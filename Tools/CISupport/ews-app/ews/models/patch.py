@@ -26,7 +26,7 @@ import logging
 
 from django.db import models
 
-from ews.config import ERR_EXISTING_PATCH, ERR_INVALID_PATCH_ID, ERR_NON_EXISTING_PATCH, SUCCESS
+from ews.config import ERR_EXISTING_CHANGE, ERR_INVALID_CHANGE_ID, ERR_NON_EXISTING_CHANGE, SUCCESS
 
 _log = logging.getLogger(__name__)
 
@@ -49,11 +49,11 @@ class Change(models.Model):
     def save_change(cls, change_id, bug_id=-1, pr_id=-1, pr_project='', obsolete=False, sent_to_buildbot=False, sent_to_commit_queue=False):
         if not Change.is_valid_change_id(change_id):
             _log.warn('Change id {} in invalid. Skipped saving.'.format(change_id))
-            return ERR_INVALID_PATCH_ID
+            return ERR_INVALID_CHANGE_ID
 
         if Change.is_existing_change_id(change_id):
             _log.debug('Change id {} already exists in database. Skipped saving.'.format(change_id))
-            return ERR_EXISTING_PATCH
+            return ERR_EXISTING_CHANGE
         Change(change_id, bug_id, obsolete, sent_to_buildbot, sent_to_commit_queue).save()
         _log.info('Saved change in database, id: {}, pr_id: {}, pr_project: {}'.format(change_id, pr_id, pr_project))
         return SUCCESS
@@ -138,7 +138,7 @@ class Change(models.Model):
     @classmethod
     def set_bug_id(cls, change_id, bug_id):
         if not Change.is_existing_change_id(change_id):
-            return ERR_NON_EXISTING_PATCH
+            return ERR_NON_EXISTING_CHANGE
 
         change = Change.objects.get(pk=change_id)
         if change.bug_id == bug_id:
@@ -153,7 +153,7 @@ class Change(models.Model):
     @classmethod
     def set_obsolete(cls, change_id, obsolete=True):
         if not Change.is_existing_change_id(change_id):
-            return ERR_NON_EXISTING_PATCH
+            return ERR_NON_EXISTING_CHANGE
 
         change = Change.objects.get(pk=change_id)
         if change.obsolete == obsolete:
