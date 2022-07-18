@@ -27,8 +27,6 @@ jobs:
           brew link llvm@13 --overwrite
       - name: Run
         env:
-          LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
-          CPPFLAGS: "-I/usr/local/opt/llvm@13/include"
           ICU_INCLUDE_DIRS: /usr/local/opt/icu4c/include
           CC: "/usr/local/opt/llvm@13/bin/clang"
           CXX: "/usr/local/opt/llvm@13/bin/clang++"
@@ -87,8 +85,6 @@ jobs:
           brew link llvm@13 --overwrite
       - name: Run
         env:
-          LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
-          CPPFLAGS: "-I/usr/local/opt/llvm@13/include"
           ICU_INCLUDE_DIRS: /usr/local/opt/icu4c/include
           CC: "/usr/local/opt/llvm@13/bin/clang"
           CXX: "/usr/local/opt/llvm@13/bin/clang++"
