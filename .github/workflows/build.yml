@@ -22,13 +22,13 @@ jobs:
       - uses: actions/checkout@v3
       - name: Run
         env:
-          PATH: "/usr/local/opt/llvm@13/bin:${{ env.PATH }}"
           LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
           CPPFLAGS: "-I/usr/local/opt/llvm@13/include"
           ICU_INCLUDE_DIRS: /usr/local/opt/icu4c/include
           CC: "/opt/homebrew/opt/llvm@13/bin/clang"
           CXX: "/opt/homebrew/opt/llvm@13/bin/clang++"
         run: |
+          echo "/usr/local/opt/llvm@13/bin" >> $GITHUB_PATH
           rm -rf /tmp/webkit-release /tmp/output
           mkdir -p /tmp/webkit-release
           brew install llvm@13 python icu4c ninja
@@ -76,13 +76,13 @@ jobs:
       - uses: actions/checkout@v3
       - name: Run
         env:
-          PATH: "/usr/local/opt/llvm@13/bin:${{ env.PATH }}"
           LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
           CPPFLAGS: "-I/usr/local/opt/llvm@13/include"
           ICU_INCLUDE_DIRS: /usr/local/opt/icu4c/include
           CC: "/opt/homebrew/opt/llvm@13/bin/clang"
           CXX: "/opt/homebrew/opt/llvm@13/bin/clang++"
         run: |
+          echo "/usr/local/opt/llvm@13/bin" >> $GITHUB_PATH
           rm -rf /tmp/webkit-release /tmp/output
           mkdir -p /tmp/webkit-release
           brew install llvm@13 python icu4c ninja
