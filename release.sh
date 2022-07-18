@@ -42,14 +42,7 @@ fi
 
 mkdir -p $temp
 
-docker buildx build -t $CONTAINER_NAME --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$temp/bun-webkit .
-
-if $? -ne 0; then
-    echo "Failed to build container"
-    exit 1
-fi
+docker buildx build -f Dockerfile -t $CONTAINER_NAME --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$temp/bun-webkit .
 
 cd $temp
 tar -cf $CONTAINER_NAME.tar bun-webkit && gzip $CONTAINER_NAME.tar >$CONTAINER_NAME.tar.gz
-
-docker rm -v $id

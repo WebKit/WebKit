@@ -1,87 +1,74 @@
-# BuildKit is required to build this
-# Enable via DOCKER_BUILDKIT=1 
-FROM ubuntu:18.04 as builder-stage
+FROM alpine:latest as base
 
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install --no-install-recommends -y wget gnupg2 curl lsb-release wget software-properties-common
+ARG GLIBC_VERSION='2.27-r0'
 
-RUN wget https://apt.llvm.org/llvm.sh --no-check-certificate
-RUN chmod +x llvm.sh
-RUN ./llvm.sh 13
-
-# Use the same version of LLVM/clang used to build Zig
-# This prevents the allocation failure
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    bc \
-    build-essential \
-    ca-certificates \
-    clang-13 \
-    clang-format-13 \
+RUN apk update
+RUN apk add --no-cache cpio \
+    build-base \
+    "clang<14.0.0" \
+    "clang-dev<14.0.0" \
+    "clang-static<14.0.0" \
     cmake \
-    cpio \
+    curl \
     curl \
     file \
-    automake \
     g++ \
     gcc \
     git \
-    gnupg2 \
-    libc++-13-dev \
-    libc++abi-13-dev \
-    libclang-13-dev \
-    liblld-13-dev \
-    libssl-dev \
-    lld-13 \
+    gnupg \
+    libc-dev \
+    libgcc \
+    libstdc++ \
+    libxml2 \
+    libxml2-dev \
+    linux-headers \
+    lld \
+    lld-dev \
+    lld-static \
+    llvm13-dev \
+    llvm13-libs \
+    llvm13-static \
     make \
-    ninja-build \
+    ninja \
+    openssl \
+    openssl-dev \
     perl \
-    python \
+    python3 \
     rsync \
     ruby \
-    software-properties-common \
     unzip \
-    wget
+    xz \
+    zlib \
+    zlib-dev \
+    icu-static \
+    icu-dev
 
-RUN update-alternatives --install /usr/bin/ld ld /usr/bin/lld-13 90 && \
-    update-alternatives --install /usr/bin/cc cc /usr/bin/clang-13 90 && \
-    update-alternatives --install /usr/bin/cpp cpp /usr/bin/clang++-13 90 && \
-    update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-13 90
+
+RUN curl -LO https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
+    curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk && \
+    cp sgerrand.rsa.pub /etc/apk/keys && \
+    apk --no-cache add glibc-${GLIBC_VERSION}.apk 
+
+ENV CXX=clang++
+ENV CC=clang
+ENV LDFLAGS='-L/usr/include -L/usr/include/llvm13'
+ENV CXXFLAGS=" -I/usr/include -I/usr/include/llvm13"
+ENV PATH="/usr/glibc-compat/bin/:/usr/bin:/usr/local/bin:/zig/bin:$PATH"
 
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
+RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc
 
-ENV CC=clang-13 
-ENV CXX=clang++-13
+RUN cp /usr/lib/libicu* /output/lib && \
+    mkdir -p /output/include/unicode && \
+    cp -r /usr/include/unicode/* /output/include/unicode
 
 COPY . /webkit
 WORKDIR /webkit
 
-RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc
 
 ARG WEBKIT_RELEASE_TYPE=Release
 
-RUN --mount=type=tmpfs,target=/icu-build \ 
-    cd /icu-build && \
-    curl -o icu4c-66_1-src.tgz -L https://github.com/unicode-org/icu/releases/download/release-66-1/icu4c-66_1-src.tgz  && \
-    tar -xzf icu4c-66_1-src.tgz && \
-    rm icu4c-66_1-src.tgz && \
-    cd icu/source && \
-    ./configure --enable-static --disable-shared && \
-    make -j$(nproc) && \
-    make install && \
-    cp -r lib/* /output/lib
-
-# | Explanation                                                                                    |                                                Flag 
-# -----------------------------------------------------------------------------------------------------------------------------------------------------
-# | Use the "JSCOnly" WebKit port                                                                  |                                  -DPORT="JSCOnly" |
-# | Build JavaScriptCore as a static library                                                       |                            -DENABLE_STATIC_JSC=ON |
-# | Build for release mode but include debug symbols                                               |               -DCMAKE_BUILD_TYPE=relwithdebuginfo |            
-# | The .a files shouldn't be symlinks to UnifiedSource.cpp files or else you can't move the files |                           -DUSE_THIN_ARCHIVES=OFF |        
-# | Enable the FTL Just-In-Time Compiler                                                           |                               -DENABLE_FTL_JIT=ON |        
-# -----------------------------------------------------------------------------------------------------------------------------------------------------
-
-# Using tmpfs this way makes it compile 2x faster
-# But means everything has to be one "RUN" statement
 RUN --mount=type=tmpfs,target=/webkitbuild \
     cd /webkitbuild && \
     cmake \
@@ -96,7 +83,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DCMAKE_C_COMPILER=$(which clang-13) \ 
     /webkit && \
     cd /webkitbuild && \
-    CFLAGS="$CFLAGS -ffat-lto-objects" CXXFLAGS="$CXXFLAGS -ffat-lto-objects" cmake --build /webkitbuild --config $WEBKIT_RELEASE_TYPE -- "jsc" -j$(nproc) && \
+    CFLAGS="$CFLAGS -ffat-lto-objects" CXXFLAGS="$CXXFLAGS -ffat-lto-objects" cmake --build /webkitbuild --config $WEBKIT_RELEASE_TYPE --target "jsc" && \
     cp -r $WEBKIT_OUT_DIR/lib/*.a /output/lib && \
     cp $WEBKIT_OUT_DIR/*.h /output/include && \
     find $WEBKIT_OUT_DIR/JavaScriptCore/Headers/JavaScriptCore/ -name "*.h" -exec cp {} /output/include/JavaScriptCore/ \; && \
@@ -105,5 +92,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     cp -r $WEBKIT_OUT_DIR/bmalloc/Headers/bmalloc/ /output/include; echo "";
 
 
-FROM builder-stage as artifact
-COPY --from=builder-stage /output /
+FROM scratch as artifact
+
+COPY --from=base /output /
+
