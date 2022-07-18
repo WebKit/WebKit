@@ -27,11 +27,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteDisplayListRecorder.h"
 #include "ScopedActiveMessageReceiveQueue.h"
 #include <WebCore/ImageBuffer.h>
 
 namespace WebKit {
+
+class RemoteDisplayListRecorder;
 
 class RemoteImageBuffer : public WebCore::ImageBuffer {
 public:
@@ -55,30 +56,10 @@ public:
         return imageBuffer;
     }
 
-    RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, std::unique_ptr<ImageBufferBackend>&& backend, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
-        : ImageBuffer(parameters, info, WTFMove(backend), renderingResourceIdentifier.object())
-        , m_renderingResourceIdentifier(renderingResourceIdentifier)
-        , m_remoteDisplayList({ RemoteDisplayListRecorder::create(*this, renderingResourceIdentifier, renderingResourceIdentifier.processIdentifier(), remoteRenderingBackend) })
-        , m_renderingResourcesRequest(ScopedRenderingResourcesRequest::acquire())
-    {
-    }
+    RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, std::unique_ptr<WebCore::ImageBufferBackend>&&, RemoteRenderingBackend&, QualifiedRenderingResourceIdentifier);
+    ~RemoteImageBuffer();
 
-    ~RemoteImageBuffer()
-    {
-        // Volatile image buffers do not have contexts.
-        if (this->volatilityState() == WebCore::VolatilityState::Volatile)
-            return;
-        // Unwind the context's state stack before destruction, since calls to restore may not have
-        // been flushed yet, or the web process may have terminated.
-        while (context().stackSize())
-            context().restore();
-    }
-
-    void setOwnershipIdentity(const WebCore::ProcessIdentity& resourceOwner)
-    {
-        if (m_backend)
-            m_backend->setOwnershipIdentity(resourceOwner);
-    }
+    void setOwnershipIdentity(const WebCore::ProcessIdentity& resourceOwner);
 
 private:
     QualifiedRenderingResourceIdentifier m_renderingResourceIdentifier;

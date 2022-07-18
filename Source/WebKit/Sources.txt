@@ -28,6 +28,7 @@ GPUProcess/GPUProcessPreferences.cpp
 GPUProcess/graphics/ImageBufferShareableAllocator.cpp
 GPUProcess/graphics/RemoteDisplayListRecorder.cpp
 GPUProcess/graphics/RemoteGraphicsContextGL.cpp
+GPUProcess/graphics/RemoteImageBuffer.cpp
 GPUProcess/graphics/RemoteRenderingBackend.cpp
 GPUProcess/graphics/RemoteResourceCache.cpp
 GPUProcess/graphics/ScopedRenderingResourcesRequest.cpp
@@ -721,6 +722,7 @@ WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp
 WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp
 WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp
 WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp
+WebProcess/GPU/graphics/RemoteImageBufferProxy.cpp
 WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp
 WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp
 WebProcess/GPU/graphics/ThreadSafeRemoteImageBufferFlusher.cpp

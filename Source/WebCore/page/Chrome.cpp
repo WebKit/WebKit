@@ -534,9 +534,9 @@ void Chrome::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     m_client.setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
 }
 
-RefPtr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, bool avoidIOSurfaceSizeCheckInWebProcess) const
+RefPtr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, bool avoidBackendSizeCheck) const
 {
-    return m_client.createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, avoidIOSurfaceSizeCheckInWebProcess);
+    return m_client.createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, avoidBackendSizeCheck);
 }
 
 #if ENABLE(WEBGL)
