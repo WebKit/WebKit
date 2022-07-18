@@ -23,6 +23,7 @@
 
 #include "BuiltinNames.h"
 #include "ClonedArguments.h"
+#include "ExecutableBaseInlines.h"
 #include "FunctionExecutable.h"
 #include "IntegrityInlines.h"
 #include "JSBoundFunction.h"
@@ -108,6 +109,8 @@ static ALWAYS_INLINE bool isAllowedReceiverFunctionForCallerAndArguments(JSFunct
         return false;
 
     FunctionExecutable* executable = function->jsExecutable();
+    if (executable->implementationVisibility() == ImplementationVisibility::Private)
+        return false;
     return !executable->isInStrictContext() && executable->parseMode() == SourceParseMode::NormalFunctionMode && !executable->isClassConstructorFunction();
 }
 
@@ -181,9 +184,6 @@ public:
 
         JSCell* callee = visitor->callee().asCell();
 
-        if (callee && (callee->inherits<JSBoundFunction>() || callee->inherits<JSRemoteFunction>() || callee->type() == ProxyObjectType))
-            return IterationStatus::Continue;
-
         if (!m_hasFoundFrame && callee != m_targetCallee)
             return IterationStatus::Continue;
 
@@ -193,8 +193,16 @@ public:
             return IterationStatus::Continue;
         }
 
-        if (callee)
+        if (callee) {
+            if (callee->inherits<JSBoundFunction>() || callee->inherits<JSRemoteFunction>() || callee->type() == ProxyObjectType)
+                return IterationStatus::Continue;
+            if (callee->inherits<JSFunction>()) {
+                if (jsCast<JSFunction*>(callee)->executable()->implementationVisibility() == ImplementationVisibility::Private)
+                    return IterationStatus::Continue;
+            }
+
             m_result = callee;
+        }
         return IterationStatus::Done;
     }
 
