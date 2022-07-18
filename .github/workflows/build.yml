@@ -34,13 +34,13 @@ jobs:
             -DCMAKE_BUILD_TYPE=relwithdebuginfo \
             -DUSE_THIN_ARCHIVES=OFF \
             -DENABLE_FTL_JIT=ON \
-            -DCMAKE_OSX_ARCHITECTURES=arm64;x86_64 \
+            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
             -G Ninja \
             -DCMAKE_C_COMPILER=clang-13 -DCMAKE_CXX_COMPILER=clang++-13 -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 \
             -DPTHREAD_JIT_PERMISSIONS_API=1 \
             -DUSE_PTHREAD_JIT_PERMISSIONS_API=ON \
             -DENABLE_REMOTE_INSPECTOR=ON \
-            $(realpath .) \
+            . \
             /tmp/webkit-release && \
             CFLAGS="-fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -O3 -flto=full -ffat-lto-objects" \
               cmake --build /tmp/webkit-release --config Release --target jsc
