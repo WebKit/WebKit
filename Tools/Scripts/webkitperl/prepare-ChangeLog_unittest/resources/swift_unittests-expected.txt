@@ -9,62 +9,62 @@
     ],
     [
       '29',
-      '30',
+      '33',
       'MyClass.function'
     ],
     [
-      '36',
-      '37',
+      '39',
+      '40',
       'MyClass.functionWithArgument(_:)'
     ],
     [
-      '42',
-      '43',
+      '45',
+      '46',
       'MyClass.functionWithMoreArguments(_:arg2:)'
     ],
     [
-      '49',
-      '50',
+      '52',
+      '53',
       'MyClass.functionWithNamedFirstArgument(argument:)'
     ],
     [
-      '55',
-      '56',
+      '58',
+      '59',
       'MyClass.functionWithNamedFirstAndSecondArgument(first:second:)'
     ],
     [
-      '63',
-      '64',
+      '66',
+      '67',
       'MyClass.classFunction'
     ],
         [
-      '69',
-      '74',
+      '72',
+      '77',
       'MyClass.readWriteComputedVariable'
     ],
     [
-      '77',
-      '79',
+      '80',
+      '82',
       'MyClass.readOnlyComputedVariable'
     ],
     [
-      '85',
-      '86',
+      '88',
+      '89',
       'MyStruct.structFunction(argument:)'
     ],
     [
-      '93',
-      '94',
+      '96',
+      '97',
       'MyEnum.enumFunction(argument:)'
     ],
     [
-      '99',
-      '100',
+      '102',
+      '103',
       'MyProtocol.protocolFunction(argument:)'
     ],
     [
-      '105',
-      '106',
+      '108',
+      '109',
       'ExtendedType.extensionFunction(argument:)'
     ],
   ]

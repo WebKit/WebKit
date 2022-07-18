@@ -1981,7 +1981,7 @@ sub get_function_line_ranges_for_swift($$)
     while (<$fileHandle>) {
         chomp;
         next if (/^\s*\/\/.*/);
-        if (/func\s+([\w_][\w\d_]*)\((.*)\)/ || /var\s+([\w_][\w\d_]*):\s+/) {
+        if (!$currentFunction && (/func\s+([\w_][\w\d_]*)\((.*)\)/ || /var\s+([\w_][\w\d_]*):\s+/)) {
             $functionScopeDepth = $scopeDepth;
             $currentFunction = $1;
             if ($2) {

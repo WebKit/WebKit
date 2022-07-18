@@ -27,6 +27,9 @@ class MyClass {
 
     // `MyClass.function()`
     func function() {
+        // Local variables need not be given ChangeLog entries. This should not generate one.
+        var local: Local {
+        }
     }
 
     // By default the first argument to functions is unnamed, so in Swift you'd call this
