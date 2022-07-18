@@ -12,9 +12,15 @@
         testRunner.dumpAsText();
     }
     onload = async () => {
+      let timer = null;
       visualViewport.onresize = () => {
         document.execCommand('Outdent');
-        setTimeout(function() { document.documentElement.innerHTML = "<body>Test passes if it does not crash.</body>"; testRunner.notifyDone(); });
+        if (timer)
+            return;
+        timer = setTimeout(function() {
+            document.documentElement.innerHTML = "<body>Test passes if it does not crash.</body>";
+            testRunner.notifyDone();
+        }, 50);
       };
       let blockquote = document.createElement('blockquote');
       document.body.append(blockquote);
