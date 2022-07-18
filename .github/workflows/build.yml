@@ -26,7 +26,9 @@ jobs:
           mkdir -p /tmp/webkit-release
           brew install llvm@13 python icu4c ninja
           brew link llvm@13 --overwrite
-          ICU_INCLUDE_DIRS="$(HOMEBREW_PREFIX)opt/icu4c/include" \
+          echo 'export PATH="/usr/local/opt/llvm@13/bin:$PATH"' >> $HOME/.bash_profile
+          source $HOME/.bash_profile
+          ICU_INCLUDE_DIRS="$(brew --prefix llvm@13)opt/icu4c/include" \
           cmake \
             -DPORT="JSCOnly" \
             -DENABLE_STATIC_JSC=ON \
@@ -36,7 +38,7 @@ jobs:
             -DENABLE_FTL_JIT=ON \
             -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
             -G Ninja \
-            -DCMAKE_C_COMPILER=clang-13 -DCMAKE_CXX_COMPILER=clang++-13 -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 \
+            -DCMAKE_C_COMPILER=$(which clang-13) -DCMAKE_CXX_COMPILER=$(which clang++-13) -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
             -DPTHREAD_JIT_PERMISSIONS_API=1 \
             -DUSE_PTHREAD_JIT_PERMISSIONS_API=ON \
             -DENABLE_REMOTE_INSPECTOR=ON \
