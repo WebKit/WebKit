@@ -1987,6 +1987,11 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
         return setHTTPCookieAcceptPolicy(policy, WTFMove(completionHandler));
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllCookies")) {
+        removeAllCookies();
+        return completionHandler(nullptr);
+    }
+
     completionHandler(m_currentInvocation->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody).get());
 }
 
@@ -2997,8 +3002,8 @@ void TestController::clearLoadedSubresourceDomains()
 
 #endif // !PLATFORM(COCOA)
 
-struct ClearServiceWorkerRegistrationsCallbackContext {
-    explicit ClearServiceWorkerRegistrationsCallbackContext(TestController& controller)
+struct GenericVoidContext {
+    explicit GenericVoidContext(TestController& controller)
         : testController(controller)
     {
     }
@@ -3007,18 +3012,18 @@ struct ClearServiceWorkerRegistrationsCallbackContext {
     bool done { false };
 };
 
-static void clearServiceWorkerRegistrationsCallback(void* userData)
+static void genericVoidCallback(void* userData)
 {
-    auto* context = static_cast<ClearServiceWorkerRegistrationsCallbackContext*>(userData);
+    auto* context = static_cast<GenericVoidContext*>(userData);
     context->done = true;
     context->testController.notifyDone();
 }
 
 void TestController::clearServiceWorkerRegistrations()
 {
-    ClearServiceWorkerRegistrationsCallbackContext context(*this);
+    GenericVoidContext context(*this);
 
-    WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(websiteDataStore(), &context, clearServiceWorkerRegistrationsCallback);
+    WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(websiteDataStore(), &context, genericVoidCallback);
     runUntil(context.done, noTimeout);
 }
 
@@ -3626,6 +3631,13 @@ void TestController::statisticsResetToConsistentState()
     WKWebsiteDataStoreStatisticsResetToConsistentState(websiteDataStore(), &context, resourceStatisticsVoidResultCallback);
     runUntil(context.done, noTimeout);
     m_currentInvocation->didResetStatisticsToConsistentState();
+}
+
+void TestController::removeAllCookies()
+{
+    GenericVoidContext context(*this);
+    WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), &context, genericVoidCallback);
+    runUntil(context.done, noTimeout);
 }
 
 void TestController::addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type)

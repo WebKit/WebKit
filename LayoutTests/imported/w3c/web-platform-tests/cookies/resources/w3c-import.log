@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/cookie-helper.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/cookie-test.js
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/cookie.py
@@ -33,6 +34,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/set-cookie.py
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/set.py
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/setSameSite.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/setSameSiteDomain.py
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/setSameSiteMultiAttribute.py
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/setSameSiteNone.py
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/setSecure.py

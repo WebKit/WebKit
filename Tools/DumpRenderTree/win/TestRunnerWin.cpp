@@ -736,6 +736,23 @@ void TestRunner::dispatchPendingLoadRequests()
     viewPrivate->dispatchPendingLoadRequests();
 }
 
+void TestRunner::removeAllCookies()
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+
+    COMPtr<IWebPreferencesPrivate4> prefsPrivate(Query, preferences);
+    if (!prefsPrivate)
+        return;
+
+    prefsPrivate->clearNetworkLoaderSession();
+}
+
 void TestRunner::removeAllVisitedLinks()
 {
     COMPtr<IWebHistory> history;

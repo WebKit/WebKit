@@ -266,6 +266,8 @@ public:
     void setAppBoundDomains(WKArrayRef originURLs);
     void statisticsResetToConsistentState();
 
+    void removeAllCookies();
+
     void getAllStorageAccessEntries();
     void loadedSubresourceDomains();
     void clearLoadedSubresourceDomains();

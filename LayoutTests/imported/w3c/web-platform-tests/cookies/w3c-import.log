@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cookies/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/cookies/README.md
+/LayoutTests/imported/w3c/web-platform-tests/cookies/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/cookies/cookie-enabled-noncookie-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/meta-blocked.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/navigated-away.html

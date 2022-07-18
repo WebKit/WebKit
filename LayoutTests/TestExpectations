@@ -809,6 +809,7 @@ imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-nested.https.htm
 imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-subresource.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/setcookie-lax.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/setcookie-navigation.https.html [ Failure Pass ]
+imported/w3c/web-platform-tests/cookies/samesite-none-secure/cookies-without-samesite-must-be-secure.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-iframe-subresource.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-navigation.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-subresource.tentative.html [ Failure Pass ]

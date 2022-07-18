@@ -1,0 +1,16 @@
+
+FAIL Too long path attribute (>1024 bytes) is ignored; previous valid path wins. assert_equals: The cookie was set as expected. expected "test=1" but got ""
+PASS Too long path attribute (>1024 bytes) is ignored; next valid path wins.
+PASS Max size path attribute (1024 bytes) is not ignored
+FAIL Too long path attribute (>1024 bytes) is ignored assert_equals: The cookie was set as expected. expected "test=4" but got ""
+FAIL Too long domain attribute (>1024 bytes) is ignored; previous valid domain wins. assert_equals: The cookie was set as expected. expected "test=5" but got ""
+PASS Too long domain attribute (>1024 bytes) is ignored; next valid domain wins.
+PASS Max size domain attribute (1024 bytes) is not ignored
+FAIL Too long domain attribute (>1024 bytes) is ignored assert_equals: The cookie was set as expected. expected "test=8" but got ""
+PASS Set cookie with max size name/value pair and max size attribute value
+PASS Set cookie with max size name/value pair and multiple max size attributes (>8k bytes total)
+PASS Max length Max-Age attribute value (1024 bytes) doesn't cause cookie rejection
+PASS Too long Max-Age attribute value (>1024 bytes) doesn't cause cookie rejection
+PASS Max length negative Max-Age attribute value (1024 bytes) doesn't get ignored
+FAIL Too long negative Max-Age attribute value (>1024 bytes) gets ignored assert_equals: The cookie was set as expected. expected "test=14" but got ""
+

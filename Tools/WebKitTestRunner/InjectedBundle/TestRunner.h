@@ -280,6 +280,7 @@ public:
     // Cookies testing
     void setAlwaysAcceptCookies(bool);
     void setOnlyAcceptFirstPartyCookies(bool);
+    void removeAllCookies();
 
     // Custom full screen behavior.
     void setHasCustomFullScreenBehavior(bool value) { m_customFullScreenBehavior = value; }

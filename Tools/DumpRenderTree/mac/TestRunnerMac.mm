@@ -550,6 +550,11 @@ void TestRunner::dispatchPendingLoadRequests()
     [[mainFrame webView] _dispatchPendingLoadRequests];
 }
 
+void TestRunner::removeAllCookies()
+{
+    [WebPreferences _clearNetworkLoaderSession];
+}
+
 void TestRunner::removeAllVisitedLinks()
 {
     [WebHistory _removeAllVisitedLinks];

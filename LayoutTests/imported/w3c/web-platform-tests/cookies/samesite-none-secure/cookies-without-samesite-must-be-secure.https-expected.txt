@@ -1,0 +1,3 @@
+
+FAIL SameSite=None cookies are rejected unless the Secure attribute is set. assert_not_equals: Non-Secure SameSite=None cookie is rejected. got disallowed value "0.7542907872387762"
+

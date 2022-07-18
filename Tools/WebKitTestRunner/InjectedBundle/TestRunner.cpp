@@ -789,6 +789,11 @@ void TestRunner::setOnlyAcceptFirstPartyCookies(bool accept)
     postSynchronousMessage("SetOnlyAcceptFirstPartyCookies", accept);
 }
 
+void TestRunner::removeAllCookies()
+{
+    postSynchronousMessage("RemoveAllCookies");
+}
+
 void TestRunner::setEnterFullscreenForElementCallback(JSValueRef callback)
 {
     cacheTestRunnerCallback(EnterFullscreenForElementCallbackID, callback);

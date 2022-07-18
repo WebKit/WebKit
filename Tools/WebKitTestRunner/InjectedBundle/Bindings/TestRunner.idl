@@ -193,6 +193,7 @@ interface TestRunner {
     // Cookies testing
     undefined setAlwaysAcceptCookies(boolean accept);
     undefined setOnlyAcceptFirstPartyCookies(boolean accept);
+    undefined removeAllCookies();
 
     // Page Visibility API
     undefined setPageVisibility(DOMString state);

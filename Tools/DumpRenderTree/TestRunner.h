@@ -95,6 +95,7 @@ public:
     void queueLoadingScript(JSStringRef script);
     void queueNonLoadingScript(JSStringRef script);
     void queueReload();
+    void removeAllCookies();
     void removeAllVisitedLinks();
     void setAcceptsEditing(bool);
     void setAppCacheMaximumSize(unsigned long long quota);

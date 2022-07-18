@@ -1445,6 +1445,9 @@
     "imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-multiple-policies-multiple-hashing-algorithms.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/cookies/attributes/attributes-ctl.sub.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/cookies/attributes/domain.sub.html": [
         "slow"
     ],
@@ -1490,7 +1493,19 @@
     "imported/w3c/web-platform-tests/cookies/ordering/resources/ordering-child.sub.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/partitioned-cookies/resources/partitioned-cookies-cross-site-embed.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/partitioned-cookies/resources/partitioned-cookies-cross-site-window.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/cookies/path/match.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/samesite-none-secure/cookies-without-samesite-must-be-secure.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/cookies/samesite-none-secure/cookies-without-samesite-must-be-secure.https.tentative.html": [
@@ -1530,6 +1545,12 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-subresource.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/size/attributes.www.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/size/name-and-value.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/cookies/value/value-ctl.html": [
