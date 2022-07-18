@@ -235,6 +235,10 @@ public:
     void clear() { m_samples.clear(); }
     SamplesVector takeSamples() { return std::exchange(m_samples, { }); }
 
+    // Indicate that this MediaSampleBlock follows a discontinuity from the previous block.
+    std::optional<bool> discontinuity() const { return m_discontinuity; }
+    void setDiscontinuity(bool discontinuity) { m_discontinuity = discontinuity; }
+
     const MediaSampleItem& operator[](size_t index) const { return m_samples[index]; }
     const MediaSampleItem& first() const { return m_samples.first(); }
     const MediaSampleItem& last() const { return m_samples.last(); }
@@ -244,6 +248,7 @@ public:
 private:
     RefPtr<const TrackInfo> m_info;
     SamplesVector m_samples;
+    std::optional<bool> m_discontinuity;
 };
 
 } // namespace WebCore
