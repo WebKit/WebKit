@@ -72,52 +72,52 @@ jobs:
       matrix:
         os: [macos-11]
 
-      steps:
-        - uses: actions/checkout@v3
-          name: Run
-          env:
-            PATH: "/usr/local/opt/llvm@13/bin:${{ env.PATH }}"
-            LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
-            CPPFLAGS: "-I/usr/local/opt/llvm@13/include"
-            ICU_INCLUDE_DIRS: /usr/local/opt/icu4c/include
-            CC: "/opt/homebrew/opt/llvm@13/bin/clang"
-            CXX: "/opt/homebrew/opt/llvm@13/bin/clang++"
-          run: |
-            rm -rf /tmp/webkit-release /tmp/output
-            mkdir -p /tmp/webkit-release
-            brew install llvm@13 python icu4c ninja
-            brew link llvm@13 --overwrite
-            cmake \
-              -DPORT="JSCOnly" \
-              -DENABLE_STATIC_JSC=ON \
-              -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
-              -DCMAKE_BUILD_TYPE=relwithdebuginfo \
-              -DUSE_THIN_ARCHIVES=OFF \
-              -DENABLE_FTL_JIT=ON \
-              -DCMAKE_CFLAGS="-fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -O3 -ffat-lto-objects -flto" \
-              -DCMAKE_CXXFLAGS="-fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -O3 -ffat-lto-objects -flto" \
-              -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
-              -G Ninja \
-              -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
-              -DPTHREAD_JIT_PERMISSIONS_API=1 \
-              -DUSE_PTHREAD_JIT_PERMISSIONS_API=ON \
-              -DENABLE_REMOTE_INSPECTOR=ON \
-              . \
-              /tmp/webkit-release && \
-                cmake --build /tmp/webkit-release --config Release --target jsc
-            mkdir -p /tmp/output/lib /tmp/output/include /tmp/output/include/JavaScriptCore /tmp/output/include/wtf /tmp/output/include/bmalloc
-            cp /tmp/webkit-release/lib/* /tmp/output/lib
-            cp -r /tmp/webkit-release/cmakeconfig.h /tmp/output/include/cmakeconfig.h
-            cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/output/include
-            cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/output/include
-            cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/output/include/JavaScriptCore
-            cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/output/include/JavaScriptCore
-            cd /tmp
-            tar -czf /tmp/bun-webkit-macos-universal-lto.tar.gz output
-        - uses: actions/upload-artifact@v3
-          with:
-            name: bun-webkit-macos-universal-lto
-            path: /tmp/output
+    steps:
+      - uses: actions/checkout@v3
+        name: Run
+        env:
+          PATH: "/usr/local/opt/llvm@13/bin:${{ env.PATH }}"
+          LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
+          CPPFLAGS: "-I/usr/local/opt/llvm@13/include"
+          ICU_INCLUDE_DIRS: /usr/local/opt/icu4c/include
+          CC: "/opt/homebrew/opt/llvm@13/bin/clang"
+          CXX: "/opt/homebrew/opt/llvm@13/bin/clang++"
+        run: |
+          rm -rf /tmp/webkit-release /tmp/output
+          mkdir -p /tmp/webkit-release
+          brew install llvm@13 python icu4c ninja
+          brew link llvm@13 --overwrite
+          cmake \
+            -DPORT="JSCOnly" \
+            -DENABLE_STATIC_JSC=ON \
+            -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
+            -DCMAKE_BUILD_TYPE=relwithdebuginfo \
+            -DUSE_THIN_ARCHIVES=OFF \
+            -DENABLE_FTL_JIT=ON \
+            -DCMAKE_CFLAGS="-fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -O3 -ffat-lto-objects -flto" \
+            -DCMAKE_CXXFLAGS="-fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -O3 -ffat-lto-objects -flto" \
+            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+            -G Ninja \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+            -DPTHREAD_JIT_PERMISSIONS_API=1 \
+            -DUSE_PTHREAD_JIT_PERMISSIONS_API=ON \
+            -DENABLE_REMOTE_INSPECTOR=ON \
+            . \
+            /tmp/webkit-release && \
+              cmake --build /tmp/webkit-release --config Release --target jsc
+          mkdir -p /tmp/output/lib /tmp/output/include /tmp/output/include/JavaScriptCore /tmp/output/include/wtf /tmp/output/include/bmalloc
+          cp /tmp/webkit-release/lib/* /tmp/output/lib
+          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/output/include/cmakeconfig.h
+          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/output/include
+          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/output/include
+          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/output/include/JavaScriptCore
+          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/output/include/JavaScriptCore
+          cd /tmp
+          tar -czf /tmp/bun-webkit-macos-universal-lto.tar.gz output
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bun-webkit-macos-universal-lto
+          path: /tmp/output
 
   linux_amd64:
     name: Linux AMD64
