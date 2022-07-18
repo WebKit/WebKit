@@ -40,8 +40,6 @@ if [ "$WEBKIT_RELEASE_TYPE" == "relwithdebuginfo" ]; then
     CONTAINER_NAME=bun-webkit-linux-$BUILDKIT_ARCH-dbg
 fi
 
-temp=$(mktemp -d)
-
 docker build . -t $CONTAINER_NAME --progress=plain --platform=linux/$BUILDKIT_ARCH
 
 if $? -ne 0; then
@@ -54,5 +52,3 @@ docker cp $id:/output $temp/bun-webkit
 
 cd $temp && tar -cf $CONTAINER_NAME.tar bun-webkit && gzip $CONTAINER_NAME.tar >$CONTAINER_NAME.tar.gz
 docker rm -v $id
-
-gh release upload $TAG $temp/$CONTAINER_NAME.tar.gz --clobber --repo Jarred-Sumner/webkit
