@@ -195,8 +195,10 @@ void SourceBufferPrivate::clearTrackBuffers()
 void SourceBufferPrivate::bufferedSamplesForTrackId(const AtomString& trackId, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     auto* trackBuffer = m_trackBufferMap.get(trackId);
-    if (!trackBuffer)
+    if (!trackBuffer) {
         completionHandler({ });
+        return;
+    }
 
     auto sampleDescriptions = WTF::map(trackBuffer->samples().decodeOrder(), [](auto& entry) {
         return toString(*entry.second);
