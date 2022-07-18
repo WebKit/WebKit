@@ -5346,3 +5346,4 @@ streams/readable-byte-stream-controller.html [ Skip ]
 streams/readable-byte-stream-controller-worker.html [ Skip ]
 
 webkit.org/b/242848 accessibility/mac/basic-embed-pdf-accessibility.html [ Pass Timeout ]
+webkit.org/b/242849 [ Release ] editing/execCommand/outdent-paragraph-crash.html [ Pass Failure ]
