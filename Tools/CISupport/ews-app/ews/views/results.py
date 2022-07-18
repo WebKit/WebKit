@@ -60,7 +60,7 @@ class Results(View):
         if not self.is_valid_result(data):
             return HttpResponse("Incomplete data.")
 
-        change_id = data['patch_id']
+        change_id = data['change_id']
         _log.info('Build {} event received, change_id: {}, type: {} for build_id: {} of type: {}, pr_id: {}, pr_project: {}'.format(data['status'], change_id, type(change_id), data['build_id'], type(data['build_id']), data.get('pr_id', -1), data.get('pr_project', '')))
         if not change_id:
             _log.error('change_id missing: {}'.format(change_id))
@@ -86,7 +86,7 @@ class Results(View):
             _log.error("Invalid data type: {}".format(data['type']))
             return False
 
-        required_keys = {u'ews-build': ['hostname', 'patch_id', 'build_id', 'builder_id', 'builder_name', 'builder_display_name',
+        required_keys = {u'ews-build': ['hostname', 'change_id', 'build_id', 'builder_id', 'builder_name', 'builder_display_name',
                                            'number', 'result', 'state_string', 'started_at', 'complete_at'],
                          u'ews-step': ['hostname', 'step_id', 'build_id', 'result', 'state_string', 'started_at', 'complete_at']}
 
