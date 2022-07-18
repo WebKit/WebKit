@@ -5344,3 +5344,5 @@ imported/w3c/web-platform-tests/streams/readable-byte-streams/respond-after-enqu
 imported/w3c/web-platform-tests/streams/readable-byte-streams/respond-after-enqueue.any.worker.html [ Skip ]
 streams/readable-byte-stream-controller.html [ Skip ]
 streams/readable-byte-stream-controller-worker.html [ Skip ]
+
+webkit.org/b/242848 accessibility/mac/basic-embed-pdf-accessibility.html [ Pass Timeout ]
