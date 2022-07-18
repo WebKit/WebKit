@@ -650,7 +650,7 @@ void LegacyInlineFlowBox::computeLogicalBoxHeights(LegacyRootInlineBox& rootBox,
     }
 }
 
-static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox, LayoutUnit top, LayoutUnit maxHeight, int maxAscent, bool strictMode, LayoutUnit& lineTop, LayoutUnit& lineBottom, bool& setLineTop,
+static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox, LayoutUnit top, LayoutUnit maxHeight, LayoutUnit maxAscent, bool strictMode, LayoutUnit& lineTop, LayoutUnit& lineBottom, bool& setLineTop,
     LayoutUnit& lineTopIncludingMargins, LayoutUnit& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline baselineType)
 {
     LayoutUnit adjustmentForChildrenWithSameLineHeightAndBaseline;
@@ -760,7 +760,7 @@ static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox
     }
 }
 
-void LegacyInlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHeight, int maxAscent, bool strictMode, LayoutUnit& lineTop, LayoutUnit& lineBottom, bool& setLineTop,
+void LegacyInlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHeight, LayoutUnit maxAscent, bool strictMode, LayoutUnit& lineTop, LayoutUnit& lineBottom, bool& setLineTop,
     LayoutUnit& lineTopIncludingMargins, LayoutUnit& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline baselineType)
 {
     bool isRootBox = isRootInlineBox();

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<script>
+function notifyAfterImagesHaveLoaded() {
+    if(window.testRunner) {
+        testRunner.notifyDone()
+    }
+    
+}
+
+if (window.testRunner) 
+{
+    testRunner.waitUntilDone();
+}
+</script>
+<style>
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.box {
+    font-family: arial;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    width: 50px;
+    height: 50px;
+    box-sizing: border-box;
+    border: 1px solid darkgray;
+    background-color: purple;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+@keyframes move {
+    from { left: -500px; background-color: cyan; }
+    to { left: 0; background-color: rgb(255, 210, 204); }
+}
+.box.animation {
+    position: relative;
+    animation: 2s linear 0s move forwards;
+}
+</style>
+<body>
+<div class="box">
+<img src="resources/zero.png" onload="notifyAfterImagesHaveLoaded();">
+</div>
+</body>
+</html>
