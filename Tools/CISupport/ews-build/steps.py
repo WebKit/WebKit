@@ -628,9 +628,9 @@ class CheckOutSource(git.Git):
             return {'step': 'Cleaned and updated working directory'}
 
     def run(self):
-        project = self.getProperty('project', GITHUB_PROJECTS[0])
+        project = self.getProperty('project', '') or GITHUB_PROJECTS[0]
         self.repourl = f'{GITHUB_URL}{project}.git'
-        self.branch = self.getProperty('github.base.ref', self.branch)
+        self.branch = self.getProperty('github.base.ref') or self.branch
 
         username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
         self.env = dict(
