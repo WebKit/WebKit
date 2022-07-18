@@ -147,8 +147,10 @@ void MediaPlayerPrivateWebM::load(const String& url)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (!m_player)
+    if (!m_player || !url.length())
         return;
+    
+    m_requestedOrigin = SecurityOrigin::createFromString(url);
 
     auto mimeType = m_player->contentMIMEType();
     if (mimeType.isEmpty() || !mimeTypeCache().contains(mimeType)) {
@@ -189,6 +191,15 @@ void MediaPlayerPrivateWebM::load(MediaStreamPrivate&)
     setNetworkState(MediaPlayer::NetworkState::FormatError);
 }
 #endif
+
+void MediaPlayerPrivateWebM::responseReceived(PlatformMediaResource& resource, const ResourceResponse& response)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    m_origins.add(SecurityOrigin::create(response.url()));
+    m_resolvedOrigin = SecurityOrigin::create(response.url());
+    m_didPassCORSAccessCheck = resource.didPassAccessControlCheck();
+}
 
 void MediaPlayerPrivateWebM::dataReceived(const SharedBuffer&)
 {
@@ -668,6 +679,22 @@ void MediaPlayerPrivateWebM::setTextTrackRepresentation(TextTrackRepresentation*
 {
     auto* representationLayer = representation ? representation->platformLayer() : nil;
     m_videoLayerManager->setTextTrackRepresentationLayer(representationLayer);
+}
+
+bool MediaPlayerPrivateWebM::hasSingleSecurityOrigin() const
+{
+    if (m_resolvedOrigin && m_requestedOrigin)
+        return m_resolvedOrigin->isSameSchemeHostPort(*m_requestedOrigin);
+    return false;
+}
+
+std::optional<bool> MediaPlayerPrivateWebM::wouldTaintOrigin(const SecurityOrigin& origin) const
+{
+    for (auto& responseOrigin : m_origins) {
+        if (!origin.isSameOriginDomain(*responseOrigin))
+            return true;
+    }
+    return false;
 }
 
 String MediaPlayerPrivateWebM::engineDescription() const
