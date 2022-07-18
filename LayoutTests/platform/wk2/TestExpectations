@@ -870,3 +870,5 @@ imported/w3c/web-platform-tests/file-system-access/ [ Pass ]
 storage/filesystemaccess/ [ Pass ]
 
 fast/canvas/large-getImageData.html [ Pass ]
+
+webkit.org/b/240987 fast/images/heic-as-background-image.html [ Failure ]
