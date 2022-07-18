@@ -21,17 +21,18 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run
+        env:
+          PATH: "/usr/local/opt/llvm@13/bin:${{ env.PATH }}"
+          LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
+          CPPFLAGS: "-I/usr/local/opt/llvm@13/include"
+          ICU_INCLUDE_DIRS: /usr/local/opt/icu4c/include
+          CC: "/opt/homebrew/opt/llvm@13/bin/clang"
+          CXX: "/opt/homebrew/opt/llvm@13/bin/clang++"
         run: |
           rm -rf /tmp/webkit-release /tmp/output
           mkdir -p /tmp/webkit-release
           brew install llvm@13 python icu4c ninja
           brew link llvm@13 --overwrite
-          export PATH="/usr/local/opt/llvm@13/bin:$PATH"
-          export LDFLAGS="-L/usr/local/opt/llvm@13/lib"
-          export CPPFLAGS="-I/usr/local/opt/llvm@13/include"
-          export CC=/opt/homebrew/opt/llvm@13/bin/clang
-          export CXX=/opt/homebrew/opt/llvm@13/bin/clang++
-          ICU_INCLUDE_DIRS="$(brew --prefix llvm@13)opt/icu4c/include" \
           cmake \
             -DPORT="JSCOnly" \
             -DENABLE_STATIC_JSC=ON \
@@ -70,20 +71,21 @@ jobs:
       matrix:
         os: [macos-11]
 
-    steps:
+        steps:
       - uses: actions/checkout@v3
       - name: Run
+        env:
+          PATH: "/usr/local/opt/llvm@13/bin:${{ env.PATH }}"
+          LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
+          CPPFLAGS: "-I/usr/local/opt/llvm@13/include"
+          ICU_INCLUDE_DIRS: /usr/local/opt/icu4c/include
+          CC: "/opt/homebrew/opt/llvm@13/bin/clang"
+          CXX: "/opt/homebrew/opt/llvm@13/bin/clang++"
         run: |
           rm -rf /tmp/webkit-release /tmp/output
           mkdir -p /tmp/webkit-release
           brew install llvm@13 python icu4c ninja
           brew link llvm@13 --overwrite
-          export PATH="/usr/local/opt/llvm@13/bin:$PATH"
-          export LDFLAGS="-L/usr/local/opt/llvm@13/lib"
-          export CPPFLAGS="-I/usr/local/opt/llvm@13/include"
-          export CC=/opt/homebrew/opt/llvm@13/bin/clang
-          export CXX=/opt/homebrew/opt/llvm@13/bin/clang++
-          ICU_INCLUDE_DIRS="$(brew --prefix llvm@13)opt/icu4c/include" \
           cmake \
             -DPORT="JSCOnly" \
             -DENABLE_STATIC_JSC=ON \
