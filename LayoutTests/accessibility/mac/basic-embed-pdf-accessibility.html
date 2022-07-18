@@ -28,7 +28,9 @@
         window.jsTestIsAsync = true;
 
         var hitTestResult, pdfAxObject, pdfEmbedElement, pdfLayerController, searchResultElement;
-        setTimeout(async function() {
+        requestAnimationFrame(async function() {
+            await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for the embed plugin to load after style update.
+
             // First, ensure the <embed> and the PDF inside the <embed> are completely initialized.
             // It would be nice if we could listen for an <embed> load event to be fired, but WebKit erroneously
             // doesn't fire those for <embed>s: https://bugs.webkit.org/show_bug.cgi?id=230054
@@ -94,7 +96,7 @@
             shouldBe("searchResultElement.stringAttributeValue('AXSubrole')", "'AXPDFPluginSubrole'");
 
             finishJSTest();
-        }, 0)
+        });
     }
 </script>
 </body>
