@@ -67,18 +67,18 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
         break;
     case ConstructorKind::Base:
     case ConstructorKind::Extends:
-        return createExecutable(m_vm, defaultConstructorSourceCode(constructorKind), name, constructorKind, ConstructAbility::CanConstruct, needsClassFieldInitializer, privateBrandRequirement);
+        return createExecutable(m_vm, defaultConstructorSourceCode(constructorKind), name, ImplementationVisibility::Public, constructorKind, ConstructAbility::CanConstruct, needsClassFieldInitializer, privateBrandRequirement);
     }
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const SourceCode& code, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility)
+UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const SourceCode& code, const Identifier& name, ImplementationVisibility implementationVisibility, ConstructorKind constructorKind, ConstructAbility constructAbility)
 {
-    return createExecutable(m_vm, code, name, constructorKind, constructAbility, NeedsClassFieldInitializer::No);
+    return createExecutable(m_vm, code, name, implementationVisibility, constructorKind, constructAbility, NeedsClassFieldInitializer::No);
 }
 
-UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement)
+UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, const Identifier& name, ImplementationVisibility implementationVisibility, ConstructorKind constructorKind, ConstructAbility constructAbility, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement)
 {
     // FIXME: Can we just make MetaData computation be constexpr and have the compiler do this for us?
     // https://bugs.webkit.org/show_bug.cgi?id=193272
@@ -258,7 +258,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
         }
     }
 
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, &metadata, kind, constructAbility, JSParserScriptMode::Classic, nullptr, std::nullopt, DerivedContextType::None, needsClassFieldInitializer, privateBrandRequirement, isBuiltinDefaultClassConstructor);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, &metadata, kind, implementationVisibility, constructAbility, JSParserScriptMode::Classic, nullptr, std::nullopt, DerivedContextType::None, needsClassFieldInitializer, privateBrandRequirement, isBuiltinDefaultClassConstructor);
     return functionExecutable;
 }
 
@@ -283,7 +283,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::name##Executable() \
         Identifier executableName = m_vm.propertyNames->builtinNames().functionName##PublicName();\
         if (overrideName)\
             executableName = Identifier::fromString(m_vm, overrideName);\
-        m_unlinkedExecutables[index] = createBuiltinExecutable(name##Source(), executableName, s_##name##ConstructorKind, s_##name##ConstructAbility);\
+        m_unlinkedExecutables[index] = createBuiltinExecutable(name##Source(), executableName, s_##name##ImplementationVisibility, s_##name##ConstructorKind, s_##name##ConstructAbility);\
     }\
     return m_unlinkedExecutables[index];\
 }

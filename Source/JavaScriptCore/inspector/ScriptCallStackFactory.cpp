@@ -33,9 +33,13 @@
 #include "config.h"
 #include "ScriptCallStackFactory.h"
 
+#include "CodeBlock.h"
+#include "ExecutableBaseInlines.h"
+#include "ImplementationVisibility.h"
 #include "JSCInlines.h"
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
+#include "ScriptExecutable.h"
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -53,6 +57,11 @@ public:
 
     IterationStatus operator()(StackVisitor& visitor) const
     {
+        if (auto* codeBlock = visitor->codeBlock()) {
+            if (codeBlock->ownerExecutable()->implementationVisibility() == ImplementationVisibility::Private)
+                return IterationStatus::Continue;
+        }
+
         if (m_needToSkipAFrame) {
             m_needToSkipAFrame = false;
             return IterationStatus::Continue;

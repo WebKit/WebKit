@@ -19,10 +19,7 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
         3: (anonymous function)
-        4: asyncFunctionResume
-        5: (anonymous function)
-        6: promiseReactionJobWithoutPromise
-        7: promiseReactionJob
+        4: (anonymous function)
       snapshot: <filtered>
   1: (duration)
     0: width

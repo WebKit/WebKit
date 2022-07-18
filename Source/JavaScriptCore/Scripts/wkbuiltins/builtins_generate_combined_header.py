@@ -80,6 +80,7 @@ class VM;
 
 enum class ConstructAbility : uint8_t;
 enum class ConstructorKind : uint8_t;
+enum class ImplementationVisibility : uint8_t;
 }"""
 
     def generate_section_for_object(self, object):
@@ -101,7 +102,8 @@ enum class ConstructorKind : uint8_t;
             lines.append("""extern const char* const s_%(codeName)s;
 extern const int s_%(codeName)sLength;
 extern const JSC::ConstructAbility s_%(codeName)sConstructAbility;
-extern const JSC::ConstructorKind s_%(codeName)sConstructorKind;""" % function_args)
+extern const JSC::ConstructorKind s_%(codeName)sConstructorKind;
+extern const JSC::ImplementationVisibility s_%(codeName)sImplementationVisibility;""" % function_args)
 
         return lines
 

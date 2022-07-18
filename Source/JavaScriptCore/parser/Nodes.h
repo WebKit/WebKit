@@ -2255,7 +2255,7 @@ namespace JSC {
         }
 
     public:
-        unsigned m_lexicalScopeFeatures : 4;
+        unsigned m_lexicalScopeFeatures : bitWidthOfLexicalScopeFeatures;
         unsigned m_superBinding : 1;
         unsigned m_constructorKind : 2;
         unsigned m_needsClassFieldInitializer : 1;

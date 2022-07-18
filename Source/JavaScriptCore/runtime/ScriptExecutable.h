@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExecutableBase.h"
+#include "ParserModes.h"
 
 namespace JSC {
 
@@ -149,7 +150,7 @@ protected:
     Intrinsic m_intrinsic { NoIntrinsic };
     bool m_didTryToEnterInLoop { false };
     CodeFeatures m_features;
-    unsigned m_lexicalScopeFeatures : 4;
+    unsigned m_lexicalScopeFeatures : bitWidthOfLexicalScopeFeatures;
     OptionSet<CodeGenerationMode> m_codeGenerationModeForGeneratorBody;
     bool m_hasCapturedVariables : 1;
     bool m_neverInline : 1;

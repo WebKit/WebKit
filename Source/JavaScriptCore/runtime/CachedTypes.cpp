@@ -1939,7 +1939,7 @@ private:
     unsigned m_hasTailCalls : 1;
     unsigned m_codeType : 2;
     unsigned m_hasCheckpoints : 1;
-    unsigned m_lexicalScopeFeatures : 4;
+    unsigned m_lexicalScopeFeatures : bitWidthOfLexicalScopeFeatures;
 
     CodeFeatures m_features;
     SourceParseMode m_parseMode;

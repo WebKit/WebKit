@@ -26,6 +26,8 @@
 #pragma once
 
 #include "ExecutableBase.h"
+#include "FunctionExecutable.h"
+#include "ImplementationVisibility.h"
 #include "NativeExecutable.h"
 #include "ScriptExecutable.h"
 
@@ -36,6 +38,13 @@ inline Intrinsic ExecutableBase::intrinsic() const
     if (isHostFunction())
         return jsCast<const NativeExecutable*>(this)->intrinsic();
     return jsCast<const ScriptExecutable*>(this)->intrinsic();
+}
+
+inline ImplementationVisibility ExecutableBase::implementationVisibility() const
+{
+    if (isFunctionExecutable())
+        return jsCast<const FunctionExecutable*>(this)->implementationVisibility();
+    return ImplementationVisibility::Public;
 }
 
 inline bool ExecutableBase::hasJITCodeForCall() const

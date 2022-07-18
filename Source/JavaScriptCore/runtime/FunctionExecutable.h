@@ -129,6 +129,7 @@ public:
     }
         
     FunctionMode functionMode() { return m_unlinkedExecutable->functionMode(); }
+    ImplementationVisibility implementationVisibility() const { return m_unlinkedExecutable->implementationVisibility(); }
     bool isBuiltinFunction() const { return m_unlinkedExecutable->isBuiltinFunction(); }
     ConstructAbility constructAbility() const { return m_unlinkedExecutable->constructAbility(); }
     bool isClass() const { return m_unlinkedExecutable->isClass(); }

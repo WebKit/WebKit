@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
- * Copyright (C) 2015 Canon Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,23 +25,13 @@
 
 #pragma once
 
-#include "ConstructAbility.h"
-#include "ConstructorKind.h"
-#include "ImplementationVisibility.h"
-
 namespace JSC {
 
-#define INITIALIZE_BUILTIN_NAMES(name) , m_##name(JSC::Identifier::fromString(vm, #name ""_s)), m_##name##PrivateName(JSC::Identifier::fromUid(JSC::PrivateName(JSC::PrivateName::PrivateSymbol, #name ""_s)))
-#define DECLARE_BUILTIN_NAMES(name) const JSC::Identifier m_##name; const JSC::Identifier m_##name##PrivateName;
-#define DECLARE_BUILTIN_IDENTIFIER_ACCESSOR(name) \
-    const JSC::Identifier& name##PublicName() const { return m_##name; } \
-    const JSC::Identifier& name##PrivateName() const { return m_##name##PrivateName; }
+enum class ImplementationVisibility : uint8_t {
+    Public,
+    Private,
+};
 
-class Identifier;
-class SourceCode;
-class UnlinkedFunctionExecutable;
-class VM;
+static constexpr unsigned bitWidthOfImplementationVisibility = 1;
 
-JS_EXPORT_PRIVATE UnlinkedFunctionExecutable* createBuiltinExecutable(VM&, const SourceCode&, const Identifier&, ImplementationVisibility, ConstructorKind, ConstructAbility);
-    
 } // namespace JSC
