@@ -1392,6 +1392,7 @@ void SourceBufferParserWebM::parsedMediaData(MediaSamplesBlock&& samplesBlock)
     } else {
         if (m_audioInfo != samplesBlock.info()) {
             flushPendingAudioSamples();
+            m_audioDiscontinuity = true;
             m_audioFormatDescription = createFormatDescriptionFromTrackInfo(*samplesBlock.info());
             m_audioInfo = samplesBlock.info();
         }
@@ -1458,6 +1459,8 @@ void SourceBufferParserWebM::flushPendingAudioSamples()
         return;
     ASSERT(m_audioInfo);
     m_queuedAudioSamples.setInfo(m_audioInfo.copyRef());
+    m_queuedAudioSamples.setDiscontinuity(m_audioDiscontinuity);
+    m_audioDiscontinuity = false;
     returnSamples(WTFMove(m_queuedAudioSamples), m_audioFormatDescription.get());
 
     m_queuedAudioSamples = { };
@@ -1468,8 +1471,10 @@ void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<voi
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "flags(", appendFlags == AppendFlags::Discontinuity ? "Discontinuity" : "", "), size(", segment.size(), ")");
 
-    if (appendFlags == AppendFlags::Discontinuity)
+    if (appendFlags == AppendFlags::Discontinuity) {
         m_parser.reset();
+        m_audioDiscontinuity = true;
+    }
 
     auto result = m_parser.parse(WTFMove(segment));
     if (result.hasException()) {

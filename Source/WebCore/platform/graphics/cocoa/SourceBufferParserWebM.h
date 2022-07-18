@@ -346,6 +346,7 @@ private:
     MediaTime m_minimumAudioSampleDuration { 96000, 48000 };
     MediaSamplesBlock m_queuedAudioSamples;
     MediaTime m_queuedAudioDuration;
+    bool m_audioDiscontinuity { true };
     RefPtr<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };
 };
