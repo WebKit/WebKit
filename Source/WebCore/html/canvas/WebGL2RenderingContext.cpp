@@ -1626,7 +1626,7 @@ void WebGL2RenderingContext::drawRangeElements(GCGLenum mode, GCGLuint start, GC
 
 void WebGL2RenderingContext::drawBuffers(const Vector<GCGLenum>& buffers)
 {
-    if (isContextLost())
+    if (isContextLostOrPending())
         return;
     GCGLsizei n = buffers.size();
     const GCGLenum* bufs = buffers.data();
@@ -1892,7 +1892,7 @@ void WebGL2RenderingContext::deleteSampler(WebGLSampler* sampler)
 {
     Locker locker { objectGraphLock() };
 
-    if (isContextLostOrPending())
+    if (!deleteObject(locker, sampler))
         return;
 
     // One sampler can be bound to multiple texture units.
@@ -1902,8 +1902,6 @@ void WebGL2RenderingContext::deleteSampler(WebGLSampler* sampler)
                 samplerSlot = nullptr;
         }
     }
-
-    deleteObject(locker, sampler);
 }
 
 GCGLboolean WebGL2RenderingContext::isSampler(WebGLSampler* sampler)
@@ -1918,16 +1916,11 @@ void WebGL2RenderingContext::bindSampler(GCGLuint unit, WebGLSampler* sampler)
 {
     Locker locker { objectGraphLock() };
 
-    if (isContextLostOrPending())
+    if (!validateNullableWebGLObject("bindSampler", sampler))
         return;
     
     if (unit >= m_boundSamplers.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bindSampler", "invalid texture unit");
-        return;
-    }
-
-    if (sampler && sampler->isDeleted()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "bindSampler", "cannot bind a deleted Sampler object");
         return;
     }
 
@@ -1939,7 +1932,7 @@ void WebGL2RenderingContext::bindSampler(GCGLuint unit, WebGLSampler* sampler)
 
 void WebGL2RenderingContext::samplerParameteri(WebGLSampler& sampler, GCGLenum pname, GCGLint value)
 {
-    if (isContextLostOrPending())
+    if (!validateWebGLObject("samplerParameteri", &sampler))
         return;
 
     m_context->samplerParameteri(sampler.object(), pname, value);
@@ -1947,7 +1940,7 @@ void WebGL2RenderingContext::samplerParameteri(WebGLSampler& sampler, GCGLenum p
 
 void WebGL2RenderingContext::samplerParameterf(WebGLSampler& sampler, GCGLenum pname, GCGLfloat value)
 {
-    if (isContextLostOrPending())
+    if (!validateWebGLObject("samplerParameterf", &sampler))
         return;
 
     m_context->samplerParameterf(sampler.object(), pname, value);
@@ -1955,7 +1948,7 @@ void WebGL2RenderingContext::samplerParameterf(WebGLSampler& sampler, GCGLenum p
 
 WebGLAny WebGL2RenderingContext::getSamplerParameter(WebGLSampler& sampler, GCGLenum pname)
 {
-    if (isContextLostOrPending())
+    if (!validateWebGLObject("getSamplerParameter", &sampler))
         return nullptr;
 
     switch (pname) {
