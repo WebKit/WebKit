@@ -58,6 +58,8 @@ jobs:
           cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/output/include
           cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/output/include/JavaScriptCore
           cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/output/include/JavaScriptCore
+          cd /tmp
+          tar -czf /tmp/bun-webkit-macos-universal.tar.gz output
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-universal
@@ -72,7 +74,7 @@ jobs:
 
       steps:
         - uses: actions/checkout@v3
-        - name: Run
+          name: Run
           env:
             PATH: "/usr/local/opt/llvm@13/bin:${{ env.PATH }}"
             LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
@@ -110,6 +112,8 @@ jobs:
             cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/output/include
             cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/output/include/JavaScriptCore
             cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/output/include/JavaScriptCore
+            cd /tmp
+            tar -czf /tmp/bun-webkit-macos-universal-lto.tar.gz output
         - uses: actions/upload-artifact@v3
           with:
             name: bun-webkit-macos-universal-lto
