@@ -3864,6 +3864,12 @@ ImageOverlayController& Page::imageOverlayController()
     return *m_imageOverlayController;
 }
 
+Page* Page::serviceWorkerPage(ScriptExecutionContextIdentifier serviceWorkerPageIdentifier)
+{
+    auto* serviceWorkerPageDocument = Document::allDocumentsMap().get(serviceWorkerPageIdentifier);
+    return serviceWorkerPageDocument ? serviceWorkerPageDocument->page() : nullptr;
+}
+
 #if ENABLE(IMAGE_ANALYSIS)
 
 ImageAnalysisQueue& Page::imageAnalysisQueue()
