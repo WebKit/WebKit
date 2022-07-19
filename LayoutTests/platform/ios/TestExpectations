@@ -3674,3 +3674,5 @@ http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]
 webkit.org/b/242825 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
 
 webkit.org/b/242840 fast/text/international/system-language/han-text-style.html [ ImageOnlyFailure ]
+
+webkit.org/b/242905 compositing/tiling/tiled-mask-inwindow.html [ Pass Failure ]
