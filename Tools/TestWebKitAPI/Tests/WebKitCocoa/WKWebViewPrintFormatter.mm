@@ -161,4 +161,109 @@ TEST(WKWebView, PrintToPDFUsingPrintInteractionController)
     EXPECT_NE(pdfDataLength, 0UL);
 }
 
+TEST(WKWebView, PrintToPDFUsingMultiplePrintInteractionControllers)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView waitForNextPresentationUpdate];
+
+    __block NSUInteger numCompleted = 0;
+    __block bool done = false;
+
+    auto printPageRenderer = adoptNS([[UIPrintPageRenderer alloc] init]);
+    [printPageRenderer addPrintFormatter:[webView viewPrintFormatter] startingAtPageAtIndex:0];
+
+    auto printInteractionController = adoptNS([[UIPrintInteractionController alloc] init]);
+    [printInteractionController setPrintPageRenderer:printPageRenderer.get()];
+
+    __block NSUInteger pdfDataLength = 0;
+    [printInteractionController _setupPrintPanel:nil];
+    [printInteractionController _generatePrintPreview:^(NSURL *pdfURL, BOOL shouldRenderOnChosenPaper) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            auto pdfData = adoptNS([[NSData alloc] initWithContentsOfURL:pdfURL]);
+            pdfDataLength = [pdfData length];
+
+            [printInteractionController _cleanPrintState];
+
+            if (++numCompleted == 2)
+                done = true;
+        });
+    }];
+
+    auto printPageRenderer2 = adoptNS([[UIPrintPageRenderer alloc] init]);
+    [printPageRenderer2 addPrintFormatter:[webView viewPrintFormatter] startingAtPageAtIndex:0];
+
+    auto printInteractionController2 = adoptNS([[UIPrintInteractionController alloc] init]);
+    [printInteractionController2 setPrintPageRenderer:printPageRenderer2.get()];
+
+    __block NSUInteger pdfDataLength2 = 0;
+    [printInteractionController2 _setupPrintPanel:nil];
+    [printInteractionController2 _generatePrintPreview:^(NSURL *pdfURL, BOOL shouldRenderOnChosenPaper) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            auto pdfData = adoptNS([[NSData alloc] initWithContentsOfURL:pdfURL]);
+            pdfDataLength2 = [pdfData length];
+
+            [printInteractionController2 _cleanPrintState];
+
+            if (++numCompleted == 2)
+                done = true;
+        });
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_NE(pdfDataLength, 0UL);
+    EXPECT_NE(pdfDataLength2, 0UL);
+}
+
+TEST(WKWebView, PrintToPDFUsingPrintInteractionControllerAndPrintPageRenderer)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView waitForNextPresentationUpdate];
+
+    auto printPageRenderer = adoptNS([[UIPrintPageRenderer alloc] init]);
+    [printPageRenderer addPrintFormatter:[webView viewPrintFormatter] startingAtPageAtIndex:0];
+
+    auto printInteractionController = adoptNS([[UIPrintInteractionController alloc] init]);
+    [printInteractionController setPrintPageRenderer:printPageRenderer.get()];
+
+    __block bool done = false;
+
+    __block NSUInteger printInteractionControllerPDFDataLength = 0;
+    [printInteractionController _setupPrintPanel:nil];
+    [printInteractionController _generatePrintPreview:^(NSURL *pdfURL, BOOL shouldRenderOnChosenPaper) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            auto pdfData = adoptNS([[NSData alloc] initWithContentsOfURL:pdfURL]);
+            printInteractionControllerPDFDataLength = [pdfData length];
+
+            [printInteractionController _cleanPrintState];
+            done = true;
+        });
+    }];
+
+    CGRect pageRect = CGRectMake(0, 0, 100, 100);
+    printPageRenderer = adoptNS([[UIPrintPageRenderer alloc] init]);
+    [printPageRenderer addPrintFormatter:[webView viewPrintFormatter] startingAtPageAtIndex:0];
+    [printPageRenderer setPaperRect:pageRect];
+    [printPageRenderer setPrintableRect:pageRect];
+
+    NSMutableData *printPageRendererPDFData = [NSMutableData data];
+    UIGraphicsBeginPDFContextToData(printPageRendererPDFData, pageRect, nil);
+
+    NSInteger numberOfPages = [printPageRenderer numberOfPages];
+    for (NSInteger i = 0; i < numberOfPages; i++) {
+        UIGraphicsBeginPDFPage();
+        CGRect bounds = UIGraphicsGetPDFContextBounds();
+        [printPageRenderer drawPageAtIndex:i inRect:bounds];
+    }
+
+    UIGraphicsEndPDFContext();
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_NE(printInteractionControllerPDFDataLength, 0UL);
+    EXPECT_NE([printPageRendererPDFData length], 0UL);
+}
+
 #endif
