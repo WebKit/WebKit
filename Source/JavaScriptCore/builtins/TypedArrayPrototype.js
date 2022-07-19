@@ -31,7 +31,7 @@
 // to look up their default constructor, which is expensive. If we used the
 // normal speciesConstructor helper we would need to look up the default
 // constructor every time.
-@globalPrivate
+@linkTimeConstant
 function typedArraySpeciesConstructor(value)
 {
     "use strict";
@@ -166,7 +166,7 @@ function some(callback /* [, thisArg] */)
     return false;
 }
 
-@globalPrivate
+@linkTimeConstant
 function typedArrayMerge(array, dst, src, srcIndex, srcEnd, width, comparator)
 {
     "use strict";
@@ -188,7 +188,7 @@ function typedArrayMerge(array, dst, src, srcIndex, srcEnd, width, comparator)
     }
 }
 
-@globalPrivate
+@linkTimeConstant
 function typedArrayMergeSort(array, valueCount, comparator)
 {
     "use strict";
@@ -213,7 +213,7 @@ function typedArrayMergeSort(array, valueCount, comparator)
     }
 }
 
-@globalPrivate
+@linkTimeConstant
 function sort(comparator)
 {
     "use strict";

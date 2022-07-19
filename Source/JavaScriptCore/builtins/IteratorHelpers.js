@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@globalPrivate
+@linkTimeConstant
 function performIteration(iterable)
 {
     "use strict";
@@ -53,7 +53,7 @@ function performIteration(iterable)
     }
 }
 
-@globalPrivate
+@linkTimeConstant
 function wrappedIterator(iterator)
 {
     let wrapper = @Object.@create(null);
@@ -61,7 +61,7 @@ function wrappedIterator(iterator)
     return wrapper;
 }
 
-@globalPrivate
+@linkTimeConstant
 function builtinSetIterable(set)
 {
     "use strict";
@@ -77,7 +77,7 @@ function builtinSetIterable(set)
     return @wrappedIterator(iteratorFunction.@call(set));
 }
 
-@globalPrivate
+@linkTimeConstant
 function builtinMapIterable(map)
 {
     "use strict";

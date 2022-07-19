@@ -31,7 +31,7 @@
 //    1. Loader.resolve
 //    2. Loader.fetch
 
-@globalPrivate
+@linkTimeConstant
 function setStateToMax(entry, newState)
 {
     // https://whatwg.github.io/loader/#set-state-to-max
@@ -42,7 +42,7 @@ function setStateToMax(entry, newState)
         entry.state = newState;
 }
 
-@globalPrivate
+@linkTimeConstant
 function newRegistryEntry(key)
 {
     // https://whatwg.github.io/loader/#registry

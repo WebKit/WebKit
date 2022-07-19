@@ -33,7 +33,7 @@ class CodeBlock;
 class JSGlobalObject;
 
 #define JSC_FOREACH_LINK_TIME_CONSTANTS(v) \
-    JSC_FOREACH_BUILTIN_FUNCTION_PRIVATE_GLOBAL_NAME(v) \
+    JSC_FOREACH_BUILTIN_LINK_TIME_CONSTANT(v) \
     v(throwTypeErrorFunction, nullptr) \
     v(importModule, nullptr) \
     v(mapBucketHead, nullptr) \

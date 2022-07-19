@@ -26,7 +26,7 @@
 
 // 25.3.3.3 GeneratorResume ( generator, value )
 // 25.3.3.4 GeneratorResumeAbrupt(generator, abruptCompletion)
-@globalPrivate
+@linkTimeConstant
 function generatorResume(generator, state, generatorThis, sentValue, value, resumeMode)
 {
     "use strict";

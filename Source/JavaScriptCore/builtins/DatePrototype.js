@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@globalPrivate
+@linkTimeConstant
 function toDateTimeOptionsAnyAll(opts)
 {
     "use strict";
@@ -90,7 +90,7 @@ function toLocaleString(/* locales, options */)
     return @dateTimeFormat(locales, options, value);
 }
 
-@globalPrivate
+@linkTimeConstant
 function toDateTimeOptionsDateDate(opts)
 {
     "use strict";
@@ -150,7 +150,7 @@ function toLocaleDateString(/* locales, options */)
     return @dateTimeFormat(locales, options, value);
 }
 
-@globalPrivate
+@linkTimeConstant
 function toDateTimeOptionsTimeTime(opts)
 {
     "use strict";

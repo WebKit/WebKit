@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@globalPrivate
+@linkTimeConstant
 function asyncFunctionResume(generator, promise, sentValue, resumeMode)
 {
     "use strict";

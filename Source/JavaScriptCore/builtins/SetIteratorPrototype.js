@@ -24,7 +24,7 @@
  */
 
 // We keep this function small very carefully to encourage inlining.
-@globalPrivate
+@linkTimeConstant
 function setIteratorNext(bucket, kind)
 {
     "use strict";

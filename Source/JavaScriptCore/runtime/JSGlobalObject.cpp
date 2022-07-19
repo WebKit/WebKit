@@ -1377,7 +1377,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner); \
             init.set(JSFunction::create(init.vm, code ## CodeGenerator(init.vm), globalObject)); \
         });
-    JSC_FOREACH_BUILTIN_FUNCTION_PRIVATE_GLOBAL_NAME(INIT_PRIVATE_GLOBAL)
+    JSC_FOREACH_BUILTIN_LINK_TIME_CONSTANT(INIT_PRIVATE_GLOBAL)
 #undef INIT_PRIVATE_GLOBAL
 
     // FIXME: Initializing them lazily.

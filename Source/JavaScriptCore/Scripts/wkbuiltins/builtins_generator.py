@@ -134,7 +134,7 @@ class BuiltinsGenerator:
             constructorKind = "Naked"
 
         visibility = "Public"
-        if function.is_global_private:
+        if function.is_link_time_constant:
             visibility = "Private"
 
         return {

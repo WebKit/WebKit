@@ -395,7 +395,7 @@ function includes(searchElement /*, fromIndex*/)
     return false;
 }
 
-@globalPrivate
+@linkTimeConstant
 function sortStringComparator(a, b)
 {
     "use strict";
@@ -409,7 +409,7 @@ function sortStringComparator(a, b)
     return aString > bString ? 1 : -1;
 }
 
-@globalPrivate
+@linkTimeConstant
 function sortCompact(receiver, receiverLength, compacted, isStringSort)
 {
     "use strict";
@@ -433,7 +433,7 @@ function sortCompact(receiver, receiverLength, compacted, isStringSort)
     return undefinedCount;
 }
 
-@globalPrivate
+@linkTimeConstant
 function sortCommit(receiver, receiverLength, sorted, undefinedCount)
 {
     "use strict";
@@ -460,7 +460,7 @@ function sortCommit(receiver, receiverLength, sorted, undefinedCount)
         delete receiver[i];
 }
 
-@globalPrivate
+@linkTimeConstant
 function sortMerge(dst, src, srcIndex, srcEnd, width, comparator)
 {
     "use strict";
@@ -493,7 +493,7 @@ function sortMerge(dst, src, srcIndex, srcEnd, width, comparator)
     }
 }
 
-@globalPrivate
+@linkTimeConstant
 function sortMergeSort(array, comparator)
 {
     "use strict";
@@ -515,7 +515,7 @@ function sortMergeSort(array, comparator)
     return src;
 }
 
-@globalPrivate
+@linkTimeConstant
 function sortBucketSort(array, dst, bucket, depth)
 {
     "use strict";
@@ -589,7 +589,7 @@ function sort(comparator)
     return receiver;
 }
 
-@globalPrivate
+@linkTimeConstant
 function concatSlowPath()
 {
     "use strict";
@@ -648,7 +648,7 @@ function concat(first)
     return @tailCallForwardArguments(@concatSlowPath, this);
 }
 
-@globalPrivate
+@linkTimeConstant
 function maxWithPositives(a, b)
 {
     "use strict";
@@ -656,7 +656,7 @@ function maxWithPositives(a, b)
     return (a < b) ? b : a;
 }
 
-@globalPrivate
+@linkTimeConstant
 function minWithMaybeNegativeZeroAndPositive(maybeNegativeZero, positive)
 {
     "use strict";
@@ -705,7 +705,7 @@ function copyWithin(target, start /*, end */)
     return array;
 }
 
-@globalPrivate
+@linkTimeConstant
 function flatIntoArray(target, source, sourceLength, targetIndex, depth)
 {
     "use strict";
@@ -744,7 +744,7 @@ function flat()
     return result;
 }
 
-@globalPrivate
+@linkTimeConstant
 function flatIntoArrayWithCallback(target, source, sourceLength, targetIndex, callback, thisArg)
 {
     "use strict";

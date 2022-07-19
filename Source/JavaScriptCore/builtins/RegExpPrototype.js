@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-@globalPrivate
+@linkTimeConstant
 @constructor
 function RegExpStringIterator(regExp, string, global, fullUnicode)
 {
@@ -36,7 +36,7 @@ function RegExpStringIterator(regExp, string, global, fullUnicode)
     @putByIdDirectPrivate(this, "regExpStringIteratorDone", false);
 }
 
-@globalPrivate
+@linkTimeConstant
 function advanceStringIndex(string, index, unicode)
 {
     // This function implements AdvanceStringIndex described in ES6 21.2.5.2.3.
@@ -59,7 +59,7 @@ function advanceStringIndex(string, index, unicode)
     return index + 2;
 }
 
-@globalPrivate
+@linkTimeConstant
 function regExpExec(regexp, str)
 {
     "use strict";
@@ -75,7 +75,7 @@ function regExpExec(regexp, str)
     return builtinExec.@call(regexp, str);
 }
 
-@globalPrivate
+@linkTimeConstant
 function hasObservableSideEffectsForRegExpMatch(regexp)
 {
     "use strict";
@@ -98,7 +98,7 @@ function hasObservableSideEffectsForRegExpMatch(regexp)
     return typeof regexp.lastIndex !== "number";
 }
 
-@globalPrivate
+@linkTimeConstant
 function matchSlow(regexp, str)
 {
     "use strict";
@@ -174,7 +174,7 @@ function matchAll(strArg)
     return new @RegExpStringIterator(matcher, string, global, fullUnicode);
 }
 
-@globalPrivate
+@linkTimeConstant
 function getSubstitution(matched, str, position, captures, namedCaptures, replacement)
 {
     "use strict";
@@ -426,7 +426,7 @@ function search(strArg)
     return result.index;
 }
 
-@globalPrivate
+@linkTimeConstant
 function hasObservableSideEffectsForRegExpSplit(regexp)
 {
     "use strict";

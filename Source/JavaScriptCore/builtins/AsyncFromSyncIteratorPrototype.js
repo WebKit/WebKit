@@ -146,7 +146,7 @@ function throw(exception)
     return promise;
 }
 
-@globalPrivate
+@linkTimeConstant
 function createAsyncFromSyncIterator(syncIterator, nextMethod)
 {
     "use strict";
@@ -157,7 +157,7 @@ function createAsyncFromSyncIterator(syncIterator, nextMethod)
     return new @AsyncFromSyncIterator(syncIterator, nextMethod);
 }
 
-@globalPrivate
+@linkTimeConstant
 @constructor
 function AsyncFromSyncIterator(syncIterator, nextMethod)
 {

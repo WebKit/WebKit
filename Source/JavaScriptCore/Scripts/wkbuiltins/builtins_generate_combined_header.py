@@ -169,8 +169,8 @@ extern const JSC::ImplementationVisibility s_%(codeName)sImplementationVisibilit
         }
 
         lines = []
-        lines.append("#define %(macroPrefix)s_FOREACH_BUILTIN_FUNCTION_PRIVATE_GLOBAL_NAME(macro) \\" % args)
-        functions = [function for function in self.model().all_functions() if function.is_global_private]
+        lines.append("#define %(macroPrefix)s_FOREACH_BUILTIN_LINK_TIME_CONSTANT(macro) \\" % args)
+        functions = [function for function in self.model().all_functions() if function.is_link_time_constant]
         functions.sort(key=lambda x: x.function_name)
         for function in functions:
             function_args = {

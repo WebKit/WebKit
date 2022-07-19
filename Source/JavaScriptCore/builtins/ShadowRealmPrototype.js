@@ -26,7 +26,7 @@
 // Wrap a value at the boundary between the incubating realm and `shadowRealm`:
 // if `fromShadowRealm` is false, we are wrapping an object from the incubating
 // realm; if true, we are wrapping an object from the shadow realm
-@globalPrivate
+@linkTimeConstant
 function wrap(fromShadowRealm, shadowRealm, target)
 {
     "use strict";

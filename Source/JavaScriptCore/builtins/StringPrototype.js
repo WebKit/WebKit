@@ -64,7 +64,7 @@ function matchAll(arg)
     return regExp.@@matchAll(string);
 }
 
-@globalPrivate
+@linkTimeConstant
 function repeatSlowPath(string, count)
 {
     "use strict";
@@ -94,7 +94,7 @@ function repeatSlowPath(string, count)
     }
 }
 
-@globalPrivate
+@linkTimeConstant
 function repeatCharactersSlowPath(string, count)
 {
     "use strict";
@@ -211,7 +211,7 @@ function padEnd(maxLength/*, fillString*/)
     return string + truncatedStringFiller;
 }
 
-@globalPrivate
+@linkTimeConstant
 function hasObservableSideEffectsForStringReplace(regexp, replacer)
 {
     "use strict";
@@ -317,7 +317,7 @@ function split(separator, limit)
     return @stringSplitFast.@call(this, separator, limit);
 }
 
-@globalPrivate
+@linkTimeConstant
 function stringConcatSlowPath()
 {
     "use strict";
@@ -359,7 +359,7 @@ function at(index)
     return (k >= 0 && k < length) ? string[k] : @undefined; 
 }
 
-@globalPrivate
+@linkTimeConstant
 function createHTML(func, string, tag, attribute, value)
 {
     "use strict";

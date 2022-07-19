@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@globalPrivate
+@linkTimeConstant
 function asyncGeneratorQueueIsEmpty(generator)
 {
     "use strict";
@@ -32,7 +32,7 @@ function asyncGeneratorQueueIsEmpty(generator)
     return @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldQueueFirst) === null;
 }
 
-@globalPrivate
+@linkTimeConstant
 function asyncGeneratorQueueEnqueue(generator, item)
 {
     "use strict";
@@ -51,7 +51,7 @@ function asyncGeneratorQueueEnqueue(generator, item)
     }
 }
 
-@globalPrivate
+@linkTimeConstant
 function asyncGeneratorQueueDequeue(generator)
 {
     "use strict";
@@ -69,7 +69,7 @@ function asyncGeneratorQueueDequeue(generator)
     return result;
 }
 
-@globalPrivate
+@linkTimeConstant
 function isExecutionState(generator)
 {
     "use strict";
@@ -81,7 +81,7 @@ function isExecutionState(generator)
         || reason === @AsyncGeneratorSuspendReasonAwait;
 }
 
-@globalPrivate
+@linkTimeConstant
 function isSuspendYieldState(generator)
 {
     "use strict";
@@ -91,7 +91,7 @@ function isSuspendYieldState(generator)
         || state === @AsyncGeneratorStateSuspendedYield;
 }
 
-@globalPrivate
+@linkTimeConstant
 function asyncGeneratorReject(generator, exception)
 {
     "use strict";
@@ -105,7 +105,7 @@ function asyncGeneratorReject(generator, exception)
     return @asyncGeneratorResumeNext(generator);
 }
 
-@globalPrivate
+@linkTimeConstant
 function asyncGeneratorResolve(generator, value, done)
 {
     "use strict";
@@ -119,7 +119,7 @@ function asyncGeneratorResolve(generator, value, done)
     return @asyncGeneratorResumeNext(generator);
 }
 
-@globalPrivate
+@linkTimeConstant
 function asyncGeneratorYield(generator, value, resumeMode)
 {
     "use strict";
@@ -135,7 +135,7 @@ function asyncGeneratorYield(generator, value, resumeMode)
     @awaitValue(generator, value, asyncGeneratorYieldAwaited);
 }
 
-@globalPrivate
+@linkTimeConstant
 function awaitValue(generator, value, onFulfilled)
 {
     "use strict";
@@ -144,7 +144,7 @@ function awaitValue(generator, value, onFulfilled)
     @resolveWithoutPromiseForAsyncAwait(value, onFulfilled, onRejected);
 }
 
-@globalPrivate
+@linkTimeConstant
 function doAsyncGeneratorBodyCall(generator, resumeValue, resumeMode)
 {
     "use strict";
@@ -195,7 +195,7 @@ function doAsyncGeneratorBodyCall(generator, resumeValue, resumeMode)
     }
 }
 
-@globalPrivate
+@linkTimeConstant
 function asyncGeneratorResumeNext(generator)
 {
     "use strict";
@@ -247,7 +247,7 @@ function asyncGeneratorResumeNext(generator)
     @doAsyncGeneratorBodyCall(generator, next.value, next.resumeMode);
 }
 
-@globalPrivate
+@linkTimeConstant
 function asyncGeneratorEnqueue(generator, value, resumeMode)
 {
     "use strict";

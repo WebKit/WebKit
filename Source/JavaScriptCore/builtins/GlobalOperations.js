@@ -26,7 +26,7 @@
 
 // @internal
 
-@globalPrivate
+@linkTimeConstant
 function toIntegerOrInfinity(target)
 {
     "use strict";
@@ -39,7 +39,7 @@ function toIntegerOrInfinity(target)
     return @trunc(numberValue);
 }
 
-@globalPrivate
+@linkTimeConstant
 function toLength(target)
 {
     "use strict";
@@ -49,7 +49,7 @@ function toLength(target)
     return +(length > 0 ? (length < @MAX_SAFE_INTEGER ? length : @MAX_SAFE_INTEGER) : 0);
 }
 
-@globalPrivate
+@linkTimeConstant
 @getter
 @overriddenName="get [Symbol.species]"
 function speciesGetter()
@@ -58,7 +58,7 @@ function speciesGetter()
     return this;
 }
 
-@globalPrivate
+@linkTimeConstant
 function speciesConstructor(obj, defaultConstructor)
 {
     "use strict";

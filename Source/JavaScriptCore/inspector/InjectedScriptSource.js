@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@globalPrivate
+@linkTimeConstant
 function createObjectWithoutPrototype(/* key1, value1, key2, value2, ... */)
 {
     if (arguments.length % 2 !== 0)
@@ -40,7 +40,7 @@ function createObjectWithoutPrototype(/* key1, value1, key2, value2, ... */)
     return object;
 }
 
-@globalPrivate
+@linkTimeConstant
 function createArrayWithoutPrototype(/* value1, value2, ... */)
 {
     let array = new @Array(arguments.length);
@@ -52,7 +52,7 @@ function createArrayWithoutPrototype(/* value1, value2, ... */)
     return array;
 }
 
-@globalPrivate
+@linkTimeConstant
 function createInspectorInjectedScript(InjectedScriptHost, inspectedGlobalObject, injectedScriptId)
 {
 
