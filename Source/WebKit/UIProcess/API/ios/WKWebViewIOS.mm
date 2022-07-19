@@ -76,6 +76,7 @@
 #if ENABLE(LOCKDOWN_MODE_API)
 #import "_WKSystemPreferencesInternal.h"
 #import <WebCore/LocalizedStrings.h>
+#import <wtf/spi/cf/CFBundleSPI.h>
 #endif
 
 #if HAVE(UI_EVENT_ATTRIBUTION)
