@@ -491,6 +491,11 @@ namespace JSC {
             return m_codeBlock->metadata().addEntry(opcodeID);
         }
 
+        ALWAYS_INLINE void removeMetadataFor(OpcodeID opcodeID)
+        {
+            m_codeBlock->metadata().removeEntry(opcodeID);
+        }
+
         void emitNode(StatementNode* n)
         {
             emitNode(nullptr, n);
@@ -1110,6 +1115,8 @@ namespace JSC {
         RegisterID* emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall);
 
         RegisterID* emitCallIterator(RegisterID* iterator, RegisterID* argument, ThrowableExpressionData*);
+
+        ALWAYS_INLINE void emitGetFromScopeHelper(RegisterID* dst, RegisterID* scope, unsigned var, GetPutInfo, unsigned localScopeDepth, unsigned offset);
 
         // Initializes the stack form the parameter; does nothing for the symbol table.
         RegisterID* initializeNextParameter();

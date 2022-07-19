@@ -2776,6 +2776,8 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
     dispatch()
 end)
 
+llintOpWithMetadata(op_resolve_and_get_from_scope, OpResolveAndGetFromScope, macro (size, get, dispatch, metadata, return)
+end)
 
 llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, metadata, return)
     macro putProperty()

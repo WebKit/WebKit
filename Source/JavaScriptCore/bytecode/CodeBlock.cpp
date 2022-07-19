@@ -467,6 +467,53 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         break; \
     }
 
+    auto linkResolveScope = [&](auto& bytecode, auto& metadata, ResolveType resolveType) {
+        const Identifier& ident = identifier(bytecode.m_var);
+        RELEASE_ASSERT(resolveType != ResolvedClosureVar);
+
+        ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, resolveType, InitializationMode::NotInitialization);
+
+        metadata.m_resolveType = op.type;
+        metadata.m_localScopeDepth = op.depth;
+        if (op.lexicalEnvironment) {
+            if (op.type == ModuleVar) {
+                // Keep the linked module environment strongly referenced.
+                if (stronglyReferencedModuleEnvironments.add(jsCast<JSModuleEnvironment*>(op.lexicalEnvironment)).isNewEntry)
+                    addConstant(ConcurrentJSLocker(m_lock), op.lexicalEnvironment);
+                metadata.m_lexicalEnvironment.set(vm, this, op.lexicalEnvironment);
+            } else
+                metadata.m_symbolTable.set(vm, this, op.lexicalEnvironment->symbolTable());
+        } else if (JSScope* constantScope = JSScope::constantScopeForCodeBlock(op.type, this)) {
+            metadata.m_constantScope.set(vm, this, constantScope);
+            if (op.type == GlobalProperty || op.type == GlobalPropertyWithVarInjectionChecks)
+                metadata.m_globalLexicalBindingEpoch = m_globalObject->globalLexicalBindingEpoch();
+        } else
+            metadata.m_globalObject.clear();
+    };
+
+    auto linkGetFromScope = [&](auto& instruction, auto& bytecode, auto& metadata) {
+        link_profile(instruction, bytecode, metadata);
+        metadata.m_watchpointSet = nullptr;
+
+        ASSERT(!isInitialization(bytecode.m_getPutInfo.initializationMode()));
+        if (bytecode.m_getPutInfo.resolveType() == ResolvedClosureVar) {
+            metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), ClosureVar, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
+            return;
+        }
+
+        const Identifier& ident = identifier(bytecode.m_var);
+        ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_getPutInfo.resolveType(), InitializationMode::NotInitialization);
+
+        metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), op.type, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
+        if (op.type == ModuleVar)
+            metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), ClosureVar, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
+        if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks || op.type == GlobalLexicalVar || op.type == GlobalLexicalVarWithVarInjectionChecks)
+            metadata.m_watchpointSet = op.watchpointSet;
+        else if (op.structure)
+            metadata.m_structure.set(vm, this, op.structure);
+        metadata.m_operand = op.operand;
+    };
+
     const auto& instructionStream = instructions();
     for (const auto& instruction : instructionStream) {
         OpcodeID opcodeID = instruction->opcodeID();
@@ -539,54 +586,20 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         case op_resolve_scope: {
             INITIALIZE_METADATA(OpResolveScope)
-
-            const Identifier& ident = identifier(bytecode.m_var);
-            RELEASE_ASSERT(bytecode.m_resolveType != ResolvedClosureVar);
-
-            ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
-
-            metadata.m_resolveType = op.type;
-            metadata.m_localScopeDepth = op.depth;
-            if (op.lexicalEnvironment) {
-                if (op.type == ModuleVar) {
-                    // Keep the linked module environment strongly referenced.
-                    if (stronglyReferencedModuleEnvironments.add(jsCast<JSModuleEnvironment*>(op.lexicalEnvironment)).isNewEntry)
-                        addConstant(ConcurrentJSLocker(m_lock), op.lexicalEnvironment);
-                    metadata.m_lexicalEnvironment.set(vm, this, op.lexicalEnvironment);
-                } else
-                    metadata.m_symbolTable.set(vm, this, op.lexicalEnvironment->symbolTable());
-            } else if (JSScope* constantScope = JSScope::constantScopeForCodeBlock(op.type, this)) {
-                metadata.m_constantScope.set(vm, this, constantScope);
-                if (op.type == GlobalProperty || op.type == GlobalPropertyWithVarInjectionChecks)
-                    metadata.m_globalLexicalBindingEpoch = m_globalObject->globalLexicalBindingEpoch();
-            } else
-                metadata.m_globalObject.clear();
+            linkResolveScope(bytecode, metadata, bytecode.m_resolveType);
             break;
         }
 
         case op_get_from_scope: {
             INITIALIZE_METADATA(OpGetFromScope)
+            linkGetFromScope(instruction, bytecode, metadata);
+            break;
+        }
 
-            link_profile(instruction, bytecode, metadata);
-            metadata.m_watchpointSet = nullptr;
-
-            ASSERT(!isInitialization(bytecode.m_getPutInfo.initializationMode()));
-            if (bytecode.m_getPutInfo.resolveType() == ResolvedClosureVar) {
-                metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), ClosureVar, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
-                break;
-            }
-
-            const Identifier& ident = identifier(bytecode.m_var);
-            ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_getPutInfo.resolveType(), InitializationMode::NotInitialization);
-
-            metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), op.type, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
-            if (op.type == ModuleVar)
-                metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), ClosureVar, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
-            if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks || op.type == GlobalLexicalVar || op.type == GlobalLexicalVarWithVarInjectionChecks)
-                metadata.m_watchpointSet = op.watchpointSet;
-            else if (op.structure)
-                metadata.m_structure.set(vm, this, op.structure);
-            metadata.m_operand = op.operand;
+        case op_resolve_and_get_from_scope: {
+            INITIALIZE_METADATA(OpResolveAndGetFromScope)
+            linkResolveScope(bytecode, metadata, bytecode.m_getPutInfo.resolveType());
+            linkGetFromScope(instruction, bytecode, metadata);
             break;
         }
 
@@ -1516,7 +1529,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
             handleCreateBytecode(metadata, "op_create_async_generator"_s);
         });
 
-        m_metadata->forEach<OpResolveScope>([&] (auto& metadata) {
+        auto clearDeadSymbolTable = [&] (auto& metadata) {
             // Right now this isn't strictly necessary. Any symbol tables that this will refer to
             // are for outer functions, and we refer to those functions strongly, and they refer
             // to the symbol table strongly. But it's nice to be on the safe side.
@@ -1525,7 +1538,10 @@ void CodeBlock::finalizeLLIntInlineCaches()
                 return;
             dataLogLnIf(Options::verboseOSR(), "Clearing dead symbolTable ", RawPointer(symbolTable.get()));
             symbolTable.clear();
-        });
+        };
+
+        m_metadata->forEach<OpResolveScope>(clearDeadSymbolTable);
+        m_metadata->forEach<OpResolveAndGetFromScope>(clearDeadSymbolTable);
 
         auto handleGetPutFromScope = [&] (auto& metadata) {
             GetPutInfo getPutInfo = metadata.m_getPutInfo;
@@ -1540,6 +1556,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
         };
 
         m_metadata->forEach<OpGetFromScope>(handleGetPutFromScope);
+        m_metadata->forEach<OpResolveAndGetFromScope>(handleGetPutFromScope);
         m_metadata->forEach<OpPutToScope>(handleGetPutFromScope);
     }
 
@@ -3021,21 +3038,30 @@ void CodeBlock::notifyLexicalBindingUpdate()
         return symbolTable->contains(locker, uid);
     };
 
+    auto updateGlobalLexicalBinding = [&] (auto& bytecode) {
+        auto& metadata = bytecode.metadata(this);
+        ResolveType originalResolveType = metadata.m_resolveType;
+        if (originalResolveType == GlobalProperty || originalResolveType == GlobalPropertyWithVarInjectionChecks) {
+            const Identifier& ident = identifier(bytecode.m_var);
+            if (isShadowed(ident.impl()))
+                metadata.m_globalLexicalBindingEpoch = 0;
+            else
+                metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
+        }
+    };
+
     const auto& instructionStream = instructions();
     for (const auto& instruction : instructionStream) {
         OpcodeID opcodeID = instruction->opcodeID();
         switch (opcodeID) {
         case op_resolve_scope: {
             auto bytecode = instruction->as<OpResolveScope>();
-            auto& metadata = bytecode.metadata(this);
-            ResolveType originalResolveType = metadata.m_resolveType;
-            if (originalResolveType == GlobalProperty || originalResolveType == GlobalPropertyWithVarInjectionChecks) {
-                const Identifier& ident = identifier(bytecode.m_var);
-                if (isShadowed(ident.impl()))
-                    metadata.m_globalLexicalBindingEpoch = 0;
-                else
-                    metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
-            }
+            updateGlobalLexicalBinding(bytecode);
+            break;
+        }
+        case op_resolve_and_get_from_scope: {
+            auto bytecode = instruction->as<OpResolveAndGetFromScope>();
+            updateGlobalLexicalBinding(bytecode);
             break;
         }
         default:
@@ -3163,9 +3189,11 @@ ValueProfile* CodeBlock::tryGetValueProfileForBytecodeIndex(BytecodeIndex byteco
 #undef CASE
 
     case op_iterator_open:
-        return &valueProfileFor(instruction->as<OpIteratorOpen>().metadata(this), bytecodeIndex.checkpoint());
+        return valueProfileFor(instruction->as<OpIteratorOpen>().metadata(this), bytecodeIndex.checkpoint());
     case op_iterator_next:
-        return &valueProfileFor(instruction->as<OpIteratorNext>().metadata(this), bytecodeIndex.checkpoint());
+        return valueProfileFor(instruction->as<OpIteratorNext>().metadata(this), bytecodeIndex.checkpoint());
+    case op_resolve_and_get_from_scope:
+        return valueProfileFor(instruction->as<OpResolveAndGetFromScope>().metadata(this), bytecodeIndex.checkpoint());
 
     default:
         return nullptr;
