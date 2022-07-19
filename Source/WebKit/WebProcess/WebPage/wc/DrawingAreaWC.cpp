@@ -122,14 +122,10 @@ void DrawingAreaWC::updateGeometry(uint64_t backingStoreStateID, IntSize viewSiz
 
 void DrawingAreaWC::setNeedsDisplay()
 {
-    if (isCompositingMode()) {
-        triggerRenderingUpdate();
-        return;
-    }
-    m_dirtyRegion = { };
+    m_dirtyRegion = m_webPage.bounds();
     m_scrollRect = { };
     m_scrollOffset = { };
-    setNeedsDisplayInRect(m_webPage.bounds());
+    triggerRenderingUpdate();
 }
 
 void DrawingAreaWC::setNeedsDisplayInRect(const IntRect& rect)
