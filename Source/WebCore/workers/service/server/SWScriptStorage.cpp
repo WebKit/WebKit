@@ -91,6 +91,9 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
             writeData({ entry.segment->data(), entry.segment->size() });
     };
 
+    // Make sure we delete the file before writing as there may be code using a mmap'd version of this file.
+    FileSystem::deleteFile(scriptPath);
+
     if (!shouldUseFileMapping(script.buffer()->size())) {
         auto handle = FileSystem::openFile(scriptPath, FileSystem::FileOpenMode::Write);
         if (!FileSystem::isHandleValid(handle)) {
@@ -105,8 +108,6 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
         return script;
     }
 
-    // Make sure we delete the file before writing as there may be code using a mmap'd version of this file.
-    FileSystem::deleteFile(scriptPath);
     auto mappedFile = FileSystem::mapToFile(scriptPath, script.buffer()->size(), WTFMove(iterateOverBufferAndWriteData));
     if (!mappedFile) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWScriptStorage::store: Failure to store %s, FileSystem::mapToFile() failed", scriptPath.utf8().data());
