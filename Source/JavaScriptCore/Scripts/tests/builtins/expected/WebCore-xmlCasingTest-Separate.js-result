@@ -49,14 +49,17 @@ extern const char* const s_xmlCasingTestXMLCasingTestCode;
 extern const int s_xmlCasingTestXMLCasingTestCodeLength;
 extern const JSC::ConstructAbility s_xmlCasingTestXMLCasingTestCodeConstructAbility;
 extern const JSC::ConstructorKind s_xmlCasingTestXMLCasingTestCodeConstructorKind;
+extern const JSC::ImplementationVisibility s_xmlCasingTestXMLCasingTestCodeImplementationVisibility;
 extern const char* const s_xmlCasingTestCssCasingTestCode;
 extern const int s_xmlCasingTestCssCasingTestCodeLength;
 extern const JSC::ConstructAbility s_xmlCasingTestCssCasingTestCodeConstructAbility;
 extern const JSC::ConstructorKind s_xmlCasingTestCssCasingTestCodeConstructorKind;
+extern const JSC::ImplementationVisibility s_xmlCasingTestCssCasingTestCodeImplementationVisibility;
 extern const char* const s_xmlCasingTestUrlCasingTestCode;
 extern const int s_xmlCasingTestUrlCasingTestCodeLength;
 extern const JSC::ConstructAbility s_xmlCasingTestUrlCasingTestCodeConstructAbility;
 extern const JSC::ConstructorKind s_xmlCasingTestUrlCasingTestCodeConstructorKind;
+extern const JSC::ImplementationVisibility s_xmlCasingTestUrlCasingTestCodeImplementationVisibility;
 
 #define WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_DATA(macro) \
     macro(xmlCasingTest, xmlCasingTestXMLCasingTest, 1) \
@@ -124,7 +127,7 @@ inline JSC::UnlinkedFunctionExecutable* xmlCasingTestBuiltinsWrapper::name##Exec
         JSC::Identifier executableName = functionName##PublicName();\
         if (overriddenName)\
             executableName = JSC::Identifier::fromString(m_vm, overriddenName);\
-        m_##name##Executable = JSC::Weak<JSC::UnlinkedFunctionExecutable>(JSC::createBuiltinExecutable(m_vm, m_##name##Source, executableName, s_##name##ConstructorKind, s_##name##ConstructAbility), this, &m_##name##Executable);\
+        m_##name##Executable = JSC::Weak<JSC::UnlinkedFunctionExecutable>(JSC::createBuiltinExecutable(m_vm, m_##name##Source, executableName, s_##name##ImplementationVisibility, s_##name##ConstructorKind, s_##name##ConstructAbility), this, &m_##name##Executable);\
     }\
     return m_##name##Executable.get();\
 }
@@ -229,6 +232,7 @@ namespace WebCore {
 
 const JSC::ConstructAbility s_xmlCasingTestXMLCasingTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_xmlCasingTestXMLCasingTestCodeConstructorKind = JSC::ConstructorKind::None;
+const JSC::ImplementationVisibility s_xmlCasingTestXMLCasingTestCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
 const int s_xmlCasingTestXMLCasingTestCodeLength = 71;
 static const JSC::Intrinsic s_xmlCasingTestXMLCasingTestCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_xmlCasingTestXMLCasingTestCode =
@@ -242,6 +246,7 @@ const char* const s_xmlCasingTestXMLCasingTestCode =
 
 const JSC::ConstructAbility s_xmlCasingTestCssCasingTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_xmlCasingTestCssCasingTestCodeConstructorKind = JSC::ConstructorKind::None;
+const JSC::ImplementationVisibility s_xmlCasingTestCssCasingTestCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
 const int s_xmlCasingTestCssCasingTestCodeLength = 402;
 static const JSC::Intrinsic s_xmlCasingTestCssCasingTestCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_xmlCasingTestCssCasingTestCode =
@@ -261,6 +266,7 @@ const char* const s_xmlCasingTestCssCasingTestCode =
 
 const JSC::ConstructAbility s_xmlCasingTestUrlCasingTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_xmlCasingTestUrlCasingTestCodeConstructorKind = JSC::ConstructorKind::None;
+const JSC::ImplementationVisibility s_xmlCasingTestUrlCasingTestCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
 const int s_xmlCasingTestUrlCasingTestCodeLength = 338;
 static const JSC::Intrinsic s_xmlCasingTestUrlCasingTestCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_xmlCasingTestUrlCasingTestCode =

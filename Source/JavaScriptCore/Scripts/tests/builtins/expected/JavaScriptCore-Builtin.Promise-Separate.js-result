@@ -44,10 +44,12 @@ extern const char* const s_builtinPromiseRejectPromiseCode;
 extern const int s_builtinPromiseRejectPromiseCodeLength;
 extern const JSC::ConstructAbility s_builtinPromiseRejectPromiseCodeConstructAbility;
 extern const JSC::ConstructorKind s_builtinPromiseRejectPromiseCodeConstructorKind;
+extern const JSC::ImplementationVisibility s_builtinPromiseRejectPromiseCodeImplementationVisibility;
 extern const char* const s_builtinPromiseFulfillPromiseCode;
 extern const int s_builtinPromiseFulfillPromiseCodeLength;
 extern const JSC::ConstructAbility s_builtinPromiseFulfillPromiseCodeConstructAbility;
 extern const JSC::ConstructorKind s_builtinPromiseFulfillPromiseCodeConstructorKind;
+extern const JSC::ImplementationVisibility s_builtinPromiseFulfillPromiseCodeImplementationVisibility;
 
 #define JSC_FOREACH_BUILTIN_PROMISE_BUILTIN_DATA(macro) \
     macro(rejectPromise, builtinPromiseRejectPromise, 2) \
@@ -118,6 +120,7 @@ namespace JSC {
 
 const JSC::ConstructAbility s_builtinPromiseRejectPromiseCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_builtinPromiseRejectPromiseCodeConstructorKind = JSC::ConstructorKind::None;
+const JSC::ImplementationVisibility s_builtinPromiseRejectPromiseCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
 const int s_builtinPromiseRejectPromiseCodeLength = 337;
 static const JSC::Intrinsic s_builtinPromiseRejectPromiseCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinPromiseRejectPromiseCode =
@@ -137,6 +140,7 @@ const char* const s_builtinPromiseRejectPromiseCode =
 
 const JSC::ConstructAbility s_builtinPromiseFulfillPromiseCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_builtinPromiseFulfillPromiseCodeConstructorKind = JSC::ConstructorKind::None;
+const JSC::ImplementationVisibility s_builtinPromiseFulfillPromiseCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
 const int s_builtinPromiseFulfillPromiseCodeLength = 336;
 static const JSC::Intrinsic s_builtinPromiseFulfillPromiseCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinPromiseFulfillPromiseCode =

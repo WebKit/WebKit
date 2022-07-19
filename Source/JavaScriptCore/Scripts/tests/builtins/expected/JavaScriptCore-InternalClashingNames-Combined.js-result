@@ -37,6 +37,7 @@ class VM;
 
 enum class ConstructAbility : uint8_t;
 enum class ConstructorKind : uint8_t;
+enum class ImplementationVisibility : uint8_t;
 }
 
 namespace JSC {
@@ -50,10 +51,12 @@ extern const char* const s_internalClashingNamesIsReadableStreamLockedCode;
 extern const int s_internalClashingNamesIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility;
 extern const JSC::ConstructorKind s_internalClashingNamesIsReadableStreamLockedCodeConstructorKind;
+extern const JSC::ImplementationVisibility s_internalClashingNamesIsReadableStreamLockedCodeImplementationVisibility;
 extern const char* const s_internalClashingNamesIsReadableStreamLockedCode;
 extern const int s_internalClashingNamesIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility;
 extern const JSC::ConstructorKind s_internalClashingNamesIsReadableStreamLockedCodeConstructorKind;
+extern const JSC::ImplementationVisibility s_internalClashingNamesIsReadableStreamLockedCodeImplementationVisibility;
 
 #define JSC_FOREACH_INTERNALCLASHINGNAMES_BUILTIN_DATA(macro) \
     macro(isReadableStreamLocked, internalClashingNamesIsReadableStreamLocked, 1) \
@@ -66,7 +69,7 @@ extern const JSC::ConstructorKind s_internalClashingNamesIsReadableStreamLockedC
 #define JSC_FOREACH_BUILTIN_FUNCTION_NAME(macro) \
     macro(isReadableStreamLocked) \
 
-#define JSC_FOREACH_BUILTIN_FUNCTION_PRIVATE_GLOBAL_NAME(macro) \
+#define JSC_FOREACH_BUILTIN_LINK_TIME_CONSTANT(macro) \
 
 #define DECLARE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \
     JSC::FunctionExecutable* codeName##Generator(JSC::VM&);
@@ -127,6 +130,7 @@ const unsigned s_JSCCombinedCodeLength = 142;
 
 const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_internalClashingNamesIsReadableStreamLockedCodeConstructorKind = JSC::ConstructorKind::None;
+const JSC::ImplementationVisibility s_internalClashingNamesIsReadableStreamLockedCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
 const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_internalClashingNamesIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_internalClashingNamesIsReadableStreamLockedCode =
@@ -135,6 +139,7 @@ s_JSCCombinedCode + 0
 
 const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_internalClashingNamesIsReadableStreamLockedCodeConstructorKind = JSC::ConstructorKind::None;
+const JSC::ImplementationVisibility s_internalClashingNamesIsReadableStreamLockedCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
 const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_internalClashingNamesIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_internalClashingNamesIsReadableStreamLockedCode =

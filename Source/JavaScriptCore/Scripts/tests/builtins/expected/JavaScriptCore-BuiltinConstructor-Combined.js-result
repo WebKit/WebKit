@@ -36,6 +36,7 @@ class VM;
 
 enum class ConstructAbility : uint8_t;
 enum class ConstructorKind : uint8_t;
+enum class ImplementationVisibility : uint8_t;
 }
 
 namespace JSC {
@@ -49,10 +50,12 @@ extern const char* const s_builtinConstructorOfCode;
 extern const int s_builtinConstructorOfCodeLength;
 extern const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility;
 extern const JSC::ConstructorKind s_builtinConstructorOfCodeConstructorKind;
+extern const JSC::ImplementationVisibility s_builtinConstructorOfCodeImplementationVisibility;
 extern const char* const s_builtinConstructorFromCode;
 extern const int s_builtinConstructorFromCodeLength;
 extern const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility;
 extern const JSC::ConstructorKind s_builtinConstructorFromCodeConstructorKind;
+extern const JSC::ImplementationVisibility s_builtinConstructorFromCodeImplementationVisibility;
 
 #define JSC_FOREACH_BUILTINCONSTRUCTOR_BUILTIN_DATA(macro) \
     macro(of, builtinConstructorOf, 0) \
@@ -66,7 +69,7 @@ extern const JSC::ConstructorKind s_builtinConstructorFromCodeConstructorKind;
     macro(from) \
     macro(of) \
 
-#define JSC_FOREACH_BUILTIN_FUNCTION_PRIVATE_GLOBAL_NAME(macro) \
+#define JSC_FOREACH_BUILTIN_LINK_TIME_CONSTANT(macro) \
 
 #define DECLARE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \
     JSC::FunctionExecutable* codeName##Generator(JSC::VM&);
@@ -126,6 +129,7 @@ const unsigned s_JSCCombinedCodeLength = 2340;
 
 const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_builtinConstructorFromCodeConstructorKind = JSC::ConstructorKind::None;
+const JSC::ImplementationVisibility s_builtinConstructorFromCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
 const int s_builtinConstructorFromCodeLength = 2046;
 static const JSC::Intrinsic s_builtinConstructorFromCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinConstructorFromCode =
@@ -134,6 +138,7 @@ s_JSCCombinedCode + 0
 
 const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_builtinConstructorOfCodeConstructorKind = JSC::ConstructorKind::None;
+const JSC::ImplementationVisibility s_builtinConstructorOfCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
 const int s_builtinConstructorOfCodeLength = 294;
 static const JSC::Intrinsic s_builtinConstructorOfCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_builtinConstructorOfCode =
