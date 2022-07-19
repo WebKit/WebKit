@@ -7451,8 +7451,10 @@ String HTMLMediaElement::mediaPlayerNetworkInterfaceName() const
 void HTMLMediaElement::mediaPlayerGetRawCookies(const URL& url, MediaPlayerClient::GetRawCookiesCallback&& completionHandler) const
 {
     auto* page = document().page();
-    if (!page)
+    if (!page) {
         completionHandler({ });
+        return;
+    }
 
     Vector<Cookie> cookies;
     page->cookieJar().getRawCookies(document(), url, cookies);
