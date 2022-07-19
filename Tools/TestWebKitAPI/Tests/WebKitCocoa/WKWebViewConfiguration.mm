@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKUserScriptPrivate.h>

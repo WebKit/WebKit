@@ -76,6 +76,7 @@
 #import <WebCore/SSLKeyGenerator.h>
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/SerializedCryptoKeyWrap.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/URL.h>
@@ -573,15 +574,19 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     };
 
     if (delegateHasWebpagePreferences) {
-        if (m_navigationState->m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler)
+        if (m_navigationState->m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler) {
+BEGIN_BLOCK_OBJC_EXCEPTIONS
             [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
-        else
+END_BLOCK_OBJC_EXCEPTIONS
+        } else
             [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) userInfo:userInfo ? static_cast<id<NSSecureCoding>>(userInfo->wrapper()) : nil decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
     } else {
         auto decisionHandler = [decisionHandlerWithPreferencesOrPolicies = WTFMove(decisionHandlerWithPreferencesOrPolicies)] (WKNavigationActionPolicy actionPolicy) mutable {
             decisionHandlerWithPreferencesOrPolicies(actionPolicy, nil);
         };
+BEGIN_BLOCK_OBJC_EXCEPTIONS
         [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) decisionHandler:makeBlockPtr(WTFMove(decisionHandler)).get()];
+END_BLOCK_OBJC_EXCEPTIONS
     }
 }
 
@@ -652,6 +657,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
         return;
 
     auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
+BEGIN_BLOCK_OBJC_EXCEPTIONS
     [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:makeBlockPtr([localListener = WTFMove(listener), checker = WTFMove(checker)](WKNavigationResponsePolicy responsePolicy) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
@@ -672,6 +678,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
             }
         });
     }).get()];
+END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void NavigationState::NavigationClient::didStartProvisionalNavigation(WebPageProxy&, const WebCore::ResourceRequest& request, API::Navigation* navigation, API::Object* userInfo)
@@ -686,8 +693,11 @@ void NavigationState::NavigationClient::didStartProvisionalNavigation(WebPagePro
     // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.
     if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigationUserInfo)
         [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView didStartProvisionalNavigation:wrapper(navigation) userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
-    else if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigation)
+    else if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigation) {
+BEGIN_BLOCK_OBJC_EXCEPTIONS
         [navigationDelegate webView:m_navigationState->m_webView didStartProvisionalNavigation:wrapper(navigation)];
+END_BLOCK_OBJC_EXCEPTIONS
+    }
 }
 
 void NavigationState::NavigationClient::didStartProvisionalLoadForFrame(WebPageProxy& page, WebCore::ResourceRequest&& request, FrameInfoData&& frameInfo)
@@ -716,8 +726,9 @@ void NavigationState::NavigationClient::didReceiveServerRedirectForProvisionalNa
         return;
 
     // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.
-
+BEGIN_BLOCK_OBJC_EXCEPTIONS
     [navigationDelegate webView:m_navigationState->m_webView didReceiveServerRedirectForProvisionalNavigation:wrapper(navigation)];
+END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void NavigationState::NavigationClient::willPerformClientRedirect(WebPageProxy& page, const WTF::String& urlString, double delay)
@@ -797,8 +808,11 @@ void NavigationState::NavigationClient::didFailProvisionalNavigationWithError(We
 
     if (frameInfo.isMainFrame) {
         // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.
-        if (m_navigationState->m_navigationDelegateMethods.webViewDidFailProvisionalNavigationWithError)
+        if (m_navigationState->m_navigationDelegateMethods.webViewDidFailProvisionalNavigationWithError) {
+BEGIN_BLOCK_OBJC_EXCEPTIONS
             [navigationDelegate webView:m_navigationState->m_webView didFailProvisionalNavigation:wrapper(navigation) withError:errorWithRecoveryAttempter.get()];
+END_BLOCK_OBJC_EXCEPTIONS
+        }
     } else {
         if (m_navigationState->m_navigationDelegateMethods.webViewNavigationDidFailProvisionalLoadInSubframeWithError)
             [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView navigation:nil didFailProvisionalLoadInSubframe:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)) withError:errorWithRecoveryAttempter.get()];
@@ -830,8 +844,11 @@ void NavigationState::NavigationClient::didCommitNavigation(WebPageProxy& page, 
         return;
 
     // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.
-    if (m_navigationState->m_navigationDelegateMethods.webViewDidCommitNavigation)
+    if (m_navigationState->m_navigationDelegateMethods.webViewDidCommitNavigation) {
+BEGIN_BLOCK_OBJC_EXCEPTIONS
         [navigationDelegate webView:m_navigationState->m_webView didCommitNavigation:wrapper(navigation)];
+END_BLOCK_OBJC_EXCEPTIONS
+    }
 }
 
 void NavigationState::NavigationClient::didCommitLoadForFrame(WebKit::WebPageProxy& page, WebCore::ResourceRequest&& request, FrameInfoData&& frameInfo)
@@ -874,8 +891,11 @@ void NavigationState::NavigationClient::didFinishNavigation(WebPageProxy&, API::
         return;
 
     // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.
-    if (m_navigationState->m_navigationDelegateMethods.webViewDidFinishNavigation)
+    if (m_navigationState->m_navigationDelegateMethods.webViewDidFinishNavigation) {
+BEGIN_BLOCK_OBJC_EXCEPTIONS
         [navigationDelegate webView:m_navigationState->m_webView didFinishNavigation:wrapper(navigation)];
+END_BLOCK_OBJC_EXCEPTIONS
+    }
 }
 
 void NavigationState::NavigationClient::didFinishLoadForFrame(WebPageProxy& page, WebCore::ResourceRequest&& request, FrameInfoData&& frameInfo)
@@ -905,8 +925,11 @@ void NavigationState::NavigationClient::didFailNavigationWithError(WebPageProxy&
     // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.
     if (m_navigationState->m_navigationDelegateMethods.webViewDidFailNavigationWithErrorUserInfo)
         [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView didFailNavigation:wrapper(navigation) withError:errorWithRecoveryAttempter.get() userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
-    else if (m_navigationState->m_navigationDelegateMethods.webViewDidFailNavigationWithError)
+    else if (m_navigationState->m_navigationDelegateMethods.webViewDidFailNavigationWithError) {
+BEGIN_BLOCK_OBJC_EXCEPTIONS
         [navigationDelegate webView:m_navigationState->m_webView didFailNavigation:wrapper(navigation) withError:errorWithRecoveryAttempter.get()];
+END_BLOCK_OBJC_EXCEPTIONS
+    }
 }
 
 void NavigationState::NavigationClient::didFailLoadWithErrorForFrame(WebPageProxy& page, WebCore::ResourceRequest&& request, const WebCore::ResourceError& error, FrameInfoData&& frameInfo)
@@ -978,12 +1001,14 @@ void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPag
         return authenticationChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue);
 
     auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:didReceiveAuthenticationChallenge:completionHandler:));
+BEGIN_BLOCK_OBJC_EXCEPTIONS
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) webView:m_navigationState->m_webView didReceiveAuthenticationChallenge:wrapper(authenticationChallenge) completionHandler:makeBlockPtr([challenge = Ref { authenticationChallenge }, checker = WTFMove(checker)](NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
         challenge->listener().completeChallenge(WebKit::toAuthenticationChallengeDisposition(disposition), Credential(credential));
     }).get()];
+END_BLOCK_OBJC_EXCEPTIONS
 }
 
 static bool systemAllowsLegacyTLSFor(WebPageProxy& page)
@@ -1016,12 +1041,14 @@ void NavigationState::NavigationClient::shouldAllowLegacyTLS(WebPageProxy& page,
 
     if (m_navigationState->m_navigationDelegateMethods.webViewAuthenticationChallengeShouldAllowDeprecatedTLS) {
         auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:authenticationChallenge:shouldAllowDeprecatedTLS:));
+BEGIN_BLOCK_OBJC_EXCEPTIONS
         [navigationDelegate.get() webView:m_navigationState->m_webView authenticationChallenge:wrapper(authenticationChallenge) shouldAllowDeprecatedTLS:makeBlockPtr([checker = WTFMove(checker), completionHandler = WTFMove(completionHandler)](BOOL shouldAllow) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
             completionHandler(shouldAllow);
         }).get()];
+END_BLOCK_OBJC_EXCEPTIONS
         return;
     }
     auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(_webView:authenticationChallenge:shouldAllowLegacyTLS:));
@@ -1094,7 +1121,9 @@ bool NavigationState::NavigationClient::processDidTerminate(WebPageProxy& page, 
 
     // We prefer webViewWebContentProcessDidTerminate: over _webViewWebProcessDidCrash:.
     if (m_navigationState->m_navigationDelegateMethods.webViewWebContentProcessDidTerminate) {
+BEGIN_BLOCK_OBJC_EXCEPTIONS
         [navigationDelegate webViewWebContentProcessDidTerminate:m_navigationState->m_webView];
+END_BLOCK_OBJC_EXCEPTIONS
         return true;
     }
 
@@ -1172,7 +1201,9 @@ void NavigationState::NavigationClient::navigationActionDidBecomeDownload(WebPag
     if (!navigationDelegate)
         return;
 
+BEGIN_BLOCK_OBJC_EXCEPTIONS
     [navigationDelegate.get() webView:m_navigationState->m_webView navigationAction:wrapper(navigationAction) didBecomeDownload:wrapper(download)];
+END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void NavigationState::NavigationClient::navigationResponseDidBecomeDownload(WebPageProxy&, API::NavigationResponse& navigationResponse, DownloadProxy& download)
@@ -1187,7 +1218,9 @@ void NavigationState::NavigationClient::navigationResponseDidBecomeDownload(WebP
     if (!navigationDelegate)
         return;
 
+BEGIN_BLOCK_OBJC_EXCEPTIONS
     [navigationDelegate.get() webView:m_navigationState->m_webView navigationResponse:wrapper(navigationResponse) didBecomeDownload:wrapper(download)];
+END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void NavigationState::NavigationClient::contextMenuDidCreateDownload(WebPageProxy&, DownloadProxy& download)
