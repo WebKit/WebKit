@@ -1965,7 +1965,7 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
 
 static bool usePlatformFocusRingColorForOutlineStyleAuto()
 {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     return true;
 #else
     return false;
@@ -1974,7 +1974,7 @@ static bool usePlatformFocusRingColorForOutlineStyleAuto()
 
 static bool useShrinkWrappedFocusRingForOutlineStyleAuto()
 {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     return true;
 #else
     return false;

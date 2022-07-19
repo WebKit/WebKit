@@ -35,10 +35,11 @@ class Path;
 
 class ThemeAdwaita : public Theme {
 public:
-    static Color focusColor(bool focusColor);
-    static void paintFocus(GraphicsContext&, const FloatRect&, int offset, bool useDarkAppearance);
+    enum class PaintRounded : bool { No, Yes };
+
+    static void paintFocus(GraphicsContext&, const FloatRect&, int offset, const Color&, PaintRounded = PaintRounded::No);
     static void paintFocus(GraphicsContext&, const Path&, const Color&);
-    static void paintFocus(GraphicsContext&, const Vector<FloatRect>&, const Color&);
+    static void paintFocus(GraphicsContext&, const Vector<FloatRect>&, const Color&, PaintRounded = PaintRounded::No);
     enum class ArrowDirection { Up, Down };
     static void paintArrow(GraphicsContext&, ArrowDirection, bool);
 
@@ -56,6 +57,8 @@ private:
     void paintRadio(ControlStates&, GraphicsContext&, const FloatRect&, bool, const Color&);
     void paintButton(ControlStates&, GraphicsContext&, const FloatRect&, bool);
     void paintSpinButton(ControlStates&, GraphicsContext&, const FloatRect&, bool);
+
+    static Color focusColor(const Color&);
 
     Color m_accentColor;
 };

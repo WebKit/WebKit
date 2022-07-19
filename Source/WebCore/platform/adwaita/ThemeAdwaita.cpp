@@ -36,13 +36,12 @@
 
 namespace WebCore {
 
-static const unsigned focusLineWidth = 1;
-static constexpr auto focusRingColorLight = SRGBA<uint8_t> { 46, 52, 54, 150 };
-static constexpr auto focusRingColorDark = SRGBA<uint8_t> { 238, 238, 236, 150 };
+static const double focusRingOpacity = 0.8; // Keep in sync with focusRingOpacity in RenderThemeAdwaita.
+static const unsigned focusLineWidth = 2;
 static const unsigned arrowSize = 16;
 static constexpr auto arrowColorLight = SRGBA<uint8_t> { 46, 52, 54 };
 static constexpr auto arrowColorDark = SRGBA<uint8_t> { 238, 238, 236 };
-static const int buttonFocusOffset = -3;
+static const int buttonFocusOffset = -2;
 static const unsigned buttonPadding = 5;
 static const int buttonBorderSize = 1; // Keep in sync with menuListButtonBorderSize in RenderThemeAdwaita.
 static const double disabledOpacity = 0.5;
@@ -63,7 +62,7 @@ static constexpr auto toggleBorderHoveredColorDark = SRGBA<uint8_t> { 255, 255, 
 
 static const double toggleSize = 14.;
 static const int toggleBorderSize = 2;
-static const int toggleFocusOffset = 2;
+static const int toggleFocusOffset = 1;
 
 static constexpr auto spinButtonBorderColorLight = SRGBA<uint8_t> { 0, 0, 0, 25 };
 static constexpr auto spinButtonBackgroundColorLight = Color::white;
@@ -81,18 +80,26 @@ Theme& Theme::singleton()
     return theme;
 }
 
-Color ThemeAdwaita::focusColor(bool useDarkAppearance)
+Color ThemeAdwaita::focusColor(const Color& accentColor)
 {
-    return useDarkAppearance ? focusRingColorDark : focusRingColorLight;
+    return accentColor.colorWithAlphaMultipliedBy(focusRingOpacity);
 }
 
-void ThemeAdwaita::paintFocus(GraphicsContext& graphicsContext, const FloatRect& rect, int offset, bool useDarkAppearance)
+static inline float getRectRadius(const FloatRect& rect, int offset)
+{
+    return (std::min(rect.width(), rect.height()) + offset) / 2;
+}
+
+void ThemeAdwaita::paintFocus(GraphicsContext& graphicsContext, const FloatRect& rect, int offset, const Color& color, PaintRounded rounded)
 {
     FloatRect focusRect = rect;
     focusRect.inflate(offset);
+
+    float radius = (rounded == PaintRounded::Yes) ? getRectRadius(rect, offset) : 2;
+
     Path path;
-    path.addRoundedRect(focusRect, { 2, 2 });
-    paintFocus(graphicsContext, path, focusColor(useDarkAppearance));
+    path.addRoundedRect(focusRect, { radius, radius });
+    paintFocus(graphicsContext, path, color);
 }
 
 void ThemeAdwaita::paintFocus(GraphicsContext& graphicsContext, const Path& path, const Color& color)
@@ -100,10 +107,11 @@ void ThemeAdwaita::paintFocus(GraphicsContext& graphicsContext, const Path& path
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
     graphicsContext.beginTransparencyLayer(color.alphaAsFloat());
-    graphicsContext.setStrokeThickness(focusLineWidth);
-    graphicsContext.setLineDash({ focusLineWidth, 2 * focusLineWidth }, 0);
-    graphicsContext.setLineCap(LineCap::Square);
-    graphicsContext.setLineJoin(LineJoin::Miter);
+    // Since we cut off a half of it by erasing the rect contents, and half
+    // of the stroke ends up inside that area, it needs to be twice as thick.
+    graphicsContext.setStrokeThickness(focusLineWidth * 2);
+    graphicsContext.setLineCap(LineCap::Round);
+    graphicsContext.setLineJoin(LineJoin::Round);
     graphicsContext.setStrokeColor(color.opaqueColor());
     graphicsContext.strokePath(path);
     graphicsContext.setFillRule(WindRule::NonZero);
@@ -113,12 +121,14 @@ void ThemeAdwaita::paintFocus(GraphicsContext& graphicsContext, const Path& path
     graphicsContext.endTransparencyLayer();
 }
 
-void ThemeAdwaita::paintFocus(GraphicsContext& graphicsContext, const Vector<FloatRect>& rects, const Color& color)
+void ThemeAdwaita::paintFocus(GraphicsContext& graphicsContext, const Vector<FloatRect>& rects, const Color& color, PaintRounded rounded)
 {
-    FloatSize corner(2, 2);
     Path path;
-    for (const auto& rect : rects)
-        path.addRoundedRect(rect, corner);
+    for (const auto& rect : rects) {
+        float radius = (rounded == PaintRounded::Yes) ? getRectRadius(rect, 0) : 2;
+
+        path.addRoundedRect(rect, { radius, radius });
+    }
     paintFocus(graphicsContext, path, color);
 }
 
@@ -303,7 +313,7 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
     }
 
     if (states.states().contains(ControlStates::States::Focused))
-        paintFocus(graphicsContext, zoomedRect, toggleFocusOffset, useDarkAppearance);
+        paintFocus(graphicsContext, zoomedRect, toggleFocusOffset, focusColor(accentColor));
 
     if (!states.states().contains(ControlStates::States::Enabled))
         graphicsContext.endTransparencyLayer();
@@ -370,7 +380,7 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
     }
 
     if (states.states().contains(ControlStates::States::Focused))
-        paintFocus(graphicsContext, zoomedRect, toggleFocusOffset, useDarkAppearance);
+        paintFocus(graphicsContext, zoomedRect, toggleFocusOffset, focusColor(accentColor), PaintRounded::Yes);
 
     if (!states.states().contains(ControlStates::States::Enabled))
         graphicsContext.endTransparencyLayer();
@@ -424,7 +434,7 @@ void ThemeAdwaita::paintButton(ControlStates& states, GraphicsContext& graphicsC
     graphicsContext.fillPath(path);
 
     if (states.states().contains(ControlStates::States::Focused))
-        paintFocus(graphicsContext, zoomedRect, buttonFocusOffset, useDarkAppearance);
+        paintFocus(graphicsContext, zoomedRect, buttonFocusOffset, focusColor(m_accentColor));
 
     if (!states.states().contains(ControlStates::States::Enabled))
         graphicsContext.endTransparencyLayer();

@@ -50,6 +50,7 @@
 
 namespace WebCore {
 
+static const double focusRingOpacity = 0.8; // Keep in sync with focusRingOpacity in ThemeAdwaita.
 static const double disabledOpacity = 0.5; // Keep in sync with disabledOpacity in ThemeAdwaita.
 static const int textFieldBorderSize = 1;
 static constexpr auto textFieldBorderColorLight = SRGBA<uint8_t> { 0, 0, 0, 50 };
@@ -59,7 +60,7 @@ static constexpr auto textFieldBorderColorDark = SRGBA<uint8_t> { 255, 255, 255,
 static constexpr auto textFieldBackgroundColorDark = SRGBA<uint8_t> { 45, 45, 45 };
 
 static const unsigned menuListButtonArrowSize = 16;
-static const int menuListButtonFocusOffset = -3;
+static const int menuListButtonFocusOffset = -2;
 static const unsigned menuListButtonPadding = 5;
 static const int menuListButtonBorderSize = 1; // Keep in sync with buttonBorderSize in ThemeAdwaita.
 static const unsigned progressActivityBlocks = 5;
@@ -186,9 +187,9 @@ Color RenderThemeAdwaita::platformInactiveListBoxSelectionForegroundColor(Option
     return platformActiveListBoxSelectionForegroundColor(options);
 }
 
-Color RenderThemeAdwaita::platformFocusRingColor(OptionSet<StyleColorOptions> options) const
+Color RenderThemeAdwaita::platformFocusRingColor(OptionSet<StyleColorOptions>) const
 {
-    return ThemeAdwaita::focusColor(options.contains(StyleColorOptions::UseDarkAppearance));
+    return getSystemAccentColor().colorWithAlphaMultipliedBy(focusRingOpacity);
 }
 
 void RenderThemeAdwaita::platformColorsDidChange()
@@ -279,6 +280,9 @@ Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColo
 
     case CSSValueWebkitFocusRingColor:
     case CSSValueActiveborder:
+        // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
+        return SRGBA<uint8_t> { 52, 132, 228, static_cast<unsigned char>(255 * focusRingOpacity) };
+
     case CSSValueHighlight:
         // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
         return SRGBA<uint8_t> { 52, 132, 228 };
@@ -324,7 +328,7 @@ bool RenderThemeAdwaita::paintTextField(const RenderObject& renderObject, const 
     path.addRoundedRect(fieldRect, corner);
     graphicsContext.setFillRule(WindRule::EvenOdd);
     if (enabled && isFocused(renderObject))
-        graphicsContext.setFillColor(getAccentColor(renderObject));
+        graphicsContext.setFillColor(platformFocusRingColor({ }));
     else
         graphicsContext.setFillColor(textFieldBorderColor);
     graphicsContext.fillPath(path);
@@ -436,7 +440,7 @@ bool RenderThemeAdwaita::paintMenuList(const RenderObject& renderObject, const P
     }
 
     if (isFocused(renderObject))
-        ThemeAdwaita::paintFocus(graphicsContext, rect, menuListButtonFocusOffset, renderObject.useDarkAppearance());
+        ThemeAdwaita::paintFocus(graphicsContext, rect, menuListButtonFocusOffset, platformFocusRingColor({ }));
 
     return false;
 }
@@ -589,8 +593,11 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
     paintSliderTicks(renderObject, paintInfo, rect);
 #endif
 
-    if (isFocused(renderObject))
-        ThemeAdwaita::paintFocus(graphicsContext, fieldRect, sliderTrackFocusOffset, renderObject.useDarkAppearance());
+    if (isFocused(renderObject)) {
+        // Sliders support accent-color, so we want to color their focus rings too
+        Color focusRingColor = getAccentColor(renderObject).colorWithAlphaMultipliedBy(focusRingOpacity);
+        ThemeAdwaita::paintFocus(graphicsContext, fieldRect, sliderTrackFocusOffset, focusRingColor, ThemeAdwaita::PaintRounded::Yes);
+    }
 
     if (!isEnabled(renderObject))
         graphicsContext.endTransparencyLayer();
