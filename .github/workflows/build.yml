@@ -275,12 +275,12 @@ jobs:
           path: /tmp/bun-webkit-macos-aarch64-lto.zip
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-macos-amd64
-          path: /tmp/bun-webkit-macos-amd64.zip
+          name: bun-webkit-macos-x64
+          path: /tmp/bun-webkit-macos-x64.zip
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-macos-amd64-lto
-          path: /tmp/bun-webkit-macos-amd64-lto.zip
+          name: bun-webkit-macos-x64-lto
+          path: /tmp/bun-webkit-macos-x64-lto.zip
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -291,5 +291,5 @@ jobs:
             - /tmp/bun-webkit-linux-amd64.zip
             - /tmp/bun-webkit-macos-aarch64.zip
             - /tmp/bun-webkit-macos-aarch64-lto.zip
-            - /tmp/bun-webkit-macos-amd64.zip
-            - /tmp/bun-webkit-macos-amd64-lto.zip
+            - /tmp/bun-webkit-macos-x64.zip
+            - /tmp/bun-webkit-macos-x64-lto.zip
