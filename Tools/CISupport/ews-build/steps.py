@@ -562,6 +562,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
     def add_patch_id_url(self):
         patch_id = self.getProperty('patch_id', '')
         if patch_id:
+            self.setProperty('remote', 'origin')
             self.setProperty('change_id', patch_id, 'ConfigureBuild')
             self.addURL('Patch {}'.format(patch_id), Bugzilla.patch_url(patch_id))
 
