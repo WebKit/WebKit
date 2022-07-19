@@ -61,9 +61,7 @@ void initializeMainThreadPlatform()
 bool isMainThread()
 {
 #if HAVE(PTHREAD_MAIN_NP)
-    int mainThreadNp = pthread_main_np();
-    ASSERT(mainThreadNp != -1);
-    return mainThreadNp == 1;
+    return pthread_main_np();
 #elif OS(LINUX)
     return getpid() == static_cast<pid_t>(syscall(SYS_gettid));
 #else
