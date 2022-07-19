@@ -822,7 +822,7 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(co
 
         startBoundary = *testStartBoundary;
         elementRect = boundsForRange(SimpleRange(startBoundary, range->end));
-        if (elementRect.isEmpty())
+        if (elementRect.isEmpty() || elementRect.x() < 0 || elementRect.y() < 0)
             break;
     }
 
