@@ -35,6 +35,7 @@
 #include "FontPlatformData.h"
 #include "FontSelector.h"
 #include "FontTaggedSettings.h"
+#include "SystemFallbackFontCache.h"
 #include "Timer.h"
 #include <array>
 #include <limits.h>
@@ -375,6 +376,8 @@ public:
     void prewarm(PrewarmInformation&&);
     static void prewarmGlobally();
 
+    SystemFallbackFontCache& systemFallbackFontCache() { return m_systemFallbackFontCache; }
+
 private:
     void invalidate();
     void platformInvalidate();
@@ -402,6 +405,7 @@ private:
     struct FontDataCaches;
     UniqueRef<FontDataCaches> m_fontDataCaches;
     FontCascadeCache m_fontCascadeCache;
+    SystemFallbackFontCache m_systemFallbackFontCache;
 
     unsigned short m_generation { 0 };
 
