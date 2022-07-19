@@ -1797,25 +1797,54 @@ void RenderLayerScrollableArea::panScrollFromPoint(const IntPoint& sourcePoint)
     scrollByRecursively(adjustedScrollDelta(delta));
 }
 
-std::optional<LayoutRect> RenderLayerScrollableArea::updateScrollPosition(const ScrollPositionChangeOptions& options, const LayoutRect& revealRect, const LayoutRect& localExposeRect)
+LayoutRect RenderLayerScrollableArea::scrollRectToVisible(const LayoutRect& absoluteRect, const ScrollRectToVisibleOptions& options)
 {
-    ASSERT(m_layer.allowsCurrentScroll());
+    RenderBox* box = layer().renderBox();
+    ASSERT(box);
+    LayoutRect localExposeRect(box->absoluteToLocalQuad(FloatQuad(FloatRect(absoluteRect))).boundingBox());
 
+    // localExposedRect is now the absolute rect in local coordinates, but relative to the
+    // border edge. Make the rectangle relative to the scrollable area.
+    localExposeRect.moveBy(-LayoutPoint(box->borderLeft(), box->borderTop()));
+
+    if (box->shouldPlaceVerticalScrollbarOnLeft()) {
+        // For `direction: rtl; writing-mode: horizontal-{tb,bt}` and `writing-mode: vertical-rl`
+        // boxes, the scroll bar is on the left side. The visible rect starts from the right side
+        // of the scroll bar. So the x of localExposeRect should start from the same position too.
+        localExposeRect.moveBy(LayoutPoint(-verticalScrollbarWidth(), 0));
+    }
+
+    // scroll-padding applies to the scroll container, but expand the rectangle that we want to expose in order
+    // simulate padding the scroll container. This rectangle is passed up the tree of scrolling elements to
+    // ensure that the padding on this scroll container is maintained.
+    LayoutRect layerBounds(0_lu, 0_lu, box->clientWidth(), box->clientHeight());
+    localExposeRect.expand(box->scrollPaddingForViewportRect(layerBounds));
+
+    auto revealRect = getRectToExposeForScrollIntoView(layerBounds, localExposeRect, options.alignX, options.alignY);
+
+    auto scrollPositionOptions = ScrollPositionChangeOptions::createProgrammatic();
+    if (!box->frame().eventHandler().autoscrollInProgress() && box->element() && useSmoothScrolling(options.behavior, box->element()))
+        scrollPositionOptions.animated = ScrollIsAnimated::Yes;
+    if (auto result = updateScrollPositionForScrollIntoView(scrollPositionOptions, revealRect, localExposeRect))
+        return result.value();
+    return absoluteRect;
+}
+std::optional<LayoutRect> RenderLayerScrollableArea::updateScrollPositionForScrollIntoView(const ScrollPositionChangeOptions& options, const LayoutRect& revealRect, const LayoutRect& localExposeRect)
+{
     RenderBox* box = m_layer.renderBox();
     ASSERT(box);
 
     ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(revealRect).location()));
-    if (clampedScrollOffset != scrollOffset() || scrollAnimationStatus() != ScrollAnimationStatus::NotAnimating) {
-        ScrollOffset oldScrollOffset = scrollOffset();
-        ScrollOffset realScrollOffset = scrollToOffset(clampedScrollOffset, options);
+    if (clampedScrollOffset == scrollOffset() && scrollAnimationStatus() == ScrollAnimationStatus::NotAnimating)
+        return std::nullopt;
 
-        IntSize scrollOffsetDifference = realScrollOffset - oldScrollOffset;
-        auto localExposeRectScrolled = localExposeRect;
-        localExposeRectScrolled.move(-scrollOffsetDifference);
-        return LayoutRect(box->localToAbsoluteQuad(FloatQuad(FloatRect(localExposeRectScrolled)), UseTransforms).boundingBox());
-    }
+    ScrollOffset oldScrollOffset = scrollOffset();
+    ScrollOffset realScrollOffset = scrollToOffset(clampedScrollOffset, options);
 
-    return std::nullopt;
+    IntSize scrollOffsetDifference = realScrollOffset - oldScrollOffset;
+    auto localExposeRectScrolled = localExposeRect;
+    localExposeRectScrolled.move(-scrollOffsetDifference);
+    return LayoutRect(box->localToAbsoluteQuad(FloatQuad(FloatRect(localExposeRectScrolled)), UseTransforms).boundingBox());
 }
 
 void RenderLayerScrollableArea::scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea)

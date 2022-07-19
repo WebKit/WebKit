@@ -1925,6 +1925,7 @@ platform/ReferrerPolicy.cpp
 platform/RemoteCommandListener.cpp
 platform/RuntimeApplicationChecks.cpp
 platform/SSLKeyGenerator.cpp
+platform/ScrollAlignment.cpp
 platform/ScrollAnimation.cpp
 platform/ScrollAnimationKinetic.cpp
 platform/ScrollAnimationMomentum.cpp
@@ -2437,7 +2438,6 @@ rendering/RenderVTTCue.cpp
 rendering/RenderVideo.cpp
 rendering/RenderView.cpp
 rendering/RenderWidget.cpp
-rendering/ScrollAlignment.cpp
 rendering/SelectionRangeData.cpp
 rendering/StyledMarkedText.cpp
 rendering/TableLayout.cpp

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RectEdges.h"
+#include "ScrollAlignment.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
 #include "Scrollbar.h"
@@ -404,6 +405,8 @@ protected:
 #endif
 
     bool hasLayerForScrollCorner() const;
+
+    LayoutRect getRectToExposeForScrollIntoView(const LayoutRect& visibleRect, const LayoutRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const;
 
 private:
     WEBCORE_EXPORT virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
