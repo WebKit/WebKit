@@ -91,7 +91,7 @@
 
 .scope-bar > li.multiple > select {
     position: absolute;
-    top: 1px;
+    top: -1px;
     inset-inline-start: calc(var(--scope-bar-padding) - var(--scope-bar-padding-default) - 2px);
     width: 0;
     height: 0;
