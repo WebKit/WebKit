@@ -790,9 +790,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return pageCount;
 }
 
-- (CGPDFDocumentRef)_wk_printedDocument
+- (void)_wk_requestDocumentForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
 {
-    return [self _ensureDocumentForPrinting];
+    [printFormatter _setPrintedDocument:[self _ensureDocumentForPrinting]];
 }
 
 @end
