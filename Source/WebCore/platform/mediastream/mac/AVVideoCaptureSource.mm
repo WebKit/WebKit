@@ -423,10 +423,7 @@ bool AVVideoCaptureSource::setupSession()
 
 #if ENABLE(APP_PRIVACY_REPORT)
     auto identity = RealtimeMediaSourceCenter::singleton().identity();
-    if (!identity) {
-        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "RealtimeMediaSourceCenter::identity() returned null!");
-        return false;
-    }
+    ERROR_LOG_IF(loggerPtr() && !identity, LOGIDENTIFIER, "RealtimeMediaSourceCenter::identity() returned null!");
 
     if (identity && [PAL::getAVCaptureSessionClass() instancesRespondToSelector:@selector(initWithAssumedIdentity:)])
         m_session = adoptNS([PAL::allocAVCaptureSessionInstance() initWithAssumedIdentity:identity.get()]);
@@ -437,6 +434,7 @@ bool AVVideoCaptureSource::setupSession()
 
     if (!m_session) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "failed to allocate AVCaptureSession");
+        captureFailed();
         return false;
     }
 
