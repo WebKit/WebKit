@@ -1828,6 +1828,18 @@ void NetworkProcessProxy::cookiesDidChange(PAL::SessionID sessionID)
         websiteDataStore->cookieStore().cookiesDidChange();
 }
 
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+void NetworkProcessProxy::setEmulatedConditions(PAL::SessionID sessionID, std::optional<int64_t>&& bytesPerSecondLimit)
+{
+    if (!canSendMessage())
+        return;
+
+    send(Messages::NetworkProcess::SetEmulatedConditions(sessionID, WTFMove(bytesPerSecondLimit)), 0);
+}
+
+#endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

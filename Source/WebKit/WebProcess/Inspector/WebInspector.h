@@ -73,7 +73,11 @@ public:
     void stopElementSelection();
     void elementSelectionChanged(bool);
     void timelineRecordingChanged(bool);
+
     void setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference, std::optional<bool>);
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
+#endif
 
     void setFrontendConnection(IPC::Attachment);
 

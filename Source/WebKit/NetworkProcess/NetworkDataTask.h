@@ -140,6 +140,10 @@ public:
     virtual void setPriority(WebCore::ResourceLoadPriority) { }
     String attributedBundleIdentifier(WebPageProxyIdentifier);
 
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    virtual void setEmulatedConditions(const std::optional<int64_t>& /* bytesPerSecondLimit */) { }
+#endif
+
     PAL::SessionID sessionID() const;
 
     NetworkSession* networkSession();

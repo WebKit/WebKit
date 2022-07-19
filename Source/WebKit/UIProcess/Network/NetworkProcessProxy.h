@@ -306,6 +306,10 @@ public:
 
     void cookiesDidChange(PAL::SessionID);
 
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    void setEmulatedConditions(PAL::SessionID, std::optional<int64_t>&& bytesPerSecondLimit);
+#endif
+
 private:
     explicit NetworkProcessProxy();
 

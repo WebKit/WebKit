@@ -52,6 +52,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         // FIXME: Provide dedicated UI to toggle Network Interception globally?
         this._interceptionEnabled = true;
 
+        this._emulatedCondition = WI.NetworkManager.EmulatedCondition.None;
+
         // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
         WI.notifications.addEventListener(WI.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
 
@@ -193,7 +195,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (target.hasDomain("Network")) {
             target.NetworkAgent.enable();
 
-            // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
+            // COMPATIBILITY (iOS 10.3): Network.setResourceCachingDisabled did not exist.
             if (target.hasCommand("Network.setResourceCachingDisabled"))
                 target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
 
@@ -208,6 +210,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 }
             }
         }
+
+        this._applyEmulatedCondition(target);
 
         if (target.type === WI.TargetType.Worker)
             this.adoptOrphanedResourcesForTarget(target);
@@ -247,6 +251,28 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             if (target.hasCommand("Network.setInterceptionEnabled"))
                 target.NetworkAgent.setInterceptionEnabled(this._interceptionEnabled);
         }
+    }
+
+    get emulatedCondition()
+    {
+        return this._emulatedCondition;
+    }
+
+    set emulatedCondition(condition)
+    {
+        console.assert(Object.values(WI.NetworkManager.EmulatedCondition).includes(condition), condition);
+        console.assert(WI.settings.experimentalEnableNetworkEmulatedCondition.value);
+        console.assert(InspectorBackend.hasCommand("Network.setEmulatedConditions"));
+
+        if (condition === this._emulatedCondition)
+            return;
+
+        this._emulatedCondition = condition;
+
+        for (let target of WI.targets)
+            this._applyEmulatedCondition(target);
+
+        this.dispatchEventToListeners(WI.NetworkManager.Event.EmulatedConditionChanged);
     }
 
     frameForIdentifier(frameId)
@@ -1433,6 +1459,18 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         }
     }
 
+    _applyEmulatedCondition(target)
+    {
+        if (!WI.settings.experimentalEnableNetworkEmulatedCondition.value)
+            return;
+
+        // COMPATIBILITY (iOS 15.4): Network.setEmulatedConditions did not exist.
+        if (!target.hasCommand("Network.setEmulatedConditions"))
+            return;
+
+        target.NetworkAgent.setEmulatedConditions(this._emulatedCondition.bytesPerSecondLimit);
+    }
+
     _dispatchFrameWasAddedEvent(frame)
     {
         this.dispatchEventToListeners(WI.NetworkManager.Event.FrameWasAdded, {frame});
@@ -1607,6 +1645,51 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     }
 };
 
+WI.NetworkManager.EmulatedCondition = {
+    // Keep this first.
+    None: {
+        id: "none",
+        bytesPerSecondLimit: 0,
+        get displayName() { return WI.UIString("No throttling", "Label indicating that network throttling is inactive."); }
+    },
+
+    Mobile3G: {
+        id: "mobile-3g",
+        bytesPerSecondLimit: 780 * 1000 / 8, // 780kbps
+        get displayName() { return WI.UIString("3G", "Label indicating that network activity is being simulated with 3G connectivity."); }
+    },
+
+    DSL: {
+        id: "dsl",
+        bytesPerSecondLimit: 2 * 1000 * 1000 / 8, // 2mbps
+        get displayName() { return WI.UIString("DSL", "Label indicating that network activity is being simulated with DSL connectivity."); }
+    },
+
+    Edge: {
+        id: "edge",
+        bytesPerSecondLimit: 240 * 1000 / 8, // 240kbps
+        get displayName() { return WI.UIString("Edge", "Label indicating that network activity is being simulated with Edge connectivity."); }
+    },
+
+    LTE: {
+        id: "lte",
+        bytesPerSecondLimit: 50 * 1000 * 1000 / 8, // 50mbps
+        get displayName() { return WI.UIString("LTE", "Label indicating that network activity is being simulated with LTE connectivity"); }
+    },
+
+    WiFi: {
+        id: "wifi",
+        bytesPerSecondLimit: 40 * 1000 * 1000 / 8, // 40mbps
+        get displayName() { return WI.UIString("Wi-Fi", "Label indicating that network activity is being simulated with Wi-Fi connectivity"); }
+    },
+
+    WiFi802_11ac: {
+        id: "wifi-802_11ac",
+        bytesPerSecondLimit: 250 * 1000 * 1000 / 8, // 250mbps
+        get displayName() { return WI.UIString("Wi-Fi 802.11ac", "Label indicating that network activity is being simulated with Wi-Fi 802.11ac connectivity"); }
+    },
+};
+
 WI.NetworkManager.Event = {
     FrameWasAdded: "network-manager-frame-was-added",
     FrameWasRemoved: "network-manager-frame-was-removed",
@@ -1616,4 +1699,5 @@ WI.NetworkManager.Event = {
     BootstrapScriptDestroyed: "network-manager-bootstrap-script-destroyed",
     LocalResourceOverrideAdded: "network-manager-local-resource-override-added",
     LocalResourceOverrideRemoved: "network-manager-local-resource-override-removed",
+    EmulatedConditionChanged: "network-manager-emulated-condition-changed",
 };

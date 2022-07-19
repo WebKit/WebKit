@@ -29,13 +29,14 @@
 
 namespace WebCore {
 
+class InspectorClient;
 class Page;
 
 class PageNetworkAgent final : public InspectorNetworkAgent {
     WTF_MAKE_NONCOPYABLE(PageNetworkAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageNetworkAgent(PageAgentContext&);
+    PageNetworkAgent(PageAgentContext&, InspectorClient*);
     ~PageNetworkAgent();
 
 private:
@@ -43,11 +44,15 @@ private:
     Inspector::Protocol::Network::FrameId frameIdentifier(DocumentLoader*);
     Vector<WebSocket*> activeWebSockets() WTF_REQUIRES_LOCK(WebSocket::allActiveWebSocketsLock());
     void setResourceCachingDisabledInternal(bool);
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    bool setEmulatedConditionsInternal(std::optional<int>&& bytesPerSecondLimit);
+#endif
     ScriptExecutionContext* scriptExecutionContext(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&);
     bool shouldForceBufferingNetworkResourceData() const { return false; }
 
     Page& m_inspectedPage;
+    InspectorClient* m_client { nullptr };
 };
 
 } // namespace WebCore

@@ -343,6 +343,15 @@
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request to fail." },
                 { "name": "errorType", "$ref": "ResourceErrorType", "description": "Deliver error reason for the request failure." }
             ]
+        },
+        {
+            "name": "setEmulatedConditions",
+            "description": "Emulate various network conditions (e.g. bytes per second, latency, etc.).",
+            "targetTypes": ["page"],
+            "condition": "defined(ENABLE_INSPECTOR_NETWORK_THROTTLING) && ENABLE_INSPECTOR_NETWORK_THROTTLING",
+            "parameters": [
+                { "name": "bytesPerSecondLimit", "type": "integer", "optional": true, "description": "Limits the bytes per second of requests if positive. Removes any limits if zero or not provided." }
+            ]
         }
     ],
     "events": [

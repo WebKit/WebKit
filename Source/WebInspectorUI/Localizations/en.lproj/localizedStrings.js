@@ -103,6 +103,8 @@ localizedStrings["0 Console warnings"] = "0 Console warnings";
 localizedStrings["1 match"] = "1 match";
 localizedStrings["1080p"] = "1080p";
 localizedStrings["2D"] = "2D";
+/* Label indicating that network activity is being simulated with 3G connectivity. */
+localizedStrings["3G"] = "3G";
 localizedStrings["720p"] = "720p";
 /* Text indicating that the local override will block the network activity with an access error. */
 localizedStrings["Access Control @ Local Override Type"] = "Access Control";
@@ -163,6 +165,8 @@ localizedStrings["All items in \u0022%s\u0022 must be valid DOM nodes"] = "All i
 /* Label for setting that allows the user to inspect the Web Inspector user interface. */
 localizedStrings["Allow Inspecting Web Inspector @ Experimental Settings"] = "Allow Inspecting Web Inspector";
 localizedStrings["Allow Media Capture on Insecure Sites"] = "Allow Media Capture on Insecure Sites";
+/* Label for checkbox that controls whether network throttling functionality is enabled. */
+localizedStrings["Allow throttling"] = "Allow throttling";
 localizedStrings["Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint's location."] = "Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint's location.";
 /* Property title for `font-variant-alternates`. */
 localizedStrings["Alternate Glyphs @ Font Details Sidebar Property"] = "Alternate Glyphs";
@@ -439,6 +443,8 @@ localizedStrings["DOM Content Loaded \u2014 %s"] = "DOM Content Loaded \u2014 %s
 localizedStrings["DOM Event \u201C%s\u201D"] = "DOM Event \u201C%s\u201D";
 localizedStrings["DOM Events"] = "DOM Events";
 localizedStrings["DOM Nodes:"] = "DOM Nodes:";
+/* Label indicating that network activity is being simulated with DSL connectivity. */
+localizedStrings["DSL"] = "DSL";
 localizedStrings["Damping"] = "Damping";
 /* Label of dropdown item used for forcing Web Inspector to be shown using a dark theme */
 localizedStrings["Dark @ Settings General Appearance"] = "Dark";
@@ -546,6 +552,8 @@ localizedStrings["Dynamically calculated for the selected element"] = "Dynamical
 localizedStrings["Dynamically calculated for the selected element and did not match"] = "Dynamically calculated for the selected element and did not match";
 /* Property title for `font-variant-east-asian`. */
 localizedStrings["East Asian @ Font Details Sidebar Property"] = "East Asian";
+/* Label indicating that network activity is being simulated with Edge connectivity. */
+localizedStrings["Edge"] = "Edge";
 /* Label for a guide within the color picker */
 localizedStrings["Edge of sRGB color space"] = "Edge of sRGB color space";
 localizedStrings["Edit"] = "Edit";
@@ -869,6 +877,8 @@ localizedStrings["JavaScript execution is paused"] = "JavaScript execution is pa
 localizedStrings["Jump to Definition"] = "Jump to Definition";
 localizedStrings["Key"] = "Key";
 localizedStrings["Key Path"] = "Key Path";
+/* Label indicating that network activity is being simulated with LTE connectivity */
+localizedStrings["LTE"] = "LTE";
 localizedStrings["Label"] = "Label";
 localizedStrings["Latency"] = "Latency";
 localizedStrings["Layer Count: %d"] = "Layer Count: %d";
@@ -984,6 +994,8 @@ localizedStrings["Network Requests"] = "Network Requests";
 localizedStrings["Network Requests:"] = "Network Requests:";
 /* Name of Network Tab */
 localizedStrings["Network Tab Name"] = "Network";
+localizedStrings["Network throttling is enabled"] = "Network throttling is enabled";
+localizedStrings["Network:"] = "Network:";
 /* A submenu item of 'Add' to add DOM nodes after the selected DOM node */
 localizedStrings["Next Sibling"] = "Next Sibling";
 localizedStrings["No"] = "No";
@@ -1037,6 +1049,8 @@ localizedStrings["No response headers"] = "No response headers";
 localizedStrings["No screenshots @ Screenshots Timeline"] = "No screenshots";
 localizedStrings["No search results"] = "No search results";
 localizedStrings["No search string"] = "No search string";
+/* Label indicating that network throttling is inactive. */
+localizedStrings["No throttling"] = "No throttling";
 localizedStrings["Node"] = "Node";
 /* A submenu item of 'Break On' that breaks (pauses) before DOM node is removed */
 localizedStrings["Node Removed @ DOM Breakpoint"] = "Node Removed";
@@ -1769,6 +1783,10 @@ localizedStrings["WebSocket Connection Established"] = "WebSocket Connection Est
 /* Property title for `font-weight`. */
 localizedStrings["Weight @ Font Details Sidebar Property"] = "Weight";
 localizedStrings["Whitespace characters"] = "Whitespace characters";
+/* Label indicating that network activity is being simulated with Wi-Fi connectivity */
+localizedStrings["Wi-Fi"] = "Wi-Fi";
+/* Label indicating that network activity is being simulated with Wi-Fi 802.11ac connectivity */
+localizedStrings["Wi-Fi 802.11ac"] = "Wi-Fi 802.11ac";
 localizedStrings["Width"] = "Width";
 localizedStrings["With Object Properties"] = "With Object Properties";
 localizedStrings["Worker"] = "Worker";

@@ -262,7 +262,11 @@ private:
     void showCertificate(const WebCore::CertificateInfo&);
     void elementSelectionChanged(bool);
     void timelineRecordingChanged(bool);
+
     void setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference, std::optional<bool>);
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
+#endif
 
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
     void load(const String& path, CompletionHandler<void(const String&)>&&);

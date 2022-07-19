@@ -243,6 +243,10 @@ public:
     bool shouldAcceptInsecureCertificatesForWebSockets() const { return m_shouldAcceptInsecureCertificatesForWebSockets; }
 #endif
 
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
+#endif
+
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
@@ -329,6 +333,9 @@ protected:
 #endif
 #if !HAVE(NSURLSESSION_WEBSOCKET)
     bool m_shouldAcceptInsecureCertificatesForWebSockets { false };
+#endif
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    std::optional<int64_t> m_bytesPerSecondLimit;
 #endif
 };
 

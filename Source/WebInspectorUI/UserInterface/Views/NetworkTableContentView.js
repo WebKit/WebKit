@@ -141,15 +141,28 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._buttonsNavigationItemGroup = new WI.GroupNavigationItem([this._harImportNavigationItem, this._harExportNavigationItem, new WI.DividerNavigationItem]);
         this._buttonsNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
-        // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
+        // COMPATIBILITY (iOS 10.3): Network.setResourceCachingDisabled did not exist.
         if (InspectorBackend.hasCommand("Network.setResourceCachingDisabled")) {
             this._disableResourceCacheNavigationItem = new WI.CheckboxNavigationItem("network-disable-resource-cache", WI.UIString("Disable Caches"), WI.settings.resourceCachingDisabled.value);
+            this._disableResourceCacheNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
             this._disableResourceCacheNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._toggleDisableResourceCache, this);
 
-            this._disableResourceCacheNavigationItemGroup = new WI.GroupNavigationItem([this._disableResourceCacheNavigationItem, new WI.DividerNavigationItem]);
-            this._disableResourceCacheNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
-
             WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
+        }
+
+        // COMPATIBILITY (iOS 15.4): Network.setEmulatedConditions did not exist.
+        if (WI.settings.experimentalEnableNetworkEmulatedCondition.value && InspectorBackend.hasCommand("Network.setEmulatedConditions")) {
+            let networkConditionScopeBarItems = [];
+            for (let networkCondition of Object.values(WI.NetworkManager.EmulatedCondition)) {
+                let scopeBarItem = new WI.ScopeBarItem("network-condition-" + networkCondition.id, networkCondition.displayName);
+                scopeBarItem.__networkCondition = networkCondition;
+                networkConditionScopeBarItems.push(scopeBarItem);
+            }
+            const shouldGroupNonExclusiveItems = true;
+            this._networkConditionScopeBar = new WI.ScopeBar("network-condition-scope-bar", networkConditionScopeBarItems, networkConditionScopeBarItems[0], shouldGroupNonExclusiveItems);
+            this._networkConditionScopeBar.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
+            this._networkConditionScopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._handleNetworkConditionSelectionChanged, this);
+            this._handleNetworkConditionSelectionChanged();
         }
 
         this._clearNetworkItemsNavigationItem = new WI.ButtonNavigationItem("clear-network-items", WI.UIString("Clear Network Items (%s)").format(WI.clearKeyboardShortcut.displayName), "Images/NavigationItemTrash.svg", 15, 15);
@@ -249,8 +262,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     get navigationItems()
     {
         let items = [];
-        if (this._disableResourceCacheNavigationItemGroup)
-            items.push(this._disableResourceCacheNavigationItemGroup);
+        if (this._disableResourceCacheNavigationItem)
+            items.push(this._disableResourceCacheNavigationItem);
+        if (this._networkConditionScopeBar)
+            items.push(this._networkConditionScopeBar);
+        if (items.length)
+            items.push(new WI.DividerNavigationItem);
         items.push(this._pathComponentsNavigationItemGroup, this._buttonsNavigationItemGroup, this._clearNetworkItemsNavigationItem);
         return items;
     }
@@ -302,7 +319,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._hidePopover();
         this._hideDetailView();
 
-        // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
+        // COMPATIBILITY (iOS 10.3): Network.setResourceCachingDisabled did not exist.
         if (InspectorBackend.hasCommand("Network.setResourceCachingDisabled"))
             WI.settings.resourceCachingDisabled.removeEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
 
@@ -1691,6 +1708,15 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     _handleClearNetworkOnNavigateChanged(event)
     {
         this._updateOtherFiltersNavigationItemState();
+    }
+
+    _handleNetworkConditionSelectionChanged(event)
+    {
+        let selectedItems = this._networkConditionScopeBar.selectedItems;
+        if (!selectedItems.length)
+            return;
+
+        WI.networkManager.emulatedCondition = selectedItems[0].__networkCondition;
     }
 
     _resourceCachingDisabledSettingChanged()

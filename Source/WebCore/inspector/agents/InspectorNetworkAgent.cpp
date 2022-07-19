@@ -908,6 +908,10 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::disable()
 
     setResourceCachingDisabled(false);
 
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    setEmulatedConditions(std::nullopt);
+#endif
+
     return { };
 }
 
@@ -1383,6 +1387,21 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithError(c
     loader.didFail(ResourceError(InspectorNetworkAgent::errorDomain(), 0, loader.url(), "Blocked by Web Inspector"_s, toResourceErrorType(errorType)));
     return { };
 }
+
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+Protocol::ErrorStringOr<void> InspectorNetworkAgent::setEmulatedConditions(std::optional<int>&& bytesPerSecondLimit)
+{
+    if (bytesPerSecondLimit && *bytesPerSecondLimit < 0)
+        return makeUnexpected("bytesPerSecond cannot be negative"_s);
+
+    if (setEmulatedConditionsInternal(WTFMove(bytesPerSecondLimit)))
+        return { };
+
+    return makeUnexpected("Not supported"_s);
+}
+
+#endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
 bool InspectorNetworkAgent::shouldTreatAsText(const String& mimeType)
 {

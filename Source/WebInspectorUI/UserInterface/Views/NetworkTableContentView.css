@@ -33,6 +33,16 @@
     --scope-bar-background-opacity-override: 0.5;
 }
 
+.network-condition-scope-bar.default-item-selected:not(:hover) {
+    --scope-bar-text-color-override: var(--text-color);
+    --scope-bar-background-color-override: transparent;
+    --scope-bar-border-color-override: var(--border-color);
+}
+
+.network-condition-scope-bar.default-item-selected:hover {
+    --scope-bar-background-opacity-override: 0.5;
+}
+
 .network-other-filters-button > .glyph {
     width: 16px;
     height: 16px;

@@ -2105,4 +2105,13 @@ void WebsiteDataStore::openWindowFromServiceWorker(const String& urlString, cons
     m_client->openWindowFromServiceWorker(urlString, serviceWorkerOrigin, WTFMove(innerCallback));
 }
 
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+void WebsiteDataStore::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
+{
+    networkProcess().setEmulatedConditions(sessionID(), WTFMove(bytesPerSecondLimit));
+}
+
+#endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
 }

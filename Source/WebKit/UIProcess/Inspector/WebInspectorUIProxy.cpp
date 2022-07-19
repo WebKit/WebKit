@@ -698,6 +698,16 @@ void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorClien
     ASSERT_NOT_REACHED();
 }
 
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+void WebInspectorUIProxy::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
+{
+    if (m_inspectedPage)
+        m_inspectedPage->websiteDataStore().setEmulatedConditions(WTFMove(bytesPerSecondLimit));
+}
+
+#endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
 void WebInspectorUIProxy::setDiagnosticLoggingAvailable(bool available)
 {
 #if ENABLE(INSPECTOR_TELEMETRY)

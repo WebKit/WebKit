@@ -39,15 +39,20 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
             this._contentBrowser.navigationBar.insertNavigationItem(filterNavigationItems[i], i);
 
         this.addSubview(this._contentBrowser);
+
+        WI.networkManager.addEventListener(WI.NetworkManager.Event.EmulatedConditionChanged, this._handleEmulatedConditionChanged, this);
     }
 
     // Static
 
     static tabInfo()
     {
+        let hasEmulatedCondition = WI.networkManager.emulatedCondition !== WI.NetworkManager.EmulatedCondition.None;
+
         return {
             identifier: NetworkTabContentView.Type,
-            image: "Images/Network.svg",
+            image: hasEmulatedCondition ? "Images/Warning.svg" : "Images/Network.svg",
+            title: hasEmulatedCondition ? WI.UIString("Network throttling is enabled") : "",
             displayName: WI.UIString("Network", "Network Tab Name", "Name of Network Tab"),
         };
     }
@@ -127,6 +132,16 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
         }
 
         WI.FileUtilities.readJSON(files, (result) => this._networkTableContentView.processHAR(result));
+    }
+
+    // Private
+
+    _handleEmulatedConditionChanged(event)
+    {
+        let hasEmulatedCondition = WI.networkManager.emulatedCondition !== WI.NetworkManager.EmulatedCondition.None;
+
+        this.tabBarItem.image = hasEmulatedCondition ? "Images/Warning.svg" : "Images/Network.svg";
+        this.tabBarItem.title = hasEmulatedCondition ? WI.UIString("Network throttling is enabled") : "";
     }
 };
 

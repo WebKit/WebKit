@@ -241,6 +241,20 @@ void WebInspectorClient::setDeveloperPreferenceOverride(WebCore::InspectorClient
         m_page->inspector()->setDeveloperPreferenceOverride(developerPreference, overrideValue);
 }
 
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+bool WebInspectorClient::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
+{
+    if (m_page->inspector()) {
+        m_page->inspector()->setEmulatedConditions(WTFMove(bytesPerSecondLimit));
+        return true;
+    }
+
+    return false;
+}
+
+#endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
 void WebInspectorClient::willMoveToPage(PageOverlay&, Page* page)
 {
     if (page)

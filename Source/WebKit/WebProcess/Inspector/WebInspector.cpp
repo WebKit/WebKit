@@ -267,6 +267,15 @@ void WebInspector::setDeveloperPreferenceOverride(InspectorClient::DeveloperPref
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::SetDeveloperPreferenceOverride(developerPreference, overrideValue), m_page->identifier());
 }
 
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+void WebInspector::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::SetEmulatedConditions(WTFMove(bytesPerSecondLimit)), m_page->identifier());
+}
+
+#endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
 bool WebInspector::canAttachWindow()
 {
     if (!m_page->corePage())

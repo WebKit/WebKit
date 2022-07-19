@@ -72,6 +72,10 @@ public:
     };
     virtual void setDeveloperPreferenceOverride(DeveloperPreference, std::optional<bool>) { }
 
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    virtual bool setEmulatedConditions(std::optional<int64_t>&& /* bytesPerSecondLimit */) { return false; }
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
     virtual bool allowRemoteInspectionToPageDirectly() const { return false; }
 #endif

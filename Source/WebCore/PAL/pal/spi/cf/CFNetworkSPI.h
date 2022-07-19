@@ -300,6 +300,9 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #if ENABLE(SERVER_PRECONNECT)
 @property (nonatomic, assign) BOOL _preconnect;
 #endif
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+@property (readwrite, assign) int64_t _bytesPerSecondLimit;
+#endif
 @end
 
 @interface NSURLSessionTaskTransactionMetrics ()

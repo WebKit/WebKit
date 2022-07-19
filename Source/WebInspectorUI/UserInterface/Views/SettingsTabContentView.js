@@ -396,6 +396,14 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             experimentalSettingsView.addSeparator();
         }
 
+        let hasNetworkEmulatedCondition = InspectorBackend.hasCommand("Network.setEmulatedConditions");
+        if (hasNetworkEmulatedCondition) {
+            let networkGroup = experimentalSettingsView.addGroup(WI.UIString("Network:"));
+            networkGroup.addSetting(WI.settings.experimentalEnableNetworkEmulatedCondition, WI.UIString("Allow throttling", "Label for checkbox that controls whether network throttling functionality is enabled."));
+
+            experimentalSettingsView.addSeparator();
+        }
+
         let diagnosticsGroup = experimentalSettingsView.addGroup(WI.UIString("Diagnostics:", "Diagnostics: @ Experimental Settings", "Category label for experimental settings related to Web Inspector diagnostics."));
         diagnosticsGroup.addSetting(WI.settings.experimentalAllowInspectingInspector, WI.UIString("Allow Inspecting Web Inspector", "Allow Inspecting Web Inspector @ Experimental Settings", "Label for setting that allows the user to inspect the Web Inspector user interface."));
         experimentalSettingsView.addSeparator();
@@ -420,6 +428,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);
             listenForChange(WI.settings.experimentalEnableStylesJumpToVariableDeclaration);
         }
+
+        if (hasNetworkEmulatedCondition)
+            listenForChange(WI.settings.experimentalEnableNetworkEmulatedCondition);
 
         this._createReferenceLink(experimentalSettingsView);
 

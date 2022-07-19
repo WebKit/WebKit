@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    NetworkAgent.setResourceCachingDisabled(true);
+    InspectorTest.evaluateInPage(`window.internals?.clearMemoryCache()`);
+
+    let suite = InspectorTest.createAsyncSuite("Network.setEmulatedConditions");
+
+    suite.addTestCase({
+        name: "Network.setEmulatedConditions.bytesPerSecondLimit.Slow",
+        description: "Check that providing a small bytesPerSecondLimit prevents resources from loading quickly.",
+        async test() {
+            InspectorTest.log("Limiting to 1bps...");
+            await NetworkAgent.setEmulatedConditions(1);
+
+            InspectorTest.log("Triggering load...");
+            let [resourceWasAddedEvent] = await Promise.all([
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                InspectorTest.evaluateInPage(`fetch("/resources/square100.png")`),
+            ])
+            let {resource} = resourceWasAddedEvent.data;
+
+            InspectorTest.log("Waiting 100ms...");
+            await Promise.delay(100);
+
+            InspectorTest.expectFalse(resource.finished, "Should not have finished loading.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Network.setEmulatedConditions.bytesPerSecondLimit.Negative",
+        description: "Check that providing a negative bytesPerSecondLimit throws.",
+        async test() {
+            await InspectorTest.expectException(async () => {
+                await NetworkAgent.setEmulatedConditions(-1);
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for `Network.setEmulatedConditions`.</p>
+</body>
+</html>

@@ -422,15 +422,19 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     if (parameters.networkActivityTracker)
         m_task.get()._nw_activity = parameters.networkActivityTracker->getPlatformObject();
 #endif
+
+    m_session->registerNetworkDataTask(*this);
 }
 
 NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
 {
-    if (!m_task || !m_sessionWrapper)
-        return;
+    if (m_task && m_sessionWrapper) {
+        auto dataTask = m_sessionWrapper->dataTaskMap.take([m_task taskIdentifier]);
+        RELEASE_ASSERT(dataTask == this);
+    }
 
-    RELEASE_ASSERT(m_sessionWrapper->dataTaskMap.get([m_task taskIdentifier]) == this);
-    m_sessionWrapper->dataTaskMap.remove([m_task taskIdentifier]);
+    if (m_session)
+        m_session->unregisterNetworkDataTask(*this);
 }
 
 void NetworkDataTaskCocoa::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
@@ -764,6 +768,15 @@ void NetworkDataTaskCocoa::setPriority(WebCore::ResourceLoadPriority priority)
         return;
     m_task.get().priority = toNSURLSessionTaskPriority(priority);
 }
+
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+void NetworkDataTaskCocoa::setEmulatedConditions(const std::optional<int64_t>& bytesPerSecondLimit)
+{
+    m_task.get()._bytesPerSecondLimit = bytesPerSecondLimit.value_or(0);
+}
+
+#endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
 void NetworkDataTaskCocoa::checkTAO(const WebCore::ResourceResponse& response)
 {

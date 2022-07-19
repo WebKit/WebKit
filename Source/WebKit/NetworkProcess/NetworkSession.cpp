@@ -565,6 +565,10 @@ std::unique_ptr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyI
 void NetworkSession::registerNetworkDataTask(NetworkDataTask& task)
 {
     m_dataTaskSet.add(task);
+
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    task.setEmulatedConditions(m_bytesPerSecondLimit);
+#endif
 }
 
 void NetworkSession::unregisterNetworkDataTask(NetworkDataTask& task)
@@ -697,5 +701,17 @@ void NetworkSession::clearCacheEngine()
 {
     m_cacheEngine = nullptr;
 }
+
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
+{
+    m_bytesPerSecondLimit = WTFMove(bytesPerSecondLimit);
+
+    for (auto& task : m_dataTaskSet)
+        task.setEmulatedConditions(m_bytesPerSecondLimit);
+}
+
+#endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
 } // namespace WebKit
