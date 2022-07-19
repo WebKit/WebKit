@@ -1058,3 +1058,18 @@ class Git(Scm):
         while line:
             yield line.rstrip()
             line = proc.stdout.readline()
+
+    def files_changed(self, argument=None):
+        if not argument:
+            return self.modified()
+        commit = self.find(argument, include_log=False, include_identifier=False)
+        if not commit:
+            raise ValueError("'{}' is not an argument recognized by git".format(argument))
+
+        output = run(
+            [self.executable(), 'show', commit.hash, '--pretty=', '--name-only'],
+            cwd=self.root_path, capture_output=True, encoding='utf-8',
+        )
+        if output.returncode:
+            raise ValueError("'{}' is not an argument recognized by git".format(argument))
+        return output.stdout.rstrip().splitlines()

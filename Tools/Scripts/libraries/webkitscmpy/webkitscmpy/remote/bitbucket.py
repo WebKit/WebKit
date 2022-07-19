@@ -525,3 +525,16 @@ class BitBucket(Scm):
         if not commit_data:
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
         return self.commit(hash=commit_data['id'], include_log=include_log, include_identifier=include_identifier)
+
+    def files_changed(self, argument=None):
+        if not argument:
+            return self.modified()
+        commit = self.find(argument, include_log=False, include_identifier=False)
+        if not commit:
+            raise ValueError("'{}' is not an argument recognized by git".format(argument))
+
+        return [
+            change.get('path', {}).get('toString')
+            for change in self.request('commits/{}/changes'.format(commit.hash))
+            if change.get('path', {}).get('toString')
+        ]

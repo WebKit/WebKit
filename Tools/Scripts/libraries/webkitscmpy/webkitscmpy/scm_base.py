@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -190,3 +190,6 @@ class ScmBase(object):
             sys.stderr.write(message + '\n')
         else:
             log.log(level, message)
+
+    def files_changed(self, argument=None):
+        raise NotImplementedError()

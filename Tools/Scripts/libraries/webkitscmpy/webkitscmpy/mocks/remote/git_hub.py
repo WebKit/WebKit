@@ -213,6 +213,8 @@ class GitHub(bmocks.GitHub):
                 'url': 'https://{}/git/commits/{}'.format(self.api_remote, commit.hash),
             }, 'url': 'https://{}/commits/{}'.format(self.api_remote, commit.hash),
             'html_url': 'https://{}/commit/{}'.format(self.remote, commit.hash),
+            # FIXME: All mock commits have the same set of files changed with this implementation
+            'files': [dict(filename=name) for name in ('Source/main.cpp', 'Source/main.h')],
         }, url=url)
 
     def _compare_response(self, url, ref_a, ref_b):
