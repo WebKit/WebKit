@@ -180,3 +180,10 @@ unix/ @WebKit/glib-reviewers
 xdg/ @WebKit/glib-reviewers
 wpe/ @WebKit/glib-reviewers @zdobersek
 **/wpe/qt/ @philn
+
+/LayoutTests/platform/glib/
+/LayoutTests/platform/gtk/
+/LayoutTests/platform/gtk4/
+/LayoutTests/platform/gtk-wayland/
+/LayoutTests/platform/gtk-wk2/
+/LayoutTests/platform/wpe/
