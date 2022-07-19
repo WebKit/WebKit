@@ -4842,6 +4842,13 @@
    },
    {
       "emails" : [
+         "m_dubet@apple.com"
+      ],
+      "github" : "mdubet",
+      "name" : "Matthieu Dubet"
+   },
+   {
+      "emails" : [
          "mvujovic@adobe.com",
          "maxvujovic@gmail.com"
       ],
