@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+</style>
+<video src="../media/content/counting.mp4" controls></video>
+<pre id="results"></pre>
+<script src="../media/media-file.js"></script>
+<script src="../media/video-test.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    waitForEvent('canplaythrough', function () {
+        if (window.internals)
+            results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+        
+        if (window.testRunner)
+            testRunner.notifyDone();
+    } );
+</script>
+</html>

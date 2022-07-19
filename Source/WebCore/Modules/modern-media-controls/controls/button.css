@@ -106,10 +106,9 @@ button.small-center {
     height: 31px !important;
 }
 
-button.center > .background-tint,
-button.small-center > .background-tint,
-button.center > .background-tint > div,
-button.small-center > .background-tint > div {
+button:is(.center, .small-center),
+button:is(.center, .small-center) > .background-tint,
+button:is(.center, .small-center) > .background-tint > div {
     border-radius: 50%;
 }
 
