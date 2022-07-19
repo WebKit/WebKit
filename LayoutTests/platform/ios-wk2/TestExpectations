@@ -2222,3 +2222,5 @@ webkit.org/b/242515 [ arm64 ] compositing/reflections/mask-and-reflection.html [
 webkit.org/b/242812 [ Release arm64 ] js/dom/Promise-reject-large-string.html [ Pass Failure ]
 
 webkit.org/b/241205 [ Release arm64 ] fast/forms/textfield-outline.html [ Pass Failure ]
+
+webkit.org/b/242904 [ Debug ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
