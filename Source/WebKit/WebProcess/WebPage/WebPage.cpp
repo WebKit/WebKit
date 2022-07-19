@@ -402,7 +402,7 @@
 
 static void adjustCoreGraphicsForCaptivePortal()
 {
-#if ENABLE(LOCKDOWN_MODE_API)
+#if HAVE(LOCKDOWN_MODE_PDF_ADDITIONS)
     CGEnterLockdownModeForPDF();
     CGEnterLockdownModeForFonts();
 #endif
