@@ -84,6 +84,7 @@ RtpParameters RestoreEncodingLayers(
       result.encodings.push_back(encoding);
       continue;
     }
+    RTC_CHECK_LT(index, parameters.encodings.size());
     result.encodings.push_back(parameters.encodings[index++]);
   }
   return result;
