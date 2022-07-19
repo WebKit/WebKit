@@ -158,6 +158,7 @@ public:
     ScrollingNodeID scrollingNodeIDForChildren() const;
 
     bool hasMaskLayer() const { return m_maskLayer; }
+    bool hasChildClippingMaskLayer() const { return m_childClippingMaskLayer != nullptr; }
 
     GraphicsLayer* parentForSublayers() const;
     GraphicsLayer* childForSuperlayers() const;
@@ -322,6 +323,7 @@ private:
     void updateScrollOffset(ScrollOffset);
     void setLocationOfScrolledContents(ScrollOffset, ScrollingLayerPositionAction);
 
+    void updateChildClippingStrategy(bool needsDescendantsClippingLayer);
     void updateMaskingLayerGeometry();
     void updateRootLayerConfiguration();
     void updatePaintingPhases();
@@ -415,6 +417,7 @@ private:
     RefPtr<GraphicsLayer> m_backgroundLayer; // Only used in cases where we need to draw the background separately.
     RefPtr<GraphicsLayer> m_childContainmentLayer; // Only used if we have clipping on a stacking context with compositing children, or if the layer has a tile cache.
     RefPtr<GraphicsLayer> m_maskLayer; // Only used if we have a mask and/or clip-path.
+    RefPtr<GraphicsLayer> m_childClippingMaskLayer; // Only used if we have to clip child layers or accelerated contents with border radius or clip-path.
 
     RefPtr<GraphicsLayer> m_layerForHorizontalScrollbar;
     RefPtr<GraphicsLayer> m_layerForVerticalScrollbar;
