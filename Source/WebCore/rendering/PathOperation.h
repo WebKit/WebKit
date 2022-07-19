@@ -57,13 +57,12 @@ public:
 
     OperationType type() const { return m_type; }
     bool isSameType(const PathOperation& o) const { return o.type() == m_type; }
-
+    virtual const std::optional<Path> getPath(const FloatRect& reference = { }, FloatPoint anchor = { }, OffsetRotation rotation = { }) const = 0;
 protected:
     explicit PathOperation(OperationType type)
         : m_type(type)
     {
     }
-
     OperationType m_type;
 };
 
@@ -73,7 +72,7 @@ public:
     const String& url() const { return m_url; }
     const AtomString& fragment() const { return m_fragment; }
     const SVGElement* element() const;
-
+    const std::optional<Path> getPath(const FloatRect&, FloatPoint, OffsetRotation) const final;
 private:
     bool operator==(const PathOperation& other) const override
     {
@@ -103,6 +102,7 @@ public:
 
     void setReferenceBox(CSSBoxType referenceBox) { m_referenceBox = referenceBox; }
     CSSBoxType referenceBox() const { return m_referenceBox; }
+    const std::optional<Path> getPath(const FloatRect& reference, FloatPoint, OffsetRotation) const final { return pathForReferenceRect(reference); }
 
 private:
     bool operator==(const PathOperation& other) const override
@@ -145,7 +145,7 @@ public:
         m_path.addRoundedRect(boundingRect);
     }
     
-    const Path getPath() const { return m_path; }
+    const std::optional<Path> getPath(const FloatRect&, FloatPoint, OffsetRotation) const final { return m_path; }
     CSSBoxType referenceBox() const { return m_referenceBox; }
 
 private:
@@ -197,7 +197,6 @@ public:
         return RayPathOperation::create(WebCore::blend(m_angle, to.m_angle, context), m_size, m_isContaining);
     }
 
-    const Path pathForReferenceRect(const FloatRect& elementRect, const FloatPoint& anchor, const OffsetRotation rotation) const;
     double lengthForPath() const;
     double lengthForContainPath(const FloatRect& elementRect, double computedPathLength, const FloatPoint& anchor, const OffsetRotation rotation) const;
     
@@ -209,6 +208,7 @@ public:
     {
         m_position = position;
     }
+    const std::optional<Path> getPath(const FloatRect& referenceRect = { }, FloatPoint anchor = { }, OffsetRotation rotation = { }) const final;
 private:
     bool operator==(const PathOperation& other) const override
     {

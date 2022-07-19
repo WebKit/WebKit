@@ -31,7 +31,7 @@ namespace WebCore {
 
 class OffsetRotation {
 public:
-    OffsetRotation(bool hasAuto, float angle);
+    OffsetRotation(bool hasAuto = false, float angle = 0);
 
     bool hasAuto() const { return m_hasAuto; }
     float angle() const { return m_angle; }

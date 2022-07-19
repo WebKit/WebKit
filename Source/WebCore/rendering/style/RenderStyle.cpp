@@ -41,7 +41,6 @@
 #include "RenderBlock.h"
 #include "RenderObject.h"
 #include "RenderTheme.h"
-#include "SVGPathData.h"
 #include "ScaleTransformOperation.h"
 #include "ShadowData.h"
 #include "StyleBuilderConverter.h"
@@ -1583,23 +1582,6 @@ void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const Float
     // (implemented in unapplyTransformOrigin)
 }
 
-static std::optional<Path> getPathFromPathOperation(const FloatRect& box, const PathOperation& operation, const FloatPoint& anchor, OffsetRotation rotation)
-{
-    switch (operation.type()) {
-    case PathOperation::Shape:
-        return downcast<ShapePathOperation>(operation).pathForReferenceRect(box);
-    case PathOperation::Reference:
-        if (!downcast<ReferencePathOperation>(operation).element() || (!is<SVGPathElement>(downcast<ReferencePathOperation>(operation).element()) && !is<SVGGeometryElement>(downcast<ReferencePathOperation>(operation).element())))
-            return std::nullopt;
-        return pathFromGraphicsElement(downcast<ReferencePathOperation>(operation).element());
-    case PathOperation::Box:
-        return downcast<BoxPathOperation>(operation).getPath();
-    case PathOperation::Ray:
-        return downcast<RayPathOperation>(operation).pathForReferenceRect(box, anchor, rotation);
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 static PathTraversalState getTraversalStateAtDistance(const Path& path, const Length& distance)
 {
     auto pathLength = path.length();
@@ -1630,7 +1612,7 @@ void RenderStyle::applyMotionPathTransform(TransformationMatrix& transform, cons
         anchor = floatPointForLengthPoint(offsetAnchor(), boundingBox.size()) + boundingBox.location();
     
     // Shift element to the point on path specified by offset-path and offset-distance.
-    auto path = getPathFromPathOperation(boundingBox, *offsetPath(), anchor, offsetRotate());
+    auto path = offsetPath()->getPath(boundingBox, anchor, offsetRotate());
     if (!path)
         return;
     auto traversalState = getTraversalStateAtDistance(*path, offsetDistance());

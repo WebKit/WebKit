@@ -28,6 +28,8 @@
 
 #include "GeometryUtilities.h"
 #include "SVGElement.h"
+#include "SVGPathData.h"
+#include "SVGPathElement.h"
 
 namespace WebCore {
 
@@ -48,6 +50,13 @@ ReferencePathOperation::ReferencePathOperation(const String& url, const AtomStri
 const SVGElement* ReferencePathOperation::element() const
 {
     return m_element.get();
+}
+
+const std::optional<Path> ReferencePathOperation::getPath(const FloatRect&, FloatPoint, OffsetRotation) const
+{
+    if (!is<SVGPathElement>(m_element.get()) && !is<SVGGeometryElement>(m_element.get()))
+        return std::nullopt;
+    return pathFromGraphicsElement(m_element.get());
 }
 
 double RayPathOperation::lengthForPath() const
@@ -118,14 +127,14 @@ double RayPathOperation::lengthForContainPath(const FloatRect& elementRect, doub
     return computedPathLength;
 }
 
-const Path RayPathOperation::pathForReferenceRect(const FloatRect& elementRect, const FloatPoint& anchor, const OffsetRotation rotation) const
+const std::optional<Path> RayPathOperation::getPath(const FloatRect& referenceRect, FloatPoint anchor, OffsetRotation rotation) const
 {
     Path path;
     if (m_containingBlockBoundingRect.isZero())
-        return path;
+        return std::nullopt;
     double length = lengthForPath();
     if (m_isContaining)
-        length = lengthForContainPath(elementRect, length, anchor, rotation);
+        length = lengthForContainPath(referenceRect, length, anchor, rotation);
     auto radians = deg2rad(toPositiveAngle(m_angle) - 90.0);
     auto point = FloatPoint(std::cos(radians) * length, std::sin(radians) * length);
     path.addLineTo(point);
