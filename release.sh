@@ -41,8 +41,6 @@ if [ "$WEBKIT_RELEASE_TYPE" == "relwithdebuginfo" ]; then
 fi
 
 mkdir -p $temp
+rm -rf $temp/bun-webkit
 
 docker buildx build -f Dockerfile -t $CONTAINER_NAME --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$temp/bun-webkit .
-
-cd $temp
-tar -czvf $CONTAINER_NAME.tar.gz bun-webkit
