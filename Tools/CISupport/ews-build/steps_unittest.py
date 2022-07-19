@@ -6144,6 +6144,7 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(Canonicalize())
         self.setProperty('patch_id', '1234')
         self.setProperty('patch_committer', 'committer@webkit.org')
+        self.setProperty('remote', 'origin')
 
         gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
         fixed_time = int(time.time())
@@ -6195,6 +6196,7 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
         self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('remote', 'origin')
 
         gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
         fixed_time = int(time.time())
@@ -6246,12 +6248,71 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Canonicalized commit')
         return self.runStep()
 
+    def test_success_branch(self):
+        self.setupStep(Canonicalize())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'safari-000-branch')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('remote', 'security')
+
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        fixed_time = int(time.time())
+        date = f'{int(time.time())} {gmtoffset}'
+        time.time = lambda: fixed_time
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['/bin/sh', '-c', 'rm .git/identifiers.json || true'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'pull', 'security', 'safari-000-branch', '--rebase'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'branch', '-f', 'safari-000-branch', 'eng/pull-request-branch'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'checkout', 'safari-000-branch'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                env=self.ENV,
+                timeout=300,
+                command=[
+                    'git', 'filter-branch', '-f',
+                    '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}';GIT_COMMITTER_NAME='WebKit Committer';GIT_COMMITTER_EMAIL='committer@webkit.org'".format(date=date),
+                    'HEAD...HEAD~1',
+                ],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Canonicalized commit')
+        return self.runStep()
+
     def test_success_no_rebase(self):
         self.setupStep(Canonicalize(rebase_enabled=False))
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
         self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('remote', 'origin')
 
         gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
         fixed_time = int(time.time())
@@ -6291,6 +6352,7 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
         self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('remote', 'origin')
 
         self.expectRemoteCommands(
             ExpectShell(

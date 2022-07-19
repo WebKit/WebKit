@@ -5110,10 +5110,11 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
 
         base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
         head_ref = self.getProperty('github.head.ref', None)
+        remote = self.getProperty('remote', 'origin')
 
         commands = [self.shell_command('rm .git/identifiers.json || {}'.format(self.shell_exit_0()))]
         if self.rebase_enabled:
-            commands += [['git', 'pull', 'origin', base_ref, '--rebase']]
+            commands += [['git', 'pull', remote, base_ref, '--rebase']]
             if head_ref:
                 commands += [['git', 'branch', '-f', base_ref, head_ref]]
             commands += [['git', 'checkout', base_ref]]
