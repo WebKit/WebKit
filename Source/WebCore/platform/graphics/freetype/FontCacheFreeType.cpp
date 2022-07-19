@@ -239,16 +239,17 @@ struct FallbackFontDescriptionKeyHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-using SystemFallbackCache = HashMap<FallbackFontDescriptionKey, std::unique_ptr<CachedFontSet>, FallbackFontDescriptionKeyHash, SimpleClassHashTraits<FallbackFontDescriptionKey>>;
-static SystemFallbackCache& systemFallbackCache()
+using SystemFallbackFontSetCache = HashMap<FallbackFontDescriptionKey, std::unique_ptr<CachedFontSet>, FallbackFontDescriptionKeyHash, SimpleClassHashTraits<FallbackFontDescriptionKey>>;
+static SystemFallbackFontSetCache& systemFallbackFontSetCache()
 {
-    static NeverDestroyed<SystemFallbackCache> cache;
+    // FIXME: This should be moved to FontCache since it can be accessed from worker threads.
+    static NeverDestroyed<SystemFallbackFontSetCache> cache;
     return cache.get();
 }
 
 RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font&, IsForPlatformFont, PreferColoredFont preferColoredFont, const UChar* characters, unsigned length)
 {
-    auto addResult = systemFallbackCache().ensure(FallbackFontDescriptionKey(description, preferColoredFont), [&description, preferColoredFont]() -> std::unique_ptr<CachedFontSet> {
+    auto addResult = systemFallbackFontSetCache().ensure(FallbackFontDescriptionKey(description, preferColoredFont), [&description, preferColoredFont]() -> std::unique_ptr<CachedFontSet> {
         RefPtr<FcPattern> pattern = adoptRef(FcPatternCreate());
         FcPatternAddBool(pattern.get(), FC_SCALABLE, FcTrue);
 #ifdef FC_COLOR
@@ -284,7 +285,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 
 void FontCache::platformPurgeInactiveFontData()
 {
-    systemFallbackCache().clear();
+    systemFallbackFontSetCache().clear();
 }
 
 static Vector<String> patternToFamilies(FcPattern& pattern)

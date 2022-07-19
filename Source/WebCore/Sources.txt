@@ -2122,6 +2122,7 @@ platform/graphics/SourceBufferPrivate.cpp
 platform/graphics/SourceImage.cpp
 platform/graphics/StringTruncator.cpp
 platform/graphics/SystemFontDatabase.cpp
+platform/graphics/SystemFallbackFontCache.cpp
 platform/graphics/TextRun.cpp
 platform/graphics/TextTrackRepresentation.cpp
 platform/graphics/TrackBuffer.cpp

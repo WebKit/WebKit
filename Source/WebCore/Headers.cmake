@@ -1614,6 +1614,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/SourceBufferPrivateClient.h
     platform/graphics/SourceImage.h
     platform/graphics/StringTruncator.h
+    platform/graphics/SystemFallbackFontCache.h
     platform/graphics/SystemImage.h
     platform/graphics/TabSize.h
     platform/graphics/TextRun.h
