@@ -156,9 +156,6 @@ public:
 
     WEBCORE_EXPORT RenderLayer* enclosingLayer() const;
 
-    // Scrolling is a RenderBox concept, however some code just cares about recursively scrolling our enclosing ScrollableArea(s).
-    WEBCORE_EXPORT bool scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions&);
-
     WEBCORE_EXPORT RenderBox& enclosingBox() const;
     RenderBoxModelObject& enclosingBoxModelObject() const;
     RenderBox* enclosingScrollableContainerForSnapping() const;

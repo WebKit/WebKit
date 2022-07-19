@@ -2502,24 +2502,24 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
 
     Position start = m_selection.start();
     ASSERT(start.deprecatedNode());
-    if (start.deprecatedNode() && start.deprecatedNode()->renderer()) {
+    if (!start.deprecatedNode() || !start.deprecatedNode()->renderer())
+        return;
+
 #if PLATFORM(IOS_FAMILY)
-        if (RenderLayer* layer = start.deprecatedNode()->renderer()->enclosingLayer()) {
-            if (!m_scrollingSuppressCount) {
-                layer->scrollRectToVisible(rect, insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior});
-                updateAppearance();
-                if (m_document->page())
-                    m_document->page()->chrome().client().notifyRevealedSelectionByScrollingFrame(*m_document->frame());
-            }
-        }
-#else
-        // FIXME: This code only handles scrolling the startContainer's layer, but
-        // the selection rect could intersect more than just that.
-        // See <rdar://problem/4799899>.
-        if (start.deprecatedNode()->renderer()->scrollRectToVisible(rect, insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior}))
-            updateAppearance();
+    if (m_scrollingSuppressCount)
+        return;
 #endif
-    }
+
+    // FIXME: This code only handles scrolling the startContainer's layer, but
+    // the selection rect could intersect more than just that.
+    // See <rdar://problem/4799899>.
+    FrameView::scrollRectToVisible(rect, *start.deprecatedNode()->renderer(), insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior });
+    updateAppearance();
+
+#if PLATFORM(IOS_FAMILY)
+    if (m_document->page())
+        m_document->page()->chrome().client().notifyRevealedSelectionByScrollingFrame(*m_document->frame());
+#endif
 }
 
 void FrameSelection::setSelectionFromNone()

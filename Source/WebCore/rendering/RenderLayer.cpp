@@ -121,7 +121,6 @@
 #include "RenderView.h"
 #include "SVGNames.h"
 #include "ScaleTransformOperation.h"
-#include "ScriptDisallowedScope.h"
 #include "ScrollAnimator.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "Scrollbar.h"
@@ -143,8 +142,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
-
-#define MIN_INTERSECT_FOR_REVEAL 32
 
 namespace WebCore {
 
@@ -566,16 +563,6 @@ static bool canCreateStackingContext(const RenderLayer& layer)
         || !renderer.style().hasAutoUsedZIndex()
         || (renderer.style().willChange() && renderer.style().willChange()->canCreateStackingContext())
         || layer.establishesTopLayer();
-}
-
-static void expandScrollRectToVisibleTargetRectToIncludeScrollPadding(RenderBox* renderBox, const LayoutRect& viewRect, LayoutRect& targetRect)
-{
-    if (!renderBox)
-        return;
-    // scroll-padding applies to the scroll container, but expand the rectangle that we want to expose in order
-    // simulate padding the scroll container. This rectangle is passed up the tree of scrolling elements to
-    // ensure that the padding on this scroll container is maintained.
-    targetRect.expand(renderBox->scrollPaddingForViewportRect(viewRect));
 }
 
 bool RenderLayer::shouldBeNormalFlowOnly() const
@@ -2489,22 +2476,7 @@ LayoutSize RenderLayer::offsetFromAncestor(const RenderLayer* ancestorLayer, Col
     return toLayoutSize(convertToLayerCoords(ancestorLayer, LayoutPoint(), adjustForColumns));
 }
 
-static inline bool frameElementAndViewPermitScroll(HTMLFrameElementBase* frameElementBase, FrameView& frameView)
-{
-    // If scrollbars aren't explicitly forbidden, permit scrolling.
-    if (frameElementBase && frameElementBase->scrollingMode() != ScrollbarMode::AlwaysOff)
-        return true;
-
-    // If scrollbars are forbidden, user initiated scrolls should obviously be ignored.
-    if (frameView.wasScrolledByUser())
-        return false;
-
-    // Forbid autoscrolls when scrollbars are off, but permits other programmatic scrolls,
-    // like navigation to an anchor.
-    return !frameView.frame().eventHandler().autoscrollInProgress();
-}
-
-bool RenderLayer::allowsCurrentScroll() const
+bool RenderLayer::shouldTryToScrollForScrollIntoView() const
 {
     if (!renderer().hasNonVisibleOverflow())
         return false;
@@ -2527,251 +2499,10 @@ bool RenderLayer::allowsCurrentScroll() const
     return box.hasPotentiallyScrollableOverflow() && (box.hasHorizontalOverflow() || box.hasVerticalOverflow());
 }
 
-void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions& options)
-{
-    LOG_WITH_STREAM(Scrolling, stream << "Layer " << this << " scrollRectToVisible " << absoluteRect);
-
-    LayoutRect newRect = absoluteRect;
-    FrameView& frameView = renderer().view().frameView();
-    auto* parentLayer = enclosingContainingBlockLayer(CrossFrameBoundaries::No);
-
-    auto scrollPositionChangeOptionsForElement = [this, options](Element* element)
-    {
-        auto scrollPositionOptions = ScrollPositionChangeOptions::createProgrammatic();
-        if (!renderer().frame().eventHandler().autoscrollInProgress() && element && useSmoothScrolling(options.behavior, element))
-            scrollPositionOptions.animated = ScrollIsAnimated::Yes;
-        return scrollPositionOptions;
-    };
-
-    if (allowsCurrentScroll()) {
-        auto* scrollableArea = ensureLayerScrollableArea();
-
-        // Don't scroll to reveal an overflow layer that is restricted by the -webkit-line-clamp property.
-        // This will prevent us from revealing text hidden by the slider in Safari RSS.
-        RenderBox* box = renderBox();
-        ASSERT(box);
-        LayoutRect localExposeRect(box->absoluteToLocalQuad(FloatQuad(FloatRect(absoluteRect))).boundingBox());
-
-        // localExposedRect is now the absolute rect in local coordinates, but relative to the
-        // border edge. Make the rectangle relative to the scrollable area.
-        localExposeRect.moveBy(-LayoutPoint(box->borderLeft(), box->borderTop()));
-
-        if (box->shouldPlaceVerticalScrollbarOnLeft()) {
-            // For `direction: rtl; writing-mode: horizontal-{tb,bt}` and `writing-mode: vertical-rl`
-            // boxes, the scroll bar is on the left side. The visible rect starts from the right side
-            // of the scroll bar. So the x of localExposeRect should start from the same position too.
-            localExposeRect.moveBy(LayoutPoint(-scrollableArea->verticalScrollbarWidth(), 0));
-        }
-        LayoutRect layerBounds(0_lu, 0_lu, box->clientWidth(), box->clientHeight());
-        expandScrollRectToVisibleTargetRectToIncludeScrollPadding(box, layerBounds, localExposeRect);
-        LayoutRect revealRect = getRectToExpose(layerBounds, localExposeRect, insideFixed, options.alignX, options.alignY);
-
-        if (auto result = scrollableArea->updateScrollPosition(scrollPositionChangeOptionsForElement(box->element()), revealRect, localExposeRect))
-            newRect = result.value();
-    } else if (!parentLayer) {
-        HTMLFrameOwnerElement* ownerElement = renderer().document().ownerElement();
-
-        if (ownerElement && ownerElement->renderer()) {
-            HTMLFrameElementBase* frameElementBase = nullptr;
-
-            if (is<HTMLFrameElementBase>(*ownerElement))
-                frameElementBase = downcast<HTMLFrameElementBase>(ownerElement);
-
-            if (frameElementAndViewPermitScroll(frameElementBase, frameView)) {
-                // If this assertion fires we need to protect the ownerElement from being destroyed.
-                ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-
-                LayoutRect viewRect = frameView.visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
-
-                auto* element = ownerElement->contentDocument() ? ownerElement->contentDocument()->documentElement() : nullptr;
-                RenderBox* renderer = element ? element->renderBox() : nullptr;
-                expandScrollRectToVisibleTargetRectToIncludeScrollPadding(renderer, viewRect, newRect);
-
-                LayoutRect exposeRect = getRectToExpose(viewRect, newRect, insideFixed, options.alignX, options.alignY);
-                auto scrollPosition = roundedIntPoint(exposeRect.location());
-
-                scrollPosition = frameView.constrainedScrollPosition(scrollPosition);
-
-                // FIXME: Should we use contentDocument()->scrollingElement()?
-                // See https://bugs.webkit.org/show_bug.cgi?id=205059
-                frameView.setScrollPosition(scrollPosition, scrollPositionChangeOptionsForElement(element));
-
-                if (options.shouldAllowCrossOriginScrolling == ShouldAllowCrossOriginScrolling::Yes || frameView.safeToPropagateScrollToParent()) {
-                    if (auto* enclosingLayer = ownerElement->renderer()->enclosingLayer())
-                        parentLayer = enclosingLayer->enclosingScrollableLayer(IncludeSelfOrNot::IncludeSelf, CrossFrameBoundaries::No);
-                    // Convert the rect into the coordinate space of the parent frame's document.
-                    newRect = frameView.contentsToContainingViewContents(enclosingIntRect(newRect));
-                    insideFixed = false; // FIXME: ideally need to determine if this <iframe> is inside position:fixed.
-                } else
-                    parentLayer = nullptr;
-            }
-        } else {
-            if (options.revealMode == SelectionRevealMode::RevealUpToMainFrame && frameView.frame().isMainFrame())
-                return;
-
-            if (options.revealMode == SelectionRevealMode::DelegateMainFrameScroll && frameView.frame().isMainFrame()) {
-                page().chrome().scrollMainFrameToRevealRect(snappedIntRect(absoluteRect));
-                return;
-            }
-
-            auto minScrollPosition = frameView.minimumScrollPosition();
-            auto maxScrollPosition = frameView.maximumScrollPosition();
-
-#if !PLATFORM(IOS_FAMILY)
-            LayoutRect viewRect = frameView.visibleContentRect();
-#else
-            // FIXME: ContentInsets should be taken care of in UI process side. webkit.org/b/199682
-            // To do that, getRectToExpose needs to return the additional scrolling to do beyond content rect.
-            LayoutRect viewRect = frameView.viewRectExpandedByContentInsets();
-
-            // FIXME: webkit.org/b/199683 FrameView::visibleContentRect is wrong when content insets are present
-            maxScrollPosition = frameView.scrollPositionFromOffset(ScrollPosition(frameView.totalContentsSize() - flooredIntSize(viewRect.size())));
-
-            auto contentInsets = page().contentInsets();
-            minScrollPosition.move(-contentInsets.left(), -contentInsets.top());
-            maxScrollPosition.move(contentInsets.right(), contentInsets.bottom());
-#endif
-            // Move the target rect into "scrollView contents" coordinates.
-            LayoutRect targetRect = absoluteRect;
-            targetRect.move(0, frameView.headerHeight());
-
-            auto* element = frameView.frame().document() ? frameView.frame().document()->documentElement() : nullptr;
-            RenderBox* renderer = element ? element->renderBox() : nullptr;
-            expandScrollRectToVisibleTargetRectToIncludeScrollPadding(renderer, viewRect, targetRect);
-
-            LayoutRect revealRect = getRectToExpose(viewRect, targetRect, insideFixed, options.alignX, options.alignY);
-            // Avoid scrolling to the rounded value of revealRect.location() if we don't actually need to scroll
-            if (revealRect != viewRect) {
-                // FIXME: Should we use document()->scrollingElement()?
-                // See https://bugs.webkit.org/show_bug.cgi?id=205059
-                ScrollOffset clampedScrollPosition = roundedIntPoint(revealRect.location()).constrainedBetween(minScrollPosition, maxScrollPosition);
-                frameView.setScrollPosition(clampedScrollPosition, scrollPositionChangeOptionsForElement(element));
-            }
-
-            // This is the outermost view of a web page, so after scrolling this view we
-            // scroll its container by calling Page::scrollMainFrameToRevealRect.
-            // This only has an effect on the Mac platform in applications
-            // that put web views into scrolling containers, such as Mac OS X Mail.
-            // The canAutoscroll function in EventHandler also knows about this.
-            page().chrome().scrollContainingScrollViewsToRevealRect(snappedIntRect(absoluteRect));
-        }
-    }
-    
-    if (parentLayer)
-        parentLayer->scrollRectToVisible(newRect, insideFixed, options);
-}
-
-LayoutRect RenderLayer::getRectToExpose(const LayoutRect& visibleRect, const LayoutRect& exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const
-{
-    FrameView& frameView = renderer().view().frameView();
-    if (renderer().isRenderView() && insideFixed) {
-        // If the element is inside position:fixed and we're not scaled, no amount of scrolling is going to move things around.
-        if (frameView.frameScaleFactor() == 1)
-            return visibleRect;
-
-        if (renderer().settings().visualViewportEnabled()) {
-            // exposeRect is in absolute coords, affected by page scale. Unscale it.
-            LayoutRect unscaledExposeRect = exposeRect;
-            unscaledExposeRect.scale(1 / frameView.frameScaleFactor());
-            unscaledExposeRect.move(0, -frameView.headerHeight());
-
-            // These are both in unscaled coordinates.
-            LayoutRect layoutViewport = frameView.layoutViewportRect();
-            LayoutRect visualViewport = frameView.visualViewportRect();
-
-            // The rect to expose may be partially offscreen, which we can't do anything about with position:fixed.
-            unscaledExposeRect.intersect(layoutViewport);
-            // Make sure it's not larger than the visual viewport; if so, we'll just move to the top left.
-            unscaledExposeRect.setSize(unscaledExposeRect.size().shrunkTo(visualViewport.size()));
-
-            // Compute how much we have to move the visualViewport to reveal the part of the layoutViewport that contains exposeRect.
-            LayoutRect requiredVisualViewport = getRectToExpose(visualViewport, unscaledExposeRect, false, alignX, alignY);
-            // Scale it back up.
-            requiredVisualViewport.scale(frameView.frameScaleFactor());
-            requiredVisualViewport.move(0, frameView.headerHeight());
-            return requiredVisualViewport;
-        }
-    }
-
-    ScrollAlignment::Behavior scrollX = alignX.getHiddenBehavior();
-    bool intersectsInX = exposeRect.maxX() >= visibleRect.x() && exposeRect.x() <= visibleRect.maxX();
-
-    // Determine the appropriate X behavior.
-    if (intersectsInX) {
-        LayoutUnit intersectWidth = std::max(LayoutUnit(), std::min(visibleRect.maxX(), exposeRect.maxX()) - std::max(visibleRect.x(), exposeRect.x()));
-        if (intersectWidth == exposeRect.width() || (alignX.legacyHorizontalVisibilityThresholdEnabled() && intersectWidth >= MIN_INTERSECT_FOR_REVEAL)) {
-            // If the rectangle is fully visible, use the specified visible behavior.
-            // If the rectangle is partially visible, but over a certain threshold,
-            // then treat it as fully visible to avoid unnecessary horizontal scrolling
-            scrollX = alignX.getVisibleBehavior();
-        } else if (intersectWidth == visibleRect.width()) {
-            // If the rect is bigger than the visible area, don't bother trying to center. Other alignments will work.
-            scrollX = alignX.getVisibleBehavior();
-            if (scrollX == ScrollAlignment::Behavior::AlignCenter)
-                scrollX = ScrollAlignment::Behavior::NoScroll;
-        } else if (intersectWidth > 0) {
-            // If the rectangle is partially visible, but not above the minimum threshold, use the specified partial behavior
-            scrollX = alignX.getPartialBehavior();
-        }
-    }
-    // If we're trying to align to the closest edge, and the exposeRect is further right
-    // than the visibleRect, and not bigger than the visible area, then align with the right.
-    if (scrollX == ScrollAlignment::Behavior::AlignToClosestEdge && exposeRect.maxX() > visibleRect.maxX() && exposeRect.width() < visibleRect.width())
-        scrollX = ScrollAlignment::Behavior::AlignRight;
-
-    // Given the X behavior, compute the X coordinate.
-    LayoutUnit x;
-    if (scrollX == ScrollAlignment::Behavior::NoScroll)
-        x = visibleRect.x();
-    else if (scrollX == ScrollAlignment::Behavior::AlignRight)
-        x = exposeRect.maxX() - visibleRect.width();
-    else if (scrollX == ScrollAlignment::Behavior::AlignCenter)
-        x = exposeRect.x() + (exposeRect.width() - visibleRect.width()) / 2;
-    else
-        x = exposeRect.x();
-
-    ScrollAlignment::Behavior scrollY = alignY.getHiddenBehavior();
-    bool intersectsInY = exposeRect.maxY() >= visibleRect.y() && exposeRect.y() <= visibleRect.maxY();
-
-    // Determine the appropriate Y behavior.
-    if (intersectsInY) {
-        LayoutUnit intersectHeight = std::max(LayoutUnit(), std::min(visibleRect.maxY(), exposeRect.maxY()) - std::max(visibleRect.y(), exposeRect.y()));
-        if (intersectHeight == exposeRect.height()) {
-            // If the rectangle is fully visible, use the specified visible behavior.
-            scrollY = alignY.getVisibleBehavior();
-        } else if (intersectHeight == visibleRect.height()) {
-            // If the rect is bigger than the visible area, don't bother trying to center. Other alignments will work.
-            scrollY = alignY.getVisibleBehavior();
-            if (scrollY == ScrollAlignment::Behavior::AlignCenter)
-                scrollY = ScrollAlignment::Behavior::NoScroll;
-        } else if (intersectHeight > 0) {
-            // If the rectangle is partially visible, use the specified partial behavior
-            scrollY = alignY.getPartialBehavior();
-        }
-    }
-    // If we're trying to align to the closest edge, and the exposeRect is further down
-    // than the visibleRect, and not bigger than the visible area, then align with the bottom.
-    if (scrollY == ScrollAlignment::Behavior::AlignToClosestEdge && exposeRect.maxY() > visibleRect.maxY() && exposeRect.height() < visibleRect.height())
-        scrollY = ScrollAlignment::Behavior::AlignBottom;
-
-    // Given the Y behavior, compute the Y coordinate.
-    LayoutUnit y;
-    if (scrollY == ScrollAlignment::Behavior::NoScroll)
-        y = visibleRect.y();
-    else if (scrollY == ScrollAlignment::Behavior::AlignBottom)
-        y = exposeRect.maxY() - visibleRect.height();
-    else if (scrollY == ScrollAlignment::Behavior::AlignCenter)
-        y = exposeRect.y() + (exposeRect.height() - visibleRect.height()) / 2;
-    else
-        y = exposeRect.y();
-
-    return LayoutRect(LayoutPoint(x, y), visibleRect.size());
-}
-
 void RenderLayer::autoscroll(const IntPoint& positionInWindow)
 {
     IntPoint currentDocumentPosition = renderer().view().frameView().windowToContents(positionInWindow);
-    scrollRectToVisible(LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), false, { SelectionRevealMode::Reveal, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::Yes });
+    FrameView::scrollRectToVisible(LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), renderer(), false, { SelectionRevealMode::Reveal, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::Yes });
 }
 
 bool RenderLayer::canResize() const

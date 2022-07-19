@@ -567,6 +567,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/MainThreadSharedTimer.h
     platform/PictureInPictureSupport.h
     platform/PlatformContentFilter.h
+    platform/ScrollAlignment.h
     platform/ScrollAnimation.h
     platform/ScrollingEffectsController.h
     platform/ScrollSnapAnimatorState.h
