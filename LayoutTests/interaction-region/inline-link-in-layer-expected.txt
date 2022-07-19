@@ -11,14 +11,11 @@ This is a link, inside the layer.
       (backgroundColor #FFFFFF)
       (event region
         (rect (0,0) width=800 height=600)
-
-      (interaction regions [
-        (region
-            (rect (-3,-3) width=35 height=24)
-)
-        (hasLightBackground 1)
-        (borderRadius 0.00)])
-      )
+        (interaction regions [
+          (region
+            (rect (-3,-3) width=35 height=24))
+          (hasLightBackground 1)
+          (borderRadius 0.00)]))
       (children 1
         (GraphicsLayer
           (position 0.00 18.00)
@@ -26,14 +23,11 @@ This is a link, inside the layer.
           (drawsContent 1)
           (event region
             (rect (0,0) width=200 height=200)
-
-          (interaction regions [
-            (region
-                (rect (-3,-3) width=35 height=24)
-)
-            (hasLightBackground 1)
-            (borderRadius 0.00)])
-          )
+            (interaction regions [
+              (region
+                (rect (-3,-3) width=35 height=24))
+              (hasLightBackground 1)
+              (borderRadius 0.00)]))
         )
       )
     )
