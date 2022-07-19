@@ -4570,7 +4570,8 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
 
     def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         head_ref = self.getProperty('github.base.ref', 'main')
-        self.command = ['git', 'push', 'origin', f'HEAD:{head_ref}']  # FIXME: Support secret remotes
+        remote = self.getProperty('remote', '?')
+        self.command = ['git', 'push', remote, f'HEAD:{head_ref}']
 
         username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
         self.workerEnvironment['GIT_USER'] = username
@@ -4767,6 +4768,65 @@ class CheckStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
             self.setProperty('passed_mac_wk2', True)
         self.finished(SUCCESS)
         return None
+
+
+class ValidateRemote(shell.ShellCommand):
+    name = 'validate-remote'
+    haltOnFailure = False
+    flunkOnFailure = True
+
+    def __init__(self, **kwargs):
+        self.summary = ''
+        super(ValidateRemote, self).__init__(logEnviron=False, **kwargs)
+
+    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        base_ref = self.getProperty('github.base.ref', f'origin/{DEFAULT_BRANCH}')
+        remote = self.getProperty('remote', 'origin')
+
+        self.command = [
+            'git', 'merge-base', '--is-ancestor',
+            f'remotes/{remote}/{base_ref}',
+            f'remotes/origin/{base_ref}',
+        ]
+
+        return super(ValidateRemote, self).start()
+
+    def getResultSummary(self):
+        if self.results in (FAILURE, SUCCESS):
+            return {'step': self.summary}
+        return super(ValidateRemote, self).getResultSummary()
+
+    def evaluateCommand(self, cmd):
+        base_ref = self.getProperty('github.base.ref', f'origin/{DEFAULT_BRANCH}')
+        rc = super(ValidateRemote, self).evaluateCommand(cmd)
+
+        if rc == SUCCESS:
+            self.summary = f"Cannot land on '{base_ref}', it is owned by '{GITHUB_PROJECTS[0]}'"
+            self.setProperty(
+                'comment_text',
+                f"{self.summary}, blocking PR #{self.getProperty('github.number')}.\n"
+                f"Make a pull request against '{GITHUB_PROJECTS[0]}' to land this change."
+            )
+            self.setProperty('build_finish_summary', self.summary)
+            self.build.addStepsAfterCurrentStep([LeaveComment(), BlockPullRequest()])
+            return FAILURE
+
+        if rc == FAILURE:
+            self.summary = f"Verified '{GITHUB_PROJECTS[0]}' does not own '{base_ref}'"
+            return SUCCESS
+
+        return rc
+
+    def doStepIf(self, step):
+        if not self.getProperty('github.number'):
+            return False
+        remote = self.getProperty('remote', None)
+        if not remote:
+            return False
+        return remote != 'origin'
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
 
 
 class ValidateSquashed(shell.ShellCommand):

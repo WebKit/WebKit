@@ -58,7 +58,7 @@ from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCo
                    RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree, RunWebKitTestsRepeatFailuresWithoutChangeRedTree,
                    RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount, ShowIdentifier,
                    Trigger, TransferToS3, UnApplyPatch, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
-                   UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange, ValidateSquashed)
+                   UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange, ValidateRemote, ValidateSquashed)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -5286,6 +5286,7 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
     def test_success(self):
         self.setupStep(PushCommitToWebKitRepo())
         self.setProperty('patch_id', '1234')
+        self.setProperty('remote', 'origin')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=300,
@@ -5304,6 +5305,8 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
     def test_failure_retry(self):
         self.setupStep(PushCommitToWebKitRepo())
         self.setProperty('patch_id', '2345')
+        self.setProperty('remote', 'origin')
+
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=300,
@@ -5322,8 +5325,9 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure_patch(self):
         self.setupStep(PushCommitToWebKitRepo())
-        self.setProperty('retry_count', PushCommitToWebKitRepo.MAX_RETRY)
+        self.setProperty('remote', 'origin')
         self.setProperty('patch_id', '2345')
+        self.setProperty('retry_count', PushCommitToWebKitRepo.MAX_RETRY)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=300,
@@ -5342,8 +5346,9 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure_pr(self):
         self.setupStep(PushCommitToWebKitRepo())
-        self.setProperty('retry_count', PushCommitToWebKitRepo.MAX_RETRY)
         self.setProperty('github.number', '1234')
+        self.setProperty('remote', 'origin')
+        self.setProperty('retry_count', PushCommitToWebKitRepo.MAX_RETRY)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=300,
@@ -5736,6 +5741,60 @@ class TestInstallBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='Installed Built Product (failure)')
         return self.runStep()
+
+
+class TestValidateRemote(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_patch(self):
+        self.setupStep(ValidateRemote())
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        return self.runStep()
+
+    def test_origin(self):
+        self.setupStep(ValidateRemote())
+        self.setProperty('remote', 'origin')
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        return self.runStep()
+
+    def test_success(self):
+        self.setupStep(ValidateRemote())
+        self.setProperty('remote', 'security')
+        self.setProperty('github.base.ref', 'safari-000-branch')
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                command=['git', 'merge-base', '--is-ancestor', 'remotes/security/safari-000-branch', 'remotes/origin/safari-000-branch'],
+            ) + 1,
+        )
+        self.expectOutcome(result=SUCCESS, state_string="Verified 'WebKit/WebKit' does not own 'safari-000-branch'")
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(ValidateRemote())
+        self.setProperty('remote', 'security')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                command=['git', 'merge-base', '--is-ancestor', 'remotes/security/main', 'remotes/origin/main'],
+            ) + 0,
+        )
+        self.expectOutcome(result=FAILURE, state_string="Cannot land on 'main', it is owned by 'WebKit/WebKit'")
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('comment_text'), "Cannot land on 'main', it is owned by 'WebKit/WebKit', blocking PR #1234.\nMake a pull request against 'WebKit/WebKit' to land this change.")
+        self.assertEqual(self.getProperty('build_finish_summary'), "Cannot land on 'main', it is owned by 'WebKit/WebKit'")
+        return rc
 
 
 class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):

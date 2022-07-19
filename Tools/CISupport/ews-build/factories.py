@@ -34,7 +34,7 @@ from steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canon
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
                    ValidateCommitMessage, ValidateChange, ValidateCommitterAndReviewer, WaitForCrashCollection,
-                   InstallBuiltProduct, ValidateSquashed)
+                   InstallBuiltProduct, ValidateRemote, ValidateSquashed)
 
 
 class Factory(factory.BuildFactory):
@@ -330,6 +330,7 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ShowIdentifier())
         self.addStep(CheckOutPullRequest())
+        self.addStep(ValidateRemote())
         self.addStep(ValidateSquashed())
         self.addStep(AddReviewerToCommitMessage())
         self.addStep(ValidateCommitMessage())
