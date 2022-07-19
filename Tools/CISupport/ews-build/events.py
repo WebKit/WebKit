@@ -329,6 +329,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
     UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
     MERGE_QUEUE_LABEL = 'merge-queue'
     LABEL_PROCESS_DELAY = 10
+    ACCOUNTS_TO_IGNORE = ('webkit-early-warning-system', 'webkit-commit-queue')
 
     @classmethod
     def file_with_status_sign(cls, info):
@@ -375,6 +376,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         action = payload.get('action')
         state = payload.get('pull_request', {}).get('state')
         labels = [label.get('name') for label in payload.get('pull_request', {}).get('labels', [])]
+        user = payload.get('pull_request', {}).get('user', {}).get('login', '')
 
         if state not in self.OPEN_STATES:
             log.msg("PR #{} is '{}', which triggers nothing".format(pr_number, state))
@@ -392,5 +394,9 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
             payload['action'] = 'synchronize'
             time.sleep(self.LABEL_PROCESS_DELAY)
             return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, 'merge_queue')
+
+        if user in self.ACCOUNTS_TO_IGNORE:
+            log.msg(f"PR #{pr_number} was updated by '{user}', ignore it")
+            return ([], 'git')
 
         return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, event)
