@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-bool SVGAttributeAnimator::isAnimatedStylePropertyAniamtor(const SVGElement& targetElement) const
+bool SVGAttributeAnimator::isAnimatedStylePropertyAnimator(const SVGElement& targetElement) const
 {
     return targetElement.isAnimatedStyleAttribute(m_attributeName);
 }

@@ -302,7 +302,7 @@ public:
     }
 
 private:
-    bool isAnimatedStyleClassAniamtor() const
+    bool isAnimatedStyleClassAnimator() const
     {
         return m_attributeName.matches(HTMLNames::classAttr);
     }
@@ -316,7 +316,7 @@ private:
     void apply(SVGElement& targetElement) final
     {
         Base::apply(targetElement);
-        if (isAnimatedStyleClassAniamtor())
+        if (isAnimatedStyleClassAnimator())
             invalidateStyle(targetElement);
     }
     
@@ -326,7 +326,7 @@ private:
             return;
 
         Base::stop(targetElement);
-        if (isAnimatedStyleClassAniamtor())
+        if (isAnimatedStyleClassAnimator())
             invalidateStyle(targetElement);
     }
 };

@@ -75,7 +75,7 @@ public:
 
     void apply(SVGElement& targetElement) override
     {
-        if (isAnimatedStylePropertyAniamtor(targetElement))
+        if (isAnimatedStylePropertyAnimator(targetElement))
             applyAnimatedStylePropertyChange(targetElement, m_animated->animValAsString());
         applyAnimatedPropertyChange(targetElement);
     }
@@ -86,7 +86,7 @@ public:
             return;
 
         applyAnimatedPropertyChange(targetElement);
-        if (isAnimatedStylePropertyAniamtor(targetElement))
+        if (isAnimatedStylePropertyAnimator(targetElement))
             removeAnimatedStyleProperty(targetElement);
 
         m_animated->stopAnimation(*this);

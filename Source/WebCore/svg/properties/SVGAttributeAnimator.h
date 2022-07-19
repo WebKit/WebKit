@@ -76,7 +76,7 @@ public:
     virtual std::optional<float> calculateDistance(SVGElement&, const String&, const String&) const { return { }; }
 
 protected:
-    bool isAnimatedStylePropertyAniamtor(const SVGElement&) const;
+    bool isAnimatedStylePropertyAnimator(const SVGElement&) const;
 
     static void invalidateStyle(SVGElement&);
     static void applyAnimatedStylePropertyChange(SVGElement&, CSSPropertyID, const String& value);
