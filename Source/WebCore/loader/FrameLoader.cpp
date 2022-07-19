@@ -3631,7 +3631,7 @@ void FrameLoader::requestFromDelegate(ResourceRequest& request, ResourceLoaderId
     notifier().dispatchWillSendRequest(m_documentLoader.get(), identifier, newRequest, ResourceResponse(), nullptr);
 
     if (newRequest.isNull())
-        error = cancelledError(request);
+        error = blockedError(request);
     else
         error = ResourceError();
 
@@ -3962,7 +3962,7 @@ ResourceError FrameLoader::blockedByContentBlockerError(const ResourceRequest& r
 ResourceError FrameLoader::blockedError(const ResourceRequest& request) const
 {
     ResourceError error = m_client->blockedError(request);
-    error.setType(ResourceError::Type::Cancellation);
+    error.setType(ResourceError::Type::AccessControl);
     return error;
 }
 

@@ -34,18 +34,11 @@ function xhrLoaded()
 }
 
 function xhrAbort() {
-    testFailed("Executed the XHR abort handler unexpectedly");
-    finishJSTest();
+    testPassed("Executed the XHR abort handler");
 }
 
 function xhrError() {
-    if (restoredFromPageCache) {
-        testFailed("Executed the XHR error handler after restoring from PageCache");
-        return;
-    }
-
-    testPassed("Executed the XHR error handler before entering PageCache");
-    shouldBe("xhr.status", "0");
+    testFailed("Executed the XHR error handler unexpectedly");
 }
 
 window.addEventListener('load', function() {
