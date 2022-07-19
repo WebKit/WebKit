@@ -5816,8 +5816,28 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
             + 0
             + ExpectShell.log('stdio', stdout='e1eb24603493 (HEAD -> eng/pull-request-branch) First line of commit\n'),
         )
-        self.expectOutcome(result=SUCCESS, state_string='Verified branch is squashed')
+        self.expectOutcome(result=SUCCESS, state_string='Verified commit is squashed')
         return self.runStep()
+
+    def test_failure_patch(self):
+        self.setupStep(ValidateSquashed())
+        self.setProperty('patch_id', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['git', 'log', '--oneline', 'HEAD', '^origin/main', '--max-count=2'],
+                        )
+            + 0
+            + ExpectShell.log('stdio', stdout='''e1eb24603493 (HEAD -> eng/pull-request-branch) Commit Series (3)
+08abb9ddcbb5 Commit Series (2)
+45cf3efe4dfb Commit Series (1)
+'''),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Can only land squashed commits')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('comment_text'), 'This change contains multiple commits which are not squashed together, rejecting attachment 1234 from commit queue. Please squash the commits to land.')
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Can only land squashed commits')
+        return rc
 
     def test_success(self):
         self.setupStep(ValidateSquashed())
@@ -5832,7 +5852,7 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
             + 0
             + ExpectShell.log('stdio', stdout='e1eb24603493 (HEAD -> eng/pull-request-branch) First line of commit\n'),
         )
-        self.expectOutcome(result=SUCCESS, state_string='Verified branch is squashed')
+        self.expectOutcome(result=SUCCESS, state_string='Verified commit is squashed')
         return self.runStep()
 
     def test_failure_multiple_commits(self):
@@ -5851,8 +5871,11 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
 45cf3efe4dfb Commit Series (1)
 '''),
         )
-        self.expectOutcome(result=FAILURE, state_string='Can only land squashed branches')
-        return self.runStep()
+        self.expectOutcome(result=FAILURE, state_string='Can only land squashed commits')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('comment_text'), 'This change contains multiple commits which are not squashed together, blocking PR #1234. Please squash the commits to land.')
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Can only land squashed commits')
+        return rc
 
     def test_failure_merged(self):
         self.setupStep(ValidateSquashed())
@@ -5867,8 +5890,11 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
             + 0
             + ExpectShell.log('stdio', stdout=''),
         )
-        self.expectOutcome(result=FAILURE, state_string='Can only land squashed branches')
-        return self.runStep()
+        self.expectOutcome(result=FAILURE, state_string='Can only land squashed commits')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('comment_text'), 'This change contains multiple commits which are not squashed together, blocking PR #1234. Please squash the commits to land.')
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Can only land squashed commits')
+        return rc
 
 
 class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase):

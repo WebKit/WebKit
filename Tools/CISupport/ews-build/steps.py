@@ -4831,9 +4831,11 @@ class ValidateRemote(shell.ShellCommand):
 
 class ValidateSquashed(shell.ShellCommand):
     name = 'validate-squashed'
-    haltOnFailure = True
+    haltOnFailure = False
+    flunkOnFailure = True
 
     def __init__(self, **kwargs):
+        self.summary = ''
         super(ValidateSquashed, self).__init__(logEnviron=False, **kwargs)
 
     def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
@@ -4847,20 +4849,49 @@ class ValidateSquashed(shell.ShellCommand):
         return shell.ShellCommand.start(self)
 
     def getResultSummary(self):
-        if self.results == FAILURE:
-            return {'step': 'Can only land squashed branches'}
-        if self.results == SUCCESS:
-            return {'step': 'Verified branch is squashed'}
-        return super(ValidateSquashed, self).getResultSummary()
+        return {'step': self.summary}
 
     def evaluateCommand(self, cmd):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)
+
+        pr_number = self.getProperty('github.number')
+        patch_id = self.getProperty('patch_id')
+
         if rc != SUCCESS:
+            self.summary = 'Failed to check if commit is squashed'
+            comment = self.summary
+            if pr_number:
+                comment = f"{self.summary}, please re-add `Merge-Queue` to PR #{pr_number} to land it."
+            elif patch_id:
+                comment = f"{self.summary}, please add cq+ to attachment {patch_id} to land it."
+
+            self.setProperty('build_finish_summary', self.summary)
+            self.setProperty('comment_text', comment)
+            self.build.addStepsAfterCurrentStep([
+                LeaveComment(),
+                BlockPullRequest() if pr_number else SetCommitQueueMinusFlagOnPatch(),
+            ])
             return rc
 
         log_text = self.log_observer.getStdout()
         if len(log_text.splitlines()) == 1:
+            self.summary = 'Verified commit is squashed'
             return SUCCESS
+
+        self.summary = 'Can only land squashed commits'
+        comment = 'This change contains multiple commits which are not squashed together'
+        if pr_number:
+            comment = f"{comment}, blocking PR #{pr_number}"
+        elif patch_id:
+            comment = f"{comment}, rejecting attachment {patch_id} from commit queue"
+        comment += '. Please squash the commits to land.'
+
+        self.setProperty('comment_text', comment)
+        self.setProperty('build_finish_summary', self.summary)
+        self.build.addStepsAfterCurrentStep([
+            LeaveComment(),
+            BlockPullRequest() if pr_number else SetCommitQueueMinusFlagOnPatch(),
+        ])
         return FAILURE
 
 
