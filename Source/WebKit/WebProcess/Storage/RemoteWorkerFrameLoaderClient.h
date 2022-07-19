@@ -27,6 +27,7 @@
 
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/EmptyFrameLoaderClient.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 
 namespace WebKit {
 
@@ -37,6 +38,9 @@ public:
     WebPageProxyIdentifier webPageProxyID() const { return m_webPageProxyID; }
 
     void setUserAgent(String&& userAgent) { m_userAgent = WTFMove(userAgent); }
+
+    void setServiceWorkerPageIdentifier(WebCore::ScriptExecutionContextIdentifier serviceWorkerPageIdentifier) { m_serviceWorkerPageIdentifier = serviceWorkerPageIdentifier; }
+    std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const { return m_serviceWorkerPageIdentifier; }
 
 private:
     Ref<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&) final;
@@ -53,6 +57,7 @@ private:
     WebCore::PageIdentifier m_pageID;
     WebCore::FrameIdentifier m_frameID;
     String m_userAgent;
+    std::optional<WebCore::ScriptExecutionContextIdentifier> m_serviceWorkerPageIdentifier;
 };
 
 } // namespace WebKit

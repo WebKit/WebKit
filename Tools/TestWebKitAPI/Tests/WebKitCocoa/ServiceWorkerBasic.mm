@@ -2551,6 +2551,8 @@ TEST(ServiceWorkers, WebProcessCache)
 }
 
 static bool didStartURLSchemeTask = false;
+static bool didStartURLSchemeTaskForXMLFile = false;
+static bool didStartURLSchemeTaskForImportedScript = false;
 
 @interface ServiceWorkerSchemeHandler : NSObject <WKURLSchemeHandler> {
     const char* _bytes;
@@ -2582,6 +2584,12 @@ static bool didStartURLSchemeTask = false;
     }
 
     NSURL *finalURL = task.request.URL;
+
+    if (URL(finalURL).string().endsWith("importedScript.js"_s))
+        didStartURLSchemeTaskForImportedScript = true;
+
+    if (URL(finalURL).string().endsWith(".xml"_s))
+        didStartURLSchemeTaskForXMLFile = true;
 
     NSMutableDictionary* headerDictionary = [NSMutableDictionary dictionary];
     if (URL(finalURL).string().endsWith(".js"_s))
@@ -2636,7 +2644,9 @@ TEST(ServiceWorker, ExtensionServiceWorker)
 
     auto schemeHandler = adoptNS([ServiceWorkerSchemeHandler new]);
     [schemeHandler addMappingFromURLString:@"sw-ext://ABC/other.html" toData:"foo"];
-    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/sw.js" toData:""];
+    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/sw.js" toData:"importScripts('sw-ext://ABC/importedScript.js');"];
+    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/bar.xml" toData:"bar"];
+    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/importedScript.js" toData:"fetch('sw-ext://ABC/bar.xml');"];
 
     WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ServiceWorkerPagePlugIn"];
 
@@ -2661,6 +2671,8 @@ TEST(ServiceWorker, ExtensionServiceWorker)
     // The service worker script should get loaded over the custom scheme handler.
     done = false;
     didStartURLSchemeTask = false;
+    didStartURLSchemeTaskForXMLFile = false;
+    didStartURLSchemeTaskForImportedScript = false;
     [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/sw.js"] completionHandler:^(BOOL success) {
         EXPECT_TRUE(success);
         EXPECT_TRUE(didStartURLSchemeTask);
@@ -2685,6 +2697,9 @@ TEST(ServiceWorker, ExtensionServiceWorker)
     EXPECT_EQ(webViewConfiguration.processPool._webProcessCountIgnoringPrewarmedAndCached, 1U);
 
     EXPECT_WK_STREQ([webView URL].absoluteString, @"sw-ext://ABC");
+
+    TestWebKitAPI::Util::run(&didStartURLSchemeTaskForImportedScript);
+    TestWebKitAPI::Util::run(&didStartURLSchemeTaskForXMLFile);
 
     // The service worker should exit if we close/deallocate the view we used to launch it.
     [webView _close];

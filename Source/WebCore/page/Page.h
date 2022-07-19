@@ -596,6 +596,8 @@ public:
     bool isServiceWorkerPage() const { return m_isServiceWorkerPage; }
     void markAsServiceWorkerPage() { m_isServiceWorkerPage = true; }
 
+    WEBCORE_EXPORT static Page* serviceWorkerPage(ScriptExecutionContextIdentifier);
+
 #if ENABLE(SERVICE_WORKER)
     // Service worker pages have an associated ServiceWorkerGlobalScope on the main thread.
     void setServiceWorkerGlobalScope(ServiceWorkerGlobalScope&);

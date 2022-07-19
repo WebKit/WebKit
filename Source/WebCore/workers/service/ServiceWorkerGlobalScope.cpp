@@ -108,8 +108,7 @@ Page* ServiceWorkerGlobalScope::serviceWorkerPage()
         return nullptr;
 
     RELEASE_ASSERT(isMainThread());
-    auto* serviceWorkerPageDocument = Document::allDocumentsMap().get(*m_contextData.serviceWorkerPageIdentifier);
-    return serviceWorkerPageDocument ? serviceWorkerPageDocument->page() : nullptr;
+    return Page::serviceWorkerPage(*m_contextData.serviceWorkerPageIdentifier);
 }
 
 void ServiceWorkerGlobalScope::skipWaiting(Ref<DeferredPromise>&& promise)
