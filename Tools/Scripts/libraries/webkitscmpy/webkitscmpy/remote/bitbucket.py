@@ -216,6 +216,8 @@ class BitBucket(Scm):
 
             response = requests.put(pr_url, json=data)
             if response.status_code // 100 != 2:
+                for error in response.json().get('errors', []):
+                    sys.stderr.write('{}: {}\n'.format(error.get('context'), error.get('message')))
                 return None
             data = response.json()
 
