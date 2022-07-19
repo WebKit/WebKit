@@ -2027,11 +2027,14 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
 
     Document& oldDocument = oldScope.documentScope();
     Document& newDocument = newScope.documentScope();
+    bool newScopeIsUAShadowTree = newScope.rootNode().hasBeenInUserAgentShadowTree();
     if (&oldDocument != &newDocument) {
         oldDocument.incrementReferencingNodeCount();
         traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
             ASSERT(!node.isTreeScope());
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
+            if (newScopeIsUAShadowTree)
+                node.setNodeFlag(NodeFlag::HasBeenInUserAgentShadowTree);
             node.setTreeScope(newScope);
             node.moveNodeToNewDocument(oldDocument, newDocument);
         }, [&](ShadowRoot& shadowRoot) {
@@ -2045,6 +2048,8 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
         traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
             ASSERT(!node.isTreeScope());
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
+            if (newScopeIsUAShadowTree)
+                node.setNodeFlag(NodeFlag::HasBeenInUserAgentShadowTree);
             node.setTreeScope(newScope);
             if (UNLIKELY(!node.hasRareData()))
                 return;
