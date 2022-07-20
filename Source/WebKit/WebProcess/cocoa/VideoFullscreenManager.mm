@@ -258,7 +258,7 @@ bool VideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElementEn
 
 bool VideoFullscreenManager::supportsVideoFullscreenStandby() const
 {
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(IOS_FAMILY)
     return true;
 #else
     return false;
