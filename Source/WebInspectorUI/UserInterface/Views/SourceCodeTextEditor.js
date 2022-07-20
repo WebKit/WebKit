@@ -742,7 +742,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     _addThreadIndicatorForTarget(target)
     {
         let targetData = WI.debuggerManager.dataForTarget(target);
-        let topCallFrame = targetData.callFrames[0];
+        let topCallFrame = targetData.stackTrace?.callFrames[0];
         if (!topCallFrame)
             return;
 

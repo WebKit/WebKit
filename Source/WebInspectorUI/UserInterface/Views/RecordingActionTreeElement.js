@@ -425,14 +425,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
         contextMenu.appendSeparator();
 
-        let sourceCodeLocation = null;
-        for (let callFrame of this.representedObject.trace) {
-            if (callFrame.sourceCodeLocation) {
-                sourceCodeLocation = callFrame.sourceCodeLocation;
-                break;
-            }
-        }
-
+        let sourceCodeLocation = this.representedObject.stackTrace?.firstNonNativeNonAnonymousNotBlackboxedCallFrame;
         if (sourceCodeLocation) {
             contextMenu.appendItem(WI.UIString("Reveal in Sources Tab"), () => {
                 WI.showSourceCodeLocation(sourceCodeLocation, {

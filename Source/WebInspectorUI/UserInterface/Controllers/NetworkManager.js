@@ -711,7 +711,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             requestSentWalltime: walltime,
             referrerPolicy: request.referrerPolicy,
             integrity: request.integrity,
-            initiatorCallFrames: this._initiatorCallFramesFromPayload(initiator),
+            initiatorStackTrace: this._initiatorStackTraceFromPayload(initiator),
             initiatorSourceCodeLocation: this._initiatorSourceCodeLocationFromPayload(initiator),
             initiatorNode: this._initiatorNodeFromPayload(initiator),
         });
@@ -851,7 +851,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             requestIdentifier,
             requestMethod: "GET",
             requestSentTimestamp: elapsedTime,
-            initiatorCallFrames: this._initiatorCallFramesFromPayload(initiator),
+            initiatorStackTrace: this._initiatorStackTraceFromPayload(initiator),
             initiatorSourceCodeLocation: this._initiatorSourceCodeLocationFromPayload(initiator),
             initiatorNode: this._initiatorNodeFromPayload(initiator),
         });
@@ -1214,16 +1214,20 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         target.addResource(resource);
     }
 
-    _initiatorCallFramesFromPayload(initiatorPayload)
+    _initiatorStackTraceFromPayload(initiatorPayload)
     {
         if (!initiatorPayload)
             return null;
 
-        let callFrames = initiatorPayload.stackTrace;
-        if (!callFrames)
+        let stackTrace = initiatorPayload.stackTrace;
+        if (!stackTrace)
             return null;
 
-        return callFrames.map((payload) => WI.CallFrame.fromPayload(WI.assumingMainTarget(), payload));
+        // COMPATIBILITY (iOS 16): `stackTrace` was an array of `Console.CallFrame`.
+        if (Array.isArray(stackTrace))
+            stackTrace = {callFrames: stackTrace};
+
+        return WI.StackTrace.fromPayload(WI.assumingMainTarget(), stackTrace);
     }
 
     _initiatorSourceCodeLocationFromPayload(initiatorPayload)
@@ -1235,10 +1239,10 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         var lineNumber = NaN;
         var columnNumber = 0;
 
-        if (initiatorPayload.stackTrace && initiatorPayload.stackTrace.length) {
-            var stackTracePayload = initiatorPayload.stackTrace;
-            for (var i = 0; i < stackTracePayload.length; ++i) {
-                var callFramePayload = stackTracePayload[i];
+        // COMPATIBILITY (iOS 16): `stackTrace` was an array of `Console.CallFrame`.
+        let callFramesPayload = Array.isArray(initiatorPayload.stackTrace) ? initiatorPayload.stackTrace : initiatorPayload.stackTrace?.callFrames;
+        if (callFramesPayload?.length) {
+            for (let callFramePayload of callFramesPayload) {
                 if (!callFramePayload.url || callFramePayload.url === "[native code]")
                     continue;
 

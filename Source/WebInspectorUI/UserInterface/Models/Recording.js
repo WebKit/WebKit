@@ -457,7 +457,30 @@ WI.Recording = class Recording extends WI.Object
 
                 case WI.Recording.Swizzle.CallStack: {
                     let array = await this.swizzle(data, WI.Recording.Swizzle.Array);
-                    this._swizzle[index][type] = await Promise.all(array.map((item) => this.swizzle(item, WI.Recording.Swizzle.CallFrame)));
+                    if (!isNaN(array[0])) {
+                        // COMPATIBILITY (iOS 16): "stackTrace" was sent as an array of call frames instead of a single call stack
+                        array = [array];
+                    }
+
+                    let promises = [];
+
+                    // callFrames
+                    promises.push(Promise.all(array[0].map((item) => this.swizzle(item, WI.Recording.Swizzle.CallFrame))));
+
+                    // topCallFrameIsBoundary
+                    if (array.length > 1)
+                        promises.push(this.swizzle(array[1], WI.Recording.Swizzle.Boolean));
+
+                    // truncated
+                    if (array.length > 2)
+                        promises.push(this.swizzle(array[2], WI.Recording.Swizzle.Boolean));
+
+                    // parentStackTrace
+                    if (array.length > 3)
+                        promises.push(this.swizzle(array[3], WI.Recording.Swizzle.StackTrace));
+
+                    let [callFrames, topCallFrameIsBoundary, truncated, parentStackTrace] = await Promise.all(promises);
+                    this._swizzle[index][type] = WI.StackTrace.fromPayload(WI.assumingMainTarget(), {callFrames, topCallFrameIsBoundary, truncated, parentStackTrace});
                     break;
                 }
 
@@ -889,7 +912,7 @@ WI.Recording = class Recording extends WI.Object
 };
 
 // Keep this in sync with Inspector::Protocol::Recording::VERSION.
-WI.Recording.Version = 1;
+WI.Recording.Version = 2;
 
 WI.Recording.Event = {
     ProcessedAction: "recording-processed-action",

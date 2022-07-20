@@ -25,7 +25,7 @@
 
 WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeElement
 {
-    constructor(callFrame, {isAsyncBoundaryCallFrame} = {})
+    constructor(callFrame, {isAsyncBoundaryCallFrame, isTruncatedBoundaryCallFrame} = {})
     {
         console.assert(callFrame instanceof WI.CallFrame);
 
@@ -42,6 +42,12 @@ WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeEleme
             this.addClassName("async-boundary");
             this.selectable = false;
          }
+
+        this._isTruncatedBoundaryCallFrame = !!isTruncatedBoundaryCallFrame;
+        if (this._isTruncatedBoundaryCallFrame) {
+            this.addClassName("truncated-boundary");
+            this.selectable = false;
+        }
 
         if (this._callFrame.nativeCode || !this._callFrame.sourceCodeLocation) {
             this.subtitle = "";

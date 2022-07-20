@@ -316,7 +316,7 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
         }
 
         var record = this.selectedNode.record;
-        if (!record || !record.callFrames || !record.callFrames.length) {
+        if (!record || !record.stackTrace?.callFrames.length) {
             this._hidePopover();
             return;
         }
@@ -399,7 +399,8 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
         } else
             this._popoverCallStackTreeOutline.removeChildren();
 
-        WI.CallFrameTreeController.groupBlackboxedCallFrames(this._popoverCallStackTreeOutline, this.selectedNode.record.callFrames);
+        if (this.selectedNode.record.stackTrace)
+            WI.CallFrameTreeController.groupBlackboxedStackTrace(this._popoverCallStackTreeOutline, this.selectedNode.record.stackTrace);
 
         let content = document.createElement("div");
         content.appendChild(this._popoverCallStackTreeOutline.element);

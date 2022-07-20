@@ -97,6 +97,12 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         if (parameters)
             parameters = parameters.map((x) => WI.RemoteObject.fromPayload(x, target));
 
+        // COMPATIBILITY (iOS 16): `stackTrace` was an array of `Console.CallFrame`.
+        if (Array.isArray(stackTrace))
+            stackTrace = {callFrames: stackTrace};
+        if (stackTrace)
+            stackTrace = WI.StackTrace.fromPayload(target, stackTrace);
+
         const request = null;
         let message = new WI.ConsoleMessage(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, request, timestamp);
 

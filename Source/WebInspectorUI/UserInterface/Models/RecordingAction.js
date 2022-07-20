@@ -25,19 +25,19 @@
 
 WI.RecordingAction = class RecordingAction extends WI.Object
 {
-    constructor(name, parameters, swizzleTypes, trace, snapshot)
+    constructor(name, parameters, swizzleTypes, stackTrace, snapshot)
     {
         super();
 
         this._payloadName = name;
         this._payloadParameters = parameters;
         this._payloadSwizzleTypes = swizzleTypes;
-        this._payloadTrace = trace;
+        this._payloadStackTrace = stackTrace;
         this._payloadSnapshot = snapshot ?? -1;
 
         this._name = "";
         this._parameters = [];
-        this._trace = [];
+        this._stackTrace = null;
         this._snapshot = "";
 
         this._valid = true;
@@ -57,7 +57,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
     // Static
 
-    // Payload format: (name, parameters, swizzleTypes, [trace, [snapshot]])
+    // Payload format: (name, parameters, swizzleTypes, [stackTrace, [snapshot]])
     static fromPayload(payload)
     {
         if (!Array.isArray(payload))
@@ -85,10 +85,10 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         }
 
         if (typeof payload[3] !== "number" || isNaN(payload[3]) || (!payload[3] && payload[3] !== 0)) {
-            // COMPATIBILITY (iOS 12.1): "trace" was sent as an array of call frames instead of a single call stack
+            // COMPATIBILITY (iOS 12.1): "stackTrace" was sent as an array of call frames instead of a single call stack
             if (!Array.isArray(payload[3])) {
                 if (payload.length > 3)
-                    WI.Recording.synthesizeWarning(WI.UIString("non-number %s").format(WI.unlocalizedString("trace")));
+                    WI.Recording.synthesizeWarning(WI.UIString("non-number %s").format(WI.unlocalizedString("stackTrace")));
 
                 payload[3] = [];
             }
@@ -235,7 +235,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     get name() { return this._name; }
     get parameters() { return this._parameters; }
     get swizzleTypes() { return this._payloadSwizzleTypes; }
-    get trace() { return this._trace; }
+    get stackTrace() { return this._stackTrace; }
     get snapshot() { return this._snapshot; }
     get valid() { return this._valid; }
     get isFunction() { return this._isFunction; }
@@ -349,20 +349,22 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             Promise.all(this._payloadParameters.map(swizzleParameter)),
         ];
 
-        if (!isNaN(this._payloadTrace))
-            swizzlePromises.push(recording.swizzle(this._payloadTrace, WI.Recording.Swizzle.CallStack))
+        if (!isNaN(this._payloadStackTrace))
+            swizzlePromises.push(recording.swizzle(this._payloadStackTrace, WI.Recording.Swizzle.CallStack));
         else {
-            // COMPATIBILITY (iOS 12.1): "trace" was sent as an array of call frames instead of a single call stack
-            swizzlePromises.push(Promise.all(this._payloadTrace.map((item) => recording.swizzle(item, WI.Recording.Swizzle.CallFrame))));
+            // COMPATIBILITY (iOS 12.1): "stackTrace" was sent as an array of call frames instead of a single call stack
+            let stackTracePromise = Promise.all(this._payloadStackTrace.map((item) => recording.swizzle(item, WI.Recording.Swizzle.CallFrame)))
+                .then((callFrames) => WI.StackTrace.fromPayload(WI.assumingMainTarget(), callFrames));
+            swizzlePromises.push(stackTracePromise);
         }
 
         if (this._payloadSnapshot >= 0)
             swizzlePromises.push(recording.swizzle(this._payloadSnapshot, WI.Recording.Swizzle.String));
 
-        let [name, parameters, callFrames, snapshot] = await Promise.all(swizzlePromises);
+        let [name, parameters, stackTrace, snapshot] = await Promise.all(swizzlePromises);
         this._name = name;
         this._parameters = parameters;
-        this._trace = callFrames;
+        this._stackTrace = stackTrace;
         if (this._payloadSnapshot >= 0)
             this._snapshot = snapshot;
 
@@ -509,7 +511,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
     toJSON()
     {
-        let json = [this._payloadName, this._payloadParameters, this._payloadSwizzleTypes, this._payloadTrace];
+        let json = [this._payloadName, this._payloadParameters, this._payloadSwizzleTypes, this._payloadStackTrace];
         if (this._payloadSnapshot >= 0)
             json.push(this._payloadSnapshot);
         return json;

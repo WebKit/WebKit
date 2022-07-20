@@ -148,7 +148,7 @@ WI.ErrorObjectView = class ErrorObjectView extends WI.Object
     _buildStackTrace(stackString)
     {
         let stackTrace = WI.StackTrace.fromString(this._object.target, stackString);
-        let stackTraceElement = new WI.StackTraceView(stackTrace).element;
+        let stackTraceElement = new WI.StackTraceView(stackTrace);
         this._outlineElement.appendChild(stackTraceElement);
     }
 };

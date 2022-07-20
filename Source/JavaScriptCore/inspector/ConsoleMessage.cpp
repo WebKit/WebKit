@@ -315,7 +315,7 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
     }
 
     if (m_callStack)
-        messageObject->setStackTrace(m_callStack->buildInspectorArray());
+        messageObject->setStackTrace(m_callStack->buildInspectorObject());
 
     consoleFrontendDispatcher.messageAdded(WTFMove(messageObject));
 }

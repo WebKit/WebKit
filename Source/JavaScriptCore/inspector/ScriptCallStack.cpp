@@ -39,18 +39,21 @@ Ref<ScriptCallStack> ScriptCallStack::create()
     return adoptRef(*new ScriptCallStack);
 }
 
-Ref<ScriptCallStack> ScriptCallStack::create(Vector<ScriptCallFrame>& frames)
+Ref<ScriptCallStack> ScriptCallStack::create(Vector<ScriptCallFrame>&& frames, bool truncated, AsyncStackTrace* parentStackTrace)
 {
-    return adoptRef(*new ScriptCallStack(frames));
+    return adoptRef(*new ScriptCallStack(WTFMove(frames), truncated, parentStackTrace));
 }
 
 ScriptCallStack::ScriptCallStack()
 {
 }
 
-ScriptCallStack::ScriptCallStack(Vector<ScriptCallFrame>& frames)
+ScriptCallStack::ScriptCallStack(Vector<ScriptCallFrame>&& frames, bool truncated, AsyncStackTrace* parentStackTrace)
+    : m_frames(WTFMove(frames))
+    , m_truncated(truncated)
+    , m_parentStackTrace(parentStackTrace)
 {
-    m_frames.swap(frames);
+    ASSERT(m_frames.size() < maxCallStackSizeToCapture);
 }
 
 ScriptCallStack::~ScriptCallStack()
@@ -109,6 +112,25 @@ Ref<JSON::ArrayOf<Protocol::Console::CallFrame>> ScriptCallStack::buildInspector
     for (size_t i = 0; i < m_frames.size(); i++)
         frames->addItem(m_frames.at(i).buildInspectorObject());
     return frames;
+}
+
+Ref<Protocol::Console::StackTrace> ScriptCallStack::buildInspectorObject() const
+{
+    auto frames = JSON::ArrayOf<Protocol::Console::CallFrame>::create();
+    for (const auto& item : m_frames)
+        frames->addItem(item.buildInspectorObject());
+
+    auto stackTrace = Protocol::Console::StackTrace::create()
+        .setCallFrames(WTFMove(frames))
+        .release();
+
+    if (m_truncated)
+        stackTrace->setTruncated(true);
+
+    if (m_parentStackTrace)
+        stackTrace->setParentStackTrace(m_parentStackTrace->buildInspectorObject());
+
+    return stackTrace;
 }
 
 } // namespace Inspector

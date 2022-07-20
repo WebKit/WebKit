@@ -500,6 +500,15 @@ void InspectorDebuggerAgent::didDispatchAsyncCall()
         m_pendingAsyncCalls.remove(identifier);
 }
 
+AsyncStackTrace* InspectorDebuggerAgent::currentParentStackTrace() const
+{
+    if (m_currentAsyncCallIdentifierStack.isEmpty())
+        return nullptr;
+
+    auto identifier = m_currentAsyncCallIdentifierStack.last();
+    return m_pendingAsyncCalls.get(identifier);
+}
+
 static Ref<Protocol::Debugger::Location> buildDebuggerLocation(const JSC::Breakpoint& debuggerBreakpoint)
 {
     ASSERT(debuggerBreakpoint.isResolved());

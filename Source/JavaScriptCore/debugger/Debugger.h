@@ -148,11 +148,14 @@ public:
     public:
         virtual ~Client() = default;
 
+        virtual bool isInspectorDebuggerAgent() const { return false; }
+
         virtual JSObject* debuggerScopeExtensionObject(Debugger&, JSGlobalObject*, DebuggerCallFrame&) { return nullptr; }
         virtual void debuggerWillEvaluate(Debugger&, JSGlobalObject*, const Breakpoint::Action&) { }
         virtual void debuggerDidEvaluate(Debugger&, JSGlobalObject*, const Breakpoint::Action&) { }
     };
 
+    Client* client() const { return m_client; }
     void setClient(Client*);
 
     // FIXME: <https://webkit.org/b/162773> Web Inspector: Simplify Debugger::Script to use SourceProvider

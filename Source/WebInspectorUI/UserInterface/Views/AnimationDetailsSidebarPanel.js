@@ -267,9 +267,9 @@ WI.AnimationDetailsSidebarPanel = class AnimationDetailsSidebarPanel extends WI.
 
     _refreshBacktraceSection()
     {
-        let callFrames = this._animation.backtrace;
-        this._backtraceTreeController.callFrames = callFrames;
-        this._backtraceSection.element.hidden = !callFrames.length;
+        let stackTrace = this._animation.stackTrace;
+        this._backtraceTreeController.stackTrace = stackTrace;
+        this._backtraceSection.element.hidden = !stackTrace?.callFrames.length;
     }
 
     _handleAnimationNameChanged(event)

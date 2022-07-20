@@ -67,13 +67,19 @@ TestPage.registerInitializer(() => {
                     lines.push("      swizzleTypes: [" + swizzleNames.join(", ") + "]");
                 }
 
-                if (action.trace.length) {
-                    lines.push("      trace:");
+                if (action.stackTrace?.callFrames.length) {
+                    let line = "      trace:";
+                    if (action.stackTrace.truncated)
+                        line += " (truncated)";
+                    lines.push(line);
 
-                    for (let k = 0; k < action.trace.length; ++k) {
-                        let functionName = action.trace[k].functionName || "(anonymous function)";
+                    for (let k = 0; k < action.stackTrace.callFrames.length; ++k) {
+                        let functionName = action.stackTrace.callFrames[k].functionName || "(anonymous function)";
                         lines.push(`        ${k}: ` + functionName);
                     }
+
+                    if (action.stackTrace.parentStackTrace)
+                        lines.push("        (async)");
                 }
 
                 if (action.snapshot) {

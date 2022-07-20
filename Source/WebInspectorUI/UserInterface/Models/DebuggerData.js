@@ -35,8 +35,7 @@ WI.DebuggerData = class DebuggerData
         this._pausing = false;
         this._pauseReason = null;
         this._pauseData = null;
-        this._callFrames = [];
-        this._asyncStackTrace = null;
+        this._stackTrace = null;
 
         this._scriptIdMap = new Map;
         this._scriptContentIdentifierMap = new Map;
@@ -51,8 +50,7 @@ WI.DebuggerData = class DebuggerData
     get pausing() { return this._pausing; }
     get pauseReason() { return this._pauseReason; }
     get pauseData() { return this._pauseData; }
-    get callFrames() { return this._callFrames; }
-    get asyncStackTrace() { return this._asyncStackTrace; }
+    get stackTrace() { return this._stackTrace; }
 
     get scripts()
     {
@@ -122,14 +120,13 @@ WI.DebuggerData = class DebuggerData
         return this._target.DebuggerAgent.continueUntilNextRunLoop();
     }
 
-    updateForPause(callFrames, pauseReason, pauseData, asyncStackTrace)
+    updateForPause(stackTrace, pauseReason, pauseData)
     {
         this._paused = true;
         this._pausing = false;
         this._pauseReason = pauseReason;
         this._pauseData = pauseData;
-        this._callFrames = callFrames;
-        this._asyncStackTrace = asyncStackTrace;
+        this._stackTrace = stackTrace;
 
         // We paused, no need for auto-pausing.
         this._makePausingAfterNextResume = false;
@@ -141,8 +138,7 @@ WI.DebuggerData = class DebuggerData
         this._pausing = false;
         this._pauseReason = null;
         this._pauseData = null;
-        this._callFrames = [];
-        this._asyncStackTrace = null;
+        this._stackTrace = null;
 
         // We resumed, but may be auto-pausing.
         if (this._makePausingAfterNextResume) {

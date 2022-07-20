@@ -9,7 +9,7 @@ TestPage.registerInitializer(() => {
         if (!targetData)
             return null;
 
-        return new WI.StackTrace(targetData.callFrames, {parentStackTrace: targetData.asyncStackTrace});
+        return targetData.stackTrace;
     };
 
     window.logAsyncStackTrace = async function(options = {}) {

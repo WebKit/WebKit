@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .details.recording-trace > .content > .no-trace-data {
+.sidebar > .details.recording-trace > .content > .no-stack-trace {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -36,7 +36,7 @@
     overflow: hidden;
 }
 
-.sidebar > .details.recording-trace > .content > .no-trace-data > .message {
+.sidebar > .details.recording-trace > .content > .no-stack-trace > .message {
     display: inline-block;
     padding: 5px 15px 6px;
     font-size: var(--sidebar-no-results-message-font-size);

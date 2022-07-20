@@ -25,12 +25,13 @@
 
 WI.Animation = class Animation extends WI.Object
 {
-    constructor(animationId, {name, cssAnimationName, cssTransitionProperty, effect, backtrace} = {})
+    constructor(animationId, {name, cssAnimationName, cssTransitionProperty, effect, stackTrace} = {})
     {
         super();
 
         console.assert(animationId);
         console.assert((!cssAnimationName && !cssTransitionProperty) || !!cssAnimationName !== !!cssTransitionProperty);
+        console.assert(!stackTrace || stackTrace instanceof WI.StackTrace, stackTrace);
 
         this._animationId = animationId;
 
@@ -38,7 +39,7 @@ WI.Animation = class Animation extends WI.Object
         this._cssAnimationName = cssAnimationName || null;
         this._cssTransitionProperty = cssTransitionProperty || null;
         this._updateEffect(effect);
-        this._backtrace = backtrace || [];
+        this._stackTrace = stackTrace || null;
 
         this._effectTarget = undefined;
         this._requestEffectTargetCallbacks = null;
@@ -48,12 +49,16 @@ WI.Animation = class Animation extends WI.Object
 
     static fromPayload(payload)
     {
+        // COMPATIBILITY (iOS 16): `backtrace` was renamed to `stackTrace`.
+        if (payload.backtrace)
+            payload.stackTrace = {callFrames: payload.backtrace};
+
         return new WI.Animation(payload.animationId, {
             name: payload.name,
             cssAnimationName: payload.cssAnimationName,
             cssTransitionProperty: payload.cssTransitionProperty,
             effect: payload.effect,
-            backtrace: Array.isArray(payload.backtrace) ? payload.backtrace.map((item) => WI.CallFrame.fromPayload(WI.mainTarget, item)) : [],
+            stackTrace: WI.StackTrace.fromPayload(WI.assumingMainTarget(), payload.stackTrace),
         });
     }
 
@@ -119,7 +124,7 @@ WI.Animation = class Animation extends WI.Object
     get name() { return this._name; }
     get cssAnimationName() { return this._cssAnimationName; }
     get cssTransitionProperty() { return this._cssTransitionProperty; }
-    get backtrace() { return this._backtrace; }
+    get stackTrace() { return this._stackTrace; }
 
     get animationType()
     {

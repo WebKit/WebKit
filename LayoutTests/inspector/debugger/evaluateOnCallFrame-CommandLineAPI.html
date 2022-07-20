@@ -62,13 +62,13 @@ function test()
 
     function testEvaluateOnNonStrictCallFrame(expression, callback) {
         let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
-        let callFrame = targetData.callFrames[1]; // foo
+        let callFrame = targetData.stackTrace.callFrames[1]; // foo
         testEvaluateOnCallFrame(callFrame, expression, callback);
     }
 
     function testEvaluateOnNonStrictCallFrameThrows(expression, callback) {
         let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
-        let callFrame = targetData.callFrames[1]; // foo
+        let callFrame = targetData.stackTrace.callFrames[1]; // foo
         testEvaluateOnCallFrameThrows(callFrame, expression, callback);
     }
 
@@ -80,7 +80,7 @@ function test()
         test(resolve, reject) {
             let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
             InspectorTest.expectThat(WI.debuggerManager.activeCallFrame.functionName === "bar", "Strict call frame is `bar`.");
-            InspectorTest.expectThat(targetData.callFrames[1].functionName === "foo", "Non-strict call frame is `foo`.");
+            InspectorTest.expectThat(targetData.stackTrace.callFrames[1].functionName === "foo", "Non-strict call frame is `foo`.");
 
             testEvaluateOnStrictCallFrame("a", (x) => { InspectorTest.expectThat(x === 6, "`a` should be 5 in `bar`."); });
             testEvaluateOnStrictCallFrame("b", (x) => { InspectorTest.expectThat(x === 123, "`b` should be 123 in `bar`."); });

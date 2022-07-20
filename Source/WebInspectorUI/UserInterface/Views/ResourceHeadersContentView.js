@@ -279,8 +279,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             let link = WI.createSourceCodeLocationLink(initiatorLocation, options);
             fragment.appendChild(link);
 
-            let callFrames = this._resource.initiatorCallFrames;
-            if (callFrames) {
+            if (this._resource.initiatorStackTrace) {
                 this._popoverCallStackIconElement = document.createElement("img");
                 this._popoverCallStackIconElement.className = "call-stack";
                 fragment.appendChild(this._popoverCallStackIconElement);
@@ -295,7 +294,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
                     let callFramesTreeOutline = new WI.TreeOutline(selectable);
                     callFramesTreeOutline.disclosureButtons = false;
                     let callFrameTreeController = new WI.CallFrameTreeController(callFramesTreeOutline);
-                    callFrameTreeController.callFrames = callFrames;
+                    callFrameTreeController.stackTrace = this._resource.initiatorStackTrace;
 
                     let popoverContent = document.createElement("div");
                     popoverContent.appendChild(callFrameTreeController.treeOutline.element);

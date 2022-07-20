@@ -31,43 +31,46 @@ PASS: Capturing started.
       "children": [
         {
           "startTime": "<filtered>",
-          "stackTrace": [
-            {
-              "functionName": "click",
-              "url": "[native code]",
-              "scriptId": "<filtered>",
-              "lineNumber": 0,
-              "columnNumber": 0
-            },
-            {
-              "functionName": "willCallFunctionTest",
-              "url": "timeline/line-column.html",
-              "scriptId": "<filtered>",
-              "lineNumber": 26,
-              "columnNumber": 44
-            },
-            {
-              "functionName": "global code",
-              "url": "",
-              "scriptId": "<filtered>",
-              "lineNumber": 1,
-              "columnNumber": 21
-            },
-            {
-              "functionName": "evaluateWithScopeExtension",
-              "url": "[native code]",
-              "scriptId": "<filtered>",
-              "lineNumber": 0,
-              "columnNumber": 0
-            },
-            {
-              "functionName": "",
-              "url": "",
-              "scriptId": "<filtered>",
-              "lineNumber": "<filtered>",
-              "columnNumber": "<filtered>"
-            }
-          ],
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "click",
+                "url": "[native code]",
+                "scriptId": "<filtered>",
+                "lineNumber": 0,
+                "columnNumber": 0
+              },
+              {
+                "functionName": "willCallFunctionTest",
+                "url": "timeline/line-column.html",
+                "scriptId": "<filtered>",
+                "lineNumber": 26,
+                "columnNumber": 44
+              },
+              {
+                "functionName": "global code",
+                "url": "",
+                "scriptId": "<filtered>",
+                "lineNumber": 1,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "evaluateWithScopeExtension",
+                "url": "[native code]",
+                "scriptId": "<filtered>",
+                "lineNumber": 0,
+                "columnNumber": 0
+              },
+              {
+                "functionName": "",
+                "url": "",
+                "scriptId": "<filtered>",
+                "lineNumber": "<filtered>",
+                "columnNumber": "<filtered>"
+              }
+            ],
+            "truncated": true
+          },
           "frameId": "<filtered>",
           "data": {
             "scriptName": "timeline/line-column.html",
@@ -84,43 +87,46 @@ PASS: Capturing started.
     },
     {
       "startTime": "<filtered>",
-      "stackTrace": [
-        {
-          "functionName": "profile",
-          "url": "[native code]",
-          "scriptId": "<filtered>",
-          "lineNumber": 0,
-          "columnNumber": 0
-        },
-        {
-          "functionName": "willCallFunctionTest",
-          "url": "timeline/line-column.html",
-          "scriptId": "<filtered>",
-          "lineNumber": 25,
-          "columnNumber": 20
-        },
-        {
-          "functionName": "global code",
-          "url": "",
-          "scriptId": "<filtered>",
-          "lineNumber": 1,
-          "columnNumber": 21
-        },
-        {
-          "functionName": "evaluateWithScopeExtension",
-          "url": "[native code]",
-          "scriptId": "<filtered>",
-          "lineNumber": 0,
-          "columnNumber": 0
-        },
-        {
-          "functionName": "",
-          "url": "",
-          "scriptId": "<filtered>",
-          "lineNumber": "<filtered>",
-          "columnNumber": "<filtered>"
-        }
-      ],
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "profile",
+            "url": "[native code]",
+            "scriptId": "<filtered>",
+            "lineNumber": 0,
+            "columnNumber": 0
+          },
+          {
+            "functionName": "willCallFunctionTest",
+            "url": "timeline/line-column.html",
+            "scriptId": "<filtered>",
+            "lineNumber": 25,
+            "columnNumber": 20
+          },
+          {
+            "functionName": "global code",
+            "url": "",
+            "scriptId": "<filtered>",
+            "lineNumber": 1,
+            "columnNumber": 21
+          },
+          {
+            "functionName": "evaluateWithScopeExtension",
+            "url": "[native code]",
+            "scriptId": "<filtered>",
+            "lineNumber": 0,
+            "columnNumber": 0
+          },
+          {
+            "functionName": "",
+            "url": "",
+            "scriptId": "<filtered>",
+            "lineNumber": "<filtered>",
+            "columnNumber": "<filtered>"
+          }
+        ],
+        "truncated": true
+      },
       "frameId": "<filtered>",
       "data": {
         "title": ""
@@ -144,43 +150,46 @@ PASS: Capturing started.
   "children": [
     {
       "startTime": "<filtered>",
-      "stackTrace": [
-        {
-          "functionName": "profile",
-          "url": "[native code]",
-          "scriptId": "<filtered>",
-          "lineNumber": 0,
-          "columnNumber": 0
-        },
-        {
-          "functionName": "willEvaluateScriptTest",
-          "url": "timeline/line-column.html",
-          "scriptId": "<filtered>",
-          "lineNumber": 31,
-          "columnNumber": 20
-        },
-        {
-          "functionName": "global code",
-          "url": "",
-          "scriptId": "<filtered>",
-          "lineNumber": 1,
-          "columnNumber": 23
-        },
-        {
-          "functionName": "evaluateWithScopeExtension",
-          "url": "[native code]",
-          "scriptId": "<filtered>",
-          "lineNumber": 0,
-          "columnNumber": 0
-        },
-        {
-          "functionName": "",
-          "url": "",
-          "scriptId": "<filtered>",
-          "lineNumber": "<filtered>",
-          "columnNumber": "<filtered>"
-        }
-      ],
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "profile",
+            "url": "[native code]",
+            "scriptId": "<filtered>",
+            "lineNumber": 0,
+            "columnNumber": 0
+          },
+          {
+            "functionName": "willEvaluateScriptTest",
+            "url": "timeline/line-column.html",
+            "scriptId": "<filtered>",
+            "lineNumber": 31,
+            "columnNumber": 20
+          },
+          {
+            "functionName": "global code",
+            "url": "",
+            "scriptId": "<filtered>",
+            "lineNumber": 1,
+            "columnNumber": 23
+          },
+          {
+            "functionName": "evaluateWithScopeExtension",
+            "url": "[native code]",
+            "scriptId": "<filtered>",
+            "lineNumber": 0,
+            "columnNumber": 0
+          },
+          {
+            "functionName": "",
+            "url": "",
+            "scriptId": "<filtered>",
+            "lineNumber": "<filtered>",
+            "columnNumber": "<filtered>"
+          }
+        ],
+        "truncated": true
+      },
       "frameId": "<filtered>",
       "data": {
         "title": ""

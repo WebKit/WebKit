@@ -52,7 +52,7 @@ function test()
         for (let target of WI.targets) {
             InspectorTest.log(`TARGET: ${target.displayName}`);
             let targetData = WI.debuggerManager.dataForTarget(target);
-            let callFrames = targetData.callFrames;
+            let callFrames = targetData.stackTrace.callFrames;
             for (let i = 0; i < callFrames.length; ++i) {
                 let callFrame = callFrames[i];
                 let active = callFrame === WI.debuggerManager.activeCallFrame;
@@ -129,7 +129,7 @@ function test()
             test(resolve, reject) {
                 let target = targetResolver();
                 let targetData = WI.debuggerManager.dataForTarget(target);
-                WI.debuggerManager.activeCallFrame = targetData.callFrames[0];
+                WI.debuggerManager.activeCallFrame = targetData.stackTrace.callFrames[0];
                 WI.runtimeManager.evaluateInInspectedWindow("testVariable", {objectGroup: "test", includeCommandLineAPI: true}, (remoteObject) => {
                     InspectorTest.expectEqual(remoteObject.description, expected, `Evaluated result in ${target.displayName} should be ${JSON.stringify(expected)}.`)
                     resolve();
@@ -161,7 +161,7 @@ function test()
         description: "Should be able to step in individual threads and not affect the others.",
         test(resolve, reject) {
             let targetData = WI.debuggerManager.dataForTarget(workerTarget1);
-            WI.debuggerManager.activeCallFrame = targetData.callFrames[0];
+            WI.debuggerManager.activeCallFrame = targetData.stackTrace.callFrames[0];
             WI.debuggerManager.stepOut();
             WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
                 InspectorTest.expectEqual(event.data.target, workerTarget1, "Should receive CallFramesDidChange for Worker 1.");

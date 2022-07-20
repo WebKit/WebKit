@@ -811,14 +811,14 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         var startTime = this._activeRecording.computeElapsedTime(recordPayload.startTime);
         var endTime = this._activeRecording.computeElapsedTime(recordPayload.endTime);
-        var callFrames = this._callFramesFromPayload(recordPayload.stackTrace);
+        let stackTrace = this._stackTraceFromPayload(recordPayload.stackTrace);
 
         var significantCallFrame = null;
-        if (callFrames) {
-            for (var i = 0; i < callFrames.length; ++i) {
-                if (callFrames[i].nativeCode)
+        if (stackTrace) {
+            for (let callFrame of stackTrace.callFrames) {
+                if (callFrame.nativeCode)
                     continue;
-                significantCallFrame = callFrames[i];
+                significantCallFrame = callFrame;
                 break;
             }
         }
@@ -830,28 +830,28 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateStyles, startTime, startTime, callFrames, sourceCodeLocation);
+            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateStyles, startTime, startTime, stackTrace, sourceCodeLocation);
 
         case InspectorBackend.Enum.Timeline.EventType.RecalculateStyles:
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.RecalculateStyles, startTime, endTime, callFrames, sourceCodeLocation);
+            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.RecalculateStyles, startTime, endTime, stackTrace, sourceCodeLocation);
 
         case InspectorBackend.Enum.Timeline.EventType.InvalidateLayout:
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateLayout, startTime, startTime, callFrames, sourceCodeLocation);
+            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateLayout, startTime, startTime, stackTrace, sourceCodeLocation);
 
         case InspectorBackend.Enum.Timeline.EventType.Layout:
             var layoutRecordType = sourceCodeLocation ? WI.LayoutTimelineRecord.EventType.ForcedLayout : WI.LayoutTimelineRecord.EventType.Layout;
             var quad = new WI.Quad(recordPayload.data.root);
-            return new WI.LayoutTimelineRecord(layoutRecordType, startTime, endTime, callFrames, sourceCodeLocation, quad);
+            return new WI.LayoutTimelineRecord(layoutRecordType, startTime, endTime, stackTrace, sourceCodeLocation, quad);
 
         case InspectorBackend.Enum.Timeline.EventType.Paint:
             var quad = new WI.Quad(recordPayload.data.clip);
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, sourceCodeLocation, quad);
+            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Paint, startTime, endTime, stackTrace, sourceCodeLocation, quad);
 
         case InspectorBackend.Enum.Timeline.EventType.Composite:
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Composite, startTime, endTime, callFrames, sourceCodeLocation);
+            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Composite, startTime, endTime, stackTrace, sourceCodeLocation);
 
         case InspectorBackend.Enum.Timeline.EventType.RenderingFrame:
             if (!recordPayload.children || !recordPayload.children.length)
@@ -877,16 +877,16 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             var record;
             switch (parentRecordPayload && parentRecordPayload.type) {
             case InspectorBackend.Enum.Timeline.EventType.TimerFire:
-                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId, profileData);
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, stackTrace, sourceCodeLocation, parentRecordPayload.data.timerId, profileData);
                 break;
             case InspectorBackend.Enum.Timeline.EventType.ObserverCallback:
-                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ObserverCallback, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profileData);
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ObserverCallback, startTime, endTime, stackTrace, sourceCodeLocation, parentRecordPayload.data.type, profileData);
                 break;
             case InspectorBackend.Enum.Timeline.EventType.FireAnimationFrame:
-                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, stackTrace, sourceCodeLocation, parentRecordPayload.data.id, profileData);
                 break;
             default:
-                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, null, profileData);
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, stackTrace, sourceCodeLocation, null, profileData);
                 break;
             }
 
@@ -894,7 +894,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return record;
 
         case InspectorBackend.Enum.Timeline.EventType.ConsoleProfile:
-            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded, startTime, endTime, callFrames, sourceCodeLocation, recordPayload.data.title);
+            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded, startTime, endTime, stackTrace, sourceCodeLocation, recordPayload.data.title);
 
         case InspectorBackend.Enum.Timeline.EventType.TimerFire:
         case InspectorBackend.Enum.Timeline.EventType.EventDispatch:
@@ -928,22 +928,22 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             var record;
             switch (parentRecordPayload.type) {
             case InspectorBackend.Enum.Timeline.EventType.TimerFire:
-                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId, profileData);
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, stackTrace, sourceCodeLocation, parentRecordPayload.data.timerId, profileData);
                 break;
             case InspectorBackend.Enum.Timeline.EventType.EventDispatch:
-                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profileData, parentRecordPayload.data);
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, stackTrace, sourceCodeLocation, parentRecordPayload.data.type, profileData, parentRecordPayload.data);
                 break;
             case InspectorBackend.Enum.Timeline.EventType.ObserverCallback:
-                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ObserverCallback, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profileData);
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ObserverCallback, startTime, endTime, stackTrace, sourceCodeLocation, parentRecordPayload.data.type, profileData);
                 break;
             case InspectorBackend.Enum.Timeline.EventType.FireAnimationFrame:
-                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, stackTrace, sourceCodeLocation, parentRecordPayload.data.id, profileData);
                 break;
             case InspectorBackend.Enum.Timeline.EventType.FunctionCall:
-                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, stackTrace, sourceCodeLocation, parentRecordPayload.data.id, profileData);
                 break;
             case InspectorBackend.Enum.Timeline.EventType.RenderingFrame:
-                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, stackTrace, sourceCodeLocation, parentRecordPayload.data.id, profileData);
                 break;
 
             default:
@@ -963,7 +963,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 sourceCodeLocation = probe.breakpoint.sourceCodeLocation;
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ProbeSampleRecorded, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.probeId);
+            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ProbeSampleRecorded, startTime, startTime, stackTrace, sourceCodeLocation, recordPayload.data.probeId);
         }
 
         case InspectorBackend.Enum.Timeline.EventType.TimerInstall:
@@ -971,25 +971,25 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             // Pass the startTime as the endTime since this record type has no duration.
             var timerDetails = {timerId: recordPayload.data.timerId, timeout: recordPayload.data.timeout, repeating: !recordPayload.data.singleShot};
-            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerInstalled, startTime, startTime, callFrames, sourceCodeLocation, timerDetails);
+            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerInstalled, startTime, startTime, stackTrace, sourceCodeLocation, timerDetails);
 
         case InspectorBackend.Enum.Timeline.EventType.TimerRemove:
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerRemoved, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.timerId);
+            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerRemoved, startTime, startTime, stackTrace, sourceCodeLocation, recordPayload.data.timerId);
 
         case InspectorBackend.Enum.Timeline.EventType.RequestAnimationFrame:
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameRequested, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.id);
+            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameRequested, startTime, startTime, stackTrace, sourceCodeLocation, recordPayload.data.id);
 
         case InspectorBackend.Enum.Timeline.EventType.CancelAnimationFrame:
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameCanceled, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.id);
+            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameCanceled, startTime, startTime, stackTrace, sourceCodeLocation, recordPayload.data.id);
 
         case InspectorBackend.Enum.Timeline.EventType.Screenshot:
             console.assert(isNaN(endTime));
@@ -1051,12 +1051,15 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this.dispatchEventToListeners(WI.TimelineManager.Event.RecordingLoaded, {oldRecording});
     }
 
-    _callFramesFromPayload(payload)
+    _stackTraceFromPayload(payload)
     {
-        if (!payload)
-            return null;
+        let target = WI.assumingMainTarget();
 
-        return payload.map((x) => WI.CallFrame.fromPayload(WI.assumingMainTarget(), x));
+        // COMPATIBILITY (iOS 16): `stackTrace` was an array of `Console.CallFrame`.
+        if (Array.isArray(payload))
+            payload = {callFrames: payload};
+
+        return WI.StackTrace.fromPayload(target, payload);
     }
 
     _addRecord(record)

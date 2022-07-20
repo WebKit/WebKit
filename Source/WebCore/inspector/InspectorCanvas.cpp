@@ -972,8 +972,8 @@ Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool capture
     }
 
     if (captureBacktrace) {
-        auto stackTrace = Inspector::createScriptCallStack(JSExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
-        canvas->setBacktrace(stackTrace->buildInspectorArray());
+        auto stackTrace = Inspector::createScriptCallStack(JSExecState::currentState());
+        canvas->setStackTrace(stackTrace->buildInspectorObject());
     }
 
     return canvas;
@@ -1075,10 +1075,15 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         if (data == item)
             return true;
 
-        auto traceA = std::get_if<RefPtr<ScriptCallStack>>(&data);
-        auto traceB = std::get_if<RefPtr<ScriptCallStack>>(&item);
-        if (traceA && *traceA && traceB && *traceB)
-            return (*traceA)->isEqual((*traceB).get());
+        auto stackTraceA = std::get_if<RefPtr<ScriptCallStack>>(&data);
+        auto stackTraceB = std::get_if<RefPtr<ScriptCallStack>>(&item);
+        if (stackTraceA && *stackTraceA && stackTraceB && *stackTraceB)
+            return (*stackTraceA)->isEqual((*stackTraceB).get());
+
+        auto parentStackTraceA = std::get_if<RefPtr<AsyncStackTrace>>(&data);
+        auto parentStackTraceB = std::get_if<RefPtr<AsyncStackTrace>>(&item);
+        if (parentStackTraceA && *parentStackTraceA && parentStackTraceB && *parentStackTraceB)
+            return *parentStackTraceA == *parentStackTraceB;
 
         return false;
     });
@@ -1137,10 +1142,38 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             index = indexForData(imageBitmap->buffer()->toDataURL("image/png"_s));
         },
         [&] (const RefPtr<ScriptCallStack>& scriptCallStack) {
-            auto array = JSON::ArrayOf<double>::create();
+            auto stackTrace = JSON::ArrayOf<JSON::Value>::create();
+
+            auto callFrames = JSON::ArrayOf<double>::create();
             for (size_t i = 0; i < scriptCallStack->size(); ++i)
-                array->addItem(indexForData(scriptCallStack->at(i)));
-            item = WTFMove(array);
+                callFrames->addItem(indexForData(scriptCallStack->at(i)));
+            stackTrace->addItem(WTFMove(callFrames));
+
+            stackTrace->addItem(/* topCallFrameIsBoundary */ false);
+
+            stackTrace->addItem(scriptCallStack->truncated());
+
+            if (const auto& parentStackTrace = scriptCallStack->parentStackTrace())
+                stackTrace->addItem(indexForData(parentStackTrace));
+
+            item = WTFMove(stackTrace);
+        },
+        [&] (const RefPtr<AsyncStackTrace>& parentStackTrace) {
+            auto stackTrace = JSON::ArrayOf<JSON::Value>::create();
+
+            auto callFrames = JSON::ArrayOf<double>::create();
+            for (size_t i = 0; i < parentStackTrace->size(); ++i)
+                callFrames->addItem(indexForData(parentStackTrace->at(i)));
+            stackTrace->addItem(WTFMove(callFrames));
+
+            stackTrace->addItem(parentStackTrace->topCallFrameIsBoundary());
+
+            stackTrace->addItem(parentStackTrace->truncated());
+
+            if (const auto& grandparentStackTrace = parentStackTrace->parentStackTrace())
+                stackTrace->addItem(indexForData(grandparentStackTrace));
+
+            item = WTFMove(stackTrace);
         },
 #if ENABLE(CSS_TYPED_OM)
         [&] (const RefPtr<CSSStyleImageValue>& cssImageValue) {
@@ -1324,8 +1357,8 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(String&& name, Insp
     action->addItem(WTFMove(parametersData));
     action->addItem(WTFMove(swizzleTypes));
 
-    auto trace = Inspector::createScriptCallStack(JSExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
-    action->addItem(indexForData(trace.ptr()));
+    auto stackTrace = Inspector::createScriptCallStack(JSExecState::currentState());
+    action->addItem(indexForData(stackTrace.ptr()));
 
     return action;
 }

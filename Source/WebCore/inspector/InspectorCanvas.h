@@ -26,6 +26,7 @@
 #pragma once
 
 #include "InspectorCanvasCallTracer.h"
+#include <JavaScriptCore/AsyncStackTrace.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallFrame.h>
@@ -117,6 +118,7 @@ private:
         RefPtr<ImageData>,
         RefPtr<ImageBitmap>,
         RefPtr<Inspector::ScriptCallStack>,
+        RefPtr<Inspector::AsyncStackTrace>,
 #if ENABLE(CSS_TYPED_OM)
         RefPtr<CSSStyleImageValue>,
 #endif

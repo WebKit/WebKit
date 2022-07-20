@@ -31,6 +31,7 @@
 
 namespace Inspector {
 
+class ScriptCallFrame;
 class ScriptCallStack;
 
 class JS_EXPORT_PRIVATE AsyncStackTrace : public RefCounted<AsyncStackTrace> {
@@ -46,6 +47,13 @@ public:
 
     bool isPending() const;
     bool isLocked() const;
+
+    const ScriptCallFrame& at(size_t) const;
+    size_t size() const;
+    bool topCallFrameIsBoundary() const;
+    bool truncated() const { return m_truncated; }
+
+    const RefPtr<AsyncStackTrace>& parentStackTrace() const { return m_parent; }
 
     void willDispatchAsyncCall(size_t maxDepth);
     void didDispatchAsyncCall();

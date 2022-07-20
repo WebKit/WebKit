@@ -25,9 +25,9 @@
 
 WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
 {
-    constructor(eventType, startTime, endTime, callFrames, sourceCodeLocation, quad)
+    constructor(eventType, startTime, endTime, stackTrace, sourceCodeLocation, quad)
     {
-        super(WI.TimelineRecord.Type.Layout, startTime, endTime, callFrames, sourceCodeLocation);
+        super(WI.TimelineRecord.Type.Layout, startTime, endTime, stackTrace, sourceCodeLocation);
 
         console.assert(eventType);
         console.assert(!quad || quad instanceof WI.Quad);
@@ -65,15 +65,15 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
 
     static async fromJSON(json)
     {
-        let {eventType, startTime, endTime, callFrames, sourceCodeLocation, quad} = json;
+        let {eventType, startTime, endTime, stackTrace, sourceCodeLocation, quad} = json;
         quad = quad ? WI.Quad.fromJSON(quad) : null;
-        return new WI.LayoutTimelineRecord(eventType, startTime, endTime, callFrames, sourceCodeLocation, quad);
+        return new WI.LayoutTimelineRecord(eventType, startTime, endTime, stackTrace, sourceCodeLocation, quad);
     }
 
     toJSON()
     {
-        // FIXME: CallFrames
-        // FIXME: SourceCodeLocation
+        // FIXME: stackTrace
+        // FIXME: sourceCodeLocation
 
         return {
             type: this.type,

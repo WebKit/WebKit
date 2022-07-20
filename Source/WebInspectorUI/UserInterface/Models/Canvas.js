@@ -25,12 +25,13 @@
 
 WI.Canvas = class Canvas extends WI.Object
 {
-    constructor(identifier, contextType, {domNode, cssCanvasName, contextAttributes, memoryCost, backtrace} = {})
+    constructor(identifier, contextType, {domNode, cssCanvasName, contextAttributes, memoryCost, stackTrace} = {})
     {
         super();
 
         console.assert(identifier);
         console.assert(contextType);
+        console.assert(!stackTrace || stackTrace instanceof WI.StackTrace, stackTrace);
 
         this._identifier = identifier;
         this._contextType = contextType;
@@ -39,7 +40,7 @@ WI.Canvas = class Canvas extends WI.Object
         this._contextAttributes = contextAttributes || {};
         this._extensions = new Set;
         this._memoryCost = memoryCost || NaN;
-        this._backtrace = backtrace || [];
+        this._stackTrace = stackTrace || null;
 
         this._clientNodes = null;
         this._shaderProgramCollection = new WI.ShaderProgramCollection;
@@ -82,12 +83,16 @@ WI.Canvas = class Canvas extends WI.Object
             console.error("Invalid canvas context type", payload.contextType);
         }
 
+        // COMPATIBILITY (iOS 16): `backtrace` was renamed to `stackTrace`.
+        if (payload.backtrace)
+            payload.stackTrace = {callFrames: payload.backtrace};
+
         return new WI.Canvas(payload.canvasId, contextType, {
             domNode: payload.nodeId ? WI.domManager.nodeForId(payload.nodeId) : null,
             cssCanvasName: payload.cssCanvasName,
             contextAttributes: payload.contextAttributes,
             memoryCost: payload.memoryCost,
-            backtrace: Array.isArray(payload.backtrace) ? payload.backtrace.map((item) => WI.CallFrame.fromPayload(WI.mainTarget, item)) : [],
+            stackTrace: WI.StackTrace.fromPayload(WI.assumingMainTarget(), payload.stackTrace),
         });
     }
 
@@ -148,7 +153,7 @@ WI.Canvas = class Canvas extends WI.Object
     get cssCanvasName() { return this._cssCanvasName; }
     get contextAttributes() { return this._contextAttributes; }
     get extensions() { return this._extensions; }
-    get backtrace() { return this._backtrace; }
+    get stackTrace() { return this._stackTrace; }
     get shaderProgramCollection() { return this._shaderProgramCollection; }
     get recordingCollection() { return this._recordingCollection; }
     get recordingFrameCount() { return this._recordingFrames.length; }

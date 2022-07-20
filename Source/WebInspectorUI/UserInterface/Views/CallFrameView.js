@@ -25,12 +25,16 @@
 
 WI.CallFrameView = class CallFrameView extends WI.Object
 {
-    constructor(callFrame, {showFunctionName, indicateIfBlackboxed} = {})
+    constructor(callFrame, {showFunctionName, indicateIfBlackboxed, isAsyncBoundaryCallFrame, isTruncatedBoundaryCallFrame} = {})
     {
         console.assert(callFrame instanceof WI.CallFrame);
 
         var callFrameElement = document.createElement("div");
         callFrameElement.classList.add("call-frame", WI.CallFrameView.iconClassNameForCallFrame(callFrame));
+        if (isAsyncBoundaryCallFrame)
+            callFrameElement.classList.add("async-boundary");
+        if (isTruncatedBoundaryCallFrame)
+            callFrameElement.classList.add("truncated-boundary");
 
         var subtitleElement = document.createElement("span");
         subtitleElement.classList.add("subtitle");

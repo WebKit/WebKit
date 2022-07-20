@@ -20,7 +20,7 @@ function test()
 {
     function topCallFrameName() {
         let targetData = WI.debuggerManager.dataForTarget(WI.mainTarget);
-        return targetData.callFrames[0].functionName;
+        return targetData.stackTrace.callFrames[0].functionName;
     }
 
     let suite = InspectorTest.createAsyncSuite("Debugger.continueUntilNextRunLoop");

@@ -51,7 +51,7 @@ Ref<JSON::Object> TimelineRecordFactory::createGenericRecord(double startTime, i
     if (maxCallStackDepth) {
         Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSExecState::currentState(), maxCallStackDepth);
         if (stackTrace->size())
-            record->setValue("stackTrace"_s, stackTrace->buildInspectorArray());
+            record->setValue("stackTrace"_s, stackTrace->buildInspectorObject());
     }
     return record;
 }

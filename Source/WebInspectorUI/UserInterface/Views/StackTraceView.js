@@ -23,20 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.StackTraceView = class StackTraceView extends WI.Object
+WI.StackTraceView = class StackTraceView
 {
     constructor(stackTrace)
     {
-        super();
+        console.assert(stackTrace instanceof WI.StackTrace, stackTrace);
 
         var element = this._element = document.createElement("div");
         element.classList.add("stack-trace");
 
-        WI.CallFrameTreeController.groupBlackboxedCallFrames(element, stackTrace.callFrames);
-    }
+        WI.CallFrameTreeController.groupBlackboxedStackTrace(element, stackTrace);
 
-    get element()
-    {
-        return this._element;
+        return element;
     }
 };

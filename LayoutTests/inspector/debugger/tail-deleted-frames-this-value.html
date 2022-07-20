@@ -40,7 +40,7 @@ function test()
         ];
 
         let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
-        let callFrames = targetData.callFrames;
+        let callFrames = targetData.stackTrace.callFrames;
 
         InspectorTest.assert(callFrames.length >= expectedFrames.length, `Should have at least ${expectedFrames.length} frames, but have ${callFrames.length} instead.`);
 

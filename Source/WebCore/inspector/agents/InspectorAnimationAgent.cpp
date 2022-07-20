@@ -558,8 +558,8 @@ void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, bool captur
         animationPayload->setEffect(buildObjectForEffect(*effect));
 
     if (captureBacktrace) {
-        auto stackTrace = Inspector::createScriptCallStack(JSExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
-        animationPayload->setBacktrace(stackTrace->buildInspectorArray());
+        auto stackTrace = Inspector::createScriptCallStack(JSExecState::currentState());
+        animationPayload->setStackTrace(stackTrace->buildInspectorObject());
     }
 
     m_frontendDispatcher->animationCreated(WTFMove(animationPayload));

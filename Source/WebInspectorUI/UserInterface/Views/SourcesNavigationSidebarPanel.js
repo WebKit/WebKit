@@ -706,7 +706,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 continue;
             }
 
-            if (treeElement.isAsyncBoundaryCallFrame)
+            if (treeElement.isAsyncBoundaryCallFrame || treeElement.isTruncatedBoundaryCallFrame)
                 asyncBoundary = treeElement.mainTitle;
 
             if (!selectedTreeElements.has(treeElement))

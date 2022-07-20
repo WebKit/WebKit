@@ -1,15 +1,17 @@
 window.animations = [];
 
 function createAnimation(selector, keyframes = [], options = {}) {
-    let animation = null;
+    setTimeout(() => {
+        let animation = null;
 
-    let target = document.querySelector(selector);
-    if (target)
-        animation = target.animate(keyframes, options);
-    else
-        animation = new Animation(new KeyframeEffect(null, keyframes, options));
+        let target = document.querySelector(selector);
+        if (target)
+            animation = target.animate(keyframes, options);
+        else
+            animation = new Animation(new KeyframeEffect(null, keyframes, options));
 
-    window.animations.push(animation);
+        window.animations.push(animation);
+    });
 }
 
 function destroyAnimations() {
@@ -60,21 +62,34 @@ TestPage.registerInitializer(() => {
 
         InspectorTest.pass(`Animation created '${animation.displayName}'.`);
 
-        for (let i = 0; i < animation.backtrace.length; ++i) {
-            let callFrame = animation.backtrace[i];
-            let traceText = `  ${i}: `;
-            traceText += callFrame.functionName || "(anonymous function)";
+        let async = false;
+        let stackTrace = animation.stackTrace;
+        while (stackTrace) {
+            if (async)
+                InspectorTest.log("  ---");
 
-            if (callFrame.nativeCode)
-                traceText += " - [native code]";
-            else if (callFrame.programCode)
-                traceText += " - [program code]";
-            else if (callFrame.sourceCodeLocation) {
-                let location = callFrame.sourceCodeLocation;
-                traceText += " - " + sanitizeURL(location.sourceCode.url) + `:${location.lineNumber}:${location.columnNumber}`;
+            for (let i = 0; i < stackTrace.callFrames.length; ++i) {
+                let callFrame = stackTrace.callFrames[i];
+                let traceText = `  ${i}: `;
+                traceText += callFrame.functionName || "(anonymous function)";
+
+                if (callFrame.nativeCode)
+                    traceText += " - [native code]";
+                else if (callFrame.programCode)
+                    traceText += " - [program code]";
+                else if (callFrame.sourceCodeLocation) {
+                    let location = callFrame.sourceCodeLocation;
+                    traceText += " - " + sanitizeURL(location.sourceCode.url) + `:${location.lineNumber}:${location.columnNumber}`;
+                }
+
+                InspectorTest.log(traceText);
             }
 
-            InspectorTest.log(traceText);
+            if (stackTrace.truncated)
+                InspectorTest.log("  (truncated)");
+
+            stackTrace = stackTrace.parentStackTrace;
+            async = true;
         }
 
         InspectorTest.expectEqual(animation.animationType, animationType, `Animation type should be ${WI.Animation.displayNameForAnimationType(animationType)}.`);

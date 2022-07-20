@@ -31,6 +31,8 @@ WI.CallFrameTreeController = class CallFrameTreeController extends WI.Object
 
         super();
 
+        this._stackTrace = null;
+
         this._treeOutline = treeOutline;
 
         if (this._treeOutline.selectable)
@@ -41,7 +43,55 @@ WI.CallFrameTreeController = class CallFrameTreeController extends WI.Object
 
     // Static
 
-    static groupBlackboxedCallFrames(parent, callFrames, {rememberBlackboxedCallFrameGroupToAutoExpand} = {})
+    static groupBlackboxedStackTrace(parent, stackTrace, {rememberBlackboxedCallFrameGroupToAutoExpand} = {})
+    {
+        let parentIsNode = parent instanceof Node;
+        console.assert(parentIsNode || parent instanceof WI.TreeOutline || parent instanceof WI.TreeElement, parent);
+        console.assert(stackTrace instanceof WI.StackTrace, stackTrace);
+
+        let CallFrameUIClass = parentIsNode ? WI.CallFrameView : WI.CallFrameTreeElement;
+
+        let activeCallFrameTreeElement = WI.CallFrameTreeController._groupBlackboxedCallFrames(parent, stackTrace.callFrames, {rememberBlackboxedCallFrameGroupToAutoExpand});
+
+        let parentStackTrace = stackTrace.parentStackTrace;
+        while (parentStackTrace) {
+            console.assert(parentStackTrace.callFrames.length, "StackTrace should have non-empty call frames array.");
+            if (!parentStackTrace.callFrames.length)
+                break;
+
+            let boundaryCallFrame;
+            if (parentStackTrace.topCallFrameIsBoundary) {
+                boundaryCallFrame = parentStackTrace.callFrames[0];
+                console.assert(boundaryCallFrame.nativeCode && !boundaryCallFrame.sourceCodeLocation);
+            } else {
+                // Create a generic native CallFrame for the asynchronous boundary.
+                boundaryCallFrame = new WI.CallFrame(parentStackTrace.callFrames[0].target, {
+                    functionName: WI.UIString("(async)"),
+                    nativeCode: true,
+                });
+            }
+
+            parent.appendChild(new CallFrameUIClass(boundaryCallFrame, {showFunctionName: true, isAsyncBoundaryCallFrame: true}));
+
+            let startIndex = parentStackTrace.topCallFrameIsBoundary ? 1 : 0;
+            let parentCallFrames = startIndex ? parentStackTrace.callFrames.slice(startIndex) : parentStackTrace.callFrames;
+            WI.CallFrameTreeController._groupBlackboxedCallFrames(parent, parentCallFrames, {rememberBlackboxedCallFrameGroupToAutoExpand});
+
+            if (parentStackTrace.truncated) {
+                let truncatedCallFrame = new WI.CallFrame(parentStackTrace.callFrames[0].target, {
+                    functionName: WI.UIString("(call frames truncated)"),
+                    nativeCode: true,
+                });
+                parent.appendChild(new CallFrameUIClass(truncatedCallFrame, {showFunctionName: true, isTruncatedBoundaryCallFrame: true}));
+            }
+
+            parentStackTrace = parentStackTrace.parentStackTrace;
+        }
+
+        return activeCallFrameTreeElement;
+    }
+
+    static _groupBlackboxedCallFrames(parent, callFrames, {rememberBlackboxedCallFrameGroupToAutoExpand} = {})
     {
         let parentIsNode = parent instanceof Node;
         console.assert(parentIsNode || parent instanceof WI.TreeOutline || parent instanceof WI.TreeElement, parent);
@@ -112,22 +162,23 @@ WI.CallFrameTreeController = class CallFrameTreeController extends WI.Object
 
     get treeOutline() { return this._treeOutline; }
 
-    get callFrames()
+    get stackTrace()
     {
-        return this._callFrames;
+        return this._stackTrace;
     }
 
-    set callFrames(callFrames)
+    set stackTrace(stackTrace)
     {
-        callFrames = callFrames || [];
-        if (this._callFrames === callFrames)
+        stackTrace = stackTrace || null;
+        if (this._stackTrace === stackTrace)
             return;
 
-        this._callFrames = callFrames;
+        this._stackTrace = stackTrace;
 
         this._treeOutline.removeChildren();
 
-        WI.CallFrameTreeController.groupBlackboxedCallFrames(this._treeOutline, this._callFrames);
+        if (this._stackTrace)
+            WI.CallFrameTreeController.groupBlackboxedStackTrace(this._treeOutline, this._stackTrace);
     }
 
     disconnect()

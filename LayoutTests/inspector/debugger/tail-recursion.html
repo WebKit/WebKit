@@ -48,7 +48,7 @@ function test()
         InspectorTest.log("------------------------------------");
 
         let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
-        let callFrames = targetData.callFrames;
+        let callFrames = targetData.stackTrace.callFrames;
 
         InspectorTest.assert(callFrames.length > numFramesToInspect); // We just look at top 50. This isn't a precise number. But it gets at the gist of the debugging experience.
         for (let i = 0; i < numFramesToInspect; i++) {

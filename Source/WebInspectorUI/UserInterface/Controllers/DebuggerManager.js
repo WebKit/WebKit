@@ -912,8 +912,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return;
         }
 
-        let asyncStackTrace = WI.StackTrace.fromPayload(target, asyncStackTracePayload);
-        targetData.updateForPause(callFrames, pauseReason, pauseData, asyncStackTrace);
+        let stackTrace = new WI.StackTrace(callFrames, {
+            parentStackTrace: WI.StackTrace.fromPayload(target, asyncStackTracePayload),
+        });
+        targetData.updateForPause(stackTrace, pauseReason, pauseData);
 
         // Pause other targets because at least one target has paused.
         // FIXME: Should this be done on the backend?

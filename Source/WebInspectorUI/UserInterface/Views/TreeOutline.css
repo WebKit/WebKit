@@ -66,7 +66,7 @@
     --tree-outline-icon-margin-end: 6px;
 }
 
-.tree-outline.non-selectable .item:hover {
+.tree-outline.non-selectable .item:not(.non-selectable):hover {
     background-color: var(--selected-background-color-unfocused);
 }
 

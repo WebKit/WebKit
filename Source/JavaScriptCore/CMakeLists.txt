@@ -798,6 +798,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/WeakSet.h
     heap/WeakSetInlines.h
 
+    inspector/AsyncStackTrace.h
     inspector/ConsoleMessage.h
     inspector/ContentSearchUtilities.h
     inspector/IdentifiersFactory.h

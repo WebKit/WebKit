@@ -57,8 +57,9 @@ TestPage.registerInitializer(() => {
             InspectorTest.expectEqual(canvas.contextType, contextType, `Canvas context should be ${contextDisplayName}.`);
 
             let traceText = "";
-            for (let i = 0; i < canvas.backtrace.length; ++i) {
-                let callFrame = canvas.backtrace[i];
+            let callFrames = canvas?.stackTrace.callFrames ?? [];
+            for (let i = 0; i < callFrames.length; ++i) {
+                let callFrame = callFrames[i];
                 traceText += `  ${i}: ` + (callFrame.functionName || "(anonymous function)");
                 if (callFrame.nativeCode)
                     traceText += " - [native code]";

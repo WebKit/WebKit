@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "AsyncStackTrace.h"
 #include "ScriptCallFrame.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -38,17 +39,22 @@
 
 namespace Inspector {
 
+class AsyncStackTrace;
+
 class JS_EXPORT_PRIVATE ScriptCallStack : public RefCounted<ScriptCallStack> {
 public:
     static constexpr size_t maxCallStackSizeToCapture = 200;
     
     static Ref<ScriptCallStack> create();
-    static Ref<ScriptCallStack> create(Vector<ScriptCallFrame>&);
+    static Ref<ScriptCallStack> create(Vector<ScriptCallFrame>&&, bool truncated = false, AsyncStackTrace* parentStackTrace = nullptr);
 
     ~ScriptCallStack();
 
     const ScriptCallFrame& at(size_t) const;
     size_t size() const;
+    bool truncated() const { return m_truncated; }
+
+    const RefPtr<AsyncStackTrace>& parentStackTrace() const { return m_parentStackTrace; }
 
     const ScriptCallFrame* firstNonNativeCallFrame() const;
 
@@ -57,12 +63,16 @@ public:
     bool isEqual(ScriptCallStack*) const;
 
     Ref<JSON::ArrayOf<Protocol::Console::CallFrame>> buildInspectorArray() const;
+    Ref<Protocol::Console::StackTrace> buildInspectorObject() const;
 
 private:
     ScriptCallStack();
-    ScriptCallStack(Vector<ScriptCallFrame>&);
+    ScriptCallStack(Vector<ScriptCallFrame>&&, bool truncated = false, AsyncStackTrace* parentStackTrace = nullptr);
 
     Vector<ScriptCallFrame> m_frames;
+    bool m_truncated { false };
+
+    RefPtr<AsyncStackTrace> m_parentStackTrace;
 };
 
 } // namespace Inspector

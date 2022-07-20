@@ -96,6 +96,7 @@ public:
     Protocol::ErrorStringOr<void> setBlackboxBreakpointEvaluations(bool) final;
 
     // JSC::Debugger::Client
+    bool isInspectorDebuggerAgent() const final { return true; }
     JSC::JSObject* debuggerScopeExtensionObject(JSC::Debugger&, JSC::JSGlobalObject*, JSC::DebuggerCallFrame&) final;
 
     // JSC::Debugger::Observer
@@ -129,6 +130,7 @@ public:
     void didCancelAsyncCall(AsyncCallType, int callbackId);
     void willDispatchAsyncCall(AsyncCallType, int callbackId);
     void didDispatchAsyncCall();
+    AsyncStackTrace* currentParentStackTrace() const;
 
     void schedulePauseAtNextOpportunity(DebuggerFrontendDispatcher::Reason, RefPtr<JSON::Object>&& data = nullptr);
     void cancelPauseAtNextOpportunity();
@@ -293,3 +295,7 @@ private:
 };
 
 } // namespace Inspector
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(Inspector::InspectorDebuggerAgent)
+    static bool isType(const JSC::Debugger::Client& context) { return context.isInspectorDebuggerAgent(); }
+SPECIALIZE_TYPE_TRAITS_END()

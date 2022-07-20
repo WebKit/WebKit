@@ -46,50 +46,16 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
 
         let targetData = WI.debuggerManager.dataForTarget(this._target);
 
-        if (targetData.pausing || !targetData.callFrames.length) {
+        if (targetData.pausing || !targetData.stackTrace?.callFrames.length) {
             this.appendChild(this._idleTreeElement);
             this.expand();
             return;
         }
 
-        let activeCallFrameTreeElement = WI.CallFrameTreeController.groupBlackboxedCallFrames(this, targetData.callFrames, {rememberBlackboxedCallFrameGroupToAutoExpand: true});
-
+        let activeCallFrameTreeElement = WI.CallFrameTreeController.groupBlackboxedStackTrace(this, targetData.stackTrace, {rememberBlackboxedCallFrameGroupToAutoExpand: true});
         if (activeCallFrameTreeElement) {
             activeCallFrameTreeElement.select(true, true);
             activeCallFrameTreeElement.isActiveCallFrame = true;
-        }
-
-        let currentStackTrace = targetData.asyncStackTrace;
-        while (currentStackTrace) {
-            console.assert(currentStackTrace.callFrames.length, "StackTrace should have non-empty call frames array.");
-            if (!currentStackTrace.callFrames.length)
-                break;
-
-            let boundaryCallFrame;
-            if (currentStackTrace.topCallFrameIsBoundary) {
-                boundaryCallFrame = currentStackTrace.callFrames[0];
-                console.assert(boundaryCallFrame.nativeCode && !boundaryCallFrame.sourceCodeLocation);
-            } else {
-                // Create a generic native CallFrame for the asynchronous boundary.
-                boundaryCallFrame = new WI.CallFrame(this._target, {
-                    functionName: WI.UIString("(async)"),
-                    nativeCode: true,
-                });
-            }
-
-            this.appendChild(new WI.CallFrameTreeElement(boundaryCallFrame, {isAsyncBoundaryCallFrame: true}));
-
-            let startIndex = currentStackTrace.topCallFrameIsBoundary ? 1 : 0;
-            let currentCallFrames = startIndex ? currentStackTrace.callFrames.slice(startIndex) : currentStackTrace.callFrames;
-            WI.CallFrameTreeController.groupBlackboxedCallFrames(this, currentCallFrames, {rememberBlackboxedCallFrameGroupToAutoExpand: true});
-
-            if (currentStackTrace.truncated) {
-                let truncatedTreeElement = new WI.GeneralTreeElement("truncated-call-frames", WI.UIString("Call Frames Truncated"));
-                truncatedTreeElement.selectable = false;
-                this.appendChild(truncatedTreeElement);
-            }
-
-            currentStackTrace = currentStackTrace.parentStackTrace;
         }
 
         this.expand();

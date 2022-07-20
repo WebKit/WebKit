@@ -25,9 +25,9 @@
 
 WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
 {
-    constructor(eventType, startTime, endTime, callFrames, sourceCodeLocation, details, profilePayload, extraDetails)
+    constructor(eventType, startTime, endTime, stackTrace, sourceCodeLocation, details, profilePayload, extraDetails)
     {
-        super(WI.TimelineRecord.Type.Script, startTime, endTime, callFrames, sourceCodeLocation);
+        super(WI.TimelineRecord.Type.Script, startTime, endTime, stackTrace, sourceCodeLocation);
 
         console.assert(eventType);
 
@@ -48,18 +48,18 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
 
     static async fromJSON(json)
     {
-        let {eventType, startTime, endTime, callFrames, sourceCodeLocation, details, profilePayload, extraDetails} = json;
+        let {eventType, startTime, endTime, stackTrace, sourceCodeLocation, details, profilePayload, extraDetails} = json;
 
         if (typeof details === "object" && details.__type === "GarbageCollection")
             details = WI.GarbageCollection.fromJSON(details);
 
-        return new WI.ScriptTimelineRecord(eventType, startTime, endTime, callFrames, sourceCodeLocation, details, profilePayload, extraDetails);
+        return new WI.ScriptTimelineRecord(eventType, startTime, endTime, stackTrace, sourceCodeLocation, details, profilePayload, extraDetails);
     }
 
     toJSON()
     {
-        // FIXME: CallFrames
-        // FIXME: SourceCodeLocation
+        // FIXME: stackTrace
+        // FIXME: sourceCodeLocation
         // FIXME: profilePayload
 
         return {

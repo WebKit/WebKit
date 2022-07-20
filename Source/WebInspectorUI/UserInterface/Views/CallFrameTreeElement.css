@@ -59,7 +59,7 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
     fill: var(--selected-foreground-color);
 }
 
-.tree-outline .item.call-frame.async-boundary {
+.call-frame:is(.async-boundary, .truncated-boundary) {
     cursor: default;
     color: var(--text-color-gray-medium);
 }
@@ -89,11 +89,15 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
 }
 
 .tree-outline .item.call-frame.async-boundary::before {
-    width: 30px;
+    width: 4px;
     margin-inline: -5px 1px;
 }
 
-.tree-outline.single-thread .item.call-frame.async-boundary::before {
+.tree-outline .children .item.call-frame.async-boundary::before {
+    width: 30px;
+}
+
+.tree-outline.single-thread .children .item.call-frame.async-boundary::before {
     width: 20px;
 }
 

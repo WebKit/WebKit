@@ -26,9 +26,10 @@
 
 WI.Resource = class Resource extends WI.SourceCode
 {
-    constructor(url, {mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, requestSentWalltime, referrerPolicy, integrity, initiatorCallFrames, initiatorSourceCodeLocation, initiatorNode} = {})
+    constructor(url, {mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, requestSentWalltime, referrerPolicy, integrity, initiatorStackTrace, initiatorSourceCodeLocation, initiatorNode} = {})
     {
         console.assert(url);
+        console.assert(!initiatorStackTrace || initiatorStackTrace instanceof WI.StackTrace, initiatorStackTrace);
 
         super(url);
 
@@ -54,7 +55,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._responseCookies = null;
         this._serverTimingEntries = null;
         this._parentFrame = null;
-        this._initiatorCallFrames = initiatorCallFrames || null;
+        this._initiatorStackTrace = initiatorStackTrace || null;
         this._initiatorSourceCodeLocation = initiatorSourceCodeLocation || null;
         this._initiatorNode = initiatorNode || null;
         this._initiatedResources = [];
@@ -327,7 +328,7 @@ WI.Resource = class Resource extends WI.SourceCode
     get requestIdentifier() { return this._requestIdentifier; }
     get requestMethod() { return this._requestMethod; }
     get requestData() { return this._requestData; }
-    get initiatorCallFrames() { return this._initiatorCallFrames; }
+    get initiatorStackTrace() { return this._initiatorStackTrace; }
     get initiatorSourceCodeLocation() { return this._initiatorSourceCodeLocation; }
     get initiatorNode() { return this._initiatorNode; }
     get initiatedResources() { return this._initiatedResources; }

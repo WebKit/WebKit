@@ -73,7 +73,7 @@ function test()
 
     function dumpCallFrames() {
         let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
-        let callFrames = targetData.callFrames;
+        let callFrames = targetData.stackTrace.callFrames;
         let chain = Promise.resolve();
         for (let callFrame of callFrames)
             chain = chain.then(() => dumpCallFrame(callFrame));

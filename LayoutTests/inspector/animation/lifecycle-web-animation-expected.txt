@@ -8,7 +8,10 @@ Creating animation...
 
 PASS: Animation created 'web-animation-test'.
   0: animate - [native code]
-  1: createAnimation - inspector/animation/resources/lifecycle-utilities.js:7:35
+  1: (anonymous function) - inspector/animation/resources/lifecycle-utilities.js:8:39
+  ---
+  0: setTimeout - [native code]
+  1: createAnimation - inspector/animation/resources/lifecycle-utilities.js:3:15
   2: Global Code - [program code]
   3: evaluateWithScopeExtension - [native code]
   4: (anonymous function) - [native code]

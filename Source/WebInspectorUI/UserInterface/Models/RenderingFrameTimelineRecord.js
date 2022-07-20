@@ -139,7 +139,7 @@ WI.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord extends WI.
                 // Layout events synchronously triggered from JavaScript must be subtracted from the total
                 // script time, to prevent the time from being counted twice.
                 duration -= this.children.reduce(function(previousValue, currentValue) {
-                    if (currentValue.type === WI.TimelineRecord.Type.Layout && (currentValue.sourceCodeLocation || currentValue.callFrames))
+                    if (currentValue.type === WI.TimelineRecord.Type.Layout && (currentValue.sourceCodeLocation || currentValue.stackTrace))
                         return previousValue + currentValue.duration;
                     return previousValue;
                 }, 0);

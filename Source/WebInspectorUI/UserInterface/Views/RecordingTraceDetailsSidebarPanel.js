@@ -75,16 +75,16 @@ WI.RecordingTraceDetailsSidebarPanel = class RecordingTraceDetailsSidebarPanel e
         if (!this._action)
             return;
 
-        let trace = this._action.trace;
-        this._backtraceTreeController.callFrames = trace;
+        let stackTrace = this._action.stackTrace;
+        this._backtraceTreeController.stackTrace = stackTrace;
 
-        if (!trace.length) {
-            let noTraceDataElement = this.contentView.element.appendChild(document.createElement("div"));
-            noTraceDataElement.classList.add("no-trace-data");
+        if (!stackTrace?.callFrames.length) {
+            let noStackTraceContainerElement = this.contentView.element.appendChild(document.createElement("div"));
+            noStackTraceContainerElement.classList.add("no-stack-trace");
 
-            let noTraceDataMessageElement = noTraceDataElement.appendChild(document.createElement("div"));
-            noTraceDataMessageElement.classList.add("message");
-            noTraceDataMessageElement.textContent = WI.UIString("Call Stack Unavailable");
+            let noStackTraceMessageElement = noStackTraceContainerElement.appendChild(document.createElement("div"));
+            noStackTraceMessageElement.classList.add("message");
+            noStackTraceMessageElement.textContent = WI.UIString("Call Stack Unavailable");
             return;
         }
 

@@ -109,7 +109,7 @@ WARN: Recording Warning: unknown type "test"
 WARN: Recording Warning: non-number name
 WARN: Recording Warning: non-array parameters
 WARN: Recording Warning: non-array swizzleTypes
-WARN: Recording Warning: non-number trace
+WARN: Recording Warning: non-number stackTrace
 {
   "version": 1,
   "type": "test",

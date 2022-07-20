@@ -783,7 +783,7 @@ Ref<Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiatorObject(Do
         initiatorObject = Protocol::Network::Initiator::create()
             .setType(Protocol::Network::Initiator::Type::Script)
             .release();
-        initiatorObject->setStackTrace(stackTrace->buildInspectorArray());
+        initiatorObject->setStackTrace(stackTrace->buildInspectorObject());
     } else if (document && document->scriptableDocumentParser()) {
         initiatorObject = Protocol::Network::Initiator::create()
             .setType(Protocol::Network::Initiator::Type::Parser)

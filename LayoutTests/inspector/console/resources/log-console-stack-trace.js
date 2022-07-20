@@ -30,6 +30,7 @@ TestPage.registerInitializer(() => {
                     InspectorTest.log("ASYNC CALL STACK:");
                     foundAsyncBoundary = true;
                 }
+                callFrameIndex = 0;
                 logCallFrame(callFrames[0], true);
             }
 

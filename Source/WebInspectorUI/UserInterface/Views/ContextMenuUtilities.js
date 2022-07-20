@@ -142,7 +142,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
         }
     }
 
-    if (sourceCode?.initiatorCallFrames) {
+    if (sourceCode?.initiatorStackTrace) {
         let existingURLBreakpoints = WI.domDebuggerManager.urlBreakpointsMatchingURL(sourceCode.url);
         if (existingURLBreakpoints.length) {
             contextMenu.appendItem(existingURLBreakpoints.length === 1 ? WI.UIString("Delete URL Breakpoint") : WI.UIString("Delete URL Breakpoints"), () => {
