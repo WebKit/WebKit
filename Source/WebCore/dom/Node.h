@@ -734,6 +734,8 @@ private:
     static void moveShadowTreeToNewDocument(ShadowRoot&, Document& oldDocument, Document& newDocument);
     static void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
     void moveNodeToNewDocument(Document& oldDocument, Document& newDocument);
+
+    WEBCORE_EXPORT void notifyInspectorOfRendererChange();
     
     struct NodeRareDataDeleter {
         void operator()(NodeRareData*) const;

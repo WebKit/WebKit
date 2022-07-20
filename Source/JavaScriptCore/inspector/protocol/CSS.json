@@ -269,10 +269,14 @@
             ]
         },
         {
-            "id": "LayoutContextType",
+            "id": "LayoutFlag",
             "type": "string",
-            "enum": ["flex", "grid"],
-            "description": "The layout context type of a node."
+            "enum": [
+                "rendered",
+                "flex",
+                "grid"
+            ],
+            "description": "Relevant layout information about the node. Things not in this list are not important to Web Inspector."
         },
         {
             "id": "LayoutContextTypeChangedMode",
@@ -479,12 +483,12 @@
             ]
         },
         {
-            "name": "nodeLayoutContextTypeChanged",
-            "description": "Called when a node's layout context type has changed.",
+            "name": "nodeLayoutFlagsChanged",
+            "description": "Called when the layout of a node changes in a way that is important to Web Inspector.",
             "targetTypes": ["page"],
             "parameters": [
-                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node whose layout context type changed." },
-                { "name": "layoutContextType", "$ref": "LayoutContextType", "optional": true, "description": "The new layout context type of the node. When not provided, the <code>LayoutContextType</code> of the node is not a context for which Web Inspector has specific functionality." }
+                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node whose layout changed." },
+                { "name": "layoutFlags", "type": "array", "items": { "type": "string", "description": "CSS.LayoutFlag" }, "optional": true, "description": "Relevant information about the layout of the node. When not provided, the layout of the node is not important to Web Inspector." }
             ]
         }
     ]

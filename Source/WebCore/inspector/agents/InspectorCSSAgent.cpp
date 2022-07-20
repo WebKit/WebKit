@@ -273,7 +273,7 @@ InspectorCSSAgent::InspectorCSSAgent(WebAgentContext& context)
     : InspectorAgentBase("CSS"_s, context)
     , m_frontendDispatcher(makeUnique<CSSFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(CSSBackendDispatcher::create(context.backendDispatcher, this))
-    , m_layoutContextTypeChangedTimer(*this, &InspectorCSSAgent::layoutContextTypeChangedTimerFired)
+    , m_nodesWithPendingLayoutFlagsChangeDispatchTimer(*this, &InspectorCSSAgent::nodesWithPendingLayoutFlagsChangeDispatchTimerFired)
 {
 }
 
@@ -296,9 +296,9 @@ void InspectorCSSAgent::reset()
     m_nodeToInspectorStyleSheet.clear();
     m_documentToInspectorStyleSheet.clear();
     m_documentToKnownCSSStyleSheets.clear();
-    m_nodesWithPendingLayoutContextTypeChanges.clear();
-    if (m_layoutContextTypeChangedTimer.isActive())
-        m_layoutContextTypeChangedTimer.stop();
+    m_nodesWithPendingLayoutFlagsChange.clear();
+    if (m_nodesWithPendingLayoutFlagsChangeDispatchTimer.isActive())
+        m_nodesWithPendingLayoutFlagsChangeDispatchTimer.stop();
     m_layoutContextTypeChangedMode = Protocol::CSS::LayoutContextTypeChangedMode::Observed;
     resetPseudoStates();
 }
@@ -935,26 +935,44 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM:
     return { };
 }
 
-std::optional<Protocol::CSS::LayoutContextType> InspectorCSSAgent::layoutContextTypeForRenderer(RenderObject* renderer)
+static std::optional<Protocol::CSS::LayoutFlag> layoutFlagContextTypeForRenderer(RenderObject* renderer)
 {
     if (auto* renderFlexibleBox = dynamicDowncast<RenderFlexibleBox>(renderer)) {
         // Subclasses of RenderFlexibleBox (buttons, selection inputs, etc.) should not be considered flex containers,
         // as it is an internal implementation detail.
         if (renderFlexibleBox->isFlexibleBoxImpl())
             return std::nullopt;
-        return Protocol::CSS::LayoutContextType::Flex;
+        return Protocol::CSS::LayoutFlag::Flex;
     }
     if (is<RenderGrid>(renderer))
-        return Protocol::CSS::LayoutContextType::Grid;
+        return Protocol::CSS::LayoutFlag::Grid;
     return std::nullopt;
 }
 
-static void pushChildrenNodesToFrontendIfLayoutContextTypePresent(InspectorDOMAgent& domAgent, ContainerNode& node)
+RefPtr<JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>> InspectorCSSAgent::layoutFlagsForNode(Node& node)
+{
+    auto* renderer = node.renderer();
+
+    auto layoutFlags = JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>::create();
+
+    if (renderer)
+        layoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Rendered));
+
+    if (auto layoutFlagContextType = layoutFlagContextTypeForRenderer(renderer))
+        layoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(*layoutFlagContextType));
+
+    if (!layoutFlags->length())
+        return nullptr;
+
+    return layoutFlags;
+}
+
+static void pushChildrenNodesToFrontendIfLayoutFlagIsRelevant(InspectorDOMAgent& domAgent, ContainerNode& node)
 {
     for (auto& child : childrenOfType<Element>(node))
-        pushChildrenNodesToFrontendIfLayoutContextTypePresent(domAgent, child);
+        pushChildrenNodesToFrontendIfLayoutFlagIsRelevant(domAgent, child);
     
-    if (InspectorCSSAgent::layoutContextTypeForRenderer(node.renderer()))
+    if (layoutFlagContextTypeForRenderer(node.renderer()))
         domAgent.pushNodeToFrontend(&node);
 }
 
@@ -971,35 +989,36 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::setLayoutContextTypeChangedMode
             return makeUnexpected("DOM domain must be enabled"_s);
 
         for (auto* document : domAgent->documents())
-            pushChildrenNodesToFrontendIfLayoutContextTypePresent(*domAgent, *document);
+            pushChildrenNodesToFrontendIfLayoutFlagIsRelevant(*domAgent, *document);
     }
     
     return { };
 }
 
-void InspectorCSSAgent::nodeLayoutContextTypeChanged(Node& node, RenderObject* newRenderer)
+void InspectorCSSAgent::didChangeRendererForDOMNode(Node& node)
+{
+    m_nodesWithPendingLayoutFlagsChange.add(node);
+    if (!m_nodesWithPendingLayoutFlagsChangeDispatchTimer.isActive())
+        m_nodesWithPendingLayoutFlagsChangeDispatchTimer.startOneShot(0_s);
+}
+
+void InspectorCSSAgent::nodesWithPendingLayoutFlagsChangeDispatchTimerFired()
 {
     auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent)
         return;
 
-    auto nodeId = domAgent->boundNodeId(&node);
-    if (!nodeId && m_layoutContextTypeChangedMode == Protocol::CSS::LayoutContextTypeChangedMode::All) {
-        // FIXME: <https://webkit.org/b/189687> Preserve DOM.NodeId if a node is removed and re-added
-        nodeId = domAgent->identifierForNode(node);
+    for (auto&& node : std::exchange(m_nodesWithPendingLayoutFlagsChange, { })) {
+        auto nodeId = domAgent->boundNodeId(&node);
+        if (!nodeId && m_layoutContextTypeChangedMode == Protocol::CSS::LayoutContextTypeChangedMode::All && layoutFlagContextTypeForRenderer(node.renderer())) {
+            // FIXME: <https://webkit.org/b/189687> Preserve DOM.NodeId if a node is removed and re-added
+            nodeId = domAgent->identifierForNode(node);
+        }
+        if (!nodeId)
+            continue;
+
+        m_frontendDispatcher->nodeLayoutFlagsChanged(nodeId, layoutFlagsForNode(node));
     }
-    if (!nodeId)
-        return;
-
-    m_nodesWithPendingLayoutContextTypeChanges.set(nodeId, newRenderer);
-    if (!m_layoutContextTypeChangedTimer.isActive())
-        m_layoutContextTypeChangedTimer.startOneShot(0_s);
-}
-
-void InspectorCSSAgent::layoutContextTypeChangedTimerFired()
-{
-    for (auto&& [nodeId, renderer] : std::exchange(m_nodesWithPendingLayoutContextTypeChanges, { }))
-        m_frontendDispatcher->nodeLayoutContextTypeChanged(nodeId, layoutContextTypeForRenderer(renderer.get()));
 }
 
 InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(StyledElement& element)

@@ -1842,8 +1842,8 @@ Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int d
             value->setChildren(WTFMove(children));
     }
     
-    if (auto layoutContextType = InspectorCSSAgent::layoutContextTypeForRenderer(node->renderer()))
-        value->setLayoutContextType(layoutContextType.value());
+    if (auto layoutFlags = InspectorCSSAgent::layoutFlagsForNode(*node))
+        value->setLayoutFlags(layoutFlags.releaseNonNull());
 
     auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (pageAgent) {

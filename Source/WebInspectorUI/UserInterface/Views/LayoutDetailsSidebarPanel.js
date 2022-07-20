@@ -43,7 +43,7 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, this._handleNodeInserted, this);
         WI.domManager.addEventListener(WI.DOMManager.Event.NodeRemoved, this._handleNodeRemoved, this);
 
-        WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutFlagsChanged, this._handleLayoutFlagsChanged, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
@@ -58,7 +58,7 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         WI.domManager.removeEventListener(WI.DOMManager.Event.NodeInserted, this._handleNodeInserted, this);
         WI.domManager.removeEventListener(WI.DOMManager.Event.NodeRemoved, this._handleNodeRemoved, this);
 
-        WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
+        WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutFlagsChanged, this._handleLayoutFlagsChanged, this);
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         super.detached();
@@ -133,7 +133,7 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         this.needsLayout();
     }
 
-    _handleLayoutContextTypeChanged(event)
+    _handleLayoutFlagsChanged(event)
     {
         let domNode = event.target;
         if (domNode.layoutContextType)
@@ -171,16 +171,16 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
 
         for (let node of WI.domManager.attachedNodes({filter: (node) => node.layoutContextType})) {
             switch (node.layoutContextType) {
-            case WI.DOMNode.LayoutContextType.Grid:
+            case WI.DOMNode.LayoutFlag.Grid:
                 this._gridNodeSet.add(node);
                 break;
 
-            case WI.DOMNode.LayoutContextType.Flex:
+            case WI.DOMNode.LayoutFlag.Flex:
                 this._flexNodeSet.add(node);
                 break;
 
             default:
-                console.assert(false, "Unknown layout context type.", node, node.type);
+                console.assert(false, this.representedObject.layoutContextType);
                 break;
             }
         }

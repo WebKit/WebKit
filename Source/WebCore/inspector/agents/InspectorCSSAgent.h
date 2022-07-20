@@ -36,6 +36,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -83,7 +84,8 @@ public:
     };
 
     static CSSStyleRule* asCSSStyleRule(CSSRule&);
-    static std::optional<Inspector::Protocol::CSS::LayoutContextType> layoutContextTypeForRenderer(RenderObject*);
+
+    static RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> layoutFlagsForNode(Node&);
 
     static std::optional<Inspector::Protocol::CSS::PseudoId> protocolValueForPseudoId(PseudoId);
 
@@ -119,7 +121,7 @@ public:
     void mediaQueryResultChanged();
     void activeStyleSheetsUpdated(Document&);
     bool forcePseudoState(const Element&, CSSSelector::PseudoClassType);
-    void nodeLayoutContextTypeChanged(Node&, RenderObject*);
+    void didChangeRendererForDOMNode(Node&);
 
     // InspectorDOMAgent hooks
     void didRemoveDOMNode(Node&, Inspector::Protocol::DOM::NodeId);
@@ -159,7 +161,7 @@ private:
     Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> buildArrayForMatchedRuleList(const Vector<RefPtr<const StyleRule>>&, Style::Resolver&, Element&, PseudoId);
     RefPtr<Inspector::Protocol::CSS::CSSStyle> buildObjectForAttributesStyle(StyledElement&);
 
-    void layoutContextTypeChangedTimerFired();
+    void nodesWithPendingLayoutFlagsChangeDispatchTimerFired();
 
     void resetPseudoStates();
 
@@ -177,8 +179,9 @@ private:
     int m_lastStyleSheetId { 1 };
     bool m_creatingViaInspectorStyleSheet { false };
 
-    HashMap<Inspector::Protocol::DOM::NodeId, WeakPtr<RenderObject>> m_nodesWithPendingLayoutContextTypeChanges;
-    Timer m_layoutContextTypeChangedTimer;
+    WeakHashSet<Node> m_nodesWithPendingLayoutFlagsChange;
+    Timer m_nodesWithPendingLayoutFlagsChangeDispatchTimer;
+
     Inspector::Protocol::CSS::LayoutContextTypeChangedMode m_layoutContextTypeChangedMode { Inspector::Protocol::CSS::LayoutContextTypeChangedMode::Observed };
 };
 

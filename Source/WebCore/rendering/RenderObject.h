@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLNames.h"
+#include "InspectorInstrumentationPublic.h"
 #include "LayoutRect.h"
 #include "Page.h"
 #include "RenderObjectEnums.h"
@@ -1204,6 +1205,9 @@ inline RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScop
 inline void Node::setRenderer(RenderObject* renderer)
 {
     m_rendererWithStyleFlags.setPointer(renderer);
+
+    if (UNLIKELY(InspectorInstrumentationPublic::hasFrontends()))
+        notifyInspectorOfRendererChange();
 }
 
 inline RenderObject* RenderObject::previousInFlowSibling() const

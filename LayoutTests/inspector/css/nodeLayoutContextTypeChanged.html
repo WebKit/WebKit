@@ -51,10 +51,10 @@ function test()
         description: "Change a `grid` to a non-grid.",
         selector: "#gridToNonGrid",
         async domNodeHandler(domNode) {
-            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Grid, "Layout context should be `grid`.");
+            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutFlag.Grid, "Layout context should be `grid`.");
 
             await Promise.all([
-                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
                 changeElementDisplayValue("gridToNonGrid", "block"),
             ]);
 
@@ -70,11 +70,11 @@ function test()
             InspectorTest.expectEqual(domNode.layoutContextType, null, "Layout context should be `null`.");
 
             await Promise.all([
-                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
                 changeElementDisplayValue("nonGridToGrid", "grid"),
             ]);
 
-            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Grid, "Layout context should now be `grid`.");
+            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutFlag.Grid, "Layout context should now be `grid`.");
         }
     });
 
@@ -83,10 +83,10 @@ function test()
         description: "Change a flex container to a non-flex container.",
         selector: "#flexToNonFlex",
         async domNodeHandler(domNode) {
-            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Flex, "Layout context should be `flex`.");
+            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutFlag.Flex, "Layout context should be `flex`.");
 
             await Promise.all([
-                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
                 changeElementDisplayValue("flexToNonFlex", "block"),
             ]);
 
@@ -102,11 +102,11 @@ function test()
             InspectorTest.expectEqual(domNode.layoutContextType, null, "Layout context should be `null`.");
 
             await Promise.all([
-                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
                 changeElementDisplayValue("nonFlexToFlex", "flex"),
             ]);
 
-            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Flex, "Layout context should now be `flex`.");
+            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutFlag.Flex, "Layout context should now be `flex`.");
         }
     });
 
@@ -115,14 +115,14 @@ function test()
         description: "Change a non-flex container to a flex container.",
         selector: "#gridToFlex",
         async domNodeHandler(domNode) {
-            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Grid, "Layout context should now be `grid`.");
+            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutFlag.Grid, "Layout context should now be `grid`.");
 
             await Promise.all([
-                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
                 changeElementDisplayValue("gridToFlex", "flex"),
             ]);
 
-            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Flex, "Layout context should now be `flex`.");
+            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutFlag.Flex, "Layout context should now be `flex`.");
         }
     });
 

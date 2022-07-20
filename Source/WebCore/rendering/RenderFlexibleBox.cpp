@@ -75,8 +75,6 @@ RenderFlexibleBox::RenderFlexibleBox(Element& element, RenderStyle&& style)
     : RenderBlock(element, WTFMove(style), 0)
 {
     setChildrenInline(false); // All of our children must be block-level.
-
-    InspectorInstrumentation::nodeLayoutContextChanged(element, this);
 }
 
 RenderFlexibleBox::RenderFlexibleBox(Document& document, RenderStyle&& style)
@@ -85,11 +83,7 @@ RenderFlexibleBox::RenderFlexibleBox(Document& document, RenderStyle&& style)
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderFlexibleBox::~RenderFlexibleBox()
-{
-    if (!isAnonymous())
-        InspectorInstrumentation::nodeLayoutContextChanged(nodeForNonAnonymous(), nullptr);
-}
+RenderFlexibleBox::~RenderFlexibleBox() = default;
 
 ASCIILiteral RenderFlexibleBox::renderName() const
 {

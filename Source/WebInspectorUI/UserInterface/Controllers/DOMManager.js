@@ -273,14 +273,16 @@ WI.DOMManager = class DOMManager extends WI.Object
         node.powerEfficientPlaybackStateChanged(timestamp, isPowerEfficient);
     }
 
-    nodeLayoutContextTypeChanged(nodeId, layoutContextType)
+    // CSSObserver
+
+    nodeLayoutFlagsChanged(nodeId, layoutFlags)
     {
         let domNode = this._idToDOMNode[nodeId];
         console.assert(domNode instanceof WI.DOMNode, domNode, nodeId);
         if (!domNode)
             return;
 
-        domNode.layoutContextType = layoutContextType;
+        domNode.layoutFlags = layoutFlags;
     }
 
     // Private

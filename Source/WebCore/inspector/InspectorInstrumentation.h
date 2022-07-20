@@ -123,7 +123,7 @@ public:
     static void willRemoveDOMNode(Document&, Node&);
     static void didRemoveDOMNode(Document&, Node&);
     static void willDestroyDOMNode(Node&);
-    static void nodeLayoutContextChanged(Node&, RenderObject*);
+    static void didChangeRendererForDOMNode(Node&);
     static void willModifyDOMAttr(Document&, Element&, const AtomString& oldValue, const AtomString& newValue);
     static void didModifyDOMAttr(Document&, Element&, const AtomString& name, const AtomString& value);
     static void didRemoveDOMAttr(Document&, Element&, const AtomString& name);
@@ -345,7 +345,7 @@ private:
     static void willRemoveDOMNodeImpl(InstrumentingAgents&, Node&);
     static void didRemoveDOMNodeImpl(InstrumentingAgents&, Node&);
     static void willDestroyDOMNodeImpl(InstrumentingAgents&, Node&);
-    static void nodeLayoutContextChangedImpl(InstrumentingAgents&, Node&, RenderObject*);
+    static void didChangeRendererForDOMNodeImpl(InstrumentingAgents&, Node&);
     static void willModifyDOMAttrImpl(InstrumentingAgents&, Element&, const AtomString& oldValue, const AtomString& newValue);
     static void didModifyDOMAttrImpl(InstrumentingAgents&, Element&, const AtomString& name, const AtomString& value);
     static void didRemoveDOMAttrImpl(InstrumentingAgents&, Element&, const AtomString& name);
@@ -598,11 +598,11 @@ inline void InspectorInstrumentation::willDestroyDOMNode(Node& node)
         willDestroyDOMNodeImpl(*agents, node);
 }
 
-inline void InspectorInstrumentation::nodeLayoutContextChanged(Node& node, RenderObject* newRenderer)
+inline void InspectorInstrumentation::didChangeRendererForDOMNode(Node& node)
 {
-    FAST_RETURN_IF_NO_FRONTENDS(void());
+    ASSERT(InspectorInstrumentationPublic::hasFrontends());
     if (auto* agents = instrumentingAgents(node.document()))
-        nodeLayoutContextChangedImpl(*agents, node, newRenderer);
+        didChangeRendererForDOMNodeImpl(*agents, node);
 }
 
 inline void InspectorInstrumentation::willModifyDOMAttr(Document& document, Element& element, const AtomString& oldValue, const AtomString& newValue)

@@ -31,7 +31,6 @@
 #include "GridLayoutFunctions.h"
 #include "GridPositionsResolver.h"
 #include "GridTrackSizingAlgorithm.h"
-#include "InspectorInstrumentation.h"
 #include "LayoutRepainter.h"
 #include "RenderChildIterator.h"
 #include "RenderLayer.h"
@@ -57,14 +56,9 @@ RenderGrid::RenderGrid(Element& element, RenderStyle&& style)
 {
     // All of our children must be block level.
     setChildrenInline(false);
-
-    InspectorInstrumentation::nodeLayoutContextChanged(element, this);
 }
 
-RenderGrid::~RenderGrid()
-{
-    InspectorInstrumentation::nodeLayoutContextChanged(element(), nullptr);
-}
+RenderGrid::~RenderGrid() = default;
 
 StyleSelfAlignmentData RenderGrid::selfAlignmentForChild(GridAxis axis, const RenderBox& child, const RenderStyle* gridStyle) const
 {

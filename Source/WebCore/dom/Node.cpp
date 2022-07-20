@@ -2667,6 +2667,11 @@ WebCoreOpaqueRoot Node::traverseToOpaqueRoot() const
     return WebCoreOpaqueRoot { const_cast<Node*>(node) };
 }
 
+void Node::notifyInspectorOfRendererChange()
+{
+    InspectorInstrumentation::didChangeRendererForDOMNode(*this);
+}
+
 template<> ContainerNode* parent<Tree>(const Node& node)
 {
     return node.parentNode();
