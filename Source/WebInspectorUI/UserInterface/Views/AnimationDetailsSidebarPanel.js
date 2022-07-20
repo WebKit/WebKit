@@ -116,7 +116,7 @@ WI.AnimationDetailsSidebarPanel = class AnimationDetailsSidebarPanel extends WI.
         const selectable = false;
         let backtraceTreeOutline = new WI.TreeOutline(selectable);
         backtraceTreeOutline.disclosureButtons = false;
-        this._backtraceTreeController = new WI.CallFrameTreeController(backtraceTreeOutline);
+        this._backtraceTreeController = new WI.StackTraceTreeController(backtraceTreeOutline);
 
         let backtraceRow = new WI.DetailsSectionRow;
         backtraceRow.element.appendChild(backtraceTreeOutline.element);

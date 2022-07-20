@@ -293,7 +293,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
                     const selectable = false;
                     let callFramesTreeOutline = new WI.TreeOutline(selectable);
                     callFramesTreeOutline.disclosureButtons = false;
-                    let callFrameTreeController = new WI.CallFrameTreeController(callFramesTreeOutline);
+                    let callFrameTreeController = new WI.StackTraceTreeController(callFramesTreeOutline);
                     callFrameTreeController.stackTrace = this._resource.initiatorStackTrace;
 
                     let popoverContent = document.createElement("div");

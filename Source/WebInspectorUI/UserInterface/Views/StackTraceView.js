@@ -32,7 +32,7 @@ WI.StackTraceView = class StackTraceView
         var element = this._element = document.createElement("div");
         element.classList.add("stack-trace");
 
-        WI.CallFrameTreeController.groupBlackboxedStackTrace(element, stackTrace);
+        WI.StackTraceTreeController.groupBlackboxedStackTrace(element, stackTrace);
 
         return element;
     }

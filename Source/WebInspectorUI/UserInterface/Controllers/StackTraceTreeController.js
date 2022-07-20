@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CallFrameTreeController = class CallFrameTreeController extends WI.Object
+WI.StackTraceTreeController = class StackTraceTreeController extends WI.Object
 {
     constructor(treeOutline)
     {
@@ -51,7 +51,7 @@ WI.CallFrameTreeController = class CallFrameTreeController extends WI.Object
 
         let CallFrameUIClass = parentIsNode ? WI.CallFrameView : WI.CallFrameTreeElement;
 
-        let activeCallFrameTreeElement = WI.CallFrameTreeController._groupBlackboxedCallFrames(parent, stackTrace.callFrames, {rememberBlackboxedCallFrameGroupToAutoExpand});
+        let activeCallFrameTreeElement = WI.StackTraceTreeController._groupBlackboxedCallFrames(parent, stackTrace.callFrames, {rememberBlackboxedCallFrameGroupToAutoExpand});
 
         let parentStackTrace = stackTrace.parentStackTrace;
         while (parentStackTrace) {
@@ -75,7 +75,7 @@ WI.CallFrameTreeController = class CallFrameTreeController extends WI.Object
 
             let startIndex = parentStackTrace.topCallFrameIsBoundary ? 1 : 0;
             let parentCallFrames = startIndex ? parentStackTrace.callFrames.slice(startIndex) : parentStackTrace.callFrames;
-            WI.CallFrameTreeController._groupBlackboxedCallFrames(parent, parentCallFrames, {rememberBlackboxedCallFrameGroupToAutoExpand});
+            WI.StackTraceTreeController._groupBlackboxedCallFrames(parent, parentCallFrames, {rememberBlackboxedCallFrameGroupToAutoExpand});
 
             if (parentStackTrace.truncated) {
                 let truncatedCallFrame = new WI.CallFrame(parentStackTrace.callFrames[0].target, {
@@ -178,7 +178,7 @@ WI.CallFrameTreeController = class CallFrameTreeController extends WI.Object
         this._treeOutline.removeChildren();
 
         if (this._stackTrace)
-            WI.CallFrameTreeController.groupBlackboxedStackTrace(this._treeOutline, this._stackTrace);
+            WI.StackTraceTreeController.groupBlackboxedStackTrace(this._treeOutline, this._stackTrace);
     }
 
     disconnect()

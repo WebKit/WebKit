@@ -400,7 +400,7 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
             this._popoverCallStackTreeOutline.removeChildren();
 
         if (this.selectedNode.record.stackTrace)
-            WI.CallFrameTreeController.groupBlackboxedStackTrace(this._popoverCallStackTreeOutline, this.selectedNode.record.stackTrace);
+            WI.StackTraceTreeController.groupBlackboxedStackTrace(this._popoverCallStackTreeOutline, this.selectedNode.record.stackTrace);
 
         let content = document.createElement("div");
         content.appendChild(this._popoverCallStackTreeOutline.element);

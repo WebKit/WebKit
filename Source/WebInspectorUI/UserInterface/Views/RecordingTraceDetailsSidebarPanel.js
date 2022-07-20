@@ -32,7 +32,7 @@ WI.RecordingTraceDetailsSidebarPanel = class RecordingTraceDetailsSidebarPanel e
         const selectable = false;
         this._backtraceTreeOutline = new WI.TreeOutline(selectable);
         this._backtraceTreeOutline.disclosureButtons = false;
-        this._backtraceTreeController = new WI.CallFrameTreeController(this._backtraceTreeOutline);
+        this._backtraceTreeController = new WI.StackTraceTreeController(this._backtraceTreeOutline);
 
         this._recording = null;
         this._action = null;

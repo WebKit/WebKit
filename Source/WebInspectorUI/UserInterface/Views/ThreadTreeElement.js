@@ -52,7 +52,7 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
             return;
         }
 
-        let activeCallFrameTreeElement = WI.CallFrameTreeController.groupBlackboxedStackTrace(this, targetData.stackTrace, {rememberBlackboxedCallFrameGroupToAutoExpand: true});
+        let activeCallFrameTreeElement = WI.StackTraceTreeController.groupBlackboxedStackTrace(this, targetData.stackTrace, {rememberBlackboxedCallFrameGroupToAutoExpand: true});
         if (activeCallFrameTreeElement) {
             activeCallFrameTreeElement.select(true, true);
             activeCallFrameTreeElement.isActiveCallFrame = true;
