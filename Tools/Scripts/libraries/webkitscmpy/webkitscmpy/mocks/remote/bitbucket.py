@@ -203,6 +203,16 @@ class BitBucket(mocks.Requests):
             return self._tags(url, params or {})
 
         if stripped_url.startswith('{}/rest/api/1.0/{}/commits/'.format(self.hosts[0], self.project)):
+            if stripped_url.endswith('/changes'):
+                # FIXME: All mock commits have the same set of files changed with this implementation
+                return mocks.Response.fromJson(dict(
+                    values=[dict(
+                        path=dict(
+                            components=path.split('/'),
+                            toString=path,
+                        )
+                    ) for path in ('Source/main.cpp', 'Source/main.h')],
+                ))
             commit = self.commit(stripped_url.split('/')[-1])
             if not commit:
                 return mocks.Response.create404(url)

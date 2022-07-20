@@ -551,6 +551,13 @@ CommitDate: {time_c}
 
             self.assertEqual(local.Git(self.path).source_remotes(), ['origin', 'security'])
 
+    def test_files_changed(self):
+        with mocks.local.Git(self.path), OutputCapture():
+            self.assertEqual(
+                local.Git(self.path).files_changed('4@main'),
+                ['Source/main.cpp', 'Source/main.h'],
+            )
+
 
 class TestGitHub(testing.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'
@@ -711,6 +718,13 @@ class TestGitHub(testing.TestCase):
                 [str(commit) for commit in git.commits(begin=dict(argument='a30ce849'), end=dict(argument='branch-b'))],
             )
 
+    def test_files_changed(self):
+        with mocks.remote.GitHub():
+            self.assertEqual(
+                remote.GitHub(self.remote).files_changed('4@main'),
+                ['Source/main.cpp', 'Source/main.h'],
+            )
+
 
 class TestBitBucket(testing.TestCase):
     remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
@@ -842,3 +856,10 @@ class TestBitBucket(testing.TestCase):
 
     def test_id(self):
         self.assertEqual(remote.BitBucket(self.remote).id, 'webkit')
+
+    def test_files_changed(self):
+        with mocks.remote.BitBucket():
+            self.assertEqual(
+                remote.BitBucket(self.remote).files_changed('4@main'),
+                ['Source/main.cpp', 'Source/main.h'],
+            )

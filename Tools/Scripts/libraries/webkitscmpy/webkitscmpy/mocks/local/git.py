@@ -579,6 +579,14 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.reset_commit(args[2]),
             ),  mocks.Subprocess.Route(
+                self.executable, 'show', re.compile(r'.+'), '--pretty=', '--name-only',
+                cwd=self.path,
+                # FIXME: All mock commits have the same set of files changed with this implementation
+                completion=mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='Source/main.cpp\nSource/main.h\n',
+                ),
+            ),  mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
