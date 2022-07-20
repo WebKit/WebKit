@@ -1235,6 +1235,11 @@ private:
         if (variant.kind() == PutByVariant::Transition) {
             transition = m_graph.m_transitions.add(
                 m_graph.registerStructure(variant.oldStructureForTransition()), m_graph.registerStructure(variant.newStructure()));
+        } else {
+#if ASSERT_ENABLED
+            for (auto structure : variant.oldStructure())
+                ASSERT(!structure->propertyReplacementWatchpointSet(variant.offset())->isStillValid());
+#endif
         }
 
         Edge propertyStorage;
@@ -1456,6 +1461,12 @@ private:
                         m_graph.registerStructure(variant.oldStructureForTransition()), newStructure));
                 newSet.add(newStructure);
             } else {
+                // We do not need to handle Replace PropertyCondition here. This conversion happens only when AI proves that
+                // baseValue has finite number of structures. And when calling PutByStatus::computeFor to collect Replace
+                // PutByVariant, we already ensured that each structure in each variant has the invalidated replacement watchpoint condition.
+                // Thus, even though baseValue's structure gets changed whatever, it is within baseValue.m_structures (since AI proved and
+                // configured watchpoint to ensure that). And for each structure in this, if it gets Replace type, then we already validated
+                // watchpoint's status.
                 ASSERT(variant.kind() == PutByVariant::Replace);
                 ASSERT(privateFieldPutKind.isNone() || privateFieldPutKind.isSet());
                 DFG_ASSERT(m_graph, node, variant.conditionSet().isEmpty());

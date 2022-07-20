@@ -66,6 +66,7 @@ bool ObjectPropertyConditionSet::hasOneSlotBaseCondition() const
     for (const ObjectPropertyCondition& condition : *this) {
         switch (condition.kind()) {
         case PropertyCondition::Presence:
+        case PropertyCondition::Replacement:
         case PropertyCondition::Equivalence:
         case PropertyCondition::HasStaticProperty:
             if (sawBase)
@@ -86,6 +87,7 @@ ObjectPropertyCondition ObjectPropertyConditionSet::slotBaseCondition() const
     unsigned numFound = 0;
     for (const ObjectPropertyCondition& condition : *this) {
         if (condition.kind() == PropertyCondition::Presence
+            || condition.kind() == PropertyCondition::Replacement
             || condition.kind() == PropertyCondition::Equivalence
             || condition.kind() == PropertyCondition::HasStaticProperty) {
             result = condition;
@@ -193,6 +195,14 @@ ObjectPropertyCondition generateCondition(
         if (offset == invalidOffset)
             return ObjectPropertyCondition();
         result = ObjectPropertyCondition::presence(vm, owner, object, uid, offset, attributes);
+        break;
+    }
+    case PropertyCondition::Replacement: {
+        unsigned attributes;
+        PropertyOffset offset = structure->get(vm, concurrency, uid, attributes);
+        if (offset == invalidOffset || !!(attributes & PropertyAttribute::ReadOnly))
+            return ObjectPropertyCondition();
+        result = ObjectPropertyCondition::replacement(vm, owner, object, uid, offset, attributes);
         break;
     }
     case PropertyCondition::Absence: {

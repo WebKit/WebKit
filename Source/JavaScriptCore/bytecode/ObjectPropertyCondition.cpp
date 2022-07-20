@@ -165,5 +165,13 @@ ObjectPropertyCondition ObjectPropertyCondition::attemptToMakeEquivalenceWithout
     return ObjectPropertyCondition(object(), result);
 }
 
+ObjectPropertyCondition ObjectPropertyCondition::attemptToMakeReplacementWithoutBarrier() const
+{
+    PropertyCondition result = condition().attemptToMakeReplacementWithoutBarrier(object());
+    if (!result)
+        return ObjectPropertyCondition();
+    return ObjectPropertyCondition(object(), result);
+}
+
 } // namespace JSC
 
