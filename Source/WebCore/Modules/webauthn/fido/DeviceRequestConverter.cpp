@@ -103,16 +103,16 @@ Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, c
     CBORValue::MapValue optionMap;
     if (options.authenticatorSelection) {
         // Resident keys are not supported by default.
-        if (options.authenticatorSelection->residentKey()) {
-            if (*options.authenticatorSelection->residentKey() == ResidentKeyRequirement::Required
-                || (*options.authenticatorSelection->residentKey() == ResidentKeyRequirement::Preferred && residentKeyAvailability == AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported))
+        if (options.authenticatorSelection->residentKey) {
+            if (*options.authenticatorSelection->residentKey == ResidentKeyRequirement::Required
+                || (*options.authenticatorSelection->residentKey == ResidentKeyRequirement::Preferred && residentKeyAvailability == AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported))
                 optionMap[CBORValue(kResidentKeyMapKey)] = CBORValue(true);
         } else if (options.authenticatorSelection->requireResidentKey)
             optionMap[CBORValue(kResidentKeyMapKey)] = CBORValue(true);
 
         // User verification is not required by default.
         bool requireUserVerification = false;
-        switch (options.authenticatorSelection->userVerification()) {
+        switch (options.authenticatorSelection->userVerification) {
         case UserVerificationRequirement::Required:
         case UserVerificationRequirement::Preferred:
             requireUserVerification = uvCapability == UVAvailability::kSupportedAndConfigured;
@@ -156,7 +156,7 @@ Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, con
     CBORValue::MapValue optionMap;
     // User verification is not required by default.
     bool requireUserVerification = false;
-    switch (options.userVerification()) {
+    switch (options.userVerification) {
     case UserVerificationRequirement::Required:
     case UserVerificationRequirement::Preferred:
         requireUserVerification = uvCapability == UVAvailability::kSupportedAndConfigured;

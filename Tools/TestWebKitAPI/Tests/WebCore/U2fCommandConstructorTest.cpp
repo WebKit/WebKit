@@ -166,7 +166,7 @@ TEST(U2fCommandConstructorTest, TestU2fRegisterUserVerificationRequirement)
 {
     auto makeCredentialParam = constructMakeCredentialRequest();
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection;
-    selection.userVerificationString = "required"_s;
+    selection.userVerification = UserVerificationRequirement::Required;
     makeCredentialParam.authenticatorSelection = WTFMove(selection);
 
     EXPECT_FALSE(isConvertibleToU2fRegisterCommand(makeCredentialParam));
@@ -234,7 +234,7 @@ TEST(U2fCommandConstructorTest, TestU2fSignUserVerificationRequirement)
     Vector<PublicKeyCredentialDescriptor> allowedList;
     allowedList.append(WTFMove(credentialDescriptor));
     getAssertionReq.allowCredentials = WTFMove(allowedList);
-    getAssertionReq.userVerificationString = "required"_s;
+    getAssertionReq.userVerification = UserVerificationRequirement::Required;
 
     EXPECT_FALSE(isConvertibleToU2fSignCommand(getAssertionReq));
 }

@@ -139,12 +139,9 @@ static inline RetainPtr<ASCPublicKeyCredentialDescriptor> toASCDescriptor(Public
     if (transportCount) {
         transports = adoptNS([[NSMutableArray alloc] initWithCapacity:transportCount]);
 
-        for (String unparsedTransport : descriptor.transports) {
-            auto transport = toAuthenticatorTransport(unparsedTransport);
-            if (!transport)
-                continue;
+        for (AuthenticatorTransport transport : descriptor.transports) {
             NSString *transportString = nil;
-            switch (*transport) {
+            switch (transport) {
             case AuthenticatorTransport::Usb:
                 transportString = @"usb";
                 break;
@@ -217,16 +214,16 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
     std::optional<ResidentKeyRequirement> residentKeyRequirement;
     std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> authenticatorSelection = options.authenticatorSelection;
     if (authenticatorSelection) {
-        std::optional<AuthenticatorAttachment> attachment = authenticatorSelection->authenticatorAttachment();
+        std::optional<AuthenticatorAttachment> attachment = authenticatorSelection->authenticatorAttachment;
         if (attachment == AuthenticatorAttachment::Platform)
             requestTypes = ASCCredentialRequestTypePlatformPublicKeyRegistration;
         else if (attachment == AuthenticatorAttachment::CrossPlatform)
             requestTypes = ASCCredentialRequestTypeSecurityKeyPublicKeyRegistration;
 
-        userVerification = toNSString(authenticatorSelection->userVerification());
+        userVerification = toNSString(authenticatorSelection->userVerification);
 
         shouldRequireResidentKey = authenticatorSelection->requireResidentKey;
-        residentKeyRequirement = authenticatorSelection->residentKey();
+        residentKeyRequirement = authenticatorSelection->residentKey;
     }
     if (!LocalService::isAvailable())
         requestTypes &= ~ASCCredentialRequestTypePlatformPublicKeyRegistration;
@@ -251,7 +248,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
         [credentialCreationOptions setResidentKeyPreference:toASCResidentKeyPreference(residentKeyRequirement, shouldRequireResidentKey)];
     else
         [credentialCreationOptions setShouldRequireResidentKey:shouldRequireResidentKey];
-    [credentialCreationOptions setAttestationPreference:toNSString(options.attestation()).get()];
+    [credentialCreationOptions setAttestationPreference:toNSString(options.attestation).get()];
 
     RetainPtr<NSMutableArray<NSNumber *>> supportedAlgorithmIdentifiers = adoptNS([[NSMutableArray alloc] initWithCapacity:options.pubKeyCredParams.size()]);
     for (PublicKeyCredentialCreationOptions::Parameters algorithmParameter : options.pubKeyCredParams)
@@ -318,13 +315,13 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
     ASCCredentialRequestTypes requestTypes = ASCCredentialRequestTypePlatformPublicKeyAssertion | ASCCredentialRequestTypeSecurityKeyPublicKeyAssertion;
 
     RetainPtr<NSString> userVerification;
-    std::optional<AuthenticatorAttachment> attachment = options.authenticatorAttachment();
+    std::optional<AuthenticatorAttachment> attachment = options.authenticatorAttachment;
     if (attachment == AuthenticatorAttachment::Platform)
         requestTypes = ASCCredentialRequestTypePlatformPublicKeyAssertion;
     else if (attachment == AuthenticatorAttachment::CrossPlatform)
         requestTypes = ASCCredentialRequestTypeSecurityKeyPublicKeyAssertion;
 
-    userVerification = toNSString(options.userVerification());
+    userVerification = toNSString(options.userVerification);
 
     size_t allowedCredentialCount = options.allowCredentials.size();
     RetainPtr<NSMutableArray<ASCPublicKeyCredentialDescriptor *>> allowedCredentials;

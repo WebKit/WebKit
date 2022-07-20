@@ -56,7 +56,7 @@ const unsigned maxTimeOutValue = 120000;
 static AuthenticatorManager::TransportSet collectTransports(const std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria>& authenticatorSelection)
 {
     AuthenticatorManager::TransportSet result;
-    if (!authenticatorSelection || !authenticatorSelection->authenticatorAttachment()) {
+    if (!authenticatorSelection || !authenticatorSelection->authenticatorAttachment) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Usb);
@@ -70,12 +70,12 @@ static AuthenticatorManager::TransportSet collectTransports(const std::optional<
         return result;
     }
 
-    if (authenticatorSelection->authenticatorAttachment() == AuthenticatorAttachment::Platform) {
+    if (authenticatorSelection->authenticatorAttachment == AuthenticatorAttachment::Platform) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
     }
-    if (authenticatorSelection->authenticatorAttachment() == AuthenticatorAttachment::CrossPlatform) {
+    if (authenticatorSelection->authenticatorAttachment == AuthenticatorAttachment::CrossPlatform) {
         auto addResult = result.add(AuthenticatorTransport::Usb);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Nfc);
@@ -123,12 +123,11 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
             break;
         }
 
-        for (const auto& unparsedTransport : allowCredential.transports) {
-            auto transport = toAuthenticatorTransport(unparsedTransport);
-            if (!transport || *transport == AuthenticatorTransport::Ble)
+        for (const auto& transport : allowCredential.transports) {
+            if (transport == AuthenticatorTransport::Ble)
                 continue;
 
-            result.add(*transport);
+            result.add(transport);
 
             if (result.size() >= AuthenticatorManager::maxTransportNumber)
                 break;
@@ -542,7 +541,7 @@ auto AuthenticatorManager::getTransports() const -> TransportSet
         transports = collectTransports(options.authenticatorSelection);
         processGoogleLegacyAppIdSupportExtension(options.extensions, transports);
     }, [&](const PublicKeyCredentialRequestOptions& options) {
-        transports = collectTransports(options.allowCredentials, options.authenticatorAttachment());
+        transports = collectTransports(options.allowCredentials, options.authenticatorAttachment);
     });
     filterTransports(transports);
     return transports;

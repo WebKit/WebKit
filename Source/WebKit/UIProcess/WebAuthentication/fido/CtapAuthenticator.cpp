@@ -99,7 +99,7 @@ void CtapAuthenticator::makeCredential()
     auto internalUVAvailability = m_info.options().userVerificationAvailability();
     auto residentKeyAvailability = m_info.options().residentKeyAvailability();
     // If UV is required, then either built-in uv or a pin will work.
-    if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && (!options.authenticatorSelection || options.authenticatorSelection->userVerification() != UserVerificationRequirement::Discouraged) && m_pinAuth.isEmpty())
+    if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && (!options.authenticatorSelection || options.authenticatorSelection->userVerification != UserVerificationRequirement::Discouraged) && m_pinAuth.isEmpty())
         cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability, residentKeyAvailability);
     else if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet)
         cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability, residentKeyAvailability, PinParameters { pin::kProtocolVersion, m_pinAuth });
@@ -115,7 +115,7 @@ void CtapAuthenticator::makeCredential()
 
 void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&& data)
 {
-    auto response = readCTAPMakeCredentialResponse(data, AuthenticatorAttachment::CrossPlatform, transports(), std::get<PublicKeyCredentialCreationOptions>(requestData().options).attestation());
+    auto response = readCTAPMakeCredentialResponse(data, AuthenticatorAttachment::CrossPlatform, transports(), std::get<PublicKeyCredentialCreationOptions>(requestData().options).attestation);
     if (!response) {
         auto error = getResponseCode(data);
 
@@ -144,7 +144,7 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
         auto extensionOutputs = response->extensions();
         
         auto rkSupported = m_info.options().residentKeyAvailability() == AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported;
-        auto rkRequested = options.authenticatorSelection && ((options.authenticatorSelection->residentKey() && options.authenticatorSelection->residentKey() != ResidentKeyRequirement::Discouraged) || options.authenticatorSelection->requireResidentKey);
+        auto rkRequested = options.authenticatorSelection && ((options.authenticatorSelection->residentKey && options.authenticatorSelection->residentKey != ResidentKeyRequirement::Discouraged) || options.authenticatorSelection->requireResidentKey);
         extensionOutputs.credProps = AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput { rkSupported && rkRequested };
         response->setExtensions(WTFMove(extensionOutputs));
     }
@@ -158,9 +158,9 @@ void CtapAuthenticator::getAssertion()
     auto& options = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
     auto internalUVAvailability = m_info.options().userVerificationAvailability();
     // If UV is required, then either built-in uv or a pin will work.
-    if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && options.userVerification() != UserVerificationRequirement::Discouraged && m_pinAuth.isEmpty())
+    if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && options.userVerification != UserVerificationRequirement::Discouraged && m_pinAuth.isEmpty())
         cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, internalUVAvailability);
-    else if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet && options.userVerification() != UserVerificationRequirement::Discouraged)
+    else if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet && options.userVerification != UserVerificationRequirement::Discouraged)
         cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, internalUVAvailability, PinParameters { pin::kProtocolVersion, m_pinAuth });
     else
         cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, internalUVAvailability);
