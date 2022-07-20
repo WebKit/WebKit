@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "APIProcessPoolConfiguration.h"
+#include "OverrideLanguages.h"
 #include "WKAPICast.h"
 
 using namespace WebKit;
@@ -151,10 +152,12 @@ WKArrayRef WKContextConfigurationCopyOverrideLanguages(WKContextConfigurationRef
     return toAPI(&API::Array::create().leakRef());
 }
 
-void WKContextConfigurationSetOverrideLanguages(WKContextConfigurationRef, WKArrayRef)
+void WKContextConfigurationSetOverrideLanguages(WKContextConfigurationRef, WKArrayRef overrideLanguages)
 {
-    // Use +[WKWebView _setOverrideLanguagesForTesting:] instead.
-    // FIXME: Delete this function.
+    // FIXME: This is an SPI function, and is only (supposed to be) used for testing.
+    // However, playwright automation tests rely on it.
+    // See https://bugs.webkit.org/show_bug.cgi?id=242827 for details.
+    WebKit::setOverrideLanguages(toImpl(overrideLanguages)->toStringVector());
 }
 
 bool WKContextConfigurationProcessSwapsOnNavigation(WKContextConfigurationRef configuration)
