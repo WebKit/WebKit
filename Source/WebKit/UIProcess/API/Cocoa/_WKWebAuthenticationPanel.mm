@@ -62,6 +62,7 @@
 #import <pal/crypto/CryptoDigest.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
@@ -932,7 +933,7 @@ static WebCore::CredentialRequestOptions::MediationRequirement toWebCore(_WKWebA
         result.authenticatorSelection = authenticatorSelectionCriteria(options.authenticatorSelection);
     result.attestationString = toString(attestationConveyancePreference(options.attestation));
     if (options.extensionsCBOR)
-        result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(vectorFromNSData(options.extensionsCBOR));
+        result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(asUInt8Span(options.extensionsCBOR));
     else
         result.extensions = authenticationExtensionsClientInputs(options.extensions);
 #endif
@@ -1017,7 +1018,10 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
     result.userVerificationString = toString(userVerification(options.userVerification));
     if (auto attachment = authenticatorAttachment(options.authenticatorAttachment))
         result.authenticatorAttachmentString = toString(*attachment);
-    result.extensions = authenticationExtensionsClientInputs(options.extensions);
+    if (options.extensionsCBOR)
+        result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(asUInt8Span(options.extensionsCBOR));
+    else
+        result.extensions = authenticationExtensionsClientInputs(options.extensions);
 #endif
 
     return result;
