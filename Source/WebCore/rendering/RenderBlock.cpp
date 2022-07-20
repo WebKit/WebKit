@@ -432,8 +432,11 @@ void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle& newSt
     const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
     // FIXME: Should change the expression below to newStyle.display() == DisplayType::InlineBlock.
     setReplacedOrInlineBlock(newStyle.isDisplayInlineType());
-    if (oldStyle)
+    if (oldStyle) {
         removePositionedObjectsIfNeeded(*oldStyle, newStyle);
+        if (isLegend() && !oldStyle->isFloating() && newStyle.isFloating())
+            setIsExcludedFromNormalLayout(false);
+    }
     RenderBox::styleWillChange(diff, newStyle);
 }
 
