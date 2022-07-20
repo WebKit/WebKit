@@ -3886,10 +3886,7 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
             defaultTabEventHandler(event);
         else if (event.keyIdentifier() == "U+0008"_s)
             defaultBackspaceEventHandler(event);
-        else if (event.keyIdentifier() == "PageUp"_s || event.keyIdentifier() == "PageDown"_s) {
-            if (keyboardScrollRecursively(event, nullptr))
-                event.setDefaultHandled();
-        } else {
+        else {
             FocusDirection direction = focusDirectionForKey(event.keyIdentifier());
             if (direction != FocusDirection::None)
                 defaultArrowEventHandler(direction, event);
@@ -4283,7 +4280,6 @@ void EventHandler::defaultTextInputEventHandler(TextEvent& event)
         event.setDefaultHandled();
 }
 
-
 void EventHandler::defaultSpaceEventHandler(KeyboardEvent& event)
 {
     Ref<Frame> protectedFrame(m_frame);
@@ -4303,7 +4299,12 @@ void EventHandler::defaultSpaceEventHandler(KeyboardEvent& event)
     if (!view)
         return;
 
-    bool defaultHandled = m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled() ? keyboardScrollRecursively(event, nullptr) : view->logicalScroll(direction, ScrollGranularity::Page);
+    bool defaultHandled = false;
+    if (shouldUseSmoothKeyboardScrollingForFocusedScrollableArea())
+        defaultHandled = keyboardScrollRecursively(scrollDirectionForKeyboardEvent(event), scrollGranularityForKeyboardEvent(event), nullptr);
+    else
+        defaultHandled = view->logicalScroll(direction, ScrollGranularity::Page);
+
     if (defaultHandled)
         event.setDefaultHandled();
 }
@@ -4343,11 +4344,9 @@ void EventHandler::stopKeyboardScrolling()
         animator->handleKeyUpEvent();
 }
 
-bool EventHandler::beginKeyboardScrollGesture(KeyboardScrollingAnimator* animator, KeyboardEvent& event)
+bool EventHandler::beginKeyboardScrollGesture(KeyboardScrollingAnimator* animator, ScrollDirection direction, ScrollGranularity granularity)
 {
-    auto* platformEvent = event.underlyingPlatformEvent();
-
-    if (animator && platformEvent && animator->beginKeyboardScrollGesture(*platformEvent)) {
+    if (animator && animator->beginKeyboardScrollGesture(direction, granularity)) {
         m_frame.page()->setCurrentKeyboardScrollingAnimator(animator);
         return true;
     }
@@ -4355,30 +4354,30 @@ bool EventHandler::beginKeyboardScrollGesture(KeyboardScrollingAnimator* animato
     return false;
 }
 
-bool EventHandler::startKeyboardScrollAnimationOnDocument(KeyboardEvent& event)
+bool EventHandler::startKeyboardScrollAnimationOnDocument(ScrollDirection direction, ScrollGranularity granularity)
 {
     auto view = m_frame.view();
     if (!view)
         return false;
 
     auto* animator = view->scrollAnimator().keyboardScrollingAnimator();
-    return beginKeyboardScrollGesture(animator, event);
+    return beginKeyboardScrollGesture(animator, direction, granularity);
 }
 
-bool EventHandler::startKeyboardScrollAnimationOnRenderBoxLayer(KeyboardEvent& event, RenderBox* renderBox)
+bool EventHandler::startKeyboardScrollAnimationOnRenderBoxLayer(ScrollDirection direction, ScrollGranularity granularity, RenderBox* renderBox)
 {
     auto* scrollableArea = renderBox->layer() ? renderBox->layer()->scrollableArea() : nullptr;
     if (!scrollableArea)
         return false;
 
     auto* animator = scrollableArea->scrollAnimator().keyboardScrollingAnimator();
-    return beginKeyboardScrollGesture(animator, event);
+    return beginKeyboardScrollGesture(animator, direction, granularity);
 }
 
-bool EventHandler::startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(KeyboardEvent& event, RenderBox* renderBox)
+bool EventHandler::startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(ScrollDirection direction, ScrollGranularity granularity, RenderBox* renderBox)
 {
     while (renderBox && !renderBox->isRenderView()) {
-        if (startKeyboardScrollAnimationOnRenderBoxLayer(event, renderBox))
+        if (startKeyboardScrollAnimationOnRenderBoxLayer(direction, granularity, renderBox))
             return true;
         renderBox = renderBox->containingBlock();
     }
@@ -4386,7 +4385,7 @@ bool EventHandler::startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(Keyboa
     return false;
 }
 
-bool EventHandler::startKeyboardScrollAnimationOnEnclosingScrollableContainer(KeyboardEvent& event, Node* startingNode)
+bool EventHandler::startKeyboardScrollAnimationOnEnclosingScrollableContainer(ScrollDirection direction, ScrollGranularity granularity, Node* startingNode)
 {
     RefPtr node = startingNode;
 
@@ -4399,25 +4398,48 @@ bool EventHandler::startKeyboardScrollAnimationOnEnclosingScrollableContainer(Ke
     if (node) {
         auto renderer = node->renderer();
         RenderBox& renderBox = renderer->enclosingBox();
-        if (renderer && !renderer->isListBox() && startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(event, &renderBox))
+        if (renderer && !renderer->isListBox() && startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(direction, granularity, &renderBox))
             return true;
     }
     return false;
 }
 
-bool EventHandler::keyboardScrollRecursively(KeyboardEvent& event, Node* startingNode)
+bool EventHandler::focusedScrollableAreaUsesScrollSnap()
 {
+    Node* node = m_frame.document()->focusedElement();
+    if (!node)
+        node = m_mousePressNode.get();
+
+    auto scrollableArea = enclosingScrollableArea(node);
+    if (!scrollableArea)
+        return false;
+
+    return scrollableArea->scrollAnimator().usesScrollSnap();
+}
+
+bool EventHandler::shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()
+{
+    if (m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled() && !focusedScrollableAreaUsesScrollSnap()) 
+        return true;
+    return false;
+}
+
+bool EventHandler::keyboardScrollRecursively(std::optional<ScrollDirection> direction, std::optional<ScrollGranularity> granularity, Node* startingNode)
+{
+    if (!direction || !granularity)
+        return false;
+
     Ref protectedFrame = m_frame;
 
-    if (!m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled())
+    if (!shouldUseSmoothKeyboardScrollingForFocusedScrollableArea())
         return false;
 
     m_frame.document()->updateLayoutIgnorePendingStylesheets();
 
-    if (startKeyboardScrollAnimationOnEnclosingScrollableContainer(event, startingNode))
+    if (startKeyboardScrollAnimationOnEnclosingScrollableContainer(*direction, *granularity, startingNode))
         return true;
 
-    if (startKeyboardScrollAnimationOnDocument(event))
+    if (startKeyboardScrollAnimationOnDocument(*direction, *granularity))
         return true;
 
     RefPtr frame = &m_frame;
@@ -4425,7 +4447,7 @@ bool EventHandler::keyboardScrollRecursively(KeyboardEvent& event, Node* startin
     if (!frame)
         return false;
 
-    return frame->eventHandler().keyboardScrollRecursively(event, m_frame.ownerElement());
+    return frame->eventHandler().keyboardScrollRecursively(direction, granularity, m_frame.ownerElement());
 }
 
 void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, KeyboardEvent& event)
@@ -4433,7 +4455,7 @@ void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, Keybo
     ASSERT(event.type() == eventNames().keydownEvent);
 
     if (!isSpatialNavigationEnabled(&m_frame)) {
-        if (keyboardScrollRecursively(event, nullptr))
+        if (keyboardScrollRecursively(scrollDirectionForKeyboardEvent(event), scrollGranularityForKeyboardEvent(event), nullptr))
             event.setDefaultHandled();
         return;
     }

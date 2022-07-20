@@ -100,6 +100,7 @@ public:
 
     bool isUserScrollInProgress() const { return m_scrollController.isUserScrollInProgress(); }
     bool isScrollSnapInProgress() const { return m_scrollController.isScrollSnapInProgress(); }
+    bool usesScrollSnap() const { return m_scrollController.usesScrollSnap(); }
 
     void contentsSizeChanged();
 

@@ -434,7 +434,7 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     
     bool didPerformAction = false;
     
-    if (!frame->settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled()) {
+    if (!frame->eventHandler().shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()) {
         if (selector == "moveUp:"_s)
             didPerformAction = scroll(m_page.get(), ScrollUp, ScrollGranularity::Line);
         else if (selector == "moveToBeginningOfParagraph:"_s)

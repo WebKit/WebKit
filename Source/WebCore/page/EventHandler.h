@@ -363,6 +363,9 @@ public:
     
     WEBCORE_EXPORT void selectClosestContextualWordOrLinkFromHitTestResult(const HitTestResult&, AppendTrailingWhitespace);
 
+    bool keyboardScrollRecursively(std::optional<ScrollDirection>, std::optional<ScrollGranularity>, Node*);
+    WEBCORE_EXPORT bool shouldUseSmoothKeyboardScrollingForFocusedScrollableArea();
+
 private:
 #if ENABLE(DRAG_SUPPORT)
     static DragState& dragState();
@@ -383,13 +386,13 @@ private:
     bool handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
     bool handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
 
-    bool beginKeyboardScrollGesture(KeyboardScrollingAnimator*, KeyboardEvent&);
+    bool beginKeyboardScrollGesture(KeyboardScrollingAnimator*, ScrollDirection, ScrollGranularity);
     void stopKeyboardScrolling();
-    bool startKeyboardScrollAnimationOnDocument(KeyboardEvent&);
-    bool startKeyboardScrollAnimationOnRenderBoxLayer(KeyboardEvent&, RenderBox*);
-    bool startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(KeyboardEvent&, RenderBox*);
-    bool startKeyboardScrollAnimationOnEnclosingScrollableContainer(KeyboardEvent&, Node*);
-    bool keyboardScrollRecursively(KeyboardEvent&, Node*);
+    bool startKeyboardScrollAnimationOnDocument(ScrollDirection, ScrollGranularity);
+    bool startKeyboardScrollAnimationOnRenderBoxLayer(ScrollDirection, ScrollGranularity, RenderBox*);
+    bool startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(ScrollDirection, ScrollGranularity, RenderBox*);
+    bool startKeyboardScrollAnimationOnEnclosingScrollableContainer(ScrollDirection, ScrollGranularity, Node*);
+    bool focusedScrollableAreaUsesScrollSnap();
 
 #if ENABLE(DRAG_SUPPORT)
     bool handleMouseDraggedEvent(const MouseEventWithHitTestResults&, CheckDragHysteresis = ShouldCheckDragHysteresis);

@@ -30,20 +30,9 @@
 #include "PlatformKeyboardEvent.h"
 #include "ScrollTypes.h"
 #include "ScrollableArea.h"
-#include "WritingMode.h"
 #include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
-
-enum class KeyboardScrollingKey : uint8_t {
-    LeftArrow,
-    RightArrow,
-    UpArrow,
-    DownArrow,
-    Space,
-    PageUp,
-    PageDown
-};
 
 KeyboardScrollingAnimator::KeyboardScrollingAnimator(ScrollAnimator& scrollAnimator, ScrollingEffectsController& scrollController)
     : m_scrollAnimator(scrollAnimator)
@@ -94,6 +83,94 @@ static FloatSize perpendicularAbsoluteUnitVector(ScrollDirection direction)
     }
     ASSERT_NOT_REACHED();
     return { };
+}
+
+const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(const KeyboardEvent& event)
+{
+    auto* platformEvent = event.underlyingPlatformEvent();
+    if (!platformEvent)
+        return { };
+
+    // PlatformEvent::Char is a "keypress" event.
+    if (!(platformEvent->type() == PlatformEvent::RawKeyDown || platformEvent->type() == PlatformEvent::Char))
+        return { };
+
+    static constexpr std::pair<ComparableASCIILiteral, KeyboardScrollingKey> mappings[] = {
+        { "Down", KeyboardScrollingKey::DownArrow },
+        { "Left", KeyboardScrollingKey::LeftArrow },
+        { "PageDown", KeyboardScrollingKey::PageDown },
+        { "PageUp", KeyboardScrollingKey::PageUp },
+        { "Right", KeyboardScrollingKey::RightArrow },
+        { "Up", KeyboardScrollingKey::UpArrow },
+    };
+    static constexpr SortedArrayMap map { mappings };
+
+    auto identifier = platformEvent->keyIdentifier();
+    if (auto* result = map.tryGet(identifier))
+        return *result;
+
+    if (platformEvent->text().characterStartingAt(0) == ' ')
+        return KeyboardScrollingKey::Space;
+
+    return { };
+}
+
+const std::optional<ScrollDirection> scrollDirectionForKeyboardEvent(const KeyboardEvent& event)
+{
+    auto key = keyboardScrollingKeyForKeyboardEvent(event);
+    if (!key)
+        return { };
+
+    // FIXME (bug 227459): This logic does not account for writing-mode.
+    auto direction = [&] {
+        switch (key.value()) {
+        case KeyboardScrollingKey::LeftArrow:
+            return ScrollDirection::ScrollLeft;
+        case KeyboardScrollingKey::RightArrow:
+            return ScrollDirection::ScrollRight;
+        case KeyboardScrollingKey::UpArrow:
+        case KeyboardScrollingKey::PageUp:
+            return ScrollDirection::ScrollUp;
+        case KeyboardScrollingKey::DownArrow:
+        case KeyboardScrollingKey::PageDown:
+            return ScrollDirection::ScrollDown;
+        case KeyboardScrollingKey::Space:
+            return event.shiftKey() ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }();
+
+    return direction;
+}
+
+const std::optional<ScrollGranularity> scrollGranularityForKeyboardEvent(const KeyboardEvent& event)
+{
+    auto key = keyboardScrollingKeyForKeyboardEvent(event);
+    if (!key)
+        return { };
+
+    // FIXME (bug 227459): This logic does not account for writing-mode.
+    auto granularity = [&] {
+        switch (key.value()) {
+        case KeyboardScrollingKey::LeftArrow:
+        case KeyboardScrollingKey::RightArrow:
+            return event.altKey() ? ScrollGranularity::Page : ScrollGranularity::Line;
+        case KeyboardScrollingKey::UpArrow:
+        case KeyboardScrollingKey::DownArrow:
+            if (event.metaKey())
+                return ScrollGranularity::Document;
+            if (event.altKey())
+                return ScrollGranularity::Page;
+            return ScrollGranularity::Line;
+        case KeyboardScrollingKey::Space:
+        case KeyboardScrollingKey::PageUp:
+        case KeyboardScrollingKey::PageDown:
+            return ScrollGranularity::Page;
+        };
+        RELEASE_ASSERT_NOT_REACHED();
+    }();
+
+    return granularity;
 }
 
 void KeyboardScrollingAnimator::updateKeyboardScrollPosition(MonotonicTime currentTime)
@@ -165,73 +242,8 @@ float KeyboardScrollingAnimator::scrollDistance(ScrollDirection direction, Scrol
     return 0;
 }
 
-static std::optional<KeyboardScrollingKey> keyboardScrollingKeyFromEvent(const PlatformKeyboardEvent& event)
+std::optional<KeyboardScroll> KeyboardScrollingAnimator::makeKeyboardScroll(ScrollDirection direction, ScrollGranularity granularity) const
 {
-    static constexpr std::pair<ComparableASCIILiteral, KeyboardScrollingKey> mappings[] = {
-        { "Down", KeyboardScrollingKey::DownArrow },
-        { "Left", KeyboardScrollingKey::LeftArrow },
-        { "PageDown", KeyboardScrollingKey::PageDown },
-        { "PageUp", KeyboardScrollingKey::PageUp },
-        { "Right", KeyboardScrollingKey::RightArrow },
-        { "Up", KeyboardScrollingKey::UpArrow },
-    };
-    static constexpr SortedArrayMap map { mappings };
-
-    auto identifier = event.keyIdentifier();
-    if (auto* result = map.tryGet(identifier))
-        return *result;
-
-    if (event.text().characterStartingAt(0) == ' ')
-        return KeyboardScrollingKey::Space;
-
-    return { };
-}
-
-std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboardEvent(const PlatformKeyboardEvent& event) const
-{
-    auto key = keyboardScrollingKeyFromEvent(event);
-    if (!key)
-        return { };
-
-    // FIXME (bug 227459): This logic does not account for writing-mode.
-    auto granularity = [&] {
-        switch (key.value()) {
-        case KeyboardScrollingKey::LeftArrow:
-        case KeyboardScrollingKey::RightArrow:
-            return event.altKey() ? ScrollGranularity::Page : ScrollGranularity::Line;
-        case KeyboardScrollingKey::UpArrow:
-        case KeyboardScrollingKey::DownArrow:
-            if (event.metaKey())
-                return ScrollGranularity::Document;
-            if (event.altKey())
-                return ScrollGranularity::Page;
-            return ScrollGranularity::Line;
-        case KeyboardScrollingKey::Space:
-        case KeyboardScrollingKey::PageUp:
-        case KeyboardScrollingKey::PageDown:
-            return ScrollGranularity::Page;
-        };
-        RELEASE_ASSERT_NOT_REACHED();
-    }();
-
-    auto direction = [&] {
-        switch (key.value()) {
-        case KeyboardScrollingKey::LeftArrow:
-            return ScrollDirection::ScrollLeft;
-        case KeyboardScrollingKey::RightArrow:
-            return ScrollDirection::ScrollRight;
-        case KeyboardScrollingKey::UpArrow:
-        case KeyboardScrollingKey::PageUp:
-            return ScrollDirection::ScrollUp;
-        case KeyboardScrollingKey::DownArrow:
-        case KeyboardScrollingKey::PageDown:
-            return ScrollDirection::ScrollDown;
-        case KeyboardScrollingKey::Space:
-            return event.shiftKey() ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }();
-
     float distance = scrollDistance(direction, granularity);
 
     if (!distance)
@@ -248,20 +260,15 @@ std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboa
     return scroll;
 }
 
-bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(const PlatformKeyboardEvent& event)
+bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direction, ScrollGranularity granularity)
 {
-    auto scroll = keyboardScrollForKeyboardEvent(event);
+    auto scroll = makeKeyboardScroll(direction, granularity);
     if (!scroll)
         return false;
 
     m_currentKeyboardScroll = scroll;
 
-    // PlatformEvent::Char is a "keypress" event.
-    if (!(event.type() == PlatformEvent::RawKeyDown || event.type() == PlatformEvent::Char))
-        return false;
-
     auto scrollableDirections = scrollableDirectionsFromPosition(m_scrollAnimator.currentPosition());
-    auto direction = m_currentKeyboardScroll->direction;
     if (!scrollableDirections.at(boxSideForDirection(direction))) {
         m_scrollTriggeringKeyIsPressed = false;
         m_scrollController.didStopKeyboardScrolling();
@@ -272,7 +279,7 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(const PlatformKeyboar
     if (m_scrollTriggeringKeyIsPressed)
         return true;
 
-    if (m_currentKeyboardScroll->granularity == ScrollGranularity::Document) {
+    if (granularity == ScrollGranularity::Document) {
         m_velocity = { };
         stopKeyboardScrollAnimation();
         auto newPosition = IntPoint(m_scrollAnimator.currentPosition() + m_currentKeyboardScroll->offset);

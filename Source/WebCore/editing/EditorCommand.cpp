@@ -1013,11 +1013,17 @@ static bool executeRemoveFormat(Frame& frame, Event*, EditorCommandSource, const
 
 static bool executeScrollPageBackward(Frame& frame, Event*, EditorCommandSource, const String&)
 {
+    if (frame.eventHandler().shouldUseSmoothKeyboardScrollingForFocusedScrollableArea())
+        return frame.eventHandler().keyboardScrollRecursively(ScrollDirection::ScrollUp, ScrollGranularity::Page, nullptr);
+
     return frame.eventHandler().logicalScrollRecursively(ScrollBlockDirectionBackward, ScrollGranularity::Page);
 }
 
 static bool executeScrollPageForward(Frame& frame, Event*, EditorCommandSource, const String&)
 {
+    if (frame.eventHandler().shouldUseSmoothKeyboardScrollingForFocusedScrollableArea())
+        return frame.eventHandler().keyboardScrollRecursively(ScrollDirection::ScrollDown, ScrollGranularity::Page, nullptr);
+
     return frame.eventHandler().logicalScrollRecursively(ScrollBlockDirectionForward, ScrollGranularity::Page);
 }
 
