@@ -337,12 +337,13 @@ private:
     }
 
 #if PLATFORM(WIN) && USE(CG)
-    static double s_fontSmoothingContrast;
-    static uint32_t s_fontSmoothingType;
-    static int s_fontSmoothingLevel;
-    static uint32_t s_systemFontSmoothingType;
-    static bool s_systemFontSmoothingSet;
-    static bool s_systemFontSmoothingEnabled;
+    static Lock s_fontSmoothingLock;
+    static double s_fontSmoothingContrast WTF_GUARDED_BY_LOCK(s_fontSmoothingLock);
+    static uint32_t s_fontSmoothingType WTF_GUARDED_BY_LOCK(s_fontSmoothingLock);
+    static int s_fontSmoothingLevel WTF_GUARDED_BY_LOCK(s_fontSmoothingLock);
+    static uint32_t s_systemFontSmoothingType WTF_GUARDED_BY_LOCK(s_fontSmoothingLock);
+    static bool s_systemFontSmoothingSet WTF_GUARDED_BY_LOCK(s_fontSmoothingLock);
+    static bool s_systemFontSmoothingEnabled WTF_GUARDED_BY_LOCK(s_fontSmoothingLock);
 #endif
 
     FontCascadeDescription m_fontDescription;

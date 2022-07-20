@@ -222,6 +222,7 @@ constexpr uint32_t kCGFontSmoothingStyleHeavy = (4 << 4);
 constexpr int fontSmoothingLevelMedium = 2;
 constexpr CGFloat antialiasingGamma = 2.3;
 
+Lock FontCascade::s_fontSmoothingLock;
 double FontCascade::s_fontSmoothingContrast = 2;
 uint32_t FontCascade::s_fontSmoothingType = kCGFontSmoothingStyleMedium;
 int FontCascade::s_fontSmoothingLevel = fontSmoothingLevelMedium;
@@ -241,6 +242,7 @@ void FontCascade::setFontSmoothingLevel(int level)
     if (level < 0 || static_cast<size_t>(level) > ARRAYSIZE(smoothingType))
         return;
 
+    Locker locker { s_fontSmoothingLock };
     s_fontSmoothingType = smoothingType[level];
     s_fontSmoothingLevel = level;
 }
@@ -259,13 +261,18 @@ uint32_t FontCascade::setFontSmoothingStyle(CGContextRef cgContext, bool fontAll
     uint32_t oldFontSmoothingStyle = 0;
     if (CGContextGetShouldSmoothFonts(cgContext))
         oldFontSmoothingStyle = CGContextGetFontSmoothingStyle(cgContext);
-    setCGFontSmoothingStyle(cgContext, s_fontSmoothingType, fontAllowsSmoothing);
+
+    {
+        Locker locker { s_fontSmoothingLock };
+        setCGFontSmoothingStyle(cgContext, s_fontSmoothingType, fontAllowsSmoothing);
+    }
 
     return oldFontSmoothingStyle;
 }
 
 void FontCascade::setFontSmoothingContrast(CGFloat contrast)
 {
+    Locker locker { s_fontSmoothingLock };
     s_fontSmoothingContrast = contrast;
 }
 
@@ -360,6 +367,7 @@ static float clearTypeContrast()
 
 void FontCascade::systemFontSmoothingChanged()
 {
+    Locker locker { s_fontSmoothingLock };
     ::SystemParametersInfo(SPI_GETFONTSMOOTHING, 0, &s_systemFontSmoothingEnabled, 0);
     ::SystemParametersInfo(SPI_GETFONTSMOOTHINGTYPE, 0, &s_systemFontSmoothingType, 0);
     s_fontSmoothingContrast = clearTypeContrast();
@@ -374,11 +382,16 @@ void FontCascade::setCGContextFontRenderingStyle(CGContextRef cgContext, bool is
     if (usePlatformNativeGlyphs) {
         // <rdar://6564501> GDI can't subpixel-position, so don't bother asking.
         maySubpixelPosition = false;
-        if (!s_systemFontSmoothingSet)
-            systemFontSmoothingChanged();
-        contrast = s_fontSmoothingContrast;
-        shouldAntialias = s_systemFontSmoothingEnabled;
-        if (s_systemFontSmoothingType == FE_FONTSMOOTHINGSTANDARD) {
+        bool smoothingTypeIsStandard;
+        {
+            Locker locker { s_fontSmoothingLock };
+            if (!s_systemFontSmoothingSet)
+                systemFontSmoothingChanged();
+            contrast = s_fontSmoothingContrast;
+            shouldAntialias = s_systemFontSmoothingEnabled;
+            smoothingTypeIsStandard = s_systemFontSmoothingType == FE_FONTSMOOTHINGSTANDARD;
+        }
+        if (smoothingTypeIsStandard) {
             CGContextSetFontSmoothingStyle(cgContext, kCGFontSmoothingStyleMinimum);
             contrast = antialiasingGamma;
         }
