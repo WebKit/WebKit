@@ -126,6 +126,9 @@
             },
             "/webkit/WebKitWebView/fullscreen": {
                 "expected": {"wpe": {"status": ["TIMEOUT", "PASS"]}}
+            },
+            "/webkit/WebKitWebView/external-audio-rendering": {
+                "expected": {"wpe": {"status": ["PASS"], "slow": true}}
             }
         }
     },
