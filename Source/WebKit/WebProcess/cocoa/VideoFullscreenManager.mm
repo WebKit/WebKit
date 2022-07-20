@@ -229,10 +229,10 @@ void VideoFullscreenManager::removeClientForContext(PlaybackSessionContextIdenti
 
 #pragma mark Interface to ChromeClient:
 
-bool VideoFullscreenManager::canEnterVideoFullscreen() const
+bool VideoFullscreenManager::canEnterVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode) const
 {
 #if PLATFORM(IOS)
-    if (m_currentlyInFullscreen)
+    if (m_currentlyInFullscreen && mode == HTMLMediaElementEnums::VideoFullscreenModeStandard)
         return false;
 #endif
     return true;
