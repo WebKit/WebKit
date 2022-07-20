@@ -91,6 +91,7 @@ private:
     int m_closedShadowDepth { 0 };
     bool m_currentTargetIsInShadowTree { false };
     bool m_contextNodeIsFormElement { false };
+    bool m_relatedTargetIsSet { false };
     Type m_type { Type::Normal };
 };
 
@@ -128,6 +129,7 @@ inline void EventContext::setRelatedTarget(Node* relatedTarget)
 {
     ASSERT(!isUnreachableNode(relatedTarget));
     m_relatedTarget = relatedTarget;
+    m_relatedTargetIsSet = true;
 }
 
 #if ENABLE(TOUCH_EVENTS)

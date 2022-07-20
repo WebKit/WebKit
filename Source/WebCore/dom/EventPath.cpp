@@ -299,7 +299,8 @@ RelatedNodeRetargeter::RelatedNodeRetargeter(Node& relatedNode, Node& target)
     if (LIKELY(currentTreeScope == &targetTreeScope && target.isConnected() && m_relatedNode.isConnected()))
         return;
 
-    if (&currentTreeScope->documentScope() != &targetTreeScope.documentScope()) {
+    if (&currentTreeScope->documentScope() != &targetTreeScope.documentScope()
+        || (relatedNode.hasBeenInUserAgentShadowTree() && !relatedNode.isConnected())) {
         m_hasDifferentTreeRoot = true;
         m_retargetedRelatedNode = nullptr;
         return;

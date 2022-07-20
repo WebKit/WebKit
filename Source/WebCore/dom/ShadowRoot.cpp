@@ -72,6 +72,8 @@ ShadowRoot::ShadowRoot(Document& document, ShadowRootMode type, DelegatesFocus d
     , m_type(type)
     , m_styleScope(makeUnique<Style::Scope>(*this))
 {
+    if (type == ShadowRootMode::UserAgent)
+        setNodeFlag(NodeFlag::HasBeenInUserAgentShadowTree);
 }
 
 
@@ -82,6 +84,7 @@ ShadowRoot::ShadowRoot(Document& document, std::unique_ptr<SlotAssignment>&& slo
     , m_styleScope(makeUnique<Style::Scope>(*this))
     , m_slotAssignment(WTFMove(slotAssignment))
 {
+    setNodeFlag(NodeFlag::HasBeenInUserAgentShadowTree);
 }
 
 
