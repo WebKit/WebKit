@@ -918,19 +918,38 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
     return SynthesisPair(needsSyntheticBold, needsSyntheticOblique);
 }
 
-typedef HashSet<String, ASCIICaseInsensitiveHash> Allowlist;
-static Allowlist& fontAllowlist()
-{
-    static NeverDestroyed<Allowlist> allowlist;
-    return allowlist;
-}
+class Allowlist {
+public:
+    static Allowlist& singleton() WTF_REQUIRES_LOCK(lock)
+    {
+        static NeverDestroyed<Allowlist> allowlist;
+        return allowlist;
+    }
+
+    void set(const Vector<String>& inputAllowlist) WTF_REQUIRES_LOCK(lock)
+    {
+        m_families.clear();
+        for (auto& item : inputAllowlist)
+            m_families.add(item);
+    }
+
+    bool allows(const AtomString& family) const WTF_REQUIRES_LOCK(lock)
+    {
+        return m_families.isEmpty() || m_families.contains(family);
+    }
+
+    static Lock lock;
+
+private:
+    HashSet<String, ASCIICaseInsensitiveHash> m_families;
+};
+
+Lock Allowlist::lock;
 
 void FontCache::setFontAllowlist(const Vector<String>& inputAllowlist)
 {
-    Allowlist& allowlist = fontAllowlist();
-    allowlist.clear();
-    for (auto& item : inputAllowlist)
-        allowlist.add(item);
+    Locker locker { Allowlist::lock };
+    Allowlist::singleton().set(inputAllowlist);
 }
 
 class FontDatabase {
@@ -1267,10 +1286,18 @@ static bool isDotPrefixedForbiddenFont(const AtomString& family)
         || equalLettersIgnoringASCIICase(family, ".applesystemuifontrounded"_s);
 }
 
+static bool isAllowlistedFamily(const AtomString& family)
+{
+    if (isSystemFont(family.string()))
+        return true;
+
+    Locker locker { Allowlist::lock };
+    return Allowlist::singleton().allows(family);
+}
+
 static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
-    const auto& allowlist = fontAllowlist();
-    if (!isSystemFont(family.string()) && allowlist.size() && !allowlist.contains(family))
+    if (!isAllowlistedFamily(family))
         return { nullptr };
 
     if (isDotPrefixedForbiddenFont(family)) {
