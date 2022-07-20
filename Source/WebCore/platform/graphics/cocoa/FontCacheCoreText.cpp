@@ -1374,8 +1374,8 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
     }
 
     if (equalLettersIgnoringASCIICase(family, "lastresort"_s)) {
-        static const CTFontDescriptorRef lastResort = CTFontDescriptorCreateLastResort();
-        return adoptCF(CTFontCreateWithFontDescriptor(lastResort, size, nullptr));
+        auto lastResort = adoptCF(CTFontDescriptorCreateLastResort());
+        return adoptCF(CTFontCreateWithFontDescriptor(lastResort.get(), size, nullptr));
     }
 
     if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers"_s)) {
