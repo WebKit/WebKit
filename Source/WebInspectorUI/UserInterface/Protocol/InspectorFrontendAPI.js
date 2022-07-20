@@ -245,4 +245,14 @@ InspectorFrontendAPI = {
     {
         return WI.sharedApp.extensionController.evaluateScriptInExtensionTab(extensionTabID, scriptSource);
     },
+
+    // Returns a string (WI.WebInspectorExtension.ErrorCode) if an error occurred that prevented the resource from loading.
+    // Returns a Promise that is resolved if the loading completes and rejected if there was an internal error.
+    // When the promise is fulfilled, it will be either:
+    // - resolved with no value.
+    // - rejected with an object containing an 'error' key and value that is the exception that was thrown while showing the tab
+    loadURLForExtension(extensionTabID, sourceURL)
+    {
+        return WI.sharedApp.extensionController.loadURLForExtension(extensionTabID, sourceURL);
+    },
 };

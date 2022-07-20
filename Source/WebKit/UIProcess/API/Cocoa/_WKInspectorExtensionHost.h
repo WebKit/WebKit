@@ -64,6 +64,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)showExtensionTabWithIdentifier:(NSString *)extensionTabIdentifier completionHandler:(void(^)(NSError * _Nullable))completionHandler;
 
 /**
+ * @abstract Loads the extension tab with a specified URL.
+ * @param extensionTabIdentifier An identifier for an extension tab created using WKInspectorExtension methods.
+ * @param url The URL that the exteb
+ * @param completionHandler The completion handler to be called when the request to show the tab succeeds or fails.
+ * @discussion This method has no effect if the extensionTabIdentifier is invalid.
+ * It is an error to call this method prior to calling -[_WKInspectorIBActions show].
+ */
+- (void)loadExtensionTabWithIdentifier:(NSString *)extensionTabIdentifier url:(NSURL *)url completionHandler:(void(^)(NSError * _Nullable))completionHandler;
+
+/**
  * @abstract The web view that is used to host extension tabs created via _WKInspectorExtension.
  * @discussion Browsing contexts for extension tabs are loaded in subframes of this web view.
  */

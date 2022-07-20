@@ -78,6 +78,17 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
         return `ExtensionTab-${this._extension.extensionBundleIdentifier}-${this._tabInfo.displayName}`;
     }
 
+    set iframeURL(sourceURL)
+    {
+        if (this._iframeElement)
+            this._iframeElement.remove();
+
+        this._iframeFinishedInitialLoad = false;
+        this._iframeElement = this.element.appendChild(document.createElement("iframe"));
+        this._iframeElement.src = sourceURL;
+        this._iframeElement.addEventListener("load", this._extensionFrameDidLoad.bind(this));
+    }
+
     whenPageAvailable()
     {
         return this._whenPageAvailablePromise.promise;
@@ -122,6 +133,7 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
         // Bounce from the initial empty page to the requested sourceURL.
         if (!this._iframeFinishedInitialLoad) {
             this._iframeFinishedInitialLoad = true;
+//            Kiara: this._iframeElement.src = this._sourceURL; // should we do this here instead?
             WI.sharedApp.extensionController.evaluateScriptInExtensionTab(this._extensionTabID, `document.location.replace("${this._sourceURL}");`);
             return;
         }
