@@ -1672,34 +1672,43 @@ TEST(WKAttachmentTests, CopyAndPasteImageBetweenWebViews)
     EXPECT_TRUE([originalData isEqualToData:pastedAttachmentInfo.data]);
 }
 
+#if HAVE(QUICKLOOK_THUMBNAILING)
+
 static bool triedToLoadThumbnail;
 static void _generateBestRepresentationForRequest(id, SEL)
 {
     triedToLoadThumbnail = true;
 }
 
+#endif
+
 TEST(WKAttachmentTests, CutAndPasteAttachmentBetweenWebViews)
 {
-    triedToLoadThumbnail = false;
     auto webView = webViewForTestingAttachments();
     [webView synchronouslyInsertAttachmentWithFilename:@"test.pages" contentType:nil data:testiWorkAttachmentData()];
     [webView selectAll:nil];
     [webView _synchronouslyExecuteEditCommand:@"Cut" argument:nil];
 
+#if HAVE(QUICKLOOK_THUMBNAILING)
     InstanceMethodSwizzler quickLookSwizzler {
         getQLThumbnailGeneratorClass(),
         @selector(generateBestRepresentationForRequest:completionHandler:),
         reinterpret_cast<IMP>(_generateBestRepresentationForRequest)
     };
+    triedToLoadThumbnail = false;
+#endif
 
     auto destinationView = webViewForTestingAttachments();
     ObserveAttachmentUpdatesForScope observer(destinationView.get());
-    triedToLoadThumbnail = false;
     [destinationView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
     EXPECT_EQ(1U, observer.observer().inserted.count);
 
+#if HAVE(QUICKLOOK_THUMBNAILING)
     Util::run(&triedToLoadThumbnail);
+#endif
 }
+
+#if HAVE(QUICKLOOK_THUMBNAILING)
 
 TEST(WKAttachmentTests, iWorkAttachmentWithoutPasteboardActionLoadsThumbnail)
 {
@@ -1728,6 +1737,8 @@ TEST(WKAttachmentTests, iWorkAttachmentWithoutPasteboardActionLoadsThumbnail)
 
     Util::run(&triedToLoadThumbnail);
 }
+
+#endif // HAVE(QUICKLOOK_THUMBNAILING)
 
 TEST(WKAttachmentTests, AttachmentIdentifierOfClonedAttachment)
 {
