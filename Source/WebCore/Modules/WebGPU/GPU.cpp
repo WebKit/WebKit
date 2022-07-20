@@ -63,4 +63,9 @@ void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options,
     });
 }
 
+GPUTextureFormat GPU::getPreferredCanvasFormat()
+{
+    return GPUTextureFormat::Rgba8unorm;
+}
+
 }

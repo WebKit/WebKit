@@ -45,11 +45,6 @@ void GPUCanvasContext::unconfigure()
 {
 }
 
-GPUTextureFormat GPUCanvasContext::getPreferredFormat(const GPUAdapter&)
-{
-    return GPUTextureFormat::Rgba8unorm;
-}
-
 RefPtr<GPUTexture> GPUCanvasContext::getCurrentTexture()
 {
     return nullptr;

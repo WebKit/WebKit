@@ -27,6 +27,7 @@
 
 #include "GPUAdapter.h"
 #include "GPURequestAdapterOptions.h"
+#include "GPUTextureFormat.h"
 #include "JSDOMPromiseDeferred.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPU.h>
@@ -45,6 +46,8 @@ public:
 
     using RequestAdapterPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<GPUAdapter>>>;
     void requestAdapter(const std::optional<GPURequestAdapterOptions>&, RequestAdapterPromise&&);
+
+    GPUTextureFormat getPreferredCanvasFormat();
 
     void setBacking(PAL::WebGPU::GPU&);
 

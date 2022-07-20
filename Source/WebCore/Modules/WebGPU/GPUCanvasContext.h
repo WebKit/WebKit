@@ -26,7 +26,6 @@
 #pragma once
 
 #include "GPUTexture.h"
-#include "GPUTextureFormat.h"
 #include "HTMLCanvasElement.h"
 #include "OffscreenCanvas.h"
 #include <variant>
@@ -57,7 +56,6 @@ public:
     void configure(const GPUCanvasConfiguration&);
     void unconfigure();
 
-    GPUTextureFormat getPreferredFormat(const GPUAdapter&);
     RefPtr<GPUTexture> getCurrentTexture();
 
 private:
