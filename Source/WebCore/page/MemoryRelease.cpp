@@ -72,7 +72,7 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
 
     // FIXME: Clear these font caches in workers too?
     FontCache::forCurrentThread().purgeInactiveFontData();
-    FontCache::forCurrentThread().clearWidthCaches();
+    FontCascadeCache::forCurrentThread().clearWidthCaches();
 
     GlyphDisplayListCache::singleton().clear();
 

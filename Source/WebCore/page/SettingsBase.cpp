@@ -59,7 +59,7 @@ static void invalidateAfterGenericFamilyChange(Page* page)
 {
     // No need to invalidate FontCascadeCaches in worker threads, since workers
     // do not respond to changes in Settings values.
-    FontCache::forCurrentThread().invalidateFontCascadeCache();
+    FontCascadeCache::forCurrentThread().invalidate();
 
     if (page)
         page->setNeedsRecalcStyleInAllFrames();
