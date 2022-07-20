@@ -72,7 +72,7 @@ namespace cbor {
 class CBORReader {
     WTF_MAKE_NONCOPYABLE(CBORReader);
 public:
-    using Bytes = Vector<uint8_t>;
+    using Bytes = Span<const uint8_t>;
 
     enum class DecoderError {
         CBORNoError = 0,
@@ -107,7 +107,7 @@ public:
     static const char* errorCodeToString(DecoderError errorCode);
 
 private:
-    CBORReader(Bytes::const_iterator, const Bytes::const_iterator);
+    CBORReader(Bytes::iterator, const Bytes::iterator);
     std::optional<CBORValue> decodeCBOR(int maxNestingLevel);
     std::optional<CBORValue> decodeValueToNegative(uint64_t value);
     std::optional<CBORValue> decodeValueToUnsigned(uint64_t value);
@@ -126,8 +126,8 @@ private:
 
     DecoderError getErrorCode();
 
-    Bytes::const_iterator m_it;
-    const Bytes::const_iterator m_end;
+    Bytes::iterator m_it;
+    const Bytes::iterator m_end;
     DecoderError m_errorCode;
 };
 

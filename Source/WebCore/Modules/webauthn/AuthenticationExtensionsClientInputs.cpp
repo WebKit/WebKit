@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-std::optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClientInputs::fromCBOR(const Vector<uint8_t>& buffer)
+std::optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClientInputs::fromCBOR(Span<const uint8_t> buffer)
 {
     std::optional<cbor::CBORValue> decodedValue = cbor::CBORReader::read(buffer);
     if (!decodedValue || !decodedValue->isMap())
