@@ -48,8 +48,8 @@ class AbstractStep(object):
         "bug": lambda self, state: self._tool.bugs.fetch_bug(state["bug_id"]),
         # bug_title can either be a new title given by the user, or one from an existing bug.
         "bug_title": lambda self, state: self.cached_lookup(state, 'bug').title(),
-        "changed_files": lambda self, state: self._tool.scm().changed_files(self._options.git_commit),
-        "diff": lambda self, state: self._tool.scm().create_patch(self._options.git_commit, changed_files=self._changed_files(state)),
+        "changed_files": lambda self, state: self._tool.scm().changed_files(self._options.git_commit, find_branch=True),
+        "diff": lambda self, state: self._tool.scm().create_patch(self._options.git_commit, changed_files=self._changed_files(state), find_branch=True),
         # Absolute path to ChangeLog files.
         "changelogs": lambda self, state: self._tool.checkout().modified_changelogs(self._options.git_commit, changed_files=self._changed_files(state)),
         "has_local_commit": lambda self, state: self._tool.scm().merge_base(None) != self._tool.scm().rev_parse('HEAD') if isinstance(self._tool.scm(), Git) else False

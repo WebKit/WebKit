@@ -33,6 +33,7 @@ import re
 
 from webkitcorepy import string_utils
 from webkitscmpy import local
+from webkitscmpy.program import branch
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import Executive, ScriptError
@@ -199,7 +200,7 @@ class Git(SCM, SVNRepository):
         current_branch = self._current_branch()
         return self._branch_from_ref(self.read_git_config('branch.%s.merge' % current_branch, cwd=self.checkout_root, executive=self._executive).strip())
 
-    def merge_base(self, git_commit):
+    def merge_base(self, git_commit, find_branch=False):
         if git_commit:
             # Rewrite UPSTREAM to the upstream branch
             if 'UPSTREAM' in git_commit:
@@ -216,7 +217,7 @@ class Git(SCM, SVNRepository):
                 git_commit = git_commit + "^.." + git_commit
             return git_commit
 
-        return self.remote_merge_base()
+        return self.remote_merge_base(find_branch=find_branch)
 
     def modifications_staged_for_commit(self):
         # This will only return non-deleted files with the "updated in index" status
@@ -234,9 +235,9 @@ class Git(SCM, SVNRepository):
         extractor = "^[?!][?!] (?P<filename>.+)$"
         return [value if not value.endswith('/') else value[:-1] for value in self.run_status_and_extract_filenames(status_command, extractor)]
 
-    def changed_files(self, git_commit=None):
+    def changed_files(self, git_commit=None, find_branch=False):
         # FIXME: --diff-filter could be used to avoid the "extract_filenames" step.
-        status_command = [self.executable_name, 'diff', '-r', '--name-status', "--no-renames", "--no-ext-diff", "--full-index", self.merge_base(git_commit), '--']
+        status_command = [self.executable_name, 'diff', '-r', '--name-status', "--no-renames", "--no-ext-diff", "--full-index", self.merge_base(git_commit, find_branch=find_branch), '--']
         status_command.extend(self._patch_directories)
         # FIXME: I'm not sure we're returning the same set of files that SVN.changed_files is.
         # Added (A), Copied (C), Deleted (D), Modified (M), Renamed (R)
@@ -351,14 +352,14 @@ class Git(SCM, SVNRepository):
 
         return string_utils.encode("Subversion Revision: ") + string_utils.encode(revision) + string_utils.encode('\n') + string_utils.encode(diff)
 
-    def create_patch(self, git_commit=None, changed_files=None, git_index=False, commit_message=True):
+    def create_patch(self, git_commit=None, changed_files=None, git_index=False, commit_message=True, find_branch=False):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain files of multiple different encodings.
         If git_index is True, git_commit is ignored because only indexed files are handled.
         """
 
         head = self.rev_parse('HEAD')
-        merge_base = self.merge_base(git_commit)
+        merge_base = self.merge_base(git_commit, find_branch=find_branch)
         if not commit_message or merge_base == head:
             command = [self.executable_name, 'diff', '--binary', '--no-color', '--no-ext-diff', '--full-index', '--no-renames']
         else:
@@ -548,22 +549,22 @@ class Git(SCM, SVNRepository):
         if self.branch_ref_exists('refs/heads/' + branch_name):
             self._run_git(['branch', '-D', branch_name])
 
-    def remote_merge_base(self):
-        return self._run_git(['merge-base', self.remote_branch_ref(), 'HEAD']).strip()
+    def remote_merge_base(self, find_branch=False):
+        return self._run_git(['merge-base', self.remote_branch_ref(find_branch), 'HEAD']).strip()
 
-    def remote_branch_ref(self):
-        # Use references so that we can avoid collisions, e.g. we don't want to operate on refs/heads/trunk if it exists.
-        remote_branch_refs = self.read_git_config('svn-remote.svn.fetch', cwd=self.checkout_root, executive=self._executive)
-        if not remote_branch_refs:
-            for ref in ['refs/remotes/origin/main', 'refs/remotes/origin/master']:
-                if self.branch_ref_exists(ref):
-                    return ref
-            raise ScriptError(message="Can't find a branch to diff against. svn-remote.svn.fetch is not in the git config and neither main nor master exist")
-
-        # FIXME: What's the right behavior when there are multiple svn-remotes listed?
-        # For now, just use the first one.
-        first_remote_branch_ref = remote_branch_refs.split('\n')[0]
-        return first_remote_branch_ref.split(':')[1]
+    @memoized
+    def remote_branch_ref(self, find_branch=False):
+        if find_branch:
+            repository = local.Git(self.checkout_root)
+            branch_point = branch.Branch.branch_point(repository, limit=10)
+            if branch_point:
+                for remote in repository.source_remotes():
+                    if branch_point.branch in repository.branches_for(remote=remote, cached=True):
+                        return 'refs/remotes/{}/{}'.format(remote, branch_point.branch)
+        for ref in ['refs/remotes/origin/main', 'refs/remotes/origin/master']:
+            if self.branch_ref_exists(ref):
+                return ref
+        raise ScriptError(message="Can't find a branch to diff against.")
 
     def cherrypick_merge(self, commit):
         git_args = ['cherry-pick', '-n', commit]

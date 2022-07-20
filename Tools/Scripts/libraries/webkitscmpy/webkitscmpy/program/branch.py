@@ -28,7 +28,7 @@ from .commit import Commit
 
 from webkitbugspy import Tracker
 from webkitcorepy import run, string_utils, Terminal
-from webkitscmpy import local, log
+from webkitscmpy import local, log, remote
 
 
 class Branch(Command):
@@ -62,18 +62,21 @@ class Branch(Command):
         if not repository or not isinstance(repository, local.Git):
             return False
 
-        # FIXME: Need to consider alternate remotes
-        for remote in ['origin']:
-            if branch in repository.branches_for(remote=remote, cached=True):
-                return False
+        remote_repo = repository.remote(name=repository.default_remote)
+        if remote_repo and isinstance(remote_repo, remote.GitHub):
+            for name in repository.source_remotes():
+                if branch in repository.branches_for(remote=name, cached=True):
+                    return False
         return True
 
     @classmethod
-    def branch_point(cls, repository):
+    def branch_point(cls, repository, limit=None):
         cnt = 0
         commit = repository.commit(include_log=False, include_identifier=False)
         while cls.editable(commit.branch, repository=repository):
             cnt += 1
+            if limit and cnt > limit:
+                return None
             commit = repository.find(argument='HEAD~{}'.format(cnt), include_log=False, include_identifier=False)
             if cnt > 1 or commit.branch != repository.branch or cls.editable(commit.branch, repository=repository):
                 log.info('    Found {}...'.format(string_utils.pluralize(cnt, 'commit')))
