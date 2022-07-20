@@ -2,6 +2,8 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (0,0) size 479x359
+  RenderSVGViewportContainer at (0,0) size 479x359
 layer at (0,0) size 471x260
   RenderSVGTransformableContainer {g} at (0,0) size 471x260
 layer at (10,54) size 461x20

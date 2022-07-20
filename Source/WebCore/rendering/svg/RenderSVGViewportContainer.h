@@ -33,12 +33,13 @@ class SVGSVGElement;
 class RenderSVGViewportContainer final : public RenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGViewportContainer);
 public:
+    RenderSVGViewportContainer(Document&, RenderStyle&&);
     RenderSVGViewportContainer(SVGSVGElement&, RenderStyle&&);
 
     SVGSVGElement& svgSVGElement() const;
 
-    // FIXME: [LBSE] Centralize implementation in RenderSVGContainer (follow-up commit)
-    bool isLayoutSizeChanged() const { return false; }
+    void updateFromStyle() final;
+    void updateFromElement() final;
 
 private:
     bool isSVGViewportContainer() const final { return true; }
@@ -46,9 +47,12 @@ private:
 
     void element() const = delete;
 
+    bool isOutermostSVGViewportContainer() const { return isAnonymous(); }
+    bool updateLayoutSizeIfNeeded() final;
+
     FloatRect computeViewport() const;
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
-    LayoutRect overflowClipRect(const LayoutPoint&, RenderFragmentContainer*, OverlayScrollbarSizeRelevancy, PaintPhase) const final { return { }; }
+    LayoutRect overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy, PaintPhase) const final { return { location, borderBoxRectInFragmentEquivalent(fragment).size() }; }
     void updateLayerTransform() final;
 
     AffineTransform m_supplementalLayerTransform;

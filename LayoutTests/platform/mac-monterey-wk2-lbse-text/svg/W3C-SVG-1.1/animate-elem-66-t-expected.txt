@@ -2,22 +2,24 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (-145,-12) size 624x372 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGViewportContainer at (-145,-13) size 624x372
 layer at (10,304) size 263x46
-  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+  RenderSVGText {text} at (154,316) size 265x47 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
-layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (1,1) size 479x359
+  RenderSVGRect {rect} at (145,13) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 layer at (223,12) size 34x23
-  RenderSVGText {text} at (222,12) size 36x23 contains 1 chunk(s)
+  RenderSVGText {text} at (367,24) size 35x24 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 35x23
       chunk 1 (middle anchor) text run 1 at (222.78,30.00) startOffset 0 endOffset 3 width 34.43: "max"
-layer at (194,172) size 92x23
-  RenderSVGText {text} at (194,172) size 92x23 contains 1 chunk(s)
+layer at (194,172) size 91x23
+  RenderSVGText {text} at (339,184) size 92x24 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 92x23
       chunk 1 (middle anchor) text run 1 at (194.45,190.00) startOffset 0 endOffset 9 width 91.10: "min & max"
-layer at (-145,-12) size 240x217 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-145,-13) size 240x217
+layer at (-145,-12) size 240x216 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 240x216
 layer at (-145,-12) size 145x216 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 145x216
 layer at (-87,-12) size 87x16 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

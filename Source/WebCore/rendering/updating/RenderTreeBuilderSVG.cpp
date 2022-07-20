@@ -28,10 +28,10 @@
 
 #include "LegacyRenderSVGContainer.h"
 #include "LegacyRenderSVGRoot.h"
-#include "RenderSVGContainer.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
+#include "RenderSVGViewportContainer.h"
 #include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderBlockFlow.h"
 #include "RenderTreeBuilderInline.h"
@@ -81,7 +81,15 @@ void RenderTreeBuilder::SVG::attach(RenderSVGInline& parent, RenderPtr<RenderObj
 void RenderTreeBuilder::SVG::attach(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
-    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
+    m_builder.attachToRenderElement(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
+
+    // updateFromStyle() needs access to the SVGSVGElement, which is only posssible
+    // after the newly created RenderSVGViewportContainer was inserted into the render tree.
+    // However updateFromStyle() was already called at this point. Therefore we have to
+    // call it again here.
+    ASSERT(parent.viewportContainer());
+    parent.viewportContainer()->updateFromStyle();
+
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 #endif
@@ -146,6 +154,27 @@ RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGRoot& parent, Re
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
     return m_builder.detachFromRenderElement(parent, child);
+}
+#endif
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+RenderSVGViewportContainer& RenderTreeBuilder::SVG::findOrCreateParentForChild(RenderSVGRoot& parent)
+{
+    if (auto* viewportContainer = parent.viewportContainer())
+        return *viewportContainer;
+
+    auto viewportContainerStyle = RenderStyle::createAnonymousStyleWithDisplay(parent.style(), RenderStyle::initialDisplay());
+    viewportContainerStyle.setUsedZIndex(0); // Enforce a stacking context.
+    viewportContainerStyle.setTransformOriginX(Length(0, LengthType::Fixed));
+    viewportContainerStyle.setTransformOriginY(Length(0, LengthType::Fixed));
+
+    auto viewportContainer = createRenderer<RenderSVGViewportContainer>(parent.document(), WTFMove(viewportContainerStyle));
+    viewportContainer->initializeStyle();
+
+    auto* viewportContainerRenderer = viewportContainer.get();
+    m_builder.attachToRenderElement(parent, WTFMove(viewportContainer), nullptr);
+    parent.setViewportContainer(*viewportContainerRenderer);
+    return *viewportContainerRenderer;
 }
 #endif
 

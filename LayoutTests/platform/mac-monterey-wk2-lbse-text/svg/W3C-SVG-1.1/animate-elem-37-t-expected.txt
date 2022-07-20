@@ -2,18 +2,20 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (-40,-30) size 519x389 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGViewportContainer at (-40,-30) size 519x389
 layer at (10,304) size 263x46
-  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+  RenderSVGText {text} at (50,334) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"
 layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+  RenderSVGRect {rect} at (41,31) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 layer at (121,11) size 238x18
-  RenderSVGText {text} at (121,11) size 238x18 contains 1 chunk(s)
+  RenderSVGText {text} at (161,41) size 238x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 238x18
       chunk 1 (middle anchor) text run 1 at (121.24,25.00) startOffset 0 endOffset 33 width 237.52: "<animateTransform> shape elements"
 layer at (-40,-30) size 80x94 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-40,-30) size 80x94
+  RenderSVGTransformableContainer {g} at (0,0) size 80x94
 layer at (-30,-30) size 60x94 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (10,0) size 60x94
 layer at (-30,-30) size 60x60 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

@@ -2,8 +2,10 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-layer at (-412,25) size 846x261 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-413,24) size 846x261
+layer at (-412,1) size 892x358 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGViewportContainer at (-413,1) size 892x358
+layer at (-412,25) size 845x261 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,23) size 845x261
 layer at (10,25) size 317x19
   RenderSVGText {text} at (422,0) size 318x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 318x19
@@ -37,8 +39,8 @@ layer at (-412,261) size 422x24 backgroundClip at (0,0) size 480x360 clip at (0,
       chunk 1 text run 1 at (-313.05,280.00) startOffset 0 endOffset 40 width 288.07 RTL: " \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" "
       chunk 1 text run 1 at (-24.97,280.00) startOffset 0 endOffset 4 width 34.97: "Text"
 layer at (10,304) size 263x46
-  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+  RenderSVGText {text} at (422,303) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.9 $"
-layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (1,1) size 479x358
+  RenderSVGRect {rect} at (413,0) size 479x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

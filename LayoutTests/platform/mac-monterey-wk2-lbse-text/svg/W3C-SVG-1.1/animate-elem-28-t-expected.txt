@@ -3,7 +3,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (1,1) size 478x358
-  RenderSVGTransformableContainer {g} at (1,1) size 478x358
+  RenderSVGViewportContainer at (1,1) size 478x358
+layer at (1,1) size 478x358
+  RenderSVGTransformableContainer {g} at (0,0) size 478x358
 layer at (90,30) size 300x300
   RenderSVGEllipse {circle} at (89,29) size 300x300 [stroke={[type=SOLID] [color=#F1E900] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [cx=240.00] [cy=180.00] [r=150.00]
 layer at (165,103) size 150x56

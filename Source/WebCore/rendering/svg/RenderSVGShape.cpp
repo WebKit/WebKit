@@ -534,7 +534,7 @@ void RenderSVGShape::styleWillChange(StyleDifference diff, const RenderStyle& ne
 
 void RenderSVGShape::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
-    applySVGTransform(transform, graphicsElement(), style, boundingBox, options);
+    applySVGTransform(transform, graphicsElement(), style, boundingBox, std::nullopt, options);
 }
 
 }

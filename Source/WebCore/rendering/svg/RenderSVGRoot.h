@@ -26,6 +26,7 @@
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "FloatRect.h"
 #include "RenderReplaced.h"
+#include "RenderSVGViewportContainer.h"
 #include "SVGBoundingBoxComputation.h"
 
 namespace WebCore {
@@ -69,6 +70,9 @@ public:
     FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
     LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
+
+    RenderSVGViewportContainer* viewportContainer() const { return m_viewportContainer.get(); }
+    void setViewportContainer(RenderSVGViewportContainer&);
 
 private:
     void element() const = delete;
@@ -121,6 +125,7 @@ private:
     FloatRect m_objectBoundingBoxWithoutTransformations;
     FloatRect m_strokeBoundingBox;
     HashSet<RenderSVGResourceContainer*> m_resourcesNeedingToInvalidateClients;
+    WeakPtr<RenderSVGViewportContainer> m_viewportContainer;
 };
 
 } // namespace WebCore

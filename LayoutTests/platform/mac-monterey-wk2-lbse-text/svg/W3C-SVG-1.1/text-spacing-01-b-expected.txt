@@ -2,8 +2,10 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-layer at (3,1) size 74x51
-  RenderSVGTransformableContainer {g} at (3,0) size 74x51
+layer at (1,1) size 78x59
+  RenderSVGViewportContainer at (1,0) size 78x59
+layer at (3,1) size 74x50
+  RenderSVGTransformableContainer {g} at (2,0) size 74x50
 layer at (3,1) size 74x50
   RenderSVGTransformableContainer {g} at (0,0) size 74x50
 layer at (3,1) size 55x9
@@ -69,8 +71,8 @@ layer at (3,42) size 73x9
       chunk 1 text run 3 at (32.56,49.00) startOffset 7 endOffset 11 width 17.34: "Two "
       chunk 1 text run 4 at (52.89,49.00) startOffset 11 endOffset 16 width 23.11: "Words"
 layer at (5,52) size 40x7
-  RenderSVGText {text} at (5,51) size 40x8 contains 1 chunk(s)
+  RenderSVGText {text} at (4,50) size 40x8 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 40x7
       chunk 1 text run 1 at (5.00,57.00) startOffset 0 endOffset 16 width 39.50: "$Revision: 1.6 $"
-layer at (1,1) size 78x58
-  RenderSVGRect {rect} at (1,1) size 78x58 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=78.00] [height=58.00]
+layer at (1,1) size 78x59
+  RenderSVGRect {rect} at (0,0) size 78x59 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=78.00] [height=58.00]

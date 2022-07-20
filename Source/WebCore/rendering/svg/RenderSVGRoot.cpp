@@ -74,6 +74,12 @@ SVGSVGElement& RenderSVGRoot::svgSVGElement() const
     return downcast<SVGSVGElement>(nodeForNonAnonymous());
 }
 
+void RenderSVGRoot::setViewportContainer(RenderSVGViewportContainer& viewportContainer)
+{
+    ASSERT(!m_viewportContainer);
+    m_viewportContainer = viewportContainer;
+}
+
 void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
     ASSERT(!shouldApplySizeContainment());
@@ -216,6 +222,7 @@ void RenderSVGRoot::layoutChildren()
     m_objectBoundingBoxWithoutTransformations = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransformations);
 
     m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
+    containerLayout.positionChildrenRelativeToContainer();
 
     if (!m_resourcesNeedingToInvalidateClients.isEmpty()) {
         // Invalidate resource clients, which may mark some nodes for layout.
@@ -571,9 +578,12 @@ void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintCon
 
 LayoutRect RenderSVGRoot::overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy, PaintPhase) const
 {
+    // SVG2: For those elements to which the overflow property can apply. If the overflow property has the value hidden or scroll, a clip, the exact size of the SVG viewport is applied.
+    // Unlike RenderBox, RenderSVGRoot explicitely includes the padding in the overflow clip rect. In SVG the padding applied to the outermost <svg>
+    // shrinks the area available for child renderers to paint into -- reflect this by shrinking the overflow clip rect itself.
     auto clipRect = borderBoxRectInFragment(fragment);
-    clipRect.setLocation(location + clipRect.location() + LayoutSize(borderLeft(), borderTop()));
-    clipRect.setSize(clipRect.size() - LayoutSize(borderLeft() + borderRight(), borderTop() + borderBottom()));
+    clipRect.setLocation(location + clipRect.location() + toLayoutSize(contentBoxLocation()));
+    clipRect.setSize(clipRect.size() - LayoutSize(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent()));
 
     if (!isEmbeddedThroughFrameContainingSVGDocument()) {
         auto zoom = style().effectiveZoom();

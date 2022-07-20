@@ -2,8 +2,10 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (-36,-31) size 516x391 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGViewportContainer at (-37,-31) size 516x391
 layer at (-36,-31) size 142x305 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-37,-31) size 142x305
+  RenderSVGTransformableContainer {g} at (0,0) size 142x305
 layer at (0,16) size 45x258
   RenderSVGTransformableContainer {g} at (36,47) size 45x258
 layer at (0,16) size 44x18
@@ -112,9 +114,9 @@ layer at (-12,-17) size 23x18 backgroundClip at (0,0) size 480x360 clip at (0,0)
   RenderSVGText {text} at (24,14) size 24x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 24x18
       chunk 1 (middle anchor) text run 1 at (-11.55,-3.00) startOffset 0 endOffset 3 width 23.10: "end"
-layer at (10,314) size 263x46
-  RenderSVGText {text} at (10,314) size 264x46 contains 1 chunk(s)
+layer at (10,314) size 264x46
+  RenderSVGText {text} at (46,345) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,350.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"
-layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (1,1) size 479x358
+  RenderSVGRect {rect} at (37,32) size 479x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

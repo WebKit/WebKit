@@ -32,6 +32,7 @@ namespace WebCore {
 class LegacyRenderSVGContainer;
 class LegacyRenderSVGRoot;
 class RenderSVGContainer;
+class RenderSVGViewportContainer;
 class RenderSVGInline;
 class RenderSVGRoot;
 class RenderSVGText;
@@ -62,6 +63,9 @@ public:
     RenderPtr<RenderObject> detach(RenderSVGText& parent, RenderObject& child) WARN_UNUSED_RETURN;
 
 private:
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    RenderSVGViewportContainer& findOrCreateParentForChild(RenderSVGRoot&);
+#endif
     RenderTreeBuilder& m_builder;
 };
 

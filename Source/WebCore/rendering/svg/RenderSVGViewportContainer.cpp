@@ -37,6 +37,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGViewportContainer);
 
+RenderSVGViewportContainer::RenderSVGViewportContainer(Document& document, RenderStyle&& style)
+    : RenderSVGContainer(document, WTFMove(style))
+{
+}
+
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, RenderStyle&& style)
     : RenderSVGContainer(element, WTFMove(style))
 {
@@ -44,11 +49,21 @@ RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, R
 
 SVGSVGElement& RenderSVGViewportContainer::svgSVGElement() const
 {
+    if (isOutermostSVGViewportContainer()) {
+        ASSERT(is<RenderSVGRoot>(parent()));
+        return downcast<RenderSVGRoot>(*parent()).svgSVGElement();
+    }
+
     return downcast<SVGSVGElement>(RenderSVGContainer::element());
 }
 
 FloatRect RenderSVGViewportContainer::computeViewport() const
 {
+    if (isOutermostSVGViewportContainer()) {
+        ASSERT(is<RenderSVGRoot>(parent()));
+        return { { }, downcast<RenderSVGRoot>(*parent()).computeViewportSize() };
+    }
+
     auto& useSVGSVGElement = svgSVGElement();
 
     SVGLengthContext lengthContext(&useSVGSVGElement);
@@ -56,13 +71,76 @@ FloatRect RenderSVGViewportContainer::computeViewport() const
         useSVGSVGElement.width().value(lengthContext), useSVGSVGElement.height().value(lengthContext) };
 }
 
-void RenderSVGViewportContainer::updateLayerTransform()
+bool RenderSVGViewportContainer::updateLayoutSizeIfNeeded()
 {
-    RenderSVGContainer::updateLayerTransform();
+    auto previousSize = m_viewport.size();
+    m_viewport = computeViewport();
+    return selfNeedsLayout() || (svgSVGElement().hasRelativeLengths() && previousSize != m_viewport.size());
 }
 
-void RenderSVGViewportContainer::applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect&, OptionSet<RenderStyle::TransformOperationOption>) const
+void RenderSVGViewportContainer::updateFromElement()
 {
+    RenderSVGContainer::updateFromElement();
+    updateLayerTransform();
+}
+
+void RenderSVGViewportContainer::updateFromStyle()
+{
+    RenderSVGContainer::updateFromStyle();
+
+    if (SVGRenderSupport::isOverflowHidden(*this))
+        setHasNonVisibleOverflow();
+
+    if (hasSVGTransform() || !parent())
+        return;
+
+    auto& useSVGSVGElement = svgSVGElement();
+    if (useSVGSVGElement.hasAttribute(SVGNames::viewBoxAttr) && !useSVGSVGElement.hasEmptyViewBox()) {
+        setHasTransformRelatedProperty();
+        setHasSVGTransform();
+    }
+}
+
+void RenderSVGViewportContainer::updateLayerTransform()
+{
+    // First update the supplemental layer transform...
+    auto& useSVGSVGElement = svgSVGElement();
+    auto viewport = m_viewport;
+
+    m_supplementalLayerTransform.makeIdentity();
+
+    if (isOutermostSVGViewportContainer()) {
+        // Handle pan - set on outermost <svg> element.
+        if (auto translation = useSVGSVGElement.currentTranslateValue(); !translation.isZero())
+            m_supplementalLayerTransform.translate(translation);
+
+        // Handle zoom - take effective zoom from outermost <svg> element.
+        if (auto scale = useSVGSVGElement.renderer()->style().effectiveZoom(); scale != 1) {
+            m_supplementalLayerTransform.scale(scale);
+            viewport.scale(1.0 / scale);
+        }
+    } else if (!viewport.location().isZero())
+        m_supplementalLayerTransform.translate(viewport.location());
+
+    auto viewBoxTransform = useSVGSVGElement.viewBoxToViewTransform(viewport.width(), viewport.height());
+    if (!viewBoxTransform.isIdentity()) {
+        if (m_supplementalLayerTransform.isIdentity())
+            m_supplementalLayerTransform = viewBoxTransform;
+        else
+            m_supplementalLayerTransform.multiply(viewBoxTransform);
+    }
+
+    // ... before being able to use it in RenderLayerModelObjects::updateLayerTransform().
+    RenderSVGContainer::updateLayerTransform();
+
+    // An empty viewBox disables the rendering -- dirty the visible descendant status!
+    if (hasLayer() && useSVGSVGElement.hasAttribute(SVGNames::viewBoxAttr) && useSVGSVGElement.hasEmptyViewBox())
+        layer()->dirtyVisibleContentStatus();
+}
+
+void RenderSVGViewportContainer::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+{
+    applySVGTransform(transform, svgSVGElement(), style, boundingBox, std::make_optional(m_supplementalLayerTransform), options);
 }
 
 }

@@ -94,8 +94,7 @@ void RenderSVGTransformableContainer::updateLayerTransform()
 
 void RenderSVGTransformableContainer::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
-    // FIXME: Make use of m_supplementalLayerTransform, to add <use> support.
-    applySVGTransform(transform, graphicsElement(), style, boundingBox, options);
+    applySVGTransform(transform, graphicsElement(), style, boundingBox, m_supplementalLayerTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalLayerTransform), options);
 }
 
 }

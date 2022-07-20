@@ -48,6 +48,7 @@ public:
     FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
 protected:
+    RenderSVGContainer(Document&, RenderStyle&&);
     RenderSVGContainer(SVGElement&, RenderStyle&&);
 
     ASCIILiteral renderName() const override { return "RenderSVGContainer"_s; }

@@ -2,8 +2,10 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-layer at (-110,-30) size 206x47 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-111,-31) size 206x47
+layer at (-110,-30) size 590x390 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGViewportContainer at (-111,-31) size 590x390
+layer at (-110,-30) size 206x46 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 206x46
 layer at (-95,-20) size 156x26 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (15,10) size 156x26
 layer at (0,-20) size 61x26 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -110,9 +112,9 @@ layer at (20,-30) size 70x45 backgroundClip at (0,0) size 480x360 clip at (0,0) 
       chunk 1 text run 1 at (40.00,-5.00) startOffset 0 endOffset 1 width 15.00: "2"
       chunk 1 text run 1 at (60.00,5.00) startOffset 0 endOffset 1 width 15.00: "3"
       chunk 1 text run 1 at (75.00,10.00) startOffset 0 endOffset 1 width 15.00: "4"
-layer at (10,304) size 283x46
-  RenderSVGText {text} at (10,304) size 284x46 contains 1 chunk(s)
+layer at (10,304) size 284x46
+  RenderSVGText {text} at (120,334) size 284x47 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 284x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 283.34: "$Revision: 1.13 $"
-layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (1,1) size 479x359
+  RenderSVGRect {rect} at (111,31) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

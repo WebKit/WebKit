@@ -52,6 +52,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGModelObject);
 
+RenderSVGModelObject::RenderSVGModelObject(Document& document, RenderStyle&& style)
+    : RenderLayerModelObject(document, WTFMove(style), 0)
+{
+}
+
 RenderSVGModelObject::RenderSVGModelObject(SVGElement& element, RenderStyle&& style)
     : RenderLayerModelObject(element, WTFMove(style), 0)
 {
@@ -61,7 +66,7 @@ void RenderSVGModelObject::updateFromStyle()
 {
     RenderLayerModelObject::updateFromStyle();
 
-    if (is<SVGGraphicsElement>(element()))
+    if (!isAnonymous() && is<SVGGraphicsElement>(element()))
         updateHasSVGTransformFlags(downcast<SVGGraphicsElement>(element()));
 }
 

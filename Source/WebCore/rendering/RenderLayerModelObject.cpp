@@ -352,36 +352,44 @@ void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject
     container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
-void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, SVGGraphicsElement& graphicsElement, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, SVGGraphicsElement& graphicsElement, const RenderStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
+    auto svgTransform = graphicsElement.animatedLocalTransform();
+
     // This check does not use style.hasTransformRelatedProperty() on purpose -- we only want to know if either the 'transform' property, an
     // offset path, or the individual transform operations are set (perspective / transform-style: preserve-3d are not relevant here).
     bool hasCSSTransform = style.hasTransform() || style.rotate() || style.translate() || style.scale();
+    bool hasSVGTransform = !svgTransform.isIdentity() || preApplySVGTransformMatrix;
 
-    bool affectedByTransformOrigin = false;
-    std::optional<AffineTransform> svgTransform;
-
-    if (hasCSSTransform)
-        affectedByTransformOrigin = style.affectedByTransformOrigin();
-    else if (auto affineTransform = graphicsElement.animatedLocalTransform(); !affineTransform.isIdentity()) {
-        svgTransform = affineTransform;
-        affectedByTransformOrigin = affineTransform.a() != 1 || affineTransform.b() || affineTransform.c() || affineTransform.d() != 1;
-    }
-
-    if (!hasCSSTransform && !svgTransform.has_value())
+    // Common case: 'viewBox' set on outermost <svg> element -> 'preApplySVGTransformMatrix'
+    // passed by RenderSVGViewportContainer::applyTransform(), the anonymous single child
+    // of RenderSVGRoot, that wraps all direct children from <svg> as present in DOM. All
+    // other transformations are unset (no need to compute transform-origin, etc. in that case).
+    if (!hasCSSTransform && !hasSVGTransform)
         return;
 
+    auto affectedByTransformOrigin = [&]() {
+        if (preApplySVGTransformMatrix && !preApplySVGTransformMatrix->isIdentityOrTranslation())
+            return true;
+        if (hasCSSTransform)
+            return style.affectedByTransformOrigin();
+        return !svgTransform.isIdentityOrTranslation();
+    };
+
     FloatPoint3D originTranslate;
-    if (options.contains(RenderStyle::TransformOperationOption::TransformOrigin) && affectedByTransformOrigin)
+    if (options.contains(RenderStyle::TransformOperationOption::TransformOrigin) && affectedByTransformOrigin())
         originTranslate = style.computeTransformOrigin(boundingBox);
 
     style.applyTransformOrigin(transform, originTranslate);
 
+    if (preApplySVGTransformMatrix)
+        transform.multiplyAffineTransform(preApplySVGTransformMatrix.value());
+
     // CSS transforms take precedence over SVG transforms.
     if (hasCSSTransform)
         style.applyCSSTransform(transform, boundingBox, options);
-    else
-        transform.multiplyAffineTransform(svgTransform.value());
+    else if (!svgTransform.isIdentity())
+        transform.multiplyAffineTransform(svgTransform);
 
     style.unapplyTransformOrigin(transform, originTranslate);
 }
