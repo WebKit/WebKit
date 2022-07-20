@@ -1423,10 +1423,11 @@ void NetworkProcessProxy::retrieveCacheStorageParameters(PAL::SessionID sessionI
         return;
     }
 
-    auto& cacheStorageDirectory = store->configuration().cacheStorageDirectory();
+    store->resolveDirectoriesIfNecessary();
+    auto& cacheStorageDirectory = store->resolvedCacheStorageDirectory();
     SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
     if (!cacheStorageDirectory.isEmpty()) {
-        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(cacheStorageDirectory))
+        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(cacheStorageDirectory, SandboxExtension::Type::ReadWrite))
             cacheStorageDirectoryExtensionHandle = WTFMove(*handle);
     }
 
