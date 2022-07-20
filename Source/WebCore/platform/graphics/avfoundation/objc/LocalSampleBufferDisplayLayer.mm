@@ -239,7 +239,7 @@ PlatformLayer* LocalSampleBufferDisplayLayer::rootLayer()
 
 bool LocalSampleBufferDisplayLayer::didFail() const
 {
-    return [m_sampleBufferDisplayLayer status] == AVQueuedSampleBufferRenderingStatusFailed;
+    return m_didFail || [m_sampleBufferDisplayLayer status] == AVQueuedSampleBufferRenderingStatusFailed;
 }
 
 void LocalSampleBufferDisplayLayer::updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer)
