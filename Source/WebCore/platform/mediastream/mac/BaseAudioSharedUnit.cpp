@@ -96,7 +96,16 @@ void BaseAudioSharedUnit::startProducingData()
         cleanupAudioUnit();
         ASSERT(!hasAudioUnit());
     }
-    startUnit();
+    auto error = startUnit();
+    if (error) {
+        const OSStatus lowPriorityError1 = 560557684;
+        const OSStatus lowPriorityError2 = 561017449;
+        if (error == lowPriorityError1 || error == lowPriorityError2) {
+            RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::startProducingData failed due to not high enough priority, suspending unit");
+            suspend();
+        } else
+            captureFailed();
+    }
 }
 
 OSStatus BaseAudioSharedUnit::startUnit()
@@ -106,11 +115,7 @@ OSStatus BaseAudioSharedUnit::startUnit()
     });
     ASSERT(!DeprecatedGlobalSettings::shouldManageAudioSessionCategory() || AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord);
 
-    if (auto error = startInternal()) {
-        captureFailed();
-        return error;
-    }
-    return 0;
+    return startInternal();
 }
 
 void BaseAudioSharedUnit::prepareForNewCapture()
