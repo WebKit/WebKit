@@ -754,7 +754,7 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
         return true;
     }
     
-    if (page->num_non_empty_words) {
+    if (page->emptiness.num_non_empty_words) {
         bool decommit_result;
         size_t num_committed_granules;
         

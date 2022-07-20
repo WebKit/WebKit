@@ -208,8 +208,6 @@ void pas_segregated_page_construct(pas_segregated_page* page,
     pas_page_base_construct(
         &page->base, pas_page_kind_for_segregated_variant_and_role(page_config.variant, role));
 
-    page->use_epoch = PAS_EPOCH_INVALID;
-
     if (verbose) {
         pas_log("Constructing page %p with boundary %p for view %p and config %s.\n",
                 page, pas_segregated_page_boundary(page, page_config),
@@ -224,8 +222,12 @@ void pas_segregated_page_construct(pas_segregated_page* page,
     page->owner = owner;
     pas_zero_memory(page->alloc_bits, pas_segregated_page_config_num_alloc_bytes(page_config));
 
-    page->num_non_empty_words = 0;
-    
+    pas_segregated_page_emptiness emptiness = {
+        .use_epoch = PAS_EPOCH_INVALID,
+        .num_non_empty_words = 0,
+    };
+    pas_atomic_store_pair_relaxed(&page->emptiness, *(pas_pair*)&emptiness);
+
     page->view_cache_index = (pas_allocator_index)UINT_MAX;
 
     switch (role) {
@@ -294,7 +296,7 @@ void pas_segregated_page_construct(pas_segregated_page* page,
     page->eligibility_notification_has_been_deferred = false;
 }
 
-void pas_segregated_page_note_emptiness(pas_segregated_page* page)
+void pas_segregated_page_note_emptiness(pas_segregated_page* page, pas_note_emptiness_action action)
 {
     static const bool verbose = false;
     if (page->lock_ptr)
@@ -305,7 +307,19 @@ void pas_segregated_page_note_emptiness(pas_segregated_page* page)
                 pas_segregated_page_boundary(
                     page, *pas_segregated_view_get_page_config(page->owner)));
     }
-    page->use_epoch = pas_get_epoch();
+    switch (action) {
+    case pas_note_emptiness_clear_num_non_empty_words: {
+        pas_segregated_page_emptiness emptiness = {
+            .use_epoch = pas_get_epoch(),
+            .num_non_empty_words = 0,
+        };
+        pas_atomic_store_pair_relaxed(&page->emptiness, *(pas_pair*)&emptiness);
+        break;
+    }
+    case pas_note_emptiness_keep_num_non_empty_words:
+        page->emptiness.use_epoch = pas_get_epoch();
+        break;
+    }
     pas_segregated_view_note_emptiness(page->owner, page);
 }
 
@@ -401,7 +415,7 @@ bool pas_segregated_page_take_physically(
         return result;
     }
 
-    PAS_ASSERT(!page->num_non_empty_words);
+    PAS_ASSERT(!page->emptiness.num_non_empty_words);
     
     base = (uintptr_t)pas_segregated_page_boundary(page, page_config);
 
