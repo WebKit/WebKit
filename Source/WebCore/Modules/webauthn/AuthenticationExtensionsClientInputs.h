@@ -40,7 +40,7 @@ struct AuthenticationExtensionsClientInputs {
     template<class Decoder> static std::optional<AuthenticationExtensionsClientInputs> decode(Decoder&);
 
     WEBCORE_EXPORT Vector<uint8_t> toCBOR() const;
-    WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientInputs> fromCBOR(const Vector<uint8_t>&);
+    WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientInputs> fromCBOR(Span<const uint8_t>);
 };
 
 template<class Encoder>

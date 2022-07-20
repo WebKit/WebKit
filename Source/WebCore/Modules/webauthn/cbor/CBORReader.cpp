@@ -68,7 +68,7 @@ const char kOutOfRangeIntegerValue[] = "Integer values must be between INT64_MIN
 
 } // namespace
 
-CBORReader::CBORReader(Bytes::const_iterator it, Bytes::const_iterator end)
+CBORReader::CBORReader(Bytes::iterator it, Bytes::iterator end)
     : m_it(it)
     , m_end(end)
     , m_errorCode(DecoderError::CBORNoError)
@@ -239,7 +239,7 @@ std::optional<CBORValue> CBORReader::readBytes(uint64_t numBytes)
         return std::nullopt;
     }
 
-    Bytes cborByteString;
+    Vector<uint8_t> cborByteString;
     ASSERT(numBytes <= std::numeric_limits<size_t>::max());
     cborByteString.append(m_it, static_cast<size_t>(numBytes));
     m_it += numBytes;
