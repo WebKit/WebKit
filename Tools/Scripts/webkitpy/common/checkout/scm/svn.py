@@ -237,7 +237,7 @@ class SVN(SCM, SVNRepository):
     def exists(self, path):
         return not self._run_svn(["info", path], return_exit_code=True, decode_output=False)
 
-    def changed_files(self, git_commit=None):
+    def changed_files(self, git_commit=None, find_branch=False):
         status_command = [self.executable_name, "status"]
         status_command.extend(self._patch_directories)
         # ACDMR: Addded, Conflicted, Deleted, Modified or Replaced
@@ -308,7 +308,7 @@ class SVN(SCM, SVNRepository):
         return self.timestamp_of_revision(path, revision)
 
     # FIXME: This method should be on Checkout.
-    def create_patch(self, git_commit=None, changed_files=None, git_index=None, commit_message=False):
+    def create_patch(self, git_commit=None, changed_files=None, git_index=None, commit_message=False, find_branch=False):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""

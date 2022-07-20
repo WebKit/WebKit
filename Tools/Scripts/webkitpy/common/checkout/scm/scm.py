@@ -139,7 +139,7 @@ class SCM:
     def exists(self, path):
         self._subclass_must_implement()
 
-    def changed_files(self, git_commit=None):
+    def changed_files(self, git_commit=None, find_branch=False):
         self._subclass_must_implement()
 
     def changed_files_for_revision(self, revision):
@@ -172,7 +172,7 @@ class SCM:
     def timestamp_of_native_revision(self, path, revision):
         self._subclass_must_implement()
 
-    def create_patch(self, git_commit=None, changed_files=None, commit_message=False):
+    def create_patch(self, git_commit=None, changed_files=None, commit_message=False, find_branch=False):
         self._subclass_must_implement()
 
     def committer_email_for_revision(self, revision):

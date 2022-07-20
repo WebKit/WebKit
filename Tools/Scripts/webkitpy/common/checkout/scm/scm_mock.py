@@ -72,7 +72,7 @@ class MockSCM(object):
     def absolute_path(self, *comps):
         return self._filesystem.join(self.checkout_root, *comps)
 
-    def changed_files(self, git_commit=None):
+    def changed_files(self, git_commit=None, find_branch=False):
         return self._mockChangedFiles
 
     def changed_files_for_revision(self, revision):
@@ -96,7 +96,7 @@ class MockSCM(object):
     def timestamp_of_native_revision(self, path, revision):
         return '2013-02-01 08:48:05 +0000'
 
-    def create_patch(self, git_commit, changed_files=None, commit_message=False):
+    def create_patch(self, git_commit, changed_files=None, commit_message=False, find_branch=False):
         return b"Patch1"
 
     def commit_ids_from_commitish_arguments(self, args):
