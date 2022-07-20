@@ -86,7 +86,11 @@ public:
     Swapchain& swapchain() { return m_swapchain; }
 
     struct EGLExtensions {
+        bool KHR_image_base { false };
+        bool KHR_surfaceless_context { false };
+        bool EXT_image_dma_buf_import { false };
         bool EXT_image_dma_buf_import_modifiers { false };
+        bool ANGLE_power_preference { false };
     };
     const EGLExtensions& eglExtensions() { return m_eglExtensions; }
 
@@ -94,8 +98,6 @@ protected:
     GraphicsContextGLGBM(WebCore::GraphicsContextGLAttributes&&);
 
 private:
-    bool isDMABufSupportedInPlatform(const char* displayExtensions);
-
     void allocateDrawBufferObject();
 
     EGLExtensions m_eglExtensions;

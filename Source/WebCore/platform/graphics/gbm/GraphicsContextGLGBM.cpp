@@ -40,6 +40,12 @@
 
 namespace WebCore {
 
+static inline bool isDMABufSupportedByANGLEPlatform(const GraphicsContextGLGBM::EGLExtensions& eglExtensions)
+{
+    return eglExtensions.KHR_image_base && eglExtensions.KHR_surfaceless_context
+        && eglExtensions.EXT_image_dma_buf_import;
+}
+
 RefPtr<GraphicsContextGLGBM> GraphicsContextGLGBM::create(GraphicsContextGLAttributes&& attributes)
 {
     auto context = adoptRef(*new GraphicsContextGLGBM(WTFMove(attributes)));
@@ -89,14 +95,6 @@ void GraphicsContextGLGBM::prepareForDisplay()
     allocateDrawBufferObject();
 }
 
-bool GraphicsContextGLGBM::isDMABufSupportedInPlatform(const char* displayExtensions)
-{
-    return (strstr(displayExtensions, "EGL_MESA_platform_surfaceless") || strstr(displayExtensions, "EGL_KHR_surfaceless_context"))
-        && (strstr(displayExtensions, "EGL_KHR_image_base") || strstr(displayExtensions, "EGL_KHR_image"))
-        && strstr(displayExtensions, "EGL_EXT_image_dma_buf_import")
-        && strstr(displayExtensions, "EGL_EXT_image_dma_buf_import_modifiers");
-}
-
 bool GraphicsContextGLGBM::platformInitializeContext()
 {
 #if ENABLE(WEBGL2)
@@ -121,10 +119,27 @@ bool GraphicsContextGLGBM::platformInitializeContext()
     }
     LOG(WebGL, "ANGLE initialised Major: %d Minor: %d", majorVersion, minorVersion);
 
-    const char* displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
-    LOG(WebGL, "Extensions: %s\n", displayExtensions);
+    {
+        const char* extensionsString = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
+        LOG(WebGL, "Extensions: %s\n", extensionsString);
 
-    if (!isDMABufSupportedInPlatform(displayExtensions)) {
+        auto displayExtensions = StringView::fromLatin1(extensionsString).split(' ');
+        auto findExtension =
+            [&](auto extensionName) {
+                return std::any_of(displayExtensions.begin(), displayExtensions.end(),
+                    [&](auto extensionEntry) {
+                        return extensionEntry == extensionName;
+                    });
+            };
+
+        m_eglExtensions.KHR_image_base = findExtension("EGL_KHR_image_base"_s);
+        m_eglExtensions.KHR_surfaceless_context = findExtension("EGL_KHR_surfaceless_context"_s);
+        m_eglExtensions.EXT_image_dma_buf_import = findExtension("EGL_EXT_image_dma_buf_import"_s);
+        m_eglExtensions.EXT_image_dma_buf_import_modifiers = findExtension("EGL_EXT_image_dma_buf_import_modifiers"_s);
+        m_eglExtensions.ANGLE_power_preference = findExtension("EGL_ANGLE_power_preference"_s);
+    }
+
+    if (!isDMABufSupportedByANGLEPlatform(m_eglExtensions)) {
         LOG(WebGL, "Warning: GL images could not be created using DMABuf buffers backend, we fallback to common GL images, they require a copy, that causes a performance penalty.");
         return false;
     }
@@ -176,7 +191,7 @@ bool GraphicsContextGLGBM::platformInitializeContext()
     eglContextAttributes.append(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
     eglContextAttributes.append(EGL_FALSE);
 
-    if (strstr(displayExtensions, "EGL_ANGLE_power_preference")) {
+    if (m_eglExtensions.ANGLE_power_preference) {
         eglContextAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
         // EGL_LOW_POWER_ANGLE is the default. Change to
         // EGL_HIGH_POWER_ANGLE if desired.
@@ -193,9 +208,6 @@ bool GraphicsContextGLGBM::platformInitializeContext()
         LOG(WebGL, "ANGLE makeContextCurrent failed.");
         return false;
     }
-
-    if (strstr(displayExtensions, "EGL_EXT_image_dma_buf_import_modifiers"))
-        m_eglExtensions.EXT_image_dma_buf_import_modifiers = true;
 
     LOG(WebGL, "Got EGLContext");
     return true;

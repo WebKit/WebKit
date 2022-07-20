@@ -33,15 +33,25 @@
 #include "GraphicsContextGLFallback.h"
 #include "GraphicsContextGLGBMTextureMapper.h"
 #include "PixelBuffer.h"
+#include "PlatformDisplay.h"
 
 namespace WebCore {
 
+#if USE(EGL)
+static inline bool isDMABufSupportedByNativePlatform(const PlatformDisplay::EGLExtensions& eglExtensions)
+{
+    return eglExtensions.KHR_image_base && eglExtensions.EXT_image_dma_buf_import;
+}
+#endif
+
 RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
 {
-#if USE(TEXTURE_MAPPER_DMABUF)
-    auto context = GraphicsContextGLGBMTextureMapper::create(GraphicsContextGLAttributes(attributes));
-    if (context)
-        return context;
+#if USE(TEXTURE_MAPPER_DMABUF) && USE(EGL)
+    if (isDMABufSupportedByNativePlatform(PlatformDisplay::sharedDisplayForCompositing().eglExtensions())) {
+        auto context = GraphicsContextGLGBMTextureMapper::create(GraphicsContextGLAttributes(attributes));
+        if (context)
+            return context;
+    }
 #endif
 
     return GraphicsContextGLFallback::create(GraphicsContextGLAttributes(attributes));

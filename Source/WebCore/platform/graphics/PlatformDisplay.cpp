@@ -280,6 +280,8 @@ void PlatformDisplay::initializeEGLDisplay()
                     });
             };
 
+        m_eglExtensions.KHR_image_base = findExtension("EGL_KHR_image_base"_s);
+        m_eglExtensions.EXT_image_dma_buf_import = findExtension("EGL_EXT_image_dma_buf_import"_s);
         m_eglExtensions.EXT_image_dma_buf_import_modifiers = findExtension("EGL_EXT_image_dma_buf_import_modifiers"_s);
     }
 

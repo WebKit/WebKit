@@ -88,6 +88,8 @@ public:
     bool eglCheckVersion(int major, int minor) const;
 
     struct EGLExtensions {
+        bool KHR_image_base { false };
+        bool EXT_image_dma_buf_import { false };
         bool EXT_image_dma_buf_import_modifiers { false };
     };
     const EGLExtensions& eglExtensions() const { return m_eglExtensions; }
