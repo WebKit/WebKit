@@ -111,12 +111,15 @@ class GitHub(object):
             return None
         return response
 
-    def comment_on_pr(self, pr_number, content, repository_url=None):
+    def update_or_leave_comment_on_pr(self, pr_number, content, repository_url=None, comment_id=None):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
             return False
 
-        comment_url = '{api_url}/issues/{pr_number}/comments'.format(api_url=api_url, pr_number=pr_number)
+        if comment_id:
+            comment_url = '{api_url}/issues/comments/{comment_id}'.format(api_url=api_url, comment_id=comment_id)
+        else:
+            comment_url = '{api_url}/issues/{pr_number}/comments'.format(api_url=api_url, pr_number=pr_number)
         try:
             username, access_token = GitHub.credentials()
             auth = HTTPBasicAuth(username, access_token) if username and access_token else None
@@ -128,7 +131,7 @@ class GitHub(object):
             if response.status_code // 100 != 2:
                 _log.error("Failed to post comment to PR {}. Unexpected response code from GitHub: {}\n".format(pr_number, response.status_code))
                 return False
+            return response.json().get('id')
         except Exception as e:
             _log.error("Error in posting comment to PR {}\n".format(pr_number))
-            return False
-        return True
+        return False
