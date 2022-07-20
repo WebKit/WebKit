@@ -52,6 +52,10 @@ ASYNC CALL STACK:
 -- Running test case: Console.StackTrace.UnhandledPromiseRejection.ImplicitReject
 CALL STACK:
 0: [F] (anonymous function)
+<<<<<<< HEAD
+=======
+1: [N] promiseReactionJob
+>>>>>>> 5e1e19d91e6f (Web Inspector: should always send Console.StackTrace instead of an array of Console.CallFrame)
 ASYNC CALL STACK:
 0: --- enqueueJob ---
 1: [N] then
