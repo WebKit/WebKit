@@ -56,33 +56,6 @@ var sequence = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     shouldThrow(() => unsortedTypedArray.toSorted(nonCallableComparator), TypeError);
 }
 
-
-// TypedArray.prototype.toSpliced()
-{
-    var splicedTypedArray = sequence.toSpliced(3, 5);
-    shouldBe(splicedTypedArray, [1, 2, 3, 9, 10]);
-
-    // Start missing
-    splicedTypedArray = sequence.toSpliced();
-    shouldBe(splicedTypedArray, sequence);
-
-    // Delete count missing.
-    splicedTypedArray = sequence.toSpliced(3);
-    shouldBe(splicedTypedArray, [1, 2, 3]);
-
-    // Start undefined.
-    splicedTypedArray = sequence.toSpliced(undefined);
-    shouldBe(splicedTypedArray, []);
-
-    // Delete count undefined
-    splicedTypedArray = sequence.toSpliced(3, undefined);
-    shouldBe(splicedTypedArray, sequence);
-
-    // Insertion.
-    splicedTypedArray = sequence.toSpliced(3, 5, 11, 12, 13);
-    shouldBe(splicedTypedArray, [1, 2, 3, 11, 12, 13, 9, 10]);
-}
-
 // TypedArray.prototype.with()
 {
     var withTypedArray = sequence.with(3, 0);

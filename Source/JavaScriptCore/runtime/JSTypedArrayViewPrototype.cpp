@@ -476,7 +476,6 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     if (Options::useChangeArrayByCopyMethods()) {
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toReversed"_s, typedArrayPrototypeToReversedCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toSorted"_s, typedArrayPrototypeToSortedCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toSpliced"_s, typedArrayPrototypeToSplicedCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("with"_s, typedArrayPrototypeWithCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
     if (Options::useAtMethod())
