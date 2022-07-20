@@ -123,8 +123,6 @@ struct WKAppPrivacyReportTestingData {
 
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected;
 
-+ (void)_setOverrideLanguagesForTesting:(NSArray<NSString *> *)languages;
-
 @end
 
 typedef NS_ENUM(NSInteger, _WKMediaSessionReadyState) {
