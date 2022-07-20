@@ -171,11 +171,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     bool http3Enabled = WebsiteDataStore::http3Enabled();
     SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
     String alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
-    if (!alternativeServiceStorageDirectory.isEmpty()) {
-        // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
-        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(alternativeServiceStorageDirectory))
-            alternativeServiceStorageDirectoryExtensionHandle = WTFMove(*handle);
-    }
+    createHandleFromResolvedPathIfPossible(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
 #endif
 
     bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;
@@ -199,6 +195,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.manualPrevalentResource = WTFMove(resourceLoadStatisticsManualPrevalentResource);
 
     auto cookieFile = resolvedCookieStorageFile();
+    createHandleFromResolvedPathIfPossible(FileSystem::parentPath(cookieFile), parameters.cookieStoragePathExtensionHandle);
 
     if (m_uiProcessCookieStorageIdentifier.isEmpty()) {
         auto utf8File = cookieFile.utf8();
@@ -208,13 +205,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     }
 
     parameters.uiProcessCookieStorageIdentifier = m_uiProcessCookieStorageIdentifier;
-
     parameters.networkSessionParameters.enablePrivateClickMeasurementDebugMode = experimentalFeatureEnabled(WebPreferencesKey::privateClickMeasurementDebugModeEnabledKey());
-
-    if (!cookieFile.isEmpty()) {
-        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(FileSystem::parentPath(cookieFile)))
-            parameters.cookieStoragePathExtensionHandle = WTFMove(*handle);
-    }
 }
 
 bool WebsiteDataStore::http3Enabled()
@@ -696,10 +687,8 @@ String WebsiteDataStore::resolvedContainerTemporaryDirectory()
     if (m_resolvedContainerTemporaryDirectory.isNull()) {
         if (!isPersistent())
             m_resolvedContainerTemporaryDirectory = emptyString();
-        else {
-            String directory = defaultContainerTemporaryDirectory();
-            m_resolvedContainerTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directory);
-        }
+        else
+            m_resolvedContainerTemporaryDirectory = defaultContainerTemporaryDirectory();
     }
 
     return m_resolvedContainerTemporaryDirectory;
