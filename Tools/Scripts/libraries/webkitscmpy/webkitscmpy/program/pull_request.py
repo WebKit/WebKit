@@ -26,6 +26,7 @@ import sys
 
 from .command import Command
 from .branch import Branch
+from .setup import Setup
 from .squash import Squash
 
 from webkitbugspy import Tracker
@@ -455,6 +456,19 @@ class PullRequest(Command):
         return 0
 
     @classmethod
+    def update_prepare_commit_msg_if_necessary(cls, repository, hooks, **kwargs):
+        """Update the prepare-commit-msg Git hook, if it exists and is outdated."""
+        source_path = os.path.join(hooks, 'prepare-commit-msg')
+        target_path = os.path.join(repository.common_directory, 'hooks', 'prepare-commit-msg')
+        if not os.path.exists(source_path) or not os.path.exists(target_path):
+            return 1
+        with open(source_path, 'r') as source, open(target_path, 'r') as target:
+            if source.readlines() == target.readlines():
+                return 0
+        log.info('  Updating outdated prepare-commit-msg hook...')
+        return Setup.copy_hook(repository, source_path)
+
+    @classmethod
     def main(cls, args, repository, **kwargs):
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only '{}' on a native Git repository\n".format(cls.name))
@@ -465,6 +479,8 @@ class PullRequest(Command):
         branch_point = cls.pull_request_branch_point(repository, args, **kwargs)
         if not branch_point:
             return 1
+
+        cls.update_prepare_commit_msg_if_necessary(repository, **kwargs)
 
         result = cls.create_commit(args, repository, **kwargs)
         if result:

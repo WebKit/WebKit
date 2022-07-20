@@ -159,6 +159,28 @@ class Setup(Command):
         log.info("Created a private fork of '{}' belonging to '{}'!".format(forked_name, username))
         return result
 
+    @staticmethod
+    def copy_hook(repository, source_path):
+        """Given the source path of a Git hook in the WebKit repository, copy it to the user's .git/hooks/ directory to
+        enable it."""
+        if not os.path.isfile(source_path):
+            return 1
+        log.info('Configuring and copying hook {} for this repository'.format(source_path))
+        with open(source_path, 'r') as f:
+            from jinja2 import Template
+            contents = Template(f.read()).render(
+                location=source_path,
+                python=os.path.basename(sys.executable),
+            )
+        destination_path = os.path.join(repository.common_directory, 'hooks', os.path.basename(source_path))
+        if not os.path.exists(os.path.dirname(destination_path)):
+            os.makedirs(os.path.dirname(destination_path))
+        with open(destination_path, 'w') as f:
+            f.write(contents)
+            f.write('\n')
+        os.chmod(destination_path, 0o775)
+        return 0
+
     @classmethod
     def _add_remote(cls, repository, name, url, fetch=True):
         returncode = run(
@@ -331,23 +353,7 @@ class Setup(Command):
         if hooks:
             for hook in os.listdir(hooks):
                 source_path = os.path.join(hooks, hook)
-                if not os.path.isfile(source_path):
-                    continue
-                log.info('Configuring and copying hook {} for this repository'.format(source_path))
-                with open(source_path, 'r') as f:
-                    from jinja2 import Template
-                    contents = Template(f.read()).render(
-                        location=source_path,
-                        python=os.path.basename(sys.executable),
-                    )
-
-                target = os.path.join(repository.common_directory, 'hooks', hook)
-                if not os.path.exists(os.path.dirname(target)):
-                    os.makedirs(os.path.dirname(target))
-                with open(target, 'w') as f:
-                    f.write(contents)
-                    f.write('\n')
-                os.chmod(target, 0o775)
+                Setup.copy_hook(repository, source_path)
 
         if args.all or not local_config.get('core.editor'):
             log.info('Setting git editor for {}...'.format(repository.root_path))

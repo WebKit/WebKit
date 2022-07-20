@@ -263,6 +263,7 @@ Reviewed by Tim Contributor.
 class TestDoPullRequest(testing.PathTestCase):
     basepath = 'mock/repository'
     BUGZILLA = 'https://bugs.example.com'
+    HOOKS_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'hooks')
 
     def setUp(self):
         super(TestDoPullRequest, self).setUp()
@@ -274,6 +275,7 @@ class TestDoPullRequest(testing.PathTestCase):
             self.assertEqual(1, program.main(
                 args=('pull-request',),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
         self.assertEqual(captured.root.log.getvalue(), '')
         self.assertEqual(captured.stderr.getvalue(), "Can only 'pull-request' on a native Git repository\n")
@@ -283,6 +285,7 @@ class TestDoPullRequest(testing.PathTestCase):
             self.assertEqual(1, program.main(
                 args=('pull-request',),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
         self.assertEqual(captured.stderr.getvalue(), "Can only 'pull-request' on a native Git repository\n")
 
@@ -291,6 +294,7 @@ class TestDoPullRequest(testing.PathTestCase):
             self.assertEqual(1, program.main(
                 args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
         self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/pr-branch'...\n")
         self.assertEqual(captured.stderr.getvalue(), 'No modified files\n')
@@ -301,6 +305,7 @@ class TestDoPullRequest(testing.PathTestCase):
             self.assertEqual(1, program.main(
                 args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
             self.assertDictEqual(repo.staged, {})
             self.assertEqual(repo.head.hash, 'c28f53f7fabd7bd9535af890cb7dc473cb342999')
@@ -322,6 +327,7 @@ No pre-PR checks to run""")
             self.assertEqual(1, program.main(
                 args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
@@ -348,6 +354,7 @@ No pre-PR checks to run""")
             self.assertEqual(0, program.main(
                 args=('pull-request', '-i', 'pr-branch', '-v', '--no-history'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 
@@ -385,6 +392,7 @@ No pre-PR checks to run""")
             self.assertEqual(0, program.main(
                 args=('pull-request', '-i', 'pr-branch', '-v', '--no-history', '--draft'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, True)
 
@@ -424,6 +432,7 @@ No pre-PR checks to run""")
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-i', 'pr-branch'),
                     path=self.path,
+                    hooks=self.HOOKS_DIR,
                 ))
 
             github_tracker = github.Tracker('https://{}'.format(remote.remote))
@@ -435,6 +444,7 @@ No pre-PR checks to run""")
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-v', '--no-history'),
                     path=self.path,
+                    hooks=self.HOOKS_DIR,
                 ))
 
             self.assertEqual(github_tracker.issue(1).labels, [])
@@ -474,6 +484,7 @@ No pre-PR checks to run""")
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-i', 'pr-branch'),
                     path=self.path,
+                    hooks=self.HOOKS_DIR,
                 ))
 
             with OutputCapture(level=logging.INFO) as captured:
@@ -481,6 +492,7 @@ No pre-PR checks to run""")
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-v', '--no-history', '--append'),
                     path=self.path,
+                    hooks=self.HOOKS_DIR,
                 ))
 
         self.assertEqual(
@@ -517,6 +529,7 @@ No pre-PR checks to run""")
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-i', 'pr-branch'),
                     path=self.path,
+                    hooks=self.HOOKS_DIR,
                 ))
 
             local.Git(self.path).remote().pull_requests.get(1).close()
@@ -527,6 +540,7 @@ No pre-PR checks to run""")
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-v', '--no-history'),
                     path=self.path,
+                    hooks=self.HOOKS_DIR,
                 ))
 
             self.assertTrue(local.Git(self.path).remote().pull_requests.get(1).opened)
@@ -586,6 +600,7 @@ No pre-PR checks to run""")
             self.assertEqual(0, program.main(
                 args=('pull-request', '-v', '--no-history'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
 
             self.assertEqual(
@@ -643,6 +658,7 @@ No pre-PR checks to run""")
             self.assertEqual(0, program.main(
                 args=('pull-request', '-i', 'https://bugs.example.com/show_bug.cgi?id=1', '-v', '--no-history'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
 
             self.assertEqual(
@@ -701,6 +717,7 @@ No pre-PR checks to run""")
             self.assertEqual(0, program.main(
                 args=('pull-request', '-i', 'https://bugs.example.com/show_bug.cgi?id=1', '-v', '--no-history'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
 
             self.assertEqual(
@@ -771,6 +788,7 @@ No pre-PR checks to run""")
             self.assertEqual(0, program.main(
                 args=('pull-request', '-v', '--no-history'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
 
             self.assertEqual(
@@ -815,6 +833,7 @@ No pre-PR checks to run""")
             self.assertEqual(0, program.main(
                 args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 
@@ -850,6 +869,7 @@ No pre-PR checks to run""")
             self.assertEqual(1, program.main(
                 args=('pull-request', '-i', 'pr-branch', '-v', '--draft'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
 
         self.assertEqual(
@@ -884,6 +904,7 @@ No pre-PR checks to run""")
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-i', 'pr-branch'),
                     path=self.path,
+                    hooks=self.HOOKS_DIR,
                 ))
 
             with OutputCapture(level=logging.INFO) as captured:
@@ -891,6 +912,7 @@ No pre-PR checks to run""")
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-v'),
                     path=self.path,
+                    hooks=self.HOOKS_DIR,
                 ))
 
         self.assertEqual(
@@ -924,6 +946,7 @@ No pre-PR checks to run""")
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-i', 'pr-branch'),
                     path=self.path,
+                    hooks=self.HOOKS_DIR,
                 ))
 
             with OutputCapture(level=logging.INFO) as captured:
@@ -931,6 +954,7 @@ No pre-PR checks to run""")
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-v', '--append'),
                     path=self.path,
+                    hooks=self.HOOKS_DIR,
                 ))
 
         self.assertEqual(
@@ -964,6 +988,7 @@ No pre-PR checks to run""")
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-i', 'pr-branch'),
                     path=self.path,
+                    hooks=self.HOOKS_DIR,
                 ))
 
             local.Git(self.path).remote().pull_requests.get(1).close()
@@ -974,6 +999,7 @@ No pre-PR checks to run""")
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-v'),
                     path=self.path,
+                    hooks=self.HOOKS_DIR,
                 ))
 
             self.assertTrue(local.Git(self.path).remote().pull_requests.get(1).opened)
@@ -1022,6 +1048,7 @@ No pre-PR checks to run""")
             self.assertEqual(0, program.main(
                 args=('pull-request', '-v', '--no-history'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
 
             self.assertEqual(
@@ -1075,6 +1102,7 @@ No pre-PR checks to run""")
             self.assertEqual(0, program.main(
                 args=('pull-request', '-v', '--no-history'),
                 path=self.path,
+                hooks=self.HOOKS_DIR,
             ))
 
             self.assertEqual(
