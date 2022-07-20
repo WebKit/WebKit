@@ -285,9 +285,6 @@ NS_ASSUME_NONNULL_END
 
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && PLATFORM(MAC)
 
-OBJC_CLASS AVFunctionBarMediaSelectionOption;
-OBJC_CLASS AVFunctionBarPlaybackControlsProvider;
-OBJC_CLASS AVFunctionBarScrubber;
 OBJC_CLASS AVTouchBarMediaSelectionOption;
 OBJC_CLASS AVTouchBarPlaybackControlsProvider;
 OBJC_CLASS AVTouchBarScrubber;
@@ -298,26 +295,7 @@ OBJC_CLASS AVTouchBarScrubber;
 #else
 NS_ASSUME_NONNULL_BEGIN
 
-__attribute__((availability(macosx, obsoleted = 10.13))) @protocol AVFunctionBarPlaybackControlsControlling <NSObject>;
-@property (readonly) NSTimeInterval contentDuration;
-@property (readonly, nullable) AVValueTiming *timing;
-@property (readonly, getter=isSeeking) BOOL seeking;
-@property (readonly) NSTimeInterval seekToTime;
-- (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)toleranceBefore toleranceAfter:(NSTimeInterval)toleranceAfter;
-@property (readonly) BOOL hasEnabledAudio;
-@property (readonly) BOOL hasEnabledVideo;
-@end
-
-__attribute__((availability(macosx, obsoleted = 10.13))) @interface AVFunctionBarPlaybackControlsProvider : NSResponder
-@property (strong, readonly, nullable) NSTouchBar *touchBar;
-@property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
-@end
-
 @class AVThumbnail;
-
-__attribute__((availability(macosx, obsoleted = 10.13))) @interface AVFunctionBarScrubber : NSView
-@property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
-@end
 
 @protocol AVTouchBarPlaybackControlsControlling <NSObject>
 @property (readonly) NSTimeInterval contentDuration;
