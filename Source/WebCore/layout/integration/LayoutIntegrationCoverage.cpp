@@ -48,9 +48,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#define ALLOW_BIDI_CONTENT 1
-#define ALLOW_BIDI_CONTENT_WITH_INLINE_BOX 1
-
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
         reasons.add(AvoidanceReason::reason); \
@@ -346,33 +343,7 @@ static void printModernLineLayoutCoverage(void)
 }
 #endif
 
-static OptionSet<AvoidanceReason> canUseForText(StringView text, IncludeReasons includeReasons)
-{
-    if (text.is8Bit())
-        return { };
-
-    OptionSet<AvoidanceReason> reasons;
-    auto length = text.length();
-    size_t position = 0;
-    while (position < length) {
-        UChar32 character;
-        U16_NEXT(text.characters16(), position, length, character);
-
-        auto isRTLDirectional = [&](auto character) {
-            auto direction = u_charDirection(character);
-            return direction == U_RIGHT_TO_LEFT || direction == U_RIGHT_TO_LEFT_ARABIC
-                || direction == U_RIGHT_TO_LEFT_EMBEDDING || direction == U_RIGHT_TO_LEFT_OVERRIDE
-                || direction == U_LEFT_TO_RIGHT_EMBEDDING || direction == U_LEFT_TO_RIGHT_OVERRIDE
-                || direction == U_POP_DIRECTIONAL_FORMAT;
-        };
-        if (isRTLDirectional(character))
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasDirectionCharacter, reasons, includeReasons);
-    }
-    return { };
-}
-
-enum class CheckForBidiCharacters { Yes, No };
-static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObject& container, CheckForBidiCharacters checkForBidiCharacters, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObject& container, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
     // We assume that all lines have metrics based purely on the primary font.
@@ -389,11 +360,6 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsTextFragment, reasons, includeReasons);
         if (textRenderer.isSVGInlineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsSVGInlineText, reasons, includeReasons);
-
-        if (checkForBidiCharacters == CheckForBidiCharacters::Yes) {
-            if (auto textReasons = canUseForText(textRenderer.stringView(), includeReasons))
-                ADD_REASONS_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
-        }
     }
     return reasons;
 }
@@ -452,11 +418,7 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
         SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons);
     if (renderInline.containingBlock()->style().lineBoxContain() != RenderStyle::initialLineBoxContain())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
-    auto checkForBidiCharacters = CheckForBidiCharacters::Yes;
-#if ALLOW_BIDI_CONTENT_WITH_INLINE_BOX
-    checkForBidiCharacters = CheckForBidiCharacters::No;
-#endif
-    auto fontAndTextReasons = canUseForFontAndText(renderInline, checkForBidiCharacters, includeReasons);
+    auto fontAndTextReasons = canUseForFontAndText(renderInline, includeReasons);
     if (fontAndTextReasons)
         ADD_REASONS_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
 
@@ -607,11 +569,9 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineClamp, reasons, includeReasons);
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
-    auto hasSeenInlineBox = false;
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         if (auto childReasons = canUseForChild(*walker.current(), includeReasons))
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
-        hasSeenInlineBox = hasSeenInlineBox || is<RenderInline>(*walker.current());
     }
     auto styleReasons = canUseForStyle(flow, includeReasons);
     if (styleReasons)
@@ -626,15 +586,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
         }
     }
-    auto checkForBidiCharacters = CheckForBidiCharacters::Yes;
-#if ALLOW_BIDI_CONTENT
-    if (!hasSeenInlineBox)
-        checkForBidiCharacters = CheckForBidiCharacters::No;
-#endif
-#if ALLOW_BIDI_CONTENT_WITH_INLINE_BOX
-    checkForBidiCharacters = CheckForBidiCharacters::No;
-#endif
-    auto fontAndTextReasons = canUseForFontAndText(flow, checkForBidiCharacters, includeReasons);
+    auto fontAndTextReasons = canUseForFontAndText(flow, includeReasons);
     if (fontAndTextReasons)
         ADD_REASONS_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
     return reasons;
