@@ -41,6 +41,12 @@ inline Span<const std::byte> asBytes(const RetainPtr<NSData>& data)
     return asBytes(data.get());
 }
 
+inline Span<const uint8_t> asUInt8Span(NSData* data)
+{
+    return { reinterpret_cast<const uint8_t*>(data.bytes), data.length };
+}
+
 }
 
 using WTF::asBytes;
+using WTF::asUInt8Span;
