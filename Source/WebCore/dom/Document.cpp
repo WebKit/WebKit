@@ -7295,6 +7295,14 @@ bool Document::processingUserGestureForMedia() const
     return false;
 }
 
+bool Document::hasRecentUserInteractionForNavigationFromJS() const
+{
+    if (UserGestureIndicator::processingUserGesture(this))
+        return true;
+
+    return (MonotonicTime::now() - lastHandledUserGestureTimestamp()) <= UserGestureToken::maximumIntervalForUserGestureForwarding;
+}
+
 void Document::startTrackingStyleRecalcs()
 {
     m_styleRecalcCount = 0;

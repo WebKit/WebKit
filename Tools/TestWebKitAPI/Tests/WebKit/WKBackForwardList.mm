@@ -672,3 +672,103 @@ TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithUserGesture2)
 
     EXPECT_STREQ([webView URL].absoluteString.UTF8String, lastURL.absoluteString.UTF8String);
 }
+
+TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithRecentUserGesture)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+
+    auto navigationDelegate = adoptNS([WKBackForwardNavigationDelegate new]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url1]];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url2]];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    // Add back/forward list items without user gestures.
+    [webView evaluateJavaScript:@"setTimeout(() => { history.pushState(null, document.title, location.pathname + '#a'); }, 0);" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+    EXPECT_TRUE([lastNavigation _isUserInitiated]);
+    NSString *expectedURLString = makeString(String(url2.absoluteString), "#a");
+    EXPECT_WK_STREQ([lastNavigation _request].URL.absoluteString.UTF8String, expectedURLString.UTF8String);
+
+    auto* lastURL = [webView URL];
+    EXPECT_FALSE([lastURL isEqual:url2]);
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+    EXPECT_WK_STREQ([lastNavigation _request].URL.absoluteString.UTF8String, url2.absoluteString.UTF8String);
+
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, url2.absoluteString.UTF8String);
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, url1.absoluteString.UTF8String);
+
+    [webView goForward];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, url2.absoluteString.UTF8String);
+
+    [webView goForward];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+    expectedURLString = makeString(String(url2.absoluteString), "#a");
+    EXPECT_WK_STREQ([lastNavigation _request].URL.absoluteString.UTF8String, expectedURLString.UTF8String);
+
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, lastURL.absoluteString.UTF8String);
+}
+
+TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithRecentUserGesture2)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+
+    auto navigationDelegate = adoptNS([WKBackForwardNavigationDelegate new]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url1]];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url2]];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    // Add back/forward list items without user gestures.
+    [webView evaluateJavaScript:@"setTimeout(() => { location.href = location.pathname + '#a'; }, 0);" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+    EXPECT_TRUE([lastNavigation _isUserInitiated]);
+    NSString *expectedURLString = makeString(String(url2.absoluteString), "#a");
+    EXPECT_WK_STREQ([lastNavigation _request].URL.absoluteString.UTF8String, expectedURLString.UTF8String);
+
+    auto* lastURL = [webView URL];
+    EXPECT_WK_STREQ(lastURL.absoluteString.UTF8String, expectedURLString.UTF8String);
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+    EXPECT_WK_STREQ([lastNavigation _request].URL.absoluteString.UTF8String, url2.absoluteString.UTF8String);
+
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, url2.absoluteString.UTF8String);
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, url1.absoluteString.UTF8String);
+
+    [webView goForward];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, url2.absoluteString.UTF8String);
+
+    [webView goForward];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+    expectedURLString = makeString(String(url2.absoluteString), "#a");
+    EXPECT_WK_STREQ([lastNavigation _request].URL.absoluteString.UTF8String, expectedURLString.UTF8String);
+
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, lastURL.absoluteString.UTF8String);
+}

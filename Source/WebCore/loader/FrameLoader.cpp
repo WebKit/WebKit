@@ -3243,7 +3243,8 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
         setProvisionalDocumentLoader(nullptr);
     }
 
-    if (!UserGestureIndicator::processingUserGesture(m_frame.document())) {
+    auto* document = m_frame.document();
+    if (document && !document->hasRecentUserInteractionForNavigationFromJS()) {
         if (auto* currentItem = history().currentItem())
             currentItem->setWasCreatedByJSWithoutUserInteraction(true);
     }
