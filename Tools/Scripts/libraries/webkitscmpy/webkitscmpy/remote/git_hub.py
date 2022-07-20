@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,7 +25,6 @@ import re
 import requests
 import six
 import sys
-import webkitcorepy
 
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
@@ -49,23 +48,29 @@ class GitHub(Scm):
             if not data:
                 return None
             issue_ref = data.get('_links', {}).get('issue', {}).get('href')
+            # We can construct an issue ref given the url and PR number
+            if issue_ref:
+                issue = self.repository.tracker.from_string(issue_ref)
+            else:
+                issue = self.repository.tracker.issue(data['number'])
+
             return PullRequest(
                 number=data['number'],
                 title=data.get('title'),
                 body=data.get('body'),
-                author=self.repository.contributors.create(data['user']['login']),
-                head=data['head']['ref'],
-                base=data['base']['ref'],
+                author=self.repository.contributors.create((data.get('user') or data.get('author'))['login']),
+                head=data.get('head', {}).get('ref', data.get('headRefName')),
+                base=data.get('base', {}).get('ref', data.get('baseRefName')),
                 opened=dict(
                     open=True,
                     closed=False,
-                ).get(data.get('state'), None),
+                ).get(data.get('state').lower(), None),
                 generator=self,
                 metadata=dict(
-                    issue=self.repository.tracker.from_string(issue_ref) if issue_ref else None,
-                    full_name=data.get('head', {}).get('repo', {}).get('full_name')
+                    issue=issue,
+                    full_name=data.get('head', {}).get('repo', {}).get('full_name') or data.get('headRepository', {}).get('nameWithOwner')
                 ), url='{}/pull/{}'.format(self.repository.url, data['number']),
-                draft=data['draft'],
+                draft=data.get('draft', data.get('isDraft', False)),
             )
 
         def get(self, number):
@@ -74,32 +79,47 @@ class GitHub(Scm):
         def find(self, opened=True, head=None, base=None):
             assert opened in (True, False, None)
 
-            user, _ = self.repository.credentials()
-            qhead = ''
-            if head and ':' in head:
-                qhead = head
-            elif user and head:
-                qhead = '{}:{}'.format(user, head)
+            search = 'repo:{}/{} is:pr'.format(self.repository.owner, self.repository.name)
+            if head:
+                search += ' head:{}'.format(head)
+            if base:
+                search += ' base:{}'.format(base)
+            if opened is not None:
+                search += ' is:open' if opened else ' is:closed'
 
-            data = self.repository.request('pulls', params=dict(
-                state={
-                    None: 'all',
-                    True: 'open',
-                    False: 'closed',
-                }.get(opened),
-                base=base,
-                head=qhead,
-            ))
+            data = self.repository.graphql('''query {{
+  search(query: "{}", type: ISSUE, last: 100) {{
+    edges {{
+      node {{
+        ... on PullRequest {{
+          number
+          state
+          title
+          body
+          isDraft
+          author {{
+            login
+          }}
+          baseRefName
+          headRefName
+          headRepository {{
+            nameWithOwner
+          }}
+        }}
+      }}
+    }}
+  }}
+}}'''.format(search)
+            )
             if not data:
                 return
-            for datum in data or []:
-                if base and datum['base']['ref'] != base:
+
+            for node in data.get('data', {}).get('search', {}).get("edges", []):
+                nodeData = node.get('node')
+                if not nodeData:
                     continue
-                if qhead and not datum['head']['ref'].endswith(qhead.split(':')[-1]):
-                    continue
-                if datum.get('head', {}).get('repo', {}).get('owner', {}).get('login', None) not in (user, None):
-                    continue
-                yield self.PullRequest(datum)
+                yield self.PullRequest(nodeData)
+            return
 
         def create(self, head, title, body=None, commits=None, base=None, draft=None):
             draft = False if draft is None else draft
@@ -358,6 +378,21 @@ class GitHub(Scm):
                 raise self.Exception("Failed to assemble pagination requests for '{}', failed on page {}".format(url, params['page']))
             result += response.json()
         return result
+
+    def graphql(self, query):
+        url = '{}/graphql'.format(self.api_url)
+        response = self.session.post(
+            url, json=dict(query=query),
+            auth=HTTPBasicAuth(*self.credentials(required=True)),
+        )
+        if response.status_code != 200:
+            sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
+            message = response.json().get('message')
+            if message:
+                sys.stderr.write('Message: {}\n'.format(message))
+            sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
+            return None
+        return response.json()
 
     def _count_for_ref(self, ref=None):
         ref = ref or self.default_branch

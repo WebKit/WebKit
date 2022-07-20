@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import re
 import time
 
 import json as jsonlib
@@ -289,9 +290,66 @@ class GitHub(bmocks.GitHub):
             ), url=url
         )
 
-    def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
-        from datetime import datetime, timedelta
+    # FIXME: Not a very flexible mock of GitHub's GraphQL API, only supports pull-request querying
+    def graphql(self, url, auth=None, json=None):
+        query = (json or {}).get('query')
+        if not query:
+            return mocks.Response.create404(url)
 
+        qline = query.splitlines()[1]
+        pr_search = re.match(r'\s*search\(query:\s+"(?P<query>.+)",\s+type:\s+ISSUE,\s+last:\s+(?P<last>\d+)\)\s*\{', qline)
+        if pr_search:
+            query_bits = {}
+            for bit in pr_search.group('query').split():
+                key, value = bit.split(':')
+                if key in query_bits:
+                    query_bits[key].append(value)
+                else:
+                    query_bits[key] = [value]
+
+            repo_name = '/'.join(self.remote.split('/')[-2:])
+            if 'pr' not in query_bits.get('is', []) or repo_name not in query_bits.get('repo', []):
+                return mocks.Response.fromJson(
+                    dict(data=dict(search=dict(edges=[]))),
+                    url=url,
+                )
+
+            head = query_bits.get('head', [None])[0]
+            base = query_bits.get('base', [None])[0]
+            state = 'open' if 'open' in query_bits.get('is', []) else None
+            state = 'closed' if 'closed' in query_bits.get('is', []) else state
+
+            nodes = []
+            for candidate in self.pull_requests:
+                chead = candidate.get('head', {}).get('ref', '').split(':')[-1]
+                cbase = candidate.get('base', {}).get('ref', '').split(':')[-1]
+                if head and chead != head:
+                    continue
+                if base and cbase != base:
+                    continue
+                if state and candidate.get('state', 'closed') != state:
+                    continue
+
+                nodes.append(dict(node=dict(
+                    number=candidate['number'],
+                    title=candidate['title'],
+                    body=candidate['body'],
+                    state=candidate.get('state', 'closed').upper(),
+                    isDraft=candidate.get('draft', False),
+                    author=dict(login=candidate['user']['login']),
+                    baseRefName=cbase,
+                    headRefName=chead,
+                    headRepository=dict(nameWithOwner='{}/{}'.format(candidate['user']['login'], repo_name.split('/')[-1])),
+                )))
+
+            return mocks.Response.fromJson(
+                dict(data=dict(search=dict(edges=nodes))),
+                url=url,
+            )
+
+        return mocks.Response.create404(url)
+
+    def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 
@@ -450,5 +508,9 @@ class GitHub(bmocks.GitHub):
         download_base = '{}/releases/download/'.format(self.remote)
         if method == 'GET' and stripped_url.startswith(download_base):
             return self.releases.get(stripped_url[len(download_base):], mocks.Response.create404(url))
+
+        # GraphQL library
+        if method == 'POST' and auth and stripped_url == '{}/graphql'.format(self.api_remote.split('/')[0]):
+            return self.graphql(url, auth=auth, json=json)
 
         return super(GitHub, self).request(method, url, data=data, params=params, auth=auth, json=json, **kwargs)
