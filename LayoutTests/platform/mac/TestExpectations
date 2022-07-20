@@ -457,14 +457,6 @@ webkit.org/b/82752 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
 
 svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
 
-# Flakey frame flattening tests
-webkit.org/b/112532 fast/frames/flattening/iframe-flattening-offscreen.html [ Failure Pass ]
-webkit.org/b/112532 fast/frames/flattening/iframe-flattening-out-of-view.html [ Failure Pass ]
-webkit.org/b/112532 fast/frames/flattening/frameset-flattening-advanced.html [ Failure Pass ]
-webkit.org/b/112532 fast/frames/flattening/frameset-flattening-subframesets.html [ Failure Pass ]
-webkit.org/b/106185 fast/frames/flattening/iframe-flattening-fixed-height.html [ Failure Pass ]
-webkit.org/b/106185 fast/frames/flattening/frameset-flattening-grid.html [ Failure Pass ]
-
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
 # Failing ref tests

@@ -580,7 +580,6 @@ fast/forms/formmethod-attribute-input-2.html
 fast/forms/formtarget-attribute-input-2.html
 fast/forms/interactive-validation-formnovalidate-2.html
 fast/forms/mailto/formenctype-attribute-input-2.html
-fast/frames/flattening/iframe-flattening-resize-event-count.html
 fast/history/history-scroll-restoration.html [ Skip ]
 fast/images/animate-list-item-image-assertion.html
 fast/loader/document-with-fragment-url-2.html

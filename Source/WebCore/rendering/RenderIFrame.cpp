@@ -79,28 +79,6 @@ bool RenderIFrame::isFullScreenIFrame() const
     return style().hasOutOfFlowPosition() && style().usesViewportUnits();
 }
 
-bool RenderIFrame::flattenFrame() const
-{
-    if (view().frameView().effectiveFrameFlattening() == FrameFlattening::Disabled)
-        return false;
-
-    if (style().width().isFixed() && style().height().isFixed()) {
-        // Do not flatten iframes with scrolling="no".
-        if (iframeElement().scrollingMode() == ScrollbarMode::AlwaysOff)
-            return false;
-        // Do not flatten iframes that have zero size, as flattening might make them visible.
-        if (style().width().value() <= 0 || style().height().value() <= 0)
-            return false;
-        // Do not flatten "fullscreen" iframes or they could become larger than the viewport.
-        if (view().frameView().effectiveFrameFlattening() <= FrameFlattening::EnabledForNonFullScreenIFrames && isFullScreenIFrame())
-            return false;
-    }
-
-    // Do not flatten offscreen inner frames during frame flattening, as flattening might make them visible.
-    IntRect boundingRect = absoluteBoundingBoxRectIgnoringTransforms();
-    return boundingRect.maxX() > 0 && boundingRect.maxY() > 0;
-}
-
 void RenderIFrame::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
@@ -109,9 +87,6 @@ void RenderIFrame::layout()
     updateLogicalWidth();
     // No kids to layout as a replaced element.
     updateLogicalHeight();
-
-    if (flattenFrame())
-        layoutWithFlattening(style().width().isFixed(), style().height().isFixed());
 
     clearOverflow();
     addVisualEffectOverflow();

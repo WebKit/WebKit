@@ -27,7 +27,6 @@
 enum EditingBehaviorType { "mac", "windows", "unix", "ios" };
 enum FontLoadTimingOverride { "None", "Block", "Swap", "Failure" };
 enum ForcedAccessibilityValue { "system", "on", "off" };
-enum FrameFlatteningValue { "Disabled", "EnabledForNonFullScreenIFrames", "FullyEnabled" };
 enum PDFImageCachingPolicy { "Enabled", "BelowMemoryLimit", "Disabled", "ClipBoundsOnly" };
 enum StorageBlockingPolicy { "AllowAll", "BlockThirdParty", "BlockAll" };
 enum SystemLayoutDirection { "LTR", "RTL" };
@@ -55,7 +54,6 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     undefined setEditingBehavior(EditingBehaviorType behavior);
     undefined setStorageBlockingPolicy(StorageBlockingPolicy policy);
     undefined setPDFImageCachingPolicy(PDFImageCachingPolicy policy);
-    undefined setFrameFlattening(FrameFlatteningValue frameFlattening);
     undefined setUserInterfaceDirectionPolicy(UserInterfaceDirectionPolicy policy);
     undefined setSystemLayoutDirection(SystemLayoutDirection direction);
     attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;

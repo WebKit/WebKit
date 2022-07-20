@@ -38,8 +38,6 @@ public:
 
     HTMLIFrameElement& iframeElement() const;
 
-    bool flattenFrame() const;
-
 private:
     void frameOwnerElement() const = delete;
 

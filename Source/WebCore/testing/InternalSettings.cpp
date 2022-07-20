@@ -60,7 +60,6 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_forcedPrefersContrastAccessibilityValue(settings.forcedPrefersContrastAccessibilityValue())
     , m_forcedPrefersReducedMotionAccessibilityValue(settings.forcedPrefersReducedMotionAccessibilityValue())
     , m_fontLoadTimingOverride(settings.fontLoadTimingOverride())
-    , m_frameFlattening(settings.frameFlattening())
     , m_fetchAPIKeepAliveAPIEnabled(DeprecatedGlobalSettings::fetchAPIKeepAliveEnabled())
     , m_customPasteboardDataEnabled(DeprecatedGlobalSettings::customPasteboardDataEnabled())
     , m_originalMockScrollbarsEnabled(DeprecatedGlobalSettings::mockScrollbarsEnabled())
@@ -115,7 +114,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setForcedPrefersContrastAccessibilityValue(m_forcedPrefersContrastAccessibilityValue);
     settings.setForcedPrefersReducedMotionAccessibilityValue(m_forcedPrefersReducedMotionAccessibilityValue);
     settings.setFontLoadTimingOverride(m_fontLoadTimingOverride);
-    settings.setFrameFlattening(m_frameFlattening);
 
     DeprecatedGlobalSettings::setFetchAPIKeepAliveEnabled(m_fetchAPIKeepAliveAPIEnabled);
     DeprecatedGlobalSettings::setCustomPasteboardDataEnabled(m_customPasteboardDataEnabled);
@@ -357,14 +355,6 @@ ExceptionOr<void> InternalSettings::setSystemLayoutDirection(SystemLayoutDirecti
     if (!m_page)
         return Exception { InvalidAccessError };
     settings().setSystemLayoutDirection(direction);
-    return { };
-}
-
-ExceptionOr<void> InternalSettings::setFrameFlattening(FrameFlatteningValue frameFlattening)
-{
-    if (!m_page)
-        return Exception { InvalidAccessError };
-    settings().setFrameFlattening(frameFlattening);
     return { };
 }
 

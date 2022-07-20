@@ -74,9 +74,6 @@ public:
     using FontLoadTimingOverride = WebCore::FontLoadTimingOverride;
     ExceptionOr<void> setFontLoadTimingOverride(FontLoadTimingOverride);
 
-    using FrameFlatteningValue = FrameFlattening;
-    ExceptionOr<void> setFrameFlattening(FrameFlatteningValue);
-
     using ForcedAccessibilityValue = WebCore::ForcedAccessibilityValue;
     ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue() const;
     void setForcedColorsAreInvertedAccessibilityValue(ForcedAccessibilityValue);
@@ -159,7 +156,6 @@ private:
         WebCore::ForcedAccessibilityValue m_forcedPrefersContrastAccessibilityValue;
         WebCore::ForcedAccessibilityValue m_forcedPrefersReducedMotionAccessibilityValue;
         WebCore::FontLoadTimingOverride m_fontLoadTimingOverride;
-        WebCore::FrameFlattening m_frameFlattening;
 
         // DeprecatedGlobalSettings
         bool m_fetchAPIKeepAliveAPIEnabled;

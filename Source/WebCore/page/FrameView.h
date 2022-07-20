@@ -81,8 +81,6 @@ class View;
 }
 #endif
 
-enum class FrameFlattening : uint8_t;
-
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 
 class FrameView final : public ScrollView {
@@ -120,8 +118,6 @@ public:
     bool isVisibleToHitTesting() const final;
 
     Ref<Scrollbar> createScrollbar(ScrollbarOrientation) final;
-
-    bool avoidScrollbarCreation() const final;
 
     void setContentsSize(const IntSize&) final;
     void updateContentsSize() final;
@@ -433,8 +429,6 @@ public:
 
     WEBCORE_EXPORT Color documentBackgroundColor() const;
 
-    bool isInChildFrameWithFrameFlattening() const;
-
     void startDisallowingLayout() { layoutContext().startDisallowingLayout(); }
     void endDisallowingLayout() { layoutContext().endDisallowingLayout(); }
 
@@ -696,8 +690,6 @@ public:
 
     void setSpeculativeTilingDelayDisabledForTesting(bool disabled) { m_speculativeTilingDelayDisabledForTesting = disabled; }
 
-    FrameFlattening effectiveFrameFlattening() const;
-
     WEBCORE_EXPORT void invalidateControlTints();
     void invalidateImagesWithAsyncDecodes();
 
@@ -859,9 +851,6 @@ private:
     void updateScrollCorner() final;
 
     FrameView* parentFrameView() const;
-
-    bool frameFlatteningEnabled() const;
-    bool isFrameFlatteningValidForThisFrame() const;
 
     void markRootOrBodyRendererDirty() const;
 

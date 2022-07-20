@@ -2716,7 +2716,6 @@ webkit.org/b/138041 fast/borders/fieldsetBorderRadius.html [ Failure ]
 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 
 # Sometimes times out
-fast/frames/flattening/scrolling-in-object.html [ Skip ] # Crashing
 fast/dom/location-new-window-no-crash.html [ Pass Timeout ]
 fast/loader/user-style-sheet-resource-load-callbacks.html [ Pass Timeout ]
 fast/block/positioning/percent-top-left-on-relative-position.html [ Pass Timeout ]
@@ -2874,7 +2873,6 @@ transforms/3d [ Skip ]
 [ Debug ] fast/frames/frame-display-none-focus.html [ Skip ] # Causes later tests to fail
 [ Debug ] fast/frames/frame-focus-blurs-active-element.html [ Skip ] # Causes later tests to fail
 [ Debug ] fast/frames/iframe-window-focus.html [ Skip ] # Causes later tests to fail
-[ Debug ] fast/frames/flattening/iframe-flattening-selection-crash.html
 [ Debug ] fast/frames/lots-of-objects.html [ Skip ] # Causes later tests to fail
 [ Debug ] fast/frames/take-focus-from-iframe.html [ Failure ]
 [ Debug ] fast/history/form-submit-in-frame.html [ Skip ] # Causes later tests to fail

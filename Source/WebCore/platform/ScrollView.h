@@ -121,8 +121,6 @@ public:
 
     WEBCORE_EXPORT virtual void setCanHaveScrollbars(bool);
 
-    virtual bool avoidScrollbarCreation() const { return false; }
-
     void setScrollbarOverlayStyle(ScrollbarOverlayStyle) final;
 
     // By default you only receive paint events for the area that is visible. In the case of using a
