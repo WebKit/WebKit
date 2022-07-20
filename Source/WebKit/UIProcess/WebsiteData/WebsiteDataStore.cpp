@@ -317,8 +317,8 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
 
     // Resolve file paths.
     if (!m_configuration->cookieStorageFile().isEmpty()) {
-        m_resolvedConfiguration->setCookieStorageFile(resolveAndCreateReadWriteDirectoryForSandboxExtension(FileSystem::parentPath(m_configuration->cookieStorageFile())));
-        m_resolvedConfiguration->setCookieStorageFile(FileSystem::pathByAppendingComponent(m_resolvedConfiguration->cookieStorageFile(), FileSystem::pathFileName(m_configuration->cookieStorageFile())));
+        auto resolvedCookieDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(FileSystem::parentPath(m_configuration->cookieStorageFile()));
+        m_resolvedConfiguration->setCookieStorageFile(FileSystem::pathByAppendingComponent(resolvedCookieDirectory, FileSystem::pathFileName(m_configuration->cookieStorageFile())));
     }
 }
 
@@ -1748,7 +1748,7 @@ Vector<WebsiteDataStoreParameters> WebsiteDataStore::parametersFromEachWebsiteDa
     });
 }
 
-static void createHandleFromResolvedPathIfPossible(const String& resolvedPath, SandboxExtension::Handle& handle, SandboxExtension::Type type = SandboxExtension::Type::ReadWrite)
+void WebsiteDataStore::createHandleFromResolvedPathIfPossible(const String& resolvedPath, SandboxExtension::Handle& handle, SandboxExtension::Type type)
 {
     if (resolvedPath.isEmpty())
         return;
