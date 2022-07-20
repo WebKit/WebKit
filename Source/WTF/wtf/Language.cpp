@@ -40,24 +40,23 @@
 
 namespace WTF {
 
-static Lock cachedPlatformPreferredLanguagesLock;
-static Vector<String>& cachedFullPlatformPreferredLanguages() WTF_REQUIRES_LOCK(cachedPlatformPreferredLanguagesLock)
+static Lock languagesLock;
+static Vector<String>& cachedFullPlatformPreferredLanguages() WTF_REQUIRES_LOCK(languagesLock)
 {
     static NeverDestroyed<Vector<String>> languages;
     return languages;
 }
-static Vector<String>& cachedMinimizedPlatformPreferredLanguages() WTF_REQUIRES_LOCK(cachedPlatformPreferredLanguagesLock)
+static Vector<String>& cachedMinimizedPlatformPreferredLanguages() WTF_REQUIRES_LOCK(languagesLock)
 {
     static NeverDestroyed<Vector<String>> languages;
     return languages;
 }
-
-static Lock preferredLanguagesOverrideLock;
-static Vector<String>& preferredLanguagesOverride() WTF_REQUIRES_LOCK(preferredLanguagesOverrideLock)
+static Vector<String>& preferredLanguagesOverride() WTF_REQUIRES_LOCK(languagesLock)
 {
     static NeverDestroyed<Vector<String>> override;
     return override;
 }
+static std::optional<bool> cachedUserPrefersSimplifiedChinese WTF_GUARDED_BY_LOCK(languagesLock);
 
 typedef HashMap<void*, LanguageChangeObserverFunction> ObserverMap;
 static ObserverMap& observerMap()
@@ -84,9 +83,10 @@ void removeLanguageChangeObserver(void* context)
 void languageDidChange()
 {
     {
-        Locker locker { cachedPlatformPreferredLanguagesLock };
+        Locker locker { languagesLock };
         cachedFullPlatformPreferredLanguages().clear();
         cachedMinimizedPlatformPreferredLanguages().clear();
+        cachedUserPrefersSimplifiedChinese = std::nullopt;
     }
 
     for (auto& observer : copyToVector(observerMap())) {
@@ -109,29 +109,52 @@ String defaultLanguage(ShouldMinimizeLanguages shouldMinimizeLanguages)
 
 Vector<String> userPreferredLanguagesOverride()
 {
-    Locker locker { preferredLanguagesOverrideLock };
+    Locker locker { languagesLock };
     return preferredLanguagesOverride();
 }
 
-Vector<String> userPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLanguages)
+// This returns a reference to a Vector<String> protected by languagesLock.
+// Callers should not let it escape past the lock.
+static Vector<String>& computeUserPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLanguages) WTF_REQUIRES_LOCK(languagesLock)
 {
-    {
-        Locker locker { preferredLanguagesOverrideLock };
-        Vector<String>& override = preferredLanguagesOverride();
-        if (!override.isEmpty()) {
-            LOG_WITH_STREAM(Language, stream << "Languages are overridden: " << override);
-            return crossThreadCopy(override);
-        }
+    Vector<String>& override = preferredLanguagesOverride();
+    if (!override.isEmpty()) {
+        LOG_WITH_STREAM(Language, stream << "Languages are overridden: " << override);
+        return override;
     }
 
-    Locker locker { cachedPlatformPreferredLanguagesLock };
     auto& languages = shouldMinimizeLanguages == ShouldMinimizeLanguages::Yes ? cachedMinimizedPlatformPreferredLanguages() : cachedFullPlatformPreferredLanguages();
     if (languages.isEmpty()) {
         LOG(Language, "userPreferredLanguages() cache miss");
         languages = platformUserPreferredLanguages(shouldMinimizeLanguages);
     } else
         LOG(Language, "userPreferredLanguages() cache hit");
-    return crossThreadCopy(languages);
+    return languages;
+}
+
+Vector<String> userPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLanguages)
+{
+    Locker locker { languagesLock };
+    return crossThreadCopy(computeUserPreferredLanguages(shouldMinimizeLanguages));
+}
+
+static bool computeUserPrefersSimplifiedChinese() WTF_REQUIRES_LOCK(languagesLock)
+{
+    for (const auto& language : computeUserPreferredLanguages(ShouldMinimizeLanguages::Yes)) {
+        if (equalLettersIgnoringASCIICase(language, "zh-tw"_s))
+            return false;
+        if (equalLettersIgnoringASCIICase(language, "zh-cn"_s))
+            return true;
+    }
+    return true;
+}
+
+bool userPrefersSimplifiedChinese()
+{
+    Locker locker { languagesLock };
+    if (!cachedUserPrefersSimplifiedChinese)
+        cachedUserPrefersSimplifiedChinese = computeUserPrefersSimplifiedChinese();
+    return *cachedUserPrefersSimplifiedChinese;
 }
 
 #if !PLATFORM(COCOA)
@@ -140,8 +163,9 @@ void overrideUserPreferredLanguages(const Vector<String>& override)
 {
     LOG_WITH_STREAM(Language, stream << "Languages are being overridden to: " << override);
     {
-        Locker locker { preferredLanguagesOverrideLock };
+        Locker locker { languagesLock };
         preferredLanguagesOverride() = override;
+        cachedUserPrefersSimplifiedChinese = std::nullopt;
     }
     languageDidChange();
 }

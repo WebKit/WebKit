@@ -44,30 +44,6 @@ static bool setGenericFontFamilyForScript(ScriptFontFamilyMap& fontMap, const St
     return true;
 }
 
-static inline bool computeUserPrefersSimplified()
-{
-    // FIXME: This is not passing ShouldMinimizeLanguages::No and then getting minimized languages,
-    // which may cause the matching below to fail.
-    for (auto& language : userPreferredLanguages()) {
-        if (equalLettersIgnoringASCIICase(language, "zh-tw"_s))
-            return false;
-        if (equalLettersIgnoringASCIICase(language, "zh-cn"_s))
-            return true;
-    }
-    return true;
-}
-
-static bool& cachedUserPrefersSimplified()
-{
-    static bool cached = true;
-    return cached;
-}
-
-static void languageChanged(void*)
-{
-    cachedUserPrefersSimplified() = computeUserPrefersSimplified();
-}
-
 static const String& genericFontFamilyForScript(const ScriptFontFamilyMap& fontMap, UScriptCode script)
 {
     ScriptFontFamilyMap::const_iterator it = fontMap.find(static_cast<int>(script));
@@ -76,7 +52,7 @@ static const String& genericFontFamilyForScript(const ScriptFontFamilyMap& fontM
     // Content using USCRIPT_HAN doesn't tell us if we should be using Simplified Chinese or Traditional Chinese. In the
     // absence of all other signals, we consult with the user's system preferences.
     if (script == USCRIPT_HAN) {
-        it = fontMap.find(static_cast<int>(cachedUserPrefersSimplified() ? USCRIPT_SIMPLIFIED_HAN : USCRIPT_TRADITIONAL_HAN));
+        it = fontMap.find(static_cast<int>(userPrefersSimplifiedChinese() ? USCRIPT_SIMPLIFIED_HAN : USCRIPT_TRADITIONAL_HAN));
         if (it != fontMap.end())
             return it->value;
     }
@@ -85,14 +61,7 @@ static const String& genericFontFamilyForScript(const ScriptFontFamilyMap& fontM
     return emptyAtom();
 }
 
-FontGenericFamilies::FontGenericFamilies()
-{
-    static std::once_flag once;
-    std::call_once(once, [&] {
-        addLanguageChangeObserver(&once, &languageChanged);
-        languageChanged(nullptr);
-    });
-}
+FontGenericFamilies::FontGenericFamilies() = default;
 
 FontGenericFamilies FontGenericFamilies::isolatedCopy() const &
 {
