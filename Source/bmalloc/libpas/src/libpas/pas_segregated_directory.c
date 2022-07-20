@@ -98,15 +98,34 @@ uint64_t pas_segregated_directory_get_use_epoch(pas_segregated_directory* direct
         if (pas_segregated_view_is_partial(view))
             continue;
 
+        /* So long as we hold the ownership lock and is_owned is true, page header is alive. */
         if (pas_segregated_view_lock_ownership_lock_if_owned(view)) {
             pas_segregated_page* page;
             uint64_t use_epoch;
+            pas_pair data;
+            pas_segregated_page_emptiness emptiness;
+
             page = pas_segregated_view_get_page(view);
-            if (page->num_non_empty_words)
+            /* While we took the ownership lock here, we are not taking the page lock. And these locks are not held at the same time.
+               Since num_non_empty_words and use_epoch are guarded by the page lock, they can be modified while reading.
+               The key idea is the following: whenever we set num_non_empty_words = 0, we atomically store use_epoch too.
+               This means that when we read both atomically and num_non_empty_words is zero, use_epoch value is in-sync.
+               It is possible that these values are changed just after reading them. But this is OK since this function is approximate one. */
+            data = pas_atomic_load_pair_relaxed(&page->emptiness);
+            emptiness = *(pas_segregated_page_emptiness*)(&data);
+            if (emptiness.num_non_empty_words)
                 use_epoch = 0; /* it's not empty, so keep looking. */
             else {
-                use_epoch = page->use_epoch;
-                PAS_ASSERT(use_epoch);
+                /* We can encounter use_epoch = 0.
+                   1. This view says empty. So start looking into it.
+                   2. Just after that, the mutator takes this view. Doing whatever, releasing this view, and destroying the page header.
+                   3. And then, the mutator takes this view again, and allocating a fresh new page.
+                   4. The mutator sets the freshly created page, which still has num_non_empty_words = 0 and use_epoch = 0.
+                   5. The mutator takes this view's ownership lock and set is_owned = true.
+                   6. After that, this thread looks into this view and it is is_owned = true. Thus holding the ownership lock.
+                   7. num_non_empty_words = 0 and use_epoch = 0.
+                   In this case, let's ignore. This is already allocated page. */
+                use_epoch = emptiness.use_epoch;
             }
             pas_segregated_view_unlock_ownership_lock(view);
             if (use_epoch) {

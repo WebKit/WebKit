@@ -326,13 +326,11 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
 
     switch (view_kind) {
     case pas_segregated_exclusive_view_kind:
-        page->num_non_empty_words =
-            pas_segregated_size_directory_data_ptr_load_non_null(
-                &directory->data)->full_num_non_empty_words;
+        page->emptiness.num_non_empty_words = pas_segregated_size_directory_data_ptr_load_non_null(&directory->data)->full_num_non_empty_words;
         break;
         
     case pas_segregated_partial_view_kind:
-        page->num_non_empty_words += num_denullified_words;
+        page->emptiness.num_non_empty_words += num_denullified_words;
         break;
         
     default:
@@ -440,7 +438,7 @@ pas_local_allocator_prepare_to_allocate(
 
     page_boundary = (uintptr_t)pas_segregated_page_boundary(page, page_config);
     
-    if (view_kind == pas_segregated_exclusive_view_kind && !page->num_non_empty_words) {
+    if (view_kind == pas_segregated_exclusive_view_kind && !page->emptiness.num_non_empty_words) {
         uintptr_t payload_begin;
         uintptr_t payload_end;
         pas_segregated_size_directory_data* data;
@@ -456,7 +454,7 @@ pas_local_allocator_prepare_to_allocate(
         payload_begin = page_boundary + data->offset_from_page_boundary_to_first_object;
         payload_end = page_boundary + data->offset_from_page_boundary_to_end_of_last_object;
         
-        page->num_non_empty_words = data->full_num_non_empty_words;
+        page->emptiness.num_non_empty_words = data->full_num_non_empty_words;
 
         pas_local_allocator_make_bump(
             allocator, page_boundary, payload_begin, payload_end, page_config);
@@ -571,7 +569,7 @@ pas_local_allocator_set_up_primordial_bump(
                     handle->partial_views + word_index, view);
             }
             
-            page->num_non_empty_words++;
+            page->emptiness.num_non_empty_words++;
         }
         if (page_config.sharing_shift != PAS_BITVECTOR_WORD_SHIFT) {
             pas_compact_atomic_segregated_partial_view_ptr* ptr;

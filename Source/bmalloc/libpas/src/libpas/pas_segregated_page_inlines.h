@@ -341,10 +341,10 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
     PAS_ASSERT(page_config.base.is_enabled);
     
     if (verbose) {
-        pas_log("Freeing %p in %p(%s), num_non_empty_words = %u\n",
+        pas_log("Freeing %p in %p(%s), num_non_empty_words = %llu\n",
                 (void*)begin, page,
                 pas_segregated_page_config_kind_get_string(page_config.kind),
-                page->num_non_empty_words);
+                (uint64_t)page->emptiness.num_non_empty_words);
     }
 
     bit_index_unmasked = begin >> page_config.base.min_align_shift;
@@ -478,17 +478,19 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
             pas_segregated_page_verify_granules(page);
 
         if (did_find_empty_granule)
-            pas_segregated_page_note_emptiness(page);
+            pas_segregated_page_note_emptiness(page, pas_note_emptiness_keep_num_non_empty_words);
     }
     
     if (!new_word) {
-        PAS_TESTING_ASSERT(page->num_non_empty_words);
-        if (!--page->num_non_empty_words) {
+        PAS_TESTING_ASSERT(page->emptiness.num_non_empty_words);
+        uintptr_t num_non_empty_words = page->emptiness.num_non_empty_words;
+        if (!--num_non_empty_words) {
             /* This has to happen last since it effectively unlocks the lock. That's due to
                the things that happen in switch_lock_and_try_to_take_bias. Specifically, its
                reliance on the fully_empty bit. */
-            pas_segregated_page_note_emptiness(page);
-        }
+            pas_segregated_page_note_emptiness(page, pas_note_emptiness_clear_num_non_empty_words);
+        } else
+            page->emptiness.num_non_empty_words = num_non_empty_words;
     }
 }
 

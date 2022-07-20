@@ -433,7 +433,7 @@ take_last_empty_consider_view(
         goto return_taken_partial_views_after_decommit;
     }
     
-    if (page->num_non_empty_words) {
+    if (page->emptiness.num_non_empty_words) {
         size_t num_committed_granules;
 
         PAS_ASSERT(page_config.base.page_size > page_config.base.granule_size);

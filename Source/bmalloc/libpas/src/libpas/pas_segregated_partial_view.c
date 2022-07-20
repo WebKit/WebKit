@@ -162,7 +162,7 @@ bool pas_segregated_partial_view_should_table(
     shared_handle_or_page_boundary = shared_view->shared_handle_or_page_boundary;
     shared_handle = pas_unwrap_shared_handle(shared_handle_or_page_boundary, *page_config);
     page = pas_segregated_page_for_boundary(shared_handle->page_boundary, *page_config);
-    return !page->num_non_empty_words;
+    return !page->emptiness.num_non_empty_words;
 }
 
 static pas_heap_summary compute_summary(pas_segregated_partial_view* view)

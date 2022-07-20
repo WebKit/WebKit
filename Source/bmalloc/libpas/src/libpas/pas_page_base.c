@@ -113,7 +113,7 @@ bool pas_page_base_is_empty(pas_page_base* page)
 {
     switch (pas_page_base_get_config_kind(page)) {
     case pas_page_config_kind_segregated:
-        return !pas_page_base_get_segregated(page)->num_non_empty_words;
+        return !pas_page_base_get_segregated(page)->emptiness.num_non_empty_words;
     case pas_page_config_kind_bitfit:
         return !pas_page_base_get_bitfit(page)->num_live_bits;
     }

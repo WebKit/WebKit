@@ -68,8 +68,10 @@ PAS_BEGIN_EXTERN_C;
 
 #if PAS_PLATFORM(PLAYSTATION) && !defined(alignof)
 #define PAS_ALIGNOF(type) _Alignof(type)
-#else
+#elif defined(__cplusplus)
 #define PAS_ALIGNOF(type) alignof(type)
+#else
+#define PAS_ALIGNOF(type) _Alignof(type)
 #endif
 
 #define PAS_FORMAT_PRINTF(fmt, args) __attribute__((format(__printf__, fmt, args)))
@@ -987,6 +989,16 @@ static inline void pas_atomic_store_pair(void* raw_ptr, pas_pair value)
     __c11_atomic_store((_Atomic pas_pair*)raw_ptr, value, __ATOMIC_SEQ_CST);
 #else
     __atomic_store_n((pas_pair*)raw_ptr, value, __ATOMIC_SEQ_CST);
+#endif
+}
+
+static inline void pas_atomic_store_pair_relaxed(void* raw_ptr, pas_pair value)
+{
+    /* Since it is __ATOMIC_RELAXED, we do not need to care about memory barrier even when the implementation uses LL/SC. */
+#if PAS_COMPILER(CLANG)
+    __c11_atomic_store((_Atomic pas_pair*)raw_ptr, value, __ATOMIC_RELAXED);
+#else
+    __atomic_store_n((pas_pair*)raw_ptr, value, __ATOMIC_RELAXED);
 #endif
 }
 

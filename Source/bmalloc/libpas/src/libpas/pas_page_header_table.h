@@ -74,7 +74,7 @@ static PAS_ALWAYS_INLINE void** pas_page_header_table_get_boundary_ptr(pas_page_
 {
     PAS_TESTING_ASSERT(page_size == table->page_size);
 
-    return ((void**)page_base) - 1;
+    return ((void**)page_base) - 2;
 }
 
 static PAS_ALWAYS_INLINE void* pas_page_header_table_get_boundary(pas_page_header_table* table,
