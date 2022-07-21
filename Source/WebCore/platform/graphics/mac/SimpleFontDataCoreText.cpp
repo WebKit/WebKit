@@ -32,6 +32,28 @@
 
 namespace WebCore {
 
+static CTParagraphStyleRef paragraphStyleWithCompositionLanguageNone()
+{
+    static LazyNeverDestroyed<RetainPtr<CTParagraphStyleRef>> paragraphStyle;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        paragraphStyle.construct(CTParagraphStyleCreate(nullptr, 0));
+        CTParagraphStyleSetCompositionLanguage(paragraphStyle.get().get(), kCTCompositionLanguageNone);
+    });
+    return paragraphStyle.get().get();
+}
+
+static CFNumberRef zeroValue()
+{
+    static LazyNeverDestroyed<RetainPtr<CFNumberRef>> zeroValue;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        const float zero = 0;
+        zeroValue.construct(adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &zero)));
+    });
+    return zeroValue.get().get();
+}
+
 RetainPtr<CFDictionaryRef> Font::getCFStringAttributes(bool enableKerning, FontOrientation orientation, const AtomString& locale) const
 {
     CFTypeRef keys[5];
@@ -52,20 +74,13 @@ RetainPtr<CFDictionaryRef> Font::getCFStringAttributes(bool enableKerning, FontO
 #else
     UNUSED_PARAM(locale);
 #endif
-    static CTParagraphStyleRef paragraphStyle = [] {
-        auto paragraphStyle = CTParagraphStyleCreate(nullptr, 0);
-        CTParagraphStyleSetCompositionLanguage(paragraphStyle, kCTCompositionLanguageNone);
-        return paragraphStyle;
-    }();
     keys[count] = kCTParagraphStyleAttributeName;
-    values[count] = paragraphStyle;
+    values[count] = paragraphStyleWithCompositionLanguageNone();
     ++count;
 
     if (!enableKerning) {
-        const float zero = 0;
-        static NeverDestroyed<RetainPtr<CFNumberRef>> zeroKerningValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &zero));
         keys[count] = kCTKernAttributeName;
-        values[count] = zeroKerningValue.get().get();
+        values[count] = zeroValue();
         ++count;
     }
 
