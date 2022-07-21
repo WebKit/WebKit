@@ -134,6 +134,20 @@ static const UniChar* provideStringAndAttributes(CFIndex stringIndex, CFIndex* c
     return reinterpret_cast<const UniChar*>(info->cp + stringIndex);
 }
 
+template<bool isLTR>
+static CFDictionaryRef typesetterOptions()
+{
+    static LazyNeverDestroyed<RetainPtr<CFDictionaryRef>> options;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        short embeddingLevelValue = isLTR ? 0 : 1;
+        const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
+        const void* optionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &embeddingLevelValue) };
+        options.construct(adoptCF(CFDictionaryCreate(kCFAllocatorDefault, optionKeys, optionValues, WTF_ARRAY_LENGTH(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks)));
+    });
+    return options.get().get();
+}
+
 void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp, unsigned length, unsigned stringLocation, const Font* font)
 {
     if (!font) {
@@ -171,18 +185,10 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
     );
 
     if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride()) {
-        const short ltrForcedEmbeddingLevelValue = 0;
-        const short rtlForcedEmbeddingLevelValue = 1;
-        static const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
-        static const void* ltrOptionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &ltrForcedEmbeddingLevelValue) };
-        static const void* rtlOptionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &rtlForcedEmbeddingLevelValue) };
-        static NeverDestroyed<RetainPtr<CFDictionaryRef>> ltrTypesetterOptions = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, optionKeys, ltrOptionValues, WTF_ARRAY_LENGTH(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-        static NeverDestroyed<RetainPtr<CFDictionaryRef>> rtlTypesetterOptions = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, optionKeys, rtlOptionValues, WTF_ARRAY_LENGTH(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
         ProviderInfo info = { cp, length, stringAttributes.get() };
         // FIXME: Some SDKs complain that the second parameter below cannot be null.
         IGNORE_NULL_CHECK_WARNINGS_BEGIN
-        RetainPtr<CTTypesetterRef> typesetter = adoptCF(CTTypesetterCreateWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run.ltr() ? ltrTypesetterOptions.get().get() : rtlTypesetterOptions.get().get()));
+        auto typesetter = adoptCF(CTTypesetterCreateWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run.ltr() ? typesetterOptions<true>() : typesetterOptions<false>()));
         IGNORE_NULL_CHECK_WARNINGS_END
 
         if (!typesetter)
