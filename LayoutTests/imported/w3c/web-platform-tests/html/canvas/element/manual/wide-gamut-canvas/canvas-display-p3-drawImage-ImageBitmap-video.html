@@ -11,47 +11,40 @@ for (let [filenameBase, expectedPixels] of Object.entries(videoTests)) {
     for (let contextColorSpace of ["srgb", "display-p3"]) {
         for (let imageDataColorSpace of ["srgb", "display-p3"]) {
             for (let cropSource of [false, true]) {
-                async_test(function(t) {
+                promise_test(async function(t) {
+
                     let video = document.createElement("video");
-                    let testVideo = t.step_func(function() {
-
-                        let canvas = document.createElement("canvas");
-                        canvas.width = 2;
-                        canvas.height = 2;
-
-                        let ctx = canvas.getContext("2d", { colorSpace: contextColorSpace });
-
-                        let imageBitmapPromise;
-                        if (cropSource)
-                            imageBitmapPromise = createImageBitmap(video, 1, 1, 1, 1);
-                        else
-                            imageBitmapPromise = createImageBitmap(video);
-
-                        imageBitmapPromise.then(t.step_func_done(function(imageBitmap) {
-                            video.remove();
-                            ctx.drawImage(imageBitmap, 0, 0);
-
-                            let imageData = ctx.getImageData(0, 0, 1, 1, { colorSpace: imageDataColorSpace });
-
-                            let expected = expectedPixels[`${contextColorSpace} ${imageDataColorSpace}`];
-                            assert_true(pixelsApproximatelyEqual(imageData.data, expected), `Actual pixel value ${[...imageData.data]} is approximately equal to ${expected}.`);
-                        }), t.step_func(function(error) {
-                            video.remove();
-                            throw error;
-                        }));
-                    });
-                    if (video.requestVideoFrameCallback)
-                        video.requestVideoFrameCallback(testVideo)
-                    else
-                        video.onloadeddata = testVideo;
                     for (let format of ["mp4", "webm"]) {
                         let source = document.createElement("source");
                         source.src = `resources/${filenameBase}.${format}`;
                         source.type = `video/${format}`;
                         video.append(source);
                     }
+
                     document.body.append(video);
-                    video.play();
+                    await video.play();
+
+                    let imageBitmap;
+                    if (cropSource)
+                        imageBitmap = await createImageBitmap(video, 1, 1, 1, 1);
+                    else
+                        imageBitmap = await createImageBitmap(video);
+
+                    video.remove();
+
+                    let canvas = document.createElement("canvas");
+                    canvas.width = 2;
+                    canvas.height = 2;
+
+                    let ctx = canvas.getContext("2d", { colorSpace: contextColorSpace });
+
+                    ctx.drawImage(imageBitmap, 0, 0);
+
+                    let imageData = ctx.getImageData(0, 0, 1, 1, { colorSpace: imageDataColorSpace });
+
+                    let expected = expectedPixels[`${contextColorSpace} ${imageDataColorSpace}`];
+                    assert_true(pixelsApproximatelyEqual(imageData.data, expected), `Actual pixel value ${[...imageData.data]} is approximately equal to ${expected}.`);
+
                 }, `${filenameBase}, Context ${contextColorSpace}, ImageData ${imageDataColorSpace}, cropSource=${cropSource}`);
             }
         }
