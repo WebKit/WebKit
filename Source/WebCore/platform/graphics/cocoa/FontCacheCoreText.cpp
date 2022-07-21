@@ -1206,8 +1206,7 @@ static FontLookup platformFontLookupWithFamily(FontDatabase& fontDatabase, const
 void FontCache::platformInvalidate()
 {
     // FIXME: Workers need to access SystemFontDatabaseCoreText.
-    // FIXME: Workers need to access FontFamilySpecificationCoreTextCache.
-    clearFontFamilySpecificationCoreTextCache();
+    m_fontFamilySpecificationCoreTextCache.clear();
 
     platformShouldEnhanceTextLegibility() = _AXSEnhanceTextLegibilityEnabled();
 }

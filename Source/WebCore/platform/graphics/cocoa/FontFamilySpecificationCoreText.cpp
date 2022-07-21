@@ -27,6 +27,7 @@
 #include "FontFamilySpecificationCoreText.h"
 
 #include "FontCache.h"
+#include "FontFamilySpecificationCoreTextCache.h"
 #include "FontSelector.h"
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/HashFunctions.h>
@@ -35,59 +36,6 @@
 #include <CoreText/CoreText.h>
 
 namespace WebCore {
-
-struct FontFamilySpecificationKey {
-    RetainPtr<CTFontDescriptorRef> fontDescriptor;
-    FontDescriptionKey fontDescriptionKey;
-
-    FontFamilySpecificationKey() = default;
-
-    FontFamilySpecificationKey(CTFontDescriptorRef fontDescriptor, const FontDescription& fontDescription)
-        : fontDescriptor(fontDescriptor)
-        , fontDescriptionKey(fontDescription)
-    { }
-
-    explicit FontFamilySpecificationKey(WTF::HashTableDeletedValueType deletedValue)
-        : fontDescriptionKey(deletedValue)
-    { }
-
-    bool operator==(const FontFamilySpecificationKey& other) const
-    {
-        return safeCFEqual(fontDescriptor.get(), other.fontDescriptor.get()) && fontDescriptionKey == other.fontDescriptionKey;
-    }
-
-    bool operator!=(const FontFamilySpecificationKey& other) const
-    {
-        return !(*this == other);
-    }
-
-    bool isHashTableDeletedValue() const { return fontDescriptionKey.isHashTableDeletedValue(); }
-};
-
-inline void add(Hasher& hasher, const FontFamilySpecificationKey& key)
-{
-    // FIXME: Ideally, we wouldn't be hashing a hash.
-    add(hasher, safeCFHash(key.fontDescriptor.get()), key.fontDescriptionKey);
-}
-
-struct FontFamilySpecificationKeyHash {
-    static unsigned hash(const FontFamilySpecificationKey& key) { return computeHash(key); }
-    static bool equal(const FontFamilySpecificationKey& a, const FontFamilySpecificationKey& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
-using FontMap = HashMap<FontFamilySpecificationKey, std::unique_ptr<FontPlatformData>, FontFamilySpecificationKeyHash, SimpleClassHashTraits<FontFamilySpecificationKey>>;
-
-static FontMap& fontMap()
-{
-    static NeverDestroyed<FontMap> fontMap;
-    return fontMap;
-}
-
-void clearFontFamilySpecificationCoreTextCache()
-{
-    fontMap().clear();
-}
 
 FontFamilySpecificationCoreText::FontFamilySpecificationCoreText(CTFontDescriptorRef fontDescriptor)
     : m_fontDescriptor(fontDescriptor)
@@ -98,7 +46,7 @@ FontFamilySpecificationCoreText::~FontFamilySpecificationCoreText() = default;
 
 FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fontDescription) const
 {
-    auto& fontPlatformData = fontMap().ensure(FontFamilySpecificationKey(m_fontDescriptor.get(), fontDescription), [&] () {
+    auto& fontPlatformData = FontFamilySpecificationCoreTextCache::forCurrentThread().ensure(FontFamilySpecificationKey(m_fontDescriptor.get(), fontDescription), [&] () {
         auto size = fontDescription.computedSize();
 
         auto font = adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr));
@@ -108,11 +56,8 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
         auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(font.get(), fontDescription, ShouldComputePhysicalTraits::Yes).boldObliquePair();
 
         return makeUnique<FontPlatformData>(font.get(), size, false, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
-    }).iterator->value;
-
-    ASSERT(fontPlatformData);
-
-    return FontRanges(FontCache::forCurrentThread().fontForPlatformData(*fontPlatformData));
+    });
+    return FontRanges(FontCache::forCurrentThread().fontForPlatformData(fontPlatformData));
 }
 
 }

@@ -57,6 +57,7 @@
 #if PLATFORM(COCOA)
 #include "FontCacheCoreText.h"
 #include "FontDatabase.h"
+#include "FontFamilySpecificationCoreTextCache.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -175,6 +176,9 @@ public:
 
     FontCascadeCache& fontCascadeCache() { return m_fontCascadeCache; }
     SystemFallbackFontCache& systemFallbackFontCache() { return m_systemFallbackFontCache; }
+#if PLATFORM(COCOA)
+    FontFamilySpecificationCoreTextCache& fontFamilySpecificationCoreTextCache() { return m_fontFamilySpecificationCoreTextCache; }
+#endif
 
     bool useBackslashAsYenSignForFamily(const AtomString& family);
 
@@ -229,6 +233,8 @@ private:
     ListHashSet<String> m_seenFamiliesForPrewarming;
     ListHashSet<String> m_fontNamesRequiringSystemFallbackForPrewarming;
     RefPtr<WorkQueue> m_prewarmQueue;
+
+    FontFamilySpecificationCoreTextCache m_fontFamilySpecificationCoreTextCache;
 
     friend class ComplexTextController;
 #endif

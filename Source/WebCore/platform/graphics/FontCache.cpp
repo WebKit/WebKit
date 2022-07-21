@@ -459,6 +459,7 @@ RefPtr<Font> FontCache::similarFont(const FontDescription&, const String&)
 {
     return nullptr;
 }
+
 #endif
 
 } // namespace WebCore
