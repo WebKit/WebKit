@@ -161,7 +161,7 @@ public:
     String resolvedCookieStorageDirectory();
     String resolvedContainerCachesWebContentDirectory();
     String resolvedContainerTemporaryDirectory();
-    static String defaultContainerTemporaryDirectory();
+    static String defaultResolvedContainerTemporaryDirectory();
     static String cacheDirectoryInContainerOrHomeDirectory(const String& subpath);
 #endif
 
