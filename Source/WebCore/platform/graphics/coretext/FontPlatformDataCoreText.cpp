@@ -107,7 +107,11 @@ static RetainPtr<CFDictionaryRef> cascadeToLastResortAttributesDictionary()
 
 static CTFontDescriptorRef cascadeToLastResortAndVariationsFontDescriptor()
 {
-    static CTFontDescriptorRef descriptor = CTFontDescriptorCreateWithAttributes(cascadeToLastResortAttributesDictionary().get());
+    static CTFontDescriptorRef descriptor;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        descriptor = CTFontDescriptorCreateWithAttributes(cascadeToLastResortAttributesDictionary().get());
+    });
     return descriptor;
 }
 
