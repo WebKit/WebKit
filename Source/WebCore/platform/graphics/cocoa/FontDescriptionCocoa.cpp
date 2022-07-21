@@ -27,71 +27,8 @@
 #include "FontCascadeDescription.h"
 
 #include "SystemFontDatabaseCoreText.h"
-#include <mutex>
 
 namespace WebCore {
-
-template<typename T, typename U, std::size_t size, std::size_t... indices> std::array<T, size> convertArray(U (&array)[size], std::index_sequence<indices...>)
-{
-    return { { array[indices]... } };
-}
-
-template<typename T, typename U, std::size_t size> inline std::array<T, size> convertArray(U (&array)[size])
-{
-    return convertArray<T>(array, std::make_index_sequence<size> { });
-}
-
-static inline std::optional<SystemFontKind> matchSystemFontUse(const AtomString& string)
-{
-    if (equalLettersIgnoringASCIICase(string, "-webkit-system-font"_s)
-        || equalLettersIgnoringASCIICase(string, "-apple-system"_s)
-        || equalLettersIgnoringASCIICase(string, "-apple-system-font"_s)
-        || equalLettersIgnoringASCIICase(string, "system-ui"_s)
-        || equalLettersIgnoringASCIICase(string, "ui-sans-serif"_s))
-        return SystemFontKind::SystemUI;
-
-#if HAVE(DESIGN_SYSTEM_UI_FONTS)
-    if (equalLettersIgnoringASCIICase(string, "ui-serif"_s))
-        return SystemFontKind::UISerif;
-    if (equalLettersIgnoringASCIICase(string, "ui-monospace"_s))
-        return SystemFontKind::UIMonospace;
-    if (equalLettersIgnoringASCIICase(string, "ui-rounded"_s))
-        return SystemFontKind::UIRounded;
-#endif
-
-    static const CFStringRef styles[] = {
-        kCTUIFontTextStyleHeadline,
-        kCTUIFontTextStyleBody,
-        kCTUIFontTextStyleTitle1,
-        kCTUIFontTextStyleTitle2,
-        kCTUIFontTextStyleTitle3,
-        kCTUIFontTextStyleSubhead,
-        kCTUIFontTextStyleFootnote,
-        kCTUIFontTextStyleCaption1,
-        kCTUIFontTextStyleCaption2,
-        kCTUIFontTextStyleShortHeadline,
-        kCTUIFontTextStyleShortBody,
-        kCTUIFontTextStyleShortSubhead,
-        kCTUIFontTextStyleShortFootnote,
-        kCTUIFontTextStyleShortCaption1,
-        kCTUIFontTextStyleTallBody,
-        kCTUIFontTextStyleTitle0,
-        kCTUIFontTextStyleTitle4,
-    };
-
-    auto compareAsPointer = [](const AtomString& lhs, const AtomString& rhs) {
-        return lhs.impl() < rhs.impl();
-    };
-    static NeverDestroyed strings = [&compareAsPointer] {
-        auto result = convertArray<AtomString>(styles);
-        std::sort(result.begin(), result.end(), compareAsPointer);
-        return result;
-    }();
-    if (std::binary_search(strings.get().begin(), strings.get().end(), string, compareAsPointer))
-        return SystemFontKind::TextStyle;
-
-    return std::nullopt;
-}
 
 static inline Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const FontDescription& description, const AtomString& cssFamily, SystemFontKind systemFontKind, AllowUserInstalledFonts allowUserInstalledFonts)
 {
@@ -104,7 +41,7 @@ unsigned FontCascadeDescription::effectiveFamilyCount() const
     unsigned result = 0;
     for (unsigned i = 0; i < familyCount(); ++i) {
         const auto& cssFamily = familyAt(i);
-        if (auto use = matchSystemFontUse(cssFamily))
+        if (auto use = SystemFontDatabaseCoreText::singleton().matchSystemFontUse(cssFamily))
             result += systemFontCascadeList(*this, cssFamily, *use, shouldAllowUserInstalledFonts()).size();
         else
             ++result;
@@ -122,7 +59,7 @@ FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index
     // These two behaviors should be unified, which would hopefully allow us to delete this duplicate code.
     for (unsigned i = 0; i < familyCount(); ++i) {
         const auto& cssFamily = familyAt(i);
-        if (auto use = matchSystemFontUse(cssFamily)) {
+        if (auto use = SystemFontDatabaseCoreText::singleton().matchSystemFontUse(cssFamily)) {
             auto cascadeList = systemFontCascadeList(*this, cssFamily, *use, shouldAllowUserInstalledFonts());
             if (index < cascadeList.size())
                 return FontFamilySpecification(cascadeList[index].get());
