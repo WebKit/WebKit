@@ -74,12 +74,14 @@ void dumpNodeFlags(PrintStream& actualOut, NodeFlags flags)
         out.print(comma, "VarArgs");
     
     if (flags & NodeResultMask) {
-        if (!(flags & NodeBytecodeUsesAsNumber) && !(flags & NodeBytecodeNeedsNegZero))
+        if (!(flags & NodeBytecodeUsesAsNumber))
             out.print(comma, "PureInt");
-        else if (!(flags & NodeBytecodeUsesAsNumber))
-            out.print(comma, "PureInt(w/ neg zero)");
-        else if (!(flags & NodeBytecodeNeedsNegZero))
+        else
             out.print(comma, "PureNum");
+        if (flags & NodeBytecodeNeedsNegZero)
+            out.print(comma, "NeedsNegZero");
+        if (flags & NodeBytecodeNeedsNaNOrInfinity)
+            out.print(comma, "NeedsNaNOrInfinity");
         if (flags & NodeBytecodeUsesAsOther)
             out.print(comma, "UseAsOther");
     }
