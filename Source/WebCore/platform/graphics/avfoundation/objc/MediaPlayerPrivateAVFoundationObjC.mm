@@ -1557,6 +1557,8 @@ void MediaPlayerPrivateAVFoundationObjC::currentMediaTimeDidChange(MediaTime&& t
 
 void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
 {
+    ASSERT(time.isFinite());
+    
     // setCurrentTime generates several event callbacks, update afterwards.
     setDelayCallbacks(true);
 
@@ -1567,9 +1569,11 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const
     CMTime cmBefore = PAL::toCMTime(negativeTolerance);
     CMTime cmAfter = PAL::toCMTime(positiveTolerance);
 
-    // [AVPlayerItem seekToTime] will throw an exception if toleranceBefore is negative.
-    if (PAL::CMTimeCompare(cmBefore, PAL::kCMTimeZero) < 0)
-        cmBefore = PAL::kCMTimeZero;
+    // [AVPlayerItem seekToTime] will throw an exception if a tolerance is invalid or negative.
+    if (!CMTIME_IS_VALID(cmBefore) || PAL::CMTimeCompare(cmBefore, PAL::kCMTimeZero) < 0)
+        cmBefore = PAL::kCMTimePositiveInfinity;
+    if (!CMTIME_IS_VALID(cmAfter) || PAL::CMTimeCompare(cmAfter, PAL::kCMTimeZero) < 0)
+        cmAfter = PAL::kCMTimePositiveInfinity;
     
     WeakPtr weakThis { *this };
 
