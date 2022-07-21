@@ -43,5 +43,11 @@ class Pull(Command):
 
         if isinstance(repository, local.Git):
             branch_point = Branch.branch_point(repository)
-            return repository.pull(rebase=True, branch=branch_point.branch)
+            bp_remotes = set(repository.branches_for(hash=branch_point.hash, remote=None).keys())
+            remote = None
+            for rmt in repository.source_remotes():
+                if rmt in bp_remotes:
+                    remote = rmt
+                    break
+            return repository.pull(rebase=True, branch=branch_point.branch, remote=remote)
         return repository.pull()
