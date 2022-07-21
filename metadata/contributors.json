@@ -745,6 +745,16 @@
    },
    {
       "emails" : [
+         "aizquierdogarcia@apple.com"
+      ],
+      "github" : "angelaizg",
+      "name" : "Angela Izquierdo Garcia",
+      "nicks" : [
+         "angie"
+      ]
+   },
+   {
+      "emails" : [
          "angelos@igalia.com"
       ],
       "expertise" : "JavaScriptCore",
