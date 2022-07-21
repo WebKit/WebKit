@@ -33,7 +33,7 @@ jobs:
           CMAKE_C_COMPILER: "/usr/local/opt/llvm@13/bin/clang"
           CMAKE_CXX_COMPILER: "/usr/local/opt/llvm@13/bin/clang++"
         run: |
-          rm -rf /tmp/webkit-release /tmp/output /tmp/bun-webkit /tmp/bun-webkit.tar.gz
+          rm -rf /tmp/webkit-release /tmp/bun-webkit /tmp/bun-webkit /tmp/bun-webkit.tar.gz
           mkdir -p /tmp/webkit-release
           cd /tmp/webkit-release
           cmake  \
@@ -55,15 +55,14 @@ jobs:
             /Users/runner/work/WebKit/WebKit \
             /tmp/webkit-release && \
               cmake --build /tmp/webkit-release --config Release --target jsc
-          mkdir -p /tmp/output/lib /tmp/output/include /tmp/output/include/JavaScriptCore /tmp/output/include/wtf /tmp/output/include/bmalloc
-          cp /tmp/webkit-release/lib/* /tmp/output/lib
-          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/output/include/cmakeconfig.h
-          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/output/include
-          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/output/include
-          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/output/include/JavaScriptCore
-          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/output/include/JavaScriptCore
+          mkdir -p /tmp/bun-webkit/lib /tmp/bun-webkit/include /tmp/bun-webkit/include/JavaScriptCore /tmp/bun-webkit/include/wtf /tmp/bun-webkit/include/bmalloc
+          cp /tmp/webkit-release/lib/* /tmp/bun-webkit/lib
+          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/bun-webkit/include/cmakeconfig.h
+          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/bun-webkit/include
+          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/bun-webkit/include
+          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
+          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
           cd /tmp
-          mv output bun-webkit
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
@@ -93,7 +92,7 @@ jobs:
           CMAKE_C_COMPILER: "/usr/local/opt/llvm@13/bin/clang"
           CMAKE_CXX_COMPILER: "/usr/local/opt/llvm@13/bin/clang++"
         run: |
-          rm -rf /tmp/webkit-release /tmp/output /tmp/bun-webkit /tmp/bun-webkit.tar.gz
+          rm -rf /tmp/webkit-release /tmp/bun-webkit /tmp/bun-webkit /tmp/bun-webkit.tar.gz
           mkdir -p /tmp/webkit-release
           cd /tmp/webkit-release
           cmake  \
@@ -115,15 +114,14 @@ jobs:
             /Users/runner/work/WebKit/WebKit \
             /tmp/webkit-release && \
               cmake --build /tmp/webkit-release --config Release --target jsc
-          mkdir -p /tmp/output/lib /tmp/output/include /tmp/output/include/JavaScriptCore /tmp/output/include/wtf /tmp/output/include/bmalloc
-          cp /tmp/webkit-release/lib/* /tmp/output/lib
-          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/output/include/cmakeconfig.h
-          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/output/include
-          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/output/include
-          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/output/include/JavaScriptCore
-          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/output/include/JavaScriptCore
+          mkdir -p /tmp/bun-webkit/lib /tmp/bun-webkit/include /tmp/bun-webkit/include/JavaScriptCore /tmp/bun-webkit/include/wtf /tmp/bun-webkit/include/bmalloc
+          cp /tmp/webkit-release/lib/* /tmp/bun-webkit/lib
+          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/bun-webkit/include/cmakeconfig.h
+          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/bun-webkit/include
+          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/bun-webkit/include
+          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
+          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
           cd /tmp
-          mv output bun-webkit
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
@@ -149,7 +147,7 @@ jobs:
           CMAKE_CXX_COMPILER: "/opt/homebrew/opt/llvm@13/bin/clang++"
         run: |
           export THIS_DIR=$(pwd)
-          rm -rf /tmp/webkit-release /tmp/output /tmp/bun-webkit /tmp/bun-webkit.tar.gz
+          rm -rf /tmp/webkit-release /tmp/bun-webkit /tmp/bun-webkit /tmp/bun-webkit.tar.gz
           mkdir -p /tmp/webkit-release
           cd /tmp/webkit-release
           cmake  \
@@ -171,15 +169,14 @@ jobs:
             $THIS_DIR \
             /tmp/webkit-release && \
               cmake --build /tmp/webkit-release --config Release --target jsc
-          mkdir -p /tmp/output/lib /tmp/output/include /tmp/output/include/JavaScriptCore /tmp/output/include/wtf /tmp/output/include/bmalloc
-          cp /tmp/webkit-release/lib/* /tmp/output/lib
-          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/output/include/cmakeconfig.h
-          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/output/include
-          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/output/include
-          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/output/include/JavaScriptCore
-          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/output/include/JavaScriptCore
+          mkdir -p /tmp/bun-webkit/lib /tmp/bun-webkit/include /tmp/bun-webkit/include/JavaScriptCore /tmp/bun-webkit/include/wtf /tmp/bun-webkit/include/bmalloc
+          cp /tmp/webkit-release/lib/* /tmp/bun-webkit/lib
+          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/bun-webkit/include/cmakeconfig.h
+          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/bun-webkit/include
+          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/bun-webkit/include
+          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
+          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
           cd /tmp
-          mv output bun-webkit
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
@@ -205,7 +202,7 @@ jobs:
           CMAKE_CXX_COMPILER: "/opt/homebrew/opt/llvm@13/bin/clang++"
         run: |
           export THIS_DIR=$(pwd)
-          rm -rf /tmp/webkit-release /tmp/output /tmp/bun-webkit /tmp/bun-webkit.tar.gz
+          rm -rf /tmp/webkit-release /tmp/bun-webkit /tmp/bun-webkit /tmp/bun-webkit.tar.gz
           mkdir -p /tmp/webkit-release
           cd /tmp/webkit-release
           cmake  \
@@ -227,15 +224,14 @@ jobs:
             $THIS_DIR \
             /tmp/webkit-release && \
               cmake --build /tmp/webkit-release --config Release --target jsc
-          mkdir -p /tmp/output/lib /tmp/output/include /tmp/output/include/JavaScriptCore /tmp/output/include/wtf /tmp/output/include/bmalloc
-          cp /tmp/webkit-release/lib/* /tmp/output/lib
-          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/output/include/cmakeconfig.h
-          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/output/include
-          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/output/include
-          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/output/include/JavaScriptCore
-          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/output/include/JavaScriptCore
+          mkdir -p /tmp/bun-webkit/lib /tmp/bun-webkit/include /tmp/bun-webkit/include/JavaScriptCore /tmp/bun-webkit/include/wtf /tmp/bun-webkit/include/bmalloc
+          cp /tmp/webkit-release/lib/* /tmp/bun-webkit/lib
+          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/bun-webkit/include/cmakeconfig.h
+          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/bun-webkit/include
+          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/bun-webkit/include
+          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
+          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
           cd /tmp
-          mv output bun-webkit
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
