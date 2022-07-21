@@ -65,11 +65,10 @@ jobs:
           cd $HOME/runner/
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
-          cp bun-webkit.tar.gz /tmp
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-amd64
-          path: /tmp/bun-webkit.tar.gz
+          path: /Users/runner/bun-webkit.tar.gz
   macos-amd64-lto:
     name: macOS amd64 LTO
     runs-on: ${{ matrix.os }}
@@ -125,11 +124,10 @@ jobs:
           cd $HOME/runner/
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
-          cp bun-webkit.tar.gz /tmp
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-amd64-lto
-          path: /tmp/bun-webkit.tar.gz
+          path: /Users/runner/bun-webkit.tar.gz
   macos-aarch64-lto:
     name: macOS AARCH64 LTO
     runs-on: macOS-arm64
