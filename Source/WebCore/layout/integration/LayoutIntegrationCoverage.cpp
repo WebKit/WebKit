@@ -340,24 +340,6 @@ static void printModernLineLayoutCoverage(void)
 }
 #endif
 
-static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObject& container, IncludeReasons includeReasons)
-{
-    OptionSet<AvoidanceReason> reasons;
-    // We assume that all lines have metrics based purely on the primary font.
-    for (const auto& textRenderer : childrenOfType<RenderText>(container)) {
-        // FIXME: Do not return until after checking all children.
-        if (textRenderer.isCombineText())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
-        if (textRenderer.isCounter())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
-        if (textRenderer.isTextFragment())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsTextFragment, reasons, includeReasons);
-        if (textRenderer.isSVGInlineText())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsSVGInlineText, reasons, includeReasons);
-    }
-    return reasons;
-}
-
 static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, IncludeReasons includeReasons)
 {
     auto& style = renderer.style();
@@ -410,9 +392,6 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
 #endif
     if (renderInline.isInFlowPositioned())
         SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons);
-    auto fontAndTextReasons = canUseForFontAndText(renderInline, includeReasons);
-    if (fontAndTextReasons)
-        ADD_REASONS_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
 
     auto styleReasons = canUseForStyle(renderInline, includeReasons);
     if (styleReasons)
@@ -428,6 +407,14 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     if (is<RenderText>(child)) {
         if (is<RenderCounter>(child))
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
+        if (child.isCombineText())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
+        if (child.isCounter())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
+        if (downcast<RenderText>(child).isTextFragment())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsTextFragment, reasons, includeReasons);
+        if (child.isSVGInlineText())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsSVGInlineText, reasons, includeReasons);
 
         return reasons;
     }
@@ -578,9 +565,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
         }
     }
-    auto fontAndTextReasons = canUseForFontAndText(flow, includeReasons);
-    if (fontAndTextReasons)
-        ADD_REASONS_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
     return reasons;
 }
 
