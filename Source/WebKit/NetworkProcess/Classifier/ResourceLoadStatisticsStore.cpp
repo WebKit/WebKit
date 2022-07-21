@@ -80,9 +80,9 @@ OperatingDate OperatingDate::fromWallTime(WallTime time)
     return OperatingDate { year, month, monthDay };
 }
 
-OperatingDate OperatingDate::today()
+OperatingDate OperatingDate::today(Seconds timeAdvanceForTesting)
 {
-    return OperatingDate::fromWallTime(WallTime::now());
+    return OperatingDate::fromWallTime(WallTime::now() + timeAdvanceForTesting);
 }
 
 Seconds OperatingDate::secondsSinceEpoch() const

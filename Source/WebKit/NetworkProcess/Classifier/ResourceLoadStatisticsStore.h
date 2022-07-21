@@ -55,7 +55,7 @@ public:
     OperatingDate() = default;
     
     static OperatingDate fromWallTime(WallTime);
-    static OperatingDate today();
+    static OperatingDate today(Seconds timeAdvanceForTesting);
     Seconds secondsSinceEpoch() const;
     int year() const { return m_year; }
     int month() const { return m_month; }
@@ -147,6 +147,8 @@ public:
     virtual void setTopFrameUniqueRedirectFrom(const TopFrameDomain&, const RedirectDomain&) = 0;
 
     void logTestingEvent(String&&);
+
+    virtual void setTimeAdvanceForTesting(Seconds) = 0;
 
     void setMaxStatisticsEntries(size_t maximumEntryCount);
     void setPruneEntriesDownTo(size_t pruneTargetCount);
@@ -256,6 +258,7 @@ protected:
     static constexpr unsigned maxNumberOfRecursiveCallsInRedirectTraceBack { 50 };
     
     Vector<CompletionHandler<void()>> m_dataRecordRemovalCompletionHandlers;
+    Seconds m_timeAdvanceForTesting;
 
 private:
     bool shouldRemoveDataRecords() const;

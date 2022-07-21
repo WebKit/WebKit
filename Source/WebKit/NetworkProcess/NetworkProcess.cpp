@@ -750,6 +750,15 @@ void NetworkProcess::setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID ses
     }
 }
 
+void NetworkProcess::setResourceLoadStatisticsTimeAdvanceForTesting(PAL::SessionID sessionID, Seconds time, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* session = networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = session->resourceLoadStatistics())
+            return resourceLoadStatistics->setTimeAdvanceForTesting(time, WTFMove(completionHandler));
+    }
+    completionHandler();
+}
+
 void NetworkProcess::setIsRunningResourceLoadStatisticsTest(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID)) {

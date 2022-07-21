@@ -881,6 +881,16 @@ void NetworkProcessProxy::setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionI
     sendWithAsyncReply(Messages::NetworkProcess::SetNotifyPagesWhenDataRecordsWereScanned(sessionID, value), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::setResourceLoadStatisticsTimeAdvanceForTesting(PAL::SessionID sessionID, Seconds time, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
+
+    sendWithAsyncReply(Messages::NetworkProcess::SetResourceLoadStatisticsTimeAdvanceForTesting(sessionID, time), WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::setIsRunningResourceLoadStatisticsTest(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
