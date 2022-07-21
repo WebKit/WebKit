@@ -40,9 +40,9 @@ private:
 
     void append(RefPtr<StringImpl>&&) override;
 
-    void insertFakePreElement();
+    void insertFakeFormattingElements();
 
-    bool m_haveInsertedFakePreElement { false };
+    bool m_hasInsertedFakeFormattingElements { false };
 };
 
 } // namespace WebCore

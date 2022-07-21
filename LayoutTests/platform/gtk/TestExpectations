@@ -56,6 +56,7 @@ webkit.org/b/191506 fast/css-grid-layout/grid-item-scroll-position.html [ Pass ]
 
 css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]
+fast/loader/plain-text-document-dark-mode.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ch-001.xht [ Pass ]
 

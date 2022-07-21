@@ -39,18 +39,24 @@ TextDocumentParser::TextDocumentParser(HTMLDocument& document)
 
 void TextDocumentParser::append(RefPtr<StringImpl>&& text)
 {
-    if (!m_haveInsertedFakePreElement)
-        insertFakePreElement();
+    if (!m_hasInsertedFakeFormattingElements)
+        insertFakeFormattingElements();
     HTMLDocumentParser::append(WTFMove(text));
 }
 
-void TextDocumentParser::insertFakePreElement()
+void TextDocumentParser::insertFakeFormattingElements()
 {
     // In principle, we should create a specialized tree builder for
     // TextDocuments, but instead we re-use the existing HTMLTreeBuilder.
-    // We create a fake token and give it to the tree builder rather than
+    // We create fake tokens and give it to the tree builder rather than
     // sending fake bytes through the front-end of the parser to avoid
     // distrubing the line/column number calculations.
+
+    Attribute nameAttribute(nameAttr, "color-scheme"_s);
+    Attribute contentAttribute(contentAttr, "light dark"_s);
+    AtomHTMLToken fakeMeta(HTMLToken::Type::StartTag, metaTag->localName(), { WTFMove(nameAttribute), WTFMove(contentAttribute) });
+    treeBuilder().constructTree(WTFMove(fakeMeta));
+
     Attribute attribute(styleAttr, "word-wrap: break-word; white-space: pre-wrap;"_s);
     AtomHTMLToken fakePre(HTMLToken::Type::StartTag, preTag->localName(), { WTFMove(attribute) });
     treeBuilder().constructTree(WTFMove(fakePre));
@@ -63,7 +69,7 @@ void TextDocumentParser::insertFakePreElement()
     // act like a <plaintext> tag, so we have to force plaintext mode.
     tokenizer().setPLAINTEXTState();
 
-    m_haveInsertedFakePreElement = true;
+    m_hasInsertedFakeFormattingElements = true;
 }
 
 }

@@ -149,6 +149,7 @@ fast/css/apple-system-control-colors.html [ Skip ]
 inspector/css/force-page-appearance.html [ Skip ]
 editing/pasteboard/paste-dark-mode-color-filtered.html [ Skip ]
 fast/forms/number/number-dark-appearance.html [ Skip ]
+fast/loader/plain-text-document-dark-mode.html [ Skip ]
 
 # Only Mac supports force tests.
 fast/events/cancelled-force-click-link-navigation.html [ Skip ]
