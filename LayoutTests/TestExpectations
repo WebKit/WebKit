@@ -799,7 +799,6 @@ imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worklet-audio.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/name/name.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/prefix/__secure.header.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/cookies/samesite-none-secure/cookies-without-samesite-must-be-secure.https.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/about-blank-subresource.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/about-blank-toplevel.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/iframe.document.https.html [ Failure Pass ]
