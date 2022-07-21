@@ -182,9 +182,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::ChildBoxIsNotInlineBlock:
         stream << "child box has unsupported display type";
         break;
-    case AvoidanceReason::UnsupportedImageMap:
-        stream << "image map";
-        break;
     case AvoidanceReason::InlineBoxNeedsLayer:
         stream << "inline box needs layer";
         break;
@@ -435,12 +432,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (replaced.isSVGRootOrLegacySVGRoot())
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
 
-        if (is<RenderImage>(replaced)) {
-            auto& image = downcast<RenderImage>(replaced);
-            if (image.imageMap())
-                SET_REASON_AND_RETURN_IF_NEEDED(UnsupportedImageMap, reasons, includeReasons);
-            return reasons;
-        }
         return reasons;
     }
 
