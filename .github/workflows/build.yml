@@ -68,7 +68,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-amd64
-          path: ${{env.RUNNER_TEMP}}/bun-webkit.tar.gz
+          path: ${{runner.temp}}/bun-webkit.tar.gz
   macos-amd64-lto:
     name: macOS amd64 LTO
     runs-on: ${{ matrix.os }}
@@ -127,7 +127,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-amd64-lto
-          path: ${{env.RUNNER_TEMP}}/bun-webkit.tar.gz
+          path: ${{runner.temp}}/bun-webkit.tar.gz
   macos-aarch64-lto:
     name: macOS AARCH64 LTO
     runs-on: macOS-arm64
@@ -182,7 +182,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-aarch64-lto
-          path: ${{env.RUNNER_TEMP}}/bun-webkit.tar.gz
+          path: ${{runner.temp}}/bun-webkit.tar.gz
   macos-aarch64:
     name: macOS AARCH64
     runs-on: macOS-arm64
@@ -237,7 +237,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-aarch64
-          path: ${{env.RUNNER_TEMP}}/bun-webkit.tar.gz
+          path: ${{runner.temp}}/bun-webkit.tar.gz
 
   linux-amd64:
     name: Linux amd64
