@@ -54,7 +54,6 @@ ASYNC CALL STACK:
 -- Running test case: Console.StackTrace.UnhandledPromiseRejection.ImplicitReject
 CALL STACK:
 0: [F] (anonymous function)
-1: [N] promiseReactionJob
 ASYNC CALL STACK:
 0: --- enqueueJob ---
 1: [N] then

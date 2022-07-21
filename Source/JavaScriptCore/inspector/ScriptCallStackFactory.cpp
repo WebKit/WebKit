@@ -59,14 +59,14 @@ public:
 
     IterationStatus operator()(StackVisitor& visitor) const
     {
-        if (auto* codeBlock = visitor->codeBlock()) {
-            if (codeBlock->ownerExecutable()->implementationVisibility() == ImplementationVisibility::Private)
-                return IterationStatus::Continue;
-        }
-
         if (m_needToSkipAFrame) {
             m_needToSkipAFrame = false;
             return IterationStatus::Continue;
+        }
+
+        if (auto* codeBlock = visitor->codeBlock()) {
+            if (codeBlock->ownerExecutable()->implementationVisibility() != ImplementationVisibility::Public)
+                return IterationStatus::Continue;
         }
 
         if (m_remainingCapacityForFrameCapture) {

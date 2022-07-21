@@ -397,6 +397,11 @@ public:
             return IterationStatus::Continue;
         }
 
+        if (auto* codeBlock = visitor->codeBlock()) {
+            if (codeBlock->ownerExecutable()->implementationVisibility() != ImplementationVisibility::Public)
+                return IterationStatus::Continue;
+        }
+
         if (m_remainingCapacityForFrameCapture) {
             if (visitor->isWasmFrame()) {
                 m_results.append(StackFrame(visitor->wasmFunctionIndexOrName()));
