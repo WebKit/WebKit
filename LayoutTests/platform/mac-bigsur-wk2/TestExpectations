@@ -5,3 +5,7 @@ webkit.org/b/229502 [ Debug ] http/tests/inspector/paymentrequest/payment-reques
 webkit.org/b/229837 http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-without-cookie.html [ Pass Failure ]
 
 webkit.org/b/243067 http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-ephemeral.html [ Pass Failure ]
+
+webkit.org/b/243069 http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe.html [ Pass Failure ]
+webkit.org/b/243069 http/tests/storageAccess/request-and-grant-access-with-per-page-scope-access-from-another-frame.html [ Pass Failure ]
+webkit.org/b/243069 http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction.html [ Pass Failure ]
