@@ -55,6 +55,7 @@
 
 #if PLATFORM(COCOA)
 #include "FontCacheCoreText.h"
+#include "FontDatabase.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -192,6 +193,10 @@ private:
     bool shouldAutoActivateFontIfNeeded(const AtomString& family);
 #endif
 
+#if PLATFORM(COCOA)
+    FontDatabase& database(AllowUserInstalledFonts);
+#endif
+
     Timer m_purgeTimer;
 
     HashSet<FontSelector*> m_clients;
@@ -211,6 +216,9 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
+    FontDatabase m_databaseAllowingUserInstalledFonts { AllowUserInstalledFonts::Yes };
+    FontDatabase m_databaseDisallowingUserInstalledFonts { AllowUserInstalledFonts::No };
+
     ListHashSet<String> m_seenFamiliesForPrewarming;
     ListHashSet<String> m_fontNamesRequiringSystemFallbackForPrewarming;
     RefPtr<WorkQueue> m_prewarmQueue;
