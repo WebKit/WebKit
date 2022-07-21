@@ -65,7 +65,7 @@ jobs:
           cd $HOME/runner/
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
-          cd bun-webkit.tar.gz /tmp
+          cp bun-webkit.tar.gz /tmp
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-amd64
@@ -125,7 +125,7 @@ jobs:
           cd $HOME/runner/
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
-          cd bun-webkit.tar.gz /tmp
+          cp bun-webkit.tar.gz /tmp
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-amd64-lto
