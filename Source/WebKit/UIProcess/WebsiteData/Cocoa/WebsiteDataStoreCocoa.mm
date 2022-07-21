@@ -684,19 +684,20 @@ String WebsiteDataStore::resolvedContainerCachesWebContentDirectory()
 
 String WebsiteDataStore::resolvedContainerTemporaryDirectory()
 {
-    if (m_resolvedContainerTemporaryDirectory.isNull()) {
-        if (!isPersistent())
-            m_resolvedContainerTemporaryDirectory = emptyString();
-        else
-            m_resolvedContainerTemporaryDirectory = defaultContainerTemporaryDirectory();
-    }
+    if (m_resolvedContainerTemporaryDirectory.isNull())
+        m_resolvedContainerTemporaryDirectory = defaultResolvedContainerTemporaryDirectory();
 
     return m_resolvedContainerTemporaryDirectory;
 }
 
-String WebsiteDataStore::defaultContainerTemporaryDirectory()
+String WebsiteDataStore::defaultResolvedContainerTemporaryDirectory()
 {
-    return NSTemporaryDirectory();
+    static NeverDestroyed<String> resolvedTemporaryDirectory;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        resolvedTemporaryDirectory.get() = resolveAndCreateReadWriteDirectoryForSandboxExtension(String(NSTemporaryDirectory()));
+    });
+    return resolvedTemporaryDirectory;
 }
 
 void WebsiteDataStore::setBackupExclusionPeriodForTesting(Seconds period, CompletionHandler<void()>&& completionHandler)
