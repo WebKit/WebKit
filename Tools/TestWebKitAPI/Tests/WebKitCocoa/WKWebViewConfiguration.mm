@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKUserScriptPrivate.h>
