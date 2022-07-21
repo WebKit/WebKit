@@ -1,0 +1,3 @@
+
+FAIL Abs-pos with zero-height static parent. assert_equals: expected 220 but got 120
+

@@ -1,0 +1,6 @@
+
+
+
+
+FAIL Anchor selection can select images assert_equals: expected 200 but got 150
+

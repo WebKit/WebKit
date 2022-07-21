@@ -1,0 +1,4 @@
+abcd efg def ghi
+
+FAIL Anchoring with text wrapping changes. assert_equals: expected 250 but got 150
+

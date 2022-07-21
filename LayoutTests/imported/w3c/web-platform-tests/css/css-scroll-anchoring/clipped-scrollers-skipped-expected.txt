@@ -1,0 +1,3 @@
+
+FAIL Anchor selection with nested scrollers. assert_equals: expected 300 but got 100
+

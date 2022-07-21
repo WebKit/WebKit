@@ -5317,6 +5317,14 @@ security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-w
 security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
 userscripts/user-script-plugin-document.html [ Skip ]
 
+webkit.org/b/242983 imported/w3c/web-platform-tests/css/css-scroll-anchoring/fullscreen-crash.html [ Skip ]
+
+# These tests are image failures
+imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-size-change-000.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-size-change-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-anchoring/nested-overflow-subtree-layout-vertical.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-anchoring/nested-overflow-subtree-layout.html [ Skip ]
+
 # This is marked as passing on WK2.
 fast/canvas/large-getImageData.html [ Skip ]
 

@@ -3643,6 +3643,11 @@ webkit.org/b/240929 [ Debug ]  resize-observer/resize-observer-with-zoom.html [ 
 
 fast/text/bulgarian-system-language-shaping.html [ Pass ]
 
+# These tests have different results on iOS
+imported/w3c/web-platform-tests/css/css-scroll-anchoring/device-pixel-adjustment.html
+imported/w3c/web-platform-tests/css/css-scroll-anchoring/history-restore-anchors.html
+imported/w3c/web-platform-tests/css/css-scroll-anchoring/infinite-scroll-event.tentative.html
+
 # Accessibility bold only exists on iOS.
 fast/text/accessibility-bold-system-font [ Pass ]
 

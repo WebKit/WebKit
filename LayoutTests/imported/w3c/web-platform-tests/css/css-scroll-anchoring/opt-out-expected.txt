@@ -1,0 +1,4 @@
+
+FAIL Disabled on document, enabled on div. assert_equals: Scroll anchoring should apply to #scroller. expected 300 but got 100
+FAIL Enabled on document, disabled on div. assert_equals: Scroll anchoring should apply to the document scroller. expected 250 but got 100
+

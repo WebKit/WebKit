@@ -1,0 +1,6 @@
+abc
+
+def
+
+FAIL Anchor selection descent into inline blocks. assert_equals: expected 200 but got 150
+

@@ -1,0 +1,3 @@
+
+PASS scrollable overflow before the start-edge of the anchor node should be clamped
+

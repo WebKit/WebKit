@@ -1,0 +1,3 @@
+
+FAIL Verify scroll anchoring interaction with history restoration assert_equals: expected 1100 but got 1000
+

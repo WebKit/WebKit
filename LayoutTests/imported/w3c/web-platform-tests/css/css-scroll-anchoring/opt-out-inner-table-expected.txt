@@ -1,0 +1,4 @@
+content
+
+PASS A table with anonymous wrappers and 'overflow-anchor: none' shouldn't generate any scroll anchor candidates.
+

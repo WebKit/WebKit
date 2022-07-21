@@ -1,0 +1,4 @@
+
+FAIL Property overflow-anchor value 'auto' assert_true: overflow-anchor doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-anchor value 'none' assert_true: overflow-anchor doesn't seem to be supported in the computed style expected true got false
+
