@@ -25,10 +25,6 @@
 (deny default (with partial-symbolication))
 (allow system-audit file-read-metadata)
 
-;; We can remove the catch once we no longer need to support iOS 15 (or earlier))
-(catch (lambda)
-    (import "dyld-support.sb"))
-
 (import "util.sb")
 
 (define (allow-read-write-directory-contents path)

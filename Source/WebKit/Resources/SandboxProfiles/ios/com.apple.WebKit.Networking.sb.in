@@ -27,10 +27,6 @@
 (deny system-privilege)
 (allow system-audit file-read-metadata)
 
-;; We can remove the catch once we no longer need to support iOS 15 (or earlier))
-(catch (lambda)
-    (import "dyld-support.sb"))
-
 (allow system-privilege (with grant)
     (require-all
         (privilege-id PRIV_NET_PRIVILEGED_SOCKET_DELEGATE)
