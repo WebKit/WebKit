@@ -1168,6 +1168,10 @@ fine
 // none
 hover
 
+// (scan:) media feature.
+progressive
+interlace
+
 // blend modes
 // normal
 multiply

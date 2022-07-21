@@ -717,9 +717,9 @@ PASS subtest_709
 PASS subtest_710
 PASS subtest_711
 PASS subtest_712
-FAIL subtest_713 assert_true: expected true got false
-FAIL subtest_714 assert_true: expected true got false
-FAIL subtest_715 assert_true: expected true got false
+PASS subtest_713
+PASS subtest_714
+PASS subtest_715
 PASS subtest_716
 PASS subtest_717
 PASS subtest_718
@@ -727,9 +727,9 @@ PASS subtest_719
 PASS subtest_720
 PASS subtest_721
 PASS subtest_722
-FAIL subtest_723 assert_true: not all and (scan) should apply expected true got false
-FAIL subtest_724 assert_true: not all and (scan: progressive) should apply expected true got false
-FAIL subtest_725 assert_true: not all and (scan: interlace) should apply expected true got false
+PASS subtest_723
+PASS subtest_724
+PASS subtest_725
 PASS subtest_726
 PASS subtest_727
 PASS subtest_728

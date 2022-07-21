@@ -481,6 +481,28 @@ static bool dynamicRangeEvaluate(CSSValue* value, const CSSToLengthConversionDat
     }
 }
 
+static bool scanEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
+{
+    RefPtr view = frame.view();
+    if (!view)
+        return false;
+
+    /* With Media Queries Level 4, the "tv" media type is deprecated
+     * and the "scan" feature applies to all media types.
+     * We are currently supporting Media Queries Level 3,
+     * thus the check against "tv".
+     */
+    if (!equalLettersIgnoringASCIICase(view->mediaType(), "tv"_s))
+        return false;
+
+    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+    if (!primitiveValue)
+        return false;
+
+    // All known implementations (Blink, Gecko) assume and match "progressive".
+    return primitiveValue->valueID() == CSSValueProgressive;
+}
+
 static bool gridEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix op)
 {
     return zeroEvaluate(value, op);

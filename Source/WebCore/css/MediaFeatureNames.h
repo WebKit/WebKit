@@ -81,6 +81,7 @@
     macro(prefersDarkInterface, "prefers-dark-interface") \
     macro(prefersReducedMotion, "prefers-reduced-motion") \
     macro(resolution, "resolution") \
+    macro(scan, "scan") \
     macro(transform2d, "-webkit-transform-2d") \
     macro(transform3d, "-webkit-transform-3d") \
     macro(transition, "-webkit-transition") \
