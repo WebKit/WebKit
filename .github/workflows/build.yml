@@ -296,8 +296,8 @@ jobs:
           prerelease: true
           title: "Latest Build"
           files: |
-            - /tmp/bun-webkit-linux-x64.zip
-            - /tmp/bun-webkit-macos-aarch64.zip
-            - /tmp/bun-webkit-macos-aarch64-lto.zip
-            - /tmp/bun-webkit-macos-x64.zip
-            - /tmp/bun-webkit-macos-x64-lto.zip
+            - /tmp/bun-webkit-linux-x64.tar.gz
+            - /tmp/bun-webkit-macos-aarch64.tar.gz
+            - /tmp/bun-webkit-macos-aarch64-lto.tar.gz
+            - /tmp/bun-webkit-macos-x64.tar.gz
+            - /tmp/bun-webkit-macos-x64-lto.tar.gz
