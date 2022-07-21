@@ -419,6 +419,27 @@ void FontCache::invalidateAllFontCaches(ShouldRunInvalidationCallback shouldRunI
         fontCacheInvalidationCallback()();
 }
 
+bool FontCache::useBackslashAsYenSignForFamily(const AtomString& family)
+{
+    if (family.isEmpty())
+        return false;
+
+    if (m_familiesUsingBackslashAsYenSign.isEmpty()) {
+        auto add = [&] (ASCIILiteral name, std::initializer_list<UChar> unicodeName) {
+            m_familiesUsingBackslashAsYenSign.add(AtomString { name });
+            unsigned unicodeNameLength = unicodeName.size();
+            m_familiesUsingBackslashAsYenSign.add(AtomString { unicodeName.begin(), unicodeNameLength });
+        };
+        add("MS PGothic"_s, { 0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x30B4, 0x30B7, 0x30C3, 0x30AF });
+        add("MS PMincho"_s, { 0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x660E, 0x671D });
+        add("MS Gothic"_s, { 0xFF2D, 0xFF33, 0x0020, 0x30B4, 0x30B7, 0x30C3, 0x30AF });
+        add("MS Mincho"_s, { 0xFF2D, 0xFF33, 0x0020, 0x660E, 0x671D });
+        add("Meiryo"_s, { 0x30E1, 0x30A4, 0x30EA, 0x30AA });
+    }
+
+    return m_familiesUsingBackslashAsYenSign.contains(family);
+}
+
 #if !PLATFORM(COCOA)
 
 FontCache::PrewarmInformation FontCache::collectPrewarmInformation() const
