@@ -257,13 +257,13 @@ jobs:
         run: |
           rm -rf /output/bun-webkit /output/bun-webkit-linux-amd64.tar.gz
           temp=/tmp bash release.sh
-          cd /output
+          cd /tmp
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-linux-amd64
-          path: /output/bun-webkit.tar.gz
+          path: /tmp/bun-webkit.tar.gz
 
   release:
     name: release
