@@ -85,7 +85,7 @@ class Squash(Command):
             if args.base_commit:
                 base_commit = repository.find(args.base_commit, include_log=True)
                 if hasattr(base_commit, 'identifier') and base_commit <= branch_point:
-                    sys.stderr.write('It seems you are trying to sqaush beyond branch point.')
+                    sys.stderr.write('It seems you are trying to squash beyond branch point.')
                     return 1
             else:
                 base_commit = branch_point

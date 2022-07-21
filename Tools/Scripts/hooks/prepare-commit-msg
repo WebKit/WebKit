@@ -10,6 +10,29 @@ SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
 
 sys.path.append(SCRIPTS)
 from webkitpy.common.checkout.diff_parser import DiffParser
+from webkitbugspy import radar
+
+
+def get_bugs_string():
+    """Determines what bug URLs to fill or suggest in a WebKit commit message."""
+    env = os.environ
+    need_the_bug_url = 'Need the bug URL (OOPS!).'
+    need_the_radar = 'Include a Radar link (OOPS!).'
+    has_radar = any([bool(regex.match(line))
+                     for line in env.get('COMMIT_MESSAGE_BUG', '').splitlines()
+                     for regex in radar.Tracker.RES])
+
+    if env.get('COMMIT_MESSAGE_BUG'):
+        if has_radar or not bool(radar.Tracker.radarclient()):
+            return env['COMMIT_MESSAGE_BUG']
+        else:
+            return env['COMMIT_MESSAGE_BUG'] + '\n' + need_the_radar
+
+    bugs_string = need_the_bug_url
+    if bool(radar.Tracker.radarclient()):
+        bugs_string += '\n' + need_the_radar
+    return bugs_string
+
 
 def message_from_staged_changelogs():
     try:
@@ -32,6 +55,7 @@ def message_from_staged_changelogs():
         message += '\n'.join(lines)
 
     return message
+
 
 def message(source=None, sha=None):
     msg = message_from_staged_changelogs()
@@ -57,8 +81,12 @@ def message(source=None, sha=None):
             if line.endswith(':'):
                 dirname = line.split(':')[0]
                 continue
+    except subprocess.CalledProcessError:
+        return ''
 
-        return '''{title}
+    bugs_string = get_bugs_string()
+
+    return '''{title}
 {bugs}
 
 Reviewed by NOBODY (OOPS!).
@@ -66,12 +94,10 @@ Reviewed by NOBODY (OOPS!).
 {content}
 '''.format(
         title=os.environ.get('COMMIT_MESSAGE_TITLE', '') or 'Need a short description (OOPS!).',
-        bugs=os.environ.get('COMMIT_MESSAGE_BUG', '') or 'Need the bug URL (OOPS!).',
+        bugs=bugs_string,
         content='\n'.join(commit_message) + os.environ.get('COMMIT_MESSAGE_CONTENT', ''),
     )
 
-    except subprocess.CalledProcessError:
-        return ''
 
 def main(file_name=None, source=None, sha=None):
     with open(file_name, 'r') as commit_message_file:
