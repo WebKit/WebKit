@@ -29,6 +29,10 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(COCOA)
+OBJC_CLASS NSString;
+#endif
+
 namespace WebCore {
 class SecurityOrigin;
 }
