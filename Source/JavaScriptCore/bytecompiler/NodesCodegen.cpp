@@ -270,10 +270,9 @@ RegisterID* ResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     
     JSTextPosition divot = m_start + m_ident.length();
     generator.emitExpressionInfo(divot, m_start, divot);
-    RefPtr<RegisterID> scope = generator.emitResolveScope(dst, var);
     RegisterID* finalDest = generator.finalDestination(dst);
     RefPtr<RegisterID> uncheckedResult = generator.newTemporary();
-    generator.emitGetFromScope(uncheckedResult.get(), scope.get(), var, ThrowIfNotFound);
+    generator.emitResolveAndGetFromScope(uncheckedResult.get(), dst, var, ThrowIfNotFound);
     generator.emitTDZCheckIfNecessary(var, uncheckedResult.get(), nullptr);
     generator.move(finalDest, uncheckedResult.get());
     generator.emitProfileType(finalDest, var, m_position, m_position + m_ident.length());
@@ -1023,10 +1022,8 @@ RegisterID* BaseDotNode::emitGetPropertyValue(BytecodeGenerator& generator, Regi
         Variable var = generator.variable(m_ident);
         ASSERT_WITH_MESSAGE(!var.local(), "Private Field names must be stored in captured variables");
 
-        RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
-        ASSERT(scope); // Private names are always captured.
         RefPtr<RegisterID> privateName = generator.newTemporary();
-        generator.emitGetFromScope(privateName.get(), scope.get(), var, DoNotThrowIfNotFound);
+        generator.emitResolveAndGetFromScope(privateName.get(), nullptr, var, DoNotThrowIfNotFound);
         return generator.emitGetPrivateName(dst, base, privateName.get());
     }
 
@@ -1082,10 +1079,8 @@ RegisterID* BaseDotNode::emitPutProperty(BytecodeGenerator& generator, RegisterI
         Variable var = generator.variable(m_ident);
         ASSERT_WITH_MESSAGE(!var.local(), "Private Field names must be stored in captured variables");
 
-        RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
-        ASSERT(scope); // Private names are always captured.
         RefPtr<RegisterID> privateName = generator.newTemporary();
-        generator.emitGetFromScope(privateName.get(), scope.get(), var, DoNotThrowIfNotFound);
+        generator.emitResolveAndGetFromScope(privateName.get(), nullptr, var, DoNotThrowIfNotFound);
         return generator.emitPrivateFieldPut(base, privateName.get(), value);
     }
 
@@ -2433,10 +2428,8 @@ RegisterID* PostfixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
 
         if (privateTraits.isField()) {
             Variable var = generator.variable(ident);
-            RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
-            ASSERT(scope); // Private names are always captured.
             RefPtr<RegisterID> privateName = generator.newTemporary();
-            generator.emitGetFromScope(privateName.get(), scope.get(), var, DoNotThrowIfNotFound);
+            generator.emitResolveAndGetFromScope(privateName.get(), nullptr, var, DoNotThrowIfNotFound);
 
             RefPtr<RegisterID> value = generator.emitGetPrivateName(generator.newTemporary(), base.get(), privateName.get());
             RefPtr<RegisterID> oldValue = emitPostIncOrDec(generator, generator.tempDestination(dst), value.get(), m_operator);
@@ -2723,9 +2716,8 @@ RegisterID* PrefixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
         if (privateTraits.isField()) {
             ASSERT(!baseNode->isSuperNode());
             Variable var = generator.variable(ident);
-            RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
             RefPtr<RegisterID> privateName = generator.newTemporary();
-            generator.emitGetFromScope(privateName.get(), scope.get(), var, DoNotThrowIfNotFound);
+            generator.emitResolveAndGetFromScope(privateName.get(), nullptr, var, DoNotThrowIfNotFound);
 
             value = generator.emitGetPrivateName(propDst.get(), base.get(), privateName.get());
             emitIncOrDec(generator, value, m_operator);
@@ -3877,8 +3869,7 @@ RegisterID* EmptyVarExpression::emitBytecode(BytecodeGenerator& generator, Regis
     if (RegisterID* local = var.local())
         generator.emitProfileType(local, var, position(), position() + m_ident.length());
     else {
-        RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
-        RefPtr<RegisterID> value = generator.emitGetFromScope(generator.newTemporary(), scope.get(), var, DoNotThrowIfNotFound);
+        RefPtr<RegisterID> value = generator.emitResolveAndGetFromScope(generator.newTemporary(), nullptr, var, DoNotThrowIfNotFound);
         generator.emitProfileType(value.get(), var, position(), position() + m_ident.length());
     }
 
@@ -5048,9 +5039,8 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         ASSERT_WITH_MESSAGE(!var.local(), "Private Field names must be stored in captured variables");
 
         generator.emitExpressionInfo(position(), position(), position() + m_ident->length());
-        RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
         RefPtr<RegisterID> privateName = generator.newTemporary();
-        generator.emitGetFromScope(privateName.get(), scope.get(), var, DoNotThrowIfNotFound);
+        generator.emitResolveAndGetFromScope(privateName.get(), nullptr, var, DoNotThrowIfNotFound);
         generator.emitDefinePrivateField(generator.thisRegister(), privateName.get(), value.get());
         break;
     }
@@ -5061,9 +5051,8 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         ASSERT_WITH_MESSAGE(!var.local(), "Computed names must be stored in captured variables");
 
         generator.emitExpressionInfo(position(), position(), position() + 1);
-        RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
         RefPtr<RegisterID> privateName = generator.newTemporary();
-        generator.emitGetFromScope(privateName.get(), scope.get(), var, ThrowIfNotFound);
+        generator.emitResolveAndGetFromScope(privateName.get(), nullptr, var, ThrowIfNotFound);
         if (shouldSetFunctionName)
             generator.emitSetFunctionName(value.get(), privateName.get());
         generator.emitProfileType(privateName.get(), var, m_position, m_position + m_ident->length());
