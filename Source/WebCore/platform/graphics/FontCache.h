@@ -223,6 +223,9 @@ private:
     FontDatabase m_databaseAllowingUserInstalledFonts { AllowUserInstalledFonts::Yes };
     FontDatabase m_databaseDisallowingUserInstalledFonts { AllowUserInstalledFonts::No };
 
+    using FallbackFontSet = HashSet<RetainPtr<CTFontRef>, WTF::RetainPtrObjectHash<CTFontRef>, WTF::RetainPtrObjectHashTraits<CTFontRef>>;
+    FallbackFontSet m_fallbackFonts;
+
     ListHashSet<String> m_seenFamiliesForPrewarming;
     ListHashSet<String> m_fontNamesRequiringSystemFallbackForPrewarming;
     RefPtr<WorkQueue> m_prewarmQueue;

@@ -1343,22 +1343,15 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     return makeUnique<FontPlatformData>(font.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
 }
 
-typedef HashSet<RetainPtr<CTFontRef>, WTF::RetainPtrObjectHash<CTFontRef>, WTF::RetainPtrObjectHashTraits<CTFontRef>> FallbackDedupSet;
-static FallbackDedupSet& fallbackDedupSet()
-{
-    static NeverDestroyed<FallbackDedupSet> dedupSet;
-    return dedupSet.get();
-}
-
 void FontCache::platformPurgeInactiveFontData()
 {
     Vector<CTFontRef> toRemove;
-    for (auto& font : fallbackDedupSet()) {
+    for (auto& font : m_fallbackFonts) {
         if (CFGetRetainCount(font.get()) == 1)
             toRemove.append(font.get());
     }
     for (auto& font : toRemove)
-        fallbackDedupSet().remove(font);
+        m_fallbackFonts.remove(font);
 
     m_databaseAllowingUserInstalledFonts.clear();
     m_databaseDisallowingUserInstalledFonts.clear();
@@ -1448,7 +1441,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     // FontCascade::drawGlyphBuffer() requires that there are no duplicate Font objects which refer to the same thing. This is enforced in
     // FontCache::fontForPlatformData(), where our equality check is based on hashing the FontPlatformData, whose hash includes the raw CoreText
     // font pointer.
-    CTFontRef substituteFont = fallbackDedupSet().add(result).iterator->get();
+    CTFontRef substituteFont = m_fallbackFonts.add(result).iterator->get();
 
     auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(substituteFont, description, ShouldComputePhysicalTraits::No, isForPlatformFont == IsForPlatformFont::Yes).boldObliquePair();
 
