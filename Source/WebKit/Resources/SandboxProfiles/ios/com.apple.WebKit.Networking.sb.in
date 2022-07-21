@@ -742,6 +742,7 @@
         SYS_setsockopt
         SYS_setxattr
         SYS_shared_region_check_np
+        SYS_shared_region_map_and_slide_2_np
         SYS_shm_open
         SYS_shutdown
         SYS_sigaction
