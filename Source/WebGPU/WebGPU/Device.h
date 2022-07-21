@@ -27,6 +27,7 @@
 
 #import "Adapter.h"
 #import "HardwareCapabilities.h"
+#import <IOSurface/IOSurfaceRef.h>
 #import "Queue.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
@@ -84,7 +85,7 @@ public:
     Ref<Sampler> createSampler(const WGPUSamplerDescriptor&);
     Ref<ShaderModule> createShaderModule(const WGPUShaderModuleDescriptor&);
     Ref<SwapChain> createSwapChain(const Surface&, const WGPUSwapChainDescriptor&);
-    Ref<Texture> createTexture(const WGPUTextureDescriptor&);
+    Ref<Texture> createTexture(const WGPUTextureDescriptor&, IOSurfaceRef = nullptr);
     void destroy();
     size_t enumerateFeatures(WGPUFeatureName* features);
     bool getLimits(WGPUSupportedLimits&);
@@ -118,6 +119,7 @@ private:
     bool validatePopErrorScope() const;
     id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
     bool validateCreateTexture(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats);
+    bool validateCreateIOSurfaceBackedTexture(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats, IOSurfaceRef backing);
 
     void makeInvalid() { m_device = nil; }
 

@@ -79,6 +79,7 @@
 		33EA188627BC26DF00A1DD52 /* CallableExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188527BC26DF00A1DD52 /* CallableExpression.h */; };
 		33EA188827BC361E00A1DD52 /* LiteralExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188727BC361E00A1DD52 /* LiteralExpressions.h */; };
 		6634666B285F0140002ABE8E /* ConstLiteralTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6634666A285F0140002ABE8E /* ConstLiteralTests.mm */; };
+		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
 		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 /* End PBXBuildFile section */
@@ -335,6 +336,7 @@
 		33EA188527BC26DF00A1DD52 /* CallableExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallableExpression.h; sourceTree = "<group>"; };
 		33EA188727BC361E00A1DD52 /* LiteralExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiteralExpressions.h; sourceTree = "<group>"; };
 		6634666A285F0140002ABE8E /* ConstLiteralTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ConstLiteralTests.mm; sourceTree = "<group>"; };
+		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -360,6 +362,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */,
 				1CBAB0922718CCA0006080BB /* JavaScriptCore.framework in Frameworks */,
 				1CEBD8262716CACC00A5254D /* libwgsl.a in Frameworks */,
 				1C2CEDEE271E8A7300EDC16F /* Metal.framework in Frameworks */,
@@ -679,6 +682,7 @@
 		1CEBD8252716CACC00A5254D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				664C92FC286A66090008D143 /* IOSurface.framework */,
 				1CEBD82B2716CAFB00A5254D /* CoreFoundation.framework */,
 				1CEBD82D2716CB1600A5254D /* Foundation.framework */,
 				1C023D4A274495B9001DB734 /* JavaScriptCore.framework */,
