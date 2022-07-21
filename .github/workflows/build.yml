@@ -33,7 +33,7 @@ jobs:
           CMAKE_C_COMPILER: "/usr/local/opt/llvm@13/bin/clang"
           CMAKE_CXX_COMPILER: "/usr/local/opt/llvm@13/bin/clang++"
         run: |
-          rm -rf /tmp/webkit-release /tmp/output
+          rm -rf /tmp/webkit-release /tmp/output /tmp/bun-webkit /tmp/bun-webkit.tar.gz
           mkdir -p /tmp/webkit-release
           cd /tmp/webkit-release
           cmake  \
