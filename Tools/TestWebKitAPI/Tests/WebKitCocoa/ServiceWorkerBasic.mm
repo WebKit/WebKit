@@ -53,6 +53,7 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
 #import <wtf/Deque.h>
+#import <wtf/FileSystem.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
@@ -1414,8 +1415,9 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     setConfigurationInjectedBundlePath(configuration.get());
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
-    [dataStoreConfiguration _setServiceWorkerRegistrationDirectory:[NSURL fileURLWithPath:@"/var/tmp"]];
-    [dataStoreConfiguration _setCacheStorageDirectory:[NSURL fileURLWithPath:@"/var/tmp"]];
+    NSString* tempDirectory = @"/var/tmp";
+    [dataStoreConfiguration _setServiceWorkerRegistrationDirectory:[NSURL fileURLWithPath:tempDirectory]];
+    [dataStoreConfiguration _setCacheStorageDirectory:[NSURL fileURLWithPath:tempDirectory]];
     auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
     [configuration setWebsiteDataStore:websiteDataStore.get()];
 
@@ -1441,7 +1443,9 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     [webView loadRequest:server.request("/second.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    EXPECT_TRUE(retrievedString.contains("\"path\": \"/var/tmp\""_s));
+    NSString* tempDirectoryInUse = FileSystem::realPath(tempDirectory);
+    String expectedString = [NSString stringWithFormat:@"\"path\": \"%@\"", tempDirectoryInUse];
+    EXPECT_TRUE(retrievedString.contains(expectedString));
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
