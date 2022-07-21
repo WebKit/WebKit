@@ -812,6 +812,7 @@
         SYS_sem_open
         SYS_sendto
         SYS_shared_region_check_np
+        SYS_shared_region_map_and_slide_2_np
         SYS_shm_open
         SYS_sigaction
         SYS_sigprocmask

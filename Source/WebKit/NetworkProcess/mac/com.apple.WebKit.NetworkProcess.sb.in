@@ -604,6 +604,9 @@
         SYS_setrlimit
         SYS_setsockopt
         SYS_shutdown
+#if !PLATFORM(MAC)
+        SYS_shared_region_map_and_slide_2_np
+#endif
         SYS_sigaction
         SYS_sigaltstack
         SYS_sigprocmask
