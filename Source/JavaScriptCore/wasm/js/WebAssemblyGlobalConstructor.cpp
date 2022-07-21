@@ -150,7 +150,9 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
             if (argument.isUndefined())
                 argument = defaultValueForReferenceType(type);
             initialValue = JSValue::encode(argument);
-        } else
+        } else if (Wasm::isExternref(type))
+            return throwVMException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "I31ref import from JS currently unsupported"_s));
+        else
             RELEASE_ASSERT_NOT_REACHED();
     }
     }

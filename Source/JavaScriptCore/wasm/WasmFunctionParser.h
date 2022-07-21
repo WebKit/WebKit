@@ -1074,6 +1074,39 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(Type { TypeKind::Rtt, Nullable::No, static_cast<TypeIndex>(typeIndex) }, result);
             return { };
         }
+        case GCOpType::I31New: {
+            TypedExpression value;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "i31.new");
+            WASM_VALIDATOR_FAIL_IF(!value.type().isI32(), "i31.new value to type ", value.type().kind, " expected ", TypeKind::I32);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addI31New(value, result));
+
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, Nullable::No, static_cast<TypeIndex>(TypeKind::I31ref) }, result);
+            return { };
+        }
+        case GCOpType::I31GetS: {
+            TypedExpression ref;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(ref, "i31.get_s");
+            WASM_VALIDATOR_FAIL_IF(!isI31ref(ref.type()), "i31.get_s ref to type ", ref.type().kind, " expected ", TypeKind::I31ref);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addI31GetS(ref, result));
+
+            m_expressionStack.constructAndAppend(Types::I32, result);
+            return { };
+        }
+        case GCOpType::I31GetU: {
+            TypedExpression ref;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(ref, "i31.get_u");
+            WASM_VALIDATOR_FAIL_IF(!isI31ref(ref.type()), "i31.get_u ref to type ", ref.type().kind, " expected ", TypeKind::I31ref);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addI31GetU(ref, result));
+
+            m_expressionStack.constructAndAppend(Types::I32, result);
+            return { };
+        }
 
         default:
             WASM_PARSER_FAIL_IF(true, "invalid extended GC op ", extOp);
@@ -1986,6 +2019,10 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get type index immediate for rtt.canon in unreachable context");
             return { };
         }
+        case GCOpType::I31New:
+        case GCOpType::I31GetS:
+        case GCOpType::I31GetU:
+            return { };
         default:
             WASM_PARSER_FAIL_IF(true, "invalid extended GC op ", extOp);
             break;

@@ -66,7 +66,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
             break;
         }
         default: {
-            if (isFuncref(type) || isExternref(type))
+            if (isFuncref(type) || isExternref(type) || isI31ref(type))
                 jit.moveValueRegs(src.jsr(), dst);
             else
                 jit.breakpoint();

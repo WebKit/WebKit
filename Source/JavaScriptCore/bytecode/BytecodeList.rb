@@ -1898,4 +1898,22 @@ op :rtt_canon,
         typeIndex: unsigned,
     }
 
+op :i31_new,
+    args: {
+        dst: VirtualRegister,
+        value: VirtualRegister,
+    }
+
+op :i31_get_s,
+    args: {
+        dst: VirtualRegister,
+        ref: VirtualRegister,
+    }
+
+op :i31_get_u,
+    args: {
+        dst: VirtualRegister,
+        ref: VirtualRegister,
+    }
+
 end_section :Wasm

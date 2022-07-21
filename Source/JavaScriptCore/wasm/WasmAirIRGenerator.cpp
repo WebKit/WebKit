@@ -379,6 +379,9 @@ public:
 
     // GC
     PartialResult WARN_UNUSED_RETURN addRttCanon(uint32_t typeIndex, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addI31New(ExpressionType value, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType ref, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
 
     // Basic operators
     template<OpType>
@@ -3021,6 +3024,58 @@ auto AirIRGenerator::addRttCanon(uint32_t typeIndex, ExpressionType& result) -> 
 {
     result = gRtt();
     emitCCall(&operationWasmRttCanon, result, instanceValue(), addConstant(Types::I32, typeIndex));
+
+    return { };
+}
+
+auto AirIRGenerator::addI31New(ExpressionType value, ExpressionType& result) -> PartialResult
+{
+    auto tmp1 = g32();
+    result = gRef(Type { TypeKind::Ref, Nullable::No, static_cast<TypeIndex>(TypeKind::I31ref) });
+
+    append(Move, Arg::bigImm(0x7fffffff), tmp1);
+    append(And32, tmp1, value, tmp1);
+    append(Move, Arg::bigImm(JSValue::NumberTag), result);
+    append(Or64, result, tmp1, result);
+
+    return { };
+}
+
+auto AirIRGenerator::addI31GetS(ExpressionType ref, ExpressionType& result) -> PartialResult
+{
+    // Trap on null reference.
+    auto tmpForNull = g64();
+    append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForNull);
+    emitCheck([&] {
+        return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Equal), ref, tmpForNull);
+    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::NullI31Get);
+    });
+
+    auto tmpForShift = g32();
+    result = g32();
+
+    append(Move, Arg::imm(1), tmpForShift);
+    append(Move32, ref, result);
+    addShift(Types::I32, Lshift32, result, tmpForShift, result);
+    addShift(Types::I32, Rshift32, result, tmpForShift, result);
+
+    return { };
+}
+
+auto AirIRGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> PartialResult
+{
+    // Trap on null reference.
+    auto tmpForNull = g64();
+    append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForNull);
+    emitCheck([&] {
+        return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Equal), ref, tmpForNull);
+    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::NullI31Get);
+    });
+
+    result = g32();
+    append(Move32, ref, result);
 
     return { };
 }

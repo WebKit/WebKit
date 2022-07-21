@@ -112,6 +112,9 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
                 }
             }
             m_value.m_externref.set(m_owner->vm(), m_owner, argument);
+        } else if (Wasm::isI31ref(m_type)) {
+            throwVMException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "I31ref import from JS currently unsupported"_s));
+            return;
         }
     }
     }

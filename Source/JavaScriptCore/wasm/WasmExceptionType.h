@@ -39,6 +39,7 @@ namespace Wasm {
     macro(OutOfBoundsCallIndirect, "Out of bounds call_indirect"_s) \
     macro(NullTableEntry,  "call_indirect to a null table entry"_s) \
     macro(NullReference,  "call_ref to a null reference"_s) \
+    macro(NullI31Get, "i31.get_<sx> to a null reference"_s) \
     macro(BadSignature, "call_indirect to a signature that does not match"_s) \
     macro(OutOfBoundsTrunc, "Out of bounds Trunc operation"_s) \
     macro(Unreachable, "Unreachable code should not be executed"_s) \

@@ -118,6 +118,12 @@ inline bool isFuncref(Type type)
     return type.kind == TypeKind::Funcref;
 }
 
+inline bool isI31ref(Type type)
+{
+    ASSERT(Options::useWebAssemblyGC());
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::I31ref);
+}
+
 inline Type funcrefType()
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
@@ -137,7 +143,7 @@ inline bool isRefWithTypeIndex(Type type)
     if (!Options::useWebAssemblyTypedFunctionReferences())
         return false;
 
-    return isRefType(type) && !isExternref(type) && !isFuncref(type);
+    return isRefType(type) && !isExternref(type) && !isFuncref(type) && !isI31ref(type);
 }
 
 inline bool isTypeIndexHeapType(int32_t heapType)
@@ -169,6 +175,8 @@ inline bool isValidHeapTypeKind(TypeKind kind)
     case TypeKind::Externref:
     case TypeKind::Rtt:
         return true;
+    case TypeKind::I31ref:
+        return Options::useWebAssemblyGC();
     default:
         break;
     }

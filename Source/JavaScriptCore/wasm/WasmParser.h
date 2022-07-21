@@ -331,7 +331,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& 
     TypeKind typeKind = static_cast<TypeKind>(kind);
     bool isNullable = true;
     TypeIndex typeIndex = 0;
-    if (Options::useWebAssemblyTypedFunctionReferences() && (typeKind == TypeKind::Funcref || typeKind == TypeKind::Externref)) {
+    if (Options::useWebAssemblyTypedFunctionReferences() && (typeKind == TypeKind::Funcref || typeKind == TypeKind::Externref || typeKind == TypeKind::I31ref)) {
         typeIndex = static_cast<TypeIndex>(typeKind);
         typeKind = TypeKind::RefNull;
     } else if (typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull) {

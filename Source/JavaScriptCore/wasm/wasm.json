@@ -15,6 +15,7 @@
         "externref": { "type": "varint7", "value":  -17, "b3type": "B3::Int64" },
         "ref_null":  { "type": "varint7", "value":  -20, "b3type": "B3::Int64" },
         "ref":       { "type": "varint7", "value":  -21, "b3type": "B3::Int64" },
+        "i31ref":    { "type": "varint7", "value":  -22, "b3type": "B3::Void" },
         "func":      { "type": "varint7", "value":  -32, "b3type": "B3::Void" },
         "struct":    { "type": "varint7", "value":  -33, "b3type": "B3::Void" },
         "rtt":       { "type": "varint7", "value":  -24, "b3type": "B3::Int64" },
@@ -261,6 +262,10 @@
         "i64.trunc_sat_f32_u": { "category": "conversion", "value": 252, "return": ["i64"], "parameter": ["f32"], "immediate": [], "extendedOp": 5 },
         "i64.trunc_sat_f64_s": { "category": "conversion", "value": 252, "return": ["i64"], "parameter": ["f64"], "immediate": [], "extendedOp": 6 },
         "i64.trunc_sat_f64_u": { "category": "conversion", "value": 252, "return": ["i64"], "parameter": ["f64"], "immediate": [], "extendedOp": 7 },
+
+        "i31.new":             { "category": "gc",         "value": 251, "return": ["i31ref"],                       "parameter": ["i32"],                        "immediate": [], "extendedOp": 32 },
+        "i31.get_s":           { "category": "gc",         "value": 251, "return": ["i32"],                          "parameter": ["i31ref"],                     "immediate": [], "extendedOp": 33 },
+        "i31.get_u":           { "category": "gc",         "value": 251, "return": ["i32"],                          "parameter": ["i31ref"],                     "immediate": [], "extendedOp": 34 },
 
         "memory.atomic.notify":       { "category": "atomic",     "value": 254, "return": ["i32"],      "parameter": ["addr", "i32"],          "immediate": [{"name": "flags",          "type": "varuint32"}, {"name": "offset",   "type": "varuint32"}], "extendedOp":  0 },
         "memory.atomic.wait32":       { "category": "atomic",     "value": 254, "return": ["i32"],      "parameter": ["addr", "i32", "i64"],   "immediate": [{"name": "flags",          "type": "varuint32"}, {"name": "offset",   "type": "varuint32"}], "extendedOp":  1 },

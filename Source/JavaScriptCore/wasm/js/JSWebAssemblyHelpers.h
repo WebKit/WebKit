@@ -203,7 +203,9 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
                 if (paramIndex != argIndex)
                     return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"_s));
             }
-        } else
+        } else if (Wasm::isI31ref(type))
+            return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "I31ref import from JS currently unsupported"_s));
+        else
             RELEASE_ASSERT_NOT_REACHED();
     }
     }

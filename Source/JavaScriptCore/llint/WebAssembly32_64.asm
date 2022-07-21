@@ -1127,3 +1127,31 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     end)
 end
 
+# GC ops
+
+wasmOp(i31_new, WasmI31New, macro(ctx)
+    mloadi(ctx, m_value, t0)
+    andi 0x7fffffff, t0
+    move Int32Tag, t1
+    return2i(ctx, t1, t0)
+end)
+
+wasmOp(i31_get_s, WasmI31GetS, macro(ctx)
+    mload2i(ctx, m_ref, t1, t0)
+    bieq t1, NullTag, .throw
+    lshifti 0x1, t0
+    rshifti 0x1, t0
+    returni(ctx, t0)
+
+.throw:
+    throwException(NullI31Get)
+end)
+
+wasmOp(i31_get_u, WasmI31GetU, macro(ctx)
+    mload2i(ctx, m_ref, t1, t0)
+    bieq t1, NullTag, .throw
+    returni(ctx, t0)
+
+.throw:
+    throwException(NullI31Get)
+end)

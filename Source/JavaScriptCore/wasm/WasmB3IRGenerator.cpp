@@ -356,6 +356,9 @@ public:
 
     // GC
     PartialResult WARN_UNUSED_RETURN addRttCanon(uint32_t typeIndex, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addI31New(ExpressionType value, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType ref, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
 
     // Basic operators
     template<OpType>
@@ -2285,6 +2288,49 @@ auto B3IRGenerator::addRttCanon(uint32_t typeIndex, ExpressionType& result) -> P
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmRttCanon)),
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex)));
 
+    return { };
+}
+
+auto B3IRGenerator::addI31New(ExpressionType value, ExpressionType& result) -> PartialResult
+{
+    Value* i64 = m_currentBlock->appendNew<Value>(m_proc, B3::ZExt32, origin(), get(value));
+    Value* truncated = m_currentBlock->appendNew<Value>(m_proc, B3::BitAnd, origin(), i64, constant(Int64, 0x7fffffff));
+    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::BitOr, origin(), truncated, constant(Int64, JSValue::NumberTag)));
+
+    return { };
+}
+
+auto B3IRGenerator::addI31GetS(ExpressionType ref, ExpressionType& result) -> PartialResult
+{
+    // Trap on null reference.
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(ref), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::NullI31Get);
+        });
+    }
+
+    Value* truncated = m_currentBlock->appendNew<Value>(m_proc, B3::Trunc, origin(), get(ref));
+    Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), truncated, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 1));
+    Value* shiftRight = m_currentBlock->appendNew<Value>(m_proc, B3::SShr, origin(), shiftLeft, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 1));
+    result = push(shiftRight);
+
+    return { };
+}
+
+auto B3IRGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> PartialResult
+{
+    // Trap on null reference.
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(ref), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::NullI31Get);
+        });
+    }
+
+    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::Trunc, origin(), get(ref)));
     return { };
 }
 
