@@ -1158,8 +1158,7 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
             if (parameterSet.contains(entry.key)) {
                 Identifier ident = Identifier::fromUid(m_vm, entry.key.get());
                 Variable var = variable(ident);
-                RegisterID* scope = emitResolveScope(nullptr, var);
-                RefPtr<RegisterID> value = emitGetFromScope(newTemporary(), scope, var, DoNotThrowIfNotFound);
+                RefPtr<RegisterID> value = emitResolveAndGetFromScope(newTemporary(), nullptr, var, DoNotThrowIfNotFound);
                 valuesToMoveIntoVars.append(std::make_pair(ident, value));
             }
         }
@@ -2162,10 +2161,8 @@ void BytecodeGenerator::hoistSloppyModeFunctionIfNecessary(const Identifier& fun
             RefPtr<RegisterID> currentValue;
             if (RegisterID* local = currentFunctionVariable.local())
                 currentValue = local;
-            else {
-                RefPtr<RegisterID> scope = emitResolveScope(nullptr, currentFunctionVariable);
-                currentValue = emitGetFromScope(newTemporary(), scope.get(), currentFunctionVariable, DoNotThrowIfNotFound);
-            }
+            else
+                currentValue = emitResolveAndGetFromScope(newTemporary(), nullptr, currentFunctionVariable, DoNotThrowIfNotFound);
 
             ASSERT(m_varScopeLexicalScopeStackIndex);
             ASSERT(*m_varScopeLexicalScopeStackIndex < m_lexicalScopeStack.size());
@@ -2192,10 +2189,8 @@ void BytecodeGenerator::hoistSloppyModeFunctionIfNecessary(const Identifier& fun
             RefPtr<RegisterID> currentValue;
             if (RegisterID* local = currentFunctionVariable.local())
                 currentValue = local;
-            else {
-                RefPtr<RegisterID> scope = emitResolveScope(nullptr, currentFunctionVariable);
-                currentValue = emitGetFromScope(newTemporary(), scope.get(), currentFunctionVariable, DoNotThrowIfNotFound);
-            }
+            else
+                currentValue = emitResolveAndGetFromScope(newTemporary(),  nullptr, currentFunctionVariable, DoNotThrowIfNotFound);
 
             RefPtr<RegisterID> scopeId = emitResolveScopeForHoistingFuncDeclInEval(nullptr, functionName);
             RefPtr<RegisterID> checkResult = emitIsUndefined(newTemporary(), scopeId.get());
@@ -2462,102 +2457,123 @@ ResolveType BytecodeGenerator::resolveType()
     return GlobalProperty;
 }
 
+RegisterID* BytecodeGenerator::emitResolveScopeWithVarKindScope(const Variable& variable)
+{
+    // This always refers to the activation that *we* allocated, and not the current scope that code
+    // lives in. Note that this will change once we have proper support for block scoping. Once that
+    // changes, it will be correct for this code to return scopeRegister(). The only reason why we
+    // don't do that already is that m_lexicalEnvironment is required by ConstDeclNode. ConstDeclNode
+    // requires weird things because it is a shameful pile of nonsense, but block scoping would make
+    // that code sensible and obviate the need for us to do bad things.
+    for (unsigned i = m_lexicalScopeStack.size(); i--; ) {
+        auto& stackEntry = m_lexicalScopeStack[i];
+        // We should not resolve a variable to VarKind::Scope if a "with" scope lies in between the current
+        // scope and the resolved scope.
+        RELEASE_ASSERT(!stackEntry.m_isWithScope);
+
+        if (stackEntry.m_symbolTable->get(NoLockingNecessary, variable.ident().impl()).isNull())
+            continue;
+        
+        RegisterID* scope = stackEntry.m_scope;
+        RELEASE_ASSERT(scope);
+        return scope;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+RegisterID* BytecodeGenerator::emitResolveScopeHelper(RegisterID* dst, const Variable& variable)
+{
+    // Indicates non-local resolution.
+    dst = tempDestination(dst);
+    OpResolveScope::emit(this, kill(dst), scopeRegister(), addConstant(variable.ident()), resolveType(), localScopeDepth());
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Variable& variable)
 {
     switch (variable.offset().kind()) {
     case VarKind::Stack:
         return nullptr;
-        
     case VarKind::DirectArgument:
         return argumentsRegister();
-        
-    case VarKind::Scope: {
-        // This always refers to the activation that *we* allocated, and not the current scope that code
-        // lives in. Note that this will change once we have proper support for block scoping. Once that
-        // changes, it will be correct for this code to return scopeRegister(). The only reason why we
-        // don't do that already is that m_lexicalEnvironment is required by ConstDeclNode. ConstDeclNode
-        // requires weird things because it is a shameful pile of nonsense, but block scoping would make
-        // that code sensible and obviate the need for us to do bad things.
-        for (unsigned i = m_lexicalScopeStack.size(); i--; ) {
-            auto& stackEntry = m_lexicalScopeStack[i];
-            // We should not resolve a variable to VarKind::Scope if a "with" scope lies in between the current
-            // scope and the resolved scope.
-            RELEASE_ASSERT(!stackEntry.m_isWithScope);
-
-            if (stackEntry.m_symbolTable->get(NoLockingNecessary, variable.ident().impl()).isNull())
-                continue;
-            
-            RegisterID* scope = stackEntry.m_scope;
-            RELEASE_ASSERT(scope);
-            return scope;
-        }
-
-        RELEASE_ASSERT_NOT_REACHED();
-        return nullptr;
-        
-    }
+    case VarKind::Scope:
+        return emitResolveScopeWithVarKindScope(variable);
     case VarKind::Invalid:
-        // Indicates non-local resolution.
-        
-        dst = tempDestination(dst);
-        OpResolveScope::emit(this, kill(dst), scopeRegister(), addConstant(variable.ident()), resolveType(), localScopeDepth());
-        return dst;
+        return emitResolveScopeHelper(dst, variable);
     }
     
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-ALWAYS_INLINE void BytecodeGenerator::emitGetFromScopeHelper(RegisterID* dst, RegisterID* scope, unsigned var, GetPutInfo getPutInfo, unsigned localScopeDepth, unsigned offset)
+RegisterID* BytecodeGenerator::emitGetFromScopeWithVarKindStack(RegisterID* dst, const Variable& variable)
 {
-    ASSERT(scope);
+    return move(dst, variable.local());
+}
 
-#if USE(JSVALUE64)
-    bool validResolveAndGetFromScopePair = false;
-    if (m_lastInstruction->opcodeID() == op_resolve_scope) {
-        auto lastOpcode = m_lastInstruction->as<OpResolveScope>();
-        validResolveAndGetFromScopePair = lastOpcode.m_dst == scope
-            && lastOpcode.m_var == var
-            && lastOpcode.m_resolveType == getPutInfo.resolveType()
-            && lastOpcode.m_localScopeDepth == localScopeDepth;
-    }
+RegisterID* BytecodeGenerator::emitGetFromScopeWithVarKindDirectArgument(RegisterID* dst, RegisterID* scope, const Variable& variable)
+{
+    OpGetFromArguments::emit(this, kill(dst), scope, variable.offset().capturedArgumentsOffset().offset());
+    return dst;
+}
 
-    if (validResolveAndGetFromScopePair) {
-        VirtualRegister prevScope = m_lastInstruction->as<OpResolveScope>().m_scope;
-        removeMetadataFor(op_resolve_scope);
-        rewind();
-        OpResolveAndGetFromScope::emit(this, dst, prevScope, scope, var, getPutInfo, localScopeDepth, offset);
-        return;
-    }
-#endif
-
-    OpGetFromScope::emit(this, dst, scope, var, getPutInfo, localScopeDepth, offset);
+RegisterID* BytecodeGenerator::emitGetFromScopeHelper(RegisterID* dst, RegisterID* scope, const Variable& variable, ResolveMode resolveMode)
+{
+    OpGetFromScope::emit(
+        this,
+        kill(dst),
+        scope,
+        addConstant(variable.ident()),
+        GetPutInfo(resolveMode, variable.offset().isScope() ? ResolvedClosureVar : resolveType(), InitializationMode::NotInitialization, ecmaMode()),
+        localScopeDepth(),
+        variable.offset().isScope() ? variable.offset().scopeOffset().offset() : 0);
+    return dst;
 }
 
 RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* scope, const Variable& variable, ResolveMode resolveMode)
 {
     switch (variable.offset().kind()) {
     case VarKind::Stack:
-        return move(dst, variable.local());
+        return emitGetFromScopeWithVarKindStack(dst, variable);
         
-    case VarKind::DirectArgument: {
-        OpGetFromArguments::emit(this, kill(dst), scope, variable.offset().capturedArgumentsOffset().offset());
-        return dst;
-    }
+    case VarKind::DirectArgument:
+        return emitGetFromScopeWithVarKindDirectArgument(dst, scope, variable);
         
     case VarKind::Scope:
-    case VarKind::Invalid: {
-        emitGetFromScopeHelper(
-            kill(dst),
-            scope,
-            addConstant(variable.ident()),
-            GetPutInfo(resolveMode, variable.offset().isScope() ? ResolvedClosureVar : resolveType(), InitializationMode::NotInitialization, ecmaMode()),
-            localScopeDepth(),
-            variable.offset().isScope() ? variable.offset().scopeOffset().offset() : 0);
-        return dst;
-    } }
+    case VarKind::Invalid: 
+        return emitGetFromScopeHelper(dst, scope, variable, resolveMode);
+    }
     
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+RegisterID* BytecodeGenerator::emitResolveAndGetFromScope(RegisterID* dst, RegisterID* resolvedScope, const Variable& variable, ResolveMode resolveMode)
+{
+    switch (variable.offset().kind()) {
+    case VarKind::Stack:
+        return emitGetFromScopeWithVarKindStack(dst, variable);
+    case VarKind::DirectArgument:
+        return emitGetFromScopeWithVarKindDirectArgument(dst, argumentsRegister(), variable);
+    case VarKind::Scope:
+        return emitGetFromScopeHelper(dst, emitResolveScopeWithVarKindScope(variable), variable, resolveMode);
+    case VarKind::Invalid:
+        if (!variable.offset().isScope()) {
+            resolvedScope = tempDestination(resolvedScope);
+            OpResolveAndGetFromScope::emit(
+                this,
+                kill(dst),
+                scopeRegister(),
+                resolvedScope,
+                addConstant(variable.ident()),
+                GetPutInfo(resolveMode, resolveType(), InitializationMode::NotInitialization, ecmaMode()),
+                localScopeDepth(),
+                variable.offset().isScope() ? variable.offset().scopeOffset().offset() : 0);
+            return dst;
+        } else
+            return emitGetFromScopeHelper(dst, emitResolveScopeHelper(resolvedScope, variable), variable, resolveMode);
+    }
 }
 
 RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable& variable, RegisterID* value, ResolveMode resolveMode, InitializationMode initializationMode)
@@ -2873,7 +2889,9 @@ void BytecodeGenerator::emitInstallPrivateClassBrand(RegisterID* target)
 
 RegisterID* BytecodeGenerator::emitGetPrivateBrand(RegisterID* dst, RegisterID* scope, bool isStatic)
 {
-    emitGetFromScopeHelper(
+    ASSERT(scope);
+    OpGetFromScope::emit(
+        this,
         kill(dst),
         scope,
         addConstant(isStatic ? propertyNames().builtinNames().privateClassBrandPrivateName() : propertyNames().builtinNames().privateBrandPrivateName()),
@@ -4557,18 +4575,6 @@ RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemp
     return move(dst, constant.get());
 }
 
-RegisterID* BytecodeGenerator::emitGetGlobalPrivate(RegisterID* dst, const Identifier& property)
-{
-    dst = tempDestination(dst);
-    Variable var = variable(property);
-    if (RegisterID* local = var.local())
-        return move(dst, local);
-
-    RefPtr<RegisterID> scope = newTemporary();
-    move(scope.get(), emitResolveScope(scope.get(), var));
-    return emitGetFromScope(dst, scope.get(), var, ThrowIfNotFound);
-}
-
 void BytecodeGenerator::emitEnumeratorNext(RegisterID* propertyName, RegisterID* mode, RegisterID* index, RegisterID* base, RegisterID* enumerator)
 {
     OpEnumeratorNext::emit(this, propertyName, mode, index, base, enumerator);
@@ -4637,7 +4643,8 @@ RegisterID* BytecodeGenerator::emitLoadArrowFunctionLexicalEnvironment(const Ide
 
 void BytecodeGenerator::emitLoadThisFromArrowFunctionLexicalEnvironment()
 {
-    emitGetFromScope(thisRegister(), emitLoadArrowFunctionLexicalEnvironment(propertyNames().builtinNames().thisPrivateName()), variable(propertyNames().builtinNames().thisPrivateName(), ThisResolutionType::Scoped), DoNotThrowIfNotFound);
+    Variable thisVar = variable(propertyNames().builtinNames().thisPrivateName(), ThisResolutionType::Scoped);
+    emitGetFromScope(thisRegister(), nullptr, thisVar, DoNotThrowIfNotFound);
 }
     
 RegisterID* BytecodeGenerator::emitLoadNewTargetFromArrowFunctionLexicalEnvironment()
