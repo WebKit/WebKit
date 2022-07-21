@@ -611,7 +611,7 @@ bool NetworkDataTaskCocoa::tryPasswordBasedAuthentication(const WebCore::Authent
     if (!challenge.protectionSpace().isPasswordBased())
         return false;
     
-    if (!m_user.isNull() && !m_password.isNull()) {
+    if (!m_user.isEmpty() || !m_password.isEmpty()) {
         auto persistence = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use ? WebCore::CredentialPersistenceForSession : WebCore::CredentialPersistenceNone;
         completionHandler(AuthenticationChallengeDisposition::UseCredential, WebCore::Credential(m_user, m_password, persistence));
         m_user = String();
