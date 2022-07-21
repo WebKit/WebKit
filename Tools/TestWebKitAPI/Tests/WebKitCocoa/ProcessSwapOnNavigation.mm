@@ -7910,7 +7910,7 @@ static void checkSettingsControlledByCaptivePortalMode(WKWebView *webView, Shoul
 
 @end
 
-void configureCaptivePortalWKWebViewConfiguration(WKWebViewConfiguration *config)
+static void configureCaptivePortalWKWebViewConfiguration(WKWebViewConfiguration *config)
 {
     [config.preferences _setMediaDevicesEnabled:YES];
     config.preferences._mediaCaptureRequiresSecureConnection = NO;

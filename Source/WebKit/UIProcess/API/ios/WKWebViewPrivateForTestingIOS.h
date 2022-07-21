@@ -93,6 +93,8 @@
 - (BOOL)_hasResizeAssertion;
 - (void)_simulateSelectionStart;
 
++ (void)_resetPresentLockdownModeMessage;
+
 @end
 
 #endif // TARGET_OS_IPHONE

@@ -495,6 +495,13 @@ static void dumpUIView(TextStream& ts, UIView *view)
     [_contentView _simulateSelectionStart];
 }
 
++ (void)_resetPresentLockdownModeMessage
+{
+#if ENABLE(LOCKDOWN_MODE_API)
+    [self _clearLockdownModeWarningNeeded];
+#endif
+}
+
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
