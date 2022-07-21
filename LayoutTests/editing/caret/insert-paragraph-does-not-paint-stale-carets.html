@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    font-family: system-ui;
+}
+
+h1 {
+    text-align: center;
+}
+
+div[contenteditable] {
+    width: 100%;
+    min-height: 400px;
+    border: 1px solid red;
+    padding: 1em;
+    outline: none;
+    box-sizing: border-box;
+}
+</style>
+<script type="text/javascript" src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+}
+
+addEventListener("load", async () => {
+    const editor = document.querySelector("div[contenteditable]");
+    editor.focus();
+    editor.addEventListener("keydown", event => {
+        if (event.key !== "Enter")
+            return;
+
+        setTimeout(() => {
+            if (!getSelection().rangeCount)
+                return;
+
+            let startContainer = getSelection().getRangeAt(0).startContainer;
+            if (startContainer.childElementCount !== 1)
+                return;
+
+            let firstChild = startContainer.children[0];
+            if (firstChild.tagName !== "BR")
+                return;
+
+            let zeroWidthJoiner = document.createElement("span");
+            zeroWidthJoiner.appendChild(document.createTextNode("\u200D"));
+            startContainer.insertBefore(zeroWidthJoiner, firstChild);
+
+            document.body.offsetHeight;
+
+            zeroWidthJoiner.remove();
+        }, 0);
+    });
+
+    let result = "";
+
+    for (let i = 0; i < 3; i++) {
+        internals.startTrackingRepaints();
+        await UIHelper.keyDown("\n");
+
+        result += internals.repaintRectsAsText() + "\n";
+        internals.stopTrackingRepaints();
+        await UIHelper.delayFor(100);
+    }
+
+    document.getElementById("result").textContent = result;
+
+    editor.blur();
+
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+});
+</script>
+</head>
+<body>
+    <div contenteditable>
+    <div id="result"></div>
+</body>
+</html>
