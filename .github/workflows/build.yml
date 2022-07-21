@@ -33,9 +33,9 @@ jobs:
           CMAKE_C_COMPILER: "/usr/local/opt/llvm@13/bin/clang"
           CMAKE_CXX_COMPILER: "/usr/local/opt/llvm@13/bin/clang++"
         run: |
-          rm -rf /tmp/webkit-release /tmp/bun-webkit /tmp/bun-webkit /tmp/bun-webkit.tar.gz
-          mkdir -p /tmp/webkit-release
-          cd /tmp/webkit-release
+          rm -rf /output/webkit-release /output/bun-webkit /output/bun-webkit /output/bun-webkit.tar.gz
+          mkdir -p /output/webkit-release
+          cd /output/webkit-release
           cmake  \
             -DPORT="JSCOnly" \
             -DENABLE_STATIC_JSC=ON \
@@ -53,22 +53,22 @@ jobs:
             -DUSE_PTHREAD_JIT_PERMISSIONS_API=ON \
             -DENABLE_REMOTE_INSPECTOR=ON \
             /Users/runner/work/WebKit/WebKit \
-            /tmp/webkit-release && \
-              cmake --build /tmp/webkit-release --config Release --target jsc
-          mkdir -p /tmp/bun-webkit/lib /tmp/bun-webkit/include /tmp/bun-webkit/include/JavaScriptCore /tmp/bun-webkit/include/wtf /tmp/bun-webkit/include/bmalloc
-          cp /tmp/webkit-release/lib/* /tmp/bun-webkit/lib
-          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/bun-webkit/include/cmakeconfig.h
-          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/bun-webkit/include
-          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/bun-webkit/include
-          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
-          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
-          cd /tmp
+            /output/webkit-release && \
+              cmake --build /output/webkit-release --config Release --target jsc
+          mkdir -p /output/bun-webkit/lib /output/bun-webkit/include /output/bun-webkit/include/JavaScriptCore /output/bun-webkit/include/wtf /output/bun-webkit/include/bmalloc
+          cp /output/webkit-release/lib/* /output/bun-webkit/lib
+          cp -r /output/webkit-release/cmakeconfig.h /output/bun-webkit/include/cmakeconfig.h
+          cp -r /output/webkit-release/WTF/Headers/wtf /output/bun-webkit/include
+          cp -r /output/webkit-release/bmalloc/Headers/bmalloc /output/bun-webkit/include
+          cp /output/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /output/bun-webkit/include/JavaScriptCore
+          cp /output/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /output/bun-webkit/include/JavaScriptCore
+          cd /output
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-amd64
-          path: /tmp/bun-webkit.tar.gz
+          path: /output/bun-webkit.tar.gz
   macos-amd64-lto:
     name: macOS amd64 LTO
     runs-on: ${{ matrix.os }}
@@ -92,9 +92,9 @@ jobs:
           CMAKE_C_COMPILER: "/usr/local/opt/llvm@13/bin/clang"
           CMAKE_CXX_COMPILER: "/usr/local/opt/llvm@13/bin/clang++"
         run: |
-          rm -rf /tmp/webkit-release /tmp/bun-webkit /tmp/bun-webkit /tmp/bun-webkit.tar.gz
-          mkdir -p /tmp/webkit-release
-          cd /tmp/webkit-release
+          rm -rf /output/webkit-release /output/bun-webkit /output/bun-webkit /output/bun-webkit.tar.gz
+          mkdir -p /output/webkit-release
+          cd /output/webkit-release
           cmake  \
             -DPORT="JSCOnly" \
             -DENABLE_STATIC_JSC=ON \
@@ -112,22 +112,22 @@ jobs:
             -DUSE_PTHREAD_JIT_PERMISSIONS_API=ON \
             -DENABLE_REMOTE_INSPECTOR=ON \
             /Users/runner/work/WebKit/WebKit \
-            /tmp/webkit-release && \
-              cmake --build /tmp/webkit-release --config Release --target jsc
-          mkdir -p /tmp/bun-webkit/lib /tmp/bun-webkit/include /tmp/bun-webkit/include/JavaScriptCore /tmp/bun-webkit/include/wtf /tmp/bun-webkit/include/bmalloc
-          cp /tmp/webkit-release/lib/* /tmp/bun-webkit/lib
-          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/bun-webkit/include/cmakeconfig.h
-          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/bun-webkit/include
-          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/bun-webkit/include
-          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
-          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
-          cd /tmp
+            /output/webkit-release && \
+              cmake --build /output/webkit-release --config Release --target jsc
+          mkdir -p /output/bun-webkit/lib /output/bun-webkit/include /output/bun-webkit/include/JavaScriptCore /output/bun-webkit/include/wtf /output/bun-webkit/include/bmalloc
+          cp /output/webkit-release/lib/* /output/bun-webkit/lib
+          cp -r /output/webkit-release/cmakeconfig.h /output/bun-webkit/include/cmakeconfig.h
+          cp -r /output/webkit-release/WTF/Headers/wtf /output/bun-webkit/include
+          cp -r /output/webkit-release/bmalloc/Headers/bmalloc /output/bun-webkit/include
+          cp /output/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /output/bun-webkit/include/JavaScriptCore
+          cp /output/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /output/bun-webkit/include/JavaScriptCore
+          cd /output
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-amd64-lto
-          path: /tmp/bun-webkit.tar.gz
+          path: /output/bun-webkit.tar.gz
   macos-aarch64-lto:
     name: macOS AARCH64 LTO
     runs-on: macOS-arm64
@@ -147,9 +147,9 @@ jobs:
           CMAKE_CXX_COMPILER: "/opt/homebrew/opt/llvm@13/bin/clang++"
         run: |
           export THIS_DIR=$(pwd)
-          rm -rf /tmp/webkit-release /tmp/bun-webkit /tmp/bun-webkit /tmp/bun-webkit.tar.gz
-          mkdir -p /tmp/webkit-release
-          cd /tmp/webkit-release
+          rm -rf /output/webkit-release /output/bun-webkit /output/bun-webkit /output/bun-webkit.tar.gz
+          mkdir -p /output/webkit-release
+          cd /output/webkit-release
           cmake  \
             -DPORT="JSCOnly" \
             -DENABLE_STATIC_JSC=ON \
@@ -167,22 +167,22 @@ jobs:
             -DUSE_PTHREAD_JIT_PERMISSIONS_API=ON \
             -DENABLE_REMOTE_INSPECTOR=ON \
             $THIS_DIR \
-            /tmp/webkit-release && \
-              cmake --build /tmp/webkit-release --config Release --target jsc
-          mkdir -p /tmp/bun-webkit/lib /tmp/bun-webkit/include /tmp/bun-webkit/include/JavaScriptCore /tmp/bun-webkit/include/wtf /tmp/bun-webkit/include/bmalloc
-          cp /tmp/webkit-release/lib/* /tmp/bun-webkit/lib
-          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/bun-webkit/include/cmakeconfig.h
-          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/bun-webkit/include
-          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/bun-webkit/include
-          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
-          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
-          cd /tmp
+            /output/webkit-release && \
+              cmake --build /output/webkit-release --config Release --target jsc
+          mkdir -p /output/bun-webkit/lib /output/bun-webkit/include /output/bun-webkit/include/JavaScriptCore /output/bun-webkit/include/wtf /output/bun-webkit/include/bmalloc
+          cp /output/webkit-release/lib/* /output/bun-webkit/lib
+          cp -r /output/webkit-release/cmakeconfig.h /output/bun-webkit/include/cmakeconfig.h
+          cp -r /output/webkit-release/WTF/Headers/wtf /output/bun-webkit/include
+          cp -r /output/webkit-release/bmalloc/Headers/bmalloc /output/bun-webkit/include
+          cp /output/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /output/bun-webkit/include/JavaScriptCore
+          cp /output/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /output/bun-webkit/include/JavaScriptCore
+          cd /output
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-aarch64-lto
-          path: /tmp/bun-webkit.tar.gz
+          path: /output/bun-webkit.tar.gz
   macos-aarch64:
     name: macOS AARCH64
     runs-on: macOS-arm64
@@ -202,9 +202,9 @@ jobs:
           CMAKE_CXX_COMPILER: "/opt/homebrew/opt/llvm@13/bin/clang++"
         run: |
           export THIS_DIR=$(pwd)
-          rm -rf /tmp/webkit-release /tmp/bun-webkit /tmp/bun-webkit /tmp/bun-webkit.tar.gz
-          mkdir -p /tmp/webkit-release
-          cd /tmp/webkit-release
+          rm -rf /output/webkit-release /output/bun-webkit /output/bun-webkit /output/bun-webkit.tar.gz
+          mkdir -p /output/webkit-release
+          cd /output/webkit-release
           cmake  \
             -DPORT="JSCOnly" \
             -DENABLE_STATIC_JSC=ON \
@@ -222,22 +222,22 @@ jobs:
             -DUSE_PTHREAD_JIT_PERMISSIONS_API=ON \
             -DENABLE_REMOTE_INSPECTOR=ON \
             $THIS_DIR \
-            /tmp/webkit-release && \
-              cmake --build /tmp/webkit-release --config Release --target jsc
-          mkdir -p /tmp/bun-webkit/lib /tmp/bun-webkit/include /tmp/bun-webkit/include/JavaScriptCore /tmp/bun-webkit/include/wtf /tmp/bun-webkit/include/bmalloc
-          cp /tmp/webkit-release/lib/* /tmp/bun-webkit/lib
-          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/bun-webkit/include/cmakeconfig.h
-          cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/bun-webkit/include
-          cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/bun-webkit/include
-          cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
-          cp /tmp/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /tmp/bun-webkit/include/JavaScriptCore
-          cd /tmp
+            /output/webkit-release && \
+              cmake --build /output/webkit-release --config Release --target jsc
+          mkdir -p /output/bun-webkit/lib /output/bun-webkit/include /output/bun-webkit/include/JavaScriptCore /output/bun-webkit/include/wtf /output/bun-webkit/include/bmalloc
+          cp /output/webkit-release/lib/* /output/bun-webkit/lib
+          cp -r /output/webkit-release/cmakeconfig.h /output/bun-webkit/include/cmakeconfig.h
+          cp -r /output/webkit-release/WTF/Headers/wtf /output/bun-webkit/include
+          cp -r /output/webkit-release/bmalloc/Headers/bmalloc /output/bun-webkit/include
+          cp /output/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /output/bun-webkit/include/JavaScriptCore
+          cp /output/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* /output/bun-webkit/include/JavaScriptCore
+          cd /output
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-aarch64
-          path: /tmp/bun-webkit.tar.gz
+          path: /output/bun-webkit.tar.gz
 
   linux-amd64:
     name: Linux amd64
@@ -255,15 +255,15 @@ jobs:
           install: true
       - name: Run
         run: |
-          rm -rf /tmp/bun-webkit /tmp/bun-webkit-linux-amd64.tar.gz
+          rm -rf /output/bun-webkit /output/bun-webkit-linux-amd64.tar.gz
           temp=/tmp bash release.sh
-          cd /tmp
+          cd /output
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-linux-amd64
-          path: /tmp/bun-webkit.tar.gz
+          path: /output/bun-webkit.tar.gz
 
   release:
     name: release
@@ -279,23 +279,23 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-linux-amd64
-          path: /tmp/artifacts
+          path: /output/artifacts
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-aarch64
-          path: /tmp/artifacts
+          path: /output/artifacts
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-aarch64-lto
-          path: /tmp/artifacts
+          path: /output/artifacts
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-amd64
-          path: /tmp/artifacts
+          path: /output/artifacts
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-amd64-lto
-          path: /tmp/artifacts
+          path: /output/artifacts
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -303,4 +303,4 @@ jobs:
           prerelease: true
           title: "Latest Build"
           files: |
-            - /tmp/artifacts/*.tar.gz
+            - /output/artifacts/*.tar.gz
