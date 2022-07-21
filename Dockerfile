@@ -49,6 +49,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DUSE_THIN_ARCHIVES=OFF \
     -DENABLE_FTL_JIT=ON \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
     -G Ninja \ 
     -DCMAKE_CXX_COMPILER=$(which clang++-13) \
     -DCMAKE_C_COMPILER=$(which clang-13) \
