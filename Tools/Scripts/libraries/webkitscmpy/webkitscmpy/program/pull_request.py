@@ -176,11 +176,25 @@ class PullRequest(Command):
         source_remote = args.remote
         if not source_remote:
             bp_remotes = set(repository.branches_for(hash=branch_point.hash, remote=None).keys())
-            for remote in repository.source_remotes():
-                if remote in bp_remotes:
-                    source_remote = remote
-                    args.remote = remote
-                    break
+            if len(bp_remotes) == 1:
+                # If there is only one remote, that means the branch point doesn't exist on any remote
+                # In that case, pick the remote with the most updated version of the branch in question
+                remote_head = None
+                for remote in repository.source_remotes():
+                    try:
+                        candidate = repository.find('remotes/{}/{}'.format(remote, branch_point.branch), include_log=False)
+                        if not remote_head or candidate.identifier > remote_head.identifier:
+                            remote_head = candidate
+                            source_remote = remote
+                    except ValueError:
+                        pass
+            else:
+                for remote in repository.source_remotes():
+                    if remote in bp_remotes:
+                        source_remote = remote
+                        break
+            if source_remote and source_remote != 'origin':
+                args.remote = source_remote
         if not source_remote:
             source_remote = repository.default_remote
 

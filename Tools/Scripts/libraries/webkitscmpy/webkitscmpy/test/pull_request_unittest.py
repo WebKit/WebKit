@@ -292,7 +292,10 @@ class TestDoPullRequest(testing.PathTestCase):
                 args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
             ))
-        self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/pr-branch'...\n")
+        self.assertEqual(
+            '\n'.join([line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line]),
+            "Creating the local development branch 'eng/pr-branch'...",
+        )
         self.assertEqual(captured.stderr.getvalue(), 'No modified files\n')
 
     def test_staged(self):
