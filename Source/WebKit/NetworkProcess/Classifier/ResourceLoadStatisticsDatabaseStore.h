@@ -48,6 +48,9 @@ static constexpr size_t numberOfBucketsPerStatistic = 5;
 static constexpr size_t numberOfStatistics = 7;
 static constexpr std::array<unsigned, numberOfBucketsPerStatistic> bucketSizes {{ 1, 3, 10, 50, 100 }};
 
+// FIXME: ResourceLoadStatisticsDatabaseStore is the only subclass of the abstract class ResourceLoadStatisticsStore.
+// There is no longer any reason to have them be separate classes.
+
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsDatabaseStore final : public ResourceLoadStatisticsStore, public DatabaseUtilities {
 public:
@@ -101,6 +104,8 @@ public:
     void logUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&) override;
     void clearUserInteraction(const RegistrableDomain&, CompletionHandler<void()>&&) override;
     bool hasHadUserInteraction(const RegistrableDomain&, OperatingDatesWindow) override;
+
+    void setTimeAdvanceForTesting(Seconds) final;
 
     void setLastSeen(const RegistrableDomain&, Seconds) override;
     bool isCorrectSubStatisticsCount(const RegistrableDomain&, const TopFrameDomain&);

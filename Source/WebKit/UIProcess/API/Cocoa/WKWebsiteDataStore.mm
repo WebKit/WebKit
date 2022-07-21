@@ -420,6 +420,13 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
+- (void)_setResourceLoadStatisticsTimeAdvanceForTesting:(NSTimeInterval)time completionHandler:(void(^)(void))completionHandler
+{
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+    _websiteDataStore->setResourceLoadStatisticsTimeAdvanceForTesting(Seconds(time), makeBlockPtr(completionHandler));
+#endif
+}
+
 + (void)_allowWebsiteDataRecordsForAllOrigins
 {
     WebKit::WebsiteDataStore::allowWebsiteDataRecordsForAllOrigins();

@@ -790,7 +790,7 @@ void ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList(const Str
     }
     
     if (statement.contains("REPLACE"_s)) {
-        if (insertRelationshipStatement->bindDouble(2, WallTime::now().secondsSinceEpoch().value()) != SQLITE_OK) {
+        if (insertRelationshipStatement->bindDouble(2, (WallTime::now() + m_timeAdvanceForTesting).secondsSinceEpoch().value()) != SQLITE_OK) {
             ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
             return;
@@ -1340,7 +1340,7 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(SubFrameDom
 #endif
         ASSERT(hasUserGrantedStorageAccessThroughPrompt(*subFrameStatus.second, topFrameDomain) == StorageAccessPromptWasShown::Yes);
 #endif
-        setUserInteraction(subFrameDomain, true, WallTime::now());
+        setUserInteraction(subFrameDomain, true, WallTime::now() + m_timeAdvanceForTesting);
     }
 
     RunLoop::main().dispatch([subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), topFrameDomain = WTFMove(topFrameDomain).isolatedCopy(), frameID, pageID, store = Ref { store() }, scope, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -1429,7 +1429,7 @@ void ResourceLoadStatisticsDatabaseStore::logFrameNavigation(const RegistrableDo
             ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logFrameNavigation was not completed due to failed insert attempt of target domain", this);
             return;
         }
-        updateLastSeen(targetDomain, ResourceLoadStatistics::reduceTimeResolution(WallTime::now()));
+        updateLastSeen(targetDomain, ResourceLoadStatistics::reduceTimeResolution(WallTime::now() + m_timeAdvanceForTesting));
         insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *targetResult.second);
         statisticsWereUpdated = true;
     }
@@ -1543,7 +1543,7 @@ void ResourceLoadStatisticsDatabaseStore::logUserInteraction(const TopFrameDomai
         return;
     }
     bool didHavePreviousUserInteraction = hasHadUserInteraction(domain, OperatingDatesWindow::Long);
-    setUserInteraction(domain, true, WallTime::now());
+    setUserInteraction(domain, true, WallTime::now() + m_timeAdvanceForTesting);
 
     if (didHavePreviousUserInteraction) {
         completionHandler();
@@ -1607,6 +1607,16 @@ bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const Registrabl
         hadUserInteraction = false;
     }
     return hadUserInteraction;
+}
+
+void ResourceLoadStatisticsDatabaseStore::setTimeAdvanceForTesting(Seconds time)
+{
+    ASSERT(!RunLoop::isMain());
+    constexpr Seconds secondsPerDay { 3600 * 24 };
+    for (Seconds t = m_timeAdvanceForTesting; t <= time; t += secondsPerDay) {
+        m_timeAdvanceForTesting = t;
+        includeTodayAsOperatingDateIfNecessary();
+    }
 }
 
 void ResourceLoadStatisticsDatabaseStore::setPrevalentResource(const RegistrableDomain& domain, ResourceLoadPrevalence newPrevalence)
@@ -2301,13 +2311,13 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
 {
     ASSERT(!RunLoop::isMain());
 
-    bool shouldCheckForGrandfathering = endOfGrandfatheringTimestamp() > WallTime::now();
+    bool shouldCheckForGrandfathering = endOfGrandfatheringTimestamp() > WallTime::now() + m_timeAdvanceForTesting;
     bool shouldClearGrandfathering = !shouldCheckForGrandfathering && endOfGrandfatheringTimestamp();
 
     if (shouldClearGrandfathering)
         clearEndOfGrandfatheringTimeStamp();
 
-    auto now = WallTime::now();
+    auto now = WallTime::now() + m_timeAdvanceForTesting;
     auto oldestUserInteraction = now;
     RegistrableDomainsToDeleteOrRestrictWebsiteDataFor toDeleteOrRestrictFor;
 
@@ -2746,7 +2756,7 @@ void ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary
 {
     ASSERT(!RunLoop::isMain());
     
-    auto today = OperatingDate::today();
+    auto today = OperatingDate::today(m_timeAdvanceForTesting);
     if (m_operatingDatesSize > 0) {
         if (today <= m_mostRecentOperatingDate)
             return;
@@ -2794,14 +2804,14 @@ bool ResourceLoadStatisticsDatabaseStore::hasStatisticsExpired(WallTime mostRece
             return true;
         break;
     case OperatingDatesWindow::ForLiveOnTesting:
-        return WallTime::now() > mostRecentUserInteractionTime + operatingTimeWindowForLiveOnTesting;
+        return WallTime::now() + m_timeAdvanceForTesting > mostRecentUserInteractionTime + operatingTimeWindowForLiveOnTesting;
     case OperatingDatesWindow::ForReproTesting:
         return true;
     }
 
     // If we don't meet the real criteria for an expired statistic, check the user setting for a tighter restriction (mainly for testing).
     if (this->parameters().timeToLiveUserInteraction) {
-        if (WallTime::now() > mostRecentUserInteractionTime + this->parameters().timeToLiveUserInteraction.value())
+        if (WallTime::now() + m_timeAdvanceForTesting > mostRecentUserInteractionTime + this->parameters().timeToLiveUserInteraction.value())
             return true;
     }
     return false;
