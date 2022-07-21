@@ -47,6 +47,10 @@
 - (void)_setContentInsetAdjustmentBehaviorInternal:(UIScrollViewContentInsetAdjustmentBehavior)insetAdjustmentBehavior;
 #endif
 
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+- (bool)_updateOverlayRegions:(const Vector<CGRect> &)overlayRegions;
+#endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
