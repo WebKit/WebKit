@@ -12,3 +12,5 @@ webkit.org/b/243069 http/tests/storageAccess/request-and-grant-access-cross-orig
 
 webkit.org/b/243074 imported/w3c/web-platform-tests/media-capabilities/decodingInfo.any.worker.html [ Pass Failure ]
 webkit.org/b/243074 imported/w3c/web-platform-tests/media-capabilities/encodingInfo.any.worker.html [ Pass Failure ]
+
+webkit.org/b/243076 imported/w3c/web-platform-tests/resource-timing/redirects.html [ Pass Failure ]
