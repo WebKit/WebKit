@@ -279,23 +279,23 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-linux-amd64
-          path: /tmp/artifacts
+          path: /tmp/artifacts/bun-webkit-linux-amd64.tar.gz
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-aarch64
-          path: /tmp/artifacts
+          path: /tmp/artifacts/bun-webkit-macos-aarch64.tar.gz
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-aarch64-lto
-          path: /tmp/artifacts
+          path: /tmp/artifacts/bun-webkit-macos-aarch64-lto.tar.gz
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-amd64
-          path: /tmp/artifacts
+          path: /tmp/artifacts/bun-webkit-macos-amd64.tar.gz
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-amd64-lto
-          path: /tmp/artifacts
+          path: /tmp/artifacts/bun-webkit-macos-amd64-lto.tar.gz
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
