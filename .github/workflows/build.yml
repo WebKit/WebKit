@@ -264,23 +264,31 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-linux-x64
-          path: /tmp/bun-webkit-linux-x64.zip
+          path: /tmp/bun-webkit-linux-x64
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-aarch64
-          path: /tmp/bun-webkit-macos-aarch64.zip
+          path: /tmp/bun-webkit-macos-aarch64
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-aarch64-lto
-          path: /tmp/bun-webkit-macos-aarch64-lto.zip
+          path: /tmp/bun-webkit-macos-aarch64-lto
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-x64
-          path: /tmp/bun-webkit-macos-x64.zip
+          path: /tmp/bun-webkit-macos-x64
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-x64-lto
-          path: /tmp/bun-webkit-macos-x64-lto.zip
+          path: /tmp/bun-webkit-macos-x64-lto
+      - name: Compress
+        run: |
+          cd /tmp
+          tar -czf bun-webkit-linux-x64.tar.gz bun-webkit-linux-x64
+          tar -czf bun-webkit-macos-x64.tar.gz bun-webkit-macos-x64
+          tar -czf bun-webkit-macos-aarch64.tar.gz bun-webkit-macos-aarch64
+          tar -czf bun-webkit-macos-aarch64-lto.tar.gz bun-webkit-macos-aarch64-lto
+          tar -czf bun-webkit-macos-x64-lto.tar.gz bun-webkit-macos-x64-lto
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
