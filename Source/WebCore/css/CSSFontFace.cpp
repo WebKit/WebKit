@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,16 +69,16 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Sc
 
         foundSVGFont = item.isSVGFontFaceSrc() || item.svgFontFaceElement();
         fontFaceElement = item.svgFontFaceElement();
+        bool allowDownloading = context && context->settingsValues().downloadableBinaryFontsEnabled;
         if (!item.isLocal()) {
-            const auto* settings = context ? &context->settingsValues() : nullptr;
-            bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled);
             if (allowDownloading && item.isSupportedFormat()) {
                 if (auto fontRequest = item.fontLoadRequest(context, foundSVGFont, isInitiatingElementInUserAgentShadowTree))
                     source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), *context->cssFontSelector(), makeUniqueRefFromNonNullUniquePtr(WTFMove(fontRequest)));
             }
-        } else
-            source = (fontFaceElement ? makeUnique<CSSFontFaceSource>(fontFace, item.resource(), *fontFaceElement)
-                : makeUnique<CSSFontFaceSource>(fontFace, item.resource()));
+        } else if (allowDownloading && fontFaceElement)
+            source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), *fontFaceElement);
+        else if (!fontFaceElement)
+            source = makeUnique<CSSFontFaceSource>(fontFace, item.resource());
 
         if (source)
             fontFace.adoptSource(WTFMove(source));
