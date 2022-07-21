@@ -9,3 +9,6 @@ webkit.org/b/243067 http/tests/storageAccess/request-and-grant-access-cross-orig
 webkit.org/b/243069 http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe.html [ Pass Failure ]
 webkit.org/b/243069 http/tests/storageAccess/request-and-grant-access-with-per-page-scope-access-from-another-frame.html [ Pass Failure ]
 webkit.org/b/243069 http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction.html [ Pass Failure ]
+
+webkit.org/b/243074 imported/w3c/web-platform-tests/media-capabilities/decodingInfo.any.worker.html [ Pass Failure ]
+webkit.org/b/243074 imported/w3c/web-platform-tests/media-capabilities/encodingInfo.any.worker.html [ Pass Failure ]
