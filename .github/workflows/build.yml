@@ -11,7 +11,7 @@ on:
 
 jobs:
   macos-x64:
-    name: macOS AMD64
+    name: macOS x64
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     strategy:
@@ -67,7 +67,7 @@ jobs:
           name: bun-webkit-macos-x64
           path: /tmp/output
   macos-x64-lto:
-    name: macOS AMD64 LTO
+    name: macOS x64 LTO
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     strategy:
@@ -227,8 +227,8 @@ jobs:
           name: bun-webkit-macos-aarch64
           path: /tmp/output
 
-  linux_amd64:
-    name: Linux AMD64
+  linux-x64:
+    name: Linux x64
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     strategy:
@@ -243,11 +243,11 @@ jobs:
           install: true
       - name: Run
         run: |
-          rm -rf /tmp/bun-webkit /tmp/bun-webkit-linux-amd64.tar.gz
+          rm -rf /tmp/bun-webkit /tmp/bun-webkit-linux-x64.tar.gz
           temp=/tmp bash release.sh
       - uses: actions/upload-artifact@v3
         with:
-          name: bun-webkit-linux-amd64
+          name: bun-webkit-linux-x64
           path: /tmp/bun-webkit
 
   release:
@@ -255,7 +255,7 @@ jobs:
     runs-on: ubuntu-18.04
     timeout-minutes: 90
     needs:
-      - linux_amd64
+      - linux-x64
       - macos-x64-lto
       - macos-x64
       - macos-aarch64-lto
@@ -263,8 +263,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-linux-amd64
-          path: /tmp/bun-webkit-linux-amd64.zip
+          name: bun-webkit-linux-x64
+          path: /tmp/bun-webkit-linux-x64.zip
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-aarch64
@@ -288,7 +288,7 @@ jobs:
           prerelease: true
           title: "Latest Build"
           files: |
-            - /tmp/bun-webkit-linux-amd64.zip
+            - /tmp/bun-webkit-linux-x64.zip
             - /tmp/bun-webkit-macos-aarch64.zip
             - /tmp/bun-webkit-macos-aarch64-lto.zip
             - /tmp/bun-webkit-macos-x64.zip
