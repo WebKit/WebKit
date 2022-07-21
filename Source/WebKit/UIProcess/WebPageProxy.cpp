@@ -8853,6 +8853,12 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
 #if ENABLE(GEOLOCATION)
         name = "geolocation"_s;
 #endif
+    } else if (descriptor.name == PermissionName::Notifications) {
+#if ENABLE(NOTIFICATIONS)
+        name = "notifications"_s;
+        // Ensure that the true permission state of the Notifications API is returned.
+        shouldChangeDeniedToPrompt = false;
+#endif
     }
 
     if (name.isNull()) {

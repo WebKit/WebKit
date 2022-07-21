@@ -2223,3 +2223,6 @@ webkit.org/b/242812 [ Release arm64 ] js/dom/Promise-reject-large-string.html [ 
 webkit.org/b/241205 [ Release arm64 ] fast/forms/textfield-outline.html [ Pass Failure ]
 
 webkit.org/b/242904 [ Debug ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
+
+# The Notifications API is not supported on iOS
+imported/w3c/web-platform-tests/permissions/all-permissions.html [ Failure ]

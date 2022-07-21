@@ -1,6 +1,6 @@
 
 PASS Query "geolocation" permission
-FAIL Query "notifications" permission promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS Query "notifications" permission
 FAIL Query "persistent-storage" permission promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL Query "push" permission promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL Query "accelerometer" permission promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
