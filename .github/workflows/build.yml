@@ -64,11 +64,12 @@ jobs:
           cp $HOME/runner/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* $HOME/runner/bun-webkit/include/JavaScriptCore
           cd $HOME/runner/
           tar -czf bun-webkit.tar.gz bun-webkit
+          mv bun-webkit.tar.gz /tmp
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-amd64
-          path: ${{env.HOME}}/runner/bun-webkit.tar.gz
+          path: /tmp/bun-webkit.tar.gz
   macos-amd64-lto:
     name: macOS amd64 LTO
     runs-on: ${{ matrix.os }}
@@ -123,11 +124,12 @@ jobs:
           cp $HOME/runner/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* $HOME/runner/bun-webkit/include/JavaScriptCore
           cd $HOME/runner/
           tar -czf bun-webkit.tar.gz bun-webkit
+          mv bun-webkit.tar.gz /tmp
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-amd64-lto
-          path: ${{env.HOME}}/runner/bun-webkit.tar.gz
+          path: /tmp/bun-webkit.tar.gz
   macos-aarch64-lto:
     name: macOS AARCH64 LTO
     runs-on: macOS-arm64
@@ -178,11 +180,12 @@ jobs:
           cp $HOME/runner/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* $HOME/runner/bun-webkit/include/JavaScriptCore
           cd $HOME/runner/
           tar -czf bun-webkit.tar.gz bun-webkit
+          mv bun-webkit.tar.gz /tmp
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-aarch64-lto
-          path: ${{env.HOME}}/runner/bun-webkit.tar.gz
+          path: /tmp/bun-webkit.tar.gz
   macos-aarch64:
     name: macOS AARCH64
     runs-on: macOS-arm64
@@ -233,11 +236,12 @@ jobs:
           cp $HOME/runner/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* $HOME/runner/bun-webkit/include/JavaScriptCore
           cd $HOME/runner/
           tar -czf bun-webkit.tar.gz bun-webkit
+          mv bun-webkit.tar.gz /tmp
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-macos-aarch64
-          path: ${{env.HOME}}/runner/bun-webkit.tar.gz
+          path: /tmp/bun-webkit.tar.gz
 
   linux-amd64:
     name: Linux amd64
@@ -259,6 +263,7 @@ jobs:
           temp=/tmp bash release.sh
           cd /tmp
           tar -czf bun-webkit.tar.gz bun-webkit
+          mv bun-webkit.tar.gz /tmp
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
