@@ -230,11 +230,11 @@ CSSColorMixEnabled:
   humanReadableDescription: "Enable support for CSS color-mix() defined in CSS Color 5"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSContainIntrinsicSizeEnabled:
   type: bool
@@ -314,11 +314,11 @@ CSSGradientInterpolationColorSpacesEnabled:
   humanReadableDescription: "Enable custom interpolation in CSS gradients"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSGradientPremultipliedAlphaInterpolationEnabled:
   type: bool
