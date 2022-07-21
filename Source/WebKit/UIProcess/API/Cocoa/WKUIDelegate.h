@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +56,18 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureType) {
     WKMediaCaptureTypeMicrophone,
     WKMediaCaptureTypeCameraAndMicrophone,
 } WK_API_AVAILABLE(macos(12.0), ios(15.0));
+
+/*! @enum WKDialogResult
+@abstract Constants returned by showLockdownModeFirstUseMessage to indicate how WebKit should treat first use.
+@constant WKDialogResultShowDefault Indicates that the client did not display a first use message. WebKit should show the default.
+@constant WKDialogResultAskAgain Indicates the client handled the message, but wants to be checked if other WKWebViews are used.
+@constant WKDialogResultHandled Indicates the client handled the message and no further checks are needed.
+*/
+typedef NS_ENUM(NSInteger, WKDialogResult) {
+    WKDialogResultShowDefault = 1,
+    WKDialogResultAskAgain,
+    WKDialogResultHandled
+} WK_API_AVAILABLE(ios(16.0));
 
 /*! A class conforming to the WKUIDelegate protocol provides methods for
  presenting native UI on behalf of a webpage.
@@ -231,6 +243,16 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureType) {
  */
 
 - (void)webView:(WKWebView *)webView contextMenuDidEndForElement:(WKContextMenuElementInfo *)elementInfo WK_API_AVAILABLE(ios(13.0));
+
+/*! @abstract Displays a Lockdown Mode warning panel.
+ @param webView The web view invoking the delegate method.
+ @param message The message WebKit would display if this delegate were not invoked.
+ @param completionHandler The completion handler you must invoke to resume after the first use message is displayed.
+ @discussion The panel should have a single OK button.
+
+ If you do not implement this method, the web view will display the default Lockdown Mode message.
+ */
+- (void)webView:(WKWebView *)webView showLockdownModeFirstUseMessage:(NSString *)message completionHandler:(void (^)(WKDialogResult))completionHandler WK_API_AVAILABLE(ios(13.0));
 
 #endif // TARGET_OS_IOS
 

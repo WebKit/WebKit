@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -155,6 +155,10 @@ enum class TapHandlingResult : uint8_t;
 
 - (void)_beginLiveResize;
 - (void)_endLiveResize;
+
+#if ENABLE(LOCKDOWN_MODE_API)
++ (void)_clearLockdownModeWarningNeeded;
+#endif
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 - (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion;

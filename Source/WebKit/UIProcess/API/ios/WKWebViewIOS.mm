@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 #import "WKBackForwardListItemInternal.h"
 #import "WKContentViewInteraction.h"
 #import "WKPasswordView.h"
+#import "WKProcessPoolPrivate.h"
 #import "WKSafeBrowsingWarning.h"
 #import "WKScrollView.h"
 #import "WKUIDelegatePrivate.h"
@@ -2989,39 +2990,87 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 constexpr auto WebKitCaptivePortalModeAlertShownKey = @"WebKitCaptivePortalModeAlertShown";
 
-- (void)_presentCaptivePortalModeAlertOnce
+static bool lockdownModeWarningNeeded = true;
+
++ (void)_clearLockdownModeWarningNeeded
+{
+    lockdownModeWarningNeeded = true;
+}
+
+static bool isLockdownModeWarningNeeded()
 {
     // Only present the alert if the app is not Safari
     // and we've never presented the alert before
     if (WebCore::IOSApplication::isMobileSafari())
-        return;
+        return false;
 
-    if (![_WKSystemPreferences isCaptivePortalModeEnabled] || [[NSUserDefaults standardUserDefaults] boolForKey:WebKitCaptivePortalModeAlertShownKey])
+    if (![WKProcessPool _lockdownModeEnabledGloballyForTesting] || [[NSUserDefaults standardUserDefaults] boolForKey:WebKitCaptivePortalModeAlertShownKey])
+        return false;
+
+    return true;
+}
+
+- (void)_presentCaptivePortalMode
+{
+    lockdownModeWarningNeeded = isLockdownModeWarningNeeded();
+    if (!lockdownModeWarningNeeded)
         return;
 
     NSString *appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)_kCFBundleDisplayNameKey];
     if (!appDisplayName)
         appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleNameKey];
 
-    UIAlertController *alert = [UIAlertController
-        alertControllerWithTitle:[NSString stringWithFormat:WEB_UI_NSSTRING(@"Lockdown Mode is Turned On For “%@“", "Lockdown Mode alert title"), appDisplayName]
-        message:WEB_UI_NSSTRING(@"Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.", "Lockdown Mode alert message")
-        preferredStyle:UIAlertControllerStyleAlert];
+    auto message = WEB_UI_NSSTRING(@"Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.", "Lockdown Mode alert message");
 
-    [alert addAction:[UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"OK", "Captive Portal Mode alert OK button") style:UIAlertActionStyleDefault handler:nil]];
+    auto decisionHandler = makeBlockPtr([appDisplayName, message, protectedSelf = retainPtr(self)](WKDialogResult result) mutable {
+        if (result == WKDialogResultAskAgain) {
+            lockdownModeWarningNeeded = true;
+            return;
+        }
 
-    UIViewController *presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
-    [presentationViewController presentViewController:alert animated:YES completion:nil];
+        lockdownModeWarningNeeded = false;
 
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitCaptivePortalModeAlertShownKey];
+        if (result == WKDialogResultHandled) {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitCaptivePortalModeAlertShownKey];
+            return;
+        }
+    
+        UIAlertController *alert = [UIAlertController
+            alertControllerWithTitle:[NSString stringWithFormat:WEB_UI_NSSTRING(@"Lockdown Mode is Turned On For “%@“", "Lockdown Mode alert title"), appDisplayName]
+            message:message
+            preferredStyle:UIAlertControllerStyleAlert];
+            
+        [alert addAction:[UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"OK", "Captive Portal Mode alert OK button") style:UIAlertActionStyleDefault handler:nil]];
+        
+        UIViewController *presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:protectedSelf.get()];
+        [presentationViewController presentViewController:alert animated:YES completion:nil];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitCaptivePortalModeAlertShownKey];
+    });
+    
+    if ([self.UIDelegate respondsToSelector:@selector(webView:showLockdownModeFirstUseMessage:completionHandler:)]) {
+        [self.UIDelegate webView:self showLockdownModeFirstUseMessage:message completionHandler:decisionHandler.get()];
+        return;
+    }
+
+    decisionHandler(WKDialogResultShowDefault);
 }
 
 - (void)_presentCaptivePortalModeAlertIfNeeded
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [self _presentCaptivePortalModeAlertOnce];
+        [self _presentCaptivePortalMode];
+        _needsToPresentLockdownModeMessage = NO;
     });
+
+    if (!lockdownModeWarningNeeded)
+        return;
+
+    if (!_needsToPresentLockdownModeMessage)
+        return;
+
+    [self _presentCaptivePortalMode];
+    _needsToPresentLockdownModeMessage = NO;
 }
 #else
 - (void)_presentCaptivePortalModeAlertIfNeeded

@@ -32,6 +32,7 @@
 #import "Utilities.h"
 
 #import <WebKit/WKContentWorld.h>
+#import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKitPrivate.h>
@@ -526,6 +527,11 @@ static UICalloutBar *suppressUICalloutBar()
 
 - (void)addToTestWindow
 {
+    if (!_hostWindow) {
+        [self _setUpTestWindow:self.frame];
+        return;
+    }
+
 #if PLATFORM(MAC)
     [[_hostWindow contentView] addSubview:self];
 #else
