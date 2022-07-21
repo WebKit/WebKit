@@ -3802,6 +3802,7 @@ webgl/2.0.y [ Skip ]
 # Explicitly enable tests which we have fixed and do not have corresponding 2.0.0 test functionality.
 webgl/2.0.y/conformance/canvas/to-data-url-test.html [ Pass ]
 webgl/2.0.y/conformance/misc/invalid-passed-params.html [ Pass ]
+webgl/2.0.y/conformance/misc/expando-loss.html [ Pass ]
 webgl/2.0.y/conformance/glsl/bugs/character-set.html [ Pass ]
 webgl/2.0.y/conformance/glsl/misc/fragcolor-fragdata-invariant.html [ Pass ]
 webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Pass Slow ]
