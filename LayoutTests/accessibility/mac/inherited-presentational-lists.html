@@ -40,8 +40,7 @@ Nested list inside a presentational list should not be presentational
     if (window.accessibilityController) {
 
         // test the list in container 1
-        document.getElementById("container1").focus();
-        var container = accessibilityController.focusedElement;
+        var container = accessibilityController.accessibleElementById("container1");
         shouldBe("container.childAtIndex(0).role", "'AXRole: AXStaticText'");
         shouldBe("container.childAtIndex(0).stringValue", "'AXValue: apples'");
         shouldBe("container.childAtIndex(1).stringValue", "'AXValue: bananas'");
@@ -51,8 +50,7 @@ Nested list inside a presentational list should not be presentational
         shouldBe("container.childAtIndex(2).title", "'AXTitle: cantalope'");
 
         // test the list in container 2
-        document.getElementById("container2").focus();
-        var container2 = accessibilityController.focusedElement;
+        var container2 = accessibilityController.accessibleElementById("container2");
         shouldBe("container2.childAtIndex(0).role", "'AXRole: AXStaticText'");
         shouldBe("container2.childAtIndex(1).role", "'AXRole: AXStaticText'");
         shouldBe("container2.childAtIndex(2).role", "'AXRole: AXStaticText'");
