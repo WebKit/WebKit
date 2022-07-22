@@ -778,6 +778,22 @@ bool HTMLElement::hasDirectionAuto() const
     return (hasTagName(bdiTag) && direction.isNull()) || equalLettersIgnoringASCIICase(direction, "auto"_s);
 }
 
+// FIXME: Cache directionality.
+TextDirection HTMLElement::computeDirectionality() const
+{
+    for (const Element* element = this; element; element = const_cast<Element*>(element)->parentOrShadowHostElement()) {
+        auto direction = element->attributeWithoutSynchronization(dirAttr);
+        if ((element->hasTagName(bdiTag) && !direction) || equalLettersIgnoringASCIICase(direction, "auto"_s))
+            return directionality();
+
+        if (equalLettersIgnoringASCIICase(direction, "ltr"_s))
+            return TextDirection::LTR;
+        if (equalLettersIgnoringASCIICase(direction, "rtl"_s))
+            return TextDirection::RTL;
+    }
+    return TextDirection::LTR;
+}
+
 TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) const
 {
     if (!(selfOrAncestorHasDirAutoAttribute() && hasDirectionAuto())) {

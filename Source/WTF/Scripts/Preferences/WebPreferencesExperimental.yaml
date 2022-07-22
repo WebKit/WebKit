@@ -531,6 +531,19 @@ DialogElementEnabled:
     WebCore:
       default: true
 
+DirPseudoEnabled:
+  type: bool
+  humanReadableName: ":dir pseudo-class"
+  humanReadableDescription: "Enable the directionality pseudo-class :dir"
+  condition: ENABLE(CSS_SELECTORS_LEVEL4)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Starting the preference name with "Disable" is inconsistent with most other preferences and should be changed.
 DisableMediaExperiencePIDInheritance:
   type: bool

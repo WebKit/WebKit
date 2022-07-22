@@ -1118,9 +1118,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return false;
 
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-        // FIXME: Implement :dir() selector.
         case CSSSelector::PseudoClassDir:
-            return false;
+            return matchesDirPseudoClass(element, selector.argument());
 
         // FIXME: Implement :role() selector.
         case CSSSelector::PseudoClassRole:
