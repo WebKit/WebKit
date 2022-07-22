@@ -90,8 +90,6 @@
 
 #if HAVE(UI_EDIT_MENU_INTERACTION)
 - (void)immediatelyDismissEditMenuInteractionIfNeeded;
-- (void)didPresentEditMenuInteraction:(UIEditMenuInteraction *)interaction;
-- (void)didDismissEditMenuInteraction:(UIEditMenuInteraction *)interaction;
 #endif
 
 @end

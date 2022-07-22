@@ -166,8 +166,6 @@
 		F44A531721B899E200DBB99C /* ClassMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531421B899DA00DBB99C /* ClassMethodSwizzler.mm */; };
 		F44A531821B899E500DBB99C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531621B899DA00DBB99C /* InstanceMethodSwizzler.mm */; };
 		F46240B1217013E500917B16 /* UIScriptControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46240AF2170128300917B16 /* UIScriptControllerCocoa.mm */; };
-		F47A0ED2285FB1C1001D0ECE /* EditMenuInteractionSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F47A0ECF285FB1B3001D0ECE /* EditMenuInteractionSwizzler.mm */; };
-		F47A0ED3285FB2AE001D0ECE /* EditMenuInteractionSwizzler.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A0ECE285FB1B3001D0ECE /* EditMenuInteractionSwizzler.h */; };
 		F4C3578C20E8444600FA0748 /* LayoutTestSpellChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */; };
 		F4FED324235823A3003C139C /* NSPasteboardAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FED3222358215E003C139C /* NSPasteboardAdditions.mm */; };
 /* End PBXBuildFile section */
@@ -449,8 +447,6 @@
 		F44A531521B899DA00DBB99C /* ClassMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClassMethodSwizzler.h; path = ../TestRunnerShared/cocoa/ClassMethodSwizzler.h; sourceTree = "<group>"; };
 		F44A531621B899DA00DBB99C /* InstanceMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InstanceMethodSwizzler.mm; path = ../TestRunnerShared/cocoa/InstanceMethodSwizzler.mm; sourceTree = "<group>"; };
 		F46240AF2170128300917B16 /* UIScriptControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIScriptControllerCocoa.mm; sourceTree = "<group>"; };
-		F47A0ECE285FB1B3001D0ECE /* EditMenuInteractionSwizzler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditMenuInteractionSwizzler.h; sourceTree = "<group>"; };
-		F47A0ECF285FB1B3001D0ECE /* EditMenuInteractionSwizzler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EditMenuInteractionSwizzler.mm; sourceTree = "<group>"; };
 		F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LayoutTestSpellChecker.mm; path = ../TestRunnerShared/cocoa/LayoutTestSpellChecker.mm; sourceTree = "<group>"; };
 		F4C3578B20E8444000FA0748 /* LayoutTestSpellChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayoutTestSpellChecker.h; path = ../TestRunnerShared/cocoa/LayoutTestSpellChecker.h; sourceTree = "<group>"; };
 		F4FED3212358215E003C139C /* NSPasteboardAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSPasteboardAdditions.h; path = ../TestRunnerShared/mac/NSPasteboardAdditions.h; sourceTree = "<group>"; };
@@ -749,8 +745,6 @@
 		2EE52D121890A9FB0010ED21 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				F47A0ECE285FB1B3001D0ECE /* EditMenuInteractionSwizzler.h */,
-				F47A0ECF285FB1B3001D0ECE /* EditMenuInteractionSwizzler.mm */,
 				4430AE181F82C4EF0099915A /* GeneratedTouchesDebugWindow.h */,
 				4430AE171F82C4EE0099915A /* GeneratedTouchesDebugWindow.mm */,
 				0FEBF8581BB61DF20028722D /* HIDEventGenerator.h */,
@@ -1002,7 +996,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DB6187E1D7D58D400978D19 /* CoreGraphicsTestSPI.h in Headers */,
-				F47A0ED3285FB2AE001D0ECE /* EditMenuInteractionSwizzler.h in Headers */,
 				2DD4C49A1D6E7D3B0007379C /* EventSerializerMac.h in Headers */,
 				0F73B5521BA78968004B3EF4 /* JSUIScriptController.h in Headers */,
 				2DFA98481D7F70CF00AFF2C9 /* SharedEventStreamsMac.h in Headers */,
@@ -1232,7 +1225,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F47A0ED2285FB1C1001D0ECE /* EditMenuInteractionSwizzler.mm in Sources */,
 				2E749BF21891EBFA007FC175 /* EventSenderProxyIOS.mm in Sources */,
 				4430AE191F82C4FD0099915A /* GeneratedTouchesDebugWindow.mm in Sources */,
 				0FEBF85A1BB61DF20028722D /* HIDEventGenerator.mm in Sources */,

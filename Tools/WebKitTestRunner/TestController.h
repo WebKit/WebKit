@@ -45,10 +45,6 @@
 #include "InstanceMethodSwizzler.h"
 #endif
 
-#if HAVE(UI_EDIT_MENU_INTERACTION)
-#include "EditMenuInteractionSwizzler.h"
-#endif
-
 OBJC_CLASS NSString;
 OBJC_CLASS UIKeyboardInputMode;
 OBJC_CLASS UIEditMenuInteraction;
@@ -603,10 +599,6 @@ private:
     RetainPtr<UIPasteboardConsistencyEnforcer> m_pasteboardConsistencyEnforcer;
     RetainPtr<UIKeyboardInputMode> m_overriddenKeyboardInputMode;
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_presentPopoverSwizzlers;
-#endif
-
-#if HAVE(UI_EDIT_MENU_INTERACTION)
-    std::unique_ptr<EditMenuInteractionSwizzler> m_editMenuInteractionSwizzler;
 #endif
 
     enum State {

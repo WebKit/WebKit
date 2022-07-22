@@ -502,6 +502,24 @@ static bool isQuickboardViewController(UIViewController *viewController)
     [self _invokeHideKeyboardCallbackIfNecessary];
 }
 
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+
+- (void)_webView:(WKWebView *)webView willPresentEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator
+{
+    [animator addCompletion:[strongSelf = RetainPtr { self }] {
+        [strongSelf _didShowMenu];
+    }];
+}
+
+- (void)_webView:(WKWebView *)webView willDismissEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator
+{
+    [animator addCompletion:[strongSelf = RetainPtr { self }] {
+        [strongSelf _didHideMenu];
+    }];
+}
+
+#endif // HAVE(UI_EDIT_MENU_INTERACTION)
+
 #pragma mark - _WKInputDelegate
 
 - (void)_webView:(WKWebView *)webView willStartInputSession:(id <_WKFormInputSession>)inputSession
@@ -551,27 +569,6 @@ static bool isQuickboardViewController(UIViewController *viewController)
 
 #if HAVE(UI_EDIT_MENU_INTERACTION)
 
-- (UIEditMenuInteraction *)currentEditMenuInteraction
-{
-    for (id<UIInteraction> interaction in self.contentView.interactions) {
-        if (auto *editMenuInteraction = dynamic_objc_cast<UIEditMenuInteraction>(interaction))
-            return editMenuInteraction;
-    }
-    return nil;
-}
-
-- (void)didPresentEditMenuInteraction:(UIEditMenuInteraction *)interaction
-{
-    if (interaction == self.currentEditMenuInteraction)
-        [self _didShowMenu];
-}
-
-- (void)didDismissEditMenuInteraction:(UIEditMenuInteraction *)interaction
-{
-    if (interaction == self.currentEditMenuInteraction)
-        [self _didHideMenu];
-}
-
 - (void)immediatelyDismissEditMenuInteractionIfNeeded
 {
     if (!self.isShowingMenu)
@@ -580,7 +577,10 @@ static bool isQuickboardViewController(UIViewController *viewController)
     self.showingMenu = NO;
 
     [UIView performWithoutAnimation:^{
-        [self.currentEditMenuInteraction dismissMenu];
+        for (id<UIInteraction> interaction in self.contentView.interactions) {
+            if (auto *editMenuInteraction = dynamic_objc_cast<UIEditMenuInteraction>(interaction))
+                [editMenuInteraction dismissMenu];
+        }
     }];
 }
 
