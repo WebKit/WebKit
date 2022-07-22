@@ -207,8 +207,6 @@ inline unsigned defaultOptLevel()
 
 std::optional<GPRReg> linkRegister();
 
-std::optional<GPRReg> dataTempRegister();
-
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

@@ -93,7 +93,7 @@ Code::Code(Procedure& proc)
             setRegsInPriorityOrder(bank, result);
         });
 
-    if (auto reg = dataTempRegister())
+    if (auto reg = linkRegister())
         pinRegister(*reg);
 
     m_pinnedRegs.set(MacroAssembler::framePointerRegister);

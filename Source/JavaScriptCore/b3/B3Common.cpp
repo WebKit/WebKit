@@ -81,17 +81,6 @@ std::optional<GPRReg> linkRegister()
 #endif
 }
 
-std::optional<GPRReg> dataTempRegister()
-{
-#if CPU(ARM64) || CPU(RISCV64)
-    return MacroAssembler::dataTempRegister;
-#elif CPU(X86_64)
-    return std::nullopt;
-#else
-#error Unhandled architecture.
-#endif
-}
-
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
