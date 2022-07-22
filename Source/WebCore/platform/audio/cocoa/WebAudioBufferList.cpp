@@ -98,6 +98,7 @@ void WebAudioBufferList::setSampleCount(uint32_t sampleCount)
 
     m_flatBuffer.resize(bufferSizes->second);
     auto* data = m_flatBuffer.data();
+    memset(data, 0, bufferSizes->second);
 
     for (uint32_t buffer = 0; buffer < m_canonicalList->mNumberBuffers; ++buffer) {
         m_canonicalList->mBuffers[buffer].mData = data;
