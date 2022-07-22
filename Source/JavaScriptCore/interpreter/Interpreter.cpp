@@ -385,7 +385,6 @@ public:
         , m_owner(owner)
         , m_results(results)
         , m_framesToSkip(framesToSkip)
-        , m_remainingCapacityForFrameCapture(capacity)
     {
         m_results.reserveInitialCapacity(capacity);
     }
@@ -402,18 +401,16 @@ public:
                 return IterationStatus::Continue;
         }
 
-        if (m_remainingCapacityForFrameCapture) {
+        if (m_results.size() < m_results.capacity()) {
             if (visitor->isWasmFrame()) {
-                m_results.append(StackFrame(visitor->wasmFunctionIndexOrName()));
+                m_results.uncheckedAppend(StackFrame(visitor->wasmFunctionIndexOrName()));
             } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
-                m_results.append(
+                m_results.uncheckedAppend(
                     StackFrame(m_vm, m_owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeIndex()));
             } else {
-                m_results.append(
+                m_results.uncheckedAppend(
                     StackFrame(m_vm, m_owner, visitor->callee().asCell()));
             }
-    
-            m_remainingCapacityForFrameCapture--;
             return IterationStatus::Continue;
         }
         return IterationStatus::Done;
@@ -424,7 +421,6 @@ private:
     JSCell* m_owner;
     Vector<StackFrame>& m_results;
     mutable size_t m_framesToSkip;
-    mutable size_t m_remainingCapacityForFrameCapture;
 };
 
 void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip, size_t maxStackSize)
@@ -435,20 +431,26 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
     if (!callFrame || !maxStackSize)
         return;
 
-    size_t framesCount = 0;
-    size_t maxFramesCountNeeded = maxStackSize + framesToSkip;
-    StackVisitor::visit(callFrame, vm, [&] (StackVisitor&) -> IterationStatus {
-        if (++framesCount < maxFramesCountNeeded)
+    size_t skippedFrames = 0;
+    size_t visitedFrames = 0;
+    StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
+        if (++skippedFrames <= framesToSkip)
             return IterationStatus::Continue;
+
+        if (auto* codeBlock = visitor->codeBlock()) {
+            if (codeBlock->ownerExecutable()->implementationVisibility() != ImplementationVisibility::Public)
+                return IterationStatus::Continue;
+        }
+
+        if (++visitedFrames < maxStackSize)
+            return IterationStatus::Continue;
+
         return IterationStatus::Done;
     });
-    if (framesCount <= framesToSkip)
+    if (!visitedFrames)
         return;
 
-    framesCount -= framesToSkip;
-    framesCount = std::min(maxStackSize, framesCount);
-
-    GetStackTraceFunctor functor(vm, owner, results, framesToSkip, framesCount);
+    GetStackTraceFunctor functor(vm, owner, results, framesToSkip, visitedFrames);
     StackVisitor::visit(callFrame, vm, functor);
     ASSERT(results.size() == results.capacity());
 }
