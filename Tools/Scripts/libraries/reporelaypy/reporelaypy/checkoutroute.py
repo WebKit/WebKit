@@ -40,10 +40,13 @@ class Redirector(object):
             if not isinstance(obj, Redirector):
                 return super(Checkout.Encoder, self).default(obj)
 
-            return dict(
+            result = dict(
                 name=obj.name,
                 url=obj.url,
             )
+            if obj.fallback:
+                result['fallback'] = self.default(obj.fallback)
+            return result
 
     @classmethod
     def bitbucket_generator(cls, base):
@@ -106,9 +109,10 @@ class Redirector(object):
             return [cls(**node) for node in data]
         return cls(**data)
 
-    def __init__(self, url, name=None):
+    def __init__(self, url, name=None, fallback=None):
         self.url = url
         self.type = None
+        self.fallback = self.from_json(fallback) if isinstance(fallback, dict) else fallback
         self._redirect = None
 
         for key, params in dict(
@@ -119,8 +123,25 @@ class Redirector(object):
             regex, generator, compare = params
             if regex.match(url):
                 self.type = key
-                self._redirect = generator(url)
-                self.compare = compare(url)
+                if self.fallback:
+                    redirect = generator(url)
+                    compare = compare(url)
+
+                    def fallback_generator(commit):
+                        if not commit or commit.message:
+                            return redirect(commit)
+                        return self.fallback(commit)
+
+                    def fallback_compare(head, base):
+                        if not head or not base or (head.message and base.message):
+                            return compare(head, base)
+                        return self.fallback.compare(head, base)
+
+                    self._redirect = fallback_generator
+                    self.compare = fallback_compare
+                else:
+                    self._redirect = generator(url)
+                    self.compare = compare(url)
                 break
         if not self.type:
             raise TypeError("'{}' is not a recognized redirect base")
