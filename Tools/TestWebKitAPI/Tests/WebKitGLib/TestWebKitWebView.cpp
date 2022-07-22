@@ -1872,7 +1872,11 @@ static void testWebViewDefaultContentSecurityPolicy(WebViewTest* test, gconstpoi
 
     // Create a new web view with a policy that blocks eval().
     auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
-        "default-content-security-policy", "script-src 'self'", nullptr));
+        "default-content-security-policy", "script-src 'self'",
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
+        nullptr));
 
     // Ensure JavaScript still functions.
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("'allowed'", &error.outPtr(), webView.get());
@@ -1913,6 +1917,9 @@ static void testWebViewWebExtensionMode(WebViewTest* test, gconstpointer)
     // Create a new web view with an extension mode that blocks the unsafe-inline keyword.
     auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-extension-mode", WEBKIT_WEB_EXTENSION_MODE_MANIFESTV3,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
         nullptr));
     test->loadHtml(html, nullptr, webView.get());
     test->waitUntilLoadFinished(webView.get());
