@@ -5471,7 +5471,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         return codeBlock->outOfLineJumpOffset(m_currentInstruction);
     };
 
-    auto resolveScopeHelper = [&](auto& bytecode, VirtualRegister dst, auto set) {
+    auto resolveScopeHelper = [&](auto& bytecode, Operand dst) {
         auto& metadata = bytecode.metadata(codeBlock);
         ResolveType resolveType;
         unsigned depth;
@@ -5581,7 +5581,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
     };
 
-    auto getFromScopeHelper = [&](auto& bytecode, VirtualRegister scope) {
+    auto getFromScopeHelper = [&](auto& bytecode, Operand scope) {
         auto& metadata = bytecode.metadata(codeBlock);
         unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
         UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
@@ -7995,10 +7995,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_resolve_scope: {
             auto bytecode = currentInstruction->as<OpResolveScope>();
-            auto resolveScopeSet = [this](VirtualRegister dst, Node* value) {
-                set(dst, value);
-            };
-            resolveScopeHelper(bytecode, bytecode.m_dst, resolveScopeSet);
+            resolveScopeHelper(bytecode, bytecode.m_dst);
             NEXT_OPCODE(op_resolve_scope);
         }
         case op_resolve_scope_for_hoisting_func_decl_in_eval: {
@@ -8017,13 +8014,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_resolve_and_get_from_scope: {
             auto bytecode = currentInstruction->as<OpResolveAndGetFromScope>();
-            auto setResolvedScope = [&] (VirtualRegister resolvedScope, Node* value) {
-                set(resolvedScope, value);
-                set(Operand::tmp(bytecode.tmpResolvedScope), value);
-            };
-            resolveScopeHelper(bytecode, bytecode.m_resolvedScope, setResolvedScope);
+            Operand tmpOperand = Operand::tmp(bytecode.tmpResolvedScope);
+            resolveScopeHelper(bytecode, tmpOperand);
             progressToNextCheckpoint();
-            getFromScopeHelper(bytecode, bytecode.m_resolvedScope);
+            getFromScopeHelper(bytecode, tmpOperand);
             NEXT_OPCODE(op_resolve_and_get_from_scope);
         }
 

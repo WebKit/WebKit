@@ -341,7 +341,7 @@ void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const JSInst
     case op_resolve_and_get_from_scope: {
         auto bytecode = instruction->as<OpResolveAndGetFromScope>();
         useAt(OpResolveAndGetFromScope::resolveScope, bytecode.m_scope);
-        useAt(OpResolveAndGetFromScope::getFromScope, bytecode.m_resolvedScope);
+        useAt(OpResolveAndGetFromScope::getFromScope, bytecode.m_dst);
         return;
     }
 
@@ -479,7 +479,7 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
 
     case op_resolve_and_get_from_scope: {
         auto bytecode = instruction->as<OpResolveAndGetFromScope>();
-        defAt(OpResolveAndGetFromScope::resolveScope, bytecode.m_resolvedScope);
+        defAt(OpResolveAndGetFromScope::resolveScope, bytecode.m_dst);
         defAt(OpResolveAndGetFromScope::getFromScope, bytecode.m_dst);
         return;
     }

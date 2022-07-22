@@ -2974,7 +2974,7 @@ end)
 
 llintOpWithMetadata(op_resolve_and_get_from_scope, OpResolveAndGetFromScope, macro (size, get, dispatch, metadata, return)
     macro gotoGetFromScope(valueReg)
-        storeVariable(get, m_resolvedScope, valueReg, t1)
+        storeVariable(get, m_dst, valueReg, t1)
         jmp .gFromScope
     end
 
@@ -2990,7 +2990,7 @@ llintOpWithMetadata(op_resolve_and_get_from_scope, OpResolveAndGetFromScope, mac
     resolveScopeHelper(OpResolveAndGetFromScope, get, dispatch, metadata, gotoGetFromScope, callSlowPathRGSResolveScope, _slow_path_rgs_resolve_scope)
 
 .gFromScope:
-    getFromScopeHelper(OpResolveAndGetFromScope, get, dispatch, metadata, return, callSlowPath, _llint_slow_path_rgs_get_from_scope, m_resolvedScope)
+    getFromScopeHelper(OpResolveAndGetFromScope, get, dispatch, metadata, return, callSlowPath, _llint_slow_path_rgs_get_from_scope, m_dst)
 end)
 
 llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, metadata, return)

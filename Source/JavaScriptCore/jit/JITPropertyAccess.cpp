@@ -1968,8 +1968,8 @@ ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeG
 
 void JIT::emit_op_resolve_and_get_from_scope(const JSInstruction* currentInstruction)
 {
-    emit_op_resolve_scope_helper<OpResolveAndGetFromScope>(currentInstruction, currentInstruction->as<OpResolveAndGetFromScope>().m_resolvedScope);
-    emit_op_get_from_scope_helper<OpResolveAndGetFromScope>(currentInstruction, currentInstruction->as<OpResolveAndGetFromScope>().m_resolvedScope);
+    emit_op_resolve_scope_helper<OpResolveAndGetFromScope>(currentInstruction, currentInstruction->as<OpResolveAndGetFromScope>().m_dst);
+    emit_op_get_from_scope_helper<OpResolveAndGetFromScope>(currentInstruction, currentInstruction->as<OpResolveAndGetFromScope>().m_dst);
 }
 
 template <ResolveType profiledResolveType>

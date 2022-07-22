@@ -2565,7 +2565,6 @@ RegisterID* BytecodeGenerator::emitResolveAndGetFromScope(RegisterID* dst, Regis
                 this,
                 kill(dst),
                 scopeRegister(),
-                resolvedScope,
                 addConstant(variable.ident()),
                 GetPutInfo(resolveMode, resolveType(), InitializationMode::NotInitialization, ecmaMode()),
                 localScopeDepth(),

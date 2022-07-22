@@ -2191,7 +2191,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
 
 LLINT_SLOW_PATH_DECL(slow_path_rgs_get_from_scope)
 {
-    return llintSlowPathGetFromScopeHelper<OpResolveAndGetFromScope>(callFrame, pc, pc->as<OpResolveAndGetFromScope>().m_resolvedScope);
+    return llintSlowPathGetFromScopeHelper<OpResolveAndGetFromScope>(callFrame, pc, pc->as<OpResolveAndGetFromScope>().m_dst);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)

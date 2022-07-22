@@ -1048,7 +1048,6 @@ op :resolve_and_get_from_scope,
     args: {
         dst: VirtualRegister,
         scope: VirtualRegister,
-        resolvedScope: VirtualRegister,
         var: unsigned,
         # $begin: :private,
         getPutInfo: GetPutInfo,
