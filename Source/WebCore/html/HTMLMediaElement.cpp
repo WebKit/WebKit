@@ -1485,6 +1485,11 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
         return;
     }
+#elif USE(GSTREAMER)
+    if (!url.isEmpty() && !frame->loader().willLoadMediaElementURL(url, *this)) {
+        mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
+        return;
+    }
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
