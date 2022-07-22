@@ -255,15 +255,15 @@ jobs:
           install: true
       - name: Run
         run: |
-          rm -rf /tmp/bun-webkit /tmp/bun-webkit.tar.gz
-          temp=/tmp bash release.sh
-          cd /tmp
+          rm -rf ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit.tar.gz
+          temp=${{runner.temp}} bash release.sh
+          cd ${{runner.temp}}
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-linux-amd64
-          path: /tmp/bun-webkit.tar.gz
+          path: ${{runner.temp}}/bun-webkit.tar.gz
 
   linux-aarch64:
     name: Linux aarch64
@@ -277,15 +277,15 @@ jobs:
           install: true
       - name: Run
         run: |
-          rm -rf /tmp/bun-webkit /tmp/bun-webkit.tar.gz
-          temp=/tmp bash release.sh
-          cd /tmp
+          rm -rf ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit.tar.gz
+          temp=${{runner.temp}} bash release.sh
+          cd ${{runner.temp}}
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
           name: bun-webkit-linux-aarch64
-          path: /tmp/bun-webkit.tar.gz
+          path: ${{runner.temp}}/bun-webkit.tar.gz
 
   release:
     name: release
@@ -302,36 +302,36 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-linux-amd64
-          path: /tmp/artifacts/bun-webkit-linux-amd64
+          path: ${{runner.temp}}/bun-webkit-linux-amd64
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-linux-aarch64
-          path: /tmp/artifacts/bun-webkit-linux-aarch64
+          path: ${{runner.temp}}/bun-webkit-linux-aarch64
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-aarch64
-          path: /tmp/artifacts/bun-webkit-macos-aarch64
+          path: ${{runner.temp}}/bun-webkit-macos-aarch64
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-aarch64-lto
-          path: /tmp/artifacts/bun-webkit-macos-aarch64-lto
+          path: ${{runner.temp}}/bun-webkit-macos-aarch64-lto
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-amd64
-          path: /tmp/artifacts/bun-webkit-macos-amd64
+          path: ${{runner.temp}}/bun-webkit-macos-amd64
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-amd64-lto
-          path: /tmp/artifacts/bun-webkit-macos-amd64-lto
+          path: ${{runner.temp}}/bun-webkit-macos-amd64-lto
 
       - name: Rename files
         run: |
-          mv /tmp/artifacts/bun-webkit-linux-amd64/bun-webkit.tar.gz /tmp/artifacts/bun-webkit-linux-amd64.tar.gz
-          mv /tmp/artifacts/bun-webkit-linux-aarch64/bun-webkit.tar.gz  /tmp/artifacts/bun-webkit-linux-aarch64.tar.gz
-          mv /tmp/artifacts/bun-webkit-macos-aarch64/bun-webkit.tar.gz /tmp/artifacts/bun-webkit-macos-aarch64.tar.gz
-          mv /tmp/artifacts/bun-webkit-macos-aarch64-lto/bun-webkit.tar.gz /tmp/artifacts/bun-webkit-macos-aarch64-lto.tar.gz
-          mv /tmp/artifacts/bun-webkit-macos-amd64/bun-webkit.tar.gz  /tmp/artifacts/bun-webkit-macos-amd64.tar.gz
-          mv /tmp/artifacts/bun-webkit-macos-amd64-lto/bun-webkit.tar.gz /tmp/artifacts/bun-webkit-macos-amd64-lto.tar.gz
+          mv ${{runner.temp}}/bun-webkit-linux-amd64/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
+          mv ${{runner.temp}}/bun-webkit-linux-aarch64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-linux-aarch64.tar.gz
+          mv ${{runner.temp}}/bun-webkit-macos-aarch64/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-aarch64.tar.gz
+          mv ${{runner.temp}}/bun-webkit-macos-aarch64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-aarch64-lto.tar.gz
+          mv ${{runner.temp}}/bun-webkit-macos-amd64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
+          mv ${{runner.temp}}/bun-webkit-macos-amd64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -339,4 +339,9 @@ jobs:
           prerelease: true
           title: "Latest Build"
           files: |
-            - /tmp/artifacts/*.tar.gz
+            - ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
+            - ${{runner.temp}}/bun-webkit-linux-aarch64.tar.gz
+            - ${{runner.temp}}/bun-webkit-macos-aarch64.tar.gz
+            - ${{runner.temp}}/bun-webkit-macos-aarch64-lto.tar.gz
+            - ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
+            - ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
