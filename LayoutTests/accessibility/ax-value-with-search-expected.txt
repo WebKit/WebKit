@@ -1,10 +1,7 @@
-This tests that a search field is returns its accessibilityValue correctly.
+This tests that a search field returns its value correctly.
+PASS: searchInput.stringValue === 'AXValue: hello'
+PASS: searchInput.stringValue === 'AXValue: test'
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS searchInput.stringValue is 'AXValue: hello'
-PASS searchInput.stringValue === 'AXValue: test'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1176,6 +1176,11 @@ void AXObjectCache::childrenChanged(AccessibilityObject* object)
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
+void AXObjectCache::valueChanged(Element* element)
+{
+    postNotification(element, AXNotification::AXValueChanged);
+}
+
 void AXObjectCache::notificationPostTimerFired()
 {
     AXTRACE(makeString("AXObjectCache::notificationPostTimerFired 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
@@ -1920,23 +1925,20 @@ void AXObjectCache::deferAttributeChangeIfNeeded(const QualifiedName& attrName, 
     }
     handleAttributeChange(element, attrName);
 }
-    
-bool AXObjectCache::shouldProcessAttributeChange(const QualifiedName& attrName, Element* element)
+
+bool AXObjectCache::shouldProcessAttributeChange(Element* element, const QualifiedName& attrName)
 {
     if (!element)
         return false;
-    
+
     // aria-modal ends up affecting sub-trees that are being shown/hidden so it's likely that
     // an AT would not have accessed this node yet.
     if (attrName == aria_modalAttr)
         return true;
-    
+
     // If an AXObject has yet to be created, then there's no need to process attribute changes.
     // Some of these notifications are processed on the parent, so allow that to proceed as well
-    if (get(element) || get(element->parentNode()))
-        return true;
-
-    return false;
+    return get(element) || get(element->parentNode());
 }
 
 void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName& attrName)
@@ -1944,7 +1946,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     AXTRACE(makeString("AXObjectCache::handleAttributeChange 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     AXLOG(makeString("attribute ", attrName.localName().string(), " for element ", element->debugDescription()));
 
-    if (!shouldProcessAttributeChange(attrName, element))
+    if (!shouldProcessAttributeChange(element, attrName))
         return;
 
     if (relationAttributes().contains(attrName))

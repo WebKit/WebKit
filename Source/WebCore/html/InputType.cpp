@@ -838,10 +838,8 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
         break;
     }
 
-    if (isRangeControl()) {
-        if (auto* cache = element()->document().existingAXObjectCache())
-            cache->postNotification(element(), AXObjectCache::AXValueChanged);
-    }
+    if (auto* cache = element()->document().existingAXObjectCache())
+        cache->valueChanged(element());
 }
 
 void InputType::willDispatchClick(InputElementClickState&)
@@ -1062,8 +1060,8 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     if (result.hasException() || !element())
         return result;
 
-    if (AXObjectCache* cache = element()->document().existingAXObjectCache())
-        cache->postNotification(element(), AXObjectCache::AXValueChanged);
+    if (auto* cache = element()->document().existingAXObjectCache())
+        cache->valueChanged(element());
 
     return result;
 }

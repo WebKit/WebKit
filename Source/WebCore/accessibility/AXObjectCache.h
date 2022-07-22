@@ -185,6 +185,7 @@ public:
     void childrenChanged(Node*, Node* newChild = nullptr);
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
+    void valueChanged(Element*);
     void checkedStateChanged(Node*);
     void autofillTypeChanged(Node*);
     void handleRoleChanged(AccessibilityObject*);
@@ -489,7 +490,7 @@ private:
     void handleMenuItemSelected(Node*);
     void handleRowCountChanged(AXCoreObject*, Document*);
     void handleAttributeChange(Element*, const QualifiedName&);
-    bool shouldProcessAttributeChange(const QualifiedName&, Element*);
+    bool shouldProcessAttributeChange(Element*, const QualifiedName&);
     void selectedChildrenChanged(Node*);
     void selectedChildrenChanged(RenderObject*);
     void selectedStateChanged(Node*);
@@ -637,6 +638,7 @@ inline void AXObjectCache::autofillTypeChanged(Node*) { }
 inline void AXObjectCache::childrenChanged(Node*, Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
+inline void AXObjectCache::valueChanged(Element*) { }
 inline void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node*, Node*) { }
 inline void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element*) { }
 inline void AXObjectCache::deferRecomputeIsIgnored(Element*) { }
@@ -656,7 +658,7 @@ inline void AXObjectCache::deferModalChange(Element*) { }
 inline void AXObjectCache::handleRoleChanged(AccessibilityObject*) { }
 inline void AXObjectCache::deferAttributeChangeIfNeeded(const QualifiedName&, Element*) { }
 inline void AXObjectCache::handleAttributeChange(Element*, const QualifiedName&) { }
-inline bool AXObjectCache::shouldProcessAttributeChange(const QualifiedName&, Element*) { return false; }
+inline bool AXObjectCache::shouldProcessAttributeChange(Element*, const QualifiedName&) { return false; }
 inline void AXObjectCache::handleFocusedUIElementChanged(Node*, Node*, UpdateModal) { }
 inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
