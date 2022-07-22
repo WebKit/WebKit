@@ -158,6 +158,14 @@ bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsig
     LegacyRootInlineBox* firstRootBox = nullptr;
     LegacyRootInlineBox* lastRootBox = nullptr;
 
+    // Verify the DOM and RenderText lengths are in sync. Certain text operations, like upper casing,
+    // may be reflected only on the Render side causing the DOM and Render lengths to differ.
+    if (renderer.style().textTransform() != TextTransform::None && renderer.textNode()
+        && renderer.length() != renderer.textNode()->wholeText().length()) {
+        dirtyAll();
+        return true;
+    }
+
     // Dirty all text boxes that include characters in between offset and offset+len.
     bool dirtiedLines = false;
     for (auto* current = m_first; current; current = current->nextTextBox()) {
