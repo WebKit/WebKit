@@ -6,24 +6,29 @@
 description("Tests that lazy image loading doesn't cause Document leaks.");
 jsTestIsAsync = true;
 
-frameDocumentID = 0;
 checkCount = 0;
-popup = null;
+
+const popupCount = 10;
+popups = [];
+frameDocumentIDs = [];
 
 function runTest()
 {
-    popup.close();
-    popup = null;
+    for (let popup of popups)
+        popup.close();
+    popups = [];
 
     handle = setInterval(() => {
         gc();
-        if (!internals.isDocumentAlive(frameDocumentID)) {
-            clearInterval(handle);
-            testPassed("The popup document didn't leak.");
-            finishJSTest();
+        for (let frameDocumentID of frameDocumentIDs) {
+            if (!internals.isDocumentAlive(frameDocumentID)) {
+                clearInterval(handle);
+                testPassed("The popup document didn't leak.");
+                finishJSTest();
+            }
         }
         checkCount++;
-        if (checkCount > 500) {
+        if (checkCount > 1000) {
             clearInterval(handle);
             testFailed("The popup document leaked.");
             finishJSTest();
@@ -31,13 +36,21 @@ function runTest()
     }, 10);
 }
 
-onload = () => {
-    popup = window.open("resources/lazy-image-loading-document-leak-popup.html");
-    popup.onload = () => {
-        popup.onload = null;
-        frameDocumentID = internals.documentIdentifier(popup.document);
-        shouldBeTrue("internals.isDocumentAlive(frameDocumentID)");
+popupDidLoad = function(popup, event)
+{
+    popup.onload = null;
+    frameDocumentID = internals.documentIdentifier(popup.document);
+    shouldBeTrue("internals.isDocumentAlive(frameDocumentID)");
+    popups.push(popup);
+    frameDocumentIDs.push(frameDocumentID);
+    if (popups.length == popupCount)
         setTimeout(runTest, 0);
+}
+
+onload = () => {
+    for (let i = 0; i < popupCount; i++) {
+        let popup = window.open("resources/lazy-image-loading-document-leak-popup.html");
+        popup.onload = popupDidLoad.bind(event, popup);
     }
 };
 </script>
