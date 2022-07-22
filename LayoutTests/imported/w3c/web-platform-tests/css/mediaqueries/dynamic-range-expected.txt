@@ -1,0 +1,17 @@
+
+FAIL Should be known: '(dynamic-range: standard)' assert_true: expected true got false
+FAIL Should be known: '(dynamic-range: high)' assert_true: expected true got false
+FAIL Should be known: '(video-dynamic-range: standard)' assert_true: Can parse with JS expected true got false
+FAIL Should be known: '(video-dynamic-range: high)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(dynamic-range)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(dynamic-range: 0)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(dynamic-range: 10px)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(dynamic-range: invalid)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(video-dynamic-range)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(video-dynamic-range: 0)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(video-dynamic-range: 10px)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(video-dynamic-range: invalid)' assert_true: Can parse with JS expected true got false
+PASS Check that dynamic-range always matches 'standard'
+FAIL Check that video-dynamic-range always matches 'standard' assert_true: expected true got false
+PASS Check that video-dynamic-range is not 'invalid'
+

@@ -1,31 +1,18 @@
 
-PASS Should be parseable in a CSS stylesheet: '(prefers-contrast)'
-PASS Should be parseable in a CSS stylesheet: '(prefers-contrast: no-preference)'
-PASS Should be parseable in a CSS stylesheet: '(prefers-contrast: more)'
-PASS Should be parseable in a CSS stylesheet: '(prefers-contrast: less)'
-PASS Should not be parseable in a CSS stylesheet: '(prefers-contrast: increase)'
-PASS Should not be parseable in a CSS stylesheet: '(prefers-contrast: none)'
-PASS Should not be parseable in a CSS stylesheet: '(prefers-contrast: forced high)'
-PASS Should not be parseable in a CSS stylesheet: '(prefers-contrast: forced low)'
-PASS Should not be parseable in a CSS stylesheet: '(prefers-contrast > increase)'
-PASS Should not be parseable in a CSS stylesheet: '(prefers-increased-contrast)'
-PASS Should not be parseable in a CSS stylesheet: '(prefers-decreased-contrast)'
-PASS Should not be parseable in a CSS stylesheet: '(prefers-contrast: high)'
-PASS Should not be parseable in a CSS stylesheet: '(prefers-contrast: low)'
-PASS Should not be parseable in a CSS stylesheet: '(prefers-contrast: forced)'
-PASS Should be parseable in JS: '(prefers-contrast)'
-PASS Should be parseable in JS: '(prefers-contrast: no-preference)'
-PASS Should be parseable in JS: '(prefers-contrast: more)'
-PASS Should be parseable in JS: '(prefers-contrast: less)'
-PASS Should not be parseable in JS: '(prefers-contrast: increase)'
-PASS Should not be parseable in JS: '(prefers-contrast: none)'
-PASS Should not be parseable in JS: '(prefers-contrast: forced high)'
-PASS Should not be parseable in JS: '(prefers-contrast: forced low)'
-PASS Should not be parseable in JS: '(prefers-contrast > increase)'
-PASS Should not be parseable in JS: '(prefers-increased-contrast)'
-PASS Should not be parseable in JS: '(prefers-decreased-contrast)'
-PASS Should not be parseable in JS: '(prefers-contrast: high)'
-PASS Should not be parseable in JS: '(prefers-contrast: low)'
-PASS Should not be parseable in JS: '(prefers-contrast: forced)'
+FAIL Should be known: '(prefers-contrast)' assert_true: expected true got false
+FAIL Should be known: '(prefers-contrast: no-preference)' assert_true: expected true got false
+FAIL Should be known: '(prefers-contrast: more)' assert_true: expected true got false
+FAIL Should be known: '(prefers-contrast: less)' assert_true: expected true got false
+FAIL Should be known: '(prefers-contrast: custom)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(prefers-contrast: increase)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(prefers-contrast: none)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(prefers-contrast: forced high)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(prefers-contrast: forced low)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(prefers-contrast > increase)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(prefers-increased-contrast)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(prefers-decreased-contrast)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(prefers-contrast: high)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(prefers-contrast: low)' assert_true: Can parse with JS expected true got false
+FAIL Should be unknown: '(prefers-contrast: forced)' assert_true: Can parse with JS expected true got false
 PASS Check boolean context evaluation.
 

@@ -40,6 +40,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-006-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/dynamic-range.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/forced-colors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/media-queries-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/media-queries-002.xht
@@ -60,6 +61,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-006-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-007-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-case-insensitive-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-case-insensitive-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-deprecated-001-expected.xht
@@ -83,11 +86,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-layer-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-layer-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-layer-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-negative-range-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-negative-range-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-range-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-range-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-unknown-feature-custom-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/navigation-controls.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-image.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-contrast.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-reduced-data.html
@@ -100,6 +111,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/relative-units-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/relative-units-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/relative-units-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/relative-units-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/viewport-script-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/viewport-script-dynamic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/viewport-script-dynamic.html
