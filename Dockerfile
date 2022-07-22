@@ -39,8 +39,15 @@ WORKDIR /webkit
 
 
 ARG WEBKIT_RELEASE_TYPE=Release
+ARG CPU=native
+ENV CPU=${CPU}
+ARG MARCH_FLAG=""
+ENV MARCH_FLAG=${MARCH_FLAG}
+
 
 RUN --mount=type=tmpfs,target=/webkitbuild \
+    export CFLAGS="$CFLAGS -flto -ffat-lto-objects $MARCH_FLAG -mtune=$CPU" && \
+    export CXXFLAGS="$CXXFLAGS -flto -ffat-lto-objects $MARCH_FLAG -mtune=$CPU" && \
     cd /webkitbuild && \
     cmake \
     -DPORT="JSCOnly" \
@@ -53,9 +60,11 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -G Ninja \ 
     -DCMAKE_CXX_COMPILER=$(which clang++-13) \
     -DCMAKE_C_COMPILER=$(which clang-13) \
+    -DCMAKE_C_FLAGS="$CFLAGS" \
+    -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
     /webkit && \
     cd /webkitbuild && \
-    CFLAGS="$CFLAGS -flto -ffat-lto-objects" CXXFLAGS="$CXXFLAGS -flto -ffat-lto-objects" cmake --build /webkitbuild --config $WEBKIT_RELEASE_TYPE --target "jsc" && \
+    CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" cmake --build /webkitbuild --config $WEBKIT_RELEASE_TYPE --target "jsc" && \
     cp -r $WEBKIT_OUT_DIR/lib/*.a /output/lib && \
     cp $WEBKIT_OUT_DIR/*.h /output/include && \
     find $WEBKIT_OUT_DIR/JavaScriptCore/Headers/JavaScriptCore/ -name "*.h" -exec cp {} /output/include/JavaScriptCore/ \; && \
