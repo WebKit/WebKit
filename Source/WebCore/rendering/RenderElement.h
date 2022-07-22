@@ -471,7 +471,7 @@ inline Element* RenderElement::generatingElement() const
 inline bool RenderElement::canContainFixedPositionObjects() const
 {
     return isRenderView()
-        || (canEstablishContainingBlockWithTransform() && hasTransform())
+        || (canEstablishContainingBlockWithTransform() && hasTransformRelatedProperty())
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned()) // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
         || isSVGForeignObject()
         || shouldApplyLayoutOrPaintContainment({ Containment::Layout, Containment::Paint });

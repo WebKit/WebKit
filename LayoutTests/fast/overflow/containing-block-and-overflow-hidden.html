@@ -5,12 +5,11 @@
         width: 50px;
         height: 50px;
     }
-    .parent {
+    body > div {
         background: green;
         overflow: hidden;
     }
-    .child {
-        position: absolute;
+    body > div > div {
         top: 60px;
         background: red;
     }
@@ -18,10 +17,23 @@
 
 <p>You should see no red.</p>
 
-<div class="parent" style="position:relative"><div class="child"></div></div>
-<div class="parent" style="transform:scale(1)"><div class="child"></div></div>
-<div class="parent" style="transform:translate(0)"><div class="child"></div></div>
-<div class="parent" style="will-change:transform"><div class="child"></div></div>
-<div class="parent" style="perspective:0"><div class="child"></div></div>
-<div class="parent" style="contain:paint"><div class="child"></div></div>
-<div class="parent" style="contain:layout"><div class="child"></div></div>
+<p>position:absolute</p>
+<div style="position:relative"><div style="position:absolute"></div></div>
+<div style="transform:scale(1)"><div style="position:absolute"></div></div>
+<div style="transform:translate(0)"><div style="position:absolute"></div></div>
+<div style="will-change:transform"><div style="position:absolute"></div></div>
+<div style="will-change:perspective"><div style="position:absolute"></div></div>
+<div style="transform-style:preserve-3d"><div style="position:absolute"></div></div>
+<div style="perspective:0"><div style="position:absolute"></div></div>
+<div style="contain:paint"><div style="position:absolute"></div></div>
+<div style="contain:layout"><div style="position:absolute"></div></div>
+
+<p>position:fixed</p>
+<div style="transform:scale(1)"><div style="position:fixed"></div></div>
+<div style="transform:translate(0)"><div style="position:fixed"></div></div>
+<div style="will-change:transform"><div style="position:fixed"></div></div>
+<div style="will-change:perspective"><div style="position:fixed"></div></div>
+<div style="transform-style:preserve-3d"><div style="position:absolute"></div></div>
+<div style="perspective:0"><div style="position:fixed"></div></div>
+<div style="contain:paint"><div style="position:fixed"></div></div>
+<div style="contain:layout"><div style="position:fixed"></div></div>
