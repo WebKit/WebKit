@@ -2946,7 +2946,7 @@ JSC_DEFINE_JIT_OPERATION(operationRGSGetFromScope, EncodedJSValue, (JSGlobalObje
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     ThrowScope throwScope = DECLARE_THROW_SCOPE(vm);
-    return operationGetFromScopeHelper<OpResolveAndGetFromScope>(globalObject, pc, vm, callFrame, throwScope, pc->as<OpResolveAndGetFromScope>().m_resolvedScope);
+    return operationGetFromScopeHelper<OpResolveAndGetFromScope>(globalObject, pc, vm, callFrame, throwScope, pc->as<OpResolveAndGetFromScope>().m_dst);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject* globalObject, const JSInstruction* pc))

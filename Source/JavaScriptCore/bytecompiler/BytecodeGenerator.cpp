@@ -2561,12 +2561,10 @@ RegisterID* BytecodeGenerator::emitResolveAndGetFromScope(RegisterID* dst, Regis
     case VarKind::Invalid: {
 #if USE(JSVALUE64)
         if (!variable.offset().isScope()) {
-            resolvedScope = tempDestination(resolvedScope);
             OpResolveAndGetFromScope::emit(
                 this,
                 kill(dst),
                 scopeRegister(),
-                resolvedScope,
                 addConstant(variable.ident()),
                 GetPutInfo(resolveMode, resolveType(), InitializationMode::NotInitialization, ecmaMode()),
                 localScopeDepth(),

@@ -1202,7 +1202,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_rgs_resolve_scope)
 {
-    return commonSlowPathResolveScopeHelper<OpResolveAndGetFromScope>(callFrame, pc, pc->as<OpResolveAndGetFromScope>().m_resolvedScope, nullptr);
+    return commonSlowPathResolveScopeHelper<OpResolveAndGetFromScope>(callFrame, pc, pc->as<OpResolveAndGetFromScope>().m_dst, nullptr);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_rest)
