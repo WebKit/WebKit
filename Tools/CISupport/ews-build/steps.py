@@ -705,7 +705,7 @@ class FetchBranches(steps.ShellSequence, ShellMixin):
         super(FetchBranches, self).__init__(timeout=5 * 60, logEnviron=False, **kwargs)
 
     def run(self):
-        self.commands = [util.ShellArg(command=['git', 'fetch', 'origin'], logname='stdio')]
+        self.commands = [util.ShellArg(command=['git', 'fetch', 'origin', '--prune'], logname='stdio')]
 
         project = self.getProperty('project', GITHUB_PROJECTS[0])
         remote = self.getProperty('remote', 'origin')
@@ -714,7 +714,7 @@ class FetchBranches(steps.ShellSequence, ShellMixin):
                 ['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
                 self.shell_command('git remote add {} {}{}.git || {}'.format(remote, GITHUB_URL, project, self.shell_exit_0())),
                 ['git', 'remote', 'set-url', remote, '{}{}.git'.format(GITHUB_URL, project)],
-                ['git', 'fetch', remote],
+                ['git', 'fetch', remote, '--prune'],
             ]:
                 self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
 
@@ -998,7 +998,7 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
             ['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
             self.shell_command('git remote add {} {}{}.git || {}'.format(remote, GITHUB_URL, project, self.shell_exit_0())),
             ['git', 'remote', 'set-url', remote, '{}{}.git'.format(GITHUB_URL, project)],
-            ['git', 'fetch', remote],
+            ['git', 'fetch', remote, '--prune'],
             ['git', 'branch', '-f', pr_branch, 'remotes/{}/{}'.format(remote, pr_branch)],
             ['git', 'checkout', pr_branch],
         ]

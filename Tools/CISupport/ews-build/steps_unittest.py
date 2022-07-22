@@ -3292,7 +3292,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'fetch', 'Contributor'],
+                command=['git', 'fetch', 'Contributor', '--prune'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
@@ -3356,7 +3356,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'fetch', 'Contributor'],
+                command=['git', 'fetch', 'Contributor', '--prune'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
@@ -3419,7 +3419,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'fetch', 'Contributor'],
+                command=['git', 'fetch', 'Contributor', '--prune'],
             ) + 1,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to checkout and rebase branch from PR 1234')
@@ -5639,7 +5639,7 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'fetch', 'origin']) +
+                        command=['git', 'fetch', 'origin', '--prune']) +
             ExpectShell.log('stdio', stdout='   fb192c1de607..afb17ed1708b  main       -> origin/main\n') +
             0,
         )
@@ -5659,7 +5659,7 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=300,
                 logEnviron=False,
                 env=env,
-                command=['git', 'fetch', 'origin'],
+                command=['git', 'fetch', 'origin', '--prune'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=300,
@@ -5683,7 +5683,7 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=300,
                 logEnviron=False,
                 env=env,
-                command=['git', 'fetch', 'security'],
+                command=['git', 'fetch', 'security', '--prune'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS)
@@ -5695,7 +5695,7 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'fetch',  'origin']) +
+                        command=['git', 'fetch',  'origin', '--prune']) +
             ExpectShell.log('stdio', stdout="fatal: unable to access 'https://github.com/WebKit/WebKit/': Could not resolve host: github.com\n") +
             2,
         )
