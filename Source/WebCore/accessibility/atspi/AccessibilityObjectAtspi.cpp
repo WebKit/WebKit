@@ -385,7 +385,9 @@ static unsigned atspiRole(AccessibilityRole role)
     case AccessibilityRole::SystemWide:
     case AccessibilityRole::TableHeaderContainer:
     case AccessibilityRole::ValueIndicator:
+    case AccessibilityRole::Suggestion:
         return Atspi::Role::Unknown;
+    // Add most new roles above. The release assert is for roles that are handled specially.
     case AccessibilityRole::ListMarker:
     case AccessibilityRole::MathElement:
         RELEASE_ASSERT_NOT_REACHED();

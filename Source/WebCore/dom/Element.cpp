@@ -730,10 +730,10 @@ AtomString Element::getAttributeForBindings(const QualifiedName& name, ResolveUR
         return AtomString(completeURLsInAttributeValue(URL(), *attribute, resolveURLs));
 
     case ResolveURLs::No:
-        return attribute->value();
+        break;
     }
 
-    ASSERT_NOT_REACHED();
+    return attribute->value();
 }
 
 Vector<String> Element::getAttributeNames() const
@@ -1828,10 +1828,10 @@ AtomString Element::getAttributeForBindings(const AtomString& qualifiedName, Res
         return AtomString(completeURLsInAttributeValue(URL(), *attribute, resolveURLs));
 
     case ResolveURLs::No:
-        return attribute->value();
+        break;
     }
 
-    ASSERT_NOT_REACHED();
+    return attribute->value();
 }
 
 const AtomString& Element::getAttributeNS(const AtomString& namespaceURI, const AtomString& localName) const
