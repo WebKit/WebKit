@@ -2271,10 +2271,19 @@
    },
    {
       "emails" : [
+         "webkit-early-warning-system@webkit.org",
          "ews@webkit.org"
       ],
       "github" : "webkit-early-warning-system",
       "name" : "EWS",
+      "status" : "bot"
+   },
+   {
+      "emails" : [
+         "webkit-ews-buildbot@webkit.org"
+      ],
+      "github" : "webkit-ews-buildbot",
+      "name" : "EWS buildbot",
       "status" : "bot"
    },
    {
