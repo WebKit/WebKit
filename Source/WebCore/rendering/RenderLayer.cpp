@@ -4693,7 +4693,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
             if (renderer().canContainAbsolutelyPositionedObjects())
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
-            if (renderer().shouldApplyPaintContainment())
+            if (renderer().canContainFixedPositionObjects())
                 clipRects.setFixedClipRect(intersection(newOverflowClip, clipRects.fixedClipRect()));
         }
         if (renderer().hasClip() && is<RenderBox>(renderer())) {
