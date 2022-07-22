@@ -332,16 +332,15 @@ jobs:
           mv ${{runner.temp}}/bun-webkit-macos-aarch64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-aarch64-lto.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
-      - uses: "marvinpinto/action-automatic-releases@latest"
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
           prerelease: true
-          title: "Latest Build"
+          generate_release_notes: true
           files: |
-            - ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
-            - ${{runner.temp}}/bun-webkit-linux-aarch64.tar.gz
-            - ${{runner.temp}}/bun-webkit-macos-aarch64.tar.gz
-            - ${{runner.temp}}/bun-webkit-macos-aarch64-lto.tar.gz
-            - ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
-            - ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-aarch64.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-aarch64.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-aarch64-lto.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
