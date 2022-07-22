@@ -45,7 +45,7 @@ class ScriptExecutionContext;
 class SecurityOrigin;
 class WebCoreOpaqueRoot;
 
-class CanvasObserver {
+class CanvasObserver : public CanMakeWeakPtr<CanvasObserver> {
 public:
     virtual ~CanvasObserver() = default;
 
@@ -144,7 +144,7 @@ private:
 #if ASSERT_ENABLED
     bool m_didNotifyObserversCanvasDestroyed { false };
 #endif
-    HashSet<CanvasObserver*> m_observers;
+    WeakHashSet<CanvasObserver> m_observers;
     WeakHashSet<CanvasDisplayBufferObserver> m_displayBufferObservers;
 };
 
