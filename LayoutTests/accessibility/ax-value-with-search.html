@@ -9,24 +9,22 @@
 <input type="search" value="hello" id="searchInput">
 
 <script>
-
-    description("This tests that a search field is returns its accessibilityValue correctly.");
-
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
+        let output = "This tests that a search field returns its value correctly.\n";
 
-        var searchInput;
+        var searchInput = accessibilityController.accessibleElementById("searchInput");
+        output += expect("searchInput.stringValue", "'AXValue: hello'");
+
+        document.getElementById("searchInput").value = "test";
         setTimeout(async function() {
-            searchInput = accessibilityController.accessibleElementById("searchInput");
-            shouldBe("searchInput.stringValue", "'AXValue: hello'");
+            await waitFor(() => { return searchInput.stringValue == "AXValue: test"; });
+            output += expect("searchInput.stringValue", "'AXValue: test'");
 
-            document.getElementById("searchInput").value = "test";
-            await expectAsyncExpression("searchInput.stringValue", "'AXValue: test'");
-
+            debug(output);
             finishJSTest();
         }, 0);
     }
 </script>
 </body>
 </html>
-
