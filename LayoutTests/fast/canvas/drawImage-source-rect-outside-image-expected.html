@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function runTest() {
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var srcCanvas = document.createElement("canvas");
+    srcCanvas.width = width;
+    srcCanvas.height = height;
+    var srcCtx = srcCanvas.getContext("2d");
+
+    srcCtx.arc(width / 2, height / 2, Math.min(width / 2, height / 2), 0, Math.PI * 2)
+    srcCtx.fill();
+    ctx.drawImage(srcCanvas, 0, 0, width, height, -width /2, -height /2, width, height);
+}
+</script>
+</head>
+<body onload="runTest()">
+    <canvas id="canvas" width="100" height="100"></canvas>
+</body>
+</html>
