@@ -1225,6 +1225,12 @@ void MediaElementSession::updateMediaUsageIfChanged()
     if (!page || page->sessionID().isEphemeral())
         return;
 
+    // Bail out early if the currentSrc() is empty, and so was the previous currentSrc(), to
+    // avoid doing a large amount of unnecessary work below.
+    auto currentSrc = m_element.currentSrc();
+    if (currentSrc.isEmpty() && (!m_mediaUsageInfo || m_mediaUsageInfo->mediaURL.isEmpty()))
+        return;
+
     bool isOutsideOfFullscreen = false;
 #if ENABLE(FULLSCREEN_API)
     if (auto* fullscreenElement = document.fullscreenManager().currentFullscreenElement())
@@ -1236,7 +1242,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
     bool isPlaying = m_element.isPlaying();
 
     MediaUsageInfo usage =  {
-        m_element.currentSrc(),
+        WTFMove(currentSrc),
         state() == PlatformMediaSession::Playing,
         canShowControlsManager(PlaybackControlsPurpose::ControlsManager),
         !page->isVisibleAndActive(),
