@@ -1,0 +1,13 @@
+
+Test that "invisible autoplay not allowed restriction" pauses realtime media when scrolled out of view and restarts as expected.
+
+** setting video.srcObject
+** waiting to play
+
+** element played, going to pause it
+** Setting style display none
+** playing video
+** removing style display none
+** element played
+** test finished
+

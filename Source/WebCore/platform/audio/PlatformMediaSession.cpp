@@ -244,6 +244,7 @@ bool PlatformMediaSession::clientWillBeginPlayback()
         return false;
     }
 
+    m_stateToRestore = Playing;
     setState(Playing);
     return true;
 }
