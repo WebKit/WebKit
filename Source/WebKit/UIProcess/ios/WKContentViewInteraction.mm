@@ -11526,7 +11526,7 @@ constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysis
 #if HAVE(LINK_PREVIEW)
     if ([userInterfaceItem isEqualToString:@"contextMenu"]) {
         auto itemTitles = adoptNS([NSMutableArray<NSString *> new]);
-        [_contextMenuInteraction updateVisibleMenuWithBlock:[&itemTitles](UIMenu *menu) -> UIMenu * {
+        [self.contextMenuInteraction updateVisibleMenuWithBlock:[&itemTitles](UIMenu *menu) -> UIMenu * {
             for (UIMenuElement *child in menu.children)
                 [itemTitles addObject:child.title];
             return menu;
