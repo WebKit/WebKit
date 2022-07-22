@@ -1106,8 +1106,8 @@ void XMLHttpRequest::dispatchErrorEvents(const AtomString& type)
             m_upload->dispatchProgressEvent(eventNames().loadendEvent, 0, 0);
         }
     }
-    m_progressEventThrottle.dispatchProgressEvent(type);
-    m_progressEventThrottle.dispatchProgressEvent(eventNames().loadendEvent);
+    m_progressEventThrottle.dispatchErrorProgressEvent(type);
+    m_progressEventThrottle.dispatchErrorProgressEvent(eventNames().loadendEvent);
 }
 
 void XMLHttpRequest::timeoutTimerFired()

@@ -50,6 +50,7 @@ public:
     void updateProgress(bool isAsync, bool lengthComputable, unsigned long long loaded, unsigned long long total);
     void dispatchReadyStateChangeEvent(Event&, ProgressEventAction = DoNotFlushProgressEvent);
     void dispatchProgressEvent(const AtomString&);
+    void dispatchErrorProgressEvent(const AtomString&);
 
     void suspend();
     void resume();

@@ -18,9 +18,9 @@ var loaded = 0;
 
 function onProgressEvent(e)
 {
-    if (total != e.total || loaded != e.loaded)
+    if (e.total != 0 || e.loaded != 0)
         fail("Event " + e.type + "total/loaded values not matching: " 
-            + "(" + e.loaded + " / " + e.total + "), expected (" + loaded + " / " + total + ")");
+            + "(" + e.loaded + " / " + e.total + "), expected (0 / 0)");
 }
 
 function onUnexpectedProgressEvent(e)
