@@ -582,7 +582,18 @@ class Port(object):
         """Return True if the test name refers to an existing test or baseline."""
         # Used by test_expectations.py to determine if an entry refers to a
         # valid test and by printing.py to determine if baselines exist.
-        return self.test_isfile(test_name) or self.test_isdir(test_name)
+        if self.test_isfile(test_name) or self.test_isdir(test_name):
+            return True
+        if '?' in test_name or '#' in test_name:
+            fs = self._filesystem
+            ext_parts = fs.splitext(test_name)
+            test_name = ext_parts[0]
+            if len(ext_parts) > 1 and '?' in ext_parts[1]:
+                test_name += ext_parts[1].split('?')[0]
+            if len(ext_parts) > 1 and '#' in ext_parts[1]:
+                test_name += ext_parts[1].split('#')[0]
+            return self.test_isfile(test_name)
+        return False
 
     def split_test(self, test_name):
         """Splits a test name into the 'directory' part and the 'basename' part."""

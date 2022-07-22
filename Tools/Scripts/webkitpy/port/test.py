@@ -107,7 +107,7 @@ class TestList(object):
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 83
+TOTAL_TESTS = 84
 TOTAL_SKIPS = 11
 TOTAL_RETRIES = 13
 
@@ -283,6 +283,8 @@ layer at (0,0) size 800x34
         expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, crash=True, is_wpt_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/crashtests/dir/test.html',
         expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+
+    tests.add('variant/variant.any.html')
 
     return tests
 

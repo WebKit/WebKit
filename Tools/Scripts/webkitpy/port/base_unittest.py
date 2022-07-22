@@ -269,6 +269,7 @@ class PortTest(unittest.TestCase):
         self.assertTrue(port.test_exists('passes'))
         self.assertTrue(port.test_exists('passes/text.html'))
         self.assertFalse(port.test_exists('passes/does_not_exist.html'))
+        self.assertTrue(port.test_exists('variant/variant.any.html?1-100'))
 
     def test_test_isfile(self):
         port = self.make_port(with_tests=True)
