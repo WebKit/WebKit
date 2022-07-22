@@ -59,7 +59,7 @@ CanvasBase::CanvasBase(IntSize size)
 CanvasBase::~CanvasBase()
 {
     ASSERT(m_didNotifyObserversCanvasDestroyed);
-    ASSERT(m_observers.isEmpty());
+    ASSERT(m_observers.computesEmpty());
     ASSERT(!m_imageBuffer);
 }
 
@@ -123,7 +123,7 @@ size_t CanvasBase::externalMemoryCost() const
 
 void CanvasBase::addObserver(CanvasObserver& observer)
 {
-    m_observers.add(&observer);
+    m_observers.add(observer);
 
     if (is<CSSCanvasValue::CanvasObserverProxy>(observer))
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*this);
@@ -131,7 +131,7 @@ void CanvasBase::addObserver(CanvasObserver& observer)
 
 void CanvasBase::removeObserver(CanvasObserver& observer)
 {
-    m_observers.remove(&observer);
+    m_observers.remove(observer);
 
     if (is<CSSCanvasValue::CanvasObserverProxy>(observer))
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*this);
@@ -140,23 +140,21 @@ void CanvasBase::removeObserver(CanvasObserver& observer)
 void CanvasBase::notifyObserversCanvasChanged(const std::optional<FloatRect>& rect)
 {
     for (auto& observer : m_observers)
-        observer->canvasChanged(*this, rect);
+        observer.canvasChanged(*this, rect);
 }
 
 void CanvasBase::notifyObserversCanvasResized()
 {
     for (auto& observer : m_observers)
-        observer->canvasResized(*this);
+        observer.canvasResized(*this);
 }
 
 void CanvasBase::notifyObserversCanvasDestroyed()
 {
     ASSERT(!m_didNotifyObserversCanvasDestroyed);
 
-    for (auto& observer : copyToVector(m_observers))
-        observer->canvasDestroyed(*this);
-
-    m_observers.clear();
+    for (auto& observer : std::exchange(m_observers, WeakHashSet<CanvasObserver>()))
+        observer.canvasDestroyed(*this);
 
 #if ASSERT_ENABLED
     m_didNotifyObserversCanvasDestroyed = true;
@@ -186,7 +184,7 @@ HashSet<Element*> CanvasBase::cssCanvasClients() const
         if (!is<CSSCanvasValue::CanvasObserverProxy>(observer))
             continue;
 
-        auto clients = downcast<CSSCanvasValue::CanvasObserverProxy>(observer)->ownerValue().clients();
+        auto clients = downcast<CSSCanvasValue::CanvasObserverProxy>(observer).ownerValue().clients();
         for (auto& entry : clients) {
             if (RefPtr<Element> element = entry.key->element())
                 cssCanvasClients.add(element.get());
