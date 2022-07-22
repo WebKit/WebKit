@@ -128,8 +128,8 @@ jobs:
         with:
           name: bun-webkit-macos-amd64-lto
           path: ${{runner.temp}}/bun-webkit.tar.gz
-  macos-aarch64-lto:
-    name: macOS AARCH64 LTO
+  macos-arm64-lto:
+    name: macOS arm64 LTO
     runs-on: macOS-arm64
     timeout-minutes: 90
     strategy:
@@ -181,10 +181,10 @@ jobs:
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
-          name: bun-webkit-macos-aarch64-lto
+          name: bun-webkit-macos-arm64-lto
           path: ${{runner.temp}}/bun-webkit.tar.gz
-  macos-aarch64:
-    name: macOS AARCH64
+  macos-arm64:
+    name: macOS arm64
     runs-on: macOS-arm64
     timeout-minutes: 90
     strategy:
@@ -236,7 +236,7 @@ jobs:
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
-          name: bun-webkit-macos-aarch64
+          name: bun-webkit-macos-arm64
           path: ${{runner.temp}}/bun-webkit.tar.gz
 
   linux-amd64:
@@ -265,8 +265,8 @@ jobs:
           name: bun-webkit-linux-amd64
           path: ${{runner.temp}}/bun-webkit.tar.gz
 
-  linux-aarch64:
-    name: Linux aarch64
+  linux-arm64:
+    name: Linux arm64
     runs-on: linux-arm64
     timeout-minutes: 90
     steps:
@@ -284,7 +284,7 @@ jobs:
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
-          name: bun-webkit-linux-aarch64
+          name: bun-webkit-linux-arm64
           path: ${{runner.temp}}/bun-webkit.tar.gz
 
   release:
@@ -293,11 +293,11 @@ jobs:
     timeout-minutes: 90
     needs:
       - linux-amd64
-      - linux-aarch64
+      - linux-arm64
       - macos-amd64-lto
       - macos-amd64
-      - macos-aarch64-lto
-      - macos-aarch64
+      - macos-arm64-lto
+      - macos-arm64
     steps:
       - uses: actions/download-artifact@v3
         with:
@@ -305,16 +305,16 @@ jobs:
           path: ${{runner.temp}}/bun-webkit-linux-amd64
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-linux-aarch64
-          path: ${{runner.temp}}/bun-webkit-linux-aarch64
+          name: bun-webkit-linux-arm64
+          path: ${{runner.temp}}/bun-webkit-linux-arm64
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-macos-aarch64
-          path: ${{runner.temp}}/bun-webkit-macos-aarch64
+          name: bun-webkit-macos-arm64
+          path: ${{runner.temp}}/bun-webkit-macos-arm64
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-macos-aarch64-lto
-          path: ${{runner.temp}}/bun-webkit-macos-aarch64-lto
+          name: bun-webkit-macos-arm64-lto
+          path: ${{runner.temp}}/bun-webkit-macos-arm64-lto
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-amd64
@@ -327,9 +327,9 @@ jobs:
       - name: Rename files
         run: |
           mv ${{runner.temp}}/bun-webkit-linux-amd64/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
-          mv ${{runner.temp}}/bun-webkit-linux-aarch64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-linux-aarch64.tar.gz
-          mv ${{runner.temp}}/bun-webkit-macos-aarch64/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-aarch64.tar.gz
-          mv ${{runner.temp}}/bun-webkit-macos-aarch64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-aarch64-lto.tar.gz
+          mv ${{runner.temp}}/bun-webkit-linux-arm64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
+          mv ${{runner.temp}}/bun-webkit-macos-arm64/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
+          mv ${{runner.temp}}/bun-webkit-macos-arm64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
       - name: Release
@@ -337,10 +337,11 @@ jobs:
         with:
           prerelease: true
           generate_release_notes: true
+          tag_name: "latest"
           files: |
             ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
-            ${{runner.temp}}/bun-webkit-linux-aarch64.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-aarch64.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-aarch64-lto.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
