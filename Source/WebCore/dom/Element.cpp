@@ -4704,6 +4704,7 @@ String Element::resolveURLStringIfNeeded(const String& urlString, ResolveURLs re
     if (resolveURLs == ResolveURLs::No)
         return urlString;
 
+    static MainThreadNeverDestroyed<const AtomString> maskedURLStringForBindings(document().maskedURLStringForBindings());
     URL completeURL = base.isNull() ? document().completeURL(urlString) : URL(base, urlString);
 
     switch (resolveURLs) {
@@ -4712,7 +4713,7 @@ String Element::resolveURLStringIfNeeded(const String& urlString, ResolveURLs re
 
     case ResolveURLs::YesExcludingURLsForPrivacy: {
         if (document().shouldMaskURLForBindings(completeURL))
-            return document().maskedURLStringForBindings();
+            return maskedURLStringForBindings.get();
         if (!document().url().isLocalFile())
             return completeURL.string();
         break;
@@ -4720,7 +4721,7 @@ String Element::resolveURLStringIfNeeded(const String& urlString, ResolveURLs re
 
     case ResolveURLs::NoExcludingURLsForPrivacy:
         if (document().shouldMaskURLForBindings(completeURL))
-            return document().maskedURLStringForBindings();
+            return maskedURLStringForBindings.get();
         break;
 
     case ResolveURLs::No:

@@ -721,7 +721,7 @@ public:
 
     inline bool shouldMaskURLForBindings(const URL&) const;
     inline const URL& maskedURLForBindingsIfNeeded(const URL&) const;
-    static const AtomString& maskedURLStringForBindings();
+    static StaticStringImpl& maskedURLStringForBindings();
     static const URL& maskedURLForBindings();
 
     String userAgent(const URL&) const final;
