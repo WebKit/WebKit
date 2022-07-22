@@ -2122,9 +2122,6 @@
         (apply-message-filter
             (deny mach-message-send (with telemetry))
             (allow mach-message-send
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-                (with telemetry-backtrace)
-#endif
                 (kernel-mig-routine
                     _mach_make_memory_entry
                     clock_get_time
