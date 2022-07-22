@@ -205,7 +205,9 @@ inline unsigned defaultOptLevel()
     return Options::defaultB3OptLevel();
 }
 
-std::optional<GPRReg> pinnedExtendedOffsetAddrRegister();
+std::optional<GPRReg> linkRegister();
+
+std::optional<GPRReg> dataTempRegister();
 
 } } // namespace JSC::B3
 
