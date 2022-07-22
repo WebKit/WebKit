@@ -560,9 +560,9 @@ PASS -webkit-perspective-origin: _dashed_attribute v. CSS.supports
 PASS -webkit-text-fill-color: _camel_cased_attribute v. CSS.supports
 PASS -webkit-text-fill-color: _webkit_cased_attribute v. CSS.supports
 PASS -webkit-text-fill-color: _dashed_attribute v. CSS.supports
-FAIL -webkit-text-size-adjust: _camel_cased_attribute v. CSS.supports assert_equals: expected true but got false
-FAIL -webkit-text-size-adjust: _webkit_cased_attribute v. CSS.supports assert_equals: expected true but got false
-FAIL -webkit-text-size-adjust: _dashed_attribute v. CSS.supports assert_equals: expected true but got false
+PASS -webkit-text-size-adjust: _camel_cased_attribute v. CSS.supports
+PASS -webkit-text-size-adjust: _webkit_cased_attribute v. CSS.supports
+PASS -webkit-text-size-adjust: _dashed_attribute v. CSS.supports
 PASS -webkit-text-stroke: _camel_cased_attribute v. CSS.supports
 PASS -webkit-text-stroke: _webkit_cased_attribute v. CSS.supports
 PASS -webkit-text-stroke: _dashed_attribute v. CSS.supports
@@ -891,8 +891,8 @@ PASS flood-color: _dashed_attribute v. CSS.supports
 PASS flood-opacity: _camel_cased_attribute v. CSS.supports
 PASS flood-opacity: _dashed_attribute v. CSS.supports
 PASS font: _camel_cased_attribute v. CSS.supports
-PASS font-display: _camel_cased_attribute v. CSS.supports
-PASS font-display: _dashed_attribute v. CSS.supports
+FAIL font-display: _camel_cased_attribute v. CSS.supports assert_equals: expected true but got false
+FAIL font-display: _dashed_attribute v. CSS.supports assert_equals: expected true but got false
 PASS font-family: _camel_cased_attribute v. CSS.supports
 PASS font-family: _dashed_attribute v. CSS.supports
 PASS font-feature-settings: _camel_cased_attribute v. CSS.supports
@@ -1333,7 +1333,7 @@ PASS size: _camel_cased_attribute v. CSS.supports
 PASS speak: _camel_cased_attribute v. CSS.supports
 PASS speak-as: _camel_cased_attribute v. CSS.supports
 PASS speak-as: _dashed_attribute v. CSS.supports
-PASS src: _camel_cased_attribute v. CSS.supports
+FAIL src: _camel_cased_attribute v. CSS.supports assert_equals: expected true but got false
 PASS stop-color: _camel_cased_attribute v. CSS.supports
 PASS stop-color: _dashed_attribute v. CSS.supports
 PASS stop-opacity: _camel_cased_attribute v. CSS.supports
@@ -1474,8 +1474,8 @@ PASS transition-timing-function: _dashed_attribute v. CSS.supports
 PASS translate: _camel_cased_attribute v. CSS.supports
 PASS unicode-bidi: _camel_cased_attribute v. CSS.supports
 PASS unicode-bidi: _dashed_attribute v. CSS.supports
-PASS unicode-range: _camel_cased_attribute v. CSS.supports
-PASS unicode-range: _dashed_attribute v. CSS.supports
+FAIL unicode-range: _camel_cased_attribute v. CSS.supports assert_equals: expected true but got false
+FAIL unicode-range: _dashed_attribute v. CSS.supports assert_equals: expected true but got false
 PASS user-select: _camel_cased_attribute v. CSS.supports
 PASS user-select: _dashed_attribute v. CSS.supports
 PASS user-zoom: _camel_cased_attribute v. CSS.supports

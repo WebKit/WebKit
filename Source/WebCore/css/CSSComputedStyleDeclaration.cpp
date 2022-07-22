@@ -2570,6 +2570,11 @@ const Settings* CSSComputedStyleDeclaration::settings() const
     return &m_element->document().settings();
 }
 
+const FixedVector<CSSPropertyID>& CSSComputedStyleDeclaration::exposedComputedCSSPropertyIDs() const
+{
+    return m_element->document().exposedComputedCSSPropertyIDs();
+}
+
 static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID propertyID)
 {
     if (element.styleValidity() != Style::Validity::Valid)
@@ -2883,6 +2888,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     if (!styledElement)
         return nullptr;
 
+    if (!isCSSPropertyExposed(propertyID, &m_element->document().settings())) {
+        // Exit quickly, and avoid us ever having to update layout in this case.
+        return nullptr;
+    }
+
     std::unique_ptr<RenderStyle> ownedStyle;
     const RenderStyle* style = nullptr;
     bool forceFullLayout = false;
@@ -2928,15 +2938,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     auto& cssValuePool = CSSValuePool::singleton();
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style.direction(), style.writingMode());
 
+    ASSERT(isCSSPropertyExposed(propertyID, &m_element->document().settings()));
+
     switch (propertyID) {
         case CSSPropertyInvalid:
-#if ENABLE(TEXT_AUTOSIZING)
-        case CSSPropertyInternalTextAutosizingStatus:
-#endif
-            break;
+            return nullptr;
         case CSSPropertyAccentColor: {
-            if (!m_element->document().settings().accentColorEnabled())
-                return nullptr;
             if (style.hasAutoAccentColor())
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
             return currentColorOrValidColor(&style, style.accentColor());
@@ -3390,8 +3397,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createValue(style.imageResolution(), CSSUnitType::CSS_DPPX);
 #endif
         case CSSPropertyInputSecurity:
-            if (!m_element->document().settings().cssInputSecurityEnabled())
-                return nullptr;
             return cssValuePool.createValue(style.inputSecurity());
         case CSSPropertyLeft:
             return positionOffsetValue(style, CSSPropertyLeft, renderer);
@@ -3474,28 +3479,16 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyOffsetPath:
             // The computed value of offset-path must only contain absolute draw commands.
             // https://github.com/w3c/fxtf-drafts/issues/225#issuecomment-334322738
-            if (!m_element->document().settings().cssMotionPathEnabled())
-                return nullptr;
             return valueForPathOperation(style, style.offsetPath(), SVGPathConversion::ForceAbsolute);
         case CSSPropertyOffsetDistance:
-            if (!m_element->document().settings().cssMotionPathEnabled())
-                return nullptr;
             return cssValuePool.createValue(style.offsetDistance(), style);
         case CSSPropertyOffsetPosition:
-            if (!m_element->document().settings().cssMotionPathEnabled())
-                return nullptr;
             return valueForPositionOrAuto(style, style.offsetPosition());
         case CSSPropertyOffsetAnchor:
-            if (!m_element->document().settings().cssMotionPathEnabled())
-                return nullptr;
             return valueForPositionOrAuto(style, style.offsetAnchor());
         case CSSPropertyOffsetRotate:
-            if (!m_element->document().settings().cssMotionPathEnabled())
-                return nullptr;
             return valueForOffsetRotate(style.offsetRotate());
         case CSSPropertyOffset:
-            if (!m_element->document().settings().cssMotionPathEnabled())
-                return nullptr;
             return valueForOffsetShorthand(style);
         case CSSPropertyOpacity:
             return cssValuePool.createValue(style.opacity(), CSSUnitType::CSS_NUMBER);
@@ -3522,16 +3515,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyOverflowY:
             return cssValuePool.createValue(style.overflowY());
         case CSSPropertyOverscrollBehavior:
-            if (!m_element->document().settings().overscrollBehaviorEnabled())
-                return nullptr;
             return cssValuePool.createValue(std::max(style.overscrollBehaviorX(), style.overscrollBehaviorY()));
         case CSSPropertyOverscrollBehaviorX:
-            if (!m_element->document().settings().overscrollBehaviorEnabled())
-                return nullptr;
             return cssValuePool.createValue(style.overscrollBehaviorX());
         case CSSPropertyOverscrollBehaviorY:
-            if (!m_element->document().settings().overscrollBehaviorEnabled())
-                return nullptr;
             return cssValuePool.createValue(style.overscrollBehaviorY());
         case CSSPropertyPaddingTop:
             return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::paddingTop, &RenderBoxModelObject::computedCSSPaddingTop>(style, renderer);
@@ -3566,14 +3553,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTextAlign:
             return cssValuePool.createValue(style.textAlign());
         case CSSPropertyTextAlignLast:
-            if (!m_element->document().settings().cssTextAlignLastEnabled())
-                return nullptr;
             return cssValuePool.createValue(style.textAlignLast());
         case CSSPropertyTextDecoration:
             return renderTextDecorationLineFlagsToCSSValue(style.textDecorationLine());
         case CSSPropertyTextJustify:
-            if (!m_element->document().settings().cssTextJustifyEnabled())
-                return nullptr;
             return cssValuePool.createValue(style.textJustify());
         case CSSPropertyWebkitTextDecoration:
             return getCSSPropertyValuesForShorthandProperties(webkitTextDecorationShorthand());
@@ -3744,8 +3727,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyAppearance:
             return cssValuePool.createValue(style.appearance());
         case CSSPropertyAspectRatio:
-            if (!m_element->document().settings().aspectRatioEnabled())
-                return nullptr;
             switch (style.aspectRatioType()) {
             case AspectRatioType::Auto:
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
@@ -3766,8 +3747,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             ASSERT_NOT_REACHED();
             return nullptr;
         case CSSPropertyContain: {
-            if (!m_element->document().settings().cssContainmentEnabled())
-                return nullptr;
             auto containment = style.contain();
             if (!containment)
                 return cssValuePool.createIdentifierValue(CSSValueNone);
@@ -3808,21 +3787,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 list->append(cssValuePool.createCustomIdent(name));
             return list;
         }
-        case CSSPropertyContainIntrinsicSize: {
-            if (!m_element->document().settings().cssContainIntrinsicSizeEnabled())
-                return nullptr;
+        case CSSPropertyContainIntrinsicSize:
             return getCSSPropertyValuesFor2SidesShorthand(containIntrinsicSizeShorthand());
-        }
-        case CSSPropertyContainIntrinsicWidth: {
-            if (!m_element->document().settings().cssContainIntrinsicSizeEnabled())
-                return nullptr;
+        case CSSPropertyContainIntrinsicWidth:
             return valueForContainIntrinsicSize(style, style.containIntrinsicWidthType(), style.containIntrinsicWidth());
-        }
-        case CSSPropertyContainIntrinsicHeight: {
-            if (!m_element->document().settings().cssContainIntrinsicSizeEnabled())
-                return nullptr;
+        case CSSPropertyContainIntrinsicHeight:
             return valueForContainIntrinsicSize(style, style.containIntrinsicHeightType(), style.containIntrinsicHeight());
-        }
         case CSSPropertyBackfaceVisibility:
             return cssValuePool.createIdentifierValue((style.backfaceVisibility() == BackfaceVisibility::Hidden) ? CSSValueHidden : CSSValueVisible);
         case CSSPropertyBorderImage:
@@ -3852,9 +3822,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             if (style.maskBoxImageSource())
                 return style.maskBoxImageSource()->cssValue();
             return cssValuePool.createIdentifierValue(CSSValueNone);
-        case CSSPropertyWebkitFontSizeDelta:
-            // Not a real style property -- used by the editing engine -- so has no computed value.
-            break;
         case CSSPropertyWebkitInitialLetter: {
             auto drop = !style.initialLetterDrop() ? cssValuePool.createIdentifierValue(CSSValueNormal) : cssValuePool.createValue(style.initialLetterDrop(), CSSUnitType::CSS_NUMBER);
             auto size = !style.initialLetterHeight() ? cssValuePool.createIdentifierValue(CSSValueNormal) : cssValuePool.createValue(style.initialLetterHeight(), CSSUnitType::CSS_NUMBER);
@@ -3961,16 +3928,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             ASSERT_NOT_REACHED();
             return nullptr;
         case CSSPropertyTranslate:
-            if (!m_element->document().settings().cssIndividualTransformPropertiesEnabled())
-                return nullptr;
             return computedTranslate(renderer, style);
         case CSSPropertyScale:
-            if (!m_element->document().settings().cssIndividualTransformPropertiesEnabled())
-                return nullptr;
             return computedScale(renderer, style);
         case CSSPropertyRotate:
-            if (!m_element->document().settings().cssIndividualTransformPropertiesEnabled())
-                return nullptr;
             return computedRotate(renderer, style);
         case CSSPropertyTransitionDelay:
         case CSSPropertyTransitionDuration:
@@ -4196,11 +4157,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
 #endif
 
-        /* Individual properties not part of the spec */
-        case CSSPropertyBackgroundRepeatX:
-        case CSSPropertyBackgroundRepeatY:
-            break;
-
         // Length properties for SVG.
         case CSSPropertyCx:
             return zoomAdjustedPixelValueForLength(style.svgStyle().cx(), style);
@@ -4239,7 +4195,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
         case CSSPropertyAll:
-            break;
+            return nullptr;
 
         /* Directional properties are resolved by resolveDirectionAwareProperty() before the switch. */
         case CSSPropertyBorderBlockEndColor:
@@ -4289,7 +4245,22 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyContainIntrinsicBlockSize:
         case CSSPropertyContainIntrinsicInlineSize:
             ASSERT_NOT_REACHED();
-            break;
+            return nullptr;
+
+        // Internal properties should be handled by isCSSPropertyExposed above.
+        case CSSPropertyBackgroundRepeatX:
+        case CSSPropertyBackgroundRepeatY:
+        case CSSPropertyWebkitFontSizeDelta:
+        case CSSPropertyWebkitMarqueeDirection:
+        case CSSPropertyWebkitMarqueeIncrement:
+        case CSSPropertyWebkitMarqueeRepetition:
+        case CSSPropertyWebkitMarqueeStyle:
+        case CSSPropertyWebkitMarqueeSpeed:
+#if ENABLE(TEXT_AUTOSIZING)
+        case CSSPropertyInternalTextAutosizingStatus:
+#endif
+            ASSERT_NOT_REACHED();
+            return nullptr;
 
         // These are intentionally unimplemented because they are actually descriptors for @counter-style.
         case CSSPropertySystem:
@@ -4301,31 +4272,26 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyFallback:
         case CSSPropertySymbols:
         case CSSPropertyAdditiveSymbols:
-            break;
+            return nullptr;
 
         /* Unimplemented @font-face properties */
         case CSSPropertySrc:
         case CSSPropertyUnicodeRange:
         case CSSPropertyFontDisplay:
-            break;
+            return nullptr;
 
         // Unimplemented @font-palette-values properties
         case CSSPropertyBasePalette:
         case CSSPropertyOverrideColors:
-            break;
+            return nullptr;
 
         /* Other unimplemented properties */
         case CSSPropertyPage: // for @page
         case CSSPropertySize: // for @page
-            break;
+            return nullptr;
 
         /* Unimplemented -webkit- properties */
         case CSSPropertyWebkitBorderRadius:
-        case CSSPropertyWebkitMarqueeDirection:
-        case CSSPropertyWebkitMarqueeIncrement:
-        case CSSPropertyWebkitMarqueeRepetition:
-        case CSSPropertyWebkitMarqueeStyle:
-        case CSSPropertyWebkitMarqueeSpeed:
         case CSSPropertyWebkitMask:
         case CSSPropertyMaskRepeatX:
         case CSSPropertyMaskRepeatY:
@@ -4335,7 +4301,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTransformOriginX:
         case CSSPropertyTransformOriginY:
         case CSSPropertyTransformOriginZ:
-            break;
+            return nullptr;
 
         case CSSPropertyBufferedRendering:
         case CSSPropertyClipRule:
@@ -4372,6 +4338,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return nullptr;
     }
 
+    ASSERT_NOT_REACHED();
     return nullptr;
 }
 
@@ -4391,7 +4358,7 @@ unsigned CSSComputedStyleDeclaration::length() const
     if (!style)
         return 0;
 
-    return numComputedPropertyIDs + style->inheritedCustomProperties().size() + style->nonInheritedCustomProperties().size();
+    return exposedComputedCSSPropertyIDs().size() + style->inheritedCustomProperties().size() + style->nonInheritedCustomProperties().size();
 }
 
 String CSSComputedStyleDeclaration::item(unsigned i) const
@@ -4399,8 +4366,8 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     if (i >= length())
         return String();
 
-    if (i < numComputedPropertyIDs)
-        return getPropertyNameString(computedPropertyIDs[i]);
+    if (i < exposedComputedCSSPropertyIDs().size())
+        return getPropertyNameString(exposedComputedCSSPropertyIDs().at(i));
 
     auto* style = m_element->computedStyle(m_pseudoElementSpecifier);
     if (!style)
@@ -4408,14 +4375,14 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
 
     const auto& inheritedCustomProperties = style->inheritedCustomProperties();
 
-    if (i < numComputedPropertyIDs + inheritedCustomProperties.size()) {
+    if (i < exposedComputedCSSPropertyIDs().size() + inheritedCustomProperties.size()) {
         auto results = copyToVector(inheritedCustomProperties.keys());
-        return results.at(i - numComputedPropertyIDs);
+        return results.at(i - exposedComputedCSSPropertyIDs().size());
     }
 
     const auto& nonInheritedCustomProperties = style->nonInheritedCustomProperties();
     auto results = copyToVector(nonInheritedCustomProperties.keys());
-    return results.at(i - inheritedCustomProperties.size() - numComputedPropertyIDs);
+    return results.at(i - inheritedCustomProperties.size() - exposedComputedCSSPropertyIDs().size());
 }
 
 bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSSValue* value)

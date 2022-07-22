@@ -55,7 +55,7 @@ ExceptionOr<RefPtr<CSSStyleValue>> ComputedStylePropertyMapReadOnly::get(const A
         return StylePropertyMapReadOnly::reifyValue(ComputedStyleExtractor(m_element.ptr()).customPropertyValue(property).get(), m_element->document(), m_element.ptr());
 
     auto propertyID = cssPropertyID(property);
-    if (!propertyID)
+    if (!propertyID || !isCSSPropertyExposed(propertyID, &m_element->document().settings()))
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     if (isShorthandCSSProperty(propertyID)) {
@@ -73,7 +73,7 @@ ExceptionOr<Vector<RefPtr<CSSStyleValue>>> ComputedStylePropertyMapReadOnly::get
         return StylePropertyMapReadOnly::reifyValueToVector(ComputedStyleExtractor(m_element.ptr()).customPropertyValue(property).get(), m_element->document(), m_element.ptr());
 
     auto propertyID = cssPropertyID(property);
-    if (!propertyID)
+    if (!propertyID || !isCSSPropertyExposed(propertyID, &m_element->document().settings()))
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     if (isShorthandCSSProperty(propertyID)) {
@@ -101,7 +101,7 @@ unsigned ComputedStylePropertyMapReadOnly::size() const
     if (!style)
         return 0;
 
-    return numComputedPropertyIDs + style->inheritedCustomProperties().size() + style->nonInheritedCustomProperties().size();
+    return m_element->document().exposedComputedCSSPropertyIDs().size() + style->inheritedCustomProperties().size() + style->nonInheritedCustomProperties().size();
 }
 
 Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMapReadOnly::entries() const
@@ -114,10 +114,11 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
 
     const auto& inheritedCustomProperties = style->inheritedCustomProperties();
     const auto& nonInheritedCustomProperties = style->nonInheritedCustomProperties();
-    values.reserveInitialCapacity(numComputedPropertyIDs + inheritedCustomProperties.size() + nonInheritedCustomProperties.size());
-    for (unsigned i = 0; i < numComputedPropertyIDs; ++i) {
-        auto key = getPropertyNameString(computedPropertyIDs[i]);
-        auto value = ComputedStyleExtractor(m_element.ptr()).propertyValue(computedPropertyIDs[i], EUpdateLayout::DoNotUpdateLayout, ComputedStyleExtractor::PropertyValueType::Computed);
+    const auto& exposedComputedCSSPropertyIDs = m_element->document().exposedComputedCSSPropertyIDs();
+    values.reserveInitialCapacity(exposedComputedCSSPropertyIDs.size() + inheritedCustomProperties.size() + nonInheritedCustomProperties.size());
+    for (auto propertyID : exposedComputedCSSPropertyIDs) {
+        auto key = getPropertyNameString(propertyID);
+        auto value = ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, EUpdateLayout::DoNotUpdateLayout, ComputedStyleExtractor::PropertyValueType::Computed);
         values.uncheckedAppend(makeKeyValuePair(WTFMove(key), StylePropertyMapReadOnly::reifyValueToVector(value.get(), m_element->document(), m_element.ptr())));
     }
 

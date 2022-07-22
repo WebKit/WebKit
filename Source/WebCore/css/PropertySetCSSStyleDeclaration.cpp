@@ -150,13 +150,24 @@ void PropertySetCSSStyleDeclaration::deref()
 
 unsigned PropertySetCSSStyleDeclaration::length() const
 {
-    return m_propertySet->propertyCount();
+    unsigned exposed = 0;
+    for (unsigned i = 0; i < m_propertySet->propertyCount(); i++) {
+        if (isCSSPropertyExposed(m_propertySet->propertyAt(i).id()))
+            exposed++;
+    }
+    return exposed;
 }
 
 String PropertySetCSSStyleDeclaration::item(unsigned i) const
 {
+    for (unsigned j = 0; j <= i && j < m_propertySet->propertyCount(); j++) {
+        if (!isCSSPropertyExposed(m_propertySet->propertyAt(j).id()))
+            i++;
+    }
+
     if (i >= m_propertySet->propertyCount())
         return String();
+
     return m_propertySet->propertyAt(i).cssName();
 }
 
@@ -189,7 +200,7 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleDeclaration::getPropertyCSSValue
     }
     
     CSSPropertyID propertyID = cssPropertyID(propertyName);
-    if (!propertyID)
+    if (!propertyID || !isCSSPropertyExposed(propertyID))
         return nullptr;
     return wrapForDeprecatedCSSOM(getPropertyCSSValueInternal(propertyID).get());
 }
@@ -200,7 +211,7 @@ String PropertySetCSSStyleDeclaration::getPropertyValue(const String& propertyNa
         return m_propertySet->getCustomPropertyValue(propertyName);
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
-    if (!propertyID)
+    if (!propertyID || !isCSSPropertyExposed(propertyID))
         return String();
     return getPropertyValueInternal(propertyID);
 }
@@ -211,7 +222,7 @@ String PropertySetCSSStyleDeclaration::getPropertyPriority(const String& propert
         return m_propertySet->customPropertyIsImportant(propertyName) ? "important"_s : emptyString();
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
-    if (!propertyID)
+    if (!propertyID || !isCSSPropertyExposed(propertyID))
         return emptyString();
     return m_propertySet->propertyIsImportant(propertyID) ? "important"_s : emptyString();
 }
@@ -219,7 +230,7 @@ String PropertySetCSSStyleDeclaration::getPropertyPriority(const String& propert
 String PropertySetCSSStyleDeclaration::getPropertyShorthand(const String& propertyName)
 {
     CSSPropertyID propertyID = cssPropertyID(propertyName);
-    if (!propertyID)
+    if (!propertyID || !isCSSPropertyExposed(propertyID))
         return String();
     return m_propertySet->getPropertyShorthand(propertyID);
 }
@@ -227,7 +238,7 @@ String PropertySetCSSStyleDeclaration::getPropertyShorthand(const String& proper
 bool PropertySetCSSStyleDeclaration::isPropertyImplicit(const String& propertyName)
 {
     CSSPropertyID propertyID = cssPropertyID(propertyName);
-    if (!propertyID)
+    if (!propertyID || !isCSSPropertyExposed(propertyID))
         return false;
     return m_propertySet->isPropertyImplicit(propertyID);
 }
@@ -239,7 +250,8 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (isCustomPropertyName(propertyName))
         propertyID = CSSPropertyCustom;
-    if (!propertyID)
+
+    if (!propertyID || !isCSSPropertyExposed(propertyID))
         return { };
 
     if (!willMutate())
@@ -279,7 +291,7 @@ ExceptionOr<String> PropertySetCSSStyleDeclaration::removeProperty(const String&
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (isCustomPropertyName(propertyName))
         propertyID = CSSPropertyCustom;
-    if (!propertyID)
+    if (!propertyID || !isCSSPropertyExposed(propertyID))
         return String();
 
     if (!willMutate())
@@ -302,6 +314,9 @@ RefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal(CSS
 
 String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
 {
+    if (!propertyID || !isCSSPropertyExposed(propertyID))
+        return { };
+
     Document* doc = nullptr;
     JSDOMObject* wrap = wrapper();
     if (wrap) {
@@ -325,6 +340,9 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropert
     if (!willMutate())
         return { };
 
+    if (!propertyID || !isCSSPropertyExposed(propertyID))
+        return { };
+
     if (m_propertySet->setProperty(propertyID, value, important, cssParserContext())) {
         didMutate(PropertyChanged);
         mutationScope.enqueueMutationRecord();
@@ -332,6 +350,15 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropert
         didMutate(NoChanges);
         
     return { };
+}
+
+bool PropertySetCSSStyleDeclaration::isCSSPropertyExposed(CSSPropertyID propertyID) const
+{
+    auto parserContext = cssParserContext();
+    bool parsingDescriptor = parserContext.enclosingRuleType && *parserContext.enclosingRuleType != StyleRuleType::Style;
+
+    return WebCore::isCSSPropertyExposed(propertyID, &parserContext.propertySettings)
+        && (!CSSProperty::isDescriptorOnly(propertyID) || parsingDescriptor);
 }
 
 RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleDeclaration::wrapForDeprecatedCSSOM(CSSValue* internalValue)

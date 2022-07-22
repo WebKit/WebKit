@@ -8865,6 +8865,23 @@ bool Document::registerCSSProperty(CSSRegisteredCustomProperty&& prop)
     return m_CSSRegisteredPropertySet.add(prop.name, makeUnique<CSSRegisteredCustomProperty>(WTFMove(prop))).isNewEntry;
 }
 
+const FixedVector<CSSPropertyID>& Document::exposedComputedCSSPropertyIDs()
+{
+    if (!m_exposedComputedCSSPropertyIDs.has_value()) {
+        std::array<CSSPropertyID, numComputedPropertyIDs> exposed;
+        auto last = std::copy_if(std::begin(computedPropertyIDs), std::end(computedPropertyIDs),
+            exposed.begin(), [&](CSSPropertyID x) {
+                return isCSSPropertyExposed(x, m_settings.ptr());
+            });
+
+        FixedVector<CSSPropertyID> active(std::distance(exposed.begin(), last));
+        std::copy(exposed.begin(), last, active.begin());
+        m_exposedComputedCSSPropertyIDs = WTFMove(active);
+    }
+
+    return m_exposedComputedCSSPropertyIDs.value();
+}
+
 void Document::detachFromFrame()
 {
     // Assertion to help pinpint rdar://problem/49877867. If this hits, the crash trace should tell us

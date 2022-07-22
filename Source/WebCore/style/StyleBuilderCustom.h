@@ -2023,7 +2023,7 @@ inline void BuilderCustom::applyValueWillChange(BuilderState& builderState, CSSV
             break;
         default:
             if (primitiveValue.isPropertyID()) {
-                if (primitiveValue.propertyID() == CSSPropertyContain && !builderState.document().settings().cssContainmentEnabled())
+                if (!isCSSPropertyExposed(primitiveValue.propertyID(), &builderState.document().settings()))
                     break;
                 willChange->addFeature(WillChangeData::Feature::Property, primitiveValue.propertyID());
             }

@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "CSSPropertyNames.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CanvasBase.h"
 #include "ClientOrigin.h"
@@ -1600,6 +1601,8 @@ public:
     const CSSRegisteredCustomPropertySet& getCSSRegisteredCustomPropertySet() const { return m_CSSRegisteredPropertySet; }
     bool registerCSSProperty(CSSRegisteredCustomProperty&&);
 
+    const FixedVector<CSSPropertyID>& exposedComputedCSSPropertyIDs();
+
 #if ENABLE(CSS_PAINTING_API)
     PaintWorklet& ensurePaintWorklet();
     PaintWorkletGlobalScope* paintWorkletGlobalScopeForName(const String& name);
@@ -2239,6 +2242,8 @@ private:
 #endif
     
     CSSRegisteredCustomPropertySet m_CSSRegisteredPropertySet;
+
+    std::optional<FixedVector<CSSPropertyID>> m_exposedComputedCSSPropertyIDs;
 
 #if ENABLE(CSS_PAINTING_API)
     RefPtr<PaintWorklet> m_paintWorklet;

@@ -1,3 +1,5 @@
+"background-repeat" is supported
+
 "box-sizing" is supported
 "box-sizing" has aliases:
  - "-webkit-box-sizing"

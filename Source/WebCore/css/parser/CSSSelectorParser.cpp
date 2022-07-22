@@ -31,6 +31,7 @@
 #include "CSSSelectorParser.h"
 
 #include "CommonAtomStrings.h"
+#include "DeprecatedGlobalSettings.h"
 #include <memory>
 #include <wtf/OptionSet.h>
 #include <wtf/SetForScope.h>
@@ -648,7 +649,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             if (!m_context.hasPseudoClassEnabled && selector->pseudoClassType() == CSSSelector::PseudoClassHas)
                 return nullptr;
 #if ENABLE(ATTACHMENT_ELEMENT)
-            if (!m_context.attachmentEnabled && selector->pseudoClassType() == CSSSelector::PseudoClassHasAttachment)
+            if (!DeprecatedGlobalSettings::attachmentElementEnabled() && selector->pseudoClassType() == CSSSelector::PseudoClassHasAttachment)
                 return nullptr;
 #endif
         }

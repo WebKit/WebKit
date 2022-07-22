@@ -80,6 +80,12 @@ async function dumpTextSizes(description) {
 }
 
 addEventListener("load", async () => {
+    // This needs to happen after the setTextAutosizingEnabled call.
+    const noAutosizing = document.querySelectorAll(".no-autosizing");
+    for (const e of noAutosizing) {
+        e.style.webkitTextSizeAdjust = "none";
+    }
+
     const metaViewport = document.querySelector("meta");
     await dumpTextSizes("At initial scale 1");
 

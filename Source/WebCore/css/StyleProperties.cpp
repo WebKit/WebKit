@@ -1329,8 +1329,12 @@ bool StyleProperties::isPropertyImplicit(CSSPropertyID propertyID) const
 
 bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important, CSSParserContext parserContext)
 {
-    if (!isEnabledCSSProperty(propertyID))
+    if (!isCSSPropertyExposed(propertyID, &parserContext.propertySettings) && !isInternalCSSProperty(propertyID)) {
+        // Allow internal properties as we use them to handle certain DOM-exposed values
+        // (e.g. -webkit-font-size-delta from execCommand('FontSizeDelta')).
+        ASSERT_NOT_REACHED();
         return false;
+    }
 
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
@@ -1515,7 +1519,7 @@ StringBuilder StyleProperties::asTextInternal() const
         auto serializeBorderShorthand = [&] (const CSSPropertyID borderProperty, const CSSPropertyID fallbackProperty) {
             // FIXME: Deal with cases where only some of border sides are specified.
             ASSERT(borderProperty - firstCSSProperty < static_cast<CSSPropertyID>(shorthandPropertyAppeared.size()));
-            if (!shorthandPropertyAppeared[borderProperty - firstCSSProperty] && isEnabledCSSProperty(borderProperty)) {
+            if (!shorthandPropertyAppeared[borderProperty - firstCSSProperty]) {
                 value = getPropertyValue(borderProperty);
                 if (value.isNull())
                     shorthandPropertyAppeared.set(borderProperty - firstCSSProperty);
@@ -1775,7 +1779,7 @@ StringBuilder StyleProperties::asTextInternal() const
         }
 
         unsigned shortPropertyIndex = shorthandPropertyID - firstCSSProperty;
-        if (shorthandPropertyID && isEnabledCSSProperty(shorthandPropertyID)) {
+        if (shorthandPropertyID) {
             ASSERT(shortPropertyIndex < shorthandPropertyUsed.size());
             if (shorthandPropertyUsed[shortPropertyIndex])
                 continue;

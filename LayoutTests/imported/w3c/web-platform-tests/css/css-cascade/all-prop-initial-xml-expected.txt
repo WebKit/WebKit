@@ -335,7 +335,6 @@ PASS x
 PASS y
 PASS z-index
 PASS zoom
-PASS -apple-color-filter
 PASS -apple-pay-button-style
 PASS -apple-pay-button-type
 PASS -webkit-backdrop-filter
@@ -388,7 +387,6 @@ PASS -webkit-ruby-position
 PASS -webkit-text-combine
 PASS -webkit-text-fill-color
 PASS -webkit-text-security
-PASS -webkit-text-size-adjust
 PASS -webkit-text-stroke-color
 PASS -webkit-text-stroke-width
 PASS -webkit-text-zoom

@@ -3,15 +3,71 @@
 <head>
 <meta charset="utf-8">
 <script src="../../resources/js-test.js"></script>
+<style>
+#test1, #test2 {
+  color: teal;
+}
+@supports (-apple-color-filter: contrast(1)) {
+  #test1 {
+    color: orange;
+  }
+}
+@supports (-apple-color-filter: inherit) {
+  #test2 {
+    color: orange;
+  }
+}
+</style>
 </head>
 <body>
+<div id=test1></div>
+<div id=test2></div>
 <script>
 description("Tests that -apple-color-filter is not exposed when the feature is disabled");
 
 shouldBeFalse("'-apple-color-filter' in document.documentElement.style");
+shouldBeUndefined("document.documentElement.style['-apple-color-filter']");
+
+document.documentElement.setAttribute("style", "-apple-color-filter: contrast(1) !important");
+shouldBeEmptyString("document.documentElement.style.getPropertyValue('-apple-color-filter')");
+shouldBeEmptyString("document.documentElement.style.getPropertyPriority('-apple-color-filter')");
+shouldBeNull("document.documentElement.style.getPropertyShorthand('-apple-color-filter')");
+shouldBeFalse("document.documentElement.style.isPropertyImplicit('-apple-color-filter')");
+shouldBeNull("document.documentElement.style.getPropertyCSSValue('-apple-color-filter')");
+shouldBeEmptyString("document.documentElement.style.removeProperty('-apple-color-filter')");
+shouldBeEmptyString("document.documentElement.style.getPropertyValue('-apple-color-filter')");
+shouldBeUndefined("document.documentElement.style.setProperty('-apple-color-filter', 'contrast(1)', '')");
+shouldBeEmptyString("document.documentElement.style.getPropertyValue('-apple-color-filter')");
+document.documentElement.removeAttribute("style");
+
 shouldBeFalse("'-apple-color-filter' in getComputedStyle(document.documentElement)");
+shouldBeUndefined("getComputedStyle(document.documentElement)['-apple-color-filter']");
+
+document.documentElement.setAttribute("style", "-apple-color-filter: contrast(1) !important");
+shouldBeEmptyString("getComputedStyle(document.documentElement).getPropertyValue('-apple-color-filter')");
+shouldBeEmptyString("getComputedStyle(document.documentElement).getPropertyPriority('-apple-color-filter')");
+shouldBeEmptyString("getComputedStyle(document.documentElement).getPropertyShorthand('-apple-color-filter')");
+shouldBeFalse("getComputedStyle(document.documentElement).isPropertyImplicit('-apple-color-filter')");
+shouldBeNull("getComputedStyle(document.documentElement).getPropertyCSSValue('-apple-color-filter')");
+shouldThrowErrorName("getComputedStyle(document.documentElement).removeProperty('-apple-color-filter')", "NoModificationAllowedError");
+shouldBeEmptyString("document.documentElement.style.getPropertyValue('-apple-color-filter')");
+shouldThrowErrorName("getComputedStyle(document.documentElement).setProperty('-apple-color-filter', 'contrast(1)', '')", "NoModificationAllowedError");
+shouldBeEmptyString("document.documentElement.style.getPropertyValue('-apple-color-filter')");
+document.documentElement.removeAttribute("style");
+
+shouldBeFalse("'AppleColorFilter' in document.documentElement.style");
+shouldBeUndefined("document.documentElement.style['AppleColorFilter']");
+
+shouldBeFalse("'AppleColorFilter' in getComputedStyle(document.documentElement)");
+shouldBeUndefined("getComputedStyle(document.documentElement)['AppleColorFilter']");
+
 shouldBeFalse("CSS.supports('-apple-color-filter: contrast(1)')");
 shouldBeFalse("CSS.supports('-apple-color-filter: inherit')");
+shouldBeFalse("CSS.supports('-apple-color-filter', 'contrast(1)')");
+shouldBeFalse("CSS.supports('-apple-color-filter', 'inherit')");
+
+shouldBe("getComputedStyle(document.getElementById('test1')).color", "'rgb(0, 128, 128)'");
+shouldBe("getComputedStyle(document.getElementById('test2')).color", "'rgb(0, 128, 128)'");
 
 </script>
 </body>

@@ -93,11 +93,9 @@ function test() {
                     switch (property.name) {
                     case "background-repeat":
                     case "background-repeat-x":
+                    case "background-repeat-y":
                     case "background-repeat-invalid":
                         InspectorTest.expectFalse(property.anonymous, `"${property.name}" is not an anonymous CSS property.`);
-                        break;
-                    case "background-repeat-y":
-                        InspectorTest.expectThat(property.anonymous, `"${property.name}" is an anonymous CSS property.`);
                         break;
                     }
                 }
@@ -119,11 +117,9 @@ function test() {
                     switch (property.name) {
                     case "background-repeat":
                     case "background-repeat-x":
+                    case "background-repeat-y":
                     case "background-repeat-invalid":
                         InspectorTest.expectFalse(property.implicit, `"${property.name}" is not an implicit CSS property.`);
-                        break;
-                    case "background-repeat-y":
-                        InspectorTest.expectThat(property.implicit, `"${property.name}" is an implicit CSS property.`);
                         break;
                     }
                 }
@@ -230,16 +226,10 @@ function test() {
                         InspectorTest.expectEqual(property._text, "background-repeat: repeat;", `"${property.name}" has the _text (private) "background-repeat: repeat;".`);
                         break;
                     case "background-repeat-x":
-                        InspectorTest.expectEqual(property.text, "background-repeat-x: repeat;", `"${property.name}" has the text "background-repeat-x: repeat;".`);
-                        InspectorTest.expectEqual(property._text, "background-repeat-x: repeat;", `"${property.name}" has the _text (private) "background-repeat-x: repeat;".`);
-                        break;
                     case "background-repeat-y":
-                        InspectorTest.expectEqual(property.text, "", `"${property.name}" has the text "".`);
-                        InspectorTest.expectEqual(property._text, "", `"${property.name}" has the _text (private) "".`);
-                        break;
                     case "background-repeat-invalid":
-                        InspectorTest.expectEqual(property.text, "background-repeat-invalid: repeat;", `"${property.name}" has the text "background-repeat-invalid: repeat;".`);
-                        InspectorTest.expectEqual(property._text, "background-repeat-invalid: repeat;", `"${property.name}" has the _text (private) "background-repeat-invalid: repeat;".`);
+                        InspectorTest.expectEqual(property.text, `${property.name}: repeat;`, `"${property.name}" has the text "${property.name}: repeat;".`);
+                        InspectorTest.expectEqual(property._text, `${property.name}: repeat;`, `"${property.name}" has the _text (private) "${property.name}: repeat;".`);
                         break;
                     }
                 }

@@ -32,6 +32,7 @@
 
 #include "CSSMarkup.h"
 #include "CSSParser.h"
+#include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "Document.h"
 #include "HighlightRegister.h"
@@ -60,10 +61,10 @@ bool DOMCSSNamespace::supports(Document& document, const String& property, const
     CSSPropertyID propertyID = cssPropertyID(property.stripWhiteSpace());
 
     CSSParserContext parserContext(document);
-    if (parserContext.isPropertyRuntimeDisabled(propertyID))
+    if (!isCSSPropertyExposed(propertyID, &document.settings()))
         return false;
 
-    if (isInternalCSSProperty(propertyID))
+    if (CSSProperty::isDescriptorOnly(propertyID))
         return false;
 
     if (propertyID == CSSPropertyInvalid)

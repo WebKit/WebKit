@@ -1780,8 +1780,6 @@ imported/w3c/web-platform-tests/css/css-conditional/css-supports-039.xht [ Image
 
 webkit.org/b/242786 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles-crash.html [ Skip ]
 
-[ Debug ] imported/w3c/web-platform-tests/css/css-conditional/js/CSS-supports-CSSStyleDeclaration.html [ Crash ]
-
 transitions/svg-text-shadow-transition.html [ Failure ]
 webkit.org/b/137883 transitions/background-transitions.html [ Failure Pass ]
 webkit.org/b/137883 transitions/border-radius-transition.html [ Failure Pass ]
@@ -2161,7 +2159,6 @@ webkit.org/b/148026 [ Debug ] animations/restart-after-scroll.html [ Skip ]
 webkit.org/b/148650 fast/repaint/add-table-overpaint.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/css/css-cascade/important-prop.html [ ImageOnlyFailure ]
-webkit.org/b/187093 [ Debug ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Skip ]
 webkit.org/b/192334 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-011.html [ ImageOnlyFailure ]
 
 # Initial failures on the import of css-content

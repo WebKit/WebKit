@@ -269,10 +269,11 @@ CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule& rule)
     return downcast<CSSStyleRule>(&rule);
 }
 
-InspectorCSSAgent::InspectorCSSAgent(WebAgentContext& context)
+InspectorCSSAgent::InspectorCSSAgent(PageAgentContext& context)
     : InspectorAgentBase("CSS"_s, context)
     , m_frontendDispatcher(makeUnique<CSSFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(CSSBackendDispatcher::create(context.backendDispatcher, this))
+    , m_inspectedPage(context.inspectedPage)
     , m_nodesWithPendingLayoutFlagsChangeDispatchTimer(*this, &InspectorCSSAgent::nodesWithPendingLayoutFlagsChangeDispatchTimerFired)
 {
 }
@@ -810,8 +811,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSPropertyInfo>>> Insp
 
     for (int i = firstCSSProperty; i <= lastCSSProperty; ++i) {
         CSSPropertyID propertyID = convertToCSSPropertyID(i);
-        // FIXME: Should take account for flags in settings().
-        if (isInternalCSSProperty(propertyID) || !isEnabledCSSProperty(propertyID))
+        if (!isCSSPropertyExposed(propertyID, &m_inspectedPage.settings()))
             continue;
 
         auto property = Protocol::CSS::CSSPropertyInfo::create()
@@ -830,10 +830,11 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSPropertyInfo>>> Insp
         if (shorthand.length()) {
             auto longhands = JSON::ArrayOf<String>::create();
             for (auto longhand : shorthand) {
-                if (isEnabledCSSProperty(longhand))
+                if (isCSSPropertyExposed(longhand, &m_inspectedPage.settings()))
                     longhands->addItem(getPropertyNameString(longhand));
             }
-            property->setLonghands(WTFMove(longhands));
+            if (longhands->length())
+                property->setLonghands(WTFMove(longhands));
         }
 
         if (CSSParserFastPaths::isKeywordPropertyID(propertyID)) {

@@ -738,7 +738,8 @@
             "codegen-properties": {
                 "custom": "Value",
                 "high-priority": true,
-                "enable-if": "ENABLE_TEXT_AUTOSIZING"
+                "enable-if": "ENABLE_TEXT_AUTOSIZING",
+                "settings-flag": "textAutosizingEnabled"
             },
             "status": "experimental",
             "specification": {
@@ -5864,6 +5865,7 @@
         "-apple-color-filter": {
             "inherited": true,
             "codegen-properties": {
+                "settings-flag": "colorFilterEnabled",
                 "conditional-converter": "FilterOperations"
             },
             "status": {
@@ -6999,7 +7001,8 @@
             "inherited": true,
             "codegen-properties": {
                 "skip-builder": true,
-                "enable-if": "ENABLE_TEXT_AUTOSIZING"
+                "enable-if": "ENABLE_TEXT_AUTOSIZING",
+                "internal-only": true
             },
             "status": "non-standard"
         },
@@ -7708,7 +7711,8 @@
             "codegen-properties": {
                 "name-for-methods": "UseTouchOverflowScrolling",
                 "converter": "OverflowScrolling",
-                "enable-if": "ENABLE_OVERFLOW_SCROLLING_TOUCH"
+                "enable-if": "ENABLE_OVERFLOW_SCROLLING_TOUCH",
+                "settings-flag": "legacyOverflowScrollingTouchEnabled"
             },
             "status": "non-standard"
         },

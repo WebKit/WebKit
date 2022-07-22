@@ -145,6 +145,12 @@ while (my ($groupName, $logicalPropertyGroup) = each %logicalPropertyGroups) {
     }
 }
 
+sub uniq(@)
+{
+    my %hash = map { $_, 1 } @_;
+    return keys %hash;
+}
+
 sub matchEnableFlags($)
 {
     my ($enable_flag) = @_;
@@ -413,6 +419,8 @@ print GPERF << "EOF";
 #include "DeprecatedGlobalSettings.h"
 #include "Settings.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/FixedVector.h>
+#include <wtf/Hasher.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 #include <string.h>
@@ -473,7 +481,7 @@ const Property* findProperty(const char* str, unsigned int len)
     return CSSPropertyNamesHash::findPropertyImpl(str, len);
 }
 
-bool isInternalCSSProperty(const CSSPropertyID id)
+bool isInternalCSSProperty(CSSPropertyID id)
 {
     switch (id) {
 EOF
@@ -493,7 +501,7 @@ EOF
 
 if (%runtimeFlags) {
   print GPERF << "EOF";
-bool isEnabledCSSProperty(const CSSPropertyID id)
+static bool isEnabledCSSProperty(CSSPropertyID id)
 {
     switch (id) {
 EOF
@@ -508,7 +516,7 @@ EOF
 EOF
 } else {
   print GPERF << "EOF";
-bool isEnabledCSSProperty(const CSSPropertyID)
+static bool isEnabledCSSProperty(CSSPropertyID)
 {
     return true;
 EOF
@@ -517,7 +525,7 @@ EOF
 print GPERF << "EOF";
 }
 
-bool isCSSPropertyEnabledBySettings(const CSSPropertyID id, const Settings* settings)
+static bool isCSSPropertyEnabledBySettings(CSSPropertyID id, const Settings* settings)
 {
     if (!settings)
         return true;
@@ -534,7 +542,36 @@ print GPERF << "EOF";
     default:
         return true;
     }
+}
+
+static bool isCSSPropertyEnabledByCSSPropertySettings(CSSPropertyID id, const CSSPropertySettings* settings)
+{
+    if (!settings)
+        return true;
+
+    switch (id) {
+EOF
+
+foreach my $name (keys %settingsFlags) {
+  print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+  print GPERF "        return settings->" . $settingsFlags{$name} . ";\n";
+}
+
+print GPERF << "EOF";
+    default:
+        return true;
+    }
     return true;
+}
+
+bool isCSSPropertyExposed(CSSPropertyID id, const Settings* settings)
+{
+    return isEnabledCSSProperty(id) && isCSSPropertyEnabledBySettings(id, settings) && !isInternalCSSProperty(id);
+}
+
+bool isCSSPropertyExposed(CSSPropertyID id, const CSSPropertySettings* settings)
+{
+    return isEnabledCSSProperty(id) && isCSSPropertyEnabledByCSSPropertySettings(id, settings) && !isInternalCSSProperty(id);
 }
 
 ASCIILiteral getPropertyName(CSSPropertyID id)
@@ -833,6 +870,54 @@ print GPERF << "EOF";
     }
 }
 
+CSSPropertySettings::CSSPropertySettings(const Settings& settings)
+EOF
+
+my $nthSetting = 0;
+foreach my $name (sort(uniq(values %settingsFlags))) {
+    print GPERF "    ";
+    if ($nthSetting == 0) {
+        print GPERF ": ";
+    } else {
+        print GPERF ", ";
+    }
+    print GPERF $name . " { settings." . $name . "() }\n";
+    $nthSetting += 1;
+}
+
+print GPERF << "EOF";
+{
+}
+
+bool operator==(const CSSPropertySettings& a, const CSSPropertySettings& b)
+{
+    return true
+EOF
+
+foreach my $name (sort(uniq(values %settingsFlags))) {
+    print GPERF "        && a." . $name . " == b." . $name . "\n";
+}
+
+print GPERF << "EOF";
+    ;
+}
+
+void add(Hasher& hasher, const CSSPropertySettings& settings)
+{
+    unsigned bits = 0
+EOF
+
+$nthSetting = 0;
+foreach my $name (sort(uniq(values %settingsFlags))) {
+    print GPERF "        | settings." . $name . " << " . $nthSetting . "\n";
+    $nthSetting += 1;
+}
+
+print GPERF << "EOF";
+    ;
+    add(hasher, bits);
+}
+
 } // namespace WebCore
 
 IGNORE_WARNINGS_END
@@ -934,9 +1019,26 @@ print HEADER "const size_t numComputedPropertyIDs = $numComputedPropertyIDs;\n";
 
 print HEADER << "EOF";
 
-bool isInternalCSSProperty(const CSSPropertyID);
-bool isEnabledCSSProperty(const CSSPropertyID);
-bool isCSSPropertyEnabledBySettings(const CSSPropertyID, const Settings* = nullptr);
+struct CSSPropertySettings {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+EOF
+
+foreach my $name (sort(uniq(values %settingsFlags))) {
+  print HEADER "    bool " . $name . " { false };\n";
+}
+
+print HEADER << "EOF";
+    CSSPropertySettings() = default;
+    explicit CSSPropertySettings(const Settings&);
+};
+
+bool operator==(const CSSPropertySettings&, const CSSPropertySettings&);
+inline bool operator!=(const CSSPropertySettings& a, const CSSPropertySettings& b) { return !(a == b); }
+void add(Hasher&, const CSSPropertySettings&);
+
+bool isInternalCSSProperty(CSSPropertyID);
+bool isCSSPropertyExposed(CSSPropertyID, const Settings*);
+bool isCSSPropertyExposed(CSSPropertyID, const CSSPropertySettings*);
 ASCIILiteral getPropertyName(CSSPropertyID);
 const AtomString& getPropertyNameAtomString(CSSPropertyID id);
 String getPropertyNameString(CSSPropertyID id);

@@ -118,12 +118,9 @@ static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned l
     }
     buffer[length] = '\0';
     
-    if (auto hashTableEntry = findProperty(buffer, length)) {
-        auto propertyID = static_cast<CSSPropertyID>(hashTableEntry->id);
-        // FIXME: Should take account for flags in settings().
-        if (isEnabledCSSProperty(propertyID))
-            return propertyID;
-    }
+    if (auto hashTableEntry = findProperty(buffer, length))
+        return static_cast<CSSPropertyID>(hashTableEntry->id);
+
     return CSSPropertyInvalid;
 }
 
@@ -212,9 +209,6 @@ CSSPropertyParser::CSSPropertyParser(const CSSParserTokenRange& range, const CSS
 
 void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID currentShorthand, Ref<CSSValue>&& value, bool important, bool implicit)
 {
-    if (!isEnabledCSSProperty(property))
-        return;
-
     int shorthandIndex = 0;
     bool setFromShorthand = false;
 
@@ -224,6 +218,12 @@ void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID curren
         if (shorthands.size() > 1)
             shorthandIndex = indexOfShorthandForLonghand(currentShorthand, shorthands);
     }
+
+    // Allow anything to be set from a shorthand (e.g. the CSS all property always sets everything,
+    // regardless of whether the longhands are enabled), and allow internal properties as we use
+    // them to handle certain DOM-exposed values (e.g. -webkit-font-size-delta from
+    // execCommand('FontSizeDelta')).
+    ASSERT(isCSSPropertyExposed(property, &m_context.propertySettings) || setFromShorthand || isInternalCSSProperty(property));
 
     m_parsedProperties->append(CSSProperty(property, WTFMove(value), important, setFromShorthand, shorthandIndex, implicit));
 }
@@ -492,7 +492,7 @@ static RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
     return CSSValuePool::singleton().createValue(selectShortValue());
 }
 
-static RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueAuto)
         return consumeIdent(range);
@@ -516,6 +516,8 @@ static RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range)
             CSSPropertyID propertyID = cssPropertyID(range.peek().value());
             if (propertyID == CSSPropertyWillChange)
                 return nullptr;
+            if (!isCSSPropertyExposed(propertyID, &context.propertySettings))
+                propertyID = CSSPropertyInvalid;
             if (propertyID != CSSPropertyInvalid) {
                 values->append(CSSValuePool::singleton().createIdentifierValue(propertyID));
                 range.consumeIncludingWhitespace();
@@ -4261,11 +4263,19 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         if (!CSSParserFastPaths::isPartialKeywordPropertyID(property))
             return nullptr;
     }
+
+    if (!isCSSPropertyExposed(property, &m_context.propertySettings) && !isInternalCSSProperty(property)) {
+        // Allow internal properties as we use them to parse several internal-only-shorthands (e.g. background-repeat),
+        // and to handle certain DOM-exposed values (e.g. -webkit-font-size-delta from execCommand('FontSizeDelta')).
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
     switch (property) {
     case CSSPropertyDisplay:
         return consumeDisplay(m_range);
     case CSSPropertyWillChange:
-        return consumeWillChange(m_range);
+        return consumeWillChange(m_range, m_context);
     case CSSPropertyPage:
         return consumePage(m_range);
     case CSSPropertyQuotes:
@@ -4304,14 +4314,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeTabSize(m_range, m_context.mode);
 #if ENABLE(TEXT_AUTOSIZING)
     case CSSPropertyWebkitTextSizeAdjust:
-        // FIXME: Support toggling the validation of this property via a runtime setting that is independent of
-        // whether isTextAutosizingEnabled() is true. We want to enable this property on iOS, when simulating
-        // a iOS device in Safari's responsive design mode and when optionally enabled in DRT/WTR. Otherwise,
-        // this property should be disabled by default.
-#if !PLATFORM(IOS_FAMILY)
-        if (!m_context.textAutosizingEnabled)
-            return nullptr;
-#endif
         return consumeTextSizeAdjust(m_range, m_context.mode);
 #endif
     case CSSPropertyFontSize:
@@ -4399,15 +4401,11 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyScrollSnapType:
         return consumeScrollSnapType(m_range);
     case CSSPropertyScrollBehavior:
-        if (!m_context.scrollBehaviorEnabled)
-            return nullptr;
         return consumeScrollBehavior(m_range);
     case CSSPropertyOverscrollBehaviorBlock:
     case CSSPropertyOverscrollBehaviorInline:
     case CSSPropertyOverscrollBehaviorX:
     case CSSPropertyOverscrollBehaviorY:
-        if (!m_context.overscrollBehaviorEnabled)
-            return nullptr;
         return consumeOverscrollBehavior(m_range);
     case CSSPropertyClip:
         return consumeClip(m_range, m_context.mode);
@@ -4482,8 +4480,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyColumnRuleColor:
         return consumeColor(m_range, m_context);
     case CSSPropertyAccentColor: {
-        if (!m_context.accentColorEnabled)
-            return nullptr;
         return consumeColorWithAuto(m_range, m_context);
     }
     case CSSPropertyCaretColor:
@@ -4525,8 +4521,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
 #endif
         return consumeFilter(m_range, m_context, AllowedFilterFunctions::PixelFilters);
     case CSSPropertyAppleColorFilter:
-        if (!m_context.colorFilterEnabled)
-            return nullptr;
         return consumeFilter(m_range, m_context, AllowedFilterFunctions::ColorFilters);
     case CSSPropertyWebkitTextDecorationsInEffect:
     case CSSPropertyTextDecorationLine:
@@ -4552,16 +4546,10 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyTransformOriginZ:
         return consumeLength(m_range, m_context.mode, ValueRange::All);
     case CSSPropertyTranslate:
-        if (!m_context.individualTransformPropertiesEnabled)
-            return nullptr;
         return consumeTranslate(m_range, m_context.mode);
     case CSSPropertyScale:
-        if (!m_context.individualTransformPropertiesEnabled)
-            return nullptr;
         return consumeScale(m_range, m_context.mode);
     case CSSPropertyRotate:
-        if (!m_context.individualTransformPropertiesEnabled)
-            return nullptr;
         return consumeRotate(m_range, m_context.mode);
     case CSSPropertyFill:
     case CSSPropertyStroke:
@@ -4593,21 +4581,13 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
             return parsedValue;
         return consumePercent(m_range, ValueRange::All);
     case CSSPropertyOffsetPath:
-        if (!m_context.motionPathEnabled)
-            return nullptr;
         return consumePathOperation(m_range, m_context, ConsumeRay::Include);
     case CSSPropertyOffsetDistance:
-        if (!m_context.motionPathEnabled)
-            return nullptr;
         return consumeLengthOrPercent(m_range, m_context.mode, ValueRange::All, UnitlessQuirk::Forbid);
     case CSSPropertyOffsetPosition:
     case CSSPropertyOffsetAnchor:
-        if (!m_context.motionPathEnabled)
-            return nullptr;
         return consumePositionOrAuto(m_range, m_context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
     case CSSPropertyOffsetRotate:
-        if (!m_context.motionPathEnabled)
-            return nullptr;
         return consumeOffsetRotate(m_range, m_context.mode);
     case CSSPropertyWebkitBoxFlex:
         return consumeNumber(m_range, ValueRange::All);
@@ -4756,12 +4736,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyAlt:
         return consumeAlt(m_range, m_context);
     case CSSPropertyAspectRatio:
-        if (!m_context.aspectRatioEnabled)
-            return nullptr;
         return consumeAspectRatio(m_range);
     case CSSPropertyContain:
-        if (!m_context.containmentEnabled)
-            return nullptr;
         return consumeContain(m_range);
     case CSSPropertyTextEmphasisPosition:
         return consumeTextEmphasisPosition(m_range);
@@ -5025,8 +5001,8 @@ static RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange& range)
 
 RefPtr<CSSValue> CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID propId, CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    if (!context.counterStyleAtRulesEnabled)
-        return nullptr;
+    ASSERT(context.propertySettings.cssCounterStyleAtRulesEnabled);
+    ASSERT(isCSSPropertyExposed(propId, &context.propertySettings));
 
     switch (propId) {
     case CSSPropertySystem:
@@ -5066,6 +5042,8 @@ bool CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID propId, const 
 
 bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
 {
+    ASSERT(isCSSPropertyExposed(propId, &m_context.propertySettings));
+
     RefPtr<CSSValue> parsedValue;
     switch (propId) {
     case CSSPropertyFontFamily:
@@ -5166,6 +5144,8 @@ static RefPtr<CSSValueList> consumeOverrideColorsDescriptor(CSSParserTokenRange&
 
 bool CSSPropertyParser::parseFontPaletteValuesDescriptor(CSSPropertyID propId)
 {
+    ASSERT(isCSSPropertyExposed(propId, &m_context.propertySettings));
+
     RefPtr<CSSValue> parsedValue;
     switch (propId) {
     case CSSPropertyFontFamily:
@@ -6239,8 +6219,6 @@ bool CSSPropertyParser::consumePlaceSelfShorthand(bool important)
 bool CSSPropertyParser::consumeOverscrollBehaviorShorthand(bool important)
 {
     ASSERT(shorthandForProperty(CSSPropertyOverscrollBehavior).length() == 2);
-    if (!m_context.overscrollBehaviorEnabled)
-        return false;
 
     if (m_range.atEnd())
         return false;
@@ -6295,8 +6273,7 @@ bool CSSPropertyParser::consumeContainerShorthand(bool important)
 bool CSSPropertyParser::consumeContainIntrinsicSizeShorthand(bool important)
 {
     ASSERT(shorthandForProperty(CSSPropertyContainIntrinsicSize).length() == 2);
-    if (!m_context.containIntrinsicSizeEnabled)
-        return false;
+    ASSERT(isCSSPropertyExposed(CSSPropertyContainIntrinsicSize, &m_context.propertySettings));
 
     if (m_range.atEnd())
         return false;
@@ -6443,8 +6420,6 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyOutline:
         return consumeShorthandGreedily(outlineShorthand(), important);
     case CSSPropertyOffset:
-        if (!m_context.motionPathEnabled)
-            return false;
         return consumeOffset(important);
     case CSSPropertyBorderInline: {
         RefPtr<CSSValue> width;

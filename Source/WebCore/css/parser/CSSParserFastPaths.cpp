@@ -38,6 +38,7 @@
 #include "CSSPropertyParserHelpers.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "DeprecatedGlobalSettings.h"
 #include "HTMLParserIdioms.h"
 #include "HashTools.h"
 #include "StyleColor.h"
@@ -647,8 +648,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyImageRendering: // auto | optimizeContrast | pixelated | optimizeSpeed | crispEdges | optimizeQuality | webkit-crispEdges
         return valueID == CSSValueAuto || valueID == CSSValueOptimizeSpeed || valueID == CSSValueOptimizeQuality || valueID == CSSValueWebkitCrispEdges || valueID == CSSValueWebkitOptimizeContrast || valueID == CSSValueCrispEdges || valueID == CSSValuePixelated;
     case CSSPropertyInputSecurity:
-        if (!context.inputSecurityEnabled)
-            return false;
         return valueID == CSSValueAuto || valueID == CSSValueNone;
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyIsolation: // auto | isolate
@@ -685,8 +684,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyOverscrollBehaviorInline:
     case CSSPropertyOverscrollBehaviorX:
     case CSSPropertyOverscrollBehaviorY:
-        if (!context.overscrollBehaviorEnabled)
-            return false;
         return valueID == CSSValueAuto || valueID == CSSValueContain || valueID == CSSValueNone;
     case CSSPropertyBreakAfter:
     case CSSPropertyBreakBefore:
@@ -751,7 +748,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
 
 #if ENABLE(ATTACHMENT_ELEMENT)
         if (valueID == CSSValueAttachment || valueID == CSSValueBorderlessAttachment)
-            return context.attachmentEnabled;
+            return DeprecatedGlobalSettings::attachmentElementEnabled();
 #endif
         return (valueID >= CSSValueCheckbox && valueID <= CSSValueTextfield) || valueID == CSSValueNone || valueID == CSSValueAuto;
     }
@@ -889,8 +886,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNormal || valueID == CSSValueHistoricalForms;
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     case CSSPropertyWebkitOverflowScrolling:
-        if (!context.legacyOverflowScrollingTouchEnabled)
-            return false;
         return valueID == CSSValueAuto || valueID == CSSValueTouch;
 #endif
 #if ENABLE(VARIATION_FONTS)
@@ -1387,7 +1382,7 @@ RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, S
 {
     if (auto result = parseSimpleLengthValue(propertyID, string, context.mode))
         return result;
-    if (propertyID == CSSPropertyCaretColor || (propertyID == CSSPropertyAccentColor && context.accentColorEnabled))
+    if ((propertyID == CSSPropertyCaretColor || propertyID == CSSPropertyAccentColor) && isCSSPropertyExposed(propertyID, &context.propertySettings))
         return parseColorWithAuto(string, context);
     if (CSSProperty::isColorProperty(propertyID))
         return parseColor(string, context);

@@ -199,7 +199,7 @@ static CSSPropertyID parseJavaScriptCSSPropertyName(const AtomString& propertyNa
 static CSSPropertyID propertyIDFromJavaScriptCSSPropertyName(const AtomString& propertyName, const Settings* settings)
 {
     auto id = parseJavaScriptCSSPropertyName(propertyName);
-    if (!isEnabledCSSProperty(id) || !isCSSPropertyEnabledBySettings(id, settings))
+    if (!isCSSPropertyExposed(id, settings))
         return CSSPropertyInvalid;
     return id;
 }

@@ -123,8 +123,6 @@ webkit.org/b/217114 [ Release ] compositing/debug-borders-dynamic.html [ Pass Im
 
 webkit.org/b/217414 [ Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.html [ Pass Failure ]
 
-webkit.org/b/217419 [ Release ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
-
 webkit.org/b/217461 imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
 
 webkit.org/b/217462 [ Release ] imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-add.https.html [ Pass Failure ]
