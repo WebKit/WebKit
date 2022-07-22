@@ -650,6 +650,7 @@ protected:
     bool isChangingVideoFullscreenMode() const { return m_changingVideoFullscreenMode; }
 
     void mediaPlayerEngineUpdated() override;
+    void visibilityStateChanged() final;
 
 private:
     friend class Internals;
@@ -681,8 +682,6 @@ private:
     void stopWithoutDestroyingMediaPlayer();
     void contextDestroyed() override;
     
-    void visibilityStateChanged() final;
-
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 

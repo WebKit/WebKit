@@ -367,6 +367,7 @@ public:
 
     void setPageIsVisible(bool);
     void setVisibleForCanvas(bool);
+    bool isVisibleForCanvas() const { return m_visibleForCanvas; }
 
     void setVisibleInViewport(bool);
     bool isVisibleInViewport() const { return m_visibleInViewport; }
@@ -736,6 +737,7 @@ private:
     Preload m_preload { Preload::Auto };
     double m_volume { 1 };
     bool m_pageIsVisible { false };
+    bool m_visibleForCanvas { false };
     bool m_visibleInViewport { false };
     bool m_muted { false };
     bool m_preservesPitch { true };

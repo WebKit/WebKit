@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video playsInline id=video1 width=300px></video>
+        <video playsInline id=video2 width=300px></video>
+        <canvas id=canvas width=300px height=200px></canvas>
+        <script>
+async function waitForPaused(video, expectedState, message, counter)
+{
+    if (video.paused === expectedState)
+        return;
+    if (!counter)
+        counter = 0;
+    else if (counter > 100)
+        return Promise.reject("waitForPaused timed out for: " + message);
+    await new Promise(resolve => setTimeout(resolve, 20));
+    return waitForPaused(video, expectedState, message, ++counter);
+}
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.reject("Test requires internals API");
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video1.srcObject = stream;
+    video2.srcObject = stream;
+    await video1.play();
+    await video2.play();
+
+    canvas.getContext('2d').drawImage(video1, 0, 0, 300, 200);
+
+    internals.setPageVisibility(false);
+
+    await waitForPaused(video2, true, "video2 should be paused");
+    assert_false(video1.paused, "video1 is paused");
+
+    internals.setPageVisibility(true);
+
+    await waitForPaused(video2, false, "video2 should be unpaused");
+    assert_false(video1.paused, "video1 is not paused");
+}, "Ensure that video elements that get drawn on canvas do not get paused due to being backgrounded");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.reject("Test requires internals API");
+
+    internals.setPageVisibility(true);
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video1.srcObject = stream;
+    video2.srcObject = stream;
+    await video1.play();
+    await video2.play();
+
+    internals.setPageVisibility(false);
+
+    await waitForPaused(video1, true, "video1 should be paused");
+    await waitForPaused(video2, true, "video2 should be paused");
+
+    canvas.getContext('2d').drawImage(video1, 0, 0, 300, 200);
+
+    await waitForPaused(video1, false, "video1 should be unpaused");
+    assert_true(video2.paused, "video2 should still be paused");
+
+    internals.setPageVisibility(true);
+
+    await waitForPaused(video2, false, "video2 should be unpaused");
+    assert_false(video1.paused, "video1 should be unpaused");
+}, "Ensure that video elements that get drawn on canvas get resumed even if backgrounded");
+        </script>
+    </body>
+</html>

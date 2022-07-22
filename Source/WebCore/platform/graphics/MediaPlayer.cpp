@@ -1071,6 +1071,10 @@ void MediaPlayer::setPageIsVisible(bool visible)
 
 void MediaPlayer::setVisibleForCanvas(bool visible)
 {
+    if (visible == m_visibleForCanvas)
+        return;
+
+    m_visibleForCanvas = visible;
     m_private->setVisibleForCanvas(visible);
 }
 
