@@ -1428,6 +1428,8 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
         initializeOnce,
         [] {
         cssValueSystemColorInformationList.get() = Vector(std::initializer_list<CSSValueSystemColorInformation> {
+            { CSSValueCanvas, @selector(systemBackgroundColor) },
+            { CSSValueCanvastext, @selector(labelColor) },
             { CSSValueText, @selector(labelColor) },
             { CSSValueWebkitControlBackground, @selector(systemBackgroundColor) },
             { CSSValueAppleSystemBlue, @selector(systemBlueColor) },
