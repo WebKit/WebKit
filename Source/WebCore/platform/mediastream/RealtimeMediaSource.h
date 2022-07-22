@@ -289,8 +289,8 @@ private:
     mutable Lock m_audioSampleObserversLock;
     HashSet<AudioSampleObserver*> m_audioSampleObservers WTF_GUARDED_BY_LOCK(m_audioSampleObserversLock);
 
-    mutable Lock m_VideoFrameObserversLock;
-    HashSet<VideoFrameObserver*> m_VideoFrameObservers WTF_GUARDED_BY_LOCK(m_VideoFrameObserversLock);
+    mutable Lock m_videoFrameObserversLock;
+    HashSet<VideoFrameObserver*> m_videoFrameObservers WTF_GUARDED_BY_LOCK(m_videoFrameObserversLock);
 
     // Set on the main thread from constraints.
     IntSize m_size;

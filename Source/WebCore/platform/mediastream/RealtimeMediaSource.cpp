@@ -78,15 +78,15 @@ void RealtimeMediaSource::removeAudioSampleObserver(AudioSampleObserver& observe
 void RealtimeMediaSource::addVideoFrameObserver(VideoFrameObserver& observer)
 {
     ASSERT(isMainThread());
-    Locker locker { m_VideoFrameObserversLock };
-    m_VideoFrameObservers.add(&observer);
+    Locker locker { m_videoFrameObserversLock };
+    m_videoFrameObservers.add(&observer);
 }
 
 void RealtimeMediaSource::removeVideoFrameObserver(VideoFrameObserver& observer)
 {
     ASSERT(isMainThread());
-    Locker locker { m_VideoFrameObserversLock };
-    m_VideoFrameObservers.remove(&observer);
+    Locker locker { m_videoFrameObserversLock };
+    m_videoFrameObservers.remove(&observer);
 }
 
 void RealtimeMediaSource::addObserver(Observer& observer)
@@ -210,8 +210,8 @@ void RealtimeMediaSource::videoFrameAvailable(VideoFrame& videoFrame, VideoFrame
 
     updateHasStartedProducingData();
 
-    Locker locker { m_VideoFrameObserversLock };
-    for (auto* observer : m_VideoFrameObservers)
+    Locker locker { m_videoFrameObserversLock };
+    for (auto* observer : m_videoFrameObservers)
         observer->videoFrameAvailable(videoFrame, metadata);
 }
 
