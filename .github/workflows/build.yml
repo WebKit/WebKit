@@ -78,22 +78,22 @@ jobs:
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
-        if: ${{ matrix.lto == true && matrix.cpu == "native" }}
+        if: ${{ matrix.lto == true && matrix.cpu == 'native' }}
         with:
           name: bun-webkit-macos-amd64-lto
           path: ${{runner.temp}}/bun-webkit.tar.gz
       - uses: actions/upload-artifact@v3
-        if: ${{ matrix.lto == false && matrix.cpu == "native" }}
+        if: ${{ matrix.lto == false && matrix.cpu == 'native' }}
         with:
           name: bun-webkit-macos-amd64
           path: ${{runner.temp}}/bun-webkit.tar.gz
       - uses: actions/upload-artifact@v3
-        if: ${{ matrix.lto == false && matrix.cpu == "sandybridge" }}
+        if: ${{ matrix.lto == false && matrix.cpu == 'sandybridge' }}
         with:
           name: bun-webkit-macos-amd64-generic
           path: ${{runner.temp}}/bun-webkit.tar.gz
       - uses: actions/upload-artifact@v3
-        if: ${{ matrix.lto == true && matrix.cpu == "sandybridge" }}
+        if: ${{ matrix.lto == true && matrix.cpu == 'sandybridge' }}
         with:
           name: bun-webkit-macos-amd64-lto-generic
           path: ${{runner.temp}}/bun-webkit.tar.gz
@@ -231,12 +231,12 @@ jobs:
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
-        if: ${{  matrix.cpu == "native" }}
+        if: ${{  matrix.cpu == 'native' }}
         with:
           name: bun-webkit-linux-amd64
           path: ${{runner.temp}}/bun-webkit.tar.gz
       - uses: actions/upload-artifact@v3
-        if: ${{ matrix.cpu == "sandybridge" }}
+        if: ${{ matrix.cpu == 'sandybridge' }}
         with:
           name: bun-webkit-linux-amd64-generic
           path: ${{runner.temp}}/bun-webkit.tar.gz
