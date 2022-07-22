@@ -116,6 +116,9 @@ void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable,
 void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
 {
 #if OS(LINUX)
+    UNUSED_PARAM(usage);
+    UNUSED_PARAM(jitCageEnabled);
+    UNUSED_PARAM(includesGuardPages);
     int protection = PROT_READ;
     if (writable)
         protection |= PROT_WRITE;

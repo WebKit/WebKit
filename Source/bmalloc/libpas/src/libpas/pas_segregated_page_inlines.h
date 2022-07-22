@@ -344,7 +344,7 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
         pas_log("Freeing %p in %p(%s), num_non_empty_words = %llu\n",
                 (void*)begin, page,
                 pas_segregated_page_config_kind_get_string(page_config.kind),
-                (uint64_t)page->emptiness.num_non_empty_words);
+                (unsigned long long)page->emptiness.num_non_empty_words);
     }
 
     bit_index_unmasked = begin >> page_config.base.min_align_shift;
