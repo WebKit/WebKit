@@ -6097,7 +6097,7 @@ bool HTMLMediaElement::elementIsHidden() const
     if (m_videoFullscreenMode != VideoFullscreenModeNone)
         return false;
 
-    return document().hidden();
+    return document().hidden() && (!m_player || !m_player->isVisibleForCanvas());
 }
 
 void HTMLMediaElement::visibilityStateChanged()

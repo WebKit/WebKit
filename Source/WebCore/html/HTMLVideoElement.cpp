@@ -306,8 +306,11 @@ void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, cons
     RefPtr<MediaPlayer> player = HTMLMediaElement::player();
     if (!player)
         return;
-    
-    player->setVisibleForCanvas(true); // Make player visible or it won't draw.
+
+    if (!player->isVisibleForCanvas()) {
+        player->setVisibleForCanvas(true); // Make player visible or it won't draw.
+        visibilityStateChanged();
+    }
     context.paintFrameForMedia(*player, destRect);
 }
 
