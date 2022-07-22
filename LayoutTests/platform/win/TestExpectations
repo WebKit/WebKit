@@ -1646,8 +1646,6 @@ webkit.org/b/140798 [ Debug ] accessibility/aria-tables.html [ Skip ] # Debug as
 webkit.org/b/140798 [ Release ] accessibility/aria-text-role.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-text-role.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Debug ] accessibility/aria-used-on-image-maps.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/auto-filled-value.html [ Failure ]
-webkit.org/b/140798 [ Debug ] accessibility/auto-filled-value.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/box-styled-lists.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/box-styled-lists.html [ Skip ] # Crash (Debug Assertion)
 webkit.org/b/140798 [ Release ] accessibility/canvas-fallback-content-2.html [ Failure ]

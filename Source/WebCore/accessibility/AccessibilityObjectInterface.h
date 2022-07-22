@@ -1372,7 +1372,6 @@ public:
     virtual AccessibilityRole roleValueForMSAA() const = 0;
 
     virtual String passwordFieldValue() const = 0;
-    virtual bool isValueAutofilled() const = 0;
     virtual bool isValueAutofillAvailable() const = 0;
     virtual AutoFillButtonType valueAutofillButtonType() const = 0;
     virtual bool hasARIAValueNow() const = 0;

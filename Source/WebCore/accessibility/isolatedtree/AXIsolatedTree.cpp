@@ -396,7 +396,6 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
     case AXPropertyName::ValueAutofillButtonType:
         propertyMap.set(AXPropertyName::ValueAutofillButtonType, static_cast<int>(axObject.valueAutofillButtonType()));
         propertyMap.set(AXPropertyName::IsValueAutofillAvailable, axObject.isValueAutofillAvailable());
-        propertyMap.set(AXPropertyName::IsValueAutofilled, axObject.isValueAutofilled());
         break;
     case AXPropertyName::AXColumnCount:
         propertyMap.set(AXPropertyName::AXColumnCount, axObject.axColumnCount());
