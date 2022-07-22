@@ -1960,7 +1960,6 @@ accessibility/table-exposure-updates-dynamically.html [ Skip ]
 webkit.org/b/98348 accessibility/internal-link-anchors2.html [ Skip ]
 # Things specific to AX API (at least at the moment)
 webkit.org/b/98348 accessibility/radio-button-group-members.html [ Skip ]
-webkit.org/b/141074 accessibility/auto-filled-value.html [ Skip ]
 webkit.org/b/156045 accessibility/attachment-element.html [ Skip ]
 webkit.org/b/193623 accessibility/set-selected-editable.html [ Skip ]
 

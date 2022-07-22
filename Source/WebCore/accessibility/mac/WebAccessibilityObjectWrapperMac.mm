@@ -124,10 +124,6 @@ using namespace WebCore;
 #define NSAccessibilityAccessKeyAttribute @"AXAccessKey"
 #endif
 
-#ifndef NSAccessibilityValueAutofilledAttribute
-#define NSAccessibilityValueAutofilledAttribute @"AXValueAutofilled"
-#endif
-
 #ifndef NSAccessibilityValueAutofillAvailableAttribute
 #define NSAccessibilityValueAutofillAvailableAttribute @"AXValueAutofillAvailable"
 #endif
@@ -1352,7 +1348,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
         [tempArray addObject:NSAccessibilityPlaceholderValueAttribute];
-        [tempArray addObject:NSAccessibilityValueAutofilledAttribute];
         return tempArray;
     }();
     static NeverDestroyed listAttrs = [] {
@@ -1502,7 +1497,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
         [tempArray addObject:NSAccessibilityPlaceholderValueAttribute];
-        [tempArray addObject:NSAccessibilityValueAutofilledAttribute];
         return tempArray;
     }();
     static NeverDestroyed tabListAttrs = [] {
@@ -2510,9 +2504,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return @"loading";
         }
     }
-
-    if ([attributeName isEqualToString:NSAccessibilityValueAutofilledAttribute])
-        return @(backingObject->isValueAutofilled());
 
     if ([attributeName isEqualToString:NSAccessibilityHasPopupAttribute])
         return [NSNumber numberWithBool:backingObject->hasPopup()];

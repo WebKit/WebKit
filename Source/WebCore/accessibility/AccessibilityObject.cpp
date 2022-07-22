@@ -2835,18 +2835,6 @@ AutoFillButtonType AccessibilityObject::valueAutofillButtonType() const
     
     return downcast<HTMLInputElement>(*this->node()).autoFillButtonType();
 }
-    
-bool AccessibilityObject::isValueAutofilled() const
-{
-    if (!isNativeTextControl())
-        return false;
-    
-    Node* node = this->node();
-    if (!is<HTMLInputElement>(node))
-        return false;
-    
-    return downcast<HTMLInputElement>(*node).isAutoFilled();
-}
 
 const String AccessibilityObject::placeholderValue() const
 {

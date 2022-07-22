@@ -284,7 +284,6 @@ private:
     std::optional<AccessibilityChildrenVector> imageOverlayElements() override { return std::nullopt; }
 
     String computedRoleString() const override { return stringAttributeValue(AXPropertyName::ComputedRoleString); }
-    bool isValueAutofilled() const override { return boolAttributeValue(AXPropertyName::IsValueAutofilled); }
     bool isValueAutofillAvailable() const override { return boolAttributeValue(AXPropertyName::IsValueAutofillAvailable); }
     AutoFillButtonType valueAutofillButtonType() const override { return static_cast<AutoFillButtonType>(intAttributeValue(AXPropertyName::ValueAutofillButtonType)); }
     void ariaTreeRows(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::ARIATreeRows, children); }

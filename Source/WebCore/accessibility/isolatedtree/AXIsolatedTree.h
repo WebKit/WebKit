@@ -215,7 +215,6 @@ enum class AXPropertyName : uint16_t {
     IsTreeItem,
     IsUnorderedList,
     IsUnvisited,
-    IsValueAutofilled,
     IsValueAutofillAvailable,
     IsVisible,
     IsVisited,

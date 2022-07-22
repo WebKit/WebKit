@@ -1169,14 +1169,6 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return self.axBackingObject->hasTouchEventListener();
 }
 
-- (BOOL)_accessibilityValueIsAutofilled
-{
-    if (![self _prepareAccessibilityCall])
-        return NO;
-
-    return self.axBackingObject->isValueAutofilled();
-}
-
 - (BOOL)_accessibilityIsStrongPasswordField
 {
     if (![self _prepareAccessibilityCall])

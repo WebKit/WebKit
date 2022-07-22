@@ -611,7 +611,6 @@ public:
     AccessibilityRole roleValueForMSAA() const override { return roleValue(); }
 
     String passwordFieldValue() const override { return String(); }
-    bool isValueAutofilled() const override;
     bool isValueAutofillAvailable() const override;
     AutoFillButtonType valueAutofillButtonType() const override;
 
