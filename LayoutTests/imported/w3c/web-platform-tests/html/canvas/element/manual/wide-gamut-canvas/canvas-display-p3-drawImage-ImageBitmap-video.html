@@ -21,8 +21,12 @@ for (let [filenameBase, expectedPixels] of Object.entries(videoTests)) {
                         video.append(source);
                     }
 
+                    let loadedData = new Promise(resolver => video.onloadeddata = resolver);
+
                     document.body.append(video);
                     await video.play();
+                    await loadedData;
+                    await new Promise(requestAnimationFrame);
 
                     let imageBitmap;
                     if (cropSource)
