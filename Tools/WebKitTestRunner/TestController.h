@@ -47,7 +47,6 @@
 
 OBJC_CLASS NSString;
 OBJC_CLASS UIKeyboardInputMode;
-OBJC_CLASS UIEditMenuInteraction;
 OBJC_CLASS UIPasteboardConsistencyEnforcer;
 OBJC_CLASS WKWebViewConfiguration;
 
@@ -382,11 +381,6 @@ public:
     bool denyNotificationPermissionOnPrompt(WKStringRef origin);
 
     PlatformWebView* createOtherPlatformWebView(PlatformWebView* parentView, WKPageConfigurationRef, WKNavigationActionRef, WKWindowFeaturesRef);
-
-#if HAVE(UI_EDIT_MENU_INTERACTION)
-    void didPresentEditMenuInteraction(UIEditMenuInteraction *);
-    void didDismissEditMenuInteraction(UIEditMenuInteraction *);
-#endif
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
