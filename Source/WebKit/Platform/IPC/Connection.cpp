@@ -1055,7 +1055,8 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<Decoder> incomingMessage
 
 void Connection::dispatchMessage(Decoder& decoder)
 {
-    RELEASE_ASSERT(isValid());
+    ASSERT(RunLoop::isMain());
+    RELEASE_ASSERT(!m_didInvalidationOnMainThread);
     if (decoder.messageReceiverName() == ReceiverName::AsyncReply) {
         auto handler = takeAsyncReplyHandler(*this, decoder.destinationID());
         if (!handler) {
