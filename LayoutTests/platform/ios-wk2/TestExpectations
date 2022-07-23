@@ -2226,3 +2226,5 @@ webkit.org/b/242904 [ Debug ] fast/dom/lazy-image-loading-document-leak.html [ P
 
 # The Notifications API is not supported on iOS
 imported/w3c/web-platform-tests/permissions/all-permissions.html [ Failure ]
+
+webkit.org/b/229656 fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]

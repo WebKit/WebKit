@@ -33,7 +33,6 @@ fast/forms/ios/inputmode-none-with-hardware-keyboard.html [ Pass Failure ]
 fast/forms/ios/dismiss-picker-using-keyboard.html [ Pass Timeout ]
 fast/forms/ios/drag-range-thumb.html [ Pass Timeout Timeout ]
 fast/forms/ios/inputmode-change-update-keyboard.html [ Pass Timeout ]
-fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
 
 fast/css/appearance-apple-pay-button.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]
