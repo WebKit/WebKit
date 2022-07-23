@@ -830,10 +830,10 @@ private:
         {
             RELEASE_ASSERT(start < islandBegin);
             RELEASE_ASSERT(islandBegin <= end);
-            m_start = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(start));
-            m_islandBegin = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(islandBegin));
-            m_end = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(end));
-            RELEASE_ASSERT(!((this->end() - this->start()) % pageSize()));
+            m_start = bitwise_cast<void*>(start);
+            m_islandBegin = bitwise_cast<void*>(islandBegin);
+            m_end = bitwise_cast<void*>(end);
+            RELEASE_ASSERT(!((this->islandBegin() - this->start()) % pageSize()));
             RELEASE_ASSERT(!((this->end() - this->islandBegin()) % pageSize()));
             addFreshFreeSpace(bitwise_cast<void*>(this->start()), allocatorSize());
         }
@@ -842,9 +842,9 @@ private:
         //  | jit allocations -->   <-- islands |
         //  -------------------------------------
 
-        uintptr_t start() { return bitwise_cast<uintptr_t>(untagCodePtr<ExecutableMemoryPtrTag>(m_start)); }
-        uintptr_t islandBegin() { return bitwise_cast<uintptr_t>(untagCodePtr<ExecutableMemoryPtrTag>(m_islandBegin)); }
-        uintptr_t end() { return bitwise_cast<uintptr_t>(untagCodePtr<ExecutableMemoryPtrTag>(m_end)); }
+        uintptr_t start() { return bitwise_cast<uintptr_t>(m_start); }
+        uintptr_t islandBegin() { return bitwise_cast<uintptr_t>(m_islandBegin); }
+        uintptr_t end() { return bitwise_cast<uintptr_t>(m_end); }
 
         size_t maxIslandsInThisRegion() { return (end() - islandBegin()) / islandSizeInBytes; }
 
@@ -935,10 +935,13 @@ private:
         }
 
     private:
+#define REGION_ALLOCATOR_CODEPTR(field) \
+    WTF_FUNCPTR_PTRAUTH_STR("RegionAllocator." #field) field
+
         // Range: [start, end)
-        void* m_start;
-        void* m_islandBegin;
-        void* m_end;
+        void* REGION_ALLOCATOR_CODEPTR(m_start);
+        void* REGION_ALLOCATOR_CODEPTR(m_islandBegin);
+        void* REGION_ALLOCATOR_CODEPTR(m_end);
         FastBitVector islandBits;
     };
 #endif // ENABLE(JUMP_ISLANDS)

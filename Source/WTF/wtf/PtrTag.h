@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -491,6 +491,10 @@ inline bool usesPointerTagging() { return true; }
 #define WTF_VTBL_FUNCPTR_PTRAUTH_STR(discriminatorStr) \
     __ptrauth(ptrauth_key_process_independent_code, 1, ptrauth_string_discriminator(discriminatorStr))
 
+#define WTF_FUNCPTR_PTRAUTH(discriminator) WTF_FUNCPTR_PTRAUTH_STR(#discriminator)
+#define WTF_FUNCPTR_PTRAUTH_STR(discriminatorStr) \
+    __ptrauth(ptrauth_key_process_dependent_code, 1, ptrauth_string_discriminator(discriminatorStr))
+
 #else // not CPU(ARM64E)
 
 inline const void* untagReturnPC(const void* pc, const void*)
@@ -554,6 +558,8 @@ inline bool usesPointerTagging() { return false; }
 
 #define WTF_VTBL_FUNCPTR_PTRAUTH(discriminator)
 #define WTF_VTBL_FUNCPTR_PTRAUTH_STR(discriminatorStr)
+#define WTF_FUNCPTR_PTRAUTH(discriminator)
+#define WTF_FUNCPTR_PTRAUTH_STR(discriminatorStr)
 
 #endif // CPU(ARM64E)
 
