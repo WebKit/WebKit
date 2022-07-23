@@ -1,65 +1,78 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
 <body>
-<script src="../resources/js-test-pre.js"></script>
 
-<div id="container" tabindex="-1"></div>
-
+<div id="container" role="group"></div>
 <canvas id="canvas" tabindex="-1"></canvas>
-
-<div id="console"></div>
+    
 <script>
-description("This test makes sure that AccessibilityNodeObjects are properly detached when the node they point to is reparented to a location that allows them to have a renderer.");
+    var testOutput = "This test makes sure that AccessibilityNodeObjects are properly detached when the node they point to is reparented to a location that allows them to have a renderer.\n\n";
 
-if (window.testRunner && window.accessibilityController) {
-    window.testRunner.dumpAsText();
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
 
-    // Create an ordinary button on the page, focus it and get its accessibility role.
-    var button = document.createElement('button');
-    document.body.appendChild(button);
-    button.focus();
-    window.axElement = accessibilityController.focusedElement;
-    window.expectedButtonRole = axElement.role;
+        // Create an ordinary button on the page.
+        var button = document.createElement("button");
+        button.id = "buttonOne";
+        document.body.appendChild(button);
 
-    // Now remove the node from the tree and get the role of the detached accessibility object.
-    document.body.removeChild(button);
-    window.expectedDetachedRole = axElement.role;
-    shouldBeTrue("expectedButtonRole != expectedDetachedRole");
+        setTimeout(async function() {
+            window.axElement = await waitForElementById("buttonOne");
+            window.expectedButtonRole = axElement.role;
 
-    // This time create a button that's a child of a canvas element. It will be focusable but not rendered.
-    // In particular, this will create an AccessibilityNodeObject rather than an AccessibilityRenderObject.
-    var canvas = document.getElementById('canvas');
-    (function() {
-        var button = document.createElement('button');
-        canvas.appendChild(button);
+            // Now remove the node from the tree and get the role of the detached accessibility object.
+            document.body.removeChild(button);
+            await waitFor(() => { 
+                window.expectedDetachedRole = axElement.role;
+                return expectedButtonRole !== expectedDetachedRole;
+            });
+            testOutput += expect("expectedButtonRole !== expectedDetachedRole", "true");
 
-        // Note: focusing the button and using that to get its accessibility object creates an extra
-        // reference to the button and it won't get deleted when we want it to. So instead we focus the
-        // canvas and get its first child.
-        canvas.focus();
-        window.axElement = accessibilityController.focusedElement.childAtIndex(0);
+            // This time create a button that's a child of a canvas element. It will be focusable but not rendered.
+            // In particular, this will create an AccessibilityNodeObject rather than an AccessibilityRenderObject.
+            var canvas = document.getElementById("canvas");
+            // This test relies on focusing the canvas to make it accessible (without the focus, accessibleElementById("canvas")
+            // below will never return anything).
+            canvas.focus();
+            var canvasButton = document.createElement("button");
+            canvas.appendChild(canvasButton);
 
-        window.canvasButtonRole = axElement.role;
-        shouldBe("canvasButtonRole", "expectedButtonRole");
+            var axCanvas;
+            await waitFor(() => {
+                axCanvas = accessibilityController.accessibleElementById("canvas");
+                return axCanvas && axCanvas.childrenCount > 0;
+            });
+            window.axElement = axCanvas.childAtIndex(0);
+            window.canvasButtonRole = axElement.role;
+            testOutput += expect("canvasButtonRole", "expectedButtonRole");
 
-        // Now reparent the node to a container that's not a canvas.
-        var container = document.getElementById('container');
-        container.appendChild(button);
-        container.focus();
-        window.axReparentedElement = accessibilityController.focusedElement.childAtIndex(0);
-    })();
+            // Now reparent the node to a container that's not a canvas.
+            var container = document.getElementById("container");
+            container.appendChild(canvasButton);
+            var axContainer = accessibilityController.accessibleElementById("container");
+            await waitFor(() => axContainer.childrenCount > 0);
+            window.axReparentedElement = axContainer.childAtIndex(0);
 
-    // Ensure that the old accessibility object is detached by checking its role.
-    window.detachedCanvasButtonRole = axElement.role;
-    shouldBe("detachedCanvasButtonRole", "expectedDetachedRole");
+            // Ensure that the old accessibility object is detached by checking its role.
+            await waitFor(() => {
+                window.detachedCanvasButtonRole = axElement.role;
+                return detachedCanvasButtonRole === expectedDetachedRole;
+            });
+            testOutput += expect("detachedCanvasButtonRole", "expectedDetachedRole");
 
-    // Ensure that the new accessibility object for the now-reparented node has the correct role.
-    window.reparentedButtonRole = axReparentedElement.role;
-    shouldBe("reparentedButtonRole", "expectedButtonRole");
-}
+            // Ensure that the new accessibility object for the now-reparented node has the correct role.
+            window.reparentedButtonRole = axReparentedElement.role;
+            testOutput += expect("reparentedButtonRole", "expectedButtonRole");
 
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+
