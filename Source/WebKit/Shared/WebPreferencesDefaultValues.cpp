@@ -163,4 +163,14 @@ bool defaultMediaSessionCoordinatorEnabled()
 }
 #endif
 
+bool defaultShowModalDialogEnabled()
+{
+#if PLATFORM(COCOA)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoShowModalDialog);
+    return !newSDK;
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

@@ -118,6 +118,7 @@ const TestFeatures& TestOptions::defaults()
             { "RequiresUserGestureForAudioPlayback", false },
             { "RequiresUserGestureForMediaPlayback", false },
             { "RequiresUserGestureForVideoPlayback", false },
+            { "ShowModalDialogEnabled", false },
             { "SpeakerSelectionRequiresUserGesture", false },
             { "SubpixelAntialiasedLayerTextEnabled", false },
             { "TabsToLinks", false },

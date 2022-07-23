@@ -75,6 +75,12 @@ bool defaultPassiveTouchListenersAsDefaultOnDocument()
     return result;
 }
 
+bool defaultShowModalDialogEnabled()
+{
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoShowModalDialog);
+    return !newSDK;
+}
+
 bool defaultRequiresUserGestureToLoadVideo()
 {
     static bool shouldRequireUserGestureToLoadVideo = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RequiresUserGestureToLoadVideo);

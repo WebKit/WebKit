@@ -630,37 +630,6 @@ public:
     }
 };
 
-static void testWebViewAllowModalDialogs(ModalDialogsTest* test, gconstpointer)
-{
-    WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
-    webkit_settings_set_allow_modal_dialogs(settings, TRUE);
-    webkit_settings_set_allow_top_navigation_to_data_urls(settings, TRUE);
-
-    test->loadHtml("<html><body onload=\"window.showModalDialog('data:text/html,<html><body/><script>window.close();</script></html>')\"></body></html>", 0);
-    test->waitUntilMainLoopFinishes();
-
-    Vector<UIClientTest::WebViewEvents>& events = test->m_webViewEvents;
-    g_assert_cmpint(events.size(), ==, 4);
-    g_assert_cmpint(events[0], ==, UIClientTest::Create);
-    g_assert_cmpint(events[1], ==, UIClientTest::ReadyToShow);
-    g_assert_cmpint(events[2], ==, UIClientTest::RunAsModal);
-    g_assert_cmpint(events[3], ==, UIClientTest::Close);
-}
-
-static void testWebViewDisallowModalDialogs(ModalDialogsTest* test, gconstpointer)
-{
-    WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
-    webkit_settings_set_allow_modal_dialogs(settings, FALSE);
-
-    test->loadHtml("<html><body onload=\"window.showModalDialog('data:text/html,<html><body/><script>window.close();</script></html>')\"></body></html>", 0);
-    // We need to use a timeout here because the viewClose() function
-    // won't ever be called as the dialog won't be created.
-    test->wait(1);
-
-    Vector<UIClientTest::WebViewEvents>& events = test->m_webViewEvents;
-    g_assert_cmpint(events.size(), ==, 0);
-}
-
 static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
 {
     test->showInWindow();
@@ -1488,8 +1457,6 @@ void beforeAll()
 #if PLATFORM(GTK)
     CreateNavigationDataTest::add("WebKitWebView", "create-navigation-data", testWebViewCreateNavigationData);
 #endif
-    ModalDialogsTest::add("WebKitWebView", "allow-modal-dialogs", testWebViewAllowModalDialogs);
-    ModalDialogsTest::add("WebKitWebView", "disallow-modal-dialogs", testWebViewDisallowModalDialogs);
     UIClientTest::add("WebKitWebView", "javascript-dialogs", testWebViewJavaScriptDialogs);
     UIClientTest::add("WebKitWebView", "window-properties", testWebViewWindowProperties);
 #if PLATFORM(GTK)

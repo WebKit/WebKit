@@ -623,47 +623,6 @@ TEST(WebKit, PointerLock)
     TestWebKitAPI::Util::run(&done);
 }
 
-static bool resizableSet;
-
-@interface ModalDelegate : NSObject <WKUIDelegatePrivate>
-@end
-
-@implementation ModalDelegate
-
-- (void)_webViewRunModal:(WKWebView *)webView
-{
-    EXPECT_TRUE(resizableSet);
-    EXPECT_EQ(webView, createdWebView.get());
-    done = true;
-}
-
-- (void)_webView:(WKWebView *)webView setResizable:(BOOL)isResizable
-{
-    EXPECT_FALSE(isResizable);
-    resizableSet = true;
-}
-
-- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
-{
-    createdWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
-    [createdWebView setUIDelegate:self];
-    return createdWebView.get();
-}
-
-@end
-
-TEST(WebKit, RunModal)
-{
-    auto delegate = adoptNS([[ModalDelegate alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
-    [webView setUIDelegate:delegate.get()];
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    NSString *html = [NSString stringWithFormat:@"%@%@%@", @"<script> function openModal() { window.showModalDialog('", url, @"'); } </script> <input type='button' value='Click to open modal' onclick='openModal();'>"];
-    [webView synchronouslyLoadHTMLString:html];
-    [webView sendClicksAtPoint:NSMakePoint(20, 600 - 20) numberOfClicks:1];
-    TestWebKitAPI::Util::run(&done);
-}
-
 static bool receivedWindowFrame;
 
 @interface WindowFrameDelegate : NSObject <WKUIDelegatePrivate>

@@ -83,4 +83,6 @@ bool defaultVisualTranslationEnabled();
 bool defaultRemoveBackgroundEnabled();
 #endif
 
+bool defaultShowModalDialogEnabled();
+
 } // namespace WebKit

@@ -853,6 +853,19 @@ ServiceWorkersUserGestureEnabled:
     WebCore:
       default: true
 
+ShowModalDialogEnabled:
+  type: bool
+  humanReadableName: "Legacy showModalDialog() API"
+  humanReadableDescription: "Legacy showModalDialog() API"
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(IOS_FAMILY)": WebKit::defaultShowModalDialogEnabled()
+      default: false
+    WebKit:
+      default: WebKit::defaultShowModalDialogEnabled()
+    WebCore:
+      default: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 SpeakerSelectionRequiresUserGesture:
   type: bool

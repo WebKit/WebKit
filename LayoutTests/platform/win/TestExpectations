@@ -618,6 +618,17 @@ webkit.org/b/151506 fast/events/beforeunload-showModalDialog.html [ Skip ]
 webkit.org/b/151506 fast/events/pagehide-showModalDialog.html [ Skip ]
 webkit.org/b/151506 fast/events/unload-showModalDialog.html [ Skip ]
 
+# ShowModalDialog preference currently cannot be enabled on Windows.
+fast/dom/Window/delete-operations.html [ Skip ]
+fast/dom/Window/forbid-showModalDialog.html [ Skip ]
+fast/dom/Window/showModalDialog-mandatory-parameter.html [ Skip ]
+fast/dom/Window/window-function-frame-getter-precedence.html [ Skip ]
+fast/dom/Window/window-function-name-getter-precedence.html [ Skip ]
+fast/events/show-modal-dialog-onblur-onfocus.html [ Skip ]
+http/tests/cookies/document-cookie-after-showModalDialog.html [ Skip ]
+js/dom/function-length.html [ Skip ]
+js/dom/global-function-resolve.html [ Skip ]
+
 # TODO Color input is not yet enabled.
 fast/forms/color/ [ Skip ]
 

@@ -43,6 +43,7 @@ bool defaultInlineMediaPlaybackRequiresPlaysInlineAttribute();
 bool defaultJavaScriptCanOpenWindowsAutomatically();
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
 bool defaultRequiresUserGestureToLoadVideo();
+bool defaultShowModalDialogEnabled();
 bool defaultWebSQLEnabled();
 bool defaultAllowContentSecurityPolicySourceStarToMatchAnyProtocol();
 #endif
