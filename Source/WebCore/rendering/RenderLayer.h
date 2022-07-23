@@ -647,30 +647,37 @@ public:
     bool hitTest(const HitTestRequest&, HitTestResult&);
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
 
+    enum class ClipRectsOption : uint8_t {
+        RespectOverflowClip         = 1 << 0,
+        IncludeOverlayScrollbarSize = 1 << 1,
+    };
+
+    static constexpr OptionSet<ClipRectsOption> clipRectOptionsForPaintingOverflowControls = { };
+    static constexpr OptionSet<ClipRectsOption> clipRectDefaultOptions = { ClipRectsOption::RespectOverflowClip };
+
     struct ClipRectsContext {
-        ClipRectsContext(const RenderLayer* inRootLayer, ClipRectsType inClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, ShouldRespectOverflowClip inRespectOverflowClip = RespectOverflowClip)
+        ClipRectsContext(const RenderLayer* inRootLayer, ClipRectsType inClipRectsType, OptionSet<ClipRectsOption> inOptions = clipRectDefaultOptions)
             : rootLayer(inRootLayer)
             , clipRectsType(inClipRectsType)
-            , overlayScrollbarSizeRelevancy(inOverlayScrollbarSizeRelevancy)
-            , respectOverflowClip(inRespectOverflowClip)
+            , options(inOptions)
         { }
         const RenderLayer* rootLayer;
         ClipRectsType clipRectsType;
-        OverlayScrollbarSizeRelevancy overlayScrollbarSizeRelevancy;
-        ShouldRespectOverflowClip respectOverflowClip;
+        OptionSet<ClipRectsOption> options;
+        
+        bool respectOverflowClip() const { return options.contains(ClipRectsOption::RespectOverflowClip); }
+        OverlayScrollbarSizeRelevancy overlayScrollbarSizeRelevancy() const { return options.contains(ClipRectsOption::IncludeOverlayScrollbarSize) ? IncludeOverlayScrollbarSize : IgnoreOverlayScrollbarSize; }
     };
 
     // This method figures out our layerBounds in coordinates relative to
     // |rootLayer|. It also computes our background and foreground clip rects
     // for painting/event handling.
     // Pass offsetFromRoot if known.
-    void calculateRects(const ClipRectsContext&, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
-        ClipRect& backgroundRect, ClipRect& foregroundRect, const LayoutSize& offsetFromRoot) const;
+    void calculateRects(const ClipRectsContext&, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds, ClipRect& backgroundRect, ClipRect& foregroundRect, const LayoutSize& offsetFromRoot) const;
 
     // Public just for RenderTreeAsText.
     void collectFragments(LayerFragments&, const RenderLayer* rootLayer, const LayoutRect& dirtyRect,
-        PaginationInclusionMode,
-        ClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy, ShouldRespectOverflowClip, const LayoutSize& offsetFromRoot,
+        PaginationInclusionMode, ClipRectsType, OptionSet<ClipRectsOption>, const LayoutSize& offsetFromRoot,
         const LayoutRect* layerBoundingBox = nullptr, ShouldApplyRootOffsetToFragments = IgnoreRootOffsetForFragments);
         
     LayoutRect childrenClipRect() const; // Returns the foreground clip rect of the layer in the document's coordinate space.
