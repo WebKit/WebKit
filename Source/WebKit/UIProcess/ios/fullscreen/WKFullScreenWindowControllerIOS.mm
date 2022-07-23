@@ -117,6 +117,7 @@ struct WKWebViewState {
     CGFloat _savedMaximumZoomScale = 1;
     BOOL _savedBouncesZoom = NO;
     BOOL _savedForceAlwaysUserScalable = NO;
+    CGFloat _savedMinimumEffectiveDeviceWidth = 0;
 
     void applyTo(WKWebView* webView)
     {
@@ -134,6 +135,7 @@ struct WKWebViewState {
         webView.scrollView.minimumZoomScale = _savedMinimumZoomScale;
         webView.scrollView.maximumZoomScale = _savedMaximumZoomScale;
         webView.scrollView.bouncesZoom = _savedBouncesZoom;
+        webView._minimumEffectiveDeviceWidth = _savedMinimumEffectiveDeviceWidth;
     }
 
     void store(WKWebView* webView)
@@ -154,6 +156,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _savedMinimumZoomScale = webView.scrollView.minimumZoomScale;
         _savedMaximumZoomScale = webView.scrollView.maximumZoomScale;
         _savedBouncesZoom = webView.scrollView.bouncesZoom;
+        _savedMinimumEffectiveDeviceWidth = webView._minimumEffectiveDeviceWidth;
     }
 };
 
@@ -467,7 +470,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     CGRect _initialFrame;
     CGRect _finalFrame;
-    CGRect _originalWindowFrame;
+    CGSize _originalWindowSize;
 
     RetainPtr<NSString> _EVOrganizationName;
     BOOL _EVOrganizationNameIsValid;
@@ -532,11 +535,15 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     _fullScreenState = WebKit::WaitingToEnterFullScreen;
     _blocksReturnToFullscreenFromPictureInPicture = manager->blocksReturnToFullscreenFromPictureInPicture();
+    _originalWindowSize = [webView window].frame.size;
 
     _window = adoptNS([[UIWindow alloc] initWithWindowScene:[[webView window] windowScene]]);
     [_window setBackgroundColor:[UIColor clearColor]];
     [_window setWindowLevel:UIWindowLevelNormal - 1];
     [_window setHidden:NO];
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    [_window setFrame:CGRectMake(0, 0, 960, 540)];
+#endif
 
     _rootViewController = adoptNS([[UIViewController alloc] init]);
     _rootViewController.get().view = adoptNS([[UIView alloc] initWithFrame:_window.get().bounds]).get();
@@ -643,7 +650,6 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     _initialFrame = initialFrame;
     _finalFrame = finalFrame;
-    _originalWindowFrame = [[_fullscreenViewController view] frame];
 
     _initialFrame.size = WebKit::sizeExpandedToSize(_initialFrame.size, CGSizeMake(1, 1));
     _finalFrame.size = WebKit::sizeExpandedToSize(_finalFrame.size, CGSizeMake(1, 1));
@@ -681,7 +687,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
             page->setSuppressVisibilityUpdates(false);
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-            configureViewForEnteringFullscreen(_fullscreenViewController.get().view, kAnimationDuration, _finalFrame.size);
+            configureViewForEnteringFullscreen(_fullscreenViewController.get().view, kAnimationDuration, [_window frame].size);
 #endif
 
             if (auto* videoFullscreenManager = self._videoFullscreenManager) {
@@ -802,7 +808,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         [self _dismissFullscreenViewController];
     };
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    configureViewForExitingFullscreen(_fullscreenViewController.get().view, kAnimationDuration, _originalWindowFrame.size, WTFMove(completionHandler));
+    configureViewForExitingFullscreen(_fullscreenViewController.get().view, kAnimationDuration, _originalWindowSize, WTFMove(completionHandler));
 #else
     completionHandler();
 #endif
