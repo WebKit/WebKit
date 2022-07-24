@@ -5355,3 +5355,8 @@ imported/w3c/web-platform-tests/streams/readable-byte-streams/respond-after-enqu
 imported/w3c/web-platform-tests/streams/readable-byte-streams/respond-after-enqueue.any.worker.html [ Skip ]
 streams/readable-byte-stream-controller.html [ Skip ]
 streams/readable-byte-stream-controller-worker.html [ Skip ]
+
+# height: fill-available failures
+webkit.org/b/241104 fast/block/fill-available-with-no-specified-containing-block-height.html [ ImageOnlyFailure ]
+webkit.org/b/241104 fast/block/fill-available-with-absolute-position.html [ ImageOnlyFailure ]
+webkit.org/b/241104 fast/css/fill-available-with-percent-height-no-quirk.html [ ImageOnlyFailure ]
