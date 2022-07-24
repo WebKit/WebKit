@@ -184,6 +184,8 @@ public:
     template <typename MeasureTextCallback>
     static float measureTextConsideringPossibleTrailingSpace(bool currentCharacterIsSpace, unsigned startIndex, unsigned wordLength, WordTrailingSpace&, HashSet<const Font*>& fallbackFonts, MeasureTextCallback&&);
 
+    static std::optional<bool> emphasisMarkExistsAndIsAbove(const RenderText&, const RenderStyle&);
+
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
     void willBeDestroyed() override;
