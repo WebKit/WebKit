@@ -112,6 +112,7 @@ private:
     void alignFlexItems(const LogicalFlexItems&, const LineRange&, VerticalConstraints, LogicalFlexItemRects&);
     void justifyFlexItems(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
     void distributeMarginAutoInMainAxis(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
+    void distributeMarginAutoInCrossAxis(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
 
     using WrappingPositions = Vector<size_t>;
     WrappingPositions computeWrappingPositions(const LogicalFlexItems&, LayoutUnit availableSpace) const;

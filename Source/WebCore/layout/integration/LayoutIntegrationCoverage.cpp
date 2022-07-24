@@ -659,8 +659,6 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
             return false;
         if (flexItemStyle.overflowX() == Overflow::Scroll || flexItemStyle.overflowY() == Overflow::Scroll)
             return false;
-        if (flexItemStyle.marginBefore().isAuto() || flexItemStyle.marginAfter().isAuto())
-            return false;
         if (flexItem.hasIntrinsicAspectRatio() || flexItemStyle.hasAspectRatio())
             return false;
         auto alignSelfValue = flexItemStyle.alignSelf().position();

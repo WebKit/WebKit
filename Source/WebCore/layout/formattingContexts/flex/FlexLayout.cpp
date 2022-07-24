@@ -348,6 +348,31 @@ void FlexLayout::distributeMarginAutoInMainAxis(const LogicalFlexItems& flexItem
     }
 }
 
+void FlexLayout::distributeMarginAutoInCrossAxis(const LogicalFlexItems& flexItems, const LineRange& lineRange, LayoutUnit availableSpace, LogicalFlexItemRects& flexRects)
+{
+    if (availableSpace <= 0)
+        return;
+
+    for (size_t index = lineRange.begin(); index < lineRange.end(); ++index) {
+        auto& flexItem = flexItems[index];
+        auto& flexRect = flexRects[index];
+
+        auto hasAutoMarginTop = flexItem.hasAutoMarginTop();
+        auto hasAutoMarginBottom = flexItem.hasAutoMarginBottom();
+        if (hasAutoMarginTop && hasAutoMarginBottom) {
+            auto marginValue = std::max(0_lu, (availableSpace - flexRect.marginRect.height()) / 2);
+            flexRect.autoMargin.top = marginValue;
+            flexRect.autoMargin.bottom = marginValue;
+        } else if (hasAutoMarginTop)
+            flexRect.autoMargin.top = std::max(0_lu, availableSpace - flexRect.marginRect.height());
+        else if (hasAutoMarginBottom)
+            flexRect.autoMargin.bottom = std::max(0_lu, availableSpace - flexRect.marginRect.height());
+        else
+            continue;
+        flexRect.marginRect.setHeight(flexRect.marginRect.height() + flexRect.autoMargin.top.value_or(0_lu) + flexRect.autoMargin.bottom.value_or(0_lu));
+    }
+}
+
 void FlexLayout::alignFlexItems(const LogicalFlexItems& flexItems, const LineRange& lineRange, VerticalConstraints constraints, LogicalFlexItemRects& flexRects)
 {
     // FIXME: Check if height computation and vertical alignment should merge.
@@ -499,6 +524,7 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const LogicalConstraints& co
         auto performCrossAxisLayout = [&] {
             auto availableLogicalVerticalSpace = lineHeightList[index];
             computeLogicalHeightForFlexItems(flexItems, lineRange, availableLogicalVerticalSpace, flexRects);
+            distributeMarginAutoInCrossAxis(flexItems, lineRange, availableLogicalVerticalSpace, flexRects);
             alignFlexItems(flexItems, lineRange, { lineTop, availableLogicalVerticalSpace }, flexRects);
             lineTop += availableLogicalVerticalSpace;
         };
