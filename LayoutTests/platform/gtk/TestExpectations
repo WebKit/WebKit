@@ -712,16 +712,6 @@ http/tests/ssl/applepay [ Skip ]
 fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 
 # Service-workers tests that fail, time out or crash.
-webkit.org/b/175419 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-storage-match.https.html [ Skip ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage-match.https.html [ Skip ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-match.https.html [ Skip ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/credentials.https.html [ Skip ]
-webkit.org/b/175419 [ Release ] http/tests/workers/service/postmessage-after-terminate.https.html [ Pass Failure Timeout ]
-webkit.org/b/175419 http/tests/workers/service/openwindow-from-notification-click.html [ Skip ]
-
-# FIXME: This can't be the right bug number.
-webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure ]
 
 # GTK ought to support async clipboard
 webkit.org/b/211979 editing/async-clipboard/clipboard-change-data-while-writing.html [ Failure ]
