@@ -12,16 +12,14 @@ if (window.testRunner && window.accessibilityController) {
 
     window.testRunner.dumpAsText();
     var ariaTextBox = document.getElementById("ariaTextBox");
-    ariaTextBox.focus();
-    var axElement = accessibilityController.focusedElement;
+    var axElement = accessibilityController.accessibleElementById("ariaTextBox");
 
     shouldBe("window.getSelection().setBaseAndExtent(ariaTextBox.childNodes[0], 0, ariaTextBox.childNodes[0], 0);"
         + " axElement.insertionPointLineNumber", "0");
 
 
     var multilineAriaTextBox = document.getElementById("multilineAriaTextBox");
-    multilineAriaTextBox.focus();
-    axElement = accessibilityController.focusedElement;
+    axElement = accessibilityController.accessibleElementById("multilineAriaTextBox");;
 
     shouldBe("window.getSelection().setBaseAndExtent(multilineAriaTextBox.childNodes[0], 1, multilineAriaTextBox.childNodes[0], 1);"
         + " axElement.insertionPointLineNumber", "0");
