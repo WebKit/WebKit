@@ -3276,43 +3276,8 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
             return adjustIntrinsicLogicalHeightForBoxSizing(intrinsicContentHeight.value());
         return { };
     }
-    if (logicalHeightLength.isFillAvailable()) {
-        auto canResolveAvailableSpace = [&] {
-            // FIXME: We need to find a way to say: yes, the constraint value is set and we can resolve height against it.
-            // Until then, this is mostly just guesswork.
-            auto inQuirksMode = document().inQuirksMode();
-            auto containingBlockHasSpecifiedSpace = [&](auto& containingBlock) {
-                auto isOrthogonal = WebCore::isOrthogonal(*this, containingBlock);
-                auto& style = containingBlock.style();
-                auto& logicalHeight = isOrthogonal ? style.width() : style.height();
-                if (logicalHeight.isSpecifiedOrIntrinsic()) {
-                    // FIXME: This should somewhat match the percent height resolution (e.g. instead of providing a definite 'yes' here, we should
-                    // keep climbing the ancestor chain to find a resolvable value.)
-                    return true;
-                }
-                if (containingBlock.isOutOfFlowPositioned()) {
-                    if ((!isOrthogonal && !style.top().isAuto() && !style.bottom().isAuto()) || (isOrthogonal && !style.left().isAuto() && !style.right().isAuto()))
-                        return true;
-                }
-                return false;
-            };
-
-            for (auto* ancestor = this->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
-                if (ancestor->hasOverridingLogicalHeight() || containingBlockHasSpecifiedSpace(*ancestor))
-                    return true;
-                if (is<RenderView>(ancestor) || (inQuirksMode && (ancestor->isBody() || ancestor->isDocumentElementRenderer())))
-                    return true;
-                // Flexing containers don't need to have specified height in order to provide a resolvable value.
-                if (!ancestor->isFlexItem() && !ancestor->isGridItem() && !is<RenderTableCell>(ancestor))
-                    return false;
-            }
-            ASSERT_NOT_REACHED();
-            return false;
-        };
-        if (canResolveAvailableSpace())
-            return containingBlock()->availableLogicalHeight(ExcludeMarginBorderPadding) - borderAndPadding;
-        return { };
-    }
+    if (logicalHeightLength.isFillAvailable())
+        return containingBlock()->availableLogicalHeight(ExcludeMarginBorderPadding) - borderAndPadding;
     ASSERT_NOT_REACHED();
     return 0_lu;
 }
