@@ -16,13 +16,9 @@
     description("This tests that the marquee role has the correct default aria-live status (off).");
 
     if (window.accessibilityController) {
-  
           // Make sure that regular elements are not exposing ARIA live attributes.
-          document.getElementById("marquee1").focus();
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'off'");
-
-          document.getElementById("marquee2").focus();
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'assertive'");
+          shouldBe("accessibilityController.accessibleElementById('marquee1').stringAttributeValue('AXARIALive')", "'off'");
+          shouldBe("accessibilityController.accessibleElementById('marquee2').stringAttributeValue('AXARIALive')", "'assertive'");
     }
 
 </script>

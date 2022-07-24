@@ -16,12 +16,6 @@
 <div id="console"></div>
 
 <script>
-    function getAccessibilityObject(id) {
-        var element = document.getElementById(id);
-        element.focus();
-        return accessibilityController.focusedElement;
-    }
-
     function output(str) {
         var results = document.getElementById("results");
         var li = document.createElement("li");
@@ -33,19 +27,19 @@
         testRunner.dumpAsText();
 
     if (window.accessibilityController) {
-        var usingNone = getAccessibilityObject("using-none");
+        var usingNone = accessibilityController.accessibleElementById("using-none");
         output("usingNone.title: [" + usingNone.title + "]");
         output("usingNone.description:  [" + usingNone.description + "]");
 
-        var usingLabel = getAccessibilityObject("using-label");
+        var usingLabel = accessibilityController.accessibleElementById("using-label");
         output("usingLabel.title: [" + usingLabel.title + "]");
         output("usingLabel.description:  [" + usingLabel.description + "]");
 
-        var usingLabelledby = getAccessibilityObject("using-labelledby");
+        var usingLabelledby = accessibilityController.accessibleElementById("using-labelledby");
         output("usingLabelledby.title: [" + usingLabelledby.title + "]");
         output("usingLabelledby.description:  [" + usingLabelledby.description + "]");
 
-        var usingLabeledby = getAccessibilityObject("using-labeledby");
+        var usingLabeledby = accessibilityController.accessibleElementById("using-labeledby");
         output("usingLabeledby.title: [" + usingLabeledby.title + "]");
         output("usingLabeledby.description:  [" + usingLabeledby.description + "]");
     }
