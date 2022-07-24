@@ -87,7 +87,8 @@ public:
         bool italic { false };
     };
 
-    static SystemFontDatabaseCoreText& singleton();
+    SystemFontDatabaseCoreText();
+    static SystemFontDatabaseCoreText& forCurrentThread();
 
     std::optional<SystemFontKind> matchSystemFontUse(const AtomString& family);
     Vector<RetainPtr<CTFontDescriptorRef>> cascadeList(const FontDescription&, const AtomString& cssFamily, SystemFontKind, AllowUserInstalledFonts);
@@ -102,13 +103,10 @@ public:
     float systemFontShorthandSize(FontShorthand);
     FontSelectionValue systemFontShorthandWeight(FontShorthand);
 
-protected:
     void clear();
 
 private:
     friend class SystemFontDatabase;
-
-    SystemFontDatabaseCoreText();
 
     Vector<RetainPtr<CTFontDescriptorRef>> cascadeList(const CascadeListParameters&, SystemFontKind);
 

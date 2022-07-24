@@ -1207,6 +1207,7 @@ void FontCache::platformInvalidate()
 {
     // FIXME: Workers need to access SystemFontDatabaseCoreText.
     m_fontFamilySpecificationCoreTextCache.clear();
+    m_systemFontDatabaseCoreText.clear();
 
     platformShouldEnhanceTextLegibility() = _AXSEnhanceTextLegibilityEnabled();
 }
@@ -1231,7 +1232,7 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
     }
 
     if (systemDesign) {
-        auto cascadeList = SystemFontDatabaseCoreText::singleton().cascadeList(fontDescription, family, *systemDesign, allowUserInstalledFonts);
+        auto cascadeList = SystemFontDatabaseCoreText::forCurrentThread().cascadeList(fontDescription, family, *systemDesign, allowUserInstalledFonts);
         if (cascadeList.isEmpty())
             return nullptr;
         return createFontForInstalledFonts(cascadeList[0].get(), size, allowUserInstalledFonts);

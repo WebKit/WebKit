@@ -34,20 +34,17 @@
 
 namespace WebCore {
 
-SystemFontDatabaseCoreText& SystemFontDatabaseCoreText::singleton()
+SystemFontDatabaseCoreText& SystemFontDatabaseCoreText::forCurrentThread()
 {
-    static NeverDestroyed<SystemFontDatabaseCoreText> database = SystemFontDatabaseCoreText();
-    return database.get();
+    return FontCache::forCurrentThread().systemFontDatabaseCoreText();
 }
 
 SystemFontDatabase& SystemFontDatabase::singleton()
 {
-    return SystemFontDatabaseCoreText::singleton();
+    return SystemFontDatabaseCoreText::forCurrentThread();
 }
 
-SystemFontDatabaseCoreText::SystemFontDatabaseCoreText()
-{
-}
+SystemFontDatabaseCoreText::SystemFontDatabaseCoreText() = default;
 
 RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createSystemUIFont(const CascadeListParameters& parameters, CFStringRef locale)
 {
@@ -132,7 +129,7 @@ Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(c
 
 void SystemFontDatabase::platformInvalidate()
 {
-    SystemFontDatabaseCoreText::singleton().clear();
+    SystemFontDatabaseCoreText::forCurrentThread().clear();
 }
 
 void SystemFontDatabaseCoreText::clear()
@@ -264,23 +261,19 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
 
     switch (systemFontKind) {
     case SystemFontKind::SystemUI: {
-        static MainThreadNeverDestroyed<const AtomString> systemUI { "system-ui"_s };
-        result.fontName = systemUI.get();
+        result.fontName = AtomString("system-ui"_s);
         break;
     }
     case SystemFontKind::UISerif: {
-        static MainThreadNeverDestroyed<const AtomString> systemUISerif { "ui-serif"_s };
-        result.fontName = systemUISerif.get();
+        result.fontName = AtomString("ui-serif"_s);
         break;
     }
     case SystemFontKind::UIMonospace: {
-        static MainThreadNeverDestroyed<const AtomString> systemUIMonospace { "ui-monospace"_s };
-        result.fontName = systemUIMonospace.get();
+        result.fontName = AtomString("ui-monospace"_s);
         break;
     }
     case SystemFontKind::UIRounded: {
-        static MainThreadNeverDestroyed<const AtomString> systemUIRounded { "ui-rounded"_s };
-        result.fontName = systemUIRounded.get();
+        result.fontName = AtomString("ui-rounded"_s);
         break;
     }
     case SystemFontKind::TextStyle:
