@@ -477,6 +477,7 @@ struct ImageAnalysisContextMenuActionData {
     BOOL _waitingForKeyboardToStartAnimatingInAfterElementFocus;
     BOOL _shouldZoomToFocusRectAfterShowingKeyboard;
     BOOL _isHidingKeyboard;
+    BOOL _isPreparingEditMenu;
 
     BOOL _focusRequiresStrongPasswordAssistance;
     BOOL _waitingForEditDragSnapshot;

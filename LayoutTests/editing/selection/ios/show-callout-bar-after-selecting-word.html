@@ -39,7 +39,7 @@ addEventListener("load", async () => {
     if (!window.testRunner)
         return;
 
-    description("This test verifies that the callout bar is shown after selecting a word in an editable element using the callout bar. To test manually, focus the editable area and tap 'Select' in the callout bar; the callout bar should appear again, with an option to 'Copy'.");
+    description("This test verifies that the callout bar is shown after selecting a word in an editable element using the callout bar. To test manually, focus the editable area and tap 'Select' in the callout bar; the callout bar should appear again, with an option to 'Copy'. The 'Select All' action should not be shown.");
 
     const editor = document.querySelector("div[contenteditable]");
 
@@ -55,6 +55,9 @@ addEventListener("load", async () => {
 
     await waitUntilMenuContains("Copy");
     testPassed("Callout bar contains 'Copy' action");
+
+    selectAllItemRect = await UIHelper.rectForMenuAction("Select All");
+    shouldBeNull("selectAllItemRect");
 
     editor.remove();
     finishJSTest();

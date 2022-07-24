@@ -4059,12 +4059,14 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     }
 
     if (action == @selector(selectAll:)) {
+        BOOL isPreparingEditMenu = _isPreparingEditMenu;
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if ([sender isKindOfClass:UIMenuController.class]) {
+        isPreparingEditMenu |= [sender isKindOfClass:UIMenuController.class];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        if (isPreparingEditMenu) {
             // By platform convention we don't show Select All in the callout menu for a range selection.
             return !editorState.selectionIsRange && self.hasContent;
         }
-        ALLOW_DEPRECATED_DECLARATIONS_END
         return YES;
     }
 
@@ -7695,8 +7697,13 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 #if ENABLE(REVEAL)
 - (void)requestRVItemInSelectedRangeWithCompletionHandler:(void(^)(RVItem *item))completionHandler
 {
-    _page->requestRVItemInCurrentSelectedRange([revealItemSelectionHandler = makeBlockPtr(completionHandler)](const WebKit::RevealItem& item) {
-        revealItemSelectionHandler(item.item());
+    _page->requestRVItemInCurrentSelectedRange([completionHandler = makeBlockPtr(completionHandler), weakSelf = WeakObjCPtr<WKContentView>(self)](const WebKit::RevealItem& item) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return completionHandler(nil);
+
+        SetForScope editMenuPreparationScope { strongSelf->_isPreparingEditMenu, YES };
+        completionHandler(item.item());
     });
 }
 
@@ -7715,10 +7722,16 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
             [strongSelf->_textInteractionAssistant activateSelection];
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-        [strongSelf doAfterComputingImageAnalysisResultsForBackgroundRemoval:[completionHandler, shouldPresentMenu, item = RetainPtr { item.item() }]() mutable {
+        [strongSelf doAfterComputingImageAnalysisResultsForBackgroundRemoval:[completionHandler, shouldPresentMenu, item = RetainPtr { item.item() }, weakSelf]() mutable {
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return completionHandler(false, nil);
+
+            SetForScope editMenuPreparationScope { strongSelf->_isPreparingEditMenu, YES };
             completionHandler(shouldPresentMenu, item.get());
         }];
 #else
+        SetForScope editMenuPreparationScope { strongSelf->_isPreparingEditMenu, YES };
         completionHandler(shouldPresentMenu, item.item());
 #endif
     });
