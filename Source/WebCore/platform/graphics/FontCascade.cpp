@@ -1212,18 +1212,28 @@ int FontCascade::emphasisMarkDescent(const AtomString& mark) const
     return markFontData->fontMetrics().descent();
 }
 
+const Font* FontCascade::fontForEmphasisMark(const AtomString& mark) const
+{
+    auto markGlyphData = getEmphasisMarkGlyphData(mark);
+    if (!markGlyphData)
+        return { };
+
+    ASSERT(markGlyphData->font);
+    return markGlyphData->font;
+}
+
 int FontCascade::emphasisMarkHeight(const AtomString& mark) const
 {
-    std::optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);
-    if (!markGlyphData)
-        return 0;
+    if (auto* font = fontForEmphasisMark(mark))
+        return font->fontMetrics().height();
+    return { };
+}
 
-    const Font* markFontData = markGlyphData.value().font;
-    ASSERT(markFontData);
-    if (!markFontData)
-        return 0;
-
-    return markFontData->fontMetrics().height();
+float FontCascade::floatEmphasisMarkHeight(const AtomString& mark) const
+{
+    if (auto* font = fontForEmphasisMark(mark))
+        return font->fontMetrics().floatHeight();
+    return { };
 }
 
 GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const

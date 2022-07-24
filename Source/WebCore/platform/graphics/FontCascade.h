@@ -178,6 +178,7 @@ public:
     int emphasisMarkAscent(const AtomString&) const;
     int emphasisMarkDescent(const AtomString&) const;
     int emphasisMarkHeight(const AtomString&) const;
+    float floatEmphasisMarkHeight(const AtomString&) const;
 
     const Font& primaryFont() const;
     const FontRanges& fallbackRangesAt(unsigned) const;
@@ -235,6 +236,7 @@ private:
     void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
 
     std::optional<GlyphData> getEmphasisMarkGlyphData(const AtomString&) const;
+    const Font* fontForEmphasisMark(const AtomString&) const;
 
     static bool canReturnFallbackFontsForComplexText();
     static bool canExpandAroundIdeographsInComplexText();
