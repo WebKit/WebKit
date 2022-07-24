@@ -43,15 +43,29 @@ public:
 
     struct LogicalFlexItem {
     public:
-        LogicalFlexItem(LayoutSize marginBoxSize, LengthType widthType, LengthType heightType, IntrinsicWidthConstraints, const ContainerBox&);
+        struct LogicalTypes {
+            LengthType width { LengthType::Auto };
+            LengthType height { LengthType::Auto };
+
+            LengthType leftMargin { LengthType::Auto };
+            LengthType rightMargin { LengthType::Auto };
+            LengthType topMargin { LengthType::Auto };
+            LengthType bottomMargin { LengthType::Auto };
+        };
+        LogicalFlexItem(LayoutSize marginBoxSize, LogicalTypes, IntrinsicWidthConstraints, const ContainerBox&);
         LogicalFlexItem() = default;
 
-        LayoutUnit flexBasis() const { return m_marginBoxSize.value.width(); }
+        LayoutUnit flexBasis() const { return m_marginBoxSize.width(); }
 
-        LayoutUnit width() const { return std::min(maximumSize(), std::max(minimumSize(), m_marginBoxSize.value.width())); }
-        LayoutUnit height() const { return m_marginBoxSize.value.height(); }
+        LayoutUnit width() const { return std::min(maximumSize(), std::max(minimumSize(), m_marginBoxSize.width())); }
+        LayoutUnit height() const { return m_marginBoxSize.height(); }
 
-        bool isHeightAuto() const { return m_marginBoxSize.heightType == LengthType::Auto; }
+        bool isHeightAuto() const { return m_logicalTypes.height == LengthType::Auto; }
+
+        bool hasAutoMarginLeft() const { return m_logicalTypes.leftMargin == LengthType::Auto; }
+        bool hasAutoMarginRight() const { return m_logicalTypes.rightMargin == LengthType::Auto; }
+        bool hasAutoMarginTop() const { return m_logicalTypes.topMargin == LengthType::Auto; }
+        bool hasAutoMarginBottom() const { return m_logicalTypes.bottomMargin == LengthType::Auto; }
 
         LayoutUnit minimumSize() const { return m_intrinsicWidthConstraints.minimum; }
         LayoutUnit maximumSize() const { return m_intrinsicWidthConstraints.maximum; }
@@ -60,12 +74,8 @@ public:
         const ContainerBox& layoutBox() const { return *m_layoutBox; }
 
     private:
-        struct MarginBoxSize {
-            LayoutSize value;
-            LengthType widthType { LengthType::Auto };
-            LengthType heightType { LengthType::Auto };
-        };
-        MarginBoxSize m_marginBoxSize { };
+        LayoutSize m_marginBoxSize;
+        LogicalTypes m_logicalTypes { };
         IntrinsicWidthConstraints m_intrinsicWidthConstraints { };
         CheckedPtr<const ContainerBox> m_layoutBox;        
     };
@@ -116,8 +126,9 @@ private:
     const ContainerBox& m_flexBox;
 };
 
-inline FlexLayout::LogicalFlexItem::LogicalFlexItem(LayoutSize marginBoxSize, LengthType widthType, LengthType heightType, IntrinsicWidthConstraints intrinsicWidthConstraints, const ContainerBox& layoutBox)
-    : m_marginBoxSize({ marginBoxSize, widthType, heightType })
+inline FlexLayout::LogicalFlexItem::LogicalFlexItem(LayoutSize marginBoxSize, LogicalTypes logicalTypes, IntrinsicWidthConstraints intrinsicWidthConstraints, const ContainerBox& layoutBox)
+    : m_marginBoxSize(marginBoxSize)
+    , m_logicalTypes(logicalTypes)
     , m_intrinsicWidthConstraints(intrinsicWidthConstraints)
     , m_layoutBox(layoutBox)
 {

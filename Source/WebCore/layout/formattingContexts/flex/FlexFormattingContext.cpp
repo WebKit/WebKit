@@ -188,12 +188,27 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
     auto logicalFlexItemList = FlexLayout::LogicalFlexItems(flexItemList.size());
     for (size_t index = 0; index < flexItemList.size(); ++index) {
         auto& layoutBox = *flexItemList[index].layoutBox;
-        auto& style = layoutBox.style();
-        auto logicalWidthType = flexDirectionIsInlineAxis ? style.width().type() : style.height().type();
-        auto logicalHeightType = flexDirectionIsInlineAxis ? style.height().type() : style.width().type();
+        auto logicalTypeValues = [&]() -> FlexLayout::LogicalFlexItem::LogicalTypes {
+            auto& style = layoutBox.style();
+            if (flexDirectionIsInlineAxis) {
+                return { style.width().type()
+                    , style.height().type()
+                    , style.marginStart().type()
+                    , style.marginEnd().type()
+                    , style.marginBefore().type()
+                    , style.marginAfter().type()
+                };
+            }
+            return { style.height().type()
+                , style.width().type()
+                , style.marginBefore().type()
+                , style.marginAfter().type()
+                , style.marginStart().type()
+                , style.marginEnd().type()
+            };
+        };
         logicalFlexItemList[index] = { flexItemList[index].marginBoxSize
-            , logicalWidthType
-            , logicalHeightType
+            , logicalTypeValues()
             , *formattingState.intrinsicWidthConstraintsForBox(layoutBox)
             , layoutBox };
     }

@@ -309,29 +309,20 @@ void FlexLayout::distributeMarginAutoInMainAxis(const LogicalFlexItems& flexItem
     if (availableSpace <= 0)
         return;
 
-    struct AutoMargin {
-        size_t flexIndex { 0 };
-        bool hasAutoMarginLeft { false };
-        bool hasAutoMarginRight { false };
-    };
-    Vector<AutoMargin> boxesWithMarginAuto;
+    Vector<size_t> boxesWithMarginAuto;
     boxesWithMarginAuto.reserveInitialCapacity(flexItems.size());
 
     auto logicalWidth = LayoutUnit { };
     size_t autoMarginCount = 0;
-    auto flexDirectionIsInlineAxis = FlexFormattingGeometry::isMainAxisParallelWithInlineAxis(flexBox());
     for (size_t index = lineRange.begin(); index < lineRange.end(); ++index) {
         auto& flexItem = flexItems[index];
-        auto& flexItemStyle = flexItem.style();
 
-        auto hasAutoMarginLeft = flexDirectionIsInlineAxis ? flexItemStyle.marginStart().isAuto() : flexItemStyle.marginBefore().isAuto();
-        auto hasAutoMarginRight = flexDirectionIsInlineAxis ? flexItemStyle.marginEnd().isAuto() : flexItemStyle.marginAfter().isAuto();
-        if (hasAutoMarginLeft || hasAutoMarginRight) {
-            if (hasAutoMarginLeft)
+        if (flexItem.hasAutoMarginLeft() || flexItem.hasAutoMarginRight()) {
+            if (flexItem.hasAutoMarginLeft())
                 ++autoMarginCount;
-            if (hasAutoMarginRight)
+            if (flexItem.hasAutoMarginRight())
                 ++autoMarginCount;
-            boxesWithMarginAuto.append({ index, hasAutoMarginLeft, hasAutoMarginRight });
+            boxesWithMarginAuto.append(index);
         }
         logicalWidth += flexRects[index]().width();
     }
@@ -345,12 +336,13 @@ void FlexLayout::distributeMarginAutoInMainAxis(const LogicalFlexItems& flexItem
     if (!extraMargin)
         return;
 
-    for (auto autoMargin : boxesWithMarginAuto) {
-        auto& flexRect = flexRects[autoMargin.flexIndex];
+    for (auto index : boxesWithMarginAuto) {
+        auto& flexRect = flexRects[index];
+        auto& flexItem = flexItems[index];
 
-        if (autoMargin.hasAutoMarginLeft)
+        if (flexItem.hasAutoMarginLeft())
             flexRect.autoMargin.left = extraMargin;
-        if (autoMargin.hasAutoMarginRight)
+        if (flexItem.hasAutoMarginRight())
             flexRect.autoMargin.right = extraMargin;
         flexRect.marginRect.setWidth(flexRect.marginRect.width() + flexRect.autoMargin.left.value_or(0_lu) + flexRect.autoMargin.right.value_or(0_lu));
     }
