@@ -1,35 +1,36 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
-
-<input type="text" id="text1" required>
-<input type="file" id="file" required>
-
-<p id="description"></p>
-<div id="console"></div>
+<input type="text" id="text-input" required>
+<input type="file" id="file-input" required>
 
 <script>
-
-    description("This tests that the required attribute is returned correctly through accessibility.");
+    var testOutput = "This tests that the required attribute is returned correctly through accessibility.\n\n";
 
     if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
 
-        document.getElementById("text1").focus();
-        shouldBeTrue("accessibilityController.focusedElement.isRequired");
+        var fileInput = accessibilityController.accessibleElementById("file-input");
+        var textInput = accessibilityController.accessibleElementById("text-input");
 
-        document.getElementById("text1").removeAttribute("required");
-        shouldBeFalse("accessibilityController.focusedElement.isRequired");
+        testOutput += expect("textInput.isRequired", "true");
+        document.getElementById("text-input").removeAttribute("required");
+        setTimeout(async function() {
+            await waitFor(() => !textInput.isRequired);
+            testOutput += expect("textInput.isRequired", "false");
 
-        var fileUpload = accessibilityController.accessibleElementById("file");
-        shouldBeTrue("fileUpload.isRequired");
+            testOutput += expect("fileInput.isRequired", "true");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
     }
-
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

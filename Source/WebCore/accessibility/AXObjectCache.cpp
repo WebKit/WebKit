@@ -1960,6 +1960,8 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         postNotification(element, AXObjectCache::AXDisabledStateChanged);
     else if (attrName == forAttr && is<HTMLLabelElement>(*element))
         labelChanged(element);
+    else if (attrName == requiredAttr)
+        postNotification(element, AXRequiredStatusChanged);
     else if (attrName == tabindexAttr)
         childrenChanged(element->parentNode(), element);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
