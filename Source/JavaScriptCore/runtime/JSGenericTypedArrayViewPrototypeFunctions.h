@@ -158,7 +158,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSet(VM& vm, JSGlobalO
     RETURN_IF_EXCEPTION(scope, { });
 
     size_t length;
-    if (isTypedView(sourceArray->classInfo()->typedArrayStorageType)) {
+    if (isTypedView(sourceArray->type())) {
         JSArrayBufferView* sourceView = jsCast<JSArrayBufferView*>(sourceArray);
         if (UNLIKELY(sourceView->isDetached()))
             return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
@@ -601,7 +601,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
 
     // https://tc39.es/ecma262/#typedarray-species-create
     // If result.[[ContentType]] ≠ exemplar.[[ContentType]], throw a TypeError exception.
-    if (contentType(result->classInfo()->typedArrayStorageType) != ViewClass::contentType)
+    if (contentType(result->type()) != ViewClass::contentType)
         return throwVMTypeError(globalObject, scope, "Content types of source and created typed arrays are different"_s);
 
     // We return early here since we don't allocate a backing store if length is 0 and memmove does not like nullptrs
@@ -615,48 +615,48 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
     if (result->length() < length)
         return throwVMTypeError(globalObject, scope, "TypedArray.prototype.slice constructed typed array of insufficient length"_s);
 
-    switch (result->classInfo()->typedArrayStorageType) {
-    case TypeInt8:
+    switch (result->type()) {
+    case Int8ArrayType:
         scope.release();
         jsCast<JSInt8Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
-    case TypeInt16:
+    case Int16ArrayType:
         scope.release();
         jsCast<JSInt16Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
-    case TypeInt32:
+    case Int32ArrayType:
         scope.release();
         jsCast<JSInt32Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
-    case TypeUint8:
+    case Uint8ArrayType:
         scope.release();
         jsCast<JSUint8Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
-    case TypeUint8Clamped:
+    case Uint8ClampedArrayType:
         scope.release();
         jsCast<JSUint8ClampedArray*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
-    case TypeUint16:
+    case Uint16ArrayType:
         scope.release();
         jsCast<JSUint16Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
-    case TypeUint32:
+    case Uint32ArrayType:
         scope.release();
         jsCast<JSUint32Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
-    case TypeFloat32:
+    case Float32ArrayType:
         scope.release();
         jsCast<JSFloat32Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
-    case TypeFloat64:
+    case Float64ArrayType:
         scope.release();
         jsCast<JSFloat64Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
-    case TypeBigInt64:
+    case BigInt64ArrayType:
         scope.release();
         jsCast<JSBigInt64Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
-    case TypeBigUint64:
+    case BigUint64ArrayType:
         scope.release();
         jsCast<JSBigUint64Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
         return JSValue::encode(result);
@@ -730,7 +730,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncSubarrayCreate(VM& 
 
     JSArrayBufferView* validated = validateTypedArray(globalObject, result);
     RETURN_IF_EXCEPTION(scope, { });
-    if (contentType(validated->classInfo()->typedArrayStorageType) != ViewClass::contentType)
+    if (contentType(validated->type()) != ViewClass::contentType)
         return throwVMTypeError(globalObject, scope, "TypedArray.prototype.subarray constructed typed array of different content type from |this|"_s);
 
     return JSValue::encode(validated);

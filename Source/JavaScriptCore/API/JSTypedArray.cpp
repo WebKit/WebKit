@@ -44,34 +44,33 @@ using namespace JSC;
 
 // Helper functions.
 
-inline JSTypedArrayType toJSTypedArrayType(TypedArrayType type)
+inline JSTypedArrayType toJSTypedArrayType(JSC::JSType type)
 {
     switch (type) {
-    case JSC::TypeDataView:
-    case NotTypedArray:
-        return kJSTypedArrayTypeNone;
-    case TypeInt8:
+    case JSC::Int8ArrayType:
         return kJSTypedArrayTypeInt8Array;
-    case TypeUint8:
+    case JSC::Uint8ArrayType:
         return kJSTypedArrayTypeUint8Array;
-    case TypeUint8Clamped:
+    case JSC::Uint8ClampedArrayType:
         return kJSTypedArrayTypeUint8ClampedArray;
-    case TypeInt16:
+    case JSC::Int16ArrayType:
         return kJSTypedArrayTypeInt16Array;
-    case TypeUint16:
+    case JSC::Uint16ArrayType:
         return kJSTypedArrayTypeUint16Array;
-    case TypeInt32:
+    case JSC::Int32ArrayType:
         return kJSTypedArrayTypeInt32Array;
-    case TypeUint32:
+    case JSC::Uint32ArrayType:
         return kJSTypedArrayTypeUint32Array;
-    case TypeFloat32:
+    case JSC::Float32ArrayType:
         return kJSTypedArrayTypeFloat32Array;
-    case TypeFloat64:
+    case JSC::Float64ArrayType:
         return kJSTypedArrayTypeFloat64Array;
-    case TypeBigInt64:
+    case JSC::BigInt64ArrayType:
         return kJSTypedArrayTypeBigInt64Array;
-    case TypeBigUint64:
+    case JSC::BigUint64ArrayType:
         return kJSTypedArrayTypeBigUint64Array;
+    default:
+        return kJSTypedArrayTypeNone;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -163,7 +162,7 @@ JSTypedArrayType JSValueGetTypedArrayType(JSContextRef ctx, JSValueRef valueRef,
     if (jsDynamicCast<JSArrayBuffer*>(object))
         return kJSTypedArrayTypeArrayBuffer;
 
-    return toJSTypedArrayType(object->classInfo()->typedArrayStorageType);
+    return toJSTypedArrayType(object->type());
 }
 
 JSObjectRef JSObjectMakeTypedArray(JSContextRef ctx, JSTypedArrayType arrayType, size_t length, JSValueRef* exception)
@@ -287,7 +286,7 @@ size_t JSObjectGetTypedArrayByteLength(JSContextRef, JSObjectRef objectRef, JSVa
     JSObject* object = toJS(objectRef);
 
     if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object))
-        return typedArray->length() * elementSize(typedArray->classInfo()->typedArrayStorageType);
+        return typedArray->length() * elementSize(typedArray->type());
 
     return 0;
 }

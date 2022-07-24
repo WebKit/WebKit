@@ -1537,7 +1537,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsBoolean(child.value().isEmpty()));
                 break;
             case IsTypedArrayView:
-                setConstant(node, jsBoolean(child.value().isObject() && isTypedView(child.value().getObject()->classInfo()->typedArrayStorageType)));
+                setConstant(node, jsBoolean(child.value().isObject() && isTypedView(child.value().getObject()->type())));
                 break;
             default:
                 constantWasSet = false;

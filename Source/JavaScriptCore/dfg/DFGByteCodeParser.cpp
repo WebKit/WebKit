@@ -3832,12 +3832,12 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
 #endif
         insertChecks();
 
-        TypedArrayType type = (*variant.structureSet().begin())->classInfoForCells()->typedArrayStorageType;
+        TypedArrayType type = typedArrayType((*variant.structureSet().begin())->typeInfo().type());
         Array::Type arrayType = toArrayType(type);
         size_t logSize = logElementSize(type);
 
         variant.structureSet().forEach([&] (Structure* structure) {
-            TypedArrayType curType = structure->classInfoForCells()->typedArrayStorageType;
+            TypedArrayType curType = typedArrayType(structure->typeInfo().type());
             ASSERT(logSize == logElementSize(curType));
             arrayType = refineTypedArrayType(arrayType, curType);
             ASSERT(arrayType != Array::Generic);
@@ -3869,11 +3869,11 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
 #endif
         insertChecks();
 
-        TypedArrayType type = (*variant.structureSet().begin())->classInfoForCells()->typedArrayStorageType;
+        TypedArrayType type = typedArrayType((*variant.structureSet().begin())->typeInfo().type());
         Array::Type arrayType = toArrayType(type);
 
         variant.structureSet().forEach([&] (Structure* structure) {
-            TypedArrayType curType = structure->classInfoForCells()->typedArrayStorageType;
+            TypedArrayType curType = typedArrayType(structure->typeInfo().type());
             arrayType = refineTypedArrayType(arrayType, curType);
             ASSERT(arrayType != Array::Generic);
         });
@@ -3893,11 +3893,11 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
 #endif
         insertChecks();
 
-        TypedArrayType type = (*variant.structureSet().begin())->classInfoForCells()->typedArrayStorageType;
+        TypedArrayType type = typedArrayType((*variant.structureSet().begin())->typeInfo().type());
         Array::Type arrayType = toArrayType(type);
 
         variant.structureSet().forEach([&] (Structure* structure) {
-            TypedArrayType curType = structure->classInfoForCells()->typedArrayStorageType;
+            TypedArrayType curType = typedArrayType(structure->typeInfo().type());
             arrayType = refineTypedArrayType(arrayType, curType);
             ASSERT(arrayType != Array::Generic);
         });

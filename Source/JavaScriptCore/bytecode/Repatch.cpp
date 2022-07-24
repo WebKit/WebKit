@@ -616,39 +616,39 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
             accessType = AccessCase::IndexedScopedArgumentsLoad;
         else if (base->type() == StringType)
             accessType = AccessCase::IndexedStringLoad;
-        else if (isTypedView(base->classInfo()->typedArrayStorageType)) {
-            switch (base->classInfo()->typedArrayStorageType) {
-            case TypeInt8:
+        else if (isTypedView(base->type())) {
+            switch (base->type()) {
+            case Int8ArrayType:
                 accessType = AccessCase::IndexedTypedArrayInt8Load;
                 break;
-            case TypeUint8:
+            case Uint8ArrayType:
                 accessType = AccessCase::IndexedTypedArrayUint8Load;
                 break;
-            case TypeUint8Clamped:
+            case Uint8ClampedArrayType:
                 accessType = AccessCase::IndexedTypedArrayUint8ClampedLoad;
                 break;
-            case TypeInt16:
+            case Int16ArrayType:
                 accessType = AccessCase::IndexedTypedArrayInt16Load;
                 break;
-            case TypeUint16:
+            case Uint16ArrayType:
                 accessType = AccessCase::IndexedTypedArrayUint16Load;
                 break;
-            case TypeInt32:
+            case Int32ArrayType:
                 accessType = AccessCase::IndexedTypedArrayInt32Load;
                 break;
-            case TypeUint32:
+            case Uint32ArrayType:
                 accessType = AccessCase::IndexedTypedArrayUint32Load;
                 break;
-            case TypeFloat32:
+            case Float32ArrayType:
                 accessType = AccessCase::IndexedTypedArrayFloat32Load;
                 break;
-            case TypeFloat64:
+            case Float64ArrayType:
                 accessType = AccessCase::IndexedTypedArrayFloat64Load;
                 break;
             // FIXME: Optimize BigInt64Array / BigUint64Array in IC
             // https://bugs.webkit.org/show_bug.cgi?id=221183
-            case TypeBigInt64:
-            case TypeBigUint64:
+            case BigInt64ArrayType:
+            case BigUint64ArrayType:
                 return GiveUpOnCache;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -1029,39 +1029,39 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
         JSCell* base = baseValue.asCell();
 
         AccessCase::AccessType accessType;
-        if (isTypedView(base->classInfo()->typedArrayStorageType)) {
-            switch (base->classInfo()->typedArrayStorageType) {
-            case TypeInt8:
+        if (isTypedView(base->type())) {
+            switch (base->type()) {
+            case Int8ArrayType:
                 accessType = AccessCase::IndexedTypedArrayInt8Store;
                 break;
-            case TypeUint8:
+            case Uint8ArrayType:
                 accessType = AccessCase::IndexedTypedArrayUint8Store;
                 break;
-            case TypeUint8Clamped:
+            case Uint8ClampedArrayType:
                 accessType = AccessCase::IndexedTypedArrayUint8ClampedStore;
                 break;
-            case TypeInt16:
+            case Int16ArrayType:
                 accessType = AccessCase::IndexedTypedArrayInt16Store;
                 break;
-            case TypeUint16:
+            case Uint16ArrayType:
                 accessType = AccessCase::IndexedTypedArrayUint16Store;
                 break;
-            case TypeInt32:
+            case Int32ArrayType:
                 accessType = AccessCase::IndexedTypedArrayInt32Store;
                 break;
-            case TypeUint32:
+            case Uint32ArrayType:
                 accessType = AccessCase::IndexedTypedArrayUint32Store;
                 break;
-            case TypeFloat32:
+            case Float32ArrayType:
                 accessType = AccessCase::IndexedTypedArrayFloat32Store;
                 break;
-            case TypeFloat64:
+            case Float64ArrayType:
                 accessType = AccessCase::IndexedTypedArrayFloat64Store;
                 break;
             // FIXME: Optimize BigInt64Array / BigUint64Array in IC
             // https://bugs.webkit.org/show_bug.cgi?id=221183
-            case TypeBigInt64:
-            case TypeBigUint64:
+            case BigInt64ArrayType:
+            case BigUint64ArrayType:
                 return GiveUpOnCache;
             default:
                 RELEASE_ASSERT_NOT_REACHED();

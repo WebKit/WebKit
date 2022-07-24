@@ -176,7 +176,6 @@ struct MethodTable {
         &ClassName::visitOutputConstraints, \
         &ClassName::visitOutputConstraints, \
     }, \
-    ClassName::TypedArrayStorageType, \
     sizeof(ClassName),
 
 struct CLASS_INFO_ALIGNMENT ClassInfo {
@@ -191,7 +190,6 @@ struct CLASS_INFO_ALIGNMENT ClassInfo {
     CheckJSCastSnippetFunctionPtr checkSubClassSnippet;
     const std::optional<JSTypeRange> inheritsJSTypeRange; // This is range of JSTypes for doing inheritance checking. Has the form: [firstJSType, lastJSType] (inclusive).
     MethodTable methodTable;
-    const TypedArrayType typedArrayStorageType;
     const unsigned staticClassSize;
 
     static ptrdiff_t offsetOfParentClass()

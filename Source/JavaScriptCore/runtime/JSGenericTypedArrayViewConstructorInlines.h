@@ -147,7 +147,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
     if (JSObject* object = jsDynamicCast<JSObject*>(firstValue)) {
         size_t length;
 
-        if (isTypedView(object->classInfo()->typedArrayStorageType)) {
+        if (isTypedView(object->type())) {
             auto* view = jsCast<JSArrayBufferView*>(object);
 
             if (view->isDetached()) {
@@ -155,7 +155,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
                 return nullptr;
             }
 
-            if (contentType(object->classInfo()->typedArrayStorageType) != ViewClass::contentType) {
+            if (contentType(object->type()) != ViewClass::contentType) {
                 throwTypeError(globalObject, scope, "Content types of source and new typed array are different"_s);
                 return nullptr;
             }

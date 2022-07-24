@@ -55,31 +55,30 @@ static JSC_DECLARE_HOST_FUNCTION(typedArrayViewProtoFuncSlice);
 static JSC_DECLARE_HOST_FUNCTION(typedArrayViewProtoGetterFuncToStringTag);
 
 #define CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(functionName) do {                           \
-    switch (thisValue.getObject()->classInfo()->typedArrayStorageType) {                      \
-    case TypeUint8Clamped:                                                                      \
+    switch (thisValue.getObject()->type()) {                                                    \
+    case Uint8ClampedArrayType:                                                                 \
         return functionName<JSUint8ClampedArray>(vm, globalObject, callFrame);                  \
-    case TypeInt32:                                                                             \
+    case Int32ArrayType:                                                                        \
         return functionName<JSInt32Array>(vm, globalObject, callFrame);                         \
-    case TypeUint32:                                                                            \
+    case Uint32ArrayType:                                                                       \
         return functionName<JSUint32Array>(vm, globalObject, callFrame);                        \
-    case TypeFloat64:                                                                           \
+    case Float64ArrayType:                                                                      \
         return functionName<JSFloat64Array>(vm, globalObject, callFrame);                       \
-    case TypeFloat32:                                                                           \
+    case Float32ArrayType:                                                                      \
         return functionName<JSFloat32Array>(vm, globalObject, callFrame);                       \
-    case TypeInt8:                                                                              \
+    case Int8ArrayType:                                                                         \
         return functionName<JSInt8Array>(vm, globalObject, callFrame);                          \
-    case TypeUint8:                                                                             \
+    case Uint8ArrayType:                                                                        \
         return functionName<JSUint8Array>(vm, globalObject, callFrame);                         \
-    case TypeInt16:                                                                             \
+    case Int16ArrayType:                                                                        \
         return functionName<JSInt16Array>(vm, globalObject, callFrame);                         \
-    case TypeUint16:                                                                            \
+    case Uint16ArrayType:                                                                       \
         return functionName<JSUint16Array>(vm, globalObject, callFrame);                        \
-    case TypeBigInt64:                                                                          \
+    case BigInt64ArrayType:                                                                     \
         return functionName<JSBigInt64Array>(vm, globalObject, callFrame);                      \
-    case TypeBigUint64:                                                                         \
+    case BigUint64ArrayType:                                                                    \
         return functionName<JSBigUint64Array>(vm, globalObject, callFrame);                     \
-    case NotTypedArray:                                                                         \
-    case TypeDataView:                                                                          \
+    default:                                                                                    \
         return throwVMTypeError(globalObject, scope,                                            \
             "Receiver should be a typed array view"_s);                                         \
     }                                                                                           \
@@ -89,7 +88,7 @@ static JSC_DECLARE_HOST_FUNCTION(typedArrayViewProtoGetterFuncToStringTag);
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsTypedArrayView, (JSGlobalObject*, CallFrame* callFrame))
 {
     JSValue value = callFrame->uncheckedArgument(0);
-    return JSValue::encode(jsBoolean(value.isCell() && isTypedView(value.asCell()->classInfo()->typedArrayStorageType)));
+    return JSValue::encode(jsBoolean(value.isCell() && isTypedView(value.asCell()->type())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsSharedTypedArrayView, (JSGlobalObject*, CallFrame* callFrame))
@@ -97,7 +96,7 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsSharedTypedArrayView, (JSGlo
     JSValue value = callFrame->uncheckedArgument(0);
     if (!value.isCell())
         return JSValue::encode(jsBoolean(false));
-    if (!isTypedView(value.asCell()->classInfo()->typedArrayStorageType))
+    if (!isTypedView(value.asCell()->type()))
         return JSValue::encode(jsBoolean(false));
     return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(value)->isShared()));
 }
@@ -105,7 +104,7 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsSharedTypedArrayView, (JSGlo
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsDetached, (JSGlobalObject*, CallFrame* callFrame))
 {
     JSValue argument = callFrame->uncheckedArgument(0);
-    ASSERT(argument.isCell() && isTypedView(argument.asCell()->classInfo()->typedArrayStorageType));
+    ASSERT(argument.isCell() && isTypedView(argument.asCell()->type()));
     return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(argument)->isDetached()));
 }
 
@@ -166,7 +165,7 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncLength, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue argument = callFrame->argument(0);
-    if (!argument.isCell() || !isTypedView(argument.asCell()->classInfo()->typedArrayStorageType))
+    if (!argument.isCell() || !isTypedView(argument.asCell()->type()))
         return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view"_s);
 
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(argument);
@@ -182,14 +181,14 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncContentType, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue argument = callFrame->argument(0);
-    if (!argument.isCell() || !isTypedView(argument.asCell()->classInfo()->typedArrayStorageType))
+    if (!argument.isCell() || !isTypedView(argument.asCell()->type()))
         return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view"_s);
-    return JSValue::encode(jsNumber(static_cast<int32_t>(contentType(argument.asCell()->classInfo()->typedArrayStorageType))));
+    return JSValue::encode(jsNumber(static_cast<int32_t>(contentType(argument.asCell()->type()))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncGetOriginalConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    TypedArrayType type = callFrame->uncheckedArgument(0).getObject()->classInfo()->typedArrayStorageType;
+    TypedArrayType type = typedArrayType(callFrame->uncheckedArgument(0).getObject()->type());
     ASSERT(isTypedView(type));
     return JSValue::encode(globalObject->typedArrayConstructor(type));
 }
@@ -395,31 +394,30 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewProtoGetterFuncToStringTag, (JSGlobalObje
         return JSValue::encode(jsUndefined());
 
     VM& vm = globalObject->vm();
-    switch (thisValue.getObject()->classInfo()->typedArrayStorageType) {
-    case TypeUint8Clamped:
+    switch (thisValue.getObject()->type()) {
+    case Uint8ClampedArrayType:
         return JSValue::encode(jsNontrivialString(vm, "Uint8ClampedArray"_s));
-    case TypeInt32:
+    case Int32ArrayType:
         return JSValue::encode(jsNontrivialString(vm, "Int32Array"_s));
-    case TypeUint32:
+    case Uint32ArrayType:
         return JSValue::encode(jsNontrivialString(vm, "Uint32Array"_s));
-    case TypeFloat64:
+    case Float64ArrayType:
         return JSValue::encode(jsNontrivialString(vm, "Float64Array"_s));
-    case TypeFloat32:
+    case Float32ArrayType:
         return JSValue::encode(jsNontrivialString(vm, "Float32Array"_s));
-    case TypeInt8:
+    case Int8ArrayType:
         return JSValue::encode(jsNontrivialString(vm, "Int8Array"_s));
-    case TypeUint8:
+    case Uint8ArrayType:
         return JSValue::encode(jsNontrivialString(vm, "Uint8Array"_s));
-    case TypeInt16:
+    case Int16ArrayType:
         return JSValue::encode(jsNontrivialString(vm, "Int16Array"_s));
-    case TypeUint16:
+    case Uint16ArrayType:
         return JSValue::encode(jsNontrivialString(vm, "Uint16Array"_s));
-    case TypeBigInt64:
+    case BigInt64ArrayType:
         return JSValue::encode(jsNontrivialString(vm, "BigInt64Array"_s));
-    case TypeBigUint64:
+    case BigUint64ArrayType:
         return JSValue::encode(jsNontrivialString(vm, "BigUint64Array"_s));
-    case NotTypedArray:
-    case TypeDataView:
+    default:
         return JSValue::encode(jsUndefined());
     }
     RELEASE_ASSERT_NOT_REACHED();

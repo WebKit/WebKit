@@ -82,6 +82,43 @@ inline TypedArrayType indexToTypedArrayType(unsigned index)
     return result;
 }
 
+inline constexpr TypedArrayType typedArrayType(JSType type)
+{
+    switch (type) {
+    case Int8ArrayType:
+        return TypeInt8;
+    case Uint8ArrayType:
+        return TypeUint8;
+    case Uint8ClampedArrayType:
+        return TypeUint8Clamped;
+    case Int16ArrayType:
+        return TypeInt16;
+    case Uint16ArrayType:
+        return TypeUint16;
+    case Int32ArrayType:
+        return TypeInt32;
+    case Uint32ArrayType:
+        return TypeUint32;
+    case Float32ArrayType:
+        return TypeFloat32;
+    case Float64ArrayType:
+        return TypeFloat64;
+    case BigInt64ArrayType:
+        return TypeBigInt64;
+    case BigUint64ArrayType:
+        return TypeBigUint64;
+    case DataViewType:
+        return TypeDataView;
+    default:
+        return NotTypedArray;
+    }
+}
+
+inline bool isTypedView(JSType type)
+{
+    return type >= FirstTypedArrayType && type <= LastTypedArrayTypeExcludingDataView;
+}
+
 inline bool isTypedView(TypedArrayType type)
 {
     switch (type) {
@@ -133,6 +170,11 @@ inline unsigned logElementSize(TypedArrayType type)
 inline size_t elementSize(TypedArrayType type)
 {
     return static_cast<size_t>(1) << logElementSize(type);
+}
+
+inline size_t elementSize(JSType type)
+{
+    return static_cast<size_t>(1) << logElementSize(typedArrayType(type));
 }
 
 const ClassInfo* constructorClassInfoForType(TypedArrayType);
@@ -209,6 +251,27 @@ inline bool isSigned(TypedArrayType type)
 inline bool isClamped(TypedArrayType type)
 {
     return type == TypeUint8Clamped;
+}
+
+inline constexpr TypedArrayContentType contentType(JSType type)
+{
+    switch (type) {
+    case BigInt64ArrayType:
+    case BigUint64ArrayType:
+        return TypedArrayContentType::BigInt;
+    case Int8ArrayType:
+    case Int16ArrayType:
+    case Int32ArrayType:
+    case Uint8ArrayType:
+    case Uint16ArrayType:
+    case Uint32ArrayType:
+    case Float32ArrayType:
+    case Float64ArrayType:
+    case Uint8ClampedArrayType:
+        return TypedArrayContentType::Number;
+    default:
+        return TypedArrayContentType::None;
+    }
 }
 
 inline constexpr TypedArrayContentType contentType(TypedArrayType type)

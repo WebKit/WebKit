@@ -522,9 +522,14 @@ SpeculatedType speculationFromClassInfoInheritance(const ClassInfo* classInfo)
     if (classInfo->isSubClassOf(JSPromise::info()))
         return SpecPromiseObject;
     
-    if (isTypedView(classInfo->typedArrayStorageType))
-        return speculationFromTypedArrayType(classInfo->typedArrayStorageType);
-    
+#define JSC_TYPED_ARRAY_CHECK(type) do { \
+        static_assert(std::is_final<JS ## type ## Array>::value); \
+        if (classInfo == JS ## type ## Array::info()) \
+            return Spec ## type ## Array; \
+    } while (0);
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_TYPED_ARRAY_CHECK)
+#undef JSC_TYPED_ARRAY_CHECK
+
     if (classInfo->isSubClassOf(JSObject::info()))
         return SpecObjectOther;
     

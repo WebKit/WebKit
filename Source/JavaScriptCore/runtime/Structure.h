@@ -557,7 +557,7 @@ public:
 
     bool hijacksIndexingHeader() const
     {
-        return isTypedView(m_classInfo->typedArrayStorageType);
+        return isTypedView(m_blob.type());
     }
     
     bool couldHaveIndexingHeader() const

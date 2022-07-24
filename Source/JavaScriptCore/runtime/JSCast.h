@@ -66,7 +66,47 @@ struct JSTypeRange {
 };
 
 // Specific type overloads.
-#define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(macro) \
+
+template<typename>
+class JSGenericTypedArrayView;
+struct Int8Adaptor;
+struct Int16Adaptor;
+struct Int32Adaptor;
+struct Uint8Adaptor;
+struct Uint16Adaptor;
+struct Uint32Adaptor;
+struct Uint8ClampedAdaptor;
+struct Float32Adaptor;
+struct Float64Adaptor;
+struct BigInt64Adaptor;
+struct BigUint64Adaptor;
+
+using JSInt8Array = JSGenericTypedArrayView<Int8Adaptor>;
+using JSInt16Array = JSGenericTypedArrayView<Int16Adaptor>;
+using JSInt32Array = JSGenericTypedArrayView<Int32Adaptor>;
+using JSUint8Array = JSGenericTypedArrayView<Uint8Adaptor>;
+using JSUint8ClampedArray = JSGenericTypedArrayView<Uint8ClampedAdaptor>;
+using JSUint16Array = JSGenericTypedArrayView<Uint16Adaptor>;
+using JSUint32Array = JSGenericTypedArrayView<Uint32Adaptor>;
+using JSFloat32Array = JSGenericTypedArrayView<Float32Adaptor>;
+using JSFloat64Array = JSGenericTypedArrayView<Float64Adaptor>;
+using JSBigInt64Array = JSGenericTypedArrayView<BigInt64Adaptor>;
+using JSBigUint64Array = JSGenericTypedArrayView<BigUint64Adaptor>;
+
+#define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD_NON_FORWARD_DECLARED(macro) \
+    /* TypedArrays are typedef, thus, we cannot use `class` forward declaration */ \
+    macro(JSInt8Array, JSType::Int8ArrayType, JSType::Int8ArrayType) \
+    macro(JSUint8Array, JSType::Uint8ArrayType, JSType::Uint8ArrayType) \
+    macro(JSInt16Array, JSType::Int16ArrayType, JSType::Int16ArrayType) \
+    macro(JSUint16Array, JSType::Uint16ArrayType, JSType::Uint16ArrayType) \
+    macro(JSInt32Array, JSType::Int32ArrayType, JSType::Int32ArrayType) \
+    macro(JSUint32Array, JSType::Uint32ArrayType, JSType::Uint32ArrayType) \
+    macro(JSFloat32Array, JSType::Float32ArrayType, JSType::Float32ArrayType) \
+    macro(JSFloat64Array, JSType::Float64ArrayType, JSType::Float64ArrayType) \
+    macro(JSBigInt64Array, JSType::BigInt64ArrayType, JSType::BigInt64ArrayType) \
+    macro(JSBigUint64Array, JSType::BigUint64ArrayType, JSType::BigUint64ArrayType) \
+
+#define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD_FORWARD_DECLARED(macro) \
     macro(JSImmutableButterfly, JSType::JSImmutableButterflyType, JSType::JSImmutableButterflyType) \
     macro(JSStringIterator, JSType::JSStringIteratorType, JSType::JSStringIteratorType) \
     macro(JSObject, FirstObjectType, LastObjectType) \
@@ -101,11 +141,15 @@ struct JSTypeRange {
     macro(JSScope, JSType::GlobalObjectType, JSType::WithScopeType) \
     macro(StringObject, JSType::StringObjectType, JSType::DerivedStringObjectType) \
     macro(ShadowRealmObject, JSType::ShadowRealmType, JSType::ShadowRealmType) \
+    macro(JSDataView, JSType::DataViewType, JSType::DataViewType) \
 
+#define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(macro) \
+    FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD_FORWARD_DECLARED(macro) \
+    FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD_NON_FORWARD_DECLARED(macro) \
 
 // Forward declare the classes because they may not already exist.
 #define FORWARD_DECLARE_OVERLOAD_CLASS(className, jsType, op) class className;
-FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(FORWARD_DECLARE_OVERLOAD_CLASS)
+FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD_FORWARD_DECLARED(FORWARD_DECLARE_OVERLOAD_CLASS)
 #undef FORWARD_DECLARE_OVERLOAD_CLASS
 
 namespace JSCastingHelpers {

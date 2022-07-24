@@ -60,9 +60,7 @@ bool IntrinsicGetterAccessCase::canEmitIntrinsicGetter(StructureStubInfo& stubIn
     case TypedArrayByteOffsetIntrinsic:
     case TypedArrayByteLengthIntrinsic:
     case TypedArrayLengthIntrinsic: {
-        TypedArrayType type = structure->classInfoForCells()->typedArrayStorageType;
-
-        if (!isTypedView(type))
+        if (!isTypedView(structure->typeInfo().type()))
             return false;
         
         return true;
@@ -98,7 +96,7 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
     }
 
     case TypedArrayByteLengthIntrinsic: {
-        TypedArrayType type = structure()->classInfoForCells()->typedArrayStorageType;
+        TypedArrayType type = typedArrayType(structure()->typeInfo().type());
 #if USE(LARGE_TYPED_ARRAYS)
         jit.load64(MacroAssembler::Address(state.baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
         if (elementSize(type) > 1)

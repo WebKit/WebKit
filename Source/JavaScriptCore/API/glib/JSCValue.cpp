@@ -1856,32 +1856,31 @@ JSCTypedArrayType jsc_value_typed_array_get_type(JSCValue *value)
     if (!jsValue.isObject())
         return JSC_TYPED_ARRAY_NONE;
 
-    switch (jsValue.getObject()->classInfo()->typedArrayStorageType) {
-    case JSC::TypeDataView:
-    case JSC::NotTypedArray:
-        return JSC_TYPED_ARRAY_NONE;
-    case JSC::TypeInt8:
+    switch (jsValue.getObject()->type()) {
+    case JSC::Int8ArrayType:
         return JSC_TYPED_ARRAY_INT8;
-    case JSC::TypeUint8:
+    case JSC::Uint8ArrayType:
         return JSC_TYPED_ARRAY_UINT8;
-    case JSC::TypeUint8Clamped:
+    case JSC::Uint8ClampedArrayType:
         return JSC_TYPED_ARRAY_UINT8_CLAMPED;
-    case JSC::TypeInt16:
+    case JSC::Int16ArrayType:
         return JSC_TYPED_ARRAY_INT16;
-    case JSC::TypeUint16:
+    case JSC::Uint16ArrayType:
         return JSC_TYPED_ARRAY_UINT16;
-    case JSC::TypeInt32:
+    case JSC::Int32ArrayType:
         return JSC_TYPED_ARRAY_INT32;
-    case JSC::TypeUint32:
+    case JSC::Uint32ArrayType:
         return JSC_TYPED_ARRAY_UINT32;
-    case JSC::TypeFloat32:
+    case JSC::Float32ArrayType:
         return JSC_TYPED_ARRAY_FLOAT32;
-    case JSC::TypeFloat64:
+    case JSC::Float64ArrayType:
         return JSC_TYPED_ARRAY_FLOAT64;
-    case JSC::TypeBigInt64:
+    case JSC::BigInt64ArrayType:
         return JSC_TYPED_ARRAY_INT64;
-    case JSC::TypeBigUint64:
+    case JSC::BigUint64ArrayType:
         return JSC_TYPED_ARRAY_UINT64;
+    default:
+        return JSC_TYPED_ARRAY_NONE;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
