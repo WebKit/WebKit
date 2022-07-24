@@ -1,6 +1,8 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -16,33 +18,33 @@ TEST
 </div>
 TEST
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-
-function runTest() {
-    description("This tests that there's no crash if we hide menu list and then try to access accessibility information.");
+    var testOutput = "This tests that there's no crash if we hide menu list and then try to access accessibility information.\n\n";
 
     if (window.accessibilityController) {
-        var menulist = document.getElementById("menulist");
-        menulist.focus();
+        window.jsTestIsAsync = true;
+
+        const menulist = document.getElementById("menulist");
         menulist.selectedIndex = 1;
 
-        var accessibleMenulist = accessibilityController.focusedElement;
-        debug("Role before removal: " + accessibleMenulist.role);
+        const axMenulist = accessibilityController.accessibleElementById("menulist");
+        const initialRole = axMenulist.role;
+        testOutput += `Role before removal: ${initialRole}\n`;
 
-        menulist.style.display = "none";
-        gc();
+        setTimeout(async function() {
+            menulist.style.display = "none";
+            gc();
 
-        // Don't crash!
-        debug("Role after removal: " + accessibleMenulist.role);
+            await waitFor(() => axMenulist.role !== initialRole);
+
+            // Don't crash!
+            testOutput += `Role after removal: ${axMenulist.role}\n`;
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
     }
-}
-
-runTest();
 </script>
-
 </body>
-<script src="../resources/js-test-post.js"></script>
 </html>
+

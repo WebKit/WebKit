@@ -1,7 +1,7 @@
 This tests that there's no crash if we hide menu list and then try to access accessibility information.
 
-Role before removal: AXRole: AXComboBox
-Role after removal: AXRole: AXInvalid
+Role before removal: PopUpButton
+Role after removal: null
 
 PASS successfullyParsed is true
 
