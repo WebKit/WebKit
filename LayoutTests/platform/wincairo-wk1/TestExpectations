@@ -60,7 +60,6 @@ accessibility/multiselect-list-reports-active-option.html [ Skip ]
 # thing is that these do not consistently fail:
 webkit.org/b/140798 accessibility/aria-checked-mixed-value.html [ Failure ]
 webkit.org/b/140798 accessibility/aria-controls.html [ Failure ]
-webkit.org/b/140798 accessibility/auto-filled-value.html [ Skip ]
 webkit.org/b/140798 accessibility/aria-flowto.html [ Failure ]
 webkit.org/b/140798 [ Release ] accessibility/aria-hidden-negates-no-visibility.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-hidden-negates-no-visibility.html [ Skip ]
@@ -512,3 +511,17 @@ webkit.org/b/240820 editing/pasteboard/files-during-page-drags.html [ Skip ] # C
 animations/3d/full-rotation-animation.html [ ImageOnlyFailure ]
 
 http/tests/websocket/tests/hybi/inspector [ Skip ] # Timeout
+
+# ShowModalDialog preference currently cannot be enabled on Windows.
+fast/dom/Window/delete-operations.html [ Skip ]
+fast/dom/Window/forbid-showModalDialog.html [ Skip ]
+fast/dom/Window/showModalDialog-mandatory-parameter.html [ Skip ]
+fast/dom/Window/window-function-frame-getter-precedence.html [ Skip ]
+fast/dom/Window/window-function-name-getter-precedence.html [ Skip ]
+fast/events/show-modal-dialog-onblur-onfocus.html [ Skip ]
+http/tests/cookies/document-cookie-after-showModalDialog.html [ Skip ]
+js/dom/function-length.html [ Skip ]
+js/dom/global-function-resolve.html [ Skip ]
+
+# DRT doesn't support testRunner.loadedSubresourceDomains
+http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]

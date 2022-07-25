@@ -388,6 +388,7 @@ webgl/2.0.0/conformance/textures/video [ Skip ]
 webgl/2.0.0/conformance2/textures/image_bitmap_from_video [ Skip ]
 webgl/2.0.0/conformance2/textures/video [ Skip ]
 webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Skip ]
+webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Skip ]
 
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
@@ -1403,7 +1404,6 @@ storage/indexeddb/modern/aborted-put.html [ Timeout Pass ]
 
 # Flaky values in WPT cookie expectations
 imported/w3c/web-platform-tests/cookies/prefix/__secure.header.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookies/samesite-none-secure/cookies-without-samesite-must-be-secure.https.tentative.html [ Pass Failure ]
 imported/w3c/web-platform-tests/cookies/samesite/iframe.document.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/cookies/samesite/multiple-samesite-attributes.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-nested.https.html [ Pass Failure ]
@@ -2118,3 +2118,5 @@ fast/css3-text/css3-text-decoration/text-underline-style.html [ ImageOnlyFailure
 fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
 
 fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html [ Failure ]
+
+fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]

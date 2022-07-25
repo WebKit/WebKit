@@ -59,7 +59,7 @@ layer at (0,0) size 785x1391
                 RenderText {#text} at (0,0) size 271x19
                   text run at (0,0) width 271: "The square above should be fifty pixels wide."
               RenderBlock (anonymous) at (4,106) size 363x181
-                RenderImage {IMG} at (0,0) size 182x181
+                RenderImage {IMG} at (0,0) size 182x182
                 RenderText {#text} at (0,0) size 0x0
               RenderBlock {P} at (4,303) size 363x40
                 RenderText {#text} at (0,0) size 332x39
