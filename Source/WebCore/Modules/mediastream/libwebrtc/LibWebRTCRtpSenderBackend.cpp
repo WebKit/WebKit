@@ -123,6 +123,55 @@ RTCRtpSendParameters LibWebRTCRtpSenderBackend::getParameters() const
     return toRTCRtpSendParameters(*m_currentParameters);
 }
 
+static bool validateModifiedParameters(const RTCRtpSendParameters& newParameters, const RTCRtpSendParameters& oldParameters)
+{
+    if (oldParameters.transactionId != newParameters.transactionId)
+        return false;
+
+    if (oldParameters.encodings.size() != newParameters.encodings.size())
+        return false;
+
+    for (size_t i = 0; i < oldParameters.encodings.size(); ++i) {
+        if (oldParameters.encodings[i].rid != newParameters.encodings[i].rid)
+            return false;
+    }
+
+    if (oldParameters.headerExtensions.size() != newParameters.headerExtensions.size())
+        return false;
+
+    for (size_t i = 0; i < oldParameters.headerExtensions.size(); ++i) {
+        const auto& oldExtension = oldParameters.headerExtensions[i];
+        const auto& newExtension = newParameters.headerExtensions[i];
+        if (oldExtension.uri != newExtension.uri || oldExtension.id != newExtension.id)
+            return false;
+    }
+
+    if (oldParameters.rtcp.cname != newParameters.rtcp.cname)
+        return false;
+
+    if (!!oldParameters.rtcp.reducedSize != !!newParameters.rtcp.reducedSize)
+        return false;
+
+    if (oldParameters.rtcp.reducedSize && *oldParameters.rtcp.reducedSize != *newParameters.rtcp.reducedSize)
+        return false;
+
+    if (oldParameters.codecs.size() != newParameters.codecs.size())
+        return false;
+
+    for (size_t i = 0; i < oldParameters.codecs.size(); ++i) {
+        const auto& oldCodec = oldParameters.codecs[i];
+        const auto& newCodec = newParameters.codecs[i];
+        if (oldCodec.payloadType != newCodec.payloadType
+            || oldCodec.mimeType != newCodec.mimeType
+            || oldCodec.clockRate != newCodec.clockRate
+            || oldCodec.channels != newCodec.channels
+            || oldCodec.sdpFmtpLine != newCodec.sdpFmtpLine)
+            return false;
+    }
+
+    return true;
+}
+
 void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parameters, DOMPromiseDeferred<void>&& promise)
 {
     if (!m_rtcSender) {
@@ -132,6 +181,11 @@ void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parame
 
     if (!m_currentParameters) {
         promise.reject(Exception { InvalidStateError, "getParameters must be called before setParameters"_s });
+        return;
+    }
+
+    if (!validateModifiedParameters(parameters, toRTCRtpSendParameters(*m_currentParameters))) {
+        promise.reject(InvalidModificationError, "parameters are not valid"_s);
         return;
     }
 
