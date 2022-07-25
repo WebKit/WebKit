@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -169,3 +169,13 @@ class Buildbot():
 
         _log.error('Failed to retry build: {}, http response code: {}'.format(build_url, response.status_code))
         return False
+
+    @classmethod
+    def is_tester_queue(self, queue):
+        icon = Buildbot.icons_for_queues_mapping.get(queue)
+        return icon in ['testOnly', 'buildAndTest']
+
+    @classmethod
+    def is_builder_queue(self, queue):
+        icon = Buildbot.icons_for_queues_mapping.get(queue)
+        return icon in ['buildOnly', 'buildAndTest']

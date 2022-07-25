@@ -25,6 +25,11 @@ import logging
 import requests
 from requests.auth import HTTPBasicAuth
 
+from ews.common.buildbot import Buildbot
+from ews.models.patch import Change
+from ews.views.statusbubble import StatusBubble
+import ews.config as config
+
 _log = logging.getLogger(__name__)
 
 GITHUB_URL = 'https://github.com/'
@@ -131,7 +136,84 @@ class GitHub(object):
             if response.status_code // 100 != 2:
                 _log.error("Failed to post comment to PR {}. Unexpected response code from GitHub: {}\n".format(pr_number, response.status_code))
                 return False
+            _log.info("Commented on PR {}\n".format(pr_number))
             return response.json().get('id')
         except Exception as e:
             _log.error("Error in posting comment to PR {}\n".format(pr_number))
         return False
+
+
+class GitHubEWS(GitHub):
+    ICON_BUILD_PASS = u'\U00002705'
+    ICON_BUILD_FAIL = u'\U0000274C'
+    ICON_BUILD_WAITING = u'\U000023F3'
+    ICON_BUILD_ONGOING = u'\U000023F3'  # FIXME: Update this icon with a better one
+    ICON_BUILD_ERROR = u'\U0001F6D1'  # FIXME: Update this icon with a better one
+    STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],
+                          ['webkitpy', 'ios-sim', 'mac-debug', 'gtk', 'wincairo'],
+                          ['webkitperl', 'ios-wk2', 'mac-AS-debug', 'api-gtk', ''],
+                          ['bindings', 'api-ios', 'api-mac', '', ''],
+                          ['services', 'tv', 'mac-wk1', '', ''],
+                          ['', 'tv-sim', 'mac-wk2', '', ''],
+                          ['', 'watch', 'mac-AS-debug-wk2', '', ''],
+                          ['', 'watch-sim', '', '', '']]
+
+    def generate_comment_text_for_sha(self, sha, comment_id=None):
+        change = Change.get_change(sha)
+        if not change:
+            _log.error('Change not found for {}. Unable to generate github comment.'.format(sha))
+            return
+        comment = 'https://github.com/WebKit/WebKit/commit/{}'.format(sha)
+        comment += '\n\n| Tests | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
+        comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
+
+        for row in self.STATUS_BUBBLE_ROWS:
+            comment_for_row = '\n'
+            for queue in row:
+                if queue == '':
+                    comment_for_row += '| '
+                    continue
+                comment_for_row += self.github_status_for_queue(change, queue)
+            comment += comment_for_row
+        return comment
+
+    def github_status_for_queue(self, change, queue):
+        name = queue
+        if Buildbot.is_tester_queue(queue):
+            name = StatusBubble.TESTER_ICON + ' ' + name
+        if Buildbot.is_builder_queue(queue):
+            name = StatusBubble.BUILDER_ICON + ' ' + name
+
+        builds, is_parent_build = StatusBubble().get_all_builds_for_queue(change, queue)
+        # FIXME: Handle parent build case
+        build = None
+        if builds:
+            build = builds[0]
+            builds = builds[:10]  # Limit number of builds to display in status-bubble hover over message
+
+        hover_over_text = ''
+        status = GitHubEWS.ICON_BUILD_WAITING
+        if not build:
+            status = GitHubEWS.ICON_BUILD_WAITING
+            queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
+            if queue_full_name:
+                url = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
+            hover_over_text = 'Waiting in queue, processing has not started yet.'
+            return u'| [{status} {name} ]({url} "{hover_over_text}") '.format(status=status, name=name, url=url, hover_over_text=hover_over_text)
+
+        url = 'https://{}/#/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, build.builder_id, build.number)
+
+        if build.result is None:
+            hover_over_text = 'Build is in progress'
+            status = GitHubEWS.ICON_BUILD_ONGOING
+        elif build.result == Buildbot.SUCCESS:
+            status = GitHubEWS.ICON_BUILD_PASS
+        elif build.result == Buildbot.WARNINGS:
+            status = GitHubEWS.ICON_BUILD_PASS
+        elif build.result == Buildbot.FAILURE:
+            status = GitHubEWS.ICON_BUILD_FAIL
+        # FIXME: Handle other cases like SKIPPED, CANCELLED, EXCEPTION, RETRY etc.
+        else:
+            status = GitHubEWS.ICON_BUILD_ERROR
+
+        return u'| [{status} {name}]({url} "{hover_over_text}") '.format(status=status, name=name, url=url, hover_over_text=hover_over_text)

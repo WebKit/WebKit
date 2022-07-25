@@ -84,8 +84,8 @@ class StatusBubble(View):
         bubble = {
             'name': queue,
         }
-        is_tester_queue = self._is_tester_queue(queue)
-        is_builder_queue = self._is_builder_queue(queue)
+        is_tester_queue = Buildbot.is_tester_queue(queue)
+        is_builder_queue = Buildbot.is_builder_queue(queue)
         if hide_icons == False:
             if is_tester_queue:
                 bubble['name'] = StatusBubble.TESTER_ICON + '  ' + bubble['name']
@@ -202,14 +202,6 @@ class StatusBubble(View):
                 bubble['details_message'] += '\n\n' + timestamp
 
         return bubble
-
-    def _is_tester_queue(self, queue):
-        icon = Buildbot.icons_for_queues_mapping.get(queue)
-        return icon in ['testOnly', 'buildAndTest']
-
-    def _is_builder_queue(self, queue):
-        icon = Buildbot.icons_for_queues_mapping.get(queue)
-        return icon in ['buildOnly', 'buildAndTest']
 
     def _get_parent_queue(self, queue):
         return StatusBubble.QUEUE_TRIGGERS.get(queue)
