@@ -71,6 +71,8 @@ public:
     void ref() const final { IPC::Connection::WorkQueueMessageReceiver::ref(); }
     void deref() const final { IPC::Connection::WorkQueueMessageReceiver::deref(); }
 
+    static WorkQueue& sharedQueue();
+
 private:
     WebSWContextManagerConnection(Ref<IPC::Connection>&&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, RemoteWorkerInitializationData&&);
 
@@ -137,7 +139,6 @@ private:
     bool m_isThrottleable { true };
     Ref<WebUserContentController> m_userContentController;
     std::optional<WebPreferencesStore> m_preferencesStore;
-    Ref<WorkQueue> m_queue;
 };
 
 } // namespace WebKit

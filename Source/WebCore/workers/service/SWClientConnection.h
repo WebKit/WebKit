@@ -37,7 +37,10 @@
 #include "ServiceWorkerTypes.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
+
+namespace WTF {
+class WorkQueue;
+}
 
 namespace WebCore {
 
@@ -59,7 +62,7 @@ struct ServiceWorkerData;
 struct ServiceWorkerRegistrationData;
 struct WorkerFetchResult;
 
-class SWClientConnection : public RefCounted<SWClientConnection> {
+class SWClientConnection {
 public:
     WEBCORE_EXPORT virtual ~SWClientConnection();
 
@@ -118,13 +121,16 @@ public:
     WEBCORE_EXPORT void registerServiceWorkerClients();
     bool isClosed() const { return m_isClosed; }
 
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
+
 protected:
     WEBCORE_EXPORT SWClientConnection();
 
     WEBCORE_EXPORT void jobRejectedInServer(ServiceWorkerJobIdentifier, ExceptionData&&);
     WEBCORE_EXPORT void registrationJobResolvedInServer(ServiceWorkerJobIdentifier, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
     WEBCORE_EXPORT void startScriptFetchForServer(ServiceWorkerJobIdentifier, ServiceWorkerRegistrationKey&&, FetchOptions::Cache);
-    WEBCORE_EXPORT void refreshImportedScripts(ServiceWorkerJobIdentifier, FetchOptions::Cache, Vector<URL>&&, ServiceWorkerJob::RefreshImportedScriptsCallback&&);
+    WEBCORE_EXPORT void refreshImportedScripts(ServiceWorkerJobIdentifier, FetchOptions::Cache, Vector<URL>&&, ServiceWorkerJob::RefreshImportedScriptsCallback&&, WTF::WorkQueue&);
     WEBCORE_EXPORT void postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, MessageWithMessagePorts&&, ServiceWorkerData&& source, String&& sourceOrigin);
     WEBCORE_EXPORT void updateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&);
     WEBCORE_EXPORT void updateWorkerState(ServiceWorkerIdentifier, ServiceWorkerState);

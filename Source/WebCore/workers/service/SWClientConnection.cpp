@@ -42,6 +42,7 @@
 #include "Worker.h"
 #include "WorkerFetchResult.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -90,29 +91,41 @@ bool SWClientConnection::postTaskForJob(ServiceWorkerJobIdentifier jobIdentifier
 
 void SWClientConnection::jobRejectedInServer(ServiceWorkerJobIdentifier jobIdentifier, ExceptionData&& exceptionData)
 {
-    postTaskForJob(jobIdentifier, IsJobComplete::Yes, [exceptionData = WTFMove(exceptionData).isolatedCopy()] (auto& job) mutable {
-        job.failedWithException(WTFMove(exceptionData).toException());
+    ASSERT(!isMainThread());
+
+    callOnMainThread([protectedThis = Ref { *this }, jobIdentifier, exceptionData = WTFMove(exceptionData).isolatedCopy()]() mutable {
+        protectedThis->postTaskForJob(jobIdentifier, IsJobComplete::Yes, [exceptionData = WTFMove(exceptionData).isolatedCopy()] (auto& job) mutable {
+            job.failedWithException(WTFMove(exceptionData).toException());
+        });
     });
 }
 
 void SWClientConnection::registrationJobResolvedInServer(ServiceWorkerJobIdentifier jobIdentifier, ServiceWorkerRegistrationData&& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
-    auto registrationKey = registrationData.key;
-    bool isPosted = postTaskForJob(jobIdentifier, IsJobComplete::Yes, [registrationData = WTFMove(registrationData).isolatedCopy(), shouldNotifyWhenResolved] (auto& job) mutable {
-        job.resolvedWithRegistration(WTFMove(registrationData), shouldNotifyWhenResolved);
-    });
+    ASSERT(!isMainThread());
 
-    if (!isPosted && shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
-        didResolveRegistrationPromise(registrationKey);
+    callOnMainThread([protectedThis = Ref { *this }, jobIdentifier, registrationData = WTFMove(registrationData).isolatedCopy(), shouldNotifyWhenResolved]() mutable {
+        auto registrationKey = registrationData.key;
+        bool isPosted = protectedThis->postTaskForJob(jobIdentifier, IsJobComplete::Yes, [registrationData = WTFMove(registrationData).isolatedCopy(), shouldNotifyWhenResolved] (auto& job) mutable {
+            job.resolvedWithRegistration(WTFMove(registrationData), shouldNotifyWhenResolved);
+        });
+
+        if (!isPosted && shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
+            protectedThis->didResolveRegistrationPromise(registrationKey);
+    });
 }
 
 void SWClientConnection::startScriptFetchForServer(ServiceWorkerJobIdentifier jobIdentifier, ServiceWorkerRegistrationKey&& registrationKey, FetchOptions::Cache cachePolicy)
 {
-    bool isPosted = postTaskForJob(jobIdentifier, IsJobComplete::No, [cachePolicy] (auto& job) {
-        job.startScriptFetch(cachePolicy);
+    ASSERT(!isMainThread());
+
+    callOnMainThread([protectedThis = Ref { *this }, jobIdentifier, registrationKey = WTFMove(registrationKey).isolatedCopy(), cachePolicy]() mutable {
+        bool isPosted = protectedThis->postTaskForJob(jobIdentifier, IsJobComplete::No, [cachePolicy] (auto& job) {
+            job.startScriptFetch(cachePolicy);
+        });
+        if (!isPosted)
+            protectedThis->finishFetchingScriptInServer({ protectedThis->serverConnectionIdentifier(), jobIdentifier }, WTFMove(registrationKey), workerFetchError(ResourceError { errorDomainWebKitInternal, 0, { }, makeString("Failed to fetch script for service worker with scope ", registrationKey.scope().string()) }));
     });
-    if (!isPosted)
-        finishFetchingScriptInServer({ serverConnectionIdentifier(), jobIdentifier }, WTFMove(registrationKey), workerFetchError(ResourceError { errorDomainWebKitInternal, 0, { }, makeString("Failed to fetch script for service worker with scope ", registrationKey.scope().string()) }));
 }
 
 class RefreshImportedScriptsCallbackHandler {
@@ -144,13 +157,22 @@ private:
     ServiceWorkerJob::RefreshImportedScriptsCallback m_callback;
 };
 
-void SWClientConnection::refreshImportedScripts(ServiceWorkerJobIdentifier jobIdentifier, FetchOptions::Cache cachePolicy, Vector<URL>&& urls, ServiceWorkerJob::RefreshImportedScriptsCallback&& callback)
+void SWClientConnection::refreshImportedScripts(ServiceWorkerJobIdentifier jobIdentifier, FetchOptions::Cache cachePolicy, Vector<URL>&& urls, ServiceWorkerJob::RefreshImportedScriptsCallback&& completionHandler, WorkQueue& completionHandlerQueue)
 {
-    ASSERT(isMainThread());
-    auto handler = makeUnique<RefreshImportedScriptsCallbackHandler>(WTFMove(callback));
-    postTaskForJob(jobIdentifier, IsJobComplete::No, [cachePolicy, urls = crossThreadCopy(WTFMove(urls)), handler = WTFMove(handler)] (auto& job) mutable {
-        job.refreshImportedScripts(urls, cachePolicy, [handler = WTFMove(handler)] (auto&& result) {
-            handler->call(WTFMove(result));
+    ASSERT(!isMainThread());
+
+    auto callback = [completionHandler = WTFMove(completionHandler), completionHandlerQueue = Ref { completionHandlerQueue }](Vector<std::pair<URL, ScriptBuffer>>&& result) mutable {
+        completionHandlerQueue->dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(WTFMove(result))]() mutable {
+            completionHandler(WTFMove(result));
+        });
+    };
+
+    callOnMainThread([protectedThis = Ref { *this }, jobIdentifier, urls = crossThreadCopy(WTFMove(urls)), cachePolicy, callback = WTFMove(callback)]() mutable {
+        auto handler = makeUnique<RefreshImportedScriptsCallbackHandler>(WTFMove(callback));
+        protectedThis->postTaskForJob(jobIdentifier, IsJobComplete::No, [cachePolicy, urls = crossThreadCopy(WTFMove(urls)), handler = WTFMove(handler)] (auto& job) mutable {
+            job.refreshImportedScripts(urls, cachePolicy, [handler = WTFMove(handler)] (auto&& result) {
+                handler->call(WTFMove(result));
+            });
         });
     });
 }
@@ -163,124 +185,175 @@ static void postMessageToContainer(ScriptExecutionContext& context, MessageWithM
 
 void SWClientConnection::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, String&& sourceOrigin)
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
 
-    if (auto* destinationDocument = Document::allDocumentsMap().get(destinationContextIdentifier)) {
-        postMessageToContainer(*destinationDocument, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
-        return;
-    }
+    callOnMainThread([destinationContextIdentifier, message = WTFMove(message), sourceData = WTFMove(sourceData).isolatedCopy(), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()]() mutable {
+        if (auto* destinationDocument = Document::allDocumentsMap().get(destinationContextIdentifier)) {
+            postMessageToContainer(*destinationDocument, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
+            return;
+        }
 
-    if (auto* worker = Worker::byIdentifier(destinationContextIdentifier)) {
-        worker->postTaskToWorkerGlobalScope([message = WTFMove(message), sourceData = WTFMove(sourceData).isolatedCopy(), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()] (auto& context) mutable {
-            postMessageToContainer(context, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
-        });
-        return;
-    }
+        if (auto* worker = Worker::byIdentifier(destinationContextIdentifier)) {
+            worker->postTaskToWorkerGlobalScope([message = WTFMove(message), sourceData = WTFMove(sourceData).isolatedCopy(), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()] (auto& context) mutable {
+                postMessageToContainer(context, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
+            });
+            return;
+        }
 
-    if (auto* sharedWorker = SharedWorkerThreadProxy::byIdentifier(destinationContextIdentifier)) {
-        sharedWorker->thread().runLoop().postTask([message = WTFMove(message), sourceData = WTFMove(sourceData).isolatedCopy(), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()] (auto& context) mutable {
-            postMessageToContainer(context, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
-        });
-    }
+        if (auto* sharedWorker = SharedWorkerThreadProxy::byIdentifier(destinationContextIdentifier)) {
+            sharedWorker->thread().runLoop().postTask([message = WTFMove(message), sourceData = WTFMove(sourceData).isolatedCopy(), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()] (auto& context) mutable {
+                postMessageToContainer(context, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
+            });
+        }
+    });
 }
 
-static void forAllWorkers(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
+static void forAllDedicatedAndSharedWorkers(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
 {
-    SWContextManager::singleton().forEachServiceWorker(callback);
     Worker::forEachWorker(callback);
     SharedWorkerContextManager::singleton().forEachSharedWorker(callback);
 }
 
+static void doUpdateRegistrationState(ScriptExecutionContext& context, ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerData>& serviceWorkerData)
+{
+    if (auto* container = context.serviceWorkerContainer())
+        container->updateRegistrationState(identifier, state, serviceWorkerData);
+}
+
 void SWClientConnection::updateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerData>& serviceWorkerData)
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
 
-    for (auto* document : Document::allDocuments()) {
-        if (auto* container = document->serviceWorkerContainer())
-            container->updateRegistrationState(identifier, state, serviceWorkerData);
-    }
-
-    forAllWorkers([identifier, state, &serviceWorkerData] {
+    SWContextManager::singleton().forEachServiceWorker([identifier, state, &serviceWorkerData] {
         return [identifier, state, serviceWorkerData = crossThreadCopy(serviceWorkerData)] (auto& context) mutable {
-            if (auto* container = context.serviceWorkerContainer())
-                container->updateRegistrationState(identifier, state, WTFMove(serviceWorkerData));
+            doUpdateRegistrationState(context, identifier, state, serviceWorkerData);
         };
     });
+
+    callOnMainThread([identifier, state, serviceWorkerData = crossThreadCopy(serviceWorkerData)] {
+        for (auto* document : Document::allDocuments())
+            doUpdateRegistrationState(*document, identifier, state, serviceWorkerData);
+
+        forAllDedicatedAndSharedWorkers([identifier, state, &serviceWorkerData] {
+            return [identifier, state, serviceWorkerData = crossThreadCopy(serviceWorkerData)] (auto& context) mutable {
+                doUpdateRegistrationState(context, identifier, state, serviceWorkerData);
+            };
+        });
+    });
+}
+
+static void doUpdateWorkerState(ScriptExecutionContext& context, ServiceWorkerIdentifier identifier, ServiceWorkerState state)
+{
+    if (auto* container = context.serviceWorkerContainer())
+        container->updateWorkerState(identifier, state);
 }
 
 void SWClientConnection::updateWorkerState(ServiceWorkerIdentifier identifier, ServiceWorkerState state)
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
 
-    for (auto* document : Document::allDocuments()) {
-        if (auto* container = document->serviceWorkerContainer())
-            container->updateWorkerState(identifier, state);
-    }
-
-    forAllWorkers([identifier, state] {
+    SWContextManager::singleton().forEachServiceWorker([identifier, state] {
         return [identifier, state] (auto& context) {
-            if (auto* container = context.serviceWorkerContainer())
-                container->updateWorkerState(identifier, state);
+            doUpdateWorkerState(context, identifier, state);
         };
     });
+
+    callOnMainThread([identifier, state] {
+        for (auto* document : Document::allDocuments())
+            doUpdateWorkerState(*document, identifier, state);
+
+        forAllDedicatedAndSharedWorkers([identifier, state] {
+            return [identifier, state] (auto& context) {
+                doUpdateWorkerState(context, identifier, state);
+            };
+        });
+    });
+}
+
+static void doFireUpdateFoundEvent(ScriptExecutionContext& context, ServiceWorkerRegistrationIdentifier identifier)
+{
+    if (auto* container = context.serviceWorkerContainer())
+        container->queueTaskToFireUpdateFoundEvent(identifier);
 }
 
 void SWClientConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
 
-    for (auto* document : Document::allDocuments()) {
-        if (auto* container = document->serviceWorkerContainer())
-            container->queueTaskToFireUpdateFoundEvent(identifier);
-    }
-
-    forAllWorkers([identifier] {
+    SWContextManager::singleton().forEachServiceWorker([identifier] {
         return [identifier] (auto& context) {
-            if (auto* container = context.serviceWorkerContainer())
-                container->queueTaskToFireUpdateFoundEvent(identifier);
+            doFireUpdateFoundEvent(context, identifier);
         };
     });
+
+    callOnMainThread([identifier] {
+        for (auto* document : Document::allDocuments())
+            doFireUpdateFoundEvent(*document, identifier);
+
+        forAllDedicatedAndSharedWorkers([identifier] {
+            return [identifier] (auto& context) {
+                doFireUpdateFoundEvent(context, identifier);
+            };
+        });
+    });
+}
+
+static void doSetRegistrationLastUpdateTime(ScriptExecutionContext& context, ServiceWorkerRegistrationIdentifier identifier, WallTime lastUpdateTime)
+{
+    if (auto* container = context.serviceWorkerContainer()) {
+        if (auto* registration = container->registration(identifier))
+            registration->setLastUpdateTime(lastUpdateTime);
+    }
 }
 
 void SWClientConnection::setRegistrationLastUpdateTime(ServiceWorkerRegistrationIdentifier identifier, WallTime lastUpdateTime)
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
 
-    for (auto* document : Document::allDocuments()) {
-        if (auto* container = document->serviceWorkerContainer()) {
-            if (auto* registration = container->registration(identifier))
-                registration->setLastUpdateTime(lastUpdateTime);
-        }
-    }
-
-    forAllWorkers([identifier, lastUpdateTime] {
+    SWContextManager::singleton().forEachServiceWorker([identifier, lastUpdateTime] {
         return [identifier, lastUpdateTime] (auto& context) {
-            if (auto* container = context.serviceWorkerContainer()) {
-                if (auto* registration = container->registration(identifier))
-                    registration->setLastUpdateTime(lastUpdateTime);
-            }
+            doSetRegistrationLastUpdateTime(context, identifier, lastUpdateTime);
         };
     });
+
+    callOnMainThread([identifier, lastUpdateTime] {
+        for (auto* document : Document::allDocuments())
+            doSetRegistrationLastUpdateTime(*document, identifier, lastUpdateTime);
+
+        forAllDedicatedAndSharedWorkers([identifier, lastUpdateTime] {
+            return [identifier, lastUpdateTime] (auto& context) {
+                doSetRegistrationLastUpdateTime(context, identifier, lastUpdateTime);
+            };
+        });
+    });
+}
+
+static void doSetRegistrationUpdateViaCache(ScriptExecutionContext& context, ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerUpdateViaCache updateViaCache)
+{
+    if (auto* container = context.serviceWorkerContainer()) {
+        if (auto* registration = container->registration(identifier))
+            registration->setUpdateViaCache(updateViaCache);
+    }
 }
 
 void SWClientConnection::setRegistrationUpdateViaCache(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerUpdateViaCache updateViaCache)
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
 
-    for (auto* document : Document::allDocuments()) {
-        if (auto* container = document->serviceWorkerContainer()) {
-            if (auto* registration = container->registration(identifier))
-                registration->setUpdateViaCache(updateViaCache);
-        }
-    }
-
-    forAllWorkers([identifier, updateViaCache] {
+    SWContextManager::singleton().forEachServiceWorker([identifier, updateViaCache] {
         return [identifier, updateViaCache] (auto& context) {
-            if (auto* container = context.serviceWorkerContainer()) {
-                if (auto* registration = container->registration(identifier))
-                    registration->setUpdateViaCache(updateViaCache);
-            }
+            doSetRegistrationUpdateViaCache(context, identifier, updateViaCache);
         };
+    });
+
+    callOnMainThread([identifier, updateViaCache] {
+        for (auto* document : Document::allDocuments())
+            doSetRegistrationUpdateViaCache(*document, identifier, updateViaCache);
+        forAllDedicatedAndSharedWorkers([identifier, updateViaCache] {
+            return [identifier, updateViaCache] (auto& context) {
+                doSetRegistrationUpdateViaCache(context, identifier, updateViaCache);
+            };
+        });
     });
 }
 
@@ -293,27 +366,29 @@ static void updateController(ScriptExecutionContext& context, ServiceWorkerData&
 
 void SWClientConnection::notifyClientsOfControllerChange(const HashSet<ScriptExecutionContextIdentifier>& contextIdentifiers, ServiceWorkerData&& newController)
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
     ASSERT(!contextIdentifiers.isEmpty());
 
-    for (auto& clientIdentifier : contextIdentifiers) {
-        if (auto* document = Document::allDocumentsMap().get(clientIdentifier)) {
-            updateController(*document, ServiceWorkerData { newController });
-            continue;
+    callOnMainThread([contextIdentifiers, newController = WTFMove(newController).isolatedCopy()] {
+        for (auto& clientIdentifier : contextIdentifiers) {
+            if (auto* document = Document::allDocumentsMap().get(clientIdentifier)) {
+                updateController(*document, ServiceWorkerData { newController });
+                continue;
+            }
+            if (auto* worker = Worker::byIdentifier(clientIdentifier)) {
+                worker->postTaskToWorkerGlobalScope([newController = newController.isolatedCopy()] (auto& context) mutable {
+                    updateController(context, WTFMove(newController));
+                });
+                continue;
+            }
+            if (auto* sharedWorker = SharedWorkerThreadProxy::byIdentifier(clientIdentifier)) {
+                sharedWorker->thread().runLoop().postTask([newController = newController.isolatedCopy()] (auto& context) mutable {
+                    updateController(context, WTFMove(newController));
+                });
+                continue;
+            }
         }
-        if (auto* worker = Worker::byIdentifier(clientIdentifier)) {
-            worker->postTaskToWorkerGlobalScope([newController = newController.isolatedCopy()] (auto& context) mutable {
-                updateController(context, WTFMove(newController));
-            });
-            continue;
-        }
-        if (auto* sharedWorker = SharedWorkerThreadProxy::byIdentifier(clientIdentifier)) {
-            sharedWorker->thread().runLoop().postTask([newController = newController.isolatedCopy()] (auto& context) mutable {
-                updateController(context, WTFMove(newController));
-            });
-            continue;
-        }
-    }
+    });
 }
 
 void SWClientConnection::clearPendingJobs()
@@ -333,11 +408,16 @@ void SWClientConnection::clearPendingJobs()
 
 void SWClientConnection::registerServiceWorkerClients()
 {
+    ASSERT(isMainThread());
+
     for (auto* document : Document::allDocuments())
         document->updateServiceWorkerClientData();
 
-    SharedWorkerContextManager::singleton().forEachSharedWorker([] { return [] (auto& context) { context.updateServiceWorkerClientData(); }; });
-    Worker::forEachWorker([] { return [] (auto& context) { context.updateServiceWorkerClientData(); }; });
+    forAllDedicatedAndSharedWorkers([] {
+        return [] (auto& context) {
+            context.updateServiceWorkerClientData();
+        };
+    });
 }
 
 } // namespace WebCore

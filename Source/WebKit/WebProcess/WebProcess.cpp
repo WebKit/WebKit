@@ -1181,8 +1181,9 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
         m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled(WebCore::LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled()), 0);
 
 #if ENABLE(SERVICE_WORKER)
+        auto& serviceWorkerConnection = m_networkProcessConnection->serviceWorkerConnection();
         if (!Document::allDocuments().isEmpty() || SharedWorkerThreadProxy::hasInstances())
-            m_networkProcessConnection->serviceWorkerConnection().registerServiceWorkerClients();
+            serviceWorkerConnection.registerServiceWorkerClients();
 #endif
 
 #if HAVE(LSDATABASECONTEXT)

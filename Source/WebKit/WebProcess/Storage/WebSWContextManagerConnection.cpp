@@ -76,6 +76,12 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
+WorkQueue& WebSWContextManagerConnection::sharedQueue()
+{
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("com.apple.WebKit.ServiceWorkerProcessing", WorkQueue::QOS::UserInitiated));
+    return queue.get();
+}
+
 WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, WebCore::RegistrableDomain&& registrableDomain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, RemoteWorkerInitializationData&& initializationData)
     : m_connectionToNetworkProcess(WTFMove(connection))
     , m_registrableDomain(WTFMove(registrableDomain))
@@ -89,7 +95,6 @@ WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection
     , m_userAgent(standardUserAgent())
 #endif
     , m_userContentController(WebUserContentController::getOrCreate(initializationData.userContentControllerIdentifier))
-    , m_queue(WorkQueue::create("WebSWContextManagerConnection queue", WorkQueue::QOS::UserInitiated))
 {
 #if ENABLE(CONTENT_EXTENSIONS)
     m_userContentController->addContentRuleLists(WTFMove(initializationData.contentRuleLists));
@@ -110,7 +115,7 @@ WebSWContextManagerConnection::~WebSWContextManagerConnection()
 
 void WebSWContextManagerConnection::establishConnection(CompletionHandler<void()>&& completionHandler)
 {
-    m_connectionToNetworkProcess->addWorkQueueMessageReceiver(Messages::WebSWContextManagerConnection::messageReceiverName(), m_queue.get(), *this);
+    m_connectionToNetworkProcess->addWorkQueueMessageReceiver(Messages::WebSWContextManagerConnection::messageReceiverName(), sharedQueue(), *this);
     m_connectionToNetworkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::EstablishSWContextConnection { m_webPageProxyID, m_registrableDomain, m_serviceWorkerPageIdentifier }, WTFMove(completionHandler), 0);
 }
 
@@ -144,7 +149,7 @@ void WebSWContextManagerConnection::updateAppInitiatedValue(ServiceWorkerIdentif
 
 void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, contextData = WTFMove(contextData).isolatedCopy(), workerData = WTFMove(workerData).isolatedCopy(), userAgent = WTFMove(userAgent).isolatedCopy(), workerThreadMode]() mutable {
     auto pageConfiguration = pageConfigurationWithEmptyClients(WebProcess::singleton().sessionID());
@@ -216,7 +221,7 @@ void WebSWContextManagerConnection::serviceWorkerFailedToStart(std::optional<Ser
 
 void WebSWContextManagerConnection::cancelFetch(SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, FetchIdentifier fetchIdentifier)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     if (auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
         serviceWorkerThreadProxy->cancelFetch(serverConnectionIdentifier, fetchIdentifier);
@@ -224,7 +229,7 @@ void WebSWContextManagerConnection::cancelFetch(SWServerConnectionIdentifier ser
 
 void WebSWContextManagerConnection::continueDidReceiveFetchResponse(SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, FetchIdentifier fetchIdentifier)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     if (auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
         serviceWorkerThreadProxy->continueDidReceiveFetchResponse(serverConnectionIdentifier, fetchIdentifier);
@@ -232,7 +237,7 @@ void WebSWContextManagerConnection::continueDidReceiveFetchResponse(SWServerConn
 
 void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, FetchIdentifier fetchIdentifier, ResourceRequest&& request, FetchOptions&& options, IPC::FormDataReference&& formData, String&& referrer, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier);
     if (!serviceWorkerThreadProxy) {
@@ -252,40 +257,38 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
 
 void WebSWContextManagerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier serviceWorkerIdentifier, MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     if (auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
         serviceWorkerThreadProxy->fireMessageEvent(WTFMove(message), WTFMove(sourceData));
 }
 
-void WebSWContextManagerConnection::fireInstallEvent(ServiceWorkerIdentifier identifier)
+void WebSWContextManagerConnection::fireInstallEvent(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
-    callOnMainRunLoop([identifier] {
-        SWContextManager::singleton().fireInstallEvent(identifier);
-    });
+    if (auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
+        serviceWorkerThreadProxy->fireInstallEvent();
 }
 
-void WebSWContextManagerConnection::fireActivateEvent(ServiceWorkerIdentifier identifier)
+void WebSWContextManagerConnection::fireActivateEvent(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
-    callOnMainRunLoop([identifier] {
-        SWContextManager::singleton().fireActivateEvent(identifier);
-    });
+    if (auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
+        serviceWorkerThreadProxy->fireActivateEvent();
 }
 
 void WebSWContextManagerConnection::firePushEvent(ServiceWorkerIdentifier identifier, const std::optional<IPC::DataReference>& ipcData, CompletionHandler<void(bool)>&& callback)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     std::optional<Vector<uint8_t>> data;
     if (ipcData)
         data = Vector<uint8_t> { ipcData->data(), ipcData->size() };
 
-    auto inQueueCallback = [queue = m_queue, callback = WTFMove(callback)](bool result) mutable {
-        queue->dispatch([result, callback = WTFMove(callback)]() mutable {
+    auto inQueueCallback = [callback = WTFMove(callback)](bool result) mutable {
+        sharedQueue().dispatch([result, callback = WTFMove(callback)]() mutable {
             callback(result);
         });
     };
@@ -297,10 +300,10 @@ void WebSWContextManagerConnection::firePushEvent(ServiceWorkerIdentifier identi
 
 void WebSWContextManagerConnection::fireNotificationEvent(ServiceWorkerIdentifier identifier, NotificationData&& data, NotificationEventType eventType, CompletionHandler<void(bool)>&& callback)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
-    auto inQueueCallback = [queue = m_queue, callback = WTFMove(callback)](bool result) mutable {
-        queue->dispatch([result, callback = WTFMove(callback)]() mutable {
+    auto inQueueCallback = [callback = WTFMove(callback)](bool result) mutable {
+        sharedQueue().dispatch([result, callback = WTFMove(callback)]() mutable {
             callback(result);
         });
     };
@@ -311,7 +314,7 @@ void WebSWContextManagerConnection::fireNotificationEvent(ServiceWorkerIdentifie
 
 void WebSWContextManagerConnection::terminateWorker(ServiceWorkerIdentifier identifier)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     callOnMainRunLoop([identifier] {
         SWContextManager::singleton().terminateWorker(identifier, SWContextManager::workerTerminationTimeout, nullptr);
@@ -321,7 +324,7 @@ void WebSWContextManagerConnection::terminateWorker(ServiceWorkerIdentifier iden
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
 void WebSWContextManagerConnection::didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, ScriptBuffer&& script, HashMap<URL, ScriptBuffer>&& importedScripts)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     if (auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
         serviceWorkerThreadProxy->didSaveScriptsToDisk(WTFMove(script), WTFMove(importedScripts));
@@ -330,7 +333,7 @@ void WebSWContextManagerConnection::didSaveScriptsToDisk(WebCore::ServiceWorkerI
 
 void WebSWContextManagerConnection::convertFetchToDownload(SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, FetchIdentifier fetchIdentifier)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     if (auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
         serviceWorkerThreadProxy->convertFetchToDownload(serverConnectionIdentifier, fetchIdentifier);
@@ -338,7 +341,7 @@ void WebSWContextManagerConnection::convertFetchToDownload(SWServerConnectionIde
 
 void WebSWContextManagerConnection::navigationPreloadIsReady(SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, FetchIdentifier fetchIdentifier, ResourceResponse&& response)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     if (auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
         serviceWorkerThreadProxy->navigationPreloadIsReady(serverConnectionIdentifier, fetchIdentifier, WTFMove(response));
@@ -346,7 +349,7 @@ void WebSWContextManagerConnection::navigationPreloadIsReady(SWServerConnectionI
 
 void WebSWContextManagerConnection::navigationPreloadFailed(SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, FetchIdentifier fetchIdentifier, ResourceError&& error)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     if (auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
         serviceWorkerThreadProxy->navigationPreloadFailed(serverConnectionIdentifier, fetchIdentifier, WTFMove(error));
@@ -381,7 +384,7 @@ void WebSWContextManagerConnection::skipWaiting(ServiceWorkerIdentifier serviceW
 
 void WebSWContextManagerConnection::skipWaitingCompleted(uint64_t requestIdentifier)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     callOnMainRunLoop([protectedThis = Ref { *this }, requestIdentifier]() mutable {
         if (auto callback = protectedThis->m_skipWaitingCallbacks.take(requestIdentifier))
@@ -413,7 +416,7 @@ void WebSWContextManagerConnection::matchAll(WebCore::ServiceWorkerIdentifier se
 
 void WebSWContextManagerConnection::matchAllCompleted(uint64_t requestIdentifier, Vector<ServiceWorkerClientData>&& clientsData)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     callOnMainRunLoop([protectedThis = Ref { *this }, requestIdentifier, clientsData = crossThreadCopy(WTFMove(clientsData))]() mutable {
         if (auto callback = protectedThis->m_matchAllRequests.take(requestIdentifier))
@@ -477,7 +480,7 @@ void WebSWContextManagerConnection::close()
 
 void WebSWContextManagerConnection::setThrottleState(bool isThrottleable)
 {
-    assertIsCurrent(m_queue.get());
+    assertIsCurrent(sharedQueue());
 
     callOnMainRunLoop([protectedThis = Ref { *this }, isThrottleable] {
         RELEASE_LOG(ServiceWorker, "Service worker throttleable state is set to %d", isThrottleable);

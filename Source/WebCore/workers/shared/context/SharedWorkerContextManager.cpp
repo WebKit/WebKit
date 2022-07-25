@@ -141,6 +141,7 @@ void SharedWorkerContextManager::Connection::resumeSharedWorker(SharedWorkerIden
 
 void SharedWorkerContextManager::forEachSharedWorker(const Function<Function<void(ScriptExecutionContext&)>()>& createTask)
 {
+    ASSERT(isMainThread());
     for (auto& worker : m_workerMap.values())
         worker->thread().runLoop().postTask(createTask());
 }

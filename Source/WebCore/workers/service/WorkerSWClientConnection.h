@@ -28,19 +28,22 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SWClientConnection.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class WorkerGlobalScope;
 class WorkerThread;
 
-class WorkerSWClientConnection final : public SWClientConnection {
+class WorkerSWClientConnection final : public SWClientConnection, public RefCounted<WorkerSWClientConnection> {
 public:
     static Ref<WorkerSWClientConnection> create(WorkerGlobalScope& scope) { return adoptRef(*new WorkerSWClientConnection { scope }); }
     ~WorkerSWClientConnection();
 
     void registerServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientData&&, const std::optional<ServiceWorkerRegistrationIdentifier>&, String&& userAgent) final;
     void unregisterServiceWorkerClient(ScriptExecutionContextIdentifier) final;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit WorkerSWClientConnection(WorkerGlobalScope&);

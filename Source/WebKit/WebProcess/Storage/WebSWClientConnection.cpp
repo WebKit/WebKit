@@ -39,6 +39,8 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include "WebSWClientConnectionMessages.h"
+#include "WebSWContextManagerConnection.h"
 #include "WebSWOriginTable.h"
 #include "WebSWServerConnectionMessages.h"
 #include <WebCore/Document.h>
@@ -69,16 +71,37 @@ WebSWClientConnection::WebSWClientConnection()
 
 WebSWClientConnection::~WebSWClientConnection()
 {
+    ASSERT(isMainRunLoop());
+
     clear();
+}
+
+void WebSWClientConnection::establishConnection()
+{
+    ASSERT(isMainRunLoop());
+
+    messageSenderConnection()->addWorkQueueMessageReceiver(Messages::WebSWClientConnection::messageReceiverName(), WebSWContextManagerConnection::sharedQueue(), *this);
+}
+
+void WebSWClientConnection::closeConnection()
+{
+    ASSERT(isMainRunLoop());
+
+    if (m_connection)
+        m_connection->removeWorkQueueMessageReceiver(Messages::WebSWClientConnection::messageReceiverName());
 }
 
 IPC::Connection* WebSWClientConnection::messageSenderConnection() const
 {
-    return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    if (!m_connection)
+        m_connection = &WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    return m_connection.get();
 }
 
 void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
 {
+    ASSERT(isMainRunLoop());
+
     runOrDelayTaskForImport([this, jobData] {
         send(Messages::WebSWServerConnection::ScheduleJobInServer { jobData });
     });
@@ -86,11 +109,15 @@ void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobD
 
 void WebSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, ServiceWorkerRegistrationKey&& registrationKey, WorkerFetchResult&& result)
 {
+    ASSERT(isMainRunLoop());
+
     send(Messages::WebSWServerConnection::FinishFetchingScriptInServer { jobDataIdentifier, registrationKey, result });
 }
 
 void WebSWClientConnection::addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
+    ASSERT(isMainRunLoop());
+
     // FIXME: We should send the message to network process only if this is a new registration, once we correctly handle recovery upon network process crash.
     WebProcess::singleton().addServiceWorkerRegistration(identifier);
     send(Messages::WebSWServerConnection::AddServiceWorkerRegistrationInServer { identifier });
@@ -98,12 +125,16 @@ void WebSWClientConnection::addServiceWorkerRegistrationInServer(ServiceWorkerRe
 
 void WebSWClientConnection::removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
+    ASSERT(isMainRunLoop());
+
     if (WebProcess::singleton().removeServiceWorkerRegistration(identifier))
         send(Messages::WebSWServerConnection::RemoveServiceWorkerRegistrationInServer { identifier });
 }
 
 void WebSWClientConnection::scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier registrationIdentifier, WebCore::ServiceWorkerOrClientIdentifier documentIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&& completionHandler)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::ScheduleUnregisterJobInServer { ServiceWorkerJobIdentifier::generateThreadSafe(), registrationIdentifier, documentIdentifier }, [completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
         if (!result.has_value())
             return completionHandler(result.error().toException());
@@ -133,6 +164,8 @@ void WebSWClientConnection::didResolveRegistrationPromise(const ServiceWorkerReg
 
 bool WebSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData& origin) const
 {
+    ASSERT(isMainRunLoop());
+
     if (!m_swOriginTable->isImported())
         return true;
 
@@ -141,14 +174,20 @@ bool WebSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const Securi
 
 void WebSWClientConnection::setSWOriginTableSharedMemory(const SharedMemory::IPCHandle& ipcHandle)
 {
+    assertIsCurrent(WebSWContextManagerConnection::sharedQueue());
+
     m_swOriginTable->setSharedMemory(ipcHandle.handle);
 }
 
 void WebSWClientConnection::setSWOriginTableIsImported()
 {
-    m_swOriginTable->setIsImported();
-    while (!m_tasksPendingOriginImport.isEmpty())
-        m_tasksPendingOriginImport.takeFirst()();
+    assertIsCurrent(WebSWContextManagerConnection::sharedQueue());
+
+    callOnMainRunLoop([protectedThis = Ref { *this }, this] {
+        m_swOriginTable->setIsImported();
+        while (!m_tasksPendingOriginImport.isEmpty())
+            m_tasksPendingOriginImport.takeFirst()();
+    });
 }
 
 void WebSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
@@ -167,6 +206,8 @@ void WebSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, co
 
 void WebSWClientConnection::runOrDelayTaskForImport(Function<void()>&& task)
 {
+    ASSERT(isMainRunLoop());
+
     if (m_swOriginTable->isImported()) {
         task();
         return;
@@ -176,25 +217,42 @@ void WebSWClientConnection::runOrDelayTaskForImport(Function<void()>&& task)
 
 void WebSWClientConnection::whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::WhenRegistrationReady { topOrigin, clientURL }, [callback = WTFMove(callback)](auto result) mutable {
-        if (result)
-            callback(*WTFMove(result));
+        if (!result)
+            return;
+        //  Let's go through the shared queue to resolve the ready promise once the registration state is updated.
+        WebSWContextManagerConnection::sharedQueue().dispatch([callback = WTFMove(callback), result = crossThreadCopy(WTFMove(result))]() mutable {
+            callOnMainRunLoop([callback = WTFMove(callback), result = crossThreadCopy(WTFMove(result))]() mutable {
+                callback(*WTFMove(result));
+            });
+        });
     });
 }
 
 void WebSWClientConnection::setServiceWorkerClientIsControlled(ScriptExecutionContextIdentifier identifier, ServiceWorkerRegistrationData&& data, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (auto* loader = DocumentLoader::fromScriptExecutionContextIdentifier(identifier)) {
-        completionHandler(loader->setControllingServiceWorkerRegistration(WTFMove(data)));
-        return;
-    }
+    assertIsCurrent(WebSWContextManagerConnection::sharedQueue());
 
-    if (auto* loader = WorkerScriptLoader::fromScriptExecutionContextIdentifier(identifier)) {
-        completionHandler(data.activeWorker ? loader->setControllingServiceWorker(WTFMove(*data.activeWorker)) : false);
-        return;
-    }
+    auto callback = [completionHandler = WTFMove(completionHandler)](bool result) mutable {
+        WebSWContextManagerConnection::sharedQueue().dispatch([completionHandler = WTFMove(completionHandler), result]() mutable {
+            completionHandler(result);
+        });
+    };
+    callOnMainRunLoop([callback = WTFMove(callback), identifier, data = WTFMove(data).isolatedCopy()]() mutable {
+        if (auto* loader = DocumentLoader::fromScriptExecutionContextIdentifier(identifier)) {
+            callback(loader->setControllingServiceWorkerRegistration(WTFMove(data)));
+            return;
+        }
 
-    completionHandler(false);
+        if (auto* loader = WorkerScriptLoader::fromScriptExecutionContextIdentifier(identifier)) {
+            callback(data.activeWorker ? loader->setControllingServiceWorker(WTFMove(*data.activeWorker)) : false);
+            return;
+        }
+
+        callback(false);
+    });
 }
 
 void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, const URL& clientURL, GetRegistrationsCallback&& callback)
@@ -213,38 +271,53 @@ void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, con
 
 void WebSWClientConnection::connectionToServerLost()
 {
+    ASSERT(isMainRunLoop());
+
+    closeConnection();
     setIsClosed();
     clear();
 }
 
 void WebSWClientConnection::clear()
 {
+    ASSERT(isMainRunLoop());
+
     clearPendingJobs();
 }
 
 void WebSWClientConnection::terminateWorkerForTesting(ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::TerminateWorkerFromClient { identifier }, WTFMove(callback));
 }
 
 void WebSWClientConnection::whenServiceWorkerIsTerminatedForTesting(ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::WhenServiceWorkerIsTerminatedForTesting { identifier }, WTFMove(callback));
 }
 
 void WebSWClientConnection::updateThrottleState()
 {
+    ASSERT(isMainRunLoop());
+
     m_isThrottleable = WebProcess::singleton().areAllPagesThrottleable();
     send(Messages::WebSWServerConnection::SetThrottleState { m_isThrottleable });
 }
 
 void WebSWClientConnection::storeRegistrationsOnDiskForTesting(CompletionHandler<void()>&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::StoreRegistrationsOnDisk { }, WTFMove(callback));
 }
 
 void WebSWClientConnection::subscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::SubscribeToPushService { registrationIdentifier, applicationServerKey }, [callback = WTFMove(callback)](auto&& result) mutable {
         if (!result.has_value())
             return callback(result.error().toException());
@@ -254,6 +327,8 @@ void WebSWClientConnection::subscribeToPushService(WebCore::ServiceWorkerRegistr
 
 void WebSWClientConnection::unsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, WebCore::PushSubscriptionIdentifier subscriptionIdentifier, UnsubscribeFromPushServiceCallback&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::UnsubscribeFromPushService { registrationIdentifier, subscriptionIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
         if (!result.has_value())
             return callback(result.error().toException());
@@ -263,6 +338,8 @@ void WebSWClientConnection::unsubscribeFromPushService(WebCore::ServiceWorkerReg
 
 void WebSWClientConnection::getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, GetPushSubscriptionCallback&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::GetPushSubscription { registrationIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
         if (!result.has_value())
             return callback(result.error().toException());
@@ -272,6 +349,8 @@ void WebSWClientConnection::getPushSubscription(WebCore::ServiceWorkerRegistrati
 
 void WebSWClientConnection::getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, GetPushPermissionStateCallback&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::GetPushPermissionState { registrationIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
         if (!result.has_value())
             return callback(result.error().toException());
@@ -281,11 +360,15 @@ void WebSWClientConnection::getPushPermissionState(WebCore::ServiceWorkerRegistr
 
 void WebSWClientConnection::getNotifications(const URL& registrationURL, const String& tag, GetNotificationsCallback&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::GetNotifications { registrationURL, tag }, WTFMove(callback));
 }
 
 void WebSWClientConnection::enableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrVoidCallback&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::EnableNavigationPreload { registrationIdentifier }, [callback = WTFMove(callback)](auto&& error) mutable {
         if (error)
             return callback(error->toException());
@@ -295,6 +378,8 @@ void WebSWClientConnection::enableNavigationPreload(WebCore::ServiceWorkerRegist
 
 void WebSWClientConnection::disableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrVoidCallback&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::DisableNavigationPreload { registrationIdentifier }, [callback = WTFMove(callback)](auto&& error) mutable {
         if (error)
             return callback(error->toException());
@@ -304,6 +389,8 @@ void WebSWClientConnection::disableNavigationPreload(WebCore::ServiceWorkerRegis
 
 void WebSWClientConnection::setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String&& headerValue, ExceptionOrVoidCallback&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::SetNavigationPreloadHeaderValue { registrationIdentifier, headerValue }, [callback = WTFMove(callback)](auto&& error) mutable {
         if (error)
             return callback(error->toException());
@@ -313,6 +400,8 @@ void WebSWClientConnection::setNavigationPreloadHeaderValue(WebCore::ServiceWork
 
 void WebSWClientConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrNavigationPreloadStateCallback&& callback)
 {
+    ASSERT(isMainRunLoop());
+
     sendWithAsyncReply(Messages::WebSWServerConnection::GetNavigationPreloadState { registrationIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
         if (!result.has_value())
             return callback(result.error().toException());
@@ -320,26 +409,40 @@ void WebSWClientConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
     });
 }
 
-void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
+void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& completionHandler)
 {
-    auto* client = Document::allDocumentsMap().get(clientIdentifier);
-    auto* page = client ? client->page() : nullptr;
-    if (!page) {
-        callback({ });
-        return;
-    }
+    assertIsCurrent(WebSWContextManagerConnection::sharedQueue());
 
-    WebPage::fromCorePage(*page).sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTFMove(callback)]() mutable {
+    auto callback = [completionHandler = WTFMove(completionHandler)](std::optional<ServiceWorkerClientData>&& result) mutable {
+        WebSWContextManagerConnection::sharedQueue().dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(WTFMove(result))]() mutable {
+            completionHandler(WTFMove(result));
+        });
+    };
+    callOnMainRunLoop([callback = WTFMove(callback), clientIdentifier]() mutable {
         auto* client = Document::allDocumentsMap().get(clientIdentifier);
-        auto* frame = client ? client->frame() : nullptr;
-        auto* page = frame ? frame->page() : nullptr;
+        auto* page = client ? client->page() : nullptr;
         if (!page) {
             callback({ });
             return;
         }
-        page->focusController().setFocusedFrame(frame);
-        callback(ServiceWorkerClientData::from(*client));
+
+        WebPage::fromCorePage(*page).sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTFMove(callback)]() mutable {
+            auto* client = Document::allDocumentsMap().get(clientIdentifier);
+            auto* frame = client ? client->frame() : nullptr;
+            auto* page = frame ? frame->page() : nullptr;
+            if (!page) {
+                callback({ });
+                return;
+            }
+            page->focusController().setFocusedFrame(frame);
+            callback(ServiceWorkerClientData::from(*client));
+        });
     });
+}
+
+void WebSWClientConnection::refreshImportedScripts(WebCore::ServiceWorkerJobIdentifier identifier, WebCore::FetchOptions::Cache cache, Vector<URL>&& urls, WebCore::ServiceWorkerJob::RefreshImportedScriptsCallback&& callback)
+{
+    SWClientConnection::refreshImportedScripts(identifier, cache, WTFMove(urls), WTFMove(callback), WebSWContextManagerConnection::sharedQueue());
 }
 
 } // namespace WebKit

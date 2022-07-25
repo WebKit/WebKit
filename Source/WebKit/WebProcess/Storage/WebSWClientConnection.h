@@ -28,7 +28,6 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "Connection.h"
-#include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "SharedMemory.h"
 #include <WebCore/MessageWithMessagePorts.h>
@@ -45,7 +44,7 @@ namespace WebKit {
 class WebSWOriginTable;
 class WebServiceWorkerProvider;
 
-class WebSWClientConnection final : public WebCore::SWClientConnection, private IPC::MessageSender, public IPC::MessageReceiver {
+class WebSWClientConnection final : public WebCore::SWClientConnection, private IPC::MessageSender, public IPC::Connection::WorkQueueMessageReceiver {
 public:
     static Ref<WebSWClientConnection> create() { return adoptRef(*new WebSWClientConnection); }
     ~WebSWClientConnection();
@@ -65,7 +64,12 @@ public:
     bool isThrottleable() const { return m_isThrottleable; }
     void updateThrottleState();
 
+    void ref() const final { IPC::Connection::WorkQueueMessageReceiver::ref(); }
+    void deref() const final { IPC::Connection::WorkQueueMessageReceiver::deref(); }
+
     void terminateWorkerForTesting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
+
+    void establishConnection();
 
 private:
     WebSWClientConnection();
@@ -102,6 +106,7 @@ private:
     void setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier, String&&, ExceptionOrVoidCallback&&) final;
     void getNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrNavigationPreloadStateCallback&&) final;
     void focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&);
+    void refreshImportedScripts(WebCore::ServiceWorkerJobIdentifier, WebCore::FetchOptions::Cache, Vector<URL>&&, WebCore::ServiceWorkerJob::RefreshImportedScriptsCallback&&);
 
     void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);
 
@@ -114,6 +119,7 @@ private:
     void setSWOriginTableIsImported();
 
     void clear();
+    void closeConnection();
 
     WebCore::SWServerConnectionIdentifier m_identifier;
 
@@ -121,6 +127,7 @@ private:
 
     Deque<Function<void()>> m_tasksPendingOriginImport;
     bool m_isThrottleable { true };
+    mutable RefPtr<IPC::Connection> m_connection;
 }; // class WebSWServerConnection
 
 } // namespace WebKit
