@@ -102,7 +102,6 @@ jobs:
           cp $RUNNER_TEMP/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* $RUNNER_TEMP/bun-webkit/include/JavaScriptCore
           cd $RUNNER_TEMP
           tar -czf bun-webkit.tar.gz bun-webkit
-          cp bun-webkit.tar.gz ${{runner.temp}}
       - uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.label}}
