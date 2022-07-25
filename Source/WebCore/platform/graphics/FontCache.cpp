@@ -440,6 +440,20 @@ void FontCache::invalidateAllFontCaches(ShouldRunInvalidationCallback shouldRunI
         fontCacheInvalidationCallback()();
 }
 
+void FontCache::releaseNoncriticalMemory()
+{
+    purgeInactiveFontData();
+    m_fontCascadeCache.clearWidthCaches();
+    platformReleaseNoncriticalMemory();
+}
+
+void FontCache::releaseNoncriticalMemoryInAllFontCaches()
+{
+    dispatchToAllFontCaches([](FontCache& fontCache) {
+        fontCache.releaseNoncriticalMemory();
+    });
+}
+
 bool FontCache::useBackslashAsYenSignForFamily(const AtomString& family)
 {
     if (family.isEmpty())
@@ -481,6 +495,9 @@ RefPtr<Font> FontCache::similarFont(const FontDescription&, const String&)
     return nullptr;
 }
 
+void FontCache::platformReleaseNoncriticalMemory()
+{
+}
 #endif
 
 } // namespace WebCore

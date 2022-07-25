@@ -149,6 +149,8 @@ public:
     WEBCORE_EXPORT void purgeInactiveFontData(unsigned count = UINT_MAX);
     void platformPurgeInactiveFontData();
 
+    static void releaseNoncriticalMemoryInAllFontCaches();
+
     void updateFontCascade(const FontCascade&, RefPtr<FontSelector>&&);
 
 #if PLATFORM(WIN)
@@ -187,8 +189,9 @@ public:
 
 private:
     void invalidate();
+    void releaseNoncriticalMemory();
+    void platformReleaseNoncriticalMemory();
     void platformInvalidate();
-
     WEBCORE_EXPORT void purgeInactiveFontDataIfNeeded();
 
     FontPlatformData* cachedFontPlatformData(const FontDescription&, const String& family, const FontCreationContext& = { }, bool checkingAlternateName = false);
