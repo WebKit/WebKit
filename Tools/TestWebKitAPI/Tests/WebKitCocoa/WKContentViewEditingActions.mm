@@ -147,7 +147,7 @@ TEST(WebKit, CaptureTextFromCamera)
     [webView _setInputDelegate:inputDelegate.get()];
     auto contentView = [webView textInputContentView];
 
-    [webView synchronouslyLoadHTMLString:@"<input value='foo' autofocus><input value='bar' readonly>"];
+    [webView synchronouslyLoadHTMLString:@"<input style='display: block; font-size: 100px;' value='foo' autofocus><input value='bar' readonly>"];
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ([webView targetForAction:@selector(captureTextFromCamera:) withSender:nil], contentView);
     EXPECT_TRUE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
@@ -170,6 +170,16 @@ TEST(WebKit, CaptureTextFromCamera)
     [webView objectByEvaluatingJavaScript:@"document.querySelector('input[readonly]').focus()"];
     [webView waitForNextPresentationUpdate];
     EXPECT_FALSE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
+
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+    __block bool done = false;
+    [contentView prepareSelectionForContextMenuWithLocationInView:CGPointMake(20, 20) completionHandler:^(BOOL shouldPresentMenu, RVItem *) {
+        EXPECT_TRUE(shouldPresentMenu);
+        EXPECT_FALSE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+#endif
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)

@@ -4096,10 +4096,12 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         if (!mayContainSelectableText(_focusedElementInformation.elementType) || _focusedElementInformation.isReadOnly)
             return NO;
 
+        BOOL isPreparingEditMenu = _isPreparingEditMenu;
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if ([sender isKindOfClass:UIMenuController.class] && editorState.selectionIsRange)
-            return NO;
+        isPreparingEditMenu |= [sender isKindOfClass:UIMenuController.class];
         ALLOW_DEPRECATED_DECLARATIONS_END
+        if (isPreparingEditMenu && editorState.selectionIsRange)
+            return NO;
     }
 #endif // ENABLE(IMAGE_ANALYSIS)
 
