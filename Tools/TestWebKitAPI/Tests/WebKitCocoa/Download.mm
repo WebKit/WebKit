@@ -1279,6 +1279,15 @@ static NSURL *tempPDFThatDoesNotExist()
     return file;
 }
 
+static NSURL *tempUSDZThatDoesNotExist()
+{
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"DownloadTest"] isDirectory:YES];
+    [[NSFileManager defaultManager] createDirectoryAtURL:tempDir withIntermediateDirectories:YES attributes:nil error:nil];
+    NSURL *file = [tempDir URLByAppendingPathComponent:@"example.usdz"];
+    [[NSFileManager defaultManager] removeItemAtURL:file error:nil];
+    return file;
+}
+
 TEST(_WKDownload, Resume)
 {
     using namespace TestWebKitAPI;
@@ -2681,6 +2690,54 @@ TEST(WKDownload, CaptivePortalPDF)
     [webView setNavigationDelegate:delegate.get()];
     auto server = simplePDFTestServer();
     NSURL *expectedDownloadFile = tempPDFThatDoesNotExist();
+
+    delegate.get().navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        download.delegate = delegate.get();
+        delegate.get().decideDestinationUsingResponse = ^(WKDownload *download, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            EXPECT_NULL(download.progress.fileURL);
+            completionHandler(expectedDownloadFile);
+            EXPECT_NOT_NULL(download.progress.fileURL);
+            EXPECT_WK_STREQ(download.progress.fileURL.absoluteString, expectedDownloadFile.absoluteString);
+        };
+    };
+
+    [webView loadRequest:server.request()];
+    [delegate waitForDownloadDidFinish];
+
+    checkFileContents(expectedDownloadFile, longString<5000>('a'));
+
+    checkCallbackRecord(delegate.get(), {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidFinish
+    });
+}
+
+static TestWebKitAPI::HTTPServer simpleUSDZTestServer()
+{
+    return { [](TestWebKitAPI::Connection connection) {
+        connection.receiveHTTPRequest([connection](Vector<char>&&) {
+            connection.send(makeString(
+                "HTTP/1.1 200 OK\r\n"
+                "content-type: model/vnd.usdz+zip\r\n"
+                "Content-Length: 5000\r\n"
+                "\r\n", longString<5000>('a')
+            ));
+        });
+    } };
+}
+
+TEST(WKDownload, CaptivePortalUSDZ)
+{
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([TestDownloadDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    auto server = simpleUSDZTestServer();
+    NSURL *expectedDownloadFile = tempUSDZThatDoesNotExist();
 
     delegate.get().navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
         download.delegate = delegate.get();
