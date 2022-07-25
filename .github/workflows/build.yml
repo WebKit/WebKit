@@ -79,6 +79,8 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DUSE_THIN_ARCHIVES=OFF \
             -DENABLE_FTL_JIT=ON \
+            -DCMAKE_C_COMPILER="$CMAKE_C_COMPILER" \
+            -DCMAKE_CXX_COMPILER="$CMAKE_CXX_COMPILER" \
             -DCMAKE_C_FLAGS="-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden ${{matrix.march}} -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
             -DCMAKE_CXX_FLAGS="-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden ${{matrix.march}} -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
             -G Ninja \
