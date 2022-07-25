@@ -4996,6 +4996,13 @@
    },
    {
       "emails" : [
+         "miguel_salinas@apple.com"
+      ],
+      "github" : "salinas-miguel",
+      "name" : "Miguel Salinas"
+   },
+   {
+      "emails" : [
          "mibalan@adobe.com"
       ],
       "name" : "Mihai Balan",
