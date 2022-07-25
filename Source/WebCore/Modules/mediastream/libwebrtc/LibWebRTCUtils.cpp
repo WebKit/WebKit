@@ -207,8 +207,6 @@ RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters& rtcParameters)
         parameters.codecs.append(toRTCCodecParameters(codec));
 
     parameters.rtcp.reducedSize = rtcParameters.rtcp.reduced_size;
-    if (rtcParameters.rtcp.cname.length())
-        parameters.rtcp.cname = fromStdString(rtcParameters.rtcp.cname);
 
     return parameters;
 }
@@ -216,6 +214,7 @@ RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters& rtcParameters)
 RTCRtpSendParameters toRTCRtpSendParameters(const webrtc::RtpParameters& rtcParameters)
 {
     RTCRtpSendParameters parameters { toRTCRtpParameters(rtcParameters) };
+    parameters.rtcp.cname = fromStdString(rtcParameters.rtcp.cname);
 
     parameters.transactionId = fromStdString(rtcParameters.transaction_id);
     for (auto& rtcEncoding : rtcParameters.encodings)
