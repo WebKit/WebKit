@@ -97,6 +97,7 @@ using JSBigUint64Array = JSGenericTypedArrayView<BigUint64Adaptor>;
     /* TypedArrays are typedef, thus, we cannot use `class` forward declaration */ \
     macro(JSInt8Array, JSType::Int8ArrayType, JSType::Int8ArrayType) \
     macro(JSUint8Array, JSType::Uint8ArrayType, JSType::Uint8ArrayType) \
+    macro(JSUint8ClampedArray, JSType::Uint8ClampedArrayType, JSType::Uint8ClampedArrayType) \
     macro(JSInt16Array, JSType::Int16ArrayType, JSType::Int16ArrayType) \
     macro(JSUint16Array, JSType::Uint16ArrayType, JSType::Uint16ArrayType) \
     macro(JSInt32Array, JSType::Int32ArrayType, JSType::Int32ArrayType) \
