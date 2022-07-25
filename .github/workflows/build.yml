@@ -69,7 +69,7 @@ jobs:
           CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@13/bin/clang++"
         run: |
           export THIS_DIR="$(pwd)"
-          export $RUNNER_DIR="$(pwd)/this-run"
+          export RUNNER_DIR="$(pwd)/this-run"
           rm -rf $RUNNER_DIR/webkit-release $RUNNER_DIR/bun-webkit $RUNNER_DIR/bun-webkit $RUNNER_DIR/bun-webkit.tar.gz
           mkdir -p $RUNNER_DIR/webkit-release
           cd $RUNNER_DIR/webkit-release
