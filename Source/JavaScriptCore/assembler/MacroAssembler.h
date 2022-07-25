@@ -425,41 +425,49 @@ public:
 #if !CPU(ARM_THUMB2) && !CPU(ARM64)
     PatchableJump patchableBranchPtr(RelationalCondition cond, Address left, TrustedImmPtr right = TrustedImmPtr(nullptr))
     {
+        padBeforePatch();
         return PatchableJump(branchPtr(cond, left, right));
     }
     
     PatchableJump patchableBranchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(nullptr))
     {
+        padBeforePatch();
         return PatchableJump(branchPtrWithPatch(cond, left, dataLabel, initialRightValue));
     }
 
     PatchableJump patchableBranch32WithPatch(RelationalCondition cond, Address left, DataLabel32& dataLabel, TrustedImm32 initialRightValue = TrustedImm32(0))
     {
+        padBeforePatch();
         return PatchableJump(branch32WithPatch(cond, left, dataLabel, initialRightValue));
     }
 
     PatchableJump patchableJump()
     {
+        padBeforePatch();
         return PatchableJump(jump());
     }
 
     PatchableJump patchableBranchTest32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
+        padBeforePatch();
         return PatchableJump(branchTest32(cond, reg, mask));
     }
 
     PatchableJump patchableBranch32(RelationalCondition cond, RegisterID reg, TrustedImm32 imm)
     {
+        padBeforePatch();
         return PatchableJump(branch32(cond, reg, imm));
     }
 
     PatchableJump patchableBranch8(RelationalCondition cond, Address address, TrustedImm32 imm)
     {
+        padBeforePatch();
         return PatchableJump(branch8(cond, address, imm));
     }
 
     PatchableJump patchableBranch32(RelationalCondition cond, Address address, TrustedImm32 imm)
     {
+        padBeforePatch();
         return PatchableJump(branch32(cond, address, imm));
     }
 #endif

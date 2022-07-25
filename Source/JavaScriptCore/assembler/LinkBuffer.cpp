@@ -307,7 +307,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
                 target = codeOutData + to - offset; // Compensate for what we have collapsed so far
             else
                 target = codeOutData + to - executableOffsetFor(to);
-                
+
             JumpLinkType jumpLinkType = MacroAssembler::computeJumpType(jumpsToLink[i], codeOutData + writePtr, target);
             // Compact branch if we can...
             if (MacroAssembler::canCompact(jumpsToLink[i].type())) {
@@ -411,7 +411,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort effort)
 {
     // Ensure that the end of the last invalidation point does not extend beyond the end of the buffer.
-    macroAssembler.label();
+    macroAssembler.padBeforePatch();
 
 #if !ENABLE(BRANCH_COMPACTION)
 #if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL

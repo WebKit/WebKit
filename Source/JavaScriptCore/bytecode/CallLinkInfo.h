@@ -265,19 +265,9 @@ public:
         return m_clearedByVirtual;
     }
 
-    bool clearedByJettison()
-    {
-        return m_clearedByJettison;
-    }
-
     void setClearedByVirtual()
     {
         m_clearedByVirtual = true;
-    }
-
-    void setClearedByJettison()
-    {
-        m_clearedByJettison = true;
     }
     
     void setCallType(CallType callType)
@@ -379,7 +369,6 @@ protected:
         , m_clearedByGC(false)
         , m_clearedByVirtual(false)
         , m_allowStubs(true)
-        , m_clearedByJettison(false)
         , m_callType(None)
         , m_useDataIC(static_cast<unsigned>(useDataIC))
         , m_type(static_cast<unsigned>(type))
@@ -422,7 +411,6 @@ protected:
     bool m_clearedByGC : 1;
     bool m_clearedByVirtual : 1;
     bool m_allowStubs : 1;
-    bool m_clearedByJettison : 1;
     unsigned m_callType : 4; // CallType
     unsigned m_useDataIC : 1; // UseDataIC
     unsigned m_type : 1; // Type

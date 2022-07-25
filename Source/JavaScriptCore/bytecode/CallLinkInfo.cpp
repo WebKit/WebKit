@@ -135,7 +135,7 @@ void CallLinkInfo::clearCallee()
     if (isDataIC()) {
         u.dataIC.m_codeBlock = nullptr;
         u.dataIC.m_monomorphicCallDestination = nullptr;
-    } else if (!clearedByJettison()) {
+    } else {
 #if ENABLE(JIT)
         MacroAssembler::repatchPointer(u.codeIC.m_codeBlockLocation, nullptr);
         MacroAssembler::repatchPointer(u.codeIC.m_calleeLocation, nullptr);

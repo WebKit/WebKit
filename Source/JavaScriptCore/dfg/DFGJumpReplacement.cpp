@@ -43,6 +43,8 @@ void JumpReplacement::fire()
 
 void JumpReplacement::installVMTrapBreakpoint()
 {
+    dataLogLnIf(Options::dumpDisassembly(),
+        "Inserting VMTrap breakpoint at ", RawPointer(m_source.dataLocation()));
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
     MacroAssembler::replaceWithVMHalt(m_source);
 #else

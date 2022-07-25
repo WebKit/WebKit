@@ -268,6 +268,7 @@ public:
 
     Call threadSafePatchableNearCall()
     {
+        padBeforePatch();
         const size_t nearCallOpcodeSize = 1;
         const size_t nearCallRelativeLocationSize = sizeof(int32_t);
         // We want to make sure the 32-bit near call immediate is 32-bit aligned.
@@ -1573,11 +1574,13 @@ public:
 
     PatchableJump patchableBranch64(RelationalCondition cond, RegisterID reg, TrustedImm64 imm)
     {
+        padBeforePatch();
         return PatchableJump(branch64(cond, reg, imm));
     }
 
     PatchableJump patchableBranch64(RelationalCondition cond, RegisterID left, RegisterID right)
     {
+        padBeforePatch();
         return PatchableJump(branch64(cond, left, right));
     }
     
