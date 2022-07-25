@@ -63,16 +63,15 @@ jobs:
       - name: Run
         env:
           ICU_INCLUDE_DIRS: ${{matrix.brew_prefix}}/icu4c/include
-          # CC: "${{matrix.brew_prefix}}/llvm@13/bin/clang"
-          # CXX: "${{matrix.brew_prefix}}/llvm@13/bin/clang++"
-          # CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@13/bin/clang"
-          # CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@13/bin/clang++"
+          CC: "${{matrix.brew_prefix}}/llvm@13/bin/clang"
+          CXX: "${{matrix.brew_prefix}}/llvm@13/bin/clang++"
+          CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@13/bin/clang"
+          CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@13/bin/clang++"
         run: |
           export THIS_DIR="$(pwd)"
-          export RUNNER_DIR="$(pwd)/this-run"
-          rm -rf $RUNNER_DIR/webkit-release $RUNNER_DIR/bun-webkit $RUNNER_DIR/bun-webkit $RUNNER_DIR/bun-webkit.tar.gz
-          mkdir -p $RUNNER_DIR/webkit-release
-          cd $RUNNER_DIR/webkit-release
+          rm -rf $RUNNER_TEMP/webkit-release $RUNNER_TEMP/bun-webkit $RUNNER_TEMP/bun-webkit $RUNNER_TEMP/bun-webkit.tar.gz
+          mkdir -p $RUNNER_TEMP/webkit-release
+          cd $RUNNER_TEMP/webkit-release
           cmake  \
             -DPORT="JSCOnly" \
             -DENABLE_STATIC_JSC=ON \
@@ -88,18 +87,18 @@ jobs:
             -DUSE_PTHREAD_JIT_PERMISSIONS_API=ON \
             -DENABLE_REMOTE_INSPECTOR=ON \
             $THIS_DIR \
-            $RUNNER_DIR/webkit-release && \
-              cmake --build $RUNNER_DIR/webkit-release --config Release --target jsc
-          mkdir -p $RUNNER_DIR/bun-webkit/lib $RUNNER_DIR/bun-webkit/include $RUNNER_DIR/bun-webkit/include/JavaScriptCore $RUNNER_DIR/bun-webkit/include/wtf $RUNNER_DIR/bun-webkit/include/bmalloc
-          cp $RUNNER_DIR/webkit-release/lib/* $RUNNER_DIR/bun-webkit/lib
-          cp -r $RUNNER_DIR/webkit-release/cmakeconfig.h $RUNNER_DIR/bun-webkit/include/cmakeconfig.h
-          echo "#define BUN_WEBKIT_VERSION \"${{github.sha}}\"" >> $RUNNER_DIR/bun-webkit/include/cmakeconfig.h
-          cp -r $RUNNER_DIR/webkit-release/WTF/Headers/wtf $RUNNER_DIR/bun-webkit/include
-          cp -r $RUNNER_DIR/webkit-release/ICU/Headers/* $RUNNER_DIR/bun-webkit/include
-          cp -r $RUNNER_DIR/webkit-release/bmalloc/Headers/bmalloc $RUNNER_DIR/bun-webkit/include
-          cp $RUNNER_DIR/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* $RUNNER_DIR/bun-webkit/include/JavaScriptCore
-          cp $RUNNER_DIR/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* $RUNNER_DIR/bun-webkit/include/JavaScriptCore
-          cd $RUNNER_DIR
+            $RUNNER_TEMP/webkit-release && \
+              cmake --build $RUNNER_TEMP/webkit-release --config Release --target jsc
+          mkdir -p $RUNNER_TEMP/bun-webkit/lib $RUNNER_TEMP/bun-webkit/include $RUNNER_TEMP/bun-webkit/include/JavaScriptCore $RUNNER_TEMP/bun-webkit/include/wtf $RUNNER_TEMP/bun-webkit/include/bmalloc
+          cp $RUNNER_TEMP/webkit-release/lib/* $RUNNER_TEMP/bun-webkit/lib
+          cp -r $RUNNER_TEMP/webkit-release/cmakeconfig.h $RUNNER_TEMP/bun-webkit/include/cmakeconfig.h
+          echo "#define BUN_WEBKIT_VERSION \"${{github.sha}}\"" >> $RUNNER_TEMP/bun-webkit/include/cmakeconfig.h
+          cp -r $RUNNER_TEMP/webkit-release/WTF/Headers/wtf $RUNNER_TEMP/bun-webkit/include
+          cp -r $RUNNER_TEMP/webkit-release/ICU/Headers/* $RUNNER_TEMP/bun-webkit/include
+          cp -r $RUNNER_TEMP/webkit-release/bmalloc/Headers/bmalloc $RUNNER_TEMP/bun-webkit/include
+          cp $RUNNER_TEMP/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* $RUNNER_TEMP/bun-webkit/include/JavaScriptCore
+          cp $RUNNER_TEMP/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* $RUNNER_TEMP/bun-webkit/include/JavaScriptCore
+          cd $RUNNER_TEMP
           tar -czf bun-webkit.tar.gz bun-webkit
           cp bun-webkit.tar.gz ${{runner.temp}}
       - uses: actions/upload-artifact@v3
