@@ -290,4 +290,24 @@ private:
 #endif
 }
 
+- (void)navigateExtensionTabWithIdentifier:(NSString *)extensionTabIdentifier toURL:(NSURL *)url completionHandler:(void(^)(NSError *))completionHandler
+{
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    // It is an error to call this method prior to creating a frontend (i.e., with -connect or -show).
+    if (!_inspector->extensionController()) {
+        completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest) }]);
+        return;
+    }
+
+    _inspector->extensionController()->navigateTabForExtension(extensionTabIdentifier, url, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (const std::optional<Inspector::ExtensionError>&& result) mutable {
+        if (result) {
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.value()) }]);
+            return;
+        }
+
+        capturedBlock(nil);
+    });
+#endif
+}
+
 @end

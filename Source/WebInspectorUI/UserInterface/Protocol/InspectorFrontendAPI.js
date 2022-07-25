@@ -245,4 +245,10 @@ InspectorFrontendAPI = {
     {
         return WI.sharedApp.extensionController.evaluateScriptInExtensionTab(extensionTabID, scriptSource);
     },
+
+    // Returns a string (WI.WebInspectorExtension.ErrorCode) if an error occurred.
+    navigateTabForExtension(extensionTabID, sourceURL)
+    {
+        return WI.sharedApp.extensionController.navigateTabForExtension(extensionTabID, sourceURL);
+    },
 };

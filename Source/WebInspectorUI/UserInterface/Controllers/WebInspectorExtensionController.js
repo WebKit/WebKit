@@ -197,6 +197,17 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
         return target.PageAgent.reload.invoke({ignoreCache});
     }
 
+    navigateTabForExtension(extensionTabID, sourceURL)
+    {
+        let tabContentView = this._extensionTabContentViewForExtensionTabIDMap.get(extensionTabID);
+        if (!tabContentView) {
+            WI.reportInternalError("Unable to navigate extension tab with unknown extensionTabID: " + extensionTabID);
+            return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
+        }
+
+        tabContentView.iframeURL = sourceURL;
+    }
+
     showExtensionTab(extensionTabID, options = {})
     {
         let tabContentView = this._extensionTabContentViewForExtensionTabIDMap.get(extensionTabID);

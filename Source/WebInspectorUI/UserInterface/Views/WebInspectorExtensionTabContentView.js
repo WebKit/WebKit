@@ -40,10 +40,10 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
         this._tabInfo = tabInfo;
         this._sourceURL = sourceURL;
 
-        this._iframeFinishedInitialLoad = false;
         this._whenPageAvailablePromise = new WI.WrappedPromise;
 
         this._iframeElement = this.element.appendChild(document.createElement("iframe"));
+        this._iframeElement.src = sourceURL;
         this._iframeElement.addEventListener("load", this._extensionFrameDidLoad.bind(this));
     }
 
@@ -76,6 +76,11 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
     get savedTabPositionKey()
     {
         return `ExtensionTab-${this._extension.extensionBundleIdentifier}-${this._tabInfo.displayName}`;
+    }
+
+    set iframeURL(sourceURL)
+    {
+        this._iframeElement.src = sourceURL;
     }
 
     whenPageAvailable()
@@ -119,13 +124,6 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
 
     _extensionFrameDidLoad()
     {
-        // Bounce from the initial empty page to the requested sourceURL.
-        if (!this._iframeFinishedInitialLoad) {
-            this._iframeFinishedInitialLoad = true;
-            WI.sharedApp.extensionController.evaluateScriptInExtensionTab(this._extensionTabID, `document.location.replace("${this._sourceURL}");`);
-            return;
-        }
-
         // Signal that the page is available since we already bounced to the requested page.
         if (!this._whenPageAvailablePromise.settled)
             this._whenPageAvailablePromise.resolve(this._sourceURL);
