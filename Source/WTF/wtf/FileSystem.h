@@ -212,6 +212,11 @@ WTF_EXPORT_PRIVATE bool setAllowsMaterializingDatalessFiles(bool, PolicyScope);
 WTF_EXPORT_PRIVATE std::optional<bool> allowsMaterializingDatalessFiles(PolicyScope);
 #endif
 
+// Impl for systems that do not already have createTemporaryDirectory
+#if !OS(WINDOWS) && !PLATFORM(COCOA)
+WTF_EXPORT_PRIVATE String createTemporaryDirectory();
+#endif
+
 WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);
 
 WTF_EXPORT_PRIVATE String realPath(const String&);
