@@ -1223,7 +1223,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!stackTrace)
             return null;
 
-        // COMPATIBILITY (iOS 16): `stackTrace` was an array of `Console.CallFrame`.
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): `stackTrace` was an array of `Console.CallFrame`.
         if (Array.isArray(stackTrace))
             stackTrace = {callFrames: stackTrace};
 
@@ -1239,7 +1239,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         var lineNumber = NaN;
         var columnNumber = 0;
 
-        // COMPATIBILITY (iOS 16): `stackTrace` was an array of `Console.CallFrame`.
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): `stackTrace` was an array of `Console.CallFrame`.
         let callFramesPayload = Array.isArray(initiatorPayload.stackTrace) ? initiatorPayload.stackTrace : initiatorPayload.stackTrace?.callFrames;
         if (callFramesPayload?.length) {
             for (let callFramePayload of callFramesPayload) {
@@ -1468,7 +1468,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!WI.settings.experimentalEnableNetworkEmulatedCondition.value)
             return;
 
-        // COMPATIBILITY (iOS 15.4): Network.setEmulatedConditions did not exist.
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): Network.setEmulatedConditions did not exist.
         if (!target.hasCommand("Network.setEmulatedConditions"))
             return;
 

@@ -150,7 +150,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
         }
 
-        // COMPATIBILITY (iOS 15.4): Network.setEmulatedConditions did not exist.
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): Network.setEmulatedConditions did not exist.
         if (WI.settings.experimentalEnableNetworkEmulatedCondition.value && InspectorBackend.hasCommand("Network.setEmulatedConditions")) {
             let networkConditionScopeBarItems = [];
             for (let networkCondition of Object.values(WI.NetworkManager.EmulatedCondition)) {

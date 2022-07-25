@@ -54,7 +54,7 @@ WI.CSSObserver = class CSSObserver extends InspectorBackend.Dispatcher
 
     nodeLayoutContextTypeChanged(nodeId, layoutContextType)
     {
-        // COMPATIBILITY (iOS 16): CSS.nodeLayoutContextTypeChanged was renamed/expanded to CSS.nodeLayoutFlagsChanged.
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): CSS.nodeLayoutContextTypeChanged was renamed/expanded to CSS.nodeLayoutFlagsChanged.
         WI.domManager.nodeLayoutFlagsChanged(nodeId, [WI.DOMNode.LayoutFlag.Rendered, layoutContextType]);
     }
 

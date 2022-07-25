@@ -158,7 +158,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (this.isMediaElement())
             WI.DOMNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
 
-        // COMPATIBILITY (iOS 16): CSS.LayoutContextType was renamed/expanded to CSS.LayoutFlag.
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): CSS.LayoutContextType was renamed/expanded to CSS.LayoutFlag.
         if (!InspectorBackend.Enum.CSS.LayoutFlag) {
             let layoutFlags = [WI.DOMNode.LayoutFlag.Rendered];
             if (payload.layoutContextType)

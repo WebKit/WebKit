@@ -258,7 +258,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     static supportsBlackboxingBreakpointEvaluations()
     {
-        // COMPATIBILITY (iOS 15.4): Debugger.setBlackboxBreakpointEvaluations did not exist yet.
+        // COMPATIBILITY (macOS 12.3, iOS 15.4): Debugger.setBlackboxBreakpointEvaluations did not exist yet.
         return InspectorBackend.hasCommand("Debugger.setBlackboxBreakpointEvaluations");
     }
 
@@ -1270,7 +1270,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     _setBlackboxBreakpointEvaluations(target)
     {
-        // COMPATIBILITY (iOS 15.4): Debugger.setBlackboxBreakpointEvaluations did not exist yet.
+        // COMPATIBILITY (macOS 12.3, iOS 15.4): Debugger.setBlackboxBreakpointEvaluations did not exist yet.
         if (target.hasCommand("Debugger.setBlackboxBreakpointEvaluations"))
             target.DebuggerAgent.setBlackboxBreakpointEvaluations(WI.settings.blackboxBreakpointEvaluations.value);
     }

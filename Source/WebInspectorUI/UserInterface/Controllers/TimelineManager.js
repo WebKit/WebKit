@@ -1055,7 +1055,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     {
         let target = WI.assumingMainTarget();
 
-        // COMPATIBILITY (iOS 16): `stackTrace` was an array of `Console.CallFrame`.
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): `stackTrace` was an array of `Console.CallFrame`.
         if (Array.isArray(payload))
             payload = {callFrames: payload};
 

@@ -458,7 +458,7 @@ WI.Recording = class Recording extends WI.Object
                 case WI.Recording.Swizzle.CallStack: {
                     let array = await this.swizzle(data, WI.Recording.Swizzle.Array);
                     if (!isNaN(array[0])) {
-                        // COMPATIBILITY (iOS 16): "stackTrace" was sent as an array of call frames instead of a single call stack
+                        // COMPATIBILITY (macOS 13.0, iOS 16.0): "stackTrace" was sent as an array of call frames instead of a single call stack
                         array = [array];
                     }
 

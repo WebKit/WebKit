@@ -381,7 +381,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         case WI.CSSManager.ForceablePseudoClass.FocusVisible:
         case WI.CSSManager.ForceablePseudoClass.FocusWithin:
         case WI.CSSManager.ForceablePseudoClass.Target:
-            // COMPATIBILITY (iOS 15.4): CSS.ForceablePseudoClass did not exist yet.
+            // COMPATIBILITY (macOS 12.3, iOS 15.4): CSS.ForceablePseudoClass did not exist yet.
             return !!InspectorBackend.Enum.CSS.ForceablePseudoClass;
         }
 
