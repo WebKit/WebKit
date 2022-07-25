@@ -76,6 +76,14 @@ WK_CLASS_AVAILABLE(macos(12.0))
 - (void)evaluateScript:(NSString *)scriptSource inTabWithIdentifier:(NSString *)tabIdentifier completionHandler:(void(^)(NSError * _Nullable, id result))completionHandler;
 
 /**
+ * @abstract Navigates a tab created by this _WKInspectorExtension to a new URL.
+ * @param url The url to be loaded.
+ * @param tabIdentifier Identifier for the Web Inspector tab in which to navigate.
+ * @param completionHandler A block to invoke when the operation completes or fails.
+ */
+- (void)navigateToURL:(NSURL *)url inTabWithIdentifier:(NSString *)tabIdentifier completionHandler:(void(^)(NSError * _Nullable))completionHandler;
+
+/**
  * @abstract Reloads the inspected page on behalf of the _WKInspectorExtension.
  * @param ignoreCache If YES, reloads the page while ignoring the cache.
  * @param userAgent If specified, overrides the user agent to be sent in the `User-Agent` header and returned by calls to `navigator.userAgent` made by scripts running in the page. This only affects the next navigation.

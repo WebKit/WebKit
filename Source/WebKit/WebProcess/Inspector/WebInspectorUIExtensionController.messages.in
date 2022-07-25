@@ -30,6 +30,7 @@ messages -> WebInspectorUIExtensionController NotRefCounted {
     EvaluateScriptForExtension(String extensionID, String scriptSource, std::optional<URL> frameURL, std::optional<URL> contextSecurityOrigin, std::optional<bool> useContentScriptContext) -> (IPC::DataReference resultData, std::optional<WebCore::ExceptionDetails> details, std::optional<Inspector::ExtensionError> error)
     ReloadForExtension(String extensionID, std::optional<bool> ignoreCache, std::optional<String> userAgent, std::optional<String> injectedScript) -> (std::optional<Inspector::ExtensionError> error)
     ShowExtensionTab(String extensionTabIdentifier) -> (Expected<void, Inspector::ExtensionError> result)
+    NavigateTabForExtension(String extensionTabIdentifier, URL sourceURL) -> (std::optional<Inspector::ExtensionError> error)
     
     // For testing.
     EvaluateScriptInExtensionTab(String extensionTabID, String scriptSource) -> (IPC::DataReference resultData, std::optional<WebCore::ExceptionDetails> details, std::optional<Inspector::ExtensionError> error)

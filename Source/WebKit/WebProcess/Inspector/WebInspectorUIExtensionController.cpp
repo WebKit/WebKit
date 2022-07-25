@@ -374,6 +374,39 @@ void WebInspectorUIExtensionController::showExtensionTab(const Inspector::Extens
     });
 }
 
+void WebInspectorUIExtensionController::navigateTabForExtension(const Inspector::ExtensionTabID& extensionTabIdentifier, const URL& sourceURL, WTF::CompletionHandler<void(const std::optional<Inspector::ExtensionError>&)>&& completionHandler)
+{
+    if (!m_frontendClient) {
+        completionHandler(Inspector::ExtensionError::InvalidRequest);
+        return;
+    }
+
+    Vector<Ref<JSON::Value>> arguments {
+        JSON::Value::create(extensionTabIdentifier),
+        JSON::Value::create(sourceURL.string()),
+    };
+    m_frontendClient->frontendAPIDispatcher().dispatchCommandWithResultAsync("navigateTabForExtension"_s, WTFMove(arguments), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](InspectorFrontendAPIDispatcher::EvaluationResult&& result) mutable {
+        if (!weakThis) {
+            completionHandler(Inspector::ExtensionError::ContextDestroyed);
+            return;
+        }
+
+        auto* frontendGlobalObject = weakThis->m_frontendClient->frontendAPIDispatcher().frontendGlobalObject();
+        if (!frontendGlobalObject) {
+            completionHandler(Inspector::ExtensionError::ContextDestroyed);
+            return;
+        }
+
+        if (auto parsedError = weakThis->parseExtensionErrorFromEvaluationResult(result)) {
+            LOG(Inspector, "Internal error encountered while evaluating upon the frontend: %s", Inspector::extensionErrorToString(*parsedError).utf8().data());
+            completionHandler(parsedError);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    });
+}
+
 // WebInspectorUIExtensionController IPC messages for testing.
 
 void WebInspectorUIExtensionController::evaluateScriptInExtensionTab(const Inspector::ExtensionTabID& extensionTabID, const String& scriptSource, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&, const std::optional<Inspector::ExtensionError>&)>&& completionHandler)
