@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 #include "JSCConfig.h"
 #include "JSCPtrTag.h"
 #include "Options.h"
-#include <stddef.h> // for ptrdiff_t
 #include <limits>
 #include <wtf/Assertions.h>
 #include <wtf/Gigacage.h>
@@ -49,8 +48,6 @@
 #if CPU(MIPS) && OS(LINUX)
 #include <sys/cachectl.h>
 #endif
-
-#define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (pageSize() * 4)
 
 #define EXECUTABLE_POOL_WRITABLE true
 

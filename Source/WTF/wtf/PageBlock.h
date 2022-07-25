@@ -57,10 +57,13 @@ constexpr size_t CeilingOnPageSize = 4 * KB;
 #endif
 
 WTF_EXPORT_PRIVATE size_t pageSize();
-WTF_EXPORT_PRIVATE size_t pageMask();
-inline bool isPageAligned(void* address) { return !(reinterpret_cast<intptr_t>(address) & (pageSize() - 1)); }
-inline bool isPageAligned(size_t size) { return !(size & (pageSize() - 1)); }
-inline bool isPowerOfTwo(size_t size) { return !(size & (size - 1)); }
+
+inline bool isPageAligned(size_t pageSize, void* address) { return !(reinterpret_cast<intptr_t>(address) & (pageSize - 1)); }
+inline bool isPageAligned(size_t pageSize, size_t size) { return !(size & (pageSize - 1)); }
+
+inline bool isPageAligned(void* address) { return isPageAligned(pageSize(), address); }
+inline bool isPageAligned(size_t size) { return isPageAligned(pageSize(), size); }
+
 
 class PageBlock {
     WTF_MAKE_FAST_ALLOCATED;
