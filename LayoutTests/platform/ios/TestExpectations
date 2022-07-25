@@ -3677,3 +3677,13 @@ webkit.org/b/242825 editing/selection/ios/hide-selection-in-tiny-contenteditable
 webkit.org/b/242840 fast/text/international/system-language/han-text-style.html [ ImageOnlyFailure ]
 
 webkit.org/b/242905 compositing/tiling/tiled-mask-inwindow.html [ Pass Failure ]
+
+# rdar://93063355 ([ iOS16 ] 8x imported/w3c/web-platform-tests/mathml/relations/* layout tests are a constant text failure)
+imported/w3c/web-platform-tests/mathml/relations/css-styling/display-2.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/not-participating-to-parent-layout.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Failure ]
