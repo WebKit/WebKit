@@ -62,6 +62,7 @@ jobs:
           CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@13/bin/clang"
           CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@13/bin/clang++"
         run: |
+          export THIS_DIR="$(pwd)"
           rm -rf ${{runner.temp}}/webkit-release ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit.tar.gz
           mkdir -p ${{runner.temp}}/webkit-release
           cd ${{runner.temp}}/webkit-release
@@ -81,7 +82,7 @@ jobs:
             -DPTHREAD_JIT_PERMISSIONS_API=1 \
             -DUSE_PTHREAD_JIT_PERMISSIONS_API=ON \
             -DENABLE_REMOTE_INSPECTOR=ON \
-            /Users/runner/work/WebKit/WebKit \
+            ${THIS_DIR} \
             ${{runner.temp}}/webkit-release && \
               cmake --build ${{runner.temp}}/webkit-release --config Release --target jsc
           mkdir -p ${{runner.temp}}/bun-webkit/lib ${{runner.temp}}/bun-webkit/include ${{runner.temp}}/bun-webkit/include/JavaScriptCore ${{runner.temp}}/bun-webkit/include/wtf ${{runner.temp}}/bun-webkit/include/bmalloc
