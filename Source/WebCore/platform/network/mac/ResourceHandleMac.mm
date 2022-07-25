@@ -162,7 +162,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         }
     }
         
-    if (!d->m_initialCredential.isEmpty()) {
+    if (!d->m_initialCredential.isEmpty() && !firstRequest().hasHTTPHeaderField(HTTPHeaderName::Authorization)) {
         // FIXME: Support Digest authentication, and Proxy-Authorization.
         applyBasicAuthorizationHeader(firstRequest(), d->m_initialCredential);
     }
