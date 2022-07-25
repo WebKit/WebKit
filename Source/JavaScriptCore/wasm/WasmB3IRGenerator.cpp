@@ -355,7 +355,6 @@ public:
     PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType, ExpressionType operand, ExpressionType& result, Type returnType, Type operandType);
 
     // GC
-    PartialResult WARN_UNUSED_RETURN addRttCanon(uint32_t typeIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31New(ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
@@ -2278,15 +2277,6 @@ auto B3IRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Express
             m_currentBlock->appendNew<Value>(m_proc, LessThan, origin(), arg, maxFloat),
             patchpoint, maxResult),
         requiresNaNCheck ? m_currentBlock->appendNew<Value>(m_proc, B3::Select, origin(), m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), arg, arg), minResult, zero) : minResult));
-
-    return { };
-}
-
-auto B3IRGenerator::addRttCanon(uint32_t typeIndex, ExpressionType& result) -> PartialResult
-{
-    result = push(m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::Rtt), origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmRttCanon)),
-        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex)));
 
     return { };
 }

@@ -74,8 +74,6 @@ inline bool isValueType(Type type)
     case TypeKind::Ref:
     case TypeKind::RefNull:
         return Options::useWebAssemblyTypedFunctionReferences();
-    case TypeKind::Rtt:
-        return Options::useWebAssemblyGC();
     default:
         break;
     }
@@ -173,7 +171,6 @@ inline bool isValidHeapTypeKind(TypeKind kind)
     switch (kind) {
     case TypeKind::Funcref:
     case TypeKind::Externref:
-    case TypeKind::Rtt:
         return true;
     case TypeKind::I31ref:
         return Options::useWebAssemblyGC();

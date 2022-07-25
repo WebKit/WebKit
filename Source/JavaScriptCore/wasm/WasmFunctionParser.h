@@ -1063,17 +1063,6 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse extended GC opcode");
 
         switch (static_cast<GCOpType>(extOp)) {
-        case GCOpType::RttCanon: {
-            uint32_t typeIndex;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for rtt.canon");
-            WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "rtt.canon index ", typeIndex, " is out of bounds");
-
-            ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addRttCanon(typeIndex, result));
-
-            m_expressionStack.constructAndAppend(Type { TypeKind::Rtt, Nullable::No, static_cast<TypeIndex>(typeIndex) }, result);
-            return { };
-        }
         case GCOpType::I31New: {
             TypedExpression value;
             WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "i31.new");
@@ -2014,11 +2003,6 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse extended GC opcode");
 
         switch (static_cast<GCOpType>(extOp)) {
-        case GCOpType::RttCanon: {
-            uint32_t unused;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get type index immediate for rtt.canon in unreachable context");
-            return { };
-        }
         case GCOpType::I31New:
         case GCOpType::I31GetS:
         case GCOpType::I31GetU:

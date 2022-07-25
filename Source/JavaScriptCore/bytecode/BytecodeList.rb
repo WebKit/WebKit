@@ -1892,12 +1892,6 @@ op_group :CatchAll,
         exception: VirtualRegister,
     }
 
-op :rtt_canon,
-    args: {
-        dst: VirtualRegister,
-        typeIndex: unsigned,
-    }
-
 op :i31_new,
     args: {
         dst: VirtualRegister,

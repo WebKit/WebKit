@@ -115,7 +115,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case TypeKind::Void:
             case TypeKind::Func:
             case TypeKind::Struct:
-            case TypeKind::Rtt:
             case TypeKind::I31ref:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case TypeKind::RefNull:
@@ -201,7 +200,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case TypeKind::Void:
             case TypeKind::Func:
             case TypeKind::Struct:
-            case TypeKind::Rtt:
             case TypeKind::I31ref:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case TypeKind::RefNull:

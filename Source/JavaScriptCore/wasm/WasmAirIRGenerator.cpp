@@ -378,7 +378,6 @@ public:
     PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType, ExpressionType operand, ExpressionType& result, Type returnType, Type operandType);
 
     // GC
-    PartialResult WARN_UNUSED_RETURN addRttCanon(uint32_t typeIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31New(ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
@@ -517,7 +516,6 @@ private:
     TypedTmp gExternref() { return { newTmp(B3::GP), Types::Externref }; }
     TypedTmp gFuncref() { return { newTmp(B3::GP), Types::Funcref }; }
     TypedTmp gRef(Type type) { return { newTmp(B3::GP), type }; }
-    TypedTmp gRtt() { return { newTmp(B3::GP), Types::Rtt }; }
     TypedTmp f32() { return { newTmp(B3::FP), Types::F32 }; }
     TypedTmp f64() { return { newTmp(B3::FP), Types::F64 }; }
 
@@ -533,8 +531,6 @@ private:
         case TypeKind::Ref:
         case TypeKind::RefNull:
             return gRef(type);
-        case TypeKind::Rtt:
-            return gRtt();
         case TypeKind::Externref:
             return gExternref();
         case TypeKind::F32:
@@ -720,7 +716,6 @@ private:
             case TypeKind::Funcref:
             case TypeKind::Ref:
             case TypeKind::RefNull:
-            case TypeKind::Rtt:
                 resultType = B3::Int64;
                 break;
             case TypeKind::F32:
@@ -1082,7 +1077,6 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
         case TypeKind::Funcref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
-        case TypeKind::Rtt:
             append(Move, arg, m_locals[i]);
             break;
         case TypeKind::F32:
@@ -3016,14 +3010,6 @@ auto AirIRGenerator::truncSaturated(Ext1OpType op, ExpressionType arg, Expressio
     inBoundsCase->setSuccessors(continuation);
 
     m_currentBlock = continuation;
-
-    return { };
-}
-
-auto AirIRGenerator::addRttCanon(uint32_t typeIndex, ExpressionType& result) -> PartialResult
-{
-    result = gRtt();
-    emitCCall(&operationWasmRttCanon, result, instanceValue(), addConstant(Types::I32, typeIndex));
 
     return { };
 }
