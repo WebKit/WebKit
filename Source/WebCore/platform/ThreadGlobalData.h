@@ -102,6 +102,7 @@ public:
         return *m_fontCache;
     }
 
+    FontCache* fontCacheIfExists() { return m_fontCache.get(); }
     FontCache* fontCacheIfNotDestroyed() { return m_destroyed ? nullptr : &fontCache(); }
 
 private:

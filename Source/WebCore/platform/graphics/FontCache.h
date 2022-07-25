@@ -92,6 +92,7 @@ class FontCache {
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static FontCache& forCurrentThread();
+    static FontCache* forCurrentThreadIfExists();
     static FontCache* forCurrentThreadIfNotDestroyed();
 
     FontCache();

@@ -39,6 +39,7 @@
 #include "ThreadGlobalData.h"
 #include "WebKitFontFamilyNames.h"
 #include "WorkerOrWorkletThread.h"
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
@@ -130,6 +131,11 @@ struct FontCache::FontDataCaches {
 FontCache& FontCache::forCurrentThread()
 {
     return threadGlobalData().fontCache();
+}
+
+FontCache* FontCache::forCurrentThreadIfExists()
+{
+    return threadGlobalData().fontCacheIfExists();
 }
 
 FontCache* FontCache::forCurrentThreadIfNotDestroyed()
@@ -408,12 +414,27 @@ void FontCache::registerFontCacheInvalidationCallback(Function<void()>&& callbac
     fontCacheInvalidationCallback() = WTFMove(callback);
 }
 
-void FontCache::invalidateAllFontCaches(ShouldRunInvalidationCallback shouldRunInvalidationCallback)
+template<typename F>
+static void dispatchToAllFontCaches(F function)
 {
     ASSERT(isMainThread());
 
-    // FIXME: Invalidate FontCaches in workers too.
-    FontCache::forCurrentThread().invalidate();
+    function(FontCache::forCurrentThread());
+
+    Locker locker { WorkerOrWorkletThread::workerOrWorkletThreadsLock() };
+    for (auto thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
+        thread->runLoop().postTask([function](ScriptExecutionContext&) {
+            if (auto fontCache = FontCache::forCurrentThreadIfExists())
+                function(*fontCache);
+        });
+    }
+}
+
+void FontCache::invalidateAllFontCaches(ShouldRunInvalidationCallback shouldRunInvalidationCallback)
+{
+    dispatchToAllFontCaches([](FontCache& fontCache) {
+        fontCache.invalidate();
+    });
 
     if (shouldRunInvalidationCallback == ShouldRunInvalidationCallback::Yes && fontCacheInvalidationCallback())
         fontCacheInvalidationCallback()();
