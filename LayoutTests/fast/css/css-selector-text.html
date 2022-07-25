@@ -703,21 +703,7 @@ shouldThrow("parseThenSerializeRule(':lang(   *-1996,*-1997   ) { }')");
 
 debug('');
 
-testSelectorRoundTrip(":role(a)");
-testSelectorRoundTrip(":role(button)");
-testSelectorRoundTrip(":role(LiNk)");
-shouldBe("parseThenSerializeRule(':role( a    ) { }')", "':role(a) { }'");
-
-debug('');
-
-shouldThrow("parseThenSerializeRule(':role() { }')");
-shouldThrow("parseThenSerializeRule(':role(42) { }')");
-shouldThrow("parseThenSerializeRule(':role(a, b) { }')");
-shouldThrow("parseThenSerializeRule(':role(}) { }')");
-shouldThrow("parseThenSerializeRule(':role()) { }')");
-shouldThrow("parseThenSerializeRule(':role(role()) { }')");
-shouldThrow("parseThenSerializeRule(':role(:role()) { }')");
-shouldThrow("parseThenSerializeRule(':role(:role(a)) { }')");
+shouldThrow("parseThenSerializeRule(':role(a) { }')");
 
 debug('');
 

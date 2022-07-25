@@ -1120,10 +1120,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 #if ENABLE(CSS_SELECTORS_LEVEL4)
         case CSSSelector::PseudoClassDir:
             return matchesDirPseudoClass(element, selector.argument());
-
-        // FIXME: Implement :role() selector.
-        case CSSSelector::PseudoClassRole:
-            return false;
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)

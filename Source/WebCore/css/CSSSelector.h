@@ -178,7 +178,6 @@ namespace WebCore {
 #endif
 #if ENABLE(CSS_SELECTORS_LEVEL4)
             PseudoClassDir,
-            PseudoClassRole,
 #endif
             PseudoClassHost,
             PseudoClassDefined,

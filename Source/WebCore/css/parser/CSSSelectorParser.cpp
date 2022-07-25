@@ -600,7 +600,6 @@ static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClassType pseudoClassTy
     case CSSSelector::PseudoClassAny:
 #if ENABLE(CSS_SELECTORS_LEVEL4)
     case CSSSelector::PseudoClassDir:
-    case CSSSelector::PseudoClassRole:
 #endif
         return true;
     default:
@@ -763,8 +762,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             return selector;
         }
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-        case CSSSelector::PseudoClassDir:
-        case CSSSelector::PseudoClassRole: {
+        case CSSSelector::PseudoClassDir: {
             const CSSParserToken& ident = block.consumeIncludingWhitespace();
             if (ident.type() != IdentToken || !block.atEnd())
                 return nullptr;
