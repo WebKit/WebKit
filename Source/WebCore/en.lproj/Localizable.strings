@@ -697,11 +697,11 @@
 /* Option in segmented control for inserting a numbered list in text editing */
 "Numbered list" = "Numbered list";
 
+/* Label for OK button in alerts */
+"OK" = "OK";
+
 /* Title of the OK button for the number pad in zoomed form controls. */
 "OK (OK button title in extra zoomed number pad)" = "OK";
-
-/* OK button label in document password failure alert */
-"OK (document password failure alert)" = "OK";
 
 /* Menu item label for the track that represents disabling closed captions. */
 "Off (text track)" = "Off";
