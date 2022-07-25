@@ -43,7 +43,10 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto scrollableOverflowRect = lineBoxRect;
-    auto enclosingTopAndBottom = InlineDisplay::Line::EnclosingTopAndBottom { lineBoxRect.top() + rootInlineBox.logicalTop(), lineBoxRect.top() + rootInlineBox.logicalBottom() };
+    auto enclosingTopAndBottom = InlineDisplay::Line::EnclosingTopAndBottom {
+        lineBoxRect.top() + rootInlineBox.logicalTop() - rootInlineBox.annotationAbove().value_or(0.f),
+        lineBoxRect.top() + rootInlineBox.logicalBottom() + rootInlineBox.annotationUnder().value_or(0.f)
+    };
 
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
         if (!inlineLevelBox.isAtomicInlineLevelBox() && !inlineLevelBox.isInlineBox())
@@ -71,8 +74,8 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
         } else
             ASSERT_NOT_REACHED();
 
-        enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, borderBox.top());
-        enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, borderBox.bottom());
+        enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, borderBox.top() - inlineLevelBox.annotationAbove().value_or(0.f));
+        enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, borderBox.bottom() + inlineLevelBox.annotationUnder().value_or(0.f));
     }
     return { enclosingTopAndBottom, scrollableOverflowRect };
 }

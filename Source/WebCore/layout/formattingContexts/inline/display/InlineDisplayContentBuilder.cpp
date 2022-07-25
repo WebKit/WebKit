@@ -138,6 +138,22 @@ static inline bool computeInkOverflowForInlineLevelBox(const RenderStyle& style,
     return hasVisualOverflow;
 }
 
+static inline bool computeInkOverflowForInlineBox(const InlineLevelBox& inlineBox, const RenderStyle& style, FloatRect& inkOverflow)
+{
+    ASSERT(inlineBox.isInlineBox());
+    auto hasVisualOverflow = computeInkOverflowForInlineLevelBox(style, inkOverflow);
+
+    auto inflateWithAnnotation = [&] {
+        if (!inlineBox.hasAnnotation())
+            return;
+        inkOverflow.inflate(0.f, inlineBox.annotationAbove().value_or(0.f), 0.f, inlineBox.annotationUnder().value_or(0.f));
+        hasVisualOverflow = true;
+    };
+    inflateWithAnnotation();
+
+    return hasVisualOverflow;
+}
+
 void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun, const InlineRect& textRunRect, DisplayBoxes& boxes)
 {
     ASSERT(lineRun.textContent() && is<InlineTextBox>(lineRun.layoutBox()));
@@ -265,6 +281,7 @@ void InlineDisplayContentBuilder::setInlineBoxGeometry(const Box& layoutBox, con
 void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lineRun, const InlineLevelBox& inlineBox, const InlineRect& inlineBoxBorderBox, bool linehasContent, DisplayBoxes& boxes)
 {
     ASSERT(lineRun.layoutBox().isInlineBox());
+    ASSERT(inlineBox.isInlineBox());
 
     auto& layoutBox = lineRun.layoutBox();
 
@@ -276,10 +293,9 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
 
     auto inkOverflow = [&] {
         auto inkOverflow = FloatRect { inlineBoxBorderBox };
-        m_contentHasInkOverflow = computeInkOverflowForInlineLevelBox(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
+        m_contentHasInkOverflow = computeInkOverflowForInlineBox(inlineBox, !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
         return inkOverflow;
     };
-    ASSERT(inlineBox.isInlineBox());
     ASSERT(inlineBox.isFirstBox());
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::NonRootInlineBox
@@ -299,11 +315,12 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
 void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::Run& lineRun, const InlineLevelBox& inlineBox, const InlineRect& inlineBoxBorderBox, DisplayBoxes& boxes)
 {
     ASSERT(lineRun.layoutBox().isInlineBox());
+    ASSERT(inlineBox.isInlineBox());
 
     auto& layoutBox = lineRun.layoutBox();
     auto inkOverflow = [&] {
         auto inkOverflow = FloatRect { inlineBoxBorderBox };
-        m_contentHasInkOverflow = computeInkOverflowForInlineLevelBox(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
+        m_contentHasInkOverflow = computeInkOverflowForInlineBox(inlineBox, !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
         return inkOverflow;
     };
     ASSERT(!inlineBox.isFirstBox());
@@ -546,15 +563,16 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     };
     afterInlineBoxContent();
 
+    auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
     auto computeInkOverflow = [&] {
         auto inkOverflow = FloatRect { displayBox.visualRectIgnoringBlockDirection() };
-        m_contentHasInkOverflow = computeInkOverflowForInlineLevelBox(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
+        m_contentHasInkOverflow = computeInkOverflowForInlineBox(inlineBox, !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
         displayBox.adjustInkOverflow(inkOverflow);
     };
     computeInkOverflow();
 
     setInlineBoxGeometry(layoutBox, displayBox.visualRectIgnoringBlockDirection(), isFirstBox);
-    if (lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent())
+    if (inlineBox.hasContent())
         displayBox.setHasContent();
 }
 
