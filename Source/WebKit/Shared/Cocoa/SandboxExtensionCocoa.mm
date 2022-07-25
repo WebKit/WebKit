@@ -321,6 +321,21 @@ auto SandboxExtension::createHandleForGenericExtension(ASCIILiteral extensionCla
     return WTFMove(handle);
 }
 
+#if HAVE(SANDBOX_STATE_FLAGS)
+static void enableMachBootstrap(std::optional<audit_token_t> auditToken)
+{
+    if (!WTF::processHasEntitlement("com.apple.private.security.message-filter"_s))
+        return;
+    
+    if (!auditToken) {
+        RELEASE_LOG_FAULT(Sandbox, "Could not enable Mach bootstrap, no audit token provided.");
+        return;
+    }
+    if (!sandbox_enable_state_flag(ENABLE_MACH_BOOTSTRAP, *auditToken))
+        RELEASE_LOG_FAULT(Sandbox, "Could not enable Mach bootstrap, errno = %d.", errno);
+}
+#endif
+
 auto SandboxExtension::createHandleForMachLookup(ASCIILiteral service, std::optional<audit_token_t> auditToken, MachBootstrapOptions machBootstrapOptions, OptionSet<Flags> flags) -> std::optional<Handle>
 {
     UNUSED_PARAM(machBootstrapOptions);
@@ -337,13 +352,8 @@ auto SandboxExtension::createHandleForMachLookup(ASCIILiteral service, std::opti
     // When launchd is blocked in the sandbox, we need to manually enable bootstrapping of new XPC connectons.
     // This is done by unblocking launchd, since launchd access is required when creating Mach connections.
     // Unblocking launchd is done by enabling a sandbox state variable.
-    if (machBootstrapOptions == MachBootstrapOptions::EnableMachBootstrap) {
-        if (auditToken) {
-            if (!sandbox_enable_state_flag(ENABLE_MACH_BOOTSTRAP, *auditToken))
-                RELEASE_LOG_FAULT(Sandbox, "Could not enable Mach bootstrap, errno = %d.", errno);
-        } else
-            RELEASE_LOG_FAULT(Sandbox, "Could not enable Mach bootstrap, no audit token provided.");
-    }
+    if (machBootstrapOptions == MachBootstrapOptions::EnableMachBootstrap)
+        enableMachBootstrap(WTFMove(auditToken));
 #endif
 
     return WTFMove(handle);
