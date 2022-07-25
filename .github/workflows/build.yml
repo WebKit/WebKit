@@ -10,40 +10,57 @@ on:
   workflow_dispatch:
 
 jobs:
-  macos-amd64:
-    name: macOS amd64 ${{matrix.lto}} {{matrix.cpu}}
-    runs-on: ${{ matrix.os }}
+  macos:
+    name: macOS
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 90
     strategy:
       matrix:
-        os: [macos-11]
-        lto: [true, false]
-        cpu: [native, sandybridge]
+        include:
+          - runner: macos-11
+            lto_flag: -flto='full'
+            cpu: native
+            label: bun-webkit-macos-amd64-lto
+            brew_prefix: /usr/local/opt
+          - runner: macos-11
+            lto_flag: -flto='full'
+            cpu: sandybridge
+            label: bun-webkit-macos-amd64-lto-generic
+            brew_prefix: /usr/local/opt
+          - runner: macos-11
+            lto_flag: ""
+            cpu: sandybridge
+            label: bun-webkit-macos-amd64-generic
+            brew_prefix: /usr/local/opt
+          - runner: macos-11
+            lto_flag: ""
+            cpu: native
+            label: bun-webkit-macos-amd64
+            brew_prefix: /usr/local/opt
+          - runner: macOS-arm64
+            lto_flag: -flto='full'
+            cpu: native
+            label: bun-webkit-macos-arm64-lto
+            brew_prefix: /opt/homebrew/opt
+          - runner: macOS-arm64
+            lto_flag: ""
+            cpu: native
+            label: bun-webkit-macos-arm64
+            brew_prefix: /opt/homebrew/opt
     steps:
-      - name: ENV
-        run: |
-          # If lto, append to env var
-          if [[ ${{ matrix.lto == true }} ]]; then
-            echo "LTO_FLAG='-flto=full'" >> $GITHUB_ENV
-          fi
-
-          # If not lto, remove from env var
-          if [[ ${{ matrix.lto == false }} ]]; then
-            echo "LTO_FLAG=''" >> $GITHUB_ENV
-          fi
       - uses: actions/checkout@v3
       - name: PATH
         run: |
-          echo "/usr/local/opt/llvm@13/bin" >> $GITHUB_PATH
+          echo "${{matrix.brew_prefix}}/llvm@13/bin" >> $GITHUB_PATH
           brew install llvm@13 python icu4c ninja
           brew link llvm@13 --overwrite
       - name: Run
         env:
-          ICU_INCLUDE_DIRS: /usr/local/opt/icu4c/include
-          CC: "/usr/local/opt/llvm@13/bin/clang"
-          CXX: "/usr/local/opt/llvm@13/bin/clang++"
-          CMAKE_C_COMPILER: "/usr/local/opt/llvm@13/bin/clang"
-          CMAKE_CXX_COMPILER: "/usr/local/opt/llvm@13/bin/clang++"
+          ICU_INCLUDE_DIRS: ${{matrix.brew_prefix}}/icu4c/include
+          CC: "${{matrix.brew_prefix}}/llvm@13/bin/clang"
+          CXX: "${{matrix.brew_prefix}}/llvm@13/bin/clang++"
+          CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@13/bin/clang"
+          CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@13/bin/clang++"
         run: |
           rm -rf $RUNNER_TEMP/webkit-release $RUNNER_TEMP/bun-webkit $RUNNER_TEMP/bun-webkit $RUNNER_TEMP/bun-webkit.tar.gz
           mkdir -p $RUNNER_TEMP/webkit-release
@@ -57,8 +74,8 @@ jobs:
             -DENABLE_FTL_JIT=ON \
             -DCMAKE_C_COMPILER=$CMAKE_C_COMPILER \
             -DCMAKE_CXX_COMPILER=$CMAKE_CXX_COMPILER \
-            -DCMAKE_C_FLAGS="-fno-exceptions $LTO_FLAG -fvisibility=hidden -march=${{matrix.cpu}} -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
-            -DCMAKE_CXX_FLAGS="-fno-exceptions $LTO_FLAG -fvisibility=hidden -march=${{matrix.cpu}} -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
+            -DCMAKE_C_FLAGS="-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -march=${{matrix.cpu}} -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
+            -DCMAKE_CXX_FLAGS="-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -march=${{matrix.cpu}} -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
             -G Ninja \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
             -DPTHREAD_JIT_PERMISSIONS_API=1 \
@@ -78,134 +95,8 @@ jobs:
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
-        if: ${{ matrix.lto == true && matrix.cpu == 'native' }}
         with:
-          name: bun-webkit-macos-amd64-lto
-          path: ${{runner.temp}}/bun-webkit.tar.gz
-      - uses: actions/upload-artifact@v3
-        if: ${{ matrix.lto == false && matrix.cpu == 'native' }}
-        with:
-          name: bun-webkit-macos-amd64
-          path: ${{runner.temp}}/bun-webkit.tar.gz
-      - uses: actions/upload-artifact@v3
-        if: ${{ matrix.lto == false && matrix.cpu == 'sandybridge' }}
-        with:
-          name: bun-webkit-macos-amd64-generic
-          path: ${{runner.temp}}/bun-webkit.tar.gz
-      - uses: actions/upload-artifact@v3
-        if: ${{ matrix.lto == true && matrix.cpu == 'sandybridge' }}
-        with:
-          name: bun-webkit-macos-amd64-lto-generic
-          path: ${{runner.temp}}/bun-webkit.tar.gz
-  macos-arm64-lto:
-    name: macOS arm64 LTO
-    runs-on: macOS-arm64
-    timeout-minutes: 90
-    strategy:
-      matrix:
-        os: [macos-11]
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run
-        env:
-          ICU_INCLUDE_DIRS: /opt/homebrew/opt/icu4c/include
-          CC: "/opt/homebrew/opt/llvm@13/bin/clang"
-          CXX: "/opt/homebrew/opt/llvm@13/bin/clang++"
-          CMAKE_C_COMPILER: "/opt/homebrew/opt/llvm@13/bin/clang"
-          CMAKE_CXX_COMPILER: "/opt/homebrew/opt/llvm@13/bin/clang++"
-        run: |
-          export THIS_DIR=$(pwd)
-          rm -rf $RUNNER_TEMP/webkit-release $RUNNER_TEMP/bun-webkit $RUNNER_TEMP/bun-webkit $RUNNER_TEMP/bun-webkit.tar.gz
-          mkdir -p $RUNNER_TEMP/webkit-release
-          cd $RUNNER_TEMP/webkit-release
-          cmake  \
-            -DPORT="JSCOnly" \
-            -DENABLE_STATIC_JSC=ON \
-            -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
-            -DCMAKE_BUILD_TYPE=relwithdebuginfo \
-            -DUSE_THIN_ARCHIVES=OFF \
-            -DENABLE_FTL_JIT=ON \
-            -DCMAKE_C_COMPILER=$CMAKE_C_COMPILER \
-            -DCMAKE_CXX_COMPILER=$CMAKE_CXX_COMPILER \
-            -DCMAKE_C_FLAGS="-fno-exceptions -flto='full' -fvisibility=hidden -fvisibility-inlines-hidden -O3" \
-            -DCMAKE_CXX_FLAGS="-fno-exceptions -flto='full' -fvisibility=hidden -fvisibility-inlines-hidden -O3" \
-            -G Ninja \
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
-            -DPTHREAD_JIT_PERMISSIONS_API=1 \
-            -DUSE_PTHREAD_JIT_PERMISSIONS_API=ON \
-            -DENABLE_REMOTE_INSPECTOR=ON \
-            $THIS_DIR \
-            $RUNNER_TEMP/webkit-release && \
-              cmake --build $RUNNER_TEMP/webkit-release --config Release --target jsc
-          mkdir -p $RUNNER_TEMP/bun-webkit/lib $RUNNER_TEMP/bun-webkit/include $RUNNER_TEMP/bun-webkit/include/JavaScriptCore $RUNNER_TEMP/bun-webkit/include/wtf $RUNNER_TEMP/bun-webkit/include/bmalloc
-          cp $RUNNER_TEMP/webkit-release/lib/* $RUNNER_TEMP/bun-webkit/lib
-          cp -r $RUNNER_TEMP/webkit-release/cmakeconfig.h $RUNNER_TEMP/bun-webkit/include/cmakeconfig.h
-          cp -r $RUNNER_TEMP/webkit-release/WTF/Headers/wtf $RUNNER_TEMP/bun-webkit/include
-          cp -r $RUNNER_TEMP/webkit-release/bmalloc/Headers/bmalloc $RUNNER_TEMP/bun-webkit/include
-          cp $RUNNER_TEMP/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* $RUNNER_TEMP/bun-webkit/include/JavaScriptCore
-          cp $RUNNER_TEMP/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* $RUNNER_TEMP/bun-webkit/include/JavaScriptCore
-          cd $RUNNER_TEMP
-          tar -czf bun-webkit.tar.gz bun-webkit
-          rm -rf bun-webkit
-      - uses: actions/upload-artifact@v3
-        with:
-          name: bun-webkit-macos-arm64-lto
-          path: ${{runner.temp}}/bun-webkit.tar.gz
-  macos-arm64:
-    name: macOS arm64
-    runs-on: macOS-arm64
-    timeout-minutes: 90
-    strategy:
-      matrix:
-        os: [macos-11]
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run
-        env:
-          ICU_INCLUDE_DIRS: /opt/homebrew/opt/icu4c/include
-          CC: "/opt/homebrew/opt/llvm@13/bin/clang"
-          CXX: "/opt/homebrew/opt/llvm@13/bin/clang++"
-          CMAKE_C_COMPILER: "/opt/homebrew/opt/llvm@13/bin/clang"
-          CMAKE_CXX_COMPILER: "/opt/homebrew/opt/llvm@13/bin/clang++"
-        run: |
-          export THIS_DIR=$(pwd)
-          rm -rf $RUNNER_TEMP/webkit-release $RUNNER_TEMP/bun-webkit $RUNNER_TEMP/bun-webkit $RUNNER_TEMP/bun-webkit.tar.gz
-          mkdir -p $RUNNER_TEMP/webkit-release
-          cd $RUNNER_TEMP/webkit-release
-          cmake  \
-            -DPORT="JSCOnly" \
-            -DENABLE_STATIC_JSC=ON \
-            -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
-            -DCMAKE_BUILD_TYPE=relwithdebuginfo \
-            -DUSE_THIN_ARCHIVES=OFF \
-            -DENABLE_FTL_JIT=ON \
-            -DCMAKE_C_COMPILER=$CMAKE_C_COMPILER \
-            -DCMAKE_CXX_COMPILER=$CMAKE_CXX_COMPILER \
-            -DCMAKE_C_FLAGS="-fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -O3" \
-            -DCMAKE_CXX_FLAGS="-fno-exceptions  -fvisibility=hidden -fvisibility-inlines-hidden -O3" \
-            -G Ninja \
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
-            -DPTHREAD_JIT_PERMISSIONS_API=1 \
-            -DUSE_PTHREAD_JIT_PERMISSIONS_API=ON \
-            -DENABLE_REMOTE_INSPECTOR=ON \
-            $THIS_DIR \
-            $RUNNER_TEMP/webkit-release && \
-              cmake --build $RUNNER_TEMP/webkit-release --config Release --target jsc
-          mkdir -p $RUNNER_TEMP/bun-webkit/lib $RUNNER_TEMP/bun-webkit/include $RUNNER_TEMP/bun-webkit/include/JavaScriptCore $RUNNER_TEMP/bun-webkit/include/wtf $RUNNER_TEMP/bun-webkit/include/bmalloc
-          cp $RUNNER_TEMP/webkit-release/lib/* $RUNNER_TEMP/bun-webkit/lib
-          cp -r $RUNNER_TEMP/webkit-release/cmakeconfig.h $RUNNER_TEMP/bun-webkit/include/cmakeconfig.h
-          cp -r $RUNNER_TEMP/webkit-release/WTF/Headers/wtf $RUNNER_TEMP/bun-webkit/include
-          cp -r $RUNNER_TEMP/webkit-release/bmalloc/Headers/bmalloc $RUNNER_TEMP/bun-webkit/include
-          cp $RUNNER_TEMP/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* $RUNNER_TEMP/bun-webkit/include/JavaScriptCore
-          cp $RUNNER_TEMP/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* $RUNNER_TEMP/bun-webkit/include/JavaScriptCore
-          cd $RUNNER_TEMP
-          tar -czf bun-webkit.tar.gz bun-webkit
-          rm -rf bun-webkit
-      - uses: actions/upload-artifact@v3
-        with:
-          name: bun-webkit-macos-arm64
+          name: ${{matrix.label}}
           path: ${{runner.temp}}/bun-webkit.tar.gz
 
   linux-amd64:
@@ -269,9 +160,7 @@ jobs:
     needs:
       - linux-amd64
       - linux-arm64
-      - macos-amd64
-      - macos-arm64-lto
-      - macos-arm64
+      - macos
     steps:
       - uses: actions/download-artifact@v3
         with:
