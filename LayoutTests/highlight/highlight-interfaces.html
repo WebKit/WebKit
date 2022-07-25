@@ -10,6 +10,7 @@ debug("Testing Highlight:");
 shouldBeTrue("Highlight instanceof Function");
 shouldBeEqualToString("typeof Highlight", "function");
 shouldBeTrue("new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})) instanceof Highlight");
+shouldBe("Highlight.prototype[Symbol.iterator]", "Highlight.prototype.values");
 shouldBeTrue("HighlightRegister instanceof Function");
 shouldBeEqualToString("typeof HighlightRegister", "function");
 shouldBeTrue("new HighlightRegister() instanceof HighlightRegister");

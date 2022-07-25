@@ -401,7 +401,6 @@ sub AddSetLikeAttributesAndOperationIfNeeded
     push(@{$forEachOperation->arguments}, ($forEachArgument));
     $forEachOperation->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($forEachOperation->extendedAttributes, $interface->setLike->extendedAttributes);
-    # FIXME: The WebIDL spec says that the forEach operation should be enumerable.
     $forEachOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $forEachOperation);
 
@@ -4656,8 +4655,10 @@ sub GenerateImplementation
 
         if (InterfaceNeedsIterator($interface)) {
             AddToImplIncludes("<JavaScriptCore/BuiltinNames.h>");
-            if (IsKeyValueIterableInterface($interface) or $interface->mapLike or $interface->setLike) {
+            if (IsKeyValueIterableInterface($interface) or $interface->mapLike) {
                 push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
+            } elsif ($interface->setLike) {
+                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().valuesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
             } else {
                 AddToImplIncludes("<JavaScriptCore/ArrayPrototype.h>");
                 push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");

@@ -7,6 +7,7 @@ Testing Highlight:
 PASS Highlight instanceof Function is true
 PASS typeof Highlight is "function"
 PASS new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})) instanceof Highlight is true
+PASS Highlight.prototype[Symbol.iterator] is Highlight.prototype.values
 PASS HighlightRegister instanceof Function is true
 PASS typeof HighlightRegister is "function"
 PASS new HighlightRegister() instanceof HighlightRegister is true
