@@ -259,7 +259,7 @@
 #define HAVE_COMPUTED_GOTO 1
 #endif
 
-#if CPU(ARM64E) && OS(DARWIN)
+#if (CPU(ARM64E) && OS(DARWIN)) || (COMPILER(CLANG) && defined(__ARM_FEATURE_JCVT))
 #define HAVE_FJCVTZS_INSTRUCTION 1
 #endif
 
