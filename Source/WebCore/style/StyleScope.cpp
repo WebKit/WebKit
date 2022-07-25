@@ -338,12 +338,15 @@ Vector<Ref<ProcessingInstruction>> Scope::collectXSLTransforms()
 }
 #endif
 
-void Scope::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
+auto Scope::collectActiveStyleSheets() -> ActiveStyleSheetCollection
 {
     if (!m_document.settings().authorAndUserStylesEnabled())
-        return;
+        return { };
 
     LOG_WITH_STREAM(StyleSheets, stream << "Scope " << this << " collectActiveStyleSheets()");
+
+    Vector<RefPtr<StyleSheet>> sheets;
+    Vector<RefPtr<StyleSheet>> styleSheetsForStyleSheetsList;
 
     for (auto& node : m_styleSheetCandidateNodes) {
         RefPtr<StyleSheet> sheet;
@@ -352,6 +355,8 @@ void Scope::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
                 continue;
             // We don't support linking to embedded CSS stylesheets, see <https://bugs.webkit.org/show_bug.cgi?id=49281> for discussion.
             sheet = downcast<ProcessingInstruction>(*node).sheet();
+            if (sheet)
+                styleSheetsForStyleSheetsList.append(sheet);
             LOG_WITH_STREAM(StyleSheets, stream << " adding sheet " << sheet << " from ProcessingInstruction node " << *node);
         } else if (is<HTMLLinkElement>(*node) || is<HTMLStyleElement>(*node) || is<SVGStyleElement>(*node)) {
             Element& element = downcast<Element>(*node);
@@ -383,6 +388,9 @@ void Scope::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
             else
                 sheet = downcast<HTMLStyleElement>(element).sheet();
 
+            if (sheet)
+                styleSheetsForStyleSheetsList.append(sheet);
+
             // Check to see if this sheet belongs to a styleset
             // (thus making it PREFERRED or ALTERNATE rather than
             // PERSISTENT).
@@ -410,6 +418,7 @@ void Scope::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
         if (sheet)
             sheets.append(WTFMove(sheet));
     }
+    return { WTFMove(sheets), WTFMove(styleSheetsForStyleSheetsList) };
 }
 
 Scope::StyleSheetChange Scope::analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets)
@@ -485,8 +494,7 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
         return;
     }
 
-    Vector<RefPtr<StyleSheet>> activeStyleSheets;
-    collectActiveStyleSheets(activeStyleSheets);
+    auto collection = collectActiveStyleSheets();
 
     Vector<RefPtr<CSSStyleSheet>> activeCSSStyleSheets;
 
@@ -495,7 +503,7 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
         activeCSSStyleSheets.appendVector(m_document.extensionStyleSheets().authorStyleSheetsForTesting());
     }
 
-    filterEnabledNonemptyCSSStyleSheets(activeCSSStyleSheets, activeStyleSheets);
+    filterEnabledNonemptyCSSStyleSheets(activeCSSStyleSheets, collection.activeStyleSheets);
 
     LOG_WITH_STREAM(StyleSheets, stream << "Scope::updateActiveStyleSheets for document " << m_document << " sheets " << activeCSSStyleSheets);
 
@@ -507,7 +515,7 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
 
     m_weakCopyOfActiveStyleSheetListForFastLookup.clear();
     m_activeStyleSheets.swap(activeCSSStyleSheets);
-    m_styleSheetsForStyleSheetList.swap(activeStyleSheets);
+    m_styleSheetsForStyleSheetList.swap(collection.styleSheetsForStyleSheetList);
 
     InspectorInstrumentation::activeStyleSheetsUpdated(m_document);
 

@@ -154,7 +154,12 @@ private:
     WEBCORE_EXPORT void flushPendingSelfUpdate();
     WEBCORE_EXPORT void flushPendingDescendantUpdates();
 
-    void collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>&);
+    struct ActiveStyleSheetCollection {
+        Vector<RefPtr<StyleSheet>> activeStyleSheets;
+        Vector<RefPtr<StyleSheet>> styleSheetsForStyleSheetList;
+    };
+
+    ActiveStyleSheetCollection collectActiveStyleSheets();
 
     enum class ResolverUpdateType {
         Reconstruct,

@@ -2,5 +2,5 @@ Should be green
 
 
 PASS Preferred style sheet name
-FAIL StyleSheet.title assert_equals: expected 4 but got 3
+PASS StyleSheet.title
 

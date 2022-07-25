@@ -60,7 +60,7 @@ public:
     Node* ownerNode() const final { return m_ownerNode; }
     MediaList* media() const final;
     String href() const final;
-    String title() const final { return m_title; }
+    String title() const final { return !m_title.isEmpty() ? m_title : String(); }
     bool disabled() const final { return m_isDisabled; }
     void setDisabled(bool) final;
 
