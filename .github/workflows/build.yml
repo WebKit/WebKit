@@ -22,31 +22,37 @@ jobs:
             cpu: native
             label: bun-webkit-macos-amd64-lto
             brew_prefix: /usr/local/opt
+            march: "-march=native"
           - runner: macos-11
             lto_flag: -flto='full'
             cpu: sandybridge
             label: bun-webkit-macos-amd64-lto-generic
             brew_prefix: /usr/local/opt
+            march: "-march=sandybridge"
           - runner: macos-11
             lto_flag: ""
             cpu: sandybridge
             label: bun-webkit-macos-amd64-generic
             brew_prefix: /usr/local/opt
+            march: "-march=sandybridge"
           - runner: macos-11
             lto_flag: ""
             cpu: native
             label: bun-webkit-macos-amd64
             brew_prefix: /usr/local/opt
+            march: "-march=native"
           - runner: macOS-arm64
             lto_flag: -flto='full'
             cpu: native
             label: bun-webkit-macos-arm64-lto
             brew_prefix: /opt/homebrew/opt
+            march: ""
           - runner: macOS-arm64
             lto_flag: ""
             cpu: native
             label: bun-webkit-macos-arm64
             brew_prefix: /opt/homebrew/opt
+            march: ""
     steps:
       - uses: actions/checkout@v3
       - name: PATH
@@ -75,8 +81,8 @@ jobs:
             -DENABLE_FTL_JIT=ON \
             -DCMAKE_C_COMPILER=$CMAKE_C_COMPILER \
             -DCMAKE_CXX_COMPILER=$CMAKE_CXX_COMPILER \
-            -DCMAKE_C_FLAGS="-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -march=${{matrix.cpu}} -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
-            -DCMAKE_CXX_FLAGS="-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -march=${{matrix.cpu}} -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
+            -DCMAKE_C_FLAGS="-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden ${{matrix.march}} -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
+            -DCMAKE_CXX_FLAGS="-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden ${{matrix.march}} -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
             -G Ninja \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
             -DPTHREAD_JIT_PERMISSIONS_API=1 \
