@@ -3039,9 +3039,9 @@ static bool isLockdownModeWarningNeeded()
             alertControllerWithTitle:[NSString stringWithFormat:WEB_UI_NSSTRING(@"Lockdown Mode is Turned On For “%@“", "Lockdown Mode alert title"), appDisplayName]
             message:message
             preferredStyle:UIAlertControllerStyleAlert];
-            
-        [alert addAction:[UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"OK", "Captive Portal Mode alert OK button") style:UIAlertActionStyleDefault handler:nil]];
-        
+
+        [alert addAction:[UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"OK", "Lockdown Mode alert OK button") style:UIAlertActionStyleDefault handler:nil]];
+
         UIViewController *presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:protectedSelf.get()];
         [presentationViewController presentViewController:alert animated:YES completion:nil];
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitCaptivePortalModeAlertShownKey];
