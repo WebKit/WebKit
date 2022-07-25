@@ -156,7 +156,16 @@
 (define-once (media-capture-support)
     ;; Media capture, microphone access
     (with-filter (extension "com.apple.webkit.microphone")
-        (allow device-microphone))
+        (allow device-microphone)
+
+        (with-filter (system-attribute apple-internal)
+            (allow user-preference-read (preference-domain "com.apple.coreaudio"))
+            (allow file-read* file-write*
+                (subpath "/private/tmp/AudioCapture")
+                (subpath "/tmp/AudioCapture")
+            )
+        )
+    )
 
     ;; Media capture, camera access
     (with-filter (extension "com.apple.webkit.camera")
