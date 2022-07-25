@@ -2050,7 +2050,6 @@ webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/buffers/buffer-copying-contents.html [ Failure ]
 webgl/2.0.0/conformance2/extensions/promoted-extensions-in-shaders.html [ Failure ]
 webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions.html [ Failure ]
-webgl/2.0.0/conformance2/query/occlusion-query.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Pass Failure ]
 webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only.html [ Pass Failure ]
 webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Failure ]

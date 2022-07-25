@@ -266,6 +266,22 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
     RELEASE_ASSERT(supportsExtension("GL_OES_EGL_image"_s));
     GL_RequestExtensionANGLE("GL_OES_EGL_image");
 
+    Vector<ASCIILiteral, 4> requiredExtensions;
+#if ENABLE(WEBGL2)
+    if (m_isForWebGL2) {
+        // For WebGL 2.0 occlusion queries to work.
+        requiredExtensions.append("GL_EXT_occlusion_query_boolean"_s);
+    }
+#endif
+
+    for (auto& extension : requiredExtensions) {
+        if (!supportsExtension(extension)) {
+            LOG(WebGL, "Missing required extension. %s", extension.characters());
+            return false;
+        }
+        ensureExtensionEnabled(extension);
+    }
+
     validateAttributes();
     auto attributes = contextAttributes(); // They may have changed during validation.
 
