@@ -141,16 +141,13 @@ static void revertCall(VM& vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef
     if (callLinkInfo.isDirect()) {
 #if ENABLE(JIT)
         callLinkInfo.clearCodeBlock();
-        if (!callLinkInfo.clearedByJettison())
-            static_cast<OptimizingCallLinkInfo&>(callLinkInfo).initializeDirectCall();
+        static_cast<OptimizingCallLinkInfo&>(callLinkInfo).initializeDirectCall();
 #endif
     } else {
-        if (!callLinkInfo.clearedByJettison()) {
-            linkSlowPathTo(vm, callLinkInfo, codeRef);
+        linkSlowPathTo(vm, callLinkInfo, codeRef);
 
-            if (callLinkInfo.stub())
-                callLinkInfo.revertCallToStub();
-        }
+        if (callLinkInfo.stub())
+            callLinkInfo.revertCallToStub();
         callLinkInfo.clearCallee(); // This also clears the inline cache both for data and code-based caches.
     }
     callLinkInfo.clearSeen();

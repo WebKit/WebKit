@@ -206,7 +206,7 @@ public:
         } else
 #endif
             m_assembler.blrab(targetGPR, tagGPR);
-        return Call(m_assembler.label(), Call::None);
+        return Call(m_assembler.labelIgnoringWatchpoints(), Call::None);
     }
 
     ALWAYS_INLINE Call call(RegisterID targetGPR, PtrTag tag)

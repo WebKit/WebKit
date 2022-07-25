@@ -2285,21 +2285,6 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
     if (vm.heap.currentThreadIsDoingGCWork() && !vm.heap.isMarked(ownerExecutable()))
         return;
 
-    {
-        ConcurrentJSLocker locker(m_lock);
-        if (JITCode::isOptimizingJIT(jitType())) {
-#if ENABLE(DFG_JIT)
-            DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-            for (auto* callLinkInfo : dfgCommon->m_callLinkInfos)
-                callLinkInfo->setClearedByJettison();
-#endif
-        } else {
-            forEachLLIntOrBaselineCallLinkInfo([&](BaselineCallLinkInfo& callLinkInfo) {
-                callLinkInfo.setClearedByJettison();
-            });
-        }
-    }
-
     // This accomplishes (2).
     ownerExecutable()->installCode(vm, alternative(), codeType(), specializationKind());
 

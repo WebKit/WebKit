@@ -1352,6 +1352,7 @@ public:
     void jitAssertArgumentCountSane();
     inline void jitAssertNoException(VM& vm) { jitReleaseAssertNoException(vm); }
     void jitAssertCodeBlockOnCallFrameWithType(GPRReg scratchGPR, JITType);
+    void jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(GPRReg scratchGPR, GPRReg scratchGPR2, UnlinkedCodeBlock&);
     void jitAssertCodeBlockOnCallFrameIsOptimizingJIT(GPRReg scratchGPR);
 #else
     void jitAssertIsInt32(GPRReg) { }
@@ -1366,6 +1367,7 @@ public:
     void jitAssertNoException(VM&) { }
     void jitAssertCodeBlockOnCallFrameWithType(GPRReg, JITType) { }
     void jitAssertCodeBlockOnCallFrameIsOptimizingJIT(GPRReg) { }
+    void jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(GPRReg, GPRReg, UnlinkedCodeBlock&) { }
 #endif
 
     void jitReleaseAssertNoException(VM&);

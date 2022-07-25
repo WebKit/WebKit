@@ -772,6 +772,7 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
 
     emitFunctionPrologue();
     jitAssertCodeBlockOnCallFrameWithType(regT2, JITType::BaselineJIT);
+    jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(regT1, regT2, *m_unlinkedCodeBlock);
 
     Label beginLabel(this);
 
@@ -840,6 +841,7 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
         emitFunctionPrologue();
         RELEASE_ASSERT(m_unlinkedCodeBlock->codeType() == FunctionCode);
         jitAssertCodeBlockOnCallFrameWithType(regT2, JITType::BaselineJIT);
+        jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(regT1, regT2, *m_unlinkedCodeBlock);
         emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, regT0);
         store8(TrustedImm32(0), Address(regT0, CodeBlock::offsetOfShouldAlwaysBeInlined()));
 

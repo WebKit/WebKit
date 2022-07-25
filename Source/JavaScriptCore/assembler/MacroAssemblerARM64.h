@@ -3930,7 +3930,7 @@ public:
     {
         invalidateAllTempRegisters();
         m_assembler.blr(target);
-        return Call(m_assembler.label(), Call::None);
+        return Call(m_assembler.labelIgnoringWatchpoints(), Call::None);
     }
 
     ALWAYS_INLINE Call call(Address address, PtrTag tag)
@@ -3996,7 +3996,7 @@ public:
     {
         invalidateAllTempRegisters();
         m_assembler.bl();
-        return Call(m_assembler.label(), Call::LinkableNear);
+        return Call(m_assembler.labelIgnoringWatchpoints(), Call::LinkableNear);
     }
 
     ALWAYS_INLINE Call nearTailCall()
@@ -4009,8 +4009,9 @@ public:
     ALWAYS_INLINE Call threadSafePatchableNearCall()
     {
         invalidateAllTempRegisters();
+        padBeforePatch();
         m_assembler.bl();
-        return Call(m_assembler.label(), Call::LinkableNear);
+        return Call(m_assembler.labelIgnoringWatchpoints(), Call::LinkableNear);
     }
 
     ALWAYS_INLINE void ret()
@@ -4725,8 +4726,10 @@ public:
 protected:
     ALWAYS_INLINE Jump makeBranch(Assembler::Condition cond)
     {
+        if (m_makeJumpPatchable)
+            padBeforePatch();
         m_assembler.b_cond(cond);
-        AssemblerLabel label = m_assembler.label();
+        AssemblerLabel label = m_assembler.labelIgnoringWatchpoints();
         m_assembler.nop();
         return Jump(label, m_makeJumpPatchable ? Assembler::JumpConditionFixedSize : Assembler::JumpCondition, cond);
     }
@@ -4737,24 +4740,28 @@ protected:
     template <int dataSize>
     ALWAYS_INLINE Jump makeCompareAndBranch(ZeroCondition cond, RegisterID reg)
     {
+        if (m_makeJumpPatchable)
+            padBeforePatch();
         if (cond == IsZero)
             m_assembler.cbz<dataSize>(reg);
         else
             m_assembler.cbnz<dataSize>(reg);
-        AssemblerLabel label = m_assembler.label();
+        AssemblerLabel label = m_assembler.labelIgnoringWatchpoints();
         m_assembler.nop();
         return Jump(label, m_makeJumpPatchable ? Assembler::JumpCompareAndBranchFixedSize : Assembler::JumpCompareAndBranch, static_cast<Assembler::Condition>(cond), dataSize == 64, reg);
     }
 
     ALWAYS_INLINE Jump makeTestBitAndBranch(RegisterID reg, unsigned bit, ZeroCondition cond)
     {
+        if (m_makeJumpPatchable)
+            padBeforePatch();
         ASSERT(bit < 64);
         bit &= 0x3f;
         if (cond == IsZero)
             m_assembler.tbz(reg, bit);
         else
             m_assembler.tbnz(reg, bit);
-        AssemblerLabel label = m_assembler.label();
+        AssemblerLabel label = m_assembler.labelIgnoringWatchpoints();
         m_assembler.nop();
         return Jump(label, m_makeJumpPatchable ? Assembler::JumpTestBitFixedSize : Assembler::JumpTestBit, static_cast<Assembler::Condition>(cond), bit, reg);
     }
