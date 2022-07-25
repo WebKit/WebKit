@@ -113,6 +113,7 @@ public:
     // any unknown input type is treated as text. Consider, for example, isTextField or
     // isTextField && !isPasswordField.
     WEBCORE_EXPORT bool isText() const;
+    bool isTextType() const;
     WEBCORE_EXPORT bool isEmailField() const;
     WEBCORE_EXPORT bool isFileUpload() const;
     bool isImageButton() const;
@@ -429,7 +430,6 @@ private:
 
     bool supportsMinLength() const { return isTextType(); }
     bool supportsMaxLength() const { return isTextType(); }
-    bool isTextType() const;
     bool tooShort(StringView, NeedsToCheckDirtyFlag) const;
     bool tooLong(StringView, NeedsToCheckDirtyFlag) const;
 

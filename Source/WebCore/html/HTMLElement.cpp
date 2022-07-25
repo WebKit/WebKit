@@ -772,18 +772,30 @@ void HTMLElement::childrenChanged(const ChildChange& change)
     adjustDirectionalityIfNeededAfterChildrenChanged(change.previousSiblingElement, change.type);
 }
 
+static bool isValidDirValue(const AtomString& direction)
+{
+    return equalLettersIgnoringASCIICase(direction, "ltr"_s)
+        || equalLettersIgnoringASCIICase(direction, "rtl"_s)
+        || equalLettersIgnoringASCIICase(direction, "auto"_s);
+}
+
 bool HTMLElement::hasDirectionAuto() const
 {
     const AtomString& direction = attributeWithoutSynchronization(dirAttr);
-    return (hasTagName(bdiTag) && direction.isNull()) || equalLettersIgnoringASCIICase(direction, "auto"_s);
+    return (hasTagName(bdiTag) && !isValidDirValue(direction)) || equalLettersIgnoringASCIICase(direction, "auto"_s);
 }
 
 // FIXME: Cache directionality.
 TextDirection HTMLElement::computeDirectionality() const
 {
+    if (auto* inputElement = dynamicDowncast<HTMLInputElement>(const_cast<HTMLElement*>(this))) {
+        auto direction = inputElement->attributeWithoutSynchronization(dirAttr);
+        if (inputElement->isTelephoneField() && !isValidDirValue(direction))
+            return TextDirection::LTR;
+    }
     for (const Element* element = this; element; element = const_cast<Element*>(element)->parentOrShadowHostElement()) {
         auto direction = element->attributeWithoutSynchronization(dirAttr);
-        if ((element->hasTagName(bdiTag) && !direction) || equalLettersIgnoringASCIICase(direction, "auto"_s))
+        if ((element->hasTagName(bdiTag) && !isValidDirValue(direction)) || equalLettersIgnoringASCIICase(direction, "auto"_s))
             return directionality();
 
         if (equalLettersIgnoringASCIICase(direction, "ltr"_s))
@@ -807,13 +819,15 @@ TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) con
 
 TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) const
 {
-    if (isTextField()) {
-        HTMLTextFormControlElement& textElement = downcast<HTMLTextFormControlElement>(const_cast<HTMLElement&>(*this));
-        bool hasStrongDirectionality;
-        UCharDirection textDirection = textElement.value().defaultWritingDirection(&hasStrongDirectionality);
-        if (strongDirectionalityTextNode)
-            *strongDirectionalityTextNode = hasStrongDirectionality ? &textElement : nullptr;
-        return (textDirection == U_LEFT_TO_RIGHT) ? TextDirection::LTR : TextDirection::RTL;
+    if (auto* textControl = dynamicDowncast<HTMLTextFormControlElement>(const_cast<HTMLElement*>(this))) {
+        auto* inputElement = dynamicDowncast<HTMLInputElement>(textControl);
+        if (!inputElement || (inputElement->isTextType() && !inputElement->isPasswordField())) {
+            bool hasStrongDirectionality;
+            UCharDirection textDirection = textControl->value().defaultWritingDirection(&hasStrongDirectionality);
+            if (strongDirectionalityTextNode)
+                *strongDirectionalityTextNode = hasStrongDirectionality ? textControl : nullptr;
+            return (textDirection == U_LEFT_TO_RIGHT) ? TextDirection::LTR : TextDirection::RTL;            
+        }
     }
 
     RefPtr<Node> node = firstChild();
