@@ -401,7 +401,7 @@ bool MediaPlayerPrivateWebM::updateLastPixelBuffer()
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     if (isCopyDisplayedPixelBufferAvailable()) {
         if (auto pixelBuffer = adoptCF([m_displayLayer copyDisplayedPixelBuffer])) {
-            ALWAYS_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentMediaTime());
+            INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentMediaTime());
             m_lastPixelBuffer = WTFMove(pixelBuffer);
             return true;
         }
