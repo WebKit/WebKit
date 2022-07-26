@@ -1,3 +1,0 @@
-
-FAIL Touchmove events are non-cancelable since the event listener is treated as passive. promise_test: Unhandled rejection with value: "Condition did not become true after 500 frames"
-

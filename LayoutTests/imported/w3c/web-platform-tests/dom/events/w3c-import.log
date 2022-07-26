@@ -78,8 +78,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-removeEventListener.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-this-of-listener.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/KeyEvent-initKeyEvent.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/document-level-wheel-event-listener-passive-by-default.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-disabled-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-extra.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-is-still-set-when-coercing-beforeunload-result.html

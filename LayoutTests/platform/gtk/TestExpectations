@@ -1871,6 +1871,9 @@ imported/w3c/web-platform-tests/xhr/send-authentication-basic-setrequestheader-e
 # Ftp code is disabled in gtk port
 http/tests/misc/ftp-eplf-directory.py [ Skip ]
 
+# These tests hit an assertion in JSUIScriptController::sendEventStream() since their import.
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive [ Skip ]
+
 webkit.org/b/238885 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.html?1001-2000 [ Failure Timeout ]
 webkit.org/b/238885 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.html?2001-3000 [ Failure Timeout ]
 webkit.org/b/238885 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.html?3001-4000 [ Failure Timeout ]

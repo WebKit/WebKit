@@ -236,7 +236,6 @@ fast/harness/uiscriptcontroller [ Skip ]
 
 # Only iOS has an implementation of UIScriptController::sendEventStream().
 imported/w3c/web-platform-tests/dom/events/scrolling [ Skip ]
-imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.tentative.html [ Skip ]
 
 # Only Mac and iOS WK2 have an implementation right now.
 imported/w3c/web-platform-tests/video-rvfc [ Skip ]
