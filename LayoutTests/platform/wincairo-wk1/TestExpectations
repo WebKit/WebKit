@@ -512,6 +512,10 @@ animations/3d/full-rotation-animation.html [ ImageOnlyFailure ]
 
 http/tests/websocket/tests/hybi/inspector [ Skip ] # Timeout
 
+webkit.org/b/151506 fast/events/beforeunload-showModalDialog.html [ Skip ]
+webkit.org/b/151506 fast/events/pagehide-showModalDialog.html [ Skip ]
+webkit.org/b/151506 fast/events/unload-showModalDialog.html [ Skip ]
+
 # ShowModalDialog preference currently cannot be enabled on Windows.
 fast/dom/Window/delete-operations.html [ Skip ]
 fast/dom/Window/forbid-showModalDialog.html [ Skip ]
@@ -525,3 +529,7 @@ js/dom/global-function-resolve.html [ Skip ]
 
 # DRT doesn't support testRunner.loadedSubresourceDomains
 http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]
+
+# :dir pseudo class isn't enabled yet.
+fast/css/dir-pseudo-on-bdi-element.html [ Failure ]
+fast/css/dir-pseudo-on-input-element.html [ Failure ]

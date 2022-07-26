@@ -1029,7 +1029,6 @@ ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 css2.1/20110323/abspos-replaced-width-margin-000-ref.htm [ Failure ]
 
 css3/flexbox/button.html [ Failure ]
-css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
 webkit.org/b/84679 css3/zoom-coords.xhtml [ Failure ]
 
@@ -1272,7 +1271,6 @@ editing/selection/move-left-right.html [ Failure ]
 editing/selection/selection-across-shadow-boundaries-readonly-1.html [ Pass ImageOnlyFailure ]
 editing/selection/selection-across-shadow-boundaries-readonly-2.html [ Pass ImageOnlyFailure ]
 editing/selection/selection-across-shadow-boundaries-readonly-3.html [ Pass ImageOnlyFailure ]
-editing/selection/update-selection-by-style-change.html [ ImageOnlyFailure ]
 [ Debug ] editing/selection/5057506.html [ Pass Failure ]
 [ Debug ] editing/selection/directionality-after-undo-replace.html [ Pass Failure ]
 
@@ -1812,7 +1810,6 @@ fast/events/ime-compositionend-on-selection-change.html [ Failure ]
 fast/events/input-event-insert-replacement.html [ Skip ] # UIScript
 fast/events/input-events-insert-by-drop.html [ Failure Pass ]
 fast/events/input-events-paste-data.html [ Pass Failure ]
-fast/events/input-events-paste-rich-datatransfer.html [ Failure ]
 fast/events/key-events-in-input-button.html [ Failure ]
 fast/events/keyboardevent-code.html [ Failure ]
 fast/events/keydown-numpad-keys.html [ Failure ]
@@ -2072,7 +2069,6 @@ fast/text/preserved-white-space-with-word-spacing.html [ ImageOnlyFailure ]
 
 fast/css/contain-invalidate-if-disabled.html [ Failure ]
 
-fast/filter-image/filter-image-blur.html [ ImageOnlyFailure ]
 fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
 
 fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ ImageOnlyFailure ]
