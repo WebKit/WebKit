@@ -143,19 +143,19 @@ public:
         if (codeBlock->ownerExecutable()->implementationVisibility() != ImplementationVisibility::Public)
             return IterationStatus::Continue;
 
-        m_foundCallFrame = visitor->callFrame();
+        m_codeBlock = codeBlock;
 
         if (!codeBlock->unlinkedCodeBlock()->isBuiltinFunction())
             m_bytecodeIndex = visitor->bytecodeIndex();
         return IterationStatus::Done;
     }
 
-    CallFrame* foundCallFrame() const { return m_foundCallFrame; }
+    CodeBlock* codeBlock() const { return m_codeBlock; }
     BytecodeIndex bytecodeIndex() const { return m_bytecodeIndex; }
 
 private:
     CallFrame* m_startCallFrame;
-    mutable CallFrame* m_foundCallFrame { nullptr };
+    mutable CodeBlock* m_codeBlock { nullptr };
     mutable bool m_foundStartCallFrame { false };
     mutable BytecodeIndex m_bytecodeIndex { 0 };
 };
@@ -172,11 +172,11 @@ std::unique_ptr<Vector<StackFrame>> getStackTrace(JSGlobalObject*, VM& vm, JSObj
     return stackTrace;
 }
 
-std::tuple<CallFrame*, BytecodeIndex> getBytecodeIndex(VM& vm, CallFrame* startCallFrame)
+std::tuple<CodeBlock*, BytecodeIndex> getBytecodeIndex(VM& vm, CallFrame* startCallFrame)
 {
     FindFirstCallerFrameWithCodeblockFunctor functor(startCallFrame);
     StackVisitor::visit(vm.topCallFrame, vm, functor);
-    return { functor.foundCallFrame(), functor.bytecodeIndex() };
+    return { functor.codeBlock(), functor.bytecodeIndex() };
 }
 
 bool getLineColumnAndSource(VM& vm, Vector<StackFrame>* stackTrace, unsigned& line, unsigned& column, String& sourceURL)

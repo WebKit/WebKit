@@ -64,14 +64,14 @@ ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* st
     return create(globalObject, vm, structure, messageString, cause, appender, type, errorType, useCurrentFrame);
 }
 
-static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* exception, BytecodeIndex bytecodeIndex, const String& message)
+static String appendSourceToErrorMessage(CodeBlock* codeBlock, ErrorInstance* exception, BytecodeIndex bytecodeIndex, const String& message)
 {
     ErrorInstance::SourceAppender appender = exception->sourceAppender();
     exception->clearSourceAppender();
     RuntimeType type = exception->runtimeTypeForCause();
     exception->clearRuntimeTypeForCause();
 
-    if (!callFrame->codeBlock()->hasExpressionInfo() || message.isNull())
+    if (!codeBlock->hasExpressionInfo() || message.isNull())
         return message;
     
     int startOffset = 0;
@@ -79,13 +79,6 @@ static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* ex
     int divotPoint = 0;
     unsigned line = 0;
     unsigned column = 0;
-
-    CodeBlock* codeBlock;
-    CodeOrigin codeOrigin = callFrame->codeOrigin();
-    if (codeOrigin && codeOrigin.inlineCallFrame())
-        codeBlock = baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame());
-    else
-        codeBlock = callFrame->codeBlock();
 
     codeBlock->expressionRangeForBytecodeIndex(bytecodeIndex, divotPoint, startOffset, endOffset, line, column);
     
@@ -133,9 +126,9 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
 
     String messageWithSource = message;
     if (m_stackTrace && !m_stackTrace->isEmpty() && hasSourceAppender()) {
-        auto [callFrame, bytecodeIndex] = getBytecodeIndex(vm, vm.topCallFrame);
-        if (callFrame && callFrame->codeBlock() && !callFrame->callee().isWasm())
-            messageWithSource = appendSourceToErrorMessage(callFrame, this, bytecodeIndex, message);
+        auto [codeBlock, bytecodeIndex] = getBytecodeIndex(vm, vm.topCallFrame);
+        if (codeBlock)
+            messageWithSource = appendSourceToErrorMessage(codeBlock, this, bytecodeIndex, message);
     }
 
     if (!messageWithSource.isNull())
