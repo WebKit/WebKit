@@ -163,6 +163,7 @@ public:
     void setBackendInfo(ImageBufferBackend::Info&& parameters) { m_backendInfo = WTFMove(parameters); }
 
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImageForDrawing(BackingStoreCopy = CopyBackingStore) const;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
     WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const;
     WEBCORE_EXPORT virtual RefPtr<Image> filteredImage(Filter&);

@@ -156,8 +156,6 @@ unsigned ImageBufferIOSurfaceBackend::bytesPerRow() const
 
 void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage() const
 {
-    if (!m_mayHaveOutstandingBackingStoreReferences)
-        return;
     // Force QuartzCore to invalidate its cached CGImageRef for this IOSurface.
     // This is necessary in cases where we know (a priori) that the IOSurface has been
     // modified, but QuartzCore may have a cached CGImageRef that does not reflect the
@@ -167,9 +165,20 @@ void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage() const
     m_mayHaveOutstandingBackingStoreReferences = false;
 }
 
+void ImageBufferIOSurfaceBackend::invalidateCachedNativeImageIfNeeded() const
+{
+    if (m_mayHaveOutstandingBackingStoreReferences)
+        invalidateCachedNativeImage();
+}
+
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const
 {
     m_mayHaveOutstandingBackingStoreReferences = true;
+    return NativeImage::create(m_surface->createImage());
+}
+
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(BackingStoreCopy) const
+{
     return NativeImage::create(m_surface->createImage());
 }
 
@@ -194,7 +203,7 @@ RefPtr<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBuffe
 
 void ImageBufferIOSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    invalidateCachedNativeImage();
+    invalidateCachedNativeImageIfNeeded();
     IOSurface::Locker lock(*m_surface, IOSurface::Locker::AccessMode::ReadWrite);
     ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, lock.surfaceBaseAddress());
 }

@@ -55,6 +55,11 @@ ImageBufferBackend::ImageBufferBackend(const Parameters& parameters)
 
 ImageBufferBackend::~ImageBufferBackend() = default;
 
+RefPtr<NativeImage> ImageBufferBackend::copyNativeImageForDrawing(BackingStoreCopy copyBehavior) const
+{
+    return copyNativeImage(copyBehavior);
+}
+
 RefPtr<NativeImage> ImageBufferBackend::sinkIntoNativeImage()
 {
     return copyNativeImage(DontCopyBackingStore);

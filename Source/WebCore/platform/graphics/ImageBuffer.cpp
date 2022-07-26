@@ -222,6 +222,15 @@ RefPtr<NativeImage> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) 
     return nullptr;
 }
 
+RefPtr<NativeImage> ImageBuffer::copyNativeImageForDrawing(BackingStoreCopy copyBehavior) const
+{
+    if (auto* backend = ensureBackendCreated()) {
+        const_cast<ImageBuffer&>(*this).flushDrawingContext();
+        return backend->copyNativeImageForDrawing(copyBehavior);
+    }
+    return nullptr;
+}
+
 RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage()
 {
     if (auto* backend = ensureBackendCreated()) {
@@ -311,7 +320,7 @@ void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, 
     srcRectScaled.scale(resolutionScale());
 
     if (auto* backend = ensureBackendCreated()) {
-        if (auto image = copyNativeImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
+        if (auto image = copyNativeImageForDrawing(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
             destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
         backend->finalizeDrawIntoContext(destContext);
     }

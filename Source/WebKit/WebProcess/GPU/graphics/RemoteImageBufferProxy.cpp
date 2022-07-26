@@ -148,17 +148,24 @@ ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
 
 RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
-    if (UNLIKELY(!m_remoteRenderingBackendProxy))
-        return { };
-
     if (canMapBackingStore())
         return ImageBuffer::copyNativeImage(copyBehavior);
+
+    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+        return { };
 
     const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
     auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, PreserveResolution::Yes);
     if (!bitmap)
         return { };
     return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore));
+}
+
+RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImageForDrawing(BackingStoreCopy copyBehavior) const
+{
+    if (canMapBackingStore())
+        return ImageBuffer::copyNativeImageForDrawing(copyBehavior);
+    return copyNativeImage(copyBehavior);
 }
 
 void RemoteImageBufferProxy::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
