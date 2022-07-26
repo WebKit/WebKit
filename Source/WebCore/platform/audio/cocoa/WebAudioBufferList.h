@@ -42,11 +42,11 @@ class CAAudioStreamDescription;
 class WebAudioBufferList final : public PlatformAudioData {
 public:
     WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&);
-    WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&, uint32_t sampleCount);
+    WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&, size_t sampleCount);
     WebAudioBufferList(const CAAudioStreamDescription&, CMSampleBufferRef);
 
     void reset();
-    WEBCORE_EXPORT void setSampleCount(uint32_t);
+    WEBCORE_EXPORT void setSampleCount(size_t);
 
     AudioBufferList* list() const { return m_list.get(); }
     operator AudioBufferList&() const { return *m_list; }
@@ -56,7 +56,7 @@ public:
     AudioBuffer* buffer(uint32_t index) const;
     IteratorRange<AudioBuffer*> buffers() const;
 
-    WEBCORE_EXPORT static bool isSupportedDescription(const CAAudioStreamDescription&, uint32_t sampleCount);
+    WEBCORE_EXPORT static bool isSupportedDescription(const CAAudioStreamDescription&, size_t sampleCount);
 
     WEBCORE_EXPORT void zeroFlatBuffer();
 
@@ -66,7 +66,7 @@ private:
     size_t m_listBufferSize { 0 };
     uint32_t m_bytesPerFrame { 0 };
     uint32_t m_channelCount { 0 };
-    uint32_t m_sampleCount { 0 };
+    size_t m_sampleCount { 0 };
     std::unique_ptr<AudioBufferList> m_canonicalList;
     std::unique_ptr<AudioBufferList> m_list;
     RetainPtr<CMBlockBufferRef> m_blockBuffer;
