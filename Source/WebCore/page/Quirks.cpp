@@ -1515,4 +1515,17 @@ bool Quirks::shouldEnableApplicationCacheQuirk() const
 #endif
 }
 
+bool Quirks::hasBrokenPermissionsAPISupportQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_hasBrokenPermissionsAPISupportQuirk) {
+        auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
+        m_hasBrokenPermissionsAPISupportQuirk = domain.endsWith(".nfl.com"_s);
+    }
+
+    return m_hasBrokenPermissionsAPISupportQuirk.value();
+}
+
 }
