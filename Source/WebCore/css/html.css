@@ -26,7 +26,7 @@
 html {
     display: block;
 #if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
-    color: text;
+    color: CanvasText;
 #endif
 }
 
@@ -411,8 +411,8 @@ textarea,
 input {
     appearance: auto;
 #if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
-    color: text;
-    background-color: -webkit-control-background;
+    color: CanvasText;
+    background-color: Canvas;
 #else
     background-color: white;
 #endif
@@ -733,8 +733,8 @@ textarea {
     appearance: auto;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 #if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
-    color: text;
-    background-color: -webkit-control-background;
+    color: CanvasText;
+    background-color: Canvas;
 #else
     background-color: white;
 #endif
@@ -1059,8 +1059,8 @@ select {
 #else
     border: 1px solid;
 #if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
-    color: text;
-    background-color: -webkit-control-background;
+    color: CanvasText;
+    background-color: Canvas;
 #else
     color: black;
     background-color: white;
