@@ -179,26 +179,32 @@ public:
     // bugs are:
     // https://bugs.webkit.org/show_bug.cgi?id=151335 (LateUse)
     // https://bugs.webkit.org/show_bug.cgi?id=151811 (warm Any)
-    void clobberEarly(const RegisterSet& set)
+    void clobberEarly(const RegisterSet128& set)
     {
         m_earlyClobbered.merge(set);
     }
 
-    void clobberLate(const RegisterSet& set)
+    void clobberLate(const RegisterSet128& set)
     {
         m_lateClobbered.merge(set);
     }
 
-    void clobber(const RegisterSet& set)
+    void clobber(const RegisterSet128& set)
     {
         clobberEarly(set);
         clobberLate(set);
     }
+    
+    void clobberFullWidth(const RegisterSet& set)
+    {
+        clobberEarly(RegisterSet128::use128Bits(set));
+        clobberLate(RegisterSet128::use128Bits(set));
+    }
 
-    RegisterSet& earlyClobbered() { return m_earlyClobbered; }
-    RegisterSet& lateClobbered() { return m_lateClobbered; }
-    const RegisterSet& earlyClobbered() const { return m_earlyClobbered; }
-    const RegisterSet& lateClobbered() const { return m_lateClobbered; }
+    RegisterSet128& earlyClobbered() { return m_earlyClobbered; }
+    RegisterSet128& lateClobbered() { return m_lateClobbered; }
+    const RegisterSet128& earlyClobbered() const { return m_earlyClobbered; }
+    const RegisterSet128& lateClobbered() const { return m_lateClobbered; }
 
     void setGenerator(RefPtr<StackmapGenerator> generator)
     {
@@ -311,9 +317,9 @@ private:
     
     Vector<ValueRep> m_reps;
     RefPtr<StackmapGenerator> m_generator;
-    RegisterSet m_earlyClobbered;
-    RegisterSet m_lateClobbered;
-    RegisterSet m_usedRegisters; // Stackmaps could be further duplicated by Air, but that's unlikely, so we just merge the used registers sets if that were to happen.
+    RegisterSet128 m_earlyClobbered;
+    RegisterSet128 m_lateClobbered;
+    RegisterSet128 m_usedRegisters; // Stackmaps could be further duplicated by Air, but that's unlikely, so we just merge the used registers sets if that were to happen.
 };
 
 } } // namespace JSC::B3

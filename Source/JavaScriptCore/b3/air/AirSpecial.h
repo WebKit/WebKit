@@ -81,12 +81,12 @@ public:
     // performance of the liveness analysis.
     //
     // Currently, we do (1) for B3 stackmaps.
-    virtual void reportUsedRegisters(Inst&, const RegisterSet&) = 0;
+    virtual void reportUsedRegisters(Inst&, const RegisterSet128&) = 0;
     
     virtual MacroAssembler::Jump generate(Inst&, CCallHelpers&, GenerationContext&) = 0;
 
-    virtual RegisterSet extraEarlyClobberedRegs(Inst&) = 0;
-    virtual RegisterSet extraClobberedRegs(Inst&) = 0;
+    virtual RegisterSet128 extraEarlyClobberedRegs(Inst&) = 0;
+    virtual RegisterSet128 extraClobberedRegs(Inst&) = 0;
     
     // By default, this returns false.
     virtual bool isTerminal(Inst&);

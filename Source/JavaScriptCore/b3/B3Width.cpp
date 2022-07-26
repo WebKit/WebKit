@@ -26,8 +26,6 @@
 #include "config.h"
 #include "B3Width.h"
 
-#if ENABLE(B3_JIT)
-
 #include <wtf/PrintStream.h>
 
 namespace JSC { namespace B3 {
@@ -55,6 +53,8 @@ Type bestType(Bank bank, Width width)
         }
         RELEASE_ASSERT_NOT_REACHED();
         return Void;
+    case Width128:
+        break;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return Void;
@@ -79,12 +79,13 @@ void printInternal(PrintStream& out, JSC::B3::Width width)
     case JSC::B3::Width64:
         out.print("64");
         return;
+    case JSC::B3::Width128:
+        out.print("128");
+        return;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WTF
-
-#endif // ENABLE(B3_JIT)
 

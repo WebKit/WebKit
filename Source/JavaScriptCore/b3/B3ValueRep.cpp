@@ -33,7 +33,7 @@
 
 namespace JSC { namespace B3 {
 
-void ValueRep::addUsedRegistersTo(RegisterSet& set) const
+void ValueRep::addUsedRegistersTo(RegisterSet128& set) const
 {
     switch (m_kind) {
     case WarmAny:
@@ -58,9 +58,9 @@ void ValueRep::addUsedRegistersTo(RegisterSet& set) const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RegisterSet ValueRep::usedRegisters() const
+RegisterSet128 ValueRep::usedRegisters() const
 {
-    RegisterSet result;
+    RegisterSet128 result;
     addUsedRegistersTo(result);
     return result;
 }

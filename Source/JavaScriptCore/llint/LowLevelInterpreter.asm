@@ -329,8 +329,8 @@ end
 const OpcodeIDNarrowSize = 1 # OpcodeID
 const OpcodeIDWide16SizeJS = 2 # Wide16 Prefix + OpcodeID
 const OpcodeIDWide32SizeJS = 2 # Wide32 Prefix + OpcodeID
-const OpcodeIDWide16SizeWasm = 2 # Wide16 Prefix + OpcodeID(1 byte)
-const OpcodeIDWide32SizeWasm = 2 # Wide32 Prefix + OpcodeID(1 byte)
+const OpcodeIDWide16SizeWasm = 3 # Wide16 Prefix + OpcodeID(2 byte)
+const OpcodeIDWide32SizeWasm = 3 # Wide32 Prefix + OpcodeID(2 byte)
 
 if X86_64_WIN or C_LOOP_WIN
     const GigacageConfig = _g_gigacageConfig

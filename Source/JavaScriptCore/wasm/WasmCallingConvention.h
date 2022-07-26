@@ -55,7 +55,7 @@ struct CallInformation {
 
     RegisterAtOffsetList computeResultsOffsetList()
     {
-        RegisterSet usedResultRegisters;
+        RegisterSet128 usedResultRegisters;
         for (ValueLocation loc : results) {
             if (loc.isGPR()) {
                 usedResultRegisters.set(loc.jsr().payloadGPR());
@@ -94,14 +94,14 @@ public:
 
 private:
     template<typename RegType>
-    ArgumentLocation marshallLocationImpl(CallRole role, const Vector<RegType>& regArgs, size_t& count, size_t& stackOffset) const
+    ArgumentLocation marshallLocationImpl(CallRole role, const Vector<RegType>& regArgs, size_t& count, size_t& stackOffset, size_t argSize) const
     {
         if (count < regArgs.size())
             return ArgumentLocation { regArgs[count++] };
 
         count++;
         ArgumentLocation result = role == CallRole::Caller ? ArgumentLocation::stackArgument(stackOffset) : ArgumentLocation::stack(stackOffset);
-        stackOffset += sizeof(Register);
+        stackOffset += sizeof(Register) * argSize;
         return result;
     }
 
@@ -115,10 +115,16 @@ private:
         case TypeKind::Externref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
+<<<<<<< HEAD
+        case TypeKind::Rtt:
+            return marshallLocationImpl(role, jsrArgs, gpArgumentCount, stackOffset, valueType.size() / 8);
+=======
             return marshallLocationImpl(role, jsrArgs, gpArgumentCount, stackOffset);
+>>>>>>> dd3a6c1321ec ([Wasm-GC] Remove RTT support)
         case TypeKind::F32:
         case TypeKind::F64:
-            return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset);
+        case TypeKind::V128:
+            return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset, valueType.size() / 8);
         default:
             break;
         }

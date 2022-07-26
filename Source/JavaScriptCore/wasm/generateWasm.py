@@ -27,21 +27,25 @@
 
 import json
 import math
+import os
 import re
+from generateSimdOpcodes import *
 
 class Wasm:
     def __init__(self, scriptName, jsonPath):
         wasmFile = open(jsonPath, "r")
         wasm = json.load(open(jsonPath, "r"))
         wasmFile.close()
+        jsonDirectory = os.path.dirname(os.path.abspath(jsonPath))
         for pre in wasm["preamble"]:
             if pre["name"] == "version":
                 self.expectedVersionNumber = str(pre["value"])
         self.preamble = wasm["preamble"]
         self.types = wasm["type"]
         self.opcodes = wasm["opcode"]
+        self.opcodes.update(simdOpcodes(jsonDirectory))
         self.header = """/*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,11 +79,6 @@ class Wasm:
             if filter(self.opcodes[op]):
                 yield ret(op)
 
-    def toCpp(self, name):
-        camelCase = re.sub(r'([^a-z0-9].)', lambda c: c.group(0)[1].upper(), name)
-        CamelCase = camelCase[:1].upper() + camelCase[1:]
-        return CamelCase
-
 
 def isNormal(op):
     if "extendedOp" in op:
@@ -110,6 +109,8 @@ def isAtomicStore(op):
 def isAtomicBinaryRMW(op):
     return op["category"] == "atomic.rmw.binary"
 
+def isSimd(op):
+    return op["category"].startswith("simd")
 
 def isSimple(op):
     return "b3op" in op

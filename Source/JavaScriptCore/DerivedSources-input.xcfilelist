@@ -209,9 +209,12 @@ $(PROJECT_DIR)/ucd/Scripts.txt
 $(PROJECT_DIR)/ucd/UnicodeData.txt
 $(PROJECT_DIR)/ucd/emoji-data.txt
 $(PROJECT_DIR)/ucd/language-subtag-registry.txt
+$(PROJECT_DIR)/wasm/generateSimdOpcodes.py
 $(PROJECT_DIR)/wasm/generateWasm.py
+$(PROJECT_DIR)/wasm/generateWasmAirIRGeneratorInlinesHeader.py
 $(PROJECT_DIR)/wasm/generateWasmB3IRGeneratorInlinesHeader.py
 $(PROJECT_DIR)/wasm/generateWasmOpsHeader.py
+$(PROJECT_DIR)/wasm/generateWasmSimdLLIntGeneratorInlinesHeader.py
 $(PROJECT_DIR)/wasm/js/JSWebAssembly.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyCompileErrorConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyCompileErrorPrototype.cpp

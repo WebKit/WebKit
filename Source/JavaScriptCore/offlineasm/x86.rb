@@ -331,7 +331,7 @@ end
 
 class FPRegisterID
     def x86Operand(kind)
-        raise unless [:float, :double].include? kind
+        raise unless [:float, :double, :vector].include? kind
         case name
         when "ft0", "fa0", "fr", "wfa0"
             register("xmm0")
@@ -1230,12 +1230,32 @@ class Instruction
             $asm.puts "movss #{x86Operands(:float, :float)}"
         when "loadd"
             $asm.puts "movsd #{x86Operands(:double, :double)}"
+        when "loadv"
+            $asm.puts "movdqu #{x86Operands(:int, :double)}"
+        when "extract_lane_byte"
+            $asm.puts "pextrb #{x86Operands(:byte, :double, :int)}"
+        when "extract_lane_int"
+            $asm.puts "pextrd #{x86Operands(:byte, :double, :int)}"
+        when "swizzle_byte"
+            $asm.puts "pshufb #{x86Operands(:double, :double)}"
+        when "replace_lane_byte"
+            $asm.puts "pinsrb #{x86Operands(:byte, :int, :double)}"
+        when "splat_lane_byte"
+            $asm.puts "pxor #{operands[1].x86Operand(:vector)}, #{operands[1].x86Operand(:vector)}"
+            $asm.puts "pinsrb #{const(0)}, #{operands[0].x86Operand(:int)}, #{operands[1].x86Operand(:vector)}"
+            $asm.puts "vpbroadcastb #{operands[1].x86Operand(:float)}, #{operands[1].x86Operand(:vector)}"
+        when "splat_lane_int"
+            $asm.puts "pxor #{operands[1].x86Operand(:vector)}, #{operands[1].x86Operand(:vector)}"
+            $asm.puts "pinsrd #{const(0)}, #{operands[0].x86Operand(:int)}, #{operands[1].x86Operand(:vector)}"
+            $asm.puts "vpbroadcastd #{operands[1].x86Operand(:float)}, #{operands[1].x86Operand(:vector)}"
         when "moved"
             $asm.puts "movsd #{x86Operands(:double, :double)}"
         when "storef"
             $asm.puts "movss #{x86Operands(:float, :float)}"
         when "stored"
             $asm.puts "movsd #{x86Operands(:double, :double)}"
+        when "storev"
+            $asm.puts "movups #{x86Operands(:vector, :vector)}"
         when "addf"
             handleX86AddFP(:float)
         when "addd"

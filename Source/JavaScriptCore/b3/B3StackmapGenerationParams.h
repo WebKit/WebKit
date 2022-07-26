@@ -65,7 +65,7 @@ public:
     
     // This tells you the registers that were used.
     // NOTE: This will report bogus information if you did proc.setNeedsUsedRegisters(false).
-    const RegisterSet& usedRegisters() const;
+    const RegisterSet128& usedRegisters() const;
 
     // This is a useful helper if you want to do register allocation inside of a patchpoint. The
     // usedRegisters() set is not directly useful for this purpose because:

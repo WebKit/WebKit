@@ -208,14 +208,14 @@ void fixPartialRegisterStalls(Code& code)
             Inst& inst = block->at(i);
 
             if (hasPartialXmmRegUpdate(inst)) {
-                RegisterSet defs;
-                RegisterSet uses;
-                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank, Width) {
+                RegisterSet128 defs;
+                RegisterSet128 uses;
+                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank, Width width) {
                     if (tmp.isFPR()) {
                         if (Arg::isAnyDef(role))
-                            defs.set(tmp.fpr());
+                            defs.set(tmp.fpr(), includeRegisterWithWidth(width));
                         if (Arg::isAnyUse(role))
-                            uses.set(tmp.fpr());
+                            uses.merge(tmp.fpr(), includeRegisterWithWidth(width));
                     }
                 });
                 // We only care about values we define but not use. Otherwise we have to wait

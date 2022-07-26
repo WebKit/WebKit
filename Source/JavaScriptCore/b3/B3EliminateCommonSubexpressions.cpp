@@ -156,6 +156,9 @@ struct ImpureBlockData {
     HashMap<Value*, Value*> m_candidateWasmAddressesAtTail;
 };
 
+// OOPS: Do more here for various wasm load/store kinds. At the very least, we can remove
+// trivial redundancies.
+
 class CSE {
 public:
     CSE(Procedure& proc)

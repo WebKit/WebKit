@@ -78,7 +78,7 @@ void lowerAfterRegAlloc(Code& code)
 
     padInterference(code);
 
-    HashMap<Inst*, RegisterSet> usedRegisters;
+    HashMap<Inst*, RegisterSet128> usedRegisters;
     
     RegLiveness liveness(code);
     for (BasicBlock* block : code) {
@@ -87,17 +87,15 @@ void lowerAfterRegAlloc(Code& code)
         for (unsigned instIndex = block->size(); instIndex--;) {
             Inst& inst = block->at(instIndex);
             
-            RegisterSet set;
+            RegisterSet128 set;
 
-            if (isRelevant(inst)) {
-                for (Reg reg : localCalc.live())
-                    set.set(reg);
-            }
+            if (isRelevant(inst))
+                set = { localCalc.live() };
             
             localCalc.execute(instIndex);
 
             if (isRelevant(inst))
-                usedRegisters.add(&inst, set);
+                usedRegisters.set(&inst, set);
         }
     }
     
@@ -111,13 +109,13 @@ void lowerAfterRegAlloc(Code& code)
     // If we run after stack allocation then we cannot use those callee saves that aren't in
     // the callee save list. Note that we are only run after stack allocation in -O1, so this
     // kind of slop is OK.
-    RegisterSet disallowedCalleeSaves;
+    RegisterSet128 disallowedCalleeSaves;
     if (code.stackIsAllocated()) {
-        disallowedCalleeSaves = RegisterSet::calleeSaveRegisters();
+        disallowedCalleeSaves = RegisterSet128::calleeSaveRegisters();
         disallowedCalleeSaves.exclude(code.calleeSaveRegisters());
     }
     
-    auto getScratches = [&] (RegisterSet set, Bank bank) -> std::array<Arg, 2> {
+    auto getScratches = [&] (RegisterSet128 set, Bank bank) -> std::array<Arg, 2> {
         std::array<Arg, 2> result;
         for (unsigned i = 0; i < 2; ++i) {
             bool found = false;
@@ -132,7 +130,7 @@ void lowerAfterRegAlloc(Code& code)
             if (!found) {
                 StackSlot*& slot = slots[bank][i];
                 if (!slot)
-                    slot = code.addStackSlot(bytes(conservativeWidth(bank)), StackSlotKind::Spill);
+                    slot = code.addStackSlot(bytesForWidth(conservativeWidth(bank)), StackSlotKind::Spill);
                 result[i] = Arg::stack(slots[bank][i]);
             }
         }
@@ -147,7 +145,7 @@ void lowerAfterRegAlloc(Code& code)
 
             switch (inst.kind.opcode) {
             case Shuffle: {
-                RegisterSet set = usedRegisters.get(&inst);
+                RegisterSet128 set = usedRegisters.get(&inst);
                 Vector<ShufflePair> pairs;
                 for (unsigned i = 0; i < inst.args.size(); i += 3) {
                     Arg src = inst.args[i + 0];
@@ -178,13 +176,13 @@ void lowerAfterRegAlloc(Code& code)
                 CCallValue* value = inst.origin->as<CCallValue>();
                 Kind oldKind = inst.kind;
 
-                RegisterSet liveRegs = usedRegisters.get(&inst);
-                RegisterSet regsToSave = liveRegs;
-                regsToSave.exclude(RegisterSet::calleeSaveRegisters());
-                regsToSave.exclude(RegisterSet::stackRegisters());
-                regsToSave.exclude(RegisterSet::reservedHardwareRegisters());
+                auto liveRegs = usedRegisters.get(&inst);
+                auto regsToSave = liveRegs;
+                regsToSave.exclude(RegisterSet128::calleeSaveRegisters());
+                regsToSave.exclude(RegisterSet128::use64Bits(RegisterSet::stackRegisters()));
+                regsToSave.exclude(RegisterSet128::use64Bits(RegisterSet::reservedHardwareRegisters()));
 
-                RegisterSet preUsed = liveRegs;
+                auto preUsed = liveRegs;
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
                 Tmp result = cCallResult(value->type());
                 Arg originalResult = result ? inst.args[1] : Arg();
@@ -213,13 +211,13 @@ void lowerAfterRegAlloc(Code& code)
                 if (originalResult.isReg())
                     regsToSave.clear(originalResult.reg());
                 Vector<StackSlot*> stackSlots;
-                regsToSave.forEach(
-                    [&] (Reg reg) {
+                regsToSave.forEachWithWidth(
+                    [&] (Reg reg, IncludedWidth includedWidth) {
                         Tmp tmp(reg);
                         Arg arg(tmp);
-                        Width width = conservativeWidth(arg.bank());
+                        Width width = includedRegisterWidth(arg.bank(), includedWidth);
                         StackSlot* stackSlot =
-                            code.addStackSlot(bytes(width), StackSlotKind::Spill);
+                            code.addStackSlot(bytesForWidth(width), StackSlotKind::Spill);
                         pairs.append(ShufflePair(arg, Arg::stack(stackSlot), width));
                         stackSlots.append(stackSlot);
                     });
@@ -237,11 +235,11 @@ void lowerAfterRegAlloc(Code& code)
                 // Now we need to emit code to restore registers.
                 pairs.shrink(0);
                 unsigned stackSlotIndex = 0;
-                regsToSave.forEach(
-                    [&] (Reg reg) {
+                regsToSave.forEachWithWidth(
+                    [&] (Reg reg, IncludedWidth includedWidth) {
                         Tmp tmp(reg);
                         Arg arg(tmp);
-                        Width width = conservativeWidth(arg.bank());
+                        Width width = includedRegisterWidth(arg.bank(), includedWidth);
                         StackSlot* stackSlot = stackSlots[stackSlotIndex++];
                         pairs.append(ShufflePair(Arg::stack(stackSlot), arg, width));
                     });

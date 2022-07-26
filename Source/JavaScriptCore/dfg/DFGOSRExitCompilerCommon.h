@@ -55,6 +55,7 @@ void adjustFrameAndStackInOSRExitCompilerThunk(MacroAssembler& jit, VM& vm, JITT
         registersToPreserve.merge(RegisterSet::macroScratchRegisters());
     }
 
+    ASSERT(!registersToPreserve.numberOfSetFPRs());
     size_t scratchSize = sizeof(void*) * registersToPreserve.numberOfSetGPRs();
     if (isFTLOSRExit)
         scratchSize += sizeof(void*);

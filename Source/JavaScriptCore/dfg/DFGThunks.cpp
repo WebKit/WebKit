@@ -25,10 +25,12 @@
 
 #include "config.h"
 #include "DFGThunks.h"
+#include "wtf/StdIntExtras.h"
 
 #if ENABLE(DFG_JIT)
 
 #include "AssemblyHelpersSpoolers.h"
+#include "B3Width.h"
 #include "CCallHelpers.h"
 #include "DFGJITCode.h"
 #include "DFGOSRExit.h"
@@ -48,7 +50,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
     // This needs to happen before we use the scratch buffer because this function also uses the scratch buffer.
     adjustFrameAndStackInOSRExitCompilerThunk<DFG::JITCode>(jit, vm, JITType::DFGJIT);
     
-    size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
+    size_t scratchSize = sizeof(EncodedJSValue) * GPRInfo::numberOfRegisters + B3::bytesForWidth(B3::conservativeWidthForC(B3::FP)) * FPRInfo::numberOfRegisters;
     ScratchBuffer* scratchBuffer = vm.scratchBufferForSize(scratchSize);
     EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
 
@@ -80,13 +82,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 
     for (unsigned i = firstGPR; i < GPRInfo::numberOfRegisters; ++i) {
         ptrdiff_t offset = i * sizeof(CPURegister);
-        storeSpooler.storeGPR({ GPRInfo::toRegister(i), offset });
+        storeSpooler.storeGPR({ GPRInfo::toRegister(i), offset, sizeof(CPURegister) });
     }
     storeSpooler.finalizeGPR();
 
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
-        ptrdiff_t offset = (GPRInfo::numberOfRegisters + i) * sizeof(double);
-        storeSpooler.storeFPR({ FPRInfo::toRegister(i), offset });
+        ptrdiff_t offset = GPRInfo::numberOfRegisters * sizeof(CPURegister) + i * B3::bytesForWidth(B3::conservativeWidthForC(B3::FP));
+        storeSpooler.storeFPR({ FPRInfo::toRegister(i), offset, B3::bytesForWidth(B3::conservativeWidthForC(B3::FP)) }, B3::bytesForWidth(B3::conservativeWidthForC(B3::FP)));
     }
     storeSpooler.finalizeFPR();
 
@@ -101,13 +103,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 
     for (unsigned i = firstGPR; i < GPRInfo::numberOfRegisters; ++i) {
         ptrdiff_t offset = i * sizeof(CPURegister);
-        loadSpooler.loadGPR({ GPRInfo::toRegister(i), offset });
+        loadSpooler.loadGPR({ GPRInfo::toRegister(i), offset, sizeof(CPURegister)});
     }
     loadSpooler.finalizeGPR();
 
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
-        ptrdiff_t offset = (GPRInfo::numberOfRegisters + i) * sizeof(double);
-        loadSpooler.loadFPR({ FPRInfo::toRegister(i), offset });
+        ptrdiff_t offset = GPRInfo::numberOfRegisters * sizeof(CPURegister) + i * B3::bytesForWidth(B3::conservativeWidthForC(B3::FP));
+        loadSpooler.loadFPR({ FPRInfo::toRegister(i), offset, B3::bytesForWidth(B3::conservativeWidthForC(B3::FP)) }, B3::bytesForWidth(B3::conservativeWidthForC(B3::FP)));
     }
     loadSpooler.finalizeFPR();
 

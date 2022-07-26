@@ -102,6 +102,8 @@ def arm64FPRName(name, kind)
     when :float
         "s" + name[1..-1]
     when :vector
+        "q" + name[1..-1]
+    when :vector_suffixed
         "v" + name[1..-1]
     else
         raise "bad FPR kind #{kind}"
@@ -177,6 +179,17 @@ class RegisterID
             raise "Bad register name #{@name} at #{codeOriginString}"
         end
     end
+    
+    def arm64OperandSuffixed()
+        base = self.arm64Operand(@suffix_kind)
+        base + @suffix
+    end
+    
+    def withSuffix(suffix_kind, suffix)
+        @suffix_kind = suffix_kind
+        @suffix = suffix.empty? ? "" : ".#{suffix}"
+        self
+    end
 end
 
 class FPRegisterID
@@ -217,11 +230,42 @@ class FPRegisterID
         else "Bad register name #{@name} at #{codeOriginString}"
         end
     end
+    
+    def arm64OperandSuffixed()
+        base = self.arm64Operand(@suffix_kind)
+        index = @index == :none ? "" : " [ #{@index.arm64Index()} ]"
+        base + @suffix + index
+    end
+    
+    def withSuffix(suffix_kind, suffix)
+        @suffix_kind = suffix_kind
+        @suffix = suffix.empty? ? "" : ".#{suffix}"
+        @index = :none
+        self
+    end
+    
+    def withIndex(index)
+        raise unless index.is_a? Immediate
+        @index = index
+        self
+    end
 end
 
 class Immediate
     def arm64Operand(kind)
         "\##{value}"
+    end
+    
+    def arm64OperandSuffixed()
+        "\##{value}"
+    end
+    
+    def arm64Index()
+        "#{value}"
+    end
+    
+    def withSuffix(_, _)
+        self
     end
 end
 
@@ -378,7 +422,7 @@ def arm64LowerLabelReferences(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
-            when "loadi", "loadis", "loadp", "loadq", "loadb", "loadbsi", "loadbsq", "loadh", "loadhsi", "loadhsq", "leap"
+            when "loadi", "loadis", "loadp", "loadq", "loadb", "loadbsi", "loadbsq", "loadh", "loadhsi", "loadhsq", "leap", "loadv"
                 labelRef = node.operands[0]
                 if labelRef.is_a? LabelReference
                     dest = node.operands[1]
@@ -461,7 +505,7 @@ class Sequence
             when "loadp", "storep", "loadq", "storeq", "loadd", "stored", "lshiftp", "lshiftq", "negp", "negq", "rshiftp", "rshiftq",
                 "urshiftp", "urshiftq", "addp", "addq", "mulp", "mulq", "andp", "andq", "orp", "orq", "subp", "subq", "xorp", "xorq", "addd",
                 "divd", "subd", "muld", "sqrtd", /^bp/, /^bq/, /^btp/, /^btq/, /^cp/, /^cq/, /^tp/, /^tq/, /^bd/,
-                "jmp", "call", "leap", "leaq", "loadlinkacqq", "storecondrelq", /^atomic[a-z]+q$/
+                "jmp", "call", "leap", "leaq", "loadlinkacqq", "storecondrelq", /^atomic[a-z]+q$/, "loadv", "storev"
                 size = $currentSettings["ADDRESS64"] ? 8 : 4
             when "loadpairq", "storepairq", "loadpaird", "storepaird"
                 size = 16
@@ -663,10 +707,27 @@ def emitARM64TACWithOperandSuffix(opcode, operands, kind)
     size = kind == :float ? 8 : 16
     operands = operands.map { |operand|
         raise unless operand.is_a? FPRegisterID
-        "#{operand.arm64Operand(:vector)}.#{size}b"
+        "#{operand.arm64Operand(:vector_suffixed)}.#{size}b"
     }
     if operands.length == 2
       operands = [operands[1], operands[1], operands[0]]
+    else
+      raise unless operands.length == 3
+      operands = [operands[2], operands[0], operands[1]]
+    end
+    $asm.puts "#{opcode} #{operands.join(", ")}"
+end
+
+def emitARM64WithOperandSuffixes(opcode, *operands)
+    operands = operands.map { |operand|
+        if operand.kind_of? Array
+            "{ " + (operand.map { | o | o.arm64OperandSuffixed() }).join(",") + " }"
+        else
+            operand.arm64OperandSuffixed()
+        end
+    }
+    if operands.length == 2
+      operands = [operands[1], operands[0]]
     else
       raise unless operands.length == 3
       operands = [operands[2], operands[0], operands[1]]
@@ -888,6 +949,8 @@ class Instruction
             emitARM64Unflipped("str", operands, :ptr)
         when "storeq"
             emitARM64Unflipped("str", operands, :quad)
+        when "storev"
+            emitARM64Unflipped("str", operands, :vector)
         when "loadb"
             emitARM64Access("ldrb", "ldurb", operands[1], operands[0], :word)
         when "loadbsi"
@@ -918,6 +981,18 @@ class Instruction
             emitARM64TAC("fmul", operands, :double)
         when "sqrtd"
             emitARM64("fsqrt", operands, :double)
+        when "loadv"
+            emitARM64Access("ldr", "ldur", operands[1], operands[0], :vector)
+        when "splat_lane_byte"
+            emitARM64WithOperandSuffixes("dup", operands[0].withSuffix(:word, ""), operands[1].withSuffix(:vector_suffixed, "16b"))
+        when "splat_lane_int"
+            emitARM64WithOperandSuffixes("dup", operands[0].withSuffix(:word, ""), operands[1].withSuffix(:vector_suffixed, "4s"))
+        when "swizzle_byte"
+            emitARM64WithOperandSuffixes("tbl", [ operands[1].withSuffix(:vector_suffixed, "16b") ], operands[0].withSuffix(:vector_suffixed, "16b"), operands[1].withSuffix(:vector_suffixed, "16b"))
+        when "extract_lane_byte"
+            emitARM64WithOperandSuffixes("umov", operands[1].withSuffix(:vector_suffixed, "B").withIndex(operands[0]), operands[2].withSuffix(:word, ""))
+        when "extract_lane_int"
+            emitARM64WithOperandSuffixes("umov", operands[1].withSuffix(:vector_suffixed, "S").withIndex(operands[0]), operands[2].withSuffix(:word, ""))
         when "bdeq"
             emitARM64Branch("fcmp", operands, :double, "b.eq")
         when "bdneq"

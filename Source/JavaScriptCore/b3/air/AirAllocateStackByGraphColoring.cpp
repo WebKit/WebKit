@@ -90,7 +90,7 @@ protected:
             StackSlot* slot = arg.stackSlot();
             if (slot->kind() != StackSlotKind::Spill)
                 return false;
-            if (slot->byteSize() != bytes(width))
+            if (slot->byteSize() != bytesForWidth(width))
                 return false;
         }
 

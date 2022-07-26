@@ -99,6 +99,7 @@ Tmp cCallResult(Type type)
     case Float:
     case Double:
         return Tmp(FPRInfo::returnValueFPR);
+    case V128:
     case Tuple:
         break;
     }

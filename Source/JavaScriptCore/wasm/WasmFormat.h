@@ -68,6 +68,7 @@ inline bool isValueType(Type type)
     case TypeKind::I64:
     case TypeKind::F32:
     case TypeKind::F64:
+    case TypeKind::V128:
     case TypeKind::Externref:
     case TypeKind::Funcref:
         return true;
@@ -82,7 +83,7 @@ inline bool isValueType(Type type)
 
 inline JSString* typeToString(VM& vm, TypeKind type)
 {
-#define TYPE_CASE(macroName, value, b3, inc, wasmName) \
+#define TYPE_CASE(macroName, value, b3, inc, wasmName, ...) \
     case TypeKind::macroName: \
         return jsNontrivialString(vm, #wasmName""_s); \
 

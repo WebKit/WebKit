@@ -25,10 +25,12 @@
 
 #include "config.h"
 #include "FTLThunks.h"
+#include "wtf/StdIntExtras.h"
 
 #if ENABLE(FTL_JIT)
 
 #include "AssemblyHelpersSpoolers.h"
+#include "B3Width.h"
 #include "DFGOSRExitCompilerCommon.h"
 #include "FTLOSRExitCompiler.h"
 #include "FTLOperations.h"
@@ -183,7 +185,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     for (MacroAssembler::RegisterID reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = static_cast<MacroAssembler::RegisterID>(reg + 1)) {
         if (!key.usedRegisters().get(reg))
             continue;
-        storeSpooler.storeGPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
+        storeSpooler.storeGPR({ reg, static_cast<ptrdiff_t>(currentOffset), sizeof(CPURegister) });
         currentOffset += sizeof(void*);
     }
     storeSpooler.finalizeGPR();
@@ -191,8 +193,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = static_cast<MacroAssembler::FPRegisterID>(reg + 1)) {
         if (!key.usedRegisters().get(reg))
             continue;
-        storeSpooler.storeFPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
-        currentOffset += sizeof(double);
+        storeSpooler.storeFPR({ reg, static_cast<ptrdiff_t>(currentOffset), B3::bytesForWidth(B3::conservativeWidthForC(B3::FP)) }, B3::bytesForWidth(B3::conservativeWidthForC(B3::FP)));
+        currentOffset += B3::bytesForWidth(B3::conservativeWidthForC(B3::FP));
     }
     storeSpooler.finalizeFPR();
 
@@ -220,8 +222,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
 
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::lastFPRegister(); ; reg = static_cast<MacroAssembler::FPRegisterID>(reg - 1)) {
         if (key.usedRegisters().get(reg)) {
-            currentOffset -= sizeof(double);
-            loadSpooler.loadFPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
+            currentOffset -= B3::bytesForWidth(B3::conservativeWidthForC(B3::FP));
+            loadSpooler.loadFPR({ reg, static_cast<ptrdiff_t>(currentOffset), B3::bytesForWidth(B3::conservativeWidthForC(B3::FP)) }, B3::bytesForWidth(B3::conservativeWidthForC(B3::FP)));
         }
         if (reg == MacroAssembler::firstFPRegister())
             break;
@@ -231,7 +233,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     for (MacroAssembler::RegisterID reg = MacroAssembler::lastRegister(); ; reg = static_cast<MacroAssembler::RegisterID>(reg - 1)) {
         if (key.usedRegisters().get(reg)) {
             currentOffset -= sizeof(void*);
-            loadSpooler.loadGPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
+            loadSpooler.loadGPR({ reg, static_cast<ptrdiff_t>(currentOffset), sizeof(CPURegister) });
         }
         if (reg == MacroAssembler::firstRegister())
             break;

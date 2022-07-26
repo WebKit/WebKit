@@ -26,6 +26,7 @@
 # This tool has a couple of helpful macros to process Wasm files from the wasm.json.
 
 from generateWasm import *
+from generateSimdOpcodes import *
 import optparse
 import sys
 import re
@@ -35,7 +36,10 @@ parser = optparse.OptionParser(usage="usage: %prog <wasm.json> <WasmOps.h>")
 if len(args) != 3:
     parser.error(parser.usage)
 
-wasm = Wasm(args[0], args[1])
+jsonPath = args[1]
+jsonDirectory = os.path.dirname(os.path.abspath(jsonPath))
+
+wasm = Wasm(args[0], jsonPath)
 opcodes = wasm.opcodes
 wasmB3IRGeneratorHFile = open(args[2], "w")
 
@@ -192,12 +196,48 @@ def generateSimpleCode(op):
     args = ["ExpressionType arg" + str(param) for param in range(len(opcode["parameter"]))]
     args.append("ExpressionType& result")
     return """
-template<> auto B3IRGenerator::addOp<OpType::""" + wasm.toCpp(op["name"]) + ">(" + ", ".join(args) + """) -> PartialResult
+template<> auto B3IRGenerator::addOp<OpType::""" + toCpp(op["name"]) + ">(" + ", ".join(args) + """) -> PartialResult
 {
 """ + generateB3Code(opcode, b3op) + """
     return { };
 }
 """
+
+def simdContents():
+    s = ""
+    opcodes = simdOpcodes(jsonDirectory)
+
+    for key in opcodes:
+        op = opcodes[key]
+        if op["is_simd_special_op"]:
+            continue
+
+        assert(len(op["parameter"]))
+        assert(len(op["return"]) == 1)
+
+        hasImm = len(op["immediate"]) != 0
+
+        s = s + "\n"
+        s = s + functionGeneratorDecl(key, op, "B3IRGenerator")
+        s = s + "    result = push(m_currentBlock->appendNew<SimdValue>(m_proc, origin(), "
+        s = s + op["b3op"] + ", " 
+        s = s + f"toB3Type(Types::{cppType(op['return'][0])}), "
+        s = s + "SimdInfo { SimdLane::" + op["simd_lane_interpretation"] + ", SimdSignMode::" + op["simd_sign_extend_mode"] + " }, "
+        if hasImm:
+            s = s + "imm, "
+        i = 0
+        for x in op["parameter"]:
+            s = s + "get(arg" + str(i) + ")"
+            i = i + 1
+            if i < len(op["parameter"]):
+                s = s + ", "
+        s = s + "));"
+        s = s + "\n"
+        s = s + "    return { };"
+        s = s + "\n}"
+
+    return s
+
 
 
 definitions = [generateSimpleCode(op) for op in wasm.opcodeIterator(lambda op: isSimple(op) and (isBinary(op) or isUnary(op)))]
@@ -209,7 +249,7 @@ contents = wasm.header + """
 
 namespace JSC { namespace Wasm {
 
-""" + "".join(definitions) + """
+""" + "".join(definitions) + "\n" + simdContents() + """
 
 } } // namespace JSC::Wasm
 

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "AirAllocateRegistersAndStackAndGenerateCode.h"
+#include "b3/B3Width.h"
 
 #if ENABLE(B3_JIT)
 
@@ -39,6 +40,10 @@
 #include "DisallowMacroScratchRegisterUsage.h"
 
 namespace JSC { namespace B3 { namespace Air {
+
+namespace GenerateAndAllocateRegistersInternal {
+static bool verbose = false;
+}
 
 GenerateAndAllocateRegisters::GenerateAndAllocateRegisters(Code& code)
     : m_code(code)
@@ -172,8 +177,11 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::flush(Tmp tmp, Reg reg)
     intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
     if (tmp.isGP())
         m_jit->store64(reg.gpr(), callFrameAddr(*m_jit, offset));
-    else
+    else if constexpr (B3::bytesForWidth(B3::conservativeWidth(B3::FP)) == sizeof(double)) {
         m_jit->storeDouble(reg.fpr(), callFrameAddr(*m_jit, offset));
+    } else {
+        m_jit->storeVector(reg.fpr(), callFrameAddr(*m_jit, offset));
+    }
 }
 
 ALWAYS_INLINE void GenerateAndAllocateRegisters::spill(Tmp tmp, Reg reg)
@@ -202,8 +210,11 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::alloc(Tmp tmp, Reg reg, Arg::Ro
         intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
         if (tmp.bank() == GP)
             m_jit->load64(callFrameAddr(*m_jit, offset), reg.gpr());
-        else
+        else if constexpr (B3::bytesForWidth(B3::conservativeWidth(B3::FP)) == sizeof(double)) {
             m_jit->loadDouble(callFrameAddr(*m_jit, offset), reg.fpr());
+        } else {
+            m_jit->loadVector(callFrameAddr(*m_jit, offset), reg.fpr());
+        }
     }
 }
 
@@ -326,7 +337,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::isDisallowedRegister(Reg reg)
 void GenerateAndAllocateRegisters::prepareForGeneration()
 {
     // We pessimistically assume we use all callee saves.
-    handleCalleeSaves(m_code, RegisterSet::calleeSaveRegisters());
+    handleCalleeSaves(m_code, RegisterSet128::calleeSaveRegisters());
     allocateEscapedStackSlots(m_code);
 
     insertBlocksForFlushAfterTerminalPatchpoints();
@@ -357,11 +368,13 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
                         toFree.append(data.spillSlot);
                     return;
                 }
-
-                if (freeSlots.size())
+                
+                if (freeSlots.size() && freeSlots.last()->byteSize() >= bytesForWidth(conservativeWidth(tmp.bank())))
                     data.spillSlot = freeSlots.takeLast();
                 else
-                    data.spillSlot = m_code.addStackSlot(8, StackSlotKind::Spill);
+                    data.spillSlot = m_code.addStackSlot(bytesForWidth(conservativeWidth(tmp.bank())), StackSlotKind::Spill);
+                
+                dataLogLnIf(GenerateAndAllocateRegistersInternal::verbose, "assignStackSlotToTmp block: ", *block, ", tmp: ", tmp, " -> slot ", data.spillSlot);
                 data.reg = Reg();
             };
 
@@ -398,7 +411,7 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
         }
     } 
 
-    m_allowedRegisters = RegisterSet();
+    m_allowedRegisters = { };
 
     forEachBank([&] (Bank bank) {
         m_registers[bank] = m_code.regsInPriorityOrder(bank);
@@ -406,18 +419,18 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
         for (Reg reg : m_registers[bank]) {
             m_allowedRegisters.set(reg);
             TmpData& data = m_map[Tmp(reg)];
-            data.spillSlot = m_code.addStackSlot(8, StackSlotKind::Spill);
+            data.spillSlot = m_code.addStackSlot(bytesForWidth(conservativeWidth(bankForReg(reg))), StackSlotKind::Spill);
+            dataLogLnIf(GenerateAndAllocateRegistersInternal::verbose, "allowedRegisters: reg: ", reg, " -> slot ", data.spillSlot);
             data.reg = Reg();
         }
     });
 
     {
-        unsigned nextIndex = 0;
+        intptr_t offset = -static_cast<intptr_t>(m_code.frameSize());
         for (StackSlot* slot : m_code.stackSlots()) {
             if (slot->isLocked())
                 continue;
-            intptr_t offset = -static_cast<intptr_t>(m_code.frameSize()) - static_cast<intptr_t>(nextIndex) * 8 - 8;
-            ++nextIndex;
+            offset -= std::max(slot->byteSize(), bytesForWidth(conservativeWidth(B3::GP)));
             slot->setOffsetFromFP(offset);
         }
     }

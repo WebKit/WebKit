@@ -61,7 +61,7 @@ RegLiveness::RegLiveness(Code& code)
     
     // The liveAtTail of each block automatically contains the LateUse's of the terminal.
     for (BasicBlock* block : code) {
-        RegisterSet& liveAtTail = m_liveAtTail[block];
+        auto& liveAtTail = m_liveAtTail[block];
             
         block->last().forEach<Reg>(
             [&] (Reg& reg, Arg::Role role, Bank, Width) {
@@ -97,14 +97,14 @@ RegLiveness::RegLiveness(Code& code)
                         localCalc.m_workset.remove(reg);
                 });
                 
-            RegisterSet& liveAtHead = m_liveAtHead[block];
+            auto& liveAtHead = m_liveAtHead[block];
             if (liveAtHead.subsumes(localCalc.m_workset))
                 continue;
                 
             liveAtHead.merge(localCalc.m_workset);
                 
             for (BasicBlock* predecessor : block->predecessors()) {
-                RegisterSet& liveAtTail = m_liveAtTail[predecessor];
+                auto& liveAtTail = m_liveAtTail[predecessor];
                 if (liveAtTail.subsumes(localCalc.m_workset))
                     continue;
                     

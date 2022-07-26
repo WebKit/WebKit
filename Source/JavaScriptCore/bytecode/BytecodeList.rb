@@ -1522,6 +1522,7 @@ op :wide32
 
 op :enter
 op :nop
+op :break
 op :loop_hint
 
 op :mov,
@@ -1676,14 +1677,14 @@ op :call,
     args: {
         functionIndex: unsigned,
         stackOffset: unsigned,
-        numberOfStackArgs: unsigned,
+        sizeOfStackArgs: unsigned,
     }
 
 op :call_no_tls,
     args: {
         functionIndex: unsigned,
         stackOffset: unsigned,
-        numberOfStackArgs: unsigned,
+        sizeOfStackArgs: unsigned,
     }
 
 op :call_indirect,
@@ -1691,7 +1692,7 @@ op :call_indirect,
         functionIndex: VirtualRegister,
         typeIndex: unsigned,
         stackOffset: unsigned,
-        numberOfStackArgs: unsigned,
+        sizeOfStackArgs: unsigned,
         tableIndex: unsigned,
     }
 
@@ -1700,7 +1701,7 @@ op :call_indirect_no_tls,
         functionIndex: VirtualRegister,
         typeIndex: unsigned,
         stackOffset: unsigned,
-        numberOfStackArgs: unsigned,
+        sizeOfStackArgs: unsigned,
         tableIndex: unsigned,
     }
 
@@ -1709,7 +1710,7 @@ op :call_ref,
         functionReference: VirtualRegister,
         typeIndex: unsigned,
         stackOffset: unsigned,
-        numberOfStackArgs: unsigned,
+        sizeOfStackArgs: unsigned,
     }
 
 op :call_ref_no_tls,
@@ -1717,7 +1718,7 @@ op :call_ref_no_tls,
         functionReference: VirtualRegister,
         typeIndex: unsigned,
         stackOffset: unsigned,
-        numberOfStackArgs: unsigned,
+        sizeOfStackArgs: unsigned,
     }
 
 op :current_memory,
@@ -1777,6 +1778,13 @@ op_group :Load,
         :i32_load16_s,
         :i64_load16_s,
         :i64_load32_s,
+        :simd_load,
+        :simd_load_splat8,
+        :simd_load_splat16,
+        :simd_load_splat32,
+        :simd_load_splat64,
+        :simd_load_pad32,
+        :simd_load_pad64,
     ],
     args: {
         dst: VirtualRegister,
@@ -1790,6 +1798,7 @@ op_group :Store,
         :store16,
         :store32,
         :store64,
+        :simd_store,
     ],
     args: {
         pointer: VirtualRegister,
@@ -1891,6 +1900,407 @@ op_group :CatchAll,
     args: {
         exception: VirtualRegister,
     }
+    
+simd_op_group :VectorExtractLane,
+    [
+        :simd_extract_lane,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lane: unsigned,
+        v: VirtualRegister,
+    },
+    makeSignedVariants: true
+
+simd_op_group :VectorReplaceLane,
+    [
+        :simd_replace_lane,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lane: unsigned,
+        vector: VirtualRegister,
+        scalar: VirtualRegister,
+    }
+
+simd_op_group :SimpleCompare,
+    [
+        :simd_eq,
+        :simd_ne,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+    }
+
+simd_op_group :ComplexCompare,
+    [
+        :simd_lt,
+        :simd_gt,
+        :simd_le,
+        :simd_ge,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+    },
+    makeAllSignedAndUnsignedVariants: true
+
+simd_op_group :Binop,
+    [
+        :simd_add,
+        :simd_sub,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+    }
+
+simd_op_group :MulBinop,
+    [
+        :simd_mul,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+    },
+    skipI8Variant: true
+
+simd_op_group :DivBinop,
+    [
+        :simd_div,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+    },
+    makeOnlyFloatingPointVariants: true
+
+simd_op_group :MinMaxBinop,
+    [
+        :simd_min,
+        :simd_max,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+    },
+    makeAllSignedAndUnsignedVariants: true,
+    skipI64Variant: true
+
+simd_op_group :PMinMaxBinop,
+    [
+        :simd_pmin,
+        :simd_pmax,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+    },
+    makeOnlyFloatingPointVariants: true
+
+simd_op_group :SimdBinaryBitwise,
+    [
+        :simd_and,
+        :simd_andnot,
+        :simd_or,
+        :simd_xor,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+    },
+    makeOnlyV128: true
+
+simd_op_group :SimdUnaryBitwise,
+    [
+        :simd_not,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    },
+    makeOnlyV128: true
+
+simd_op_group :SimdUnary,
+    [
+        :simd_abs,
+        :simd_neg,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    }
+
+simd_op_group :SimdPopcnt,
+    [
+        :simd_popcnt,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    },
+    makeOnlyI8: true
+
+simd_op_group :SimdFloatingPointUnary,
+    [
+        :simd_ceil,
+        :simd_floor,
+        :simd_trunc,
+        :simd_nearest,
+        :simd_sqrt,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    },
+    makeOnlyFloatingPointVariants: true
+
+
+simd_op_group :SimdExtend,
+    [
+        :simd_extend_low,
+        :simd_extend_high,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    },
+    makeAllSignedAndUnsignedVariants: true,
+    skipI64Variant: true,
+    skipFloatVariants: true
+
+simd_op_group :SimdPromote,
+    [
+        :simd_promote,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    },
+    makeOnlyF32: true
+
+simd_op_group :SimdDemote,
+    [
+        :simd_demote,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    },
+    makeOnlyF64: true
+
+simd_op_group :SimdSplat,
+    [
+        :simd_splat,
+    ],
+    args: {
+        dst: VirtualRegister,
+        input: VirtualRegister,
+    }
+
+simd_op_group :SimdShl,
+    [
+        :simd_shl,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+        shift: VirtualRegister
+    },
+    skipFloatVariants: true
+
+simd_op_group :SimdShr,
+    [
+        :simd_shr,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+        shift: VirtualRegister
+    },
+    makeAllSignedAndUnsignedVariants: true,
+    skipFloatVariants: true
+
+simd_op_group :SimdSatArithmetic,
+    [
+        :simd_add_sat,
+        :simd_sub_sat,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister
+    },
+    variants: ["i8x16_s", "i8x16_u", "i16x8_s", "i16x8_u"]
+
+simd_op_group :SimdTruncSat,
+    [
+        :simd_trunc_sat,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    },
+    variants: ["f32x4_s", "f32x4_u", "f64x2_s", "f64x2_u"]
+
+simd_op_group :SimdConvert,
+    [
+        :simd_convert,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    },
+    variants: ["i32x4_s", "i32x4_u"]
+
+simd_op_group :SimdConvertLow,
+    [
+        :simd_convert_low,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    },
+    variants: ["i32x4_s", "i32x4_u"]
+
+simd_op_group :SimdNarrow,
+    [
+        :simd_narrow,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lower: VirtualRegister,
+        upper: VirtualRegister,
+    },
+    variants: ["i16x8_s", "i16x8_u", "i32x4_s", "i32x4_u"]
+
+op_group :LoadLane,
+    [
+        :simd_load_lane8,
+        :simd_load_lane16,
+        :simd_load_lane32,
+        :simd_load_lane64,
+    ],
+    args: {
+        dst: VirtualRegister,
+        pointer: VirtualRegister,
+        vector: VirtualRegister,
+        offset: unsigned,
+        laneIndex: uint8_t,
+    }
+
+op_group :StoreLane,
+    [
+        :simd_store_lane8,
+        :simd_store_lane16,
+        :simd_store_lane32,
+        :simd_store_lane64,
+    ],
+    args: {
+        value: VirtualRegister,
+        pointer: VirtualRegister,
+        offset: unsigned,
+        laneIndex: uint8_t,
+    }
+
+simd_op_group :LoadExtend,
+    [
+        :simd_load_extend
+    ],
+    args: {
+        dst: VirtualRegister,
+        pointer: VirtualRegister,
+        offset: unsigned,
+    },
+    variants: ["8u", "8s", "16u", "16s", "32u", "32s"]
+
+simd_op_group :SimdAnyTrue,
+    [
+        :simd_any_true,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    },
+    variants: ["v128"]
+
+simd_op_group :SimdReduce,
+    [
+        :simd_all_true,
+        :simd_bitmask,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    },
+    skipFloatVariants: true
+
+simd_op_group :SimdExtadd,
+    [
+        :simd_extadd_pairwise,
+    ],
+    args: {
+        dst: VirtualRegister,
+        v: VirtualRegister,
+    },
+    variants: ["i32x4_s", "i32x4_u", "i16x8_s", "i16x8_u"]
+
+simd_op_group :SimdAvgRound,
+    [
+        :simd_avg_round,
+    ],
+    args: {
+        dst: VirtualRegister,
+        a: VirtualRegister,
+        b: VirtualRegister,
+    },
+    variants: ["i8x16", "i16x8"]
+    
+op_group :SimdV128Binop,
+    [
+        :simd_mul_sat_i16x8,
+        :simd_swizzle_i8x16,
+        :simd_dot_product_i32x4,
+    ],
+    args: {
+        dst: VirtualRegister,
+        a: VirtualRegister,
+        b: VirtualRegister,
+    }
+
+simd_op_group :SimdShuffle,
+    [
+        :simd_shuffle,
+    ],
+    args: {
+        dst: VirtualRegister,
+        a: VirtualRegister,
+        b: VirtualRegister,
+        imm_low: uintptr_t,
+        imm_high: uintptr_t,
+    },
+    variants: ["i16x8"]
+
+simd_op_group :SimdV128Ternop,
+    [
+        :simd_bitwise_select,
+    ],
+    args: {
+        dst: VirtualRegister,
+        a: VirtualRegister,
+        b: VirtualRegister,
+        c: VirtualRegister,
+    },
+    variants: ["v128"]
 
 op :i31_new,
     args: {

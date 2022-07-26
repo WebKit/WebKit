@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "AirAllocateRegistersAndStackByLinearScan.h"
+#include "b3/B3Bank.h"
+#include "b3/B3Width.h"
 
 #if ENABLE(B3_JIT)
 
@@ -78,7 +80,7 @@ struct TmpData {
     
     Interval interval;
     StackSlot* spilled { nullptr };
-    RegisterSet possibleRegs;
+    RegisterSet128 possibleRegs;
     Reg assigned;
     bool isUnspillable { false };
     bool didBuildPossibleRegs { false };
@@ -90,7 +92,7 @@ struct Clobber {
     {
     }
     
-    Clobber(size_t index, RegisterSet regs)
+    Clobber(size_t index, const RegisterSet128& regs)
         : index(index)
         , regs(regs)
     {
@@ -102,7 +104,7 @@ struct Clobber {
     }
     
     size_t index { 0 };
-    RegisterSet regs;
+    RegisterSet128 regs;
 };
 
 class LinearScan {
@@ -270,9 +272,9 @@ private:
                 // liveness constraints. Except we want those constraints to separate the late
                 // actions of one instruction from the early actions of the next.
                 // https://bugs.webkit.org/show_bug.cgi?id=170850
-                const RegisterSet& regs = localCalc.live();
+                const auto& regs = localCalc.live();
                 if (Inst* prev = block->get(instIndex - 1)) {
-                    RegisterSet prevRegs = regs;
+                    auto prevRegs = regs;
                     prev->forEach<Reg>(
                         [&] (Reg& reg, Arg::Role role, Bank, Width) {
                             if (Arg::isLateDef(role))
@@ -285,7 +287,7 @@ private:
                         m_clobbers.append(Clobber(indexOfHead + instIndex * 2 - 1, prevRegs));
                 }
                 if (Inst* next = block->get(instIndex)) {
-                    RegisterSet nextRegs = regs;
+                    auto nextRegs = regs;
                     next->forEach<Reg>(
                         [&] (Reg& reg, Arg::Role role, Bank, Width) {
                             if (Arg::isEarlyDef(role))
@@ -461,7 +463,7 @@ private:
                 while (clobberIndex < m_clobbers.size() && m_clobbers[clobberIndex].index < index)
                     clobberIndex++;
                 
-                RegisterSet possibleRegs = m_registerSet[bank];
+                auto possibleRegs = m_registerSet[bank];
                 for (size_t i = clobberIndex; i < m_clobbers.size() && m_clobbers[i].index < entry.interval.end(); ++i)
                     possibleRegs.exclude(m_clobbers[i].regs);
                 
@@ -541,7 +543,7 @@ private:
     {
         TmpData& entry = m_map[tmp];
         RELEASE_ASSERT(!entry.isUnspillable);
-        entry.spilled = m_code.addStackSlot(8, StackSlotKind::Spill);
+        entry.spilled = m_code.addStackSlot(B3::bytesForWidth(B3::conservativeWidth(tmp.bank())), StackSlotKind::Spill);
         entry.assigned = Reg();
         m_didSpill = true;
     }
@@ -571,13 +573,13 @@ private:
                 
                 // Fall back on the hard way.
                 inst.forEachTmp(
-                    [&] (Tmp& tmp, Arg::Role role, Bank bank, Width) {
+                    [&] (Tmp& tmp, Arg::Role role, Bank bank, Width width) {
                         if (tmp.isReg())
                             return;
                         StackSlot* spilled = m_map[tmp].spilled;
                         if (!spilled)
                             return;
-                        Opcode move = bank == GP ? Move : MoveDouble;
+                        Opcode move = bank == GP ? Move : width <= Width64 ? MoveDouble : MoveVector;
                         tmp = addSpillTmpWithInterval(bank, intervalForSpill(indexOfEarly, role));
                         if (role == Arg::Scratch)
                             return;
@@ -620,6 +622,7 @@ private:
             }
             
             entry.spillIndex = m_usedSpillSlots.findBit(0, false);
+            // OOPS: should handle v128
             ptrdiff_t offset = -static_cast<ptrdiff_t>(m_code.frameSize()) - static_cast<ptrdiff_t>(entry.spillIndex) * 8 - 8;
             if (verbose())
                 dataLog("  Assigning offset = ", offset, " to spill ", pointerDump(entry.spilled), " for ", tmp, "\n");
@@ -669,15 +672,15 @@ private:
     
     Code& m_code;
     Vector<Reg> m_registers[numBanks];
-    RegisterSet m_registerSet[numBanks];
-    RegisterSet m_unifiedRegisterSet;
+    RegisterSet128 m_registerSet[numBanks];
+    RegisterSet128 m_unifiedRegisterSet;
     IndexMap<BasicBlock*, size_t> m_startIndex;
     TmpMap<TmpData> m_map;
     IndexMap<BasicBlock*, PhaseInsertionSet> m_insertionSets;
     Vector<Clobber> m_clobbers; // After we allocate this, we happily point pointers into it.
     Vector<Tmp> m_tmps;
     Deque<Tmp> m_active;
-    RegisterSet m_activeRegs;
+    RegisterSet128 m_activeRegs;
     BitVector m_usedSpillSlots;
     bool m_didSpill { false };
 };

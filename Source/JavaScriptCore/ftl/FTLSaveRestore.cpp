@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "FTLSaveRestore.h"
+#include "wtf/StdIntExtras.h"
 
 #if ENABLE(FTL_JIT)
 
@@ -36,17 +37,25 @@
 
 namespace JSC { namespace FTL {
 
-static size_t bytesForGPRs()
+static inline constexpr size_t bytesForGPRs()
 {
-    return MacroAssembler::numberOfRegisters() * sizeof(int64_t);
+    return MacroAssembler::numberOfRegisters() * sizeof(CPURegister);
 }
 
-static size_t bytesForFPRs()
+static inline constexpr size_t bytesForFPR()
 {
     // FIXME: It might be worthwhile saving the full state of the FP registers, at some point.
     // Right now we don't need this since we only do the save/restore just prior to OSR exit, and
     // OSR exit will be guaranteed to only need the double portion of the FP registers.
-    return MacroAssembler::numberOfFPRegisters() * sizeof(double);
+    return B3::bytesForWidth(B3::conservativeWidthForC(B3::FP));
+}
+
+static inline constexpr size_t bytesForFPRs()
+{
+    // FIXME: It might be worthwhile saving the full state of the FP registers, at some point.
+    // Right now we don't need this since we only do the save/restore just prior to OSR exit, and
+    // OSR exit will be guaranteed to only need the double portion of the FP registers.
+    return MacroAssembler::numberOfFPRegisters() * bytesForFPR();
 }
 
 size_t requiredScratchMemorySizeInBytes()
@@ -56,12 +65,12 @@ size_t requiredScratchMemorySizeInBytes()
 
 size_t offsetOfGPR(GPRReg reg)
 {
-    return MacroAssembler::registerIndex(reg) * sizeof(int64_t);
+    return MacroAssembler::registerIndex(reg) * sizeof(CPURegister);
 }
 
 size_t offsetOfFPR(FPRReg reg)
 {
-    return bytesForGPRs() + MacroAssembler::fpRegisterIndex(reg) * sizeof(double);
+    return bytesForGPRs() + MacroAssembler::fpRegisterIndex(reg) * bytesForFPR();
 }
 
 size_t offsetOfReg(Reg reg)
@@ -123,7 +132,7 @@ void saveAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
     for (MacroAssembler::RegisterID reg = firstToSaveGPR; reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
         if (regs.special.get(reg))
             continue;
-        spooler.storeGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)) });
+        spooler.storeGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)), sizeof(CPURegister) });
     }
     spooler.finalizeGPR();
     
@@ -139,7 +148,7 @@ void saveAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
         if (regs.special.get(reg))
             continue;
-        spooler.storeFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)) });
+        spooler.storeFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)), bytesForFPR() }, bytesForFPR());
     }
     spooler.finalizeFPR();
 }
@@ -158,7 +167,7 @@ void restoreAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
         if (regs.special.get(reg))
             continue;
-        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)) });
+        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)), sizeof(CPURegister) }, bytesForFPR());
     }
     spooler.finalizeFPR();
     
@@ -173,7 +182,7 @@ void restoreAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
     for (MacroAssembler::RegisterID reg = firstToRestoreGPR; reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
         if (regs.special.get(reg))
             continue;
-        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)) });
+        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)), sizeof(CPURegister) });
     }
     spooler.finalizeGPR();
 
