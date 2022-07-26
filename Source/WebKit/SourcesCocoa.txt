@@ -241,6 +241,8 @@ Shared/mac/MediaFormatReader/MediaSampleByteRange.cpp
 Shared/mac/MediaFormatReader/MediaSampleCursor.cpp
 Shared/mac/MediaFormatReader/MediaTrackReader.cpp
 
+Shared/RemoteLayerTree/CGDisplayList.cpp
+Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp
 Shared/RemoteLayerTree/RemoteLayerBackingStore.mm
 Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm
 Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.mm

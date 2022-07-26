@@ -601,6 +601,7 @@
 		2D3A65E31A7C3A9300CAC637 /* WKNavigationRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A65E11A7C3A9300CAC637 /* WKNavigationRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3A65E71A7C3AA700CAC637 /* WKFrameInfoRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A65E51A7C3AA700CAC637 /* WKFrameInfoRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3EF4431917646300034184 /* WebMemoryPressureHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3EF4411917646300034184 /* WebMemoryPressureHandler.h */; };
+		2D478B91288F33A600F3B73A /* CGDisplayList.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D478B8F288F333500F3B73A /* CGDisplayList.h */; };
 		2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */; };
 		2D4AF0892044C3C4006C8817 /* FrontBoardServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4AF0882044C3C4006C8817 /* FrontBoardServicesSPI.h */; };
 		2D4D2C811DF60BF3002EB10C /* InteractionInformationRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4D2C7F1DF60BF3002EB10C /* InteractionInformationRequest.h */; };
@@ -1813,7 +1814,6 @@
 		BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469521214E6CB000B98EB /* WebFormSubmissionListenerProxy.h */; };
 		BCE4695A1214EDF4000B98EB /* WKFormSubmissionListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469581214EDF4000B98EB /* WKFormSubmissionListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE579A62634836700F5C5E9 /* CGDisplayListImageBufferBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE579A42634836700F5C5E9 /* CGDisplayListImageBufferBackend.h */; };
-		BCE579A72634836700F5C5E9 /* CGDisplayListImageBufferBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE579A52634836700F5C5E9 /* CGDisplayListImageBufferBackend.cpp */; };
 		BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE81D8B1319F7EF00241910 /* FontInfo.h */; };
 		BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE7ACC12817988009827DA /* WebProcessProxyMessageReceiver.cpp */; };
 		BCEE7AD112817988009827DA /* WebProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEE7ACD12817988009827DA /* WebProcessProxyMessages.h */; };
@@ -3845,6 +3845,8 @@
 		2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordField.mm; path = PDF/PDFPluginPasswordField.mm; sourceTree = "<group>"; };
 		2D440B8225EF235E00A98D87 /* PDFKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFKitSoftLink.mm; sourceTree = "<group>"; };
 		2D440B8325EF235E00A98D87 /* PDFKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFKitSoftLink.h; sourceTree = "<group>"; };
+		2D478B8F288F333500F3B73A /* CGDisplayList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CGDisplayList.h; sourceTree = "<group>"; };
+		2D478B90288F333500F3B73A /* CGDisplayList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CGDisplayList.cpp; sourceTree = "<group>"; };
 		2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStore.mm; sourceTree = "<group>"; };
 		2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerBackingStore.h; sourceTree = "<group>"; };
 		2D4AF0882044C3C4006C8817 /* FrontBoardServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrontBoardServicesSPI.h; sourceTree = "<group>"; };
@@ -8772,6 +8774,8 @@
 		2D2E04761F5BEC4F00BB25ED /* RemoteLayerTree */ = {
 			isa = PBXGroup;
 			children = (
+				2D478B90288F333500F3B73A /* CGDisplayList.cpp */,
+				2D478B8F288F333500F3B73A /* CGDisplayList.h */,
 				BCE579A52634836700F5C5E9 /* CGDisplayListImageBufferBackend.cpp */,
 				BCE579A42634836700F5C5E9 /* CGDisplayListImageBufferBackend.h */,
 				2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */,
@@ -13942,6 +13946,7 @@
 				41FABD2A1F4DE001006A6C97 /* CacheStorageEngineCache.h in Headers */,
 				41897EDA1F415D8A0016FA42 /* CacheStorageEngineConnection.h in Headers */,
 				4659F25F275FF6B200BBB369 /* CaptivePortalModeObserver.h in Headers */,
+				2D478B91288F33A600F3B73A /* CGDisplayList.h in Headers */,
 				BCE579A62634836700F5C5E9 /* CGDisplayListImageBufferBackend.h in Headers */,
 				57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */,
 				4482734724528F6000A95493 /* CocoaImage.h in Headers */,
@@ -16743,7 +16748,6 @@
 				51FAEC3B1B0657680009C4E7 /* AuxiliaryProcessMessageReceiver.cpp in Sources */,
 				E326E357284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm in Sources */,
 				517CF0E3163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp in Sources */,
-				BCE579A72634836700F5C5E9 /* CGDisplayListImageBufferBackend.cpp in Sources */,
 				49DC1DE127E5129100C1CB36 /* CSPExtensionUtilities.mm in Sources */,
 				526C5723284ADCBC00E08955 /* CtapCcidDriver.cpp in Sources */,
 				2D0C56FE229F1DEA00BD33E7 /* DeviceManagementSoftLink.mm in Sources */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,33 @@
 
 #pragma once
 
-#include "CGDisplayList.h"
-#include "ShareableBitmap.h"
-#include <variant>
-#include <wtf/MachSendRight.h>
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+
+#include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
 
-using ImageBufferBackendHandle = std::variant<
-    ShareableBitmap::Handle
-#if PLATFORM(COCOA) // FIXME: This is really about IOSurface.
-    , MachSendRight
-#endif
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    , CGDisplayList
-#endif
->;
+class CGDisplayList {
+    WTF_MAKE_NONCOPYABLE(CGDisplayList);
+public:
+    CGDisplayList() = default;
+    explicit CGDisplayList(WebCore::SharedBuffer& displayList)
+        : m_displayList(&displayList)
+    {
+    }
 
-} // namespace WebKit
+    CGDisplayList(CGDisplayList&&) = default;
+    CGDisplayList& operator=(CGDisplayList&&) = default;
+
+    RefPtr<WebCore::SharedBuffer> buffer() const { return m_displayList; }
+
+    void encode(IPC::Encoder&) const;
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, CGDisplayList&);
+
+private:
+    RefPtr<WebCore::SharedBuffer> m_displayList;
+};
+
+}
+
+#endif // ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)

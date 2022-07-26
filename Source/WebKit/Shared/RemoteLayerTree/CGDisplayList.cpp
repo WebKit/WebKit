@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
+#include "config.h"
 #include "CGDisplayList.h"
-#include "ShareableBitmap.h"
-#include <variant>
-#include <wtf/MachSendRight.h>
+
+#include "SharedBufferReference.h"
+
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
 
 namespace WebKit {
 
-using ImageBufferBackendHandle = std::variant<
-    ShareableBitmap::Handle
-#if PLATFORM(COCOA) // FIXME: This is really about IOSurface.
-    , MachSendRight
-#endif
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    , CGDisplayList
-#endif
->;
+void CGDisplayList::encode(IPC::Encoder& encoder) const
+{
+    encoder << m_displayList;
+}
 
-} // namespace WebKit
+bool CGDisplayList::decode(IPC::Decoder& decoder, CGDisplayList& handle)
+{
+    if (!decoder.decode(handle.m_displayList))
+        return false;
+    return true;
+}
+
+}
+
+#endif // ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)

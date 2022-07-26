@@ -28,6 +28,7 @@
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
 
+#include "CGDisplayList.h"
 #include "Logging.h"
 #include <WebCore/GraphicsContextCG.h>
 #include <WebCore/PixelBuffer.h>
@@ -108,7 +109,7 @@ ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(Sh
     RELEASE_LOG(RemoteLayerTree, "CGDisplayListImageBufferBackend of size %dx%d encoded display list of %ld bytes", size.width(), size.height(), CFDataGetLength(data.get()));
 #endif
 
-    return ImageBufferBackendHandle { IPC::SharedBufferReference { WebCore::SharedBuffer::create(data.get()) } };
+    return CGDisplayList { WebCore::SharedBuffer::create(data.get()) };
 }
 
 WebCore::GraphicsContext& CGDisplayListImageBufferBackend::context() const
