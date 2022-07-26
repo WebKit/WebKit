@@ -534,7 +534,7 @@
 ;;; End UIKit-apps.sb content
 ;;;
 
-(deny sysctl* (with telemetry))
+(deny sysctl*)
 (allow sysctl-read
     (sysctl-name
         "hw.activecpu"
