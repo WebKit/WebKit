@@ -94,7 +94,70 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
     return CoreAudioCaptureSource::createForTesting(WTFMove(deviceID),  WTFMove(name), WTFMove(hashSalt), constraints, MockAudioSharedUnit::singleton());
 }
 
-MockAudioSharedUnit& MockAudioSharedUnit::singleton()
+class MockAudioSharedInternalUnitState : public ThreadSafeRefCounted<MockAudioSharedInternalUnitState> {
+public:
+    static Ref<MockAudioSharedInternalUnitState> create() { return adoptRef(*new MockAudioSharedInternalUnitState()); }
+
+    bool isProducingData() const { return m_isProducingData; }
+    void setIsProducingData(bool value) { m_isProducingData = value; }
+
+private:
+    bool m_isProducingData { false };
+};
+
+class MockAudioSharedInternalUnit :  public CoreAudioSharedUnit::InternalUnit {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    MockAudioSharedInternalUnit();
+    ~MockAudioSharedInternalUnit();
+
+private:
+    OSStatus initialize() final;
+    OSStatus uninitialize() final;
+    OSStatus start() final;
+    OSStatus stop() final;
+    OSStatus set(AudioUnitPropertyID, AudioUnitScope, AudioUnitElement, const void*, UInt32) final;
+    OSStatus get(AudioUnitPropertyID, AudioUnitScope, AudioUnitElement, void*, UInt32*) final;
+    OSStatus render(AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32, UInt32, AudioBufferList*) final;
+    OSStatus defaultInputDevice(uint32_t*) final;
+    OSStatus defaultOutputDevice(uint32_t*) final;
+    void delaySamples(Seconds) final;
+
+    int sampleRate() const { return m_streamFormat.mSampleRate; }
+    void tick();
+
+    void generateSampleBuffers(MonotonicTime);
+    void emitSampleBuffers(uint32_t frameCount);
+    void reconfigure();
+
+    static Seconds renderInterval() { return 20_ms; }
+
+    std::unique_ptr<WebAudioBufferList> m_audioBufferList;
+
+    size_t m_maximiumFrameCount;
+    uint64_t m_samplesEmitted { 0 };
+    uint64_t m_samplesRendered { 0 };
+
+    RetainPtr<CMFormatDescriptionRef> m_formatDescription;
+    AudioStreamBasicDescription m_outputStreamFormat;
+    AudioStreamBasicDescription m_streamFormat;
+
+    Vector<float> m_bipBopBuffer;
+    bool m_hasAudioUnit { false };
+    Ref<MockAudioSharedInternalUnitState> m_internalState;
+    bool m_enableEchoCancellation { true };
+    RunLoop::Timer<MockAudioSharedInternalUnit> m_timer;
+    MonotonicTime m_lastRenderTime { MonotonicTime::nan() };
+    MonotonicTime m_delayUntil;
+
+    Ref<WorkQueue> m_workQueue;
+    unsigned m_channelCount { 2 };
+    
+    AURenderCallbackStruct m_microphoneCallback;
+    AURenderCallbackStruct m_speakerCallback;
+};
+
+CoreAudioSharedUnit& MockAudioSharedUnit::singleton()
 {
     static NeverDestroyed<MockAudioSharedUnit> singleton;
     return singleton;
