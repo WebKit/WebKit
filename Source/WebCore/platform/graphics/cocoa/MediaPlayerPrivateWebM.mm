@@ -1265,6 +1265,9 @@ void MediaPlayerPrivateWebM::ensureDecompressionSession()
             setHasAvailableVideoFrame(true);
     });
     
+    if (m_enabledVideoTrackID != notFound)
+        reenqueSamples(m_enabledVideoTrackID);
+    
     m_player->renderingModeChanged();
 }
 
