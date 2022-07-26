@@ -4435,11 +4435,21 @@ void WebPage::updateRendering()
 
 void WebPage::didUpdateRendering()
 {
+    didPaintLayers();
+
     if (m_didUpdateRenderingAfterCommittingLoad)
         return;
 
     m_didUpdateRenderingAfterCommittingLoad = true;
     send(Messages::WebPageProxy::DidUpdateRenderingAfterCommittingLoad());
+}
+
+void WebPage::didPaintLayers()
+{
+#if ENABLE(GPU_PROCESS)
+    if (m_remoteRenderingBackendProxy)
+        m_remoteRenderingBackendProxy->didPaintLayers();
+#endif
 }
 
 bool WebPage::shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const

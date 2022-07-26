@@ -116,6 +116,8 @@ public:
     Vector<SwapBuffersResult> prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>&);
 
     void finalizeRenderingUpdate();
+    void didPaintLayers();
+
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }
     unsigned delayedRenderingUpdateCount() const { return m_renderingUpdateID - m_didRenderingUpdateID; }
 

@@ -386,8 +386,14 @@ void RemoteRenderingBackendProxy::finalizeRenderingUpdate()
     if (!m_gpuProcessConnection)
         return;
     sendToStream(Messages::RemoteRenderingBackend::FinalizeRenderingUpdate(m_renderingUpdateID));
-    m_remoteResourceCacheProxy.finalizeRenderingUpdate();
     m_renderingUpdateID.increment();
+}
+
+void RemoteRenderingBackendProxy::didPaintLayers()
+{
+    if (!m_gpuProcessConnection)
+        return;
+    m_remoteResourceCacheProxy.didPaintLayers();
 }
 
 void RemoteRenderingBackendProxy::didCreateImageBufferBackend(ImageBufferBackendHandle handle, RenderingResourceIdentifier renderingResourceIdentifier)
