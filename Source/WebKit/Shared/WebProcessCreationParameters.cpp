@@ -200,6 +200,9 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 
     encoder << accessibilityPreferences;
+#if PLATFORM(IOS_FAMILY)
+    encoder << applicationAccessibilityEnabled;
+#endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     encoder << memoryPressureHandlerConfiguration;
@@ -545,6 +548,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!accessibilityPreferences)
         return false;
     parameters.accessibilityPreferences = WTFMove(*accessibilityPreferences);
+
+#if PLATFORM(IOS_FAMILY)
+    if (!decoder.decode(parameters.applicationAccessibilityEnabled))
+        return false;
+#endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<std::optional<MemoryPressureHandler::Configuration>> memoryPressureHandlerConfiguration;

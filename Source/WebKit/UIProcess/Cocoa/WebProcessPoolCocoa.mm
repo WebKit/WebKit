@@ -440,6 +440,9 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.bytesPerRowIOSurfaceAlignment = WebCore::IOSurface::bytesPerRowAlignment();
 
     parameters.accessibilityPreferences = accessibilityPreferences();
+#if PLATFORM(IOS_FAMILY)
+    parameters.applicationAccessibilityEnabled = _AXSApplicationAccessibilityEnabled();
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)

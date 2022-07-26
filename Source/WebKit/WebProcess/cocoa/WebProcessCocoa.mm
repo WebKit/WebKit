@@ -456,6 +456,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     WebCore::IOSurface::setBytesPerRowAlignment(parameters.bytesPerRowIOSurfaceAlignment);
 
     accessibilityPreferencesDidChange(parameters.accessibilityPreferences);
+#if PLATFORM(IOS_FAMILY)
+    _AXSApplicationAccessibilitySetEnabled(parameters.applicationAccessibilityEnabled);
+#endif
 
     disableURLSchemeCheckInDataDetectors();
 
