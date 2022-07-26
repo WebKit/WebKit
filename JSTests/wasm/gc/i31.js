@@ -1,212 +1,186 @@
 //@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true")
 
 import * as assert from "../assert.js";
-import { instantiate } from "../wabt-wrapper.js";
-
-function module(bytes, valid = true) {
-  let buffer = new ArrayBuffer(bytes.length);
-  let view = new Uint8Array(buffer);
-  for (let i = 0; i < bytes.length; ++i) {
-    view[i] = bytes.charCodeAt(i);
-  }
-  return new WebAssembly.Module(buffer);
-}
+import { compile, instantiate } from "./wast-wrapper.js";
 
 function testI31Type() {
-  /*
-   * (module
-   *   (type (func (param i31ref) (result (ref i31))))
-   * )
-   */
-  new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x87\x80\x80\x80\x00\x01\x60\x01\x6a\x01\x6b\x6a"));
+  compile(`
+    (module
+       (type (func (param i31ref) (result (ref i31))))
+    )
+  `);
 
-  /*
-   * (module
-   *   (global i31ref (ref.null i31))
-   * )
-   */
-  new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x86\x80\x80\x80\x00\x01\x6a\x00\xd0\x6a\x0b"));
+  compile(`
+    (module
+      (global i31ref (ref.null i31))
+    )
+  `);
 }
 
 function testI31New() {
-  /*
-   * (module
-   *   (func (export "f") (result i32)
-   *     (i31.new (f32.const 42.42)))
-   * )
-   */
   assert.throws(
-    () => new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x8f\x80\x80\x80\x00\x01\x89\x80\x80\x80\x00\x00\x43\x14\xae\x29\x42\xfb\x20\x0b")),
+    () => instantiate(`
+      (module
+        (func (export "f") (result i32)
+          (i31.new (f32.const 42.42)))
+      )
+    `),
     WebAssembly.CompileError,
     "WebAssembly.Module doesn't validate: i31.new value to type F32 expected I32"
   )
 
-  /*
-   * ;; use in global and also export to JS via global
-   * (module
-   *   (global (export "g") (mut i31ref) (ref.null i31))
-   *   (func (export "f")
-   *     (global.set 0 (i31.new (i32.const 42))))
-   * )
-   */
+  // Use i31 in global and also export to JS via global.
   {
-    let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x84\x80\x80\x80\x00\x01\x60\x00\x00\x03\x82\x80\x80\x80\x00\x01\x00\x06\x86\x80\x80\x80\x00\x01\x6a\x01\xd0\x6a\x0b\x07\x89\x80\x80\x80\x00\x02\x01\x67\x03\x00\x01\x66\x00\x00\x0a\x8e\x80\x80\x80\x00\x01\x88\x80\x80\x80\x00\x00\x41\x2a\xfb\x20\x24\x00\x0b"));
+    let m = instantiate(`
+      (module
+        (global (export "g") (mut i31ref) (ref.null i31))
+        (func (export "f")
+          (global.set 0 (i31.new (i32.const 42))))
+      )
+    `);
     m.exports.f();
     assert.eq(m.exports.g.value, 42);
   }
 
-  /*
-   * ;; export to JS
-   * (module
-   *   (func (export "f") (result i31ref)
-   *     (i31.new (i32.const 42)))
-   * )
-   */
+  // Test export to JS.
   {
-    let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x6a\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x8c\x80\x80\x80\x00\x01\x86\x80\x80\x80\x00\x00\x41\x2a\xfb\x20\x0b"));
+    let m = instantiate(`
+      (module
+        (func (export "f") (result i31ref)
+          (i31.new (i32.const 42)))
+      )
+    `);
     assert.eq(m.exports.f(), 42);
   }
 
-  /*
-   * ;; export to JS via import
-   * (module
-   *   (import "m" "f" (func (param i31ref)))
-   *   (func (export "g")
-   *     (call 0 (i31.new (i32.const 42))))
-   * )
-   */
+  // Export to JS via import.
   {
-    let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x88\x80\x80\x80\x00\x02\x60\x01\x6a\x00\x60\x00\x00\x02\x87\x80\x80\x80\x00\x01\x01\x6d\x01\x66\x00\x00\x03\x82\x80\x80\x80\x00\x01\x01\x07\x85\x80\x80\x80\x00\x01\x01\x67\x00\x01\x0a\x8e\x80\x80\x80\x00\x01\x88\x80\x80\x80\x00\x00\x41\x2a\xfb\x20\x10\x00\x0b"),
-                                     { m: { f: (i31) => assert.eq(i31, 42) } });
+    let m = instantiate(`
+      (module
+        (import "m" "f" (func (param i31ref)))
+        (func (export "g")
+          (call 0 (i31.new (i32.const 42))))
+      )`,
+      { m: { f: (i31) => assert.eq(i31, 42) } }
+    );
     m.exports.g();
   }
 }
 
 function testI31Get() {
-  /*
-   * (module
-   *   (func (export "f") (result i32)
-   *     (i31.get_s (i31.new (i32.const 42))))
-   * )
-   */
   {
-    let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x8e\x80\x80\x80\x00\x01\x88\x80\x80\x80\x00\x00\x41\x2a\xfb\x20\xfb\x21\x0b"));
+    let m = instantiate(`
+      (module
+        (func (export "f") (result i32)
+          (i31.get_s (i31.new (i32.const 42))))
+      )
+    `);
     assert.eq(m.exports.f(), 42);
   }
 
-  /*
-   * (module
-   *   (func (export "f") (result i32)
-   *     (i31.get_u (i31.new (i32.const 42))))
-   * )
-   */
   {
-    let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x8e\x80\x80\x80\x00\x01\x88\x80\x80\x80\x00\x00\x41\x2a\xfb\x20\xfb\x22\x0b"));
+    let m = instantiate(`
+      (module
+        (func (export "f") (result i32)
+          (i31.get_u (i31.new (i32.const 42))))
+      )
+    `);
     assert.eq(m.exports.f(), 42);
   }
 
-  /*
-   * (module
-   *   (func (export "f") (result i32)
-   *     (i31.get_s (i31.new (i32.const 0x4000_0000))))
-   * )
-   */
   {
-    let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x92\x80\x80\x80\x00\x01\x8c\x80\x80\x80\x00\x00\x41\x80\x80\x80\x80\x04\xfb\x20\xfb\x21\x0b"));
+    let m = instantiate(`
+      (module
+        (func (export "f") (result i32)
+          (i31.get_s (i31.new (i32.const 0x4000_0000))))
+      )
+    `);
     assert.eq(m.exports.f(), -0x40000000);
   }
 
-  /*
-   * (module
-   *   (func (export "f") (result i32)
-   *     (i31.get_u (i31.new (i32.const 0x4000_0000))))
-   * )
-   */
   {
-    let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x92\x80\x80\x80\x00\x01\x8c\x80\x80\x80\x00\x00\x41\x80\x80\x80\x80\x04\xfb\x20\xfb\x22\x0b"));
+    let m = instantiate(
+      `(module
+         (func (export "f") (result i32)
+           (i31.get_u (i31.new (i32.const 0x4000_0000))))
+       )
+    `);
     assert.eq(m.exports.f(), 0x40000000);
   }
 
-  /*
-   * (module
-   *   (func (export "f") (result i32)
-   *     (i31.get_s (i31.new (i32.const 0xaaaa_aaaa))))
-   * )
-   */
   {
-    let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x92\x80\x80\x80\x00\x01\x8c\x80\x80\x80\x00\x00\x41\xaa\xd5\xaa\xd5\x7a\xfb\x20\xfb\x21\x0b"));
+    let m = instantiate(`
+      (module
+        (func (export "f") (result i32)
+          (i31.get_s (i31.new (i32.const 0xaaaa_aaaa))))
+      )
+    `);
     assert.eq(m.exports.f(), 0x2aaaaaaa);
   }
 
-  /*
-   * (module
-   *   (func (export "f") (result i32)
-   *     (i31.get_u (i31.new (i32.const 0xaaaa_aaaa))))
-   * )
-   */
   {
-    let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x92\x80\x80\x80\x00\x01\x8c\x80\x80\x80\x00\x00\x41\xaa\xd5\xaa\xd5\x7a\xfb\x20\xfb\x22\x0b"));
+    let m = instantiate(`
+      (module
+        (func (export "f") (result i32)
+          (i31.get_u (i31.new (i32.const 0xaaaa_aaaa))))
+      )
+    `);
     assert.eq(m.exports.f(), 0x2aaaaaaa);
   }
 
-  /*
-   * (module
-   *   (func (export "f") (result i32)
-   *     (i31.get_s (i31.new (i32.const -1))))
-   * )
-   */
   {
-    let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x8e\x80\x80\x80\x00\x01\x88\x80\x80\x80\x00\x00\x41\x7f\xfb\x20\xfb\x21\x0b"));
+    let m = instantiate(`
+      (module
+        (func (export "f") (result i32)
+          (i31.get_s (i31.new (i32.const -1))))
+      )
+    `);
     assert.eq(m.exports.f(), -1);
   }
 
-  /*
-   * (module
-   *   (func (export "f") (result i32)
-   *     (i31.get_u (i31.new (i32.const -1))))
-   * )
-   */
   {
-    let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x8e\x80\x80\x80\x00\x01\x88\x80\x80\x80\x00\x00\x41\x7f\xfb\x20\xfb\x22\x0b"));
+    let m = instantiate(`
+      (module
+        (func (export "f") (result i32)
+          (i31.get_u (i31.new (i32.const -1))))
+      )
+    `);
     assert.eq(m.exports.f(), 0x7fffffff);
   }
 
-  /*
-   * (module
-   *   (func (export "f") (result i32)
-   *     (i31.get_s (ref.null extern)))
-   * )
-   */
   assert.throws(
-    () => new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x8c\x80\x80\x80\x00\x01\x86\x80\x80\x80\x00\x00\xd0\x6f\xfb\x21\x0b")),
+    () => instantiate(`
+      (module
+        (func (export "f") (result i32)
+          (i31.get_s (ref.null extern)))
+      )
+    `),
     WebAssembly.CompileError,
     "WebAssembly.Module doesn't validate: i31.get_s ref to type RefNull expected I31ref"
   )
 
-  /*
-   * (module
-   *   (func (export "f") (result i32)
-   *     (i31.get_s (ref.null i31)))
-   * )
-   */
   assert.throws(
     () => {
-      let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x8c\x80\x80\x80\x00\x01\x86\x80\x80\x80\x00\x00\xd0\x6a\xfb\x21\x0b"));
+      let m = instantiate(`
+        (module
+          (func (export "f") (result i32)
+            (i31.get_s (ref.null i31)))
+        )
+      `);
       m.exports.f();
     },
     WebAssembly.RuntimeError,
     "i31.get_<sx> to a null reference"
   )
 
-  /*
-   * (module
-   *   (func (export "f") (result i32)
-   *     (i31.get_u (ref.null i31)))
-   * )
-   */
   assert.throws(
     () => {
-      let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x85\x80\x80\x80\x00\x01\x60\x00\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x8c\x80\x80\x80\x00\x01\x86\x80\x80\x80\x00\x00\xd0\x6a\xfb\x22\x0b"));
+      let m = instantiate(`
+        (module
+          (func (export "f") (result i32)
+            (i31.get_u (ref.null i31)))
+        )
+      `);
       m.exports.f();
     },
     WebAssembly.RuntimeError,
@@ -215,40 +189,36 @@ function testI31Get() {
 }
 
 function testI31JS() {
-  /*
-   * ;; JS API behavior not specified yet, import errors for now.
-   * (module
-   *   (func (export "f") (param i31ref) (result i32)
-   *     (i31.get_u (local.get 0)))
-   * )
-   */
+  // JS API behavior not specified yet, import errors for now.
   assert.throws(
     () => {
-      let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x86\x80\x80\x80\x00\x01\x60\x01\x6a\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x8c\x80\x80\x80\x00\x01\x86\x80\x80\x80\x00\x00\x20\x00\xfb\x22\x0b"));
+      let m = instantiate(`
+        (module
+          (func (export "f") (param i31ref) (result i32)
+            (i31.get_u (local.get 0)))
+        )
+      `);
       m.exports.f(42);
     },
     WebAssembly.RuntimeError,
     "I31ref import from JS currently unsupported"
   )
 
-  /*
-   * JS API behavior not specified yet, i31 global errors for now.
-   */
+  // JS API behavior not specified yet, i31 global errors for now.
   assert.throws(
     () => { return new WebAssembly.Global({ type: "i31ref" }, 42) },
     TypeError,
     "WebAssembly.Global expects its 'value' field to be the string"
   )
 
-  /*
-   * ;; JS API behavior not specified yet, setting global errors for now.
-   * (module
-   *   (global (export "g") (mut i31ref) (ref.null i31))
-   * )
-   */
+  // JS API behavior not specified yet, setting global errors for now.
   assert.throws(
     () => {
-      let m = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x86\x80\x80\x80\x00\x01\x6a\x01\xd0\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"));
+      let m = instantiate(`
+        (module
+          (global (export "g") (mut i31ref) (ref.null i31))
+        )
+      `);
       m.exports.g.value = 42;
     },
     WebAssembly.RuntimeError,
