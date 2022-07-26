@@ -3628,7 +3628,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
     auto computeBorderBoxBottom = [&] {
         auto contentBoxBottom = contentBoxTop + computeContentHeight();
-        return contentBoxBottom + borderAndPaddingAfter();
+        return contentBoxBottom + borderAndPaddingAfter() + scrollbarLogicalHeight();
     };
 
     auto oldBorderBoxBottom = computeBorderBoxBottom();

@@ -89,7 +89,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
 
     auto lineBoxVisualLeft = isLeftToRightDirection
         ? rootGeometry.contentBoxLeft() + lineOffsetFromContentBox
-        : InlineLayoutUnit { rootGeometry.borderEnd() } + rootGeometry.paddingEnd().value_or(0_lu);
+        : InlineLayoutUnit { rootGeometry.borderEnd() } + rootGeometry.horizontalSpaceForScrollbar() + rootGeometry.paddingEnd().value_or(0_lu);
     auto contentVisualLeft = isLeftToRightDirection
         ? lineBox.rootInlineBoxAlignmentOffset()
         : rootGeometry.contentBoxWidth() - lineOffsetFromContentBox -  lineBox.rootInlineBoxAlignmentOffset() - lineContent.contentLogicalRight;
