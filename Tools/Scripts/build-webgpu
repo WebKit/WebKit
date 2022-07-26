@@ -32,8 +32,5 @@ use lib $FindBin::Bin;
 use webkitperl::FeatureList qw(getFeatureOptionList);
 use webkitperl::BuildSubproject;
 
-buildMyProject("Source/bmalloc", "bmalloc");
-buildMyProject("Source/WTF", "WTF");
-buildMyProject("Source/JavaScriptCore", "JavaScriptCore");
-buildMyProject("Source/WebGPU", "WebGPU");
+buildUpToProject("Source/WebGPU", "WebGPU");
 writeCongrats("WebGPU");

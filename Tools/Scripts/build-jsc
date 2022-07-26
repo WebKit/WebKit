@@ -32,9 +32,7 @@ use lib $FindBin::Bin;
 use webkitperl::FeatureList qw(getFeatureOptionList);
 use webkitperl::BuildSubproject;
 
-buildMyProject("Source/bmalloc", "bmalloc");
-buildMyProject("Source/WTF", "WTF");
-buildMyProject("Source/JavaScriptCore", "JavaScriptCore");
+buildUpToProject("Source/JavaScriptCore", "JavaScriptCore");
 if (isAppleCocoaWebKit()) {
     writeCongrats("JavaScriptCore");
 }

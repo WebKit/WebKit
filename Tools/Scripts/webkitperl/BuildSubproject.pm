@@ -214,12 +214,15 @@ if (isAppleCocoaWebKit()) {
     }
 }
 
-sub buildMyProject
+sub buildUpToProject
 {
     my ($projectDirectory, $projectName) = @_;
     my $result;
     chdir $projectDirectory or die "Can't find $projectName directory to build from";
     if (isAppleCocoaWebKit()) {
+        if (!configuredXcodeWorkspace()) {
+            system("$FindBin::Bin/set-webkit-configuration", "--workspace=" . sourceDir() . "/WebKit.xcworkspace") == 0 or die;
+        }
         my $compilerFlags = 'GCC_PREPROCESSOR_ADDITIONS="';
         if ($forceCLoop) {
             $compilerFlags .= "ENABLE_JIT=0 ENABLE_C_LOOP=1";
@@ -238,7 +241,7 @@ sub buildMyProject
             $extraCommands .= " " . $arg;
         }
 
-        my $command = "make " . (lc configuration()) . " " . $compilerFlags . " " . $extraCommands;
+        my $command = "make USE_WORKSPACE=YES " . (lc configuration()) . " " . $compilerFlags . " " . $extraCommands;
 
         print "\n";
         print "building ", $projectName, "\n";
