@@ -11,7 +11,7 @@ PASS new PaymentRequest([validPaymentMethod()], validPaymentDetails()) did not t
 Testing ApplePayAMSUIRequest.engagementRequest
 
 SETUP: paymentMethod = validPaymentMethod(); delete paymentMethod.data.engagementRequest
-PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayAMSUIRequest.engagementRequest is required and must be a JSON-serializable object.
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayAMSUIRequest.engagementRequest is required and must be an instance of JSON.
 
 SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.engagementRequest = ''
 PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayAMSUIRequest.engagementRequest is required and must be a JSON-serializable object.
