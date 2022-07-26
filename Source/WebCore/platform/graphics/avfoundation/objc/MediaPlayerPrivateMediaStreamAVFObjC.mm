@@ -415,6 +415,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bo
     if (!didSucceed) {
         ERROR_LOG(LOGIDENTIFIER, "Initializing the SampleBufferDisplayLayer failed.");
         m_sampleBufferDisplayLayer = nullptr;
+        updateLayersAsNeeded();
         return;
     }
 

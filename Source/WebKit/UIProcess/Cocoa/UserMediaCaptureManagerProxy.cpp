@@ -99,6 +99,7 @@ public:
     void audioUnitWillStart() final
     {
         AudioSession::sharedSession().setCategory(AudioSession::CategoryType::PlayAndRecord, RouteSharingPolicy::Default);
+        AudioSession::sharedSession().tryToSetActive(true);
     }
 
     void start()

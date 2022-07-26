@@ -143,7 +143,12 @@ static void runWithoutAnimations(const WTF::Function<void()>& function)
 
 std::unique_ptr<LocalSampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::create(Client& client)
 {
-    auto sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
+    RetainPtr<AVSampleBufferDisplayLayer> sampleBufferDisplayLayer;
+    @try {
+        sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
+    } @catch(id exception) {
+        RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::create failed to allocate display layer");
+    }
     if (!sampleBufferDisplayLayer)
         return nullptr;
 
@@ -317,7 +322,12 @@ void LocalSampleBufferDisplayLayer::flush()
 void LocalSampleBufferDisplayLayer::flushAndRemoveImage()
 {
     m_processingQueue->dispatch([this] {
-        [m_sampleBufferDisplayLayer flushAndRemoveImage];
+        @try {
+            [m_sampleBufferDisplayLayer flushAndRemoveImage];
+        } @catch(id exception) {
+            RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::flushAndRemoveImage failed");
+            layerErrorDidChange();
+        }
     });
 }
 
