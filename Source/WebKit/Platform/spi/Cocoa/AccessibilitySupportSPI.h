@@ -44,6 +44,7 @@ void _AXSSetReduceMotionEnabled(Boolean enabled);
 void _AXSSetDarkenSystemColors(Boolean enabled);
 Boolean _AXSKeyRepeatEnabled();
 Boolean _AXSApplicationAccessibilityEnabled();
+void _AXSApplicationAccessibilitySetEnabled(Boolean enabled);
 extern CFStringRef kAXSApplicationAccessibilityEnabledNotification;
 
 extern CFStringRef kAXSReduceMotionPreference;
