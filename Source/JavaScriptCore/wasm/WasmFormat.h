@@ -118,7 +118,8 @@ inline bool isFuncref(Type type)
 
 inline bool isI31ref(Type type)
 {
-    ASSERT(Options::useWebAssemblyGC());
+    if (!Options::useWebAssemblyGC())
+        return false;
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::I31ref);
 }
 
