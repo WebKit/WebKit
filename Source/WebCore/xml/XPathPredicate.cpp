@@ -32,6 +32,7 @@
 #include "XPathUtil.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 namespace XPath {
@@ -75,8 +76,15 @@ NumericOp::NumericOp(Opcode opcode, std::unique_ptr<Expression> lhs, std::unique
 
 Value NumericOp::evaluate() const
 {
+    EvaluationContext clonedContext(Expression::evaluationContext());
+
     double leftVal = subexpression(0).evaluate().toNumber();
-    double rightVal = subexpression(1).evaluate().toNumber();
+    double rightVal;
+
+    {
+        SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext);
+        rightVal = subexpression(1).evaluate().toNumber();
+    }
 
     switch (m_opcode) {
         case OP_Add:
@@ -199,8 +207,14 @@ bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
 
 Value EqTestOp::evaluate() const
 {
+    EvaluationContext clonedContext(Expression::evaluationContext());
+
     Value lhs(subexpression(0).evaluate());
-    Value rhs(subexpression(1).evaluate());
+    Value rhs = [&] {
+        SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext);
+        return subexpression(1).evaluate();
+    }();
+
     return compare(lhs, rhs);
 }
 
@@ -218,12 +232,15 @@ inline bool LogicalOp::shortCircuitOn() const
 
 Value LogicalOp::evaluate() const
 {
+    EvaluationContext clonedContext(Expression::evaluationContext());
+
     // This is not only an optimization, http://www.w3.org/TR/xpath
     // dictates that we must do short-circuit evaluation
     bool lhsBool = subexpression(0).evaluate().toBoolean();
     if (lhsBool == shortCircuitOn())
         return lhsBool;
 
+    SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext);
     return subexpression(1).evaluate().toBoolean();
 }
 
