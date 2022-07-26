@@ -137,7 +137,7 @@ private:
 
     std::unique_ptr<WebAudioBufferList> m_audioBufferList;
 
-    uint32_t m_maximiumFrameCount;
+    size_t m_maximiumFrameCount;
     uint64_t m_samplesEmitted { 0 };
     uint64_t m_samplesRendered { 0 };
 
