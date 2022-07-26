@@ -248,7 +248,6 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const Vector<A
     return false;
 }
 
-#if ENABLE(CSS_SELECTORS_LEVEL4)
 ALWAYS_INLINE bool matchesDirPseudoClass(const Element& element, const AtomString& argument)
 {
     if (!is<HTMLElement>(element))
@@ -267,7 +266,6 @@ ALWAYS_INLINE bool matchesDirPseudoClass(const Element& element, const AtomStrin
 
     return false;
 }
-#endif
 
 ALWAYS_INLINE bool matchesReadOnlyPseudoClass(const Element& element)
 {

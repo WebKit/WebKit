@@ -1117,10 +1117,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassCornerPresent:
             return false;
 
-#if ENABLE(CSS_SELECTORS_LEVEL4)
         case CSSSelector::PseudoClassDir:
             return matchesDirPseudoClass(element, selector.argument());
-#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
         case CSSSelector::PseudoClassHasAttachment:

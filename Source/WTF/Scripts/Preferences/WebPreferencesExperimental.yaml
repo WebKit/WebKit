@@ -535,7 +535,6 @@ DirPseudoEnabled:
   type: bool
   humanReadableName: ":dir pseudo-class"
   humanReadableDescription: "Enable the directionality pseudo-class :dir"
-  condition: ENABLE(CSS_SELECTORS_LEVEL4)
   defaultValue:
     WebKitLegacy:
       default: false

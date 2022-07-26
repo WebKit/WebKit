@@ -335,9 +335,7 @@ bool CSSSelector::operator==(const CSSSelector& other) const
 static void appendPseudoClassFunctionTail(StringBuilder& builder, const CSSSelector* selector)
 {
     switch (selector->pseudoClassType()) {
-#if ENABLE(CSS_SELECTORS_LEVEL4)
     case CSSSelector::PseudoClassDir:
-#endif
     case CSSSelector::PseudoClassLang:
     case CSSSelector::PseudoClassNthChild:
     case CSSSelector::PseudoClassNthLastChild:
@@ -484,12 +482,10 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassDefault:
                 builder.append(":default");
                 break;
-#if ENABLE(CSS_SELECTORS_LEVEL4)
             case CSSSelector::PseudoClassDir:
                 builder.append(":dir(");
                 appendPseudoClassFunctionTail(builder, cs);
                 break;
-#endif
             case CSSSelector::PseudoClassDisabled:
                 builder.append(":disabled");
                 break;
