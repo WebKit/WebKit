@@ -77,6 +77,10 @@ void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayer
 {
     callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier, hideRootLayer, size, callback = WTFMove(callback)]() mutable {
         auto layer = RemoteSampleBufferDisplayLayer::create(m_connectionToWebProcess, identifier, m_connection.copyRef());
+        if (!layer) {
+            callback({ });
+            return;
+        }
         auto& layerReference = *layer;
         layerReference.initialize(hideRootLayer, size, [this, protectedThis = Ref { *this }, callback = WTFMove(callback), identifier, layer = WTFMove(layer)](auto layerId) mutable {
             m_queue->dispatch([this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), identifier, layer = WTFMove(layer), layerId = WTFMove(layerId)]() mutable {

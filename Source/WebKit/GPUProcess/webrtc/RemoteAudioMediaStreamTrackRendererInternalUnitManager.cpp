@@ -41,6 +41,7 @@
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/CoreAudioCaptureSource.h>
+#include <WebCore/CoreAudioSharedUnit.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/WeakPtr.h>
 
@@ -260,7 +261,7 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::captureUnitIs
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::captureUnitHasStopped()
 {
     // Capture unit has stopped and audio will no longer be rendered through it so start the local unit.
-    if (m_isPlaying)
+    if (m_isPlaying && !CoreAudioSharedUnit::unit().isSuspended())
         m_localUnit->start();
 }
 
