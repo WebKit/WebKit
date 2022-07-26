@@ -77,6 +77,8 @@ void BaseAudioSharedUnit::forEachClient(const Function<void(CoreAudioCaptureSour
     }
 }
 
+const static OSStatus lowPriorityError1 = 560557684;
+const static OSStatus lowPriorityError2 = 561017449;
 void BaseAudioSharedUnit::startProducingData()
 {
     ASSERT(isMainThread());
@@ -98,8 +100,6 @@ void BaseAudioSharedUnit::startProducingData()
     }
     auto error = startUnit();
     if (error) {
-        const OSStatus lowPriorityError1 = 560557684;
-        const OSStatus lowPriorityError2 = 561017449;
         if (error == lowPriorityError1 || error == lowPriorityError2) {
             RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::startProducingData failed due to not high enough priority, suspending unit");
             suspend();
@@ -114,6 +114,11 @@ OSStatus BaseAudioSharedUnit::startUnit()
         client.audioUnitWillStart();
     });
     ASSERT(!DeprecatedGlobalSettings::shouldManageAudioSessionCategory() || AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord);
+
+    if (AudioSession::sharedSession().category() != AudioSession::CategoryType::PlayAndRecord) {
+        RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::startUnit cannot call startInternal if category is not set to PlayAndRecord");
+        return lowPriorityError2;
+    }
 
     return startInternal();
 }
