@@ -721,8 +721,12 @@ TEST(WebAuthenticationPanel, PanelHidCancel)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&webAuthenticationPanelRan);
+    __block bool done = false;
+    [webView performAfterReceivingMessage:@"This request has been cancelled by the user." action:^{
+        done = true;
+    }];
     [[delegate panel] cancel];
-    [webView waitForMessage:@"This request has been cancelled by the user."];
+    Util::run(&done);
     EXPECT_TRUE(webAuthenticationPanelFailed);
 }
 
