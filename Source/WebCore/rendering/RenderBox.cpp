@@ -5451,6 +5451,8 @@ bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const
                 return false;
         } else if (hasStretchedLogicalWidth(StretchingMode::Explicit))
             return false;
+        if (style().logicalWidth().isPercentOrCalculated() && parent()->style().logicalWidth().isFixed())
+            return false;
     }
 
     auto isResolvablePercentageHeight = [&] {
