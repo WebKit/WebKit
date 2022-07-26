@@ -395,7 +395,7 @@ TEST(WebKit, InjectedBundleNodeHandleIsSelectElement)
     TestWebKitAPI::Util::run(&done);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
 
 static int presentViewControllerCallCount = 0;
 
@@ -540,7 +540,7 @@ TEST(WebKit, LockdownModeAskAgainFirstUseMessage)
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitCaptivePortalModeAlertShownKey];
 }
 
-#endif
+#endif // PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
 
 #if PLATFORM(MAC)
 
