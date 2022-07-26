@@ -56,7 +56,7 @@ public:
     void recordImageBufferUse(WebCore::ImageBuffer&);
     void recordDecomposedGlyphsUse(WebCore::DecomposedGlyphs&);
 
-    void finalizeRenderingUpdate();
+    void didPaintLayers();
 
     void remoteResourceCacheWasDestroyed();
     void releaseMemory();
@@ -66,7 +66,7 @@ public:
 private:
     using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::ImageBuffer>>;
     using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::NativeImage>>;
-    using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, RenderingUpdateID>;
+    using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, uint64_t>;
     using DecomposedGlyphsHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::DecomposedGlyphs>>;
     
     void releaseNativeImage(WebCore::RenderingResourceIdentifier) override;
@@ -87,6 +87,7 @@ private:
     unsigned m_numberOfFontsUsedInCurrentRenderingUpdate { 0 };
 
     RemoteRenderingBackendProxy& m_remoteRenderingBackendProxy;
+    uint64_t m_renderingUpdateID;
 };
 
 } // namespace WebKit
