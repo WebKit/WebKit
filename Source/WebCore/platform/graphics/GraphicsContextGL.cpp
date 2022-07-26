@@ -503,6 +503,7 @@ GCGLenum GraphicsContextGL::computeImageSizeInBytes(GCGLenum format, GCGLenum ty
     if (paddingInBytes)
         *paddingInBytes = padding;
 
+
     CheckedUint32 skipSize = 0;
     if (params.skipImages > 0) {
         CheckedUint32 tmp = paddedRowSize;
