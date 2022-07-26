@@ -27,7 +27,8 @@
 
 [
     EnabledBySetting=PermissionsAPIEnabled,
-    ImplementedBy=NavigatorPermissions
+    ImplementedBy=NavigatorPermissions,
+    DisabledByQuirk=hasBrokenPermissionsAPISupport
 ] partial interface Navigator {
     [SameObject] readonly attribute Permissions permissions;
 };
