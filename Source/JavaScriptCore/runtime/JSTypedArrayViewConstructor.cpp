@@ -49,6 +49,7 @@ void JSTypedArrayViewConstructor::finishCreation(VM& vm, JSGlobalObject* globalO
 
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->of, typedArrayConstructorOfCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->from, typedArrayConstructorFromCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    globalObject->installTypedArrayConstructorSpeciesWatchpoint(this);
 }
 
 Structure* JSTypedArrayViewConstructor::createStructure(

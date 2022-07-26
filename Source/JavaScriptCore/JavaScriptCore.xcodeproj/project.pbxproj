@@ -1977,6 +1977,7 @@
 		E3893A1D2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */; };
 		E38DB2E727F588F80027BD3F /* ScriptExecutableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E38DB2E627F588F70027BD3F /* ScriptExecutableInlines.h */; };
 		E38E8790254B978400F6F9E4 /* JSDateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9788FC221471AD0C0068CE2D /* JSDateMath.cpp */; };
+		E38F091A288D35CF009FD386 /* ObjectAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E38F0919288D35CF009FD386 /* ObjectAdaptiveStructureWatchpoint.h */; };
 		E39006212208BFC4001019CF /* SubspaceAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E39006202208BFC3001019CF /* SubspaceAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E392E6F824D25FA600B20767 /* B3BottomTupleValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E392E6F624D25FA600B20767 /* B3BottomTupleValue.cpp */; };
 		E392E6F924D25FA900B20767 /* B3BottomTupleValue.h in Headers */ = {isa = PBXBuildFile; fileRef = E392E6F724D25FA600B20767 /* B3BottomTupleValue.h */; };
@@ -5465,6 +5466,7 @@
 		E38D060C1F8E814100649CF2 /* ScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFetchParameters.h; sourceTree = "<group>"; };
 		E38D060D1F8E814100649CF2 /* JSScriptFetchParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptFetchParameters.cpp; sourceTree = "<group>"; };
 		E38DB2E627F588F70027BD3F /* ScriptExecutableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptExecutableInlines.h; sourceTree = "<group>"; };
+		E38F0919288D35CF009FD386 /* ObjectAdaptiveStructureWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectAdaptiveStructureWatchpoint.h; sourceTree = "<group>"; };
 		E39006202208BFC3001019CF /* SubspaceAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubspaceAccess.h; sourceTree = "<group>"; };
 		E3915C062309682900CB2561 /* WasmContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmContext.cpp; sourceTree = "<group>"; };
 		E392E6F624D25FA600B20767 /* B3BottomTupleValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3BottomTupleValue.cpp; path = b3/B3BottomTupleValue.cpp; sourceTree = "<group>"; };
@@ -8128,6 +8130,7 @@
 				BC2680C40E16D4E900A06E92 /* NumberPrototype.cpp */,
 				BC2680C50E16D4E900A06E92 /* NumberPrototype.h */,
 				142D3938103E4560007DCB52 /* NumericStrings.h */,
+				E38F0919288D35CF009FD386 /* ObjectAdaptiveStructureWatchpoint.h */,
 				BC2680C60E16D4E900A06E92 /* ObjectConstructor.cpp */,
 				BC2680C70E16D4E900A06E92 /* ObjectConstructor.h */,
 				E374166D26912BC700C80789 /* ObjectConstructorInlines.h */,
@@ -10895,6 +10898,7 @@
 				C4F4B6F61A05C984005CAB76 /* objc_generator_templates.py in Headers */,
 				86F3EEBD168CDE930077B92A /* ObjCCallbackFunction.h in Headers */,
 				86F3EEBF168CDE930077B92A /* ObjcRuntimeExtras.h in Headers */,
+				E38F091A288D35CF009FD386 /* ObjectAdaptiveStructureWatchpoint.h in Headers */,
 				14CA958D16AB50FA00938A06 /* ObjectAllocationProfile.h in Headers */,
 				79AC30FF1F99536400484FD7 /* ObjectAllocationProfileInlines.h in Headers */,
 				BC18C4450E16F5CD00B34460 /* ObjectConstructor.h in Headers */,

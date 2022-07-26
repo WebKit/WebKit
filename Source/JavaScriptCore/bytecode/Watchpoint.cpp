@@ -33,6 +33,7 @@
 #include "FunctionRareData.h"
 #include "HeapInlines.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
+#include "ObjectAdaptiveStructureWatchpoint.h"
 #include "StructureRareDataInlines.h"
 #include "StructureStubClearingWatchpoint.h"
 #include "VM.h"

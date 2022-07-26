@@ -68,31 +68,69 @@
 
 namespace JSC {
 
+namespace JSGenericTypedArrayViewPrototypeFunctionsInternal {
+static constexpr bool verbose = false;
+}
+
+template<typename ViewClass>
+ALWAYS_INLINE bool speciesWatchpointIsValid(JSGlobalObject* globalObject, ViewClass* thisObject)
+{
+    auto* prototype = globalObject->typedArrayPrototype(ViewClass::TypedArrayStorageType);
+
+    if (globalObject->typedArraySpeciesWatchpointSet(ViewClass::TypedArrayStorageType).state() == ClearWatchpoint) {
+        globalObject->tryInstallTypedArraySpeciesWatchpoint(ViewClass::TypedArrayStorageType);
+        ASSERT(globalObject->typedArraySpeciesWatchpointSet(ViewClass::TypedArrayStorageType).state() != ClearWatchpoint);
+    }
+
+    return !thisObject->hasCustomProperties()
+        && prototype == thisObject->getPrototypeDirect()
+        && globalObject->typedArraySpeciesWatchpointSet(ViewClass::TypedArrayStorageType).state() == IsWatched
+        && globalObject->typedArrayConstructorSpeciesWatchpointSet().state() == IsWatched;
+}
+
 // This implements 22.2.4.7 TypedArraySpeciesCreate
 // Note, that this function throws.
-template<typename Functor>
-inline JSArrayBufferView* speciesConstruct(JSGlobalObject* globalObject, JSObject* exemplar, MarkedArgumentBuffer& args, const Functor& defaultConstructor)
+// https://tc39.es/ecma262/#typedarray-species-create
+template<typename ViewClass, typename Functor>
+inline JSArrayBufferView* speciesConstruct(JSGlobalObject* globalObject, ViewClass* exemplar, MarkedArgumentBuffer& args, const Functor& defaultConstructor)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue constructor = exemplar->get(globalObject, vm.propertyNames->constructor);
+    bool inSameRealm = exemplar->globalObject() == globalObject;
+    if (LIKELY(inSameRealm)) {
+        if (LIKELY(speciesWatchpointIsValid(globalObject, exemplar)))
+            RELEASE_AND_RETURN(scope, defaultConstructor());
+    }
+
+    JSValue constructorValue = exemplar->get(globalObject, vm.propertyNames->constructor);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    if (constructor.isUndefined())
+    if (constructorValue.isUndefined())
         RELEASE_AND_RETURN(scope, defaultConstructor());
 
-    if (!constructor.isObject()) {
+    if (!constructorValue.isObject()) {
         throwTypeError(globalObject, scope, "constructor Property should not be null"_s);
         return nullptr;
     }
 
-    JSValue species = constructor.get(globalObject, vm.propertyNames->speciesSymbol);
+    // Even though exemplar is extended, still we can try to use watchpoints to avoid @@species lookup if the obtained constructor is ViewClass's constructor.
+    JSObject* viewClassConstructor = globalObject->typedArrayConstructor(ViewClass::TypedArrayStorageType);
+    JSObject* constructor = jsCast<JSObject*>(constructorValue);
+    if (LIKELY(constructor == viewClassConstructor)) {
+        if (LIKELY(inSameRealm && globalObject->typedArraySpeciesWatchpointSet(ViewClass::TypedArrayStorageType).state() == IsWatched && globalObject->typedArrayConstructorSpeciesWatchpointSet().state() == IsWatched))
+            RELEASE_AND_RETURN(scope, defaultConstructor());
+    }
+
+    JSValue species = constructor->get(globalObject, vm.propertyNames->speciesSymbol);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (species.isUndefinedOrNull())
         RELEASE_AND_RETURN(scope, defaultConstructor());
 
+    // If species constructor ends up the same to viewClassConstructor, let's use default fast path.
+    if (species == viewClassConstructor)
+        RELEASE_AND_RETURN(scope, defaultConstructor());
 
     JSValue result = construct(globalObject, species, args, "species is not a constructor"_s);
     RETURN_IF_EXCEPTION(scope, nullptr);

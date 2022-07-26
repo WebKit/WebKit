@@ -136,6 +136,7 @@ class WrapperMap;
 #endif
 
 template<typename Watchpoint> class ObjectPropertyChangeAdaptiveWatchpoint;
+class ObjectAdaptiveStructureWatchpoint;
 
 constexpr bool typeExposedByDefault = true;
 
@@ -517,16 +518,16 @@ public:
 
     // If this hasn't been invalidated, it means the array iterator protocol
     // is not observable to user code yet.
-    InlineWatchpointSet m_arrayIteratorProtocolWatchpointSet;
-    InlineWatchpointSet m_mapIteratorProtocolWatchpointSet;
-    InlineWatchpointSet m_setIteratorProtocolWatchpointSet;
-    InlineWatchpointSet m_stringIteratorProtocolWatchpointSet;
-    InlineWatchpointSet m_mapSetWatchpointSet;
-    InlineWatchpointSet m_setAddWatchpointSet;
+    InlineWatchpointSet m_arrayIteratorProtocolWatchpointSet { IsWatched };
+    InlineWatchpointSet m_mapIteratorProtocolWatchpointSet { IsWatched };
+    InlineWatchpointSet m_setIteratorProtocolWatchpointSet { IsWatched };
+    InlineWatchpointSet m_stringIteratorProtocolWatchpointSet { IsWatched };
+    InlineWatchpointSet m_mapSetWatchpointSet { IsWatched };
+    InlineWatchpointSet m_setAddWatchpointSet { IsWatched };
     InlineWatchpointSet m_arraySpeciesWatchpointSet { ClearWatchpoint };
-    InlineWatchpointSet m_arrayJoinWatchpointSet;
-    InlineWatchpointSet m_numberToStringWatchpointSet;
-    InlineWatchpointSet m_structureCacheClearedWatchpoint;
+    InlineWatchpointSet m_arrayJoinWatchpointSet { IsWatched };
+    InlineWatchpointSet m_numberToStringWatchpointSet { IsWatched };
+    InlineWatchpointSet m_structureCacheClearedWatchpoint { IsWatched };
     InlineWatchpointSet m_arrayBufferSpeciesWatchpointSet { ClearWatchpoint };
     InlineWatchpointSet m_sharedArrayBufferSpeciesWatchpointSet { ClearWatchpoint };
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayConstructorSpeciesWatchpoint;
@@ -545,6 +546,34 @@ public:
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_numberPrototypeToStringWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayBufferConstructorSpeciesWatchpoints[2];
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayBufferPrototypeConstructorWatchpoints[2];
+
+    std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayConstructorSpeciesAbsenceWatchpoint(TypedArrayType type)
+    {
+        switch (type) {
+        case NotTypedArray:
+            RELEASE_ASSERT_NOT_REACHED();
+            return m_typedArrayInt8ConstructorSpeciesAbsenceWatchpoint;
+#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_typedArray ## name ## ConstructorSpeciesAbsenceWatchpoint;
+            FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
+#undef TYPED_ARRAY_TYPE_CASE
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return m_typedArrayInt8ConstructorSpeciesAbsenceWatchpoint;
+    }
+
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& typedArrayPrototypeConstructorWatchpoint(TypedArrayType type)
+    {
+        switch (type) {
+        case NotTypedArray:
+            RELEASE_ASSERT_NOT_REACHED();
+            return m_typedArrayInt8PrototypeConstructorWatchpoint;
+#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_typedArray ## name ## PrototypeConstructorWatchpoint;
+            FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
+#undef TYPED_ARRAY_TYPE_CASE
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return m_typedArrayInt8PrototypeConstructorWatchpoint;
+    }
 
 public:
     JSCallee* stackOverflowFrameCallee() const { return m_stackOverflowFrameCallee.get(); }
@@ -574,6 +603,21 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
         return m_arrayBufferSpeciesWatchpointSet;
     }
+
+    InlineWatchpointSet& typedArraySpeciesWatchpointSet(TypedArrayType type)
+    {
+        switch (type) {
+        case NotTypedArray:
+            RELEASE_ASSERT_NOT_REACHED();
+            return m_typedArrayInt8SpeciesWatchpointSet;
+#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_typedArray ## name ## SpeciesWatchpointSet;
+            FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
+#undef TYPED_ARRAY_TYPE_CASE
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return m_typedArrayInt8SpeciesWatchpointSet;
+    }
+    InlineWatchpointSet& typedArrayConstructorSpeciesWatchpointSet() { return m_typedArrayConstructorSpeciesWatchpointSet; }
 
     bool isArrayPrototypeIteratorProtocolFastAndNonObservable();
     bool isMapPrototypeIteratorProtocolFastAndNonObservable();
@@ -1052,6 +1096,11 @@ public:
         return lazyTypedArrayStructure(type).constructor(this);
     }
 
+    JSObject* typedArrayPrototype(TypedArrayType type) const
+    {
+        return lazyTypedArrayStructure(type).prototype(this);
+    }
+
     JSCell* linkTimeConstant(LinkTimeConstant value) const
     {
         JSCell* result = m_linkTimeConstants[static_cast<unsigned>(value)].getInitializedOnMainThread(this);
@@ -1194,9 +1243,13 @@ public:
     void installMapPrototypeWatchpoint(MapPrototype*);
     void installSetPrototypeWatchpoint(SetPrototype*);
     void tryInstallArrayBufferSpeciesWatchpoint(ArrayBufferSharingMode);
+    void tryInstallTypedArraySpeciesWatchpoint(TypedArrayType);
+    void installTypedArrayConstructorSpeciesWatchpoint(JSTypedArrayViewConstructor*);
 
 protected:
-    void tryInstallSpeciesWatchpoint(JSObject* prototype, JSObject* constructor, std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& constructorWatchpoint, std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& speciesWatchpoint, InlineWatchpointSet& speciesWatchpointSet);
+    enum class HasSpeciesProperty : bool { Yes, No };
+    template<typename SpeciesWatchpoint>
+    void tryInstallSpeciesWatchpoint(JSObject* prototype, JSObject* constructor, std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& constructorWatchpoint, std::unique_ptr<SpeciesWatchpoint>&, InlineWatchpointSet&, HasSpeciesProperty);
 
     struct GlobalPropertyInfo {
         GlobalPropertyInfo(const Identifier& i, JSValue v, unsigned a)
@@ -1231,6 +1284,18 @@ private:
     void fixupPrototypeChainWithObjectPrototype(VM&);
 
     JS_EXPORT_PRIVATE static void clearRareData(JSCell*);
+
+    InlineWatchpointSet m_typedArrayConstructorSpeciesWatchpointSet { IsWatched };
+#define DECLARE_TYPED_ARRAY_TYPE_SPECIES_WATCHPOINT_SET(name) \
+    InlineWatchpointSet m_typedArray ## name ## SpeciesWatchpointSet { ClearWatchpoint };
+    FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE_SPECIES_WATCHPOINT_SET)
+#undef DECLARE_TYPED_ARRAY_TYPE_SPECIES_WATCHPOINT_SET
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_typedArrayConstructorSpeciesWatchpoint;
+#define DECLARE_TYPED_ARRAY_TYPE_WATCHPOINT(name) \
+    std::unique_ptr<ObjectAdaptiveStructureWatchpoint> m_typedArray ## name ## ConstructorSpeciesAbsenceWatchpoint; \
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_typedArray ## name ## PrototypeConstructorWatchpoint;
+    FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE_WATCHPOINT)
+#undef DECLARE_TYPED_ARRAY_TYPE_WATCHPOINT
 
 #if JSC_OBJC_API_ENABLED
     RetainPtr<JSWrapperMap> m_wrapperMap;
