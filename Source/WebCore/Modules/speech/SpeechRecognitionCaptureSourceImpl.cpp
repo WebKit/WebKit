@@ -113,7 +113,7 @@ void SpeechRecognitionCaptureSourceImpl::pullSamplesAndCallDataCallback(const Me
 {
     ASSERT(isMainThread());
 
-    auto data = WebAudioBufferList { audioDescription, static_cast<uint32_t>(sampleCount) };
+    auto data = WebAudioBufferList { audioDescription, sampleCount };
     {
         Locker locker { m_dataSourceLock };
         m_dataSource->pullSamples(*data.list(), sampleCount, time.timeValue(), 0, AudioSampleDataSource::Copy);

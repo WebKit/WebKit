@@ -80,7 +80,7 @@ void MediaStreamAudioSource::consumeAudio(AudioBus& bus, size_t numberOfFrames)
         // Heap allocations are forbidden on the audio thread for performance reasons so we need to
         // explicitly allow the following allocation(s).
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-        m_audioBuffer = makeUnique<WebAudioBufferList>(description, safeCast<uint32_t>(numberOfFrames));
+        m_audioBuffer = makeUnique<WebAudioBufferList>(description, numberOfFrames);
         audioBuffer = &downcast<WebAudioBufferList>(*m_audioBuffer);
     } else
         audioBuffer->setSampleCount(numberOfFrames);
