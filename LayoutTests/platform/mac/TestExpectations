@@ -2279,7 +2279,7 @@ webkit.org/b/240989 http/tests/media/hls/hls-webvtt-flashing.html [ Pass Failure
 webkit.org/b/242249 [ BigSur+ ] webanimations/accelerated-animation-after-forward-filling-animation.html [ Pass ImageOnlyFailure ]
 
 # Requires platform support (see rdar://94324932).
-[ BigSur Monterey ] http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]
+[ BigSur Monterey ] http/tests/media/media-source/mediasource-rvfc.html [ Skip ]
 
 webkit.org/b/242481 fast/css/direct-adjacent-style-sharing-3.html [ Pass ImageOnlyFailure ]
 
