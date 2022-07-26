@@ -359,7 +359,6 @@ public:
     static WTF::String defaultMediaKeysStorageDirectory();
     static WTF::String defaultDeviceIdHashSaltsStorageDirectory();
     static WTF::String defaultJavaScriptConfigurationDirectory();
-    static bool http3Enabled();
     static constexpr uint64_t defaultPerOriginQuota() { return 1000 * MB; }
     static bool defaultShouldUseCustomStoragePaths();
 

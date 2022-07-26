@@ -168,7 +168,6 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
         httpsProxy = URL { [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey] };
 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
-    bool http3Enabled = WebsiteDataStore::http3Enabled();
     SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
     String alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
     createHandleFromResolvedPathIfPossible(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
@@ -185,7 +184,6 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     parameters.networkSessionParameters.alternativeServiceDirectory = WTFMove(alternativeServiceStorageDirectory);
     parameters.networkSessionParameters.alternativeServiceDirectoryExtensionHandle = WTFMove(alternativeServiceStorageDirectoryExtensionHandle);
-    parameters.networkSessionParameters.http3Enabled = WTFMove(http3Enabled);
 #endif
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost = shouldIncludeLocalhostInResourceLoadStatistics;
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.enableDebugMode = enableResourceLoadStatisticsDebugMode;
@@ -206,15 +204,6 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 
     parameters.uiProcessCookieStorageIdentifier = m_uiProcessCookieStorageIdentifier;
     parameters.networkSessionParameters.enablePrivateClickMeasurementDebugMode = experimentalFeatureEnabled(WebPreferencesKey::privateClickMeasurementDebugModeEnabledKey());
-}
-
-bool WebsiteDataStore::http3Enabled()
-{
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
-    return experimentalFeatureEnabled(WebPreferencesKey::http3EnabledKey());
-#else
-    return false;
-#endif
 }
 
 bool WebsiteDataStore::useNetworkLoader()

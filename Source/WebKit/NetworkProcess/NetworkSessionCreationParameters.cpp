@@ -54,7 +54,6 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     encoder << alternativeServiceDirectory;
     encoder << alternativeServiceDirectoryExtensionHandle;
-    encoder << http3Enabled;
 #endif
     encoder << hstsStorageDirectory;
     encoder << hstsStorageDirectoryExtensionHandle;
@@ -166,11 +165,6 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     std::optional<SandboxExtension::Handle> alternativeServiceDirectoryExtensionHandle;
     decoder >> alternativeServiceDirectoryExtensionHandle;
     if (!alternativeServiceDirectoryExtensionHandle)
-        return std::nullopt;
-    
-    std::optional<bool> http3Enabled;
-    decoder >> http3Enabled;
-    if (!http3Enabled)
         return std::nullopt;
 #endif
 
@@ -442,7 +436,6 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
         , WTFMove(*alternativeServiceDirectory)
         , WTFMove(*alternativeServiceDirectoryExtensionHandle)
-        , WTFMove(*http3Enabled)
 #endif
         , WTFMove(*hstsStorageDirectory)
         , WTFMove(*hstsStorageDirectoryExtensionHandle)

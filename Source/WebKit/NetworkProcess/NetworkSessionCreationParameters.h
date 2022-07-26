@@ -69,7 +69,6 @@ struct NetworkSessionCreationParameters {
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     String alternativeServiceDirectory;
     SandboxExtension::Handle alternativeServiceDirectoryExtensionHandle;
-    bool http3Enabled { false };
 #endif
     String hstsStorageDirectory;
     SandboxExtension::Handle hstsStorageDirectoryExtensionHandle;

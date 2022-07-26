@@ -687,17 +687,6 @@ HDRMediaCapabilitiesEnabled:
     WebCore:
       default: false
 
-HTTP3Enabled:
-  type: bool
-  humanReadableName: "HTTP/3"
-  humanReadableDescription: "Enable HTTP/3"
-  webcoreBinding: none
-  condition: HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: false
-
 HasPseudoClassEnabled:
   type: bool
   humanReadableName: ":has() pseudo-class"

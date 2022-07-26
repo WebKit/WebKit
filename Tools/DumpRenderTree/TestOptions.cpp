@@ -104,7 +104,7 @@ const TestFeatures& TestOptions::defaults()
             { "XSSAuditorEnabled", false },
 
             // FIXME: These experimental features are currently the only ones not enabled for WebKitLegacy, we
-            // should either enable them or stop exposing them (as we do with with preferences like HTTP3Enabled).
+            // should either enable them or stop exposing them (as we do with with preferences).
             // All other experimental features are automatically enabled regardless of their specified defaults.
             { "AsyncClipboardAPIEnabled", false },
             { "CSSOMViewSmoothScrollingEnabled", false },

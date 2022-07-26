@@ -1960,11 +1960,6 @@ String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
     return String();
 }
 
-bool WebsiteDataStore::http3Enabled()
-{
-    return false;
-}
-
 bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String&)
 {
     return false;
