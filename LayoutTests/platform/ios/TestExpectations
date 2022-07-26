@@ -3302,9 +3302,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/canva
 imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/canvas_transformations_scale_001.htm [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/transform_a.html [ ImageOnlyFailure ]
 
-# rdar://79084756 ((r278618) media/modern-media-controls /overflow-support/chapters.html is timing out since introduction (226828))
-media/modern-media-controls/overflow-support/chapters.html [ Timeout ]
-
 # rdar://80345578 ([ Mac iOS Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html is flaky crashing)
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html [ Pass Failure Crash ]
 
