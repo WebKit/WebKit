@@ -3,7 +3,7 @@ Tests XMLHttpRequest.responseType of "json" fails to parse if the payload was en
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL jsonXHR.response should be null. Was [object Object].
+PASS jsonXHR.response is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

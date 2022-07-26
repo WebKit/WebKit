@@ -337,6 +337,9 @@ String TextResourceDecoder::textFromUTF8(const unsigned char* data, unsigned len
 
 void TextResourceDecoder::setEncoding(const PAL::TextEncoding& encoding, EncodingSource source)
 {
+    if (m_alwaysUseUTF8)
+        return;
+
     // In case the encoding didn't exist, we keep the old one (helps some sites specifying invalid encodings).
     if (!encoding.isValid())
         return;
@@ -420,18 +423,20 @@ size_t TextResourceDecoder::checkForBOM(const char* data, size_t len)
     unsigned char c3 = buf1Len ? (static_cast<void>(--buf1Len), *buf1++) : buf2Len ? (static_cast<void>(--buf2Len), *buf2++) : 0;
 
     // Check for the BOM.
-    if (c1 == 0xFF && c2 == 0xFE) {
-        ASSERT(PAL::UTF16LittleEndianEncoding().isValid());
-        setEncoding(PAL::UTF16LittleEndianEncoding(), AutoDetectedEncoding);
-        lengthOfBOM = 2;
-    } else if (c1 == 0xFE && c2 == 0xFF) {
-        ASSERT(PAL::UTF16BigEndianEncoding().isValid());
-        setEncoding(PAL::UTF16BigEndianEncoding(), AutoDetectedEncoding);
-        lengthOfBOM = 2;
-    } else if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF) {
+    if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF) {
         ASSERT(PAL::UTF8Encoding().isValid());
         setEncoding(PAL::UTF8Encoding(), AutoDetectedEncoding);
         lengthOfBOM = 3;
+    } else if (!m_alwaysUseUTF8) {
+        if (c1 == 0xFF && c2 == 0xFE) {
+            ASSERT(PAL::UTF16LittleEndianEncoding().isValid());
+            setEncoding(PAL::UTF16LittleEndianEncoding(), AutoDetectedEncoding);
+            lengthOfBOM = 2;
+        } else if (c1 == 0xFE && c2 == 0xFF) {
+            ASSERT(PAL::UTF16BigEndianEncoding().isValid());
+            setEncoding(PAL::UTF16BigEndianEncoding(), AutoDetectedEncoding);
+            lengthOfBOM = 2;
+        }
     }
 
     if (lengthOfBOM || bufferLength + len >= maximumBOMLength)

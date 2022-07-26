@@ -68,6 +68,8 @@ public:
     void useLenientXMLDecoding() { m_useLenientXMLDecoding = true; }
     bool sawError() const { return m_sawError; }
 
+    void setAlwaysUseUTF8() { ASSERT(!strcmp(m_encoding.name(), "UTF-8")); m_alwaysUseUTF8 = true; }
+
 private:
     TextResourceDecoder(const String& mimeType, const PAL::TextEncoding& defaultEncoding, bool usesEncodingDetector);
 
@@ -95,6 +97,7 @@ private:
     bool m_useLenientXMLDecoding { false }; // Don't stop on XML decoding errors.
     bool m_sawError { false };
     bool m_usesEncodingDetector { false };
+    bool m_alwaysUseUTF8 { false };
 };
 
 inline void TextResourceDecoder::setHintEncoding(const TextResourceDecoder* parentFrameDecoder)

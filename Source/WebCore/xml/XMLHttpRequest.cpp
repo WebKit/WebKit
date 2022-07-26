@@ -1017,8 +1017,12 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
         }
         FALLTHROUGH;
     case ResponseType::Text:
-    case ResponseType::Json:
-        return TextResourceDecoder::create("text/plain"_s, "UTF-8");
+    case ResponseType::Json: {
+        auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8");
+        if (responseType() == ResponseType::Json)
+            decoder->setAlwaysUseUTF8();
+        return decoder;
+    }
     case ResponseType::Document: {
         if (equalLettersIgnoringASCIICase(responseMIMEType(), "text/html"_s))
             return TextResourceDecoder::create("text/html"_s, "UTF-8");
