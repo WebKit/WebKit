@@ -61,7 +61,7 @@ public:
         virtual void delaySamples(Seconds) { }
     };
 
-    static CoreAudioSharedUnit& unit();
+    WEBCORE_EXPORT static CoreAudioSharedUnit& unit();
     static BaseAudioSharedUnit& singleton()  { return unit(); }
     CoreAudioSharedUnit();
 

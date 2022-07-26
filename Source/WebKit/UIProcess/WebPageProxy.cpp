@@ -11209,6 +11209,9 @@ void WebPageProxy::gpuProcessExited(ProcessTerminationReason)
     if (activeAudioCapture || activeVideoCapture) {
         auto& gpuProcess = process().processPool().ensureGPUProcess();
         gpuProcess.updateCaptureAccess(activeAudioCapture, activeVideoCapture, activeDisplayCapture, m_process->coreProcessIdentifier(), [] { });
+#if PLATFORM(IOS_FAMILY)
+        gpuProcess.setOrientationForMediaCapture(m_deviceOrientation);
+#endif
     }
 #endif
 }
