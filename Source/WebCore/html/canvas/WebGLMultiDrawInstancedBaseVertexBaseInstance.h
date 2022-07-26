@@ -48,8 +48,8 @@ public:
     void multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL(GCGLenum mode, Int32List&& countsList, GCGLuint countsOffset, GCGLenum type, Int32List&& offsetsList, GCGLuint offsetsOffset, Int32List&& instanceCountsList, GCGLuint instanceCountsOffset, Int32List&& baseVerticesList, GCGLuint baseVerticesOffset, Uint32List&& baseInstancesList, GCGLuint baseInstancesOffset, GCGLsizei drawcount);
 
 private:
-    bool validateDrawcount(const char* functionName, GCGLsizei drawcount);
-    bool validateOffset(const char* functionName, const char* outOfBoundsDescription, GCGLsizei, GCGLuint offset, GCGLsizei drawcount);
+    bool validateDrawcount(WebGLExtensionScopedContext&, const char* functionName, GCGLsizei drawcount);
+    bool validateOffset(WebGLExtensionScopedContext&, const char* functionName, const char* outOfBoundsDescription, GCGLsizei, GCGLuint offset, GCGLsizei drawcount);
 };
 
 } // namespace WebCore

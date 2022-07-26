@@ -59,35 +59,36 @@ bool WebGLDrawBuffers::supported(WebGLRenderingContextBase& context)
 
 void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GCGLenum>& buffers)
 {
-    if (!m_context || m_context->isContextLost())
+    auto context = WebGLExtensionScopedContext(this);
+    if (context.isLost())
         return;
     GCGLsizei n = buffers.size();
     const GCGLenum* bufs = buffers.data();
-    if (!m_context->m_framebufferBinding) {
+    if (!context->m_framebufferBinding) {
         if (n != 1) {
-            m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "drawBuffersWEBGL", "more or fewer than one buffer");
+            context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "drawBuffersWEBGL", "more or fewer than one buffer");
             return;
         }
         if (bufs[0] != GraphicsContextGL::BACK && bufs[0] != GraphicsContextGL::NONE) {
-            m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "drawBuffersWEBGL", "BACK or NONE");
+            context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "drawBuffersWEBGL", "BACK or NONE");
             return;
         }
         // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
         GCGLenum value[1] { bufs[0] == GraphicsContextGL::BACK ? GraphicsContextGL::COLOR_ATTACHMENT0 : GraphicsContextGL::NONE };
-        m_context->graphicsContextGL()->drawBuffersEXT(value);
-        m_context->setBackDrawBuffer(bufs[0]);
+        context->graphicsContextGL()->drawBuffersEXT(value);
+        context->setBackDrawBuffer(bufs[0]);
     } else {
-        if (n > m_context->getMaxDrawBuffers()) {
-            m_context->synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "drawBuffersWEBGL", "more than max draw buffers");
+        if (n > context->getMaxDrawBuffers()) {
+            context->synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "drawBuffersWEBGL", "more than max draw buffers");
             return;
         }
         for (GCGLsizei i = 0; i < n; ++i) {
             if (bufs[i] != GraphicsContextGL::NONE && bufs[i] != GraphicsContextGL::COLOR_ATTACHMENT0_EXT + i) {
-                m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "drawBuffersWEBGL", "COLOR_ATTACHMENTi_EXT or NONE");
+                context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "drawBuffersWEBGL", "COLOR_ATTACHMENTi_EXT or NONE");
                 return;
             }
         }
-        m_context->m_framebufferBinding->drawBuffers(buffers);
+        context->m_framebufferBinding->drawBuffers(buffers);
     }
 }
 

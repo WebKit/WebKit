@@ -33,6 +33,11 @@
 
 namespace WebCore {
 
+WebGLExtensionScopedContext::WebGLExtensionScopedContext(WebGLExtension* extension)
+    : m_context(extension->context())
+{
+}
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLExtension);
 
 WebGLExtension::WebGLExtension(WebGLRenderingContextBase& context)

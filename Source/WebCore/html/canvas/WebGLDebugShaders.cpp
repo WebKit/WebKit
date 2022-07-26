@@ -56,11 +56,12 @@ bool WebGLDebugShaders::supported(GraphicsContextGL& context)
 
 String WebGLDebugShaders::getTranslatedShaderSource(WebGLShader& shader)
 {
-    if (!m_context || m_context->isContextLost())
+    auto context = WebGLExtensionScopedContext(this);
+    if (context.isLost())
         return String();
-    if (!m_context->validateWebGLObject("getTranslatedShaderSource", &shader))
+    if (!context->validateWebGLObject("getTranslatedShaderSource", &shader))
         return emptyString();
-    return m_context->graphicsContextGL()->getTranslatedShaderSourceANGLE(shader.object());
+    return context->graphicsContextGL()->getTranslatedShaderSourceANGLE(shader.object());
 }
 
 } // namespace WebCore
