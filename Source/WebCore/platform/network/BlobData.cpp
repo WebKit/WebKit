@@ -39,7 +39,6 @@ namespace WebCore {
 BlobData::BlobData(const String& contentType)
     : m_contentType(contentType)
 {
-    ASSERT(Blob::isNormalizedContentType(contentType));
 }
 
 const long long BlobDataItem::toEndOfFile = -1;
