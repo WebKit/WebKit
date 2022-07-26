@@ -830,11 +830,11 @@ LazyIframeLoadingEnabled:
   humanReadableDescription: "Enable lazy iframe loading support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 LazyImageLoadingEnabled:
   type: bool
