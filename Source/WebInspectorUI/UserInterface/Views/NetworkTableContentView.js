@@ -523,6 +523,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         case "domain":
             this._populateDomainCell(cell, entry);
             break;
+        case "path":
+            setTextContent((resourceEntry) => resourceEntry.path);
+            break;
         case "type":
             setTextContent((resourceEntry) => resourceEntry.displayType);
             break;
@@ -1057,6 +1060,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         switch (sortColumnIdentifier) {
         case "name":
         case "domain":
+        case "path":
         case "mimeType":
         case "method":
         case "scheme":
@@ -1188,6 +1192,13 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             initialWidth: 150,
         });
 
+        this._pathColumn = new WI.TableColumn("path", WI.UIString("Path"), {
+            hidden: true,
+            minWidth: 120,
+            maxWidth: 400,
+            initialWidth: 150,
+        });
+
         this._typeColumn = new WI.TableColumn("type", WI.UIString("Type"), {
             minWidth: 70,
             maxWidth: 120,
@@ -1290,6 +1301,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this._table.addColumn(this._nameColumn);
         this._table.addColumn(this._domainColumn);
+        this._table.addColumn(this._pathColumn);
         this._table.addColumn(this._typeColumn);
         this._table.addColumn(this._mimeTypeColumn);
         this._table.addColumn(this._methodColumn);
@@ -1988,10 +2000,15 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 rowClassNames.push("initiated");
         }
 
+        let subpath = resource.urlComponents.path;
+        if (subpath && resource.urlComponents.lastPathComponent)
+            subpath = subpath.substring(0, subpath.length - resource.urlComponents.lastPathComponent.length);
+
         return {
             resource,
             name: WI.displayNameForURL(resource.url, resource.urlComponents),
             domain: WI.displayNameForHost(resource.urlComponents.host),
+            path: subpath || "",
             scheme: resource.urlComponents.scheme ? resource.urlComponents.scheme.toLowerCase() : "",
             method: resource.requestMethod,
             type: resource.type,
