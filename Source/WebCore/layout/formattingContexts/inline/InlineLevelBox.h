@@ -90,10 +90,10 @@ public:
     enum class Type : uint8_t {
         InlineBox             = 1 << 0,
         LineSpanningInlineBox = 1 << 1,
-        RootInlineBox         = 1 << 1,
-        AtomicInlineLevelBox  = 1 << 2,
-        LineBreakBox          = 1 << 3,
-        GenericInlineLevelBox = 1 << 4
+        RootInlineBox         = 1 << 2,
+        AtomicInlineLevelBox  = 1 << 3,
+        LineBreakBox          = 1 << 4,
+        GenericInlineLevelBox = 1 << 5
     };
     Type type() const { return m_type; }
 
