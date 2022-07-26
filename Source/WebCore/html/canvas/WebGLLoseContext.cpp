@@ -48,18 +48,20 @@ WebGLExtension::ExtensionName WebGLLoseContext::getName() const
 
 void WebGLLoseContext::loseContext()
 {
-    if (!m_context)
+    auto context = WebGLExtensionScopedContext(this);
+    if (context.isLost())
         return;
 
-    m_context->forceLostContext(WebGLRenderingContextBase::SyntheticLostContext);
+    context->forceLostContext(WebGLRenderingContextBase::SyntheticLostContext);
 }
 
 void WebGLLoseContext::restoreContext()
 {
-    if (!m_context)
+    auto context = WebGLExtensionScopedContext(this);
+    if (context.isLost())
         return;
 
-    m_context->forceRestoreContext();
+    context->forceRestoreContext();
 }
 
 void WebGLLoseContext::loseParentContext(WebGLRenderingContextBase::LostContextMode mode)

@@ -56,46 +56,48 @@ bool WebGLDrawInstancedBaseVertexBaseInstance::supported(GraphicsContextGL& cont
 
 void WebGLDrawInstancedBaseVertexBaseInstance::drawArraysInstancedBaseInstanceWEBGL(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei instanceCount, GCGLuint baseInstance)
 {
-    if (!m_context || m_context->isContextLost())
+    auto context = WebGLExtensionScopedContext(this);
+    if (context.isLost())
         return;
 
-    if (!m_context->validateVertexArrayObject("drawArraysInstancedBaseInstanceWEBGL"))
+    if (!context->validateVertexArrayObject("drawArraysInstancedBaseInstanceWEBGL"))
         return;
 
-    if (m_context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*m_context, *m_context->m_currentProgram))
+    if (context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*context, *context->m_currentProgram))
         return;
 
-    m_context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(*m_context, m_context->m_currentProgram.get());
+        InspectorScopedShaderProgramHighlight scopedHighlight(*context, context->m_currentProgram.get());
 
-        m_context->graphicsContextGL()->drawArraysInstancedBaseInstanceANGLE(mode, first, count, instanceCount, baseInstance);
+        context->graphicsContextGL()->drawArraysInstancedBaseInstanceANGLE(mode, first, count, instanceCount, baseInstance);
     }
 
-    m_context->markContextChangedAndNotifyCanvasObserver();
+    context->markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGLDrawInstancedBaseVertexBaseInstance::drawElementsInstancedBaseVertexBaseInstanceWEBGL(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei instanceCount, GCGLint baseVertex, GCGLuint baseInstance)
 {
-    if (!m_context || m_context->isContextLost())
+    auto context = WebGLExtensionScopedContext(this);
+    if (context.isLost())
         return;
 
-    if (!m_context->validateVertexArrayObject("drawElementsInstancedBaseVertexBaseInstanceWEBGL"))
+    if (!context->validateVertexArrayObject("drawElementsInstancedBaseVertexBaseInstanceWEBGL"))
         return;
 
-    if (m_context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*m_context, *m_context->m_currentProgram))
+    if (context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*context, *context->m_currentProgram))
         return;
 
-    m_context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(*m_context, m_context->m_currentProgram.get());
+        InspectorScopedShaderProgramHighlight scopedHighlight(*context, context->m_currentProgram.get());
 
-        m_context->graphicsContextGL()->drawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, offset, instanceCount, baseVertex, baseInstance);
+        context->graphicsContextGL()->drawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, offset, instanceCount, baseVertex, baseInstance);
     }
 
-    m_context->markContextChangedAndNotifyCanvasObserver();
+    context->markContextChangedAndNotifyCanvasObserver();
 }
 
 } // namespace WebCore

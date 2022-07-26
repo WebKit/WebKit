@@ -8249,7 +8249,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
 #define LOSE_EXTENSION(variable) \
     if (variable) { \
         variable->loseParentContext(mode); \
-        if (variable->isLost()) \
+        if (variable->isLostContext()) \
             (void) variable.releaseNonNull(); \
     }
 

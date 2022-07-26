@@ -59,23 +59,26 @@ bool ANGLEInstancedArrays::supported(GraphicsContextGL& context)
 
 void ANGLEInstancedArrays::drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
-    if (!m_context || m_context->isContextLost())
+    auto context = WebGLExtensionScopedContext(this);
+    if (context.isLost())
         return;
-    m_context->drawArraysInstanced(mode, first, count, primcount);
+    context->drawArraysInstanced(mode, first, count, primcount);
 }
 
 void ANGLEInstancedArrays::drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount)
 {
-    if (!m_context || m_context->isContextLost())
+    auto context = WebGLExtensionScopedContext(this);
+    if (context.isLost())
         return;
-    m_context->drawElementsInstanced(mode, count, type, offset, primcount);
+    context->drawElementsInstanced(mode, count, type, offset, primcount);
 }
 
 void ANGLEInstancedArrays::vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor)
 {
-    if (!m_context || m_context->isContextLost())
+    auto context = WebGLExtensionScopedContext(this);
+    if (context.isLost())
         return;
-    m_context->vertexAttribDivisor(index, divisor);
+    context->vertexAttribDivisor(index, divisor);
 }
 
 } // namespace WebCore
