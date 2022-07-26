@@ -42,7 +42,7 @@ GradientRendererCG::GradientRendererCG(ColorInterpolationMethod colorInterpolati
 
 #if !HAVE(CORE_GRAPHICS_PREMULTIPLIED_INTERPOLATION_GRADIENT)
 
-enum class EmulatedAlphaPremuliplicationAnalysisResult {
+enum class EmulatedAlphaPremultiplicationAnalysisResult {
     UseGradientAsIs,
     UseGradientWithAlphaTransforms,
     UseShading
@@ -63,10 +63,10 @@ static constexpr AlphaType classifyAlphaType(float alpha)
     return AlphaType::PartiallyTransparent;
 }
 
-static EmulatedAlphaPremuliplicationAnalysisResult analyzeColorStopsForEmulatedAlphaPremuliplicationOppertunity(const GradientColorStops& stops)
+static EmulatedAlphaPremultiplicationAnalysisResult analyzeColorStopsForEmulatedAlphaPremultiplicationOpportunity(const GradientColorStops& stops)
 {
     if (stops.size() < 2)
-        return EmulatedAlphaPremuliplicationAnalysisResult::UseGradientAsIs;
+        return EmulatedAlphaPremultiplicationAnalysisResult::UseGradientAsIs;
 
     bool uniformAlpha = true;
 
@@ -89,7 +89,7 @@ static EmulatedAlphaPremuliplicationAnalysisResult analyzeColorStopsForEmulatedA
             case AlphaType::Opaque:
                 break;
             case AlphaType::PartiallyTransparent:
-                return EmulatedAlphaPremuliplicationAnalysisResult::UseShading;
+                return EmulatedAlphaPremultiplicationAnalysisResult::UseShading;
             case AlphaType::FullyTransparent:
                 uniformAlpha = false;
                 break;
@@ -99,10 +99,10 @@ static EmulatedAlphaPremuliplicationAnalysisResult analyzeColorStopsForEmulatedA
         case AlphaType::PartiallyTransparent:
             switch (previousStopAlphaType) {
             case AlphaType::Opaque:
-                return EmulatedAlphaPremuliplicationAnalysisResult::UseShading;
+                return EmulatedAlphaPremultiplicationAnalysisResult::UseShading;
             case AlphaType::PartiallyTransparent:
                 if (previousStopAlpha != stopAlpha)
-                    return EmulatedAlphaPremuliplicationAnalysisResult::UseShading;
+                    return EmulatedAlphaPremultiplicationAnalysisResult::UseShading;
                 break;
             case AlphaType::FullyTransparent:
                 uniformAlpha = false;
@@ -129,10 +129,10 @@ static EmulatedAlphaPremuliplicationAnalysisResult analyzeColorStopsForEmulatedA
         ++stopIterator;
     }
 
-    return uniformAlpha ? EmulatedAlphaPremuliplicationAnalysisResult::UseGradientAsIs : EmulatedAlphaPremuliplicationAnalysisResult::UseGradientWithAlphaTransforms;
+    return uniformAlpha ? EmulatedAlphaPremultiplicationAnalysisResult::UseGradientAsIs : EmulatedAlphaPremultiplicationAnalysisResult::UseGradientWithAlphaTransforms;
 }
 
-static GradientColorStops alphaTransformStopsToEmulateAlphaPremuliplication(const GradientColorStops& stops)
+static GradientColorStops alphaTransformStopsToEmulateAlphaPremultiplication(const GradientColorStops& stops)
 {
     // The following is the set of transforms that can be performed on a color stop list to transform it from one used with a premuliplied alpha gradient
     // implmentation to one used by with an un-premultiplied gradient implementation.
@@ -411,12 +411,12 @@ GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolation
 #if HAVE(CORE_GRAPHICS_PREMULTIPLIED_INTERPOLATION_GRADIENT)
                 return makeGradient(colorInterpolationMethod, stops);
 #else
-                switch (analyzeColorStopsForEmulatedAlphaPremuliplicationOppertunity(stops)) {
-                case EmulatedAlphaPremuliplicationAnalysisResult::UseGradientAsIs:
+                switch (analyzeColorStopsForEmulatedAlphaPremultiplicationOpportunity(stops)) {
+                case EmulatedAlphaPremultiplicationAnalysisResult::UseGradientAsIs:
                     return makeGradient({ ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, stops);
-                case EmulatedAlphaPremuliplicationAnalysisResult::UseGradientWithAlphaTransforms:
-                    return makeGradient({ ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, alphaTransformStopsToEmulateAlphaPremuliplication(stops));
-                case EmulatedAlphaPremuliplicationAnalysisResult::UseShading:
+                case EmulatedAlphaPremultiplicationAnalysisResult::UseGradientWithAlphaTransforms:
+                    return makeGradient({ ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, alphaTransformStopsToEmulateAlphaPremultiplication(stops));
+                case EmulatedAlphaPremultiplicationAnalysisResult::UseShading:
                     return makeShading(colorInterpolationMethod, stops);
                 }
 #endif
