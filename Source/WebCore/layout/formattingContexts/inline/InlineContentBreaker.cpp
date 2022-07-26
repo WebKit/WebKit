@@ -555,14 +555,14 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
                     // we should forward the breaking index to the closing inline box.
                     // FIXME: We may wanna skip over the visually empty inline boxes only e.g. <span style="word-wrap: break-word">fits_and_we_break_at_the_right_edge</span><span></span><span>overflows</span>
                     auto trailingInlineBoxEndIndex = std::optional<size_t> { };
-                    for (auto candidateIndex = index + 1; candidateIndex < overflowingRunIndex; ++candidateIndex) {
+                    for (auto candidateIndex = index + 1; candidateIndex <= overflowingRunIndex; ++candidateIndex) {
                         auto& trailingInlineItem = runs[candidateIndex].inlineItem;
                         if (trailingInlineItem.isInlineBoxEnd())
                             trailingInlineBoxEndIndex = candidateIndex;
                         if (!trailingInlineItem.isInlineBoxStart() && !trailingInlineItem.isInlineBoxEnd())
                             break;
                     }
-                    ASSERT(!trailingInlineBoxEndIndex || *trailingInlineBoxEndIndex < overflowingRunIndex);
+                    ASSERT(!trailingInlineBoxEndIndex || *trailingInlineBoxEndIndex <= overflowingRunIndex);
                     return trailingInlineBoxEndIndex.value_or(index);
                 };
                 return OverflowingTextContent::BreakingPosition { trailingRunIndex(), OverflowingTextContent::BreakingPosition::TrailingContent { false, std::nullopt } };
