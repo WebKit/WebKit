@@ -5582,11 +5582,17 @@ void WebViewImpl::nativeMouseEventHandlerInternal(NSEvent *event)
 
 void WebViewImpl::mouseEntered(NSEvent *event)
 {
+    if (m_ignoresMouseMoveEvents)
+        return;
+
     nativeMouseEventHandler(event);
 }
 
 void WebViewImpl::mouseExited(NSEvent *event)
 {
+    if (m_ignoresMouseMoveEvents)
+        return;
+
     nativeMouseEventHandler(event);
 }
 
@@ -5642,7 +5648,7 @@ void WebViewImpl::mouseDraggedInternal(NSEvent *event)
 
 void WebViewImpl::mouseMoved(NSEvent *event)
 {
-    if (m_ignoresNonWheelEvents)
+    if (m_ignoresNonWheelEvents || m_ignoresMouseMoveEvents)
         return;
 
 #if ENABLE(UI_PROCESS_PDF_HUD)

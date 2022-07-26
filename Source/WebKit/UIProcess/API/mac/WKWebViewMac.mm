@@ -1307,6 +1307,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _impl->setIgnoresNonWheelEvents(ignoresNonWheelEvents);
 }
 
+- (BOOL)_ignoresMouseMoveEvents
+{
+    return _impl->ignoresMouseMoveEvents();
+}
+
+- (void)_setIgnoresMouseMoveEvents:(BOOL)ignoresMouseMoveEvents
+{
+    _impl->setIgnoresMouseMoveEvents(ignoresMouseMoveEvents);
+}
+
 - (NSView *)_safeBrowsingWarning
 {
     return _impl->safeBrowsingWarning();
