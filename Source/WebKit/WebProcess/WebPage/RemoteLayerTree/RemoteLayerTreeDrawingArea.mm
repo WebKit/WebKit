@@ -378,6 +378,9 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::singleton().parentProcessConnection(), WTFMove(commitEncoder), WTFMove(flushers));
     m_pendingBackingStoreFlusher = backingStoreFlusher;
 
+    if (flushers.size())
+        m_webPage.didPaintLayers();
+
     auto pageID = m_webPage.identifier();
     dispatch_async(m_commitQueue.get(), [backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] {
         backingStoreFlusher->flush();
