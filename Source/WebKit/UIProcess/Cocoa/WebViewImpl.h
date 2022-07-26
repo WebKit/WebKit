@@ -435,6 +435,8 @@ public:
 
     void setIgnoresNonWheelEvents(bool);
     bool ignoresNonWheelEvents() const { return m_ignoresNonWheelEvents; }
+    void setIgnoresMouseMoveEvents(bool ignoresMouseMoveEvents) { m_ignoresMouseMoveEvents = ignoresMouseMoveEvents; }
+    bool ignoresMouseMoveEvents() const { return m_ignoresMouseMoveEvents; }
     void setIgnoresAllEvents(bool);
     bool ignoresAllEvents() const { return m_ignoresAllEvents; }
     void setIgnoresMouseDraggedEvents(bool);
@@ -829,6 +831,7 @@ private:
     RetainPtr<NSEvent> m_lastPressureEvent;
 
     bool m_ignoresNonWheelEvents { false };
+    bool m_ignoresMouseMoveEvents { false };
     bool m_ignoresAllEvents { false };
     bool m_ignoresMouseDraggedEvents { false };
 
