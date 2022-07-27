@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1">
+<script>
+
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+function doTest() {
+  var canvasElement = document.getElementById("canvas");
+  let dpr = window.devicePixelRatio || 1;
+
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
+  canvas.style.transform = "scale(" + 1/dpr + ", " + 1/dpr + ")";
+
+  let ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  ctx.fillStyle = 'green';
+  ctx.fillRect(0, 0, 1000, 500);
+    
+  if (window.testRunner) {
+    document.getElementById('layers-before').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_DEVICE_SCALE);
+  }
+
+  requestAnimationFrame(function() {
+    if (window.internals) {
+      window.internals.setPageScaleFactor(0.5, 0, 0);
+    }
+
+    if (window.testRunner) {
+      document.getElementById('layers-after').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_DEVICE_SCALE);
+      testRunner.notifyDone();
+    }
+  });
+}
+
+window.addEventListener('load', doTest, false);
+</script>
+</head>
+
+<body>
+<p> Tests whether we switch back to a hidpi backing store when we zoom out (and would otherwise downscale the content too much).</p>
+<div style="opacity:0.5">
+<canvas id="canvas" width="1000" height="500" style="transform-origin:top left"></canvas>
+</div>
+<pre id="layers-before">Initial layer tree goes here in DRT</pre>
+<pre id="layers-after">Mutated layer tree goes here in DRT</pre>
+</body>
+
+</html>

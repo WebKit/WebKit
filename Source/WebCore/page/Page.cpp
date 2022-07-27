@@ -1198,6 +1198,7 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
         if (view && !delegatesScaling()) {
             view->setNeedsLayoutAfterViewConfigurationChange();
             view->setNeedsCompositingGeometryUpdate();
+            view->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
 
             document->resolveStyle(Document::ResolveStyleType::Rebuild);
 
