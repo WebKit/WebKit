@@ -166,11 +166,8 @@ void HTMLIFrameElement::setLoadingForBindings(const AtomString& value)
     setAttributeWithoutSynchronization(loadingAttr, value);
 }
 
-static bool isFrameLazyLoadable(const Document& document, const URL& completeURL, const AtomString& loadingAttributeValue)
+static bool isFrameLazyLoadable(const Document& document, const AtomString& loadingAttributeValue)
 {
-    if (!completeURL.protocolIsInHTTPFamily())
-        return false;
-
     if (!document.frame() || !document.frame()->script().canExecuteScripts(NotAboutToExecuteScript))
         return false;
 
@@ -180,9 +177,9 @@ static bool isFrameLazyLoadable(const Document& document, const URL& completeURL
 bool HTMLIFrameElement::shouldLoadFrameLazily()
 {
     if (!m_lazyLoadFrameObserver && document().settings().lazyIframeLoadingEnabled()) {
-        URL completeURL = document().completeURL(frameURL());
-        if (isFrameLazyLoadable(document(), completeURL, attributeWithoutSynchronization(HTMLNames::loadingAttr))) {
+        if (isFrameLazyLoadable(document(), attributeWithoutSynchronization(HTMLNames::loadingAttr))) {
             auto currentReferrerPolicy = referrerPolicy();
+            URL completeURL = document().completeURL(frameURL());
             lazyLoadFrameObserver().observe(AtomString { completeURL.string() }, currentReferrerPolicy);
             return true;
         }
