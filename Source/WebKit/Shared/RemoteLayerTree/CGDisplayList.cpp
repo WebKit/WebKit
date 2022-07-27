@@ -35,11 +35,14 @@ namespace WebKit {
 void CGDisplayList::encode(IPC::Encoder& encoder) const
 {
     encoder << m_displayList;
+    encoder << m_surfaces;
 }
 
-bool CGDisplayList::decode(IPC::Decoder& decoder, CGDisplayList& handle)
+bool CGDisplayList::decode(IPC::Decoder& decoder, CGDisplayList& displayList)
 {
-    if (!decoder.decode(handle.m_displayList))
+    if (!decoder.decode(displayList.m_displayList))
+        return false;
+    if (!decoder.decode(displayList.m_surfaces))
         return false;
     return true;
 }

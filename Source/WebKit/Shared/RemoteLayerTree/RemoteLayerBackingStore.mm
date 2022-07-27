@@ -87,9 +87,9 @@ RemoteLayerBackingStoreCollection* RemoteLayerBackingStore::backingStoreCollecti
     return nullptr;
 }
 
-void RemoteLayerBackingStore::ensureBackingStore(Type type, FloatSize size, float scale, bool deepColor, bool isOpaque, IncludeDisplayList includeDisplayList)
+void RemoteLayerBackingStore::ensureBackingStore(Type type, FloatSize size, float scale, bool deepColor, bool isOpaque, IncludeDisplayList includeDisplayList, UseOutOfLineSurfaces useOutOfLineSurfaces)
 {
-    if (m_type == type && m_size == size && m_scale == scale && m_deepColor == deepColor && m_isOpaque == isOpaque && m_includeDisplayList == includeDisplayList)
+    if (m_type == type && m_size == size && m_scale == scale && m_deepColor == deepColor && m_isOpaque == isOpaque && m_includeDisplayList == includeDisplayList && m_useOutOfLineSurfaces == useOutOfLineSurfaces)
         return;
 
     m_type = type;
@@ -98,6 +98,7 @@ void RemoteLayerBackingStore::ensureBackingStore(Type type, FloatSize size, floa
     m_deepColor = deepColor;
     m_isOpaque = isOpaque;
     m_includeDisplayList = includeDisplayList;
+    m_useOutOfLineSurfaces = useOutOfLineSurfaces;
 
     if (m_frontBuffer) {
         // If we have a valid backing store, we need to ensure that it gets completely
@@ -366,8 +367,11 @@ void RemoteLayerBackingStore::ensureFrontBuffer()
     m_frontBuffer.imageBuffer = collection->allocateBufferForBackingStore(*this);
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    if (m_includeDisplayList == IncludeDisplayList::Yes)
-        m_frontBuffer.displayListImageBuffer = ImageBuffer::create<CGDisplayListImageBufferBackend>(m_size, m_scale, DestinationColorSpace::SRGB(), pixelFormat(), RenderingPurpose::DOM, { });
+    if (m_includeDisplayList == IncludeDisplayList::Yes) {
+        ImageBuffer::CreationContext creationContext;
+        creationContext.useOutOfLineSurfacesForCGDisplayLists = m_useOutOfLineSurfaces;
+        m_frontBuffer.displayListImageBuffer = ImageBuffer::create<CGDisplayListImageBufferBackend>(m_size, m_scale, DestinationColorSpace::SRGB(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
+    }
 #endif
 }
 
@@ -585,8 +589,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
             [layer setValue:@1 forKeyPath:WKCGDisplayListBifurcationEnabledKey];
         } else
             layer.opaque = m_isOpaque;
-        auto data = std::get<CGDisplayList>(*m_displayListBufferHandle).buffer()->createCFData();
-        [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:data.get() replayForTesting:replayCGDisplayListsIntoBackingStore];
+        [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:WTFMove(std::get<CGDisplayList>(*m_displayListBufferHandle)) replayForTesting:replayCGDisplayListsIntoBackingStore];
         return;
     }
 #else

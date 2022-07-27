@@ -59,18 +59,28 @@ public:
 #endif
         bool avoidIOSurfaceSizeCheckInWebProcessForTesting = false;
 
+        enum class UseOutOfLineSurfaces : bool { No, Yes };
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        UseOutOfLineSurfaces useOutOfLineSurfacesForCGDisplayLists;
+#endif
+
         CreationContext(HostWindow* window = nullptr
 #if HAVE(IOSURFACE)
             , IOSurfacePool* pool = nullptr
 #endif
             , bool avoidCheck = false
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+            , UseOutOfLineSurfaces useOutOfLineSurfacesForCGDisplayLists = UseOutOfLineSurfaces::No
+#endif
         )
             : hostWindow(window)
 #if HAVE(IOSURFACE)
             , surfacePool(pool)
 #endif
             , avoidIOSurfaceSizeCheckInWebProcessForTesting(avoidCheck)
-
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+            , useOutOfLineSurfacesForCGDisplayLists(useOutOfLineSurfacesForCGDisplayLists)
+#endif
         { }
     };
 

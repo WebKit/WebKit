@@ -47,6 +47,8 @@ class PlatformCALayerRemote;
 class RemoteLayerBackingStoreCollection;
 enum class SwapBuffersDisplayRequirement : uint8_t;
 
+using UseOutOfLineSurfaces = WebCore::ImageBuffer::CreationContext::UseOutOfLineSurfaces;
+
 class RemoteLayerBackingStore {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
     WTF_MAKE_FAST_ALLOCATED;
@@ -60,7 +62,7 @@ public:
     };
 
     enum class IncludeDisplayList : bool { No, Yes };
-    void ensureBackingStore(Type, WebCore::FloatSize, float scale, bool deepColor, bool isOpaque, IncludeDisplayList);
+    void ensureBackingStore(Type, WebCore::FloatSize, float scale, bool deepColor, bool isOpaque, IncludeDisplayList, UseOutOfLineSurfaces);
 
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
@@ -174,6 +176,7 @@ private:
 
     Type m_type;
     IncludeDisplayList m_includeDisplayList { IncludeDisplayList::No };
+    UseOutOfLineSurfaces m_useOutOfLineSurfaces { UseOutOfLineSurfaces::No };
     bool m_deepColor { false };
 
     WebCore::RepaintRectList m_paintingRects;

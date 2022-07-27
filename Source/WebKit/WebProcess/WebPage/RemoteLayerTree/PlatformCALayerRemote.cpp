@@ -237,11 +237,14 @@ void PlatformCALayerRemote::updateBackingStore()
 
     auto type = m_acceleratesDrawing ? RemoteLayerBackingStore::Type::IOSurface : RemoteLayerBackingStore::Type::Bitmap;
     auto includeDisplayList = RemoteLayerBackingStore::IncludeDisplayList::No;
+    auto useOutOfLineSurfaces = UseOutOfLineSurfaces::No;
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     if (m_context->useCGDisplayListsForDOMRendering())
         includeDisplayList = RemoteLayerBackingStore::IncludeDisplayList::Yes;
+    if (m_context->useCGDisplayListOutOfLineSurfaces())
+        useOutOfLineSurfaces = UseOutOfLineSurfaces::Yes;
 #endif
-    m_properties.backingStore->ensureBackingStore(type, m_properties.bounds.size(), m_properties.contentsScale, m_wantsDeepColorBackingStore, m_properties.opaque, includeDisplayList);
+    m_properties.backingStore->ensureBackingStore(type, m_properties.bounds.size(), m_properties.contentsScale, m_wantsDeepColorBackingStore, m_properties.opaque, includeDisplayList, useOutOfLineSurfaces);
 }
 
 void PlatformCALayerRemote::setNeedsDisplayInRect(const FloatRect& rect)

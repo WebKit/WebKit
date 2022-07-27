@@ -6372,7 +6372,7 @@
 		BCE469571214EDF4000B98EB /* WKFormSubmissionListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKFormSubmissionListener.cpp; sourceTree = "<group>"; };
 		BCE469581214EDF4000B98EB /* WKFormSubmissionListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFormSubmissionListener.h; sourceTree = "<group>"; };
 		BCE579A42634836700F5C5E9 /* CGDisplayListImageBufferBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CGDisplayListImageBufferBackend.h; sourceTree = "<group>"; };
-		BCE579A52634836700F5C5E9 /* CGDisplayListImageBufferBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CGDisplayListImageBufferBackend.cpp; sourceTree = "<group>"; };
+		BCE579A52634836700F5C5E9 /* CGDisplayListImageBufferBackend.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CGDisplayListImageBufferBackend.mm; sourceTree = "<group>"; };
 		BCE81D8A1319F7EF00241910 /* FontInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontInfo.cpp; sourceTree = "<group>"; };
 		BCE81D8B1319F7EF00241910 /* FontInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontInfo.h; sourceTree = "<group>"; };
 		BCE9C0CF1485965D00E33D61 /* WebConnectionToUIProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebConnectionToUIProcess.cpp; sourceTree = "<group>"; };
@@ -8776,8 +8776,8 @@
 			children = (
 				2D478B90288F333500F3B73A /* CGDisplayList.cpp */,
 				2D478B8F288F333500F3B73A /* CGDisplayList.h */,
-				BCE579A52634836700F5C5E9 /* CGDisplayListImageBufferBackend.cpp */,
 				BCE579A42634836700F5C5E9 /* CGDisplayListImageBufferBackend.h */,
+				BCE579A52634836700F5C5E9 /* CGDisplayListImageBufferBackend.mm */,
 				2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */,
 				2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */,
 				2DDF731318E95060004F5A66 /* RemoteLayerBackingStoreCollection.h */,

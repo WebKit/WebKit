@@ -23,17 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CGDisplayListImageBufferBackend.h"
+#import "config.h"
+#import "CGDisplayListImageBufferBackend.h"
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
 
-#include "CGDisplayList.h"
-#include "Logging.h"
-#include <WebCore/GraphicsContextCG.h>
-#include <WebCore/PixelBuffer.h>
-#include <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
-#include <wtf/IsoMallocInlines.h>
+#import "CGDisplayList.h"
+#import "Logging.h"
+#import <WebCore/GraphicsContextCG.h>
+#import <WebCore/PixelBuffer.h>
+#import <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/IsoMallocInlines.h>
+#import <wtf/MachSendRight.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
+
+template<> struct WTF::CFTypeTrait<CAMachPortRef> {
+    static inline CFTypeID typeID(void) { return CAMachPortGetTypeID(); }
+};
 
 namespace WebKit {
 
@@ -74,7 +82,7 @@ size_t CGDisplayListImageBufferBackend::calculateMemoryCost(const Parameters& pa
     return WebCore::ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(backendSize));
 }
 
-std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend::create(const Parameters& parameters)
+std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend::create(const Parameters& parameters, const WebCore::ImageBuffer::CreationContext& creationContext)
 {
     auto logicalSize = parameters.logicalSize;
     if (logicalSize.isEmpty())
@@ -85,31 +93,44 @@ std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend
         return nullptr;
 
     auto context = makeUnique<GraphicsContextCGDisplayList>(cgContext.get(), parameters);
-    return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, WTFMove(context)));
+    return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, WTFMove(context), creationContext.useOutOfLineSurfacesForCGDisplayLists));
 }
 
-std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend::create(const Parameters& parameters, const WebCore::ImageBuffer::CreationContext&)
-{
-    return CGDisplayListImageBufferBackend::create(parameters);
-}
-
-CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameters& parameters, std::unique_ptr<WebCore::GraphicsContext>&& context)
+CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameters& parameters, std::unique_ptr<WebCore::GraphicsContext>&& context, UseOutOfLineSurfaces useOutOfLineSurfaces)
     : ImageBufferCGBackend { parameters }
     , m_context { WTFMove(context) }
+    , m_useOutOfLineSurfaces { useOutOfLineSurfaces }
 {
 }
 
 ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(SharedMemory::Protection) const
 {
-    auto data = adoptCF(WKCGCommandsContextCopyEncodedData(m_context->platformContext()));
+    RetainPtr<NSDictionary> options;
+    RetainPtr<NSMutableArray> ports;
+    if (m_useOutOfLineSurfaces == UseOutOfLineSurfaces::Yes) {
+        ports = adoptNS([[NSMutableArray alloc] init]);
+        options = @{
+            @"ports": ports.get()
+        };
+    }
+
+    auto data = adoptCF(WKCGCommandsContextCopyEncodedDataWithOptions(m_context->platformContext(), bridge_cast(options.get())));
     ASSERT(data);
 
 #if !RELEASE_LOG_DISABLED
     auto size = backendSize();
-    RELEASE_LOG(RemoteLayerTree, "CGDisplayListImageBufferBackend of size %dx%d encoded display list of %ld bytes", size.width(), size.height(), CFDataGetLength(data.get()));
+    RELEASE_LOG(RemoteLayerTree, "CGDisplayListImageBufferBackend of size %dx%d encoded display list of %ld bytes with %ld surfaces (useOutOfLineSurfaces: %s)", size.width(), size.height(), CFDataGetLength(data.get()), [ports count], m_useOutOfLineSurfaces == UseOutOfLineSurfaces::Yes ? "yes" : "no");
 #endif
 
-    return CGDisplayList { WebCore::SharedBuffer::create(data.get()) };
+    Vector<MachSendRight> sendRights;
+    if (m_useOutOfLineSurfaces == UseOutOfLineSurfaces::Yes) {
+        sendRights = makeVector(ports.get(), [] (id port) -> std::optional<MachSendRight> {
+            // We `create` instead of `adopt` because CAMachPort has no API to leak its reference.
+            return { MachSendRight::create(CAMachPortGetPort(checked_cf_cast<CAMachPortRef>(port))) };
+        });
+    }
+
+    return CGDisplayList { WebCore::SharedBuffer::create(data.get()), WTFMove(sendRights) };
 }
 
 WebCore::GraphicsContext& CGDisplayListImageBufferBackend::context() const

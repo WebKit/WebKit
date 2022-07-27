@@ -35,8 +35,9 @@ class CGDisplayList {
     WTF_MAKE_NONCOPYABLE(CGDisplayList);
 public:
     CGDisplayList() = default;
-    explicit CGDisplayList(WebCore::SharedBuffer& displayList)
+    CGDisplayList(WebCore::SharedBuffer& displayList, Vector<MachSendRight>&& surfaces)
         : m_displayList(&displayList)
+        , m_surfaces(WTFMove(surfaces))
     {
     }
 
@@ -44,12 +45,14 @@ public:
     CGDisplayList& operator=(CGDisplayList&&) = default;
 
     RefPtr<WebCore::SharedBuffer> buffer() const { return m_displayList; }
+    Vector<MachSendRight> takeSurfaces() { return std::exchange(m_surfaces, { }); }
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, CGDisplayList&);
 
 private:
     RefPtr<WebCore::SharedBuffer> m_displayList;
+    Vector<MachSendRight> m_surfaces;
 };
 
 }
