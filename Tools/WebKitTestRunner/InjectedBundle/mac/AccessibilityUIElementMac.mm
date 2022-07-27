@@ -1994,7 +1994,7 @@ bool AccessibilityUIElement::insertText(JSStringRef text)
         result = [m_element accessibilityInsertText:text];
     });
     END_AX_OBJC_EXCEPTIONS
-    return false;
+    return result;
 }
 
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForBounds(int x, int y, int width, int height)
