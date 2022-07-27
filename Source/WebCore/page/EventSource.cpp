@@ -382,9 +382,7 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
         if (!valueLength)
             m_reconnectDelay = defaultReconnectDelay;
         else {
-            // FIXME: Do we really want to ignore trailing junk here?
-            // FIXME: When we can't parse the value, should we really leave m_reconnectDelay alone? Shouldn't we set it to defaultReconnectDelay?
-            if (auto reconnectDelay = parseIntegerAllowingTrailingJunk<uint64_t>({ &m_receiveBuffer[position], valueLength }))
+            if (auto reconnectDelay = parseInteger<uint64_t>({ &m_receiveBuffer[position], valueLength }))
                 m_reconnectDelay = *reconnectDelay;
         }
     }
