@@ -38,14 +38,14 @@ layer at (0,0) size 800x1432
         RenderImage {IMG} at (192,0) size 392x50 [bgcolor=#008000]
 layer at (8,208) size 584x59 clip at (10,210) size 565x40
   RenderBlock {DIV} at (0,0) size 584x59 [border: (2px solid #0000FF)]
-    RenderText {#text} at (11,2) size 556x39
-      text run at (11,2) width 556: "This is an overflow:scroll region. It should sit on the same line as the float and wrap as"
-      text run at (277,22) width 5 RTL: "."
-      text run at (281,22) width 286: "needed to fit within the remaining line width"
+    RenderText {#text} at (26,2) size 556x39
+      text run at (26,2) width 556: "This is an overflow:scroll region. It should sit on the same line as the float and wrap as"
+      text run at (292,22) width 5 RTL: "."
+      text run at (296,22) width 286: "needed to fit within the remaining line width"
 layer at (196,816) size 396x79 clip at (198,818) size 377x60
   RenderBlock {DIV} at (188,0) size 396x79 [border: (2px solid #0000FF)]
-    RenderText {#text} at (6,2) size 373x59
-      text run at (6,2) width 373: "This is an overflow:scroll region. It should sit on the same"
-      text run at (47,22) width 332: "line as the float and wrap as needed to fit within the"
-      text run at (241,42) width 5 RTL: "."
-      text run at (245,42) width 134: "remaining line width"
+    RenderText {#text} at (21,2) size 373x59
+      text run at (21,2) width 373: "This is an overflow:scroll region. It should sit on the same"
+      text run at (62,22) width 332: "line as the float and wrap as needed to fit within the"
+      text run at (256,42) width 5 RTL: "."
+      text run at (260,42) width 134: "remaining line width"

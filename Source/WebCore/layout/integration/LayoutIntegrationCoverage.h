@@ -52,7 +52,7 @@ enum class AvoidanceReason : uint64_t {
     FlowHasUnsupportedFloat                      = 1LLU  << 10,
     // Unused                                    = 1LLU  << 11,
     // Unused                                    = 1LLU  << 12,
-    FlowHasOverflowNotVisible                    = 1LLU  << 13,
+    // Unused                                    = 1LLU  << 13,
     // Unused                                    = 1LLU  << 14,
     // Unused                                    = 1LLU  << 15,
     FlowHasLineBoxContainProperty                = 1LLU  << 16,

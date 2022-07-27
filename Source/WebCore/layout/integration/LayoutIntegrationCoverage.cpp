@@ -107,9 +107,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasUnsupportedFloat:
         stream << "complicated float";
         break;
-    case AvoidanceReason::FlowHasOverflowNotVisible:
-        stream << "overflow: hidden | scroll | auto";
-        break;
     case AvoidanceReason::FlowHasLineBoxContainProperty:
         stream << "line-box-contain value indicates variable line height";
         break;
@@ -341,9 +338,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
 {
     auto& style = renderer.style();
     OptionSet<AvoidanceReason> reasons;
-    if ((style.overflowX() != Overflow::Visible && style.overflowX() != Overflow::Hidden)
-        || (style.overflowY() != Overflow::Visible && style.overflowY() != Overflow::Hidden))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (style.textOverflow() == TextOverflow::Ellipsis)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
     if (style.writingMode() == WritingMode::BottomToTop)
