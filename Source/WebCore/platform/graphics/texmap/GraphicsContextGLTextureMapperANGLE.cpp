@@ -271,6 +271,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
     if (m_isForWebGL2) {
         // For WebGL 2.0 occlusion queries to work.
         requiredExtensions.append("GL_EXT_occlusion_query_boolean"_s);
+        requiredExtensions.append("GL_ANGLE_framebuffer_multisample"_s);
     }
 #endif
 
