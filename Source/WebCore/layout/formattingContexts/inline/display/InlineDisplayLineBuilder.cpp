@@ -80,7 +80,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
     return { enclosingTopAndBottom, scrollableOverflowRect };
 }
 
-InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, InlineLayoutUnit lineBoxLogicalHeight) const
+InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox) const
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto& rootGeometry = layoutState().geometryForBox(root());
@@ -94,7 +94,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         ? lineBox.rootInlineBoxAlignmentOffset()
         : rootGeometry.contentBoxWidth() - lineOffsetFromContentBox -  lineBox.rootInlineBoxAlignmentOffset() - lineContent.contentLogicalRight;
 
-    auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), lineBoxVisualLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
+    auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), lineBoxVisualLeft, lineBox.hasContent() ? lineContent.lineLogicalWidth : 0.f, lineBox.logicalRect().height() };
     auto enclosingLineGeometry = collectEnclosingLineGeometry(lineBox, lineBoxRect);
 
     // FIXME: Figure out if properties like enclosingLineGeometry top and bottom needs to be flipped as well.

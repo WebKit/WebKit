@@ -91,9 +91,13 @@ public:
         bool isSoftLineBreak() const  { return m_type == Type::SoftLineBreak; }
         bool isHardLineBreak() const { return m_type == Type::HardLineBreak; }
         bool isWordBreakOpportunity() const { return m_type == Type::WordBreakOpportunity; }
+        bool isInlineBox() const { return isInlineBoxStart() || isLineSpanningInlineBoxStart() || isInlineBoxEnd(); }
         bool isInlineBoxStart() const { return m_type == Type::InlineBoxStart; }
         bool isLineSpanningInlineBoxStart() const { return m_type == Type::LineSpanningInlineBoxStart; }
         bool isInlineBoxEnd() const { return m_type == Type::InlineBoxEnd; }
+
+        bool isContentful() const { return (isText() && textContent()->length) || isBox() || isLineBreak() || isListMarker(); }
+        bool isGenerated() const { return isListMarker(); }
 
         const Box& layoutBox() const { return *m_layoutBox; }
         struct Text {
@@ -245,7 +249,7 @@ private:
 inline bool Line::hasContent() const
 {
     for (auto& run : makeReversedRange(m_runs)) {
-        if (run.isText() || run.isBox() || run.isLineBreak())
+        if (run.isContentful() && !run.isGenerated())
             return true;
     }
     return false;

@@ -258,12 +258,16 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
         auto& style = styleToUse(layoutBox);
         auto runHasContent = [&] () -> bool {
             ASSERT(!lineHasContent);
-            if (run.isText() || run.isBox() || run.isSoftLineBreak() || run.isHardLineBreak() || run.isListMarker())
+            if (run.isContentful())
                 return true;
-            if (run.isLineSpanningInlineBoxStart())
+            if (run.isText() || run.isWordBreakOpportunity())
                 return false;
-            if (run.isWordBreakOpportunity())
+
+            ASSERT(run.isInlineBox());
+            if (run.isLineSpanningInlineBoxStart()) {
+                // We already handled inline box decoration at the non-spanning start.
                 return false;
+            }
             auto& inlineBoxGeometry = formattingContext().geometryForBox(layoutBox);
             // Even negative horizontal margin makes the line "contentful".
             if (run.isInlineBoxStart())

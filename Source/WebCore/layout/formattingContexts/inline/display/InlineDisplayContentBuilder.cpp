@@ -358,7 +358,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
 #ifndef NDEBUG
     auto hasContent = false;
     for (auto& lineRun : lineContent.runs)
-        hasContent = hasContent || lineRun.isText() || lineRun.isBox();
+        hasContent = hasContent || lineRun.isContentful();
     ASSERT(lineContent.inlineBaseDirection == TextDirection::LTR || !hasContent);
 #endif
     auto writingMode = root().style().writingMode();
