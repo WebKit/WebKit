@@ -1,0 +1,3 @@
+Tests whether we switch back to a hidpi backing store when we zoom out (and would otherwise downscale the content too much).
+
+

@@ -3173,6 +3173,16 @@ void FrameView::setNeedsCompositingGeometryUpdate()
     }
 }
 
+void FrameView::setDescendantsNeedUpdateBackingAndHierarchyTraversal()
+{
+    RenderView* renderView = this->renderView();
+    if (renderView->usesCompositing()) {
+        if (auto* rootLayer = renderView->layer())
+            rootLayer->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
+        renderView->compositor().scheduleCompositingLayerUpdate();
+    }
+}
+
 void FrameView::scheduleSelectionUpdate()
 {
     if (needsLayout())

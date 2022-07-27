@@ -2900,6 +2900,9 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
     if (m_owningLayer.hasVisibleBoxDecorationsOrBackground())
         return false;
 
+    if (pageScaleFactor() < 1.0f)
+        return false;
+
     auto contents = contentsBox();
     if (contents.location() != LayoutPoint(0, 0))
         return false;

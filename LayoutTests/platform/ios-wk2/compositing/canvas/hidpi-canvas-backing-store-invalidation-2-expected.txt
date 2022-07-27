@@ -1,0 +1,62 @@
+Tests whether we switch back to a hidpi backing store when we zoom out (and would otherwise downscale the content too much).
+
+ (GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 2008.00 1144.00)
+  (device scale 2.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 2008.00 1144.00)
+      (contentsOpaque 1)
+      (device scale 2.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 72.00)
+          (bounds 2000.00 1005.00)
+          (opacity 0.50)
+          (device scale 2.00)
+          (children 1
+            (GraphicsLayer
+              (anchor 0.00 0.00)
+              (bounds 2000.00 1000.00)
+              (usingTiledLayer 1)
+              (drawsContent 1)
+              (transform [0.50 0.00 0.00 0.00] [0.00 0.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+              (device scale 1.00)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 2008.00 1550.00)
+  (device scale 2.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 2008.00 1550.00)
+      (contentsOpaque 1)
+      (device scale 2.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 72.00)
+          (bounds 2000.00 1005.00)
+          (opacity 0.50)
+          (device scale 2.00)
+          (children 1
+            (GraphicsLayer
+              (anchor 0.00 0.00)
+              (bounds 2000.00 1000.00)
+              (drawsContent 1)
+              (transform [0.50 0.00 0.00 0.00] [0.00 0.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+              (device scale 1.00)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
