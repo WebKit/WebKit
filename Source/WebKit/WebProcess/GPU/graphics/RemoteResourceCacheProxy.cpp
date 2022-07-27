@@ -118,7 +118,7 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
 
 void RemoteResourceCacheProxy::recordFontUse(Font& font)
 {
-    auto result = m_fonts.add(font.renderingResourceIdentifier(), m_renderingUpdateID);
+    auto result = m_fonts.add(font.renderingResourceIdentifier(), m_remoteRenderingBackendProxy.renderingUpdateID());
 
     if (result.isNewEntry) {
         m_remoteRenderingBackendProxy.cacheFont(font);
@@ -127,8 +127,8 @@ void RemoteResourceCacheProxy::recordFontUse(Font& font)
     }
 
     auto& currentState = result.iterator->value;
-    if (currentState != m_renderingUpdateID) {
-        currentState = m_renderingUpdateID;
+    if (currentState != m_remoteRenderingBackendProxy.renderingUpdateID()) {
+        currentState = m_remoteRenderingBackendProxy.renderingUpdateID();
         ++m_numberOfFontsUsedInCurrentRenderingUpdate;
     }
 }
@@ -205,7 +205,7 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
         return;
 
     HashSet<WebCore::RenderingResourceIdentifier> toRemove;
-    auto renderingUpdateID = m_renderingUpdateID;
+    auto renderingUpdateID = m_remoteRenderingBackendProxy.renderingUpdateID();
     for (auto& item : m_fonts) {
         if (renderingUpdateID - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {
             toRemove.add(item.key);
@@ -218,11 +218,10 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
     });
 }
 
-void RemoteResourceCacheProxy::didPaintLayers()
+void RemoteResourceCacheProxy::finalizeRenderingUpdate()
 {
     finalizeRenderingUpdateForFonts();
     prepareForNextRenderingUpdate();
-    m_renderingUpdateID++;
 }
 
 void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
