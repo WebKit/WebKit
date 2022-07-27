@@ -141,6 +141,7 @@ async function testUserMediaToCanvas(t, subcase) {
         setMockCameraImageOrientation(0);
         await waitForVideoSize(video, realVideoSize[0], realVideoSize[1]);
         debuge.removeChild(video);
+        video.srcObject = null;
     });
 
     if (subcase.angle == 180) {
