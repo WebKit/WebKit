@@ -5800,7 +5800,7 @@ FloatSize FrameView::sizeForCSSDynamicViewportUnits() const
         return fixedLayoutSize();
 
     if (frame().settings().visualViewportEnabled())
-        return size();
+        return unobscuredContentRectIncludingScrollbars().size();
 
     return viewportConstrainedVisibleContentRect().size();
 }

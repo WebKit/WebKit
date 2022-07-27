@@ -794,6 +794,156 @@ TEST(CSSViewportUnits, MaximumViewportInsetWithBounds)
     }
 }
 
+#if PLATFORM(MAC)
+
+TEST(CSSViewportUnits, TopContentInset)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:CGRectMake(0, 0, 320, 500) styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView) backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    [window makeKeyAndOrderFront:nil];
+
+    [webView synchronouslyLoadTestPageNamed:@"CSSViewportUnits"];
+
+    [webView _setAutomaticallyAdjustsContentInsets:NO];
+    [webView _setTopContentInset:10];
+
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"vw"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"vh"));
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"vmin"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"vmax"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"vb"));
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"vi"));
+
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"svw"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"svh"));
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"svmin"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"svmax"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"svb"));
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"svi"));
+
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"lvw"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"lvh"));
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"lvmin"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"lvmax"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"lvb"));
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"lvi"));
+
+    {
+        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize;
+        double fixedHeight = heightOfElementWithID(webView, @"fixed");
+        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
+        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
+        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvmin"));
+        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvmax"));
+        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvb"));
+        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvi"));
+    }
+}
+
+TEST(CSSViewportUnits, MinimumViewportInsetWithTopContentInset)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:CGRectMake(0, 0, 320, 500) styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView) backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    [window makeKeyAndOrderFront:nil];
+
+    [webView setMinimumViewportInset:CocoaEdgeInsetsMake(11, 21, 31, 41) maximumViewportInset:CocoaEdgeInsetsMake(12, 22, 32, 42)];
+    [webView synchronouslyLoadTestPageNamed:@"CSSViewportUnits"];
+
+    [webView _setAutomaticallyAdjustsContentInsets:NO];
+    [webView _setTopContentInset:10];
+
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"vw"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"vh"));
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"vmin"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"vmax"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"vb"));
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"vi"));
+
+    EXPECT_FLOAT_EQ(256, viewportUnitLength(webView, @"svw"));
+    EXPECT_FLOAT_EQ(446, viewportUnitLength(webView, @"svh"));
+    EXPECT_FLOAT_EQ(256, viewportUnitLength(webView, @"svmin"));
+    EXPECT_FLOAT_EQ(446, viewportUnitLength(webView, @"svmax"));
+    EXPECT_FLOAT_EQ(446, viewportUnitLength(webView, @"svb"));
+    EXPECT_FLOAT_EQ(256, viewportUnitLength(webView, @"svi"));
+
+    EXPECT_FLOAT_EQ(258, viewportUnitLength(webView, @"lvw"));
+    EXPECT_FLOAT_EQ(448, viewportUnitLength(webView, @"lvh"));
+    EXPECT_FLOAT_EQ(258, viewportUnitLength(webView, @"lvmin"));
+    EXPECT_FLOAT_EQ(448, viewportUnitLength(webView, @"lvmax"));
+    EXPECT_FLOAT_EQ(448, viewportUnitLength(webView, @"lvb"));
+    EXPECT_FLOAT_EQ(258, viewportUnitLength(webView, @"lvi"));
+
+    {
+        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize;
+        double fixedHeight = heightOfElementWithID(webView, @"fixed");
+        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
+        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
+        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvmin"));
+        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvmax"));
+        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvb"));
+        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvi"));
+    }
+}
+
+TEST(CSSViewportUnits, MaximumViewportInsetWithTopContentInset)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:CGRectMake(0, 0, 320, 500) styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView) backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    [window makeKeyAndOrderFront:nil];
+
+    [webView setMinimumViewportInset:CocoaEdgeInsetsZero maximumViewportInset:CocoaEdgeInsetsMake(12, 22, 32, 42)];
+    [webView synchronouslyLoadTestPageNamed:@"CSSViewportUnits"];
+
+    [webView _setAutomaticallyAdjustsContentInsets:NO];
+    [webView _setTopContentInset:10];
+
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"vw"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"vh"));
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"vmin"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"vmax"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"vb"));
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"vi"));
+
+    EXPECT_FLOAT_EQ(256, viewportUnitLength(webView, @"svw"));
+    EXPECT_FLOAT_EQ(446, viewportUnitLength(webView, @"svh"));
+    EXPECT_FLOAT_EQ(256, viewportUnitLength(webView, @"svmin"));
+    EXPECT_FLOAT_EQ(446, viewportUnitLength(webView, @"svmax"));
+    EXPECT_FLOAT_EQ(446, viewportUnitLength(webView, @"svb"));
+    EXPECT_FLOAT_EQ(256, viewportUnitLength(webView, @"svi"));
+
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"lvw"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"lvh"));
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"lvmin"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"lvmax"));
+    EXPECT_FLOAT_EQ(490, viewportUnitLength(webView, @"lvb"));
+    EXPECT_FLOAT_EQ(320, viewportUnitLength(webView, @"lvi"));
+
+    {
+        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize;
+        double fixedHeight = heightOfElementWithID(webView, @"fixed");
+        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
+        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
+        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvmin"));
+        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvmax"));
+        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvb"));
+        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvi"));
+    }
+}
+
+#endif // PLATFORM(MAC)
+
 #if PLATFORM(IOS_FAMILY)
 
 TEST(CSSViewportUnits, MinimumViewportInsetWithContentInset)
