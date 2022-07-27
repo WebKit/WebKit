@@ -128,6 +128,14 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--o-10e"_s, // 'o' U+0BE6
         "xn--a-53i"_s, // U+15AF 'a'
         "xn--a-63i"_s, // 'a' U+15AF
+        "xn--a-g4i"_s, // U+15B4 'a'
+        "xn--a-h4i"_s, // 'a' U+15B4
+        "xn--a-80i"_s, // U+157C 'a'
+        "xn--a-90i"_s, // 'a' U+157C
+        "xn--a-0fj"_s, // U+166D 'a'
+        "xn--a-1fj"_s, // 'a' U+166D
+        "xn--a-2fj"_s, // U+166E 'a'
+        "xn--a-3fj"_s, // 'a' U+166E
     };
     for (auto& host : punycodedSpoofHosts) {
         auto url = makeString("http://", host, "/").utf8();
@@ -157,6 +165,10 @@ TEST(WTF_URLExtras, URLExtras_NotSpoofed)
 
     // Canadian aboriginal
     EXPECT_STREQ("https://\u15AF\u1401abc/", userVisibleString(literalURL("https://\u15AF\u1401abc/")));
+    EXPECT_STREQ("https://\u15B4\u1401abc/", userVisibleString(literalURL("https://\u15B4\u1401abc/")));
+    EXPECT_STREQ("https://\u157C\u1401abc/", userVisibleString(literalURL("https://\u157C\u1401abc/")));
+    EXPECT_STREQ("https://\u166D\u1401abc/", userVisibleString(literalURL("https://\u166D\u1401abc/")));
+    EXPECT_STREQ("https://\u166E\u1401abc/", userVisibleString(literalURL("https://\u166E\u1401abc/")));
 }
 
 TEST(WTF_URLExtras, URLExtras_DivisionSign)
