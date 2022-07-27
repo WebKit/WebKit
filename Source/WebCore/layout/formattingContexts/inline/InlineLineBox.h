@@ -101,6 +101,8 @@ private:
     void setHasContent(bool hasContent) { m_hasContent = hasContent; }
     void setBaselineType(FontBaseline baselineType) { m_baselineType = baselineType; }
 
+    InlineLayoutUnit inlineLevelBoxAbsoluteTop(const InlineLevelBox&) const;
+
 private:
     bool m_hasContent { false };
     InlineRect m_logicalRect;

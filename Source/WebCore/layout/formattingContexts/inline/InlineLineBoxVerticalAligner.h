@@ -51,6 +51,7 @@ private:
     LineBoxAlignmentContent computeLineBoxLogicalHeight(LineBox&) const;
     void computeRootInlineBoxVerticalPosition(LineBox&, const LineBoxAlignmentContent&) const;
     void alignInlineLevelBoxes(LineBox&, InlineLayoutUnit lineBoxLogicalHeight) const;
+    InlineLayoutUnit adjustForAnnotationIfNeeded(LineBox&, InlineLayoutUnit lineBoxHeight) const;
 
     const InlineFormattingGeometry& formattingGeometry() const { return m_inlineFormattingGeometry; }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }

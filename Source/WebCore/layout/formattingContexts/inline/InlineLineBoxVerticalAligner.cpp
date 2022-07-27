@@ -93,6 +93,8 @@ InlineLayoutUnit LineBoxVerticalAligner::computeLogicalHeightAndAlign(LineBox& l
 
     auto lineBoxHeight = lineBoxAlignmentContent.height();
     alignInlineLevelBoxes(lineBox, lineBoxHeight);
+    if (lineBoxAlignmentContent.hasAnnotation)
+        lineBoxHeight = adjustForAnnotationIfNeeded(lineBox, lineBoxHeight);
     return lineBoxHeight;
 }
 
@@ -409,6 +411,85 @@ void LineBoxVerticalAligner::alignInlineLevelBoxes(LineBox& lineBox, InlineLayou
         }
         inlineLevelBox.setLogicalTop(logicalTop);
     }
+}
+
+InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& lineBox, InlineLayoutUnit lineBoxHeight) const
+{
+    auto lineBoxTop = InlineLayoutUnit { };
+    auto lineBoxBottom = lineBoxHeight;
+    // At this point we have a properly aligned set of inline level boxes. Let's find out if annotation marks have enough space.
+    auto adjustLineBoxHeightIfNeeded = [&] {
+        auto adjustLineBoxTopAndBottomForInlineBox = [&](const InlineLevelBox& inlineBox) {
+            ASSERT(inlineBox.isInlineBox());
+            auto inlineBoxTop = lineBox.inlineLevelBoxAbsoluteTop(inlineBox);
+            auto inlineBoxBottom = inlineBoxTop + inlineBox.logicalHeight();
+
+            switch (inlineBox.verticalAlign().type) {
+            case VerticalAlign::Baseline:
+            case VerticalAlign::Middle:
+            case VerticalAlign::BaselineMiddle:
+            case VerticalAlign::Length:
+            case VerticalAlign::Sub:
+            case VerticalAlign::Super:
+            case VerticalAlign::TextTop:
+            case VerticalAlign::TextBottom:
+            case VerticalAlign::Bottom:
+                if (auto aboveSpace = inlineBox.annotationAbove())
+                    lineBoxTop = std::min(lineBoxTop, inlineBoxTop - *aboveSpace);
+                else if (auto underSpace = inlineBox.annotationUnder())
+                    lineBoxBottom = std::max(lineBoxBottom, inlineBoxBottom + *underSpace);
+                break;
+            case VerticalAlign::Top: {
+                // FIXME: Check if horizontal vs. vertical writing mode should be taking into account.
+                auto annotationSpace = inlineBox.annotationAbove().value_or(0.f) + inlineBox.annotationUnder().value_or(0.f); 
+                lineBoxBottom = std::max(lineBoxBottom, inlineBoxBottom + annotationSpace);
+                break;
+            }
+            default:
+                ASSERT_NOT_IMPLEMENTED_YET();
+                break;
+            }
+        };
+
+        adjustLineBoxTopAndBottomForInlineBox(lineBox.rootInlineBox());
+        for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+            if (inlineLevelBox.isInlineBox())
+                adjustLineBoxTopAndBottomForInlineBox(inlineLevelBox);
+        }
+
+        return lineBoxBottom - lineBoxTop;
+    };
+    auto adjustedLineBoxHeight = adjustLineBoxHeightIfNeeded();
+
+    if (lineBoxHeight != adjustedLineBoxHeight) {
+        // Annotations needs some space.
+        auto adjustContentTopWithAnnotationSpace = [&] {
+            auto& rootInlineBox = lineBox.rootInlineBox();
+            auto rootInlineBoxTop = rootInlineBox.logicalTop();
+            auto annotationOffset = -lineBoxTop;
+            rootInlineBox.setLogicalTop(annotationOffset + rootInlineBoxTop);
+
+            for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+                switch (inlineLevelBox.verticalAlign().type) {
+                case VerticalAlign::Top: {
+                    auto inlineBoxTop = inlineLevelBox.layoutBounds().ascent - inlineLevelBox.ascent();
+                    inlineLevelBox.setLogicalTop(inlineLevelBox.annotationAbove().value_or(0.f) + inlineBoxTop);
+                    break;
+                }
+                case VerticalAlign::Bottom: {
+                    auto inlineBoxTop = adjustedLineBoxHeight - (inlineLevelBox.layoutBounds().descent + inlineLevelBox.ascent());
+                    inlineLevelBox.setLogicalTop(inlineBoxTop - inlineLevelBox.annotationUnder().value_or(0.f));
+                    break;
+                }
+                default:
+                    // These alignment positions are relative to the root inline box's baseline.
+                    break;
+                }
+            }
+        };
+        adjustContentTopWithAnnotationSpace();
+    }
+    return adjustedLineBoxHeight;
 }
 
 }
