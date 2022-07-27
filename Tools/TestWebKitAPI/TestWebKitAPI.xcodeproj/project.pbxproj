@@ -111,6 +111,7 @@
 		1C81802725FB09E200608B3E /* FontRegistrySandboxCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C81802625FB09E200608B3E /* FontRegistrySandboxCheck.mm */; };
 		1C8FA53A2685A6D500B7E49E /* StringWidth.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C8FA5392685A6D500B7E49E /* StringWidth.mm */; };
 		1C90420C2326E03C00BEF91E /* SelectionByWord.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C90420B2326E03C00BEF91E /* SelectionByWord.mm */; };
+		1C9C7F512891238500C4649E /* ImmediateFont.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1C9C7F4F2891234500C4649E /* ImmediateFont.html */; };
 		1C9DD9232697655B00274DB2 /* SVGImageCasts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C9DD9222697655B00274DB2 /* SVGImageCasts.cpp */; };
 		1C9EB8411E380DA1005C6442 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */; };
 		1CACADA1230620AE0007D54C /* WKWebViewOpaque.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CACADA0230620AD0007D54C /* WKWebViewOpaque.mm */; };
@@ -1440,6 +1441,7 @@
 				F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */,
 				3128A8152376413300D90D40 /* image.html in Copy Resources */,
 				71E88C4524B534B700665160 /* img-with-base64-url.html in Copy Resources */,
+				1C9C7F512891238500C4649E /* ImmediateFont.html in Copy Resources */,
 				49897D6C241FE9E400ECF153 /* in-app-browser-privacy-local-file.html in Copy Resources */,
 				4971B1182451F29A0096994D /* incorrectCreateTableSchema.db in Copy Resources */,
 				9341C95727CD507A0023C0F4 /* indexeddb-persistence-third-party.sqlite3 in Copy Resources */,
@@ -1835,6 +1837,7 @@
 		1C81802625FB09E200608B3E /* FontRegistrySandboxCheck.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FontRegistrySandboxCheck.mm; sourceTree = "<group>"; };
 		1C8FA5392685A6D500B7E49E /* StringWidth.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = StringWidth.mm; sourceTree = "<group>"; };
 		1C90420B2326E03C00BEF91E /* SelectionByWord.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SelectionByWord.mm; sourceTree = "<group>"; };
+		1C9C7F4F2891234500C4649E /* ImmediateFont.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = ImmediateFont.html; sourceTree = "<group>"; };
 		1C9DD9222697655B00274DB2 /* SVGImageCasts.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageCasts.cpp; sourceTree = "<group>"; };
 		1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		1CACADA0230620AD0007D54C /* WKWebViewOpaque.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewOpaque.mm; sourceTree = "<group>"; };
@@ -4276,6 +4279,7 @@
 				F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */,
 				F45B63FA1F197F33009D38B9 /* image-map.html */,
 				3128A814237640FD00D90D40 /* image.html */,
+				1C9C7F4F2891234500C4649E /* ImmediateFont.html */,
 				49D7FBA7241FDDDA00AB67FA /* in-app-browser-privacy-local-file.html */,
 				4971B1172451F2780096994D /* incorrectCreateTableSchema.db */,
 				9341C95627CD50680023C0F4 /* indexeddb-persistence-third-party.sqlite3 */,
