@@ -338,6 +338,7 @@ OSStatus CoreAudioSharedUnit::configureMicrophoneProc(int sampleRate)
         return err;
     }
 
+    m_shouldUpdateMicrophoneSampleBufferSize = false;
     m_microphoneSampleBuffer = AudioSampleBufferList::create(microphoneProcFormat, preferredIOBufferSize() * 2);
     m_microphoneProcFormat = microphoneProcFormat;
 
@@ -425,13 +426,13 @@ OSStatus CoreAudioSharedUnit::processMicrophoneSamples(AudioUnitRenderActionFlag
     AudioBufferList& bufferList = m_microphoneSampleBuffer->bufferList();
     if (auto err = m_ioUnit->render(&ioActionFlags, &timeStamp, inBusNumber, inNumberFrames, &bufferList)) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::processMicrophoneSamples(%p) AudioUnitRender failed with error %d (%.4s), bufferList size %d, inNumberFrames %d ", this, (int)err, (char*)&err, (int)bufferList.mBuffers[0].mDataByteSize, (int)inNumberFrames);
-        if (err == kAudio_ParamError) {
+        if (err == kAudio_ParamError && !m_shouldUpdateMicrophoneSampleBufferSize) {
+            m_shouldUpdateMicrophoneSampleBufferSize = true;
             // Our buffer might be too small, the preferred buffer size or sample rate might have changed.
             callOnMainThread([] {
                 CoreAudioSharedUnit::singleton().reconfigure();
             });
         }
-        // We return early so that if this error happens, we do not increment m_microphoneProcsCalled and fail the capture once timer kicks in.
         return err;
     }
 

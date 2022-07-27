@@ -145,6 +145,7 @@ private:
     uint64_t m_microphoneProcsCalledLastTime { 0 };
     Timer m_verifyCapturingTimer;
 
+    bool m_shouldUpdateMicrophoneSampleBufferSize { false };
     bool m_isReconfiguring { false };
     mutable Lock m_speakerSamplesProducerLock;
     CoreAudioSpeakerSamplesProducer* m_speakerSamplesProducer WTF_GUARDED_BY_LOCK(m_speakerSamplesProducerLock) { nullptr };
