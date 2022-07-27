@@ -61,6 +61,8 @@ checkRequiredSystemConfig();
 setConfiguration();
 chdirWebKit();
 
+# ImageDiff is not part of any workspace.
+overrideConfiguredXcodeWorkspace("");
 my @xcodeOptions = ("-target", "ImageDiff");
 push @xcodeOptions, XcodeOptions();
 

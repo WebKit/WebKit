@@ -67,13 +67,5 @@ chdirWebKit();
 
 my @xcodeOptions = XcodeOptions();
 
-buildProjectOrDie("Tools/lldb/lldbWebKitTester", "lldbWebKitTester");
-
-sub buildProjectOrDie($$)
-{
-    my ($path, $project) = @_;
-    chdir($path) or die;
-    $result = exitStatus(buildXCodeProject($project, $clean, @xcodeOptions, @ARGV));
-    exit $result if $result;
-    chdirWebKit();
-}
+$result = exitStatus(buildXcodeScheme("lldbWebKitTester", $clean, @xcodeOptions, @ARGV));
+exit $result if $result;

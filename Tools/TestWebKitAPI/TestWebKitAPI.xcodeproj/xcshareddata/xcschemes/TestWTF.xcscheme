@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1140"
+   LastUpgradeVersion = "1400"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8DD76F960486AA7600D96B5E"
-               BuildableName = "TestWebKitAPI"
-               BlueprintName = "TestWebKitAPI"
+               BlueprintIdentifier = "7C83DF951D0A5AE400FEBCF3"
+               BuildableName = "TestWTF"
+               BlueprintName = "TestWTF"
                ReferencedContainer = "container:TestWebKitAPI.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -58,9 +58,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8DD76F960486AA7600D96B5E"
-            BuildableName = "TestWebKitAPI"
-            BlueprintName = "TestWebKitAPI"
+            BlueprintIdentifier = "7C83DF951D0A5AE400FEBCF3"
+            BuildableName = "TestWTF"
+            BlueprintName = "TestWTF"
             ReferencedContainer = "container:TestWebKitAPI.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -75,9 +75,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8DD76F960486AA7600D96B5E"
-            BuildableName = "TestWebKitAPI"
-            BlueprintName = "TestWebKitAPI"
+            BlueprintIdentifier = "7C83DF951D0A5AE400FEBCF3"
+            BuildableName = "TestWTF"
+            BlueprintName = "TestWTF"
             ReferencedContainer = "container:TestWebKitAPI.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

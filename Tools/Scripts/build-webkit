@@ -226,11 +226,9 @@ if ((isAppleWebKit() || isWinCairo() || isPlayStation() || isFTW()) && !-d "WebK
 my @options = ();
 
 if (isAppleCocoaWebKit()) {
-    # Ignore any workspace set by set-webkit-configuration
     if (!$useWorkspace) {
+        # Ignore any workspace set by set-webkit-configuration
         overrideConfiguredXcodeWorkspace("");
-    } else {
-        overrideConfiguredXcodeWorkspace("WebKit.xcworkspace");
     }
     push @options, XcodeOptions();
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1140"
+   LastUpgradeVersion = "1400"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "NO">
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -14,24 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8DD76F960486AA7600D96B5E"
-               BuildableName = "TestWebKitAPI"
-               BlueprintName = "TestWebKitAPI"
-               ReferencedContainer = "container:TestWebKitAPI.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8D07F2BC0486CC7A007CD1D0"
-               BuildableName = "gtest.framework"
-               BlueprintName = "gtest-framework"
-               ReferencedContainer = "container:../../Source/ThirdParty/gtest/xcode/gtest.xcodeproj">
+               BlueprintIdentifier = "7C4AB3A01AF0276C003FC8D1"
+               BuildableName = "lldbWebKitTester"
+               BlueprintName = "lldbWebKitTester"
+               ReferencedContainer = "container:lldbWebKitTester.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -58,10 +44,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8DD76F960486AA7600D96B5E"
-            BuildableName = "TestWebKitAPI"
-            BlueprintName = "TestWebKitAPI"
-            ReferencedContainer = "container:TestWebKitAPI.xcodeproj">
+            BlueprintIdentifier = "7C4AB3A01AF0276C003FC8D1"
+            BuildableName = "lldbWebKitTester"
+            BlueprintName = "lldbWebKitTester"
+            ReferencedContainer = "container:lldbWebKitTester.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -75,10 +61,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8DD76F960486AA7600D96B5E"
-            BuildableName = "TestWebKitAPI"
-            BlueprintName = "TestWebKitAPI"
-            ReferencedContainer = "container:TestWebKitAPI.xcodeproj">
+            BlueprintIdentifier = "7C4AB3A01AF0276C003FC8D1"
+            BuildableName = "lldbWebKitTester"
+            BlueprintName = "lldbWebKitTester"
+            ReferencedContainer = "container:lldbWebKitTester.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

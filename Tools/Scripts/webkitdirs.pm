@@ -1055,8 +1055,9 @@ sub XcodeOptions
     my @options;
     push @options, "-UseSanitizedBuildSystemEnvironment=YES";
     push @options, "-ShowBuildOperationDuration=YES";
-    if ($configuredXcodeWorkspace && !checkForArgumentAndRemoveFromARGV("--no-use-workspace")) {
-        push @options, ("-workspace", $configuredXcodeWorkspace);
+    if (!checkForArgumentAndRemoveFromARGV("--no-use-workspace")) {
+        my $workspace = $configuredXcodeWorkspace // sourceDir() . "/WebKit.xcworkspace";
+        push @options, ("-workspace", $workspace) if $workspace;
     }
     push @options, ("-configuration", $configuration);
     if ($asanIsEnabled) {
