@@ -100,6 +100,9 @@ set(WebKitTestRunnerInjectedBundle_LIBRARIES
     WebKit::WebCoreTestSupport
     WebKit::WebKit
 )
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES bmalloc)
+endif ()
 
 set(WebKitTestRunnerInjectedBundle_IDL_FILES
     "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/AccessibilityController.idl"

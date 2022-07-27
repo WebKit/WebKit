@@ -20,6 +20,7 @@ set(bmalloc_SOURCES
     bmalloc/Heap.cpp
     bmalloc/HeapConstants.cpp
     bmalloc/HeapKind.cpp
+    bmalloc/IsoHeap.cpp
     bmalloc/IsoHeapImpl.cpp
     bmalloc/IsoMallocFallback.cpp
     bmalloc/IsoPage.cpp
