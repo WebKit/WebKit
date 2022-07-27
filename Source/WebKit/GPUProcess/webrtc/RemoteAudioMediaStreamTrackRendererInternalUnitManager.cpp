@@ -210,9 +210,7 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start(const S
 
     if (m_shouldRegisterAsSpeakerSamplesProducer) {
         WebCore::CoreAudioCaptureSourceFactory::singleton().registerSpeakerSamplesProducer(*this);
-        bool shouldNotStartLocalUnit = WebCore::CoreAudioCaptureSourceFactory::singleton().isAudioCaptureUnitRunning()
-            || (WebCore::CoreAudioSharedUnit::unit().hasClients() && WebCore::CoreAudioSharedUnit::unit().isSuspended());
-        if (shouldNotStartLocalUnit)
+        if (WebCore::CoreAudioCaptureSourceFactory::singleton().isAudioCaptureUnitRunning())
             return;
     }
 
