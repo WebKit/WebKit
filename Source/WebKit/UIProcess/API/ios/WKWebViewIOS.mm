@@ -3028,13 +3028,9 @@ static bool isLockdownModeWarningNeeded()
     if (!lockdownModeWarningNeeded)
         return;
 
-    NSString *appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)_kCFBundleDisplayNameKey];
-    if (!appDisplayName)
-        appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleNameKey];
-
     auto message = WEB_UI_NSSTRING(@"Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.", "Lockdown Mode alert message");
 
-    auto decisionHandler = makeBlockPtr([appDisplayName, message, protectedSelf = retainPtr(self)](WKDialogResult result) mutable {
+    auto decisionHandler = makeBlockPtr([message, protectedSelf = retainPtr(self)](WKDialogResult result) mutable {
         if (result == WKDialogResultAskAgain) {
             lockdownModeWarningNeeded = true;
             return;
@@ -3046,17 +3042,20 @@ static bool isLockdownModeWarningNeeded()
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitCaptivePortalModeAlertShownKey];
             return;
         }
-    
-        UIAlertController *alert = [UIAlertController
-            alertControllerWithTitle:[NSString stringWithFormat:WEB_UI_NSSTRING(@"Lockdown Mode is Turned On For “%@“", "Lockdown Mode alert title"), appDisplayName]
-            message:message
-            preferredStyle:UIAlertControllerStyleAlert];
 
-        [alert addAction:[UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"OK", "Lockdown Mode alert OK button") style:UIAlertActionStyleDefault handler:nil]];
+        RunLoop::main().dispatch([message = retainPtr(message), protectedSelf = WTFMove(protectedSelf)] {
+            NSString *appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)_kCFBundleDisplayNameKey];
+            if (!appDisplayName)
+                appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleNameKey];
 
-        UIViewController *presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:protectedSelf.get()];
-        [presentationViewController presentViewController:alert animated:YES completion:nil];
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitCaptivePortalModeAlertShownKey];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:WEB_UI_NSSTRING(@"Lockdown Mode is Turned On For “%@“", "Lockdown Mode alert title"), appDisplayName] message:message.get() preferredStyle:UIAlertControllerStyleAlert];
+
+            [alert addAction:[UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"OK", "Lockdown Mode alert OK button") style:UIAlertActionStyleDefault handler:nil]];
+
+            UIViewController *presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:protectedSelf.get()];
+            [presentationViewController presentViewController:alert animated:YES completion:nil];
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitCaptivePortalModeAlertShownKey];
+        });
     });
     
 #if PLATFORM(IOS)
