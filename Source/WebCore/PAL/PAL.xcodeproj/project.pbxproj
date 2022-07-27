@@ -1804,7 +1804,6 @@
 				DD20DE4527BC90D80093D175 /* PopupMenu.h in Headers */,
 				E34F26F62846D0D90076E549 /* PowerLogSPI.h in Headers */,
 				DD20DE0427BC90D80093D175 /* pthreadSPI.h in Headers */,
-				5CB898B2286274FA00CA3485 /* QuarantineSPI.h in Headers */,
 				DD20DE0527BC90D80093D175 /* QuartzCoreSPI.h in Headers */,
 				DD20DE3F27BC90D80093D175 /* QuickLookMacSPI.h in Headers */,
 				DD20DDC127BC90D70093D175 /* QuickLookSoftLink.h in Headers */,
@@ -1992,6 +1991,7 @@
 				DD20DDAE27BC90D70093D175 /* WebGPUTextureAspect.h in Headers */,
 				DD20DDAF27BC90D70093D175 /* WebGPUTextureBindingLayout.h in Headers */,
 				DD20DDB027BC90D70093D175 /* WebGPUTextureDescriptor.h in Headers */,
+				5CB898B2286274FA00CA3485 /* QuarantineSPI.h in Headers */,
 				DD20DDB127BC90D70093D175 /* WebGPUTextureDimension.h in Headers */,
 				DD20DDB227BC90D70093D175 /* WebGPUTextureFormat.h in Headers */,
 				DD20DD3E27BC90D60093D175 /* WebGPUTextureImpl.h in Headers */,
@@ -2022,6 +2022,7 @@
 			buildPhases = (
 				DDE992FF278D07A100F60D26 /* Product Dependencies */,
 				DD20DD1127BC90B80093D175 /* Headers */,
+				DD20DE6627BC91B80093D175 /* (Legacy Build System) Nest Headers */,
 				1C09D0391E31C32800725F18 /* Sources */,
 				1C09D03A1E31C32800725F18 /* Frameworks */,
 			);
@@ -2075,6 +2076,27 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DD20DE6627BC91B80093D175 /* (Legacy Build System) Nest Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "(Legacy Build System) Nest Headers";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = YES ] && exit 0\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" installhdrs SYMROOT=\"${TARGET_TEMP_DIR}/LegacyNestHeaders-build\" DSTROOT=\"${BUILT_PRODUCTS_DIR}\" SDKROOT=\"${SDKROOT}\" SDK_VARIANT=\"${SDK_VARIANT}\" WK_USE_ALTERNATE_FRAMEWORKS_DIR=NO -UseNewBuildSystem=YES\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1C09D0391E31C32800725F18 /* Sources */ = {
