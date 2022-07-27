@@ -36,7 +36,6 @@
 
 namespace JSC {
 
-
 VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     : m_vm(vm)
     , m_globalObject(globalObject)
@@ -76,9 +75,6 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
 #endif
         if (UNLIKELY(Options::useTracePoints()))
             tracePoint(VMEntryScopeStart);
-        #if ENABLE(SINGLE_THREADED_VM_ENTRY_SCOPE)
-        }
-        #endif
     }
 
     vm.clearLastException();
