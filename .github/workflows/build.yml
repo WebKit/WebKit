@@ -125,7 +125,7 @@ jobs:
       - name: Run
         run: |
           rm -rf ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit.tar.gz
-          cpu=${{matrix.cpu}} temp=${{runner.temp}} bash release.sh
+          CPU=${{matrix.cpu}} cpu=${{matrix.cpu}} temp=${{runner.temp}} bash release.sh
           cd ${{runner.temp}}
           echo "#define BUN_WEBKIT_VERSION \"${{github.sha}}\"" >> bun-webkit/include/cmakeconfig.h
           tar -czf bun-webkit.tar.gz bun-webkit
@@ -153,10 +153,10 @@ jobs:
       - name: Run
         run: |
           rm -rf ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit.tar.gz
-          temp=${{runner.temp}} bash release.sh
+          CPU="native" cpu=native temp=${{runner.temp}} bash release.sh
           cd ${{runner.temp}}
           echo "#define BUN_WEBKIT_VERSION \"${{github.sha}}\"" >> bun-webkit/include/cmakeconfig.h
-          cpu=native tar -czf bun-webkit.tar.gz bun-webkit
+          tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
