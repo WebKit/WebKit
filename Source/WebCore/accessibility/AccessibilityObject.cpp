@@ -2368,10 +2368,12 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
 
 bool AccessibilityObject::insertText(const String& text)
 {
+    AXTRACE(makeString("AccessibilityObject::insertText text = ", text));
+
     if (!renderer() || !is<Element>(node()))
         return false;
 
-    auto& element = downcast<Element>(*renderer()->node());
+    auto& element = downcast<Element>(*node());
     // Only try to insert text if the field is in editing mode (excluding password fields, which we do still want to try to insert into).
     if (!isPasswordField() && !element.shouldUseInputMethod())
         return false;
