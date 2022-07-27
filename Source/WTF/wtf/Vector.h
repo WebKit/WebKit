@@ -858,6 +858,9 @@ public:
     void remove(size_t position, size_t length);
     template<typename U> bool removeFirst(const U&);
     template<typename MatchFunction> bool removeFirstMatching(const MatchFunction&, size_t startIndex = 0);
+    template<typename U> bool removeLast(const U&);
+    template<typename MatchFunction> bool removeLastMatching(const MatchFunction&);
+    template<typename MatchFunction> bool removeLastMatching(const MatchFunction&, size_t startIndex);
     template<typename U> unsigned removeAll(const U&);
     template<typename MatchFunction> unsigned removeAllMatching(const MatchFunction&, size_t startIndex = 0);
 
@@ -1593,6 +1596,35 @@ inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::rem
     for (size_t i = startIndex; i < size(); ++i) {
         if (matches(at(i))) {
             remove(i);
+            return true;
+        }
+    }
+    return false;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<typename U>
+inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeLast(const U& value)
+{
+    return removeLastMatching([&value] (const T& current) {
+        return current == value;
+    });
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<typename MatchFunction>
+inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeLastMatching(const MatchFunction& matches)
+{
+    return removeLastMatching(matches, size());
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<typename MatchFunction>
+inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeLastMatching(const MatchFunction& matches, size_t startIndex)
+{
+    for (size_t i = std::min(startIndex + 1, size()); i > 0; --i) {
+        if (matches(at(i - 1))) {
+            remove(i - 1);
             return true;
         }
     }

@@ -583,6 +583,42 @@ TEST(WTF_Vector, RemoveFirst)
     EXPECT_TRUE(v.isEmpty());
 }
 
+TEST(WTF_Vector, RemoveLast)
+{
+    Vector<int> v;
+    EXPECT_TRUE(v.isEmpty());
+    EXPECT_FALSE(v.removeLast(1));
+    EXPECT_FALSE(v.removeLast(-1));
+    EXPECT_TRUE(v.isEmpty());
+
+    v.fill(2, 10);
+    EXPECT_EQ(10U, v.size());
+    EXPECT_FALSE(v.removeLast(1));
+    EXPECT_EQ(10U, v.size());
+    v.clear();
+
+    v.fill(1, 10);
+    EXPECT_EQ(10U, v.size());
+    EXPECT_TRUE(v.removeLast(1));
+    EXPECT_TRUE(v == Vector<int>({1, 1, 1, 1, 1, 1, 1, 1, 1}));
+    EXPECT_EQ(9U, v.size());
+    EXPECT_FALSE(v.removeLast(2));
+    EXPECT_EQ(9U, v.size());
+    EXPECT_TRUE(v == Vector<int>({1, 1, 1, 1, 1, 1, 1, 1, 1}));
+
+    unsigned removed = 0;
+    while (v.removeLast(1))
+        ++removed;
+    EXPECT_EQ(9U, removed);
+    EXPECT_TRUE(v.isEmpty());
+
+    v.resize(1);
+    EXPECT_EQ(1U, v.size());
+    EXPECT_TRUE(v.removeLast(1));
+    EXPECT_EQ(0U, v.size());
+    EXPECT_TRUE(v.isEmpty());
+}
+
 TEST(WTF_Vector, RemoveAll)
 {
     // Using a memcpy-able type.
@@ -773,6 +809,39 @@ TEST(WTF_Vector, RemoveFirstMatching)
     EXPECT_FALSE(v.removeFirstMatching([] (int value) { return value == 1; }, 7));
     EXPECT_EQ(7U, v.size());
     EXPECT_FALSE(v.removeFirstMatching([] (int value) { return value == 1; }, 10));
+    EXPECT_EQ(7U, v.size());
+}
+
+TEST(WTF_Vector, RemoveLastMatching)
+{
+    Vector<int> v;
+    EXPECT_TRUE(v.isEmpty());
+    EXPECT_FALSE(v.removeLastMatching([] (int value) { return value > 0; }));
+    EXPECT_FALSE(v.removeLastMatching([] (int) { return true; }));
+    EXPECT_FALSE(v.removeLastMatching([] (int) { return false; }));
+
+    v = {3, 1, 1, 1, 2, 2, 1, 2, 1, 2, 1, 3};
+    EXPECT_EQ(12U, v.size());
+    EXPECT_FALSE(v.removeLastMatching([] (int) { return false; }));
+    EXPECT_EQ(12U, v.size());
+    EXPECT_FALSE(v.removeLastMatching([] (int value) { return value < 0; }));
+    EXPECT_EQ(12U, v.size());
+    EXPECT_TRUE(v.removeLastMatching([] (int value) { return value < 3; }));
+    EXPECT_EQ(11U, v.size());
+    EXPECT_TRUE(v == Vector<int>({3, 1, 1, 1, 2, 2, 1, 2, 1, 2, 3}));
+    EXPECT_TRUE(v.removeLastMatching([] (int value) { return value > 2; }));
+    EXPECT_EQ(10U, v.size());
+    EXPECT_TRUE(v == Vector<int>({3, 1, 1, 1, 2, 2, 1, 2, 1, 2}));
+    EXPECT_TRUE(v.removeLastMatching([] (int value) { return value > 2; }, 10));
+    EXPECT_EQ(9U, v.size());
+    EXPECT_TRUE(v == Vector<int>({1, 1, 1, 2, 2, 1, 2, 1, 2}));
+    EXPECT_TRUE(v.removeLastMatching([] (int value) { return value == 1; }, 7));
+    EXPECT_EQ(8U, v.size());
+    EXPECT_TRUE(v == Vector<int>({1, 1, 1, 2, 2, 1, 2, 2}));
+    EXPECT_TRUE(v.removeLastMatching([] (int value) { return value == 1; }, 4));
+    EXPECT_EQ(7U, v.size());
+    EXPECT_TRUE(v == Vector<int>({1, 1, 2, 2, 1, 2, 2}));
+    EXPECT_FALSE(v.removeLastMatching([] (int value) { return value == 2; }, 1));
     EXPECT_EQ(7U, v.size());
 }
 

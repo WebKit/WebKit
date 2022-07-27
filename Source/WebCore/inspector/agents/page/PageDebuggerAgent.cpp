@@ -199,4 +199,9 @@ void PageDebuggerAgent::didCancelAnimationFrame(int callbackId)
     didCancelAsyncCall(InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId);
 }
 
+void PageDebuggerAgent::didFireAnimationFrame(int callbackId)
+{
+    didDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId);
+}
+
 } // namespace WebCore

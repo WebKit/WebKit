@@ -267,7 +267,7 @@ public:
     static void didRequestAnimationFrame(Document&, int callbackId);
     static void didCancelAnimationFrame(Document&, int callbackId);
     static void willFireAnimationFrame(Document&, int callbackId);
-    static void didFireAnimationFrame(Document&);
+    static void didFireAnimationFrame(Document&, int callbackId);
 
     static void willFireObserverCallback(ScriptExecutionContext&, const String& callbackType);
     static void didFireObserverCallback(ScriptExecutionContext&);
@@ -470,7 +470,7 @@ private:
     static void didRequestAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
     static void didCancelAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
     static void willFireAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
-    static void didFireAnimationFrameImpl(InstrumentingAgents&);
+    static void didFireAnimationFrameImpl(InstrumentingAgents&, int callbackId);
 
     static void willFireObserverCallbackImpl(InstrumentingAgents&, const String&, ScriptExecutionContext&);
     static void didFireObserverCallbackImpl(InstrumentingAgents&);
@@ -1661,11 +1661,11 @@ inline void InspectorInstrumentation::willFireAnimationFrame(Document& document,
         willFireAnimationFrameImpl(*agents, callbackId, document);
 }
 
-inline void InspectorInstrumentation::didFireAnimationFrame(Document& document)
+inline void InspectorInstrumentation::didFireAnimationFrame(Document& document, int callbackId)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(document))
-        didFireAnimationFrameImpl(*agents);
+        didFireAnimationFrameImpl(*agents, callbackId);
 }
 
 inline void InspectorInstrumentation::willFireObserverCallback(ScriptExecutionContext& context, const String& callbackType)

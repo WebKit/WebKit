@@ -431,7 +431,7 @@ void InspectorInstrumentation::willHandleEventImpl(InstrumentingAgents& instrume
 void InspectorInstrumentation::didHandleEventImpl(InstrumentingAgents& instrumentingAgents, ScriptExecutionContext& context, Event& event, const RegisteredEventListener& listener)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
-        webDebuggerAgent->didDispatchAsyncCall();
+        webDebuggerAgent->didHandleEvent(listener);
 
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
         domDebuggerAgent->didHandleEvent(context, event, listener);
@@ -483,10 +483,10 @@ void InspectorInstrumentation::willFireTimerImpl(InstrumentingAgents& instrument
         timelineAgent->willFireTimer(timerId, frameForScriptExecutionContext(context));
 }
 
-void InspectorInstrumentation::didFireTimerImpl(InstrumentingAgents& instrumentingAgents, int /* timerId */, bool oneShot)
+void InspectorInstrumentation::didFireTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, bool oneShot)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
-        webDebuggerAgent->didDispatchAsyncCall();
+        webDebuggerAgent->didDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::DOMTimer, timerId);
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
         domDebuggerAgent->didFireTimer(oneShot);
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
@@ -1242,10 +1242,10 @@ void InspectorInstrumentation::willFireAnimationFrameImpl(InstrumentingAgents& i
         timelineAgent->willFireAnimationFrame(callbackId, document.frame());
 }
 
-void InspectorInstrumentation::didFireAnimationFrameImpl(InstrumentingAgents& instrumentingAgents)
+void InspectorInstrumentation::didFireAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, int callbackId)
 {
-    if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
-        webDebuggerAgent->didDispatchAsyncCall();
+    if (auto* pageDebuggerAgent = instrumentingAgents.enabledPageDebuggerAgent())
+        pageDebuggerAgent->didFireAnimationFrame(callbackId);
     if (auto* pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())
         pageDOMDebuggerAgent->didFireAnimationFrame();
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())

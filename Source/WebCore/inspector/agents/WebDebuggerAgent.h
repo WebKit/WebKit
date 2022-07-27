@@ -47,6 +47,7 @@ public:
     void didAddEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void willHandleEvent(const RegisteredEventListener&);
+    void didHandleEvent(const RegisteredEventListener&);
     int willPostMessage();
     void didPostMessage(int postMessageIdentifier, JSC::JSGlobalObject&);
     void didFailPostMessage(int postMessageIdentifier);
@@ -64,6 +65,7 @@ protected:
 
 private:
     HashMap<const RegisteredEventListener*, int> m_registeredEventListeners;
+    HashMap<const RegisteredEventListener*, int> m_dispatchedEventListeners;
     HashSet<int> m_postMessageTasks;
     int m_nextEventListenerIdentifier { 1 };
     int m_nextPostMessageIdentifier { 1 };

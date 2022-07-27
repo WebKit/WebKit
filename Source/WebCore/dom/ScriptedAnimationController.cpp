@@ -169,9 +169,10 @@ void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(ReducedR
             userGestureTokenToForward = nullptr;
         UserGestureIndicator gestureIndicator(userGestureTokenToForward);
 
-        InspectorInstrumentation::willFireAnimationFrame(protectedDocument, callback->m_id);
+        auto identifier = callback->m_id;
+        InspectorInstrumentation::willFireAnimationFrame(protectedDocument, identifier);
         callback->handleEvent(highResNowMs);
-        InspectorInstrumentation::didFireAnimationFrame(protectedDocument);
+        InspectorInstrumentation::didFireAnimationFrame(protectedDocument, identifier);
     }
 
     // Remove any callbacks we fired from the list of pending callbacks.

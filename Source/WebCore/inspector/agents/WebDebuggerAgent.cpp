@@ -109,7 +109,21 @@ void WebDebuggerAgent::willHandleEvent(const RegisteredEventListener& listener)
     if (it == m_registeredEventListeners.end())
         return;
 
+    // Save the identifier for the listener we're about to dispatch an event to in case it's removed.
+    m_dispatchedEventListeners.set(&listener, it->value);
+
     willDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::EventListener, it->value);
+}
+
+void WebDebuggerAgent::didHandleEvent(const RegisteredEventListener& listener)
+{
+    auto it = m_dispatchedEventListeners.find(&listener);
+    if (it == m_dispatchedEventListeners.end())
+        return;
+
+    didDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::EventListener, it->value);
+
+    m_dispatchedEventListeners.remove(it);
 }
 
 int WebDebuggerAgent::willPostMessage()
@@ -164,7 +178,7 @@ void WebDebuggerAgent::didDispatchPostMessage(int postMessageIdentifier)
     if (it == m_postMessageTasks.end())
         return;
 
-    didDispatchAsyncCall();
+    didDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::PostMessage, postMessageIdentifier);
 
     m_postMessageTasks.remove(it);
 }
@@ -174,6 +188,7 @@ void WebDebuggerAgent::didClearAsyncStackTraceData()
     InspectorDebuggerAgent::didClearAsyncStackTraceData();
 
     m_registeredEventListeners.clear();
+    m_dispatchedEventListeners.clear();
     m_postMessageTasks.clear();
     m_nextEventListenerIdentifier = 1;
     m_nextPostMessageIdentifier = 1;

@@ -129,7 +129,7 @@ public:
     void didScheduleAsyncCall(JSC::JSGlobalObject*, AsyncCallType, int callbackId, bool singleShot);
     void didCancelAsyncCall(AsyncCallType, int callbackId);
     void willDispatchAsyncCall(AsyncCallType, int callbackId);
-    void didDispatchAsyncCall();
+    void didDispatchAsyncCall(AsyncCallType, int callbackId);
     AsyncStackTrace* currentParentStackTrace() const;
 
     void schedulePauseAtNextOpportunity(DebuggerFrontendDispatcher::Reason, RefPtr<JSON::Object>&& data = nullptr);

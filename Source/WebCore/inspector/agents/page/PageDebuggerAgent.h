@@ -67,6 +67,7 @@ public:
     void didRequestAnimationFrame(int callbackId, Document&);
     void willFireAnimationFrame(int callbackId);
     void didCancelAnimationFrame(int callbackId);
+    void didFireAnimationFrame(int callbackId);
 
 private:
     void internalEnable();
