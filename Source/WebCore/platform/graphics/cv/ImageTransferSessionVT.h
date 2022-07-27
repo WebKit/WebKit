@@ -54,6 +54,7 @@ public:
 #endif
 
     uint32_t pixelFormat() const { return m_pixelFormat; }
+    void setMaximumBufferPoolSize(size_t maxBufferPoolSize) { m_maxBufferPoolSize = maxBufferPoolSize; }
 
 private:
     WEBCORE_EXPORT ImageTransferSessionVT(uint32_t pixelFormat, bool shouldUseIOSurface);
@@ -77,6 +78,7 @@ private:
     bool m_shouldUseIOSurface { true };
     uint32_t m_pixelFormat;
     IntSize m_size;
+    size_t m_maxBufferPoolSize { 0 };
 };
 
 }

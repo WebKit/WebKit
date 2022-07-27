@@ -62,6 +62,7 @@ private:
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
     IntSize m_presetSize;
     Ref<WorkQueue> m_workQueue;
+    size_t m_pixelGenerationFailureCount { 0 };
 };
 
 } // namespace WebCore
