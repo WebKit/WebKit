@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -36,7 +36,6 @@
 
 namespace JSC {
 
-
 VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     : m_vm(vm)
     , m_globalObject(globalObject)
@@ -49,12 +48,12 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
             Thread::registerJSThread(thread);
 
 #if ENABLE(WEBASSEMBLY)
-                if (Wasm::isSupported())
-                    Wasm::startTrackingCurrentThread();
+            if (Wasm::isSupported())
+                Wasm::startTrackingCurrentThread();
 #endif
 
 #if HAVE(MACH_EXCEPTIONS)
-                registerThreadForMachExceptionHandling(thread);
+            registerThreadForMachExceptionHandling(thread);
 #endif
         }
 
@@ -76,15 +75,12 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
 #endif
         if (UNLIKELY(Options::useTracePoints()))
             tracePoint(VMEntryScopeStart);
-        #if ENABLE(SINGLE_THREADED_VM_ENTRY_SCOPE)
-        }
-        #endif
     }
 
     vm.clearLastException();
 }
 
-void VMEntryScope::addDidPopListener(Function<void ()>&& listener)
+void VMEntryScope::addDidPopListener(Function<void()>&& listener)
 {
     m_didPopListeners.append(WTFMove(listener));
 }
@@ -98,7 +94,7 @@ VMEntryScope::~VMEntryScope()
 
     if (UNLIKELY(Options::useTracePoints()))
         tracePoint(VMEntryScopeEnd);
-    
+
     if (UNLIKELY(m_vm.watchdog()))
         m_vm.watchdog()->exitedVM();
 

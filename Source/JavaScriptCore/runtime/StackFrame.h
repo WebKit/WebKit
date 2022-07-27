@@ -51,7 +51,6 @@ public:
     const Wasm::IndexOrName& wasmFunctionIndexOrName() const { return m_wasmFunctionIndexOrName; }
 
     bool hasLineAndColumnInfo() const { return !!m_codeBlock; }
-    CodeBlock* codeBlock() const { return m_codeBlock.get(); }
 
     void computeLineAndColumn(unsigned& line, unsigned& column) const;
     String functionName(VM&) const;
