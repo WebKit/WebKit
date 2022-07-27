@@ -138,9 +138,8 @@ void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier 
     if (width > std::numeric_limits<int>::max() || height > std::numeric_limits<int>::max())
         return;
     DestinationColorSpace colorSpace { CGImageGetColorSpace(frameImage.get()) };
-    bool isOpaque = false;
 
-    auto bitmap = ShareableBitmap::create(IntSize(width, height), { WTFMove(colorSpace), isOpaque });
+    auto bitmap = ShareableBitmap::create(IntSize(width, height), { WTFMove(colorSpace), true /* isOpaque */ });
     if (!bitmap)
         return;
     auto context = bitmap->createGraphicsContext();
