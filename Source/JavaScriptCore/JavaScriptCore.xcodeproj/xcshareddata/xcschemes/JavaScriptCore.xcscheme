@@ -20,6 +20,20 @@
                ReferencedContainer = "container:JavaScriptCore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "932F5BE30822A1C700736975"
+               BuildableName = "All"
+               BlueprintName = "All"
+               ReferencedContainer = "container:JavaScriptCore.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
