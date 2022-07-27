@@ -84,16 +84,6 @@ static inline bool isYahooMail(Document& document)
 }
 #endif
 
-static bool isTwitterDocument(Document& document)
-{
-    return RegistrableDomain(document.url()).string() == "twitter.com"_s;
-}
-
-static bool isYouTubeDocument(Document& document)
-{
-    return RegistrableDomain(document.url()).string() == "youtube.com"_s;
-}
-
 Quirks::Quirks(Document& document)
     : m_document(document)
 {
@@ -1390,8 +1380,10 @@ bool Quirks::requiresUserGestureToLoadInPictureInPicture() const
     if (!needsQuirks())
         return false;
 
-    if (!m_requiresUserGestureToLoadInPictureInPicture)
-        m_requiresUserGestureToLoadInPictureInPicture = isTwitterDocument(m_document->topDocument());
+    if (!m_requiresUserGestureToLoadInPictureInPicture) {
+        auto domain = RegistrableDomain(m_document->topDocument().url());
+        m_requiresUserGestureToLoadInPictureInPicture = domain.string() == "twitter.com"_s;
+    }
 
     return *m_requiresUserGestureToLoadInPictureInPicture;
 #else
@@ -1466,17 +1458,6 @@ bool Quirks::needsToForceUserSelectAndUserDragWhenInstallingImageOverlay() const
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
-
-bool Quirks::shouldDisableWebSharePolicy() const
-{
-    if (!needsQuirks())
-        return false;
-
-    if (!m_shouldDisableWebSharePolicy)
-        m_shouldDisableWebSharePolicy = isTwitterDocument(*m_document) || isYouTubeDocument(*m_document);
-
-    return *m_shouldDisableWebSharePolicy;
-}
 
 #if PLATFORM(IOS)
 bool Quirks::allowLayeredFullscreenVideos() const

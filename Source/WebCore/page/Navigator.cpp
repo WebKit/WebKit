@@ -129,7 +129,7 @@ static std::optional<URL> shareableURLForShareData(ScriptExecutionContext& conte
 
 static bool validateWebSharePolicy(Document& document)
 {
-    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::WebShare, document, LogFeaturePolicyFailure::Yes) || document.quirks().shouldDisableWebSharePolicy();
+    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::WebShare, document, LogFeaturePolicyFailure::Yes);
 }
 
 bool Navigator::canShare(Document& document, const ShareData& data)
