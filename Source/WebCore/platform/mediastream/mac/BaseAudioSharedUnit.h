@@ -82,12 +82,12 @@ public:
     void devicesChanged(const Vector<CaptureDevice>&);
     void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);
     bool isRenderingAudio() const { return m_isRenderingAudio; }
-    bool hasClients() const { return !m_clients.isEmpty(); }
 
     const String& persistentIDForTesting() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
 
 protected:
     void forEachClient(const Function<void(CoreAudioCaptureSource&)>&) const;
+    bool hasClients() const { return !m_clients.isEmpty(); }
     void captureFailed();
 
     virtual void cleanupAudioUnit() = 0;
