@@ -3280,6 +3280,22 @@ void WebPage::validateCommand(const String& commandName, CompletionHandler<void(
     completionHandler(isEnabled, state);
 }
 
+void WebPage::generateSyntheticCommandP(CompletionHandler<void(bool)>&& completion)
+{
+    OptionSet<PlatformEvent::Modifier> modifiers;
+    modifiers.add(PlatformEvent::Modifier::MetaKey);
+    
+    PlatformKeyboardEvent keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "p"_s, "p"_s, "p"_s, "KeyP"_s, "U+0050"_s, 80, false, false, false, modifiers, WallTime::now());
+    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+
+    keyEvent.setIsSyntheticEvent();
+    
+    PlatformKeyboardEvent::setCurrentModifierState(modifiers);
+    
+    bool wasHandled = frame->eventHandler().keyEvent(keyEvent);
+    completion(wasHandled);
+}
+
 void WebPage::executeEditCommand(const String& commandName, const String& argument)
 {
     executeEditingCommand(commandName, argument);

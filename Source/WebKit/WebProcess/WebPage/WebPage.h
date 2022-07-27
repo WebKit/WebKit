@@ -1584,6 +1584,8 @@ private:
     void updateSizeForCSSSmallViewportUnits();
     void updateSizeForCSSLargeViewportUnits();
 
+    void generateSyntheticCommandP(CompletionHandler<void(bool)>&&);
+
 #if PLATFORM(IOS_FAMILY)
     std::optional<FocusedElementInformation> focusedElementInformation();
     void generateSyntheticEditingCommand(SyntheticEditingCommandType);

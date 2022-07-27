@@ -974,6 +974,16 @@ bool WebPageProxy::shouldUseBackForwardCache() const
     return m_preferences->usesBackForwardCache() && backForwardCache().capacity() > 0;
 }
 
+void WebPageProxy::generateSyntheticCommandP(CompletionHandler<void(bool)>&& callbackFunction)
+{
+    if (!hasRunningProcess()) {
+        callbackFunction(false);
+        return;
+    }
+    
+    sendWithAsyncReply(Messages::WebPage::GenerateSyntheticCommandP(), WTFMove(callbackFunction));
+}
+
 void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> provisionalPage)
 {
     ASSERT(!m_isClosed);

@@ -820,6 +820,9 @@ public:
 #if ENABLE(UI_SIDE_COMPOSITING)
     void updateVisibleContentRects(const VisibleContentRectUpdateInfo&, bool sendEvenIfUnchanged);
 #endif
+        
+    void generateSyntheticCommandP(CompletionHandler<void(bool)>&& callbackFunction);
+        
 
 #if PLATFORM(IOS_FAMILY)
     void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);

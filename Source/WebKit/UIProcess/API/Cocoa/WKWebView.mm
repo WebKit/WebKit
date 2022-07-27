@@ -2794,6 +2794,13 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     });
 }
 
+- (void)_generateSyntheticCommandP:(void (^)(BOOL))completionBlock
+{
+    _page->generateSyntheticCommandP([completionBlock = makeBlockPtr(completionBlock)](bool wasHandled) {
+        completionBlock(wasHandled);
+    });
+}
+
 - (NSData *)_sessionStateData
 {
     // FIXME: This should not use the legacy session state encoder.

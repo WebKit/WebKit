@@ -268,6 +268,8 @@ for this property.
 
 - (void)_doAfterNextVisibleContentRectUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
+- (void)_generateSyntheticCommandP:(void (^)(BOOL))completionBlock WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 - (void)_executeEditCommand:(NSString *)command argument:(NSString *)argument completion:(void (^)(BOOL))completion WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
 - (void)_isJITEnabled:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
