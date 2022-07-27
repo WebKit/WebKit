@@ -336,6 +336,8 @@ public:
     virtual void setResourceOwner(const ProcessIdentity&) { }
 
     virtual String errorMessage() const { return { }; }
+
+    virtual void renderVideoWillBeDestroyed() { }
 };
 
 }

@@ -93,7 +93,7 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBu
     if (!sourceBuffer || !setSize(size))
         return nullptr;
 
-    auto result = createCVPixelBufferFromPool(m_outputBufferPool.get());
+    auto result = createCVPixelBufferFromPool(m_outputBufferPool.get(), m_maxBufferPoolSize);
     if (!result) {
         RELEASE_LOG(Media, "ImageTransferSessionVT::convertPixelBuffer, createCVPixelBufferFromPool failed with error %d", static_cast<int>(result.error()));
         return nullptr;
