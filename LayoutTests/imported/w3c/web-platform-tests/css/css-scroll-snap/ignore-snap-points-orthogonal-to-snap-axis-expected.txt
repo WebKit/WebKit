@@ -1,0 +1,3 @@
+
+PASS Ignore snap points orthogonal to scroll snap axis
+

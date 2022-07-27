@@ -17,8 +17,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/adding-only-snap-area.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/adding-snap-area-while-snapped.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-align.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-type-on-root-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-type.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/move-current-target.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/not-resnap-outside-proximity-threshold.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/remove-current-target.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/resnap-to-focused.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/snap-to-different-targets.html

@@ -1,0 +1,9 @@
+
+PASS The closest snap point is preferred than scroll-snap-stop: always where it's further than the destination (the closest one is closer to the scroll start position than the destination)
+FAIL The closest snap point is preferred than scroll-snap-stop: always where it's further than the destination (the closest one is futrher than the destination from the start position) assert_equals: expected 95 but got 120
+PASS The scroll destination on a large element whose snap area covers the snapport entirely is a valid snap position
+PASS The scroll destination on a large element whose snap area covers the snapport entirely is a valid snap position (with two `scroll-snap-stop: always` snap points
+PASS `scroll-snap-stop: always` snap point is preferred even if the snap area entire snapport
+PASS `scroll-snap-stop: always` snap point is further than the scroll destination
+PASS `scroll-snap-stop: always` snap point is further than the scroll destination and a snap area covers the snapport
+

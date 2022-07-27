@@ -1,0 +1,4 @@
+12345
+
+PASS There's no valid snap positions on large element if it doesn't cover the snapport
+

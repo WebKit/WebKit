@@ -1,0 +1,3 @@
+
+FAIL scroll snap should happens on Element.focus() assert_equals: expected 1200 but got 0
+
