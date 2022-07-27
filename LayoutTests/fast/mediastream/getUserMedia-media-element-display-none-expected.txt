@@ -1,0 +1,3 @@
+
+PASS Media element should not store video frames in display=none case
+

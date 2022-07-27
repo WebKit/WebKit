@@ -709,6 +709,8 @@ public:
 
     bool prefersSandboxedParsing() const { return client().mediaPlayerPrefersSandboxedParsing(); }
 
+    void renderVideoWillBeDestroyed();
+
 private:
     MediaPlayer(MediaPlayerClient&);
     MediaPlayer(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);

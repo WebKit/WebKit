@@ -86,8 +86,10 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
     if (!imageBuffer)
         return;
 
-    if (!m_imageTransferSession)
+    if (!m_imageTransferSession) {
         m_imageTransferSession = ImageTransferSessionVT::create(preferedPixelBufferFormat());
+        m_imageTransferSession->setMaximumBufferPoolSize(10);
+    }
 
     PlatformImagePtr platformImage;
     if (auto nativeImage = imageBuffer->copyImage()->nativeImage())
@@ -95,9 +97,14 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
 
     auto presentationTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
     auto videoFrame = m_imageTransferSession->createVideoFrame(platformImage.get(), presentationTime, size(), videoFrameRotation());
-    if (!videoFrame)
+    if (!videoFrame) {
+        static const size_t MaxPixelGenerationFailureCount = 30;
+        if (++m_pixelGenerationFailureCount > MaxPixelGenerationFailureCount)
+            captureFailed();
         return;
+    }
 
+    m_pixelGenerationFailureCount = 0;
     auto captureTime = MonotonicTime::now().secondsSinceEpoch();
     m_workQueue->dispatch([this, protectedThis = Ref { *this }, videoFrame = WTFMove(videoFrame), captureTime]() mutable {
         VideoFrameTimeMetadata metadata;

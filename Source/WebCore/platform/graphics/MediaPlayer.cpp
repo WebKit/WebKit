@@ -1813,6 +1813,11 @@ void MediaPlayer::stopVideoFrameMetadataGathering()
     m_private->stopVideoFrameMetadataGathering();
 }
 
+void MediaPlayer::renderVideoWillBeDestroyed()
+{
+    m_private->renderVideoWillBeDestroyed();
+}
+
 void MediaPlayer::playerContentBoxRectChanged(const LayoutRect& rect)
 {
     m_private->playerContentBoxRectChanged(rect);

@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay></video>
+        <script>
+promise_test(async (test) => {
+    video.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
+    await video.play();
+    video.style.display = 'none';
+    return new Promise((resolve, reject) => {
+        video.srcObject.getVideoTracks()[0].onended = () => reject('capture failed');
+        setTimeout(resolve, 3000);
+    });
+}, "Media element should not store video frames in display=none case");
+        </script>
+    </body>
+</html>
