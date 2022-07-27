@@ -283,6 +283,11 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
     auto& lines = inlineContent.lines;
     auto& boxes = inlineContent.boxes;
 
+    if (boxes.isEmpty()) {
+        // Has to have at least one box, the root inline box.
+        return;
+    }
+
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto addSpacing = [&] {
             size_t printedCharacters = 0;
@@ -297,53 +302,52 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
         stream.nextLine();
 
         addSpacing();
-        stream << "  Inline level boxes:";
+
+        auto& rootInlineBox = boxes[0];
+        auto rootInlineBoxRect = rootInlineBox.visualRectIgnoringBlockDirection();
+        stream << "  ";
+        stream << "Root inline box at (" << rootInlineBoxRect.x() << "," << rootInlineBoxRect.y() << ")" << " size (" << rootInlineBoxRect.width() << "x" << rootInlineBoxRect.height() << ")";
         stream.nextLine();
 
-        auto outputInlineLevelBox = [&](const auto& inlineLevelBox) {
-            addSpacing();
-            stream << "    ";
-            auto rect = inlineLevelBox.visualRectIgnoringBlockDirection();
-            auto& layoutBox = inlineLevelBox.layoutBox();
-            if (layoutBox.isAtomicInlineLevelBox())
-                stream << "Atomic inline level box";
-            else if (layoutBox.isLineBreakBox())
-                stream << "Line break box";
-            else if (layoutBox.isInlineBox())
-                stream << "Inline box";
-            else
-                stream << "Generic inline level box";
-            stream
-                << " at (" << rect.x() << "," << rect.y() << ")"
-                << " size (" << rect.width() << "x" << rect.height() << ")";
-            stream.nextLine();
-        };
         for (auto& box : boxes) {
-            if (box.lineIndex() != lineIndex)
+            if (box.lineIndex() != lineIndex || !box.isNonRootInlineBox())
                 continue;
-            if (!box.layoutBox().isInlineLevelBox())
-                continue;
-            outputInlineLevelBox(box);
+
+            addSpacing();
+            stream << "  ";
+            for (auto* ancestor = &box.layoutBox(); ancestor != &rootInlineBox.layoutBox(); ancestor = &ancestor->parent())
+                stream << "  ";
+            auto rect = box.visualRectIgnoringBlockDirection();
+            stream << "Inline box at (" << rect.x() << "," << rect.y() << ") size (" << rect.width() << "x" << rect.height() << ") renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
+            stream.nextLine();
         }
 
         addSpacing();
-        stream << "  Runs:";
+        stream << "  ";
+        stream << "Run(s):";
         stream.nextLine();
         for (auto& box : boxes) {
-            if (box.lineIndex() != lineIndex)
+            if (box.lineIndex() != lineIndex || box.isInlineBox())
                 continue;
             addSpacing();
             stream << "    ";
-            if (box.text())
-                stream << "text box";
-            else
-                stream << "box box";
+
+            if (box.isText())
+                stream << "Text";
+            else if (box.isWordSeparator())
+                stream << "Word separator";
+            else if (box.isLineBreak())
+                stream << "Line break";
+            else if (box.isAtomicInlineLevelBox())
+                stream << "Atomic box";
+            else if (box.isGenericInlineLevelBox())
+                stream << "Generic inline level box";
             stream << " at (" << box.left() << "," << box.top() << ") size " << box.width() << "x" << box.height();
-            if (box.text())
-                stream << " box(" << box.text()->start() << ", " << box.text()->end() << ")";
+            if (box.isText())
+                stream << " run(" << box.text()->start() << ", " << box.text()->end() << ")";
+            stream << " renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
             stream.nextLine();
         }
-
     }
 }
 #endif
