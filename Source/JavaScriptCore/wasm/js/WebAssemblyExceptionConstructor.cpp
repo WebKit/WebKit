@@ -63,6 +63,8 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
     MarkedArgumentBuffer values;
     forEachInIterable(globalObject, tagParameters, [&] (VM&, JSGlobalObject*, JSValue nextValue) {
         values.append(nextValue);
+        if (UNLIKELY(values.hasOverflowed()))
+            throwOutOfMemoryError(globalObject, scope);
     });
     RETURN_IF_EXCEPTION(scope, { });
 
