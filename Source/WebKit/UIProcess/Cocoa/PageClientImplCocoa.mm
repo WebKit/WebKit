@@ -44,6 +44,11 @@ PageClientImplCocoa::PageClientImplCocoa(WKWebView *webView)
 
 PageClientImplCocoa::~PageClientImplCocoa() = default;
 
+void PageClientImplCocoa::topContentInsetDidChange()
+{
+    [m_webView _recalculateViewportSizesWithMinimumViewportInset:[m_webView minimumViewportInset] maximumViewportInset:[m_webView maximumViewportInset] throwOnInvalidInput:NO];
+}
+
 void PageClientImplCocoa::themeColorWillChange()
 {
     [m_webView willChangeValueForKey:@"themeColor"];

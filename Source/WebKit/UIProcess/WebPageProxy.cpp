@@ -2033,6 +2033,8 @@ void WebPageProxy::setTopContentInset(float contentInset)
 
     m_topContentInset = contentInset;
 
+    pageClient().topContentInsetDidChange();
+
     if (!hasRunningProcess())
         return;
 #if PLATFORM(COCOA)
