@@ -327,6 +327,12 @@ const AtomString& webkitValidationBubbleBody()
     return webkitValidationBubbleBody;
 }
 
+const AtomString& appleAttachmentControlsContainer()
+{
+    static MainThreadNeverDestroyed<const AtomString> appleAttachmentControlsContainer("-apple-attachment-controls-container"_s);
+    return appleAttachmentControlsContainer;
+}
+
 } // namespace ShadowPseudoId
 
 } // namespace WebCore
