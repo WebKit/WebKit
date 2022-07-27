@@ -96,6 +96,10 @@ template<> bool isLookalikeCharacterOfScriptType<USCRIPT_CANADIAN_ABORIGINAL>(UC
 {
     switch (codePoint) {
     case 0x15AF: /* CANADIAN SYLLABICS AIVILIK B */
+    case 0x15B4: /* CANADIAN SYLLABICS BLACKFOOT WE */
+    case 0x157C: /* CANADIAN SYLLABICS NUNAVUT H */
+    case 0x166D: /* CANADIAN SYLLABICS CHI SIGN */
+    case 0x166E: /* CANADIAN SYLLABICS FULL STOP */
         return true;
     default:
         return false;
