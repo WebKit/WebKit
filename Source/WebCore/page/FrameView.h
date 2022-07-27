@@ -137,6 +137,7 @@ public:
 
     void setNeedsCompositingConfigurationUpdate();
     void setNeedsCompositingGeometryUpdate();
+    void setDescendantsNeedUpdateBackingAndHierarchyTraversal();
 
     WEBCORE_EXPORT void setViewportConstrainedObjectsNeedLayout();
 
