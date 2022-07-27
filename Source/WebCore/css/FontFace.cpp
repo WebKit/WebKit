@@ -76,6 +76,7 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
         return result;
     }
 
+    bool allowDownloading = context.settingsValues().downloadableBinaryFontsEnabled;
     auto sourceConversionResult = WTF::switchOn(source,
         [&] (String& string) -> ExceptionOr<void> {
             auto value = CSSPropertyParserWorkerSafe::parseFontFaceSrc(string, is<Document>(context) ? CSSParserContext(downcast<Document>(context)) : HTMLStandardMode);
@@ -84,11 +85,17 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
             CSSFontFace::appendSources(result->backing(), *value, &context, false);
             return { };
         },
-        [&] (RefPtr<ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> {
+        [&, allowDownloading] (RefPtr<ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> {
+            if (!allowDownloading)
+                return { };
+
             dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
             return { };
         },
-        [&] (RefPtr<ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> {
+        [&, allowDownloading] (RefPtr<ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> {
+            if (!allowDownloading)
+                return { };
+
             unsigned byteLength = arrayBuffer->byteLength();
             auto arrayBufferView = JSC::Uint8Array::create(WTFMove(arrayBuffer), 0, byteLength);
             dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), WTFMove(arrayBufferView));
