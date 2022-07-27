@@ -103,6 +103,8 @@ const AtomString& webkitValidationBubbleTextBlock();
 const AtomString& webkitValidationBubbleHeading();
 const AtomString& webkitValidationBubbleBody();
 
+const AtomString& appleAttachmentControlsContainer();
+
 } // namespace ShadowPseudoId
 
 } // namespace WebCore
