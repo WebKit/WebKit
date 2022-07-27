@@ -47,6 +47,7 @@
 #include "LineSelection.h"
 #include "Logging.h"
 #include "RenderCombineText.h"
+#include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
 #include "RenderInline.h"
@@ -3610,6 +3611,15 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
         if (is<RenderInline>(renderer)) {
             layoutFormattingContextLineLayout.updateInlineBoxDimensions(downcast<RenderInline>(renderer));
+            renderer.clearNeedsLayout();
+            continue;
+        }
+
+        if (is<RenderCounter>(renderer)) {
+            // The counter content gets updated unconventionally by involving computePreferredLogicalWidths() (see RenderCounter::updateCounter())
+            // Here we assume that every time the content of a counter changes, we already handled the update by re-constructing the associated InlineTextBox (see BoxTree::buildTreeForInlineContent).
+            if (renderer.preferredLogicalWidthsDirty())
+                downcast<RenderCounter>(renderer).updateCounter();
             renderer.clearNeedsLayout();
             continue;
         }

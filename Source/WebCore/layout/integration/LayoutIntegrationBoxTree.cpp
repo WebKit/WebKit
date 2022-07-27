@@ -36,6 +36,7 @@
 #include "RenderBlock.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderCounter.h"
 #include "RenderDetailsMarker.h"
 #include "RenderFlexibleBox.h"
 #include "RenderImage.h"
@@ -104,6 +105,13 @@ void BoxTree::buildTreeForInlineContent()
         if (&childRenderer.style() != &childRenderer.firstLineStyle())
             firstLineStyle = RenderStyle::clonePtr(childRenderer.firstLineStyle());
 #endif
+        if (is<RenderCounter>(childRenderer)) {
+            // This ensures that InlineTextBox (see below) always has uptodate counter text (note that RenderCounter is a type of RenderText).
+            if (childRenderer.preferredLogicalWidthsDirty()) {
+                // Counter content is updated through preferred width computation.
+                downcast<RenderCounter>(childRenderer).updateCounter();
+            }
+        }
         if (is<RenderText>(childRenderer)) {
             auto& textRenderer = downcast<RenderText>(childRenderer);
             auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer.style(), DisplayType::Inline);

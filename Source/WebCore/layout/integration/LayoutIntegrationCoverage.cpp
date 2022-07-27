@@ -32,7 +32,6 @@
 #include "Logging.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
-#include "RenderCounter.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
@@ -139,9 +138,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlowTextIsCombineText:
         stream << "text is combine";
-        break;
-    case AvoidanceReason::FlowTextIsRenderCounter:
-        stream << "RenderCounter";
         break;
     case AvoidanceReason::ContentIsRenderQuote:
         stream << "RenderQuote";
@@ -396,12 +392,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     OptionSet<AvoidanceReason> reasons;
 
     if (is<RenderText>(child)) {
-        if (is<RenderCounter>(child))
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
         if (child.isCombineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
-        if (child.isCounter())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
         if (downcast<RenderText>(child).isTextFragment())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsTextFragment, reasons, includeReasons);
         if (child.isSVGInlineText())

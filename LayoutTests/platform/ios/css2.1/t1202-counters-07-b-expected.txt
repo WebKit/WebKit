@@ -19,8 +19,8 @@ layer at (0,0) size 800x100
               text run at (16,0) width 19: "i.ii"
         RenderText {#text} at (34,0) size 5x19
           text run at (34,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 23x19
-          RenderInline (generated) at (0,0) size 23x19
+        RenderInline {SPAN} at (0,0) size 22x19
+          RenderInline (generated) at (0,0) size 22x19
             RenderCounter at (38,0) size 23x19
               text run at (38,0) width 23: "i.iii"
         RenderText {#text} at (60,0) size 5x19
