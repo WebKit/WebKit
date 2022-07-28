@@ -399,6 +399,26 @@ RefPtr<WebGLTexture> WebGL2RenderingContext::validateTexImageBinding(const char*
     return validateTexture2DBinding(functionName, target);
 }
 
+RefPtr<WebGLTexture> WebGL2RenderingContext::validateTextureStorage2DBinding(const char* functionName, GCGLenum target)
+{
+    RefPtr<WebGLTexture> texture;
+    switch (target) {
+    case GraphicsContextGL::TEXTURE_2D:
+        texture = m_textureUnits[m_activeTextureUnit].texture2DBinding;
+        break;
+    case GraphicsContextGL::TEXTURE_CUBE_MAP:
+        texture = m_textureUnits[m_activeTextureUnit].textureCubeMapBinding;
+        break;
+    default:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture target");
+        return nullptr;
+    }
+
+    if (!texture)
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "no texture");
+    return texture;
+}
+
 RefPtr<WebGLTexture> WebGL2RenderingContext::validateTexture3DBinding(const char* functionName, GCGLenum target)
 {
     RefPtr<WebGLTexture> texture;
@@ -876,7 +896,7 @@ void WebGL2RenderingContext::texStorage2D(GCGLenum target, GCGLsizei levels, GCG
     if (isContextLostOrPending())
         return;
 
-    auto texture = validateTextureBinding("texStorage2D", target);
+    auto texture = validateTextureStorage2DBinding("texStorage2D", target);
     if (!texture)
         return;
 
