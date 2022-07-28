@@ -76,6 +76,20 @@ public:
     virtual AtomString inBandMetadataTrackDispatchType() const { return emptyAtom(); }
 
     CueFormat cueFormat() const { return m_format; }
+    
+    virtual bool operator==(const InbandTextTrackPrivate& track) const
+    {
+        return TrackPrivateBase::operator==(track)
+            && cueFormat() == track.cueFormat()
+            && kind() == track.kind()
+            && isClosedCaptions() == track.isClosedCaptions()
+            && isSDH() == track.isSDH()
+            && containsOnlyForcedSubtitles() == track.containsOnlyForcedSubtitles()
+            && isMainProgramContent() == track.isMainProgramContent()
+            && isEasyToRead() == track.isEasyToRead()
+            && isDefault() == track.isDefault()
+            && inBandMetadataTrackDispatchType() == track.inBandMetadataTrackDispatchType();
+    }
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "InbandTextTrackPrivate"; }

@@ -682,10 +682,10 @@ void SourceBuffer::setActive(bool active)
         m_source->sourceBufferDidChangeActiveState(*this, active);
 }
 
-void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment, CompletionHandler<void()>&& completionHandler)
+void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment, CompletionHandler<void(ReceiveResult)>&& completionHandler)
 {
     if (isRemoved()) {
-        completionHandler();
+        completionHandler(ReceiveResult::BufferRemoved);
         return;
     }
 
@@ -710,7 +710,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
     // with the decode error parameter set to true and abort these steps.
     if (segment.audioTracks.isEmpty() && segment.videoTracks.isEmpty() && segment.textTracks.isEmpty()) {
         appendError(true);
-        completionHandler();
+        completionHandler(ReceiveResult::AppendError);
         return;
     }
 
@@ -720,7 +720,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
         // with the decode error parameter set to true and abort these steps.
         if (!validateInitializationSegment(segment)) {
             appendError(true);
-            completionHandler();
+            completionHandler(ReceiveResult::AppendError);
             return;
         }
 
@@ -798,7 +798,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
                 if (audioTrackInfo.description && allowedMediaAudioCodecIDs->contains(FourCC::fromString(audioTrackInfo.description->codec())))
                     continue;
                 appendError(true);
-                completionHandler();
+                completionHandler(ReceiveResult::AppendError);
                 return;
             }
         }
@@ -808,7 +808,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
                 if (videoTrackInfo.description && allowedMediaVideoCodecIDs->contains(FourCC::fromString(videoTrackInfo.description->codec())))
                     continue;
                 appendError(true);
-                completionHandler();
+                completionHandler(ReceiveResult::AppendError);
                 return;
             }
         }
@@ -932,7 +932,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
     // (Note: Issue #155 adds this step after step 5:)
     // 6. Set  pending initialization segment for changeType flag  to false.
     m_pendingInitializationSegmentForChangeType = false;
-    completionHandler();
+    completionHandler(ReceiveResult::RecieveSucceeded);
 
     // 6. If the HTMLMediaElement.readyState attribute is HAVE_NOTHING, then run the following steps:
     if (m_private->readyState() == MediaPlayer::ReadyState::HaveNothing) {

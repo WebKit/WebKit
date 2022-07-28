@@ -559,15 +559,16 @@ void SourceBufferPrivate::setAllTrackBuffersNeedRandomAccess()
         trackBuffer.get().setNeedRandomAccessFlag(true);
 }
 
-void SourceBufferPrivate::didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&& segment, CompletionHandler<void()>&& completionHandler)
+void SourceBufferPrivate::didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&& segment, CompletionHandler<void(SourceBufferPrivateClient::ReceiveResult)>&& completionHandler)
 {
     if (!m_client) {
-        completionHandler();
+        completionHandler(SourceBufferPrivateClient::ReceiveResult::ClientDisconnected);
         return;
     }
 
     if (m_receivedFirstInitializationSegment && !validateInitializationSegment(segment)) {
         m_client->sourceBufferPrivateAppendError(true);
+        completionHandler(SourceBufferPrivateClient::ReceiveResult::AppendError);
         return;
     }
 

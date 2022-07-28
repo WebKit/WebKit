@@ -393,8 +393,6 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
         }
     }
 
-    clearTracks();
-
     m_protectedTrackInitDataMap.swap(m_pendingProtectedTrackInitDataMap);
     m_pendingProtectedTrackInitDataMap.clear();
 
@@ -417,7 +415,7 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
             m_pendingTrackChangeCallbacks.append(WTFMove(videoTrackSelectedChanged));
         });
 
-        m_videoTracks.append(videoTrackInfo.track);
+        m_videoTracks.set(videoTrackInfo.track->id(), videoTrackInfo.track);
     }
 
     for (auto audioTrackInfo : segment.audioTracks) {
@@ -440,17 +438,19 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
             m_pendingTrackChangeCallbacks.append(WTFMove(audioTrackEnabledChanged));
         });
 
-        m_audioTracks.append(audioTrackInfo.track);
+        m_audioTracks.set(audioTrackInfo.track->id(), audioTrackInfo.track);
     }
 
     m_processingInitializationSegment = true;
-    didReceiveInitializationSegment(WTFMove(segment), [this, weakThis = WeakPtr { *this }, abortCalled = m_abortCalled]() {
+    didReceiveInitializationSegment(WTFMove(segment), [this, weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (SourceBufferPrivateClient::ReceiveResult result) {
         ASSERT(isMainThread());
         if (!weakThis)
             return;
 
         m_processingInitializationSegment = false;
-        if (abortCalled != weakThis->m_abortCalled) {
+        auto didAbort = abortCalled != weakThis->m_abortCalled;
+        if (didAbort || result != SourceBufferPrivateClient::ReceiveResult::RecieveSucceeded) {
+            ERROR_LOG(LOGIDENTIFIER, "failed to process initialization segment: didAbort = ", didAbort, " recieveResult = ", result);
             m_pendingTrackChangeCallbacks.clear();
             m_mediaSamples.clear();
             return;
@@ -805,12 +805,18 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
 
 void SourceBufferPrivateAVFObjC::clearTracks()
 {
-    for (auto& track : m_videoTracks)
+    for (auto& track : m_videoTracks.values()) {
         track->setSelectedChangedCallback(nullptr);
+        if (auto player = this->player())
+            player->removeVideoTrack(*track);
+    }
     m_videoTracks.clear();
 
-    for (auto& track : m_audioTracks)
+    for (auto& track : m_audioTracks.values()) {
         track->setEnabledChangedCallback(nullptr);
+        if (auto player = this->player())
+            player->removeAudioTrack(*track);
+    }
     m_audioTracks.clear();
 }
 

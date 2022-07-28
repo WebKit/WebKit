@@ -356,9 +356,9 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    HashMap<WebCore::AudioTrackPrivate*, Ref<RemoteAudioTrackProxy>> m_audioTracks;
-    HashMap<WebCore::VideoTrackPrivate*, Ref<RemoteVideoTrackProxy>> m_videoTracks;
-    HashMap<WebCore::InbandTextTrackPrivate*, Ref<RemoteTextTrackProxy>> m_textTracks;
+    HashMap<Ref<WebCore::AudioTrackPrivate>, Ref<RemoteAudioTrackProxy>> m_audioTracks;
+    HashMap<Ref<WebCore::VideoTrackPrivate>, Ref<RemoteVideoTrackProxy>> m_videoTracks;
+    HashMap<Ref<WebCore::InbandTextTrackPrivate>, Ref<RemoteTextTrackProxy>> m_textTracks;
 
     WebCore::MediaPlayerIdentifier m_id;
     RefPtr<SandboxExtension> m_sandboxExtension;
