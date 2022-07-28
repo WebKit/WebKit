@@ -29,12 +29,12 @@ import os
 import re
 import sys
 
-if len(sys.argv) < 2:
-    print("usage: %s [json files or directory of json files ...]" % os.path.basename(sys.argv[0]))
+if len(sys.argv) < 3:
+    print("usage: %s [json files or directory of json files ...] 'condition_flags'" % os.path.basename(sys.argv[0]))
     sys.exit(1)
 
 files = []
-for arg in sys.argv[1:]:
+for arg in sys.argv[1:-1]:
     if not os.access(arg, os.F_OK):
         raise Exception("File \"%s\" not found" % arg)
     elif os.path.isdir(arg):
@@ -42,6 +42,9 @@ for arg in sys.argv[1:]:
     else:
         files.append(arg)
 files.sort()
+
+known_condition_flags = sys.argv[-1].split(" ")
+used_condition_flags = set()
 
 # To keep as close to the original JSON formatting as possible, just
 # dump each JSON input file unmodified into an array of "domains".
@@ -66,6 +69,10 @@ for file in files:
         sys.stderr.write("File \"%s\" does not contain valid JSON:\n" % file)
         raise
 
+    for condition_flag in known_condition_flags:
+        if condition_flag in string:
+            used_condition_flags.add(condition_flag)
+
     print(string.rstrip())
-print("]}")
+print("], \"conditionFlags\": \"" + " ".join(used_condition_flags) + "\"}")
 

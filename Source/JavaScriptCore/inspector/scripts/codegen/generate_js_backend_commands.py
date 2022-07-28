@@ -47,7 +47,7 @@ class JSBackendCommandsGenerator(Generator):
         Generator.__init__(self, *args, **kwargs)
 
     def output_filename(self):
-        return "InspectorBackendCommands.js.in"
+        return "InspectorBackendCommands.js"
 
     def should_generate_domain(self, domain):
         type_declarations = self.type_declarations_for_domain(domain)
@@ -62,6 +62,9 @@ class JSBackendCommandsGenerator(Generator):
         sections.append(self.generate_license())
         sections.extend(list(map(self.generate_domain, self.domains_to_generate())))
         return "\n\n".join(sections)
+
+    def needs_preprocess(self):
+        return True
 
     def generate_domain(self, domain):
         lines = []

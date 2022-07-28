@@ -34,6 +34,7 @@ import string
 from string import Template
 import optparse
 import logging
+import subprocess
 
 try:
     import json
@@ -160,6 +161,7 @@ def generate_from_specification(primary_specification_filepath=None,
         generators.append(ObjCProtocolTypesImplementationGenerator(*generator_arguments))
 
     elif protocol.framework is Frameworks.JavaScriptCore:
+        generators.append(JSBackendCommandsGenerator(*generator_arguments))
         generators.append(CppAlternateBackendDispatcherHeaderGenerator(*generator_arguments))
         generators.append(CppBackendDispatcherHeaderGenerator(*generator_arguments))
         generators.append(CppBackendDispatcherImplementationGenerator(*generator_arguments))
@@ -207,13 +209,49 @@ def generate_from_specification(primary_specification_filepath=None,
             generator.set_generator_setting('generate_frontend', True)
 
         output = generator.generate_output()
-        if concatenate_output:
-            single_output_file_contents.append('### Begin File: %s' % generator.output_filename())
+
+        output_filename = generator.output_filename()
+        output_filepath = os.path.join(output_dirpath, output_filename)
+
+        if generator.needs_preprocess():
+            temporary_input_filename = output_filename + ".in"
+            temporary_input_filepath = os.path.join(output_dirpath, temporary_input_filename)
+
+            temporary_output_filename = output_filename + ".out"
+            temporary_output_filepath = os.path.join(output_dirpath, temporary_output_filename)
+
+            if concatenate_output:
+                single_output_file_contents.append('### Begin File: %s' % temporary_input_filename)
+                single_output_file_contents.append(output)
+                single_output_file_contents.append('### End File: %s' % temporary_input_filename)
+                single_output_file_contents.append('')
+
+            temporary_input_file = open(temporary_input_filepath, "w")
+            temporary_input_file.write(output)
+            temporary_input_file.close()
+
+            subprocess.check_call(["perl", os.path.join(os.path.dirname(__file__), "codegen", "preprocess.pl"), "--input", temporary_input_filepath, "--defines", protocol.condition_flags, "--output", temporary_output_filepath])
+
+            temporary_output_file = open(temporary_output_filepath, "r")
+            output = temporary_output_file.read()
+            temporary_output_file.close()
+
+            if concatenate_output:
+                single_output_file_contents.append('### Begin File: %s' % temporary_output_filename)
+                single_output_file_contents.append(output)
+                single_output_file_contents.append('### End File: %s' % temporary_output_filename)
+                single_output_file_contents.append('')
+
+            os.remove(temporary_input_filepath)
+            os.remove(temporary_output_filepath)
+        elif concatenate_output:
+            single_output_file_contents.append('### Begin File: %s' % output_filename)
             single_output_file_contents.append(output)
-            single_output_file_contents.append('### End File: %s' % generator.output_filename())
+            single_output_file_contents.append('### End File: %s' % output_filename)
             single_output_file_contents.append('')
-        else:
-            output_file = IncrementalFileWriter(os.path.join(output_dirpath, generator.output_filename()), force_output)
+
+        if not concatenate_output:
+            output_file = IncrementalFileWriter(output_filepath, force_output)
             output_file.write(output)
             output_file.close()
 

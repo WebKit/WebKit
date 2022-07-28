@@ -339,19 +339,30 @@ def check_for_required_properties(props, obj, what):
 class Protocol:
     def __init__(self, framework_name):
         self.domains = []
+        self.condition_flags = ""
         self.types_by_name = {}
         self.framework = Framework.fromString(framework_name)
 
     def parse_specification(self, json, isSupplemental):
         log.debug("parse toplevel")
 
-        if isinstance(json, dict) and 'domains' in json:
-            json = json['domains']
-        if not isinstance(json, list):
-            json = [json]
+        domains = json  # Tests don't have a "domains".
+        condition_flags = ""
 
-        for domain in json:
+        if isinstance(json, dict):
+            if 'domains' in json:
+                domains = json['domains']
+            if 'conditionFlags' in json:
+                condition_flags = json['conditionFlags']
+
+        if not isinstance(domains, list):
+            domains = [domains]
+
+        for domain in domains:
             self.parse_domain(domain, isSupplemental)
+
+        if isinstance(condition_flags, str):
+            self.condition_flags = condition_flags
 
     def parse_domain(self, json, isSupplemental):
         check_for_required_properties(['domain'], json, "domain")
