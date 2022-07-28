@@ -920,6 +920,17 @@
 #endif
 )
 
+;; <rdar://97677559>
+(deny iokit-get-properties
+    (iokit-property "AppleDiagnosticDataSysCfg")
+    (iokit-property "AppleJPEGNumCores")
+    (iokit-property "als-colorCfg")
+    (iokit-property "ean-storage-present")
+    (iokit-property "noMultiColorSupport")
+    (iokit-property "product-id")
+    (iokit-property "syscfg-v2-data")
+    (with no-report))
+
 ;; <rdar://problem/60088861>
 (if (equal? (param "CPU") "arm64")
     (allow iokit-get-properties
