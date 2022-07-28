@@ -198,7 +198,7 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
     if (result == MAP_FAILED)
         return nullptr;
     if (result)
-        while (madvise(address, bytes, MADV_DONTNEED) == -1 && errno == EAGAIN) { }
+        while (madvise(result, bytes, MADV_DONTNEED) == -1 && errno == EAGAIN) { }
     return result;
 #else
 
