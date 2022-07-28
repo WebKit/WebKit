@@ -383,11 +383,6 @@ bool Element::supportsFocus() const
     return !!tabIndexSetExplicitly();
 }
 
-RefPtr<Element> Element::focusDelegate()
-{
-    return this;
-}
-
 int Element::tabIndexForBindings() const
 {
     return valueOrCompute(tabIndexSetExplicitly(), [&] { return defaultTabIndex(); });

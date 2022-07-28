@@ -206,11 +206,6 @@ bool SliderThumbElement::matchesReadWritePseudoClass() const
     return input && input->matchesReadWritePseudoClass();
 }
 
-RefPtr<Element> SliderThumbElement::focusDelegate()
-{
-    return hostInput();
-}
-
 void SliderThumbElement::dragFrom(const LayoutPoint& point)
 {
     Ref<SliderThumbElement> protectedThis(*this);

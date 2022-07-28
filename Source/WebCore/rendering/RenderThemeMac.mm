@@ -60,6 +60,7 @@
 #import "RenderSlider.h"
 #import "RenderView.h"
 #import "SharedBuffer.h"
+#import "SliderThumbElement.h"
 #import "StringTruncator.h"
 #import "ThemeMac.h"
 #import "TimeRanges.h"
@@ -1805,8 +1806,11 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
 
     // Update the various states we respond to.
     updateEnabledState(sliderThumbCell, o);
-    auto focusDelegate = is<Element>(o.node()) ? downcast<Element>(*o.node()).focusDelegate() : nullptr;
-    updateFocusedState(sliderThumbCell, focusDelegate ? focusDelegate->renderer() : nullptr);
+    RefPtr element = dynamicDowncast<Element>(o.node());
+    RefPtr delegate = element;
+    if (is<SliderThumbElement>(element))
+        delegate = downcast<SliderThumbElement>(*element).hostInput();
+    updateFocusedState(sliderThumbCell, delegate ? delegate->renderer() : nullptr);
 
     // Update the pressed state using the NSCell tracking methods, since that's how NSSliderCell keeps track of it.
     bool oldPressed;
