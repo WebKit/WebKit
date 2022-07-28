@@ -4126,8 +4126,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(style.scrollSnapStop());
         case CSSPropertyScrollSnapType:
             return valueForScrollSnapType(style.scrollSnapType());
-        case CSSPropertyOverflowAnchor:
-            return cssValuePool.createValue(style.overflowAnchor());
+
 #if ENABLE(CSS_TRAILING_WORD)
         case CSSPropertyAppleTrailingWord:
             return cssValuePool.createValue(style.trailingWord());

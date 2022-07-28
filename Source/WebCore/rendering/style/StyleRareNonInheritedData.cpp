@@ -116,7 +116,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , containIntrinsicWidthType(static_cast<unsigned>(RenderStyle::initialContainIntrinsicWidthType()))
     , containIntrinsicHeightType(static_cast<unsigned>(RenderStyle::initialContainIntrinsicHeightType()))
     , containerType(static_cast<unsigned>(RenderStyle::initialContainerType()))
-    , overflowAnchor(static_cast<unsigned>(RenderStyle::initialOverflowAnchor()))
     , columnGap(RenderStyle::initialColumnGap())
     , rowGap(RenderStyle::initialRowGap())
     , offsetDistance(RenderStyle::initialOffsetDistance())
@@ -225,7 +224,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , containIntrinsicWidthType(o.containIntrinsicWidthType)
     , containIntrinsicHeightType(o.containIntrinsicHeightType)
     , containerType(o.containerType)
-    , overflowAnchor(o.overflowAnchor)
     , containerNames(o.containerNames)
     , columnGap(o.columnGap)
     , rowGap(o.rowGap)
@@ -348,8 +346,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && offsetDistance == o.offsetDistance
         && offsetPosition == o.offsetPosition
         && offsetAnchor == o.offsetAnchor
-        && offsetRotate == o.offsetRotate
-        && overflowAnchor == o.overflowAnchor;
+        && offsetRotate == o.offsetRotate;
 }
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& other) const

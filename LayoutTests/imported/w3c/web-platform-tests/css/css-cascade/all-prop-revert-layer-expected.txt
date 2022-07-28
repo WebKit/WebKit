@@ -216,7 +216,6 @@ PASS outline-color
 PASS outline-offset
 PASS outline-style
 PASS outline-width
-PASS overflow-anchor
 PASS overflow-wrap
 PASS overflow-x
 PASS overflow-y

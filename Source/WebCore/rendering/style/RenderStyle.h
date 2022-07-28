@@ -1958,10 +1958,6 @@ public:
     static OffsetRotation initialOffsetRotate() { return OffsetRotation(true, 0); }
 
     bool borderAndBackgroundEqual(const RenderStyle&) const;
-    
-    OverflowAnchor overflowAnchor() const { return static_cast<OverflowAnchor>(m_rareNonInheritedData->overflowAnchor); }
-    void setOverflowAnchor(OverflowAnchor a) { SET_VAR(m_rareNonInheritedData, overflowAnchor, static_cast<unsigned>(a)); }
-    static OverflowAnchor initialOverflowAnchor() { return OverflowAnchor::Auto; }
 
 private:
     struct NonInheritedFlags {
