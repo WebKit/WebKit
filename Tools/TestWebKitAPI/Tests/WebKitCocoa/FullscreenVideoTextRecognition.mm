@@ -44,10 +44,13 @@
 
 static void swizzledPresentViewController(UIViewController *, SEL, UIViewController *, BOOL, dispatch_block_t completion)
 {
-    dispatch_async(dispatch_get_main_queue(), completion);
+    RunLoop::main().dispatch([completion = makeBlockPtr(completion)] {
+        if (completion)
+            completion();
+    });
 }
 
-#endif
+#endif // PLATFORM(IOS_FAMILY)
 
 static int32_t swizzledProcessRequest(VKCImageAnalyzer *, SEL, id request, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
 {
@@ -67,6 +70,7 @@ static void swizzledSetAnalysis(VKCImageAnalysisInteraction *, SEL, VKCImageAnal
 @implementation FullscreenVideoTextRecognitionWebView {
     std::unique_ptr<InstanceMethodSwizzler> _imageAnalysisRequestSwizzler;
 #if PLATFORM(IOS_FAMILY)
+    std::unique_ptr<InstanceMethodSwizzler> _viewControllerPresentationSwizzler;
     std::unique_ptr<InstanceMethodSwizzler> _imageAnalysisInteractionSwizzler;
 #else
     std::unique_ptr<InstanceMethodSwizzler> _imageAnalysisOverlaySwizzler;
@@ -101,6 +105,14 @@ static void swizzledSetAnalysis(VKCImageAnalysisInteraction *, SEL, VKCImageAnal
         @selector(setAnalysis:),
         reinterpret_cast<IMP>(swizzledSetAnalysis)
     );
+    // Work around lack of a real UIApplication in TestWebKitAPIApp on iOS. Without this,
+    // -presentViewController:animated:completion: never calls the completion handler,
+    // which means we never transition into WKFullscreenStateInFullscreen.
+    _viewControllerPresentationSwizzler = WTF::makeUnique<InstanceMethodSwizzler>(
+        UIViewController.class,
+        @selector(presentViewController:animated:completion:),
+        reinterpret_cast<IMP>(swizzledPresentViewController)
+    );
 #else
     _imageAnalysisOverlaySwizzler = WTF::makeUnique<InstanceMethodSwizzler>(
         PAL::getVKCImageAnalysisOverlayViewClass(),
@@ -125,17 +137,6 @@ static void swizzledSetAnalysis(VKCImageAnalysisInteraction *, SEL, VKCImageAnal
 
 - (void)enterFullscreen
 {
-#if PLATFORM(IOS_FAMILY)
-    // Work around lack of a real UIApplication in TestWebKitAPIApp on iOS. Without this,
-    // -presentViewController:animated:completion: never calls the completion handler,
-    // which means we never transition into WKFullscreenStateInFullscreen.
-    InstanceMethodSwizzler presentationSwizzler {
-        UIViewController.class,
-        @selector(presentViewController:animated:completion:),
-        reinterpret_cast<IMP>(swizzledPresentViewController)
-    };
-#endif // PLATFORM(IOS_FAMILY)
-
     _doneEnteringFullscreen = false;
     [self evaluateJavaScript:@"enterFullscreen()" completionHandler:nil];
     TestWebKitAPI::Util::run(&_doneEnteringFullscreen);
