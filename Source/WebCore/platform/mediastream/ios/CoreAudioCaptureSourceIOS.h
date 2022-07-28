@@ -35,16 +35,12 @@ OBJC_CLASS WebCoreAudioCaptureSourceIOSListener;
 
 namespace WebCore {
 
-class CoreAudioCaptureSourceFactoryIOS final : public CoreAudioCaptureSourceFactory, public AudioSession::InterruptionObserver  {
+class CoreAudioCaptureSourceFactoryIOS final : public CoreAudioCaptureSourceFactory  {
 public:
     CoreAudioCaptureSourceFactoryIOS();
     ~CoreAudioCaptureSourceFactoryIOS();
 
 private:
-    // AudioSession::InterruptionObserver.
-    void beginAudioSessionInterruption() { beginInterruption(); }
-    void endAudioSessionInterruption(AudioSession::MayResume) { endInterruption(); }
-
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier) final;
     void addExtensiveObserver(ExtensiveObserver&) final;
     void removeExtensiveObserver(ExtensiveObserver&) final;

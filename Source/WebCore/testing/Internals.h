@@ -755,6 +755,7 @@ public:
     bool isPlayerVisibleInViewport(const HTMLMediaElement&) const;
     bool isPlayerMuted(const HTMLMediaElement&) const;
     void beginAudioSessionInterruption();
+    void endAudioSessionInterruption();
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

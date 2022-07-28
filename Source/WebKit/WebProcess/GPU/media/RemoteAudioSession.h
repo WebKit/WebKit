@@ -90,6 +90,9 @@ private:
 
     bool isActive() const final { return configuration().isActive; }
 
+    void beginInterruptionForTesting() final;
+    void endInterruptionForTesting() final;
+
     const RemoteAudioSessionConfiguration& configuration() const;
     RemoteAudioSessionConfiguration& configuration();
     void initializeConfigurationIfNecessary();

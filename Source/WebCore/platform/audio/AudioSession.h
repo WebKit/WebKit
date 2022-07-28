@@ -115,6 +115,9 @@ public:
     enum class MayResume { No, Yes };
     virtual void endInterruption(MayResume);
 
+    virtual void beginInterruptionForTesting() { beginInterruption(); }
+    virtual void endInterruptionForTesting() { endInterruption(MayResume::Yes); }
+
     class InterruptionObserver : public CanMakeWeakPtr<InterruptionObserver> {
     public:
         virtual ~InterruptionObserver() = default;

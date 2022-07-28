@@ -127,6 +127,16 @@ IPC::Connection& RemoteAudioSessionProxy::connection()
     return m_gpuConnection.connection();
 }
 
+void RemoteAudioSessionProxy::triggerBeginInterruptionForTesting()
+{
+    AudioSession::sharedSession().beginInterruptionForTesting();
+}
+
+void RemoteAudioSessionProxy::triggerEndInterruptionForTesting()
+{
+    AudioSession::sharedSession().endInterruptionForTesting();
+}
+
 }
 
 #endif

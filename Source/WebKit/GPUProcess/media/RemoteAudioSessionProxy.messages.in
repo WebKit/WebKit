@@ -30,6 +30,9 @@ messages -> RemoteAudioSessionProxy NotRefCounted {
     SetPreferredBufferSize(uint64_t preferredBufferSize)
     TryToSetActive(bool active) -> (bool suceeded) Synchronous
     SetIsPlayingToBluetoothOverride(std::optional<bool> value)
+
+    TriggerBeginInterruptionForTesting()
+    TriggerEndInterruptionForTesting()
 }
 
 #endif

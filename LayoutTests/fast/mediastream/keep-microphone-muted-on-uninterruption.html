@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Capture source interruption with page muted state.</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+ </head>
+<body>
+    <script>
+    promise_test(async (test) => {
+        const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+
+        const onMutePromise = new Promise(resolve => stream.getAudioTracks()[0].onmute = resolve);
+        if (window.internals)
+            internals.setPageMuted("capturedevices");
+        else
+            return;
+        await onMutePromise;
+
+
+        assert_true(stream.getAudioTracks()[0].muted, "track should be muted");
+        const onUnmutePromise = new Promise((resolve, reject) => {
+            stream.getAudioTracks()[0].onunmute = () => reject("unmute should not be triggered");
+            setTimeout(resolve, 500);
+        });
+
+        if (window.internals)
+            internals.beginAudioSessionInterruption();
+        await new Promise(resolve => setTimeout(resolve, 50));
+        if (window.internals)
+            internals.endAudioSessionInterruption();
+
+        await onUnmutePromise;
+
+        assert_true(stream.getAudioTracks()[0].muted, "track should still be muted");
+
+        const onUnmutePromise2 = new Promise(resolve => stream.getAudioTracks()[0].onunmute = resolve);
+        if (window.internals)
+            internals.setPageMuted("");
+        await onUnmutePromise2;
+    }, "Do not unmute track in case of end of interruption if page muted the track in the first place");
+    </script>
+</body>
+</html>

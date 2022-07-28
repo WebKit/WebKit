@@ -164,6 +164,16 @@ void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& 
     });
 }
 
+void RemoteAudioSession::beginInterruptionForTesting()
+{
+    ensureConnection().send(Messages::RemoteAudioSessionProxy::TriggerBeginInterruptionForTesting(), { });
+}
+
+void RemoteAudioSession::endInterruptionForTesting()
+{
+    ensureConnection().send(Messages::RemoteAudioSessionProxy::TriggerEndInterruptionForTesting(), { });
+}
+
 }
 
 #endif
