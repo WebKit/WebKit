@@ -138,6 +138,8 @@ public:
     virtual void setHostProcessAttribution(audit_token_t) { };
     virtual void setPresentingProcesses(Vector<audit_token_t>&&) { };
 
+    bool isInterrupted() const { return m_isInterrupted; }
+
 protected:
     friend class NeverDestroyed<AudioSession>;
     AudioSession();
