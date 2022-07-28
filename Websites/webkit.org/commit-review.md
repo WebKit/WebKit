@@ -1,4 +1,4 @@
-The WebKit project has two kinds of special status beyond being a contributor. WebKit Committers have direct read-write access to the Subversion repository, enabling them to commit changes by themselves or reviewed changes by others if authors ask committers to do so. WebKit Reviewers are permitted to review patches and may grant or deny approval for committing. Details of the review and commit process are available on the [contribution page](http://webkit.org/coding/contributing.html).
+The WebKit project has two kinds of special status beyond being a contributor. WebKit Committers have direct read-write access to the repository, enabling them to commit changes by themselves or reviewed changes by others if authors ask committers to do so. WebKit Reviewers are permitted to review patches and may grant or deny approval for committing. Details of the review and commit process are available on the [contribution page](http://webkit.org/coding/contributing.html).
 
 New WebKit Committers and WebKit Reviewers will be selected by the set of existing WebKit Reviewers. We will create a mailing list, &lt;[webkit-reviewers@lists.webkit.org](mailto:webkit-reviewers@lists.webkit.org)&gt;, for this purpose.
 
@@ -6,9 +6,9 @@ An up to date list of current WebKit Committers and WebKit Reviewers will be mai
 
 ## Choosing Committers and Reviewers
 
-A candidate for WebKit Committer or WebKit Reviewer should initially be nominated by a reviewer on the reviewers mailing list, in accordance with the criteria below. If the required reviewers (see below) second the nomination, then it carries within 5 business days unless someone objects. If an objection is raised, the reviewers should discuss the matter and try to come to consensus; failing this, the matter will be decided by majority vote of the reviewers.
+A candidate for WebKit Committer or WebKit Reviewer should initially be nominated by a reviewer on the reviewers mailing list, in accordance with the criteria below. If the required reviewers (see below) second the nomination, then it carries in 5 business days unless someone objects. If an objection is raised, the reviewers should discuss the matter and try to come to consensus; failing this, the matter will be decided by majority vote of the reviewers.
 
-Once someone is successfully nominated for WebKit Committer status, Apple will take care of sending the committer agreement and setting up a Subversion account once signed and received.
+Once someone is successfully nominated for WebKit Committer status, Apple will take care of sending the committer agreement and granting read-write access once signed and received.
 
 Once someone is successfully nominated for WebKit Reviewer status, the nominating Reviewer or another responsible party should inform the candidate and ask for indication of acceptance from the potential new reviewer. If the candidate accepts, [contributors.json](http://trac.webkit.org/browser/trunk/metadata/contributors.json) will be updated.
 
@@ -44,7 +44,7 @@ Inactive Committers can regain Active Committer status by landing (via the Commi
 
 Inactive Reviewers need to show that they are making an effort to get familiar with the changes that have happened in the project since they were last active by landing at least 3 non-trivial patches. Once they have landed the patches, they need to send an email requesting reactivation to webkit-reviewers. This request needs the support of 2 Active Reviewers to be granted.
 
-Note that regardless of a Committer or Reviewer's activity status, any subversion account that has not been used in the past year will be deactivated for security purposes. For example, a Reviewer that has reviewed a patch in the past year but has not committed may have their subversion account deactivated. To reactivate a deactivated subversion account, an Active Committer or Active Reviewer can send an email to webkit-committers requesting it.
+Note that regardless of a Committer or Reviewer's activity status, any account that has not been used in the past year will be deactivated for security purposes. For example, a Reviewer that has reviewed a patch in the past year but has not committed may have their account deactivated. To reactivate a deactivated account, an Active Committer or Active Reviewer can send an email to webkit-committers requesting it and access will be granted in 5 business days unless someone objects.
 
 ## Suspension and Revocation of Committer or Reviewer Status
 
