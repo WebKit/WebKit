@@ -6,3 +6,5 @@ twistd.pid
 state.sqlite
 passwords.json
 workers/
+archives/
+results/
