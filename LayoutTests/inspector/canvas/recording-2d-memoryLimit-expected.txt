@@ -46,6 +46,4 @@ frames:
         5: performActions
         6: Global Code
         7: evaluateWithScopeExtension
-        8: (anonymous function)
-        9: _wrapCall
 

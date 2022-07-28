@@ -60,16 +60,8 @@ PASS: Capturing started.
                 "scriptId": "<filtered>",
                 "lineNumber": 0,
                 "columnNumber": 0
-              },
-              {
-                "functionName": "",
-                "url": "",
-                "scriptId": "<filtered>",
-                "lineNumber": "<filtered>",
-                "columnNumber": "<filtered>"
               }
-            ],
-            "truncated": true
+            ]
           },
           "frameId": "<filtered>",
           "data": {
@@ -116,16 +108,8 @@ PASS: Capturing started.
             "scriptId": "<filtered>",
             "lineNumber": 0,
             "columnNumber": 0
-          },
-          {
-            "functionName": "",
-            "url": "",
-            "scriptId": "<filtered>",
-            "lineNumber": "<filtered>",
-            "columnNumber": "<filtered>"
           }
-        ],
-        "truncated": true
+        ]
       },
       "frameId": "<filtered>",
       "data": {
@@ -179,16 +163,8 @@ PASS: Capturing started.
             "scriptId": "<filtered>",
             "lineNumber": 0,
             "columnNumber": 0
-          },
-          {
-            "functionName": "",
-            "url": "",
-            "scriptId": "<filtered>",
-            "lineNumber": "<filtered>",
-            "columnNumber": "<filtered>"
           }
-        ],
-        "truncated": true
+        ]
       },
       "frameId": "<filtered>",
       "data": {

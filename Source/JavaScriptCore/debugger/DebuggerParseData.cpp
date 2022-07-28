@@ -136,7 +136,7 @@ bool gatherDebuggerParseData(VM& vm, const SourceCode& source, DebuggerParseData
     JSParserScriptMode scriptMode = DebuggerParseInfo<T>::scriptMode;
 
     ParserError error;
-    std::unique_ptr<RootNode> rootNode = parse<RootNode>(vm, source, Identifier(),
+    std::unique_ptr<RootNode> rootNode = parse<RootNode>(vm, source, Identifier(), ImplementationVisibility::Public,
         JSParserBuiltinMode::NotBuiltin, strictMode, scriptMode, parseMode, SuperBinding::NotNeeded,
         error, nullptr, ConstructorKind::None, DerivedContextType::None, EvalContextType::None,
         &debuggerParseData);

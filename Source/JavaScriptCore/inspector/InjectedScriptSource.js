@@ -53,6 +53,7 @@ function createArrayWithoutPrototype(/* value1, value2, ... */)
 }
 
 @linkTimeConstant
+@visibility=PrivateRecursive
 function createInspectorInjectedScript(InjectedScriptHost, inspectedGlobalObject, injectedScriptId)
 {
 

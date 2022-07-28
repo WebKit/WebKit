@@ -14,8 +14,6 @@ PASS: Animation created 'web-animation-test'.
   1: createAnimation - inspector/animation/resources/lifecycle-utilities.js:3:15
   2: Global Code - [program code]
   3: evaluateWithScopeExtension - [native code]
-  4: (anonymous function) - [native code]
-  5: _wrapCall - [native code]
 PASS: Animation type should be Web Animation.
 startDelay: 100
 endDelay: 200

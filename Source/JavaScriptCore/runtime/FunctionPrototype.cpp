@@ -109,7 +109,7 @@ static ALWAYS_INLINE bool isAllowedReceiverFunctionForCallerAndArguments(JSFunct
         return false;
 
     FunctionExecutable* executable = function->jsExecutable();
-    if (executable->implementationVisibility() == ImplementationVisibility::Private)
+    if (executable->implementationVisibility() != ImplementationVisibility::Public)
         return false;
     return !executable->isInStrictContext() && executable->parseMode() == SourceParseMode::NormalFunctionMode && !executable->isClassConstructorFunction();
 }
@@ -197,7 +197,7 @@ public:
             if (callee->inherits<JSBoundFunction>() || callee->inherits<JSRemoteFunction>() || callee->type() == ProxyObjectType)
                 return IterationStatus::Continue;
             if (callee->inherits<JSFunction>()) {
-                if (jsCast<JSFunction*>(callee)->executable()->implementationVisibility() == ImplementationVisibility::Private)
+                if (jsCast<JSFunction*>(callee)->executable()->implementationVisibility() != ImplementationVisibility::Public)
                     return IterationStatus::Continue;
             }
 

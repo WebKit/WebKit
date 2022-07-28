@@ -133,10 +133,6 @@ class BuiltinsGenerator:
         if function.is_naked_constructor:
             constructorKind = "Naked"
 
-        visibility = "Public"
-        if function.is_link_time_constant:
-            visibility = "Private"
-
         return {
             'codeName': BuiltinsGenerator.mangledNameForFunction(function) + 'Code',
             'embeddedSource': embeddedSource,
@@ -144,7 +140,7 @@ class BuiltinsGenerator:
             'originalSource': text + "\n",
             'constructAbility': constructAbility,
             'constructorKind': constructorKind,
-            'visibility': visibility,
+            'visibility': function.visibility,
             'intrinsic': function.intrinsic
         }
 

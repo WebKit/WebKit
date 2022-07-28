@@ -30,8 +30,9 @@ namespace JSC {
 enum class ImplementationVisibility : uint8_t {
     Public,
     Private,
+    PrivateRecursive,
 };
 
-static constexpr unsigned bitWidthOfImplementationVisibility = 1;
+static constexpr unsigned bitWidthOfImplementationVisibility = 2;
 
 } // namespace JSC

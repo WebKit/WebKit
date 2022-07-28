@@ -44,6 +44,7 @@ _FRAMEWORK_CONFIG_MAP = {
 
 functionHeadRegExp = re.compile(r"(?:@[\w|=\[\] \"\.]+\s*\n)*(?:async\s+)?function\s+\w+\s*\(.*?\)", re.MULTILINE | re.DOTALL)
 functionLinkTimeConstantRegExp = re.compile(r".*^@linkTimeConstant", re.MULTILINE | re.DOTALL)
+functionVisibilityRegExp = re.compile(r".*^@visibility=(\w+)", re.MULTILINE | re.DOTALL)
 functionNakedConstructorRegExp = re.compile(r".*^@nakedConstructor", re.MULTILINE | re.DOTALL)
 functionIntrinsicRegExp = re.compile(r".*^@intrinsic=(\w+)", re.MULTILINE | re.DOTALL)
 functionIsConstructorRegExp = re.compile(r".*^@constructor", re.MULTILINE | re.DOTALL)
@@ -103,7 +104,7 @@ class BuiltinObject:
 
 
 class BuiltinFunction:
-    def __init__(self, function_name, function_source, parameters, is_async, is_constructor, is_link_time_constant, is_naked_constructor, intrinsic, overridden_name):
+    def __init__(self, function_name, function_source, parameters, is_async, is_constructor, is_link_time_constant, is_naked_constructor, intrinsic, visibility, overridden_name):
         self.function_name = function_name
         self.function_source = function_source
         self.parameters = parameters
@@ -112,6 +113,7 @@ class BuiltinFunction:
         self.is_naked_constructor = is_naked_constructor
         self.is_link_time_constant = is_link_time_constant
         self.intrinsic = intrinsic
+        self.visibility = visibility
         self.overridden_name = overridden_name
         self.object = None  # Set by the owning BuiltinObject
 
@@ -146,6 +148,15 @@ class BuiltinFunction:
         is_naked_constructor = functionNakedConstructorRegExp.match(function_source) != None
         if is_naked_constructor:
             is_constructor = True
+
+        visibility = "Public"
+        visibilityMatch = functionVisibilityRegExp.search(function_source)
+        if visibilityMatch:
+            visibility = visibilityMatch.group(1)
+            function_source = functionVisibilityRegExp.sub("", function_source)
+        elif is_link_time_constant:
+            visibility = "Private"
+
         parameters = [s.strip() for s in functionParametersSplitter.split(functionParameterFinder.findall(function_source)[0])]
         if len(parameters[0]) == 0:
             parameters = []
@@ -159,7 +170,7 @@ class BuiltinFunction:
         if overridden_name[-1] == "\"":
             overridden_name += "_s"
 
-        return BuiltinFunction(function_name, function_source, parameters, is_async, is_constructor, is_link_time_constant, is_naked_constructor, intrinsic, overridden_name)
+        return BuiltinFunction(function_name, function_source, parameters, is_async, is_constructor, is_link_time_constant, is_naked_constructor, intrinsic, visibility, overridden_name)
 
     def __str__(self):
         interface = "%s(%s)" % (self.function_name, ', '.join(self.parameters))

@@ -312,8 +312,8 @@ const LexicalScopeFeatures NoLexicalFeatures                           = 0;
 const LexicalScopeFeatures StrictModeLexicalFeature               = 1 << 0;
 
 const LexicalScopeFeatures AllLexicalFeatures = NoLexicalFeatures | StrictModeLexicalFeature;
-static constexpr unsigned bitWidthOfLexicalScopeFeatures = 3;
-static_assert(AllLexicalFeatures <= (1 << bitWidthOfLexicalScopeFeatures) - 1, "LexicalScopeFeatures must be 3bits");
+static constexpr unsigned bitWidthOfLexicalScopeFeatures = 2;
+static_assert(AllLexicalFeatures <= (1 << bitWidthOfLexicalScopeFeatures) - 1, "LexicalScopeFeatures must be 2bits");
 
 typedef uint16_t CodeFeatures;
 

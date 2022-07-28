@@ -21,8 +21,6 @@ frames:
         3: performActions
         4: Global Code
         5: evaluateWithScopeExtension
-        6: (anonymous function)
-        7: _wrapCall
   1: (duration)
     0: attachShader(0, 0)
       swizzleTypes: [WebGLProgram, WebGLShader]
