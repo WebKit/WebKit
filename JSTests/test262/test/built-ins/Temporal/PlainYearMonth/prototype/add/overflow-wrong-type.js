@@ -29,7 +29,7 @@ assert.throws(RangeError, () => yearmonth.add(duration, { overflow: null }), "nu
 assert.throws(RangeError, () => yearmonth.add(duration, { overflow: true }), "true");
 assert.throws(RangeError, () => yearmonth.add(duration, { overflow: false }), "false");
 assert.throws(TypeError, () => yearmonth.add(duration, { overflow: Symbol() }), "symbol");
-assert.throws(RangeError, () => yearmonth.add(duration, { overflow: 2 }), "bigint");
+assert.throws(RangeError, () => yearmonth.add(duration, { overflow: 2 }), "number");
 assert.throws(RangeError, () => yearmonth.add(duration, { overflow: 2n }), "bigint");
 assert.throws(RangeError, () => yearmonth.add(duration, { overflow: {} }), "plain object");
 

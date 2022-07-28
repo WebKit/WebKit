@@ -26,6 +26,6 @@ let c = new C();
 assert.sameValue(Object.hasOwnProperty.call(C.prototype, 'accessor'), false);
 assert.sameValue(Object.hasOwnProperty.call(C.prototype, '$'), false);
 assert.sameValue(Object.hasOwnProperty.call(C, 'accessor'), true);
-assert.sameValue(Object.hasOwnProperty.call(C, '$'), true);
+assert.sameValue(Object.hasOwnProperty.call(C, '$'), false);
 assert.sameValue(Object.hasOwnProperty.call(c, 'accessor'), true);
 assert.sameValue(Object.hasOwnProperty.call(c, '$'), true);

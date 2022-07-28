@@ -46,6 +46,7 @@ assert.throws(RangeError, () => Temporal.ZonedDateTime.from(propertyBag, { overf
 assert.throws(RangeError, () => Temporal.ZonedDateTime.from(propertyBag, { overflow: false }), "false");
 assert.throws(TypeError, () => Temporal.ZonedDateTime.from(propertyBag, { overflow: Symbol() }), "symbol");
 assert.throws(RangeError, () => Temporal.ZonedDateTime.from(propertyBag, { overflow: 2n }), "bigint");
+assert.throws(RangeError, () => Temporal.ZonedDateTime.from(propertyBag, { overflow: 2 }), "number");
 assert.throws(RangeError, () => Temporal.ZonedDateTime.from(propertyBag, { overflow: {} }), "plain object");
 
 // toString property is read once by Calendar.dateFromFields() in the builtin

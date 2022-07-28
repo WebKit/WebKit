@@ -896,6 +896,102 @@ var TemporalHelpers = {
   },
 
   /*
+   * A custom calendar used in prototype pollution checks. Verifies that the
+   * fromFields methods are always called with a null-prototype fields object.
+   */
+  calendarCheckFieldsPrototypePollution() {
+    class CalendarCheckFieldsPrototypePollution extends Temporal.Calendar {
+      constructor() {
+        super("iso8601");
+        this.dateFromFieldsCallCount = 0;
+        this.yearMonthFromFieldsCallCount = 0;
+        this.monthDayFromFieldsCallCount = 0;
+      }
+
+      // toString must remain "iso8601", so that some methods don't throw due to
+      // incompatible calendars
+
+      dateFromFields(fields, options = {}) {
+        this.dateFromFieldsCallCount++;
+        assert.sameValue(Object.getPrototypeOf(fields), null, "dateFromFields should be called with null-prototype fields object");
+        return super.dateFromFields(fields, options);
+      }
+
+      yearMonthFromFields(fields, options = {}) {
+        this.yearMonthFromFieldsCallCount++;
+        assert.sameValue(Object.getPrototypeOf(fields), null, "yearMonthFromFields should be called with null-prototype fields object");
+        return super.yearMonthFromFields(fields, options);
+      }
+
+      monthDayFromFields(fields, options = {}) {
+        this.monthDayFromFieldsCallCount++;
+        assert.sameValue(Object.getPrototypeOf(fields), null, "monthDayFromFields should be called with null-prototype fields object");
+        return super.monthDayFromFields(fields, options);
+      }
+    }
+
+    return new CalendarCheckFieldsPrototypePollution();
+  },
+
+  /*
+   * A custom calendar used in prototype pollution checks. Verifies that the
+   * mergeFields() method is always called with null-prototype fields objects.
+   */
+  calendarCheckMergeFieldsPrototypePollution() {
+    class CalendarCheckMergeFieldsPrototypePollution extends Temporal.Calendar {
+      constructor() {
+        super("iso8601");
+        this.mergeFieldsCallCount = 0;
+      }
+
+      toString() {
+        return "merge-fields-null-proto";
+      }
+
+      mergeFields(fields, additionalFields) {
+        this.mergeFieldsCallCount++;
+        assert.sameValue(Object.getPrototypeOf(fields), null, "mergeFields should be called with null-prototype fields object (first argument)");
+        assert.sameValue(Object.getPrototypeOf(additionalFields), null, "mergeFields should be called with null-prototype fields object (second argument)");
+        return super.mergeFields(fields, additionalFields);
+      }
+    }
+
+    return new CalendarCheckMergeFieldsPrototypePollution();
+  },
+
+  /*
+   * A custom calendar used in prototype pollution checks. Verifies that methods
+   * are always called with a null-prototype options object.
+   */
+  calendarCheckOptionsPrototypePollution() {
+    class CalendarCheckOptionsPrototypePollution extends Temporal.Calendar {
+      constructor() {
+        super("iso8601");
+        this.yearMonthFromFieldsCallCount = 0;
+        this.dateUntilCallCount = 0;
+      }
+
+      toString() {
+        return "options-null-proto";
+      }
+
+      yearMonthFromFields(fields, options) {
+        this.yearMonthFromFieldsCallCount++;
+        assert.sameValue(Object.getPrototypeOf(options), null, "yearMonthFromFields should be called with null-prototype options");
+        return super.yearMonthFromFields(fields, options);
+      }
+
+      dateUntil(one, two, options) {
+        this.dateUntilCallCount++;
+        assert.sameValue(Object.getPrototypeOf(options), null, "dateUntil should be called with null-prototype options");
+        return super.dateUntil(one, two, options);
+      }
+    }
+
+    return new CalendarCheckOptionsPrototypePollution();
+  },
+
+  /*
    * A custom calendar that asserts its dateAdd() method is called with the
    * options parameter having the value undefined.
    */

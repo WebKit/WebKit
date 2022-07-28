@@ -1,4 +1,5 @@
 // Copyright 2021 the V8 project authors. All rights reserved.
+// Copyright 2022 Apple Inc. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
@@ -6,10 +7,7 @@ esid: sec-initializenumberformat
 description: Tests that the option useGrouping is processed correctly.
 info: |
   The "Intl.NumberFormat v3" proposal contradicts the behavior required by the
-  latest revision of ECMA402. Likewise, this test contradicts
-  test-option-useGrouping.js. Until the proposal is included in a published
-  standard (when the tests' discrepancies can be resolved), implementations
-  should only expect to pass one of these two tests.
+  latest revision of ECMA402.
 features: [Intl.NumberFormat-v3]
 ---*/
 
@@ -36,18 +34,7 @@ assert.sameValue(render({notation: 'compact', useGrouping: false}), false, 'comp
 assert.sameValue(render({notation: 'compact', useGrouping: null}), false, 'compact, null');
 assert.sameValue(render({notation: 'compact', useGrouping: 'min2'}), 'min2', 'compact, "min2"');
 
-assert.throws(RangeError, function() {
-  new Intl.NumberFormat(undefined, {useGrouping: 'undefined'});
-}, '"undefined"');
-
-assert.throws(RangeError, function() {
-  new Intl.NumberFormat(undefined, {useGrouping: 'false'});
-}, '"false"');
-
-assert.throws(RangeError, function() {
-  new Intl.NumberFormat(undefined, {useGrouping: 'true'});
-}, '"true"');
-
-assert.throws(RangeError, function() {
-  new Intl.NumberFormat(undefined, {useGrouping: 'min3'});
-}, '"min3"');
+assert.sameValue(render({useGrouping: 'undefined'}), 'auto', 'use fallback value');
+assert.sameValue(render({useGrouping: 'false'}), 'auto', 'use fallback value');
+assert.sameValue(render({useGrouping: 'true'}), 'auto', 'use fallback value');
+assert.sameValue(render({useGrouping: 'min3'}), 'auto', 'use fallback value');

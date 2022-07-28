@@ -24,6 +24,8 @@ features: [Temporal]
 
 const validItems = [
   new Temporal.PlainDate(2000, 5, 2),
+  new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC"),
+  new Temporal.PlainDateTime(2000, 5, 2, 12),
   { year: 2000, month: 5, day: 2 },
   "2000-05-02",
 ];

@@ -3,7 +3,7 @@
 /*---
 es6id: 19.4.3.4
 description: >
-    Behavior when `this` value is an object with a [[SymboldData]] internal
+    Behavior when `this` value is an object with a [[SymbolData]] internal
     slot
 info: |
     1. Let s be the this value.

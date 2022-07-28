@@ -7,7 +7,7 @@ description: Passing a primitive other than string to add() throws
 features: [Symbol, Temporal]
 ---*/
 
-const instance = Temporal.PlainDate.from({ year: 2000, month: 5, day: 2 });
+const instance = new Temporal.PlainDate(2000, 5, 2);
 assert.throws(RangeError, () => instance.add(undefined), "undefined");
 assert.throws(RangeError, () => instance.add(null), "null");
 assert.throws(RangeError, () => instance.add(true), "boolean");
@@ -15,3 +15,5 @@ assert.throws(RangeError, () => instance.add(""), "empty string");
 assert.throws(TypeError, () => instance.add(Symbol()), "Symbol");
 assert.throws(RangeError, () => instance.add(7), "number");
 assert.throws(RangeError, () => instance.add(7n), "bigint");
+assert.throws(TypeError, () => instance.add([]), "array");
+assert.throws(TypeError, () => instance.add(() => {}), "function");

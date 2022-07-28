@@ -44,6 +44,7 @@ assert.throws(RangeError, () => Temporal.PlainDateTime.from(propertyBag, { overf
 assert.throws(RangeError, () => Temporal.PlainDateTime.from(propertyBag, { overflow: true }), "true");
 assert.throws(RangeError, () => Temporal.PlainDateTime.from(propertyBag, { overflow: false }), "false");
 assert.throws(TypeError, () => Temporal.PlainDateTime.from(propertyBag, { overflow: Symbol() }), "symbol");
+assert.throws(RangeError, () => Temporal.PlainDateTime.from(propertyBag, { overflow: 2 }), "number");
 assert.throws(RangeError, () => Temporal.PlainDateTime.from(propertyBag, { overflow: 2n }), "bigint");
 assert.throws(RangeError, () => Temporal.PlainDateTime.from(propertyBag, { overflow: {} }), "plain object");
 

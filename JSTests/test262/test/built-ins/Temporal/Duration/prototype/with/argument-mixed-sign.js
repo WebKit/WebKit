@@ -3,9 +3,14 @@
 
 /*---
 esid: sec-temporal.duration.prototype.with
-description: The durationLike argument must not contain different signs.
+description: Positive and negative values in the temporalDurationLike argument are not acceptable
 features: [Temporal]
 ---*/
 
-const d = new Temporal.Duration(1, 2, 3, 4, 5);
-assert.throws(RangeError, () => d.with({ hours: 1, minutes: -1 }));
+const instance = new Temporal.Duration(0, 0, 0, 1, 2, 3, 4, 987, 654, 321);
+
+assert.throws(
+  RangeError,
+  () => instance.with({ hours: 1, minutes: -30 }),
+  `mixed positive and negative values always throw`
+);

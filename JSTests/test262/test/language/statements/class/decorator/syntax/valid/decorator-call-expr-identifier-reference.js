@@ -39,6 +39,7 @@ info: |
 function decorator() {
   return () => {};
 }
+var $ = decorator;
 var _ = decorator;
 var \u{6F} = decorator;
 var \u2118 = decorator;

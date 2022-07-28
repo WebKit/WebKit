@@ -5,7 +5,7 @@
 esid: sec-temporal.calendar.prototype.dateuntil
 description: >
   RangeError thrown if an invalid ISO string (or syntactically valid ISO string
-  that is not supported) is used as a %%%conversion_target%%%
+  that is not supported) is used as a PlainDate
 features: [Temporal, arrow-function]
 ---*/
 

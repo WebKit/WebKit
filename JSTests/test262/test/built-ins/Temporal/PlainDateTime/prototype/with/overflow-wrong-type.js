@@ -27,6 +27,7 @@ assert.throws(RangeError, () => datetime.with({ minute: 45 }, { overflow: null }
 assert.throws(RangeError, () => datetime.with({ minute: 45 }, { overflow: true }), "true");
 assert.throws(RangeError, () => datetime.with({ minute: 45 }, { overflow: false }), "false");
 assert.throws(TypeError, () => datetime.with({ minute: 45 }, { overflow: Symbol() }), "symbol");
+assert.throws(RangeError, () => datetime.with({ minute: 45 }, { overflow: 2 }), "number");
 assert.throws(RangeError, () => datetime.with({ minute: 45 }, { overflow: 2n }), "bigint");
 assert.throws(RangeError, () => datetime.with({ minute: 45 }, { overflow: {} }), "plain object");
 

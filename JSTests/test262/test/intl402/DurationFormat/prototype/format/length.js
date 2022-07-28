@@ -2,9 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-intl.datetimeformat.prototype.format
+esid: sec-Intl.DurationFormat.prototype.format
 description: >
-  Intl.DateTimeFormat.prototype.format.length is 1.
+  Intl.DurationFormat.prototype.format.length is 1.
 info: |
   Intl.DurationFormat.prototype.format ( duration )
 
@@ -24,8 +24,6 @@ info: |
 features: [Intl.DurationFormat]
 includes: [propertyHelper.js]
 ---*/
-
-assert.sameValue(Intl.DateTimeFormat.prototype.format.length, 1);
 
 verifyProperty(Intl.DurationFormat.prototype.format, "length", {
   value: 1,

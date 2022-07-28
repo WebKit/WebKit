@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-temporal.plaintime.from
-description: Fast path for converting Temporal.PlainDateTime to Temporal.PlainDate by reading internal slots
+description: Fast path for converting Temporal.PlainDateTime to Temporal.PlainTime by reading internal slots
 includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/

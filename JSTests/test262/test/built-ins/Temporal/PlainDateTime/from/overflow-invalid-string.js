@@ -28,6 +28,8 @@ features: [Temporal]
 
 const validValues = [
   new Temporal.PlainDateTime(2000, 5, 2, 12),
+  new Temporal.PlainDate(2000, 5, 2),
+  new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC"),
   { year: 2000, month: 5, day: 2, hour: 12 },
   "2000-05-02T12:00",
 ];
