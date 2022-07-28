@@ -5164,6 +5164,10 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
         // elements' size for WebGL 1.0 as late as possible.
         bool sourceImageRectIsDefault = inputSourceImageRect == sentinelEmptyRect() || inputSourceImageRect == IntRect(0, 0, video->videoWidth(), video->videoHeight());
 
+#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+        if (auto player = video->player())
+            player->willBeAskedToPaintGL();
+#endif
         // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
         // Otherwise, it will fall back to the normal SW path.
         // FIXME: The current restrictions require that format shoud be RGB or RGBA,
@@ -5173,9 +5177,6 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
             && type == GraphicsContextGL::UNSIGNED_BYTE
             && !level) {
             if (auto player = video->player()) {
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-                player->willBeAskedToPaintGL();
-#endif
                 if (m_context->copyTextureFromMedia(*player, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
 #if !USE(ANGLE)
                     texture->setLevelInfo(target, level, internalformat, video->videoWidth(), video->videoHeight(), type);

@@ -610,7 +610,7 @@ bool MediaPlayerPrivateWebM::shouldEnsureLayer() const
         && ((m_displayLayer && !CGRectIsEmpty([m_displayLayer bounds]))
             || !m_player->playerContentBoxRect().isEmpty());
 #else
-    return !m_hasBeenAskedToPaintGL;
+    return !m_hasBeenAskedToPaintGL && !m_isGatheringVideoFrameMetadata;
 #endif
 }
 
@@ -1394,6 +1394,7 @@ void MediaPlayerPrivateWebM::startVideoFrameMetadataGathering()
 {
     ASSERT(!m_videoFrameMetadataGatheringObserver || m_synchronizer);
     m_isGatheringVideoFrameMetadata = true;
+    acceleratedRenderingStateChanged();
 
     // FIXME: We should use a CADisplayLink to get updates on rendering, for now we emulate with addPeriodicTimeObserverForInterval.
     m_videoFrameMetadataGatheringObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }](CMTime currentTime) {
@@ -1407,6 +1408,7 @@ void MediaPlayerPrivateWebM::startVideoFrameMetadataGathering()
 void MediaPlayerPrivateWebM::stopVideoFrameMetadataGathering()
 {
     m_isGatheringVideoFrameMetadata = false;
+    acceleratedRenderingStateChanged();
     m_videoFrameMetadata = { };
 
     ASSERT(m_videoFrameMetadataGatheringObserver);
