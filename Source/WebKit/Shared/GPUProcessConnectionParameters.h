@@ -43,6 +43,9 @@ struct GPUProcessConnectionParameters {
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> presentingApplicationAuditToken;
 #endif
+#if ENABLE(VP9)
+    std::optional<bool> hasVP9HardwareDecoder;
+#endif
 
     void encode(IPC::Encoder& encoder) const
     {
@@ -54,6 +57,9 @@ struct GPUProcessConnectionParameters {
 #endif
 #if HAVE(AUDIT_TOKEN)
         encoder << presentingApplicationAuditToken;
+#endif
+#if ENABLE(VP9)
+        encoder << hasVP9HardwareDecoder;
 #endif
     }
 
@@ -68,6 +74,9 @@ struct GPUProcessConnectionParameters {
 #if HAVE(AUDIT_TOKEN)
         auto presentingApplicationAuditToken = decoder.decode<std::optional<audit_token_t>>();
 #endif
+#if ENABLE(VP9)
+        auto hasVP9HardwareDecoder = decoder.decode<std::optional<bool>>();
+#endif
         if (!decoder.isValid())
             return std::nullopt;
 
@@ -80,6 +89,9 @@ struct GPUProcessConnectionParameters {
 #endif
 #if HAVE(AUDIT_TOKEN)
             WTFMove(*presentingApplicationAuditToken),
+#endif
+#if ENABLE(VP9)
+            WTFMove(*hasVP9HardwareDecoder),
 #endif
         };
     }

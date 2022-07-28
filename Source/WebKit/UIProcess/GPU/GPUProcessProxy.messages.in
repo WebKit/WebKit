@@ -28,6 +28,10 @@ messages -> GPUProcessProxy {
     DidCreateContextForVisibilityPropagation(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, WebKit::LayerHostingContextID contextID)
 #endif
 
+#if ENABLE(VP9)
+    SetHasVP9HardwareDecoder(bool hasVP9HardwareDecoder)
+#endif
+
     ProcessIsReadyToExit()
     TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
 }
