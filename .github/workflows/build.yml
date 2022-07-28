@@ -19,10 +19,10 @@ jobs:
         include:
           - runner: macos-11
             lto_flag: -flto='full'
-            cpu: x86-64-v3
+            cpu: haswell
             label: bun-webkit-macos-amd64-lto
             brew_prefix: /usr/local/opt
-            march: "-march=x86-64-v3"
+            march: "-march=haswell"
           - runner: macos-11
             lto_flag: -flto='full'
             cpu: westmere
@@ -37,10 +37,10 @@ jobs:
             march: "-march=westmere"
           - runner: macos-11
             lto_flag: ""
-            cpu: x86-64-v3
+            cpu: haswell
             label: bun-webkit-macos-amd64
             brew_prefix: /usr/local/opt
-            march: "-march=x86-64-v3"
+            march: "-march=haswell"
           - runner: macOS-arm64
             lto_flag: -flto='full'
             cpu: native
@@ -114,7 +114,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-18.04]
-        cpu: [x86-64-v3, westmere]
+        cpu: [haswell, westmere]
 
     steps:
       - uses: actions/checkout@v3
@@ -131,7 +131,7 @@ jobs:
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
-        if: ${{  matrix.cpu == 'x86-64-v3' }}
+        if: ${{  matrix.cpu == 'haswell' }}
         with:
           name: bun-webkit-linux-amd64
           path: ${{runner.temp}}/bun-webkit.tar.gz
