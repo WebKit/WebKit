@@ -139,9 +139,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::ContentIsRenderQuote:
         stream << "RenderQuote";
         break;
-    case AvoidanceReason::FlowTextIsTextFragment:
-        stream << "TextFragment";
-        break;
     case AvoidanceReason::FlowTextIsSVGInlineText:
         stream << "SVGInlineText";
         break;
@@ -389,8 +386,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     if (is<RenderText>(child)) {
         if (child.isCombineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
-        if (downcast<RenderText>(child).isTextFragment())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsTextFragment, reasons, includeReasons);
         if (child.isSVGInlineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsSVGInlineText, reasons, includeReasons);
 

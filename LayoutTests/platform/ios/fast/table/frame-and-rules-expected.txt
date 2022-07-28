@@ -57,7 +57,7 @@ layer at (0,0) size 800x8148
           RenderInline {A} at (0,0) size 237x19
             RenderText {#text} at (15,0) size 237x19
               text run at (15,0) width 237: "Frame=\x{201C}above\x{201D} and Rules=\x{201C}none\x{201D}"
-          RenderInline (generated) at (0,0) size 7x19
+          RenderInline (generated) at (0,0) size 6x19
             RenderText at (251,0) size 7x19
               text run at (251,0) width 7: ":"
         RenderTableSection {THEAD} at (0,20) size 273x23
@@ -1821,7 +1821,7 @@ layer at (0,0) size 800x8148
           RenderInline {A} at (0,0) size 221x19
             RenderText {#text} at (24,0) size 221x19
               text run at (24,0) width 221: "Frame=\x{201C}above\x{201D} and Rules=\x{201C}all\x{201D}"
-          RenderInline (generated) at (0,0) size 7x19
+          RenderInline (generated) at (0,0) size 6x19
             RenderText at (244,0) size 7x19
               text run at (244,0) width 7: ":"
         RenderTableSection {THEAD} at (0,20) size 275x24
