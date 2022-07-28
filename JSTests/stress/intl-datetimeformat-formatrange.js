@@ -37,9 +37,7 @@ shouldThrow(() => {
     fmt0.formatRange();
 }, `TypeError: startDate or endDate is undefined`);
 
-shouldThrow(() => {
-    fmt0.formatRange(new Date(Date.UTC(2008, 0, 20, 10, 0, 0)), new Date(Date.UTC(2007, 0, 10, 10, 0, 0)));
-}, `RangeError: startDate is larger than endDate`);
+shouldBe(fmt0.formatRange(new Date(Date.UTC(2008, 0, 20, 10, 0, 0)), new Date(Date.UTC(2007, 0, 10, 10, 0, 0))), `1/20/08, 2:00 AM – 1/10/07, 2:00 AM`);
 
 function test() {
     let date1 = new Date(Date.UTC(2007, 0, 10, 10, 0, 0));

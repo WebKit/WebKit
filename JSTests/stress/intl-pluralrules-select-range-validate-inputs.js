@@ -1,3 +1,8 @@
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error('bad value: ' + actual);
+}
+
 function shouldThrow(func, errorMessage) {
     var errorThrown = false;
     var error = null;
@@ -36,7 +41,6 @@ if (Intl.PluralRules.prototype.selectRange) {
     shouldThrow(() => {
         pl.selectRange(NaN, NaN);
     }, `RangeError: Passed numbers are out of range`);
-    shouldThrow(() => {
-        pl.selectRange(0, -0);
-    }, `RangeError: start is larger than end`);
+    shouldBe(pl.selectRange(0, -0), `other`);
+    shouldBe(pl.selectRange(20, -20), `other`);
 }

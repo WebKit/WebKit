@@ -199,8 +199,6 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRange, (JSGlobalOb
     RETURN_IF_EXCEPTION(scope, { });
     double endDate = IntlDateTimeFormat::handleDateTimeValue(globalObject, endDateValue);
     RETURN_IF_EXCEPTION(scope, { });
-    if (startDate > endDate)
-        return throwVMRangeError(globalObject, scope, "startDate is larger than endDate"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatRange(globalObject, startDate, endDate)));
 }
@@ -226,8 +224,6 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRangeToParts, (JSG
     RETURN_IF_EXCEPTION(scope, { });
     double endDate = IntlDateTimeFormat::handleDateTimeValue(globalObject, endDateValue);
     RETURN_IF_EXCEPTION(scope, { });
-    if (startDate > endDate)
-        return throwVMRangeError(globalObject, scope, "startDate is larger than endDate"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatRangeToParts(globalObject, startDate, endDate)));
 }

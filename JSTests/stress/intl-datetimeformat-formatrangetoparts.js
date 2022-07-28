@@ -53,9 +53,31 @@ function test() {
             fmt0.formatRangeToParts();
         }, `TypeError: startDate or endDate is undefined`);
 
-        shouldThrow(() => {
-            fmt0.formatRangeToParts(new Date(Date.UTC(2008, 0, 20, 10, 0, 0)), new Date(Date.UTC(2007, 0, 10, 10, 0, 0)));
-        }, `RangeError: startDate is larger than endDate`);
+        compareParts(fmt0.formatRangeToParts(new Date(Date.UTC(2008, 0, 20, 10, 0, 0)), new Date(Date.UTC(2007, 0, 10, 10, 0, 0))), [
+            {"type":"month","value":"1","source":"startRange"},
+            {"type":"literal","value":"/","source":"startRange"},
+            {"type":"day","value":"20","source":"startRange"},
+            {"type":"literal","value":"/","source":"startRange"},
+            {"type":"year","value":"08","source":"startRange"},
+            {"type":"literal","value":", ","source":"startRange"},
+            {"type":"hour","value":"2","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":" ","source":"startRange"},
+            {"type":"dayPeriod","value":"AM","source":"startRange"},
+            {"type":"literal","value":" – ","source":"shared"},
+            {"type":"month","value":"1","source":"endRange"},
+            {"type":"literal","value":"/","source":"endRange"},
+            {"type":"day","value":"10","source":"endRange"},
+            {"type":"literal","value":"/","source":"endRange"},
+            {"type":"year","value":"07","source":"endRange"},
+            {"type":"literal","value":", ","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":" ","source":"endRange"},
+            {"type":"dayPeriod","value":"AM","source":"endRange"}
+        ]);
     }
 
     {

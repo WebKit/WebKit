@@ -282,12 +282,6 @@ JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, double start,
     if (std::isnan(start) || std::isnan(end))
         return throwRangeError(globalObject, scope, "Passed numbers are out of range"_s);
 
-    if (end < start)
-        return throwRangeError(globalObject, scope, "start is larger than end"_s);
-
-    if (isNegativeZero(end) && start >= 0)
-        return throwRangeError(globalObject, scope, "start is larger than end"_s);
-
     UErrorCode status = U_ZERO_ERROR;
     auto range = std::unique_ptr<UFormattedNumberRange, ICUDeleter<unumrf_closeResult>>(unumrf_openResult(&status));
     if (U_FAILURE(status))

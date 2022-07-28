@@ -107,22 +107,19 @@ if (nf.formatRange || nf.formatRangeToParts) {
         shouldThrow(() => { nf[method](12, "NaN") }, RangeError);
         shouldThrow(() => { nf[method](12, "xyz") }, RangeError);
 
-        // 7. If x is a non-finite Number ..., throw a RangeError exception.
         shouldNotThrow(() => { nf[method](-12/0, 12/0) });
-        shouldThrow(() => { nf[method](12/0, -12/0) }, RangeError);
+        shouldNotThrow(() => { nf[method](12/0, -12/0) });
 
-        // 8. If x is greater than y, throw a RangeError exception.
-        // neither x nor y are bigint.
-        shouldThrow(() => { nf[method](23, 12) }, RangeError);
+        shouldNotThrow(() => nf[method](23, 12));
         shouldNotThrow(() => nf[method](12, 23));
         // x is not bigint but y is.
-        shouldThrow(() => { nf[method](23, 12n) }, RangeError);
+        shouldNotThrow(() => { nf[method](23, 12n) });
         shouldNotThrow(() => nf[method](12, 23n));
         // x is bigint but y is not.
-        shouldThrow(() => { nf[method](23n, 12) }, RangeError);
+        shouldNotThrow(() => { nf[method](23n, 12) });
         shouldNotThrow(() => nf[method](12n, 23));
         // both x and y are bigint.
-        shouldThrow(() => { nf[method](23n, 12n) }, RangeError);
+        shouldNotThrow(() => { nf[method](23n, 12n) });
         shouldNotThrow(() => nf[method](12n, 23n));
 
         validRanges.forEach(

@@ -1161,9 +1161,6 @@ test/harness/temporalHelpers-one-shift-time-zone.js:
 test/intl402/DateTimeFormat/prototype/format/temporal-objects-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
-test/intl402/DateTimeFormat/prototype/formatRange/date-x-greater-than-y-not-throws.js:
-  default: 'RangeError: startDate is larger than endDate'
-  strict mode: 'RangeError: startDate is larger than endDate'
 test/intl402/DateTimeFormat/prototype/formatRange/en-US.js:
   default: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
@@ -1173,9 +1170,6 @@ test/intl402/DateTimeFormat/prototype/formatRange/fractionalSecondDigits.js:
 test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
-test/intl402/DateTimeFormat/prototype/formatRangeToParts/date-x-greater-than-y-not-throws.js:
-  default: 'RangeError: startDate is larger than endDate'
-  strict mode: 'RangeError: startDate is larger than endDate'
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
