@@ -1602,7 +1602,7 @@ const Vector<String>& intlAvailableCalendars()
         }
 
         // The AvailableCalendars abstract operation returns a List, ordered as if an Array of the same
-        // values had been sorted using %Array.prototype.sort% using undefined as comparefn
+        // values had been sorted using %Array.prototype.sort% using undefined as comparator
         std::sort(availableCalendars->begin(), availableCalendars->end(),
             [](const String& a, const String& b) {
                 return WTF::codePointCompare(a, b) < 0;
@@ -1676,7 +1676,7 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
     }
 
     // The AvailableCollations abstract operation returns a List, ordered as if an Array of the same
-    // values had been sorted using %Array.prototype.sort% using undefined as comparefn
+    // values had been sorted using %Array.prototype.sort% using undefined as comparator
     std::sort(elements.begin(), elements.end(),
         [](const String& a, const String& b) {
             return WTF::codePointCompare(a, b) < 0;
@@ -1732,7 +1732,7 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
     }
 
     // The AvailableCurrencies abstract operation returns a List, ordered as if an Array of the same
-    // values had been sorted using %Array.prototype.sort% using undefined as comparefn
+    // values had been sorted using %Array.prototype.sort% using undefined as comparator
     std::sort(elements.begin(), elements.end(),
         [](const String& a, const String& b) {
             return WTF::codePointCompare(a, b) < 0;
@@ -1782,7 +1782,7 @@ static JSArray* availableNumberingSystems(JSGlobalObject* globalObject)
     }
 
     // The AvailableNumberingSystems abstract operation returns a List, ordered as if an Array of the same
-    // values had been sorted using %Array.prototype.sort% using undefined as comparefn
+    // values had been sorted using %Array.prototype.sort% using undefined as comprator
     std::sort(elements.begin(), elements.end(),
         [](const String& a, const String& b) {
             return WTF::codePointCompare(a, b) < 0;
@@ -1840,7 +1840,7 @@ const Vector<String>& intlAvailableTimeZones()
         }
 
         // The AvailableTimeZones abstract operation returns a List, ordered as if an Array of the same
-        // values had been sorted using %Array.prototype.sort% using undefined as comparefn
+        // values had been sorted using %Array.prototype.sort% using undefined as comparator
         std::sort(temporary.begin(), temporary.end(),
             [](const String& a, const String& b) {
                 return WTF::codePointCompare(a, b) < 0;

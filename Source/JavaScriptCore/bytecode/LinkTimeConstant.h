@@ -50,6 +50,7 @@ class JSGlobalObject;
     v(makeTypeError, nullptr) \
     v(AggregateError, nullptr) \
     v(typedArrayLength, nullptr) \
+    v(typedArrayClone, nullptr) \
     v(typedArrayContentType, nullptr) \
     v(typedArrayGetOriginalConstructor, nullptr) \
     v(typedArraySort, nullptr) \
@@ -57,7 +58,6 @@ class JSGlobalObject;
     v(isSharedTypedArrayView, nullptr) \
     v(isDetached, nullptr) \
     v(typedArrayDefaultComparator, nullptr) \
-    v(typedArraySubarrayCreate, nullptr) \
     v(isBoundFunction, nullptr) \
     v(hasInstanceBoundFunction, nullptr) \
     v(instanceOf, nullptr) \

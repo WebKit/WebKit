@@ -50,7 +50,7 @@ void JSModuleNamespaceObject::finishCreation(JSGlobalObject* globalObject, Abstr
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects
     // Quoted from the spec:
     //     A List containing the String values of the exported names exposed as own properties of this object.
-    //     The list is ordered as if an Array of those String values had been sorted using Array.prototype.sort using SortCompare as comparefn.
+    //     The list is ordered as if an Array of those String values had been sorted using Array.prototype.sort using SortCompare as comparator.
     //
     // Sort the exported names by the code point order.
     std::sort(resolutions.begin(), resolutions.end(), [] (const auto& lhs, const auto& rhs) {

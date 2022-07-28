@@ -213,7 +213,6 @@ function typedArrayMergeSort(array, valueCount, comparator)
     }
 }
 
-@linkTimeConstant
 function sort(comparator)
 {
     "use strict";
@@ -235,23 +234,6 @@ function sort(comparator)
         @typedArraySort(this);
 
     return this;
-}
-
-function subarray(begin, end)
-{
-    "use strict";
-
-    if (!@isTypedArrayView(this))
-        @throwTypeError("|this| should be a typed array view");
-
-    var start = @toIntegerOrInfinity(begin);
-    var finish;
-    if (end !== @undefined)
-        finish = @toIntegerOrInfinity(end);
-
-    var constructor = @typedArraySpeciesConstructor(this);
-
-    return @typedArraySubarrayCreate.@call(this, start, finish, constructor);
 }
 
 function reduce(callback /* [, initialValue] */)
@@ -393,85 +375,28 @@ function at(index)
     return (k >= 0 && k < length) ? this[k] : @undefined;
 }
 
-function toReversed()
-{
-    "use strict";
-
-    // Step 2-3.
-    var length = @typedArrayLength(this);
-
-    // Step 4.
-    var constructor = @typedArrayGetOriginalConstructor(this);
-    var result = new constructor(length);
-
-    // Step 5-6.
-    for (var k = 0; k < length; k++) {
-        var fromValue = this[length - k - 1];
-        result[k] = fromValue;
-    }
-
-    return result;
-}
-
-function toSorted(comparefn)
+function toSorted(comparator)
 {
     "use strict";
 
     // Step 1.
-    if (comparefn !== @undefined && !@isCallable(comparefn))
-        @throwTypeError("TypedArray.prototype.toSorted requires the comparefn argument to be a function or undefined");
+    if (comparator !== @undefined && !@isCallable(comparator))
+        @throwTypeError("TypedArray.prototype.toSorted requires the comparator argument to be a function or undefined");
 
-    // Step 5.
-    var length = @typedArrayLength(this);
+    var result = @typedArrayClone.@call(this);
 
-    // Step 6.
-    var constructor = @typedArrayGetOriginalConstructor(this);
-    var result = new constructor(length);
+    var length = @typedArrayLength(result);
+    if (length < 2)
+        return result;
 
-    // Step 11.
-    for (var k = 0; k < length; k++)
-        result[k] = this[k];
-
-    // Step 9.
-    @sort.@call(result, comparefn);
-
-    return result;
-}
-
-function with(index, value)
-{
-    "use strict";
-
-    // Step 2-3.
-    var length = @typedArrayLength(this);
-
-    // Step 4.
-    var relativeIndex = @toIntegerOrInfinity(index);
-    var actualIndex;
-
-    // Step 5-6.
-    if (relativeIndex >= 0)
-        actualIndex = relativeIndex;
-    else
-        actualIndex = length + relativeIndex;
-
-    // Step 7.
-    if (@isDetached(this))
-        @throwRangeError("TypedArray.prototype.with called on an detached array");
-    if (actualIndex < 0 || actualIndex >= length)
-        @throwRangeError("Array index out of range")
-
-    // Step 8.
-    var constructor = @typedArrayGetOriginalConstructor(this);
-    var result = new constructor(length);
-
-    // Step 9-10.
-    for (var k = 0; k < length; k++) {
-        if (k == actualIndex)
-            result[k] = value;
-        else
-            result[k] = this[k];
-    }
+    // typedArraySort is not safe when the other thread is modifying content. So if |result| is SharedArrayBuffer,
+    // use JS-implemented sorting.
+    if (comparator !== @undefined || @isSharedTypedArrayView(result)) {
+        if (comparator === @undefined)
+            comparator = @typedArrayDefaultComparator;
+        @typedArrayMergeSort(result, length, comparator);
+    } else
+        @typedArraySort(result);
 
     return result;
 }

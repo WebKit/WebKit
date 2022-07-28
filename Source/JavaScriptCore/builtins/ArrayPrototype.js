@@ -818,12 +818,12 @@ function toReversed()
     return result;
 }
 
-function toSorted(comparefn)
+function toSorted(comparator)
 {
     "use strict";
 
     // Step 1.
-    if (comparefn !== @undefined && !@isCallable(comparefn))
+    if (comparator !== @undefined && !@isCallable(comparator))
         @throwTypeError("Array.prototype.toSorted requires the comparator argument to be a function or undefined");
 
     // Step 2.
@@ -840,7 +840,7 @@ function toSorted(comparefn)
         @putByValDirect(result, k, array[k]);
 
     // Step 6.
-    @arraySort.@call(result, comparefn);
+    @arraySort.@call(result, comparator);
 
     return result;
 }

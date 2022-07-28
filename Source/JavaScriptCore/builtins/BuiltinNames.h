@@ -73,10 +73,10 @@ namespace JSC {
     macro(Map) \
     macro(throwTypeErrorFunction) \
     macro(typedArrayLength) \
+    macro(typedArrayClone) \
     macro(typedArrayContentType) \
     macro(typedArraySort) \
     macro(typedArrayGetOriginalConstructor) \
-    macro(typedArraySubarrayCreate) \
     macro(BuiltinLog) \
     macro(BuiltinDescribe) \
     macro(homeObject) \
