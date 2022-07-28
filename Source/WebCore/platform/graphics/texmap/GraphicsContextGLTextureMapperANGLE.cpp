@@ -256,6 +256,11 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
 
 bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
 {
+#if ENABLE(WEBGL2)
+    if (m_isForWebGL2)
+        GL_Enable(GraphicsContextGL::PRIMITIVE_RESTART_FIXED_INDEX);
+#endif
+
     m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
     m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(m_texmapLayer.get());
 
