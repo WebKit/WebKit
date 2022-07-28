@@ -804,6 +804,21 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRange() const
     return computedRange;
 }
 
+#if PLATFORM(IOS_FAMILY)
+static const RenderStyle* styleFromNode(Node* node)
+{
+    if (auto* textNode = dynamicDowncast<Text>(node)) {
+        if (auto* renderer = textNode->renderer())
+            return &renderer->style();
+    }
+
+    if (auto* element = dynamicDowncast<Element>(node))
+        return element->computedStyle();
+
+    return nullptr;
+}
+#endif
+
 std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(const std::optional<SimpleRange>& range, const FloatRect& contentRect, const IntRect& startingElementRect) const
 {
     if (!range || !contentRect.intersects(startingElementRect))
@@ -813,6 +828,12 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(co
     auto startBoundary = range->start;
     auto endBoundary = range->end;
 
+#if PLATFORM(IOS_FAMILY)
+    auto* style = styleFromNode(node());
+    // If we can't get style for this object, assume a horizontal writing mode.
+    bool isHorizontalWritingMode = style ? style->isHorizontalWritingMode() : true;
+#endif
+
     // Origin isn't contained in visible rect, start moving forward by line.
     while (!contentRect.contains(elementRect.location())) {
         auto nextLinePosition = nextLineEndPosition(VisiblePosition(makeContainerOffsetPosition(startBoundary)));
@@ -820,10 +841,23 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(co
         if (!testStartBoundary || !contains(*range, *testStartBoundary))
             break;
 
+#if PLATFORM(IOS_FAMILY)
+        float lastX = elementRect.x();
+#endif
+
+        // testStartBoundary is valid, so commit it and update the elementRect.
         startBoundary = *testStartBoundary;
         elementRect = boundsForRange(SimpleRange(startBoundary, range->end));
         if (elementRect.isEmpty() || elementRect.x() < 0 || elementRect.y() < 0)
             break;
+
+#if PLATFORM(IOS_FAMILY)
+        // If the x-coordinate of the element's frame has grown, we should break because that likely means
+        // we have crossed a viewport boundary (e.g. moved to a new page in Books).
+        // FIXME: We should investigate further to understand if this is the correct behavior for all platforms.
+        if (isHorizontalWritingMode && lastX < elementRect.x())
+            break;
+#endif
     }
 
     // Computing previous line start positions is cheap relative to computing boundsForRange, so compute the end boundary by
