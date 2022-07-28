@@ -1929,6 +1929,7 @@ public:
 #endif
 
     bool isHandlingPreventableTouchStart() const { return m_handlingPreventableTouchStartCount; }
+    bool isHandlingPreventableTouchMove() const { return m_touchMovePreventionState == TouchMovePreventionState::Waiting; }
     bool isHandlingPreventableTouchEnd() const { return m_handlingPreventableTouchEndCount; }
 
     bool hasQueuedKeyEvent() const;
@@ -2981,9 +2982,10 @@ private:
     Deque<QueuedTouchEvents> m_touchEventQueue;
 #endif
 
-    bool m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart { false };
     uint64_t m_handlingPreventableTouchStartCount { 0 };
     uint64_t m_handlingPreventableTouchEndCount { 0 };
+    enum class TouchMovePreventionState : uint8_t { NotWaiting, Waiting, ReceivedReply };
+    TouchMovePreventionState m_touchMovePreventionState { TouchMovePreventionState::NotWaiting };
 
 #if ENABLE(INPUT_TYPE_COLOR)
     RefPtr<WebColorPicker> m_colorPicker;

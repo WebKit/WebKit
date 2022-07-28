@@ -1364,7 +1364,7 @@ public:
     template<typename T>
     SendSyncResult sendSyncWithDelayedReply(T&& message, typename T::Reply&& reply, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
     {
-        cancelGesturesBlockedOnSynchronousReplies();
+        cancelCurrentInteractionInformationRequest();
         sendSyncOptions = sendSyncOptions | IPC::SendSyncOption::InformPlatformProcessWillSuspend;
         return sendSync(WTFMove(message), WTFMove(reply), Seconds::infinity(), sendSyncOptions);
     }
@@ -1996,7 +1996,7 @@ private:
 
     bool canShowMIMEType(const String&, const Function<bool(const String&, WebCore::PluginData::AllowedPluginTypes)>& supportsPlugin) const;
 
-    void cancelGesturesBlockedOnSynchronousReplies();
+    void cancelCurrentInteractionInformationRequest();
 
     bool shouldDispatchUpdateAfterFocusingElement(const WebCore::Element&) const;
 
@@ -2299,10 +2299,6 @@ private:
         ScheduledDuringAccessibilitySelectionChange,
     };
     PendingEditorStateUpdateStatus m_pendingEditorStateUpdateStatus { PendingEditorStateUpdateStatus::NotScheduled };
-
-#if ENABLE(IOS_TOUCH_EVENTS)
-    CompletionHandler<void(bool)> m_pendingSynchronousTouchEventReply;
-#endif
 
 #if ENABLE(META_VIEWPORT)
     WebCore::ViewportConfiguration m_viewportConfiguration;

@@ -3331,13 +3331,8 @@ void WebPage::requestFontAttributesAtSelectionStart(CompletionHandler<void(const
     completionHandler(CheckedRef(m_page->focusController())->focusedOrMainFrame().editor().fontAttributesAtSelectionStart());
 }
 
-void WebPage::cancelGesturesBlockedOnSynchronousReplies()
+void WebPage::cancelCurrentInteractionInformationRequest()
 {
-#if ENABLE(IOS_TOUCH_EVENTS)
-    if (auto reply = WTFMove(m_pendingSynchronousTouchEventReply))
-        reply(true);
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     if (auto reply = WTFMove(m_pendingSynchronousPositionInformationReply))
         reply(InteractionInformationAtPosition::invalidInformation());
@@ -3363,26 +3358,6 @@ bool WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent)
     bool handled = handleTouchEvent(touchEvent, m_page.get());
     updatePotentialTapSecurityOrigin(touchEvent, handled);
     return handled;
-}
-
-void WebPage::touchEventSync(const WebTouchEvent& touchEvent, CompletionHandler<void(bool)>&& reply)
-{
-    // Avoid UIProcess hangs when the WebContent process is stuck on a sync IPC.
-    if (IPC::UnboundedSynchronousIPCScope::hasOngoingUnboundedSyncIPC()) {
-        WEBPAGE_RELEASE_LOG_ERROR(Process, "touchEventSync: Not processing because the process is stuck on unbounded sync IPC");
-        return reply(true);
-    }
-
-    m_pendingSynchronousTouchEventReply = WTFMove(reply);
-
-    EventDispatcher::TouchEventQueue queuedEvents;
-    WebProcess::singleton().eventDispatcher().takeQueuedTouchEventsForPage(*this, queuedEvents);
-    dispatchAsynchronousTouchEvents(WTFMove(queuedEvents));
-
-    bool handled = dispatchTouchEvent(touchEvent);
-
-    if (auto reply = WTFMove(m_pendingSynchronousTouchEventReply))
-        reply(handled);
 }
 
 void WebPage::resetPotentialTapSecurityOrigin()

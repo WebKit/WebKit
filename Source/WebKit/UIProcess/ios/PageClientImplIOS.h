@@ -118,6 +118,7 @@ private:
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
     void doneDeferringTouchStart(bool preventNativeGestures) override;
+    void doneDeferringTouchMove(bool preventNativeGestures) override;
     void doneDeferringTouchEnd(bool preventNativeGestures) override;
 #endif
 

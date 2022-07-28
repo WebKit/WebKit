@@ -3233,12 +3233,18 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
     });
 
     bool isTouchStart = event.type() == WebEvent::TouchStart;
+    bool isTouchMove = event.type() == WebEvent::TouchMove;
     bool isTouchEnd = event.type() == WebEvent::TouchEnd;
+
+    if (isTouchStart)
+        m_touchMovePreventionState = TouchMovePreventionState::NotWaiting;
 
     TrackingType touchEventsTrackingType = touchEventTrackingType(event);
     if (touchEventsTrackingType == TrackingType::NotTracking) {
         if (isTouchStart)
             pageClient().doneDeferringTouchStart(false);
+        if (isTouchMove)
+            pageClient().doneDeferringTouchMove(false);
         if (isTouchEnd)
             pageClient().doneDeferringTouchEnd(false);
         return;
@@ -3256,65 +3262,58 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         didReceiveEvent(event.type(), false);
         if (isTouchStart)
             pageClient().doneDeferringTouchStart(false);
+        if (isTouchMove)
+            pageClient().doneDeferringTouchMove(false);
         if (isTouchEnd)
             pageClient().doneDeferringTouchEnd(false);
         return;
     }
 
-    if (isTouchStart || isTouchEnd) {
-        if (isTouchStart)
-            ++m_handlingPreventableTouchStartCount;
+    if (isTouchStart)
+        ++m_handlingPreventableTouchStartCount;
 
-        if (isTouchEnd)
-            ++m_handlingPreventableTouchEndCount;
+    if (isTouchMove && m_touchMovePreventionState == TouchMovePreventionState::NotWaiting)
+        m_touchMovePreventionState = TouchMovePreventionState::Waiting;
 
-        sendWithAsyncReply(Messages::EventDispatcher::TouchEvent(m_webPageID, event), [this, weakThis = WeakPtr { *this }, event] (bool handled) {
-            RefPtr protectedThis { weakThis.get() };
-            if (!protectedThis)
-                return;
+    if (isTouchEnd)
+        ++m_handlingPreventableTouchEndCount;
 
-            bool didFinishDeferringTouchStart = false;
-            ASSERT_IMPLIES(event.type() == WebEvent::TouchStart, m_handlingPreventableTouchStartCount);
-            if (event.type() == WebEvent::TouchStart && m_handlingPreventableTouchStartCount)
-                didFinishDeferringTouchStart = !--m_handlingPreventableTouchStartCount;
+    sendWithAsyncReply(Messages::EventDispatcher::TouchEvent(m_webPageID, event), [this, weakThis = WeakPtr { *this }, event] (bool handled) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
 
-            bool didFinishDeferringTouchEnd = false;
-            ASSERT_IMPLIES(event.type() == WebEvent::TouchEnd, m_handlingPreventableTouchEndCount);
-            if (event.type() == WebEvent::TouchEnd && m_handlingPreventableTouchEndCount)
-                didFinishDeferringTouchEnd = !--m_handlingPreventableTouchEndCount;
+        bool didFinishDeferringTouchStart = false;
+        ASSERT_IMPLIES(event.type() == WebEvent::TouchStart, m_handlingPreventableTouchStartCount);
+        if (event.type() == WebEvent::TouchStart && m_handlingPreventableTouchStartCount)
+            didFinishDeferringTouchStart = !--m_handlingPreventableTouchStartCount;
 
-            bool handledOrFailedWithError = handled || m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart;
-            if (!isHandlingPreventableTouchStart())
-                m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart = false;
+        bool didFinishDeferringTouchMove = false;
+        if (event.type() == WebEvent::TouchMove && m_touchMovePreventionState == TouchMovePreventionState::Waiting) {
+            m_touchMovePreventionState = TouchMovePreventionState::ReceivedReply;
+            didFinishDeferringTouchMove = true;
+        }
 
-            didReceiveEvent(event.type(), handledOrFailedWithError);
-            if (!m_pageClient)
-                return;
+        bool didFinishDeferringTouchEnd = false;
+        ASSERT_IMPLIES(event.type() == WebEvent::TouchEnd, m_handlingPreventableTouchEndCount);
+        if (event.type() == WebEvent::TouchEnd && m_handlingPreventableTouchEndCount)
+            didFinishDeferringTouchEnd = !--m_handlingPreventableTouchEndCount;
 
-            pageClient().doneWithTouchEvent(event, handledOrFailedWithError);
+        didReceiveEvent(event.type(), handled);
+        if (!m_pageClient)
+            return;
 
-            if (didFinishDeferringTouchStart)
-                pageClient().doneDeferringTouchStart(handledOrFailedWithError);
+        pageClient().doneWithTouchEvent(event, handled);
 
-            if (didFinishDeferringTouchEnd)
-                pageClient().doneDeferringTouchEnd(handledOrFailedWithError);
-        });
-        return;
-    }
+        if (didFinishDeferringTouchStart)
+            pageClient().doneDeferringTouchStart(handled);
 
-    m_process->startResponsivenessTimer();
-    bool handled = false;
-    bool replyReceived = !!sendSync(Messages::WebPage::TouchEventSync(event), Messages::WebPage::TouchEventSync::Reply(handled), 1_s, IPC::SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply);
-    // If the sync request has timed out, we should consider the event handled. The Web Process is too busy to answer any questions, so the default action is also likely to have issues.
-    if (!replyReceived)
-        handled = true;
-    didReceiveEvent(event.type(), handled);
-    pageClient().doneWithTouchEvent(event, handled);
-    if (!isHandlingPreventableTouchStart())
-        pageClient().doneDeferringTouchStart(handled);
-    else if (handled)
-        m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart = true;
-    m_process->stopResponsivenessTimer();
+        if (didFinishDeferringTouchMove)
+            pageClient().doneDeferringTouchMove(handled);
+
+        if (didFinishDeferringTouchEnd)
+            pageClient().doneDeferringTouchEnd(handled);
+    });
 }
 
 void WebPageProxy::resetPotentialTapSecurityOrigin()

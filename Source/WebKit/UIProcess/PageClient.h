@@ -365,6 +365,7 @@ public:
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
     virtual void doneDeferringTouchStart(bool preventNativeGestures) = 0;
+    virtual void doneDeferringTouchMove(bool preventNativeGestures) = 0;
     virtual void doneDeferringTouchEnd(bool preventNativeGestures) = 0;
 #endif
 

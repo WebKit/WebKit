@@ -455,6 +455,11 @@ void PageClientImpl::doneDeferringTouchStart(bool preventNativeGestures)
     [m_contentView _doneDeferringTouchStart:preventNativeGestures];
 }
 
+void PageClientImpl::doneDeferringTouchMove(bool preventNativeGestures)
+{
+    [m_contentView _doneDeferringTouchMove:preventNativeGestures];
+}
+
 void PageClientImpl::doneDeferringTouchEnd(bool preventNativeGestures)
 {
     [m_contentView _doneDeferringTouchEnd:preventNativeGestures];

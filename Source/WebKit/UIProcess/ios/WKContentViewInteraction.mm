@@ -984,6 +984,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _touchEndDeferringGestureRecognizerForSyntheticTapGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
     [_touchEndDeferringGestureRecognizerForSyntheticTapGestures setName:@"Deferrer for touch end (synthetic tap)"];
 
+    _touchMoveDeferringGestureRecognizer = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_touchMoveDeferringGestureRecognizer setName:@"Deferrer for touch move"];
+
 #if ENABLE(IMAGE_ANALYSIS)
     _imageAnalysisDeferringGestureRecognizer = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
     [_imageAnalysisDeferringGestureRecognizer setName:@"Deferrer for image analysis"];
@@ -1755,10 +1758,10 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     if (!_page->hasRunningProcess())
         return;
 
-    const _UIWebTouchEvent* lastTouchEvent = gestureRecognizer.lastTouchEvent;
+    const auto& lastTouchEvent = *gestureRecognizer.lastTouchEvent;
+    _lastInteractionLocation = lastTouchEvent.locationInDocumentCoordinates;
 
-    _lastInteractionLocation = lastTouchEvent->locationInDocumentCoordinates;
-    if (lastTouchEvent->type == UIWebTouchEventTouchBegin) {
+    if (lastTouchEvent.type == UIWebTouchEventTouchBegin) {
         if (!_failedTouchStartDeferringGestures)
             _failedTouchStartDeferringGestures = { { } };
 
@@ -1776,7 +1779,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    WebKit::NativeWebTouchEvent nativeWebTouchEvent { lastTouchEvent, gestureRecognizer.modifierFlags };
+    WebKit::NativeWebTouchEvent nativeWebTouchEvent { &lastTouchEvent, gestureRecognizer.modifierFlags };
     nativeWebTouchEvent.setCanPreventNativeGestures(_touchEventsCanPreventNativeGestures || [gestureRecognizer isDefaultPrevented]);
 
     [self _handleTouchActionsForTouchEvent:nativeWebTouchEvent];
@@ -1795,18 +1798,23 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
         if (nativeWebTouchEvent.isPotentialTap() && self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
             [self.window makeKeyWindow];
 
-        auto stopDeferringNativeGesturesIfNeeded = [] (NSArray<WKDeferringGestureRecognizer *> *deferringGestures) {
-            for (WKDeferringGestureRecognizer *gesture in deferringGestures) {
-                if (gesture.state == UIGestureRecognizerStatePossible)
-                    gesture.state = UIGestureRecognizerStateFailed;
-            }
+        auto stopDeferringNativeGesturesIfNeeded = [] (WKDeferringGestureRecognizer *gestureRecognizer) {
+            if (gestureRecognizer.state == UIGestureRecognizerStatePossible)
+                gestureRecognizer.state = UIGestureRecognizerStateFailed;
         };
 
-        if (!_page->isHandlingPreventableTouchStart())
-            stopDeferringNativeGesturesIfNeeded(self._touchStartDeferringGestures);
+        if (!_page->isHandlingPreventableTouchStart()) {
+            for (WKDeferringGestureRecognizer *gestureRecognizer in self._touchStartDeferringGestures)
+                stopDeferringNativeGesturesIfNeeded(gestureRecognizer);
+        }
 
-        if (!_page->isHandlingPreventableTouchEnd())
-            stopDeferringNativeGesturesIfNeeded(self._touchEndDeferringGestures);
+        if (!_page->isHandlingPreventableTouchMove())
+            stopDeferringNativeGesturesIfNeeded(_touchMoveDeferringGestureRecognizer.get());
+
+        if (!_page->isHandlingPreventableTouchEnd()) {
+            for (WKDeferringGestureRecognizer *gestureRecognizer in self._touchEndDeferringGestures)
+                stopDeferringNativeGesturesIfNeeded(gestureRecognizer);
+        }
 
         _failedTouchStartDeferringGestures = std::nullopt;
     }
@@ -2012,6 +2020,7 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
     auto gestures = [NSMutableArray arrayWithCapacity:7];
     [gestures addObjectsFromArray:self._touchStartDeferringGestures];
     [gestures addObjectsFromArray:self._touchEndDeferringGestures];
+    [gestures addObject:_touchMoveDeferringGestureRecognizer.get()];
 #if ENABLE(IMAGE_ANALYSIS)
     [gestures addObject:_imageAnalysisDeferringGestureRecognizer.get()];
 #endif
@@ -2053,6 +2062,11 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
         if (_failedTouchStartDeferringGestures && !preventNativeGestures)
             _failedTouchStartDeferringGestures->add(gestureRecognizer);
     }
+}
+
+- (void)_doneDeferringTouchMove:(BOOL)preventNativeGestures
+{
+    [_touchMoveDeferringGestureRecognizer endDeferral:preventNativeGestures ? WebKit::ShouldPreventGestures::Yes : WebKit::ShouldPreventGestures::No];
 }
 
 - (void)_doneDeferringTouchEnd:(BOOL)preventNativeGestures
@@ -8449,6 +8463,9 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (_page->isHandlingPreventableTouchStart() && [self _isTouchStartDeferringGesture:deferringGestureRecognizer])
         return;
 
+    if (_page->isHandlingPreventableTouchMove() && deferringGestureRecognizer == _touchMoveDeferringGestureRecognizer)
+        return;
+
     if (_page->isHandlingPreventableTouchEnd() && [self _isTouchEndDeferringGesture:deferringGestureRecognizer])
         return;
 
@@ -8509,19 +8526,22 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         return [self shouldDeferGestureDueToImageAnalysis:gestureRecognizer];
 #endif
 
-    auto mayDelayResetOfContainingSubgraph = [&](UIGestureRecognizer *gesture) -> BOOL {
+    if (deferringGestureRecognizer == _touchMoveDeferringGestureRecognizer)
+        return [gestureRecognizer isKindOfClass:UIPanGestureRecognizer.class] || [gestureRecognizer isKindOfClass:UIPinchGestureRecognizer.class];
+
+    BOOL mayDelayReset = [&]() -> BOOL {
 #if USE(UICONTEXTMENU) && HAVE(LINK_PREVIEW)
-        if (gesture == [self.contextMenuInteraction gestureRecognizerForFailureRelationships])
+        if (gestureRecognizer == [self.contextMenuInteraction gestureRecognizerForFailureRelationships])
             return YES;
 #endif
 
 #if HAVE(TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION)
-        if (gesture == [_textInteractionAssistant contextMenuInteraction].gestureRecognizerForFailureRelationships)
+        if (gestureRecognizer == [_textInteractionAssistant contextMenuInteraction].gestureRecognizerForFailureRelationships)
             return YES;
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
-        if (gesture.delegate == [_dragInteraction _initiationDriver])
+        if (gestureRecognizer.delegate == [_dragInteraction _initiationDriver])
             return YES;
 #endif
 
@@ -8536,16 +8556,13 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         if (gestureRecognizer == [_textInteractionAssistant loupeGesture])
             return YES;
 
-        if ([gesture isKindOfClass:UITapGestureRecognizer.class]) {
-            UITapGestureRecognizer *tapGesture = (UITapGestureRecognizer *)gesture;
+        if (auto *tapGesture = dynamic_objc_cast<UITapGestureRecognizer>(gestureRecognizer))
             return tapGesture.numberOfTapsRequired > 1 && tapGesture.numberOfTouchesRequired < 2;
-        }
 
         return NO;
-    };
+    }();
 
     BOOL isSyntheticTap = [gestureRecognizer isKindOfClass:WKSyntheticTapGestureRecognizer.class];
-    BOOL mayDelayReset = mayDelayResetOfContainingSubgraph(gestureRecognizer);
     if ([gestureRecognizer isKindOfClass:UITapGestureRecognizer.class]) {
         if (deferringGestureRecognizer == _touchEndDeferringGestureRecognizerForSyntheticTapGestures)
             return isSyntheticTap;
