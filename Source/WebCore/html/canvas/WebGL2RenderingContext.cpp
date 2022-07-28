@@ -2673,13 +2673,10 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
     return result;
 }
 
-static bool validateDefaultFramebufferAttachment(GCGLenum& attachment)
+static bool validateDefaultFramebufferAttachment(GCGLenum attachment)
 {
     switch (attachment) {
     case GraphicsContextGL::BACK:
-        // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
-        attachment = GraphicsContextGL::COLOR_ATTACHMENT0;
-        return true;
     case GraphicsContextGL::DEPTH:
     case GraphicsContextGL::STENCIL:
         return true;
