@@ -393,6 +393,7 @@ void UnlinkedCodeBlock::allocateSharedProfiles(unsigned numBinaryArithProfiles, 
 #undef COUNT
             numberOfValueProfiles += m_metadata->numEntries<OpIteratorOpen>() * 3;
             numberOfValueProfiles += m_metadata->numEntries<OpIteratorNext>() * 3;
+            numberOfValueProfiles += m_metadata->numEntries<OpResolveAndGetFromScope>();
         }
 
         m_valueProfiles = FixedVector<UnlinkedValueProfile>(numberOfValueProfiles);

@@ -1044,6 +1044,53 @@ op :get_from_scope,
         operand: :offset,
     }
 
+op :resolve_and_get_from_scope,
+    args: {
+        dst: VirtualRegister,
+        scope: VirtualRegister,
+        var: unsigned,
+        # $begin: :private,
+        getPutInfo: GetPutInfo,
+        localScopeDepth: unsigned,
+        offset: unsigned,
+    },
+    metadata: {
+        getPutInfo: GetPutInfo,
+        _0: {
+            watchpointSet: WatchpointSet.*,
+            structure: WriteBarrierBase[Structure],
+        },
+        operand: uintptr_t,
+        profile: ValueProfile,
+        resolveType: ResolveType,
+        _1: {
+            localScopeDepth: unsigned,
+            globalLexicalBindingEpoch: unsigned,
+        },
+        _2: {
+             # written during linking
+             lexicalEnvironment: WriteBarrierBase[JSCell], # lexicalEnvironment && type == ModuleVar
+             symbolTable: WriteBarrierBase[SymbolTable], # lexicalEnvironment && type != ModuleVar
+
+             constantScope: WriteBarrierBase[JSScope],
+
+             # written from the slow path
+             globalLexicalEnvironment: WriteBarrierBase[JSGlobalLexicalEnvironment],
+             globalObject: WriteBarrierBase[JSGlobalObject],
+        },
+    },
+    metadata_initializers: {
+        getPutInfo: :getPutInfo,
+        operand: :offset,
+    },
+    tmps: {
+        tmpResolvedScope: JSValue,
+    },
+    checkpoints: {
+        resolveScope: nil,
+        getFromScope: nil,
+    }
+
 op :put_to_scope,
     args: {
         scope: VirtualRegister, # offset 1

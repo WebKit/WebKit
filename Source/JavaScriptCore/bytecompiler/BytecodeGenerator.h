@@ -833,7 +833,6 @@ namespace JSC {
         void emitEnumeration(ThrowableExpressionData* enumerationNode, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* = nullptr, RegisterID* forLoopSymbolTable = nullptr);
 
         RegisterID* emitGetTemplateObject(RegisterID* dst, TaggedTemplateNode*);
-        RegisterID* emitGetGlobalPrivate(RegisterID* dst, const Identifier& property);
 
         enum class ReturnFrom { Normal, Finally };
         RegisterID* emitReturn(RegisterID* src, ReturnFrom = ReturnFrom::Normal);
@@ -846,8 +845,14 @@ namespace JSC {
 
         ResolveType resolveType();
         RegisterID* emitResolveConstantLocal(RegisterID* dst, const Variable&);
+        RegisterID* emitResolveScopeWithVarKindScope(const Variable&);
+        RegisterID* emitResolveScopeHelper(RegisterID* dst, const Variable&);
         RegisterID* emitResolveScope(RegisterID* dst, const Variable&);
+        RegisterID* emitGetFromScopeWithVarKindStack(RegisterID* dst, const Variable&);
+        RegisterID* emitGetFromScopeWithVarKindDirectArgument(RegisterID* dst, RegisterID* scope, const Variable&);
+        RegisterID* emitGetFromScopeHelper(RegisterID* dst, RegisterID* scope, const Variable&, ResolveMode);
         RegisterID* emitGetFromScope(RegisterID* dst, RegisterID* scope, const Variable&, ResolveMode);
+        RegisterID* emitResolveAndGetFromScope(RegisterID* dst, RegisterID* resolvedScope, const Variable&, ResolveMode, bool isPrivate = false);
         RegisterID* emitPutToScope(RegisterID* scope, const Variable&, RegisterID* value, ResolveMode, InitializationMode);
 
         RegisterID* emitResolveScopeForHoistingFuncDeclInEval(RegisterID* dst, const Identifier&);
