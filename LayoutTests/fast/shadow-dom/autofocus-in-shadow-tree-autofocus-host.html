@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<div id="host" tabindex="0" autofocus></div>
+<script>
+
+const shadowRoot = host.attachShadow({mode: 'closed', delegatesFocus: true});
+shadowRoot.innerHTML = `<input type="text" id="target"><input type="text" id="target" autofocus>`;
+
+promise_test(async () => {
+    await new Promise((resolve) => { requestAnimationFrame(() => setTimeout(resolve, 0)); });
+    assert_equals(document.activeElement, host);
+    assert_equals(shadowRoot.activeElement, shadowRoot.lastChild);
+}, 'an element with autofocus content attribute in a shadow tree whereby shadow host also has autofocus should automatically get focus');
+
+</script>
+</body>
+</html>
