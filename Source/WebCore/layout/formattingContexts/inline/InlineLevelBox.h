@@ -186,18 +186,15 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
         auto hasAboveTextEmphasis = false;
         auto hasUnderTextEmphasis = false;
         if (style.isHorizontalWritingMode()) {
-            hasAboveTextEmphasis = emphasisPosition.containsAny({ TextEmphasisPosition::Over, TextEmphasisPosition::Left, TextEmphasisPosition::Right });
+            hasAboveTextEmphasis = emphasisPosition.contains(TextEmphasisPosition::Over);
             hasUnderTextEmphasis = !hasAboveTextEmphasis && emphasisPosition.contains(TextEmphasisPosition::Under);
-        } else if (style.writingMode() == WritingMode::LeftToRight) {
-            hasAboveTextEmphasis = emphasisPosition.containsAny({ TextEmphasisPosition::Over, TextEmphasisPosition::Right });
-            hasUnderTextEmphasis = !hasAboveTextEmphasis && emphasisPosition.containsAny({ TextEmphasisPosition::Under, TextEmphasisPosition::Left });
-        } else if (style.writingMode() == WritingMode::RightToLeft) {
-            hasAboveTextEmphasis = emphasisPosition.containsAny({ TextEmphasisPosition::Over, TextEmphasisPosition::Left });
-            hasUnderTextEmphasis = !hasAboveTextEmphasis && emphasisPosition.containsAny({ TextEmphasisPosition::Under, TextEmphasisPosition::Right });
+        } else {
+            hasAboveTextEmphasis = emphasisPosition.contains(TextEmphasisPosition::Right) || emphasisPosition == TextEmphasisPosition::Over;  
+            hasUnderTextEmphasis = !hasAboveTextEmphasis && (emphasisPosition.contains(TextEmphasisPosition::Left) || emphasisPosition == TextEmphasisPosition::Under);
         }
 
         if (hasAboveTextEmphasis || hasUnderTextEmphasis) {
-            auto annotationSize = style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString());
+            InlineLayoutUnit annotationSize = roundToInt(style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString()));
             m_annotation = { hasAboveTextEmphasis ? Annotation::Type::Above : Annotation::Type::Under, annotationSize };
         }
     };

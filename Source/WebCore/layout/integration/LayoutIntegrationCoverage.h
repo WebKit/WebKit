@@ -61,7 +61,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 19,
     FlowHasLineAlignEdges                        = 1LLU  << 20,
     FlowHasLineSnap                              = 1LLU  << 21,
-    FlowHasTextEmphasisFillOrMark                = 1LLU  << 22,
+    // Unused                                    = 1LLU  << 22,
     // Unused                                    = 1LLU  << 23,
     // Unused                                    = 1LLU  << 24,
     FlowHasPseudoFirstLetter                     = 1LLU  << 25,
