@@ -19,28 +19,28 @@ jobs:
         include:
           - runner: macos-11
             lto_flag: -flto='full'
-            cpu: native
+            cpu: haswell
             label: bun-webkit-macos-amd64-lto
             brew_prefix: /usr/local/opt
-            march: "-march=native"
+            march: "-march=haswell"
           - runner: macos-11
             lto_flag: -flto='full'
-            cpu: sandybridge
+            cpu: westmere
             label: bun-webkit-macos-amd64-lto-baseline
             brew_prefix: /usr/local/opt
-            march: "-march=sandybridge"
+            march: "-march=westmere"
           - runner: macos-11
             lto_flag: ""
-            cpu: sandybridge
+            cpu: westmere
             label: bun-webkit-macos-amd64-baseline
             brew_prefix: /usr/local/opt
-            march: "-march=sandybridge"
+            march: "-march=westmere"
           - runner: macos-11
             lto_flag: ""
-            cpu: native
+            cpu: haswell
             label: bun-webkit-macos-amd64
             brew_prefix: /usr/local/opt
-            march: "-march=native"
+            march: "-march=haswell"
           - runner: macOS-arm64
             lto_flag: -flto='full'
             cpu: native
@@ -114,7 +114,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-18.04]
-        cpu: [native, sandybridge]
+        cpu: [native, westmere]
 
     steps:
       - uses: actions/checkout@v3
@@ -136,7 +136,7 @@ jobs:
           name: bun-webkit-linux-amd64
           path: ${{runner.temp}}/bun-webkit.tar.gz
       - uses: actions/upload-artifact@v3
-        if: ${{ matrix.cpu == 'sandybridge' }}
+        if: ${{ matrix.cpu == 'westmere' }}
         with:
           name: bun-webkit-linux-amd64-baseline
           path: ${{runner.temp}}/bun-webkit.tar.gz
