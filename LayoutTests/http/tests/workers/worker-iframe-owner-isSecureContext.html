@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that a worker's isSecureContext flag relies on the owner's top URL, not the owner's URL");
+jsTestIsAsync = true;
+
+// We need to explicitly mark the context as insecure, even though it has a HTTP URL. The reason is that '127.0.0.1'
+// host is treated as secure by default. Sadly, WebKitTestRunner only supports running tests over secure hosts at the
+// moment.
+if (window.internals)
+    internals.markContextAsInsecure();
+
+onload = () => {
+    var frame = document.createElement("iframe");
+    frame.src = "https://127.0.0.1:8443/workers/resources/worker-iframe-owner-isSecureContext-frame.html";
+    document.body.appendChild(frame);
+}
+
+onmessage = (message) => {
+    isSecureContext = message.data;
+    shouldBeFalse("isSecureContext");
+    finishJSTest();
+};
+</script>
+</body>
+</html>

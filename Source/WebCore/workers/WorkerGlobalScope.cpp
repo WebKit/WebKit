@@ -181,7 +181,7 @@ bool WorkerGlobalScope::isSecureContext() const
     if (!DeprecatedGlobalSettings::secureContextChecksEnabled())
         return true;
 
-    return securityOrigin() && securityOrigin()->isPotentiallyTrustworthy();
+    return m_topOrigin->isPotentiallyTrustworthy();
 }
 
 void WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
