@@ -54,8 +54,6 @@
 
 namespace WebCore {
 
-static constexpr auto packedDepthStencilExtensionName = "GL_OES_packed_depth_stencil"_s;
-
 static Seconds maxFrameDuration = 5_s;
 
 // List of displays ever instantiated from EGL. When terminating all EGL resources, we need to
@@ -219,7 +217,7 @@ void GraphicsContextGLANGLE::validateAttributes()
 {
     m_internalColorFormat = contextAttributes().alpha ? GL_RGBA8 : GL_RGB8;
 
-    validateDepthStencil(packedDepthStencilExtensionName);
+    validateDepthStencil("GL_OES_packed_depth_stencil"_s);
 }
 
 bool GraphicsContextGLANGLE::reshapeFBOs(const IntSize& size)
@@ -241,18 +239,19 @@ bool GraphicsContextGLANGLE::reshapeFBOs(const IntSize& size)
         GL_RenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, m_internalColorFormat, width, height);
         GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_multisampleColorBuffer);
         if (attrs.stencil || attrs.depth) {
+            ASSERT(m_internalDepthStencilFormat);
+            ASSERT(!attrs.stencil || m_internalDepthStencilFormat == GL_STENCIL_INDEX8 || m_internalDepthStencilFormat == GL_DEPTH24_STENCIL8_OES);
+            ASSERT(!attrs.depth || m_internalDepthStencilFormat != GL_STENCIL_INDEX8);
             GL_BindRenderbuffer(GL_RENDERBUFFER, m_multisampleDepthStencilBuffer);
             GL_RenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, m_internalDepthStencilFormat, width, height);
             // WebGL 1.0's rules state that combined depth/stencil renderbuffers
             // have to be attached to the synthetic DEPTH_STENCIL_ATTACHMENT point.
-            if (!isGLES2Compliant() && m_internalDepthStencilFormat == GL_DEPTH24_STENCIL8_OES)
+            if (attrs.stencil && attrs.depth)
                 GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_multisampleDepthStencilBuffer);
-            else {
-                if (attrs.stencil)
-                    GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_multisampleDepthStencilBuffer);
-                if (attrs.depth)
-                    GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_multisampleDepthStencilBuffer);
-            }
+            else if (attrs.stencil)
+                GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_multisampleDepthStencilBuffer);
+            else
+                GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_multisampleDepthStencilBuffer);
         }
         GL_BindRenderbuffer(GL_RENDERBUFFER, 0);
         if (GL_CheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -307,18 +306,19 @@ void GraphicsContextGLANGLE::attachDepthAndStencilBufferIfNeeded(GLuint internal
     auto attrs = contextAttributes();
 
     if (!attrs.antialias && (attrs.stencil || attrs.depth)) {
+        ASSERT(internalDepthStencilFormat);
+        ASSERT(!attrs.stencil || m_internalDepthStencilFormat == GL_STENCIL_INDEX8 || m_internalDepthStencilFormat == GL_DEPTH24_STENCIL8_OES);
+        ASSERT(!attrs.depth || internalDepthStencilFormat != GL_STENCIL_INDEX8);
         GL_BindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
         GL_RenderbufferStorage(GL_RENDERBUFFER, internalDepthStencilFormat, width, height);
         // WebGL 1.0's rules state that combined depth/stencil renderbuffers
         // have to be attached to the synthetic DEPTH_STENCIL_ATTACHMENT point.
-        if (!isGLES2Compliant() && internalDepthStencilFormat == GL_DEPTH24_STENCIL8_OES)
+        if (attrs.stencil && attrs.depth)
             GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
-        else {
-            if (attrs.stencil)
-                GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
-            if (attrs.depth)
-                GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
-        }
+        else if (attrs.stencil)
+            GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
+        else
+            GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
         GL_BindRenderbuffer(GL_RENDERBUFFER, 0);
     }
 
@@ -514,24 +514,31 @@ void GraphicsContextGLANGLE::readnPixelsImpl(GCGLint x, GCGLint y, GCGLsizei wid
 
 void GraphicsContextGLANGLE::validateDepthStencil(ASCIILiteral packedDepthStencilExtension)
 {
-    // FIXME: Since the constructors of various platforms are not shared, we initialize this here.
-    // Upon constructing the context, always initialize the extensions that the WebGLRenderingContext* will
-    // use to turn on feature flags.
-    String packedDepthStencilExtensionString { packedDepthStencilExtension };
-    if (supportsExtension(packedDepthStencilExtensionString)) {
-        ensureExtensionEnabled(packedDepthStencilExtensionString);
-        m_internalDepthStencilFormat = GL_DEPTH24_STENCIL8_OES;
-    } else
-        m_internalDepthStencilFormat = GL_DEPTH_COMPONENT16;
-
     auto attrs = contextAttributes();
-    if (attrs.stencil) {
-        if (m_internalDepthStencilFormat == GL_DEPTH24_STENCIL8_OES) {
-            // Force depth if stencil is true.
-            attrs.depth = true;
-        } else
+    if (attrs.stencil && attrs.depth) {
+        ASSERT(packedDepthStencilExtension == "GL_OES_packed_depth_stencil"_s);
+        String packedDepthStencilExtensionString { packedDepthStencilExtension };
+        if (supportsExtension(packedDepthStencilExtensionString)) {
+            // This extension is always enabled when supported
+            m_internalDepthStencilFormat = GL_DEPTH24_STENCIL8_OES;
+        } else {
+            // Combined buffer not supported, prefer depth when both requested.
+            // This extension is always enabled when supported
+            if (supportsExtension("GL_OES_depth24"_s))
+                m_internalDepthStencilFormat = GL_DEPTH_COMPONENT24_OES;
+            else
+                m_internalDepthStencilFormat = GL_DEPTH_COMPONENT16;
             attrs.stencil = false;
-        setContextAttributes(attrs);
+            setContextAttributes(attrs);
+        }
+    } else if (attrs.stencil)
+        m_internalDepthStencilFormat = GL_STENCIL_INDEX8;
+    else if (attrs.depth) {
+        // This extension is always enabled when supported
+        if (supportsExtension("GL_OES_depth24"_s))
+            m_internalDepthStencilFormat = GL_DEPTH_COMPONENT24_OES;
+        else
+            m_internalDepthStencilFormat = GL_DEPTH_COMPONENT16;
     }
 
     if (attrs.antialias) {

@@ -1156,8 +1156,10 @@ protected:
 
     String ensureNotNull(const String&) const;
 
+#if !USE(ANGLE)
     // Enable or disable stencil test based on user setting and whether the current FBO has a stencil buffer.
     void applyStencilTest();
+#endif
 
     // Helper for enabling or disabling a capability.
     void enableOrDisable(GCGLenum capability, bool enable);

@@ -778,7 +778,6 @@ void WebGL2RenderingContext::framebufferTextureLayer(GCGLenum target, GCGLenum a
         return;
     }
     framebufferBinding->setAttachmentForBoundFramebuffer(target, attachment, texTarget, texture, level, layer);
-    applyStencilTest();
 }
 
 WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCGLenum internalformat, GCGLenum pname)
@@ -866,7 +865,6 @@ void WebGL2RenderingContext::renderbufferStorageMultisample(GCGLenum target, GCG
     if (!validateSize(functionName, width, height))
         return;
     renderbufferStorageImpl(target, samples, internalformat, width, height, functionName);
-    applyStencilTest();
 }
 
 WebGLAny WebGL2RenderingContext::getTexParameter(GCGLenum target, GCGLenum pname)

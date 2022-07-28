@@ -2442,8 +2442,10 @@ void WebGLRenderingContextBase::disable(GCGLenum cap)
         return;
     if (cap == GraphicsContextGL::STENCIL_TEST) {
         m_stencilEnabled = false;
+#if !USE(ANGLE)
         applyStencilTest();
         return;
+#endif
     }
     if (cap == GraphicsContextGL::SCISSOR_TEST)
         m_scissorEnabled = false;
@@ -2925,8 +2927,10 @@ void WebGLRenderingContextBase::enable(GCGLenum cap)
         return;
     if (cap == GraphicsContextGL::STENCIL_TEST) {
         m_stencilEnabled = true;
+#if !USE(ANGLE)
         applyStencilTest();
         return;
+#endif
     }
     if (cap == GraphicsContextGL::SCISSOR_TEST)
         m_scissorEnabled = true;
@@ -2993,7 +2997,9 @@ void WebGLRenderingContextBase::framebufferRenderbuffer(GCGLenum target, GCGLenu
 #endif
 
     framebufferBinding->setAttachmentForBoundFramebuffer(target, attachment, buffer);
+#if !USE(ANGLE)
     applyStencilTest();
+#endif
 }
 
 void WebGLRenderingContextBase::framebufferTexture2D(GCGLenum target, GCGLenum attachment, GCGLenum textarget, WebGLTexture* texture, GCGLint level)
@@ -3023,7 +3029,9 @@ void WebGLRenderingContextBase::framebufferTexture2D(GCGLenum target, GCGLenum a
 #endif
 
     framebufferBinding->setAttachmentForBoundFramebuffer(target, attachment, textarget, texture, level, 0);
+#if !USE(ANGLE)
     applyStencilTest();
+#endif
 }
 
 void WebGLRenderingContextBase::frontFace(GCGLenum mode)
@@ -4709,7 +4717,9 @@ void WebGLRenderingContextBase::renderbufferStorage(GCGLenum target, GCGLenum in
     if (!validateSize(functionName, width, height))
         return;
     renderbufferStorageImpl(target, 0, internalformat, width, height, functionName);
+#if !USE(ANGLE)
     applyStencilTest();
+#endif
 }
 
 void WebGLRenderingContextBase::renderbufferStorageImpl(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, const char* functionName)
@@ -8059,6 +8069,7 @@ void WebGLRenderingContextBase::synthesizeLostContextGLError(GCGLenum error, con
     m_contextLostState->errors.add(error);
 }
 
+#if !USE(ANGLE)
 void WebGLRenderingContextBase::applyStencilTest()
 {
     bool haveStencilBuffer = false;
@@ -8072,6 +8083,7 @@ void WebGLRenderingContextBase::applyStencilTest()
     }
     enableOrDisable(GraphicsContextGL::STENCIL_TEST, m_stencilEnabled && haveStencilBuffer);
 }
+#endif
 
 void WebGLRenderingContextBase::enableOrDisable(GCGLenum capability, bool enable)
 {
@@ -8121,7 +8133,9 @@ void WebGLRenderingContextBase::setFramebuffer(const AbstractLocker&, GCGLenum t
 
     if (target == GraphicsContextGL::FRAMEBUFFER || target == GraphicsContextGL::DRAW_FRAMEBUFFER) {
         m_framebufferBinding = buffer;
+#if !USE(ANGLE)
         applyStencilTest();
+#endif
     }
     m_context->bindFramebuffer(target, objectOrZero(buffer));
 }
