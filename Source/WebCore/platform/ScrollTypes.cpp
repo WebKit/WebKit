@@ -94,4 +94,17 @@ TextStream& operator<<(TextStream& ts, ScrollbarMode behavior)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, OverflowAnchor behavior)
+{
+    switch (behavior) {
+    case OverflowAnchor::Auto:
+        ts << 0;
+        break;
+    case OverflowAnchor::None:
+        ts << 1;
+        break;
+    }
+    return ts;
+}
+
 } // namespace WebCore

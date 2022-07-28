@@ -77,6 +77,11 @@ enum class ScrollIsAnimated : uint8_t {
     Yes
 };
 
+enum class OverflowAnchor : uint8_t {
+    Auto,
+    None
+};
+
 inline ScrollDirection logicalToPhysical(ScrollLogicalDirection direction, bool isVertical, bool isFlipped)
 {
     switch (direction) {
@@ -323,6 +328,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollClamping);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollBehaviorForFixedElements);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollElasticity);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollbarMode);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, OverflowAnchor);
 
 struct ScrollPositionChangeOptions {
     ScrollType type;

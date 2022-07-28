@@ -243,6 +243,8 @@ public:
 
     unsigned containerType : 2; // ContainerType
 
+    unsigned overflowAnchor : 1; // Scroll Anchoring- OverflowAnchor
+
     Vector<AtomString> containerNames;
 
     GapLength columnGap;

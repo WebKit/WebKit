@@ -3832,6 +3832,19 @@
                 "url": "https://www.w3.org/TR/css-overflow-3/#propdef-overflow"
             }
         },
+        "overflow-anchor": {
+            "codegen-properties": {
+                "settings-flag": "cssScrollAnchoringEnabled"
+            },
+            "values": [
+                "none",
+                "auto"
+            ],
+            "specification": {
+                "category": "css-scroll-anchoring",
+                "url": "https://www.w3.org/TR/css-scroll-anchoring-1/#propdef-overflow-anchor"
+            }
+        },
         "overflow-wrap": {
             "codegen-properties": {
                 "aliases": [
@@ -7969,6 +7982,11 @@
             "shortname": "CSS Ruby",
             "longname": "CSS Ruby Layout Module",
             "url": "https://www.w3.org/TR/css-ruby-1/"
+        },
+        "css-scroll-anchoring": {
+            "shortname": "CSS Scroll Anchoring",
+            "longname": "CSS Scroll Anchoring Module",
+            "url": "https://www.w3.org/TR/css-scroll-anchoring-1/"
         },
         "css-scroll-snap": {
             "shortname": "CSS Scroll Snap",
