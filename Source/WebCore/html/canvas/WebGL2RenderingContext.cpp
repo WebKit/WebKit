@@ -1963,8 +1963,15 @@ WebGLAny WebGL2RenderingContext::getSamplerParameter(WebGLSampler& sampler, GCGL
     case GraphicsContextGL::TEXTURE_MAX_LOD:
     case GraphicsContextGL::TEXTURE_MIN_LOD:
         return m_context->getSamplerParameterf(sampler.object(), pname);
+    // EXT_texture_filter_anisotropic
+    case GraphicsContextGL::TEXTURE_MAX_ANISOTROPY_EXT:
+        if (!m_extTextureFilterAnisotropic) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getSamplerParameter", "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
+            return nullptr;
+        }
+        return m_context->getSamplerParameterf(sampler.object(), pname);
     default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getSamplerParameter", "Invalid pname");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getSamplerParameter", "invalid parameter name");
         return nullptr;
     }
 }
@@ -2371,18 +2378,21 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
             return nullptr;
         }
         return m_boundIndexedUniformBuffers[index];
-    // OES_draw_buffers_indexed state
-    // ANGLE will synthesize an error if the extension
-    // was not enabled or the index is out of bounds
+    // OES_draw_buffers_indexed
     case GraphicsContextGL::BLEND_EQUATION_RGB:
     case GraphicsContextGL::BLEND_EQUATION_ALPHA:
     case GraphicsContextGL::BLEND_SRC_RGB:
     case GraphicsContextGL::BLEND_SRC_ALPHA:
     case GraphicsContextGL::BLEND_DST_RGB:
     case GraphicsContextGL::BLEND_DST_ALPHA:
-        return m_context->getIntegeri(target, index);
     case GraphicsContextGL::COLOR_WRITEMASK:
-        return getIndexedBooleanArrayParameter(target, index);
+        if (!m_oesDrawBuffersIndexed) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getIndexedParameter", "invalid parameter name, OES_draw_buffers_indexed not enabled");
+            return nullptr;
+        }
+        if (target == GraphicsContextGL::COLOR_WRITEMASK)
+            return getIndexedBooleanArrayParameter(target, index);
+        return m_context->getIntegeri(target, index);
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getIndexedParameter", "invalid parameter name");
         return nullptr;
