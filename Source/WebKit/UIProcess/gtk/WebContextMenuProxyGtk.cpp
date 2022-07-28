@@ -73,7 +73,8 @@ static inline void popdownMenuWidget(GtkWidget* widget)
 
 static inline bool menuWidgetHasItems(GtkWidget* widget)
 {
-    return g_menu_model_get_n_items(gtk_popover_menu_get_menu_model(GTK_POPOVER_MENU(widget)));
+    GMenuModel* model = gtk_popover_menu_get_menu_model(GTK_POPOVER_MENU(widget));
+    return model ? g_menu_model_get_n_items(model) : 0;
 }
 
 static inline void bindModelToMenuWidget(GtkWidget* widget, GMenuModel* model)

@@ -46,6 +46,9 @@ template <> void derefGPtr(GtkWidgetPath* ptr);
 #if USE(GTK4)
 template <> GskRenderNode* refGPtr(GskRenderNode* ptr);
 template <> void derefGPtr(GskRenderNode* ptr);
+
+template <> GdkEvent* refGPtr(GdkEvent* ptr);
+template <> void derefGPtr(GdkEvent* ptr);
 #endif
 
 }
