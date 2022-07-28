@@ -205,8 +205,9 @@ static bool shouldAutofocus(const Element& element)
         return false;
 
     auto& document = element.document();
-    if (!element.isConnected() || !document.hasBrowsingContext())
+    if (!element.isInDocumentTree() || !document.hasBrowsingContext())
         return false;
+
     if (document.isSandboxed(SandboxAutomaticFeatures)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
         document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control because the form's frame is sandboxed and the 'allow-scripts' permission is not set."_s);
@@ -3201,13 +3202,32 @@ static bool isProgramaticallyFocusable(Element& element)
     return element.supportsFocus();
 }
 
-static RefPtr<Element> findFirstProgramaticallyFocusableElementInComposedTree(Element& host)
+// https://html.spec.whatwg.org/multipage/interaction.html#autofocus-delegate
+static RefPtr<Element> autoFocusDelegate(ShadowRoot& target)
 {
-    ASSERT(host.shadowRoot());
-    for (auto& node : composedTreeDescendants(host)) {
-        if (!is<Element>(node))
+    for (auto& element : descendantsOfType<Element>(target)) {
+        if (!element.hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
             continue;
-        auto& element = downcast<Element>(node);
+        if (auto root = shadowRootWithDelegatesFocus(element)) {
+            if (auto target = autoFocusDelegate(*root))
+                return target;
+        }
+        if (isProgramaticallyFocusable(element))
+            return &element;
+    }
+    return nullptr;
+}
+
+// https://html.spec.whatwg.org/multipage/interaction.html#focus-delegate
+static RefPtr<Element> focusDelegateFromShadowHost(ShadowRoot& target)
+{
+    if (auto element = autoFocusDelegate(target))
+        return element;
+    for (auto& element : descendantsOfType<Element>(target)) {
+        if (auto root = shadowRootWithDelegatesFocus(element)) {
+            if (auto target = focusDelegateFromShadowHost(*root))
+                return target;
+        }
         if (isProgramaticallyFocusable(element))
             return &element;
     }
@@ -3244,7 +3264,7 @@ void Element::focus(const FocusOptions& options)
             return;
         }
 
-        newTarget = findFirstProgramaticallyFocusableElementInComposedTree(*this);            
+        newTarget = focusDelegateFromShadowHost(*root);
         if (!newTarget)
             return;
     } else if (!isProgramaticallyFocusable(*newTarget))
