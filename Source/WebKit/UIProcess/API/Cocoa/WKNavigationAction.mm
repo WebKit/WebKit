@@ -219,4 +219,22 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::Synthe
     return wrapper(_navigationAction->mainFrameNavigation());
 }
 
+
+- (void)_storeSKAdNetworkAttribution
+{
+    auto* mainFrameNavigation = _navigationAction->mainFrameNavigation();
+    if (!mainFrameNavigation)
+        return;
+    auto& privateClickMeasurement = mainFrameNavigation->privateClickMeasurement();
+    if (!privateClickMeasurement || !privateClickMeasurement->isSKAdNetworkAttribution())
+        return;
+    auto* sourceFrame = _navigationAction->sourceFrame();
+    if (!sourceFrame)
+        return;
+    auto* page = sourceFrame->page();
+    if (!page)
+        return;
+    page->websiteDataStore().storePrivateClickMeasurement(*privateClickMeasurement);
+}
+
 @end

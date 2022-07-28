@@ -26,6 +26,7 @@
 #import "config.h"
 #import "TestNavigationDelegate.h"
 
+#import "PlatformUtilities.h"
 #import "Utilities.h"
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
@@ -96,6 +97,15 @@
         _didReceiveAuthenticationChallenge(webView, challenge, completionHandler);
     else
         completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+}
+
+- (void)allowAnyTLSCertificate
+{
+    EXPECT_FALSE(self.didReceiveAuthenticationChallenge);
+    self.didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
 }
 
 - (void)waitForDidStartProvisionalNavigation
