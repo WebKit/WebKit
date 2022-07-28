@@ -10446,7 +10446,6 @@ void WebPageProxy::writePromisedAttachmentToPasteboard(WebCore::PromisedAttachme
 void WebPageProxy::requestAttachmentIcon(const String& identifier, const String& contentType, const String& fileName, const String& title, const FloatSize& requestedSize)
 {
     MESSAGE_CHECK(m_process, m_preferences->attachmentElementEnabled());
-    MESSAGE_CHECK(m_process, m_process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Disabled);
 
     FloatSize size = requestedSize;
     ShareableBitmap::Handle handle;
@@ -10507,7 +10506,6 @@ void WebPageProxy::updateAttachmentThumbnail(const String& identifier, const Ref
 void WebPageProxy::registerAttachmentIdentifierFromData(const String& identifier, const String& contentType, const String& preferredFileName, const IPC::SharedBufferReference& data)
 {
     MESSAGE_CHECK(m_process, m_preferences->attachmentElementEnabled());
-    MESSAGE_CHECK(m_process, m_process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Disabled);
     MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(identifier));
 
     if (attachmentForIdentifier(identifier))
@@ -10523,7 +10521,6 @@ void WebPageProxy::registerAttachmentIdentifierFromData(const String& identifier
 void WebPageProxy::registerAttachmentIdentifierFromFilePath(const String& identifier, const String& contentType, const String& filePath)
 {
     MESSAGE_CHECK(m_process, m_preferences->attachmentElementEnabled());
-    MESSAGE_CHECK(m_process, m_process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Disabled);
     MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(identifier));
 
     if (attachmentForIdentifier(identifier))
@@ -10542,7 +10539,6 @@ void WebPageProxy::registerAttachmentIdentifierFromFilePath(const String& identi
 void WebPageProxy::registerAttachmentIdentifier(const String& identifier)
 {
     MESSAGE_CHECK(m_process, m_preferences->attachmentElementEnabled());
-    MESSAGE_CHECK(m_process, m_process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Disabled);
     MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(identifier));
 
     if (!attachmentForIdentifier(identifier))
@@ -10552,7 +10548,6 @@ void WebPageProxy::registerAttachmentIdentifier(const String& identifier)
 void WebPageProxy::registerAttachmentsFromSerializedData(Vector<WebCore::SerializedAttachmentData>&& data)
 {
     MESSAGE_CHECK(m_process, m_preferences->attachmentElementEnabled());
-    MESSAGE_CHECK(m_process, m_process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Disabled);
 
     for (auto& serializedData : data) {
         auto identifier = WTFMove(serializedData.identifier);
@@ -10569,7 +10564,6 @@ void WebPageProxy::registerAttachmentsFromSerializedData(Vector<WebCore::Seriali
 void WebPageProxy::cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier)
 {
     MESSAGE_CHECK(m_process, m_preferences->attachmentElementEnabled());
-    MESSAGE_CHECK(m_process, m_process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Disabled);
     MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(fromIdentifier));
     MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(toIdentifier));
 
@@ -10601,7 +10595,6 @@ void WebPageProxy::serializedAttachmentDataForIdentifiers(const Vector<String>& 
     Vector<WebCore::SerializedAttachmentData> serializedData;
 
     MESSAGE_CHECK_COMPLETION(m_process, m_preferences->attachmentElementEnabled(), completionHandler(WTFMove(serializedData)));
-    MESSAGE_CHECK_COMPLETION(m_process, m_process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Disabled, completionHandler(WTFMove(serializedData)));
 
     for (const auto& identifier : identifiers) {
         auto attachment = attachmentForIdentifier(identifier);
@@ -10646,7 +10639,6 @@ void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&&, Ref<API::Atta
 void WebPageProxy::didInsertAttachmentWithIdentifier(const String& identifier, const String& source, bool hasEnclosingImage)
 {
     MESSAGE_CHECK(m_process, m_preferences->attachmentElementEnabled());
-    MESSAGE_CHECK(m_process, m_process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Disabled);
     MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(identifier));
 
     auto attachment = ensureAttachment(identifier);
@@ -10661,7 +10653,6 @@ void WebPageProxy::didInsertAttachmentWithIdentifier(const String& identifier, c
 void WebPageProxy::didRemoveAttachmentWithIdentifier(const String& identifier)
 {
     MESSAGE_CHECK(m_process, m_preferences->attachmentElementEnabled());
-    MESSAGE_CHECK(m_process, m_process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Disabled);
     MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(identifier));
 
     if (auto attachment = attachmentForIdentifier(identifier))
