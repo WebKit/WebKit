@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.36.5
+================
+
+What's new in WebKitGTK 2.36.5?
+
+  - Add support for PAC proxy in the WebDriver implementation.
+  - Fix video playback when loaded through custom URIs, this fixes video
+    playback in the Yelp documentation browser.
+  - Fix WebKitWebView::context-menu when using GTK4.
+  - Fix LTO builds with GCC.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.36.4
 ================
 
