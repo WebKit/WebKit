@@ -762,21 +762,35 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
 template<typename ViewClass>
 ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSubarray(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    DeferTermination deferScope(vm);
+    // https://tc39.es/ecma262/#sec-%typedarray%.prototype.subarray
+
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // 22.2.3.23
+    JSValue start = callFrame->argument(0);
+    if (UNLIKELY(!start.isInt32())) {
+        start = jsNumber(start.toIntegerOrInfinity(globalObject));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    JSValue finish = callFrame->argument(1);
+    if (!finish.isUndefined()) {
+        if (UNLIKELY(!finish.isInt32())) {
+            finish = jsNumber(finish.toIntegerOrInfinity(globalObject));
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+    }
 
     ViewClass* thisObject = jsCast<ViewClass*>(callFrame->thisValue());
     if (UNLIKELY(thisObject->isDetached()))
         return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
-
     // Get the length here; later assert that the length didn't change.
     size_t thisLength = thisObject->length();
 
-    size_t begin = argumentClampedIndexFromStartOrEnd(globalObject, callFrame->argument(0), thisLength);
+    ASSERT(start.isNumber());
+    ASSERT(finish.isUndefined() || finish.isNumber());
+    size_t begin = argumentClampedIndexFromStartOrEnd(globalObject, start, thisLength);
     RETURN_IF_EXCEPTION(scope, { });
-    size_t end = argumentClampedIndexFromStartOrEnd(globalObject, callFrame->argument(1), thisLength, thisLength);
+    size_t end = argumentClampedIndexFromStartOrEnd(globalObject, finish, thisLength, thisLength);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (UNLIKELY(thisObject->isDetached()))
