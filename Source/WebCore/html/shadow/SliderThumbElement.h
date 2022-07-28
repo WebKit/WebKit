@@ -58,11 +58,11 @@ public:
 
 private:
     SliderThumbElement(Document&);
+    bool isSliderThumbElement() const final { return true; }
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
     bool isDisabledFormControl() const final;
     bool matchesReadWritePseudoClass() const final;
-    RefPtr<Element> focusDelegate() final;
 
     void defaultEventHandler(Event&) final;
     bool willRespondToMouseMoveEvents() const final;
@@ -118,6 +118,11 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SliderThumbElement)
+    static bool isType(const WebCore::Element& element) { return element.isSliderThumbElement(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SliderContainerElement)
     static bool isType(const WebCore::Element& element) { return element.isSliderContainerElement(); }
