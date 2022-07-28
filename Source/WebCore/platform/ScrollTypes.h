@@ -77,6 +77,11 @@ enum class ScrollIsAnimated : uint8_t {
     Yes
 };
 
+enum class OverflowAnchor : uint8_t {
+    Auto,
+    None
+};
+
 inline ScrollDirection logicalToPhysical(ScrollLogicalDirection direction, bool isVertical, bool isFlipped)
 {
     switch (direction) {

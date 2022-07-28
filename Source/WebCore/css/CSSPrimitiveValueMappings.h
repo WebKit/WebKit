@@ -1907,6 +1907,37 @@ template<> inline CSSPrimitiveValue::operator OverscrollBehavior() const
     return OverscrollBehavior::Auto;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(OverflowAnchor anchor)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    switch (anchor) {
+    case OverflowAnchor::None:
+        m_value.valueID = CSSValueNone;
+        break;
+    case OverflowAnchor::Auto:
+        m_value.valueID = CSSValueAuto;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator OverflowAnchor() const
+{
+    ASSERT(isValueID());
+
+    switch (m_value.valueID) {
+    case CSSValueNone:
+        return OverflowAnchor::None;
+    case CSSValueAuto:
+        return OverflowAnchor::Auto;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return OverflowAnchor::Auto;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BreakBetween e)
     : CSSValue(PrimitiveClass)
 {
