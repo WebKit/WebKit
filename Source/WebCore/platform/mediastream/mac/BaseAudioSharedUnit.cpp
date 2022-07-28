@@ -244,7 +244,8 @@ OSStatus BaseAudioSharedUnit::resume()
             return;
 
         weakThis->forEachClient([](auto& client) {
-            client.setMuted(false);
+            if (client.canResumeAfterInterruption())
+                client.setMuted(false);
         });
     });
 
@@ -261,6 +262,7 @@ OSStatus BaseAudioSharedUnit::suspend()
     stopInternal();
 
     forEachClient([](auto& client) {
+        client.setCanResumeAfterInterruption(client.isProducingData());
         client.setMuted(true);
     });
 

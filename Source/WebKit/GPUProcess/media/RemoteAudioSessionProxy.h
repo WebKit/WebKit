@@ -77,6 +77,8 @@ private:
     using SetActiveCompletion = CompletionHandler<void(bool)>;
     void tryToSetActive(bool, SetActiveCompletion&&);
     void setIsPlayingToBluetoothOverride(std::optional<bool>&& value);
+    void triggerBeginInterruptionForTesting();
+    void triggerEndInterruptionForTesting();
 
     RemoteAudioSessionProxyManager& audioSessionManager();
     IPC::Connection& connection();

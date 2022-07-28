@@ -4555,9 +4555,18 @@ bool Internals::isPlayerMuted(const HTMLMediaElement& element) const
 void Internals::beginAudioSessionInterruption()
 {
 #if USE(AUDIO_SESSION)
-    AudioSession::sharedSession().beginInterruption();
+    AudioSession::sharedSession().beginInterruptionForTesting();
 #endif
 }
+
+
+void Internals::endAudioSessionInterruption()
+{
+#if USE(AUDIO_SESSION)
+    AudioSession::sharedSession().endInterruptionForTesting();
+#endif
+}
+
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(WEB_AUDIO)

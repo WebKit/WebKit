@@ -81,6 +81,8 @@ static CaptureSourceOrError initializeCoreAudioCaptureSource(Ref<CoreAudioCaptur
 
 CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
+    CoreAudioCaptureSourceFactory::singleton().setOverrideUnit(nullptr);
+
 #if PLATFORM(MAC)
     auto device = CoreAudioCaptureDeviceManager::singleton().coreAudioDeviceWithUID(deviceID);
     if (!device)
@@ -99,6 +101,8 @@ CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, String&& 
 
 CaptureSourceOrError CoreAudioCaptureSource::createForTesting(String&& deviceID, AtomString&& label, String&& hashSalt, const MediaConstraints* constraints, BaseAudioSharedUnit& overrideUnit, PageIdentifier pageIdentifier)
 {
+    CoreAudioCaptureSourceFactory::singleton().setOverrideUnit(&overrideUnit);
+
     auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), WTFMove(label), WTFMove(hashSalt), 0, &overrideUnit, pageIdentifier));
     return initializeCoreAudioCaptureSource(WTFMove(source), constraints);
 }
@@ -113,17 +117,32 @@ const BaseAudioSharedUnit& CoreAudioCaptureSource::unit() const
     return m_overrideUnit ? *m_overrideUnit : CoreAudioSharedUnit::singleton();
 }
 
+CoreAudioCaptureSourceFactory::CoreAudioCaptureSourceFactory()
+{
+    AudioSession::sharedSession().addInterruptionObserver(*this);
+}
+
+CoreAudioCaptureSourceFactory::~CoreAudioCaptureSourceFactory()
+{
+    AudioSession::sharedSession().removeInterruptionObserver(*this);
+}
+
+BaseAudioSharedUnit& CoreAudioCaptureSourceFactory::unit()
+{
+    return m_overrideUnit ? *m_overrideUnit : CoreAudioSharedUnit::singleton();
+}
+
 void CoreAudioCaptureSourceFactory::beginInterruption()
 {
     ensureOnMainThread([] {
-        CoreAudioSharedUnit::singleton().suspend();
+        CoreAudioCaptureSourceFactory::singleton().unit().suspend();
     });
 }
 
 void CoreAudioCaptureSourceFactory::endInterruption()
 {
     ensureOnMainThread([] {
-        CoreAudioSharedUnit::singleton().resume();
+        CoreAudioCaptureSourceFactory::singleton().unit().resume();
     });
 }
 
@@ -230,6 +249,7 @@ CoreAudioCaptureSource::~CoreAudioCaptureSource()
 
 void CoreAudioCaptureSource::startProducingData()
 {
+    m_canResumeAfterInterruption = true;
     initializeToStartProducingData();
     unit().startProducingData();
     m_currentSettings = { };
