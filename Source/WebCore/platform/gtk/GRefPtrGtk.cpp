@@ -89,6 +89,19 @@ template <> void derefGPtr(GskRenderNode* ptr)
     if (ptr)
         gsk_render_node_unref(ptr);
 }
+
+template <> GdkEvent* refGPtr(GdkEvent* ptr)
+{
+    if (ptr)
+        gdk_event_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GdkEvent* ptr)
+{
+    if (ptr)
+        gdk_event_unref(ptr);
+}
 #endif
 
 }
