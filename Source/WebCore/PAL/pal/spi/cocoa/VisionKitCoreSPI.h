@@ -150,7 +150,7 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, readonly) BOOL shouldWrap;
 @end
 
-#if HAVE(VK_IMAGE_TRANSLATION_SUPPORT)
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #if __has_include(<VisionKitCore/VKCImageAnalysisTranslation.h>)
 #import <VisionKitCore/VKCImageAnalysisTranslation.h>
@@ -173,10 +173,6 @@ NS_ASSUME_NONNULL_END
 @interface VKCTranslatedParagraph (Staging_93280734)
 @property (nonatomic, readonly) BOOL isPassthrough;
 @end
-
-#endif // HAVE(VK_IMAGE_TRANSLATION_SUPPORT)
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #if __has_include(<VisionKitCore/VKImageClass_Private.h>)
 #import <VisionKitCore/VKImageClass_Private.h>
