@@ -26,13 +26,13 @@ jobs:
           - runner: macos-11
             lto_flag: -flto='full'
             cpu: sandybridge
-            label: bun-webkit-macos-amd64-lto-generic
+            label: bun-webkit-macos-amd64-lto-baseline
             brew_prefix: /usr/local/opt
             march: "-march=sandybridge"
           - runner: macos-11
             lto_flag: ""
             cpu: sandybridge
-            label: bun-webkit-macos-amd64-generic
+            label: bun-webkit-macos-amd64-baseline
             brew_prefix: /usr/local/opt
             march: "-march=sandybridge"
           - runner: macos-11
@@ -138,7 +138,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: ${{ matrix.cpu == 'sandybridge' }}
         with:
-          name: bun-webkit-linux-amd64-generic
+          name: bun-webkit-linux-amd64-baseline
           path: ${{runner.temp}}/bun-webkit.tar.gz
   linux-arm64:
     name: Linux arm64
@@ -178,8 +178,8 @@ jobs:
           path: ${{runner.temp}}/bun-webkit-linux-amd64
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-linux-amd64-generic
-          path: ${{runner.temp}}/bun-webkit-linux-amd64-generic
+          name: bun-webkit-linux-amd64-baseline
+          path: ${{runner.temp}}/bun-webkit-linux-amd64-baseline
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-linux-arm64
@@ -194,12 +194,12 @@ jobs:
           path: ${{runner.temp}}/bun-webkit-macos-arm64-lto
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-macos-amd64-lto-generic
-          path: ${{runner.temp}}/bun-webkit-macos-amd64-lto-generic
+          name: bun-webkit-macos-amd64-lto-baseline
+          path: ${{runner.temp}}/bun-webkit-macos-amd64-lto-baseline
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-macos-amd64-generic
-          path: ${{runner.temp}}/bun-webkit-macos-amd64-generic
+          name: bun-webkit-macos-amd64-baseline
+          path: ${{runner.temp}}/bun-webkit-macos-amd64-baseline
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-amd64
@@ -212,14 +212,14 @@ jobs:
       - name: Rename files
         run: |
           mv ${{runner.temp}}/bun-webkit-linux-amd64/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
-          mv ${{runner.temp}}/bun-webkit-linux-amd64-generic/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64-generic.tar.gz
+          mv ${{runner.temp}}/bun-webkit-linux-amd64-baseline/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64-baseline.tar.gz
           mv ${{runner.temp}}/bun-webkit-linux-arm64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-arm64/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-arm64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
-          mv ${{runner.temp}}/bun-webkit-macos-amd64-lto-generic/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-lto-generic.tar.gz
-          mv ${{runner.temp}}/bun-webkit-macos-amd64-generic/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-generic.tar.gz
+          mv ${{runner.temp}}/bun-webkit-macos-amd64-lto-baseline/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-lto-baseline.tar.gz
+          mv ${{runner.temp}}/bun-webkit-macos-amd64-baseline/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-baseline.tar.gz
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -228,11 +228,11 @@ jobs:
           tag_name: "latest"
           files: |
             ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
-            ${{runner.temp}}/bun-webkit-linux-amd64-generic.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-amd64-baseline.tar.gz
             ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-amd64-lto-generic
-            ${{runner.temp}}/bun-webkit-macos-amd64-generic
+            ${{runner.temp}}/bun-webkit-macos-amd64-lto-baseline.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-amd64-baseline.tar.gz
