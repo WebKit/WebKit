@@ -323,7 +323,7 @@ void FrameView::init()
 {
     reset();
 
-    m_size = LayoutSize();
+    m_lastUsedSizeForLayout = { };
 
     // Propagate the scrolling mode to the view.
     auto* ownerElement = frame().ownerElement();
@@ -1268,11 +1268,11 @@ void FrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
     }
     adjustScrollbarsForLayout(firstLayout);
         
-    auto oldSize = m_size;
-    LayoutSize newSize = layoutSize();
+    auto oldSize = m_lastUsedSizeForLayout;
+    auto newSize = layoutSize();
     if (oldSize != newSize) {
-        m_size = newSize;
-        LOG_WITH_STREAM(Layout, stream << "  layout size changed from " << oldSize << " to " << newSize);
+        m_lastUsedSizeForLayout = newSize;
+        LOG_WITH_STREAM(Layout, stream << "  size for layout changed from " << oldSize << " to " << newSize);
         layoutContext().setNeedsFullRepaint();
         if (!firstLayout)
             markRootOrBodyRendererDirty();
@@ -2733,7 +2733,7 @@ void FrameView::updateScriptedAnimationsAndTimersThrottlingState(const IntRect& 
         return;
 
     // We don't throttle zero-size or display:none frames because those are usually utility frames.
-    bool shouldThrottle = visibleRect.isEmpty() && !m_size.isEmpty() && frame().ownerRenderer();
+    bool shouldThrottle = visibleRect.isEmpty() && !m_lastUsedSizeForLayout.isEmpty() && frame().ownerRenderer();
     document->setTimerThrottlingEnabled(shouldThrottle);
 
     auto* page = frame().page();

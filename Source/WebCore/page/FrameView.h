@@ -918,7 +918,7 @@ private:
 
     MonotonicTime m_lastPaintTime;
 
-    LayoutSize m_size;
+    LayoutSize m_lastUsedSizeForLayout;
 
     Color m_baseBackgroundColor { Color::white };
     IntSize m_lastViewportSize;
