@@ -15493,7 +15493,7 @@
 				5C1579D227165B2F00ED5280 /* Sources */,
 				5C1579D427165B2F00ED5280 /* Frameworks */,
 				5C1579D527165B2F00ED5280 /* Process webpushd Entitlements */,
-				6508960F28482C6A00A91844 /* Copy launchd plist and create symlink */,
+				6508960F28482C6A00A91844 /* Copy launchd plist */,
 			);
 			buildRules = (
 			);
@@ -15514,7 +15514,7 @@
 				5CAF7A9D26F93A750003F19E /* Sources */,
 				5CAF7A9F26F93A750003F19E /* Frameworks */,
 				5C1578E6270E129400ED5280 /* Process adattributiond Entitlements */,
-				6508961028482D0900A91844 /* Copy launchd plist and create symlink */,
+				6508961028482D0900A91844 /* Copy launchd plist */,
 			);
 			buildRules = (
 			);
@@ -16144,7 +16144,7 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
 		};
-		6508960F28482C6A00A91844 /* Copy launchd plist and create symlink */ = {
+		6508960F28482C6A00A91844 /* Copy launchd plist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
 			files = (
@@ -16152,10 +16152,10 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Scripts/copy-launchd-plist-and-create-symlink.sh",
+				"$(SRCROOT)/Scripts/copy-launchd-plist.sh",
 				"$(SRCROOT)/$(LAUNCHD_PLIST_INPUT_FILE)",
 			);
-			name = "Copy launchd plist and create symlink";
+			name = "Copy launchd plist";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -16163,9 +16163,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/copy-launchd-plist-and-create-symlink.sh\n";
+			shellScript = "Scripts/copy-launchd-plist.sh\n";
 		};
-		6508961028482D0900A91844 /* Copy launchd plist and create symlink */ = {
+		6508961028482D0900A91844 /* Copy launchd plist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
 			files = (
@@ -16173,10 +16173,10 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Scripts/copy-launchd-plist-and-create-symlink.sh",
+				"$(SRCROOT)/Scripts/copy-launchd-plist.sh",
 				"$(SRCROOT)/$(LAUNCHD_PLIST_INPUT_FILE)",
 			);
-			name = "Copy launchd plist and create symlink";
+			name = "Copy launchd plist";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -16184,7 +16184,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/copy-launchd-plist-and-create-symlink.sh\n";
+			shellScript = "Scripts/copy-launchd-plist.sh\n";
 		};
 		6517571527C9AB4C00D9FE40 /* Copy Frameworks to Secondary Path */ = {
 			isa = PBXShellScriptBuildPhase;
