@@ -223,6 +223,11 @@ sub buildUpToProject
         if (!configuredXcodeWorkspace()) {
             system("$FindBin::Bin/set-webkit-configuration", "--workspace=" . sourceDir() . "/WebKit.xcworkspace") == 0 or die;
         }
+        # By convention, projects that support this build workflow
+        # (JavaScriptCore, WebGPU) have a scheme which builds that project
+        # and its implicit dependencies.
+        my $schemeName = "Everything up to $projectName";
+
         my $compilerFlags = 'GCC_PREPROCESSOR_ADDITIONS="';
         if ($forceCLoop) {
             $compilerFlags .= "ENABLE_JIT=0 ENABLE_C_LOOP=1";
@@ -241,7 +246,7 @@ sub buildUpToProject
             $extraCommands .= " " . $arg;
         }
 
-        my $command = "make USE_WORKSPACE=YES " . (lc configuration()) . " " . $compilerFlags . " " . $extraCommands;
+        my $command = "make SCHEME=\"$schemeName\" " . (lc configuration()) . " " . $compilerFlags . " " . $extraCommands;
 
         print "\n";
         print "building ", $projectName, "\n";

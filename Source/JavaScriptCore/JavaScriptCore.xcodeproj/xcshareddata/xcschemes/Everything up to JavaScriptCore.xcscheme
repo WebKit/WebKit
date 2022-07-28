@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1330"
+   LastUpgradeVersion = "1400"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "NO">
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -14,10 +14,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1CEBD7E22716AFBA00A5254D"
-               BuildableName = "WebGPU.framework"
-               BlueprintName = "WebGPU"
-               ReferencedContainer = "container:WebGPU.xcodeproj">
+               BlueprintIdentifier = "932F5B3E0822A1C700736975"
+               BuildableName = "JavaScriptCore.framework"
+               BlueprintName = "JavaScriptCore"
+               ReferencedContainer = "container:JavaScriptCore.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "932F5BE30822A1C700736975"
+               BuildableName = "All"
+               BlueprintName = "All"
+               ReferencedContainer = "container:JavaScriptCore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +64,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1CEBD7E22716AFBA00A5254D"
-            BuildableName = "WebGPU.framework"
-            BlueprintName = "WebGPU"
-            ReferencedContainer = "container:WebGPU.xcodeproj">
+            BlueprintIdentifier = "932F5B3E0822A1C700736975"
+            BuildableName = "JavaScriptCore.framework"
+            BlueprintName = "JavaScriptCore"
+            ReferencedContainer = "container:JavaScriptCore.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
