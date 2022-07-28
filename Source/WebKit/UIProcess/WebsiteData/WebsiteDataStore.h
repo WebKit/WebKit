@@ -75,6 +75,7 @@ class CertificateInfo;
 class RegistrableDomain;
 class SecurityOrigin;
 class LocalWebLockRegistry;
+class PrivateClickMeasurement;
 
 struct MockWebAuthenticationConfiguration;
 struct NotificationData;
@@ -153,6 +154,7 @@ public:
     void isResourceLoadStatisticsEphemeral(CompletionHandler<void(bool)>&&) const;
 
     void setPrivateClickMeasurementDebugMode(bool);
+    void storePrivateClickMeasurement(const WebCore::PrivateClickMeasurement&);
 
     uint64_t perOriginStorageQuota() const { return m_resolvedConfiguration->perOriginStorageQuota(); }
     uint64_t perThirdPartyOriginStorageQuota() const;

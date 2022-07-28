@@ -1684,6 +1684,11 @@ void WebsiteDataStore::setPrivateClickMeasurementDebugMode(bool enabled)
     networkProcess().setPrivateClickMeasurementDebugMode(sessionID(), enabled);
 }
 
+void WebsiteDataStore::storePrivateClickMeasurement(const WebCore::PrivateClickMeasurement& privateClickMeasurement)
+{
+    networkProcess().send(Messages::NetworkProcess::StorePrivateClickMeasurement(sessionID(), privateClickMeasurement), 0);
+}
+
 void WebsiteDataStore::closeDatabases(CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
