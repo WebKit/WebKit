@@ -60,7 +60,6 @@ public:
 #if PLATFORM(COCOA) && USE(AVFOUNDATION)
     WEBCORE_EXPORT RefPtr<VideoFrameCV> asVideoFrameCV();
 #endif
-    WEBCORE_EXPORT RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const;
 
     virtual FloatSize presentationSize() const = 0;
     virtual uint32_t pixelFormat() const = 0;
