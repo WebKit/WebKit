@@ -1,4 +1,15 @@
 =================
+WPE WebKit 2.36.5
+=================
+
+What's new in WPE WebKit 2.36.5?
+
+  - Add support for PAC proxy in the WebDriver implementation.
+  - Fix video playback when loaded through custom URIs.
+  - Fix LTO builds with GCC.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.36.4
 =================
 
