@@ -45,11 +45,17 @@ class SubmitToEWS(View):
     def post(self, request):
         try:
             change_id = request.POST.get('change_id')
+            _log.info('SubmitToEWS::change: {}'.format(change_id))
             change_id = int(change_id)
         except:
             return HttpResponse('Invalid patch id provided, should be an integer. git hashes are not supported.')
 
-        _log.info('SubmitToEWS::change: {}'.format(change_id))
+        if change_id < 459500:
+            return HttpResponse('Patch is too old. Skipping.')
+
+        if change_id > 600000:
+            return HttpResponse('patch id is too large. Skipping.')
+
         if Change.is_change_sent_to_buildbot(change_id):
             _log.info('SubmitToEWS::change {} already submitted'.format(change_id))
             if request.POST.get('next_action') == 'return_to_bubbles':
