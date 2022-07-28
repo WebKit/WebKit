@@ -147,11 +147,11 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-44,4) size 88x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 87x14
             chunk 1 (middle anchor) text run 1 at (-43.48,15.00) startOffset 0 endOffset 18 width 86.96: "Arial (underlined)"
-      RenderSVGContainer {g} at (179,379) size 92x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,410.00)}]
-        RenderSVGContainer {use} at (179,379) size 92x38
-          RenderSVGText {text} at (-46,-31) size 92x38 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 92x37
-              chunk 1 (middle anchor) text run 1 at (-45.75,0.00) startOffset 0 endOffset 6 width 91.49: "sample"
+      RenderSVGContainer {g} at (182,383) size 86x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,410.00)}]
+        RenderSVGContainer {use} at (182,383) size 86x34
+          RenderSVGText {text} at (-43,-27) size 86x34 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 85x34
+              chunk 1 (middle anchor) text run 1 at (-42.49,0.00) startOffset 0 endOffset 6 width 84.98: "sample"
         RenderSVGText {text} at (-17,4) size 34x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 34x14
             chunk 1 (middle anchor) text run 1 at (-16.66,15.00) startOffset 0 endOffset 6 width 33.32: "Impact"

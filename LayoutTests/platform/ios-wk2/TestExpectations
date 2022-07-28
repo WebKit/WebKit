@@ -2228,3 +2228,42 @@ webkit.org/b/242904 [ Debug ] fast/dom/lazy-image-loading-document-leak.html [ P
 imported/w3c/web-platform-tests/permissions/all-permissions.html [ Failure ]
 
 webkit.org/b/229656 fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
+
+# rdar://92887847 ([ iOS16 ] 7x editing/selection/ios/* test are flaky timeouts)
+editing/selection/ios/avoid-showing-callout-menu-over-controls.html [ Pass Timeout ]
+editing/selection/ios/dispatch-mouse-events-when-modifying-selection-quirk.html [ Pass Timeout ]
+editing/selection/ios/scroll-to-reveal-selection-when-showing-software-keyboard.html [ Pass Timeout ]
+editing/selection/ios/select-all-in-readonly-input-does-not-overflow.html [ Pass Timeout ]
+editing/selection/ios/show-callout-bar-after-selecting-word.html [ Pass Timeout ]
+editing/selection/ios/show-callout-bar-after-tap.html [ Pass Timeout ]
+
+# rdar://93063355 ([ iOS16 ] 8x imported/w3c/web-platform-tests/mathml/relations/* layout tests are a constant text failure)
+imported/w3c/web-platform-tests/mathml/relations/css-styling/display-2.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/not-participating-to-parent-layout.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Failure ]
+
+# rdar://96912160 3* imported/w3c/web-platform-tests/cookies* tests are constant text failures)
+imported/w3c/web-platform-tests/cookies/attributes/path.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/value/value.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
+
+#rdar://95420649 ([BLOCKED] 2X fast/canvas/canvas-createPattern-video (layout-tests) are constant text failures)
+fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
+fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
+
+# Changed JS cookie behavior in iOS16
+http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html  [ Skip ]
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Skip ]
+http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Skip ]
+
+
+# rdar://97228542 ([ iOS16 ] imported/w3c/web-platform-tests/speech-api/idlharness.window.html is a constant text failure)
+imported/w3c/web-platform-tests/speech-api/idlharness.window.html [ Failure ]
+
+# rdar://97297483 ([ iOS16 ] fast/events/ios/rotation/zz-no-rotation.html is a constant timeout =)
+fast/events/ios/rotation/zz-no-rotation.html [ Timeout ]
