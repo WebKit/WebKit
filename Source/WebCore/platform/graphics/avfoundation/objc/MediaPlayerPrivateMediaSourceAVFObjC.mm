@@ -1330,6 +1330,21 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     m_player->renderingModeChanged();
 }
 
+void MediaPlayerPrivateMediaSourceAVFObjC::removeAudioTrack(AudioTrackPrivate& track)
+{
+    m_player->removeAudioTrack(track);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::removeVideoTrack(VideoTrackPrivate& track)
+{
+    m_player->removeVideoTrack(track);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::removeTextTrack(InbandTextTrackPrivate& track)
+{
+    m_player->removeTextTrack(track);
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::characteristicsChanged()
 {
     updateAllRenderersHaveAvailableSamples();

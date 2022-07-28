@@ -209,7 +209,7 @@ bool SourceBufferPrivateGStreamer::isActive() const
     return m_isActive;
 }
 
-void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&& initializationSegment, CompletionHandler<void()>&& completionHandler)
+void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&& initializationSegment, CompletionHandler<void(SourceBufferPrivateClient::ReceiveResult)>&& completionHandler)
 {
     m_hasReceivedInitializationSegment = true;
     for (auto& trackInfo : initializationSegment.videoTracks) {

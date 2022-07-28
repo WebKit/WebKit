@@ -1390,12 +1390,16 @@ void MediaPlayerPrivateWebM::destroyAudioRenderers()
 
 void MediaPlayerPrivateWebM::clearTracks()
 {
-    for (auto& track : m_videoTracks)
+    for (auto& track : m_videoTracks) {
         track->setSelectedChangedCallback(nullptr);
+        m_player->removeVideoTrack(*track);
+    }
     m_videoTracks.clear();
 
-    for (auto& track : m_audioTracks)
+    for (auto& track : m_audioTracks) {
         track->setEnabledChangedCallback(nullptr);
+        m_player->removeAudioTrack(*track);
+    }
     m_audioTracks.clear();
 }
 

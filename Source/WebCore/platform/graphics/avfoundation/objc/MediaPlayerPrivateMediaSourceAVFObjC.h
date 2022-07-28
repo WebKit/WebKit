@@ -49,11 +49,14 @@ typedef struct __CVBuffer *CVOpenGLTextureRef;
 
 namespace WebCore {
 
+class AudioTrackPrivate;
 class CDMSessionMediaSourceAVFObjC;
 class EffectiveRateChangedListener;
+class InbandTextTrackPrivate;
 class MediaSourcePrivateAVFObjC;
 class PixelBufferConformerCV;
 class VideoLayerManagerObjC;
+class VideoTrackPrivate;
 class WebCoreDecompressionSession;
 
 
@@ -77,6 +80,10 @@ public:
     void addAudioRenderer(AVSampleBufferAudioRenderer*);
     void removeAudioRenderer(AVSampleBufferAudioRenderer*);
     ALLOW_NEW_API_WITHOUT_GUARDS_END
+    
+    void removeAudioTrack(AudioTrackPrivate&);
+    void removeVideoTrack(VideoTrackPrivate&);
+    void removeTextTrack(InbandTextTrackPrivate&);
 
     MediaPlayer::NetworkState networkState() const override;
     MediaPlayer::ReadyState readyState() const override;

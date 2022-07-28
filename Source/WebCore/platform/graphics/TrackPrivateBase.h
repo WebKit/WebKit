@@ -65,6 +65,8 @@ public:
         if (auto* client = this->client())
             client->willRemove();
     }
+    
+    virtual bool operator==(const TrackPrivateBase&) const;
 
 #if !RELEASE_LOG_DISABLED
     virtual void setLogger(const Logger&, const void*);

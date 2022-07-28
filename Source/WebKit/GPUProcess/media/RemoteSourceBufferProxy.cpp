@@ -68,10 +68,10 @@ RemoteSourceBufferProxy::~RemoteSourceBufferProxy()
     m_connectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment, CompletionHandler<void()>&& completionHandler)
+void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment, CompletionHandler<void(ReceiveResult)>&& completionHandler)
 {
     if (!m_remoteMediaPlayerProxy) {
-        completionHandler();
+        completionHandler(ReceiveResult::ClientDisconnected);
         return;
     }
 
@@ -80,33 +80,33 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment
 
     segmentInfo.audioTracks = segment.audioTracks.map([&](auto& audioTrackInfo) {
         auto identifier = m_remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*audioTrackInfo.track);
-        ASSERT(!m_trackIds.contains(identifier));
-        ASSERT(!m_mediaDescriptions.contains(identifier));
-        m_trackIds.add(identifier, audioTrackInfo.track->id());
-        m_mediaDescriptions.add(identifier, *audioTrackInfo.description);
+        if (!m_trackIds.contains(identifier))
+            m_trackIds.add(identifier, audioTrackInfo.track->id());
+        if (!m_mediaDescriptions.contains(identifier))
+            m_mediaDescriptions.add(identifier, *audioTrackInfo.description);
         return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*audioTrackInfo.description), identifier };
     });
 
     segmentInfo.videoTracks = segment.videoTracks.map([&](auto& videoTrackInfo) {
         auto identifier = m_remoteMediaPlayerProxy->addRemoteVideoTrackProxy(*videoTrackInfo.track);
-        ASSERT(!m_trackIds.contains(identifier));
-        ASSERT(!m_mediaDescriptions.contains(identifier));
-        m_trackIds.add(identifier, videoTrackInfo.track->id());
-        m_mediaDescriptions.add(identifier, *videoTrackInfo.description);
+        if (!m_trackIds.contains(identifier))
+            m_trackIds.add(identifier, videoTrackInfo.track->id());
+        if (!m_mediaDescriptions.contains(identifier))
+            m_mediaDescriptions.add(identifier, *videoTrackInfo.description);
         return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*videoTrackInfo.description), identifier };
     });
 
     segmentInfo.textTracks = segment.textTracks.map([&](auto& textTrackInfo) {
         auto identifier = m_remoteMediaPlayerProxy->addRemoteTextTrackProxy(*textTrackInfo.track);
-        ASSERT(!m_trackIds.contains(identifier));
-        ASSERT(!m_mediaDescriptions.contains(identifier));
-        m_trackIds.add(identifier, textTrackInfo.track->id());
-        m_mediaDescriptions.add(identifier, *textTrackInfo.description);
+        if (!m_trackIds.contains(identifier))
+            m_trackIds.add(identifier, textTrackInfo.track->id());
+        if (!m_mediaDescriptions.contains(identifier))
+            m_mediaDescriptions.add(identifier, *textTrackInfo.description);
         return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*textTrackInfo.description), identifier };
     });
 
     if (!m_connectionToWebProcess) {
-        completionHandler();
+        completionHandler(ReceiveResult::IPCError);
         return;
     }
 

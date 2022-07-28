@@ -42,6 +42,17 @@ std::optional<bool> TrackPrivateBase::defaultEnabled() const
     return std::nullopt;
 }
 
+bool TrackPrivateBase::operator==(const TrackPrivateBase& track) const
+{
+    return id() == track.id()
+        && label() == track.label()
+        && language() == track.language()
+        && trackIndex() == track.trackIndex()
+        && trackUID() == track.trackUID()
+        && defaultEnabled() == track.defaultEnabled()
+        && startTimeVariance() == track.startTimeVariance();
+}
+
 #if !RELEASE_LOG_DISABLED
 
 static uint64_t s_uniqueId = 0;

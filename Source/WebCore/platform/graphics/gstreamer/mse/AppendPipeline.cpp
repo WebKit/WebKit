@@ -554,7 +554,7 @@ void AppendPipeline::didReceiveInitializationSegment()
     m_hasReceivedFirstInitializationSegment = true;
     GST_DEBUG("Notifying SourceBuffer of initialization segment.");
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "append-pipeline-received-init-segment");
-    m_sourceBufferPrivate.didReceiveInitializationSegment(WTFMove(initializationSegment), []() { });
+    m_sourceBufferPrivate.didReceiveInitializationSegment(WTFMove(initializationSegment), [](SourceBufferPrivateClient::ReceiveResult) { });
 }
 
 void AppendPipeline::consumeAppsinksAvailableSamples()

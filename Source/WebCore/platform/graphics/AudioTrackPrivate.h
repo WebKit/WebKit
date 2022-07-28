@@ -75,6 +75,13 @@ public:
         if (m_client)
             m_client->configurationChanged(m_configuration);
     }
+    
+    virtual bool operator==(const AudioTrackPrivate& track) const
+    {
+        return TrackPrivateBase::operator==(track)
+            && configuration() == track.configuration()
+            && kind() == track.kind();
+    }
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "AudioTrackPrivate"; }
