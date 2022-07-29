@@ -522,7 +522,7 @@ void JSGenericTypedArrayView<Adaptor>::getOwnPropertyNames(
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
 
     if (array.includeStringProperties()) {
-        for (unsigned i = 0; i < thisObject->m_length; ++i)
+        for (uint64_t i = 0; i < thisObject->m_length; ++i)
             array.add(Identifier::from(vm, i));
     }
     

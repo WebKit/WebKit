@@ -263,6 +263,62 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncCopyWithin(VM& vm, JS
 }
 
 template<typename ViewClass>
+static ALWAYS_INLINE size_t typedArrayIndexOfImpl(typename ViewClass::ElementType* array, size_t length, typename ViewClass::ElementType target, size_t index)
+{
+    if (index >= length)
+        return WTF::notFound;
+
+    if constexpr (ViewClass::Adaptor::isInteger) {
+        if constexpr (ViewClass::elementSize == 1) {
+            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::find8(bitwise_cast<const uint8_t*>(array + index), target, length - index));
+            if (result)
+                return result - array;
+            return WTF::notFound;
+        }
+
+        if constexpr (ViewClass::elementSize == 2) {
+            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::find16(bitwise_cast<const uint16_t*>(array + index), target, length - index));
+            if (result)
+                return result - array;
+            return WTF::notFound;
+        }
+
+        if constexpr (ViewClass::elementSize == 4) {
+            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::find32(bitwise_cast<const uint32_t*>(array + index), target, length - index));
+            if (result)
+                return result - array;
+            return WTF::notFound;
+        }
+
+        if constexpr (ViewClass::elementSize == 8) {
+            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::find64(bitwise_cast<const uint64_t*>(array + index), target, length - index));
+            if (result)
+                return result - array;
+            return WTF::notFound;
+        }
+    }
+
+    if constexpr (ViewClass::Adaptor::isFloat) {
+        if constexpr (ViewClass::elementSize == 4) {
+            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::findFloat(bitwise_cast<const float*>(array + index), target, length - index));
+            if (result)
+                return result - array;
+            return WTF::notFound;
+        }
+
+        if constexpr (ViewClass::elementSize == 8) {
+            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::findDouble(bitwise_cast<const double*>(array + index), target, length - index));
+            if (result)
+                return result - array;
+            return WTF::notFound;
+        }
+    }
+
+    ASSERT_NOT_REACHED();
+    return WTF::notFound;
+}
+
+template<typename ViewClass>
 ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -298,35 +354,12 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGl
                 if (std::isnan(static_cast<double>(array[index])))
                     return JSValue::encode(jsBoolean(true));
             }
-        }
-    }
-
-    if constexpr (ViewClass::Adaptor::isInteger) {
-        if constexpr (ViewClass::elementSize == 1) {
-            if (index < length) {
-                auto* result = static_cast<typename ViewClass::ElementType*>(memchr(array + index, targetOption.value(), length - index));
-                return JSValue::encode(jsBoolean(!!result));
-            }
             return JSValue::encode(jsBoolean(false));
         }
-
-#if HAVE(MEMCHR16)
-        if constexpr (ViewClass::elementSize == 2) {
-            if (index < length) {
-                auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::memchr16(bitwise_cast<const uint16_t*>(array + index), targetOption.value(), length - index));
-                return JSValue::encode(jsBoolean(!!result));
-            }
-            return JSValue::encode(jsBoolean(false));
-        }
-#endif
     }
 
-    for (; index < length; ++index) {
-        if (array[index] == targetOption.value())
-            return JSValue::encode(jsBoolean(true));
-    }
-
-    return JSValue::encode(jsBoolean(false));
+    size_t result = typedArrayIndexOfImpl<ViewClass>(array, length, targetOption.value(), index);
+    return JSValue::encode(jsBoolean(result != WTF::notFound));
 }
 
 template<typename ViewClass>
@@ -358,34 +391,10 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIndexOf(VM& vm, JSGlo
     scope.assertNoExceptionExceptTermination();
     RELEASE_ASSERT(!thisObject->isDetached());
 
-    if constexpr (ViewClass::Adaptor::isInteger) {
-        if constexpr (ViewClass::elementSize == 1) {
-            if (index < length) {
-                auto* result = static_cast<typename ViewClass::ElementType*>(memchr(array + index, targetOption.value(), length - index));
-                if (result)
-                    return JSValue::encode(jsNumber(result - array));
-            }
-            return JSValue::encode(jsNumber(-1));
-        }
-
-#if HAVE(MEMCHR16)
-        if constexpr (ViewClass::elementSize == 2) {
-            if (index < length) {
-                auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::memchr16(bitwise_cast<const uint16_t*>(array + index), targetOption.value(), length - index));
-                if (result)
-                    return JSValue::encode(jsNumber(result - array));
-            }
-            return JSValue::encode(jsNumber(-1));
-        }
-#endif
-    }
-
-    for (; index < length; ++index) {
-        if (array[index] == targetOption.value())
-            return JSValue::encode(jsNumber(index));
-    }
-
-    return JSValue::encode(jsNumber(-1));
+    size_t result = typedArrayIndexOfImpl<ViewClass>(array, length, targetOption.value(), index);
+    if (result == WTF::notFound)
+        return JSValue::encode(jsNumber(-1));
+    return JSValue::encode(jsNumber(result));
 }
 
 template<typename ViewClass>

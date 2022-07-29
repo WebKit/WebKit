@@ -35,7 +35,7 @@ namespace WTF {
 #if CPU(ARM64)
 // Suppress ASan because this code intentionally loads out-of-bound memory, but it must be safe since we do not overlap page boundary.
 SUPPRESS_ASAN
-const uint16_t* memchr16AlignedImpl(const uint16_t* pointer, uint16_t character, size_t length)
+const uint16_t* find16AlignedImpl(const uint16_t* pointer, uint16_t character, size_t length)
 {
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0x1));
 
@@ -48,6 +48,7 @@ const uint16_t* memchr16AlignedImpl(const uint16_t* pointer, uint16_t character,
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
     ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
     const uint16_t* cursor = pointer;
+    constexpr size_t stride = 16 / sizeof(uint16_t);
 
     // Dupe character => |c|c|c|c|c|c|c|c|
     uint16x8_t charactersVector = vdupq_n_u16(character);
@@ -80,8 +81,134 @@ const uint16_t* memchr16AlignedImpl(const uint16_t* pointer, uint16_t character,
             return (index < length) ? cursor + index : nullptr;
         }
         oldLength = length;
-        length -= 8;
-        cursor += 8;
+        length -= stride;
+        cursor += stride;
+    } while (length < oldLength);
+    return nullptr;
+}
+
+SUPPRESS_ASAN
+const uint32_t* find32AlignedImpl(const uint32_t* pointer, uint32_t character, size_t length)
+{
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0b11));
+
+    constexpr uint32x4_t indexMask { 0, 1, 2, 3 };
+
+    ASSERT(length);
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
+    ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
+    const uint32_t* cursor = pointer;
+    constexpr size_t stride = 16 / sizeof(uint32_t);
+
+    uint32x4_t charactersVector = vdupq_n_u32(character);
+
+    size_t oldLength;
+    do {
+        uint32x4_t value = vld1q_u32(cursor);
+        uint32x4_t mask = vceqq_u32(value, charactersVector);
+        if (vget_lane_u64(vreinterpret_u64_u16(vmovn_u32(mask)), 0)) {
+            uint32x4_t ranked = vornq_u32(indexMask, mask);
+            uint32_t index = vminvq_u32(ranked);
+            return (index < length) ? cursor + index : nullptr;
+        }
+        oldLength = length;
+        length -= stride;
+        cursor += stride;
+    } while (length < oldLength);
+    return nullptr;
+}
+
+SUPPRESS_ASAN
+const uint64_t* find64AlignedImpl(const uint64_t* pointer, uint64_t character, size_t length)
+{
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0b111));
+
+    constexpr uint32x2_t indexMask { 0, 1 };
+
+    ASSERT(length);
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
+    ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
+    const uint64_t* cursor = pointer;
+    constexpr size_t stride = 16 / sizeof(uint64_t);
+
+    uint64x2_t charactersVector = vdupq_n_u64(character);
+
+    size_t oldLength;
+    do {
+        uint64x2_t value = vld1q_u64(cursor);
+        uint64x2_t mask = vceqq_u64(value, charactersVector);
+        uint32x2_t reducedMask = vmovn_u64(mask);
+        if (vget_lane_u64(vreinterpret_u64_u32(reducedMask), 0)) {
+            uint32x2_t ranked = vorn_u32(indexMask, reducedMask);
+            uint64_t index = vminv_u32(ranked);
+            return (index < length) ? cursor + index : nullptr;
+        }
+        oldLength = length;
+        length -= stride;
+        cursor += stride;
+    } while (length < oldLength);
+    return nullptr;
+}
+
+SUPPRESS_ASAN
+const float* findFloatAlignedImpl(const float* pointer, float target, size_t length)
+{
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0b11));
+
+    constexpr uint32x4_t indexMask { 0, 1, 2, 3 };
+
+    ASSERT(length);
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
+    ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
+    const float* cursor = pointer;
+    constexpr size_t stride = 16 / sizeof(float);
+
+    float32x4_t targetsVector = vdupq_n_f32(target);
+
+    size_t oldLength;
+    do {
+        float32x4_t value = vld1q_f32(cursor);
+        uint32x4_t mask = vceqq_f32(value, targetsVector);
+        if (vget_lane_u64(vreinterpret_u64_u16(vmovn_u32(mask)), 0)) {
+            uint32x4_t ranked = vornq_u32(indexMask, mask);
+            uint32_t index = vminvq_u32(ranked);
+            return (index < length) ? cursor + index : nullptr;
+        }
+        oldLength = length;
+        length -= stride;
+        cursor += stride;
+    } while (length < oldLength);
+    return nullptr;
+}
+
+SUPPRESS_ASAN
+const double* findDoubleAlignedImpl(const double* pointer, double target, size_t length)
+{
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0b111));
+
+    constexpr uint32x2_t indexMask { 0, 1 };
+
+    ASSERT(length);
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
+    ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
+    const double* cursor = pointer;
+    constexpr size_t stride = 16 / sizeof(double);
+
+    float64x2_t targetsVector = vdupq_n_f64(target);
+
+    size_t oldLength;
+    do {
+        float64x2_t value = vld1q_f64(cursor);
+        uint64x2_t mask = vceqq_f64(value, targetsVector);
+        uint32x2_t reducedMask = vmovn_u64(mask);
+        if (vget_lane_u64(vreinterpret_u64_u32(reducedMask), 0)) {
+            uint32x2_t ranked = vorn_u32(indexMask, reducedMask);
+            uint32_t index = vminv_u32(ranked);
+            return (index < length) ? cursor + index : nullptr;
+        }
+        oldLength = length;
+        length -= stride;
+        cursor += stride;
     } while (length < oldLength);
     return nullptr;
 }
