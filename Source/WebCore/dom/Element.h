@@ -437,6 +437,8 @@ public:
     virtual const AtomString& imageSourceURL() const;
     virtual AtomString target() const { return nullAtom(); }
 
+    RefPtr<Element> findFocusDelegate();
+
     static AXTextStateChangeIntent defaultFocusTextStateChangeIntent() { return AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, true }); }
     virtual void focus(const FocusOptions& = { });
     virtual void focusForBindings(FocusOptions&&);
