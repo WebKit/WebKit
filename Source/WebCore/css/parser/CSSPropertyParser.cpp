@@ -2544,6 +2544,14 @@ static RefPtr<CSSValue> consumeOverscrollBehavior(CSSParserTokenRange& range)
     return consumeIdent(range);
 }
 
+static RefPtr<CSSValue> consumeOverflowAnchor(CSSParserTokenRange& range)
+{
+    auto valueID = range.peek().id();
+    if (valueID != CSSValueAuto && valueID != CSSValueNone)
+        return nullptr;
+    return consumeIdent(range);
+}
+
 static RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     RefPtr<CSSPrimitiveValue> parsedValue1 = consumeLengthOrPercent(range, cssParserMode, ValueRange::NonNegative);
@@ -4755,6 +4763,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyContainIntrinsicBlockSize:
     case CSSPropertyContainIntrinsicInlineSize:
         return consumeContainIntrinsicSize(m_range);
+    case CSSPropertyOverflowAnchor:
+        return consumeOverflowAnchor(m_range);
     default:
         return nullptr;
     }

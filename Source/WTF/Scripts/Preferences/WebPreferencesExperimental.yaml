@@ -405,6 +405,18 @@ CSSRelativeColorSyntaxEnabled:
     WebCore:
       default: false
 
+CSSScrollAnchoringEnabled:
+  type: bool
+  humanReadableName: "CSS Scroll Anchoring"
+  humanReadableDescription: "Enable CSS Scroll Anchoring"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSTextAlignLastEnabled:
   type: bool
   humanReadableName: "CSS text-align-last property"
