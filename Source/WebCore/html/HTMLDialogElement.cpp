@@ -126,20 +126,7 @@ void HTMLDialogElement::queueCancelTask()
 // https://html.spec.whatwg.org/multipage/interactive-elements.html#dialog-focusing-steps
 void HTMLDialogElement::runFocusingSteps()
 {
-    RefPtr<Element> control;
-    for (auto& element : descendantsOfType<Element>(*this)) {
-        if (!element.isFocusable())
-            continue;
-
-        if (element.hasAttribute(autofocusAttr)) {
-            control = &element;
-            break;
-        }
-
-        // FIXME: Potentially remove this and adjust related WPTs after https://github.com/whatwg/html/pull/4184.
-        if (!control)
-            control = &element;
-    }
+    RefPtr control = findFocusDelegate();
 
     if (!control)
         control = this;

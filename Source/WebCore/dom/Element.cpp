@@ -3206,7 +3206,7 @@ static bool isProgramaticallyFocusable(Element& element)
 }
 
 // https://html.spec.whatwg.org/multipage/interaction.html#autofocus-delegate
-static RefPtr<Element> autoFocusDelegate(ShadowRoot& target)
+static RefPtr<Element> autoFocusDelegate(ContainerNode& target)
 {
     for (auto& element : descendantsOfType<Element>(target)) {
         if (!element.hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
@@ -3222,19 +3222,25 @@ static RefPtr<Element> autoFocusDelegate(ShadowRoot& target)
 }
 
 // https://html.spec.whatwg.org/multipage/interaction.html#focus-delegate
-static RefPtr<Element> focusDelegateFromShadowHost(ShadowRoot& target)
+static RefPtr<Element> findFocusDelegateInternal(ContainerNode& target)
 {
     if (auto element = autoFocusDelegate(target))
         return element;
-    for (auto& element : descendantsOfType<Element>(target)) {
-        if (auto root = shadowRootWithDelegatesFocus(element)) {
-            if (auto target = focusDelegateFromShadowHost(*root))
-                return target;
-        }
+    for (auto& element : childrenOfType<Element>(target)) {
         if (isProgramaticallyFocusable(element))
             return &element;
+        if (auto root = shadowRootWithDelegatesFocus(element)) {
+            if (auto target = findFocusDelegateInternal(*root))
+                return target;
+        }
     }
     return nullptr;
+}
+
+// https://html.spec.whatwg.org/multipage/interaction.html#focus-delegate
+RefPtr<Element> Element::findFocusDelegate()
+{
+    return findFocusDelegateInternal(*this);
 }
 
 void Element::focus(const FocusOptions& options)
@@ -3267,7 +3273,7 @@ void Element::focus(const FocusOptions& options)
             return;
         }
 
-        newTarget = focusDelegateFromShadowHost(*root);
+        newTarget = findFocusDelegateInternal(*root);
         if (!newTarget)
             return;
     } else if (!isProgramaticallyFocusable(*newTarget))
