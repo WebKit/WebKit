@@ -67,7 +67,7 @@ public:
     ISO8601::Duration round(JSGlobalObject*, JSValue options) const;
     double total(JSGlobalObject*, JSValue options) const;
     String toString(JSGlobalObject*, JSValue options) const;
-    String toString(std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const { return toString(m_duration, precision); }
+    String toString(JSGlobalObject* globalObject, std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const { return toString(globalObject, m_duration, precision); }
 
     static ISO8601::Duration fromDurationLike(JSGlobalObject*, JSObject*);
     static ISO8601::Duration toISO8601Duration(JSGlobalObject*, JSValue);
@@ -83,7 +83,7 @@ private:
     template<typename CharacterType>
     static std::optional<ISO8601::Duration> parse(StringParsingBuffer<CharacterType>&);
 
-    static String toString(const ISO8601::Duration&, std::tuple<Precision, unsigned> precision);
+    static String toString(JSGlobalObject*, const ISO8601::Duration&, std::tuple<Precision, unsigned> precision);
 
     ISO8601::Duration m_duration;
 };

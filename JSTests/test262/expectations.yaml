@@ -1056,12 +1056,6 @@ test/built-ins/Temporal/Duration/prototype/subtract/timezone-string-leap-second.
 test/built-ins/Temporal/Duration/prototype/subtract/timezone-wrong-type.js:
   default: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
-test/built-ins/Temporal/Duration/prototype/toString/precision-formatted-as-decimal-number.js:
-  default: 'Test262Error: Expected SameValue(«P10000000000000004000W», «P10000000000000004096W») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«P10000000000000004000W», «P10000000000000004096W») to be true'
-test/built-ins/Temporal/Duration/prototype/toString/throws-when-rounded-duration-is-invalid.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/total/calendar-dateadd-called-with-options-undefined.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone, calendar)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone, calendar)')"

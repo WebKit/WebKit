@@ -245,7 +245,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncToJSON, (JSGlobalObject* g
     if (!duration)
         return throwVMTypeError(globalObject, scope, "Temporal.Duration.prototype.toJSON called on value that's not a Duration"_s);
 
-    return JSValue::encode(jsString(vm, duration->toString()));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, duration->toString(globalObject))));
 }
 
 // This will be part of the ECMA-402 Intl.DurationFormat proposal; until then, we just follow ECMA-262 in mimicking toJSON.
@@ -258,7 +258,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncToLocaleString, (JSGlobalO
     if (!duration)
         return throwVMTypeError(globalObject, scope, "Temporal.Duration.prototype.toLocaleString called on value that's not a Duration"_s);
 
-    return JSValue::encode(jsString(vm, duration->toString()));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, duration->toString(globalObject))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncValueOf, (JSGlobalObject* globalObject, CallFrame*))

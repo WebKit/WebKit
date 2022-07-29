@@ -563,7 +563,7 @@ String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsV
     RETURN_IF_EXCEPTION(scope, { });
 
     if (!options)
-        return toString();
+        RELEASE_AND_RETURN(scope, toString(globalObject));
 
     PrecisionData data = secondsStringPrecision(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
@@ -577,18 +577,43 @@ String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsV
 
     // No need to make a new object if we were given explicit defaults.
     if (std::get<0>(data.precision) == Precision::Auto && roundingMode == RoundingMode::Trunc)
-        return toString();
+        RELEASE_AND_RETURN(scope, toString(globalObject));
 
     ISO8601::Duration newDuration = m_duration;
     round(newDuration, data.increment, data.unit, roundingMode);
-    return toString(newDuration, data.precision);
+    RELEASE_AND_RETURN(scope, toString(globalObject, newDuration, data.precision));
+}
+
+static void appendInteger(JSGlobalObject* globalObject, StringBuilder& builder, double value)
+{
+    ASSERT(std::isfinite(value));
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    double absValue = std::abs(value);
+    if (LIKELY(absValue <= maxSafeInteger())) {
+        builder.append(absValue);
+        return;
+    }
+
+    auto* bigint = JSBigInt::createFrom(globalObject, absValue);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    String string = bigint->toString(globalObject, 10);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    builder.append(string);
 }
 
 // TemporalDurationToString ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds, precision )
 // https://tc39.es/proposal-temporal/#sec-temporal-temporaldurationtostring
-String TemporalDuration::toString(const ISO8601::Duration& duration, std::tuple<Precision, unsigned> precision)
+String TemporalDuration::toString(JSGlobalObject* globalObject, const ISO8601::Duration& duration, std::tuple<Precision, unsigned> precision)
 {
     ASSERT(std::get<0>(precision) == Precision::Auto || std::get<1>(precision) < 10);
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto balancedMicroseconds = duration.microseconds() + std::trunc(duration.nanoseconds() / 1000);
     auto balancedNanoseconds = std::fmod(duration.nanoseconds(), 1000);
@@ -597,14 +622,6 @@ String TemporalDuration::toString(const ISO8601::Duration& duration, std::tuple<
     auto balancedSeconds = duration.seconds() + std::trunc(balancedMilliseconds / 1000);
     balancedMilliseconds = std::fmod(balancedMilliseconds, 1000);
 
-    // TEMPORARY! (pending spec discussion about maximum values @ https://github.com/tc39/proposal-temporal/issues/1604)
-    // We *must* avoid printing a number in scientific notation, which is currently only possible for numbers < 1e21
-    // (a value originating in the Number#toFixed spec and upheld by our NumberToStringBuffer).
-    auto formatInteger = [](double value) -> double {
-        auto absValue = std::abs(value);
-        return LIKELY(absValue < 1e21) ? absValue : 1e21 - 65537;
-    };
-
     StringBuilder builder;
 
     auto sign = TemporalDuration::sign(duration);
@@ -612,14 +629,26 @@ String TemporalDuration::toString(const ISO8601::Duration& duration, std::tuple<
         builder.append('-');
 
     builder.append('P');
-    if (duration.years())
-        builder.append(formatInteger(duration.years()), 'Y');
-    if (duration.months())
-        builder.append(formatInteger(duration.months()), 'M');
-    if (duration.weeks())
-        builder.append(formatInteger(duration.weeks()), 'W');
-    if (duration.days())
-        builder.append(formatInteger(duration.days()), 'D');
+    if (duration.years()) {
+        appendInteger(globalObject, builder, duration.years());
+        RETURN_IF_EXCEPTION(scope, { });
+        builder.append('Y');
+    }
+    if (duration.months()) {
+        appendInteger(globalObject, builder, duration.months());
+        RETURN_IF_EXCEPTION(scope, { });
+        builder.append('M');
+    }
+    if (duration.weeks()) {
+        appendInteger(globalObject, builder, duration.weeks());
+        RETURN_IF_EXCEPTION(scope, { });
+        builder.append('W');
+    }
+    if (duration.days()) {
+        appendInteger(globalObject, builder, duration.days());
+        RETURN_IF_EXCEPTION(scope, { });
+        builder.append('D');
+    }
 
     // The zero value is displayed in seconds.
     auto usesSeconds = balancedSeconds || balancedMilliseconds || balancedMicroseconds || balancedNanoseconds || !sign || std::get<0>(precision) != Precision::Auto;
@@ -627,12 +656,28 @@ String TemporalDuration::toString(const ISO8601::Duration& duration, std::tuple<
         return builder.toString();
 
     builder.append('T');
-    if (duration.hours())
-        builder.append(formatInteger(duration.hours()), 'H');
-    if (duration.minutes())
-        builder.append(formatInteger(duration.minutes()), 'M');
+    if (duration.hours()) {
+        appendInteger(globalObject, builder, duration.hours());
+        RETURN_IF_EXCEPTION(scope, { });
+        builder.append('H');
+    }
+    if (duration.minutes()) {
+        appendInteger(globalObject, builder, duration.minutes());
+        RETURN_IF_EXCEPTION(scope, { });
+        builder.append('M');
+    }
     if (usesSeconds) {
-        builder.append(formatInteger(balancedSeconds));
+        // TEMPORARY! (pending spec discussion about rebalancing @ https://github.com/tc39/proposal-temporal/issues/2195)
+        // Although we must be able to display Number values beyond MAX_SAFE_INTEGER, it does not seem reasonable
+        // to require that calculations be performed outside of double space purely to support a case like
+        // `Temporal.Duration.from({ microseconds: Number.MAX_VALUE, nanoseconds: Number.MAX_VALUE }).toString()`.
+        if (UNLIKELY(!std::isfinite(balancedSeconds))) {
+            throwRangeError(globalObject, scope, "Cannot display infinite seconds!"_s);
+            return { };
+        }
+
+        appendInteger(globalObject, builder, balancedSeconds);
+        RETURN_IF_EXCEPTION(scope, { });
 
         auto fraction = std::abs(balancedMilliseconds) * 1e6 + std::abs(balancedMicroseconds) * 1e3 + std::abs(balancedNanoseconds);
         formatSecondsStringFraction(builder, fraction, precision);
