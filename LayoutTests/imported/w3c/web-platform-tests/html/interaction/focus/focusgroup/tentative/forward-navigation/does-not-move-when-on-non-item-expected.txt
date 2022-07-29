@@ -1,0 +1,5 @@
+nonitem1
+item1 item2
+
+PASS When the focus is set on a focusable element that isn't a focusgroup item, an arrow key press shouldn't move the focus at all.
+

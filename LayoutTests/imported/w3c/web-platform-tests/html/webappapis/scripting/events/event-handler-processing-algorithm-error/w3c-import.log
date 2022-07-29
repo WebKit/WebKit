@@ -14,8 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm-error/body-element-synthetic-errorevent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm-error/body-element-synthetic-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm-error/document-synthetic-errorevent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm-error/document-synthetic-event.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm-error/frameset-element-synthetic-errorevent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm-error/frameset-element-synthetic-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm-error/script-element.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm-error/synthetic-errorevent-click.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm-error/synthetic-errorevent-click.worker.js

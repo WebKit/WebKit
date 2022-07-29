@@ -1,0 +1,7 @@
+
+FAIL <button data-focusable="false"> assert_true: Shouldn't be focused expected true got false
+FAIL <section tabindex="-1" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
+FAIL <div tabindex="-1" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
+FAIL <span tabindex="-1" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
+FAIL <a href="#" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
+

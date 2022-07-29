@@ -1,38 +1,29 @@
 
-PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via window_open a SAME_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via anchor a SAME_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_GET a SAME_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_POST a SAME_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_SITE iframe opening popup via window_open a SAME_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_SITE iframe opening popup via anchor a SAME_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_SITE iframe opening popup via form_GET a SAME_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_SITE iframe opening popup via form_POST a SAME_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via window_open a SAME_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via anchor a SAME_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_GET a SAME_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_POST a SAME_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via window_open a SAME_SITE with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via anchor a SAME_SITE with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_GET a SAME_SITE with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_POST a SAME_SITE with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_SITE iframe opening popup via window_open a SAME_SITE with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_SITE iframe opening popup via anchor a SAME_SITE with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_SITE iframe opening popup via form_GET a SAME_SITE with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_SITE iframe opening popup via form_POST a SAME_SITE with COOP: "same-origin"
-PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via window_open a SAME_SITE with COOP: "same-origin"
-PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via anchor a SAME_SITE with COOP: "same-origin"
-PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_GET a SAME_SITE with COOP: "same-origin"
-PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_POST a SAME_SITE with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via window_open a CROSS_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via anchor a CROSS_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_GET a CROSS_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_POST a CROSS_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_SITE iframe opening popup via window_open a CROSS_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_SITE iframe opening popup via anchor a CROSS_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_SITE iframe opening popup via form_GET a CROSS_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with SAME_SITE iframe opening popup via form_POST a CROSS_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via window_open a CROSS_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via anchor a CROSS_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_GET a CROSS_ORIGIN with COOP: "same-origin"
-PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_POST a CROSS_ORIGIN with COOP: "same-origin"
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same origin iframe, same origin popup with window_open
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same origin iframe, same origin popup with anchor
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same origin iframe, same origin popup with form
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same site iframe, same origin popup with window_open
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same site iframe, same origin popup with anchor
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same site iframe, same origin popup with form
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with cross origin iframe, same origin popup with window_open
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with cross origin iframe, same origin popup with anchor
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with cross origin iframe, same origin popup with form
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same origin iframe, same site popup with window_open
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same origin iframe, same site popup with anchor
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same origin iframe, same site popup with form
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same site iframe, same site popup with window_open
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same site iframe, same site popup with anchor
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same site iframe, same site popup with form
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with cross origin iframe, same site popup with window_open
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with cross origin iframe, same site popup with anchor
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with cross origin iframe, same site popup with form
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same origin iframe, cross origin popup with window_open
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same origin iframe, cross origin popup with anchor
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same origin iframe, cross origin popup with form
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same site iframe, cross origin popup with window_open
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same site iframe, cross origin popup with anchor
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with same site iframe, cross origin popup with form
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with cross origin iframe, cross origin popup with window_open
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with cross origin iframe, cross origin popup with anchor
+PASS COOP: same-origin-allow-popups to popup COOP: same-origin via an iframe, with cross origin iframe, cross origin popup with form
 

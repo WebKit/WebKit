@@ -1,0 +1,5 @@
+2d.gradient.object.invalidcolor
+
+
+PASS OffscreenCanvas test: 2d.gradient.object.invalidcolor
+

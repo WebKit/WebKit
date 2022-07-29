@@ -17,4 +17,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/checkpoint-after-error-event-worker-module.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/checkpoint-after-error-event-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/checkpoint-after-error-event.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-1-nothrow-setup.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-1-nothrow.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-1-throw-setup.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-1-throw.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-2-setup.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-2.1.mjs
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-2.2.mjs
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-3-setup.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-3.1.mjs
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-3.2.mjs
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-4.1.mjs
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-4.2.mjs
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/evaluation-order-setup.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/resources/resolve-then-throw.js

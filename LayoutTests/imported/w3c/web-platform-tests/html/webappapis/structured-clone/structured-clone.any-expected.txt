@@ -72,6 +72,14 @@ PASS Object RegExp object, RegExp unicode flag
 PASS Object RegExp object, RegExp empty
 PASS Object RegExp object, RegExp slash
 PASS Object RegExp object, RegExp new line
+FAIL Empty Error object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL Error object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL EvalError object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL RangeError object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL ReferenceError object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL SyntaxError object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL TypeError object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL URIError object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
 PASS Blob basic
 PASS Blob unpaired high surrogate (invalid utf-8)
 PASS Blob unpaired low surrogate (invalid utf-8)
@@ -112,6 +120,7 @@ PASS Object with property on prototype
 PASS Object with non-enumerable property
 PASS Object with non-writable property
 PASS Object with non-configurable property
+PASS Object with a getter that throws
 PASS ImageBitmap 1x1 transparent black
 PASS ImageBitmap 1x1 non-transparent non-black
 PASS Array ImageBitmap object, ImageBitmap 1x1 transparent black

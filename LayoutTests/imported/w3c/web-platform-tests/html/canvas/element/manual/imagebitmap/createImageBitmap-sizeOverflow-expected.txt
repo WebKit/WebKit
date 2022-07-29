@@ -4,4 +4,6 @@ PASS createImageBitmap does not crash or reject the promise when passing very la
 PASS createImageBitmap does not crash or reject the promise when passing very large sw
 PASS createImageBitmap does not crash or reject the promise when passing very large sh
 PASS createImageBitmap does not crash or reject the promise when passing very large sx, sy, sw and sh
+FAIL createImageBitmap throws an InvalidStateError error with big imageBitmap scaled up in big height assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL createImageBitmap throws an InvalidStateError error with big imageBitmap scaled up in big width assert_unreached: Should have rejected: undefined Reached unreachable code
 

@@ -15,4 +15,10 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/interactions-of-styling-and-scripting/conditionally-block-rendering-on-link-media-attr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/interactions-of-styling-and-scripting/dynamic-render-blocking-link-stylesheet-does-not-block-script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/interactions-of-styling-and-scripting/dynamic-render-blocking-style-element-does-not-block-script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/interactions-of-styling-and-scripting/script-created-link-stylesheet-does-not-block-script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/interactions-of-styling-and-scripting/script-created-style-element-does-not-block-script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/interactions-of-styling-and-scripting/style-element-media-match-block-script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/interactions-of-styling-and-scripting/style-element-media-not-match-does-not-block-script.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/interactions-of-styling-and-scripting/stylesheet.py

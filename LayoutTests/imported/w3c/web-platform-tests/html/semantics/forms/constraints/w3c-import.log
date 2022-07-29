@@ -20,13 +20,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-customError.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-patternMismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-stepMismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-tooLong.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-tooShort.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-typeMismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-datalist.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html

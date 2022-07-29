@@ -1,0 +1,8 @@
+
+FAIL Supported tokens of the 'blocking' IDL attribute of the link element undefined is not an object (evaluating 'link.blocking.supports')
+FAIL Setting the 'blocking' IDL attribute of the link element assert_equals: expected (string) "asdf" but got (undefined) undefined
+FAIL Supported tokens of the 'blocking' IDL attribute of the script element undefined is not an object (evaluating 'script.blocking.supports')
+FAIL Setting the 'blocking' IDL attribute of the script element assert_equals: expected (string) "asdf" but got (undefined) undefined
+FAIL Supported tokens of the 'blocking' IDL attribute of the style element undefined is not an object (evaluating 'style.blocking.supports')
+FAIL Setting the 'blocking' IDL attribute of the style element assert_equals: expected (string) "asdf" but got (undefined) undefined
+

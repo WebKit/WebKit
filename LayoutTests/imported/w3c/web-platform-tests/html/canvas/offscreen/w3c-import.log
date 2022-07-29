@@ -19,3 +19,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/2d.conformance.requirements.missingargs.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/2d.conformance.requirements.missingargs.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/set-proprietary-font-names-001-crash.html

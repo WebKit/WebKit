@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Error: assert_array_equals: Execution order expected property 2 to be "Inline2" but got "Defer1" (expected array ["Inline1", "Sync1", "Inline2", "Sync2", "EndOfBody", "Defer1", "Defer2", "DOMContentLoaded"] got ["Inline1", "Sync1", "Defer1", "Inline2", "Defer2", "Sync2", "EndOfBody", "DOMContentLoaded"])
+
+Detected
+
+FAIL Defer Script Execution Order Error: assert_array_equals: Execution order expected property 2 to be "Inline2" but got "Defer1" (expected array ["Inline1", "Sync1", "Inline2", "Sync2", "EndOfBody", "Defer1", "Defer2", "DOMContentLoaded"] got ["Inline1", "Sync1", "Defer1", "Inline2", "Defer2", "Sync2", "EndOfBody", "DOMContentLoaded"])
+

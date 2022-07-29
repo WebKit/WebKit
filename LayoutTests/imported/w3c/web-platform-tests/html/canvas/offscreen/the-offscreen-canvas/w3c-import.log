@@ -43,8 +43,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/context.unrecognised.nullsuffix.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/context.unrecognised.unicode.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/context.unrecognised.unicode.worker.js
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/initial.colour.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/initial.colour.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/initial.color.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/initial.color.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/initial.reset.2dstate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/initial.reset.2dstate.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/initial.reset.clip.html

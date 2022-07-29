@@ -7,8 +7,6 @@ PASS input type tel should support the select() method
 PASS input type email should support the select() method
 PASS input type password should support the select() method
 PASS input type date should support the select() method
-PASS input type month should support the select() method
-PASS input type week should support the select() method
 PASS input type time should support the select() method
 PASS input type datetime-local should support the select() method
 PASS input type number should support the select() method
@@ -31,8 +29,6 @@ PASS input type password should support all selection attributes and methods
 PASS input type hidden should not support variable-length selections
 PASS input type email should not support variable-length selections
 PASS input type date should not support variable-length selections
-PASS input type month should not support variable-length selections
-PASS input type week should not support variable-length selections
 PASS input type time should not support variable-length selections
 PASS input type datetime-local should not support variable-length selections
 PASS input type number should not support variable-length selections

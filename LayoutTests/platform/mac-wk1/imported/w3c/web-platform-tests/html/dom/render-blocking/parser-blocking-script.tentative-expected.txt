@@ -1,0 +1,6 @@
+text
+Some more text
+
+FAIL Rendering is blocked before render-blocking resources are loaded step_wait_func: Timed out waiting on condition
+PASS Parser-blocking script is evaluated
+

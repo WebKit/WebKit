@@ -13,10 +13,6 @@ PASS border-top-width
 PASS border-right-width
 PASS border-bottom-width
 PASS border-left-width
-PASS border-top-color
-PASS border-right-color
-PASS border-bottom-color
-PASS border-left-color
 PASS padding-top
 PASS padding-right
 PASS padding-bottom

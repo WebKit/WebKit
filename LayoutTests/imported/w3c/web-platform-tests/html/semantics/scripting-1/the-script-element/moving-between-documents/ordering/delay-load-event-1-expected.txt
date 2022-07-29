@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: SyntaxError: The string did not match the expected pattern.
+CONSOLE MESSAGE: Not executing script because it moved between documents during fetching
+
+
+PASS Script elements (parser-blocking) still delay the load event in the original Document after move
+PASS Script elements (parser-blocking) does not delay the load event in the new Document after move
+

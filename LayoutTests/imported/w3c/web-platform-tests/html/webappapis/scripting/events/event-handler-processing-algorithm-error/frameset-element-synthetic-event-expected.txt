@@ -1,0 +1,4 @@
+
+
+PASS error event is normal (return true does not cancel; one arg) on Window, with a synthetic Event
+

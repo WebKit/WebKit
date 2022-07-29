@@ -119,7 +119,8 @@ async function navigateAndThenBack(pageA, pageB, urlB,
 
   await pageB.execute_script(waitForPageShow);
   if (funcBeforeBackNavigation) {
-    await pageB.execute_script(funcBeforeBackNavigation);
+    await pageB.execute_script(funcBeforeBackNavigation,
+                               argsBeforeBackNavigation);
   }
   await pageB.execute_script(
     () => {
@@ -152,6 +153,10 @@ function runBfcacheTest(params, description) {
     const urlA = executorPath + pageA.context_id;
     const urlB = params.targetOrigin + executorPath + pageB.context_id;
 
+    // So that tests can refer to these URLs for assertions if necessary.
+    pageA.url = originSameOrigin + urlA;
+    pageB.url = urlB;
+
     params.openFunc(urlA);
 
     await pageA.execute_script(waitForPageShow);
@@ -181,4 +186,17 @@ function runBfcacheTest(params, description) {
       await params.funcAfterAssertion(pageA, pageB, t);
     }
   }, description);
+}
+
+// Call clients.claim() on the service worker
+async function claim(t, worker) {
+  const channel = new MessageChannel();
+  const saw_message = new Promise(function(resolve) {
+    channel.port1.onmessage = t.step_func(function(e) {
+      assert_equals(e.data, 'PASS', 'Worker call to claim() should fulfill.');
+      resolve();
+    });
+  });
+  worker.postMessage({port: channel.port2}, [channel.port2]);
+  await saw_message;
 }

@@ -14,6 +14,21 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/blocking-idl-attr.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/non-render-blocking-scripts.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/parser-blocking-script.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/parser-inserted-async-script.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/parser-inserted-defer-script.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/parser-inserted-module-script.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/parser-inserted-style-element.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/parser-inserted-stylesheet-link.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/render-blocked-apis-by-preload-link.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/remove-attr-script-keeps-blocking.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/remove-attr-style-keeps-blocking.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/remove-attr-stylesheet-link-keeps-blocking.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/remove-attr-unblocks-rendering.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/remove-element-unblocks-rendering.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/remove-pending-async-render-blocking-script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/script-inserted-module-script.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/script-inserted-script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/script-inserted-style-element.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/script-inserted-stylesheet-link.tentative.html

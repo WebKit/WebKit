@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/attributes.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/location.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/lone-surrogates.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/navigation.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-16be.html
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-16le.html

@@ -1,0 +1,11 @@
+1
+
+PASS Render-blocking on parser-inserted async script is cancellable
+FAIL Render-blocking on parser-inserted defer script is cancellable assert_false: expected false got true
+FAIL Render-blocking on parser-inserted module script is cancellable assert_false: expected false got true
+PASS Render-blocking on parser-inserted async module script is cancellable
+PASS Render-blocking on script-inserted stylesheet link is cancellable
+PASS Render-blocking on script-inserted script is cancellable
+PASS Render-blocking on script-inserted module script is cancellable
+PASS Render-blocking on script-inserted inline style is cancellable
+

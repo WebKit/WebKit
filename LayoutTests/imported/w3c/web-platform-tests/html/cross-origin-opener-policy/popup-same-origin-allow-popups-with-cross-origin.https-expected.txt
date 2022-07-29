@@ -1,10 +1,10 @@
 
-PASS same-origin-allow-popups document opening popup to https://127.0.0.1:9443 with COOP: ""
-PASS same-origin-allow-popups document opening popup to https://127.0.0.1:9443 with COOP: "unsafe-none"
-PASS same-origin-allow-popups document opening popup to https://127.0.0.1:9443 with COOP: "jibberish"
-PASS same-origin-allow-popups document opening popup to https://127.0.0.1:9443 with COOP: "same-site"
-PASS same-origin-allow-popups document opening popup to https://127.0.0.1:9443 with COOP: "same-site unsafe-allow-outgoing"
-PASS same-origin-allow-popups document opening popup to https://127.0.0.1:9443 with COOP: "same-origin unsafe-allow-outgoing"
-PASS same-origin-allow-popups document opening popup to https://127.0.0.1:9443 with COOP: "same-origin"
-PASS same-origin-allow-popups document opening popup to https://127.0.0.1:9443 with COOP: "same-origin-allow-popups"
+PASS Cross-origin popup with empty coop
+PASS Cross-origin popup with coop unsafe-none
+PASS Cross-origin popup with jibberish coop
+PASS Cross-origin popup with obsolete coop
+PASS Cross-origin popup with obsolete coop 2
+PASS Cross-origin popup with obsolete coop 3
+PASS Cross-origin popup with coop same-origin
+PASS Cross-origin popup with coop same-origin-allow-popups
 

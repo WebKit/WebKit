@@ -1,0 +1,4 @@
+item1 item2
+
+PASS When the focus is set on an item of a focusgroup that only supports the orthogonal axis to the arrow key pressed, the arrow pressed shouldn't move the focus.
+

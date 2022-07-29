@@ -138,6 +138,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.rect.zero.5.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.rect.zero.6.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompoint.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompoint.single argument.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompointinit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompointinit.single.argument.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.double.html
@@ -180,6 +181,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.intersecting.1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.intersecting.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.negative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.noarugment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.none.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.toomany.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.selfintersect.html

@@ -1,8 +1,8 @@
 
 
-PASS Test that the autocapitalize is avaible on HTMLInputElement.
-PASS Test that the autocapitalize is avaible on HTMLTextAreaElement.
-PASS Test that the autocapitalize is avaible on div.
+PASS Test that the autocapitalize is available on HTMLInputElement.
+PASS Test that the autocapitalize is available on HTMLTextAreaElement.
+PASS Test that the autocapitalize is available on div.
 PASS Test deprecated values of autocapitalize.
 PASS Test reflection of autocapitalize.
 PASS Test that the IDL attribute returns the empty string if the content attribute is not set.

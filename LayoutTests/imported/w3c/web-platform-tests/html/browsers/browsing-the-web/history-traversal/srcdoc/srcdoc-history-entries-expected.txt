@@ -1,0 +1,4 @@
+
+FAIL srcdoc history entries: the iframe itself navigates assert_equals: expected 2 but got 1
+FAIL srcdoc history entries: the container window navigates assert_equals: expected 2 but got 1
+

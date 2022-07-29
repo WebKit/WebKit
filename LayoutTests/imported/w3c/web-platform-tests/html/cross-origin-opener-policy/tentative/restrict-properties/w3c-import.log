@@ -1,0 +1,40 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-soap.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-soap.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/named_targeting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/named_targeting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-so.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-so.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-soap.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-soap.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-u.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-un.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-un.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-with-cross-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-with-cross-origin.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-with-same-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-with-same-origin.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-with-same-site.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/popup-with-same-site.https.html.headers

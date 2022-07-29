@@ -17,7 +17,7 @@ PASS Node for caption
 PASS Node for cite
 PASS Node for code
 PASS Node for colgroup
-PASS Node for command
+PASS Node for data
 PASS Node for datalist
 PASS Node for dd
 PASS Node for del
@@ -41,7 +41,6 @@ PASS Node for h5
 PASS Node for h6
 PASS Node for head
 PASS Node for header
-PASS Node for hgroup
 PASS Node for html
 PASS Node for i
 PASS Node for iframe
@@ -50,6 +49,7 @@ PASS Node for kbd
 PASS Node for label
 PASS Node for legend
 PASS Node for li
+PASS Node for main
 PASS Node for map
 PASS Node for mark
 PASS Node for menu
@@ -73,16 +73,18 @@ PASS Node for samp
 PASS Node for script
 PASS Node for section
 PASS Node for select
+PASS Node for slot
 PASS Node for small
 PASS Node for span
 PASS Node for strong
 PASS Node for style
 PASS Node for sub
-PASS Node for summary
 PASS Node for sup
+PASS Node for summary
 PASS Node for table
 PASS Node for tbody
 PASS Node for td
+PASS Node for template
 PASS Node for textarea
 PASS Node for tfoot
 PASS Node for th
@@ -94,7 +96,6 @@ PASS Node for u
 PASS Node for ul
 PASS Node for var
 PASS Node for video
-PASS Node for data
 PASS Node for area
 PASS Node for base
 PASS Node for br
@@ -103,7 +104,6 @@ PASS Node for embed
 PASS Node for hr
 PASS Node for img
 PASS Node for input
-PASS Node for keygen
 PASS Node for link
 PASS Node for meta
 PASS Node for param

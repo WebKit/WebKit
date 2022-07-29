@@ -1,0 +1,22 @@
+
+PASS [INPUT in MONTH status] The required attribute is not set
+PASS [INPUT in MONTH status] Valid month string(2000-12)
+PASS [INPUT in MONTH status] Valid month string(9999-01)
+PASS [INPUT in MONTH status] The value attribute is a number(1234567)
+PASS [INPUT in MONTH status] The value attribute is a Date object
+PASS [INPUT in MONTH status] Invalid month string(2000-99)
+PASS [INPUT in MONTH status] Invalid month string(37-01)
+PASS [INPUT in MONTH status] Invalid month string(2000/01)
+PASS [INPUT in MONTH status] The value attribute is empty string
+PASS [INPUT in WEEK status] The required attribute is not set
+PASS [INPUT in WEEK status] Valid week string(2000-W12)
+PASS [INPUT in WEEK status] Valid week string(9999-W01)
+PASS [INPUT in WEEK status] The value attribute is a number(1234567)
+PASS [INPUT in WEEK status] The value attribute is a Date object
+PASS [INPUT in WEEK status] Invalid week string(2000-W99)
+PASS [INPUT in WEEK status] invalid week string(2000-W00)
+PASS [INPUT in WEEK status] invalid week string(2000-w01)
+PASS [INPUT in WEEK status] The value attribute is empty string
+PASS validationMessage should return empty string when willValidate is false and valueMissing is true
+
+

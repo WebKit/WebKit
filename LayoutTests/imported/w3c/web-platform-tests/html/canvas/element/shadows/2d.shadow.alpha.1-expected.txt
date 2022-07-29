@@ -1,8 +1,8 @@
 2d.shadow.alpha.1
-Shadow colour alpha components are used
+Shadow color alpha components are used
 Actual output:
 Expected output:
 
 
-PASS Shadow colour alpha components are used
+PASS Shadow color alpha components are used
 

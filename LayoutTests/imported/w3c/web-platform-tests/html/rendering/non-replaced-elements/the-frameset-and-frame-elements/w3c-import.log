@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/frameset-visibility-hidden-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/frameset-visibility-hidden.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-cols-abssize-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-cols-abssize.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-cols-percentage-expected.html

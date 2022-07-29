@@ -1,0 +1,5 @@
+
+PASS Setup
+FAIL same_origin anonymous iframe can't access the sessionStorage assert_equals: expected "" but got "same_origin"
+PASS cross_origin anonymous iframe can't access the sessionStorage
+

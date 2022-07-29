@@ -27,6 +27,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-empty-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-empty-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-empty.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-intrinsic-option-font-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-intrinsic-option-font-size-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-intrinsic-option-font-size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-intrinsic-text-transform-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-intrinsic-text-transform-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-intrinsic-text-transform.html

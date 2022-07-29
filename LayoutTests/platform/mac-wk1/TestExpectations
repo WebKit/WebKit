@@ -151,12 +151,21 @@ imported/w3c/web-platform-tests/eventsource/eventsource-constructor-empty-url.an
 imported/w3c/web-platform-tests/eventsource/eventsource-constructor-url-bogus.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/eventsource/shared-worker [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/cors/data-url-shared-worker.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-1-nothrow-sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-1-sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-2-import-sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-3-dynamic-sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/evaluation-order-1-nothrow-sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/evaluation-order-1-sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompoint.single.argument.html [ Skip ]
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe-in-multicol.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/messagechannel.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/charset-bom.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/invalid-content-type.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/non-object.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/repeated-imports.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions/dynamic-import-with-assertion-argument.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/checkpoint-importScripts.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/evaluation-order-1-nothrow-importScripts.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/evaluation-order-1-throw-importScripts.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/blob-url.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtask-exceptions.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtask.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-success.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html [ Skip ]
 imported/w3c/web-platform-tests/wasm/serialization/module/broadcastchannel-success-and-failure.html [ Skip ]
@@ -562,8 +571,16 @@ imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Skip ]
 imported/w3c/web-platform-tests/push-api [ Skip ]
 imported/w3c/web-platform-tests/service-workers [ Skip ]
+imported/w3c/web-platform-tests/html/anonymous-iframe/cache-storage.tentative.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-clients-claim.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-clients-matchall.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-controlled-after-restore.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-unregister.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/messagechannel.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/json-module-service-worker-test.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-object.any.serviceworker-module.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-resolve.any.serviceworker-module.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-url.any.serviceworker-module.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtask.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtask-exceptions.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/infrastructure/server/context.any.serviceworker.html [ Skip ]
@@ -663,6 +680,7 @@ imported/w3c/web-platform-tests/streams/transform-streams/strategies.any.service
 imported/w3c/web-platform-tests/streams/transform-streams/terminate.any.serviceworker.html [ Skip ]
 
 # No Cross-Origin-Opener-Policy / Cross-Origin-Embedder-Policy in WK1.
+imported/w3c/web-platform-tests/html/anonymous-iframe [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy [ Skip ]
 http/wpt/cross-origin-opener-policy [ Skip ]
@@ -1286,6 +1304,16 @@ fast/forms/datetimelocal
 fast/forms/month
 fast/forms/time
 fast/forms/week
+imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow-weekmonth.html
+imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow-weekmonth.html
+imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-weekmonth.html
+imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-weekmonth.html
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-weekmonth.html
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepdown-weekmonth.html
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepup-weekmonth.html
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-weekmonth.html
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-weekmonth.html
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-weekmonth.html
 
 # New failure after update of WPT tests in bug 214278
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vrl-013.xht [ ImageOnlyFailure ]
@@ -1611,6 +1639,7 @@ webkit.org/b/232852 inspector/page/setShowPaintRects.html [ Skip ]
 webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
 
 webkit.org/b/231918 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-multiple-times.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/show-modal-focusing-steps.html [ Skip ]
 
 # webkit.org/b/234105 Skip 2 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis in mac wk1. 
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Skip ]
@@ -1825,6 +1854,8 @@ http/tests/webgpu/webgpu/shader/validation/shader_io/generic.html [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/shader_io/locations.html [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/wgsl/basic.html [ Skip ]
 
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-param-url.html [ ImageOnlyFailure ]
+
 webkit.org/b/238642 imported/w3c/web-platform-tests/css/css-contain/contain-body-overflow-002.html [ ImageOnlyFailure ]
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/canvas-as-container-001.html [ ImageOnlyFailure ]
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/canvas-as-container-002.html [ ImageOnlyFailure ]
@@ -1852,6 +1883,9 @@ webkit.org/b/232630 fast/forms/autofocus-opera-003.html [ Failure ]
 webkit.org/b/240841 fast/forms/scroll-into-view-and-show-validation-message.html [ Pass Failure ]
 
 webkit.org/b/241266 compositing/video/video-border-radius.html [ Pass Timeout ]
+
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-screeny.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-top.html [ Failure Pass ]
 
 webkit.org/b/241376 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-035.html [ Pass ImageOnlyFailure ]
 

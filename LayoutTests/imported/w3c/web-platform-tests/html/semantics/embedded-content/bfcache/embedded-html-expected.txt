@@ -1,0 +1,4 @@
+
+NOTRUN Page with <embed type=text/html src=/resources/blank.html> Should be BFCached but actually wasn't
+NOTRUN Page with <object type=text/html data=/resources/blank.html> Should be BFCached but actually wasn't
+

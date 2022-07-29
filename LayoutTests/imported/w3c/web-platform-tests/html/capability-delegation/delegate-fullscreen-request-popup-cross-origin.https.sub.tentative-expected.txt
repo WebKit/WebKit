@@ -1,0 +1,8 @@
+Verifies that element.requestFullscreen() calls from a cross-origin popup without user activation work if and only if the opener has user activation and it delegates the capability. https://wicg.github.io/capability-delegation/spec.html
+
+Harness Error (FAIL), message = SyntaxError: The string did not match the expected pattern.
+
+NOTRUN Fullscreen requests from a cross-origin popup fails without delegation from an opener with no user activation
+NOTRUN Fullscreen requests from a cross-origin popup fails without delegation from an opener with user activation
+NOTRUN Fullscreen requests from a cross-origin popup succeeds with delegation from an opener with user activation
+

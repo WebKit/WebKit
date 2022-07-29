@@ -20,8 +20,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/coop-same-origin-repeated.asis
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/csp-sandbox.py
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/fully-loaded.js
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/iframe-popup.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/javascript-url-same-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/iframe-test.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/popup-test.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/postback.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/postback.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/redirect.py

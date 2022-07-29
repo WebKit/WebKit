@@ -24,6 +24,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-newline-2-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-newline-2-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-newline-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-newline-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-newline-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-newline.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html

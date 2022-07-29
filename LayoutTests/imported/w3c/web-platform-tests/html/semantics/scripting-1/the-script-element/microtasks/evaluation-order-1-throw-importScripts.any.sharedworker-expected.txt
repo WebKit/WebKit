@@ -1,0 +1,3 @@
+
+FAIL importScripts() queueing a microtask then throwing an exception assert_array_equals: expected property 1 to be "global-error" but got "microtask" (expected array ["body", "global-error", "microtask"] got ["body", "microtask", "global-error"])
+

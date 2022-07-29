@@ -3,7 +3,7 @@ Button 5
 Div
 editor
 
-FAIL Disabling the active element (making it expressly inert) assert_not_equals: After disabling, the button must no longer be focused got disallowed value Element node <button id="button1" disabled="">Button 1</button>
+FAIL Disabling the active element (making it inert) assert_not_equals: After disabling, the button must no longer be focused got disallowed value Element node <button id="button1" disabled="">Button 1</button>
 FAIL Hiding the active element assert_not_equals: After hiding, the button must no longer be focused got disallowed value Element node <button id="button2" hidden="">Button 2</button>
 PASS Removing the active element from the DOM
 FAIL Disabling <fieldset> affects its descendants assert_not_equals: After disabling ancestor fieldset, the button must no longer be focused got disallowed value Element node <button id="button4">Button 4</button>

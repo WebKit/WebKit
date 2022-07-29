@@ -1,0 +1,5 @@
+
+
+FAIL error event is weird (return true cancels; many args) on Window, with a synthetic ErrorEvent assert_greater_than: expected a number greater than 1 but got 1
+FAIL error event has the right 5 args on Window, with a synthetic ErrorEvent assert_equals: There must be exactly 5 arguments expected 5 but got 1
+

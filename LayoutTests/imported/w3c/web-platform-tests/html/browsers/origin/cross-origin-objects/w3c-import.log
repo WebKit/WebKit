@@ -23,5 +23,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/frame-with-then.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/location-properties-smoke-test.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/win-documentdomain.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/window-location-and-location-href-cross-realm-set.html

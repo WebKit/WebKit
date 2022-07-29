@@ -1,0 +1,5 @@
+item1
+item3
+
+FAIL Since |item1| removes the middle row on key press, the grid focusgroup should check for a relayout before navigating to the next row. assert_equals: expected Element node <td id="item3" tabindex="-1">item3</td> but got Element node <td id="item1" tabindex="0" onkeydown="removeMiddleRow()"...
+

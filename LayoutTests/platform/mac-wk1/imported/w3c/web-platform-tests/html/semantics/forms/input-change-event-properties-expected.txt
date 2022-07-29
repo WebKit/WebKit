@@ -2,8 +2,6 @@
 
   Clickable
 
-Harness Error (TIMEOUT), message = null
-
 PASS <input type="checkbox"> click()
 PASS <input type="radio"> click()
 PASS <input type="text"> typing
@@ -14,5 +12,5 @@ PASS <input type="email"> typing
 PASS <input type="password"> typing
 PASS <input type="number"> typing
 PASS <textarea></textarea> typing
-TIMEOUT <select> pressing down arrow Test timed out
+FAIL <select> pressing down arrow promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e.bubbles')"
 

@@ -1,0 +1,4 @@
+item1
+
+PASS When the focus is set on the only focusgroup item, the focus shouldn't move and we shouldn't get stuck in an infinite loop.
+

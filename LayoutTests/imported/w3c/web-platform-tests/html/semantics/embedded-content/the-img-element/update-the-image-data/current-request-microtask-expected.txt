@@ -1,0 +1,3 @@
+
+FAIL currentSrc is updated only after the microtask that updates the current request is run assert_equals: after assigning to img.src but before the corresponding microtask is run expected "" but got "data:,c"
+

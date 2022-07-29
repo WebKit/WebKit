@@ -1,0 +1,7 @@
+
+
+PASS document.write()
+PASS document.write(),close()
+PASS document.open(),write()
+PASS document.open(),write(),close()
+

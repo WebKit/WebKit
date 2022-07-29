@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.colorObject.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.colorObject.transparency.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.default.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.get.halftransparent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.get.semitransparent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.get.solid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.fillStyle.get.transparent.html
@@ -232,10 +233,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.alpha.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.alpha.png
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.colour.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.colour.png
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.colouralpha.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.colouralpha.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.color.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.color.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.coloralpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.coloralpha.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.multiple.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.interpolate.outside.html
@@ -259,7 +260,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.object.crosscanvas.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.object.current.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.object.current.png
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.object.invalidcolour.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.object.invalidcolor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.object.invalidoffset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.object.return.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.object.type.html

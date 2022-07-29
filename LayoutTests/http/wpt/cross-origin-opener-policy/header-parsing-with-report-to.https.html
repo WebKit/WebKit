@@ -2,31 +2,58 @@
 <meta charset=utf-8>
 <script src=/resources/testharness.js></script>
 <script src=/resources/testharnessreport.js></script>
+<script src="/common/dispatcher/dispatcher.js"></script>
 <script src="/common/get-host-info.sub.js"></script>
+<script src="/common/utils.js"></script>
 <script src="/html/cross-origin-opener-policy/resources/common.js"></script>
+<script src="/html/cross-origin-opener-policy/resources/popup-test.js"></script>
 
 <div id=log></div>
 <script>
 
-let tests = [
-  // popup Origin, popup COOP, expect opener
-
+[
   // None of the following should be recognized as "same-origin" (hence the
   // "expected opener" value of `true`).
-  [SAME_ORIGIN, 'same-origin; report-to="foo', true],
-  [SAME_ORIGIN, 'same-origin; report-to="foo"x', true],
-  [SAME_ORIGIN, 'same-origin; report-to="foo\\a"', true],
-
+  {
+    "title": "Failure to parse 1",
+    "coop": 'same-origin; report-to="foo',
+    "opener": "preserved"
+  },
+  { 
+    "title": "Failure to parse 2",
+    "coop": 'same-origin; report-to="foo"x',
+    "opener": "preserved"
+  },
+  
   // All of the following should be recognized as "same-origin" (hence the
   // "expected opener" value of `false`).
-  [SAME_ORIGIN, 'same-origin', false],
-  [SAME_ORIGIN, 'same-origin; report-to="foo"', false],
-  [SAME_ORIGIN, 'same-origin; report-to="foo-123"', false],
-  [SAME_ORIGIN, 'same-origin; report-to="foo 123"', false],
-  [SAME_ORIGIN, 'same-origin; report-to="foo\\\\123"', false],
-  [SAME_ORIGIN, 'same-origin; report-to="foo\\"123"', false],
-  [SAME_ORIGIN, 'same-origin; report-to="foo"; bar=baz', false],
-];
+  { 
+    "title": "Able to parse 1",
+    "coop": 'same-origin',
+    "opener": "severed"
+  },
+  { 
+    "title": "Able to parse 2",
+    "coop": 'same-origin; report-to="foo"',
+    "opener": "severed"
+  },
+  { 
+    "title": "Able to parse 3",
+    "coop": 'same-origin; report-to="foo-123"',
+    "opener": "severed"
+  },
+  { 
+    "title": "Able to parse 4",
+    "coop": 'same-origin; report-to="foo 123"',
+    "opener": "severed"
+  },
+  { 
+    "title": "Able to parse 5",
+    "coop": 'same-origin; report-to="foo"; bar=baz',
+    "opener": "severed"
+  },
+].forEach(variant => {
+  popup_test(`Same-origin ${variant.title}`, SAME_ORIGIN, { coop: variant.coop }, variant.opener);
+});
 
-run_coop_tests("unspecified", tests);
 </script>

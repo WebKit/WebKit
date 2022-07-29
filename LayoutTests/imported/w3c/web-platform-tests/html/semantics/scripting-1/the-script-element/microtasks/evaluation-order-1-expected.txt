@@ -1,0 +1,6 @@
+
+FAIL Classic script queueing a microtask then throwing an exception assert_array_equals: expected property 1 to be "global-error" but got "microtask" (expected array ["body", "global-error", "microtask"] got ["body", "microtask", "global-error"])
+PASS Classic script queueing a microtask
+FAIL Module script queueing a microtask then throwing an exception assert_array_equals: lengths differ, expected array ["body", "microtask", "global-error"] length 3, got ["body", "global-error"] length 2
+FAIL Module script queueing a microtask assert_array_equals: expected property 0 to be "body" but got "microtask" (expected array ["body", "microtask"] got ["microtask", "body"])
+

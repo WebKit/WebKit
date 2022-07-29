@@ -1,0 +1,6 @@
+item1
+item2 item3
+item4
+
+FAIL When the focus is set on the last item of a focusgroup and the previous item is located past a non-focusgroup subtree, a backward arrow key press should move the focus to that previous item without getting stuck in the subtree. assert_equals: expected Element node <span id="item1" tabindex="0">item1</span> but got Element node <span id="item4" tabindex="-1">item4</span>
+

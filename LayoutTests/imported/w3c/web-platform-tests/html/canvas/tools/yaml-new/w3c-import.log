@@ -17,3 +17,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/color_space.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/compositing.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/conformance_requirements.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/drawing-images-to-the-canvas.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/drawing-rectangles-to-the-canvas.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/filters.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/reset.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/scroll.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/video.yaml

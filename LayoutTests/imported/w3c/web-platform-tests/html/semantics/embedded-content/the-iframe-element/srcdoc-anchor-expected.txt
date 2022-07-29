@@ -1,0 +1,4 @@
+
+
+PASS Verify srcdoc content loads when src is about:srcdoc#foo.
+

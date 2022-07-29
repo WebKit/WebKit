@@ -2158,6 +2158,25 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Pass Failure ]
 http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Pass Failure ]
 
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-height.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-innerheight.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-innerwidth.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-left.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-screenx.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-screeny.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-top.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-width.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-innerheight-innerwidth.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-screenx-screeny.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-top-left.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-width-height.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/remove-element-unblocks-rendering.optional.html [ Failure ]
+
+# Time out since import.
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-soap.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/editing/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-event.html [ Skip ]
+
 ######################################################
 # Test failures from turning GPU Process on by default
 webkit.org/b/234536 webxr/high-performance.html [ Failure ]
@@ -2246,6 +2265,10 @@ imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-marg
 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002.html [ Failure ]
 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Failure ]
+
+# Timing out since import.
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-events-closewatcher.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-preventDefault-closewatcher.tentative.html [ Skip ]
 
 # rdar://96912160 3* imported/w3c/web-platform-tests/cookies* tests are constant text failures)
 imported/w3c/web-platform-tests/cookies/attributes/path.html [ Failure ]

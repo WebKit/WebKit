@@ -14,7 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/aria-attribute-reflection.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/aria-element-reflection.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-embedded.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-forms-weekmonth.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-forms.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-grouping.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-metadata.js
@@ -24,11 +27,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-tabular.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-text.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/idlharness-shadowrealm.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/idlharness.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/idlharness.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/new-harness.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/original-harness.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-embedded.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-forms-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-forms.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-grouping.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-metadata.html

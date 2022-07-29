@@ -20,6 +20,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-document-under-content-visibility-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-document-under-content-visibility-gbcr.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-hidden-attribute-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-hidden-attribute-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-hidden-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-ignored-in-media-element.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback-2.html

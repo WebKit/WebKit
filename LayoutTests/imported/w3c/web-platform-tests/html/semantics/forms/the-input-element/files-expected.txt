@@ -22,4 +22,5 @@ PASS files for input type=reset
 PASS files for input type=button
 PASS files for input type=file
 PASS setting <input type=file>.files
+PASS setting <input type=file>.files from DataTransfer
 

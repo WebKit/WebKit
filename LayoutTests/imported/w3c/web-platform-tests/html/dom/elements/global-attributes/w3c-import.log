@@ -217,3 +217,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-translate-attribute-011.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-translate-attribute-012.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/translate-enumerated-ascii-case-insensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/translate-inherit-no-parent-element.html

@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/does-not-move-when-on-focusgroup-root.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/does-not-move-when-on-non-item.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/does-not-move-when-only-one-item-and-wraps.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/does-not-move-when-only-one-item.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/does-not-move-when-outside-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/does-not-wrap-in-focusgroup-with-no-items.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/does-not-wrap-when-not-supported.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/moves-inside-extending-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/moves-to-next-item-and-skips-non-focusable.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/moves-to-next-item-outside-extending-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/moves-to-next-item-within-descendants.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/moves-to-next-item.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/wraps-and-goes-into-inner-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/wraps-successfully.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/wraps-to-parent-focusgroup.html

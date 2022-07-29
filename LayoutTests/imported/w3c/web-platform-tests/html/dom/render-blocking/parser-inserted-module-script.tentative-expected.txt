@@ -1,0 +1,5 @@
+1
+
+FAIL Rendering is blocked before render-blocking resources are loaded assert_true: expected true got false
+PASS Parser-inserted render-blocking module script is evaluated
+

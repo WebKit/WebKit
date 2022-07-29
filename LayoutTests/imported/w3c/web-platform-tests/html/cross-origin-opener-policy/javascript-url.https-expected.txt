@@ -3,7 +3,7 @@ According to HTML's navigate algorithm, requests to javascript: URLs should inhe
 create popup with a given COOP (the parentCOOP)
 navigate the popup to a javascript: URL (the new document is expected to inherit the parentCOOP)
 from the popup, create a second popup window with a given COOP (the childCOOP)
-Both popup windows inspect state and report back to the test context using BroadcastChannels.
+Both popup windows inspect state and report back to the test.
 
     .---- test ----.
     | open(https:) |

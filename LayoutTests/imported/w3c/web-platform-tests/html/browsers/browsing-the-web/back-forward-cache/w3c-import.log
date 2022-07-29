@@ -17,4 +17,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/README.md
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/events.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/focus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/pushstate.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-clients-claim.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-clients-matchall.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-controlled-after-restore.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-unregister.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/storage-events.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/timers.html

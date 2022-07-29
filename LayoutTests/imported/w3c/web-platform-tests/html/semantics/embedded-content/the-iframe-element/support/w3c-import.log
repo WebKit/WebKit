@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-performs-top-navigation-on-popup.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-performs-top-navigation-without-user-gesture-failed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-performs-top-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-send-message-to-the-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-tries-to-navigate-parent-and-sends-result-to-grandparent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-tried-to-be-navigated-by-history.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-tried-to-be-navigated-by-its-child.html

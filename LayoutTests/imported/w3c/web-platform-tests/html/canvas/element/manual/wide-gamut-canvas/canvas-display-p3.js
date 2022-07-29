@@ -208,8 +208,7 @@ const svgImageTests = {
 };
 
 // Each video:
-//  * is 300x200, 25fps, with a duration of 10s
-//  * is a constant, solid color
+//  * is 300x200 and has a single color
 //  * has a filename base that indicates its contents:
 //
 //      <color-space>-<8-or-10-bit-color-value>
@@ -217,15 +216,15 @@ const svgImageTests = {
 //  * was generated using commands like:
 //
 //      W=300 H=200 Y=3F Cb=66 Cr=F0 ; \
-//        perl -e "print ((pack('c', 0x$Y) x ($W * $H) . pack('c', 0x$Cb) x ($W * $H / 4) . pack('c', 0x$Cr) x ($W * $H / 4)) x 250)" | \
+//        perl -e "print pack('c', 0x$Y) x ($W * $H), pack('c', 0x$Cb) x ($W * $H / 4), pack('c', 0x$Cr) x ($W * $H / 4)" | \
 //        ffmpeg -f rawvideo -pix_fmt yuv420p -s:v ${W}x$H -r 25 -i - -pix_fmt yuv420p -colorspace bt709 -color_primaries bt709 -color_trc iec61966_2_1 sRGB-FF0100.webm
 //
 //      W=300 H=200 Y=0BB Cb=1BD Cr=2EF ; \
-//        perl -e "print ((pack('v', 0x$Y) x ($W * $H) . pack('v', 0x$Cb) x ($W * $H / 4) . pack('v', 0x$Cr) x ($W * $H / 4)) x 250)" | \
+//        perl -e "print pack('s', 0x$Y) x ($W * $H), pack('s', 0x$Cb) x ($W * $H / 4), pack('s', 0x$Cr) x ($W * $H / 4)" | \
 //        ffmpeg -f rawvideo -pix_fmt yuv420p10le -s:v ${W}x$H -r 25 -i - -c:v libx265 -vtag hvc1 -pix_fmt yuv420p10le -colorspace bt2020nc -color_primaries bt2020 -color_trc bt2020-10 Rec2020-222000000.mp4
 //
 //      W=300 H=200 Y=0BB Cb=1BD Cr=2EF ; \
-//        perl -e "print ((pack('v', 0x$Y) x ($W * $H) . pack('v', 0x$Cb) x ($W * $H / 4) . pack('v', 0x$Cr) x ($W * $H / 4)) x 250)" | \
+//        perl -e "print pack('s', 0x$Y) x ($W * $H), pack('s', 0x$Cb) x ($W * $H / 4), pack('s', 0x$Cr) x ($W * $H / 4)" | \
 //        ffmpeg -f rawvideo -pix_fmt yuv420p10le -s:v ${W}x$H -r 25 -i - -vcodec libvpx-vp9 -profile:v 2 -pix_fmt yuv420p10le -colorspace bt2020nc -color_primaries bt2020 -color_trc bt2020-10 Rec2020-222000000.webm
 //
 //    where the Y'CbCr values were computed using https://jdashg.github.io/misc/colors/from-coeffs.html.

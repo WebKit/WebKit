@@ -44,5 +44,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imagebitmap-replication-exif-orientation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/serialize-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/transfer-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/worker-onmessage-noop.js

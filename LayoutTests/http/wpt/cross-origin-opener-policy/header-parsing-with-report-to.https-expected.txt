@@ -1,12 +1,9 @@
 
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin; report-to=\"foo"
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin; report-to=\"foo\"x"
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin; report-to=\"foo\\a\""
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin"
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin; report-to=\"foo\""
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin; report-to=\"foo-123\""
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin; report-to=\"foo 123\""
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin; report-to=\"foo\\\\123\""
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin; report-to=\"foo\\\"123\""
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin; report-to=\"foo\"; bar=baz"
+PASS Same-origin Failure to parse 1
+PASS Same-origin Failure to parse 2
+PASS Same-origin Able to parse 1
+PASS Same-origin Able to parse 2
+PASS Same-origin Able to parse 3
+PASS Same-origin Able to parse 4
+PASS Same-origin Able to parse 5
 

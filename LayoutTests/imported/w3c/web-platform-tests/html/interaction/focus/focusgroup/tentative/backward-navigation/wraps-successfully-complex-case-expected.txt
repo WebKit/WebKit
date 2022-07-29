@@ -1,0 +1,6 @@
+nonitem1 nonitem2
+item1 item2 item3
+nonitem3 nonitem4
+
+FAIL When the focus is set on the first item of an extending focusgroup while there are other non-item elements before, we should still be able to wrap to the last item. Also, if the last item has other non-item elements after itself, skipping these non-item elements shouldn't be an issue. assert_equals: expected Element node <span id="item3" tabindex="-1">item3</span> but got Element node <span id="item1" tabindex="0">item1</span>
+

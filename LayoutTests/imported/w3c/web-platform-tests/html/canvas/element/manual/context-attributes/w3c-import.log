@@ -15,4 +15,22 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/canvas-with-padding.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/clearRect_alpha_false-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/clearRect_alpha_false-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/clearRect_alpha_false.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/drawImage_alpha_false-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/drawImage_alpha_false-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/drawImage_alpha_false.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/fillRect_alpha_false-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/fillRect_alpha_false-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/fillRect_alpha_false.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/fill_alpha_false-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/fill_alpha_false-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/fill_alpha_false.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/getContextAttributes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/initial_color_alpha_false-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/initial_color_alpha_false-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/initial_color_alpha_false.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/reset_color_alpha_false-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/reset_color_alpha_false-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/reset_color_alpha_false.html

@@ -77,4 +77,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/058.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransfer-constructor-001.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransfer-types.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-remove.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/helper-drop-box-here.xhtml

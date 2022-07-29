@@ -1,0 +1,7 @@
+
+FAIL Importing a specifier that previously failed due to an incorrect type assertion can succeed if the correct assertion is later given promise_test: Unhandled rejection with value: object "TypeError: 'application/json' is not a valid JavaScript MIME type."
+FAIL Importing a specifier that previously succeeded with the correct type assertion should fail if the incorrect assertion is later given promise_test: Unhandled rejection with value: object "TypeError: 'application/json' is not a valid JavaScript MIME type."
+FAIL Two modules of different type with the same specifier can load if the server changes its responses promise_test: Unhandled rejection with value: object "TypeError: 'text/json' is not a valid JavaScript MIME type."
+FAIL An import should always fail if the same specifier/type assertion pair failed previously assert_unreached: Should have rejected: import should always fail if the same specifier/type assertion pair failed previously Reached unreachable code
+FAIL If an import previously succeeded for a given specifier/type assertion pair, future uses of that pair should yield the same result promise_test: Unhandled rejection with value: object "TypeError: 'text/json' is not a valid JavaScript MIME type."
+

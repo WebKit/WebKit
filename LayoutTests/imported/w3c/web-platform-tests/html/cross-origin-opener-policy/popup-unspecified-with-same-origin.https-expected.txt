@@ -1,10 +1,10 @@
 
-PASS unspecified document opening popup to https://localhost:9443 with COOP: ""
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "unsafe-none"
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "jibberish"
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-site"
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-site unsafe-allow-outgoing"
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin unsafe-allow-outgoing"
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin"
-PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin-allow-popups"
+PASS Same-origin popup with empty coop
+PASS Same-origin popup with coop unsafe-none
+PASS Same-origin popup with jibberish coop
+PASS Same-origin popup with obsolete coop
+PASS Same-origin popup with obsolete coop 2
+PASS Same-origin popup with obsolete coop 3
+PASS Same-origin popup with coop same-origin
+PASS Same-origin popup with coop same-origin-allow-popups
 

@@ -16,7 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/broadcast-channel.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/dedicated-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/inflight-fetch-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/inflight-fetch-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/inflight-fetch-cors.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/inflight-fetch-redirects.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/inflight-fetch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/shared-worker.html

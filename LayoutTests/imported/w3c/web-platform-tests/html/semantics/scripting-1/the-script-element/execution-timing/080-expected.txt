@@ -1,4 +1,0 @@
-FAILED (This TC requires JavaScript enabled)
-
-PASS scheduler: IFRAMEs added with DOM (appendChild), javascript: URL
-

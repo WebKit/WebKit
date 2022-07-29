@@ -1,0 +1,6 @@
+2d.filter.canvasFilterObject.componentTransfer.identity.tentative
+Test pixels on CanvasFilter() componentTransfer with identity type
+Actual output:
+
+FAIL Test pixels on CanvasFilter() componentTransfer with identity type Can't find variable: CanvasFilter
+

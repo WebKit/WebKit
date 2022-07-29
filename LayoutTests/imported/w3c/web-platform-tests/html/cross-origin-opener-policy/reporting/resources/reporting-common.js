@@ -117,7 +117,7 @@ function isObjectAsExpected(report, expectedReport) {
 
 async function checkForExpectedReport(expectedReport) {
   return new Promise( async (resolve, reject) => {
-    const polls = 5;
+    const polls = 20;
     const waitTime = 200;
     for (var i=0; i < polls; ++i) {
       pollReports(expectedReport.endpoint);
@@ -180,8 +180,7 @@ function replaceTokensInReceivedReport(str) {
   return str.replace(/.{8}-.{4}-.{4}-.{4}-.{12}/g, `(uuid)`);
 }
 
-// Run a test (such as coop_coep_test from ./common.js) then check that all
-// expected reports are present.
+// Run a test then check that all expected reports are present.
 async function reportingTest(testFunction, executorToken, expectedReports) {
   await new Promise(testFunction);
   expectedReports = Array.from(
@@ -239,7 +238,7 @@ function navigationReportingTest(testName, host, coop, coep, coopRo, coepRo,
   promise_test(async t => {
     await reportingTest(async resolve => {
       const openee_headers = [
-        getReportToHeader(host.origin),
+        getReportingEndpointsHeader(host.origin),
         ...getPolicyHeaders(coop, coep, coopRo, coepRo)
       ].map(convertToWPTHeaderPipe);
       const openee_url = host.origin + executor_path +

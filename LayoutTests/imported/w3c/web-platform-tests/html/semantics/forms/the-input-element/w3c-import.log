@@ -27,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/date.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local-trailing-zeros.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/defaultValue-clobbering.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email-set-value.html
@@ -45,7 +46,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-list.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-seconds-leading-zeroes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-setcustomvalidity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepdown-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepdown.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepup-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepup.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-submit-remove-jssubmit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-button.html
@@ -100,6 +103,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/reset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/search_input.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-pointer.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker-cross-origin-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker-disabled-readonly.html
@@ -111,7 +115,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-focus-dynamic-value-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-file-to-text-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-weekmonth.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/week.html

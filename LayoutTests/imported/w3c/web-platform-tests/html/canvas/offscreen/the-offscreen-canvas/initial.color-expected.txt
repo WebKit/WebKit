@@ -1,0 +1,7 @@
+initial.color
+
+Initial state is transparent black
+
+
+PASS Initial state is transparent black
+

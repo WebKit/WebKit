@@ -1,0 +1,18 @@
+
+PASS Parsing coop with semi-column
+PASS Parsing coop with vertical tab
+PASS Parsing coop with form feed
+PASS Parsing coop with carriage return
+PASS Parsing coop with capital letter
+PASS Parsing coop with bad structured header 1
+PASS Parsing coop with bad structured header 2
+PASS Parsing coop with bad structured header 3
+PASS Parsing coop as a structured header 'string' item
+PASS Parsing coop as a structured header 'byte sequence' item
+PASS Parsing coop as a structured header 'boolean' item
+PASS Parsing coop as a structured header 'integer or decimal' item
+PASS Parsing coop as an unrecognized structured header type
+PASS Parsing coop with duplicate value
+PASS Parsing coop with duplicate value, separated by a comma
+PASS Parsing coop with preceding asterisk character
+

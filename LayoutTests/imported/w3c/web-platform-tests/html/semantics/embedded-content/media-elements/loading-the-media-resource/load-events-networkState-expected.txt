@@ -1,5 +1,6 @@
 
 PASS NETWORK_IDLE
+FAIL NETWORK_DISPATCH_EMPTIED_BEFORE_TIMEUPDATE assert_array_equals: lengths differ, expected array ["abort", "emptied", "timeupdate"] length 3, got ["abort", "emptied"] length 2
 PASS NETWORK_LOADING
 PASS NETWORK_NO_SOURCE
 

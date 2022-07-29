@@ -1,0 +1,1557 @@
+Implementers looking to fix bugs might want to use the original version of this suite's test framework, which conveniently aggregates similar errors and only reports failures. This file is (part of) the authoritative conformance test suite, and is suitable for incorporation into automated test suites.
+
+
+PASS input.title: typeof IDL attribute
+PASS input.title: IDL get with DOM attribute unset
+PASS input.title: setAttribute() to ""
+PASS input.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.title: setAttribute() to undefined
+PASS input.title: setAttribute() to 7
+PASS input.title: setAttribute() to 1.5
+PASS input.title: setAttribute() to "5%"
+PASS input.title: setAttribute() to "+100"
+PASS input.title: setAttribute() to ".5"
+PASS input.title: setAttribute() to true
+PASS input.title: setAttribute() to false
+PASS input.title: setAttribute() to object "[object Object]"
+PASS input.title: setAttribute() to NaN
+PASS input.title: setAttribute() to Infinity
+PASS input.title: setAttribute() to -Infinity
+PASS input.title: setAttribute() to "\0"
+PASS input.title: setAttribute() to null
+PASS input.title: setAttribute() to object "test-toString"
+PASS input.title: setAttribute() to object "test-valueOf"
+PASS input.title: IDL set to ""
+PASS input.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.title: IDL set to undefined
+PASS input.title: IDL set to 7
+PASS input.title: IDL set to 1.5
+PASS input.title: IDL set to "5%"
+PASS input.title: IDL set to "+100"
+PASS input.title: IDL set to ".5"
+PASS input.title: IDL set to true
+PASS input.title: IDL set to false
+PASS input.title: IDL set to object "[object Object]"
+PASS input.title: IDL set to NaN
+PASS input.title: IDL set to Infinity
+PASS input.title: IDL set to -Infinity
+PASS input.title: IDL set to "\0"
+PASS input.title: IDL set to null
+PASS input.title: IDL set to object "test-toString"
+PASS input.title: IDL set to object "test-valueOf"
+PASS input.lang: typeof IDL attribute
+PASS input.lang: IDL get with DOM attribute unset
+PASS input.lang: setAttribute() to ""
+PASS input.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.lang: setAttribute() to undefined
+PASS input.lang: setAttribute() to 7
+PASS input.lang: setAttribute() to 1.5
+PASS input.lang: setAttribute() to "5%"
+PASS input.lang: setAttribute() to "+100"
+PASS input.lang: setAttribute() to ".5"
+PASS input.lang: setAttribute() to true
+PASS input.lang: setAttribute() to false
+PASS input.lang: setAttribute() to object "[object Object]"
+PASS input.lang: setAttribute() to NaN
+PASS input.lang: setAttribute() to Infinity
+PASS input.lang: setAttribute() to -Infinity
+PASS input.lang: setAttribute() to "\0"
+PASS input.lang: setAttribute() to null
+PASS input.lang: setAttribute() to object "test-toString"
+PASS input.lang: setAttribute() to object "test-valueOf"
+PASS input.lang: IDL set to ""
+PASS input.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.lang: IDL set to undefined
+PASS input.lang: IDL set to 7
+PASS input.lang: IDL set to 1.5
+PASS input.lang: IDL set to "5%"
+PASS input.lang: IDL set to "+100"
+PASS input.lang: IDL set to ".5"
+PASS input.lang: IDL set to true
+PASS input.lang: IDL set to false
+PASS input.lang: IDL set to object "[object Object]"
+PASS input.lang: IDL set to NaN
+PASS input.lang: IDL set to Infinity
+PASS input.lang: IDL set to -Infinity
+PASS input.lang: IDL set to "\0"
+PASS input.lang: IDL set to null
+PASS input.lang: IDL set to object "test-toString"
+PASS input.lang: IDL set to object "test-valueOf"
+PASS input.dir: typeof IDL attribute
+PASS input.dir: IDL get with DOM attribute unset
+PASS input.dir: setAttribute() to ""
+PASS input.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.dir: setAttribute() to undefined
+PASS input.dir: setAttribute() to 7
+PASS input.dir: setAttribute() to 1.5
+PASS input.dir: setAttribute() to "5%"
+PASS input.dir: setAttribute() to "+100"
+PASS input.dir: setAttribute() to ".5"
+PASS input.dir: setAttribute() to true
+PASS input.dir: setAttribute() to false
+PASS input.dir: setAttribute() to object "[object Object]"
+PASS input.dir: setAttribute() to NaN
+PASS input.dir: setAttribute() to Infinity
+PASS input.dir: setAttribute() to -Infinity
+PASS input.dir: setAttribute() to "\0"
+PASS input.dir: setAttribute() to null
+PASS input.dir: setAttribute() to object "test-toString"
+PASS input.dir: setAttribute() to object "test-valueOf"
+PASS input.dir: setAttribute() to "ltr"
+PASS input.dir: setAttribute() to "xltr"
+PASS input.dir: setAttribute() to "ltr\0"
+PASS input.dir: setAttribute() to "tr"
+PASS input.dir: setAttribute() to "LTR"
+PASS input.dir: setAttribute() to "rtl"
+PASS input.dir: setAttribute() to "xrtl"
+PASS input.dir: setAttribute() to "rtl\0"
+PASS input.dir: setAttribute() to "tl"
+PASS input.dir: setAttribute() to "RTL"
+PASS input.dir: setAttribute() to "auto"
+PASS input.dir: setAttribute() to "xauto"
+PASS input.dir: setAttribute() to "auto\0"
+PASS input.dir: setAttribute() to "uto"
+PASS input.dir: setAttribute() to "AUTO"
+PASS input.dir: IDL set to ""
+PASS input.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.dir: IDL set to undefined
+PASS input.dir: IDL set to 7
+PASS input.dir: IDL set to 1.5
+PASS input.dir: IDL set to "5%"
+PASS input.dir: IDL set to "+100"
+PASS input.dir: IDL set to ".5"
+PASS input.dir: IDL set to true
+PASS input.dir: IDL set to false
+PASS input.dir: IDL set to object "[object Object]"
+PASS input.dir: IDL set to NaN
+PASS input.dir: IDL set to Infinity
+PASS input.dir: IDL set to -Infinity
+PASS input.dir: IDL set to "\0"
+PASS input.dir: IDL set to null
+PASS input.dir: IDL set to object "test-toString"
+PASS input.dir: IDL set to object "test-valueOf"
+PASS input.dir: IDL set to "ltr"
+PASS input.dir: IDL set to "xltr"
+PASS input.dir: IDL set to "ltr\0"
+PASS input.dir: IDL set to "tr"
+PASS input.dir: IDL set to "LTR"
+PASS input.dir: IDL set to "rtl"
+PASS input.dir: IDL set to "xrtl"
+PASS input.dir: IDL set to "rtl\0"
+PASS input.dir: IDL set to "tl"
+PASS input.dir: IDL set to "RTL"
+PASS input.dir: IDL set to "auto"
+PASS input.dir: IDL set to "xauto"
+PASS input.dir: IDL set to "auto\0"
+PASS input.dir: IDL set to "uto"
+PASS input.dir: IDL set to "AUTO"
+PASS input.className (<input class>): typeof IDL attribute
+PASS input.className (<input class>): IDL get with DOM attribute unset
+PASS input.className (<input class>): setAttribute() to ""
+PASS input.className (<input class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.className (<input class>): setAttribute() to undefined
+PASS input.className (<input class>): setAttribute() to 7
+PASS input.className (<input class>): setAttribute() to 1.5
+PASS input.className (<input class>): setAttribute() to "5%"
+PASS input.className (<input class>): setAttribute() to "+100"
+PASS input.className (<input class>): setAttribute() to ".5"
+PASS input.className (<input class>): setAttribute() to true
+PASS input.className (<input class>): setAttribute() to false
+PASS input.className (<input class>): setAttribute() to object "[object Object]"
+PASS input.className (<input class>): setAttribute() to NaN
+PASS input.className (<input class>): setAttribute() to Infinity
+PASS input.className (<input class>): setAttribute() to -Infinity
+PASS input.className (<input class>): setAttribute() to "\0"
+PASS input.className (<input class>): setAttribute() to null
+PASS input.className (<input class>): setAttribute() to object "test-toString"
+PASS input.className (<input class>): setAttribute() to object "test-valueOf"
+PASS input.className (<input class>): IDL set to ""
+PASS input.className (<input class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.className (<input class>): IDL set to undefined
+PASS input.className (<input class>): IDL set to 7
+PASS input.className (<input class>): IDL set to 1.5
+PASS input.className (<input class>): IDL set to "5%"
+PASS input.className (<input class>): IDL set to "+100"
+PASS input.className (<input class>): IDL set to ".5"
+PASS input.className (<input class>): IDL set to true
+PASS input.className (<input class>): IDL set to false
+PASS input.className (<input class>): IDL set to object "[object Object]"
+PASS input.className (<input class>): IDL set to NaN
+PASS input.className (<input class>): IDL set to Infinity
+PASS input.className (<input class>): IDL set to -Infinity
+PASS input.className (<input class>): IDL set to "\0"
+PASS input.className (<input class>): IDL set to null
+PASS input.className (<input class>): IDL set to object "test-toString"
+PASS input.className (<input class>): IDL set to object "test-valueOf"
+PASS input.autofocus: typeof IDL attribute
+PASS input.autofocus: IDL get with DOM attribute unset
+PASS input.autofocus: setAttribute() to ""
+PASS input.autofocus: setAttribute() to " foo "
+PASS input.autofocus: setAttribute() to undefined
+PASS input.autofocus: setAttribute() to null
+PASS input.autofocus: setAttribute() to 7
+PASS input.autofocus: setAttribute() to 1.5
+PASS input.autofocus: setAttribute() to "5%"
+PASS input.autofocus: setAttribute() to "+100"
+PASS input.autofocus: setAttribute() to ".5"
+PASS input.autofocus: setAttribute() to true
+PASS input.autofocus: setAttribute() to false
+PASS input.autofocus: setAttribute() to object "[object Object]"
+PASS input.autofocus: setAttribute() to NaN
+PASS input.autofocus: setAttribute() to Infinity
+PASS input.autofocus: setAttribute() to -Infinity
+PASS input.autofocus: setAttribute() to "\0"
+PASS input.autofocus: setAttribute() to object "test-toString"
+PASS input.autofocus: setAttribute() to object "test-valueOf"
+PASS input.autofocus: setAttribute() to "autofocus"
+PASS input.autofocus: IDL set to ""
+PASS input.autofocus: IDL set to " foo "
+PASS input.autofocus: IDL set to undefined
+PASS input.autofocus: IDL set to null
+PASS input.autofocus: IDL set to 7
+PASS input.autofocus: IDL set to 1.5
+PASS input.autofocus: IDL set to "5%"
+PASS input.autofocus: IDL set to "+100"
+PASS input.autofocus: IDL set to ".5"
+PASS input.autofocus: IDL set to true
+PASS input.autofocus: IDL set to false
+PASS input.autofocus: IDL set to object "[object Object]"
+PASS input.autofocus: IDL set to NaN
+PASS input.autofocus: IDL set to Infinity
+PASS input.autofocus: IDL set to -Infinity
+PASS input.autofocus: IDL set to "\0"
+PASS input.autofocus: IDL set to object "test-toString"
+PASS input.autofocus: IDL set to object "test-valueOf"
+PASS input.hidden: typeof IDL attribute
+PASS input.hidden: IDL get with DOM attribute unset
+PASS input.hidden: setAttribute() to ""
+PASS input.hidden: setAttribute() to " foo "
+PASS input.hidden: setAttribute() to undefined
+PASS input.hidden: setAttribute() to null
+PASS input.hidden: setAttribute() to 7
+PASS input.hidden: setAttribute() to 1.5
+PASS input.hidden: setAttribute() to "5%"
+PASS input.hidden: setAttribute() to "+100"
+PASS input.hidden: setAttribute() to ".5"
+PASS input.hidden: setAttribute() to true
+PASS input.hidden: setAttribute() to false
+PASS input.hidden: setAttribute() to object "[object Object]"
+PASS input.hidden: setAttribute() to NaN
+PASS input.hidden: setAttribute() to Infinity
+PASS input.hidden: setAttribute() to -Infinity
+PASS input.hidden: setAttribute() to "\0"
+PASS input.hidden: setAttribute() to object "test-toString"
+PASS input.hidden: setAttribute() to object "test-valueOf"
+PASS input.hidden: setAttribute() to "hidden"
+PASS input.hidden: IDL set to ""
+PASS input.hidden: IDL set to " foo "
+PASS input.hidden: IDL set to undefined
+PASS input.hidden: IDL set to null
+PASS input.hidden: IDL set to 7
+PASS input.hidden: IDL set to 1.5
+PASS input.hidden: IDL set to "5%"
+PASS input.hidden: IDL set to "+100"
+PASS input.hidden: IDL set to ".5"
+PASS input.hidden: IDL set to true
+PASS input.hidden: IDL set to false
+PASS input.hidden: IDL set to object "[object Object]"
+PASS input.hidden: IDL set to NaN
+PASS input.hidden: IDL set to Infinity
+PASS input.hidden: IDL set to -Infinity
+PASS input.hidden: IDL set to "\0"
+PASS input.hidden: IDL set to object "test-toString"
+PASS input.hidden: IDL set to object "test-valueOf"
+PASS input.accessKey: typeof IDL attribute
+PASS input.accessKey: IDL get with DOM attribute unset
+PASS input.accessKey: setAttribute() to ""
+PASS input.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.accessKey: setAttribute() to undefined
+PASS input.accessKey: setAttribute() to 7
+PASS input.accessKey: setAttribute() to 1.5
+PASS input.accessKey: setAttribute() to "5%"
+PASS input.accessKey: setAttribute() to "+100"
+PASS input.accessKey: setAttribute() to ".5"
+PASS input.accessKey: setAttribute() to true
+PASS input.accessKey: setAttribute() to false
+PASS input.accessKey: setAttribute() to object "[object Object]"
+PASS input.accessKey: setAttribute() to NaN
+PASS input.accessKey: setAttribute() to Infinity
+PASS input.accessKey: setAttribute() to -Infinity
+PASS input.accessKey: setAttribute() to "\0"
+PASS input.accessKey: setAttribute() to null
+PASS input.accessKey: setAttribute() to object "test-toString"
+PASS input.accessKey: setAttribute() to object "test-valueOf"
+PASS input.accessKey: IDL set to ""
+PASS input.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.accessKey: IDL set to undefined
+PASS input.accessKey: IDL set to 7
+PASS input.accessKey: IDL set to 1.5
+PASS input.accessKey: IDL set to "5%"
+PASS input.accessKey: IDL set to "+100"
+PASS input.accessKey: IDL set to ".5"
+PASS input.accessKey: IDL set to true
+PASS input.accessKey: IDL set to false
+PASS input.accessKey: IDL set to object "[object Object]"
+PASS input.accessKey: IDL set to NaN
+PASS input.accessKey: IDL set to Infinity
+PASS input.accessKey: IDL set to -Infinity
+PASS input.accessKey: IDL set to "\0"
+PASS input.accessKey: IDL set to null
+PASS input.accessKey: IDL set to object "test-toString"
+PASS input.accessKey: IDL set to object "test-valueOf"
+PASS input.tabIndex: typeof IDL attribute
+PASS input.tabIndex: setAttribute() to -36
+PASS input.tabIndex: setAttribute() to -1
+PASS input.tabIndex: setAttribute() to 0
+PASS input.tabIndex: setAttribute() to 1
+PASS input.tabIndex: setAttribute() to 2147483647
+PASS input.tabIndex: setAttribute() to -2147483648
+PASS input.tabIndex: setAttribute() to "-1"
+PASS input.tabIndex: setAttribute() to "-0"
+PASS input.tabIndex: setAttribute() to "0"
+PASS input.tabIndex: setAttribute() to "1"
+PASS input.tabIndex: setAttribute() to "\t7"
+PASS input.tabIndex: setAttribute() to "\f7"
+PASS input.tabIndex: setAttribute() to " 7"
+PASS input.tabIndex: setAttribute() to "\n7"
+PASS input.tabIndex: setAttribute() to "\r7"
+PASS input.tabIndex: setAttribute() to 1.5
+PASS input.tabIndex: setAttribute() to "5%"
+PASS input.tabIndex: setAttribute() to "+100"
+PASS input.tabIndex: setAttribute() to object "2"
+PASS input.tabIndex: IDL set to -36
+PASS input.tabIndex: IDL set to -1
+PASS input.tabIndex: IDL set to 0
+PASS input.tabIndex: IDL set to 1
+PASS input.tabIndex: IDL set to 2147483647
+PASS input.tabIndex: IDL set to -2147483648
+PASS input.accept: typeof IDL attribute
+PASS input.accept: IDL get with DOM attribute unset
+PASS input.accept: setAttribute() to ""
+PASS input.accept: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.accept: setAttribute() to undefined
+PASS input.accept: setAttribute() to 7
+PASS input.accept: setAttribute() to 1.5
+PASS input.accept: setAttribute() to "5%"
+PASS input.accept: setAttribute() to "+100"
+PASS input.accept: setAttribute() to ".5"
+PASS input.accept: setAttribute() to true
+PASS input.accept: setAttribute() to false
+PASS input.accept: setAttribute() to object "[object Object]"
+PASS input.accept: setAttribute() to NaN
+PASS input.accept: setAttribute() to Infinity
+PASS input.accept: setAttribute() to -Infinity
+PASS input.accept: setAttribute() to "\0"
+PASS input.accept: setAttribute() to null
+PASS input.accept: setAttribute() to object "test-toString"
+PASS input.accept: setAttribute() to object "test-valueOf"
+PASS input.accept: IDL set to ""
+PASS input.accept: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.accept: IDL set to undefined
+PASS input.accept: IDL set to 7
+PASS input.accept: IDL set to 1.5
+PASS input.accept: IDL set to "5%"
+PASS input.accept: IDL set to "+100"
+PASS input.accept: IDL set to ".5"
+PASS input.accept: IDL set to true
+PASS input.accept: IDL set to false
+PASS input.accept: IDL set to object "[object Object]"
+PASS input.accept: IDL set to NaN
+PASS input.accept: IDL set to Infinity
+PASS input.accept: IDL set to -Infinity
+PASS input.accept: IDL set to "\0"
+PASS input.accept: IDL set to null
+PASS input.accept: IDL set to object "test-toString"
+PASS input.accept: IDL set to object "test-valueOf"
+PASS input.alt: typeof IDL attribute
+PASS input.alt: IDL get with DOM attribute unset
+PASS input.alt: setAttribute() to ""
+PASS input.alt: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.alt: setAttribute() to undefined
+PASS input.alt: setAttribute() to 7
+PASS input.alt: setAttribute() to 1.5
+PASS input.alt: setAttribute() to "5%"
+PASS input.alt: setAttribute() to "+100"
+PASS input.alt: setAttribute() to ".5"
+PASS input.alt: setAttribute() to true
+PASS input.alt: setAttribute() to false
+PASS input.alt: setAttribute() to object "[object Object]"
+PASS input.alt: setAttribute() to NaN
+PASS input.alt: setAttribute() to Infinity
+PASS input.alt: setAttribute() to -Infinity
+PASS input.alt: setAttribute() to "\0"
+PASS input.alt: setAttribute() to null
+PASS input.alt: setAttribute() to object "test-toString"
+PASS input.alt: setAttribute() to object "test-valueOf"
+PASS input.alt: IDL set to ""
+PASS input.alt: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.alt: IDL set to undefined
+PASS input.alt: IDL set to 7
+PASS input.alt: IDL set to 1.5
+PASS input.alt: IDL set to "5%"
+PASS input.alt: IDL set to "+100"
+PASS input.alt: IDL set to ".5"
+PASS input.alt: IDL set to true
+PASS input.alt: IDL set to false
+PASS input.alt: IDL set to object "[object Object]"
+PASS input.alt: IDL set to NaN
+PASS input.alt: IDL set to Infinity
+PASS input.alt: IDL set to -Infinity
+PASS input.alt: IDL set to "\0"
+PASS input.alt: IDL set to null
+PASS input.alt: IDL set to object "test-toString"
+PASS input.alt: IDL set to object "test-valueOf"
+PASS input.autocomplete: typeof IDL attribute
+PASS input.autocomplete: IDL set to ""
+PASS input.autocomplete: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.autocomplete: IDL set to undefined
+PASS input.autocomplete: IDL set to 7
+PASS input.autocomplete: IDL set to 1.5
+PASS input.autocomplete: IDL set to "5%"
+PASS input.autocomplete: IDL set to "+100"
+PASS input.autocomplete: IDL set to ".5"
+PASS input.autocomplete: IDL set to true
+PASS input.autocomplete: IDL set to false
+PASS input.autocomplete: IDL set to object "[object Object]"
+PASS input.autocomplete: IDL set to NaN
+PASS input.autocomplete: IDL set to Infinity
+PASS input.autocomplete: IDL set to -Infinity
+PASS input.autocomplete: IDL set to "\0"
+PASS input.autocomplete: IDL set to null
+PASS input.autocomplete: IDL set to object "test-toString"
+PASS input.autocomplete: IDL set to object "test-valueOf"
+PASS input.defaultChecked (<input checked>): typeof IDL attribute
+PASS input.defaultChecked (<input checked>): IDL get with DOM attribute unset
+PASS input.defaultChecked (<input checked>): setAttribute() to ""
+PASS input.defaultChecked (<input checked>): setAttribute() to " foo "
+PASS input.defaultChecked (<input checked>): setAttribute() to undefined
+PASS input.defaultChecked (<input checked>): setAttribute() to null
+PASS input.defaultChecked (<input checked>): setAttribute() to 7
+PASS input.defaultChecked (<input checked>): setAttribute() to 1.5
+PASS input.defaultChecked (<input checked>): setAttribute() to "5%"
+PASS input.defaultChecked (<input checked>): setAttribute() to "+100"
+PASS input.defaultChecked (<input checked>): setAttribute() to ".5"
+PASS input.defaultChecked (<input checked>): setAttribute() to true
+PASS input.defaultChecked (<input checked>): setAttribute() to false
+PASS input.defaultChecked (<input checked>): setAttribute() to object "[object Object]"
+PASS input.defaultChecked (<input checked>): setAttribute() to NaN
+PASS input.defaultChecked (<input checked>): setAttribute() to Infinity
+PASS input.defaultChecked (<input checked>): setAttribute() to -Infinity
+PASS input.defaultChecked (<input checked>): setAttribute() to "\0"
+PASS input.defaultChecked (<input checked>): setAttribute() to object "test-toString"
+PASS input.defaultChecked (<input checked>): setAttribute() to object "test-valueOf"
+PASS input.defaultChecked (<input checked>): setAttribute() to "checked"
+PASS input.defaultChecked (<input checked>): IDL set to ""
+PASS input.defaultChecked (<input checked>): IDL set to " foo "
+PASS input.defaultChecked (<input checked>): IDL set to undefined
+PASS input.defaultChecked (<input checked>): IDL set to null
+PASS input.defaultChecked (<input checked>): IDL set to 7
+PASS input.defaultChecked (<input checked>): IDL set to 1.5
+PASS input.defaultChecked (<input checked>): IDL set to "5%"
+PASS input.defaultChecked (<input checked>): IDL set to "+100"
+PASS input.defaultChecked (<input checked>): IDL set to ".5"
+PASS input.defaultChecked (<input checked>): IDL set to true
+PASS input.defaultChecked (<input checked>): IDL set to false
+PASS input.defaultChecked (<input checked>): IDL set to object "[object Object]"
+PASS input.defaultChecked (<input checked>): IDL set to NaN
+PASS input.defaultChecked (<input checked>): IDL set to Infinity
+PASS input.defaultChecked (<input checked>): IDL set to -Infinity
+PASS input.defaultChecked (<input checked>): IDL set to "\0"
+PASS input.defaultChecked (<input checked>): IDL set to object "test-toString"
+PASS input.defaultChecked (<input checked>): IDL set to object "test-valueOf"
+PASS input.dirName: typeof IDL attribute
+PASS input.dirName: IDL get with DOM attribute unset
+PASS input.dirName: setAttribute() to ""
+PASS input.dirName: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.dirName: setAttribute() to undefined
+PASS input.dirName: setAttribute() to 7
+PASS input.dirName: setAttribute() to 1.5
+PASS input.dirName: setAttribute() to "5%"
+PASS input.dirName: setAttribute() to "+100"
+PASS input.dirName: setAttribute() to ".5"
+PASS input.dirName: setAttribute() to true
+PASS input.dirName: setAttribute() to false
+PASS input.dirName: setAttribute() to object "[object Object]"
+PASS input.dirName: setAttribute() to NaN
+PASS input.dirName: setAttribute() to Infinity
+PASS input.dirName: setAttribute() to -Infinity
+PASS input.dirName: setAttribute() to "\0"
+PASS input.dirName: setAttribute() to null
+PASS input.dirName: setAttribute() to object "test-toString"
+PASS input.dirName: setAttribute() to object "test-valueOf"
+PASS input.dirName: IDL set to ""
+PASS input.dirName: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.dirName: IDL set to undefined
+PASS input.dirName: IDL set to 7
+PASS input.dirName: IDL set to 1.5
+PASS input.dirName: IDL set to "5%"
+PASS input.dirName: IDL set to "+100"
+PASS input.dirName: IDL set to ".5"
+PASS input.dirName: IDL set to true
+PASS input.dirName: IDL set to false
+PASS input.dirName: IDL set to object "[object Object]"
+PASS input.dirName: IDL set to NaN
+PASS input.dirName: IDL set to Infinity
+PASS input.dirName: IDL set to -Infinity
+PASS input.dirName: IDL set to "\0"
+PASS input.dirName: IDL set to null
+PASS input.dirName: IDL set to object "test-toString"
+PASS input.dirName: IDL set to object "test-valueOf"
+PASS input.disabled: typeof IDL attribute
+PASS input.disabled: IDL get with DOM attribute unset
+PASS input.disabled: setAttribute() to ""
+PASS input.disabled: setAttribute() to " foo "
+PASS input.disabled: setAttribute() to undefined
+PASS input.disabled: setAttribute() to null
+PASS input.disabled: setAttribute() to 7
+PASS input.disabled: setAttribute() to 1.5
+PASS input.disabled: setAttribute() to "5%"
+PASS input.disabled: setAttribute() to "+100"
+PASS input.disabled: setAttribute() to ".5"
+PASS input.disabled: setAttribute() to true
+PASS input.disabled: setAttribute() to false
+PASS input.disabled: setAttribute() to object "[object Object]"
+PASS input.disabled: setAttribute() to NaN
+PASS input.disabled: setAttribute() to Infinity
+PASS input.disabled: setAttribute() to -Infinity
+PASS input.disabled: setAttribute() to "\0"
+PASS input.disabled: setAttribute() to object "test-toString"
+PASS input.disabled: setAttribute() to object "test-valueOf"
+PASS input.disabled: setAttribute() to "disabled"
+PASS input.disabled: IDL set to ""
+PASS input.disabled: IDL set to " foo "
+PASS input.disabled: IDL set to undefined
+PASS input.disabled: IDL set to null
+PASS input.disabled: IDL set to 7
+PASS input.disabled: IDL set to 1.5
+PASS input.disabled: IDL set to "5%"
+PASS input.disabled: IDL set to "+100"
+PASS input.disabled: IDL set to ".5"
+PASS input.disabled: IDL set to true
+PASS input.disabled: IDL set to false
+PASS input.disabled: IDL set to object "[object Object]"
+PASS input.disabled: IDL set to NaN
+PASS input.disabled: IDL set to Infinity
+PASS input.disabled: IDL set to -Infinity
+PASS input.disabled: IDL set to "\0"
+PASS input.disabled: IDL set to object "test-toString"
+PASS input.disabled: IDL set to object "test-valueOf"
+PASS input.formAction: typeof IDL attribute
+PASS input.formAction: IDL get with DOM attribute unset
+PASS input.formAction: setAttribute() to ""
+PASS input.formAction: setAttribute() to " foo "
+PASS input.formAction: setAttribute() to "http://site.example/"
+PASS input.formAction: setAttribute() to "//site.example/path???@#l"
+PASS input.formAction: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f "
+PASS input.formAction: setAttribute() to undefined
+PASS input.formAction: setAttribute() to 7
+PASS input.formAction: setAttribute() to 1.5
+PASS input.formAction: setAttribute() to "5%"
+PASS input.formAction: setAttribute() to "+100"
+PASS input.formAction: setAttribute() to ".5"
+PASS input.formAction: setAttribute() to true
+PASS input.formAction: setAttribute() to false
+PASS input.formAction: setAttribute() to object "[object Object]"
+PASS input.formAction: setAttribute() to NaN
+PASS input.formAction: setAttribute() to Infinity
+PASS input.formAction: setAttribute() to -Infinity
+PASS input.formAction: setAttribute() to "\0"
+PASS input.formAction: setAttribute() to null
+PASS input.formAction: setAttribute() to object "test-toString"
+PASS input.formAction: setAttribute() to object "test-valueOf"
+PASS input.formAction: IDL set to ""
+PASS input.formAction: IDL set to " foo "
+PASS input.formAction: IDL set to "http://site.example/"
+PASS input.formAction: IDL set to "//site.example/path???@#l"
+PASS input.formAction: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f "
+PASS input.formAction: IDL set to undefined
+PASS input.formAction: IDL set to 7
+PASS input.formAction: IDL set to 1.5
+PASS input.formAction: IDL set to "5%"
+PASS input.formAction: IDL set to "+100"
+PASS input.formAction: IDL set to ".5"
+PASS input.formAction: IDL set to true
+PASS input.formAction: IDL set to false
+PASS input.formAction: IDL set to object "[object Object]"
+PASS input.formAction: IDL set to NaN
+PASS input.formAction: IDL set to Infinity
+PASS input.formAction: IDL set to -Infinity
+PASS input.formAction: IDL set to "\0"
+PASS input.formAction: IDL set to null
+PASS input.formAction: IDL set to object "test-toString"
+PASS input.formAction: IDL set to object "test-valueOf"
+PASS input.formEnctype: typeof IDL attribute
+PASS input.formEnctype: IDL get with DOM attribute unset
+PASS input.formEnctype: setAttribute() to ""
+PASS input.formEnctype: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.formEnctype: setAttribute() to undefined
+PASS input.formEnctype: setAttribute() to 7
+PASS input.formEnctype: setAttribute() to 1.5
+PASS input.formEnctype: setAttribute() to "5%"
+PASS input.formEnctype: setAttribute() to "+100"
+PASS input.formEnctype: setAttribute() to ".5"
+PASS input.formEnctype: setAttribute() to true
+PASS input.formEnctype: setAttribute() to false
+PASS input.formEnctype: setAttribute() to object "[object Object]"
+PASS input.formEnctype: setAttribute() to NaN
+PASS input.formEnctype: setAttribute() to Infinity
+PASS input.formEnctype: setAttribute() to -Infinity
+PASS input.formEnctype: setAttribute() to "\0"
+PASS input.formEnctype: setAttribute() to null
+PASS input.formEnctype: setAttribute() to object "test-toString"
+PASS input.formEnctype: setAttribute() to object "test-valueOf"
+PASS input.formEnctype: setAttribute() to "application/x-www-form-urlencoded"
+PASS input.formEnctype: setAttribute() to "xapplication/x-www-form-urlencoded"
+PASS input.formEnctype: setAttribute() to "application/x-www-form-urlencoded\0"
+PASS input.formEnctype: setAttribute() to "pplication/x-www-form-urlencoded"
+PASS input.formEnctype: setAttribute() to "APPLICATION/X-WWW-FORM-URLENCODED"
+PASS input.formEnctype: setAttribute() to "multipart/form-data"
+PASS input.formEnctype: setAttribute() to "xmultipart/form-data"
+PASS input.formEnctype: setAttribute() to "multipart/form-data\0"
+PASS input.formEnctype: setAttribute() to "ultipart/form-data"
+PASS input.formEnctype: setAttribute() to "MULTIPART/FORM-DATA"
+PASS input.formEnctype: setAttribute() to "text/plain"
+PASS input.formEnctype: setAttribute() to "xtext/plain"
+PASS input.formEnctype: setAttribute() to "text/plain\0"
+PASS input.formEnctype: setAttribute() to "ext/plain"
+PASS input.formEnctype: setAttribute() to "TEXT/PLAIN"
+PASS input.formEnctype: IDL set to ""
+PASS input.formEnctype: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.formEnctype: IDL set to undefined
+PASS input.formEnctype: IDL set to 7
+PASS input.formEnctype: IDL set to 1.5
+PASS input.formEnctype: IDL set to "5%"
+PASS input.formEnctype: IDL set to "+100"
+PASS input.formEnctype: IDL set to ".5"
+PASS input.formEnctype: IDL set to true
+PASS input.formEnctype: IDL set to false
+PASS input.formEnctype: IDL set to object "[object Object]"
+PASS input.formEnctype: IDL set to NaN
+PASS input.formEnctype: IDL set to Infinity
+PASS input.formEnctype: IDL set to -Infinity
+PASS input.formEnctype: IDL set to "\0"
+PASS input.formEnctype: IDL set to null
+PASS input.formEnctype: IDL set to object "test-toString"
+PASS input.formEnctype: IDL set to object "test-valueOf"
+PASS input.formEnctype: IDL set to "application/x-www-form-urlencoded"
+PASS input.formEnctype: IDL set to "xapplication/x-www-form-urlencoded"
+PASS input.formEnctype: IDL set to "application/x-www-form-urlencoded\0"
+PASS input.formEnctype: IDL set to "pplication/x-www-form-urlencoded"
+PASS input.formEnctype: IDL set to "APPLICATION/X-WWW-FORM-URLENCODED"
+PASS input.formEnctype: IDL set to "multipart/form-data"
+PASS input.formEnctype: IDL set to "xmultipart/form-data"
+PASS input.formEnctype: IDL set to "multipart/form-data\0"
+PASS input.formEnctype: IDL set to "ultipart/form-data"
+PASS input.formEnctype: IDL set to "MULTIPART/FORM-DATA"
+PASS input.formEnctype: IDL set to "text/plain"
+PASS input.formEnctype: IDL set to "xtext/plain"
+PASS input.formEnctype: IDL set to "text/plain\0"
+PASS input.formEnctype: IDL set to "ext/plain"
+PASS input.formEnctype: IDL set to "TEXT/PLAIN"
+PASS input.formMethod: typeof IDL attribute
+PASS input.formMethod: IDL get with DOM attribute unset
+PASS input.formMethod: setAttribute() to ""
+PASS input.formMethod: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.formMethod: setAttribute() to undefined
+PASS input.formMethod: setAttribute() to 7
+PASS input.formMethod: setAttribute() to 1.5
+PASS input.formMethod: setAttribute() to "5%"
+PASS input.formMethod: setAttribute() to "+100"
+PASS input.formMethod: setAttribute() to ".5"
+PASS input.formMethod: setAttribute() to true
+PASS input.formMethod: setAttribute() to false
+PASS input.formMethod: setAttribute() to object "[object Object]"
+PASS input.formMethod: setAttribute() to NaN
+PASS input.formMethod: setAttribute() to Infinity
+PASS input.formMethod: setAttribute() to -Infinity
+PASS input.formMethod: setAttribute() to "\0"
+PASS input.formMethod: setAttribute() to null
+PASS input.formMethod: setAttribute() to object "test-toString"
+PASS input.formMethod: setAttribute() to object "test-valueOf"
+PASS input.formMethod: setAttribute() to "get"
+PASS input.formMethod: setAttribute() to "xget"
+PASS input.formMethod: setAttribute() to "get\0"
+PASS input.formMethod: setAttribute() to "et"
+PASS input.formMethod: setAttribute() to "GET"
+PASS input.formMethod: setAttribute() to "post"
+PASS input.formMethod: setAttribute() to "xpost"
+PASS input.formMethod: setAttribute() to "post\0"
+PASS input.formMethod: setAttribute() to "ost"
+PASS input.formMethod: setAttribute() to "POST"
+PASS input.formMethod: setAttribute() to "poſt"
+PASS input.formMethod: IDL set to ""
+PASS input.formMethod: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.formMethod: IDL set to undefined
+PASS input.formMethod: IDL set to 7
+PASS input.formMethod: IDL set to 1.5
+PASS input.formMethod: IDL set to "5%"
+PASS input.formMethod: IDL set to "+100"
+PASS input.formMethod: IDL set to ".5"
+PASS input.formMethod: IDL set to true
+PASS input.formMethod: IDL set to false
+PASS input.formMethod: IDL set to object "[object Object]"
+PASS input.formMethod: IDL set to NaN
+PASS input.formMethod: IDL set to Infinity
+PASS input.formMethod: IDL set to -Infinity
+PASS input.formMethod: IDL set to "\0"
+PASS input.formMethod: IDL set to null
+PASS input.formMethod: IDL set to object "test-toString"
+PASS input.formMethod: IDL set to object "test-valueOf"
+PASS input.formMethod: IDL set to "get"
+PASS input.formMethod: IDL set to "xget"
+PASS input.formMethod: IDL set to "get\0"
+PASS input.formMethod: IDL set to "et"
+PASS input.formMethod: IDL set to "GET"
+PASS input.formMethod: IDL set to "post"
+PASS input.formMethod: IDL set to "xpost"
+PASS input.formMethod: IDL set to "post\0"
+PASS input.formMethod: IDL set to "ost"
+PASS input.formMethod: IDL set to "POST"
+PASS input.formMethod: IDL set to "poſt"
+PASS input.formNoValidate: typeof IDL attribute
+PASS input.formNoValidate: IDL get with DOM attribute unset
+PASS input.formNoValidate: setAttribute() to ""
+PASS input.formNoValidate: setAttribute() to " foo "
+PASS input.formNoValidate: setAttribute() to undefined
+PASS input.formNoValidate: setAttribute() to null
+PASS input.formNoValidate: setAttribute() to 7
+PASS input.formNoValidate: setAttribute() to 1.5
+PASS input.formNoValidate: setAttribute() to "5%"
+PASS input.formNoValidate: setAttribute() to "+100"
+PASS input.formNoValidate: setAttribute() to ".5"
+PASS input.formNoValidate: setAttribute() to true
+PASS input.formNoValidate: setAttribute() to false
+PASS input.formNoValidate: setAttribute() to object "[object Object]"
+PASS input.formNoValidate: setAttribute() to NaN
+PASS input.formNoValidate: setAttribute() to Infinity
+PASS input.formNoValidate: setAttribute() to -Infinity
+PASS input.formNoValidate: setAttribute() to "\0"
+PASS input.formNoValidate: setAttribute() to object "test-toString"
+PASS input.formNoValidate: setAttribute() to object "test-valueOf"
+PASS input.formNoValidate: setAttribute() to "formNoValidate"
+PASS input.formNoValidate: IDL set to ""
+PASS input.formNoValidate: IDL set to " foo "
+PASS input.formNoValidate: IDL set to undefined
+PASS input.formNoValidate: IDL set to null
+PASS input.formNoValidate: IDL set to 7
+PASS input.formNoValidate: IDL set to 1.5
+PASS input.formNoValidate: IDL set to "5%"
+PASS input.formNoValidate: IDL set to "+100"
+PASS input.formNoValidate: IDL set to ".5"
+PASS input.formNoValidate: IDL set to true
+PASS input.formNoValidate: IDL set to false
+PASS input.formNoValidate: IDL set to object "[object Object]"
+PASS input.formNoValidate: IDL set to NaN
+PASS input.formNoValidate: IDL set to Infinity
+PASS input.formNoValidate: IDL set to -Infinity
+PASS input.formNoValidate: IDL set to "\0"
+PASS input.formNoValidate: IDL set to object "test-toString"
+PASS input.formNoValidate: IDL set to object "test-valueOf"
+PASS input.formTarget: typeof IDL attribute
+PASS input.formTarget: IDL get with DOM attribute unset
+PASS input.formTarget: setAttribute() to ""
+PASS input.formTarget: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.formTarget: setAttribute() to undefined
+PASS input.formTarget: setAttribute() to 7
+PASS input.formTarget: setAttribute() to 1.5
+PASS input.formTarget: setAttribute() to "5%"
+PASS input.formTarget: setAttribute() to "+100"
+PASS input.formTarget: setAttribute() to ".5"
+PASS input.formTarget: setAttribute() to true
+PASS input.formTarget: setAttribute() to false
+PASS input.formTarget: setAttribute() to object "[object Object]"
+PASS input.formTarget: setAttribute() to NaN
+PASS input.formTarget: setAttribute() to Infinity
+PASS input.formTarget: setAttribute() to -Infinity
+PASS input.formTarget: setAttribute() to "\0"
+PASS input.formTarget: setAttribute() to null
+PASS input.formTarget: setAttribute() to object "test-toString"
+PASS input.formTarget: setAttribute() to object "test-valueOf"
+PASS input.formTarget: IDL set to ""
+PASS input.formTarget: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.formTarget: IDL set to undefined
+PASS input.formTarget: IDL set to 7
+PASS input.formTarget: IDL set to 1.5
+PASS input.formTarget: IDL set to "5%"
+PASS input.formTarget: IDL set to "+100"
+PASS input.formTarget: IDL set to ".5"
+PASS input.formTarget: IDL set to true
+PASS input.formTarget: IDL set to false
+PASS input.formTarget: IDL set to object "[object Object]"
+PASS input.formTarget: IDL set to NaN
+PASS input.formTarget: IDL set to Infinity
+PASS input.formTarget: IDL set to -Infinity
+PASS input.formTarget: IDL set to "\0"
+PASS input.formTarget: IDL set to null
+PASS input.formTarget: IDL set to object "test-toString"
+PASS input.formTarget: IDL set to object "test-valueOf"
+PASS input.height: typeof IDL attribute
+PASS input.height: IDL set to 0
+PASS input.height: IDL set to 1
+PASS input.height: IDL set to 257
+PASS input.height: IDL set to 2147483647
+PASS input.height: IDL set to "-0"
+PASS input.height: IDL set to 2147483648
+PASS input.height: IDL set to 4294967295
+PASS input.max: typeof IDL attribute
+PASS input.max: IDL get with DOM attribute unset
+PASS input.max: setAttribute() to ""
+PASS input.max: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.max: setAttribute() to undefined
+PASS input.max: setAttribute() to 7
+PASS input.max: setAttribute() to 1.5
+PASS input.max: setAttribute() to "5%"
+PASS input.max: setAttribute() to "+100"
+PASS input.max: setAttribute() to ".5"
+PASS input.max: setAttribute() to true
+PASS input.max: setAttribute() to false
+PASS input.max: setAttribute() to object "[object Object]"
+PASS input.max: setAttribute() to NaN
+PASS input.max: setAttribute() to Infinity
+PASS input.max: setAttribute() to -Infinity
+PASS input.max: setAttribute() to "\0"
+PASS input.max: setAttribute() to null
+PASS input.max: setAttribute() to object "test-toString"
+PASS input.max: setAttribute() to object "test-valueOf"
+PASS input.max: IDL set to ""
+PASS input.max: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.max: IDL set to undefined
+PASS input.max: IDL set to 7
+PASS input.max: IDL set to 1.5
+PASS input.max: IDL set to "5%"
+PASS input.max: IDL set to "+100"
+PASS input.max: IDL set to ".5"
+PASS input.max: IDL set to true
+PASS input.max: IDL set to false
+PASS input.max: IDL set to object "[object Object]"
+PASS input.max: IDL set to NaN
+PASS input.max: IDL set to Infinity
+PASS input.max: IDL set to -Infinity
+PASS input.max: IDL set to "\0"
+PASS input.max: IDL set to null
+PASS input.max: IDL set to object "test-toString"
+PASS input.max: IDL set to object "test-valueOf"
+PASS input.maxLength: typeof IDL attribute
+PASS input.maxLength: IDL get with DOM attribute unset
+PASS input.maxLength: setAttribute() to -2147483649
+PASS input.maxLength: setAttribute() to -2147483648
+PASS input.maxLength: setAttribute() to -36
+PASS input.maxLength: setAttribute() to -1
+PASS input.maxLength: setAttribute() to -0
+PASS input.maxLength: setAttribute() to 0
+PASS input.maxLength: setAttribute() to 1
+PASS input.maxLength: setAttribute() to 2147483647
+PASS input.maxLength: setAttribute() to 2147483648
+PASS input.maxLength: setAttribute() to 4294967295
+PASS input.maxLength: setAttribute() to 4294967296
+PASS input.maxLength: setAttribute() to ""
+PASS input.maxLength: setAttribute() to "-1"
+PASS input.maxLength: setAttribute() to "-0"
+PASS input.maxLength: setAttribute() to "0"
+PASS input.maxLength: setAttribute() to "1"
+PASS input.maxLength: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.maxLength: setAttribute() to "\t7"
+PASS input.maxLength: setAttribute() to "\v7"
+PASS input.maxLength: setAttribute() to "\f7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to "﻿7"
+PASS input.maxLength: setAttribute() to "\n7"
+PASS input.maxLength: setAttribute() to "\r7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to "᠎7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to " 7"
+PASS input.maxLength: setAttribute() to "　7"
+PASS input.maxLength: setAttribute() to undefined
+PASS input.maxLength: setAttribute() to 1.5
+PASS input.maxLength: setAttribute() to "5%"
+PASS input.maxLength: setAttribute() to "+100"
+PASS input.maxLength: setAttribute() to ".5"
+PASS input.maxLength: setAttribute() to true
+PASS input.maxLength: setAttribute() to false
+PASS input.maxLength: setAttribute() to object "[object Object]"
+PASS input.maxLength: setAttribute() to NaN
+PASS input.maxLength: setAttribute() to Infinity
+PASS input.maxLength: setAttribute() to -Infinity
+PASS input.maxLength: setAttribute() to "\0"
+PASS input.maxLength: setAttribute() to object "2"
+PASS input.maxLength: setAttribute() to object "3"
+PASS input.maxLength: IDL set to -2147483648
+PASS input.maxLength: IDL set to -36
+PASS input.maxLength: IDL set to -1
+PASS input.maxLength: IDL set to 0
+PASS input.maxLength: IDL set to 1
+PASS input.maxLength: IDL set to 2147483647
+PASS input.min: typeof IDL attribute
+PASS input.min: IDL get with DOM attribute unset
+PASS input.min: setAttribute() to ""
+PASS input.min: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.min: setAttribute() to undefined
+PASS input.min: setAttribute() to 7
+PASS input.min: setAttribute() to 1.5
+PASS input.min: setAttribute() to "5%"
+PASS input.min: setAttribute() to "+100"
+PASS input.min: setAttribute() to ".5"
+PASS input.min: setAttribute() to true
+PASS input.min: setAttribute() to false
+PASS input.min: setAttribute() to object "[object Object]"
+PASS input.min: setAttribute() to NaN
+PASS input.min: setAttribute() to Infinity
+PASS input.min: setAttribute() to -Infinity
+PASS input.min: setAttribute() to "\0"
+PASS input.min: setAttribute() to null
+PASS input.min: setAttribute() to object "test-toString"
+PASS input.min: setAttribute() to object "test-valueOf"
+PASS input.min: IDL set to ""
+PASS input.min: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.min: IDL set to undefined
+PASS input.min: IDL set to 7
+PASS input.min: IDL set to 1.5
+PASS input.min: IDL set to "5%"
+PASS input.min: IDL set to "+100"
+PASS input.min: IDL set to ".5"
+PASS input.min: IDL set to true
+PASS input.min: IDL set to false
+PASS input.min: IDL set to object "[object Object]"
+PASS input.min: IDL set to NaN
+PASS input.min: IDL set to Infinity
+PASS input.min: IDL set to -Infinity
+PASS input.min: IDL set to "\0"
+PASS input.min: IDL set to null
+PASS input.min: IDL set to object "test-toString"
+PASS input.min: IDL set to object "test-valueOf"
+PASS input.minLength: typeof IDL attribute
+PASS input.minLength: IDL get with DOM attribute unset
+PASS input.minLength: setAttribute() to -2147483649
+PASS input.minLength: setAttribute() to -2147483648
+PASS input.minLength: setAttribute() to -36
+PASS input.minLength: setAttribute() to -1
+PASS input.minLength: setAttribute() to -0
+PASS input.minLength: setAttribute() to 0
+PASS input.minLength: setAttribute() to 1
+PASS input.minLength: setAttribute() to 2147483647
+PASS input.minLength: setAttribute() to 2147483648
+PASS input.minLength: setAttribute() to 4294967295
+PASS input.minLength: setAttribute() to 4294967296
+PASS input.minLength: setAttribute() to ""
+PASS input.minLength: setAttribute() to "-1"
+PASS input.minLength: setAttribute() to "-0"
+PASS input.minLength: setAttribute() to "0"
+PASS input.minLength: setAttribute() to "1"
+PASS input.minLength: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.minLength: setAttribute() to "\t7"
+PASS input.minLength: setAttribute() to "\v7"
+PASS input.minLength: setAttribute() to "\f7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to "﻿7"
+PASS input.minLength: setAttribute() to "\n7"
+PASS input.minLength: setAttribute() to "\r7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to "᠎7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to " 7"
+PASS input.minLength: setAttribute() to "　7"
+PASS input.minLength: setAttribute() to undefined
+PASS input.minLength: setAttribute() to 1.5
+PASS input.minLength: setAttribute() to "5%"
+PASS input.minLength: setAttribute() to "+100"
+PASS input.minLength: setAttribute() to ".5"
+PASS input.minLength: setAttribute() to true
+PASS input.minLength: setAttribute() to false
+PASS input.minLength: setAttribute() to object "[object Object]"
+PASS input.minLength: setAttribute() to NaN
+PASS input.minLength: setAttribute() to Infinity
+PASS input.minLength: setAttribute() to -Infinity
+PASS input.minLength: setAttribute() to "\0"
+PASS input.minLength: setAttribute() to object "2"
+PASS input.minLength: setAttribute() to object "3"
+PASS input.minLength: IDL set to -2147483648
+PASS input.minLength: IDL set to -36
+PASS input.minLength: IDL set to -1
+PASS input.minLength: IDL set to 0
+PASS input.minLength: IDL set to 1
+PASS input.minLength: IDL set to 2147483647
+PASS input.multiple: typeof IDL attribute
+PASS input.multiple: IDL get with DOM attribute unset
+PASS input.multiple: setAttribute() to ""
+PASS input.multiple: setAttribute() to " foo "
+PASS input.multiple: setAttribute() to undefined
+PASS input.multiple: setAttribute() to null
+PASS input.multiple: setAttribute() to 7
+PASS input.multiple: setAttribute() to 1.5
+PASS input.multiple: setAttribute() to "5%"
+PASS input.multiple: setAttribute() to "+100"
+PASS input.multiple: setAttribute() to ".5"
+PASS input.multiple: setAttribute() to true
+PASS input.multiple: setAttribute() to false
+PASS input.multiple: setAttribute() to object "[object Object]"
+PASS input.multiple: setAttribute() to NaN
+PASS input.multiple: setAttribute() to Infinity
+PASS input.multiple: setAttribute() to -Infinity
+PASS input.multiple: setAttribute() to "\0"
+PASS input.multiple: setAttribute() to object "test-toString"
+PASS input.multiple: setAttribute() to object "test-valueOf"
+PASS input.multiple: setAttribute() to "multiple"
+PASS input.multiple: IDL set to ""
+PASS input.multiple: IDL set to " foo "
+PASS input.multiple: IDL set to undefined
+PASS input.multiple: IDL set to null
+PASS input.multiple: IDL set to 7
+PASS input.multiple: IDL set to 1.5
+PASS input.multiple: IDL set to "5%"
+PASS input.multiple: IDL set to "+100"
+PASS input.multiple: IDL set to ".5"
+PASS input.multiple: IDL set to true
+PASS input.multiple: IDL set to false
+PASS input.multiple: IDL set to object "[object Object]"
+PASS input.multiple: IDL set to NaN
+PASS input.multiple: IDL set to Infinity
+PASS input.multiple: IDL set to -Infinity
+PASS input.multiple: IDL set to "\0"
+PASS input.multiple: IDL set to object "test-toString"
+PASS input.multiple: IDL set to object "test-valueOf"
+PASS input.name: typeof IDL attribute
+PASS input.name: IDL get with DOM attribute unset
+PASS input.name: setAttribute() to ""
+PASS input.name: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.name: setAttribute() to undefined
+PASS input.name: setAttribute() to 7
+PASS input.name: setAttribute() to 1.5
+PASS input.name: setAttribute() to "5%"
+PASS input.name: setAttribute() to "+100"
+PASS input.name: setAttribute() to ".5"
+PASS input.name: setAttribute() to true
+PASS input.name: setAttribute() to false
+PASS input.name: setAttribute() to object "[object Object]"
+PASS input.name: setAttribute() to NaN
+PASS input.name: setAttribute() to Infinity
+PASS input.name: setAttribute() to -Infinity
+PASS input.name: setAttribute() to "\0"
+PASS input.name: setAttribute() to null
+PASS input.name: setAttribute() to object "test-toString"
+PASS input.name: setAttribute() to object "test-valueOf"
+PASS input.name: IDL set to ""
+PASS input.name: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.name: IDL set to undefined
+PASS input.name: IDL set to 7
+PASS input.name: IDL set to 1.5
+PASS input.name: IDL set to "5%"
+PASS input.name: IDL set to "+100"
+PASS input.name: IDL set to ".5"
+PASS input.name: IDL set to true
+PASS input.name: IDL set to false
+PASS input.name: IDL set to object "[object Object]"
+PASS input.name: IDL set to NaN
+PASS input.name: IDL set to Infinity
+PASS input.name: IDL set to -Infinity
+PASS input.name: IDL set to "\0"
+PASS input.name: IDL set to null
+PASS input.name: IDL set to object "test-toString"
+PASS input.name: IDL set to object "test-valueOf"
+PASS input.pattern: typeof IDL attribute
+PASS input.pattern: IDL get with DOM attribute unset
+PASS input.pattern: setAttribute() to ""
+PASS input.pattern: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.pattern: setAttribute() to undefined
+PASS input.pattern: setAttribute() to 7
+PASS input.pattern: setAttribute() to 1.5
+PASS input.pattern: setAttribute() to "5%"
+PASS input.pattern: setAttribute() to "+100"
+PASS input.pattern: setAttribute() to ".5"
+PASS input.pattern: setAttribute() to true
+PASS input.pattern: setAttribute() to false
+PASS input.pattern: setAttribute() to object "[object Object]"
+PASS input.pattern: setAttribute() to NaN
+PASS input.pattern: setAttribute() to Infinity
+PASS input.pattern: setAttribute() to -Infinity
+PASS input.pattern: setAttribute() to "\0"
+PASS input.pattern: setAttribute() to null
+PASS input.pattern: setAttribute() to object "test-toString"
+PASS input.pattern: setAttribute() to object "test-valueOf"
+PASS input.pattern: IDL set to ""
+PASS input.pattern: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.pattern: IDL set to undefined
+PASS input.pattern: IDL set to 7
+PASS input.pattern: IDL set to 1.5
+PASS input.pattern: IDL set to "5%"
+PASS input.pattern: IDL set to "+100"
+PASS input.pattern: IDL set to ".5"
+PASS input.pattern: IDL set to true
+PASS input.pattern: IDL set to false
+PASS input.pattern: IDL set to object "[object Object]"
+PASS input.pattern: IDL set to NaN
+PASS input.pattern: IDL set to Infinity
+PASS input.pattern: IDL set to -Infinity
+PASS input.pattern: IDL set to "\0"
+PASS input.pattern: IDL set to null
+PASS input.pattern: IDL set to object "test-toString"
+PASS input.pattern: IDL set to object "test-valueOf"
+PASS input.placeholder: typeof IDL attribute
+PASS input.placeholder: IDL get with DOM attribute unset
+PASS input.placeholder: setAttribute() to ""
+PASS input.placeholder: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.placeholder: setAttribute() to undefined
+PASS input.placeholder: setAttribute() to 7
+PASS input.placeholder: setAttribute() to 1.5
+PASS input.placeholder: setAttribute() to "5%"
+PASS input.placeholder: setAttribute() to "+100"
+PASS input.placeholder: setAttribute() to ".5"
+PASS input.placeholder: setAttribute() to true
+PASS input.placeholder: setAttribute() to false
+PASS input.placeholder: setAttribute() to object "[object Object]"
+PASS input.placeholder: setAttribute() to NaN
+PASS input.placeholder: setAttribute() to Infinity
+PASS input.placeholder: setAttribute() to -Infinity
+PASS input.placeholder: setAttribute() to "\0"
+PASS input.placeholder: setAttribute() to null
+PASS input.placeholder: setAttribute() to object "test-toString"
+PASS input.placeholder: setAttribute() to object "test-valueOf"
+PASS input.placeholder: IDL set to ""
+PASS input.placeholder: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.placeholder: IDL set to undefined
+PASS input.placeholder: IDL set to 7
+PASS input.placeholder: IDL set to 1.5
+PASS input.placeholder: IDL set to "5%"
+PASS input.placeholder: IDL set to "+100"
+PASS input.placeholder: IDL set to ".5"
+PASS input.placeholder: IDL set to true
+PASS input.placeholder: IDL set to false
+PASS input.placeholder: IDL set to object "[object Object]"
+PASS input.placeholder: IDL set to NaN
+PASS input.placeholder: IDL set to Infinity
+PASS input.placeholder: IDL set to -Infinity
+PASS input.placeholder: IDL set to "\0"
+PASS input.placeholder: IDL set to null
+PASS input.placeholder: IDL set to object "test-toString"
+PASS input.placeholder: IDL set to object "test-valueOf"
+PASS input.readOnly: typeof IDL attribute
+PASS input.readOnly: IDL get with DOM attribute unset
+PASS input.readOnly: setAttribute() to ""
+PASS input.readOnly: setAttribute() to " foo "
+PASS input.readOnly: setAttribute() to undefined
+PASS input.readOnly: setAttribute() to null
+PASS input.readOnly: setAttribute() to 7
+PASS input.readOnly: setAttribute() to 1.5
+PASS input.readOnly: setAttribute() to "5%"
+PASS input.readOnly: setAttribute() to "+100"
+PASS input.readOnly: setAttribute() to ".5"
+PASS input.readOnly: setAttribute() to true
+PASS input.readOnly: setAttribute() to false
+PASS input.readOnly: setAttribute() to object "[object Object]"
+PASS input.readOnly: setAttribute() to NaN
+PASS input.readOnly: setAttribute() to Infinity
+PASS input.readOnly: setAttribute() to -Infinity
+PASS input.readOnly: setAttribute() to "\0"
+PASS input.readOnly: setAttribute() to object "test-toString"
+PASS input.readOnly: setAttribute() to object "test-valueOf"
+PASS input.readOnly: setAttribute() to "readOnly"
+PASS input.readOnly: IDL set to ""
+PASS input.readOnly: IDL set to " foo "
+PASS input.readOnly: IDL set to undefined
+PASS input.readOnly: IDL set to null
+PASS input.readOnly: IDL set to 7
+PASS input.readOnly: IDL set to 1.5
+PASS input.readOnly: IDL set to "5%"
+PASS input.readOnly: IDL set to "+100"
+PASS input.readOnly: IDL set to ".5"
+PASS input.readOnly: IDL set to true
+PASS input.readOnly: IDL set to false
+PASS input.readOnly: IDL set to object "[object Object]"
+PASS input.readOnly: IDL set to NaN
+PASS input.readOnly: IDL set to Infinity
+PASS input.readOnly: IDL set to -Infinity
+PASS input.readOnly: IDL set to "\0"
+PASS input.readOnly: IDL set to object "test-toString"
+PASS input.readOnly: IDL set to object "test-valueOf"
+PASS input.required: typeof IDL attribute
+PASS input.required: IDL get with DOM attribute unset
+PASS input.required: setAttribute() to ""
+PASS input.required: setAttribute() to " foo "
+PASS input.required: setAttribute() to undefined
+PASS input.required: setAttribute() to null
+PASS input.required: setAttribute() to 7
+PASS input.required: setAttribute() to 1.5
+PASS input.required: setAttribute() to "5%"
+PASS input.required: setAttribute() to "+100"
+PASS input.required: setAttribute() to ".5"
+PASS input.required: setAttribute() to true
+PASS input.required: setAttribute() to false
+PASS input.required: setAttribute() to object "[object Object]"
+PASS input.required: setAttribute() to NaN
+PASS input.required: setAttribute() to Infinity
+PASS input.required: setAttribute() to -Infinity
+PASS input.required: setAttribute() to "\0"
+PASS input.required: setAttribute() to object "test-toString"
+PASS input.required: setAttribute() to object "test-valueOf"
+PASS input.required: setAttribute() to "required"
+PASS input.required: IDL set to ""
+PASS input.required: IDL set to " foo "
+PASS input.required: IDL set to undefined
+PASS input.required: IDL set to null
+PASS input.required: IDL set to 7
+PASS input.required: IDL set to 1.5
+PASS input.required: IDL set to "5%"
+PASS input.required: IDL set to "+100"
+PASS input.required: IDL set to ".5"
+PASS input.required: IDL set to true
+PASS input.required: IDL set to false
+PASS input.required: IDL set to object "[object Object]"
+PASS input.required: IDL set to NaN
+PASS input.required: IDL set to Infinity
+PASS input.required: IDL set to -Infinity
+PASS input.required: IDL set to "\0"
+PASS input.required: IDL set to object "test-toString"
+PASS input.required: IDL set to object "test-valueOf"
+PASS input.size: typeof IDL attribute
+PASS input.size: IDL get with DOM attribute unset
+PASS input.size: setAttribute() to -2147483649
+PASS input.size: setAttribute() to -2147483648
+PASS input.size: setAttribute() to -36
+PASS input.size: setAttribute() to -1
+PASS input.size: setAttribute() to 0
+PASS input.size: setAttribute() to 1
+PASS input.size: setAttribute() to 2147483647
+PASS input.size: setAttribute() to 2147483648
+PASS input.size: setAttribute() to 4294967295
+PASS input.size: setAttribute() to 4294967296
+PASS input.size: setAttribute() to ""
+PASS input.size: setAttribute() to "-1"
+PASS input.size: setAttribute() to "-0"
+PASS input.size: setAttribute() to "0"
+PASS input.size: setAttribute() to "1"
+PASS input.size: setAttribute() to "\t7"
+PASS input.size: setAttribute() to "\v7"
+PASS input.size: setAttribute() to "\f7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to "﻿7"
+PASS input.size: setAttribute() to "\n7"
+PASS input.size: setAttribute() to "\r7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to "᠎7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to " 7"
+PASS input.size: setAttribute() to "　7"
+PASS input.size: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.size: setAttribute() to undefined
+PASS input.size: setAttribute() to 1.5
+PASS input.size: setAttribute() to "5%"
+PASS input.size: setAttribute() to "+100"
+PASS input.size: setAttribute() to ".5"
+PASS input.size: setAttribute() to true
+PASS input.size: setAttribute() to false
+PASS input.size: setAttribute() to object "[object Object]"
+PASS input.size: setAttribute() to NaN
+PASS input.size: setAttribute() to Infinity
+PASS input.size: setAttribute() to -Infinity
+PASS input.size: setAttribute() to "\0"
+PASS input.size: setAttribute() to object "2"
+PASS input.size: setAttribute() to object "3"
+PASS input.size: IDL set to 0
+PASS input.size: IDL set to 1
+PASS input.size: IDL set to 2147483647
+PASS input.size: IDL set to 2147483648
+PASS input.size: IDL set to 4294967295
+PASS input.src: typeof IDL attribute
+PASS input.src: IDL get with DOM attribute unset
+PASS input.src: setAttribute() to ""
+PASS input.src: setAttribute() to " foo "
+PASS input.src: setAttribute() to "http://site.example/"
+PASS input.src: setAttribute() to "//site.example/path???@#l"
+PASS input.src: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f "
+PASS input.src: setAttribute() to undefined
+PASS input.src: setAttribute() to 7
+PASS input.src: setAttribute() to 1.5
+PASS input.src: setAttribute() to "5%"
+PASS input.src: setAttribute() to "+100"
+PASS input.src: setAttribute() to ".5"
+PASS input.src: setAttribute() to true
+PASS input.src: setAttribute() to false
+PASS input.src: setAttribute() to object "[object Object]"
+PASS input.src: setAttribute() to NaN
+PASS input.src: setAttribute() to Infinity
+PASS input.src: setAttribute() to -Infinity
+PASS input.src: setAttribute() to "\0"
+PASS input.src: setAttribute() to null
+PASS input.src: setAttribute() to object "test-toString"
+PASS input.src: setAttribute() to object "test-valueOf"
+PASS input.src: IDL set to ""
+PASS input.src: IDL set to " foo "
+PASS input.src: IDL set to "http://site.example/"
+PASS input.src: IDL set to "//site.example/path???@#l"
+PASS input.src: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f "
+PASS input.src: IDL set to undefined
+PASS input.src: IDL set to 7
+PASS input.src: IDL set to 1.5
+PASS input.src: IDL set to "5%"
+PASS input.src: IDL set to "+100"
+PASS input.src: IDL set to ".5"
+PASS input.src: IDL set to true
+PASS input.src: IDL set to false
+PASS input.src: IDL set to object "[object Object]"
+PASS input.src: IDL set to NaN
+PASS input.src: IDL set to Infinity
+PASS input.src: IDL set to -Infinity
+PASS input.src: IDL set to "\0"
+PASS input.src: IDL set to null
+PASS input.src: IDL set to object "test-toString"
+PASS input.src: IDL set to object "test-valueOf"
+PASS input.step: typeof IDL attribute
+PASS input.step: IDL get with DOM attribute unset
+PASS input.step: setAttribute() to ""
+PASS input.step: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.step: setAttribute() to undefined
+PASS input.step: setAttribute() to 7
+PASS input.step: setAttribute() to 1.5
+PASS input.step: setAttribute() to "5%"
+PASS input.step: setAttribute() to "+100"
+PASS input.step: setAttribute() to ".5"
+PASS input.step: setAttribute() to true
+PASS input.step: setAttribute() to false
+PASS input.step: setAttribute() to object "[object Object]"
+PASS input.step: setAttribute() to NaN
+PASS input.step: setAttribute() to Infinity
+PASS input.step: setAttribute() to -Infinity
+PASS input.step: setAttribute() to "\0"
+PASS input.step: setAttribute() to null
+PASS input.step: setAttribute() to object "test-toString"
+PASS input.step: setAttribute() to object "test-valueOf"
+PASS input.step: IDL set to ""
+PASS input.step: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.step: IDL set to undefined
+PASS input.step: IDL set to 7
+PASS input.step: IDL set to 1.5
+PASS input.step: IDL set to "5%"
+PASS input.step: IDL set to "+100"
+PASS input.step: IDL set to ".5"
+PASS input.step: IDL set to true
+PASS input.step: IDL set to false
+PASS input.step: IDL set to object "[object Object]"
+PASS input.step: IDL set to NaN
+PASS input.step: IDL set to Infinity
+PASS input.step: IDL set to -Infinity
+PASS input.step: IDL set to "\0"
+PASS input.step: IDL set to null
+PASS input.step: IDL set to object "test-toString"
+PASS input.step: IDL set to object "test-valueOf"
+PASS input.type: typeof IDL attribute
+PASS input.type: IDL get with DOM attribute unset
+PASS input.type: setAttribute() to ""
+PASS input.type: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.type: setAttribute() to undefined
+PASS input.type: setAttribute() to 7
+PASS input.type: setAttribute() to 1.5
+PASS input.type: setAttribute() to "5%"
+PASS input.type: setAttribute() to "+100"
+PASS input.type: setAttribute() to ".5"
+PASS input.type: setAttribute() to true
+PASS input.type: setAttribute() to false
+PASS input.type: setAttribute() to object "[object Object]"
+PASS input.type: setAttribute() to NaN
+PASS input.type: setAttribute() to Infinity
+PASS input.type: setAttribute() to -Infinity
+PASS input.type: setAttribute() to "\0"
+PASS input.type: setAttribute() to null
+PASS input.type: setAttribute() to object "test-toString"
+PASS input.type: setAttribute() to object "test-valueOf"
+PASS input.type: setAttribute() to "month"
+PASS input.type: setAttribute() to "xmonth"
+PASS input.type: setAttribute() to "month\0"
+PASS input.type: setAttribute() to "onth"
+PASS input.type: setAttribute() to "MONTH"
+PASS input.type: setAttribute() to "week"
+PASS input.type: setAttribute() to "xweek"
+PASS input.type: setAttribute() to "week\0"
+PASS input.type: setAttribute() to "eek"
+PASS input.type: setAttribute() to "WEEK"
+PASS input.type: setAttribute() to "weeK"
+PASS input.type: IDL set to ""
+PASS input.type: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.type: IDL set to undefined
+PASS input.type: IDL set to 7
+PASS input.type: IDL set to 1.5
+PASS input.type: IDL set to "5%"
+PASS input.type: IDL set to "+100"
+PASS input.type: IDL set to ".5"
+PASS input.type: IDL set to true
+PASS input.type: IDL set to false
+PASS input.type: IDL set to object "[object Object]"
+PASS input.type: IDL set to NaN
+PASS input.type: IDL set to Infinity
+PASS input.type: IDL set to -Infinity
+PASS input.type: IDL set to "\0"
+PASS input.type: IDL set to null
+PASS input.type: IDL set to object "test-toString"
+PASS input.type: IDL set to object "test-valueOf"
+PASS input.type: IDL set to "month"
+PASS input.type: IDL set to "xmonth"
+PASS input.type: IDL set to "month\0"
+PASS input.type: IDL set to "onth"
+PASS input.type: IDL set to "MONTH"
+PASS input.type: IDL set to "week"
+PASS input.type: IDL set to "xweek"
+PASS input.type: IDL set to "week\0"
+PASS input.type: IDL set to "eek"
+PASS input.type: IDL set to "WEEK"
+PASS input.type: IDL set to "weeK"
+PASS input.width: typeof IDL attribute
+PASS input.width: IDL set to 0
+PASS input.width: IDL set to 1
+PASS input.width: IDL set to 257
+PASS input.width: IDL set to 2147483647
+PASS input.width: IDL set to "-0"
+PASS input.width: IDL set to 2147483648
+PASS input.width: IDL set to 4294967295
+PASS input.defaultValue (<input value>): typeof IDL attribute
+PASS input.defaultValue (<input value>): IDL get with DOM attribute unset
+PASS input.defaultValue (<input value>): setAttribute() to ""
+PASS input.defaultValue (<input value>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.defaultValue (<input value>): setAttribute() to undefined
+PASS input.defaultValue (<input value>): setAttribute() to 7
+PASS input.defaultValue (<input value>): setAttribute() to 1.5
+PASS input.defaultValue (<input value>): setAttribute() to "5%"
+PASS input.defaultValue (<input value>): setAttribute() to "+100"
+PASS input.defaultValue (<input value>): setAttribute() to ".5"
+PASS input.defaultValue (<input value>): setAttribute() to true
+PASS input.defaultValue (<input value>): setAttribute() to false
+PASS input.defaultValue (<input value>): setAttribute() to object "[object Object]"
+PASS input.defaultValue (<input value>): setAttribute() to NaN
+PASS input.defaultValue (<input value>): setAttribute() to Infinity
+PASS input.defaultValue (<input value>): setAttribute() to -Infinity
+PASS input.defaultValue (<input value>): setAttribute() to "\0"
+PASS input.defaultValue (<input value>): setAttribute() to null
+PASS input.defaultValue (<input value>): setAttribute() to object "test-toString"
+PASS input.defaultValue (<input value>): setAttribute() to object "test-valueOf"
+PASS input.defaultValue (<input value>): IDL set to ""
+PASS input.defaultValue (<input value>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.defaultValue (<input value>): IDL set to undefined
+PASS input.defaultValue (<input value>): IDL set to 7
+PASS input.defaultValue (<input value>): IDL set to 1.5
+PASS input.defaultValue (<input value>): IDL set to "5%"
+PASS input.defaultValue (<input value>): IDL set to "+100"
+PASS input.defaultValue (<input value>): IDL set to ".5"
+PASS input.defaultValue (<input value>): IDL set to true
+PASS input.defaultValue (<input value>): IDL set to false
+PASS input.defaultValue (<input value>): IDL set to object "[object Object]"
+PASS input.defaultValue (<input value>): IDL set to NaN
+PASS input.defaultValue (<input value>): IDL set to Infinity
+PASS input.defaultValue (<input value>): IDL set to -Infinity
+PASS input.defaultValue (<input value>): IDL set to "\0"
+PASS input.defaultValue (<input value>): IDL set to null
+PASS input.defaultValue (<input value>): IDL set to object "test-toString"
+PASS input.defaultValue (<input value>): IDL set to object "test-valueOf"
+PASS input.align: typeof IDL attribute
+PASS input.align: IDL get with DOM attribute unset
+PASS input.align: setAttribute() to ""
+PASS input.align: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.align: setAttribute() to undefined
+PASS input.align: setAttribute() to 7
+PASS input.align: setAttribute() to 1.5
+PASS input.align: setAttribute() to "5%"
+PASS input.align: setAttribute() to "+100"
+PASS input.align: setAttribute() to ".5"
+PASS input.align: setAttribute() to true
+PASS input.align: setAttribute() to false
+PASS input.align: setAttribute() to object "[object Object]"
+PASS input.align: setAttribute() to NaN
+PASS input.align: setAttribute() to Infinity
+PASS input.align: setAttribute() to -Infinity
+PASS input.align: setAttribute() to "\0"
+PASS input.align: setAttribute() to null
+PASS input.align: setAttribute() to object "test-toString"
+PASS input.align: setAttribute() to object "test-valueOf"
+PASS input.align: IDL set to ""
+PASS input.align: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.align: IDL set to undefined
+PASS input.align: IDL set to 7
+PASS input.align: IDL set to 1.5
+PASS input.align: IDL set to "5%"
+PASS input.align: IDL set to "+100"
+PASS input.align: IDL set to ".5"
+PASS input.align: IDL set to true
+PASS input.align: IDL set to false
+PASS input.align: IDL set to object "[object Object]"
+PASS input.align: IDL set to NaN
+PASS input.align: IDL set to Infinity
+PASS input.align: IDL set to -Infinity
+PASS input.align: IDL set to "\0"
+PASS input.align: IDL set to null
+PASS input.align: IDL set to object "test-toString"
+PASS input.align: IDL set to object "test-valueOf"
+PASS input.useMap: typeof IDL attribute
+PASS input.useMap: IDL get with DOM attribute unset
+PASS input.useMap: setAttribute() to ""
+PASS input.useMap: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.useMap: setAttribute() to undefined
+PASS input.useMap: setAttribute() to 7
+PASS input.useMap: setAttribute() to 1.5
+PASS input.useMap: setAttribute() to "5%"
+PASS input.useMap: setAttribute() to "+100"
+PASS input.useMap: setAttribute() to ".5"
+PASS input.useMap: setAttribute() to true
+PASS input.useMap: setAttribute() to false
+PASS input.useMap: setAttribute() to object "[object Object]"
+PASS input.useMap: setAttribute() to NaN
+PASS input.useMap: setAttribute() to Infinity
+PASS input.useMap: setAttribute() to -Infinity
+PASS input.useMap: setAttribute() to "\0"
+PASS input.useMap: setAttribute() to null
+PASS input.useMap: setAttribute() to object "test-toString"
+PASS input.useMap: setAttribute() to object "test-valueOf"
+PASS input.useMap: IDL set to ""
+PASS input.useMap: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS input.useMap: IDL set to undefined
+PASS input.useMap: IDL set to 7
+PASS input.useMap: IDL set to 1.5
+PASS input.useMap: IDL set to "5%"
+PASS input.useMap: IDL set to "+100"
+PASS input.useMap: IDL set to ".5"
+PASS input.useMap: IDL set to true
+PASS input.useMap: IDL set to false
+PASS input.useMap: IDL set to object "[object Object]"
+PASS input.useMap: IDL set to NaN
+PASS input.useMap: IDL set to Infinity
+PASS input.useMap: IDL set to -Infinity
+PASS input.useMap: IDL set to "\0"
+PASS input.useMap: IDL set to null
+PASS input.useMap: IDL set to object "test-toString"
+PASS input.useMap: IDL set to object "test-valueOf"
+(Note: missing tests for types tokenlist.)

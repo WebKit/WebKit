@@ -1,0 +1,6 @@
+item1
+item3 item4
+item5
+
+FAIL When the focus is set on the last item of a focusgroup and the previous item is located past an extending focusgroup that only supports the orthogonal axis, a backward arrow key press should move the focus to that previous item without getting stuck in the inner focusgroup that doesn't support the axis. The same should still be true when inside a focusgroup that extends another extending focusgroup that supports only the orthogonal axis within the original focusgroup. assert_equals: expected Element node <span id="item1" tabindex="0">item1</span> but got Element node <span id="item5" tabindex="-1">item5</span>
+

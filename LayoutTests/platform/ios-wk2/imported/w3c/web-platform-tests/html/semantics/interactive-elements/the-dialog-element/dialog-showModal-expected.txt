@@ -10,4 +10,5 @@ FAIL opening dialog with multiple focusable children, one having the autofocus a
 <button id="b0">OK</button>
 <d...
 PASS when opening multiple dialogs, the most recently opened is rendered on top
+PASS Although the document is not attached to any pages, showModal() should execute as normal.
 OK

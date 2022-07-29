@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/active-disabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/autofill.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/checked-type-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/checked.html

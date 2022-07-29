@@ -1,0 +1,5 @@
+Outer popup
+Inner popup
+
+FAIL The defaultopen attribute should cause only the first popup to open The string did not match the expected pattern.
+

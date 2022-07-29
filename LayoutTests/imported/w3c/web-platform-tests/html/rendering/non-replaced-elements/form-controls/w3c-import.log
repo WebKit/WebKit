@@ -14,6 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/input-line-height-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/input-line-height-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/input-line-height-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/input-line-height.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/input-placeholder-line-height-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/input-placeholder-line-height-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/input-placeholder-line-height.html

@@ -1,0 +1,8 @@
+r1c1	r1c2	r1c3
+r2c1	r2c2	r2c3
+
+FAIL A right arrow press should move the focus to the next column. assert_equals: expected Element node <td id="r1c2" tabindex="-1">r1c2</td> but got Element node <td id="r1c1" tabindex="0">r1c1</td>
+FAIL A down arrow press should move the focus to the next row. assert_equals: expected Element node <td id="r2c1" tabindex="-1">r2c1</td> but got Element node <td id="r1c1" tabindex="0">r1c1</td>
+FAIL A left arrow press should move to the previous column. assert_equals: expected Element node <td id="r1c1" tabindex="0">r1c1</td> but got Element node <td id="r1c2" tabindex="-1">r1c2</td>
+FAIL An up arrow press should move the focus to the previous row. assert_equals: expected Element node <td id="r1c1" tabindex="0">r1c1</td> but got Element node <td id="r2c1" tabindex="-1">r2c1</td>
+

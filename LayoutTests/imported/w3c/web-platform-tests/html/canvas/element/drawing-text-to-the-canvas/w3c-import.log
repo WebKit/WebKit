@@ -41,6 +41,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.drawing.style.fontKerning.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.drawing.style.fontKerning.with.uppercase.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.drawing.style.fontVariant.settings.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.drawing.style.invalid.spacing.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.drawing.style.letterSpacing.change.font.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.drawing.style.letterSpacing.measure.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.drawing.style.nonfinite.spacing.html
@@ -59,3 +60,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.measure.rtl.text.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.measure.width.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.measure.width.empty.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/direction-inherit-rtl-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/direction-inherit-rtl.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/direction-ltr-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/direction-ltr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/direction-rtl-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/direction-rtl.html

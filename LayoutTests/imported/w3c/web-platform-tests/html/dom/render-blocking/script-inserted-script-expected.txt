@@ -1,0 +1,5 @@
+Some text
+
+FAIL Rendering is blocked before render-blocking resources are loaded assert_true: expected true got false
+PASS Script-inserted render-blocking script is evaluated
+

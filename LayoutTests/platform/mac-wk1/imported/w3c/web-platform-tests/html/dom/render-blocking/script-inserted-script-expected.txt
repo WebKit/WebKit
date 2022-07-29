@@ -1,0 +1,5 @@
+Some text
+
+FAIL Rendering is blocked before render-blocking resources are loaded step_wait_func: Timed out waiting on condition
+PASS Script-inserted render-blocking script is evaluated
+

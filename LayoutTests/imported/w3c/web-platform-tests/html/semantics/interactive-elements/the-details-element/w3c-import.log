@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-add-summary-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-add-summary-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-add-summary.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-cq-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-findstring-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/display-table-with-rt-crash.html

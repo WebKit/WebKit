@@ -17,3 +17,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-option-element/option-with-br-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-option-element/option-with-br-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-option-element/option-with-br.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-option-element/select-multiple-covered-by-abspos-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-option-element/select-multiple-covered-by-abspos-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-option-element/select-multiple-covered-by-abspos.html

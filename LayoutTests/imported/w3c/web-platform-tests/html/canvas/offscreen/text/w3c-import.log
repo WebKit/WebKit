@@ -101,6 +101,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.fontKerning.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.fontVariant.settings.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.fontVariant.settings.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.invalid.spacing.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.invalid.spacing.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.letterSpacing.change.font.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.letterSpacing.change.font.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.letterSpacing.measure.html

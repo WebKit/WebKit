@@ -1,0 +1,5 @@
+item1
+item3 item4
+
+FAIL When the focus is set on the last item of an inner focusgroup that supports wrapping while its parent focusgroup also does, the focus should move to the first item of the parent focusgroup. assert_equals: expected Element node <span id="item1" tabindex="0">item1</span> but got Element node <span id="item4" tabindex="-1">item4</span>
+
