@@ -8155,6 +8155,13 @@ bool WebPage::handlesPageScaleGesture()
 #endif
 }
 
+#if ENABLE(NOTIFICATIONS)
+void WebPage::clearNotificationPermissionState()
+{
+    static_cast<WebNotificationClient&>(WebCore::NotificationController::from(m_page.get())->client()).clearNotificationPermissionState();
+}
+#endif
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

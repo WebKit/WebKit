@@ -34,6 +34,7 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <WebCore/ScriptExecutionContext.h>
+#import <WebCore/SecurityOrigin.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Scope.h>
@@ -97,6 +98,11 @@ void WebNotificationClient::notificationControllerDestroyed()
     delete this;
 }
 
+void WebNotificationClient::clearNotificationPermissionState()
+{
+    m_notificationPermissionRequesters.clear();
+}
+
 void WebNotificationClient::requestPermission(ScriptExecutionContext& context, WebNotificationPolicyListener *listener)
 {
     SEL selector = @selector(webView:decidePolicyForNotificationRequestFromOrigin:listener:);
@@ -106,6 +112,9 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext& context, W
     m_everRequestedPermission = true;
 
     auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context.securityOrigin()]);
+
+    // Add origin to list of origins that have requested permission to use the Notifications API.
+    m_notificationPermissionRequesters.add(context.securityOrigin()->data());
     
     CallUIDelegate(m_webView, selector, webOrigin.get(), listener);
 }
@@ -126,6 +135,12 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
         return NotificationClient::Permission::Denied;
     auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context->securityOrigin()]);
     WebNotificationPermission permission = [[m_webView _notificationProvider] policyForOrigin:webOrigin.get()];
+
+    // To reduce fingerprinting, if the origin has not requested permission to use the
+    // Notifications API, and the permission state is "denied", return "default" instead.
+    if (permission == WebNotificationPermissionDenied && !m_notificationPermissionRequesters.contains(context->securityOrigin()->data()))
+        return NotificationClient::Permission::Default;
+
     switch (permission) {
         case WebNotificationPermissionAllowed:
             return NotificationClient::Permission::Granted;

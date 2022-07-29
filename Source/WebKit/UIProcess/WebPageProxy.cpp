@@ -8857,8 +8857,11 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
     } else if (descriptor.name == PermissionName::Notifications) {
 #if ENABLE(NOTIFICATIONS)
         name = "notifications"_s;
-        // Ensure that the true permission state of the Notifications API is returned.
-        shouldChangeDeniedToPrompt = false;
+
+        // Ensure that the true permission state of the Notifications API is returned if
+        // this topOrigin has requested permission to use the Notifications API previously.
+        if (m_notificationPermissionRequesters.contains(clientOrigin.topOrigin))
+            shouldChangeDeniedToPrompt = false;
 #endif
     }
 
@@ -9068,10 +9071,23 @@ void WebPageProxy::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<
 
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
+#if ENABLE(NOTIFICATIONS)
+void WebPageProxy::clearNotificationPermissionState()
+{
+    m_notificationPermissionRequesters.clear();
+    send(Messages::WebPage::ClearNotificationPermissionState());
+}
+#endif
 
 void WebPageProxy::requestNotificationPermission(const String& originString, CompletionHandler<void(bool allowed)>&& completionHandler)
 {
     auto origin = API::SecurityOrigin::createFromString(originString);
+
+#if ENABLE(NOTIFICATIONS)
+    // Add origin to list of origins that have requested permission to use the Notifications API.
+    m_notificationPermissionRequesters.add(origin->securityOrigin());
+#endif
+
     m_uiClient->decidePolicyForNotificationPermissionRequest(*this, origin.get(), WTFMove(completionHandler));
 }
 

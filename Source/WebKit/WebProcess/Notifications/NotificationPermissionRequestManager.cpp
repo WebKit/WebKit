@@ -77,10 +77,6 @@ NotificationPermissionRequestManager::~NotificationPermissionRequestManager()
 #if ENABLE(NOTIFICATIONS)
 void NotificationPermissionRequestManager::startRequest(const SecurityOriginData& securityOrigin, PermissionHandler&& permissionHandler)
 {
-    auto permission = permissionLevel(securityOrigin);
-    if (permission != Permission::Default)
-        return permissionHandler(permission);
-
     auto addResult = m_requestsPerOrigin.add(securityOrigin, PermissionHandlers { });
     addResult.iterator->value.append(WTFMove(permissionHandler));
     if (!addResult.isNewEntry)

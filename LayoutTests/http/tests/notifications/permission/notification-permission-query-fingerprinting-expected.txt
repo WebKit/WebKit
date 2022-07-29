@@ -1,0 +1,14 @@
+This test tests the fingerprinting countermeasures implemented for querying the Notifications API with Permissions::query() and Notification::permission().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS notificationPermissionResult is "default"
+PASS permissionsQueryResult is "prompt"
+PASS requestPermissionResult is "denied"
+PASS notificationPermissionResult is "denied"
+PASS permissionsQueryResult is "denied"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

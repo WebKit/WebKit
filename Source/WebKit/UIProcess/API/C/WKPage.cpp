@@ -3188,3 +3188,10 @@ void WKPageDispatchActivityStateUpdateForTesting(WKPageRef pageRef)
     CRASH_IF_SUSPENDED;
     toImpl(pageRef)->dispatchActivityStateUpdateForTesting();
 }
+
+void WKPageClearNotificationPermissionState(WKPageRef pageRef)
+{
+#if ENABLE(NOTIFICATIONS)
+    toImpl(pageRef)->clearNotificationPermissionState();
+#endif
+}

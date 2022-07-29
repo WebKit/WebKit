@@ -276,6 +276,8 @@ WK_EXPORT void WKPagePostMessageToInjectedBundle(WKPageRef page, WKStringRef mes
 
 WK_EXPORT void WKPageSelectContextMenuItem(WKPageRef page, WKContextMenuItemRef item);
 
+WK_EXPORT void WKPageClearNotificationPermissionState(WKPageRef page);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1043,6 +1043,7 @@ typedef struct WebEdgeInsets {
 - (void)_notificationsDidClose:(NSArray *)notificationIDs;
 
 - (uint64_t)_notificationIDForTesting:(JSValueRef)jsNotification;
+- (void)_clearNotificationPermissionState;
 @end
 
 @interface WebView (WebViewFontSelection)

@@ -163,6 +163,17 @@ WKDictionaryRef WebNotificationProvider::notificationPermissions()
     return m_permissions.get();
 }
 
+// If the state is not stored in m_permissions, return nullopt. Otherwise, return true if
+// the permission is granted and false if it's denied.
+std::optional<bool> WebNotificationProvider::permissionState(WKSecurityOriginRef securityOrigin)
+{
+    auto securityOriginString = adoptWK(WKSecurityOriginCopyToString(securityOrigin));
+    if (auto value = WKDictionaryGetItemForKey(m_permissions.get(), securityOriginString.get()))
+        return WKBooleanGetValue(static_cast<WKBooleanRef>(value));
+
+    return std::nullopt;
+}
+
 void WebNotificationProvider::setPermission(const String& origin, bool allowed)
 {
     auto wkAllowed = adoptWK(WKBooleanCreate(allowed));

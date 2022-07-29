@@ -101,6 +101,10 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext& context, P
     auto* securityOrigin = context.securityOrigin();
     if (!securityOrigin)
         return permissionHandler(NotificationClient::Permission::Denied);
+
+    // Add origin to list of origins that have requested permission to use the Notifications API.
+    m_notificationPermissionRequesters.add(securityOrigin->data());
+
     m_page->notificationPermissionRequestManager()->startRequest(securityOrigin->data(), WTFMove(permissionHandler));
 }
 
@@ -119,7 +123,18 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
     callOnMainRunLoopAndWait([&resultPermission, origin = origin->data().toString().isolatedCopy()] {
         resultPermission = WebProcess::singleton().supplement<WebNotificationManager>()->policyForOrigin(origin);
     });
+
+    // To reduce fingerprinting, if the origin has not requested permission to use the
+    // Notifications API, and the permission state is "denied", return "default" instead.
+    if (resultPermission == NotificationClient::Permission::Denied && !m_notificationPermissionRequesters.contains(context->securityOrigin()->data()))
+        return NotificationClient::Permission::Default;
+
     return resultPermission;
+}
+
+void WebNotificationClient::clearNotificationPermissionState()
+{
+    m_notificationPermissionRequesters.clear();
 }
 
 } // namespace WebKit

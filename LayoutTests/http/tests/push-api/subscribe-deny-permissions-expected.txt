@@ -1,6 +1,7 @@
-PASS: service worker permissionState was denied
-PASS: document permissionState was denied
+CONSOLE MESSAGE: Push notification prompting can only be done from a user gesture.
+PASS: service worker permissionState was prompt
+PASS: document permissionState was prompt
 PASS: service worker subscribe was error: NotAllowedError
-PASS: document subscribe without user gesture was error: NotAllowedError: User denied push permission
+PASS: document subscribe without user gesture was error: NotAllowedError: Push notification prompting can only be done from a user gesture.
 PASS: document subscribe with user gesture was error: NotAllowedError
 

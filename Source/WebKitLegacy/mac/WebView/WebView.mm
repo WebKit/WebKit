@@ -9800,6 +9800,15 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
     return 0;
 #endif
 }
+
+- (void)_clearNotificationPermissionState
+{
+#if ENABLE(NOTIFICATIONS)
+    auto* page = _private->page;
+    if (page)
+        static_cast<WebNotificationClient*>(WebCore::NotificationController::clientFrom(*page))->clearNotificationPermissionState();
+#endif
+}
 @end
 
 @implementation WebView (WebViewFontSelection)

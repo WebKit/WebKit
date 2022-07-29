@@ -107,7 +107,8 @@ static void runRequestPermissionTest(ShouldGrantPermission shouldGrantPermission
     [webView evaluateJavaScript:@"Notification.requestPermission((permission) => { webkit.messageHandlers.testHandler.postMessage(permission) });" completionHandler:nil];
     TestWebKitAPI::Util::run(&didReceiveMessage);
 
-    EXPECT_EQ(clientPermissionRequestCount, 1U);
+    // All calls to Notification.requestPermission result in a call to the client to request permission.
+    EXPECT_EQ(clientPermissionRequestCount, 2U);
     if (shouldGrantPermission == ShouldGrantPermission::Yes)
         EXPECT_WK_STREQ(@"granted", receivedMessages.get()[1]);
     else

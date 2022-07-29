@@ -29,6 +29,7 @@
 #include <WebKit/WKNotificationManager.h>
 #include <WebKit/WKNotificationProvider.h>
 #include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKSecurityOriginRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/UUID.h>
@@ -47,6 +48,7 @@ public:
     void addNotificationManager(WKNotificationManagerRef);
     void removeNotificationManager(WKNotificationManagerRef);
     WKDictionaryRef notificationPermissions();
+    std::optional<bool> permissionState(WKSecurityOriginRef);
 
     void simulateWebNotificationClick(WKPageRef, WKDataRef notificationID);
     void simulateWebNotificationClickForServiceWorkerNotifications();

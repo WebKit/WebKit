@@ -27,6 +27,7 @@
 
 #import <WebCore/Notification.h>
 #import <WebCore/NotificationClient.h>
+#import <WebCore/SecurityOriginData.h>
 #import <wtf/HashMap.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -40,6 +41,7 @@ class WebNotificationClient final : public WebCore::NotificationClient {
 public:
     WebNotificationClient(WebView *);
     WebView *webView() { return m_webView; }
+    void clearNotificationPermissionState();
 
     // For testing purposes.
     uint64_t notificationIDForTesting(WebCore::Notification*);
@@ -56,6 +58,7 @@ private:
 
     WebView *m_webView;
     HashMap<RefPtr<WebCore::Notification>, RetainPtr<WebNotification>> m_notificationMap;
+    HashSet<WebCore::SecurityOriginData> m_notificationPermissionRequesters;
 
     bool m_everRequestedPermission { false };
 };

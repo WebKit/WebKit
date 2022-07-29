@@ -18,7 +18,7 @@ if (window.testRunner) {
 
 description("This tests that a notification shown by a service worker can be clicked and closed, with those actions being observable by the service worker");
 
-shouldBeEqualToString("Notification.permission", "denied");
+shouldBeEqualToString("Notification.permission", "default");
 
 async function registerServiceWorker() {
     var registration = await navigator.serviceWorker.register('resources/shownotification-worker.js');

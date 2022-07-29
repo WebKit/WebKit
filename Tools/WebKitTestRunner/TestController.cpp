@@ -30,6 +30,7 @@
 #include "EventSenderProxy.h"
 #include "Options.h"
 #include "PlatformWebView.h"
+#include "StringFunctions.h"
 #include "TestCommand.h"
 #include "TestInvocation.h"
 #include "WebCoreTestSupport.h"
@@ -360,8 +361,24 @@ void TestController::setIsMediaKeySystemPermissionGranted(bool granted)
     m_isMediaKeySystemPermissionGranted = granted;
 }
 
-static void queryPermission(WKStringRef, WKSecurityOriginRef, WKQueryPermissionResultCallbackRef callback)
+static void queryPermission(WKStringRef string, WKSecurityOriginRef securityOrigin, WKQueryPermissionResultCallbackRef callback)
 {
+    TestController::singleton().handleQueryPermission(string, securityOrigin, callback);
+}
+
+void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginRef securityOrigin, WKQueryPermissionResultCallbackRef callback)
+{
+    if (toWTFString(string) == "notifications"_s) {
+        auto permissionState = m_webNotificationProvider.permissionState(securityOrigin);
+        if (permissionState) {
+            if (permissionState.value())
+                WKQueryPermissionResultCallbackCompleteWithGranted(callback);
+            else
+                WKQueryPermissionResultCallbackCompleteWithDenied(callback);
+            return;
+        }
+    }
+
     WKQueryPermissionResultCallbackCompleteWithPrompt(callback);
 }
 
@@ -1085,6 +1102,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     // Reset notification permissions
     m_webNotificationProvider.reset();
     m_notificationOriginsToDenyOnPrompt.clear();
+    WKPageClearNotificationPermissionState(m_mainWebView->page());
 
     // Reset Geolocation permissions.
     m_geolocationPermissionRequests.clear();
@@ -2688,11 +2706,21 @@ void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef page
 void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef, WKSecurityOriginRef origin, WKNotificationPermissionRequestRef request)
 {
     auto originName = originUserVisibleName(origin);
-    if (m_notificationOriginsToDenyOnPrompt.contains(originName)) {
+    auto securityOriginString = adoptWK(WKSecurityOriginCopyToString(origin));
+    auto permissionState = m_webNotificationProvider.permissionState(origin);
+
+    if (permissionState && !permissionState.value()) {
         WKNotificationPermissionRequestDeny(request);
         return;
     }
 
+    if (m_notificationOriginsToDenyOnPrompt.contains(originName)) {
+        m_webNotificationProvider.setPermission(toWTFString(securityOriginString.get()), false);
+        WKNotificationPermissionRequestDeny(request);
+        return;
+    }
+
+    m_webNotificationProvider.setPermission(toWTFString(securityOriginString.get()), true);
     WKNotificationPermissionRequestAllow(request);
 }
 

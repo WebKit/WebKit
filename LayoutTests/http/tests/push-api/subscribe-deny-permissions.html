@@ -11,10 +11,10 @@ if (window.testRunner)
 navigator.serviceWorker.register("resources/subscribe-worker.js", { }).then(async (registration) => {
     try {
         await waitForState(registration.installing, "activated");
-        await testServiceWorkerPermissionState(registration, 'denied');
-        await testDocumentPermissionState(registration, 'denied');
+        await testServiceWorkerPermissionState(registration, 'prompt');
+        await testDocumentPermissionState(registration, 'prompt');
         await testServiceWorkerSubscribe(registration, 'NotAllowedError');
-        await testDocumentSubscribeWithoutUserGesture(registration, 'NotAllowedError', 'User denied push permission');
+        await testDocumentSubscribeWithoutUserGesture(registration, 'NotAllowedError', 'Push notification prompting can only be done from a user gesture.');
         await testDocumentSubscribeWithUserGesture(registration, 'NotAllowedError');
     } catch (e) {
         log(`FAIL: unexpected exception ${e}`);

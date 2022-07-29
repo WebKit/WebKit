@@ -43,7 +43,9 @@ function part2() {
 function part3() {
 	debug("Denying permission to " + testURL);
 	testRunner.denyWebNotificationPermission(testURL);
-	shouldBeEqualToString("Notification.permission", "denied");
+	// To reduce fingerprinting, Notification.permission returns "prompt" instead of "deny" 
+	// since the test has not tried to request permission to use the Notifications API.
+	shouldBeEqualToString("Notification.permission", "default");
 
 	n = new Notification("title 3");
 	n.onshow = function() {
@@ -57,6 +59,26 @@ function part3() {
 }
 
 function part4() {
+	debug("Denying permission to " + testURL);
+	testRunner.denyWebNotificationPermission(testURL);
+	internals.withUserGesture(() => {
+		window.Notification.requestPermission().then((result)=> {
+			shouldBeEqualToString("Notification.permission", "denied");
+
+			n = new Notification("title 3");
+			n.onshow = function() {
+				testFailed("onshow event handler should not be called");
+				setTimeout(part5, 0);
+			};
+			n.onerror = function() {
+				testPassed("onerror event handler was called");
+				setTimeout(part5, 0);
+			};
+		});
+	});
+}
+
+function part5() {
 	debug("Resetting all permissions");
 	testRunner.removeAllWebNotificationPermissions();
 	shouldBeEqualToString("Notification.permission", "default");

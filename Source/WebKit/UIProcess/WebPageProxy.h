@@ -2135,6 +2135,10 @@ public:
     void updateIconForDirectory(NSFileWrapper *, const String&);
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+    void clearNotificationPermissionState();
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2819,6 +2823,10 @@ private:
 #endif
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
+
+#if ENABLE(NOTIFICATIONS)
+    HashSet<WebCore::SecurityOriginData> m_notificationPermissionRequesters;
+#endif
 
 #if PLATFORM(COCOA)
     HashSet<String> m_knownKeypressCommandNames;

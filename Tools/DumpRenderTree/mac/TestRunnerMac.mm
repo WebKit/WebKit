@@ -198,6 +198,11 @@ void TestRunner::clearAllDatabases()
     [[WebDatabaseManager sharedWebDatabaseManager] deleteAllIndexedDatabases];
 }
 
+void TestRunner::clearNotificationPermissionState()
+{
+    [[mainFrame webView] _clearNotificationPermissionState];
+}
+
 void TestRunner::setStorageDatabaseIdleInterval(double interval)
 {
     [WebStorageManager setStorageDatabaseIdleInterval:interval];

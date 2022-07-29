@@ -1923,6 +1923,7 @@ static void runTest(const std::string& inputLine)
     gTestRunner->clearAllApplicationCaches();
 
     gTestRunner->clearAllDatabases();
+    gTestRunner->clearNotificationPermissionState();
 
     if (disallowedURLs)
         CFSetRemoveAllValues(disallowedURLs.get());
