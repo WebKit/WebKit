@@ -577,6 +577,9 @@ bool RTCPeerConnection::doClose()
     }
     m_operations.clear();
 
+    for (auto& transport : m_dtlsTransports)
+        transport->close();
+
     return true;
 }
 
