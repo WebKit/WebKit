@@ -3617,8 +3617,6 @@ imported/w3c/web-platform-tests/clipboard-apis/async-raw-write-read.tentative.ht
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-047.html
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-048.html
 imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html
-platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position-limit.html
-platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position.html
 swipe/main-frame-pinning-requirement.html
 
 

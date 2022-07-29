@@ -6,17 +6,19 @@
     <script type="text/javascript">
       if (window.testRunner)
           testRunner.waitUntilDone();
-      function run() {
+      async function run() {
         if (!window.testRunner || !testRunner.runUIScript)
           return;
 
         var findOptions = 1 << 6; // show find indicator
         var maxCount = 1;
-        testRunner.runUIScript(`
-          uiController.findString("match", ${findOptions}, ${maxCount});
-          uiController.findString("match", ${findOptions}, ${maxCount});
-          uiController.uiScriptComplete("Done");
-        `);
+        await new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.findString("match", ${findOptions}, ${maxCount});
+                uiController.findString("match", ${findOptions}, ${maxCount});
+                uiController.uiScriptComplete("");
+            `, resolve);
+        });
 
         testRunner.notifyDone();
       }
