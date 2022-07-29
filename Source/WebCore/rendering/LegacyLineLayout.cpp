@@ -359,33 +359,9 @@ TextAlignMode LegacyLineLayout::textAlignmentForLine(bool endsWithSoftBreak) con
     if (auto overrideAlignment = m_flow.overrideTextAlignmentForLine(endsWithSoftBreak))
         return *overrideAlignment;
 
-    TextAlignMode alignment = style().textAlign();
-
-    if (endsWithSoftBreak)
-        return alignment;
-
-    TextAlignLast alignmentLast = style().textAlignLast();
-    switch (alignmentLast) {
-    case TextAlignLast::Start:
-        return TextAlignMode::Start;
-    case TextAlignLast::End:
-        return TextAlignMode::End;
-    case TextAlignLast::Left:
-        return TextAlignMode::Left;
-    case TextAlignLast::Right:
-        return TextAlignMode::Right;
-    case TextAlignLast::Center:
-        return TextAlignMode::Center;
-    case TextAlignLast::Justify:
-        return TextAlignMode::Justify;
-    case TextAlignLast::Auto:
-        if (alignment == TextAlignMode::Justify)
-            return TextAlignMode::Start;
-        return alignment;
-    }
-
-    ASSERT_NOT_REACHED();
-    return TextAlignMode::Start;
+    // Line ending with soft break means it's not the last line. effectiveTextAlignForLine
+    // expects a bool indicating if this is the last line or not.
+    return style().effectiveTextAlignForLine(!endsWithSoftBreak);
 }
 
 static void updateLogicalWidthForLeftAlignedBlock(bool isLeftToRightDirection, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float availableLogicalWidth)

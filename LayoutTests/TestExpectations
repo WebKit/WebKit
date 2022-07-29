@@ -2913,8 +2913,6 @@ imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.https.htm
 imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.https.html [ Skip ]
 
 # text-justify
-webkit.org/b/99945 fast/css3-text/css3-text-justify/text-justify-none.html [ ImageOnlyFailure ]
-webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-001.html [ ImageOnlyFailure ]
 webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-006.html [ ImageOnlyFailure ]
 webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-and-trailing-spaces-002.html [ ImageOnlyFailure ]
 webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-and-trailing-spaces-003.html [ ImageOnlyFailure ]
@@ -2924,7 +2922,6 @@ webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/tex
 webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-distribute-001.html [ ImageOnlyFailure ]
 webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-inter-character-001.html [ ImageOnlyFailure ]
 webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-inter-word-001.html [ ImageOnlyFailure ]
-webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-none-001.html [ ImageOnlyFailure ]
 
 # Link prefetch is disabled by default (needs ENABLE_LINK_PREFETCH)
 webkit.org/b/3652 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Skip ]

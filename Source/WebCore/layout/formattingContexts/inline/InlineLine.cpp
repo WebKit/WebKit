@@ -90,14 +90,17 @@ void Line::resetTrailingContent()
     m_trailingSoftHyphenWidth = { };
 }
 
-void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
+void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace, bool isLastLine)
 {
-    ASSERT(formattingContext().root().style().textAlign() == TextAlignMode::Justify || formattingContext().root().style().textAlignLast() == TextAlignLast::Justify);
     // Text is justified according to the method specified by the text-justify property,
     // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
     // the last line before a forced break or the end of the block is start-aligned.
+
+    ASSERT_UNUSED(isLastLine, formattingContext().root().style().effectiveTextAlignForLine(isLastLine) == TextAlignMode::Justify);
+
     if (m_runs.isEmpty() || m_runs.last().isLineBreak())
         return;
+
     // A hanging glyph is still enclosed inside its parent inline box and still participates in text justification:
     // its character advance is just not measured when determining how much content fits on the line, how much the line’s contents
     // need to be expanded or compressed for justification, or how to position the content within the line box for text alignment.

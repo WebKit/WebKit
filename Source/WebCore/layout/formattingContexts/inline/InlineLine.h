@@ -67,7 +67,7 @@ public:
     void removeTrailingTrimmableContent(ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk);
     void removeHangingGlyphs();
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
-    void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
+    void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace, bool isLastLine);
 
     struct Run {
         enum class Type : uint8_t {

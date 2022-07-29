@@ -381,6 +381,8 @@ public:
     const Length& textIndent() const { return m_rareInheritedData->indent; }
     TextAlignMode textAlign() const { return static_cast<TextAlignMode>(m_inheritedFlags.textAlign); }
     TextAlignLast textAlignLast() const { return static_cast<TextAlignLast>(m_rareInheritedData->textAlignLast); }
+    // Return the effective text alignment for a line based on text-align, text-align-last and text-justify.
+    TextAlignMode effectiveTextAlignForLine(bool isLastLine) const;
     TextTransform textTransform() const { return static_cast<TextTransform>(m_inheritedFlags.textTransform); }
     OptionSet<TextDecorationLine> textDecorationsInEffect() const { return OptionSet<TextDecorationLine>::fromRaw(m_inheritedFlags.textDecorationLines); }
     OptionSet<TextDecorationLine> textDecorationLine() const { return OptionSet<TextDecorationLine>::fromRaw(m_visualData->textDecorationLine); }

@@ -2949,4 +2949,45 @@ UserSelect RenderStyle::effectiveUserSelect() const
     return value;
 }
 
+TextAlignMode RenderStyle::effectiveTextAlignForLine(bool isLastLine) const
+{
+    // Text alignment always follows text-align...
+    TextAlignMode alignment = textAlign();
+
+    // ...except when it's the last line in a block, in which case
+    // text-align-last takes precedence.
+    if (isLastLine) {
+        switch (textAlignLast()) {
+        case TextAlignLast::Auto:
+            if (alignment == TextAlignMode::Justify)
+                alignment = TextAlignMode::Start;
+            break;
+        case TextAlignLast::Start:
+            alignment = TextAlignMode::Start;
+            break;
+        case TextAlignLast::End:
+            alignment = TextAlignMode::End;
+            break;
+        case TextAlignLast::Left:
+            alignment = TextAlignMode::Left;
+            break;
+        case TextAlignLast::Right:
+            alignment = TextAlignMode::Right;
+            break;
+        case TextAlignLast::Center:
+            alignment = TextAlignMode::Center;
+            break;
+        case TextAlignLast::Justify:
+            alignment = TextAlignMode::Justify;
+            break;
+        }
+    }
+
+    // text-justify: none forces disable justification, even when text-align(-last) is justify.
+    if (alignment == TextAlignMode::Justify && textJustify() == TextJustify::None)
+        alignment = initialTextAlign();
+
+    return alignment;
+}
+
 } // namespace WebCore
