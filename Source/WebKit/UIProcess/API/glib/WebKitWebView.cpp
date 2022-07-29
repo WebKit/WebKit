@@ -4137,7 +4137,7 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
  * @web_view: a #WebKitWebView
  * @body: the JavaScript function body
  * @arguments: a #GVariant with format `{&sv}` storing the function arguments. Function argument values must be one of the following types, or contain only the following GVariant types: number, string, array, and dictionary.
- * @world_name (nullable): the name of a #WebKitScriptWorld, if no name is provided, the default world is used.
+ * @world_name (nullable): the name of a #WebKitScriptWorld, if no name (i.e. %NULL) is provided, the default world is used. Any value that is not %NULL is a distinct world.
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
  * @user_data: (closure): the data to pass to callback function
@@ -4203,10 +4203,9 @@ void webkit_web_view_run_async_javascript_function_in_world(WebKitWebView* webVi
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(body);
-    g_return_if_fail(worldName);
 
     auto task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-    auto world = API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName ? worldName : ""));
+    auto world = worldName ? API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName)) : Ref<API::ContentWorld> { API::ContentWorld::pageContentWorld() };
     bool hasInvalidArgument = false;
     auto argumentsMap = WebCore::ArgumentWireBytesMap { };
 
