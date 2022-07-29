@@ -623,6 +623,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncToReversed(VM& vm, JS
 
     Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType);
     ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
+    RETURN_IF_EXCEPTION(scope, { });
 
     const typename ViewClass::ElementType* from = thisObject->typedVector();
     typename ViewClass::ElementType* to = result->typedVector();
@@ -645,6 +646,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncClone(VM& vm, JSGlo
     size_t length = thisObject->length();
     Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType);
     ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
+    RETURN_IF_EXCEPTION(scope, { });
 
     typename ViewClass::ElementType* from = thisObject->typedVector();
     typename ViewClass::ElementType* to = result->typedVector();
@@ -893,6 +895,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncWith(VM& vm, JSGlobal
 
     Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType);
     ViewClass* result = ViewClass::createUninitialized(globalObject, structure, thisLength);
+    RETURN_IF_EXCEPTION(scope, { });
 
     if (UNLIKELY(thisLength != thisObject->length())) {
         for (unsigned index = 0; index < thisLength; ++index) {
