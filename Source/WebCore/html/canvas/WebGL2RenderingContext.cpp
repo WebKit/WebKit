@@ -2518,7 +2518,7 @@ void WebGL2RenderingContext::uniformBlockBinding(WebGLProgram& program, GCGLuint
 
 RefPtr<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
 {
-    if (isContextLost())
+    if (isContextLostOrPending())
         return nullptr;
 
     auto object = WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::User);
@@ -2532,11 +2532,11 @@ void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObje
 
     // validateWebGLObject generates an error if the object has already been
     // deleted, so we must replicate most of its checks here.
-    if (!arrayObject || isContextLost())
+    if (isContextLostOrPending() || !arrayObject)
         return;
 
     if (!arrayObject->validate(contextGroup(), *this)) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "deleteVertexArray", "object does not belong to this context");
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "delete", "object does not belong to this context");
         return;
     }
 
@@ -2544,9 +2544,9 @@ void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObje
         return;
 
     if (!arrayObject->isDefaultObject() && arrayObject == m_boundVertexArrayObject) {
-        // bindVertexArray grabs the lock internally.
-        DropLockForScope noLockScope(locker);
-        bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
+        // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
+        m_context->bindVertexArray(m_defaultVertexArrayObject->object());
+        setBoundVertexArrayObject(locker, m_defaultVertexArrayObject.get());
     }
 
     arrayObject->deleteObject(locker, graphicsContextGL());
@@ -2554,7 +2554,7 @@ void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObje
 
 GCGLboolean WebGL2RenderingContext::isVertexArray(WebGLVertexArrayObject* arrayObject)
 {
-    if (!arrayObject || isContextLost() || !arrayObject->validate(0, *this))
+    if (isContextLostOrPending() || !arrayObject || !arrayObject->validate(contextGroup(), *this))
         return false;
 
     if (!arrayObject->hasEverBeenBound())
