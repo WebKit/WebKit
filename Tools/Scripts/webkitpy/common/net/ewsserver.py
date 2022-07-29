@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ class EWSServer:
         submit_to_ews_url = '{}/submit-to-ews'.format(self._server_url())
         self._browser.open(submit_to_ews_url)
         self._browser.select_form(name='submit_to_ews')
-        self._browser['patch_id'] = unicode(attachment_id)
+        self._browser['change_id'] = unicode(attachment_id)
         self._browser.submit()
 
     def submit_to_ews(self, attachment_id):
