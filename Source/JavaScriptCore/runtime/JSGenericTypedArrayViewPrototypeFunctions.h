@@ -99,7 +99,9 @@ inline JSArrayBufferView* speciesConstruct(JSGlobalObject* globalObject, ViewCla
 
     bool inSameRealm = exemplar->globalObject() == globalObject;
     if (LIKELY(inSameRealm)) {
-        if (LIKELY(speciesWatchpointIsValid(globalObject, exemplar)))
+        bool isValid = speciesWatchpointIsValid(globalObject, exemplar);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        if (LIKELY(isValid))
             RELEASE_AND_RETURN(scope, defaultConstructor());
     }
 
