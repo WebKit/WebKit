@@ -48,20 +48,22 @@ public:
     WebCore::IntSize backendSize() const final;
     ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
 
+    void clearContents() final;
+
     // NOTE: These all ASSERT_NOT_REACHED().
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
     RefPtr<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&, const WebCore::ImageBufferAllocator& = WebCore::ImageBufferAllocator()) const final;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
 
 protected:
-    CGDisplayListImageBufferBackend(const Parameters&, std::unique_ptr<WebCore::GraphicsContext>&&, UseOutOfLineSurfaces);
+    CGDisplayListImageBufferBackend(const Parameters&, UseOutOfLineSurfaces);
 
     unsigned bytesPerRow() const final;
 
     // ImageBufferBackendSharing
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
-    std::unique_ptr<WebCore::GraphicsContext> m_context;
+    mutable std::unique_ptr<WebCore::GraphicsContext> m_context;
     UseOutOfLineSurfaces m_useOutOfLineSurfaces;
 };
 

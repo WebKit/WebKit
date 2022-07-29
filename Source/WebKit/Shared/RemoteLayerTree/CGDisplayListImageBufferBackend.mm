@@ -47,8 +47,8 @@ namespace WebKit {
 
 class GraphicsContextCGDisplayList : public WebCore::GraphicsContextCG {
 public:
-    GraphicsContextCGDisplayList(CGContextRef cgContext, const CGDisplayListImageBufferBackend::Parameters& parameters)
-        : GraphicsContextCG(cgContext)
+    GraphicsContextCGDisplayList(const CGDisplayListImageBufferBackend::Parameters& parameters)
+        : GraphicsContextCG(adoptCF(WKCGCommandsContextCreate(parameters.logicalSize, nullptr)).autorelease())
     {
         m_immutableBaseTransform.scale(parameters.resolutionScale, -parameters.resolutionScale);
         m_immutableBaseTransform.translate(0, -parameters.logicalSize.height());
@@ -84,27 +84,22 @@ size_t CGDisplayListImageBufferBackend::calculateMemoryCost(const Parameters& pa
 
 std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend::create(const Parameters& parameters, const WebCore::ImageBuffer::CreationContext& creationContext)
 {
-    auto logicalSize = parameters.logicalSize;
-    if (logicalSize.isEmpty())
+    if (parameters.logicalSize.isEmpty())
         return nullptr;
 
-    auto cgContext = adoptCF(WKCGCommandsContextCreate(logicalSize, nullptr));
-    if (!cgContext)
-        return nullptr;
-
-    auto context = makeUnique<GraphicsContextCGDisplayList>(cgContext.get(), parameters);
-    return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, WTFMove(context), creationContext.useOutOfLineSurfacesForCGDisplayLists));
+    return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, creationContext.useOutOfLineSurfacesForCGDisplayLists));
 }
 
-CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameters& parameters, std::unique_ptr<WebCore::GraphicsContext>&& context, UseOutOfLineSurfaces useOutOfLineSurfaces)
+CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameters& parameters, UseOutOfLineSurfaces useOutOfLineSurfaces)
     : ImageBufferCGBackend { parameters }
-    , m_context { WTFMove(context) }
     , m_useOutOfLineSurfaces { useOutOfLineSurfaces }
 {
 }
 
 ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(SharedMemory::Protection) const
 {
+    ASSERT(m_context);
+
     RetainPtr<NSDictionary> options;
     RetainPtr<NSMutableArray> ports;
     if (m_useOutOfLineSurfaces == UseOutOfLineSurfaces::Yes) {
@@ -135,6 +130,8 @@ ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(Sh
 
 WebCore::GraphicsContext& CGDisplayListImageBufferBackend::context() const
 {
+    if (!m_context)
+        m_context = makeUnique<GraphicsContextCGDisplayList>(m_parameters);
     return *m_context;
 }
 
@@ -146,6 +143,11 @@ WebCore::IntSize CGDisplayListImageBufferBackend::backendSize() const
 unsigned CGDisplayListImageBufferBackend::bytesPerRow() const
 {
     return calculateBytesPerRow(backendSize());
+}
+
+void CGDisplayListImageBufferBackend::clearContents()
+{
+    m_context = nullptr;
 }
 
 RefPtr<WebCore::NativeImage> CGDisplayListImageBufferBackend::copyNativeImage(WebCore::BackingStoreCopy) const

@@ -131,9 +131,7 @@ private:
 
     struct Buffer {
         RefPtr<WebCore::ImageBuffer> imageBuffer;
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-        RefPtr<WebCore::ImageBuffer> displayListImageBuffer;
-#endif
+
         explicit operator bool() const
         {
             return !!imageBuffer;
@@ -169,6 +167,7 @@ private:
     std::optional<MachSendRight> m_contentsBufferHandle;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    RefPtr<WebCore::ImageBuffer> m_displayListBuffer;
     std::optional<ImageBufferBackendHandle> m_displayListBufferHandle;
 #endif
 

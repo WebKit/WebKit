@@ -215,6 +215,8 @@ public:
     WEBCORE_EXPORT VolatilityState volatilityState() const;
     WEBCORE_EXPORT void setVolatilityState(VolatilityState);
 
+    WEBCORE_EXPORT void clearContents();
+
     WEBCORE_EXPORT virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher();
 
 protected:

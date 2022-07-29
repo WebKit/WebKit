@@ -478,6 +478,12 @@ void ImageBuffer::setVolatilityState(VolatilityState volatilityState)
         backend->setVolatilityState(volatilityState);
 }
 
+void ImageBuffer::clearContents()
+{
+    if (auto* backend = ensureBackendCreated())
+        backend->clearContents();
+}
+
 std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBuffer::createFlusher()
 {
     if (auto* backend = ensureBackendCreated())

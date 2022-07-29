@@ -164,6 +164,8 @@ public:
 
     virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 
+    virtual void clearContents() { ASSERT_NOT_REACHED(); }
+
 protected:
     WEBCORE_EXPORT ImageBufferBackend(const Parameters&);
 
