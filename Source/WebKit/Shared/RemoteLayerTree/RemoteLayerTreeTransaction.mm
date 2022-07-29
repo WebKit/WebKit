@@ -799,7 +799,7 @@ void RemoteLayerTreeTransaction::setRootLayerID(WebCore::GraphicsLayer::Platform
 
 void RemoteLayerTreeTransaction::layerPropertiesChanged(PlatformCALayerRemote& remoteLayer)
 {
-    m_changedLayers.append(&remoteLayer);
+    m_changedLayers.add(&remoteLayer);
 }
 
 void RemoteLayerTreeTransaction::setCreatedLayers(Vector<LayerCreationProperties> createdLayers)
