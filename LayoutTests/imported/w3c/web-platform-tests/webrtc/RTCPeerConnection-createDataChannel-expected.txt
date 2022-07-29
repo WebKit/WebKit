@@ -4,7 +4,7 @@ PASS createDataChannel with closed connection should throw InvalidStateError
 FAIL createDataChannel attribute default values assert_equals: expected "blob" but got "arraybuffer"
 FAIL createDataChannel with provided parameters should initialize attributes to provided values assert_equals: expected "blob" but got "arraybuffer"
 PASS createDataChannel with label "foo" should succeed
-FAIL createDataChannel with label null should succeed assert_equals: expected "null" but got ""
+PASS createDataChannel with label null should succeed
 PASS createDataChannel with label undefined should succeed
 PASS createDataChannel with label lone surrogate should succeed
 PASS createDataChannel with ordered false should succeed
