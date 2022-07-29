@@ -58,6 +58,7 @@ enum class MessageType : uint8_t {
     RemovePushSubscriptionsForOrigin,
     SetPublicTokenForTesting,
     SetPushAndNotificationsEnabledForOrigin,
+    GetOriginsWithPushSubscriptions,
 };
 
 enum class RawXPCMessageType : uint8_t {
@@ -83,6 +84,7 @@ inline bool messageTypeSendsReply(MessageType messageType)
     case MessageType::RemovePushSubscriptionsForOrigin:
     case MessageType::SetPublicTokenForTesting:
     case MessageType::SetPushAndNotificationsEnabledForOrigin:
+    case MessageType::GetOriginsWithPushSubscriptions:
         return true;
     case MessageType::SetDebugModeIsEnabled:
     case MessageType::UpdateConnectionConfiguration:

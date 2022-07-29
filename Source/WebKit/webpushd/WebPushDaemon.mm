@@ -69,6 +69,11 @@ ARGUMENTS()
 REPLY(const Vector<String>&)
 END
 
+FUNCTION(getOriginsWithPushSubscriptions)
+ARGUMENTS()
+REPLY(Vector<String>&&)
+END
+
 FUNCTION(setPushAndNotificationsEnabledForOrigin)
 ARGUMENTS(String, bool)
 REPLY()
@@ -172,6 +177,13 @@ WebPushD::EncodedMessage getOriginsWithPushAndNotificationPermissions::encodeRep
     return encoder.takeBuffer();
 }
 
+WebPushD::EncodedMessage getOriginsWithPushSubscriptions::encodeReply(Vector<String>&& reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
 WebPushD::EncodedMessage deletePushAndNotificationRegistration::encodeReply(String reply)
 {
     WebKit::Daemon::Encoder encoder;
@@ -269,7 +281,7 @@ void handleWebPushDMessageWithReply(ClientConnection* connection, Span<const uin
         return;
 
     typename Info::Reply completionHandler { [replySender = WTFMove(replySender)] (auto&&... args) mutable {
-        replySender(Info::encodeReply(args...));
+        replySender(Info::encodeReply(std::forward<decltype(args)>(args)...));
     } };
 
     IPC::callMemberFunction(tuple_cat(std::make_tuple(connection), WTFMove(*arguments)), WTFMove(completionHandler), &WebPushD::Daemon::singleton(), Info::MemberFunction);
@@ -463,6 +475,9 @@ void Daemon::decodeAndHandleMessage(xpc_connection_t connection, MessageType mes
     case MessageType::GetOriginsWithPushAndNotificationPermissions:
         handleWebPushDMessageWithReply<MessageInfo::getOriginsWithPushAndNotificationPermissions>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
+    case MessageType::GetOriginsWithPushSubscriptions:
+        handleWebPushDMessageWithReply<MessageInfo::getOriginsWithPushSubscriptions>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
     case MessageType::SetPushAndNotificationsEnabledForOrigin:
         handleWebPushDMessageWithReply<MessageInfo::setPushAndNotificationsEnabledForOrigin>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
@@ -556,6 +571,16 @@ void Daemon::getOriginsWithPushAndNotificationPermissions(ClientConnection* conn
 #else
     RELEASE_ASSERT_NOT_REACHED();
 #endif
+}
+
+void Daemon::getOriginsWithPushSubscriptions(ClientConnection* connection, CompletionHandler<void(Vector<String>&&)>&& callback)
+{
+    runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), callback = WTFMove(callback)]() mutable {
+        if (!m_pushService)
+            return callback({ });
+
+        m_pushService->getOriginsWithPushSubscriptions(bundleIdentifier, WTFMove(callback));
+    });
 }
 
 void Daemon::deletePushRegistration(const String& bundleIdentifier, const String& originString, CompletionHandler<void()>&& callback)
