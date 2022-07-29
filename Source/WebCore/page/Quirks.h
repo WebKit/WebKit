@@ -161,6 +161,7 @@ public:
     WEBCORE_EXPORT bool allowLayeredFullscreenVideos() const;
 #endif
     bool hasBrokenPermissionsAPISupportQuirk() const;
+    bool shouldEnableApplicationCacheQuirk() const;
     
 private:
     bool needsQuirks() const;
@@ -211,6 +212,9 @@ private:
     mutable std::optional<bool> m_allowLayeredFullscreenVideos;
 #endif
     mutable std::optional<bool> m_hasBrokenPermissionsAPISupportQuirk;
+#if PLATFORM(IOS_FAMILY)
+    mutable std::optional<bool> m_shouldEnableApplicationCacheQuirk;
+#endif
 };
 
 } // namespace WebCore
