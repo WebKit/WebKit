@@ -310,14 +310,14 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             continue;
         }
         if (run.isListMarker()) {
-            auto& ListMarkerBoxGeometry = formattingContext().geometryForBox(layoutBox);
-            auto marginBoxHeight = ListMarkerBoxGeometry.marginBoxHeight();
+            auto& listMarkerBoxGeometry = formattingContext().geometryForBox(layoutBox);
+            auto marginBoxHeight = listMarkerBoxGeometry.marginBoxHeight();
             // Integration codepath constructs ReplacedBoxes for list markers.
             auto baseline = downcast<ReplacedBox>(layoutBox).baseline();
             auto ascent = baseline.value_or(marginBoxHeight);
 
-            logicalLeft += std::max(0_lu, ListMarkerBoxGeometry.marginStart());
-            auto listMarkerInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, { ListMarkerBoxGeometry.borderBoxWidth(), marginBoxHeight });
+            logicalLeft += std::max(0_lu, listMarkerBoxGeometry.marginStart());
+            auto listMarkerInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, { listMarkerBoxGeometry.borderBoxWidth(), marginBoxHeight });
             setBaselineAndLayoutBounds(listMarkerInlineLevelBox, { ascent, marginBoxHeight - ascent }, baseline.has_value() ? BehavesAsText::Yes : BehavesAsText::No);
             lineBox.addInlineLevelBox(WTFMove(listMarkerInlineLevelBox));
             continue;

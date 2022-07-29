@@ -30,6 +30,7 @@
 
 #include "FloatingContext.h"
 #include "InlineFormattingContext.h"
+#include "InlineFormattingGeometry.h"
 #include "InlineFormattingQuirks.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
@@ -641,46 +642,9 @@ UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initial
         lineIsConstrainedByFloat = true;
     }
 
-    auto computedTextIndent = [&]() -> InlineLayoutUnit {
-        auto& root = this->root();
-
-        // text-indent property specifies the indentation applied to lines of inline content in a block.
-        // The indent is treated as a margin applied to the start edge of the line box.
-        // The first formatted line of an element is always indented. For example, the first line of an anonymous block box
-        // is only affected if it is the first child of its parent element.
-        // If 'each-line' is specified, indentation also applies to all lines where the previous line ends with a hard break.
-        // [Integration] root()->parent() would normally produce a valid layout box.
-        bool shouldIndent = false;
-        if (!previousLineEndsWithLineBreak) {
-            shouldIndent = !root.isAnonymous();
-            if (root.isAnonymous()) {
-                auto isIntegratedRootBoxFirstChild = layoutState().isIntegratedRootBoxFirstChild();
-                if (isIntegratedRootBoxFirstChild == LayoutState::IsIntegratedRootBoxFirstChild::NotApplicable)
-                    shouldIndent = root.parent().firstInFlowChild() == &root;
-                else
-                    shouldIndent = isIntegratedRootBoxFirstChild == LayoutState::IsIntegratedRootBoxFirstChild::Yes;
-            }
-        } else
-            shouldIndent = root.style().textIndentLine() == TextIndentLine::EachLine && *previousLineEndsWithLineBreak;
-
-        // Specifying 'hanging' inverts whether the line should be indented or not.
-        if (root.style().textIndentType() == TextIndentType::Hanging)
-            shouldIndent = !shouldIndent;
-
-        if (!shouldIndent)
-            return { };
-
-        auto textIndent = root.style().textIndent();
-        if (textIndent == RenderStyle::initialTextIndent())
-            return { };
-        if (isInIntrinsicWidthMode() && textIndent.isPercent()) {
-            // Percentages must be treated as 0 for the purpose of calculating intrinsic size contributions.
-            // https://drafts.csswg.org/css-text/#text-indent-property
-            return { };
-        }
-        return { minimumValueForLength(textIndent, initialLineLogicalRect.width()) };
-    };
-    return UsedConstraints { { initialLineLogicalRect.top(), lineLogicalLeft, lineLogicalRight - lineLogicalLeft, initialLineLogicalRect.height() }, computedTextIndent(), lineIsConstrainedByFloat };
+    auto isIntrinsicWidthMode = isInIntrinsicWidthMode() ? InlineFormattingGeometry::IsIntrinsicWidthMode::Yes : InlineFormattingGeometry::IsIntrinsicWidthMode::No;
+    auto textIndent = formattingContext().formattingGeometry().computedTextIndent(isIntrinsicWidthMode, previousLineEndsWithLineBreak, initialLineLogicalRect.width());
+    return UsedConstraints { { initialLineLogicalRect.top(), lineLogicalLeft, lineLogicalRight - lineLogicalLeft, initialLineLogicalRect.height() }, textIndent, lineIsConstrainedByFloat };
 }
 
 void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, InlineLayoutUnit currentLogicalRight)

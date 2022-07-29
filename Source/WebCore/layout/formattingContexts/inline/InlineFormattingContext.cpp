@@ -544,11 +544,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
 
     auto lineBox = LineBoxBuilder { *this }.build(lineContent, currentLineIndex);
     auto displayLine = InlineDisplayLineBuilder { *this }.build(lineContent, lineBox);
-    formattingState.addBoxes(InlineDisplayContentBuilder { root(), formattingState }.build(lineContent
-        , lineBox
-        , displayLine
-        , currentLineIndex)
-    );
+    formattingState.addBoxes(InlineDisplayContentBuilder { *this, formattingState }.build(lineContent, lineBox, displayLine, currentLineIndex));
     formattingState.addLineBox(WTFMove(lineBox));
     formattingState.addLine(displayLine);
 

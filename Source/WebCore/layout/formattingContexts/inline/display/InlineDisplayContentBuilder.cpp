@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FontCascade.h"
+#include "InlineFormattingGeometry.h"
 #include "InlineTextBoxStyle.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
@@ -81,8 +82,8 @@ static inline OptionSet<InlineDisplay::Box::PositionWithinInlineLevelBox> isFirs
     return positionWithinInlineLevelBox;
 }
 
-InlineDisplayContentBuilder::InlineDisplayContentBuilder(const ContainerBox& formattingContextRoot, InlineFormattingState& formattingState)
-    : m_formattingContextRoot(formattingContextRoot)
+InlineDisplayContentBuilder::InlineDisplayContentBuilder(const InlineFormattingContext& formattingContext, InlineFormattingState& formattingState)
+    : m_formattingContext(formattingContext)
     , m_formattingState(formattingState)
 {
 }
@@ -387,10 +388,19 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
             appendHardLineBreakDisplayBox(lineRun, visualRectRelativeToRoot(lineBox.logicalRectForLineBreakBox(layoutBox)), boxes);
             continue;
         }
-        if (lineRun.isBox() || lineRun.isListMarker()) {
+        if (lineRun.isBox()) {
             appendAtomicInlineLevelDisplayBox(lineRun
                 , visualRectRelativeToRoot(lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox)))
                 , boxes);
+            continue;
+        }
+        if (lineRun.isListMarker()) {
+            auto logicalRect = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox));
+            if (layoutBox.isOutsideListMarker()) {
+                auto leftOffsetForListMarker = -formattingContext().formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, { }, lineBox.logicalRect().width());
+                logicalRect.moveHorizontally(leftOffsetForListMarker);
+            }
+            appendAtomicInlineLevelDisplayBox(lineRun, visualRectRelativeToRoot(logicalRect), boxes);
             continue;
         }
         if (lineRun.isInlineBoxStart()) {
@@ -645,12 +655,19 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 continue;
             }
             if (lineRun.isBox() || lineRun.isListMarker()) {
+                auto isLeftToRightDirection = layoutBox.parent().style().isLeftToRightDirection();
                 auto& boxGeometry = formattingState().boxGeometry(layoutBox);
                 auto logicalRect = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
                 auto visualRect = visualRectRelativeToRoot(logicalRect);
+                auto boxMarginLeft = [&] {
+                    auto marginLeftValue = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
+                    auto mayNeedTextIndentOffset = lineRun.isListMarker() && layoutBox.isOutsideListMarker();
+                    if (!mayNeedTextIndentOffset)
+                        return marginLeftValue;
+                    auto startOffsetForListMarker = LayoutUnit { -formattingContext().formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, { }, lineBox.logicalRect().width()) };
+                    return marginLeftValue + (isLeftToRightDirection ? startOffsetForListMarker : -startOffsetForListMarker);
+                }();
 
-                auto isLeftToRightDirection = layoutBox.parent().style().isLeftToRightDirection();
-                auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
                 isHorizontalWritingMode ? visualRect.moveHorizontally(boxMarginLeft) : visualRect.moveVertically(boxMarginLeft);
                 appendAtomicInlineLevelDisplayBox(lineRun, visualRect, boxes);
                 contentRightInInlineDirectionVisualOrder += boxMarginLeft + logicalRect.width() + marginRightInInlineDirection(boxGeometry, isLeftToRightDirection);
