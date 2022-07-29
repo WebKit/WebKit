@@ -2799,6 +2799,12 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
             m_tree.openElements().pop();
             return;
         }
+        if (token.name() == brTag || token.name() == pTag) {
+            parseError(token);
+            m_tree.openElements().popUntilForeignContentScopeMarker();
+            processEndTag(WTFMove(token));
+            return;
+        }
         if (!isInHTMLNamespace(m_tree.currentStackItem())) {
             // FIXME: This code just wants an Element* iterator, instead of an ElementRecord*
             auto* nodeRecord = &m_tree.openElements().topRecord();
