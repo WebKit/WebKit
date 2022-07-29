@@ -84,6 +84,7 @@ private:
     bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     bool validateFinish() const;
     bool validatePopDebugGroup() const;
+    bool validateRenderPassDescriptor(const WGPURenderPassDescriptor&) const;
 
     void makeInvalid() { m_commandBuffer = nil; }
 

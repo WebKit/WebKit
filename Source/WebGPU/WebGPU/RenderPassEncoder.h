@@ -98,6 +98,7 @@ private:
     uint64_t m_debugGroupStackSize { 0 };
 
     const Ref<Device> m_device;
+    RefPtr<const RenderPipeline> m_renderPipeline;
 };
 
 } // namespace WebGPU
