@@ -2680,7 +2680,7 @@ void RenderBox::updateLogicalWidth()
 static LayoutUnit inlineSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatio, BoxSizing boxSizing, LayoutUnit blockSize)
 {
     if (boxSizing == BoxSizing::BorderBox)
-        return LayoutUnit(blockSize * aspectRatio);
+        return std::max(borderPaddingInlineSum, LayoutUnit(blockSize * aspectRatio));
 
     return LayoutUnit((blockSize - borderPaddingBlockSum) * aspectRatio) + borderPaddingInlineSum;
 }

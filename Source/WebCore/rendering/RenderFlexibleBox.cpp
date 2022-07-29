@@ -956,9 +956,7 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
 {
     ASSERT(childHasAspectRatio(child));
 
-    auto adjustForBoxSizing = [this] (const RenderBox& box, Length length) -> LayoutUnit {
-        ASSERT(length.isFixed());
-        auto value = LayoutUnit(length.value());
+    auto adjustForBoxSizing = [this] (const RenderBox& box, LayoutUnit value) -> LayoutUnit {
         // We need to substract the border and padding extent from the cross axis.
         // Furthermore, the sizing calculations that floor the content box size at zero when applying box-sizing are also ignored.
         // https://drafts.csswg.org/css-flexbox/#algo-main-item.
@@ -967,34 +965,42 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
         return value;
     };
 
-    std::optional<LayoutUnit> crossSize;
+    LayoutUnit crossSize;
+    // crossSize is border-box size if box-sizing is border-box, and content-box otherwise.
     if (crossSizeLength.isFixed())
-        crossSize = adjustForBoxSizing(child, crossSizeLength);
+        crossSize = LayoutUnit(crossSizeLength.value());
     else if (crossSizeLength.isAuto()) {
         ASSERT(childCrossSizeShouldUseContainerCrossSize(child));
         crossSize = computeCrossSizeForChildUsingContainerCrossSize(child);
     } else {
         ASSERT(crossSizeLength.isPercentOrCalculated());
-        crossSize = mainAxisIsChildInlineAxis(child) ? child.computePercentageLogicalHeight(crossSizeLength) : adjustBorderBoxLogicalWidthForBoxSizing(valueForLength(crossSizeLength, contentWidth()), crossSizeLength.type());
-        if (!crossSize)
+        auto childSize = mainAxisIsChildInlineAxis(child) ? child.computePercentageLogicalHeight(crossSizeLength) : adjustBorderBoxLogicalWidthForBoxSizing(valueForLength(crossSizeLength, contentWidth()), crossSizeLength.type());
+        if (!childSize)
             return 0_lu;
+        crossSize = childSize.value();
     }
 
     double ratio;
+    LayoutUnit borderAndPadding;
     if (child.isSVGRootOrLegacySVGRoot())
         ratio = downcast<RenderReplaced>(child).computeIntrinsicAspectRatio();
     else {
         auto childIntrinsicSize = child.intrinsicSize();
-        if (child.style().aspectRatioType() == AspectRatioType::Ratio || (child.style().aspectRatioType() == AspectRatioType::AutoAndRatio && childIntrinsicSize.isEmpty()))
+        if (child.style().aspectRatioType() == AspectRatioType::Ratio || (child.style().aspectRatioType() == AspectRatioType::AutoAndRatio && childIntrinsicSize.isEmpty())) {
             ratio = child.style().aspectRatioWidth() / child.style().aspectRatioHeight();
-        else {
+            if (child.style().boxSizingForAspectRatio() == BoxSizing::ContentBox)
+                crossSize -= isHorizontalFlow() ? child.verticalBorderAndPaddingExtent() : child.horizontalBorderAndPaddingExtent();
+            else
+                borderAndPadding = isHorizontalFlow() ? child.horizontalBorderAndPaddingExtent() : child.verticalBorderAndPaddingExtent();
+        } else {
             ASSERT(childIntrinsicSize.height());
             ratio = childIntrinsicSize.width().toFloat() / childIntrinsicSize.height().toFloat();
+            crossSize = adjustForBoxSizing(child, crossSize);
         }
     }
     if (isHorizontalFlow())
-        return LayoutUnit(crossSize.value() * ratio);
-    return LayoutUnit(crossSize.value() / ratio);
+        return std::max(0_lu, LayoutUnit(crossSize * ratio) - borderAndPadding);
+    return std::max(0_lu, LayoutUnit(crossSize / ratio) - borderAndPadding);
 }
 
 void RenderFlexibleBox::setFlowAwareLocationForChild(RenderBox& child, const LayoutPoint& location)

@@ -734,7 +734,7 @@ protected:
     static LayoutUnit blockSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatio, BoxSizing boxSizing, LayoutUnit inlineSize)
     {
         if (boxSizing == BoxSizing::BorderBox)
-            return LayoutUnit(inlineSize / aspectRatio);
+            return std::max(borderPaddingBlockSum, LayoutUnit(inlineSize / aspectRatio));
         return LayoutUnit((inlineSize - borderPaddingInlineSum) / aspectRatio) + borderPaddingBlockSum;
     }
 
