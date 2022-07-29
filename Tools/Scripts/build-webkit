@@ -365,7 +365,7 @@ if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
 
     # Build, and abort if the build fails.
     if ($useWorkspace) {
-        my $scheme = $onlyWebKitProject ? "WebKitLegacy" : "All Modules";
+        my $scheme = $onlyWebKitProject ? "WebKitLegacy" : "Everything up to WebKit + Tools";
         $result = buildXcodeScheme($scheme, $clean, @local_options, @ARGV);
         if (exitStatus($result)) {
             exit exitStatus($result);
