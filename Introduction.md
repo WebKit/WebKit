@@ -1738,7 +1738,7 @@ FIXME: Write how to investigate a test failure.
 ## Debugging Layout Tests in Xcode
 
 The easiest way to debug a layout test is with WebKitTestRunner or DumpRenderTree.
-In Product > Scheme, select “All Source”.
+In Product > Scheme, select “Everything up to WebKit + Tools”.
 
 In Product > Scheme > Edit Scheme, open “Run” tab.
 Pick WebKitTestRunner or DumpRenderTree, whichever is desired in “Executable”.

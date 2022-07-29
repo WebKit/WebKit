@@ -1,8 +1,7 @@
 ifeq ($(USE_WORKSPACE),YES)
 
-SCHEME = All Modules
+SCHEME = Everything up to WebKit + Tools
 SCRIPTS_PATH = Tools/Scripts
-WORKSPACE_PATH = WebKit.xcworkspace
 include Makefile.shared
 
 else
