@@ -135,7 +135,7 @@ ExceptionOr<void> RTCDataChannel::setBinaryType(const AtomString& binaryType)
         m_binaryType = BinaryType::ArrayBuffer;
         return { };
     }
-    return Exception { TypeMismatchError };
+    return Exception { SyntaxError };
 }
 
 ExceptionOr<void> RTCDataChannel::send(const String& data)
