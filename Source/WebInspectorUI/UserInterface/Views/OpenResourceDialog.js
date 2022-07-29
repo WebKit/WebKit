@@ -57,6 +57,10 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
         this.element.appendChild(this._treeOutline.element);
 
+        this._updateFilterThrottler = new Throttler(() => {
+            this._updateFilter();
+        }, 250);
+
         this._queryController = new WI.ResourceQueryController;
         this._filteredResults = [];
     }
@@ -163,6 +167,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetRemoved, this._handleStyleSheetRemoved, this);
 
         this._queryController.reset();
+        this._updateFilterThrottler.cancel();
     }
 
     didPresentDialog()
@@ -201,7 +206,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
                 this._addResource(styleSheet);
         }
 
-        this._updateFilter();
+        this._updateFilterThrottler.force();
 
         this._inputElement.focus();
         this._clear();
@@ -260,7 +265,10 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         if (event.keyCode === WI.KeyboardShortcut.Key.Up.keyCode || event.keyCode === WI.KeyboardShortcut.Key.Down.keyCode)
             return;
 
-        this._updateFilter();
+        if (this._inputElement.value)
+            this._updateFilterThrottler.fire();
+        else
+            this._updateFilterThrottler.force();
     }
 
     _handleBlurEvent(event)
@@ -289,7 +297,8 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
     _clear()
     {
         this._inputElement.value = "";
-        this._updateFilter();
+
+        this._updateFilterThrottler.force();
     }
 
     _updateFilter()
@@ -334,7 +343,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         if (suppressFilterUpdate)
             return;
 
-        this._updateFilter();
+        this._updateFilterThrottler.fire();
     }
 
     _removeResource(resource)
@@ -344,7 +353,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
         this._queryController.removeResource(resource);
 
-        this._updateFilter();
+        this._updateFilterThrottler.force();
     }
 
     _addResourcesForFrame(frame)
