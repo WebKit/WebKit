@@ -1767,8 +1767,6 @@ imported/w3c/web-platform-tests/css/css-conditional/css-supports-036.xht [ Image
 imported/w3c/web-platform-tests/css/css-conditional/css-supports-038.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/css-supports-039.xht [ ImageOnlyFailure ]
 
-webkit.org/b/242786 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles-crash.html [ Skip ]
-
 transitions/svg-text-shadow-transition.html [ Failure ]
 webkit.org/b/137883 transitions/background-transitions.html [ Failure Pass ]
 webkit.org/b/137883 transitions/border-radius-transition.html [ Failure Pass ]
@@ -3374,9 +3372,6 @@ fast/text/design-system-ui-16.html [ ImageOnlyFailure ]
 # This is a crash test.
 fast/editing/apply-relative-font-style-change-crash-004.html [ Pass Failure ]
 
-# This is a crash test. The result is ignored for now.
-imported/w3c/web-platform-tests/shadow-dom/imperative-slot-assign-not-slotable-crash.html [ Pass Failure ]
-
 # wpt css-images failures
 webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations002.html [ ImageOnlyFailure ]
 webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations003.html [ ImageOnlyFailure ]
@@ -3386,7 +3381,6 @@ webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fal
 webkit.org/b/200209 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-radial.html [ ImageOnlyFailure ]
 
 # wpt css-transitions and css-animations failures and flakiness
-webkit.org/b/203296 imported/w3c/web-platform-tests/css/css-animations/keyframes-remove-documentElement-crash.html [ Skip ]
 webkit.org/b/225407 imported/w3c/web-platform-tests/css/css-animations/nested-scale-animations.html [ ImageOnlyFailure ]
 webkit.org/b/225407 imported/w3c/web-platform-tests/css/css-animations/transform-animation-under-large-scale.html [ ImageOnlyFailure ]
 webkit.org/b/203305 imported/w3c/web-platform-tests/css/css-transitions/properties-value-001.html [ Pass Failure ]
