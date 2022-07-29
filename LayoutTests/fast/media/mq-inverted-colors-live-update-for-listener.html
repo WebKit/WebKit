@@ -15,26 +15,29 @@ let didCallListener = false;
 let timer;
 
 window.onload = () => {
-    requestAnimationFrame(() => {
-        window.matchMedia('(inverted-colors)').addListener((event) => {
-            didCallListener = true;
-            finalize();
-        });
+    window.matchMedia('(inverted-colors)').addListener((event) => {
+        didCallListener = true;
+    });
 
-        if (!window.internals || !testRunner.runUIScript) {
-            testFailed('This test requires runUIScript');
-            finishJSTest();
-            return;
-        }
+    if (!window.internals || !testRunner.runUIScript) {
+        testFailed('This test requires runUIScript');
+        finishJSTest();
+        return;
+    }
 
+    requestAnimationFrame(async () => {
         window.internals.settings.forcedColorsAreInvertedAccessibilityValue = "on";
-        testRunner.runUIScript(`
-            uiController.simulateAccessibilitySettingsChangeNotification(() => {
-                uiController.uiScriptComplete("Done");
-            })`, () => {
-            if (!didCallListener)
-                timer = setTimeout(finalize, 1000);
+        await new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.simulateAccessibilitySettingsChangeNotification(() => {
+                    uiController.uiScriptComplete();
+                });`, resolve);
         });
+
+        if (didCallListener)
+            finalize();
+        else
+            timer = setTimeout(finalize, 1000);
     });
 }
 
