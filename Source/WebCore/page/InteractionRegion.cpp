@@ -27,6 +27,7 @@
 #include "InteractionRegion.h"
 
 #include "Document.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameSnapshotting.h"
 #include "FrameView.h"
