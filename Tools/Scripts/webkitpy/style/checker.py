@@ -312,6 +312,12 @@ _PATH_RULES_SPECIFIER = [
      os.path.join('Tools', 'Scripts', 'webkitpy', 'binary_bundling', 'dlopenwrap')],
      ["-readability/naming/underscores",
       "-whitespace/tab"]),
+
+    ([  # MiniBrowser doesn't use WTF, but only public WebKit API.
+     os.path.join('Tools', 'MiniBrowser')],
+     ["-runtime/wtf_make_unique",
+      "-runtime/wtf_move"]),
+
 ]
 
 
