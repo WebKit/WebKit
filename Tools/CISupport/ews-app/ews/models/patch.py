@@ -54,7 +54,7 @@ class Change(models.Model):
         if Change.is_existing_change_id(change_id):
             _log.debug('Change id {} already exists in database. Skipped saving.'.format(change_id))
             return ERR_EXISTING_CHANGE
-        Change(change_id, bug_id, obsolete, sent_to_buildbot, sent_to_commit_queue).save()
+        Change(change_id=change_id, bug_id=bug_id, pr_id=pr_id, pr_project=pr_project, obsolete=obsolete, sent_to_buildbot=sent_to_buildbot, sent_to_commit_queue=sent_to_commit_queue).save()
         _log.info('Saved change in database, id: {}, pr_id: {}, pr_project: {}'.format(change_id, pr_id, pr_project))
         return SUCCESS
 
