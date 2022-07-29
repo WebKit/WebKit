@@ -162,6 +162,7 @@ public:
 #if PLATFORM(IOS)
     WEBCORE_EXPORT bool allowLayeredFullscreenVideos() const;
 #endif
+    bool shouldEnableApplicationCacheQuirk() const;
     
 private:
     bool needsQuirks() const;
@@ -211,6 +212,9 @@ private:
     mutable std::optional<bool> m_shouldDisableWebSharePolicy;
 #if PLATFORM(IOS)
     mutable std::optional<bool> m_allowLayeredFullscreenVideos;
+#endif
+#if PLATFORM(IOS_FAMILY)
+    mutable std::optional<bool> m_shouldEnableApplicationCacheQuirk;
 #endif
 };
 

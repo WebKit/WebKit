@@ -1494,4 +1494,25 @@ bool Quirks::allowLayeredFullscreenVideos() const
 }
 #endif
 
+bool Quirks::shouldEnableApplicationCacheQuirk() const
+{
+    bool shouldEnableBySetting = m_document && m_document->settings().offlineWebApplicationCacheEnabled();
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return shouldEnableBySetting;
+
+    if (!m_shouldEnableApplicationCacheQuirk) {
+        auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
+        if (domain.endsWith("mail.google.com"_s))
+            m_shouldEnableApplicationCacheQuirk = true;
+        else
+            m_shouldEnableApplicationCacheQuirk = shouldEnableBySetting;
+    }
+
+    return m_shouldEnableApplicationCacheQuirk.value();
+#else
+    return shouldEnableBySetting;
+#endif
+}
+
 }
