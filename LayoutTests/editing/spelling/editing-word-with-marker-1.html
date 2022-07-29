@@ -57,7 +57,7 @@ async function resetText()
 
 async function runTest()
 {
-    resetText();
+    await resetText();
     textarea.setSelectionRange(14, 15);
     execDeleteCommand();
     if (window.internals && window.internals.hasSpellingMarker) {
@@ -68,7 +68,7 @@ async function runTest()
     }
 
     // Testing deletion at various location.
-    resetText();
+    await resetText();
     textarea.setSelectionRange(6, 6);
     execForwardDeleteCommand();
     if (window.internals && window.internals.hasSpellingMarker) {
@@ -78,7 +78,7 @@ async function runTest()
             document.getElementById('console').innerHTML += "FAILURE. The word 'ameagesga' has underline.<br>";
     }
 
-    resetText();
+    await resetText();
     textarea.setSelectionRange(7, 7);
     execForwardDeleteCommand();
     if (window.internals && window.internals.hasSpellingMarker) {
@@ -88,7 +88,7 @@ async function runTest()
             document.getElementById('console').innerHTML += "FAILURE. The word 'eagesga' has underline.<br>";
     }
 
-    resetText();
+    await resetText();
     textarea.setSelectionRange(10, 10);
     typeCharacterCommand(' ');
     if (window.internals && window.internals.hasSpellingMarker) {
@@ -98,7 +98,7 @@ async function runTest()
             document.getElementById('console').innerHTML += "FAILURE. The segment 'mea gesga' has underline.<br>";
     }
 
-    resetText();
+    await resetText();
     textarea.setSelectionRange(10, 13);
     execDeleteCommand();
     if (window.internals && window.internals.hasSpellingMarker) {
@@ -108,7 +108,7 @@ async function runTest()
             document.getElementById('console').innerHTML += "FAILURE. The word 'meaga' has underline.<br>";
     }
 
-    resetText();
+    await resetText();
     textarea.setSelectionRange(10, 13);
     typeCharacterCommand(' ');
     if (window.internals && window.internals.hasSpellingMarker) {
@@ -119,7 +119,7 @@ async function runTest()
     }
 
     // Testing appending non-whitespace character.
-    resetText();
+    await resetText();
     textarea.setSelectionRange(7, 7);
     typeCharacterCommand('a');
     if (window.internals && window.internals.hasSpellingMarker) {
@@ -129,7 +129,7 @@ async function runTest()
             document.getElementById('console').innerHTML += "FAILURE. The word 'ameagesga' has underline.<br>";
     }
 
-    resetText();
+    await resetText();
     textarea.setSelectionRange(15, 15);
     typeCharacterCommand('a');
     if (window.internals && window.internals.hasSpellingMarker) {
@@ -140,7 +140,7 @@ async function runTest()
     }
 
     // Testing pasting.
-    resetText();
+    await resetText();
     textarea = document.getElementById('test');
     textarea.setSelectionRange(0, 4);
     execCopyCommand();
@@ -153,7 +153,7 @@ async function runTest()
             document.getElementById('console').innerHTML += "FAILURE. The word 'meagesga' has underline.<br>";
     }
 
-    resetText();
+    await resetText();
     textarea = document.getElementById('test');
     textarea.setSelectionRange(0, 4);
     execCopyCommand();
@@ -168,7 +168,7 @@ async function runTest()
             document.getElementById('console').innerHTML += "FAILURE. The word 'meagesga' has underline.<br>";
     }
 
-    resetText();
+    await resetText();
     textarea = document.getElementById('test');
     textarea.setSelectionRange(0, 4);
     execCopyCommand();
