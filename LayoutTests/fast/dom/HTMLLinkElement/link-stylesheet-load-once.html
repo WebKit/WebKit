@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpResourceLoadCallbacks();
+}
+
+let loadCount = 0;
+function didLoad(element)
+{
+    if (!loadCount) {
+        document.querySelector('link').rel = 'stylesheet';
+        setTimeout(() => {
+            document.querySelector('link').rel = 'StyleSheet';          
+        }, 100);
+        setTimeout(() => {
+            document.querySelector('link').rel = '  StyleSheet';          
+        }, 200);
+        setTimeout(() => {
+            if (window.testRunner)
+              testRunner.notifyDone();
+        }, 300);
+    }
+    ++loadCount;
+    result.innerHTML = loadCount;
+}
+
+</script>
+<link rel="stylesheet" href="data:text/css,div { background: green; width: 100px; height: 100px }" onload="didLoad(this)">
+</head>
+<body>
+<p>This tests overriding rel content attribute with the same value.<br>
+You should see 1 in a green box below:</p>
+<div id="result"></div>
+</body>
+</html>

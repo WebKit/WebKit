@@ -92,7 +92,6 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& 
     , m_disabledState(Unset)
     , m_loading(false)
     , m_createdByParser(createdByParser)
-    , m_firedLoad(false)
     , m_loadedResource(false)
     , m_isHandlingBeforeLoad(false)
     , m_allowPrefetchLoadAndErrorForTesting(false)
@@ -167,10 +166,13 @@ void HTMLLinkElement::setDisabledState(bool disabled)
 void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == relAttr) {
-        m_relAttribute = LinkRelAttribute(document(), value);
+        auto parsedRel = LinkRelAttribute(document(), value);
+        auto didMutateRel = parsedRel != m_relAttribute;
+        m_relAttribute = parsedRel;
         if (m_relList)
             m_relList->associatedAttributeValueChanged(value);
-        process();
+        if (didMutateRel)
+            process();
         return;
     }
     if (name == hrefAttr) {
@@ -559,11 +561,8 @@ DOMTokenList& HTMLLinkElement::relList()
 
 void HTMLLinkElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred)
 {
-    if (m_firedLoad)
-        return;
     m_loadedResource = !errorOccurred;
     linkLoadEventSender().dispatchEventSoon(*this);
-    m_firedLoad = true;
 }
 
 void HTMLLinkElement::startLoadingDynamicSheet()
