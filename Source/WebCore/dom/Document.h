@@ -327,7 +327,8 @@ using RenderingContext = std::variant<
     RefPtr<WebGL2RenderingContext>,
 #endif
     RefPtr<ImageBitmapRenderingContext>,
-    RefPtr<CanvasRenderingContext2D>
+    RefPtr<CanvasRenderingContext2D>,
+    RefPtr<GPUCanvasContext>
 >;
 
 class DocumentParserYieldToken {

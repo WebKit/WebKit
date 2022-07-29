@@ -25,9 +25,12 @@
 
 #pragma once
 
+#include "GPUBasedCanvasRenderingContext.h"
+#include "GPUCanvasConfiguration.h"
 #include "GPUTexture.h"
 #include "HTMLCanvasElement.h"
 #include "OffscreenCanvas.h"
+#include "WebGPUSurface.h"
 #include <variant>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -35,10 +38,8 @@
 
 namespace WebCore {
 
-class GPUAdapter;
-struct GPUCanvasConfiguration;
-
-class GPUCanvasContext : public RefCounted<GPUCanvasContext> {
+class GPUCanvasContext final : public GPUBasedCanvasRenderingContext {
+    WTF_MAKE_ISO_ALLOCATED(GPUCanvasContext);
 public:
 #if ENABLE(OFFSCREEN_CANVAS)
     using CanvasType = std::variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
@@ -46,20 +47,49 @@ public:
     using CanvasType = std::variant<RefPtr<HTMLCanvasElement>>;
 #endif
 
-    static Ref<GPUCanvasContext> create()
-    {
-        return adoptRef(*new GPUCanvasContext());
-    }
+    static std::unique_ptr<GPUCanvasContext> create(CanvasBase&);
 
+    // CanvasRenderingContext overrides:
+    DestinationColorSpace colorSpace() const override;
+    bool compositingResultsNeedUpdating() const override { return m_compositingResultsNeedsUpdating; }
+    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
+    bool needsPreparationForDisplay() const override { return true; }
+    void prepareForDisplay() override;
+    PixelFormat pixelFormat() const override;
+    void reshape(int width, int height) override;
+    // FIXME: implement these to allow for painting
+    void prepareForDisplayWithPaint() override { }
+    void paintRenderingResultsToCanvas() override { }
+
+    // GPUCanvasContext methods:
     CanvasType canvas();
-
-    void configure(const GPUCanvasConfiguration&);
+    void configure(GPUCanvasConfiguration);
+    RefPtr<GPUTexture> getCurrentTexture();
     void unconfigure();
 
-    RefPtr<GPUTexture> getCurrentTexture();
+    bool isWebGPU() const override { return true; }
+    const char* activeDOMObjectName() const override
+    {
+        return "GPUCanvasElement";
+    }
 
 private:
-    GPUCanvasContext() = default;
+    explicit GPUCanvasContext(CanvasBase&);
+
+    void markContextChangedAndNotifyCanvasObservers();
+
+    // The current (and last) configuration passed to configure(). Surface initialization
+    // requires the canvas size and this configuration. When the canvas is resized, the
+    // surface is recreated to the new canvas size and the old configuration.
+    std::optional<GPUCanvasConfiguration> m_currentConfiguration;
+
+    // Surface that stores the rendering destination (where contents drawn into getCurrentTexture())
+    // ends up.
+    RefPtr<WebGPUSurface> m_surface;
+
+    bool m_compositingResultsNeedsUpdating { false };
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::GPUCanvasContext, isWebGPU())

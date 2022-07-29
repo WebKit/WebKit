@@ -27,6 +27,11 @@
 #include "GPU.h"
 
 #include "JSGPUAdapter.h"
+#if PLATFORM(COCOA)
+#include "WebGPUSurfaceCocoa.h"
+#else
+#include "WebGPUSurface.h"
+#endif
 
 namespace WebCore {
 
@@ -65,7 +70,11 @@ void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options,
 
 GPUTextureFormat GPU::getPreferredCanvasFormat()
 {
-    return GPUTextureFormat::Rgba8unorm;
+#if PLATFORM(COCOA)
+    return WebGPUSurfaceCocoa::preferredTextureFormat();
+#else
+    return WebGPUSurface::preferredTextureFormat();
+#endif
 }
 
 }

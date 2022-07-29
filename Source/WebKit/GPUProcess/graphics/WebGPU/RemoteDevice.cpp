@@ -47,6 +47,7 @@
 #include "WebGPUObjectHeap.h"
 #include "WebGPUOutOfMemoryError.h"
 #include "WebGPUValidationError.h"
+#include <WebCore/IOSurface.h>
 #include <pal/graphics/WebGPU/WebGPUBindGroup.h>
 #include <pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h>
 #include <pal/graphics/WebGPU/WebGPUBindGroupLayout.h>
@@ -74,7 +75,6 @@
 #include <pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h>
 #include <pal/graphics/WebGPU/WebGPUTexture.h>
 #include <pal/graphics/WebGPU/WebGPUTextureDescriptor.h>
-
 
 namespace WebKit {
 
@@ -128,6 +128,22 @@ void RemoteDevice::createTexture(const WebGPU::TextureDescriptor& descriptor, We
     auto remoteTexture = RemoteTexture::create(texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, remoteTexture);
 }
+
+#if HAVE(IOSURFACE)
+void RemoteDevice::createIOSurfaceBackedTexture(const WebGPU::TextureDescriptor& descriptor, MachSendRight surfaceSendRight, WebGPUIdentifier identifier)
+{
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
+    ASSERT(convertedDescriptor);
+    if (!convertedDescriptor)
+        return;
+
+    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight), WebCore::DestinationColorSpace::SRGB());
+
+    auto texture = m_backing->createIOSurfaceBackedTexture(*convertedDescriptor, surface->surface());
+    auto remoteTexture = RemoteTexture::create(texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
+    m_objectHeap.addObject(identifier, remoteTexture);
+}
+#endif
 
 void RemoteDevice::createSampler(const WebGPU::SamplerDescriptor& descriptor, WebGPUIdentifier identifier)
 {

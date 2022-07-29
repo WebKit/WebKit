@@ -65,6 +65,9 @@ private:
 
     Ref<Buffer> createBuffer(const BufferDescriptor&) final;
     Ref<Texture> createTexture(const TextureDescriptor&) final;
+#if HAVE(IOSURFACE)
+    Ref<Texture> createIOSurfaceBackedTexture(const TextureDescriptor&, IOSurfaceRef) final;
+#endif
     Ref<Sampler> createSampler(const SamplerDescriptor&) final;
     Ref<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) final;
 

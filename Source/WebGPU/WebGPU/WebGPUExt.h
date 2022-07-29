@@ -26,6 +26,8 @@
 #ifndef WEBGPUEXT_H_
 #define WEBGPUEXT_H_
 
+#include <IOSurface/IOSurfaceRef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -47,6 +49,7 @@ typedef enum WGPUSTypeExtended {
     WGPUSTypeExtended_ShaderModuleDescriptorHints = 0x348970F3, // Random
     WGPUSTypeExtended_TextureDescriptorViewFormats = 0x1D5BC57, // Random
     WGPUSTypeExtended_InstanceCocoaDescriptor = 0x151BBC00, // Random
+    WGPUSTypeExtended_TextureDescriptorIOSurfaceBacking = 0x017E9710, // Random
     WGPUSTypeExtended_Force32 = 0x7FFFFFFF
 } WGPUSTypeExtended;
 
@@ -83,6 +86,11 @@ typedef struct WGPUTextureDescriptorViewFormats {
     uint32_t viewFormatsCount;
     WGPUTextureFormat const * viewFormats;
 } WGPUTextureDescriptorViewFormats;
+
+typedef struct WGPUTextureDescriptorIOSurfaceBacking {
+    WGPUChainedStruct chain;
+    IOSurfaceRef surface;
+} WGPUTextureDescriptorIOSurfaceBacking;
 
 #if !defined(WGPU_SKIP_PROCS)
 

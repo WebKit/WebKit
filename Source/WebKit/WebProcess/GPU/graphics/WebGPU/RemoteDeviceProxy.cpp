@@ -43,8 +43,10 @@
 #include "RemoteSamplerProxy.h"
 #include "RemoteShaderModuleProxy.h"
 #include "RemoteTextureProxy.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUConvertToBackingContext.h"
+#include <WebCore/IOSurface.h>
 
 namespace WebKit::WebGPU {
 
@@ -99,6 +101,25 @@ Ref<PAL::WebGPU::Texture> RemoteDeviceProxy::createTexture(const PAL::WebGPU::Te
 
     return RemoteTextureProxy::create(*this, m_convertToBackingContext, identifier);
 }
+
+#if HAVE(IOSURFACE)
+Ref<PAL::WebGPU::Texture> RemoteDeviceProxy::createIOSurfaceBackedTexture(const PAL::WebGPU::TextureDescriptor& descriptor, IOSurfaceRef surface)
+{
+    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    if (!convertedDescriptor) {
+        // FIXME: Implement error handling.
+        return RemoteTextureProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
+    }
+
+    auto surfaceSendRight = WebCore::IOSurface::createFromSurface(surface, WebCore::DestinationColorSpace::SRGB())->createSendRight();
+
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateIOSurfaceBackedTexture(*convertedDescriptor, surfaceSendRight, identifier));
+    UNUSED_VARIABLE(sendResult);
+
+    return RemoteTextureProxy::create(*this, m_convertToBackingContext, identifier);
+}
+#endif
 
 Ref<PAL::WebGPU::Sampler> RemoteDeviceProxy::createSampler(const PAL::WebGPU::SamplerDescriptor& descriptor)
 {

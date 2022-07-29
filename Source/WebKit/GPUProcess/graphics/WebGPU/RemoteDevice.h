@@ -33,6 +33,7 @@
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPUErrorFilter.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/MachSendRight.h>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
@@ -95,6 +96,9 @@ private:
 
     void createBuffer(const WebGPU::BufferDescriptor&, WebGPUIdentifier);
     void createTexture(const WebGPU::TextureDescriptor&, WebGPUIdentifier);
+#if HAVE(IOSURFACE)
+    void createIOSurfaceBackedTexture(const WebGPU::TextureDescriptor&, MachSendRight, WebGPUIdentifier);
+#endif
     void createSampler(const WebGPU::SamplerDescriptor&, WebGPUIdentifier);
     void importExternalTexture(const WebGPU::ExternalTextureDescriptor&, WebGPUIdentifier);
 

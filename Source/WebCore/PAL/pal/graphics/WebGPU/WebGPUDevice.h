@@ -38,6 +38,10 @@
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
+#if HAVE(IOSURFACE)
+#include <IOSurface/IOSurfaceRef.h>
+#endif
+
 namespace PAL::WebGPU {
 
 class BindGroup;
@@ -93,6 +97,9 @@ public:
 
     virtual Ref<Buffer> createBuffer(const BufferDescriptor&) = 0;
     virtual Ref<Texture> createTexture(const TextureDescriptor&) = 0;
+#if HAVE(IOSURFACE)
+    virtual Ref<Texture> createIOSurfaceBackedTexture(const TextureDescriptor&, IOSurfaceRef) = 0;
+#endif
     virtual Ref<Sampler> createSampler(const SamplerDescriptor&) = 0;
     virtual Ref<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) = 0;
 

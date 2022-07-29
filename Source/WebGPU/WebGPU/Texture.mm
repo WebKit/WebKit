@@ -2031,17 +2031,33 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonP
 #endif
 }
 
-Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor, IOSurfaceRef ioSurfaceBacking)
+Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 {
     Vector<WGPUTextureFormat> viewFormats;
-    if (descriptor.nextInChain) {
-        if (descriptor.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorViewFormats))
+    IOSurfaceRef ioSurfaceBacking = nullptr;
+    const auto* current = descriptor.nextInChain;
+    while (current) {
+        bool viewFormatsSpecified = false;
+        bool ioSurfaceBackingSpecified = false;
+
+        if (current->sType == static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorViewFormats) && !viewFormatsSpecified) {
+            if (viewFormatsSpecified)
+                return Texture::createInvalid(*this);
+            viewFormatsSpecified = true;
+
+            const auto& descriptorViewFormats = reinterpret_cast<const WGPUTextureDescriptorViewFormats&>(*current);
+            viewFormats = Vector { descriptorViewFormats.viewFormats, descriptorViewFormats.viewFormatsCount };
+        } else if (current->sType == static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorIOSurfaceBacking) && !ioSurfaceBackingSpecified) {
+            if (ioSurfaceBackingSpecified)
+                return Texture::createInvalid(*this);
+            ioSurfaceBackingSpecified = true;
+
+            const auto& ioSurfaceBackingDescriptor = reinterpret_cast<const WGPUTextureDescriptorIOSurfaceBacking&>(*current);
+            ioSurfaceBacking = ioSurfaceBackingDescriptor.surface;
+        } else
             return Texture::createInvalid(*this);
-        const auto& descriptorViewFormats = reinterpret_cast<const WGPUTextureDescriptorViewFormats&>(*descriptor.nextInChain);
-        if (descriptor.nextInChain->next != nullptr)
-            return Texture::createInvalid(*this);
-        // This copy is temporary, just until WGPUTextureDescriptorViewFormats gets folded into WGPUTextureDescriptor.
-        viewFormats = Vector { descriptorViewFormats.viewFormats, descriptorViewFormats.viewFormatsCount };
+
+        current = current->next;
     }
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createtexture

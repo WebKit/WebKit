@@ -81,6 +81,9 @@ private:
 
     Ref<PAL::WebGPU::Buffer> createBuffer(const PAL::WebGPU::BufferDescriptor&) final;
     Ref<PAL::WebGPU::Texture> createTexture(const PAL::WebGPU::TextureDescriptor&) final;
+#if HAVE(IOSURFACE)
+    Ref<PAL::WebGPU::Texture> createIOSurfaceBackedTexture(const PAL::WebGPU::TextureDescriptor&, IOSurfaceRef) final;
+#endif
     Ref<PAL::WebGPU::Sampler> createSampler(const PAL::WebGPU::SamplerDescriptor&) final;
     Ref<PAL::WebGPU::ExternalTexture> importExternalTexture(const PAL::WebGPU::ExternalTextureDescriptor&) final;
 

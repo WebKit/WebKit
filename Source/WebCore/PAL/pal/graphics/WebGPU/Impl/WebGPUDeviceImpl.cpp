@@ -121,7 +121,7 @@ Ref<Texture> DeviceImpl::createTexture(const TextureDescriptor& descriptor)
         label.data(),
         m_convertToBackingContext->convertTextureUsageFlagsToBacking(descriptor.usage),
         m_convertToBackingContext->convertToBacking(descriptor.dimension),
-        size,
+        WTFMove(size),
         m_convertToBackingContext->convertToBacking(descriptor.format),
         descriptor.mipLevelCount,
         descriptor.sampleCount,
@@ -129,6 +129,49 @@ Ref<Texture> DeviceImpl::createTexture(const TextureDescriptor& descriptor)
 
     return TextureImpl::create(wgpuDeviceCreateTexture(backing(), &backingDescriptor), descriptor.format, descriptor.dimension, m_convertToBackingContext);
 }
+
+#if HAVE(IOSURFACE)
+Ref<Texture> DeviceImpl::createIOSurfaceBackedTexture(const TextureDescriptor& descriptor, IOSurfaceRef surface)
+{
+    auto size = m_convertToBackingContext->convertToBacking(descriptor.size);
+
+    auto label = descriptor.label.utf8();
+
+    auto backingTextureFormats = descriptor.viewFormats.map([&] (TextureFormat textureFormat) {
+        return m_convertToBackingContext->convertToBacking(textureFormat);
+    });
+
+    WGPUTextureDescriptorIOSurfaceBacking ioSurfaceBacking {
+        {
+            nullptr,
+            static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorIOSurfaceBacking),
+        },
+        surface
+    };
+
+    WGPUTextureDescriptorViewFormats backingViewFormats {
+        {
+            reinterpret_cast<WGPUChainedStruct*>(&ioSurfaceBacking),
+            static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorViewFormats),
+        },
+        static_cast<uint32_t>(backingTextureFormats.size()),
+        backingTextureFormats.data(),
+    };
+
+    WGPUTextureDescriptor backingDescriptor {
+        &backingViewFormats.chain,
+        label.data(),
+        m_convertToBackingContext->convertTextureUsageFlagsToBacking(descriptor.usage),
+        m_convertToBackingContext->convertToBacking(descriptor.dimension),
+        WTFMove(size),
+        m_convertToBackingContext->convertToBacking(descriptor.format),
+        descriptor.mipLevelCount,
+        descriptor.sampleCount,
+    };
+
+    return TextureImpl::create(wgpuDeviceCreateTexture(backing(), &backingDescriptor), descriptor.format, descriptor.dimension, m_convertToBackingContext);
+}
+#endif
 
 Ref<Sampler> DeviceImpl::createSampler(const SamplerDescriptor& descriptor)
 {

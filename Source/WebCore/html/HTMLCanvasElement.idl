@@ -32,7 +32,8 @@ typedef (
     WebGL2RenderingContext or
 #endif
     ImageBitmapRenderingContext or 
-    CanvasRenderingContext2D) RenderingContext;
+    CanvasRenderingContext2D or
+    GPUCanvasContext) RenderingContext;
 
 [
     ExportMacro=WEBCORE_EXPORT,

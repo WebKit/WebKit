@@ -28,26 +28,156 @@
 
 #include "GPUAdapter.h"
 #include "GPUCanvasConfiguration.h"
+#include "RenderBox.h"
+#include <wtf/IsoMallocInlines.h>
+
+#if PLATFORM(COCOA)
+#include "WebGPUSurfaceCocoa.h"
+#endif
 
 namespace WebCore {
 
+static IntSize getCanvasSizeAsIntSize(const GPUCanvasContext::CanvasType& canvas)
+{
+    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> IntSize {
+        return { static_cast<int>(htmlCanvas->width()), static_cast<int>(htmlCanvas->height()) };
+    }
+#if ENABLE(OFFSCREEN_CANVAS)
+    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> IntSize {
+        return { static_cast<int>(offscreenCanvas->width()), static_cast<int>(offscreenCanvas->height()) };
+    }
+#endif
+    );
+}
+
+static bool platformSupportsWebGPUSurface()
+{
+#if PLATFORM(COCOA)
+    return true;
+#else
+    return false;
+#endif
+}
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(GPUCanvasContext);
+
+std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas)
+{
+    if (!platformSupportsWebGPUSurface())
+        return nullptr;
+
+    auto context = std::unique_ptr<GPUCanvasContext>(new GPUCanvasContext(canvas));
+    context->suspendIfNeeded();
+    return context;
+}
+
+GPUCanvasContext::GPUCanvasContext(CanvasBase& canvas)
+    : GPUBasedCanvasRenderingContext(canvas)
+{
+    ASSERT(platformSupportsWebGPUSurface());
+}
+
+void GPUCanvasContext::reshape(int width, int height)
+{
+    if (!m_currentConfiguration)
+        return;
+
+#if PLATFORM(COCOA)
+    m_surface = WebGPUSurfaceCocoa::create({ width, height }, m_currentConfiguration->convertToBacking());
+#else
+    // This code should not be reached, because GPUCanvasContext::create prevents creating a new
+    // GPUCanvasContext when platformSupportsWebGPUSurface() is false.
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    ASSERT_NOT_REACHED();
+#endif
+}
+
 GPUCanvasContext::CanvasType GPUCanvasContext::canvas()
 {
-    return { };
+    return htmlCanvas();
 }
 
-void GPUCanvasContext::configure(const GPUCanvasConfiguration&)
+void GPUCanvasContext::configure(GPUCanvasConfiguration configuration)
 {
+    m_currentConfiguration = WTFMove(configuration);
 
-}
-
-void GPUCanvasContext::unconfigure()
-{
+    auto canvasSize = getCanvasSizeAsIntSize(htmlCanvas());
+    reshape(canvasSize.width(), canvasSize.height());
 }
 
 RefPtr<GPUTexture> GPUCanvasContext::getCurrentTexture()
 {
-    return nullptr;
+    markContextChangedAndNotifyCanvasObservers();
+    return GPUTexture::create(m_surface->currentTexture());
+}
+
+void GPUCanvasContext::unconfigure()
+{
+    m_currentConfiguration.reset();
+    m_surface = nullptr;
+}
+
+PixelFormat GPUCanvasContext::pixelFormat() const
+{
+    if (!m_surface)
+        return PixelFormat::BGRA8;
+
+    return m_surface->pixelFormat();
+}
+
+DestinationColorSpace GPUCanvasContext::colorSpace() const
+{
+    if (!m_surface)
+        return DestinationColorSpace::SRGB();
+
+    return m_surface->colorSpace();
+}
+
+RefPtr<GraphicsLayerContentsDisplayDelegate> GPUCanvasContext::layerContentsDisplayDelegate()
+{
+    return m_surface;
+}
+
+void GPUCanvasContext::prepareForDisplay()
+{
+    if (!m_surface)
+        return;
+
+    m_surface->present();
+    m_compositingResultsNeedsUpdating = false;
+}
+
+void GPUCanvasContext::markContextChangedAndNotifyCanvasObservers()
+{
+    m_compositingResultsNeedsUpdating = true;
+
+    bool canvasIsDirty = false;
+
+    if (auto* canvas = htmlCanvas()) {
+        auto* renderBox = canvas->renderBox();
+        if (isAccelerated() && renderBox && renderBox->hasAcceleratedCompositing()) {
+            canvasIsDirty = true;
+            canvas->clearCopiedImage();
+            // renderBox->contentChanged(CanvasPixelsChanged);
+            renderBox->contentChanged(CanvasChanged);
+            // return;
+        }
+    }
+
+    if (!canvasIsDirty) {
+        canvasIsDirty = true;
+        canvasBase().didDraw({ });
+    }
+
+    if (!isAccelerated())
+        return;
+
+    auto* canvas = htmlCanvas();
+    if (!canvas)
+        return;
+
+    canvas->notifyObserversCanvasChanged({ });
 }
 
 }

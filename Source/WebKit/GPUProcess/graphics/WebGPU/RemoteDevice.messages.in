@@ -27,6 +27,9 @@ messages -> RemoteDevice NotRefCounted Stream {
     void Destroy()
     void CreateBuffer(WebKit::WebGPU::BufferDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateTexture(WebKit::WebGPU::TextureDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
+#if HAVE(IOSURFACE)
+    void CreateIOSurfaceBackedTexture(WebKit::WebGPU::TextureDescriptor descriptor, MachSendRight backing, WebKit::WebGPUIdentifier identifier) NotStreamEncodable
+#endif
     void CreateSampler(WebKit::WebGPU::SamplerDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void ImportExternalTexture(WebKit::WebGPU::ExternalTextureDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateBindGroupLayout(WebKit::WebGPU::BindGroupLayoutDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
