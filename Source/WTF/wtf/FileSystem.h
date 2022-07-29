@@ -213,7 +213,7 @@ WTF_EXPORT_PRIVATE std::optional<bool> allowsMaterializingDatalessFiles(PolicySc
 #endif
 
 // Impl for systems that do not already have createTemporaryDirectory
-#if !OS(WINDOWS) && !PLATFORM(COCOA)
+#if !OS(WINDOWS) && !PLATFORM(COCOA) && !PLATFORM(PLAYSTATION)
 WTF_EXPORT_PRIVATE String createTemporaryDirectory();
 #endif
 
