@@ -136,9 +136,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowTextIsCombineText:
         stream << "text is combine";
         break;
-    case AvoidanceReason::ContentIsRenderQuote:
-        stream << "RenderQuote";
-        break;
     case AvoidanceReason::FlowTextIsSVGInlineText:
         stream << "SVGInlineText";
         break;
@@ -357,8 +354,6 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
     if (renderInline.isRubyInline())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-    if (renderInline.isQuote())
-        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRenderQuote, reasons, includeReasons);
     if (renderInline.requiresLayer())
         SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxNeedsLayer, reasons, includeReasons)
 

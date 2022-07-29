@@ -14,4 +14,4 @@ layer at (0,0) size 800x600
         RenderInline (generated) at (0,0) size 9x19
           RenderText at (443,0) size 9x19
             text run at (443,0) width 9: "*"
-          RenderQuote at (0,0) size 1x19
+          RenderQuote at (0,0) size 0x19

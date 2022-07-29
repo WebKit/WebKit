@@ -342,7 +342,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto marginStart = formattingContext().geometryForBox(layoutBox).marginStart();
             logicalLeft += std::max(0_lu, marginStart);
             auto initialLogicalWidth = rootInlineBox.logicalWidth() - (logicalLeft - rootInlineBox.logicalLeft());
-            ASSERT(initialLogicalWidth >= 0 || lineContent.hangingContentWidth);
+            ASSERT(initialLogicalWidth >= 0 || lineContent.hangingContentWidth || std::isnan(initialLogicalWidth));
             initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth);
             inlineBox.setIsFirstBox();
