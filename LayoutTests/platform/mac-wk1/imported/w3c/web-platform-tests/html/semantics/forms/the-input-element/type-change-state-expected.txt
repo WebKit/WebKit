@@ -265,8 +265,8 @@ FAIL change state from number to week assert_implements: Support for input type 
 FAIL change state from number to time assert_implements: Support for input type time is required for this test. undefined
 PASS change state from number to range
 FAIL change state from number to color assert_implements: Support for input type color is required for this test. undefined
-FAIL change state from number to checkbox assert_equals: input.value should be 'on' after change of state expected "on" but got ""
-FAIL change state from number to radio assert_equals: input.value should be 'on' after change of state expected "on" but got ""
+PASS change state from number to checkbox
+PASS change state from number to radio
 PASS change state from number to file
 PASS change state from number to submit
 PASS change state from number to image

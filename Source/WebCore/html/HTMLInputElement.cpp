@@ -529,8 +529,10 @@ void HTMLInputElement::updateType()
     bool didRespectHeightAndWidth = m_inputType->shouldRespectHeightAndWidthAttributes();
     bool wasSuccessfulSubmitButtonCandidate = m_inputType->canBeSuccessfulSubmitButton();
 
-    if (didStoreValue && !willStoreValue && hasDirtyValue())
-        setAttributeWithoutSynchronization(valueAttr, AtomString { std::exchange(m_valueIfDirty, { }) });
+    if (didStoreValue && !willStoreValue) {
+        if (auto dirtyValue = std::exchange(m_valueIfDirty, { }); !dirtyValue.isEmpty())
+            setAttributeWithoutSynchronization(valueAttr, AtomString { WTFMove(dirtyValue) });
+    }
 
     m_inputType->destroyShadowSubtree();
     m_inputType->detachFromElement();

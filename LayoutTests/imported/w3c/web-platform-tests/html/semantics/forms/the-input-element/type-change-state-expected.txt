@@ -160,8 +160,8 @@ PASS change state from datetime-local to time
 PASS change state from datetime-local to number
 PASS change state from datetime-local to range
 PASS change state from datetime-local to color
-FAIL change state from datetime-local to checkbox assert_equals: input.value should be 'on' after change of state expected "on" but got ""
-FAIL change state from datetime-local to radio assert_equals: input.value should be 'on' after change of state expected "on" but got ""
+PASS change state from datetime-local to checkbox
+PASS change state from datetime-local to radio
 PASS change state from datetime-local to file
 PASS change state from datetime-local to submit
 PASS change state from datetime-local to image
@@ -265,8 +265,8 @@ PASS change state from number to week
 PASS change state from number to time
 PASS change state from number to range
 PASS change state from number to color
-FAIL change state from number to checkbox assert_equals: input.value should be 'on' after change of state expected "on" but got ""
-FAIL change state from number to radio assert_equals: input.value should be 'on' after change of state expected "on" but got ""
+PASS change state from number to checkbox
+PASS change state from number to radio
 PASS change state from number to file
 PASS change state from number to submit
 PASS change state from number to image
