@@ -46,8 +46,8 @@ namespace WasmOSREntryPlanInternal {
 static constexpr bool verbose = false;
 }
 
-OSREntryPlan::OSREntryPlan(Context* context, Ref<Module>&& module, Ref<Callee>&& callee, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
-    : Base(context, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
+OSREntryPlan::OSREntryPlan(VM& vm, Ref<Module>&& module, Ref<Callee>&& callee, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
+    : Base(vm, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
     , m_module(WTFMove(module))
     , m_calleeGroup(*m_module->calleeGroupFor(mode))
     , m_callee(WTFMove(callee))

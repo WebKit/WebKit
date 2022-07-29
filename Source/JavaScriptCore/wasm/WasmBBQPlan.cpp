@@ -49,8 +49,8 @@ namespace WasmBBQPlanInternal {
 static constexpr bool verbose = false;
 }
 
-BBQPlan::BBQPlan(Context* context, Ref<ModuleInformation> moduleInformation, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, CalleeGroup* calleeGroup, CompletionTask&& completionTask)
-    : EntryPlan(context, WTFMove(moduleInformation), CompilerMode::FullCompile, WTFMove(completionTask))
+BBQPlan::BBQPlan(VM& vm, Ref<ModuleInformation> moduleInformation, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, CalleeGroup* calleeGroup, CompletionTask&& completionTask)
+    : EntryPlan(vm, WTFMove(moduleInformation), CompilerMode::FullCompile, WTFMove(completionTask))
     , m_calleeGroup(calleeGroup)
     , m_functionIndex(functionIndex)
     , m_hasExceptionHandlers(hasExceptionHandlers)

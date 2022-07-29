@@ -73,7 +73,7 @@ Ref<StreamingCompiler> StreamingCompiler::create(VM& vm, CompilerMode compilerMo
 bool StreamingCompiler::didReceiveFunctionData(unsigned functionIndex, const Wasm::FunctionData&)
 {
     if (!m_plan) {
-        m_plan = adoptRef(*new LLIntPlan(&m_vm.wasmContext, m_info.copyRef(), m_compilerMode, Plan::dontFinalize()));
+        m_plan = adoptRef(*new LLIntPlan(m_vm, m_info.copyRef(), m_compilerMode, Plan::dontFinalize()));
         // Plan already failed in preparation. We do not start threaded compilation.
         // Keep Plan failed, and "finalize" will reject promise with that failure.
         if (!m_plan->failed()) {
@@ -83,7 +83,7 @@ bool StreamingCompiler::didReceiveFunctionData(unsigned functionIndex, const Was
     }
 
     if (m_threadedCompilationStarted) {
-        Ref<Plan> plan = adoptRef(*new StreamingPlan(&m_vm.wasmContext, m_info.copyRef(), *m_plan, functionIndex, createSharedTask<Plan::CallbackType>([compiler = Ref { *this }](Plan& plan) {
+        Ref<Plan> plan = adoptRef(*new StreamingPlan(m_vm, m_info.copyRef(), *m_plan, functionIndex, createSharedTask<Plan::CallbackType>([compiler = Ref { *this }](Plan& plan) {
             compiler->didCompileFunction(static_cast<StreamingPlan&>(plan));
         })));
         ensureWorklist().enqueue(WTFMove(plan));
@@ -109,7 +109,7 @@ void StreamingCompiler::didFinishParsing()
         // Reaching here means that this WebAssembly module has no functions.
         ASSERT(!m_info->functions.size());
         ASSERT(!m_remainingCompilationRequests);
-        m_plan = adoptRef(*new LLIntPlan(&m_vm.wasmContext, m_info.copyRef(), m_compilerMode, Plan::dontFinalize()));
+        m_plan = adoptRef(*new LLIntPlan(m_vm, m_info.copyRef(), m_compilerMode, Plan::dontFinalize()));
         // If plan is already failed in preparation, we will reject promise with plan's failure soon in finalize.
     }
 }

@@ -145,7 +145,7 @@ void JSWebAssembly::webAssemblyModuleValidateAsync(JSGlobalObject* globalObject,
     dependencies.append(Strong<JSCell>(vm, globalObject));
 
     auto ticket = vm.deferredWorkTimer->addPendingWork(vm, promise, WTFMove(dependencies));
-    Wasm::Module::validateAsync(&vm.wasmContext, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([ticket, promise, globalObject, &vm] (Wasm::Module::ValidationResult&& result) mutable {
+    Wasm::Module::validateAsync(vm, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([ticket, promise, globalObject, &vm] (Wasm::Module::ValidationResult&& result) mutable {
         vm.deferredWorkTimer->scheduleWorkSoon(ticket, [promise, globalObject, result = WTFMove(result), &vm](DeferredWorkTimer::Ticket) mutable {
             auto scope = DECLARE_THROW_SCOPE(vm);
             JSValue module = JSWebAssemblyModule::createStub(vm, globalObject, globalObject->webAssemblyModuleStructure(), WTFMove(result));
@@ -185,7 +185,7 @@ static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise
     scope.release();
     auto ticket = vm.deferredWorkTimer->addPendingWork(vm, instance, WTFMove(dependencies));
     // Note: This completion task may or may not get called immediately.
-    module->module().compileAsync(&vm.wasmContext, instance->memoryMode(), createSharedTask<Wasm::CalleeGroup::CallbackType>([ticket, promise, instance, module, resolveKind, creationMode, &vm] (Ref<Wasm::CalleeGroup>&& refCalleeGroup) mutable {
+    module->module().compileAsync(vm, instance->memoryMode(), createSharedTask<Wasm::CalleeGroup::CallbackType>([ticket, promise, instance, module, resolveKind, creationMode, &vm] (Ref<Wasm::CalleeGroup>&& refCalleeGroup) mutable {
         RefPtr<Wasm::CalleeGroup> calleeGroup = WTFMove(refCalleeGroup);
         vm.deferredWorkTimer->scheduleWorkSoon(ticket, [promise, instance, module, resolveKind, creationMode, &vm, calleeGroup = WTFMove(calleeGroup)](DeferredWorkTimer::Ticket) mutable {
             auto scope = DECLARE_THROW_SCOPE(vm);
@@ -236,7 +236,7 @@ static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromis
     dependencies.append(Strong<JSCell>(vm, importObject));
     dependencies.append(Strong<JSCell>(vm, moduleKeyCell));
     auto ticket = vm.deferredWorkTimer->addPendingWork(vm, promise, WTFMove(dependencies));
-    Wasm::Module::validateAsync(&vm.wasmContext, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([ticket, promise, importObject, moduleKeyCell, globalObject, resolveKind, creationMode, &vm] (Wasm::Module::ValidationResult&& result) mutable {
+    Wasm::Module::validateAsync(vm, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([ticket, promise, importObject, moduleKeyCell, globalObject, resolveKind, creationMode, &vm] (Wasm::Module::ValidationResult&& result) mutable {
         vm.deferredWorkTimer->scheduleWorkSoon(ticket, [promise, importObject, moduleKeyCell, globalObject, result = WTFMove(result), resolveKind, creationMode, &vm](DeferredWorkTimer::Ticket) mutable {
             auto scope = DECLARE_THROW_SCOPE(vm);
             JSWebAssemblyModule* module = JSWebAssemblyModule::createStub(vm, globalObject, globalObject->webAssemblyModuleStructure(), WTFMove(result));
@@ -280,7 +280,7 @@ void JSWebAssembly::webAssemblyModuleInstantinateAsync(JSGlobalObject* globalObj
     dependencies.append(Strong<JSCell>(vm, importObject));
     dependencies.append(Strong<JSCell>(vm, globalObject));
     auto ticket = vm.deferredWorkTimer->addPendingWork(vm, promise, WTFMove(dependencies));
-    Wasm::Module::validateAsync(&vm.wasmContext, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([ticket, promise, importObject, globalObject, &vm] (Wasm::Module::ValidationResult&& result) mutable {
+    Wasm::Module::validateAsync(vm, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([ticket, promise, importObject, globalObject, &vm] (Wasm::Module::ValidationResult&& result) mutable {
         vm.deferredWorkTimer->scheduleWorkSoon(ticket, [promise, importObject, globalObject, result = WTFMove(result), &vm](DeferredWorkTimer::Ticket) mutable {
             auto scope = DECLARE_THROW_SCOPE(vm);
             JSWebAssemblyModule* module = JSWebAssemblyModule::createStub(vm, globalObject, globalObject->webAssemblyModuleStructure(), WTFMove(result));
@@ -326,7 +326,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyValidateFunc, (JSGlobalObject* globalObject,
     // https://bugs.webkit.org/show_bug.cgi?id=166015
     Vector<uint8_t> source = createSourceBufferFromValue(vm, globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto validationResult = Wasm::Module::validateSync(&vm.wasmContext, WTFMove(source));
+    auto validationResult = Wasm::Module::validateSync(vm, WTFMove(source));
     return JSValue::encode(jsBoolean(validationResult.has_value()));
 }
 

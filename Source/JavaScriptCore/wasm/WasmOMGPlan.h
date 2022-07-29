@@ -46,7 +46,7 @@ public:
     bool multiThreaded() const final { return false; }
 
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    OMGPlan(Context*, Ref<Module>&&, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, MemoryMode, CompletionTask&&);
+    OMGPlan(VM&, Ref<Module>&&, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, MemoryMode, CompletionTask&&);
 
 private:
     // For some reason friendship doesn't extend to parent classes...

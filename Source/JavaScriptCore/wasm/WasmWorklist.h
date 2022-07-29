@@ -36,9 +36,10 @@
 
 namespace JSC {
 
+class VM;
+
 namespace Wasm {
 
-struct Context;
 class Plan;
 
 class Worklist {
@@ -48,7 +49,7 @@ public:
     ~Worklist();
 
     JS_EXPORT_PRIVATE void enqueue(Ref<Plan>);
-    void stopAllPlansForContext(Context&);
+    void stopAllPlansForContext(VM&);
 
     JS_EXPORT_PRIVATE void completePlanSynchronously(Plan&);
 

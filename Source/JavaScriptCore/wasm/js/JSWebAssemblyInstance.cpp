@@ -176,13 +176,8 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
     WebAssemblyModuleRecord* moduleRecord = WebAssemblyModuleRecord::create(globalObject, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, moduleInformation);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
-    auto storeTopCallFrame = [&vm] (void* topCallFrame) {
-        vm.topCallFrame = bitwise_cast<CallFrame*>(topCallFrame);
-    };
-
     // FIXME: These objects could be pretty big we should try to throw OOM here.
-    auto* jsInstance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm)) JSWebAssemblyInstance(vm, instanceStructure, 
-        Wasm::Instance::create(&vm.wasmContext, WTFMove(module), &vm.topEntryFrame, vm.addressOfSoftStackLimit(), WTFMove(storeTopCallFrame)));
+    auto* jsInstance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm)) JSWebAssemblyInstance(vm, instanceStructure, Wasm::Instance::create(vm, WTFMove(module)));
     jsInstance->finishCreation(vm, jsModule, moduleRecord);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 

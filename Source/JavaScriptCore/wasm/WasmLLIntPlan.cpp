@@ -42,15 +42,15 @@
 
 namespace JSC { namespace Wasm {
 
-LLIntPlan::LLIntPlan(Context* context, Vector<uint8_t>&& source, CompilerMode compilerMode, CompletionTask&& task)
-    : Base(context, WTFMove(source), compilerMode, WTFMove(task))
+LLIntPlan::LLIntPlan(VM& vm, Vector<uint8_t>&& source, CompilerMode compilerMode, CompletionTask&& task)
+    : Base(vm, WTFMove(source), compilerMode, WTFMove(task))
 {
     if (parseAndValidateModule(m_source.data(), m_source.size()))
         prepare();
 }
 
-LLIntPlan::LLIntPlan(Context* context, Ref<ModuleInformation> info, const Ref<LLIntCallee>* callees, CompletionTask&& task)
-    : Base(context, WTFMove(info), CompilerMode::FullCompile, WTFMove(task))
+LLIntPlan::LLIntPlan(VM& vm, Ref<ModuleInformation> info, const Ref<LLIntCallee>* callees, CompletionTask&& task)
+    : Base(vm, WTFMove(info), CompilerMode::FullCompile, WTFMove(task))
     , m_callees(callees)
 {
     ASSERT(m_callees || !m_moduleInformation->functions.size());
@@ -58,8 +58,8 @@ LLIntPlan::LLIntPlan(Context* context, Ref<ModuleInformation> info, const Ref<LL
     m_currentIndex = m_moduleInformation->functions.size();
 }
 
-LLIntPlan::LLIntPlan(Context* context, Ref<ModuleInformation> info, CompilerMode compilerMode, CompletionTask&& task)
-    : Base(context, WTFMove(info), compilerMode, WTFMove(task))
+LLIntPlan::LLIntPlan(VM& vm, Ref<ModuleInformation> info, CompilerMode compilerMode, CompletionTask&& task)
+    : Base(vm, WTFMove(info), compilerMode, WTFMove(task))
 {
     prepare();
     m_currentIndex = m_moduleInformation->functions.size();

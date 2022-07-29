@@ -44,17 +44,15 @@ class JSWebAssemblyInstance;
 
 namespace Wasm {
 
-struct Context;
 class Instance;
 
 class Instance : public ThreadSafeRefCounted<Instance>, public CanMakeWeakPtr<Instance> {
     friend LLIntOffsetsExtractor;
 
 public:
-    using StoreTopCallFrameCallback = WTF::Function<void(void*)>;
     using FunctionWrapperMap = HashMap<uint32_t, WriteBarrier<Unknown>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 
-    static Ref<Instance> create(Context*, Ref<Module>&&, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&&);
+    static Ref<Instance> create(VM&, Ref<Module>&&);
 
     void setOwner(void* owner)
     {
@@ -68,8 +66,7 @@ public:
 
     size_t extraMemoryAllocated() const;
 
-    Wasm::Context* context() const { return m_context; }
-
+    VM& vm() const { return m_vm; }
     Module& module() const { return m_module.get(); }
     CalleeGroup* calleeGroup() const { return module().calleeGroupFor(memory()->mode()); }
     Memory* memory() const { return m_memory.get(); }
@@ -218,21 +215,21 @@ public:
 
     void storeTopCallFrame(void* callFrame)
     {
-        m_storeTopCallFrame(callFrame);
+        m_vm.topCallFrame = bitwise_cast<CallFrame*>(callFrame);
     }
 
     const Tag& tag(unsigned i) const { return *m_tags[i]; }
     void setTag(unsigned, Ref<const Tag>&&);
 
 private:
-    Instance(Context*, Ref<Module>&&, EntryFrame**, void**, StoreTopCallFrameCallback&&);
+    Instance(VM&, Ref<Module>&&);
     
     static size_t allocationSize(Checked<size_t> numImportFunctions, Checked<size_t> numTables)
     {
         return offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Table*) * numTables;
     }
     void* m_owner { nullptr }; // In a JS embedding, this is a JSWebAssemblyInstance*.
-    Context* m_context { nullptr };
+    VM& m_vm;
     CagedPtr<Gigacage::Primitive, void, tagCagedPtr> m_cachedMemory;
     size_t m_cachedBoundsCheckingSize { 0 };
     Ref<Module> m_module;
@@ -245,7 +242,6 @@ private:
     EntryFrame** m_pointerToTopEntryFrame { nullptr };
     void** m_pointerToActualStackLimit { nullptr };
     void* m_cachedStackLimit { bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()) };
-    StoreTopCallFrameCallback m_storeTopCallFrame;
     unsigned m_numImportFunctions { 0 };
     HashMap<uint32_t, Ref<Global>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_linkedGlobals;
     BitVector m_passiveElements;

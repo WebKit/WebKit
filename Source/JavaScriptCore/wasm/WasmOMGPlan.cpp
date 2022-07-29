@@ -46,8 +46,8 @@ namespace WasmOMGPlanInternal {
 static constexpr bool verbose = false;
 }
 
-OMGPlan::OMGPlan(Context* context, Ref<Module>&& module, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, MemoryMode mode, CompletionTask&& task)
-    : Base(context, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
+OMGPlan::OMGPlan(VM& vm, Ref<Module>&& module, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, MemoryMode mode, CompletionTask&& task)
+    : Base(vm, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
     , m_module(WTFMove(module))
     , m_calleeGroup(*m_module->calleeGroupFor(mode))
     , m_hasExceptionHandlers(hasExceptionHandlers)

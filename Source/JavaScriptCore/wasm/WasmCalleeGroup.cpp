@@ -36,9 +36,9 @@
 
 namespace JSC { namespace Wasm {
 
-Ref<CalleeGroup> CalleeGroup::create(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
+Ref<CalleeGroup> CalleeGroup::create(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
 {
-    return adoptRef(*new CalleeGroup(context, mode, moduleInformation, llintCallees));
+    return adoptRef(*new CalleeGroup(vm, mode, moduleInformation, llintCallees));
 }
 
 Ref<CalleeGroup> CalleeGroup::createFromExisting(MemoryMode mode, const CalleeGroup& other)
@@ -58,7 +58,7 @@ CalleeGroup::CalleeGroup(MemoryMode mode, const CalleeGroup& other)
     setCompilationFinished();
 }
 
-CalleeGroup::CalleeGroup(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
+CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
     : m_calleeCount(moduleInformation.internalFunctionCount())
     , m_mode(mode)
     , m_llintCallees(llintCallees)
@@ -66,7 +66,7 @@ CalleeGroup::CalleeGroup(Context* context, MemoryMode mode, ModuleInformation& m
     RefPtr<CalleeGroup> protectedThis = this;
 
     if (Options::useWasmLLInt()) {
-        m_plan = adoptRef(*new LLIntPlan(context, moduleInformation, m_llintCallees->data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
+        m_plan = adoptRef(*new LLIntPlan(vm, moduleInformation, m_llintCallees->data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
             Locker locker { m_lock };
             if (m_plan->failed()) {
                 m_errorMessage = m_plan->errorMessage();
@@ -88,7 +88,7 @@ CalleeGroup::CalleeGroup(Context* context, MemoryMode mode, ModuleInformation& m
     }
 #if ENABLE(WEBASSEMBLY_B3JIT)
     else {
-        m_plan = adoptRef(*new BBQPlan(context, moduleInformation, CompilerMode::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
+        m_plan = adoptRef(*new BBQPlan(vm, moduleInformation, CompilerMode::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
             Locker locker { m_lock };
             if (m_plan->failed()) {
                 m_errorMessage = m_plan->errorMessage();
@@ -139,7 +139,7 @@ void CalleeGroup::waitUntilFinished()
     // else, if we don't have a plan, we're already compiled.
 }
 
-void CalleeGroup::compileAsync(Context* context, AsyncCompilationCallback&& task)
+void CalleeGroup::compileAsync(VM& vm, AsyncCompilationCallback&& task)
 {
     RefPtr<Plan> plan;
     {
@@ -151,7 +151,7 @@ void CalleeGroup::compileAsync(Context* context, AsyncCompilationCallback&& task
         // We don't need to keep a RefPtr on the Plan because the worklist will keep
         // a RefPtr on the Plan until the plan finishes notifying all of its callbacks.
         RefPtr<CalleeGroup> protectedThis = this;
-        plan->addCompletionTask(context, createSharedTask<Plan::CallbackType>([this, task = WTFMove(task), protectedThis = WTFMove(protectedThis)] (Plan&) {
+        plan->addCompletionTask(vm, createSharedTask<Plan::CallbackType>([this, task = WTFMove(task), protectedThis = WTFMove(protectedThis)] (Plan&) {
             task->run(Ref { *this });
         }));
     } else

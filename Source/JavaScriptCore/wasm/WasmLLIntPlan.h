@@ -46,9 +46,9 @@ class LLIntPlan final : public EntryPlan {
     using Base = EntryPlan;
 
 public:
-    JS_EXPORT_PRIVATE LLIntPlan(Context*, Vector<uint8_t>&&, CompilerMode, CompletionTask&&);
-    LLIntPlan(Context*, Ref<ModuleInformation>, const Ref<LLIntCallee>*, CompletionTask&&);
-    LLIntPlan(Context*, Ref<ModuleInformation>, CompilerMode, CompletionTask&&); // For StreamingCompiler.
+    JS_EXPORT_PRIVATE LLIntPlan(VM&, Vector<uint8_t>&&, CompilerMode, CompletionTask&&);
+    LLIntPlan(VM&, Ref<ModuleInformation>, const Ref<LLIntCallee>*, CompletionTask&&);
+    LLIntPlan(VM&, Ref<ModuleInformation>, CompilerMode, CompletionTask&&); // For StreamingCompiler.
 
     MacroAssemblerCodeRef<JITCompilationPtrTag>&& takeEntryThunks()
     {

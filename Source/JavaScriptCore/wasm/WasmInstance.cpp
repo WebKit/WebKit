@@ -46,15 +46,14 @@ size_t globalMemoryByteSize(Module& module)
 }
 }
 
-Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&& storeTopCallFrame)
-    : m_context(context)
+Instance::Instance(VM& vm, Ref<Module>&& module)
+    : m_vm(vm)
     , m_module(WTFMove(module))
     , m_globals(MallocPtr<Global::Value, VMMalloc>::malloc(globalMemoryByteSize(m_module.get())))
     , m_globalsToMark(m_module.get().moduleInformation().globals.size())
     , m_globalsToBinding(m_module.get().moduleInformation().globals.size())
-    , m_pointerToTopEntryFrame(pointerToTopEntryFrame)
-    , m_pointerToActualStackLimit(pointerToActualStackLimit)
-    , m_storeTopCallFrame(WTFMove(storeTopCallFrame))
+    , m_pointerToTopEntryFrame(&vm.topEntryFrame)
+    , m_pointerToActualStackLimit(vm.addressOfSoftStackLimit())
     , m_numImportFunctions(m_module->moduleInformation().importFunctionCount())
     , m_passiveElements(m_module->moduleInformation().elementCount())
     , m_passiveDataSegments(m_module->moduleInformation().dataSegmentsCount())
@@ -87,9 +86,9 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
     }
 }
 
-Ref<Instance> Instance::create(Context* context, Ref<Module>&& module, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&& storeTopCallFrame)
+Ref<Instance> Instance::create(VM& vm, Ref<Module>&& module)
 {
-    return adoptRef(*new (NotNull, fastMalloc(allocationSize(module->moduleInformation().importFunctionCount(), module->moduleInformation().tableCount()))) Instance(context, WTFMove(module), pointerToTopEntryFrame, pointerToActualStackLimit, WTFMove(storeTopCallFrame)));
+    return adoptRef(*new (NotNull, fastMalloc(allocationSize(module->moduleInformation().importFunctionCount(), module->moduleInformation().tableCount()))) Instance(vm, WTFMove(module)));
 }
 
 Instance::~Instance()

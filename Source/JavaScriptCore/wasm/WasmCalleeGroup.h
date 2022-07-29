@@ -40,9 +40,10 @@
 
 namespace JSC {
 
+class VM;
+
 namespace Wasm {
 
-struct Context;
 class EntryPlan;
 struct ModuleInformation;
 struct UnlinkedWasmToWasmCall;
@@ -52,11 +53,11 @@ class CalleeGroup final : public ThreadSafeRefCounted<CalleeGroup> {
 public:
     typedef void CallbackType(Ref<CalleeGroup>&&);
     using AsyncCompilationCallback = RefPtr<WTF::SharedTask<CallbackType>>;
-    static Ref<CalleeGroup> create(Context*, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
+    static Ref<CalleeGroup> create(VM&, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
     static Ref<CalleeGroup> createFromExisting(MemoryMode, const CalleeGroup&);
 
     void waitUntilFinished();
-    void compileAsync(Context*, AsyncCompilationCallback&&);
+    void compileAsync(VM&, AsyncCompilationCallback&&);
 
     bool compilationFinished()
     {
@@ -166,7 +167,7 @@ private:
     friend class OSREntryPlan;
 #endif
 
-    CalleeGroup(Context*, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
+    CalleeGroup(VM&, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
     CalleeGroup(MemoryMode, const CalleeGroup&);
     void setCompilationFinished();
     unsigned m_calleeCount;

@@ -41,15 +41,15 @@ namespace WasmPlanInternal {
 static constexpr bool verbose = false;
 }
 
-Plan::Plan(Context* context, Ref<ModuleInformation> info, CompletionTask&& task)
+Plan::Plan(VM& vm, Ref<ModuleInformation> info, CompletionTask&& task)
     : m_moduleInformation(WTFMove(info))
 {
-    m_completionTasks.append(std::make_pair(context, WTFMove(task)));
+    m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
 }
-Plan::Plan(Context* context, CompletionTask&& task)
+Plan::Plan(VM& vm, CompletionTask&& task)
     : m_moduleInformation(ModuleInformation::create())
 {
-    m_completionTasks.append(std::make_pair(context, WTFMove(task)));
+    m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
 }
 
 void Plan::runCompletionTasks()
@@ -62,11 +62,11 @@ void Plan::runCompletionTasks()
     m_completed.notifyAll();
 }
 
-void Plan::addCompletionTask(Context* context, CompletionTask&& task)
+void Plan::addCompletionTask(VM& vm, CompletionTask&& task)
 {
     Locker locker { m_lock };
     if (!isComplete())
-        m_completionTasks.append(std::make_pair(context, WTFMove(task)));
+        m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
     else
         task->run(*this);
 }
@@ -79,19 +79,19 @@ void Plan::waitForCompletion()
     }
 }
 
-bool Plan::tryRemoveContextAndCancelIfLast(Context& context)
+bool Plan::tryRemoveContextAndCancelIfLast(VM& vm)
 {
     Locker locker { m_lock };
 
     if (ASSERT_ENABLED) {
-        // We allow the first completion task to not have a Context.
+        // We allow the first completion task to not have a VM.
         for (unsigned i = 1; i < m_completionTasks.size(); ++i)
             ASSERT(m_completionTasks[i].first);
     }
 
     bool removedAnyTasks = false;
-    m_completionTasks.removeAllMatching([&] (const std::pair<Context*, CompletionTask>& pair) {
-        bool shouldRemove = pair.first == &context;
+    m_completionTasks.removeAllMatching([&] (const std::pair<VM*, CompletionTask>& pair) {
+        bool shouldRemove = pair.first == &vm;
         removedAnyTasks |= shouldRemove;
         return shouldRemove;
     });

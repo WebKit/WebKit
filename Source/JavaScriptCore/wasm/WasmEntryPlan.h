@@ -46,8 +46,8 @@ public:
     using Base = Plan;
 
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    EntryPlan(Context*, Ref<ModuleInformation>, CompilerMode, CompletionTask&&);
-    JS_EXPORT_PRIVATE EntryPlan(Context*, Vector<uint8_t>&&, CompilerMode, CompletionTask&&);
+    EntryPlan(VM&, Ref<ModuleInformation>, CompilerMode, CompletionTask&&);
+    JS_EXPORT_PRIVATE EntryPlan(VM&, Vector<uint8_t>&&, CompilerMode, CompletionTask&&);
 
     ~EntryPlan() override = default;
 

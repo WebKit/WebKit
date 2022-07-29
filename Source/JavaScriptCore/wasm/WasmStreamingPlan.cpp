@@ -42,8 +42,8 @@ namespace WasmStreamingPlanInternal {
 static constexpr bool verbose = false;
 }
 
-StreamingPlan::StreamingPlan(Context* context, Ref<ModuleInformation>&& info, Ref<LLIntPlan>&& plan, uint32_t functionIndex, CompletionTask&& task)
-    : Base(context, WTFMove(info), WTFMove(task))
+StreamingPlan::StreamingPlan(VM& vm, Ref<ModuleInformation>&& info, Ref<LLIntPlan>&& plan, uint32_t functionIndex, CompletionTask&& task)
+    : Base(vm, WTFMove(info), WTFMove(task))
     , m_plan(WTFMove(plan))
     , m_functionIndex(functionIndex)
 {

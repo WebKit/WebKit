@@ -407,7 +407,7 @@ VM::~VM()
     deferredWorkTimer->stopRunningTasks();
 #if ENABLE(WEBASSEMBLY)
     if (Wasm::Worklist* worklist = Wasm::existingWorklistOrNull())
-        worklist->stopAllPlansForContext(wasmContext);
+        worklist->stopAllPlansForContext(*this);
 #endif
     if (UNLIKELY(m_watchdog))
         m_watchdog->willDestroyVM(this);

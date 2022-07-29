@@ -449,7 +449,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         // this point when we know which memory mode to use.
         Wasm::CalleeGroup* calleeGroup = m_instance->instance().calleeGroup();
         if (!calleeGroup || !calleeGroup->runnable()) {
-            calleeGroup = m_instance->module()->module().compileSync(&vm.wasmContext, m_instance->instance().memory()->mode()).ptr();
+            calleeGroup = m_instance->module()->module().compileSync(vm, m_instance->instance().memory()->mode()).ptr();
             if (!calleeGroup->runnable())
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, calleeGroup->errorMessage()));
         }

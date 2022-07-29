@@ -40,11 +40,11 @@
 namespace JSC {
 
 class CallLinkInfo;
+class VM;
 
 namespace Wasm {
 
 class CalleeGroup;
-struct Context;
 
 class Plan : public ThreadSafeRefCounted<Plan> {
 public:
@@ -52,15 +52,15 @@ public:
     using CompletionTask = RefPtr<SharedTask<CallbackType>>;
 
     static CompletionTask dontFinalize() { return createSharedTask<CallbackType>([](Plan&) { }); }
-    Plan(Context*, Ref<ModuleInformation>, CompletionTask&&);
+    Plan(VM&, Ref<ModuleInformation>, CompletionTask&&);
 
     // Note: This constructor should only be used if you are not actually building a module e.g. validation/function tests
-    JS_EXPORT_PRIVATE Plan(Context*, CompletionTask&&);
+    JS_EXPORT_PRIVATE Plan(VM&, CompletionTask&&);
     virtual JS_EXPORT_PRIVATE ~Plan();
 
     // If you guarantee the ordering here, you can rely on FIFO of the
     // completion tasks being called.
-    void addCompletionTask(Context*, CompletionTask&&);
+    void addCompletionTask(VM&, CompletionTask&&);
 
     void setMode(MemoryMode mode) { m_mode = mode; }
     MemoryMode mode() const { return m_mode; }
@@ -75,7 +75,7 @@ public:
 
     void waitForCompletion();
     // Returns true if it cancelled the plan.
-    bool tryRemoveContextAndCancelIfLast(Context&);
+    bool tryRemoveContextAndCancelIfLast(VM&);
 
 protected:
     void runCompletionTasks() WTF_REQUIRES_LOCK(m_lock);
@@ -90,7 +90,7 @@ protected:
 
     Ref<ModuleInformation> m_moduleInformation;
 
-    Vector<std::pair<Context*, CompletionTask>, 1> m_completionTasks;
+    Vector<std::pair<VM*, CompletionTask>, 1> m_completionTasks;
 
     String m_errorMessage;
     MemoryMode m_mode { MemoryMode::BoundsChecking };

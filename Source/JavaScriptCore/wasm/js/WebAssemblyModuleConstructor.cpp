@@ -184,7 +184,7 @@ JSWebAssemblyModule* WebAssemblyModuleConstructor::createModule(JSGlobalObject* 
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, webAssemblyModuleStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    RELEASE_AND_RETURN(scope, JSWebAssemblyModule::createStub(vm, globalObject, structure, Wasm::Module::validateSync(&vm.wasmContext, WTFMove(buffer))));
+    RELEASE_AND_RETURN(scope, JSWebAssemblyModule::createStub(vm, globalObject, structure, Wasm::Module::validateSync(vm, WTFMove(buffer))));
 }
 
 WebAssemblyModuleConstructor* WebAssemblyModuleConstructor::create(VM& vm, Structure* structure, WebAssemblyModulePrototype* thisPrototype)
