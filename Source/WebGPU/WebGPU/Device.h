@@ -121,6 +121,10 @@ private:
     bool validateCreateTexture(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats);
     bool validateCreateIOSurfaceBackedTexture(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats, IOSurfaceRef backing);
 
+    // Validate the render pipeline according to
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpurenderpipelinedescriptor
+    bool validateRenderPipeline(const WGPURenderPipelineDescriptor&);
+
     void makeInvalid() { m_device = nil; }
 
     void loseTheDevice(WGPUDeviceLostReason);

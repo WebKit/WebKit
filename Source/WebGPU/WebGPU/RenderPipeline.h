@@ -41,9 +41,9 @@ class Device;
 class RenderPipeline : public WGPURenderPipelineImpl, public RefCounted<RenderPipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, Device& device)
+    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, Device& device)
     {
-        return adoptRef(*new RenderPipeline(renderPipelineState, device));
+        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, device));
     }
     static Ref<RenderPipeline> createInvalid(Device& device)
     {
@@ -58,14 +58,22 @@ public:
     bool isValid() const { return m_renderPipelineState; }
 
     id<MTLRenderPipelineState> renderPipelineState() const { return m_renderPipelineState; }
+    MTLPrimitiveType primitiveType() const { return m_primitiveType; }
+    std::optional<MTLIndexType> maybeIndexType() const { return m_indexType; }
+    MTLWinding frontFace() const { return m_frontFace; }
+    MTLCullMode cullMode() const { return m_cullMode; }
 
     Device& device() const { return m_device; }
 
 private:
-    RenderPipeline(id<MTLRenderPipelineState>, Device&);
+    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, Device&);
     RenderPipeline(Device&);
 
     const id<MTLRenderPipelineState> m_renderPipelineState { nil };
+    MTLPrimitiveType m_primitiveType;
+    std::optional<MTLIndexType> m_indexType;
+    MTLWinding m_frontFace;
+    MTLCullMode m_cullMode;
 
     const Ref<Device> m_device;
 };
