@@ -43,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKContextMenuElementInfo;
 @class UIContextMenuConfiguration;
 @protocol UIContextMenuInteractionCommitAnimating;
+@protocol UIEditMenuInteractionAnimating;
 #endif
 
 typedef NS_ENUM(NSInteger, WKPermissionDecision) {
@@ -253,6 +254,22 @@ typedef NS_ENUM(NSInteger, WKDialogResult) {
  If you do not implement this method, the web view will display the default Lockdown Mode message.
  */
 - (void)webView:(WKWebView *)webView showLockdownModeFirstUseMessage:(NSString *)message completionHandler:(void (^)(WKDialogResult))completionHandler WK_API_AVAILABLE(ios(13.0));
+
+/**
+ * @abstract Called when the web view is about to present its edit menu.
+ *
+ * @param webView The web view displaying the menu.
+ * @param animator Appearance animator. Add animations to this object to run them alongside the appearance transition.
+ */
+- (void)webView:(WKWebView *)webView willPresentEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
+/**
+ * @abstract Called when the web view is about to dismiss its edit menu.
+ *
+ * @param webView The web view displaying the menu.
+ * @param animator Dismissal animator. Add animations to this object to run them alongside the dismissal transition.
+ */
+- (void)webView:(WKWebView *)webView willDismissEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 #endif // TARGET_OS_IOS
 

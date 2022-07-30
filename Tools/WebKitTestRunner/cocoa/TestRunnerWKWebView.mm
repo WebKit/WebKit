@@ -504,14 +504,14 @@ static bool isQuickboardViewController(UIViewController *viewController)
 
 #if HAVE(UI_EDIT_MENU_INTERACTION)
 
-- (void)_webView:(WKWebView *)webView willPresentEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator
+- (void)webView:(WKWebView *)webView willPresentEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator
 {
     [animator addCompletion:[strongSelf = RetainPtr { self }] {
         [strongSelf _didShowMenu];
     }];
 }
 
-- (void)_webView:(WKWebView *)webView willDismissEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator
+- (void)webView:(WKWebView *)webView willDismissEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator
 {
     [animator addCompletion:[strongSelf = RetainPtr { self }] {
         [strongSelf _didHideMenu];

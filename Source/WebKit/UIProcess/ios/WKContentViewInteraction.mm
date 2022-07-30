@@ -11365,20 +11365,20 @@ constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysis
 
 - (void)willPresentEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator
 {
-    auto delegate = static_cast<id<WKUIDelegatePrivate>>(self.webView.UIDelegate);
-    if (![delegate respondsToSelector:@selector(_webView:willPresentEditMenuWithAnimator:)])
+    auto delegate = self.webView.UIDelegate;
+    if (![delegate respondsToSelector:@selector(webView:willPresentEditMenuWithAnimator:)])
         return;
 
-    [delegate _webView:self.webView willPresentEditMenuWithAnimator:animator];
+    [delegate webView:self.webView willPresentEditMenuWithAnimator:animator];
 }
 
 - (void)willDismissEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator
 {
-    auto delegate = static_cast<id<WKUIDelegatePrivate>>(self.webView.UIDelegate);
-    if (![delegate respondsToSelector:@selector(_webView:willDismissEditMenuWithAnimator:)])
+    auto delegate = self.webView.UIDelegate;
+    if (![delegate respondsToSelector:@selector(webView:willDismissEditMenuWithAnimator:)])
         return;
 
-    [delegate _webView:self.webView willDismissEditMenuWithAnimator:animator];
+    [delegate webView:self.webView willDismissEditMenuWithAnimator:animator];
 }
 
 #endif // HAVE(UI_EDIT_MENU_INTERACTION)
