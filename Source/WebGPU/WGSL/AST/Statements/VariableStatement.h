@@ -25,55 +25,29 @@
 
 #pragma once
 
-#include "ASTNode.h"
-#include "Attribute.h"
-#include "CompilationMessage.h"
-#include "GlobalDecl.h"
-#include "TypeDecl.h"
-#include <wtf/text/StringView.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/UniqueRef.h>
-
+#include "Statement.h"
+#include "VariableDecl.h"
 
 namespace WGSL::AST {
 
-class StructMember final : public ASTNode {
+class VariableStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StructMember(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attributes&& attributes)
-        : ASTNode(span)
-        , m_name(name)
-        , m_attributes(WTFMove(attributes))
-        , m_type(WTFMove(type))
+    VariableStatement(SourceSpan span, VariableDecl decl)
+        : Statement(span)
+        , m_decl(WTFMove(decl))
     {
     }
 
-    const StringView& name() const { return m_name; }
-    TypeDecl& type() { return m_type; }
-    Attributes& attributes() { return m_attributes; }
+    Kind kind() const override { return Kind::Variable; }
+    const VariableDecl& decl() const { return m_decl; }
 
 private:
-    StringView m_name;
-    Attributes m_attributes;
-    UniqueRef<TypeDecl> m_type;
-};
-
-class StructDecl final : public ASTNode {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    StructDecl(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<StructMember>>&& members)
-        : ASTNode(sourceSpan)
-        , m_name(name)
-        , m_members(WTFMove(members))
-    {
-    }
-
-    const StringView& name() const { return m_name; }
-    Vector<UniqueRef<StructMember>>& members() { return m_members; }
-
-private:
-    StringView m_name;
-    Vector<UniqueRef<StructMember>> m_members;
+    VariableDecl m_decl;
 };
 
 } // namespace WGSL::AST
+
+SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(VariableStatement, isVariable())
+
+

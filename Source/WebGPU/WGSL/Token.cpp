@@ -93,10 +93,14 @@ String toString(TokenType type)
         return "true"_s;
     case TokenType::LiteralFalse:
         return "false"_s;
+    case TokenType::And:
+        return "&"_s;
     case TokenType::Arrow:
         return "->"_s;
     case TokenType::Attribute:
         return "@"_s;
+    case TokenType::Bang:
+        return "!"_s;
     case TokenType::BracketLeft:
         return "["_s;
     case TokenType::BracketRight:
@@ -111,18 +115,30 @@ String toString(TokenType type)
         return ","_s;
     case TokenType::Equal:
         return "="_s;
+    case TokenType::ForwardSlash:
+        return "/"_s;
     case TokenType::GT:
         return ">"_s;
     case TokenType::LT:
         return "<"_s;
+    case TokenType::Minus:
+        return "-"_s;
     case TokenType::Period:
         return "."_s;
     case TokenType::ParenLeft:
         return "("_s;
     case TokenType::ParenRight:
         return ")"_s;
+    case TokenType::Modulo:
+        return "%"_s;
+    case TokenType::Star:
+        return "*"_s;
     case TokenType::Semicolon:
         return ";"_s;
+    case TokenType::Tilde:
+        return "~"_s;
+    case TokenType::Plus:
+        return "+"_s;
     }
 }
 

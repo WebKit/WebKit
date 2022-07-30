@@ -67,7 +67,7 @@
 
 - (void) testLexerOnComputeShader {
     WGSL::Lexer<LChar> lexer(
-        "@block struct B {\n"
+        "struct B {\n"
         "    a: i32;\n"
         "}\n"
         "\n"
@@ -88,16 +88,14 @@
     };
     auto checkNextTokenIsIdentifier = [&] (const String& ident) {
         WGSL::Token result = checkNextToken(WGSL::TokenType::Identifier);
-        XCTAssertEqual(result.m_ident, ident);
+        XCTAssert(result.m_ident == ident);
     };
     auto checkNextTokenIsLiteral = [&] (WGSL::TokenType type, double literalValue) {
         WGSL::Token result = checkNextToken(type);
         XCTAssertEqual(result.m_literalValue, literalValue);
     };
 
-    // @block struct B {
-    checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("block"_s);
+    // struct B {
     checkNextToken(WGSL::TokenType::KeywordStruct);
     checkNextTokenIsIdentifier("B"_s);
     checkNextToken(WGSL::TokenType::BraceLeft);
@@ -188,7 +186,7 @@
     };
     auto checkNextTokenIsIdentifier = [&] (const String& ident) {
         WGSL::Token result = checkNextToken(WGSL::TokenType::Identifier);
-        XCTAssertEqual(result.m_ident, ident);
+        XCTAssert(result.m_ident == ident);
     };
     auto checkNextTokenIsLiteral = [&] (WGSL::TokenType type, double literalValue) {
         WGSL::Token result = checkNextToken(type);
@@ -283,6 +281,125 @@
     ++lineNumber;
     checkNextToken(WGSL::TokenType::BraceRight);
     checkNextToken(WGSL::TokenType::EndOfFile);
+}
+
+- (void)testArrayOfVectors {
+    WGSL::Lexer<LChar> lexer("var pos = array<vec2<f32>, 3>(\n"
+                             "    vec2<f32>(0.0, 0.5),\n"
+                             "    vec2<f32>(-0.5, -0.5),\n"
+                             "    vec2<f32>(0.5, -0.5));"_s);
+
+    unsigned lineNumber = 0;
+    auto checkNextToken = [&] (WGSL::TokenType type) {
+        WGSL::Token result = lexer.lex();
+        XCTAssertEqual(result.m_type, type);
+        XCTAssertEqual(result.m_span.m_line, lineNumber);
+        return result;
+    };
+    auto checkNextTokenIsIdentifier = [&] (String ident) {
+        WGSL::Token result = checkNextToken(WGSL::TokenType::Identifier);
+        XCTAssert(result.m_ident == ident);
+    };
+    auto checkNextTokenIsLiteral = [&] (WGSL::TokenType type, double literalValue) {
+        WGSL::Token result = checkNextToken(type);
+        XCTAssertEqual(result.m_literalValue, literalValue);
+    };
+
+    // var pos = array<vec2<f32>, 3>(
+    checkNextToken(WGSL::TokenType::KeywordVar);
+    checkNextTokenIsIdentifier("pos"_s);
+    checkNextToken(WGSL::TokenType::Equal);
+    checkNextToken(WGSL::TokenType::KeywordArray);
+    checkNextToken(WGSL::TokenType::LT);
+    checkNextToken(WGSL::TokenType::KeywordVec2);
+    checkNextToken(WGSL::TokenType::LT);
+    checkNextToken(WGSL::TokenType::KeywordF32);
+    checkNextToken(WGSL::TokenType::GT);
+    checkNextToken(WGSL::TokenType::Comma);
+    checkNextTokenIsLiteral(WGSL::TokenType::IntegerLiteral, 3);
+    checkNextToken(WGSL::TokenType::GT);
+    checkNextToken(WGSL::TokenType::ParenLeft);
+
+    //     vec2<f32>(0.0, 0.5),
+    lineNumber++;
+    checkNextToken(WGSL::TokenType::KeywordVec2);
+    checkNextToken(WGSL::TokenType::LT);
+    checkNextToken(WGSL::TokenType::KeywordF32);
+    checkNextToken(WGSL::TokenType::GT);
+    checkNextToken(WGSL::TokenType::ParenLeft);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.0);
+    checkNextToken(WGSL::TokenType::Comma);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.5);
+    checkNextToken(WGSL::TokenType::ParenRight);
+    checkNextToken(WGSL::TokenType::Comma);
+
+    //     vec2<f32>(-0.5, -0.5),
+    lineNumber++;
+    checkNextToken(WGSL::TokenType::KeywordVec2);
+    checkNextToken(WGSL::TokenType::LT);
+    checkNextToken(WGSL::TokenType::KeywordF32);
+    checkNextToken(WGSL::TokenType::GT);
+    checkNextToken(WGSL::TokenType::ParenLeft);
+    checkNextToken(WGSL::TokenType::Minus);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.5);
+    checkNextToken(WGSL::TokenType::Comma);
+    checkNextToken(WGSL::TokenType::Minus);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.5);
+    checkNextToken(WGSL::TokenType::ParenRight);
+    checkNextToken(WGSL::TokenType::Comma);
+
+    //     vec2<f32>(0.5, -0.5));
+    lineNumber++;
+    checkNextToken(WGSL::TokenType::KeywordVec2);
+    checkNextToken(WGSL::TokenType::LT);
+    checkNextToken(WGSL::TokenType::KeywordF32);
+    checkNextToken(WGSL::TokenType::GT);
+    checkNextToken(WGSL::TokenType::ParenLeft);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.5);
+    checkNextToken(WGSL::TokenType::Comma);
+    checkNextToken(WGSL::TokenType::Minus);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.5);
+    checkNextToken(WGSL::TokenType::ParenRight);
+    checkNextToken(WGSL::TokenType::ParenRight);
+    checkNextToken(WGSL::TokenType::Semicolon);
+    checkNextToken(WGSL::TokenType::EndOfFile);
+}
+
+- (void)testSubscript {
+    WGSL::Lexer<LChar> lexer("return vec4<f32>(pos[VertexIndex], 0.0, 1.0);"_s);
+
+    unsigned lineNumber = 0;
+    auto checkNextToken = [&] (WGSL::TokenType type) {
+        WGSL::Token result = lexer.lex();
+        XCTAssertEqual(result.m_type, type);
+        XCTAssertEqual(result.m_span.m_line, lineNumber);
+        return result;
+    };
+    auto checkNextTokenIsIdentifier = [&] (String ident) {
+        WGSL::Token result = checkNextToken(WGSL::TokenType::Identifier);
+        XCTAssert(result.m_ident == ident);
+    };
+    auto checkNextTokenIsLiteral = [&] (WGSL::TokenType type, double literalValue) {
+        WGSL::Token result = checkNextToken(type);
+        XCTAssertEqual(result.m_literalValue, literalValue);
+    };
+
+    checkNextToken(WGSL::TokenType::KeywordReturn);
+    checkNextToken(WGSL::TokenType::KeywordVec4);
+    checkNextToken(WGSL::TokenType::LT);
+    checkNextToken(WGSL::TokenType::KeywordF32);
+    checkNextToken(WGSL::TokenType::GT);
+    checkNextToken(WGSL::TokenType::ParenLeft);
+    checkNextTokenIsIdentifier("pos"_s);
+    checkNextToken(WGSL::TokenType::BracketLeft);
+    checkNextTokenIsIdentifier("VertexIndex"_s);
+    checkNextToken(WGSL::TokenType::BracketRight);
+    checkNextToken(WGSL::TokenType::Comma);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.0);
+    checkNextToken(WGSL::TokenType::Comma);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 1.0);
+    checkNextToken(WGSL::TokenType::ParenRight);
+    checkNextToken(WGSL::TokenType::Semicolon);
 }
 
 @end

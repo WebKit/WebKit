@@ -27,6 +27,7 @@
 
 #include "Expression.h"
 #include <wtf/text/StringView.h>
+#include <wtf/UniqueRef.h>
 
 namespace WGSL::AST {
 
@@ -41,7 +42,7 @@ public:
     }
 
     Kind kind() const override { return Kind::StructureAccess; }
-    UniqueRef<Expression>& base() { return m_base; }
+    const Expression& base() const { return m_base; }
     const StringView& fieldName() const { return m_fieldName; }
 
 private:

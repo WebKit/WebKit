@@ -39,7 +39,7 @@ public:
     }
 
     Kind kind() const override { return Kind::Compound; }
-    Vector<UniqueRef<Statement>>& statements() { return m_statements; }
+    const Vector<UniqueRef<Statement>>& statements() const { return m_statements; }
 
 private:
     Vector<UniqueRef<Statement>> m_statements;

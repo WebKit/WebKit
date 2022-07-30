@@ -55,11 +55,11 @@ private:
     Attributes m_attributes;
 };
 
-class FunctionDecl final : public GlobalDecl {
+class FunctionDecl final : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FunctionDecl(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<Parameter>>&& parameters, std::unique_ptr<TypeDecl>&& returnType, CompoundStatement&& body, Attributes&& attributes, Attributes&& returnAttributes)
-        : GlobalDecl(sourceSpan)
+        : ASTNode(sourceSpan)
         , m_name(name)
         , m_parameters(WTFMove(parameters))
         , m_attributes(WTFMove(attributes))
@@ -69,13 +69,12 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Function; }
     const StringView& name() const { return m_name; }
-    Vector<UniqueRef<Parameter>>& parameters() { return m_parameters; }
-    Attributes& attributes() { return m_attributes; }
-    Attributes& returnAttributes() { return m_returnAttributes; }
-    TypeDecl* maybeReturnType() { return m_returnType.get(); }
-    CompoundStatement& body() { return m_body; }
+    const Vector<UniqueRef<Parameter>>& parameters() { return m_parameters; }
+    const Attributes& attributes() const { return m_attributes; }
+    const Attributes& returnAttributes() const { return m_returnAttributes; }
+    const TypeDecl* maybeReturnType() const { return m_returnType.get(); }
+    const CompoundStatement& body() const { return m_body; }
 
 private:
     StringView m_name;
@@ -87,5 +86,3 @@ private:
 };
 
 } // namespace WGSL::AST
-
-SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(FunctionDecl, isFunction())

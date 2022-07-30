@@ -23,38 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+// #pragma once
 
-#include "ASTNode.h"
-#include <wtf/TypeCasts.h>
+// #include "ASTNode.h"
+// #include <wtf/TypeCasts.h>
 
-namespace WGSL::AST {
+// namespace WGSL::AST {
 
-class GlobalDecl : public ASTNode {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    enum class Kind {
-        GlobalVariable,
-        Struct,
-        Function,
-    };
+// class GlobalDecl : public ASTNode {
+//     WTF_MAKE_FAST_ALLOCATED;
+// public:
+//     enum class Kind {
+//         Struct,
+//         Function,
+//     };
 
-    GlobalDecl(SourceSpan span)
-        : ASTNode(span)
-    {
-    }
+//     GlobalDecl(SourceSpan span)
+//         : ASTNode(span)
+//     {
+//     }
 
-    virtual ~GlobalDecl() {}
+//     virtual ~GlobalDecl() {}
 
-    virtual Kind kind() const = 0;
-    bool isGlobalVariable() const { return kind() == Kind::GlobalVariable; }
-    bool isStruct() const { return kind() == Kind::Struct; }
-    bool isFunction() const { return kind() == Kind::Function; }
-};
+//     virtual Kind kind() const = 0;
+//     bool isStruct() const { return kind() == Kind::Struct; }
+//     bool isFunction() const { return kind() == Kind::Function; }
+// };
 
-} // namespace WGSL::AST
+// } // namespace WGSL::AST
 
-#define SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
-    static bool isType(const WGSL::AST::GlobalDecl& decl) { return decl.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
+// #define SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(ToValueTypeName, predicate) \
+// SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
+//     static bool isType(const WGSL::AST::GlobalDecl& decl) { return decl.predicate; } \
+// SPECIALIZE_TYPE_TRAITS_END()

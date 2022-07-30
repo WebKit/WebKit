@@ -25,55 +25,46 @@
 
 #pragma once
 
-#include "ASTNode.h"
-#include "Attribute.h"
-#include "CompilationMessage.h"
-#include "GlobalDecl.h"
-#include "TypeDecl.h"
+#include "Expression.h"
 #include <wtf/text/StringView.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
-
 
 namespace WGSL::AST {
 
-class StructMember final : public ASTNode {
+class UnaryExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StructMember(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attributes&& attributes)
-        : ASTNode(span)
-        , m_name(name)
-        , m_attributes(WTFMove(attributes))
-        , m_type(WTFMove(type))
+    enum class Op {
+        /* - */ Negation,
+
+        /* ! */ LogicalNot,
+
+        /* ~ */ BitwiseNot,
+
+        // https://gpuweb.github.io/gpuweb/wgsl/#address-of-expr
+        /* & */ AddressOf,
+
+        // https://gpuweb.github.io/gpuweb/wgsl/#indirection-expr
+        /* * */ Indirection,
+    };
+
+    UnaryExpression(SourceSpan span, Op op, UniqueRef<Expression> expression)
+        : Expression(span)
+        , m_op(op)
+        , m_expression(WTFMove(expression))
     {
     }
 
-    const StringView& name() const { return m_name; }
-    TypeDecl& type() { return m_type; }
-    Attributes& attributes() { return m_attributes; }
+    Kind kind() const override { return Kind::UnaryExpression; }
+    Op op() const { return m_op; }
+    const Expression& expression() const { return m_expression; } 
 
 private:
-    StringView m_name;
-    Attributes m_attributes;
-    UniqueRef<TypeDecl> m_type;
-};
-
-class StructDecl final : public ASTNode {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    StructDecl(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<StructMember>>&& members)
-        : ASTNode(sourceSpan)
-        , m_name(name)
-        , m_members(WTFMove(members))
-    {
-    }
-
-    const StringView& name() const { return m_name; }
-    Vector<UniqueRef<StructMember>>& members() { return m_members; }
-
-private:
-    StringView m_name;
-    Vector<UniqueRef<StructMember>> m_members;
+    Op m_op;
+    UniqueRef<Expression> m_expression;
 };
 
 } // namespace WGSL::AST
+
+SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(UnaryExpression, isUnaryExpression())
+

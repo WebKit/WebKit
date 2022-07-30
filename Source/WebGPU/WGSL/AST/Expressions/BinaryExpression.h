@@ -25,55 +25,66 @@
 
 #pragma once
 
-#include "ASTNode.h"
-#include "Attribute.h"
-#include "CompilationMessage.h"
-#include "GlobalDecl.h"
-#include "TypeDecl.h"
+#include "Expression.h"
 #include <wtf/text/StringView.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
-
 
 namespace WGSL::AST {
 
-class StructMember final : public ASTNode {
+class BinaryExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StructMember(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attributes&& attributes)
-        : ASTNode(span)
-        , m_name(name)
-        , m_attributes(WTFMove(attributes))
-        , m_type(WTFMove(type))
+    enum class Op {
+        // Math operations
+        Multiply,
+        Divide,
+        Modulo,
+        Add,
+        Subtract,
+
+        // Comparison operations
+        LessThan,
+        GreaterThan,
+        LessThanEqual,
+        GreaterThanEqual,
+        Equal,
+        NotEqual,
+
+        // Logical operations
+        LogicalAnd,
+        LogicalOr,
+
+        // Bitwise operations
+        BitwiseLeftShift,
+        BitwiseRightShift,
+        BitwiseAnd,
+        BitwiseOr,
+        BitwiseXor,
+        
+        // Subscript access (like a[0])
+        Subscript
+    };
+
+    BinaryExpression(SourceSpan span, UniqueRef<Expression> lhs, Op op, UniqueRef<Expression> rhs)
+        : Expression(span)
+        , m_lhs(WTFMove(lhs))
+        , m_rhs(WTFMove(rhs))
+        , m_op(op)
     {
     }
 
-    const StringView& name() const { return m_name; }
-    TypeDecl& type() { return m_type; }
-    Attributes& attributes() { return m_attributes; }
+    Kind kind() const override { return Kind::BinaryExpression; }
+    const Expression& lhs() const { return m_lhs; } 
+    Op op() const { return m_op; }
+    const Expression& rhs() const { return m_rhs; } 
 
 private:
-    StringView m_name;
-    Attributes m_attributes;
-    UniqueRef<TypeDecl> m_type;
-};
-
-class StructDecl final : public ASTNode {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    StructDecl(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<StructMember>>&& members)
-        : ASTNode(sourceSpan)
-        , m_name(name)
-        , m_members(WTFMove(members))
-    {
-    }
-
-    const StringView& name() const { return m_name; }
-    Vector<UniqueRef<StructMember>>& members() { return m_members; }
-
-private:
-    StringView m_name;
-    Vector<UniqueRef<StructMember>> m_members;
+    UniqueRef<Expression> m_lhs;
+    UniqueRef<Expression> m_rhs;
+    Op m_op;
 };
 
 } // namespace WGSL::AST
+
+SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(BinaryExpression, isBinaryExpression())
+

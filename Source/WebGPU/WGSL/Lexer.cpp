@@ -80,6 +80,27 @@ Token Lexer<T>::lex()
     case '@':
         shift();
         return makeToken(TokenType::Attribute);
+    case '!':
+        shift();
+        return makeToken(TokenType::Bang);
+    case '~':
+        shift();
+        return makeToken(TokenType::Tilde);
+    case '&':
+        shift();
+        return makeToken(TokenType::And);
+    case '*':
+        shift();
+        return makeToken(TokenType::Star);
+    case '/':
+        shift();
+        return makeToken(TokenType::ForwardSlash);
+    case '%':
+        shift();
+        return makeToken(TokenType::Modulo);
+    case '+':
+        shift();
+        return makeToken(TokenType::Plus);
     case '.': {
         shift();
         unsigned offset = currentOffset();
@@ -101,8 +122,9 @@ Token Lexer<T>::lex()
         if (m_current == '>') {
             shift();
             return makeToken(TokenType::Arrow);
+        } else {
+            return makeToken(TokenType::Minus);
         }
-        break;
     case '0': {
         shift();
         double literalValue = 0;

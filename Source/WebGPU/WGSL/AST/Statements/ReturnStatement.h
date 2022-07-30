@@ -25,8 +25,6 @@
 
 #pragma once
 
-#pragma once
-
 #include "Expression.h"
 #include "Statement.h"
 

@@ -25,55 +25,35 @@
 
 #pragma once
 
-#include "ASTNode.h"
-#include "Attribute.h"
-#include "CompilationMessage.h"
-#include "GlobalDecl.h"
-#include "TypeDecl.h"
-#include <wtf/text/StringView.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/UniqueRef.h>
+#include "FunctionDecl.h"
 
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenate.h>
 
-namespace WGSL::AST {
+namespace WGSL::Writer {
 
-class StructMember final : public ASTNode {
-    WTF_MAKE_FAST_ALLOCATED;
+class MetalWriter {
 public:
-    StructMember(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attributes&& attributes)
-        : ASTNode(span)
-        , m_name(name)
-        , m_attributes(WTFMove(attributes))
-        , m_type(WTFMove(type))
-    {
-    }
+    void writeAttribute(const AST::Attribute&);
+    void writeAttributes(const AST::Attributes&);
+    void writeStageAttribute(const AST::StageAttribute&);
 
-    const StringView& name() const { return m_name; }
-    TypeDecl& type() { return m_type; }
-    Attributes& attributes() { return m_attributes; }
+    void writeTypeDecl(const AST::TypeDecl*);
+    void writeNamedTypeDecl(const AST::NamedType&);
+    void writeVecTypeDecl(const AST::VecType&);
+    void writeArrayTypeDecl(const AST::ArrayType&);
+
+    void writeExpression(const AST::Expression&);
+
+    void writeStatement(const AST::Statement&);
+
+    void writeFunction(const AST::FunctionDecl&);
 
 private:
-    StringView m_name;
-    Attributes m_attributes;
-    UniqueRef<TypeDecl> m_type;
+    void newline();
+
+    StringBuilder m_msl;
+    Indentation<4> m_indent;
 };
 
-class StructDecl final : public ASTNode {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    StructDecl(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<StructMember>>&& members)
-        : ASTNode(sourceSpan)
-        , m_name(name)
-        , m_members(WTFMove(members))
-    {
-    }
-
-    const StringView& name() const { return m_name; }
-    Vector<UniqueRef<StructMember>>& members() { return m_members; }
-
-private:
-    StringView m_name;
-    Vector<UniqueRef<StructMember>> m_members;
-};
-
-} // namespace WGSL::AST
+} // namespace WGSL::Writer

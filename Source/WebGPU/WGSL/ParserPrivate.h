@@ -44,18 +44,16 @@ public:
     Expected<AST::ShaderModule, Error> parseShader();
 
     // UniqueRef whenever it can return multiple types.
-    Expected<UniqueRef<AST::GlobalDecl>, Error> parseGlobalDecl();
     Expected<AST::Attributes, Error> parseAttributes();
     Expected<UniqueRef<AST::Attribute>, Error> parseAttribute();
-    Expected<AST::StructDecl, Error> parseStructDecl(AST::Attributes&&);
+    Expected<AST::StructDecl, Error> parseStructDecl();
     Expected<AST::StructMember, Error> parseStructMember();
     Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDecl();
-    Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDeclAfterIdentifier(StringView&&, SourcePosition start);
-    Expected<AST::GlobalVariableDecl, Error> parseGlobalVariableDecl(AST::Attributes&&);
+    Expected<AST::VariableDecl, Error> parseVariableDecl(AST::Attributes);
     Expected<AST::VariableQualifier, Error> parseVariableQualifier();
     Expected<AST::StorageClass, Error> parseStorageClass();
     Expected<AST::AccessMode, Error> parseAccessMode();
-    Expected<AST::FunctionDecl, Error> parseFunctionDecl(AST::Attributes&&);
+    Expected<AST::FunctionDecl, Error> parseFunctionDecl(AST::Attributes);
     Expected<AST::Parameter, Error> parseParameter();
     Expected<UniqueRef<AST::Statement>, Error> parseStatement();
     Expected<AST::CompoundStatement, Error> parseCompoundStatement();
@@ -73,6 +71,7 @@ public:
     Expected<UniqueRef<AST::Expression>, Error> parseLHSExpression();
     Expected<UniqueRef<AST::Expression>, Error> parseCoreLHSExpression();
     Expected<Vector<UniqueRef<AST::Expression>>, Error> parseArgumentExpressionList();
+    Expected<AST::VariableStatement, Error> parseVariableStatement();
 
 private:
     Expected<Token, TokenType> consumeType(TokenType);

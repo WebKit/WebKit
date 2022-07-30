@@ -29,6 +29,7 @@
 #include "CompilationMessage.h"
 #include "Lexer.h"
 #include <wtf/Expected.h>
+#include "AST/Statements/ReturnStatement.h"
 
 namespace WGSL {
 

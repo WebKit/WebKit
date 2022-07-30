@@ -208,3 +208,4 @@ PrepareResult prepare(const AST::ShaderModule&, const HashMap<String, PipelineLa
 PrepareResult prepare(const AST::ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
 
 } // namespace WGSL
+

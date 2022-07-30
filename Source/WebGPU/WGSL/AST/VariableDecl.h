@@ -35,37 +35,42 @@
 
 namespace WGSL::AST {
 
-class GlobalVariableDecl final : public GlobalDecl {
+class VariableDecl final : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GlobalVariableDecl(SourceSpan span, StringView name, std::unique_ptr<VariableQualifier>&& qualifier, std::unique_ptr<TypeDecl>&& type, std::unique_ptr<Expression>&& initializer, Attributes&& attributes)
-        : GlobalDecl(span)
+    enum class Kind {
+        Var,
+        Let,
+        Const
+    };
+    
+    VariableDecl(SourceSpan span, Kind kind, StringView name, std::optional<VariableQualifier>&& qualifier, std::unique_ptr<TypeDecl>&& type, std::unique_ptr<Expression>&& initializer, Attributes&& attributes)
+        : ASTNode(span)
+        , m_kind(kind)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
         , m_qualifier(WTFMove(qualifier))
         , m_type(WTFMove(type))
         , m_initializer(WTFMove(initializer))
     {
-        ASSERT(m_type || m_initializer);
     }
 
-    Kind kind() const override { return Kind::GlobalVariable; }
+    Kind kind() const { return m_kind; }
     const StringView& name() const { return m_name; }
-    Attributes& attributes() { return m_attributes; }
-    VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
-    TypeDecl* maybeTypeDecl() { return m_type.get(); }
-    Expression* maybeInitializer() { return m_initializer.get(); }
+    const Attributes& attributes() const { return m_attributes; }
+    const std::optional<VariableQualifier>& maybeQualifier() const { return m_qualifier; }
+    const TypeDecl* maybeTypeDecl() const { return m_type.get(); }
+    const Expression* maybeInitializer() const { return m_initializer.get(); }
 
 private:
+    Kind m_kind;
     StringView m_name;
     Attributes m_attributes;
     // Each of the following may be null
     // But at least one of type and initializer must be non-null
-    std::unique_ptr<VariableQualifier> m_qualifier;
+    std::optional<VariableQualifier> m_qualifier;
     std::unique_ptr<TypeDecl> m_type;
     std::unique_ptr<Expression> m_initializer;
 };
 
 } // namespace WGSL::AST
-
-SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(GlobalVariableDecl, isGlobalVariable())

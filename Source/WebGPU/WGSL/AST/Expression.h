@@ -43,6 +43,9 @@ public:
         Identifier,
         StructureAccess,
         CallableExpression,
+        UnaryExpression,
+        BinaryExpression,
+        SubscriptAccess
     };
 
     Expression(SourceSpan span)
@@ -62,6 +65,9 @@ public:
     bool isIdentifier() const { return kind() == Kind::Identifier; }
     bool isStructureAccess() const { return kind() == Kind::StructureAccess; }
     bool isCallableExpression() const { return kind() == Kind::CallableExpression; }
+    bool isUnaryExpression() const { return kind() == Kind::UnaryExpression; }
+    bool isBinaryExpression() const { return kind() == Kind::BinaryExpression; }
+    bool isSubscriptAccess() const { return kind() == Kind::SubscriptAccess; }
 };
 
 } // namespace WGSL::AST
