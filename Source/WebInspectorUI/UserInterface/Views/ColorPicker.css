@@ -33,10 +33,6 @@
     --color-picker-opacity-offset-start: 18px;
 }
 
-.color-picker.hide-inputs {
-    height: 210px;
-}
-
 .color-picker .wrapper {
     white-space: nowrap;
 }

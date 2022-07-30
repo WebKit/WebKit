@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,14 +77,6 @@ WI.GradientEditor = class GradientEditor extends WI.Object
         }
         this._gradientTypePicker.addEventListener("change", this._gradientTypeChanged.bind(this));
 
-        this._gradientSlider = new WI.GradientSlider(this);
-        this._element.appendChild(this._gradientSlider.element);
-
-        this._colorPicker = new WI.ColorPicker;
-        this._colorPicker.colorSquare.dimension = 195;
-        this._colorPicker.enableColorComponentInputs = false;
-        this._colorPicker.addEventListener(WI.ColorPicker.Event.ColorChanged, this._colorPickerColorChanged, this);
-
         let angleContainerElement = this._element.appendChild(document.createElement("div"));
         angleContainerElement.classList.add("gradient-angle");
         angleContainerElement.append(WI.UIString("Angle"));
@@ -115,6 +107,13 @@ WI.GradientEditor = class GradientEditor extends WI.Object
 
             return [name, {element: optionElement, min, max, step}];
         }));
+
+        this._gradientSlider = new WI.GradientSlider(this);
+        this._element.appendChild(this._gradientSlider.element);
+
+        this._colorPicker = new WI.ColorPicker;
+        this._colorPicker.colorSquare.dimension = 195;
+        this._colorPicker.addEventListener(WI.ColorPicker.Event.ColorChanged, this._colorPickerColorChanged, this);
     }
 
     get element()
@@ -168,12 +167,10 @@ WI.GradientEditor = class GradientEditor extends WI.Object
         const selectedStop = gradientSlider.selectedStop;
         if (selectedStop && !this._editingColor) {
             this._element.appendChild(this._colorPicker.element);
-            this._element.classList.add("editing-color");
             this._colorPicker.color = selectedStop.color;
             this._editingColor = true;
         } else if (!selectedStop) {
             this._colorPicker.element.remove();
-            this._element.classList.remove("editing-color");
             this._editingColor = false;
         }
 

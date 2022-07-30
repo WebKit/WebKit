@@ -90,8 +90,6 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._color = WI.Color.fromString("white");
 
         this._dontUpdateColor = false;
-
-        this._enableColorComponentInputs = true;
     }
 
     // Static
@@ -159,12 +157,6 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._updateColorGamut();
 
         this._dontUpdateColor = false;
-    }
-
-    set enableColorComponentInputs(value)
-    {
-        this._enableColorComponentInputs = value;
-        this._element.classList.toggle("hide-inputs", !this._enableColorComponentInputs);
     }
 
     focus()
@@ -308,9 +300,6 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
     _showColorComponentInputs()
     {
-        if (!this._enableColorComponentInputs)
-            return;
-
         this._createColorInputsIfNeeded();
 
         let components = [];
