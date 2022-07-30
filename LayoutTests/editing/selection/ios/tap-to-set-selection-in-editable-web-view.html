@@ -1,0 +1,73 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true focusStartsInputSessionPolicy=allow ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+clickedTarget = false;
+
+addEventListener("load", async () => {
+    description("This test verifies that the selection changes when initially focusing an editable web view by tapping, if the WebKit client unconditionally allows programmatic focus to show the keyboard. To manually test, tap the red square above and verify that the selection is set ");
+
+    target = document.getElementById("target");
+    target.addEventListener("mouseover", () => target.style.opacity = 0.8);
+    target.addEventListener("click", () => clickedTarget = true);
+
+    if (!window.testRunner || !window.internals)
+        return;
+
+    internals.settings.setContentChangeObserverEnabled(true);
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+    await UIHelper.addChromeInputField();
+    await UIHelper.selectChromeInputField();
+    await UIHelper.setWebViewEditable(true);
+    getSelection().removeAllRanges();
+    await UIHelper.activateElementAndWaitForInputSession(target);
+
+    await shouldBecomeEqual("clickedTarget", "true");
+    shouldBe("getSelection().rangeCount", "1");
+    shouldBe("getSelection().type", "'Caret'");
+    selectionRange = getSelection().getRangeAt(0);
+    shouldBeTrue("target.contains(selectionRange.startContainer)");
+    shouldBeTrue("target.contains(selectionRange.endContainer)");
+
+    document.activeElement.blur();
+    document.getElementById("content").remove();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+<style>
+body {
+    font-size: 20px;
+}
+#target {
+    margin: 4px;
+    display: inline-block;
+    background-color: rgba(255, 0, 0, 0.5);
+}
+</style>
+</head>
+<body>
+<div id="content">
+    <div>Here's to the crazy ones.</div>
+    <div>The misfits.</div>
+    <div>The rebels.</div>
+    <div>The troublemakers.</div>
+    <div>The round pegs in the square holes.</div>
+    <div>The ones who see things differently.</div>
+    <div id="target">They're not fond of rules.</div>
+    <div>And they have no respect for the status quo.</div>
+    <div>You can quote them, disagree with them, glorify or vilify them.</div>
+    <div>About the only thing you can't do is ignore them.</div>
+    <div>Because they change things.</div>
+    <div>They push the human race forward.</div>
+    <div>And while some may see them as the crazy ones, we see genius.</div>
+    <div>Because the people who are crazy enough to think they can change the world, are the ones who do.</div>
+</div>
+<div id="console"></div>
+</body>
+</html>
