@@ -24,6 +24,7 @@
  */
 
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKInputDelegate.h>
 
 @class UIEditMenuInteraction;
 @class UITextEffectsWindow;
@@ -68,6 +69,7 @@
 @property (nonatomic, readonly, getter=isShowingPopover) BOOL showingPopover;
 @property (nonatomic, assign) BOOL usesSafariLikeRotation;
 @property (nonatomic, readonly, getter=isInteractingWithFormControl) BOOL interactingWithFormControl;
+@property (nonatomic) _WKFocusStartsInputSessionPolicy focusStartsInputSessionPolicy;
 
 #endif
 

@@ -859,6 +859,7 @@ public:
 
     void updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&&);
     void requestDocumentEditingContext(WebKit::DocumentEditingContextRequest, CompletionHandler<void(WebKit::DocumentEditingContext)>&&);
+    bool shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection);
 #endif
 
     void willChangeSelectionForAccessibility() { m_isChangingSelectionForAccessibility = true; }
@@ -2317,6 +2318,8 @@ private:
     WebCore::IntPoint m_lastInteractionLocation;
 
     bool m_isShowingInputViewForFocusedElement { false };
+    bool m_wasShowingInputViewForFocusedElementDuringLastPotentialTap { false };
+    bool m_completingSyntheticClick { false };
     bool m_hasHandledSyntheticClick { false };
     
     enum SelectionAnchor { Start, End };
