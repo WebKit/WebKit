@@ -297,6 +297,28 @@ inline constexpr TypedArrayContentType contentType(TypedArrayType type)
     return TypedArrayContentType::None;
 }
 
+inline constexpr bool isSomeUint8(TypedArrayType type)
+{
+    switch (type) {
+    case TypeUint8:
+    case TypeUint8Clamped:
+        return true;
+    case TypeInt8:
+    case TypeInt16:
+    case TypeInt32:
+    case TypeUint16:
+    case TypeUint32:
+    case TypeFloat32:
+    case TypeFloat64:
+    case TypeBigInt64:
+    case TypeBigUint64:
+    case NotTypedArray:
+    case TypeDataView:
+        return false;
+    }
+    return false;
+}
+
 } // namespace JSC
 
 namespace WTF {

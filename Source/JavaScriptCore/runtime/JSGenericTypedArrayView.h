@@ -81,6 +81,7 @@ JS_EXPORT_PRIVATE const ClassInfo* getBigUint64ArrayClassInfo();
 //     static int8_t toNativeFromInt32(int32_t);
 //     static int8_t toNativeFromUint32(uint32_t);
 //     static int8_t toNativeFromDouble(double);
+//     static int8_t toNativeFromUndefined();
 //     static JSValue toJSValue(int8_t);
 //     template<T> static T::Type convertTo(uint8_t);
 // };

@@ -273,10 +273,6 @@ bool JSGenericTypedArrayView<Adaptor>::set(
     if (typedArrayType == Adaptor::typeValue)
         return memmoveFastPath(jsCast<JSArrayBufferView*>(object));
 
-    auto isSomeUint8 = [] (TypedArrayType type) {
-        return type == TypedArrayType::TypeUint8 || type == TypedArrayType::TypeUint8Clamped;
-    };
-
     if (isSomeUint8(typedArrayType) && isSomeUint8(Adaptor::typeValue))
         return memmoveFastPath(jsCast<JSArrayBufferView*>(object));
 

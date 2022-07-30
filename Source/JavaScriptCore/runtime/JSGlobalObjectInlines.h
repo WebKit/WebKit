@@ -90,6 +90,31 @@ ALWAYS_INLINE bool JSGlobalObject::isArrayPrototypeIteratorProtocolFastAndNonObs
     return arrayIteratorProtocolWatchpointSet().isStillValid() && !isHavingABadTime() && arrayPrototypeChainIsSane();
 }
 
+ALWAYS_INLINE bool JSGlobalObject::isTypedArrayPrototypeIteratorProtocolFastAndNonObservable(TypedArrayType typedArrayType)
+{
+    ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+
+    typedArrayPrototype(typedArrayType); // Materialize WatchpointSet.
+
+    // Since TypedArray iteration uses ArrayIterator, we need to check the state of ArrayIteratorProtocolWatchpointSet.
+    // But we do not need to check isHavingABadTime() and array prototype's chain.
+    if (!arrayIteratorProtocolWatchpointSet().isStillValid())
+        return false;
+
+    // This WatchpointSet ensures that
+    //     1. "length" getter is absent on derived TypedArray prototype (e.g. Uint8Array.prototype).
+    //     2. @@iterator function is absent on derived TypedArray prototype.
+    //     3. derived TypedArray prototype's [[Prototype]] is TypedArray.prototype.
+    if (typedArrayIteratorProtocolWatchpointSet(typedArrayType).state() != IsWatched)
+        return false;
+
+    // This WatchpointSet ensures that TypedArray.prototype has default "length" getter and @@iterator function.
+    if (typedArrayPrototypeIteratorProtocolWatchpointSet().state() != IsWatched)
+        return false;
+
+    return true;
+}
+
 // We're non-observable if the iteration protocol hasn't changed.
 //
 // Note: it only makes sense to call this from the main thread. If you're

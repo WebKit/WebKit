@@ -207,6 +207,8 @@ public:
     static RefPtr<ArrayBufferView> toWrapped(VM&, JSValue);
     static RefPtr<ArrayBufferView> toWrappedAllowShared(VM&, JSValue);
 
+    bool isIteratorProtocolFastAndNonObservable();
+
 private:
     enum Requester { Mutator, ConcurrentThread };
     template<Requester, typename ResultType> ResultType byteOffsetImpl();

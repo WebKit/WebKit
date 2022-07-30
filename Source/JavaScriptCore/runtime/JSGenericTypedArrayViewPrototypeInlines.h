@@ -37,14 +37,14 @@ JSGenericTypedArrayViewPrototype<ViewClass>::JSGenericTypedArrayViewPrototype(VM
 
 template<typename ViewClass>
 void JSGenericTypedArrayViewPrototype<ViewClass>::finishCreation(
-    VM& vm, JSGlobalObject*)
+    VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     
     ASSERT(inherits(info()));
 
-    putDirect(vm, vm.propertyNames->BYTES_PER_ELEMENT, jsNumber(ViewClass::elementSize), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete);
-
+    putDirectWithoutTransition(vm, vm.propertyNames->BYTES_PER_ELEMENT, jsNumber(ViewClass::elementSize), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete);
+    globalObject->installTypedArrayIteratorProtocolWatchpoint(this, ViewClass::TypedArrayStorageType);
 }
 
 template<typename ViewClass>

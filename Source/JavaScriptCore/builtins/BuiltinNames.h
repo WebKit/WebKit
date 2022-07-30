@@ -130,6 +130,7 @@ namespace JSC {
     macro(isSharedTypedArrayView) \
     macro(isDetached) \
     macro(typedArrayDefaultComparator) \
+    macro(typedArrayFromFast) \
     macro(isBoundFunction) \
     macro(hasInstanceBoundFunction) \
     macro(instanceOf) \

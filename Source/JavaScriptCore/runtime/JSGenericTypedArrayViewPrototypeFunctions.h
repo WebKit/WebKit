@@ -670,6 +670,70 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncSort(VM& vm, JSGlob
 }
 
 template<typename ViewClass>
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncFromFast(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue arrayLike = callFrame->uncheckedArgument(1);
+    JSArrayBufferView* items = jsDynamicCast<JSArrayBufferView*>(arrayLike);
+    if (!items) {
+        // Converting Double or Int32 to BigInt throws an error.
+        if constexpr (ViewClass::TypedArrayStorageType == TypeBigInt64 || ViewClass::TypedArrayStorageType == TypeBigUint64)
+            return JSValue::encode(jsUndefined());
+
+        // TypedArray.from(Array) case.
+        JSArray* array = jsDynamicCast<JSArray*>(arrayLike);
+        if (!array)
+            return JSValue::encode(jsUndefined());
+
+        if (!array->isIteratorProtocolFastAndNonObservable())
+            return JSValue::encode(jsUndefined());
+
+        IndexingType indexingType = array->indexingType() & IndexingShapeMask;
+        if (indexingType != Int32Shape && indexingType != DoubleShape)
+            return JSValue::encode(jsUndefined());
+
+        size_t length = array->length();
+
+        Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType);
+        ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        if (indexingType == Int32Shape) {
+            for (unsigned i = 0; i < length; i++) {
+                JSValue value = array->butterfly()->contiguous().at(array, i).get();
+                if (LIKELY(!!value))
+                    result->setIndexQuicklyToNativeValue(i, ViewClass::Adaptor::toNativeFromInt32(value.asInt32()));
+                else
+                    result->setIndexQuicklyToNativeValue(i, ViewClass::Adaptor::toNativeFromUndefined());
+            }
+        } else {
+            ASSERT(indexingType == DoubleShape);
+            for (unsigned i = 0; i < length; i++) {
+                double d = array->butterfly()->contiguousDouble().at(array, i);
+                result->setIndexQuicklyToNativeValue(i, ViewClass::Adaptor::toNativeFromDouble(d));
+            }
+        }
+        return JSValue::encode(result);
+    }
+
+    if (!items->isIteratorProtocolFastAndNonObservable())
+        return JSValue::encode(jsUndefined());
+
+    if (UNLIKELY(items->isDetached()))
+        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+    size_t length = items->length();
+
+    Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType);
+    ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    scope.release();
+    result->set(globalObject, 0, items, 0, length, CopyType::Unobservable);
+    return JSValue::encode(result);
+}
+
+template<typename ViewClass>
 ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);

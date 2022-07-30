@@ -31,6 +31,7 @@
 #include "JSArrayIterator.h"
 #include "JSCInlines.h"
 #include "JSGenericTypedArrayViewPrototypeFunctions.h"
+#include "JSTypedArrayConstructors.h"
 #include "Operations.h"
 #include "VMTrapsInlines.h"
 
@@ -57,8 +58,8 @@ static JSC_DECLARE_HOST_FUNCTION(typedArrayViewProtoGetterFuncToStringTag);
 static JSC_DECLARE_HOST_FUNCTION(typedArrayViewProtoFuncToReversed);
 static JSC_DECLARE_HOST_FUNCTION(typedArrayViewProtoFuncWith);
 
-#define CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(functionName) do {                           \
-    switch (thisValue.getObject()->type()) {                                                    \
+#define CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION_ON_TYPE(type, functionName) do {             \
+    switch ((type)) {                                                                             \
     case Uint8ClampedArrayType:                                                                 \
         return functionName<JSUint8ClampedArray>(vm, globalObject, callFrame);                  \
     case Int32ArrayType:                                                                        \
@@ -88,6 +89,11 @@ static JSC_DECLARE_HOST_FUNCTION(typedArrayViewProtoFuncWith);
     RELEASE_ASSERT_NOT_REACHED();                                                               \
 } while (false)
 
+
+#define CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(functionName) do { \
+    CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION_ON_TYPE(thisValue.getObject()->type(), functionName); \
+} while (false)
+
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsTypedArrayView, (JSGlobalObject*, CallFrame* callFrame))
 {
     JSValue value = callFrame->uncheckedArgument(0);
@@ -102,6 +108,37 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsSharedTypedArrayView, (JSGlo
     if (!isTypedView(value.asCell()->type()))
         return JSValue::encode(jsBoolean(false));
     return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(value)->isShared()));
+}
+
+static inline std::optional<JSType> isTypedArrayViewConstructor(JSValue value)
+{
+    if (UNLIKELY(!value.isCell()))
+        return std::nullopt;
+    const auto* classInfo = value.asCell()->classInfo();
+
+#define CASE_TYPED_ARRAY_TYPE(name) \
+    if (JS##name##ArrayConstructor::info() == classInfo) \
+        return name##ArrayType;
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(CASE_TYPED_ARRAY_TYPE)
+#undef CASE_TYPED_ARRAY_TYPE
+
+    return std::nullopt;
+}
+
+JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncTypedArrayFromFast, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue constructor = callFrame->uncheckedArgument(0);
+    auto type = isTypedArrayViewConstructor(constructor);
+    if (!type)
+        return JSValue::encode(jsUndefined());
+
+    if (jsCast<JSObject*>(constructor)->globalObject() != globalObject)
+        return JSValue::encode(jsUndefined());
+
+    CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION_ON_TYPE(type.value(), genericTypedArrayViewPrivateFuncFromFast);
 }
 
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsDetached, (JSGlobalObject*, CallFrame* callFrame))
@@ -495,7 +532,11 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->join, typedArrayViewProtoFuncJoin, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().keysPublicName(), typedArrayViewProtoFuncKeys, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, TypedArrayKeysIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf"_s, typedArrayViewProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION(vm.propertyNames->length, typedArrayViewProtoGetterFuncLength, static_cast<unsigned>(PropertyAttribute::DontEnum) | PropertyAttribute::ReadOnly, TypedArrayLengthIntrinsic);
+
+    JSFunction* lengthFunction = JSFunction::create(vm, globalObject, 0, "get length"_s, typedArrayViewProtoGetterFuncLength, TypedArrayLengthIntrinsic);
+    GetterSetter* lengthGetterSetter = GetterSetter::create(vm, globalObject, lengthFunction, nullptr);
+    putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->length, lengthGetterSetter, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly | PropertyAttribute::Accessor);
+
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("map"_s, typedArrayPrototypeMapCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("reduce"_s, typedArrayPrototypeReduceCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("reduceRight"_s, typedArrayPrototypeReduceRightCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -523,6 +564,7 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().valuesPublicName(), valuesFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, valuesFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
+    globalObject->installTypedArrayPrototypeIteratorProtocolWatchpoint(this, lengthGetterSetter);
 }
 
 JSTypedArrayViewPrototype* JSTypedArrayViewPrototype::create(

@@ -348,6 +348,35 @@ JSArrayBufferView* validateTypedArray(JSGlobalObject* globalObject, JSValue type
     return typedArray;
 }
 
+bool JSArrayBufferView::isIteratorProtocolFastAndNonObservable()
+{
+    // Excluding DataView.
+    if (!isTypedArrayType(type()))
+        return false;
+
+    JSGlobalObject* globalObject = this->globalObject();
+    TypedArrayType typedArrayType = JSC::typedArrayType(type());
+    if (!globalObject->isTypedArrayPrototypeIteratorProtocolFastAndNonObservable(typedArrayType))
+        return false;
+
+    VM& vm = globalObject->vm();
+    Structure* structure = this->structure();
+    // This is the fast case. Many TypedArrays will be an original typed array structure.
+    if (globalObject->isOriginalTypedArrayStructure(structure))
+        return true;
+
+    if (getPrototypeDirect() != globalObject->typedArrayPrototype(typedArrayType))
+        return false;
+
+    if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)
+        return false;
+
+    if (getDirectOffset(vm, vm.propertyNames->length) != invalidOffset)
+        return false;
+
+    return true;
+}
+
 } // namespace JSC
 
 namespace WTF {

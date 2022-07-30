@@ -73,6 +73,11 @@ struct IntegralTypedArrayAdaptor {
             result = toInt32(value);
         return static_cast<Type>(result);
     }
+
+    static constexpr Type toNativeFromUndefined()
+    {
+        return 0;
+    }
     
     template<typename OtherAdaptor>
     static typename OtherAdaptor::Type convertTo(Type value)
@@ -146,6 +151,11 @@ struct FloatTypedArrayAdaptor {
         return static_cast<Type>(value);
     }
 
+    static Type toNativeFromUndefined()
+    {
+        return PNaN;
+    }
+
     template<typename OtherAdaptor>
     static typename OtherAdaptor::Type convertTo(Type value)
     {
@@ -209,6 +219,12 @@ struct BigIntTypedArrayAdaptor {
     static Type toNativeFromDouble(double value)
     {
         return static_cast<Type>(value);
+    }
+
+    static Type toNativeFromUndefined()
+    {
+        // This function is a stub since undefined->BigInt conversion throws an error.
+        return 0;
     }
 
     template<typename OtherAdaptor>
@@ -277,6 +293,11 @@ struct Uint8ClampedAdaptor {
         if (value > 255)
             return 255;
         return static_cast<uint8_t>(lrint(value));
+    }
+
+    static constexpr Type toNativeFromUndefined()
+    {
+        return 0;
     }
 
     template<typename OtherAdaptor>
