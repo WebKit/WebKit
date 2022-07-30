@@ -30,7 +30,6 @@
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
-#import <WebKit/_WKInputDelegate.h>
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -119,6 +118,7 @@ IGNORE_WARNINGS_END
         [center addObserver:self selector:@selector(_didDismissPopover) name:@"UIPopoverControllerDidDismissPopoverNotification" object:nil];
         self.UIDelegate = self;
         self._inputDelegate = self;
+        self.focusStartsInputSessionPolicy = _WKFocusStartsInputSessionPolicyAuto;
 #endif
     }
     return self;
@@ -508,6 +508,11 @@ static bool isQuickboardViewController(UIViewController *viewController)
 {
     if (self.willStartInputSessionCallback)
         self.willStartInputSessionCallback();
+}
+
+- (_WKFocusStartsInputSessionPolicy)_webView:(WKWebView *)webView decidePolicyForFocusedElement:(id<_WKFocusedElementInfo>)info
+{
+    return self.focusStartsInputSessionPolicy;
 }
 
 #pragma mark - UIGestureRecognizerDelegate

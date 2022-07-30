@@ -188,6 +188,7 @@ const TestFeatures& TestOptions::defaults()
             { "contentMode", { } },
             { "contentSecurityPolicyExtensionMode", { } },
             { "dragInteractionPolicy", { } },
+            { "focusStartsInputSessionPolicy", { } },
             { "jscOptions", { } },
             { "standaloneWebApplicationURL", { } },
         };
@@ -241,6 +242,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "contentMode", TestHeaderKeyType::StringTestRunner },
         { "contentSecurityPolicyExtensionMode", TestHeaderKeyType::StringTestRunner },
         { "dragInteractionPolicy", TestHeaderKeyType::StringTestRunner },
+        { "focusStartsInputSessionPolicy", TestHeaderKeyType::StringTestRunner },
         { "jscOptions", TestHeaderKeyType::StringTestRunner },
         { "standaloneWebApplicationURL", TestHeaderKeyType::StringURLTestRunner },
 

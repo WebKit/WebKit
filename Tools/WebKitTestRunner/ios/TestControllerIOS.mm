@@ -159,6 +159,16 @@ static _WKDragInteractionPolicy dragInteractionPolicy(const TestOptions& options
     return _WKDragInteractionPolicyDefault;
 }
 
+static _WKFocusStartsInputSessionPolicy focusStartsInputSessionPolicy(const TestOptions& options)
+{
+    auto policy = options.focusStartsInputSessionPolicy();
+    if (policy == "allow")
+        return _WKFocusStartsInputSessionPolicyAllow;
+    if (policy == "disallow")
+        return _WKFocusStartsInputSessionPolicyDisallow;
+    return _WKFocusStartsInputSessionPolicyAuto;
+}
+
 static void restorePortraitOrientationIfNeeded(PlatformWebView* platformWebView, Seconds timeoutDuration)
 {
 #if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
@@ -265,6 +275,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         [webView _clearInterfaceOrientationOverride];
         [webView setAllowedMenuActions:nil];
         webView._dragInteractionPolicy = dragInteractionPolicy(options);
+        webView.focusStartsInputSessionPolicy = focusStartsInputSessionPolicy(options);
 
         UIScrollView *scrollView = webView.scrollView;
         [scrollView _removeAllAnimations:YES];
