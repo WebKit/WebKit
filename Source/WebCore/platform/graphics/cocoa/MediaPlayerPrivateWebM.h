@@ -84,6 +84,7 @@ private:
     
     // WebMResourceClientParent
     friend class WebMResourceClient;
+    void responseReceived(PlatformMediaResource&, const ResourceResponse&) final;
     void dataReceived(const SharedBuffer&) final;
     void loadFailed(const ResourceError&) final;
     void loadFinished(const FragmentedSharedBuffer&) final;
@@ -170,6 +171,10 @@ private:
     bool requiresTextTrackRepresentation() const final;
     void setTextTrackRepresentation(TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
+        
+    bool hasSingleSecurityOrigin() const final;
+    bool didPassCORSAccessCheck() const final { return m_didPassCORSAccessCheck; }
+    std::optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
         
     String engineDescription() const final;
     MediaPlayer::MovieLoadType movieLoadType() const final { return MediaPlayer::MovieLoadType::Download; }
@@ -264,6 +269,12 @@ private:
 
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
+        
+    RefPtr<SecurityOrigin> m_requestedOrigin;
+    RefPtr<SecurityOrigin> m_resolvedOrigin;
+    HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
+    bool m_didPassCORSAccessCheck { false };
+        
 #if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     bool m_hasBeenAskedToPaintGL { false };
 #endif

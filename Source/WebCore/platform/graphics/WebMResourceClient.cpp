@@ -62,6 +62,15 @@ void WebMResourceClient::stop()
     resource->setClient(nullptr);
 }
 
+void WebMResourceClient::responseReceived(PlatformMediaResource& resource, const ResourceResponse& response, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
+{
+    if (!m_parent)
+        return;
+    
+    m_parent->responseReceived(resource, response);
+    completionHandler(ShouldContinuePolicyCheck::Yes);
+}
+
 void WebMResourceClient::dataReceived(PlatformMediaResource&, const SharedBuffer& buffer)
 {
     if (!m_parent)
