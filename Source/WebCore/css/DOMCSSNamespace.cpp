@@ -58,9 +58,16 @@ static String valueWithoutImportant(const String& value)
 
 bool DOMCSSNamespace::supports(Document& document, const String& property, const String& value)
 {
-    CSSPropertyID propertyID = cssPropertyID(property.stripWhiteSpace());
-
     CSSParserContext parserContext(document);
+
+    auto propertyNameWithoutWhitespace = property.stripWhiteSpace();
+    CSSPropertyID propertyID = cssPropertyID(propertyNameWithoutWhitespace);
+    if (propertyID == CSSPropertyInvalid && isCustomPropertyName(propertyNameWithoutWhitespace)) {
+        auto dummyStyle = MutableStyleProperties::create();
+        constexpr bool importance = false;
+        return CSSParser::parseCustomPropertyValue(dummyStyle, AtomString { propertyNameWithoutWhitespace }, value, importance, parserContext) != CSSParser::ParseResult::Error;
+    }
+
     if (!isCSSPropertyExposed(propertyID, &document.settings()))
         return false;
 

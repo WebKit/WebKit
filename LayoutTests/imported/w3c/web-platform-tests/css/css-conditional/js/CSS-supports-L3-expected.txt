@@ -15,5 +15,5 @@ PASS two argument form fails for unknown property (but known descriptor, univers
 PASS one argument form fails for invalid value
 PASS two argument form fails for invalid value
 PASS one argument form succeeds for custom property
-FAIL two argument form succeeds for custom property assert_equals: expected true but got false
+PASS two argument form succeeds for custom property
 
