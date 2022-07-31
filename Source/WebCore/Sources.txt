@@ -1612,6 +1612,7 @@ layout/layouttree/LayoutBoxGeometry.cpp
 layout/layouttree/LayoutInitialContainingBlock.cpp
 layout/layouttree/LayoutInlineTextBox.cpp
 layout/layouttree/LayoutLineBreakBox.cpp
+layout/layouttree/LayoutListMarkerBox.cpp
 layout/layouttree/LayoutReplacedBox.cpp
 layout/layouttree/LayoutTreeBuilder.cpp
 layout/formattingContexts/table/TableFormattingContext.cpp

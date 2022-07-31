@@ -84,7 +84,7 @@ public:
     bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
     bool isLineSpanningInlineBox() const { return m_type == Type::LineSpanningInlineBox; }
     bool isAtomicInlineLevelBox() const { return m_type == Type::AtomicInlineLevelBox; }
-    bool isListMarker() const { return isAtomicInlineLevelBox() && layoutBox().isListMarker(); }
+    bool isListMarker() const { return isAtomicInlineLevelBox() && layoutBox().isListMarkerBox(); }
     bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
 
     enum class Type : uint8_t {

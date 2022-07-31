@@ -578,7 +578,7 @@ inline static Line::Run::Type toLineRunType(const InlineItem& inlineItem)
     case InlineItem::Type::WordBreakOpportunity:
         return Line::Run::Type::WordBreakOpportunity;
     case InlineItem::Type::Box:
-        return inlineItem.layoutBox().isListMarker() ? Line::Run::Type::ListMarker : Line::Run::Type::GenericInlineLevelBox;
+        return inlineItem.layoutBox().isListMarkerBox() ? Line::Run::Type::ListMarker : Line::Run::Type::GenericInlineLevelBox;
     case InlineItem::Type::InlineBoxStart:
         return Line::Run::Type::InlineBoxStart;
     case InlineItem::Type::InlineBoxEnd:

@@ -396,7 +396,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
         }
         if (lineRun.isListMarker()) {
             auto logicalRect = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox));
-            if (layoutBox.isOutsideListMarker()) {
+            if (downcast<ListMarkerBox>(layoutBox).isOutside()) {
                 auto leftOffsetForListMarker = -formattingContext().formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, { }, lineBox.logicalRect().width());
                 logicalRect.moveHorizontally(leftOffsetForListMarker);
             }
@@ -661,7 +661,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 auto visualRect = visualRectRelativeToRoot(logicalRect);
                 auto boxMarginLeft = [&] {
                     auto marginLeftValue = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
-                    auto mayNeedTextIndentOffset = lineRun.isListMarker() && layoutBox.isOutsideListMarker();
+                    auto mayNeedTextIndentOffset = lineRun.isListMarker() && downcast<ListMarkerBox>(layoutBox).isOutside();
                     if (!mayNeedTextIndentOffset)
                         return marginLeftValue;
                     auto startOffsetForListMarker = LayoutUnit { -formattingContext().formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, { }, lineBox.logicalRect().width()) };

@@ -29,6 +29,7 @@
 #include "InlineLineBoxVerticalAligner.h"
 #include "InlineLineBuilder.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutListMarkerBox.h"
 #include "LayoutReplacedBox.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -431,17 +432,18 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
         if (!initiatesLayoutBoundsChange)
             return;
 
+        auto behavesAsText = inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !downcast<ListMarkerBox>(inlineLevelBox.layoutBox()).isImage());
         auto layoutBoundsPrimaryMetrics = LayoutBoundsMetrics { };
-        if (inlineLevelBox.isInlineBox())
+        if (behavesAsText) {
+            auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());
+            layoutBoundsPrimaryMetrics = layoutBoundsPrimaryMetricsForInlineBox(parentInlineBox, IdeographicBaseline);
+        } else if (inlineLevelBox.isInlineBox())
             layoutBoundsPrimaryMetrics = layoutBoundsPrimaryMetricsForInlineBox(inlineLevelBox, IdeographicBaseline);
         else if (inlineLevelBox.isAtomicInlineLevelBox()) {
             auto inlineLevelBoxHeight = inlineLevelBox.layoutBounds().height();
             InlineLayoutUnit ideographicBaseline = roundToInt(inlineLevelBoxHeight / 2);
             // Move the baseline position but keep the same logical height.
             layoutBoundsPrimaryMetrics = { ideographicBaseline, inlineLevelBoxHeight - ideographicBaseline };
-        } else if (inlineLevelBox.isLineBreakBox()) {
-            auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());
-            layoutBoundsPrimaryMetrics = layoutBoundsPrimaryMetricsForInlineBox(parentInlineBox, IdeographicBaseline);
         }
         setBaselineAndLayoutBounds(inlineLevelBox, layoutBoundsPrimaryMetrics);
 

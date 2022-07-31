@@ -32,6 +32,7 @@
 #include "LayoutContainerBox.h"
 #include "LayoutInlineTextBox.h"
 #include "LayoutLineBreakBox.h"
+#include "LayoutListMarkerBox.h"
 #include "LayoutReplacedBox.h"
 #include "RenderBlock.h"
 #include "RenderBlockFlow.h"
@@ -139,11 +140,16 @@ void BoxTree::buildTreeForInlineContent()
             return makeUnique<Layout::LineBreakBox>(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(style), WTFMove(firstLineStyle));
         }
 
+        if (is<RenderListMarker>(childRenderer)) {
+            auto& listMarkerRenderer = downcast<RenderListMarker>(childRenderer);
+            return makeUnique<Layout::ListMarkerBox>(listMarkerRenderer.isImage() ? Layout::ListMarkerBox::IsImage::Yes : Layout::ListMarkerBox::IsImage::No
+                , listMarkerRenderer.isInside() ? Layout::ListMarkerBox::IsOutside::No : Layout::ListMarkerBox::IsOutside::Yes
+                , WTFMove(style)
+                , WTFMove(firstLineStyle));
+        }
+
         if (is<RenderReplaced>(childRenderer))
             return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { is<RenderImage>(childRenderer) ? Layout::Box::ElementType::Image : Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
-
-        if (is<RenderListMarker>(childRenderer))
-            return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { downcast<RenderListMarker>(childRenderer).isInside() ? Layout::Box::ElementType::InsideListMarker : Layout::Box::ElementType::OutsideListMarker }, WTFMove(style), WTFMove(firstLineStyle));
 
         if (is<RenderBlock>(childRenderer)) {
             auto attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationInlineBlock };
