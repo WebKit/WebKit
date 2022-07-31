@@ -39,6 +39,7 @@ struct DisplayBoxTree;
 struct IsFirstLastIndex;
 class InlineFormattingState;
 class LineBox;
+class ListMarkerBox;
 
 class InlineDisplayContentBuilder {
 public:
@@ -73,6 +74,7 @@ private:
     void setLeftForWritingMode(InlineDisplay::Box&, InlineLayoutUnit logicalRight, WritingMode) const;
     void setRightForWritingMode(InlineDisplay::Box&, InlineLayoutUnit logicalRight, WritingMode) const;
     InlineLayoutPoint movePointHorizontallyForWritingMode(const InlineLayoutPoint& topLeft, InlineLayoutUnit horizontalOffset, WritingMode) const;
+    InlineLayoutUnit outsideListMarkerVisualPosition(const ListMarkerBox&, const InlineDisplay::Line&) const;
 
     const ContainerBox& root() const { return formattingContext().root(); }
     const InlineFormattingContext& formattingContext() const { return m_formattingContext; }

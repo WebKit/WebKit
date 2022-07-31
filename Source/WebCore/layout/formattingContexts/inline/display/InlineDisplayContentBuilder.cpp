@@ -395,12 +395,11 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
             continue;
         }
         if (lineRun.isListMarker()) {
-            auto logicalRect = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox));
-            if (downcast<ListMarkerBox>(layoutBox).isOutside()) {
-                auto leftOffsetForListMarker = -formattingContext().formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, { }, lineBox.logicalRect().width());
-                logicalRect.moveHorizontally(leftOffsetForListMarker);
-            }
-            appendAtomicInlineLevelDisplayBox(lineRun, visualRectRelativeToRoot(logicalRect), boxes);
+            auto& listMarker = downcast<ListMarkerBox>(layoutBox);
+            auto visualRect = visualRectRelativeToRoot(lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox)));
+            if (listMarker.isOutside())
+                WebCore::isHorizontalWritingMode(writingMode) ? visualRect.setLeft(outsideListMarkerVisualPosition(listMarker, displayLine)) : visualRect.setTop(outsideListMarkerVisualPosition(listMarker, displayLine));
+            appendAtomicInlineLevelDisplayBox(lineRun, visualRect, boxes);
             continue;
         }
         if (lineRun.isInlineBoxStart()) {
@@ -659,16 +658,14 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 auto& boxGeometry = formattingState().boxGeometry(layoutBox);
                 auto logicalRect = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
                 auto visualRect = visualRectRelativeToRoot(logicalRect);
-                auto boxMarginLeft = [&] {
-                    auto marginLeftValue = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
-                    auto mayNeedTextIndentOffset = lineRun.isListMarker() && downcast<ListMarkerBox>(layoutBox).isOutside();
-                    if (!mayNeedTextIndentOffset)
-                        return marginLeftValue;
-                    auto startOffsetForListMarker = LayoutUnit { -formattingContext().formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, { }, lineBox.logicalRect().width()) };
-                    return marginLeftValue + (isLeftToRightDirection ? startOffsetForListMarker : -startOffsetForListMarker);
-                }();
+                auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
 
-                isHorizontalWritingMode ? visualRect.moveHorizontally(boxMarginLeft) : visualRect.moveVertically(boxMarginLeft);
+                if (is<ListMarkerBox>(layoutBox) && downcast<ListMarkerBox>(layoutBox).isOutside()) {
+                    auto& listMarker = downcast<ListMarkerBox>(layoutBox);
+                    isHorizontalWritingMode ? visualRect.setLeft(outsideListMarkerVisualPosition(listMarker, displayLine)) : visualRect.setTop(outsideListMarkerVisualPosition(listMarker, displayLine));
+                } else
+                    isHorizontalWritingMode ? visualRect.moveHorizontally(boxMarginLeft) : visualRect.moveVertically(boxMarginLeft);
+
                 appendAtomicInlineLevelDisplayBox(lineRun, visualRect, boxes);
                 contentRightInInlineDirectionVisualOrder += boxMarginLeft + logicalRect.width() + marginRightInInlineDirection(boxGeometry, isLeftToRightDirection);
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
@@ -1042,6 +1039,20 @@ InlineLayoutPoint InlineDisplayContentBuilder::movePointHorizontallyForWritingMo
         break;
     }
     return visualPoint;
+}
+
+InlineLayoutUnit InlineDisplayContentBuilder::outsideListMarkerVisualPosition(const ListMarkerBox& listMarker, const InlineDisplay::Line& displayLine) const
+{
+    ASSERT(listMarker.isOutside());
+    auto& boxGeometry = formattingState().boxGeometry(listMarker);
+    auto isLeftToRightDirection = listMarker.parent().style().isLeftToRightDirection();
+    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(root().style().writingMode());
+    auto lineBoxOffset = formattingContext().formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, { }, displayLine.lineBoxRect().width());
+    auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
+
+    if (isHorizontalWritingMode)
+        return isLeftToRightDirection ? displayLine.left() - lineBoxOffset + boxMarginLeft : displayLine.right() + lineBoxOffset + boxMarginLeft;
+    return isLeftToRightDirection ? displayLine.top() - lineBoxOffset + boxMarginLeft : displayLine.bottom() + lineBoxOffset + boxMarginLeft;
 }
 
 }

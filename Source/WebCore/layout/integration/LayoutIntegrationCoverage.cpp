@@ -412,7 +412,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     }
 
     if (is<RenderListItem>(child)) {
-        if (!child.style().isHorizontalWritingMode() || !child.style().isLeftToRightDirection() || child.isPositioned() || child.isFloating())
+        if (child.isPositioned() || child.isFloating())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
         return reasons;
     }
@@ -497,7 +497,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     }
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-    if (is<RenderListItem>(flow) && (!flow.style().isHorizontalWritingMode() || !flow.style().isLeftToRightDirection() || flow.isPositioned() || flow.isFloating()))
+    if (is<RenderListItem>(flow) && (flow.isPositioned() || flow.isFloating()))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
 
     // Printing does pagination without a flow thread.
