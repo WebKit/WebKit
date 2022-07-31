@@ -138,6 +138,7 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncTypedArrayFromFast, (JSGlobalO
     if (jsCast<JSObject*>(constructor)->globalObject() != globalObject)
         return JSValue::encode(jsUndefined());
 
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION_ON_TYPE(type.value(), genericTypedArrayViewPrivateFuncFromFast);
 }
 
