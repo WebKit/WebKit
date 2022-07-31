@@ -458,6 +458,11 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
         if (inlineLevelBox.isAtomicInlineLevelBox()) {
             auto& layoutBox = inlineLevelBox.layoutBox();
+            if (layoutBox.isInlineTableBox()) {
+                // This is the integration codepath where inline table boxes are represented as atomic inline boxes.
+                // Integration codepath sets ideographic baseline by default for non-horizontal content.
+                continue;
+            }
             auto isInlineBlockWithNonSyntheticBaseline = layoutBox.isIntegrationInlineBlock() && downcast<ReplacedBox>(layoutBox).baseline().has_value();
             // FIXME: While the layoutBox.isIntegrationInlineBlock check may seem redundant here, it's really just because currently
             // the integration codepath turns inline-blocks into replaced type boxes.

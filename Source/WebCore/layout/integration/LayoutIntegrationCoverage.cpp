@@ -417,7 +417,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
 
     if (is<RenderTable>(child)) {
         auto& table = downcast<RenderTable>(child);
-        if (!table.isInline() || table.isPositioned() || !table.style().isHorizontalWritingMode())
+        if (!table.isInline() || table.isPositioned())
             SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
         return reasons;
     }
