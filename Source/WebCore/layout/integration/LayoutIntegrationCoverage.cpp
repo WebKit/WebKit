@@ -333,6 +333,14 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasPseudoFirstLetter, reasons, includeReasons);
     if (style.hasTextCombine())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextCombine, reasons, includeReasons);
+    if (!style.hangingPunctuation().isEmpty())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons)
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
+    if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
+        SET_REASON_AND_RETURN_IF_NEEDED(BoxDecorationBreakClone, reasons, includeReasons);
+#endif
+    if (renderer.isAnonymousBlock() && renderer.parent()->style().textOverflow() == TextOverflow::Ellipsis)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
 
     // These are non-standard properties.
     if (style.lineBreak() == LineBreak::AfterWhiteSpace)
@@ -343,6 +351,11 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
     if (style.lineSnap() != LineSnap::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineSnap, reasons, includeReasons);
+    if (!renderer.parent()->style().lineClamp().isNone()) {
+        // Line clamp is on the deprecated flex box and not the root.
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineClamp, reasons, includeReasons);
+    }
+
     return reasons;
 }
 
@@ -356,14 +369,6 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
     if (renderInline.requiresLayer())
         SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxNeedsLayer, reasons, includeReasons)
-
-    auto& style = renderInline.style();
-    if (!style.hangingPunctuation().isEmpty())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons)
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
-    if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
-        SET_REASON_AND_RETURN_IF_NEEDED(BoxDecorationBreakClone, reasons, includeReasons);
-#endif
     if (renderInline.isInFlowPositioned())
         SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons);
 
@@ -430,8 +435,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
 
         auto& style = block.style();
-        if (!style.hangingPunctuation().isEmpty())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons)
         if (style.display() != DisplayType::InlineBlock)
             SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsNotInlineBlock, reasons, includeReasons)
 
@@ -496,16 +499,10 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
     if (is<RenderListItem>(flow) && (!flow.style().isHorizontalWritingMode() || !flow.style().isLeftToRightDirection() || flow.isPositioned() || flow.isFloating()))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
-    if (!flow.style().hangingPunctuation().isEmpty())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons);
 
     // Printing does pagination without a flow thread.
     if (flow.document().paginated())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsPaginated, reasons, includeReasons);
-    if (flow.isAnonymousBlock() && flow.parent()->style().textOverflow() == TextOverflow::Ellipsis)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-    if (!flow.parent()->style().lineClamp().isNone())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineClamp, reasons, includeReasons);
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
