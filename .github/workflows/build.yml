@@ -22,37 +22,21 @@ jobs:
             cpu: haswell
             label: bun-webkit-macos-amd64-lto
             brew_prefix: /usr/local/opt
-            march: "-march=haswell"
-          - runner: macos-11
-            lto_flag: -flto='full'
-            cpu: westmere
-            label: bun-webkit-macos-amd64-lto-baseline
-            brew_prefix: /usr/local/opt
-            march: "-march=westmere"
-          - runner: macos-11
-            lto_flag: ""
-            cpu: westmere
-            label: bun-webkit-macos-amd64-baseline
-            brew_prefix: /usr/local/opt
-            march: "-march=westmere"
           - runner: macos-11
             lto_flag: ""
             cpu: haswell
             label: bun-webkit-macos-amd64
             brew_prefix: /usr/local/opt
-            march: "-march=haswell"
           - runner: macOS-arm64
             lto_flag: -flto='full'
             cpu: native
             label: bun-webkit-macos-arm64-lto
             brew_prefix: /opt/homebrew/opt
-            march: ""
           - runner: macOS-arm64
             lto_flag: ""
             cpu: native
             label: bun-webkit-macos-arm64
             brew_prefix: /opt/homebrew/opt
-            march: ""
     steps:
       - uses: actions/checkout@v3
       - name: PATH
@@ -81,8 +65,8 @@ jobs:
             -DENABLE_FTL_JIT=ON \
             -DCMAKE_C_COMPILER="$CMAKE_C_COMPILER" \
             -DCMAKE_CXX_COMPILER="$CMAKE_CXX_COMPILER" \
-            -DCMAKE_C_FLAGS="-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden ${{matrix.march}} -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
-            -DCMAKE_CXX_FLAGS="-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden ${{matrix.march}} -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
+            -DCMAKE_C_FLAGS="-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
+            -DCMAKE_CXX_FLAGS="-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -mtune=${{matrix.cpu}} -fvisibility-inlines-hidden -O3" \
             -G Ninja \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
             -DPTHREAD_JIT_PERMISSIONS_API=1 \
@@ -114,7 +98,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-18.04]
-        cpu: [haswell, baseline]
 
     steps:
       - uses: actions/checkout@v3
@@ -131,14 +114,8 @@ jobs:
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
-        if: ${{  matrix.cpu == 'haswell' }}
         with:
           name: bun-webkit-linux-amd64
-          path: ${{runner.temp}}/bun-webkit.tar.gz
-      - uses: actions/upload-artifact@v3
-        if: ${{ matrix.cpu == 'westmere' }}
-        with:
-          name: bun-webkit-linux-amd64-baseline
           path: ${{runner.temp}}/bun-webkit.tar.gz
   linux-arm64:
     name: Linux arm64
@@ -178,10 +155,6 @@ jobs:
           path: ${{runner.temp}}/bun-webkit-linux-amd64
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-linux-amd64-baseline
-          path: ${{runner.temp}}/bun-webkit-linux-amd64-baseline
-      - uses: actions/download-artifact@v3
-        with:
           name: bun-webkit-linux-arm64
           path: ${{runner.temp}}/bun-webkit-linux-arm64
       - uses: actions/download-artifact@v3
@@ -194,14 +167,6 @@ jobs:
           path: ${{runner.temp}}/bun-webkit-macos-arm64-lto
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-macos-amd64-lto-baseline
-          path: ${{runner.temp}}/bun-webkit-macos-amd64-lto-baseline
-      - uses: actions/download-artifact@v3
-        with:
-          name: bun-webkit-macos-amd64-baseline
-          path: ${{runner.temp}}/bun-webkit-macos-amd64-baseline
-      - uses: actions/download-artifact@v3
-        with:
           name: bun-webkit-macos-amd64
           path: ${{runner.temp}}/bun-webkit-macos-amd64
       - uses: actions/download-artifact@v3
@@ -212,14 +177,11 @@ jobs:
       - name: Rename files
         run: |
           mv ${{runner.temp}}/bun-webkit-linux-amd64/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
-          mv ${{runner.temp}}/bun-webkit-linux-amd64-baseline/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64-baseline.tar.gz
           mv ${{runner.temp}}/bun-webkit-linux-arm64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-arm64/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-arm64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
-          mv ${{runner.temp}}/bun-webkit-macos-amd64-lto-baseline/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-lto-baseline.tar.gz
-          mv ${{runner.temp}}/bun-webkit-macos-amd64-baseline/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-baseline.tar.gz
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -228,14 +190,11 @@ jobs:
           tag_name: "autobuild-${{github.sha}}"
           files: |
             ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
-            ${{runner.temp}}/bun-webkit-linux-amd64-baseline.tar.gz
             ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-amd64-lto-baseline.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-amd64-baseline.tar.gz
       - name: Canary
         uses: softprops/action-gh-release@v1
         with:
@@ -244,11 +203,8 @@ jobs:
           tag_name: "canary"
           files: |
             ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
-            ${{runner.temp}}/bun-webkit-linux-amd64-baseline.tar.gz
             ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-amd64-lto-baseline.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-amd64-baseline.tar.gz
