@@ -117,6 +117,15 @@ Ref<MainWindow> MainWindow::create()
     return adoptRef(*new MainWindow());
 }
 
+void MainWindow::resetFeatureMenu(BrowserWindow::FeatureType featureType, bool resetsSettingsToDefaults)
+{
+    auto settingMenu = GetSubMenu(GetMenu(m_hMainWnd), 3);
+    int index = featureType == BrowserWindow::FeatureType::Experimental ? 0 : 1;
+    auto featureMenu = GetSubMenu(settingMenu, index);
+    assert(GetMenuItemID(featureMenu, 0) == (featureType == BrowserWindow::FeatureType::Experimental ? IDM_EXPERIMENTAL_FEATURES_RESET_ALL_TO_DEFAULTS : IDM_INTERNAL_DEBUG_FEATURES_RESET_ALL_TO_DEFAULTS));
+    m_browserWindow->resetFeatureMenu(featureType, featureMenu, resetsSettingsToDefaults);
+}
+
 void MainWindow::createToolbar(HINSTANCE hInstance)
 {
     m_hToolbarWnd = CreateWindowEx(0, TOOLBARCLASSNAME, nullptr, 
@@ -226,6 +235,9 @@ bool MainWindow::init(BrowserWindowFactory factory, HINSTANCE hInstance, bool us
     if (FAILED(hr))
         return false;
 
+    resetFeatureMenu(BrowserWindow::FeatureType::Experimental);
+    resetFeatureMenu(BrowserWindow::FeatureType::InternalDebug);
+    
     updateDeviceScaleFactor();
     resizeSubViews();
     SetFocus(m_hURLBarWnd);
@@ -343,6 +355,12 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
             break;
         case IDM_PROXY_SETTINGS:
             thisWindow->browserWindow()->openProxySettings();
+            break;
+        case IDM_EXPERIMENTAL_FEATURES_RESET_ALL_TO_DEFAULTS:
+            thisWindow->resetFeatureMenu(BrowserWindow::FeatureType::Experimental, true);
+            break;
+        case IDM_INTERNAL_DEBUG_FEATURES_RESET_ALL_TO_DEFAULTS:
+            thisWindow->resetFeatureMenu(BrowserWindow::FeatureType::InternalDebug, true);
             break;
         case IDM_SET_DEFAULT_URL:
             thisWindow->setDefaultURLToCurrentURL();

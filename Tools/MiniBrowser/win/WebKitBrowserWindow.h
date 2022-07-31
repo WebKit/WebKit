@@ -47,6 +47,8 @@ private:
     void navigateToHistory(UINT menuID) override;
     void setPreference(UINT menuID, bool enable) override;
 
+    void resetFeatureMenu(FeatureType, HMENU, bool resetsSettingsToDefaults) override;
+
     void print() override;
     void launchInspector() override;
     void openProxySettings() override;
@@ -82,4 +84,6 @@ private:
     HWND m_hMainWnd { nullptr };
     ProxySettings m_proxy { };
     std::unordered_map<std::wstring, std::wstring> m_acceptedServerTrustCerts;
+    std::vector<WKRetainPtr<WKStringRef>> m_experimentalFeatureKeys;
+    std::vector<WKRetainPtr<WKStringRef>> m_internalDebugFeatureKeys;
 };

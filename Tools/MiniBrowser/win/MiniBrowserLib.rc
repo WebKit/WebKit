@@ -75,6 +75,16 @@ BEGIN
     END
     POPUP "D&evelop"
     BEGIN
+        POPUP "Experimental Features"
+        BEGIN
+            MENUITEM "Reset All to Defaults",       IDM_EXPERIMENTAL_FEATURES_RESET_ALL_TO_DEFAULTS
+            MENUITEM SEPARATOR
+        END
+        POPUP "Internal Debug Features"
+        BEGIN
+            MENUITEM "Reset All to Defaults",       IDM_INTERNAL_DEBUG_FEATURES_RESET_ALL_TO_DEFAULTS
+            MENUITEM SEPARATOR
+        END
         MENUITEM "Show Web Inspector",          IDM_WEB_INSPECTOR
         POPUP "User Agent"
         BEGIN

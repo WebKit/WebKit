@@ -164,6 +164,12 @@ HRESULT WebKitLegacyBrowserWindow::init()
     return hr;
 }
 
+void WebKitLegacyBrowserWindow::resetFeatureMenu(FeatureType featureType, HMENU menu, bool resetsSettingsToDefaults)
+{
+    EnableMenuItem(menu, IDM_EXPERIMENTAL_FEATURES_RESET_ALL_TO_DEFAULTS, MF_GRAYED);
+    EnableMenuItem(menu, IDM_INTERNAL_DEBUG_FEATURES_RESET_ALL_TO_DEFAULTS, MF_GRAYED);
+}
+
 bool WebKitLegacyBrowserWindow::setCacheFolder()
 {
     _bstr_t appDataFolder;

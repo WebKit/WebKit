@@ -72,6 +72,8 @@ private:
     HRESULT init();
     HRESULT prepareViews(HWND mainWnd, const RECT& clientRect);
 
+    void resetFeatureMenu(FeatureType, HMENU, bool resetsSettingsToDefaults) override;
+
     HRESULT loadURL(const BSTR& passedURL);
     void reload();
 

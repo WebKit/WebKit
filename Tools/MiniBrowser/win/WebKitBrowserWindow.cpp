@@ -212,6 +212,59 @@ HRESULT WebKitBrowserWindow::init()
     return S_OK;
 }
 
+void WebKitBrowserWindow::resetFeatureMenu(FeatureType featureType, HMENU menu, bool resetsSettingsToDefaults)
+{
+    auto page = WKViewGetPage(m_view.get());
+    auto pgroup = WKPageGetPageGroup(page);
+    auto pref = WKPageGroupGetPreferences(pgroup);
+    switch (featureType) {
+    case FeatureType::Experimental: {
+        auto features = adoptWK(WKPreferencesCopyExperimentalFeatures(pref));
+        auto size = WKArrayGetSize(features.get());
+        for (size_t i = 0; i < size; i++) {
+            auto item = WKArrayGetItemAtIndex(features.get(), i);
+            assert(WKGetTypeID(item) == WKExperimentalFeatureGetTypeID());
+            auto feature = static_cast<WKExperimentalFeatureRef>(item);
+            auto name = createString(adoptWK(WKExperimentalFeatureCopyName(feature)).get());
+            auto key = adoptWK(WKExperimentalFeatureCopyKey(feature));
+            bool defaultValue = WKExperimentalFeatureDefaultValue(feature);
+            if (resetsSettingsToDefaults) {
+                auto flag = MF_BYCOMMAND | (defaultValue ? MF_CHECKED : MF_UNCHECKED);
+                CheckMenuItem(menu, IDM_EXPERIMENTAL_FEATURES_BEGIN + i, flag);
+                WKPreferencesSetExperimentalFeatureForKey(pref, defaultValue, key.get());
+            } else {
+                auto flag = MF_STRING | (defaultValue ? MF_CHECKED : MF_UNCHECKED);
+                AppendMenu(menu, flag, IDM_EXPERIMENTAL_FEATURES_BEGIN + i, name.c_str());
+                m_experimentalFeatureKeys.push_back(std::move(key));
+            }
+        }
+        break;
+    }
+    case FeatureType::InternalDebug: {
+        auto features = adoptWK(WKPreferencesCopyInternalDebugFeatures(pref));
+        auto size = WKArrayGetSize(features.get());
+        for (size_t i = 0; i < size; i++) {
+            auto item = WKArrayGetItemAtIndex(features.get(), i);
+            assert(WKGetTypeID(item) == WKInternalDebugFeatureGetTypeID());
+            auto feature = static_cast<WKInternalDebugFeatureRef>(item);
+            auto name = createString(adoptWK(WKInternalDebugFeatureCopyName(feature)).get());
+            auto key = adoptWK(WKInternalDebugFeatureCopyKey(feature));
+            bool defaultValue = WKInternalDebugFeatureDefaultValue(feature);
+            if (resetsSettingsToDefaults) {
+                auto flag = MF_BYCOMMAND | (defaultValue ? MF_CHECKED : MF_UNCHECKED);
+                CheckMenuItem(menu, IDM_INTERNAL_DEBUG_FEATURES_BEGIN + i, flag);
+                WKPreferencesSetInternalDebugFeatureForKey(pref, defaultValue, key.get());
+            } else {
+                auto flag = MF_STRING | (defaultValue ? MF_CHECKED : MF_UNCHECKED);
+                AppendMenu(menu, flag, IDM_INTERNAL_DEBUG_FEATURES_BEGIN + i, name.c_str());
+                m_internalDebugFeatureKeys.push_back(std::move(key));
+            }
+        }
+        break;
+    }
+    }
+}
+
 HWND WebKitBrowserWindow::hwnd()
 {
     return WKViewGetWindow(m_view.get());
@@ -249,6 +302,16 @@ void WebKitBrowserWindow::setPreference(UINT menuID, bool enable)
     auto page = WKViewGetPage(m_view.get());
     auto pgroup = WKPageGetPageGroup(page);
     auto pref = WKPageGroupGetPreferences(pgroup);
+    if (IDM_EXPERIMENTAL_FEATURES_BEGIN <= menuID && menuID <= IDM_EXPERIMENTAL_FEATURES_END) {
+        int index = menuID - IDM_EXPERIMENTAL_FEATURES_BEGIN;
+        WKPreferencesSetExperimentalFeatureForKey(pref, enable, m_experimentalFeatureKeys[index].get());
+        return;
+    }
+    if (IDM_INTERNAL_DEBUG_FEATURES_BEGIN <= menuID && menuID <= IDM_INTERNAL_DEBUG_FEATURES_END) {
+        int index = menuID - IDM_INTERNAL_DEBUG_FEATURES_BEGIN;
+        WKPreferencesSetInternalDebugFeatureForKey(pref, enable, m_internalDebugFeatureKeys[index].get());
+        return;
+    }
     switch (menuID) {
     case IDM_ACC_COMPOSITING:
         WKPreferencesSetAcceleratedCompositingEnabled(pref, enable);

@@ -63,6 +63,7 @@ private:
     void onURLBarEnter();
     void updateDeviceScaleFactor();
 
+    void resetFeatureMenu(BrowserWindow::FeatureType, bool resetsSettingsToDefaults = false);
     void createToolbar(HINSTANCE);
     void resizeToolbar(int);
     void rescaleToolbar();

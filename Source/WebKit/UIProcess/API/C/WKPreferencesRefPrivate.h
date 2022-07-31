@@ -53,8 +53,10 @@ WK_EXPORT WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef);
 WK_EXPORT void WKPreferencesStartBatchingUpdates(WKPreferencesRef);
 WK_EXPORT void WKPreferencesEndBatchingUpdates(WKPreferencesRef);
 
+WK_EXPORT WKArrayRef WKPreferencesCopyExperimentalFeatures(WKPreferencesRef);
 WK_EXPORT void WKPreferencesEnableAllExperimentalFeatures(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetExperimentalFeatureForKey(WKPreferencesRef, bool, WKStringRef);
+WK_EXPORT WKArrayRef WKPreferencesCopyInternalDebugFeatures(WKPreferencesRef);
 WK_EXPORT void WKPreferencesResetAllInternalDebugFeatures(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetInternalDebugFeatureForKey(WKPreferencesRef, bool, WKStringRef);
 
