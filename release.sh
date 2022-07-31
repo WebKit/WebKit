@@ -43,4 +43,4 @@ fi
 mkdir -p $temp
 rm -rf $temp/bun-webkit
 
-docker buildx build -f Dockerfile -t $CONTAINER_NAME --build-arg CPU=$cpu --build-arg MARCH_FLAG="" --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$temp/bun-webkit .
+docker buildx build -f Dockerfile -t $CONTAINER_NAME --build-arg --build-arg MARCH_FLAG="" --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$temp/bun-webkit .
