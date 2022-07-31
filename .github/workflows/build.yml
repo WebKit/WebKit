@@ -91,35 +91,25 @@ jobs:
           name: ${{matrix.label}}
           path: ${{runner.temp}}/bun-webkit.tar.gz
 
-  linux-amd64:
-    name: Linux amd64
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 90
+  linux:
+    name: Linux
+    runs-on: ${{matrix.os}}
     strategy:
       matrix:
-        os: [ubuntu-18.04]
+        include:
+          - lto_flag: "-flto='full'"
+            label: bun-webkit-linux-arm64-lto
+            os: linux-arm64
+          - lto_flag: ""
+            label: bun-webkit-linux-arm64
+            os: linux-arm64
+          - lto_flag: "-flto='full'"
+            label: bun-webkit-linux-amd64-lto
+            os: ubuntu-18.04
+          - lto_flag: ""
+            label: bun-webkit-linux-amd64
+            os: ubuntu-18.04
 
-    steps:
-      - uses: actions/checkout@v3
-      - uses: docker/setup-buildx-action@v2
-        id: buildx
-        with:
-          install: true
-      - name: Run
-        run: |
-          rm -rf ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit.tar.gz
-          temp=${{runner.temp}} bash release.sh
-          cd ${{runner.temp}}
-          echo "#define BUN_WEBKIT_VERSION \"${{github.sha}}\"" >> bun-webkit/include/cmakeconfig.h
-          tar -czf bun-webkit.tar.gz bun-webkit
-          rm -rf bun-webkit
-      - uses: actions/upload-artifact@v3
-        with:
-          name: bun-webkit-linux-amd64
-          path: ${{runner.temp}}/bun-webkit.tar.gz
-  linux-arm64:
-    name: Linux arm64
-    runs-on: linux-arm64
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v3
@@ -130,14 +120,14 @@ jobs:
       - name: Run
         run: |
           rm -rf ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit.tar.gz
-          CPU="native" cpu=native temp=${{runner.temp}} bash release.sh
+          CPU="native" cpu=native LTO_FLAG=${{matrix.lto_flag}} temp=${{runner.temp}} bash release.sh
           cd ${{runner.temp}}
           echo "#define BUN_WEBKIT_VERSION \"${{github.sha}}\"" >> bun-webkit/include/cmakeconfig.h
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
         with:
-          name: bun-webkit-linux-arm64
+          name: ${{matrix.label}}
           path: ${{runner.temp}}/bun-webkit.tar.gz
 
   release:
@@ -145,8 +135,7 @@ jobs:
     runs-on: ubuntu-18.04
     timeout-minutes: 90
     needs:
-      - linux-amd64
-      - linux-arm64
+      - linux
       - macos
     steps:
       - uses: actions/download-artifact@v3
@@ -173,6 +162,14 @@ jobs:
         with:
           name: bun-webkit-macos-amd64-lto
           path: ${{runner.temp}}/bun-webkit-macos-amd64-lto
+      - uses: actions/download-artifact@v3
+        with:
+          name: bun-webkit-linux-amd64-lto
+          path: ${{runner.temp}}/bun-webkit-linux-amd64-lto
+      - uses: actions/download-artifact@v3
+        with:
+          name: bun-webkit-linux-arm64-lto
+          path: ${{runner.temp}}/bun-webkit-linux-arm64-lto
 
       - name: Rename files
         run: |
@@ -182,6 +179,8 @@ jobs:
           mv ${{runner.temp}}/bun-webkit-macos-arm64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
+          mv ${{runner.temp}}/bun-webkit-linux-arm64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz
+          mv ${{runner.temp}}/bun-webkit-linux-amd64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -189,6 +188,8 @@ jobs:
           generate_release_notes: true
           tag_name: "autobuild-${{github.sha}}"
           files: |
+            ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
@@ -202,6 +203,8 @@ jobs:
           generate_release_notes: true
           tag_name: "canary"
           files: |
+            ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz

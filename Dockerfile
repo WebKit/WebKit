@@ -1,5 +1,14 @@
+ARG MARCH_FLAG=""
+ARG WEBKIT_RELEASE_TYPE=Release
+ARG CPU=native
+ARG LTO_FLAG="-flto='full'"
+
 FROM bitnami/minideb:bullseye as base
 
+ARG MARCH_FLAG
+ARG WEBKIT_RELEASE_TYPE
+ARG CPU
+ARG LTO_FLAG
 RUN install_packages ca-certificates curl wget lsb-release software-properties-common gnupg gnupg1 gnupg2
 
 RUN wget https://apt.llvm.org/llvm.sh && \
@@ -38,16 +47,15 @@ COPY . /webkit
 WORKDIR /webkit
 
 
-ARG WEBKIT_RELEASE_TYPE=Release
-ARG CPU=native
+
 ENV CPU=${CPU}
-ARG MARCH_FLAG=""
 ENV MARCH_FLAG=${MARCH_FLAG}
+ENV LTO_FLAG=${LTO_FLAG}
 
 
 RUN --mount=type=tmpfs,target=/webkitbuild \
-    export CFLAGS="$CFLAGS -flto -ffat-lto-objects $MARCH_FLAG -mtune=$CPU" && \
-    export CXXFLAGS="$CXXFLAGS -flto -ffat-lto-objects $MARCH_FLAG -mtune=$CPU" && \
+    export CFLAGS="$CFLAGS $LTO_FLAG -ffat-lto-objects $MARCH_FLAG -mtune=$CPU" && \
+    export CXXFLAGS="$CXXFLAGS $LTO_FLAG -ffat-lto-objects $MARCH_FLAG -mtune=$CPU" && \
     cd /webkitbuild && \
     cmake \
     -DPORT="JSCOnly" \
