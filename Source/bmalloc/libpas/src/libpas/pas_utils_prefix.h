@@ -58,7 +58,7 @@ __PAS_BEGIN_EXTERN_C;
 #if defined(PAS_LIBMALLOC) && PAS_LIBMALLOC
 #define __PAS_API __attribute__((visibility("hidden")))
 #else
-#define __PAS_API
+#define __PAS_API __attribute__((visibility("default")))
 #endif
 
 #if defined(PAS_BMALLOC) && PAS_BMALLOC
