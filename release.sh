@@ -6,18 +6,15 @@ export DOCKER_BUILDKIT=1
 
 export BUILDKIT_ARCH=$(uname -m)
 export ARCH=${BUILDKIT_ARCH}
-export MARCH_FLAG=""
 
 if [ "$BUILDKIT_ARCH" == "amd64" ]; then
     export BUILDKIT_ARCH="amd64"
     export ARCH=x64
-    export MARCH_FLAG="-march=$CPU"
 fi
 
 if [ "$BUILDKIT_ARCH" == "x86_64" ]; then
     export BUILDKIT_ARCH="amd64"
     export ARCH=x64
-    export MARCH_FLAG="-march=$CPU"
 fi
 
 if [ "$BUILDKIT_ARCH" == "arm64" ]; then
@@ -46,4 +43,4 @@ fi
 mkdir -p $temp
 rm -rf $temp/bun-webkit
 
-docker buildx build -f Dockerfile -t $CONTAINER_NAME --build-arg CPU=$cpu --build-arg MARCH_FLAG=$MARCH_FLAG --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$temp/bun-webkit .
+docker buildx build -f Dockerfile -t $CONTAINER_NAME --build-arg CPU=$cpu --build-arg MARCH_FLAG="" --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$temp/bun-webkit .
