@@ -114,7 +114,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-18.04]
-        cpu: [haswell, westmere]
+        cpu: [haswell, baseline]
 
     steps:
       - uses: actions/checkout@v3
@@ -125,7 +125,7 @@ jobs:
       - name: Run
         run: |
           rm -rf ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit.tar.gz
-          CPU=${{matrix.cpu}} cpu=${{matrix.cpu}} temp=${{runner.temp}} bash release.sh
+          temp=${{runner.temp}} bash release.sh
           cd ${{runner.temp}}
           echo "#define BUN_WEBKIT_VERSION \"${{github.sha}}\"" >> bun-webkit/include/cmakeconfig.h
           tar -czf bun-webkit.tar.gz bun-webkit
@@ -225,7 +225,23 @@ jobs:
         with:
           prerelease: true
           generate_release_notes: true
-          tag_name: "latest"
+          tag_name: "autobuild-${{github.sha}}"
+          files: |
+            ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-amd64-baseline.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-amd64-lto-baseline.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-amd64-baseline.tar.gz
+      - name: Canary
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: true
+          generate_release_notes: true
+          tag_name: "canary"
           files: |
             ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-linux-amd64-baseline.tar.gz
