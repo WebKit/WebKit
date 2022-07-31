@@ -424,8 +424,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
 
     if (is<RenderBlockFlow>(child)) {
         auto& block = downcast<RenderBlockFlow>(child);
-        if (!block.isReplacedOrInlineBlock() || !block.isInline())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
         if (block.isFloating() || block.isPositioned())
             SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
         if (block.isRubyRun())
