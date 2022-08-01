@@ -190,9 +190,11 @@ void MediaPlayerPrivateWebM::load(MediaStreamPrivate&)
 }
 #endif
 
-void MediaPlayerPrivateWebM::dataReceived(const SharedBuffer&)
+void MediaPlayerPrivateWebM::dataReceived(const SharedBuffer& buffer)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+    // FIXME: Remove const_cast once https://bugs.webkit.org/show_bug.cgi?id=243370 is fixed.
+    append(const_cast<SharedBuffer&>(buffer));
 }
 
 void MediaPlayerPrivateWebM::loadFailed(const ResourceError& error)
@@ -201,12 +203,9 @@ void MediaPlayerPrivateWebM::loadFailed(const ResourceError& error)
     setNetworkState(MediaPlayer::NetworkState::NetworkError);
 }
 
-void MediaPlayerPrivateWebM::loadFinished(const FragmentedSharedBuffer& fragmentedBuffer)
+void MediaPlayerPrivateWebM::loadFinished(const FragmentedSharedBuffer&)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-
-    auto buffer = fragmentedBuffer.makeContiguous();
-    append(buffer);
 
     if (!m_hasVideo && !m_hasAudio) {
         ERROR_LOG(LOGIDENTIFIER, "could not load audio or video tracks");
