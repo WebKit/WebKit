@@ -654,7 +654,7 @@ JSC_DEFINE_JIT_OPERATION(operationGrowMemory, int32_t, (void* callFrame, Instanc
     if (delta < 0)
         return -1;
 
-    auto grown = instance->memory()->grow(PageCount(delta));
+    auto grown = instance->memory()->grow(instance->vm(), PageCount(delta));
     if (!grown) {
         switch (grown.error()) {
         case Memory::GrowFailReason::InvalidDelta:

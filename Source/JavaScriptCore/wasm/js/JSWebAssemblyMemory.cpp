@@ -124,7 +124,7 @@ Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, JSGlobalObject* globalObject, 
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    auto grown = memory().grow(Wasm::PageCount(delta));
+    auto grown = memory().grow(vm, Wasm::PageCount(delta));
     if (!grown) {
         switch (grown.error()) {
         case Wasm::Memory::GrowFailReason::InvalidDelta:
