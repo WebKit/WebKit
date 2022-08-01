@@ -3,6 +3,9 @@ sources:
 - kind: tar
   url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.20.3.tar.xz
   ref: 7a11c13b55dd1d2386dd902219e41cbfcdda8e1e0aa3e738186c95074b35da4f
+# https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/2341/
+- kind: patch
+  path: patches/gst-plugins-bad-mr-2341.patch
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
@@ -29,7 +32,7 @@ depends:
 - freedesktop-sdk.bst:components/orc.bst
 - freedesktop-sdk.bst:components/sndfile.bst
 - freedesktop-sdk.bst:components/wayland.bst
-- freedesktop-sdk.bst:components/webrtc-audio-processing.bst
+- sdk/webrtc-audio-processing-1.bst
 - freedesktop-sdk.bst:bootstrap-import.bst
 
 variables:

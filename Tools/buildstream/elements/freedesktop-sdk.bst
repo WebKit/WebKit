@@ -17,7 +17,7 @@ sources:
 - kind: patch
   path: patches/fdo-0002-meson-Bump-to-1.62.patch
 - kind: patch
-  path: patches/fdo-0001-pipewire-base-Track-master-branch.patch
+  path: patches/fdo-0001-pipewire-base-Track-master-branch-and-disable-AEC-mo.patch
 config:
   options:
     target_arch: '%{arch}'
