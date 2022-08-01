@@ -623,7 +623,7 @@ void WorkerGlobalScope::releaseMemoryInWorkers(Synchronous synchronous)
     }
 }
 
-void WorkerGlobalScope::setMainScriptSourceProvider(ScriptBufferSourceProvider& provider)
+void WorkerGlobalScope::setMainScriptSourceProvider(AbstractScriptBufferHolder& provider)
 {
     ASSERT(!m_mainScriptSourceProvider);
     m_mainScriptSourceProvider = provider;

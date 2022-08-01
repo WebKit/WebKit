@@ -27,10 +27,12 @@
 #include "config.h"
 #include "WorkerThread.h"
 
+#include "AbstractScriptSourceCode.h"
 #include "IDBConnectionProxy.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "SocketProvider.h"
+#include "WebAssemblyScriptSourceCode.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerScriptFetcher.h"
 #include <JavaScriptCore/ScriptCallStack.h>
@@ -67,7 +69,8 @@ WorkerParameters WorkerParameters::isolatedCopy() const
 #if ENABLE(SERVICE_WORKER)
         crossThreadCopy(serviceWorkerData),
 #endif
-        clientIdentifier
+        clientIdentifier,
+        mimeType
     };
 }
 
@@ -144,7 +147,7 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
     // We are currently holding only the initial script code. If the WorkerType is Module, we should fetch the entire graph before executing the rest of this.
     // We invoke module loader as if we are executing inline module script tag in Document.
 
-    WeakPtr<ScriptBufferSourceProvider> sourceProvider;
+    WeakPtr<AbstractScriptBufferHolder> sourceProvider;
     if (m_startupData->params.workerType == WorkerType::Classic) {
         ScriptSourceCode sourceCode(m_startupData->sourceCode, URL(m_startupData->params.scriptURL));
         sourceProvider = static_cast<ScriptBufferSourceProvider&>(sourceCode.provider());
@@ -152,8 +155,17 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
         finishedEvaluatingScript();
     } else {
         auto scriptFetcher = WorkerScriptFetcher::create(globalScope()->credentials(), globalScope()->destination(), globalScope()->referrerPolicy());
+#if ENABLE(WEBASSEMBLY)
+        const bool useWasmModule = m_startupData->params.settingsValues.webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(m_startupData->params.mimeType);
+        AbstractScriptSourceCode sourceCode = useWasmModule ? static_cast<AbstractScriptSourceCode>(WebAssemblyScriptSourceCode(m_startupData->sourceCode, URL(m_startupData->params.scriptURL), scriptFetcher.copyRef())) : static_cast<AbstractScriptSourceCode>(ScriptSourceCode(m_startupData->sourceCode, URL(m_startupData->params.scriptURL), { }, JSC::SourceProviderSourceType::Module, scriptFetcher.copyRef()));
+        if (useWasmModule)
+            sourceProvider = static_cast<AbstractScriptBufferHolder&>(static_cast<WebAssemblyScriptBufferSourceProvider&>(sourceCode.provider()));
+        else
+            sourceProvider = static_cast<AbstractScriptBufferHolder&>(static_cast<ScriptBufferSourceProvider&>(sourceCode.provider()));
+#else
         ScriptSourceCode sourceCode(m_startupData->sourceCode, URL(m_startupData->params.scriptURL), { }, JSC::SourceProviderSourceType::Module, scriptFetcher.copyRef());
-        sourceProvider = static_cast<ScriptBufferSourceProvider&>(sourceCode.provider());
+        sourceProvider = static_cast<AbstractScriptBufferHolder&>(static_cast<ScriptBufferSourceProvider&>(sourceCode.provider()));
+#endif
         bool success = globalScope()->script()->loadModuleSynchronously(scriptFetcher.get(), sourceCode);
         if (success) {
             if (std::optional<LoadableScript::Error> error = scriptFetcher->error()) {

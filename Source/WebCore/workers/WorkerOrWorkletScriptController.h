@@ -45,9 +45,9 @@ class VM;
 
 namespace WebCore {
 
+class AbstractScriptSourceCode;
 class Exception;
 class JSDOMGlobalObject;
-class ScriptSourceCode;
 class WorkerConsoleClient;
 class WorkerOrWorkletGlobalScope;
 class WorkerScriptFetcher;
@@ -94,13 +94,13 @@ public:
     void disableEval(const String& errorMessage);
     void disableWebAssembly(const String& errorMessage);
 
-    void evaluate(const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
-    void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage = nullptr);
+    void evaluate(const AbstractScriptSourceCode&, String* returnedExceptionMessage = nullptr);
+    void evaluate(const AbstractScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage = nullptr);
 
     JSC::JSValue evaluateModule(JSC::AbstractModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
 
-    void linkAndEvaluateModule(WorkerScriptFetcher&, const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
-    bool loadModuleSynchronously(WorkerScriptFetcher&, const ScriptSourceCode&);
+    void linkAndEvaluateModule(WorkerScriptFetcher&, const AbstractScriptSourceCode&, String* returnedExceptionMessage = nullptr);
+    bool loadModuleSynchronously(WorkerScriptFetcher&, const AbstractScriptSourceCode&);
 
     void loadAndEvaluateModule(const URL& moduleURL, FetchOptions::Credentials, CompletionHandler<void(std::optional<Exception>&&)>&&);
 

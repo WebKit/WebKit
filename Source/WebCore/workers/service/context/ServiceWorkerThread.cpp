@@ -98,7 +98,8 @@ static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData&
         workerThreadMode,
         sessionID,
         { },
-        { }
+        { },
+        emptyString()
     };
 }
 

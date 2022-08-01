@@ -78,7 +78,8 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
 #if ENABLE(SERVICE_WORKER)
         WTFMove(initializationData.serviceWorkerData),
 #endif
-        *initializationData.clientIdentifier
+        *initializationData.clientIdentifier,
+        emptyString()
     };
 }
 
