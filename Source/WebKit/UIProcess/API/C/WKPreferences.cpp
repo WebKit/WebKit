@@ -25,9 +25,10 @@
 
 #include "config.h"
 
+#include "APIArray.h"
+#include "WKAPICast.h"
 #include "WKPreferencesRef.h"
 #include "WKPreferencesRefPrivate.h"
-#include "WKAPICast.h"
 #include "WebPreferences.h"
 #include <WebCore/Settings.h>
 #include <wtf/RefPtr.h>

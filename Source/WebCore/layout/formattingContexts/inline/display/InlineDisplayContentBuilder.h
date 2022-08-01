@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineFormattingContext.h"
 #include "InlineLineBuilder.h"
 #include "LayoutUnits.h"
 
@@ -37,6 +38,7 @@ struct AncestorStack;
 class ContainerBox;
 struct DisplayBoxTree;
 struct IsFirstLastIndex;
+class InlineFormattingGeometry;
 class InlineFormattingState;
 class LineBox;
 class ListMarkerBox;

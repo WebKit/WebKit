@@ -29,7 +29,6 @@
 namespace WebCore {
 
 class CachedSVGDocument;
-class SVGGElement;
 
 class SVGUseElement final : public SVGGraphicsElement, public SVGURIReference, private CachedSVGDocumentClient {
     WTF_MAKE_ISO_ALLOCATED(SVGUseElement);
