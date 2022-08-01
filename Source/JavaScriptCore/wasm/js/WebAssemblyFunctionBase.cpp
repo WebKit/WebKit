@@ -30,6 +30,7 @@
 
 #include "HeapCellInlines.h"
 #include "HeapInlines.h"
+#include "JSCellInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "SlotVisitorInlines.h"
 
