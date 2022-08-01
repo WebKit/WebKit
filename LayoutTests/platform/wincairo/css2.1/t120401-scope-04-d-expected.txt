@@ -7,7 +7,7 @@ layer at (0,0) size 800x100
         RenderText {#text} at (0,0) size 231x19
           text run at (0,0) width 231: "The next two lines should be the same:"
       RenderBlock {DIV} at (0,36) size 784x20
-        RenderInline {SPAN} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 0x19
         RenderInline {SPAN} at (0,0) size 12x19
           RenderInline (generated) at (0,0) size 12x19
             RenderCounter at (0,0) size 8x19
