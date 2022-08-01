@@ -926,8 +926,8 @@
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
         (apply-message-filter
-            (allow mach-message-send (with telemetry)))))
-            
+            (allow mach-message-send))))
+
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (deny syscall-mach (with telemetry))
     (allow syscall-mach (machtrap-number
