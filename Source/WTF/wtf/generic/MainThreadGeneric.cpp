@@ -31,29 +31,22 @@
  */
 
 #include "config.h"
-#if !OS(LINUX)
 #include <pthread.h>
-#endif
 #if HAVE(PTHREAD_NP_H)
 #include <pthread_np.h>
-#endif
-#if OS(LINUX)
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <unistd.h>
 #endif
 
 #include <wtf/RunLoop.h>
 
 namespace WTF {
 
-#if !HAVE(PTHREAD_MAIN_NP) && !OS(LINUX)
+#if !HAVE(PTHREAD_MAIN_NP)
 static pthread_t mainThread;
 #endif
 
 void initializeMainThreadPlatform()
 {
-#if !HAVE(PTHREAD_MAIN_NP) && !OS(LINUX)
+#if !HAVE(PTHREAD_MAIN_NP)
     mainThread = pthread_self();
 #endif
 }
@@ -62,8 +55,6 @@ bool isMainThread()
 {
 #if HAVE(PTHREAD_MAIN_NP)
     return pthread_main_np();
-#elif OS(LINUX)
-    return getpid() == static_cast<pid_t>(syscall(SYS_gettid));
 #else
     return pthread_equal(pthread_self(), mainThread);
 #endif
