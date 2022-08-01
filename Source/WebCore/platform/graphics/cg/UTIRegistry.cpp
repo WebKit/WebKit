@@ -60,6 +60,7 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
 #endif
 #if HAVE(AVIF)
             "public.avif"_s,
+            "public.avis"_s,
 #endif
         };
 
