@@ -769,8 +769,12 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
         return;
     }
 
+    auto orientation = image->orientation();
+    if (orientation == ImageOrientation::FromImage)
+        orientation = ImageOrientation::None;
+
     FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawImage(image, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::None) });
+    bitmapData->context().drawImage(image, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
 
     OptionSet<SerializationState> serializationState = SerializationState::OriginClean;
     if (alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied)
