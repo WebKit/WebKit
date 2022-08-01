@@ -691,6 +691,12 @@ Vector<ScrollUpdate> ScrollingTree::takePendingScrollUpdates()
     return std::exchange(m_pendingScrollUpdates, { });
 }
 
+bool ScrollingTree::hasPendingScrollUpdates()
+{
+    Locker locker { m_pendingScrollUpdatesLock };
+    return m_pendingScrollUpdates.size();
+}
+
 // Can be called from the main thread.
 void ScrollingTree::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 {
