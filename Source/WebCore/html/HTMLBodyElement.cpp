@@ -115,25 +115,24 @@ const AtomString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const
 void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == vlinkAttr || name == alinkAttr || name == linkAttr) {
-        if (value.isNull()) {
-            if (name == linkAttr)
+        auto parsedColor = parseLegacyColorValue(value);
+        if (name == linkAttr) {
+            if (parsedColor)
+                document().setLinkColor(*parsedColor);
+            else
                 document().resetLinkColor();
-            else if (name == vlinkAttr)
+        } else if (name == vlinkAttr) {
+            if (parsedColor)
+                document().setVisitedLinkColor(*parsedColor);
+            else
                 document().resetVisitedLinkColor();
+        } else {
+            ASSERT(name == alinkAttr);
+            if (parsedColor)
+                document().setActiveLinkColor(*parsedColor);
             else
                 document().resetActiveLinkColor();
-        } else {
-            Color color = CSSParser::parseColorWithoutContext(value, !document().inQuirksMode());
-            if (color.isValid()) {
-                if (name == linkAttr)
-                    document().setLinkColor(color);
-                else if (name == vlinkAttr)
-                    document().setVisitedLinkColor(color);
-                else
-                    document().setActiveLinkColor(color);
-            }
         }
-
         invalidateStyleForSubtree();
         return;
     }
