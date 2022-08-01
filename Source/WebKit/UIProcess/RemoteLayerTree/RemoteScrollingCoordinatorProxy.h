@@ -35,6 +35,7 @@
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS UIScrollView;
 
@@ -50,7 +51,7 @@ class RemoteScrollingCoordinatorTransaction;
 class RemoteScrollingTree;
 class WebPageProxy;
 
-class RemoteScrollingCoordinatorProxy {
+class RemoteScrollingCoordinatorProxy : public CanMakeWeakPtr<RemoteScrollingCoordinatorProxy> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(RemoteScrollingCoordinatorProxy);
 public:
@@ -124,6 +125,8 @@ private:
     std::pair<float, std::optional<unsigned>> closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float currentScrollOffset, WebCore::FloatPoint scrollDestination, float velocity) const;
 
     void sendUIStateChangedIfNecessary();
+    void sendScrollingTreeNodeDidScroll();
+    void receivedLastScrollingTreeNodeDidScrollReply();
 
     WebPageProxy& m_webPageProxy;
     RefPtr<RemoteScrollingTree> m_scrollingTree;
@@ -133,6 +136,7 @@ private:
     std::optional<unsigned> m_currentHorizontalSnapPointIndex;
     std::optional<unsigned> m_currentVerticalSnapPointIndex;
     bool m_propagatesMainFrameScrolls { true };
+    bool m_waitingForDidScrollReply { false };
     HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_layersWithScrollingRelations;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_fixedScrollingNodeLayerIDs;
