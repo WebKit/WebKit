@@ -233,8 +233,10 @@ public:
     
     WEBCORE_EXPORT void willProcessWheelEvent();
 
-    void addPendingScrollUpdate(ScrollUpdate&&);
-    Vector<ScrollUpdate> takePendingScrollUpdates();
+    WEBCORE_EXPORT void addPendingScrollUpdate(ScrollUpdate&&);
+    WEBCORE_EXPORT Vector<ScrollUpdate> takePendingScrollUpdates();
+    WEBCORE_EXPORT bool hasPendingScrollUpdates();
+
     virtual void removePendingScrollAnimationForNode(ScrollingNodeID) { }
 
 protected:
