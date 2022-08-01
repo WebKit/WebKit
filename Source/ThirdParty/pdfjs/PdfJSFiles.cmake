@@ -208,6 +208,9 @@ set(PDFJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-bookmark.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-currentOutlineItem.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-download.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorFreeText.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorInk.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorNone.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-menuArrow.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-openFile.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-pageDown.svg
