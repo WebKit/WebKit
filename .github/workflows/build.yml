@@ -22,21 +22,25 @@ jobs:
             cpu: haswell
             label: bun-webkit-macos-amd64-lto
             brew_prefix: /usr/local/opt
+            package_json_arch: "x64"
           - runner: macos-11
             lto_flag: ""
             cpu: haswell
             label: bun-webkit-macos-amd64
             brew_prefix: /usr/local/opt
+            package_json_arch: "x64"
           - runner: macOS-arm64
             lto_flag: -flto='full'
             cpu: native
             label: bun-webkit-macos-arm64-lto
             brew_prefix: /opt/homebrew/opt
+            package_json_arch: "arm64"
           - runner: macOS-arm64
             lto_flag: ""
             cpu: native
             label: bun-webkit-macos-arm64
             brew_prefix: /opt/homebrew/opt
+            package_json_arch: "arm64"
     steps:
       - uses: actions/checkout@v3
       - name: PATH
@@ -84,6 +88,10 @@ jobs:
           cp -r $RUNNER_TEMP/webkit-release/bmalloc/Headers/bmalloc $RUNNER_TEMP/bun-webkit/include
           cp $RUNNER_TEMP/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* $RUNNER_TEMP/bun-webkit/include/JavaScriptCore
           cp $RUNNER_TEMP/webkit-release/JavaScriptCore/PrivateHeaders/JavaScriptCore/* $RUNNER_TEMP/bun-webkit/include/JavaScriptCore
+          mkdir -p $RUNNER_TEMP/bun-webkit/Source/JavaScriptCore/Scripts
+          cp $THIS_DIR/Source/JavaScriptCore/Scripts/generate-js-builtins.pl $RUNNER_TEMP/bun-webkit/Source/JavaScriptCore/Scripts
+          cp $THIS_DIR/Source/JavaScriptCore/create_hash_table $RUNNER_TEMP/bun-webkit/Source/JavaScriptCore
+          echo '{ "name": "${{matrix.label}}", "version": "0.0.1+${{github.sha}}", "os": "darwin", "arch": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > $RUNNER_TEMP/bun-webkit/package.json
           cd $RUNNER_TEMP
           tar -czf bun-webkit.tar.gz bun-webkit
       - uses: actions/upload-artifact@v3
@@ -100,15 +108,19 @@ jobs:
           - lto_flag: "-flto='full'"
             label: bun-webkit-linux-arm64-lto
             os: linux-arm64
+            package_json_arch: "arm64"
           - lto_flag: ""
             label: bun-webkit-linux-arm64
             os: linux-arm64
+            package_json_arch: "arm64"
           - lto_flag: "-flto='full'"
             label: bun-webkit-linux-amd64-lto
             os: ubuntu-18.04
+            package_json_arch: "x64"
           - lto_flag: ""
             label: bun-webkit-linux-amd64
             os: ubuntu-18.04
+            package_json_arch: "x64"
 
     timeout-minutes: 90
     steps:
@@ -123,6 +135,7 @@ jobs:
           CPU="native" cpu=native LTO_FLAG=${{matrix.lto_flag}} temp=${{runner.temp}} bash release.sh
           cd ${{runner.temp}}
           echo "#define BUN_WEBKIT_VERSION \"${{github.sha}}\"" >> bun-webkit/include/cmakeconfig.h
+          echo '{ "name": "${{matrix.label}}", "version": "0.0.1+${{github.sha}}", "os": "linux", "arch": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > bun-webkit/package.json
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
