@@ -1391,7 +1391,7 @@ void MediaPlayerPrivateWebM::clearTracks()
 
 void MediaPlayerPrivateWebM::startVideoFrameMetadataGathering()
 {
-    ASSERT(!m_videoFrameMetadataGatheringObserver || m_synchronizer);
+    ASSERT(!m_videoFrameMetadataGatheringObserver && m_synchronizer);
     m_isGatheringVideoFrameMetadata = true;
     acceleratedRenderingStateChanged();
 
