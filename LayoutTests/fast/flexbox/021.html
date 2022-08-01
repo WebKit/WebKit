@@ -5,13 +5,14 @@ div {
   display: -moz-box;
   display: -webkit-box;
   display: box;
-  background-color: red;
+  background-color: blue;
   width: 100px;
   height: 100px;
 }
 
 .first {
   visibility: collapse;
+  background-color: red;
   -moz-box-flex: 1;
   -webkit-box-flex: 1;
   box-flex: 1;
@@ -31,8 +32,10 @@ div {
 </style>
 </head>
 <body>
-<p>You should see a 100x100 green square below.  If you see any red, the test has failed.  This test is checking
-for visibility:collapse support.</p>
+<!--
+If used on elements other than rows, row groups, columns, or column groups, collapse has the same meaning as hidden.
+https://drafts.csswg.org/css2/#visibility
+-->
 <div>
   <div class="first"></div>
   <div class="second"></div>

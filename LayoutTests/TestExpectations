@@ -654,7 +654,6 @@ imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-data-url
 imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-data-url-cross-origin.html [ Skip ]
 
 # Newly imported WPT ref tests failures.
-imported/w3c/web-platform-tests/compat/webkit-box-clamp-visibility-change.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/compat/webkit-box-fieldset.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/compat/webkit-box-rtl-flex.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-004.html [ ImageOnlyFailure ]

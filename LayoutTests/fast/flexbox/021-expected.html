@@ -2,9 +2,6 @@
 <head>
 <style>
 div {
-  box-orient: vertical;
-  -moz-box-orient: vertical;
-  -webkit-box-orient: vertical;
   display: -moz-box;
   display: -webkit-box;
   display: box;
@@ -14,11 +11,11 @@ div {
 }
 
 .first {
-  visibility: collapse;
+  visibility: hidden;
+  background-color: red;
   -moz-box-flex: 1;
   -webkit-box-flex: 1;
   box-flex: 1;
-  background-color: red;
   width: 50px;
   height: 100px;
 }
@@ -35,10 +32,6 @@ div {
 </style>
 </head>
 <body>
-<!--
-If used on elements other than rows, row groups, columns, or column groups, collapse has the same meaning as hidden.
-https://drafts.csswg.org/css2/#visibility
--->
 <div>
   <div class="first"></div>
   <div class="second"></div>
