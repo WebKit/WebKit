@@ -116,12 +116,12 @@ class GitHub(object):
             return None
         return response
 
-    def update_or_leave_comment_on_pr(self, pr_number, content, repository_url=None, comment_id=None):
+    def update_or_leave_comment_on_pr(self, pr_number, content, repository_url=None, comment_id=-1):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
             return False
 
-        if comment_id:
+        if comment_id != -1:
             comment_url = '{api_url}/issues/comments/{comment_id}'.format(api_url=api_url, comment_id=comment_id)
         else:
             comment_url = '{api_url}/issues/{pr_number}/comments'.format(api_url=api_url, pr_number=pr_number)
@@ -135,12 +135,12 @@ class GitHub(object):
             )
             if response.status_code // 100 != 2:
                 _log.error("Failed to post comment to PR {}. Unexpected response code from GitHub: {}\n".format(pr_number, response.status_code))
-                return False
+                return -1
             _log.info("Commented on PR {}\n".format(pr_number))
             return response.json().get('id')
         except Exception as e:
             _log.error("Error in posting comment to PR {}\n".format(pr_number))
-        return False
+        return -1
 
 
 class GitHubEWS(GitHub):
@@ -158,12 +158,8 @@ class GitHubEWS(GitHub):
                           ['', 'watch', 'mac-AS-debug-wk2', '', ''],
                           ['', 'watch-sim', '', '', '']]
 
-    def generate_comment_text_for_sha(self, sha, comment_id=None):
-        change = Change.get_change(sha)
-        if not change:
-            _log.error('Change not found for {}. Unable to generate github comment.'.format(sha))
-            return
-        comment = 'https://github.com/WebKit/WebKit/commit/{}'.format(sha)
+    def generate_comment_text_for_change(self, change):
+        comment = 'https://github.com/WebKit/WebKit/commit/{}'.format(change.change_id)
         comment += '\n\n| Tests | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
 
@@ -217,3 +213,28 @@ class GitHubEWS(GitHub):
             status = GitHubEWS.ICON_BUILD_ERROR
 
         return u'| [{status} {name}]({url} "{hover_over_text}") '.format(status=status, name=name, url=url, hover_over_text=hover_over_text)
+
+    @classmethod
+    def add_or_update_comment_for_change_id(self, sha, pr_id, pr_project=None):
+        if not pr_id or pr_id == -1:
+            _log.error('Invalid pr_id: {}'.format(pr_id))
+            return -1
+
+        change = Change.get_change(sha)
+        if not change:
+            _log.error('Change not found for hash: {}. Unable to generate github comment.'.format(sha))
+            return -1
+        gh = GitHubEWS()
+        comment_text = gh.generate_comment_text_for_change(change)
+        comment_id = change.comment_id
+        if comment_id == -1:
+            _log.info('Adding comment for hash: {}, pr_id: {}, pr_id from db: {}.'.format(sha, pr_id, change.pr_id))
+            new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, comment_text)
+            if new_comment_id != -1:
+                change.set_comment_id(new_comment_id)
+                _log.info('Set new comment id as {} for hash: {}.'.format(new_comment_id, sha))
+        else:
+            _log.info('Updating comment for hash: {}, pr_id: {}, pr_id from db: {}.'.format(sha, pr_id, change.pr_id))
+            new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, comment_text, comment_id=comment_id)
+
+        return comment_id
