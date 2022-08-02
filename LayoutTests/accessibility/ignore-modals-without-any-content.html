@@ -57,10 +57,9 @@
             let text = document.createTextNode("Foo text, inside modal");
             document.getElementById("modal").appendChild(text);
 
+            // Wait for text node to be added as an AX child.
             await waitFor(() => {
-                let innerModalGroup = accessibilityController.accessibleElementById("modal").childAtIndex(0);
-                // Wait for text node to be added as an AX child.
-                return innerModalGroup && innerModalGroup.childAtIndex(0);
+                return accessibilityController.accessibleElementById("modal").childAtIndex(0);
             });
 
             let containerElement = accessibilityController.accessibleElementById("container");

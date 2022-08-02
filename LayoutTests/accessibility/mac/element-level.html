@@ -35,7 +35,7 @@
         var body = accessibilityController.focusedElement;
         
         // Blockquote levels.
-        shouldBe("body.childAtIndex(0).childAtIndex(0).numberAttributeValue('AXBlockQuoteLevel')", "1");
+        shouldBe("body.childAtIndex(0).numberAttributeValue('AXBlockQuoteLevel')", "1");
         shouldBe("body.childAtIndex(1).childAtIndex(0).numberAttributeValue('AXBlockQuoteLevel')", "2");
         // Non-blockquotes should return a blockquote level of 0.
         shouldBe("body.childAtIndex(2).numberAttributeValue('AXBlockQuoteLevel')", "0");

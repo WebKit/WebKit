@@ -17,11 +17,20 @@
 
           var body = document.getElementById("body");
           body.focus();
-          var textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
+
+          var textField;
+          if (accessibilityController.platformName === "atspi" || accessibilityController.platformName === "win")
+              textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
+          else
+              textField = accessibilityController.focusedElement.childAtIndex(0);
+
           var succeeded = textField.isEnabled;
           shouldBe("succeeded", "false");
 
-          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(1);
+          if (accessibilityController.platformName === "atspi" || accessibilityController.platformName === "win")
+              textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(1);
+          else
+              textField = accessibilityController.focusedElement.childAtIndex(1);
           succeeded = textField.isEnabled;
           shouldBe("succeeded", "true");
     }

@@ -37,7 +37,7 @@ if (window.testRunner)
           var treeitem = tree.childAtIndex(0);
           var child1 = treeitem.childAtIndex(0);
           var child2 = treeitem.uiElementArrayAttributeValue("AXChildren")[0];
-          shouldBe("child1 == child2", "true");
+          shouldBe("child1.stringValue == child2.stringValue && child1.role == child2.role", "true");
     }
 
 </script>

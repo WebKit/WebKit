@@ -5,13 +5,9 @@ Menu item 2.1
 Menu item 2.2
 AXRole: AXMenuBar AXTitle:
     AXRole: AXMenuItem AXTitle: Menu 1
-        AXRole: AXGroup AXTitle:
-            AXRole: AXStaticText AXTitle:
         AXRole: AXMenu AXTitle:
             AXRole: AXMenuItem AXTitle: Menu item 1.1
     AXRole: AXMenuItem AXTitle: Menu 2
-        AXRole: AXGroup AXTitle:
-            AXRole: AXStaticText AXTitle:
         AXRole: AXMenu AXTitle:
             AXRole: AXMenuItem AXTitle: Menu item 2.1
             AXRole: AXMenuItem AXTitle: Menu item 2.2

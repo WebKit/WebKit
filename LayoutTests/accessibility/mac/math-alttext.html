@@ -41,7 +41,7 @@
 
     if (window.accessibilityController) {
 
-        var math = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0).childAtIndex(0);
+        var math = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
         shouldBe("math.role", "'AXRole: AXGroup'");
         shouldBe("math.subrole", "'AXSubrole: AXDocumentMath'");
         shouldBe("math.description", "'AXDescription: F e sub 1  minus x, end subscript. C o sub x, S b sub 2'");

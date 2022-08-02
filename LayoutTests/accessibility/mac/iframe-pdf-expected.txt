@@ -7,7 +7,6 @@ At index 0, got AXRole: AXWebArea
 At index 0, got AXRole: AXGroup
 At index 0, got AXRole: AXGroup
 At index 0, got AXRole: AXGroup
-At index 0, got AXRole: AXGroup
 At index 0, got AXRole: AXPage
 At index 0, got AXRole: AXGroup
 At index 0, got AXRole: AXGroup

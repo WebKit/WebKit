@@ -35,7 +35,7 @@
             // and the PDF inside the iframe are fully loaded.
             await waitFor(() => {
                 let container = accessibilityController.accessibleElementById("container");
-                [traversalString, textNode] = traverseChildrenWithPath(container, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]);
+                [traversalString, textNode] = traverseChildrenWithPath(container, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]);
                 return textNode;
             });
             testOutput += "Traversal path to text node inside PDF:\n\n";

@@ -21,7 +21,9 @@
             var result = document.getElementById("result");
 
             var body = document.getElementById("body").focus();
-            var imgUIElement = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
+            var imgUIElement = accessibilityController.focusedElement.childAtIndex(0);
+            if (accessibilityController.platformName === "atspi" || accessibilityController.platformName === "win")
+                imgUIElement = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
             shouldBeEqualToString("platformValueForW3CName(imgUIElement)", "alternate");
         }
     </script>

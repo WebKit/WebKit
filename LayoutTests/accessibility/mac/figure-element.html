@@ -42,6 +42,10 @@
 
 <script>
 
+    function isIgnored(axElement) {
+        return !axElement || axElement.isIgnored;
+    }
+
     description("This tests that the 'figure' element is accessible on the Mac.");
 
     if (window.accessibilityController) {
@@ -57,7 +61,7 @@
            var titleUIElement = figure.titleUIElement();
            if (k >= 4) {
                var figureCaption = accessibilityController.accessibleElementById("figCaption" + k);
-               shouldBeTrue("titleUIElement.isEqual(figureCaption)");
+               shouldBeTrue("(isIgnored(titleUIElement) && isIgnored(figureCaption)) || titleUIElement.isEqual(figureCaption)");
            } else
                shouldBeTrue("!titleUIElement");
            debug("");

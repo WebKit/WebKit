@@ -26,31 +26,37 @@
         document.getElementById("images").focus();
         var imagesGroup = accessibilityController.focusedElement;
 
+        const isAtspi = accessibilityController.platformName === "atspi";
+
         // First image should have a description of "test1" because there is no alt tag (it should use the title).
         // The title should NOT be in the help text.
-        var image1 = imagesGroup.childAtIndex(0).childAtIndex(0);
+        var image1 = isAtspi ? imagesGroup.childAtIndex(0).childAtIndex(0) : imagesGroup.childAtIndex(0);
         debug("Image1:");
         debug(platformTextAlternatives(image1));
 
         // Second image should use the description from the alt tag instead of the title.
         // The help text should reflect what's in the title.
-        var image2 = imagesGroup.childAtIndex(0).childAtIndex(1);
+        var image2 = isAtspi ? imagesGroup.childAtIndex(0).childAtIndex(1) : imagesGroup.childAtIndex(1);
         debug("Image2:");
         debug(platformTextAlternatives(image2));
 
         // Now do the same checks for ARIA type images.
-        var image3 = imagesGroup.childAtIndex(1);
+        var image3 = isAtspi ? imagesGroup.childAtIndex(1) : imagesGroup.childAtIndex(2);
         debug("Image3:");
         debug(platformTextAlternatives(image3));
 
         // Now do the same checks for ARIA type images.
-        var image4 = imagesGroup.childAtIndex(2);
+        var image4 = isAtspi ? imagesGroup.childAtIndex(2) : imagesGroup.childAtIndex(3);
         debug("Image4:");
         debug(platformTextAlternatives(image4));
 
-        // Verify that the first image (with an empty alt tag) is ignored
-        // by checking the children count of the group containing the native images == 2.
-        shouldBe("imagesGroup.childAtIndex(0).childrenCount", "2");
+        if (isAtspi)
+            shouldBe("imagesGroup.childAtIndex(0).childrenCount", "2");
+        else {
+            // Verify that the first image (with an empty alt tag) is ignored by checking the children count of
+            // the group is 4 (not 5).
+            shouldBe("imagesGroup.childrenCount", "4");
+        }
     }
 
 </script>

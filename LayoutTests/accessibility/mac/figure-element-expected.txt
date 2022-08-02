@@ -29,14 +29,14 @@ figure4 role: AXRole: AXGroup
 figure4 roleDescription: AXRoleDescription: figure
 figure4 description: AXDescription: Figcaption element
 figure4 helpText: AXHelp:
-PASS titleUIElement.isEqual(figureCaption) is true
+PASS (isIgnored(titleUIElement) && isIgnored(figureCaption)) || titleUIElement.isEqual(figureCaption) is true
 
 Test figure with figcaption element and title attribute.
 figure5 role: AXRole: AXGroup
 figure5 roleDescription: AXRoleDescription: figure
 figure5 description: AXDescription: Figcaption element
 figure5 helpText: AXHelp: title attribute
-PASS titleUIElement.isEqual(figureCaption) is true
+PASS (isIgnored(titleUIElement) && isIgnored(figureCaption)) || titleUIElement.isEqual(figureCaption) is true
 
 PASS successfullyParsed is true
 
