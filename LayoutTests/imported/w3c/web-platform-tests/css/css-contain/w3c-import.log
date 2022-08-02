@@ -125,6 +125,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-flexitem.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-grid-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-grid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-intrinsic-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-intrinsic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-legend-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-legend-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-legend.html
@@ -132,6 +134,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-multicol.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-regular-container-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-regular-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-removed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-removed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-replaced.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-table-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-table.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-vertical-rl--expected.xht
@@ -172,6 +177,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-019.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-020-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-020.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-021-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-021.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-baseline-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-baseline-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-baseline-002-expected.xht
@@ -538,6 +545,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-multicol-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-multicol-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-multicol-as-flex-item.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-removed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-removed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-replaced-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-replaced-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-replaced-002-expected.xht
@@ -636,3 +645,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/quote-scoping-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/quote-scoping-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/quote-scoping-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/quote-scoping-empty-style-boundaries-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/quote-scoping-empty-style-boundaries.html
