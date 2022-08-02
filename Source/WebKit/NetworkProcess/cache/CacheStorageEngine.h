@@ -59,7 +59,7 @@ using LockCount = uint64_t;
 
 class Engine : public RefCounted<Engine>, public CanMakeWeakPtr<Engine> {
 public:
-    static Ref<Engine> create(NetworkSession&, String&& rootPath);
+    static Ref<Engine> create(NetworkSession&, const String& rootPath);
     ~Engine();
 
     static void fetchEntries(NetworkSession&, bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>)>&&);
@@ -100,7 +100,7 @@ public:
     uint64_t nextCacheIdentifier() { return ++m_nextCacheIdentifier; }
 
 private:
-    Engine(NetworkSession&, String&& rootPath);
+    Engine(NetworkSession&, const String& rootPath);
 
     void open(const WebCore::ClientOrigin&, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     void remove(uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
