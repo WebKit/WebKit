@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_USAGE)
 
+#import <WebCore/NotImplemented.h>
 #import <pal/cocoa/UsageTrackingSoftLink.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -90,6 +91,14 @@ std::unique_ptr<MediaUsageManager> MediaUsageManager::create()
 {
     return makeUnique<MediaUsageManagerCocoa>();
 }
+
+#if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095)
+bool MediaUsageManager::isPlayingVideoInViewport() const
+{
+    notImplemented();
+    return false;
+}
+#endif
 
 MediaUsageManagerCocoa::~MediaUsageManagerCocoa()
 {
@@ -198,6 +207,17 @@ void MediaUsageManagerCocoa::updateMediaUsage(WebCore::MediaSessionIdentifier id
         WTFLogAlways("MediaUsageManagerCocoa::updateMediaUsage caught exception: %@", [[exception reason] UTF8String]);
     }
 }
+
+#if !HAVE(CGS_FIX_FOR_RADAR_97530095)
+bool MediaUsageManagerCocoa::isPlayingVideoInViewport() const
+{
+    for (auto& session : m_mediaSessions.values()) {
+        if (session->mediaUsageInfo && session->mediaUsageInfo->isPlaying && session->mediaUsageInfo->isVideo && session->mediaUsageInfo->isInViewport)
+            return true;
+    }
+    return false;
+}
+#endif
 
 } // namespace WebKit
 
