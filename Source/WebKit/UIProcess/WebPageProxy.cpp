@@ -2173,7 +2173,12 @@ void WebPageProxy::updateActivityState(OptionSet<ActivityState::Flag> flagsToUpd
         m_activityState.add(ActivityState::IsVisibleOrOccluded);
     if (flagsToUpdate & ActivityState::IsInWindow && pageClient().isViewInWindow())
         m_activityState.add(ActivityState::IsInWindow);
-    if (flagsToUpdate & ActivityState::IsVisuallyIdle && pageClient().isVisuallyIdle())
+    bool isVisuallyIdle = pageClient().isVisuallyIdle();
+#if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095) && ENABLE(MEDIA_USAGE)
+    if (pageClient().isViewVisible() && m_mediaUsageManager && m_mediaUsageManager->isPlayingVideoInViewport())
+        isVisuallyIdle = false;
+#endif
+    if (flagsToUpdate & ActivityState::IsVisuallyIdle && isVisuallyIdle)
         m_activityState.add(ActivityState::IsVisuallyIdle);
     if (flagsToUpdate & ActivityState::IsAudible && m_mediaState.contains(MediaProducerMediaState::IsPlayingAudio) && !(m_mutedState.contains(MediaProducerMutedState::AudioIsMuted)))
         m_activityState.add(ActivityState::IsAudible);
