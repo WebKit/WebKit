@@ -3861,6 +3861,22 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
     }
 #endif
 
+    bool shouldAllowUserInteraction = [&] {
+        if (m_userIsInteracting)
+            return true;
+
+        if (parameters.forceUserGesture == ForceUserGesture::No)
+            return false;
+
+#if PLATFORM(COCOA)
+        if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ProgrammaticFocusDuringUserScriptShowsInputViews))
+            return true;
+#endif
+
+        return false;
+    }();
+
+    SetForScope userIsInteractingChange { m_userIsInteracting, shouldAllowUserInteraction };
     auto resolveFunction = [world = Ref { *world }, frame = Ref { *frame }, coreFrame = Ref { *frame->coreFrame() }, completionHandler = WTFMove(completionHandler)] (ValueOrException result) mutable {
         RefPtr<SerializedScriptValue> serializedResultValue;
         if (result) {
