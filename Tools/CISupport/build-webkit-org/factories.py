@@ -38,6 +38,8 @@ class Factory(factory.BuildFactory):
             self.addStep(KillOldProcesses())
         self.addStep(CleanBuildIfScheduled())
         self.addStep(DeleteStaleBuildFiles())
+        if platform.startswith('mac'):
+            self.addStep(PruneCoreSymbolicationdCacheIfTooLarge())
         if platform == "win":
             self.addStep(InstallWin32Dependencies())
         if platform == "gtk" and "--no-experimental-features" not in (additionalArguments or []):
