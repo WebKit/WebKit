@@ -276,10 +276,22 @@ static URLSchemesMap& CORSEnabledSchemes()
     return schemes;
 }
 
+#if ENABLE(PDFJS)
+static Span<const ASCIILiteral> builtinCSPBypassingSchemes()
+{
+    static constexpr std::array schemes { "webkit-pdfjs-viewer"_s };
+    return schemes;
+}
+#endif
+
 static URLSchemesMap& ContentSecurityPolicyBypassingSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
 {
     ASSERT(schemeRegistryLock.isHeld());
+#if ENABLE(PDFJS)
+    static auto schemes = makeNeverDestroyedSchemeSet(builtinCSPBypassingSchemes);
+#else
     static NeverDestroyed<URLSchemesMap> schemes;
+#endif
     return schemes;
 }
 
