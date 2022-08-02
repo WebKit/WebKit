@@ -1,6 +1,3 @@
 
-FAIL Order with different tabindex on host assert_equals: expected Element node <div></div> but got Element node <body>
-<script>
-promise_test(async () => {
-  function cre...
+PASS Order with different tabindex on host
 
