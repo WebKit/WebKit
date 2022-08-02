@@ -361,8 +361,30 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         }
     }
 
-    // Make sure our z-index value is only applied if the object is positioned.
-    if (style.hasAutoSpecifiedZIndex() || (style.position() == PositionType::Static && !m_parentBoxStyle.isDisplayFlexibleOrGridBox()))
+    auto hasAutoZIndex = [](const RenderStyle& style, const RenderStyle& parentBoxStyle, const Element* element) {
+        if (style.hasAutoSpecifiedZIndex())
+            return true;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        // SVG2: Contrary to the rules in CSS 2.1, the z-index property applies to all SVG elements regardless
+        // of the value of the position property, with one exception: as for boxes in CSS 2.1, outer ‘svg’ elements
+        // must be positioned for z-index to apply to them.
+        if (element && is<SVGElement>(element)) {
+            auto& svgElement = downcast<SVGElement>(*element);
+            if (svgElement.hasTagName(SVGNames::svgTag) && svgElement.parentNode() && !svgElement.parentNode()->isSVGElement() && !svgElement.correspondingElement())
+                return svgElement.renderer() && svgElement.renderer()->style().position() == PositionType::Static;
+
+            return false;
+        }
+#else
+        UNUSED_PARAM(element);
+#endif
+
+        // Make sure our z-index value is only applied if the object is positioned.
+        return style.position() == PositionType::Static && !parentBoxStyle.isDisplayFlexibleOrGridBox();
+    };
+
+    if (hasAutoZIndex(style, m_parentBoxStyle, m_element))
         style.setHasAutoUsedZIndex();
     else
         style.setUsedZIndex(style.specifiedZIndex());
@@ -663,7 +685,6 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
         ASSERT(!style.hasClip());
         ASSERT(!style.clipPath());
         ASSERT(!style.hasFilter());
-        ASSERT(!svgElement.isOutermostSVGSVGElement());
 
         auto isInnerSVGElement = [] (const SVGElement& svgElement) -> bool {
             return svgElement.hasTagName(SVGNames::svgTag) && svgElement.parentNode() && is<SVGElement>(svgElement.parentNode());

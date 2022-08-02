@@ -1,0 +1,8 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <rect x="0"  width="100" height="100" style="fill: red;    z-index: -1;"/>
+  <rect x="40" width="100" height="100" style="fill: lime;"/>
+  <rect x="80" width="100" height="100" style="fill: blue;   z-index: 1;"/>
+  <rect x="60" width="100" height="100" style="fill: aqua;"/>
+  <rect x="20" width="100" height="100" style="fill: yellow; z-index: -1;"/>
+</svg>

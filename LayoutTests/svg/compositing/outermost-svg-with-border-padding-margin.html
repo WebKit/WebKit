@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<!-- FIXME: SVG content slightly clipped (up to 1px) due to off-device-pixel-alignment issue, remove when fixed. -->
+<meta name="fuzzy" content="maxDifference=111; totalPixels=847-857" />
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .overflow-visible { overflow: visible; }
+    .first-row { top: 25px; }
+    .second-row { top: 300px; }
+    .first-column { left: 50px; }
+    .second-column { left: 350px; }
+    .affine-transform { transform: rotateZ(25deg); }
+    .perspective-transform { transform: perspective(300px) rotateX(15deg) rotateZ(15deg); }
+
+    svg {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        background-color: lightgray;
+        border: 10px solid black;
+        padding: 15px;
+        margin: 20px;
+    }
+</style>
+</head>
+<body>
+    <svg class="first-row first-column overflow-visible">
+        <g class="affine-transform">
+            <rect x="100" y="50" width="150" height="100" fill="green"/>
+        </g>
+    </svg>
+    <svg class="first-row second-column">
+        <g class="affine-transform">
+            <rect x="100" y="50" width="150" height="100" fill="green"/>
+        </g>
+    </svg>
+
+    <svg class="second-row first-column overflow-visible">
+        <g class="perspective-transform">
+            <rect x="100" y="50" width="150" height="100" fill="green"/>
+        </g>
+    </svg>
+    <svg class="second-row second-column">
+        <g class="perspective-transform">
+            <rect x="100" y="50" width="150" height="100" fill="green"/>
+        </g>
+    </svg>
+</body>
+</html>
