@@ -38,6 +38,7 @@
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
@@ -227,6 +228,8 @@ private:
     void destroyAudioRenderers();
     void clearTracks();
         
+    void registerNotifyWhenHasAvailableVideoFrame();
+        
     void startVideoFrameMetadataGathering() final;
     void stopVideoFrameMetadataGathering() final;
     std::optional<VideoFrameMetadata> videoFrameMetadata() final { return std::exchange(m_videoFrameMetadata, { }); }
@@ -281,6 +284,7 @@ private:
     uint64_t m_lastConvertedSampleCount { 0 };
     uint64_t m_sampleCount { 0 };
     ProcessIdentity m_resourceOwner;
+    std::unique_ptr<BinarySemaphore> m_hasAvailableVideoFrameSemaphore;
 
     FloatSize m_naturalSize;
     MediaTime m_currentTime;

@@ -483,8 +483,15 @@ void MediaPlayerPrivateWebM::willBeAskedToPaintGL()
 
 RefPtr<VideoFrame> MediaPlayerPrivateWebM::videoFrameForCurrentTime()
 {
-    if (!m_isGatheringVideoFrameMetadata)
+    if (!m_isGatheringVideoFrameMetadata) {
+        // FIXME: This method is synchronous in order to
+        // work around https://bugs.webkit.org/show_bug.cgi?id=228997
+        // on builds without AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER
+        const auto shouldWaitForFrame = m_hasAvailableVideoFrameSemaphore && m_decompressionSession;
+        if (shouldWaitForFrame)
+            m_hasAvailableVideoFrameSemaphore->waitFor(100_ms);
         updateLastPixelBuffer();
+    }
     if (!m_lastPixelBuffer)
         return nullptr;
     return VideoFrameCV::create(currentMediaTime(), false, VideoFrame::Rotation::None, RetainPtr { m_lastPixelBuffer });
@@ -1181,10 +1188,9 @@ void MediaPlayerPrivateWebM::flushVideo()
     
     if (m_decompressionSession) {
         m_decompressionSession->flush();
-        m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }, this] {
-            if (weakThis)
-                setHasAvailableVideoFrame(true);
-        });
+        if (!m_hasAvailableVideoFrameSemaphore)
+            m_hasAvailableVideoFrameSemaphore = makeUnique<BinarySemaphore>();
+        registerNotifyWhenHasAvailableVideoFrame();
     }
     setHasAvailableVideoFrame(false);
 }
@@ -1251,6 +1257,8 @@ void MediaPlayerPrivateWebM::ensureDecompressionSession()
 {
     if (m_decompressionSession)
         return;
+    
+    m_hasAvailableVideoFrameSemaphore = makeUnique<BinarySemaphore>();
 
     m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
     m_decompressionSession->setTimebase([m_synchronizer timebase]);
@@ -1259,10 +1267,7 @@ void MediaPlayerPrivateWebM::ensureDecompressionSession()
         if (weakThis)
             didBecomeReadyForMoreSamples(m_enabledVideoTrackID);
     });
-    m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }, this] {
-        if (weakThis)
-            setHasAvailableVideoFrame(true);
-    });
+    registerNotifyWhenHasAvailableVideoFrame();
     
     if (m_enabledVideoTrackID != notFound)
         reenqueSamples(m_enabledVideoTrackID);
@@ -1352,6 +1357,7 @@ void MediaPlayerPrivateWebM::destroyDecompressionSession()
     
     m_decompressionSession->invalidate();
     m_decompressionSession = nullptr;
+    m_hasAvailableVideoFrameSemaphore = nullptr;
     setHasAvailableVideoFrame(false);
 }
 
@@ -1387,6 +1393,22 @@ void MediaPlayerPrivateWebM::clearTracks()
         m_player->removeAudioTrack(*track);
     }
     m_audioTracks.clear();
+}
+
+void MediaPlayerPrivateWebM::registerNotifyWhenHasAvailableVideoFrame()
+{
+    if (!m_decompressionSession)
+        return;
+    
+    m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }, this] {
+        if (weakThis) {
+            setHasAvailableVideoFrame(true);
+            if (m_hasAvailableVideoFrameSemaphore) {
+                m_hasAvailableVideoFrameSemaphore->signal();
+                m_hasAvailableVideoFrameSemaphore = nullptr;
+            }
+        }
+    });
 }
 
 void MediaPlayerPrivateWebM::startVideoFrameMetadataGathering()
