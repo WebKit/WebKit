@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/sw-test-pre.js"></script>
+<p>Tests that loads from dedicated worker still get intercepted by the service worker after a reload.</p>
+<script>
+
+const scopeURL = "/workers/service/resources/";
+
+let didReload = false;
+let iframe = null;
+
+function createTestIframe()
+{
+    if (iframe)
+        iframe.remove();
+
+    iframe = document.createElement("iframe");
+    iframe.src = "resources/interception-from-dedicated-worker-on-reload-iframe.html";
+    document.body.appendChild(iframe);
+}
+
+function receivedFetchContentFromDedicatedWorker(content)
+{
+    if (content === "INTERCEPTED")
+        log("PASS: Load from dedicated worker was properly intercepted by the service worker");
+    else
+        log("FAIL: Load from dedicated worker was not intercepted by the service worker");
+
+    if (!didReload) {
+        didReload = true;
+        log("* Reloading...");
+        createTestIframe();
+        return;
+    }
+    finishSWTest();
+}
+
+async function test()
+{
+    let registration = await registerAndWaitForActive("resources/interception-from-dedicated-worker-on-reload-sw.js", scopeURL);
+    createTestIframe();
+}
+
+test();
+</script>
+</body>
+</html>
