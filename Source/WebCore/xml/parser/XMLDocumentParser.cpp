@@ -268,17 +268,11 @@ static XMLParsingNamespaces findXMLParsingNamespaces(Element* contextElement)
 
     XMLParsingNamespaces result;
 
-    bool stopLookingForDefaultNamespace = false;
+    result.defaultNamespace = contextElement->lookupNamespaceURI(nullAtom());
 
     for (auto& element : lineageOfType<Element>(*contextElement)) {
-        if (is<SVGForeignObjectElement>(element))
-            stopLookingForDefaultNamespace = true;
-        else if (!stopLookingForDefaultNamespace)
-            result.defaultNamespace = element.namespaceURI();
-
         if (!element.hasAttributes())
             continue;
-
         for (auto& attribute : element.attributesIterator()) {
             if (attribute.prefix() == xmlnsAtom())
                 result.prefixNamespaces.set(attribute.localName(), attribute.value());
