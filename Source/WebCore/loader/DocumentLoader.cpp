@@ -1042,7 +1042,7 @@ bool DocumentLoader::disallowWebArchive() const
     if (!LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(m_request.url().protocol()))
         return true;
 
-    if (!frame() || (frame()->isMainFrame() && m_allowsWebArchiveForMainFrame))
+    if (!frame() || (frame()->isMainFrame() && allowsWebArchiveForMainFrame()))
         return false;
 
     // On purpose of maintaining existing tests.
@@ -1057,7 +1057,7 @@ bool DocumentLoader::disallowDataRequest() const
     if (!m_response.url().protocolIsData())
         return false;
 
-    if (!frame() || !frame()->isMainFrame() || m_allowsDataURLsForMainFrame || frame()->settings().allowTopNavigationToDataURLs())
+    if (!frame() || !frame()->isMainFrame() || allowsDataURLsForMainFrame() || frame()->settings().allowTopNavigationToDataURLs())
         return false;
 
     if (auto* currentDocument = frame()->document()) {
