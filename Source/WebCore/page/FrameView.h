@@ -715,6 +715,9 @@ public:
     OverscrollBehavior horizontalOverscrollBehavior() const final;
     OverscrollBehavior verticalOverscrollBehavior() const final;
 
+    void setNeedsHoverUpdate(bool);
+    bool needsHoverUpdate() const;
+    void updateHover();
 private:
     explicit FrameView(Frame&);
 
@@ -1020,6 +1023,8 @@ private:
     // True if autosize has been run since m_shouldAutoSize was set.
     bool m_didRunAutosize { false };
     bool m_inUpdateEmbeddedObjects { false };
+    
+    bool m_needsHoverUpdate { false };
 };
 
 inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)

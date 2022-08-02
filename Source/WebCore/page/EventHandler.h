@@ -153,7 +153,8 @@ public:
     bool mouseDownWasInSubframe() const { return m_mouseDownWasInSubframe; }
     bool panScrollInProgress() const;
 
-    WEBCORE_EXPORT void dispatchFakeMouseMoveEventSoon();
+    WEBCORE_EXPORT void dispatchFakeMouseMoveEventSoon(bool now);
+    void dispatchFakeMouseMoveEvent(Seconds);
     void dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad&);
 
     WEBCORE_EXPORT HitTestResult hitTestResultAtPoint(const LayoutPoint&, OptionSet<HitTestRequest::Type>) const;
@@ -568,6 +569,7 @@ private:
     bool m_currentWheelEventAllowsScrolling { true };
     bool m_svgPan { false };
     bool m_eventHandlerWillResetCapturingMouseEventsElement { false };
+    bool m_mouseMoved { false };
 
     enum SelectionInitiationState : uint8_t { HaveNotStartedSelection, PlacedCaret, ExtendedSelection };
     SelectionInitiationState m_selectionInitiationState { HaveNotStartedSelection };

@@ -1717,6 +1717,20 @@ void Document::updateTitleFromTitleElement()
     }
 }
 
+void Document::updateMouseEvents()
+{
+    if (!m_updateMouseEventsTaskScheduled){
+        eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = Ref { *this }, this]() mutable {
+            m_updateMouseEventsTaskScheduled = false;
+            auto* frame = protectedThis->view();
+            if (frame) {
+                frame->updateHover();
+            }
+        });
+        m_updateMouseEventsTaskScheduled = true;
+    }
+}
+
 void Document::setTitle(String&& title)
 {
     RefPtr element = documentElement();
@@ -2111,7 +2125,7 @@ void Document::resolveStyle(ResolveStyleType type)
         // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
         // to check if any other elements ended up under the mouse pointer due to re-layout.
         if (m_hoveredElement && !m_hoveredElement->renderer())
-            frameView.frame().mainFrame().eventHandler().dispatchFakeMouseMoveEventSoon();
+            frameView.frame().mainFrame().eventHandler().dispatchFakeMouseMoveEventSoon(false);
 
         ++m_styleRecalcCount;
         // FIXME: Assert ASSERT(!needsStyleRecalc()) here. Do we still have some cases where it's not true?

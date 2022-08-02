@@ -1914,6 +1914,7 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
 
     HitTestResult hitTestResult;
     bool result = handleMouseMoveEvent(event, &hitTestResult);
+    m_mouseMoved = true;
 
     Page* page = m_frame.page();
     if (!page)
@@ -3386,7 +3387,7 @@ void EventHandler::scheduleCursorUpdate()
     page->scheduleRenderingUpdate(RenderingUpdateStep::CursorUpdate);
 }
 
-void EventHandler::dispatchFakeMouseMoveEventSoon()
+void EventHandler::dispatchFakeMouseMoveEventSoon(bool now)
 {
 #if !ENABLE(IOS_TOUCH_EVENTS)
     if (m_mousePressed)
@@ -3406,8 +3407,35 @@ void EventHandler::dispatchFakeMouseMoveEventSoon()
     // pauses during the scroll.
     if (m_fakeMouseMoveEventTimer.isActive())
         m_fakeMouseMoveEventTimer.stop();
+    if(now)
+        fakeMouseMoveEventTimerFired();
     m_fakeMouseMoveEventTimer.startOneShot(m_maxMouseMovedDuration > fakeMouseMoveDurationThreshold ? fakeMouseMoveLongInterval : fakeMouseMoveShortInterval);
 #endif
+}
+
+void EventHandler::dispatchFakeMouseMoveEvent(Seconds delay)
+{
+    if (m_mousePressed)
+        return;
+
+    if (!m_lastKnownMousePosition)
+        return;
+
+    if(m_fakeMouseMoveEventTimer.isActive())
+        return;
+
+
+    if (m_mouseMoved) {
+        m_mouseMoved = false;
+        return;
+    }
+
+    if (Page* page = m_frame.page()) {
+        if (!page->chrome().client().shouldDispatchFakeMouseMoveEvents())
+            return;
+    }
+
+    m_fakeMouseMoveEventTimer.startOneShot(delay);
 }
 
 void EventHandler::dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad& quad)
@@ -3422,7 +3450,7 @@ void EventHandler::dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad& quad)
     if (!quad.containsPoint(view->windowToContents(valueOrDefault(m_lastKnownMousePosition))))
         return;
 
-    dispatchFakeMouseMoveEventSoon();
+    dispatchFakeMouseMoveEventSoon(false);
 #endif
 }
 
@@ -3435,6 +3463,8 @@ void EventHandler::cancelFakeMouseMoveEvent()
 void EventHandler::fakeMouseMoveEventTimerFired()
 {
     ASSERT(!m_mousePressed);
+
+    
 
     Ref protectedFrame = m_frame;
     if (!m_frame.view())

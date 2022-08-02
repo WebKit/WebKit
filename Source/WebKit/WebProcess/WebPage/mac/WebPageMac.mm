@@ -990,7 +990,7 @@ void WebPage::dataDetectorsDidHideUI(PageOverlay::PageOverlayID overlayID)
     auto& mainFrame = corePage()->mainFrame();
 
     // Dispatching a fake mouse event will allow clients to display any UI that is normally displayed on hover.
-    mainFrame.eventHandler().dispatchFakeMouseMoveEventSoon();
+    mainFrame.eventHandler().dispatchFakeMouseMoveEventSoon(false);
 
     for (const auto& overlay : corePage()->pageOverlayController().pageOverlays()) {
         if (overlay->pageOverlayID() == overlayID) {

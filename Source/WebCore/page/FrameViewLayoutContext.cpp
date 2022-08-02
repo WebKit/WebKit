@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "FrameViewLayoutContext.h"
-
+#include "EventHandler.h"
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
@@ -268,12 +268,20 @@ void FrameViewLayoutContext::performLayout()
     }
     {
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InPostLayout);
+         
         if (m_needsFullRepaint)
             renderView()->repaintRootContents();
+            
         ASSERT(!layoutRoot->needsLayout());
         view().didLayout(layoutRoot);
+        
+        auto* doc = document();
+        if (doc) {
+            doc->updateMouseEvents();
+        }
         runOrScheduleAsynchronousTasks();
     }
+   
     InspectorInstrumentation::didLayout(view().frame(), *layoutRoot);
     DebugPageOverlays::didLayout(view().frame());
 }

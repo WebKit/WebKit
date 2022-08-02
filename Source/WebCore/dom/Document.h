@@ -1692,6 +1692,7 @@ public:
 
     std::optional<PAL::SessionID> sessionID() const final;
 
+    void updateMouseEvents();
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
@@ -1749,6 +1750,7 @@ private:
     void updateTitleFromTitleElement();
     void updateTitle(const StringWithDirection&);
     void updateBaseURL();
+
 
     WeakPtr<HTMLMetaElement> determineActiveThemeColorMetaElement();
     void themeColorChanged();
@@ -2217,6 +2219,8 @@ private:
 #endif
 
     bool m_updateTitleTaskScheduled { false };
+
+    bool m_updateMouseEventsTaskScheduled { false };
 
     FocusTrigger m_latestFocusTrigger { FocusTrigger::Other };
 

@@ -1,0 +1,74 @@
+<!doctype html>
+<html class="reftest-wait">
+<title>Hover is triggered on elements that move under mouse</title>
+<script src="../../imported/w3c/web-platform-tests/common/reftest-wait.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver-actions.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver-vendor.js"></script>
+<style>
+.arena {
+ width: 400px;
+ height: 200px;
+ position: relative;
+ }
+
+ .rightSideBox {
+ position: absolute;
+ top: 50px;
+ right: 20px;
+ background-color: yellow;
+ width: 100px;
+ height: 100px;
+ }
+
+ .leftSideBox {
+ position: absolute;
+ top: 50px;
+ right: 300px;
+ width: 100px;
+ height: 100px;
+ background-color: purple;
+ }
+
+ .rightSideBox:hover + .leftSideBox {
+ right: 20px;
+ }
+
+ .leftSideBox:hover {
+ background-color: green;
+ right: 20px;
+ }
+
+p {
+    display: none;
+}
+
+</style>
+<div class="arena" id="arena">
+    <div class="rightSideBox" id="rightSideBox"></div>
+    <div class="leftSideBox" id="leftSideBox"></div>
+</div>
+
+<p id="mouseEnterText">Mouse enter works</p>
+<p id="pointerEnterText">Pointer enter works</p>
+
+<script>
+
+  rightSideBox.addEventListener("mouseenter", () => {
+    takeScreenshot();
+  });
+
+  leftSideBox.addEventListener("mouseenter", () => {
+    document.getElementById("mouseEnterText").style.display = "block";
+  });
+
+  leftSideBox.addEventListener("pointerenter", () => {
+    document.getElementById("pointerEnterText").style.display = "block";
+  });
+
+  if(window.testRunner) {
+    var actions = new test_driver.Actions();
+    actions.pointerMove(0, 0, {origin: rightSideBox}).send();
+  }
+ 
+</script>

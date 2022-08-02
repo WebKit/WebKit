@@ -5328,7 +5328,7 @@ void FrameView::scrollableAreaSetChanged()
 void FrameView::scheduleScrollEvent()
 {
     frame().eventHandler().scheduleScrollEvent();
-    frame().eventHandler().dispatchFakeMouseMoveEventSoon();
+    frame().eventHandler().dispatchFakeMouseMoveEventSoon(false);
 }
 
 void FrameView::addChild(Widget& widget)
@@ -5990,6 +5990,40 @@ LayoutRect FrameView::getPossiblyFixedRectToExpose(const LayoutRect& visibleRect
     requiredVisualViewport.scale(frameScaleFactor());
     requiredVisualViewport.move(0, headerHeight());
     return requiredVisualViewport;
+}
+
+void FrameView::setNeedsHoverUpdate(bool needsHoverUpdate)
+{
+    m_needsHoverUpdate = needsHoverUpdate;
+}
+
+bool FrameView::needsHoverUpdate() const
+{
+    return m_needsHoverUpdate;
+}
+
+void FrameView::updateHover()
+{
+    
+    //if (!m_needsHoverUpdate)
+    //    return;
+    frame().eventHandler().dispatchFakeMouseMoveEvent(0_s);
+    /*
+    // Update hover if an element moved under the mouse during layout even if the user didn't move the mouse
+    LayoutPoint currentMousePoint(windowToContents(frame().eventHandler().lastKnownMousePosition()));
+    HitTestResult hitTestResult(currentMousePoint);
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Move, HitTestRequest::Type::DisallowUserAgentShadowContent };
+    HitTestRequest hitTestRequest(hitType);
+    
+    auto *doc = frame().document();
+    if (doc) {
+        doc->hitTest(hitTestRequest, hitTestResult);
+        RefPtr targetElement = hitTestResult.targetElement();
+    
+        doc->updateHoverActiveState(hitTestRequest, targetElement.get(), Document::CaptureChange::No);
+    }
+     */
+    //m_needsHoverUpdate = false;
 }
 
 } // namespace WebCore
