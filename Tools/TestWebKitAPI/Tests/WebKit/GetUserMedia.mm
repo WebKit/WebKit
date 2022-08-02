@@ -560,8 +560,12 @@ TEST(WebKit, WebAudioAndGetUserMedia)
 #endif
 
 #if ENABLE(GPU_PROCESS)
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=239315
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=243412
+#if PLATFORM(IOS)
+TEST(WebKit2, DISABLED_CrashGPUProcessWhileCapturing)
+#else 
 TEST(WebKit2, CrashGPUProcessWhileCapturing)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];
@@ -708,8 +712,12 @@ TEST(WebKit2, CrashGPUProcessAfterApplyingConstraints)
     EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
 }
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=239309
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=243412
+#if PLATFORM(IOS)
+TEST(WebKit2, DISABLED_CrashGPUProcessWhileCapturingAndCalling)
+#else
 TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];
