@@ -111,7 +111,7 @@ bool HTMLParserScheduler::shouldYieldBeforeExecutingScript(const ScriptElement* 
     if (!document->body())
         return false;
 
-    if (!document->frame() || !document->frame()->script().canExecuteScripts(NotAboutToExecuteScript))
+    if (!document->frame() || !document->frame()->script().canExecuteScripts(mainThreadNormalWorld(), NotAboutToExecuteScript))
         return false;
 
     if (!document->haveStylesheetsLoaded())

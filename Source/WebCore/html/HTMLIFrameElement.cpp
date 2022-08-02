@@ -168,7 +168,7 @@ void HTMLIFrameElement::setLoadingForBindings(const AtomString& value)
 
 static bool isFrameLazyLoadable(const Document& document, const AtomString& loadingAttributeValue)
 {
-    if (!document.frame() || !document.frame()->script().canExecuteScripts(NotAboutToExecuteScript))
+    if (!document.frame() || !document.frame()->script().canExecuteScripts(mainThreadNormalWorld(), NotAboutToExecuteScript))
         return false;
 
     return equalLettersIgnoringASCIICase(loadingAttributeValue, "lazy"_s);

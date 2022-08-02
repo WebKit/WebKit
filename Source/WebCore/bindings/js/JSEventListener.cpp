@@ -157,7 +157,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         }
         // FIXME: Is this check needed for other contexts?
         auto& script = window->wrapped().frame()->script();
-        if (!script.canExecuteScripts(AboutToExecuteScript) || script.isPaused())
+        if (!script.canExecuteScripts(m_isolatedWorld, AboutToExecuteScript) || script.isPaused())
             return;
     }
 
