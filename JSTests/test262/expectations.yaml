@@ -609,9 +609,6 @@ test/built-ins/AsyncGeneratorPrototype/return/return-suspendedStart-broken-promi
 test/built-ins/AsyncGeneratorPrototype/return/return-suspendedYield-broken-promise-try-catch.js:
   default: 'Test262:AsyncTestFailure:Error: broken promise'
   strict mode: 'Test262:AsyncTestFailure:Error: broken promise'
-test/built-ins/Date/UTC/fp-evaluation-order.js:
-  default: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
-  strict mode: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'

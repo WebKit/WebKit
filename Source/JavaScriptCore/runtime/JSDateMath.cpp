@@ -294,6 +294,12 @@ double DateCache::gregorianDateTimeToMS(const GregorianDateTime& t, double milli
     return localTimeResult - localToUTCTimeOffset;
 }
 
+double DateCache::localTimeToMS(double milliseconds, WTF::TimeType inputTimeType)
+{
+    double localToUTCTimeOffset = inputTimeType == WTF::LocalTime ? localTimeOffset(milliseconds, inputTimeType).offset : 0;
+    return milliseconds - localToUTCTimeOffset;
+}
+
 // input is UTC
 void DateCache::msToGregorianDateTime(double millisecondsFromEpoch, WTF::TimeType outputTimeType, GregorianDateTime& tm)
 {
