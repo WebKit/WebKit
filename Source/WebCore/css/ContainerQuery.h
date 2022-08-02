@@ -44,7 +44,7 @@ struct UnknownQuery {
     String text;
 };
 
-using ContainerQuery = std::variant<ContainerCondition, SizeFeature, UnknownQuery>;
+using QueryInParens = std::variant<ContainerCondition, SizeFeature, UnknownQuery>;
 
 enum class LogicalOperator : uint8_t { And, Or, Not };
 enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, GreaterThan, GreaterThanOrEqual };
@@ -52,7 +52,7 @@ enum class Syntax : uint8_t { Boolean, Colon, Range };
 
 struct ContainerCondition {
     LogicalOperator logicalOperator { LogicalOperator::And };
-    Vector<ContainerQuery> queries;
+    Vector<QueryInParens> queries;
 };
 
 struct Comparison {
@@ -84,18 +84,17 @@ enum class Axis : uint8_t {
 };
 OptionSet<Axis> requiredAxesForFeature(const AtomString&);
 
-}
-
-using ContainerQuery = CQ::ContainerQuery;
-
-struct FilteredContainerQuery {
-    AtomString nameFilter;
+struct ContainerQuery {
+    AtomString name;
     OptionSet<CQ::Axis> axisFilter;
-    ContainerQuery query;
+    CQ::ContainerCondition condition;
 };
 
-using CachedQueryContainers = Vector<Ref<const Element>>;
-
+void serialize(StringBuilder&, const ContainerCondition&);
 void serialize(StringBuilder&, const ContainerQuery&);
+
+}
+
+using CachedQueryContainers = Vector<Ref<const Element>>;
 
 }

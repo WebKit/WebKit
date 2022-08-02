@@ -291,16 +291,16 @@ private:
 
 class StyleRuleContainer final : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleContainer> create(FilteredContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
+    static Ref<StyleRuleContainer> create(CQ::ContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
     Ref<StyleRuleContainer> copy() const { return adoptRef(*new StyleRuleContainer(*this)); }
 
-    const FilteredContainerQuery& filteredQuery() const { return m_filteredQuery; }
+    const CQ::ContainerQuery& containerQuery() const { return m_containerQuery; }
 
 private:
-    StyleRuleContainer(FilteredContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
+    StyleRuleContainer(CQ::ContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
     StyleRuleContainer(const StyleRuleContainer&);
 
-    FilteredContainerQuery m_filteredQuery;
+    CQ::ContainerQuery m_containerQuery;
 };
 
 // This is only used by the CSS parser.

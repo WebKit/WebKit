@@ -18,7 +18,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/canvas-as-container-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1289718-000-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1289718-001-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1346969-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-quotes-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-remove-insert-evaluator-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/columns-in-table-001-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/columns-in-table-002-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/container-in-canvas-crash.html

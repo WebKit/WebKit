@@ -519,9 +519,9 @@ static Ref<JSON::ArrayOf<Protocol::CSS::Grouping>> buildArrayForGroupings(CSSRul
                 .release();
 
             StringBuilder builder;
-            auto nameFilter = containerRule->nameFilterText();
-            if (!nameFilter.isEmpty())
-                builder.append(nameFilter, ' ');
+            auto nameText = containerRule->nameText();
+            if (!nameText.isEmpty())
+                builder.append(nameText, ' ');
             builder.append(containerRule->conditionText());
             containerRulePayload->setText(builder.toString());
 

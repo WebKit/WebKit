@@ -52,16 +52,16 @@ ContainerQueryEvaluator::ContainerQueryEvaluator(const Element& element, Selecti
 {
 }
 
-bool ContainerQueryEvaluator::evaluate(const FilteredContainerQuery& filteredContainerQuery) const
+bool ContainerQueryEvaluator::evaluate(const CQ::ContainerQuery& containerQuery) const
 {
-    auto container = selectContainer(filteredContainerQuery);
+    auto container = selectContainer(containerQuery);
     if (!container)
         return false;
 
-    return evaluateQuery(filteredContainerQuery.query, *container) == EvaluationResult::True;
+    return evaluateCondition(containerQuery.condition, *container) == EvaluationResult::True;
 }
 
-auto ContainerQueryEvaluator::selectContainer(const FilteredContainerQuery& filteredContainerQuery) const -> std::optional<SelectedContainer>
+auto ContainerQueryEvaluator::selectContainer(const CQ::ContainerQuery& containerQuery) const -> std::optional<SelectedContainer>
 {
     // "For each element, the query container to be queried is selected from among the element’s
     // ancestor query containers that have a valid container-type for all the container features
@@ -81,7 +81,7 @@ auto ContainerQueryEvaluator::selectContainer(const FilteredContainerQuery& filt
 
     auto* cachedQueryContainers = m_selectorMatchingState ? &m_selectorMatchingState->queryContainers : nullptr;
 
-    auto* container = selectContainer(filteredContainerQuery.axisFilter, filteredContainerQuery.nameFilter, m_element.get(), m_selectionMode, m_scopeOrdinal, cachedQueryContainers);
+    auto* container = selectContainer(containerQuery.axisFilter, containerQuery.name, m_element.get(), m_selectionMode, m_scopeOrdinal, cachedQueryContainers);
     if (!container)
         return { };
 
@@ -163,9 +163,9 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes
     return { };
 }
 
-auto ContainerQueryEvaluator::evaluateQuery(const CQ::ContainerQuery& containerQuery, const SelectedContainer& container) const -> EvaluationResult
+auto ContainerQueryEvaluator::evaluateQueryInParens(const CQ::QueryInParens& queryInParens, const SelectedContainer& container) const -> EvaluationResult
 {
-    return WTF::switchOn(containerQuery, [&](const CQ::ContainerCondition& containerCondition) {
+    return WTF::switchOn(queryInParens, [&](const CQ::ContainerCondition& containerCondition) {
         return evaluateCondition(containerCondition, container);
     }, [&](const CQ::SizeFeature& sizeFeature) {
         return evaluateSizeFeature(sizeFeature, container);
@@ -182,11 +182,11 @@ auto ContainerQueryEvaluator::evaluateCondition(const ConditionType& condition, 
 
     switch (condition.logicalOperator) {
     case CQ::LogicalOperator::Not:
-        return !evaluateQuery(condition.queries.first(), container);
+        return !evaluateQueryInParens(condition.queries.first(), container);
     case CQ::LogicalOperator::And: {
         auto result = EvaluationResult::True;
         for (auto query : condition.queries) {
-            auto queryResult = evaluateQuery(query, container);
+            auto queryResult = evaluateQueryInParens(query, container);
             if (queryResult == EvaluationResult::False)
                 return EvaluationResult::False;
             if (queryResult == EvaluationResult::Unknown)
@@ -197,7 +197,7 @@ auto ContainerQueryEvaluator::evaluateCondition(const ConditionType& condition, 
     case CQ::LogicalOperator::Or: {
         auto result = EvaluationResult::False;
         for (auto query : condition.queries) {
-            auto queryResult = evaluateQuery(query, container);
+            auto queryResult = evaluateQueryInParens(query, container);
             if (queryResult == EvaluationResult::True)
                 return EvaluationResult::True;
             if (queryResult == EvaluationResult::Unknown)

@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-std::optional<FilteredContainerQuery> ContainerQueryParser::consumeFilteredContainerQuery(CSSParserTokenRange& range, const CSSParserContext& context)
+std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ContainerQueryParser parser(context);
-    return parser.consumeFilteredContainerQuery(range);
+    return parser.consumeContainerQuery(range);
 }
 
-std::optional<FilteredContainerQuery> ContainerQueryParser::consumeFilteredContainerQuery(CSSParserTokenRange& range)
+std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range)
 {
     auto consumeName = [&] {
         if (range.peek().type() == LeftParenthesisToken || range.peek().type() == FunctionToken)
@@ -51,14 +51,14 @@ std::optional<FilteredContainerQuery> ContainerQueryParser::consumeFilteredConta
 
     m_requiredAxes = { };
 
-    auto query = consumeContainerQuery(range);
-    if (!query)
+    auto condition = consumeCondition<CQ::ContainerCondition>(range);
+    if (!condition)
         return { };
 
-    return FilteredContainerQuery { name, m_requiredAxes, *query };
+    return CQ::ContainerQuery { name, m_requiredAxes, *condition };
 }
 
-std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range)
+std::optional<CQ::QueryInParens> ContainerQueryParser::consumeQueryInParens(CSSParserTokenRange& range)
 {
     if (range.peek().type() == FunctionToken) {
         auto name = range.peek().value();
@@ -92,7 +92,7 @@ std::optional<ConditionType> ContainerQueryParser::consumeCondition(CSSParserTok
 {
     auto consumeQuery = [&](CSSParserTokenRange& range) {
         if constexpr (std::is_same_v<CQ::ContainerCondition, ConditionType>)
-            return consumeContainerQuery(range);
+            return consumeQueryInParens(range);
         // Style query support would be here.
     };
 

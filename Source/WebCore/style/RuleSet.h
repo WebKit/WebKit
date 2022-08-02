@@ -113,7 +113,7 @@ public:
     CascadeLayerPriority cascadeLayerPriorityFor(const RuleData&) const;
 
     bool hasContainerQueries() const { return !m_containerQueries.isEmpty(); }
-    Vector<const FilteredContainerQuery*> containerQueriesFor(const RuleData&) const;
+    Vector<const CQ::ContainerQuery*> containerQueriesFor(const RuleData&) const;
 
 private:
     friend class RuleSetBuilder;
@@ -230,17 +230,17 @@ inline CascadeLayerPriority RuleSet::cascadeLayerPriorityFor(const RuleData& rul
     return cascadeLayerPriorityForIdentifier(identifier);
 }
 
-inline Vector<const FilteredContainerQuery*> RuleSet::containerQueriesFor(const RuleData& ruleData) const
+inline Vector<const CQ::ContainerQuery*> RuleSet::containerQueriesFor(const RuleData& ruleData) const
 {
     if (m_containerQueryIdentifierForRulePosition.size() <= ruleData.position())
         return { };
 
-    Vector<const FilteredContainerQuery*> queries;
+    Vector<const CQ::ContainerQuery*> queries;
 
     auto identifier = m_containerQueryIdentifierForRulePosition[ruleData.position()];
     while (identifier) {
         auto& query = m_containerQueries[identifier - 1];
-        queries.append(&query.containerRule->filteredQuery());
+        queries.append(&query.containerRule->containerQuery());
         identifier = query.parent;
     };
 

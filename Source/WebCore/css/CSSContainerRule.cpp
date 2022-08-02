@@ -54,13 +54,7 @@ String CSSContainerRule::cssText() const
 
     builder.append("@container ");
 
-    auto name = styleRuleContainer().filteredQuery().nameFilter;
-    if (!name.isEmpty()) {
-        serializeIdentifier(name, builder);
-        builder.append(' ');
-    }
-
-    serialize(builder, styleRuleContainer().filteredQuery().query);
+    CQ::serialize(builder, styleRuleContainer().containerQuery());
 
     builder.append(" {\n");
     appendCSSTextForItems(builder);
@@ -72,15 +66,15 @@ String CSSContainerRule::cssText() const
 String CSSContainerRule::conditionText() const
 {
     StringBuilder builder;
-    serialize(builder, styleRuleContainer().filteredQuery().query);
+    CQ::serialize(builder, styleRuleContainer().containerQuery().condition);
     return builder.toString();
 }
 
-String CSSContainerRule::nameFilterText() const
+String CSSContainerRule::nameText() const
 {
     StringBuilder builder;
     
-    auto name = styleRuleContainer().filteredQuery().nameFilter;
+    auto name = styleRuleContainer().containerQuery().name;
     if (!name.isEmpty())
         serializeIdentifier(name, builder);
 
