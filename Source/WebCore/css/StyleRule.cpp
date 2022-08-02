@@ -455,19 +455,19 @@ Ref<StyleRuleLayer> StyleRuleLayer::createBlock(CascadeLayerName&& name, Vector<
     return adoptRef(*new StyleRuleLayer(WTFMove(name), WTFMove(rules)));
 }
 
-StyleRuleContainer::StyleRuleContainer(FilteredContainerQuery&& query, Vector<RefPtr<StyleRuleBase>>&& rules)
+StyleRuleContainer::StyleRuleContainer(CQ::ContainerQuery&& query, Vector<RefPtr<StyleRuleBase>>&& rules)
     : StyleRuleGroup(StyleRuleType::Container, WTFMove(rules))
-    , m_filteredQuery(WTFMove(query))
+    , m_containerQuery(WTFMove(query))
 {
 }
 
 StyleRuleContainer::StyleRuleContainer(const StyleRuleContainer& other)
     : StyleRuleGroup(other)
-    , m_filteredQuery(other.m_filteredQuery)
+    , m_containerQuery(other.m_containerQuery)
 {
 }
 
-Ref<StyleRuleContainer> StyleRuleContainer::create(FilteredContainerQuery&& query, Vector<RefPtr<StyleRuleBase>>&& rules)
+Ref<StyleRuleContainer> StyleRuleContainer::create(CQ::ContainerQuery&& query, Vector<RefPtr<StyleRuleBase>>&& rules)
 {
     return adoptRef(*new StyleRuleContainer(WTFMove(query), WTFMove(rules)));
 }

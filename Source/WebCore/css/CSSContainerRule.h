@@ -37,7 +37,7 @@ public:
 
     String cssText() const final;
     String conditionText() const final;
-    String nameFilterText() const;
+    String nameText() const;
 
 private:
     const StyleRuleContainer& styleRuleContainer() const;

@@ -90,9 +90,9 @@ OptionSet<Axis> requiredAxesForFeature(const AtomString& featureName)
 void serialize(StringBuilder&, const SizeFeature&);
 template<typename ConditionType> void serialize(StringBuilder&, const ConditionType&);
 
-static void serialize(StringBuilder& builder, const ContainerQuery& containerQuery)
+static void serialize(StringBuilder& builder, const QueryInParens& query)
 {
-    WTF::switchOn(containerQuery, [&](auto& node) {
+    WTF::switchOn(query, [&](auto& node) {
         builder.append('(');
         serialize(builder, node);
         builder.append(')');
@@ -186,12 +186,22 @@ void serialize(StringBuilder& builder, const ConditionType& condition)
     }
 }
 
+void serialize(StringBuilder& builder, const ContainerCondition& condition)
+{
+    serialize<ContainerCondition>(builder, condition);
 }
 
 void serialize(StringBuilder& builder, const ContainerQuery& query)
 {
-    CQ::serialize(builder, query);
+    auto name = query.name;
+    if (!name.isEmpty()) {
+        serializeIdentifier(name, builder);
+        builder.append(' ');
+    }
+
+    serialize(builder, query.condition);
 }
 
+}
 }
 
