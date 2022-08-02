@@ -344,9 +344,9 @@ static inline std::optional<size_t> lastValidBreakingPosition(const InlineConten
     for (auto index = inlineTextItem.end() - 1; index > left; --index) {
         U16_SET_CP_START(text, left, index);
         // We should never find surrogates/segments across inline items.
-        ASSERT(index > inlineTextItem.start());
+        ASSERT(index >= inlineTextItem.start());
         if (canBreakBefore(text[index], lineBreak))
-            return index;
+            return index == inlineTextItem.start() ? std::nullopt : std::make_optional(index);
     }
     return { };
 }
