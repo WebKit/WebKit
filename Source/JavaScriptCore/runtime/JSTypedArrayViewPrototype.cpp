@@ -516,12 +516,12 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION("buffer"_s, typedArrayViewProtoGetterFuncBuffer, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION(vm.propertyNames->byteLength, typedArrayViewProtoGetterFuncByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, TypedArrayByteLengthIntrinsic);
     JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION(vm.propertyNames->byteOffset, typedArrayViewProtoGetterFuncByteOffset, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, TypedArrayByteOffsetIntrinsic);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("copyWithin"_s, typedArrayViewProtoFuncCopyWithin, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("copyWithin"_s, typedArrayViewProtoFuncCopyWithin, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("every"_s, typedArrayPrototypeEveryCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("filter"_s, typedArrayPrototypeFilterCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().entriesPublicName(), typedArrayProtoViewFuncEntries, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, TypedArrayEntriesIntrinsic);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("includes"_s, typedArrayViewProtoFuncIncludes, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().fillPublicName(), typedArrayViewProtoFuncFill, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().entriesPublicName(), typedArrayProtoViewFuncEntries, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public, TypedArrayEntriesIntrinsic);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("includes"_s, typedArrayViewProtoFuncIncludes, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().fillPublicName(), typedArrayViewProtoFuncFill, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("find"_s, typedArrayPrototypeFindCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     if (Options::useArrayFindLastMethod())
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().findLastPublicName(), typedArrayPrototypeFindLastCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -529,38 +529,38 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     if (Options::useArrayFindLastMethod())
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().findLastIndexPublicName(), typedArrayPrototypeFindLastIndexCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->forEach, typedArrayPrototypeForEachCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("indexOf"_s, typedArrayViewProtoFuncIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->join, typedArrayViewProtoFuncJoin, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().keysPublicName(), typedArrayViewProtoFuncKeys, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, TypedArrayKeysIntrinsic);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf"_s, typedArrayViewProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("indexOf"_s, typedArrayViewProtoFuncIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->join, typedArrayViewProtoFuncJoin, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().keysPublicName(), typedArrayViewProtoFuncKeys, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public, TypedArrayKeysIntrinsic);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf"_s, typedArrayViewProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
 
-    JSFunction* lengthFunction = JSFunction::create(vm, globalObject, 0, "get length"_s, typedArrayViewProtoGetterFuncLength, TypedArrayLengthIntrinsic);
+    JSFunction* lengthFunction = JSFunction::create(vm, globalObject, 0, "get length"_s, typedArrayViewProtoGetterFuncLength, ImplementationVisibility::Public, TypedArrayLengthIntrinsic);
     GetterSetter* lengthGetterSetter = GetterSetter::create(vm, globalObject, lengthFunction, nullptr);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->length, lengthGetterSetter, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly | PropertyAttribute::Accessor);
 
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("map"_s, typedArrayPrototypeMapCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("reduce"_s, typedArrayPrototypeReduceCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("reduceRight"_s, typedArrayPrototypeReduceRightCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("reverse"_s, typedArrayViewProtoFuncReverse, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->set, typedArrayViewProtoFuncSet, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, typedArrayViewProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("reverse"_s, typedArrayViewProtoFuncReverse, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->set, typedArrayViewProtoFuncSet, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, typedArrayViewProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("some"_s, typedArrayPrototypeSomeCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->subarray, typedArrayViewProtoFuncSubarray, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->subarray, typedArrayViewProtoFuncSubarray, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toLocaleString, typedArrayPrototypeToLocaleStringCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     if (Options::useChangeArrayByCopyMethods()) {
-        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toReversed"_s, typedArrayViewProtoFuncToReversed, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toReversed"_s, typedArrayViewProtoFuncToReversed, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toSorted"_s, typedArrayPrototypeToSortedCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->withKeyword, typedArrayViewProtoFuncWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->withKeyword, typedArrayViewProtoFuncWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     }
     if (Options::useAtMethod())
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().atPublicName(), typedArrayPrototypeAtCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSFunction* toStringTagFunction = JSFunction::create(vm, globalObject, 0, "get [Symbol.toStringTag]"_s, typedArrayViewProtoGetterFuncToStringTag, NoIntrinsic);
+    JSFunction* toStringTagFunction = JSFunction::create(vm, globalObject, 0, "get [Symbol.toStringTag]"_s, typedArrayViewProtoGetterFuncToStringTag, ImplementationVisibility::Public);
     GetterSetter* toStringTagAccessor = GetterSetter::create(vm, globalObject, toStringTagFunction, nullptr);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, toStringTagAccessor, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly | PropertyAttribute::Accessor);
 
-    JSFunction* valuesFunction = JSFunction::create(vm, globalObject, 0, vm.propertyNames->builtinNames().valuesPublicName().string(), typedArrayViewProtoFuncValues, TypedArrayValuesIntrinsic);
+    JSFunction* valuesFunction = JSFunction::create(vm, globalObject, 0, vm.propertyNames->builtinNames().valuesPublicName().string(), typedArrayViewProtoFuncValues, ImplementationVisibility::Public, TypedArrayValuesIntrinsic);
 
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().valuesPublicName(), valuesFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, valuesFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));

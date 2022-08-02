@@ -687,33 +687,33 @@ void JSTestGlobalObject::finishCreation(VM& vm)
 #endif
 #if ENABLE(TEST_FEATURE)
     if (DeprecatedGlobalSettings::testFeatureEnabled())
-        putDirectNativeFunction(vm, this, builtinNames(vm).enabledAtRuntimeOperationPublicName(), 1, jsTestGlobalObjectInstanceFunction_enabledAtRuntimeOperation, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
+        putDirectNativeFunction(vm, this, builtinNames(vm).enabledAtRuntimeOperationPublicName(), 1, jsTestGlobalObjectInstanceFunction_enabledAtRuntimeOperation, ImplementationVisibility::Public, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
 #endif
 #if ENABLE(TEST_FEATURE)
     if (DeprecatedGlobalSettings::testFeatureEnabled())
-        putDirectNativeFunction(vm, this, builtinNames(vm).enabledAtRuntimeOperationStaticPublicName(), 1, jsTestGlobalObjectConstructorFunction_enabledAtRuntimeOperationStatic, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
+        putDirectNativeFunction(vm, this, builtinNames(vm).enabledAtRuntimeOperationStaticPublicName(), 1, jsTestGlobalObjectConstructorFunction_enabledAtRuntimeOperationStatic, ImplementationVisibility::Public, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
 #endif
     if (worldForDOMObject(*this).specificWorld())
-        putDirectNativeFunction(vm, this, builtinNames(vm).enabledInSpecificWorldPublicName(), 1, jsTestGlobalObjectInstanceFunction_enabledInSpecificWorld, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
+        putDirectNativeFunction(vm, this, builtinNames(vm).enabledInSpecificWorldPublicName(), 1, jsTestGlobalObjectInstanceFunction_enabledInSpecificWorld, ImplementationVisibility::Public, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
     if ((worldForDOMObject(*this).specificWorld() && DeprecatedGlobalSettings::testFeatureEnabled()))
-        putDirectNativeFunction(vm, this, builtinNames(vm).enabledInSpecificWorldWhenRuntimeFeatureEnabledPublicName(), 1, jsTestGlobalObjectInstanceFunction_enabledInSpecificWorldWhenRuntimeFeatureEnabled, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
+        putDirectNativeFunction(vm, this, builtinNames(vm).enabledInSpecificWorldWhenRuntimeFeatureEnabledPublicName(), 1, jsTestGlobalObjectInstanceFunction_enabledInSpecificWorldWhenRuntimeFeatureEnabled, ImplementationVisibility::Public, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
     if ((worldForDOMObject(*this).specificWorld() && DeprecatedGlobalSettings::testFeatureEnabled() && DeprecatedGlobalSettings::testFeature1Enabled()))
-        putDirectNativeFunction(vm, this, builtinNames(vm).enabledInSpecificWorldWhenRuntimeFeaturesEnabledPublicName(), 1, jsTestGlobalObjectInstanceFunction_enabledInSpecificWorldWhenRuntimeFeaturesEnabled, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
+        putDirectNativeFunction(vm, this, builtinNames(vm).enabledInSpecificWorldWhenRuntimeFeaturesEnabledPublicName(), 1, jsTestGlobalObjectInstanceFunction_enabledInSpecificWorldWhenRuntimeFeaturesEnabled, ImplementationVisibility::Public, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
 #if ENABLE(TEST_FEATURE)
     if (DeprecatedGlobalSettings::testFeatureEnabled())
-        putDirectNativeFunction(vm, this, builtinNames(vm).testPrivateFunctionPrivateName(), 0, jsTestGlobalObjectInstanceFunction_testPrivateFunction, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
+        putDirectNativeFunction(vm, this, builtinNames(vm).testPrivateFunctionPrivateName(), 0, jsTestGlobalObjectInstanceFunction_testPrivateFunction, ImplementationVisibility::Public, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
 #endif
 #if ENABLE(TEST_FEATURE)
     if (DeprecatedGlobalSettings::testFeatureEnabled())
         putDirectBuiltinFunction(vm, this, builtinNames(vm).testJSBuiltinFunctionPublicName(), testGlobalObjectTestJSBuiltinFunctionCodeGenerator(vm), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Builtin)));
 #endif
     if (jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext())
-        putDirectNativeFunction(vm, this, builtinNames(vm).calculateSecretResultPublicName(), 0, jsTestGlobalObjectInstanceFunction_calculateSecretResult, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
+        putDirectNativeFunction(vm, this, builtinNames(vm).calculateSecretResultPublicName(), 0, jsTestGlobalObjectInstanceFunction_calculateSecretResult, ImplementationVisibility::Public, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
     if (jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext())
-        putDirectNativeFunction(vm, this, builtinNames(vm).getSecretBooleanPublicName(), 0, jsTestGlobalObjectInstanceFunction_getSecretBoolean, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
+        putDirectNativeFunction(vm, this, builtinNames(vm).getSecretBooleanPublicName(), 0, jsTestGlobalObjectInstanceFunction_getSecretBoolean, ImplementationVisibility::Public, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
 #if ENABLE(TEST_FEATURE)
     if ((jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() && DeprecatedGlobalSettings::testFeatureEnabled()))
-        putDirectNativeFunction(vm, this, builtinNames(vm).testFeatureGetSecretBooleanPublicName(), 0, jsTestGlobalObjectInstanceFunction_testFeatureGetSecretBoolean, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
+        putDirectNativeFunction(vm, this, builtinNames(vm).testFeatureGetSecretBooleanPublicName(), 0, jsTestGlobalObjectInstanceFunction_testFeatureGetSecretBoolean, ImplementationVisibility::Public, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
 #endif
 }
 

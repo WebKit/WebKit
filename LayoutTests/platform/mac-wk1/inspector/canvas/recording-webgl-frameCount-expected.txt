@@ -20,5 +20,4 @@ frames:
         2: executeFrameFunction
         3: performActions
         4: Global Code
-        5: evaluateWithScopeExtension
 

@@ -36,6 +36,7 @@
 #include "ExceptionEventLocation.h"
 #include "FunctionHasExecutedCache.h"
 #include "Heap.h"
+#include "ImplementationVisibility.h"
 #include "IndexingType.h"
 #include "Integrity.h"
 #include "Interpreter.h"
@@ -557,8 +558,8 @@ public:
     std::unique_ptr<FTL::Thunks> ftlThunks;
 #endif
 
-    NativeExecutable* getHostFunction(NativeFunction, NativeFunction constructor, const String& name);
-    NativeExecutable* getHostFunction(NativeFunction, Intrinsic, NativeFunction constructor, const DOMJIT::Signature*, const String& name);
+    NativeExecutable* getHostFunction(NativeFunction, ImplementationVisibility, NativeFunction constructor, const String& name);
+    NativeExecutable* getHostFunction(NativeFunction, ImplementationVisibility, Intrinsic, NativeFunction constructor, const DOMJIT::Signature*, const String& name);
 
     NativeExecutable* getBoundFunction(bool isJSFunction, bool canConstruct);
     NativeExecutable* getRemoteFunction(bool isJSFunction);

@@ -10,7 +10,6 @@ PASS: Canvas context should be 2D.
   0: getContext - [native code]
   1: createAttachedCanvas - inspector/canvas/resources/create-context-utilities.js:4:36
   2: Global Code - [program code]
-  3: evaluateWithScopeExtension - [native code]
 
 PASS: Removed canvas has expected ID.
 
@@ -19,7 +18,6 @@ PASS: Canvas context should be 2D.
   0: getContext - [native code]
   1: createDetachedCanvas - inspector/canvas/resources/create-context-utilities.js:11:62
   2: Global Code - [program code]
-  3: evaluateWithScopeExtension - [native code]
 
 PASS: Removed canvas has expected ID.
 
@@ -29,7 +27,6 @@ PASS: Canvas context should be 2D.
   0: getCSSCanvasContext - [native code]
   1: createCSSCanvas - inspector/canvas/resources/create-context-utilities.js:18:47
   2: Global Code - [program code]
-  3: evaluateWithScopeExtension - [native code]
 
 PASS: Canvas name should equal the identifier passed to -webkit-canvas.
 

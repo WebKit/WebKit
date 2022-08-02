@@ -235,7 +235,7 @@ void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->toPrimitiveSymbol,
-        JSFunction::create(vm, globalObject, 0, "[Symbol.toPrimitive]"_s, convertObjCFallbackObjectToPrimitive),
+        JSFunction::create(vm, globalObject, 0, "[Symbol.toPrimitive]"_s, convertObjCFallbackObjectToPrimitive, ImplementationVisibility::Public),
         static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 

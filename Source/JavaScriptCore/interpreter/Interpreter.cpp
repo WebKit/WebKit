@@ -396,10 +396,8 @@ public:
             return IterationStatus::Continue;
         }
 
-        if (auto* codeBlock = visitor->codeBlock()) {
-            if (codeBlock->ownerExecutable()->implementationVisibility() != ImplementationVisibility::Public)
-                return IterationStatus::Continue;
-        }
+        if (visitor->isImplementationVisibilityPrivate())
+            return IterationStatus::Continue;
 
         if (m_results.size() < m_results.capacity()) {
             if (visitor->isWasmFrame()) {
@@ -437,10 +435,8 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
         if (++skippedFrames <= framesToSkip)
             return IterationStatus::Continue;
 
-        if (auto* codeBlock = visitor->codeBlock()) {
-            if (codeBlock->ownerExecutable()->implementationVisibility() != ImplementationVisibility::Public)
-                return IterationStatus::Continue;
-        }
+        if (visitor->isImplementationVisibilityPrivate())
+            return IterationStatus::Continue;
 
         if (++visitedFrames < maxStackSize)
             return IterationStatus::Continue;

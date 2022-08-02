@@ -126,46 +126,46 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm, jsEmptyString(vm));
     ASSERT(inherits(info()));
 
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, stringProtoFuncToString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, StringPrototypeValueOfIntrinsic);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->valueOf, stringProtoFuncToString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, StringPrototypeValueOfIntrinsic);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("charAt"_s, stringProtoFuncCharAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, CharAtIntrinsic);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("charCodeAt"_s, stringProtoFuncCharCodeAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, CharCodeAtIntrinsic);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("codePointAt"_s, stringProtoFuncCodePointAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, StringPrototypeCodePointAtIntrinsic);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("indexOf"_s, stringProtoFuncIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf"_s, stringProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceUsingRegExpPrivateName(), stringProtoFuncReplaceUsingRegExp, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, StringPrototypeReplaceRegExpIntrinsic);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceUsingStringSearchPrivateName(), stringProtoFuncReplaceUsingStringSearch, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceAllUsingStringSearchPrivateName(), stringProtoFuncReplaceAllUsingStringSearch, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("slice"_s, stringProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, StringPrototypeSliceIntrinsic);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substr"_s, stringProtoFuncSubstr, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substring"_s, stringProtoFuncSubstring, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("toLowerCase"_s, stringProtoFuncToLowerCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, StringPrototypeToLowerCaseIntrinsic);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toUpperCase"_s, stringProtoFuncToUpperCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("localeCompare"_s, stringProtoFuncLocaleCompare, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleLowerCase"_s, stringProtoFuncToLocaleLowerCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleUpperCase"_s, stringProtoFuncToLocaleUpperCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trim"_s, stringProtoFuncTrim, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("startsWith"_s, stringProtoFuncStartsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("endsWith"_s, stringProtoFuncEndsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("includes"_s, stringProtoFuncIncludes, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("normalize"_s, stringProtoFuncNormalize, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().charCodeAtPrivateName(), stringProtoFuncCharCodeAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, CharCodeAtIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, stringProtoFuncToString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public, StringPrototypeValueOfIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->valueOf, stringProtoFuncToString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public, StringPrototypeValueOfIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("charAt"_s, stringProtoFuncCharAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, CharAtIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("charCodeAt"_s, stringProtoFuncCharCodeAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, CharCodeAtIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("codePointAt"_s, stringProtoFuncCodePointAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, StringPrototypeCodePointAtIntrinsic);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("indexOf"_s, stringProtoFuncIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf"_s, stringProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceUsingRegExpPrivateName(), stringProtoFuncReplaceUsingRegExp, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceRegExpIntrinsic);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceUsingStringSearchPrivateName(), stringProtoFuncReplaceUsingStringSearch, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceAllUsingStringSearchPrivateName(), stringProtoFuncReplaceAllUsingStringSearch, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("slice"_s, stringProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeSliceIntrinsic);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substr"_s, stringProtoFuncSubstr, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substring"_s, stringProtoFuncSubstring, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("toLowerCase"_s, stringProtoFuncToLowerCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public, StringPrototypeToLowerCaseIntrinsic);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toUpperCase"_s, stringProtoFuncToUpperCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("localeCompare"_s, stringProtoFuncLocaleCompare, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleLowerCase"_s, stringProtoFuncToLocaleLowerCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleUpperCase"_s, stringProtoFuncToLocaleUpperCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trim"_s, stringProtoFuncTrim, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("startsWith"_s, stringProtoFuncStartsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("endsWith"_s, stringProtoFuncEndsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("includes"_s, stringProtoFuncIncludes, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("normalize"_s, stringProtoFuncNormalize, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().charCodeAtPrivateName(), stringProtoFuncCharCodeAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, CharCodeAtIntrinsic);
 
     if (Options::useAtMethod())
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().atPublicName(), stringPrototypeAtCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSFunction* trimStartFunction = JSFunction::create(vm, globalObject, 0, "trimStart"_s, stringProtoFuncTrimStart, NoIntrinsic);
-    JSFunction* trimEndFunction = JSFunction::create(vm, globalObject, 0, "trimEnd"_s, stringProtoFuncTrimEnd, NoIntrinsic);
+    JSFunction* trimStartFunction = JSFunction::create(vm, globalObject, 0, "trimStart"_s, stringProtoFuncTrimStart, ImplementationVisibility::Public);
+    JSFunction* trimEndFunction = JSFunction::create(vm, globalObject, 0, "trimEnd"_s, stringProtoFuncTrimEnd, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, Identifier::fromString(vm, "trimStart"_s), trimStartFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, Identifier::fromString(vm, "trimLeft"_s), trimStartFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, Identifier::fromString(vm, "trimEnd"_s), trimEndFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, Identifier::fromString(vm, "trimRight"_s), trimEndFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, "[Symbol.iterator]"_s, stringProtoFuncIterator, NoIntrinsic);
+    JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, "[Symbol.iterator]"_s, stringProtoFuncIterator, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, iteratorFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().substrPrivateName(), stringProtoFuncSubstr, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().endsWithPrivateName(), stringProtoFuncEndsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().substrPrivateName(), stringProtoFuncSubstr, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().endsWithPrivateName(), stringProtoFuncEndsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
 
     // The constructor will be added later, after StringConstructor has been built
 }

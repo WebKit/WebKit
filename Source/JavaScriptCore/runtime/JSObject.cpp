@@ -3325,47 +3325,47 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(JSGlobalObject* globalObje
 
 bool JSObject::putDirectNativeIntrinsicGetter(VM& vm, JSGlobalObject* globalObject, Identifier name, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)
 {
-    JSFunction* function = JSFunction::create(vm, globalObject, 0, makeString("get ", name.string()), nativeFunction, intrinsic);
+    JSFunction* function = JSFunction::create(vm, globalObject, 0, makeString("get ", name.string()), nativeFunction, ImplementationVisibility::Public, intrinsic);
     GetterSetter* accessor = GetterSetter::create(vm, globalObject, function, nullptr);
     return putDirectNonIndexAccessor(vm, name, accessor, attributes);
 }
 
 void JSObject::putDirectNativeIntrinsicGetterWithoutTransition(VM& vm, JSGlobalObject* globalObject, Identifier name, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)
 {
-    JSFunction* function = JSFunction::create(vm, globalObject, 0, makeString("get ", name.string()), nativeFunction, intrinsic);
+    JSFunction* function = JSFunction::create(vm, globalObject, 0, makeString("get ", name.string()), nativeFunction, ImplementationVisibility::Public, intrinsic);
     GetterSetter* accessor = GetterSetter::create(vm, globalObject, function, nullptr);
     putDirectNonIndexAccessorWithoutTransition(vm, name, accessor, attributes);
 }
 
-bool JSObject::putDirectNativeFunction(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)
+bool JSObject::putDirectNativeFunction(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, unsigned attributes)
 {
     StringImpl* name = propertyName.publicName();
     if (!name)
         name = vm.propertyNames->anonymous.impl();
     ASSERT(name);
 
-    JSFunction* function = JSFunction::create(vm, globalObject, functionLength, name, nativeFunction, intrinsic);
+    JSFunction* function = JSFunction::create(vm, globalObject, functionLength, name, nativeFunction, implementationVisibility, intrinsic);
     return putDirect(vm, propertyName, function, attributes);
 }
 
-bool JSObject::putDirectNativeFunction(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, Intrinsic intrinsic, const DOMJIT::Signature* signature, unsigned attributes)
+bool JSObject::putDirectNativeFunction(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, const DOMJIT::Signature* signature, unsigned attributes)
 {
     StringImpl* name = propertyName.publicName();
     if (!name)
         name = vm.propertyNames->anonymous.impl();
     ASSERT(name);
 
-    JSFunction* function = JSFunction::create(vm, globalObject, functionLength, name, nativeFunction, intrinsic, callHostFunctionAsConstructor, signature);
+    JSFunction* function = JSFunction::create(vm, globalObject, functionLength, name, nativeFunction, implementationVisibility, intrinsic, callHostFunctionAsConstructor, signature);
     return putDirect(vm, propertyName, function, attributes);
 }
 
-void JSObject::putDirectNativeFunctionWithoutTransition(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)
+void JSObject::putDirectNativeFunctionWithoutTransition(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, unsigned attributes)
 {
     StringImpl* name = propertyName.publicName();
     if (!name)
         name = vm.propertyNames->anonymous.impl();
     ASSERT(name);
-    JSFunction* function = JSFunction::create(vm, globalObject, functionLength, name, nativeFunction, intrinsic);
+    JSFunction* function = JSFunction::create(vm, globalObject, functionLength, name, nativeFunction, implementationVisibility, intrinsic);
     putDirectWithoutTransition(vm, propertyName, function, attributes);
 }
 

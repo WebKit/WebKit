@@ -69,7 +69,7 @@ void IntlSegmentsPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->iteratorSymbol, intlSegmentsPrototypeFuncIterator, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->iteratorSymbol, intlSegmentsPrototypeFuncIterator, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
 }
 
 // https://tc39.es/proposal-intl-segmenter/#sec-%segmentsprototype%.containing

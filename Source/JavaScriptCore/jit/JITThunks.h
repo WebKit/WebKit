@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 
 #include "CallData.h"
+#include "ImplementationVisibility.h"
 #include "Intrinsic.h"
 #include "MacroAssemblerCodeRef.h"
 #include "SlowPathFunction.h"
@@ -39,7 +40,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/PackedRefPtr.h>
 #include <wtf/RecursiveLockAdapter.h>
-#include <wtf/text/StringHash.h>
+#include <wtf/Hasher.h>
 
 namespace JSC {
 namespace DOMJIT {
@@ -65,9 +66,9 @@ public:
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, ThunkGenerator);
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiSlowPathFunctionStub(VM&, SlowPathFunction);
 
-    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, const String& name);
-    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ThunkGenerator, Intrinsic, const DOMJIT::Signature*, const String& name);
-    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, ThunkGenerator, Intrinsic, const String& name);
+    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ImplementationVisibility, const String& name);
+    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ThunkGenerator, ImplementationVisibility, Intrinsic, const DOMJIT::Signature*, const String& name);
+    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, ThunkGenerator, ImplementationVisibility, Intrinsic, const String& name);
 
 private:
     template <typename GenerateThunk>
@@ -82,14 +83,14 @@ private:
     using CTIStubMap = HashMap<ThunkGenerator, Entry>;
     CTIStubMap m_ctiStubMap;
 
-    using HostFunctionKey = std::tuple<TaggedNativeFunction, TaggedNativeFunction, String>;
+    using HostFunctionKey = std::tuple<TaggedNativeFunction, TaggedNativeFunction, ImplementationVisibility, String>;
 
     struct WeakNativeExecutableHash {
         static inline unsigned hash(const Weak<NativeExecutable>&);
         static inline unsigned hash(NativeExecutable*);
         static unsigned hash(const HostFunctionKey& key)
         {
-            return hash(std::get<0>(key), std::get<1>(key), std::get<2>(key));
+            return hash(std::get<0>(key), std::get<1>(key), std::get<2>(key), std::get<3>(key));
         }
 
         static inline bool equal(const Weak<NativeExecutable>&, const Weak<NativeExecutable>&);
@@ -99,19 +100,15 @@ private:
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
 
     private:
-        static inline unsigned hashPointer(TaggedNativeFunction p)
+        static unsigned hash(TaggedNativeFunction function, TaggedNativeFunction constructor, ImplementationVisibility implementationVisibility, const String& name)
         {
-            return DefaultHash<TaggedNativeFunction>::hash(p);
-        }
-
-        static unsigned hash(TaggedNativeFunction function, TaggedNativeFunction constructor, const String& name)
-        {
-            // FIXME: Use WTF::computeHash.
-            // https://bugs.webkit.org/show_bug.cgi?id=207835
-            unsigned hash = WTF::pairIntHash(hashPointer(function), hashPointer(constructor));
+            Hasher hasher;
+            WTF::add(hasher, function);
+            WTF::add(hasher, constructor);
+            WTF::add(hasher, implementationVisibility);
             if (!name.isNull())
-                hash = WTF::pairIntHash(hash, DefaultHash<String>::hash(name));
-            return hash;
+                WTF::add(hasher, name);
+            return hasher.hash();
         }
     };
     struct HostKeySearcher;

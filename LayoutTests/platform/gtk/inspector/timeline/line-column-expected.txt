@@ -49,13 +49,6 @@ PASS: Capturing started.
             "scriptId": "<filtered>",
             "lineNumber": 1,
             "columnNumber": 21
-          },
-          {
-            "functionName": "evaluateWithScopeExtension",
-            "url": "[native code]",
-            "scriptId": "<filtered>",
-            "lineNumber": 0,
-            "columnNumber": 0
           }
         ]
       },
@@ -97,13 +90,6 @@ PASS: Capturing started.
         "scriptId": "<filtered>",
         "lineNumber": 1,
         "columnNumber": 21
-      },
-      {
-        "functionName": "evaluateWithScopeExtension",
-        "url": "[native code]",
-        "scriptId": "<filtered>",
-        "lineNumber": 0,
-        "columnNumber": 0
       }
     ]
   },
@@ -144,13 +130,6 @@ PASS: Capturing started.
         "scriptId": "<filtered>",
         "lineNumber": 1,
         "columnNumber": 23
-      },
-      {
-        "functionName": "evaluateWithScopeExtension",
-        "url": "[native code]",
-        "scriptId": "<filtered>",
-        "lineNumber": 0,
-        "columnNumber": 0
       }
     ]
   },

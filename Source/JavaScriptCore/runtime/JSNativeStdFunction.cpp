@@ -66,7 +66,7 @@ JSC_DEFINE_HOST_FUNCTION(runStdFunction, (JSGlobalObject* globalObject, CallFram
 
 JSNativeStdFunction* JSNativeStdFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, NativeStdFunction&& nativeStdFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
-    NativeExecutable* executable = vm.getHostFunction(runStdFunction, intrinsic, nativeConstructor, nullptr, name);
+    NativeExecutable* executable = vm.getHostFunction(runStdFunction, ImplementationVisibility::Private, intrinsic, nativeConstructor, nullptr, name);
     Structure* structure = globalObject->nativeStdFunctionStructure();
     JSNativeStdFunction* function = new (NotNull, allocateCell<JSNativeStdFunction>(vm)) JSNativeStdFunction(vm, executable, globalObject, structure, WTFMove(nativeStdFunction));
     function->finishCreation(vm, executable, length, name);

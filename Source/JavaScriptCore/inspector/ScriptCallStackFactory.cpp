@@ -64,10 +64,8 @@ public:
             return IterationStatus::Continue;
         }
 
-        if (auto* codeBlock = visitor->codeBlock()) {
-            if (codeBlock->ownerExecutable()->implementationVisibility() != ImplementationVisibility::Public)
-                return IterationStatus::Continue;
-        }
+        if (visitor->isImplementationVisibilityPrivate())
+            return IterationStatus::Continue;
 
         if (m_remainingCapacityForFrameCapture) {
             unsigned line;

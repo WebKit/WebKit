@@ -503,7 +503,7 @@ JSC_DEFINE_CUSTOM_GETTER(showModalDialogGetter, (JSGlobalObject* lexicalGlobalOb
 
     if (auto* frame = thisObject->wrapped().frame()) {
         if (DOMWindow::canShowModalDialog(*frame)) {
-            auto* jsFunction = JSFunction::create(vm, lexicalGlobalObject, 1, "showModalDialog"_s, showModalDialog);
+            auto* jsFunction = JSFunction::create(vm, lexicalGlobalObject, 1, "showModalDialog"_s, showModalDialog, ImplementationVisibility::Public);
             thisObject->putDirect(vm, propertyName, jsFunction);
             return JSValue::encode(jsFunction);
         }
@@ -648,7 +648,7 @@ JSValue JSDOMWindow::openDatabase(JSC::JSGlobalObject& lexicalGlobalObject) cons
     VM& vm = lexicalGlobalObject.vm();
     StringImpl* name = PropertyName(builtinNames(vm).openDatabasePublicName()).publicName();
     if (DeprecatedGlobalSettings::webSQLEnabled())
-        return JSFunction::create(vm, &lexicalGlobalObject, 4, name, jsDOMWindowInstanceFunction_openDatabase, NoIntrinsic);
+        return JSFunction::create(vm, &lexicalGlobalObject, 4, name, jsDOMWindowInstanceFunction_openDatabase, ImplementationVisibility::Public);
 
     return InternalFunction::createFunctionThatMasqueradesAsUndefined(vm, &lexicalGlobalObject, 4, name, jsDOMWindowInstanceFunction_openDatabase);
 }

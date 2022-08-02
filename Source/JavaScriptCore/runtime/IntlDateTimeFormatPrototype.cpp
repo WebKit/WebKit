@@ -83,7 +83,7 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalO
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 #if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("formatRangeToParts"_s, intlDateTimeFormatPrototypeFuncFormatRangeToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("formatRangeToParts"_s, intlDateTimeFormatPrototypeFuncFormatRangeToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
 #else
     UNUSED_PARAM(globalObject);
     UNUSED_PARAM(&intlDateTimeFormatPrototypeFuncFormatRangeToParts);
@@ -147,7 +147,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlDateTimeFormatPrototypeGetterFormat, (JSGlobalObjec
         JSGlobalObject* globalObject = dtf->globalObject();
         // a. Let F be a new built-in function object as defined in 12.3.4.
         // b. The value of F’s length property is 1. (Note: F’s length property was 0 in ECMA-402 1.0)
-        JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, "format"_s, intlDateTimeFormatFuncFormatDateTime, NoIntrinsic);
+        JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, "format"_s, intlDateTimeFormatFuncFormatDateTime, ImplementationVisibility::Public);
         // c. Let bf be BoundFunctionCreate(F, «this value»).
         boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, dtf, nullptr, 1, nullptr);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());

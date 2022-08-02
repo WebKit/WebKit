@@ -274,16 +274,16 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(info()));
 
     Identifier toUTCStringName = Identifier::fromString(vm, "toUTCString"_s);
-    JSFunction* toUTCStringFunction = JSFunction::create(vm, globalObject, 0, toUTCStringName.string(), dateProtoFuncToUTCString);
+    JSFunction* toUTCStringFunction = JSFunction::create(vm, globalObject, 0, toUTCStringName.string(), dateProtoFuncToUTCString, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, toUTCStringName, toUTCStringFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, Identifier::fromString(vm, "toGMTString"_s), toUTCStringFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_s, dateProtoFuncToPrimitiveSymbol, NoIntrinsic);
+    JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_s, dateProtoFuncToPrimitiveSymbol, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->toPrimitiveSymbol, toPrimitiveFunction, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 
     if (Options::useTemporal()) {
         Identifier toTemporalInstantName = Identifier::fromString(vm, "toTemporalInstant"_s);
-        JSFunction* toTemporalInstantFunction = JSFunction::create(vm, globalObject, 0, toTemporalInstantName.string(), dateProtoFuncToTemporalInstant);
+        JSFunction* toTemporalInstantFunction = JSFunction::create(vm, globalObject, 0, toTemporalInstantName.string(), dateProtoFuncToTemporalInstant, ImplementationVisibility::Public);
         putDirectWithoutTransition(vm, toTemporalInstantName, toTemporalInstantFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
     // The constructor will be added later, after DateConstructor has been built.
