@@ -44,7 +44,8 @@
           shouldBe("body.childAtIndex(6).childAtIndex(0).subrole", "'AXSubrole: '");
 
           // When a header and footer are inside a section, they should not be landmarks.
-          shouldBe("body.childAtIndex(7).childAtIndex(0).subrole", "'AXSubrole: '");
+          // Instead, expect only the static text inside to be exposed.
+          shouldBe("body.childAtIndex(7).role", "'AXRole: AXStaticText'");
     }
 
 </script>

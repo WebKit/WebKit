@@ -1505,6 +1505,13 @@ webkit.org/b/205361 [ Release ] crypto/workers/subtle/aes-indexeddb.html [ Pass 
 
 webkit.org/b/205403 accessibility/presentation-role-iframe.html [ Pass Failure ]
 
+# The actual behavior-under-test has been flaky since introduced, but this flakiness
+# was only exposed when an unnecessary group was removed from the AX tree in:
+# https://bugs.webkit.org/show_bug.cgi?id=243373 (AX: An unnecessary group is created for every block-flow box with no other useful AX semantics)
+# The flakey behavior is that sometimes the AXImage with "circle" AXStaticText child sometimes never becomes part of the AX tree.
+# Full investigation at: https://bugs.webkit.org/show_bug.cgi?id=243407
+webkit.org/b/243407 accessibility/add-children-pseudo-element.html [ Pass Failure ]
+
 # Disabled temporarily since it is causing other tests to fail.
 accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
 

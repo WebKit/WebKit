@@ -24,10 +24,9 @@
             body.focus();
             var focusedElement = accessibilityController.focusedElement;
 
-            // this input=file is inside of a group, so we need to go two levels
             var element1 = focusedElement.childAtIndex(0);
-            element1 = element1.childAtIndex(0);
-
+            if (accessibilityController.platformName === "atspi")
+                element1 = focusedElement.childAtIndex(0).childAtIndex(0);
             var element2 = focusedElement.childAtIndex(1);
 
             var element1Children = element1.attributesOfChildren();

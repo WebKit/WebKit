@@ -21,7 +21,7 @@ Image4:
 	AXTitle:
 	AXDescription: alt
 	AXHelp: test4
-PASS imagesGroup.childAtIndex(0).childrenCount is 2
+PASS imagesGroup.childrenCount is 4
 PASS successfullyParsed is true
 
 TEST COMPLETE

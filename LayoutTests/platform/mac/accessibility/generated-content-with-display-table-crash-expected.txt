@@ -6,8 +6,7 @@ AXRole: AXWebArea AXValue:
     AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: foo
         AXRole: AXStaticText AXValue: !
-    AXRole: AXGroup AXValue:
-        AXRole: AXStaticText AXValue: bar
+    AXRole: AXStaticText AXValue: bar
     AXRole: AXStaticText AXValue: !
     AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: baz

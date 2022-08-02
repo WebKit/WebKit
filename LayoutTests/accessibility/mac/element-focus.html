@@ -23,8 +23,8 @@
           var root = accessibilityController.rootElement;
           var body = root.childAtIndex(0);
 
-          shouldBe("body.childAtIndex(0).childAtIndex(0).role", "'AXRole: AXLink'");
-          shouldBe("body.childAtIndex(0).childAtIndex(0).isAttributeSettable('AXFocused')", "true");
+          shouldBe("body.childAtIndex(0).role", "'AXRole: AXLink'");
+          shouldBe("body.childAtIndex(0).isAttributeSettable('AXFocused')", "true");
 
           shouldBe("body.childAtIndex(1).role", "'AXRole: AXStaticText'");
           shouldBe("body.childAtIndex(1).isAttributeSettable('AXFocused')", "true");

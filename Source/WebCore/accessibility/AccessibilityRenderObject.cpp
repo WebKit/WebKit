@@ -2826,9 +2826,12 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     auto roleFromNode = determineAccessibilityRoleFromNode(treatStyleFormatGroupAsInline);
     if (roleFromNode != AccessibilityRole::Unknown)
         return roleFromNode;
-    
+
+#if !PLATFORM(COCOA)
+    // This block should be deleted for all platforms, but doing so causes a lot of test failures that need to be sorted out.
     if (m_renderer->isRenderBlockFlow())
         return m_renderer->isAnonymousBlock() ? AccessibilityRole::TextGroup : AccessibilityRole::Group;
+#endif
     
     // InlineRole is the final fallback before assigning AccessibilityRole::Unknown to an object. It makes it
     // possible to distinguish truly unknown objects from non-focusable inline text elements

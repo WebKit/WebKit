@@ -21,7 +21,7 @@
         var slider = accessibilityController.focusedElement;
 
         document.getElementById("title").focus();
-        var title = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0).childAtIndex(0);
+        var title = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
 
         shouldBeTrue("slider.titleUIElement().isEqual(title)");
         shouldBe("title.role", "'AXRole: AXStaticText'");

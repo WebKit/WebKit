@@ -22,7 +22,7 @@ PASS object.childrenCount is 0
 PASS object.role is 'AXRole: AXSection'
 PASS object.childrenCount is 1
 PASS object.childAtIndex(0).role is 'AXRole: AXButton'
-Non-rendered iframe content should not be visible when aria-hidden=true. The first child should be a group and NOT static text.
+Non-rendered iframe content should not be visible when aria-hidden=true. The first child should NOT be static text.
 iFrame child role: AXRole: AXWebArea
 PASS successfullyParsed is true
 

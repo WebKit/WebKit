@@ -22,7 +22,7 @@
         let root = accessibilityController.rootElement;
         dumpAccessibilityTree(root);
 
-        var pseudoElement = root.childAtIndex(0).childAtIndex(0).childAtIndex(0);
+        var pseudoElement = root.childAtIndex(0).childAtIndex(0);
         shouldBe("pseudoElement.role", "'AXRole: AXStaticText'");
         shouldBe("pseudoElement.stringValue", "'AXValue: Hello'");
 

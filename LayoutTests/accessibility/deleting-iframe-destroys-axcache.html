@@ -18,11 +18,7 @@
             window.iframe = body.childAtIndex(1).childAtIndex(0);
             window.after = body.childAtIndex(2);
 
-            window.frameBody = window.iframe.childAtIndex(0);
-            window.frameBodyRole = window.frameBody.role;
-            window.frameGroup = window.frameBody.childAtIndex(0);
-            window.frameGroupRole = window.frameGroup.role;
-            window.frameButton = window.frameGroup.childAtIndex(0);
+            window.frameButton = window.iframe.childAtIndex(0);
             window.frameButtonRole = window.frameButton.role;
 
             document.getElementById("tree").innerText += "\nBefore:\n";
@@ -43,8 +39,6 @@
             // Make sure that the accessibility objects from the iframe's nodes
             // are now invalid by checking that their role is changed - this
             // is because they've been deleted.
-            shouldBeFalse("frameBodyRole == frameBody.role");
-            shouldBeFalse("frameGroupRole == frameGroup.role");
             shouldBeFalse("frameButtonRole == frameButton.role");
 
             // Make sure that the other nodes are unchanged.

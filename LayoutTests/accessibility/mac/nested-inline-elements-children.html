@@ -22,7 +22,7 @@
 
 <body id="body">
 
-<div>
+<div id="content" role="group">
 <span>
     <span>
         test1
@@ -40,7 +40,7 @@
     if (window.accessibilityController) {
         description("This tests that when you have nested inline continuations, we add the children correctly.");
 
-        var content = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+        var content = accessibilityController.accessibleElementById("content");
         dumpAccessibilityChildren(content, 0);
         
         shouldBe("content.childrenCount", "3");

@@ -15,7 +15,6 @@ PASS successfullyParsed is true
 TEST COMPLETE
 AXRole: AXScrollArea AXValue:
 AXRole: AXWebArea AXValue:
-AXRole: AXGroup AXValue:
 AXRole: AXStaticText AXValue: Hello
 AXRole: AXGroup AXValue:
 AXRole: AXStaticText AXValue: This tests that the pseudo element style:body:before is accessible via the accessibility tree but not via TextMarkers.
@@ -28,7 +27,6 @@ AXRole: AXStaticText AXValue: ".
 AXRole: AXGroup AXValue:
 AXRole: AXStaticText AXValue: AXRole: AXScrollArea AXValue:
 AXRole: AXStaticText AXValue: AXRole: AXWebArea AXValue:
-AXRole: AXStaticText AXValue: AXRole: AXGroup AXValue:
 AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: Hello
 AXRole: AXStaticText AXValue: AXRole: AXGroup AXValue:
 AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: This tests that the pseudo element style:body:before is accessible via the accessibility tree but not via TextMarkers.

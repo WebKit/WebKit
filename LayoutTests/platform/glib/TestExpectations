@@ -1954,6 +1954,9 @@ http/tests/webrtc [ Skip ]
 # Failing since more testcases were added in https://bugs.webkit.org/show_bug.cgi?id=242092
 accessibility/table-exposure-updates-dynamically.html [ Skip ]
 
+# GTK already has its own version of this test (accessibility/gtk/aria-roles-unignored.html).
+accessibility/aria-roles-unignored.html [ Skip ]
+
 # Accessibility tests that should never be run for GTK/WPE due to being
 # written in a platform-specific way. They should either be moved to
 # the right platform or re-written in a more platform-agnostic way.

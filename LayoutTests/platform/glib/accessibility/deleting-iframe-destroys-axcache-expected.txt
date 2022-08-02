@@ -30,8 +30,6 @@ AXRole: AXScrollArea
         AXRole: AXParagraph AXValue: After
         AXRole: AXParagraph AXValue: End of test
 
-PASS frameBodyRole == frameBody.role is false
-PASS frameGroupRole == frameGroup.role is false
 PASS frameButtonRole == frameButton.role is false
 PASS root.isEqual(newRoot) is true
 PASS body.isEqual(newBody) is true

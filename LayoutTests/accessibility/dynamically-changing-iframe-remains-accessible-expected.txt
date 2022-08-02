@@ -9,8 +9,6 @@ AXRole: AXScrollArea
 
 AXRole: AXWebArea
 
-AXRole: AXGroup
-
 AXRole: AXStaticText
 AXValue: Purple pineapple
 
@@ -18,12 +16,10 @@ AXRole: AXScrollArea
 
 AXRole: AXWebArea
 
-AXRole: AXGroup
-
 AXRole: AXStaticText
 AXValue: Purple pineapple
 
-Traversed 9 elements.
+Traversed 7 elements.
 PASS successfullyParsed is true
 
 TEST COMPLETE

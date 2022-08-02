@@ -1,0 +1,31 @@
+This tests that ARIA roles are not ignored for 'p', 'label', 'form' and 'div' elements.
+
+AXRole: AXWebArea
+    AXRole: AXGroup
+        AXRole: AXStaticText
+        AXValue: Simple paragraph
+    AXRole: AXTable
+        AXRole: AXGroup
+    AXRole: AXStaticText
+    AXValue: A label
+        AXRole: AXStaticText
+        AXValue: A label
+    AXRole: AXHeading
+        AXRole: AXStaticText
+        AXValue: Who said label? It's a heading!
+    AXRole: AXGroup
+        AXRole: AXStaticText
+        AXValue: A form with a button
+        AXRole: AXButton
+    AXRole: AXButton
+    AXRole: AXGroup
+        AXRole: AXStaticText
+        AXValue: Just some text inside a div
+    AXRole: AXTextField
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
