@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+let worker = new Worker("interception-from-dedicated-worker-on-reload-cacheable-worker.py");
+worker.onmessage = (message) => {
+    top.receivedFetchContentFromDedicatedWorker(message.data);
+};
+</script>
+</body>
+</html>
