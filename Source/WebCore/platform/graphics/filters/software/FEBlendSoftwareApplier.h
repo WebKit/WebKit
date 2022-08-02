@@ -23,6 +23,8 @@
 
 #pragma once
 
+#if !HAVE(ARM_NEON_INTRINSICS)
+
 #include "FilterEffectApplier.h"
 
 namespace WebCore {
@@ -41,3 +43,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // !HAVE(ARM_NEON_INTRINSICS)

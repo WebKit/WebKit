@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FEBlendSoftwareApplier.h"
 
+#if !HAVE(ARM_NEON_INTRINSICS)
+
 #include "FEBlend.h"
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
@@ -57,3 +59,5 @@ bool FEBlendSoftwareApplier::apply(const Filter&, const FilterImageVector& input
 }
 
 } // namespace WebCore
+
+#endif // !HAVE(ARM_NEON_INTRINSICS)

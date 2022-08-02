@@ -2132,7 +2132,7 @@ platform/graphics/VelocityData.cpp
 platform/graphics/WebMResourceClient.cpp
 platform/graphics/WOFFFileFormat.cpp
 platform/graphics/WidthIterator.cpp
-platform/graphics/cpu/arm/filters/FELightingNEON.cpp
+platform/graphics/cpu/arm/filters/FEBlendNeonApplier.cpp
 platform/graphics/displaylists/DisplayList.cpp
 platform/graphics/displaylists/DisplayListDrawingContext.cpp
 platform/graphics/displaylists/DisplayListItems.cpp
