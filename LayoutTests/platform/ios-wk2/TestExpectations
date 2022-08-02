@@ -2288,3 +2288,5 @@ imported/w3c/web-platform-tests/speech-api/idlharness.window.html [ Failure ]
 
 # rdar://97297483 ([ iOS16 ] fast/events/ios/rotation/zz-no-rotation.html is a constant timeout =)
 fast/events/ios/rotation/zz-no-rotation.html [ Timeout ]
+
+webkit.org/b/210849 compositing/overflow/rtl-scrollbar-layer-positioning.html [ Pass Timeout ]
