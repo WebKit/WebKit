@@ -791,6 +791,19 @@ RestrictedHTTPResponseAccess:
     WebKit:
       default: true
 
+SampleBufferContentKeySessionSupportEnabled:
+  type: bool
+  humanReadableName: "ContentKeySession support for SampleBuffer Renderers"
+  humanReadableDescription: "ContentKeySession support for SampleBuffer Renderers Enabled"
+  condition: HAVE(AVCONTENTKEYSPECIFIER)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ScrollingPerformanceTestingEnabled:
   type: bool
   humanReadableName: "Scroll Performance Testing Enabled"

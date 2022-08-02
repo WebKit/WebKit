@@ -48,6 +48,11 @@ RemoteCDMInstanceSession::RemoteCDMInstanceSession(WeakPtr<RemoteCDMFactory>&& f
 {
 }
 
+RemoteCDMInstanceSession::~RemoteCDMInstanceSession()
+{
+    m_factory->removeSession(m_identifier);
+}
+
 #if !RELEASE_LOG_DISABLED
 void RemoteCDMInstanceSession::setLogIdentifier(const void* logIdentifier)
 {
