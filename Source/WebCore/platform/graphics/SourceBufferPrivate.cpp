@@ -40,6 +40,7 @@
 #include "TrackBuffer.h"
 #include "VideoTrackPrivate.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/MainThread.h>
 #include <wtf/MediaTime.h>
 #include <wtf/StringPrintStream.h>
 
@@ -551,6 +552,12 @@ void SourceBufferPrivate::updateTrackIds(Vector<std::pair<AtomString, AtomString
             continue;
         m_trackBufferMap.add(newId, makeUniqueRefFromNonNullUniquePtr(WTFMove(trackBuffer)));
     }
+}
+
+void SourceBufferPrivate::setClient(SourceBufferPrivateClient* client)
+{
+    ASSERT(isMainThread());
+    m_client = client;
 }
 
 void SourceBufferPrivate::setAllTrackBuffersNeedRandomAccess()
