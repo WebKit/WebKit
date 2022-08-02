@@ -30,6 +30,7 @@
 #include "MediaDescription.h"
 #include <wtf/MediaTime.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ class MediaDescription;
 class PlatformTimeRanges;
 class VideoTrackPrivate;
 
-class SourceBufferPrivateClient {
+class SourceBufferPrivateClient : public CanMakeWeakPtr<SourceBufferPrivateClient> {
 public:
     virtual ~SourceBufferPrivateClient() = default;
 
