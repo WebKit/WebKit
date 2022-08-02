@@ -148,9 +148,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowDoesNotEstablishInlineFormattingContext:
         stream << "flow does not establishes inline formatting context";
         break;
-    case AvoidanceReason::UnsupportedFieldset:
-        stream << "fieldset box";
-        break;
     case AvoidanceReason::ChildBoxIsFloatingOrPositioned:
         stream << "child box is floating or positioned";
         break;
@@ -385,11 +382,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
 
     if (is<RenderLineBreak>(child))
         return reasons;
-
-    if (child.isFieldset()) {
-        // Fieldsets don't follow the standard CSS box model. They require special handling.
-        SET_REASON_AND_RETURN_IF_NEEDED(UnsupportedFieldset, reasons, includeReasons)
-    }
 
     if (is<RenderReplaced>(child)) {
         auto& replaced = downcast<RenderReplaced>(child);
