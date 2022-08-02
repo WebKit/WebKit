@@ -74,5 +74,5 @@ for file in files:
             used_condition_flags.add(condition_flag)
 
     print(string.rstrip())
-print("], \"conditionFlags\": \"" + " ".join(used_condition_flags) + "\"}")
+print("], \"conditionFlags\": \"" + " ".join(sorted(used_condition_flags)) + "\"}")
 
