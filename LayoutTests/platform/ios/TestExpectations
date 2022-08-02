@@ -3615,7 +3615,6 @@ webkit.org/b/240579 http/wpt/push-api [ Skip ]
 
 # These tests finish with unfired UI script callbacks, causing crashes. See webkit.org/b/236794
 fast/events/ios/pdf-modifer-key-down-crash.html
-imported/w3c/web-platform-tests/clipboard-apis/async-raw-write-read.tentative.https.html
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-047.html
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-048.html
 imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html

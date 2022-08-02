@@ -1,9 +1,16 @@
 
-PASS Test driver
+PASS idl_test setup
+PASS idl_test validation
 PASS Partial interface Navigator: original interface defined
 PASS Partial interface Navigator: member names are unique
-PASS Navigator interface: attribute clipboard
-PASS Navigator interface: navigator must inherit property "clipboard" with the proper type
+PASS Partial interface mixin NavigatorID: member names are unique
+PASS Navigator includes NavigatorID: member names are unique
+PASS Navigator includes NavigatorLanguage: member names are unique
+PASS Navigator includes NavigatorOnLine: member names are unique
+PASS Navigator includes NavigatorContentUtils: member names are unique
+PASS Navigator includes NavigatorCookies: member names are unique
+PASS Navigator includes NavigatorPlugins: member names are unique
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique
 PASS ClipboardEvent interface: existence and properties of interface object
 PASS ClipboardEvent interface object length
 PASS ClipboardEvent interface object name
@@ -44,4 +51,6 @@ FAIL ClipboardItem interface: attribute lastModified assert_true: The prototype 
 FAIL ClipboardItem interface: attribute delayed assert_true: The prototype object must have a property "delayed" expected true got false
 PASS ClipboardItem interface: attribute types
 PASS ClipboardItem interface: operation getType(DOMString)
+PASS Navigator interface: attribute clipboard
+PASS Navigator interface: navigator must inherit property "clipboard" with the proper type
 

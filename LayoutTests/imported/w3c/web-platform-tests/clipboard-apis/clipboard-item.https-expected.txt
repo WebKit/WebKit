@@ -6,8 +6,9 @@ FAIL ClipboardItem(Blob) fails assert_throws_js: function "() => {new ClipboardI
 FAIL ClipboardItem() fails with null input assert_throws_js: function "() => {new ClipboardItem(null);}" did not throw
 PASS ClipboardItem() fails with no input
 PASS types() returns correct values
-FAIL raw() returns correct values, defaulting to false assert_equals: expected (boolean) false but got (undefined) undefined
 PASS getType(DOMString valid type) succeeds with correct output
 PASS getType(DOMString invalid type) succeeds with correct output
 PASS getType(DOMString type) rejects correctly when querying for missing type
+PASS getType(DOMString valid type) converts DOMString to Blob
+PASS getType(DOMString invalid type) converts DOMString to Blob
 

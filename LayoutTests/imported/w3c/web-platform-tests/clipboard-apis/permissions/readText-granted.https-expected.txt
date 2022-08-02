@@ -1,3 +1,4 @@
+Body needed for test_driver.click()
 
 FAIL navigator.clipboard.readText() succeeds when permission granted promise_test: Unhandled rejection with value: object "Error: unimplemented"
 

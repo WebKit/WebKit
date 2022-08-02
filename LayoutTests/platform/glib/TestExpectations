@@ -466,7 +466,6 @@ webkit.org/b/232256 accessibility/auto-fill-crash.html [ Timeout ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html [ Failure ]
-webkit.org/b/211979 imported/w3c/web-platform-tests/clipboard-apis/async-raw-write-read.tentative.https.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Clipboard API
