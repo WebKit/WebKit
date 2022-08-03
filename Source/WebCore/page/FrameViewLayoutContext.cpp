@@ -169,16 +169,24 @@ void FrameViewLayoutContext::layout()
 {
     LOG_WITH_STREAM(Layout, stream << "FrameView " << &view() << " FrameViewLayoutContext::layout() with size " << view().layoutSize());
 
+    Ref<FrameView> protectView(view());
+
     performLayout();
 
+    if (view().hasOneRef())
+        return;
+
     Style::Scope::QueryContainerUpdateContext queryContainerUpdateContext;
-    while (document()->styleScope().updateQueryContainerState(queryContainerUpdateContext)) {
+    while (document() && document()->styleScope().updateQueryContainerState(queryContainerUpdateContext)) {
         document()->updateStyleIfNeeded();
 
         if (!needsLayout())
             break;
 
         performLayout();
+
+        if (view().hasOneRef())
+            return;
     }
 }
 
@@ -196,7 +204,6 @@ void FrameViewLayoutContext::performLayout()
         return;
     }
 
-    Ref<FrameView> protectView(view());
     LayoutScope layoutScope(*this);
     TraceScope tracingScope(LayoutStart, LayoutEnd);
     InspectorInstrumentation::willLayout(view().frame());
