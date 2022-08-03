@@ -28,12 +28,9 @@
 #include "Connection.h"
 #include <WebCore/BroadcastChannelRegistry.h>
 #include <WebCore/ClientOrigin.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
-
-namespace WTF {
-class CallbackAggregator;
-}
 
 namespace WebCore {
 struct MessageWithMessagePorts;
