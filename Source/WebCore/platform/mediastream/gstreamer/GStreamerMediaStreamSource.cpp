@@ -325,18 +325,26 @@ public:
 
         const auto& data = static_cast<const GStreamerAudioData&>(audioData);
         auto sample = data.getSample();
-        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         if (m_track.enabled()) {
+            GST_TRACE_OBJECT(m_parent, "Pushing audio sample from enabled track");
             pushSample(sample.get());
             return;
         }
 
-        auto buffer = adoptGRef(gst_buffer_copy_deep(gst_sample_get_buffer(sample.get())));
-        GstMappedBuffer map(buffer.get(), GST_MAP_WRITE);
-        const auto& info = data.getAudioInfo();
-        webkitGstAudioFormatFillSilence(info.finfo, map.data(), map.size());
-        auto silentSample = adoptGRef(gst_sample_new(buffer.get(), gst_sample_get_caps(sample.get()), nullptr, nullptr));
-        pushSample(silentSample.get());
+        if (!m_silentSample) {
+            DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+            auto size = gst_buffer_get_size(gst_sample_get_buffer(sample.get()));
+            auto buffer = adoptGRef(gst_buffer_new_and_alloc(size));
+            GstMappedBuffer map(buffer.get(), GST_MAP_WRITE);
+            GstAudioInfo info;
+            gst_audio_info_set_format(&info, GST_AUDIO_FORMAT_F32LE, 44100, 1, nullptr);
+            webkitGstAudioFormatFillSilence(info.finfo, map.data(), map.size());
+            auto caps = adoptGRef(gst_audio_info_to_caps(&info));
+            m_silentSample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
+        }
+
+        GST_TRACE_OBJECT(m_parent, "Pushing audio silence from disabled track");
+        pushSample(m_silentSample.get());
     }
 
 private:
@@ -391,6 +399,7 @@ private:
     IntSize m_configuredSize;
     IntSize m_lastKnownSize;
     GRefPtr<GstSample> m_blackFrame;
+    GRefPtr<GstSample> m_silentSample;
     VideoFrame::Rotation m_videoRotation { VideoFrame::Rotation::None };
     bool m_videoMirrored { false };
 };
@@ -750,6 +759,7 @@ void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc* self, MediaStreamPrivat
     ASSERT(!self->priv->stream);
     self->priv->stream = stream;
 
+    GST_DEBUG_OBJECT(self, "Associating with MediaStream");
     self->priv->stream->addObserver(*self->priv->mediaStreamObserver.get());
     auto tracks = stream->tracks();
     bool onlyTrack = tracks.size() == 1;
