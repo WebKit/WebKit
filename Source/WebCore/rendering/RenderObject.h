@@ -431,6 +431,7 @@ public:
     bool isRenderFragmentedFlow() const { return m_bitfields.hasRareData() && rareData().isRenderFragmentedFlow(); }
     bool hasOutlineAutoAncestor() const { return m_bitfields.hasRareData() && rareData().hasOutlineAutoAncestor(); }
     bool paintContainmentApplies() const { return m_bitfields.hasRareData() && rareData().paintContainmentApplies(); }
+    bool layoutContainmentApplies() const { return m_bitfields.hasRareData() && rareData().layoutContainmentApplies(); }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     bool hasSVGTransform() const { return m_bitfields.hasRareData() && rareData().hasSVGTransform(); }
@@ -537,6 +538,7 @@ public:
     void setIsRenderFragmentedFlow(bool = true);
     void setHasOutlineAutoAncestor(bool = true);
     void setPaintContainmentApplies(bool = true);
+    void setLayoutContainmentApplies(bool = true);
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     void setHasSVGTransform(bool = true);
 #endif
@@ -975,6 +977,7 @@ private:
         ADD_BOOLEAN_BITFIELD(isRenderFragmentedFlow, IsRenderFragmentedFlow);
         ADD_BOOLEAN_BITFIELD(hasOutlineAutoAncestor, HasOutlineAutoAncestor);
         ADD_BOOLEAN_BITFIELD(paintContainmentApplies, PaintContainmentApplies);
+        ADD_BOOLEAN_BITFIELD(layoutContainmentApplies, LayoutContainmentApplies);
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         ADD_BOOLEAN_BITFIELD(hasSVGTransform, HasSVGTransform);
 #endif
