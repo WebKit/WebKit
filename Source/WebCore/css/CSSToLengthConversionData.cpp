@@ -59,6 +59,26 @@ CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, c
 {
 }
 
+const FontCascade& CSSToLengthConversionData::fontCascadeForFontUnits() const
+{
+    if (computingFontSize()) {
+        ASSERT(parentStyle());
+        return parentStyle()->fontCascade();
+    }
+    ASSERT(style());
+    return style()->fontCascade();
+}
+
+int CSSToLengthConversionData::computedLineHeightForFontUnits() const
+{
+    if (computingFontSize()) {
+        ASSERT(parentStyle());
+        return parentStyle()->computedLineHeight();
+    }
+    ASSERT(style());
+    return style()->computedLineHeight();
+}
+
 float CSSToLengthConversionData::zoom() const
 {
     return m_zoom.value_or(m_style ? m_style->effectiveZoom() : 1.f);

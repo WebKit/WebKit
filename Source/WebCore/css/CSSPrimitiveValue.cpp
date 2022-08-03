@@ -838,16 +838,14 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
     switch (primitiveType) {
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_QUIRKY_EMS:
-        ASSERT(conversionData.style());
-        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), nullptr, &conversionData.style()->fontDescription());
+        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), nullptr, &conversionData.fontCascadeForFontUnits().fontDescription());
         break;
 
     case CSSUnitType::CSS_EXS:
         // FIXME: We have a bug right now where the zoom will be applied twice to EX units.
         // We really need to compute EX using fontMetrics for the original specifiedSize and not use
         // our actual constructed rendering font.
-        ASSERT(conversionData.style());
-        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.style()->metricsOfPrimaryFont(), &conversionData.style()->fontDescription());
+        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont(), &conversionData.fontCascadeForFontUnits().fontDescription());
         break;
 
     case CSSUnitType::CSS_REMS:
@@ -856,8 +854,7 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
 
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_IC:
-        ASSERT(conversionData.style());
-        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.style()->metricsOfPrimaryFont(), &conversionData.style()->fontDescription());
+        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont(), &conversionData.fontCascadeForFontUnits().fontDescription());
         break;
 
     case CSSUnitType::CSS_PX:
@@ -945,12 +942,11 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Inline, conversionData.dynamicViewportFactor(), conversionData.style());
 
     case CSSUnitType::CSS_LHS:
-        ASSERT(conversionData.style());
         if (conversionData.computingLineHeight() || conversionData.computingFontSize()) {
             // Try to get the parent's computed line-height, or fall back to the initial line-height of this element's font spacing.
-            value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.style()->metricsOfPrimaryFont().lineSpacing();
+            value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont().lineSpacing();
         } else
-            value *= conversionData.style()->computedLineHeight();
+            value *= conversionData.computedLineHeightForFontUnits();
         break;
 
     case CSSUnitType::CSS_CQW: {

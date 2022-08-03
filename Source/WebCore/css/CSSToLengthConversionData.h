@@ -39,6 +39,7 @@ namespace WebCore {
 
 class Element;
 class FloatSize;
+class FontCascade;
 class RenderStyle;
 class RenderView;
 
@@ -65,15 +66,17 @@ public:
     const RenderView* renderView() const { return m_renderView; }
     const Element* elementForContainerUnitResolution() const { return m_elementForContainerUnitResolution.get(); }
 
+    const FontCascade& fontCascadeForFontUnits() const;
+    int computedLineHeightForFontUnits() const;
+
     FloatSize defaultViewportFactor() const;
     FloatSize smallViewportFactor() const;
     FloatSize largeViewportFactor() const;
     FloatSize dynamicViewportFactor() const;
 
-    CSSToLengthConversionData copyForFontSizeWithParentStyle() const
+    CSSToLengthConversionData copyForFontSize() const
     {
         CSSToLengthConversionData copy(*this);
-        copy.m_style = parentStyle();
         copy.m_zoom = 1.f;
         copy.m_propertyToCompute = CSSPropertyFontSize;
         return copy;

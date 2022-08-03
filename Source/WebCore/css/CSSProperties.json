@@ -136,6 +136,10 @@
         "corresponding \"StylePropertyShorthand propertyIdShorthand()\" function will be",
         "generated in StylePropertyShorthandFunctions.h header.",
         "",
+        "* top-priority:",
+        "Whether the property needs to be applied before high-priority properties",
+        "in CSS cascading order. Please justify usage with a comment field.",
+        "",
         "* high-priority:",
         "Whether the property needs to be applied before non-high-priority properties",
         "in CSS cascading order. High priority properties must not accept <length>",
@@ -794,7 +798,8 @@
                     "-epub-writing-mode"
                 ],
                 "custom": "Value",
-                "high-priority": true
+                "comment": "This is top priority because vi/vb units (depending on writing-mode) may be used by other properties",
+                "top-priority": true
             },
             "specification": {
                 "category": "css-writing-modes",
@@ -849,7 +854,8 @@
                 }
             ],
             "codegen-properties": {
-                "comment": "This is the highest priority property and 'is resolved before all other properties, to ensure that its value can be checked when determining a smart default font size', (<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>)."
+                "top-priority": true,
+                "comment": "This is a top priority property to ensure that its value can be checked when determining a smart default font size', (<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>)."
             },
             "specification": {
                 "category": "css-ruby",
@@ -6677,10 +6683,10 @@
                     "supported-color-schemes"
                 ],
                 "converter": "ColorScheme",
-                "comment": "This is the second highest priority property, to ensure that its value can be checked when resolving colors.",
+                "comment": "This is a top priority property, to ensure that its value can be checked when resolving colors.",
                 "custom": "Value",
                 "enable-if": "ENABLE_DARK_MODE_CSS",
-                "high-priority": true
+                "top-priority": true
             },
             "specification": {
                 "category": "css-color-adjust",

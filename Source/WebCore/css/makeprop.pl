@@ -67,6 +67,7 @@ my %settingsFlags;
 my $numPredefinedProperties = 2;
 my %nameIsColorProperty;
 my %nameIsDescriptorOnly;
+my %nameIsTopPriority;
 my %nameIsHighPriority;
 my %nameIsDeferred;
 my %nameIsInherited;
@@ -288,7 +289,12 @@ sub addProperty($$)
                     next;
                 } elsif ($codegenOptionName eq "comment") {
                     next;
+                } elsif ($codegenOptionName eq "top-priority") {
+                    die "$name has top priority, but no comment to justify" if not (exists $codegenProperties->{"comment"});
+                    die "$name is a shorthand, but has top-priority" if exists $codegenProperties->{"longhands"};
+                    $nameIsTopPriority{$name} = 1;
                 } elsif ($codegenOptionName eq "high-priority") {
+                    die "$name can't have conflicting top/high priority" if !!$nameIsTopPriority{$name};
                     die "$name is a shorthand, but has high-priority" if exists $codegenProperties->{"longhands"};
                     $nameIsHighPriority{$name} = 1;
                 } elsif ($codegenOptionName eq "sink-priority") {
@@ -368,6 +374,13 @@ sub sortByDescendingPriorityAndName
     }
     if (exists $propertiesWithStyleBuilderOptions{$a}{"longhands"} > exists $propertiesWithStyleBuilderOptions{$b}{"longhands"}) {
         return 1;
+    }
+    # Sort longhands with top priority to the front
+    if (!!$nameIsTopPriority{$a} < !!$nameIsTopPriority{$b}) {
+        return 1;
+    }
+    if (!!$nameIsTopPriority{$a} > !!$nameIsTopPriority{$b}) {
+        return -1;
     }
     # Sort longhands with high priority to the front
     if (!!$nameIsHighPriority{$a} < !!$nameIsHighPriority{$b}) {
@@ -863,6 +876,8 @@ EOF
 my $first = $numPredefinedProperties;
 my $i = $numPredefinedProperties;
 my $maxLen = 0;
+my $firstTopPriorityPropertyName;
+my $lastTopPriorityPropertyName;
 my $firstHighPriorityPropertyName;
 my $lastHighPriorityPropertyName;
 my $firstLowPriorityPropertyName;
@@ -876,6 +891,9 @@ foreach my $name (@names) {
   if (exists $propertiesWithStyleBuilderOptions{$name}{"longhands"}) {
     $firstShorthandPropertyName = $name if !$firstShorthandPropertyName;
     $lastShorthandPropertyName = $name;
+  } elsif ($nameIsTopPriority{$name}) {
+    $firstTopPriorityPropertyName = $name if !$firstTopPriorityPropertyName;
+    $lastTopPriorityPropertyName = $name;
   } elsif ($nameIsHighPriority{$name}) {
     $firstHighPriorityPropertyName = $name if !$firstHighPriorityPropertyName;
     $lastHighPriorityPropertyName = $name;
@@ -900,6 +918,8 @@ print HEADER "const int firstCSSProperty = $first;\n";
 print HEADER "const int numCSSProperties = $num;\n";
 print HEADER "const int lastCSSProperty = $last;\n";
 print HEADER "const size_t maxCSSPropertyNameLength = $maxLen;\n";
+print HEADER "const CSSPropertyID firstTopPriorityProperty = CSSProperty" . $nameToId{$firstTopPriorityPropertyName} . ";\n";
+print HEADER "const CSSPropertyID lastTopPriorityProperty = CSSProperty" . $nameToId{$lastTopPriorityPropertyName} . ";\n";
 print HEADER "const CSSPropertyID firstHighPriorityProperty = CSSProperty" . $nameToId{$firstHighPriorityPropertyName} . ";\n";
 print HEADER "const CSSPropertyID lastHighPriorityProperty = CSSProperty" . $nameToId{$lastHighPriorityPropertyName} . ";\n";
 print HEADER "const CSSPropertyID firstLowPriorityProperty = CSSProperty" . $nameToId{$firstLowPriorityPropertyName} . ";\n";

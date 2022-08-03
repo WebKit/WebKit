@@ -295,6 +295,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'fill-layer-property': self.validate_boolean,
             'font-property': self.validate_boolean,
             'getter': self.validate_string,
+            'top-priority': self.validate_boolean,
             'high-priority': self.validate_boolean,
             'initial': self.validate_string,
             'internal-only': self.validate_boolean,

@@ -39,6 +39,7 @@ public:
     ~Builder();
 
     void applyAllProperties();
+    void applyTopPriorityProperties();
     void applyHighPriorityProperties();
     void applyNonHighPriorityProperties();
 
