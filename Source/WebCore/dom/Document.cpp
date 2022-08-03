@@ -7545,10 +7545,10 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     };
 
     changeState(elementsToClearActive, CSSSelector::PseudoClassActive, false, [](auto& element) {
-        element.setActive(false, false, Style::InvalidationScope::SelfChildrenAndSiblings);
+        element.setActive(false, Style::InvalidationScope::SelfChildrenAndSiblings);
     });
     changeState(elementsToSetActive, CSSSelector::PseudoClassActive, true, [](auto& element) {
-        element.setActive(true, false, Style::InvalidationScope::SelfChildrenAndSiblings);
+        element.setActive(true, Style::InvalidationScope::SelfChildrenAndSiblings);
     });
     changeState(elementsToClearHover, CSSSelector::PseudoClassHover, false, [request](auto& element) {
         element.setHovered(false, Style::InvalidationScope::SelfChildrenAndSiblings, request);

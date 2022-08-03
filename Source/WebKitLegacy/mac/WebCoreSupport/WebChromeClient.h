@@ -95,7 +95,6 @@ private:
     bool runJavaScriptConfirm(WebCore::Frame&, const String&) override;
     bool runJavaScriptPrompt(WebCore::Frame&, const String& message, const String& defaultValue, String& result) override;
 
-    bool supportsImmediateInvalidation() final;
     void invalidateRootView(const WebCore::IntRect&) final;
     void invalidateContentsAndRootView(const WebCore::IntRect&) final;
     void invalidateContentsForSlowScroll(const WebCore::IntRect&) final;

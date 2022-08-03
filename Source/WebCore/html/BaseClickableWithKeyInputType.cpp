@@ -43,7 +43,7 @@ auto BaseClickableWithKeyInputType::handleKeydownEvent(HTMLInputElement& element
 {
     const String& key = event.keyIdentifier();
     if (key == "U+0020"_s) {
-        element.setActive(true, true);
+        element.setActive(true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case
         // and the caller will only dispatch a keypress if we don't call setDefaultHandled().
         return ShouldCallBaseEventHandler::No;

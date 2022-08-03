@@ -86,17 +86,17 @@ HTMLFormElement* HTMLLabelElement::form() const
     return downcast<HTMLFormControlElement>(control.get())->form();
 }
 
-void HTMLLabelElement::setActive(bool down, bool pause, Style::InvalidationScope invalidationScope)
+void HTMLLabelElement::setActive(bool down, Style::InvalidationScope invalidationScope)
 {
     if (down == active())
         return;
 
     // Update our status first.
-    HTMLElement::setActive(down, pause, invalidationScope);
+    HTMLElement::setActive(down, invalidationScope);
 
     // Also update our corresponding control.
     if (auto element = control())
-        element->setActive(down, pause);
+        element->setActive(down);
 }
 
 void HTMLLabelElement::setHovered(bool over, Style::InvalidationScope invalidationScope, HitTestRequest request)

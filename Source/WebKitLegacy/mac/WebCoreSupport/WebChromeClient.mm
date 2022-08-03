@@ -545,11 +545,6 @@ void WebChromeClient::setStatusbarText(const String& status)
     }
 }
 
-bool WebChromeClient::supportsImmediateInvalidation()
-{
-    return true;
-}
-
 void WebChromeClient::invalidateRootView(const IntRect&)
 {
 }

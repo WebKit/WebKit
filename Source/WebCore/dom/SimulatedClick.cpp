@@ -97,7 +97,7 @@ bool simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouse
     if (mouseEventOptions != SendNoEvents)
         simulateMouseEvent(eventNames.mousedownEvent, element, underlyingEvent, creationOptions);
     if (mouseEventOptions != SendNoEvents || visualOptions == ShowPressedLook)
-        element.setActive(true, true);
+        element.setActive(true);
     if (mouseEventOptions != SendNoEvents)
         simulateMouseEvent(eventNames.mouseupEvent, element, underlyingEvent, creationOptions);
     element.setActive(false);
