@@ -50,6 +50,10 @@
 #include <wtf/glib/GRefPtr.h>
 #endif
 
+#if USE(GENERIC_EVENT_LOOP)
+#include <wtf/RedBlackTree.h>
+#endif
+
 namespace WTF {
 
 #if USE(COCOA_EVENT_LOOP)
@@ -163,7 +167,7 @@ public:
         void stopWithLock() WTF_REQUIRES_LOCK(m_runLoop->m_loopLock);
 
         class ScheduledTask;
-        RefPtr<ScheduledTask> m_scheduledTask;
+        Ref<ScheduledTask> m_scheduledTask;
 #endif
     };
 
@@ -242,10 +246,9 @@ private:
     GRefPtr<GSource> m_source;
     WeakHashSet<Observer> m_observers;
 #elif USE(GENERIC_EVENT_LOOP)
-    void schedule(Ref<TimerBase::ScheduledTask>&&);
-    void scheduleWithLock(Ref<TimerBase::ScheduledTask>&&) WTF_REQUIRES_LOCK(m_loopLock);
+    void scheduleWithLock(TimerBase::ScheduledTask&) WTF_REQUIRES_LOCK(m_loopLock);
+    void unscheduleWithLock(TimerBase::ScheduledTask&) WTF_REQUIRES_LOCK(m_loopLock);
     void wakeUpWithLock() WTF_REQUIRES_LOCK(m_loopLock);
-    void scheduleAndWakeUpWithLock(Ref<TimerBase::ScheduledTask>&&) WTF_REQUIRES_LOCK(m_loopLock);
 
     enum class RunMode {
         Iterate,
@@ -257,14 +260,14 @@ private:
         Stopping,
     };
     void runImpl(RunMode);
-    bool populateTasks(RunMode, Status&, Deque<RefPtr<TimerBase::ScheduledTask>>&);
+    bool populateTasks(RunMode, Status&, Deque<Ref<TimerBase::ScheduledTask>>&);
 
     friend class TimerBase;
 
     Lock m_loopLock;
     Condition m_readyToRun;
     Condition m_stopCondition;
-    Vector<RefPtr<TimerBase::ScheduledTask>> m_schedules;
+    RedBlackTree<TimerBase::ScheduledTask, MonotonicTime> m_schedules;
     Vector<Status*> m_mainLoops;
     bool m_shutdown { false };
     bool m_pendingTasks { false };
