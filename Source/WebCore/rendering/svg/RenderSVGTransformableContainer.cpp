@@ -94,7 +94,8 @@ void RenderSVGTransformableContainer::updateLayerTransform()
 
 void RenderSVGTransformableContainer::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
-    applySVGTransform(transform, graphicsElement(), style, boundingBox, m_supplementalLayerTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalLayerTransform), options);
+    auto postTransform = m_supplementalLayerTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalLayerTransform);
+    applySVGTransform(transform, graphicsElement(), style, boundingBox, std::nullopt, postTransform, options);
 }
 
 }

@@ -4,10 +4,220 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
+layer at (-5,-14) size 116x370 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (-5,-14) size 116x370
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 110x22
+layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 110x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=110.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 50x22
+layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
 layer at (0,-14) size 111x370 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,-14) size 111x370
-layer at (0,-14) size 111x370 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 111x370
+  RenderSVGTransformableContainer {g} at (5,0) size 111x370
 layer at (0,-14) size 33x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 33x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 33x18
@@ -77,7 +287,7 @@ layer at (0,338) size 73x18
     RenderSVGInlineText {#text} at (0,0) size 73x18
       chunk 1 text run 1 at (0.00,352.00) startOffset 0 endOffset 11 width 72.85: "text-anchor"
 layer at (3,10) size 16x32
-  RenderSVGTransformableContainer {g} at (3,24) size 16x32
+  RenderSVGTransformableContainer {g} at (8,24) size 16x32
 layer at (3,10) size 16x32
   RenderSVGTransformableContainer {g} at (0,0) size 16x32
 layer at (3,10) size 16x32
@@ -121,7 +331,7 @@ layer at (4,12) size 14x23
     RenderSVGInlineText {#text} at (0,0) size 15x23
       chunk 1 (middle anchor) text run 1 at (3.78,30.00) startOffset 0 endOffset 1 width 14.44: "A"
 layer at (3,10) size 16x32
-  RenderSVGTransformableContainer {g} at (3,24) size 16x32
+  RenderSVGTransformableContainer {g} at (8,24) size 16x32
 layer at (3,10) size 16x32
   RenderSVGTransformableContainer {g} at (0,0) size 16x32
 layer at (3,10) size 16x32

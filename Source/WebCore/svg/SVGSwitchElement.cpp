@@ -24,6 +24,7 @@
 
 #include "ElementIterator.h"
 #include "LegacyRenderSVGTransformableContainer.h"
+#include "RenderSVGTransformableContainer.h"
 #include "SVGElementTypeHelpers.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -57,6 +58,10 @@ bool SVGSwitchElement::childShouldCreateRenderer(const Node& child) const
 
 RenderPtr<RenderElement> SVGSwitchElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
+#endif
     return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 

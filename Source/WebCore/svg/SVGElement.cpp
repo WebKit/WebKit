@@ -553,7 +553,9 @@ static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> createSVGLayerAwareEl
         pathTag.get(),
         rectTag.get(),
         svgTag.get(),
-        textTag.get()
+        switchTag.get(),
+        textTag.get(),
+        useTag.get()
     };
     for (auto& tag : allowedTags)
         set.add(tag.localName());

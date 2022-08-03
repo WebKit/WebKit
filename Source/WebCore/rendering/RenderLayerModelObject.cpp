@@ -351,14 +351,14 @@ void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject
     container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
-void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, SVGGraphicsElement& graphicsElement, const RenderStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, SVGGraphicsElement& graphicsElement, const RenderStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     auto svgTransform = graphicsElement.animatedLocalTransform();
 
     // This check does not use style.hasTransformRelatedProperty() on purpose -- we only want to know if either the 'transform' property, an
     // offset path, or the individual transform operations are set (perspective / transform-style: preserve-3d are not relevant here).
     bool hasCSSTransform = style.hasTransform() || style.rotate() || style.translate() || style.scale();
-    bool hasSVGTransform = !svgTransform.isIdentity() || preApplySVGTransformMatrix;
+    bool hasSVGTransform = !svgTransform.isIdentity() || preApplySVGTransformMatrix || postApplySVGTransformMatrix;
 
     // Common case: 'viewBox' set on outermost <svg> element -> 'preApplySVGTransformMatrix'
     // passed by RenderSVGViewportContainer::applyTransform(), the anonymous single child
@@ -369,6 +369,8 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
 
     auto affectedByTransformOrigin = [&]() {
         if (preApplySVGTransformMatrix && !preApplySVGTransformMatrix->isIdentityOrTranslation())
+            return true;
+        if (postApplySVGTransformMatrix && !postApplySVGTransformMatrix->isIdentityOrTranslation())
             return true;
         if (hasCSSTransform)
             return style.affectedByTransformOrigin();
@@ -389,6 +391,9 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
         style.applyCSSTransform(transform, boundingBox, options);
     else if (!svgTransform.isIdentity())
         transform.multiplyAffineTransform(svgTransform);
+
+    if (postApplySVGTransformMatrix)
+        transform.multiplyAffineTransform(postApplySVGTransformMatrix.value());
 
     style.unapplyTransformOrigin(transform, originTranslate);
 }
