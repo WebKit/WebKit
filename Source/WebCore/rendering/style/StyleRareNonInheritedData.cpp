@@ -97,6 +97,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , effectiveAppearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
     , textDecorationStyle(static_cast<unsigned>(RenderStyle::initialTextDecorationStyle()))
     , aspectRatioType(static_cast<unsigned>(RenderStyle::initialAspectRatioType()))
+    , contentVisibility(static_cast<unsigned>(ContentVisibility::Visible))
 #if ENABLE(CSS_COMPOSITING)
     , effectiveBlendMode(static_cast<unsigned>(RenderStyle::initialBlendMode()))
     , isolation(static_cast<unsigned>(RenderStyle::initialIsolation()))
@@ -206,6 +207,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , effectiveAppearance(o.effectiveAppearance)
     , textDecorationStyle(o.textDecorationStyle)
     , aspectRatioType(o.aspectRatioType)
+    , contentVisibility(o.contentVisibility)
 #if ENABLE(CSS_COMPOSITING)
     , effectiveBlendMode(o.effectiveBlendMode)
     , isolation(o.isolation)
@@ -331,6 +333,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && applePayButtonType == o.applePayButtonType
 #endif
         && aspectRatioType == o.aspectRatioType
+        && contentVisibility == o.contentVisibility
         && objectFit == o.objectFit
         && breakAfter == o.breakAfter
         && breakBefore == o.breakBefore

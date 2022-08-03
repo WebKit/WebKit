@@ -545,6 +545,9 @@ public:
     ContainerType containerType() const { return static_cast<ContainerType>(m_rareNonInheritedData->containerType); }
     const Vector<AtomString>& containerNames() const { return m_rareNonInheritedData->containerNames; }
 
+    ContentVisibility contentVisibility() const { return static_cast<ContentVisibility>(m_rareNonInheritedData->contentVisibility); }
+    bool contentVisibilityHidden() const { return contentVisibility() == ContentVisibility::Hidden; }
+
     ContainIntrinsicSizeType containIntrinsicWidthType() const { return static_cast<ContainIntrinsicSizeType>(m_rareNonInheritedData->containIntrinsicWidthType); }
     ContainIntrinsicSizeType containIntrinsicHeightType() const { return static_cast<ContainIntrinsicSizeType>(m_rareNonInheritedData->containIntrinsicHeightType); }
     std::optional<Length> containIntrinsicWidth() const { return m_rareNonInheritedData->containIntrinsicWidth; }
@@ -1106,6 +1109,8 @@ public:
     void setContainIntrinsicHeightType(ContainIntrinsicSizeType containIntrinsicHeightType) { SET_VAR(m_rareNonInheritedData, containIntrinsicHeightType, static_cast<unsigned>(containIntrinsicHeightType)); }
     void setContainIntrinsicWidth(std::optional<Length> width) { SET_VAR(m_rareNonInheritedData, containIntrinsicWidth, width); }
     void setContainIntrinsicHeight(std::optional<Length> height) { SET_VAR(m_rareNonInheritedData, containIntrinsicHeight, height); }
+
+    void setContentVisibility(ContentVisibility value) { SET_VAR(m_rareNonInheritedData, contentVisibility, static_cast<unsigned>(value)); }
 
     void setListStyleStringValue(const AtomString& value) { SET_VAR(m_rareInheritedData, listStyleStringValue, value); }
     void setListStyleType(ListStyleType v) { m_inheritedFlags.listStyleType = static_cast<unsigned>(v); }
@@ -1719,6 +1724,7 @@ public:
     static OptionSet<Containment> strictContainment() { return OptionSet<Containment> { Containment::Size, Containment::Layout, Containment::Paint, Containment::Style }; }
     static OptionSet<Containment> contentContainment() { return OptionSet<Containment> { Containment::Layout, Containment::Paint, Containment::Style }; }
     static ContainerType initialContainerType() { return ContainerType::Normal; }
+    static ContentVisibility initialContentVisibility() { return ContentVisibility::Visible; }
     static Vector<AtomString> initialContainerNames() { return { }; }
     static double initialAspectRatioWidth() { return 1.0; }
     static double initialAspectRatioHeight() { return 1.0; }
