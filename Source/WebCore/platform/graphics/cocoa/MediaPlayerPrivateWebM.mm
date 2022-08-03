@@ -280,6 +280,7 @@ void MediaPlayerPrivateWebM::seek(const MediaTime& time)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "time = ", time);
 
+    [m_synchronizer setRate:0 time:PAL::toCMTime(time)];
     for (auto& trackBufferPair : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferPair.value;
         auto trackId = trackBufferPair.key;
@@ -287,7 +288,7 @@ void MediaPlayerPrivateWebM::seek(const MediaTime& time)
         trackBuffer.setNeedsReenqueueing(true);
         reenqueueMediaForTime(trackBuffer, trackId, time);
     }
-    [m_synchronizer setRate:effectiveRate() time:PAL::toCMTime(time)];
+    [m_synchronizer setRate:m_rate];
     m_player->timeChanged();
 }
 
