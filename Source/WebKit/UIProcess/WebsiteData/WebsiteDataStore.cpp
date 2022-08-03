@@ -586,35 +586,10 @@ static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(OptionSet<Web
     return ProcessAccessType::None;
 }
 
-class RemovalCallbackAggregator : public ThreadSafeRefCounted<RemovalCallbackAggregator, WTF::DestructionThread::MainRunLoop> {
-public:
-    static Ref<RemovalCallbackAggregator> create(WebsiteDataStore& dataStore, CompletionHandler<void()>&& completionHandler)
-    {
-        return adoptRef(*new RemovalCallbackAggregator(dataStore, WTFMove(completionHandler)));
-    }
-
-    ~RemovalCallbackAggregator()
-    {
-        ASSERT(RunLoop::isMain());
-        RunLoop::main().dispatch(WTFMove(m_completionHandler));
-    }
-
-private:
-    RemovalCallbackAggregator(WebsiteDataStore& dataStore, CompletionHandler<void()>&& completionHandler)
-        : m_protectedDataStore(dataStore)
-        , m_completionHandler(WTFMove(completionHandler))
-    {
-        ASSERT(RunLoop::isMain());
-    }
-
-    Ref<WebsiteDataStore> m_protectedDataStore;
-    CompletionHandler<void()> m_completionHandler;
-};
-
 void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, Function<void()>&& completionHandler)
 {
     RELEASE_LOG(Storage, "WebsiteDataStore::removeData started to delete data modified since %f for session %" PRIu64, modifiedSince.secondsSinceEpoch().value(), m_sessionID.toUInt64());
-    auto callbackAggregator = RemovalCallbackAggregator::create(*this, [sessionID = m_sessionID, completionHandler = WTFMove(completionHandler)] {
+    auto callbackAggregator = MainRunLoopCallbackAggregator::create([protectedThis = Ref { *this }, sessionID = m_sessionID, completionHandler = WTFMove(completionHandler)] {
         RELEASE_LOG(Storage, "WebsiteDataStore::removeData finished deleting modified data for session %" PRIu64, sessionID.toUInt64());
         completionHandler();
     });
@@ -699,7 +674,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
 void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Vector<WebsiteDataRecord>& dataRecords, Function<void()>&& completionHandler)
 {
     RELEASE_LOG(Storage, "WebsiteDataStore::removeData started to delete data for session %" PRIu64, m_sessionID.toUInt64());
-    auto callbackAggregator = RemovalCallbackAggregator::create(*this, [sessionID = m_sessionID, completionHandler = WTFMove(completionHandler)] {
+    auto callbackAggregator = MainRunLoopCallbackAggregator::create([protectedThis = Ref { *this }, sessionID = m_sessionID, completionHandler = WTFMove(completionHandler)] {
         RELEASE_LOG(Storage, "WebsiteDataStore::removeData finished deleting data for session %" PRIu64, sessionID.toUInt64());
         completionHandler();
     });

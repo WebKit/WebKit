@@ -30,12 +30,9 @@
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/PartitionedSecurityOrigin.h>
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
-
-namespace WTF {
-class CallbackAggregator;
-}
 
 namespace WebCore {
 struct MessageWithMessagePorts;

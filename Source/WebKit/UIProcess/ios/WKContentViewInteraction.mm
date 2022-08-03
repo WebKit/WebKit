@@ -10948,7 +10948,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
     data->hasSelectableText = hasTextResults;
 
     auto weakSelf = WeakObjCPtr<WKContentView>(self);
-    auto aggregator = CallbackAggregator::create([weakSelf, data]() mutable {
+    auto aggregator = MainRunLoopCallbackAggregator::create([weakSelf, data]() mutable {
         auto strongSelf = weakSelf.get();
         if (!strongSelf || !strongSelf->_waitingForDynamicImageAnalysisContextMenuActions)
             return;
@@ -11073,7 +11073,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
         // making redundant image analysis requests for the same image data.
 
         auto data = Box<WebKit::ImageAnalysisContextMenuActionData>::create();
-        auto aggregator = CallbackAggregator::create([weakSelf, location, data]() mutable {
+        auto aggregator = MainRunLoopCallbackAggregator::create([weakSelf, location, data]() mutable {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
                 return;
