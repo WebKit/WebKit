@@ -163,6 +163,9 @@ public:
     {
         stopObserving();
 
+        // Flushing unlocks the basesrc in case its hasn't emitted its first buffer yet.
+        flush();
+
         if (m_src)
             g_signal_handlers_disconnect_matched(m_src.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     }
@@ -266,8 +269,7 @@ public:
         if (m_blackFrame && !m_track.enabled()) {
             m_enoughData = false;
             m_needsDiscont = true;
-            gst_element_send_event(m_src.get(), gst_event_new_flush_start());
-            gst_element_send_event(m_src.get(), gst_event_new_flush_stop(FALSE));
+            flush();
             pushBlackFrame();
         }
     }
@@ -338,6 +340,12 @@ public:
     }
 
 private:
+    void flush()
+    {
+        gst_element_send_event(m_src.get(), gst_event_new_flush_start());
+        gst_element_send_event(m_src.get(), gst_event_new_flush_stop(FALSE));
+    }
+
     void updateBlackFrame(const GstCaps* sampleCaps)
     {
         GST_DEBUG_OBJECT(m_src.get(), "Updating black video frame");
