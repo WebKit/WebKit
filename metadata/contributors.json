@@ -1448,6 +1448,13 @@
    },
    {
       "emails" : [
+         "charles_wolfe@apple.com"
+      ],
+      "github" : "charliewolfe",
+      "name" : "Charlie Wolfe"
+   },
+   {
+      "emails" : [
          "cpugh@apple.com"
       ],
       "name" : "Chelsea Pugh",
