@@ -1,3 +1,7 @@
-FAIL: Timed out waiting for notifyDone to be called
+CONSOLE MESSAGE: ReferenceError: Can't find variable: GET
 
+
+PASS href
+PASS search
+PASS hash
 
