@@ -2834,6 +2834,12 @@ webkit.org/b/233047 inspector/page/setShowPaintRects.html [ Skip ]
 webkit.org/b/235396 fast/mediastream/getUserMedia-to-canvas-1.html [ Failure ]
 webkit.org/b/235396 fast/mediastream/getUserMedia-to-canvas-2.html [ Failure ]
 
+# Timing out since their import.
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-requestsubmit.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-button-click.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/location-assign.html [ Skip ]
+
 # WebSocket tests failing after Python 3 transition
 webkit.org/b/237108 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html [ Failure ]
 webkit.org/b/237108 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter.html [ Failure ]

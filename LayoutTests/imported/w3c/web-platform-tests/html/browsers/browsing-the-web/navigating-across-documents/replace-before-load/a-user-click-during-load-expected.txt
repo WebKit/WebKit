@@ -1,0 +1,6 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT User click on <a> during the load event must NOT replace Test timed out
+
