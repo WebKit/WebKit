@@ -1312,7 +1312,7 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
 #endif
 
 #if USE(GTK4)
-static gboolean webkitWebViewBaseScroll(WebKitWebViewBase* webViewBase, double deltaX, double deltaY, GtkEventController* eventController)
+static gboolean handleScroll(WebKitWebViewBase* webViewBase, double deltaX, double deltaY, bool isEnd, GtkEventController* eventController)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->dialog)
@@ -1326,27 +1326,37 @@ static gboolean webkitWebViewBaseScroll(WebKitWebViewBase* webViewBase, double d
 
         int32_t eventTime = static_cast<int32_t>(gtk_event_controller_get_current_event_time(eventController));
 
-        GdkDevice* device = gdk_event_get_device(event);
-        GdkInputSource source = gdk_device_get_source(device);
-
-        bool isEnd = gdk_scroll_event_is_stop(event) ? true : false;
+        GdkDevice* device = gtk_event_controller_get_current_event_device(eventController);
+        // We only have hold events on touchpads, so assume one if we get no event.
+        GdkInputSource source = device ? gdk_device_get_source(device) : GDK_SOURCE_TOUCHPAD;
 
         PlatformGtkScrollData scrollData = { .delta = delta, .eventTime = eventTime, .source = source, .isEnd = isEnd };
         if (controller->handleScrollWheelEvent(&scrollData))
             return GDK_EVENT_STOP;
     }
 
-    if (shouldInvertDirectionForScrollEvent(priv->mouseIsOverScrollbar, gdk_event_get_modifier_state(event) & GDK_SHIFT_MASK))
+    if (!isEnd && shouldInvertDirectionForScrollEvent(priv->mouseIsOverScrollbar, gdk_event_get_modifier_state(event) & GDK_SHIFT_MASK))
         std::swap(deltaX, deltaY);
 
-    priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, priv->lastMotionEvent ? IntPoint(priv->lastMotionEvent->position) : IntPoint(), FloatSize(-deltaX, -deltaY)));
+    if (event)
+        priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, priv->lastMotionEvent ? IntPoint(priv->lastMotionEvent->position) : IntPoint(), FloatSize(-deltaX, -deltaY)));
 
     return GDK_EVENT_STOP;
 }
 
+static void webkitWebViewBaseScrollBegin(WebKitWebViewBase* webViewBase, GtkEventController* controller)
+{
+    handleScroll(webViewBase, 0, 0, false, controller);
+}
+
+static gboolean webkitWebViewBaseScroll(WebKitWebViewBase* webViewBase, double deltaX, double deltaY, GtkEventController* eventController)
+{
+    return handleScroll(webViewBase, deltaX, deltaY, false, eventController);
+}
+
 static void webkitWebViewBaseScrollEnd(WebKitWebViewBase* webViewBase, GtkEventController* controller)
 {
-    webkitWebViewBaseScroll(webViewBase, 0, 0, controller);
+    handleScroll(webViewBase, 0, 0, true, controller);
 }
 #endif
 
@@ -2082,6 +2092,7 @@ static void webkitWebViewBaseConstructed(GObject* object)
 
 #if USE(GTK4)
     auto* controller = gtk_event_controller_scroll_new(GTK_EVENT_CONTROLLER_SCROLL_BOTH_AXES);
+    g_signal_connect_object(controller, "scroll-begin", G_CALLBACK(webkitWebViewBaseScrollBegin), viewWidget, G_CONNECT_SWAPPED);
     g_signal_connect_object(controller, "scroll", G_CALLBACK(webkitWebViewBaseScroll), viewWidget, G_CONNECT_SWAPPED);
     g_signal_connect_object(controller, "scroll-end", G_CALLBACK(webkitWebViewBaseScrollEnd), viewWidget, G_CONNECT_SWAPPED);
     gtk_widget_add_controller(viewWidget, controller);

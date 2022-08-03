@@ -195,10 +195,11 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(PlatformGtkScrollD
     }
 
     Seconds time = Seconds::fromMilliseconds(eventTime);
-    if (time != m_prevTime)
+    if (time > m_prevTime) {
         m_velocity = deltaX / (time - m_prevTime).milliseconds();
+        m_prevTime = time;
+    }
 
-    m_prevTime = time;
     m_progress += deltaX;
 
     bool swipingLeft = m_viewGestureController.isPhysicallySwipingLeft(m_direction);
