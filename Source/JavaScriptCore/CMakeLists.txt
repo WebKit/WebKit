@@ -578,6 +578,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/AbstractMacroAssembler.h
     assembler/AssemblerBuffer.h
     assembler/AssemblerCommon.h
+    assembler/AssemblyComments.h
     assembler/CPU.h
     assembler/CodeLocation.h
     assembler/FastJITPermissions.h

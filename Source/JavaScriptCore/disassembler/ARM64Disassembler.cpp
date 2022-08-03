@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "AssemblyComments.h"
 #include "Disassembler.h"
 
 #if ENABLE(ARM64_DISASSEMBLER)
@@ -49,7 +50,11 @@ bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, s
             snprintf(pcInfo, sizeof(pcInfo) - 1, "<%u> %#llx", pcOffset, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(currentPC)));
         else
             snprintf(pcInfo, sizeof(pcInfo) - 1, "%#llx", static_cast<unsigned long long>(bitwise_cast<uintptr_t>(currentPC)));
-        out.printf("%s%24s: %s\n", prefix, pcInfo, arm64Opcode.disassemble(currentPC));
+        out.printf("%s%24s: %s", prefix, pcInfo, arm64Opcode.disassemble(currentPC));
+        if (auto str = AssemblyCommentRegistry::singleton().comment(reinterpret_cast<void*>(currentPC)))
+            out.printf("; %s\n", str->ascii().data());
+        else
+            out.printf("\n");
         pcOffset += sizeof(uint32_t);
         currentPC++;
         byteCount -= sizeof(uint32_t);

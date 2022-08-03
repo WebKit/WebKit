@@ -438,6 +438,8 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort e
 
     m_linkTasks = WTFMove(macroAssembler.m_linkTasks);
     m_lateLinkTasks = WTFMove(macroAssembler.m_lateLinkTasks);
+
+    linkComments(macroAssembler);
 }
 
 void LinkBuffer::allocate(MacroAssembler& macroAssembler, JITCompilationEffort effort)
@@ -468,6 +470,22 @@ void LinkBuffer::allocate(MacroAssembler& macroAssembler, JITCompilationEffort e
     m_code = MacroAssemblerCodePtr<LinkBufferPtrTag>(m_executableMemory->start().retaggedPtr<LinkBufferPtrTag>());
     m_size = initialSize;
     m_didAllocate = true;
+}
+
+void LinkBuffer::linkComments(MacroAssembler& assembler)
+{
+    if (LIKELY(!Options::dumpDisassembly()) || !m_executableMemory)
+        return;
+    AssemblyCommentRegistry::CommentMap map;
+    for (const auto& [label, str] : assembler.m_comments) {
+        void* commentLocation = locationOf<DisassemblyPtrTag>(label).dataLocation();
+        auto key = reinterpret_cast<uintptr_t>(commentLocation);
+        RELEASE_ASSERT(!map.contains(reinterpret_cast<uintptr_t>(commentLocation)), 
+            "You cannot print more than one comment on the same line.");
+        map.add(key, str.isolatedCopy());
+    }
+
+    AssemblyCommentRegistry::singleton().registerCodeRange(m_executableMemory->start().untaggedPtr(), m_executableMemory->end().untaggedPtr(), WTFMove(map));
 }
 
 void LinkBuffer::performFinalization()

@@ -374,6 +374,8 @@ private:
     {
         return m_code.dataLocation();
     }
+
+    void linkComments(MacroAssembler&);
     
     void allocate(MacroAssembler&, JITCompilationEffort);
 

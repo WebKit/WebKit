@@ -29,6 +29,7 @@
 #include "config.h"
 #include "InitializeThreading.h"
 
+#include "AssemblyComments.h"
 #include "ExecutableAllocator.h"
 #include "JITOperationList.h"
 #include "JSCConfig.h"
@@ -103,6 +104,7 @@ void initialize()
         if (Options::useSigillCrashAnalyzer())
             enableSigillCrashAnalyzer();
 
+        AssemblyCommentRegistry::initialize();
         LLInt::initialize();
         DisallowGC::initialize();
 

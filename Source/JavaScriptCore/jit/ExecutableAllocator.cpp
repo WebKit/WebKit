@@ -1288,6 +1288,7 @@ RefPtr<ExecutableMemoryHandle> ExecutableMemoryHandle::createImpl(size_t sizeInB
 
 ExecutableMemoryHandle::~ExecutableMemoryHandle()
 {
+    AssemblyCommentRegistry::singleton().unregisterCodeRange(start().untaggedPtr(), end().untaggedPtr());
     FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     allocator->handleWillBeReleased(*this, sizeInBytes());
     jit_heap_deallocate(key());

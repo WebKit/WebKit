@@ -28,6 +28,7 @@
 #include "AbortReason.h"
 #include "AssemblerBuffer.h"
 #include "AssemblerCommon.h"
+#include "AssemblyComments.h"
 #include "CPU.h"
 #include "CodeLocation.h"
 #include "JSCJSValue.h"
@@ -38,6 +39,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/SharedTask.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRandom.h>
 
@@ -1019,6 +1021,16 @@ public:
     ALWAYS_INLINE void removePtrTag(RegisterID) { }
     ALWAYS_INLINE void validateUntaggedPtr(RegisterID, RegisterID = RegisterID::InvalidGPRReg) { }
 
+    template<typename... Types>
+    void comment(const Types&... values)
+    {
+        if (LIKELY(!Options::dumpDisassembly()))
+            return;
+        StringPrintStream s;
+        s.print(values...);
+        commentImpl(s.toString());
+    }
+
 protected:
     AbstractMacroAssembler()
         : m_assembler()
@@ -1109,11 +1121,15 @@ protected:
         m_tempRegistersValidBits |= registerMask;
     }
 
+    void commentImpl(String&& str) { m_comments.append({ labelIgnoringWatchpoints(), WTFMove(str) }); }
+
     friend class AllowMacroScratchRegisterUsage;
     friend class AllowMacroScratchRegisterUsageIf;
     template<typename T> friend class DisallowMacroScratchRegisterUsage;
     unsigned m_tempRegistersValidBits;
     bool m_allowScratchRegister { true };
+
+    Vector<std::pair<Label, String>> m_comments;
 
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;
