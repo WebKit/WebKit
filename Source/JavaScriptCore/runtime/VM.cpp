@@ -624,9 +624,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> VM::getCTIStub(ThunkGenerator generator)
 
 #endif // ENABLE(JIT)
 
-NativeExecutable* VM::getHostFunction(NativeFunction function, NativeFunction constructor, const String& name)
+NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVisibility implementationVisibility, NativeFunction constructor, const String& name)
 {
-    return getHostFunction(function, NoIntrinsic, constructor, nullptr, name);
+    return getHostFunction(function, implementationVisibility, NoIntrinsic, constructor, nullptr, name);
 }
 
 static Ref<NativeJITCode> jitCodeForCallTrampoline()
@@ -649,19 +649,19 @@ static Ref<NativeJITCode> jitCodeForConstructTrampoline()
     return *result;
 }
 
-NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrinsic, NativeFunction constructor, const DOMJIT::Signature* signature, const String& name)
+NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, NativeFunction constructor, const DOMJIT::Signature* signature, const String& name)
 {
 #if ENABLE(JIT)
     if (Options::useJIT()) {
         return jitStubs->hostFunctionStub(
             *this, function, constructor,
             intrinsic != NoIntrinsic ? thunkGeneratorForIntrinsic(intrinsic) : nullptr,
-            intrinsic, signature, name);
+            implementationVisibility, intrinsic, signature, name);
     }
 #endif // ENABLE(JIT)
     UNUSED_PARAM(intrinsic);
     UNUSED_PARAM(signature);
-    return NativeExecutable::create(*this, jitCodeForCallTrampoline(), function, jitCodeForConstructTrampoline(), constructor, name);
+    return NativeExecutable::create(*this, jitCodeForCallTrampoline(), function, jitCodeForConstructTrampoline(), constructor, implementationVisibility, name);
 }
 
 NativeExecutable* VM::getBoundFunction(bool isJSFunction, bool canConstruct)
@@ -673,6 +673,7 @@ NativeExecutable* VM::getBoundFunction(bool isJSFunction, bool canConstruct)
             return cached;
         NativeExecutable* result = getHostFunction(
             slowCase ? boundFunctionCall : boundThisNoArgsFunctionCall,
+            ImplementationVisibility::Public,
             slowCase ? NoIntrinsic : BoundFunctionCallIntrinsic,
             canConstruct ? (slowCase ? boundFunctionConstruct : boundThisNoArgsFunctionConstruct) : callHostFunctionAsConstructor, nullptr, String());
         slot = Weak<NativeExecutable>(result);
@@ -705,7 +706,7 @@ NativeExecutable* VM::getRemoteFunction(bool isJSFunction)
 
         NativeExecutable* result = getHostFunction(
             slowCase ? remoteFunctionCallGeneric : remoteFunctionCallForJSFunction,
-            intrinsic,
+            ImplementationVisibility::Public, intrinsic,
             callHostFunctionAsConstructor, nullptr, String());
         slot = Weak<NativeExecutable>(result);
         return result;

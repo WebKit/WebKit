@@ -1870,19 +1870,7 @@
     (preference-domain "com.apple.WebKit.WebContent.Launch"))
 #endif
 
-(define (syscall-unix-only-in-use-during-launch)
-    (syscall-number
-        SYS_csops
-        SYS_csrctl
-        SYS_fsgetpath
-        SYS_getaudit_addr
-        SYS_getfsstat64
-        SYS_getrlimit
-        SYS_kdebug_trace
-        SYS_pathconf
-        SYS_statfs64))
-
-(define (syscall-unix-in-use-after-launch)
+(define (syscall-unix-common)
     (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall
@@ -1894,7 +1882,9 @@
         SYS_bsdthread_terminate
         SYS_close
         SYS_close_nocancel
+        SYS_csops
         SYS_csops_audittoken
+        SYS_csrctl
         SYS_exit
         SYS_faccessat ;; <rdar://problem/56690456>
         SYS_fcntl
@@ -1903,23 +1893,28 @@
         SYS_fileport_makefd
         SYS_flock
         SYS_fsetxattr ;; <rdar://problem/56332491>
+        SYS_fsgetpath
         SYS_fstat64
         SYS_fstatat64
         SYS_fstatfs64
         SYS_ftruncate
         SYS_getattrlist
         SYS_getattrlistbulk
+        SYS_getaudit_addr
         SYS_getdirentries64
         SYS_getentropy
         SYS_geteuid
+        SYS_getfsstat64
         SYS_getgid
         SYS_gethostuuid
+        SYS_getrlimit
         SYS_getrusage
         SYS_gettimeofday
         SYS_getuid
         SYS_getxattr
         SYS_ioctl
         SYS_issetugid
+        SYS_kdebug_trace
         SYS_kdebug_trace64
         SYS_kdebug_trace_string ;; Needed for performance sampling, see <rdar://problem/48829655>.
         SYS_kevent_id
@@ -1942,6 +1937,7 @@
         SYS_open
         SYS_open_nocancel
         SYS_openat
+        SYS_pathconf
         SYS_pread
         SYS_proc_info
         SYS_psynch_cvbroad
@@ -1960,6 +1956,7 @@
         SYS_sigaltstack
         SYS_sigprocmask
         SYS_stat64
+        SYS_statfs64
         SYS_sysctlbyname
         SYS_thread_selfid
 #if !PLATFORM(MAC)
@@ -2027,21 +2024,9 @@
 ))
 
 (when (defined? 'syscall-unix)
-    (deny syscall-unix (with telemetry) (with send-signal SIGKILL))
+    (deny syscall-unix (with send-signal SIGKILL))
     (allow syscall-unix
-        (syscall-unix-in-use-after-launch)
-        (syscall-unix-only-in-use-during-launch))
-
-#if HAVE(SANDBOX_STATE_FLAGS)
-    (with-filter (state-flag "WebContentProcessLaunched")
-        (deny syscall-unix
-            (syscall-unix-only-in-use-during-launch))
-        (allow syscall-unix
-            (with report)
-            (with telemetry)
-            (with message "Unix syscall used after launch")
-            (syscall-unix-only-in-use-during-launch)))
-#endif
+        (syscall-unix-common))
 
     (if (equal? (param "CPU") "arm64")
         (begin
@@ -2049,9 +2034,6 @@
                 (syscall-unix-apple-silicon))))
 
     (allow syscall-unix
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-        (with telemetry-backtrace)
-#endif
         (syscalls-rarely-used))
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
@@ -2131,7 +2113,7 @@
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
         (apply-message-filter
-            (deny mach-message-send (with telemetry))
+            (deny mach-message-send)
             (allow mach-message-send
                 (kernel-mig-routine
                     _mach_make_memory_entry
@@ -2200,15 +2182,6 @@
     )
 )
 
-(when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
-    (deny syscall-mach
-        (machtrap-number
-            MSC_mach_wait_until
-        )
-    )
-    (deny syscall-mach (with telemetry))
-)
-
 (define (syscall-mach-common)
     (machtrap-number
         MSC__kernelrpc_mach_port_allocate_trap
@@ -2253,15 +2226,12 @@
         MSC_thread_self_trap))
 
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
-    (allow syscall-mach
-        (syscall-mach-common))
+    (deny syscall-mach)
+    (allow syscall-mach (syscall-mach-common))
 
     (when (defined? 'MSC_mach_msg2_trap)
         (allow syscall-mach
-            (machtrap-number MSC_mach_msg2_trap)
-        )
-    )
-)
+            (machtrap-number MSC_mach_msg2_trap))))
 #endif // HAVE(SANDBOX_MESSAGE_FILTERING)
 
 (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")

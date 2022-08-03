@@ -55,18 +55,8 @@ RefPtr<MediaQuerySet> MediaQueryParser::parseMediaCondition(CSSParserTokenRange 
     return MediaQueryParser(MediaConditionParser, context).parseInternal(range);
 }
 
-RefPtr<MediaQuerySet> MediaQueryParser::parseContainerQuery(CSSParserTokenRange range, MediaQueryParserContext context)
-{
-    if (range.atEnd())
-        return nullptr;
-    if (range.peek().type() != LeftParenthesisToken && range.peek().type() != FunctionToken)
-        return nullptr;
-    return MediaQueryParser(ContainerQueryParser, context).parseInternal(range);
-}
-
 const MediaQueryParser::State MediaQueryParser::ReadRestrictor = &MediaQueryParser::readRestrictor;
 const MediaQueryParser::State MediaQueryParser::ReadMediaNot = &MediaQueryParser::readMediaNot;
-const MediaQueryParser::State MediaQueryParser::ReadContainerQuery = &MediaQueryParser::readContainerQuery;
 const MediaQueryParser::State MediaQueryParser::ReadMediaType = &MediaQueryParser::readMediaType;
 const MediaQueryParser::State MediaQueryParser::ReadAnd = &MediaQueryParser::readAnd;
 const MediaQueryParser::State MediaQueryParser::ReadFeatureStart = &MediaQueryParser::readFeatureStart;
@@ -91,9 +81,6 @@ MediaQueryParser::MediaQueryParser(ParserType parserType, MediaQueryParserContex
     case MediaConditionParser:
         m_state = &MediaQueryParser::readMediaNot;
         break;
-    case ContainerQueryParser:
-        m_state = &MediaQueryParser::readContainerQuery;
-        break;
     }
 }
 
@@ -117,12 +104,6 @@ void MediaQueryParser::readMediaNot(CSSParserTokenType type, const CSSParserToke
         setStateAndRestrict(ReadFeatureStart, MediaQuery::Not);
     else
         readFeatureStart(type, token, range);
-}
-
-void MediaQueryParser::readContainerQuery(CSSParserTokenType type, const CSSParserToken&, CSSParserTokenRange&)
-{
-    if (type == FunctionToken || type == LeftParenthesisToken)
-        m_state = ReadFeature;
 }
 
 static bool isRestrictorOrLogicalOperator(const CSSParserToken& token)
@@ -270,8 +251,6 @@ void MediaQueryParser::handleBlocks(const CSSParserToken& token)
             return true;
         if (token.type() == LeftParenthesisToken)
             return false;
-        if (m_parserType == ContainerQueryParser && token.type() == FunctionToken)
-            return !equalLettersIgnoringASCIICase(token.value(), "size"_s);
         return true;
     }();
     if (shouldSkipBlock)

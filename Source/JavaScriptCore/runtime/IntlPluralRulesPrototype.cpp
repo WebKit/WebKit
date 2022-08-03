@@ -77,7 +77,7 @@ void IntlPluralRulesPrototype::finishCreation(VM& vm, JSGlobalObject* globalObje
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
     UNUSED_PARAM(globalObject);
 #if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->selectRange, intlPluralRulesPrototypeFuncSelectRange, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->selectRange, intlPluralRulesPrototypeFuncSelectRange, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
 #endif
 }
 

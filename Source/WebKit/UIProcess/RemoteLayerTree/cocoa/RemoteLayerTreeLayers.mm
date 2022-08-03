@@ -57,7 +57,6 @@
 
     if (replay) {
         _displayListDataForTesting = data;
-        ASSERT(displayList.ports.isEmpty());
         [self setNeedsDisplay];
         return;
     }

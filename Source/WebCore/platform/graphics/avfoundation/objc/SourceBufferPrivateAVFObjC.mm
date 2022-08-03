@@ -1334,17 +1334,14 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
 
                 [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
                 [m_displayLayer prerollDecodeWithCompletionHandler:[this, logSiteIdentifier, weakThis = WeakPtr { *this }] (BOOL success) mutable {
-                    if (!weakThis)
-                        return;
-
-                    if (!success) {
-                        ERROR_LOG(logSiteIdentifier, "prerollDecodeWithCompletionHandler failed");
-                        return;
-                    }
-
-                    callOnMainThread([weakThis = WTFMove(weakThis)] () {
+                    callOnMainThread([this, logSiteIdentifier, weakThis = WTFMove(weakThis), success] () {
                         if (!weakThis)
                             return;
+                        
+                        if (!success) {
+                            ERROR_LOG(logSiteIdentifier, "prerollDecodeWithCompletionHandler failed");
+                            return;
+                        }
 
                         weakThis->bufferWasConsumed();
                     });

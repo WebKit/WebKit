@@ -131,9 +131,7 @@ header
       AXRoleDescription: banner
 
 hgroup
-      AXRole: AXGroup
-      AXSubrole:
-      AXRoleDescription: group
+      Could not get AX element.
 
 h1
       AXRole: AXHeading

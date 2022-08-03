@@ -38,20 +38,18 @@ html, body {
 jsTestIsAsync = true;
 scroller = document.getElementById("scroller");
 observedFirstTouchMove = false;
-observedTouchEnd = false;
-scroller.addEventListener("scroll", () => testPassed("Observed scroll event"), { once: true });
+observedScroll = false;
+scroller.addEventListener("scroll", () => observedScroll = true, { once: true });
 scroller.addEventListener("touchstart", () => observedFirstTouchMove = false, { passive: true });
-scroller.addEventListener("touchend", () => observedTouchEnd = true, { passive: true });
 scroller.addEventListener("touchmove", event => {
     if (observedFirstTouchMove)
         return;
 
     const startTime = Date.now();
     while (true) {
-        if (Date.now() - startTime > 100)
+        if (Date.now() - startTime > 50)
             break;
     }
-    testPassed("Observed first touchmove");
     observedFirstTouchMove = true;
 });
 
@@ -59,14 +57,9 @@ description("This test verifies that panning up and down over an element that ha
 
 if (window.testRunner) {
     (async function() {
-        await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
-            .begin(150, 150)
-            .move(150, 10, 0.5)
-            .move(150, 290, 1)
-            .move(150, 150, 0.5)
-            .end()
-            .takeResult());
-        await shouldBecomeEqual("observedTouchEnd", "true");
+        while (!observedScroll)
+            await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder().begin(150, 290).move(150, 10, 0.5).end().takeResult());
+        testPassed("Observed scroll event");
         finishJSTest();
     })();
 }

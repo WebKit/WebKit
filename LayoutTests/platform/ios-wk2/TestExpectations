@@ -2235,8 +2235,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-flipped.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap.html [ ImageOnlyFailure ]
 
-webkit.org/b/242515 [ arm64 ] compositing/reflections/mask-and-reflection.html [ ImageOnlyFailure ]
-
 webkit.org/b/242812 [ Release arm64 ] js/dom/Promise-reject-large-string.html [ Pass Failure ]
 
 webkit.org/b/241205 [ Release arm64 ] fast/forms/textfield-outline.html [ Pass Failure ]
@@ -2290,3 +2288,5 @@ imported/w3c/web-platform-tests/speech-api/idlharness.window.html [ Failure ]
 
 # rdar://97297483 ([ iOS16 ] fast/events/ios/rotation/zz-no-rotation.html is a constant timeout =)
 fast/events/ios/rotation/zz-no-rotation.html [ Timeout ]
+
+webkit.org/b/210849 compositing/overflow/rtl-scrollbar-layer-positioning.html [ Pass Timeout ]

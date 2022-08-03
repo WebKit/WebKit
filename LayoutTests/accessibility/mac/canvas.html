@@ -48,7 +48,7 @@
 
             var body = document.getElementById("body");
             body.focus();
-            var canvasElement = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
+            var canvasElement = accessibilityController.focusedElement.childAtIndex(0);
             
             var pattern = "AXRole: AXImage";
             if (canvasElement.allAttributes().indexOf(pattern) != -1) {

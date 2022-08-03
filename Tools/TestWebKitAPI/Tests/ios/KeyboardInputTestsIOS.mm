@@ -894,6 +894,61 @@ TEST(KeyboardInputTests, EditableWebViewRequiresKeyboardWhenFirstResponder)
     EXPECT_FALSE([contentView _requiresKeyboardWhenFirstResponder]);
 }
 
+TEST(KeyboardInputTests, InputSessionWhenEvaluatingJavaScript)
+{
+    __block bool done = false;
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    bool willStartInputSession = false;
+    [inputDelegate setWillStartInputSessionHandler:[&] (WKWebView *, id<_WKFormInputSession>) {
+        willStartInputSession = true;
+    }];
+    bool didStartInputSession = false;
+    [inputDelegate setDidStartInputSessionHandler:[&] (WKWebView *, id<_WKFormInputSession>) {
+        didStartInputSession = true;
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<input value='foo'>"];
+
+    NSString *focusInputScript = @"document.querySelector('input').focus()";
+
+    done = false;
+    [webView _evaluateJavaScriptWithoutUserGesture:focusInputScript completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE(willStartInputSession);
+    EXPECT_FALSE(didStartInputSession);
+
+    done = false;
+    [webView callAsyncJavaScript:focusInputScript arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(willStartInputSession);
+    EXPECT_TRUE(didStartInputSession);
+
+    [webView objectByEvaluatingJavaScript:@"document.activeElement.blur()"];
+    [webView waitForNextPresentationUpdate];
+
+    willStartInputSession = false;
+    didStartInputSession = false;
+    done = false;
+    [webView evaluateJavaScript:focusInputScript completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(willStartInputSession);
+    EXPECT_TRUE(didStartInputSession);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

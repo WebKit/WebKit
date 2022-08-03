@@ -1,0 +1,30 @@
+This tests that ARIA roles are not ignored for 'p', 'label', 'form' and 'div' elements.
+
+WebArea
+    Paragraph
+        StaticText
+        AXLabel: Simple paragraph
+    Grid
+    Unknown
+        Label
+            StaticText
+            AXLabel: A label
+        Heading
+            StaticText
+            AXLabel: Who said label? It's a heading!
+    Form
+        StaticText
+        AXLabel: A form with a button
+        Button
+    Button
+    Div
+        StaticText
+        AXLabel: Just some text inside a div
+    TextField
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

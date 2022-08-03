@@ -45,7 +45,6 @@ frames:
         4: executeFrameFunction
         5: performActions
         6: Global Code
-        7: evaluateWithScopeExtension
     1: arc(6, 7, 8, 9, 10, true)
       swizzleTypes: [Number, Number, Number, Number, Number, Boolean]
       trace:
@@ -56,7 +55,6 @@ frames:
         4: executeFrameFunction
         5: performActions
         6: Global Code
-        7: evaluateWithScopeExtension
   1: (duration)
     0: arcTo(1, 2, 3, 4, 5)
       swizzleTypes: [Number, Number, Number, Number, Number]

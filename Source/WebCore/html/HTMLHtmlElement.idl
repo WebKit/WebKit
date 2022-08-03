@@ -21,6 +21,5 @@
     Exposed=Window
 ] interface HTMLHtmlElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString version;
-    [Reflect, URL] attribute DOMString manifest;
 };
 

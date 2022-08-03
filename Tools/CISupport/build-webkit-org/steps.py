@@ -33,6 +33,7 @@ import re
 import socket
 import sys
 import urllib
+from pathlib import Path
 
 if sys.version_info < (3, 5):
     print('ERROR: Please use Python 3. This code is not compatible with Python 2.')
@@ -203,6 +204,16 @@ class KillOldProcesses(shell.Compile):
     description = ["killing old processes"]
     descriptionDone = ["killed old processes"]
     command = ["python3", "Tools/CISupport/kill-old-processes", "buildbot"]
+
+
+class PruneCoreSymbolicationdCacheIfTooLarge(shell.ShellCommand):
+    name = "prune-coresymbolicationd-cache-if-too-large"
+    description = ["pruning coresymbolicationd cache to < 10GB"]
+    descriptionDone = ["pruned coresymbolicationd cache"]
+    flunkOnFailure = False
+    haltOnFailure = False
+    command = ["python3", "Tools/Scripts/delete-if-too-large",
+               "/System/Library/Caches/com.apple.coresymbolicationd"]
 
 
 class TriggerCrashLogSubmission(shell.Compile):

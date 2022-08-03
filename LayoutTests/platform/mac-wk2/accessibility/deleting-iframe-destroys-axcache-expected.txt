@@ -15,11 +15,9 @@ AXRole: AXScrollArea AXValue:
     AXRole: AXWebArea AXValue:
         AXRole: AXGroup AXValue:
             AXRole: AXStaticText AXValue: Before
-        AXRole: AXGroup AXValue:
-            AXRole: AXScrollArea AXValue:
-                AXRole: AXWebArea AXValue:
-                    AXRole: AXGroup AXValue:
-                        AXRole: AXButton AXValue:
+        AXRole: AXScrollArea AXValue:
+            AXRole: AXWebArea AXValue:
+                AXRole: AXButton AXValue:
         AXRole: AXGroup AXValue:
             AXRole: AXStaticText AXValue: After
         AXRole: AXGroup AXValue:
@@ -33,8 +31,6 @@ AXRole: AXScrollArea AXValue:
             AXRole: AXStaticText AXValue: After
         AXRole: AXGroup AXValue:
 
-PASS frameBodyRole == frameBody.role is false
-PASS frameGroupRole == frameGroup.role is false
 PASS frameButtonRole == frameButton.role is false
 PASS root.isEqual(newRoot) is true
 PASS body.isEqual(newBody) is true

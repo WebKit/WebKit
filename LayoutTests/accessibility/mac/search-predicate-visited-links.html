@@ -25,7 +25,7 @@
         startElement = accessibilityController.focusedElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXUnvisitedLinkSearchKey", "", false);
         shouldBe("resultElement.boolAttributeValue('AXVisited')", "false");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
+        shouldBe("resultElement.stringValue", "'AXValue: link'");
 
         // Visited link.
         accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0).press();
@@ -33,7 +33,7 @@
 
             resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXVisitedLinkSearchKey", "", false);
             shouldBe("resultElement.boolAttributeValue('AXVisited')", "true");
-            shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
+            shouldBe("resultElement.stringValue", "'AXValue: link'");
 
             finishJSTest();
         }, 50);

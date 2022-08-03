@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .overflow-hidden { overflow: hidden; }
+    .first-row { top: 25px; }
+    .second-row { top: 300px; }
+    .first-column { left: 50px; }
+    .second-column { left: 350px; }
+    .affine-transform { transform: rotateZ(25deg); }
+    .perspective-transform { transform: perspective(300px) rotateX(15deg) rotateZ(15deg); }
+
+    div.container {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        background-color: lightgray;
+        border: 10px solid black;
+    }
+
+    div.content {
+        position: absolute;
+        left: 100px;
+        top: 50px;
+        width: 150px;
+        height: 100px;
+        background-color: green;
+        transform-origin: -100px -50px;
+    }
+</style>
+</head>
+<body>
+    <div class="container first-row first-column">
+        <div class="content affine-transform"></div>
+    </div>
+    <div class="container first-row second-column overflow-hidden">
+        <div class="content affine-transform"></div>
+    </div>
+
+    <div class="container second-row first-column">
+        <div class="content perspective-transform"></div>
+    </div>
+    <div class="container second-row second-column overflow-hidden">
+        <div class="content perspective-transform "></div>
+    </div>
+</body>
+</html>

@@ -1609,6 +1609,8 @@ accessibility/aria-table-with-presentational-elements.html [ Skip ]
 # stringValue is not implemented.
 webkit.org/b/149177 accessibility/ax-value-with-search.html [ Skip ]
 
+accessibility/aria-roles-unignored.html [ Skip ]
+
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X (or Windows)
 accessibility/aria-checkbox-sends-notification.html [ Skip ]
 accessibility/combo-box-collapsed-selection-changed.html [ Skip ]
@@ -2180,6 +2182,10 @@ svg/filters/feImage-self-and-other-referencing.html
 
 # GCController.collect() issues.
 svg/animations/svglength-element-removed-crash.svg [ Failure ]
+
+# Compositing/z-index needs LBSE enabled builds, which is off by default for this port.
+svg/compositing [ Skip ]
+svg/z-index [ Skip ]
 
 ################################################################################
 ###################          End SVG Issues              #######################

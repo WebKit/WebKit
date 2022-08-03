@@ -422,6 +422,37 @@ void StackVisitor::Frame::setToEnd()
     m_isWasmFrame = false;
 }
 
+bool StackVisitor::Frame::isImplementationVisibilityPrivate() const
+{
+    auto* executable = [&] () -> ExecutableBase* {
+        if (auto* codeBlock = this->codeBlock())
+            return codeBlock->ownerExecutable();
+
+        if (callee().isCell()) {
+            if (auto* callee = this->callee().asCell()) {
+                if (auto* jsFunction = jsDynamicCast<JSFunction*>(callee))
+                    return jsFunction->executable();
+            }
+        }
+
+        return nullptr;
+    }();
+    if (!executable)
+        return false;
+
+    switch (executable->implementationVisibility()) {
+    case ImplementationVisibility::Public:
+        return false;
+
+    case ImplementationVisibility::Private:
+    case ImplementationVisibility::PrivateRecursive:
+        return true;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 void StackVisitor::Frame::dump(PrintStream& out, Indenter indent) const
 {
     dump(out, indent, [] (PrintStream&) { });

@@ -1,5 +1,6 @@
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -18,17 +19,14 @@
         body.focus();
         var webArea = accessibilityController.focusedElement;
 
-        var group1 = webArea.childAtIndex(0);
-        var iframeScrollArea = group1.childAtIndex(0);
+        var iframeScrollArea = webArea.childAtIndex(0);
         var iframeWebArea = iframeScrollArea.childAtIndex(0);
             
         var parentIframeWebArea = iframeWebArea.parentElement();
         var parentIframeScrollArea = parentIframeWebArea.parentElement();
-        var parentGroup1 = parentIframeScrollArea.parentElement();
 
         shouldBe("parentIframeWebArea.isEqual(iframeScrollArea)", "true");
-        shouldBe("parentIframeScrollArea.isEqual(group1)", "true");
-        shouldBe("parentGroup1.isEqual(webArea)", "true");
+        shouldBe("parentIframeScrollArea.isEqual(webArea)", "true");
     }
 
 </script>

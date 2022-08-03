@@ -1444,7 +1444,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::audioOutputDeviceChanged()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::startVideoFrameMetadataGathering()
 {
-    ASSERT(!m_videoFrameMetadataGatheringObserver || m_synchronizer);
+    if (m_videoFrameMetadataGatheringObserver)
+        return;
+    ASSERT(m_synchronizer);
     m_isGatheringVideoFrameMetadata = true;
     acceleratedRenderingStateChanged();
 

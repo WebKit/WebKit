@@ -1,11 +1,11 @@
 
 
-FAIL ImageBitmap from file with EXIF rotation, duplicated via structuredClone assert_array_approx_equals: Pixel value at (40,40) 255,0,0,255 =~ 0,0,0,255. property 0, expected 255 +/- 1, expected 255 but got 0
+PASS ImageBitmap from file with EXIF rotation, duplicated via structuredClone
 PASS ImageBitmap from file with EXIF rotation, loaded via <img>
 PASS ImageBitmap from file with EXIF rotation, loaded via <img> not in DOM, imageOrientation = none
 FAIL ImageBitmap from file with EXIF rotation, loaded via <img> in DOM, imageOrientation = none assert_equals: Bitmap width expected 320 but got 160
-FAIL ImageBitmap from file with EXIF rotation, duplicated via createImageBitmap assert_array_approx_equals: Pixel value at (40,40) 255,0,0,255 =~ 0,0,0,255. property 0, expected 255 +/- 1, expected 255 but got 0
-FAIL ImageBitmap from file with EXIF rotation, duplicated via worker serialization round-trip assert_array_approx_equals: Pixel value at (40,40) 255,0,0,255 =~ 0,0,0,255. property 0, expected 255 +/- 1, expected 255 but got 0
-FAIL ImageBitmap from file with EXIF rotation, duplicated via worker transfer round-trip assert_array_approx_equals: Pixel value at (40,40) 255,0,0,255 =~ 0,0,0,255. property 0, expected 255 +/- 1, expected 255 but got 0
+PASS ImageBitmap from file with EXIF rotation, duplicated via createImageBitmap
+PASS ImageBitmap from file with EXIF rotation, duplicated via worker serialization round-trip
+PASS ImageBitmap from file with EXIF rotation, duplicated via worker transfer round-trip
 FAIL ImageBitmap from file with EXIF rotation, duplicated via worker transfer round-trip, while referenced by a CanvasPattern promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

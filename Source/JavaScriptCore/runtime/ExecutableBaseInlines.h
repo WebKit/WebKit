@@ -44,6 +44,8 @@ inline ImplementationVisibility ExecutableBase::implementationVisibility() const
 {
     if (isFunctionExecutable())
         return jsCast<const FunctionExecutable*>(this)->implementationVisibility();
+    if (isHostFunction())
+        return jsCast<const NativeExecutable*>(this)->implementationVisibility();
     return ImplementationVisibility::Public;
 }
 

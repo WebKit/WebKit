@@ -1069,7 +1069,7 @@
       "nicks" : [
          "nham"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
@@ -1445,6 +1445,13 @@
          "cturner"
       ],
       "status" : "committer"
+   },
+   {
+      "emails" : [
+         "charles_wolfe@apple.com"
+      ],
+      "github" : "charliewolfe",
+      "name" : "Charlie Wolfe"
    },
    {
       "emails" : [

@@ -125,7 +125,7 @@ WI.StackTraceTreeController = class StackTraceTreeController extends WI.Object
             let callFrame = callFrames[i];
 
             if (callFrame) {
-                if (!displayable(callFrame))
+                if (callFrames.length > 1 && !displayable(callFrame))
                     continue;
 
                 if (callFrame.blackboxed) {

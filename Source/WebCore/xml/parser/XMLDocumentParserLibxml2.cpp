@@ -1328,6 +1328,9 @@ void XMLDocumentParser::doEnd()
     }
 
 #if ENABLE(XSLT)
+    if (isDetached())
+        return;
+
     bool xmlViewerMode = !m_sawError && !m_sawCSS && !m_sawXSLTransform && shouldRenderInXMLTreeViewerMode(*document());
     if (xmlViewerMode) {
         XMLTreeViewer xmlTreeViewer(*document());

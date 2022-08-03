@@ -1424,26 +1424,6 @@ WebsiteDataStore* NetworkProcessProxy::websiteDataStoreFromSessionID(PAL::Sessio
     return WebsiteDataStore::existingDataStoreForSessionID(sessionID);
 }
 
-void NetworkProcessProxy::retrieveCacheStorageParameters(PAL::SessionID sessionID, CompletionHandler<void(const String& cacheStorageDirectory, const WebKit::SandboxExtension::Handle& handle)>&& completionHandler)
-{
-    auto* store = websiteDataStoreFromSessionID(sessionID);
-    if (!store) {
-        RELEASE_LOG_ERROR(CacheStorage, "%p - NetworkProcessProxy is unable to retrieve CacheStorage parameters from the given session ID %" PRIu64, this, sessionID.toUInt64());
-        completionHandler({ }, { });
-        return;
-    }
-
-    store->resolveDirectoriesIfNecessary();
-    auto& cacheStorageDirectory = store->resolvedCacheStorageDirectory();
-    SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
-    if (!cacheStorageDirectory.isEmpty()) {
-        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(cacheStorageDirectory, SandboxExtension::Type::ReadWrite))
-            cacheStorageDirectoryExtensionHandle = WTFMove(*handle);
-    }
-
-    completionHandler(cacheStorageDirectory, cacheStorageDirectoryExtensionHandle);
-}
-
 #if ENABLE(CONTENT_EXTENSIONS)
 void NetworkProcessProxy::contentExtensionRules(UserContentControllerIdentifier identifier)
 {

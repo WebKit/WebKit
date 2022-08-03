@@ -36,6 +36,7 @@ class Change(models.Model):
     bug_id = models.IntegerField()
     pr_id = models.IntegerField(default=-1)
     pr_project = models.TextField(default='')
+    comment_id = models.IntegerField(default=-1)
     obsolete = models.BooleanField(default=False)
     sent_to_buildbot = models.BooleanField(default=False)
     sent_to_commit_queue = models.BooleanField(default=False)
@@ -162,4 +163,18 @@ class Change(models.Model):
         change.obsolete = obsolete
         change.save()
         _log.debug('Marked change {} as obsolete={}'.format(change_id, obsolete))
+        return SUCCESS
+
+    def set_comment_id(self, comment_id):
+        if type(comment_id) != int or comment_id < 0:
+            _log.error('Invalid comment_id {}, while trying to set comment_id for change: {}'.format(comment_id, self.change_id))
+            return FAILURE
+
+        if self.comment_id == comment_id:
+            _log.warn('Change {} already has comment id {} set.'.format(self.change_id, comment_id))
+            return SUCCESS
+
+        self.comment_id = comment_id
+        self.save()
+        _log.info('Updated change {} with comment id {}'.format(self.change_id, comment_id))
         return SUCCESS

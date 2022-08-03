@@ -136,8 +136,8 @@ void WebAssemblyGlobalPrototype::finishCreation(VM& vm, JSGlobalObject* globalOb
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    JSFunction* valueGetterFunction = JSFunction::create(vm, globalObject, 0, "get value"_s, webAssemblyGlobalProtoGetterFuncValue, NoIntrinsic);
-    JSFunction* valueSetterFunction = JSFunction::create(vm, globalObject, 1, "set value"_s, webAssemblyGlobalProtoSetterFuncValue, NoIntrinsic);
+    JSFunction* valueGetterFunction = JSFunction::create(vm, globalObject, 0, "get value"_s, webAssemblyGlobalProtoGetterFuncValue, ImplementationVisibility::Public);
+    JSFunction* valueSetterFunction = JSFunction::create(vm, globalObject, 1, "set value"_s, webAssemblyGlobalProtoSetterFuncValue, ImplementationVisibility::Public);
     GetterSetter* valueAccessor = GetterSetter::create(vm, globalObject, valueGetterFunction, valueSetterFunction);
     putDirectNonIndexAccessorWithoutTransition(vm, Identifier::fromString(vm, "value"_s), valueAccessor, static_cast<unsigned>(PropertyAttribute::Accessor));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();

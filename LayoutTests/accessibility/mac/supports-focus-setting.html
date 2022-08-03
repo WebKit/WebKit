@@ -24,7 +24,7 @@ var successfullyParsed = false;
     if (window.accessibilityController) {
 
         document.getElementById("body").focus();
-        var group = accessibilityController.focusedElement.childAtIndex(0);
+        var group = accessibilityController.focusedElement;
         shouldBe("group.childAtIndex(0).isFocusable", "true");
         shouldBe("group.childAtIndex(1).isFocusable", "false");
         shouldBe("group.childAtIndex(2).isFocusable", "true");

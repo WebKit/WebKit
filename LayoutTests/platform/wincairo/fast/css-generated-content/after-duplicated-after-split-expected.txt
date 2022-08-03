@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,0) size 784x0
         RenderBlock (anonymous) at (0,113) size 784x113
           RenderInline {SPAN} at (0,0) size 147x109
-            RenderInline {B} at (0,0) size 0x0
+            RenderInline {B} at (0,0) size 0x109
             RenderInline (generated) at (0,0) size 147x109
               RenderText at (0,2) size 147x109
                 text run at (0,2) width 147: "not "

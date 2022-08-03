@@ -46,13 +46,14 @@
 
 namespace WebCore {
 
+const CFStringRef WebCoreCGImagePropertyAVISDictionary = CFSTR("{AVIS}");
 const CFStringRef WebCoreCGImagePropertyHEICSDictionary = CFSTR("{HEICS}");
-const CFStringRef WebCoreCGImagePropertyHEICSFrameInfoArray = CFSTR("FrameInfo");
+const CFStringRef WebCoreCGImagePropertyFrameInfoArray = CFSTR("FrameInfo");
 
 const CFStringRef WebCoreCGImagePropertyUnclampedDelayTime = CFSTR("UnclampedDelayTime");
 const CFStringRef WebCoreCGImagePropertyDelayTime = CFSTR("DelayTime");
 const CFStringRef WebCoreCGImagePropertyLoopCount = CFSTR("LoopCount");
-    
+
 #if PLATFORM(WIN)
 const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
 const CFStringRef kCGImageSourceSkipMetadata = CFSTR("kCGImageSourceSkipMetadata");
@@ -157,27 +158,30 @@ static CFDictionaryRef animationPropertiesFromProperties(CFDictionaryRef propert
     if (auto animationProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, kCGImagePropertyPNGDictionary))
         return animationProperties;
 
+    if (auto animationProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, WebCoreCGImagePropertyAVISDictionary))
+        return animationProperties;
+
     return (CFDictionaryRef)CFDictionaryGetValue(properties, WebCoreCGImagePropertyHEICSDictionary);
 }
 
-static CFDictionaryRef animationHEICSPropertiesFromProperties(CFDictionaryRef properties, size_t index)
+static CFDictionaryRef animationPropertiesFromProperties(CFDictionaryRef properties, const CFStringRef animationDictionaryName, size_t index)
 {
     if (!properties)
         return nullptr;
 
-    // For HEICS images, ImageIO does not create a properties dictionary for each HEICS frame. Instead it maintains
-    // all frames' information in the image properties dictionary. Here is how ImageIO structures the properties
-    // dictionary for HEICS image:
+    // For HEIF container images, ImageIO does not create a properties dictionary for each frame.
+    // Instead it maintains all frames' information in the image properties dictionary. Here is how
+    // ImageIO structures the properties dictionary for HEICS image:
     //  "{HEICS}" =  {
     //      FrameInfo = ( { DelayTime = "0.1"; }, { DelayTime = "0.1"; }, ... );
     //      LoopCount = 0;
     //      ...
     //  };
-    CFDictionaryRef heicsProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, WebCoreCGImagePropertyHEICSDictionary);
-    if (!heicsProperties)
+    auto animationProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, animationDictionaryName);
+    if (!animationProperties)
         return nullptr;
 
-    CFArrayRef frameInfoArray = (CFArrayRef)CFDictionaryGetValue(heicsProperties, WebCoreCGImagePropertyHEICSFrameInfoArray);
+    auto frameInfoArray = (CFArrayRef)CFDictionaryGetValue(animationProperties, WebCoreCGImagePropertyFrameInfoArray);
     if (!frameInfoArray)
         return nullptr;
 
@@ -486,7 +490,9 @@ Seconds ImageDecoderCG::frameDurationAtIndex(size_t index) const
 
     if (frameProperties && !animationProperties) {
         properties = adoptCF(CGImageSourceCopyProperties(m_nativeDecoder.get(), imageSourceOptions().get()));
-        animationProperties = animationHEICSPropertiesFromProperties(properties.get(), index);
+        animationProperties = animationPropertiesFromProperties(properties.get(), WebCoreCGImagePropertyAVISDictionary, index);
+        if (!animationProperties)
+            animationProperties = animationPropertiesFromProperties(properties.get(), WebCoreCGImagePropertyHEICSDictionary, index);
     }
 
     // Use the unclamped frame delay if it exists. Otherwise use the clamped frame delay.

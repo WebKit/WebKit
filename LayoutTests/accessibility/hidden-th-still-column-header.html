@@ -22,7 +22,7 @@
         var table = accessibilityController.accessibleElementById("table");
         var colHeaders = table.columnHeaders();
         shouldBe("colHeaders.length", "2");
-        shouldBe("colHeaders[0].childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: header 1'");
+        shouldBe("colHeaders[0].childAtIndex(0).stringValue", "'AXValue: header 1'");
         shouldBe("colHeaders[1].childAtIndex(0).stringValue", "'AXValue: header 3'");
     }
 </script>

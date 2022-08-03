@@ -3598,7 +3598,6 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         if (is<RenderBlock>(renderer)) {
             auto& block = downcast<RenderBlock>(renderer);
             block.layoutIfNeeded();
-            ASSERT(block.style().display() == DisplayType::InlineBlock);
             layoutFormattingContextLineLayout.updateInlineBlockDimensions(block);
             continue;
         }

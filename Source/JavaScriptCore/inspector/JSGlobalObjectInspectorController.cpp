@@ -200,7 +200,7 @@ void JSGlobalObjectInspectorController::reportAPIException(JSGlobalObject* globa
 
 WeakPtr<ConsoleClient> JSGlobalObjectInspectorController::consoleClient() const
 {
-    return m_consoleClient.get();
+    return WeakPtr<ConsoleClient>(m_consoleClient.get(), EnableWeakPtrThreadingAssertions::No);
 }
 
 bool JSGlobalObjectInspectorController::developerExtrasEnabled() const

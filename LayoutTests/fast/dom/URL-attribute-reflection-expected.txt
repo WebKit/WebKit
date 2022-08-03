@@ -18,7 +18,6 @@ PASS testURLReflection('href', 'area') is 'URL'
 PASS testURLReflection('href', 'link') is 'URL'
 PASS testURLReflection('href', 'base') is 'URL'
 FAIL testURLReflection('icon', 'command') should be URL. Was none.
-PASS testURLReflection('manifest', 'html') is 'URL'
 PASS testURLReflection('poster', 'video') is 'URL'
 PASS testURLReflection('src', 'audio') is 'URL'
 PASS testURLReflection('src', 'embed') is 'URL'

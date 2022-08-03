@@ -31,6 +31,7 @@
 #include "RemoteCDMFactory.h"
 #include "RemoteCDMInstanceSessionIdentifier.h"
 #include <WebCore/CDMInstanceSession.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class SharedBuffer;
@@ -38,10 +39,10 @@ class SharedBuffer;
 
 namespace WebKit {
 
-class RemoteCDMInstanceSession final : private IPC::MessageReceiver, public WebCore::CDMInstanceSession {
+class RemoteCDMInstanceSession final : public IPC::MessageReceiver, public WebCore::CDMInstanceSession {
 public:
     static Ref<RemoteCDMInstanceSession> create(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceSessionIdentifier&&);
-    virtual ~RemoteCDMInstanceSession() = default;
+    virtual ~RemoteCDMInstanceSession();
 
     RemoteCDMInstanceSessionIdentifier identifier() const { return m_identifier; }
 

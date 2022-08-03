@@ -14,8 +14,9 @@ FAIL ClipboardItem() fails with no input assert_throws_js: function "() => {new 
     [native code]
 }" ("TypeError")
 FAIL types() returns correct values Can't find variable: ClipboardItem
-FAIL raw() returns correct values, defaulting to false Can't find variable: ClipboardItem
 FAIL getType(DOMString valid type) succeeds with correct output promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ClipboardItem"
 FAIL getType(DOMString invalid type) succeeds with correct output promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ClipboardItem"
 FAIL getType(DOMString type) rejects correctly when querying for missing type promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ClipboardItem"
+FAIL getType(DOMString valid type) converts DOMString to Blob promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ClipboardItem"
+FAIL getType(DOMString invalid type) converts DOMString to Blob promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ClipboardItem"
 

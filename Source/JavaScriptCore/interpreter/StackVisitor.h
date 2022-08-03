@@ -101,6 +101,8 @@ public:
 
         ClonedArguments* createArguments(VM&);
         CallFrame* callFrame() const { return m_callFrame; }
+
+        JS_EXPORT_PRIVATE bool isImplementationVisibilityPrivate() const;
         
         void dump(PrintStream&, Indenter = Indenter()) const;
         void dump(PrintStream&, Indenter, WTF::Function<void(PrintStream&)> prefix) const;

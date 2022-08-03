@@ -73,7 +73,7 @@ JSC_DEFINE_HOST_FUNCTION(jsFileSystemDirectoryHandleIterator_onPromiseSettled, (
 JSBoundFunction* JSFileSystemDirectoryHandleIterator::createOnSettledFunction(JSC::JSGlobalObject* globalObject)
 {
     JSC::VM& vm = globalObject->vm();
-    auto onSettled = JSC::JSFunction::create(vm, globalObject, 0, String(), jsFileSystemDirectoryHandleIterator_onPromiseSettled);
+    auto onSettled = JSC::JSFunction::create(vm, globalObject, 0, String(), jsFileSystemDirectoryHandleIterator_onPromiseSettled, ImplementationVisibility::Public);
     return JSC::JSBoundFunction::create(vm, globalObject, onSettled, this, nullptr, 1, nullptr);
 }
 
@@ -90,7 +90,7 @@ JSC_DEFINE_HOST_FUNCTION(jsFileSystemDirectoryHandleIterator_onPromiseFulfilled,
 JSBoundFunction* JSFileSystemDirectoryHandleIterator::createOnFulfilledFunction(JSC::JSGlobalObject* globalObject)
 {
     JSC::VM& vm = globalObject->vm();
-    auto onFulfilled = JSC::JSFunction::create(vm, globalObject, 1, String(), jsFileSystemDirectoryHandleIterator_onPromiseFulfilled);
+    auto onFulfilled = JSC::JSFunction::create(vm, globalObject, 1, String(), jsFileSystemDirectoryHandleIterator_onPromiseFulfilled, ImplementationVisibility::Public);
     return JSC::JSBoundFunction::create(vm, globalObject, onFulfilled, this, nullptr, 1, nullptr);
 }
 
@@ -107,7 +107,7 @@ JSC_DEFINE_HOST_FUNCTION(jsFileSystemDirectoryHandleIterator_onPromiseRejected, 
 JSBoundFunction* JSFileSystemDirectoryHandleIterator::createOnRejectedFunction(JSC::JSGlobalObject* globalObject)
 {
     JSC::VM& vm = globalObject->vm();
-    auto onSettled = JSC::JSFunction::create(vm, globalObject, 0, String(), jsFileSystemDirectoryHandleIterator_onPromiseRejected);
+    auto onSettled = JSC::JSFunction::create(vm, globalObject, 0, String(), jsFileSystemDirectoryHandleIterator_onPromiseRejected, ImplementationVisibility::Public);
     return JSC::JSBoundFunction::create(vm, globalObject, onSettled, this, nullptr, 1, nullptr);
 }
 

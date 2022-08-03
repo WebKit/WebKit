@@ -57,8 +57,11 @@ RemoteCDMInstance::RemoteCDMInstance(WeakPtr<RemoteCDMFactory>&& factory, Remote
 
 RemoteCDMInstance::~RemoteCDMInstance()
 {
-    if (m_factory)
-        m_factory->gpuProcessConnection().messageReceiverMap().removeMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64());
+    if (!m_factory)
+        return;
+
+    m_factory->removeInstance(m_identifier);
+    m_factory->gpuProcessConnection().messageReceiverMap().removeMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteCDMInstance::unrequestedInitializationDataReceived(const String& type, Ref<SharedBuffer>&& initData)

@@ -105,6 +105,9 @@ class BuiltinsSeparateImplementationGenerator(BuiltinsGenerator):
                 ("JavaScriptCore", "runtime/IdentifierInlines.h"),
             ),
             (["JavaScriptCore", "WebCore"],
+                ("JavaScriptCore", "runtime/ImplementationVisibility.h"),
+            ),
+            (["JavaScriptCore", "WebCore"],
                 ("JavaScriptCore", "runtime/Intrinsic.h"),
             ),
         ]

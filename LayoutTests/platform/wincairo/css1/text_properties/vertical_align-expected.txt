@@ -84,7 +84,7 @@ layer at (0,0) size 785x4501
             text run at (0,96) width 55: "line."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,781) size 769x71
-        RenderImage {IMG} at (0,1) size 15x50
+        RenderImage {IMG} at (0,0) size 15x50
         RenderText {#text} at (15,14) size 756x55
           text run at (15,14) width 741: " The image at the beginning of this sentence should be middle-aligned, which should align its middle with the point defined as"
           text run at (0,50) width 227: "the text baseline plus half the x-height."
@@ -224,7 +224,7 @@ layer at (0,0) size 785x4501
       RenderBlock {P} at (0,1885) size 769x233
         RenderText {#text} at (0,22) size 94x19
           text run at (0,22) width 94: "This paragraph "
-        RenderImage {IMG} at (94,19) size 9x30
+        RenderImage {IMG} at (94,18) size 9x30
         RenderText {#text} at (103,22) size 4x19
           text run at (103,22) width 4: " "
         RenderInline {SPAN} at (0,0) size 352x46
@@ -232,7 +232,7 @@ layer at (0,0) size 785x4501
             text run at (107,1) width 352: "contains many images"
         RenderText {#text} at (459,22) size 4x19
           text run at (459,22) width 4: " "
-        RenderImage {IMG} at (463,9) size 15x50
+        RenderImage {IMG} at (463,8) size 15x50
         RenderText {#text} at (478,22) size 112x19
           text run at (478,22) width 112: " of varying heights "
         RenderImage {IMG} at (590,29) size 3x10
@@ -257,7 +257,7 @@ layer at (0,0) size 785x4501
             text run at (122,93) width 232: "with the middle of"
         RenderText {#text} at (353,106) size 5x19
           text run at (353,106) width 5: " "
-        RenderImage {IMG} at (357,93) size 16x50
+        RenderImage {IMG} at (357,92) size 16x50
         RenderText {#text} at (372,106) size 5x19
           text run at (372,106) width 5: " "
         RenderInline {SPAN} at (0,0) size 346x27
@@ -270,7 +270,7 @@ layer at (0,0) size 785x4501
             text run at (596,100) width 126: " text element"
         RenderText {#text} at (721,106) size 5x19
           text run at (721,106) width 5: " "
-        RenderImage {IMG} at (725,93) size 16x50
+        RenderImage {IMG} at (725,92) size 16x50
         RenderText {#text} at (0,0) size 0x0
         RenderInline {SMALL} at (0,0) size 176x20
           RenderText {#text} at (0,176) size 176x20
@@ -285,7 +285,7 @@ layer at (0,0) size 785x4501
             text run at (188,173) width 153: "the images appear."
         RenderText {#text} at (340,176) size 5x20
           text run at (340,176) width 5: " "
-        RenderImage {IMG} at (344,143) size 28x91
+        RenderImage {IMG} at (344,142) size 28x91
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,2134) size 769x40
         RenderText {#text} at (0,0) size 753x39
@@ -425,7 +425,7 @@ layer at (0,0) size 785x4501
                     text run at (0,96) width 133: "in the line."
                 RenderText {#text} at (0,0) size 0x0
               RenderBlock {P} at (4,430) size 747x71
-                RenderImage {IMG} at (0,1) size 15x50
+                RenderImage {IMG} at (0,0) size 15x50
                 RenderText {#text} at (15,14) size 739x55
                   text run at (15,14) width 724: " The image at the beginning of this sentence should be middle-aligned, which should align its middle with the point defined"
                   text run at (0,50) width 244: "as the text baseline plus half the x-height."
@@ -563,7 +563,7 @@ layer at (0,0) size 785x4501
               RenderBlock {P} at (4,1534) size 747x233
                 RenderText {#text} at (0,22) size 94x19
                   text run at (0,22) width 94: "This paragraph "
-                RenderImage {IMG} at (94,19) size 9x30
+                RenderImage {IMG} at (94,18) size 9x30
                 RenderText {#text} at (103,22) size 4x19
                   text run at (103,22) width 4: " "
                 RenderInline {SPAN} at (0,0) size 352x46
@@ -571,7 +571,7 @@ layer at (0,0) size 785x4501
                     text run at (107,1) width 352: "contains many images"
                 RenderText {#text} at (459,22) size 4x19
                   text run at (459,22) width 4: " "
-                RenderImage {IMG} at (463,9) size 15x50
+                RenderImage {IMG} at (463,8) size 15x50
                 RenderText {#text} at (478,22) size 112x19
                   text run at (478,22) width 112: " of varying heights "
                 RenderImage {IMG} at (590,29) size 3x10
@@ -596,7 +596,7 @@ layer at (0,0) size 785x4501
                     text run at (146,85) width 231: "with the middle of"
                 RenderText {#text} at (377,98) size 4x20
                   text run at (377,98) width 4: " "
-                RenderImage {IMG} at (381,85) size 15x51
+                RenderImage {IMG} at (381,84) size 15x51
                 RenderText {#text} at (396,98) size 4x20
                   text run at (396,98) width 4: " "
                 RenderInline {SPAN} at (0,0) size 345x28
@@ -608,7 +608,7 @@ layer at (0,0) size 785x4501
                   RenderText {#text} at (620,92) size 125x28
                     text run at (620,92) width 125: " text element"
                 RenderText {#text} at (0,0) size 0x0
-                RenderImage {IMG} at (0,163) size 15x51
+                RenderImage {IMG} at (0,162) size 15x51
                 RenderText {#text} at (15,176) size 4x20
                   text run at (15,176) width 4: " "
                 RenderInline {SMALL} at (0,0) size 176x20
@@ -624,7 +624,7 @@ layer at (0,0) size 785x4501
                     text run at (207,173) width 153: "the images appear."
                 RenderText {#text} at (359,176) size 5x20
                   text run at (359,176) width 5: " "
-                RenderImage {IMG} at (363,143) size 28x91
+                RenderImage {IMG} at (363,142) size 28x91
                 RenderText {#text} at (0,0) size 0x0
               RenderBlock {P} at (4,1783) size 747x40
                 RenderText {#text} at (0,0) size 740x39

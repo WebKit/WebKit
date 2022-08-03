@@ -966,7 +966,7 @@ void HTMLElement::addHTMLNumberToStyle(MutableStyleProperties& style, CSSPropert
 
 // Color parsing that matches HTML's "rules for parsing a legacy color value"
 // https://html.spec.whatwg.org/#rules-for-parsing-a-legacy-colour-value
-static std::optional<SRGBA<uint8_t>> parseLegacyColorValue(StringView string)
+std::optional<SRGBA<uint8_t>> HTMLElement::parseLegacyColorValue(StringView string)
 {
     // An empty string doesn't apply a color.
     if (string.isEmpty())
@@ -1039,7 +1039,7 @@ static std::optional<SRGBA<uint8_t>> parseLegacyColorValue(StringView string)
     return { { redValue, greenValue, blueValue } };
 }
 
-void HTMLElement::addHTMLColorToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, const String& attributeValue)
+void HTMLElement::addHTMLColorToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, const AtomString& attributeValue)
 {
     if (auto color = parseLegacyColorValue(attributeValue))
         style.setProperty(propertyID, CSSValuePool::singleton().createColorValue(*color));

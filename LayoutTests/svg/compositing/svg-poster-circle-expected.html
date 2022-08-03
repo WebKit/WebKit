@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #stage {
+        background-color: lightgray;
+        margin: 150px auto;
+        width: 600px;
+        height: 400px;
+        perspective: 800px;
+      }
+
+      #rotate {
+        width: 600px;
+        height: 400px;
+        transform-style: preserve-3d;
+	transform: rotateX(30deg) rotateY(30deg) rotateZ(30deg) translateZ(25px);
+      }
+
+      .ring {
+        height: 110px;
+        width: 600px;
+        transform-style: preserve-3d;
+      }
+
+      .ring > :nth-child(odd) {
+        background-color: #995C7F;
+      }
+
+      .ring > :nth-child(even) {
+        background-color: #835A99;
+      }
+
+      .poster {
+        position: absolute;
+        left: 250px;
+        width: 100px;
+        height: 100px;
+        opacity: 0.5;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage">
+      <div id="rotate">
+        <div class="ring">
+	  <div class="poster" style="transform: rotateY(0deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(30deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(60deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(90deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(120deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(150deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(180deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(210deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(240deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(270deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(300deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(330deg) translateZ(200px);"></div>
+	</div>
+	<div class="ring">
+	  <div class="poster" style="transform: rotateY(0deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(30deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(60deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(90deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(120deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(150deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(180deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(210deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(240deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(270deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(300deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(330deg) translateZ(200px);"></div>
+	</div>
+	<div class="ring">
+	  <div class="poster" style="transform: rotateY(0deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(30deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(60deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(90deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(120deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(150deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(180deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(210deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(240deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(270deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(300deg) translateZ(200px);"></div>
+	  <div class="poster" style="transform: rotateY(330deg) translateZ(200px);"></div>
+	</div>
+      </div>
+    </div>
+  </body>
+</html>

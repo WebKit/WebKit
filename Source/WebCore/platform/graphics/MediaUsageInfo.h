@@ -63,6 +63,9 @@ struct MediaUsageInfo {
     bool hasEverNotifiedAboutPlaying { false };
     bool outsideOfFullscreen { false };
     bool isLargeEnoughForMainContent { false };
+#if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095)
+    bool isInViewport { false };
+#endif
 
     bool operator==(const MediaUsageInfo& other) const
     {
@@ -96,7 +99,11 @@ struct MediaUsageInfo {
             && requiresPlaybackAndIsNotPlaying == other.requiresPlaybackAndIsNotPlaying
             && hasEverNotifiedAboutPlaying == other.hasEverNotifiedAboutPlaying
             && outsideOfFullscreen == other.outsideOfFullscreen
-            && isLargeEnoughForMainContent == other.isLargeEnoughForMainContent;
+            && isLargeEnoughForMainContent == other.isLargeEnoughForMainContent
+#if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095)
+            && isInViewport == other.isInViewport
+#endif
+            ;
     }
 
     bool operator!=(const MediaUsageInfo other) const
@@ -141,6 +148,9 @@ template<class Encoder> inline void MediaUsageInfo::encode(Encoder& encoder) con
     encoder << hasEverNotifiedAboutPlaying;
     encoder << outsideOfFullscreen;
     encoder << isLargeEnoughForMainContent;
+#if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095)
+    encoder << isInViewport;
+#endif
 }
 
 template<class Decoder> inline std::optional<MediaUsageInfo> MediaUsageInfo::decode(Decoder& decoder)
@@ -239,6 +249,11 @@ template<class Decoder> inline std::optional<MediaUsageInfo> MediaUsageInfo::dec
 
     if (!decoder.decode(info.isLargeEnoughForMainContent))
         return { };
+
+#if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095)
+    if (!decoder.decode(info.isInViewport))
+        return { };
+#endif
 
     return info;
 }

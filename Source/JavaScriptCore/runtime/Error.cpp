@@ -136,11 +136,11 @@ public:
         if (visitor->isWasmFrame())
             return IterationStatus::Continue;
 
-        auto* codeBlock = visitor->codeBlock();
-        if (!codeBlock)
+        if (visitor->isImplementationVisibilityPrivate())
             return IterationStatus::Continue;
 
-        if (codeBlock->ownerExecutable()->implementationVisibility() != ImplementationVisibility::Public)
+        auto* codeBlock = visitor->codeBlock();
+        if (!codeBlock)
             return IterationStatus::Continue;
 
         m_codeBlock = codeBlock;

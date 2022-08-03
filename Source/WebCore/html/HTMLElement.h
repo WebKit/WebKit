@@ -148,7 +148,8 @@ protected:
     void addHTMLPixelsToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
     void addHTMLNumberToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
 
-    void addHTMLColorToStyle(MutableStyleProperties&, CSSPropertyID, const String& color);
+    static std::optional<SRGBA<uint8_t>> parseLegacyColorValue(StringView);
+    void addHTMLColorToStyle(MutableStyleProperties&, CSSPropertyID, const AtomString& color);
 
     void applyAspectRatioFromWidthAndHeightAttributesToStyle(StringView widthAttribute, StringView heightAttribute, MutableStyleProperties&);
     void applyAspectRatioWithoutDimensionalRulesFromWidthAndHeightAttributesToStyle(StringView widthAttribute, StringView heightAttribute, MutableStyleProperties&);

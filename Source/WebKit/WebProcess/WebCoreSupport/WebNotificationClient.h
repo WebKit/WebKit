@@ -30,6 +30,7 @@
 
 #include <WebCore/NotificationClient.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 class ScriptExecutionContext;

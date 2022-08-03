@@ -1,3 +1,4 @@
+Body needed for test_driver.click()
 The bottom image should display the same image as the top image.
 
 Original Image:

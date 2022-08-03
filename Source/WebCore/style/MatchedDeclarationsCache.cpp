@@ -80,6 +80,11 @@ bool MatchedDeclarationsCache::Entry::isUsableAfterHighPriorityProperties(const 
     if (style.effectiveZoom() != renderStyle->effectiveZoom())
         return false;
 
+#if ENABLE(DARK_MODE_CSS)
+    if (style.colorScheme() != renderStyle->colorScheme())
+        return false;
+#endif
+
     return CSSPrimitiveValue::equalForLengthResolution(style, *renderStyle);
 }
 

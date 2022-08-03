@@ -466,7 +466,6 @@ webkit.org/b/232256 accessibility/auto-fill-crash.html [ Timeout ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html [ Failure ]
-webkit.org/b/211979 imported/w3c/web-platform-tests/clipboard-apis/async-raw-write-read.tentative.https.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Clipboard API
@@ -1349,6 +1348,10 @@ webkit.org/b/240934 imported/w3c/web-platform-tests/css/filter-effects/root-elem
 
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
 
+# Compositing/z-index needs LBSE enabled builds, which is off by default for this port.
+svg/compositing [ Skip ]
+svg/z-index [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SVG-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1953,6 +1956,9 @@ http/tests/webrtc [ Skip ]
 
 # Failing since more testcases were added in https://bugs.webkit.org/show_bug.cgi?id=242092
 accessibility/table-exposure-updates-dynamically.html [ Skip ]
+
+# GTK already has its own version of this test (accessibility/gtk/aria-roles-unignored.html).
+accessibility/aria-roles-unignored.html [ Skip ]
 
 # Accessibility tests that should never be run for GTK/WPE due to being
 # written in a platform-specific way. They should either be moved to

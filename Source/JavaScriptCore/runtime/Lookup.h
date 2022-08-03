@@ -27,6 +27,7 @@
 #include "DOMJITSignature.h"
 #include "Identifier.h"
 #include "IdentifierInlines.h"
+#include "ImplementationVisibility.h"
 #include "Intrinsic.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
@@ -265,12 +266,12 @@ inline void reifyStaticProperty(VM& vm, const ClassInfo* classInfo, const Proper
         if (value.attributes() & PropertyAttribute::DOMJITFunction) {
             thisObj.putDirectNativeFunction(
                 vm, thisObj.globalObject(), propertyName, value.functionLength(),
-                value.function(), value.intrinsic(), value.signature(), attributesForStructure(value.attributes()));
+                value.function(), ImplementationVisibility::Public, value.intrinsic(), value.signature(), attributesForStructure(value.attributes()));
             return;
         }
         thisObj.putDirectNativeFunction(
             vm, thisObj.globalObject(), propertyName, value.functionLength(),
-            value.function(), value.intrinsic(), attributesForStructure(value.attributes()));
+            value.function(), ImplementationVisibility::Public, value.intrinsic(), attributesForStructure(value.attributes()));
         return;
     }
 

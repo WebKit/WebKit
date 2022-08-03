@@ -127,12 +127,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasAfterWhiteSpaceLineBreak:
         stream << "line-break is after-white-space";
         break;
-    case AvoidanceReason::FlowHasSVGFont:
-        stream << "SVG font";
-        break;
-    case AvoidanceReason::FlowTextHasDirectionCharacter:
-        stream << "direction character";
-        break;
     case AvoidanceReason::FlowTextIsCombineText:
         stream << "text is combine";
         break;
@@ -154,17 +148,11 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowDoesNotEstablishInlineFormattingContext:
         stream << "flow does not establishes inline formatting context";
         break;
-    case AvoidanceReason::UnsupportedFieldset:
-        stream << "fieldset box";
-        break;
     case AvoidanceReason::ChildBoxIsFloatingOrPositioned:
         stream << "child box is floating or positioned";
         break;
     case AvoidanceReason::ContentIsSVG:
         stream << "SVG content";
-        break;
-    case AvoidanceReason::ChildBoxIsNotInlineBlock:
-        stream << "child box has unsupported display type";
         break;
     case AvoidanceReason::InlineBoxNeedsLayer:
         stream << "inline box needs layer";
@@ -395,11 +383,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     if (is<RenderLineBreak>(child))
         return reasons;
 
-    if (child.isFieldset()) {
-        // Fieldsets don't follow the standard CSS box model. They require special handling.
-        SET_REASON_AND_RETURN_IF_NEEDED(UnsupportedFieldset, reasons, includeReasons)
-    }
-
     if (is<RenderReplaced>(child)) {
         auto& replaced = downcast<RenderReplaced>(child);
         if (replaced.isFloating() || replaced.isPositioned())
@@ -433,10 +416,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
             SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
         if (block.isRubyRun())
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-
-        auto& style = block.style();
-        if (style.display() != DisplayType::InlineBlock)
-            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsNotInlineBlock, reasons, includeReasons)
 
         return reasons;
     }

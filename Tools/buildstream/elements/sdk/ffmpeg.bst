@@ -37,7 +37,7 @@ variables:
   ffmpeg-arch: '%{arch}'
 
   audio-encoders: |
-    ac3,alac,flac,libfdk_aac,g723_1,mp2,libmp3lame,libopus,libspeex,pcm_alaw,pcm_mulaw,\
+    ac3,adpcm_g722,alac,flac,libfdk_aac,g723_1,mp2,libmp3lame,libopus,libspeex,pcm_alaw,pcm_mulaw,\
     pcm_f32le,pcm_s16be,pcm_s24be,pcm_s16le,pcm_s24le,pcm_s32le,\
     pcm_u8,tta,libvorbis,wavpack,%{extra-aud-enc}
 

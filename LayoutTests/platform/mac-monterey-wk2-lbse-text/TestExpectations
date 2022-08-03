@@ -1,13 +1,14 @@
 # This TestExpectations file reflects the current status of the 'Layer-based SVG engine' (LBSE) in WebKit
 #
 # 1. Run tests against legacy SVG engine
-#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-pixel --pixel-tests --tolerance=0 svg/W3C-SVG-1.1
+#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-pixel --pixel-tests --tolerance=0 svg/W3C-SVG-1.1 svg/compositing svg/z-index
 #
 # 2. Run tests against LBSE
 #    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-pixel \
 #                       --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-lbse-text \
 #                       --additional-expectations=$PWD/LayoutTests/platform/mac-monterey-wk2-lbse-text/TestExpectations \
-#                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true svg/W3C-SVG-1.1
+#                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true svg/W3C-SVG-1.1 svg/compositing svg/z-index
+
 svg/W3C-SVG-1.1/animate-elem-02-t.svg       [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-03-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-04-t.svg       [ ImageOnlyFailure ]

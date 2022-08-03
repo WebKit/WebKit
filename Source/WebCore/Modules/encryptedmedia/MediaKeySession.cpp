@@ -818,6 +818,24 @@ const char* MediaKeySession::activeDOMObjectName() const
     return "MediaKeySession";
 }
 
+void MediaKeySession::stop()
+{
+    if (m_closed) {
+        ALWAYS_LOG(LOGIDENTIFIER, "Already closed");
+        return;
+    }
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    m_instanceSession->closeSession(m_sessionId, [this, weakThis = WeakPtr { this }, logIdentifier = LOGIDENTIFIER] {
+        if (!weakThis)
+            return;
+
+        ALWAYS_LOG(logIdentifier, "::lambda, closed");
+        sessionClosed();
+    });
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaKeySession::logChannel() const
 {

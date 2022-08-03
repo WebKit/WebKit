@@ -55,8 +55,8 @@ void JSJavaScriptCallFramePrototype::finishCreation(VM& vm, JSGlobalObject* glob
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("evaluateWithScopeExtension"_s, jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("scopeDescriptions"_s, jsJavaScriptCallFramePrototypeFunctionScopeDescriptions, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("evaluateWithScopeExtension"_s, jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("scopeDescriptions"_s, jsJavaScriptCallFramePrototypeFunctionScopeDescriptions, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Private);
 
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION("caller"_s, jsJavaScriptCallFrameAttributeCaller, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION("sourceID"_s, jsJavaScriptCallFrameAttributeSourceID, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);

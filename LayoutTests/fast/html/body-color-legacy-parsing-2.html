@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body alink="0080x">
+<a href="#foo">hello</a>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+(function () {
+    if (!window.eventSender)
+        return;
+    const anchor = document.querySelector('a');
+    eventSender.mouseMoveTo(anchor.offsetLeft + anchor.offsetWidth / 2, anchor.offsetTop + anchor.offsetHeight / 2);
+    eventSender.mouseDown();
+})();
+</script>
+</body>
+</html>

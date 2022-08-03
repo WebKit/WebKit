@@ -148,8 +148,8 @@ static LayoutUnit marginWidthForChild(RenderBox* child)
 
 static bool childDoesNotAffectWidthOrFlexing(RenderObject* child)
 {
-    // Positioned children and collapsed children don't affect the min/max width.
-    return child->isOutOfFlowPositioned() || child->style().visibility() == Visibility::Collapse;
+    // Positioned children don't affect the min/max width.
+    return child->isOutOfFlowPositioned();
 }
 
 static LayoutUnit widthForChild(RenderBox* child)
@@ -499,13 +499,6 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             }
             
             LayoutSize& childLayoutDelta = childLayoutDeltas[childIndex++];
-            
-            if (child->style().visibility() == Visibility::Collapse) {
-                // visibility: collapsed children do not participate in our positioning.
-                // But we need to lay them out.
-                layoutChildIfNeededApplyingDelta(child, childLayoutDelta);
-                continue;
-            }
 
             // We need to see if this child's height has changed, since we make block elements
             // fill the height of a containing box by default.
@@ -594,9 +587,6 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
 
                     // Now distribute the space to objects.
                     for (RenderBox* child = iterator.first(); child && spaceAvailableThisPass && totalFlex; child = iterator.next()) {
-                        if (child->style().visibility() == Visibility::Collapse)
-                            continue;
-
                         if (allowedChildFlex(child, expanding, i)) {
                             LayoutUnit spaceAdd = LayoutUnit(spaceAvailableThisPass * (child->style().boxFlex() / totalFlex));
                             if (spaceAdd) {
@@ -743,13 +733,6 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             }
             
             LayoutSize& childLayoutDelta = childLayoutDeltas[childIndex++];
-
-            if (child->style().visibility() == Visibility::Collapse) {
-                // visibility: collapsed children do not participate in our positioning.
-                // But we need to lay them down.
-                layoutChildIfNeededApplyingDelta(child, childLayoutDelta);
-                continue;
-            }
 
             // Compute the child's vertical margins.
             child->computeAndSetBlockDirectionMargins(*this);
@@ -952,9 +935,6 @@ static bool shouldIncludeLinesForParentLineCount(const RenderBlockFlow& blockFlo
 
 static void clearTruncation(RenderBlockFlow& blockFlow)
 {
-    if (blockFlow.style().visibility() != Visibility::Visible)
-        return;
-
     if (blockFlow.childrenInline() && blockFlow.hasMarkupTruncation()) {
         blockFlow.setHasMarkupTruncation(false);
         for (auto* box = blockFlow.firstRootBox(); box; box = box->nextRootBox())
@@ -971,9 +951,6 @@ static void clearTruncation(RenderBlockFlow& blockFlow)
 static LegacyRootInlineBox* lineAtIndex(const RenderBlockFlow& flow, int i)
 {
     ASSERT(i >= 0);
-
-    if (flow.style().visibility() != Visibility::Visible)
-        return nullptr;
 
     if (flow.childrenInline()) {
         for (auto* box = flow.firstRootBox(); box; box = box->nextRootBox()) {
@@ -995,9 +972,6 @@ static LegacyRootInlineBox* lineAtIndex(const RenderBlockFlow& flow, int i)
 
 static std::optional<LayoutUnit> getHeightForLineCount(const RenderBlockFlow& block, size_t lineCount, bool includeBottom, size_t& count)
 {
-    if (block.style().visibility() != Visibility::Visible)
-        return { };
-
     if (block.childrenInline()) {
         for (auto* box = block.firstRootBox(); box; box = box->nextRootBox()) {
             if (++count == lineCount)
@@ -1029,9 +1003,6 @@ static LayoutUnit heightForLineCount(const RenderBlockFlow& flow, size_t lineCou
 
 static size_t lineCountFor(const RenderBlockFlow& blockFlow)
 {
-    if (blockFlow.style().visibility() != Visibility::Visible)
-        return 0;
-
     if (blockFlow.childrenInline())
         return blockFlow.lineCount();
 

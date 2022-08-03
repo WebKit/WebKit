@@ -298,6 +298,10 @@ void MediaElementSession::isVisibleInViewportChanged()
 
     if (m_element.isFullscreen() || m_element.isVisibleInViewport())
         m_elementIsHiddenUntilVisibleInViewport = false;
+
+#if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095)
+    PlatformMediaSessionManager::sharedManager().scheduleSessionStatusUpdate();
+#endif
 }
 
 void MediaElementSession::inActiveDocumentChanged()
@@ -1241,7 +1245,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
     bool processingUserGesture = document.processingUserGestureForMedia();
     bool isPlaying = m_element.isPlaying();
 
-    MediaUsageInfo usage =  {
+    MediaUsageInfo usage = {
         WTFMove(currentSrc),
         state() == PlatformMediaSession::Playing,
         canShowControlsManager(PlaybackControlsPurpose::ControlsManager),
@@ -1273,6 +1277,9 @@ void MediaElementSession::updateMediaUsageIfChanged()
         m_element.hasEverNotifiedAboutPlaying(),
         isOutsideOfFullscreen,
         isLargeEnoughForMainContent(MediaSessionMainContentPurpose::MediaControls),
+#if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095)
+        m_element.isVisibleInViewport()
+#endif
     };
 
     if (m_mediaUsageInfo && *m_mediaUsageInfo == usage)

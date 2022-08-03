@@ -41,7 +41,7 @@ void WeakObjectRefPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     ASSERT(inherits(info()));
 
     // FIXME: It wouldn't be hard to make this an intrinsic.
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deref, protoFuncWeakRefDeref, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deref, protoFuncWeakRefDeref, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
 
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }

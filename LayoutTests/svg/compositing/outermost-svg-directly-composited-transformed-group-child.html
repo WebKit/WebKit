@@ -1,0 +1,31 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<!-- FIXME: SVG content slightly clipped (up to 1px) due to off-device-pixel-alignment issue, remove when fixed. -->
+<meta name="fuzzy" content="maxDifference=0-102; totalPixels=2371-2372" />
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+    svg {
+        width: 550px;
+        height: 550px;
+    }
+    g {
+        transform: scale(2);
+   }
+    rect {
+        transform: perspective(200px) rotateX(15deg) rotateZ(15deg);
+    }
+</style>
+</head>
+<body>
+    <svg>
+        <g>
+            <rect x="100" y="50" width="100" height="100" fill="green"/>
+	</g>
+    </svg>
+</body>
+</html>

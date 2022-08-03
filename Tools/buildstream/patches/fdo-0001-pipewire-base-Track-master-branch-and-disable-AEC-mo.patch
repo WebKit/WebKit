@@ -1,0 +1,49 @@
+From 3f6af0ce217bb61bb4dbf68e35cadfad038a7bd1 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Sat, 23 Jul 2022 10:30:58 +0100
+Subject: [PATCH] pipewire-base: Track master branch and disable AEC module
+
+The webrtc-echo-canceller hasn't been ported to webrtc-audio-processing-1 yet.
+---
+ elements/components/pipewire-base.bst | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/elements/components/pipewire-base.bst b/elements/components/pipewire-base.bst
+index 2c5686a89..2b8c6a9ef 100644
+--- a/elements/components/pipewire-base.bst
++++ b/elements/components/pipewire-base.bst
+@@ -28,6 +28,7 @@ build-depends:
+ variables:
+   meson-local: >-
+     -Daudiotestsrc=disabled
++    -Decho-cancel-webrtc=disabled
+     -Djack=disabled
+     -Droc=disabled
+     -Dvideotestsrc=disabled
+@@ -37,7 +38,11 @@ variables:
+     -Dman=enabled
+     -Dbluez5-codec-ldac=disabled
+     -Dbluez5-codec-aptx=disabled
++    -Dbluez5-codec-lc3plus=disabled
+     -Dlibcamera=disabled
++    -Dlibcanberra=disabled
++    -Dlv2=disabled
++    -Dsession-managers=
+     -Dlibjack-path=%{libdir}
+     -Dudevrulesdir=$(pkg-config --variable=udevdir udev)/rules.d
+ 
+@@ -107,9 +112,7 @@ public:
+ sources:
+ - kind: git_tag
+   url: freedesktop:PipeWire/pipewire.git
+-  # track: master : Frozen due to forward break
++  track: master
+   exclude:
+   - '*.*.9*'
+-  ref: 0.3.36-0-g4997d47f63ed2c91d74bc8e5b229e57200354ee5
+-- kind: patch
+-  path: patches/pipewire/remove-useless-rpaths.patch
++  ref: 0.3.54-7-ga293e079d1be41c00b6e4f831cc216964cbfbf15
+-- 
+2.36.1
+

@@ -38,7 +38,9 @@
         // Now check a table that uses a different role to make sure we don't have any cell roles.
         var table2 = accessibilityController.accessibleElementById("table2");
         shouldBe("table2.role", "'AXRole: AXGroup'");
-        var cell2 = table2.childAtIndex(0).childAtIndex(0);
+        var cell2 = table2.childAtIndex(0);
+        if (accessibilityController.platformName === "atspi")
+            cell2 = table2.childAtIndex(0).childAtIndex(0);
         shouldBeFalse("cell2.role == 'AXRole: AXCell'");
 
         document.getElementById("content").style.visibility = "hidden";

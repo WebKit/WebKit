@@ -1,0 +1,95 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+  <head>
+    <!-- FIXME: SVG content slightly clipped (up to 1px) due to off-device-pixel-alignment issue, remove when fixed. -->
+    <meta name="fuzzy" content="maxDifference=38; totalPixels=8904-8973" />
+
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+
+      svg {
+        display: block;
+        margin: 150px auto;
+        width: 600px;
+        height: 400px;
+        perspective: 800px;
+        background-color: lightgray;
+        overflow: visible;
+      }
+
+      #rotate {
+        transform: rotateX(30deg) rotateY(30deg) rotateZ(30deg) translateZ(25px);
+        transform-origin: 50% 50%;
+        transform-style: preserve-3d;
+      }
+
+      g.ring {
+        transform-style: preserve-3d;
+      }
+
+      g.ring > :nth-child(odd) {
+        fill: #995C7F;
+      }
+
+      g.ring > :nth-child(even) {
+        fill: #835A99;
+      }
+
+      rect.poster {
+        opacity: 0.5;
+        transform-origin: 50% 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <svg>
+      <g id="rotate">
+        <g class="ring">
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(0deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(30deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(60deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(90deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(120deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(150deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(180deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(210deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(240deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(270deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(300deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(330deg) translateZ(200px);"/>
+        </g>
+        <g class="ring" transform="translate(0,110)">
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(0deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(30deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(60deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(90deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(120deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(150deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(180deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(210deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(240deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(270deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(300deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(330deg) translateZ(200px);"/>
+        </g>
+        <g class="ring" transform="translate(0,220)">
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(0deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(30deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(60deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(90deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(120deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(150deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(180deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(210deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(240deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(270deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(300deg) translateZ(200px);"/>
+          <rect x="250" y="0" width="100" height="100" rx="10" ry="10" class="poster" style="transform: rotateY(330deg) translateZ(200px);"/>
+        </g>
+      </g>
+    </svg>
+  </body>
+</html>

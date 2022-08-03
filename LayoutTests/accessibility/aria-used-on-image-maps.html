@@ -20,7 +20,9 @@
 
     if (window.accessibilityController) {
 
-          var group = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+          var group = accessibilityController.rootElement.childAtIndex(0);
+          if (accessibilityController.platformName === "atspi" || accessibilityController.platformName === "win")
+              group = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
           shouldBe("group.childAtIndex(0).role", "'AXRole: AXButton'");
           shouldBe("group.childAtIndex(1).role", "'AXRole: AXButton'");
     }

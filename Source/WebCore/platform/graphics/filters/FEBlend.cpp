@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FEBlend.h"
 
-#include "FEBlendNEON.h"
+#include "FEBlendNeonApplier.h"
 #include "FEBlendSoftwareApplier.h"
 #include "ImageBuffer.h"
 #include <wtf/text/TextStream.h>
@@ -54,7 +54,11 @@ bool FEBlend::setBlendMode(BlendMode mode)
 
 std::unique_ptr<FilterEffectApplier> FEBlend::createSoftwareApplier() const
 {
+#if HAVE(ARM_NEON_INTRINSICS)
+    return FilterEffectApplier::create<FEBlendNeonApplier>(*this);
+#else
     return FilterEffectApplier::create<FEBlendSoftwareApplier>(*this);
+#endif
 }
 
 TextStream& FEBlend::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
