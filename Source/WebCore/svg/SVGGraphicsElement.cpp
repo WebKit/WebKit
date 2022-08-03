@@ -143,10 +143,19 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
         ASSERT(attrName == SVGNames::transformAttr);
         InstanceInvalidationGuard guard(*this);
 
-        if (auto renderer = this->renderer())
-            renderer->setNeedsTransformUpdate();
-        updateSVGRendererForElementChange();
+        if (auto renderer = this->renderer()) {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+            if (document().settings().layerBasedSVGEngineEnabled()) {
+                renderer->updateFromElement();
+                updateSVGRendererForElementChange();
+                return;
+            }
+#endif
 
+            renderer->setNeedsTransformUpdate();
+        }
+
+        updateSVGRendererForElementChange();
         return;
     }
 

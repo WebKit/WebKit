@@ -198,15 +198,15 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
     if (options.contains(DecorationOption::IncludeClippers) && m_renderer.hasNonVisibleOverflow()) {
         ASSERT(m_renderer.hasLayer());
 
-        // FIXME: [LBSE] Upstream new RenderSVGViewportContainer / RenderSVGResourceMarker implementation
+        // FIXME: [LBSE] Upstream new RenderSVGResourceMarker implementation
         // ASSERT(is<RenderSVGViewportContainer>(m_renderer) || is<RenderSVGResourceMarker>(m_renderer) || is<RenderSVGRoot>(m_renderer));
-        ASSERT(is<RenderSVGRoot>(m_renderer));
+        ASSERT(is<RenderSVGViewportContainer>(m_renderer) || is<RenderSVGRoot>(m_renderer));
 
         LayoutRect overflowClipRect;
-        if (is<RenderSVGModelObject>(m_renderer))
-            overflowClipRect = downcast<RenderSVGModelObject>(m_renderer).overflowClipRect(LayoutPoint());
-        else if (is<RenderBox>(m_renderer))
-            overflowClipRect = downcast<RenderBox>(m_renderer).overflowClipRect(LayoutPoint());
+        if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(m_renderer))
+            overflowClipRect = svgModelObject->overflowClipRect(svgModelObject->currentSVGLayoutLocation());
+        else if (auto* box = dynamicDowncast<RenderBox>(m_renderer))
+            overflowClipRect = box->overflowClipRect(box->location());
         else {
             ASSERT_NOT_REACHED();
             return FloatRect();

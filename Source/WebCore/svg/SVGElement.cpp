@@ -197,9 +197,21 @@ SVGElementRareData& SVGElement::ensureSVGRareData()
     return *m_svgRareData;
 }
 
+bool SVGElement::isInnerSVGSVGElement() const
+{
+    if (!is<SVGSVGElement>(this))
+        return false;
+
+    // Element may not be in the document, pretend we're outermost for viewport(), getCTM(), etc.
+    if (!parentNode())
+        return false;
+
+    return is<SVGElement>(parentNode());
+}
+
 bool SVGElement::isOutermostSVGSVGElement() const
 {
-    if (!is<SVGSVGElement>(*this))
+    if (!is<SVGSVGElement>(this))
         return false;
 
     // Element may not be in the document, pretend we're outermost for viewport(), getCTM(), etc.
@@ -207,7 +219,7 @@ bool SVGElement::isOutermostSVGSVGElement() const
         return true;
 
     // We act like an outermost SVG element, if we're a direct child of a <foreignObject> element.
-    if (is<SVGForeignObjectElement>(*parentNode()))
+    if (is<SVGForeignObjectElement>(parentNode()))
         return true;
 
     // If we're inside the shadow tree of a <use> element, we're always an inner <svg> element.
@@ -215,7 +227,7 @@ bool SVGElement::isOutermostSVGSVGElement() const
         return false;
 
     // This is true whenever this is the outermost SVG, even if there are HTML elements outside it
-    return !is<SVGElement>(*parentNode());
+    return !is<SVGElement>(parentNode());
 }
 
 void SVGElement::reportAttributeParsingError(SVGParsingError error, const QualifiedName& name, const AtomString& value)
@@ -540,6 +552,7 @@ static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> createSVGLayerAwareEl
         gTag.get(),
         pathTag.get(),
         rectTag.get(),
+        svgTag.get(),
         textTag.get()
     };
     for (auto& tag : allowedTags)

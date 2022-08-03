@@ -55,6 +55,10 @@ public:
     // The query rect is given in local coordinate system.
     virtual bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const { return false; }
 
+    // Returns false if the rect has no intersection with the applied clip rect. When the context specifies edge-inclusive
+    // intersection, this return value allows distinguishing between no intersection and zero-area intersection.
+    virtual bool applyCachedClipAndScrollPosition(LayoutRect&, const RenderLayerModelObject*, VisibleRectContext) const { return false; }
+
     virtual bool isScrollableOrRubberbandableBox() const { return false; }
 
     bool shouldPlaceVerticalScrollbarOnLeft() const;

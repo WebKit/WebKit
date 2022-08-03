@@ -2619,8 +2619,7 @@ std::optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutR
     // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
     adjustedRect.setLocation(topLeft);
     if (localContainer->hasNonVisibleOverflow()) {
-        RenderBox& containerBox = downcast<RenderBox>(*localContainer);
-        bool isEmpty = !containerBox.applyCachedClipAndScrollPosition(adjustedRect, container, context);
+        bool isEmpty = !downcast<RenderLayerModelObject>(*localContainer).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
             if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
                 return std::nullopt;

@@ -284,8 +284,10 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     } else if (is<RenderBox>(o))
         r = downcast<RenderBox>(o).frameRect();
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    else if (is<RenderSVGModelObject>(o))
-        r = downcast<RenderSVGModelObject>(o).frameRectEquivalent();
+    else if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(o)) {
+        r = svgModelObject->frameRectEquivalent();
+        ASSERT(r.location() == svgModelObject->currentSVGLayoutLocation());
+    }
 #endif
 
     // FIXME: Temporary in order to ensure compatibility with existing layout test results.
@@ -294,6 +296,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 
     // FIXME: Convert layout test results to report sub-pixel values, in the meantime using enclosingIntRect
     // for consistency with old results.
+    // FIXME: [LBSE] Enable sub-pixel dumps for SVG
     ts << " " << enclosingIntRect(r);
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)

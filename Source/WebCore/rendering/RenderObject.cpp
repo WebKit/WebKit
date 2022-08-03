@@ -1062,7 +1062,7 @@ std::optional<LayoutRect> RenderObject::computeVisibleRectInContainer(const Layo
 
     LayoutRect adjustedRect = rect;
     if (parent->hasNonVisibleOverflow()) {
-        bool isEmpty = !downcast<RenderBox>(*parent).applyCachedClipAndScrollPosition(adjustedRect, container, context);
+        bool isEmpty = !downcast<RenderLayerModelObject>(*parent).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
             if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
                 return std::nullopt;

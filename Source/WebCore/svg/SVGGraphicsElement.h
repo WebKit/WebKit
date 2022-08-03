@@ -50,6 +50,8 @@ public:
     AffineTransform animatedLocalTransform() const override;
     AffineTransform* supplementalTransform() override;
 
+    virtual bool hasTransformRelatedAttributes() const { return !animatedLocalTransform().isIdentity(); }
+
     Ref<SVGRect> getBBoxForBindings();
     FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) override;
 

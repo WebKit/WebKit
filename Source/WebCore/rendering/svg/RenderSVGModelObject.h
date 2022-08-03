@@ -76,7 +76,7 @@ public:
 
     // For RenderLayer only
     void applyTopLeftLocationOffsetEquivalent(LayoutPoint& point) const { point.moveBy(currentSVGLayoutLocation()); }
-    FloatRect borderBoxRectInFragmentEquivalent(RenderFragmentContainer*, RenderBox::RenderBoxFragmentInfoFlags = RenderBox::CacheRenderBoxFragmentInfo) const;
+    LayoutRect borderBoxRectInFragmentEquivalent(RenderFragmentContainer*, RenderBox::RenderBoxFragmentInfoFlags = RenderBox::CacheRenderBoxFragmentInfo) const { return borderBoxRectEquivalent(); }
     virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* = nullptr, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const;
     LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy relevancy) { return overflowClipRect(location, fragment, relevancy); }
 
@@ -103,8 +103,13 @@ protected:
     // FIXME: [LBSE] Upstream SVG outline painting functionality
     // void paintSVGOutline(PaintInfo&, const LayoutPoint& adjustedPaintOffset);
 
+    // Returns false if the rect has no intersection with the applied clip rect. When the context specifies edge-inclusive
+    // intersection, this return value allows distinguishing between no intersection and zero-area intersection.
+    bool applyCachedClipAndScrollPosition(LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const final;
+
 private:
     bool isRenderSVGModelObject() const final { return true; }
+    LayoutSize cachedSizeForOverflowClip() const;
 
     LayoutRect m_layoutRect;
 };

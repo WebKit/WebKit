@@ -690,7 +690,7 @@ std::optional<LayoutRect> RenderInline::computeVisibleRectInContainer(const Layo
     if (localContainer->hasNonVisibleOverflow()) {
         // FIXME: Respect the value of context.options.
         SetForScope change(context.options, context.options | VisibleRectContextOption::ApplyCompositedContainerScrolls);
-        bool isEmpty = !downcast<RenderBox>(*localContainer).applyCachedClipAndScrollPosition(adjustedRect, container, context);
+        bool isEmpty = !downcast<RenderLayerModelObject>(*localContainer).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
             if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
                 return std::nullopt;

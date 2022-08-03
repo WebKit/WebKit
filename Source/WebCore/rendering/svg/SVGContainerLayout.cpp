@@ -145,7 +145,7 @@ void SVGContainerLayout::positionChildrenRelativeToContainer()
 #endif
     };
 
-    auto computeContainerLayoutLocation = [&]() {
+    auto computeContainerLayoutLocation = [&]() -> LayoutPoint {
         // The nominal SVG layout location (== flooredLayoutPoint(objectBoundingBoxWithoutTransformsTopLeft), where
         // objectBoundingBoxWithoutTransforms = union of child boxes, not mapped through their tranforms) is
         // only meaningful for the children of the RenderSVGRoot. RenderSVGRoot itself is positioned according to
@@ -153,6 +153,12 @@ void SVGContainerLayout::positionChildrenRelativeToContainer()
         // -> Position all RenderSVGRoot children relative to the contentBoxLocation() to avoid intruding border/padding area.
         if (is<RenderSVGRoot>(m_container))
             return -downcast<RenderSVGRoot>(m_container).contentBoxLocation();
+
+        // For (inner) RenderSVGViewportContainer nominalSVGLayoutLocation() returns the viewport boundaries,
+        // including the effect of the 'x'/'y' attribute values. Do not subtract the location, otherwise the
+        // effect of the x/y translation is removed.
+        if (is<RenderSVGViewportContainer>(m_container) && !m_container.isAnonymous())
+            return { };
 
         return m_container.nominalSVGLayoutLocation();
     };

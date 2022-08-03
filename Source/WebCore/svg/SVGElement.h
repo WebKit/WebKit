@@ -52,6 +52,7 @@ void mapAttributeToCSSProperty(HashMap<AtomStringImpl*, CSSPropertyID>* property
 class SVGElement : public StyledElement, public SVGPropertyOwner {
     WTF_MAKE_ISO_ALLOCATED(SVGElement);
 public:
+    bool isInnerSVGSVGElement() const;
     bool isOutermostSVGSVGElement() const;
 
     SVGSVGElement* ownerSVGElement() const;

@@ -2195,7 +2195,7 @@ static void expandClipRectForDescendantsAndReflection(LayoutRect& clipRect, cons
     // current transparencyClipBox to catch all child layers.
     // FIXME: Accelerated compositing will eventually want to do something smart here to avoid incorporating this
     // size into the parent layer.
-    if (layer.renderer().hasReflection()) {
+    if (layer.renderer().isBox() && layer.renderer().hasReflection()) {
         LayoutSize delta = layer.offsetFromAncestor(rootLayer);
         clipRect.move(-delta);
         clipRect.unite(layer.renderBox()->reflectedRect(clipRect));
@@ -2478,7 +2478,7 @@ LayoutSize RenderLayer::offsetFromAncestor(const RenderLayer* ancestorLayer, Col
 
 bool RenderLayer::shouldTryToScrollForScrollIntoView() const
 {
-    if (!renderer().hasNonVisibleOverflow())
+    if (!renderer().isBox() || !renderer().hasNonVisibleOverflow())
         return false;
 
     // Don't scroll to reveal an overflow layer that is restricted by the -webkit-line-clamp property.
@@ -2486,7 +2486,6 @@ bool RenderLayer::shouldTryToScrollForScrollIntoView() const
     if (renderer().parent() && !renderer().parent()->style().lineClamp().isNone())
         return false;
 
-    // Only boxes can have overflowClip set.
     auto& box = *renderBox();
 
     if (box.frame().eventHandler().autoscrollInProgress()) {
@@ -2756,7 +2755,7 @@ void RenderLayer::clipToRect(GraphicsContext& context, GraphicsContextStateSaver
     if (needsClipping) {
         LayoutRect adjustedClipRect = clipRect.rect();
         adjustedClipRect.move(paintingInfo.subpixelOffset);
-        auto snappedClipRect = snapRectToDevicePixels(adjustedClipRect, deviceScaleFactor);
+        auto snappedClipRect = snapRectToDevicePixelsIfNeeded(adjustedClipRect, renderer());
         context.clip(snappedClipRect);
         eventRegionStateSaver.pushClip(enclosingIntRect(snappedClipRect));
     }
@@ -4410,18 +4409,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             offset -= toLayoutSize(renderer().view().frameView().scrollPositionForFixedPosition());
 
         if (renderer().hasNonVisibleOverflow()) {
-            ClipRect newOverflowClip;
-            if (is<RenderBox>(renderer()))
-                newOverflowClip = downcast<RenderBox>(renderer()).overflowClipRectForChildLayers(offset, nullptr, clipRectsContext.overlayScrollbarSizeRelevancy());
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-            else if (is<RenderSVGModelObject>(renderer()))
-                newOverflowClip = downcast<RenderSVGModelObject>(renderer()).overflowClipRectForChildLayers(offset, nullptr, clipRectsContext.overlayScrollbarSizeRelevancy());
-#endif
-            else {
-                ASSERT_NOT_REACHED();
-                return;
-            }
-
+            ClipRect newOverflowClip = rendererOverflowClipRectForChildLayers(offset, nullptr, clipRectsContext.overlayScrollbarSizeRelevancy());
             newOverflowClip.setAffectedByRadius(renderer().style().hasBorderRadius());
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
             if (renderer().canContainAbsolutelyPositionedObjects())
@@ -4509,19 +4497,7 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
         // This layer establishes a clip of some kind.
         if (renderer().hasNonVisibleOverflow()) {
             if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip()) {
-                LayoutRect overflowClipRect;
-
-                if (is<RenderBox>(renderer()))
-                    overflowClipRect = downcast<RenderBox>(renderer()).overflowClipRect(toLayoutPoint(offsetFromRootLocal), nullptr, clipRectsContext.overlayScrollbarSizeRelevancy());
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-                else if (is<RenderSVGModelObject>(renderer()))
-                    overflowClipRect = downcast<RenderSVGModelObject>(renderer()).overflowClipRect(toLayoutPoint(offsetFromRootLocal), nullptr, clipRectsContext.overlayScrollbarSizeRelevancy());
-#endif
-                else {
-                    ASSERT_NOT_REACHED();
-                    return;
-                }
-
+                LayoutRect overflowClipRect = rendererOverflowClipRect(toLayoutPoint(offsetFromRootLocal), nullptr, clipRectsContext.overlayScrollbarSizeRelevancy());
                 foregroundRect.intersect(overflowClipRect);
                 foregroundRect.setAffectedByRadius(true);
             } else if (transform() && renderer().style().hasBorderRadius())
@@ -4537,17 +4513,18 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
 
         // If we establish a clip at all, then make sure our background rect is intersected with our layer's bounds including our visual overflow,
         // since any visual overflow like box-shadow or border-outset is not clipped by overflow:auto/hidden.
-        if (renderBox() && renderBox()->hasVisualOverflow()) {
+        if (rendererHasVisualOverflow()) {
             // FIXME: Does not do the right thing with CSS regions yet, since we don't yet factor in the
             // individual region boxes as overflow.
-            LayoutRect layerBoundsWithVisualOverflow = renderBox()->visualOverflowRect();
-            renderBox()->flipForWritingMode(layerBoundsWithVisualOverflow); // Layers are in physical coordinates, so the overflow has to be flipped.
+            LayoutRect layerBoundsWithVisualOverflow = rendererVisualOverflowRect();
+            if (renderer().isBox())
+                renderBox()->flipForWritingMode(layerBoundsWithVisualOverflow); // Layers are in physical coordinates, so the overflow has to be flipped.
             layerBoundsWithVisualOverflow.move(offsetFromRootLocal);
             if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip())
                 backgroundRect.intersect(layerBoundsWithVisualOverflow);
         } else {
             // Shift the bounds to be for our region only.
-            LayoutRect bounds = renderBox()->borderBoxRectInFragment(nullptr);
+            LayoutRect bounds = rendererBorderBoxRectInFragment(nullptr);
 
             bounds.move(offsetFromRootLocal);
             if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip())

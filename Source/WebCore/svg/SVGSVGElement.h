@@ -104,6 +104,7 @@ public:
     FloatRect currentViewBoxRect() const;
 
     AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
+    bool hasTransformRelatedAttributes() const final;
 
     const SVGLengthValue& x() const { return m_x->currentValue(); }
     const SVGLengthValue& y() const { return m_y->currentValue(); }
@@ -129,6 +130,7 @@ private:
     bool selfHasRelativeLengths() const override;
     bool isValid() const override;
 
+    void didAttachRenderers() final;
     bool rendererIsNeeded(const RenderStyle&) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
