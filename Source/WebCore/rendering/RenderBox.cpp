@@ -3189,7 +3189,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
             if (computedValues.m_extent != LayoutUnit::max())
                 intrinsicHeight = computedValues.m_extent;
             if (shouldComputeLogicalHeightFromAspectRatio()) {
-                if (intrinsicHeight && style().boxSizingForAspectRatio() == BoxSizing::ContentBox)
+                if (intrinsicHeight && style().boxSizing() == BoxSizing::ContentBox)
                     *intrinsicHeight -= RenderBox::borderBefore() + RenderBox::paddingBefore() + RenderBox::borderAfter() + RenderBox::paddingAfter();
                 heightResult = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth());
             } else {
