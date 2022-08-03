@@ -741,7 +741,6 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-el
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-open-display.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-open-overflow-display.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-stacking-context.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/phrasing-content-0/font-element-text-decoration-color/001-x.xhtml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-nowrap-with-fixed-width.html [ ImageOnlyFailure ]
@@ -4866,10 +4865,6 @@ imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.ht
 # 2. We ignore the background-color property value (supposed to be white on white to renderer "blank" content).
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-002.html [ ImageOnlyFailure ]
-
-# CSS property color is not working in select elements.
-webkit.org/b/238667 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-001.html [ ImageOnlyFailure ]
-webkit.org/b/238667 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-002.html [ ImageOnlyFailure ]
 
 # Counter style tests that fail on some platforms because of subtle character positioning differences, presumably from subpixel rounding.
 # These failures are slightly different per-platform, but it seems unwise to move the expectations into platform-specific expectations files.
