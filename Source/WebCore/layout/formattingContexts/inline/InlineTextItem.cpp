@@ -50,8 +50,8 @@ InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, unsigned star
     m_textItemType = textItemType;
 }
 
-InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, UBiDiLevel bidiLevel)
-    : InlineItem(inlineTextBox, Type::Text, bidiLevel)
+InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox)
+    : InlineItem(inlineTextBox, Type::Text, UBIDI_DEFAULT_LTR)
 {
 }
 

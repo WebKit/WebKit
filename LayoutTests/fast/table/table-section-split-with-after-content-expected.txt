@@ -11,5 +11,4 @@ layer at (0,0) size 800x16
           RenderTableSection (anonymous) at (0,0) size 0x0
             RenderTableRow (anonymous) at (0,0) size 0x0
               RenderTableCell (anonymous) at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
-                RenderText at (0,-40) size 0x50
-                  text run at (0,-40) width 0: ""
+                RenderText at (0,0) size 0x0

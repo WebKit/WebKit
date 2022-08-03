@@ -293,6 +293,10 @@ void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& s
 void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     auto willCollapseCompletely = [&] {
+        if (m_runs.isEmpty() && inlineTextItem.isEmpty()) {
+            // Some generated content initiates empty text items. They are truly collapsible.
+            return true;
+        }
         if (!inlineTextItem.isWhitespace()) {
             auto isLeadingCollapsibleNonBreakingSpace = [&] {
                 // Let's check for leading non-breaking space collapsing to match legacy line layout quirk.

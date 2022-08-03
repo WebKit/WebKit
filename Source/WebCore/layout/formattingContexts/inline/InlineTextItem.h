@@ -41,12 +41,13 @@ class InlineTextItem : public InlineItem {
 public:
     static InlineTextItem createWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, UBiDiLevel, bool isWordSeparator, std::optional<InlineLayoutUnit> width);
     static InlineTextItem createNonWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, UBiDiLevel, bool hasTrailingSoftHyphen, std::optional<InlineLayoutUnit> width);
-    static InlineTextItem createEmptyItem(const InlineTextBox&, UBiDiLevel = UBIDI_DEFAULT_LTR);
+    static InlineTextItem createEmptyItem(const InlineTextBox&);
 
     unsigned start() const { return m_startOrPosition; }
     unsigned end() const { return start() + length(); }
     unsigned length() const { return m_length; }
 
+    bool isEmpty() const { return !length() && m_textItemType == TextItemType::Undefined; }
     bool isWhitespace() const { return m_textItemType == TextItemType::Whitespace; }
     bool isWordSeparator() const { return m_isWordSeparator; }
     bool isZeroWidthSpaceSeparator() const;
@@ -68,7 +69,7 @@ private:
     InlineTextItem split(size_t leftSideLength);
 
     InlineTextItem(const InlineTextBox&, unsigned start, unsigned length, UBiDiLevel, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType);
-    explicit InlineTextItem(const InlineTextBox&, UBiDiLevel);
+    explicit InlineTextItem(const InlineTextBox&);
 };
 
 inline InlineTextItem InlineTextItem::createWhitespaceItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, UBiDiLevel bidiLevel, bool isWordSeparator, std::optional<InlineLayoutUnit> width)
@@ -82,9 +83,10 @@ inline InlineTextItem InlineTextItem::createNonWhitespaceItem(const InlineTextBo
     return { inlineTextBox, start, length, bidiLevel, hasTrailingSoftHyphen, false, width, TextItemType::NonWhitespace };
 }
 
-inline InlineTextItem InlineTextItem::createEmptyItem(const InlineTextBox& inlineTextBox, UBiDiLevel bidiLevel)
+inline InlineTextItem InlineTextItem::createEmptyItem(const InlineTextBox& inlineTextBox)
 {
-    return InlineTextItem { inlineTextBox, bidiLevel };
+    ASSERT(!inlineTextBox.content().length());
+    return InlineTextItem { inlineTextBox };
 }
 
 }
