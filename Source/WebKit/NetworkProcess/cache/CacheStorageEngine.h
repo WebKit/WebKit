@@ -30,6 +30,7 @@
 #include "WebsiteData.h"
 #include <WebCore/ClientOrigin.h>
 #include <pal/SessionID.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -38,10 +39,6 @@
 namespace IPC {
 class Connection;
 }
-
-namespace WTF {
-class CallbackAggregator;
-};
 
 namespace WebCore {
 struct RetrieveRecordsOptions;
