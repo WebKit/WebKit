@@ -5169,7 +5169,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('patch_id', '1234')
         self.setProperty('patch_committer', 'reviewer@apple.com')
         self.expectHidden(False)
-        self.expectOutcome(result=SUCCESS, state_string='Validated committer')
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer, reviewer not found')
         return self.runStep()
 
     def test_success_no_reviewer_pr(self):
@@ -5178,7 +5178,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('github.number', '1234')
         self.setProperty('owners', ['webkit-reviewer'])
         self.expectHidden(False)
-        self.expectOutcome(result=SUCCESS, state_string='Validated committer')
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer, reviewer not found')
         return self.runStep()
 
     def test_failure_load_contributors_patch(self):
@@ -5993,7 +5993,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         timeout=60,
                         command=['/bin/sh', '-c',
-                                 "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
+                                 "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no reviewer found' || test $? -eq 1"])
             + 0, ExpectShell(workdir='wkdir',
                              logEnviron=False,
                              timeout=60,
@@ -6028,7 +6028,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log HEAD ^origin/main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
+                        command=['/bin/sh', '-c', "git log HEAD ^origin/main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no reviewer found' || test $? -eq 1"])
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
@@ -6069,13 +6069,13 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no reviewer found' || test $? -eq 1"])
             + 1
-            + ExpectShell.log('stdio', stdout='Commit message contains (OOPS!)\n'),
+            + ExpectShell.log('stdio', stdout='Commit message contains (OOPS!) and no reviewer found\n'),
         )
-        self.expectOutcome(result=FAILURE, state_string='Commit message contains (OOPS!)')
+        self.expectOutcome(result=FAILURE, state_string='Commit message contains (OOPS!) and no reviewer found')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), 'Commit message contains (OOPS!), blocking PR #1234')
+        self.assertEqual(self.getProperty('comment_text'), 'Commit message contains (OOPS!) and no reviewer found, blocking PR #1234')
         return rc
 
     def test_failure_no_reviewer(self):

@@ -1770,7 +1770,8 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
         if not reviewers:
             # Change has not been reviewed in bug tracker. This is acceptable, since the ChangeLog might have 'Reviewed by' in it.
-            self.descriptionDone = 'Validated committer'
+            self._addToLog('stdio', f'Reviewer not found. Commit message  will be checked for reviewer name in later steps\n')
+            self.descriptionDone = 'Validated committer, reviewer not found'
             self.finished(SUCCESS)
             return None
 
@@ -5021,7 +5022,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
 
         self.commands = []
         commands = [
-            f"git log {head_ref} ^{base_ref} | grep -q '{self.OOPS_RE}' && echo 'Commit message contains (OOPS!)' || test $? -eq 1",
+            f"git log {head_ref} ^{base_ref} | grep -q '{self.OOPS_RE}' && echo 'Commit message contains (OOPS!) and no reviewer found' || test $? -eq 1",
             "git log {} ^{} | grep -q '\\({}\\)' || echo 'No reviewer information in commit message'".format(
                 head_ref, base_ref,
                 '\\|'.join(self.REVIEWED_STRINGS),
