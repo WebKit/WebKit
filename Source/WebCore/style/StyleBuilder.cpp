@@ -85,23 +85,22 @@ Builder::~Builder() = default;
 
 void Builder::applyAllProperties()
 {
+    applyTopPriorityProperties();
     applyHighPriorityProperties();
     applyNonHighPriorityProperties();
+}
+
+// Top priority properties affect resolution of high priority properties.
+void Builder::applyTopPriorityProperties()
+{
+    applyProperties(firstTopPriorityProperty, lastTopPriorityProperty);
+    m_state.adjustStyleForInterCharacterRuby();
 }
 
 // High priority properties may affect resolution of other properties (they are mostly font related).
 void Builder::applyHighPriorityProperties()
 {
-    applyProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
-    m_state.adjustStyleForInterCharacterRuby();
-
-#if ENABLE(DARK_MODE_CSS)
-    // Supported color schemes can affect resolved colors, so we need to apply that property before any color properties.
-    applyProperties(CSSPropertyColorScheme, CSSPropertyColorScheme);
-#endif
-
     applyProperties(firstHighPriorityProperty, lastHighPriorityProperty);
-
     m_state.updateFont();
 }
 
