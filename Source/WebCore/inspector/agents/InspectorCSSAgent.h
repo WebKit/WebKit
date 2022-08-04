@@ -86,7 +86,7 @@ public:
 
     static CSSStyleRule* asCSSStyleRule(CSSRule&);
 
-    static RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> layoutFlagsForNode(Node&);
+    static RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> layoutFlagsForNode(const Node&);
 
     static std::optional<Inspector::Protocol::CSS::PseudoId> protocolValueForPseudoId(PseudoId);
 
@@ -123,6 +123,7 @@ public:
     void activeStyleSheetsUpdated(Document&);
     bool forcePseudoState(const Element&, CSSSelector::PseudoClassType);
     void didChangeRendererForDOMNode(Node&);
+    void didChangeRendererPropertyForDOMNode(Node&);
 
     // InspectorDOMAgent hooks
     void didRemoveDOMNode(Node&, Inspector::Protocol::DOM::NodeId);

@@ -185,6 +185,12 @@ void InspectorInstrumentation::didChangeRendererForDOMNodeImpl(InstrumentingAgen
         cssAgent->didChangeRendererForDOMNode(node);
 }
 
+void InspectorInstrumentation::didChangeRendererPropertyForDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& node)
+{
+    if (auto* cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->didChangeRendererPropertyForDOMNode(node);
+}
+
 void InspectorInstrumentation::willModifyDOMAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element, const AtomString& oldValue, const AtomString& newValue)
 {
     if (auto* pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())

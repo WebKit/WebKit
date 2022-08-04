@@ -1287,6 +1287,9 @@ void RenderLayerScrollableArea::updateScrollInfoAfterLayout()
         m_layer.setNeedsPostLayoutCompositingUpdate();
 
     resnapAfterLayout();
+
+    // Update the "scrollable" state of the node.
+    m_layer.renderer().notifyInspectorOfPropertyChange();
 }
 
 bool RenderLayerScrollableArea::overflowControlsIntersectRect(const IntRect& localRect) const

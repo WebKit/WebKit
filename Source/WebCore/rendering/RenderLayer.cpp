@@ -5455,16 +5455,22 @@ void RenderLayer::updateFiltersAfterStyleChange()
 
 void RenderLayer::updateLayerScrollableArea()
 {
-    if (!is<RenderBox>(renderer()) || !downcast<RenderBox>(renderer()).requiresLayerWithScrollableArea()) {
-        bool hadScrollableArea = scrollableArea();
-        clearLayerScrollableArea();
+    bool hasScrollableArea = scrollableArea();
+    bool needsScrollableArea = is<RenderBox>(renderer()) && downcast<RenderBox>(renderer()).requiresLayerWithScrollableArea();
 
-        if (hadScrollableArea && renderer().settings().asyncOverflowScrollingEnabled())
-            setNeedsCompositingConfigurationUpdate();
+    if (needsScrollableArea == hasScrollableArea)
         return;
+
+    if (needsScrollableArea)
+        ensureLayerScrollableArea();
+    else {
+        clearLayerScrollableArea();
+        if (renderer().settings().asyncOverflowScrollingEnabled())
+            setNeedsCompositingConfigurationUpdate();
     }
 
-    ensureLayerScrollableArea();
+    // Update the "scrollable" state of the node.
+    renderer().notifyInspectorOfPropertyChange();
 }
 
 void RenderLayer::updateFilterPaintingStrategy()

@@ -529,6 +529,8 @@ public:
     void updateAncestorConnectedSubframeCountForRemoval() const;
     void updateAncestorConnectedSubframeCountForInsertion() const;
 
+    WEBCORE_EXPORT void notifyInspectorOfRendererPropertyChange();
+
 #if ENABLE(JIT)
     static ptrdiff_t nodeFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_nodeFlags); }
     static ptrdiff_t rareDataMemoryOffset() { return OBJECT_OFFSETOF(Node, m_rareDataWithBitfields); }

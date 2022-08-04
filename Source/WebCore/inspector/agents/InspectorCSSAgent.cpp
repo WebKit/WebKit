@@ -50,6 +50,7 @@
 #include "FontPlatformData.h"
 #include "Frame.h"
 #include "HTMLHeadElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLStyleElement.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
@@ -76,6 +77,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -950,14 +952,25 @@ static std::optional<Protocol::CSS::LayoutFlag> layoutFlagContextTypeForRenderer
     return std::nullopt;
 }
 
-RefPtr<JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>> InspectorCSSAgent::layoutFlagsForNode(Node& node)
+RefPtr<JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>> InspectorCSSAgent::layoutFlagsForNode(const Node& node)
 {
     auto* renderer = node.renderer();
 
     auto layoutFlags = JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>::create();
 
-    if (renderer)
+    if (renderer) {
         layoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Rendered));
+        if (is<Document>(node)) {
+            // We display document scrollability on the document element's node in the frontend. Other browsers show scrollability on document.scrollingElement(),
+            // but that makes it impossible to see when both the document and the <body> are scrollable in quirks mode.
+        } else if (is<HTMLHtmlElement>(node)) {
+            if (auto* frameView = node.document().view()) {
+                if (frameView->isScrollable())
+                    layoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Scrollable));
+            }
+        } else if (is<RenderBox>(*renderer) && downcast<RenderBox>(*renderer).canBeScrolledAndHasScrollableArea())
+            layoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Scrollable));
+    }
 
     if (auto layoutFlagContextType = layoutFlagContextTypeForRenderer(renderer))
         layoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(*layoutFlagContextType));
@@ -1001,6 +1014,11 @@ void InspectorCSSAgent::didChangeRendererForDOMNode(Node& node)
     m_nodesWithPendingLayoutFlagsChange.add(node);
     if (!m_nodesWithPendingLayoutFlagsChangeDispatchTimer.isActive())
         m_nodesWithPendingLayoutFlagsChangeDispatchTimer.startOneShot(0_s);
+}
+
+void InspectorCSSAgent::didChangeRendererPropertyForDOMNode(Node& node)
+{
+    didChangeRendererForDOMNode(node);
 }
 
 void InspectorCSSAgent::nodesWithPendingLayoutFlagsChangeDispatchTimerFired()

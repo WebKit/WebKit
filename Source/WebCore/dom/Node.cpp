@@ -2672,6 +2672,11 @@ void Node::notifyInspectorOfRendererChange()
     InspectorInstrumentation::didChangeRendererForDOMNode(*this);
 }
 
+void Node::notifyInspectorOfRendererPropertyChange()
+{
+    InspectorInstrumentation::didChangeRendererPropertyForDOMNode(*this);
+}
+
 template<> ContainerNode* parent<Tree>(const Node& node)
 {
     return node.parentNode();

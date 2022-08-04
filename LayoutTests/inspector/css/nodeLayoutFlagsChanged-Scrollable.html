@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .scroller {
+        height: 200px;
+        width: 200px;
+        border: 1px solid black;
+    }
+
+    .scroller .contents {
+        height: 200%;
+        width: 100%;
+    }
+
+    #scroller {
+        overflow: scroll;
+    }
+    
+    #overflow-hidden {
+        overflow: hidden;
+    }
+
+    #overflow-visible {
+        overflow: visible;
+    }
+    
+    #content-shrinking {
+        overflow: scroll;
+    }
+
+    #content-shrinking.shrunk .contents {
+        height: 80%;
+    }
+</style>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let documentNode;
+
+    let suite = InspectorTest.createAsyncSuite("CSS.nodeLayoutFlagsChanged.Scrollable");
+
+    function addTestCase({name, description, selector, setup, domNodeHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            setup,
+            async test() {
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+                await domNodeHandler(domNode);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Scrollable.InitiallyScrollable",
+        description: "Test that an element with overflow:scroll and scrollable contents is scrollable",
+        selector: "#scroller",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "Should be scrollable");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Scrollable.InitiallyOverflowHidden",
+        description: "Test that nodes changed to `display: none` are not rendered.",
+        selector: "#overflow-hidden",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(!domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "Should not be initially scrollable.");
+
+            InspectorTest.log("Changing to `overflow: scroll`...");
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                domNode.setAttributeValue("style", "overflow: scroll"),
+            ]);
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should render nodes changed to `display: block`.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Scrollable.InitiallyOverflowVisible",
+        description: "Test that nodes that change from having visible overflow to `overflow:scroll` are scrollable",
+        selector: "#overflow-visible",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(!domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "Should not be initially scrollable.");
+
+            InspectorTest.log("Changing to `overflow: scroll`...");
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                domNode.setAttributeValue("style", "overflow: scroll"),
+            ]);
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "Should have become scrollable");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Scrollable.ContentShrunk",
+        description: "Test that nodes whose content shrinks are no longer scrollable",
+        selector: "#content-shrinking",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "Should be initially scrollable.");
+
+            InspectorTest.log("Changing content length");
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                domNode.setAttributeValue("class", "shrunk scroller"),
+            ]);
+            InspectorTest.expectTrue(!domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "Should have become non-scrollable");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Scrollable.IFrameContents",
+        description: "Test scrollability of document nodes in an iframe",
+        selector: "#iframe",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectFalse(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "iframe element should not be scrollable.");
+
+            let iframeDocumentNode = domNode.children[0];
+            InspectorTest.expectFalse(iframeDocumentNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "iframe's #document node should not be scrollable");
+
+            let iframeHTMLNode = WI.domManager.nodeForId(await iframeDocumentNode.querySelector("html"));
+            InspectorTest.expectTrue(iframeHTMLNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "Iframe <html> element should be scrollable.");
+
+            let iframeBodyNode = WI.domManager.nodeForId(await iframeDocumentNode.querySelector("body"));
+            InspectorTest.expectFalse(iframeBodyNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "Iframe <body> element should not be scrollable.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Scrollable.IFrameWithScrollableBody",
+        description: "Test scrollability of the body node in an iframe ",
+        selector: "#iframe-with-scrollable-body",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectFalse(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "iframe element should not be scrollable.");
+
+            let iframeDocumentNode = domNode.children[0];
+            InspectorTest.expectFalse(iframeDocumentNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "iframe's #document node should not be scrollable");
+
+            let iframeHTMLNode = WI.domManager.nodeForId(await iframeDocumentNode.querySelector("html"));
+            InspectorTest.expectFalse(iframeHTMLNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "Iframe <html> element should not be scrollable.");
+
+            let iframeBodyNode = WI.domManager.nodeForId(await iframeDocumentNode.querySelector("body"));
+            InspectorTest.expectTrue(iframeBodyNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Scrollable), "Iframe <body> element should be scrollable.");
+        },
+    });
+
+    WI.domManager.requestDocument().then((doc) => {
+        documentNode = doc;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.nodeLayoutFlagsChanged event with the Scrollable enum.</p>
+
+    <div class="scroller" id="scroller">
+        <div class="contents"></div>
+    </div>
+
+    <div class="scroller" id="overflow-hidden">
+        <div class="contents"></div>
+    </div>
+
+    <div class="scroller" id="overflow-visible">
+        <div class="contents"></div>
+    </div>
+
+    <div class="scroller" id="content-shrinking">
+        <div class="contents"></div>
+    </div>
+
+    <iframe id="iframe" srcdoc="
+    <html><style>body { height: 3000px; }</style><body>iframe document</body></html>
+    "></iframe>
+
+    <iframe id="iframe-with-scrollable-body" srcdoc="
+    <!DOCTYPE html><html><style>html { height: 100%; overflow: hidden; } body { height: 100%; overflow: scroll; } div { height: 1000px; }</style><body><div>contents</div></body></html>
+    "></iframe>
+</body>
+</html>

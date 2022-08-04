@@ -764,6 +764,8 @@ public:
 
     LayoutRect absoluteOutlineBounds() const { return outlineBoundsForRepaint(nullptr); }
 
+    void notifyInspectorOfPropertyChange();
+
     // FIXME: Renderers should not need to be notified about internal reparenting (webkit.org/b/224143).
     enum class IsInternalMove { No, Yes };
     virtual void insertedIntoTree(IsInternalMove = IsInternalMove::No);
@@ -1208,6 +1210,14 @@ inline void Node::setRenderer(RenderObject* renderer)
 
     if (UNLIKELY(InspectorInstrumentationPublic::hasFrontends()))
         notifyInspectorOfRendererChange();
+}
+
+inline void RenderObject::notifyInspectorOfPropertyChange()
+{
+    if (UNLIKELY(InspectorInstrumentationPublic::hasFrontends())) {
+        if (auto* node = this->node())
+            node->notifyInspectorOfRendererPropertyChange();
+    }
 }
 
 inline RenderObject* RenderObject::previousInFlowSibling() const

@@ -1355,6 +1355,7 @@ WI.DOMNode.CustomElementState = {
 // Corresponds to `CSS.LayoutFlag`.
 WI.DOMNode.LayoutFlag = {
     Rendered: "rendered",
+    Scrollable: "scrollable",
 
     // These are mutually exclusive.
     Flex: "flex",
