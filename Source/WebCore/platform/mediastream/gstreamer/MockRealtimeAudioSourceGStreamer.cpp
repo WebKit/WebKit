@@ -116,11 +116,14 @@ void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
         totalFrameCount -= bipBopCount;
         frameCount = std::min(totalFrameCount, m_maximiumFrameCount);
 
+        MediaTime presentationTime((m_samplesRendered * G_USEC_PER_SEC) / sampleRate(), G_USEC_PER_SEC);
+        GST_BUFFER_PTS(buffer.get()) = toGstClockTime(presentationTime);
+        GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_LIVE);
+
         auto caps = adoptGRef(gst_audio_info_to_caps(&info));
         auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
         GStreamerAudioData data(WTFMove(sample), info);
-        MediaTime mediaTime((m_samplesRendered * G_USEC_PER_SEC) / sampleRate(), G_USEC_PER_SEC);
-        audioSamplesAvailable(mediaTime, data, *m_streamFormat, bipBopCount);
+        audioSamplesAvailable(presentationTime, data, *m_streamFormat, bipBopCount);
     }
 }
 
