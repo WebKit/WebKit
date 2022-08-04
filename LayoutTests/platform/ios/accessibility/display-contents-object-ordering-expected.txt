@@ -1,0 +1,96 @@
+This test ensures that display:contents elements are inserted in the correct place in the AX tree.
+
+
+Performing search traversal of #button-container.
+
+#block-0 Button
+
+#inline-block-1 Button
+
+#contents-2 Button
+
+#block-3 Button
+
+#inline-block-4 Button
+
+#contents-5 Button
+
+#block-6 Button
+
+Performing search traversal of #heading-container.
+
+StaticText
+AXLabel: Flex-7
+
+StaticText
+AXLabel: Grid-8
+
+StaticText
+AXLabel: Block-9
+
+StaticText
+AXLabel: Inline-Block-10
+
+StaticText
+AXLabel: Inline-Block-11
+
+StaticText
+AXLabel: Contents-12
+
+StaticText
+AXLabel: Inline-Block-13
+
+StaticText
+AXLabel: Inline-Block-14
+
+StaticText
+AXLabel: Contents-15
+
+StaticText
+AXLabel: Contents-16
+
+StaticText
+AXLabel: Flex-17
+
+StaticText
+AXLabel: Grid-18
+
+StaticText
+AXLabel: Contents-19
+
+Performing search traversal of #mixed-element-container.
+
+StaticText
+AXLabel: Flex-20
+
+StaticText
+AXLabel: Grid-21
+
+#contents-22 Button
+
+StaticText
+AXLabel: Contents-23
+
+#block-24 Button
+
+StaticText
+AXLabel: Inline-Block-25
+
+StaticText
+AXLabel: Contents-26
+
+#contents-27 Button
+
+#block-28 Button
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+
+
+
+

@@ -48,6 +48,10 @@
 <script>
     description("This tests that the 'figure' element is accessible on iOS.");
 
+    function isIgnored(axElement) {
+        return !axElement || axElement.isIgnored;
+    }
+
     if (window.accessibilityController) {
         for (var k = 1; k <= 6; k++) {
             var p = document.getElementById("p" + k);
@@ -61,7 +65,7 @@
             var titleUIElement = figure.titleUIElement();
             if (k >= 5) {
                 var figureCaption = accessibilityController.accessibleElementById("figCaption" + k);
-                shouldBeTrue("titleUIElement.isEqual(figureCaption)");
+                shouldBeTrue("titleUIElement.isEqual(figureCaption) || (isIgnored(titleUIElement) && isIgnored(figureCaption))");
             } else
                 shouldBeTrue("!titleUIElement");
 
