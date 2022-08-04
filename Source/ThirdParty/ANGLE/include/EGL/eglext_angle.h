@@ -398,6 +398,13 @@ EGLAPI EGLBoolean EGLAPIENTRY eglPrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurf
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLEXPORTVKIMAGEANGLEPROC)(EGLDisplay dpy, EGLImage image, void* vk_image, void* vk_image_create_info);
 #endif /* EGL_ANGLE_vulkan_image */
 
+#ifndef EGL_ANGLE_metal_shared_event_sync
+#define EGL_ANGLE_metal_shared_event_sync 1
+#define EGL_SYNC_METAL_SHARED_EVENT_ANGLE 0x34D8
+#define EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE 0x34D9
+#define EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_ANGLE 0x34DA
+#endif /* EGL_ANGLE_metal_shared_event_sync */
+
 // clang-format on
 
 #endif  // INCLUDE_EGL_EGLEXT_ANGLE_

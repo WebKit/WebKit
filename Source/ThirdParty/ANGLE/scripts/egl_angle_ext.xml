@@ -576,6 +576,9 @@
         <enum value="0x34D5" name="EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE"/>
         <enum value="0x34D6" name="EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE"/>
         <enum value="0x34D7" name="EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE"/>
+        <enum value="0x34D8" name="EGL_SYNC_METAL_SHARED_EVENT_ANGLE"/>
+        <enum value="0x34D9" name="EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE"/>
+        <enum value="0x34DA" name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_ANGLE"/>
     </enums>
     <enums namespace="EGL" vendor="ANGLE">
         <enum value="0x0001" name="EGL_LOW_POWER_ANGLE"/>

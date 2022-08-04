@@ -1354,6 +1354,54 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
             }
             break;
 
+        case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
+            if (!display->getExtensions().fenceSync)
+            {
+                val->setError(EGL_BAD_MATCH, "EGL_KHR_fence_sync extension is not available");
+                return false;
+            }
+
+            if (!display->getExtensions().mtlSyncSharedEventANGLE)
+            {
+                val->setError(EGL_BAD_DISPLAY, "EGL_ANGLE_metal_shared_event_sync is not available");
+                return false;
+            }
+
+            if (display != currentDisplay)
+            {
+                val->setError(EGL_BAD_MATCH, "CreateSync can only be called on the current display");
+                return false;
+            }
+
+            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext));
+
+            // TODO: Cribbed from above. Is this necessary? Note that the FD_ANDROID should probably
+            // report "EGL_SYNC_NATIVE_FENCE_ANDROID cnnot be used without GL_OES_EGL_sync support."
+            if (!currentContext->getExtensions().EGLSyncOES)
+            {
+                val->setError(EGL_BAD_MATCH,
+                              "EGL_SYNC_METAL_SHARED_EVENT_ANGLE cannot be used without "
+                              "GL_OES_EGL_sync support.");
+                return false;
+            }
+
+            for (const auto &attributeIter : attribs)
+            {
+                EGLAttrib attribute = attributeIter.first;
+
+                switch (attribute)
+                {
+                    case EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE:
+                    case EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_ANGLE:
+                        break;
+
+                    default:
+                        val->setError(EGL_BAD_ATTRIBUTE, "Invalid attribute");
+                        return false;
+                }
+            }
+            break;
+
         default:
             if (isExt)
             {
@@ -1384,6 +1432,7 @@ bool ValidateGetSyncAttribBase(const ValidationContext *val,
             {
                 case EGL_SYNC_FENCE_KHR:
                 case EGL_SYNC_NATIVE_FENCE_ANDROID:
+                case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
                     break;
 
                 default:

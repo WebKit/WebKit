@@ -1,3 +1,98 @@
+diff --git a/extensions/EGL_ANGLE_sync_mtl_shared_event.txt b/extensions/EGL_ANGLE_sync_mtl_shared_event.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..c7ef13596a906fb705e0da50d7e2bbd4a5298e78
+--- /dev/null
++++ b/extensions/EGL_ANGLE_sync_mtl_shared_event.txt
+@@ -0,0 +1,56 @@
++Name
++
++    ANGLE_metal_shared_event_sync
++
++Name Strings
++
++    EGL_ANGLE_metal_shared_event_sync
++
++Contributors
++
++    Dan Glastonbury, Apple
++
++Contacts
++
++    Dan Glastonbury, Apple (djg 'at' apple.com)
++
++Status
++
++    Draft
++
++Version
++
++    Version 1, 2022-05-17
++
++Number
++
++    EGL Extensions XXX
++
++Extension Type
++
++    EGL display extension
++
++Dependencies
++
++Overview
++
++New Types
++
++New Procedures and Functions
++
++New Tokens
++
++Additions to the EGL Specification
++
++    None
++
++New Behavior
++
++Issues
++
++    None
++
++Revision History
++
++    Version 1, 2022-05-17
++      - Initial draft
+\ No newline at end of file
+diff --git a/include/EGL/eglext_angle.h b/include/EGL/eglext_angle.h
+index 60d5ed372412996f7f65cbbc10d1fb319b05825a..4b6262e3fee26a93645dd01e093b864e0fb49f78 100644
+--- a/include/EGL/eglext_angle.h
++++ b/include/EGL/eglext_angle.h
+@@ -398,6 +398,13 @@ EGLAPI EGLBoolean EGLAPIENTRY eglPrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurf
+ typedef EGLBoolean (EGLAPIENTRYP PFNEGLEXPORTVKIMAGEANGLEPROC)(EGLDisplay dpy, EGLImage image, void* vk_image, void* vk_image_create_info);
+ #endif /* EGL_ANGLE_vulkan_image */
+ 
++#ifndef EGL_ANGLE_metal_shared_event_sync
++#define EGL_ANGLE_metal_hared_event_sync 1
++#define EGL_SYNC_METAL_SHARED_EVENT_ANGLE 0x34D8
++#define EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE 0x34D9
++#define EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_ANGLE 0x34DA
++#endif /* EGL_ANGLE_metal_shared_event_sync */
++
+ // clang-format on
+ 
+ #endif  // INCLUDE_EGL_EGLEXT_ANGLE_
+diff --git a/scripts/egl_angle_ext.xml b/scripts/egl_angle_ext.xml
+index 4daeadbfedf17839115fbd31ca80557c8f511d09..3aee1ec304387c7878b915b8b0bb183d31ea3ffc 100644
+--- a/scripts/egl_angle_ext.xml
++++ b/scripts/egl_angle_ext.xml
+@@ -576,6 +576,9 @@
+         <enum value="0x34D5" name="EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE"/>
+         <enum value="0x34D6" name="EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE"/>
+         <enum value="0x34D7" name="EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE"/>
++        <enum value="0x34D8" name="EGL_SYNC_METAL_SHARED_EVENT_ANGLE"/>
++        <enum value="0x34D9" name="EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE"/>
++        <enum value="0x34DA" name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_ANGLE"/>
+     </enums>
+     <enums namespace="EGL" vendor="ANGLE">
+         <enum value="0x0001" name="EGL_LOW_POWER_ANGLE"/>
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
 index 274d8029521aa8e6d6fdae039a21931f00125fe6..5314733998768cdbda34126ed61d4247ef952541 100644
 --- a/src/common/utilities.cpp
@@ -140,6 +235,44 @@ index 648c7190a9382f0ce020839322fae56acfbe40db..9ddc681d320550b171a2916cac8e9a4b
  namespace sh
  {
  
+diff --git a/src/libANGLE/Caps.cpp b/src/libANGLE/Caps.cpp
+index e028d0b1ad6981bf5dca72fcc4064c4a960e5a6b..cbf9f32e634556af9743a8d3f6b845211f9b2905 100644
+--- a/src/libANGLE/Caps.cpp
++++ b/src/libANGLE/Caps.cpp
+@@ -1301,6 +1301,7 @@ std::vector<std::string> DisplayExtensions::getStrings() const
+     InsertExtensionString("EGL_ANGLE_vulkan_image",                              vulkanImageANGLE,                   &extensionStrings);
+     InsertExtensionString("EGL_ANGLE_metal_create_context_ownership_identity",   metalCreateContextOwnershipIdentityANGLE, &extensionStrings);
+     InsertExtensionString("EGL_KHR_partial_update",                              partialUpdateKHR,                   &extensionStrings);
++    InsertExtensionString("EGL_ANGLE_metal_shared_event_sync",                   mtlSyncSharedEventANGLE,            &extensionStrings);
+     // clang-format on
+ 
+     return extensionStrings;
+diff --git a/src/libANGLE/Caps.h b/src/libANGLE/Caps.h
+index 4e5ec34cd0ff2d4431b2c298f0d7d967a047eaa4..f3067290585a03997588945e2db63eab40863c2c 100644
+--- a/src/libANGLE/Caps.h
++++ b/src/libANGLE/Caps.h
+@@ -652,6 +652,9 @@ struct DisplayExtensions
+ 
+     // EGL_KHR_partial_update
+     bool partialUpdateKHR = false;
++
++    // EGL_ANGLE_sync_mtl_shared_event
++    bool mtlSyncSharedEventANGLE = false;
+ };
+ 
+ struct DeviceExtensions
+diff --git a/src/libANGLE/EGLSync.cpp b/src/libANGLE/EGLSync.cpp
+index 71472291d30a26c97bfc157e2449ed26a6d80799..36fe1343803da7e80b27c773523f61c606d4b4da 100644
+--- a/src/libANGLE/EGLSync.cpp
++++ b/src/libANGLE/EGLSync.cpp
+@@ -29,6 +29,7 @@ Sync::Sync(rx::EGLImplFactory *factory, EGLenum type, const AttributeMap &attrib
+     {
+         case EGL_SYNC_FENCE:
+         case EGL_SYNC_NATIVE_FENCE_ANDROID:
++        case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
+             mFence = std::unique_ptr<rx::EGLSyncImpl>(factory->createSync(attribs));
+             break;
+ 
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
 index 53c6b7ca6771e01c11c5d50ce328bb4d64c94dd8..903c42c43021784fe584f2847fe7c45bf41ced7f 100644
 --- a/src/libANGLE/State.cpp
@@ -231,10 +364,20 @@ index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2
                  maxBuffers = 10;
                  mBufferPool.setAlwaysUseSharedMem();
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index ade92ae2dbfa4d27cfe40442f5811e94a84ca6ec..648613409c9da7800f5645db0d1ccf24dbb42fb4 100644
+index ade92ae2dbfa4d27cfe40442f5811e94a84ca6ec..a48dd85508a313e20044a6b7a3946ca208268f02 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1242,8 +1242,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
+@@ -480,6 +480,9 @@ void DisplayMtl::generateExtensions(egl::DisplayExtensions *outExtensions) const
+ 
+     // EGL_ANGLE_metal_create_context_ownership_identity
+     outExtensions->metalCreateContextOwnershipIdentityANGLE = true;
++
++    // EGL_ANGLE_metal_sync_shared_event
++    outExtensions->mtlSyncSharedEventANGLE = true;
+ }
+ 
+ void DisplayMtl::generateCaps(egl::Caps *outCaps) const {}
+@@ -1242,8 +1245,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -244,6 +387,205 @@ index ade92ae2dbfa4d27cfe40442f5811e94a84ca6ec..648613409c9da7800f5645db0d1ccf24
      if (@available(ios 14.0, macOS 11.0, *))
      {
          return [mMetalDevice supports32BitFloatFiltering];
+diff --git a/src/libANGLE/renderer/metal/SyncMtl.h b/src/libANGLE/renderer/metal/SyncMtl.h
+index f4bcae90e31b9920c48a2940f0be65aee8163a74..128fe550a4e1d392f12876669c8112f3809ca9e3 100644
+--- a/src/libANGLE/renderer/metal/SyncMtl.h
++++ b/src/libANGLE/renderer/metal/SyncMtl.h
+@@ -18,6 +18,8 @@
+ #include "libANGLE/renderer/SyncImpl.h"
+ #include "libANGLE/renderer/metal/mtl_common.h"
+ 
++#include "common/Optional.h"
++
+ namespace egl
+ {
+ class AttributeMap;
+@@ -42,9 +44,13 @@ class Sync
+ 
+     void onDestroy();
+ 
+-    angle::Result initialize(ContextMtl *contextMtl);
++    angle::Result initialize(ContextMtl *contextMtl, id<MTLSharedEvent> sharedEvent, Optional<uint64_t> signalValue);
+ 
+-    angle::Result set(ContextMtl *contextMtl, GLenum condition, GLbitfield flags);
++    angle::Result set(ContextMtl *contextMtl,
++                      GLenum condition,
++                      GLbitfield flags,
++                      id<MTLSharedEvent> sharedEvent = nil,
++                      Optional<uint64_t> signalValue = Optional<uint64_t>::Invalid());
+     angle::Result clientWait(ContextMtl *contextMtl,
+                              bool flushCommands,
+                              uint64_t timeout,
+@@ -54,7 +60,8 @@ class Sync
+ 
+   private:
+     SharedEventRef mMetalSharedEvent;
+-    uint64_t mSetCounter = 0;
++    //uint64_t mSetCounter = 0;
++    uint64_t mSignalValue = 0;
+ 
+     std::shared_ptr<std::condition_variable> mCv;
+     std::shared_ptr<std::mutex> mLock;
+@@ -154,6 +161,8 @@ class EGLSyncMtl final : public EGLSyncImpl
+ 
+   private:
+     mtl::Sync mSync;
++    const egl::AttributeMap &mAttribs;
++    EGLenum mType;
+ };
+ 
+ }  // namespace rx
+diff --git a/src/libANGLE/renderer/metal/SyncMtl.mm b/src/libANGLE/renderer/metal/SyncMtl.mm
+index b7484143f7c307b43beb0d0feb26cc9cc1879076..edc1b51fc5ad4e8dffeee4570f114f4add7bec77 100644
+--- a/src/libANGLE/renderer/metal/SyncMtl.mm
++++ b/src/libANGLE/renderer/metal/SyncMtl.mm
+@@ -33,37 +33,54 @@ void Sync::onDestroy()
+     mLock             = nullptr;
+ }
+ 
+-angle::Result Sync::initialize(ContextMtl *contextMtl)
++angle::Result Sync::initialize(ContextMtl *contextMtl, id<MTLSharedEvent> sharedEvent, Optional<uint64_t> signalValue)
+ {
+-    ANGLE_MTL_OBJC_SCOPE { mMetalSharedEvent = contextMtl->getMetalDevice().newSharedEvent(); }
++    ANGLE_MTL_OBJC_SCOPE
++    {
++        if (sharedEvent)
++        {
++            // Retain ownership of sharedEvent
++            mMetalSharedEvent = std::move(sharedEvent);
++        }
++        else
++        {
++            mMetalSharedEvent = contextMtl->getMetalDevice().newSharedEvent();
++        }
++    }
+ 
+-    mSetCounter = mMetalSharedEvent.get().signaledValue;
++    auto signaledValue = mMetalSharedEvent.get().signaledValue;
++    mSignalValue = signalValue.valid() ? signalValue.value() : signaledValue + 1;
+ 
+     mCv.reset(new std::condition_variable());
+     mLock.reset(new std::mutex());
+     return angle::Result::Continue;
+ }
+ 
+-angle::Result Sync::set(ContextMtl *contextMtl, GLenum condition, GLbitfield flags)
++angle::Result Sync::set(ContextMtl *contextMtl,
++                        GLenum condition,
++                        GLbitfield flags,
++                        id<MTLSharedEvent> sharedEvent,
++                        Optional<uint64_t> signalValue)
+ {
+     if (!mMetalSharedEvent)
+     {
+-        ANGLE_TRY(initialize(contextMtl));
++        ANGLE_TRY(initialize(contextMtl, sharedEvent, signalValue));
+     }
+     ASSERT(condition == GL_SYNC_GPU_COMMANDS_COMPLETE);
+     ASSERT(flags == 0);
+ 
+-    mSetCounter++;
+-    contextMtl->queueEventSignal(mMetalSharedEvent, mSetCounter);
++    //mSetCounter++;
++    contextMtl->queueEventSignal(mMetalSharedEvent, mSignalValue);
+     return angle::Result::Continue;
+ }
++
+ angle::Result Sync::clientWait(ContextMtl *contextMtl,
+                                bool flushCommands,
+                                uint64_t timeout,
+                                GLenum *outResult)
+ {
+     std::unique_lock<std::mutex> lg(*mLock);
+-    if (mMetalSharedEvent.get().signaledValue >= mSetCounter)
++    if (mMetalSharedEvent.get().signaledValue >= mSignalValue)
+     {
+         *outResult = GL_ALREADY_SIGNALED;
+         return angle::Result::Continue;
+@@ -87,31 +104,31 @@ angle::Result Sync::clientWait(ContextMtl *contextMtl,
+     AutoObjCObj<MTLSharedEventListener> eventListener =
+         contextMtl->getDisplay()->getOrCreateSharedEventListener();
+     [mMetalSharedEvent.get() notifyListener:eventListener
+-                                    atValue:mSetCounter
++                                    atValue:mSignalValue
+                                       block:^(id<MTLSharedEvent> sharedEvent, uint64_t value) {
+                                         std::unique_lock<std::mutex> localLock(*lockRef);
+                                         cvRef->notify_one();
+                                       }];
+ 
+     if (!mCv->wait_for(lg, std::chrono::nanoseconds(timeout),
+-                       [this] { return mMetalSharedEvent.get().signaledValue >= mSetCounter; }))
++                       [this] { return mMetalSharedEvent.get().signaledValue >= mSignalValue; }))
+     {
+         *outResult = GL_TIMEOUT_EXPIRED;
+         return angle::Result::Incomplete;
+     }
+ 
+-    ASSERT(mMetalSharedEvent.get().signaledValue >= mSetCounter);
++    ASSERT(mMetalSharedEvent.get().signaledValue >= mSignalValue);
+     *outResult = GL_CONDITION_SATISFIED;
+ 
+     return angle::Result::Continue;
+ }
+ void Sync::serverWait(ContextMtl *contextMtl)
+ {
+-    contextMtl->serverWaitEvent(mMetalSharedEvent, mSetCounter);
++    contextMtl->serverWaitEvent(mMetalSharedEvent, mSignalValue);
+ }
+ angle::Result Sync::getStatus(bool *signaled)
+ {
+-    *signaled = mMetalSharedEvent.get().signaledValue >= mSetCounter;
++    *signaled = mMetalSharedEvent.get().signaledValue >= mSignalValue;
+     return angle::Result::Continue;
+ }
+ #endif  // #if defined(__IPHONE_12_0) || defined(__MAC_10_14)
+@@ -212,10 +229,7 @@ angle::Result SyncMtl::getStatus(const gl::Context *context, GLint *outResult)
+ }
+ 
+ // EGLSyncMtl implementation
+-EGLSyncMtl::EGLSyncMtl(const egl::AttributeMap &attribs) : EGLSyncImpl()
+-{
+-    ASSERT(attribs.isEmpty());
+-}
++EGLSyncMtl::EGLSyncMtl(const egl::AttributeMap &attribs) : EGLSyncImpl(), mAttribs(attribs) {}
+ 
+ EGLSyncMtl::~EGLSyncMtl() {}
+ 
+@@ -228,11 +242,32 @@ egl::Error EGLSyncMtl::initialize(const egl::Display *display,
+                                   const gl::Context *context,
+                                   EGLenum type)
+ {
+-    ASSERT(type == EGL_SYNC_FENCE_KHR);
+     ASSERT(context != nullptr);
++    mType = type;
+ 
+     ContextMtl *contextMtl         = mtl::GetImpl(context);
+-    if (IsError(mSync.set(contextMtl, GL_SYNC_GPU_COMMANDS_COMPLETE, 0)))
++    id<MTLSharedEvent> sharedEvent = nil;
++    Optional<uint64_t> signalValue;
++
++    switch (type)
++    {
++        case EGL_SYNC_FENCE_KHR:
++            ASSERT(mAttribs.isEmpty());
++            break;
++        case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
++            sharedEvent = (__bridge id<MTLSharedEvent>)reinterpret_cast<void *>(
++                mAttribs.get(EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE, 0));
++            if (mAttribs.contains(EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_ANGLE))
++            {
++                signalValue = mAttribs.get(EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_ANGLE);
++            }
++            break;
++        default:
++            UNREACHABLE();
++            return egl::Error(EGL_BAD_ALLOC);
++    }
++
++    if (IsError(mSync.set(contextMtl, GL_SYNC_GPU_COMMANDS_COMPLETE, 0, sharedEvent)))
+     {
+         return egl::Error(EGL_BAD_ALLOC, "eglCreateSyncKHR failed to create sync object");
+     }
 diff --git a/src/libANGLE/renderer/metal/mtl_buffer_pool.h b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
 index c3be11f78156c7fab4ee8a90733de2f3b049de7e..204ebb949873112c010242b2b16b0860cd40c00a 100644
 --- a/src/libANGLE/renderer/metal/mtl_buffer_pool.h
@@ -868,3 +1210,197 @@ index 08efb0da60496d9bd3d2a14aec6a389348e3f496..63f4196a072ded6e4cd08bc388acf673
  }
  
  
+diff --git a/src/libANGLE/validationEGL.cpp b/src/libANGLE/validationEGL.cpp
+index a8ac78959e3cf80214cd2335686ce1390357884c..cfe1a1a621bd41fdd22ac04bc898d6f575b248d2 100644
+--- a/src/libANGLE/validationEGL.cpp
++++ b/src/libANGLE/validationEGL.cpp
+@@ -1354,6 +1354,54 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
+             }
+             break;
+ 
++        case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
++            if (!display->getExtensions().fenceSync)
++            {
++                val->setError(EGL_BAD_MATCH, "EGL_KHR_fence_sync extension is not available");
++                return false;
++            }
++
++            if (!display->getExtensions().mtlSyncSharedEventANGLE)
++            {
++                val->setError(EGL_BAD_DISPLAY, "EGL_ANGLE_metal_shared_event_sync is not available");
++                return false;
++            }
++
++            if (display != currentDisplay)
++            {
++                val->setError(EGL_BAD_MATCH, "CreateSync can only be called on the current display");
++                return false;
++            }
++
++            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext));
++
++            // TODO: Cribbed from above. Is this necessary? Note that the FD_ANDROID should probably
++            // report "EGL_SYNC_NATIVE_FENCE_ANDROID cnnot be used without GL_OES_EGL_sync support."
++            if (!currentContext->getExtensions().EGLSyncOES)
++            {
++                val->setError(EGL_BAD_MATCH,
++                              "EGL_SYNC_METAL_SHARED_EVENT_ANGLE cannot be used without "
++                              "GL_OES_EGL_sync support.");
++                return false;
++            }
++
++            for (const auto &attributeIter : attribs)
++            {
++                EGLAttrib attribute = attributeIter.first;
++
++                switch (attribute)
++                {
++                    case EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE:
++                    case EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_ANGLE:
++                        break;
++
++                    default:
++                        val->setError(EGL_BAD_ATTRIBUTE, "Invalid attribute");
++                        return false;
++                }
++            }
++            break;
++
+         default:
+             if (isExt)
+             {
+@@ -1384,6 +1432,7 @@ bool ValidateGetSyncAttribBase(const ValidationContext *val,
+             {
+                 case EGL_SYNC_FENCE_KHR:
+                 case EGL_SYNC_NATIVE_FENCE_ANDROID:
++                case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
+                     break;
+ 
+                 default:
+diff --git a/src/tests/angle_end2end_tests.gni b/src/tests/angle_end2end_tests.gni
+index 5457bf0819616b938ef912009c8a0613cd8fee11..b80f51daeba40ca9310f5e2e5b3ea89ec27b5068 100644
+--- a/src/tests/angle_end2end_tests.gni
++++ b/src/tests/angle_end2end_tests.gni
+@@ -199,6 +199,7 @@ angle_end2end_tests_mac_sources = [
+   "egl_tests/EGLIOSurfaceClientBufferTest.cpp",
+   "egl_tests/EGLPowerPreferenceTest.cpp",
+   "egl_tests/EGLSurfaceTestMac.mm",
++  "egl_tests/EGLSyncTestMetalSharedEvent.mm",
+   "gl_tests/ImageTestMetal.mm",
+ ]
+ angle_end2end_tests_win_sources = [
+diff --git a/src/tests/egl_tests/EGLSyncTestMetalSharedEvent.mm b/src/tests/egl_tests/EGLSyncTestMetalSharedEvent.mm
+new file mode 100644
+index 0000000000000000000000000000000000000000..8ce56b0c574339c0c3a36e6103adc87eb175cf25
+--- /dev/null
++++ b/src/tests/egl_tests/EGLSyncTestMetalSharedEvent.mm
+@@ -0,0 +1,109 @@
++//
++//  Copyright 2022 The ANGLE Project Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++//
++// EGLSyncTestMetalSharedEvent:
++//   Tests pertaining to EGL_ANGLE_sync_mtl_shared_event extension.
++//
++
++#include <gtest/gtest.h>
++
++#include "test_utils/ANGLETest.h"
++#include "util/EGLWindow.h"
++
++#include <Metal/Metal.h>
++
++using namespace angle;
++
++class EGLSyncTestMetalSharedEvent : public ANGLETest
++{
++  protected:
++    id<MTLSharedEvent> createMetalSharedEvent() const
++    {
++        id<MTLDevice> device = getMetalDevice();
++        return [device newSharedEvent];
++    }
++
++    id<MTLDevice> getMetalDevice() const
++    {
++        EGLAttrib angleDevice = 0;
++        EXPECT_EGL_TRUE(
++            eglQueryDisplayAttribEXT(getEGLWindow()->getDisplay(), EGL_DEVICE_EXT, &angleDevice));
++
++        EGLAttrib device = 0;
++        EXPECT_EGL_TRUE(
++            eglQueryDeviceAttribEXT(reinterpret_cast<EGLDeviceEXT>(angleDevice),
++                                    EGL_METAL_DEVICE_ANGLE, &device));
++
++        return (__bridge id<MTLDevice>)reinterpret_cast<void *>(device);
++    }
++
++    bool hasEGLDisplayExtension(const char* extname) const
++    {
++        return IsEGLDisplayExtensionEnabled(getEGLWindow()->getDisplay(), extname);
++    }
++
++    bool hasFenceSyncExtension() const
++    {
++        return hasEGLDisplayExtension("EGL_KHR_fence_sync");
++    }
++
++    bool hasGLSyncExtension() const { return IsGLExtensionEnabled("GL_OES_EGL_sync"); }
++
++    bool hasSyncMetalSharedEventExtension() const
++    {
++        return hasEGLDisplayExtension("EGL_ANGLE_metal_shared_event_sync");
++    }
++};
++
++TEST_P(EGLSyncTestMetalSharedEvent, BasicOperations)
++{
++    //ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension());
++    EXPECT_EGL_TRUE(hasSyncMetalSharedEventExtension());
++
++    EGLWindow *window = getEGLWindow();
++
++    id<MTLSharedEvent> sharedEvent = createMetalSharedEvent();
++    sharedEvent.label = @"TestSharedEvent";
++
++    EGLDisplay display = window->getDisplay();
++
++    EGLAttrib syncAttribs[] = {EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE, (EGLAttrib)sharedEvent, EGL_NONE};
++
++    EGLSync sync = eglCreateSync(display, EGL_SYNC_METAL_SHARED_EVENT_ANGLE, syncAttribs);
++    EXPECT_NE(sync, EGL_NO_SYNC);
++
++    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
++
++    glClear(GL_COLOR_BUFFER_BIT);
++    EXPECT_EGL_TRUE(eglWaitSync(display, sync, 0));
++
++    glFlush();
++
++    glClear(GL_COLOR_BUFFER_BIT);
++
++    // Don't wait forever to make sure the test terminates
++    constexpr GLuint64 kTimeout = 1'000'000'000;  // 1 second
++    EGLAttrib value             = 0;
++    ASSERT_EQ(EGL_CONDITION_SATISFIED,
++              eglClientWaitSync(display, sync, EGL_SYNC_FLUSH_COMMANDS_BIT, kTimeout));
++
++    for (size_t i = 0; i < 20; i++)
++    {
++        glClear(GL_COLOR_BUFFER_BIT);
++        EXPECT_EQ(
++            EGL_CONDITION_SATISFIED,
++            eglClientWaitSync(display, sync, EGL_SYNC_FLUSH_COMMANDS_BIT, EGL_FOREVER));
++        EXPECT_EGL_TRUE(eglGetSyncAttrib(display, sync, EGL_SYNC_STATUS, &value));
++        EXPECT_EQ(value, EGL_SIGNALED);
++    }
++
++    EXPECT_EGL_TRUE(eglDestroySync(display, sync));
++
++    sharedEvent = nil;
++}
++
++ANGLE_INSTANTIATE_TEST(EGLSyncTestMetalSharedEvent,
++                       ES2_METAL(),
++                       ES3_METAL());

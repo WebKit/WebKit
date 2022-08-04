@@ -1,0 +1,56 @@
+Name
+
+    ANGLE_metal_shared_event_sync
+
+Name Strings
+
+    EGL_ANGLE_metal_shared_event_sync
+
+Contributors
+
+    Dan Glastonbury, Apple
+
+Contacts
+
+    Dan Glastonbury, Apple (djg 'at' apple.com)
+
+Status
+
+    Draft
+
+Version
+
+    Version 1, 2022-05-17
+
+Number
+
+    EGL Extensions XXX
+
+Extension Type
+
+    EGL display extension
+
+Dependencies
+
+Overview
+
+New Types
+
+New Procedures and Functions
+
+New Tokens
+
+Additions to the EGL Specification
+
+    None
+
+New Behavior
+
+Issues
+
+    None
+
+Revision History
+
+    Version 1, 2022-05-17
+      - Initial draft
