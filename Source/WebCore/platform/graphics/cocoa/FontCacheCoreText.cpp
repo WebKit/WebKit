@@ -1298,7 +1298,7 @@ bool FontCache::shouldAutoActivateFontIfNeeded(const AtomString& family)
         m_knownFamilies.remove(m_knownFamilies.random());
 
     // Only attempt to auto-activate fonts once for performance reasons.
-    return m_knownFamilies.add(family).isNewEntry;
+    return !family.isEmpty() && m_knownFamilies.add(family).isNewEntry;
 }
 
 static void autoActivateFont(const String& name, CGFloat size)

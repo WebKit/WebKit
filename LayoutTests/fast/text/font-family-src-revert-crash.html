@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: 'TestFont';
+    src: local(revert);
+}
+</style>
+</head>
+<body>
+<p style="font-family: TestFont">This test passes if WebKit does not crash</p>
+<div id="result"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+onload = () => result.textContent = 'PASS';
+</script>
+</body>
+</html>
