@@ -33,6 +33,7 @@ use Getopt::Long;
 use Test::More;
 use lib File::Spec->catdir($FindBin::Bin, "..");
 use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
+use VCSUtils;
 
 sub captureOutput($);
 sub convertAbsolutePathToRelativeUnixPath($$);
@@ -133,8 +134,8 @@ sub captureOutput($)
 sub convertAbsolutePathToRelativeUnixPath($$)
 {
     my ($string, $path) = @_;
-    my $sourceDir = LoadAsModule::unixPath(LoadAsModule::sourceDir());
-    my $relativeUnixPath = LoadAsModule::unixPath($path);
+    my $sourceDir = unixPath(LoadAsModule::sourceDir());
+    my $relativeUnixPath = unixPath($path);
     $sourceDir .= "/" unless $sourceDir =~ m-/$-;
     my $quotedSourceDir = quotemeta($sourceDir);
     $relativeUnixPath  =~ s/$quotedSourceDir//;
