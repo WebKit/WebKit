@@ -67,6 +67,7 @@
 #import <objc/runtime.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFNotificationCenterSPI.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <sys/param.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
@@ -308,6 +309,15 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     parameters.latencyQOS = webProcessLatencyQOS();
     parameters.throughputQOS = webProcessThroughputQOS();
+
+    if (m_configuration->presentingApplicationProcessToken()) {
+        NSError *error = nil;
+        auto bundleProxy = [LSBundleProxy bundleProxyWithAuditToken:*m_configuration->presentingApplicationProcessToken() error:&error];
+        if (error)
+            RELEASE_LOG_ERROR(WebRTC, "Failed to get attribution bundleID from audit token with error: %@.", error.localizedDescription);
+        else
+            parameters.presentingApplicationBundleIdentifier = bundleProxy.bundleIdentifier;
+    }
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     if (WebProcessProxy::shouldEnableRemoteInspector()) {
