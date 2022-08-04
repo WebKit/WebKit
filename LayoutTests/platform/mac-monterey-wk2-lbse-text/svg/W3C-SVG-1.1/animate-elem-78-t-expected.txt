@@ -109,6 +109,10 @@ layer at (10,0) size 8x8
 layer at (10,0) size 8x8
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
 layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {a} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
 layer at (10,0) size 8x8
   RenderSVGTransformableContainer {use} at (0,0) size 8x8
@@ -138,6 +142,10 @@ layer at (10,0) size 8x8
   RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
 layer at (10,0) size 8x8
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {a} at (0,0) size 8x8
 layer at (10,0) size 8x8
   RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
 layer at (10,0) size 8x8
@@ -200,6 +208,10 @@ layer at (10,0) size 8x8
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
 layer at (10,0) size 8x8
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {a} at (0,0) size 8x8
 layer at (10,0) size 8x8
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
 layer at (10,0) size 8x8
@@ -232,5 +244,9 @@ layer at (10,0) size 8x8
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
 layer at (10,0) size 8x8
   RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {a} at (0,0) size 8x8
 layer at (10,0) size 8x8
   RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]

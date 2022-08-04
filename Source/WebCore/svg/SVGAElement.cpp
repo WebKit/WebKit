@@ -37,6 +37,7 @@
 #include "PlatformMouseEvent.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGText.h"
+#include "RenderSVGTransformableContainer.h"
 #include "ResourceRequest.h"
 #include "SVGElementInlines.h"
 #include "SVGElementTypeHelpers.h"
@@ -110,6 +111,11 @@ RenderPtr<RenderElement> SVGAElement::createElementRenderer(RenderStyle&& style,
 {
     if (is<SVGElement>(parentNode()) && downcast<SVGElement>(*parentNode()).isTextContent())
         return createRenderer<RenderSVGInline>(*this, WTFMove(style));
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
+#endif
     return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 

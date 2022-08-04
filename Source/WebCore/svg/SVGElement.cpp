@@ -547,6 +547,8 @@ static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> createSVGLayerAwareEl
     MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
 
     const Vector<SVGQualifiedName> allowedTags = {
+        aTag.get(),
+        altGlyphTag.get(),
         circleTag.get(),
         ellipseTag.get(),
         gTag.get(),
@@ -554,7 +556,10 @@ static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> createSVGLayerAwareEl
         rectTag.get(),
         svgTag.get(),
         switchTag.get(),
+        textPathTag.get(),
         textTag.get(),
+        trefTag.get(),
+        tspanTag.get(),
         useTag.get()
     };
     for (auto& tag : allowedTags)
@@ -579,8 +584,8 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
     // If the layer based SVG engine is enabled, all renderers that do not support the
     // RenderLayer aware layout / painting / hit-testing mode ('LBSE-mode') have to be skipped.
     // FIXME: [LBSE] Upstream support for all elements, and remove 'isSVGLayerAwareElement' check afterwards.
-    if (document().settings().layerBasedSVGEngineEnabled())
-        return isSVGLayerAwareElement(svgChild);
+    if (document().settings().layerBasedSVGEngineEnabled() && !isSVGLayerAwareElement(svgChild))
+        return false;
 #endif
 
     static const QualifiedName* const invalidTextContent[] {

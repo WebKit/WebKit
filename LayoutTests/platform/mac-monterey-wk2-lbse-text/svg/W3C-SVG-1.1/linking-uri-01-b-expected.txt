@@ -14,6 +14,30 @@ layer at (300,55) size 125x110
   RenderSVGTransformableContainer {g} at (264,50) size 125x110
 layer at (300,55) size 125x85
   RenderSVGRect {rect} at (0,0) size 125x85 [fill={[type=SOLID] [color=#AAAAAA]}] [x=300.00] [y=55.00] [width=125.00] [height=85.00]
+layer at (320,56) size 104x18
+  RenderSVGTransformableContainer {a} at (20,1) size 104x18
+layer at (320,56) size 104x18
+  RenderSVGText {text} at (0,0) size 104x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 104x18
+      chunk 1 text run 1 at (320.00,70.00) startOffset 0 endOffset 15 width 103.97: "Go to Rectangle"
+layer at (320,76) size 85x18
+  RenderSVGTransformableContainer {a} at (20,21) size 85x18
+layer at (320,76) size 84x18
+  RenderSVGText {text} at (0,0) size 85x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 85x18
+      chunk 1 text run 1 at (320.00,90.00) startOffset 0 endOffset 13 width 84.44: "Go to Ellipse"
+layer at (320,96) size 80x18
+  RenderSVGTransformableContainer {a} at (20,41) size 80x18
+layer at (320,96) size 79x18
+  RenderSVGText {text} at (0,0) size 80x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 80x18
+      chunk 1 text run 1 at (320.00,110.00) startOffset 0 endOffset 12 width 79.09: "Go to Circle"
+layer at (320,116) size 94x18
+  RenderSVGTransformableContainer {a} at (20,61) size 94x18
+layer at (320,116) size 93x18
+  RenderSVGText {text} at (0,0) size 94x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 94x18
+      chunk 1 text run 1 at (320.00,130.00) startOffset 0 endOffset 13 width 93.34: "Go to Polygon"
 layer at (315,139) size 95x14
   RenderSVGText {text} at (15,84) size 95x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 95x14

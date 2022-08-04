@@ -88,6 +88,10 @@ layer at (374,299) size 32x32
   RenderSVGEllipse {circle} at (0,0) size 32x32 [fill={[type=SOLID] [color=#FFFFCC]}] [cx=390.00] [cy=315.00] [r=16.00]
 layer at (384,309) size 12x12
   RenderSVGEllipse {circle} at (10,10) size 12x12 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=390.00] [cy=315.00] [r=6.00]
+layer at (388,313) size 4x4
+  RenderSVGTransformableContainer {a} at (14,14) size 4x4
+layer at (388,313) size 4x4
+  RenderSVGEllipse {circle} at (0,0) size 4x4 [fill={[type=SOLID] [color=#000000]}] [cx=390.00] [cy=315.00] [r=2.00]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

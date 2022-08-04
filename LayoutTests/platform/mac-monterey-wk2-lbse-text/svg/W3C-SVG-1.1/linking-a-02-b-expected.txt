@@ -4,6 +4,12 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
+layer at (40,28) size 145x72
+  RenderSVGTransformableContainer {g} at (40,28) size 145x72
+layer at (40,28) size 145x72
+  RenderSVGTransformableContainer {a} at (0,0) size 145x72
+layer at (40,28) size 145x72
+  RenderSVGPath {path} at (0,0) size 145x72 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M 185 40 L 85 40 L 85 28 L 40 64 L 85 100 L 85 88 L 185 88 Z"]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46
