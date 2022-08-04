@@ -1292,6 +1292,9 @@ static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, const Ato
 #if PLATFORM(MAC)
 bool FontCache::shouldAutoActivateFontIfNeeded(const AtomString& family)
 {
+    if (family.isEmpty())
+        return false;
+
     static const unsigned maxCacheSize = 128;
     ASSERT(m_knownFamilies.size() <= maxCacheSize);
     if (m_knownFamilies.size() == maxCacheSize)
