@@ -32,9 +32,13 @@
 #include "Comment.h"
 #include "CachedResourceLoader.h"
 #include "CommonAtomStrings.h"
+#include "CustomElementReactionQueue.h"
+#include "CustomElementRegistry.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
+#include "EventLoop.h"
 #include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
@@ -58,6 +62,7 @@
 #include "SharedBuffer.h"
 #include "StyleScope.h"
 #include "TextResourceDecoder.h"
+#include "ThrowOnDynamicMarkupInsertionCountIncrementer.h"
 #include "TransformSource.h"
 #include "XMLNSNames.h"
 #include "XMLDocumentParserScope.h"
@@ -787,6 +792,24 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     m_sawFirstElement = true;
 
     QualifiedName qName(prefix, localName, uri);
+
+    bool willConstructCustomElement = false;
+    if (!m_parsingFragment) {
+        if (auto* window = m_currentNode->document().domWindow()) {
+            auto* registry = window->customElementRegistry();
+            if (UNLIKELY(registry))
+                willConstructCustomElement = registry->findInterface(qName);
+        }
+    }
+
+    std::optional<ThrowOnDynamicMarkupInsertionCountIncrementer> markupInsertionCountIncrementer;
+    std::optional<CustomElementReactionStack> customElementReactionStack;
+    if (UNLIKELY(willConstructCustomElement)) {
+        markupInsertionCountIncrementer.emplace(m_currentNode->document());
+        m_currentNode->document().eventLoop().performMicrotaskCheckpoint();
+        customElementReactionStack.emplace(m_currentNode->document().globalObject());
+    }
+
     auto newElement = m_currentNode->document().createElement(qName, true);
 
     Vector<Attribute> prefixedAttributes;
@@ -801,6 +824,11 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (!success) {
         stopParsing();
         return;
+    }
+
+    if (UNLIKELY(willConstructCustomElement)) {
+        customElementReactionStack.reset();
+        markupInsertionCountIncrementer.reset();
     }
 
     newElement->beginParsingChildren();

@@ -174,7 +174,7 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
 // https://html.spec.whatwg.org/multipage/custom-elements.html#concept-upgrade-an-element
 void JSCustomElementInterface::upgradeElement(Element& element)
 {
-    ASSERT(element.tagQName() == name());
+    ASSERT(element.tagQName().matches(name()));
 
     if (element.isDefinedCustomElement() || element.isFailedCustomElement())
         return; // If element's custom element state is not "undefined" or "uncustomized", then return.
