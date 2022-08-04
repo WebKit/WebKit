@@ -191,11 +191,16 @@ bool TextDecorationPainter::Styles::operator==(const Styles& other) const
         && underlineStyle == other.underlineStyle && overlineStyle == other.overlineStyle && linethroughStyle == other.linethroughStyle;
 }
 
-TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, OptionSet<TextDecorationLine> decorations, const RenderText& renderer, bool isFirstLine, const FontCascade& font, std::optional<Styles> styles)
+TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, OptionSet<TextDecorationLine> decorations, const RenderText& renderer, bool isFirstLine, const FontCascade& font, InlineIterator::TextBoxIterator textBox, float width, const ShadowData* shadow, const FilterOperations* colorFilter, std::optional<Styles> styles)
     : m_context { context }
     , m_decorations { decorations }
     , m_wavyOffset { wavyOffsetFromDecoration() }
+    , m_width(width)
     , m_isPrinting { renderer.document().printing() }
+    , m_isHorizontal(textBox->isHorizontal())
+    , m_shadow(shadow)
+    , m_shadowColorFilter(colorFilter)
+    , m_textBox(textBox)
     , m_font { font }
     , m_styles { styles ? *WTFMove(styles) : stylesForRenderer(renderer, decorations, isFirstLine, PseudoId::None) }
     , m_lineStyle { isFirstLine ? renderer.firstLineStyle() : renderer.style() }
