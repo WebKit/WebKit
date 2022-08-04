@@ -15,6 +15,7 @@ found in the LICENSE.txt file.
 </head>
 <body>
 <canvas id="canvas" width="16" height="16" style="width: 40px; height: 40px;"> </canvas>
+<canvas id="canvas2" width="16" height="16" style="width: 40px; height: 40px;"> </canvas>
 <div id="description"></div>
 <div id="console"></div>
 <script>
@@ -22,6 +23,7 @@ found in the LICENSE.txt file.
 description("Checks the scissor does not change when switching framebuffers.");
 
 var wtu = WebGLTestUtils;
+var gl;
 
 function makeFramebuffer(width, height) {
   var tex = gl.createTexture();
@@ -44,10 +46,16 @@ function checkCanvasRect(x, y, width, height, color, msg) {
   wtu.checkCanvasRect(gl, x, y, width, height, color, msg);
 }
 
-var gl = wtu.create3DContext("canvas", {antialias: false});
-if (!gl) {
-  testFailed("context does not exist");
-} else {
+function runEntireTest(canvasName, antialias) {
+  debug("");
+  debug("== Running scissor fbo test with antialias:" + antialias + " ==");
+  debug("");
+
+  gl = wtu.create3DContext(canvasName, {antialias: antialias});
+  if (!gl) {
+    testFailed("context does not exist");
+    return;
+  }
   testPassed("context exists");
 
   var fb8x8 = makeFramebuffer(8, 8);
@@ -100,6 +108,9 @@ if (!gl) {
 
   wtu.glErrorShouldBe(gl, gl.NO_ERROR, "there should be no errors");
 }
+
+runEntireTest("canvas", false);
+runEntireTest("canvas2", true);
 
 debug("");
 var successfullyParsed = true;

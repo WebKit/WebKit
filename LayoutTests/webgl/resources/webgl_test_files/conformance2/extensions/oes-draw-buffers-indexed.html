@@ -14,6 +14,7 @@ found in the LICENSE.txt file.
 <script src="../../js/webgl-test-utils.js"></script>
 </head>
 <body>
+<canvas width="20" height="20" style="border: 1px solid blue;" id="c"></canvas>
 <div id="description"></div>
 <div id="console"></div>
 <script>
@@ -23,8 +24,7 @@ description("This test verifies the functionality of the OES_draw_buffers_indexe
 debug("");
 
 var wtu = WebGLTestUtils;
-var canvas = document.getElementById("canvas");
-var gl = wtu.create3DContext(null, null, 2);
+var gl = wtu.create3DContext("c", null, 2);
 var ext;
 
 const vs = `#version 300 es
@@ -297,23 +297,25 @@ function runTestExtension() {
     indexedBlendColorTest();
 
     testColorMaskDrawNoOp();
+
+    testColorMaskAfterComposite();
 }
 
 function runInvalidEnumsTest() {
     debug("Testing new enums for getIndexedParameterTest being invalid before requesting the extension");
-    gl.getIndexedParameter(0x8009, 0);  // BLEND_EQUATION_RGB
+    shouldBeNull("gl.getIndexedParameter(0x8009, 0)");  // BLEND_EQUATION_RGB
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, 'BLEND_EQUATION_RGB');
-    gl.getIndexedParameter(0x883D, 0);  // BLEND_EQUATION_ALPHA
+    shouldBeNull("gl.getIndexedParameter(0x883D, 0)");  // BLEND_EQUATION_ALPHA
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, 'BLEND_EQUATION_ALPHA');
-    gl.getIndexedParameter(0x80C9, 0);  // BLEND_SRC_RGB
+    shouldBeNull("gl.getIndexedParameter(0x80C9, 0)");  // BLEND_SRC_RGB
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, 'BLEND_SRC_RGB');
-    gl.getIndexedParameter(0x80CB, 0);  // BLEND_SRC_ALPHA
+    shouldBeNull("gl.getIndexedParameter(0x80CB, 0)");  // BLEND_SRC_ALPHA
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, 'BLEND_SRC_ALPHA');
-    gl.getIndexedParameter(0x80C8, 0);  // BLEND_DST_RGB
+    shouldBeNull("gl.getIndexedParameter(0x80C8, 0)");  // BLEND_DST_RGB
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, 'BLEND_DST_RGB');
-    gl.getIndexedParameter(0x80CA, 0);  // BLEND_DST_ALPHA
+    shouldBeNull("gl.getIndexedParameter(0x80CA, 0)");  // BLEND_DST_ALPHA
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, 'BLEND_DST_ALPHA');
-    gl.getIndexedParameter(0x0C23, 0);  // COLOR_WRITEMASK
+    shouldBeNull("gl.getIndexedParameter(0x0C23, 0)");  // COLOR_WRITEMASK
     wtu.glErrorShouldBe(gl, [gl.INVALID_OPERATION, gl.INVALID_ENUM], 'invalid operations or invalid enums for COLOR_WRITEMASK');
 }
 
@@ -517,6 +519,32 @@ void main() {
     }
 }
 
+function testColorMaskAfterComposite() {
+    debug('');
+    debug('testColorMaskAfterComposite')
+
+    const NUM_OUTPUTS = gl.getParameter(gl.MAX_COLOR_ATTACHMENTS);
+    shouldBeTrue(`${NUM_OUTPUTS} > 2`);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.colorMask(0, 0, 1, 0);
+    ext.colorMaskiOES(0, 1, 0, 0, 0);
+    ext.colorMaskiOES(1, 0, 1, 0, 0);
+
+    function check() {
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        shouldBe('gl.getIndexedParameter(gl.COLOR_WRITEMASK, 0)', '[true, false, false, false]');
+        shouldBe('gl.getIndexedParameter(gl.COLOR_WRITEMASK, 1)', '[false, true, false, false]');
+        shouldBe('gl.getIndexedParameter(gl.COLOR_WRITEMASK, 2)', '[false, false, true, false]');
+        finishTest();
+    }
+
+    wtu.waitForComposite(check);
+}
+
 function runTest() {
   if (!gl) {
     testFailed("context does not exist");
@@ -541,6 +569,5 @@ runTest();
 
 var successfullyParsed = true;
 </script>
-<script src="../../js/js-test-post.js"></script>
 </body>
 </html>

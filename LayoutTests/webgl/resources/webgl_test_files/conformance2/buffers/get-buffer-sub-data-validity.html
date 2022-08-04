@@ -82,7 +82,7 @@ async function fence() {
     do {
         await wait();
         status = gl.clientWaitSync(sync, 0, 0);
-    } while (status != gl.ALREADY_SIGNALED && status != gl.CONDITION_SATISIFIED);
+    } while (status != gl.ALREADY_SIGNALED && status != gl.CONDITION_SATISFIED);
     gl.deleteSync(sync);
 }
 

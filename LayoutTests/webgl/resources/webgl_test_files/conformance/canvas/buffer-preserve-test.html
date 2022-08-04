@@ -11,6 +11,7 @@ found in the LICENSE.txt file.
 <link rel="stylesheet" href="../../resources/js-test-style.css"/>
 <script src="../../js/js-test-pre.js"></script>
 <script src="../../js/webgl-test-utils.js"> </script>
+<script src="../../js/tests/compositing-test.js"></script>
 <style type="text/css">
 body {
     height: 3000px;
@@ -20,7 +21,6 @@ body {
 <body>
 <!-- Important to put the canvas at the top so that it's always visible even in the test suite runner.
      Otherwise it just doesn't get composited in Firefox. -->
-<canvas width="20" height="20" style="border: 1px solid blue;" id="c"></canvas>
 <div id="description"></div>
 <div id="console"></div>
 <script type="application/javascript">
@@ -30,35 +30,41 @@ description("This test ensures WebGL implementations correctly clear the drawing
             "on composite if preserveDrawingBuffer is false.");
 debug("");
 
-var wtu = WebGLTestUtils;
+const wtu = WebGLTestUtils;
 
-var gl = wtu.create3DContext("c");
-shouldBeTrue("gl != null");
-shouldBeTrue('gl.getContextAttributes().preserveDrawingBuffer == false');
+async function runCompositingTests() {
+    const compositingTestFn = createCompositingTestFn({
+      webglVersion: 1,
+      shadersFn(gl) {
+        const vs = `\
+        attribute vec4 position;
+        void main() {
+          gl_Position = position;
+        }
+        `;
+        const fs = `\
+        precision mediump float;
+        void main() {
+          gl_FragColor = vec4(1, 0, 0, 1);
+        }
+        `;
+        return [vs, fs];
+      },
+    });
 
-gl.clearColor(1, 0, 0, 1);
-gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
+    function drawArrays(gl) {
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
 
-// enable scissor here, before compositing, to make sure it's correctly
-// ignored and restored
-gl.scissor(0, 10, 10, 10);
-gl.enable(gl.SCISSOR_TEST);
+    function drawElements(gl) {
+      gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
+    }
 
-function clear() {
-    // scissor was set earlier
-    gl.clearColor(0, 0, 1, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    wtu.checkCanvasRect(gl, 0, 10, 10, 10, [0, 0, 255, 255],
-        "cleared corner should be blue, stencil should be preserved");
-    wtu.checkCanvasRect(gl, 0, 0, 10, 10, [0, 0, 0, 0],
-        "remainder of buffer should be cleared");
-
+    await compositingTestFn(drawArrays);
+    await compositingTestFn(drawElements);
     finishTest();
-    return;
 }
-
-wtu.waitForComposite(clear);
+runCompositingTests();
 
 var successfullyParsed = true;
 </script>

@@ -66,7 +66,6 @@ function CreateContext() {
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.CONSTANT_COLOR, gl.ZERO);
-    gl.blendColor(10, 1, 1, 1);
 
     return gl;
 }
@@ -117,12 +116,30 @@ let was, fb;
 const TESTS = [
     () => {
         debug('');
-        debug("State queries don't clamp.");
+        debug('Clamping of blendColor args:');
 
         const gl = wtu.create3DContext();
+        if (!gl.texImage3D) { // WebGL 1.0
+            // WebGL 1.0 clamps without EXT_color_buffer_half_float or WEBGL_color_buffer_float.
+            gl.blendColor(1000, 1, 1, 1);
+            const was = gl.getParameter(gl.BLEND_COLOR);
+            expectArray(was, [1, 1, 1, 1]);
+
+            const ext = gl.getExtension('EXT_color_buffer_half_float') ||
+                        gl.getExtension('WEBGL_color_buffer_float');
+            if (!ext) return;
+        }
+
+        // WebGL 2.0 or extended WebGL 1.0 may still clamp the value on store
+        // when the underlying platform does the same.
         gl.blendColor(1000, 1, 1, 1);
         const was = gl.getParameter(gl.BLEND_COLOR);
-        expectArray(was, [1000, 1, 1, 1]);
+        if (was[0] == 1000) {
+            expectArray(was, [1000, 1, 1, 1]);
+        } else {
+            debug("Platform does not support unclamped blend color.")
+            expectArray(was, [1, 1, 1, 1]);
+        }
     },
     () => {
         debug('');
@@ -132,13 +149,17 @@ const TESTS = [
         fb = CreateValidFb(gl, [[gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE]]);
         shouldBeNonNull('fb');
 
+        // Regardless of the context version and enabled extensions,
+        // the value will be clamped at draw time,
+        gl.blendColor(10, 1, 1, 1);
         const was = gl.drawAndRead(gl.UNSIGNED_BYTE);
         expectArray(was, [1, 2, 3, 4]);
 
-        if (gl.getExtension('EXT_color_buffer_float') ||
-            gl.getExtension('EXT_color_buffer_half_float'))
+        if (gl.getExtension('EXT_color_buffer_half_float') ||
+            gl.getExtension('WEBGL_color_buffer_float') ||
+            gl.getExtension('EXT_color_buffer_float'))
         {
-            debug('Enable color_buffer_half_float and retest');
+            debug('Enable floating-point color buffers and retest');
             gl.blendColor(1000, 1, 1, 1);
             const was = gl.drawAndRead(gl.UNSIGNED_BYTE);
             expectArray(was, [1, 2, 3, 4]);
@@ -149,16 +170,15 @@ const TESTS = [
         debug('Blending for RGBA16F:');
 
         const gl = CreateContext();
-        if (gl.blitFramebuffer) {
-            if (!gl.getExtension('EXT_color_buffer_float')) {
-                testPassed('Missing ext EXT_color_buffer_float is optional, skipping.');
-                return;
-            }
-        } else {
-            if (!gl.getExtension('EXT_color_buffer_half_float')) {
-                testPassed('Missing ext EXT_color_buffer_half_float is optional, skipping.');
-                return;
-            }
+
+        // Set the value before enabling the extension.
+        // It must be clamped only on WebGL 1.0 contexts.
+        gl.blendColor(10, 1, 1, 1);
+        if (!gl.getExtension('EXT_color_buffer_half_float')) {
+            testPassed('Missing ext EXT_color_buffer_half_float is optional, skipping.');
+            return;
+        }
+        if (!gl.texImage3D) { // WebGL 1.0
             const ext = gl.getExtension('OES_texture_half_float');
             gl.HALF_FLOAT = ext.HALF_FLOAT_OES; // These aren't the same value, but this'll work.
         }
@@ -166,15 +186,32 @@ const TESTS = [
         fb = CreateValidFb(gl, [[gl.RGBA16F, gl.RGBA, gl.HALF_FLOAT]]);
         shouldBeNonNull('fb');
         gl.prog.uColor([1, 2, 3, 4]);
-        const was = gl.drawAndRead(gl.FLOAT);
-        expectArray(was, [10, 2, 3, 4]);
+
+        let was = gl.drawAndRead(gl.FLOAT);
+        if (!gl.texImage3D) { // WebGL 1.0
+            expectArray(was, [1, 2, 3, 4]);
+        } else {
+            // Some WebGL 2.0 implementations may clamp the blend color anyway.
+            const r = gl.getParameter(gl.BLEND_COLOR)[0];
+            expectArray(was, [r, 2, 3, 4]);
+        }
+
+        // Re-set the value after the extension was enabled.
+        gl.blendColor(100, 1, 1, 1);
+        const r = gl.getParameter(gl.BLEND_COLOR)[0];
+        was = gl.drawAndRead(gl.FLOAT);
+        expectArray(was, [r, 2, 3, 4]);
     },
     () => {
         debug('');
         debug('Blending for RGBA32F:');
 
         const gl = CreateContext();
-        if (gl.blitFramebuffer) {
+
+        // Set the value before enabling the extension.
+        // It must be clamped only on WebGL 1.0 contexts.
+        gl.blendColor(10, 1, 1, 1);
+        if (gl.texImage3D) { // WebGL 2.0
             if (!gl.getExtension('EXT_color_buffer_float')) {
                 testPassed('Missing ext EXT_color_buffer_float is optional, skipping.');
                 return;
@@ -189,14 +226,27 @@ const TESTS = [
         fb = CreateValidFb(gl, [[gl.RGBA32F, gl.RGBA, gl.FLOAT]]);
         shouldBeNonNull('fb');
         gl.prog.uColor([1, 2, 3, 4]);
-        const was = gl.drawAndRead(gl.FLOAT);
+
+        let was = gl.drawAndRead(gl.FLOAT);
+        if (!gl.texImage3D) { // WebGL 1.0
+            expectArray(was, [1, 2, 3, 4]);
+        } else {
+            // Some WebGL 2.0 implementations may clamp the blend color anyway.
+            const r = gl.getParameter(gl.BLEND_COLOR)[0];
+            expectArray(was, [r, 2, 3, 4]);
+        }
+
+        // Re-set the value after the extension was enabled.
+        gl.blendColor(100, 1, 1, 1);
+        const r = gl.getParameter(gl.BLEND_COLOR)[0];
+        was = gl.drawAndRead(gl.FLOAT);
 
         if (!gl.getExtension('EXT_float_blend')) {
             wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, 'Should not be able to blend 32F formats.');
             return;
         }
         wtu.glErrorShouldBe(gl, 0, 'Should be able to blend 32F formats.');
-        expectArray(was, [10, 2, 3, 4]);
+        expectArray(was, [r, 2, 3, 4]);
     },
 ];
 

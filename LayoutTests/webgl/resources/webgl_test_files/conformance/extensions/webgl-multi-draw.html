@@ -7,6 +7,8 @@
 <script src="../../js/desktop-gl-constants.js"></script>
 <script src="../../js/js-test-pre.js"></script>
 <script src="../../js/webgl-test-utils.js"></script>
+<script src="../../js/tests/compositing-test.js"></script>
+<script src="../../js/tests/invalid-vertex-attrib-test.js"></script>
 </head>
 <body>
 <script id="vshaderIllegalDrawID" type="x-shader/x-vertex">
@@ -846,10 +848,217 @@ function doTest(ext, instanced) {
   }
 }
 
-runTest();
+function waitForComposite() {
+  debug('wait for composite');
+  return new Promise(resolve => wtu.waitForComposite(resolve));
+}
 
-const successfullyParsed = true;
+async function testPreserveDrawingBufferFalse(gl, drawFn) {
+  debug('');
+  debug('test preserveDrawingBuffer: false');
+
+  if (drawFn(gl)) {
+    debug('skipped: extension does not exist');
+    return;
+  }
+
+  wtu.checkCanvasRect(gl, 0, 0, 20, 20, [255, 0, 0, 255],
+      "canvas should be red");
+
+  // enable scissor here, before compositing, to make sure it's correctly
+  // ignored and restored
+  gl.scissor(0, 10, 10, 10);
+  gl.enable(gl.SCISSOR_TEST);
+
+  await waitForComposite();
+
+  // scissor was set earlier
+  gl.clearColor(0, 0, 1, 1);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  wtu.checkCanvasRect(gl, 0, 10, 10, 10, [0, 0, 255, 255],
+      "cleared corner should be blue, stencil should be preserved");
+  wtu.checkCanvasRect(gl, 0, 0, 10, 10, [0, 0, 0, 0],
+      "remainder of buffer should be cleared");
+
+  gl.disable(gl.SCISSOR_TEST);
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "there should be no errors");
+}
+
+async function testPreserveDrawingBufferTrue(gl, drawFn) {
+  debug('');
+  debug('test preserveDrawingBuffer: true');
+  if (drawFn(gl)) {
+    debug('skipped: extension does not exist');
+    return;
+  }
+
+  wtu.checkCanvasRect(gl, 0, 0, 20, 20, [255, 0, 0, 255],
+      "canvas should be red");
+
+  await waitForComposite();
+
+  wtu.checkCanvasRect(gl, 0, 0, 20, 20, [255, 0, 0, 255],
+      "canvas should be red");
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "there should be no errors");
+}
+
+async function doCompositingTests([glPreserveDrawingBufferFalse, glPreserveDrawingBufferTrue], drawFn) {
+  debug('');
+  debug(drawFn.name);
+
+  await testPreserveDrawingBufferFalse(glPreserveDrawingBufferFalse, drawFn);
+  await testPreserveDrawingBufferTrue(glPreserveDrawingBufferTrue, drawFn);
+}
+
+async function runDrawTests(testFn) {
+  function drawArrays(gl) {
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+  }
+
+  function drawElements(gl) {
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
+  }
+
+  function drawArraysInstanced(gl) {
+    gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, 1);
+  }
+
+  function drawElementsInstanced(gl) {
+    gl.drawElementsInstanced(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0, 1);
+  }
+
+  function multiDrawArraysWEBGL(gl) {
+    const ext = gl.getExtension('WEBGL_multi_draw');
+    if (!ext) {
+      throw 'Should not have run this test without WEBGL_multi_draw';
+    }
+
+    ext.multiDrawArraysWEBGL(
+        gl.TRIANGLES,
+        [0], 0, // firsts
+        [6], 0, // counts
+        1,      // drawCount
+    );
+  }
+
+  function multiDrawElementsWEBGL(gl) {
+    const ext = gl.getExtension('WEBGL_multi_draw');
+    if (!ext) {
+      throw 'Should not have run this test without WEBGL_multi_draw';
+    }
+
+    ext.multiDrawElementsWEBGL(
+        gl.TRIANGLES,
+        [6], 0,   // counts
+        gl.UNSIGNED_BYTE,
+        [0], 0,   // offsets
+        1,        // drawCount
+    );
+  }
+
+  function multiDrawArraysInstancedWEBGL(gl) {
+    const ext = gl.getExtension('WEBGL_multi_draw');
+    if (!ext) {
+      throw 'Should not have run this test without WEBGL_multi_draw';
+    }
+    ext.multiDrawArraysInstancedWEBGL(
+        gl.TRIANGLES,
+        [0], 0, // firsts
+        [6], 0, // counts
+        [1], 0, // instances
+        1,      // drawCount
+    );
+  }
+
+  function multiDrawElementsInstancedWEBGL(gl) {
+    const ext = gl.getExtension('WEBGL_multi_draw');
+    if (!ext) {
+      throw 'Should not have run this test without WEBGL_multi_draw';
+    }
+    ext.multiDrawElementsInstancedWEBGL(
+        gl.TRIANGLES,
+        [6], 0, // counts
+        gl.UNSIGNED_BYTE,
+        [0], 0, // offsets
+        [1], 0, // instances
+        1,      // drawCount
+    );
+  }
+
+  await testFn(drawArrays);             // sanity check
+  await testFn(drawElements);           // sanity check
+
+  // It's only legal to call testFn if the extension is supported,
+  // since the invalid vertex attrib tests, in particular, expect the
+  // draw function to have an effect.
+  if (gl.getExtension('WEBGL_multi_draw')) {
+    await testFn(multiDrawArraysWEBGL);
+    await testFn(multiDrawElementsWEBGL);
+    await testFn(multiDrawArraysInstancedWEBGL);
+    await testFn(multiDrawElementsInstancedWEBGL);
+  }
+}
+
+async function runCompositingTests() {
+  const compositingTestFn = createCompositingTestFn({
+    webglVersion: 1,
+    shadersFn(gl) {
+      const vs = `\
+      //#extension GL_ANGLE_multi_draw : enable
+      attribute vec4 position;
+      void main() {
+        gl_Position = position;
+      }
+      `;
+      const fs = `\
+      precision mediump float;
+      void main() {
+        gl_FragColor = vec4(1, 0, 0, 1);
+      }
+      `;
+      return [vs, fs];
+    },
+  });
+  await runDrawTests(compositingTestFn);
+}
+
+async function runInvalidAttribTests(gl) {
+  const invalidAttribTestFn = createInvalidAttribTestFn(gl);
+  await runDrawTests(invalidAttribTestFn);
+}
+
+function testSideEffects() {
+  debug("")
+  debug("Testing that ANGLE_instanced_arrays is implicitly enabled")
+  const canvas = document.createElement("canvas");
+  const gl = wtu.create3DContext(canvas, undefined, 1);
+  if (!gl) {
+    testFailed('WebGL context creation failed');
+    return;
+  }
+  gl.enableVertexAttribArray(0);
+  const VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE = 0x88FE;
+  gl.getVertexAttrib(0, VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE);
+  wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "divisor enum unknown");
+  const ext = gl.getExtension("WEBGL_multi_draw");
+  if (ext) {
+    debug("WEBGL_multi_draw enabled");
+    gl.getVertexAttrib(0, VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "divisor enum known");
+  }
+}
+
+async function main() {
+  runTest();
+  testSideEffects();
+  await runInvalidAttribTests(gl);
+  await runCompositingTests();
+  finishTest();
+}
+main();
+
+var successfullyParsed = true;
 </script>
-<script src="../../js/js-test-post.js"></script>
 </body>
 </html>

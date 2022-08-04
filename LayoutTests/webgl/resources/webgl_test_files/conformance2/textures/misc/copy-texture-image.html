@@ -190,7 +190,7 @@ var testInternalformat = function () {
 
     snormFormats.forEach(function(internalformat) {
         const srcTexFormatsTypes = { internalformat: "RGBA8", format: gl.RGBA, type: gl.UNSIGNED_BYTE };
-        testFormat(internalformat, srcTexFormatsTypes, gl.COLOR_ATTACHMENT0, gl.INVALID_ENUM, "copyTexImage2D should fail for snorm internalformat ");
+        testFormat(internalformat, srcTexFormatsTypes, gl.COLOR_ATTACHMENT0, [gl.INVALID_ENUM, gl.INVALID_OPERATION], "copyTexImage2D should fail for snorm internalformat ");
     });
 
     if (gl.getExtension("EXT_color_buffer_float")) {

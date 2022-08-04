@@ -192,7 +192,7 @@ function runEnumTestDisabled() {
   // Use the constant directly as we don't have the extension
   extensionConstants.forEach(function(c) {
     if (c.expectedFn) {
-      gl.getParameter(c.enum);
+      shouldBeNull(`gl.getParameter(${c.enum})`);
       wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, c.name + " should not be queryable if extension is disabled");
     }
   });

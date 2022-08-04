@@ -49,6 +49,13 @@ var gl = wtu.create3DContext(canvas);
 var ext = null;
 var vao = null;
 
+var contextA;
+var contextB;
+var extA;
+var extB;
+var vertexArrayA;
+var vertexArrayB;
+
 if (!gl) {
     testFailed("WebGL context does not exist");
 } else {
@@ -81,6 +88,7 @@ if (!gl) {
         runUnboundDeleteTests();
         runBoundDeleteTests();
         runArrayBufferBindTests();
+        runInvalidContextTests();
         wtu.glErrorShouldBe(gl, gl.NO_ERROR, "there should be no errors");
     }
 }
@@ -714,6 +722,53 @@ function runArrayBufferBindTests() {
     gl.vertexAttribPointer(0, 4, gl.UNSIGNED_BYTE, true, 0, 0);
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
     wtu.checkCanvas(gl, [0, 255, 0, 255], "should be green");
+}
+
+function runInvalidContextTests() {
+    contextA = wtu.create3DContext(undefined, undefined, 1);
+    contextB = wtu.create3DContext(undefined, undefined, 1);
+    extA = contextA.getExtension("OES_vertex_array_object");
+    extB = contextB.getExtension("OES_vertex_array_object");
+    vertexArrayA = extA.createVertexArrayOES();
+    vertexArrayB = extB.createVertexArrayOES();
+
+    wtu.shouldGenerateGLError(contextA, contextA.NO_ERROR, "extA.bindVertexArrayOES(vertexArrayA)");
+    wtu.shouldGenerateGLError(contextA, contextA.NO_ERROR, "extA.bindVertexArrayOES(null)");
+    wtu.shouldGenerateGLError(contextB, contextB.NO_ERROR, "extB.bindVertexArrayOES(vertexArrayB)");
+    wtu.shouldGenerateGLError(contextB, contextB.NO_ERROR, "extB.bindVertexArrayOES(null)");
+
+    debug("")
+    debug("State queries validate context");
+    shouldBeFalse("extA.isVertexArrayOES(vertexArrayB)");
+    wtu.glErrorShouldBe(contextA, gl.NO_ERROR, "there should be no errors from invalid request");
+    shouldBeFalse("extB.isVertexArrayOES(vertexArrayA)");
+    wtu.glErrorShouldBe(contextB, gl.NO_ERROR, "there should be no errors from invalid request");
+    shouldBeTrue("extA.isVertexArrayOES(vertexArrayA)");
+    wtu.glErrorShouldBe(contextA, gl.NO_ERROR, "there should be no errors from valid request");
+    shouldBeTrue("extB.isVertexArrayOES(vertexArrayB)");
+    wtu.glErrorShouldBe(contextB, gl.NO_ERROR, "there should be no errors from valid request");
+
+    debug("")
+    debug("Deleting an object from another context generates an error");
+    wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "extA.deleteVertexArrayOES(vertexArrayB)");
+    wtu.shouldGenerateGLError(contextB, contextB.INVALID_OPERATION, "extB.deleteVertexArrayOES(vertexArrayA)");
+
+    debug("")
+    debug("Invalid delete operations do not delete");
+    shouldBeTrue("extA.isVertexArrayOES(vertexArrayA)");
+    shouldBeTrue("extB.isVertexArrayOES(vertexArrayB)");
+
+    debug("")
+    debug("Cannot bind VAOs from other contexts");
+    wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "extA.bindVertexArrayOES(vertexArrayB)");
+    wtu.shouldGenerateGLError(contextB, contextB.INVALID_OPERATION, "extB.bindVertexArrayOES(vertexArrayA)");
+
+    debug("")
+    debug("Context checks happen even for deleted objects");
+    wtu.shouldGenerateGLError(contextA, contextA.NO_ERROR, "extA.deleteVertexArrayOES(vertexArrayA)");
+    wtu.shouldGenerateGLError(contextB, contextB.NO_ERROR, "extB.deleteVertexArrayOES(vertexArrayB)");
+    wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "extA.deleteVertexArrayOES(vertexArrayB)");
+    wtu.shouldGenerateGLError(contextB, contextB.INVALID_OPERATION, "extB.deleteVertexArrayOES(vertexArrayA)");
 }
 
 debug("");

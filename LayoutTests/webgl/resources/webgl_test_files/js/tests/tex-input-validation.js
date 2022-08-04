@@ -275,7 +275,7 @@ var testCases = [
     border: 0,
     format: 0x1903, // GL_RED
     type: gl.UNSIGNED_BYTE,
-    expectedError: [gl.INVALID_ENUM, gl.INVALID_VALUE] },
+    expectedError: [gl.INVALID_ENUM, gl.INVALID_VALUE, gl.INVALID_OPERATION] },
   { target: gl.TEXTURE_2D,
     internalFormat: gl.RGBA,
     border: 1,
@@ -517,7 +517,7 @@ var testCases = [
     border: 0,
     format: gl.RGBA,
     type: gl.UNSIGNED_BYTE,
-    expectedError: gl.INVALID_VALUE},
+    expectedError: [gl.INVALID_VALUE, gl.INVALID_OPERATION]},
   { target: gl.TEXTURE_3D,
     internalFormat: gl.RGBA,
     border: 0,

@@ -7,6 +7,7 @@ let wtu = WebGLTestUtils;
 let canvas = document.getElementById("canvas");
 let gl = wtu.create3DContext(canvas, undefined, contextVersion);
 let ext = null;
+let sampler;
 
 if (!gl) {
     testFailed("WebGL context does not exist");
@@ -57,7 +58,7 @@ function runHintTestDisabled() {
     debug("Testing MAX_TEXTURE_MAX_ANISOTROPY_EXT with extension disabled");
 
     const MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF;
-    gl.getParameter(MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+    shouldBeNull(`gl.getParameter(${MAX_TEXTURE_MAX_ANISOTROPY_EXT})`);
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "MAX_TEXTURE_MAX_ANISOTROPY_EXT should not be queryable if extension is disabled");
 
     debug("Testing TEXTURE_MAX_ANISOTROPY_EXT with extension disabled");
@@ -65,7 +66,7 @@ function runHintTestDisabled() {
     let texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
-    gl.getTexParameter(gl.TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT);
+    shouldBeNull(`gl.getTexParameter(gl.TEXTURE_2D, ${TEXTURE_MAX_ANISOTROPY_EXT})`);
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "TEXTURE_MAX_ANISOTROPY_EXT should not be queryable if extension is disabled");
 
     gl.texParameterf(gl.TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, 1);
@@ -141,10 +142,12 @@ function runHintTestEnabled() {
 }
 
 function runSamplerTestDisabled() {
-    let sampler = gl.createSampler();
+    sampler = gl.createSampler();
     const TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE;
     gl.samplerParameterf(sampler, TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "setting TEXTURE_MAX_ANISOTROPY_EXT on sampler without extension enabled should fail");
+    shouldBeNull(`gl.getSamplerParameter(sampler, ${TEXTURE_MAX_ANISOTROPY_EXT})`);
+    wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "querying TEXTURE_MAX_ANISOTROPY_EXT on sampler without extension enabled should fail");
     gl.deleteSampler(sampler);
 }
 

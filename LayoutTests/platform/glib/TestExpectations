@@ -1471,6 +1471,8 @@ webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-draw
 
 webkit.org/b/219340 webgl/1.0.3/conformance/extensions/angle-instanced-arrays-out-of-bounds.html [ Failure ]
 
+webkit.org/b/243487 webgl/1.0.x/conformance/extensions/webgl-multi-draw.html [ Failure ]
+
 # Tests related with the WebGL/Metal backend, maybe should be skipped
 webkit.org/b/229050 fast/canvas/webgl/shader-with-comma-op.html [ Failure ]
 webkit.org/b/229050 fast/canvas/webgl/shader-with-struct-array.html [ Failure ]

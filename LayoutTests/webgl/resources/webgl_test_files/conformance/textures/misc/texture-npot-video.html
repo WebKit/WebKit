@@ -19,9 +19,25 @@ var successfullyParsed = false;
 
 initTestingHarness();
 
+function logVisibility(isOnload)
+{
+    let prefix = '';
+    if (isOnload)
+        prefix = 'Upon load: ';
+    if (document.hidden) {
+        console.log(prefix + '*** Tab was backgrounded (if running in automated test harness, why?) ***');
+    } else {
+        console.log(prefix + 'Tab was foregrounded');
+    }
+}
+
 function init()
 {
     description('Verify npot video');
+
+    document.addEventListener("visibilitychange", visibilityChanged, false);
+
+    logVisibility(true);
 
     var canvas = document.getElementById("example");
     gl = wtu.create3DContext(canvas);
@@ -37,6 +53,10 @@ function init()
 
     var video = document.getElementById("vid");
     wtu.startPlayingAndWaitForVideo(video, runTest);
+}
+
+function visibilityChanged() {
+    logVisibility(false);
 }
 
 function runOneIteration(videoElement, useTexSubImage2D, flipY, topColor, bottomColor, badMinFilter, badClamp, genMips)

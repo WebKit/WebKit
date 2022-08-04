@@ -16,7 +16,7 @@ found in the LICENSE.txt file.
 <body onload="runTest()">
 <div id="description"></div>
 <div id="console"></div>
-<canvas id="canvas" width="64" height="64"> </canvas>
+<canvas id="canvas" width="64" height="64" style="position:fixed;left:0;top:0"> </canvas>
 <script>
 "use strict";
 description("This tests the operation of clearBuffer followed by a draw call.");
@@ -32,6 +32,7 @@ var iterations = 0;
 var maxIterations = 10;
 var prog;
 var tests;
+var stage = 0;
 var blackUint8 = [0, 0, 0, 255];
 var redFloat = [1.0, 0.0, 0.0, 0.0];
 var redUint8 = [255, 0, 0, 255];
@@ -52,21 +53,39 @@ function verifyOnePixel(kind, x, y, readFormat, readType, arrayType, expectedCol
 }
 
 function testClearBufferAndDraw(test) {
+  gl.stencilFunc(gl.EQUAL, 0, 0xFF);
   test['clear']();
   wtu.setFloatDrawColor(gl, greenFloat);
   wtu.drawUnitQuad(gl);
   // Back buffer has no alpha channel.
   let readFormat = gl.RGBA;
   let readType = gl.UNSIGNED_BYTE;
-  verifyOnePixel("Clearing", 0, 0, readFormat, readType, Uint8Array, test['bgColor']);
-  verifyOnePixel("Drawing", canvas.width / 2, canvas.height / 2,
-                 readFormat, readType, Uint8Array, test['drawColor']);
+  if (stage == 2) {
+    verifyOnePixel("Clearing outside scissor",63, 63, readFormat, readType, Uint8Array, blackUint8);
+    verifyOnePixel("Drawing outside scissor", 40, 40, readFormat, readType, Uint8Array, blackUint8);
+  }
+  verifyOnePixel("Clearing", 0,  0, readFormat, readType, Uint8Array, test['bgColor']);
+  verifyOnePixel("Drawing", 32, 32, readFormat, readType, Uint8Array, test['drawColor']);
 }
 
 function runNextTest() {
   if (testIndex >= tests.length) {
-    finishTest();
-    return;
+    // Restore after the last clearBufferiv test
+    gl.enable(gl.DEPTH_TEST);
+    if (stage == 0) {
+      debug('');
+      debug('Enabling full-canvas scissor');
+      gl.enable(gl.SCISSOR_TEST);
+    } else if (stage == 1) {
+      debug('');
+      debug('Limiting scissor rect');
+      gl.scissor(0, 0, 33, 33);
+    } else if (stage == 2) {
+      finishTest();
+      return;
+    }
+    testIndex = 0;
+    stage++;
   }
 
 
@@ -80,13 +99,18 @@ function runNextTest() {
   if (++iterations == maxIterations) {
     iterations = 0;
     ++testIndex;
+
+    // Clear to yellow between the tests to ensure that
+    // subsequent tests do not rely on past results.
+    gl.clearColor(1.0, 1.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
   }
 
   wtu.waitForComposite(runNextTest);
 }
 
 function runTest() {
-  gl = wtu.create3DContext(canvas, { alpha:false }, 2);
+  gl = wtu.create3DContext(canvas, { alpha: false, stencil: true }, 2);
 
   if (!gl) {
     testFailed("context does not exist");
@@ -109,7 +133,16 @@ function runTest() {
     {
       desc: 'clearBufferfi only',
       clear: function() {
-        gl.clearBufferfi(gl.DEPTH_STENCIL, 0, 0.0, 0);
+        gl.clearBufferfi(gl.DEPTH_STENCIL, 0, 0.0, 1);
+        gl.stencilFunc(gl.EQUAL, 1, 0xFF);
+      },
+      bgColor: blackUint8,
+      drawColor: greenUint8,
+    },
+    {
+      desc: 'clearBufferfv only',
+      clear: function() {
+        gl.clearBufferfv(gl.DEPTH, 0, [0.0]);
       },
       bgColor: blackUint8,
       drawColor: greenUint8,
@@ -117,7 +150,7 @@ function runTest() {
     {
       desc: 'clearBufferfv and clear',
       clear: function() {
-        gl.clearBufferfv(gl.COLOR, 0, redFloat),
+        gl.clearBufferfv(gl.COLOR, 0, redFloat);
         gl.clearDepth(0.0);
         gl.clear(gl.DEPTH_BUFFER_BIT);
       },
@@ -125,12 +158,33 @@ function runTest() {
       drawColor: greenUint8,
     },
     {
+      desc: 'clearBufferfv (no-op) and clear',
+      clear: function() {
+        gl.clearBufferfv(gl.COLOR, 1, greenFloat);
+        gl.clearDepth(0.0);
+        gl.clear(gl.DEPTH_BUFFER_BIT);
+      },
+      bgColor: blackUint8,
+      drawColor: greenUint8,
+    },
+    {
       desc: 'clearBuffer{fv} and {fi}',
       clear: function() {
-        gl.clearBufferfv(gl.COLOR, 0, redFloat),
-        gl.clearBufferfi(gl.DEPTH_STENCIL, 0, 0.0, 0);
+        gl.clearBufferfv(gl.COLOR, 0, redFloat);
+        gl.clearBufferfi(gl.DEPTH_STENCIL, 0, 0.0, 2);
+        gl.stencilFunc(gl.EQUAL, 2, 0xFF);
       },
       bgColor: redUint8,
+      drawColor: greenUint8,
+    },
+    {
+      desc: 'clearBufferiv only',
+      clear: function() {
+        gl.disable(gl.DEPTH_TEST);
+        gl.clearBufferiv(gl.STENCIL, 0, [3]);
+        gl.stencilFunc(gl.EQUAL, 3, 0xFF);
+      },
+      bgColor: blackUint8,
       drawColor: greenUint8,
     },
   ];
@@ -145,6 +199,8 @@ function runTest() {
   // case highlights the rendering error more clearly, since neither
   // the background nor any rendered object show up.
   gl.depthFunc(gl.GEQUAL);
+
+  gl.enable(gl.STENCIL_TEST);
 
   // Must run in a requestAnimationFrame loop to provoke implicit
   // clears of the canvas.

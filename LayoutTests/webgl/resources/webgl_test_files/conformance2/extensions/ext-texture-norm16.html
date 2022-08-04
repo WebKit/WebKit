@@ -49,12 +49,13 @@ function generateFormatColor(format, value, alpha) {
   }
 }
 
-function testNorm16Texture(internalFormat, format, type) {
+function testNorm16Texture(internalFormat, format, type, error="NO_ERROR") {
+  debug(`\ntestNorm16Texture(${[].slice.call(arguments).join(", ")})`);
   let pixelValue;
   let expectedValue;
   let imageData;
 
-  switch(type) {
+  switch(gl[type]) {
     case gl.SHORT:
       pixelValue = 0x7fff;
       expectedValue = 0xff;
@@ -73,14 +74,16 @@ function testNorm16Texture(internalFormat, format, type) {
   // Texture sampled from
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, textures[0]);
-  gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 1, 1, 0, format, type, imageData);
+  gl.texImage2D(gl.TEXTURE_2D, 0, ext[internalFormat] || gl[internalFormat],
+        1, 1, 0, gl[format], gl[type], imageData);
 
-  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "texture bindings succeed");
+  wtu.glErrorShouldBe(gl, gl[error], `texImage should generate error:${error}`);
+  if (gl[error]) return;
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
   // Read back as gl.UNSIGNED_BYTE
-  wtu.checkCanvasRect(gl, 0, 0, 1, 1, generateFormatColor(format, expectedValue));
+  wtu.checkCanvasRect(gl, 0, 0, 1, 1, generateFormatColor(gl[format], expectedValue));
 }
 
 function testNorm16Render(interalFormat, format, type, tolerance) {
@@ -138,9 +141,9 @@ function testNorm16Render(interalFormat, format, type, tolerance) {
   gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
-function testSnorm16Unrenderable(internalFormat, format, type) {
+function testExtFormatUnrenderable(internalFormatName, format, type) {
   gl.bindTexture(gl.TEXTURE_2D, textures[1]);
-  gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 1, 1, 0, format, type, null);
+  gl.texImage2D(gl.TEXTURE_2D, 0, ext[internalFormatName], 1, 1, 0, format, type, null);
 
   wtu.glErrorShouldBe(gl, gl.NO_ERROR, "texture definition succeeded");
 
@@ -150,7 +153,7 @@ function testSnorm16Unrenderable(internalFormat, format, type) {
   wtu.glErrorShouldBe(gl, gl.NO_ERROR, "fbo binding succeeded");
 
   wtu.framebufferStatusShouldBe(gl, gl.FRAMEBUFFER, [ gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT, gl.FRAMEBUFFER_UNSUPPORTED ],
-                                "framebuffer should not be complete with SNORM16 texture attached");
+                                `framebuffer should not be complete with ${internalFormatName} texture attached`);
 }
 
 function runInternalFormatQueryTest()
@@ -188,14 +191,22 @@ function runTestExtension() {
   let program300 = wtu.setupSimpleTextureProgramESSL300(gl);
   let program100 = wtu.setupTexturedQuad(gl, 0, 1, wtu.simpleHighPrecisionTextureFragmentShader);
 
-  testNorm16Texture(ext.R16_EXT, gl.RED, gl.UNSIGNED_SHORT);
-  testNorm16Texture(ext.RG16_EXT, gl.RG, gl.UNSIGNED_SHORT);
-  testNorm16Texture(ext.RGB16_EXT, gl.RGB, gl.UNSIGNED_SHORT);
-  testNorm16Texture(ext.RGBA16_EXT, gl.RGBA, gl.UNSIGNED_SHORT);
-  testNorm16Texture(ext.R16_SNORM_EXT, gl.RED, gl.SHORT);
-  testNorm16Texture(ext.RG16_SNORM_EXT, gl.RG, gl.SHORT);
-  testNorm16Texture(ext.RGB16_SNORM_EXT, gl.RGB, gl.SHORT);
-  testNorm16Texture(ext.RGBA16_SNORM_EXT, gl.RGBA, gl.SHORT);
+  debug("");
+  debug("Texture creation");
+  testNorm16Texture("R16_EXT", "RED", "UNSIGNED_SHORT");
+  testNorm16Texture("RG16_EXT", "RG", "UNSIGNED_SHORT");
+  testNorm16Texture("RGB16_EXT", "RGB", "UNSIGNED_SHORT");
+  testNorm16Texture("RGBA16_EXT", "RGBA", "UNSIGNED_SHORT");
+  testNorm16Texture("R16_SNORM_EXT", "RED", "SHORT");
+  testNorm16Texture("RG16_SNORM_EXT", "RG", "SHORT");
+  testNorm16Texture("RGB16_SNORM_EXT", "RGB", "SHORT");
+  testNorm16Texture("RGBA16_SNORM_EXT", "RGBA", "SHORT");
+
+  testNorm16Texture("RGBA", "RGBA", "UNSIGNED_SHORT", "INVALID_OPERATION");
+  testNorm16Texture("RGBA", "RGBA", "SHORT", "INVALID_OPERATION");
+
+  debug("");
+  debug("Texture renderability");
 
   testNorm16Render(ext.R16_EXT, gl.RED, gl.UNSIGNED_SHORT, 8);
   testNorm16Render(ext.RG16_EXT, gl.RG, gl.UNSIGNED_SHORT, 8);
@@ -205,12 +216,13 @@ function runTestExtension() {
 
   testNorm16Render(ext.R16_EXT, gl.RED, gl.UNSIGNED_SHORT, 0);
   testNorm16Render(ext.RG16_EXT, gl.RG, gl.UNSIGNED_SHORT, 0);
+  testExtFormatUnrenderable("RGB16_EXT", gl.RGB, gl.UNSIGNED_SHORT);
   testNorm16Render(ext.RGBA16_EXT, gl.RGBA, gl.UNSIGNED_SHORT, 0);
 
-  testSnorm16Unrenderable(ext.R16_SNORM_EXT, gl.RED, gl.SHORT);
-  testSnorm16Unrenderable(ext.RG16_SNORM_EXT, gl.RG, gl.SHORT);
-  testSnorm16Unrenderable(ext.RGB16_SNORM_EXT, gl.RGB, gl.SHORT);
-  testSnorm16Unrenderable(ext.RGBA16_SNORM_EXT, gl.RGBA, gl.SHORT);
+  testExtFormatUnrenderable("R16_SNORM_EXT", gl.RED, gl.SHORT);
+  testExtFormatUnrenderable("RG16_SNORM_EXT", gl.RG, gl.SHORT);
+  testExtFormatUnrenderable("RGB16_SNORM_EXT", gl.RGB, gl.SHORT);
+  testExtFormatUnrenderable("RGBA16_SNORM_EXT", gl.RGBA, gl.SHORT);
 };
 
 function runTest() {

@@ -791,11 +791,75 @@ var TexImageUtils = (function() {
     return program;
   };
 
+  /**
+   * Return a list of unpack color spaces to test, supported by the specified
+   * WebGLRenderingContext.
+   */
+  var unpackColorSpacesToTest = function(gl)
+  {
+    if ('unpackColorSpace' in gl)
+      return ['srgb', 'display-p3'];
+    else
+      return [undefined];
+  }
+
+  /**
+   * For each entry in unpackColorSpaces, duplicate all of cases, adding an
+   * unpackColorSpace key with its value set to that entry to each case.
+   */
+  var crossProductTestCasesWithUnpackColorSpaces = function(testCaseList, unpackColorSpaces)
+  {
+    var testCaseWithUnpackColorSpace = function(testCase, colorSpace)
+    {
+      return {...testCase, ...{unpackColorSpace:colorSpace}};
+    }
+    var listOfTestCaseLists = unpackColorSpaces.map(colorSpace =>
+        testCaseList.map(testCase => testCaseWithUnpackColorSpace(testCase, colorSpace)));
+    return listOfTestCaseLists.flat();
+  }
+
+  /**
+   * Given given an internalformat, format, and type, return the tolerance
+   * that should be used when comparing an input 8-bit value to one that has
+   * been truncated through the specified formats.
+   */
+  var tolerance = function(internalformat, format, type) {
+    function typeTolerance(type) {
+      switch(type) {
+        case 'UNSIGNED_SHORT_5_6_5':
+        case 'UNSIGNED_SHORT_5_5_5_1':
+          return 255 / 31;
+        case 'UNSIGNED_SHORT_4_4_4_4':
+          return 255 / 15;
+          break;
+        default:
+          return 1;
+      }
+    };
+    function formatTolerance(format) {
+      switch(format) {
+        case 'RGB565':
+        case 'RGB5_A1':
+          return 255/31;
+        case 'RGBA4':
+          return 255/15;
+        default:
+          return 1;
+      }
+    };
+    return Math.max(formatTolerance(internalformat),
+                    formatTolerance(format),
+                    typeTolerance(type));
+  }
+
   return {
     setupTexturedQuad: setupTexturedQuad,
     setupTexturedQuadWithCubeMap: setupTexturedQuadWithCubeMap,
     setupTexturedQuadWith3D: setupTexturedQuadWith3D,
-    setupTexturedQuadWith2DArray: setupTexturedQuadWith2DArray
+    setupTexturedQuadWith2DArray: setupTexturedQuadWith2DArray,
+    unpackColorSpacesToTest: unpackColorSpacesToTest,
+    crossProductTestCasesWithUnpackColorSpaces: crossProductTestCasesWithUnpackColorSpaces,
+    tolerance: tolerance
   };
 
 }());

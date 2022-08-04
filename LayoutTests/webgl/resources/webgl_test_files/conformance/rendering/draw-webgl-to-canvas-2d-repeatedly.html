@@ -12,6 +12,12 @@ found in the LICENSE.txt file.
 <link rel="stylesheet" href="../../resources/js-test-style.css"/>
 <script src="../../js/js-test-pre.js"></script>
 <script src="../../js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas-webgl" width="256" height="256"></canvas>
+<canvas id="canvas-2d" width="256" height="256"></canvas>
 <script>
 "use strict";
 const wtu = WebGLTestUtils;
@@ -81,11 +87,5 @@ function runTest() {
 
 requestAnimationFrame(runTest);
 </script>
-</head>
-<body>
-<div id="description"></div>
-<div id="console"></div>
-<canvas id="canvas-webgl" width="256" height="256"></canvas>
-<canvas id="canvas-2d" width="256" height="256"></canvas>
 </body>
 </html>

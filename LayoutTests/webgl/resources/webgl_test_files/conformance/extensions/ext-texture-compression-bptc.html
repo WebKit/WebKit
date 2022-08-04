@@ -115,17 +115,17 @@ function runTestExtension() {
     gl.bindTexture(gl.TEXTURE_2D, tex);
 
     gl.texImage2D(gl.TEXTURE_2D, 0, ext.COMPRESSED_RGBA_BPTC_UNORM_EXT, 4, 4, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "COMPRESSED_RGBA_BPTC_UNORM_EXT fails with texImage2D");
+    wtu.glErrorShouldBe(gl, [gl.INVALID_VALUE, gl.INVALID_OPERATION], "COMPRESSED_RGBA_BPTC_UNORM_EXT fails with texImage2D");
 
     gl.texImage2D(gl.TEXTURE_2D, 0, ext.COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT, 4, 4, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT fails with texImage2D");
+    wtu.glErrorShouldBe(gl, [gl.INVALID_VALUE, gl.INVALID_OPERATION], "COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT fails with texImage2D");
 
     if (contextVersion >= 2) {
       gl.texImage2D(gl.TEXTURE_2D, 0, ext.COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT, 4, 4, 0, gl.RGB, gl.FLOAT, null);
-      wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT fails with texImage2D");
+      wtu.glErrorShouldBe(gl, [gl.INVALID_VALUE, gl.INVALID_OPERATION], "COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT fails with texImage2D");
 
       gl.texImage2D(gl.TEXTURE_2D, 0, ext.COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT, 4, 4, 0, gl.RGB, gl.FLOAT, null);
-      wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT fails with texImage2D");
+      wtu.glErrorShouldBe(gl, [gl.INVALID_VALUE, gl.INVALID_OPERATION], "COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT fails with texImage2D");
     }
 
     gl.deleteTexture(tex);

@@ -56,6 +56,7 @@ var frameBufferA = contextA.createFramebuffer();
 var frameBufferB = contextB.createFramebuffer();
 var programB = wtu.loadStandardProgram(contextB);
 var queryB = contextB.createQuery();
+var samplerA = contextA.createSampler();
 var samplerB = contextB.createSampler();
 var syncB = contextB.fenceSync(contextB.SYNC_GPU_COMMANDS_COMPLETE, 0);
 var transformFeedbackA = contextA.createTransformFeedback();
@@ -176,11 +177,19 @@ wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "contextA.getQue
 
 // Sampler objects
 wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "contextA.deleteSampler(samplerB)");
+wtu.shouldGenerateGLError(contextB, contextB.INVALID_OPERATION, "contextB.deleteSampler(samplerA)");
+wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "contextA.bindSampler(0, samplerB)");
+wtu.shouldGenerateGLError(contextB, contextB.INVALID_OPERATION, "contextB.bindSampler(0, samplerA)");
 wtu.shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.isSampler(samplerB)");
+wtu.shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextB.isSampler(samplerA)");
 shouldBeFalse("contextA.isSampler(samplerB)");
+shouldBeFalse("contextB.isSampler(samplerA)");
 wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "contextA.samplerParameteri(samplerB, contextA.TEXTURE_WRAP_S, contextA.CLAMP_TO_EDGE)");
+wtu.shouldGenerateGLError(contextB, contextB.INVALID_OPERATION, "contextB.samplerParameteri(samplerA, contextB.TEXTURE_WRAP_S, contextB.CLAMP_TO_EDGE)");
 wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "contextA.samplerParameterf(samplerB, contextA.TEXTURE_MIN_LOD, -500.5)");
+wtu.shouldGenerateGLError(contextB, contextB.INVALID_OPERATION, "contextB.samplerParameterf(samplerA, contextB.TEXTURE_MIN_LOD, -500.5)");
 wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "contextA.getSamplerParameter(samplerB, contextA.TEXTURE_WRAP_S)");
+wtu.shouldGenerateGLError(contextB, contextB.INVALID_OPERATION, "contextB.getSamplerParameter(samplerA, contextB.TEXTURE_WRAP_S)");
 
 // Sync objects
 wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "contextA.deleteSync(syncB)");

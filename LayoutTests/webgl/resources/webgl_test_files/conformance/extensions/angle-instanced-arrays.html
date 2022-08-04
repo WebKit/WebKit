@@ -13,6 +13,8 @@ found in the LICENSE.txt file.
 <script src="../../js/desktop-gl-constants.js"></script>
 <script src="../../js/js-test-pre.js"></script>
 <script src="../../js/webgl-test-utils.js"></script>
+<script src="../../js/tests/compositing-test.js"></script>
+<script src="../../js/tests/invalid-vertex-attrib-test.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -59,6 +61,8 @@ description("This test verifies the functionality of the ANGLE_instanced_arrays 
 
 debug("");
 
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 var wtu = WebGLTestUtils;
 var canvas = document.getElementById("canvas");
 var gl = wtu.create3DContext(canvas);
@@ -88,18 +92,21 @@ if (!gl) {
     } else {
         testPassed("Successfully enabled ANGLE_instanced_arrays extension");
 
-        runSupportedTest(true);
+        (async function() {
+            runSupportedTest(true);
 
-        runDivisorTestEnabled();
-        runUniqueObjectTest();
+            runDivisorTestEnabled();
+            runUniqueObjectTest();
 
-        setupCanvas();
-        runOutputTests();
-        runDrawArraysWithOffsetTest();
-        runVAOInstancingInteractionTest();
-        runANGLECorruptionTest();
-        // Note that the ANGLE corruption test leaves vertex attrib divisors dirty at the moment.
-        // This should be cleaned up if more subtests are added after it.
+            setupCanvas();
+            runOutputTests();
+            runDrawArraysWithOffsetTest();
+            runVAOInstancingInteractionTest();
+            await runANGLECorruptionTest();
+            await runInvalidAttribTests(gl);
+            await runCompositingTests();
+            finishTest();
+        }());
     }
 }
 
@@ -553,7 +560,7 @@ function runVAOInstancingInteractionTest()
     vaoext.bindVertexArrayOES(null);
 }
 
-function runANGLECorruptionTest()
+async function runANGLECorruptionTest()
 {
     debug("")
     debug("Testing to ensure that rendering isn't corrupt due to an ANGLE bug");
@@ -563,8 +570,6 @@ function runANGLECorruptionTest()
 
     var tolerance = 2; // Amount of variance to allow in result pixels - may need to be tweaked higher
     var instanceCount = 10; // Must be higher than 6
-    var iteration = 0;
-    var totalIterations = 10;
 
     var offsets = new Float32Array([
         0.0, 0.0,
@@ -609,7 +614,9 @@ function runANGLECorruptionTest()
     gl.clear(gl.COLOR_BUFFER_BIT);
     wtu.setupUnitQuad(gl, 0);
 
-    function cycleAndTest() {
+    const totalIterations = 10;
+    for (let iteration = 0; iteration < totalIterations; ++iteration)
+    {
         // Update the instanced data buffers outside the accessed range.
         // This, plus rendering more instances than vertices, triggers the bug.
         var nullData = new Float32Array(offsets.length);
@@ -640,20 +647,77 @@ function runANGLECorruptionTest()
 
         if (passed) {
             testPassed("Passed test " + iteration + " of " + totalIterations);
-            if (iteration < totalIterations) {
-                ++iteration;
-                setTimeout(cycleAndTest, 0);
-            } else {
-                finishTest();
-            }
         } else {
             testFailed("Failed test " + iteration + " of " + totalIterations);
-            finishTest();
+            break;
         }
+        await wait();
+    }
+    ext.vertexAttribDivisorANGLE(offsetLoc, 0);
+    ext.vertexAttribDivisorANGLE(colorLoc, 0);
+}
+
+async function runDrawTests(testFn) {
+    function drawArrays(gl) {
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
-    cycleAndTest();
+    function drawElements(gl) {
+      gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
+    }
+
+    function drawArraysInstancedANGLE(gl) {
+      const ext = gl.getExtension('ANGLE_instanced_arrays');
+      if (!ext) {
+        return true;
+      }
+
+      ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 6, 1);
+    }
+
+    function drawElementsInstancedANGLE(gl) {
+      const ext = gl.getExtension('ANGLE_instanced_arrays');
+      if (!ext) {
+        return true;
+      }
+
+      ext.drawElementsInstancedANGLE(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0, 1);
+    }
+
+    await testFn(drawArrays);             // sanity check
+    await testFn(drawElements);           // sanity check
+
+    await testFn(drawArraysInstancedANGLE);
+    await testFn(drawElementsInstancedANGLE);
 }
+
+async function runCompositingTests() {
+    const compositingTestFn = createCompositingTestFn({
+      webglVersion: 1,
+      shadersFn(gl) {
+        const vs = `\
+        attribute vec4 position;
+        void main() {
+          gl_Position = position;
+        }
+        `;
+        const fs = `\
+        precision mediump float;
+        void main() {
+          gl_FragColor = vec4(1, 0, 0, 1);
+        }
+        `;
+        return [vs, fs];
+      },
+    });
+    await runDrawTests(compositingTestFn);
+}
+
+async function runInvalidAttribTests(gl) {
+  const invalidAttribTestFn = createInvalidAttribTestFn(gl);
+  await runDrawTests(invalidAttribTestFn);
+}
+
 </script>
 </body>
 </html>

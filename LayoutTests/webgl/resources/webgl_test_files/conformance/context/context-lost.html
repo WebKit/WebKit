@@ -38,11 +38,16 @@ var int32array;
 var OES_vertex_array_object;
 var vertexArrayObject;
 
+var secondCanvas;
+var secondGL;
+
 function init()
 {
     wtu = WebGLTestUtils;
     canvas = document.getElementById("canvas");
     gl = wtu.create3DContext(canvas);
+    secondCanvas = document.getElementById("canvas2");
+    secondGL = wtu.create3DContext(secondCanvas);
     shouldGenerateGLError = wtu.shouldGenerateGLError;
 
     description("Tests behavior under a lost context");
@@ -130,6 +135,15 @@ function testFunctionsThatReturnNULL(tests) {
   tests.forEach(function(test) {
       shouldBeNull(test);
   });
+}
+
+function testUploadingLostContextToTexture() {
+  debug("Testing uploading a canvas with a lost WebGL context to a texture");
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors at beginning");
+  let texture = secondGL.createTexture();
+  secondGL.bindTexture(secondGL.TEXTURE_2D, texture);
+  secondGL.texImage2D(secondGL.TEXTURE_2D, 0, secondGL.RGBA, secondGL.RGBA, secondGL.UNSIGNED_BYTE, canvas);
+  wtu.glErrorShouldBe(secondGL, [secondGL.INVALID_OPERATION, secondGL.NO_ERROR], "Should not crash when uploading canvas with lost WebGL context to a texture");
 }
 
 function testLostContext()
@@ -347,6 +361,8 @@ function testLostContext()
         ]);
     }
 
+    testUploadingLostContextToTexture();
+
     debug("");
 
     finishTest();
@@ -358,5 +374,6 @@ function testLostContext()
 <div id="description"></div>
 <div id="console"></div>
 <canvas id="canvas">
+<canvas id="canvas2">
 </body>
 </html>

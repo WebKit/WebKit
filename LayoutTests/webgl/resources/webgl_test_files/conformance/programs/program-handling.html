@@ -63,56 +63,76 @@ if (!gl) {
     testFailed("context does not exist");
 }
 
-var vs = wtu.loadShaderFromScript(gl, "vshader");
-var fs = wtu.loadShaderFromScript(gl, "fshader");
-var prg = wtu.createProgram(gl, vs, fs);
-gl.useProgram(prg);
-const positionLoc = gl.getAttribLocation(prg, 'a_position');
-const colorLoc = gl.getUniformLocation(prg, 'u_color');
+function testProgramInvalidation() {
+    debug('');
+    debug('== Testing invalidation of the current program ==');
+    var vs = wtu.loadShaderFromScript(gl, "vshader");
+    var fs = wtu.loadShaderFromScript(gl, "fshader");
+    var prg = wtu.createProgram(gl, vs, fs);
+    gl.useProgram(prg);
+    const positionLoc = gl.getAttribLocation(prg, 'a_position');
+    const colorLoc = gl.getUniformLocation(prg, 'u_color');
 
-wtu.setupUnitQuad(gl, positionLoc);
+    wtu.setupUnitQuad(gl, positionLoc);
 
-debug("Draw red with valid program");
-gl.uniform4fv(colorLoc, [1, 0, 0, 1]);
-wtu.drawUnitQuad(gl);
-wtu.checkCanvas(gl, [255, 0, 0, 255], "should be red");
+    debug("Draw red with valid program");
+    gl.uniform4fv(colorLoc, [1, 0, 0, 1]);
+    wtu.drawUnitQuad(gl);
+    wtu.checkCanvas(gl, [255, 0, 0, 255], "should be red");
 
-debug("Change fragment shader to one that will not link");
-compile(gl, fs, "fshader-not-link");
-debug("Draw orange");
-gl.uniform4fv(colorLoc, [1, 127/255, 0, 1]);
-wtu.drawUnitQuad(gl);
-wtu.checkCanvas(gl, [255, 127, 0, 255], "should be orange");
+    debug("Change fragment shader to one that will not link");
+    compile(gl, fs, "fshader-not-link");
+    debug("Draw orange");
+    gl.uniform4fv(colorLoc, [1, 127/255, 0, 1]);
+    wtu.drawUnitQuad(gl);
+    wtu.checkCanvas(gl, [255, 127, 0, 255], "should be orange");
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "should be no errors before relink");
 
-debug("Try linking");
-gl.linkProgram(prg);
-assertMsg(gl.getProgramParameter(prg, gl.LINK_STATUS) == false, "link should fail");
-debug("Draw green to show even though link failed old program is still valid");
-gl.uniform4fv(colorLoc, [0, 1, 0, 1]);
-wtu.drawUnitQuad(gl);
-wtu.checkCanvas(gl, [0, 255, 0, 255], "should be green");
+    debug("Try linking");
+    gl.linkProgram(prg);
+    assertMsg(gl.getProgramParameter(prg, gl.LINK_STATUS) == false, "link should fail");
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "should be no errors after linkProgram");
+    debug("Attempt to draw green; because link failed, in WebGL, the draw should generate INVALID_OPERATION");
+    gl.uniform4fv(colorLoc, [0, 1, 0, 1]);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "because the current program has been invalidated, uniform* calls generate INVALID_OPERATION");
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "should be no errors before draw");
+    wtu.drawUnitQuad(gl);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "draw with invalidated program should fail");
+    wtu.checkCanvas(gl, [255, 127, 0, 255], "should still be orange");
+}
 
-debug("Detach and delete shaders");
-gl.detachShader(prg, vs);
-gl.detachShader(prg, fs);
-gl.deleteShader(vs);
-gl.deleteShader(fs);
+function testProgramShaderRemoval() {
+    debug('');
+    debug('== Testing removal of shaders from the current program ==');
+    var vs = wtu.loadShaderFromScript(gl, "vshader");
+    var fs = wtu.loadShaderFromScript(gl, "fshader");
+    var prg = wtu.createProgram(gl, vs, fs);
+    gl.useProgram(prg);
+    const positionLoc = gl.getAttribLocation(prg, 'a_position');
+    const colorLoc = gl.getUniformLocation(prg, 'u_color');
 
-debug("Draw blue to show even though shaders are gone program is still valid");
-gl.uniform4fv(colorLoc, [0, 0, 1, 1]);
-wtu.drawUnitQuad(gl);
-wtu.checkCanvas(gl, [0, 0, 255, 255], "should be blue");
+    wtu.setupUnitQuad(gl, positionLoc);
 
-debug("Call useProgram to show old program can not be made current again");
-gl.useProgram(prg);
-wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "should be invalid");
+    debug("Draw red with valid program");
+    gl.uniform4fv(colorLoc, [1, 0, 0, 1]);
+    wtu.drawUnitQuad(gl);
+    wtu.checkCanvas(gl, [255, 0, 0, 255], "should be red");
 
-debug("Draw purple to show the original program is still usable");
-gl.uniform4fv(colorLoc, [1, 0, 1, 1]);
-wtu.drawUnitQuad(gl);
-wtu.checkCanvas(gl, [255, 0, 255, 255], "should be purple");
+    debug("Detach and delete shaders");
+    gl.detachShader(prg, vs);
+    gl.detachShader(prg, fs);
+    gl.deleteShader(vs);
+    gl.deleteShader(fs);
 
-wtu.glErrorShouldBe(gl, gl.NO_ERROR, "should be no errors");
+    debug("Draw blue to show even though shaders are gone program is still valid");
+    gl.uniform4fv(colorLoc, [0, 0, 1, 1]);
+    wtu.drawUnitQuad(gl);
+    wtu.checkCanvas(gl, [0, 0, 255, 255], "should be blue");
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "should be no errors");
+}
+
+testProgramInvalidation();
+testProgramShaderRemoval();
 
 var successfullyParsed = true;
 </script>

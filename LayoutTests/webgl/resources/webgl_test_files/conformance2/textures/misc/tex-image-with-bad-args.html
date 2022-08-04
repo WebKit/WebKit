@@ -44,7 +44,7 @@ var tests = [
     { internalformat: gl.RGBA, format: gl.RGBA, type: gl.HALF_FLOAT, errors: [gl.INVALID_OPERATION] },
     { internalformat: gl.LUMINANCE, format: gl.LUMINANCE, type: gl.FLOAT, errors: [gl.INVALID_OPERATION] },
     { internalformat: gl.LUMINANCE_ALPHA, format: gl.LUMINANCE_ALPHA, type: gl.HALF_FLOAT, errors: [gl.INVALID_OPERATION] },
-    { internalformat: 0x822A /*GL_R16_EXT*/ , format: gl.RED, type: gl.UNSIGNED_SHORT, errors: [gl.INVALID_VALUE] },
+    { internalformat: 0x822A /*GL_R16_EXT*/ , format: gl.RED, type: gl.UNSIGNED_SHORT, errors: [gl.INVALID_VALUE, gl.INVALID_OPERATION] },
     { internalformat: gl.RED, format: gl.RED, type: gl.UNSIGNED_SHORT, errors: [gl.INVALID_VALUE, gl.INVALID_OPERATION] },
 ];
 
