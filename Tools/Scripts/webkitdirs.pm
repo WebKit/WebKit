@@ -29,8 +29,6 @@
 
 # Module to share code to get to WebKit directories.
 
-package webkitdirs;
-
 use strict;
 use version;
 use warnings;
@@ -69,117 +67,38 @@ BEGIN {
        &appDisplayNameFromBundle
        &appendToEnvironmentVariableList
        &archCommandLineArgumentsForRestrictedEnvironmentVariables
-       &architecture
-       &architecturesForProducts
-       &argumentsForConfiguration
-       &asanIsEnabled
        &availableXcodeSDKs
        &baseProductDir
-       &buildCMakeProjectOrExit
-       &buildVisualStudioProject
-       &buildXCodeProject
-       &buildXcodeScheme
-       &builtDylibPathForName
-       &canUseNinja
        &chdirWebKit
-       &checkForArgumentAndRemoveFromARGV
-       &checkForArgumentAndRemoveFromARGVGettingValue
-       &checkForArgumentAndRemoveFromArrayRef
-       &checkForArgumentAndRemoveFromArrayRefGettingValue
        &checkFrameworks
-       &checkRequiredSystemConfig
        &cmakeArgsFromFeatures
-       &configuration
-       &configuredXcodeWorkspace
-       &coverageIsEnabled
-       &currentPerlPath
        &currentSVNRevision
-       &debugMiniBrowser
        &debugSafari
-       &debugWebKitTestRunner
        &executableProductDir
-       &exitStatus
-       &extractNonMacOSHostConfiguration
-       &forceOptimizationLevel
-       &formatBuildTime
-       &generateBuildSystemFromCMakeProject
-       &inFlatpakSandbox
+       &extractNonHostConfiguration
        &iosVersion
-       &isARM64
-       &isAnyWindows
-       &isAppleCocoaWebKit
-       &isAppleMacWebKit
-       &isAppleWebKit
-       &isAppleWinWebKit
-       &isCMakeBuild
-       &isCygwin
-       &isEmbeddedWebKit
-       &isFTW
-       &isGenerateProjectOnly
-       &isGtk
-       &isInspectorFrontend
-       &isJSCOnly
-       &isPlayStation
-       &isWPE
-       &isWinCairo
-       &isWindows
-       &isX86_64
-       &jscPath
-       &jscProductDir
-       &launcherName
-       &launcherPath
-       &ltoMode
-       &markBaseProductDirectoryAsCreatedByXcodeBuildSystem
-       &maxCPULoad
-       &nativeArchitecture
        &nmPath
-       &numberOfCPUs
-       &osXVersion
-       &overrideConfiguredXcodeWorkspace
-       &parseAvailableXcodeSDKs
-       &passedArchitecture
        &passedConfiguration
-       &portName
        &prependToEnvironmentVariableList
        &printHelpAndExitForRunAndDebugWebKitAppIfNeeded
        &productDir
-       &prohibitUnknownPort
-       &relativeScriptsDir
-       &removeCMakeCache
-       &runGitUpdate
        &runIOSWebKitApp
-       &runInFlatpak
-       &runInFlatpakIfAvailable
        &runMacWebKitApp
-       &runWebKitTestRunner
        &safariPath
        &sdkDirectory
        &sdkPlatformDirectory
-       &setArchitecture
        &setConfiguration
-       &setConfigurationProductDir
-       &setPathForRunningWebKitApp
-       &setUpGuardMallocIfNeeded
-       &setupAppleWinEnv
        &setupMacWebKitEnvironment
        &setupUnixWebKitEnvironment
        &sharedCommandLineOptions
        &sharedCommandLineOptionsUsage
        &shouldUseFlatpak
+       &runInFlatpak
        &sourceDir
-       &splitVersionString
-       &tsanIsEnabled
-       &ubsanIsEnabled
        &willUseIOSDeviceSDK
        &willUseIOSSimulatorSDK
-       &winVersion
-       &wrapperPrefixIfNeeded
-       &xcodeSDK
-       &xcodeSDKPlatformName
        DO_NOT_USE_OPEN_COMMAND
-       Mac
        USE_OPEN_COMMAND
-       iOS
    );
    %EXPORT_TAGS = ( );
    @EXPORT_OK   = ();
@@ -1165,7 +1084,7 @@ sub XcodeOptions
     push @options, "ARCHS=$architecture" if $architecture;
     push @options, "SDKROOT=$xcodeSDK" if $xcodeSDK;
 
-    my @features = webkitperl::FeatureList::getFeatureOptionList();
+    my @features = getFeatureOptionList();
     foreach (@features) {
         if (checkForArgumentAndRemoveFromARGV("--no-$_->{option}")) {
             push @options, "$_->{define}=";
