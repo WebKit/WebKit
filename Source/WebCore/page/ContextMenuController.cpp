@@ -811,6 +811,14 @@ void ContextMenuController::populate()
     ContextMenuItem SearchSpotlightItem(ActionType, ContextMenuItemTagSearchInSpotlight, 
         contextMenuItemTagSearchInSpotlight());
 #endif
+
+#if ENABLE(PDFJS)
+    ContextMenuItem SinglePageItem(ActionType, ContextMenuItemPDFSinglePage, contextMenuItemPDFSinglePage());
+    ContextMenuItem SinglePageContinuousItem(ActionType, ContextMenuItemPDFSinglePageContinuous, contextMenuItemPDFSinglePageContinuous());
+    ContextMenuItem TwoPagesItem(ActionType, ContextMenuItemPDFTwoPages, contextMenuItemPDFTwoPages());
+    ContextMenuItem TwoPagesContinuousItem(ActionType, ContextMenuItemPDFTwoPagesContinuous, contextMenuItemPDFTwoPagesContinuous());
+#endif
+    
 #if ENABLE(APP_HIGHLIGHTS)
     ContextMenuItem AddHighlightItem(ActionType, ContextMenuItemTagAddHighlightToCurrentQuickNote, contextMenuItemTagAddHighlightToCurrentQuickNote());
     ContextMenuItem AddHighlightToNewQuickNoteItem(ActionType, ContextMenuItemTagAddHighlightToNewQuickNote, contextMenuItemTagAddHighlightToNewQuickNote());
@@ -823,7 +831,7 @@ void ContextMenuController::populate()
     ContextMenuItem ForwardItem(ActionType, ContextMenuItemTagGoForward,  contextMenuItemTagGoForward());
     ContextMenuItem StopItem(ActionType, ContextMenuItemTagStop, contextMenuItemTagStop());
     ContextMenuItem ReloadItem(ActionType, ContextMenuItemTagReload, contextMenuItemTagReload());
-    ContextMenuItem OpenFrameItem(ActionType, ContextMenuItemTagOpenFrameInNewWindow, 
+    ContextMenuItem OpenFrameItem(ActionType, ContextMenuItemTagOpenFrameInNewWindow,
         contextMenuItemTagOpenFrameInNewWindow());
     ContextMenuItem NoGuessesItem(ActionType, ContextMenuItemTagNoGuessesFound, 
         contextMenuItemTagNoGuessesFound());
@@ -965,6 +973,11 @@ void ContextMenuController::populate()
         if (selectionIsInsideImageOverlay || (linkURL.isEmpty() && mediaURL.isEmpty() && imageURL.isEmpty())) {
             if (!imageURL.isEmpty())
                 appendItem(*separatorItem(), m_contextMenu.get());
+            
+            auto* page = frame->page();
+            RefPtr ownerElement = frame->ownerElement();
+            bool isPDFDocument = ownerElement && ownerElement->document().isPDFDocument();
+            bool isMainFrame = frame->isMainFrame();
 
             if (m_context.hitTestResult().isSelected()) {
                 addSelectedTextActionsIfNeeded(selectedText);
@@ -974,7 +987,7 @@ void ContextMenuController::populate()
                 appendItem(*separatorItem(), m_contextMenu.get());
 
 #if ENABLE(APP_HIGHLIGHTS)
-                if (auto* page = frame->page(); page && page->settings().appHighlightsEnabled() && !selectionIsInsideImageOverlay) {
+                if (page && page->settings().appHighlightsEnabled() && !selectionIsInsideImageOverlay) {
                     appendItem(AddHighlightToNewQuickNoteItem, m_contextMenu.get());
                     appendItem(AddHighlightItem, m_contextMenu.get());
                     appendItem(*separatorItem(), m_contextMenu.get());
@@ -989,7 +1002,7 @@ void ContextMenuController::populate()
                 appendItem(SpeechMenuItem, m_contextMenu.get());
 #endif                
             } else {
-                if (!(frame->page() && (frame->page()->inspectorController().inspectionLevel() > 0 || frame->page()->inspectorController().hasRemoteFrontend()))) {
+                if (!(page && (page->inspectorController().inspectionLevel() > 0 || page->inspectorController().hasRemoteFrontend()))) {
 
                 // In GTK+ unavailable items are not hidden but insensitive.
 #if PLATFORM(GTK)
@@ -998,29 +1011,40 @@ void ContextMenuController::populate()
                 appendItem(StopItem, m_contextMenu.get());
                 appendItem(ReloadItem, m_contextMenu.get());
 #else
-                if (frame->page() && frame->page()->backForward().canGoBackOrForward(-1))
-                    appendItem(BackItem, m_contextMenu.get());
 
-                if (frame->page() && frame->page()->backForward().canGoBackOrForward(1))
-                    appendItem(ForwardItem, m_contextMenu.get());
+                
+                if (isMainFrame || isPDFDocument) {
+                    if (page && page->backForward().canGoBackOrForward(-1))
+                        appendItem(BackItem, m_contextMenu.get());
 
-                // use isLoadingInAPISense rather than isLoading because Stop/Reload are
-                // intended to match WebKit's API, not WebCore's internal notion of loading status
-                if (loader.documentLoader()->isLoadingInAPISense())
-                    appendItem(StopItem, m_contextMenu.get());
-                else
-                    appendItem(ReloadItem, m_contextMenu.get());
+                    if (page && page->backForward().canGoBackOrForward(1))
+                        appendItem(ForwardItem, m_contextMenu.get());
+                    
+                    // Here we use isLoadingInAPISense rather than isLoading because Stop/Reload are
+                    // intended to match WebKit's API, not WebCore's internal notion of loading status.
+                    if (loader.documentLoader()->isLoadingInAPISense())
+                        appendItem(StopItem, m_contextMenu.get());
+                    else
+                        appendItem(ReloadItem, m_contextMenu.get());
+                }
 #endif
                 }
 
-                if (frame->page() && !frame->isMainFrame())
+                if (page && !isMainFrame && !isPDFDocument) 
                     appendItem(OpenFrameItem, m_contextMenu.get());
-
                 if (!ShareMenuItem.isNull()) {
                     appendItem(*separatorItem(), m_contextMenu.get());
                     appendItem(ShareMenuItem, m_contextMenu.get());
                 }
             }
+#if ENABLE(PDFJS)
+            if (isPDFDocument) {
+                appendItem(SinglePageItem, m_contextMenu.get());
+                appendItem(SinglePageContinuousItem, m_contextMenu.get());
+                appendItem(TwoPagesItem, m_contextMenu.get());
+                appendItem(TwoPagesContinuousItem, m_contextMenu.get());
+            }
+#endif
         } else if (!ShareMenuItem.isNull()) {
             appendItem(*separatorItem(), m_contextMenu.get());
             appendItem(ShareMenuItem, m_contextMenu.get());
@@ -1469,6 +1493,9 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemPDFZoomOut:
         case ContextMenuItemPDFAutoSize:
         case ContextMenuItemPDFSinglePage:
+        case ContextMenuItemPDFSinglePageContinuous:
+        case ContextMenuItemPDFTwoPages:
+        case ContextMenuItemPDFTwoPagesContinuous:
         case ContextMenuItemPDFFacingPages:
         case ContextMenuItemPDFContinuous:
         case ContextMenuItemPDFNextPage:

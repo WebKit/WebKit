@@ -197,6 +197,9 @@ bool isValidContextMenuAction(ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemPDFZoomOut:
     case ContextMenuAction::ContextMenuItemPDFAutoSize:
     case ContextMenuAction::ContextMenuItemPDFSinglePage:
+    case ContextMenuAction::ContextMenuItemPDFSinglePageContinuous:
+    case ContextMenuAction::ContextMenuItemPDFTwoPages:
+    case ContextMenuAction::ContextMenuItemPDFTwoPagesContinuous:
     case ContextMenuAction::ContextMenuItemPDFFacingPages:
     case ContextMenuAction::ContextMenuItemPDFContinuous:
     case ContextMenuAction::ContextMenuItemPDFNextPage:

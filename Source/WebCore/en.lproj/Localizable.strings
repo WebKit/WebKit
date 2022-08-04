@@ -1701,3 +1701,13 @@
 
 /* Lockdown Mode alert message */
 "Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings." = "Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.";
+
+/* PDFJS strings */
+"Single Page" = "Single Page";
+
+"Single Page Continuous" = "Single Page Continuous";
+
+"Two Pages" = "Two Pages";
+
+"Two Pages Continuous" = "Two Pages Continuous";
+

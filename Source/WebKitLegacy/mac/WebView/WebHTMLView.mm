@@ -601,6 +601,9 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagTranslate;
     case ContextMenuItemTagCopySubject:
     case ContextMenuItemTagLookUpImage:
+    case ContextMenuItemPDFSinglePageContinuous:
+    case ContextMenuItemPDFTwoPages:
+    case ContextMenuItemPDFTwoPagesContinuous:
         return std::nullopt;
 
     case ContextMenuItemBaseCustomTag ... ContextMenuItemLastCustomTag:
