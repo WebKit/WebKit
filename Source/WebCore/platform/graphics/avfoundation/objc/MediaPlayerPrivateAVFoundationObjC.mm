@@ -2685,8 +2685,9 @@ bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
     if (m_lastImage)
         return true;
 
+    createVideoOutput();
     if (!m_videoOutput)
-        createVideoOutput();
+        return false;
 
     return m_videoOutput->hasImageForTime(PAL::toMediaTime([m_avPlayerItem currentTime]));
 }
