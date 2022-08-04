@@ -13,6 +13,6 @@
   (layout viewport at (0,0) size 785x600)
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,4421))
-  (behavior for fixed 0)
+  (behavior for fixed 1)
 )
 

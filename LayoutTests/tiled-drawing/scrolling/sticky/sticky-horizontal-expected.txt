@@ -15,7 +15,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
   (layout viewport at (800,0) size 800x585)
   (min layout viewport origin (0,0))
   (max layout viewport origin (1208,0))
-  (behavior for fixed 0)
+  (behavior for fixed 1)
   (children 6
     (Sticky node
       (anchor edges: AnchorEdgeLeft )

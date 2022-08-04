@@ -26,7 +26,7 @@ None visible
     (layout viewport (0,0) width=800 height=600)
     (min layoutViewport origin (0,0))
     (max layoutViewport origin (0,0))
-    (behavior for fixed 0)
+    (behavior for fixed 1)
     (frame hosting node
       (frame scrolling node
         (scrollable area size width=300 height=150)
@@ -40,7 +40,7 @@ None visible
         (layout viewport (0,0) width=300 height=150)
         (min layoutViewport origin (0,0))
         (max layoutViewport origin (708,866))
-        (behavior for fixed 0)))
+        (behavior for fixed 1)))
     (frame hosting node
       (frame scrolling node
         (scrollable area size width=300 height=150)
@@ -55,7 +55,7 @@ None visible
         (layout viewport (0,0) width=300 height=150)
         (min layoutViewport origin (0,0))
         (max layoutViewport origin (708,866))
-        (behavior for fixed 0)))
+        (behavior for fixed 1)))
     (frame hosting node
       (frame scrolling node
         (scrollable area size width=300 height=150)
@@ -70,7 +70,7 @@ None visible
         (layout viewport (0,0) width=300 height=150)
         (min layoutViewport origin (0,0))
         (max layoutViewport origin (708,866))
-        (behavior for fixed 0)))
+        (behavior for fixed 1)))
     (frame hosting node
       (frame scrolling node
         (scrollable area size width=300 height=150)
@@ -86,4 +86,4 @@ None visible
         (layout viewport (0,0) width=300 height=150)
         (min layoutViewport origin (0,0))
         (max layoutViewport origin (708,866))
-        (behavior for fixed 0)))))
+        (behavior for fixed 1)))))

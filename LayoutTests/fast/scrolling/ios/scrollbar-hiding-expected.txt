@@ -24,7 +24,7 @@ None visible
     (layout viewport (0,0) width=800 height=600)
     (min layoutViewport origin (0,0))
     (max layoutViewport origin (0,0))
-    (behavior for fixed 0)
+    (behavior for fixed 1)
     (overflow scrolling node
       (scrollable area size width=200 height=100)
       (total content size width=400 height=200)

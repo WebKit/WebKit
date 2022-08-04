@@ -2,7 +2,6 @@ s
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 785.00 742.00)
-  (clips 1)
   (children 1
     (GraphicsLayer
       (bounds 785.00 742.00)

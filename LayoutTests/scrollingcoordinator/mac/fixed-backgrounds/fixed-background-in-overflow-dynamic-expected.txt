@@ -17,7 +17,7 @@ Before toggle:
   (layout viewport at (0,0) size 785x600)
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,65))
-  (behavior for fixed 0)
+  (behavior for fixed 1)
   (children 2
     (Overflow scrolling node
       (scrollable area size 405 305)
@@ -61,7 +61,7 @@ After toggle:
   (layout viewport at (0,0) size 785x600)
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,65))
-  (behavior for fixed 0)
+  (behavior for fixed 1)
   (children 2
     (Overflow scrolling node
       (scrollable area size 405 305)
@@ -104,7 +104,7 @@ After removal:
   (layout viewport at (0,0) size 785x600)
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,65))
-  (behavior for fixed 0)
+  (behavior for fixed 1)
   (children 2
     (Overflow scrolling node
       (scrollable area size 405 305)

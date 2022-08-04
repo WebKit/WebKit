@@ -16,7 +16,7 @@ Fixed background
     (layout viewport (0,0) width=800 height=600)
     (min layoutViewport origin (0,0))
     (max layoutViewport origin (0,0))
-    (behavior for fixed 0)
+    (behavior for fixed 1)
     (overflow scrolling node
       (scrollable area size width=405 height=305)
       (total content size width=405 height=1020)

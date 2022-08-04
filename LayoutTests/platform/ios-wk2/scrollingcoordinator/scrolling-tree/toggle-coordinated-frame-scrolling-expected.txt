@@ -13,7 +13,7 @@ Scrolling tree on non-scrollable
   (layout viewport at (0,0) size 800x600)
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,45))
-  (behavior for fixed 0)
+  (behavior for fixed 1)
   (children 1
     (Frame hosting node
       (children 1
@@ -28,7 +28,7 @@ Scrolling tree on non-scrollable
           (layout viewport at (0,0) size 600x500)
           (min layout viewport origin (0,0))
           (max layout viewport origin (0,0))
-          (behavior for fixed 0)
+          (behavior for fixed 1)
           (children 1
             (Frame hosting node
               (children 1
@@ -43,7 +43,7 @@ Scrolling tree on non-scrollable
                   (layout viewport at (0,0) size 500x400)
                   (min layout viewport origin (0,0))
                   (max layout viewport origin (0,624))
-                  (behavior for fixed 0)
+                  (behavior for fixed 1)
                 )
               )
             )
@@ -68,7 +68,7 @@ Scrolling tree on scrollable
   (layout viewport at (0,0) size 800x600)
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,45))
-  (behavior for fixed 0)
+  (behavior for fixed 1)
   (children 1
     (Frame hosting node
       (children 1
@@ -83,7 +83,7 @@ Scrolling tree on scrollable
           (layout viewport at (0,0) size 600x500)
           (min layout viewport origin (0,0))
           (max layout viewport origin (0,524))
-          (behavior for fixed 0)
+          (behavior for fixed 1)
           (children 1
             (Frame hosting node
               (children 1
@@ -98,7 +98,7 @@ Scrolling tree on scrollable
                   (layout viewport at (0,0) size 500x400)
                   (min layout viewport origin (0,0))
                   (max layout viewport origin (0,624))
-                  (behavior for fixed 0)
+                  (behavior for fixed 1)
                 )
               )
             )

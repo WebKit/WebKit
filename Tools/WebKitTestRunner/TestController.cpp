@@ -1021,11 +1021,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     for (auto& auxiliaryWebView : std::exchange(m_auxiliaryWebViews, { }))
         WKPageClose(auxiliaryWebView->page());
 
-    // This setting differs between the antique and modern Mac WebKit2 API.
-    // For now, maintain the antique behavior, because some tests depend on it!
-    // FIXME: We should be testing the default.
-    WKPageSetBackgroundExtendsBeyondPage(m_mainWebView->page(), false);
-
     WKPageSetCustomUserAgent(m_mainWebView->page(), nullptr);
 
     auto resetMessageBody = adoptWK(WKMutableDictionaryCreate());

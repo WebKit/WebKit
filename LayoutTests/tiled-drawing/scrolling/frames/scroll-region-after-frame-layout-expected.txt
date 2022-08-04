@@ -14,6 +14,6 @@
   (max layout viewport origin (0,157))
   (synchronous event dispatch region for event wheel
     at (68,68) size 300x300)
-  (behavior for fixed 0)
+  (behavior for fixed 1)
 )
 

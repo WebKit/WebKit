@@ -60,6 +60,11 @@ webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-utf-8.html [ Skip
 webkit.org/b/82665 webarchive/test-css-url-resources-in-stylesheets.html [ Skip ]
 webkit.org/b/82665 webarchive/test-css-url-resources-inline-styles.html [ Skip ]
 
+webkit.org/b/243425 css3/blending/blend-mode-html-element-screen.html [ ImageOnlyFailure ]
+webkit.org/b/243426 fast/borders/border-radius-on-html.html [ ImageOnlyFailure ]
+webkit.org/b/243444 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-document-element-will-change.html [ ImageOnlyFailure ]
+webkit.org/b/243444 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-document-element.html [ ImageOnlyFailure ]
+
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
 editing/input/setting-input-value-cancel-ime-composition.html

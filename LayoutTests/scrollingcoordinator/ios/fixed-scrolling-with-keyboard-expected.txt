@@ -14,7 +14,7 @@
     (min layoutViewport origin (0,0))
     (max layoutViewport origin (100,3644))
     (override visual viewport size width=220.20 height=346.83)
-    (behavior for fixed 0)
+    (behavior for fixed 1)
     (visual viewport is smaller than layout viewport 1)
     (fixed node
       (fixed constraints

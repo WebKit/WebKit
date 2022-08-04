@@ -16,7 +16,7 @@
   (max layout viewport origin (0,1613))
   (synchronous event dispatch region for event wheel
     at (0,13) size 204x204)
-  (behavior for fixed 0)
+  (behavior for fixed 1)
   (children 1
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)

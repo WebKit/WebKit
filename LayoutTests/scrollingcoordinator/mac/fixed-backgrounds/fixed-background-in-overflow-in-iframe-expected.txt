@@ -14,7 +14,7 @@
     (layout viewport (0,0) width=785 height=600)
     (min layoutViewport origin (0,0))
     (max layoutViewport origin (0,1416))
-    (behavior for fixed 0)
+    (behavior for fixed 1)
     (frame hosting node
       (frame scrolling node
         (scrollable area size width=500 height=400)
@@ -29,7 +29,7 @@
         (layout viewport (0,0) width=500 height=400)
         (min layoutViewport origin (0,0))
         (max layoutViewport origin (0,0))
-        (behavior for fixed 0)
+        (behavior for fixed 1)
         (overflow scrolling node
           (scrollable area size width=405 height=305)
           (total content size width=410 height=1020)

@@ -25,7 +25,7 @@ Stacking
   (layout viewport at (0,0) size 785x600)
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,229))
-  (behavior for fixed 0)
+  (behavior for fixed 1)
   (children 19
     (Overflow scrolling node
       (scrollable area size 205 155)
