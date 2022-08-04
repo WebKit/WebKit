@@ -164,10 +164,6 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 
 #if HAVE(UIFINDINTERACTION)
 #define FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M) \
-    M(find) \
-    M(findNext) \
-    M(findPrevious) \
-    M(findAndReplace) \
     M(useSelectionForFind) \
     M(_findSelected)
 #else

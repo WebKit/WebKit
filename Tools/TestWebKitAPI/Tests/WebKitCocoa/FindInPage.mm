@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -805,6 +806,27 @@ TEST(WebKit, FindOverlaySPI)
     TestWebKitAPI::Util::run(&done);
     EXPECT_NOT_NULL([webView _layerForFindOverlay]);
     EXPECT_EQ(overlayCount(webView.get()), 1U);
+}
+
+static void swizzledPerformTextSearchWithQueryString(id, SEL, NSString *, UITextSearchOptions *, id<UITextSearchAggregator> aggregator)
+{
+    [aggregator finishedSearching];
+}
+
+TEST(WebKit, FindInPDF)
+{
+    // Swizzle out the method that performs searching, since PDFHostViewController (a remote view
+    // (controller) cannot be created in TestWebKitAPI, and we cannot actually search the PDF.
+    std::unique_ptr<InstanceMethodSwizzler> isInBackgroundSwizzler = makeUnique<InstanceMethodSwizzler>(NSClassFromString(@"WKPDFView"), @selector(performTextSearchWithQueryString:usingOptions:resultAggregator:), reinterpret_cast<IMP>(swizzledPerformTextSearchWithQueryString));
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birthday", searchOptions.get(), 0UL);
 }
 
 #endif // HAVE(UIFINDINTERACTION)

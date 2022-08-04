@@ -147,6 +147,31 @@ TEST(WebKit, WKPDFViewLosesApplicationForegroundNotification)
     TestWebKitAPI::Util::run(&finished);
 }
 
+#if HAVE(UIFINDINTERACTION)
+
+TEST(WebKit, WKPDFViewFindActions)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_FALSE([webView canPerformAction:@selector(find:) withSender:nil]);
+    EXPECT_FALSE([webView canPerformAction:@selector(findNext:) withSender:nil]);
+    EXPECT_FALSE([webView canPerformAction:@selector(findPrevious:) withSender:nil]);
+    EXPECT_FALSE([webView canPerformAction:@selector(findAndReplace:) withSender:nil]);
+
+    [webView setFindInteractionEnabled:YES];
+
+    EXPECT_TRUE([webView canPerformAction:@selector(find:) withSender:nil]);
+    EXPECT_TRUE([webView canPerformAction:@selector(findNext:) withSender:nil]);
+    EXPECT_TRUE([webView canPerformAction:@selector(findPrevious:) withSender:nil]);
+    EXPECT_FALSE([webView canPerformAction:@selector(findAndReplace:) withSender:nil]);
+}
+
+#endif
+
 #endif
 
 #if ENABLE(UI_PROCESS_PDF_HUD)

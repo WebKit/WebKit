@@ -364,6 +364,14 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 #undef FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW
 
+#if HAVE(UIFINDINTERACTION)
+    if (action == @selector(find:) || action == @selector(findNext:) || action == @selector(findPrevious:))
+        return _findInteractionEnabled;
+
+    if (action == @selector(findAndReplace:))
+        return _findInteractionEnabled && self._isEditable;
+#endif
+
     return [super canPerformAction:action withSender:sender];
 }
 
@@ -383,6 +391,30 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
     return [super targetForAction:action withSender:sender];
 }
+
+#if HAVE(UIFINDINTERACTION)
+
+- (void)find:(id)sender
+{
+    [_findInteraction presentFindNavigatorShowingReplace:NO];
+}
+
+- (void)findNext:(id)sender
+{
+    [_findInteraction findNext];
+}
+
+- (void)findPrevious:(id)sender
+{
+    [_findInteraction findPrevious];
+}
+
+- (void)findAndReplace:(id)sender
+{
+    [_findInteraction presentFindNavigatorShowingReplace:YES];
+}
+
+#endif
 
 - (void)willFinishIgnoringCalloutBarFadeAfterPerformingAction
 {
@@ -3955,7 +3987,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(UITextSearchOptions *)options resultAggregator:(id<UITextSearchAggregator>)aggregator
 {
-    [_contentView performTextSearchWithQueryString:string usingOptions:options resultAggregator:aggregator];
+    [[self _searchableObject] performTextSearchWithQueryString:string usingOptions:options resultAggregator:aggregator];
 }
 
 - (void)replaceFoundTextInRange:(UITextRange *)range inDocument:(UITextSearchDocumentIdentifier)document withText:(NSString *)replacementText
