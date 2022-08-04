@@ -212,7 +212,7 @@ diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/me
 index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2f54269a2 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/BufferMtl.mm
-@@ -365,7 +365,7 @@
+@@ -365,7 +365,7 @@ ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context,
      {
          if (buffer.offset == offset)
          {
@@ -221,7 +221,7 @@ index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2
          }
      }
  
-@@ -520,7 +520,7 @@
+@@ -520,7 +520,7 @@ angle::Result BufferMtl::setDataImpl(const gl::Context *context,
          default:
              // dynamic buffer, allow up to 10 update per frame/encoding without
              // waiting for GPU.
@@ -234,7 +234,7 @@ diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/m
 index ade92ae2dbfa4d27cfe40442f5811e94a84ca6ec..648613409c9da7800f5645db0d1ccf24dbb42fb4 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1242,8 +1242,7 @@ bool IsMetalDisplayAvailable()
+@@ -1242,8 +1242,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -281,7 +281,7 @@ diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/rend
 index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..2446882e26d29aacccf8c8670bb59a757b3e5945 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-@@ -87,8 +87,9 @@
+@@ -87,8 +87,9 @@ struct IndexConversionUniform
  {
      uint32_t srcOffset;
      uint32_t indexCount;
@@ -308,7 +308,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..2446882e26d29aacccf8c8670bb59a75
                                            bool primitiveRestartEnabled,
                                            const T *indices,
                                            const BufferRef &dstBuffer,
-@@ -236,8 +243,8 @@ void GetBlitTexCoords(const NormalizedCoords &normalizedCoords,
+@@ -236,8 +243,8 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
      GLsizei dstTriangle                   = 0;
      uint32_t *dstPtr = reinterpret_cast<uint32_t *>(dstBuffer->map(contextMtl) + dstOffset);
      T triFirstIdx, srcPrevIdx;
@@ -319,7 +319,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..2446882e26d29aacccf8c8670bb59a75
      
      if (primitiveRestartEnabled)
      {
-@@ -245,14 +252,14 @@ void GetBlitTexCoords(const NormalizedCoords &normalizedCoords,
+@@ -245,14 +252,14 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
          while (triFirstIdx == kSrcPrimitiveRestartIndex)
          {
              ++triFirstIdxLoc;
@@ -336,7 +336,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..2446882e26d29aacccf8c8670bb59a75
              bool completeTriangle = true;
              if (srcPrevIdx == kSrcPrimitiveRestartIndex || srcIdx == kSrcPrimitiveRestartIndex)
              {
-@@ -285,8 +292,7 @@ void GetBlitTexCoords(const NormalizedCoords &normalizedCoords,
+@@ -285,8 +292,7 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
          for (GLsizei i = 2; i < count; ++i)
          {
              T srcIdx;
@@ -346,7 +346,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..2446882e26d29aacccf8c8670bb59a75
              uint32_t triIndices[3];
              triIndices[0] = triFirstIdx;
              triIndices[1] = srcPrevIdx;
-@@ -2089,11 +2095,14 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+@@ -2089,11 +2095,14 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArray(
          size_t srcOffset            = reinterpret_cast<size_t>(params.indices);
          ANGLE_CHECK(contextMtl, srcOffset <= std::numeric_limits<uint32_t>::max(),
                      "Index offset is too large", GL_INVALID_VALUE);
@@ -362,7 +362,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..2446882e26d29aacccf8c8670bb59a75
              cpuPathParams.indices =
                  elementBufferMtl->getClientShadowCopyData(contextMtl) + srcOffset;
              return generateTriFanBufferFromElementsArrayCPU(contextMtl, cpuPathParams,
-@@ -2102,7 +2111,7 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+@@ -2102,7 +2111,7 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArray(
          else
          {
              return generateTriFanBufferFromElementsArrayGPU(
@@ -371,7 +371,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..2446882e26d29aacccf8c8670bb59a75
                  static_cast<uint32_t>(srcOffset), params.dstBuffer, params.dstOffset);
          }
      }
-@@ -2116,6 +2125,7 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+@@ -2116,6 +2125,7 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArrayGPU(
      ContextMtl *contextMtl,
      gl::DrawElementsType srcType,
      uint32_t indexCount,
@@ -379,7 +379,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..2446882e26d29aacccf8c8670bb59a75
      const BufferRef &srcBuffer,
      uint32_t srcOffset,
      const BufferRef &dstBuffer,
-@@ -2140,7 +2150,7 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+@@ -2140,7 +2150,7 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArrayGPU(
      IndexConversionUniform uniform;
      uniform.srcOffset  = srcOffset;
      uniform.indexCount = indexCount - 2;  // Only start from the 3rd element.
@@ -388,7 +388,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..2446882e26d29aacccf8c8670bb59a75
      cmdEncoder->setData(uniform, 0);
      cmdEncoder->setBuffer(srcBuffer, 0, 1);
      cmdEncoder->setBufferForWrite(dstBuffer, dstOffset, 2);
-@@ -2158,17 +2168,17 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+@@ -2158,17 +2168,17 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArrayCPU(
      switch (params.srcType)
      {
          case gl::DrawElementsType::UnsignedByte:
@@ -409,7 +409,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..2446882e26d29aacccf8c8670bb59a75
                                                 params.primitiveRestartEnabled,
                                                 static_cast<const uint32_t *>(params.indices),
                                                 params.dstBuffer, params.dstOffset, genIndices);
-@@ -2540,45 +2550,13 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+@@ -2540,45 +2550,13 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
                                              bool sRGBMipmap,
                                              NativeTexLevelArray *mipmapOutputViews)
  {
@@ -455,7 +455,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..2446882e26d29aacccf8c8670bb59a75
      ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
      ASSERT(cmdEncoder);
  
-@@ -2615,8 +2593,29 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+@@ -2615,8 +2593,29 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
              UNREACHABLE();
      }
  
@@ -605,7 +605,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..414a3d9dbb7ab125172ee99aa9df6363
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
      // Make sure GPU & CPU contents are synchronized.
-@@ -271,11 +273,10 @@ void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
+@@ -271,11 +273,10 @@ angle::Result Texture::MakeTexture(ContextMtl *context,
      {
          return angle::Result::Stop;
      }
@@ -621,7 +621,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..414a3d9dbb7ab125172ee99aa9df6363
      if (!mtlFormat.hasDepthAndStencilBits())
      {
          refOut->get()->setColorWritableMask(GetEmulatedColorWriteMask(mtlFormat));
-@@ -299,13 +300,10 @@ void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
+@@ -299,13 +300,10 @@ angle::Result Texture::MakeTexture(ContextMtl *context,
                                     bool renderTargetOnly,
                                     TextureRef *refOut)
  {
@@ -639,7 +639,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..414a3d9dbb7ab125172ee99aa9df6363
      if (!mtlFormat.hasDepthAndStencilBits())
      {
          refOut->get()->setColorWritableMask(GetEmulatedColorWriteMask(mtlFormat));
-@@ -504,12 +502,12 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -504,12 +502,12 @@ Texture::Texture(Texture *original, const TextureSwizzleChannels &swizzle)
  
  void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -654,7 +654,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..414a3d9dbb7ab125172ee99aa9df6363
  }
  
  bool Texture::isCPUAccessible() const
-@@ -988,7 +986,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -988,7 +986,7 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
  
  void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -663,7 +663,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..414a3d9dbb7ab125172ee99aa9df6363
  }
  
  const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
-@@ -1009,7 +1007,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -1009,7 +1007,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
      {
          CommandQueue &cmdQueue = context->cmdQueue();
  
@@ -676,7 +676,7 @@ diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.mm b/src/libANGLE/rende
 index c525add3369e3c5a9af865ce5a1e91b3248a1940..abd36e8aecb66fea297137cd53ce687a4a915257 100644
 --- a/src/libANGLE/renderer/metal/mtl_state_cache.mm
 +++ b/src/libANGLE/renderer/metal/mtl_state_cache.mm
-@@ -948,6 +948,62 @@ void ToObjC(const RenderPassStencilAttachmentDesc &desc,
+@@ -948,6 +948,62 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::insertRenderPipelin
      return re.first->second;
  }
  
@@ -739,7 +739,7 @@ index c525add3369e3c5a9af865ce5a1e91b3248a1940..abd36e8aecb66fea297137cd53ce687a
  AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelineState(
      ContextMtl *context,
      const RenderPipelineDesc &originalDesc,
-@@ -1009,23 +1065,10 @@ void ToObjC(const RenderPassStencilAttachmentDesc &desc,
+@@ -1009,23 +1065,10 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
  
          auto objCDesc = CreateMTLRenderPipelineDescriptor(vertShader, fragShader, desc);
  
