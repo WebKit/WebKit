@@ -40,9 +40,10 @@ namespace JSC {
 
 ALWAYS_INLINE bool JSGlobalObject::objectPrototypeIsSaneConcurrently(Structure* objectPrototypeStructure)
 {
-    return !hasIndexedProperties(objectPrototypeStructure->indexingType())
-        && objectPrototypeStructure->hasMonoProto()
-        && objectPrototypeStructure->storedPrototype().isNull();
+    ASSERT(objectPrototypeStructure->typeInfo().isImmutablePrototypeExoticObject());
+    ASSERT(objectPrototypeStructure->storedPrototype().isNull());
+
+    return !hasIndexedProperties(objectPrototypeStructure->indexingType());
 }
 
 ALWAYS_INLINE bool JSGlobalObject::arrayPrototypeChainIsSaneConcurrently(Structure* arrayPrototypeStructure, Structure* objectPrototypeStructure)
