@@ -330,9 +330,9 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
     auto children = oldParent->removeAllChildrenWithScriptAssertion(ChildChange::Source::Parser);
 
-    // FIXME: assert that we don't dispatch events here since this container node is still disconnected.
     for (auto& child : children) {
-        RELEASE_ASSERT(!child->parentNode() && &child->treeScope() == &treeScope());
+        if (child->parentNode()) // Previous parserAppendChild may have mutated DOM.
+            continue;
         ASSERT(!ensurePreInsertionValidity(child, nullptr).hasException());
         child->setTreeScopeRecursively(treeScope());
         parserAppendChild(child);
