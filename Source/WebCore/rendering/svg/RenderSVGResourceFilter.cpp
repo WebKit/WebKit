@@ -48,6 +48,11 @@ RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement& element, Rend
 
 RenderSVGResourceFilter::~RenderSVGResourceFilter() = default;
 
+bool RenderSVGResourceFilter::isIdentity() const
+{
+    return SVGFilter::isIdentity(filterElement());
+}
+
 void RenderSVGResourceFilter::removeAllClientsFromCache(bool markForInvalidation)
 {
     LOG(Filters, "RenderSVGResourceFilter %p removeAllClientsFromCache", this);
@@ -89,7 +94,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     auto addResult = m_rendererFilterDataMap.set(&renderer, makeUnique<FilterData>());
     auto filterData = addResult.iterator->value.get();
-    
+
     auto targetBoundingBox = renderer.objectBoundingBox();
     auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), targetBoundingBox);
     if (filterRegion.isEmpty()) {
@@ -97,7 +102,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
         return false;
     }
 
-    // Determine absolute transformation matrix for filter. 
+    // Determine absolute transformation matrix for filter.
     auto absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     if (!absoluteTransform.isInvertible()) {
         m_rendererFilterDataMap.remove(&renderer);

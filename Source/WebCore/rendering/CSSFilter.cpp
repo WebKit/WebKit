@@ -246,6 +246,15 @@ static SVGFilterElement* referenceFilterElement(const ReferenceFilterOperation& 
     return filterElement;
 }
 
+static bool isIdentityReferenceFilter(const ReferenceFilterOperation& filterOperation, RenderElement& renderer)
+{
+    auto filterElement = referenceFilterElement(filterOperation, renderer);
+    if (!filterElement)
+        return false;
+
+    return SVGFilter::isIdentity(*filterElement);
+}
+
 static IntOutsets calculateReferenceFilterOutsets(const ReferenceFilterOperation& filterOperation, RenderElement& renderer, const FloatRect& targetBoundingBox)
 {
     auto filterElement = referenceFilterElement(filterOperation, renderer);
@@ -393,6 +402,25 @@ void CSSFilter::setFilterRegion(const FloatRect& filterRegion)
 {
     Filter::setFilterRegion(filterRegion);
     clampFilterRegionIfNeeded();
+}
+
+bool CSSFilter::isIdentity(RenderElement& renderer, const FilterOperations& operations)
+{
+    if (operations.hasFilterThatShouldBeRestrictedBySecurityOrigin())
+        return false;
+
+    for (auto& operation : operations.operations()) {
+        if (operation->type() == FilterOperation::REFERENCE) {
+            if (!isIdentityReferenceFilter(downcast<ReferenceFilterOperation>(*operation), renderer))
+                return false;
+            continue;
+        }
+
+        if (!operation->isIdentity())
+            return false;
+    }
+
+    return true;
 }
 
 IntOutsets CSSFilter::calculateOutsets(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox)

@@ -54,6 +54,7 @@ public:
     OptionSet<FilterEffectGeometry::Flags> effectGeometryFlags() const;
 
     virtual Vector<AtomString> filterEffectInputsNames() const { return { }; }
+    virtual bool isIdentity() const { return false; }
     virtual IntOutsets outsets(const FloatRect&, SVGUnitTypes::SVGUnitType) const { return { }; }
     RefPtr<FilterEffect> filterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext);
 

@@ -98,6 +98,11 @@ bool SVGFEOffsetElement::setFilterEffectAttribute(FilterEffect& effect, const Qu
     return false;
 }
 
+bool SVGFEOffsetElement::isIdentity() const
+{
+    return !dx() && !dy();
+}
+
 IntOutsets SVGFEOffsetElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
 {
     auto offset = SVGFilter::calculateResolvedSize({ dx(), dy() }, targetBoundingBox, primitiveUnits);

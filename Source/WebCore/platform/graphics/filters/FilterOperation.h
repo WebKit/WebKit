@@ -97,6 +97,8 @@ public:
 
     bool isSameType(const FilterOperation& o) const { return o.type() == m_type; }
 
+    virtual bool isIdentity() const { return false; }
+
     // True if the alpha channel of any pixel can change under this operation.
     virtual bool affectsOpacity() const { return false; }
     // True if the value of one pixel can affect the value of another pixel under this operation, such as blur.
@@ -195,6 +197,8 @@ private:
 
     bool operator==(const FilterOperation&) const override;
 
+    bool isIdentity() const override;
+
     String m_url;
     AtomString m_fragment;
     std::unique_ptr<CachedSVGDocumentReference> m_cachedSVGDocumentReference;
@@ -227,6 +231,11 @@ private:
         : FilterOperation(type)
         , m_amount(amount)
     {
+    }
+
+    bool isIdentity() const override
+    {
+        return m_type == SATURATE ? (m_amount == 1) : !m_amount;
     }
 
     bool transformColor(SRGBA<float>&) const override;
@@ -262,6 +271,11 @@ private:
         : FilterOperation(type)
         , m_amount(amount)
     {
+    }
+
+    bool isIdentity() const override
+    {
+        return m_type == INVERT ? !m_amount : (m_amount == 1);
     }
 
     bool transformColor(SRGBA<float>&) const override;
@@ -323,6 +337,11 @@ private:
     {
     }
 
+    bool isIdentity() const override
+    {
+        return m_stdDeviation.isZero() || m_stdDeviation.isNegative();
+    }
+
     Length m_stdDeviation;
 };
 
@@ -358,6 +377,11 @@ private:
         , m_stdDeviation(stdDeviation)
         , m_color(color)
     {
+    }
+
+    bool isIdentity() const override
+    {
+        return m_stdDeviation < 0 || (!m_stdDeviation && m_location.isZero());
     }
 
     IntPoint m_location; // FIXME: should location be in Lengths?

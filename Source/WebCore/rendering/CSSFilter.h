@@ -52,6 +52,7 @@ public:
 
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
 
+    static bool isIdentity(RenderElement&, const FilterOperations&);
     static IntOutsets calculateOutsets(RenderElement&, const FilterOperations&, const FloatRect& targetBoundingBox);
 
 private:

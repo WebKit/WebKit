@@ -138,7 +138,8 @@ std::optional<SVGFilterExpression> SVGFilter::buildExpression(SVGFilterElement& 
 
 static std::optional<SVGFilterPrimitivesGraph> buildFilterPrimitivesGraph(SVGFilterElement& filterElement)
 {
-    if (filterElement.countChildNodes() > maxCountChildNodes)
+    auto countChildNodes = filterElement.countChildNodes();
+    if (!countChildNodes || countChildNodes > maxCountChildNodes)
         return std::nullopt;
 
     SVGFilterPrimitivesGraph graph;
@@ -151,6 +152,21 @@ static std::optional<SVGFilterPrimitivesGraph> buildFilterPrimitivesGraph(SVGFil
     }
 
     return graph;
+}
+
+bool SVGFilter::isIdentity(SVGFilterElement& filterElement)
+{
+    auto graph = buildFilterPrimitivesGraph(filterElement);
+    if (!graph)
+        return false;
+
+    bool isIdentity = true;
+    graph->visit([&](SVGFilterPrimitiveStandardAttributes& primitive, unsigned) {
+        if (!primitive.isIdentity())
+            isIdentity = false;
+    });
+
+    return isIdentity;
 }
 
 IntOutsets SVGFilter::calculateOutsets(SVGFilterElement& filterElement, const FloatRect& targetBoundingBox)

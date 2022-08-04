@@ -61,6 +61,7 @@ public:
     void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
     void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
 
+    static bool isIdentity(RenderElement&);
     static IntOutsets calculateOutsets(RenderElement&, const FloatRect& targetBoundingBox);
 
     // Per render

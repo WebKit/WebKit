@@ -869,7 +869,10 @@ bool RenderLayer::paintsWithFilters() const
 {
     if (!renderer().hasFilter())
         return false;
-        
+
+    if (RenderLayerFilters::isIdentity(renderer()))
+        return false;
+
     if (!isComposited())
         return true;
 

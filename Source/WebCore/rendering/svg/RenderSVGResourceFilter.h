@@ -61,6 +61,7 @@ public:
     virtual ~RenderSVGResourceFilter();
 
     inline SVGFilterElement& filterElement() const;
+    bool isIdentity() const;
 
     void removeAllClientsFromCache(bool markForInvalidation = true) override;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;

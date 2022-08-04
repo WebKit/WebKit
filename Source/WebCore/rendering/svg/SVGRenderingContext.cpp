@@ -161,7 +161,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
 
     if (!isRenderingMask) {
         m_filter = resources->filter();
-        if (m_filter) {
+        if (m_filter && !m_filter->isIdentity()) {
             m_savedContext = &m_paintInfo->context();
             m_savedPaintRect = m_paintInfo->rect;
             // Return with false here may mean that we don't need to draw the content

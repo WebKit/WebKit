@@ -123,6 +123,11 @@ bool SVGFEGaussianBlurElement::setFilterEffectAttribute(FilterEffect& effect, co
     return false;
 }
 
+bool SVGFEGaussianBlurElement::isIdentity() const
+{
+    return !stdDeviationX() && !stdDeviationY();
+}
+
 IntOutsets SVGFEGaussianBlurElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
 {
     auto stdDeviation = SVGFilter::calculateResolvedSize({ stdDeviationX(), stdDeviationY() }, targetBoundingBox, primitiveUnits);
