@@ -22,6 +22,7 @@
 
 #include "AddEventListenerOptions.h"
 #include "EventNames.h"
+#include "MediaQueryListEvent.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -78,16 +79,23 @@ void MediaQueryList::removeListener(RefPtr<EventListener>&& listener)
     removeEventListener(eventNames().changeEvent, *listener, { });
 }
 
-void MediaQueryList::evaluate(MediaQueryEvaluator& evaluator, bool& notificationNeeded)
+void MediaQueryList::evaluate(MediaQueryEvaluator& evaluator, MediaQueryMatcher::EventMode eventMode)
 {
-    if (!m_matcher) {
-        notificationNeeded = false;
-        return;
-    }
-
+    RELEASE_ASSERT(m_matcher);
     if (m_evaluationRound != m_matcher->evaluationRound())
         setMatches(evaluator.evaluate(m_media.get()));
-    notificationNeeded = m_changeRound == m_matcher->evaluationRound();
+
+    m_needsNotification = m_changeRound == m_matcher->evaluationRound() || m_needsNotification;
+    if (!m_needsNotification || eventMode == MediaQueryMatcher::EventMode::Schedule)
+        return;
+    ASSERT(eventMode == MediaQueryMatcher::EventMode::DispatchNow);
+
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (document && document->quirks().shouldSilenceMediaQueryListChangeEvents())
+        return;
+
+    dispatchEvent(MediaQueryListEvent::create(eventNames().changeEvent, media(), matches()));
+    m_needsNotification = false;
 }
 
 void MediaQueryList::setMatches(bool newValue)
@@ -104,7 +112,29 @@ void MediaQueryList::setMatches(bool newValue)
 
 bool MediaQueryList::matches()
 {
-    if (m_matcher && m_evaluationRound != m_matcher->evaluationRound())
+    if (!m_matcher)
+        return m_matches;
+
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext())) {
+        if (RefPtr ownerElement = document->ownerElement()) {
+            bool isViewportDependent = [&]() {
+                for (auto& query : m_media->queryVector()) {
+                    for (auto& expression : query.expressions()) {
+                        if (expression.isViewportDependent())
+                            return true;
+                    }
+                }
+                return false;
+            }();
+
+            if (isViewportDependent) {
+                ownerElement->document().updateLayout();
+                m_matcher->evaluateAll(MediaQueryMatcher::EventMode::Schedule);
+            }
+        }
+    }
+
+    if (m_evaluationRound != m_matcher->evaluationRound())
         setMatches(m_matcher->evaluate(m_media.get()));
     return m_matches;
 }

@@ -271,6 +271,20 @@ MediaQueryExpression::MediaQueryExpression(const String& feature, CSSParserToken
     }
 }
 
+bool MediaQueryExpression::isViewportDependent() const
+{
+    return m_mediaFeature == MediaFeatureNames::width
+        || m_mediaFeature == MediaFeatureNames::height
+        || m_mediaFeature == MediaFeatureNames::minWidth
+        || m_mediaFeature == MediaFeatureNames::minHeight
+        || m_mediaFeature == MediaFeatureNames::maxWidth
+        || m_mediaFeature == MediaFeatureNames::maxHeight
+        || m_mediaFeature == MediaFeatureNames::orientation
+        || m_mediaFeature == MediaFeatureNames::aspectRatio
+        || m_mediaFeature == MediaFeatureNames::minAspectRatio
+        || m_mediaFeature == MediaFeatureNames::maxAspectRatio;
+}
+
 String MediaQueryExpression::serialize() const
 {
     if (m_serializationCache.isNull())

@@ -28,7 +28,6 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryList.h"
-#include "MediaQueryListEvent.h"
 #include "MediaQueryParserContext.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
@@ -104,7 +103,7 @@ RefPtr<MediaQueryList> MediaQueryMatcher::matchMedia(const String& query)
     return MediaQueryList::create(*m_document, *this, WTFMove(media), matches);
 }
 
-void MediaQueryMatcher::evaluateAll()
+void MediaQueryMatcher::evaluateAll(EventMode eventMode)
 {
     ASSERT(m_document);
 
@@ -120,16 +119,8 @@ void MediaQueryMatcher::evaluateAll()
 
     auto mediaQueryLists = m_mediaQueryLists;
     for (auto& list : mediaQueryLists) {
-        if (!list)
-            continue;
-        bool notify;
-        list->evaluate(evaluator, notify);
-        if (notify) {
-            if (m_document && m_document->quirks().shouldSilenceMediaQueryListChangeEvents())
-                continue;
-
-            list->dispatchEvent(MediaQueryListEvent::create(eventNames().changeEvent, list->media(), list->matches()));
-        }
+        if (RefPtr protectedList = list.get())
+            protectedList->evaluate(evaluator, eventMode);
     }
 }
 

@@ -4360,7 +4360,7 @@ void Document::evaluateMediaQueriesAndReportChanges()
     if (!m_mediaQueryMatcher)
         return;
 
-    m_mediaQueryMatcher->evaluateAll();
+    m_mediaQueryMatcher->evaluateAll(MediaQueryMatcher::EventMode::DispatchNow);
 }
 
 void Document::updateViewportUnitsOnResize()

@@ -44,7 +44,7 @@ public:
     void addListener(RefPtr<EventListener>&&);
     void removeListener(RefPtr<EventListener>&&);
 
-    void evaluate(MediaQueryEvaluator&, bool& notificationNeeded);
+    void evaluate(MediaQueryEvaluator&, MediaQueryMatcher::EventMode);
 
     void detachFromMatcher();
 
@@ -72,6 +72,7 @@ private:
     unsigned m_changeRound; // Used to know if the query has changed in the last style selector change.
     bool m_matches;
     bool m_hasChangeEventListener { false };
+    bool m_needsNotification { false };
 };
 
 }

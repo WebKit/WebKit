@@ -50,7 +50,8 @@ public:
 
     unsigned evaluationRound() const { return m_evaluationRound; }
 
-    void evaluateAll();
+    enum class EventMode : uint8_t { Schedule, DispatchNow };
+    void evaluateAll(EventMode);
 
     bool evaluate(const MediaQuerySet&);
 

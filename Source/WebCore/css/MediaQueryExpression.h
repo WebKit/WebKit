@@ -48,6 +48,7 @@ public:
     CSSValue* value() const;
 
     bool isValid() const;
+    bool isViewportDependent() const;
 
     String serialize() const;
 
