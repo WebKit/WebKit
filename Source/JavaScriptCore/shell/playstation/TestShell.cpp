@@ -50,6 +50,9 @@ extern "C" void setupTestRun()
 
     JSC::initialize();
 
+#if ENABLE(WEBASSEMBLY)
+    JSC::Wasm::enableFastMemory();
+#endif
     Gigacage::forbidDisablingPrimitiveGigacage();
 }
 

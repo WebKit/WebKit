@@ -3617,6 +3617,9 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
     VM& vm = VM::create(LargeHeap).leakRef();
     if (!isWorker && options.m_canBlockIsFalse)
         vm.m_typedArrayController = adoptRef(new JSC::SimpleTypedArrayController(false));
+#if ENABLE(WEBASSEMBLY)
+    Wasm::enableFastMemory();
+#endif
 
     int result;
     bool success = true;

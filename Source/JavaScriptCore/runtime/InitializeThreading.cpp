@@ -107,7 +107,7 @@ void initialize()
 #endif
         VMTraps::initializeSignals();
 #if ENABLE(WEBASSEMBLY)
-        Wasm::prepareSignalingMemory();
+        Wasm::prepareFastMemory();
 #endif
 
         WTF::compilerFence();

@@ -50,6 +50,8 @@ static constexpr bool verbose = false;
 }
 }
 
+static bool fastHandlerInstalled { false };
+
 #if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
 
 static SignalAction trapHandler(Signal signal, SigInfo& sigInfo, PlatformRegisters& context)
@@ -105,7 +107,12 @@ static SignalAction trapHandler(Signal signal, SigInfo& sigInfo, PlatformRegiste
 
 #endif // ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
 
-void activateSignalingMemory()
+bool fastMemoryEnabled()
+{
+    return fastHandlerInstalled;
+}
+
+void enableFastMemory()
 {
 #if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     static std::once_flag once;
@@ -117,11 +124,13 @@ void activateSignalingMemory()
             return;
 
         activateSignalHandlersFor(Signal::AccessFault);
+
+        fastHandlerInstalled = true;
     });
-#endif // ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
+#endif
 }
 
-void prepareSignalingMemory()
+void prepareFastMemory()
 {
 #if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     static std::once_flag once;
