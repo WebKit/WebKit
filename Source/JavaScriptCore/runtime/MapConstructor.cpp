@@ -68,7 +68,7 @@ JSC_DEFINE_HOST_FUNCTION(constructMap, (JSGlobalObject* globalObject, CallFrame*
 
     JSValue iterable = callFrame->argument(0);
     if (iterable.isUndefinedOrNull())
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSMap::create(globalObject, vm, mapStructure)));
+        return JSValue::encode(JSMap::create(vm, mapStructure));
 
     bool canPerformFastSet = JSMap::isSetFastAndNonObservable(mapStructure);
     if (auto* iterableMap = jsDynamicCast<JSMap*>(vm, iterable)) {
@@ -76,8 +76,7 @@ JSC_DEFINE_HOST_FUNCTION(constructMap, (JSGlobalObject* globalObject, CallFrame*
             RELEASE_AND_RETURN(scope, JSValue::encode(iterableMap->clone(globalObject, vm, mapStructure)));
     }
 
-    JSMap* map = JSMap::create(globalObject, vm, mapStructure);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSMap* map = JSMap::create(vm, mapStructure);
 
     JSValue adderFunction;
     CallData adderFunctionCallData;

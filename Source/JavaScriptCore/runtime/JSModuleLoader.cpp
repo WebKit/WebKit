@@ -99,13 +99,9 @@ JSModuleLoader::JSModuleLoader(VM& vm, Structure* structure)
 
 void JSModuleLoader::finishCreation(JSGlobalObject* globalObject, VM& vm)
 {
-    DeferTerminationForAWhile deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    JSMap* map = JSMap::create(globalObject, vm, globalObject->mapStructure());
-    scope.releaseAssertNoException();
+    JSMap* map = JSMap::create(vm, globalObject->mapStructure());
     putDirect(vm, Identifier::fromString(vm, "registry"), map);
 }
 
