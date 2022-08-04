@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "Editor.h"
 #include "Element.h"
+#include "ElementAncestorIterator.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameSnapshotting.h"
@@ -69,7 +70,21 @@ Ref<TextIndicator> TextIndicator::create(const TextIndicatorData& data)
 
 RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, OptionSet<TextIndicatorOption> options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)
 {
-    RefPtr frame = range.startContainer().document().frame();
+    auto rangeToUse = range;
+    if (options.contains(TextIndicatorOption::UseUserSelectAllCommonAncestor)) {
+        if (auto* commonAncestor = commonInclusiveAncestor<ComposedTree>(range)) {
+            Ref indicatorNode = *commonAncestor;
+
+            for (auto& ancestorElement : ancestorsOfType<Element>(*commonAncestor)) {
+                if (auto* renderer = ancestorElement.renderer(); renderer && renderer->style().effectiveUserSelect() == UserSelect::All)
+                    indicatorNode = ancestorElement;
+            }
+
+            rangeToUse = makeRangeSelectingNodeContents(indicatorNode.get());
+        }
+    }
+
+    RefPtr frame = rangeToUse.startContainer().document().frame();
     if (!frame)
         return nullptr;
 
@@ -77,7 +92,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, O
     if (!document)
         return nullptr;
 
-    bool indicatesCurrentSelection = range == document->selection().selection().toNormalizedRange();
+    bool indicatesCurrentSelection = rangeToUse == document->selection().selection().toNormalizedRange();
 
     OptionSet<TemporarySelectionOption> temporarySelectionOptions;
     temporarySelectionOptions.add(TemporarySelectionOption::DoNotSetFocus);
@@ -85,14 +100,14 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, O
 #if PLATFORM(IOS_FAMILY)
     temporarySelectionOptions.add(TemporarySelectionOption::EnableAppearanceUpdates);
 #endif
-    TemporarySelectionChange selectionChange(*document, { range }, temporarySelectionOptions);
+    TemporarySelectionChange selectionChange(*document, { rangeToUse }, temporarySelectionOptions);
 
     TextIndicatorData data;
 
     data.presentationTransition = presentationTransition;
     data.options = options;
 
-    if (!initializeIndicator(data, *frame, range, margin, indicatesCurrentSelection))
+    if (!initializeIndicator(data, *frame, rangeToUse, margin, indicatesCurrentSelection))
         return nullptr;
 
     return TextIndicator::create(data);

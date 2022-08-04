@@ -1183,6 +1183,7 @@ public:
         bool useBoundingRectAndPaintAllContentForComplexRanges { false };
         bool computeEstimatedBackgroundColor { false };
         bool respectTextColor { false };
+        bool useUserSelectAllCommonAncestor { false };
 
         OptionSet<WebCore::TextIndicatorOption> coreOptions()
         {
@@ -1193,6 +1194,8 @@ public:
                 options.add(TextIndicatorOption::ComputeEstimatedBackgroundColor);
             if (respectTextColor)
                 options.add(TextIndicatorOption::RespectTextColor);
+            if (useUserSelectAllCommonAncestor)
+                options.add(TextIndicatorOption::UseUserSelectAllCommonAncestor);
             return options;
         }
     };

@@ -849,7 +849,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     auto selectionRange = corePage()->focusController().focusedOrMainFrame().selection().selection().firstRange();
 
     auto indicatorOptions = [&](const SimpleRange& range) {
-        OptionSet<TextIndicatorOption> options { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges };
+        OptionSet<TextIndicatorOption> options { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorOption::UseUserSelectAllCommonAncestor };
         if (ImageOverlay::isInsideOverlay(range))
             options.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
         return options;

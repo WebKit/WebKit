@@ -287,6 +287,7 @@ enum HEVCParameterCodec {
     boolean useBoundingRectAndPaintAllContentForComplexRanges = false;
     boolean computeEstimatedBackgroundColor = false;
     boolean respectTextColor = false;
+    boolean useUserSelectAllCommonAncestor = false;
 };
 
 [

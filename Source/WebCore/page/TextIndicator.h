@@ -117,6 +117,10 @@ enum class TextIndicatorOption : uint16_t {
     // Compute a background color to use when rendering a platter around the content image, falling back to a default if the
     // content's background is too complex to be captured by a single color.
     ComputeEstimatedBackgroundColor = 1 << 11,
+
+    // By default, TextIndicator does not consider the user-select property.
+    // If this option is set, expand the range to include the highest `user-select: all` ancestor.
+    UseUserSelectAllCommonAncestor = 1 << 12,
 };
 
 struct TextIndicatorData {
@@ -183,7 +187,8 @@ template<> struct EnumTraits<WebCore::TextIndicatorOption> {
         WebCore::TextIndicatorOption::DoNotClipToVisibleRect,
         WebCore::TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
         WebCore::TextIndicatorOption::UseSelectionRectForSizing,
-        WebCore::TextIndicatorOption::ComputeEstimatedBackgroundColor
+        WebCore::TextIndicatorOption::ComputeEstimatedBackgroundColor,
+        WebCore::TextIndicatorOption::UseUserSelectAllCommonAncestor
     >;
 };
 
