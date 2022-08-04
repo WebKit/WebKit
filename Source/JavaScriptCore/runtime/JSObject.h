@@ -517,18 +517,9 @@ public:
                 butterfly->setPublicLength(i + 1);
             break;
         }
-        case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
-            ArrayStorage* storage = butterfly->arrayStorage();
-            WriteBarrier<Unknown>& x = storage->m_vector[i];
-            JSValue old = x.get();
-            x.set(vm, this, v);
-            if (!old) {
-                ++storage->m_numValuesInVector;
-                if (i >= storage->length())
-                    storage->setLength(i + 1);
-            }
+        case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+            setIndexQuicklyForArrayStorageIndexingType(vm, i, v);
             break;
-        }
         case ALL_BLANK_INDEXING_TYPES:
             setIndexQuicklyForTypedArray(i, v);
             break;
