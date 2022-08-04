@@ -65,7 +65,6 @@ variables:
     -Dgs=disabled
     -Dgsm=disabled
     -Diqa=disabled
-    -Disac=disabled
     -Dladspa=disabled
     -Dldac=disabled
     -Dlibde265=disabled
