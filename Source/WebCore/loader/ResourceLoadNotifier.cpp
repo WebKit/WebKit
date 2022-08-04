@@ -186,7 +186,7 @@ void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader,
     // If the request is null, willSendRequest cancelled the load. We should
     // only dispatch didFailLoading in this case.
     if (request.isNull()) {
-        ASSERT(error.isCancellation());
+        ASSERT(error.isCancellation() || error.isAccessControl());
         dispatchDidFailLoading(loader, identifier, error);
         return;
     }
