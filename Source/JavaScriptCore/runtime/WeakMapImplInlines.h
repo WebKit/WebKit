@@ -129,7 +129,7 @@ void WeakMapImpl<WeakMapBucket>::rehash(RehashMode mode)
 template<typename WeakMapBucket>
 ALWAYS_INLINE uint32_t WeakMapImpl<WeakMapBucket>::shouldRehashAfterAdd() const
 {
-    return JSC::shouldRehashAfterAdd(m_capacity, m_keyCount, m_deleteCount);
+    return JSC::shouldRehash(m_capacity, m_keyCount, m_deleteCount);
 }
 
 } // namespace JSC
