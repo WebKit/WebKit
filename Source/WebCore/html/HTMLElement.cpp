@@ -713,11 +713,6 @@ bool HTMLElement::rendererIsEverNeeded()
     return StyledElement::rendererIsEverNeeded();
 }
 
-RenderPtr<RenderElement> HTMLElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
-{
-    return RenderElement::createFor(*this, WTFMove(style));
-}
-
 HTMLFormElement* HTMLElement::form() const
 {
     return HTMLFormElement::findClosestFormAncestor(*this);

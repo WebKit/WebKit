@@ -80,7 +80,6 @@ public:
 
     String accessKeyLabel() const;
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool rendererIsEverNeeded() final;
 
     WEBCORE_EXPORT virtual HTMLFormElement* form() const;
