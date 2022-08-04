@@ -139,6 +139,6 @@ var nonObjectKeys = [
 ];
 
 for (var item of nonObjectKeys) {
-    testTypeError(item, 'TypeError: Attempted to set a non-object key in a WeakMap');
+    testTypeError(item, 'TypeError: WeakMap keys must be objects or non-registered symbols');
     testCallTypeError(item);
 }

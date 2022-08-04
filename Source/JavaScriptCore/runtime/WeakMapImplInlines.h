@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-ALWAYS_INLINE uint32_t jsWeakMapHash(JSObject* key)
+ALWAYS_INLINE uint32_t jsWeakMapHash(JSCell* key)
 {
     return wangsInt64Hash(JSValue::encode(key));
 }
@@ -42,15 +42,25 @@ ALWAYS_INLINE uint32_t nextCapacityAfterBatchRemoval(uint32_t capacity, uint32_t
     return capacity;
 }
 
+static ALWAYS_INLINE bool canBeHeldWeakly(JSValue value)
+{
+    // https://tc39.es/proposal-symbols-as-weakmap-keys/#sec-canbeheldweakly-abstract-operation
+    if (value.isObject())
+        return true;
+    if (!value.isSymbol())
+        return false;
+    return !asSymbol(value)->uid().isRegistered();
+}
+
 template <typename WeakMapBucket>
-ALWAYS_INLINE void WeakMapImpl<WeakMapBucket>::add(VM& vm, JSObject* key, JSValue value)
+ALWAYS_INLINE void WeakMapImpl<WeakMapBucket>::add(VM& vm, JSCell* key, JSValue value)
 {
     DisallowGC disallowGC;
     add(vm, key, value, jsWeakMapHash(key));
 }
 
 template <typename WeakMapBucket>
-ALWAYS_INLINE void WeakMapImpl<WeakMapBucket>::add(VM& vm, JSObject* key, JSValue value, uint32_t hash)
+ALWAYS_INLINE void WeakMapImpl<WeakMapBucket>::add(VM& vm, JSCell* key, JSValue value, uint32_t hash)
 {
     DisallowGC disallowGC;
     ASSERT_WITH_MESSAGE(jsWeakMapHash(key) == hash, "We expect hash value is what we expect.");

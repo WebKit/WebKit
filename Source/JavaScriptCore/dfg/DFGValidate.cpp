@@ -405,6 +405,15 @@ public:
                         break;
                     }
                     break;
+                case WeakMapGet:
+                    VALIDATE((node), node->child2().useKind() == CellUse || node->child2().useKind() == ObjectUse || node->child2().useKind() == SymbolUse);
+                    break;
+                case WeakSetAdd:
+                    VALIDATE((node), node->child2().useKind() == CellUse || node->child2().useKind() == ObjectUse);
+                    break;
+                case WeakMapSet:
+                    VALIDATE((node), m_graph.varArgChild(node, 1).useKind() == CellUse || m_graph.varArgChild(node, 1).useKind() == ObjectUse);
+                    break;
                 default:
                     break;
                 }

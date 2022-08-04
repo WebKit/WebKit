@@ -12641,8 +12641,15 @@ IGNORE_CLANG_WARNINGS_END
             weakMap = lowWeakSetObject(m_node->child1());
         else
             RELEASE_ASSERT_NOT_REACHED();
-        LValue key = lowObject(m_node->child2());
         LValue hash = lowInt32(m_node->child3());
+
+        LValue key = nullptr;
+        if (m_node->child2().useKind() == ObjectUse)
+            key = lowObject(m_node->child2());
+        else if (m_node->child2().useKind() == SymbolUse)
+            key = lowSymbol(m_node->child2());
+        else
+            key = lowCell(m_node->child2());
 
         LValue buffer = m_out.loadPtr(weakMap, m_heaps.WeakMapImpl_buffer);
         LValue mask = m_out.sub(m_out.load32(weakMap, m_heaps.WeakMapImpl_capacity), m_out.int32One);
@@ -12685,21 +12692,33 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileWeakSetAdd()
     {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+
         LValue set = lowWeakSetObject(m_node->child1());
-        LValue key = lowObject(m_node->child2());
+        LValue key = nullptr;
+        if (m_node->child2().useKind() == ObjectUse)
+            key = lowObject(m_node->child2());
+        else
+            key = lowCell(m_node->child2());
         LValue hash = lowInt32(m_node->child3());
 
-        vmCall(Void, operationWeakSetAdd, m_vmValue, set, key, hash);
+        vmCall(Void, operationWeakSetAdd, weakPointer(globalObject), set, key, hash);
     }
 
     void compileWeakMapSet()
     {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+
         LValue map = lowWeakMapObject(m_graph.varArgChild(m_node, 0));
-        LValue key = lowObject(m_graph.varArgChild(m_node, 1));
+        LValue key = nullptr;
+        if (m_graph.varArgChild(m_node, 1).useKind() == ObjectUse)
+            key = lowObject(m_graph.varArgChild(m_node, 1));
+        else
+            key = lowCell(m_graph.varArgChild(m_node, 1));
         LValue value = lowJSValue(m_graph.varArgChild(m_node, 2));
         LValue hash = lowInt32(m_graph.varArgChild(m_node, 3));
 
-        vmCall(Void, operationWeakMapSet, m_vmValue, map, key, value, hash);
+        vmCall(Void, operationWeakMapSet, weakPointer(globalObject), map, key, value, hash);
     }
 
     void compileTypeOfIsObject()

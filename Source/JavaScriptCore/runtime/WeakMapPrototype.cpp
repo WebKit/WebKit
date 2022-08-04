@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ASCIILiteral WeakMapNonObjectKeyError { "Attempted to set a non-object key in a WeakMap"_s };
+const ASCIILiteral WeakMapInvalidKeyError { "WeakMap keys must be objects or non-registered symbols"_s };
 
 const ClassInfo WeakMapPrototype::s_info = { "WeakMap"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakMapPrototype) };
 
@@ -76,7 +76,9 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncWeakMapDelete, (JSGlobalObject* globalObject, 
     if (!map)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
-    return JSValue::encode(jsBoolean(key.isObject() && map->remove(asObject(key))));
+    if (UNLIKELY(!key.isCell()))
+        return JSValue::encode(jsBoolean(false));
+    return JSValue::encode(jsBoolean(map->remove(key.asCell())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(protoFuncWeakMapGet, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -85,9 +87,9 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncWeakMapGet, (JSGlobalObject* globalObject, Cal
     if (!map)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
-    if (!key.isObject())
+    if (UNLIKELY(!key.isCell()))
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(map->get(asObject(key)));
+    return JSValue::encode(map->get(key.asCell()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(protoFuncWeakMapHas, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -96,7 +98,9 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncWeakMapHas, (JSGlobalObject* globalObject, Cal
     if (!map)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
-    return JSValue::encode(jsBoolean(key.isObject() && map->has(asObject(key))));
+    if (UNLIKELY(!key.isCell()))
+        return JSValue::encode(jsBoolean(false));
+    return JSValue::encode(jsBoolean(map->has(key.asCell())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(protoFuncWeakMapSet, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -109,9 +113,9 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncWeakMapSet, (JSGlobalObject* globalObject, Cal
     if (!map)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
-    if (!key.isObject())
-        return JSValue::encode(throwTypeError(globalObject, scope, WeakMapNonObjectKeyError));
-    map->set(vm, asObject(key), callFrame->argument(1));
+    if (UNLIKELY(!canBeHeldWeakly(key)))
+        return JSValue::encode(throwTypeError(globalObject, scope, WeakMapInvalidKeyError));
+    map->set(vm, key.asCell(), callFrame->argument(1));
     return JSValue::encode(callFrame->thisValue());
 }
 

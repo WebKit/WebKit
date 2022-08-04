@@ -40,14 +40,14 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static JSWeakObjectRef* create(VM& vm, Structure* structure, JSObject* target)
+    static JSWeakObjectRef* create(VM& vm, Structure* structure, JSCell* target)
     {
         JSWeakObjectRef* instance = new (NotNull, allocateCell<JSWeakObjectRef>(vm)) JSWeakObjectRef(vm, structure);
         instance->finishCreation(vm, target);
         return instance;
     }
 
-    JSObject* deref(VM& vm)
+    JSCell* deref(VM& vm)
     {
         if (m_value && vm.currentWeakRefVersion() != m_lastAccessVersion) {
             m_lastAccessVersion = vm.currentWeakRefVersion();
@@ -73,10 +73,10 @@ private:
     {
     }
 
-    JS_EXPORT_PRIVATE void finishCreation(VM&, JSObject* value);
+    JS_EXPORT_PRIVATE void finishCreation(VM&, JSCell* value);
 
     uintptr_t m_lastAccessVersion;
-    WriteBarrier<JSObject> m_value;
+    WriteBarrier<JSCell> m_value;
 };
 
 } // namespace JSC

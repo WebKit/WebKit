@@ -48,7 +48,7 @@ public:
         return instance;
     }
 
-    ALWAYS_INLINE void set(VM&, JSObject* key, JSValue);
+    ALWAYS_INLINE void set(VM&, JSCell* key, JSValue);
 
 private:
     JSWeakMap(VM& vm, Structure* structure)

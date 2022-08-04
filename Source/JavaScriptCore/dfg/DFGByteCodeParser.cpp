@@ -3377,9 +3377,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             insertChecks();
             Node* map = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            addToGraph(Check, Edge(key, ObjectUse));
+            addToGraph(Check, Edge(key, CellUse));
             Node* hash = addToGraph(MapHash, key);
-            Node* holder = addToGraph(WeakMapGet, Edge(map, WeakMapObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
+            Node* holder = addToGraph(WeakMapGet, Edge(map, WeakMapObjectUse), Edge(key, CellUse), Edge(hash, Int32Use));
             Node* resultNode = addToGraph(ExtractValueFromWeakMapGet, OpInfo(), OpInfo(prediction), holder);
 
             setResult(resultNode);
@@ -3396,9 +3396,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             insertChecks();
             Node* map = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            addToGraph(Check, Edge(key, ObjectUse));
+            addToGraph(Check, Edge(key, CellUse));
             Node* hash = addToGraph(MapHash, key);
-            Node* holder = addToGraph(WeakMapGet, Edge(map, WeakMapObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
+            Node* holder = addToGraph(WeakMapGet, Edge(map, WeakMapObjectUse), Edge(key, CellUse), Edge(hash, Int32Use));
             Node* invertedResult = addToGraph(IsEmpty, holder);
             Node* resultNode = addToGraph(LogicalNot, invertedResult);
 
@@ -3416,9 +3416,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             insertChecks();
             Node* map = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            addToGraph(Check, Edge(key, ObjectUse));
+            addToGraph(Check, Edge(key, CellUse));
             Node* hash = addToGraph(MapHash, key);
-            Node* holder = addToGraph(WeakMapGet, Edge(map, WeakSetObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
+            Node* holder = addToGraph(WeakMapGet, Edge(map, WeakSetObjectUse), Edge(key, CellUse), Edge(hash, Int32Use));
             Node* invertedResult = addToGraph(IsEmpty, holder);
             Node* resultNode = addToGraph(LogicalNot, invertedResult);
 
@@ -3436,9 +3436,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             insertChecks();
             Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            addToGraph(Check, Edge(key, ObjectUse));
+            addToGraph(Check, Edge(key, CellUse));
             Node* hash = addToGraph(MapHash, key);
-            addToGraph(WeakSetAdd, Edge(base, WeakSetObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
+            addToGraph(WeakSetAdd, Edge(base, WeakSetObjectUse), Edge(key, CellUse), Edge(hash, Int32Use));
             setResult(base);
             return true;
         }
@@ -3455,11 +3455,11 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* value = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
 
-            addToGraph(Check, Edge(key, ObjectUse));
+            addToGraph(Check, Edge(key, CellUse));
             Node* hash = addToGraph(MapHash, key);
 
             addVarArgChild(Edge(base, WeakMapObjectUse));
-            addVarArgChild(Edge(key, ObjectUse));
+            addVarArgChild(Edge(key, CellUse));
             addVarArgChild(Edge(value));
             addVarArgChild(Edge(hash, Int32Use));
             addToGraph(Node::VarArg, WeakMapSet, OpInfo(0), OpInfo(0));

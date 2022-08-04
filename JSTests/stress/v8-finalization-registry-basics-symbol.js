@@ -68,24 +68,24 @@ load("./resources/v8-mjsunit.js", "caller relative");
 
 (function TestRegisterTargetAndHoldingsSameValue() {
   let fg = new FinalizationRegistry(() => {});
-  let obj = {a: 1};
+  let sym = Symbol();
   // SameValue(target, holdings) not ok
-  assertThrows(() => fg.register(obj, obj), TypeError,
+  assertThrows(() => fg.register(sym, sym), TypeError,
                "FinalizationRegistry.prototype.register: target and holdings must not be same");
-  let holdings = {a: 1};
-  fg.register(obj, holdings);
+  let holdings = Symbol();
+  fg.register(sym, holdings);
 })();
 
 (function TestRegisterWithoutFinalizationRegistry() {
-  assertThrows(() => FinalizationRegistry.prototype.register.call({}, {}, "holdings"), TypeError);
+  assertThrows(() => FinalizationRegistry.prototype.register.call({}, Symbol(), "holdings"), TypeError);
   // Does not throw:
   let fg = new FinalizationRegistry(() => {});
-  FinalizationRegistry.prototype.register.call(fg, {}, "holdings");
+  FinalizationRegistry.prototype.register.call(fg, Symbol(), "holdings");
 })();
 
 (function TestUnregisterWithNonExistentKey() {
   let fg = new FinalizationRegistry(() => {});
-  let success = fg.unregister({"k": "whatever"});
+  let success = fg.unregister(Symbol());
   assertFalse(success);
 })();
 
@@ -106,7 +106,7 @@ load("./resources/v8-mjsunit.js", "caller relative");
 })();
 
 (function TestWeakRefConstructor() {
-  let wr = new WeakRef({});
+  let wr = new WeakRef(Symbol());
   assertEquals(wr.toString(), "[object WeakRef]");
   assertNotSame(wr.__proto__, Object.prototype);
 
@@ -130,18 +130,11 @@ load("./resources/v8-mjsunit.js", "caller relative");
   let caught = false;
   let message = "";
   try {
-    let f = WeakRef({});
+    let f = WeakRef(Symbol());
   } catch (e) {
     message = e.message;
     caught = true;
   } finally {
     assertTrue(caught);
   }
-})();
-
-(function TestWeakRefWithProxy() {
-  let handler = {};
-  let obj = {};
-  let proxy = new Proxy(obj, handler);
-  let wr = new WeakRef(proxy);
 })();

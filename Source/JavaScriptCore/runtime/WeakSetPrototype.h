@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-extern const ASCIILiteral WeakSetNonObjectValueError;
+extern const ASCIILiteral WeakSetInvalidValueError;
 
 JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetAdd);
 

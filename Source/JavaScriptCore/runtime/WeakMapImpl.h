@@ -36,13 +36,13 @@ namespace JSC {
 
 struct WeakMapBucketDataKey {
     static const HashTableType Type = HashTableType::Key;
-    WriteBarrier<JSObject> key;
+    WriteBarrier<JSCell> key;
 };
 static_assert(sizeof(WeakMapBucketDataKey) == sizeof(void*));
 
 struct WeakMapBucketDataKeyValue {
     static const HashTableType Type = HashTableType::KeyValue;
-    WriteBarrier<JSObject> key;
+    WriteBarrier<JSCell> key;
 #if USE(JSVALUE32_64)
     uint32_t padding;
 #endif
@@ -50,13 +50,13 @@ struct WeakMapBucketDataKeyValue {
 };
 static_assert(sizeof(WeakMapBucketDataKeyValue) == 16);
 
-ALWAYS_INLINE uint32_t jsWeakMapHash(JSObject* key);
+ALWAYS_INLINE uint32_t jsWeakMapHash(JSCell* key);
 ALWAYS_INLINE uint32_t nextCapacityAfterBatchRemoval(uint32_t capacity, uint32_t keyCount);
 
 template <typename Data>
 class WeakMapBucket {
 public:
-    ALWAYS_INLINE void setKey(VM& vm, JSCell* owner, JSObject* key)
+    ALWAYS_INLINE void setKey(VM& vm, JSCell* owner, JSCell* key)
     {
         m_data.key.set(vm, owner, key);
     }
@@ -69,7 +69,7 @@ public:
     template <typename T = Data>
     ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKey>::value>::type setValue(VM&, JSCell*, JSValue) { }
 
-    ALWAYS_INLINE JSObject* key() const { return m_data.key.get(); }
+    ALWAYS_INLINE JSCell* key() const { return m_data.key.get(); }
 
     template <typename T = Data>
     ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKeyValue>::value, JSValue>::type value() const
@@ -119,9 +119,9 @@ public:
         return !m_data.key.unvalidatedGet();
     }
 
-    static JSObject* deletedKey()
+    static JSCell* deletedKey()
     {
-        return bitwise_cast<JSObject*>(static_cast<uintptr_t>(-3));
+        return bitwise_cast<JSCell*>(static_cast<uintptr_t>(-3));
     }
 
     bool isDeleted()
@@ -210,7 +210,7 @@ public:
     // This guarantee is ensured by DisallowGC.
 
     template <typename T = WeakMapBucketType>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucket<WeakMapBucketDataKeyValue>>::value, JSValue>::type get(JSObject* key)
+    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucket<WeakMapBucketDataKeyValue>>::value, JSValue>::type get(JSCell* key)
     {
         DisallowGC disallowGC;
         if (WeakMapBucketType* bucket = findBucket(key))
@@ -218,16 +218,21 @@ public:
         return jsUndefined();
     }
 
-    ALWAYS_INLINE bool has(JSObject* key)
+    ALWAYS_INLINE WeakMapBucketType* findBucket(JSCell* key, uint32_t hash)
+    {
+        return findBucketAlreadyHashed(key, hash);
+    }
+
+    ALWAYS_INLINE bool has(JSCell* key)
     {
         DisallowGC disallowGC;
         return !!findBucket(key);
     }
 
-    ALWAYS_INLINE void add(VM&, JSObject* key, JSValue = JSValue());
-    ALWAYS_INLINE void add(VM&, JSObject* key, JSValue, uint32_t hash);
+    ALWAYS_INLINE void add(VM&, JSCell* key, JSValue = JSValue());
+    ALWAYS_INLINE void add(VM&, JSCell* key, JSValue, uint32_t hash);
 
-    ALWAYS_INLINE bool remove(JSObject* key)
+    ALWAYS_INLINE bool remove(JSCell* key)
     {
         DisallowGC disallowGC;
         WeakMapBucketType* bucket = findBucket(key);
@@ -288,14 +293,9 @@ private:
     template<typename Visitor>
     ALWAYS_INLINE static void visitOutputConstraintsForDataKeyValue(JSCell*, Visitor&);
 
-    ALWAYS_INLINE WeakMapBucketType* findBucket(JSObject* key)
+    ALWAYS_INLINE WeakMapBucketType* findBucket(JSCell* key)
     {
         return findBucket(key, jsWeakMapHash(key));
-    }
-
-    ALWAYS_INLINE WeakMapBucketType* findBucket(JSObject* key, uint32_t hash)
-    {
-        return findBucketAlreadyHashed(key, hash);
     }
 
     ALWAYS_INLINE WeakMapBucketType* buffer() const
@@ -324,12 +324,12 @@ private:
         return JSC::shouldShrink(m_capacity, m_keyCount);
     }
 
-    ALWAYS_INLINE static bool canUseBucket(WeakMapBucketType* bucket, JSObject* key)
+    ALWAYS_INLINE static bool canUseBucket(WeakMapBucketType* bucket, JSCell* key)
     {
         return !bucket->isDeleted() && key == bucket->key();
     }
 
-    ALWAYS_INLINE void addInternal(VM& vm, JSObject* key, JSValue value, uint32_t hash)
+    ALWAYS_INLINE void addInternal(VM& vm, JSCell* key, JSValue value, uint32_t hash)
     {
         const uint32_t mask = m_capacity - 1;
         uint32_t index = hash & mask;
@@ -351,7 +351,7 @@ private:
         ++m_keyCount;
     }
 
-    ALWAYS_INLINE WeakMapBucketType* findBucketAlreadyHashed(JSObject* key, uint32_t hash)
+    ALWAYS_INLINE WeakMapBucketType* findBucketAlreadyHashed(JSCell* key, uint32_t hash)
     {
         const uint32_t mask = m_capacity - 1;
         uint32_t index = hash & mask;

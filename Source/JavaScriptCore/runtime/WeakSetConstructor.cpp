@@ -86,7 +86,7 @@ JSC_DEFINE_HOST_FUNCTION(constructWeakSet, (JSGlobalObject* globalObject, CallFr
             if (nextValue.isObject())
                 weakSet->add(vm, asObject(nextValue));
             else
-                throwTypeError(asObject(adderFunction)->globalObject(), scope, WeakSetNonObjectValueError);
+                throwTypeError(asObject(adderFunction)->globalObject(), scope, WeakSetInvalidValueError);
             return;
         }
 

@@ -7,13 +7,13 @@ PASS WeakMap instanceof WeakMap is false
 PASS WeakMap.prototype instanceof WeakMap is false
 PASS new WeakMap() instanceof WeakMap is true
 PASS WeakMap() threw exception TypeError: calling WeakMap constructor without new is invalid.
-PASS map.set(0, 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
-PASS map.set(0.5, 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
-PASS map.set('foo', 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
-PASS map.set(true, 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
-PASS map.set(false, 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
-PASS map.set(null, 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
-PASS map.set(undefined, 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
+PASS map.set(0, 1) threw exception TypeError: WeakMap keys must be objects or non-registered symbols.
+PASS map.set(0.5, 1) threw exception TypeError: WeakMap keys must be objects or non-registered symbols.
+PASS map.set('foo', 1) threw exception TypeError: WeakMap keys must be objects or non-registered symbols.
+PASS map.set(true, 1) threw exception TypeError: WeakMap keys must be objects or non-registered symbols.
+PASS map.set(false, 1) threw exception TypeError: WeakMap keys must be objects or non-registered symbols.
+PASS map.set(null, 1) threw exception TypeError: WeakMap keys must be objects or non-registered symbols.
+PASS map.set(undefined, 1) threw exception TypeError: WeakMap keys must be objects or non-registered symbols.
 PASS map.get(0) is undefined.
 PASS map.get(0.5) is undefined.
 PASS map.get('foo') is undefined.

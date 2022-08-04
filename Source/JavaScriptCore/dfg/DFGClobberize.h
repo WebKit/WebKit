@@ -1975,6 +1975,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case WeakSetAdd: {
         Edge& mapEdge = node->child1();
         Edge& keyEdge = node->child2();
+        if (keyEdge.useKind() != ObjectUse) {
+            read(World);
+            write(SideState);
+        }
         write(JSWeakSetFields);
         def(HeapLocation(WeakMapGetLoc, JSWeakSetFields, mapEdge, keyEdge), LazyNode(keyEdge.node()));
         return;
@@ -1984,6 +1988,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         Edge& mapEdge = graph.varArgChild(node, 0);
         Edge& keyEdge = graph.varArgChild(node, 1);
         Edge& valueEdge = graph.varArgChild(node, 2);
+        if (keyEdge.useKind() != ObjectUse) {
+            read(World);
+            write(SideState);
+        }
         write(JSWeakMapFields);
         def(HeapLocation(WeakMapGetLoc, JSWeakMapFields, mapEdge, keyEdge), LazyNode(valueEdge.node()));
         return;

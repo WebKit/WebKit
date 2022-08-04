@@ -372,3 +372,12 @@ skip:
     - test/built-ins/Temporal/Instant/prototype/until/instant-string.js
     - test/built-ins/Temporal/PlainTime/prototype/since/balance-negative-time-units.js
     - test/built-ins/Temporal/PlainTime/prototype/until/balance-negative-time-units.js
+
+    # Symbols as WeakMap keys proposal breaks existing tests https://github.com/tc39/proposal-symbols-as-weakmap-keys
+    - test/built-ins/WeakMap/prototype/set/key-not-object-throw.js
+    - test/built-ins/WeakSet/symbol-disallowed-as-weakset-key.js
+    - test/built-ins/WeakSet/prototype/add/value-not-object-throw.js
+    - test/built-ins/WeakRef/target-not-object-throws.js
+    - test/built-ins/FinalizationRegistry/prototype/unregister/unregisterToken-not-object-throws.js
+    - test/built-ins/FinalizationRegistry/prototype/register/target-not-object-throws.js
+    - test/built-ins/FinalizationRegistry/prototype/register/unregisterToken-not-object-or-undefined-throws.js

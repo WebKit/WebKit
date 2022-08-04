@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-ALWAYS_INLINE void JSWeakMap::set(VM& vm, JSObject* key, JSValue value)
+ALWAYS_INLINE void JSWeakMap::set(VM& vm, JSCell* key, JSValue value)
 {
     add(vm, key, value);
 }

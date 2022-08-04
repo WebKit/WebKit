@@ -99,7 +99,7 @@ JSC_DEFINE_HOST_FUNCTION(constructWeakMap, (JSGlobalObject* globalObject, CallFr
             if (key.isObject())
                 weakMap->set(vm, asObject(key), value);
             else
-                throwTypeError(asObject(adderFunction)->globalObject(), scope, WeakMapNonObjectKeyError);
+                throwTypeError(asObject(adderFunction)->globalObject(), scope, WeakMapInvalidKeyError);
             return;
         }
 

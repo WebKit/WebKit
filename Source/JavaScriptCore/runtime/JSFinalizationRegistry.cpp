@@ -198,7 +198,7 @@ JSValue JSFinalizationRegistry::takeDeadHoldingsValue()
     return result;
 }
 
-void JSFinalizationRegistry::registerTarget(VM& vm, JSObject* target, JSValue holdings, JSValue token)
+void JSFinalizationRegistry::registerTarget(VM& vm, JSCell* target, JSValue holdings, JSValue token)
 {
     Locker locker { cellLock() };
     Registration registration;
@@ -207,13 +207,14 @@ void JSFinalizationRegistry::registerTarget(VM& vm, JSObject* target, JSValue ho
     if (token.isUndefined())
         m_noUnregistrationLive.append(WTFMove(registration));
     else {
-        auto result = m_liveRegistrations.add(jsSecureCast<JSObject*>(token), LiveRegistrations());
+        RELEASE_ASSERT(token.isCell());
+        auto result = m_liveRegistrations.add(token.asCell(), LiveRegistrations());
         result.iterator->value.append(WTFMove(registration));
     }
     vm.writeBarrier(this);
 }
 
-bool JSFinalizationRegistry::unregister(VM&, JSObject* token)
+bool JSFinalizationRegistry::unregister(VM&, JSCell* token)
 {
     // We don't need to write barrier ourselves here because we will only point to less things after this finishes.
     Locker locker { cellLock() };

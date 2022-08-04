@@ -7,14 +7,13 @@ PASS WeakSet instanceof WeakSet is false
 PASS WeakSet.prototype instanceof WeakSet is false
 PASS new WeakSet() instanceof WeakSet is true
 PASS WeakSet() threw exception TypeError: calling WeakSet constructor without new is invalid.
-PASS set.add(0) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
-PASS set.add(0.5) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
-PASS set.add('foo') threw exception TypeError: Attempted to add a non-object value to a WeakSet.
-PASS set.add(true) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
-PASS set.add(false) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
-PASS set.add(null) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
-PASS set.add(undefined) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
-PASS set.add(Symbol.iterator) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
+PASS set.add(0) threw exception TypeError: WeakSet values must be objects or non-registered symbols.
+PASS set.add(0.5) threw exception TypeError: WeakSet values must be objects or non-registered symbols.
+PASS set.add('foo') threw exception TypeError: WeakSet values must be objects or non-registered symbols.
+PASS set.add(true) threw exception TypeError: WeakSet values must be objects or non-registered symbols.
+PASS set.add(false) threw exception TypeError: WeakSet values must be objects or non-registered symbols.
+PASS set.add(null) threw exception TypeError: WeakSet values must be objects or non-registered symbols.
+PASS set.add(undefined) threw exception TypeError: WeakSet values must be objects or non-registered symbols.
 PASS set.has(0) is false
 PASS set.has(0.5) is false
 PASS set.has('foo') is false
@@ -22,7 +21,6 @@ PASS set.has(true) is false
 PASS set.has(false) is false
 PASS set.has(null) is false
 PASS set.has(undefined) is false
-PASS set.has(Symbol.iterator) is false
 PASS set.delete(0) is false
 PASS set.delete(0.5) is false
 PASS set.delete('foo') is false
@@ -30,7 +28,6 @@ PASS set.delete(true) is false
 PASS set.delete(false) is false
 PASS set.delete(null) is false
 PASS set.delete(undefined) is false
-PASS set.delete(Symbol.iterator) is false
 PASS set.add(new String('foo')) is set
 PASS set.add(new String('foo')) is set
 PASS set.has(new String('foo')) is false
@@ -40,6 +37,10 @@ PASS set.delete(new String('foo')) is false
 PASS set.delete(object) is true
 PASS set.has(object) is false
 PASS set.delete(object) is false
+PASS set.add(Symbol.iterator) is set
+PASS set.has(Symbol.iterator) is true
+PASS set.delete(Symbol.iterator) is true
+PASS set.has(Symbol.iterator) is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

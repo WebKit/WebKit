@@ -171,9 +171,6 @@ bool doesGC(Graph& graph, Node* node)
     case LoadKeyFromMapBucket:
     case LoadValueFromMapBucket:
     case ExtractValueFromWeakMapGet:
-    case WeakMapGet:
-    case WeakSetAdd:
-    case WeakMapSet:
     case Unreachable:
     case ExtractOSREntryLocal:
     case ExtractCatchLocal:
@@ -261,6 +258,7 @@ bool doesGC(Graph& graph, Node* node)
     case DataViewGetFloat:
     case DataViewSet:
     case PutByOffset:
+    case WeakMapGet:
         return false;
 
 #if ASSERT_ENABLED
@@ -593,6 +591,14 @@ bool doesGC(Graph& graph, Node* node)
         default:
             return true;
         }
+
+    // WeakSet / WeakMap storages are not GC-managed buffer, thus adding an element does not cause GC,
+    // unless we throw an error due to key type. An error can be thrown even though a key is Symbol
+    // if the Symbol key is not registered one.
+    case WeakSetAdd:
+        return node->child2().useKind() != ObjectUse;
+    case WeakMapSet:
+        return graph.varArgChild(node, 1).useKind() != ObjectUse;
 
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();

@@ -15290,7 +15290,13 @@ void SpeculativeJIT::compileWeakMapGet(Node* node)
 
     SpeculateCellOperand key(this, node->child2());
     GPRReg keyGPR = key.gpr();
-    speculateObject(node->child2(), keyGPR);
+
+    // We are not checking whether Symbol is registered one or not, but it is OK since Symbol and SymbolImpl are one-to-one.
+    // If the key is not registered Symbol, it never matches against an element in this WeakMap.
+    if (node->child2().useKind() == ObjectUse)
+        speculateObject(node->child2(), keyGPR);
+    else if (node->child2().useKind() == SymbolUse)
+        speculateSymbol(node->child2(), keyGPR);
 
 #if USE(JSVALUE32_64)
     GPRReg bucketGPR = resultRegs.tagGPR();
@@ -15354,6 +15360,8 @@ void SpeculativeJIT::compileWeakMapGet(Node* node)
 
 void SpeculativeJIT::compileWeakSetAdd(Node* node)
 {
+    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+
     SpeculateCellOperand set(this, node->child1());
     SpeculateCellOperand key(this, node->child2());
     SpeculateInt32Operand hash(this, node->child3());
@@ -15363,16 +15371,19 @@ void SpeculativeJIT::compileWeakSetAdd(Node* node)
     GPRReg hashGPR = hash.gpr();
 
     speculateWeakSetObject(node->child1(), setGPR);
-    speculateObject(node->child2(), keyGPR);
+    if (node->child2().useKind() == ObjectUse)
+        speculateObject(node->child2(), keyGPR);
 
     flushRegisters();
-    callOperation(operationWeakSetAdd, TrustedImmPtr(&vm()), setGPR, keyGPR, hashGPR);
+    callOperation(operationWeakSetAdd, JITCompiler::LinkableConstant(m_jit, globalObject), setGPR, keyGPR, hashGPR);
     m_jit.exceptionCheck();
     noResult(node);
 }
 
 void SpeculativeJIT::compileWeakMapSet(Node* node)
 {
+    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+
     SpeculateCellOperand map(this, m_graph.varArgChild(node, 0));
     SpeculateCellOperand key(this, m_graph.varArgChild(node, 1));
     JSValueOperand value(this, m_graph.varArgChild(node, 2));
@@ -15384,10 +15395,11 @@ void SpeculativeJIT::compileWeakMapSet(Node* node)
     GPRReg hashGPR = hash.gpr();
 
     speculateWeakMapObject(m_graph.varArgChild(node, 0), mapGPR);
-    speculateObject(m_graph.varArgChild(node, 1), keyGPR);
+    if (m_graph.varArgChild(node, 1).useKind() == ObjectUse)
+        speculateObject(m_graph.varArgChild(node, 1), keyGPR);
 
     flushRegisters();
-    callOperation(operationWeakMapSet, TrustedImmPtr(&vm()), mapGPR, keyGPR, valueRegs, hashGPR);
+    callOperation(operationWeakMapSet, JITCompiler::LinkableConstant(m_jit, globalObject), mapGPR, keyGPR, valueRegs, hashGPR);
     m_jit.exceptionCheck();
     noResult(node);
 }
