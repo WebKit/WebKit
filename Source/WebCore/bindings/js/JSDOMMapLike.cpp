@@ -41,12 +41,7 @@ std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingMap(JSC::JSGlob
     if (backingMap)
         return { false, *JSC::asObject(backingMap) };
 
-    JSC::DeferTerminationForAWhile deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-
-    backingMap = JSC::JSMap::create(&lexicalGlobalObject, vm, lexicalGlobalObject.mapStructure());
-    scope.releaseAssertNoException();
-
+    backingMap = JSC::JSMap::create(vm, lexicalGlobalObject.mapStructure());
     mapLike.putDirect(vm, builtinNames(vm).backingMapPrivateName(), backingMap, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
     return { true, *JSC::asObject(backingMap) };
 }
