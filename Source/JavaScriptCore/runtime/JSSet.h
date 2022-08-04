@@ -47,15 +47,10 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSSetType, StructureFlags), info());
     }
 
-    static JSSet* create(JSGlobalObject* globalObject, VM& vm, Structure* structure)
+    static JSSet* create(VM& vm, Structure* structure)
     {
-        return create(globalObject, vm, structure, 0);
-    }
-
-    static JSSet* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, uint32_t size)
-    {
-        JSSet* instance = new (NotNull, allocateCell<JSSet>(vm)) JSSet(vm, structure, size);
-        instance->finishCreation(globalObject, vm);
+        JSSet* instance = new (NotNull, allocateCell<JSSet>(vm)) JSSet(vm, structure);
+        instance->finishCreation(vm);
         return instance;
     }
 
@@ -66,11 +61,6 @@ public:
 private:
     JSSet(VM& vm, Structure* structure)
         : Base(vm, structure)
-    {
-    }
-
-    JSSet(VM& vm, Structure* structure, uint32_t sizeHint)
-        : Base(vm, structure, sizeHint)
     {
     }
 };
