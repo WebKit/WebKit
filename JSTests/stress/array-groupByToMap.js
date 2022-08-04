@@ -1,4 +1,4 @@
-//@ requireOptions("--useArrayGroupByMethod=1")
+//@ requireOptions("--useArrayGroupMethod=1")
 
 function shouldBe(actual, expected) {
     if (actual !== expected)
@@ -43,7 +43,7 @@ function toObject(array) {
     result.length = array.length;
     for (let i in array)
         result[i] = array[i];
-    result.groupByToMap = Array.prototype.groupByToMap;
+    result.groupToMap = Array.prototype.groupToMap;
     return result;
 }
 
@@ -55,7 +55,7 @@ function reverseInsertionOrder(array) {
     let result = {};
     for (let i = props.length - 1; i >= 0; i--)
         result[props[i]] = obj[props[i]];
-    result.groupByToMap = Array.prototype.groupByToMap;
+    result.groupToMap = Array.prototype.groupToMap;
     return result;
 }
 
@@ -70,92 +70,92 @@ let objectWithValueOfThatThrows = {
 
 // Basic
 
-shouldBe(Array.prototype.groupByToMap.length, 1);
-shouldBe(Array.prototype.groupByToMap.name, "groupByToMap");
+shouldBe(Array.prototype.groupToMap.length, 1);
+shouldBe(Array.prototype.groupToMap.name, "groupToMap");
 
-shouldBeMap([undefined].groupByToMap((x) => x === undefined ? "a" : "b"), [["a", [undefined]]]);
-shouldBeMap([undefined].groupByToMap((x) => x === undefined), [[true, [undefined]]]);
+shouldBeMap([undefined].groupToMap((x) => x === undefined ? "a" : "b"), [["a", [undefined]]]);
+shouldBeMap([undefined].groupToMap((x) => x === undefined), [[true, [undefined]]]);
 
-shouldBeMap((new Array(4)).groupByToMap((x) => x === undefined ? "a" : "b"), [["a", [undefined, undefined, undefined, undefined]]]);
-shouldBeMap((new Array(4)).groupByToMap((x) => x === undefined), [[true, [undefined, undefined, undefined, undefined]]]);
+shouldBeMap((new Array(4)).groupToMap((x) => x === undefined ? "a" : "b"), [["a", [undefined, undefined, undefined, undefined]]]);
+shouldBeMap((new Array(4)).groupToMap((x) => x === undefined), [[true, [undefined, undefined, undefined, undefined]]]);
 
-shouldBeMap([0, 1, 2, 3].groupByToMap((x) => !(x & 1) ? "a" : "b"), [["a", [0, 2]], ["b", [1, 3]]]);
-shouldBeMap([0, 1, 2, 3].groupByToMap((x) => !(x & 1)), [[true, [0, 2]], [false, [1, 3]]]);
+shouldBeMap([0, 1, 2, 3].groupToMap((x) => !(x & 1) ? "a" : "b"), [["a", [0, 2]], ["b", [1, 3]]]);
+shouldBeMap([0, 1, 2, 3].groupToMap((x) => !(x & 1)), [[true, [0, 2]], [false, [1, 3]]]);
 
-shouldBeMap([0, 1, 2, 3].groupByToMap((x, i) => i >= 2 ? "a" : "b"), [["b", [0, 1]], ["a", [2, 3]]]);
-shouldBeMap([0, 1, 2, 3].groupByToMap((x, i) => i >= 2), [[false, [0, 1]], [true, [2, 3]]]);
+shouldBeMap([0, 1, 2, 3].groupToMap((x, i) => i >= 2 ? "a" : "b"), [["b", [0, 1]], ["a", [2, 3]]]);
+shouldBeMap([0, 1, 2, 3].groupToMap((x, i) => i >= 2), [[false, [0, 1]], [true, [2, 3]]]);
 
-shouldBeMap(mixPartialAndFast.groupByToMap((x, i) => i >= 2 ? "a" : "b"), [["b", [0, 1]], ["a", [2, undefined, undefined, sparseArrayLength - 1]]]);
-shouldBeMap(mixPartialAndFast.groupByToMap((x, i) => i >= 2), [[false, [0, 1]], [true, [2, undefined, undefined, sparseArrayLength - 1]]]);
+shouldBeMap(mixPartialAndFast.groupToMap((x, i) => i >= 2 ? "a" : "b"), [["b", [0, 1]], ["a", [2, undefined, undefined, sparseArrayLength - 1]]]);
+shouldBeMap(mixPartialAndFast.groupToMap((x, i) => i >= 2), [[false, [0, 1]], [true, [2, undefined, undefined, sparseArrayLength - 1]]]);
 
 
 // Generic Object
 
-shouldBeMap(toObject([undefined]).groupByToMap((x) => x === undefined ? "a" : "b"), [["a", [undefined]]]);
-shouldBeMap(toObject([undefined]).groupByToMap((x) => x === undefined), [[true, [undefined]]]);
+shouldBeMap(toObject([undefined]).groupToMap((x) => x === undefined ? "a" : "b"), [["a", [undefined]]]);
+shouldBeMap(toObject([undefined]).groupToMap((x) => x === undefined), [[true, [undefined]]]);
 
-shouldBeMap(toObject(new Array(4)).groupByToMap((x) => x === undefined ? "a" : "b"), [["a", [undefined, undefined, undefined, undefined]]]);
-shouldBeMap(toObject(new Array(4)).groupByToMap((x) => x === undefined), [[true, [undefined, undefined, undefined, undefined]]]);
+shouldBeMap(toObject(new Array(4)).groupToMap((x) => x === undefined ? "a" : "b"), [["a", [undefined, undefined, undefined, undefined]]]);
+shouldBeMap(toObject(new Array(4)).groupToMap((x) => x === undefined), [[true, [undefined, undefined, undefined, undefined]]]);
 
-shouldBeMap(toObject([0, 1, 2, 3]).groupByToMap((x) => !(x & 1) ? "a" : "b"), [["a", [0, 2]], ["b", [1, 3]]]);
-shouldBeMap(toObject([0, 1, 2, 3]).groupByToMap((x) => !(x & 1)), [[true, [0, 2]], [false, [1, 3]]]);
+shouldBeMap(toObject([0, 1, 2, 3]).groupToMap((x) => !(x & 1) ? "a" : "b"), [["a", [0, 2]], ["b", [1, 3]]]);
+shouldBeMap(toObject([0, 1, 2, 3]).groupToMap((x) => !(x & 1)), [[true, [0, 2]], [false, [1, 3]]]);
 
-shouldBeMap(toObject([0, 1, 2, 3]).groupByToMap((x, i) => i >= 2 ? "a" : "b"), [["b", [0, 1]], ["a", [2, 3]]]);
-shouldBeMap(toObject([0, 1, 2, 3]).groupByToMap((x, i) => i >= 2), [[false, [0, 1]], [true, [2, 3]]]);
+shouldBeMap(toObject([0, 1, 2, 3]).groupToMap((x, i) => i >= 2 ? "a" : "b"), [["b", [0, 1]], ["a", [2, 3]]]);
+shouldBeMap(toObject([0, 1, 2, 3]).groupToMap((x, i) => i >= 2), [[false, [0, 1]], [true, [2, 3]]]);
 
-shouldBeMap(toObject(mixPartialAndFast).groupByToMap((x, i) => i >= 2 ? "a" : "b"), [["b", [0, 1]], ["a", [2, undefined, undefined, sparseArrayLength - 1]]]);
-shouldBeMap(toObject(mixPartialAndFast).groupByToMap((x, i) => i >= 2), [[false, [0, 1]], [true, [2, undefined, undefined, sparseArrayLength - 1]]]);
+shouldBeMap(toObject(mixPartialAndFast).groupToMap((x, i) => i >= 2 ? "a" : "b"), [["b", [0, 1]], ["a", [2, undefined, undefined, sparseArrayLength - 1]]]);
+shouldBeMap(toObject(mixPartialAndFast).groupToMap((x, i) => i >= 2), [[false, [0, 1]], [true, [2, undefined, undefined, sparseArrayLength - 1]]]);
 
 
 // Array-like object with invalid lengths
 
-shouldBeMap(Array.prototype.groupByToMap.call({ 0: 0, 1: 1, 2: 2, 3: 3, length: 0 }, notReached), []);
-shouldBeMap(Array.prototype.groupByToMap.call({ 0: 0, 1: 1, 2: 2, 3: 3, length: -0 }, notReached), []);
-shouldBeMap(Array.prototype.groupByToMap.call({ 0: 0, 1: 1, 2: 2, 3: 3, length: -4 }, notReached), []);
+shouldBeMap(Array.prototype.groupToMap.call({ 0: 0, 1: 1, 2: 2, 3: 3, length: 0 }, notReached), []);
+shouldBeMap(Array.prototype.groupToMap.call({ 0: 0, 1: 1, 2: 2, 3: 3, length: -0 }, notReached), []);
+shouldBeMap(Array.prototype.groupToMap.call({ 0: 0, 1: 1, 2: 2, 3: 3, length: -4 }, notReached), []);
 
 
 // Reversed generic Object
 
-shouldBeMap(reverseInsertionOrder([undefined]).groupByToMap((x) => x === undefined ? "a" : "b"), [["a", [undefined]]]);
-shouldBeMap(reverseInsertionOrder([undefined]).groupByToMap((x) => x === undefined), [[true, [undefined]]]);
+shouldBeMap(reverseInsertionOrder([undefined]).groupToMap((x) => x === undefined ? "a" : "b"), [["a", [undefined]]]);
+shouldBeMap(reverseInsertionOrder([undefined]).groupToMap((x) => x === undefined), [[true, [undefined]]]);
 
-shouldBeMap(reverseInsertionOrder(new Array(4)).groupByToMap((x) => x === undefined ? "a" : "b"), [["a", [undefined, undefined, undefined, undefined]]]);
-shouldBeMap(reverseInsertionOrder(new Array(4)).groupByToMap((x) => x === undefined), [[true, [undefined, undefined, undefined, undefined]]]);
+shouldBeMap(reverseInsertionOrder(new Array(4)).groupToMap((x) => x === undefined ? "a" : "b"), [["a", [undefined, undefined, undefined, undefined]]]);
+shouldBeMap(reverseInsertionOrder(new Array(4)).groupToMap((x) => x === undefined), [[true, [undefined, undefined, undefined, undefined]]]);
 
-shouldBeMap(reverseInsertionOrder([0, 1, 2, 3]).groupByToMap((x) => !(x & 1) ? "a" : "b"), [["a", [0, 2]], ["b", [1, 3]]]);
-shouldBeMap(reverseInsertionOrder([0, 1, 2, 3]).groupByToMap((x) => !(x & 1)), [[true, [0, 2]], [false, [1, 3]]]);
+shouldBeMap(reverseInsertionOrder([0, 1, 2, 3]).groupToMap((x) => !(x & 1) ? "a" : "b"), [["a", [0, 2]], ["b", [1, 3]]]);
+shouldBeMap(reverseInsertionOrder([0, 1, 2, 3]).groupToMap((x) => !(x & 1)), [[true, [0, 2]], [false, [1, 3]]]);
 
-shouldBeMap(reverseInsertionOrder([0, 1, 2, 3]).groupByToMap((x, i) => i >= 2 ? "a" : "b"), [["b", [0, 1]], ["a", [2, 3]]]);
-shouldBeMap(reverseInsertionOrder([0, 1, 2, 3]).groupByToMap((x, i) => i >= 2), [[false, [0, 1]], [true, [2, 3]]]);
+shouldBeMap(reverseInsertionOrder([0, 1, 2, 3]).groupToMap((x, i) => i >= 2 ? "a" : "b"), [["b", [0, 1]], ["a", [2, 3]]]);
+shouldBeMap(reverseInsertionOrder([0, 1, 2, 3]).groupToMap((x, i) => i >= 2), [[false, [0, 1]], [true, [2, 3]]]);
 
-shouldBeMap(reverseInsertionOrder(mixPartialAndFast).groupByToMap((x, i) => i >= 2 ? "a" : "b"), [["b", [0, 1]], ["a", [2, undefined, undefined, sparseArrayLength - 1]]]);
-shouldBeMap(reverseInsertionOrder(mixPartialAndFast).groupByToMap((x, i) => i >= 2), [[false, [0, 1]], [true, [2, undefined, undefined, sparseArrayLength - 1]]]);
+shouldBeMap(reverseInsertionOrder(mixPartialAndFast).groupToMap((x, i) => i >= 2 ? "a" : "b"), [["b", [0, 1]], ["a", [2, undefined, undefined, sparseArrayLength - 1]]]);
+shouldBeMap(reverseInsertionOrder(mixPartialAndFast).groupToMap((x, i) => i >= 2), [[false, [0, 1]], [true, [2, undefined, undefined, sparseArrayLength - 1]]]);
 
 
 // Extra callback parameters
 
-shouldBeMap([0, 1, 2, 3].groupByToMap((i, j, k, l, m) => m = !m), [[true, [0, 1, 2, 3]]]);
+shouldBeMap([0, 1, 2, 3].groupToMap((i, j, k, l, m) => m = !m), [[true, [0, 1, 2, 3]]]);
 
 
 // Special keys
 
-shouldBeObject([0, 1, 2, 3].groupByToMap((x) => "constructor").get("constructor"), [0, 1, 2, 3]);
+shouldBeObject([0, 1, 2, 3].groupToMap((x) => "constructor").get("constructor"), [0, 1, 2, 3]);
 
-shouldBeObject([0, 1, 2, 3].groupByToMap((x) => "prototype").get("prototype"), [0, 1, 2, 3]);
-shouldBeObject([0, 1, 2, 3].groupByToMap((x) => "__proto__").get("__proto__"), [0, 1, 2, 3]);
+shouldBeObject([0, 1, 2, 3].groupToMap((x) => "prototype").get("prototype"), [0, 1, 2, 3]);
+shouldBeObject([0, 1, 2, 3].groupToMap((x) => "__proto__").get("__proto__"), [0, 1, 2, 3]);
 
-shouldBeObject([0, 1, 2, 3].groupByToMap((x) => -0).get(0), [0, 1, 2, 3]);
-shouldBeObject([0, 1, 2, 3].groupByToMap((x) => 0).get(0), [0, 1, 2, 3]);
+shouldBeObject([0, 1, 2, 3].groupToMap((x) => -0).get(0), [0, 1, 2, 3]);
+shouldBeObject([0, 1, 2, 3].groupToMap((x) => 0).get(0), [0, 1, 2, 3]);
 
 let objectWithToStringCounter = {
     counter: 0,
     toString() { return this.counter++; },
 };
-shouldBeObject([0, 1, 2, 3].groupByToMap((x) => objectWithToStringCounter).get(objectWithToStringCounter), [0, 1, 2, 3]);
+shouldBeObject([0, 1, 2, 3].groupToMap((x) => objectWithToStringCounter).get(objectWithToStringCounter), [0, 1, 2, 3]);
 shouldBe(objectWithToStringCounter.counter, 0);
 
-shouldBeObject([0, 1, 2, 3].groupByToMap((x) => objectWithToStringThatThrows).get(objectWithToStringThatThrows), [0, 1, 2, 3]);
+shouldBeObject([0, 1, 2, 3].groupToMap((x) => objectWithToStringThatThrows).get(objectWithToStringThatThrows), [0, 1, 2, 3]);
 
-shouldBeObject([0, 1, 2, 3].groupByToMap((x) => objectWithValueOfThatThrows).get(objectWithValueOfThatThrows), [0, 1, 2, 3]);
+shouldBeObject([0, 1, 2, 3].groupToMap((x) => objectWithValueOfThatThrows).get(objectWithValueOfThatThrows), [0, 1, 2, 3]);
 
-shouldBeObject([0, 1, 2, 3].groupByToMap((x) => symbol).get(symbol), [0, 1, 2, 3]);
+shouldBeObject([0, 1, 2, 3].groupToMap((x) => symbol).get(symbol), [0, 1, 2, 3]);

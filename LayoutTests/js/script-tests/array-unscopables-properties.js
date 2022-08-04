@@ -17,6 +17,8 @@ let expectedEntries = [
     "findLastIndex",
     "flat",
     "flatMap",
+    "group",
+    "groupToMap",
     "includes",
     "keys",
     "toReversed",

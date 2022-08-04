@@ -156,15 +156,15 @@ function filter(callback /*, thisArg */)
     return result;
 }
 
-function groupBy(callback /*, thisArg */)
+function group(callback /*, thisArg */)
 {
     "use strict";
 
-    var array = @toObject(this, "Array.prototype.groupBy requires that |this| not be null or undefined");
+    var array = @toObject(this, "Array.prototype.group requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
     if (!@isCallable(callback))
-        @throwTypeError("Array.prototype.groupBy callback must be a function");
+        @throwTypeError("Array.prototype.group callback must be a function");
 
     var thisArg = @argument(1);
 
@@ -182,15 +182,15 @@ function groupBy(callback /*, thisArg */)
     return groups;
 }
 
-function groupByToMap(callback /*, thisArg */)
+function groupToMap(callback /*, thisArg */)
 {
     "use strict";
 
-    var array = @toObject(this, "Array.prototype.groupByToMap requires that |this| not be null or undefined");
+    var array = @toObject(this, "Array.prototype.groupToMap requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
     if (!@isCallable(callback))
-        @throwTypeError("Array.prototype.groupByToMap callback must be a function");
+        @throwTypeError("Array.prototype.groupToMap callback must be a function");
 
     var thisArg = @argument(1);
 

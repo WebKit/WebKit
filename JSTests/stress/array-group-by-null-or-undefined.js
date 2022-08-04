@@ -1,4 +1,4 @@
-//@ requireOptions("--useArrayGroupByMethod=1")
+//@ requireOptions("--useArrayGroupMethod=1")
 
 function shouldThrow(func, errorMessage) {
     var errorThrown = false;
@@ -16,15 +16,15 @@ function shouldThrow(func, errorMessage) {
 }
 
 shouldThrow(() => {
-    Array.prototype.groupBy.call(null, () => { /* empty */ })
-}, `TypeError: Array.prototype.groupBy requires that |this| not be null or undefined`);
+    Array.prototype.group.call(null, () => { /* empty */ })
+}, `TypeError: Array.prototype.group requires that |this| not be null or undefined`);
 shouldThrow(() => {
-    Array.prototype.groupBy.call(undefined, () => { /* empty */ })
-}, `TypeError: Array.prototype.groupBy requires that |this| not be null or undefined`);
+    Array.prototype.group.call(undefined, () => { /* empty */ })
+}, `TypeError: Array.prototype.group requires that |this| not be null or undefined`);
 
 shouldThrow(() => {
-    Array.prototype.groupByToMap.call(null, () => { /* empty */ })
-}, `TypeError: Array.prototype.groupByToMap requires that |this| not be null or undefined`);
+    Array.prototype.groupToMap.call(null, () => { /* empty */ })
+}, `TypeError: Array.prototype.groupToMap requires that |this| not be null or undefined`);
 shouldThrow(() => {
-    Array.prototype.groupByToMap.call(undefined, () => { /* empty */ })
-}, `TypeError: Array.prototype.groupByToMap requires that |this| not be null or undefined`);
+    Array.prototype.groupToMap.call(undefined, () => { /* empty */ })
+}, `TypeError: Array.prototype.groupToMap requires that |this| not be null or undefined`);

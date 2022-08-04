@@ -50,6 +50,14 @@ PASS Array.prototype[Symbol.unscopables]["flatMap"] is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "flatMap").writable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "flatMap").enumerable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "flatMap").configurable is true
+PASS Array.prototype[Symbol.unscopables]["group"] is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "group").writable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "group").enumerable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "group").configurable is true
+PASS Array.prototype[Symbol.unscopables]["groupToMap"] is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "groupToMap").writable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "groupToMap").enumerable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "groupToMap").configurable is true
 PASS Array.prototype[Symbol.unscopables]["includes"] is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "includes").writable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "includes").enumerable is true
