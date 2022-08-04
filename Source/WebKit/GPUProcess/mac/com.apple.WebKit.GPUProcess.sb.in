@@ -23,7 +23,7 @@
 
 (version 1)
 (deny default (with partial-symbolication))
-(deny nvram*)
+(deny nvram* (with no-report))
 (deny system-privilege)
 (allow system-audit file-read-metadata)
 
@@ -39,7 +39,7 @@
 #if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
 #include <WebKitAdditions/SystemContentSandbox-macos.defs>
 #endif
- 
+
 ;;;
 ;;; The following rules were originally contained in 'system.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
@@ -83,7 +83,7 @@
     (literal "/dev/dtracehelper"))
 
 ;;; Allow IPC to standard system agents.
-(allow ipc-posix-shm-read* (with telemetry)
+(allow ipc-posix-shm-read*
 #if !ENABLE(CFPREFS_DIRECT_MODE)
     (ipc-posix-name-prefix "apple.cfprefs.")
 #endif
@@ -96,39 +96,39 @@
         (preference-domain "com.apple.opengl")
         (preference-domain "com.nvidia.OpenGL"))
     ;; CVMS
-    (allow mach-lookup (with telemetry)
+    (allow mach-lookup
         (global-name "com.apple.cvmsServ"))
-    (allow file-read* (with telemetry)
+    (allow file-read*
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
     ;; OpenCL
     (allow iokit-open
         (iokit-connection "IOAccelerator")
         (iokit-registry-entry-class "IOSurfaceRootUserClient"))
-    (deny iokit-open (with telemetry)
+    (deny iokit-open
         (iokit-registry-entry-class "IOAccelerationUserClient"))
     ;; CoreVideo CVCGDisplayLink
-    (deny iokit-open (with telemetry)
+    (deny iokit-open
         (iokit-registry-entry-class "IOFramebufferSharedUserClient"))
 
     ;; These are needed for Encrypted Media on some hardware (MacMini8,1 for example)
-    (allow iokit-open (with telemetry)
+    (allow iokit-open
         (iokit-registry-entry-class "AppleIntelMEUserClient")
         (iokit-registry-entry-class "AppleSNBFBUserClient")
     )
 
     ;; QuartzCore
-    (deny iokit-open (with telemetry)
+    (deny iokit-open
         (iokit-registry-entry-class "AGPMClient")
         (iokit-registry-entry-class "AppleGraphicsControlClient")
         (iokit-registry-entry-class "AppleGraphicsPolicyClient"))
     ;; OpenGL
-    (deny iokit-open (with telemetry)
+    (deny iokit-open
         (iokit-registry-entry-class "AppleMGPUPowerControlClient"))
     ;; GPU bundles
-    (allow file-read* (with telemetry)
+    (allow file-read*
         (subpath "/Library/GPUBundles"))
     ;; DisplayServices
-    (allow iokit-set-properties (with telemetry)
+    (allow iokit-set-properties
         (require-all (iokit-connection "IODisplay")
         (require-any (iokit-property "brightness")
         (iokit-property "linear-brightness")
@@ -149,8 +149,8 @@
 (allow process-info-setcontrol (target self))
 (allow process-codesigning-status*)
 
-(deny sysctl* (with telemetry))
-(allow sysctl-read (with telemetry)
+(deny sysctl*)
+(allow sysctl-read
     (sysctl-name
         "hw.activecpu"
         "hw.cachelinesize"
@@ -180,6 +180,9 @@
     (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
 )
+
+(deny sysctl-read (with no-report)
+    (sysctl-name "security.mac.amfi.qa_root_certs_allowed"))
 
 (deny iokit-get-properties)
 (allow iokit-get-properties
@@ -496,10 +499,38 @@
                             "display-rotation"
                             "display-scale"))))
 
+(with-filter (iokit-registry-entry-class "IOPlatformDevice")
+    (deny iokit-get-properties (with no-report)
+        (iokit-property
+            "artwork-display-gamut"
+            "product-id")))
+
+(with-filter (iokit-registry-entry-class "AppleMobileADBE0")
+    (deny iokit-get-properties (with no-report)
+        (iokit-property "APTDevice")))
+
+(with-filter (iokit-registry-entry-class "AppleARMIODevice")
+    (deny iokit-get-properties (with no-report)
+        (iokit-property
+            "AAPL,phandle"
+            "ads-present"
+            "avd-version"
+            "clock-gates"
+            "clock-ids"
+            "decode-samples-per-second"
+            "function-avd_reset"
+            "function-mcc_dataset"
+            "h264-playback-level"
+            "interrupt-parent"
+            "interrupts"
+            "iommu-parent"
+            "power-gates"
+            "supports-apt")))
+
 (deny mach-lookup (xpc-service-name-prefix ""))
 (allow mach-lookup
     (xpc-service-name "com.apple.audio.SandboxHelper"))
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (xpc-service-name "com.apple.coremedia.videodecoder")
     (xpc-service-name "com.apple.coremedia.videoencoder"))
 
@@ -606,10 +637,10 @@
 
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)
-    (op file-read* (with telemetry) path-filter)
+    (op file-read* path-filter)
     (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") path-filter)))
 (define (apply-write-and-issue-extension op path-filter)
-    (op file-write* (with telemetry) path-filter)
+    (op file-write* path-filter)
     (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") path-filter)))
 (define (read-only-and-issue-extensions path-filter)
     (apply-read-and-issue-extension allow path-filter))
@@ -621,7 +652,7 @@
 
 ;; Allow the OpenGL Profiler to attach.
 (with-filter (system-attribute apple-internal)
-    (allow mach-register (with telemetry) (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
+    (allow mach-register (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
 
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
@@ -638,7 +669,7 @@
     ;; Following is needed due to <rdar://problem/10427451> && <rdar://problem/10808817>
     (iokit-user-client-class "AudioAUUC"))
 
-(deny iokit-open (with telemetry)
+(deny iokit-open
     (iokit-user-client-class "AppleMultitouchDeviceUserClient")
     (iokit-user-client-class "IOHIDParamUserClient"))
 
@@ -658,9 +689,8 @@
     (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
 
 #if !ENABLE(CFPREFS_DIRECT_MODE)
-(allow mach-lookup (with telemetry)
-    (global-name "com.apple.cfprefsd.agent")
-)
+(allow mach-lookup
+    (global-name "com.apple.cfprefsd.agent"))
 #endif
 
 (allow mach-lookup
@@ -708,18 +738,23 @@
 (allow mach-lookup (xpc-service-name "com.apple.MTLCompilerService"))
 
 (deny mach-lookup (with no-log)
-    (global-name "com.apple.CoreServices.coreservicesd")
-    (global-name "com.apple.DiskArbitration.diskarbitrationd")
-    (global-name "com.apple.ViewBridgeAuxiliary")
-    (global-name "com.apple.windowserver.active"))
+    (global-name
+        "com.apple.CoreServices.coreservicesd"
+        "com.apple.DiskArbitration.diskarbitrationd"
+        "com.apple.ViewBridgeAuxiliary"
+        "com.apple.coreservices.launchservicesd"
+        "com.apple.windowserver.active"))
+        
+(deny mach-lookup (with no-report)
+    (global-name-prefix "com.apple.distributed_notifications"))
 
 ;; Needed to support encrypted media playback <rdar://problem/40038478>
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.SecurityServer"))
 
 (allow file-read* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 (with-filter (uid 0)
-    (allow file-write* (with telemetry)
+    (allow file-write*
         (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 )
 
@@ -731,17 +766,17 @@
 
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
 #if !HAVE(CSCHECKFIXDISABLE)
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.CoreServices.coreservicesd"))
 #endif
 
-(allow system-fsctl (with telemetry) (fsctl-command (_IO "h" 47)))
+(allow system-fsctl (fsctl-command (_IO "h" 47)))
 
 ;; Graphics
 (system-graphics)
 
 ;; Networking
-(allow network-outbound (with telemetry)
+(allow network-outbound
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101500
        ;; Local mDNSResponder for DNS, arbitrary outbound TCP
        ;; Note: This is needed for some media playback features. <rdar://problem/38191574>
@@ -757,6 +792,9 @@
 
 ;; CFNetwork
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
+
+(deny file-read* (with no-report)
+    (home-literal "/Library/Preferences/com.apple.networkd.plist"))
 
 #if PLATFORM(MAC)
 (allow mach-lookup
@@ -788,7 +826,7 @@
 ;; AirPlay
 (allow mach-lookup
     (global-name "com.apple.coremedia.routingcontext.xpc"))
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.coremedia.endpoint.xpc")
     (global-name "com.apple.coremedia.endpointstream.xpc")
     (global-name "com.apple.coremedia.endpointstreamaudioengine.xpc") ;; <rdar://76029596>
@@ -847,12 +885,15 @@
 (with-filter (extension "com.apple.webkit.microphone")
     (allow device-microphone))
 
+(deny mach-lookup (with no-report)
+    (global-name "com.apple.cmio.registerassistantservice.system-extensions"))
+
 ;; Media capture, camera access
 (with-filter (extension "com.apple.webkit.camera")
     (shared-preferences-read "com.apple.cmio")
     (shared-preferences-read "com.apple.coremedia")
     (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
-    (allow mach-lookup (with telemetry)
+    (allow mach-lookup
         (global-name "com.apple.cmio.AppleCameraAssistant")
         (global-name "com.apple.cmio.registerassistantservice")
         (global-name "com.apple.cmio.registerassistantservice.system-extensions")
@@ -874,13 +915,16 @@
         )
 #endif
         )
-    (deny iokit-open (with telemetry)
+    (deny iokit-open
         ;; QuickTimeUSBVDCDigitizer
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
         (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
     (allow device-camera))
 
 #endif // PLATFORM(MAC)
+
+(deny mach-lookup (with no-report)
+    (global-name "com.apple.tccd.system"))
 
 #if HAVE(SC_CONTENT_SHARING_SESSION)
 (allow mach-lookup
@@ -896,20 +940,22 @@
 )
 #endif
 
+(deny mach-lookup (with no-report)
+    (global-name "com.apple.system.opendirectoryd.libinfo"))
+
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name "com.apple.system.opendirectoryd.libinfo")))
 
-(allow mach-lookup (with telemetry)
-    (global-name "com.apple.relatived.tempest")
-)
+(allow mach-lookup
+    (global-name "com.apple.relatived.tempest"))
 
 (allow iokit-open
     (iokit-user-client-class "AppleAVDUserClient"))
 
 (when (equal? (param "CPU") "arm64")
-    (allow iokit-open (with telemetry)
+    (allow iokit-open
         (iokit-user-client-class "IOMobileFramebufferUserClient")
         ;; VideoToolbox VTImageRotationSession
         (iokit-user-client-class "IOSurfaceAcceleratorClient")
@@ -923,7 +969,7 @@
             (allow mach-message-send))))
 
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
-    (deny syscall-mach (with telemetry))
+    (deny syscall-mach)
     (allow syscall-mach (machtrap-number
         MSC__kernelrpc_mach_port_allocate_trap
         MSC__kernelrpc_mach_port_construct_trap
@@ -970,7 +1016,7 @@
 #endif // HAVE(SANDBOX_MESSAGE_FILTERING)
 
 (when (defined? 'syscall-unix)
-    (deny syscall-unix (with telemetry))
+    (deny syscall-unix)
     (allow syscall-unix (syscall-number
         SYS___channel_open
         SYS___disable_threadsignal
