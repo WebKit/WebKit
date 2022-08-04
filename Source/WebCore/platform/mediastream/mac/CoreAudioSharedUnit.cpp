@@ -382,10 +382,10 @@ OSStatus CoreAudioSharedUnit::configureSpeakerProc(int sampleRate)
 }
 
 #if !LOG_DISABLED
-void CoreAudioSharedUnit::checkTimestamps(const AudioTimeStamp& timeStamp, uint64_t sampleTime, double hostTime)
+void CoreAudioSharedUnit::checkTimestamps(const AudioTimeStamp& timeStamp, double hostTime)
 {
-    if (!timeStamp.mSampleTime || sampleTime == m_latestMicTimeStamp || !hostTime)
-        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::checkTimestamps: unusual timestamps, sample time = %lld, previous sample time = %lld, hostTime %f", sampleTime, m_latestMicTimeStamp, hostTime);
+    if (!timeStamp.mSampleTime || timeStamp.mSampleTime == m_latestMicTimeStamp || !hostTime)
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::checkTimestamps: unusual timestamps, sample time = %f, previous sample time = %f, hostTime %f", timeStamp.mSampleTime, m_latestMicTimeStamp, hostTime);
 }
 #endif
 
@@ -442,9 +442,9 @@ OSStatus CoreAudioSharedUnit::processMicrophoneSamples(AudioUnitRenderActionFlag
     double adjustedHostTime = m_DTSConversionRatio * timeStamp.mHostTime;
     uint64_t sampleTime = timeStamp.mSampleTime;
 #if !LOG_DISABLED
-    checkTimestamps(timeStamp, sampleTime, adjustedHostTime);
+    checkTimestamps(timeStamp, adjustedHostTime);
 #endif
-    m_latestMicTimeStamp = sampleTime;
+    m_latestMicTimeStamp = timeStamp.mSampleTime;
     m_microphoneSampleBuffer->setTimes(adjustedHostTime, sampleTime);
 
     if (volume() != 1.0)

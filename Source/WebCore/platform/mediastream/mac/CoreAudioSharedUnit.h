@@ -121,7 +121,7 @@ private:
 
     CAAudioStreamDescription m_microphoneProcFormat;
     RefPtr<AudioSampleBufferList> m_microphoneSampleBuffer;
-    uint64_t m_latestMicTimeStamp { 0 };
+    double m_latestMicTimeStamp { 0 };
 
     CAAudioStreamDescription m_speakerProcFormat;
 
@@ -134,7 +134,7 @@ private:
     mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
 
 #if !LOG_DISABLED
-    void checkTimestamps(const AudioTimeStamp&, uint64_t, double);
+    void checkTimestamps(const AudioTimeStamp&, double);
 
     String m_ioUnitName;
 #endif
