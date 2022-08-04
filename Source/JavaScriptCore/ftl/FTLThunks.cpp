@@ -107,8 +107,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
     // ensures that the return address is out of the way of register restoration.
     jit.restoreReturnAddressBeforeReturn(GPRInfo::regT0);
 
-    restoreAllRegisters(jit, buffer);
-
 #if CPU(ARM64E)
     jit.untagPtr(resultTag, AssemblyHelpers::linkRegister);
     jit.validateUntaggedPtr(AssemblyHelpers::linkRegister);
@@ -116,6 +114,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
 #else
     UNUSED_PARAM(resultTag);
 #endif
+
+    restoreAllRegisters(jit, buffer);
+
     jit.ret();
     
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::FTLThunk);
