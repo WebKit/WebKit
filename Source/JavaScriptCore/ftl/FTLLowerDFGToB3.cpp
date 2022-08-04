@@ -12322,6 +12322,7 @@ IGNORE_CLANG_WARNINGS_END
     void compileGetMapBucket()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LBasicBlock indexSetUp = m_out.newBlock();
         LBasicBlock loopStart = m_out.newBlock();
         LBasicBlock loopAround = m_out.newBlock();
         LBasicBlock slowPath = m_out.newBlock();
@@ -12329,8 +12330,6 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock notEmptyValue = m_out.newBlock();
         LBasicBlock notDeletedValue = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
-
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(loopStart);
 
         LValue map;
         if (m_node->child1().useKind() == MapObjectUse)
@@ -12347,8 +12346,11 @@ IGNORE_CLANG_WARNINGS_END
         LValue hash = lowInt32(m_node->child3());
 
         LValue buffer = m_out.loadPtr(map, m_heaps.HashMapImpl_buffer);
-        LValue mask = m_out.sub(m_out.load32(map, m_heaps.HashMapImpl_capacity), m_out.int32One);
 
+        m_out.branch(m_out.isNull(buffer), unsure(notPresentInTable), unsure(indexSetUp));
+
+        LBasicBlock lastNext = m_out.appendTo(indexSetUp, loopStart);
+        LValue mask = m_out.sub(m_out.load32(map, m_heaps.HashMapImpl_capacity), m_out.int32One);
         ValueFromBlock indexStart = m_out.anchor(hash);
         m_out.jump(loopStart);
 
