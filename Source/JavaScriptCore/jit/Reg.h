@@ -28,6 +28,7 @@
 #if ENABLE(ASSEMBLER)
 
 #include "MacroAssembler.h"
+#include "SimdInfo.h"
 
 namespace JSC {
 
@@ -50,41 +51,41 @@ namespace JSC {
 
 class Reg {
 public:
-    Reg()
+    constexpr Reg()
         : m_index(invalid())
     {
     }
 
-    Reg(WTF::HashTableDeletedValueType)
+    constexpr Reg(WTF::HashTableDeletedValueType)
         : m_index(deleted())
     {
     }
     
-    Reg(MacroAssembler::RegisterID reg)
+    constexpr Reg(MacroAssembler::RegisterID reg)
         : m_index(MacroAssembler::registerIndex(reg))
     {
     }
     
-    Reg(MacroAssembler::FPRegisterID reg)
+    constexpr Reg(MacroAssembler::FPRegisterID reg)
         : m_index(MacroAssembler::registerIndex(reg))
     {
     }
     
-    static Reg fromIndex(unsigned index)
+    static constexpr Reg fromIndex(unsigned index)
     {
         Reg result;
         result.m_index = index;
         return result;
     }
     
-    static Reg first()
+    static constexpr Reg first()
     {
         Reg result;
         result.m_index = 0;
         return result;
     }
     
-    static Reg last()
+    static constexpr Reg last()
     {
         Reg result;
         result.m_index = MacroAssembler::numberOfRegisters() + MacroAssembler::numberOfFPRegisters() - 1;
@@ -101,9 +102,9 @@ public:
         return result;
     }
     
-    unsigned index() const { return m_index; }
+    unsigned constexpr index() const { return m_index; }
 
-    static unsigned maxIndex()
+    static constexpr unsigned maxIndex()
     {
         return last().index();
     }
@@ -113,23 +114,23 @@ public:
 
     bool isHashTableDeletedValue() const { return m_index == deleted(); }
     
-    bool isGPR() const
+    constexpr bool isGPR() const
     {
         return m_index < MacroAssembler::numberOfRegisters();
     }
     
-    bool isFPR() const
+    constexpr bool isFPR() const
     {
         return (m_index - MacroAssembler::numberOfRegisters()) < MacroAssembler::numberOfFPRegisters();
     }
     
-    MacroAssembler::RegisterID gpr() const
+    constexpr MacroAssembler::RegisterID gpr() const
     {
         ASSERT(isGPR());
         return static_cast<MacroAssembler::RegisterID>(MacroAssembler::firstRegister() + m_index);
     }
     
-    MacroAssembler::FPRegisterID fpr() const
+    constexpr MacroAssembler::FPRegisterID fpr() const
     {
         ASSERT(isFPR());
         return static_cast<MacroAssembler::FPRegisterID>(
@@ -213,12 +214,12 @@ public:
         iterator end() const { return iterator(Reg()); }
     };
 
-    static AllRegsIterable all() { return AllRegsIterable(); }
+    static constexpr AllRegsIterable all() { return AllRegsIterable(); }
 
 private:
-    static uint8_t invalid() { return 0xff; }
+    static constexpr uint8_t invalid() { return 0xff; }
 
-    static uint8_t deleted() { return 0xfe; }
+    static constexpr uint8_t deleted() { return 0xfe; }
     
     uint8_t m_index;
 };
@@ -228,6 +229,26 @@ struct RegHash {
     static bool equal(const Reg& a, const Reg& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
+
+inline constexpr Width conservativeWidth(const Reg reg)
+{
+    return reg.isFPR() ? Width128 : pointerWidth();
+}
+
+inline constexpr Width conservativeWidthForC(const Reg reg)
+{
+    return reg.isFPR() ? Width64 : pointerWidth();
+}
+
+inline constexpr unsigned conservativeRegisterBytes(const Reg reg)
+{
+    return bytesForWidth(conservativeWidth(reg));
+}
+
+inline constexpr unsigned conservativeRegisterBytesForC(const Reg reg)
+{
+    return bytesForWidth(conservativeWidthForC(reg));
+}
 
 } // namespace JSC
 

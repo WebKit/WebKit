@@ -90,7 +90,7 @@ protected:
             StackSlot* slot = arg.stackSlot();
             if (slot->kind() != StackSlotKind::Spill)
                 return false;
-            if (slot->byteSize() != bytes(width))
+            if (slot->byteSize() != bytesForWidth(width))
                 return false;
         }
 
@@ -372,6 +372,7 @@ bool tryTrivialStackAllocation(Code& code)
 
 void allocateStackByGraphColoring(Code& code)
 {
+    RELEASE_ASSERT(!Options::useWebAssemblySIMD());
     PhaseScope phaseScope(code, "allocateStackByGraphColoring");
 
     handleCalleeSaves(code);

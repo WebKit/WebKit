@@ -25,11 +25,14 @@
 
 #pragma once
 
+#include "WasmOps.h"
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmParser.h"
+#include "WasmSIMDOpcodes.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/DataLog.h>
+#include <wtf/ListDump.h>
 
 namespace JSC { namespace Wasm {
 
@@ -86,6 +89,11 @@ public:
         operator ExpressionType() const { return m_value; }
 
         ExpressionType operator->() const { return m_value; }
+        
+        void dump(PrintStream& out) const
+        {
+            out.print(m_value, ": ", m_type);
+        }
 
     private:
         Type m_type;
@@ -147,6 +155,11 @@ private:
     PartialResult WARN_UNUSED_RETURN atomicWait(ExtAtomicOpType, Type memoryType);
     PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType);
     PartialResult WARN_UNUSED_RETURN atomicFence(ExtAtomicOpType);
+
+    template<bool isReachable, typename = void>
+    PartialResult
+    WARN_UNUSED_RETURN
+    simd(SimdLaneOperation, SimdLane, SimdSignMode);
 
     PartialResult WARN_UNUSED_RETURN parseTableIndex(unsigned&);
     PartialResult WARN_UNUSED_RETURN parseElementIndex(unsigned&);
@@ -550,6 +563,103 @@ auto FunctionParser<Context>::atomicFence(ExtAtomicOpType op) -> PartialResult
     WASM_PARSER_FAIL_IF(!parseUInt8(flags), "can't get flags");
     WASM_PARSER_FAIL_IF(flags != 0x0, "flags should be 0x0 but got ", flags);
     WASM_TRY_ADD_TO_CONTEXT(atomicFence(op, flags));
+    return { };
+}
+
+template<typename Context>
+template<bool isReachable, typename>
+auto FunctionParser<Context>::simd(SimdLaneOperation op, SimdLane lane, SimdSignMode signMode) -> PartialResult
+{
+    auto pushUnreachable = [&](auto type) -> PartialResult {
+        // Appease generators without SIMD support.
+        m_expressionStack.constructAndAppend(type, m_context.addConstant(Types::F64, 0));
+        return { };
+    };
+
+    auto parseMemOp = [&] (uint32_t& offset, TypedExpression& pointer) -> PartialResult {
+        uint32_t maxAlignment;
+        switch (op) {
+        case SimdLaneOperation::Load:
+        case SimdLaneOperation::Store:
+            maxAlignment = 16;
+            break;
+        default: RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        WASM_VALIDATOR_FAIL_IF(!m_info.memory, "simd memory instructions need a memory defined in the module");
+
+        uint32_t alignment;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get simd memory op alignment");
+        WASM_PARSER_FAIL_IF(alignment > maxAlignment, "alignment: ", alignment, " can't be larger than max alignment for simd operation: ", maxAlignment);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get simd memory op offset");
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "simd memory op pointer");
+        WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), "pointer must be i32");
+
+        return { };
+    };
+
+    switch (op) {
+    case SimdLaneOperation::Const: {
+        v128_t constant;
+        ASSERT(lane == SimdLane::v128);
+        ASSERT(signMode == SimdSignMode::None);
+        WASM_PARSER_FAIL_IF(!parseImmByteArray16(constant), "can't parse 128-bit vector constant");
+        if constexpr (isReachable) {
+            m_expressionStack.constructAndAppend(Types::V128, m_context.addConstant(constant));
+            return { };
+        } else 
+            return pushUnreachable(Types::V128);
+    }
+    case SimdLaneOperation::ExtractLane: {
+        uint8_t laneIdx;
+        TypedExpression v;
+        ASSERT(lane != SimdLane::v128);
+        ASSERT((signMode == SimdSignMode::None) == (elementSize(lane) >= Width32));
+        WASM_FAIL_IF_HELPER_FAILS(parseImmLaneIdx(elementCount(lane), laneIdx));        
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(v, "vector argument");
+        WASM_VALIDATOR_FAIL_IF(v.type() != Types::V128, "type mismatch for argument 0");
+        
+        if constexpr (isReachable) {
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addExtractLane(SimdInfo { lane, signMode }, laneIdx, v, result));
+            m_expressionStack.constructAndAppend(simdScalarType(lane), result);
+            return { };
+        } else 
+            return pushUnreachable(scalarType(lane));
+    }
+    case SimdLaneOperation::Load: {
+        uint32_t offset;
+        TypedExpression pointer;
+        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer));
+        
+        if constexpr (isReachable) {
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addSimdLoad(pointer, offset, result));
+            m_expressionStack.constructAndAppend(Types::V128, result);
+            return { };
+        } else 
+            return pushUnreachable(Types::V128);
+    }
+    case SimdLaneOperation::Store: {
+        TypedExpression val;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(val, "val");
+        WASM_VALIDATOR_FAIL_IF(!val.type().isV128(), "store vector must be v128");
+        
+        uint32_t offset;
+        TypedExpression pointer;
+        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer));
+
+        if constexpr (isReachable) {
+            WASM_TRY_ADD_TO_CONTEXT(addSimdStore(val, pointer, offset));
+            return { };
+        } else 
+            return { };
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        WASM_PARSER_FAIL_IF(true, "invalid simd op ", SimdLaneOperationDump(op));
+        break;
+    }
     return { };
 }
 
@@ -1798,6 +1908,23 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         return { };
     }
+
+    case ExtSimd: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblySIMD(), "wasm-simd is not enabled");
+        uint8_t simdOp;
+        WASM_PARSER_FAIL_IF(!parseUInt8(simdOp), "can't parse wasm extended opcode");
+
+        ExtSimdOpType op = static_cast<ExtSimdOpType>(simdOp);
+        switch (op) {
+#define CREATE_SIMD_CASE(name, _, laneOp, lane, signMode) case ExtSimdOpType::name: return simd<Context::tierSupportsSimd>(laneOp, lane, signMode);
+        FOR_EACH_WASM_EXT_SIMD_OP(CREATE_SIMD_CASE)
+#undef CREATE_SIMD_CASE
+        default:
+            WASM_PARSER_FAIL_IF(true, "invalid extended simd op ", simdOp);
+            break;
+        }
+        return { };
+    }
     }
 
     ASSERT_NOT_REACHED();
@@ -2191,6 +2318,23 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 #undef CREATE_ATOMIC_CASE
+
+    case ExtSimd: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblySIMD(), "wasm-simd is not enabled");
+        uint8_t simdOp;
+        WASM_PARSER_FAIL_IF(!parseUInt8(simdOp), "can't parse wasm extended opcode");
+
+        ExtSimdOpType op = static_cast<ExtSimdOpType>(simdOp);
+        switch (op) {
+#define CREATE_SIMD_CASE(name, id, laneOp, lane, signMode) case ExtSimdOpType::name: return simd<false>(laneOp, lane, signMode);
+        FOR_EACH_WASM_EXT_SIMD_OP(CREATE_SIMD_CASE)
+#undef CREATE_SIMD_CASE
+        default:
+            WASM_PARSER_FAIL_IF(true, "invalid extended simd op ", simdOp);
+            break;
+        }
+        return { };
+    }
 
     // no immediate cases
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE)

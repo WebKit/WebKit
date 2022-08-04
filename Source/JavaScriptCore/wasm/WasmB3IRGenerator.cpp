@@ -94,6 +94,8 @@ public:
     using ExpressionType = Variable*;
     using ResultList = Vector<ExpressionType, 8>;
 
+    static constexpr bool tierSupportsSimd = false;
+
     struct ControlData {
         ControlData(Procedure& proc, Origin origin, BlockSignature signature, BlockType type, unsigned stackSize, BasicBlock* continuation, BasicBlock* special = nullptr)
             : controlBlockType(type)
@@ -371,7 +373,6 @@ public:
     template<OpType>
     PartialResult WARN_UNUSED_RETURN addOp(ExpressionType left, ExpressionType right, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result);
-
 
     // Control flow
     ControlData WARN_UNUSED_RETURN addTopLevel(BlockSignature);
@@ -1723,9 +1724,9 @@ auto B3IRGenerator::store(StoreOpType op, ExpressionType pointerVar, ExpressionT
     return { };
 }
 
-inline B3::Width accessWidth(ExtAtomicOpType op)
+inline Width accessWidth(ExtAtomicOpType op)
 {
-    return static_cast<B3::Width>(memoryLog2Alignment(op));
+    return widthForBytes(1 << memoryLog2Alignment(op));
 }
 
 inline uint32_t sizeOfAtomicOpMemoryAccess(ExtAtomicOpType op)
@@ -1737,9 +1738,9 @@ inline Value* B3IRGenerator::sanitizeAtomicResult(ExtAtomicOpType op, Type value
 {
     auto sanitize32 = [&](Value* result) {
         switch (accessWidth(op)) {
-        case B3::Width8:
+        case Width8:
             return m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), result, constant(Int32, 0xff));
-        case B3::Width16:
+        case Width16:
             return m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), result, constant(Int32, 0xffff));
         default:
             return result;
@@ -1748,7 +1749,7 @@ inline Value* B3IRGenerator::sanitizeAtomicResult(ExtAtomicOpType op, Type value
 
     switch (valueType.kind) {
     case TypeKind::I64: {
-        if (accessWidth(op) == B3::Width64)
+        if (accessWidth(op) == Width64)
             return result;
         return m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), sanitize32(result));
     }
@@ -1763,7 +1764,7 @@ inline Value* B3IRGenerator::sanitizeAtomicResult(ExtAtomicOpType op, Type value
 Value* B3IRGenerator::fixupPointerPlusOffsetForAtomicOps(ExtAtomicOpType op, Value* ptr, uint32_t offset)
 {
     auto pointer = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), ptr, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), offset));
-    if (accessWidth(op) != B3::Width8) {
+    if (accessWidth(op) != Width8) {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
             m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), pointer, constant(pointerType(), sizeOfAtomicOpMemoryAccess(op) - 1)));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
@@ -1779,13 +1780,16 @@ inline Value* B3IRGenerator::emitAtomicLoadOp(ExtAtomicOpType op, Type valueType
 
     Value* value = nullptr;
     switch (accessWidth(op)) {
-    case B3::Width8:
-    case B3::Width16:
-    case B3::Width32:
+    case Width8:
+    case Width16:
+    case Width32:
         value = constant(Int32, 0);
         break;
-    case B3::Width64:
+    case Width64:
         value = constant(Int64, 0);
+        break;
+    case Width128:
+        RELEASE_ASSERT_NOT_REACHED();
         break;
     }
 
@@ -1825,7 +1829,7 @@ inline void B3IRGenerator::emitAtomicStoreOp(ExtAtomicOpType op, Type valueType,
 {
     pointer = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
 
-    if (valueType.isI64() && accessWidth(op) != B3::Width64)
+    if (valueType.isI64() && accessWidth(op) != Width64)
         value = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), value);
     m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicXchg), origin(), accessWidth(op), value, pointer);
 }
@@ -1912,7 +1916,7 @@ inline Value* B3IRGenerator::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valu
         break;
     }
 
-    if (valueType.isI64() && accessWidth(op) != B3::Width64)
+    if (valueType.isI64() && accessWidth(op) != Width64)
         value = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), value);
 
     return sanitizeAtomicResult(op, valueType, m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(opcode), origin(), accessWidth(op), value, pointer));
@@ -1951,7 +1955,7 @@ Value* B3IRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueTy
 {
     pointer = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
 
-    B3::Width accessWidth = Wasm::accessWidth(op);
+    Width accessWidth = Wasm::accessWidth(op);
 
     if (widthForType(toB3Type(valueType)) == accessWidth)
         return sanitizeAtomicResult(op, valueType, m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicStrongCAS), origin(), accessWidth, expected, value, pointer));
@@ -1960,30 +1964,32 @@ Value* B3IRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueTy
     switch (valueType.kind) {
     case TypeKind::I64: {
         switch (accessWidth) {
-        case B3::Width8:
+        case Width8:
             maximum = constant(Int64, UINT8_MAX);
             break;
-        case B3::Width16:
+        case Width16:
             maximum = constant(Int64, UINT16_MAX);
             break;
-        case B3::Width32:
+        case Width32:
             maximum = constant(Int64, UINT32_MAX);
             break;
-        case B3::Width64:
+        case Width64:
+        case Width128:
             RELEASE_ASSERT_NOT_REACHED();
         }
         break;
     }
     case TypeKind::I32:
         switch (accessWidth) {
-        case B3::Width8:
+        case Width8:
             maximum = constant(Int32, UINT8_MAX);
             break;
-        case B3::Width16:
+        case Width16:
             maximum = constant(Int32, UINT16_MAX);
             break;
-        case B3::Width32:
-        case B3::Width64:
+        case Width32:
+        case Width64:
+        case Width128:
             RELEASE_ASSERT_NOT_REACHED();
         }
         break;
@@ -2021,13 +2027,16 @@ Value* B3IRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueTy
     {
         Value* addingValue = nullptr;
         switch (accessWidth) {
-        case B3::Width8:
-        case B3::Width16:
-        case B3::Width32:
+        case Width8:
+        case Width16:
+        case Width32:
             addingValue = constant(Int32, 0);
             break;
-        case B3::Width64:
+        case Width64:
             addingValue = constant(Int64, 0);
+            break;
+        case Width128:
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         auto result = m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicXchgAdd), origin(), accessWidth, addingValue, pointer);
@@ -2037,7 +2046,7 @@ Value* B3IRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueTy
     }
 
     m_currentBlock = continuation;
-    Value* phi = continuation->appendNew<Value>(m_proc, Phi, accessWidth == B3::Width64 ? Int64 : Int32, origin());
+    Value* phi = continuation->appendNew<Value>(m_proc, Phi, accessWidth == Width64 ? Int64 : Int32, origin());
     successValue->setPhi(phi);
     failureValue->setPhi(phi);
     return sanitizeAtomicResult(op, valueType, phi);
@@ -2517,7 +2526,6 @@ auto B3IRGenerator::addSelect(ExpressionType condition, ExpressionType nonZero, 
 
 B3IRGenerator::ExpressionType B3IRGenerator::addConstant(Type type, uint64_t value)
 {
-
     return push(constant(toB3Type(type), value));
 }
 

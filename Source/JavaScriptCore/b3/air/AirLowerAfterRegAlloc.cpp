@@ -89,10 +89,8 @@ void lowerAfterRegAlloc(Code& code)
             
             RegisterSet set;
 
-            if (isRelevant(inst)) {
-                for (Reg reg : localCalc.live())
-                    set.set(reg);
-            }
+            if (isRelevant(inst))
+                set = { localCalc.live() };
             
             localCalc.execute(instIndex);
 
@@ -137,7 +135,7 @@ void lowerAfterRegAlloc(Code& code)
             if (!found) {
                 StackSlot*& slot = slots[bank][i];
                 if (!slot)
-                    slot = code.addStackSlot(bytes(conservativeWidth(bank)), StackSlotKind::Spill);
+                    slot = code.addStackSlot(conservativeRegisterBytes(bank), StackSlotKind::Spill);
                 result[i] = Arg::stack(slots[bank][i]);
             }
         }
@@ -219,13 +217,12 @@ void lowerAfterRegAlloc(Code& code)
                 if (originalResult.isReg())
                     regsToSave.excludeRegister(originalResult.reg());
                 Vector<StackSlot*> stackSlots;
-                regsToSave.forEach(
-                    [&] (Reg reg) {
+                regsToSave.forEachWithWidth(
+                    [&] (Reg reg, Width width) {
                         Tmp tmp(reg);
                         Arg arg(tmp);
-                        Width width = conservativeWidth(arg.bank());
                         StackSlot* stackSlot =
-                            code.addStackSlot(bytes(width), StackSlotKind::Spill);
+                            code.addStackSlot(bytesForWidth(width), StackSlotKind::Spill);
                         pairs.append(ShufflePair(arg, Arg::stack(stackSlot), width));
                         stackSlots.append(stackSlot);
                     });
@@ -243,11 +240,10 @@ void lowerAfterRegAlloc(Code& code)
                 // Now we need to emit code to restore registers.
                 pairs.shrink(0);
                 unsigned stackSlotIndex = 0;
-                regsToSave.forEach(
-                    [&] (Reg reg) {
+                regsToSave.forEachWithWidth(
+                    [&] (Reg reg, Width width) {
                         Tmp tmp(reg);
                         Arg arg(tmp);
-                        Width width = conservativeWidth(arg.bank());
                         StackSlot* stackSlot = stackSlots[stackSlotIndex++];
                         pairs.append(ShufflePair(Arg::stack(stackSlot), arg, width));
                     });

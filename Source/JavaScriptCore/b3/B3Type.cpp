@@ -52,6 +52,9 @@ void printInternal(PrintStream& out, Type type)
     case Double:
         out.print("Double");
         return;
+    case V128:
+        out.print("V128");
+        return;
     case Tuple:
         out.print("Tuple");
         return;

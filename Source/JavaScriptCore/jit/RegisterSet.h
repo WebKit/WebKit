@@ -145,6 +145,15 @@ public:
                 func(Reg::fromIndex(index));
             });
     }
+
+    template<typename Func>
+    void forEachWithWidth(const Func& func) const
+    {
+        m_bits.forEachSetBit(
+            [&] (size_t index) {
+                func(Reg::fromIndex(index), conservativeWidth(Reg::fromIndex(index)));
+            });
+    }
     
     class iterator {
     public:

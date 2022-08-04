@@ -90,7 +90,9 @@ public:
         WidthArg,
 
         // ZeroReg is interpreted as a zero register in ARM64
-        ZeroReg
+        ZeroReg,
+        
+        SimdInfo
     };
     
     enum Temperature : int8_t {
@@ -492,6 +494,22 @@ public:
         : Arg(Air::Tmp(reg))
     {
     }
+    
+    static Arg simdInfo(SimdLane simdLane, SimdSignMode signMode = SimdSignMode::None)
+    {
+        Arg result;
+        result.m_kind = SimdInfo;
+        result.m_simdInfo = ::JSC::SimdInfo { simdLane, signMode };
+        return result;
+    }
+
+    static Arg simdInfo(::JSC::SimdInfo info)
+    {
+        Arg result;
+        result.m_kind = SimdInfo;
+        result.m_simdInfo = info;
+        return result;
+    }
 
     static Arg imm(int64_t value)
     {
@@ -605,7 +623,7 @@ public:
             if (isARM64()) {
                 if (!width)
                     return true;
-                return scale == 1 || scale == bytes(*width);
+                return scale == 1 || scale == bytesForWidth(*width);
             }
             return false;
         default:
@@ -624,6 +642,8 @@ public:
             return 2;
         case 8:
             return 3;
+        case 16:
+            return 4;
         default:
             ASSERT_NOT_REACHED();
             return 0;
@@ -719,7 +739,7 @@ public:
     {
         Arg result;
         result.m_kind = WidthArg;
-        result.m_offset = width;
+        result.m_offset = bytesForWidth(width);
         return result;
     }
 
@@ -909,6 +929,11 @@ public:
     {
         return isTmp() || isStack();
     }
+    
+    bool isSimdInfo() const
+    {
+        return kind() == SimdInfo;
+    }
 
     Air::Tmp tmp() const
     {
@@ -941,6 +966,8 @@ public:
                 return B3::isRepresentableAs<int32_t>(value);
             case Width64:
                 return B3::isRepresentableAs<int64_t>(value);
+            case Width128:
+                return false;
             }
             RELEASE_ASSERT_NOT_REACHED();
         case Unsigned:
@@ -953,6 +980,8 @@ public:
                 return B3::isRepresentableAs<uint32_t>(value);
             case Width64:
                 return B3::isRepresentableAs<uint64_t>(value);
+            case Width128:
+                return false;
             }
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -973,6 +1002,8 @@ public:
                 return static_cast<int32_t>(value);
             case Width64:
                 return static_cast<int64_t>(value);
+            case Width128:
+                break;
             }
             RELEASE_ASSERT_NOT_REACHED();
         case Unsigned:
@@ -985,6 +1016,8 @@ public:
                 return static_cast<uint32_t>(value);
             case Width64:
                 return static_cast<uint64_t>(value);
+            case Width128:
+                break;
             }
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -1056,7 +1089,7 @@ public:
     Width width() const
     {
         ASSERT(kind() == WidthArg);
-        return static_cast<Width>(m_offset);
+        return widthForBytes(m_offset);
     }
 
     bool isGPTmp() const
@@ -1095,6 +1128,7 @@ public:
             return true;
         case Tmp:
             return isGPTmp();
+        case SimdInfo:
         case Invalid:
             return false;
         }
@@ -1116,6 +1150,7 @@ public:
         case WidthArg:
         case Invalid:
         case ZeroReg:
+        case SimdInfo:
             return false;
         case SimpleAddr:
         case Addr:
@@ -1262,6 +1297,8 @@ public:
                 return isValidScaledUImm12<32>(offset);
             case Width64:
                 return isValidScaledUImm12<64>(offset);
+            case Width128:
+                return false;
             }
         }
         return false;
@@ -1308,6 +1345,7 @@ public:
         case ZeroReg:
         case SimpleAddr:
         case ExtendedOffsetAddr:
+        case SimdInfo:
             return true;
         case Addr:
         case Stack:
@@ -1478,6 +1516,18 @@ public:
         return static_cast<MacroAssembler::StatusCondition>(m_offset);
     }
     
+    ::JSC::SimdInfo simdInfo() const
+    {
+        ASSERT(isSimdInfo());
+        return m_simdInfo;
+    }
+    
+    SimdSignMode simdSignMode() const
+    {
+        ASSERT(isSimdInfo());
+        return m_simdInfo.signMode;
+    }
+    
     // Tells you if the Arg is invertible. Only condition arguments are invertible, and even for those, there
     // are a few exceptions - notably Overflow and Signed.
     bool isInvertible() const
@@ -1560,6 +1610,7 @@ private:
     int32_t m_scale { 1 };
     Air::Tmp m_base;
     Air::Tmp m_index;
+    ::JSC::SimdInfo m_simdInfo;
 };
 
 struct ArgHash {

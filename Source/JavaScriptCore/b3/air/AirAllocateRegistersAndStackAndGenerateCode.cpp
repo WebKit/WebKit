@@ -40,6 +40,10 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
+namespace GenerateAndAllocateRegistersInternal {
+static bool verbose = false;
+}
+
 GenerateAndAllocateRegisters::GenerateAndAllocateRegisters(Code& code)
     : m_code(code)
     , m_map(code)
@@ -169,10 +173,16 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::flush(Tmp tmp, Reg reg)
 {
     ASSERT(tmp);
     intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
+    JIT_COMMENT(*m_jit, "Flush(", tmp, ", ", reg, ", offset=", offset, ")");
     if (tmp.isGP())
         m_jit->store64(reg.gpr(), callFrameAddr(*m_jit, offset));
-    else
+    else if (B3::conservativeRegisterBytes(B3::FP) == sizeof(double) || !Options::useWebAssemblySIMD()) {
+        ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width64));
         m_jit->storeDouble(reg.fpr(), callFrameAddr(*m_jit, offset));
+    } else {
+        ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width128));
+        m_jit->storeVector(reg.fpr(), callFrameAddr(*m_jit, offset));
+    }
 }
 
 ALWAYS_INLINE void GenerateAndAllocateRegisters::spill(Tmp tmp, Reg reg)
@@ -198,11 +208,17 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::alloc(Tmp tmp, Reg reg, Arg::Ro
     m_currentAllocation->at(reg) = tmp;
 
     if (Arg::isAnyUse(role)) {
+        JIT_COMMENT(*m_jit, "Alloc(", tmp, ", ", reg, ", role=", role, ")");
         intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
         if (tmp.bank() == GP)
             m_jit->load64(callFrameAddr(*m_jit, offset), reg.gpr());
-        else
+        else if (B3::conservativeRegisterBytes(B3::FP) == sizeof(double) || !Options::useWebAssemblySIMD()) {
+            ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width64));
             m_jit->loadDouble(callFrameAddr(*m_jit, offset), reg.fpr());
+        } else {
+            ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width128));
+            m_jit->loadVector(callFrameAddr(*m_jit, offset), reg.fpr());
+        }
     }
 }
 
@@ -357,10 +373,16 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
                     return;
                 }
 
-                if (freeSlots.size())
+                unsigned slotSize = conservativeRegisterBytes(tmp.bank());
+                if (!Options::useWebAssemblySIMD())
+                    slotSize = conservativeRegisterBytesForC(tmp.bank());
+                
+                if (freeSlots.size() && freeSlots.last()->byteSize() >= slotSize)
                     data.spillSlot = freeSlots.takeLast();
                 else
-                    data.spillSlot = m_code.addStackSlot(8, StackSlotKind::Spill);
+                    data.spillSlot = m_code.addStackSlot(slotSize, StackSlotKind::Spill);
+                
+                dataLogLnIf(GenerateAndAllocateRegistersInternal::verbose, "assignStackSlotToTmp block: ", *block, ", tmp: ", tmp, " -> slot ", data.spillSlot);
                 data.reg = Reg();
             };
 
@@ -397,7 +419,7 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
         }
     } 
 
-    m_allowedRegisters = RegisterSet();
+    m_allowedRegisters = { };
 
     forEachBank([&] (Bank bank) {
         m_registers[bank] = m_code.regsInPriorityOrder(bank);
@@ -405,18 +427,21 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
         for (Reg reg : m_registers[bank]) {
             m_allowedRegisters.includeRegister(reg);
             TmpData& data = m_map[Tmp(reg)];
-            data.spillSlot = m_code.addStackSlot(8, StackSlotKind::Spill);
+            unsigned slotSize = conservativeRegisterBytes(bank);
+            if (!Options::useWebAssemblySIMD())
+                slotSize = conservativeRegisterBytesForC(bank);
+            data.spillSlot = m_code.addStackSlot(slotSize, StackSlotKind::Spill);
+            dataLogLnIf(GenerateAndAllocateRegistersInternal::verbose, "allowedRegisters: reg: ", reg, " -> slot ", data.spillSlot);
             data.reg = Reg();
         }
     });
 
     {
-        unsigned nextIndex = 0;
+        intptr_t offset = -static_cast<intptr_t>(m_code.frameSize());
         for (StackSlot* slot : m_code.stackSlots()) {
             if (slot->isLocked())
                 continue;
-            intptr_t offset = -static_cast<intptr_t>(m_code.frameSize()) - static_cast<intptr_t>(nextIndex) * 8 - 8;
-            ++nextIndex;
+            offset -= std::max(slot->byteSize(), conservativeRegisterBytes(B3::GP));
             slot->setOffsetFromFP(offset);
         }
     }

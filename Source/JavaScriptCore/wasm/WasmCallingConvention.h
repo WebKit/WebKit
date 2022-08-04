@@ -41,7 +41,19 @@ namespace JSC { namespace Wasm {
 
 constexpr unsigned numberOfLLIntCalleeSaveRegisters = 2;
 
-using ArgumentLocation = ValueLocation;
+struct ArgumentLocation {
+    ArgumentLocation(ValueLocation loc, Width width)
+        : location(loc)
+        , width(width)
+    {
+    }
+
+    ArgumentLocation() {}
+
+    ValueLocation location;
+    Width width;
+};
+
 enum class CallRole : uint8_t {
     Caller,
     Callee,
@@ -97,20 +109,21 @@ public:
 
 private:
     template<typename RegType>
-    ArgumentLocation marshallLocationImpl(CallRole role, const Vector<RegType>& regArgs, size_t& count, size_t& stackOffset) const
+    ArgumentLocation marshallLocationImpl(CallRole role, const Vector<RegType>& regArgs, size_t& count, size_t& stackOffset, size_t valueSize) const
     {
         if (count < regArgs.size())
-            return ArgumentLocation { regArgs[count++] };
+            return ArgumentLocation { ValueLocation { regArgs[count++] }, widthForBytes(valueSize) };
 
         count++;
-        ArgumentLocation result = role == CallRole::Caller ? ArgumentLocation::stackArgument(stackOffset) : ArgumentLocation::stack(stackOffset);
-        stackOffset += sizeof(Register);
+        ArgumentLocation result = { role == CallRole::Caller ? ValueLocation::stackArgument(stackOffset) : ValueLocation::stack(stackOffset), widthForBytes(valueSize) };
+        stackOffset += valueSize;
         return result;
     }
 
     ArgumentLocation marshallLocation(CallRole role, Type valueType, size_t& gpArgumentCount, size_t& fpArgumentCount, size_t& stackOffset) const
     {
         ASSERT(isValueType(valueType));
+        unsigned alignedWidth = WTF::roundUpToMultipleOf(bytesForWidth(valueType.width()), sizeof(Register));
         switch (valueType.kind) {
         case TypeKind::I32:
         case TypeKind::I64:
@@ -118,10 +131,11 @@ private:
         case TypeKind::Externref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
-            return marshallLocationImpl(role, jsrArgs, gpArgumentCount, stackOffset);
+            return marshallLocationImpl(role, jsrArgs, gpArgumentCount, stackOffset, alignedWidth);
         case TypeKind::F32:
         case TypeKind::F64:
-            return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset);
+        case TypeKind::V128:
+            return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset, alignedWidth);
         default:
             break;
         }
@@ -198,10 +212,10 @@ private:
     ArgumentLocation marshallLocationImpl(CallRole role, const Vector<RegType>& regArgs, size_t& count, size_t& stackOffset) const
     {
         if (count < regArgs.size())
-            return ArgumentLocation { regArgs[count++] };
+            return ArgumentLocation { ValueLocation { regArgs[count++] }, Width64 };
 
         count++;
-        ArgumentLocation result = role == CallRole::Caller ? ArgumentLocation::stackArgument(stackOffset) : ArgumentLocation::stack(stackOffset);
+        ArgumentLocation result = { role == CallRole::Caller ? ValueLocation::stackArgument(stackOffset) : ValueLocation::stack(stackOffset), Width64 };
         stackOffset += sizeof(Register);
         return result;
     }

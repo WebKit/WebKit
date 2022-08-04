@@ -55,36 +55,15 @@ Type bestType(Bank bank, Width width)
         }
         RELEASE_ASSERT_NOT_REACHED();
         return Void;
+    case Width128:
+        RELEASE_ASSERT_NOT_REACHED();
+        return Void;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return Void;
 }
 
 } } // namespace JSC::B3
-
-namespace WTF {
-
-void printInternal(PrintStream& out, JSC::B3::Width width)
-{
-    switch (width) {
-    case JSC::B3::Width8:
-        out.print("8");
-        return;
-    case JSC::B3::Width16:
-        out.print("16");
-        return;
-    case JSC::B3::Width32:
-        out.print("32");
-        return;
-    case JSC::B3::Width64:
-        out.print("64");
-        return;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-} // namespace WTF
 
 #endif // ENABLE(B3_JIT)
 

@@ -48,6 +48,8 @@ class LLIntGenerator : public BytecodeGeneratorBase<GeneratorTraits> {
 public:
     using ExpressionType = VirtualRegister;
 
+    static constexpr bool tierSupportsSimd = false;
+
     struct ControlLoop  {
         Ref<Label> m_body;
     };
@@ -657,6 +659,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
             break;
         case TypeKind::F32:
         case TypeKind::F64:
+        case TypeKind::V128:
             if (fprIndex < fprCount)
                 ++fprIndex;
             else if (stackIndex++ >= stackCount)
@@ -719,6 +722,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
             break;
         case TypeKind::F32:
         case TypeKind::F64:
+        case TypeKind::V128:
             if (fprIndex > fprLimit)
                 arguments[i] = virtualRegisterForLocal(--fprIndex);
             else
@@ -753,6 +757,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
             break;
         case TypeKind::F32:
         case TypeKind::F64:
+        case TypeKind::V128:
             if (fprIndex > fprLimit)
                 temporaryResults[i] = virtualRegisterForLocal(--fprIndex);
             else
@@ -815,6 +820,7 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
             break;
         case TypeKind::F32:
         case TypeKind::F64:
+        case TypeKind::V128:
             if (fprIndex < maxFPRIndex)
                 m_results.append(virtualRegisterForLocal(numberOfLLIntCalleeSaveRegisters + fprIndex++));
             else
@@ -873,6 +879,7 @@ auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
             break;
         case TypeKind::F32:
         case TypeKind::F64:
+        case TypeKind::V128:
             addArgument(i, fprIndex, maxFPRIndex);
             break;
         case TypeKind::Void:
@@ -1160,6 +1167,7 @@ auto LLIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDe
         case Wasm::TypeKind::I64:
         case Wasm::TypeKind::Externref:
         case Wasm::TypeKind::Funcref:
+        case Wasm::TypeKind::V128:
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

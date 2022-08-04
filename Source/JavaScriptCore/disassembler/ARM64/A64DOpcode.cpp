@@ -84,6 +84,8 @@ static const OpcodeGroupInitializer opcodeGroupList[] = {
     OPCODE_GROUP_ENTRY(0x0b, A64DOpcodeAddSubtractShiftedRegister),
     OPCODE_GROUP_ENTRY(0x0c, A64DOpcodeLoadStoreRegisterPair),
     OPCODE_GROUP_ENTRY(0x0d, A64DOpcodeLoadStoreRegisterPair),
+    OPCODE_GROUP_ENTRY(0x0e, A64DOpcodeVectorDataProcessingLogical1Source),
+    OPCODE_GROUP_ENTRY(0x0e, A64DOpcodeVectorDataProcessingLogical2Source),
     OPCODE_GROUP_ENTRY(0x11, A64DOpcodeAddSubtractImmediate),
     OPCODE_GROUP_ENTRY(0x12, A64DOpcodeMoveWide),
     OPCODE_GROUP_ENTRY(0x12, A64DOpcodeLogicalImmediate),
@@ -1849,6 +1851,66 @@ const char* A64DOpcodeUnconditionalBranchRegister::format()
     if (opcValue <= 2)
         appendRegisterName(rn());
     return m_formatBuffer;
+}
+
+const char* A64DOpcodeVectorDataProcessingLogical1Source::format()
+{
+    appendInstructionName(opName());
+    appendSimdLaneIndexAndType((q() << 6) | imm5());
+    appendSeparator();
+    appendCharacter('v');
+    appendCharacter('/');
+    appendRegisterName(rd());
+    appendSeparator();
+    appendCharacter('v');
+    appendCharacter('/');
+    appendRegisterName(rt());
+    appendSeparator();
+    return m_formatBuffer;
+}
+
+const char* A64DOpcodeVectorDataProcessingLogical1Source::opName()
+{
+    switch (op10_15()) {
+    case 0b000111:
+        return "ins";
+    case 0b001111:
+        return "umov";
+    default:
+        dataLogLn("Dissassembler saw unknown simd one source instruction opcode ", op10_15());
+        return "SIMDUK";
+    }
+}
+
+const char* A64DOpcodeVectorDataProcessingLogical2Source::format()
+{
+    appendInstructionName(opName());
+    appendSimdLaneType(q());
+    appendSeparator();
+    appendCharacter('v');
+    appendCharacter('/');
+    appendRegisterName(rd());
+    appendSeparator();
+    appendCharacter('v');
+    appendCharacter('/');
+    appendRegisterName(rn());
+    appendSeparator();
+    appendCharacter('v');
+    appendCharacter('/');
+    appendRegisterName(rm());
+    appendSeparator();
+    return m_formatBuffer;
+}
+
+const char* A64DOpcodeVectorDataProcessingLogical2Source::opName()
+{
+    switch (op10_15()) {
+    case 0b00111:
+        return "orr";
+    default:
+        dataLogLn("Dissassembler saw unknown simd 2 source instruction opcode ", op10_15());
+        return "SIMDUK";
+    }
 }
 
 } } // namespace JSC::ARM64Disassembler
