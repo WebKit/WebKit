@@ -44,17 +44,10 @@ class TextRun;
 class TextDecorationPainter {
 public:
     struct Styles;
-    TextDecorationPainter(GraphicsContext&, OptionSet<TextDecorationLine> decorations, const RenderText&, bool isFirstLine, const FontCascade&, std::optional<Styles> = std::nullopt);
-    
-    void setTextBox(InlineIterator::TextBoxIterator textBox) { m_textBox = textBox; }
-    void setIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal; }
-    void setWidth(float width) { m_width = width; }
-    void setTextShadow(const ShadowData* textShadow) { m_shadow = textShadow; }
-    void setShadowColorFilter(const FilterOperations* colorFilter) { m_shadowColorFilter = colorFilter; }
+    TextDecorationPainter(GraphicsContext&, OptionSet<TextDecorationLine> decorations, const RenderText&, bool isFirstLine, const FontCascade&, InlineIterator::TextBoxIterator, float width, const ShadowData*, const FilterOperations*, std::optional<Styles> = std::nullopt);
 
     void paintBackgroundDecorations(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin);
     void paintForegroundDecorations(const FloatPoint& boxOrigin);
-    void paintLineThrough(const Color&, float thickness, const FloatPoint& localOrigin);
 
     struct Styles {
         bool operator==(const Styles&) const;
@@ -72,6 +65,8 @@ public:
     static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);
 
 private:
+    void paintLineThrough(const Color&, float thickness, const FloatPoint& localOrigin);
+
     GraphicsContext& m_context;
     OptionSet<TextDecorationLine> m_decorations;
     float m_wavyOffset;

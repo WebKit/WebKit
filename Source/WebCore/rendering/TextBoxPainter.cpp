@@ -433,20 +433,11 @@ TextDecorationPainter TextBoxPainter<TextBoxPath>::createDecorationPainter(const
     }
 
     // Create painter
-    const FontCascade& font = fontCascade();
     auto textDecorations = m_style.textDecorationsInEffect();
     textDecorations.add(TextDecorationPainter::textDecorationsInEffectForStyle(markedText.style.textDecorationStyles));
-    TextDecorationPainter decorationPainter { context, textDecorations, m_renderer, m_isFirstLine, font, markedText.style.textDecorationStyles };
-    decorationPainter.setTextBox(makeIterator());
-    decorationPainter.setWidth(snappedSelectionRect.width());
-    decorationPainter.setIsHorizontal(textBox().isHorizontal());
-    if (markedText.style.textShadow) {
-        decorationPainter.setTextShadow(&markedText.style.textShadow.value());
-        if (m_style.hasAppleColorFilter())
-            decorationPainter.setShadowColorFilter(&m_style.appleColorFilter());
-    }
-
-    return decorationPainter;
+    auto* shadow = markedText.style.textShadow ? &markedText.style.textShadow.value() : nullptr;
+    auto* colorFilter = markedText.style.textShadow && m_style.hasAppleColorFilter() ? &m_style.appleColorFilter() : nullptr;
+    return { context, textDecorations, m_renderer, m_isFirstLine, fontCascade(), makeIterator(), snappedSelectionRect.width(), shadow, colorFilter, markedText.style.textDecorationStyles };
 }
 
 template<typename TextBoxPath>
