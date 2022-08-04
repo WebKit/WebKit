@@ -4102,12 +4102,6 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 #endif // ENABLE(IMAGE_ANALYSIS)
 
 #if HAVE(UIFINDINTERACTION)
-    if (action == @selector(find:) || action == @selector(findNext:) || action == @selector(findPrevious:))
-        return self.webView._findInteractionEnabled;
-
-    if (action == @selector(findAndReplace:))
-        return self.webView._findInteractionEnabled && self.supportsTextReplacement;
-
     if (action == @selector(useSelectionForFind:) || action == @selector(_findSelected:)) {
         if (!self.webView._findInteractionEnabled)
             return NO;
@@ -10447,26 +10441,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if HAVE(UIFINDINTERACTION)
 
-- (void)findForWebView:(id)sender
-{
-    [self.webView._findInteraction presentFindNavigatorShowingReplace:NO];
-}
-
-- (void)findNextForWebView:(id)sender
-{
-    [self.webView._findInteraction findNext];
-}
-
-- (void)findPreviousForWebView:(id)sender
-{
-    [self.webView._findInteraction findPrevious];
-}
-
-- (void)findAndReplaceForWebView:(id)sender
-{
-    [self.webView._findInteraction presentFindNavigatorShowingReplace:YES];
-}
-
 - (void)useSelectionForFindForWebView:(id)sender
 {
     if (!_page->hasSelectedRange())
@@ -10482,7 +10456,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (void)_findSelectedForWebView:(id)sender
 {
     [self useSelectionForFindForWebView:sender];
-    [self findForWebView:sender];
+    [self.webView find:sender];
 }
 
 - (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(UITextSearchOptions *)options resultAggregator:(id<UITextSearchAggregator>)aggregator
