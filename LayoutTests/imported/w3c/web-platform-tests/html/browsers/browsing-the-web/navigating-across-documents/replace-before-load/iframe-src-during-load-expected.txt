@@ -1,3 +1,4 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+
+PASS Replace during the load event, triggered by setting iframeElement.src
 

@@ -1,4 +1,4 @@
 
 
-FAIL Replace before load, triggered by setting iframeElement.src assert_equals: onload must not yet have fired expected (undefined) undefined but got (boolean) true
+PASS Replace before load, triggered by setting iframeElement.src
 
