@@ -199,12 +199,7 @@ class ArrayProfile {
     friend class UnlinkedArrayProfile;
 
 public:
-    explicit ArrayProfile()
-        : m_mayInterceptIndexedAccesses(false)
-        , m_usesOriginalArrayStructures(true)
-        , m_didPerformFirstRunPruning(false)
-    {
-    }
+    explicit ArrayProfile() = default;
 
 #if USE(LARGE_TYPED_ARRAYS)
     static constexpr uint64_t s_smallTypedArrayMaxLength = std::numeric_limits<int32_t>::max();
@@ -255,9 +250,9 @@ private:
 #if USE(LARGE_TYPED_ARRAYS)
     bool m_mayBeLargeTypedArray { false };
 #endif
-    bool m_mayInterceptIndexedAccesses : 1;
-    bool m_usesOriginalArrayStructures : 1;
-    bool m_didPerformFirstRunPruning : 1;
+    bool m_mayInterceptIndexedAccesses : 1 { false };
+    bool m_usesOriginalArrayStructures : 1 { true };
+    bool m_didPerformFirstRunPruning : 1 { false };
     ArrayModes m_observedArrayModes { 0 };
 };
 static_assert(sizeof(ArrayProfile) == 12);

@@ -129,6 +129,7 @@ public:
         IndexedTypedArrayFloat32Load,
         IndexedTypedArrayFloat64Load,
         IndexedStringLoad,
+        IndexedNoIndexingMiss,
         IndexedInt32Store,
         IndexedDoubleStore,
         IndexedContiguousStore,
@@ -156,12 +157,6 @@ public:
     template<typename T>
     const T& as() const { return *static_cast<const T*>(this); }
 
-
-    template<typename AccessCaseType, typename... Arguments>
-    static std::unique_ptr<AccessCaseType> create(Arguments... arguments)
-    {
-        return std::unique_ptr<AccessCaseType>(new AccessCaseType(arguments...));
-    }
 
     static Ref<AccessCase> create(VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset = invalidOffset,
         Structure* = nullptr, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(), RefPtr<PolyProtoAccessChain>&& = nullptr);

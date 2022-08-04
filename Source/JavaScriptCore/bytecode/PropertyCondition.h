@@ -40,6 +40,7 @@ public:
         Replacement, // This implies the property is Present but cannot be watched for replacement.
         Absence,
         AbsenceOfSetEffect,
+        AbsenceOfIndexedProperties,
         Equivalence, // An adaptive watchpoint on this will be a pair of watchpoints, and when the structure transitions, we will set the replacement watchpoint on the new structure.
         HasStaticProperty, // Custom value or accessor.
         HasPrototype
@@ -122,7 +123,22 @@ public:
             vm.writeBarrier(owner);
         return absenceOfSetEffectWithoutBarrier(uid, prototype);
     }
-    
+
+    static PropertyCondition absenceOfIndexedPropertiesWithoutBarrier(JSObject* prototype)
+    {
+        PropertyCondition result;
+        result.m_header = Header(nullptr, AbsenceOfIndexedProperties);
+        result.u.prototype.prototype = prototype;
+        return result;
+    }
+
+    static PropertyCondition absenceOfIndexedProperties(VM& vm, JSCell* owner, JSObject* prototype)
+    {
+        if (owner)
+            vm.writeBarrier(owner);
+        return absenceOfIndexedPropertiesWithoutBarrier(prototype);
+    }
+
     static PropertyCondition equivalenceWithoutBarrier(
         UniquedStringImpl* uid, JSValue value)
     {
@@ -183,7 +199,7 @@ public:
     bool hasPrototype() const
     {
         return !!*this
-            && (m_header.type() == Absence || m_header.type() == AbsenceOfSetEffect || m_header.type() == HasPrototype);
+            && (m_header.type() == Absence || m_header.type() == AbsenceOfSetEffect || m_header.type() == AbsenceOfIndexedProperties || m_header.type() == HasPrototype);
     }
     JSObject* prototype() const
     {
@@ -212,6 +228,7 @@ public:
             break;
         case Absence:
         case AbsenceOfSetEffect:
+        case AbsenceOfIndexedProperties:
         case HasPrototype:
             result ^= WTF::PtrHash<JSObject*>::hash(u.prototype.prototype);
             break;
@@ -237,6 +254,7 @@ public:
                 && u.presence.attributes == other.u.presence.attributes;
         case Absence:
         case AbsenceOfSetEffect:
+        case AbsenceOfIndexedProperties:
         case HasPrototype:
             return u.prototype.prototype == other.u.prototype.prototype;
         case Equivalence:

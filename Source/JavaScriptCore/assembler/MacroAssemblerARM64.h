@@ -353,6 +353,13 @@ public:
         m_assembler.add<64>(dest, dest, dataTempRegister);
     }
 
+    void add8(TrustedImm32 imm, Address address)
+    {
+        load8(address, getCachedMemoryTempRegisterIDAndInvalidate());
+        add32(imm, memoryTempRegister, getCachedDataTempRegisterIDAndInvalidate());
+        store8(dataTempRegister, address);
+    }
+
     void and32(RegisterID src, RegisterID dest)
     {
         and32(dest, src, dest);

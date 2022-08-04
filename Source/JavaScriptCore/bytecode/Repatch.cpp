@@ -606,7 +606,8 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
 
         JSCell* base = baseValue.asCell();
 
-        AccessCase::AccessType accessType;
+        RefPtr<AccessCase> newCase;
+        AccessCase::AccessType accessType = AccessCase::IndexedInt32Load;
         if (base->type() == DirectArgumentsType)
             accessType = AccessCase::IndexedDirectArgumentsLoad;
         else if (base->type() == ScopedArgumentsType)
@@ -665,12 +666,38 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
             case ArrayStorageShape:
                 accessType = AccessCase::IndexedArrayStorageLoad;
                 break;
+            case NoIndexingShape: {
+                if (!base->isObject())
+                    return GiveUpOnCache;
+
+                if (base->structure()->mayInterceptIndexedAccesses() || base->structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
+                    return GiveUpOnCache;
+
+                // FIXME: prepareChainForCaching is conservative. We should have another function which only cares about information related to this IC.
+                auto cacheStatus = prepareChainForCaching(globalObject, base, nullptr);
+                if (!cacheStatus)
+                    return GiveUpOnCache;
+
+                if (cacheStatus->usesPolyProto)
+                    return GiveUpOnCache;
+
+                Structure* headStructure = base->structure();
+                ObjectPropertyConditionSet conditionSet = generateConditionsForIndexedMiss(vm, codeBlock, globalObject, headStructure);
+                if (!conditionSet.isValid())
+                    return GiveUpOnCache;
+
+                newCase = AccessCase::create(vm, codeBlock, AccessCase::IndexedNoIndexingMiss, nullptr, invalidOffset, headStructure, conditionSet);
+                break;
+            }
             default:
                 return GiveUpOnCache;
             }
         }
 
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), nullptr, AccessCase::create(vm, codeBlock, accessType, nullptr));
+        if (!newCase)
+            newCase = AccessCase::create(vm, codeBlock, accessType, nullptr);
+
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), nullptr, newCase.releaseNonNull());
 
         if (result.generatedSomeCode()) {
             LOG_IC((ICEvent::GetByReplaceWithJump, baseValue.classInfoOrNull(), Identifier()));

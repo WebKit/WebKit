@@ -120,7 +120,22 @@ public:
             vm.writeBarrier(owner);
         return absenceOfSetEffectWithoutBarrier(object, uid, prototype);
     }
-    
+
+    static ObjectPropertyCondition absenceOfIndexedPropertiesWithoutBarrier(JSObject* object, JSObject* prototype)
+    {
+        ObjectPropertyCondition result;
+        result.m_object = object;
+        result.m_condition = PropertyCondition::absenceOfIndexedPropertiesWithoutBarrier(prototype);
+        return result;
+    }
+
+    static ObjectPropertyCondition absenceOfIndexedProperties(VM& vm, JSCell* owner, JSObject* object, JSObject* prototype)
+    {
+        if (owner)
+            vm.writeBarrier(owner);
+        return absenceOfIndexedPropertiesWithoutBarrier(object, prototype);
+    }
+
     static ObjectPropertyCondition equivalenceWithoutBarrier(
         JSObject* object, UniquedStringImpl* uid, JSValue value)
     {

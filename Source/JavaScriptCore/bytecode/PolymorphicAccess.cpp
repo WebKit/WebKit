@@ -724,7 +724,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
         // patch things if the countdown reaches zero. We increment the slow path count here to ensure
         // that the slow path does not try to patch.
         if (codeBlock->useDataIC()) {
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
             jit.add8(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfCountdown()));
 #else
             jit.load8(CCallHelpers::Address(stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfCountdown()), state.scratchGPR);
@@ -732,7 +732,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
             jit.store8(state.scratchGPR, CCallHelpers::Address(stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfCountdown()));
 #endif
         } else {
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
             jit.move(CCallHelpers::TrustedImmPtr(&stubInfo.countdown), state.scratchGPR);
             jit.add8(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(state.scratchGPR));
 #else
@@ -1022,6 +1022,9 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
         return;
     case AccessCase::IndexedStringLoad:
         out.print("IndexedStringLoad");
+        return;
+    case AccessCase::IndexedNoIndexingMiss:
+        out.print("IndexedNoIndexingMiss");
         return;
     case AccessCase::IndexedInt32Store:
         out.print("IndexedInt32Store");

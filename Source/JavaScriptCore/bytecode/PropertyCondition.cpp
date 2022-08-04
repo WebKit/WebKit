@@ -50,6 +50,7 @@ void PropertyCondition::dumpInContext(PrintStream& out, DumpContext* context) co
         return;
     case Absence:
     case AbsenceOfSetEffect:
+    case AbsenceOfIndexedProperties:
         out.print(m_header.type(), " of ", m_header.pointer(), " with prototype ", inContext(JSValue(prototype()), context));
         return;
     case Equivalence:
@@ -105,6 +106,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     case Replacement:
     case Absence:
     case AbsenceOfSetEffect:
+    case AbsenceOfIndexedProperties:
     case Equivalence:
     case HasStaticProperty:
         if (!structure->propertyAccessesAreCacheable()) {
@@ -224,7 +226,40 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         
         return true;
     }
-        
+
+    case AbsenceOfIndexedProperties: {
+        if (structure->hasPolyProto()) {
+            // FIXME: I think this is too conservative. We can probably prove this if
+            // we have the base. Anyways, we should make this work when integrating
+            // OPC and poly proto.
+            // https://bugs.webkit.org/show_bug.cgi?id=177339
+            return false;
+        }
+
+        if (hasIndexedProperties(structure->indexingType())) {
+            if (PropertyConditionInternal::verbose)
+                dataLog("Invalid because the indexed properties exist: ", structure->indexingType(), "\n");
+            return false;
+        }
+
+        if (structure->mayInterceptIndexedAccesses() || structure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
+            if (PropertyConditionInternal::verbose)
+                dataLog("Invalid because structure intercepts index access.\n");
+            return false;
+        }
+
+        if (structure->storedPrototypeObject() != prototype()) {
+            if (PropertyConditionInternal::verbose) {
+                dataLog(
+                    "Invalid because the prototype is ", structure->storedPrototype(), " even though "
+                    "it should have been ", JSValue(prototype()), "\n");
+            }
+            return false;
+        }
+
+        return true;
+    }
+
     case HasPrototype: {
         if (structure->hasPolyProto()) {
             // FIXME: I think this is too conservative. We can probably prove this if
@@ -320,6 +355,7 @@ bool PropertyCondition::validityRequiresImpurePropertyWatchpoint(Structure* stru
     case HasStaticProperty:
         return structure->needImpurePropertyWatchpoint();
     case AbsenceOfSetEffect:
+    case AbsenceOfIndexedProperties:
     case HasPrototype:
         return false;
     }
@@ -347,6 +383,7 @@ bool PropertyCondition::isStillValid(Concurrency concurrency, Structure* structu
         if (structure->typeInfo().getOwnPropertySlotIsImpure())
             return false;
         break;
+    case AbsenceOfIndexedProperties:
     default:
         break;
     }
@@ -520,7 +557,10 @@ void printInternal(PrintStream& out, JSC::PropertyCondition::Kind condition)
         out.print("Absence");
         return;
     case JSC::PropertyCondition::AbsenceOfSetEffect:
-        out.print("Absence");
+        out.print("AbsenceOfSetEffect");
+        return;
+    case JSC::PropertyCondition::AbsenceOfIndexedProperties:
+        out.print("AbsenceOfIndexedProperties");
         return;
     case JSC::PropertyCondition::Equivalence:
         out.print("Equivalence");

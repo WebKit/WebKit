@@ -99,6 +99,7 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedStringLoad:
+    case IndexedNoIndexingMiss:
     case IndexedInt32Store:
     case IndexedDoubleStore:
     case IndexedContiguousStore:
@@ -333,6 +334,7 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
         return false;
+    case IndexedNoIndexingMiss:
     default:
         return true;
     }
@@ -386,6 +388,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedStringLoad:
+    case IndexedNoIndexingMiss:
     case IndexedInt32Store:
     case IndexedDoubleStore:
     case IndexedContiguousStore:
@@ -451,6 +454,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedStringLoad:
+    case IndexedNoIndexingMiss:
     case IndexedInt32Store:
     case IndexedDoubleStore:
     case IndexedContiguousStore:
@@ -510,6 +514,7 @@ bool AccessCase::needsScratchFPR() const
     case IndexedTypedArrayUint16Load:
     case IndexedTypedArrayInt32Load:
     case IndexedStringLoad:
+    case IndexedNoIndexingMiss:
     case IndexedInt32Store:
     case IndexedContiguousStore:
     case IndexedArrayStorageStore:
@@ -615,6 +620,7 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedStringLoad:
+    case IndexedNoIndexingMiss:
     case IndexedInt32Store:
     case IndexedDoubleStore:
     case IndexedContiguousStore:
@@ -682,6 +688,7 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedStringLoad:
+    case IndexedNoIndexingMiss:
     case IndexedInt32Store:
     case IndexedDoubleStore:
     case IndexedContiguousStore:
@@ -837,6 +844,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case InMiss:
     case CheckPrivateBrand:
     case SetPrivateBrand:
+    case IndexedNoIndexingMiss:
         if (other.type() != type())
             return false;
 
@@ -1320,6 +1328,13 @@ void AccessCase::generateWithGuard(
             state.failAndIgnore.append(failAndIgnore);
 
         return;
+    }
+
+    case IndexedNoIndexingMiss: {
+        emitDefaultGuard();
+        GPRReg propertyGPR = state.propertyGPR();
+        state.failAndIgnore.append(jit.branch32(CCallHelpers::LessThan, propertyGPR, CCallHelpers::TrustedImm32(0)));
+        break;
     }
 
     case IndexedInt32Load:
@@ -2493,7 +2508,12 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         state.succeed();
         return;
     }
-        
+
+    case IndexedNoIndexingMiss:
+        jit.moveTrustedValue(jsUndefined(), valueRegs);
+        state.succeed();
+        return;
+
     case IntrinsicGetter: {
         RELEASE_ASSERT(isValidOffset(offset()));
 
@@ -2668,6 +2688,7 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
     case IndexedStringLoad:
+    case IndexedNoIndexingMiss:
     case InstanceOfGeneric:
         return true;
 

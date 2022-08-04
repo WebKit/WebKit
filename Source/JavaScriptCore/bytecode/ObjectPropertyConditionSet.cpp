@@ -219,6 +219,16 @@ ObjectPropertyCondition generateCondition(
             vm, owner, object, uid, structure->storedPrototypeObject());
         break;
     }
+    case PropertyCondition::AbsenceOfIndexedProperties: {
+        if (structure->hasPolyProto())
+            return ObjectPropertyCondition();
+        if (hasIndexedProperties(structure->indexingType()))
+            return ObjectPropertyCondition();
+        if (structure->mayInterceptIndexedAccesses() || structure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
+            return ObjectPropertyCondition();
+        result = ObjectPropertyCondition::absenceOfIndexedProperties(vm, owner, object, structure->storedPrototypeObject());
+        break;
+    }
     case PropertyCondition::Equivalence: {
         unsigned attributes;
         PropertyOffset offset = structure->get(vm, concurrency, uid, attributes);
@@ -342,6 +352,20 @@ ObjectPropertyConditionSet generateConditionsForPropertySetterMiss(
         [&](auto& conditions, JSObject* object, Structure* structure) -> bool {
             ObjectPropertyCondition result =
                 generateCondition(vm, owner, object, structure, uid, PropertyCondition::AbsenceOfSetEffect, Concurrency::MainThread);
+            if (!result)
+                return false;
+            conditions.append(result);
+            return true;
+        });
+}
+
+ObjectPropertyConditionSet generateConditionsForIndexedMiss(VM& vm, JSCell* owner, JSGlobalObject* globalObject, Structure* headStructure)
+{
+    return generateConditions(
+        globalObject, headStructure, nullptr,
+        [&](auto& conditions, JSObject* object, Structure* structure) -> bool {
+            ObjectPropertyCondition result =
+                generateCondition(vm, owner, object, structure, nullptr, PropertyCondition::AbsenceOfIndexedProperties, Concurrency::MainThread);
             if (!result)
                 return false;
             conditions.append(result);
