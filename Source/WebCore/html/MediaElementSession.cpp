@@ -50,6 +50,7 @@
 #include "Quirks.h"
 #include "RenderMedia.h"
 #include "RenderView.h"
+#include "RuntimeApplicationChecks.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "SourceBuffer.h"
@@ -1193,6 +1194,14 @@ std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
     double currentTime = m_element.currentTime();
     if (!std::isfinite(currentTime) || !supportsSeeking)
         currentTime = MediaPlayer::invalidTime();
+    auto sourceApplicationIdentifier = m_element.sourceApplicationIdentifier();
+#if PLATFORM(COCOA)
+    // FIXME: Eventually, this should be moved into HTMLMediaElement, so all clients
+    // will use the same bundle identifier (the presentingApplication, rather than the
+    // sourceApplication).
+    if (!presentingApplicationBundleIdentifier().isNull())
+        sourceApplicationIdentifier = presentingApplicationBundleIdentifier();
+#endif
 
 #if ENABLE(MEDIA_SESSION)
     auto* session = mediaSession();
@@ -1211,11 +1220,11 @@ std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
             ASSERT(sessionMetadata->artworkImage()->data(), "An image must always have associated data");
             artwork = NowPlayingInfoArtwork { sessionMetadata->artworkSrc(), sessionMetadata->artworkImage()->mimeType(), sessionMetadata->artworkImage()->data() };
         }
-        return NowPlayingInfo { sessionMetadata->title(), sessionMetadata->artist(), sessionMetadata->album(), m_element.sourceApplicationIdentifier(), duration, currentTime, rate, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, WTFMove(artwork) };
+        return NowPlayingInfo { sessionMetadata->title(), sessionMetadata->artist(), sessionMetadata->album(), sourceApplicationIdentifier, duration, currentTime, rate, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, WTFMove(artwork) };
     }
 #endif
 
-    return NowPlayingInfo { m_element.mediaSessionTitle(), emptyString(), emptyString(), m_element.sourceApplicationIdentifier(), duration, currentTime, rate, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, { } };
+    return NowPlayingInfo { m_element.mediaSessionTitle(), emptyString(), emptyString(), sourceApplicationIdentifier, duration, currentTime, rate, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, { } };
 }
 
 void MediaElementSession::updateMediaUsageIfChanged()

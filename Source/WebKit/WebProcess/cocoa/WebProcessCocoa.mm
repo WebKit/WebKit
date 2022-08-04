@@ -269,6 +269,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
 
+    WebCore::setPresentingApplicationBundleIdentifier(parameters.presentingApplicationBundleIdentifier);
+
 #if ENABLE(SANDBOX_EXTENSIONS)
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);
 #if ENABLE(MEDIA_STREAM)

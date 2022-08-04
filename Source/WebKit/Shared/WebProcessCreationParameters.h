@@ -144,6 +144,7 @@ struct WebProcessCreationParameters {
     String uiProcessBundleIdentifier;
     int latencyQOS { 0 };
     int throughputQOS { 0 };
+    String presentingApplicationBundleIdentifier;
 #endif
 
     ProcessID presentingApplicationPID { 0 };
