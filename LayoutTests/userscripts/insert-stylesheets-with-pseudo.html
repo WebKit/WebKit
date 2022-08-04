@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<p>This test requires testRunner and window.internals.</p>
+<input id="test" type="range">
+<script>
+function test()
+{
+    if (!window.internals)
+      return;
+
+    window.testRunner?.dumpAsText();
+
+    let shadow = internals.shadowRoot(document.getElementById("test"));
+
+    window.testElement = shadow.querySelector("[pseudo='-webkit-slider-runnable-track']");
+    shouldNotBe("getComputedStyle(testElement).backgroundColor", "'rgb(255, 0, 0)'");
+
+    debug("");
+
+    debug("Adding author CSS...");
+    internals.insertAuthorCSS("input[type=\"range\"]::-webkit-slider-runnable-track { background-color: red; }");
+    shouldBe("getComputedStyle(testElement).backgroundColor", "'rgb(255, 0, 0)'");
+
+    debug("");
+
+    debug("Adding user CSS...");
+    internals.insertUserCSS("input[type=\"range\"]::-webkit-slider-runnable-track { background-color: blue !important; }");
+    shouldBe("getComputedStyle(testElement).backgroundColor", "'rgb(0, 0, 255)'");
+}
+
+test();
+</script>
+</body>
+</html>

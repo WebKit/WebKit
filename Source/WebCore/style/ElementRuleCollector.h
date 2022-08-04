@@ -36,6 +36,7 @@ namespace WebCore::Style {
 class MatchRequest;
 class ScopeRuleSets;
 struct SelectorMatchingState;
+enum class CascadeLevel : uint8_t;
 
 class PseudoElementRequest {
 public:
@@ -100,17 +101,17 @@ private:
 
     void matchUARules(const RuleSet&);
 
-    void collectMatchingAuthorRules();
     void addElementInlineStyleProperties(bool includeSMILProperties);
 
-    void matchAuthorShadowPseudoElementRules();
-    void matchHostPseudoClassRules();
-    void matchSlottedPseudoElementRules();
-    void matchPartPseudoElementRules();
-    void matchPartPseudoElementRulesForScope(const Element& partMatchingElement);
+    void matchShadowPseudoElementRules(CascadeLevel);
+    void matchHostPseudoClassRules(CascadeLevel);
+    void matchSlottedPseudoElementRules(CascadeLevel);
+    void matchPartPseudoElementRules(CascadeLevel);
+    void matchPartPseudoElementRulesForScope(const Element& partMatchingElement, CascadeLevel);
 
     void collectMatchingShadowPseudoElementRules(const MatchRequest&);
 
+    void collectMatchingRules(CascadeLevel);
     void collectMatchingRules(const MatchRequest&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
     bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal);

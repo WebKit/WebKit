@@ -30,6 +30,7 @@
 #include "StyleScopeRuleSets.h"
 
 #include "CSSStyleSheet.h"
+#include "CascadeLevel.h"
 #include "ExtensionStyleSheets.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -86,6 +87,23 @@ RuleSet* ScopeRuleSets::userStyle() const
     if (m_usesSharedUserStyle)
         return m_styleResolver.document().styleScope().resolver().ruleSets().userStyle();
     return m_userStyle.get();
+}
+
+RuleSet* ScopeRuleSets::styleForCascadeLevel(CascadeLevel level)
+{
+    switch (level) {
+    case CascadeLevel::Author:
+        return m_authorStyle.get();
+
+    case CascadeLevel::User:
+        return userStyle();
+
+    case CascadeLevel::UserAgent:
+        return userAgentMediaQueryStyle();
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 void ScopeRuleSets::initializeUserStyle()
@@ -326,6 +344,17 @@ bool ScopeRuleSets::hasComplexSelectorsForStyleAttribute() const
         m_cachedHasComplexSelectorsForStyleAttribute = compute();
 
     return *m_cachedHasComplexSelectorsForStyleAttribute;
+}
+
+bool ScopeRuleSets::hasMatchingUserOrAuthorStyle(const Function<bool(RuleSet&)>& predicate)
+{
+    if (m_authorStyle && predicate(*m_authorStyle))
+        return true;
+
+    if (auto* userStyle = this->userStyle(); userStyle && predicate(*userStyle))
+        return true;
+
+    return false;
 }
 
 } // namespace Style

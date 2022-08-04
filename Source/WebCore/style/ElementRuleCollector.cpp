@@ -33,6 +33,7 @@
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSValueKeywords.h"
+#include "CascadeLevel.h"
 #include "ContainerQueryEvaluator.h"
 #include "ElementInlines.h"
 #include "ElementRareData.h"
@@ -141,6 +142,40 @@ inline void ElementRuleCollector::addElementStyleProperties(const StylePropertie
     addMatchedProperties(WTFMove(matchedProperty), DeclarationOrigin::Author);
 }
 
+void ElementRuleCollector::collectMatchingRules(CascadeLevel level)
+{
+    switch (level) {
+    case CascadeLevel::Author: {
+        MatchRequest matchRequest(m_authorStyle);
+        collectMatchingRules(matchRequest);
+        break;
+    }
+
+    case CascadeLevel::User:
+        if (m_userStyle) {
+            MatchRequest matchRequest(*m_userStyle);
+            collectMatchingRules(matchRequest);
+        }
+        break;
+
+    case CascadeLevel::UserAgent:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto* parent = element().parentElement();
+    if (parent && parent->shadowRoot())
+        matchSlottedPseudoElementRules(level);
+
+    if (element().shadowRoot())
+        matchHostPseudoClassRules(level);
+
+    if (element().isInShadowTree()) {
+        matchShadowPseudoElementRules(level);
+        matchPartPseudoElementRules(level);
+    }
+}
+
 void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest)
 {
     ASSERT_WITH_MESSAGE(!(m_mode == SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements && m_pseudoElementRequest.pseudoId != PseudoId::None), "When in StyleInvalidation or SharingRules, SelectorChecker does not try to match the pseudo ID. While ElementRuleCollector supports matching a particular pseudoId in this case, this would indicate a error at the call site since matching a particular element should be unnecessary.");
@@ -230,7 +265,7 @@ void ElementRuleCollector::matchAuthorRules()
 {
     clearMatchedRules();
 
-    collectMatchingAuthorRules();
+    collectMatchingRules(CascadeLevel::Author);
 
     sortAndTransferMatchedRules(DeclarationOrigin::Author);
 }
@@ -240,57 +275,44 @@ bool ElementRuleCollector::matchesAnyAuthorRules()
     clearMatchedRules();
 
     // FIXME: This should bail out on first match.
-    collectMatchingAuthorRules();
+    collectMatchingRules(CascadeLevel::Author);
 
     return !m_matchedRules.isEmpty();
 }
 
-void ElementRuleCollector::collectMatchingAuthorRules()
-{
-    {
-        MatchRequest matchRequest(m_authorStyle);
-        collectMatchingRules(matchRequest);
-    }
-
-    auto* parent = element().parentElement();
-    if (parent && parent->shadowRoot())
-        matchSlottedPseudoElementRules();
-
-    if (element().shadowRoot())
-        matchHostPseudoClassRules();
-
-    if (element().isInShadowTree()) {
-        matchAuthorShadowPseudoElementRules();
-        matchPartPseudoElementRules();
-    }
-}
-
-void ElementRuleCollector::matchAuthorShadowPseudoElementRules()
+void ElementRuleCollector::matchShadowPseudoElementRules(CascadeLevel level)
 {
     ASSERT(element().isInShadowTree());
     auto& shadowRoot = *element().containingShadowRoot();
     if (shadowRoot.mode() != ShadowRootMode::UserAgent)
         return;
-    // Look up shadow pseudo elements also from the host scope author style as they are web-exposed.
-    auto& hostAuthorRules = Scope::forNode(*shadowRoot.host()).resolver().ruleSets().authorStyle();
-    MatchRequest hostAuthorRequest { hostAuthorRules, ScopeOrdinal::ContainingHost };
-    collectMatchingShadowPseudoElementRules(hostAuthorRequest);
+
+    // Look up shadow pseudo elements also from the host scope style as they are web-exposed.
+    auto* hostRules = Scope::forNode(*shadowRoot.host()).resolver().ruleSets().styleForCascadeLevel(level);
+    if (!hostRules)
+        return;
+
+    MatchRequest hostRequest { *hostRules, ScopeOrdinal::ContainingHost };
+    collectMatchingShadowPseudoElementRules(hostRequest);
 }
 
-void ElementRuleCollector::matchHostPseudoClassRules()
+void ElementRuleCollector::matchHostPseudoClassRules(CascadeLevel level)
 {
     ASSERT(element().shadowRoot());
 
-    auto& shadowAuthorStyle = element().shadowRoot()->styleScope().resolver().ruleSets().authorStyle();
-    auto& shadowHostRules = shadowAuthorStyle.hostPseudoClassRules();
+    auto* shadowRules = element().shadowRoot()->styleScope().resolver().ruleSets().styleForCascadeLevel(level);
+    if (!shadowRules)
+        return;
+
+    auto& shadowHostRules = shadowRules->hostPseudoClassRules();
     if (shadowHostRules.isEmpty())
         return;
 
-    MatchRequest hostMatchRequest { shadowAuthorStyle, ScopeOrdinal::Shadow };
+    MatchRequest hostMatchRequest { *shadowRules, ScopeOrdinal::Shadow };
     collectMatchingRulesForList(&shadowHostRules, hostMatchRequest);
 }
 
-void ElementRuleCollector::matchSlottedPseudoElementRules()
+void ElementRuleCollector::matchSlottedPseudoElementRules(CascadeLevel level)
 {
     auto* slot = element().assignedSlot();
     auto styleScopeOrdinal = ScopeOrdinal::FirstSlot;
@@ -300,17 +322,19 @@ void ElementRuleCollector::matchSlottedPseudoElementRules()
         if (!styleScope.resolver().ruleSets().isAuthorStyleDefined())
             continue;
 
-        auto& scopeAuthorRules = styleScope.resolver().ruleSets().authorStyle();
+        auto* scopeRules = styleScope.resolver().ruleSets().styleForCascadeLevel(level);
+        if (!scopeRules)
+            continue;
 
-        MatchRequest scopeMatchRequest(scopeAuthorRules, styleScopeOrdinal);
-        collectMatchingRulesForList(&scopeAuthorRules.slottedPseudoElementRules(), scopeMatchRequest);
+        MatchRequest scopeMatchRequest(*scopeRules, styleScopeOrdinal);
+        collectMatchingRulesForList(&scopeRules->slottedPseudoElementRules(), scopeMatchRequest);
 
         if (styleScopeOrdinal == ScopeOrdinal::SlotLimit)
             break;
     }
 }
 
-void ElementRuleCollector::matchPartPseudoElementRules()
+void ElementRuleCollector::matchPartPseudoElementRules(CascadeLevel level)
 {
     ASSERT(element().isInShadowTree());
 
@@ -320,10 +344,10 @@ void ElementRuleCollector::matchPartPseudoElementRules()
     if (partMatchingElement.partNames().isEmpty() || !partMatchingElement.isInShadowTree())
         return;
 
-    matchPartPseudoElementRulesForScope(partMatchingElement);
+    matchPartPseudoElementRulesForScope(partMatchingElement, level);
 }
 
-void ElementRuleCollector::matchPartPseudoElementRulesForScope(const Element& partMatchingElement)
+void ElementRuleCollector::matchPartPseudoElementRulesForScope(const Element& partMatchingElement, CascadeLevel level)
 {
     auto* element = &partMatchingElement;
     auto styleScopeOrdinal = ScopeOrdinal::Element;
@@ -333,10 +357,12 @@ void ElementRuleCollector::matchPartPseudoElementRulesForScope(const Element& pa
         if (!styleScope.resolver().ruleSets().isAuthorStyleDefined())
             continue;
 
-        auto& hostAuthorRules = styleScope.resolver().ruleSets().authorStyle();
+        auto* hostRules = styleScope.resolver().ruleSets().styleForCascadeLevel(level);
+        if (!hostRules)
+            continue;
 
-        MatchRequest scopeMatchRequest(hostAuthorRules, styleScopeOrdinal);
-        collectMatchingRulesForList(&hostAuthorRules.partPseudoElementRules(), scopeMatchRequest);
+        MatchRequest scopeMatchRequest(*hostRules, styleScopeOrdinal);
+        collectMatchingRulesForList(&hostRules->partPseudoElementRules(), scopeMatchRequest);
 
         // Element may only be exposed to styling from enclosing scopes via exportparts attributes.
         if (element != &partMatchingElement && element->shadowRoot()->partMappings().isEmpty())
@@ -364,13 +390,9 @@ void ElementRuleCollector::collectMatchingShadowPseudoElementRules(const MatchRe
 
 void ElementRuleCollector::matchUserRules()
 {
-    if (!m_userStyle)
-        return;
-    
     clearMatchedRules();
 
-    MatchRequest matchRequest(*m_userStyle);
-    collectMatchingRules(matchRequest);
+    collectMatchingRules(CascadeLevel::User);
 
     sortAndTransferMatchedRules(DeclarationOrigin::User);
 }
@@ -584,7 +606,7 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
     if (matchAuthorAndUserStyles) {
         clearMatchedRules();
 
-        collectMatchingAuthorRules();
+        collectMatchingRules(CascadeLevel::Author);
         sortMatchedRules();
 
         transferMatchedRules(DeclarationOrigin::Author, ScopeOrdinal::Element);

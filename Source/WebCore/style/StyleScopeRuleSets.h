@@ -36,6 +36,7 @@ class CSSStyleRule;
 class CSSStyleSheet;
 class ExtensionStyleSheets;
 class MediaQueryEvaluator;
+enum class CascadeLevel : uint8_t;
 
 namespace Style {
 
@@ -58,6 +59,8 @@ public:
     RuleSet* userAgentMediaQueryStyle() const;
     RuleSet& authorStyle() const { return *m_authorStyle; }
     RuleSet* userStyle() const;
+    RuleSet* styleForCascadeLevel(CascadeLevel);
+
     const RuleFeatureSet& features() const;
     RuleSet* sibling() const { return m_siblingRuleSet.get(); }
     RuleSet* uncommonAttribute() const { return m_uncommonAttributeRuleSet.get(); }
@@ -86,6 +89,8 @@ public:
     RuleFeatureSet& mutableFeatures();
 
     bool& isInvalidatingStyleWithRuleSets() { return m_isInvalidatingStyleWithRuleSets; }
+
+    bool hasMatchingUserOrAuthorStyle(const Function<bool(RuleSet&)>&);
 
 private:
     void collectFeatures() const;
