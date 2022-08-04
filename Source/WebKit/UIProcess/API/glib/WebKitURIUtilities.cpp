@@ -28,7 +28,9 @@
  * webkit_uri_for_display:
  * @uri: the URI to be converted
  *
- * Use this function to format a URI for display. The URIs used internally by
+ * Use this function to format a URI for display.
+ *
+ * The URIs used internally by
  * WebKit may contain percent-encoded characters or Punycode, which are not
  * generally suitable to display to users. This function provides protection
  * against IDN homograph attacks, so in some cases the host part of the returned

@@ -386,7 +386,9 @@ void webkit_input_method_context_set_enable_preedit(WebKitInputMethodContext* co
  * @underlines: (out) (transfer full) (nullable) (element-type WebKitInputMethodUnderline): location to store the underlines as a #GList of #WebKitInputMethodUnderline
  * @cursor_offset: (out) (nullable): location to store the position of cursor in preedit string
  *
- * Get the current preedit string for the @context, and a list of WebKitInputMethodUnderline to apply to the string.
+ *  Get the pre-edit string and a list of WebKitInputMethodUnderline.
+ *
+ * Get the current pre-edit string for the @context, and a list of WebKitInputMethodUnderline to apply to the string.
  * The string will be displayed inserted at @cursor_offset.
  *
  * Since: 2.28
@@ -473,6 +475,7 @@ void webkit_input_method_context_notify_cursor_area(WebKitInputMethodContext* co
  * @selection_index: the byte index of the selection cursor within @text.
  *
  * Notify @context that the context surrounding the cursor has changed.
+ *
  * If there's no selection @selection_index is the same as @cursor_index.
  *
  * Since: 2.28
@@ -497,7 +500,9 @@ void webkit_input_method_context_notify_surrounding(WebKitInputMethodContext* co
  * webkit_input_method_context_reset:
  * @context: a #WebKitInputMethodContext
  *
- * Reset the @context. This will typically cause the input to clear the preedit state.
+ * Reset the @context.
+ *
+ * This will typically cause the input to clear the preedit state.
  *
  * Since: 2.28
  */

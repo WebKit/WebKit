@@ -152,7 +152,9 @@ WebKitContextMenuItem* webkit_context_menu_item_new(GtkAction* action)
  * @label: the menu item label text
  * @target: (allow-none): a #GVariant to use as the action target
  *
- * Creates a new #WebKitContextMenuItem for the given @action and @label. On activation
+ * Creates a new #WebKitContextMenuItem for the given @action and @label.
+ *
+ * On activation
  * @target will be passed as parameter to the callback.
  *
  * Returns: the newly created #WebKitContextMenuItem object.
@@ -177,6 +179,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_from_gaction(GAction* action
  * @action: a #WebKitContextMenuAction stock action
  *
  * Creates a new #WebKitContextMenuItem for the given stock action.
+ *
  * Stock actions are handled automatically by WebKit so that, for example,
  * when a menu item created with a %WEBKIT_CONTEXT_MENU_ACTION_STOP is
  * activated the action associated will be handled by WebKit and the current
@@ -205,6 +208,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_from_stock_action(WebKitCont
  * @label: a custom label text to use instead of the predefined one
  *
  * Creates a new #WebKitContextMenuItem for the given stock action using the given @label.
+ *
  * Stock actions have a predefined label, this method can be used to create a
  * #WebKitContextMenuItem for a #WebKitContextMenuAction but using a custom label.
  *
@@ -303,7 +307,9 @@ GAction* webkit_context_menu_item_get_gaction(WebKitContextMenuItem* item)
  * webkit_context_menu_item_get_stock_action:
  * @item: a #WebKitContextMenuItem
  *
- * Gets the #WebKitContextMenuAction of @item. If the #WebKitContextMenuItem was not
+ * Gets the #WebKitContextMenuAction of @item.
+ *
+ * If the #WebKitContextMenuItem was not
  * created for a stock action %WEBKIT_CONTEXT_MENU_ACTION_CUSTOM will be
  * returned. If the #WebKitContextMenuItem is a separator %WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION
  * will be returned.
@@ -337,7 +343,9 @@ gboolean webkit_context_menu_item_is_separator(WebKitContextMenuItem* item)
  * @item: a #WebKitContextMenuItem
  * @submenu: (allow-none): a #WebKitContextMenu
  *
- * Sets or replaces the @item submenu. If @submenu is %NULL the current
+ * Sets or replaces the @item submenu.
+ *
+ * If @submenu is %NULL the current
  * submenu of @item is removed.
  */
 void webkit_context_menu_item_set_submenu(WebKitContextMenuItem* item, WebKitContextMenu* submenu)

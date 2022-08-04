@@ -107,6 +107,8 @@ WebKitContextMenuItem* webkitContextMenuGetParentItem(WebKitContextMenu* menu)
 /**
  * webkit_context_menu_new:
  *
+ * Creates a new #WebKitContextMenu object.
+ *
  * Creates a new #WebKitContextMenu object to be used as a submenu of an existing
  * #WebKitContextMenu. The context menu of a #WebKitWebView is created by the view
  * and passed as an argument of #WebKitWebView::context-menu signal.
@@ -125,6 +127,8 @@ WebKitContextMenu* webkit_context_menu_new()
 /**
  * webkit_context_menu_new_with_items:
  * @items: (element-type WebKitContextMenuItem): a #GList of #WebKitContextMenuItem
+ *
+ * Creates a new #WebKitContextMenu object with the given items.
  *
  * Creates a new #WebKitContextMenu object to be used as a submenu of an existing
  * #WebKitContextMenu with the given initial items.
@@ -172,6 +176,7 @@ void webkit_context_menu_append(WebKitContextMenu* menu, WebKitContextMenuItem* 
  * @position: the position to insert the item
  *
  * Inserts @item into the @menu at the given position.
+ *
  * If @position is negative, or is larger than the number of items
  * in the #WebKitContextMenu, the item is added on to the end of
  * the @menu. The first position is 0.
@@ -192,6 +197,7 @@ void webkit_context_menu_insert(WebKitContextMenu* menu, WebKitContextMenuItem* 
  * @position: the new position to move the item
  *
  * Moves @item to the given position in the @menu.
+ *
  * If @position is negative, or is larger than the number of items
  * in the #WebKitContextMenu, the item is added on to the end of
  * the @menu.
@@ -297,6 +303,7 @@ WebKitContextMenuItem* webkit_context_menu_get_item_at_position(WebKitContextMen
  * @item: the #WebKitContextMenuItem to remove
  *
  * Removes @item from the @menu.
+ *
  * See also webkit_context_menu_remove_all() to remove all items.
  */
 void webkit_context_menu_remove(WebKitContextMenu* menu, WebKitContextMenuItem* item)
@@ -331,6 +338,7 @@ void webkit_context_menu_remove_all(WebKitContextMenu* menu)
  * @user_data: a #GVariant
  *
  * Sets user data to @menu.
+ *
  * This function can be used from a Web Process extension to set user data
  * that can be retrieved from the UI Process using webkit_context_menu_get_user_data().
  * If the @user_data #GVariant is floating, it is consumed.
@@ -350,6 +358,7 @@ void webkit_context_menu_set_user_data(WebKitContextMenu* menu, GVariant* userDa
  * @menu: a #WebKitContextMenu
  *
  * Gets the user data of @menu.
+ *
  * This function can be used from the UI Process to get user data previously set
  * from the Web Process with webkit_context_menu_set_user_data().
  *

@@ -115,6 +115,7 @@ static void webkit_response_policy_decision_class_init(WebKitResponsePolicyDecis
  * @decision: a #WebKitResponsePolicyDecision
  *
  * Return the #WebKitURIRequest associated with the response decision.
+ *
  * Modifications to the returned object are <emphasis>not</emphasis> taken
  * into account when the request is sent over the network, and is intended
  * only to aid in evaluating whether a response decision should be taken or
@@ -150,6 +151,8 @@ WebKitURIResponse* webkit_response_policy_decision_get_response(WebKitResponsePo
 /**
  * webkit_response_policy_decision_is_mime_type_supported:
  * @decision: a #WebKitResponsePolicyDecision
+ *
+ * Gets whether the MIME type of the response can be displayed in the #WebKitWebView.
  *
  * Gets whether the MIME type of the response can be displayed in the #WebKitWebView
  * that triggered this policy decision request. See also webkit_web_view_can_show_mime_type().

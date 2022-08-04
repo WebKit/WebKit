@@ -50,7 +50,7 @@ using namespace WebCore;
  * called. There you will be able to provide more response parameters
  * when the methods and properties of a #WebKitURISchemeRequest is not
  * enough.
- * 
+ *
  * When you finished setting up your #WebKitURISchemeResponse, call
  * webkit_uri_request_finish_with_response() with it to return the response.
  */
@@ -196,6 +196,7 @@ void webkit_uri_scheme_response_set_content_type(WebKitURISchemeResponse* respon
  * @headers: (transfer full): the HTTP headers to be set
  *
  * Assign the provided #SoupMessageHeaders to the response.
+ *
  * @headers need to be of the type %SOUP_MESSAGE_HEADERS_RESPONSE.
  * Any existing headers will be overwritten.
  *
@@ -216,6 +217,7 @@ void webkit_uri_scheme_response_set_http_headers(WebKitURISchemeResponse* respon
  * @reason_phrase: (allow-none): a reason phrase
  *
  * Sets the status code and reason phrase for the @response.
+ *
  * If @status_code is a known value and @reason_phrase is %NULL, the @reason_phrase will be set automatically.
  *
  * Since: 2.36

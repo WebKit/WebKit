@@ -91,6 +91,8 @@ WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std:
  * webkit_form_submission_request_get_text_fields:
  * @request: a #WebKitFormSubmissionRequest
  *
+ * Get the values of the text fields contained in the form associated to @request.
+ *
  * Get a #GHashTable with the values of the text fields contained in the form
  * associated to @request. Note that fields will be missing if the form
  * contains multiple text input elements with the same name, so this
@@ -125,6 +127,8 @@ GHashTable* webkit_form_submission_request_get_text_fields(WebKitFormSubmissionR
  *    names of the text fields in the form
  * @field_values: (out) (optional) (element-type utf8) (transfer none):
  *    values of the text fields in the form
+ *
+ * Get lists of the text fields contained in the form associated to @request.
  *
  * Get lists with the names and values of the text fields contained in
  * the form associated to @request. Note that names and values may be

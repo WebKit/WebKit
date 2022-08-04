@@ -457,7 +457,9 @@ WebKitWebViewSessionState* webkit_web_view_session_state_new(GBytes* data)
  * webkit_web_view_session_state_ref:
  * @state: a #WebKitWebViewSessionState
  *
- * Atomically increments the reference count of @state by one. This
+ * Atomically increments the reference count of @state by one.
+ *
+ * This
  * function is MT-safe and may be called from any thread.
  *
  * Returns: The passed in #WebKitWebViewSessionState
@@ -475,7 +477,9 @@ WebKitWebViewSessionState* webkit_web_view_session_state_ref(WebKitWebViewSessio
  * webkit_web_view_session_state_unref:
  * @state: a #WebKitWebViewSessionState
  *
- * Atomically decrements the reference count of @state by one. If the
+ * Atomically decrements the reference count of @state by one.
+ *
+ * If the
  * reference count drops to 0, all memory allocated by the #WebKitWebViewSessionState is
  * released. This function is MT-safe and may be called from any thread.
  *

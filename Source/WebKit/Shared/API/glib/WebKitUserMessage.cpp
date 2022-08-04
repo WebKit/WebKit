@@ -239,7 +239,7 @@ WebKitUserMessage* webkit_user_message_new_with_fd_list(const char* name, GVaria
  * webkit_user_message_get_name:
  * @message: a #WebKitUserMessage
  *
- * Get the @message name
+ * Get the @message name.
  *
  * Returns: the message name
  *
@@ -256,7 +256,7 @@ const char* webkit_user_message_get_name(WebKitUserMessage* message)
  * webkit_user_message_get_parameters:
  * @message: a #WebKitUserMessage
  *
- * Get the @message parameters
+ * Get the @message parameters.
  *
  * Returns: (transfer none) (nullable): the message parameters
  *
@@ -273,7 +273,7 @@ GVariant* webkit_user_message_get_parameters(WebKitUserMessage* message)
  * webkit_user_message_get_fd_list:
  * @message: a #WebKitUserMessage
  *
- * Get the @message list of file descritpor
+ * Get the @message list of file descritpor.
  *
  * Returns: (transfer none) (nullable): the message list of file descriptors
  *
@@ -291,7 +291,9 @@ GUnixFDList* webkit_user_message_get_fd_list(WebKitUserMessage* message)
  * @message: a #WebKitUserMessage
  * @reply: a #WebKitUserMessage to send as reply
  *
- * Send a reply to @message. If @reply is floating, it's consumed.
+ * Send a reply to an user message.
+ *
+ * If @reply is floating, it's consumed.
  * You can only send a reply to a #WebKitUserMessage that has been
  * received.
  *

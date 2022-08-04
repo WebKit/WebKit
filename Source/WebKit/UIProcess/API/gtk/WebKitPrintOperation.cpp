@@ -375,7 +375,9 @@ WebKitPrintOperation* webkit_print_operation_new(WebKitWebView* webView)
  * webkit_print_operation_get_print_settings:
  * @print_operation: a #WebKitPrintOperation
  *
- * Return the current print settings of @print_operation. It returns %NULL until
+ * Return the current print settings of @print_operation.
+ *
+ * It returns %NULL until
  * either webkit_print_operation_set_print_settings() or webkit_print_operation_run_dialog()
  * have been called.
  *
@@ -392,6 +394,8 @@ GtkPrintSettings* webkit_print_operation_get_print_settings(WebKitPrintOperation
  * webkit_print_operation_set_print_settings:
  * @print_operation: a #WebKitPrintOperation
  * @print_settings: a #GtkPrintSettings to set
+ *
+ *  Set the current print settings of @print_operation.
  *
  * Set the current print settings of @print_operation. Current print settings are used for
  * the initial values of the print dialog when webkit_print_operation_run_dialog() is called.
@@ -412,7 +416,9 @@ void webkit_print_operation_set_print_settings(WebKitPrintOperation* printOperat
  * webkit_print_operation_get_page_setup:
  * @print_operation: a #WebKitPrintOperation
  *
- * Return the current page setup of @print_operation. It returns %NULL until
+ * Return the current page setup of @print_operation.
+ *
+ * It returns %NULL until
  * either webkit_print_operation_set_page_setup() or webkit_print_operation_run_dialog()
  * have been called.
  *
@@ -430,7 +436,9 @@ GtkPageSetup* webkit_print_operation_get_page_setup(WebKitPrintOperation* printO
  * @print_operation: a #WebKitPrintOperation
  * @page_setup: a #GtkPageSetup to set
  *
- * Set the current page setup of @print_operation. Current page setup is used for the
+ * Set the current page setup of @print_operation.
+ *
+ * Current page setup is used for the
  * initial values of the print dialog when webkit_print_operation_run_dialog() is called.
  */
 void webkit_print_operation_set_page_setup(WebKitPrintOperation* printOperation, GtkPageSetup* pageSetup)
@@ -449,6 +457,8 @@ void webkit_print_operation_set_page_setup(WebKitPrintOperation* printOperation,
  * webkit_print_operation_run_dialog:
  * @print_operation: a #WebKitPrintOperation
  * @parent: (allow-none): transient parent of the print dialog
+ *
+ * Run the print dialog and start printing.
  *
  * Run the print dialog and start printing using the options selected by
  * the user. This method returns when the print dialog is closed.
@@ -476,6 +486,8 @@ WebKitPrintOperationResponse webkit_print_operation_run_dialog(WebKitPrintOperat
 /**
  * webkit_print_operation_print:
  * @print_operation: a #WebKitPrintOperation
+ *
+ * Start a print operation using current print settings and page setup.
  *
  * Start a print operation using current print settings and page setup
  * without showing the print dialog. If either print settings or page setup

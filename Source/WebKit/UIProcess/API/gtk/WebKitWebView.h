@@ -85,7 +85,7 @@ typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
  *   a #WebKitNavigationPolicyDecision. These decisions are useful for implementing
  *   special actions for new windows, such as forcing the new window to open
  *   in a tab when a keyboard modifier is active or handling a special
- *   target attribute on &lt;a&gt; elements.
+ *   target attribute on <a> elements.
  * @WEBKIT_POLICY_DECISION_TYPE_RESPONSE: This type of decision is used when WebKit has
  *   received a response for a network resource and is about to start the load.
  *   Note that these resources include all subresources of a page such as images

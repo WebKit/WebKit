@@ -115,6 +115,7 @@ G_DEFINE_BOXED_TYPE(WebKitUserStyleSheet, webkit_user_style_sheet, webkit_user_s
  * @user_style_sheet: a #WebKitUserStyleSheet
  *
  * Atomically increments the reference count of @user_style_sheet by one.
+ *
  * This function is MT-safe and may be called from any thread.
  *
  * Returns: The passed #WebKitUserStyleSheet
@@ -132,6 +133,7 @@ WebKitUserStyleSheet* webkit_user_style_sheet_ref(WebKitUserStyleSheet* userStyl
  * @user_style_sheet: a #WebKitUserStyleSheet
  *
  * Atomically decrements the reference count of @user_style_sheet by one.
+ *
  * If the reference count drops to 0, all memory allocated by
  * #WebKitUserStyleSheet is released. This function is MT-safe and may be
  * called from any thread.
@@ -154,7 +156,9 @@ void webkit_user_style_sheet_unref(WebKitUserStyleSheet* userStyleSheet)
  * @allow_list: (array zero-terminated=1) (allow-none): An allow_list of URI patterns or %NULL
  * @block_list: (array zero-terminated=1) (allow-none): A block_list of URI patterns or %NULL
  *
- * Creates a new user style sheet. Style sheets can be applied to some URIs
+ * Creates a new user style sheet.
+ *
+ * Style sheets can be applied to some URIs
  * only by passing non-null values for @allow_list or @block_list. Passing a
  * %NULL allow_list implies that all URIs are on the allow_list. The style
  * sheet is applied if an URI matches the allow_list and not the block_list.
@@ -182,6 +186,8 @@ WebKitUserStyleSheet* webkit_user_style_sheet_new(const gchar* source, WebKitUse
  * @world_name: the name of a #WebKitScriptWorld
  * @allow_list: (array zero-terminated=1) (allow-none): An allow_list of URI patterns or %NULL
  * @block_list: (array zero-terminated=1) (allow-none): A block_list of URI patterns or %NULL
+ *
+ * Creates a new user style sheet for script world.
  *
  * Creates a new user style sheet for script world with name @world_name.
  * See webkit_user_style_sheet_new() for a full description.
@@ -235,6 +241,7 @@ G_DEFINE_BOXED_TYPE(WebKitUserScript, webkit_user_script, webkit_user_script_ref
  * @user_script: a #WebKitUserScript
  *
  * Atomically increments the reference count of @user_script by one.
+ *
  * This function is MT-safe and may be called from any thread.
  *
  * Returns: The passed #WebKitUserScript
@@ -252,6 +259,7 @@ WebKitUserScript* webkit_user_script_ref(WebKitUserScript* userScript)
  * @user_script: a #WebKitUserScript
  *
  * Atomically decrements the reference count of @user_script by one.
+ *
  * If the reference count drops to 0, all memory allocated by
  * #WebKitUserScript is released. This function is MT-safe and may be called
  * from any thread.
@@ -274,7 +282,9 @@ void webkit_user_script_unref(WebKitUserScript* userScript)
  * @allow_list: (array zero-terminated=1) (allow-none): An allow_list of URI patterns or %NULL
  * @block_list: (array zero-terminated=1) (allow-none): A block_list of URI patterns or %NULL
  *
- * Creates a new user script. Scripts can be applied to some URIs
+ * Creates a new user script.
+ *
+ * Scripts can be applied to some URIs
  * only by passing non-null values for @allow_list or @block_list. Passing a
  * %NULL allow_list implies that all URIs are on the allow_list. The script
  * is applied if an URI matches the allow_list and not the block_list.
@@ -304,6 +314,7 @@ WebKitUserScript* webkit_user_script_new(const gchar* source, WebKitUserContentI
  * @block_list: (array zero-terminated=1) (allow-none): A block_list of URI patterns or %NULL
  *
  * Creates a new user script for script world with name @world_name.
+ *
  * See webkit_user_script_new() for a full description.
  *
  * Returns: A new #WebKitUserScript
@@ -356,6 +367,7 @@ G_DEFINE_BOXED_TYPE(WebKitUserContentFilter, webkit_user_content_filter, webkit_
  * @user_content_filter: A #WebKitUserContentFilter
  *
  * Atomically increments the reference count of @user_content_filter by one.
+ *
  * This function is MT-safe and may be called from any thread.
  *
  * Returns: the @user_content_filter passed in.
@@ -374,6 +386,7 @@ WebKitUserContentFilter* webkit_user_content_filter_ref(WebKitUserContentFilter*
  * @user_content_filter: A #WebKitUserContentFilter
  *
  * Atomically decrements the reference count of @user_content_filter by one.
+ *
  * If the reference count drops to 0, all the memory allocated by the
  * #WebKitUserContentFilter is released. This function is MT-safe and may
  * be called from any thread.
@@ -392,6 +405,8 @@ void webkit_user_content_filter_unref(WebKitUserContentFilter* userContentFilter
 /**
  * webkit_user_content_filter_get_identifier:
  * @user_content_filter: A #WebKitUserContentFilter
+ *
+ * Obtain the identifier previously used to save the @user_content_filter.
  *
  * Obtain the identifier previously used to save the @user_content_filter in the
  * #WebKitUserContentFilterStore.

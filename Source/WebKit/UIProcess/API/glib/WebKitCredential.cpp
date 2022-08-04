@@ -116,6 +116,7 @@ WebKitCredential* webkit_credential_new(const gchar* username, const gchar* pass
  * @persistence: The #WebKitCredentialPersistence of the new credential
  *
  * Create a new credential from the provided PIN and persistence mode.
+ *
  * Note that %WEBKIT_CREDENTIAL_PERSISTENCE_PERMANENT is not supported for certificate pin credentials.
  *
  * Returns: (transfer full): A #WebKitCredential.
@@ -140,6 +141,7 @@ WebKitCredential* webkit_credential_new_for_certificate_pin(const gchar* pin, We
  * @persistence: The #WebKitCredentialPersistence of the new credential
  *
  * Create a new credential from the @certificate and persistence mode.
+ *
  * Note that %WEBKIT_CREDENTIAL_PERSISTENCE_PERMANENT is not supported for certificate credentials.
  *
  * Returns: (transfer full): A #WebKitCredential.

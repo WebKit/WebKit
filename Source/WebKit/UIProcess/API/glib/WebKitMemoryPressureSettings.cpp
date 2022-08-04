@@ -42,7 +42,7 @@
  *
  * A #WebKitMemoryPressureSettings can be passed to a #WebKitWebContext constructor, and the settings will
  * be applied to all the web processes created by that context.
- * 
+ *
  * A #WebKitMemoryPressureSettings can be passed to webkit_website_data_manager_set_memory_pressure_settings(),
  * and the settings will be applied to all the network processes created after that call by any instance of
  * #WebKitWebsiteDataManager.
@@ -149,6 +149,8 @@ guint webkit_memory_pressure_settings_get_memory_limit(WebKitMemoryPressureSetti
  * @settings: a #WebKitMemoryPressureSettings
  * @value: fraction of the memory limit where the conservative policy starts working.
  *
+ * Sets the memory limit for the conservative policy to start working.
+ *
  * Sets @value as the fraction of the defined memory limit where the conservative
  * policy starts working. This policy will try to reduce the memory footprint by
  * releasing non critical memory.
@@ -188,6 +190,8 @@ gdouble webkit_memory_pressure_settings_get_conservative_threshold(WebKitMemoryP
  * webkit_memory_pressure_settings_set_strict_threshold:
  * @settings: a #WebKitMemoryPressureSettings
  * @value: fraction of the memory limit where the strict policy starts working.
+ *
+ * Sets the memory limit for the strict policy to start working.
  *
  * Sets @value as the fraction of the defined memory limit where the strict
  * policy starts working. This policy will try to reduce the memory footprint by

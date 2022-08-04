@@ -97,7 +97,7 @@ void webkitURISchemeRequestCancel(WebKitURISchemeRequest* request)
  * webkit_uri_scheme_request_get_scheme:
  * @request: a #WebKitURISchemeRequest
  *
- * Get the URI scheme of @request
+ * Get the URI scheme of @request.
  *
  * Returns: the URI scheme of @request
  */
@@ -115,7 +115,7 @@ const char* webkit_uri_scheme_request_get_scheme(WebKitURISchemeRequest* request
  * webkit_uri_scheme_request_get_uri:
  * @request: a #WebKitURISchemeRequest
  *
- * Get the URI of @request
+ * Get the URI of @request.
  *
  * Returns: the full URI of @request
  */
@@ -133,7 +133,7 @@ const char* webkit_uri_scheme_request_get_uri(WebKitURISchemeRequest* request)
  * webkit_uri_scheme_request_get_path:
  * @request: a #WebKitURISchemeRequest
  *
- * Get the URI path of @request
+ * Get the URI path of @request.
  *
  * Returns: the URI path of @request
  */
@@ -166,10 +166,10 @@ WebKitWebView* webkit_uri_scheme_request_get_web_view(WebKitURISchemeRequest* re
  * webkit_uri_scheme_request_get_http_method:
  * @request: a #WebKitURISchemeRequest
  *
- * Get the HTTP method of the @request
+ * Get the HTTP method of the @request.
  *
  * Returns: the HTTP method of the @request
- * 
+ *
  * Since: 2.36
  */
 const gchar* webkit_uri_scheme_request_get_http_method(WebKitURISchemeRequest* request)

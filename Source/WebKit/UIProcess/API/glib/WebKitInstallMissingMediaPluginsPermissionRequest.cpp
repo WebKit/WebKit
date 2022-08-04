@@ -145,6 +145,8 @@ WebKitInstallMissingMediaPluginsPermissionRequest* webkitInstallMissingMediaPlug
  * webkit_install_missing_media_plugins_permission_request_get_description:
  * @request: a #WebKitInstallMissingMediaPluginsPermissionRequest
  *
+ * Gets the description about the missing plugins.
+ *
  * Gets the description about the missing plugins provided by the media backend when a media couldn't be played.
  *
  * Returns: a string with the description provided by the media backend.

@@ -97,6 +97,8 @@ const char* webkit_plugin_get_path(WebKitPlugin*)
  * webkit_plugin_get_mime_info_list:
  * @plugin: a #WebKitPlugin
  *
+ * Get information about MIME types handled by the plugin.
+ *
  * Get information about MIME types handled by the plugin,
  * as a list of #WebKitMimeInfo.
  *

@@ -96,6 +96,8 @@ WebKitNavigationType webkit_navigation_action_get_navigation_type(WebKitNavigati
  * webkit_navigation_action_get_mouse_button:
  * @navigation: a #WebKitNavigationAction
  *
+ * Return the number of the mouse button that triggered the navigation.
+ *
  * Return the number of the mouse button that triggered the navigation, or 0 if
  * the navigation was not started by a mouse event.
  *
@@ -112,6 +114,8 @@ unsigned webkit_navigation_action_get_mouse_button(WebKitNavigationAction* navig
 /**
  * webkit_navigation_action_get_modifiers:
  * @navigation: a #WebKitNavigationAction
+ *
+ * Return the modifier keys.
  *
  * Return a bitmask of #GdkModifierType values describing the modifier keys that were in effect
  * when the navigation was requested
@@ -131,6 +135,7 @@ unsigned webkit_navigation_action_get_modifiers(WebKitNavigationAction* navigati
  * @navigation: a #WebKitNavigationAction
  *
  * Return the #WebKitURIRequest associated with the navigation action.
+ *
  * Modifications to the returned object are <emphasis>not</emphasis> taken
  * into account when the request is sent over the network, and is intended
  * only to aid in evaluating whether a navigation action should be taken or

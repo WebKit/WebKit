@@ -157,6 +157,7 @@ static void webkit_user_content_filter_store_class_init(WebKitUserContentFilterS
  * @storage_path: path where data for filters will be stored on disk
  *
  * Create a new #WebKitUserContentFilterStore to manipulate filters stored at @storage_path.
+ *
  * The path must point to a local filesystem, and will be created if needed.
  *
  * Returns: (transfer full): a newly created #WebKitUserContentFilterStore
@@ -217,6 +218,8 @@ static void webkitUserContentFilterStoreSaveBytes(GRefPtr<GTask>&& task, String&
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when saving is completed
  * @user_data: (closure): the data to pass to the callback function
+ *
+ * Asynchronously save a content filter from a set source rule.
  *
  * Asynchronously save a content filter from a source rule set in the
  * [WebKit content extesions JSON format](https://webkit.org/blog/3476/content-blockers-first-look/).
@@ -281,6 +284,8 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(SaveTaskData)
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when saving is completed
  * @user_data: (closure): the data to pass to the callback function
+ *
+ * Asynchronously save a content filter from the contents of a file.
  *
  * Asynchronously save a content filter from the contents of a file, which must be
  * native to the platform, as checked by g_file_is_native(). See
@@ -422,7 +427,9 @@ gboolean webkit_user_content_filter_store_remove_finish(WebKitUserContentFilterS
  * @callback: (scope async): a #GAsyncReadyCallback to call when the load is completed
  * @user_data: (closure): the data to pass to the callback function
  *
- * Asynchronously load a content filter given its @identifier. The filter must have been
+ * Asynchronously load a content filter given its @identifier.
+ *
+ * The filter must have been
  * previously stored using webkit_user_content_filter_store_save().
  *
  * When the operation is finished, @callback will be invoked, which then can use
@@ -514,6 +521,8 @@ void webkit_user_content_filter_store_fetch_identifiers(WebKitUserContentFilterS
  * webkit_user_content_filter_store_fetch_identifiers_finish:
  * @store: a #WebKitUserContentFilterStore
  * @result: a #GAsyncResult
+ *
+ * Finishes an asynchronous fetch of the list of stored filters.
  *
  * Finishes an asynchronous fetch of the list of identifiers for the stored filters previously
  * started with webkit_user_content_filter_store_fetch_identifiers().

@@ -98,6 +98,8 @@ WebKitSecurityOrigin* webkit_security_origin_new(const gchar* protocol, const gc
  * webkit_security_origin_new_for_uri:
  * @uri: The URI for the new origin
  *
+ * Create a new security origin from the provided.
+ *
  * Create a new security origin from the provided URI. Components of
  * @uri other than protocol, host, and port do not affect the created
  * #WebKitSecurityOrigin.
@@ -118,6 +120,7 @@ WebKitSecurityOrigin* webkit_security_origin_new_for_uri(const gchar* uri)
  * @origin: a #WebKitSecurityOrigin
  *
  * Atomically increments the reference count of @origin by one.
+ *
  * This function is MT-safe and may be called from any thread.
  *
  * Returns: The passed #WebKitSecurityOrigin
@@ -137,6 +140,7 @@ WebKitSecurityOrigin* webkit_security_origin_ref(WebKitSecurityOrigin* origin)
  * @origin: A #WebKitSecurityOrigin
  *
  * Atomically decrements the reference count of @origin by one.
+ *
  * If the reference count drops to 0, all memory allocated by
  * #WebKitSecurityOrigin is released. This function is MT-safe and may be
  * called from any thread.
@@ -179,7 +183,9 @@ const gchar* webkit_security_origin_get_protocol(WebKitSecurityOrigin* origin)
  * webkit_security_origin_get_host:
  * @origin: a #WebKitSecurityOrigin
  *
- * Gets the hostname of @origin. It is reasonable for this to be %NULL
+ * Gets the hostname of @origin.
+ *
+ * It is reasonable for this to be %NULL
  * if its protocol does not require a host component.
  *
  * Returns: (allow-none): The host of the #WebKitSecurityOrigin
@@ -202,7 +208,9 @@ const gchar* webkit_security_origin_get_host(WebKitSecurityOrigin* origin)
  * webkit_security_origin_get_port:
  * @origin: a #WebKitSecurityOrigin
  *
- * Gets the port of @origin. This function will always return 0 if the
+ * Gets the port of @origin.
+ *
+ * This function will always return 0 if the
  * port is the default port for the given protocol. For example,
  * http://example.com has the same security origin as
  * http://example.com:80, and this function will return 0 for a
@@ -223,8 +231,10 @@ guint16 webkit_security_origin_get_port(WebKitSecurityOrigin* origin)
  * webkit_security_origin_is_opaque:
  * @origin: a #WebKitSecurityOrigin
  *
+ * This function returns %FALSE.
+ *
  * This function returns %FALSE. #WebKitSecurityOrigin is now a simple
- * wrapper around a &lt;protocol, host, port&gt; triplet, and no longer
+ * wrapper around a <protocol, host, port> triplet, and no longer
  * represents an origin as defined by web standards that may be opaque.
  *
  * Returns: %FALSE
@@ -244,7 +254,9 @@ gboolean webkit_security_origin_is_opaque(WebKitSecurityOrigin* origin)
  * webkit_security_origin_to_string:
  * @origin: a #WebKitSecurityOrigin
  *
- * Gets a string representation of @origin. The string representation
+ * Gets a string representation of @origin.
+ *
+ * The string representation
  * is a valid URI with only protocol, host, and port components, or
  * %NULL.
  *

@@ -156,7 +156,7 @@ static void webkit_website_policies_class_init(WebKitWebsitePoliciesClass* findC
 /**
  * webkit_website_policies_new:
  *
- * Create a new #WebKitWebsitePolicies
+ * Create a new #WebKitWebsitePolicies.
  *
  * Returns: (transfer full): the newly created #WebKitWebsitePolicies
  *
@@ -171,6 +171,8 @@ WebKitWebsitePolicies* webkit_website_policies_new(void)
  * webkit_website_policies_new_with_policies:
  * @first_policy_name: name of the first policy to set
  * @...: value of first policy, followed by more policies, %NULL-terminated
+ *
+ * Create a new #WebKitWebsitePolicies with given policies.
  *
  * Create a new #WebKitWebsitePolicies with policies given as variadic
  * arguments.

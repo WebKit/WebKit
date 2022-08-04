@@ -729,7 +729,7 @@ static gpointer createDefaultWebContext(gpointer)
 /**
  * webkit_web_context_get_default:
  *
- * Gets the default web context
+ * Gets the default web context.
  *
  * Returns: (transfer none): a #WebKitWebContext
  */
@@ -742,7 +742,7 @@ WebKitWebContext* webkit_web_context_get_default(void)
 /**
  * webkit_web_context_new:
  *
- * Create a new #WebKitWebContext
+ * Create a new #WebKitWebContext.
  *
  * Returns: (transfer full): a newly created #WebKitWebContext
  *
@@ -756,7 +756,9 @@ WebKitWebContext* webkit_web_context_new(void)
 /**
  * webkit_web_context_new_ephemeral:
  *
- * Create a new ephemeral #WebKitWebContext. An ephemeral #WebKitWebContext is a context
+ * Create a new ephemeral #WebKitWebContext.
+ *
+ * An ephemeral #WebKitWebContext is a context
  * created with an ephemeral #WebKitWebsiteDataManager. This is just a convenient method
  * to create ephemeral contexts without having to create your own #WebKitWebsiteDataManager.
  * All #WebKitWebView<!-- -->s associated with this context will also be ephemeral. Websites will
@@ -829,6 +831,7 @@ gboolean webkit_web_context_is_ephemeral(WebKitWebContext* context)
  * @context: the #WebKitWebContext
  *
  * Get whether automation is allowed in @context.
+ *
  * See also webkit_web_context_set_automation_allowed().
  *
  * Returns: %TRUE if automation is allowed or %FALSE otherwise.
@@ -851,7 +854,9 @@ gboolean webkit_web_context_is_automation_allowed(WebKitWebContext* context)
  * @context: the #WebKitWebContext
  * @allowed: value to set
  *
- * Set whether automation is allowed in @context. When automation is enabled the browser could
+ * Set whether automation is allowed in @context.
+ *
+ * When automation is enabled the browser could
  * be controlled by another process by requesting an automation session. When a new automation
  * session is requested the signal #WebKitWebContext::automation-started is emitted.
  * Automation is disabled by default, so you need to explicitly call this method passing %TRUE
@@ -884,6 +889,8 @@ void webkit_web_context_set_automation_allowed(WebKitWebContext* context, gboole
  * webkit_web_context_set_cache_model:
  * @context: the #WebKitWebContext
  * @cache_model: a #WebKitCacheModel
+ *
+ * Specifies a usage model for WebViews.
  *
  * Specifies a usage model for WebViews, which WebKit will use to
  * determine its caching behavior. All web views follow the cache
@@ -930,7 +937,9 @@ void webkit_web_context_set_cache_model(WebKitWebContext*, WebKitCacheModel mode
  * webkit_web_context_get_cache_model:
  * @context: the #WebKitWebContext
  *
- * Returns the current cache model. For more information about this
+ * Returns the current cache model.
+ *
+ * For more information about this
  * value check the documentation of the function
  * webkit_web_context_set_cache_model().
  *
@@ -959,6 +968,7 @@ WebKitCacheModel webkit_web_context_get_cache_model(WebKitWebContext* context)
  * @context: a #WebKitWebContext
  *
  * Clears all resources currently cached.
+ *
  * See also webkit_web_context_set_cache_model().
  */
 void webkit_web_context_clear_cache(WebKitWebContext* context)
@@ -979,6 +989,7 @@ void webkit_web_context_clear_cache(WebKitWebContext* context)
  * @proxy_settings: (allow-none): a #WebKitNetworkProxySettings, or %NULL
  *
  * Set the network proxy settings to be used by connections started in @context.
+ *
  * By default %WEBKIT_NETWORK_PROXY_MODE_DEFAULT is used, which means that the
  * system settings will be used (g_proxy_resolver_get_default()).
  * If you want to override the system default settings, you can either use
@@ -1011,9 +1022,10 @@ static DownloadsMap& downloadsMap()
  * @context: a #WebKitWebContext
  * @uri: the URI to download
  *
- * Requests downloading of the specified URI string. The download operation
- * will not be associated to any #WebKitWebView, if you are interested in
- * starting a download from a particular #WebKitWebView use
+ * Requests downloading of the specified URI string.
+ *
+ * The download operation will not be associated to any #WebKitWebView,
+ * if you are interested in starting a download from a particular #WebKitWebView use
  * webkit_web_view_download_uri() instead.
  *
  * Returns: (transfer full): a new #WebKitDownload representing
@@ -1075,6 +1087,8 @@ static void ensureFaviconDatabase(WebKitWebContext* context)
  * @path: (allow-none): an absolute path to the icon database
  * directory or %NULL to use the defaults
  *
+ * Set the directory path to store the favicons database.
+ *
  * Set the directory path to be used to store the favicons database
  * for @context on disk. Passing %NULL as @path means using the
  * default directory for the platform (see g_get_user_cache_dir()).
@@ -1115,6 +1129,8 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
 /**
  * webkit_web_context_get_favicon_database_directory:
  * @context: a #WebKitWebContext
+ *
+ * Get the directory path to store the favicons database.
  *
  * Get the directory path being used to store the favicons database
  * for @context, or %NULL if
@@ -1244,6 +1260,8 @@ GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncRe
  * @user_data: data to pass to callback function
  * @user_data_destroy_func: destroy notify for @user_data
  *
+ * Register @scheme in @context.
+ *
  * Register @scheme in @context, so that when an URI request with @scheme is made in the
  * #WebKitWebContext, the #WebKitURISchemeRequestCallback registered will be called with a
  * #WebKitURISchemeRequest.
@@ -1311,8 +1329,9 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
  * @context: a #WebKitWebContext
  * @enabled: if %TRUE enable sandboxing
  *
- * Set whether WebKit subprocesses will be sandboxed, limiting access to the system.
+ * Set whether WebKit subprocesses will be sandboxed.
  *
+ * Set whether WebKit subprocesses will be sandboxed, limiting access to the system.
  * This method **must be called before any web process has been created**,
  * as early as possible in your application. Calling it later is a fatal error.
  *
@@ -1351,7 +1370,9 @@ static bool pathIsBlocked(const char* path)
  * @path: (type filename): an absolute path to mount in the sandbox
  * @read_only: if %TRUE the path will be read-only
  *
- * Adds a path to be mounted in the sandbox. @path must exist before any web process
+ * Adds a path to be mounted in the sandbox.
+ *
+ * @path must exist before any web process
  * has been created otherwise it will be silently ignored. It is a fatal error to
  * add paths after a web process has been spawned.
  *
@@ -1434,6 +1455,8 @@ void webkit_web_context_set_spell_checking_enabled(WebKitWebContext* context, gb
  * webkit_web_context_get_spell_checking_languages:
  * @context: a #WebKitWebContext
  *
+ * Get the the list of spell checking languages.
+ *
  * Get the the list of spell checking languages associated with
  * @context, or %NULL if no languages have been previously set.
  *
@@ -1499,6 +1522,8 @@ void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, 
  * @context: a #WebKitWebContext
  * @languages: (allow-none) (array zero-terminated=1) (element-type utf8) (transfer none): a %NULL-terminated list of language identifiers
  *
+ * Set the list of preferred languages.
+ *
  * Set the list of preferred languages, sorted from most desirable
  * to least desirable. The list will be used in the following ways:
  *
@@ -1531,7 +1556,7 @@ void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const
  * @context: a #WebKitWebContext
  * @policy: a #WebKitTLSErrorsPolicy
  *
- * Set the TLS errors policy of @context as @policy
+ * Set the TLS errors policy of @context as @policy.
  *
  * Deprecated: 2.32. Use webkit_website_data_manager_set_tls_errors_policy() instead.
  */
@@ -1546,7 +1571,7 @@ void webkit_web_context_set_tls_errors_policy(WebKitWebContext* context, WebKitT
  * webkit_web_context_get_tls_errors_policy:
  * @context: a #WebKitWebContext
  *
- * Get the TLS errors policy of @context
+ * Get the TLS errors policy of @context.
  *
  * Returns: a #WebKitTLSErrorsPolicy
  *
@@ -1565,6 +1590,7 @@ WebKitTLSErrorsPolicy webkit_web_context_get_tls_errors_policy(WebKitWebContext*
  * @directory: the directory to add
  *
  * Set the directory where WebKit will look for Web Extensions.
+ *
  * This method must be called before loading anything in this context,
  * otherwise it will not have any effect. You can connect to
  * #WebKitWebContext::initialize-web-extensions to call this method
@@ -1585,6 +1611,7 @@ void webkit_web_context_set_web_extensions_directory(WebKitWebContext* context, 
  * @user_data: a #GVariant
  *
  * Set user data to be passed to Web Extensions on initialization.
+ *
  * The data will be passed to the
  * #WebKitWebExtensionInitializeWithUserDataFunction.
  * This method must be called before loading anything in this context,
@@ -1608,7 +1635,8 @@ void webkit_web_context_set_web_extensions_initialization_user_data(WebKitWebCon
  * @context: a #WebKitWebContext
  * @directory: the directory to set
  *
- * Set the directory where disk cache files will be stored
+ * Set the directory where disk cache files will be stored.
+ *
  * This method must be called before loading anything in this context, otherwise
  * it will not have any effect.
  *
@@ -1628,6 +1656,8 @@ void webkit_web_context_set_disk_cache_directory(WebKitWebContext*, const char*)
  * webkit_web_context_prefetch_dns:
  * @context: a #WebKitWebContext
  * @hostname: a hostname to be resolved
+ *
+ * Resolve the domain name of the given @hostname in advance.
  *
  * Resolve the domain name of the given @hostname in advance, so that if a URI
  * of @hostname is requested the load will be performed more quickly.
@@ -1668,6 +1698,8 @@ void webkit_web_context_allow_tls_certificate_for_host(WebKitWebContext* context
  * @context: the #WebKitWebContext
  * @process_model: a #WebKitProcessModel
  *
+ * Specifies a process model for WebViews.
+ *
  * Specifies a process model for WebViews, which WebKit will use to
  * determine how auxiliary processes are handled.
  *
@@ -1707,7 +1739,9 @@ void webkit_web_context_set_process_model(WebKitWebContext* context, WebKitProce
  * webkit_web_context_get_process_model:
  * @context: the #WebKitWebContext
  *
- * Returns the current process model. For more information about this value
+ * Returns the current process model.
+ *
+ * For more information about this value
  * see webkit_web_context_set_process_model().
  *
  * Returns: the current #WebKitProcessModel
@@ -1725,6 +1759,8 @@ WebKitProcessModel webkit_web_context_get_process_model(WebKitWebContext* contex
  * webkit_web_context_set_web_process_count_limit:
  * @context: the #WebKitWebContext
  * @limit: the maximum number of web processes
+ *
+ * Sets the maximum number of web processes.
  *
  * Sets the maximum number of web processes that can be created at the same time for the @context.
  * The default value is 0 and means no limit.
@@ -1777,6 +1813,7 @@ static void addOriginToMap(WebKitSecurityOrigin* origin, HashMap<String, bool>* 
  * @disallowed_origins: (element-type WebKitSecurityOrigin): a #GList of security origins
  *
  * Sets initial desktop notification permissions for the @context.
+ *
  * @allowed_origins and @disallowed_origins must each be #GList of
  * #WebKitSecurityOrigin objects representing origins that will,
  * respectively, either always or never have permission to show desktop
@@ -1812,6 +1849,7 @@ void webkit_web_context_initialize_notification_permissions(WebKitWebContext* co
  * @message: a #WebKitUserMessage
  *
  * Send @message to all #WebKitWebExtension<!-- -->s associated to @context.
+ *
  * If @message is floating, it's consumed.
  *
  * Since: 2.28

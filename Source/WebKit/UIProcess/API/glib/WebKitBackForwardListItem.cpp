@@ -142,6 +142,7 @@ const gchar* webkit_back_forward_list_item_get_title(WebKitBackForwardListItem* 
  * @list_item: a #WebKitBackForwardListItem
  *
  * Obtain the original URI of the item.
+ *
  * See also webkit_back_forward_list_item_get_uri().
  *
  * Returns: the original URI of @list_item or %NULL

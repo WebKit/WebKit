@@ -139,6 +139,7 @@ const WebKit::WebsiteDataRecord& webkitWebsiteDataGetRecord(WebKitWebsiteData* w
  * @website_data: a #WebKitWebsiteData
  *
  * Atomically increments the reference count of @website_data by one.
+ *
  * This function is MT-safe and may be called from any thread.
  *
  * Returns: The passed #WebKitWebsiteData
@@ -158,6 +159,7 @@ WebKitWebsiteData* webkit_website_data_ref(WebKitWebsiteData* websiteData)
  * @website_data: A #WebKitWebsiteData
  *
  * Atomically decrements the reference count of @website_data by one.
+ *
  * If the reference count drops to 0, all memory allocated by
  * #WebKitWebsiteData is released. This function is MT-safe and may be
  * called from any thread.
@@ -178,7 +180,9 @@ void webkit_website_data_unref(WebKitWebsiteData* websiteData)
  * webkit_website_data_get_name:
  * @website_data: a #WebKitWebsiteData
  *
- * Gets the name of #WebKitWebsiteData. This is the website name, normally represented by
+ * Gets the name of #WebKitWebsiteData.
+ *
+ * This is the website name, normally represented by
  * a domain or host name. All local documents are grouped in the same #WebKitWebsiteData using
  * the name "Local files".
  *
@@ -203,7 +207,9 @@ const char* webkit_website_data_get_name(WebKitWebsiteData* websiteData)
  * webkit_website_data_get_types:
  * @website_data: a #WebKitWebsiteData
  *
- * Gets the types of data stored in the client for a #WebKitWebsiteData. These are the
+ * Gets the types of data stored in the client for a #WebKitWebsiteData.
+ *
+ * These are the
  * types actually present, not the types queried with webkit_website_data_manager_fetch().
  *
  * Returns: a bitmask of #WebKitWebsiteDataTypes in @website_data
@@ -223,6 +229,7 @@ WebKitWebsiteDataTypes webkit_website_data_get_types(WebKitWebsiteData* websiteD
  * @types: a bitmask  of #WebKitWebsiteDataTypes
  *
  * Gets the size of the data of types @types in a #WebKitWebsiteData.
+ *
  * Note that currently the data size is only known for %WEBKIT_WEBSITE_DATA_DISK_CACHE data type
  * so for all other types 0 will be returned.
  *

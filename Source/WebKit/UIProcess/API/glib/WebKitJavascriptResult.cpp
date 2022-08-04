@@ -56,8 +56,9 @@ WebKitJavascriptResult* webkitJavascriptResultCreate(WebCore::SerializedScriptVa
  * webkit_javascript_result_ref:
  * @js_result: a #WebKitJavascriptResult
  *
- * Atomically increments the reference count of @js_result by one. This
- * function is MT-safe and may be called from any thread.
+ * Atomically increments the reference count of @js_result by one.
+ *
+ * This function is MT-safe and may be called from any thread.
  *
  * Returns: The passed in #WebKitJavascriptResult
  */
@@ -71,8 +72,10 @@ WebKitJavascriptResult* webkit_javascript_result_ref(WebKitJavascriptResult* jav
  * webkit_javascript_result_unref:
  * @js_result: a #WebKitJavascriptResult
  *
- * Atomically decrements the reference count of @js_result by one. If the
- * reference count drops to 0, all memory allocated by the #WebKitJavascriptResult is
+ * Atomically decrements the reference count of @js_result by one.
+ *
+ * If the reference count drops to 0,
+ * all memory allocated by the #WebKitJavascriptResult is
  * released. This function is MT-safe and may be called from any
  * thread.
  */
@@ -88,6 +91,8 @@ void webkit_javascript_result_unref(WebKitJavascriptResult* javascriptResult)
 /**
  * webkit_javascript_result_get_global_context: (skip)
  * @js_result: a #WebKitJavascriptResult
+ *
+ * Get the global Javascript context.
  *
  * Get the global Javascript context that should be used with the
  * <function>JSValueRef</function> returned by webkit_javascript_result_get_value().
@@ -106,7 +111,9 @@ JSGlobalContextRef webkit_javascript_result_get_global_context(WebKitJavascriptR
  * webkit_javascript_result_get_value: (skip)
  * @js_result: a #WebKitJavascriptResult
  *
- * Get the value of @js_result. You should use the <function>JSGlobalContextRef</function>
+ * Get the value of @js_result.
+ *
+ * You should use the <function>JSGlobalContextRef</function>
  * returned by webkit_javascript_result_get_global_context() to use the <function>JSValueRef</function>.
  *
  * Returns: the <function>JSValueRef</function> of the #WebKitJavascriptResult

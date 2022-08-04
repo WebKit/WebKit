@@ -43,7 +43,7 @@ using namespace WebCore;
  *
  * A request to open a file chooser.
  *
- * Whenever the user interacts with an &lt;input type='file' /&gt;
+ * Whenever the user interacts with an <input type='file' />
  * HTML element, WebKit will need to show a dialog to choose one or
  * more files to be uploaded to the server along with the rest of the
  * form data. For that to happen in a general way, instead of just
@@ -199,6 +199,8 @@ WebKitFileChooserRequest* webkitFileChooserRequestCreate(API::OpenPanelParameter
  * webkit_file_chooser_request_get_mime_types:
  * @request: a #WebKitFileChooserRequest
  *
+ * Get the list of MIME types the file chooser dialog should handle.
+ *
  * Get the list of MIME types the file chooser dialog should handle,
  * in the format specified in RFC 2046 for "media types". Its contents
  * depend on the value of the 'accept' attribute for HTML input
@@ -240,6 +242,8 @@ const gchar* const* webkit_file_chooser_request_get_mime_types(WebKitFileChooser
 /**
  * webkit_file_chooser_request_get_mime_types_filter:
  * @request: a #WebKitFileChooserRequest
+ *
+ * Get the filter currently associated with the request.
  *
  * Get the filter currently associated with the request, ready to be
  * used by #GtkFileChooser. This function should normally be called
@@ -284,6 +288,8 @@ GtkFileFilter* webkit_file_chooser_request_get_mime_types_filter(WebKitFileChoos
 /**
  * webkit_file_chooser_request_get_select_multiple:
  * @request: a #WebKitFileChooserRequest
+ *
+ * Whether the file chooser should allow selecting multiple files.
  *
  * Determine whether the file chooser associated to this
  * #WebKitFileChooserRequest should allow selecting multiple files,
@@ -330,6 +336,8 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
  * webkit_file_chooser_request_get_selected_files:
  * @request: a #WebKitFileChooserRequest
  *
+ * Get the list of selected files associated to the request.
+ *
  * Get the list of selected files currently associated to the
  * request. Initially, the return value of this method contains any
  * files selected in previous file chooser requests for this HTML
@@ -374,7 +382,9 @@ const gchar* const* webkit_file_chooser_request_get_selected_files(WebKitFileCho
  * webkit_file_chooser_request_cancel:
  * @request: a #WebKitFileChooserRequest
  *
- * Ask WebKit to cancel the request. It's important to do this in case
+ * Ask WebKit to cancel the request.
+ *
+ * It's important to do this in case
  * no selection has been made in the client, otherwise the request
  * won't be properly completed and the browser will keep the request
  * pending forever, which might cause the browser to hang.

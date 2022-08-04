@@ -92,6 +92,8 @@ void webkit_policy_decision_use(WebKitPolicyDecision* decision)
  * @decision: a #WebKitPolicyDecision
  * @policies: a #WebKitWebsitePolicies
  *
+ * Accept the navigation action and continue with provided @policies.
+ *
  * Accept the navigation action which triggered this decision, and
  * continue with @policies affecting all subsequent loads of resources
  * in the origin associated with the accepted navigation action.
@@ -118,6 +120,8 @@ void webkit_policy_decision_use_with_policies(WebKitPolicyDecision* decision, We
 /**
  * webkit_policy_decision_ignore:
  * @decision: a #WebKitPolicyDecision
+ *
+ * #WebKitResponsePolicyDecision, this would cancel the request.
  *
  * Ignore the action which triggered this decision. For instance, for a
  * #WebKitResponsePolicyDecision, this would cancel the request.

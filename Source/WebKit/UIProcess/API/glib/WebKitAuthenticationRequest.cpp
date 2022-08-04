@@ -40,7 +40,7 @@ using namespace WebCore;
  * WebKitAuthenticationRequest:
  * @See_also: #WebKitWebView
  *
- * Represents an authentication request
+ * Represents an authentication request.
  *
  * Whenever a client attempts to load a page protected by HTTP
  * authentication, credentials will need to be provided to authorize access.
@@ -195,6 +195,8 @@ const WebCore::Credential& webkitAuthenticationRequestGetProposedCredential(WebK
  * webkit_authentication_request_can_save_credentials:
  * @request: a #WebKitAuthenticationRequest
  *
+ * Determine whether this #WebKitAuthenticationRequest should allow the storage of credentials.
+ *
  * Determine whether the authentication method associated with this
  * #WebKitAuthenticationRequest should allow the storage of credentials.
  * This will return %FALSE if WebKit doesn't support credential storing,
@@ -230,6 +232,9 @@ gboolean webkit_authentication_request_can_save_credentials(WebKitAuthentication
  *
  * Set whether the authentication method associated with @request
  * should allow the storage of credentials.
+ *
+ * Set whether the authentication method associated with @request
+ * should allow the storage of credentials.
  * This should be used by applications handling their own credentials
  * storage to indicate that it should be supported even when internal
  * credential storage is disabled or unsupported.
@@ -248,6 +253,8 @@ void webkit_authentication_request_set_can_save_credentials(WebKitAuthentication
 /**
  * webkit_authentication_request_get_proposed_credential:
  * @request: a #WebKitAuthenticationRequest
+ *
+ * Get the #WebKitCredential of the proposed authentication challenge.
  *
  * Get the #WebKitCredential of the proposed authentication challenge that was
  * stored from a previous session. The client can use this directly for
@@ -273,6 +280,8 @@ WebKitCredential* webkit_authentication_request_get_proposed_credential(WebKitAu
  * webkit_authentication_request_set_proposed_credential:
  * @request: a #WebKitAuthenticationRequest
  * @credential: a #WebKitCredential, or %NULL
+ *
+ * Set the #WebKitCredential of the proposed authentication challenge.
  *
  * Set the #WebKitCredential of the proposed authentication challenge that was
  * stored from a previous session. This should only be used by applications handling
@@ -410,6 +419,8 @@ WebKitAuthenticationScheme webkit_authentication_request_get_scheme(WebKitAuthen
  * webkit_authentication_request_is_for_proxy:
  * @request: a #WebKitAuthenticationRequest
  *
+ * Determine whether the authentication challenge is associated with a proxy server.
+ *
  * Determine whether the authentication challenge is associated with a proxy server rather than an "origin" server.
  *
  * Returns: %TRUE if authentication is for a proxy or %FALSE otherwise.
@@ -445,6 +456,8 @@ gboolean webkit_authentication_request_is_retry(WebKitAuthenticationRequest* req
  * @request: a #WebKitAuthenticationRequest
  * @credential: (transfer none) (allow-none): A #WebKitCredential, or %NULL
  *
+ * Authenticate the #WebKitAuthenticationRequest.
+ *
  * Authenticate the #WebKitAuthenticationRequest using the #WebKitCredential
  * supplied. To continue without credentials, pass %NULL as @credential.
  *
@@ -466,7 +479,9 @@ void webkit_authentication_request_authenticate(WebKitAuthenticationRequest* req
  * webkit_authentication_request_cancel:
  * @request: a #WebKitAuthenticationRequest
  *
- * Cancel the authentication challenge. This will also cancel the page loading and result in a
+ * Cancel the authentication challenge.
+ *
+ * This will also cancel the page loading and result in a
  * #WebKitWebView::load-failed signal with a #WebKitNetworkError of type %WEBKIT_NETWORK_ERROR_CANCELLED being emitted.
  *
  * Since: 2.2

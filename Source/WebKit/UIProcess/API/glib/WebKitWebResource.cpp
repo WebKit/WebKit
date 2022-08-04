@@ -285,7 +285,9 @@ WebFrameProxy* webkitWebResourceGetFrame(WebKitWebResource* resource)
  * webkit_web_resource_get_uri:
  * @resource: a #WebKitWebResource
  *
- * Returns the current active URI of @resource. The active URI might change during
+ * Returns the current active URI of @resource.
+ *
+ * The active URI might change during
  * a load operation:
  *
  * <orderedlist>
@@ -325,6 +327,7 @@ const char* webkit_web_resource_get_uri(WebKitWebResource* resource)
  * @resource: a #WebKitWebResource
  *
  * Retrieves the #WebKitURIResponse of the resource load operation.
+ *
  * This method returns %NULL if called before the response
  * is received from the server. You can connect to notify::response
  * signal to be notified when the response is received.

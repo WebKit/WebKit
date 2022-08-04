@@ -503,8 +503,9 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
  * @first_option_name: name of the first option to set
  * @...: value of first option, followed by more options, %NULL-terminated
  *
- * Creates a new #WebKitWebsiteDataManager with the given options. It must
- * be passed as construction parameter of a #WebKitWebContext.
+ * Creates a new #WebKitWebsiteDataManager with the given options.
+ *
+ * It must be passed as construction parameter of a #WebKitWebContext.
  *
  * Returns: (transfer full): the newly created #WebKitWebsiteDataManager
  *
@@ -523,7 +524,9 @@ WebKitWebsiteDataManager* webkit_website_data_manager_new(const gchar* firstOpti
 /**
  * webkit_website_data_manager_new_ephemeral:
  *
- * Creates an ephemeral #WebKitWebsiteDataManager. See #WebKitWebsiteDataManager:is-ephemeral for more details.
+ * Creates an ephemeral #WebKitWebsiteDataManager.
+ *
+ * See #WebKitWebsiteDataManager:is-ephemeral for more details.
  *
  * Returns: (transfer full): a new ephemeral #WebKitWebsiteDataManager.
  *
@@ -538,7 +541,9 @@ WebKitWebsiteDataManager* webkit_website_data_manager_new_ephemeral()
  * webkit_website_data_manager_is_ephemeral:
  * @manager: a #WebKitWebsiteDataManager
  *
- * Get whether a #WebKitWebsiteDataManager is ephemeral. See #WebKitWebsiteDataManager:is-ephemeral for more details.
+ * Get whether a #WebKitWebsiteDataManager is ephemeral.
+ *
+ * See #WebKitWebsiteDataManager:is-ephemeral for more details.
  *
  * Returns: %TRUE if @manager is ephemeral or %FALSE otherwise.
  *
@@ -829,7 +834,9 @@ WebKitCookieManager* webkit_website_data_manager_get_cookie_manager(WebKitWebsit
  * @manager: a #WebKitWebsiteDataManager
  * @enabled: value to set
  *
- * Enable or disable Intelligent Tracking Prevention (ITP). When ITP is enabled resource load statistics
+ * Enable or disable Intelligent Tracking Prevention (ITP).
+ *
+ * When ITP is enabled resource load statistics
  * are collected and used to decide whether to allow or block third-party cookies and prevent user tracking.
  * Note that while ITP is enabled the accept policy %WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY is ignored and
  * %WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS is used instead. See also webkit_cookie_manager_set_accept_policy().
@@ -865,7 +872,9 @@ gboolean webkit_website_data_manager_get_itp_enabled(WebKitWebsiteDataManager* m
  * @manager: a #WebKitWebsiteDataManager
  * @enabled: value to set
  *
- * Enable or disable persistent credential storage. When enabled, which is the default for
+ * Enable or disable persistent credential storage.
+ *
+ * When enabled, which is the default for
  * non-ephemeral sessions, the network process will try to read and write HTTP authentiacation
  * credentials from persistent storage.
  *
@@ -883,6 +892,7 @@ void webkit_website_data_manager_set_persistent_credential_storage_enabled(WebKi
  * @manager: a #WebKitWebsiteDataManager
  *
  * Get whether persistent credential storage is enabled or not.
+ *
  * See also webkit_website_data_manager_set_persistent_credential_storage_enabled().
  *
  * Returns: %TRUE if persistent credential storage is enabled, or %FALSE otherwise.
@@ -901,7 +911,7 @@ gboolean webkit_website_data_manager_get_persistent_credential_storage_enabled(W
  * @manager: a #WebKitWebsiteDataManager
  * @policy: a #WebKitTLSErrorsPolicy
  *
- * Set the TLS errors policy of @manager as @policy
+ * Set the TLS errors policy of @manager as @policy.
  *
  * Since: 2.32
  */
@@ -920,7 +930,7 @@ void webkit_website_data_manager_set_tls_errors_policy(WebKitWebsiteDataManager*
  * webkit_website_data_manager_get_tls_errors_policy:
  * @manager: a #WebKitWebsiteDataManager
  *
- * Get the TLS errors policy of @manager
+ * Get the TLS errors policy of @manager.
  *
  * Returns: a #WebKitTLSErrorsPolicy
  *
@@ -940,6 +950,7 @@ WebKitTLSErrorsPolicy webkit_website_data_manager_get_tls_errors_policy(WebKitWe
  * @proxy_settings: (allow-none): a #WebKitNetworkProxySettings, or %NULL
  *
  * Set the network proxy settings to be used by connections started in @manager session.
+ *
  * By default %WEBKIT_NETWORK_PROXY_MODE_DEFAULT is used, which means that the
  * system settings will be used (g_proxy_resolver_get_default()).
  * If you want to override the system default settings, you can either use
@@ -1071,7 +1082,9 @@ GList* webkit_website_data_manager_fetch_finish(WebKitWebsiteDataManager* manage
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
  * @user_data: (closure): the data to pass to callback function
  *
- * Asynchronously removes the website data of the for the given @types for websites in the given @website_data list.
+ * Asynchronously removes the website data in the given @website_data list.
+ *
+ * Asynchronously removes the website data of the given @types for websites in the given @website_data list.
  * Use webkit_website_data_manager_clear() if you want to remove the website data for all sites.
  *
  * When the operation is finished, @callback will be called. You can then call
@@ -1137,6 +1150,7 @@ gboolean webkit_website_data_manager_remove_finish(WebKitWebsiteDataManager* man
  * @user_data: (closure): the data to pass to callback function
  *
  * Asynchronously clear the website data of the given @types modified in the past @timespan.
+ *
  * If @timespan is 0, all website data will be removed.
  *
  * When the operation is finished, @callback will be called. You can then call
@@ -1204,6 +1218,8 @@ struct _WebKitITPFirstParty {
  * webkit_website_data_manager_set_memory_pressure_settings:
  * @settings: a WebKitMemoryPressureSettings.
  *
+ * Sets @settings as the #WebKitMemoryPressureSettings.
+ *
  * Sets @settings as the #WebKitMemoryPressureSettings to be used by all the network
  * processes created by any instance of #WebKitWebsiteDataManager after this function
  * is called.
@@ -1239,6 +1255,7 @@ static WebKitITPFirstParty* webkitITPFirstPartyCreate(WebResourceLoadStatisticsS
  * @itp_first_party: a #WebKitITPFirstParty
  *
  * Atomically increments the reference count of @itp_first_party by one.
+ *
  * This function is MT-safe and may be called from any thread.
  *
  * Returns: The passed #WebKitITPFirstParty
@@ -1258,6 +1275,7 @@ WebKitITPFirstParty* webkit_itp_first_party_ref(WebKitITPFirstParty* firstParty)
  * @itp_first_party: a #WebKitITPFirstParty
  *
  * Atomically decrements the reference count of @itp_first_party by one.
+ *
  * If the reference count drops to 0, all memory allocated by
  * #WebKitITPFirstParty is released. This function is MT-safe and may be
  * called from any thread.
@@ -1278,7 +1296,7 @@ void webkit_itp_first_party_unref(WebKitITPFirstParty* firstParty)
  * webkit_itp_first_party_get_domain:
  * @itp_first_party: a #WebKitITPFirstParty
  *
- * Get the domain name of @itp_first_party
+ * Get the domain name of @itp_first_party.
  *
  * Returns: the domain name
  *
@@ -1296,6 +1314,7 @@ const char* webkit_itp_first_party_get_domain(WebKitITPFirstParty* firstParty)
  * @itp_first_party: a #WebKitITPFirstParty
  *
  * Get whether @itp_first_party has granted website data access to its #WebKitITPThirdParty.
+ *
  * Each @WebKitITPFirstParty is created by webkit_itp_third_party_get_first_parties() and
  * therefore corresponds to exactly one #WebKitITPThirdParty.
  *
@@ -1315,6 +1334,7 @@ gboolean webkit_itp_first_party_get_website_data_access_allowed(WebKitITPFirstPa
  * @itp_first_party: a #WebKitITPFirstParty
  *
  * Get the last time a #WebKitITPThirdParty has been seen under @itp_first_party.
+ *
  * Each @WebKitITPFirstParty is created by webkit_itp_third_party_get_first_parties() and
  * therefore corresponds to exactly one #WebKitITPThirdParty.
  *
@@ -1369,6 +1389,7 @@ static WebKitITPThirdParty* webkitITPThirdPartyCreate(WebResourceLoadStatisticsS
  * @itp_third_party: a #WebKitITPThirdParty
  *
  * Atomically increments the reference count of @itp_third_party by one.
+ *
  * This function is MT-safe and may be called from any thread.
  *
  * Returns: The passed #WebKitITPThirdParty
@@ -1388,6 +1409,7 @@ WebKitITPThirdParty* webkit_itp_third_party_ref(WebKitITPThirdParty* thirdParty)
  * @itp_third_party: a #WebKitITPThirdParty
  *
  * Atomically decrements the reference count of @itp_third_party by one.
+ *
  * If the reference count drops to 0, all memory allocated by
  * #WebKitITPThirdParty is released. This function is MT-safe and may be
  * called from any thread.
@@ -1408,7 +1430,7 @@ void webkit_itp_third_party_unref(WebKitITPThirdParty* thirdParty)
  * webkit_itp_third_party_get_domain:
  * @itp_third_party: a #WebKitITPThirdParty
  *
- * Get the domain name of @itp_third_party
+ * Get the domain name of @itp_third_party.
  *
  * Returns: the domain name
  *
@@ -1445,7 +1467,9 @@ GList* webkit_itp_third_party_get_first_parties(WebKitITPThirdParty* thirdParty)
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
  * @user_data: (closure): the data to pass to callback function
  *
- * Asynchronously get the list of #WebKitITPThirdParty seen for @manager. Every #WebKitITPThirdParty
+ * Asynchronously get the list of #WebKitITPThirdParty seen for @manager.
+ *
+ * Every #WebKitITPThirdParty
  * contains the list of #WebKitITPFirstParty under which it has been seen.
  *
  * When the operation is finished, @callback will be called. You can then call

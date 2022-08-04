@@ -294,7 +294,9 @@ void webkit_notification_close(WebKitNotification* notification)
  * webkit_notification_clicked:
  * @notification: a #WebKitNotification
  *
- * Tells WebKit the notification has been clicked. This will emit the
+ * Tells WebKit the notification has been clicked.
+ *
+ * This will emit the
  * #WebKitNotification::clicked signal.
  *
  * Since: 2.12

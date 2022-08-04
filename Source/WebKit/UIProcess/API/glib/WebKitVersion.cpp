@@ -60,6 +60,7 @@
  * webkit_get_major_version:
  *
  * Returns the major version number of the WebKit library.
+ *
  * (e.g. in WebKit version 1.8.3 this is 1.)
  *
  * This function is in the library, so it represents the WebKit library
@@ -78,6 +79,7 @@ guint webkit_get_major_version(void)
  * webkit_get_minor_version:
  *
  * Returns the minor version number of the WebKit library.
+ *
  * (e.g. in WebKit version 1.8.3 this is 8.)
  *
  * This function is in the library, so it represents the WebKit library
@@ -96,6 +98,7 @@ guint webkit_get_minor_version(void)
  * webkit_get_micro_version:
  *
  * Returns the micro version number of the WebKit library.
+ *
  * (e.g. in WebKit version 1.8.3 this is 3.)
  *
  * This function is in the library, so it represents the WebKit library

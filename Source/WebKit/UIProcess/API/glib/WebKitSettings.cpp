@@ -1593,8 +1593,9 @@ WebPreferences* webkitSettingsGetPreferences(WebKitSettings* settings)
 /**
  * webkit_settings_new:
  *
- * Creates a new #WebKitSettings instance with default values. It must
- * be manually attached to a #WebKitWebView.
+ * Creates a new #WebKitSettings instance with default values.
+ *
+ * It must be manually attached to a #WebKitWebView.
  * See also webkit_settings_new_with_settings().
  *
  * Returns: a new #WebKitSettings instance.
@@ -1610,8 +1611,9 @@ WebKitSettings* webkit_settings_new()
  * @...: value of first setting, followed by more settings,
  *    %NULL-terminated
  *
- * Creates a new #WebKitSettings instance with the given settings. It must
- * be manually attached to a #WebKitWebView.
+ * Creates a new #WebKitSettings instance with the given settings.
+ *
+ * It must be manually attached to a #WebKitWebView.
  *
  * Returns: a new #WebKitSettings instance.
  */
@@ -1960,7 +1962,9 @@ gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
  * @settings: a #WebKitSettings
  * @enabled: Value to be set
  *
- * Set the #WebKitSettings:enable-java property. Deprecated function that does nothing.
+ * Set the #WebKitSettings:enable-java property.
+ *
+ * Deprecated function that does nothing.
  *
  * Deprecated: 2.38. This function does nothing.
  */
@@ -3127,6 +3131,8 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
  * @application_name: (allow-none): The application name used for the user agent or %NULL to use the default user agent.
  * @application_version: (allow-none): The application version for the user agent or %NULL to user the default version.
  *
+ * Set the #WebKitSettings:user-agent property by appending the application details.
+ *
  * Set the #WebKitSettings:user-agent property by appending the application details to the default user
  * agent. If no application name or version is given, the default user agent used will be used. If only
  * the version is given, the default engine version is used with the given application name.
@@ -3774,6 +3780,8 @@ void webkit_settings_set_enable_back_forward_navigation_gestures(WebKitSettings*
  * webkit_settings_font_size_to_points:
  * @pixels: the font size in pixels to convert to points
  *
+ * Convert @pixels to the equivalent value in points.
+ *
  * Convert @pixels to the equivalent value in points, based on the current
  * screen DPI. Applications can use this function to convert font size values
  * in pixels to font size values in points when getting the font size properties
@@ -3791,6 +3799,8 @@ guint32 webkit_settings_font_size_to_points(guint32 pixels)
 /**
  * webkit_settings_font_size_to_pixels:
  * @points: the font size in points to convert to pixels
+ *
+ * Convert @points to the equivalent value in pixels.
  *
  * Convert @points to the equivalent value in pixels, based on the current
  * screen DPI. Applications can use this function to convert font size values

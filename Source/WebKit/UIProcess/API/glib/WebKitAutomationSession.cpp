@@ -432,7 +432,9 @@ const char* webkit_automation_session_get_id(WebKitAutomationSession* session)
  * @session: a #WebKitAutomationSession
  * @info: a #WebKitApplicationInfo
  *
- * Set the application information to @session. This information will be used by the driver service
+ * Set the application information to @session.
+ *
+ * This information will be used by the driver service
  * to match the requested capabilities with the actual application information. If this information
  * is not provided to the session when a new automation session is requested, the creation might fail
  * if the client requested a specific browser name or version. This will not have any effect when called
@@ -457,6 +459,8 @@ void webkit_automation_session_set_application_info(WebKitAutomationSession* ses
 /**
  * webkit_automation_session_get_application_info:
  * @session: a #WebKitAutomationSession
+ *
+ * Get the the previously set #WebKitAutomationSession.
  *
  * Get the #WebKitAutomationSession previously set with webkit_automation_session_set_application_info().
  *

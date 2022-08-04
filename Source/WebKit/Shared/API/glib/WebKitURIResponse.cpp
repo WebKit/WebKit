@@ -194,6 +194,8 @@ const gchar* webkit_uri_response_get_uri(WebKitURIResponse* response)
  * webkit_uri_response_get_status_code:
  * @response: a #WebKitURIResponse
  *
+ * Get the status code of the #WebKitURIResponse.
+ *
  * Get the status code of the #WebKitURIResponse as returned by
  * the server. It will normally be a #SoupKnownStatusCode, for
  * example %SOUP_STATUS_OK, though the server can respond with any
@@ -212,8 +214,9 @@ guint webkit_uri_response_get_status_code(WebKitURIResponse* response)
  * webkit_uri_response_get_content_length:
  * @response: a #WebKitURIResponse
  *
- * Get the expected content length of the #WebKitURIResponse. It can
- * be 0 if the server provided an incorrect or missing Content-Length.
+ * Get the expected content length of the #WebKitURIResponse.
+ *
+ * It can be 0 if the server provided an incorrect or missing Content-Length.
  *
  * Returns: the expected content length of @response.
  */
@@ -243,6 +246,8 @@ const gchar* webkit_uri_response_get_mime_type(WebKitURIResponse* response)
 /**
  * webkit_uri_response_get_suggested_filename:
  * @response: a #WebKitURIResponse
+ *
+ * Get the suggested filename for @response.
  *
  * Get the suggested filename for @response, as specified by
  * the 'Content-Disposition' HTTP header, or %NULL if it's not

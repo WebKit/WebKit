@@ -157,7 +157,9 @@ void webkit_network_proxy_settings_free(WebKitNetworkProxySettings* proxySetting
  * @scheme: the URI scheme to add a proxy for
  * @proxy_uri: the proxy URI to use for @uri_scheme
  *
- * Adds a URI-scheme-specific proxy. URIs whose scheme matches @uri_scheme will be proxied via @proxy_uri.
+ * Adds a URI-scheme-specific proxy.
+ *
+ * URIs whose scheme matches @uri_scheme will be proxied via @proxy_uri.
  * As with the default proxy URI, if @proxy_uri starts with "socks://", it will be treated as referring to
  * all three of the socks5, socks4a, and socks4 proxy types.
  *

@@ -37,8 +37,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
  * webkit_mime_info_ref:
  * @info: a #WebKitMimeInfo
  *
- * Atomically increments the reference count of @info by one. This
- * function is MT-safe and may be called from any thread.
+ * Atomically increments the reference count of @info by one.
+ *
+ * This function is MT-safe and may be called from any thread.
  *
  * Returns: The passed in #WebKitMimeInfo
  *
@@ -53,8 +54,9 @@ WebKitMimeInfo* webkit_mime_info_ref(WebKitMimeInfo*)
  * webkit_mime_info_unref:
  * @info: a #WebKitMimeInfo
  *
- * Atomically decrements the reference count of @info by one. If the
- * reference count drops to 0, all memory allocated by the #WebKitMimeInfo is
+ * Atomically decrements the reference count of @info by one.
+ *
+ * If the reference count drops to 0, all memory allocated by the #WebKitMimeInfo is
  * released. This function is MT-safe and may be called from any
  * thread.
  *

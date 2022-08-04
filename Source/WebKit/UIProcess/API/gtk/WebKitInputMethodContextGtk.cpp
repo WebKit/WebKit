@@ -30,7 +30,9 @@ using namespace WebCore;
  * @underline: a #WebKitInputMethodUnderline
  * @rgba: (nullable): a #GdkRGBA or %NULL
  *
- * Set the color of the underline. If @rgba is %NULL the foreground text color will be used
+ * Set the color of the underline.
+ *
+ * If @rgba is %NULL the foreground text color will be used
  * for the underline too.
  *
  * Since: 2.28
@@ -53,7 +55,9 @@ void webkit_input_method_underline_set_color(WebKitInputMethodUnderline* underli
  * @context: a #WebKitInputMethodContext
  * @key_event: the key event to filter
  *
- * Allow @key_event to be handled by the input method. If %TRUE is returned, then no further processing should be
+ * Allow @key_event to be handled by the input method.
+ *
+ * If %TRUE is returned, then no further processing should be
  * done for the key event.
  *
  * Returns: %TRUE if the key event was handled, or %FALSE otherwise

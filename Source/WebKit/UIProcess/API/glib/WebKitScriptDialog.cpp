@@ -46,7 +46,9 @@ bool webkitScriptDialogIsRunning(WebKitScriptDialog* scriptDialog)
  * webkit_script_dialog_ref:
  * @dialog: a #WebKitScriptDialog
  *
- * Atomically increments the reference count of @dialog by one. This
+ * Atomically increments the reference count of @dialog by one.
+ *
+ * This
  * function is MT-safe and may be called from any thread.
  *
  * Returns: The passed in #WebKitScriptDialog
@@ -63,7 +65,9 @@ WebKitScriptDialog* webkit_script_dialog_ref(WebKitScriptDialog* dialog)
  * webkit_script_dialog_unref:
  * @dialog: a #WebKitScriptDialog
  *
- * Atomically decrements the reference count of @dialog by one. If the
+ * Atomically decrements the reference count of @dialog by one.
+ *
+ * If the
  * reference count drops to 0, all memory allocated by the #WebKitScriptdialog is
  * released. This function is MT-safe and may be called from any
  * thread.
@@ -114,6 +118,8 @@ const char* webkit_script_dialog_get_message(WebKitScriptDialog* dialog)
  * @dialog: a #WebKitScriptDialog
  * @confirmed: whether user confirmed the dialog
  *
+ * Set whether the user confirmed the dialog.
+ *
  * This method is used for %WEBKIT_SCRIPT_DIALOG_CONFIRM and %WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM dialogs when
  * #WebKitWebView::script-dialog signal is emitted to set whether the user
  * confirmed the dialog or not. The default implementation of #WebKitWebView::script-dialog
@@ -134,6 +140,7 @@ void webkit_script_dialog_confirm_set_confirmed(WebKitScriptDialog* dialog, gboo
  * @dialog: a #WebKitScriptDialog
  *
  * Get the default text of a #WebKitScriptDialog of type %WEBKIT_SCRIPT_DIALOG_PROMPT.
+ *
  * It's an error to use this method with a #WebKitScriptDialog that is not of type
  * %WEBKIT_SCRIPT_DIALOG_PROMPT.
  *
@@ -151,6 +158,8 @@ const char* webkit_script_dialog_prompt_get_default_text(WebKitScriptDialog* dia
  * webkit_script_dialog_prompt_set_text:
  * @dialog: a #WebKitScriptDialog
  * @text: the text to set
+ *
+ * Set the text entered by the user in the dialog.
  *
  * This method is used for %WEBKIT_SCRIPT_DIALOG_PROMPT dialogs when
  * #WebKitWebView::script-dialog signal is emitted to set the text
@@ -171,7 +180,9 @@ void webkit_script_dialog_prompt_set_text(WebKitScriptDialog* dialog, const char
  * webkit_script_dialog_close:
  * @dialog: a #WebKitScriptDialog
  *
- * Close @dialog. When handling a #WebKitScriptDialog asynchronously (webkit_script_dialog_ref()
+ * Close @dialog.
+ *
+ * When handling a #WebKitScriptDialog asynchronously (webkit_script_dialog_ref()
  * was called in #WebKitWebView::script-dialog callback), this function needs to be called to notify
  * that we are done with the script dialog. The dialog will be closed on destruction if this function
  * hasn't been called before.
