@@ -104,6 +104,7 @@
 #include "ScriptDisallowedScope.h"
 #include "ScriptRunner.h"
 #include "ScriptedAnimationController.h"
+#include "ScrollAnchoringController.h"
 #include "ScrollAnimator.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollbarTheme.h"
@@ -214,6 +215,9 @@ FrameView::FrameView(Frame& frame)
     ScrollableArea::setVerticalScrollElasticity(verticalElasticity);
     ScrollableArea::setHorizontalScrollElasticity(horizontalElasticity);
 #endif
+    if (frame.document() && frame.document()->settings().cssScrollAnchoringEnabled())
+        m_scrollAnchoringController = WTF::makeUnique<ScrollAnchoringController>(*this);
+
 }
 
 Ref<FrameView> FrameView::create(Frame& frame)
@@ -2651,6 +2655,8 @@ void FrameView::didChangeScrollOffset()
     if (auto* page = frame().page())
         page->pageOverlayController().didScrollFrame(frame());
     frame().loader().client().didChangeScrollOffset();
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->invalidateAnchorElement();
 }
 
 void FrameView::scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset& oldOffset, const ScrollOffset& newOffset)

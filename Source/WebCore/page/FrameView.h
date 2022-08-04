@@ -74,6 +74,7 @@ class RenderStyle;
 class RenderView;
 class RenderWidget;
 class ScrollingCoordinator;
+class ScrollAnchoringController;
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 namespace Display {
@@ -978,6 +979,7 @@ private:
     ViewportRendererType m_viewportRendererType { ViewportRendererType::None };
     ScrollPinningBehavior m_scrollPinningBehavior { DoNotPin };
     SelectionRevealMode m_selectionRevealModeForFocusedElement { SelectionRevealMode::DoNotReveal };
+    std::unique_ptr<ScrollAnchoringController> m_scrollAnchoringController;
 
     bool m_shouldUpdateWhileOffscreen { true };
     bool m_overflowStatusDirty { true };

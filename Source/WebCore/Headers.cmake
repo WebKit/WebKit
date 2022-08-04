@@ -1231,6 +1231,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/csp/ContentSecurityPolicyResponseHeaders.h
 
     page/scrolling/AsyncScrollingCoordinator.h
+    page/scrolling/ScrollAnchoringController.h
     page/scrolling/ScrollSnapOffsetsInfo.h
     page/scrolling/ScrollingConstraints.h
     page/scrolling/ScrollingCoordinator.h
