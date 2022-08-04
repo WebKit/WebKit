@@ -26,11 +26,11 @@
 
 #include "BufferSource.h"
 #include "Formats.h"
-
 #include <JavaScriptCore/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
+#include <zlib.h>
 
 namespace WebCore {
 
@@ -41,17 +41,37 @@ public:
         return adoptRef(*new DecompressionStreamDecoder(format));
     }
 
-    RefPtr<Uint8Array> decode(const BufferSource&&);
-    RefPtr<Uint8Array> flush();
+    ExceptionOr<RefPtr<Uint8Array>> decode(const BufferSource&&);
+    ExceptionOr<RefPtr<Uint8Array>> flush();
+
+    ~DecompressionStreamDecoder()
+    {
+        if (initailized)
+            deflateEnd(&zstream);
+    }
 
 private:
-    const Formats::CompressionFormat m_format;
+
+    // When given an encoded input, it is difficult to guess the output size.
+    // My approach here is starting from one page and growing at a linear rate of x2 until the input data
+    // has been fully processed. To ensure the user's memory is not completely consumed, I am setting a cap
+    // of 1GB per allocation. This strategy enables very fast memory allocation growth without needing to perform
+    // unnecessarily large allocations upfront.
+    const size_t startingAllocationSize = 16384; // 16KB
+    const size_t maxAllocationSize = 1073741824; // 1GB
+    
+    bool initailized { false };
+    bool finish { false };
+    z_stream zstream;
+
+    Formats::CompressionFormat m_format;
+
+    ExceptionOr<Vector<uint8_t>> decompress(const uint8_t* input, const size_t inputLength);
+    ExceptionOr<bool> initialize();
 
     explicit DecompressionStreamDecoder(unsigned char format) 
         : m_format(static_cast<Formats::CompressionFormat>(format))
     {
-        UNUSED_PARAM(m_format);
     }
 };
-
-}
+} // namespace WebCore

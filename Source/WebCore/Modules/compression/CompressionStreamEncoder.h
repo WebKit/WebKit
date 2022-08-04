@@ -26,11 +26,12 @@
 
 #include "BufferSource.h"
 #include "Formats.h"
-
 #include <JavaScriptCore/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
+#include <zlib.h>
 
 namespace WebCore {
 
@@ -41,17 +42,33 @@ public:
         return adoptRef(*new CompressionStreamEncoder(format));
     }
 
-    RefPtr<Uint8Array> encode(const BufferSource&& input);
-    RefPtr<Uint8Array> flush();
+    ExceptionOr<RefPtr<Uint8Array>> encode(const BufferSource&& input);
+    ExceptionOr<RefPtr<Uint8Array>> flush();
+
+    ~CompressionStreamEncoder()
+    {
+        if (initailized)
+            deflateEnd(&zstream);
+    }
 
 private:
-    const Formats::CompressionFormat m_format;
+    // If the user provides too small of an input size we will automatically allocate a page worth of memory instead.
+    // Very small input sizes can result in a larger output than their input. This would require an additional 
+    // encode call then, which is not desired.
+    const size_t startingAllocationSize = 16384; // 16KB
+
+    bool initailized { false };
+    bool finish { false };
+    z_stream zstream;
+
+    Formats::CompressionFormat m_format;
+
+    ExceptionOr<Vector<uint8_t>> compress(const uint8_t* input, const size_t inputLength);
+    ExceptionOr<bool> initialize();
 
     explicit CompressionStreamEncoder(unsigned char format) 
         : m_format(static_cast<Formats::CompressionFormat>(format))
     {
-        UNUSED_PARAM(m_format);
     }
 };
-
-}
+} // namespace WebCore

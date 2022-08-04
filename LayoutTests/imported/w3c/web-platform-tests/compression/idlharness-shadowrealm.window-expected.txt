@@ -1,0 +1,17 @@
+
+PASS setup
+PASS CompressionStream includes GenericTransformStream: member names are unique
+PASS DecompressionStream includes GenericTransformStream: member names are unique
+PASS CompressionStream interface: existence and properties of interface object
+PASS CompressionStream interface object length
+PASS CompressionStream interface object name
+PASS CompressionStream interface: existence and properties of interface prototype object
+PASS CompressionStream interface: existence and properties of interface prototype object's "constructor" property
+PASS CompressionStream interface: existence and properties of interface prototype object's @@unscopables property
+PASS DecompressionStream interface: existence and properties of interface object
+PASS DecompressionStream interface object length
+PASS DecompressionStream interface object name
+PASS DecompressionStream interface: existence and properties of interface prototype object
+PASS DecompressionStream interface: existence and properties of interface prototype object's "constructor" property
+PASS DecompressionStream interface: existence and properties of interface prototype object's @@unscopables property
+

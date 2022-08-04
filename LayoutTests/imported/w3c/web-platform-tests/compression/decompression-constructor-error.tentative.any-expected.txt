@@ -1,0 +1,7 @@
+
+PASS "a" should cause the constructor to throw
+PASS no input should cause the constructor to throw
+FAIL non-string input should cause the constructor to throw assert_throws_js: constructor should throw function "() => new DecompressionStream({ toString() { throw Error(); } })" threw object "TypeError: CompressionStream input must be a string." ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+

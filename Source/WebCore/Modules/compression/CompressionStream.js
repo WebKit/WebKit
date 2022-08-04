@@ -29,13 +29,15 @@ function initializeCompressionStream(format)
 
     const errorMessage = "CompressionStream requires a single argument with the value 'deflate', 'deflate-raw', or 'gzip'.";
 
-    // Error Checking
-    if (arguments.length < 1 || typeof arguments[0] !== "string")
+    if (arguments.length < 1)
         @throwTypeError(errorMessage);
 
-    const algorithms = ['gzip', 'deflate', 'deflate-raw'];
+    if (typeof arguments[0] !== "string")
+        @throwTypeError("CompressionStream input must be a string.");
 
-    const findAlgorithm = (element) => element === arguments[0].toLowerCase();
+    const algorithms = ['gzip', 'deflate', 'deflate-raw'];
+    const text = arguments[0].toLowerCase();
+    const findAlgorithm = (element) => element === text;
 
     // Pass the index to our new CompressionStreamEncoder, so we do not need to reparse the string.
     // We need to ensure that the Formats.h and this file stay in sync.
@@ -49,24 +51,33 @@ function initializeCompressionStream(format)
         return @Promise.@resolve();
     };
     const transformAlgorithm = (chunk) => {
-        const encoder = @getByIdDirectPrivate(this, "CompressionStreamEncoder");
-        let buffer;
+        if (!@isObject(chunk) || (!(chunk instanceof @ArrayBuffer) && !(chunk.buffer instanceof @ArrayBuffer)))
+            return @Promise.@reject(@makeTypeError("Invalid type should be ArrayBuffer"));
+
         try {
-            buffer = encoder.@encode(chunk);
+            const encoder = @getByIdDirectPrivate(this, "CompressionStreamEncoder");
+
+            let buffer = encoder.@encode(chunk);
+            if (buffer) {
+                const transformStream = @getByIdDirectPrivate(this, "CompressionStreamTransform");
+                const controller = @getByIdDirectPrivate(transformStream, "controller");
+                @transformStreamDefaultControllerEnqueue(controller, buffer);
+            }
         } catch (e) {
-            return @Promise.@reject(e);
-        }
-        if (buffer) {
-            const transformStream = @getByIdDirectPrivate(this, "CompressionStreamTransform");
-            const controller = @getByIdDirectPrivate(transformStream, "controller");
-            @transformStreamDefaultControllerEnqueue(controller, buffer);
+            return @Promise.@reject(@makeTypeError(e.message));
         }
 
         return @Promise.@resolve();
     };
     const flushAlgorithm = () => {
         const encoder = @getByIdDirectPrivate(this, "CompressionStreamEncoder");
-        const buffer = encoder.@flush();
+
+        let buffer;
+        try {
+            buffer = encoder.@flush();
+        } catch (e) {
+            return @Promise.@reject(@makeTypeError(e.message));
+        }
         if (buffer) {
             const transformStream = @getByIdDirectPrivate(this, "CompressionStreamTransform");
             const controller = @getByIdDirectPrivate(transformStream, "controller");

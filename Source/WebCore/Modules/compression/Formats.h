@@ -30,7 +30,7 @@ namespace WebCore {
 class Formats {
 
 public:
-    enum CompressionFormat : uint8_t { Gzip, Deflate, Deflate_raw };
+    enum CompressionFormat : uint8_t { Gzip, Zlib, Deflate };
 };
 
 }

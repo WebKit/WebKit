@@ -26,21 +26,123 @@
 #include "CompressionStreamEncoder.h"
 
 #include "BufferSource.h"
+#include "Exception.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 
 namespace WebCore {
 
-RefPtr<Uint8Array> CompressionStreamEncoder::encode(const BufferSource&& input)
+ExceptionOr<RefPtr<Uint8Array>> CompressionStreamEncoder::encode(const BufferSource&& input)
 {
-    UNUSED_PARAM(input);
-    return nullptr;
+    auto* data = input.data();
+    if (!data)
+        return Exception { TypeError, "No data provided"_s };
+
+    auto compressedDataCheck = compress(data, input.length());
+    if (compressedDataCheck.hasException())
+        return compressedDataCheck.releaseException();
+
+    auto compressedData = compressedDataCheck.returnValue();
+    if (!compressedData.size())
+        return nullptr;
+    
+    return Uint8Array::tryCreate(compressedData.data(), compressedData.size());
 }
 
-RefPtr<Uint8Array> CompressionStreamEncoder::flush()
+ExceptionOr<RefPtr<Uint8Array>> CompressionStreamEncoder::flush()
 {
-    return nullptr;
+    finish = true;
+
+    auto compressedDataCheck = compress(0, 0);
+    if (compressedDataCheck.hasException())
+        return compressedDataCheck.releaseException();
+    
+    auto compressedData = compressedDataCheck.returnValue();
+    if (!compressedData.size())
+        return nullptr;
+    
+    return Uint8Array::tryCreate(compressedData.data(), compressedData.size());
 }
 
+ExceptionOr<bool> CompressionStreamEncoder::initialize() 
+{
+    int result = Z_OK;
+
+    initailized = true;
+    zstream.opaque = 0;
+    zstream.zalloc = 0;
+    zstream.zfree = 0;
+
+    switch (m_format) {
+    // Values chosen here are based off
+    // https://developer.apple.com/documentation/compression/compression_algorithm/compression_zlib?language=objc
+    case Formats::CompressionFormat::Deflate:
+        result = deflateInit2(&zstream, 5, Z_DEFLATED, -15, 8, Z_DEFAULT_STRATEGY);
+        break;
+    case Formats::CompressionFormat::Zlib:
+        result = deflateInit2(&zstream, 5, Z_DEFLATED, 15, 8, Z_DEFAULT_STRATEGY);
+        break;
+    case Formats::CompressionFormat::Gzip:
+        result = deflateInit2(&zstream, 5, Z_DEFLATED, 15 + 16, 8, Z_DEFAULT_STRATEGY);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    if (result != Z_OK)
+        return Exception { TypeError, "Initialization Failed."_s };
+
+    return true;
 }
+
+ExceptionOr<Vector<uint8_t>> CompressionStreamEncoder::compress(const uint8_t* input, const size_t inputLength)
+{
+    size_t index = 0, totalSize = 0;
+    size_t allocateSize = (inputLength < startingAllocationSize) ? startingAllocationSize : inputLength;
+    Vector<Vector<uint8_t>>storage;
+    storage.reserveCapacity(128);
+    int result;    
+    bool shouldCompress = true;
+
+    zstream.next_in = const_cast<z_const Bytef*>(input);
+    zstream.avail_in = inputLength;
+
+    if (!initailized) {
+        auto initializeResult = initialize();
+        if (initializeResult.hasException())
+            return initializeResult.releaseException();
+    }
+
+    while (shouldCompress) {
+        storage.append(Vector<uint8_t>(allocateSize));
+        totalSize += allocateSize;
+
+        zstream.next_out = storage[index].data();
+        zstream.avail_out = storage[index].size();
+
+        result = deflate(&zstream, (finish) ? Z_FINISH : Z_NO_FLUSH);
+        if (result != Z_OK && result != Z_STREAM_END && result != Z_BUF_ERROR)
+            return Exception { TypeError, "Failed to compress data."_s };
+
+        if (!zstream.avail_in)
+            shouldCompress = false;
+        else {
+            index++;
+            if (allocateSize < 1073741824) // 1GB
+                allocateSize *= 2;
+        }
+    }
+
+    storage.at(index).resize(allocateSize - zstream.avail_out);
+    totalSize -= zstream.avail_out;
+
+    Vector<uint8_t> output;
+    output.reserveCapacity(totalSize);
+    for (auto& storageElement : storage)
+        output.append(storageElement.data(), storageElement.size());
+
+    return output;
+}
+} // namespace WebCore
