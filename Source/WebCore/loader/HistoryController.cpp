@@ -739,12 +739,12 @@ void FrameLoader::HistoryController::recursiveSetProvisionalItem(HistoryItem& it
     for (auto& childItem : item.children()) {
         auto& childFrameName = childItem->target();
 
-        HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
-        ASSERT(fromChildItem);
-        Frame* childFrame = m_frame.tree().child(childFrameName);
-        ASSERT(childFrame);
+        auto* fromChildItem = fromItem->childItemWithTarget(childFrameName);
+        if (!fromChildItem)
+            continue;
 
-        childFrame->loader().history().recursiveSetProvisionalItem(childItem, fromChildItem);
+        if (auto* childFrame = m_frame.tree().child(childFrameName))
+            childFrame->loader().history().recursiveSetProvisionalItem(childItem, fromChildItem);
     }
 }
 
@@ -761,8 +761,10 @@ void FrameLoader::HistoryController::recursiveGoToItem(HistoryItem& item, Histor
     for (auto& childItem : item.children()) {
         auto& childFrameName = childItem->target();
 
-        HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
-        ASSERT(fromChildItem);
+        auto* fromChildItem = fromItem->childItemWithTarget(childFrameName);
+        if (!fromChildItem)
+            continue;
+
         if (Frame* childFrame = m_frame.tree().child(childFrameName))
             childFrame->loader().history().recursiveGoToItem(childItem, fromChildItem, type, shouldTreatAsContinuingLoad);
     }
@@ -780,9 +782,7 @@ bool FrameLoader::HistoryController::itemsAreClones(HistoryItem& item1, HistoryI
     // (See http://webkit.org/b/35532 for details.)
     return item2
         && &item1 != item2
-        && item1.itemSequenceNumber() == item2->itemSequenceNumber()
-        && currentFramesMatchItem(item1)
-        && item2->hasSameFrames(item1);
+        && item1.itemSequenceNumber() == item2->itemSequenceNumber();
 }
 
 // Helper method that determines whether the current frame tree matches given history item's.
