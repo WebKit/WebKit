@@ -5,13 +5,12 @@ WebArea
         StaticText
         AXLabel: Simple paragraph
     Grid
-    Unknown
-        Label
-            StaticText
-            AXLabel: A label
-        Heading
-            StaticText
-            AXLabel: Who said label? It's a heading!
+    Label
+        StaticText
+        AXLabel: A label
+    Heading
+        StaticText
+        AXLabel: Who said label? It's a heading!
     Form
         StaticText
         AXLabel: A form with a button

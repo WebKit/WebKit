@@ -382,6 +382,7 @@ void AccessibilityTable::recomputeIsExposable()
 void AccessibilityTable::updateChildrenRoles()
 {
     for (const auto& row : m_rows) {
+        downcast<AccessibilityObject>(*row).updateRole();
         for (const auto& cell : row->children())
             downcast<AccessibilityObject>(*cell).updateRole();
     }

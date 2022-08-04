@@ -36,14 +36,14 @@ figure5: [object AccessibilityUIElement]
 figure5 AXRoleDescription: figure
 figure5 AXLabel: Caption for Figure 5.
 figure5 AXHint:
-PASS titleUIElement.isEqual(figureCaption) is true
+PASS titleUIElement.isEqual(figureCaption) || (isIgnored(titleUIElement) && isIgnored(figureCaption)) is true
 
 Test figure with figcaption element and title attribute.
 figure6: [object AccessibilityUIElement]
 figure6 AXRoleDescription: figure
 figure6 AXLabel: Caption for Figure 6.
 figure6 AXHint: Figure 6.
-PASS titleUIElement.isEqual(figureCaption) is true
+PASS titleUIElement.isEqual(figureCaption) || (isIgnored(titleUIElement) && isIgnored(figureCaption)) is true
 
 PASS successfullyParsed is true
 

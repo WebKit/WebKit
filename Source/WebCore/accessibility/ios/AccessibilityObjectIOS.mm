@@ -100,6 +100,8 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
     
 AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
 {
+    if (roleValue() == AccessibilityRole::Unknown)
+        return AccessibilityObjectInclusion::IgnoreObject;
     return AccessibilityObjectInclusion::DefaultBehavior;
 }
 
