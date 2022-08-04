@@ -3607,6 +3607,8 @@ webkit.org/b/240489 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip-016.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip-015.html [ ImageOnlyFailure ]
 
+webkit.org/b/243558 fast/canvas/image-object-in-canvas.html [ Slow ]
+
 #  Correction to guard in Platform file removing iOS - Skip tests
 webkit.org/b/240579 http/tests/workers/service/shownotification-allowed-document.html [ Skip ]
 webkit.org/b/240579 http/tests/workers/service/shownotification-allowed.html [ Skip ]
