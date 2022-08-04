@@ -67,6 +67,9 @@ WEBCORE_EXPORT void setApplicationBundleIdentifierOverride(const String&);
 WEBCORE_EXPORT String applicationBundleIdentifier();
 WEBCORE_EXPORT void clearApplicationBundleIdentifierTestingOverride();
 
+WEBCORE_EXPORT void setPresentingApplicationBundleIdentifier(const String&);
+WEBCORE_EXPORT const String& presentingApplicationBundleIdentifier();
+
 namespace CocoaApplication {
 
 WEBCORE_EXPORT bool isIBooks();
