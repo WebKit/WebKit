@@ -87,9 +87,8 @@ struct IndexConversionUniform
 {
     uint32_t srcOffset;
     uint32_t indexCount;
-    uint32_t maxIndex;
     uint8_t primitiveRestartEnabled;
-    uint8_t padding[3];
+    uint8_t padding[7];
 };
 
 // See libANGLE/renderer/metal/shaders/visibility.metal
@@ -224,14 +223,8 @@ void GetBlitTexCoords(const NormalizedCoords &normalizedCoords,
 }
 
 template <typename T>
-inline T accessBounded(const T * array, GLsizei idx, GLsizei maxIdx)
-{
-    return idx < maxIdx ? array[idx] : 0;
-}
-template <typename T>
 angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
                                           GLsizei count,
-                                          GLsizei maxIndex,
                                           bool primitiveRestartEnabled,
                                           const T *indices,
                                           const BufferRef &dstBuffer,
@@ -243,23 +236,23 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
     GLsizei dstTriangle                   = 0;
     uint32_t *dstPtr = reinterpret_cast<uint32_t *>(dstBuffer->map(contextMtl) + dstOffset);
     T triFirstIdx, srcPrevIdx;
-    triFirstIdx = accessBounded(indices, 0, maxIndex);
-    srcPrevIdx =  accessBounded(indices, 1, maxIndex);
-    
+    memcpy(&triFirstIdx, indices, sizeof(triFirstIdx));
+    memcpy(&srcPrevIdx, indices + 1, sizeof(srcPrevIdx));
+
     if (primitiveRestartEnabled)
     {
         GLsizei triFirstIdxLoc = 0;
         while (triFirstIdx == kSrcPrimitiveRestartIndex)
         {
             ++triFirstIdxLoc;
-            triFirstIdx = accessBounded(indices, triFirstIdxLoc, maxIndex);
+            memcpy(&triFirstIdx, indices + triFirstIdxLoc, sizeof(triFirstIdx));
         }
 
         for (GLsizei i = triFirstIdxLoc + 2; i < count; ++i)
         {
             uint32_t triIndices[3];
             T srcIdx;
-            srcIdx = accessBounded(indices, i, maxIndex);
+            memcpy(&srcIdx, indices + i, sizeof(srcIdx));
             bool completeTriangle = true;
             if (srcPrevIdx == kSrcPrimitiveRestartIndex || srcIdx == kSrcPrimitiveRestartIndex)
             {
@@ -292,7 +285,8 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
         for (GLsizei i = 2; i < count; ++i)
         {
             T srcIdx;
-            srcIdx = accessBounded(indices,i,maxIndex);
+            memcpy(&srcIdx, indices + i, sizeof(srcIdx));
+
             uint32_t triIndices[3];
             triIndices[0] = triFirstIdx;
             triIndices[1] = srcPrevIdx;
@@ -2095,14 +2089,11 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArray(
         size_t srcOffset            = reinterpret_cast<size_t>(params.indices);
         ANGLE_CHECK(contextMtl, srcOffset <= std::numeric_limits<uint32_t>::max(),
                     "Index offset is too large", GL_INVALID_VALUE);
-        IndexGenerationParams limitedParams = params;
-        limitedParams.maxIndexCount = std::min<GLsizei>(params.indexCount, (GLsizei)(elementBufferMtl->size() - srcOffset) / (GLsizei)GetDrawElementsTypeSize(params.srcType));
-                
         if (params.primitiveRestartEnabled ||
             (!contextMtl->getDisplay()->getFeatures().hasCheapRenderPass.enabled &&
              contextMtl->getRenderCommandEncoder()))
         {
-            IndexGenerationParams cpuPathParams = limitedParams;
+            IndexGenerationParams cpuPathParams = params;
             cpuPathParams.indices =
                 elementBufferMtl->getClientShadowCopyData(contextMtl) + srcOffset;
             return generateTriFanBufferFromElementsArrayCPU(contextMtl, cpuPathParams,
@@ -2111,7 +2102,7 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArray(
         else
         {
             return generateTriFanBufferFromElementsArrayGPU(
-                contextMtl, params.srcType, params.indexCount, limitedParams.maxIndexCount, elementBufferMtl->getCurrentBuffer(),
+                contextMtl, params.srcType, params.indexCount, elementBufferMtl->getCurrentBuffer(),
                 static_cast<uint32_t>(srcOffset), params.dstBuffer, params.dstOffset);
         }
     }
@@ -2125,7 +2116,6 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArrayGPU(
     ContextMtl *contextMtl,
     gl::DrawElementsType srcType,
     uint32_t indexCount,
-    uint32_t maxIndexCount,
     const BufferRef &srcBuffer,
     uint32_t srcOffset,
     const BufferRef &dstBuffer,
@@ -2150,7 +2140,7 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArrayGPU(
     IndexConversionUniform uniform;
     uniform.srcOffset  = srcOffset;
     uniform.indexCount = indexCount - 2;  // Only start from the 3rd element.
-    uniform.maxIndex   = maxIndexCount;
+
     cmdEncoder->setData(uniform, 0);
     cmdEncoder->setBuffer(srcBuffer, 0, 1);
     cmdEncoder->setBufferForWrite(dstBuffer, dstOffset, 2);
@@ -2168,17 +2158,17 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArrayCPU(
     switch (params.srcType)
     {
         case gl::DrawElementsType::UnsignedByte:
-            return GenTriFanFromClientElements(contextMtl, params.indexCount, params.maxIndexCount,
+            return GenTriFanFromClientElements(contextMtl, params.indexCount,
                                                params.primitiveRestartEnabled,
                                                static_cast<const uint8_t *>(params.indices),
                                                params.dstBuffer, params.dstOffset, genIndices);
         case gl::DrawElementsType::UnsignedShort:
-            return GenTriFanFromClientElements(contextMtl, params.indexCount, params.maxIndexCount,
+            return GenTriFanFromClientElements(contextMtl, params.indexCount,
                                                params.primitiveRestartEnabled,
                                                static_cast<const uint16_t *>(params.indices),
                                                params.dstBuffer, params.dstOffset, genIndices);
         case gl::DrawElementsType::UnsignedInt:
-            return GenTriFanFromClientElements(contextMtl, params.indexCount, params.maxIndexCount,
+            return GenTriFanFromClientElements(contextMtl, params.indexCount,
                                                params.primitiveRestartEnabled,
                                                static_cast<const uint32_t *>(params.indices),
                                                params.dstBuffer, params.dstOffset, genIndices);
