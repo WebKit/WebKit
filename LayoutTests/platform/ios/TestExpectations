@@ -3603,6 +3603,10 @@ webkit.org/b/240167 [ Release ] fast/css-custom-paint/animate-repaint.html [ Pas
 
 webkit.org/b/240489 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/004.html [ Slow ]
 
+# webkit.org/b/243556 [ iOS ] 2* imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip* tests are constant Image failures
+imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip-016.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip-015.html [ ImageOnlyFailure ]
+
 #  Correction to guard in Platform file removing iOS - Skip tests
 webkit.org/b/240579 http/tests/workers/service/shownotification-allowed-document.html [ Skip ]
 webkit.org/b/240579 http/tests/workers/service/shownotification-allowed.html [ Skip ]
