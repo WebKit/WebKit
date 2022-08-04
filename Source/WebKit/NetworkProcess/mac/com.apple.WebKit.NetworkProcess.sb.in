@@ -62,7 +62,9 @@
 (allow file-map-executable
     (home-subpath "/Library/Caches")
     (home-subpath "/Library/Containers")
+    (home-subpath "/Library/WebKit")
     (subpath (param "DARWIN_USER_TEMP_DIR"))
+    (subpath "/Library/Frameworks")
     (subpath "/Library/KerberosPlugins")
     (subpath "/System/Library/Frameworks")
     (subpath "/System/Library/KerberosPlugins")
@@ -470,7 +472,7 @@
     (prefix "/private/var/db/com.apple.networkextension."))
 
 (when (defined? 'syscall-unix)
-    (deny syscall-unix (with telemetry))
+    (deny syscall-unix)
     (allow syscall-unix (syscall-number
         SYS___channel_get_info
         SYS___channel_open
@@ -632,7 +634,7 @@
             (allow mach-message-send))))
 
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
-    (deny syscall-mach (with telemetry))
+    (deny syscall-mach)
     (allow syscall-mach
         (machtrap-number
             MSC__kernelrpc_mach_port_allocate_trap
