@@ -2171,6 +2171,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
 #if !ENABLE(DFG_JIT)
     UNUSED_PARAM(mode);
     UNUSED_PARAM(detail);
+    UNUSED_VARIABLE(dumpDetail);
 #endif
 
     VM& vm = *m_vm;

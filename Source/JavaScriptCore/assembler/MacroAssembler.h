@@ -29,6 +29,32 @@
 
 #include "JSCJSValue.h"
 
+#define DEFINE_SIMD_FUNC(name, func, lane) \
+    template <typename ...Args> \
+    void name(Args&&... args) { func(lane, std::forward<Args>(args)...); }
+
+#define DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name, func, lane, mode) \
+    template <typename ...Args> \
+    void name(Args&&... args) { func(lane, mode, std::forward<Args>(args)...); }
+
+#define DEFINE_SIMD_FUNCS(name) \
+    DEFINE_SIMD_FUNC(name##Int8, name, SimdLane::i8x16) \
+    DEFINE_SIMD_FUNC(name##Int16, name, SimdLane::i16x8) \
+    DEFINE_SIMD_FUNC(name##Int32, name, SimdLane::i32x4) \
+    DEFINE_SIMD_FUNC(name##Int64, name, SimdLane::i64x2) \
+    DEFINE_SIMD_FUNC(name##Float32, name, SimdLane::f32x4) \
+    DEFINE_SIMD_FUNC(name##Float64, name, SimdLane::f64x2)
+
+#define DEFINE_SIGNED_SIMD_FUNCS(name) \
+    DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name##SignedInt8, name, SimdLane::i8x16, SimdSignMode::Signed) \
+    DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name##UnsignedInt8, name, SimdLane::i8x16, SimdSignMode::Unsigned) \
+    DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name##SignedInt16, name, SimdLane::i16x8, SimdSignMode::Signed) \
+    DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name##UnsignedInt16, name, SimdLane::i16x8, SimdSignMode::Unsigned) \
+    DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name##Int32, name, SimdLane::i32x4, SimdSignMode::None) \
+    DEFINE_SIMD_FUNC_WITH_SIGN_EXTEND_MODE(name##Int64, name, SimdLane::i64x2, SimdSignMode::None) \
+    DEFINE_SIMD_FUNC(name##Float32, name, SimdLane::f32x4) \
+    DEFINE_SIMD_FUNC(name##Float64, name, SimdLane::f64x2)
+
 #if CPU(ARM_THUMB2)
 #define TARGET_ASSEMBLER ARMv7Assembler
 #define TARGET_MACROASSEMBLER MacroAssemblerARMv7

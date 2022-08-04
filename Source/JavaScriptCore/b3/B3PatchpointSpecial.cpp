@@ -69,7 +69,7 @@ void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgC
     for (unsigned i = patchpoint->numGPScratchRegisters; i--;)
         callback(inst.args[argIndex++], Arg::Scratch, GP, conservativeWidth(GP));
     for (unsigned i = patchpoint->numFPScratchRegisters; i--;)
-        callback(inst.args[argIndex++], Arg::Scratch, FP, conservativeWidth(FP));
+        callback(inst.args[argIndex++], Arg::Scratch, FP, Options::useWebAssemblySIMD() ? conservativeWidth(FP) : conservativeWidthForC(FP));
 }
 
 bool PatchpointSpecial::isValid(Inst& inst)

@@ -66,11 +66,11 @@ using namespace JSC::B3::Air;
 
 using JSC::B3::FP;
 using JSC::B3::GP;
-using JSC::B3::Width;
-using JSC::B3::Width8;
-using JSC::B3::Width16;
-using JSC::B3::Width32;
-using JSC::B3::Width64;
+using JSC::Width;
+using JSC::Width8;
+using JSC::Width16;
+using JSC::Width32;
+using JSC::Width64;
 
 namespace {
 

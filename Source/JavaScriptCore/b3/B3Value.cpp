@@ -52,7 +52,7 @@ namespace JSC { namespace B3 {
 #if ASSERT_ENABLED
 String Value::generateCompilerConstructionSite()
 {
-    if (!Options::dumpDisassembly() || true)
+    if (!Options::dumpDisassembly())
         return emptyString();
 
     StringPrintStream s;
@@ -922,6 +922,7 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
             return Int32;
         case Void:
         case Tuple:
+        case V128:
             ASSERT_NOT_REACHED();
         }
         return Void;

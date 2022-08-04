@@ -58,6 +58,7 @@ inline Bank bankForType(Type type)
         return GP;
     case Float:
     case Double:
+    case V128:
         return FP;
     }
     ASSERT_NOT_REACHED();
@@ -66,7 +67,7 @@ inline Bank bankForType(Type type)
 
 inline Bank bankForReg(Reg reg)
 {
-    return reg.isGPR() ? GP : FP;
+    return reg.isFPR() ? FP : GP;
 }
 
 } } // namespace JSC::B3

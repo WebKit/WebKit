@@ -39,6 +39,7 @@ RegisterAtOffsetList::RegisterAtOffsetList() = default;
 RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSet, OffsetBaseType offsetBaseType)
     : m_registers(registerSet.numberOfSetRegisters())
 {
+    ASSERT(!registerSet.hasAnyWideRegisters());
     constexpr size_t sizeOfGPR = sizeof(CPURegister);
     constexpr size_t sizeOfFPR = sizeof(double);
 
@@ -67,7 +68,7 @@ RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSet, OffsetBaseTy
     unsigned index = 0;
 
     registerSet.forEach([&] (Reg reg) {
-        size_t registerSize = reg.isGPR() ? sizeOfGPR : sizeOfFPR;
+        size_t registerSize = reg.isFPR() ? sizeOfFPR : sizeOfGPR;
         offset = WTF::roundUpToMultipleOf(registerSize, offset);
         m_registers[index++] = RegisterAtOffset(reg, offset);
         offset += registerSize;

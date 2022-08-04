@@ -90,7 +90,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     // If we ever change this, we will also need to change WasmB3IRGenerator.
 
     // Below, we assume that the JS calling convention is always on the stack.
-    ASSERT(!jsCC.jsrArgs.size());
+    ASSERT_UNUSED(jsCC, !jsCC.jsrArgs.size());
     ASSERT(!jsCC.fprArgs.size());
 
     jit.emitFunctionPrologue();
@@ -144,6 +144,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case TypeKind::Arrayref:
             case TypeKind::I31ref:
             case TypeKind::Rec:
+            case TypeKind::V128:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case TypeKind::RefNull:
             case TypeKind::Ref:
@@ -229,6 +230,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case TypeKind::Arrayref:
             case TypeKind::I31ref:
             case TypeKind::Rec:
+            case TypeKind::V128:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case TypeKind::RefNull:
             case TypeKind::Ref:

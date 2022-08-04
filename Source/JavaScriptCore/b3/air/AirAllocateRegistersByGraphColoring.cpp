@@ -2087,7 +2087,7 @@ private:
                             canUseMove32IfDidSpill = false;
                         
                         stackSlotEntry->value->ensureSize(
-                            canUseMove32IfDidSpill ? 4 : bytes(width));
+                            canUseMove32IfDidSpill ? 4 : bytesForWidth(width));
                         arg = Arg::stack(stackSlotEntry->value);
                         didSpill = true;
                         if (needScratchIfSpilledInPlace)
@@ -2193,6 +2193,7 @@ private:
 
 void allocateRegistersByGraphColoring(Code& code)
 {
+    RELEASE_ASSERT(!Options::useWebAssemblySIMD());
     PhaseScope phaseScope(code, "allocateRegistersByGraphColoring");
     
     if (traceDebug)

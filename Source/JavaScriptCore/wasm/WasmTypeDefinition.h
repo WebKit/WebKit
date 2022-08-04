@@ -42,6 +42,25 @@ namespace JSC {
 
 namespace Wasm {
 
+constexpr Type scalarType(SimdLane lane)
+{
+    switch (lane) {
+    case SimdLane::v128:
+        RELEASE_ASSERT_NOT_REACHED();
+        return Types::Void;
+    case SimdLane::i64x2:
+        return Types::I64;
+    case SimdLane::f64x2:
+        return Types::F64;
+    case SimdLane::i8x16:
+    case SimdLane::i16x8:
+    case SimdLane::i32x4:
+        return Types::I32;
+    case SimdLane::f32x4:
+        return Types::F32;
+    }
+}
+
 using FunctionArgCount = uint32_t;
 using StructFieldCount = uint32_t;
 using RecursionGroupCount = uint32_t;

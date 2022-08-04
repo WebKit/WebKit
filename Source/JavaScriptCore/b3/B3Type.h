@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3Common.h"
+#include "SimdInfo.h"
 #include <wtf/StdLibExtras.h>
 
 #if !ASSERT_ENABLED
@@ -45,6 +46,7 @@ enum TypeKind : uint32_t {
     Int64,
     Float,
     Double,
+    V128,
 
     // Tuples are represented as the tupleFlag | with the tuple's index into Procedure's m_tuples table.
     Tuple = tupleFlag,
@@ -70,6 +72,7 @@ public:
     inline bool isFloat() const;
     inline bool isNumeric() const;
     inline bool isTuple() const;
+    inline bool isVector() const;
 
     bool operator==(const TypeKind& otherKind) const { return kind() == otherKind; }
     bool operator==(const Type& type) const { return m_kind == type.m_kind; }
@@ -79,6 +82,30 @@ public:
 private:
     TypeKind m_kind { Void };
 };
+
+inline constexpr TypeKind simdB3ScalarTypeKind(SimdLane lane)
+{
+    switch (lane) {
+    case SimdLane::i8x16:
+    case SimdLane::i16x8:
+    case SimdLane::i32x4:
+        return Int32;
+    case SimdLane::i64x2:
+        return Int64;
+    case SimdLane::f32x4:
+        return Float;
+    case SimdLane::f64x2:
+        return Double;
+    case SimdLane::v128:
+        RELEASE_ASSERT_NOT_REACHED();
+        return Int64;
+    }
+}
+
+inline Type simdB3ScalarType(SimdLane lane)
+{
+    return { simdB3ScalarTypeKind(lane) };
+}
 
 static_assert(sizeof(TypeKind) == sizeof(Type));
 
@@ -94,12 +121,17 @@ inline bool Type::isFloat() const
 
 inline bool Type::isNumeric() const
 {
-    return isInt() || isFloat();
+    return isInt() || isFloat() || isVector();
 }
 
 inline bool Type::isTuple() const
 {
     return kind() == Tuple;
+}
+
+inline bool Type::isVector() const
+{
+    return kind() == V128;
 }
 
 inline Type pointerType()
@@ -121,6 +153,8 @@ inline size_t sizeofType(Type type)
     case Int64:
     case Double:
         return 8;
+    case V128:
+        return 16;
     }
     ASSERT_NOT_REACHED();
 }

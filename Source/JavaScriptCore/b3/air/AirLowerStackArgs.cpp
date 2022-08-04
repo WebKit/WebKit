@@ -48,7 +48,8 @@ void lowerStackArgs(Code& code)
                     // such an awesome assumption.
                     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=150454
                     ASSERT(arg.offset() >= 0);
-                    code.requestCallArgAreaSizeInBytes(arg.offset() + 8);
+                    ASSERT(!arg.canRepresent(V128));
+                    code.requestCallArgAreaSizeInBytes(arg.offset() + conservativeRegisterBytesForC(arg.bank()));
                 }
             }
         }
@@ -148,7 +149,7 @@ void lowerStackArgs(Code& code)
                         StackSlot* slot = arg.stackSlot();
                         if (Arg::isZDef(role)
                             && slot->kind() == StackSlotKind::Spill
-                            && slot->byteSize() > bytes(width)) {
+                            && slot->byteSize() > bytesForWidth(width)) {
                             // Currently we only handle this simple case because it's the only one
                             // that arises: ZDef's are only 32-bit right now. So, when we hit these
                             // assertions it means that we need to implement those other kinds of

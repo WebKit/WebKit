@@ -49,13 +49,13 @@ void CCallSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
     for (unsigned i = 0; i < numReturnGPArgs; ++i)
         callback(inst.args[returnGPArgOffset + i], Arg::Def, GP, pointerWidth());
     for (unsigned i = 0; i < numReturnFPArgs; ++i)
-        callback(inst.args[returnFPArgOffset + i], Arg::Def, FP, Width64);
+        callback(inst.args[returnFPArgOffset + i], Arg::Def, FP, Options::useWebAssemblySIMD() ? conservativeWidth(FP) : conservativeWidthForC(FP));
     
     for (unsigned i = argArgOffset; i < inst.args.size(); ++i) {
         // For the type, we can just query the arg's bank. The arg will have a bank, because we
         // require these args to be argument registers.
         Bank bank = inst.args[i].bank();
-        callback(inst.args[i], Arg::Use, bank, conservativeWidth(bank));
+        callback(inst.args[i], Arg::Use, bank, conservativeWidthForC(bank));
     }
 }
 

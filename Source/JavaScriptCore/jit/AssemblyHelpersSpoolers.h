@@ -28,10 +28,11 @@
 #if ENABLE(JIT)
 
 #include "AssemblyHelpers.h"
+#include "SimdInfo.h"
 
 namespace JSC {
 
-template<typename RegType>
+template<typename RegType, Width width>
 struct RegDispatch {
     static bool hasSameType(Reg);
     static RegType get(Reg);
@@ -45,7 +46,7 @@ struct RegDispatch {
 };
 
 template<>
-struct RegDispatch<GPRReg> {
+struct RegDispatch<GPRReg, Width64> {
     static bool hasSameType(Reg reg) { return reg.isGPR(); }
     static GPRReg get(Reg reg) { return reg.gpr(); }
     template<typename Spooler> static GPRReg temp1(const Spooler* spooler) { return spooler->m_temp1GPR; }
@@ -63,7 +64,7 @@ struct RegDispatch<GPRReg> {
 };
 
 template<>
-struct RegDispatch<FPRReg> {
+struct RegDispatch<FPRReg, Width64> {
     static bool hasSameType(Reg reg) { return reg.isFPR(); }
     static FPRReg get(Reg reg) { return reg.fpr(); }
     template<typename Spooler> static FPRReg temp1(const Spooler* spooler) { return spooler->m_temp1FPR; }
@@ -80,6 +81,24 @@ struct RegDispatch<FPRReg> {
 #endif
 };
 
+template<>
+struct RegDispatch<FPRReg, Width128> {
+    static bool hasSameType(Reg reg) { return reg.isFPR(); }
+    static FPRReg get(Reg reg) { return reg.fpr(); }
+    template<typename Spooler> static FPRReg temp1(const Spooler*) { return InvalidFPRReg; }
+    template<typename Spooler> static FPRReg temp2(const Spooler*) { return InvalidFPRReg; }
+    template<typename Spooler> static FPRReg& regToStore(Spooler* spooler) { return spooler->m_fprToStore; }
+    static constexpr FPRReg invalid() { return InvalidFPRReg; }
+    static constexpr size_t regSize() { return bytesForWidth(Width128); }
+#if CPU(ARM64)
+    static bool isValidLoadPairImm(int) { return false; }
+    static bool isValidStorePairImm(int) { return false; }
+#else
+    static bool isValidLoadPairImm(int) { return false; }
+    static bool isValidStorePairImm(int) { return false; }
+#endif
+};
+
 template<typename Op>
 class AssemblyHelpers::Spooler {
 public:
@@ -90,24 +109,27 @@ public:
         , m_baseGPR(baseGPR)
     { }
 
-    template<typename RegType>
+    template<typename RegType, Width width>
     void execute(const RegisterAtOffset& entry)
     {
-        RELEASE_ASSERT(RegDispatch<RegType>::hasSameType(entry.reg()));
+        bool hasSameType = RegDispatch<RegType, width>::hasSameType(entry.reg());
+        RELEASE_ASSERT(hasSameType);
         auto& jit = m_jit;
         JIT_COMMENT(jit, "Execute Spooler: ", entry);
 
+        if constexpr (width == Width128)
+            return op().executeVector(entry.offset(), RegDispatch<RegType, width>::get(entry.reg()));
         if constexpr (!hasPairOp)
-            return op().executeSingle(entry.offset(), RegDispatch<RegType>::get(entry.reg()));
+            return op().executeSingle(entry.offset(), RegDispatch<RegType, width>::get(entry.reg()));
 
         if (!m_bufferedEntry.reg().isSet()) {
             m_bufferedEntry = entry;
             return;
         }
 
-        constexpr ptrdiff_t regSize = RegDispatch<RegType>::regSize();
-        RegType bufferedEntryReg = RegDispatch<RegType>::get(m_bufferedEntry.reg());
-        RegType entryReg = RegDispatch<RegType>::get(entry.reg());
+        constexpr ptrdiff_t regSize = RegDispatch<RegType, width>::regSize();
+        RegType bufferedEntryReg = RegDispatch<RegType, width>::get(m_bufferedEntry.reg());
+        RegType entryReg = RegDispatch<RegType, width>::get(entry.reg());
 
         if (entry.offset() == m_bufferedEntry.offset() + regSize) {
             op().executePair(m_bufferedEntry.offset(), bufferedEntryReg, entryReg);
@@ -124,7 +146,7 @@ public:
         // Execute the previous one as a single (finalize will do that), and then
         // buffer the current entry to potentially be paired with the next entry.
         finalize<RegType>();
-        execute<RegType>(entry);
+        execute<RegType, width>(entry);
     }
 
     template<typename RegType>
@@ -132,7 +154,7 @@ public:
     {
         if constexpr (hasPairOp) {
             if (m_bufferedEntry.reg().isSet()) {
-                op().executeSingle(m_bufferedEntry.offset(), RegDispatch<RegType>::get(m_bufferedEntry.reg()));
+                op().executeSingle(m_bufferedEntry.offset(), RegDispatch<RegType, Width64>::get(m_bufferedEntry.reg()));
                 m_bufferedEntry = { };
             }
         }
@@ -157,10 +179,11 @@ public:
         : Base(jit, baseGPR)
     { }
 
-    ALWAYS_INLINE void loadGPR(const RegisterAtOffset& entry) { execute<GPRReg>(entry); }
+    ALWAYS_INLINE void loadGPR(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width64); execute<GPRReg, Width64>(entry); }
     ALWAYS_INLINE void finalizeGPR() { finalize<GPRReg>(); }
-    ALWAYS_INLINE void loadFPR(const RegisterAtOffset& entry) { execute<FPRReg>(entry); }
+    ALWAYS_INLINE void loadFPR(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width64); execute<FPRReg, Width64>(entry); }
     ALWAYS_INLINE void finalizeFPR() { finalize<FPRReg>(); }
+    ALWAYS_INLINE void loadVector(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width128); execute<FPRReg, Width128>(entry); }
 
 private:
 #if CPU(ARM64) || CPU(ARM)
@@ -195,6 +218,17 @@ private:
         m_jit.loadDouble(Address(m_baseGPR, offset), reg);
     }
 
+    ALWAYS_INLINE void executeVector(ptrdiff_t offset, FPRReg reg)
+    {
+#if ENABLE(WEBASSEMBLY) && USE(JSVALUE64)
+        m_jit.loadVector(Address(m_baseGPR, offset), reg);
+#else
+        UNUSED_PARAM(offset);
+        UNUSED_PARAM(reg);
+        UNREACHABLE_FOR_PLATFORM();
+#endif
+    }
+
     friend class AssemblyHelpers::Spooler<LoadRegSpooler>;
 };
 
@@ -206,10 +240,11 @@ public:
         : Base(jit, baseGPR)
     { }
 
-    ALWAYS_INLINE void storeGPR(const RegisterAtOffset& entry) { execute<GPRReg>(entry); }
+    ALWAYS_INLINE void storeGPR(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width64); execute<GPRReg, Width64>(entry); }
     ALWAYS_INLINE void finalizeGPR() { finalize<GPRReg>(); }
-    ALWAYS_INLINE void storeFPR(const RegisterAtOffset& entry) { execute<FPRReg>(entry); }
+    ALWAYS_INLINE void storeFPR(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width64); execute<FPRReg, Width64>(entry); }
     ALWAYS_INLINE void finalizeFPR() { finalize<FPRReg>(); }
+    ALWAYS_INLINE void storeVector(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width128); execute<FPRReg, Width128>(entry); }
 
 private:
 #if CPU(ARM64) || CPU(ARM)
@@ -244,6 +279,17 @@ private:
         m_jit.storeDouble(reg, Address(m_baseGPR, offset));
     }
 
+    ALWAYS_INLINE void executeVector(ptrdiff_t offset, FPRReg reg)
+    {
+#if ENABLE(WEBASSEMBLY) && USE(JSVALUE64)
+        m_jit.storeVector(reg, Address(m_baseGPR, offset));
+#else
+        UNUSED_PARAM(offset);
+        UNUSED_PARAM(reg);
+        UNREACHABLE_FOR_PLATFORM();
+#endif
+    }
+
     friend class AssemblyHelpers::Spooler<StoreRegSpooler>;
 };
 
@@ -259,7 +305,7 @@ public:
         Reg reg;
         EncodedJSValue value;
 
-        template<typename RegType> RegType getReg() { return RegDispatch<RegType>::get(reg); };
+        template<typename RegType> RegType getReg() { return RegDispatch<RegType, Width64>::get(reg); };
     };
 
     enum class BufferRegs {
@@ -286,15 +332,15 @@ public:
     { }
 
 private:
-    template<typename RegType> RegType temp1() const { return RegDispatch<RegType>::temp1(this); }
-    template<typename RegType> RegType temp2() const { return RegDispatch<RegType>::temp2(this); }
-    template<typename RegType> RegType& regToStore() { return RegDispatch<RegType>::regToStore(this); }
+    template<typename RegType> RegType temp1() const { return RegDispatch<RegType, Width64>::temp1(this); }
+    template<typename RegType> RegType temp2() const { return RegDispatch<RegType, Width64>::temp2(this); }
+    template<typename RegType> RegType& regToStore() { return RegDispatch<RegType, Width64>::regToStore(this); }
 
-    template<typename RegType> static constexpr RegType invalid() { return RegDispatch<RegType>::invalid(); }
-    template<typename RegType> static constexpr int regSize() { return RegDispatch<RegType>::regSize(); }
+    template<typename RegType> static constexpr RegType invalid() { return RegDispatch<RegType, Width64>::invalid(); }
+    template<typename RegType> static constexpr int regSize() { return RegDispatch<RegType, Width64>::regSize(); }
 
-    template<typename RegType> static bool isValidLoadPairImm(int offset) { return RegDispatch<RegType>::isValidLoadPairImm(offset); }
-    template<typename RegType> static bool isValidStorePairImm(int offset) { return RegDispatch<RegType>::isValidStorePairImm(offset); }
+    template<typename RegType> static bool isValidLoadPairImm(int offset) { return RegDispatch<RegType, Width64>::isValidLoadPairImm(offset); }
+    template<typename RegType> static bool isValidStorePairImm(int offset) { return RegDispatch<RegType, Width64>::isValidStorePairImm(offset); }
 
     template<typename RegType>
     void load(int offset)
@@ -596,7 +642,7 @@ private:
     int m_dstOffsetAdjustment { 0 };
     int m_deferredStoreOffset;
 
-    template<typename RegType> friend struct RegDispatch;
+    template<typename RegTypem, Width> friend struct RegDispatch;
 };
 
 } // namespace JSC

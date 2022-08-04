@@ -114,6 +114,9 @@ void lowerMacros(Code& code)
                 case Int64:
                     insertionSet.insert(instIndex + 1, Move, value, result, resultDst);
                     break;
+                case V128:
+                    insertionSet.insert(instIndex + 1, MoveVector, value, result, resultDst);
+                    break;
                 }
             };
 

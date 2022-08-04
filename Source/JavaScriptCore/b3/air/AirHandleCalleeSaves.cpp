@@ -70,13 +70,9 @@ void handleCalleeSaves(Code& code, RegisterSet usedCalleeSaves)
 
     RegisterAtOffsetList calleeSaveRegisters = RegisterAtOffsetList(calleSavesToSave);
 
-    size_t byteSize = 0;
-    for (const RegisterAtOffset& entry : calleeSaveRegisters)
-        byteSize = std::max(static_cast<size_t>(-entry.offset()), byteSize);
-
     code.setCalleeSaveRegisterAtOffsetList(
         WTFMove(calleeSaveRegisters),
-        code.addStackSlot(byteSize, StackSlotKind::Locked));
+        code.addStackSlot(calleeSaveRegisters.sizeOfAreaInBytes(), StackSlotKind::Locked));
 }
 
 } } } // namespace JSC::B3::Air

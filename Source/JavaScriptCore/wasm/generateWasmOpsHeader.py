@@ -53,7 +53,7 @@ def cppMacro(wasmOpcode, value, b3, inc, *extraArgs):
 def typeMacroizer():
     inc = 0
     for ty in wasm.types:
-        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc, ty)
+        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc, ty, str(wasm.types[ty]["width"]))
         inc += 1
 
 
@@ -160,6 +160,7 @@ defines.append("\n\n")
 defines = "".join(defines)
 
 opValueSet = set([op for op in wasm.opcodeIterator(lambda op: True, lambda op: opcodes[op]["value"])])
+opValueSet.add(0xFD)  # ExtSimd
 maxOpValue = max(opValueSet)
 
 
@@ -204,6 +205,9 @@ contents = wasm.header + """
 #pragma once
 
 #if ENABLE(WEBASSEMBLY)
+
+#include "SimdInfo.h"
+#include "WasmSIMDOpcodes.h"
 
 #include <cstdint>
 #include <wtf/PrintStream.h>
@@ -255,6 +259,14 @@ struct Type {
         #undef CREATE_CASE
         }
     }
+
+    Width width() const {
+        switch (kind) {
+        #define CREATE_CASE(name, id, b3type, inc, wasmName, width, ...) case TypeKind::name: return widthForBytes(width / 8);
+        FOR_EACH_WASM_TYPE(CREATE_CASE)
+        #undef CREATE_CASE
+        }
+     }
 
     // Use Wasm::isFuncref and Wasm::isExternref instead because they check againts all kind of representations of function referenes and external references.
 
@@ -339,6 +351,7 @@ inline TypeKind linearizedToType(int i)
     FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \\
     FOR_EACH_WASM_MEMORY_STORE_OP(macro) \\
     macro(Ext1,  0xFC, Oops, 0) \\
+    macro(ExtSimd, 0xFD, Oops, 0) \\
     macro(GCPrefix,  0xFB, Oops, 0) \\
     macro(ExtAtomic, 0xFE, Oops, 0)
 
@@ -375,6 +388,10 @@ enum class StoreOpType : uint8_t {
 enum class Ext1OpType : uint8_t {
     FOR_EACH_WASM_TABLE_OP(CREATE_ENUM_VALUE)
     FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_ENUM_VALUE)
+};
+
+enum class ExtSimdOpType : uint8_t {
+    FOR_EACH_WASM_EXT_SIMD_OP(CREATE_ENUM_VALUE)
 };
 
 enum class GCOpType : uint8_t {
@@ -462,6 +479,24 @@ inline const char* makeString(OpType op)
     return nullptr;
 }
 #undef CREATE_CASE
+
+inline constexpr Wasm::Type simdScalarType(SimdLane lane) {
+    switch (lane) {
+    case SimdLane::i8x16:
+    case SimdLane::i16x8:
+    case SimdLane::i32x4:
+        return Wasm::Types::I32;
+    case SimdLane::i64x2:
+        return Wasm::Types::I64;
+    case SimdLane::f32x4:
+        return Wasm::Types::F32;
+    case SimdLane::f64x2:
+        return Wasm::Types::F64;
+    case SimdLane::v128:
+        RELEASE_ASSERT_NOT_REACHED();
+        return Wasm::Types::I32;
+    }
+}
 
 } } // namespace JSC::Wasm
 

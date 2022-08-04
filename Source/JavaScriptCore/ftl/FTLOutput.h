@@ -373,13 +373,13 @@ public:
     
     // These are relaxed atomics by default. Use AbstractHeapRepository::decorateFencedAccess() with a
     // non-null heap to make them seq_cst fenced.
-    LValue atomicXchgAdd(LValue operand, TypedPointer pointer, B3::Width);
-    LValue atomicXchgAnd(LValue operand, TypedPointer pointer, B3::Width);
-    LValue atomicXchgOr(LValue operand, TypedPointer pointer, B3::Width);
-    LValue atomicXchgSub(LValue operand, TypedPointer pointer, B3::Width);
-    LValue atomicXchgXor(LValue operand, TypedPointer pointer, B3::Width);
-    LValue atomicXchg(LValue operand, TypedPointer pointer, B3::Width);
-    LValue atomicStrongCAS(LValue expected, LValue newValue, TypedPointer pointer, B3::Width);
+    LValue atomicXchgAdd(LValue operand, TypedPointer pointer, Width);
+    LValue atomicXchgAnd(LValue operand, TypedPointer pointer, Width);
+    LValue atomicXchgOr(LValue operand, TypedPointer pointer, Width);
+    LValue atomicXchgSub(LValue operand, TypedPointer pointer, Width);
+    LValue atomicXchgXor(LValue operand, TypedPointer pointer, Width);
+    LValue atomicXchg(LValue operand, TypedPointer pointer, Width);
+    LValue atomicStrongCAS(LValue expected, LValue newValue, TypedPointer pointer, Width);
 
     template<typename VectorType>
     LValue call(LType type, LValue function, const VectorType& vector)
