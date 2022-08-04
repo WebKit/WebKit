@@ -1,4 +1,6 @@
 SCRIPTS_PATH = ../Scripts
+# Opt out of workspace builds, as ImageDiff is not part of any workspace.
+USE_WORKSPACE = NO
 
 TO_LOWER = $(shell echo $(1) | tr [:upper:] [:lower:])
 
