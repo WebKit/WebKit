@@ -141,7 +141,11 @@ unsigned WebBackForwardListProxy::forwardListCount() const
 
 bool WebBackForwardListProxy::containsItem(const WebCore::HistoryItem& item) const
 {
-    return idToHistoryItemMap().contains(item.identifier());
+    // Items are removed asynchronously from idToHistoryItemMap() via IPC from the UIProcess so we need to ask
+    // the UIProcess to make sure this HistoryItem is still part of the back/forward list.
+    bool contains = false;
+    m_page->sendSync(Messages::WebPageProxy::BackForwardListContainsItem(item.identifier()), Messages::WebPageProxy::BackForwardListContainsItem::Reply(contains), m_page->identifier());
+    return contains;
 }
 
 const WebBackForwardListCounts& WebBackForwardListProxy::cacheListCountsIfNecessary() const
