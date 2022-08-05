@@ -284,15 +284,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
 
         // These decorations should match the visual overflows computed in visualOverflowForDecorations().
         if (m_decorations.contains(TextDecorationLine::Underline)) {
-            float textDecorationBaseFontSize = 16;
-            auto defaultGap = m_lineStyle.computedFontSize() / textDecorationBaseFontSize;
-            float offset = computeUnderlineOffset({ m_lineStyle
-                , defaultGap
-                , UnderlineOffsetArguments::TextUnderlinePositionUnder { m_textBox->lineBox()->baselineType(),
-                    m_textBox->logicalBottom() - m_textBox->logicalTop(),
-                    textRunLogicalOffsetFromLineBottom(m_textBox->lineBox(), m_textBox->renderer(), m_textBox->logicalTop(), m_textBox->logicalBottom())
-                }
-            });
+            auto offset = underlineOffsetForTextBoxPainting(m_lineStyle, m_textBox);
             float wavyOffset = m_styles.underlineStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0;
             FloatRect rect(localOrigin, FloatSize(m_width, textDecorationThickness));
             rect.move(0, offset + wavyOffset);

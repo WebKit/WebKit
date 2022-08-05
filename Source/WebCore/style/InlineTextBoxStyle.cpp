@@ -104,7 +104,7 @@ static const RenderElement* enclosingRendererWithTextDecoration(const RenderText
     return current;
 }
 
-float textRunLogicalOffsetFromLineBottom(const InlineIterator::LineBoxIterator& lineBox, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom)
+static float textRunLogicalOffsetFromLineBottom(const InlineIterator::LineBoxIterator& lineBox, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom)
 {
     float offset = 0.f;
     auto* decorationRenderer = enclosingRendererWithTextDecoration(renderer, lineBox->isFirst());
@@ -124,7 +124,7 @@ static inline float defaultGap(const RenderStyle& style)
     return style.computedFontSize() / textDecorationBaseFontSize;
 }
 
-float computeUnderlineOffset(const UnderlineOffsetArguments& context)
+static float computeUnderlineOffset(const UnderlineOffsetArguments& context)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
     float gap = std::max<int>(1, std::ceil(context.defaultGap / 2.0f));
@@ -268,6 +268,16 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& style)
         ? std::make_optional(computeUnderlineOffset({ style, defaultGap(style), { } }))
         : std::nullopt;
     return computedVisualOverflowForDecorations(style, underlineOffset);
+}
+
+float underlineOffsetForTextBoxPainting(const RenderStyle& style, const InlineIterator::TextBoxIterator& textBox)
+{
+    auto textUnderlinePositionUnder = UnderlineOffsetArguments::TextUnderlinePositionUnder {
+        textBox->lineBox()->baselineType(),
+        textBox->logicalBottom() - textBox->logicalTop(),
+        textRunLogicalOffsetFromLineBottom(textBox->lineBox(), textBox->renderer(), textBox->logicalTop(), textBox->logicalBottom())
+    };
+    return computeUnderlineOffset({ style , defaultGap(style), textUnderlinePositionUnder });
 }
 
 }
