@@ -68,7 +68,6 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle&);
 GlyphOverflow visualOverflowForDecorations(const RenderStyle&, UnderlineOffsetArguments::TextUnderlinePositionUnder);
 GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator&, const RenderText&, float textBoxLogicalTop, float textBoxLogicalBottom);
 
-float computeUnderlineOffset(const UnderlineOffsetArguments&);
-float textRunLogicalOffsetFromLineBottom(const InlineIterator::LineBoxIterator&, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom);
+float underlineOffsetForTextBoxPainting(const RenderStyle&, const InlineIterator::TextBoxIterator&);
 
 } // namespace WebCore
