@@ -169,6 +169,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     } else if (auto* activeServiceWorker = scriptExecutionContext.activeServiceWorker())
         options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
 #endif
+
     if (m_destination == FetchOptions::Destination::Sharedworker)
         m_userAgentForSharedWorker = scriptExecutionContext.userAgent(scriptRequest.url());
 
