@@ -450,7 +450,6 @@ struct ImageAnalysisContextMenuActionData {
     BOOL _textInteractionDidChangeFocusedElement;
     BOOL _treatAsContentEditableUntilNextEditorStateUpdate;
     BOOL _isWaitingOnPositionInformation;
-    BOOL _isRequestingAutocorrectionContext;
     BOOL _autocorrectionContextNeedsUpdate;
 
     WebCore::PointerID _commitPotentialTapPointerId;
