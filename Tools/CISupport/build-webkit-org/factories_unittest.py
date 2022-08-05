@@ -25,6 +25,7 @@ import loadConfig
 import os
 import unittest
 
+
 class TestExpectedBuildSteps(unittest.TestCase):
 
     expected_steps = {
