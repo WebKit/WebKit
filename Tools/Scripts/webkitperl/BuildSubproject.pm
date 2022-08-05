@@ -29,6 +29,7 @@
 
 use strict;
 use warnings;
+use File::Basename;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;

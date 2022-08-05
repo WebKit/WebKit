@@ -32,13 +32,16 @@
 
 use strict;
 use warnings;
+use File::Basename;
 use File::Spec;
+use File::Temp qw(tempdir);
 use FindBin;
 use Getopt::Long qw(:config pass_through);
 use JSON::PP;
 use lib $FindBin::Bin;
 use List::Util qw(min max);
 use POSIX;
+use VCSUtils;
 use webkitdirs;
 use Scalar::Util qw(looks_like_number);
 use Text::ParseWords;

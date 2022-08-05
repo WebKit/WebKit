@@ -45,6 +45,7 @@ use Config;
 use Time::HiRes qw(time);
 use IO::Handle;
 use IO::Select;
+use Pod::Usage;
 use webkitdirs;
 
 my $Bin;
