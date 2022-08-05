@@ -5034,8 +5034,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
 
-    SetForScope requestAutocorrectionContextScope { _isRequestingAutocorrectionContext, YES };
-
     _pendingAutocorrectionContextHandler = completionHandler;
     _page->requestAutocorrectionContext();
 
@@ -5045,7 +5043,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(_page->webPageID(), 1_s, IPC::WaitForOption::DispatchIncomingSyncMessagesWhileWaiting))
         RELEASE_LOG(TextInput, "Timed out while waiting for autocorrection context.");
 
-    [self _cancelPendingAutocorrectionContextHandler];
+    if (_autocorrectionContextNeedsUpdate)
+        [self _cancelPendingAutocorrectionContextHandler];
+    else
+        [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:_lastAutocorrectionContext]];
 }
 
 - (void)_handleAutocorrectionContext:(const WebKit::WebAutocorrectionContext&)context
@@ -5053,7 +5054,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _lastAutocorrectionContext = context;
     _autocorrectionContextNeedsUpdate = NO;
     [self unsuppressSoftwareKeyboardUsingLastAutocorrectionContextIfNeeded];
-    [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:context]];
 }
 
 - (void)updateSoftwareKeyboardSuppressionStateFromWebView
@@ -6737,14 +6737,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges userObject:(NSObject <NSSecureCoding> *)userObject
 {
-    if (_isRequestingAutocorrectionContext) {
-        RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKContentView> { self }, information, userIsInteracting, blurPreviousNode, activityStateChanges, userObject = RetainPtr { userObject } ] {
-            if (auto strongSelf = weakSelf.get())
-                [strongSelf _elementDidFocus:information userIsInteracting:userIsInteracting blurPreviousNode:blurPreviousNode activityStateChanges:activityStateChanges userObject:userObject.get()];
-        });
-        return;
-    }
-
     SetForScope isChangingFocusForScope { _isChangingFocus, self._hasFocusedElement };
     SetForScope isFocusingElementWithKeyboardForScope { _isFocusingElementWithKeyboard, [self _shouldShowKeyboardForElement:information] };
 
@@ -6925,14 +6917,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
 - (void)_elementDidBlur
 {
-    if (_isRequestingAutocorrectionContext) {
-        RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKContentView> { self }] {
-            if (auto strongSelf = weakSelf.get())
-                [strongSelf _elementDidBlur];
-        });
-        return;
-    }
-
     SetForScope isBlurringFocusedElementForScope { _isBlurringFocusedElement, YES };
 
     [self _endEditing];
