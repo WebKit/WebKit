@@ -54,10 +54,6 @@ struct WavyStrokeParameters {
 };
 WavyStrokeParameters getWavyStrokeParameters(float fontSize);
 
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle);
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const InlineIterator::TextBoxIterator&);
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, std::optional<float> underlineOffset);
-
 struct UnderlineOffsetArguments {
     const RenderStyle& lineStyle;
     float defaultGap { 0 };
@@ -68,8 +64,11 @@ struct UnderlineOffsetArguments {
     };
     std::optional<TextUnderlinePositionUnder> textUnderlinePositionUnder { };
 };
+GlyphOverflow visualOverflowForDecorations(const RenderStyle&);
+GlyphOverflow visualOverflowForDecorations(const RenderStyle&, UnderlineOffsetArguments::TextUnderlinePositionUnder);
+GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator&, const RenderText&, float textBoxLogicalTop, float textBoxLogicalBottom);
+
 float computeUnderlineOffset(const UnderlineOffsetArguments&);
-float textRunLogicalOffsetFromLineBottom(const InlineIterator::TextBoxIterator&);
-float defaultGap(const RenderStyle& lineStyle);
+float textRunLogicalOffsetFromLineBottom(const InlineIterator::LineBoxIterator&, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom);
 
 } // namespace WebCore
