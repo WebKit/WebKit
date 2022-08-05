@@ -3460,7 +3460,7 @@ JSC_DEFINE_JIT_OPERATION(operationWeakSetAdd, void, (JSGlobalObject* globalObjec
         return;
     }
 
-    jsCast<JSWeakSet*>(set)->add(vm, asObject(key), JSValue(), hash);
+    jsCast<JSWeakSet*>(set)->add(vm, key, JSValue(), hash);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWeakMapSet, void, (JSGlobalObject* globalObject, JSCell* map, JSCell* key, EncodedJSValue value, int32_t hash))
@@ -3475,7 +3475,7 @@ JSC_DEFINE_JIT_OPERATION(operationWeakMapSet, void, (JSGlobalObject* globalObjec
         return;
     }
 
-    jsCast<JSWeakMap*>(map)->add(vm, asObject(key), JSValue::decode(value), hash);
+    jsCast<JSWeakMap*>(map)->add(vm, key, JSValue::decode(value), hash);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetPrototypeOfObject, EncodedJSValue, (JSGlobalObject* globalObject, JSObject* thisObject))
