@@ -13,6 +13,20 @@ let b = {f: 22};
 loadString("b.f = 42");
 assert(b.f === 42);
 
+let c = [1,2,3];
+loadString("c[0] = 42;");
+assert(c[0] === 42);
+
+let d = {
+    foo: [[1,2,3]]
+};
+loadString("d.foo[0][0] = 42;");
+assert(d.foo[0][0] === 42);
+
+let e = [[[1,2,3]]];
+loadString("e[0][0][0] = 42;");
+assert(e[0][0][0] === 42);
+
 let foo = null;
 let bar = 42;
 loadString("foo = 'root'; bar = 5")

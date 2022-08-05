@@ -828,6 +828,8 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
         parseResult = literalParser.tryJSONPParse(JSONPData, globalObject->globalObjectMethodTable()->supportsRichSourceInfo(globalObject));
     }
 
+    // FIXME: The patterns to trigger JSONP fast path should be more idiomatic.
+    // https://bugs.webkit.org/show_bug.cgi?id=243578
     RETURN_IF_EXCEPTION(throwScope, { });
     if (parseResult) {
         JSValue result;
@@ -893,18 +895,24 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
                 }
             }
 
+            const Identifier& ident = JSONPPath.last().m_pathEntryName;
             if (JSONPPath.size() == 1 && JSONPPath.last().m_type != JSONPPathEntryTypeLookup) {
                 RELEASE_ASSERT(baseObject == globalObject);
                 JSGlobalLexicalEnvironment* scope = globalObject->globalLexicalEnvironment();
-                if (scope->hasProperty(globalObject, JSONPPath.last().m_pathEntryName))
+                if (scope->hasProperty(globalObject, ident)) {
+                    RETURN_IF_EXCEPTION(throwScope, JSValue());
+                    PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
+                    JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, globalObject, ident, slot);
+                    if (slot.getValue(globalObject, ident) == jsTDZValue())
+                        return throwException(globalObject, throwScope, createTDZError(globalObject));
                     baseObject = scope;
-                RETURN_IF_EXCEPTION(throwScope, JSValue());
+                }
             }
 
             PutPropertySlot slot(baseObject);
             switch (JSONPPath.last().m_type) {
             case JSONPPathEntryTypeCall: {
-                JSValue function = baseObject.get(globalObject, JSONPPath.last().m_pathEntryName);
+                JSValue function = baseObject.get(globalObject, ident);
                 RETURN_IF_EXCEPTION(throwScope, JSValue());
                 auto callData = JSC::getCallData(function);
                 if (callData.type == CallData::Type::None)
@@ -918,7 +926,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
                 break;
             }
             case JSONPPathEntryTypeDot: {
-                baseObject.put(globalObject, JSONPPath.last().m_pathEntryName, JSONPValue, slot);
+                baseObject.put(globalObject, ident, JSONPValue, slot);
                 RETURN_IF_EXCEPTION(throwScope, JSValue());
                 break;
             }
