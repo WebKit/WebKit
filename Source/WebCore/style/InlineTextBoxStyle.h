@@ -54,18 +54,13 @@ struct WavyStrokeParameters {
 };
 WavyStrokeParameters getWavyStrokeParameters(float fontSize);
 
-struct UnderlineOffsetArguments {
-    const RenderStyle& lineStyle;
-    float defaultGap { 0 };
-    struct TextUnderlinePositionUnder {
-        FontBaseline baselineType { AlphabeticBaseline };
-        float textRunLogicalHeight { 0 };
-        float textRunOffsetFromLineBottom { 0 };
-    };
-    std::optional<TextUnderlinePositionUnder> textUnderlinePositionUnder { };
+struct TextUnderlinePositionUnder {
+    FontBaseline baselineType { AlphabeticBaseline };
+    float textRunLogicalHeight { 0 };
+    float textRunOffsetFromLineBottom { 0 };
 };
 GlyphOverflow visualOverflowForDecorations(const RenderStyle&);
-GlyphOverflow visualOverflowForDecorations(const RenderStyle&, UnderlineOffsetArguments::TextUnderlinePositionUnder);
+GlyphOverflow visualOverflowForDecorations(const RenderStyle&, TextUnderlinePositionUnder);
 GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator&, const RenderText&, float textBoxLogicalTop, float textBoxLogicalBottom);
 
 float underlineOffsetForTextBoxPainting(const RenderStyle&, const InlineIterator::TextBoxIterator&);

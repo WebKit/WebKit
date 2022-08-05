@@ -37,6 +37,12 @@
 
 namespace WebCore {
 
+struct UnderlineOffsetArguments {
+    const RenderStyle& lineStyle;
+    float defaultGap { 0 };
+    std::optional<TextUnderlinePositionUnder> textUnderlinePositionUnder { };
+};
+
 static bool isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderObject* child)
 {
     const RenderObject* object = child;
@@ -249,12 +255,12 @@ GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator
 {
     auto& style = lineBox->isFirst() ? renderer.firstLineStyle() : renderer.style();
     auto underlineOffset = style.textDecorationsInEffect().contains(TextDecorationLine::Underline)
-        ? std::make_optional(computeUnderlineOffset({ style, defaultGap(style), UnderlineOffsetArguments::TextUnderlinePositionUnder { lineBox->baselineType(), textBoxLogicalBottom - textBoxLogicalTop, textRunLogicalOffsetFromLineBottom(lineBox, renderer, textBoxLogicalTop, textBoxLogicalBottom) } }))
+        ? std::make_optional(computeUnderlineOffset({ style, defaultGap(style), TextUnderlinePositionUnder { lineBox->baselineType(), textBoxLogicalBottom - textBoxLogicalTop, textRunLogicalOffsetFromLineBottom(lineBox, renderer, textBoxLogicalTop, textBoxLogicalBottom) } }))
         : std::nullopt;
     return computedVisualOverflowForDecorations(style, underlineOffset);
 }
 
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& style, UnderlineOffsetArguments::TextUnderlinePositionUnder textUnderlinePositionUnder)
+GlyphOverflow visualOverflowForDecorations(const RenderStyle& style, TextUnderlinePositionUnder textUnderlinePositionUnder)
 {
     auto underlineOffset = style.textDecorationsInEffect().contains(TextDecorationLine::Underline)
         ? std::make_optional(computeUnderlineOffset({ style, defaultGap(style), textUnderlinePositionUnder }))
@@ -272,7 +278,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& style)
 
 float underlineOffsetForTextBoxPainting(const RenderStyle& style, const InlineIterator::TextBoxIterator& textBox)
 {
-    auto textUnderlinePositionUnder = UnderlineOffsetArguments::TextUnderlinePositionUnder {
+    auto textUnderlinePositionUnder = TextUnderlinePositionUnder {
         textBox->lineBox()->baselineType(),
         textBox->logicalBottom() - textBox->logicalTop(),
         textRunLogicalOffsetFromLineBottom(textBox->lineBox(), textBox->renderer(), textBox->logicalTop(), textBox->logicalBottom())
