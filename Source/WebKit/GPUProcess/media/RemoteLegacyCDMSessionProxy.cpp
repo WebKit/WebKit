@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include "RemoteLegacyCDMFactoryProxy.h"
 #include "RemoteLegacyCDMSessionMessages.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
@@ -46,15 +47,17 @@ std::unique_ptr<RemoteLegacyCDMSessionProxy> RemoteLegacyCDMSessionProxy::create
     return std::unique_ptr<RemoteLegacyCDMSessionProxy>(new RemoteLegacyCDMSessionProxy(factory, logIdentifier, sessionIdentifier, cdm));
 }
 
-RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy(RemoteLegacyCDMFactoryProxy& factory, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier sessionIdentifier, WebCore::LegacyCDM& cdm)
+RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy(RemoteLegacyCDMFactoryProxy& factory, uint64_t parentLogIdentifier, RemoteLegacyCDMSessionIdentifier sessionIdentifier, WebCore::LegacyCDM& cdm)
     : m_factory(factory)
 #if !RELEASE_LOG_DISABLED
     , m_logger(factory.logger())
-    , m_logIdentifier(reinterpret_cast<const void*>(logIdentifier))
+    , m_logIdentifier(reinterpret_cast<const void*>(parentLogIdentifier))
 #endif
     , m_identifier(sessionIdentifier)
     , m_session(cdm.createSession(*this))
 {
+    if (!m_session)
+        ERROR_LOG(LOGIDENTIFIER, "could not create CDM session.");
 }
 
 RemoteLegacyCDMSessionProxy::~RemoteLegacyCDMSessionProxy() = default;
@@ -80,6 +83,11 @@ static RefPtr<WebCore::SharedBuffer> convertToOptionalSharedBuffer(T array)
 
 void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, RefPtr<SharedBuffer>&& initData, GenerateKeyCallback&& completion)
 {
+    if (!m_session) {
+        completion({ }, emptyString(), 0, 0);
+        return;
+    }
+    
     auto initDataArray = convertToUint8Array(WTFMove(initData));
     if (!initDataArray) {
         completion({ }, emptyString(), 0, 0);
@@ -99,11 +107,17 @@ void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, Ref
 
 void RemoteLegacyCDMSessionProxy::releaseKeys()
 {
-    m_session->releaseKeys();
+    if (m_session)
+        m_session->releaseKeys();
 }
 
 void RemoteLegacyCDMSessionProxy::update(RefPtr<SharedBuffer>&& update, UpdateCallback&& completion)
 {
+    if (!m_session) {
+        completion(false, nullptr, 0, 0);
+        return;
+    }
+    
     auto updateArray = convertToUint8Array(WTFMove(update));
     if (!updateArray) {
         completion(false, nullptr, 0, 0);
@@ -121,6 +135,9 @@ void RemoteLegacyCDMSessionProxy::update(RefPtr<SharedBuffer>&& update, UpdateCa
 
 RefPtr<ArrayBuffer> RemoteLegacyCDMSessionProxy::getCachedKeyForKeyId(const String& keyId)
 {
+    if (!m_session)
+        return nullptr;
+    
     return m_session->cachedKeyForKeyID(keyId);
 }
 
@@ -165,6 +182,13 @@ String RemoteLegacyCDMSessionProxy::mediaKeysStorageDirectory() const
     return gpuConnectionToWebProcess->mediaKeysStorageDirectory();
 }
 
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& RemoteLegacyCDMSessionProxy::logChannel() const
+{
+    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, EME);
 }
+#endif
+
+} // namespace WebKit
 
 #endif
