@@ -242,6 +242,11 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         }
     }
 
+    _createSortedArrayForHeaders(headers)
+    {
+        return Object.entries(headers).sort((a, b) => a[0].toLowerCase().extendedLocaleCompare(b[0].toLowerCase()));
+    }
+
     _refreshSummarySection()
     {
         let detailsElement = this._summarySection.detailsElement;
@@ -324,8 +329,8 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             // FIXME: <https://webkit.org/b/190214> Web Inspector: expose full load metrics for redirect requests
             redirectRequestSection.appendKeyValuePair(`${redirect.requestMethod} ${redirect.urlComponents.path}`, null, "h1-status");
 
-            for (let key in redirect.requestHeaders)
-                redirectRequestSection.appendKeyValuePair(key, redirect.requestHeaders[key], "header");
+            for (let [key, value] of this._createSortedArrayForHeaders(redirect.requestHeaders))
+                redirectRequestSection.appendKeyValuePair(key, value, "header");
 
             referenceElement = this.element.insertBefore(redirectRequestSection.element, referenceElement.nextElementSibling);
             this._redirectDetailsSections.push(redirectRequestSection);
@@ -335,8 +340,8 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             // FIXME: <https://webkit.org/b/190214> Web Inspector: expose full load metrics for redirect requests
             redirectResponseSection.appendKeyValuePair(`${redirect.responseStatusCode} ${redirect.responseStatusText}`, null, "h1-status");
 
-            for (let key in redirect.responseHeaders)
-                redirectResponseSection.appendKeyValuePair(key, redirect.responseHeaders[key], "header");
+            for (let [key, value] of this._createSortedArrayForHeaders(redirect.responseHeaders))
+                redirectResponseSection.appendKeyValuePair(key, value, "header");
 
             referenceElement = this.element.insertBefore(redirectResponseSection.element, referenceElement.nextElementSibling);
             this._redirectDetailsSections.push(redirectResponseSection);
@@ -376,9 +381,8 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             this._requestHeadersSection.appendKeyValuePair(":path", WI.h2Path(urlComponents), "h2-pseudo-header");
         }
 
-        let requestHeaders = this._resource.requestHeaders;
-        for (let key in requestHeaders)
-            this._requestHeadersSection.appendKeyValuePair(key, requestHeaders[key], "header");
+        for (let [key, value] of this._createSortedArrayForHeaders(this._resource.requestHeaders))
+            this._requestHeadersSection.appendKeyValuePair(key, value, "header");
 
         if (!detailsElement.firstChild)
             this._requestHeadersSection.markIncompleteSectionWithMessage(WI.UIString("No request headers"));
@@ -408,8 +412,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             this._responseHeadersSection.appendKeyValuePair(":status", this._resource.statusCode, "h2-pseudo-header");
         }
 
-        let responseHeaders = this._resource.responseHeaders;
-        for (let key in responseHeaders) {
+        for (let [key, value] of this._createSortedArrayForHeaders(this._resource.responseHeaders)) {
             // Split multiple Set-Cookie response headers out into their multiple headers instead of as a combined value.
             if (key.toLowerCase() === "set-cookie") {
                 let responseCookies = this._resource.responseCookies;
@@ -419,7 +422,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
                 continue;
             }
 
-            this._responseHeadersSection.appendKeyValuePair(key, responseHeaders[key], "header");
+            this._responseHeadersSection.appendKeyValuePair(key, value, "header");
         }
 
         if (!detailsElement.firstChild)
