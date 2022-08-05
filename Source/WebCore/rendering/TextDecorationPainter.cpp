@@ -290,7 +290,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
                 , defaultGap
                 , UnderlineOffsetArguments::TextUnderlinePositionUnder { m_textBox->lineBox()->baselineType(),
                     m_textBox->logicalBottom() - m_textBox->logicalTop(),
-                    textRunLogicalOffsetFromLineBottom(m_textBox)
+                    textRunLogicalOffsetFromLineBottom(m_textBox->lineBox(), m_textBox->renderer(), m_textBox->logicalTop(), m_textBox->logicalBottom())
                 }
             });
             float wavyOffset = m_styles.underlineStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0;

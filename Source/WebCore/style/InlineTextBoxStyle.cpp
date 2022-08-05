@@ -104,18 +104,24 @@ static const RenderElement* enclosingRendererWithTextDecoration(const RenderText
     return current;
 }
 
-float textRunLogicalOffsetFromLineBottom(const InlineIterator::TextBoxIterator& textRun)
+float textRunLogicalOffsetFromLineBottom(const InlineIterator::LineBoxIterator& lineBox, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom)
 {
     float offset = 0.f;
-    auto* decorationRenderer = enclosingRendererWithTextDecoration(textRun->renderer(), textRun->lineBox()->isFirst());
-    if (textRun->renderer().style().isFlippedLinesWritingMode()) {
-        auto minLogicalTop = minLogicalTopForTextDecorationLine(textRun->lineBox(), textRun->logicalTop(), decorationRenderer);
-        offset = textRun->logicalTop() - minLogicalTop;
+    auto* decorationRenderer = enclosingRendererWithTextDecoration(renderer, lineBox->isFirst());
+    if (renderer.style().isFlippedLinesWritingMode()) {
+        auto minLogicalTop = minLogicalTopForTextDecorationLine(lineBox, textBoxLogicalTop, decorationRenderer);
+        offset = textBoxLogicalTop - minLogicalTop;
     } else {
-        offset = maxLogicalBottomForTextDecorationLine(textRun->lineBox(), textRun->logicalBottom(), decorationRenderer);
-        offset -= textRun->logicalBottom();
+        offset = maxLogicalBottomForTextDecorationLine(lineBox, textBoxLogicalBottom, decorationRenderer);
+        offset -= textBoxLogicalBottom;
     }
     return offset;
+}
+
+static inline float defaultGap(const RenderStyle& style)
+{
+    const float textDecorationBaseFontSize = 16.f;
+    return style.computedFontSize() / textDecorationBaseFontSize;
 }
 
 float computeUnderlineOffset(const UnderlineOffsetArguments& context)
@@ -172,8 +178,12 @@ WavyStrokeParameters getWavyStrokeParameters(float fontSize)
     return result;
 }
 
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, std::optional<float> underlineOffset)
+static GlyphOverflow computedVisualOverflowForDecorations(const RenderStyle& lineStyle, std::optional<float> underlineOffset)
 {
+    // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
+    if (underlineOffset)
+        *underlineOffset += 1;
+
     auto decoration = lineStyle.textDecorationsInEffect();
     if (decoration.isEmpty())
         return GlyphOverflow();
@@ -235,37 +245,29 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, std::op
     return overflowResult;
 }
 
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const InlineIterator::TextBoxIterator& textRun)
+GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator& lineBox, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom)
 {
-    ASSERT(!textRun || textRun->style() == lineStyle);
-
-    if (!lineStyle.textDecorationsInEffect().contains(TextDecorationLine::Underline))
-        return visualOverflowForDecorations(lineStyle, std::optional<float> { });
-
-    // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
-    int underlineOffset = 1;
-    // FIXME: RenderStyle calls us with empty textRun but only when TextUnderlinePosition is not Under.
-    ASSERT(textRun || lineStyle.textUnderlinePosition() != TextUnderlinePosition::Under);
-    if (!textRun)
-        underlineOffset += computeUnderlineOffset({ lineStyle, defaultGap(lineStyle) });
-    else {
-        underlineOffset += computeUnderlineOffset({ lineStyle
-            , defaultGap(lineStyle)
-            , UnderlineOffsetArguments::TextUnderlinePositionUnder { textRun->lineBox()->baselineType(), textRun->logicalBottom() - textRun->logicalTop(), textRunLogicalOffsetFromLineBottom(textRun) }
-        });
-    }
-    return visualOverflowForDecorations(lineStyle, underlineOffset);
+    auto& style = lineBox->isFirst() ? renderer.firstLineStyle() : renderer.style();
+    auto underlineOffset = style.textDecorationsInEffect().contains(TextDecorationLine::Underline)
+        ? std::make_optional(computeUnderlineOffset({ style, defaultGap(style), UnderlineOffsetArguments::TextUnderlinePositionUnder { lineBox->baselineType(), textBoxLogicalBottom - textBoxLogicalTop, textRunLogicalOffsetFromLineBottom(lineBox, renderer, textBoxLogicalTop, textBoxLogicalBottom) } }))
+        : std::nullopt;
+    return computedVisualOverflowForDecorations(style, underlineOffset);
 }
 
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle)
+GlyphOverflow visualOverflowForDecorations(const RenderStyle& style, UnderlineOffsetArguments::TextUnderlinePositionUnder textUnderlinePositionUnder)
 {
-    return visualOverflowForDecorations(lineStyle, InlineIterator::TextBoxIterator { });
+    auto underlineOffset = style.textDecorationsInEffect().contains(TextDecorationLine::Underline)
+        ? std::make_optional(computeUnderlineOffset({ style, defaultGap(style), textUnderlinePositionUnder }))
+        : std::nullopt;
+    return computedVisualOverflowForDecorations(style, underlineOffset);
 }
 
-float defaultGap(const RenderStyle& lineStyle)
+GlyphOverflow visualOverflowForDecorations(const RenderStyle& style)
 {
-    const float textDecorationBaseFontSize = 16.f;
-    return lineStyle.computedFontSize() / textDecorationBaseFontSize;
+    auto underlineOffset = style.textDecorationsInEffect().contains(TextDecorationLine::Underline)
+        ? std::make_optional(computeUnderlineOffset({ style, defaultGap(style), { } }))
+        : std::nullopt;
+    return computedVisualOverflowForDecorations(style, underlineOffset);
 }
 
 }

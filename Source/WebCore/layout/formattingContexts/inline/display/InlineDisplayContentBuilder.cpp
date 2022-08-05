@@ -840,17 +840,16 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(DisplayBo
         if (!textDecorations)
             continue;
 
-        auto underlineOffset = [&]() -> std::optional<float> {
+        auto decorationOverflow = [&] {
             if (!textDecorations.contains(TextDecorationLine::Underline))
-                return { };
+                return visualOverflowForDecorations(style);
+
             if (!logicalBottomForTextDecoration)
                 logicalBottomForTextDecoration = logicalBottomForTextDecorationContent(boxes, isHorizontalWritingMode);
             auto textRunLogicalOffsetFromLineBottom = *logicalBottomForTextDecoration - (isHorizontalWritingMode ? displayBox.bottom() : displayBox.right());
-            // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
-            return computeUnderlineOffset({ style, defaultGap(style), UnderlineOffsetArguments::TextUnderlinePositionUnder { displayLine.baselineType(), displayBox.height(), textRunLogicalOffsetFromLineBottom } }) + 1.0f;
-        };
+            return visualOverflowForDecorations(style, { displayLine.baselineType(), displayBox.height(), textRunLogicalOffsetFromLineBottom });
+        }();
 
-        auto decorationOverflow = visualOverflowForDecorations(style, underlineOffset());
         if (!decorationOverflow.isEmpty()) {
             m_contentHasInkOverflow = true;
             auto inflatedVisualOverflowRect = [&] {
