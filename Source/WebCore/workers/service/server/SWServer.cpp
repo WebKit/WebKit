@@ -607,8 +607,6 @@ void SWServer::refreshImportedScripts(const ServiceWorkerJobData& jobData, SWSer
             weakThis->refreshImportedScriptsFinished(jobDataIdentifier, registrationKey, scripts);
     };
     bool shouldRefreshCache = registration.updateViaCache() == ServiceWorkerUpdateViaCache::None || (registration.getNewestWorker() && registration.isStale());
-
-    ASSERT(jobData.connectionIdentifier() == Process::identifier());
     auto handler = RefreshImportedScriptsHandler::create(urls.size(), WTFMove(callback));
     for (auto& url : urls) {
         m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, createScriptRequest(url, jobData, registration), [handler, url, size = urls.size()](auto&& result) {
