@@ -111,7 +111,7 @@
 /Source/WebCore/Modules/web-locks @cdumez
 /Source/WebCore/Modules/webaudio @cdumez
 /Source/WebCore/bindings @cdumez
-/Source/WebCore/html @cdumez
+/Source/WebCore/html @cdumez @rniwa
 /Source/WebCore/loader @cdumez
 /Source/WebCore/workers @cdumez
 /Source/WebCore/worklets @cdumez
