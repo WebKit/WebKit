@@ -74,6 +74,8 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const { return "RemoteLegacyCDMSessionProxy"; }
+    WTFLogChannel& logChannel() const;
 #endif
 
     // Messages
