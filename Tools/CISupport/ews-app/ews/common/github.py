@@ -208,7 +208,10 @@ class GitHubEWS(GitHub):
             status = GitHubEWS.ICON_BUILD_PASS
         elif build.result == Buildbot.FAILURE:
             status = GitHubEWS.ICON_BUILD_FAIL
-        # FIXME: Handle other cases like SKIPPED, CANCELLED, EXCEPTION, RETRY etc.
+        elif build.result == Buildbot.CANCELLED:
+            status = GitHubEWS.ICON_BUILD_PASS
+            name = u'~~{}~~'.format(name)
+        # FIXME: Handle other cases like SKIPPED, EXCEPTION, RETRY etc.
         else:
             status = GitHubEWS.ICON_BUILD_ERROR
 
