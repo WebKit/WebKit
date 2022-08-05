@@ -6,6 +6,9 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
     testRunner.dumpResourceLoadCallbacks();
+    internals.clearMemoryCache();
+    if (testRunner.setSerializeHTTPLoads)
+        testRunner.setSerializeHTTPLoads();
 }
 
 let loadCount = 0;
@@ -29,7 +32,7 @@ function didLoad(element)
 }
 
 </script>
-<link rel="stylesheet" href="data:text/css,div { background: green; width: 100px; height: 100px }" onload="didLoad(this)">
+<link rel="stylesheet" href="resources/link-stylesheet-load-once.css" onload="didLoad(this)">
 </head>
 <body>
 <p>This tests overriding rel content attribute with the same value.<br>

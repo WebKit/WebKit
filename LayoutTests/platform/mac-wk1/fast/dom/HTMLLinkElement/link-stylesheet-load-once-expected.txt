@@ -1,8 +1,0 @@
-data:text/css,div%20%7B%20background:%20green;%20width:%20100px;%20height:%20100px%20%7D - willSendRequest <NSURLRequest URL data:text/css,div%20%7B%20background:%20green;%20width:%20100px;%20height:%20100px%20%7D, main document URL (null), http method GET> redirectResponse (null)
-data:text/css,div%20%7B%20background:%20green;%20width:%20100px;%20height:%20100px%20%7D - didReceiveResponse <NSURLResponse data:text/css,div%20%7B%20background:%20green;%20width:%20100px;%20height:%20100px%20%7D, http status code 0>
-data:text/css,div%20%7B%20background:%20green;%20width:%20100px;%20height:%20100px%20%7D - didFinishLoading
-link-stylesheet-load-once.html - didFinishLoading
-This tests overriding rel content attribute with the same value.
-You should see 1 in a green box below:
-
-1
