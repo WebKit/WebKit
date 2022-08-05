@@ -2847,9 +2847,14 @@ Element* AccessibilityObject::element() const
 
 const RenderStyle* AccessibilityObject::style() const
 {
-    if (auto* element = this->element())
-        return element->computedStyle();
-    return nullptr;
+    const RenderStyle* style = nullptr;
+    if (auto* renderer = this->renderer())
+        style = &renderer->style();
+    if (!style) {
+        if (auto* element = this->element())
+            style = element->computedStyle();
+    }
+    return style;
 }
 
 bool AccessibilityObject::isValueAutofillAvailable() const
@@ -3722,12 +3727,9 @@ bool AccessibilityObject::isAXHidden() const
 // https://www.w3.org/TR/wai-aria/#dfn-hidden
 bool AccessibilityObject::isDOMHidden() const
 {
-    RenderObject* renderer = this->renderer();
-    if (!renderer)
-        return true;
-    
-    const RenderStyle& style = renderer->style();
-    return style.display() == DisplayType::None || style.visibility() != Visibility::Visible;
+    if (auto* style = this->style())
+        return style->display() == DisplayType::None || style->visibility() != Visibility::Visible;
+    return true;
 }
 
 bool AccessibilityObject::isShowingValidationMessage() const
