@@ -47,11 +47,10 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
 bool GPUProcessProxy::isPowerLoggingInTaskMode()
 {
-    PLClientID clientIDWebKit = static_cast<PLClientID>(132); // FIXME: Replace with PLClientIDWebKit when available in SDK
-    auto dictionary = adoptCF(PLQueryRegistered(clientIDWebKit, CFSTR("TaskModeQuery"), nullptr));
+    auto dictionary = PLQueryRegistered(PLClientIDWebKit, CFSTR("TaskModeQuery"), nullptr);
     if (!dictionary)
         return false;
-    CFNumberRef taskModeRef = static_cast<CFNumberRef>(CFDictionaryGetValue(dictionary.get(), CFSTR("Task Mode")));
+    CFNumberRef taskModeRef = static_cast<CFNumberRef>(CFDictionaryGetValue(dictionary, CFSTR("Task Mode")));
     if (!taskModeRef)
         return false;
     int taskMode = 0;
@@ -62,6 +61,7 @@ bool GPUProcessProxy::isPowerLoggingInTaskMode()
 
 void GPUProcessProxy::enablePowerLogging()
 {
+    RELEASE_LOG(Sandbox, "GPUProcessProxy::enablePowerLogging()");
     auto handle = SandboxExtension::createHandleForMachLookup("com.apple.powerlog.plxpclogger.xpc"_s, std::nullopt);
     if (!handle)
         return;

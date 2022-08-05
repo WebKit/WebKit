@@ -598,7 +598,11 @@ private:
 #if PLATFORM(MAC)
     static void colorPreferencesDidChangeCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
 #endif
-    
+
+#if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
+    static void powerLogTaskModeStartedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef);
+#endif
+
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void startObservingPreferenceChanges();
 #endif
@@ -692,10 +696,6 @@ private:
 
     std::unique_ptr<HighPerformanceGraphicsUsageSampler> m_highPerformanceGraphicsUsageSampler;
     std::unique_ptr<PerActivityStateCPUUsageSampler> m_perActivityStateCPUUsageSampler;
-#endif
-
-#if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
-    RetainPtr<NSObject> m_powerLogObserver;
 #endif
 
 #if PLATFORM(COCOA)

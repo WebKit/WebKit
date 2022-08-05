@@ -27,14 +27,13 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <PowerLog/PLClientLogging.h>
-#include <PowerLog/PLXPCClientHeader.h>
+#include <PowerLog/PowerLog.h>
 
 #else // USE(APPLE_INTERNAL_SDK)
 
 typedef CF_ENUM(short, PLClientID)
 {
-    PLClientIDWebKit = 132
+    PLClientIDWebKit = 134
 };
 
 WTF_EXTERN_C_BEGIN

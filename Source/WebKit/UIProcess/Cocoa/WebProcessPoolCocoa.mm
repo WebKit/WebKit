@@ -145,6 +145,10 @@ static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKi
 static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
 #endif
 
+#if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
+static NSString * const kPLTaskingStartNotificationGlobal = @"kPLTaskingStartNotificationGlobal";
+#endif
+
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
 SOFT_LINK(BackBoardServices, BKSDisplayBrightnessGetCurrent, float, (), ());
@@ -580,6 +584,14 @@ void WebProcessPool::captivePortalModeConfigUpdateCallback(CFNotificationCenterR
 }
 #endif
 
+#if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
+void WebProcessPool::powerLogTaskModeStartedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+{
+    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->enablePowerLogging();
+}
+#endif
+
 #if ENABLE(CFPREFS_DIRECT_MODE)
 void WebProcessPool::startObservingPreferenceChanges()
 {
@@ -733,12 +745,7 @@ void WebProcessPool::registerNotificationObservers()
     addCFNotificationObserver(mediaAccessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification);
 #endif
 #if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
-    if (kPLTaskingStartNotification) {
-        m_powerLogObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kPLTaskingStartNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
-            if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
-                gpuProcess->enablePowerLogging();
-        }];
-    }
+    addCFNotificationObserver(powerLogTaskModeStartedCallback, (__bridge CFStringRef)kPLTaskingStartNotificationGlobal);
 #endif // HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
 }
 
@@ -791,8 +798,7 @@ void WebProcessPool::unregisterNotificationObservers()
     removeCFNotificationObserver(kMAXCaptionAppearanceSettingsChangedNotification);
 #endif
 #if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
-    if (m_powerLogObserver)
-        [[NSNotificationCenter defaultCenter] removeObserver:m_powerLogObserver.get()];
+    removeCFNotificationObserver((__bridge CFStringRef)kPLTaskingStartNotificationGlobal);
 #endif
     m_weakObserver = nil;
 }
