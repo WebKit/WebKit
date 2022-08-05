@@ -22,6 +22,7 @@
 
 import json
 import logging
+import re
 import requests
 from requests.auth import HTTPBasicAuth
 
@@ -211,7 +212,12 @@ class GitHubEWS(GitHub):
         elif build.result == Buildbot.CANCELLED:
             status = GitHubEWS.ICON_BUILD_PASS
             name = u'~~{}~~'.format(name)
-        # FIXME: Handle other cases like SKIPPED, EXCEPTION, RETRY etc.
+        elif build.result == Buildbot.SKIPPED:
+            status = GitHubEWS.ICON_BUILD_PASS
+            if re.search(r'Pull request .* doesn\'t have relevant changes', build.state_string):
+                return u'| '
+            name = u'~~{}~~'.format(name)
+        # FIXME: Handle other cases like EXCEPTION, RETRY etc.
         else:
             status = GitHubEWS.ICON_BUILD_ERROR
 
