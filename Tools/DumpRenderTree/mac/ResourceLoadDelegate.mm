@@ -31,6 +31,7 @@
 
 #import "DumpRenderTree.h"
 #import "TestRunner.h"
+#import <JavaScriptCore/RegularExpression.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitLegacy.h>
 #import <wtf/Assertions.h>
@@ -167,7 +168,9 @@ BOOL isAllowedHost(NSString *host)
         if ([lowercaseTestURL hasPrefix:@"http:"] || [lowercaseTestURL hasPrefix:@"https:"])
             testHost = [[NSURL URLWithString:testURL] host];
         if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host) && !isAllowedHost(host) && (!testHost || isLocalhost(testHost))) {
-            printf("Blocked access to external URL %s\n", [[url absoluteString] cStringUsingEncoding:NSUTF8StringEncoding]);
+            String blockedURL = [url absoluteString];
+            replace(blockedURL, JSC::Yarr::RegularExpression("&key=[^&]+&"_s), "&key=GENERATED_KEY&"_s);
+            printf("Blocked access to external URL %s\n", blockedURL.utf8().data());
             return nil;
         }
     }

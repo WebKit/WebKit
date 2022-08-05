@@ -1,0 +1,58 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/fetch.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/fetch.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/iframe-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/iframe-tag.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/img-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/img-tag.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/sharedworker-classic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/sharedworker-classic.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/sharedworker-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/sharedworker-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/sharedworker-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/sharedworker-import.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/sharedworker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/sharedworker-module.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/websocket.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/websocket.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worker-classic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worker-classic.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worker-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worker-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worker-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worker-import.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worker-module.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-animation-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-animation-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-animation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-animation.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-audio-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-audio-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-audio.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-audio.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-layout-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-layout-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-layout.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-layout.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-paint-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-paint-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-paint.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/worklet-paint.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/xhr.https.html
+/LayoutTests/imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/xhr.https.html.headers
