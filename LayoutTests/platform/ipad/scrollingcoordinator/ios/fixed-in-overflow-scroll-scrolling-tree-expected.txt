@@ -12,7 +12,7 @@
     (layout viewport (0,0) width=768 height=1004)
     (min layoutViewport origin (0,0))
     (max layoutViewport origin (0,0))
-    (behavior for fixed 0)
+    (behavior for fixed 1)
     (overflow scrolling node
       (scrollable area size width=300 height=300)
       (total content size width=300 height=800)
