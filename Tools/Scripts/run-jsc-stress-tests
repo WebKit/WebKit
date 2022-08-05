@@ -1741,7 +1741,7 @@ def runWebAssembly
         run("wasm-slow-memory", "-m", "--useWebAssemblyFastMemory=false", *FTL_OPTIONS)
         run("wasm-collect-continuously", "-m", "--collectContinuously=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
         if $isFTLPlatform
-            run("wasm-b3", "-m", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
+            run("wasm-b3-o0", "-m", "--useWasmLLInt=false", *B3O0_OPTIONS)
             run("wasm-air", "-m", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *FTL_OPTIONS)
         end
     end
@@ -1770,7 +1770,7 @@ def runWebAssemblyJetStream2
         run("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *FTL_OPTIONS)
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
         if $isFTLPlatform
-            run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
+            run("wasm-b3-o0", "--useWasmLLInt=false", *B3O0_OPTIONS)
             run("wasm-air", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *FTL_OPTIONS)
         end
     end
@@ -1796,9 +1796,8 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
         run("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
         if $isFTLPlatform
-            run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            run("wasm-b3-o0", "--useWasmLLInt=false", *(B3O0_OPTIONS + optionalTestSpecificOptions))
             run("wasm-air", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
-            run("wasm-bbqb3", "--useWasmLLInt=true", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end
     end
 end
@@ -1831,9 +1830,8 @@ def runWebAssemblyWithHarness(*optionalTestSpecificOptions)
         runHarnessTest("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         runHarnessTest("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
         if $isFTLPlatform
-            runHarnessTest("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            runHarnessTest("wasm-b3-o0", "--useWasmLLInt=false", *(B3O0_OPTIONS + optionalTestSpecificOptions))
             runHarnessTest("wasm-no-air", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
-            runHarnessTest("wasm-bbqb3", "--useWasmLLInt=true", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
         end
     end
 end
@@ -1854,7 +1852,7 @@ def runWebAssemblyEmscripten(mode)
         run("wasm-no-tls-context", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
         if $isFTLPlatform
-            run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
+            run("wasm-b3-o0", "--useWasmLLInt=false", *B3O0_OPTIONS)
             run("wasm-air", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *FTL_OPTIONS)
         end
     end
@@ -1883,7 +1881,7 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, *optionalTestSpecificOptio
       runWithOutputHandler("wasm-no-tls-context", noisyOutputHandler, specHarnessJsPath, "--useFastTLSForWasmContext=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
       runWithOutputHandler("wasm-collect-continuously", noisyOutputHandler, specHarnessJsPath, "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
       if $isFTLPlatform
-          runWithOutputHandler("wasm-b3", noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+          runWithOutputHandler("wasm-b3-o0", noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", *(B3O0_OPTIONS + optionalTestSpecificOptions))
           runWithOutputHandler("wasm-air", noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
       end
     end

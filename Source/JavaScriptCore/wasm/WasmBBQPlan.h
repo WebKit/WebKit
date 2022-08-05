@@ -28,7 +28,6 @@
 #if ENABLE(WEBASSEMBLY_B3JIT)
 
 #include "CompilationResult.h"
-#include "WasmB3IRGenerator.h"
 #include "WasmEntryPlan.h"
 #include "WasmModuleInformation.h"
 #include "WasmTierUpCount.h"
@@ -74,8 +73,6 @@ public:
     {
         return Base::parseAndValidateModule(m_source.data(), m_source.size());
     }
-
-    static bool planGeneratesLoopOSREntrypoints(const ModuleInformation&);
 
 private:
     bool prepareImpl() final;

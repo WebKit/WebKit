@@ -32,7 +32,6 @@
 #include "JSToWasm.h"
 #include "LinkBuffer.h"
 #include "WasmAirIRGenerator.h"
-#include "WasmB3IRGenerator.h"
 #include "WasmCallee.h"
 #include "WasmCalleeGroup.h"
 #include "WasmCalleeRegistry.h"
@@ -58,18 +57,6 @@ BBQPlan::BBQPlan(VM& vm, Ref<ModuleInformation> moduleInformation, uint32_t func
     ASSERT(Options::useBBQJIT());
     setMode(m_calleeGroup->mode());
     dataLogLnIf(WasmBBQPlanInternal::verbose, "Starting BBQ plan for ", functionIndex);
-}
-
-bool BBQPlan::planGeneratesLoopOSREntrypoints(const ModuleInformation& moduleInformation)
-{
-    // FIXME: Some webpages use very large Wasm module, and it exhausts all executable memory in ARM64 devices since the size of executable memory region is only limited to 128MB.
-    // The long term solution should be to introduce a Wasm interpreter. But as a short term solution, we introduce heuristics to switch back to BBQ B3 at the sacrifice of start-up time,
-    // as BBQ Air bloats such lengthy Wasm code and will consume a large amount of executable memory.
-    if (Options::webAssemblyBBQAirModeThreshold() && moduleInformation.codeSectionSize >= Options::webAssemblyBBQAirModeThreshold())
-        return false;
-    if (!Options::wasmBBQUsesAir())
-        return false;
-    return true;
 }
 
 bool BBQPlan::prepareImpl()
@@ -224,12 +211,9 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
     const TypeDefinition& signature = TypeInformation::get(typeIndex);
     unsigned functionIndexSpace = m_moduleInformation->importFunctionCount() + functionIndex;
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
-    Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
-
-    if (!planGeneratesLoopOSREntrypoints(m_moduleInformation.get()))
-        parseAndCompileResult = parseAndCompileB3(context, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, m_hasExceptionHandlers, UINT32_MAX, tierUp);
-    else
-        parseAndCompileResult = parseAndCompileAir(context, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, tierUp);
+    auto parseAndCompileResult = parseAndCompileAir(context, function, signature, 
+        unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex,
+        m_hasExceptionHandlers, tierUp);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };

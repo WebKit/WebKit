@@ -3276,9 +3276,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(Compilatio
     // optLevel=1.
     procedure.setNeedsUsedRegisters(false);
     
-    procedure.setOptLevel(isAnyBBQ(compilationMode)
-        ? Options::webAssemblyBBQB3OptimizationLevel()
-        : Options::webAssemblyOMGOptimizationLevel());
+    procedure.setOptLevel(Options::webAssemblyOMGOptimizationLevel());
 
     procedure.code().setForceIRCRegisterAllocation();
 
