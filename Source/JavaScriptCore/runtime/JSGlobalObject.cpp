@@ -2617,10 +2617,9 @@ void JSGlobalObject::installTypedArrayIteratorProtocolWatchpoint(JSObject* base,
         return ObjectPropertyCondition::absence(vm, this, base, propertyName.uid(), m_typedArrayProto.get(this));
     };
 
-    ObjectPropertyCondition lengthCondition = absenceCondition(vm.propertyNames->length);
     ObjectPropertyCondition iteratorCondition = absenceCondition(vm.propertyNames->iteratorSymbol);
 
-    if (!lengthCondition.isWatchable(PropertyCondition::EnsureWatchability) || !iteratorCondition.isWatchable(PropertyCondition::EnsureWatchability)) {
+    if (!iteratorCondition.isWatchable(PropertyCondition::EnsureWatchability)) {
         typedArrayIteratorProtocolWatchpointSet(typedArrayType).invalidate(vm, StringFireDetail("Was not able to set up iterator protocol watchpoint."));
         return;
     }
@@ -2628,28 +2627,16 @@ void JSGlobalObject::installTypedArrayIteratorProtocolWatchpoint(JSObject* base,
     RELEASE_ASSERT(!typedArrayIteratorProtocolWatchpointSet(typedArrayType).isBeingWatched());
     typedArrayIteratorProtocolWatchpointSet(typedArrayType).touch(vm, "Set up iterator protocol watchpoint.");
 
-    typedArrayPrototypeLengthAbsenceWatchpoint(typedArrayType) = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, lengthCondition, typedArrayIteratorProtocolWatchpointSet(typedArrayType));
-    typedArrayPrototypeLengthAbsenceWatchpoint(typedArrayType)->install(vm);
     typedArrayPrototypeSymbolIteratorAbsenceWatchpoint(typedArrayType) = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, iteratorCondition, typedArrayIteratorProtocolWatchpointSet(typedArrayType));
     typedArrayPrototypeSymbolIteratorAbsenceWatchpoint(typedArrayType)->install(vm);
 }
 
-void JSGlobalObject::installTypedArrayPrototypeIteratorProtocolWatchpoint(JSTypedArrayViewPrototype* prototype, GetterSetter* lengthGetterSetter)
+void JSGlobalObject::installTypedArrayPrototypeIteratorProtocolWatchpoint(JSTypedArrayViewPrototype* prototype)
 {
     VM& vm = this->vm();
-    {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, prototype, vm.propertyNames->iteratorSymbol);
-        m_typedArrayPrototypeSymbolIteratorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_typedArrayPrototypeIteratorProtocolWatchpointSet);
-        m_typedArrayPrototypeSymbolIteratorWatchpoint->install(vm);
-    }
-    {
-        PropertySlot slot(prototype, PropertySlot::InternalMethodType::VMInquiry, &vm);
-        prototype->getOwnPropertySlot(prototype, this, vm.propertyNames->length.impl(), slot);
-        prototype->structure()->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
-        ObjectPropertyCondition speciesCondition = ObjectPropertyCondition::equivalence(vm, nullptr, prototype, vm.propertyNames->length.impl(), lengthGetterSetter);
-        m_typedArrayPrototypeLengthWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, speciesCondition, m_typedArrayPrototypeIteratorProtocolWatchpointSet);
-        m_typedArrayPrototypeLengthWatchpoint->install(vm);
-    }
+    ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, prototype, vm.propertyNames->iteratorSymbol);
+    m_typedArrayPrototypeSymbolIteratorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_typedArrayPrototypeIteratorProtocolWatchpointSet);
+    m_typedArrayPrototypeSymbolIteratorWatchpoint->install(vm);
 }
 
 void JSGlobalObject::installNumberPrototypeWatchpoint(NumberPrototype* numberPrototype)

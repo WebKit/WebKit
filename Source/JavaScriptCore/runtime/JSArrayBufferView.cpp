@@ -371,9 +371,6 @@ bool JSArrayBufferView::isIteratorProtocolFastAndNonObservable()
     if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)
         return false;
 
-    if (getDirectOffset(vm, vm.propertyNames->length) != invalidOffset)
-        return false;
-
     return true;
 }
 

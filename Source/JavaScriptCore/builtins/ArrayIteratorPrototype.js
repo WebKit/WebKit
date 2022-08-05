@@ -50,7 +50,7 @@ function arrayIteratorNextHelper(array, kind)
 
     var index = @getArrayIteratorInternalField(this, @arrayIteratorFieldIndex);
     if (index !== -1) {
-        var length = array.length >>> 0;
+        var length = @isTypedArrayView(array) ? @typedArrayLength(array) : @toLength(array.length);
         if (index < length) {
             @putArrayIteratorInternalField(this, @arrayIteratorFieldIndex, index + 1);
             done = false;

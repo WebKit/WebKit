@@ -8,4 +8,4 @@ Reflect.defineProperty(array, 'length', {
     value: 42
 });
 var result = Uint8Array.from(array);
-shouldBe(result.length, 42);
+shouldBe(result.length, 128); // Ignore "length"
