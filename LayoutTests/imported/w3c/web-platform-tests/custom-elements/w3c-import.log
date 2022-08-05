@@ -33,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/enqueue-custom-element-callback-reactions-inside-another-callback.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/microtasks-and-constructors.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/perform-microtask-checkpoint-before-construction-xml-parser.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/perform-microtask-checkpoint-before-construction.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/prevent-extensions-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined-print-expected.html
@@ -41,7 +42,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/range-and-constructors.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reaction-timing.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/throw-on-dynamic-markup-insertion-counter-construct-xml-parser.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/throw-on-dynamic-markup-insertion-counter-construct.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/xhtml-crash.xhtml

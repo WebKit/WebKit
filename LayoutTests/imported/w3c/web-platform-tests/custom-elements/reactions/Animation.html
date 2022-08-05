@@ -6,10 +6,10 @@
 <meta name="assert" content="commitStyles of Animation interface must have CEReactions">
 <meta name="help" content="https://dom.spec.whatwg.org/#element">
 <meta name="help" content="https://w3c.github.io/DOM-Parsing/">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
-<script src="../../imported/w3c/web-platform-tests/custom-elements/resources/custom-elements-helpers.js"></script>
-<script src="../../imported/w3c/web-platform-tests/custom-elements/reactions/resources/reactions.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="../resources/custom-elements-helpers.js"></script>
+<script src="./resources/reactions.js"></script>
 </head>
 <body>
 <div id="log"></div>
@@ -50,7 +50,7 @@ test(function () {
 }, 'Animation.animate must enqueue an attributeChanged reaction when it mutates the observed style attribute');
 
 test(function () {
-    var element = define_new_custom_element([]);
+    const element = define_new_custom_element([]);
     const instance = document.createElement(element.name);
     document.body.appendChild(instance);
     assert_array_equals(element.takeLog().types(), ['constructed', 'connected']);

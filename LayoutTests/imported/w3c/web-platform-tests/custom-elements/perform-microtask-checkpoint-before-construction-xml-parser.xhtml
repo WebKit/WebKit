@@ -6,31 +6,18 @@
 <meta name="assert" content="When the HTML parser creates an element for a token, it must perform a microtask checkpoint before invoking the constructor" />
 <meta name="help" content="https://html.spec.whatwg.org/multipage/parsing.html#create-an-element-for-the-token" />
 <meta name="help" content="https://html.spec.whatwg.org/multipage/webappapis.html#perform-a-microtask-checkpoint" />
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/custom-elements-helpers.js"></script>
 </head>
 <body>
 <div id="log"></div>
 <script>
 <![CDATA[
 
-function create_window_in_test(test, doc) {
-    return new Promise((resolve) => {
-        let iframe = document.createElement('iframe');
-        blob = new Blob([doc], {type: 'application/xml'});
-        iframe.src = URL.createObjectURL(blob);
-        iframe.onload = (event) => {
-            let contentWindow = iframe.contentWindow;
-            test.add_cleanup(() => iframe.remove());
-            resolve(contentWindow);
-        };
-        document.body.appendChild(iframe);
-    });
-}
-
 async function construct_custom_element_in_parser(test, markup)
 {
-    const window = await create_window_in_test(test, `<?xml version="1.0" encoding="utf-8"?>
+    const window = await create_window_in_test_async(test, 'application/xml', `<?xml version="1.0" encoding="utf-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <body><script>
 class SomeElement extends HTMLElement {
