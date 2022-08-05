@@ -30,18 +30,18 @@ class TextBreakIteratorCF {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Mode {
-        Caret,
-        Delete
+        ComposedCharacter,
+        BackwardDeletion
     };
 
     TextBreakIteratorCF(StringView string, Mode mode)
         : m_string(string.createCFStringWithoutCopying())
     {
         switch (mode) {
-        case Mode::Caret:
+        case Mode::ComposedCharacter:
             m_type = kCFStringComposedCharacterCluster;
             break;
-        case Mode::Delete:
+        case Mode::BackwardDeletion:
             m_type = kCFStringBackwardDeletionCluster;
             break;
         }

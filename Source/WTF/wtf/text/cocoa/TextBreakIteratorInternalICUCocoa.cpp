@@ -37,9 +37,9 @@ static std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBa
     case TextBreakIterator::Mode::Line:
         return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Line, locale.string().utf8().data());
     case TextBreakIterator::Mode::Caret:
-        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::Caret);
+        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::ComposedCharacter);
     case TextBreakIterator::Mode::Delete:
-        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::Delete);
+        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::BackwardDeletion);
     }
 }
 
