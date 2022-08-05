@@ -27,7 +27,6 @@ messages -> WebSWClientConnection {
     JobRejectedInServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, struct WebCore::ExceptionData exception)
     RegistrationJobResolvedInServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, struct WebCore::ServiceWorkerRegistrationData registration, enum:bool WebCore::ShouldNotifyWhenResolved shouldNotifyWhenResolved)
     StartScriptFetchForServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, WebCore::FetchOptions::Cache cachePolicy)
-    RefreshImportedScripts(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, WebCore::FetchOptions::Cache cachePolicy, Vector<URL> urls) -> (Vector<std::pair<URL, WebCore::ScriptBuffer>> results);
     UpdateRegistrationState(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum:uint8_t WebCore::ServiceWorkerRegistrationState state, std::optional<WebCore::ServiceWorkerData> serviceWorkerIdentifier)
     UpdateWorkerState(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum:uint8_t WebCore::ServiceWorkerState state)
     FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier identifier)

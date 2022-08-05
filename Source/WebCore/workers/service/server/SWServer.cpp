@@ -608,12 +608,6 @@ void SWServer::refreshImportedScripts(const ServiceWorkerJobData& jobData, SWSer
     };
     bool shouldRefreshCache = registration.updateViaCache() == ServiceWorkerUpdateViaCache::None || (registration.getNewestWorker() && registration.isStale());
 
-    auto* connection = m_connections.get(jobData.connectionIdentifier());
-    if (connection) {
-        connection->refreshImportedScripts(jobData.identifier().jobIdentifier, shouldRefreshCache ? FetchOptions::Cache::NoCache : FetchOptions::Cache::Default, urls, WTFMove(callback));
-        return;
-    }
-
     ASSERT(jobData.connectionIdentifier() == Process::identifier());
     auto handler = RefreshImportedScriptsHandler::create(urls.size(), WTFMove(callback));
     for (auto& url : urls) {

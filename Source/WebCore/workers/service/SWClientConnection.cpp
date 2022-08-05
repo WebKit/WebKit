@@ -115,46 +115,6 @@ void SWClientConnection::startScriptFetchForServer(ServiceWorkerJobIdentifier jo
         finishFetchingScriptInServer({ serverConnectionIdentifier(), jobIdentifier }, WTFMove(registrationKey), workerFetchError(ResourceError { errorDomainWebKitInternal, 0, { }, makeString("Failed to fetch script for service worker with scope ", registrationKey.scope().string()) }));
 }
 
-class RefreshImportedScriptsCallbackHandler {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit RefreshImportedScriptsCallbackHandler(ServiceWorkerJob::RefreshImportedScriptsCallback&& callback)
-        : m_callback(WTFMove(callback))
-    {
-    }
-
-    ~RefreshImportedScriptsCallbackHandler()
-    {
-        if (!m_callback)
-            return;
-
-        callOnMainThread([callback = WTFMove(m_callback)] () mutable {
-            callback({ });
-        });
-    }
-
-    void call(Vector<std::pair<URL, ScriptBuffer>>&& scripts)
-    {
-        callOnMainThread([callback = WTFMove(m_callback), scripts = crossThreadCopy(WTFMove(scripts))] () mutable {
-            callback(WTFMove(scripts));
-        });
-    }
-
-private:
-    ServiceWorkerJob::RefreshImportedScriptsCallback m_callback;
-};
-
-void SWClientConnection::refreshImportedScripts(ServiceWorkerJobIdentifier jobIdentifier, FetchOptions::Cache cachePolicy, Vector<URL>&& urls, ServiceWorkerJob::RefreshImportedScriptsCallback&& callback)
-{
-    ASSERT(isMainThread());
-    auto handler = makeUnique<RefreshImportedScriptsCallbackHandler>(WTFMove(callback));
-    postTaskForJob(jobIdentifier, IsJobComplete::No, [cachePolicy, urls = crossThreadCopy(WTFMove(urls)), handler = WTFMove(handler)] (auto& job) mutable {
-        job.refreshImportedScripts(urls, cachePolicy, [handler = WTFMove(handler)] (auto&& result) {
-            handler->call(WTFMove(result));
-        });
-    });
-}
-
 static void postMessageToContainer(ScriptExecutionContext& context, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, String&& sourceOrigin)
 {
     if (auto* container = context.ensureServiceWorkerContainer())

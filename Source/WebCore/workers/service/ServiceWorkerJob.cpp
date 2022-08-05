@@ -113,70 +113,6 @@ static FetchOptions scriptFetchOptions(FetchOptions::Cache cachePolicy, FetchOpt
     return options;
 }
 
-ServiceWorkerJob::ImportedScriptsLoader::ImportedScriptsLoader(RefreshImportedScriptsCallback&& callback)
-    : m_callback(WTFMove(callback))
-{
-}
-
-ServiceWorkerJob::ImportedScriptsLoader::~ImportedScriptsLoader()
-{
-    if (m_callback)
-        m_callback({ });
-}
-
-void ServiceWorkerJob::ImportedScriptsLoader::load(ScriptExecutionContext& context, const Vector<URL>& urls, FetchOptions::Cache cachePolicy)
-{
-    m_loaders.reserveCapacity(urls.size());
-    for (auto& url : urls) {
-        auto scriptLoader = WorkerScriptLoader::create();
-        scriptLoader->loadAsynchronously(context, scriptResourceRequest(context, url), WorkerScriptLoader::Source::ClassicWorkerScript, scriptFetchOptions(cachePolicy, FetchOptions::Destination::Script), ContentSecurityPolicyEnforcement::DoNotEnforce, ServiceWorkersMode::None, *this, WorkerRunLoop::defaultMode());
-        if (scriptLoader->failed())
-            continue;
-        m_loaders.uncheckedAppend(WTFMove(scriptLoader));
-    }
-    m_remainingLoads = m_loaders.size();
-}
-
-void ServiceWorkerJob::ImportedScriptsLoader::cancel()
-{
-    auto loaders = WTFMove(m_loaders);
-    for (auto loader : loaders)
-        loader->cancel();
-}
-
-void ServiceWorkerJob::ImportedScriptsLoader::notifyFinished()
-{
-    if (--m_remainingLoads)
-        return;
-
-    Vector<std::pair<URL, ScriptBuffer>> results;
-    results.reserveInitialCapacity(m_loaders.size());
-
-    auto loaders = WTFMove(m_loaders);
-    for (auto loader : loaders) {
-        if (!loader->failed())
-            results.uncheckedAppend(std::make_pair(loader->url(), loader->script()));
-    }
-
-    m_callback(WTFMove(results));
-}
-
-
-void ServiceWorkerJob::refreshImportedScripts(const Vector<URL>& urls, FetchOptions::Cache cachePolicy, RefreshImportedScriptsCallback&& callback)
-{
-    ASSERT(m_creationThread.ptr() == &Thread::current());
-    ASSERT(!m_completed);
-
-    auto* context = m_client.context();
-    if (!context) {
-        callback({ });
-        return;
-    }
-
-    m_importedScriptsLoader = makeUnique<ImportedScriptsLoader>(WTFMove(callback));
-    m_importedScriptsLoader->load(*context, urls, cachePolicy);
-}
-
 void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, FetchOptions::Cache cachePolicy)
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
@@ -253,9 +189,6 @@ void ServiceWorkerJob::notifyFinished()
 
 bool ServiceWorkerJob::cancelPendingLoad()
 {
-    if (auto importedScriptsLoader = WTFMove(m_importedScriptsLoader))
-        importedScriptsLoader->cancel();
-
     if (auto loader = WTFMove(m_scriptLoader)) {
         m_scriptLoader->cancel();
         return true;

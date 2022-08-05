@@ -118,7 +118,6 @@ public:
         virtual void resolveRegistrationJobInClient(ServiceWorkerJobIdentifier, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved) = 0;
         virtual void resolveUnregistrationJobInClient(ServiceWorkerJobIdentifier, const ServiceWorkerRegistrationKey&, bool registrationResult) = 0;
         virtual void startScriptFetchInClient(ServiceWorkerJobIdentifier, const ServiceWorkerRegistrationKey&, FetchOptions::Cache) = 0;
-        virtual void refreshImportedScripts(ServiceWorkerJobIdentifier, FetchOptions::Cache, const Vector<URL>&, ServiceWorkerJob::RefreshImportedScriptsCallback&&) = 0;
 
         struct RegistrationReadyRequest {
             SecurityOriginData topOrigin;
