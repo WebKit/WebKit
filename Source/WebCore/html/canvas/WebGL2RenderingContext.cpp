@@ -674,7 +674,7 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
         return;
 
     // FIXME: Coalesce multiple getBufferSubData() calls to use a single map() call
-    m_context->getBufferSubData(target, srcByteOffset, makeGCGLSpan(static_cast<char*>(dstData->baseAddress()) + dstData->byteOffset() + dstOffset * elementSize, copyLength * elementSize));
+    m_context->getBufferSubData(target, srcByteOffset, makeGCGLSpan(static_cast<char*>(dstData->baseAddress()) + dstOffset * elementSize, copyLength * elementSize));
 }
 
 void WebGL2RenderingContext::bindFramebuffer(GCGLenum target, WebGLFramebuffer* buffer)
