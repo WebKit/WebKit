@@ -542,7 +542,11 @@ class Manager(object):
             self._save_json_files(summarized_results, initial_results)
 
             results_path = self._filesystem.join(self._results_directory, "results.html")
-            self._copy_results_html_file(results_path)
+            self._copy_results_html_file("results.html", results_path)
+
+            treemap_path = self._filesystem.join(self._results_directory, "test-duration-treemap.html")
+            self._copy_results_html_file("test-duration-treemap.html", treemap_path)
+
             if initial_results.keyboard_interrupted:
                 exit_code = INTERRUPTED_EXIT_STATUS
             else:
@@ -713,9 +717,9 @@ class Manager(object):
         self._filesystem.remove(times_json_path)
         self._filesystem.remove(incremental_results_path)
 
-    def _copy_results_html_file(self, destination_path):
+    def _copy_results_html_file(self, filename, destination_path):
         base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')
-        results_file = self._filesystem.join(base_dir, 'results.html')
+        results_file = self._filesystem.join(base_dir, filename)
         # Note that the results.html template file won't exist when we're using a MockFileSystem during unit tests,
         # so make sure it exists before we try to copy it.
         if self._filesystem.exists(results_file):

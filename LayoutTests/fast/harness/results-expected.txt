@@ -43,5 +43,8 @@ canvas/philip/tests/2d.gradient.interpolate.solid.html	fail	history
 editing/spelling/spelling-marker-includes-hyphen.html	image	history
 editing/spelling/spelling-markers-in-overlapping-lines.html	image	history
 webarchive/loading/test-loading-archive-subresource-null-mimetype.html	crash	history
-httpd access log: access_log.txt
-httpd error log: error_log.txt
+Additional test data
+
+httpd access log
+httpd error log
+Test durations

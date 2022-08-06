@@ -647,17 +647,8 @@ class TestResultsController
         if (this.testResults.usesExpectationsFile() && this.testResults.unexpectedPassTests.length)
             this.containerElement.appendChild(this.buildOneSection(this.testResults.unexpectedPassTests, 'passes-table'));
 
-        if (this.testResults.hasHttpTests) {
-            let httpdAccessLogLink = document.createElement('p');
-            httpdAccessLogLink.innerHTML = 'httpd access log: <a href="access_log.txt">access_log.txt</a>';
+        this.containerElement.appendChild(this.buildMiscLinksSection());
 
-            let httpdErrorLogLink = document.createElement('p');
-            httpdErrorLogLink.innerHTML = 'httpd error log: <a href="error_log.txt">error_log.txt</a>';
-            
-            this.containerElement.appendChild(httpdAccessLogLink);
-            this.containerElement.appendChild(httpdErrorLogLink);
-        }
-        
         this.updateTestlistCounts();
     }
 
@@ -719,6 +710,31 @@ class TestResultsController
         let sectionBuilderClass = TestResultsController.sectionBuilderClassForTableID(tableID);
         let sectionBuilder = new sectionBuilderClass(tests, tableID, this);
         return sectionBuilder.build();
+    }
+
+    buildMiscLinksSection()
+    {
+        let section = document.createElement('section');
+        let header = document.createElement('h1');
+        header.textContent = 'Additional test data';
+        section.appendChild(header);
+
+        if (this.testResults.hasHttpTests) {
+            let httpdAccessLogLink = document.createElement('p');
+            httpdAccessLogLink.innerHTML = '<a href="access_log.txt">httpd access log</a>';
+
+            let httpdErrorLogLink = document.createElement('p');
+            httpdErrorLogLink.innerHTML = '<a href="error_log.txt">httpd error log</a>';
+            
+            section.appendChild(httpdAccessLogLink);
+            section.appendChild(httpdErrorLogLink);
+        }
+
+        let perfTreeMapLink = document.createElement('p');
+        perfTreeMapLink.innerHTML = '<a href="test-duration-treemap.html">Test durations</a>';
+        section.appendChild(perfTreeMapLink);
+
+        return section;
     }
 
     updateTestlistCounts()
