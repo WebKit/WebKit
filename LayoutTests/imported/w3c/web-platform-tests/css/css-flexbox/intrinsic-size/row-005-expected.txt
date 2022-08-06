@@ -1,0 +1,78 @@
+
+FAIL .floating-flexbox 1 assert_equals:
+<div class="floating-flexbox" data-expected-width="300">
+        <div style="flex: 1 1 200px; width:50px;">
+          <div></div>
+        </div>
+        <div style="flex: 1 1 400px; width:50px;">
+          <div></div>
+        </div>
+      </div>
+width expected 300 but got 100
+FAIL .floating-flexbox 2 assert_equals:
+<div class="floating-flexbox" data-expected-width="225">
+        <div style="flex: 1 1 200px; width:50px;">
+          <div></div>
+        </div>
+        <div style="flex: 1 2 400px; width:50px;">
+          <div></div>
+        </div>
+      </div>
+width expected 225 but got 100
+FAIL .floating-flexbox 3 assert_equals:
+<div class="floating-flexbox" data-expected-width="225">
+        <div style="flex: 1 1 200px; width:50px; min-width: 0px;">
+          <div></div>
+        </div>
+        <div style="flex: 1 2 400px; width:50px; min-width: 0px;">
+          <div></div>
+        </div>
+      </div>
+width expected 225 but got 100
+FAIL .floating-flexbox 4 assert_equals:
+<div class="floating-flexbox" data-expected-width="600">
+        <div style="flex: 1 0 200px; width:50px;">
+          <div></div>
+        </div>
+        <div style="flex: 1 1 400px; width:50px;">
+          <div></div>
+        </div>
+      </div>
+width expected 600 but got 100
+FAIL .floating-flexbox 5 assert_equals:
+<div class="floating-flexbox" data-expected-width="200">
+        <div style="flex: 0 0 50px; width: 200px;">
+          <div></div>
+        </div>
+        <div style="flex: 0 0 50px; width: 200px;">
+          <div></div>
+        </div>
+      </div>
+width expected 200 but got 400
+FAIL .floating-flexbox 6 assert_equals:
+<div class="floating-flexbox" data-expected-width="600">
+        <!-- contribution: 200 -->
+        <!-- fraction: 150 -->
+        <!-- 50 + 1*150 = 200 -->
+        <div style="flex: 1 0 50px; width: 200px;">
+          <div></div>
+        </div>
+        <!-- contribution: 200 -->
+        <!-- fraction: 100 -->
+        <!-- 100 + 2*150 = 400 -->
+        <div style="flex: 2 0 100px; width: 200px;">
+          <div></div>
+        </div>
+      </div>
+width expected 600 but got 400
+FAIL .floating-flexbox 7 assert_equals:
+<div class="floating-flexbox" data-expected-width="400">
+        <div style="flex: 0 1 200px; width: 50px;">
+          <div></div>
+        </div>
+        <div style="flex: 2 0 100px; width: 200px;">
+          <div></div>
+        </div>
+      </div>
+width expected 400 but got 250
+

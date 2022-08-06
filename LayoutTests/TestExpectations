@@ -1376,11 +1376,9 @@ webkit.org/b/136078 fast/borders/border-painting-double.html [ ImageOnlyFailure 
 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ DumpJSConsoleLogInStdErr ]
 
 # official flexbox tests
-webkit.org/b/143294 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-height-animation-stretch.html [ Pass ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-align-items-center.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-items-flexibility.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_generated-container.html [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-center-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_min-height-auto.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_min-width-auto.html [ ImageOnlyFailure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_visibility-collapse-line-wrapping.html [ ImageOnlyFailure ]
@@ -1393,6 +1391,15 @@ webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-safe-overflow-position-001.html [ ImageOnlyFailure ]
 webkit.org/b/210243 imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks-002.html [ Failure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-no-margin.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/fieldset-baseline-alignment.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/stretch-flex-item-checkbox-input.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/stretch-flex-item-radio-input.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/webkit-box-vertical-writing-mode.html [ ImageOnlyFailure ]
 
 # grid layout tests
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-with-dynamic-img.html [ ImageOnlyFailure ]
