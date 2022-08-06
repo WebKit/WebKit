@@ -29,6 +29,7 @@
 
 #include "APIArray.h"
 #include "APINotificationProvider.h"
+#include "NotificationService.h"
 #include "WebKitNotificationPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
@@ -80,69 +81,95 @@ WebKitNotificationProvider::WebKitNotificationProvider(WebNotificationManagerPro
 
 WebKitNotificationProvider::~WebKitNotificationProvider()
 {
+    if (m_observerRegistered)
+        NotificationService::singleton().removeObserver(*this);
+
     m_notificationManager->setProvider(nullptr);
 }
 
-void WebKitNotificationProvider::notificationCloseCallback(WebKitNotification* notification, WebKitNotificationProvider* provider)
+void WebKitNotificationProvider::apiNotificationCloseCallback(WebKitNotification* notification, WebKitNotificationProvider* provider)
 {
     uint64_t notificationID = webkit_notification_get_id(notification);
     Vector<RefPtr<API::Object>> arrayIDs;
     arrayIDs.append(API::UInt64::create(notificationID));
     provider->m_notificationManager->providerDidCloseNotifications(API::Array::create(WTFMove(arrayIDs)).ptr());
-    provider->m_notifications.remove(notificationID);
+    provider->m_apiNotifications.remove(notificationID);
 }
 
-void WebKitNotificationProvider::notificationClickedCallback(WebKitNotification* notification, WebKitNotificationProvider* provider)
+void WebKitNotificationProvider::apiNotificationClickedCallback(WebKitNotification* notification, WebKitNotificationProvider* provider)
 {
     provider->m_notificationManager->providerDidClickNotification(webkit_notification_get_id(notification));
 }
 
-void WebKitNotificationProvider::withdrawAnyPreviousNotificationMatchingTag(const CString& tag)
+void WebKitNotificationProvider::closeAPINotification(uint64_t notificationID)
+{
+    if (auto notification = m_apiNotifications.take(notificationID))
+        webkit_notification_close(notification.get());
+}
+
+void WebKitNotificationProvider::withdrawAnyPreviousAPINotificationMatchingTag(const CString& tag)
 {
     if (!tag.length())
         return;
 
-    for (auto& notification : m_notifications.values()) {
+    for (auto& notification : m_apiNotifications.values()) {
         if (tag == webkit_notification_get_tag(notification.get())) {
-            webkit_notification_close(notification.get());
+            closeAPINotification(webkit_notification_get_id(notification.get()));
             break;
         }
     }
 
-#ifndef NDEBUG
-    for (auto& notification : m_notifications.values())
+#if ASSERT_ENABLED
+    for (auto& notification : m_apiNotifications.values())
         ASSERT(tag != webkit_notification_get_tag(notification.get()));
 #endif
 }
 
-void WebKitNotificationProvider::show(WebPageProxy* page, const WebNotification& webNotification)
+void WebKitNotificationProvider::show(WebPageProxy* page, WebNotification& webNotification)
 {
     if (!page) {
-        // FIXME: glib needs to find their own solution to handling pageless notifications.
-        // I won't make something up for them.
+        // FIXME: glib API needs to find their own solution to handling pageless notifications.
+        show(webNotification);
         return;
     }
-    
-    GRefPtr<WebKitNotification> notification = m_notifications.get(webNotification.notificationID());
+
+    GRefPtr<WebKitNotification> notification = m_apiNotifications.get(webNotification.notificationID());
+    if (!notification) {
+        withdrawAnyPreviousAPINotificationMatchingTag(webNotification.tag().utf8());
+        notification = adoptGRef(webkitNotificationCreate(webNotification));
+        g_signal_connect(notification.get(), "closed", G_CALLBACK(apiNotificationCloseCallback), this);
+        g_signal_connect(notification.get(), "clicked", G_CALLBACK(apiNotificationClickedCallback), this);
+        m_apiNotifications.set(webNotification.notificationID(), notification);
+    }
+
     auto* webView = webkitWebContextGetWebViewForPage(m_webContext, page);
     ASSERT(webView);
 
-    if (!notification) {
-        withdrawAnyPreviousNotificationMatchingTag(webNotification.tag().utf8());
-        notification = adoptGRef(webkitNotificationCreate(webView, webNotification));
-        g_signal_connect(notification.get(), "closed", G_CALLBACK(notificationCloseCallback), this);
-        g_signal_connect(notification.get(), "clicked", G_CALLBACK(notificationClickedCallback), this);
-        m_notifications.set(webNotification.notificationID(), notification);
+    if (webkitWebViewEmitShowNotification(webView, notification.get()))
+        m_notificationManager->providerDidShowNotification(webNotification.notificationID());
+    else {
+        g_signal_handlers_disconnect_by_data(notification.get(), this);
+        show(webNotification);
+    }
+}
+
+void WebKitNotificationProvider::show(WebNotification& webNotification)
+{
+    if (!m_observerRegistered) {
+        NotificationService::singleton().addObserver(*this);
+        m_observerRegistered = true;
     }
 
-    if (webkitWebViewEmitShowNotification(webView, notification.get()))
+    if (NotificationService::singleton().showNotification(webNotification))
         m_notificationManager->providerDidShowNotification(webNotification.notificationID());
 }
 
 void WebKitNotificationProvider::cancelNotificationByID(uint64_t notificationID)
 {
-    if (GRefPtr<WebKitNotification> notification = m_notifications.get(notificationID))
-        webkit_notification_close(notification.get());
+    closeAPINotification(notificationID);
+
+    if (m_observerRegistered)
+        NotificationService::singleton().cancelNotification(notificationID);
 }
 
 void WebKitNotificationProvider::cancel(const WebNotification& webNotification)
@@ -165,4 +192,21 @@ HashMap<WTF::String, bool> WebKitNotificationProvider::notificationPermissions()
 void WebKitNotificationProvider::setNotificationPermissions(HashMap<String, bool>&& permissionsMap)
 {
     m_notificationPermissions = WTFMove(permissionsMap);
+}
+
+void WebKitNotificationProvider::didClickNotification(uint64_t notificationID)
+{
+    if (auto* notification = m_apiNotifications.get(notificationID))
+        webkit_notification_clicked(notification);
+
+    m_notificationManager->providerDidClickNotification(notificationID);
+}
+
+void WebKitNotificationProvider::didCloseNotification(uint64_t notificationID)
+{
+    closeAPINotification(notificationID);
+
+    Vector<RefPtr<API::Object>> arrayIDs;
+    arrayIDs.append(API::UInt64::create(notificationID));
+    m_notificationManager->providerDidCloseNotifications(API::Array::create(WTFMove(arrayIDs)).ptr());
 }

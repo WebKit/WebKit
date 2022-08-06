@@ -460,6 +460,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT_DIR}/UIProcess/Inspector/glib"
     "${WEBKIT_DIR}/UIProcess/Inspector/gtk"
+    "${WEBKIT_DIR}/UIProcess/Notifications/glib/"
     "${WEBKIT_DIR}/UIProcess/geoclue"
     "${WEBKIT_DIR}/UIProcess/glib"
     "${WEBKIT_DIR}/UIProcess/gstreamer"
@@ -499,12 +500,6 @@ if (USE_WPE_RENDERER)
     )
 endif ()
 
-if (USE_LIBNOTIFY)
-list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-    ${LIBNOTIFY_INCLUDE_DIRS}
-)
-endif ()
-
 set(WebKitCommonIncludeDirectories ${WebKit_INCLUDE_DIRECTORIES})
 set(WebKitCommonSystemIncludeDirectories ${WebKit_SYSTEM_INCLUDE_DIRECTORIES})
 
@@ -529,12 +524,6 @@ endif ()
 
 if (GTK_UNIX_PRINT_FOUND)
     list(APPEND WebKit_LIBRARIES GTK::UnixPrint)
-endif ()
-
-if (LIBNOTIFY_FOUND)
-    list(APPEND WebKit_PRIVATE_LIBRARIES
-        ${LIBNOTIFY_LIBRARIES}
-    )
 endif ()
 
 if (USE_LIBWEBRTC)
