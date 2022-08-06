@@ -19,9 +19,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 use warnings;
-use Cwd qw(realpath);
-use Digest::MD5 qw(md5_hex);
-use File::Basename;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;

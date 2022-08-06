@@ -39,7 +39,6 @@ use lib $FindBin::Bin;
 use VCSUtils;
 use webkitdirs;
 
-use File::Basename;
 use File::Spec;
 
 sub generateEntityListFromFile($);
