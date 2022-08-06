@@ -27,6 +27,55 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <html>
 <title>Test Runtimes</title>
 <style>
+    :root {
+        color-scheme: dark light;
+        --clickable-link-color: blue;
+        --item-highlight-color: red;
+        --button-background-color: white;
+        --panel-background-color: rgba(255, 255, 255, 0.9);
+        --node-background-color: white;
+        --node-hover-background-color: #eee;
+
+        --node-border-level0-color: #444;
+        --node-border-level1-color: #666;
+        --node-border-level2-color: #888;
+        --node-border-level3-color: #aaa;
+        --node-border-level4-color: #ccc;
+        
+        --drop-button-text-color: canvastext;
+        --drop-button-background-color: rgba(0, 0, 0, 0.1);
+        --drop-button-over-background-color: rgba(0, 0, 0, 0.3);
+        --drop-button-border-color: rgba(0, 0, 0, 0.3);
+        --drop-button-over-border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --item-highlight-color: #F8490A;
+            --button-background-color: #666;
+            --panel-background-color: rgba(50, 50, 50, 0.9);
+            --clickable-link-color: #9e9eff;
+            --node-background-color: #222;
+            --node-hover-background-color: #333;
+
+            --node-border-level0-color: #ccc;
+            --node-border-level1-color: #aaa;
+            --node-border-level2-color: #777;
+            --node-border-level3-color: #555;
+            --node-border-level4-color: #444;
+
+            --drop-button-text-color: canvastext;
+            --drop-button-background-color: rgba(128, 128, 128, 0.1);
+            --drop-button-over-background-color: rgba(128, 128, 128, 0.3);
+            --drop-button-border-color: rgba(128, 128, 128, 0.3);
+            --drop-button-over-border-color: rgba(128, 128, 128, 0.1);
+        }
+        /* Remove when webkit.org/b/209851 is fixed. */
+        a:link { color: #9e9eff; }
+        a:visited { color: #d0adf0; }
+        a:active { color: red; }
+    }
+
     html {
         height: 100%;
     }
@@ -90,23 +139,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         position: absolute;
         top: 4px;
         right: 4px;
-        border: 2px solid rgba(0, 0, 0, 0.3);
-        background-color: rgba(0, 0, 0, 0.1);
+        border: 2px solid var(--drop-button-border-color);
+        background-color: var(--drop-button-background-color);
         padding: 10px;
         border-radius: 10px;
     }
 
     #dropTarget.dragOver {
-        border: 2px solid rgba(0, 0, 0, 0.1);
-        background-color: rgba(0, 0, 0, 0.5);
-        color: #ddd;
+        border: 2px solid var(--drop-button-over-border-color);
+        background-color: var(--drop-button-over-background-color);
+        color: var(--drop-button-text-color);
     }
 
     .webtreemap-node {
         /* Required attributes. */
         position: absolute;
         overflow: hidden;   /* To hide overlong captions. */
-        background: white;  /* Nodes must be opaque for zIndex layering. */
+        background: var(--node-background-color);  /* Nodes must be opaque for zIndex layering. */
         border: solid 1px black;  /* Calculations assume 1px border. */
 
         transition: top    0.3s,
@@ -117,24 +166,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     /* Optional: highlight nodes on mouseover. */
     .webtreemap-node:hover {
-        background: #eee;
+        background: var(--node-hover-background-color);
     }
 
     /* Optional: Different borders depending on level. */
     .webtreemap-level0 {
-        border: solid 1px #444;
+        border: solid 1px var(--node-border-level0-color);
     }
     .webtreemap-level1 {
-        border: solid 1px #666;
+        border: solid 1px var(--node-border-level1-color);
     }
     .webtreemap-level2 {
-        border: solid 1px #888;
+        border: solid 1px var(--node-border-level2-color);
     }
     .webtreemap-level3 {
-        border: solid 1px #aaa;
+        border: solid 1px var(--node-border-level3-color);
     }
     .webtreemap-level4 {
-        border: solid 1px #ccc;
+        border: solid 1px var(--node-border-level4-color);
     }
 
     /* Optional: styling on node captions. */
@@ -152,7 +201,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         left: 10px;
         box-sizing: border-box;
         width: calc(100% - 20px);
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: var(--panel-background-color);
         padding: 2em;
         border-radius: 10px;
         border: 1px solid gray;

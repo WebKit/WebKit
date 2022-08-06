@@ -1,8 +1,12 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 <head>
 <title>__TITLE__</title>
 <style>
+    :root {
+        color-scheme: dark light;
+    }
+
     body {
         font-family: Helvetica, sans-serif;
         font-size: 11pt;
@@ -69,8 +73,8 @@
     </tr>
     <tr class="pixel-diff __HIDE_FUZZY_CLASS__">
         <td>Fuzzy match:</td>
-        <td><span>Click to toggle between ranges and values</span><br/><input type="button" id="fuzzy-match-data" onclick="toggleFuzzyMatchString()"</td>
-        <td id="fuzzy-match-form" colspan=2><input type="button" value="Copy to clipboard as <meta> tag" onclick="copyToClipboardFuzzyMetaTag()" /></td>
+        <td><span>Click to toggle between ranges and values</span><br><input type="button" id="fuzzy-match-data" onclick="toggleFuzzyMatchString()"></td>
+        <td id="fuzzy-match-form" colspan=2><input type="button" value="Copy to clipboard as <meta> tag" onclick="copyToClipboardFuzzyMetaTag()"></td>
     </tr>
     <tr>
         <td></td>
