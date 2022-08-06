@@ -44,7 +44,7 @@ class TextRun;
 class TextDecorationPainter {
 public:
     struct Styles;
-    TextDecorationPainter(GraphicsContext&, OptionSet<TextDecorationLine> decorations, const RenderText&, bool isFirstLine, const FontCascade&, InlineIterator::TextBoxIterator, float width, const ShadowData*, const FilterOperations*, std::optional<Styles> = std::nullopt);
+    TextDecorationPainter(GraphicsContext&, OptionSet<TextDecorationLine> decorations, bool isFirstLine, const FontCascade&, InlineIterator::TextBoxIterator, float width, const ShadowData*, const FilterOperations*, std::optional<Styles> = std::nullopt);
 
     void paintBackgroundDecorations(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin);
     void paintForegroundDecorations(const FloatPoint& boxOrigin);
