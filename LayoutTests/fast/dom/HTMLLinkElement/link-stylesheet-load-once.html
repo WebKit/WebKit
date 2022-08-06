@@ -2,13 +2,10 @@
 <html>
 <head>
 <script>
+
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
-    testRunner.dumpResourceLoadCallbacks();
-    internals.clearMemoryCache();
-    if (testRunner.setSerializeHTTPLoads)
-        testRunner.setSerializeHTTPLoads();
 }
 
 let loadCount = 0;
@@ -31,8 +28,19 @@ function didLoad(element)
     result.innerHTML = loadCount;
 }
 
+window.onload = () => {
+    setTimeout(() => {
+        if (window.testRunner) {
+            internals.clearMemoryCache();
+            testRunner.dumpResourceLoadCallbacks();
+            if (testRunner.setSerializeHTTPLoads)
+                testRunner.setSerializeHTTPLoads();
+        }
+        document.head.innerHTML = `<link rel="stylesheet" href="resources/link-stylesheet-load-once.css" onload="didLoad(this)">`;
+    }, 0);
+}
+
 </script>
-<link rel="stylesheet" href="resources/link-stylesheet-load-once.css" onload="didLoad(this)">
 </head>
 <body>
 <p>This tests overriding rel content attribute with the same value.<br>
