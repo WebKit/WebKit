@@ -176,8 +176,10 @@ async function doHumAnalysis(stream, expected)
     var context = new AudioContext();
     for (var cptr = 0; cptr < 20; cptr++) {
         var results = await analyseAudio(stream, 200, context);
-        if (results.heardHum === expected)
+        if (results.heardHum === expected) {
+            await context.close();
             return true;
+        }
         await waitFor(50);
     }
     await context.close();
