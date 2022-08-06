@@ -34,6 +34,18 @@ layer at (0,0) size 20x21
   RenderSVGTransformableContainer {use} at (0,22) size 20x21
 layer at (0,0) size 20x20
   RenderSVGEllipse {ellipse} at (0,0) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [cx=10.00] [cy=10.00] [rx=10.00] [ry=10.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {use} at (0,22) size 0x0
+layer at (0,10) size 20x0
+  RenderSVGPath {line} at (0,10) size 20x0 [stroke={[type=SOLID] [color=#00FF00] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=10.00] [x2=20.00] [y2=10.00]
+layer at (0,0) size 20x21
+  RenderSVGTransformableContainer {use} at (0,22) size 20x21
+layer at (0,0) size 20x20
+  RenderSVGPath {polyline} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#00FF00] [stroke width=2.00]}] [points="0 0 20 0 20 20"]
+layer at (0,0) size 20x21
+  RenderSVGTransformableContainer {use} at (0,22) size 20x21
+layer at (0,0) size 20x20
+  RenderSVGPath {polygon} at (0,0) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [points="0 0 20 0 20 20 0 20 0 0"]
 layer at (0,0) size 20x21
   RenderSVGTransformableContainer {use} at (0,22) size 20x21
 layer at (0,0) size 20x20

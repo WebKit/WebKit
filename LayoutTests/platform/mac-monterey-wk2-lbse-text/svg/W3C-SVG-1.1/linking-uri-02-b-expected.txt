@@ -90,6 +90,8 @@ layer at (36,128) size 83x12
   RenderSVGText {text} at (0,122) size 84x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 84x12
       chunk 1 text run 1 at (36.00,137.00) startOffset 0 endOffset 19 width 83.30: "preserveAspectRatio"
+layer at (39,211) size 95x72
+  RenderSVGPath {polygon} at (3,206) size 95x72 [fill={[type=SOLID] [color=#008000]}] [points="87 211 134 238 116 283 57 283 39 238 87 211"]
 layer at (65,281) size 53x18
   RenderSVGText {text} at (29,276) size 54x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 54x18

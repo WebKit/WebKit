@@ -26,6 +26,20 @@ layer at (75,23) size 83x9
   RenderSVGText {text} at (72,0) size 84x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 84x9
       chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 83.16: "this is a line to squeeze"
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (-3,-23) size 0x0
+layer at (2,32) size 54x0
+  RenderSVGPath {line} at (2,32) size 54x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=56.00] [y2=32.00]
+layer at (2,32) size 0x4
+  RenderSVGPath {line} at (2,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=2.00] [y2=36.00]
+layer at (56,32) size 0x4
+  RenderSVGPath {line} at (56,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=56.00] [y1=32.00] [x2=56.00] [y2=36.00]
+layer at (74,32) size 84x0
+  RenderSVGPath {line} at (74,32) size 84x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=158.00] [y2=32.00]
+layer at (74,32) size 0x4
+  RenderSVGPath {line} at (74,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=74.00] [y2=36.00]
+layer at (158,32) size 0x4
+  RenderSVGPath {line} at (158,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=158.00] [y1=32.00] [x2=158.00] [y2=36.00]
 layer at (6,33) size 125x14
   RenderSVGTransformableContainer {g} at (3,9) size 125x14
 layer at (6,33) size 49x7
@@ -94,6 +108,20 @@ layer at (75,23) size 66x9
       chunk 1 text run 23 at (129.28,30.00) startOffset 22 endOffset 23 width 4.45: "e"
       chunk 1 text run 24 at (133.00,30.00) startOffset 23 endOffset 24 width 4.00: "z"
       chunk 1 text run 25 at (136.28,30.00) startOffset 24 endOffset 25 width 4.45: "e"
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (-3,-23) size 0x0
+layer at (2,32) size 67x0
+  RenderSVGPath {line} at (2,32) size 67x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=69.00] [y2=32.00]
+layer at (2,32) size 0x4
+  RenderSVGPath {line} at (2,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=2.00] [y2=36.00]
+layer at (69,32) size 0x4
+  RenderSVGPath {line} at (69,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=69.00] [y1=32.00] [x2=69.00] [y2=36.00]
+layer at (74,32) size 67x0
+  RenderSVGPath {line} at (74,32) size 67x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=141.00] [y2=32.00]
+layer at (74,32) size 0x4
+  RenderSVGPath {line} at (74,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=74.00] [y2=36.00]
+layer at (141,32) size 0x4
+  RenderSVGPath {line} at (141,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=141.00] [y1=32.00] [x2=141.00] [y2=36.00]
 layer at (6,33) size 134x14
   RenderSVGTransformableContainer {g} at (3,9) size 134x14
 layer at (6,33) size 62x7
@@ -162,6 +190,20 @@ layer at (75,23) size 66x9
       chunk 1 text run 23 at (129.28,30.00) startOffset 22 endOffset 23 width 4.45: "e"
       chunk 1 text run 24 at (133.00,30.00) startOffset 23 endOffset 24 width 4.00: "z"
       chunk 1 text run 25 at (136.28,30.00) startOffset 24 endOffset 25 width 4.45: "e"
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (-3,-23) size 0x0
+layer at (2,32) size 67x0
+  RenderSVGPath {line} at (2,32) size 67x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=69.00] [y2=32.00]
+layer at (2,32) size 0x4
+  RenderSVGPath {line} at (2,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=2.00] [y2=36.00]
+layer at (69,32) size 0x4
+  RenderSVGPath {line} at (69,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=69.00] [y1=32.00] [x2=69.00] [y2=36.00]
+layer at (74,32) size 67x0
+  RenderSVGPath {line} at (74,32) size 67x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=141.00] [y2=32.00]
+layer at (74,32) size 0x4
+  RenderSVGPath {line} at (74,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=74.00] [y2=36.00]
+layer at (141,32) size 0x4
+  RenderSVGPath {line} at (141,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=141.00] [y1=32.00] [x2=141.00] [y2=36.00]
 layer at (3,33) size 137x14
   RenderSVGTransformableContainer {g} at (0,9) size 137x14
 layer at (3,33) size 62x7
@@ -192,6 +234,20 @@ layer at (75,23) size 65x9
   RenderSVGText {text} at (72,0) size 65x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 65x9
       chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 83.16: "this is a line to squeeze"
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (-3,-23) size 0x0
+layer at (2,32) size 67x0
+  RenderSVGPath {line} at (2,32) size 67x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=69.00] [y2=32.00]
+layer at (2,32) size 0x4
+  RenderSVGPath {line} at (2,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=2.00] [y2=36.00]
+layer at (69,32) size 0x4
+  RenderSVGPath {line} at (69,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=69.00] [y1=32.00] [x2=69.00] [y2=36.00]
+layer at (74,32) size 67x0
+  RenderSVGPath {line} at (74,32) size 67x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=141.00] [y2=32.00]
+layer at (74,32) size 0x4
+  RenderSVGPath {line} at (74,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=74.00] [y2=36.00]
+layer at (141,32) size 0x4
+  RenderSVGPath {line} at (141,32) size 0x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=141.00] [y1=32.00] [x2=141.00] [y2=36.00]
 layer at (6,33) size 134x14
   RenderSVGTransformableContainer {g} at (3,9) size 134x14
 layer at (6,33) size 62x7

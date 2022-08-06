@@ -17,6 +17,12 @@ layer at (50,80) size 383x150
       RenderSVGInlineText {#text} at (337,96) size 45x31
         chunk 1 text run 1 at (387.50,200.00) startOffset 0 endOffset 3 width 45.00: "a\x{729C}\x{923}"
     RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (50,200) size 383x0
+  RenderSVGPath {line} at (0,120) size 383x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=50.00] [y1=200.00] [x2=433.00] [y2=200.00]
+layer at (50,230) size 383x0
+  RenderSVGPath {line} at (0,150) size 383x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=50.00] [y1=230.00] [x2=433.00] [y2=230.00]
+layer at (50,95) size 383x0
+  RenderSVGPath {line} at (0,15) size 383x0 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=50.00] [y1=95.00] [x2=433.00] [y2=95.00]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

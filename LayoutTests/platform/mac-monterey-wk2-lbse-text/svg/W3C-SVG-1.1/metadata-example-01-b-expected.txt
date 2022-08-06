@@ -106,6 +106,12 @@ layer at (216,220) size 290x44 backgroundClip at (0,0) size 480x360 clip at (0,0
   RenderSVGPath {path} at (15,113) size 290x44 [stroke={[type=SOLID] [color=#5A59CE]}] [data="M 216 220 C 224 224 232 227 240 229 C 334 252 444 261 506 264"]
 layer at (201,227) size 391x106 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGPath {path} at (0,120) size 391x106 [stroke={[type=SOLID] [color=#5A59CE]}] [data="M 201 227 C 212 253 215 265 240 280 C 352 344 508 337 592 325"]
+layer at (420,103) size 180x226 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (252,19) size 180x226
+layer at (425,103) size 8x8
+  RenderSVGPath {polygon} at (5,0) size 8x8 [fill={[type=SOLID] [color=#5A59CE]}] [points="433 107 425 111 425 103"]
+layer at (420,157) size 8x8
+  RenderSVGPath {polygon} at (0,54) size 8x8 [fill={[type=SOLID] [color=#5A59CE]}] [points="428 160 421 165 420 157"]
 layer at (177,95) size 587x229 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (9,11) size 587x229
 layer at (458,95) size 305x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

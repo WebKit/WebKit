@@ -72,16 +72,11 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
         invalidateMPathDependencies();
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (auto* renderer = this->renderer()) {
-            if (document().settings().layerBasedSVGEngineEnabled())
-                static_cast<RenderSVGPath*>(renderer)->setNeedsShapeUpdate();
-            else
-                static_cast<LegacyRenderSVGPath*>(renderer)->setNeedsShapeUpdate();
-        }
-#else
-        if (auto* renderer = this->renderer())
-            static_cast<LegacyRenderSVGPath*>(renderer)->setNeedsShapeUpdate();
+        if (auto* path = dynamicDowncast<RenderSVGPath>(renderer()))
+            path->setNeedsShapeUpdate();
 #endif
+        if (auto* path = dynamicDowncast<LegacyRenderSVGPath>(renderer()))
+            path->setNeedsShapeUpdate();
 
         updateSVGRendererForElementChange();
         return;
@@ -142,16 +137,11 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     // which is an error.
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (is<RenderSVGPath>(renderer())) {
-        if (auto& pathRenderer = *downcast<RenderSVGPath>(renderer()); pathRenderer.hasPath())
-            return pathRenderer.path().boundingRect();
-    }
+        if (auto* path = dynamicDowncast<RenderSVGPath>(renderer()); path && path->hasPath())
+            return path->path().boundingRect();
 #endif
-
-    if (is<LegacyRenderSVGPath>(renderer())) {
-        if (auto& pathRenderer = *downcast<LegacyRenderSVGPath>(renderer()); pathRenderer.hasPath())
-            return pathRenderer.path().boundingRect();
-    }
+        if (auto* path = dynamicDowncast<LegacyRenderSVGPath>(renderer()); path && path->hasPath())
+            return path->path().boundingRect();
 
     return { };
 }
@@ -162,7 +152,6 @@ RenderPtr<RenderElement> SVGPathElement::createElementRenderer(RenderStyle&& sty
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGPath>(*this, WTFMove(style));
 #endif
-
     return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
 }
 

@@ -16,6 +16,8 @@ layer at (55,60) size 40x40
   RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [cx=75.00] [cy=80.00] [r=20.00]
 layer at (95,60) size 40x40
   RenderSVGEllipse {circle} at (40,40) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [cx=115.00] [cy=80.00] [r=20.00]
+layer at (75,40) size 40x40
+  RenderSVGPath {polygon} at (20,20) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [points="95 40 115 60 95 80 75 60"]
 layer at (180,20) size 80x80
   RenderSVGTransformableContainer {g} at (125,0) size 80x80
 layer at (180,20) size 40x40
@@ -26,6 +28,8 @@ layer at (180,60) size 40x40
   RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#00FF00]}] [cx=200.00] [cy=80.00] [r=20.00]
 layer at (220,60) size 40x40
   RenderSVGEllipse {circle} at (40,40) size 40x40 [fill={[type=SOLID] [color=#00FF00]}] [cx=240.00] [cy=80.00] [r=20.00]
+layer at (200,40) size 40x40
+  RenderSVGPath {polygon} at (20,20) size 40x40 [fill={[type=SOLID] [color=#00FF00]}] [points="220 40 240 60 220 80 200 60"]
 layer at (305,20) size 80x80
   RenderSVGTransformableContainer {g} at (250,0) size 80x80
 layer at (305,20) size 40x40
@@ -36,6 +40,8 @@ layer at (305,60) size 40x40
   RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#0000FF]}] [cx=325.00] [cy=80.00] [r=20.00]
 layer at (345,60) size 40x40
   RenderSVGEllipse {circle} at (40,40) size 40x40 [fill={[type=SOLID] [color=#0000FF]}] [cx=365.00] [cy=80.00] [r=20.00]
+layer at (325,40) size 40x40
+  RenderSVGPath {polygon} at (20,20) size 40x40 [fill={[type=SOLID] [color=#0000FF]}] [points="345 40 365 60 345 80 325 60"]
 layer at (55,115) size 80x80
   RenderSVGTransformableContainer {g} at (0,95) size 80x80
 layer at (55,115) size 40x40

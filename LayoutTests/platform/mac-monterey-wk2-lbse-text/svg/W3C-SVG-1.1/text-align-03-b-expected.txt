@@ -10,6 +10,8 @@ layer at (5,4) size 349x45
   RenderSVGText {text} at (6,0) size 350x45 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 349x45
       chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 21 width 348.75: "Test of 'text-anchor'"
+layer at (225,75) size 0x151
+  RenderSVGPath {line} at (226,71) size 0x151 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=225.00] [y1=75.00] [x2=225.00] [y2=225.00]
 layer at (-1,83) size 470x134 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,79) size 470x134
 layer at (-1,83) size 470x134 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

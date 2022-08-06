@@ -14,6 +14,8 @@ layer at (20,53) size 218x34
   RenderSVGText {text} at (23,49) size 219x34 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 219x34
       chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 17 width 218.45: "Tspan, tref, toap"
+layer at (220,120) size 0x141
+  RenderSVGPath {line} at (223,116) size 0x141 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=220.00] [y1=120.00] [x2=220.00] [y2=260.00]
 layer at (-4,113) size 481x154 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,109) size 481x154
 layer at (220,113) size 256x34
