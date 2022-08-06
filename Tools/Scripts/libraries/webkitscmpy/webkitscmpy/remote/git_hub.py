@@ -146,7 +146,11 @@ class GitHub(Scm):
             )
             if response.status_code == 422:
                 sys.stderr.write('Validation failed when creating pull request\n')
-                sys.stderr.write('Does a pull request against this branch already exist?\n')
+                errors = response.json().get('errors')
+                if errors and len(errors) > 0:
+                    sys.stderr.write('List of errors:\n')
+                    for error in errors:
+                        sys.stderr.write('* {}\n'.format(error.get('message')))
                 return None
             if response.status_code // 100 != 2:
                 sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
