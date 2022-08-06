@@ -57,7 +57,9 @@ WavyStrokeParameters getWavyStrokeParameters(float fontSize);
 struct TextUnderlinePositionUnder {
     FontBaseline baselineType { AlphabeticBaseline };
     float textRunLogicalHeight { 0 };
-    float textRunOffsetFromLineBottom { 0 };
+    // This offset value is the distance between the current text run's logical bottom and the lowest position of all the text runs
+    // on line that belong to the same decoration box.
+    float textRunOffsetFromBottomMost { 0 };
 };
 GlyphOverflow visualOverflowForDecorations(const RenderStyle&);
 GlyphOverflow visualOverflowForDecorations(const RenderStyle&, TextUnderlinePositionUnder);
