@@ -219,6 +219,8 @@ UIProcess/Launcher/glib/BubblewrapLauncher.cpp
 UIProcess/Launcher/glib/FlatpakLauncher.cpp
 UIProcess/Launcher/glib/XDGDBusProxy.cpp
 
+UIProcess/Notifications/glib/NotificationService.cpp
+
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 

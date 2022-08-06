@@ -241,6 +241,8 @@ UIProcess/Launcher/glib/BubblewrapLauncher.cpp @no-unify
 UIProcess/Launcher/glib/FlatpakLauncher.cpp @no-unify
 UIProcess/Launcher/glib/XDGDBusProxy.cpp @no-unify
 
+UIProcess/Notifications/glib/NotificationService.cpp
+
 UIProcess/linux/MemoryPressureMonitor.cpp
 
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp

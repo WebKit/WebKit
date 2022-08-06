@@ -28,6 +28,7 @@
 #include "APISerializedScriptValue.h"
 #include "DataReference.h"
 #include "ImageOptions.h"
+#include "NotificationService.h"
 #include "ProvisionalPageProxy.h"
 #include "WebCertificateInfo.h"
 #include "WebContextMenuItem.h"
@@ -98,10 +99,6 @@
 #include "WebKitOptionMenuPrivate.h"
 #include "WebKitWebViewBackendPrivate.h"
 #include "WebKitWebViewClient.h"
-#endif
-
-#if USE(LIBNOTIFY)
-#include <libnotify/notify.h>
 #endif
 
 using namespace WebKit;
@@ -715,60 +712,6 @@ static void webkitWebViewDisconnectFaviconDatabaseSignalHandlers(WebKitWebView* 
 }
 #endif
 
-#if USE(LIBNOTIFY)
-static const char* gNotifyNotificationID = "wk-notify-notification";
-
-static void notifyNotificationClosed(NotifyNotification*, WebKitNotification* webNotification)
-{
-    g_object_set_data(G_OBJECT(webNotification), gNotifyNotificationID, nullptr);
-    webkit_notification_close(webNotification);
-}
-
-static void notifyNotificationClicked(NotifyNotification*, char*, WebKitNotification* webNotification)
-{
-    webkit_notification_clicked(webNotification);
-}
-
-static void webNotificationClosed(WebKitNotification* webNotification)
-{
-    NotifyNotification* notification = NOTIFY_NOTIFICATION(g_object_get_data(G_OBJECT(webNotification), gNotifyNotificationID));
-    if (!notification)
-        return;
-
-    notify_notification_close(notification, nullptr);
-    g_object_set_data(G_OBJECT(webNotification), gNotifyNotificationID, nullptr);
-}
-#endif // USE(LIBNOTIFY)
-
-static gboolean webkitWebViewShowNotification(WebKitWebView*, WebKitNotification* webNotification)
-{
-#if USE(LIBNOTIFY)
-    if (!notify_is_initted())
-        notify_init(g_get_prgname());
-
-    NotifyNotification* notification = NOTIFY_NOTIFICATION(g_object_get_data(G_OBJECT(webNotification), gNotifyNotificationID));
-    if (!notification) {
-        notification = notify_notification_new(webkit_notification_get_title(webNotification),
-            webkit_notification_get_body(webNotification), nullptr);
-
-        notify_notification_add_action(notification, "default", _("Acknowledge"), NOTIFY_ACTION_CALLBACK(notifyNotificationClicked), webNotification, nullptr);
-
-        g_signal_connect_object(notification, "closed", G_CALLBACK(notifyNotificationClosed), webNotification, static_cast<GConnectFlags>(0));
-        g_signal_connect(webNotification, "closed", G_CALLBACK(webNotificationClosed), nullptr);
-        g_object_set_data_full(G_OBJECT(webNotification), gNotifyNotificationID, notification, static_cast<GDestroyNotify>(g_object_unref));
-    } else {
-        notify_notification_update(notification, webkit_notification_get_title(webNotification),
-            webkit_notification_get_body(webNotification), nullptr);
-    }
-
-    notify_notification_show(notification, nullptr);
-    return TRUE;
-#else
-    UNUSED_PARAM(webNotification);
-    return FALSE;
-#endif
-}
-
 static void webkitWebViewConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_view_parent_class)->constructed(object);
@@ -1129,7 +1072,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->permission_request = webkitWebViewPermissionRequest;
     webViewClass->run_file_chooser = webkitWebViewRunFileChooser;
     webViewClass->authenticate = webkitWebViewAuthenticate;
-    webViewClass->show_notification = webkitWebViewShowNotification;
 
 #if PLATFORM(WPE)
     /**

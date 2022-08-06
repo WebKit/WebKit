@@ -290,4 +290,9 @@ gtk_event_controller_get_current_event_time(GtkEventController*)
     return gtk_get_current_event_time();
 }
 
+static inline GtkIconTheme* gtk_icon_theme_get_for_display(GdkDisplay* display)
+{
+    return gtk_icon_theme_get_for_screen(gdk_display_get_default_screen(display));
+}
+
 #endif // USE(GTK4)

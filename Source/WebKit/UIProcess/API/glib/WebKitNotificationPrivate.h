@@ -20,9 +20,8 @@
 #pragma once
 
 #include "WebKitNotification.h"
-#include "WebKitWebView.h"
 #include "WebNotification.h"
 #include <wtf/text/CString.h>
 
-WebKitNotification* webkitNotificationCreate(WebKitWebView*, const WebKit::WebNotification&);
-WebKitWebView* webkitNotificationGetWebView(WebKitNotification*);
+WebKitNotification* webkitNotificationCreate(WebKit::WebNotification&);
+const WebKit::WebNotification& webkitNotificationGetWebNotification(WebKitNotification*);
