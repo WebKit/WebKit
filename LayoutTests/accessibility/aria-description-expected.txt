@@ -1,0 +1,8 @@
+This test ensures that aria-description maps to appropriate attributes.
+
+Custom content: description: Longer description
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+button

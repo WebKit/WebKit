@@ -113,6 +113,7 @@ JSValueRef AccessibilityUIElement::mathRootRadicand() const { return { }; }
 
 #if !PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const { return nullptr; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::customContent() const { return nullptr; }
 
 bool AccessibilityUIElement::hasDocumentRoleAncestor() const { return false; }
 bool AccessibilityUIElement::hasWebApplicationAncestor() const { return false; }

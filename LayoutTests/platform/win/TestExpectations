@@ -489,6 +489,7 @@ accessibility/listbox-clear-selection.html [ Skip ]
 accessibility/embedded-image-description.html [ Skip ]
 accessibility/img-no-alt-not-ignored-with-title.html [ Skip ]
 accessibility/model-element-attributes.html [ Skip ]
+accessibility/aria-description.html [ Skip ]
 
 accessibility/visible-character-range-basic.html [ Skip ]
 accessibility/visible-character-range-height-changes.html [ Skip ]

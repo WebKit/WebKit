@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="button" role="button" aria-description="Longer description">button</div>
+
+<script>
+    var testOutput = "This test ensures that aria-description maps to appropriate attributes.\n\n";
+
+    if (window.accessibilityController) {
+        const button = accessibilityController.accessibleElementById("button");
+        testOutput += `Custom content: ${button.customContent}\n`;
+        debug(testOutput);
+    }
+</script>
+</body>
+</html>
+
+

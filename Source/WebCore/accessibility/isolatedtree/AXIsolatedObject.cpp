@@ -397,6 +397,10 @@ void AXIsolatedObject::initializeProperties(Ref<AXCoreObject> coreObject, IsRoot
     if (object.isWidget())
         setProperty(AXPropertyName::IsWidget, true);
 
+    auto extendedDescription = object.extendedDescription();
+    if (extendedDescription.length())
+        setProperty(AXPropertyName::ExtendedDescription, extendedDescription.isolatedCopy());
+    
     initializePlatformProperties(coreObject, isRoot);
 }
 

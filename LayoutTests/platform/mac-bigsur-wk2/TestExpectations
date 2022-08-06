@@ -14,3 +14,4 @@ webkit.org/b/243074 imported/w3c/web-platform-tests/media-capabilities/decodingI
 webkit.org/b/243074 imported/w3c/web-platform-tests/media-capabilities/encodingInfo.any.worker.html [ Pass Failure ]
 
 webkit.org/b/243076 imported/w3c/web-platform-tests/resource-timing/redirects.html [ Pass Failure ]
+accessibility/aria-description.html [ Skip ]
