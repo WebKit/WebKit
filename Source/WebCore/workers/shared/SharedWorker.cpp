@@ -74,14 +74,16 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, String&&
     if (!url.isValid())
         return Exception { SyntaxError, "Invalid script URL"_s };
 
+    auto* contentSecurityPolicy = document.contentSecurityPolicy();
+    if (contentSecurityPolicy)
+        contentSecurityPolicy->upgradeInsecureRequestIfNeeded(url, ContentSecurityPolicy::InsecureRequestType::Load);
+
     // Per the specification, any same-origin URL (including blob: URLs) can be used. data: URLs can also be used, but they create a worker with an opaque origin.
     if (!document.securityOrigin().canRequest(url) && !url.protocolIsData())
         return Exception { SecurityError, "URL of the shared worker is cross-origin"_s };
 
-    if (auto* contentSecurityPolicy = document.contentSecurityPolicy()) {
-        if (!contentSecurityPolicy->allowWorkerFromSource(url))
-            return Exception { SecurityError };
-    }
+    if (contentSecurityPolicy && !contentSecurityPolicy->allowWorkerFromSource(url))
+        return Exception { SecurityError };
 
     WorkerOptions options;
     if (maybeOptions) {
