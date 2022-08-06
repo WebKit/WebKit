@@ -529,7 +529,7 @@ inline void JSObject::setIndexQuicklyForTypedArray(unsigned i, JSValue value)
     }
 }
 
-inline void JSObject::setIndexQuicklyForArrayStorageIndexingType(VM& vm, unsigned i, JSValue v)
+ALWAYS_INLINE void JSObject::setIndexQuicklyForArrayStorageIndexingType(VM& vm, unsigned i, JSValue v)
 {
     ArrayStorage* storage = this->butterfly()->arrayStorage();
     WriteBarrier<Unknown>& x = storage->m_vector[i];
