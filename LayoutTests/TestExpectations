@@ -1380,7 +1380,6 @@ webkit.org/b/143294 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-
 webkit.org/b/136754 css3/flexbox/csswg/flex-align-items-center.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-items-flexibility.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_generated-container.html [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-center-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_min-height-auto.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_min-width-auto.html [ ImageOnlyFailure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_visibility-collapse-line-wrapping.html [ ImageOnlyFailure ]
