@@ -1200,7 +1200,7 @@ void AXObjectCache::notificationPostTimerFired()
     auto notifications = std::exchange(m_notificationsToPost, { });
 
     // Filter out the notifications that are not going to be posted to platform clients.
-    Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>> notificationsToPost;
+    Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>> notificationsToPost;
     notificationsToPost.reserveInitialCapacity(notifications.size());
     for (const auto& note : notifications) {
         ASSERT(note.first);
@@ -1290,7 +1290,7 @@ void AXObjectCache::postNotification(Node* node, AXNotification notification, Po
     postNotification(object.get(), &node->document(), notification, postTarget);
 }
 
-void AXObjectCache::postNotification(AXCoreObject* object, Document* document, AXNotification notification, PostTarget postTarget)
+void AXObjectCache::postNotification(AccessibilityObject* object, Document* document, AXNotification notification, PostTarget postTarget)
 {
     AXTRACE(makeString("AXObjectCache::postNotification 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     AXLOG(std::make_pair(object, notification));
@@ -1336,7 +1336,7 @@ void AXObjectCache::handleMenuItemSelected(Node* node)
     postNotification(getOrCreate(node), &document(), AXMenuListItemSelected);
 }
 
-void AXObjectCache::handleRowCountChanged(AXCoreObject* axObject, Document* document)
+void AXObjectCache::handleRowCountChanged(AccessibilityObject* axObject, Document* document)
 {
     if (!axObject)
         return;
@@ -3560,18 +3560,18 @@ void AXObjectCache::handleMenuListValueChanged(Element& element)
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-void AXObjectCache::updateIsolatedTree(AXCoreObject* object, AXNotification notification)
+void AXObjectCache::updateIsolatedTree(AccessibilityObject* object, AXNotification notification)
 {
     if (object)
         updateIsolatedTree(*object, notification);
 }
 
-void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification notification)
+void AXObjectCache::updateIsolatedTree(AccessibilityObject& object, AXNotification notification)
 {
     updateIsolatedTree({ std::make_pair(&object, notification) });
 }
 
-void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>>& notifications)
+void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>>& notifications)
 {
     AXTRACE(makeString("AXObjectCache::updateIsolatedTree 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
 
