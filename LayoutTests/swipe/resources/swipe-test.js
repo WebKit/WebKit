@@ -39,41 +39,53 @@ function measuredDurationShouldBeLessThan(key, timeInMS, message)
         log("Failure. " + message + " (expected: " + timeInMS + ", actual: " + duration + ")");
 }
 
-function startSwipeGesture(callback)
+async function startSwipeGesture()
 {
     log("startSwipeGesture");
-    testRunner.runUIScript(`
-    (function() {
-        uiController.beginBackSwipe(function() {
-            uiController.uiScriptComplete();
-        });
-    })();`, callback || function () {});
+
+    return new Promise(resolve => {
+        testRunner.runUIScript(`
+            (function() {
+                uiController.beginBackSwipe(function() {
+                    uiController.uiScriptComplete();
+                });
+            })();
+        `, resolve);
+    });
 }
 
-function completeSwipeGesture(callback)
+async function completeSwipeGesture()
 {
     log("completeSwipeGesture");
-    testRunner.runUIScript(`
-    (function() {
-        uiController.completeBackSwipe(function() {
-            uiController.uiScriptComplete();
-        });
-    })();`, callback || function () {});
+
+    return new Promise(resolve => {
+        testRunner.runUIScript(`
+            (function() {
+                uiController.completeBackSwipe(function() {
+                    uiController.uiScriptComplete();
+                });
+            })();
+        `, resolve);
+    });
 }
 
-function playEventStream(stream, callback)
+async function playEventStream(stream)
 {
     log("playEventStream");
     if (testRunner.isIOSFamily) {
         // FIXME: This test should probably not log playEventStream
         // on iOS, where it doesn't actually do it.
-        setTimeout(callback, 0);
-        return;
+        const timeout = 0;
+        return new Promise(resolve => setTimeout(resolve, timeout));
     }
-    testRunner.runUIScript(`
-    (function() {
-        uiController.playBackEventStream(\`${stream}\`, function() {
-            uiController.uiScriptComplete();
-        });
-    })();`, callback || function () {});
+
+    return new Promise(resolve => {
+        testRunner.runUIScript(`
+            (function() {
+                uiController.playBackEventStream(\`${stream}\`, function() {
+                    uiController.uiScriptComplete();
+                });
+            })();
+        `, resolve);
+    });
 }

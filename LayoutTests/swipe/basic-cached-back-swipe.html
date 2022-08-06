@@ -43,7 +43,7 @@ function isFirstPage()
     return window.location.href.indexOf("second") == -1;
 }
 
-window.onload = function () {
+window.onload = async function () {
     if (!window.eventSender || !window.testRunner) {
         document.body.innerHTML = "This test must be run in WebKitTestRunner.";
         return;
@@ -68,7 +68,7 @@ window.onload = function () {
         return;
     }
 
-    startSwipeGesture();
+    await startSwipeGesture();
 };
 </script>
 </head>

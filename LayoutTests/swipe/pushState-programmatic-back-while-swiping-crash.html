@@ -6,10 +6,11 @@ html {
 }
 </style>
 <script src="resources/swipe-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
 <script>
-function runTest()
+async function runTest()
 {
-    playEventStream(`[{
+    await playEventStream(`[{
         "relativeTimeMS" : 0,
         "kCGEventScrollGestureFlagBits" : 1,
         "kCGEventGestureHIDType" : 6,
@@ -40,19 +41,22 @@ function runTest()
         "kCGScrollWheelEventIsContinuous" : 1,
         "kCGScrollWheelEventPointDeltaAxis2" : 1,
         "kCGSEventTypeField" : 22
-      }]`, goBack);
+      }]`);
+      
+      await goBack();
 }
 
-function goBack()
+async function goBack()
 {
     window.history.back();
 
-    setTimeout(continueTest, 0);
+    await UIHelper.delayFor(0);
+    await continueTest();
 }
 
-function continueTest()
+async function continueTest()
 {
-    playEventStream(`[
+    await playEventStream(`[
       {
         "relativeTimeMS" : 0,
         "windowLocation" : "{400, 300}",
@@ -60,14 +64,15 @@ function continueTest()
         "kCGScrollWheelEventIsContinuous" : 1,
         "kCGScrollWheelEventPointDeltaAxis2" : 20,
         "kCGSEventTypeField" : 22
-      }]`, function () {
-        completeTest();
-      });
+      }]`);
+    
+    await completeTest();
 }
 
-function completeTest()
+async function completeTest()
 {
-    completeSwipeGesture(testComplete);
+    await completeSwipeGesture();
+    testComplete();
 }
 
 function didBeginSwipeCallback()
@@ -85,7 +90,7 @@ function updateContent()
     document.body.innerHTML = isFirstPage() ? "first" : "second";
 }
 
-window.onload = function () {
+window.onload = async function () {
     if (!window.eventSender || !window.testRunner) {
         document.body.innerHTML = "This test must be run in WebKitTestRunner.";
         return;
@@ -104,14 +109,13 @@ window.onload = function () {
         updateContent();
     });
 
-    setTimeout(function () { 
-        history.pushState(null, null, "/second");
-        updateContent();
+    await UIHelper.delayFor(0);
 
-        setTimeout(function () {
-            runTest();
-        }, 0);
-    }, 0);
+    history.pushState(null, null, "/second");
+    updateContent();
+
+    await UIHelper.delayFor(0);
+    await runTest();
 };
 </script>
 </head>

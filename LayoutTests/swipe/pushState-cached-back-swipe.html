@@ -6,6 +6,8 @@ html {
 }
 </style>
 <script src="resources/swipe-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
+
 <script>
 
 function didBeginSwipeCallback()
@@ -49,7 +51,7 @@ function updateContent()
     document.body.innerHTML = isFirstPage() ? "first" : "second";
 }
 
-window.onload = function () {
+window.onload = async function () {
     if (!window.eventSender || !window.testRunner) {
         document.body.innerHTML = "This test must be run in WebKitTestRunner.";
         return;
@@ -71,14 +73,13 @@ window.onload = function () {
         updateContent();
     });
 
-    setTimeout(function () { 
-        history.pushState(null, null, "/second");
-        updateContent();
+    await UIHelper.delayFor(0);
 
-        setTimeout(function () {
-            startSwipeGesture();
-        }, 0);
-    }, 0);
+    history.pushState(null, null, "/second");
+    updateContent();
+
+    await UIHelper.delayFor(0);
+    await startSwipeGesture();
 };
 </script>
 </head>

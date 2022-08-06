@@ -3036,6 +3036,9 @@ accessibility/smart-invert-reference.html [ ImageOnlyFailure ]
 scrollingcoordinator/ios/fixed-frame-overflow-swipe.html [ ImageOnlyFailure ]
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ ImageOnlyFailure ]
 
+# Test fails, but has flaky output.
+swipe/main-frame-pinning-requirement.html [ Pass Failure ]
+
 # These tests fail unexpectedly with accelerated drawing enabled.
 # Interestingly, these versions fail worse than the more recently updated WPT versions above.
 fast/canvas/set-colors.html [ Failure ]
@@ -3623,8 +3626,6 @@ fast/events/ios/pdf-modifer-key-down-crash.html
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-047.html
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-048.html
 imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html
-swipe/main-frame-pinning-requirement.html
-
 
 webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Pass Crash ]
 

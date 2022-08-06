@@ -6,6 +6,8 @@ html {
 }
 </style>
 <script src="resources/swipe-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
+
 <script>
 history.scrollRestoration = "manual";
 
@@ -32,7 +34,7 @@ function didRemoveSwipeSnapshotCallback()
     testComplete();
 }
 
-window.onload = function () {
+window.onload = async function () {
     if (!window.eventSender || !window.testRunner) {
         document.body.innerHTML = "This test must be run in WebKitTestRunner.";
         return;
@@ -47,11 +49,10 @@ window.onload = function () {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 
-    setTimeout(function () {
-        history.pushState({page: "second"}, "second", "?second");
-        document.body.innerHTML = "second";
-        startSwipeGesture();
-    }, 0);
+    await UIHelper.delayFor(0);
+    history.pushState({page: "second"}, "second", "?second");
+    document.body.innerHTML = "second";
+    await startSwipeGesture();
 };
 </script>
 </head>

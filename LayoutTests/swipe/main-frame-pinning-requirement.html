@@ -8,23 +8,23 @@ html {
 <script src="resources/swipe-test.js"></script>
 <script>
 
-function runTest()
+async function runTest()
 {
     // The first swipe should fail because we're scrolled to the middle of the document
     // and this is all a single gesture. We can only start swipes if we *begin*
     // pinned to the edge.
-    startSwipeGesture(function () {
-        completeSwipeGesture(function () {
-            testRunner.clearTestRunnerCallbacks();
-            testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
-            testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
-            testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
-            testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);    
+    await startSwipeGesture();
+    await completeSwipeGesture();
+    
+    testRunner.clearTestRunnerCallbacks();
+    testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+    testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
+    testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
+    testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);    
 
-            // The second swipe should succeed because we are now scrolled to the left edge.
-            startSwipeGesture(function () { completeSwipeGesture(); });
-        });
-    });
+    // The second swipe should succeed because we are now scrolled to the left edge.
+    await startSwipeGesture();
+    await completeSwipeGesture();
 }
 
 function didBeginSwipeNotReachedCallback()
@@ -66,7 +66,7 @@ function isFirstPage()
     return window.location.href.indexOf("second") == -1;
 }
 
-window.onload = function () {
+window.onload = async function () {
     if (!window.eventSender || !window.testRunner) {
         document.getElementById("large").innerHTML = "This test must be run in WebKitTestRunner.";
         return;
@@ -94,7 +94,7 @@ window.onload = function () {
     // Second page loaded.
     window.scrollTo(100, 0);
 
-    runTest();
+    await runTest();
 };
 </script>
 </head>
