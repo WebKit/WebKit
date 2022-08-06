@@ -847,7 +847,7 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(DisplayBo
             if (!logicalBottomForTextDecoration)
                 logicalBottomForTextDecoration = logicalBottomForTextDecorationContent(boxes, isHorizontalWritingMode);
             auto textRunLogicalOffsetFromLineBottom = *logicalBottomForTextDecoration - (isHorizontalWritingMode ? displayBox.bottom() : displayBox.right());
-            return visualOverflowForDecorations(style, { displayLine.baselineType(), displayBox.height(), textRunLogicalOffsetFromLineBottom });
+            return visualOverflowForDecorations(style, displayLine.baselineType(), { displayBox.height(), textRunLogicalOffsetFromLineBottom });
         }();
 
         if (!decorationOverflow.isEmpty()) {
