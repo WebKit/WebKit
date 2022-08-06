@@ -110,7 +110,7 @@ static const RenderElement* enclosingRendererWithTextDecoration(const RenderText
     return current;
 }
 
-static float textRunLogicalOffsetFromLineBottom(const InlineIterator::LineBoxIterator& lineBox, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom)
+static float textRunOffsetFromBottomMost(const InlineIterator::LineBoxIterator& lineBox, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom)
 {
     float offset = 0.f;
     auto* decorationRenderer = enclosingRendererWithTextDecoration(renderer, lineBox->isFirst());
@@ -166,7 +166,7 @@ static float computeUnderlineOffset(const UnderlineOffsetArguments& context)
     case TextUnderlinePosition::Under: {
         ASSERT(context.textUnderlinePositionUnder);
         // Position underline relative to the bottom edge of the lowest element's content box.
-        auto desiredOffset = context.textUnderlinePositionUnder->textRunLogicalHeight + gap + std::max(context.textUnderlinePositionUnder->textRunOffsetFromLineBottom, 0.0f) + underlineOffset.lengthOr(0);
+        auto desiredOffset = context.textUnderlinePositionUnder->textRunLogicalHeight + gap + std::max(context.textUnderlinePositionUnder->textRunOffsetFromBottomMost, 0.0f) + underlineOffset.lengthOr(0);
         return std::max<float>(desiredOffset, fontMetrics.ascent());
     }
     }
@@ -255,7 +255,7 @@ GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator
 {
     auto& style = lineBox->isFirst() ? renderer.firstLineStyle() : renderer.style();
     auto underlineOffset = style.textDecorationsInEffect().contains(TextDecorationLine::Underline)
-        ? std::make_optional(computeUnderlineOffset({ style, defaultGap(style), TextUnderlinePositionUnder { lineBox->baselineType(), textBoxLogicalBottom - textBoxLogicalTop, textRunLogicalOffsetFromLineBottom(lineBox, renderer, textBoxLogicalTop, textBoxLogicalBottom) } }))
+        ? std::make_optional(computeUnderlineOffset({ style, defaultGap(style), TextUnderlinePositionUnder { lineBox->baselineType(), textBoxLogicalBottom - textBoxLogicalTop, textRunOffsetFromBottomMost(lineBox, renderer, textBoxLogicalTop, textBoxLogicalBottom) } }))
         : std::nullopt;
     return computedVisualOverflowForDecorations(style, underlineOffset);
 }
@@ -281,7 +281,7 @@ float underlineOffsetForTextBoxPainting(const RenderStyle& style, const InlineIt
     auto textUnderlinePositionUnder = TextUnderlinePositionUnder {
         textBox->lineBox()->baselineType(),
         textBox->logicalBottom() - textBox->logicalTop(),
-        textRunLogicalOffsetFromLineBottom(textBox->lineBox(), textBox->renderer(), textBox->logicalTop(), textBox->logicalBottom())
+        textRunOffsetFromBottomMost(textBox->lineBox(), textBox->renderer(), textBox->logicalTop(), textBox->logicalBottom())
     };
     return computeUnderlineOffset({ style , defaultGap(style), textUnderlinePositionUnder });
 }
