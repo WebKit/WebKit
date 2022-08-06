@@ -487,7 +487,7 @@ void AXIsolatedTree::updateNodeAndDependentProperties(AXCoreObject& axObject)
         updateNodeProperty(*treeAncestor, AXPropertyName::ARIATreeRows);
 }
 
-void AXIsolatedTree::updateChildren(AXCoreObject& axObject, ResolveNodeChanges resolveNodeChanges)
+void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeChanges resolveNodeChanges)
 {
     AXTRACE("AXIsolatedTree::updateChildren"_s);
     AXLOG("For AXObject:");
@@ -522,12 +522,12 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject, ResolveNodeChanges r
         AXLOG(makeString("Original object with ID ", axObject.objectID().loggingString(), " wasn't in the isolated tree, so instead updating the closest in-isolated-tree ancestor:"));
         AXLOG(axAncestor);
         for (auto& child : axObject.children()) {
-            auto* liveChild = dynamicDowncast<AccessibilityObject>(child.get());
-            if (!liveChild || liveChild->childrenInitialized())
+            Ref liveChild = downcast<AccessibilityObject>(*child);
+            if (liveChild->childrenInitialized())
                 continue;
 
             if (!m_nodeMap.contains(liveChild->objectID())) {
-                if (!shouldCreateNodeChange(*liveChild))
+                if (!shouldCreateNodeChange(liveChild))
                     continue;
 
                 // This child should be added to the isolated tree but hasn't been yet.
@@ -543,7 +543,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject, ResolveNodeChanges r
             // Don't immediately resolve node changes in these recursive calls to updateChildren. This avoids duplicate node change creation in this scenario:
             //   1. Some subtree is updated in the below call to updateChildren.
             //   2. Later in this function, when updating axAncestor, we update some higher subtree that includes the updated subtree from step 1.
-            updateChildren(*liveChild, ResolveNodeChanges::No);
+            updateChildren(liveChild, ResolveNodeChanges::No);
         }
     }
 
