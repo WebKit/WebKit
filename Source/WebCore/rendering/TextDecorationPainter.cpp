@@ -202,6 +202,7 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, OptionSet
     , m_shadowColorFilter(colorFilter)
     , m_textBox(textBox)
     , m_font { font }
+    , m_deviceScaleFactor(textBox->renderer().document().deviceScaleFactor())
     , m_styles { styles ? *WTFMove(styles) : stylesForRenderer(textBox->renderer(), decorations, isFirstLine, PseudoId::None) }
     , m_lineStyle { isFirstLine ? textBox->renderer().firstLineStyle() : textBox->renderer().style() }
 {
@@ -211,7 +212,7 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, OptionSet
 void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, const FloatPoint& textOrigin, const FloatPoint& boxOrigin)
 {
     const auto& fontMetrics = m_lineStyle.metricsOfPrimaryFont();
-    float textDecorationThickness = m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), fontMetrics);
+    auto textDecorationThickness = ceilToDevicePixel(m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), fontMetrics), m_deviceScaleFactor);
     FloatPoint localOrigin = boxOrigin;
 
     auto paintDecoration = [&] (TextDecorationLine decoration, TextDecorationStyle style, const Color& color, const FloatRect& rect) {
@@ -300,7 +301,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
         if (m_decorations.contains(TextDecorationLine::Overline)) {
             float wavyOffset = m_styles.overlineStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0;
             FloatRect rect(localOrigin, FloatSize(m_width, textDecorationThickness));
-            float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(m_lineStyle.computedFontSize(), fontMetrics);
+            float autoTextDecorationThickness = ceilToDevicePixel(TextDecorationThickness::createWithAuto().resolve(m_lineStyle.computedFontSize(), fontMetrics), m_deviceScaleFactor);
             rect.move(0, autoTextDecorationThickness - textDecorationThickness - wavyOffset);
             paintDecoration(TextDecorationLine::Overline, m_styles.overlineStyle, m_styles.overlineColor, rect);
         }
@@ -322,7 +323,7 @@ void TextDecorationPainter::paintForegroundDecorations(const FloatPoint& boxOrig
     if (!m_decorations.contains(TextDecorationLine::LineThrough))
         return;
 
-    float textDecorationThickness = m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), m_lineStyle.metricsOfPrimaryFont());
+    auto textDecorationThickness = ceilToDevicePixel(m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), m_lineStyle.metricsOfPrimaryFont()), m_deviceScaleFactor);
     paintLineThrough(m_styles.linethroughColor, textDecorationThickness, boxOrigin);
 }
 
@@ -330,7 +331,7 @@ void TextDecorationPainter::paintLineThrough(const Color& color, float thickness
 {
     const auto& fontMetrics = m_lineStyle.metricsOfPrimaryFont();
     FloatRect rect(localOrigin, FloatSize(m_width, thickness));
-    float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(m_lineStyle.computedFontSize(), fontMetrics);
+    auto autoTextDecorationThickness = ceilToDevicePixel(TextDecorationThickness::createWithAuto().resolve(m_lineStyle.computedFontSize(), fontMetrics), m_deviceScaleFactor);
     auto center = 2 * fontMetrics.floatAscent() / 3 + autoTextDecorationThickness / 2;
     rect.move(0, center - thickness / 2);
 

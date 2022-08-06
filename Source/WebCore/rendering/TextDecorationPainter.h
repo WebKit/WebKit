@@ -69,15 +69,16 @@ private:
 
     GraphicsContext& m_context;
     OptionSet<TextDecorationLine> m_decorations;
-    float m_wavyOffset;
+    float m_wavyOffset { 0 };
     float m_width { 0 };
     FloatPoint m_boxOrigin;
-    bool m_isPrinting;
+    bool m_isPrinting { false };
     bool m_isHorizontal { true };
     const ShadowData* m_shadow { nullptr };
     const FilterOperations* m_shadowColorFilter { nullptr };
     InlineIterator::TextBoxIterator m_textBox;
     const FontCascade& m_font;
+    float m_deviceScaleFactor { 0 };
 
     Styles m_styles;
     const RenderStyle& m_lineStyle;
