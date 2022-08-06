@@ -28,9 +28,7 @@
 [
     LegacyNoInterfaceObject,
     GenerateIsReachable=ReachableFromDOMWindow,
+    MasqueradesAsUndefined,
 ] interface StyleMedia {
     readonly attribute DOMString type;
-
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    boolean matchMedium(optional DOMString mediaquery = "undefined");
 };

@@ -1696,11 +1696,6 @@ WI.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
-    StyleMedia: {
-        matchMedium: "[mediaquery]",
-        __proto__: null,
-    },
-
     StyleSheetList: {
         item: "[index]",
         __proto__: null,

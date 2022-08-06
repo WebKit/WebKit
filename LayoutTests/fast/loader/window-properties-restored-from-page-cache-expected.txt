@@ -6,7 +6,6 @@ This test makes sure that various properties on the window object are correctly 
 [object Storage]
 true
 [object BarProp]
-[object StyleMedia]
 [object BarProp]
 [object Navigator]
 [object BarProp]

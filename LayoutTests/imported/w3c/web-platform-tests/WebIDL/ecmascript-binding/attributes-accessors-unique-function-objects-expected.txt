@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: window.styleMedia is deprecated draft version of window.matchMedia API that is not implemented in Firefox and will be removed from the web platform in future.
 
 PASS For attributes, each copy of the accessor property has distinct built-in function objects for its getters and setters.
 

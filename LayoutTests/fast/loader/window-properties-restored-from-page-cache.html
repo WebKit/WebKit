@@ -12,7 +12,6 @@ var cachedHistory = window.history;
 var cachedLocalStorage = window.localStorage;
 var cachedLocation = window.location;
 var cachedLocationbar = window.locationbar;
-var cachedMedia = window.styleMedia;
 var cachedMenubar = window.menubar;
 var cachedNavigator = window.navigator;
 var cachedPersonalbar = window.personalbar;
@@ -48,7 +47,6 @@ window.onpageshow = function(evt) {
 	logMessage(window.localStorage);
 	logMessage(window.location != null && window.location != undefined);
 	logMessage(window.locationbar);
-	logMessage(window.styleMedia);
 	logMessage(window.menubar);
 	logMessage(window.navigator);
 	logMessage(window.personalbar);
@@ -74,8 +72,6 @@ window.onpageshow = function(evt) {
 		logErrorMessage("location");
 	if (cachedLocationbar != window.locationbar)
 		logErrorMessage("locationbar");
-	if (cachedMedia != window.styleMedia)
-		logErrorMessage("styleMedia");
 	if (cachedMenubar != window.menubar)
 		logErrorMessage("menubar");
 	if (cachedNavigator != window.navigator)

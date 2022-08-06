@@ -37,7 +37,6 @@ public:
     static Ref<StyleMedia> create(DOMWindow& window) { return adoptRef(*new StyleMedia(window)); }
 
     String type() const;
-    bool matchMedium(const String&) const;
 
 private:
     explicit StyleMedia(DOMWindow&);

@@ -26,51 +26,20 @@
 #include "config.h"
 #include "StyleMedia.h"
 
-#include "Document.h"
-#include "Frame.h"
-#include "FrameView.h"
-#include "MediaList.h"
-#include "MediaQueryEvaluator.h"
-#include "MediaQueryParser.h"
-#include "NodeRenderStyle.h"
-#include "RenderElement.h"
-#include "StyleResolver.h"
-#include "StyleScope.h"
-
 namespace WebCore {
 
 StyleMedia::StyleMedia(DOMWindow& window)
     : DOMWindowProperty(&window)
 {
+    if (window.document()) {
+        window.document()->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Warning,
+            "window.styleMedia is deprecated draft version of window.matchMedia API that is not implemented in Firefox and will be removed from the web platform in future."_s));
+    }
 }
 
 String StyleMedia::type() const
 {
-    auto* frame = this->frame();
-    FrameView* view = frame ? frame->view() : nullptr;
-    if (view)
-        return view->mediaType();
-
-    return String();
-}
-
-bool StyleMedia::matchMedium(const String& query) const
-{
-    auto* frame = this->frame();
-    if (!frame)
-        return false;
-
-    Document* document = frame->document();
-    ASSERT(document);
-    Element* documentElement = document->documentElement();
-    if (!documentElement)
-        return false;
-
-    auto rootStyle = document->styleScope().resolver().styleForElement(*documentElement, { document->renderStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
-
-    auto media = MediaQuerySet::create(query, MediaQueryParserContext(*document));
-
-    return MediaQueryEvaluator { type(), *document, rootStyle.get() }.evaluate(media.get());
+    return "screen"_s;
 }
 
 } // namespace WebCore

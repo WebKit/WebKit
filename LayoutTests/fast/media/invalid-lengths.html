@@ -12,7 +12,7 @@
   
     function testQuery(query, expected)
     {
-        var actual = window.styleMedia.matchMedium(query);
+        var actual = window.matchMedia(query).matches;
         var message = (actual === expected) ? 'PASS' : 'FAIL';
         message += ": \"" + query + "\" evaluates to " + (actual ? "true" : "false") + ".";
         log(message);

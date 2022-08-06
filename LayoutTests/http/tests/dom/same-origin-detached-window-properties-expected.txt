@@ -61,8 +61,7 @@ PASS w.visualViewport.width is 0
 PASS w.visualViewport.height is 0
 PASS w.visualViewport.scale is 1
 PASS !!w.styleMedia is true
-PASS w.styleMedia.type is ""
-PASS w.styleMedia.matchMedium('foo') is false
+PASS w.styleMedia.type is "screen"
 PASS !!w.navigator is true
 PASS w.navigator.appCodeName is "Mozilla"
 PASS w.navigator.appName is "Netscape"
@@ -136,8 +135,7 @@ PASS w.visualViewport.width is 0
 PASS w.visualViewport.height is 0
 PASS w.visualViewport.scale is 1
 PASS !!w.styleMedia is true
-PASS w.styleMedia.type is ""
-PASS w.styleMedia.matchMedium('foo') is false
+PASS w.styleMedia.type is "screen"
 PASS !!w.navigator is true
 PASS w.navigator.appCodeName is "Mozilla"
 PASS w.navigator.appName is "Netscape"

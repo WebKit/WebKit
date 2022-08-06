@@ -63,5 +63,5 @@ partial interface DOMWindow {
 
 
     // Non-standard: This was removed from the CSSOM View specification.
-    readonly attribute StyleMedia styleMedia;
+    [NotEnumerable] readonly attribute StyleMedia styleMedia;
 };
