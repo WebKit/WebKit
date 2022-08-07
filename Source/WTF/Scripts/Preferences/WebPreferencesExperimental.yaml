@@ -732,6 +732,18 @@ ImageBitmapEnabled:
     WebKit:
       default: true
 
+ImperativeSlotAPIEnabled:
+  type: bool
+  humanReadableName: "Imperative Slot API"
+  humanReadableDescription: "Imperative Shadow DOM Distribution API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 InProcessCookieCacheEnabled:
   type: bool
