@@ -44,7 +44,7 @@ class TextRun;
 class TextDecorationPainter {
 public:
     struct Styles;
-    TextDecorationPainter(GraphicsContext&, OptionSet<TextDecorationLine> decorations, bool isFirstLine, const FontCascade&, InlineIterator::TextBoxIterator, float width, const ShadowData*, const FilterOperations*, std::optional<Styles> = std::nullopt);
+    TextDecorationPainter(GraphicsContext&, const FontCascade&, InlineIterator::TextBoxIterator, float width, const ShadowData*, const FilterOperations*, Styles);
 
     void paintBackgroundDecorations(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin);
     void paintForegroundDecorations(const FloatPoint& boxOrigin);
@@ -61,14 +61,13 @@ public:
         TextDecorationStyle linethroughStyle;
     };
     static Color decorationColor(const RenderStyle&);
-    static OptionSet<TextDecorationLine> textDecorationsInEffectForStyle(const Styles&);
     static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);
 
 private:
     void paintLineThrough(const Color&, float thickness, const FloatPoint& localOrigin);
 
     GraphicsContext& m_context;
-    OptionSet<TextDecorationLine> m_decorations;
+    OptionSet<TextDecorationLine> m_textBoxDecorations;
     float m_wavyOffset { 0 };
     float m_width { 0 };
     FloatPoint m_boxOrigin;
@@ -81,7 +80,7 @@ private:
     float m_deviceScaleFactor { 0 };
 
     Styles m_styles;
-    const RenderStyle& m_lineStyle;
+    const RenderStyle& m_textBoxStyle;
 };
     
 } // namespace WebCore

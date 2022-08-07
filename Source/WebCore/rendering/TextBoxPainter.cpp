@@ -433,11 +433,9 @@ TextDecorationPainter TextBoxPainter<TextBoxPath>::createDecorationPainter(const
     }
 
     // Create painter
-    auto textDecorations = m_style.textDecorationsInEffect();
-    textDecorations.add(TextDecorationPainter::textDecorationsInEffectForStyle(markedText.style.textDecorationStyles));
     auto* shadow = markedText.style.textShadow ? &markedText.style.textShadow.value() : nullptr;
     auto* colorFilter = markedText.style.textShadow && m_style.hasAppleColorFilter() ? &m_style.appleColorFilter() : nullptr;
-    return { context, textDecorations, m_isFirstLine, fontCascade(), makeIterator(), snappedSelectionRect.width(), shadow, colorFilter, markedText.style.textDecorationStyles };
+    return { context, fontCascade(), makeIterator(), snappedSelectionRect.width(), shadow, colorFilter, markedText.style.textDecorationStyles };
 }
 
 template<typename TextBoxPath>
