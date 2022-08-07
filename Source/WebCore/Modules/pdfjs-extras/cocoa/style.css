@@ -123,12 +123,12 @@ body {
 
 #zoomOut {
     order: 1;
-    background-image: url("./minus.magnifyingglass@2x.png");
+    background-image: url("./minus.magnifyingglass.svg");
 }
 
 #zoomIn {
     order: 2;
-    background-image: url("./plus.magnifyingglass@2x.png");
+    background-image: url("./plus.magnifyingglass.svg");
 }
 
 #zoomOut + .splitToolbarButtonSeparator {
@@ -138,11 +138,12 @@ body {
     width: var(--layerSeperatorControllerSize);
     margin-top: -1px;
     margin-bottom: -1px;
+    height: auto;
 }
 
 #download {
     order: 4;
-    background-image: url("./arrow.down.circle@2x.png");
+    background-image: url("./arrow.down.circle.svg");
     display: block !important;
 }
 
