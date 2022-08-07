@@ -25,6 +25,7 @@ COMPRESSIBLE_EXTENSIONS = {'.html', '.js', '.css', '.svg', '.properties'}
 BASE_DIRS = {'pdfjs/', 'pdfjs-extras/'}
 
 IGNORE = {'LICENSE',
+          'PdfJSExtras.cmake',
           'PdfJSFiles.cmake',
           'README.webkit',
           'web/cmaps/LICENSE',
