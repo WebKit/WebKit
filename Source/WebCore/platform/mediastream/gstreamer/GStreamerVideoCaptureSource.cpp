@@ -222,6 +222,7 @@ void GStreamerVideoCaptureSource::stopProducingData()
 {
     GST_INFO("Reset height and width after stopping source");
     setSize({ 0, 0 });
+    m_capturer->stop();
 }
 
 const RealtimeMediaSourceCapabilities& GStreamerVideoCaptureSource::capabilities()
