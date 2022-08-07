@@ -1,4 +1,14 @@
 ================
+WebKitGTK 2.36.6
+================
+
+What's new in WebKitGTK 2.36.6?
+
+  - Fix handling of touchpad scrolling on GTK4 builds.
+  - Fix WebKitGTK not allowing to be used from non-main threads.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.36.5
 ================
 
