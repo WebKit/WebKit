@@ -1,0 +1,5 @@
+PASS 50 is >= document.getElementById('target').offsetWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ส‍โ

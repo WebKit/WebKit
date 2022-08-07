@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -260,55 +260,27 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
     return 0;
 }
 
-// FIXME: We should consider reimplementing this function using ICU to advance by grapheme.
-// The current implementation only considers explicitly emoji sequences and emoji variations.
-static bool advanceByCombiningCharacterSequence(const UChar*& iterator, const UChar* end, UChar32& baseCharacter, unsigned& markCount)
+static bool advanceByCombiningCharacterSequence(CachedTextBreakIterator& graphemeClusterIterator, unsigned& location, const UChar*& iterator, const UChar* end, UChar32& baseCharacter, unsigned& markCount)
 {
     ASSERT(iterator < end);
-
-    markCount = 0;
 
     unsigned i = 0;
     unsigned remainingCharacters = end - iterator;
     U16_NEXT(iterator, i, remainingCharacters, baseCharacter);
-    iterator = iterator + i;
-    if (U_IS_SURROGATE(baseCharacter))
+    if (U_IS_SURROGATE(baseCharacter)) {
+        iterator = iterator + i;
+        markCount = 0;
+        location += i;
         return false;
-
-    // Consume marks.
-    bool sawEmojiGroupCandidate = isEmojiGroupCandidate(baseCharacter);
-    bool sawJoiner = false;
-    bool sawRegionalIndicator = isEmojiRegionalIndicator(baseCharacter);
-    while (iterator < end) {
-        UChar32 nextCharacter;
-        unsigned markLength = 0;
-        bool shouldContinue = false;
-        ASSERT(end >= iterator);
-        U16_NEXT(iterator, markLength, static_cast<unsigned>(end - iterator), nextCharacter);
-
-        if (isVariationSelector(nextCharacter) || isEmojiFitzpatrickModifier(nextCharacter))
-            shouldContinue = true;
-
-        if (sawRegionalIndicator && isEmojiRegionalIndicator(nextCharacter)) {
-            shouldContinue = true;
-            sawRegionalIndicator = false;
-        }
-
-        if (sawJoiner && isEmojiGroupCandidate(nextCharacter))
-            shouldContinue = true;
-
-        sawJoiner = false;
-        if (sawEmojiGroupCandidate && nextCharacter == zeroWidthJoiner) {
-            sawJoiner = true;
-            shouldContinue = true;
-        }
-        
-        if (!shouldContinue && !(U_GET_GC_MASK(nextCharacter) & U_GC_M_MASK))
-            break;
-
-        markCount += markLength;
-        iterator += markLength;
     }
+
+    int delta = remainingCharacters;
+    if (auto following = graphemeClusterIterator.following(location))
+        delta = *following - location;
+
+    iterator += delta;
+    markCount = delta - 1;
+    location += delta;
 
     return true;
 }
@@ -371,9 +343,12 @@ void ComplexTextController::collectComplexTextRuns()
     const Font* synthesizedFont = nullptr;
     const Font* smallSynthesizedFont = nullptr;
 
+    CachedTextBreakIterator graphemeClusterIterator(m_run.text(), TextBreakIterator::Mode::Character, m_font.fontDescription().computedLocale());
+    unsigned location = 0;
+
     unsigned markCount;
     UChar32 baseCharacter;
-    if (!advanceByCombiningCharacterSequence(curr, end, baseCharacter, markCount))
+    if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, location, curr, end, baseCharacter, markCount))
         return;
 
     nextFont = m_font.fontForCombiningCharacterSequence(cp, curr - cp);
@@ -398,7 +373,7 @@ void ComplexTextController::collectComplexTextRuns()
         isSmallCaps = nextIsSmallCaps;
         unsigned index = curr - cp;
 
-        if (!advanceByCombiningCharacterSequence(curr, end, baseCharacter, markCount))
+        if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, location, curr, end, baseCharacter, markCount))
             return;
 
         if (synthesizedFont) {
@@ -429,6 +404,7 @@ void ComplexTextController::collectComplexTextRuns()
             smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());
             nextIsSmallCaps = true;
             curr = cp + indexOfFontTransition;
+            location = indexOfFontTransition;
             continue;
         }
 
