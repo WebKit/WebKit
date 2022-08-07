@@ -56,7 +56,7 @@ enum ClauseType { Unresolved, Conjunction, Disjunction };
 
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeCondition(CSSParserTokenRange range)
 {
-    if (range.peek().type() == IdentToken || range.peek().type() == FunctionToken) {
+    if (range.peek().type() == IdentToken) {
         if (equalLettersIgnoringASCIICase(range.peek().value(), "not"_s))
             return consumeNegation(range);
     }
@@ -85,30 +85,35 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeCondition(CSSParserT
             break;
 
         const CSSParserToken& token = range.peek();
-        if (token.type() != IdentToken && token.type() != FunctionToken)
+        if (token.type() != IdentToken)
             return Invalid;
 
         previousTokenType = token.type();
-        
+
         if (clauseType == Unresolved)
             clauseType = token.value().length() == 3 ? Conjunction : Disjunction;
         if ((clauseType == Conjunction && !equalLettersIgnoringASCIICase(token.value(), "and"_s))
             || (clauseType == Disjunction && !equalLettersIgnoringASCIICase(token.value(), "or"_s)))
             return Invalid;
 
-        if (token.type() == IdentToken)
-            range.consumeIncludingWhitespace();
+        range.consume();
+        if (range.peek().type() != WhitespaceToken)
+            return Invalid;
+        range.consumeWhitespace();
     }
     return result ? Supported : Unsupported;
 }
 
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeNegation(CSSParserTokenRange range)
 {
-    ASSERT(range.peek().type() == IdentToken || range.peek().type() == FunctionToken);
+    ASSERT(range.peek().type() == IdentToken);
     auto tokenType = range.peek().type();
 
     if (range.peek().type() == IdentToken)
-        range.consumeIncludingWhitespace();
+        range.consume();
+    if (range.peek().type() != WhitespaceToken)
+        return Invalid;
+    range.consumeWhitespace();
     auto result = consumeConditionInParenthesis(range, tokenType);
     range.consumeWhitespace();
     if (!range.atEnd() || result == Invalid)

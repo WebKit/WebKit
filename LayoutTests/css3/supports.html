@@ -86,7 +86,7 @@
 
     /* Whitespace/Syntax */
     @supports not( display: deadbeef) {
-        #t22 { content: "APPLIED" }
+        #t22 { content: "FAIL" }
     }
 
     @supports (display: none)and (   -webkit-transition: all 1s ) {
@@ -94,11 +94,11 @@
     }
 
     @supports (display: none)or(-webkit-transition: all 1s) {
-        #t24 { content: "APPLIED" }
+        #t24 { content: "FAIL" }
     }
 
     @supports (display: none) or(-webkit-transition: all 1s    ) {
-        #t25 { content: "APPLIED" }
+        #t25 { content: "FAIL" }
     }
 
     @supports (((((((display: none))))))) {
@@ -231,7 +231,7 @@
 <script>
     description("Test the @supports rule.");
     var numTests = 45;
-    var untouchedTests = [1, 3, 5, 8, 12, 13, 14, 18, 28, 29, 34, 36, 43, 44]; // Tests whose content shouldn't change from the UNTOUCHED default.
+    var untouchedTests = [1, 3, 5, 8, 12, 13, 14, 18, 22, 24, 25, 28, 29, 34, 36, 43, 44]; // Tests whose content shouldn't change from the UNTOUCHED default.
 
     var container = document.getElementById("test_container");
     for (var i=0; i < numTests; i++) {

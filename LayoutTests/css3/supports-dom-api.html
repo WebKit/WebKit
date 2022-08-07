@@ -50,10 +50,10 @@
     shouldBeTrue('CSS.supports("not ((not (display: block)) or ((display: none) and (deadbeef: 1px)))")');
 
     // Whitespace/Syntax.
-    shouldBeTrue('CSS.supports("not( display: deadbeef)")');
+    shouldBeFalse('CSS.supports("not( display: deadbeef)")');
     shouldBeTrue('CSS.supports("(display: none)and (   -webkit-transition: all 1s )")');
-    shouldBeTrue('CSS.supports("(display: none)or(-webkit-transition: all 1s)")');
-    shouldBeTrue('CSS.supports("(display: none) or(-webkit-transition: all 1s    )")');
+    shouldBeFalse('CSS.supports("(display: none)or(-webkit-transition: all 1s)")');
+    shouldBeFalse('CSS.supports("(display: none) or(-webkit-transition: all 1s    )")');
     shouldBeTrue('CSS.supports("(((((((display: none)))))))")');
     shouldBeFalse('CSS.supports("(!important)")');
     shouldBeFalse('CSS.supports("!important")');
