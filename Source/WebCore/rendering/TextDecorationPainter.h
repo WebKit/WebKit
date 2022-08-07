@@ -53,12 +53,13 @@ public:
         bool operator==(const Styles&) const;
         bool operator!=(const Styles& other) const { return !(*this == other); }
 
-        Color underlineColor;
-        Color overlineColor;
-        Color linethroughColor;
-        TextDecorationStyle underlineStyle;
-        TextDecorationStyle overlineStyle;
-        TextDecorationStyle linethroughStyle;
+        struct DecorationStyleAndColor {
+            Color color;
+            TextDecorationStyle decorationStyle;
+        };
+        DecorationStyleAndColor underline;
+        DecorationStyleAndColor overline;
+        DecorationStyleAndColor linethrough;
     };
     static Color decorationColor(const RenderStyle&);
     static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);

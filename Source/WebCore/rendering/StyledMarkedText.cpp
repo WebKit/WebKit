@@ -58,16 +58,16 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
             auto decorations = renderStyle->textDecorationsInEffect();
 
             if (decorations.contains(TextDecorationLine::Underline)) {
-                style.textDecorationStyles.underlineColor = color;
-                style.textDecorationStyles.underlineStyle = decorationStyle;
+                style.textDecorationStyles.underline.color = color;
+                style.textDecorationStyles.underline.decorationStyle = decorationStyle;
             }
             if (decorations.contains(TextDecorationLine::Overline)) {
-                style.textDecorationStyles.overlineColor = color;
-                style.textDecorationStyles.overlineStyle = decorationStyle;
+                style.textDecorationStyles.overline.color = color;
+                style.textDecorationStyles.overline.decorationStyle = decorationStyle;
             }
             if (decorations.contains(TextDecorationLine::LineThrough)) {
-                style.textDecorationStyles.linethroughColor = color;
-                style.textDecorationStyles.linethroughStyle = decorationStyle;
+                style.textDecorationStyles.linethrough.color = color;
+                style.textDecorationStyles.linethrough.decorationStyle = decorationStyle;
             }
         }
         break;

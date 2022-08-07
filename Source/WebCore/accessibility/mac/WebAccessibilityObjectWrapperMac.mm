@@ -843,12 +843,12 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
 
         if (decor & TextDecorationLine::Underline) {
             AXAttributeStringSetNumber(attrString, NSAccessibilityUnderlineTextAttribute, @YES, range);
-            AXAttributeStringSetColor(attrString, NSAccessibilityUnderlineColorTextAttribute, cocoaColor(decorationStyles.underlineColor).get(), range);
+            AXAttributeStringSetColor(attrString, NSAccessibilityUnderlineColorTextAttribute, cocoaColor(decorationStyles.underline.color).get(), range);
         }
 
         if (decor & TextDecorationLine::LineThrough) {
             AXAttributeStringSetNumber(attrString, NSAccessibilityStrikethroughTextAttribute, @YES, range);
-            AXAttributeStringSetColor(attrString, NSAccessibilityStrikethroughColorTextAttribute, cocoaColor(decorationStyles.linethroughColor).get(), range);
+            AXAttributeStringSetColor(attrString, NSAccessibilityStrikethroughColorTextAttribute, cocoaColor(decorationStyles.linethrough.color).get(), range);
         }
     }
     
