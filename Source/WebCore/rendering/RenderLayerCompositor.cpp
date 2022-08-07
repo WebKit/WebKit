@@ -3645,7 +3645,7 @@ bool RenderLayerCompositor::requiresScrollLayer(RootLayerAttachment attachment) 
         || attachment == RootLayerAttachedViaEnclosingFrame; // a composited frame on Mac
 }
 
-void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRect& clip, const Color& backgroundColor)
+void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRect& clip)
 {
     if (!scrollbar)
         return;
@@ -3655,12 +3655,6 @@ void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRec
     context.translate(-scrollbarRect.location());
     IntRect transformedClip = clip;
     transformedClip.moveBy(scrollbarRect.location());
-#if HAVE(RUBBER_BANDING)
-    UNUSED_PARAM(backgroundColor);
-#else
-    if (backgroundColor.isVisible())
-        context.fillRect(transformedClip, backgroundColor);
-#endif
     scrollbar->paint(context, transformedClip);
     context.restore();
 }
@@ -3673,9 +3667,9 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
 
     IntRect pixelSnappedRectForIntegralPositionedItems = snappedIntRect(LayoutRect(clip));
     if (graphicsLayer == layerForHorizontalScrollbar())
-        paintScrollbar(m_renderView.frameView().horizontalScrollbar(), context, pixelSnappedRectForIntegralPositionedItems, m_viewBackgroundColor);
+        paintScrollbar(m_renderView.frameView().horizontalScrollbar(), context, pixelSnappedRectForIntegralPositionedItems);
     else if (graphicsLayer == layerForVerticalScrollbar())
-        paintScrollbar(m_renderView.frameView().verticalScrollbar(), context, pixelSnappedRectForIntegralPositionedItems, m_viewBackgroundColor);
+        paintScrollbar(m_renderView.frameView().verticalScrollbar(), context, pixelSnappedRectForIntegralPositionedItems);
     else if (graphicsLayer == layerForScrollCorner()) {
         const IntRect& scrollCorner = m_renderView.frameView().scrollCornerRect();
         context.save();
