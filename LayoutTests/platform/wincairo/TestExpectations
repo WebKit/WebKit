@@ -1608,6 +1608,7 @@ imported/w3c/web-platform-tests/streams [ Skip ]
 imported/w3c/web-platform-tests/subresource-integrity [ Skip ]
 imported/w3c/web-platform-tests/svg [ Skip ]
 imported/w3c/web-platform-tests/uievents [ Skip ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests [ Skip ]
 imported/w3c/web-platform-tests/url [ Skip ]
 imported/w3c/web-platform-tests/user-timing [ Skip ]
 imported/w3c/web-platform-tests/visual-viewport [ Skip ]
@@ -2115,3 +2116,7 @@ fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
 fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html [ Failure ]
 
 fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
+
+webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Failure ]
+webgl/2.0.y/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-instance.html [ Failure ]
+
