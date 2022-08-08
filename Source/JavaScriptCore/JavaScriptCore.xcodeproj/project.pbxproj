@@ -2010,6 +2010,7 @@
 		E3BFA5D021E853A1009C0EBA /* DFGDesiredGlobalProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFA5CD21E853A1009C0EBA /* DFGDesiredGlobalProperty.h */; };
 		E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */; };
 		E3C295DD1ED2CBDA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */; };
+		E3C4131D289E08EA001150F8 /* SyntheticModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C4131C289E08E5001150F8 /* SyntheticModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C694B323026877006FBE42 /* WasmOSREntryData.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C694B123026873006FBE42 /* WasmOSREntryData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C73A9125BFA73B00EFE303 /* WasmStreamingPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C73A9025BFA73400EFE303 /* WasmStreamingPlan.h */; };
 		E3C79CAB1DB9A4DC00D1ECA4 /* DOMJITEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C79CAA1DB9A4D600D1ECA4 /* DOMJITEffect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5515,6 +5516,8 @@
 		E3BFD0B91DAF807C0065DEA2 /* AccessCaseSnippetParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessCaseSnippetParams.cpp; sourceTree = "<group>"; };
 		E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessCaseSnippetParams.h; sourceTree = "<group>"; };
 		E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectPropertyChangeAdaptiveWatchpoint.h; sourceTree = "<group>"; };
+		E3C4131B289E08E5001150F8 /* SyntheticModuleRecord.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SyntheticModuleRecord.cpp; sourceTree = "<group>"; };
+		E3C4131C289E08E5001150F8 /* SyntheticModuleRecord.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyntheticModuleRecord.h; sourceTree = "<group>"; };
 		E3C4630526DB5DE900896336 /* TemporalCalendarConstructor.lut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemporalCalendarConstructor.lut.h; sourceTree = "<group>"; };
 		E3C4630626DB5DE900896336 /* TemporalCalendarPrototype.lut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemporalCalendarPrototype.lut.h; sourceTree = "<group>"; };
 		E3C694B123026873006FBE42 /* WasmOSREntryData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmOSREntryData.h; sourceTree = "<group>"; };
@@ -8288,6 +8291,8 @@
 				14A396A60CD2933100B5B4FF /* SymbolTable.h */,
 				E39BF39822A2288B00BD183E /* SymbolTableInlines.h */,
 				E31179A92288385D00514B2C /* SymbolTableOrScopeDepth.h */,
+				E3C4131B289E08E5001150F8 /* SyntheticModuleRecord.cpp */,
+				E3C4131C289E08E5001150F8 /* SyntheticModuleRecord.h */,
 				BDB4B5E099CD4C1BB3C1CF05 /* TemplateObjectDescriptor.cpp */,
 				70ECA6041AFDBEA200449739 /* TemplateObjectDescriptor.h */,
 				E32D4DE026DAFD4200D4533A /* TemporalCalendar.cpp */,
@@ -8835,8 +8840,6 @@
 		9688CB120ED12B4E001D649F /* assembler */ = {
 			isa = PBXGroup;
 			children = (
-				4BDF3001289324AB00AE1DE3 /* AssemblyComments.cpp */,
-				4BDF3002289324AC00AE1DE3 /* AssemblyComments.h */,
 				0F1FE51B1922A3BC006987C5 /* AbortReason.h */,
 				0F2C63BF1E660EA500C13839 /* AbstractMacroAssembler.cpp */,
 				860161DF0F3A83C100F84710 /* AbstractMacroAssembler.h */,
@@ -8850,6 +8853,8 @@
 				0FA6F39620CCB7A600A03DCD /* AssemblerBuffer.cpp */,
 				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
 				43C392AA1C3BEB0000241F53 /* AssemblerCommon.h */,
+				4BDF3001289324AB00AE1DE3 /* AssemblyComments.cpp */,
+				4BDF3002289324AC00AE1DE3 /* AssemblyComments.h */,
 				86E116B00FE75AC800B512BC /* CodeLocation.h */,
 				52335628225EB8E900268BD2 /* CPU.cpp */,
 				0F30D7BF1D95D62F0053089D /* CPU.h */,
@@ -9769,6 +9774,7 @@
 				FE1D6D7123625AB1007A5C26 /* ArrayStorageInlines.h in Headers */,
 				9688CB150ED12B4E001D649F /* AssemblerBuffer.h in Headers */,
 				43C392AB1C3BEB0500241F53 /* AssemblerCommon.h in Headers */,
+				4BDF3004289324AC00AE1DE3 /* AssemblyComments.h in Headers */,
 				0F24E54117EA9F5900ABB217 /* AssemblyHelpers.h in Headers */,
 				6B767E7B26791F270017F8D1 /* AssemblyHelpersSpoolers.h in Headers */,
 				A784A26111D16622005776AC /* ASTBuilder.h in Headers */,
@@ -10457,7 +10463,6 @@
 				0FB7F39B15ED8E4600F167B2 /* IndexingType.h in Headers */,
 				14386A791DD6989C008652C4 /* IndirectEvalExecutable.h in Headers */,
 				0FF8BDEB1AD4CF7100DFE884 /* InferredValue.h in Headers */,
-				4BDF3004289324AC00AE1DE3 /* AssemblyComments.h in Headers */,
 				0F4AE0431FE0D25700E20839 /* InferredValueInlines.h in Headers */,
 				BC18C4100E16F5CD00B34460 /* InitializeThreading.h in Headers */,
 				A513E5B8185B8BD3007E95AD /* InjectedScript.h in Headers */,
@@ -11141,6 +11146,7 @@
 				0FD79A2D1EBBBDBB00DA88D3 /* Synchronousness.h in Headers */,
 				0F1FB38F1E173A6700A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h in Headers */,
 				A784A26411D16622005776AC /* SyntaxChecker.h in Headers */,
+				E3C4131D289E08EA001150F8 /* SyntheticModuleRecord.h in Headers */,
 				DC7997831CDE9FA0004D4A09 /* TagRegistersMode.h in Headers */,
 				70ECA6091AFDBEA200449739 /* TemplateObjectDescriptor.h in Headers */,
 				E32D4DE926DAFD4300D4533A /* TemporalCalendar.h in Headers */,
@@ -12258,10 +12264,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BE92D442898522400FA48E1 /* LowLevelInterpreter.asm in Sources */,
-				4BE92D452898522400FA48E1 /* LowLevelInterpreter.cpp in Sources */,
-				4B46940428984FEE00512FDF /* MacroAssemblerX86Common.cpp in Sources */,
-				4B46940328984FA800512FDF /* MacroAssemblerARM64.cpp in Sources */,
 				FE05FAFD1FE4CEDA00093230 /* DeprecatedInspectorValues.cpp in Sources */,
 				5333BBDC2110F7D9007618EC /* DFGSpeculativeJIT.cpp in Sources */,
 				5333BBDB2110F7D2007618EC /* DFGSpeculativeJIT32_64.cpp in Sources */,
@@ -12273,6 +12275,10 @@
 				E30873E7272559410053B601 /* IntlPluralRules.cpp in Sources */,
 				A3EE8543262514B000FC9B8D /* IntlWorkaround.cpp in Sources */,
 				E38E8790254B978400F6F9E4 /* JSDateMath.cpp in Sources */,
+				4BE92D442898522400FA48E1 /* LowLevelInterpreter.asm in Sources */,
+				4BE92D452898522400FA48E1 /* LowLevelInterpreter.cpp in Sources */,
+				4B46940328984FA800512FDF /* MacroAssemblerARM64.cpp in Sources */,
+				4B46940428984FEE00512FDF /* MacroAssemblerX86Common.cpp in Sources */,
 				DFBC2CA625E6D5B90081BDD1 /* SymbolStubsForSafariCompatibility.mm in Sources */,
 				E32F713F281B3C6600AFD21D /* UnifiedSource1-c.c in Sources */,
 				536B319A1F735E780037FC33 /* UnifiedSource1-mm.mm in Sources */,

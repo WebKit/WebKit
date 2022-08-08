@@ -34,6 +34,9 @@
 #include <wtf/RefPtr.h>
 #include <wtf/URL.h>
 
+namespace JSC {
+class ScriptFetchParameters;
+}
 namespace WebCore {
 
 class ModuleScriptLoaderClient;
@@ -41,11 +44,10 @@ class CachedScript;
 class DeferredPromise;
 class Document;
 class JSDOMGlobalObject;
-class ModuleFetchParameters;
 
 class CachedModuleScriptLoader final : public ModuleScriptLoader, private CachedResourceClient {
 public:
-    static Ref<CachedModuleScriptLoader> create(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<ModuleFetchParameters>&&);
+    static Ref<CachedModuleScriptLoader> create(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
 
     virtual ~CachedModuleScriptLoader();
 
@@ -55,7 +57,7 @@ public:
     CachedScriptFetcher& scriptFetcher() { return static_cast<CachedScriptFetcher&>(ModuleScriptLoader::scriptFetcher()); }
 
 private:
-    CachedModuleScriptLoader(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<ModuleFetchParameters>&&);
+    CachedModuleScriptLoader(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
 
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 

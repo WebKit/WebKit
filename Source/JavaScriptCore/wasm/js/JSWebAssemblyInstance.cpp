@@ -188,18 +188,23 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
     }
 
     // For each import i in module.imports:
-    for (auto& import : moduleInformation.imports) {
-        Identifier moduleName = Identifier::fromString(vm, String::fromUTF8(import.module));
-        Identifier fieldName = Identifier::fromString(vm, String::fromUTF8(import.field));
-        moduleRecord->appendRequestedModule(moduleName);
-        moduleRecord->addImportEntry(WebAssemblyModuleRecord::ImportEntry {
-            WebAssemblyModuleRecord::ImportEntryType::Single,
-            moduleName,
-            fieldName,
-            Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyImportName"_s)),
-        });
+    {
+        IdentifierSet specifiers;
+        for (auto& import : moduleInformation.imports) {
+            Identifier moduleName = Identifier::fromString(vm, String::fromUTF8(import.module));
+            Identifier fieldName = Identifier::fromString(vm, String::fromUTF8(import.field));
+            auto result = specifiers.add(moduleName.impl());
+            if (result.isNewEntry)
+                moduleRecord->appendRequestedModule(moduleName, nullptr);
+            moduleRecord->addImportEntry(WebAssemblyModuleRecord::ImportEntry {
+                WebAssemblyModuleRecord::ImportEntryType::Single,
+                moduleName,
+                fieldName,
+                Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyImportName"_s)),
+            });
+        }
+        ASSERT(moduleRecord->importEntries().size() == moduleInformation.imports.size());
     }
-    ASSERT(moduleRecord->importEntries().size() == moduleInformation.imports.size());
 
     bool hasMemoryImport = moduleInformation.memory.isImport();
     if (moduleInformation.memory && !hasMemoryImport) {

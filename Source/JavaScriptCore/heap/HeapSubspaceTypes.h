@@ -106,6 +106,7 @@
 #include "StringObject.h"
 #include "StructureChain.h"
 #include "SymbolObject.h"
+#include "SyntheticModuleRecord.h"
 #include "TemporalCalendar.h"
 #include "TemporalDuration.h"
 #include "TemporalInstant.h"

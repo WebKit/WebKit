@@ -38,9 +38,9 @@ class Document;
 
 class WorkerScriptFetcher final : public JSC::ScriptFetcher {
 public:
-    static Ref<WorkerScriptFetcher> create(FetchOptions::Credentials credentials, FetchOptions::Destination destination, ReferrerPolicy referrerPolicy)
+    static Ref<WorkerScriptFetcher> create(Ref<ModuleFetchParameters>&& parameters, FetchOptions::Credentials credentials, FetchOptions::Destination destination, ReferrerPolicy referrerPolicy)
     {
-        return adoptRef(*new WorkerScriptFetcher(credentials, destination, referrerPolicy));
+        return adoptRef(*new WorkerScriptFetcher(WTFMove(parameters), credentials, destination, referrerPolicy));
     }
 
     FetchOptions::Credentials credentials() const { return m_credentials; }
@@ -77,11 +77,11 @@ public:
     }
 
 protected:
-    WorkerScriptFetcher(FetchOptions::Credentials credentials, FetchOptions::Destination destination, ReferrerPolicy referrerPolicy)
+    WorkerScriptFetcher(Ref<ModuleFetchParameters>&& parameters, FetchOptions::Credentials credentials, FetchOptions::Destination destination, ReferrerPolicy referrerPolicy)
         : m_credentials(credentials)
         , m_destination(destination)
         , m_referrerPolicy(referrerPolicy)
-        , m_parameters(ModuleFetchParameters::create(emptyString(), /* isTopLevelModule */ true))
+        , m_parameters(WTFMove(parameters))
     {
     }
 

@@ -538,12 +538,16 @@ bool MIMETypeRegistry::isTextMediaPlaylistMIMEType(const String& mimeType)
     return false;
 }
 
+// https://mimesniff.spec.whatwg.org/#json-mime-type
 bool MIMETypeRegistry::isSupportedJSONMIMEType(const String& mimeType)
 {
     if (mimeType.isEmpty())
         return false;
 
     if (equalLettersIgnoringASCIICase(mimeType, "application/json"_s))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(mimeType, "text/json"_s))
         return true;
 
     // When detecting +json ensure there is a non-empty type / subtype preceeding the suffix.

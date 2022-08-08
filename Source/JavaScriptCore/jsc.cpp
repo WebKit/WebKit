@@ -55,6 +55,7 @@
 #include "JSNativeStdFunction.h"
 #include "JSONObject.h"
 #include "JSObjectInlines.h"
+#include "JSScriptFetchParameters.h"
 #include "JSSourceCode.h"
 #include "JSString.h"
 #include "JSTypedArrays.h"
@@ -916,6 +917,15 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     if (!moduleURL.isLocalFile())
         RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Module url, '", moduleURL.string(), "' does not map to a local file."))));
 
+    auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
+    parameters = jsUndefined();
+    if (!assertions.isEmpty()) {
+        if (std::optional<ScriptFetchParameters::Type> type = ScriptFetchParameters::parseType(assertions.get(vm.propertyNames->type.impl())))
+            parameters = JSScriptFetchParameters::create(vm, ScriptFetchParameters::create(type.value()));
+    }
+
     auto result = JSC::importModule(globalObject, Identifier::fromString(vm, moduleURL.string()), parameters, jsUndefined());
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
@@ -1235,7 +1245,7 @@ static bool fetchModuleFromLocalFileSystem(const URL& fileURL, Vector& buffer)
     return result;
 }
 
-JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, JSValue, JSValue)
+JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, JSValue assertionsValue, JSValue)
 {
     VM& vm = globalObject->vm();
     JSInternalPromise* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
@@ -1255,23 +1265,32 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     // Strip the URI from our key so Errors print canonical system paths.
     moduleKey = moduleURL.fileSystemPath();
 
+    RefPtr<ScriptFetchParameters> assertions;
+    if (auto* value = jsDynamicCast<JSScriptFetchParameters*>(assertionsValue))
+        assertions = &value->parameters();
+
     Vector<uint8_t> buffer;
     if (!fetchModuleFromLocalFileSystem(moduleURL, buffer))
         RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not open file '", moduleKey, "'."))));
 
 #if ENABLE(WEBASSEMBLY)
     // FileSystem does not have mime-type header. The JSC shell recognizes WebAssembly's magic header.
-    if (buffer.size() >= 4) {
-        if (buffer[0] == '\0' && buffer[1] == 'a' && buffer[2] == 's' && buffer[3] == 'm') {
-            auto source = SourceCode(WebAssemblySourceProvider::create(WTFMove(buffer), SourceOrigin { moduleURL }, WTFMove(moduleKey)));
-            scope.releaseAssertNoException();
-            auto sourceCode = JSSourceCode::create(vm, WTFMove(source));
-            scope.release();
-            promise->resolve(globalObject, sourceCode);
-            return promise;
-        }
+    if ((buffer.size() >= 4 && buffer[0] == '\0' && buffer[1] == 'a' && buffer[2] == 's' && buffer[3] == 'm') || (assertions && assertions->type() == ScriptFetchParameters::Type::WebAssembly)) {
+        auto source = SourceCode(WebAssemblySourceProvider::create(WTFMove(buffer), SourceOrigin { moduleURL }, WTFMove(moduleKey)));
+        auto sourceCode = JSSourceCode::create(vm, WTFMove(source));
+        scope.release();
+        promise->resolve(globalObject, sourceCode);
+        return promise;
     }
 #endif
+
+    if (assertions && assertions->type() == ScriptFetchParameters::Type::JSON) {
+        auto source = SourceCode(StringSourceProvider::create(stringFromUTF(buffer), SourceOrigin { moduleURL }, WTFMove(moduleKey), TextPosition(), SourceProviderSourceType::JSON));
+        auto sourceCode = JSSourceCode::create(vm, WTFMove(source));
+        scope.release();
+        promise->resolve(globalObject, sourceCode);
+        return promise;
+    }
 
     auto sourceCode = JSSourceCode::create(vm, jscSource(stringFromUTF(buffer), SourceOrigin { moduleURL }, WTFMove(moduleKey), TextPosition(), SourceProviderSourceType::Module));
     scope.release();

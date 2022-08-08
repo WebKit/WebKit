@@ -11,6 +11,8 @@ flags:
   array-grouping: useArrayGroupMethod
   Object.hasOwn: useHasOwn
   ShadowRealm: useShadowRealm
+  import-assertions: useImportAssertion
+  json-modules: useImportAssertion
 skip:
   features:
     - Atomics.waitAsync
@@ -18,8 +20,6 @@ skip:
     - regexp-lookbehind
     - regexp-v-flag
     - resizable-arraybuffer
-    - import-assertions
-    - json-modules
     - class-static-block
     - callable-boundary-realms
     - FinalizationRegistry.prototype.cleanupSome

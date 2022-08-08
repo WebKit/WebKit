@@ -32,6 +32,23 @@
 
 namespace JSC {
 
+static RefPtr<ScriptFetchParameters> tryCreateAssertion(VM& vm, ImportAssertionListNode* assertionList)
+{
+    if (!assertionList)
+        return nullptr;
+
+    // Currently, only "type" is supported.
+    std::optional<ScriptFetchParameters::Type> type;
+    for (auto& [key, value] : assertionList->assertions()) {
+        if (*key == vm.propertyNames->type)
+            type = ScriptFetchParameters::parseType(value->impl());
+    }
+
+    if (type)
+        return ScriptFetchParameters::create(type.value());
+    return nullptr;
+}
+
 void ScopeNode::analyzeModule(ModuleAnalyzer& analyzer)
 {
     m_statements->analyzeModule(analyzer);
@@ -48,7 +65,7 @@ void SourceElements::analyzeModule(ModuleAnalyzer& analyzer)
 
 void ImportDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
 {
-    analyzer.moduleRecord()->appendRequestedModule(m_moduleName->moduleName());
+    analyzer.appendRequestedModule(m_moduleName->moduleName(), tryCreateAssertion(analyzer.vm(), assertionList()));
     for (auto* specifier : m_specifierList->specifiers()) {
         analyzer.moduleRecord()->addImportEntry(JSModuleRecord::ImportEntry {
             specifier->importedName() == analyzer.vm().propertyNames->timesIdentifier
@@ -62,7 +79,7 @@ void ImportDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
 
 void ExportAllDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
 {
-    analyzer.moduleRecord()->appendRequestedModule(m_moduleName->moduleName());
+    analyzer.appendRequestedModule(m_moduleName->moduleName(), tryCreateAssertion(analyzer.vm(), assertionList()));
     analyzer.moduleRecord()->addStarExportEntry(m_moduleName->moduleName());
 }
 
@@ -77,7 +94,7 @@ void ExportLocalDeclarationNode::analyzeModule(ModuleAnalyzer&)
 void ExportNamedDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
 {
     if (m_moduleName)
-        analyzer.moduleRecord()->appendRequestedModule(m_moduleName->moduleName());
+        analyzer.appendRequestedModule(m_moduleName->moduleName(), tryCreateAssertion(analyzer.vm(), assertionList()));
 
     for (auto* specifier : m_specifierList->specifiers()) {
         if (m_moduleName) {

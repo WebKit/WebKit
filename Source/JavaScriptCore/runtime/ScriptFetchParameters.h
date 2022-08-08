@@ -25,13 +25,51 @@
 
 #pragma once
 
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
 class ScriptFetchParameters : public RefCounted<ScriptFetchParameters> {
 public:
-    virtual ~ScriptFetchParameters() { }
+    enum Type : uint8_t {
+        None,
+        JavaScript,
+        WebAssembly,
+        JSON,
+    };
+
+    ScriptFetchParameters(Type type)
+        : m_type(type)
+    {
+    }
+
+    virtual ~ScriptFetchParameters() = default;
+
+    Type type() const { return m_type; }
+
+    virtual const String& integrity() const { return nullString(); }
+    virtual bool isTopLevelModule() const { return false; }
+
+    static Ref<ScriptFetchParameters> create(Type type)
+    {
+        return adoptRef(*new ScriptFetchParameters(type));
+    }
+
+    static std::optional<Type> parseType(StringView string)
+    {
+        if (string == "json"_s)
+            return Type::JSON;
+        if (string == "javascript"_s)
+            return Type::JavaScript;
+        if (string == "webassembly"_s)
+            return Type::WebAssembly;
+        return std::nullopt;
+    }
+
+private:
+    Type m_type { Type::None };
 };
 
 } // namespace JSC

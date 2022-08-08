@@ -234,8 +234,9 @@ function requestSatisfy(entry, parameters, fetcher, visited)
         if (entry.satisfy)
             return entry.satisfy;
 
-        var depLoads = @newArrayWithSize(entry.dependencies.length);
+        var depLoads = this.requestedModuleParameters(entry.module);
         for (var i = 0, length = entry.dependencies.length; i < length; ++i) {
+            var parameters = depLoads[i];
             var depEntry = entry.dependencies[i];
             var promise;
 
@@ -249,10 +250,10 @@ function requestSatisfy(entry, parameters, fetcher, visited)
             // rejected by the Promises runtime. Since only we need is the instantiated module, instead of waiting
             // the Satisfy for this module, we just wait Instantiate for this.
             if (visited.@has(depEntry))
-                promise = this.requestInstantiate(depEntry, @undefined, fetcher);
+                promise = this.requestInstantiate(depEntry, parameters, fetcher);
             else {
                 // Currently, module loader do not pass any information for non-top-level module fetching.
-                promise = this.requestSatisfy(depEntry, @undefined, fetcher, visited);
+                promise = this.requestSatisfy(depEntry, parameters, fetcher, visited);
             }
             @putByValDirect(depLoads, i, promise);
         }

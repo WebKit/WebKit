@@ -230,6 +230,7 @@ class Heap;
     v(intlSegmentsSpace, intlSegmentsHeapCellType, IntlSegments) \
     v(javaScriptCallFrameSpace, javaScriptCallFrameHeapCellType, Inspector::JSJavaScriptCallFrame) \
     v(jsModuleRecordSpace, jsModuleRecordHeapCellType, JSModuleRecord) \
+    v(syntheticModuleRecordSpace, syntheticModuleRecordHeapCellType, SyntheticModuleRecord) \
     v(mapBucketSpace, cellHeapCellType, JSMap::BucketType) \
     v(mapIteratorSpace, cellHeapCellType, JSMapIterator) \
     v(mapSpace, cellHeapCellType, JSMap) \
@@ -935,6 +936,7 @@ public:
     IsoHeapCellType injectedScriptHostSpaceHeapCellType;
     IsoHeapCellType javaScriptCallFrameHeapCellType;
     IsoHeapCellType jsModuleRecordHeapCellType;
+    IsoHeapCellType syntheticModuleRecordHeapCellType;
     IsoHeapCellType moduleNamespaceObjectHeapCellType;
     IsoHeapCellType nativeStdFunctionHeapCellType;
     IsoInlinedHeapCellType<JSString> stringHeapCellType;

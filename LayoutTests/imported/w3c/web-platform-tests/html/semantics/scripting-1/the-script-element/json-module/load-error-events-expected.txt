@@ -1,20 +1,10 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
 
-Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-
-NOTRUN inline, 200, parser-inserted
-NOTRUN inline, 404, parser-inserted
-NOTRUN src, 200, parser-inserted
-NOTRUN src, 404, parser-inserted
-NOTRUN src, 200, not parser-inserted
-NOTRUN src, 404, not parser-inserted
-NOTRUN inline, 200, not parser-inserted
-NOTRUN inline, 404, not parser-inserted
+FAIL inline, 200, parser-inserted assert_unreached: Load event should not be fired. Reached unreachable code
+PASS inline, 404, parser-inserted
+PASS src, 200, parser-inserted
+PASS src, 404, parser-inserted
+PASS src, 200, not parser-inserted
+PASS src, 404, not parser-inserted
+FAIL inline, 200, not parser-inserted assert_unreached: Load event should not be fired. Reached unreachable code
+PASS inline, 404, not parser-inserted
 

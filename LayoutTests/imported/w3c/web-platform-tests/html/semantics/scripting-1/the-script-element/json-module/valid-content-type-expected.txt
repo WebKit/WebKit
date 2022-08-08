@@ -1,16 +1,10 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: TypeError: 'text/html json' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: TypeError: 'image/svg json' is not a valid JavaScript MIME type.
 
-Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-
-NOTRUN text/json
-NOTRUN application/json
-NOTRUN text/html+json
-NOTRUN image/svg+json
-NOTRUN text/json;boundary=something
-NOTRUN text/json;foo=bar
+PASS text/json
+PASS application/json
+FAIL text/html+json assert_unreached: [object Event] Reached unreachable code
+FAIL image/svg+json assert_unreached: [object Event] Reached unreachable code
+PASS text/json;boundary=something
+PASS text/json;foo=bar
 

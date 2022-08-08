@@ -37,9 +37,9 @@ TEST(MIMETypeRegistry, JSONMIMETypes)
     ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("APPLICATION/JSON"_s));
     ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("application/vnd.api+json"_s));
     ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("anything/something+json"_s));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("text/json"_s));
 
     ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/plain"_s));
-    ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/json"_s));
     ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/javascript"_s));
 }
 

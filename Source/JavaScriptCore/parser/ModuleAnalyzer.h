@@ -31,6 +31,7 @@ namespace JSC {
 
 class JSModuleRecord;
 class SourceCode;
+class ScriptFetchParameters;
 
 class ModuleAnalyzer {
     WTF_MAKE_NONCOPYABLE(ModuleAnalyzer);
@@ -43,11 +44,14 @@ public:
 
     JSModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
 
+    void appendRequestedModule(const Identifier&, RefPtr<ScriptFetchParameters>&&);
+
 private:
     void exportVariable(ModuleProgramNode&, const RefPtr<UniquedStringImpl>&, const VariableEnvironmentEntry&);
 
     VM& m_vm;
     Strong<JSModuleRecord> m_moduleRecord;
+    IdentifierSet m_requestedModules;
 };
 
 } // namespace JSC

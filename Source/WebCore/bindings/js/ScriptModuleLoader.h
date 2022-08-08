@@ -53,7 +53,7 @@ class ScriptModuleLoader final : private ModuleScriptLoaderClient {
     WTF_MAKE_NONCOPYABLE(ScriptModuleLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class OwnerType : uint8_t { Document, WorkerOrWorklet };
-    enum class ModuleType : uint8_t { Invalid, JavaScript, WebAssembly };
+    enum class ModuleType : uint8_t { Invalid, JavaScript, WebAssembly, JSON };
     explicit ScriptModuleLoader(ScriptExecutionContext&, OwnerType);
     ~ScriptModuleLoader();
 

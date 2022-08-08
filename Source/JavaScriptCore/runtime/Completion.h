@@ -23,6 +23,7 @@
 #pragma once
 
 #include "CallData.h"
+#include "Identifier.h"
 #include "JSCJSValue.h"
 #include <wtf/FileSystem.h>
 #include <wtf/NakedPtr.h>
@@ -76,5 +77,7 @@ JS_EXPORT_PRIVATE JSInternalPromise* loadModule(JSGlobalObject*, const SourceCod
 JS_EXPORT_PRIVATE JSValue linkAndEvaluateModule(JSGlobalObject*, const Identifier& moduleKey, JSValue scriptFetcher);
 
 JS_EXPORT_PRIVATE JSInternalPromise* importModule(JSGlobalObject*, const Identifier& moduleKey, JSValue parameters, JSValue scriptFetcher);
+
+JS_EXPORT_PRIVATE HashMap<RefPtr<UniquedStringImpl>, String> retrieveAssertionsFromDynamicImportOptions(JSGlobalObject*, JSValue, const Vector<RefPtr<UniquedStringImpl>>& supportedAssertions);
 
 } // namespace JSC

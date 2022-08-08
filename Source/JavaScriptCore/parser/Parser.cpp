@@ -3602,11 +3602,13 @@ template <class TreeBuilder> typename TreeBuilder::ImportSpecifier Parser<LexerT
 template <typename LexerType>
 template <class TreeBuilder> typename TreeBuilder::ImportAssertionList Parser<LexerType>::parseImportAssertions(TreeBuilder& context)
 {
+    HashSet<UniquedStringImpl*> keys;
     auto assertionList = context.createImportAssertionList();
     consumeOrFail(OPENBRACE, "Expected opening '{' at the start of import assertion");
     while (!match(CLOSEBRACE)) {
         failIfFalse(matchIdentifierOrKeyword() || match(STRING), "Expected an assertion key");
         auto key = m_token.m_data.ident;
+        failIfFalse(keys.add(key->impl()).isNewEntry, "A duplicate key for import assertions '", key->impl(), "'");
         next();
         consumeOrFail(COLON, "Expected ':' after assertion key");
         failIfFalse(match(STRING), "Expected an assertion value");

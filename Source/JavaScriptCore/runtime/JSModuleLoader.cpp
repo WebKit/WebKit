@@ -34,6 +34,7 @@
 #include "JSMap.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
+#include "JSScriptFetchParameters.h"
 #include "JSSourceCode.h"
 #include "JSWebAssembly.h"
 #include "ModuleAnalyzer.h"
@@ -41,12 +42,14 @@
 #include "ObjectConstructor.h"
 #include "Parser.h"
 #include "ParserError.h"
+#include "SyntheticModuleRecord.h"
 #include "VMTrapsInlines.h"
 
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(moduleLoaderParseModule);
 static JSC_DECLARE_HOST_FUNCTION(moduleLoaderRequestedModules);
+static JSC_DECLARE_HOST_FUNCTION(moduleLoaderRequestedModuleParameters);
 static JSC_DECLARE_HOST_FUNCTION(moduleLoaderEvaluate);
 static JSC_DECLARE_HOST_FUNCTION(moduleLoaderModuleDeclarationInstantiation);
 static JSC_DECLARE_HOST_FUNCTION(moduleLoaderResolve);
@@ -86,6 +89,7 @@ const ClassInfo JSModuleLoader::s_info = { "ModuleLoader"_s, &Base::s_info, &mod
     getModuleNamespaceObject       moduleLoaderGetModuleNamespaceObject       DontEnum|Function 1
     parseModule                    moduleLoaderParseModule                    DontEnum|Function 2
     requestedModules               moduleLoaderRequestedModules               DontEnum|Function 1
+    requestedModuleParameters      moduleLoaderRequestedModuleParameters      DontEnum|Function 1
     resolve                        moduleLoaderResolve                        DontEnum|Function 2
     resolveSync                    moduleLoaderResolveSync                    DontEnum|Function 2
     fetch                          moduleLoaderFetch                          DontEnum|Function 3
@@ -355,6 +359,8 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
     const Identifier moduleKey = callFrame->argument(0).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
 
+    dataLogLnIf(Options::dumpModuleLoadingState(), "loader [parsing] ", moduleKey);
+
     JSValue source = callFrame->argument(1);
     auto* jsSourceCode = jsCast<JSSourceCode*>(source);
     SourceCode sourceCode = jsSourceCode->sourceCode();
@@ -364,7 +370,14 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
         RELEASE_AND_RETURN(scope, JSValue::encode(JSWebAssembly::instantiate(globalObject, promise, moduleKey, jsSourceCode)));
 #endif
 
-    dataLogLnIf(Options::dumpModuleLoadingState(), "loader [parsing] ", moduleKey);
+    // https://tc39.es/proposal-json-modules/#sec-parse-json-module
+    if (sourceCode.provider()->sourceType() == SourceProviderSourceType::JSON) {
+        auto* moduleRecord = SyntheticModuleRecord::parseJSONModule(globalObject, moduleKey, WTFMove(sourceCode));
+        RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
+        scope.release();
+        promise->resolve(globalObject, moduleRecord);
+        return JSValue::encode(promise);
+    }
 
     ParserError error;
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(
@@ -393,8 +406,29 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderRequestedModules, (JSGlobalObject* globalOb
     JSArray* result = constructEmptyArray(globalObject, nullptr, moduleRecord->requestedModules().size());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     size_t i = 0;
-    for (auto& key : moduleRecord->requestedModules()) {
-        result->putDirectIndex(globalObject, i++, jsString(vm, String { key.get() }));
+    for (auto& request : moduleRecord->requestedModules()) {
+        result->putDirectIndex(globalObject, i++, jsString(vm, String { request.m_specifier.get() }));
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
+    return JSValue::encode(result);
+}
+
+JSC_DEFINE_HOST_FUNCTION(moduleLoaderRequestedModuleParameters, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(callFrame->argument(0));
+    if (!moduleRecord)
+        RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(globalObject, nullptr)));
+
+    JSArray* result = constructEmptyArray(globalObject, nullptr, moduleRecord->requestedModules().size());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    size_t i = 0;
+    for (auto& request : moduleRecord->requestedModules()) {
+        if (request.m_assertions)
+            result->putDirectIndex(globalObject, i++, JSScriptFetchParameters::create(vm, vm.scriptFetchParametersStructure.get(), *request.m_assertions));
+        else
+            result->putDirectIndex(globalObject, i++, jsUndefined());
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     return JSValue::encode(result);

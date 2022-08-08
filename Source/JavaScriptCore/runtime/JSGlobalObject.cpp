@@ -208,6 +208,7 @@
 #include "SymbolConstructor.h"
 #include "SymbolObject.h"
 #include "SymbolPrototype.h"
+#include "SyntheticModuleRecord.h"
 #include "TemporalCalendar.h"
 #include "TemporalCalendarPrototype.h"
 #include "TemporalDuration.h"
@@ -969,6 +970,10 @@ void JSGlobalObject::init(VM& vm)
     m_moduleRecordStructure.initLater(
         [] (const Initializer<Structure>& init) {
             init.set(JSModuleRecord::createStructure(init.vm, init.owner, jsNull()));
+        });
+    m_syntheticModuleRecordStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            init.set(SyntheticModuleRecord::createStructure(init.vm, init.owner, jsNull()));
         });
     m_moduleNamespaceObjectStructure.initLater(
         [] (const Initializer<Structure>& init) {
@@ -2359,6 +2364,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_regExpMatchesArrayWithIndicesStructure);
     visitor.append(thisObject->m_regExpMatchesIndicesArrayStructure);
     thisObject->m_moduleRecordStructure.visit(visitor);
+    thisObject->m_syntheticModuleRecordStructure.visit(visitor);
     thisObject->m_moduleNamespaceObjectStructure.visit(visitor);
     thisObject->m_proxyObjectStructure.visit(visitor);
     thisObject->m_callableProxyObjectStructure.visit(visitor);

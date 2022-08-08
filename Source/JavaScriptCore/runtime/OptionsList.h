@@ -545,7 +545,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useAtMethod, true, Normal, "Expose the at() method on Array, %TypedArray%, and String.") \
     v(Bool, useChangeArrayByCopyMethods, true, Normal, "Expose the withAt(), withReversed(), withSorted() and withSpliced() methods on Array and %TypedArray%.") \
     v(Bool, useHasOwn, true, Normal, "Expose the Object.hasOwn method") \
-    v(Bool, useImportAssertion, false, Normal, "Enable import assertion.") \
+    v(Bool, useImportAssertion, true, Normal, "Enable import assertion.") \
     v(Bool, useIntlEnumeration, true, Normal, "Expose the Intl enumeration APIs.") \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useShadowRealm, true, Normal, "Expose the ShadowRealm object.") \

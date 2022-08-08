@@ -45,10 +45,10 @@ public:
     }
 
     JSC::ScriptFetcher& scriptFetcher() { return m_scriptFetcher.get(); }
-    ModuleFetchParameters* parameters() { return m_parameters.get(); }
+    JSC::ScriptFetchParameters* parameters() { return m_parameters.get(); }
 
 protected:
-    ModuleScriptLoader(ModuleScriptLoaderClient& client, DeferredPromise& promise, JSC::ScriptFetcher& scriptFetcher, RefPtr<ModuleFetchParameters>&& parameters)
+    ModuleScriptLoader(ModuleScriptLoaderClient& client, DeferredPromise& promise, JSC::ScriptFetcher& scriptFetcher, RefPtr<JSC::ScriptFetchParameters>&& parameters)
         : m_client(&client)
         , m_promise(&promise)
         , m_scriptFetcher(scriptFetcher)
@@ -59,7 +59,7 @@ protected:
     ModuleScriptLoaderClient* m_client;
     RefPtr<DeferredPromise> m_promise;
     Ref<JSC::ScriptFetcher> m_scriptFetcher;
-    RefPtr<ModuleFetchParameters> m_parameters;
+    RefPtr<JSC::ScriptFetchParameters> m_parameters;
 };
 
 } // namespace WebCore

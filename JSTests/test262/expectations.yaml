@@ -2040,6 +2040,8 @@ test/language/module-code/early-dup-top-function-generator.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/early-dup-top-function.js:
   module: 'Test262: This statement should not be evaluated.'
+test/language/module-code/eval-gtbndng-indirect-faux-assertion.js:
+  raw: "SyntaxError: Unexpected identifier 'x'. import call expects one or two arguments."
 test/language/module-code/parse-err-hoist-lex-fun.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/parse-err-hoist-lex-gen.js:

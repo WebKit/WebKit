@@ -33,6 +33,7 @@
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
+#include "SyntheticModuleRecord.h"
 #include "VMTrapsInlines.h"
 #include "WebAssemblyModuleRecord.h"
 
@@ -77,9 +78,9 @@ void AbstractModuleRecord::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(AbstractModuleRecord);
 
-void AbstractModuleRecord::appendRequestedModule(const Identifier& moduleName)
+void AbstractModuleRecord::appendRequestedModule(const Identifier& moduleName, RefPtr<ScriptFetchParameters>&& assertions)
 {
-    m_requestedModules.add(moduleName.impl());
+    m_requestedModules.append({ moduleName.impl(), WTFMove(assertions) });
 }
 
 void AbstractModuleRecord::addStarExportEntry(const Identifier& moduleName)
@@ -822,6 +823,8 @@ Synchronousness AbstractModuleRecord::link(JSGlobalObject* globalObject, JSValue
     if (auto* wasmModuleRecord = jsDynamicCast<WebAssemblyModuleRecord*>(this))
         return wasmModuleRecord->link(globalObject, scriptFetcher);
 #endif
+    if (auto* moduleRecord = jsDynamicCast<SyntheticModuleRecord*>(this))
+        return moduleRecord->link(globalObject, scriptFetcher);
     RELEASE_ASSERT_NOT_REACHED();
     return Synchronousness::Sync;
 }
@@ -845,6 +848,8 @@ JS_EXPORT_PRIVATE JSValue AbstractModuleRecord::evaluate(JSGlobalObject* globalO
         RELEASE_AND_RETURN(scope, wasmModuleRecord->evaluate(globalObject));
     }
 #endif
+    if (auto* moduleRecord = jsDynamicCast<SyntheticModuleRecord*>(this))
+        RELEASE_AND_RETURN(scope, moduleRecord->evaluate(globalObject));
     RELEASE_ASSERT_NOT_REACHED();
     return jsUndefined();
 }
@@ -866,8 +871,8 @@ void AbstractModuleRecord::dump()
     dataLog("\nAnalyzing ModuleRecord key(", printableName(m_moduleKey), ")\n");
 
     dataLog("    Dependencies: ", m_requestedModules.size(), " modules\n");
-    for (const auto& moduleName : m_requestedModules)
-        dataLog("      module(", printableName(moduleName), ")\n");
+    for (const auto& request : m_requestedModules)
+        dataLogLn("      module(", printableName(request.m_specifier), "),assertions(", RawPointer(request.m_assertions.get()), ")");
 
     dataLog("    Import: ", m_importEntries.size(), " entries\n");
     for (const auto& pair : m_importEntries) {

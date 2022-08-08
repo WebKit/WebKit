@@ -426,7 +426,8 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
     VM& vm = globalObject.vm();
     JSLockHolder lock { vm };
 
-    auto scriptFetcher = WorkerScriptFetcher::create(credentials, globalScope()->destination(), globalScope()->referrerPolicy());
+    auto parameters = ModuleFetchParameters::create(JSC::ScriptFetchParameters::Type::JavaScript, emptyString(), /* isTopLevelModule */ true);
+    auto scriptFetcher = WorkerScriptFetcher::create(WTFMove(parameters), credentials, globalScope()->destination(), globalScope()->referrerPolicy());
     {
         auto& promise = JSExecState::loadModule(globalObject, moduleURL.string(), JSC::JSScriptFetchParameters::create(vm, scriptFetcher->parameters()), JSC::JSScriptFetcher::create(vm, { scriptFetcher.ptr() }));
 

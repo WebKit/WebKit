@@ -70,6 +70,7 @@
 #include <JavaScriptCore/JSScriptFetcher.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/SyntheticModuleRecord.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <JavaScriptCore/WebAssemblyModuleRecord.h>
 #include <wtf/GenerateProfiles.h>
@@ -173,7 +174,7 @@ JSC::JSValue ScriptController::evaluateIgnoringException(const ScriptSourceCode&
     return evaluateInWorldIgnoringException(sourceCode, mainThreadNormalWorld());
 }
 
-void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScript, const String& moduleName, Ref<ModuleFetchParameters>&& topLevelFetchParameters, DOMWrapperWorld& world)
+void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScript, const String& moduleName, Ref<JSC::ScriptFetchParameters>&& topLevelFetchParameters, DOMWrapperWorld& world)
 {
     JSLockHolder lock(world.vm());
 
@@ -184,7 +185,7 @@ void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScrip
     setupModuleScriptHandlers(moduleScript, promise, world);
 }
 
-void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const String& moduleName, Ref<ModuleFetchParameters>&& topLevelFetchParameters)
+void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const String& moduleName, Ref<JSC::ScriptFetchParameters>&& topLevelFetchParameters)
 {
     loadModuleScriptInWorld(moduleScript, moduleName, WTFMove(topLevelFetchParameters), mainThreadNormalWorld());
 }
@@ -253,8 +254,10 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, AbstractModu
     if (isWasmModule) {
         // FIXME: Provide better inspector support for Wasm scripts.
         InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), 1, 1);
-    } else {
-        auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(&moduleRecord);
+    } else if (moduleRecord.inherits<JSC::SyntheticModuleRecord>())
+        InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), 1, 1);
+    else {
+        auto* jsModuleRecord = jsCast<JSModuleRecord*>(&moduleRecord);
         const auto& jsSourceCode = jsModuleRecord->sourceCode();
         InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
     }

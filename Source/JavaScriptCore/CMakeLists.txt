@@ -1192,6 +1192,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/SymbolPrototype.h
     runtime/SymbolTable.h
     runtime/SymbolTableOrScopeDepth.h
+    runtime/SyntheticModuleRecord.h
     runtime/TemplateObjectDescriptor.h
     runtime/TemporalNow.h
     runtime/TemporalObject.h

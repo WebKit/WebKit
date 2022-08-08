@@ -41,7 +41,7 @@ Ref<LoadableModuleScript> LoadableModuleScript::create(const AtomString& nonce, 
 
 LoadableModuleScript::LoadableModuleScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
     : LoadableScript(nonce, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
-    , m_parameters(ModuleFetchParameters::create(integrity, /* isTopLevelModule */ true))
+    , m_parameters(ModuleFetchParameters::create(JSC::ScriptFetchParameters::Type::JavaScript, integrity, /* isTopLevelModule */ true))
 {
 }
 

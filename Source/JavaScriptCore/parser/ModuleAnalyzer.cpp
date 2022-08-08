@@ -40,6 +40,13 @@ ModuleAnalyzer::ModuleAnalyzer(JSGlobalObject* globalObject, const Identifier& m
 {
 }
 
+void ModuleAnalyzer::appendRequestedModule(const Identifier& specifier, RefPtr<ScriptFetchParameters>&& assertions)
+{
+    auto result = m_requestedModules.add(specifier.impl());
+    if (result.isNewEntry)
+        moduleRecord()->appendRequestedModule(specifier, WTFMove(assertions));
+}
+
 void ModuleAnalyzer::exportVariable(ModuleProgramNode& moduleProgramNode, const RefPtr<UniquedStringImpl>& localName, const VariableEnvironmentEntry& variable)
 {
     // In the parser, we already marked the variables as Exported and Imported.

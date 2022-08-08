@@ -60,7 +60,8 @@ private:
     void finishCreation(VM&);
 };
 
-JS_EXPORT_PRIVATE JSValue JSONParse(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE JSValue JSONParse(JSGlobalObject*, StringView);
+JSValue JSONParseWithException(JSGlobalObject*, StringView);
 JS_EXPORT_PRIVATE String JSONStringify(JSGlobalObject*, JSValue, JSValue space);
 JS_EXPORT_PRIVATE String JSONStringify(JSGlobalObject*, JSValue, unsigned indent);
     

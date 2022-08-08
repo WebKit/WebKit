@@ -28,6 +28,7 @@
 #include "Identifier.h"
 #include "JSGenerator.h"
 #include "JSInternalFieldObjectImpl.h"
+#include "ScriptFetchParameters.h"
 #include <wtf/ListHashSet.h>
 
 namespace JSC {
@@ -100,9 +101,14 @@ public:
     typedef HashMap<RefPtr<UniquedStringImpl>, ImportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> ImportEntries;
     typedef HashMap<RefPtr<UniquedStringImpl>, ExportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> ExportEntries;
 
+    struct ModuleRequest {
+        RefPtr<UniquedStringImpl> m_specifier;
+        RefPtr<ScriptFetchParameters> m_assertions;
+    };
+
     DECLARE_EXPORT_INFO;
 
-    void appendRequestedModule(const Identifier&);
+    void appendRequestedModule(const Identifier&, RefPtr<ScriptFetchParameters>&&);
     void addStarExportEntry(const Identifier&);
     void addImportEntry(const ImportEntry&);
     void addExportEntry(const ExportEntry&);
@@ -111,7 +117,7 @@ public:
     std::optional<ExportEntry> tryGetExportEntry(UniquedStringImpl* exportName);
 
     const Identifier& moduleKey() const { return m_moduleKey; }
-    const OrderedIdentifierSet& requestedModules() const { return m_requestedModules; }
+    const Vector<ModuleRequest>& requestedModules() const { return m_requestedModules; }
     const ExportEntries& exportEntries() const { return m_exportEntries; }
     const ImportEntries& importEntries() const { return m_importEntries; }
     const OrderedIdentifierSet& starExportEntries() const { return m_starExportEntries; }
@@ -194,7 +200,7 @@ private:
 
     // Save the occurrence order since the module loader loads and runs the modules in this order.
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduleevaluation
-    OrderedIdentifierSet m_requestedModules;
+    Vector<ModuleRequest> m_requestedModules;
 
     WriteBarrier<JSMap> m_dependenciesMap;
     

@@ -1351,7 +1351,7 @@ JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncStringify, (JSGlobalObject* globalObject, 
     return result.isNull() ? encodedJSUndefined() : JSValue::encode(jsString(globalObject->vm(), WTFMove(result)));
 }
 
-JSValue JSONParse(JSGlobalObject* globalObject, const String& json)
+JSValue JSONParse(JSGlobalObject* globalObject, StringView json)
 {
     if (json.isNull())
         return JSValue();
@@ -1363,6 +1363,31 @@ JSValue JSONParse(JSGlobalObject* globalObject, const String& json)
 
     LiteralParser<UChar> jsonParser(globalObject, json.characters16(), json.length(), StrictJSON);
     return jsonParser.tryLiteralParse();
+}
+
+JSValue JSONParseWithException(JSGlobalObject* globalObject, StringView json)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (json.isNull())
+        return JSValue();
+
+    if (json.is8Bit()) {
+        LiteralParser<LChar> jsonParser(globalObject, json.characters8(), json.length(), StrictJSON);
+        JSValue result = jsonParser.tryLiteralParse();
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!result)
+            throwSyntaxError(globalObject, scope, jsonParser.getErrorMessage());
+        return result;
+    }
+
+    LiteralParser<UChar> jsonParser(globalObject, json.characters16(), json.length(), StrictJSON);
+    JSValue result = jsonParser.tryLiteralParse();
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!result)
+        throwSyntaxError(globalObject, scope, jsonParser.getErrorMessage());
+    return result;
 }
 
 String JSONStringify(JSGlobalObject* globalObject, JSValue value, JSValue space)

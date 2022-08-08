@@ -168,7 +168,7 @@ static void rejectWithFetchError(DeferredPromise& deferred, ExceptionCode ec, co
     });
 }
 
-JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
+JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue parametersValue, JSC::JSValue scriptFetcher)
 {
     JSC::VM& vm = jsGlobalObject->vm();
     ASSERT(JSC::jsDynamicCast<JSC::JSScriptFetcher*>(scriptFetcher));
@@ -195,12 +195,12 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
         return jsPromise;
     }
 
-    RefPtr<ModuleFetchParameters> topLevelFetchParameters;
-    if (auto* scriptFetchParameters = JSC::jsDynamicCast<JSC::JSScriptFetchParameters*>(parameters))
-        topLevelFetchParameters = static_cast<ModuleFetchParameters*>(&scriptFetchParameters->parameters());
+    RefPtr<JSC::ScriptFetchParameters> parameters;
+    if (auto* scriptFetchParameters = JSC::jsDynamicCast<JSC::JSScriptFetchParameters*>(parametersValue))
+        parameters = &scriptFetchParameters->parameters();
 
     if (m_ownerType == OwnerType::Document) {
-        auto loader = CachedModuleScriptLoader::create(*this, deferred.get(), *static_cast<CachedScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), WTFMove(topLevelFetchParameters));
+        auto loader = CachedModuleScriptLoader::create(*this, deferred.get(), *static_cast<CachedScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), WTFMove(parameters));
         m_loaders.add(loader.copyRef());
         if (!loader->load(downcast<Document>(m_context), WTFMove(completedURL))) {
             loader->clearClient();
@@ -209,7 +209,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
             return jsPromise;
         }
     } else {
-        auto loader = WorkerModuleScriptLoader::create(*this, deferred.get(), *static_cast<WorkerScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), WTFMove(topLevelFetchParameters));
+        auto loader = WorkerModuleScriptLoader::create(*this, deferred.get(), *static_cast<WorkerScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), WTFMove(parameters));
         m_loaders.add(loader.copyRef());
         loader->load(m_context, WTFMove(completedURL));
     }
@@ -299,15 +299,31 @@ static bool isWorkletOrServiceWorker(ScriptExecutionContext& context)
     return false;
 }
 
-JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSString* moduleName, JSC::JSValue parameters, const JSC::SourceOrigin& sourceOrigin)
+JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSString* moduleName, JSC::JSValue parametersValue, const JSC::SourceOrigin& sourceOrigin)
 {
     JSC::VM& vm = jsGlobalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#hostimportmoduledynamically(referencingscriptormodule,-specifier,-promisecapability)
     // If settings object's global object implements WorkletGlobalScope or ServiceWorkerGlobalScope, then:
-    if (isWorkletOrServiceWorker(m_context))
+    if (isWorkletOrServiceWorker(m_context)) {
+        scope.release();
         return rejectPromise(globalObject, TypeError, "Dynamic-import is not available in Worklets or ServiceWorkers"_s);
+    }
+
+    auto reject = [&](auto& scope) {
+        auto* promise = JSC::JSInternalPromise::create(vm, globalObject.internalPromiseStructure());
+        return promise->rejectWithCaughtException(&globalObject, scope);
+    };
+
+    auto getTypeFromAssertions = [&]() -> JSC::ScriptFetchParameters::Type {
+        auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(&globalObject, parametersValue, { vm.propertyNames->type.impl() });
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!assertions.isEmpty())
+            return JSC::ScriptFetchParameters::parseType(assertions.get(vm.propertyNames->type.impl())).value_or(JSC::ScriptFetchParameters::Type::JavaScript);
+        return JSC::ScriptFetchParameters::Type::JavaScript;
+    };
 
     // If SourceOrigin and/or CachedScriptFetcher is null, we import the module with the default fetcher.
     // SourceOrigin can be null if the source code is not coupled with the script file.
@@ -318,19 +334,32 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
     //     4. The code from extension script.
     URL baseURL;
     RefPtr<JSC::ScriptFetcher> scriptFetcher;
+    RefPtr<ModuleFetchParameters> parameters;
     if (sourceOrigin.isNull()) {
+        auto type = getTypeFromAssertions();
+        RETURN_IF_EXCEPTION(scope, reject(scope));
+
+        parameters = ModuleFetchParameters::create(type, emptyString(), /* isTopLevelModule */ true);
+
         if (m_ownerType == OwnerType::Document) {
             baseURL = downcast<Document>(m_context).baseURL();
             scriptFetcher = CachedScriptFetcher::create(downcast<Document>(m_context).charset());
         } else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#default-classic-script-fetch-options
             baseURL = m_context.url();
-            scriptFetcher = WorkerScriptFetcher::create(FetchOptions::Credentials::SameOrigin, FetchOptions::Destination::Script, ReferrerPolicy::EmptyString);
+            scriptFetcher = WorkerScriptFetcher::create(*parameters, FetchOptions::Credentials::SameOrigin, FetchOptions::Destination::Script, ReferrerPolicy::EmptyString);
         }
     } else {
         baseURL = URL { sourceOrigin.string() };
-        if (!baseURL.isValid())
+        if (!baseURL.isValid()) {
+            scope.release();
             return rejectPromise(globalObject, TypeError, "Importer module key is not a Symbol or a String."_s);
+        }
+
+        auto type = getTypeFromAssertions();
+        RETURN_IF_EXCEPTION(scope, reject(scope));
+
+        parameters = ModuleFetchParameters::create(type, emptyString(), /* isTopLevelModule */ true);
 
         if (sourceOrigin.fetcher()) {
             scriptFetcher = sourceOrigin.fetcher();
@@ -338,7 +367,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
             // Destination should be "script" for dynamic-import.
             if (m_ownerType == OwnerType::WorkerOrWorklet) {
                 auto& fetcher = static_cast<WorkerScriptFetcher&>(*scriptFetcher);
-                scriptFetcher = WorkerScriptFetcher::create(fetcher.credentials(), FetchOptions::Destination::Script, fetcher.referrerPolicy());
+                scriptFetcher = WorkerScriptFetcher::create(*parameters, fetcher.credentials(), FetchOptions::Destination::Script, fetcher.referrerPolicy());
             }
         }
 
@@ -346,18 +375,21 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
             if (m_ownerType == OwnerType::Document)
                 scriptFetcher = CachedScriptFetcher::create(downcast<Document>(m_context).charset());
             else
-                scriptFetcher = WorkerScriptFetcher::create(FetchOptions::Credentials::SameOrigin, FetchOptions::Destination::Script, ReferrerPolicy::EmptyString);
+                scriptFetcher = WorkerScriptFetcher::create(*parameters, FetchOptions::Credentials::SameOrigin, FetchOptions::Destination::Script, ReferrerPolicy::EmptyString);
         }
     }
     ASSERT(baseURL.isValid());
     ASSERT(scriptFetcher);
+    ASSERT(parameters);
 
     auto specifier = moduleName->value(jsGlobalObject);
     auto result = resolveModuleSpecifier(m_context, m_ownerType, specifier, baseURL);
-    if (!result)
+    if (!result) {
+        scope.release();
         return rejectPromise(globalObject, TypeError, result.error());
+    }
 
-    return JSC::importModule(jsGlobalObject, JSC::Identifier::fromString(vm, result->string()), parameters, JSC::JSScriptFetcher::create(vm, WTFMove(scriptFetcher) ));
+    return JSC::importModule(jsGlobalObject, JSC::Identifier::fromString(vm, result->string()), JSC::JSScriptFetchParameters::create(vm, parameters.releaseNonNull()), JSC::JSScriptFetcher::create(vm, WTFMove(scriptFetcher)));
 }
 
 JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSModuleRecord*, JSC::JSValue)
@@ -417,12 +449,15 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         }
 
         ModuleType type = ModuleType::Invalid;
-        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(cachedScript.response().mimeType()))
+        auto mimeType = cachedScript.response().mimeType();
+        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
             type = ModuleType::JavaScript;
 #if ENABLE(WEBASSEMBLY)
-        else if (context().settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(cachedScript.response().mimeType()))
+        else if (context().settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(mimeType))
             type = ModuleType::WebAssembly;
 #endif
+        else if (loader.parameters() && loader.parameters()->type() == JSC::ScriptFetchParameters::JSON && MIMETypeRegistry::isSupportedJSONMIMEType(mimeType))
+            type = ModuleType::JSON;
         else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
@@ -432,10 +467,13 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         }
 
         if (auto* parameters = loader.parameters()) {
-            if (!matchIntegrityMetadata(cachedScript, parameters->integrity())) {
-                m_context.addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load script ", integrityMismatchDescription(cachedScript, parameters->integrity())));
-                rejectWithFetchError(promise.get(), TypeError, "Cannot load script due to integrity mismatch"_s);
-                return;
+            String integrity = parameters->integrity();
+            if (!integrity.isEmpty()) {
+                if (!matchIntegrityMetadata(cachedScript, integrity)) {
+                    m_context.addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load script ", integrityMismatchDescription(cachedScript, integrity)));
+                    rejectWithFetchError(promise.get(), TypeError, "Cannot load script due to integrity mismatch"_s);
+                    return;
+                }
             }
         }
 
@@ -453,6 +491,10 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
                     JSC::SourceCode { WebAssemblyScriptSourceCode { &cachedScript, loader.scriptFetcher() }.jsSourceCode() });
                 break;
 #endif
+            case ModuleType::JSON:
+                return JSC::JSSourceCode::create(jsGlobalObject.vm(),
+                    JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() });
+                break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }
@@ -479,12 +521,15 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         }
 
         ModuleType type = ModuleType::Invalid;
-        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(loader.responseMIMEType()))
+        auto mimeType = loader.responseMIMEType();
+        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
             type = ModuleType::JavaScript;
 #if ENABLE(WEBASSEMBLY)
-        else if (context().settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(loader.responseMIMEType()))
+        else if (context().settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(mimeType))
             type = ModuleType::WebAssembly;
 #endif
+        else if (loader.parameters() && loader.parameters()->type() == JSC::ScriptFetchParameters::JSON && MIMETypeRegistry::isSupportedJSONMIMEType(mimeType))
+            type = ModuleType::JSON;
         else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
@@ -520,6 +565,10 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
                     JSC::SourceCode { WebAssemblyScriptSourceCode { loader.script(), WTFMove(responseURL), loader.scriptFetcher() }.jsSourceCode() });
                 break;
 #endif
+            case ModuleType::JSON:
+                return JSC::JSSourceCode::create(jsGlobalObject.vm(),
+                    JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), { }, JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() });
+                break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }
