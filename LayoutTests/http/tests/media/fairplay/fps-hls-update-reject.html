@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-hls-update-reject</title>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=eme2016.js></script>
+    <script src=support.js></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    async function startTest() {
+        var video = document.querySelector('video');
+        video.src = 'content/prog_index.m3u8';
+        event = await waitFor(video, 'encrypted');
+
+        if (event.initDataType !== 'skd') {
+            consoleWrite('FAIL: expected event.initDataType === "skd", got ' + event.initDataType);
+            endTest();
+            return;
+        }
+
+        var initData = event.initData;
+        var keyURI = new TextDecoder('utf-8').decode(initData);
+        var video = event.target;
+        var access = await navigator.requestMediaKeySystemAccess("com.apple.fps", [{
+            initDataTypes: ['skd'],
+            videoCapabilities: [{ contentType: 'application/vnd.apple.mpegurl', robustness: '' }],
+            distinctiveIdentifier: 'not-allowed',
+            persistentState: 'not-allowed',
+            sessionTypes: ['temporary'],
+        }]);
+        consoleWrite('PROMISE: requestMediaKeySystemAccess resolved');
+
+        var keys = await access.createMediaKeys();
+        consoleWrite('PROMISE: createMediaKeys resolved');
+
+        var certificateResponse = await fetch('resources/cert.der');
+        consoleWrite('FETCH: server certificate received');
+
+        var arrayBuffer = await certificateResponse.arrayBuffer();
+        consoleWrite('PROMISE: arrayBuffer resolved');
+
+        await keys.setServerCertificate(arrayBuffer);
+        consoleWrite('PROMISE: setServerCertificate resolved');
+
+        var session = keys.createSession();
+        session.generateRequest('skd', initData);
+        messageEvent = await waitFor(session, 'message');
+
+        let response = await getResponse(messageEvent);
+
+        await shouldReject(session.update(new TextEncoder().encode('invalid')));
+        consoleWrite('PROMISE: session.update() rejected');
+    }
+    </script>
+</head>
+<body>
+    <video controls width="480"></video>
+</body>
+</html>

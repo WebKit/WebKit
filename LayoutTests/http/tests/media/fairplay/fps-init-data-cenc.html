@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-init-data-cenc</title>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=eme2016.js></script>
+    <script src=support.js></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    async function startTest() {
+        var access = await navigator.requestMediaKeySystemAccess("com.apple.fps", [{
+            initDataTypes: ['cenc'],
+            videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
+            distinctiveIdentifier: 'not-allowed',
+            persistentState: 'not-allowed',
+            sessionTypes: ['temporary'],
+        }]);
+
+        consoleWrite('PROMISE: requestMediaKeySystemAccess resolved');
+        var keys = await access.createMediaKeys();
+
+        consoleWrite('PROMISE: createMediaKeys resolved');
+        var certificateResponse = await fetch('resources/cert.der');
+
+        consoleWrite('FETCH: server certificate recieved');
+        var arrayBuffer = await certificateResponse.arrayBuffer();
+
+        consoleWrite('PROMISE: arrayBuffer resolved');
+        await keys.setServerCertificate(arrayBuffer);
+
+        consoleWrite('PROMISE: setServerCertificate resolved');
+        var session = keys.createSession();
+
+        var initData = Uint8Array.of(0x00, 0x00, 0x00, 0x80, 0x70, 0x73, 0x73, 0x68, 0x00, 0x00, 0x00, 0x00, 0x94, 0xCE, 0x86, 0xFB, 0x07, 0xFF, 0x4F, 0x43, 0xAD, 0xB8, 0x93, 0xD2, 0xFA, 0x96, 0x8C, 0xA2, 0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x00, 0x60, 0x66, 0x70, 0x73, 0x64, 0x00, 0x00, 0x00, 0x10, 0x66, 0x70, 0x73, 0x69, 0x00, 0x00, 0x00, 0x00, 0x63, 0x65, 0x6E, 0x63, 0x00, 0x00, 0x00, 0x24, 0x66, 0x70, 0x73, 0x6B, 0x00, 0x00, 0x00, 0x1C, 0x66, 0x6B, 0x72, 0x69, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x24, 0x66, 0x70, 0x73, 0x6B, 0x00, 0x00, 0x00, 0x1C, 0x66, 0x6B, 0x72, 0x69, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02);
+
+        session.generateRequest('cenc', initData);
+        let event = await waitFor(session, 'message');
+
+        let messageString = uInt8ArrayToString(new Uint8Array(event.message));
+        let messageObject = JSON.parse(messageString);
+        let responses = [];
+        for (let message of messageObject) {
+            let id = base64DecodeUint8Array(message.keyID)[15];
+
+            var licenseResponse = await fetch('resources/index.py', {
+                method: 'POST',
+                headers: new Headers({'Content-type': 'application/x-www-form-urlencoded'}),
+                body: JSON.stringify({
+                    "fairplay-streaming-request" : {
+                        "version" : 1,
+                        "streaming-keys" : [{
+                            id: id,
+                            uri: 'skd://twelve',
+                            spc: message.payload,
+                        }],
+                    }
+                }),
+            });
+            consoleWrite('PROMISE: licenseResponse resolved');
+            var license = await licenseResponse.text();
+
+            responseObject = JSON.parse(license.trim());
+            responses.push({ keyID: message.keyID, payload: responseObject["fairplay-streaming-response"]["streaming-keys"][0].ckc });
+        }
+
+        let response = stringToUInt8Array(JSON.stringify(responses));
+
+        await session.update(response.buffer);
+        consoleWrite('PROMISE: session.update() resolved');
+    }
+    </script>
+</head>
+<body>
+</body>
+</html>

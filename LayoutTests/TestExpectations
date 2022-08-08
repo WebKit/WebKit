@@ -1154,6 +1154,8 @@ imported/w3c/web-platform-tests/notifications/idlharness.https.any.worker.html [
 http/tests/workers/service/getnotifications-stop.html [ Skip ]
 http/tests/workers/service/getnotifications.html [ Skip ]
 
+http/tests/media/fairplay [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
