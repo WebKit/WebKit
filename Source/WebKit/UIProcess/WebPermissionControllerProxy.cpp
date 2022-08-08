@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPermissionControllerProxy.h"
 
+#include "WebPageProxy.h"
 #include "WebPermissionControllerProxyMessages.h"
 #include "WebProcessProxy.h"
 #include <WebCore/ClientOrigin.h>

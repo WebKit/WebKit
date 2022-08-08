@@ -29,13 +29,14 @@
 #include "WebPageProxyIdentifier.h"
 
 namespace WebCore {
-class WebProcessProxy;
 enum class PermissionState : uint8_t;
 struct ClientOrigin;
 struct PermissionDescriptor;
 }
 
 namespace WebKit {
+
+class WebProcessProxy;
 
 class WebPermissionControllerProxy final : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;

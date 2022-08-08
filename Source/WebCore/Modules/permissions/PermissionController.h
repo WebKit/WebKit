@@ -27,6 +27,7 @@
 
 #include "PermissionState.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
