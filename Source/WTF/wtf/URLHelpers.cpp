@@ -95,9 +95,19 @@ template<> bool isLookalikeCharacterOfScriptType<USCRIPT_TAMIL>(UChar32 codePoin
 template<> bool isLookalikeCharacterOfScriptType<USCRIPT_CANADIAN_ABORIGINAL>(UChar32 codePoint)
 {
     switch (codePoint) {
+    case 0x146D: /* CANADIAN SYLLABICS KI */
+    case 0x146F: /* CANADIAN SYLLABICS KO */
+    case 0x1472: /* CANADIAN SYLLABICS KA */
+    case 0x14AA: /* CANADIAN SYLLABICS MA */
+    case 0x157C: /* CANADIAN SYLLABICS NUNAVUT H */
+    case 0x1587: /* CANADIAN SYLLABICS TLHI */
     case 0x15AF: /* CANADIAN SYLLABICS AIVILIK B */
     case 0x15B4: /* CANADIAN SYLLABICS BLACKFOOT WE */
-    case 0x157C: /* CANADIAN SYLLABICS NUNAVUT H */
+    case 0x15C5: /* CANADIAN SYLLABICS CARRIER GHO */
+    case 0x15DE: /* CANADIAN SYLLABICS CARRIER THE */
+    case 0x15E9: /* CANADIAN SYLLABICS CARRIER PO */
+    case 0x15F1: /* CANADIAN SYLLABICS CARRIER GE */
+    case 0x15F4: /* CANADIAN SYLLABICS CARRIER GA */
     case 0x166D: /* CANADIAN SYLLABICS CHI SIGN */
     case 0x166E: /* CANADIAN SYLLABICS FULL STOP */
         return true;

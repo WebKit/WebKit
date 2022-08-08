@@ -136,6 +136,26 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--a-1fj"_s, // 'a' U+166D
         "xn--a-2fj"_s, // U+166E 'a'
         "xn--a-3fj"_s, // 'a' U+166E
+        "xn--a-rli"_s, // U+146D 'a'
+        "xn--a-sli"_s, // 'a' U+146D
+        "xn--a-vli"_s, // U+146F 'a'
+        "xn--a-wli"_s, // 'a' U+146F
+        "xn--a-1li"_s, // U+1472 'a'
+        "xn--a-2li"_s, // 'a' U+1472
+        "xn--a-8oi"_s, // U+14AA 'a'
+        "xn--a-9oi"_s, // 'a' U+14AA
+        "xn--a-v1i"_s, // U+1587 'a'
+        "xn--a-w1i"_s, // 'a' U+1587
+        "xn--a-f5i"_s, // U+15C5 'a'
+        "xn--a-g5i"_s, // 'a' U+15C5
+        "xn--a-u6i"_s, // U+15DE 'a'
+        "xn--a-v6i"_s, // 'a' U+15DE
+        "xn--a-h7i"_s, // U+15E9 'a'
+        "xn--a-i7i"_s, // 'a' U+15E9
+        "xn--a-x7i"_s, // U+15F1 'a'
+        "xn--a-y7i"_s, // 'a' U+15F1
+        "xn--a-37i"_s, // U+15F4 'a'
+        "xn--a-47i"_s, // 'a' U+15F4
     };
     for (auto& host : punycodedSpoofHosts) {
         auto url = makeString("http://", host, "/").utf8();
@@ -164,9 +184,19 @@ TEST(WTF_URLExtras, URLExtras_NotSpoofed)
     EXPECT_STREQ("https://\u0BE6\u0BE7\u0BE8\u0BE9count/", userVisibleString(literalURL("https://\u0BE6\u0BE7\u0BE8\u0BE9count/")));
 
     // Canadian aboriginal
+    EXPECT_STREQ("https://\u146D\u1401abc/", userVisibleString(literalURL("https://\u146D\u1401abc/")));
+    EXPECT_STREQ("https://\u146F\u1401abc/", userVisibleString(literalURL("https://\u146F\u1401abc/")));
+    EXPECT_STREQ("https://\u1472\u1401abc/", userVisibleString(literalURL("https://\u1472\u1401abc/")));
+    EXPECT_STREQ("https://\u14AA\u1401abc/", userVisibleString(literalURL("https://\u14AA\u1401abc/")));
+    EXPECT_STREQ("https://\u157C\u1401abc/", userVisibleString(literalURL("https://\u157C\u1401abc/")));
+    EXPECT_STREQ("https://\u1587\u1401abc/", userVisibleString(literalURL("https://\u1587\u1401abc/")));
     EXPECT_STREQ("https://\u15AF\u1401abc/", userVisibleString(literalURL("https://\u15AF\u1401abc/")));
     EXPECT_STREQ("https://\u15B4\u1401abc/", userVisibleString(literalURL("https://\u15B4\u1401abc/")));
-    EXPECT_STREQ("https://\u157C\u1401abc/", userVisibleString(literalURL("https://\u157C\u1401abc/")));
+    EXPECT_STREQ("https://\u15C5\u1401abc/", userVisibleString(literalURL("https://\u15C5\u1401abc/")));
+    EXPECT_STREQ("https://\u15DE\u1401abc/", userVisibleString(literalURL("https://\u15DE\u1401abc/")));
+    EXPECT_STREQ("https://\u15E9\u1401abc/", userVisibleString(literalURL("https://\u15E9\u1401abc/")));
+    EXPECT_STREQ("https://\u15F1\u1401abc/", userVisibleString(literalURL("https://\u15F1\u1401abc/")));
+    EXPECT_STREQ("https://\u15F4\u1401abc/", userVisibleString(literalURL("https://\u15F4\u1401abc/")));
     EXPECT_STREQ("https://\u166D\u1401abc/", userVisibleString(literalURL("https://\u166D\u1401abc/")));
     EXPECT_STREQ("https://\u166E\u1401abc/", userVisibleString(literalURL("https://\u166E\u1401abc/")));
 }
