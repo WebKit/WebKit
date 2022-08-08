@@ -8,14 +8,14 @@ var currentTest = 0;
 // match IE and FF unless specified otherwise.
 var allTests = [
     [ "Single text input", "!text", "y" ],
-    [ "Single text input with submit disabled", "!text,-submit", "y" ],
+    [ "Single text input with submit disabled", "!text,-submit", "n" ],
     [ "Multiple text inputs", "!text,text,text", "n" ],
     [ "Multiple text inputs with submit", "!text,text,text,submit", "y" ],
     [ "Multiple text inputs with submit disabled", "!text,text,text,-submit", "n" ],
-    [ "Multiple text inputs and multiple submits, first submit disabled", "!text,text,text,-submit,submit", "y" ], // match IE, not FF.
+    [ "Multiple text inputs and multiple submits, first submit disabled", "!text,text,text,-submit,submit", "n" ],
     [ "Text input and text area, text input focused", "!text,textarea", "y" ],
     [ "Text input and text area and a submit, text input focused", "!text,textarea,submit", "y" ],
-    [ "Text input and text area and a disabled submit, text input focused", "!text,textarea,-submit", "y" ], // match IE, not FF.
+    [ "Text input and text area and a disabled submit, text input focused", "!text,textarea,-submit", "n" ],
     [ "Text input and checkbox, text input focused", "!text,checkbox", "y" ],
     [ "Text input and radio, text input focused", "!text,radio", "y" ],
     [ "Text input and text area, textarea focused", "text,!textarea", "n" ],

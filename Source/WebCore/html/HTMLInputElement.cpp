@@ -884,7 +884,7 @@ bool HTMLInputElement::isSuccessfulSubmitButton() const
 {
     // HTML spec says that buttons must have names to be considered successful.
     // However, other browsers do not impose this constraint. So we do not.
-    return !isDisabledFormControl() && m_inputType->canBeSuccessfulSubmitButton();
+    return m_inputType->canBeSuccessfulSubmitButton();
 }
 
 bool HTMLInputElement::matchesDefaultPseudoClass() const
