@@ -96,7 +96,6 @@
 .computed-style-section .computed-property-item .property-trace-item::before {
     content: "\2022";
     display: inline-block;
-    position: absolute;
     margin-left: -0.8em;
 }
 
