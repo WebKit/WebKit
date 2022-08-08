@@ -3679,3 +3679,20 @@ webkit.org/b/242840 fast/text/international/system-language/han-text-style.html 
 webkit.org/b/242905 compositing/tiling/tiled-mask-inwindow.html [ Pass Failure ]
 
 webkit.org/b/243547 fast/mediastream/getUserMedia-to-canvas-1.html [ Pass Timeout ]
+
+# These tests have a similar assert_equals issue, causing failures. See webkit.org/b/243688
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/iframe-blank-inherit.meta/upgrade/websocket.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/sharedworker-classic.http-rp/upgrade/fetch.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/sharedworker-classic.http-rp/upgrade/websocket.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/sharedworker-classic.http-rp/upgrade/xhr.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/sharedworker-module.http-rp/upgrade/fetch.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/sharedworker-module.http-rp/upgrade/websocket.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/sharedworker-module.http-rp/upgrade/xhr.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/upgrade/websocket.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrade/websocket.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/upgrade/websocket.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic-data.meta/upgrade/websocket.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic.http-rp/upgrade/websocket.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.http-rp/upgrade/websocket.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.meta/upgrade/websocket.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module.http-rp/upgrade/websocket.https.html [ Pass Failure ]
