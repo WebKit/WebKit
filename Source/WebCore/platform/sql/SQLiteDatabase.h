@@ -157,6 +157,8 @@ public:
     void disableThreadingChecks() { }
 #endif
 
+    WEBCORE_EXPORT static void useFastMalloc();
+
     WEBCORE_EXPORT static void setIsDatabaseOpeningForbidden(bool);
 
     WEBCORE_EXPORT void releaseMemory();
