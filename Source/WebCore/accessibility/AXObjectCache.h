@@ -668,7 +668,7 @@ inline Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AX
 inline void AXObjectCache::passwordNotificationPostTimerFired() { }
 inline void AXObjectCache::performDeferredCacheUpdate() { }
 inline void AXObjectCache::postLiveRegionChangeNotification(AccessibilityObject*) { }
-inline void AXObjectCache::postNotification(AXCoreObject*, Document*, AXNotification, PostTarget) { }
+inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXNotification, PostTarget) { }
 inline void AXObjectCache::postNotification(Node*, AXNotification, PostTarget) { }
 inline void AXObjectCache::postNotification(RenderObject*, AXNotification, PostTarget) { }
 inline void AXObjectCache::postPlatformNotification(AXCoreObject*, AXNotification) { }
