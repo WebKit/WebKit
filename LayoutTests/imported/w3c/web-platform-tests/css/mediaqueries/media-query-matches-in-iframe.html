@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
+<link rel="help" href="https://drafts.csswg.org/mediaqueries-4/#mf-dimensions">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 <script>
 
 async function createFrameAndUpdateLayout(test) {
@@ -72,7 +73,6 @@ for (const query of ['(max-width: 150px)', '(width: 100px)', '(orientation: port
         assert_false(mediaQuery.matches);
         assert_equals(changes, 0);
         await new Promise(requestAnimationFrame);
-        await new Promise(setTimeout);
         assert_false(mediaQuery.matches);
         assert_equals(changes, 1);
     }, `matchMedia('${query}') should not receive a change event until update the rendering step of HTML5 event loop`);
@@ -101,3 +101,4 @@ for (const query of ['(max-width: 150px)', '(width: 100px)', '(orientation: port
 
 </script>
 </body>
+</html>

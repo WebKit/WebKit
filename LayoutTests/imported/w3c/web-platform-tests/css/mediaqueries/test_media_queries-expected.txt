@@ -18,30 +18,43 @@ PASS query_should_not_be_parseable: all and (orientation) or (orientation)
 PASS query_should_be_parseable: all and (orientation) and (orientation)
 PASS query_should_not_be_parseable: (orientation) and (orientation) or (orientation)
 PASS query_should_not_be_parseable: (orientation) and not (orientation)
-FAIL expression_should_be_known: width assert_true: expected true got false
-FAIL expression_should_be_unknown: min-width assert_true: expected true got false
-FAIL expression_should_be_unknown: max-width assert_true: expected true got false
-FAIL expression_should_be_known: width : 0 assert_true: expected true got false
-FAIL expression_should_be_known: width : 0px assert_true: expected true got false
-FAIL expression_should_be_known: width : 0em assert_true: expected true got false
-FAIL expression_should_be_known: width : -0 assert_true: expected true got false
-FAIL expression_should_be_known: width : -0cm assert_true: expected true got false
-FAIL expression_should_be_known: width : 1px assert_true: expected true got false
-FAIL expression_should_be_known: width : 0.001mm assert_true: expected true got false
-FAIL expression_should_be_known: width : 100000px assert_true: expected true got false
-FAIL expression_should_be_known: min-width : -0 assert_true: expected true got false
-FAIL expression_should_be_known: max-width : -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: width : -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-width : -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-width : -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: width : -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: width : -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : width : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : width > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : width >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : width = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : width <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : width < 0px assert_true: expected true got false
+PASS expression_should_be_known: width
+FAIL expression_should_be_parseable: min-width assert_true: expected true got false
+PASS expression_should_be_unknown: min-width
+FAIL expression_should_be_parseable: max-width assert_true: expected true got false
+PASS expression_should_be_unknown: max-width
+PASS expression_should_be_known: width : 0
+PASS expression_should_be_known: width : 0px
+PASS expression_should_be_known: width : 0em
+PASS expression_should_be_known: width : -0
+PASS expression_should_be_known: width : -0cm
+PASS expression_should_be_known: width : 1px
+PASS expression_should_be_known: width : 0.001mm
+PASS expression_should_be_known: width : 100000px
+PASS expression_should_be_known: min-width : -0
+PASS expression_should_be_known: max-width : -0
+FAIL expression_should_be_parseable: width : -1px assert_true: expected true got false
+PASS expression_should_be_unknown: width : -1px
+FAIL expression_should_be_parseable: min-width : -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-width : -1px
+FAIL expression_should_be_parseable: max-width : -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-width : -1px
+FAIL expression_should_be_parseable: width : -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: width : -0.00001mm
+FAIL expression_should_be_parseable: width : -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: width : -100000em
+FAIL expression_should_be_parseable: 0px : width : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : width : 0px
+FAIL expression_should_be_parseable: 0px : width > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : width > 0px
+FAIL expression_should_be_parseable: 0px : width >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : width >= 0px
+FAIL expression_should_be_parseable: 0px : width = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : width = 0px
+FAIL expression_should_be_parseable: 0px : width <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : width <= 0px
+FAIL expression_should_be_parseable: 0px : width < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : width < 0px
 FAIL expression_should_be_known: width > 0 assert_true: expected true got false
 FAIL expression_should_be_known: width > 0px assert_true: expected true got false
 FAIL expression_should_be_known: width > 0em assert_true: expected true got false
@@ -50,20 +63,31 @@ FAIL expression_should_be_known: width > -0cm assert_true: expected true got fal
 FAIL expression_should_be_known: width > 1px assert_true: expected true got false
 FAIL expression_should_be_known: width > 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: width > 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-width > -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-width > -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-width > -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-width > -0
+FAIL expression_should_be_parseable: max-width > -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-width > -0
 FAIL expression_should_be_known: 0px > width > 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: width > -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-width > -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-width > -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: width > -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: width > -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > width : 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: width > -1px assert_true: expected true got false
+PASS expression_should_be_unknown: width > -1px
+FAIL expression_should_be_parseable: min-width > -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-width > -1px
+FAIL expression_should_be_parseable: max-width > -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-width > -1px
+FAIL expression_should_be_parseable: width > -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: width > -0.00001mm
+FAIL expression_should_be_parseable: width > -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: width > -100000em
+FAIL expression_should_be_parseable: 0px > width : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > width : 0px
 FAIL expression_should_be_known: 0px > width > 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px > width >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > width = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > width <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > width < 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: 0px > width = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > width = 0px
+FAIL expression_should_be_parseable: 0px > width <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > width <= 0px
+FAIL expression_should_be_parseable: 0px > width < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > width < 0px
 FAIL expression_should_be_known: width >= 0 assert_true: expected true got false
 FAIL expression_should_be_known: width >= 0px assert_true: expected true got false
 FAIL expression_should_be_known: width >= 0em assert_true: expected true got false
@@ -72,21 +96,33 @@ FAIL expression_should_be_known: width >= -0cm assert_true: expected true got fa
 FAIL expression_should_be_known: width >= 1px assert_true: expected true got false
 FAIL expression_should_be_known: width >= 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: width >= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-width >= -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-width >= -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-width >= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-width >= -0
+FAIL expression_should_be_parseable: max-width >= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-width >= -0
 FAIL expression_should_be_known: 0px >= width >= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: width > = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: width >= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-width >= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-width >= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: width >= -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: width >= -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= width : 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: width > = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: width > = 0px
+FAIL expression_should_be_parseable: width >= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: width >= -1px
+FAIL expression_should_be_parseable: min-width >= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-width >= -1px
+FAIL expression_should_be_parseable: max-width >= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-width >= -1px
+FAIL expression_should_be_parseable: width >= -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: width >= -0.00001mm
+FAIL expression_should_be_parseable: width >= -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: width >= -100000em
+FAIL expression_should_be_parseable: 0px >= width : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= width : 0px
 FAIL expression_should_be_known: 0px >= width > 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px >= width >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= width = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= width <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= width < 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: 0px >= width = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= width = 0px
+FAIL expression_should_be_parseable: 0px >= width <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= width <= 0px
+FAIL expression_should_be_parseable: 0px >= width < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= width < 0px
 FAIL expression_should_be_known: width = 0 assert_true: expected true got false
 FAIL expression_should_be_known: width = 0px assert_true: expected true got false
 FAIL expression_should_be_known: width = 0em assert_true: expected true got false
@@ -95,20 +131,34 @@ FAIL expression_should_be_known: width = -0cm assert_true: expected true got fal
 FAIL expression_should_be_known: width = 1px assert_true: expected true got false
 FAIL expression_should_be_known: width = 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: width = 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-width = -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-width = -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = width = 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: width = -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-width = -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-width = -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: width = -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: width = -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = width : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = width > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = width >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = width = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = width <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = width < 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: min-width = -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-width = -0
+FAIL expression_should_be_parseable: max-width = -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-width = -0
+FAIL expression_should_be_parseable: 0px = width = 100000px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = width = 100000px
+FAIL expression_should_be_parseable: width = -1px assert_true: expected true got false
+PASS expression_should_be_unknown: width = -1px
+FAIL expression_should_be_parseable: min-width = -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-width = -1px
+FAIL expression_should_be_parseable: max-width = -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-width = -1px
+FAIL expression_should_be_parseable: width = -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: width = -0.00001mm
+FAIL expression_should_be_parseable: width = -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: width = -100000em
+FAIL expression_should_be_parseable: 0px = width : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = width : 0px
+FAIL expression_should_be_parseable: 0px = width > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = width > 0px
+FAIL expression_should_be_parseable: 0px = width >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = width >= 0px
+FAIL expression_should_be_parseable: 0px = width = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = width = 0px
+FAIL expression_should_be_parseable: 0px = width <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = width <= 0px
+FAIL expression_should_be_parseable: 0px = width < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = width < 0px
 FAIL expression_should_be_known: width <= 0 assert_true: expected true got false
 FAIL expression_should_be_known: width <= 0px assert_true: expected true got false
 FAIL expression_should_be_known: width <= 0em assert_true: expected true got false
@@ -117,19 +167,31 @@ FAIL expression_should_be_known: width <= -0cm assert_true: expected true got fa
 FAIL expression_should_be_known: width <= 1px assert_true: expected true got false
 FAIL expression_should_be_known: width <= 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: width <= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-width <= -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-width <= -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-width <= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-width <= -0
+FAIL expression_should_be_parseable: max-width <= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-width <= -0
 FAIL expression_should_be_known: 0px <= width <= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: width < = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: width <= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-width <= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-width <= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: width <= -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: width <= -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= width : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= width > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= width >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= width = 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: width < = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: width < = 0px
+FAIL expression_should_be_parseable: width <= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: width <= -1px
+FAIL expression_should_be_parseable: min-width <= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-width <= -1px
+FAIL expression_should_be_parseable: max-width <= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-width <= -1px
+FAIL expression_should_be_parseable: width <= -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: width <= -0.00001mm
+FAIL expression_should_be_parseable: width <= -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: width <= -100000em
+FAIL expression_should_be_parseable: 0px <= width : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= width : 0px
+FAIL expression_should_be_parseable: 0px <= width > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= width > 0px
+FAIL expression_should_be_parseable: 0px <= width >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= width >= 0px
+FAIL expression_should_be_parseable: 0px <= width = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= width = 0px
 FAIL expression_should_be_known: 0px <= width <= 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px <= width < 0px assert_true: expected true got false
 FAIL expression_should_be_known: width < 0 assert_true: expected true got false
@@ -140,44 +202,68 @@ FAIL expression_should_be_known: width < -0cm assert_true: expected true got fal
 FAIL expression_should_be_known: width < 1px assert_true: expected true got false
 FAIL expression_should_be_known: width < 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: width < 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-width < -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-width < -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-width < -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-width < -0
+FAIL expression_should_be_parseable: max-width < -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-width < -0
 FAIL expression_should_be_known: 0px < width < 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: width < -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-width < -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-width < -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: width < -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: width < -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < width : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < width > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < width >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < width = 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: width < -1px assert_true: expected true got false
+PASS expression_should_be_unknown: width < -1px
+FAIL expression_should_be_parseable: min-width < -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-width < -1px
+FAIL expression_should_be_parseable: max-width < -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-width < -1px
+FAIL expression_should_be_parseable: width < -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: width < -0.00001mm
+FAIL expression_should_be_parseable: width < -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: width < -100000em
+FAIL expression_should_be_parseable: 0px < width : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < width : 0px
+FAIL expression_should_be_parseable: 0px < width > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < width > 0px
+FAIL expression_should_be_parseable: 0px < width >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < width >= 0px
+FAIL expression_should_be_parseable: 0px < width = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < width = 0px
 FAIL expression_should_be_known: 0px < width <= 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px < width < 0px assert_true: expected true got false
-FAIL expression_should_be_known: height assert_true: expected true got false
-FAIL expression_should_be_unknown: min-height assert_true: expected true got false
-FAIL expression_should_be_unknown: max-height assert_true: expected true got false
-FAIL expression_should_be_known: height : 0 assert_true: expected true got false
-FAIL expression_should_be_known: height : 0px assert_true: expected true got false
-FAIL expression_should_be_known: height : 0em assert_true: expected true got false
-FAIL expression_should_be_known: height : -0 assert_true: expected true got false
-FAIL expression_should_be_known: height : -0cm assert_true: expected true got false
-FAIL expression_should_be_known: height : 1px assert_true: expected true got false
-FAIL expression_should_be_known: height : 0.001mm assert_true: expected true got false
-FAIL expression_should_be_known: height : 100000px assert_true: expected true got false
-FAIL expression_should_be_known: min-height : -0 assert_true: expected true got false
-FAIL expression_should_be_known: max-height : -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: height : -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-height : -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-height : -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: height : -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: height : -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : height : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : height > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : height >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : height = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : height <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : height < 0px assert_true: expected true got false
+PASS expression_should_be_known: height
+FAIL expression_should_be_parseable: min-height assert_true: expected true got false
+PASS expression_should_be_unknown: min-height
+FAIL expression_should_be_parseable: max-height assert_true: expected true got false
+PASS expression_should_be_unknown: max-height
+PASS expression_should_be_known: height : 0
+PASS expression_should_be_known: height : 0px
+PASS expression_should_be_known: height : 0em
+PASS expression_should_be_known: height : -0
+PASS expression_should_be_known: height : -0cm
+PASS expression_should_be_known: height : 1px
+PASS expression_should_be_known: height : 0.001mm
+PASS expression_should_be_known: height : 100000px
+PASS expression_should_be_known: min-height : -0
+PASS expression_should_be_known: max-height : -0
+FAIL expression_should_be_parseable: height : -1px assert_true: expected true got false
+PASS expression_should_be_unknown: height : -1px
+FAIL expression_should_be_parseable: min-height : -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-height : -1px
+FAIL expression_should_be_parseable: max-height : -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-height : -1px
+FAIL expression_should_be_parseable: height : -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: height : -0.00001mm
+FAIL expression_should_be_parseable: height : -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: height : -100000em
+FAIL expression_should_be_parseable: 0px : height : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : height : 0px
+FAIL expression_should_be_parseable: 0px : height > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : height > 0px
+FAIL expression_should_be_parseable: 0px : height >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : height >= 0px
+FAIL expression_should_be_parseable: 0px : height = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : height = 0px
+FAIL expression_should_be_parseable: 0px : height <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : height <= 0px
+FAIL expression_should_be_parseable: 0px : height < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : height < 0px
 FAIL expression_should_be_known: height > 0 assert_true: expected true got false
 FAIL expression_should_be_known: height > 0px assert_true: expected true got false
 FAIL expression_should_be_known: height > 0em assert_true: expected true got false
@@ -186,20 +272,31 @@ FAIL expression_should_be_known: height > -0cm assert_true: expected true got fa
 FAIL expression_should_be_known: height > 1px assert_true: expected true got false
 FAIL expression_should_be_known: height > 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: height > 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-height > -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-height > -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-height > -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-height > -0
+FAIL expression_should_be_parseable: max-height > -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-height > -0
 FAIL expression_should_be_known: 0px > height > 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: height > -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-height > -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-height > -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: height > -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: height > -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > height : 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: height > -1px assert_true: expected true got false
+PASS expression_should_be_unknown: height > -1px
+FAIL expression_should_be_parseable: min-height > -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-height > -1px
+FAIL expression_should_be_parseable: max-height > -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-height > -1px
+FAIL expression_should_be_parseable: height > -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: height > -0.00001mm
+FAIL expression_should_be_parseable: height > -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: height > -100000em
+FAIL expression_should_be_parseable: 0px > height : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > height : 0px
 FAIL expression_should_be_known: 0px > height > 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px > height >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > height = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > height <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > height < 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: 0px > height = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > height = 0px
+FAIL expression_should_be_parseable: 0px > height <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > height <= 0px
+FAIL expression_should_be_parseable: 0px > height < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > height < 0px
 FAIL expression_should_be_known: height >= 0 assert_true: expected true got false
 FAIL expression_should_be_known: height >= 0px assert_true: expected true got false
 FAIL expression_should_be_known: height >= 0em assert_true: expected true got false
@@ -208,21 +305,33 @@ FAIL expression_should_be_known: height >= -0cm assert_true: expected true got f
 FAIL expression_should_be_known: height >= 1px assert_true: expected true got false
 FAIL expression_should_be_known: height >= 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: height >= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-height >= -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-height >= -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-height >= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-height >= -0
+FAIL expression_should_be_parseable: max-height >= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-height >= -0
 FAIL expression_should_be_known: 0px >= height >= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: height > = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: height >= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-height >= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-height >= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: height >= -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: height >= -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= height : 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: height > = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: height > = 0px
+FAIL expression_should_be_parseable: height >= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: height >= -1px
+FAIL expression_should_be_parseable: min-height >= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-height >= -1px
+FAIL expression_should_be_parseable: max-height >= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-height >= -1px
+FAIL expression_should_be_parseable: height >= -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: height >= -0.00001mm
+FAIL expression_should_be_parseable: height >= -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: height >= -100000em
+FAIL expression_should_be_parseable: 0px >= height : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= height : 0px
 FAIL expression_should_be_known: 0px >= height > 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px >= height >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= height = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= height <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= height < 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: 0px >= height = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= height = 0px
+FAIL expression_should_be_parseable: 0px >= height <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= height <= 0px
+FAIL expression_should_be_parseable: 0px >= height < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= height < 0px
 FAIL expression_should_be_known: height = 0 assert_true: expected true got false
 FAIL expression_should_be_known: height = 0px assert_true: expected true got false
 FAIL expression_should_be_known: height = 0em assert_true: expected true got false
@@ -231,20 +340,34 @@ FAIL expression_should_be_known: height = -0cm assert_true: expected true got fa
 FAIL expression_should_be_known: height = 1px assert_true: expected true got false
 FAIL expression_should_be_known: height = 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: height = 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-height = -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-height = -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = height = 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: height = -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-height = -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-height = -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: height = -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: height = -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = height : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = height > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = height >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = height = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = height <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = height < 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: min-height = -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-height = -0
+FAIL expression_should_be_parseable: max-height = -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-height = -0
+FAIL expression_should_be_parseable: 0px = height = 100000px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = height = 100000px
+FAIL expression_should_be_parseable: height = -1px assert_true: expected true got false
+PASS expression_should_be_unknown: height = -1px
+FAIL expression_should_be_parseable: min-height = -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-height = -1px
+FAIL expression_should_be_parseable: max-height = -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-height = -1px
+FAIL expression_should_be_parseable: height = -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: height = -0.00001mm
+FAIL expression_should_be_parseable: height = -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: height = -100000em
+FAIL expression_should_be_parseable: 0px = height : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = height : 0px
+FAIL expression_should_be_parseable: 0px = height > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = height > 0px
+FAIL expression_should_be_parseable: 0px = height >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = height >= 0px
+FAIL expression_should_be_parseable: 0px = height = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = height = 0px
+FAIL expression_should_be_parseable: 0px = height <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = height <= 0px
+FAIL expression_should_be_parseable: 0px = height < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = height < 0px
 FAIL expression_should_be_known: height <= 0 assert_true: expected true got false
 FAIL expression_should_be_known: height <= 0px assert_true: expected true got false
 FAIL expression_should_be_known: height <= 0em assert_true: expected true got false
@@ -253,19 +376,31 @@ FAIL expression_should_be_known: height <= -0cm assert_true: expected true got f
 FAIL expression_should_be_known: height <= 1px assert_true: expected true got false
 FAIL expression_should_be_known: height <= 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: height <= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-height <= -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-height <= -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-height <= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-height <= -0
+FAIL expression_should_be_parseable: max-height <= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-height <= -0
 FAIL expression_should_be_known: 0px <= height <= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: height < = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: height <= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-height <= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-height <= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: height <= -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: height <= -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= height : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= height > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= height >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= height = 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: height < = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: height < = 0px
+FAIL expression_should_be_parseable: height <= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: height <= -1px
+FAIL expression_should_be_parseable: min-height <= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-height <= -1px
+FAIL expression_should_be_parseable: max-height <= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-height <= -1px
+FAIL expression_should_be_parseable: height <= -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: height <= -0.00001mm
+FAIL expression_should_be_parseable: height <= -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: height <= -100000em
+FAIL expression_should_be_parseable: 0px <= height : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= height : 0px
+FAIL expression_should_be_parseable: 0px <= height > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= height > 0px
+FAIL expression_should_be_parseable: 0px <= height >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= height >= 0px
+FAIL expression_should_be_parseable: 0px <= height = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= height = 0px
 FAIL expression_should_be_known: 0px <= height <= 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px <= height < 0px assert_true: expected true got false
 FAIL expression_should_be_known: height < 0 assert_true: expected true got false
@@ -276,44 +411,68 @@ FAIL expression_should_be_known: height < -0cm assert_true: expected true got fa
 FAIL expression_should_be_known: height < 1px assert_true: expected true got false
 FAIL expression_should_be_known: height < 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: height < 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-height < -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-height < -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-height < -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-height < -0
+FAIL expression_should_be_parseable: max-height < -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-height < -0
 FAIL expression_should_be_known: 0px < height < 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: height < -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-height < -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-height < -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: height < -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: height < -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < height : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < height > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < height >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < height = 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: height < -1px assert_true: expected true got false
+PASS expression_should_be_unknown: height < -1px
+FAIL expression_should_be_parseable: min-height < -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-height < -1px
+FAIL expression_should_be_parseable: max-height < -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-height < -1px
+FAIL expression_should_be_parseable: height < -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: height < -0.00001mm
+FAIL expression_should_be_parseable: height < -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: height < -100000em
+FAIL expression_should_be_parseable: 0px < height : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < height : 0px
+FAIL expression_should_be_parseable: 0px < height > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < height > 0px
+FAIL expression_should_be_parseable: 0px < height >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < height >= 0px
+FAIL expression_should_be_parseable: 0px < height = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < height = 0px
 FAIL expression_should_be_known: 0px < height <= 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px < height < 0px assert_true: expected true got false
-FAIL expression_should_be_known: device-width assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-width assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-width assert_true: expected true got false
-FAIL expression_should_be_known: device-width : 0 assert_true: expected true got false
-FAIL expression_should_be_known: device-width : 0px assert_true: expected true got false
-FAIL expression_should_be_known: device-width : 0em assert_true: expected true got false
-FAIL expression_should_be_known: device-width : -0 assert_true: expected true got false
-FAIL expression_should_be_known: device-width : -0cm assert_true: expected true got false
-FAIL expression_should_be_known: device-width : 1px assert_true: expected true got false
-FAIL expression_should_be_known: device-width : 0.001mm assert_true: expected true got false
-FAIL expression_should_be_known: device-width : 100000px assert_true: expected true got false
-FAIL expression_should_be_known: min-device-width : -0 assert_true: expected true got false
-FAIL expression_should_be_known: max-device-width : -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width : -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-width : -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-width : -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width : -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width : -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : device-width : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : device-width > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : device-width >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : device-width = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : device-width <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : device-width < 0px assert_true: expected true got false
+PASS expression_should_be_known: device-width
+FAIL expression_should_be_parseable: min-device-width assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-width
+FAIL expression_should_be_parseable: max-device-width assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-width
+PASS expression_should_be_known: device-width : 0
+PASS expression_should_be_known: device-width : 0px
+PASS expression_should_be_known: device-width : 0em
+PASS expression_should_be_known: device-width : -0
+PASS expression_should_be_known: device-width : -0cm
+PASS expression_should_be_known: device-width : 1px
+PASS expression_should_be_known: device-width : 0.001mm
+PASS expression_should_be_known: device-width : 100000px
+PASS expression_should_be_known: min-device-width : -0
+PASS expression_should_be_known: max-device-width : -0
+FAIL expression_should_be_parseable: device-width : -1px assert_true: expected true got false
+PASS expression_should_be_unknown: device-width : -1px
+FAIL expression_should_be_parseable: min-device-width : -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-width : -1px
+FAIL expression_should_be_parseable: max-device-width : -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-width : -1px
+FAIL expression_should_be_parseable: device-width : -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: device-width : -0.00001mm
+FAIL expression_should_be_parseable: device-width : -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: device-width : -100000em
+FAIL expression_should_be_parseable: 0px : device-width : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : device-width : 0px
+FAIL expression_should_be_parseable: 0px : device-width > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : device-width > 0px
+FAIL expression_should_be_parseable: 0px : device-width >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : device-width >= 0px
+FAIL expression_should_be_parseable: 0px : device-width = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : device-width = 0px
+FAIL expression_should_be_parseable: 0px : device-width <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : device-width <= 0px
+FAIL expression_should_be_parseable: 0px : device-width < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : device-width < 0px
 FAIL expression_should_be_known: device-width > 0 assert_true: expected true got false
 FAIL expression_should_be_known: device-width > 0px assert_true: expected true got false
 FAIL expression_should_be_known: device-width > 0em assert_true: expected true got false
@@ -322,20 +481,31 @@ FAIL expression_should_be_known: device-width > -0cm assert_true: expected true 
 FAIL expression_should_be_known: device-width > 1px assert_true: expected true got false
 FAIL expression_should_be_known: device-width > 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: device-width > 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-width > -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-width > -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-device-width > -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-width > -0
+FAIL expression_should_be_parseable: max-device-width > -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-width > -0
 FAIL expression_should_be_known: 0px > device-width > 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width > -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-width > -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-width > -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width > -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width > -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > device-width : 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: device-width > -1px assert_true: expected true got false
+PASS expression_should_be_unknown: device-width > -1px
+FAIL expression_should_be_parseable: min-device-width > -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-width > -1px
+FAIL expression_should_be_parseable: max-device-width > -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-width > -1px
+FAIL expression_should_be_parseable: device-width > -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: device-width > -0.00001mm
+FAIL expression_should_be_parseable: device-width > -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: device-width > -100000em
+FAIL expression_should_be_parseable: 0px > device-width : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > device-width : 0px
 FAIL expression_should_be_known: 0px > device-width > 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px > device-width >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > device-width = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > device-width <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > device-width < 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: 0px > device-width = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > device-width = 0px
+FAIL expression_should_be_parseable: 0px > device-width <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > device-width <= 0px
+FAIL expression_should_be_parseable: 0px > device-width < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > device-width < 0px
 FAIL expression_should_be_known: device-width >= 0 assert_true: expected true got false
 FAIL expression_should_be_known: device-width >= 0px assert_true: expected true got false
 FAIL expression_should_be_known: device-width >= 0em assert_true: expected true got false
@@ -344,21 +514,33 @@ FAIL expression_should_be_known: device-width >= -0cm assert_true: expected true
 FAIL expression_should_be_known: device-width >= 1px assert_true: expected true got false
 FAIL expression_should_be_known: device-width >= 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: device-width >= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-width >= -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-width >= -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-device-width >= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-width >= -0
+FAIL expression_should_be_parseable: max-device-width >= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-width >= -0
 FAIL expression_should_be_known: 0px >= device-width >= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width > = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width >= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-width >= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-width >= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width >= -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width >= -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= device-width : 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: device-width > = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: device-width > = 0px
+FAIL expression_should_be_parseable: device-width >= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: device-width >= -1px
+FAIL expression_should_be_parseable: min-device-width >= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-width >= -1px
+FAIL expression_should_be_parseable: max-device-width >= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-width >= -1px
+FAIL expression_should_be_parseable: device-width >= -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: device-width >= -0.00001mm
+FAIL expression_should_be_parseable: device-width >= -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: device-width >= -100000em
+FAIL expression_should_be_parseable: 0px >= device-width : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= device-width : 0px
 FAIL expression_should_be_known: 0px >= device-width > 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px >= device-width >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= device-width = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= device-width <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= device-width < 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: 0px >= device-width = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= device-width = 0px
+FAIL expression_should_be_parseable: 0px >= device-width <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= device-width <= 0px
+FAIL expression_should_be_parseable: 0px >= device-width < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= device-width < 0px
 FAIL expression_should_be_known: device-width = 0 assert_true: expected true got false
 FAIL expression_should_be_known: device-width = 0px assert_true: expected true got false
 FAIL expression_should_be_known: device-width = 0em assert_true: expected true got false
@@ -367,20 +549,34 @@ FAIL expression_should_be_known: device-width = -0cm assert_true: expected true 
 FAIL expression_should_be_known: device-width = 1px assert_true: expected true got false
 FAIL expression_should_be_known: device-width = 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: device-width = 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-width = -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-width = -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-width = 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width = -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-width = -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-width = -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width = -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width = -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-width : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-width > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-width >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-width = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-width <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-width < 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: min-device-width = -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-width = -0
+FAIL expression_should_be_parseable: max-device-width = -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-width = -0
+FAIL expression_should_be_parseable: 0px = device-width = 100000px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-width = 100000px
+FAIL expression_should_be_parseable: device-width = -1px assert_true: expected true got false
+PASS expression_should_be_unknown: device-width = -1px
+FAIL expression_should_be_parseable: min-device-width = -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-width = -1px
+FAIL expression_should_be_parseable: max-device-width = -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-width = -1px
+FAIL expression_should_be_parseable: device-width = -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: device-width = -0.00001mm
+FAIL expression_should_be_parseable: device-width = -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: device-width = -100000em
+FAIL expression_should_be_parseable: 0px = device-width : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-width : 0px
+FAIL expression_should_be_parseable: 0px = device-width > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-width > 0px
+FAIL expression_should_be_parseable: 0px = device-width >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-width >= 0px
+FAIL expression_should_be_parseable: 0px = device-width = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-width = 0px
+FAIL expression_should_be_parseable: 0px = device-width <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-width <= 0px
+FAIL expression_should_be_parseable: 0px = device-width < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-width < 0px
 FAIL expression_should_be_known: device-width <= 0 assert_true: expected true got false
 FAIL expression_should_be_known: device-width <= 0px assert_true: expected true got false
 FAIL expression_should_be_known: device-width <= 0em assert_true: expected true got false
@@ -389,19 +585,31 @@ FAIL expression_should_be_known: device-width <= -0cm assert_true: expected true
 FAIL expression_should_be_known: device-width <= 1px assert_true: expected true got false
 FAIL expression_should_be_known: device-width <= 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: device-width <= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-width <= -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-width <= -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-device-width <= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-width <= -0
+FAIL expression_should_be_parseable: max-device-width <= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-width <= -0
 FAIL expression_should_be_known: 0px <= device-width <= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width < = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width <= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-width <= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-width <= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width <= -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width <= -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= device-width : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= device-width > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= device-width >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= device-width = 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: device-width < = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: device-width < = 0px
+FAIL expression_should_be_parseable: device-width <= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: device-width <= -1px
+FAIL expression_should_be_parseable: min-device-width <= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-width <= -1px
+FAIL expression_should_be_parseable: max-device-width <= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-width <= -1px
+FAIL expression_should_be_parseable: device-width <= -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: device-width <= -0.00001mm
+FAIL expression_should_be_parseable: device-width <= -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: device-width <= -100000em
+FAIL expression_should_be_parseable: 0px <= device-width : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= device-width : 0px
+FAIL expression_should_be_parseable: 0px <= device-width > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= device-width > 0px
+FAIL expression_should_be_parseable: 0px <= device-width >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= device-width >= 0px
+FAIL expression_should_be_parseable: 0px <= device-width = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= device-width = 0px
 FAIL expression_should_be_known: 0px <= device-width <= 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px <= device-width < 0px assert_true: expected true got false
 FAIL expression_should_be_known: device-width < 0 assert_true: expected true got false
@@ -412,44 +620,68 @@ FAIL expression_should_be_known: device-width < -0cm assert_true: expected true 
 FAIL expression_should_be_known: device-width < 1px assert_true: expected true got false
 FAIL expression_should_be_known: device-width < 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: device-width < 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-width < -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-width < -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-device-width < -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-width < -0
+FAIL expression_should_be_parseable: max-device-width < -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-width < -0
 FAIL expression_should_be_known: 0px < device-width < 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width < -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-width < -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-width < -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width < -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: device-width < -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < device-width : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < device-width > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < device-width >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < device-width = 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: device-width < -1px assert_true: expected true got false
+PASS expression_should_be_unknown: device-width < -1px
+FAIL expression_should_be_parseable: min-device-width < -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-width < -1px
+FAIL expression_should_be_parseable: max-device-width < -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-width < -1px
+FAIL expression_should_be_parseable: device-width < -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: device-width < -0.00001mm
+FAIL expression_should_be_parseable: device-width < -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: device-width < -100000em
+FAIL expression_should_be_parseable: 0px < device-width : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < device-width : 0px
+FAIL expression_should_be_parseable: 0px < device-width > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < device-width > 0px
+FAIL expression_should_be_parseable: 0px < device-width >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < device-width >= 0px
+FAIL expression_should_be_parseable: 0px < device-width = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < device-width = 0px
 FAIL expression_should_be_known: 0px < device-width <= 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px < device-width < 0px assert_true: expected true got false
-FAIL expression_should_be_known: device-height assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-height assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-height assert_true: expected true got false
-FAIL expression_should_be_known: device-height : 0 assert_true: expected true got false
-FAIL expression_should_be_known: device-height : 0px assert_true: expected true got false
-FAIL expression_should_be_known: device-height : 0em assert_true: expected true got false
-FAIL expression_should_be_known: device-height : -0 assert_true: expected true got false
-FAIL expression_should_be_known: device-height : -0cm assert_true: expected true got false
-FAIL expression_should_be_known: device-height : 1px assert_true: expected true got false
-FAIL expression_should_be_known: device-height : 0.001mm assert_true: expected true got false
-FAIL expression_should_be_known: device-height : 100000px assert_true: expected true got false
-FAIL expression_should_be_known: min-device-height : -0 assert_true: expected true got false
-FAIL expression_should_be_known: max-device-height : -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height : -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-height : -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-height : -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height : -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height : -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : device-height : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : device-height > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : device-height >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : device-height = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : device-height <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px : device-height < 0px assert_true: expected true got false
+PASS expression_should_be_known: device-height
+FAIL expression_should_be_parseable: min-device-height assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-height
+FAIL expression_should_be_parseable: max-device-height assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-height
+PASS expression_should_be_known: device-height : 0
+PASS expression_should_be_known: device-height : 0px
+PASS expression_should_be_known: device-height : 0em
+PASS expression_should_be_known: device-height : -0
+PASS expression_should_be_known: device-height : -0cm
+PASS expression_should_be_known: device-height : 1px
+PASS expression_should_be_known: device-height : 0.001mm
+PASS expression_should_be_known: device-height : 100000px
+PASS expression_should_be_known: min-device-height : -0
+PASS expression_should_be_known: max-device-height : -0
+FAIL expression_should_be_parseable: device-height : -1px assert_true: expected true got false
+PASS expression_should_be_unknown: device-height : -1px
+FAIL expression_should_be_parseable: min-device-height : -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-height : -1px
+FAIL expression_should_be_parseable: max-device-height : -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-height : -1px
+FAIL expression_should_be_parseable: device-height : -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: device-height : -0.00001mm
+FAIL expression_should_be_parseable: device-height : -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: device-height : -100000em
+FAIL expression_should_be_parseable: 0px : device-height : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : device-height : 0px
+FAIL expression_should_be_parseable: 0px : device-height > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : device-height > 0px
+FAIL expression_should_be_parseable: 0px : device-height >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : device-height >= 0px
+FAIL expression_should_be_parseable: 0px : device-height = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : device-height = 0px
+FAIL expression_should_be_parseable: 0px : device-height <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : device-height <= 0px
+FAIL expression_should_be_parseable: 0px : device-height < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px : device-height < 0px
 FAIL expression_should_be_known: device-height > 0 assert_true: expected true got false
 FAIL expression_should_be_known: device-height > 0px assert_true: expected true got false
 FAIL expression_should_be_known: device-height > 0em assert_true: expected true got false
@@ -458,20 +690,31 @@ FAIL expression_should_be_known: device-height > -0cm assert_true: expected true
 FAIL expression_should_be_known: device-height > 1px assert_true: expected true got false
 FAIL expression_should_be_known: device-height > 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: device-height > 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-height > -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-height > -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-device-height > -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-height > -0
+FAIL expression_should_be_parseable: max-device-height > -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-height > -0
 FAIL expression_should_be_known: 0px > device-height > 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height > -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-height > -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-height > -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height > -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height > -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > device-height : 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: device-height > -1px assert_true: expected true got false
+PASS expression_should_be_unknown: device-height > -1px
+FAIL expression_should_be_parseable: min-device-height > -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-height > -1px
+FAIL expression_should_be_parseable: max-device-height > -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-height > -1px
+FAIL expression_should_be_parseable: device-height > -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: device-height > -0.00001mm
+FAIL expression_should_be_parseable: device-height > -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: device-height > -100000em
+FAIL expression_should_be_parseable: 0px > device-height : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > device-height : 0px
 FAIL expression_should_be_known: 0px > device-height > 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px > device-height >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > device-height = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > device-height <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px > device-height < 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: 0px > device-height = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > device-height = 0px
+FAIL expression_should_be_parseable: 0px > device-height <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > device-height <= 0px
+FAIL expression_should_be_parseable: 0px > device-height < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px > device-height < 0px
 FAIL expression_should_be_known: device-height >= 0 assert_true: expected true got false
 FAIL expression_should_be_known: device-height >= 0px assert_true: expected true got false
 FAIL expression_should_be_known: device-height >= 0em assert_true: expected true got false
@@ -480,21 +723,33 @@ FAIL expression_should_be_known: device-height >= -0cm assert_true: expected tru
 FAIL expression_should_be_known: device-height >= 1px assert_true: expected true got false
 FAIL expression_should_be_known: device-height >= 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: device-height >= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-height >= -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-height >= -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-device-height >= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-height >= -0
+FAIL expression_should_be_parseable: max-device-height >= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-height >= -0
 FAIL expression_should_be_known: 0px >= device-height >= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height > = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height >= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-height >= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-height >= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height >= -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height >= -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= device-height : 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: device-height > = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: device-height > = 0px
+FAIL expression_should_be_parseable: device-height >= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: device-height >= -1px
+FAIL expression_should_be_parseable: min-device-height >= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-height >= -1px
+FAIL expression_should_be_parseable: max-device-height >= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-height >= -1px
+FAIL expression_should_be_parseable: device-height >= -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: device-height >= -0.00001mm
+FAIL expression_should_be_parseable: device-height >= -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: device-height >= -100000em
+FAIL expression_should_be_parseable: 0px >= device-height : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= device-height : 0px
 FAIL expression_should_be_known: 0px >= device-height > 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px >= device-height >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= device-height = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= device-height <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px >= device-height < 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: 0px >= device-height = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= device-height = 0px
+FAIL expression_should_be_parseable: 0px >= device-height <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= device-height <= 0px
+FAIL expression_should_be_parseable: 0px >= device-height < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px >= device-height < 0px
 FAIL expression_should_be_known: device-height = 0 assert_true: expected true got false
 FAIL expression_should_be_known: device-height = 0px assert_true: expected true got false
 FAIL expression_should_be_known: device-height = 0em assert_true: expected true got false
@@ -503,20 +758,34 @@ FAIL expression_should_be_known: device-height = -0cm assert_true: expected true
 FAIL expression_should_be_known: device-height = 1px assert_true: expected true got false
 FAIL expression_should_be_known: device-height = 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: device-height = 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-height = -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-height = -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-height = 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height = -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-height = -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-height = -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height = -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height = -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-height : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-height > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-height >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-height = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-height <= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px = device-height < 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: min-device-height = -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-height = -0
+FAIL expression_should_be_parseable: max-device-height = -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-height = -0
+FAIL expression_should_be_parseable: 0px = device-height = 100000px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-height = 100000px
+FAIL expression_should_be_parseable: device-height = -1px assert_true: expected true got false
+PASS expression_should_be_unknown: device-height = -1px
+FAIL expression_should_be_parseable: min-device-height = -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-height = -1px
+FAIL expression_should_be_parseable: max-device-height = -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-height = -1px
+FAIL expression_should_be_parseable: device-height = -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: device-height = -0.00001mm
+FAIL expression_should_be_parseable: device-height = -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: device-height = -100000em
+FAIL expression_should_be_parseable: 0px = device-height : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-height : 0px
+FAIL expression_should_be_parseable: 0px = device-height > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-height > 0px
+FAIL expression_should_be_parseable: 0px = device-height >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-height >= 0px
+FAIL expression_should_be_parseable: 0px = device-height = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-height = 0px
+FAIL expression_should_be_parseable: 0px = device-height <= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-height <= 0px
+FAIL expression_should_be_parseable: 0px = device-height < 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px = device-height < 0px
 FAIL expression_should_be_known: device-height <= 0 assert_true: expected true got false
 FAIL expression_should_be_known: device-height <= 0px assert_true: expected true got false
 FAIL expression_should_be_known: device-height <= 0em assert_true: expected true got false
@@ -525,19 +794,31 @@ FAIL expression_should_be_known: device-height <= -0cm assert_true: expected tru
 FAIL expression_should_be_known: device-height <= 1px assert_true: expected true got false
 FAIL expression_should_be_known: device-height <= 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: device-height <= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-height <= -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-height <= -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-device-height <= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-height <= -0
+FAIL expression_should_be_parseable: max-device-height <= -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-height <= -0
 FAIL expression_should_be_known: 0px <= device-height <= 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height < = 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height <= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-height <= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-height <= -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height <= -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height <= -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= device-height : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= device-height > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= device-height >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px <= device-height = 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: device-height < = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: device-height < = 0px
+FAIL expression_should_be_parseable: device-height <= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: device-height <= -1px
+FAIL expression_should_be_parseable: min-device-height <= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-height <= -1px
+FAIL expression_should_be_parseable: max-device-height <= -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-height <= -1px
+FAIL expression_should_be_parseable: device-height <= -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: device-height <= -0.00001mm
+FAIL expression_should_be_parseable: device-height <= -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: device-height <= -100000em
+FAIL expression_should_be_parseable: 0px <= device-height : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= device-height : 0px
+FAIL expression_should_be_parseable: 0px <= device-height > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= device-height > 0px
+FAIL expression_should_be_parseable: 0px <= device-height >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= device-height >= 0px
+FAIL expression_should_be_parseable: 0px <= device-height = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px <= device-height = 0px
 FAIL expression_should_be_known: 0px <= device-height <= 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px <= device-height < 0px assert_true: expected true got false
 FAIL expression_should_be_known: device-height < 0 assert_true: expected true got false
@@ -548,18 +829,29 @@ FAIL expression_should_be_known: device-height < -0cm assert_true: expected true
 FAIL expression_should_be_known: device-height < 1px assert_true: expected true got false
 FAIL expression_should_be_known: device-height < 0.001mm assert_true: expected true got false
 FAIL expression_should_be_known: device-height < 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-height < -0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-height < -0 assert_true: expected true got false
+FAIL expression_should_be_parseable: min-device-height < -0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-height < -0
+FAIL expression_should_be_parseable: max-device-height < -0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-height < -0
 FAIL expression_should_be_known: 0px < device-height < 100000px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height < -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: min-device-height < -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: max-device-height < -1px assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height < -0.00001mm assert_true: expected true got false
-FAIL expression_should_be_unknown: device-height < -100000em assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < device-height : 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < device-height > 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < device-height >= 0px assert_true: expected true got false
-FAIL expression_should_be_unknown: 0px < device-height = 0px assert_true: expected true got false
+FAIL expression_should_be_parseable: device-height < -1px assert_true: expected true got false
+PASS expression_should_be_unknown: device-height < -1px
+FAIL expression_should_be_parseable: min-device-height < -1px assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-height < -1px
+FAIL expression_should_be_parseable: max-device-height < -1px assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-height < -1px
+FAIL expression_should_be_parseable: device-height < -0.00001mm assert_true: expected true got false
+PASS expression_should_be_unknown: device-height < -0.00001mm
+FAIL expression_should_be_parseable: device-height < -100000em assert_true: expected true got false
+PASS expression_should_be_unknown: device-height < -100000em
+FAIL expression_should_be_parseable: 0px < device-height : 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < device-height : 0px
+FAIL expression_should_be_parseable: 0px < device-height > 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < device-height > 0px
+FAIL expression_should_be_parseable: 0px < device-height >= 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < device-height >= 0px
+FAIL expression_should_be_parseable: 0px < device-height = 0px assert_true: expected true got false
+PASS expression_should_be_unknown: 0px < device-height = 0px
 FAIL expression_should_be_known: 0px < device-height <= 0px assert_true: expected true got false
 FAIL expression_should_be_known: 0px < device-height < 0px assert_true: expected true got false
 PASS should_apply: all and (width: ${value}px)
@@ -748,15 +1040,21 @@ PASS width != 0, height = 0: should_not_apply: all and (height)
 PASS width != 0, height = 0: should_apply: all and (width)
 PASS width != 0, height != 0: should_apply: all and (height)
 PASS width != 0, height != 0: should_apply: all and (width)
-FAIL ratio that reduces to 59/40: expression_should_be_known: orientation assert_true: expected true got false
-FAIL ratio that reduces to 59/40: expression_should_be_known: orientation: portrait assert_true: expected true got false
-FAIL ratio that reduces to 59/40: expression_should_be_known: orientation: landscape assert_true: expected true got false
-FAIL ratio that reduces to 59/40: expression_should_be_unknown: min-orientation assert_true: expected true got false
-FAIL ratio that reduces to 59/40: expression_should_be_unknown: min-orientation: portrait assert_true: expected true got false
-FAIL ratio that reduces to 59/40: expression_should_be_unknown: min-orientation: landscape assert_true: expected true got false
-FAIL ratio that reduces to 59/40: expression_should_be_unknown: max-orientation assert_true: expected true got false
-FAIL ratio that reduces to 59/40: expression_should_be_unknown: max-orientation: portrait assert_true: expected true got false
-FAIL ratio that reduces to 59/40: expression_should_be_unknown: max-orientation: landscape assert_true: expected true got false
+PASS ratio that reduces to 59/40: expression_should_be_known: orientation
+PASS ratio that reduces to 59/40: expression_should_be_known: orientation: portrait
+PASS ratio that reduces to 59/40: expression_should_be_known: orientation: landscape
+FAIL ratio that reduces to 59/40: expression_should_be_parseable: min-orientation assert_true: expected true got false
+PASS ratio that reduces to 59/40: expression_should_be_unknown: min-orientation
+FAIL ratio that reduces to 59/40: expression_should_be_parseable: min-orientation: portrait assert_true: expected true got false
+PASS ratio that reduces to 59/40: expression_should_be_unknown: min-orientation: portrait
+FAIL ratio that reduces to 59/40: expression_should_be_parseable: min-orientation: landscape assert_true: expected true got false
+PASS ratio that reduces to 59/40: expression_should_be_unknown: min-orientation: landscape
+FAIL ratio that reduces to 59/40: expression_should_be_parseable: max-orientation assert_true: expected true got false
+PASS ratio that reduces to 59/40: expression_should_be_unknown: max-orientation
+FAIL ratio that reduces to 59/40: expression_should_be_parseable: max-orientation: portrait assert_true: expected true got false
+PASS ratio that reduces to 59/40: expression_should_be_unknown: max-orientation: portrait
+FAIL ratio that reduces to 59/40: expression_should_be_parseable: max-orientation: landscape assert_true: expected true got false
+PASS ratio that reduces to 59/40: expression_should_be_unknown: max-orientation: landscape
 PASS ratio that reduces to 59/40: should_apply: (orientation)
 PASS ratio that reduces to 59/40: should_apply: (orientation: landscape)
 PASS ratio that reduces to 59/40: should_not_apply: (orientation: portrait)
@@ -783,13 +1081,15 @@ PASS should_apply: (min-aspect-ratio: 58/80)
 PASS should_apply: (min-aspect-ratio: 59/81)
 PASS should_not_apply: (min-aspect-ratio: 60/80)
 PASS should_not_apply: (min-aspect-ratio: 59/79)
-FAIL expression_should_be_unknown: min-aspect-ratio assert_true: expected true got false
+FAIL expression_should_be_parseable: min-aspect-ratio assert_true: expected true got false
+PASS expression_should_be_unknown: min-aspect-ratio
 PASS should_apply: (max-aspect-ratio: 59/80)
 PASS should_not_apply: (max-aspect-ratio: 58/80)
 PASS should_not_apply: (max-aspect-ratio: 59/81)
 PASS should_apply: (max-aspect-ratio: 60/80)
 PASS should_apply: (max-aspect-ratio: 59/79)
-FAIL expression_should_be_unknown: max-aspect-ratio assert_true: expected true got false
+FAIL expression_should_be_parseable: max-aspect-ratio assert_true: expected true got false
+PASS expression_should_be_unknown: max-aspect-ratio
 PASS should_apply: (device-aspect-ratio: ${real_dar})
 PASS should_apply: not all and (device-aspect-ratio: ${high_dar_1})
 PASS should_not_apply: all and (device-aspect-ratio: ${high_dar_2})
@@ -801,18 +1101,20 @@ PASS should_not_apply: all and (min-device-aspect-ratio: ${high_dar_1})
 PASS should_apply: not all and (min-device-aspect-ratio: ${high_dar_2})
 PASS should_not_apply: not all and (min-device-aspect-ratio: ${low_dar_1})
 PASS should_apply: all and (min-device-aspect-ratio: ${low_dar_2})
-FAIL expression_should_be_unknown: min-device-aspect-ratio assert_true: expected true got false
+FAIL expression_should_be_parseable: min-device-aspect-ratio assert_true: expected true got false
+PASS expression_should_be_unknown: min-device-aspect-ratio
 PASS should_apply: all and (max-device-aspect-ratio: ${real_dar})
 PASS should_apply: (max-device-aspect-ratio: ${high_dar_1})
 PASS should_apply: (max-device-aspect-ratio: ${high_dar_2})
 PASS should_not_apply: all and (max-device-aspect-ratio: ${low_dar_1})
 PASS should_apply: not all and (max-device-aspect-ratio: ${low_dar_2})
-FAIL expression_should_be_unknown: max-device-aspect-ratio assert_true: expected true got false
-FAIL expression_should_be_known: max-aspect-ratio: 1/1 assert_true: expected true got false
-FAIL expression_should_be_known: max-aspect-ratio: 1  /1 assert_true: expected true got false
-FAIL expression_should_be_known: max-aspect-ratio: 1  / 	
-1 assert_true: expected true got false
-FAIL expression_should_be_known: max-aspect-ratio: 1/\r1 assert_true: expected true got false
+FAIL expression_should_be_parseable: max-device-aspect-ratio assert_true: expected true got false
+PASS expression_should_be_unknown: max-device-aspect-ratio
+PASS expression_should_be_known: max-aspect-ratio: 1/1
+PASS expression_should_be_known: max-aspect-ratio: 1  /1
+PASS expression_should_be_known: max-aspect-ratio: 1  / 	
+1
+PASS expression_should_be_known: max-aspect-ratio: 1/\r1
 FAIL expression_should_be_known: max-aspect-ratio: 1 assert_true: expected true got false
 FAIL expression_should_be_known: max-aspect-ratio: 0.5 assert_true: expected true got false
 FAIL expression_should_be_known: max-aspect-ratio: 1.0/1 assert_true: expected true got false
@@ -821,17 +1123,23 @@ FAIL expression_should_be_known: max-aspect-ratio: 1.0/1.0 assert_true: expected
 FAIL expression_should_be_known: max-aspect-ratio: 0/1 assert_true: expected true got false
 FAIL expression_should_be_known: max-aspect-ratio: 1/0 assert_true: expected true got false
 FAIL expression_should_be_known: max-aspect-ratio: 0/0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-aspect-ratio: -1/1 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-aspect-ratio: 1/-1 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-aspect-ratio: -1/-1 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-aspect-ratio: invalid assert_true: expected true got false
-FAIL expression_should_be_unknown: max-aspect-ratio: 1 / invalid assert_true: expected true got false
-FAIL expression_should_be_unknown: max-aspect-ratio: 1 invalid assert_true: expected true got false
-FAIL expression_should_be_known: device-aspect-ratio: 1/1 assert_true: expected true got false
-FAIL expression_should_be_known: device-aspect-ratio: 1  /1 assert_true: expected true got false
-FAIL expression_should_be_known: device-aspect-ratio: 1  / 	
-1 assert_true: expected true got false
-FAIL expression_should_be_known: device-aspect-ratio: 1/\r1 assert_true: expected true got false
+FAIL expression_should_be_parseable: max-aspect-ratio: -1/1 assert_true: expected true got false
+PASS expression_should_be_unknown: max-aspect-ratio: -1/1
+FAIL expression_should_be_parseable: max-aspect-ratio: 1/-1 assert_true: expected true got false
+PASS expression_should_be_unknown: max-aspect-ratio: 1/-1
+FAIL expression_should_be_parseable: max-aspect-ratio: -1/-1 assert_true: expected true got false
+PASS expression_should_be_unknown: max-aspect-ratio: -1/-1
+FAIL expression_should_be_parseable: max-aspect-ratio: invalid assert_true: expected true got false
+PASS expression_should_be_unknown: max-aspect-ratio: invalid
+FAIL expression_should_be_parseable: max-aspect-ratio: 1 / invalid assert_true: expected true got false
+PASS expression_should_be_unknown: max-aspect-ratio: 1 / invalid
+FAIL expression_should_be_parseable: max-aspect-ratio: 1 invalid assert_true: expected true got false
+PASS expression_should_be_unknown: max-aspect-ratio: 1 invalid
+PASS expression_should_be_known: device-aspect-ratio: 1/1
+PASS expression_should_be_known: device-aspect-ratio: 1  /1
+PASS expression_should_be_known: device-aspect-ratio: 1  / 	
+1
+PASS expression_should_be_known: device-aspect-ratio: 1/\r1
 FAIL expression_should_be_known: device-aspect-ratio: 1 assert_true: expected true got false
 FAIL expression_should_be_known: device-aspect-ratio: 0.5 assert_true: expected true got false
 FAIL expression_should_be_known: device-aspect-ratio: 1.0/1 assert_true: expected true got false
@@ -840,12 +1148,18 @@ FAIL expression_should_be_known: device-aspect-ratio: 1.0/1.0 assert_true: expec
 FAIL expression_should_be_known: device-aspect-ratio: 0/1 assert_true: expected true got false
 FAIL expression_should_be_known: device-aspect-ratio: 1/0 assert_true: expected true got false
 FAIL expression_should_be_known: device-aspect-ratio: 0/0 assert_true: expected true got false
-FAIL expression_should_be_unknown: device-aspect-ratio: -1/1 assert_true: expected true got false
-FAIL expression_should_be_unknown: device-aspect-ratio: 1/-1 assert_true: expected true got false
-FAIL expression_should_be_unknown: device-aspect-ratio: -1/-1 assert_true: expected true got false
-FAIL expression_should_be_unknown: device-aspect-ratio: invalid assert_true: expected true got false
-FAIL expression_should_be_unknown: device-aspect-ratio: 1 / invalid assert_true: expected true got false
-FAIL expression_should_be_unknown: device-aspect-ratio: 1 invalid assert_true: expected true got false
+FAIL expression_should_be_parseable: device-aspect-ratio: -1/1 assert_true: expected true got false
+PASS expression_should_be_unknown: device-aspect-ratio: -1/1
+FAIL expression_should_be_parseable: device-aspect-ratio: 1/-1 assert_true: expected true got false
+PASS expression_should_be_unknown: device-aspect-ratio: 1/-1
+FAIL expression_should_be_parseable: device-aspect-ratio: -1/-1 assert_true: expected true got false
+PASS expression_should_be_unknown: device-aspect-ratio: -1/-1
+FAIL expression_should_be_parseable: device-aspect-ratio: invalid assert_true: expected true got false
+PASS expression_should_be_unknown: device-aspect-ratio: invalid
+FAIL expression_should_be_parseable: device-aspect-ratio: 1 / invalid assert_true: expected true got false
+PASS expression_should_be_unknown: device-aspect-ratio: 1 / invalid
+FAIL expression_should_be_parseable: device-aspect-ratio: 1 invalid assert_true: expected true got false
+PASS expression_should_be_unknown: device-aspect-ratio: 1 invalid
 PASS monochrome_and_color
 PASS find_depth
 PASS should_apply: all and (color:8)
@@ -855,33 +1169,46 @@ PASS should_apply: all and (max-color:8)
 PASS should_not_apply: all and (max-color:7)
 PASS should_apply: all and (max-color:9)
 PASS should_apply: all and (color)
-FAIL expression_should_be_unknown: max-color assert_true: expected true got false
-FAIL expression_should_be_unknown: min-color assert_true: expected true got false
+FAIL expression_should_be_parseable: max-color assert_true: expected true got false
+PASS expression_should_be_unknown: max-color
+FAIL expression_should_be_parseable: min-color assert_true: expected true got false
+PASS expression_should_be_unknown: min-color
 PASS should_not_apply: all and (monochrome)
-FAIL expression_should_be_unknown: max-monochrome assert_true: expected true got false
-FAIL expression_should_be_unknown: min-monochrome assert_true: expected true got false
+FAIL expression_should_be_parseable: max-monochrome assert_true: expected true got false
+PASS expression_should_be_unknown: max-monochrome
+FAIL expression_should_be_parseable: min-monochrome assert_true: expected true got false
+PASS expression_should_be_unknown: min-monochrome
 PASS should_apply: not all and (monochrome)
 PASS should_not_apply: not all and (color)
 PASS should_apply: only all and (color)
 PASS should_not_apply: only all and (monochrome)
-FAIL expression_should_be_known: color: 1 assert_true: expected true got false
-FAIL expression_should_be_known: color: 327 assert_true: expected true got false
-FAIL expression_should_be_known: color: 0 assert_true: expected true got false
-FAIL expression_should_be_unknown: color: 1.0 assert_true: expected true got false
-FAIL expression_should_be_unknown: color: -1 assert_true: expected true got false
-FAIL expression_should_be_unknown: color: 1/1 assert_true: expected true got false
-FAIL expression_should_be_known: min-monochrome: 1 assert_true: expected true got false
-FAIL expression_should_be_known: min-monochrome: 327 assert_true: expected true got false
-FAIL expression_should_be_known: min-monochrome: 0 assert_true: expected true got false
-FAIL expression_should_be_unknown: min-monochrome: 1.0 assert_true: expected true got false
-FAIL expression_should_be_unknown: min-monochrome: -1 assert_true: expected true got false
-FAIL expression_should_be_unknown: min-monochrome: 1/1 assert_true: expected true got false
-FAIL expression_should_be_known: max-color-index: 1 assert_true: expected true got false
-FAIL expression_should_be_known: max-color-index: 327 assert_true: expected true got false
-FAIL expression_should_be_known: max-color-index: 0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-color-index: 1.0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-color-index: -1 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-color-index: 1/1 assert_true: expected true got false
+PASS expression_should_be_known: color: 1
+PASS expression_should_be_known: color: 327
+PASS expression_should_be_known: color: 0
+FAIL expression_should_be_parseable: color: 1.0 assert_true: expected true got false
+PASS expression_should_be_unknown: color: 1.0
+FAIL expression_should_be_parseable: color: -1 assert_true: expected true got false
+PASS expression_should_be_unknown: color: -1
+FAIL expression_should_be_parseable: color: 1/1 assert_true: expected true got false
+PASS expression_should_be_unknown: color: 1/1
+PASS expression_should_be_known: min-monochrome: 1
+PASS expression_should_be_known: min-monochrome: 327
+PASS expression_should_be_known: min-monochrome: 0
+FAIL expression_should_be_parseable: min-monochrome: 1.0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-monochrome: 1.0
+FAIL expression_should_be_parseable: min-monochrome: -1 assert_true: expected true got false
+PASS expression_should_be_unknown: min-monochrome: -1
+FAIL expression_should_be_parseable: min-monochrome: 1/1 assert_true: expected true got false
+PASS expression_should_be_unknown: min-monochrome: 1/1
+PASS expression_should_be_known: max-color-index: 1
+PASS expression_should_be_known: max-color-index: 327
+PASS expression_should_be_known: max-color-index: 0
+FAIL expression_should_be_parseable: max-color-index: 1.0 assert_true: expected true got false
+PASS expression_should_be_unknown: max-color-index: 1.0
+FAIL expression_should_be_parseable: max-color-index: -1 assert_true: expected true got false
+PASS expression_should_be_unknown: max-color-index: -1
+FAIL expression_should_be_parseable: max-color-index: 1/1 assert_true: expected true got false
+PASS expression_should_be_unknown: max-color-index: 1/1
 PASS should_apply: (color-index: 0)
 PASS should_not_apply: (color-index: 1)
 PASS should_apply: (min-color-index: 0)
@@ -889,48 +1216,60 @@ PASS should_not_apply: (min-color-index: 1)
 PASS should_apply: (max-color-index: 0)
 PASS should_apply: (max-color-index: 1)
 PASS should_apply: (max-color-index: 157)
-FAIL expression_should_be_known: resolution: 3dpi assert_true: expected true got false
-FAIL expression_should_be_known: resolution:3dpi assert_true: expected true got false
-FAIL expression_should_be_known: resolution: 3.0dpi assert_true: expected true got false
-FAIL expression_should_be_known: resolution: 3.4dpi assert_true: expected true got false
-FAIL expression_should_be_known: resolution	: 120dpcm assert_true: expected true got false
-FAIL expression_should_be_known: resolution: 1dppx assert_true: expected true got false
-FAIL expression_should_be_known: resolution: 1x assert_true: expected true got false
-FAIL expression_should_be_known: resolution: 1.5dppx assert_true: expected true got false
-FAIL expression_should_be_known: resolution: 1.5x assert_true: expected true got false
-FAIL expression_should_be_known: resolution: 2.0dppx assert_true: expected true got false
-FAIL expression_should_be_unknown: resolution: 0dpi assert_true: expected true got false
-FAIL expression_should_be_unknown: resolution: -3dpi assert_true: expected true got false
-FAIL expression_should_be_unknown: resolution: 0dppx assert_true: expected true got false
-FAIL expression_should_be_unknown: resolution: 0x assert_true: expected true got false
-FAIL expression_should_be_known: min-resolution: 3dpi assert_true: expected true got false
-FAIL expression_should_be_known: min-resolution:3dpi assert_true: expected true got false
-FAIL expression_should_be_known: min-resolution: 3.0dpi assert_true: expected true got false
-FAIL expression_should_be_known: min-resolution: 3.4dpi assert_true: expected true got false
-FAIL expression_should_be_known: min-resolution	: 120dpcm assert_true: expected true got false
-FAIL expression_should_be_known: min-resolution: 1dppx assert_true: expected true got false
-FAIL expression_should_be_known: min-resolution: 1x assert_true: expected true got false
-FAIL expression_should_be_known: min-resolution: 1.5dppx assert_true: expected true got false
-FAIL expression_should_be_known: min-resolution: 1.5x assert_true: expected true got false
-FAIL expression_should_be_known: min-resolution: 2.0dppx assert_true: expected true got false
-FAIL expression_should_be_unknown: min-resolution: 0dpi assert_true: expected true got false
-FAIL expression_should_be_unknown: min-resolution: -3dpi assert_true: expected true got false
-FAIL expression_should_be_unknown: min-resolution: 0dppx assert_true: expected true got false
-FAIL expression_should_be_unknown: min-resolution: 0x assert_true: expected true got false
-FAIL expression_should_be_known: max-resolution: 3dpi assert_true: expected true got false
-FAIL expression_should_be_known: max-resolution:3dpi assert_true: expected true got false
-FAIL expression_should_be_known: max-resolution: 3.0dpi assert_true: expected true got false
-FAIL expression_should_be_known: max-resolution: 3.4dpi assert_true: expected true got false
-FAIL expression_should_be_known: max-resolution	: 120dpcm assert_true: expected true got false
-FAIL expression_should_be_known: max-resolution: 1dppx assert_true: expected true got false
-FAIL expression_should_be_known: max-resolution: 1x assert_true: expected true got false
-FAIL expression_should_be_known: max-resolution: 1.5dppx assert_true: expected true got false
-FAIL expression_should_be_known: max-resolution: 1.5x assert_true: expected true got false
-FAIL expression_should_be_known: max-resolution: 2.0dppx assert_true: expected true got false
-FAIL expression_should_be_unknown: max-resolution: 0dpi assert_true: expected true got false
-FAIL expression_should_be_unknown: max-resolution: -3dpi assert_true: expected true got false
-FAIL expression_should_be_unknown: max-resolution: 0dppx assert_true: expected true got false
-FAIL expression_should_be_unknown: max-resolution: 0x assert_true: expected true got false
+PASS expression_should_be_known: resolution: 3dpi
+PASS expression_should_be_known: resolution:3dpi
+PASS expression_should_be_known: resolution: 3.0dpi
+PASS expression_should_be_known: resolution: 3.4dpi
+PASS expression_should_be_known: resolution	: 120dpcm
+PASS expression_should_be_known: resolution: 1dppx
+PASS expression_should_be_known: resolution: 1x
+PASS expression_should_be_known: resolution: 1.5dppx
+PASS expression_should_be_known: resolution: 1.5x
+PASS expression_should_be_known: resolution: 2.0dppx
+FAIL expression_should_be_parseable: resolution: 0dpi assert_true: expected true got false
+PASS expression_should_be_unknown: resolution: 0dpi
+FAIL expression_should_be_parseable: resolution: -3dpi assert_true: expected true got false
+PASS expression_should_be_unknown: resolution: -3dpi
+FAIL expression_should_be_parseable: resolution: 0dppx assert_true: expected true got false
+PASS expression_should_be_unknown: resolution: 0dppx
+FAIL expression_should_be_parseable: resolution: 0x assert_true: expected true got false
+PASS expression_should_be_unknown: resolution: 0x
+PASS expression_should_be_known: min-resolution: 3dpi
+PASS expression_should_be_known: min-resolution:3dpi
+PASS expression_should_be_known: min-resolution: 3.0dpi
+PASS expression_should_be_known: min-resolution: 3.4dpi
+PASS expression_should_be_known: min-resolution	: 120dpcm
+PASS expression_should_be_known: min-resolution: 1dppx
+PASS expression_should_be_known: min-resolution: 1x
+PASS expression_should_be_known: min-resolution: 1.5dppx
+PASS expression_should_be_known: min-resolution: 1.5x
+PASS expression_should_be_known: min-resolution: 2.0dppx
+FAIL expression_should_be_parseable: min-resolution: 0dpi assert_true: expected true got false
+PASS expression_should_be_unknown: min-resolution: 0dpi
+FAIL expression_should_be_parseable: min-resolution: -3dpi assert_true: expected true got false
+PASS expression_should_be_unknown: min-resolution: -3dpi
+FAIL expression_should_be_parseable: min-resolution: 0dppx assert_true: expected true got false
+PASS expression_should_be_unknown: min-resolution: 0dppx
+FAIL expression_should_be_parseable: min-resolution: 0x assert_true: expected true got false
+PASS expression_should_be_unknown: min-resolution: 0x
+PASS expression_should_be_known: max-resolution: 3dpi
+PASS expression_should_be_known: max-resolution:3dpi
+PASS expression_should_be_known: max-resolution: 3.0dpi
+PASS expression_should_be_known: max-resolution: 3.4dpi
+PASS expression_should_be_known: max-resolution	: 120dpcm
+PASS expression_should_be_known: max-resolution: 1dppx
+PASS expression_should_be_known: max-resolution: 1x
+PASS expression_should_be_known: max-resolution: 1.5dppx
+PASS expression_should_be_known: max-resolution: 1.5x
+PASS expression_should_be_known: max-resolution: 2.0dppx
+FAIL expression_should_be_parseable: max-resolution: 0dpi assert_true: expected true got false
+PASS expression_should_be_unknown: max-resolution: 0dpi
+FAIL expression_should_be_parseable: max-resolution: -3dpi assert_true: expected true got false
+PASS expression_should_be_unknown: max-resolution: -3dpi
+FAIL expression_should_be_parseable: max-resolution: 0dppx assert_true: expected true got false
+PASS expression_should_be_unknown: max-resolution: 0dppx
+FAIL expression_should_be_parseable: max-resolution: 0x assert_true: expected true got false
+PASS expression_should_be_unknown: max-resolution: 0x
 PASS find_resolution
 PASS resolution is exact: should_apply: (resolution: ${resolution}dpi)
 PASS resolution is exact: should_apply: (resolution: ${Math.floor(resolution/96)}dppx)
@@ -945,27 +1284,36 @@ PASS should_apply: (min-resolution: ${dpcm_low}dpcm)
 PASS should_apply: (max-resolution: ${dpcm_high}dpcm)
 PASS should_not_apply: (max-resolution: ${dpcm_low}dpcm)
 PASS should_apply: not all and (min-resolution: ${dpcm_high}dpcm)
-FAIL expression_should_be_known: scan assert_true: expected true got false
-FAIL expression_should_be_known: scan: progressive assert_true: expected true got false
-FAIL expression_should_be_known: scan:interlace assert_true: expected true got false
-FAIL expression_should_be_unknown: min-scan:interlace assert_true: expected true got false
-FAIL expression_should_be_unknown: scan: 1 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-scan assert_true: expected true got false
-FAIL expression_should_be_unknown: max-scan: progressive assert_true: expected true got false
+PASS expression_should_be_known: scan
+PASS expression_should_be_known: scan: progressive
+PASS expression_should_be_known: scan:interlace
+FAIL expression_should_be_parseable: min-scan:interlace assert_true: expected true got false
+PASS expression_should_be_unknown: min-scan:interlace
+FAIL expression_should_be_parseable: scan: 1 assert_true: expected true got false
+PASS expression_should_be_unknown: scan: 1
+FAIL expression_should_be_parseable: max-scan assert_true: expected true got false
+PASS expression_should_be_unknown: max-scan
+FAIL expression_should_be_parseable: max-scan: progressive assert_true: expected true got false
+PASS expression_should_be_unknown: max-scan: progressive
 PASS should_not_apply: (scan)
 PASS should_not_apply: (scan: progressive)
 PASS should_not_apply: (scan: interlace)
 PASS should_apply: not all and (scan)
 PASS should_apply: not all and (scan: progressive)
 PASS should_apply: not all and (scan: interlace)
-FAIL expression_should_be_known: grid assert_true: expected true got false
-FAIL expression_should_be_known: grid: 0 assert_true: expected true got false
-FAIL expression_should_be_known: grid: 1 assert_true: expected true got false
-FAIL expression_should_be_unknown: min-grid assert_true: expected true got false
-FAIL expression_should_be_unknown: min-grid:0 assert_true: expected true got false
-FAIL expression_should_be_unknown: max-grid: 1 assert_true: expected true got false
-FAIL expression_should_be_unknown: grid: 2 assert_true: expected true got false
-FAIL expression_should_be_unknown: grid: -1 assert_true: expected true got false
+PASS expression_should_be_known: grid
+PASS expression_should_be_known: grid: 0
+PASS expression_should_be_known: grid: 1
+FAIL expression_should_be_parseable: min-grid assert_true: expected true got false
+PASS expression_should_be_unknown: min-grid
+FAIL expression_should_be_parseable: min-grid:0 assert_true: expected true got false
+PASS expression_should_be_unknown: min-grid:0
+FAIL expression_should_be_parseable: max-grid: 1 assert_true: expected true got false
+PASS expression_should_be_unknown: max-grid: 1
+FAIL expression_should_be_parseable: grid: 2 assert_true: expected true got false
+PASS expression_should_be_unknown: grid: 2
+FAIL expression_should_be_parseable: grid: -1 assert_true: expected true got false
+PASS expression_should_be_unknown: grid: -1
 PASS should_not_apply: (grid)
 PASS should_apply: (grid: 0)
 PASS should_not_apply: (grid: 1)
@@ -1008,37 +1356,40 @@ FAIL expression_should_be_known: overflow-block: none assert_true: expected true
 FAIL expression_should_be_known: overflow-block: paged assert_true: expected true got false
 FAIL expression_should_be_known: overflow-block: scroll assert_true: expected true got false
 FAIL expression_should_be_known: overflow-block: optional-paged assert_true: expected true got false
-FAIL expression_should_be_unknown: overflow-block: some-random-invalid-thing assert_true: expected true got false
+FAIL expression_should_be_parseable: overflow-block: some-random-invalid-thing assert_true: expected true got false
+PASS expression_should_be_unknown: overflow-block: some-random-invalid-thing
 FAIL Sanity check for overflow-block assert_not_equals: overflow-block should be equivalent to not (overflow-block: none) got disallowed value false
 FAIL expression_should_be_known: overflow-inline assert_true: expected true got false
 FAIL expression_should_be_known: overflow-inline: none assert_true: expected true got false
 FAIL expression_should_be_known: overflow-inline: scroll assert_true: expected true got false
-FAIL expression_should_be_unknown: overflow-inline: some-random-invalid-thing assert_true: expected true got false
+FAIL expression_should_be_parseable: overflow-inline: some-random-invalid-thing assert_true: expected true got false
+PASS expression_should_be_unknown: overflow-inline: some-random-invalid-thing
 FAIL Sanity check for overflow-inline assert_not_equals: overflow-inline should be equivalent to not (overflow-inline: none) got disallowed value false
 FAIL expression_should_be_known: update assert_true: expected true got false
 FAIL expression_should_be_known: update: none assert_true: expected true got false
 FAIL expression_should_be_known: update: slow assert_true: expected true got false
 FAIL expression_should_be_known: update: fast assert_true: expected true got false
-FAIL expression_should_be_unknown: update: some-random-invalid-thing assert_true: expected true got false
+FAIL expression_should_be_parseable: update: some-random-invalid-thing assert_true: expected true got false
+PASS expression_should_be_unknown: update: some-random-invalid-thing
 FAIL Sanity check for update assert_not_equals: update should be equivalent to not (update: none) got disallowed value false
-FAIL expression_should_be_known: hover assert_true: expected true got false
-FAIL expression_should_be_known: hover: hover assert_true: expected true got false
-FAIL expression_should_be_known: hover: none assert_true: expected true got false
-FAIL expression_should_be_known: any-hover assert_true: expected true got false
-FAIL expression_should_be_known: any-hover: hover assert_true: expected true got false
-FAIL expression_should_be_known: any-hover: none assert_true: expected true got false
+PASS expression_should_be_known: hover
+PASS expression_should_be_known: hover: hover
+PASS expression_should_be_known: hover: none
+PASS expression_should_be_known: any-hover
+PASS expression_should_be_known: any-hover: hover
+PASS expression_should_be_known: any-hover: none
 PASS (hover) == (hover: hover)
 PASS (hover) == not (hover: none)
 PASS (any-hover) == (any-hover: hover)
 PASS (any-hover) == not (any-hover: none)
-FAIL expression_should_be_known: pointer assert_true: expected true got false
-FAIL expression_should_be_known: pointer: coarse assert_true: expected true got false
-FAIL expression_should_be_known: pointer: fine assert_true: expected true got false
-FAIL expression_should_be_known: pointer: none assert_true: expected true got false
-FAIL expression_should_be_known: any-pointer assert_true: expected true got false
-FAIL expression_should_be_known: any-pointer: coarse assert_true: expected true got false
-FAIL expression_should_be_known: any-pointer: fine assert_true: expected true got false
-FAIL expression_should_be_known: any-pointer: none assert_true: expected true got false
+PASS expression_should_be_known: pointer
+PASS expression_should_be_known: pointer: coarse
+PASS expression_should_be_known: pointer: fine
+PASS expression_should_be_known: pointer: none
+PASS expression_should_be_known: any-pointer
+PASS expression_should_be_known: any-pointer: coarse
+PASS expression_should_be_known: any-pointer: fine
+PASS expression_should_be_known: any-pointer: none
 PASS (pointer) == (pointer: coarse) or (pointer: fine)
 PASS (pointer) == not (pointer: none)
 PASS (any-pointer) == (any-pointer: coarse) or (any-pointer: fine)

@@ -45,6 +45,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/media-queries-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/media-queries-002.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/media-queries-003.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/media-query-matches-in-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/min-width-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/min-width-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/min-width-tables-001-expected.xht
