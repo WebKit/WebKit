@@ -71,7 +71,6 @@ class EventTarget;
 class FontLoadRequest;
 class MessagePort;
 class NotificationClient;
-class PermissionController;
 class PublicURLManager;
 class RejectedPromiseTracker;
 class RTCDataChannelRemoteHandlerConnection;
@@ -127,7 +126,6 @@ public:
     virtual void disableWebAssembly(const String& errorMessage) = 0;
 
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
-    virtual RefPtr<PermissionController> permissionController();
 
     virtual SocketProvider* socketProvider() = 0;
 

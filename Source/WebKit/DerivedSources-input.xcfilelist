@@ -165,6 +165,7 @@ $(PROJECT_DIR)/UIProcess/WebGeolocationManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebLockRegistryProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebPageProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebPasteboardProxy.messages.in
+$(PROJECT_DIR)/UIProcess/WebPermissionControllerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebProcessPool.messages.in
 $(PROJECT_DIR)/UIProcess/WebProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/XR/PlatformXRSystem.messages.in

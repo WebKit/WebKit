@@ -31,14 +31,18 @@
 
 namespace WebCore {
 
+class Page;
 class PermissionObserver;
 struct ClientOrigin;
 struct PermissionDescriptor;
 
 class PermissionController : public ThreadSafeRefCounted<PermissionController> {
 public:
+    static PermissionController& shared();
+    WEBCORE_EXPORT static void setSharedController(Ref<PermissionController>&&);
+    
     virtual ~PermissionController() = default;
-    virtual void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, CompletionHandler<void(std::optional<PermissionState>)>&&) = 0;
+    virtual void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, Page&, CompletionHandler<void(std::optional<PermissionState>)>&&) = 0;
     virtual void addObserver(PermissionObserver&) = 0;
     virtual void removeObserver(PermissionObserver&) = 0;
 protected:
@@ -50,7 +54,7 @@ public:
     static Ref<DummyPermissionController> create() { return adoptRef(*new DummyPermissionController); }
 private:
     DummyPermissionController() = default;
-    void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, CompletionHandler<void(std::optional<PermissionState>)>&& callback) final { callback({ }); }
+    void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, Page&, CompletionHandler<void(std::optional<PermissionState>)>&& callback) final { callback({ }); }
     void addObserver(PermissionObserver&) final { }
     void removeObserver(PermissionObserver&) final { }
 };

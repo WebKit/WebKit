@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "PermissionController.h"
 
-#include "IDLTypes.h"
-#include <JavaScriptCore/Strong.h>
-#include <wtf/IsoMalloc.h>
-#include <wtf/WeakPtr.h>
-
-namespace JSC {
-class JSObject;
-} // namespace JSC
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class Navigator;
-class PermissionStatus;
+static RefPtr<PermissionController>& sharedController()
+{
+    static MainThreadNeverDestroyed<RefPtr<PermissionController>> controller;
+    return controller;
+}
 
-template<typename IDLType> class DOMPromiseDeferred;
+PermissionController& PermissionController::shared()
+{
+    auto& controller = sharedController();
+    if (!controller)
+        controller = DummyPermissionController::create();
+    return *controller;
+}
 
-class Permissions : public RefCounted<Permissions> {
-    WTF_MAKE_ISO_ALLOCATED(Permissions);
-public:
-    static Ref<Permissions> create(Navigator&);
-    ~Permissions();
-
-    Navigator* navigator();
-    void query(JSC::Strong<JSC::JSObject>, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&&);
-
-private:
-    explicit Permissions(Navigator&);
-
-    WeakPtr<Navigator> m_navigator;
-};
+void PermissionController::setSharedController(Ref<PermissionController>&& controller)
+{
+    ASSERT(!sharedController());
+    sharedController() = WTFMove(controller);
+}
 
 } // namespace WebCore

@@ -49,20 +49,17 @@ PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionSt
     : ActiveDOMObject(&context)
     , m_state(state)
     , m_descriptor(descriptor)
-    , m_controller(context.permissionController())
 {
     auto* origin = context.securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };
     m_origin = ClientOrigin { context.topOrigin().data(), WTFMove(originData) };
 
-    if (m_controller)
-        m_controller->addObserver(*this);
+    PermissionController::shared().addObserver(*this);
 }
 
 PermissionStatus::~PermissionStatus()
 {
-    if (m_controller)
-        m_controller->removeObserver(*this);
+    PermissionController::shared().removeObserver(*this);
 }
 
 void PermissionStatus::stateChanged(PermissionState newState)

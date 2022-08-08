@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Permissions.h"
 
+#include "Document.h"
 #include "Exception.h"
 #include "FeaturePolicy.h"
 #include "Frame.h"
@@ -36,6 +37,7 @@
 #include "Page.h"
 #include "PermissionController.h"
 #include "PermissionDescriptor.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -50,8 +52,6 @@ Ref<Permissions> Permissions::create(Navigator& navigator)
 Permissions::Permissions(Navigator& navigator)
     : m_navigator(navigator)
 {
-    if (auto context = navigator.scriptExecutionContext())
-        m_controller = context->permissionController();
 }
 
 Navigator* Permissions::navigator()
@@ -78,10 +78,6 @@ static bool isAllowedByFeaturePolicy(const Document& document, PermissionName na
 void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&& promise)
 {
     // FIXME: support permissions in WorkerNavigator.
-    if (!m_controller) {
-        promise.reject(Exception { NotSupportedError });
-        return;
-    }
 
     auto context = m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
 
@@ -90,8 +86,19 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
         return;
     }
 
-    if (auto* document = dynamicDowncast<Document>(context); !document->isFullyActive()) {
+    auto* document = dynamicDowncast<Document>(context);
+    if (!document) {
+        promise.reject(Exception { NotSupportedError });
+        return;
+    }
+
+    if (!document->isFullyActive()) {
         promise.reject(Exception { InvalidStateError, "The document is not fully active"_s });
+        return;
+    }
+
+    if (!document->page()) {
+        promise.reject(Exception { NotSupportedError });
         return;
     }
 
@@ -117,7 +124,8 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
 
     auto* origin = context->securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };
-    m_controller->query(ClientOrigin { context->topOrigin().data(), originData }, PermissionDescriptor { parameterDescriptor }, [this, protectedThis = Ref { *this }, parameterDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
+
+    PermissionController::shared().query(ClientOrigin { context->topOrigin().data(), originData }, PermissionDescriptor { parameterDescriptor }, *document->page(), [this, protectedThis = Ref { *this }, parameterDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
         auto context = m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
         if (!context || !context->globalObject())
             return;

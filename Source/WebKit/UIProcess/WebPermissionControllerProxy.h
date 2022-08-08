@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,30 @@
 
 #pragma once
 
-#include "IDLTypes.h"
-#include <JavaScriptCore/Strong.h>
-#include <wtf/IsoMalloc.h>
-#include <wtf/WeakPtr.h>
-
-namespace JSC {
-class JSObject;
-} // namespace JSC
+#include "MessageReceiver.h"
+#include "WebPageProxyIdentifier.h"
 
 namespace WebCore {
+class WebProcessProxy;
+enum class PermissionState : uint8_t;
+struct ClientOrigin;
+struct PermissionDescriptor;
+}
 
-class Navigator;
-class PermissionStatus;
+namespace WebKit {
 
-template<typename IDLType> class DOMPromiseDeferred;
-
-class Permissions : public RefCounted<Permissions> {
-    WTF_MAKE_ISO_ALLOCATED(Permissions);
+class WebPermissionControllerProxy final : public IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Permissions> create(Navigator&);
-    ~Permissions();
-
-    Navigator* navigator();
-    void query(JSC::Strong<JSC::JSObject>, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&&);
+    explicit WebPermissionControllerProxy(WebProcessProxy&);
+    ~WebPermissionControllerProxy();
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
-    explicit Permissions(Navigator&);
+    // IPC Message handlers.
+    void query(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, WebPageProxyIdentifier, CompletionHandler<void(std::optional<WebCore::PermissionState>, bool shouldCache)>&&);
 
-    WeakPtr<Navigator> m_navigator;
+    WebProcessProxy& m_process;
 };
 
-} // namespace WebCore
+} // namespace WebKit

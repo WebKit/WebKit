@@ -48,7 +48,6 @@
 #include "Navigator.h"
 #include "Page.h"
 #include "Performance.h"
-#include "PermissionController.h"
 #include "PublicURLManager.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "RejectedPromiseTracker.h"
@@ -375,11 +374,6 @@ void ScriptExecutionContext::didCreateDestructionObserver(ContextDestructionObse
 void ScriptExecutionContext::willDestroyDestructionObserver(ContextDestructionObserver& observer)
 {
     m_destructionObservers.remove(&observer);
-}
-
-RefPtr<PermissionController> ScriptExecutionContext::permissionController()
-{
-    return nullptr;
 }
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> ScriptExecutionContext::createRTCDataChannelRemoteHandlerConnection()

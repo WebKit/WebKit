@@ -35,7 +35,6 @@
 
 namespace WebCore {
 
-class PermissionController;
 class ScriptExecutionContext;
 
 class PermissionStatus final : public PermissionObserver, public ActiveDOMObject, public RefCounted<PermissionStatus>, public EventTargetWithInlineData  {
@@ -75,7 +74,6 @@ private:
     PermissionState m_state;
     PermissionDescriptor m_descriptor;
     ClientOrigin m_origin;
-    RefPtr<PermissionController> m_controller;
     std::atomic<bool> m_hasChangeEventListener;
 };
 

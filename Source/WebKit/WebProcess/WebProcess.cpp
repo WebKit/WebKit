@@ -73,6 +73,7 @@
 #include "WebPageCreationParameters.h"
 #include "WebPageGroupProxy.h"
 #include "WebPaymentCoordinator.h"
+#include "WebPermissionController.h"
 #include "WebPlatformStrategies.h"
 #include "WebPluginInfoProvider.h"
 #include "WebProcessCreationParameters.h"
@@ -125,6 +126,7 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
+#include <WebCore/PermissionController.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/ProcessWarming.h>
@@ -352,6 +354,7 @@ WebProcess::WebProcess()
 #endif
 
     WebCore::WebLockRegistry::setSharedRegistry(RemoteWebLockRegistry::create(*this));
+    WebCore::PermissionController::setSharedController(WebPermissionController::create());
 }
 
 WebProcess::~WebProcess()
