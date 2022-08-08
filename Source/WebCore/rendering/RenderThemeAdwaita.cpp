@@ -72,7 +72,6 @@ static constexpr auto progressBarBackgroundColorDark = SRGBA<uint8_t> { 255, 255
 static const unsigned sliderTrackSize = 6;
 static constexpr auto sliderTrackBackgroundColorLight = SRGBA<uint8_t> { 0, 0, 0, 40 };
 static constexpr auto sliderTrackBackgroundColorDark = SRGBA<uint8_t> { 255, 255, 255, 30 };
-static const int sliderTrackFocusOffset = 2;
 static const int sliderThumbSize = 20;
 static const int sliderThumbBorderSize = 1;
 static constexpr auto sliderThumbBorderColorLight = SRGBA<uint8_t>  { 0, 0, 0, 50 };
@@ -593,12 +592,6 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
     paintSliderTicks(renderObject, paintInfo, rect);
 #endif
 
-    if (isFocused(renderObject)) {
-        // Sliders support accent-color, so we want to color their focus rings too
-        Color focusRingColor = getAccentColor(renderObject).colorWithAlphaMultipliedBy(focusRingOpacity);
-        ThemeAdwaita::paintFocus(graphicsContext, fieldRect, sliderTrackFocusOffset, focusRingColor, ThemeAdwaita::PaintRounded::Yes);
-    }
-
     if (!isEnabled(renderObject))
         graphicsContext.endTransparencyLayer();
 
@@ -661,6 +654,12 @@ bool RenderThemeAdwaita::paintSliderThumb(const RenderObject& renderObject, cons
     else
         graphicsContext.setFillColor(sliderThumbBackgroundColor);
     graphicsContext.fillPath(path);
+
+    if (isFocused(renderObject)) {
+        // Sliders support accent-color, so we want to color their focus rings too
+        Color focusRingColor = getAccentColor(renderObject).colorWithAlphaMultipliedBy(focusRingOpacity);
+        ThemeAdwaita::paintFocus(graphicsContext, fieldRect, 0, focusRingColor, ThemeAdwaita::PaintRounded::Yes);
+    }
 
     return false;
 }
