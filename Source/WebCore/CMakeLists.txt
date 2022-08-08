@@ -981,6 +981,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ShadowRoot.idl
     dom/ShadowRootInit.idl
     dom/ShadowRootMode.idl
+    dom/SlotAssignmentMode.idl
     dom/Slotable.idl
     dom/StaticRange.idl
     dom/StringCallback.idl

@@ -736,6 +736,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ShadowRootMode.h
     dom/SimpleRange.h
     dom/SimulatedClickOptions.h
+    dom/SlotAssignmentMode.h
     dom/SpaceSplitString.h
     dom/StaticRange.h
     dom/StyledElement.h

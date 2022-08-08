@@ -2670,7 +2670,7 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
         return Exception { NotSupportedError };
     if (init.mode == ShadowRootMode::UserAgent)
         return Exception { TypeError };
-    auto shadow = ShadowRoot::create(document(), init.mode, init.delegatesFocus ? ShadowRoot::DelegatesFocus::Yes : ShadowRoot::DelegatesFocus::No);
+    auto shadow = ShadowRoot::create(document(), init.mode, init.slotAssignment, init.delegatesFocus ? ShadowRoot::DelegatesFocus::Yes : ShadowRoot::DelegatesFocus::No);
     auto& result = shadow.get();
     addShadowRoot(WTFMove(shadow));
     return result;

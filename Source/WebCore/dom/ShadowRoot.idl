@@ -29,6 +29,7 @@
 ] interface ShadowRoot : DocumentFragment {
     readonly attribute ShadowRootMode mode;
     readonly attribute boolean delegatesFocus;
+    [ImplementedAs=slotAssignmentMode, EnabledBySetting=ImperativeSlotAPIEnabled] readonly attribute SlotAssignmentMode slotAssignment;
     readonly attribute Element host;
     attribute EventHandler onslotchange;
 };

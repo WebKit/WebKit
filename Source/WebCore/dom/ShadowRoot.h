@@ -34,6 +34,7 @@
 #include "HTMLVideoElement.h"
 #endif
 #include "ShadowRootMode.h"
+#include "SlotAssignmentMode.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -49,9 +50,10 @@ public:
 
     enum class DelegatesFocus : uint8_t { Yes, No };
 
-    static Ref<ShadowRoot> create(Document& document, ShadowRootMode type, DelegatesFocus delegatesFocus = DelegatesFocus::No)
+    static Ref<ShadowRoot> create(Document& document, ShadowRootMode type,
+        SlotAssignmentMode assignmentMode = SlotAssignmentMode::Named, DelegatesFocus delegatesFocus = DelegatesFocus::No)
     {
-        return adoptRef(*new ShadowRoot(document, type, delegatesFocus));
+        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus));
     }
 
     static Ref<ShadowRoot> create(Document& document, std::unique_ptr<SlotAssignment>&& assignment)
@@ -87,6 +89,7 @@ public:
 
     void removeAllEventListeners() override;
 
+    SlotAssignmentMode slotAssignmentMode() const { return m_slotAssignmentMode; }
     HTMLSlotElement* findAssignedSlot(const Node&);
 
     void renameSlotElement(HTMLSlotElement&, const AtomString& oldName, const AtomString& newName);
@@ -118,7 +121,7 @@ public:
     Vector<RefPtr<WebAnimation>> getAnimations();
 
 private:
-    ShadowRoot(Document&, ShadowRootMode, DelegatesFocus);
+    ShadowRoot(Document&, ShadowRootMode, SlotAssignmentMode, DelegatesFocus);
     ShadowRoot(Document&, std::unique_ptr<SlotAssignment>&&);
 
     bool childTypeAllowed(NodeType) const override;
@@ -135,6 +138,7 @@ private:
     bool m_delegatesFocus { false };
     bool m_containsFocusedElement { false };
     ShadowRootMode m_type { ShadowRootMode::UserAgent };
+    SlotAssignmentMode m_slotAssignmentMode { SlotAssignmentMode::Named };
 
     WeakPtr<Element> m_host;
     RefPtr<StyleSheetList> m_styleSheetList;

@@ -3940,6 +3940,7 @@ JSShadowRootMode.cpp
 JSShareData.cpp
 JSSharedWorker.cpp
 JSSharedWorkerGlobalScope.cpp
+JSSlotAssignmentMode.cpp
 JSSlotable.cpp
 JSSourceBuffer.cpp
 JSSourceBufferList.cpp

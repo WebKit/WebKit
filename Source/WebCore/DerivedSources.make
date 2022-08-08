@@ -983,6 +983,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/ShadowRoot.idl \
     $(WebCore)/dom/ShadowRootInit.idl \
     $(WebCore)/dom/ShadowRootMode.idl \
+    $(WebCore)/dom/SlotAssignmentMode.idl \
     $(WebCore)/dom/Slotable.idl \
     $(WebCore)/dom/StaticRange.idl \
     $(WebCore)/dom/StringCallback.idl \

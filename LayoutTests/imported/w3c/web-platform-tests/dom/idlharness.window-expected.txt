@@ -876,7 +876,7 @@ PASS ShadowRoot interface: existence and properties of interface prototype objec
 PASS ShadowRoot interface: existence and properties of interface prototype object's @@unscopables property
 PASS ShadowRoot interface: attribute mode
 PASS ShadowRoot interface: attribute delegatesFocus
-FAIL ShadowRoot interface: attribute slotAssignment assert_true: The prototype object must have a property "slotAssignment" expected true got false
+PASS ShadowRoot interface: attribute slotAssignment
 PASS ShadowRoot interface: attribute host
 PASS ShadowRoot interface: attribute onslotchange
 PASS Element interface: existence and properties of interface object

@@ -2552,6 +2552,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSharedWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSharedWorker.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSharedWorkerGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSharedWorkerGlobalScope.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSlotAssignmentMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSlotAssignmentMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSlotable.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSlotable.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSourceBuffer.cpp
