@@ -442,7 +442,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_havePreparedToPlay(false)
     , m_parsingInProgress(createdByParser)
     , m_elementIsHidden(document.hidden())
-    , m_creatingControls(false)
     , m_receivedLayoutSizeChanged(false)
     , m_hasEverNotifiedAboutPlaying(false)
     , m_hasEverHadAudio(false)
@@ -4641,16 +4640,6 @@ static JSC::JSValue controllerJSValue(JSC::JSGlobalObject& lexicalGlobalObject, 
     return controllerJSWrapper;
 }
 
-void HTMLMediaElement::ensureMediaControlsShadowRoot()
-{
-    if (m_creatingControls)
-        return;
-
-    m_creatingControls = true;
-    ensureUserAgentShadowRoot();
-    m_creatingControls = false;
-}
-
 bool HTMLMediaElement::setupAndCallJS(const JSSetupFunction& task)
 {
     Page* page = document().page();
@@ -4673,13 +4662,8 @@ void HTMLMediaElement::updateCaptionContainer()
     if (m_haveSetUpCaptionContainer)
         return;
 
-    if (!ensureMediaControlsInjectedScript())
+    if (!ensureMediaControls())
         return;
-
-    ensureMediaControlsShadowRoot();
-
-    if (!m_mediaControlsHost)
-        m_mediaControlsHost = MediaControlsHost::create(*this);
 
     setupAndCallJS([this](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
         auto& vm = globalObject.vm();
@@ -6077,7 +6061,7 @@ bool HTMLMediaElement::hasLiveSource() const
 
 bool HTMLMediaElement::virtualHasPendingActivity() const
 {
-    return m_creatingControls
+    return m_controlsState == ControlsState::Initializing
         || (hasAudio() && isPlaying())
         || (hasLiveSource() && hasEventListeners());
 }
@@ -6753,24 +6737,19 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
     if (!m_haveVisibleTextTrack)
         return;
 
-    ensureMediaControlsShadowRoot();
     updateTextTrackDisplay();
 }
 
 void HTMLMediaElement::updateTextTrackDisplay()
 {
-    ensureMediaControlsShadowRoot();
-    if (!m_mediaControlsHost)
-        m_mediaControlsHost = MediaControlsHost::create(*this);
-    m_mediaControlsHost->updateTextTrackContainer();
+    if (ensureMediaControls())
+        m_mediaControlsHost->updateTextTrackContainer();
 }
 
 void HTMLMediaElement::updateTextTrackRepresentationImageIfNeeded()
 {
-    ensureMediaControlsShadowRoot();
-    if (!m_mediaControlsHost)
-        m_mediaControlsHost = MediaControlsHost::create(*this);
-    m_mediaControlsHost->updateTextTrackRepresentationImageIfNeeded();
+    if (ensureMediaControls())
+        m_mediaControlsHost->updateTextTrackRepresentationImageIfNeeded();
 }
 
 void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
@@ -6933,7 +6912,7 @@ void HTMLMediaElement::configureMediaControls()
     if (!requireControls || !isConnected() || !inActiveDocument())
         return;
 
-    ensureMediaControlsShadowRoot();
+    ensureMediaControls();
 }
 
 void HTMLMediaElement::captionPreferencesChanged()
@@ -7640,45 +7619,6 @@ DOMWrapperWorld& HTMLMediaElement::ensureIsolatedWorld()
     return *m_isolatedWorld;
 }
 
-bool HTMLMediaElement::ensureMediaControlsInjectedScript()
-{
-    INFO_LOG(LOGIDENTIFIER);
-
-    Page* page = document().page();
-    if (!page)
-        return false;
-
-    auto mediaControlsScripts = RenderTheme::singleton().mediaControlsScripts();
-    if (mediaControlsScripts.isEmpty())
-        return false;
-
-    return setupAndCallJS([mediaControlsScripts = WTFMove(mediaControlsScripts)](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController& scriptController, DOMWrapperWorld& world) {
-        auto& vm = globalObject.vm();
-        auto scope = DECLARE_CATCH_SCOPE(vm);
-
-        auto reportExceptionAndReturnFalse = [&] () -> bool {
-            auto* exception = scope.exception();
-            scope.clearException();
-            reportException(&globalObject, exception);
-            return false;
-        };
-
-        auto functionValue = globalObject.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "createControls"_s));
-        RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
-        if (functionValue.isCallable())
-            return true;
-
-        for (auto& mediaControlsScript : mediaControlsScripts) {
-            if (mediaControlsScript.isEmpty())
-                continue;
-            scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript), world);
-            RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
-        }
-
-        return true;
-    });
-}
-
 void HTMLMediaElement::updatePageScaleFactorJSProperty()
 {
     Page* page = document().page();
@@ -7721,16 +7661,36 @@ void HTMLMediaElement::setControllerJSProperty(ASCIILiteral propertyName, JSC::J
     });
 }
 
-void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
+bool HTMLMediaElement::ensureMediaControls()
 {
+    if (m_controlsState == ControlsState::Ready)
+        return true;
+
+    auto mediaControlsScripts = RenderTheme::singleton().mediaControlsScripts();
+    if (mediaControlsScripts.isEmpty())
+        return false;
+
     INFO_LOG(LOGIDENTIFIER);
 
-    if (!ensureMediaControlsInjectedScript())
-        return;
+    m_controlsState = ControlsState::Initializing;
 
-    setupAndCallJS([this, &root](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
+    auto controlsReady = setupAndCallJS([this, mediaControlsScripts = WTFMove(mediaControlsScripts)](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController& scriptController, DOMWrapperWorld& world) {
         auto& vm = globalObject.vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
+
+        auto reportExceptionAndReturnFalse = [&] {
+            auto* exception = scope.exception();
+            scope.clearException();
+            reportException(&globalObject, exception);
+            return false;
+        };
+
+        for (auto& mediaControlsScript : mediaControlsScripts) {
+            if (mediaControlsScript.isEmpty())
+                continue;
+            scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript), world);
+            RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+        }
 
         // The media controls script must provide a method with the following details.
         // Name: createControls
@@ -7752,17 +7712,10 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
         auto mediaControlsHostJSWrapper = toJS(&lexicalGlobalObject, &globalObject, *m_mediaControlsHost);
 
         JSC::MarkedArgumentBuffer argList;
-        argList.append(toJS(&lexicalGlobalObject, &globalObject, root));
+        argList.append(toJS(&lexicalGlobalObject, &globalObject, ensureUserAgentShadowRoot()));
         argList.append(mediaJSWrapper);
         argList.append(mediaControlsHostJSWrapper);
         ASSERT(!argList.hasOverflowed());
-
-        auto reportExceptionAndReturnFalse = [&] () -> bool {
-            auto* exception = scope.exception();
-            scope.clearException();
-            reportException(&globalObject, exception);
-            return false;
-        };
 
         auto* function = functionValue.toObject(&lexicalGlobalObject);
         RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
@@ -7805,6 +7758,8 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
         return true;
     });
+    m_controlsState = controlsReady ? ControlsState::Ready : ControlsState::None;
+    return controlsReady;
 }
 
 void HTMLMediaElement::setMediaControlsDependOnPageScaleFactor(bool dependsOnPageScale)
@@ -7869,7 +7824,7 @@ void HTMLMediaElement::userInterfaceLayoutDirectionChanged()
 
 String HTMLMediaElement::getCurrentMediaControlsStatus()
 {
-    ensureMediaControlsShadowRoot();
+    ensureMediaControls();
 
     String status;
     setupAndCallJS([this, &status](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {

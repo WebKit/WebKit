@@ -903,9 +903,7 @@ private:
     enum class SleepType { None, Display, System };
     SleepType shouldDisableSleep() const;
 
-    void didAddUserAgentShadowRoot(ShadowRoot&) override;
     DOMWrapperWorld& ensureIsolatedWorld();
-    bool ensureMediaControlsInjectedScript();
 
     PlatformMediaSession::MediaType mediaType() const override;
     PlatformMediaSession::MediaType presentationType() const override;
@@ -939,7 +937,7 @@ private:
     void initializeMediaSession();
 
     void updateCaptionContainer();
-    void ensureMediaControlsShadowRoot();
+    bool ensureMediaControls();
 
     using JSSetupFunction = Function<bool(JSDOMGlobalObject&, JSC::JSGlobalObject&, ScriptController&, DOMWrapperWorld&)>;
     bool setupAndCallJS(const JSSetupFunction&);
@@ -1131,7 +1129,6 @@ private:
     bool m_parsingInProgress : 1;
     bool m_elementIsHidden : 1;
     bool m_elementWasRemovedFromDOM : 1;
-    bool m_creatingControls : 1;
     bool m_receivedLayoutSizeChanged : 1;
     bool m_hasEverNotifiedAboutPlaying : 1;
 
@@ -1152,6 +1149,9 @@ private:
     bool m_shouldAudioPlaybackRequireUserGesture : 1;
     bool m_shouldVideoPlaybackRequireUserGesture : 1;
     bool m_volumeLocked : 1;
+
+    enum class ControlsState : uint8_t { None, Initializing, Ready };
+    ControlsState m_controlsState { ControlsState::None };
 
     AutoplayEventPlaybackState m_autoplayEventPlaybackState { AutoplayEventPlaybackState::None };
 

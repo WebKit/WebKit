@@ -1,0 +1,16 @@
+<p>Test that UA shadow from 'controls' attribute is still populated when using adoptNode.<p>
+<script src=video-test.js></script>
+<script>
+var parser = new DOMParser;
+mediaElement = parser.parseFromString("<audio controls></audio>", "text/html").body.children[0];
+
+document.body.appendChild(document.adoptNode(mediaElement));
+
+testExpected("mediaElement.getAttribute('controls')", "");
+
+var shadow = window.internals?.shadowRoot(mediaElement);
+testExpected("shadow?.childNodes.length", 0, ">");
+
+endTest();
+
+</script>
