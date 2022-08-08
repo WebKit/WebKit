@@ -1695,7 +1695,7 @@ void RenderThemeMac::adjustMenuListButtonStyle(RenderStyle& style, const Element
     style.resetPadding();
     style.setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
 
-    const int minHeight = 15;
+    const int minHeight = 18;
     style.setMinHeight(Length(minHeight, LengthType::Fixed));
 
     style.setLineHeight(RenderStyle::initialLineHeight());
