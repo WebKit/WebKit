@@ -902,8 +902,9 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
             if (JSONPPath.size() == 1 && JSONPPath.last().m_type != JSONPPathEntryTypeLookup) {
                 RELEASE_ASSERT(baseObject == globalObject);
                 JSGlobalLexicalEnvironment* scope = globalObject->globalLexicalEnvironment();
-                if (scope->hasProperty(globalObject, ident)) {
-                    RETURN_IF_EXCEPTION(throwScope, JSValue());
+                bool hasProperty = scope->hasProperty(globalObject, ident);
+                RETURN_IF_EXCEPTION(throwScope, JSValue());
+                if (hasProperty) {
                     PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
                     JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, globalObject, ident, slot);
                     if (slot.getValue(globalObject, ident) == jsTDZValue())
