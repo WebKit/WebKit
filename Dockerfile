@@ -80,7 +80,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     cp -r $WEBKIT_OUT_DIR/WTF/Headers/wtf/ /output/include && \
     cp -r $WEBKIT_OUT_DIR/bmalloc/Headers/bmalloc/ /output/include && \
     mkdir -p /output/Source/JavaScriptCore/Scripts && \
-    cp /webkit/Source/JavaScriptCore/Scripts/generate-js-builtins.pl /output/Source/JavaScriptCore/Scripts && \
+    cp /webkit/Source/JavaScriptCore/Scripts/generate-js-builtins.py /output/Source/JavaScriptCore/Scripts && \
     cp /webkit/Source/JavaScriptCore/create_hash_table /output/Source/JavaScriptCore && \
     echo "";
 
