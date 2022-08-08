@@ -36,10 +36,10 @@ class CSSStyleRule;
 class CSSStyleSheet;
 class ExtensionStyleSheets;
 class MediaQueryEvaluator;
-enum class CascadeLevel : uint8_t;
 
 namespace Style {
 
+enum class CascadeLevel : uint8_t;
 class InspectorCSSOMWrappers;
 class Resolver;
 

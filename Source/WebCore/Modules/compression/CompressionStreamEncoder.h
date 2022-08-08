@@ -25,12 +25,12 @@
 #pragma once
 
 #include "BufferSource.h"
+#include "ExceptionOr.h"
 #include "Formats.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 #include <zlib.h>
 
 namespace WebCore {

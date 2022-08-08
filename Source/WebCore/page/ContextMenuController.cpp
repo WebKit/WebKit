@@ -50,6 +50,7 @@
 #include "FrameSelection.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
 #include "ImageOverlay.h"
 #include "InspectorController.h"

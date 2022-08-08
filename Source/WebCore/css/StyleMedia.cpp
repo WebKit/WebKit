@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StyleMedia.h"
 
+#include <JavaScriptCore/ConsoleMessage.h>
+
 namespace WebCore {
 
 StyleMedia::StyleMedia(DOMWindow& window)
