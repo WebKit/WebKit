@@ -127,7 +127,7 @@ void WebKitNotificationProvider::withdrawAnyPreviousAPINotificationMatchingTag(c
 
 void WebKitNotificationProvider::show(WebPageProxy* page, WebNotification& webNotification)
 {
-    if (!page) {
+    if (!page || !m_webContext) {
         // FIXME: glib API needs to find their own solution to handling pageless notifications.
         show(webNotification);
         return;
@@ -185,7 +185,8 @@ void WebKitNotificationProvider::clearNotifications(const Vector<uint64_t>& noti
 
 HashMap<WTF::String, bool> WebKitNotificationProvider::notificationPermissions()
 {
-    webkitWebContextInitializeNotificationPermissions(m_webContext);
+    if (m_webContext)
+        webkitWebContextInitializeNotificationPermissions(m_webContext);
     return m_notificationPermissions;
 }
 
