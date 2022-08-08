@@ -30,8 +30,7 @@ std::string GetPath(HMODULE module)
 std::string GetDirectory(HMODULE module)
 {
     std::string executablePath = GetPath(module);
-    size_t lastPathSepLoc      = executablePath.find_last_of("\\/");
-    return (lastPathSepLoc != std::string::npos) ? executablePath.substr(0, lastPathSepLoc) : "";
+    return StripFilenameFromPath(executablePath);
 }
 
 }  // anonymous namespace
@@ -168,6 +167,34 @@ std::string GetModuleDirectory()
 std::string GetRootDirectory()
 {
     return "C:\\";
+}
+
+Optional<std::string> GetTempDirectory()
+{
+    char tempDirOut[MAX_PATH + 1];
+    GetTempPathA(MAX_PATH + 1, tempDirOut);
+    std::string tempDir = std::string(tempDirOut);
+
+    if (tempDir.length() < 0 || tempDir.length() > MAX_PATH)
+    {
+        return Optional<std::string>::Invalid();
+    }
+
+    if (tempDir.length() > 0 && tempDir.back() == '\\')
+    {
+        tempDir.pop_back();
+    }
+
+    return tempDir;
+}
+
+Optional<std::string> CreateTemporaryFileInDirectory(const std::string &directory)
+{
+    char fileName[MAX_PATH + 1];
+    if (GetTempFileNameA(directory.c_str(), "ANGLE", 0, fileName) == 0)
+        return Optional<std::string>::Invalid();
+
+    return std::string(fileName);
 }
 
 std::string GetLibraryPath(void *libraryHandle)

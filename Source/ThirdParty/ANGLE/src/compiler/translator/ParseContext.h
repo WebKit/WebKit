@@ -91,6 +91,11 @@ class TParseContext : angle::NonCopyable
 
     int getNumViews() const { return mNumViews; }
 
+    const std::map<int, TLayoutImageInternalFormat> &pixelLocalStorageBindings() const
+    {
+        return mPLSBindings;
+    }
+
     void enterFunctionDeclaration() { mDeclaringFunction = true; }
 
     void exitFunctionDeclaration() { mDeclaringFunction = false; }
@@ -585,6 +590,7 @@ class TParseContext : angle::NonCopyable
                                   int binding,
                                   int arraySize);
     void checkAtomicCounterBindingIsValid(const TSourceLoc &location, int binding);
+    void checkPixelLocalStorageBindingIsValid(const TSourceLoc &, const TType &);
 
     void checkUniformLocationInRange(const TSourceLoc &location,
                                      int objectLocationCount,
@@ -671,6 +677,40 @@ class TParseContext : angle::NonCopyable
     bool parseTessControlShaderOutputLayoutQualifier(const TTypeQualifier &typeQualifier);
     bool parseTessEvaluationShaderInputLayoutQualifier(const TTypeQualifier &typeQualifier);
 
+    // Certain operations become illegal only iff the shader declares pixel local storage uniforms.
+    enum class PLSIllegalOperations
+    {
+        // When polyfilled with shader images, pixel local storage requires early_fragment_tests,
+        // which causes discard to interact differently with the depth and stencil tests.
+        //
+        // To ensure identical behavior across all backends (some of which may not have access to
+        // early_fragment_tests), we disallow discard if pixel local storage uniforms have been
+        // declared.
+        Discard,
+
+        // ARB_fragment_shader_interlock functions cannot be called within flow control, which
+        // includes any code that might execute after a return statement. To keep things simple, and
+        // since these "interlock" calls are automatically injected by the compiler inside of
+        // main(), we disallow return from main() if pixel local storage uniforms have been
+        // declared.
+        ReturnFromMain,
+
+        // When polyfilled with shader images, pixel local storage requires early_fragment_tests,
+        // which causes assignments to gl_FragDepth(EXT) and gl_SampleMask to be ignored.
+        //
+        // To ensure identical behavior across all backends, we disallow assignment to these values
+        // if pixel local storage uniforms have been declared.
+        AssignFragDepth,
+        AssignSampleMask
+    };
+
+    // Generates an error if any pixel local storage uniforms have been declared (more specifically,
+    // if mPLSBindings is not empty).
+    //
+    // If no pixel local storage uniforms have been declared, and if the PLS extension is enabled,
+    // saves the potential error to mPLSPotentialErrors in case we encounter a PLS uniform later.
+    void errorIfPLSDeclared(const TSourceLoc &, PLSIllegalOperations);
+
     // Set to true when the last/current declarator list was started with an empty declaration. The
     // non-empty declaration error check will need to be performed if the empty declaration is
     // followed by a declarator.
@@ -725,8 +765,17 @@ class TParseContext : angle::NonCopyable
     // keeps track whether we are declaring / defining a function
     bool mDeclaringFunction;
 
+    // keeps track whether we are declaring / defining the function main().
+    bool mDeclaringMain;
+
     // Track the state of each atomic counter binding.
     std::map<int, AtomicCounterBindingState> mAtomicCounterBindingStates;
+
+    // Track the format of each pixel local storage binding.
+    std::map<int, TLayoutImageInternalFormat> mPLSBindings;
+
+    // Potential errors to generate immediately upon encountering a pixel local storage uniform.
+    std::vector<std::tuple<const TSourceLoc, PLSIllegalOperations>> mPLSPotentialErrors;
 
     // Track the geometry shader global parameters declared in layout.
     TLayoutPrimitiveType mGeometryShaderInputPrimitiveType;

@@ -1403,7 +1403,8 @@ class ProgramBinariesAcrossPlatforms : public testing::TestWithParam<PlatformsWi
 
     EGLWindow *createAndInitEGLWindow(angle::PlatformParameters &param)
     {
-        EGLWindow *eglWindow = EGLWindow::New(param.majorVersion, param.minorVersion);
+        EGLWindow *eglWindow = EGLWindow::New(param.clientType, param.majorVersion,
+                                              param.minorVersion, param.profileMask);
         ConfigParameters configParams;
         bool result = eglWindow->initializeGL(mOSWindow, mEntryPointsLib.get(), param.driver,
                                               param.eglParameters, configParams);

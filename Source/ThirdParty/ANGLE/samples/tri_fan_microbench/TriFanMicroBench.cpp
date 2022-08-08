@@ -29,7 +29,7 @@ class TriangleFanBenchSample : public SampleApplication
 {
   public:
     TriangleFanBenchSample(int argc, char **argv)
-        : SampleApplication("Microbench", argc, argv, 2, 0, 1280, 1280), mFrameCount(0)
+        : SampleApplication("Microbench", argc, argv, ClientType::ES2, 1280, 1280), mFrameCount(0)
     {}
 
     void createVertexBuffers()

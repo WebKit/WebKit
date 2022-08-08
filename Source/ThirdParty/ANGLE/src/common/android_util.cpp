@@ -194,7 +194,8 @@ enum {
 
 #endif  // ANGLE_AHARDWARE_BUFFER_SUPPORT
 
-    AHARDWAREBUFFER_FORMAT_YV12                     = 0x32315659
+    AHARDWAREBUFFER_FORMAT_YV12                     = 0x32315659,
+    AHARDWAREBUFFER_FORMAT_IMPLEMENTATION_DEFINED   = 0x22,
 };
 // clang-format on
 
@@ -260,12 +261,12 @@ GLenum getPixelFormatInfo(int pixelFormat, bool *isYUV)
             return GL_STENCIL_INDEX8;
         case AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420:
         case AHARDWAREBUFFER_FORMAT_YV12:
+        case AHARDWAREBUFFER_FORMAT_IMPLEMENTATION_DEFINED:
             *isYUV = true;
             return GL_RGB8;
         default:
             // Treat unknown formats as RGB. They are vendor-specific YUV formats that would sample
             // as RGB.
-            WARN() << "Unknown pixelFormat: " << pixelFormat << ". Treating as RGB8";
             *isYUV = true;
             return GL_RGB8;
     }

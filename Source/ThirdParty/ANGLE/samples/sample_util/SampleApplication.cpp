@@ -77,8 +77,7 @@ bool IsGLExtensionEnabled(const std::string &extName)
 SampleApplication::SampleApplication(std::string name,
                                      int argc,
                                      char **argv,
-                                     EGLint glesMajorVersion,
-                                     EGLint glesMinorVersion,
+                                     ClientType clientType,
                                      uint32_t width,
                                      uint32_t height)
     : mName(std::move(name)),
@@ -109,17 +108,52 @@ SampleApplication::SampleApplication(std::string name,
         }
     }
 
+    EGLenum eglClientType = EGL_OPENGL_ES_API;
+    EGLint glMajorVersion = 2;
+    EGLint glMinorVersion = 0;
+    EGLint profileMask    = 0;
+
+    switch (clientType)
+    {
+        case ClientType::ES1:
+            glMajorVersion = 1;
+            break;
+        case ClientType::ES2:
+            break;
+        case ClientType::ES3_0:
+            glMajorVersion = 3;
+            break;
+        case ClientType::ES3_1:
+            glMajorVersion = 3;
+            glMinorVersion = 1;
+            break;
+        case ClientType::GL3_3_CORE:
+            eglClientType  = EGL_OPENGL_API;
+            glMajorVersion = 3;
+            glMinorVersion = 3;
+            profileMask    = EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT;
+            break;
+        case ClientType::GL3_3_COMPATIBILITY:
+            eglClientType  = EGL_OPENGL_API;
+            glMajorVersion = 3;
+            glMinorVersion = 3;
+            profileMask    = EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT;
+            break;
+        default:
+            UNREACHABLE();
+    }
+
     mOSWindow = OSWindow::New();
 
     // Load EGL library so we can initialize the display.
     if (useNativeGL)
     {
 #if defined(ANGLE_PLATFORM_WINDOWS)
-        mGLWindow = WGLWindow::New(glesMajorVersion, glesMinorVersion);
+        mGLWindow = WGLWindow::New(eglClientType, glMajorVersion, glMinorVersion, profileMask);
         mEntryPointsLib.reset(angle::OpenSharedLibrary("opengl32", angle::SearchType::SystemDir));
         mDriverType = angle::GLESDriverType::SystemWGL;
 #else
-        mGLWindow = EGLWindow::New(glesMajorVersion, glesMinorVersion);
+        mGLWindow = EGLWindow::New(eglClientType, glMajorVersion, glMinorVersion, profileMask);
         mEntryPointsLib.reset(angle::OpenSharedLibraryWithExtension(
             angle::GetNativeEGLLibraryNameWithExtension(), angle::SearchType::SystemDir));
         mDriverType = angle::GLESDriverType::SystemEGL;
@@ -127,7 +161,8 @@ SampleApplication::SampleApplication(std::string name,
     }
     else
     {
-        mGLWindow = mEGLWindow = EGLWindow::New(glesMajorVersion, glesMinorVersion);
+        mGLWindow = mEGLWindow =
+            EGLWindow::New(eglClientType, glMajorVersion, glMinorVersion, profileMask);
         mEntryPointsLib.reset(
             angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ModuleDir));
     }

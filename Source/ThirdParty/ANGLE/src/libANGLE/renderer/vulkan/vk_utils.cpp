@@ -800,6 +800,7 @@ void MakeDebugUtilsLabel(GLenum source, const char *marker, VkDebugUtilsLabelEXT
 }
 
 angle::Result SetDebugUtilsObjectName(ContextVk *contextVk,
+                                      VkObjectType objectType,
                                       uint64_t handle,
                                       const std::string &label)
 {
@@ -807,7 +808,7 @@ angle::Result SetDebugUtilsObjectName(ContextVk *contextVk,
 
     VkDebugUtilsObjectNameInfoEXT objectNameInfo = {};
     objectNameInfo.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-    objectNameInfo.objectType   = VK_OBJECT_TYPE_IMAGE;
+    objectNameInfo.objectType   = objectType;
     objectNameInfo.objectHandle = handle;
     objectNameInfo.pObjectName  = label.c_str();
 
@@ -1680,134 +1681,4 @@ gl::LevelIndex GetLevelIndex(vk::LevelIndex levelVk, gl::LevelIndex baseLevel)
     return gl::LevelIndex(levelVk.get() + baseLevel.get());
 }
 }  // namespace vk_gl
-
-namespace vk
-{
-// BufferBlock implementation.
-BufferBlock::BufferBlock() : mMemoryPropertyFlags(0), mSize(0), mMappedMemory(nullptr) {}
-
-BufferBlock::BufferBlock(BufferBlock &&other)
-    : mVirtualBlock(std::move(other.mVirtualBlock)),
-      mBuffer(std::move(other.mBuffer)),
-      mDeviceMemory(std::move(other.mDeviceMemory)),
-      mMemoryPropertyFlags(other.mMemoryPropertyFlags),
-      mSize(other.mSize),
-      mMappedMemory(other.mMappedMemory),
-      mSerial(other.mSerial),
-      mCountRemainsEmpty(0)
-{}
-
-BufferBlock &BufferBlock::operator=(BufferBlock &&other)
-{
-    std::swap(mVirtualBlock, other.mVirtualBlock);
-    std::swap(mBuffer, other.mBuffer);
-    std::swap(mDeviceMemory, other.mDeviceMemory);
-    std::swap(mMemoryPropertyFlags, other.mMemoryPropertyFlags);
-    std::swap(mSize, other.mSize);
-    std::swap(mMappedMemory, other.mMappedMemory);
-    std::swap(mSerial, other.mSerial);
-    std::swap(mCountRemainsEmpty, other.mCountRemainsEmpty);
-    return *this;
-}
-
-BufferBlock::~BufferBlock()
-{
-    ASSERT(!mVirtualBlock.valid());
-    ASSERT(!mBuffer.valid());
-    ASSERT(!mDeviceMemory.valid());
-}
-
-void BufferBlock::destroy(RendererVk *renderer)
-{
-    VkDevice device = renderer->getDevice();
-
-    if (mMappedMemory)
-    {
-        unmap(device);
-    }
-
-    mVirtualBlock.destroy(device);
-    mBuffer.destroy(device);
-    mDeviceMemory.destroy(device);
-}
-
-angle::Result BufferBlock::init(Context *context,
-                                Buffer &buffer,
-                                vma::VirtualBlockCreateFlags flags,
-                                DeviceMemory &deviceMemory,
-                                VkMemoryPropertyFlags memoryPropertyFlags,
-                                VkDeviceSize size)
-{
-    RendererVk *renderer = context->getRenderer();
-    ASSERT(!mVirtualBlock.valid());
-    ASSERT(!mBuffer.valid());
-    ASSERT(!mDeviceMemory.valid());
-
-    mVirtualBlockMutex.init(renderer->isAsyncCommandQueueEnabled());
-    ANGLE_VK_TRY(context, mVirtualBlock.init(renderer->getDevice(), flags, size));
-
-    mBuffer              = std::move(buffer);
-    mDeviceMemory        = std::move(deviceMemory);
-    mMemoryPropertyFlags = memoryPropertyFlags;
-    mSize                = size;
-    mMappedMemory        = nullptr;
-    mSerial              = renderer->getResourceSerialFactory().generateBufferSerial();
-
-    return angle::Result::Continue;
-}
-
-void BufferBlock::initWithoutVirtualBlock(Context *context,
-                                          Buffer &buffer,
-                                          DeviceMemory &deviceMemory,
-                                          VkMemoryPropertyFlags memoryPropertyFlags,
-                                          VkDeviceSize size)
-{
-    RendererVk *renderer = context->getRenderer();
-    ASSERT(!mVirtualBlock.valid());
-    ASSERT(!mBuffer.valid());
-    ASSERT(!mDeviceMemory.valid());
-
-    mBuffer              = std::move(buffer);
-    mDeviceMemory        = std::move(deviceMemory);
-    mMemoryPropertyFlags = memoryPropertyFlags;
-    mSize                = size;
-    mMappedMemory        = nullptr;
-    mSerial              = renderer->getResourceSerialFactory().generateBufferSerial();
-}
-
-VkResult BufferBlock::map(const VkDevice device)
-{
-    ASSERT(mMappedMemory == nullptr);
-    return mDeviceMemory.map(device, 0, mSize, 0, &mMappedMemory);
-}
-
-void BufferBlock::unmap(const VkDevice device)
-{
-    mDeviceMemory.unmap(device);
-    mMappedMemory = nullptr;
-}
-
-void BufferBlock::free(VmaVirtualAllocation allocation, VkDeviceSize offset)
-{
-    std::lock_guard<ConditionalMutex> lock(mVirtualBlockMutex);
-    mVirtualBlock.free(allocation, offset);
-}
-
-int32_t BufferBlock::getAndIncrementEmptyCounter()
-{
-    return ++mCountRemainsEmpty;
-}
-
-void BufferBlock::calculateStats(vma::StatInfo *pStatInfo) const
-{
-    std::lock_guard<ConditionalMutex> lock(mVirtualBlockMutex);
-    mVirtualBlock.calculateStats(pStatInfo);
-}
-
-// BufferSuballocation implementation.
-VkResult BufferSuballocation::map(Context *context)
-{
-    return mBufferBlock->map(context->getDevice());
-}
-}  // namespace vk
 }  // namespace rx

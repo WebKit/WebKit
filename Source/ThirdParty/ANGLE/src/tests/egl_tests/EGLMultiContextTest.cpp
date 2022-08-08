@@ -347,7 +347,7 @@ void main()
 // Test that repeated EGL init + terminate with improper cleanup doesn't cause an OOM crash.
 // To reproduce the OOM error -
 //     1. Increase the loop count to a large number
-//     2. Run the test without the rest of the code in change 3329273
+//     2. Remove the call to "eglReleaseThread" in the for loop
 TEST_P(EGLMultiContextTest, RepeatedEglInitAndTerminate)
 {
     // GL and GLES drivers don't seem to perform appropriate cleanup
@@ -395,6 +395,55 @@ TEST_P(EGLMultiContextTest, RepeatedEglInitAndTerminate)
 
         thread.join();
     }
+}
+
+// Test that thread B can reuse the unterminated display created by thread A
+// even after thread A is destroyed.
+TEST_P(EGLMultiContextTest, ReuseUnterminatedDisplay)
+{
+    // Release all resources in parent thread
+    getEGLWindow()->destroyGL();
+
+    EGLDisplay dpy;
+    EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
+                          EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, GetParam().getDeviceType(),
+                          EGL_NONE};
+
+    std::thread threadA = std::thread([&]() {
+        dpy = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE,
+                                       reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+        EXPECT_TRUE(dpy != EGL_NO_DISPLAY);
+        EXPECT_EGL_TRUE(eglInitialize(dpy, nullptr, nullptr));
+    });
+    threadA.join();
+
+    std::thread threadB = std::thread([&]() {
+        EGLSurface srf;
+        EGLContext ctx;
+        EGLConfig config = EGL_NO_CONFIG_KHR;
+        // If threadA's termination caused "dpy" to be incorrectly terminated all EGL APIs below
+        // staring with eglChooseConfig(...) will error out with an EGL_NOT_INITIALIZED error.
+        EXPECT_TRUE(chooseConfig(dpy, &config));
+
+        EXPECT_TRUE(createPbufferSurface(dpy, config, 2560, 1080, &srf));
+        ASSERT_EGL_SUCCESS() << "eglCreatePbufferSurface failed.";
+
+        EXPECT_TRUE(createContext(dpy, config, &ctx));
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, srf, srf, ctx));
+
+        // Clear and read back to make sure thread uses context.
+        glClearColor(1.0, 0.0, 0.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_PIXEL_EQ(0, 0, 255, 0, 0, 255);
+
+        eglTerminate(dpy);
+        EXPECT_EGL_SUCCESS();
+        EXPECT_EGL_SUCCESS();
+        dpy = EGL_NO_DISPLAY;
+        srf = EGL_NO_SURFACE;
+        ctx = EGL_NO_CONTEXT;
+    });
+    threadB.join();
 }
 
 // Test that thread B can wait on thread A's sync before thread A flushes it, and wakes up after

@@ -36,6 +36,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import traceback
 
@@ -293,8 +294,9 @@ class GroupedResult():
     Crashed = "Crashed"
     CompileFailed = "CompileFailed"
     Skipped = "Skipped"
+    FailedToTrace = "FailedToTrace"
 
-    ResultTypes = [Passed, Failed, TimedOut, Crashed, CompileFailed, Skipped]
+    ResultTypes = [Passed, Failed, TimedOut, Crashed, CompileFailed, Skipped, FailedToTrace]
 
     def __init__(self, resultcode, message, output, tests):
         self.resultcode = resultcode
@@ -367,6 +369,7 @@ class Test():
         self.context_id = 0
         self.test_index = -1  # index of test within a test batch
         self._label = self.full_test_name.replace(".", "_").replace("/", "_")
+        self.skipped_by_suite = False
 
     def __str__(self):
         return self.full_test_name + " Params: " + self.params
@@ -446,35 +449,59 @@ class TestBatch():
         filt = ':'.join([test.full_test_name for test in self.tests])
 
         cmd = GetRunCommand(args, test_exe_path)
-        cmd += ['--gtest_filter=%s' % filt, '--angle-per-test-capture-label']
+        results_file = tempfile.mktemp()
+        cmd += [
+            '--gtest_filter=%s' % filt,
+            '--angle-per-test-capture-label',
+            '--results-file=' + results_file,
+        ]
         self.logger.info('%s %s' % (_FormatEnv(extra_env), ' '.join(cmd)))
 
         returncode, output = child_processes_manager.RunSubprocess(
             cmd, env, timeout=SUBPROCESS_TIMEOUT)
+
         if args.show_capture_stdout:
             self.logger.info("Capture stdout: %s" % output)
+
         if returncode == -1:
             self.results.append(GroupedResult(GroupedResult.Crashed, "", output, self.tests))
             return False
         elif returncode == -2:
             self.results.append(GroupedResult(GroupedResult.TimedOut, "", "", self.tests))
             return False
+
+        with open(results_file) as f:
+            test_results = json.load(f)
+        os.unlink(results_file)
+        for test in self.tests:
+            test_result = test_results['tests'][test.full_test_name]
+            if test_result['actual'] == 'SKIP':
+                test.skipped_by_suite = True
+
         return True
 
     def RemoveTestsThatDoNotProduceAppropriateTraceFiles(self):
         continued_tests = []
         skipped_tests = []
+        failed_to_trace_tests = []
         for test in self.tests:
             if not test.CanRunReplay(self.trace_folder_path):
-                skipped_tests.append(test)
+                if test.skipped_by_suite:
+                    skipped_tests.append(test)
+                else:
+                    failed_to_trace_tests.append(test)
             else:
                 continued_tests.append(test)
         if len(skipped_tests) > 0:
             self.results.append(
-                GroupedResult(
-                    GroupedResult.Skipped,
-                    "Skipping replay since capture didn't produce necessary trace files", "",
-                    skipped_tests))
+                GroupedResult(GroupedResult.Skipped, "Skipping replay since test skipped by suite",
+                              "", skipped_tests))
+        if len(failed_to_trace_tests) > 0:
+            self.results.append(
+                GroupedResult(GroupedResult.FailedToTrace,
+                              "Test not skipped but failed to produce trace files", "",
+                              failed_to_trace_tests))
+
         return continued_tests
 
     def BuildReplay(self, replay_build_dir, composite_file_id, tests, child_processes_manager):
@@ -1024,8 +1051,9 @@ def main(args):
         retval = EXIT_SUCCESS
 
         unexpected_test_results_count = 0
-        for count in unexpected_count.values():
-            unexpected_test_results_count += count
+        for result, count in unexpected_count.items():
+            if result != GroupedResult.Skipped:  # Suite skipping tests is ok
+                unexpected_test_results_count += count
 
         if unexpected_test_results_count > 0:
             retval = EXIT_FAILURE
@@ -1034,7 +1062,7 @@ def main(args):
                 unexpected_test_results_count))
             logger.info('')
             for result, count in unexpected_count.items():
-                if count > 0:
+                if count > 0 and result != GroupedResult.Skipped:
                     logger.info("Unexpected '{}' ({}):".format(result, count))
                     for test_result in unexpected_test_results[result]:
                         logger.info('     {}'.format(test_result))

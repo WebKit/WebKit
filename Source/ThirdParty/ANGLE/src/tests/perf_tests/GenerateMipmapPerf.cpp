@@ -286,6 +286,20 @@ GenerateMipmapParams D3D11Params(bool webglCompat, bool singleIteration)
     return params;
 }
 
+GenerateMipmapParams MetalParams(bool webglCompat, bool singleIteration)
+{
+    GenerateMipmapParams params;
+    params.eglParameters = egl_platform::METAL();
+    params.majorVersion  = 3;
+    params.minorVersion  = 0;
+    params.webgl         = webglCompat;
+    if (singleIteration)
+    {
+        params.iterationsPerStep = 1;
+    }
+    return params;
+}
+
 GenerateMipmapParams OpenGLOrGLESParams(bool webglCompat, bool singleIteration)
 {
     GenerateMipmapParams params;
@@ -335,6 +349,8 @@ using namespace params;
 ANGLE_INSTANTIATE_TEST(GenerateMipmapBenchmark,
                        D3D11Params(false, false),
                        D3D11Params(true, false),
+                       MetalParams(false, false),
+                       MetalParams(true, false),
                        OpenGLOrGLESParams(false, false),
                        OpenGLOrGLESParams(true, false),
                        VulkanParams(false, false, false),
@@ -345,6 +361,8 @@ ANGLE_INSTANTIATE_TEST(GenerateMipmapBenchmark,
 ANGLE_INSTANTIATE_TEST(GenerateMipmapWithRedefineBenchmark,
                        D3D11Params(false, true),
                        D3D11Params(true, true),
+                       MetalParams(false, true),
+                       MetalParams(true, true),
                        OpenGLOrGLESParams(false, true),
                        OpenGLOrGLESParams(true, true),
                        VulkanParams(false, true, false),

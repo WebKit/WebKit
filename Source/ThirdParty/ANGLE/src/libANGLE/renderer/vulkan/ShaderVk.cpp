@@ -101,6 +101,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         compileOptions |= SH_ROUND_OUTPUT_AFTER_DITHERING;
     }
 
+    if (contextVk->getFeatures().precisionSafeDivision.enabled)
+    {
+        compileOptions |= SH_PRECISION_SAFE_DIVISION;
+    }
+
     return compileImpl(context, compilerInstance, mState.getSource(), compileOptions | options);
 }
 

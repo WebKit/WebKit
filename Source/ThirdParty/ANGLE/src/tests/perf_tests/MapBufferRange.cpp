@@ -362,6 +362,27 @@ MapBufferRangeParams BufferUpdateD3D11Params()
     return params;
 }
 
+MapBufferRangeParams BufferUpdateMetalParams()
+{
+    MapBufferRangeParams params;
+    params.eglParameters        = egl_platform::METAL();
+    params.vertexType           = GL_FLOAT;
+    params.vertexComponentCount = 4;
+    params.vertexNormalized     = GL_FALSE;
+    return params;
+}
+
+MapBufferRangeParams BufferUpdateMetalParamsLargeUpdate()
+{
+    MapBufferRangeParams params;
+    params.eglParameters        = egl_platform::METAL();
+    params.vertexType           = GL_FLOAT;
+    params.vertexComponentCount = 4;
+    params.vertexNormalized     = GL_FALSE;
+    params.updateSize           = 524288;
+    return params;
+}
+
 MapBufferRangeParams BufferUpdateOpenGLOrGLESParams()
 {
     MapBufferRangeParams params;
@@ -468,6 +489,8 @@ TEST_P(MapBufferRangeBenchmark, Run)
 
 ANGLE_INSTANTIATE_TEST(MapBufferRangeBenchmark,
                        BufferUpdateD3D11Params(),
+                       BufferUpdateMetalParams(),
+                       BufferUpdateMetalParamsLargeUpdate(),
                        BufferUpdateOpenGLOrGLESParams(),
                        BufferUpdateVulkanParams(),
                        BufferUpdateVulkanParamsMidBuffer(),

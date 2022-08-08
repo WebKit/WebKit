@@ -13,17 +13,6 @@
 
 namespace angle
 {
-bool CreateTemporaryFile(char *tempFileNameOut, uint32_t maxFileNameLen)
-{
-    constexpr uint32_t kMaxPath = 1000u;
-    char tempPath[kMaxPath];
-
-    if (!GetTempDir(tempPath, kMaxPath))
-        return false;
-
-    return CreateTemporaryFileInDir(tempPath, tempFileNameOut, maxFileNameLen);
-}
-
 bool GetFileSize(const char *filePath, uint32_t *sizeOut)
 {
     std::ifstream stream(filePath);

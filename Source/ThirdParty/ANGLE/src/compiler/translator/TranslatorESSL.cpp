@@ -171,6 +171,13 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
                 ASSERT((compileOptions & SH_EMULATE_GL_BASE_VERTEX_BASE_INSTANCE) != 0);
                 continue;
             }
+            else if (iter->first == TExtension::ANGLE_shader_pixel_local_storage)
+            {
+                // Don't emit anything. This extension is emulated on ES 3.1.
+                // TODO(anglebug.com/7279): future impl that uses EXT_shader_pixel_local_storage.
+                // TODO(anglebug.com/7279): future impl that uses EXT_shader_framebuffer_fetch.
+                continue;
+            }
             else if (iter->first == TExtension::WEBGL_video_texture)
             {
                 // Don't emit anything. This extension is emulated

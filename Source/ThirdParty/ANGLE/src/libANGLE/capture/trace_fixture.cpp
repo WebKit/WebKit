@@ -128,6 +128,7 @@ GLuint *gVertexArrayMap;
 
 ClientBufferMap gClientBufferMap;
 EGLImageMap gEGLImageMap;
+SurfaceMap gSurfaceMap;
 
 void SetBinaryDataDecompressCallback(DecompressCallback callback)
 {

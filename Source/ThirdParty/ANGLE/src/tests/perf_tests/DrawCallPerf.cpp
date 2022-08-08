@@ -647,7 +647,7 @@ using P = DrawArraysPerfParams;
 std::vector<P> gTestsWithStateChange =
     CombineWithValues({P()}, angle::AllEnums<StateChange>(), CombineStateChange);
 std::vector<P> gTestsWithRenderer =
-    CombineWithFuncs(gTestsWithStateChange, {D3D11<P>, GL<P>, Vulkan<P>, WGL<P>});
+    CombineWithFuncs(gTestsWithStateChange, {D3D11<P>, GL<P>, Metal<P>, Vulkan<P>, WGL<P>});
 std::vector<P> gTestsWithDevice =
     CombineWithFuncs(gTestsWithRenderer, {Passthrough<P>, Offscreen<P>, NullDevice<P>});
 

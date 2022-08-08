@@ -31,4 +31,9 @@ angle::Result BufferImpl::setDataWithUsageFlags(const gl::Context *context,
     return setData(context, target, data, size, usage);
 }
 
+angle::Result BufferImpl::onLabelUpdate(const gl::Context *context)
+{
+    return angle::Result::Continue;
+}
+
 }  // namespace rx

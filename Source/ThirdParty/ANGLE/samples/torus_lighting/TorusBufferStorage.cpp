@@ -26,7 +26,7 @@ class BufferStorageSample : public SampleApplication
 {
   public:
     BufferStorageSample(int argc, char **argv)
-        : SampleApplication("GLES3.1 Buffer Storage", argc, argv, 3, 1)
+        : SampleApplication("GLES3.1 Buffer Storage", argc, argv, ClientType::ES3_1)
     {}
 
     bool initialize() override

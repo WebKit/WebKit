@@ -497,8 +497,9 @@ class Separator : public TIntermRebuild
         TIntermTyped *else_ = node.getFalseExpression();
 
         const Name name = mIdGen.createNewName();
-        auto *var =
-            new TVariable(&mSymbolTable, name.rawName(), &node.getType(), name.symbolType());
+        TType *newType  = new TType(node.getType());
+        newType->setInterfaceBlock(nullptr);
+        auto *var = new TVariable(&mSymbolTable, name.rawName(), newType, name.symbolType());
 
         TIntermTyped *newElse   = pullMappedExpr(else_, false);
         TIntermBlock *elseBlock = &buildBlockWithTailAssign(*var, *newElse);

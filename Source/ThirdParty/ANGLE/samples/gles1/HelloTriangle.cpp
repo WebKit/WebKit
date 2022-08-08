@@ -20,7 +20,7 @@ class GLES1HelloTriangleSample : public SampleApplication
 {
   public:
     GLES1HelloTriangleSample(int argc, char **argv)
-        : SampleApplication("GLES1HelloTriangle", argc, argv, 1, 0)
+        : SampleApplication("GLES1HelloTriangle", argc, argv, ClientType::ES1)
     {}
 
     bool initialize() override

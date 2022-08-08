@@ -403,7 +403,6 @@ TEST_P(TransformFeedbackTest, RecordAndDraw)
 // Test that transform feedback can cover multiple render passes.
 TEST_P(TransformFeedbackTest, SpanMultipleRenderPasses)
 {
-
     // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
@@ -4288,6 +4287,36 @@ TEST_P(TransformFeedbackTest, BindAndUnbindTransformFeedback)
     glFinish();
     glDrawArrays(GL_POINTS, 0, 1);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test that redefining the transform feedback buffer and starting a new render pass works.
+TEST_P(TransformFeedbackTest, RenderOnceChangeXfbBufferRenderAgain)
+{
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("gl_Position");
+    ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(drawColor, essl3_shaders::vs::Simple(),
+                                        essl3_shaders::fs::Red(), tfVaryings,
+                                        GL_INTERLEAVED_ATTRIBS);
+
+    GLBuffer buffer;
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 10'000'000, nullptr, GL_DYNAMIC_READ);
+
+    glUseProgram(drawColor);
+    glBeginTransformFeedback(GL_TRIANGLES);
+
+    drawQuad(drawColor, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Break the render pass
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Redefine the transform feedback buffer
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 40, nullptr, GL_DYNAMIC_READ);
+
+    // Start a new render pass
+    drawQuad(drawColor, essl3_shaders::PositionAttrib(), 0.5f);
+
+    glEndTransformFeedback();
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);

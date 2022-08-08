@@ -77,7 +77,7 @@ void EmitFragmentOutputDither(TCompiler *compiler,
                               TIntermTyped *fragmentOutput,
                               uint32_t location)
 {
-    bool roundOutputAfterDithering = (compileOptions | SH_ROUND_OUTPUT_AFTER_DITHERING) != 0;
+    bool roundOutputAfterDithering = (compileOptions & SH_ROUND_OUTPUT_AFTER_DITHERING) != 0;
 
     // dither >> 2*location
     TIntermBinary *ditherControlShifted = new TIntermBinary(

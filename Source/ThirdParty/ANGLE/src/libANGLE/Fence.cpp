@@ -82,9 +82,10 @@ Sync::~Sync()
     SafeDelete(mFence);
 }
 
-void Sync::setLabel(const Context *context, const std::string &label)
+angle::Result Sync::setLabel(const Context *context, const std::string &label)
 {
     mLabel = label;
+    return angle::Result::Continue;
 }
 
 const std::string &Sync::getLabel() const

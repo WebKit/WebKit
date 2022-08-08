@@ -209,7 +209,7 @@ class Framebuffer final : public angle::ObserverInterface,
     void onDestroy(const Context *context);
 
     void setReadSurface(const Context *context, egl::Surface *readSurface);
-    void setLabel(const Context *context, const std::string &label) override;
+    angle::Result setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;
 
     rx::FramebufferImpl *getImplementation() const { return mImpl; }

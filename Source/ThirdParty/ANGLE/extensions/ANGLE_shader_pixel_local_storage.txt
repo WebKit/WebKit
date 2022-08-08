@@ -1,0 +1,343 @@
+Name
+
+    ANGLE_shader_pixel_local_storage
+
+Name Strings
+
+    GL_ANGLE_shader_pixel_local_storage
+    GL_ANGLE_shader_pixel_local_storage_coherent
+
+Contact
+
+    Chris Dalton (chris 'at' rive.app)
+
+Contributors
+
+    Chris Dalton, Rive
+    Kenneth Russell, Google Inc.
+    Shahbaz Youssefi, Google Inc.
+    Kelsey Gilbert, Mozilla Corp.
+    Geoff Lang, Google Inc.
+    WebGL Working Group in Khronos
+    Contributors to the EXT_shader_pixel_local_storage specification
+    Contributors to the ARB_fragment_shader_interlock specification
+    Contributors to the INTEL_fragment_shader_ordering specification
+    Contributors to the EXT_shader_framebuffer_fetch specification
+    Contributors to the QCOM_tiled_rendering specification
+    Contributors to the KHR_blend_equation_advanced specification
+    Contributors to the NV_texture_barrier specification
+    Contributors to the (Vulkan) EXT_fragment_shader_interlock specification
+    Contributors to the (Vulkan) ARM_rasterization_order_attachment_access specification
+
+Status
+
+    Incomplete
+
+Version
+
+    Last Modified Date: Jun 29, 2022
+    Author Revision: 1
+
+Number
+
+    OpenGL ES Extension XX
+
+Dependencies
+
+    OpenGL ES 3.0 is required.
+
+    This extension is written against the OpenGL ES 3.0 specification and the
+    OpenGL ES Shading Language 3.0 specification.
+
+    This extension interacts with OpenGL ES 3.1.
+
+    This extension interacts with GL_OES_sample_variables.
+
+Overview
+
+    A major feature missing from WebGL is the ability to access rendering
+    results from fragment shaders and perform tasks like programmable blending.
+    This is especially desirable on Tile-Based Deferred Rendering (TBDR)
+    architectures, as it can be implemented entirely on-chip to achieve maximum
+    performance.
+
+    Capabilities in this area vary widely, but it is the case that all major GPU
+    vendors, on all major APIs, have some mechanism, direct or indirect, whereby
+    a fragment shader can access prior rendering results. The intent of this
+    extension is to condense this myriad of hardware and API features into a
+    simple interface with straightforward implementation(s) on every graphics
+    API.
+
+    Similar to EXT_shader_pixel_local_storage, this extension provides a means
+    for fragment shaders to load and store user-defined data associated with the
+    pixel being covered. The data is accessed via GLSL built-in functions
+    pixelLocalLoadANGLE() and pixelLocalStoreANGLE(). Only the current pixel's
+    data can be accessed; data associated with other pixels is not accessible to
+    the fragment shader. Pixel local storage persists across all fragment
+    invocations and across all rendering passes issued between OpenGL ES API
+    calls BeginPixelLocalStorageANGLE() and EndPixelLocalStorageANGLE(), even if
+    the application binds different shader programs. In order to make this
+    guarantee, various OpenGL ES commands are explicitly disallowed while pixel
+    local storage is active, instead generating errors.
+
+    Applications define custom, formatted planes of pixel local storage data, up
+    to an implementation-dependent maximum, using the OpenGL ES API function
+    FramebufferPixelLocalStorageANGLE(). This method behaves similarly to
+    FramebufferTexture2D(). Fragment shaders access a specific local storage
+    plane using one of the opaque GLSL types {pixelLocalANGLE, ipixelLocalANGLE,
+    upixelLocalANGLE}, which are analogous to samplers or images.
+
+    This extension provides two different extension string entries:
+
+        - GL_ANGLE_shader_pixel_local_storage: Provides the new pixel local
+          storage functionality, but each pixel may only be touched once in any
+          single rendering pass. The command PixelLocalStorageBarrierANGLE() is
+          provided to indicate a boundary between passes. Rendering the same
+          pixel twice without a barrier can yield incorrect results. However,
+          "incorrect" does _not_ mean they can be random, uninitialized, or
+          leaked from another context; any artifacts are strictly a result of
+          race conditions between overlapping fragment invocations involved in
+          the current rendering pass.
+
+        - GL_ANGLE_shader_pixel_local_storage_coherent: Guarantees that pixel
+          local storage operations touching the same pixel are invoked
+          synchronously and in API primitive order. No barriers are required and
+          render passes can emit overlapping fragments.
+
+    Some implementations may support GL_ANGLE_shader_pixel_local_storage without
+    supporting GL_ANGLE_shader_pixel_local_storage_coherent.
+
+    A note on performance: On some platforms, this feature will be polyfilled
+    with shader images. While every implementation can be expected to run
+    reasonably fast, certain platforms may see some performance degradation at
+    times from using pixel local storage instead of the normal raster pipeline.
+    As always, benchmark and consider other options before using pixel local
+    storage.
+
+IP Status
+
+    No known IP claims.
+
+New Procedures and Functions
+
+    TBD
+
+New Tokens
+
+    TBD
+
+New GLSL Opaque Types
+
+    pixelLocalANGLE
+    ipixelLocalANGLE
+    upixelLocalANGLE
+
+New GLSL Built-in Functions
+
+    gvec4 pixelLocalLoadANGLE(gpixelLocalANGLE)
+    void pixelLocalStoreANGLE(gpixelLocalANGLE, gvec4 value)
+
+Additions to the OpenGL ES Specification, Version 3.0.6
+
+    TBD
+
+      internalformat    format qualifier    Pixel Local Type     Bytes per Pixel
+      --------------------------------------------------------------------------
+      GL_RGBA8          rgba8               pixelLocalANGLE      4
+      GL_RGBA16F        rgba16f             pixelLocalANGLE      8
+      GL_R32F           r32f                pixelLocalANGLE      4
+      GL_RGBA32F        rgba32f             pixelLocalANGLE      16
+      GL_RGBA16I        rgba16i             ipixelLocalANGLE     8
+      GL_RGBA8I         rgba8i              ipixelLocalANGLE     4
+      GL_RGBA8UI        rgba8ui             upixelLocalANGLE     4
+      GL_RGBA16UI       rgba16ui            upixelLocalANGLE     8
+      GL_R32UI          r32ui               upixelLocalANGLE     4
+      GL_RGBA32UI       rgba32ui            upixelLocalANGLE     16
+
+      Table X.1, Supported pixel local storage internalformats, with
+      corresponding format layout qualifiers, associated pixel local types, and
+      bytes per pixel.
+
+Additions to the OpenGL ES Shading Language Specification, Version 3.00
+
+    Including the following line in a fragment shader controls the language
+    features described in this extension:
+
+      #extension GL_ANGLE_shader_pixel_local_storage : <behavior>
+
+    Where <behavior> is as specified in section 3.5.
+
+    Whether or not the application relies on the "_coherent" extension string
+    from the OpenGL ES API side, the language features described in this section
+    are identical, and fragment shaders should only enable
+    GL_ANGLE_shader_pixel_local_storage.
+
+    Modify Section 4.1 "Basic Types"
+
+    (Add the following new types.)
+
+    Pixel Local Types (opaque)
+
+      * pixelLocalANGLE
+          a handle for accessing floating-point pixel local storage data
+
+      * ipixelLocalANGLE
+          a handle for accessing integer pixel local storage data
+
+      * upixelLocalANGLE
+          a handle for accessing unsigned integer pixel local storage data
+
+    Modify Section 4.1.7 "Opaque Types"
+
+    (Insert a new numbered section after 4.1.7.1 "Samplers".)
+
+    Section 4.1.7.X "Pixel Local Storage"
+
+    Pixel local types (e.g. pixelLocalANGLE) are opaque types. They are handles
+    for accessing user-defined data that is associated with the pixel being
+    covered. They are used with the built-in functions described in section 8.X
+    "Pixel Local Storage Functions".
+
+    In addition to the limitations already imposed on opaque types, pixel local
+    types are subject to additional constraints:
+
+      * They cannot be aggregated in arrays.
+
+      * As uniforms, they must be declared at global scope; they cannot be
+        declared in structs or interface blocks.
+
+      * As uniforms, they must declare "binding" and "format" layout qualifiers,
+        as described in section 4.3.8.X "Pixel Local Storage Layout Qualifiers".
+        Additionally, pixel local storage uniforms cannot be updated by the OpenGL
+        ES API; their binding and format must be hard-coded into the shader. (This
+        facilitates backends that are implemented entirely in-shader, e.g.,
+        EXT_shader_pixel_local_storage.)
+
+      * As function arguments, they cannot have layout qualifiers. Any function
+        that accepts pixel local type(s) as arguments is inlined by the compiler,
+        and the bindings and formats are determined at the call site.
+
+      * They cannot be aliased; it is a compile-time error to declare two pixel
+        local uniforms with duplicate binding layout qualifiers.
+
+      * They can only be declared in a fragment shader.
+
+    Fragment shaders that declare pixel local storage uniforms are subject to
+    additional shader-wide restrictions as well:
+
+      * discard is illegal
+
+          When polyfilled with shader images, pixel local storage requires
+          early_fragment_tests, which causes discard to interact differently
+          with the depth and stencil tests.
+
+          In order to ensure identical behavior across all backends (some of
+          which may not have access to early_fragment_tests), we disallow
+          discard if pixel local storage uniforms have been declared.
+
+      * return from main() is illegal
+
+          ARB_fragment_shader_interlock functions cannot be called within flow
+          control, which includes any code that might execute after a return
+          statement. To keep things simple, and since these "interlock" calls
+          are automatically generated by the compiler inside of main(), we
+          disallow return from main() if pixel local storage uniforms have been
+          declared.
+
+      * assignment to gl_FragDepth(EXT) or gl_SampleMask is illegal
+
+          When polyfilled with shader images, pixel local storage requires
+          early_fragment_tests, which causes assignments to gl_FragDepth(EXT)
+          and gl_SampleMask to be ignored.
+
+          In order to ensure identical behavior across all backends, we disallow
+          assignment to these values if pixel local storage uniforms have been
+          declared.
+
+    Modify Section 4.3.8 "Layout Qualifiers"
+
+    (Insert a new numbered section after 4.3.8.3 "Uniform Block Layout
+     Qualifiers")
+
+    Section 4.3.8.X "Pixel Local Storage Layout Qualifiers"
+
+    The layout qualifier identifiers for pixel local storage types are:
+
+      layout-qualifier-id
+        binding = <integer-constant>
+        <format>
+
+    Accepable identifiers for <format> are enumerated in Table X.1.
+
+    It is a compile-time error to declare a pixel local storage uniform that
+    does not specify both of these layout qualifiers, or to specify a format
+    layout qualifier on any type other than that format's corresponding "Pixel
+    Local Type", as enumerated in Table X.1.
+
+    Additionally, draw-time errors will be generated in the OpenGL ES API and
+    the draw will be dropped if an application attempts to render with pixel
+    local storage (abbreviated as "PLS") and:
+
+      * Any PLS handle's binding layout qualifier indexes a PLS plane on the
+        current draw framebuffer that is inactive.
+
+      * Any PLS handle is declared with a format layout qualifier that does not
+        identically match the internalformat of the associated PLS plane on the
+        current draw framebuffer, as enumerated in Table X.1.
+
+      * The current draw framebuffer has any active PLS plane that is not
+        explicitly indexed by a PLS handle in the fragment shader. (i.e., a
+        fragment shader must exhaustively declare every active PLS plane on the
+        current draw framebuffer, even if the handle to that plane is unused.)
+
+    Modify Section 8 "Built-in Functions"
+
+    (Insert a new numbered section after 8.9 "Fragment Processing Functions".)
+
+    Section 8.X "Pixel Local Storage Functions"
+
+    The built-in functions defined in this section accept pixel local storage
+    handles (abbreviated as "PLS handles") in order to load and store data
+    associated with the pixel being covered.
+
+    A reference to a specific PLS plane is established by indexing into the
+    current draw framebuffer's PLS planes using the PLS handle's "binding"
+    layout qualifier. If any PLS handle references an inactive PLS plane, or a
+    PLS plane whose internalformat does not match the handle's format, the
+    shader does not execute and a draw-time error is generated in the OpenGL ES
+    API instead.
+
+    Syntax:
+
+      vec4 pixelLocalLoadANGLE(pixelLocalANGLE handle)
+      ivec4 pixelLocalLoadANGLE(ipixelLocalANGLE handle)
+      uvec4 pixelLocalLoadANGLE(upixelLocalANGLE handle)
+
+    Description:
+
+      Reads the current pixel's data from the PLS plane referenced by <handle>.
+
+    Syntax:
+
+      void pixelLocalStoreANGLE(pixelLocalANGLE handle, vec4 value)
+      void pixelLocalStoreANGLE(ipixelLocalANGLE handle, ivec4 value)
+      void pixelLocalStoreANGLE(upixelLocalANGLE handle, uvec4 value)
+
+    Description:
+
+      Replaces the current pixel's data with <value> in the PLS plane referenced
+      by <handle>.
+
+    Modify Section 9 "Shading Language Grammar"
+
+    (Add the following tokens to the lexical analysis.)
+
+    PIXELLOCALANGLE IPIXELLOCALANGLE UPIXELLOCALANGLE
+
+Errors
+
+    TBD
+
+Issues
+
+    TBD

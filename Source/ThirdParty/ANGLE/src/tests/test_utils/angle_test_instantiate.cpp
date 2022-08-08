@@ -47,7 +47,8 @@ bool IsAngleEGLConfigSupported(const PlatformParameters &param, OSWindow *osWind
         angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ModuleDir));
 #endif
 
-    EGLWindow *eglWindow = EGLWindow::New(param.majorVersion, param.minorVersion);
+    EGLWindow *eglWindow =
+        EGLWindow::New(param.clientType, param.majorVersion, param.minorVersion, param.profileMask);
     ConfigParameters configParams;
     bool result =
         eglWindow->initializeGL(osWindow, eglLibrary.get(), angle::GLESDriverType::AngleEGL,
@@ -63,7 +64,8 @@ bool IsSystemWGLConfigSupported(const PlatformParameters &param, OSWindow *osWin
     std::unique_ptr<angle::Library> openglLibrary(
         angle::OpenSharedLibrary("opengl32", angle::SearchType::SystemDir));
 
-    WGLWindow *wglWindow = WGLWindow::New(param.majorVersion, param.minorVersion);
+    WGLWindow *wglWindow =
+        WGLWindow::New(param.clientType, param.majorVersion, param.minorVersion, param.profileMask);
     ConfigParameters configParams;
     bool result =
         wglWindow->initializeGL(osWindow, openglLibrary.get(), angle::GLESDriverType::SystemWGL,
@@ -84,7 +86,8 @@ bool IsSystemEGLConfigSupported(const PlatformParameters &param, OSWindow *osWin
     eglLibrary.reset(OpenSharedLibraryWithExtension(GetNativeEGLLibraryNameWithExtension(),
                                                     SearchType::SystemDir));
 
-    EGLWindow *eglWindow = EGLWindow::New(param.majorVersion, param.minorVersion);
+    EGLWindow *eglWindow =
+        EGLWindow::New(param.clientType, param.majorVersion, param.minorVersion, param.profileMask);
     ConfigParameters configParams;
     bool result =
         eglWindow->initializeGL(osWindow, eglLibrary.get(), angle::GLESDriverType::SystemEGL,
@@ -362,11 +365,6 @@ bool IsIntelUHD630Mobile()
     return HasSystemDeviceID(kVendorID_Intel, kDeviceID_UHD630Mobile);
 }
 
-bool IsIntelHD630Mobile()
-{
-    return HasSystemDeviceID(kVendorID_Intel, kDeviceID_HD630Mobile);
-}
-
 bool IsAMD()
 {
     return HasSystemVendorID(kVendorID_AMD);
@@ -440,6 +438,14 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
     {
         return false;
     }
+
+// Skip test configs that target the desktop OpenGL frontend when it's not enabled.
+#if !defined(ANGLE_ENABLE_OPENGL_DESKTOP)
+    if (param.isDesktopOpenGLFrontend())
+    {
+        return false;
+    }
+#endif
 
     if (IsWindows())
     {

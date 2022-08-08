@@ -1,10 +1,11 @@
 {
     "Vendor": "Google Inc. (NVIDIA)",
-    "Version": "OpenGL ES 3.2.0 (ANGLE 2.1.18778 git hash: 4784f091deba)",
+    "Version": "OpenGL ES 3.2.0 (ANGLE 2.1.19130 git hash: e3933465d88f)",
     "Renderer": "ANGLE (NVIDIA, Vulkan 1.2.142 (NVIDIA GeForce GTX 1660 (0x00002184)), NVIDIA-456.38.0.0)",
-    "ShaderLanguageVersion": "OpenGL ES GLSL ES 3.20 (ANGLE 2.1.18778 git hash: 4784f091deba)",
+    "ShaderLanguageVersion": "OpenGL ES GLSL ES 3.20 (ANGLE 2.1.19130 git hash: e3933465d88f)",
     "Extensions": [
         "GL_AMD_performance_monitor",
+        "GL_ANDROID_extension_pack_es31a",
         "GL_ANGLE_base_vertex_base_instance",
         "GL_ANGLE_base_vertex_base_instance_shader_builtin",
         "GL_ANGLE_client_arrays",
@@ -41,6 +42,7 @@
         "GL_EXT_EGL_image_array",
         "GL_EXT_EGL_image_external_wrap_modes",
         "GL_EXT_EGL_image_storage",
+        "GL_EXT_base_instance",
         "GL_EXT_blend_func_extended",
         "GL_EXT_blend_minmax",
         "GL_EXT_buffer_storage",
@@ -97,12 +99,14 @@
         "GL_EXT_unpack_subimage",
         "GL_KHR_blend_equation_advanced",
         "GL_KHR_debug",
+        "GL_KHR_texture_compression_astc_ldr",
         "GL_NV_depth_buffer_float2",
         "GL_NV_fence",
         "GL_NV_framebuffer_blit",
         "GL_NV_pack_subimage",
         "GL_NV_pixel_buffer_object",
         "GL_NV_read_depth",
+        "GL_NV_read_depth_stencil",
         "GL_NV_read_stencil",
         "GL_NV_shader_noperspective_interpolation",
         "GL_OES_EGL_image",
@@ -158,5 +162,5 @@
         "GL_OVR_multiview",
         "GL_OVR_multiview2"
     ],
-    "DateRecorded": "June  1, 2022"
+    "DateRecorded": "July 23, 2022"
 }

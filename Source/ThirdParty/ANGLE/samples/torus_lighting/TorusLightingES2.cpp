@@ -19,7 +19,7 @@ class GLES2TorusLightingSample : public SampleApplication
 {
   public:
     GLES2TorusLightingSample(int argc, char **argv)
-        : SampleApplication("GLES2 Torus Lighting", argc, argv, 2, 0)
+        : SampleApplication("GLES2 Torus Lighting", argc, argv)
     {}
 
     bool initialize() override

@@ -23,7 +23,7 @@ namespace sh
 using Resources = ShBuiltInResources;
 using TableBase = TSymbolTableBase;
 
-const int TSymbolTable::kLastBuiltInId = 3071;
+const int TSymbolTable::kLastBuiltInId = 3080;
 
 namespace BuiltInName
 {
@@ -321,6 +321,8 @@ constexpr const ImmutableString packSnorm2x16("packSnorm2x16");
 constexpr const ImmutableString packSnorm4x8("packSnorm4x8");
 constexpr const ImmutableString packUnorm2x16("packUnorm2x16");
 constexpr const ImmutableString packUnorm4x8("packUnorm4x8");
+constexpr const ImmutableString pixelLocalLoadANGLE("pixelLocalLoadANGLE");
+constexpr const ImmutableString pixelLocalStoreANGLE("pixelLocalStoreANGLE");
 constexpr const ImmutableString pow("pow");
 constexpr const ImmutableString radians("radians");
 constexpr const ImmutableString reflect("reflect");
@@ -1221,37 +1223,55 @@ constexpr const TVariable kpt01f(BuiltInId::pt01f,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtUImageBuffer, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01g(BuiltInId::pt01g,
-                                 BuiltInName::_empty,
-                                 SymbolType::BuiltIn,
-                                 std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                 StaticType::Get<EbtSubpassInput, EbpUndefined, EvqGlobal, 1, 1>());
+constexpr const TVariable kpt01g(
+    BuiltInId::pt01g,
+    BuiltInName::_empty,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    StaticType::Get<EbtPixelLocalANGLE, EbpUndefined, EvqGlobal, 1, 1>());
 constexpr const TVariable kpt01h(
     BuiltInId::pt01h,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    StaticType::Get<EbtISubpassInput, EbpUndefined, EvqGlobal, 1, 1>());
+    StaticType::Get<EbtIPixelLocalANGLE, EbpUndefined, EvqGlobal, 1, 1>());
 constexpr const TVariable kpt01i(
     BuiltInId::pt01i,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    StaticType::Get<EbtUSubpassInput, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01j(
-    BuiltInId::pt01j,
-    BuiltInName::_empty,
-    SymbolType::BuiltIn,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    StaticType::Get<EbtSubpassInputMS, EbpUndefined, EvqGlobal, 1, 1>());
+    StaticType::Get<EbtUPixelLocalANGLE, EbpUndefined, EvqGlobal, 1, 1>());
+constexpr const TVariable kpt01j(BuiltInId::pt01j,
+                                 BuiltInName::_empty,
+                                 SymbolType::BuiltIn,
+                                 std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+                                 StaticType::Get<EbtSubpassInput, EbpUndefined, EvqGlobal, 1, 1>());
 constexpr const TVariable kpt01k(
     BuiltInId::pt01k,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    StaticType::Get<EbtISubpassInputMS, EbpUndefined, EvqGlobal, 1, 1>());
+    StaticType::Get<EbtISubpassInput, EbpUndefined, EvqGlobal, 1, 1>());
 constexpr const TVariable kpt01l(
     BuiltInId::pt01l,
+    BuiltInName::_empty,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    StaticType::Get<EbtUSubpassInput, EbpUndefined, EvqGlobal, 1, 1>());
+constexpr const TVariable kpt01m(
+    BuiltInId::pt01m,
+    BuiltInName::_empty,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    StaticType::Get<EbtSubpassInputMS, EbpUndefined, EvqGlobal, 1, 1>());
+constexpr const TVariable kpt01n(
+    BuiltInId::pt01n,
+    BuiltInName::_empty,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    StaticType::Get<EbtISubpassInputMS, EbpUndefined, EvqGlobal, 1, 1>());
+constexpr const TVariable kpt01o(
+    BuiltInId::pt01o,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -2647,12 +2667,15 @@ constexpr const TVariable *p01f00D00E00E[4] = {&BuiltInVariable::kpt01f, &BuiltI
                                                &BuiltInVariable::kpt00E, &BuiltInVariable::kpt00E};
 constexpr const TVariable *p01f00D30E[3]    = {&BuiltInVariable::kpt01f, &BuiltInVariable::kpt00D,
                                                &BuiltInVariable::kpt30E};
-constexpr const TVariable *p01g[1]          = {&BuiltInVariable::kpt01g};
-constexpr const TVariable *p01h[1]          = {&BuiltInVariable::kpt01h};
-constexpr const TVariable *p01i[1]          = {&BuiltInVariable::kpt01i};
-constexpr const TVariable *p01j00D[2]       = {&BuiltInVariable::kpt01j, &BuiltInVariable::kpt00D};
-constexpr const TVariable *p01k00D[2]       = {&BuiltInVariable::kpt01k, &BuiltInVariable::kpt00D};
-constexpr const TVariable *p01l00D[2]       = {&BuiltInVariable::kpt01l, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p01g30B[2]       = {&BuiltInVariable::kpt01g, &BuiltInVariable::kpt30B};
+constexpr const TVariable *p01h30D[2]       = {&BuiltInVariable::kpt01h, &BuiltInVariable::kpt30D};
+constexpr const TVariable *p01i30E[2]       = {&BuiltInVariable::kpt01i, &BuiltInVariable::kpt30E};
+constexpr const TVariable *p01j[1]          = {&BuiltInVariable::kpt01j};
+constexpr const TVariable *p01k[1]          = {&BuiltInVariable::kpt01k};
+constexpr const TVariable *p01l[1]          = {&BuiltInVariable::kpt01l};
+constexpr const TVariable *p01m00D[2]       = {&BuiltInVariable::kpt01m, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p01n00D[2]       = {&BuiltInVariable::kpt01n, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p01o00D[2]       = {&BuiltInVariable::kpt01o, &BuiltInVariable::kpt00D};
 constexpr const TVariable *p10B00B00B[3]    = {&BuiltInVariable::kpt10B, &BuiltInVariable::kpt00B,
                                                &BuiltInVariable::kpt00B};
 constexpr const TVariable *p10B00D[2]       = {&BuiltInVariable::kpt10B, &BuiltInVariable::kpt00D};
@@ -26509,6 +26532,60 @@ constexpr const TFunction imageAtomicCompSwapExt_01c20D00D00D00D(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
+constexpr const TFunction pixelLocalLoadANGLE_01g(
+    BuiltInId::pixelLocalLoadANGLE_PixelLocalANGLE1,
+    BuiltInName::pixelLocalLoadANGLE,
+    std::array<TExtension, 1u>{{TExtension::ANGLE_shader_pixel_local_storage}},
+    BuiltInParameters::p01g30B,
+    1,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
+    EOpPixelLocalLoadANGLE,
+    false);
+constexpr const TFunction pixelLocalLoadANGLE_01h(
+    BuiltInId::pixelLocalLoadANGLE_IPixelLocalANGLE1,
+    BuiltInName::pixelLocalLoadANGLE,
+    std::array<TExtension, 1u>{{TExtension::ANGLE_shader_pixel_local_storage}},
+    BuiltInParameters::p01h30D,
+    1,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
+    EOpPixelLocalLoadANGLE,
+    false);
+constexpr const TFunction pixelLocalLoadANGLE_01i(
+    BuiltInId::pixelLocalLoadANGLE_UPixelLocalANGLE1,
+    BuiltInName::pixelLocalLoadANGLE,
+    std::array<TExtension, 1u>{{TExtension::ANGLE_shader_pixel_local_storage}},
+    BuiltInParameters::p01i30E,
+    1,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
+    EOpPixelLocalLoadANGLE,
+    false);
+constexpr const TFunction pixelLocalStoreANGLE_01g30B(
+    BuiltInId::pixelLocalStoreANGLE_PixelLocalANGLE1_Float4,
+    BuiltInName::pixelLocalStoreANGLE,
+    std::array<TExtension, 1u>{{TExtension::ANGLE_shader_pixel_local_storage}},
+    BuiltInParameters::p01g30B,
+    2,
+    StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpPixelLocalStoreANGLE,
+    false);
+constexpr const TFunction pixelLocalStoreANGLE_01h30D(
+    BuiltInId::pixelLocalStoreANGLE_IPixelLocalANGLE1_Int4,
+    BuiltInName::pixelLocalStoreANGLE,
+    std::array<TExtension, 1u>{{TExtension::ANGLE_shader_pixel_local_storage}},
+    BuiltInParameters::p01h30D,
+    2,
+    StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpPixelLocalStoreANGLE,
+    false);
+constexpr const TFunction pixelLocalStoreANGLE_01i30E(
+    BuiltInId::pixelLocalStoreANGLE_UPixelLocalANGLE1_UInt4,
+    BuiltInName::pixelLocalStoreANGLE,
+    std::array<TExtension, 1u>{{TExtension::ANGLE_shader_pixel_local_storage}},
+    BuiltInParameters::p01i30E,
+    2,
+    StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpPixelLocalStoreANGLE,
+    false);
 constexpr const TFunction noise1_00B(BuiltInId::noise1_Float1,
                                      BuiltInName::noise1,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26770,54 +26847,54 @@ constexpr const TFunction EndStreamPrimitive_00D(
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpEndStreamPrimitive,
     false);
-constexpr const TFunction subpassLoad_01g(
+constexpr const TFunction subpassLoad_01j(
     BuiltInId::subpassLoad_SubpassInput1,
     BuiltInName::subpassLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01g,
+    BuiltInParameters::p01j,
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpSubpassLoad,
     false);
-constexpr const TFunction subpassLoad_01h(BuiltInId::subpassLoad_ISubpassInput1,
+constexpr const TFunction subpassLoad_01k(BuiltInId::subpassLoad_ISubpassInput1,
                                           BuiltInName::subpassLoad,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                          BuiltInParameters::p01h,
+                                          BuiltInParameters::p01k,
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                           EOpSubpassLoad,
                                           false);
-constexpr const TFunction subpassLoad_01i(BuiltInId::subpassLoad_USubpassInput1,
+constexpr const TFunction subpassLoad_01l(BuiltInId::subpassLoad_USubpassInput1,
                                           BuiltInName::subpassLoad,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                          BuiltInParameters::p01i,
+                                          BuiltInParameters::p01l,
                                           1,
                                           StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                           EOpSubpassLoad,
                                           false);
-constexpr const TFunction subpassLoad_01j00D(
+constexpr const TFunction subpassLoad_01m00D(
     BuiltInId::subpassLoad_SubpassInputMS1_Int1,
     BuiltInName::subpassLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01j00D,
+    BuiltInParameters::p01m00D,
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpSubpassLoad,
     false);
-constexpr const TFunction subpassLoad_01k00D(
+constexpr const TFunction subpassLoad_01n00D(
     BuiltInId::subpassLoad_ISubpassInputMS1_Int1,
     BuiltInName::subpassLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01k00D,
+    BuiltInParameters::p01n00D,
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpSubpassLoad,
     false);
-constexpr const TFunction subpassLoad_01l00D(
+constexpr const TFunction subpassLoad_01o00D(
     BuiltInId::subpassLoad_USubpassInputMS1_Int1,
     BuiltInName::subpassLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01l00D,
+    BuiltInParameters::p01o00D,
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpSubpassLoad,
@@ -31756,6 +31833,18 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01c20D00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01c20D00D00D00D),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
+        &pixelLocalLoadANGLE_01g),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
+        &pixelLocalLoadANGLE_01h),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
+        &pixelLocalLoadANGLE_01i),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
+        &pixelLocalStoreANGLE_01g30B),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
+        &pixelLocalStoreANGLE_01h30D),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
+        &pixelLocalStoreANGLE_01i30E),
     Rule::Get<Spec::GLSL, 0, Shader::ALL, 0>(&noise1_00B),
     Rule::Get<Spec::GLSL, 0, Shader::ALL, 0>(&noise1_10B),
     Rule::Get<Spec::GLSL, 0, Shader::ALL, 0>(&noise1_20B),
@@ -31799,18 +31888,18 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<Spec::ESSL, 310, Shader::GEOMETRY, EXT_INDEX(OES_geometry_shader)>(&EndPrimitive_),
     Rule::Get<Spec::GLSL, 400, Shader::GEOMETRY, 0>(&EmitStreamVertex_00D),
     Rule::Get<Spec::GLSL, 400, Shader::GEOMETRY, 0>(&EndStreamPrimitive_00D),
-    Rule::Get<Spec::ESSL, kESSLVulkanOnly, Shader::ALL, 0>(&subpassLoad_01g),
-    Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&subpassLoad_01g),
-    Rule::Get<Spec::ESSL, kESSLVulkanOnly, Shader::ALL, 0>(&subpassLoad_01h),
-    Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&subpassLoad_01h),
-    Rule::Get<Spec::ESSL, kESSLVulkanOnly, Shader::ALL, 0>(&subpassLoad_01i),
-    Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&subpassLoad_01i),
-    Rule::Get<Spec::ESSL, kESSLVulkanOnly, Shader::ALL, 0>(&subpassLoad_01j00D),
-    Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&subpassLoad_01j00D),
-    Rule::Get<Spec::ESSL, kESSLVulkanOnly, Shader::ALL, 0>(&subpassLoad_01k00D),
-    Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&subpassLoad_01k00D),
-    Rule::Get<Spec::ESSL, kESSLVulkanOnly, Shader::ALL, 0>(&subpassLoad_01l00D),
-    Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&subpassLoad_01l00D),
+    Rule::Get<Spec::ESSL, kESSLVulkanOnly, Shader::ALL, 0>(&subpassLoad_01j),
+    Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&subpassLoad_01j),
+    Rule::Get<Spec::ESSL, kESSLVulkanOnly, Shader::ALL, 0>(&subpassLoad_01k),
+    Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&subpassLoad_01k),
+    Rule::Get<Spec::ESSL, kESSLVulkanOnly, Shader::ALL, 0>(&subpassLoad_01l),
+    Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&subpassLoad_01l),
+    Rule::Get<Spec::ESSL, kESSLVulkanOnly, Shader::ALL, 0>(&subpassLoad_01m00D),
+    Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&subpassLoad_01m00D),
+    Rule::Get<Spec::ESSL, kESSLVulkanOnly, Shader::ALL, 0>(&subpassLoad_01n00D),
+    Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&subpassLoad_01n00D),
+    Rule::Get<Spec::ESSL, kESSLVulkanOnly, Shader::ALL, 0>(&subpassLoad_01o00D),
+    Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&subpassLoad_01o00D),
     Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&anyInvocation_00F),
     Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&allInvocations_00F),
     Rule::Get<Spec::GLSL, 460, Shader::ALL, 0>(&allInvocationsEqual_00F),
@@ -34334,6 +34423,12 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "imageAtomicCompSwap(01G20D00D00D00D",
                                          "imageAtomicCompSwap(01R20D00D00D00D",
                                          "imageAtomicCompSwap(01c20D00D00D00D",
+                                         "pixelLocalLoadANGLE(01g",
+                                         "pixelLocalLoadANGLE(01h",
+                                         "pixelLocalLoadANGLE(01i",
+                                         "pixelLocalStoreANGLE(01g30B",
+                                         "pixelLocalStoreANGLE(01h30D",
+                                         "pixelLocalStoreANGLE(01i30E",
                                          "noise1(00B",
                                          "noise1(10B",
                                          "noise1(20B",
@@ -34361,12 +34456,12 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "EndPrimitive(",
                                          "EmitStreamVertex(00D",
                                          "EndStreamPrimitive(00D",
-                                         "subpassLoad(01g",
-                                         "subpassLoad(01h",
-                                         "subpassLoad(01i",
-                                         "subpassLoad(01j00D",
-                                         "subpassLoad(01k00D",
-                                         "subpassLoad(01l00D",
+                                         "subpassLoad(01j",
+                                         "subpassLoad(01k",
+                                         "subpassLoad(01l",
+                                         "subpassLoad(01m00D",
+                                         "subpassLoad(01n00D",
+                                         "subpassLoad(01o00D",
                                          "anyInvocation(00F",
                                          "allInvocations(00F",
                                          "allInvocationsEqual(00F",
@@ -36520,161 +36615,167 @@ constexpr uint16_t kMangledOffsets[] = {
     4187,  // imageAtomicCompSwap_01G20D00D00D00D
     4190,  // imageAtomicCompSwap_01R20D00D00D00D
     4193,  // imageAtomicCompSwap_01c20D00D00D00D
-    4196,  // noise1_00B
-    4197,  // noise1_10B
-    4198,  // noise1_20B
-    4199,  // noise1_30B
-    4200,  // noise2_00B
-    4201,  // noise2_10B
-    4202,  // noise2_20B
-    4203,  // noise2_30B
-    4204,  // noise3_00B
-    4205,  // noise3_10B
-    4206,  // noise3_20B
-    4207,  // noise3_30B
-    4208,  // noise4_00B
-    4209,  // noise4_10B
-    4210,  // noise4_20B
-    4211,  // noise4_30B
-    4212,  // memoryBarrier_
-    4214,  // memoryBarrierAtomicCounter_
-    4216,  // memoryBarrierBuffer_
-    4218,  // memoryBarrierImage_
-    4220,  // barrier_
-    4224,  // memoryBarrierShared_
-    4226,  // groupMemoryBarrier_
-    4228,  // EmitVertex_
-    4232,  // EndPrimitive_
-    4236,  // EmitStreamVertex_00D
-    4237,  // EndStreamPrimitive_00D
-    4238,  // subpassLoad_01g
-    4240,  // subpassLoad_01h
-    4242,  // subpassLoad_01i
-    4244,  // subpassLoad_01j00D
-    4246,  // subpassLoad_01k00D
-    4248,  // subpassLoad_01l00D
-    4250,  // anyInvocation_00F
-    4251,  // allInvocations_00F
-    4252,  // allInvocationsEqual_00F
-    4253,  // gl_DepthRangeParameters
-    4255,  // gl_DepthRange
-    4257,  // gl_NumSamples
-    4260,  // gl_MaxVertexAttribs
-    4262,  // gl_MaxVertexUniformVectors
-    4264,  // gl_MaxVertexTextureImageUnits
-    4266,  // gl_MaxCombinedTextureImageUnits
-    4268,  // gl_MaxTextureImageUnits
-    4270,  // gl_MaxFragmentUniformVectors
-    4272,  // gl_MaxVaryingVectors
-    4274,  // gl_MaxDrawBuffers
-    4276,  // gl_MaxDualSourceDrawBuffersEXT
-    4277,  // gl_MaxVertexOutputVectors
-    4279,  // gl_MaxFragmentInputVectors
-    4281,  // gl_MinProgramTexelOffset
-    4283,  // gl_MaxProgramTexelOffset
-    4285,  // gl_MaxImageUnits
-    4287,  // gl_MaxVertexImageUniforms
-    4289,  // gl_MaxFragmentImageUniforms
-    4291,  // gl_MaxComputeImageUniforms
-    4293,  // gl_MaxCombinedImageUniforms
-    4295,  // gl_MaxCombinedShaderOutputResources
-    4297,  // gl_MaxComputeWorkGroupCount
-    4299,  // gl_MaxComputeWorkGroupSize
-    4301,  // gl_MaxComputeUniformComponents
-    4303,  // gl_MaxComputeTextureImageUnits
-    4305,  // gl_MaxComputeAtomicCounters
-    4307,  // gl_MaxComputeAtomicCounterBuffers
-    4309,  // gl_MaxVertexAtomicCounters
-    4311,  // gl_MaxFragmentAtomicCounters
-    4313,  // gl_MaxCombinedAtomicCounters
-    4315,  // gl_MaxAtomicCounterBindings
-    4317,  // gl_MaxVertexAtomicCounterBuffers
-    4319,  // gl_MaxFragmentAtomicCounterBuffers
-    4321,  // gl_MaxCombinedAtomicCounterBuffers
-    4323,  // gl_MaxAtomicCounterBufferSize
-    4325,  // gl_MaxGeometryInputComponents
-    4329,  // gl_MaxGeometryOutputComponents
-    4333,  // gl_MaxGeometryImageUniforms
-    4337,  // gl_MaxGeometryTextureImageUnits
-    4341,  // gl_MaxGeometryOutputVertices
-    4345,  // gl_MaxGeometryTotalOutputComponents
-    4349,  // gl_MaxGeometryUniformComponents
-    4353,  // gl_MaxGeometryAtomicCounters
-    4357,  // gl_MaxGeometryAtomicCounterBuffers
-    4361,  // gl_MaxTessControlInputComponents
-    4364,  // gl_MaxTessControlOutputComponents
-    4367,  // gl_MaxTessControlTextureImageUnits
-    4370,  // gl_MaxTessControlUniformComponents
-    4373,  // gl_MaxTessControlTotalOutputComponents
-    4376,  // gl_MaxTessControlImageUniforms
-    4379,  // gl_MaxTessControlAtomicCounters
-    4382,  // gl_MaxTessControlAtomicCounterBuffers
-    4385,  // gl_MaxTessPatchComponents
-    4388,  // gl_MaxPatchVertices
-    4391,  // gl_MaxTessGenLevel
-    4394,  // gl_MaxTessEvaluationInputComponents
-    4397,  // gl_MaxTessEvaluationOutputComponents
-    4400,  // gl_MaxTessEvaluationTextureImageUnits
-    4403,  // gl_MaxTessEvaluationUniformComponents
-    4406,  // gl_MaxTessEvaluationImageUniforms
-    4409,  // gl_MaxTessEvaluationAtomicCounters
-    4412,  // gl_MaxTessEvaluationAtomicCounterBuffers
-    4415,  // gl_MaxSamples
-    4418,  // gl_MaxClipDistances
-    4419,  // gl_MaxCullDistances
-    4420,  // gl_MaxCombinedClipAndCullDistances
-    4421,  // gl_FragCoord
-    4425,  // gl_FrontFacing
-    4427,  // gl_PointCoord
-    4429,  // gl_FragColor
-    4431,  // gl_FragData
-    4433,  // gl_FragDepth
-    4435,  // gl_HelperInvocation
-    4437,  // gl_SecondaryFragColorEXT
-    4438,  // gl_SecondaryFragDataEXT
-    4439,  // gl_FragDepthEXT
-    4440,  // gl_LastFragData
-    4443,  // gl_LastFragColor
-    4444,  // gl_LastFragColorARM
-    4445,  // gl_PrimitiveID
-    4459,  // gl_Layer
-    4467,  // gl_SampleID
-    4470,  // gl_SamplePosition
-    4473,  // gl_SampleMaskIn
-    4476,  // gl_SampleMask
-    4479,  // gl_CullDistance
-    4481,  // gl_ClipDistance
-    4483,  // gl_Position
-    4495,  // gl_PointSize
-    4499,  // gl_InstanceID
-    4501,  // Empty
-    4501,  // gl_VertexID
-    4503,  // Empty
-    4503,  // Empty
-    4503,  // gl_DrawID
-    4504,  // gl_BaseVertex
-    4505,  // gl_BaseInstance
-    4506,  // angle_BaseVertex
-    4507,  // angle_BaseInstance
-    4508,  // gl_NumWorkGroups
-    4510,  // gl_WorkGroupSize
-    4512,  // gl_WorkGroupID
-    4514,  // gl_LocalInvocationID
-    4516,  // gl_GlobalInvocationID
-    4518,  // gl_LocalInvocationIndex
-    4520,  // gl_PrimitiveIDIn
-    4524,  // gl_InvocationID
-    4531,  // gl_PerVertex
-    4541,  // gl_in
-    4551,  // gl_PatchVerticesIn
-    4557,  // gl_TessLevelOuter
-    4563,  // gl_TessLevelInner
-    4569,  // gl_out
-    4575,  // gl_BoundingBox
-    4578,  // gl_BoundingBoxEXT
-    4581,  // gl_BoundingBoxOES
-    4584,  // gl_TessCoord
-    4586,  // gl_ViewID_OVR
+    4196,  // pixelLocalLoadANGLE_01g
+    4197,  // pixelLocalLoadANGLE_01h
+    4198,  // pixelLocalLoadANGLE_01i
+    4199,  // pixelLocalStoreANGLE_01g30B
+    4200,  // pixelLocalStoreANGLE_01h30D
+    4201,  // pixelLocalStoreANGLE_01i30E
+    4202,  // noise1_00B
+    4203,  // noise1_10B
+    4204,  // noise1_20B
+    4205,  // noise1_30B
+    4206,  // noise2_00B
+    4207,  // noise2_10B
+    4208,  // noise2_20B
+    4209,  // noise2_30B
+    4210,  // noise3_00B
+    4211,  // noise3_10B
+    4212,  // noise3_20B
+    4213,  // noise3_30B
+    4214,  // noise4_00B
+    4215,  // noise4_10B
+    4216,  // noise4_20B
+    4217,  // noise4_30B
+    4218,  // memoryBarrier_
+    4220,  // memoryBarrierAtomicCounter_
+    4222,  // memoryBarrierBuffer_
+    4224,  // memoryBarrierImage_
+    4226,  // barrier_
+    4230,  // memoryBarrierShared_
+    4232,  // groupMemoryBarrier_
+    4234,  // EmitVertex_
+    4238,  // EndPrimitive_
+    4242,  // EmitStreamVertex_00D
+    4243,  // EndStreamPrimitive_00D
+    4244,  // subpassLoad_01j
+    4246,  // subpassLoad_01k
+    4248,  // subpassLoad_01l
+    4250,  // subpassLoad_01m00D
+    4252,  // subpassLoad_01n00D
+    4254,  // subpassLoad_01o00D
+    4256,  // anyInvocation_00F
+    4257,  // allInvocations_00F
+    4258,  // allInvocationsEqual_00F
+    4259,  // gl_DepthRangeParameters
+    4261,  // gl_DepthRange
+    4263,  // gl_NumSamples
+    4266,  // gl_MaxVertexAttribs
+    4268,  // gl_MaxVertexUniformVectors
+    4270,  // gl_MaxVertexTextureImageUnits
+    4272,  // gl_MaxCombinedTextureImageUnits
+    4274,  // gl_MaxTextureImageUnits
+    4276,  // gl_MaxFragmentUniformVectors
+    4278,  // gl_MaxVaryingVectors
+    4280,  // gl_MaxDrawBuffers
+    4282,  // gl_MaxDualSourceDrawBuffersEXT
+    4283,  // gl_MaxVertexOutputVectors
+    4285,  // gl_MaxFragmentInputVectors
+    4287,  // gl_MinProgramTexelOffset
+    4289,  // gl_MaxProgramTexelOffset
+    4291,  // gl_MaxImageUnits
+    4293,  // gl_MaxVertexImageUniforms
+    4295,  // gl_MaxFragmentImageUniforms
+    4297,  // gl_MaxComputeImageUniforms
+    4299,  // gl_MaxCombinedImageUniforms
+    4301,  // gl_MaxCombinedShaderOutputResources
+    4303,  // gl_MaxComputeWorkGroupCount
+    4305,  // gl_MaxComputeWorkGroupSize
+    4307,  // gl_MaxComputeUniformComponents
+    4309,  // gl_MaxComputeTextureImageUnits
+    4311,  // gl_MaxComputeAtomicCounters
+    4313,  // gl_MaxComputeAtomicCounterBuffers
+    4315,  // gl_MaxVertexAtomicCounters
+    4317,  // gl_MaxFragmentAtomicCounters
+    4319,  // gl_MaxCombinedAtomicCounters
+    4321,  // gl_MaxAtomicCounterBindings
+    4323,  // gl_MaxVertexAtomicCounterBuffers
+    4325,  // gl_MaxFragmentAtomicCounterBuffers
+    4327,  // gl_MaxCombinedAtomicCounterBuffers
+    4329,  // gl_MaxAtomicCounterBufferSize
+    4331,  // gl_MaxGeometryInputComponents
+    4335,  // gl_MaxGeometryOutputComponents
+    4339,  // gl_MaxGeometryImageUniforms
+    4343,  // gl_MaxGeometryTextureImageUnits
+    4347,  // gl_MaxGeometryOutputVertices
+    4351,  // gl_MaxGeometryTotalOutputComponents
+    4355,  // gl_MaxGeometryUniformComponents
+    4359,  // gl_MaxGeometryAtomicCounters
+    4363,  // gl_MaxGeometryAtomicCounterBuffers
+    4367,  // gl_MaxTessControlInputComponents
+    4370,  // gl_MaxTessControlOutputComponents
+    4373,  // gl_MaxTessControlTextureImageUnits
+    4376,  // gl_MaxTessControlUniformComponents
+    4379,  // gl_MaxTessControlTotalOutputComponents
+    4382,  // gl_MaxTessControlImageUniforms
+    4385,  // gl_MaxTessControlAtomicCounters
+    4388,  // gl_MaxTessControlAtomicCounterBuffers
+    4391,  // gl_MaxTessPatchComponents
+    4394,  // gl_MaxPatchVertices
+    4397,  // gl_MaxTessGenLevel
+    4400,  // gl_MaxTessEvaluationInputComponents
+    4403,  // gl_MaxTessEvaluationOutputComponents
+    4406,  // gl_MaxTessEvaluationTextureImageUnits
+    4409,  // gl_MaxTessEvaluationUniformComponents
+    4412,  // gl_MaxTessEvaluationImageUniforms
+    4415,  // gl_MaxTessEvaluationAtomicCounters
+    4418,  // gl_MaxTessEvaluationAtomicCounterBuffers
+    4421,  // gl_MaxSamples
+    4424,  // gl_MaxClipDistances
+    4425,  // gl_MaxCullDistances
+    4426,  // gl_MaxCombinedClipAndCullDistances
+    4427,  // gl_FragCoord
+    4431,  // gl_FrontFacing
+    4433,  // gl_PointCoord
+    4435,  // gl_FragColor
+    4437,  // gl_FragData
+    4439,  // gl_FragDepth
+    4441,  // gl_HelperInvocation
+    4443,  // gl_SecondaryFragColorEXT
+    4444,  // gl_SecondaryFragDataEXT
+    4445,  // gl_FragDepthEXT
+    4446,  // gl_LastFragData
+    4449,  // gl_LastFragColor
+    4450,  // gl_LastFragColorARM
+    4451,  // gl_PrimitiveID
+    4465,  // gl_Layer
+    4473,  // gl_SampleID
+    4476,  // gl_SamplePosition
+    4479,  // gl_SampleMaskIn
+    4482,  // gl_SampleMask
+    4485,  // gl_CullDistance
+    4487,  // gl_ClipDistance
+    4489,  // gl_Position
+    4501,  // gl_PointSize
+    4505,  // gl_InstanceID
+    4507,  // Empty
+    4507,  // gl_VertexID
+    4509,  // Empty
+    4509,  // Empty
+    4509,  // gl_DrawID
+    4510,  // gl_BaseVertex
+    4511,  // gl_BaseInstance
+    4512,  // angle_BaseVertex
+    4513,  // angle_BaseInstance
+    4514,  // gl_NumWorkGroups
+    4516,  // gl_WorkGroupSize
+    4518,  // gl_WorkGroupID
+    4520,  // gl_LocalInvocationID
+    4522,  // gl_GlobalInvocationID
+    4524,  // gl_LocalInvocationIndex
+    4526,  // gl_PrimitiveIDIn
+    4530,  // gl_InvocationID
+    4537,  // gl_PerVertex
+    4547,  // gl_in
+    4557,  // gl_PatchVerticesIn
+    4563,  // gl_TessLevelOuter
+    4569,  // gl_TessLevelInner
+    4575,  // gl_out
+    4581,  // gl_BoundingBox
+    4584,  // gl_BoundingBoxEXT
+    4587,  // gl_BoundingBoxOES
+    4590,  // gl_TessCoord
+    4592,  // gl_ViewID_OVR
 };
 
 using Ext = TExtension;
@@ -37006,6 +37107,10 @@ constexpr UnmangledEntry unmangled[] = {
     {"imageAtomicExchange", std::array<TExtension, 1>{{Ext::OES_shader_image_atomic}},
      Ext::UNDEFINED, 310, -1, Shader::ALL},
     {"imageAtomicCompSwap", std::array<TExtension, 1>{{Ext::OES_shader_image_atomic}},
+     Ext::UNDEFINED, 310, -1, Shader::ALL},
+    {"pixelLocalLoadANGLE", std::array<TExtension, 1>{{Ext::ANGLE_shader_pixel_local_storage}},
+     Ext::UNDEFINED, 310, -1, Shader::ALL},
+    {"pixelLocalStoreANGLE", std::array<TExtension, 1>{{Ext::ANGLE_shader_pixel_local_storage}},
      Ext::UNDEFINED, 310, -1, Shader::ALL},
     {"noise1", std::array<TExtension, 1>{{Ext::UNDEFINED}}, Ext::UNDEFINED, -1, 0, Shader::ALL},
     {"noise2", std::array<TExtension, 1>{{Ext::UNDEFINED}}, Ext::UNDEFINED, -1, 0, Shader::ALL},
@@ -38381,7 +38486,7 @@ namespace
 {
 uint16_t GetNextRuleIndex(uint32_t nameHash)
 {
-    if (nameHash == 2183 - 1)
+    if (nameHash == 2189 - 1)
         return ArraySize(BuiltInArray::kRules);
     return BuiltInArray::kMangledOffsets[nameHash + 1];
 }
@@ -38393,7 +38498,7 @@ const TSymbol *TSymbolTable::findBuiltIn(const ImmutableString &name, int shader
         return nullptr;
 
     uint32_t nameHash = name.mangledNameHash();
-    if (nameHash >= 2183)
+    if (nameHash >= 2189)
         return nullptr;
 
     const char *actualName = BuiltInArray::kMangledNames[nameHash];
@@ -38415,7 +38520,7 @@ bool TSymbolTable::isUnmangledBuiltInName(const ImmutableString &name,
         return false;
 
     uint32_t nameHash = name.unmangledNameHash();
-    if (nameHash >= 210)
+    if (nameHash >= 212)
         return false;
 
     return BuiltInArray::unmangled[nameHash].matches(name, mShaderSpec, shaderVersion, mShaderType,

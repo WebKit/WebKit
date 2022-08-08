@@ -339,6 +339,16 @@ TexturesParams D3D11Params(bool webglCompat,
     return ApplyFrequencies(params, rebindFrequency, stateUpdateFrequency);
 }
 
+TexturesParams MetalParams(bool webglCompat,
+                           Frequency rebindFrequency,
+                           Frequency stateUpdateFrequency)
+{
+    TexturesParams params;
+    params.eglParameters = egl_platform::METAL();
+    params.webgl         = webglCompat;
+    return ApplyFrequencies(params, rebindFrequency, stateUpdateFrequency);
+}
+
 TexturesParams OpenGLOrGLESParams(bool webglCompat,
                                   Frequency rebindFrequency,
                                   Frequency stateUpdateFrequency)
@@ -369,6 +379,10 @@ ANGLE_INSTANTIATE_TEST(TexturesBenchmark,
                        D3D11Params(true, Frequency::Sometimes, Frequency::Sometimes),
                        D3D11Params(false, Frequency::Always, Frequency::Always),
                        D3D11Params(true, Frequency::Always, Frequency::Always),
+                       MetalParams(false, Frequency::Sometimes, Frequency::Sometimes),
+                       MetalParams(true, Frequency::Sometimes, Frequency::Sometimes),
+                       MetalParams(false, Frequency::Always, Frequency::Always),
+                       MetalParams(true, Frequency::Always, Frequency::Always),
                        OpenGLOrGLESParams(false, Frequency::Sometimes, Frequency::Sometimes),
                        OpenGLOrGLESParams(true, Frequency::Sometimes, Frequency::Sometimes),
                        OpenGLOrGLESParams(false, Frequency::Always, Frequency::Always),

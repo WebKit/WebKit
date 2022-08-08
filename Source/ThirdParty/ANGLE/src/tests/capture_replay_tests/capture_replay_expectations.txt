@@ -10,7 +10,9 @@
 #
 # Valid values for "handling/result" are
 #
-#   NOT_RUN : the is expceted to be skipped by the end2end_tests program
+#   SKIP_FOR_CAPTURE : SKIP from capture_replay tests
+#
+#   NOT_RUN (DEPRECATED https://anglebug.com/7516): already skipped by end2end test suite
 #
 #   FAIL : the test is expected to fail
 #
@@ -38,14 +40,6 @@
 6180 : GLSLTest_ES3.GLVertexIDIntegerTextureDrawElementsU8Line/* = NOT_RUN
 6180 : GLSLTest_ES3.GLVertexIDIntegerTextureDrawElementsU8LineIds/* = NOT_RUN
 
-6180 : PbufferTest.BindTexImage/* = FAIL
-6180 : PbufferTest.BindTexImageAfterTexImage/* = FAIL
-6180 : PbufferTest.ClearAndBindTexImageSrgb/* = FAIL
-6180 : PbufferTest.ClearAndBindTexImageSrgbSkipDecode/* = FAIL
-6180 : PbufferTest.Clearing/* = FAIL
-6180 : PbufferTest.TextureSizeReset/* = FAIL
-
-
 6221 : VulkanExternalImageTest.ShouldClearOpaqueFdWithSemaphores/* = TIMEOUT
 6221 : VulkanExternalImageTest.ShouldClearOpaqueFdWithSemaphoresMutableNoStorage/* = TIMEOUT
 6221 : VulkanExternalImageTest.ShouldClearOpaqueFdWithSemaphoresNoStorage/* = TIMEOUT
@@ -63,9 +57,6 @@
 # Fails because of unsupported combined depth/stencil GetImage.
 4688 ASAN : DepthStencilTest.DepthOnlyEmulatedWithPacked/* = FAIL
 
-# Skipped in end2end tests
-6336 : GetImageTest.InconsistentTexture2D/* = NOT_RUN
-
 # ES3
 6180 : BlitFramebufferTest.BlitDepthStencilPixelByPixel/* = NOT_RUN
 6180 : GLSLTest_ES3.UnsuccessfulRelinkWithBindAttribLocation/* = NOT_RUN
@@ -75,7 +66,6 @@
 # This test only exists on Win64
 6180 WIN : BufferDataOverflowTest.VertexBufferIntegerOverflow/* = NOT_RUN
 
-6512 : RobustResourceInitTestES3.BindTexImage/* = FAIL
 6180 WIN : TransformFeedbackTest.DrawWithoutTransformFeedbackThenWith/* = FLAKY
 6180 : TransformFeedbackTest.TransformFeedbackQueryPausedDrawThenResume/* = FLAKY
 6513 : TransformFeedbackTest.MultiContext/* = FLAKY
@@ -110,8 +100,8 @@
 6631 WIN : MultithreadingTestES3.MultithreadFenceTexImage/* = CRASH
 6631 : MultithreadingTest.MultiContextDrawWithSwapBuffers/* = CRASH
 
-# Marking this as NOT_RUN because we don't want it to run as it uses multiple contexts
-6752 : OcclusionQueriesNoSurfaceTestES3.SwitchingContextsWithQuery/* = NOT_RUN
+# Uses multiple contexts, don't want to run
+6752 : OcclusionQueriesNoSurfaceTestES3.SwitchingContextsWithQuery/* = SKIP_FOR_CAPTURE
 
 # ES3_1
 6180 : ProgramPipelineTest31.VerifyPpoLinkErrorSignalledCorrectly/* = FAIL
@@ -126,20 +116,12 @@
 6180 : GeometryShaderTest.LayeredFramebufferPreRenderClear2DArrayColor/* = NOT_RUN
 6180 : GeometryShaderTest.LayeredFramebufferPreRenderClear3DColor/* = NOT_RUN
 
-6663 : Texture2DTest.UploadThenFSThenNewRPThenFSThenVS/* = NOT_RUN
-6663 : Texture2DTest.UploadThenFSThenNewRPThenVS/* = NOT_RUN
-6663 : Texture2DTest.UploadThenFSThenNewRPThenVSThenFS/* = NOT_RUN
-6663 : Texture2DTest.UploadThenFSThenVS/* = NOT_RUN
-6663 : Texture2DTest.UploadThenFSThenVSThenNewRPThenFS/*  = NOT_RUN
-
 6741 : VulkanImageTest.* = SKIP_FOR_CAPTURE
 
 6941 : Texture2DTestES3RobustInit.TextureCOMPRESSEDRGB8A1ETC2/* = NOT_RUN
 6941 : Texture2DTestES3RobustInit.TextureCOMPRESSEDSRGB8A1ETC2/* = NOT_RUN
 
 6926 : Texture2DTestES3.TextureRGBUpdateWithPBO/ES3_Vulkan* = NOT_RUN
-
-6875 : TransformFeedbackTest.SpanMultipleRenderPasses/* = NOT_RUN
 
 7112 : TransformFeedbackTest.BaseInstance/* = NOT_RUN
 
@@ -154,7 +136,7 @@
 7291 : BlitFramebufferTest.Blit2DArrayTo3D/* = SKIP_FOR_CAPTURE
 
 7357 : FramebufferTest_ES3.FramebufferConditionalFeedbackLoop/* = SKIP_FOR_CAPTURE
-
+7499 : Texture2DTest.TextureMaxSize/* = SKIP_FOR_CAPTURE
 7373 : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/* = SKIP_FOR_CAPTURE
 
 7423 : MultithreadingTest.NoFlushNoContextReturnsTimeout/* = SKIP_FOR_CAPTURE
@@ -175,3 +157,8 @@
 7449 : MultisampleTest.Line/* = SKIP_FOR_CAPTURE
 7449 : MultisampleTest.Point/* = SKIP_FOR_CAPTURE
 7449 : MultisampleTest.Triangle/* = SKIP_FOR_CAPTURE
+
+7483 : MultisampleTest.AlphaToSampleCoverage/* = SKIP_FOR_CAPTURE
+7483 : MultisampleTestES3.ResolveToFBO/* = SKIP_FOR_CAPTURE
+
+6723 : EGLMultiContextTest.ReuseUnterminatedDisplay/* = SKIP_FOR_CAPTURE

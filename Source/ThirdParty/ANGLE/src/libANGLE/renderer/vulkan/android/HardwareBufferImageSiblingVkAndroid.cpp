@@ -236,6 +236,12 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     int pixelFormat = 0;
     angle::android::GetANativeWindowBufferProperties(windowBuffer, &mSize.width, &mSize.height,
                                                      &mSize.depth, &pixelFormat, &mUsage);
+
+    // BUG: b/223456677 Android sometimes uses an uninitialized value for layerCount of the
+    // ANativeWindowBuffer. Force depth <= 256 here. If we see a bigger value,
+    // force to 1.
+    mSize.depth = mSize.depth > 256 ? 1 : mSize.depth;
+
     GLenum internalFormat = angle::android::NativePixelFormatToGLInternalFormat(pixelFormat);
     mFormat               = gl::Format(internalFormat);
 
@@ -364,7 +370,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
             renderer, bufferFormatProperties.externalFormat,
             bufferFormatProperties.suggestedYcbcrModel, bufferFormatProperties.suggestedYcbcrRange,
             bufferFormatProperties.suggestedXChromaOffset,
-            bufferFormatProperties.suggestedYChromaOffset, renderer->getPreferredFilterForYUV(),
+            bufferFormatProperties.suggestedYChromaOffset, vk::kDefaultYCbCrChromaFilter,
             bufferFormatProperties.samplerYcbcrConversionComponents, angle::FormatID::NONE);
         mYUV = true;
     }

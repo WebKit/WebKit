@@ -558,6 +558,13 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
                 return false;
             }
             break;
+        case EGL_PLATFORM_WAYLAND_EXT:
+            if (!clientExtensions.platformWaylandEXT)
+            {
+                val->setError(EGL_BAD_PARAMETER, "Platform Wayland extension is not active");
+                return false;
+            }
+            break;
         default:
             val->setError(EGL_BAD_CONFIG, "Bad platform type.");
             return false;
@@ -1452,9 +1459,13 @@ bool ValidateCreateContextAttribute(const ValidationContext *val,
             break;
 
         case EGL_CONTEXT_OPENGL_PROFILE_MASK_KHR:
-            // Only valid for OpenGL (non-ES) contexts
-            val->setError(EGL_BAD_ATTRIBUTE);
-            return false;
+            if (val->eglThread->getAPI() != EGL_OPENGL_API)
+            {
+                // Only valid for OpenGL (non-ES) contexts
+                val->setError(EGL_BAD_ATTRIBUTE, "OpenGL profile mask requires an OpenGL context.");
+                return false;
+            }
+            break;
 
         case EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT:
             if (!display->getExtensions().createContextRobustness)
@@ -1691,6 +1702,19 @@ bool ValidateCreateContextAttributeValue(const ValidationContext *val,
         case EGL_CONTEXT_OPENGL_DEBUG:
         case EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE:
             break;
+
+        case EGL_CONTEXT_OPENGL_PROFILE_MASK_KHR:
+        {
+            constexpr EGLint kValidProfileMaskFlags =
+                (EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT |
+                 EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT);
+            if ((value & ~kValidProfileMaskFlags) != 0)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE, "Invalid OpenGL profile mask.");
+                return false;
+            }
+            break;
+        }
 
         case EGL_CONTEXT_FLAGS_KHR:
         {
@@ -2329,78 +2353,93 @@ bool ValidateCreateContext(const ValidationContext *val,
     // Get the requested client version (default is 1) and check it is 2 or 3.
     EGLAttrib clientMajorVersion = attributes.get(EGL_CONTEXT_CLIENT_VERSION, 1);
     EGLAttrib clientMinorVersion = attributes.get(EGL_CONTEXT_MINOR_VERSION, 0);
+    EGLenum api                  = val->eglThread->getAPI();
 
-    switch (clientMajorVersion)
+    switch (api)
     {
-        case 1:
-            if (clientMinorVersion != 0 && clientMinorVersion != 1)
+        case EGL_OPENGL_ES_API:
+            switch (clientMajorVersion)
             {
-                val->setError(EGL_BAD_ATTRIBUTE);
-                return false;
-            }
-            if (configuration == EGL_NO_CONFIG_KHR)
-            {
-                val->setError(EGL_BAD_MATCH);
-                return false;
-            }
-            if ((configuration != EGL_NO_CONFIG_KHR) &&
-                !(configuration->renderableType & EGL_OPENGL_ES_BIT))
-            {
-                val->setError(EGL_BAD_MATCH);
-                return false;
+                case 1:
+                    if (clientMinorVersion != 0 && clientMinorVersion != 1)
+                    {
+                        val->setError(EGL_BAD_ATTRIBUTE);
+                        return false;
+                    }
+                    if (configuration == EGL_NO_CONFIG_KHR)
+                    {
+                        val->setError(EGL_BAD_MATCH);
+                        return false;
+                    }
+                    if ((configuration != EGL_NO_CONFIG_KHR) &&
+                        !(configuration->renderableType & EGL_OPENGL_ES_BIT))
+                    {
+                        val->setError(EGL_BAD_MATCH);
+                        return false;
+                    }
+                    break;
+
+                case 2:
+                    if (clientMinorVersion != 0)
+                    {
+                        val->setError(EGL_BAD_ATTRIBUTE);
+                        return false;
+                    }
+                    if ((configuration != EGL_NO_CONFIG_KHR) &&
+                        !(configuration->renderableType & EGL_OPENGL_ES2_BIT))
+                    {
+                        val->setError(EGL_BAD_MATCH);
+                        return false;
+                    }
+                    break;
+                case 3:
+                    if (clientMinorVersion < 0 || clientMinorVersion > 2)
+                    {
+                        val->setError(EGL_BAD_ATTRIBUTE);
+                        return false;
+                    }
+                    if ((configuration != EGL_NO_CONFIG_KHR) &&
+                        !(configuration->renderableType & EGL_OPENGL_ES3_BIT))
+                    {
+                        val->setError(EGL_BAD_MATCH);
+                        return false;
+                    }
+                    if (display->getMaxSupportedESVersion() <
+                        gl::Version(static_cast<GLuint>(clientMajorVersion),
+                                    static_cast<GLuint>(clientMinorVersion)))
+                    {
+                        gl::Version max = display->getMaxSupportedESVersion();
+                        val->setError(EGL_BAD_ATTRIBUTE,
+                                      "Requested GLES version (%" PRIxPTR ".%" PRIxPTR
+                                      ") is greater than "
+                                      "max supported (%d, %d).",
+                                      clientMajorVersion, clientMinorVersion, max.major, max.minor);
+                        return false;
+                    }
+                    if ((attributes.get(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE, EGL_FALSE) ==
+                         EGL_TRUE) &&
+                        (clientMinorVersion > 1))
+                    {
+                        val->setError(EGL_BAD_ATTRIBUTE,
+                                      "Requested GLES version (%" PRIxPTR ".%" PRIxPTR
+                                      ") is greater than "
+                                      "max supported 3.1 for WebGL.",
+                                      clientMajorVersion, clientMinorVersion);
+                        return false;
+                    }
+                    break;
+                default:
+                    val->setError(EGL_BAD_ATTRIBUTE);
+                    return false;
             }
             break;
 
-        case 2:
-            if (clientMinorVersion != 0)
-            {
-                val->setError(EGL_BAD_ATTRIBUTE);
-                return false;
-            }
-            if ((configuration != EGL_NO_CONFIG_KHR) &&
-                !(configuration->renderableType & EGL_OPENGL_ES2_BIT))
-            {
-                val->setError(EGL_BAD_MATCH);
-                return false;
-            }
+        case EGL_OPENGL_API:
+            // TODO: validate desktop OpenGL versions and profile mask
             break;
-        case 3:
-            if (clientMinorVersion < 0 || clientMinorVersion > 2)
-            {
-                val->setError(EGL_BAD_ATTRIBUTE);
-                return false;
-            }
-            if ((configuration != EGL_NO_CONFIG_KHR) &&
-                !(configuration->renderableType & EGL_OPENGL_ES3_BIT))
-            {
-                val->setError(EGL_BAD_MATCH);
-                return false;
-            }
-            if (display->getMaxSupportedESVersion() <
-                gl::Version(static_cast<GLuint>(clientMajorVersion),
-                            static_cast<GLuint>(clientMinorVersion)))
-            {
-                gl::Version max = display->getMaxSupportedESVersion();
-                val->setError(EGL_BAD_ATTRIBUTE,
-                              "Requested GLES version (%" PRIxPTR ".%" PRIxPTR
-                              ") is greater than "
-                              "max supported (%d, %d).",
-                              clientMajorVersion, clientMinorVersion, max.major, max.minor);
-                return false;
-            }
-            if ((attributes.get(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE, EGL_FALSE) == EGL_TRUE) &&
-                (clientMinorVersion > 1))
-            {
-                val->setError(EGL_BAD_ATTRIBUTE,
-                              "Requested GLES version (%" PRIxPTR ".%" PRIxPTR
-                              ") is greater than "
-                              "max supported 3.1 for WebGL.",
-                              clientMajorVersion, clientMinorVersion);
-                return false;
-            }
-            break;
+
         default:
-            val->setError(EGL_BAD_ATTRIBUTE);
+            val->setError(EGL_BAD_MATCH, "Unsupported API.");
             return false;
     }
 
@@ -2835,11 +2874,6 @@ bool ValidateCreatePbufferFromClientBuffer(const ValidationContext *val,
                 {
                     val->setError(EGL_BAD_ATTRIBUTE,
                                   "<buftype> doesn't support setting texture offset");
-                    return false;
-                }
-                if (value < 0)
-                {
-                    val->setError(EGL_BAD_ATTRIBUTE, "Texture offset cannot be negative");
                     return false;
                 }
                 break;
@@ -4935,12 +4969,12 @@ bool ValidateBindAPI(const ValidationContext *val, const EGLenum api)
 {
     switch (api)
     {
+        case EGL_OPENGL_ES_API:
         case EGL_OPENGL_API:
+            break;
         case EGL_OPENVG_API:
             val->setError(EGL_BAD_PARAMETER);
             return false;  // Not supported by this implementation
-        case EGL_OPENGL_ES_API:
-            break;
         default:
             val->setError(EGL_BAD_PARAMETER);
             return false;
@@ -5330,6 +5364,10 @@ bool ValidateSurfaceAttrib(const ValidationContext *val,
                     val->setError(EGL_BAD_ATTRIBUTE, "Invalid value.");
                     return false;
             }
+            break;
+
+        case EGL_FRONT_BUFFER_AUTO_REFRESH_ANDROID:
+            ASSERT(value == EGL_TRUE || value == EGL_FALSE);
             break;
 
         case EGL_RENDER_BUFFER:

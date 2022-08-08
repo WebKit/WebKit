@@ -8,9 +8,10 @@ angle_presubmit_utils_unittest.py: Top-level unittest script for ANGLE presubmit
 
 import imp
 import os
+import pathlib
+import tempfile
 import unittest
 from angle_presubmit_utils import *
-
 
 def SetCWDToAngleFolder():
     angle_folder = "angle"
@@ -22,7 +23,6 @@ def SetCWDToAngleFolder():
 SetCWDToAngleFolder()
 
 PRESUBMIT = imp.load_source('PRESUBMIT', 'PRESUBMIT.py')
-
 
 class CommitMessageFormattingCheckTest(unittest.TestCase):
 
@@ -314,6 +314,40 @@ bbbbbbbbbbbbbbbbbbbb
 Change-Id: I443c36aaa8956c20da1abddf7aea613659e2cd5b"""
         errors = self.run_check_commit_message_formatting(commit_msg)
         self.assertEqual(len(errors), 0)
+
+
+class GClientFileExistenceCheck(unittest.TestCase):
+
+    def __init__(self, *args, **kwargs):
+        super(GClientFileExistenceCheck, self).__init__(*args, **kwargs)
+        self.output_api = OutputAPI_mock()
+
+    def run_gclient_presubmit(self, cwd, search_limit):
+        input_api = InputAPI_mock('')
+        input_api.cwd = cwd
+        return PRESUBMIT._CheckGClientExists(input_api, self.output_api,
+                                             pathlib.Path(search_limit))
+
+    def test_gclient_in_cwd(self):
+        with tempfile.TemporaryDirectory() as cwd:
+            pathlib.Path(cwd).joinpath('.gclient').touch()
+            errors = self.run_gclient_presubmit(cwd, cwd)
+            self.assertEqual(len(errors), 0)
+
+    def test_missing_gclient(self):
+        with tempfile.TemporaryDirectory() as cwd:
+            errors = self.run_gclient_presubmit(cwd, cwd)
+            self.assertEqual(len(errors), 1)
+            self.assertEqual(errors[0], self.output_api.PresubmitError('Missing .gclient file.'))
+
+    def test_gclient_in_parent(self):
+        with tempfile.TemporaryDirectory() as cwd:
+            cwd = pathlib.Path(cwd)
+            cwd.joinpath('.gclient').touch()
+            inner = cwd.joinpath('inner')
+            inner.mkdir()
+            errors = self.run_gclient_presubmit(str(inner), str(cwd))
+            self.assertEqual(len(errors), 0)
 
 
 if __name__ == '__main__':

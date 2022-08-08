@@ -283,8 +283,9 @@ TIntermTyped *DriverUniform::getHalfRenderArea() const
 TIntermTyped *DriverUniform::getFlipXY(TSymbolTable *symbolTable, DriverUniformFlip stage) const
 {
     TIntermTyped *flipXY = createDriverUniformRef(kFlipXY);
-    TIntermTyped *values =
-        CreateBuiltInUnaryFunctionCallNode("unpackSnorm4x8", flipXY, *symbolTable, 310);
+    TIntermTyped *values = CreateBuiltInUnaryFunctionCallNode(
+        "unpackSnorm4x8", flipXY, *symbolTable,
+        GetESSLOrGLSLVersion(symbolTable->getShaderSpec(), 310, 400));
 
     if (stage == DriverUniformFlip::Fragment)
     {

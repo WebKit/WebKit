@@ -65,28 +65,28 @@ IP Status
 New Procedures and Functions
 
     void MultiDrawArraysANGLE(enum mode,
-                              const GLint* firsts,
-                              const GLsizei* counts,
-                              const GLsizei drawcount);
+                              const int *firsts,
+                              const sizei *counts,
+                              sizei drawcount);
 
     void MultiDrawElementsANGLE(enum mode,
-                                const GLint* counts,
-                                GLenum type,
-                                const GLvoid* const* indices,
-                                const GLsizei drawcount);
+                                const sizei *counts,
+                                enum type,
+                                const void *const *indices,
+                                sizei drawcount);
 
     void MultiDrawArraysInstancedANGLE(enum mode,
-                                       const GLint* firsts,
-                                       const GLsizei* counts,
-                                       const GLsizei* instanceCounts,
-                                       const GLsizei drawcount);
+                                       const int *firsts,
+                                       const sizei *counts,
+                                       const sizei *instanceCounts,
+                                       sizei drawcount);
 
     void MultiDrawElementsInstancedANGLE(enum mode,
-                                         const GLint* counts,
-                                         GLenum type,
-                                         const GLvoid* const* indices,
-                                         const GLsizei* instanceCounts,
-                                         const GLsizei drawcount);
+                                         const sizei *counts,
+                                         enum type,
+                                         const void *const *indices,
+                                         const sizei *instanceCounts,
+                                         sizei drawcount);
 
 New Tokens
 
@@ -98,10 +98,11 @@ Additions to Chapter 2 of the OpenGL ES 2.0 Specification
 
     The command
 
-      void MultiDrawArraysANGLE(GLenum mode,
-              const GLint* firsts,
-              const GLsizei *counts,
-              GLsizei drawcount)
+    void MultiDrawArraysANGLE(
+        enum mode,
+        const int *firsts,
+        const sizei *counts,
+        sizei drawcount)
 
     Behaves identically to DrawArrays except that a list of arrays is
     specified instead. The number of lists is specified in the drawcount
@@ -116,11 +117,12 @@ Additions to Chapter 2 of the OpenGL ES 2.0 Specification
 
     The command
 
-      void MultiDrawElementsANGLE(GLenum mode,
-                GLsizei* counts,
-                GLenum type,
-                const GLvoid* const* indices,
-                GLsizei drawcount)
+    void MultiDrawElementsANGLE(
+        enum mode,
+        const sizei *counts,
+        enum type,
+        const void *const *indices,
+        sizei drawcount)
 
     Behaves identically to DrawElements except that a list of arrays is
     specified instead. The number of lists is specified in the drawcount
@@ -141,12 +143,12 @@ Additions to Chapter 2 of the OpenGL ES 3.0 Specification
 
     The command
 
-      void MultiDrawArraysInstancedANGLE(
-              GLenum mode,
-              const GLint* firsts,
-              const GLsizei *counts,
-              const GLsizei* instanceCounts,
-              GLsizei drawcount)
+    void MultiDrawArraysInstancedANGLE(
+        enum mode,
+        const int *firsts,
+        const sizei *counts,
+        const sizei *instanceCounts,
+        sizei drawcount)
 
     Behaves identically to DrawArraysInstanced except that a list of arrays is
     specified instead. The number of lists is specified in the drawcount
@@ -162,13 +164,13 @@ Additions to Chapter 2 of the OpenGL ES 3.0 Specification
 
     The command
 
-      void MultiDrawElementsInstancedANGLE(
-                GLenum mode,
-                GLsizei* counts,
-                GLenum type,
-                const GLvoid* const* indices,
-                const GLsizei* instanceCounts,
-                GLsizei drawcount)
+    void MultiDrawElementsInstancedANGLE(
+        enum mode,
+        sizei *counts,
+        enum type,
+        const void *const *indices,
+        const sizei *instanceCounts,
+        sizei drawcount)
 
     Behaves identically to DrawElementsInstanced except that a list of arrays is
     specified instead. The number of lists is specified in the drawcount
@@ -226,7 +228,8 @@ Issues
 
 Revision History
 
-    Rev.    Date    Author       Changes
-    ----  --------  ----------   --------------------------------------------
-    1     10/24/18   Austin Eng  First revision.
-    2     10/25/18   Austin Eng  Second revision. Add instanced variants
+    Rev.    Date    Author            Changes
+    ----  --------  ----------------  --------------------------------------------
+    1     10/24/18   Austin Eng       First revision.
+    2     10/25/18   Austin Eng       Add instanced variants.
+    3     06/21/22   Alexey Knyazev   Fixed typos and type usage.

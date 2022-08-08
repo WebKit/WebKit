@@ -468,6 +468,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     void updateColorMasks();
     void updateBlendFuncsAndEquations();
     void updateSampleMaskWithRasterizationSamples(const uint32_t rasterizationSamples);
+    void updateFrameBufferFetchSamples(const uint32_t prevSamples, const uint32_t curSamples);
 
     void handleError(VkResult errorCode,
                      const char *file,
@@ -764,6 +765,10 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     }
 
     std::ostringstream &getPipelineCacheGraphStream() { return mPipelineCacheGraph; }
+
+    // Add resource to the resource use list tracking the last CommandBuffer (i.e,
+    // RenderpassCommands if exists, or outsideRenderPassCommands)
+    void retainResource(vk::Resource *resource);
 
   private:
     // Dirty bits.
@@ -1574,6 +1579,18 @@ ANGLE_INLINE angle::Result ContextVk::onVertexAttributeChange(size_t attribIndex
         divisor > mRenderer->getMaxVertexAttribDivisor() ? 1 : divisor, format, compressed,
         relativeOffset);
     return onVertexBufferChange(vertexBuffer);
+}
+
+ANGLE_INLINE void ContextVk::retainResource(vk::Resource *resource)
+{
+    if (hasStartedRenderPass())
+    {
+        mRenderPassCommands->retainResource(resource);
+    }
+    else
+    {
+        mOutsideRenderPassCommands->retainResource(resource);
+    }
 }
 
 ANGLE_INLINE bool UseLineRaster(const ContextVk *contextVk, gl::PrimitiveMode mode)

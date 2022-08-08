@@ -420,6 +420,14 @@ enum TOperator : uint16_t
     EOpImageAtomicExchange,
     EOpImageAtomicCompSwap,
 
+    // Group PixelLocal
+
+    // Group PixelLocalLoad
+    EOpPixelLocalLoadANGLE,
+
+    // Group PixelLocalStore
+    EOpPixelLocalStoreANGLE,
+
     // Group Noise
     EOpNoise1,
     EOpNoise2,
@@ -543,6 +551,18 @@ static inline bool IsImageAtomic(TOperator op)
 static inline bool IsImage(TOperator op)
 {
     return op >= EOpImageSize && op <= EOpImageAtomicCompSwap;
+}
+static inline bool IsPixelLocalLoad(TOperator op)
+{
+    return op >= EOpPixelLocalLoadANGLE && op <= EOpPixelLocalLoadANGLE;
+}
+static inline bool IsPixelLocalStore(TOperator op)
+{
+    return op >= EOpPixelLocalStoreANGLE && op <= EOpPixelLocalStoreANGLE;
+}
+static inline bool IsPixelLocal(TOperator op)
+{
+    return op >= EOpPixelLocalLoadANGLE && op <= EOpPixelLocalStoreANGLE;
 }
 }  // namespace BuiltInGroup
 

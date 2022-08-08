@@ -61,6 +61,16 @@ Run them like so:
 out/<config>/angle_perftests --gtest_filter=TracePerfTest*
 ```
 
+## (Optional) Reducing the trace count
+
+Since the traces are numerous, you can limit build to a subset of them if needed with the
+`angle_restricted_traces` GN arg.  This arg takes a list of traces as found in
+`restricted_traces.json`.  For example:
+
+```
+angle_restricted_traces = ["world_of_kings 5", "worms_zone_io 5"]
+```
+
 # Capturing and adding new Android traces
 
 Generally we want to use a Debug setup for recording new traces. That allows us to see asserts and

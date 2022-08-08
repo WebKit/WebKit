@@ -292,6 +292,12 @@ angle::Result BlitGL::copyImageToLUMAWorkaroundTexture(const gl::Context *contex
     GLenum format   = gl::GetUnsizedFormat(internalFormat);
     GLenum readType = source->getImplementationColorReadType(context);
 
+    // getImplementationColorReadType aligns the type with ES client version
+    if (readType == GL_HALF_FLOAT_OES && mFunctions->standard == STANDARD_GL_DESKTOP)
+    {
+        readType = GL_HALF_FLOAT;
+    }
+
     gl::PixelUnpackState unpack;
     ANGLE_TRY(mStateManager->setPixelUnpackState(context, unpack));
     ANGLE_TRY(mStateManager->setPixelUnpackBuffer(
@@ -326,6 +332,12 @@ angle::Result BlitGL::copySubImageToLUMAWorkaroundTexture(const gl::Context *con
 
     GLenum readFormat = source->getImplementationColorReadFormat(context);
     GLenum readType   = source->getImplementationColorReadType(context);
+
+    // getImplementationColorReadType aligns the type with ES client version
+    if (readType == GL_HALF_FLOAT_OES && mFunctions->standard == STANDARD_GL_DESKTOP)
+    {
+        readType = GL_HALF_FLOAT;
+    }
 
     nativegl::CopyTexImageImageFormat copyTexImageFormat =
         nativegl::GetCopyTexImageImageFormat(mFunctions, mFeatures, readFormat, readType);

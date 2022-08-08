@@ -48,7 +48,7 @@ class TexRedefBenchSample : public SampleApplication
 {
   public:
     TexRedefBenchSample(int argc, char **argv)
-        : SampleApplication("Microbench", argc, argv, 2, 0, 1280, 1280),
+        : SampleApplication("Microbench", argc, argv, ClientType::ES2, 1280, 1280),
           mPixelsResize(nullptr),
           mPixelsNewTex(nullptr),
           mTimeFrame(false),

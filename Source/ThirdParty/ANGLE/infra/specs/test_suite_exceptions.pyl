@@ -14,11 +14,6 @@
   'angle_end2end_tests': {
     'modifications': {
       # anglebug.com/5328 suspecting blue screen caused by multiprocess
-      'linux-intel': {
-        'args': [
-          '--max-processes=1',
-        ],
-      },
       'win10-x64-intel': {
         'args': [
           '--max-processes=1',
@@ -28,11 +23,6 @@
   },
   'angle_restricted_trace_gold_tests': {
     'modifications': {
-      'linux-intel': {
-        'args': [
-          '--flaky-retries=1',
-        ],
-      },
       'win10-x64-intel': {
         'args': [
           '--flaky-retries=1',
@@ -43,11 +33,6 @@
   'angle_white_box_tests': {
     'modifications': {
       # anglebug.com/5328 suspecting blue screen caused by multiprocess
-      'linux-intel': {
-        'args': [
-          '--max-processes=1',
-        ],
-      },
       'win10-x64-intel': {
         'args': [
           '--max-processes=1',

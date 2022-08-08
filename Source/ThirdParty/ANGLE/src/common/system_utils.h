@@ -43,6 +43,10 @@ bool IsFullPath(std::string dirName);
 std::string GetRootDirectory();
 std::string ConcatenatePath(std::string first, std::string second);
 
+Optional<std::string> GetTempDirectory();
+Optional<std::string> CreateTemporaryFileInDirectory(const std::string &directory);
+Optional<std::string> CreateTemporaryFile();
+
 // Get absolute time in seconds.  Use this function to get an absolute time with an unknown origin.
 double GetCurrentSystemTime();
 // Get CPU time for current process in seconds.
@@ -210,6 +214,8 @@ std::string Narrow(const std::wstring_view &utf16);
 // Convert an UTF-8 string to an UTF-16 wstring.
 std::wstring Widen(const std::string_view &utf8);
 #endif
+
+std::string StripFilenameFromPath(const std::string &path);
 }  // namespace angle
 
 #endif  // COMMON_SYSTEM_UTILS_H_

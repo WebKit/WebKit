@@ -172,6 +172,11 @@ void main()
 
     bool hasReadDepthSupport() const { return IsGLExtensionEnabled("GL_NV_read_depth"); }
 
+    bool hasReadDepthStencilSupport() const
+    {
+        return IsGLExtensionEnabled("GL_NV_read_depth_stencil");
+    }
+
     bool hasReadStencilSupport() const { return IsGLExtensionEnabled("GL_NV_read_stencil"); }
 
     bool hasFloatDepthSupport() const { return IsGLExtensionEnabled("GL_NV_depth_buffer_float2"); }
@@ -356,8 +361,7 @@ void DepthStencilFormatsTestBase::depthStencilReadbackCase(const ReadbackTestPar
     GLubyte actualPixels[destRes * destRes * 8];
     glReadPixels(0, 0, destRes, destRes, GL_DEPTH_COMPONENT,
                  hasFloatDepth ? GL_FLOAT : GL_UNSIGNED_SHORT, actualPixels);
-    // NV_read_depth and NV_read_stencil do not support packed depth/stencil
-    if (hasReadDepthSupport() && type.format != GL_DEPTH_STENCIL)
+    if (hasReadDepthSupport())
     {
         EXPECT_GL_NO_ERROR();
         if (hasFloatDepth)
@@ -371,17 +375,12 @@ void DepthStencilFormatsTestBase::depthStencilReadbackCase(const ReadbackTestPar
         }
         else
         {
-            auto scale = [](float f) {
-                return static_cast<uint16_t>(
-                    static_cast<float>(std::numeric_limits<uint16_t>::max()) * f);
-            };
-
             constexpr unsigned short kEpsilon = 2;
             const unsigned short *pixels = reinterpret_cast<const unsigned short *>(actualPixels);
-            ASSERT_NEAR(pixels[0], scale(d00), kEpsilon);
-            ASSERT_NEAR(pixels[0 + destRes], scale(d01), kEpsilon);
-            ASSERT_NEAR(pixels[1], scale(d10), kEpsilon);
-            ASSERT_NEAR(pixels[1 + destRes], scale(d11), kEpsilon);
+            ASSERT_NEAR(pixels[0], gl::unorm<16>(d00), kEpsilon);
+            ASSERT_NEAR(pixels[0 + destRes], gl::unorm<16>(d01), kEpsilon);
+            ASSERT_NEAR(pixels[1], gl::unorm<16>(d10), kEpsilon);
+            ASSERT_NEAR(pixels[1 + destRes], gl::unorm<16>(d11), kEpsilon);
         }
     }
     else
@@ -395,7 +394,39 @@ void DepthStencilFormatsTestBase::depthStencilReadbackCase(const ReadbackTestPar
         {
             EXPECT_GL_NO_ERROR();
             ASSERT_TRUE((actualPixels[0] == 1) && (actualPixels[1] == 2) &&
-                        (actualPixels[0 + destRes] == 3) && (actualPixels[1 + destRes] = 4));
+                        (actualPixels[0 + destRes] == 3) && (actualPixels[1 + destRes] == 4));
+        }
+        else
+        {
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+        }
+
+        ASSERT(!hasFloatDepth);
+
+        glReadPixels(0, 0, destRes, destRes, GL_DEPTH_STENCIL_OES, GL_UNSIGNED_INT_24_8_OES,
+                     actualPixels);
+        if (hasReadDepthStencilSupport())
+        {
+            EXPECT_GL_NO_ERROR();
+
+            struct Pixel
+            {
+                uint32_t x;
+
+                uint32_t d24() const { return x >> 8; }
+
+                uint8_t s8() const { return x & 0xff; }
+            };
+
+            constexpr unsigned short kEpsilon = 2;
+            const Pixel *pixels               = reinterpret_cast<const Pixel *>(actualPixels);
+
+            ASSERT_NEAR(pixels[0].d24(), gl::unorm<24>(d00), kEpsilon);
+            ASSERT_NEAR(pixels[0 + destRes].d24(), gl::unorm<24>(d01), kEpsilon);
+            ASSERT_NEAR(pixels[1].d24(), gl::unorm<24>(d10), kEpsilon);
+            ASSERT_NEAR(pixels[1 + destRes].d24(), gl::unorm<24>(d11), kEpsilon);
+            ASSERT_TRUE((pixels[0].s8() == 1) && (pixels[1].s8() == 2) &&
+                        (pixels[0 + destRes].s8() == 3) && (pixels[1 + destRes].s8() == 4));
         }
         else
         {
@@ -443,6 +474,53 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_DepthStencil)
     ReadbackTestParam type = {
         GL_DEPTH_STENCIL_ATTACHMENT, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8_OES, fakeData, 24, 8};
     depthStencilReadbackCase(type);
+}
+
+// Verify that packed D/S readPixels with a D32_FLOAT_S8X24_UINT attachment
+TEST_P(DepthStencilFormatsTestES3, DepthStencilReadback_DepthFloatStencil)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_packed_depth_stencil") ||
+                       !IsGLExtensionEnabled("GL_NV_depth_buffer_float2") ||
+                       !IsGLExtensionEnabled("GL_NV_read_depth") ||
+                       !IsGLExtensionEnabled("GL_NV_read_depth_stencil") ||
+                       !IsGLExtensionEnabled("GL_NV_read_stencil"));
+
+    GLFramebuffer FBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture depthStencilTexture;
+    glBindTexture(GL_TEXTURE_2D, depthStencilTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH32F_STENCIL8, getWindowWidth(), getWindowHeight(), 0,
+                 GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencilTexture);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH32F_STENCIL8, getWindowWidth(),
+                          getWindowHeight());
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencilTexture);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr float kDepthClearValue     = 0.123f;
+    constexpr uint8_t kStencilClearValue = 0x42;
+
+    glClearDepthf(kDepthClearValue);
+    glClearStencil(kStencilClearValue);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    struct
+    {
+        float depth;
+        uint8_t stencil;
+        char unused[3];
+    } pixel = {};
+    glReadPixels(0, 0, 1, 1, GL_DEPTH_STENCIL_OES, GL_FLOAT_32_UNSIGNED_INT_24_8_REV, &pixel);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_FLOAT_EQ(pixel.depth, kDepthClearValue);
+    EXPECT_EQ(pixel.stencil, kStencilClearValue);
 }
 
 // This test will initialize a depth texture and then render with it and verify

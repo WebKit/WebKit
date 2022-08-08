@@ -77,7 +77,7 @@ vk::PresentMode GetDesiredPresentMode(const std::vector<vk::PresentMode> &presen
             case vk::PresentMode::ImmediateKHR:
                 immediateAvailable = true;
                 break;
-            case vk::PresentMode::SharedContinuousRefreshKHR:
+            case vk::PresentMode::SharedDemandRefreshKHR:
                 sharedPresent = true;
                 break;
             default:
@@ -1100,7 +1100,7 @@ angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk)
     if ((mState.attributes.getAsInt(EGL_RENDER_BUFFER, EGL_BACK_BUFFER) == EGL_SINGLE_BUFFER) &&
         supportsPresentMode(vk::PresentMode::SharedDemandRefreshKHR))
     {
-        std::vector<vk::PresentMode> presentModes = {vk::PresentMode::SharedContinuousRefreshKHR};
+        std::vector<vk::PresentMode> presentModes = {vk::PresentMode::SharedDemandRefreshKHR};
         mDesiredSwapchainPresentMode              = GetDesiredPresentMode(presentModes, 0);
     }
 
@@ -1356,7 +1356,7 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
     swapchainInfo.clipped     = VK_TRUE;
     swapchainInfo.oldSwapchain = lastSwapchain;
 
-    if (mDesiredSwapchainPresentMode == vk::PresentMode::SharedDemandRefreshKHR)
+    if (isSharedPresentModeDesired())
     {
         swapchainInfo.minImageCount = 1;
 
@@ -1911,7 +1911,7 @@ angle::Result WindowSurfaceVk::swapImpl(const gl::Context *context,
     if (!presentOutOfDate)
     {
         // Defer acquiring the next swapchain image since the swapchain is not out-of-date.
-        deferAcquireNextImage(context);
+        deferAcquireNextImage();
     }
     else
     {
@@ -1933,7 +1933,12 @@ angle::Result WindowSurfaceVk::onSharedPresentContextFlush(const gl::Context *co
     return swapImpl(context, nullptr, 0, nullptr);
 }
 
-void WindowSurfaceVk::deferAcquireNextImage(const gl::Context *context)
+bool WindowSurfaceVk::hasStagedUpdates() const
+{
+    return mSwapchainImages[mCurrentSwapchainImageIndex].image.hasStagedUpdatesInAllocatedLevels();
+}
+
+void WindowSurfaceVk::deferAcquireNextImage()
 {
     mNeedToAcquireNextSwapchainImage = true;
 
@@ -1991,9 +1996,9 @@ angle::Result WindowSurfaceVk::doDeferredAcquireNextImage(const gl::Context *con
     //    * This is disabled when buffer age has been queried to work around a dEQP test bug.
     // - Depth/Stencil can always be invalidated
     //
-    // In all cases, when the present mode is DEMAND_REFRESH, swap is implicit and the swap behavior
+    // In all cases, when in shared present mode, swap is implicit and the swap behavior
     // doesn't apply so no invalidation is done.
-    if (mSwapchainPresentMode != vk::PresentMode::SharedDemandRefreshKHR)
+    if (!isSharedPresentMode())
     {
         if (mState.swapBehavior == EGL_BUFFER_DESTROYED && mBufferAgeQueryFrameNumber == 0)
         {
@@ -2023,8 +2028,7 @@ VkResult WindowSurfaceVk::acquireNextSwapchainImage(vk::Context *context)
 {
     VkDevice device = context->getDevice();
 
-    if ((mSwapchainPresentMode == vk::PresentMode::SharedDemandRefreshKHR) &&
-        !mNeedToAcquireNextSwapchainImage)
+    if (isSharedPresentMode() && !mNeedToAcquireNextSwapchainImage)
     {
         ASSERT(mSwapchainImages.size());
         SwapchainImage &image = mSwapchainImages[0];
@@ -2051,7 +2055,7 @@ VkResult WindowSurfaceVk::acquireNextSwapchainImage(vk::Context *context)
     SwapchainImage &image = mSwapchainImages[mCurrentSwapchainImageIndex];
 
     // Single Image Mode
-    if ((mSwapchainPresentMode == vk::PresentMode::SharedDemandRefreshKHR) &&
+    if (isSharedPresentMode() &&
         (image.image.getCurrentImageLayout() != vk::ImageLayout::SharedPresent))
     {
         rx::RendererVk *rendererVk = context->getRenderer();
@@ -2149,7 +2153,7 @@ egl::Error WindowSurfaceVk::getMscRate(EGLint * /*numerator*/, EGLint * /*denomi
 void WindowSurfaceVk::setSwapInterval(EGLint interval)
 {
     // Don't let setSwapInterval change presentation mode if using SHARED present.
-    if (mSwapchainPresentMode == vk::PresentMode::SharedDemandRefreshKHR)
+    if (isSharedPresentMode())
     {
         return;
     }
@@ -2477,6 +2481,37 @@ angle::Result WindowSurfaceVk::drawOverlay(ContextVk *contextVk, SwapchainImage 
     return angle::Result::Continue;
 }
 
+egl::Error WindowSurfaceVk::setAutoRefreshEnabled(bool enabled)
+{
+    if (enabled && !supportsPresentMode(vk::PresentMode::SharedContinuousRefreshKHR))
+    {
+        return egl::EglBadMatch();
+    }
+
+    vk::PresentMode newDesiredSwapchainPresentMode =
+        enabled ? vk::PresentMode::SharedContinuousRefreshKHR
+                : vk::PresentMode::SharedDemandRefreshKHR;
+    // Auto refresh is only applicable in shared present mode
+    if (isSharedPresentModeDesired() &&
+        (mDesiredSwapchainPresentMode != newDesiredSwapchainPresentMode))
+    {
+        // In cases where the user switches to single buffer and have yet to call eglSwapBuffer,
+        // enabling/disabling auto refresh should only change mDesiredSwapchainPresentMode as we
+        // have not yet actually switched to single buffer mode.
+        mDesiredSwapchainPresentMode = newDesiredSwapchainPresentMode;
+
+        // If auto refresh is updated and we are already in single buffer mode we need to recreate
+        // swapchain. We need the deferAcquireNextImage() call as unlike setRenderBuffer(), the user
+        // does not have to call eglSwapBuffers after setting the auto refresh attribute
+        if (isSharedPresentMode())
+        {
+            deferAcquireNextImage();
+        }
+    }
+
+    return egl::NoError();
+}
+
 egl::Error WindowSurfaceVk::getBufferAge(const gl::Context *context, EGLint *age)
 {
     if (mNeedToAcquireNextSwapchainImage)
@@ -2529,11 +2564,14 @@ egl::Error WindowSurfaceVk::setRenderBuffer(EGLint renderBuffer)
 {
     if (renderBuffer == EGL_SINGLE_BUFFER)
     {
-        if (!supportsPresentMode(vk::PresentMode::SharedDemandRefreshKHR))
+        vk::PresentMode presentMode = mState.autoRefreshEnabled
+                                          ? vk::PresentMode::SharedContinuousRefreshKHR
+                                          : vk::PresentMode::SharedDemandRefreshKHR;
+        if (!supportsPresentMode(presentMode))
         {
             return egl::EglBadMatch();
         }
-        mDesiredSwapchainPresentMode = vk::PresentMode::SharedDemandRefreshKHR;
+        mDesiredSwapchainPresentMode = presentMode;
     }
     else  // EGL_BACK_BUFFER
     {

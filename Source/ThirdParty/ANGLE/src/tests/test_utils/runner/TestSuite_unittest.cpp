@@ -49,16 +49,15 @@ class TestSuiteTest : public testing::Test
         EXPECT_NE(executablePath, "");
         executablePath += std::string("/") + kTestHelperExecutable + GetExecutableExtension();
 
-        constexpr uint32_t kMaxTempDirLen = 100;
-        char tempDirName[kMaxTempDirLen * 2];
-
-        if (!GetTempDir(tempDirName, kMaxTempDirLen))
+        const Optional<std::string> tempDirName = GetTempDirectory();
+        if (!tempDirName.valid())
         {
             return false;
         }
 
         std::stringstream tempFNameStream;
-        tempFNameStream << tempDirName << GetPathSeparator() << "test_temp_" << rand() << ".json";
+        tempFNameStream << tempDirName.value() << GetPathSeparator() << "test_temp_" << rand()
+                        << ".json";
         mTempFileName = tempFNameStream.str();
 
         std::string resultsFileName = "--results-file=" + mTempFileName;
@@ -204,12 +203,11 @@ TEST(MockTestSuiteTest, DISABLED_Skip)
 // Trigger a flaky test failure.
 TEST(MockFlakyTestSuiteTest, DISABLED_Flaky)
 {
-    constexpr uint32_t kMaxTempDirLen = 100;
-    char tempDirName[kMaxTempDirLen * 2];
-    ASSERT_TRUE(GetTempDir(tempDirName, kMaxTempDirLen));
+    const Optional<std::string> tempDirName = GetTempDirectory();
+    ASSERT_TRUE(tempDirName.valid());
 
     std::stringstream tempFNameStream;
-    tempFNameStream << tempDirName << GetPathSeparator() << "flaky_temp.txt";
+    tempFNameStream << tempDirName.value() << GetPathSeparator() << "flaky_temp.txt";
     std::string tempFileName = tempFNameStream.str();
 
     int fails = 0;

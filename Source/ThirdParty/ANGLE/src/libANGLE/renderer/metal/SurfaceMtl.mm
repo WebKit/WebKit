@@ -249,7 +249,12 @@ EGLint SurfaceMtl::isPostSubBufferSupported() const
 
 EGLint SurfaceMtl::getSwapBehavior() const
 {
-    return EGL_BUFFER_PRESERVED;
+    // dEQP-EGL.functional.query_surface.* requires that for a surface with swap
+    // behavior=EGL_BUFFER_PRESERVED, config.surfaceType must contain
+    // EGL_SWAP_BEHAVIOR_PRESERVED_BIT.
+    // Since we don't support EGL_SWAP_BEHAVIOR_PRESERVED_BIT in egl::Config for now, let's just use
+    // EGL_BUFFER_DESTROYED as default swap behavior.
+    return EGL_BUFFER_DESTROYED;
 }
 
 angle::Result SurfaceMtl::initializeContents(const gl::Context *context,
@@ -706,6 +711,16 @@ OffscreenSurfaceMtl::~OffscreenSurfaceMtl() {}
 void OffscreenSurfaceMtl::destroy(const egl::Display *display)
 {
     SurfaceMtl::destroy(display);
+}
+
+EGLint OffscreenSurfaceMtl::getWidth() const
+{
+    return mSize.width;
+}
+
+EGLint OffscreenSurfaceMtl::getHeight() const
+{
+    return mSize.height;
 }
 
 egl::Error OffscreenSurfaceMtl::swap(const gl::Context *context)

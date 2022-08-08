@@ -320,11 +320,6 @@ class PosixProcess : public Process
     int mExitCode = 0;
     pid_t mPID    = -1;
 };
-
-std::string TempFileName()
-{
-    return std::string(".angle.XXXXXX");
-}
 }  // anonymous namespace
 
 void Sleep(unsigned int milliseconds)
@@ -395,34 +390,6 @@ bool StabilizeCPUForBenchmarking()
 #else  // defined(ANGLE_PLATFORM_FUCHSIA)
     return false;
 #endif
-}
-
-bool GetTempDir(char *tempDirOut, uint32_t maxDirNameLen)
-{
-    const char *tmp = getenv("TMPDIR");
-    if (tmp)
-    {
-        strncpy(tempDirOut, tmp, maxDirNameLen);
-        return true;
-    }
-
-#if defined(ANGLE_PLATFORM_ANDROID)
-    // Not used right now in the ANGLE test runner.
-    // return PathService::Get(DIR_CACHE, path);
-    return false;
-#else
-    strncpy(tempDirOut, "/tmp", maxDirNameLen);
-    return true;
-#endif
-}
-
-bool CreateTemporaryFileInDir(const char *dir, char *tempFileNameOut, uint32_t maxFileNameLen)
-{
-    std::string tempFile = TempFileName();
-    snprintf(tempFileNameOut, maxFileNameLen, "%s/%s", dir, tempFile.c_str());
-    int fd = mkstemp(tempFileNameOut);
-    close(fd);
-    return fd != -1;
 }
 
 bool DeleteSystemFile(const char *path)

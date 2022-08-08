@@ -630,6 +630,9 @@ basic_types_enumeration = [
     'UImageCubeArray',
     'UImageRect',
     'UImageBuffer',
+    'PixelLocalANGLE',
+    'IPixelLocalANGLE',
+    'UPixelLocalANGLE',
     'SubpassInput',
     'ISubpassInput',
     'USubpassInput',
@@ -1217,8 +1220,10 @@ class TType:
             type_obj['basic'] = glsl_header_type[0].upper() + glsl_header_type[1:]
             return type_obj
 
-        if glsl_header_type.startswith('gsampler') or glsl_header_type.startswith(
-                'gimage') or glsl_header_type.startswith('gsubpassInput'):
+        if glsl_header_type.startswith('gsampler') or \
+           glsl_header_type.startswith('gimage') or \
+           glsl_header_type.startswith('gpixelLocal') or \
+           glsl_header_type.startswith('gsubpassInput'):
             type_obj['basic'] = glsl_header_type[1].upper() + glsl_header_type[2:]
             type_obj['genType'] = 'sampler_or_image_or_subpass'
             return type_obj

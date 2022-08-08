@@ -131,23 +131,14 @@ TEST_P(RendererTest, RequestedRendererCreated)
     EGLint glesMajorVersion = GetParam().majorVersion;
     EGLint glesMinorVersion = GetParam().minorVersion;
 
-    // Ensure that the renderer string contains the requested version number
-    if (glesMajorVersion == 3 && glesMinorVersion == 1)
+    std::ostringstream expectedVersionString;
+    if (GetParam().clientType == EGL_OPENGL_ES_API)
     {
-        ASSERT_NE(versionString.find(std::string("es 3.1")), std::string::npos);
+        expectedVersionString << "es ";
     }
-    else if (glesMajorVersion == 3 && glesMinorVersion == 0)
-    {
-        ASSERT_NE(versionString.find(std::string("es 3.0")), std::string::npos);
-    }
-    else if (glesMajorVersion == 2 && glesMinorVersion == 0)
-    {
-        ASSERT_NE(versionString.find(std::string("es 2.0")), std::string::npos);
-    }
-    else
-    {
-        FAIL() << "Unhandled GL ES client version.";
-    }
+    expectedVersionString << glesMajorVersion << "." << glesMinorVersion;
+
+    ASSERT_NE(versionString.find(expectedVersionString.str()), std::string::npos);
 
     ASSERT_GL_NO_ERROR();
     ASSERT_EGL_SUCCESS();
@@ -172,5 +163,6 @@ TEST_P(RendererTest, SimpleOperation)
 // Select configurations (e.g. which renderer, which GLES major version) these tests should be run
 // against.
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_NULL(RendererTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_NULL_AND(RendererTest,
+                                                         ANGLE_ALL_TEST_PLATFORMS_GL32_CORE);
 }  // anonymous namespace

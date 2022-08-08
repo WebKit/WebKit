@@ -91,6 +91,11 @@ struct FrontendFeatures : FeatureSetBase
         "forceGlErrorChecking", FeatureCategory::FrontendFeatures,
         "Force GL error checking (i.e. prevent applications from disabling error checking",
         &members, "https://issuetracker.google.com/220069903"};
+
+    FeatureInfo emulatePixelLocalStorage = {
+        "emulatePixelLocalStorage", FeatureCategory::FrontendFeatures,
+        "Emulate ANGLE_shader_pixel_local_storage using shader images", &members,
+        "http://anglebug.com/7279"};
 };
 
 inline FrontendFeatures::FrontendFeatures()  = default;

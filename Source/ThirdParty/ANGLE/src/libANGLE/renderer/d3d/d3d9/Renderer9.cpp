@@ -2906,29 +2906,30 @@ TextureStorage *Renderer9::createTextureStorageExternal(
 }
 
 TextureStorage *Renderer9::createTextureStorage2D(GLenum internalformat,
-                                                  bool renderTarget,
+                                                  BindFlags bindFlags,
                                                   GLsizei width,
                                                   GLsizei height,
                                                   int levels,
                                                   const std::string &label,
                                                   bool hintLevelZeroOnly)
 {
-    return new TextureStorage9_2D(this, internalformat, renderTarget, width, height, levels, label);
+    return new TextureStorage9_2D(this, internalformat, bindFlags.renderTarget, width, height,
+                                  levels, label);
 }
 
 TextureStorage *Renderer9::createTextureStorageCube(GLenum internalformat,
-                                                    bool renderTarget,
+                                                    BindFlags bindFlags,
                                                     int size,
                                                     int levels,
                                                     bool hintLevelZeroOnly,
                                                     const std::string &label)
 {
-    return new TextureStorage9_Cube(this, internalformat, renderTarget, size, levels,
+    return new TextureStorage9_Cube(this, internalformat, bindFlags.renderTarget, size, levels,
                                     hintLevelZeroOnly, label);
 }
 
 TextureStorage *Renderer9::createTextureStorage3D(GLenum internalformat,
-                                                  bool renderTarget,
+                                                  BindFlags bindFlags,
                                                   GLsizei width,
                                                   GLsizei height,
                                                   GLsizei depth,
@@ -2942,7 +2943,7 @@ TextureStorage *Renderer9::createTextureStorage3D(GLenum internalformat,
 }
 
 TextureStorage *Renderer9::createTextureStorage2DArray(GLenum internalformat,
-                                                       bool renderTarget,
+                                                       BindFlags bindFlags,
                                                        GLsizei width,
                                                        GLsizei height,
                                                        GLsizei depth,

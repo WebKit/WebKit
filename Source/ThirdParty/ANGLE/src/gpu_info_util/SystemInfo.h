@@ -119,7 +119,6 @@ constexpr VendorID kVendorID_Kazan       = 0x10003;
 constexpr DeviceID kDeviceID_Swiftshader  = 0xC0DE;
 constexpr DeviceID kDeviceID_Adreno540    = 0x5040001;
 constexpr DeviceID kDeviceID_UHD630Mobile = 0x3E9B;
-constexpr DeviceID kDeviceID_HD630Mobile  = 0x5912;
 
 // Predicates on vendor IDs
 bool IsAMD(VendorID vendorId);

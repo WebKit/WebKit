@@ -768,18 +768,18 @@ TEST_P(FramebufferMultiviewTest, NegativeMultisampledFramebufferTest)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferMultiviewTest);
 ANGLE_INSTANTIATE_TEST(FramebufferMultiviewTest,
-                       VertexShaderOpenGL(3, 0, ExtensionName::multiview),
-                       VertexShaderVulkan(3, 0, ExtensionName::multiview),
-                       GeomShaderD3D11(3, 0, ExtensionName::multiview),
-                       VertexShaderOpenGL(3, 0, ExtensionName::multiview2),
-                       VertexShaderVulkan(3, 0, ExtensionName::multiview2),
-                       GeomShaderD3D11(3, 0, ExtensionName::multiview2));
+                       VertexShaderOpenGL(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview),
+                       VertexShaderVulkan(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview),
+                       GeomShaderD3D11(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview),
+                       VertexShaderOpenGL(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview2),
+                       VertexShaderVulkan(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview2),
+                       GeomShaderD3D11(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview2));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferMultiviewLayeredClearTest);
 ANGLE_INSTANTIATE_TEST(FramebufferMultiviewLayeredClearTest,
-                       VertexShaderOpenGL(3, 0, ExtensionName::multiview),
-                       VertexShaderVulkan(3, 0, ExtensionName::multiview),
-                       GeomShaderD3D11(3, 0, ExtensionName::multiview),
-                       VertexShaderOpenGL(3, 0, ExtensionName::multiview2),
-                       VertexShaderVulkan(3, 0, ExtensionName::multiview2),
-                       GeomShaderD3D11(3, 0, ExtensionName::multiview2));
+                       VertexShaderOpenGL(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview),
+                       VertexShaderVulkan(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview),
+                       GeomShaderD3D11(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview),
+                       VertexShaderOpenGL(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview2),
+                       VertexShaderVulkan(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview2),
+                       GeomShaderD3D11(EGL_OPENGL_ES_API, 3, 0, 0, ExtensionName::multiview2));

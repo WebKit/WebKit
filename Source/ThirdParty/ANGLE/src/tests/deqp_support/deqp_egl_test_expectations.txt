@@ -96,8 +96,9 @@
 2546 MAC : dEQP-EGL.functional.native_coord_mapping.native_window.* = FAIL
 2546 MAC : dEQP-EGL.functional.negative_api.copy_buffers = FAIL
 2546 MAC : dEQP-EGL.functional.negative_api.swap_interval = FAIL
-2546 MAC : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_depth_stencil = FAIL
+2546 MAC OPENGL : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_depth_stencil = FAIL
 2546 MAC : dEQP-EGL.functional.thread_cleanup.* = SKIP
+1347817 MAC : dEQP-EGL.functional.image.api.create_image_gles2_android_native_* = SKIP
 
 // Android GLES-only failues
 2567 ANDROID GLES : dEQP-EGL.functional.image.api.create_image_gles2_tex2d_red = FAIL
@@ -123,6 +124,10 @@
 // Pixel 6 Vulkan
 // These fail on the Android S bots, but pass on pre-release Android T drivers:
 6899 PIXEL6 VULKAN : dEQP-EGL.functional.query_context.*.rgb888_window = FAIL
+
+// render_sample_texture_array tests failing on some configurations on bots
+7506 ANDROID VULKAN : dEQP-EGL.functional.image.create.gles3_android_native_array_*_render_sample_texture_array = FAIL
+7506 ANDROID GLES : dEQP-EGL.functional.image.create.gles3_android_native_array_*_render_sample_texture_array = FAIL
 
 // ES 1 tests
 2306 WIN : dEQP-EGL.functional.color_clears.single_context.gles1* = FAIL
@@ -232,8 +237,6 @@
 6485 MAC METAL : dEQP-EGL.functional.image.render_multiple_contexts.gles2_renderbuffer* = FAIL
 6485 MAC METAL : dEQP-EGL.functional.image.render_multiple_contexts.gles2_texture* = FAIL
 
-6485 MAC METAL : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_depth_no_stencil = FAIL
-6485 MAC METAL : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_no_depth_stencil = FAIL
 6485 MAC METAL : dEQP-EGL.functional.render.multi_context.gles2.rgba8888_pbuffer = FAIL
 6485 MAC METAL : dEQP-EGL.functional.render.multi_context.gles2_gles3.rgba8888_pbuffer = FAIL
 6485 MAC METAL : dEQP-EGL.functional.render.multi_context.gles3.rgba8888_pbuffer = FAIL

@@ -58,7 +58,7 @@ class Sync final : public RefCountObject<GLuint>, public LabeledObject
 
     void onDestroy(const Context *context) override;
 
-    void setLabel(const Context *context, const std::string &label) override;
+    angle::Result setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;
 
     angle::Result set(const Context *context, GLenum condition, GLbitfield flags);

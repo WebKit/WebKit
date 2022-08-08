@@ -199,6 +199,13 @@ ClearParams D3D11Params()
     return params;
 }
 
+ClearParams MetalParams()
+{
+    ClearParams params;
+    params.eglParameters = egl_platform::METAL();
+    return params;
+}
+
 ClearParams OpenGLOrGLESParams()
 {
     ClearParams params;
@@ -227,6 +234,7 @@ TEST_P(ClearBenchmark, Run)
 
 ANGLE_INSTANTIATE_TEST(ClearBenchmark,
                        D3D11Params(),
+                       MetalParams(),
                        OpenGLOrGLESParams(),
                        VulkanParams(false, false),
                        VulkanParams(true, false),

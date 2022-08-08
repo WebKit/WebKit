@@ -201,6 +201,13 @@ PointSpritesParams D3D11Params()
     return params;
 }
 
+PointSpritesParams MetalParams()
+{
+    PointSpritesParams params;
+    params.eglParameters = egl_platform::METAL();
+    return params;
+}
+
 PointSpritesParams OpenGLOrGLESParams()
 {
     PointSpritesParams params;
@@ -222,4 +229,8 @@ TEST_P(PointSpritesBenchmark, Run)
     run();
 }
 
-ANGLE_INSTANTIATE_TEST(PointSpritesBenchmark, D3D11Params(), OpenGLOrGLESParams(), VulkanParams());
+ANGLE_INSTANTIATE_TEST(PointSpritesBenchmark,
+                       D3D11Params(),
+                       MetalParams(),
+                       OpenGLOrGLESParams(),
+                       VulkanParams());

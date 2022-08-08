@@ -121,6 +121,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::OES_texture_3D] = EBhUndefined;
     }
+    if (resources.ANGLE_shader_pixel_local_storage)
+    {
+        extBehavior[TExtension::ANGLE_shader_pixel_local_storage] = EBhUndefined;
+    }
     if (resources.ANGLE_texture_multisample)
     {
         extBehavior[TExtension::ANGLE_texture_multisample] = EBhUndefined;

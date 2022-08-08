@@ -188,7 +188,7 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
             // The semantic of this call is to take uncompressed data and compress it on-the-fly.
             // This operation is not supported in OpenGL ES.
             glTexImage2D(GL_TEXTURE_2D, 0, format, 4, 4, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-            EXPECT_GL_ERROR(getClientMajorVersion() >= 3 ? GL_INVALID_OPERATION : GL_INVALID_VALUE);
+            EXPECT_GL_ERROR(GL_INVALID_VALUE);
 
             // Try compressed enum as format. Compressed texture extensions never allow this.
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 4, 4, 0, format, GL_UNSIGNED_BYTE, nullptr);
@@ -263,7 +263,7 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
             // uncompressed data and compress it on-the-fly. This operation is not supported in
             // OpenGL ES.
             glTexImage3D(target, 0, format, 4, 4, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+            EXPECT_GL_ERROR(GL_INVALID_VALUE);
 
             // Try compressed enum as format. Compressed texture extensions never allow this.
             glTexImage3D(target, 0, GL_RGB, 4, 4, 1, 0, format, GL_UNSIGNED_BYTE, nullptr);

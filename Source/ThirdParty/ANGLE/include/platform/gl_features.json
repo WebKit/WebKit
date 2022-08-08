@@ -453,6 +453,13 @@
             "issue": "http://anglebug.com/4646"
         },
         {
+            "name": "emulate_CopyTexImage2D",
+            "category": "Workarounds",
+            "description": [
+                "Replace CopyTexImage2D with TexImage2D + CopyTexSubImage2D."
+            ]
+        },
+        {
             "name": "emulate_CopyTexImage2D_from_renderbuffers",
             "category": "Workarounds",
             "description": [

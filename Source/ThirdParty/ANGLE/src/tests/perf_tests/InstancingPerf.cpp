@@ -330,6 +330,13 @@ InstancingPerfParams InstancingPerfD3D11Params()
     return params;
 }
 
+InstancingPerfParams InstancingPerfMetalParams()
+{
+    InstancingPerfParams params;
+    params.eglParameters = METAL();
+    return params;
+}
+
 InstancingPerfParams InstancingPerfOpenGLOrGLESParams()
 {
     InstancingPerfParams params;
@@ -344,6 +351,7 @@ TEST_P(InstancingPerfBenchmark, Run)
 
 ANGLE_INSTANTIATE_TEST(InstancingPerfBenchmark,
                        InstancingPerfD3D11Params(),
+                       InstancingPerfMetalParams(),
                        InstancingPerfOpenGLOrGLESParams());
 
 }  // anonymous namespace

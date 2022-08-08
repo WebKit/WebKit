@@ -83,10 +83,13 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
     using Attrib       = intptr_t;
     using AttribKHR    = khronos_int32_t;
     using Boolean      = unsigned int;
+    using Surface      = void *;
 
     // It should also be possible to set multisample and floating point framebuffers.
     EGLint getClientMajorVersion() const { return mClientMajorVersion; }
     EGLint getClientMinorVersion() const { return mClientMinorVersion; }
+    EGLenum getClientType() const { return mClientType; }
+    EGLint getProfileMask() const { return mProfileMask; }
 
     virtual bool initializeGL(OSWindow *osWindow,
                               angle::Library *glWindowingLibrary,
@@ -122,6 +125,13 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
                                  const AttribKHR *attrib_list)          = 0;
     virtual EGLBoolean destroyImage(Image image)                        = 0;
     virtual EGLBoolean destroyImageKHR(Image image)                     = 0;
+    virtual Surface createPbufferSurface(const EGLint *attrib_list)     = 0;
+    virtual EGLBoolean destroySurface(Surface surface)                  = 0;
+
+    virtual EGLBoolean bindTexImage(EGLSurface surface, EGLint buffer)    = 0;
+    virtual EGLBoolean releaseTexImage(EGLSurface surface, EGLint buffer) = 0;
+
+    virtual bool makeCurrent(EGLSurface draw, EGLSurface read, EGLContext context) = 0;
 
     bool isMultisample() const { return mConfigParams.multisample; }
     bool isDebugEnabled() const { return mConfigParams.debug; }
@@ -132,11 +142,16 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
     const ConfigParameters &getConfigParams() const { return mConfigParams; }
 
   protected:
-    GLWindowBase(EGLint glesMajorVersion, EGLint glesMinorVersion);
+    GLWindowBase(EGLenum clientType,
+                 EGLint glesMajorVersion,
+                 EGLint glesMinorVersion,
+                 EGLint profileMask);
     virtual ~GLWindowBase();
 
+    EGLenum mClientType;
     EGLint mClientMajorVersion;
     EGLint mClientMinorVersion;
+    EGLint mProfileMask;
     EGLPlatformParameters mPlatform;
     ConfigParameters mConfigParams;
 };
@@ -144,7 +159,10 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
 class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
 {
   public:
-    static EGLWindow *New(EGLint glesMajorVersion, EGLint glesMinorVersion);
+    static EGLWindow *New(EGLenum clientType,
+                          EGLint glesMajorVersion,
+                          EGLint glesMinorVersion,
+                          EGLint profileMask);
     static void Delete(EGLWindow **window);
 
     static EGLBoolean FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *config);
@@ -207,6 +225,12 @@ class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
                          const AttribKHR *attrib_list) override;
     EGLBoolean destroyImage(Image image) override;
     EGLBoolean destroyImageKHR(Image image) override;
+    Surface createPbufferSurface(const EGLint *attrib_list) override;
+    EGLBoolean destroySurface(Surface surface) override;
+
+    EGLBoolean bindTexImage(EGLSurface surface, EGLint buffer) override;
+    EGLBoolean releaseTexImage(EGLSurface surface, EGLint buffer) override;
+    bool makeCurrent(EGLSurface draw, EGLSurface read, EGLContext context) override;
 
     // Only initializes the Context.
     bool initializeContext();
@@ -217,7 +241,10 @@ class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
     bool isDisplayInitialized() const { return mDisplay != EGL_NO_DISPLAY; }
 
   private:
-    EGLWindow(EGLint glesMajorVersion, EGLint glesMinorVersion);
+    EGLWindow(EGLenum clientType,
+              EGLint glesMajorVersion,
+              EGLint glesMinorVersion,
+              EGLint profileMask);
     ~EGLWindow() override;
 
     EGLConfig mConfig;

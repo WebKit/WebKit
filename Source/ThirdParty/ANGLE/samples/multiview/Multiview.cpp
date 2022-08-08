@@ -44,7 +44,7 @@ class MultiviewSample : public SampleApplication
 {
   public:
     MultiviewSample(int argc, char **argv)
-        : SampleApplication("Multiview", argc, argv, 3, 0),
+        : SampleApplication("Multiview", argc, argv, ClientType::ES3_0),
           mMultiviewProgram(0),
           mMultiviewPersperiveUniformLoc(-1),
           mMultiviewLeftEyeCameraUniformLoc(-1),

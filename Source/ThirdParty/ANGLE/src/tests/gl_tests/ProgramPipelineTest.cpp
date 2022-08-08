@@ -242,7 +242,10 @@ TEST_P(ProgramPipelineTest31, IsProgramPipelineTest)
 }
 
 // Simulates a call to glCreateShaderProgramv()
-GLuint createShaderProgram(GLenum type, const GLchar *shaderString)
+GLuint createShaderProgram(GLenum type,
+                           const GLchar *shaderString,
+                           unsigned int varyingsCount,
+                           const char *const *varyings)
 {
     GLShader shader(type);
     if (!shader.get())
@@ -251,6 +254,8 @@ GLuint createShaderProgram(GLenum type, const GLchar *shaderString)
     }
 
     glShaderSource(shader, 1, &shaderString, nullptr);
+    EXPECT_GL_NO_ERROR();
+
     glCompileShader(shader);
 
     GLint compiled;
@@ -263,7 +268,9 @@ GLuint createShaderProgram(GLenum type, const GLchar *shaderString)
         std::vector<GLchar> infoLog(infoLogLength);
         glGetShaderInfoLog(shader, infoLogLength, NULL, infoLog.data());
         INFO() << "Compilation failed:\n"
-               << infoLog.data() << "\n for shader:\n'<< shaderString << '\n";
+               << infoLog.data() << "\n for shader:\n"
+               << shaderString << "\n";
+
         glDeleteShader(shader);
         return 0;
     }
@@ -276,7 +283,24 @@ GLuint createShaderProgram(GLenum type, const GLchar *shaderString)
         if (compiled)
         {
             glAttachShader(program, shader);
+            EXPECT_GL_NO_ERROR();
+
+            if (varyingsCount > 0)
+            {
+                glTransformFeedbackVaryings(program, varyingsCount, varyings, GL_SEPARATE_ATTRIBS);
+                EXPECT_GL_NO_ERROR();
+            }
+
             glLinkProgram(program);
+
+            GLint linked = 0;
+            glGetProgramiv(program, GL_LINK_STATUS, &linked);
+
+            if (linked == 0)
+            {
+                glDeleteProgram(program);
+                return 0;
+            }
             glDetachShader(program, shader);
         }
     }
@@ -284,6 +308,11 @@ GLuint createShaderProgram(GLenum type, const GLchar *shaderString)
     EXPECT_GL_NO_ERROR();
 
     return program;
+}
+
+GLuint createShaderProgram(GLenum type, const GLchar *shaderString)
+{
+    return createShaderProgram(type, shaderString, 0, nullptr);
 }
 
 void ProgramPipelineTest31::drawQuadWithPPO(const std::string &positionAttribName,
@@ -1648,6 +1677,138 @@ void main()
 
     glDrawArrays(GL_POINTS, 0, 6);
     ASSERT_GL_NO_ERROR();
+}
+
+// Verify creation of seperable tessellation control shader program with transform feeback varying
+TEST_P(ProgramPipelineTest32, CreateProgramWithTransformFeedbackVarying)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+
+    const char *kVS =
+        "#version 320 es\n"
+        "\n"
+        "#extension GL_EXT_shader_io_blocks : require\n"
+        "\n"
+        "precision highp float;\n"
+
+        "out BLOCK_INOUT { vec4 value; } user_out;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "    gl_Position    = vec4(1.0, 0.0, 0.0, 1.0);\n"
+        "    user_out.value = vec4(4.0, 5.0, 6.0, 7.0);\n"
+        "}\n";
+
+    // Fragment shader body
+    const char *kFS =
+        "#version 320 es\n"
+        "\n"
+        "#extension GL_EXT_shader_io_blocks : require\n"
+        "\n"
+        "precision highp float;\n"
+        "in BLOCK_INOUT { vec4 value; } user_in;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "}\n";
+
+    // Geometry shader body
+    const char *kGS =
+        "#version 320 es\n"
+        "\n"
+        "#extension GL_EXT_geometry_shader : require\n"
+        "\n"
+        "layout(points)                   in;\n"
+        "layout(points, max_vertices = 1) out;\n"
+        "\n"
+        "precision highp float;\n"
+        "//${IN_PER_VERTEX_DECL_ARRAY}\n"
+        "//${OUT_PER_VERTEX_DECL}\n"
+        "in  BLOCK_INOUT { vec4 value; } user_in[];\n"
+        "out BLOCK_INOUT { vec4 value; } user_out;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "    user_out.value = vec4(1.0, 2.0, 3.0, 4.0);\n"
+        "    gl_Position    = vec4(0.0, 0.0, 0.0, 1.0);\n"
+        "\n"
+        "    EmitVertex();\n"
+        "}\n";
+
+    // tessellation control shader body
+    const char *kTCS =
+        "#version 320 es\n"
+        "\n"
+        "#extension GL_EXT_tessellation_shader : require\n"
+        "#extension GL_EXT_shader_io_blocks : require\n"
+        "\n"
+        "layout (vertices=4) out;\n"
+        "\n"
+        "precision highp float;\n"
+        "in  BLOCK_INOUT { vec4 value; } user_in[];\n"
+        "out BLOCK_INOUT { vec4 value; } user_out[];\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "    gl_out   [gl_InvocationID].gl_Position = vec4(0.0, 0.0, 0.0, 1.0);\n"
+        "    user_out [gl_InvocationID].value       = vec4(2.0, 3.0, 4.0, 5.0);\n"
+        "\n"
+        "    gl_TessLevelOuter[0] = 1.0;\n"
+        "    gl_TessLevelOuter[1] = 1.0;\n"
+        "}\n";
+
+    // Tessellation evaluation shader
+    const char *kTES =
+        "#version 320 es\n"
+        "\n"
+        "#extension GL_EXT_tessellation_shader : require\n"
+        "#extension GL_EXT_shader_io_blocks : require\n"
+        "\n"
+        "layout (isolines, point_mode) in;\n"
+        "\n"
+        "precision highp float;\n"
+        "in  BLOCK_INOUT { vec4 value; } user_in[];\n"
+        "out BLOCK_INOUT { vec4 value; } user_out;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "    gl_Position     = gl_in[0].gl_Position;\n"
+        "    user_out.value = vec4(3.0, 4.0, 5.0, 6.0);\n"
+        "}\n";
+    const GLchar *kVaryingName = "BLOCK_INOUT.value";
+
+    GLuint fsProgram = createShaderProgram(GL_FRAGMENT_SHADER, kFS);
+    ASSERT_NE(0u, fsProgram);
+
+    GLuint vsProgram = createShaderProgram(GL_VERTEX_SHADER, kVS, 1, &kVaryingName);
+    ASSERT_NE(0u, vsProgram);
+
+    GLuint gsProgram = 0u;
+    if (IsGLExtensionEnabled("GL_EXT_geometry_shader"))
+    {
+        gsProgram = createShaderProgram(GL_GEOMETRY_SHADER, kGS, 1, &kVaryingName);
+        ASSERT_NE(0u, gsProgram);
+    }
+
+    GLuint tcsProgram = createShaderProgram(GL_TESS_CONTROL_SHADER, kTCS, 1, &kVaryingName);
+    // Should fail here.
+    ASSERT_EQ(0u, tcsProgram);
+
+    // try compiling without transform feedback varying it should pass
+    tcsProgram = createShaderProgram(GL_TESS_CONTROL_SHADER, kTCS);
+    ASSERT_NE(0u, tcsProgram);
+
+    GLuint tesProgram = createShaderProgram(GL_TESS_EVALUATION_SHADER, kTES, 1, &kVaryingName);
+    ASSERT_NE(0u, tesProgram);
+
+    glDeleteProgram(fsProgram);
+    glDeleteProgram(vsProgram);
+    if (gsProgram != 0u)
+    {
+        glDeleteProgram(gsProgram);
+    }
+    glDeleteProgram(tcsProgram);
+    glDeleteProgram(tesProgram);
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramPipelineTest);

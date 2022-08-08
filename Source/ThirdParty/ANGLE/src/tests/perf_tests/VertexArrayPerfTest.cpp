@@ -198,6 +198,13 @@ TEST_P(VertexArrayBenchmark, Run)
     run();
 }
 
+VertexArrayParams MetalParams()
+{
+    VertexArrayParams params;
+    params.eglParameters = egl_platform::METAL();
+    return params;
+}
+
 VertexArrayParams VulkanParams()
 {
     VertexArrayParams params;
@@ -215,6 +222,7 @@ VertexArrayParams VulkanNullParams(TestMode testMode)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexArrayBenchmark);
 ANGLE_INSTANTIATE_TEST(VertexArrayBenchmark,
+                       MetalParams(),
                        VulkanParams(),
                        VulkanNullParams(TestMode::BindBuffer),
                        VulkanNullParams(TestMode::BufferData),

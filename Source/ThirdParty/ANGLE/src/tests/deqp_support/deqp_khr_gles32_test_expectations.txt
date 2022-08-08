@@ -9,37 +9,24 @@
 // Geometry shader support (conditioned to windows as that's our only bot capable of running these
 // tests)
 // API validation bugs
-// Wrong results
-5579 VULKAN WIN : KHR-GLES32.core.geometry_shader.adjacency.adjacency_indiced_triangle_strip = FAIL
-5579 VULKAN WIN : KHR-GLES32.core.geometry_shader.adjacency.adjacency_non_indiced_triangle_strip = FAIL
-5579 VULKAN WIN : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_input_line_strip_output_triangle_*_drawcall = FAIL
-5579 VULKAN WIN : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangle_*_drawcall = FAIL
-5579 VULKAN WIN : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_with_adjacency_input_*_strip_output_triangle_strip_adjacency_drawcall = FAIL
 // Failures on windows nvidia
+5579 VULKAN WIN NVIDIA : KHR-GLES32.core.geometry_shader.adjacency.adjacency_indiced_triangle_strip = FAIL
+5579 VULKAN WIN NVIDIA : KHR-GLES32.core.geometry_shader.adjacency.adjacency_non_indiced_triangle_strip = FAIL
+5579 VULKAN WIN NVIDIA : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_input_line_strip_output_triangle_*_drawcall = FAIL
+5579 VULKAN WIN NVIDIA : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangle_*_drawcall = FAIL
+5579 VULKAN WIN NVIDIA : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_with_adjacency_input_*_strip_output_triangle_strip_adjacency_drawcall = FAIL
 5579 VULKAN WIN NVIDIA : KHR-GLES32.core.geometry_shader.limits.max_invocations = FAIL
-5579 VULKAN WIN NVIDIA : KHR-GLES32.core.tessellation_shader.single.primitive_coverage = FAIL
 
 // Tessellation shader support
-// API validation bugs
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.vertex.vertex_ordering = FAIL
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_tessLevel = FAIL
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.compilation_and_linking_errors.tc_non_arrayed_per_vertex_input_variables = FAIL
-// Vulkan Validation error regarding buffer usage bits for transform feedback:
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.vertex.vertex_spacing = FAIL
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.single.program_object_properties = FAIL
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_PatchVerticesIn = FAIL
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = FAIL
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.TCS_TES = FAIL
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.input_patch_discard = FAIL
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_triangles_tessellation.degenerate_triangle = FAIL
-// Missing names in mVariableInfo map (fail on ASSERT in SPIR-V transformer)
+// Failures on older nvidia drivers
+5557 VULKAN WIN NVIDIA : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_PatchVerticesIn = FAIL
+5557 VULKAN WIN NVIDIA : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = FAIL
+// Expects separable program to fail but doesn't
 5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.single.xfb_captures_data_from_correct_stage = SKIP
-// Bug in front-end where builtins are not correctly marked active in every stage
-// Test failures
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_quads_tessellation.* = FAIL
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_triangles_tessellation.identical_triangles = FAIL
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_triangles_tessellation.inner_tessellation_level_rounding = FAIL
-// Crash on assert in libcpp. CTS passes to a function '&vector[0], size', where vector is empty.
+
+// Slow test
+5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.vertex.vertex_ordering = SKIP
+5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.vertex.vertex_spacing = SKIP
 5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_point_mode.points_verification = SKIP
 
 // Geometry and tessellation failures on the Android and Linux bots, potentially due to missing
@@ -81,10 +68,16 @@
 
 6008 VULKAN NVIDIA LINUX :  KHR-GLES32.core.framebuffer_completeness.cube_map_layered_attachment_valid_size_and_format = SKIP
 
-// Texture border clamp support
-3577 VULKAN : KHR-GLES32.core.texture_border_clamp.* = SKIP
-3577 VULKAN : KHR-GLES32.core.gpu_shader5.*clamp*_border = SKIP
-3577 VULKAN : KHR-GLES32.core.gpu_shader5.*clamp*_edge = SKIP
+// GL_EXT_texture_border_clamp related test failures on NVIDIA
+5978 VULKAN WIN NVIDIA : KHR-GLES32.core.texture_border_clamp.Texture2DDC16Linear = SKIP
+5978 VULKAN WIN NVIDIA : KHR-GLES32.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
+// Lack of border clamp support on older drivers.
+3577 VULKAN LINUX NVIDIA : KHR-GLES32.core.texture_border_clamp.* = SKIP
+3577 VULKAN LINUX NVIDIA : KHR-GLES32.core.gpu_shader5.*clamp*_border = SKIP
+3577 VULKAN LINUX NVIDIA : KHR-GLES32.core.gpu_shader5.*clamp*_edge = SKIP
+3577 VULKAN ANDROID : KHR-GLES32.core.texture_border_clamp.* = SKIP
+3577 VULKAN ANDROID : KHR-GLES32.core.gpu_shader5.*clamp*_border = SKIP
+3577 VULKAN ANDROID : KHR-GLES32.core.gpu_shader5.*clamp*_edge = SKIP
 
 // No known implementation supports STORAGE_TEXEL_BUFFER support for RGB32 formats
 3573 VULKAN : KHR-GLES32.core.texture_buffer.texture_buffer_texture_buffer_range = SKIP
@@ -94,8 +87,17 @@
 5276 AMD VULKAN WIN : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
 5276 NVIDIA VULKAN : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
 
-// Newly-added dEQP tests that are failing (2021-09-27)
-6441 VULKAN : KHR-GLES32.core.compressed* = SKIP
+// Validation errors
+6441 VULKAN : KHR-GLES32.core.compressed_format.api.texstorage_accepts_compressed_format = FAIL
+6441 VULKAN : KHR-GLES32.core.compressed_format.api.invalid_inconsistent_data_size = FAIL
+6441 VULKAN : KHR-GLES32.core.compressed_format.api.invalid_inconsistent_data_size_array = FAIL
+6441 VULKAN : KHR-GLES32.core.compressed_format.api.invalid_offset_or_size = FAIL
+6441 VULKAN : KHR-GLES32.core.compressed_format.api.copy_compressed_to_uncompressed = FAIL
+6441 VULKAN : KHR-GLES32.core.compressed_format.api.copy_uncompressed_to_compressed = FAIL
+6441 VULKAN : KHR-GLES32.core.compressed_format.api.copy_compressed_to_compressed = FAIL
+// Looks like test error where ASTC support is not queried
+6441 VULKAN NVIDIA : KHR-GLES32.core.compressed_format.format.*astc* = FAIL
+6441 VULKAN AMD : KHR-GLES32.core.compressed_format.format.*astc* = FAIL
 
 // Pixel 4 expectations.
 5990 PIXEL4ORXL VULKAN : KHR-GLES32.core.draw_buffers_indexed.color_masks = SKIP

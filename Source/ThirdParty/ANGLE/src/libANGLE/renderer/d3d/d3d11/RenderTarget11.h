@@ -26,11 +26,13 @@ class RenderTarget11 : public RenderTargetD3D
     RenderTarget11(const d3d11::Format &formatSet);
     ~RenderTarget11() override;
 
-    virtual const TextureHelper11 &getTexture() const                                           = 0;
-    virtual const d3d11::RenderTargetView &getRenderTargetView() const                          = 0;
-    virtual const d3d11::DepthStencilView &getDepthStencilView() const                          = 0;
-    virtual const d3d11::SharedSRV &getShaderResourceView(const gl::Context *context) const     = 0;
-    virtual const d3d11::SharedSRV &getBlitShaderResourceView(const gl::Context *context) const = 0;
+    virtual const TextureHelper11 &getTexture() const                                = 0;
+    virtual const d3d11::RenderTargetView &getRenderTargetView() const               = 0;
+    virtual const d3d11::DepthStencilView &getDepthStencilView() const               = 0;
+    virtual angle::Result getShaderResourceView(const gl::Context *context,
+                                                const d3d11::SharedSRV **outSRV)     = 0;
+    virtual angle::Result getBlitShaderResourceView(const gl::Context *context,
+                                                    const d3d11::SharedSRV **outSRV) = 0;
 
     virtual unsigned int getSubresourceIndex() const = 0;
 
@@ -74,8 +76,10 @@ class TextureRenderTarget11 : public RenderTarget11
     const TextureHelper11 &getTexture() const override;
     const d3d11::RenderTargetView &getRenderTargetView() const override;
     const d3d11::DepthStencilView &getDepthStencilView() const override;
-    const d3d11::SharedSRV &getShaderResourceView(const gl::Context *context) const override;
-    const d3d11::SharedSRV &getBlitShaderResourceView(const gl::Context *context) const override;
+    angle::Result getShaderResourceView(const gl::Context *context,
+                                        const d3d11::SharedSRV **outSRV) override;
+    angle::Result getBlitShaderResourceView(const gl::Context *context,
+                                            const d3d11::SharedSRV **outSRV) override;
 
     unsigned int getSubresourceIndex() const override;
 
@@ -112,8 +116,10 @@ class SurfaceRenderTarget11 : public RenderTarget11
     const TextureHelper11 &getTexture() const override;
     const d3d11::RenderTargetView &getRenderTargetView() const override;
     const d3d11::DepthStencilView &getDepthStencilView() const override;
-    const d3d11::SharedSRV &getShaderResourceView(const gl::Context *context) const override;
-    const d3d11::SharedSRV &getBlitShaderResourceView(const gl::Context *context) const override;
+    angle::Result getShaderResourceView(const gl::Context *context,
+                                        const d3d11::SharedSRV **outSRV) override;
+    angle::Result getBlitShaderResourceView(const gl::Context *context,
+                                            const d3d11::SharedSRV **outSRV) override;
 
     unsigned int getSubresourceIndex() const override;
 

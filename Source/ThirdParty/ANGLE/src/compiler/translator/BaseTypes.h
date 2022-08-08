@@ -147,6 +147,13 @@ enum TBasicType
     EbtGuardUIntImageEnd = EbtUImageBuffer,
     EbtGuardImageEnd     = EbtGuardUIntImageEnd,
 
+    // ANGLE_shader_pixel_local_storage
+    EbtGuardPixelLocalBegin,
+    EbtPixelLocalANGLE = EbtGuardPixelLocalBegin,
+    EbtIPixelLocalANGLE,
+    EbtUPixelLocalANGLE,
+    EbtGuardPixelLocalEnd = EbtUPixelLocalANGLE,
+
     // Subpass Input
     EbtGuardSubpassInputBegin,
     EbtSubpassInput = EbtGuardSubpassInputBegin,
@@ -228,6 +235,11 @@ inline bool IsAtomicCounter(TBasicType type)
     return type == EbtAtomicCounter;
 }
 
+inline bool IsPixelLocal(TBasicType type)
+{
+    return type >= EbtGuardPixelLocalBegin && type <= EbtGuardPixelLocalEnd;
+}
+
 inline bool IsSubpassInputType(TBasicType type)
 {
     return type >= EbtGuardSubpassInputBegin && type <= EbtGuardSubpassInputEnd;
@@ -235,7 +247,8 @@ inline bool IsSubpassInputType(TBasicType type)
 
 inline bool IsOpaqueType(TBasicType type)
 {
-    return IsSampler(type) || IsImage(type) || IsAtomicCounter(type) || IsSubpassInputType(type);
+    return IsSampler(type) || IsImage(type) || IsAtomicCounter(type) || IsPixelLocal(type) ||
+           IsSubpassInputType(type);
 }
 
 inline bool IsIntegerSampler(TBasicType type)

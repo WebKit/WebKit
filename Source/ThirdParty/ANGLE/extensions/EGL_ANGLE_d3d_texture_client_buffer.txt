@@ -91,8 +91,8 @@ Additions to Chapter 2 of the EGL 1.2 Specification (EGL Operation)
     the specified array slice of the texture array <buffer>.
 
     If EGL_TEXTURE_OFFSET_X_ANGLE or EGL_TEXTURE_OFFSET_Y_ANGLE are specified,
-    they must be non-negative and are used to offset all rendering into the
-    surface including blits, clears and draws.
+    they are used to offset all rendering into the surface including blits,
+    clears and draws.
 
     If the EGL_ANGLE_device_d3d extension is present, the provided D3D11 texture
     object must have been created by the same D3D11 device queried from the
@@ -237,6 +237,8 @@ Issues
     correct rendering in that case.
 
 Revision History
+
+    Version 9, 2022/06/15 - removed non-negative offsets restriction.
 
     Version 9, 2021/09/07 - added support for R/RG formats and GL_RGB10_A2_EXT.
 

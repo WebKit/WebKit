@@ -41,8 +41,8 @@ std::string GetErrorMessage()
     DWORD errorCode     = GetLastError();
     LPSTR messageBuffer = nullptr;
     size_t size         = FormatMessageA(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+                FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                NULL, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
     std::string message(messageBuffer, size);
     if (size == 0)
     {
@@ -162,9 +162,9 @@ egl::Error DisplayWGL::initializeImpl(egl::Display *display)
     mWindowClass                        = RegisterClassW(&intermediateClassDesc);
     if (!mWindowClass)
     {
-        return egl::EglNotInitialized()
-               << "Failed to register intermediate OpenGL window class \"" << className.c_str()
-               << "\":" << gl::FmtErr(HRESULT_CODE(GetLastError()));
+        return egl::EglNotInitialized() << "Failed to register intermediate OpenGL window class \""
+                                        << gl::FmtHex<egl::Display *, char>(display)
+                                        << "\":" << gl::FmtErr(HRESULT_CODE(GetLastError()));
     }
 
     HWND placeholderWindow =
@@ -225,7 +225,7 @@ egl::Error DisplayWGL::initializeImpl(egl::Display *display)
 
     const egl::AttributeMap &displayAttributes = display->getAttributeMap();
     EGLint requestedDisplayType                = static_cast<EGLint>(displayAttributes.get(
-        EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE));
+                       EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE));
     if (requestedDisplayType == EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE &&
         !mFunctionsWGL->hasExtension("WGL_EXT_create_context_es2_profile") &&
         !mFunctionsWGL->hasExtension("WGL_EXT_create_context_es_profile"))

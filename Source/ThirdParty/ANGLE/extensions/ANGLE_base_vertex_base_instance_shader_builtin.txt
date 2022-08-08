@@ -67,20 +67,22 @@ Additions to Chapter 10 of the OpenGL ES 3.2 Specification
     The base index of the instance may be read by a vertex shader as
     <gl_BaseInstance>, for the commands
 
-    void DrawArraysInstancedBaseInstanceANGLE (GLenum mode,
-        GLint first,
-        GLsizei count,
-        GLsizei instanceCount,
-        GLuint baseInstance);
+    void DrawArraysInstancedBaseInstanceANGLE(
+        enum mode,
+        int first,
+        sizei count,
+        sizei instanceCount,
+        uint baseInstance);
 
     and
 
-    void MultiDrawArraysInstancedBaseInstanceANGLE(GLenum mode,
-        const GLint* firsts,
-        const GLsizei* counts,
-        const GLsizei* instanceCounts,
-        const GLuint* baseInstances,
-        GLsizei drawcount);
+    void MultiDrawArraysInstancedBaseInstanceANGLE(
+        enum mode,
+        const int *firsts,
+        const sizei *counts,
+        const sizei *instanceCounts,
+        const uint *baseInstances,
+        sizei drawcount);
 
     The base index of the vertex may be read by a vertex shader as
     <gl_BaseVertex>. This value is also added to the <gl_VertexID>.
@@ -89,24 +91,26 @@ Additions to Chapter 10 of the OpenGL ES 3.2 Specification
     <gl_BaseInstance>. Note that this value is not added to the
     <gl_InstanceID>, for the commands
 
-    void DrawElementsInstancedBaseVertexBaseInstanceANGLE (GLenum mode,
-        GLsizei count,
-        GLenum type,
-        const GLvoid* indices,
-        GLsizei instanceCount,
-        GLint baseVertex,
-        GLuint baseInstance);
+    void DrawElementsInstancedBaseVertexBaseInstanceANGLE(
+        enum mode,
+        sizei count,
+        enum type,
+        const void *indices,
+        sizei instanceCount,
+        int baseVertex,
+        uint baseInstance);
 
     and
 
-    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode,
-        const GLsizei* counts,
-        GLenum type,
-        const GLvoid* const* indices,
-        const GLsizei* instanceCounts,
-        const GLint* baseVertices,
-        const GLuint* baseInstances,
-        GLsizei drawcount);
+    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(
+        enum mode,
+        const sizei *counts,
+        enum type,
+        const void *const *indices,
+        const sizei *instanceCounts,
+        const int *baseVertices,
+        const uint *baseInstances,
+        sizei drawcount);
 
 Errors
 
@@ -132,6 +136,7 @@ Issues
 
 Revision History
 
-    Rev.    Date    Author       Changes
-    ----  --------  ----------   --------------------------------------------
-    1     11/19/21   Shrek Shao   First revision.
+    Rev.    Date    Author            Changes
+    ----  --------  ----------------  --------------------------------------------
+    1     11/19/21   Shrek Shao       First revision.
+    2     06/21/22   Alexey Knyazev   Fixed typos and type usage.

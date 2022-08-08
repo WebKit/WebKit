@@ -53,6 +53,14 @@
             "issue": "http://anglebug.com/3970"
         },
         {
+            "name": "mutable_mipmap_texture_upload",
+            "category": "Features",
+            "description": [
+                "Enable uploading the previously defined mutable mipmap texture."
+            ],
+            "issue": "https://anglebug.com/7308"
+        },
+        {
             "name": "supports_renderpass2",
             "category": "Features",
             "description": [
@@ -257,14 +265,6 @@
             "issue": "http://anglebug.com/3153"
         },
         {
-            "name": "bind_empty_for_unused_descriptor_sets",
-            "category": "Workarounds",
-            "description": [
-                "Gaps in bound descriptor set indices causes the post-gap sets to misbehave"
-            ],
-            "issue": "http://anglebug.com/2727"
-        },
-        {
             "name": "force_D16_tex_filter",
             "category": "Workarounds",
             "description": [
@@ -363,6 +363,14 @@
                 "Persistently map buffer memory to reduce map/unmap IOCTL overhead."
             ],
             "issue": "http://anglebug.com/2162"
+        },
+        {
+            "name": "extra_buffer_logging_and_checking",
+            "category": "Features",
+            "description": [
+                "Enable extra buffer logging and checking to catch rare crashes"
+            ],
+            "issue": "https://issuetracker.google.com/236098131"
         },
         {
             "name": "enable_pre_rotate_surfaces",
@@ -791,6 +799,14 @@
             "issue": "http://anglebug.com/3586"
         },
         {
+            "name": "precision_safe_division",
+            "category": "Workarounds",
+            "description": [
+                "Special case handling for platforms that do not generate 1.0f even when the dividend and",
+                "divisor have the same value"
+            ]
+        },
+        {
             "name": "bottom_left_origin_present_region_rectangles",
             "category": "Workarounds",
             "description": [
@@ -884,6 +900,13 @@
             "category": "Features",
             "description": [
                 "Prefer to use VK_FILTER_LINEAR for VkSamplerYcbcrConversion"
+            ]
+        },
+        {
+            "name": "supports_yuv_target",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_ANDROID_render_to_external_format and VK_EXT_ycbcr_attachment"
             ]
         }
     ]

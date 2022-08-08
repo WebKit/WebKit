@@ -671,15 +671,26 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
 
     // Additionally:
     //
-    // - decorate gl_Layer in FS with Flat.
+    // - decorate int inputs in FS with Flat (gl_Layer, gl_SampleID, gl_PrimitiveID, gl_ViewID_OVR).
     // - decorate gl_TessLevel* with Patch.
-    if (type.getQualifier() == EvqLayerIn)
+    switch (type.getQualifier())
     {
-        spirv::WriteDecorate(mBuilder.getSpirvDecorations(), varId, spv::DecorationFlat, {});
-    }
-    else if (type.getQualifier() == EvqTessLevelInner || type.getQualifier() == EvqTessLevelOuter)
-    {
-        spirv::WriteDecorate(mBuilder.getSpirvDecorations(), varId, spv::DecorationPatch, {});
+        case EvqLayerIn:
+        case EvqSampleID:
+        case EvqPrimitiveID:
+        case EvqViewIDOVR:
+            if (mCompiler->getShaderType() == GL_FRAGMENT_SHADER)
+            {
+                spirv::WriteDecorate(mBuilder.getSpirvDecorations(), varId, spv::DecorationFlat,
+                                     {});
+            }
+            break;
+        case EvqTessLevelInner:
+        case EvqTessLevelOuter:
+            spirv::WriteDecorate(mBuilder.getSpirvDecorations(), varId, spv::DecorationPatch, {});
+            break;
+        default:
+            break;
     }
 
     mSymbolIdMap.insert({symbol, varId});

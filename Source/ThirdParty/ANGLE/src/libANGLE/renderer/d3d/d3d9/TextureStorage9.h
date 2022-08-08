@@ -42,6 +42,7 @@ class TextureStorage9 : public TextureStorage
 
     int getTopLevel() const override;
     bool isRenderTarget() const override;
+    bool isUnorderedAccess() const override { return false; }
     bool isManaged() const override;
     bool supportsNativeMipmapFunction() const override;
     int getLevelCount() const override;

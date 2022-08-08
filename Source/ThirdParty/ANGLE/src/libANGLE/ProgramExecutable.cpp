@@ -1064,6 +1064,17 @@ bool ProgramExecutable::linkValidateTransformFeedback(
         uniqueNames.insert(tfVaryingName);
     }
 
+    // From OpneGLES spec. 11.1.2.1: A program will fail to link if:
+    // the count specified by TransformFeedbackVaryings is non-zero, but the
+    // program object has no vertex, tessellation evaluation, or geometry shader
+    if (transformFeedbackVaryingNames.size() > 0 &&
+        !gl::ShaderTypeSupportsTransformFeedback(getLinkedTransformFeedbackStage()))
+    {
+        mInfoLog << "Linked transform feedback stage " << getLinkedTransformFeedbackStage()
+                 << " does not support transform feedback varying.";
+        return false;
+    }
+
     // Validate against program varyings.
     size_t totalComponents = 0;
     for (const std::string &tfVaryingName : transformFeedbackVaryingNames)

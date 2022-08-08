@@ -13,7 +13,9 @@ namespace angle
 class ContextLostTest : public ANGLETest<>
 {
   protected:
-    ContextLostTest()
+    ContextLostTest() {}
+
+    void testSetUp() override
     {
         if (IsEGLClientExtensionEnabled("EGL_EXT_create_context_robustness"))
         {
@@ -121,7 +123,9 @@ TEST_P(ContextLostTest, ParallelCompileReadyQuery)
 class ContextLostSkipValidationTest : public ANGLETest<>
 {
   protected:
-    ContextLostSkipValidationTest()
+    ContextLostSkipValidationTest() {}
+
+    void testSetUp() override
     {
         if (IsEGLClientExtensionEnabled("EGL_EXT_create_context_robustness"))
         {

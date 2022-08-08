@@ -206,11 +206,6 @@ std::unique_ptr<LinkEvent> ProgramVk::link(const gl::Context *context,
                                     &mGlslangProgramInterfaceInfo, &spirvBlobs,
                                     &mExecutable.mVariableInfoMap);
 
-    if (contextVk->getFeatures().enablePrecisionQualifiers.enabled)
-    {
-        mExecutable.resolvePrecisionMismatch(mergedVaryings);
-    }
-
     // Compile the shaders.
     const gl::ProgramExecutable &programExecutable = mState.getExecutable();
     angle::Result status                           = mExecutable.mOriginalShaderInfo.initShaders(

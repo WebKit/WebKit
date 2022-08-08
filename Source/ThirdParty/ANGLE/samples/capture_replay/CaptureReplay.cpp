@@ -18,8 +18,7 @@ class CaptureReplaySample : public SampleApplication
         : SampleApplication("CaptureReplaySample",
                             argc,
                             argv,
-                            3,
-                            0,
+                            ClientType::ES3_0,
                             traceInfo.drawSurfaceWidth,
                             traceInfo.drawSurfaceHeight),
           mTraceInfo(traceInfo)

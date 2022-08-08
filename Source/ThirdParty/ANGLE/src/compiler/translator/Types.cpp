@@ -142,6 +142,12 @@ const char *getBasicString(TBasicType t)
             return "atomic_uint";
         case EbtSamplerVideoWEBGL:
             return "samplerVideoWEBGL";
+        case EbtPixelLocalANGLE:
+            return "pixelLocalANGLE";
+        case EbtIPixelLocalANGLE:
+            return "ipixelLocalANGLE";
+        case EbtUPixelLocalANGLE:
+            return "upixelLocalANGLE";
         case EbtSubpassInput:
             return "subpassInput";
         case EbtISubpassInput:

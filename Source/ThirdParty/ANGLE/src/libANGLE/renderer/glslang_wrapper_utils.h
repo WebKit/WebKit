@@ -53,12 +53,13 @@ struct GlslangSourceOptions
 
 struct GlslangSpirvOptions
 {
-    gl::ShaderType shaderType        = gl::ShaderType::InvalidEnum;
-    bool negativeViewportSupported   = false;
-    bool removeDebugInfo             = false;
-    bool isLastPreFragmentStage      = false;
-    bool isTransformFeedbackStage    = false;
-    bool isTransformFeedbackEmulated = false;
+    gl::ShaderType shaderType           = gl::ShaderType::InvalidEnum;
+    bool negativeViewportSupported      = false;
+    bool removeDebugInfo                = false;
+    bool isLastPreFragmentStage         = false;
+    bool isTransformFeedbackStage       = false;
+    bool isTransformFeedbackEmulated    = false;
+    bool isMultisampledFramebufferFetch = false;
 };
 
 struct UniformBindingInfo final
@@ -124,8 +125,8 @@ struct ShaderInterfaceVariableInfo
     bool useRelaxedPrecision = false;
     // Indicate if varying is input or output, or both (in case of for example gl_Position in a
     // geometry shader)
-    bool varyingIsInput  = false;
-    bool varyingIsOutput = false;
+    bool builtinIsInput  = false;
+    bool builtinIsOutput = false;
     // For vertex attributes, this is the number of components / locations.  These are used by the
     // vertex attribute aliasing transformation only.
     uint8_t attributeComponentCount = 0;

@@ -310,6 +310,13 @@ TextureSamplingParams D3D11Params()
     return params;
 }
 
+TextureSamplingParams MetalParams()
+{
+    TextureSamplingParams params;
+    params.eglParameters = egl_platform::METAL();
+    return params;
+}
+
 TextureSamplingParams OpenGLOrGLESParams()
 {
     TextureSamplingParams params;
@@ -340,6 +347,7 @@ TEST_P(TextureSamplingMutableFormatBenchmark, Run)
 
 ANGLE_INSTANTIATE_TEST(TextureSamplingBenchmark,
                        D3D11Params(),
+                       MetalParams(),
                        OpenGLOrGLESParams(),
                        VulkanParams());
 

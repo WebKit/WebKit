@@ -211,6 +211,13 @@ InterleavedAttributeDataParams D3D11Params()
     return params;
 }
 
+InterleavedAttributeDataParams MetalParams()
+{
+    InterleavedAttributeDataParams params;
+    params.eglParameters = egl_platform::METAL();
+    return params;
+}
+
 InterleavedAttributeDataParams OpenGLOrGLESParams()
 {
     InterleavedAttributeDataParams params;
@@ -227,6 +234,7 @@ InterleavedAttributeDataParams VulkanParams()
 
 ANGLE_INSTANTIATE_TEST(InterleavedAttributeDataBenchmark,
                        D3D11Params(),
+                       MetalParams(),
                        OpenGLOrGLESParams(),
                        VulkanParams());
 

@@ -486,6 +486,8 @@ const FramebufferAttachment *FramebufferState::getReadPixelsAttachment(GLenum re
             return getDepthAttachment();
         case GL_STENCIL_INDEX_OES:
             return getStencilOrDepthStencilAttachment();
+        case GL_DEPTH_STENCIL_OES:
+            return getDepthStencilAttachment();
         default:
             return getReadAttachment();
     }
@@ -903,9 +905,15 @@ void Framebuffer::setReadSurface(const Context *context, egl::Surface *readSurfa
     mDirtyBits.set(DIRTY_BIT_READ_BUFFER);
 }
 
-void Framebuffer::setLabel(const Context *context, const std::string &label)
+angle::Result Framebuffer::setLabel(const Context *context, const std::string &label)
 {
     mState.mLabel = label;
+
+    if (mImpl)
+    {
+        return mImpl->onLabelUpdate(context);
+    }
+    return angle::Result::Continue;
 }
 
 const std::string &Framebuffer::getLabel() const

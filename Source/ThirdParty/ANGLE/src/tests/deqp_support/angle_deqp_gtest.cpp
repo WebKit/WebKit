@@ -101,6 +101,8 @@ constexpr APIInfo kEGLDisplayAPIs[] = {
     {"angle-null", GPUTestConfig::kAPIUnknown},
     {"angle-swiftshader", GPUTestConfig::kAPISwiftShader},
     {"angle-vulkan", GPUTestConfig::kAPIVulkan},
+    {"win32", GPUTestConfig::kAPIUnknown},
+    {"window", GPUTestConfig::kAPIUnknown},
 };
 
 constexpr char kdEQPEGLString[]     = "--deqp-egl-display-type=";
@@ -605,20 +607,22 @@ void HandleDisplayType(const char *displayTypeString)
         exit(1);
     }
 
-    if (strncmp(displayTypeString, "angle-", strlen("angle-")) != 0)
-    {
-        argStream << "angle-";
-    }
-
     argStream << displayTypeString;
     std::string arg = argStream.str();
+    gInitAPI        = FindAPIInfo(arg);
 
-    gInitAPI = FindAPIInfo(arg);
-
-    if (!gInitAPI)
+    if (!gInitAPI && strncmp(displayTypeString, "angle-", strlen("angle-")) != 0)
     {
-        std::cout << "Unknown ANGLE back-end API: " << displayTypeString << std::endl;
-        exit(1);
+        std::stringstream argStream2;
+        argStream2 << "angle-" << displayTypeString;
+        std::string arg2 = argStream2.str();
+        gInitAPI         = FindAPIInfo(arg2);
+
+        if (!gInitAPI)
+        {
+            std::cout << "Unknown API: " << displayTypeString << std::endl;
+            exit(1);
+        }
     }
 }
 

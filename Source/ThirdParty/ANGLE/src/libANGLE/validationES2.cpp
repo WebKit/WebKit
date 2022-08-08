@@ -988,7 +988,7 @@ bool ValidateES2TexImageParametersBase(const Context *context,
             // ETC1_RGB8_OES.
             //
             // This is relaxed if GL_EXT_compressed_ETC1_RGB8_sub_texture is supported.
-            if (actualInternalFormat == GL_ETC1_RGB8_OES &&
+            if (IsETC1Format(actualInternalFormat) &&
                 !context->getExtensions().compressedETC1RGB8SubTextureEXT)
             {
                 context->validationError(entryPoint, GL_INVALID_OPERATION, kInvalidInternalFormat);
@@ -1489,6 +1489,7 @@ bool ValidateES2TexImageParametersBase(const Context *context,
                     }
                     break;
                 default:
+                    // Compressed formats are not valid internal formats for glTexImage*D
                     context->validationError(entryPoint, GL_INVALID_VALUE, kInvalidInternalFormat);
                     return false;
             }

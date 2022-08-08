@@ -215,6 +215,8 @@ angle_es_only_extensions = [
     "GL_ANGLE_rgbx_internal_format",
     "GL_ANGLE_robust_client_memory",
     "GL_ANGLE_robust_resource_initialization",
+    "GL_ANGLE_shader_pixel_local_storage",
+    "GL_ANGLE_shader_pixel_local_storage_coherent",
     "GL_ANGLE_webgl_compatibility",
     "GL_CHROMIUM_bind_generates_resource",
     "GL_CHROMIUM_bind_uniform_location",

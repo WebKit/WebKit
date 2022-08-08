@@ -233,7 +233,7 @@ P CombineIndexBufferChanged(const P &in, bool indexBufferChanged)
 std::vector<GLenum> gIndexTypes = {GL_UNSIGNED_INT, GL_UNSIGNED_SHORT};
 std::vector<P> gWithIndexType   = CombineWithValues({P()}, gIndexTypes, CombineIndexType);
 std::vector<P> gWithRenderer =
-    CombineWithFuncs(gWithIndexType, {D3D11<P>, GL<P>, Vulkan<P>, WGL<P>});
+    CombineWithFuncs(gWithIndexType, {D3D11<P>, GL<P>, Metal<P>, Vulkan<P>, WGL<P>});
 std::vector<P> gWithChange =
     CombineWithValues(gWithRenderer, {false, true}, CombineIndexBufferChanged);
 std::vector<P> gWithDevice = CombineWithFuncs(gWithChange, {Passthrough<P>, NullDevice<P>});

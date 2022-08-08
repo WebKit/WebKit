@@ -882,7 +882,7 @@ bool IsClearOfAllChannels(UpdateSource updateSource)
 
 angle::Result InitDynamicDescriptorPool(Context *context,
                                         const DescriptorSetLayoutDesc &descriptorSetLayoutDesc,
-                                        VkDescriptorSetLayout descriptorSetLayout,
+                                        const DescriptorSetLayout &descriptorSetLayout,
                                         uint32_t descriptorCountMultiplier,
                                         DynamicDescriptorPool *poolToInit)
 {
@@ -900,24 +900,6 @@ angle::Result InitDynamicDescriptorPool(Context *context,
             poolSize.type                 = binding.descriptorType;
             poolSize.descriptorCount      = binding.descriptorCount * descriptorCountMultiplier;
             descriptorPoolSizes.emplace_back(poolSize);
-        }
-    }
-
-    if (descriptorPoolSizes.empty())
-    {
-        if (context->getRenderer()->getFeatures().bindEmptyForUnusedDescriptorSets.enabled)
-        {
-            // For this workaround, we have to create an empty descriptor set for each descriptor
-            // set index, so make sure their pools are initialized.
-            VkDescriptorPoolSize poolSize = {};
-            // The type doesn't matter, since it's not actually used for anything.
-            poolSize.type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            poolSize.descriptorCount = 1;
-            descriptorPoolSizes.emplace_back(poolSize);
-        }
-        else
-        {
-            return angle::Result::Continue;
         }
     }
 
@@ -3008,6 +2990,8 @@ angle::Result BufferPool::allocateBuffer(Context *context,
     VmaVirtualAllocation allocation;
     VkDeviceSize offset;
     VkDeviceSize alignedSize = roundUp(sizeInBytes, alignment);
+    bool extraBufferLoggingAndChecking =
+        context->getRenderer()->getFeatures().extraBufferLoggingAndChecking.enabled;
 
     if (alignedSize >= kMaxBufferSizeForSuballocation)
     {
@@ -3039,6 +3023,13 @@ angle::Result BufferPool::allocateBuffer(Context *context,
         VkDeviceSize sizeOut;
         ANGLE_TRY(AllocateBufferMemory(context, memoryPropertyFlags, &memoryPropertyFlagsOut,
                                        nullptr, &buffer.get(), &deviceMemory.get(), &sizeOut));
+        // Explicitly check the ASSERT on Android-Swiftshader
+        if (extraBufferLoggingAndChecking && !(sizeOut >= alignedSize))
+        {
+            ERR() << "BufferPool::allocateBuffer(): ASSERT FAILED: \"sizeOut >= alignedSize\""
+                     " with sizeOut = "
+                  << sizeOut << ", and alignSize = " << alignedSize;
+        }
         ASSERT(sizeOut >= alignedSize);
 
         suballocation->initWithEntireBuffer(context, buffer.get(), deviceMemory.get(),
@@ -3064,10 +3055,25 @@ angle::Result BufferPool::allocateBuffer(Context *context,
             continue;
         }
 
+        if (extraBufferLoggingAndChecking)
+        {
+            WARN() << "BufferPool::allocateBuffer(): about to call block->allocate(alignedSize = "
+                   << alignedSize << ", alignment = " << alignment << ", ...)";
+        }
         if (block->allocate(alignedSize, alignment, &allocation, &offset) == VK_SUCCESS)
         {
+            if (extraBufferLoggingAndChecking)
+            {
+                WARN() << "BufferPool::allocateBuffer(): block->allocate() returned VK_SUCCESS "
+                          "with offset = "
+                       << offset;
+            }
             suballocation->init(context->getDevice(), block.get(), allocation, offset, alignedSize);
             return angle::Result::Continue;
+        }
+        if (extraBufferLoggingAndChecking)
+        {
+            WARN() << "BufferPool::allocateBuffer(): block->allocate() DID NOT return VK_SUCCESS";
         }
         ++iter;
     }
@@ -3162,13 +3168,13 @@ void BufferPool::addStats(std::ostringstream *out) const
 }
 
 // DescriptorPoolHelper implementation.
-DescriptorPoolHelper::DescriptorPoolHelper() : mFreeDescriptorSets(0) {}
+DescriptorPoolHelper::DescriptorPoolHelper() : mValidDescriptorSets(0), mFreeDescriptorSets(0) {}
 
-DescriptorPoolHelper::~DescriptorPoolHelper() = default;
-
-bool DescriptorPoolHelper::hasCapacity(uint32_t descriptorSetCount) const
+DescriptorPoolHelper::~DescriptorPoolHelper()
 {
-    return mFreeDescriptorSets >= descriptorSetCount;
+    // Caller must have already freed all caches
+    ASSERT(mDescriptorSetCacheManager.empty());
+    ASSERT(mDescriptorSetGarbageList.empty());
 }
 
 angle::Result DescriptorPoolHelper::init(Context *context,
@@ -3176,6 +3182,11 @@ angle::Result DescriptorPoolHelper::init(Context *context,
                                          uint32_t maxSets)
 {
     RendererVk *renderer = context->getRenderer();
+
+    // If there are descriptorSet garbage, they no longer relevant since the entire pool is going to
+    // be destroyed.
+    mDescriptorSetCacheManager.destroyKeys(renderer);
+    mDescriptorSetGarbageList.clear();
 
     if (mDescriptorPool.valid())
     {
@@ -3198,72 +3209,69 @@ angle::Result DescriptorPoolHelper::init(Context *context,
     descriptorPoolInfo.poolSizeCount              = static_cast<uint32_t>(poolSizes.size());
     descriptorPoolInfo.pPoolSizes                 = poolSizes.data();
 
-    mFreeDescriptorSets = maxSets;
+    mValidDescriptorSets = 0;
+    mFreeDescriptorSets  = maxSets;
 
     ANGLE_VK_TRY(context, mDescriptorPool.init(renderer->getDevice(), descriptorPoolInfo));
 
     return angle::Result::Continue;
 }
 
-void DescriptorPoolHelper::destroy(RendererVk *renderer, VulkanCacheType cacheType)
+void DescriptorPoolHelper::destroy(RendererVk *renderer)
 {
+    mDescriptorSetCacheManager.destroyKeys(renderer);
+    mDescriptorSetGarbageList.clear();
     mDescriptorPool.destroy(renderer->getDevice());
-    mDescriptorSetCache.resetCache();
 }
 
-void DescriptorPoolHelper::release(ContextVk *contextVk, VulkanCacheType cacheType)
+void DescriptorPoolHelper::release(RendererVk *renderer)
 {
-    contextVk->addGarbage(&mDescriptorPool);
-    mDescriptorSetCache.resetCache();
+    mDescriptorSetGarbageList.clear();
+
+    GarbageList garbageList;
+    garbageList.emplace_back(GetGarbage(&mDescriptorPool));
+    renderer->collectGarbage(std::move(mUse), std::move(garbageList));
+    mUse.init();
 }
 
-angle::Result DescriptorPoolHelper::allocateDescriptorSets(
-    Context *context,
-    CommandBufferHelperCommon *commandBufferHelper,
-    const DescriptorSetLayout &descriptorSetLayout,
-    uint32_t descriptorSetCount,
-    VkDescriptorSet *descriptorSetsOut)
+bool DescriptorPoolHelper::allocateDescriptorSet(Context *context,
+                                                 const DescriptorSetLayout &descriptorSetLayout,
+                                                 VkDescriptorSet *descriptorSetsOut)
 {
-    VkDescriptorSetAllocateInfo allocInfo = {};
-    allocInfo.sType                       = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-    allocInfo.descriptorPool              = mDescriptorPool.getHandle();
-    allocInfo.descriptorSetCount          = descriptorSetCount;
-    allocInfo.pSetLayouts                 = descriptorSetLayout.ptr();
+    // Try to reuse descriptorSet garbage first
+    if (!mDescriptorSetGarbageList.empty())
+    {
+        RendererVk *rendererVk          = context->getRenderer();
+        Serial lastCompletedQueueSerial = rendererVk->getLastCompletedQueueSerial();
 
-    ASSERT(mFreeDescriptorSets >= descriptorSetCount);
-    mFreeDescriptorSets -= descriptorSetCount;
+        DescriptorSetHelper &garbage = mDescriptorSetGarbageList.front();
+        if (!garbage.isCurrentlyInUse(lastCompletedQueueSerial))
+        {
+            *descriptorSetsOut = garbage.getDescriptorSet();
+            mDescriptorSetGarbageList.pop_front();
+            mValidDescriptorSets++;
+            return true;
+        }
+    }
 
-    ANGLE_VK_TRY(context, mDescriptorPool.allocateDescriptorSets(context->getDevice(), allocInfo,
-                                                                 descriptorSetsOut));
+    if (mFreeDescriptorSets > 0)
+    {
+        VkDescriptorSetAllocateInfo allocInfo = {};
+        allocInfo.sType                       = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool              = mDescriptorPool.getHandle();
+        allocInfo.descriptorSetCount          = 1;
+        allocInfo.pSetLayouts                 = descriptorSetLayout.ptr();
 
-    // The pool is still in use every time a new descriptor set is allocated from it.
-    commandBufferHelper->retainResource(this);
+        VkResult result = mDescriptorPool.allocateDescriptorSets(context->getDevice(), allocInfo,
+                                                                 descriptorSetsOut);
+        // If fail, it means our own accounting has a bug.
+        ASSERT(result == VK_SUCCESS);
+        mFreeDescriptorSets--;
+        mValidDescriptorSets++;
+        return true;
+    }
 
-    return angle::Result::Continue;
-}
-
-angle::Result DescriptorPoolHelper::allocateAndCacheDescriptorSet(
-    Context *context,
-    CommandBufferHelperCommon *commandBufferHelper,
-    const DescriptorSetDesc &desc,
-    const DescriptorSetLayout &descriptorSetLayout,
-    VkDescriptorSet *descriptorSetOut)
-{
-    ANGLE_TRY(allocateDescriptorSets(context, commandBufferHelper, descriptorSetLayout, 1,
-                                     descriptorSetOut));
-    mDescriptorSetCache.insertDescriptorSet(desc, *descriptorSetOut);
-    return angle::Result::Continue;
-}
-
-bool DescriptorPoolHelper::getCachedDescriptorSet(const DescriptorSetDesc &desc,
-                                                  VkDescriptorSet *descriptorSetOut)
-{
-    return mDescriptorSetCache.getDescriptorSet(desc, descriptorSetOut);
-}
-
-void DescriptorPoolHelper::resetCache()
-{
-    mDescriptorSetCache.resetCache();
+    return false;
 }
 
 // DynamicDescriptorPool implementation.
@@ -3271,7 +3279,10 @@ DynamicDescriptorPool::DynamicDescriptorPool()
     : mCurrentPoolIndex(0), mCachedDescriptorSetLayout(VK_NULL_HANDLE)
 {}
 
-DynamicDescriptorPool::~DynamicDescriptorPool() = default;
+DynamicDescriptorPool::~DynamicDescriptorPool()
+{
+    ASSERT(mDescriptorSetCache.empty());
+}
 
 DynamicDescriptorPool::DynamicDescriptorPool(DynamicDescriptorPool &&other)
     : DynamicDescriptorPool()
@@ -3285,36 +3296,38 @@ DynamicDescriptorPool &DynamicDescriptorPool::operator=(DynamicDescriptorPool &&
     std::swap(mDescriptorPools, other.mDescriptorPools);
     std::swap(mPoolSizes, other.mPoolSizes);
     std::swap(mCachedDescriptorSetLayout, other.mCachedDescriptorSetLayout);
+    std::swap(mDescriptorSetCache, other.mDescriptorSetCache);
     return *this;
 }
 
 angle::Result DynamicDescriptorPool::init(Context *context,
                                           const VkDescriptorPoolSize *setSizes,
                                           size_t setSizeCount,
-                                          VkDescriptorSetLayout descriptorSetLayout)
+                                          const DescriptorSetLayout &descriptorSetLayout)
 {
     ASSERT(setSizes);
     ASSERT(setSizeCount);
     ASSERT(mCurrentPoolIndex == 0);
-    ASSERT(mDescriptorPools.empty() ||
-           (mDescriptorPools.size() == 1 &&
-            mDescriptorPools[mCurrentPoolIndex]->get().hasCapacity(mMaxSetsPerPool)));
+    ASSERT(mDescriptorPools.empty());
     ASSERT(mCachedDescriptorSetLayout == VK_NULL_HANDLE);
 
     mPoolSizes.assign(setSizes, setSizes + setSizeCount);
-    mCachedDescriptorSetLayout = descriptorSetLayout;
+    mCachedDescriptorSetLayout = descriptorSetLayout.getHandle();
 
     mDescriptorPools.push_back(new RefCountedDescriptorPoolHelper());
     mCurrentPoolIndex = mDescriptorPools.size() - 1;
-    return mDescriptorPools[mCurrentPoolIndex]->get().init(context, mPoolSizes, mMaxSetsPerPool);
+    ANGLE_TRY(
+        mDescriptorPools[mCurrentPoolIndex]->get().init(context, mPoolSizes, mMaxSetsPerPool));
+
+    return angle::Result::Continue;
 }
 
-void DynamicDescriptorPool::destroy(RendererVk *renderer, VulkanCacheType cacheType)
+void DynamicDescriptorPool::destroy(RendererVk *renderer)
 {
     for (RefCountedDescriptorPoolHelper *pool : mDescriptorPools)
     {
         ASSERT(!pool->isReferenced());
-        pool->get().destroy(renderer, cacheType);
+        pool->get().destroy(renderer);
         delete pool;
     }
 
@@ -3323,45 +3336,55 @@ void DynamicDescriptorPool::destroy(RendererVk *renderer, VulkanCacheType cacheT
     mCachedDescriptorSetLayout = VK_NULL_HANDLE;
 }
 
-void DynamicDescriptorPool::release(ContextVk *contextVk, VulkanCacheType cacheType)
-{
-    for (RefCountedDescriptorPoolHelper *pool : mDescriptorPools)
-    {
-        ASSERT(!pool->isReferenced());
-        pool->get().release(contextVk, cacheType);
-        delete pool;
-    }
-
-    mDescriptorPools.clear();
-    mCurrentPoolIndex          = 0;
-    mCachedDescriptorSetLayout = VK_NULL_HANDLE;
-}
-
-angle::Result DynamicDescriptorPool::allocateDescriptorSets(
+angle::Result DynamicDescriptorPool::allocateDescriptorSet(
     Context *context,
-    CommandBufferHelperCommon *commandBufferHelper,
     const DescriptorSetLayout &descriptorSetLayout,
-    uint32_t descriptorSetCount,
     RefCountedDescriptorPoolBinding *bindingOut,
-    VkDescriptorSet *descriptorSetsOut)
+    VkDescriptorSet *descriptorSetOut)
 {
     ASSERT(!mDescriptorPools.empty());
     ASSERT(descriptorSetLayout.getHandle() == mCachedDescriptorSetLayout);
 
-    if (!bindingOut->valid() || !bindingOut->get().hasCapacity(descriptorSetCount))
+    // First try to allocate from the same pool
+    if (bindingOut->valid() &&
+        bindingOut->get().allocateDescriptorSet(context, descriptorSetLayout, descriptorSetOut))
     {
-        if (!mDescriptorPools[mCurrentPoolIndex]->get().hasCapacity(descriptorSetCount))
-        {
-            ANGLE_TRY(allocateNewPool(context));
-        }
-
-        bindingOut->set(mDescriptorPools[mCurrentPoolIndex]);
+        return angle::Result::Continue;
     }
 
-    ++context->getPerfCounters().descriptorSetAllocations;
+    // Next try to allocate from mCurrentPoolIndex pool
+    if (mDescriptorPools[mCurrentPoolIndex]->get().valid() &&
+        mDescriptorPools[mCurrentPoolIndex]->get().allocateDescriptorSet(
+            context, descriptorSetLayout, descriptorSetOut))
+    {
+        bindingOut->set(mDescriptorPools[mCurrentPoolIndex]);
+        return angle::Result::Continue;
+    }
 
-    return bindingOut->get().allocateDescriptorSets(
-        context, commandBufferHelper, descriptorSetLayout, descriptorSetCount, descriptorSetsOut);
+    // Next try all existing pools
+    for (RefCountedDescriptorPoolHelper *pool : mDescriptorPools)
+    {
+        if (!pool->get().valid())
+        {
+            continue;
+        }
+
+        if (pool->get().allocateDescriptorSet(context, descriptorSetLayout, descriptorSetOut))
+        {
+            bindingOut->set(pool);
+            return angle::Result::Continue;
+        }
+    }
+
+    // Last, try to allocate a new pool (and/or evict an existing pool)
+    ANGLE_TRY(allocateNewPool(context));
+    bool success = mDescriptorPools[mCurrentPoolIndex]->get().allocateDescriptorSet(
+        context, descriptorSetLayout, descriptorSetOut);
+    // Allocate from a new pool must succeed.
+    ASSERT(success);
+    bindingOut->set(mDescriptorPools[mCurrentPoolIndex]);
+
+    return angle::Result::Continue;
 }
 
 angle::Result DynamicDescriptorPool::getOrAllocateDescriptorSet(
@@ -3371,68 +3394,61 @@ angle::Result DynamicDescriptorPool::getOrAllocateDescriptorSet(
     const DescriptorSetLayout &descriptorSetLayout,
     RefCountedDescriptorPoolBinding *bindingOut,
     VkDescriptorSet *descriptorSetOut,
-    DescriptorCacheResult *cacheResultOut)
+    SharedDescriptorSetCacheKey *newSharedCacheKeyOut)
 {
-    // First scan the descriptor pools.
-    for (RefCountedDescriptorPoolHelper *pool : mDescriptorPools)
+    // First scan the descriptorSet cache.
+    vk::RefCountedDescriptorPoolHelper *poolOut;
+    if (mDescriptorSetCache.getDescriptorSet(desc, descriptorSetOut, &poolOut))
     {
-        if (pool->get().getCachedDescriptorSet(desc, descriptorSetOut))
-        {
-            *cacheResultOut = DescriptorCacheResult::CacheHit;
-            bindingOut->set(pool);
-            mCacheStats.hit();
-            return angle::Result::Continue;
-        }
+        *newSharedCacheKeyOut = nullptr;
+        bindingOut->set(poolOut);
+        mCacheStats.hit();
+        return angle::Result::Continue;
     }
 
-    mCacheStats.missAndIncrementSize();
-
-    ASSERT(!mDescriptorPools.empty());
-    ASSERT(descriptorSetLayout.getHandle() == mCachedDescriptorSetLayout);
-
-    constexpr uint32_t kDescriptorSetCount = 1;
-
-    if (!bindingOut->valid() || !bindingOut->get().hasCapacity(kDescriptorSetCount))
-    {
-        if (!mDescriptorPools[mCurrentPoolIndex]->get().hasCapacity(kDescriptorSetCount))
-        {
-            ANGLE_TRY(allocateNewPool(context));
-        }
-    }
-
-    bindingOut->set(mDescriptorPools[mCurrentPoolIndex]);
-    ANGLE_TRY(mDescriptorPools[mCurrentPoolIndex]->get().allocateAndCacheDescriptorSet(
-        context, commandBufferHelper, desc, descriptorSetLayout, descriptorSetOut));
-    *cacheResultOut = DescriptorCacheResult::NewAllocation;
+    ANGLE_TRY(allocateDescriptorSet(context, descriptorSetLayout, bindingOut, descriptorSetOut));
+    // The pool is still in use every time a new descriptor set is allocated from it.
+    commandBufferHelper->retainResource(&bindingOut->get());
     ++context->getPerfCounters().descriptorSetAllocations;
+
+    mDescriptorSetCache.insertDescriptorSet(desc, *descriptorSetOut, bindingOut->getRefCounted());
+    mCacheStats.missAndIncrementSize();
+    // Let pool know there is a shared cache key created and destroys the shared cache key
+    // when it destroys the pool.
+    *newSharedCacheKeyOut = CreateSharedDescriptorSetCacheKey(desc, this);
+    bindingOut->get().onNewDescriptorSetAllocated(*newSharedCacheKeyOut);
+
     return angle::Result::Continue;
 }
 
 angle::Result DynamicDescriptorPool::allocateNewPool(Context *context)
 {
-    bool found = false;
-
+    // Eviction logic: Before we allocate a new pool, check to see if there is any existing pool is
+    // not bound to program and is GPU compete. We destroy one pool in exchange for allocate a new
+    // pool to keep total descriptorPool count under control.
     Serial lastCompletedSerial = context->getRenderer()->getLastCompletedQueueSerial();
-    for (size_t poolIndex = 0; poolIndex < mDescriptorPools.size(); ++poolIndex)
+    for (size_t poolIndex = 0; poolIndex < mDescriptorPools.size();)
     {
+        if (!mDescriptorPools[poolIndex]->get().valid())
+        {
+            mDescriptorPools.erase(mDescriptorPools.begin() + poolIndex);
+            continue;
+        }
         if (!mDescriptorPools[poolIndex]->isReferenced() &&
             !mDescriptorPools[poolIndex]->get().isCurrentlyInUse(lastCompletedSerial))
         {
-            mCurrentPoolIndex = poolIndex;
-            found             = true;
-            mDescriptorPools[poolIndex]->get().resetCache();
+            mDescriptorPools[poolIndex]->get().destroy(context->getRenderer());
+            mDescriptorPools.erase(mDescriptorPools.begin() + poolIndex);
             break;
         }
+        ++poolIndex;
     }
 
-    if (!found)
-    {
-        mDescriptorPools.push_back(new RefCountedDescriptorPoolHelper());
-        mCurrentPoolIndex = mDescriptorPools.size() - 1;
+    mDescriptorPools.push_back(new RefCountedDescriptorPoolHelper());
+    mCurrentPoolIndex = mDescriptorPools.size() - 1;
 
-        static constexpr size_t kMaxPools = 99999;
-        ANGLE_VK_CHECK(context, mDescriptorPools.size() < kMaxPools, VK_ERROR_TOO_MANY_OBJECTS);
-    }
+    static constexpr size_t kMaxPools = 99999;
+    ANGLE_VK_CHECK(context, mDescriptorPools.size() < kMaxPools, VK_ERROR_TOO_MANY_OBJECTS);
 
     // This pool is getting hot, so grow its max size to try and prevent allocating another pool in
     // the future.
@@ -3442,6 +3458,69 @@ angle::Result DynamicDescriptorPool::allocateNewPool(Context *context)
     }
 
     return mDescriptorPools[mCurrentPoolIndex]->get().init(context, mPoolSizes, mMaxSetsPerPool);
+}
+
+void DynamicDescriptorPool::releaseCachedDescriptorSet(ContextVk *contextVk,
+                                                       const DescriptorSetDesc &desc)
+{
+    VkDescriptorSet descriptorSet;
+    RefCountedDescriptorPoolHelper *poolOut;
+    if (mDescriptorSetCache.getDescriptorSet(desc, &descriptorSet, &poolOut))
+    {
+        // Remove from the cache hash map
+        mDescriptorSetCache.eraseDescriptorSet(desc);
+        mCacheStats.decrementSize();
+
+        // Wrap it with helper object so that it can be GPU tracked and add it to resource list.
+        DescriptorSetHelper descriptorSetHelper(descriptorSet);
+        contextVk->retainResource(&descriptorSetHelper);
+        poolOut->get().addGarbage(std::move(descriptorSetHelper));
+        checkAndReleaseUnusedPool(contextVk->getRenderer(), poolOut);
+    }
+}
+
+void DynamicDescriptorPool::destroyCachedDescriptorSet(RendererVk *renderer,
+                                                       const DescriptorSetDesc &desc)
+{
+    VkDescriptorSet descriptorSet;
+    RefCountedDescriptorPoolHelper *poolOut;
+    if (mDescriptorSetCache.getDescriptorSet(desc, &descriptorSet, &poolOut))
+    {
+        // Remove from the cache hash map
+        mDescriptorSetCache.eraseDescriptorSet(desc);
+        mCacheStats.decrementSize();
+
+        // Put descriptorSet to the garbage list for reuse.
+        DescriptorSetHelper descriptorSetHelper(descriptorSet);
+        poolOut->get().addGarbage(std::move(descriptorSetHelper));
+        checkAndReleaseUnusedPool(renderer, poolOut);
+    }
+}
+
+void DynamicDescriptorPool::checkAndReleaseUnusedPool(RendererVk *renderer,
+                                                      RefCountedDescriptorPoolHelper *pool)
+{
+    // If pool still contains any valid descriptorSet cache, then don't destroy it. Note that even
+    // if pool has no valid descriptorSet, pool itself may still be bound to a program until it gets
+    // unbound when next descriptorSet gets allocated. We always keep at least one pool around.
+    if (mDescriptorPools.size() < 2 || pool->get().hasValidDescriptorSet() || pool->isReferenced())
+    {
+        return;
+    }
+
+    // Erase it from the array
+    size_t poolIndex;
+    for (poolIndex = 0; poolIndex < mDescriptorPools.size(); ++poolIndex)
+    {
+        if (pool == mDescriptorPools[poolIndex])
+        {
+            break;
+        }
+    }
+    // There must be a match
+    ASSERT(poolIndex != mDescriptorPools.size());
+    ASSERT(pool->get().valid());
+    pool->get().release(renderer);
 }
 
 // For testing only!
@@ -4629,6 +4708,7 @@ const Buffer &BufferHelper::getBufferForVertexArray(ContextVk *contextVk,
 
 void BufferHelper::destroy(RendererVk *renderer)
 {
+    mDescriptorSetCacheManager.destroyKeys(renderer);
     unmap(renderer);
     mBufferForVertexArray.destroy(renderer->getDevice());
     mSuballocation.destroy(renderer);
@@ -4636,6 +4716,7 @@ void BufferHelper::destroy(RendererVk *renderer)
 
 void BufferHelper::release(RendererVk *renderer)
 {
+    ASSERT(mDescriptorSetCacheManager.empty());
     unmap(renderer);
 
     if (mSuballocation.valid())
@@ -4650,6 +4731,22 @@ void BufferHelper::release(RendererVk *renderer)
         }
     }
     ASSERT(!mBufferForVertexArray.valid());
+}
+
+void BufferHelper::releaseBufferAndDescriptorSetCache(ContextVk *contextVk)
+{
+    RendererVk *renderer = contextVk->getRenderer();
+
+    if (mReadOnlyUse.isCurrentlyInUse(renderer->getLastCompletedQueueSerial()))
+    {
+        mDescriptorSetCacheManager.releaseKeys(contextVk);
+    }
+    else
+    {
+        mDescriptorSetCacheManager.destroyKeys(renderer);
+    }
+
+    release(renderer);
 }
 
 angle::Result BufferHelper::copyFromBuffer(ContextVk *contextVk,
@@ -5138,7 +5235,7 @@ angle::Result ImageHelper::initExternal(Context *context,
                                                             : VK_CHROMA_LOCATION_MIDPOINT;
         VkSamplerYcbcrModelConversion conversionModel = VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601;
         VkSamplerYcbcrRange colorRange                = VK_SAMPLER_YCBCR_RANGE_ITU_NARROW;
-        VkFilter chromaFilter                         = rendererVk->getPreferredFilterForYUV();
+        VkFilter chromaFilter                         = kDefaultYCbCrChromaFilter;
         VkComponentMapping components                 = {
                             VK_COMPONENT_SWIZZLE_IDENTITY,
                             VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -5148,8 +5245,8 @@ angle::Result ImageHelper::initExternal(Context *context,
 
         // Create the VkSamplerYcbcrConversion to associate with image views and samplers
         // Update the SamplerYcbcrConversionCache key
-        mYcbcrConversionDesc.update(rendererVk, 0, conversionModel, colorRange, supportedLocation,
-                                    supportedLocation, chromaFilter, components, intendedFormatID);
+        updateYcbcrConversionDesc(rendererVk, 0, conversionModel, colorRange, supportedLocation,
+                                  supportedLocation, chromaFilter, components, intendedFormatID);
     }
 
     if (hasProtectedContent)
@@ -5515,7 +5612,7 @@ angle::Result ImageHelper::initImageView(Context *context,
 {
     return initLayerImageView(context, textureType, aspectMask, swizzleMap, imageViewOut,
                               baseMipLevelVk, levelCount, 0, mLayerCount,
-                              gl::SrgbWriteControlMode::Default);
+                              gl::SrgbWriteControlMode::Default, gl::YuvSamplingMode::Default);
 }
 
 angle::Result ImageHelper::initLayerImageView(Context *context,
@@ -5527,14 +5624,15 @@ angle::Result ImageHelper::initLayerImageView(Context *context,
                                               uint32_t levelCount,
                                               uint32_t baseArrayLayer,
                                               uint32_t layerCount,
-                                              gl::SrgbWriteControlMode mode) const
+                                              gl::SrgbWriteControlMode srgbWriteControlMode,
+                                              gl::YuvSamplingMode yuvSamplingMode) const
 {
     angle::FormatID actualFormat = mActualFormatID;
 
     // If we are initializing an imageview for use with EXT_srgb_write_control, we need to override
     // the format to its linear counterpart. Formats that cannot be reinterpreted are exempt from
     // this requirement.
-    if (mode == gl::SrgbWriteControlMode::Linear)
+    if (srgbWriteControlMode == gl::SrgbWriteControlMode::Linear)
     {
         angle::FormatID linearFormat = ConvertToLinear(actualFormat);
         if (linearFormat != angle::FormatID::NONE)
@@ -5545,7 +5643,7 @@ angle::Result ImageHelper::initLayerImageView(Context *context,
 
     return initLayerImageViewImpl(context, textureType, aspectMask, swizzleMap, imageViewOut,
                                   baseMipLevelVk, levelCount, baseArrayLayer, layerCount,
-                                  GetVkFormatFromFormatID(actualFormat), 0);
+                                  GetVkFormatFromFormatID(actualFormat), 0, yuvSamplingMode);
 }
 
 angle::Result ImageHelper::initLayerImageViewImpl(Context *context,
@@ -5558,7 +5656,8 @@ angle::Result ImageHelper::initLayerImageViewImpl(Context *context,
                                                   uint32_t baseArrayLayer,
                                                   uint32_t layerCount,
                                                   VkFormat imageFormat,
-                                                  VkImageUsageFlags usageFlags) const
+                                                  VkImageUsageFlags usageFlags,
+                                                  gl::YuvSamplingMode yuvSamplingMode) const
 {
     VkImageViewCreateInfo viewInfo = {};
     viewInfo.sType                 = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -5597,18 +5696,22 @@ angle::Result ImageHelper::initLayerImageViewImpl(Context *context,
     }
 
     VkSamplerYcbcrConversionInfo yuvConversionInfo = {};
-    if (mYcbcrConversionDesc.valid())
+
+    auto conversionDesc =
+        yuvSamplingMode == gl::YuvSamplingMode::Y2Y ? getY2YConversionDesc() : mYcbcrConversionDesc;
+
+    if (conversionDesc.valid())
     {
         ASSERT((context->getRenderer()->getFeatures().supportsYUVSamplerConversion.enabled));
         yuvConversionInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
         yuvConversionInfo.pNext = nullptr;
         ANGLE_TRY(context->getRenderer()->getYuvConversionCache().getSamplerYcbcrConversion(
-            context, mYcbcrConversionDesc, &yuvConversionInfo.conversion));
+            context, conversionDesc, &yuvConversionInfo.conversion));
         AddToPNextChain(&viewInfo, &yuvConversionInfo);
 
         // VUID-VkImageViewCreateInfo-image-02399
         // If image has an external format, format must be VK_FORMAT_UNDEFINED
-        if (mYcbcrConversionDesc.getExternalFormat() != 0)
+        if (conversionDesc.getExternalFormat() != 0)
         {
             viewInfo.format = VK_FORMAT_UNDEFINED;
         }
@@ -5634,7 +5737,8 @@ angle::Result ImageHelper::initReinterpretedLayerImageView(Context *context,
 
     return initLayerImageViewImpl(context, textureType, aspectMask, swizzleMap, imageViewOut,
                                   baseMipLevelVk, levelCount, baseArrayLayer, layerCount,
-                                  vk::GetVkFormatFromFormatID(imageViewFormat), usageFlags);
+                                  vk::GetVkFormatFromFormatID(imageViewFormat), usageFlags,
+                                  gl::YuvSamplingMode::Default);
 }
 
 void ImageHelper::destroy(RendererVk *renderer)
@@ -6992,21 +7096,6 @@ void ImageHelper::onWrite(gl::LevelIndex levelStart,
     setContentDefined(toVkLevel(levelStart), levelCount, layerStart, layerCount, aspectFlags);
 }
 
-void ImageHelper::updateImmutableSamplerState(const gl::SamplerState &samplerState)
-{
-    // VUID-VkSamplerCreateInfo-minFilter VkCreateSampler:
-    // VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT
-    // specifies that the format can have different chroma, min, and mag filters. However,
-    // VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT is
-    // not supported for VkSamplerYcbcrConversionCreateInfo.format = VK_FORMAT_UNDEFINED so
-    // chromaFilter needs to be equal to minFilter/magFilter.
-    if (mYcbcrConversionDesc.getExternalFormat() != 0)
-    {
-        ASSERT(samplerState.getMinFilter() == samplerState.getMagFilter());
-        mYcbcrConversionDesc.updateChromaFilter(gl_vk::GetFilter(samplerState.getMinFilter()));
-    }
-}
-
 bool ImageHelper::hasSubresourceDefinedContent(gl::LevelIndex level,
                                                uint32_t layerIndex,
                                                uint32_t layerCount) const
@@ -7575,6 +7664,13 @@ void ImageHelper::stageClearIfEmulatedFormat(bool isRobustResourceInitEnabled, b
     // For external images, we cannot clear the image entirely, as it may contain data in the
     // non-emulated channels.  For depth/stencil images, clear is already per aspect, but for color
     // images we would need to take a special path where we only clear the emulated channels.
+
+    // Block images are not cleared, since no emulated channels are present if decoded.
+    if (isExternalImage && getIntendedFormat().isBlock)
+    {
+        return;
+    }
+
     const bool clearOnlyEmulatedChannels =
         isExternalImage && !getIntendedFormat().hasDepthOrStencilBits();
     const VkColorComponentFlags colorMaskFlags =
@@ -8556,22 +8652,19 @@ angle::Result ImageHelper::readPixelsForGetImage(ContextVk *contextVk,
     if (angleFormat.redBits > 0 || angleFormat.blueBits > 0 || angleFormat.greenBits > 0 ||
         angleFormat.alphaBits > 0 || angleFormat.luminanceBits > 0)
     {
-        aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
+        aspectFlags = static_cast<VkImageAspectFlagBits>(aspectFlags | VK_IMAGE_ASPECT_COLOR_BIT);
     }
     else
     {
         if (angleFormat.depthBits > 0)
         {
-            if (angleFormat.stencilBits != 0)
-            {
-                // TODO (anglebug.com/4688) Support combined depth stencil for GetTexImage
-                WARN() << "Unable to pull stencil from combined depth/stencil for GetTexImage";
-            }
-            aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
+            aspectFlags =
+                static_cast<VkImageAspectFlagBits>(aspectFlags | VK_IMAGE_ASPECT_DEPTH_BIT);
         }
-        else if (angleFormat.stencilBits > 0)
+        if (angleFormat.stencilBits > 0)
         {
-            aspectFlags = VK_IMAGE_ASPECT_STENCIL_BIT;
+            aspectFlags =
+                static_cast<VkImageAspectFlagBits>(aspectFlags | VK_IMAGE_ASPECT_STENCIL_BIT);
         }
     }
 
@@ -8699,6 +8792,105 @@ angle::Result ImageHelper::readPixels(ContextVk *contextVk,
                                       void *pixels)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ImageHelper::readPixels");
+
+    const angle::Format &readFormat = getActualFormat();
+
+    if (readFormat.depthBits == 0)
+    {
+        copyAspectFlags =
+            static_cast<VkImageAspectFlagBits>(copyAspectFlags & ~VK_IMAGE_ASPECT_DEPTH_BIT);
+    }
+    if (readFormat.stencilBits == 0)
+    {
+        copyAspectFlags =
+            static_cast<VkImageAspectFlagBits>(copyAspectFlags & ~VK_IMAGE_ASPECT_STENCIL_BIT);
+    }
+
+    if (copyAspectFlags == IMAGE_ASPECT_DEPTH_STENCIL)
+    {
+        const angle::Format &depthFormat =
+            GetDepthStencilImageToBufferFormat(readFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+        const angle::Format &stencilFormat =
+            GetDepthStencilImageToBufferFormat(readFormat, VK_IMAGE_ASPECT_STENCIL_BIT);
+
+        int depthOffset   = 0;
+        int stencilOffset = 0;
+        switch (readFormat.id)
+        {
+            case angle::FormatID::D24_UNORM_S8_UINT:
+                depthOffset   = 1;
+                stencilOffset = 0;
+                break;
+
+            case angle::FormatID::D32_FLOAT_S8X24_UINT:
+                depthOffset   = 0;
+                stencilOffset = 4;
+                break;
+
+            default:
+                UNREACHABLE();
+        }
+
+        ASSERT(depthOffset > 0 || stencilOffset > 0);
+        ASSERT(depthOffset + depthFormat.depthBits / 8 <= readFormat.pixelBytes);
+        ASSERT(stencilOffset + stencilFormat.stencilBits / 8 <= readFormat.pixelBytes);
+
+        // Read the depth values, tightly-packed
+        angle::MemoryBuffer depthBuffer;
+        ANGLE_VK_CHECK_ALLOC(contextVk,
+                             depthBuffer.resize(depthFormat.pixelBytes * area.width * area.height));
+        ANGLE_TRY(
+            readPixelsImpl(contextVk, area,
+                           PackPixelsParams(area, depthFormat, depthFormat.pixelBytes * area.width,
+                                            false, nullptr, 0),
+                           VK_IMAGE_ASPECT_DEPTH_BIT, levelGL, layer, depthBuffer.data()));
+
+        // Read the stencil values, tightly-packed
+        angle::MemoryBuffer stencilBuffer;
+        ANGLE_VK_CHECK_ALLOC(
+            contextVk, stencilBuffer.resize(stencilFormat.pixelBytes * area.width * area.height));
+        ANGLE_TRY(readPixelsImpl(
+            contextVk, area,
+            PackPixelsParams(area, stencilFormat, stencilFormat.pixelBytes * area.width, false,
+                             nullptr, 0),
+            VK_IMAGE_ASPECT_STENCIL_BIT, levelGL, layer, stencilBuffer.data()));
+
+        // Interleave them together
+        angle::MemoryBuffer readPixelBuffer;
+        ANGLE_VK_CHECK_ALLOC(
+            contextVk, readPixelBuffer.resize(readFormat.pixelBytes * area.width * area.height));
+        readPixelBuffer.fill(0);
+        for (int i = 0; i < area.width * area.height; i++)
+        {
+            uint8_t *readPixel = readPixelBuffer.data() + i * readFormat.pixelBytes;
+            memcpy(readPixel + depthOffset, depthBuffer.data() + i * depthFormat.pixelBytes,
+                   depthFormat.depthBits / 8);
+            memcpy(readPixel + stencilOffset, stencilBuffer.data() + i * stencilFormat.pixelBytes,
+                   stencilFormat.stencilBits / 8);
+        }
+
+        // Pack the interleaved depth and stencil into user-provided
+        // destination, per user's pack pixels params
+
+        // The compressed format path in packReadPixelBuffer isn't applicable
+        // to our case, let's make extra sure we won't hit it
+        ASSERT(!readFormat.isBlock);
+        return packReadPixelBuffer(contextVk, area, packPixelsParams, readFormat, readFormat,
+                                   readPixelBuffer.data(), levelGL, pixels);
+    }
+
+    return readPixelsImpl(contextVk, area, packPixelsParams, copyAspectFlags, levelGL, layer,
+                          pixels);
+}
+
+angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
+                                          const gl::Rectangle &area,
+                                          const PackPixelsParams &packPixelsParams,
+                                          VkImageAspectFlagBits copyAspectFlags,
+                                          gl::LevelIndex levelGL,
+                                          uint32_t layer,
+                                          void *pixels)
+{
     RendererVk *renderer = contextVk->getRenderer();
 
     // If the source image is multisampled, we need to resolve it into a temporary image before
@@ -8864,8 +9056,27 @@ angle::Result ImageHelper::readPixels(ContextVk *contextVk,
     // TODO(jmadill): Don't block on asynchronous readback.
     ANGLE_TRY(contextVk->finishImpl(RenderPassClosureReason::GLReadPixels));
 
-    if (readFormat->isBlock)
+    return packReadPixelBuffer(contextVk, area, packPixelsParams, getActualFormat(), *readFormat,
+                               readPixelBuffer, levelGL, pixels);
+}
+
+angle::Result ImageHelper::packReadPixelBuffer(ContextVk *contextVk,
+                                               const gl::Rectangle &area,
+                                               const PackPixelsParams &packPixelsParams,
+                                               const angle::Format &readFormat,
+                                               const angle::Format &aspectFormat,
+                                               const uint8_t *readPixelBuffer,
+                                               gl::LevelIndex levelGL,
+                                               void *pixels)
+{
+    const vk::Format &vkFormat = contextVk->getRenderer()->getFormat(readFormat.id);
+    const gl::InternalFormat &storageFormatInfo =
+        vkFormat.getInternalFormatInfo(readFormat.componentType);
+
+    if (readFormat.isBlock)
     {
+        ASSERT(readFormat == aspectFormat);
+
         const LevelIndex levelVk = toVkLevel(levelGL);
         gl::Extents levelExtents = getLevelExtents(levelVk);
 
@@ -8883,13 +9094,13 @@ angle::Result ImageHelper::readPixels(ContextVk *contextVk,
         void *mapPtr           = nullptr;
         ANGLE_TRY(packBufferVk->mapImpl(contextVk, GL_MAP_WRITE_BIT, &mapPtr));
         uint8_t *dst = static_cast<uint8_t *>(mapPtr) + reinterpret_cast<ptrdiff_t>(pixels);
-        PackPixels(packPixelsParams, *readFormat, area.width * readFormat->pixelBytes,
+        PackPixels(packPixelsParams, aspectFormat, area.width * aspectFormat.pixelBytes,
                    readPixelBuffer, static_cast<uint8_t *>(dst));
         ANGLE_TRY(packBufferVk->unmapImpl(contextVk));
     }
     else
     {
-        PackPixels(packPixelsParams, *readFormat, area.width * readFormat->pixelBytes,
+        PackPixels(packPixelsParams, aspectFormat, area.width * aspectFormat.pixelBytes,
                    readPixelBuffer, static_cast<uint8_t *>(pixels));
     }
 
@@ -9156,6 +9367,12 @@ bool ImageHelper::hasEmulatedImageChannels() const
     const angle::Format &angleFmt   = getIntendedFormat();
     const angle::Format &textureFmt = getActualFormat();
 
+    // Block formats may be decoded and emulated with a non-block format.
+    if (angleFmt.isBlock && !textureFmt.isBlock)
+    {
+        return true;
+    }
+
     // The red channel is never emulated.
     ASSERT((angleFmt.redBits != 0 || angleFmt.luminanceBits != 0 || angleFmt.alphaBits != 0) ==
            (textureFmt.redBits != 0));
@@ -9206,40 +9423,6 @@ VkColorComponentFlags ImageHelper::getEmulatedChannelsMask() const
     return emulatedChannelsMask;
 }
 
-// FramebufferHelper implementation.
-FramebufferHelper::FramebufferHelper() = default;
-
-FramebufferHelper::~FramebufferHelper() = default;
-
-FramebufferHelper::FramebufferHelper(FramebufferHelper &&other) : Resource(std::move(other))
-{
-    mFramebuffer = std::move(other.mFramebuffer);
-}
-
-FramebufferHelper &FramebufferHelper::operator=(FramebufferHelper &&other)
-{
-    std::swap(mUse, other.mUse);
-    std::swap(mFramebuffer, other.mFramebuffer);
-    return *this;
-}
-
-angle::Result FramebufferHelper::init(ContextVk *contextVk,
-                                      const VkFramebufferCreateInfo &createInfo)
-{
-    ANGLE_VK_TRY(contextVk, mFramebuffer.init(contextVk->getDevice(), createInfo));
-    return angle::Result::Continue;
-}
-
-void FramebufferHelper::destroy(RendererVk *rendererVk)
-{
-    mFramebuffer.destroy(rendererVk->getDevice());
-}
-
-void FramebufferHelper::release(ContextVk *contextVk)
-{
-    contextVk->addGarbage(&mFramebuffer);
-}
-
 LayerMode GetLayerMode(const vk::ImageHelper &image, uint32_t layerCount)
 {
     const uint32_t imageLayerCount = GetImageLayerCountForView(image);
@@ -9264,6 +9447,8 @@ ImageViewHelper::ImageViewHelper(ImageViewHelper &&other)
     std::swap(mPerLevelRangeLinearCopyImageViews, other.mPerLevelRangeLinearCopyImageViews);
     std::swap(mPerLevelRangeSRGBCopyImageViews, other.mPerLevelRangeSRGBCopyImageViews);
     std::swap(mPerLevelRangeStencilReadImageViews, other.mPerLevelRangeStencilReadImageViews);
+    std::swap(mPerLevelRangeSamplerExternal2DY2YEXTImageViews,
+              other.mPerLevelRangeSamplerExternal2DY2YEXTImageViews);
 
     std::swap(mLayerLevelDrawImageViews, other.mLayerLevelDrawImageViews);
     std::swap(mLayerLevelDrawImageViewsLinear, other.mLayerLevelDrawImageViewsLinear);
@@ -9295,6 +9480,7 @@ void ImageViewHelper::release(RendererVk *renderer, std::vector<vk::GarbageObjec
     ReleaseImageViews(&mPerLevelRangeLinearCopyImageViews, &garbage);
     ReleaseImageViews(&mPerLevelRangeSRGBCopyImageViews, &garbage);
     ReleaseImageViews(&mPerLevelRangeStencilReadImageViews, &garbage);
+    ReleaseImageViews(&mPerLevelRangeSamplerExternal2DY2YEXTImageViews, &garbage);
 
     // Release the draw views
     for (ImageViewVector &layerViews : mLayerLevelDrawImageViews)
@@ -9354,9 +9540,10 @@ bool ImageViewHelper::isImageViewGarbageEmpty() const
            mPerLevelRangeLinearFetchImageViews.empty() &&
            mPerLevelRangeSRGBReadImageViews.empty() && mPerLevelRangeSRGBCopyImageViews.empty() &&
            mPerLevelRangeSRGBFetchImageViews.empty() &&
-           mPerLevelRangeStencilReadImageViews.empty() && mLayerLevelDrawImageViews.empty() &&
-           mLayerLevelDrawImageViewsLinear.empty() && mSubresourceDrawImageViews.empty() &&
-           mLayerLevelStorageImageViews.empty();
+           mPerLevelRangeStencilReadImageViews.empty() &&
+           mPerLevelRangeSamplerExternal2DY2YEXTImageViews.empty() &&
+           mLayerLevelDrawImageViews.empty() && mLayerLevelDrawImageViewsLinear.empty() &&
+           mSubresourceDrawImageViews.empty() && mLayerLevelStorageImageViews.empty();
 }
 
 void ImageViewHelper::destroy(VkDevice device)
@@ -9371,6 +9558,7 @@ void ImageViewHelper::destroy(VkDevice device)
     DestroyImageViews(&mPerLevelRangeLinearCopyImageViews, device);
     DestroyImageViews(&mPerLevelRangeSRGBCopyImageViews, device);
     DestroyImageViews(&mPerLevelRangeStencilReadImageViews, device);
+    DestroyImageViews(&mPerLevelRangeSamplerExternal2DY2YEXTImageViews, device);
 
     // Release the draw views
     for (ImageViewVector &layerViews : mLayerLevelDrawImageViews)
@@ -9440,6 +9628,7 @@ angle::Result ImageViewHelper::initReadViews(ContextVk *contextVk,
         mPerLevelRangeLinearCopyImageViews.resize(maxViewCount);
         mPerLevelRangeSRGBCopyImageViews.resize(maxViewCount);
         mPerLevelRangeStencilReadImageViews.resize(maxViewCount);
+        mPerLevelRangeSamplerExternal2DY2YEXTImageViews.resize(maxViewCount);
     }
 
     // Determine if we already have ImageViews for the new max level
@@ -9479,19 +9668,26 @@ angle::Result ImageViewHelper::initReadViewsImpl(ContextVk *contextVk,
 
     if (HasBothDepthAndStencilAspects(aspectFlags))
     {
-        ANGLE_TRY(image.initLayerImageView(
-            contextVk, viewType, VK_IMAGE_ASPECT_DEPTH_BIT, readSwizzle, &getReadImageView(),
-            baseLevel, levelCount, baseLayer, layerCount, gl::SrgbWriteControlMode::Default));
+        ANGLE_TRY(image.initLayerImageView(contextVk, viewType, VK_IMAGE_ASPECT_DEPTH_BIT,
+                                           readSwizzle, &getReadImageView(), baseLevel, levelCount,
+                                           baseLayer, layerCount, gl::SrgbWriteControlMode::Default,
+                                           gl::YuvSamplingMode::Default));
         ANGLE_TRY(image.initLayerImageView(
             contextVk, viewType, VK_IMAGE_ASPECT_STENCIL_BIT, readSwizzle,
             &mPerLevelRangeStencilReadImageViews[mCurrentBaseMaxLevelHash], baseLevel, levelCount,
-            baseLayer, layerCount, gl::SrgbWriteControlMode::Default));
+            baseLayer, layerCount, gl::SrgbWriteControlMode::Default,
+            gl::YuvSamplingMode::Default));
     }
     else
     {
         ANGLE_TRY(image.initLayerImageView(contextVk, viewType, aspectFlags, readSwizzle,
                                            &getReadImageView(), baseLevel, levelCount, baseLayer,
-                                           layerCount, gl::SrgbWriteControlMode::Default));
+                                           layerCount, gl::SrgbWriteControlMode::Default,
+                                           gl::YuvSamplingMode::Default));
+        ANGLE_TRY(image.initLayerImageView(
+            contextVk, viewType, aspectFlags, readSwizzle, &getSamplerExternal2DY2YEXTImageView(),
+            baseLevel, levelCount, baseLayer, layerCount, gl::SrgbWriteControlMode::Default,
+            gl::YuvSamplingMode::Y2Y));
     }
 
     gl::TextureType fetchType = viewType;
@@ -9503,12 +9699,14 @@ angle::Result ImageViewHelper::initReadViewsImpl(ContextVk *contextVk,
 
         ANGLE_TRY(image.initLayerImageView(contextVk, fetchType, aspectFlags, readSwizzle,
                                            &getFetchImageView(), baseLevel, levelCount, baseLayer,
-                                           layerCount, gl::SrgbWriteControlMode::Default));
+                                           layerCount, gl::SrgbWriteControlMode::Default,
+                                           gl::YuvSamplingMode::Default));
     }
 
     ANGLE_TRY(image.initLayerImageView(contextVk, fetchType, aspectFlags, formatSwizzle,
                                        &getCopyImageView(), baseLevel, levelCount, baseLayer,
-                                       layerCount, gl::SrgbWriteControlMode::Default));
+                                       layerCount, gl::SrgbWriteControlMode::Default,
+                                       gl::YuvSamplingMode::Default));
 
     return angle::Result::Continue;
 }
@@ -9687,7 +9885,8 @@ angle::Result ImageViewHelper::getLevelDrawImageView(Context *context,
     // therefore don't have swizzle.
     gl::TextureType viewType = Get2DTextureType(layerCount, image.getSamples());
     return image.initLayerImageView(context, viewType, image.getAspectFlags(), gl::SwizzleState(),
-                                    view.get(), levelVk, 1, layer, layerCount, mode);
+                                    view.get(), levelVk, 1, layer, layerCount, mode,
+                                    gl::YuvSamplingMode::Default);
 }
 
 angle::Result ImageViewHelper::getLevelLayerDrawImageView(Context *context,
@@ -9720,7 +9919,8 @@ angle::Result ImageViewHelper::getLevelLayerDrawImageView(Context *context,
     // therefore don't have swizzle.
     gl::TextureType viewType = Get2DTextureType(1, image.getSamples());
     return image.initLayerImageView(context, viewType, image.getAspectFlags(), gl::SwizzleState(),
-                                    imageView, levelVk, 1, layer, 1, mode);
+                                    imageView, levelVk, 1, layer, 1, mode,
+                                    gl::YuvSamplingMode::Default);
 }
 
 ImageOrBufferViewSubresourceSerial ImageViewHelper::getSubresourceSerial(
@@ -10084,13 +10284,13 @@ MetaDescriptorPool::~MetaDescriptorPool()
     ASSERT(mPayload.empty());
 }
 
-void MetaDescriptorPool::destroy(RendererVk *rendererVk, VulkanCacheType cacheType)
+void MetaDescriptorPool::destroy(RendererVk *rendererVk)
 {
     for (auto &iter : mPayload)
     {
         RefCountedDescriptorPool &refCountedPool = iter.second;
         ASSERT(!refCountedPool.isReferenced());
-        refCountedPool.get().destroy(rendererVk, cacheType);
+        refCountedPool.get().destroy(rendererVk);
     }
 
     mPayload.clear();
@@ -10116,8 +10316,7 @@ angle::Result MetaDescriptorPool::bindCachedDescriptorPool(
                                                                &descriptorSetLayout));
 
     DynamicDescriptorPool newDescriptorPool;
-    ANGLE_TRY(InitDynamicDescriptorPool(context, descriptorSetLayoutDesc,
-                                        descriptorSetLayout.get().getHandle(),
+    ANGLE_TRY(InitDynamicDescriptorPool(context, descriptorSetLayoutDesc, descriptorSetLayout.get(),
                                         descriptorCountMultiplier, &newDescriptorPool));
 
     auto insertIter = mPayload.emplace(descriptorSetLayoutDesc,

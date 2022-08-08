@@ -189,6 +189,13 @@ LinkProgramParams LinkProgramD3D11Params(TaskOption taskOption, ThreadOption thr
     return params;
 }
 
+LinkProgramParams LinkProgramMetalParams(TaskOption taskOption, ThreadOption threadOption)
+{
+    LinkProgramParams params(taskOption, threadOption);
+    params.eglParameters = METAL();
+    return params;
+}
+
 LinkProgramParams LinkProgramOpenGLOrGLESParams(TaskOption taskOption, ThreadOption threadOption)
 {
     LinkProgramParams params(taskOption, threadOption);
@@ -211,15 +218,19 @@ TEST_P(LinkProgramBenchmark, Run)
 ANGLE_INSTANTIATE_TEST(
     LinkProgramBenchmark,
     LinkProgramD3D11Params(TaskOption::CompileOnly, ThreadOption::MultiThread),
+    LinkProgramMetalParams(TaskOption::CompileOnly, ThreadOption::MultiThread),
     LinkProgramOpenGLOrGLESParams(TaskOption::CompileOnly, ThreadOption::MultiThread),
     LinkProgramVulkanParams(TaskOption::CompileOnly, ThreadOption::MultiThread),
     LinkProgramD3D11Params(TaskOption::CompileAndLink, ThreadOption::MultiThread),
+    LinkProgramMetalParams(TaskOption::CompileAndLink, ThreadOption::MultiThread),
     LinkProgramOpenGLOrGLESParams(TaskOption::CompileAndLink, ThreadOption::MultiThread),
     LinkProgramVulkanParams(TaskOption::CompileAndLink, ThreadOption::MultiThread),
     LinkProgramD3D11Params(TaskOption::CompileOnly, ThreadOption::SingleThread),
+    LinkProgramMetalParams(TaskOption::CompileOnly, ThreadOption::SingleThread),
     LinkProgramOpenGLOrGLESParams(TaskOption::CompileOnly, ThreadOption::SingleThread),
     LinkProgramVulkanParams(TaskOption::CompileOnly, ThreadOption::SingleThread),
     LinkProgramD3D11Params(TaskOption::CompileAndLink, ThreadOption::SingleThread),
+    LinkProgramMetalParams(TaskOption::CompileAndLink, ThreadOption::SingleThread),
     LinkProgramOpenGLOrGLESParams(TaskOption::CompileAndLink, ThreadOption::SingleThread),
     LinkProgramVulkanParams(TaskOption::CompileAndLink, ThreadOption::SingleThread));
 

@@ -338,6 +338,7 @@ State::State(const State *shareContextState,
              const OverlayType *overlay,
              const EGLenum clientType,
              const Version &clientVersion,
+             EGLint profileMask,
              bool debug,
              bool bindGeneratesResourceCHROMIUM,
              bool clientArraysEnabled,
@@ -347,6 +348,7 @@ State::State(const State *shareContextState,
              bool hasProtectedContent)
     : mID({gIDCounter++}),
       mClientType(clientType),
+      mProfileMask(profileMask),
       mContextPriority(contextPriority),
       mHasProtectedContent(hasProtectedContent),
       mIsDebugContext(debug),
@@ -1609,6 +1611,11 @@ void State::setFragmentShaderDerivativeHint(GLenum hint)
 
 void State::setViewportParams(GLint x, GLint y, GLsizei width, GLsizei height)
 {
+    // [OpenGL ES 2.0.25] section 2.12.1 page 45:
+    // Viewport width and height are clamped to implementation-dependent maximums when specified.
+    width  = std::min(width, mCaps.maxViewportWidth);
+    height = std::min(height, mCaps.maxViewportHeight);
+
     // Skip if same viewport info
     if (mViewport.x != x || mViewport.y != y || mViewport.width != width ||
         mViewport.height != height)

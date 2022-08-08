@@ -183,6 +183,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     ~ANGLERenderTest() override;
 
     void addExtensionPrerequisite(const char *extensionName);
+    void addIntegerPrerequisite(GLenum target, int min);
 
     virtual void initializeBenchmark() {}
     virtual void destroyBenchmark() {}
@@ -232,12 +233,19 @@ class ANGLERenderTest : public ANGLEPerfTest
     void computeGPUTime() override;
 
     void skipTestIfMissingExtensionPrerequisites();
+    void skipTestIfFailsIntegerPrerequisite();
 
     void initPerfCounters();
 
     GLWindowBase *mGLWindow;
     OSWindow *mOSWindow;
     std::vector<const char *> mExtensionPrerequisites;
+    struct IntegerPrerequisite
+    {
+        GLenum target;
+        int min;
+    };
+    std::vector<IntegerPrerequisite> mIntegerPrerequisites;
     angle::PlatformMethods mPlatformMethods;
     ConfigParameters mConfigParams;
     bool mSwapEnabled;

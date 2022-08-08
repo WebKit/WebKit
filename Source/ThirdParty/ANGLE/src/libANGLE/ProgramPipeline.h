@@ -95,7 +95,7 @@ class ProgramPipeline final : public RefCountObject<ProgramPipelineID>,
 
     void onDestroy(const Context *context) override;
 
-    void setLabel(const Context *context, const std::string &label) override;
+    angle::Result setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;
 
     const ProgramPipelineState &getState() const { return mState; }

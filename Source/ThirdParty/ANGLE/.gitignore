@@ -33,11 +33,11 @@
 /third_party/abseil-cpp
 /third_party/android_build_tools
 /third_party/android_deps
-/third_party/android_lint
 /third_party/android_ndk
 /third_party/android_platform
 /third_party/android_sdk
 /third_party/android_system_sdk/*.jar
+/third_party/astc-encoder/src
 /third_party/bazel/desugar/*.jar
 /third_party/catapult
 /third_party/cherry
@@ -95,8 +95,8 @@
 /tools/valgrind
 angle.iml
 angle_debug.txt
-build
-buildtools/
+/build
+/buildtools
 debug.txt
 Debug/
 Debug_ARM/

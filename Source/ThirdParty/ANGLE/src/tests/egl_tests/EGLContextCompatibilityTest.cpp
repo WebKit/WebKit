@@ -112,7 +112,8 @@ std::vector<EGLConfig> GetConfigs(EGLDisplay display)
 
 PlatformParameters FromRenderer(EGLint renderer)
 {
-    return WithNoFixture(PlatformParameters(2, 0, EGLPlatformParameters(renderer)));
+    return WithNoFixture(
+        PlatformParameters(EGL_OPENGL_ES_API, 2, 0, 0, EGLPlatformParameters(renderer)));
 }
 
 std::string EGLConfigName(EGLDisplay display, EGLConfig config)
@@ -180,7 +181,7 @@ class EGLContextCompatibilityTest : public ANGLETestBase, public testing::Test
 
         EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, mRenderer, EGL_NONE};
         mDisplay           = eglGetPlatformDisplayEXT(
-            EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+                      EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         ASSERT_TRUE(mDisplay != EGL_NO_DISPLAY);
 
         ASSERT_TRUE(eglInitialize(mDisplay, nullptr, nullptr) == EGL_TRUE);

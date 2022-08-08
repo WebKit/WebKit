@@ -178,9 +178,15 @@ void ProgramPipeline::onDestroy(const Context *context)
     getImplementation()->destroy(context);
 }
 
-void ProgramPipeline::setLabel(const Context *context, const std::string &label)
+angle::Result ProgramPipeline::setLabel(const Context *context, const std::string &label)
 {
     mState.mLabel = label;
+
+    if (mProgramPipelineImpl)
+    {
+        return mProgramPipelineImpl->onLabelUpdate(context);
+    }
+    return angle::Result::Continue;
 }
 
 const std::string &ProgramPipeline::getLabel() const
@@ -627,11 +633,11 @@ void ProgramPipeline::validate(const gl::Context *context)
         }
     }
 
-    intptr_t drawStatesError = context->getStateCache().getBasicDrawStatesError(context);
-    if (drawStatesError)
+    intptr_t programPipelineError = context->getStateCache().getProgramPipelineError(context);
+    if (programPipelineError)
     {
         mState.mValid            = false;
-        const char *errorMessage = reinterpret_cast<const char *>(drawStatesError);
+        const char *errorMessage = reinterpret_cast<const char *>(programPipelineError);
         infoLog << errorMessage << "\n";
         return;
     }

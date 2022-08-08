@@ -32,6 +32,8 @@ class TransformFeedbackImpl : angle::NonCopyable
         size_t index,
         const gl::OffsetBindingPointer<gl::Buffer> &binding) = 0;
 
+    virtual angle::Result onLabelUpdate(const gl::Context *context);
+
   protected:
     const gl::TransformFeedbackState &mState;
 };

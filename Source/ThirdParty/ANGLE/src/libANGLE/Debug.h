@@ -13,6 +13,7 @@
 #include "common/PackedEnums.h"
 #include "common/angleutils.h"
 #include "libANGLE/AttributeMap.h"
+#include "libANGLE/Error.h"
 
 #include <deque>
 #include <string>
@@ -26,8 +27,8 @@ class LabeledObject
 {
   public:
     virtual ~LabeledObject() {}
-    virtual void setLabel(const Context *context, const std::string &label) = 0;
-    virtual const std::string &getLabel() const                             = 0;
+    virtual angle::Result setLabel(const Context *context, const std::string &label) = 0;
+    virtual const std::string &getLabel() const                                      = 0;
 };
 
 class Debug : angle::NonCopyable

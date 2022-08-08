@@ -196,6 +196,9 @@ class OffscreenSurfaceMtl : public SurfaceMtl
 
     void destroy(const egl::Display *display) override;
 
+    EGLint getWidth() const override;
+    EGLint getHeight() const override;
+
     egl::Error swap(const gl::Context *context) override;
 
     egl::Error bindTexImage(const gl::Context *context,

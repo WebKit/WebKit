@@ -61,6 +61,8 @@ class ShaderImpl : angle::NonCopyable
 
     const gl::ShaderState &getState() const { return mState; }
 
+    virtual angle::Result onLabelUpdate(const gl::Context *context);
+
   protected:
     std::shared_ptr<WaitableCompileEvent> compileImpl(const gl::Context *context,
                                                       gl::ShCompilerInstance *compilerInstance,

@@ -42,6 +42,7 @@ struct Format final : private angle::NonCopyable
                             DXGI_FORMAT dsvFormat,
                             DXGI_FORMAT blitSRVFormat,
                             DXGI_FORMAT stencilSRVFormat,
+                            DXGI_FORMAT typelessFormat,
                             GLenum swizzleFormat,
                             InitializeTextureDataFunction internalFormatInitializer);
 
@@ -62,6 +63,7 @@ struct Format final : private angle::NonCopyable
 
     DXGI_FORMAT blitSRVFormat;
     DXGI_FORMAT stencilSRVFormat;
+    DXGI_FORMAT typelessFormat;
 
     GLenum swizzleFormat;
 
@@ -78,6 +80,7 @@ constexpr Format::Format()
       dsvFormat(DXGI_FORMAT_UNKNOWN),
       blitSRVFormat(DXGI_FORMAT_UNKNOWN),
       stencilSRVFormat(DXGI_FORMAT_UNKNOWN),
+      typelessFormat(DXGI_FORMAT_UNKNOWN),
       swizzleFormat(GL_NONE),
       dataInitializerFunction(nullptr)
 {}
@@ -91,6 +94,7 @@ constexpr Format::Format(GLenum internalFormat,
                          DXGI_FORMAT dsvFormat,
                          DXGI_FORMAT blitSRVFormat,
                          DXGI_FORMAT stencilSRVFormat,
+                         DXGI_FORMAT typelessFormat,
                          GLenum swizzleFormat,
                          InitializeTextureDataFunction internalFormatInitializer)
     : internalFormat(internalFormat),
@@ -102,6 +106,7 @@ constexpr Format::Format(GLenum internalFormat,
       dsvFormat(dsvFormat),
       blitSRVFormat(blitSRVFormat),
       stencilSRVFormat(stencilSRVFormat),
+      typelessFormat(typelessFormat),
       swizzleFormat(swizzleFormat),
       dataInitializerFunction(internalFormatInitializer)
 {}

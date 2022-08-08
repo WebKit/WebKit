@@ -553,7 +553,8 @@ void ANGLETestBase::initOSWindow()
         case GLESDriverType::SystemEGL:
         {
             mFixture->eglWindow =
-                EGLWindow::New(mCurrentParams->majorVersion, mCurrentParams->minorVersion);
+                EGLWindow::New(mCurrentParams->clientType, mCurrentParams->majorVersion,
+                               mCurrentParams->minorVersion, mCurrentParams->profileMask);
             break;
         }
 

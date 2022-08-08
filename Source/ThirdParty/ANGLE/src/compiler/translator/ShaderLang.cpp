@@ -216,6 +216,7 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->NV_shader_noperspective_interpolation          = 0;
     resources->OES_texture_storage_multisample_2d_array       = 0;
     resources->OES_texture_3D                                 = 0;
+    resources->ANGLE_shader_pixel_local_storage               = 0;
     resources->ANGLE_texture_multisample                      = 0;
     resources->ANGLE_multi_draw                               = 0;
     resources->ANGLE_base_vertex_base_instance                = 0;

@@ -146,7 +146,6 @@ struct IndexGenerationParams
     BufferRef dstBuffer;
     uint32_t dstOffset;
     bool primitiveRestartEnabled = false;
-    GLsizei maxIndexCount = std::numeric_limits<GLsizei>::max();
 };
 
 struct CopyPixelsCommonParams
@@ -389,7 +388,6 @@ class IndexGeneratorUtils final : angle::NonCopyable
         ContextMtl *contextMtl,
         gl::DrawElementsType srcType,
         uint32_t indexCount,
-        uint32_t maxIndexCount,
         const BufferRef &srcBuffer,
         uint32_t srcOffset,
         const BufferRef &dstBuffer,

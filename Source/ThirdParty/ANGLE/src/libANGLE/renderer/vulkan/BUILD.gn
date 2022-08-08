@@ -82,6 +82,8 @@ _vulkan_backend_sources = [
   "SemaphoreVk.h",
   "ShaderVk.cpp",
   "ShaderVk.h",
+  "Suballocation.cpp",
+  "Suballocation.h",
   "SurfaceVk.cpp",
   "SurfaceVk.h",
   "SyncVk.cpp",

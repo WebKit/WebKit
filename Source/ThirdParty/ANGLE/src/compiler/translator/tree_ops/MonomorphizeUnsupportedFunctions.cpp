@@ -243,10 +243,12 @@ class MonomorphizeTraverser final : public TIntermTraverser
     explicit MonomorphizeTraverser(TCompiler *compiler,
                                    TSymbolTable *symbolTable,
                                    ShCompileOptions compileOptions,
+                                   UnsupportedFunctionArgsBitSet unsupportedFunctionArgs,
                                    FunctionMap *functionMap)
         : TIntermTraverser(true, false, false, symbolTable),
           mCompiler(compiler),
           mCompileOptions(compileOptions),
+          mUnsupportedFunctionArgs(unsupportedFunctionArgs),
           mFunctionMap(functionMap)
     {}
 
@@ -275,6 +277,100 @@ class MonomorphizeTraverser final : public TIntermTraverser
     bool getAnyMonomorphized() const { return mAnyMonomorphized; }
 
   private:
+    bool isUnsupportedArgument(TIntermTyped *callArgument, const TVariable *funcArgument) const
+    {
+        // Only interested in opaque uniforms and structs that contain samplers.
+        const bool isOpaqueType = IsOpaqueType(funcArgument->getType().getBasicType());
+        const bool isStructContainingSamplers =
+            funcArgument->getType().isStructureContainingSamplers();
+        if (!isOpaqueType && !isStructContainingSamplers)
+        {
+            return false;
+        }
+
+        // If not uniform (the variable was itself a function parameter), don't process it in
+        // this pass, as we don't know which actual uniform it corresponds to.
+        bool isSamplerInStruct   = false;
+        const TVariable *uniform = GetBaseUniform(callArgument, &isSamplerInStruct);
+        if (uniform == nullptr)
+        {
+            return false;
+        }
+
+        const TType &type = uniform->getType();
+
+        if (mUnsupportedFunctionArgs[UnsupportedFunctionArgs::StructContainingSamplers])
+        {
+            // Monomorphize if the parameter is a structure that contains samplers (so in
+            // RewriteStructSamplers we don't need to rewrite the functions to accept multiple
+            // parameters split from the struct).
+            if (isStructContainingSamplers)
+            {
+                return true;
+            }
+        }
+
+        if (mUnsupportedFunctionArgs[UnsupportedFunctionArgs::ArrayOfArrayOfSamplerOrImage])
+        {
+            // Monomorphize if:
+            //
+            // - The opaque uniform is a sampler in a struct (which can create an array-of-array
+            //   situation), and the function expects an array of samplers, or
+            //
+            // - The opaque uniform is an array of array of sampler or image, and it's partially
+            //   subscripted (i.e. the function itself expects an array)
+            //
+            const bool isParameterArrayOfOpaqueType = funcArgument->getType().isArray();
+            const bool isArrayOfArrayOfSamplerOrImage =
+                (type.isSampler() || type.isImage()) && type.isArrayOfArrays();
+            if (isSamplerInStruct && isParameterArrayOfOpaqueType)
+            {
+                return true;
+            }
+            if (isArrayOfArrayOfSamplerOrImage && isParameterArrayOfOpaqueType)
+            {
+                return true;
+            }
+        }
+
+        if (mUnsupportedFunctionArgs[UnsupportedFunctionArgs::AtomicCounter])
+        {
+            if (type.isAtomicCounter())
+            {
+                return true;
+            }
+        }
+
+        if (mUnsupportedFunctionArgs[UnsupportedFunctionArgs::SamplerCubeEmulation])
+        {
+            // Monomorphize if the opaque uniform is a samplerCube and ES2's cube sampling emulation
+            // is requested.
+            if (type.isSamplerCube() &&
+                (mCompileOptions & SH_EMULATE_SEAMFUL_CUBE_MAP_SAMPLING) != 0)
+            {
+                return true;
+            }
+        }
+
+        if (mUnsupportedFunctionArgs[UnsupportedFunctionArgs::Image])
+        {
+            if (type.isImage())
+            {
+                return true;
+            }
+        }
+
+        if (mUnsupportedFunctionArgs[UnsupportedFunctionArgs::PixelLocalStorage])
+        {
+            if (type.isPixelLocal())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     TIntermFunctionDefinition *processFunctionCall(TIntermAggregate *functionCall,
                                                    TIntermFunctionDefinition *originalDefinition,
                                                    bool *isOriginalUsedOut)
@@ -290,62 +386,14 @@ class MonomorphizeTraverser final : public TIntermTraverser
         {
             TIntermTyped *callArgument    = callArguments[argIndex]->getAsTyped();
             const TVariable *funcArgument = function->getParam(argIndex);
-
-            // Only interested in opaque uniforms and structs that contain samplers.
-            const bool isOpaqueType = IsOpaqueType(funcArgument->getType().getBasicType());
-            const bool isStructContainingSamplers =
-                funcArgument->getType().isStructureContainingSamplers();
-            if (!isOpaqueType && !isStructContainingSamplers)
+            if (isUnsupportedArgument(callArgument, funcArgument))
             {
-                continue;
+                // Copy the argument and extract the side effects.
+                TIntermTyped *argument =
+                    ExtractSideEffects(mSymbolTable, callArgument, &replacementIndices);
+
+                replacedArguments.push_back({argIndex, argument});
             }
-
-            // If not uniform (the variable was itself a function parameter), don't process it in
-            // this pass, as we don't know which actual uniform it corresponds to.
-            bool isSamplerInStruct   = false;
-            const TVariable *uniform = GetBaseUniform(callArgument, &isSamplerInStruct);
-            if (uniform == nullptr)
-            {
-                continue;
-            }
-
-            // Conditions for monomorphization:
-            //
-            // - If the parameter is a structure that contains samplers (so in RewriteStructSamplers
-            //   we don't need to rewrite the functions to accept multiple parameters split from the
-            //   struct), or
-            // - If the opaque uniform is a sampler in a struct (which can create an array-of-array
-            //   situation), and the function expects an array of samplers, or
-            // - If the opaque uniform is an array of array of sampler or image, and it's partially
-            //   subscripted (i.e. the function itself expects an array), or
-            // - The opaque uniform is an atomic counter
-            // - The opaque uniform is a samplerCube and ES2's cube sampling emulation is requested.
-            // - The opaque uniform is an image* with r32f format.
-            //
-            const TType &type = uniform->getType();
-            const bool isArrayOfArrayOfSamplerOrImage =
-                (type.isSampler() || type.isImage()) && type.isArrayOfArrays();
-            const bool isParameterArrayOfOpaqueType = funcArgument->getType().isArray();
-            const bool isAtomicCounter              = type.isAtomicCounter();
-            const bool isSamplerCubeEmulation =
-                type.isSamplerCube() &&
-                (mCompileOptions & SH_EMULATE_SEAMFUL_CUBE_MAP_SAMPLING) != 0;
-            const bool isR32fImage =
-                type.isImage() && type.getLayoutQualifier().imageInternalFormat == EiifR32F;
-
-            if (!(isStructContainingSamplers ||
-                  (isSamplerInStruct && isParameterArrayOfOpaqueType) ||
-                  (isArrayOfArrayOfSamplerOrImage && isParameterArrayOfOpaqueType) ||
-                  isAtomicCounter || isSamplerCubeEmulation || isR32fImage))
-            {
-                continue;
-            }
-
-            // Copy the argument and extract the side effects.
-            TIntermTyped *argument =
-                ExtractSideEffects(mSymbolTable, callArgument, &replacementIndices);
-
-            replacedArguments.push_back({argIndex, argument});
         }
 
         if (replacedArguments.empty())
@@ -388,6 +436,7 @@ class MonomorphizeTraverser final : public TIntermTraverser
 
     TCompiler *mCompiler;
     ShCompileOptions mCompileOptions;
+    UnsupportedFunctionArgsBitSet mUnsupportedFunctionArgs;
     bool mAnyMonomorphized = false;
 
     // Map of original to monomorphized functions.
@@ -506,7 +555,8 @@ void SortDeclarations(TIntermBlock *root)
 bool MonomorphizeUnsupportedFunctionsImpl(TCompiler *compiler,
                                           TIntermBlock *root,
                                           TSymbolTable *symbolTable,
-                                          ShCompileOptions compileOptions)
+                                          ShCompileOptions compileOptions,
+                                          UnsupportedFunctionArgsBitSet unsupportedFunctionArgs)
 {
     // First, sort out the declarations such that all non-function declarations are placed before
     // function definitions.  This way when the function is replaced with one that references said
@@ -518,7 +568,8 @@ bool MonomorphizeUnsupportedFunctionsImpl(TCompiler *compiler,
         FunctionMap functionMap;
         InitializeFunctionMap(root, &functionMap);
 
-        MonomorphizeTraverser monomorphizer(compiler, symbolTable, compileOptions, &functionMap);
+        MonomorphizeTraverser monomorphizer(compiler, symbolTable, compileOptions,
+                                            unsupportedFunctionArgs, &functionMap);
         root->traverse(&monomorphizer);
 
         if (!monomorphizer.getAnyMonomorphized())
@@ -547,13 +598,15 @@ bool MonomorphizeUnsupportedFunctionsImpl(TCompiler *compiler,
 bool MonomorphizeUnsupportedFunctions(TCompiler *compiler,
                                       TIntermBlock *root,
                                       TSymbolTable *symbolTable,
-                                      ShCompileOptions compileOptions)
+                                      ShCompileOptions compileOptions,
+                                      UnsupportedFunctionArgsBitSet unsupportedFunctionArgs)
 {
     // This function actually applies multiple transformation, and the AST may not be valid until
     // the transformations are entirely done.  Some validation is momentarily disabled.
     bool enableValidateFunctionCall = compiler->disableValidateFunctionCall();
 
-    bool result = MonomorphizeUnsupportedFunctionsImpl(compiler, root, symbolTable, compileOptions);
+    bool result = MonomorphizeUnsupportedFunctionsImpl(compiler, root, symbolTable, compileOptions,
+                                                       unsupportedFunctionArgs);
 
     compiler->restoreValidateFunctionCall(enableValidateFunctionCall);
     return result && compiler->validateAST(root);

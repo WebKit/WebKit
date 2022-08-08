@@ -256,7 +256,7 @@ void BufferVk::release(ContextVk *contextVk)
     RendererVk *renderer = contextVk->getRenderer();
     if (mBuffer.valid())
     {
-        mBuffer.release(renderer);
+        mBuffer.releaseBufferAndDescriptorSetCache(contextVk);
     }
     if (mStagingBuffer.valid())
     {
@@ -598,7 +598,7 @@ angle::Result BufferVk::ghostMappedBuffer(ContextVk *contextVk,
         memcpy(dstMapPtr, srcMapPtr, static_cast<size_t>(mState.getSize()));
     }
 
-    src.release(contextVk->getRenderer());
+    src.releaseBufferAndDescriptorSetCache(contextVk);
 
     // Return the already mapped pointer with the offset adjustment to avoid the call to unmap().
     *mapPtr = dstMapPtr + offset;
@@ -809,6 +809,7 @@ angle::Result BufferVk::updateBuffer(ContextVk *contextVk,
     }
     return angle::Result::Continue;
 }
+
 angle::Result BufferVk::directUpdate(ContextVk *contextVk,
                                      const uint8_t *data,
                                      size_t size,
@@ -934,7 +935,7 @@ angle::Result BufferVk::acquireAndUpdate(ContextVk *contextVk,
 
     if (src.valid())
     {
-        src.release(contextVk->getRenderer());
+        src.releaseBufferAndDescriptorSetCache(contextVk);
     }
 
     return angle::Result::Continue;
@@ -1028,7 +1029,7 @@ angle::Result BufferVk::acquireBufferHelper(ContextVk *contextVk, size_t sizeInB
 
     if (mBuffer.valid())
     {
-        mBuffer.release(renderer);
+        mBuffer.releaseBufferAndDescriptorSetCache(contextVk);
     }
 
     // Allocate the buffer directly

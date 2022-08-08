@@ -313,6 +313,7 @@ class TSymbolTable : angle::NonCopyable, TSymbolTableBase
     {
         return mResources.UBOArgumentBufferBindingIndex;
     }
+    ShShaderSpec getShaderSpec() const { return mShaderSpec; }
 
   private:
     friend class TSymbolUniqueId;

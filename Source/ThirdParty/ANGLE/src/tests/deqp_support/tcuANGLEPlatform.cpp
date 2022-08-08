@@ -20,19 +20,68 @@
 
 #include "tcuANGLEPlatform.h"
 
+#include "egluGLContextFactory.hpp"
+#include "gluPlatform.hpp"
+#include "tcuANGLENativeDisplayFactory.h"
+#include "tcuDefs.hpp"
+#include "tcuNullContextFactory.hpp"
+#include "tcuPlatform.hpp"
+#include "util/angle_features_autogen.h"
+#include "util/test_utils.h"
+
+#ifndef _EGLUPLATFORM_HPP
+#    include "egluPlatform.hpp"
+#endif
+
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
-#include "egluGLContextFactory.hpp"
-#include "tcuANGLENativeDisplayFactory.h"
-#include "tcuNullContextFactory.hpp"
-#include "util/angle_features_autogen.h"
-#include "util/test_utils.h"
+#if (DE_OS == DE_OS_WIN32)
+#    include "tcuWGLContextFactory.hpp"
+#    include "tcuWin32EGLNativeDisplayFactory.hpp"
+#endif  // (DE_OS == DE_OS_WIN32)
+
+#if (DE_OS == DE_OS_UNIX)
+#    include "tcuLnxX11EglDisplayFactory.hpp"
+#endif  // (DE_OKS == DE_OS_UNIX)
 
 static_assert(EGL_DONT_CARE == -1, "Unexpected value for EGL_DONT_CARE");
 
 namespace tcu
 {
+class ANGLEPlatform : public tcu::Platform, private glu::Platform, private eglu::Platform
+{
+  public:
+    ANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotation);
+    ~ANGLEPlatform();
+
+    bool processEvents() override;
+
+    const glu::Platform &getGLPlatform() const override
+    {
+        return static_cast<const glu::Platform &>(*this);
+    }
+    const eglu::Platform &getEGLPlatform() const override
+    {
+        return static_cast<const eglu::Platform &>(*this);
+    }
+
+  private:
+    // Note: -1 represents EGL_DONT_CARE, but we don't have the EGL headers here.
+    std::vector<eglw::EGLAttrib> initAttribs(eglw::EGLAttrib type,
+                                             eglw::EGLAttrib deviceType   = -1,
+                                             eglw::EGLAttrib majorVersion = -1,
+                                             eglw::EGLAttrib minorVersion = -1);
+
+    EventState mEvents;
+    angle::PlatformMethods mPlatformMethods;
+    std::vector<const char *> mEnableFeatureOverrides;
+
+#if (DE_OS == DE_OS_UNIX)
+    lnx::EventState mLnxEventState;
+#endif
+};
+
 ANGLEPlatform::ANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotation)
 {
     angle::SetLowPriorityProcess();
@@ -93,6 +142,9 @@ ANGLEPlatform::ANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotat
                                                           d3d9Attribs, &mEvents);
         m_nativeDisplayFactoryRegistry.registerFactory(d3d9Factory);
     }
+
+    m_nativeDisplayFactoryRegistry.registerFactory(
+        new win32::EGLNativeDisplayFactory(GetModuleHandle(nullptr)));
 #endif  // (DE_OS == DE_OS_WIN32)
 
 #if defined(ANGLE_USE_GBM) || (DE_OS == DE_OS_ANDROID) || (DE_OS == DE_OS_WIN32)
@@ -151,11 +203,27 @@ ANGLEPlatform::ANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotat
         m_nativeDisplayFactoryRegistry.registerFactory(nullFactory);
     }
 
+#if (DE_OS == DE_OS_UNIX)
+    m_nativeDisplayFactoryRegistry.registerFactory(
+        lnx::x11::egl::createDisplayFactory(mLnxEventState));
+#endif
+
     m_contextFactoryRegistry.registerFactory(
         new eglu::GLContextFactory(m_nativeDisplayFactoryRegistry));
 
     // Add Null context type for use in generating case lists
     m_contextFactoryRegistry.registerFactory(new null::NullGLContextFactory());
+
+#if (DE_OS == DE_OS_WIN32)
+    // The wgl::ContextFactory can throw an exception when it fails to load WGL extension functions.
+    // Fail gracefully by catching the exception, which prevents adding the factory to the registry.
+    try
+    {
+        m_contextFactoryRegistry.registerFactory(new wgl::ContextFactory(GetModuleHandle(nullptr)));
+    }
+    catch (tcu::Exception e)
+    {}
+#endif
 }
 
 ANGLEPlatform::~ANGLEPlatform() {}

@@ -29,7 +29,7 @@ class BoxedUint32
     {
         return T{mValue};
     }
-    BoxedUint32(const BoxedUint32 &other) = default;
+    BoxedUint32(const BoxedUint32 &other)            = default;
     BoxedUint32 &operator=(const BoxedUint32 &other) = default;
     operator uint32_t() const { return mValue.value; }
     bool operator==(const BoxedUint32 &other) const { return mValue.value == other.mValue.value; }
@@ -125,6 +125,7 @@ enum HeaderIndex
 // Returns whether SPIR-V is valid.  Useful for ASSERTs.  Automatically generates a warning if
 // SPIR-V is not valid.
 bool Validate(const Blob &blob);
+void Print(const Blob &blob);
 
 }  // namespace spirv
 }  // namespace angle

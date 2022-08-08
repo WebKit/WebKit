@@ -340,6 +340,13 @@ struct FeaturesGL : FeatureSetBase
         "Decode and encode before generateMipmap for srgb format textures.", &members,
         "http://anglebug.com/4646"};
 
+    FeatureInfo emulateCopyTexImage2D = {
+        "emulateCopyTexImage2D",
+        FeatureCategory::OpenGLWorkarounds,
+        "Replace CopyTexImage2D with TexImage2D + CopyTexSubImage2D.",
+        &members,
+    };
+
     FeatureInfo emulateCopyTexImage2DFromRenderbuffers = {
         "emulateCopyTexImage2DFromRenderbuffers", FeatureCategory::OpenGLWorkarounds,
         "CopyTexImage2D spuriously returns errors on iOS when copying from renderbuffers.",

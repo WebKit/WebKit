@@ -69,34 +69,34 @@ IP Status
 New Procedures and Functions
 
     void DrawArraysInstancedBaseInstanceANGLE(enum mode,
-                                              GLint first,
-                                              GLsizei count,
-                                              GLsizei instanceCount,
-                                              GLuint baseInstance);
+                                              int first,
+                                              sizei count,
+                                              sizei instanceCount,
+                                              uint baseInstance);
 
-    void DrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode,
-                                                        GLsizei count,
-                                                        GLenum type,
-                                                        const GLvoid *indices,
-                                                        GLsizei instanceCount,
-                                                        GLint baseVertex,
-                                                        GLuint baseInstance);
+    void DrawElementsInstancedBaseVertexBaseInstanceANGLE(enum mode,
+                                                          sizei count,
+                                                          enum type,
+                                                          const void *indices,
+                                                          sizei instanceCount,
+                                                          int baseVertex,
+                                                          uint baseInstance);
 
     void MultiDrawArraysInstancedBaseInstanceANGLE(enum mode,
-                                                const GLint* firsts,
-                                                const GLsizei* counts,
-                                                const GLsizei* instanceCounts,
-                                                const GLuint* baseInstances,
-                                                const GLsizei drawcount);
+                                                   const int *firsts,
+                                                   const sizei *counts,
+                                                   const sizei *instanceCounts,
+                                                   const uint *baseInstances,
+                                                   sizei drawcount);
 
     void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(enum mode,
-                                                const GLint* counts,
-                                                GLenum type,
-                                                const GLvoid* const* indices,
-                                                const GLsizei* instanceCounts,
-                                                const GLint* baseVertices,
-                                                const GLuint* baseInstances,
-                                                const GLsizei drawcount);
+                                                               const sizei *counts,
+                                                               enum type,
+                                                               const void *const *indices,
+                                                               const sizei *instanceCounts,
+                                                               const int *baseVertices,
+                                                               const uint *baseInstances,
+                                                               sizei drawcount);
 
 New Tokens
 
@@ -108,23 +108,25 @@ Additions to Chapter 10 of the OpenGL ES 3.2 Specification
 
     The command
 
-    void DrawArraysInstancedBaseInstanceANGLE (GLenum mode,
-        GLint first,
-        GLsizei count,
-        GLsizei instanceCount,
-        GLuint baseInstance);
+    void DrawArraysInstancedBaseInstanceANGLE(
+        enum mode,
+        int first,
+        sizei count,
+        sizei instanceCount,
+        uint baseInstance);
 
     Behaves identically to DrawArraysInstanced except that <baseInstance> is
     passed down to DrawArraysOneInstance instead of zero.
 
     The command
 
-    void MultiDrawArraysInstancedBaseInstanceANGLE(GLenum mode,
-        const GLint* firsts,
-        const GLsizei* counts,
-        const GLsizei* instanceCounts,
-        const GLuint* baseInstances,
-        GLsizei drawcount);
+    void MultiDrawArraysInstancedBaseInstanceANGLE(
+        enum mode,
+        const int *firsts,
+        const sizei *counts,
+        const sizei *instanceCounts,
+        const uint *baseInstances,
+        sizei drawcount);
 
     Behaves identically to DrawArraysInstancedBaseInstanceANGLE except that a
     list of arrays is specified instead. The number of lists is specified in
@@ -145,27 +147,29 @@ Additions to Chapter 10 of the OpenGL ES 3.2 Specification
 
     The command
 
-    void DrawElementsInstancedBaseVertexBaseInstanceANGLE (GLenum mode,
-        GLsizei count,
-        GLenum type,
-        const GLvoid* indices,
-        GLsizei instanceCount,
-        GLint baseVertex,
-        GLuint baseInstance);
+    void DrawElementsInstancedBaseVertexBaseInstanceANGLE(
+        enum mode,
+        sizei count,
+        enum type,
+        const void *indices,
+        sizei instanceCount,
+        int baseVertex,
+        uint baseInstance);
 
     Behaves identically to DrawElementsInstanced except that <baseVertex> and
     <baseInstance> are passed down to DrawElementsOneInstance instead of zero.
 
     The command
 
-    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode,
-        const GLsizei* counts,
-        GLenum type,
-        const GLvoid* const* indices,
-        const GLsizei* instanceCounts,
-        const GLint* baseVertices,
-        const GLuint* baseInstances,
-        GLsizei drawcount);
+    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(
+        enum mode,
+        const sizei *counts,
+        enum type,
+        const void *const *indices,
+        const sizei *instanceCounts,
+        const int *baseVertices,
+        const uint *baseInstances,
+        sizei drawcount);
 
     Behaves identically to DrawElementsInstancedBaseVertexBaseInstanceANGLE
     except that a list of arrays is specified instead. The number of lists is
@@ -193,7 +197,7 @@ Errors
     generate the same errors as DrawArraysInstanced and DrawElementsInstanced.
 
     MultiDrawArraysInstancedBaseInstanceANGLE and
-    MultiDrawElementsInstancedBaseVertexBaseInstanceANGL
+    MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE
     generate the same errors as DrawArraysInstanced and DrawElementsInstanced,
     respectively, for any draw <i> where an error is generated. If any call
     would produce an error, no drawing is performed.
@@ -214,8 +218,9 @@ Issues
 
 Revision History
 
-    Rev.    Date    Author       Changes
-    ----  --------  ----------   --------------------------------------------
-    1     08/13/19   Shrek Shao   First revision.
-    2     07/14/20   Shrek Shao   Fix baseInstance type from GLint to GLuint.
-    3     11/19/21   Shrek Shao   Decouple gl_BaseVertex/gl_BaseInstance.
+    Rev.    Date    Author            Changes
+    ----  --------  ----------------  --------------------------------------------
+    1     08/13/19   Shrek Shao       First revision.
+    2     07/14/20   Shrek Shao       Fix baseInstance type from GLint to GLuint.
+    3     11/19/21   Shrek Shao       Decouple gl_BaseVertex/gl_BaseInstance.
+    4     06/21/22   Alexey Knyazev   Fixed typos and type usage.

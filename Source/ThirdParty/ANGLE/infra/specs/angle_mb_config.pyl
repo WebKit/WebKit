@@ -22,6 +22,7 @@
       'android-pixel4-perf': 'angle_goma_android_perf_bot',
       'linux-asan-test': 'angle_asan_bot',
       'linux-dbg-compile': 'angle_goma_debug_bot',
+      'linux-exp-test': 'angle_goma_release_bot',
       'linux-intel-hd630-perf': 'angle_goma_perf_bot',
       'linux-nvidia-p400-perf': 'angle_goma_perf_bot',
       'linux-test': 'angle_goma_release_bot',

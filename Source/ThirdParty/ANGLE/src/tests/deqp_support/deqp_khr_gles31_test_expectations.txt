@@ -19,20 +19,12 @@
 // No known implementation supports STORAGE_TEXEL_BUFFER support for RGB32 formats
 3573 VULKAN : KHR-GLES31.core.texture_buffer.texture_buffer_texture_buffer_range = SKIP
 
-// Geometry shader support (conditioned to windows as that's our only bot capable of running these
-// tests)
-// Wrong results
-5579 VULKAN WIN : KHR-GLES31.core.geometry_shader.adjacency.adjacency_indiced_triangle_strip = FAIL
-5579 VULKAN WIN : KHR-GLES31.core.geometry_shader.adjacency.adjacency_non_indiced_triangle_strip = FAIL
-5579 VULKAN WIN : KHR-GLES31.core.geometry_shader.rendering.rendering.triangles_input_line_strip_output_triangle_*_drawcall = FAIL
-5579 VULKAN WIN : KHR-GLES31.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangle_*_drawcall = FAIL
-5579 VULKAN WIN : KHR-GLES31.core.geometry_shader.rendering.rendering.triangles_with_adjacency_input_*_strip_output_triangle_strip_adjacency_drawcall = FAIL
-5579 VULKAN LINUX : KHR-GLES31.core.geometry_shader.adjacency.adjacency_indiced_triangle_strip = FAIL
-5579 VULKAN LINUX : KHR-GLES31.core.geometry_shader.adjacency.adjacency_non_indiced_triangle_strip = FAIL
-5579 VULKAN LINUX : KHR-GLES31.core.geometry_shader.rendering.rendering.triangles_input_line_strip_output_triangle_*_drawcall = FAIL
-5579 VULKAN LINUX : KHR-GLES31.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangle_*_drawcall = FAIL
-5579 VULKAN LINUX : KHR-GLES31.core.geometry_shader.rendering.rendering.triangles_with_adjacency_input_*_strip_output_triangle_strip_adjacency_drawcall = FAIL
-// Failures on windows nvidia
+// Failures on nvidia
+5579 VULKAN NVIDIA : KHR-GLES31.core.geometry_shader.adjacency.adjacency_indiced_triangle_strip = FAIL
+5579 VULKAN NVIDIA : KHR-GLES31.core.geometry_shader.adjacency.adjacency_non_indiced_triangle_strip = FAIL
+5579 VULKAN NVIDIA : KHR-GLES31.core.geometry_shader.rendering.rendering.triangles_input_line_strip_output_triangle_*_drawcall = FAIL
+5579 VULKAN NVIDIA : KHR-GLES31.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangle_*_drawcall = FAIL
+5579 VULKAN NVIDIA : KHR-GLES31.core.geometry_shader.rendering.rendering.triangles_with_adjacency_input_*_strip_output_triangle_strip_adjacency_drawcall = FAIL
 5579 VULKAN NVIDIA : KHR-GLES31.core.geometry_shader.limits.max_invocations = FAIL
 
 // XFB array elements capture:
@@ -57,9 +49,6 @@
 4723 VULKAN NVIDIA : KHR-GLES31.core.shader_image_size.advanced-nonMS-vs-int = SKIP
 4723 VULKAN NVIDIA : KHR-GLES31.core.shader_image_size.advanced-nonMS-vs-uint = SKIP
 4723 VULKAN NVIDIA : KHR-GLES31.core.program_interface_query.transform-feedback-types = SKIP
-
-// Newly-added dEQP tests that are failing
-6441 VULKAN : KHR-GLES31.core.compressed* = SKIP
 
 ////
 //// Desktop Vulkan expectations

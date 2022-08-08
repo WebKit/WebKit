@@ -29,6 +29,8 @@ class ProgramPipelineImpl : public angle::NonCopyable
 
     virtual void onProgramUniformUpdate(gl::ShaderType shaderType) {}
 
+    virtual angle::Result onLabelUpdate(const gl::Context *context);
+
     const gl::ProgramPipelineState &getState() const { return mState; }
 
   protected:

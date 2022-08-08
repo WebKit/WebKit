@@ -733,7 +733,12 @@ bool TranslatorVulkan::translateImpl(TInfoSinkBase &sink,
     // - It dramatically simplifies future transformations w.r.t to samplers in structs, array of
     //   arrays of opaque types, atomic counters etc.
     // - Avoids the need for shader*ArrayDynamicIndexing Vulkan features.
-    if (!MonomorphizeUnsupportedFunctions(this, root, &getSymbolTable(), compileOptions))
+    UnsupportedFunctionArgsBitSet args{UnsupportedFunctionArgs::StructContainingSamplers,
+                                       UnsupportedFunctionArgs::ArrayOfArrayOfSamplerOrImage,
+                                       UnsupportedFunctionArgs::AtomicCounter,
+                                       UnsupportedFunctionArgs::SamplerCubeEmulation,
+                                       UnsupportedFunctionArgs::Image};
+    if (!MonomorphizeUnsupportedFunctions(this, root, &getSymbolTable(), compileOptions, args))
     {
         return false;
     }
@@ -1024,8 +1029,9 @@ bool TranslatorVulkan::translateImpl(TInfoSinkBase &sink,
             // attachment variable then create a new one.
             if (getAdvancedBlendEquations().any() &&
                 (compileOptions & SH_ADD_ADVANCED_BLEND_EQUATIONS_EMULATION) != 0 &&
-                !EmulateAdvancedBlendEquations(this, root, &getSymbolTable(), driverUniforms,
-                                               &mUniforms, getAdvancedBlendEquations()))
+                !EmulateAdvancedBlendEquations(this, compileOptions, root, &getSymbolTable(),
+                                               driverUniforms, &mUniforms,
+                                               getAdvancedBlendEquations()))
             {
                 return false;
             }

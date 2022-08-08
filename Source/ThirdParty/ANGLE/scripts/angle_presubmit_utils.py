@@ -21,13 +21,16 @@ class InputAPI_mock():
     def __init__(self, description_text):
         self.change = Change_mock(description_text)
 
+    def PresubmitLocalPath(self):
+        return self.cwd
+
 
 class _PresubmitResult(object):
     """Base class for result objects."""
     fatal = False
     should_prompt = False
 
-    def __init__(self, message):
+    def __init__(self, message, long_text=''):
         self._message = message
 
     def __eq__(self, other):

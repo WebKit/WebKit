@@ -112,6 +112,9 @@ class SurfaceImpl : public FramebufferAttachmentObjectImpl
                                           EGLnsecsANDROID *values) const;
     virtual egl::Error getBufferAge(const gl::Context *context, EGLint *age);
 
+    // EGL_ANDROID_front_buffer_auto_refresh
+    virtual egl::Error setAutoRefreshEnabled(bool enabled);
+
     // EGL_KHR_lock_surface3
     virtual egl::Error lockSurface(const egl::Display *display,
                                    EGLint usageHint,

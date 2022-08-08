@@ -75,6 +75,24 @@ enum RendererClass
     RENDERER_D3D9
 };
 
+struct BindFlags
+{
+    bool renderTarget    = false;
+    bool unorderedAccess = false;
+    static BindFlags RenderTarget()
+    {
+        BindFlags flags;
+        flags.renderTarget = true;
+        return flags;
+    }
+    static BindFlags UnorderedAccess()
+    {
+        BindFlags flags;
+        flags.unorderedAccess = true;
+        return flags;
+    }
+};
+
 // A d3d::Context wraps error handling.
 namespace d3d
 {
@@ -319,27 +337,27 @@ class RendererD3D : public BufferFactoryD3D
         const egl::Stream::GLTextureDescription &desc,
         const std::string &label)                                                            = 0;
     virtual TextureStorage *createTextureStorage2D(GLenum internalformat,
-                                                   bool renderTarget,
+                                                   BindFlags bindFlags,
                                                    GLsizei width,
                                                    GLsizei height,
                                                    int levels,
                                                    const std::string &label,
                                                    bool hintLevelZeroOnly)                   = 0;
     virtual TextureStorage *createTextureStorageCube(GLenum internalformat,
-                                                     bool renderTarget,
+                                                     BindFlags bindFlags,
                                                      int size,
                                                      int levels,
                                                      bool hintLevelZeroOnly,
                                                      const std::string &label)               = 0;
     virtual TextureStorage *createTextureStorage3D(GLenum internalformat,
-                                                   bool renderTarget,
+                                                   BindFlags bindFlags,
                                                    GLsizei width,
                                                    GLsizei height,
                                                    GLsizei depth,
                                                    int levels,
                                                    const std::string &label)                 = 0;
     virtual TextureStorage *createTextureStorage2DArray(GLenum internalformat,
-                                                        bool renderTarget,
+                                                        BindFlags bindFlags,
                                                         GLsizei width,
                                                         GLsizei height,
                                                         GLsizei depth,

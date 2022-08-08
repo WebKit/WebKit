@@ -11,6 +11,7 @@
 #define COMPILER_TRANSLATOR_TREEOPS_VULKAN_EMULATEADVANCEDBLENDEQUATIONS_H_
 
 #include "common/angleutils.h"
+#include "compiler/translator/Compiler.h"
 
 namespace sh
 {
@@ -27,6 +28,7 @@ class AdvancedBlendEquations;
 // which function to use at runtime.
 [[nodiscard]] bool EmulateAdvancedBlendEquations(
     TCompiler *compiler,
+    ShCompileOptions compileOptions,
     TIntermBlock *root,
     TSymbolTable *symbolTable,
     const DriverUniform *driverUniforms,

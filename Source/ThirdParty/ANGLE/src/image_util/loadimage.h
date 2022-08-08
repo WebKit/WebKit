@@ -681,6 +681,29 @@ void LoadETC1RGB8ToRGBA8(size_t width,
                          size_t outputRowPitch,
                          size_t outputDepthPitch);
 
+void LoadASTCToRGBA8Inner(size_t width,
+                          size_t height,
+                          size_t depth,
+                          uint32_t blockWidth,
+                          uint32_t blockHeight,
+                          const uint8_t *input,
+                          size_t inputRowPitch,
+                          size_t inputDepthPitch,
+                          uint8_t *output,
+                          size_t outputRowPitch,
+                          size_t outputDepthPitch);
+
+template <size_t blockWidth, size_t blockHeight>
+inline void LoadASTCToRGBA8(size_t width,
+                            size_t height,
+                            size_t depth,
+                            const uint8_t *input,
+                            size_t inputRowPitch,
+                            size_t inputDepthPitch,
+                            uint8_t *output,
+                            size_t outputRowPitch,
+                            size_t outputDepthPitch);
+
 void LoadETC1RGB8ToBC1(size_t width,
                        size_t height,
                        size_t depth,

@@ -284,6 +284,7 @@ _MD_ANGLE_EXT_LINK_TEMPLATE = """[{full_name}](https://chromium.googlesource.com
 
 # Some extensions are defined in documents that have different names.
 _LINK_OVERRIDES = {
+    'GL_ANGLE_shader_pixel_local_storage_coherent': 'shader_pixel_local_storage',
     'GL_EXT_memory_object_fd': 'external_objects_fd',
     'GL_EXT_semaphore_fd': 'external_objects_fd',
 }

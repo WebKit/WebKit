@@ -310,6 +310,13 @@ void RendererVk::ensureCapsInitialized() const
         mNativeLimitations.emulatedEtc1 = true;
     }
 
+    // When ASTC formats are not natively supported
+    // mark potentially-available ASTC extension as emulated.
+    if (mPhysicalDeviceFeatures.textureCompressionASTC_LDR == VK_FALSE)
+    {
+        mNativeLimitations.emulatedAstc = true;
+    }
+
     // Vulkan doesn't support ASTC 3D block textures, which are required by
     // GL_OES_texture_compression_astc.
     mNativeExtensions.textureCompressionAstcOES = false;
@@ -1126,6 +1133,11 @@ void RendererVk::ensureCapsInitialized() const
 
     // GL_KHR_parallel_shader_compile
     mNativeExtensions.parallelShaderCompileKHR = false;
+
+    // GL_NV_read_depth, GL_NV_read_depth_stencil, GL_NV_read_stencil
+    mNativeExtensions.readDepthNV        = true;
+    mNativeExtensions.readDepthStencilNV = true;
+    mNativeExtensions.readStencilNV      = true;
 
     // GL_QCOM_shading_rate
     mNativeExtensions.shadingRateQCOM = mFeatures.supportsFragmentShadingRate.enabled;

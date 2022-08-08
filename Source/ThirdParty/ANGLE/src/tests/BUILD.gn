@@ -8,8 +8,6 @@ import("../../gni/angle.gni")
 import("angle_unittests.gni")
 
 declare_args() {
-  # Don't build dEQP by default.
-  build_angle_deqp_tests = false
   build_angle_gles1_conform_tests = false
   build_angle_trace_perf_tests = false
   build_angle_perftests =
@@ -84,6 +82,10 @@ angle_static_library("angle_test_expectations") {
 
 config("angle_common_test_utils_config") {
   include_dirs = [ "." ]
+  defines = []
+  if (angle_enable_gl_desktop) {
+    defines += [ "ANGLE_ENABLE_OPENGL_DESKTOP" ]
+  }
 }
 
 template("angle_common_test_utils") {
@@ -1281,14 +1283,46 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     public_configs = [ ":angle_deqp_glshared_config" ]
   }
 
+  angle_deqp_source_set("angle_deqp_framework_platform") {
+    if (is_ios) {
+      # shared libraries are hidden inside ios_framework_bundle, but we include headers from them
+      check_includes = false
+    }
+    sources = deqp_framework_platform_sources
+    libs = []
+    if (is_win) {
+      sources += [
+        "$deqp_path/framework/platform/win32/tcuWGL.cpp",
+        "$deqp_path/framework/platform/win32/tcuWGLContextFactory.cpp",
+        "$deqp_path/framework/platform/win32/tcuWin32EGLNativeDisplayFactory.cpp",
+        "$deqp_path/framework/platform/win32/tcuWin32Window.cpp",
+      ]
+    }
+    if (is_linux) {
+      sources += [
+        "$deqp_path/framework/platform/lnx/X11/tcuLnxX11.cpp",
+        "$deqp_path/framework/platform/lnx/X11/tcuLnxX11.hpp",
+        "$deqp_path/framework/platform/lnx/X11/tcuLnxX11EglDisplayFactory.cpp",
+        "$deqp_path/framework/platform/lnx/X11/tcuLnxX11EglDisplayFactory.hpp",
+        "$deqp_path/framework/platform/lnx/tcuLnx.cpp",
+        "$deqp_path/framework/platform/lnx/tcuLnx.hpp",
+        "$deqp_path/framework/platform/lnx/tcuLnxEglPlatform.cpp",
+        "$deqp_path/framework/platform/lnx/tcuLnxEglPlatform.hpp",
+      ]
+    }
+    public_deps = [
+      ":angle_deqp_framework_common",
+      ":angle_deqp_framework_egl",
+    ]
+  }
+
   angle_deqp_source_set("angle_deqp_libtester") {
     if (is_ios) {
       # shared libraries are hidden inside ios_framework_bundle, but we include headers from them
       check_includes = false
     }
     public_deps = [
-      ":angle_deqp_framework_common",
-      ":angle_deqp_framework_egl",
+      ":angle_deqp_framework_platform",
       ":angle_deqp_glshared",
       "$angle_root:angle_common",
       "$angle_root/util:angle_util",
@@ -1487,7 +1521,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
               deqp_khr_gles32_sources + deqp_khr_glesext_sources +
               [ "deqp_support/glcTestPackageEntry_override.cpp" ]
     public_deps = [
-      ":angle_deqp_framework_egl",
+      ":angle_deqp_framework_platform",
       ":angle_deqp_glshared",
       "${angle_glslang_dir}:glslang_lib_sources",
       "${angle_spirv_tools_dir}:spvtools_val",
@@ -1499,11 +1533,24 @@ if (build_angle_deqp_tests && !is_fuchsia) {
   }
 
   template("angle_deqp_khr_gtest") {
+    split_target = string_split(target_name, "_")
+    _api = split_target[1]
     angle_deqp_gtest(target_name) {
       forward_variables_from(invoker, "*")
       deps = [ ":angle_deqp_khr_common" ]
       deps += angle_deqp_data_copy_targets
-      data = angle_deqp_external_openglcts_data_gles3
+      if (_api == "gles2") {
+        # Make sure we include something so that angle_deqp_libtester_main.cpp can find something.
+        data = [ "$root_gen_dir/vk_gl_cts_data/data/gles2/shaders/misc.test" ]
+      } else if (_api == "gles3") {
+        data = angle_deqp_external_openglcts_data_gles3
+      } else if (_api == "gles31") {
+        data = angle_deqp_external_openglcts_data_gles31
+      } else if (_api == "gles32") {
+        data = angle_deqp_external_openglcts_data_gles32
+      } else {
+        assert(false)
+      }
       mustpass_dir = _khronos_mustpass
     }
   }

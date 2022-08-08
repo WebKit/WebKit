@@ -1997,7 +1997,7 @@ TPrecision TIntermBinary::derivePrecision() const
             const TFieldList &fields = mOp == EOpIndexDirectStruct
                                            ? mLeft->getType().getStruct()->fields()
                                            : mLeft->getType().getInterfaceBlock()->fields();
-            const int fieldIndex = mRight->getAsConstantUnion()->getIConst(0);
+            const int fieldIndex     = mRight->getAsConstantUnion()->getIConst(0);
             return fields[fieldIndex]->type()->getPrecision();
         }
 

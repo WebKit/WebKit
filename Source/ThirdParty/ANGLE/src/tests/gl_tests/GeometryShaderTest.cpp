@@ -79,7 +79,7 @@ class GeometryShaderTest : public ANGLETest<>
                                               GLsizei layerCount);
 
     void layeredFramebufferClearTest(GLenum colorTarget);
-    void layeredFramebufferPreRenderClearTest(GLenum colorTarget);
+    void layeredFramebufferPreRenderClearTest(GLenum colorTarget, bool doubleClear);
     void layeredFramebufferMidRenderClearTest(GLenum colorTarget);
 
     static constexpr GLsizei kWidth              = 16;
@@ -1226,7 +1226,7 @@ TEST_P(GeometryShaderTest, LayeredFramebufferClear2DArrayColor)
     layeredFramebufferClearTest(GL_TEXTURE_2D_ARRAY);
 }
 
-void GeometryShaderTest::layeredFramebufferPreRenderClearTest(GLenum colorTarget)
+void GeometryShaderTest::layeredFramebufferPreRenderClearTest(GLenum colorTarget, bool doubleClear)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
 
@@ -1244,6 +1244,14 @@ void GeometryShaderTest::layeredFramebufferPreRenderClearTest(GLenum colorTarget
     setupLayeredFramebuffer(framebuffer, color0, color1, depthStencil, colorTarget,
                             kColor0InitColor, kColor1InitColor, kDepthInitValue, kStencilInitValue);
     setupLayeredFramebufferProgram(&program);
+
+    if (doubleClear)
+    {
+        glClearColor(0.1, 0.2, 0.8, 0.9);
+        glClearDepthf(0.2f);
+        glClearStencil(0x99);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    }
 
     glClearColor(0.5, 0.5, 0.5, 0.5);
     glClearDepthf(1.0f);
@@ -1291,13 +1299,29 @@ TEST_P(GeometryShaderTest, LayeredFramebufferPreRenderClear3DColor)
     // http://anglebug.com/5463
     ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
 
-    layeredFramebufferPreRenderClearTest(GL_TEXTURE_3D);
+    layeredFramebufferPreRenderClearTest(GL_TEXTURE_3D, false);
+}
+
+// Same as LayeredFramebufferPreRenderClear3DColor, but clears twice.
+TEST_P(GeometryShaderTest, LayeredFramebufferPreRenderDoubleClear3DColor)
+{
+    // Mesa considers the framebuffer with mixed 3D and 2D array attachments to be incomplete.
+    // http://anglebug.com/5463
+    ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
+
+    layeredFramebufferPreRenderClearTest(GL_TEXTURE_3D, true);
 }
 
 // Verify pre-render clear of layered attachments.  Uses 2D array color textures.
 TEST_P(GeometryShaderTest, LayeredFramebufferPreRenderClear2DArrayColor)
 {
-    layeredFramebufferPreRenderClearTest(GL_TEXTURE_2D_ARRAY);
+    layeredFramebufferPreRenderClearTest(GL_TEXTURE_2D_ARRAY, false);
+}
+
+// Same as LayeredFramebufferPreRenderClear2DArrayColor, but clears twice.
+TEST_P(GeometryShaderTest, LayeredFramebufferPreRenderDoubleClear2DArrayColor)
+{
+    layeredFramebufferPreRenderClearTest(GL_TEXTURE_2D_ARRAY, true);
 }
 
 void GeometryShaderTest::layeredFramebufferMidRenderClearTest(GLenum colorTarget)

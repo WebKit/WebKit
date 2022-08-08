@@ -696,22 +696,15 @@ static GLenum GetNativeCompressedFormat(const FunctionsGL *functions,
 {
     GLenum result = format;
 
-    if (functions->standard == STANDARD_GL_DESKTOP)
+    if (gl::IsETC1Format(format))
     {
-        if (format == GL_ETC1_RGB8_OES)
-        {
-            // GL_ETC1_RGB8_OES is not available in any desktop GL extension but the compression
-            // format is forwards compatible so just use the ETC2 format.
-            result = GL_COMPRESSED_RGB8_ETC2;
-        }
-    }
+        // GL_ETC1_RGB8_OES is not available in any desktop GL extension but the compression
+        // format is forwards compatible so just use the ETC2 format. Pass GL_COMPRESSED_RGB8_ETC2
+        // as the target format in ES3 and higher because it becomes a core format.
 
-    if (functions->isAtLeastGLES(gl::Version(3, 0)))
-    {
-        if (format == GL_ETC1_RGB8_OES)
+        if (functions->standard == STANDARD_GL_DESKTOP ||
+            functions->isAtLeastGLES(gl::Version(3, 0)))
         {
-            // Pass GL_COMPRESSED_RGB8_ETC2 as the target format in ES3 and higher because it
-            // becomes a core format.
             result = GL_COMPRESSED_RGB8_ETC2;
         }
     }

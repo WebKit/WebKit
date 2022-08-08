@@ -23,7 +23,7 @@ class GLES1SimpleTexture2DSample : public SampleApplication
 {
   public:
     GLES1SimpleTexture2DSample(int argc, char **argv)
-        : SampleApplication("GLES1SimpleTexture2D", argc, argv, 1, 0)
+        : SampleApplication("GLES1SimpleTexture2D", argc, argv, ClientType::ES1)
     {}
 
     bool initialize() override

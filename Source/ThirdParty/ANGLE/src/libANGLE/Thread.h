@@ -18,9 +18,8 @@
 namespace angle
 {
 extern bool gUseAndroidOpenGLTlsSlot;
-extern std::atomic_int gProcessCleanupRefCount;
 
-void ProcessCleanupCallback(void *ptr);
+void PthreadKeyDestructorCallback(void *ptr);
 }  // namespace angle
 
 namespace gl

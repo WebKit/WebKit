@@ -91,6 +91,8 @@ TIntermTyped *CreateBuiltInUnaryFunctionCallNode(const char *name,
                                                  const TSymbolTable &symbolTable,
                                                  int shaderVersion);
 
+int GetESSLOrGLSLVersion(ShShaderSpec spec, int esslVersion, int glslVersion);
+
 inline void GetSwizzleIndex(TVector<int> *indexOut) {}
 
 template <typename T, typename... ArgsT>

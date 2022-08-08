@@ -98,6 +98,8 @@ class FramebufferImpl : angle::NonCopyable
     // D3D back-ends to skip syncState lets us do more work in the syncState call.
     virtual bool shouldSyncStateBeforeCheckStatus() const;
 
+    virtual angle::Result onLabelUpdate(const gl::Context *context);
+
     const gl::FramebufferState &getState() const { return mState; }
 
   protected:

@@ -1422,6 +1422,21 @@ angle::Result FramebufferMtl::invalidateImpl(const gl::Context *context,
     {
         if (invalidateColorBuffers.test(i))
         {
+            // Some opaque formats, like RGB8, are emulated as RGBA with alpha channel initialized
+            // to 1.0. Invalidating such attachments may lead to random values in their alpha
+            // channel, so skip invalidation in this case.
+            RenderTargetMtl *renderTarget = mColorRenderTargets[i];
+            if (renderTarget && renderTarget->getTexture())
+            {
+                const mtl::Format &mtlFormat        = *renderTarget->getFormat();
+                const angle::Format &intendedFormat = mtlFormat.intendedAngleFormat();
+                const angle::Format &actualFormat   = mtlFormat.actualAngleFormat();
+                if (intendedFormat.alphaBits == 0 && actualFormat.alphaBits)
+                {
+                    continue;
+                }
+            }
+
             mtl::RenderPassColorAttachmentDesc &colorAttachment =
                 mRenderPassDesc.colorAttachments[i];
             colorAttachment.storeAction = MTLStoreActionDontCare;

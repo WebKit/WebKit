@@ -4358,6 +4358,36 @@ TEST_P(GLSLTest_ES3, WriteIntoDynamicIndexingOfSwizzledVector)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test including Ternary using a uniform block is correctly
+// expanded.
+TEST_P(GLSLTest_ES3, NamelessUniformBlockTernary)
+{
+    const char kVS[] = R"(#version 300 es
+    precision highp float;
+    out vec4 color_interp;
+    void  main()
+    {
+        color_interp = vec4(0.0);
+    }
+)";
+    const char kFS[] = R"(#version 300 es
+    precision highp float;
+    out vec4 fragColor;
+    in vec4 color_interp;
+layout(std140) uniform TestData {
+    int a;
+    int b;
+};
+void main()
+{
+    int c, a1;
+    a1 += c > 0 ? a : b;
+    fragColor = vec4(a1,a1,a1,1.0);
+}
+)";
+    ANGLE_GL_PROGRAM(testProgram, kVS, kFS);
+}
+
 // Test that the length() method is correctly translated in Vulkan atomic counter buffer emulation.
 TEST_P(GLSLTest_ES31, AtomicCounterArrayLength)
 {
@@ -5117,6 +5147,123 @@ void main()
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Check that writeonly image2D handles can be passed as function args.
+TEST_P(GLSLTest_ES31, WriteOnlyImage2DAsFunctionArg)
+{
+    // Create an image.
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, getWindowWidth(), getWindowHeight());
+
+    // Clear the image to red.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glClearColor(1, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+    const char kVS[] = R"(#version 310 es
+precision highp float;
+void main()
+{
+    gl_Position.x = ((gl_VertexID & 1) == 0 ? -1.0 : 1.0);
+    gl_Position.y = ((gl_VertexID & 2) == 0 ? -1.0 : 1.0);
+    gl_Position.zw = vec2(0, 1);
+})";
+
+    const char kFS[] = R"(#version 310 es
+precision highp float;
+layout(binding=0, rgba8) writeonly highp uniform image2D uniformImage;
+void store(writeonly highp image2D img, vec4 color)
+{
+    ivec2 imgcoord = ivec2(floor(gl_FragCoord.xy));
+    imageStore(img, imgcoord, color);
+}
+void main()
+{
+    store(uniformImage, vec4(1, 1, 0, 1));
+})";
+
+    // Store yellow to the image.
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindImageTexture(0, tex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
+
+    // Check that the image is yellow.
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Check that readonly image2D handles can be passed as function args.
+TEST_P(GLSLTest_ES31, ReadOnlyImage2DAsFunctionArg)
+{
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    // Create an image.
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, w, h);
+
+    const std::vector<GLColor> kInitData(w * h, GLColor::red);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, kInitData.data());
+
+    // Create a framebuffer.
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, w, h);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Initialize the framebuffer with the contents of the texture.
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    const char kVS[] = R"(#version 310 es
+precision highp float;
+void main()
+{
+    gl_Position.x = ((gl_VertexID & 1) == 0 ? -1.0 : 1.0);
+    gl_Position.y = ((gl_VertexID & 2) == 0 ? -1.0 : 1.0);
+    gl_Position.zw = vec2(0, 1);
+})";
+
+    const char kFS[] = R"(#version 310 es
+precision highp float;
+layout(binding=0, rgba8) readonly highp uniform image2D uniformImage;
+out vec4 color;
+vec4 load(readonly highp image2D img)
+{
+    ivec2 imgcoord = ivec2(floor(gl_FragCoord.xy));
+    return imageLoad(img, imgcoord);
+}
+void main()
+{
+    color = load(uniformImage);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    glBindImageTexture(0, tex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    // Check that the framebuffer is red.
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::red);
     ASSERT_GL_NO_ERROR();
 }
 
@@ -7338,6 +7485,64 @@ void main()
 
     EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::green);
 }
+
+// This test covers passing a struct containing a sampler as a function argument, where the function
+// has non-return branch statements.
+TEST_P(GLSLTest_ES3, StructsWithSamplersAsFunctionArgWithBranch)
+{
+    // Shader failed to compile on Nexus devices. http://anglebug.com/2114
+    ANGLE_SKIP_TEST_IF(IsNexus5X() && IsAdreno() && IsOpenGLES());
+
+    const char kFragmentShader[] = R"(precision mediump float;
+struct S { sampler2D samplerMember; };
+uniform S uStruct;
+uniform vec2 uTexCoord;
+vec4 foo(S structVar)
+{
+    vec4 result;
+    while (true)
+    {
+        result = texture2D(structVar.samplerMember, uTexCoord);
+        if (result.x == 12345.)
+        {
+            continue;
+        }
+        break;
+    }
+    return result;
+}
+void main()
+{
+    gl_FragColor = foo(uStruct);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragmentShader);
+
+    // Initialize the texture with green.
+    GLTexture tex;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    GLubyte texData[] = {0u, 255u, 0u, 255u};
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw
+    glUseProgram(program);
+    GLint samplerMemberLoc = glGetUniformLocation(program, "uStruct.samplerMember");
+    ASSERT_NE(-1, samplerMemberLoc);
+    glUniform1i(samplerMemberLoc, 0);
+    GLint texCoordLoc = glGetUniformLocation(program, "uTexCoord");
+    ASSERT_NE(-1, texCoordLoc);
+    glUniform2f(texCoordLoc, 0.5f, 0.5f);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::green);
+}
+
 // This test covers passing an array of structs containing samplers as a function argument.
 TEST_P(GLSLTest, ArrayOfStructsWithSamplersAsFunctionArg)
 {
@@ -15703,6 +15908,7 @@ void main()
 
     ANGLE_GL_PROGRAM(testProgram, kVS, kFS);
 }
+
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(GLSLTest,

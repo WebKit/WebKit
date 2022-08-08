@@ -155,6 +155,15 @@ std::string ConcatenatePath(std::string first, std::string second)
     return first + GetPathSeparator() + second;
 }
 
+Optional<std::string> CreateTemporaryFile()
+{
+    const Optional<std::string> tempDir = GetTempDirectory();
+    if (!tempDir.valid())
+        return Optional<std::string>::Invalid();
+
+    return CreateTemporaryFileInDirectory(tempDir.value());
+}
+
 PageFaultHandler::PageFaultHandler(PageFaultCallback callback) : mCallback(callback) {}
 PageFaultHandler::~PageFaultHandler() {}
 
@@ -205,5 +214,11 @@ void *OpenSystemLibraryAndGetError(const char *libraryName,
     std::string libraryWithExtension = std::string(libraryName) + "." + GetSharedLibraryExtension();
     return OpenSystemLibraryWithExtensionAndGetError(libraryWithExtension.c_str(), searchType,
                                                      errorOut);
+}
+
+std::string StripFilenameFromPath(const std::string &path)
+{
+    size_t lastPathSepLoc = path.find_last_of("\\/");
+    return (lastPathSepLoc != std::string::npos) ? path.substr(0, lastPathSepLoc) : "";
 }
 }  // namespace angle

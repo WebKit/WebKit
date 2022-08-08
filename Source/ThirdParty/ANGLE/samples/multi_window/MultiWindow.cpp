@@ -20,7 +20,7 @@ class MultiWindowSample : public SampleApplication
 {
   public:
     MultiWindowSample(int argc, char **argv)
-        : SampleApplication("MultiWindow", argc, argv, 2, 0, 256, 256)
+        : SampleApplication("MultiWindow", argc, argv, ClientType::ES2, 256, 256)
     {}
 
     bool initialize() override

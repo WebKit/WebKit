@@ -16,7 +16,7 @@ class GLES1TorusLightingSample : public SampleApplication
 {
   public:
     GLES1TorusLightingSample(int argc, char **argv)
-        : SampleApplication("GLES1 Torus Lighting", argc, argv, 1, 0)
+        : SampleApplication("GLES1 Torus Lighting", argc, argv, ClientType::ES1)
     {}
 
     bool initialize() override

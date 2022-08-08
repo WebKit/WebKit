@@ -20,9 +20,7 @@
 class HelloTriangleSample : public SampleApplication
 {
   public:
-    HelloTriangleSample(int argc, char **argv)
-        : SampleApplication("HelloTriangle", argc, argv, 2, 0)
-    {}
+    HelloTriangleSample(int argc, char **argv) : SampleApplication("HelloTriangle", argc, argv) {}
 
     bool initialize() override
     {

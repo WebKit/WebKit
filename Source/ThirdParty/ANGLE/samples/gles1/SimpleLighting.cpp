@@ -23,7 +23,7 @@ class SimpleLightingSample : public SampleApplication
 {
   public:
     SimpleLightingSample(int argc, char **argv)
-        : SampleApplication("SimpleLightingSample", argc, argv, 1, 0)
+        : SampleApplication("SimpleLightingSample", argc, argv, ClientType::ES1)
     {}
 
     bool initialize() override

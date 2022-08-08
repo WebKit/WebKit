@@ -233,6 +233,17 @@ MultisampledRenderToTextureParams D3D11Params(bool multiplePasses, bool withDept
     return params;
 }
 
+MultisampledRenderToTextureParams MetalParams(bool multiplePasses, bool withDepthStencil)
+{
+    MultisampledRenderToTextureParams params;
+    params.eglParameters    = egl_platform::METAL();
+    params.majorVersion     = 3;
+    params.minorVersion     = 0;
+    params.multiplePasses   = multiplePasses;
+    params.withDepthStencil = withDepthStencil;
+    return params;
+}
+
 MultisampledRenderToTextureParams OpenGLOrGLESParams(bool multiplePasses, bool withDepthStencil)
 {
     MultisampledRenderToTextureParams params;
@@ -267,6 +278,8 @@ using namespace params;
 ANGLE_INSTANTIATE_TEST(MultisampledRenderToTextureBenchmark,
                        D3D11Params(false, false),
                        D3D11Params(true, true),
+                       MetalParams(false, false),
+                       MetalParams(true, true),
                        OpenGLOrGLESParams(false, false),
                        OpenGLOrGLESParams(true, true),
                        VulkanParams(false, false),

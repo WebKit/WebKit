@@ -68,10 +68,10 @@ class TextureStorage11 : public TextureStorage
 
     static DWORD GetTextureBindFlags(GLenum internalFormat,
                                      const Renderer11DeviceCaps &renderer11DeviceCaps,
-                                     bool renderTarget);
+                                     BindFlags flags);
     static DWORD GetTextureMiscFlags(GLenum internalFormat,
                                      const Renderer11DeviceCaps &renderer11DeviceCaps,
-                                     bool renderTarget,
+                                     BindFlags flags,
                                      int levels);
 
     UINT getBindFlags() const;
@@ -104,6 +104,7 @@ class TextureStorage11 : public TextureStorage
     bool isManaged() const override;
     bool supportsNativeMipmapFunction() const override;
     int getLevelCount() const override;
+    bool isUnorderedAccess() const override { return mBindFlags & D3D11_BIND_UNORDERED_ACCESS; }
     angle::Result generateMipmap(const gl::Context *context,
                                  const gl::ImageIndex &sourceIndex,
                                  const gl::ImageIndex &destIndex) override;
@@ -292,7 +293,7 @@ class TextureStorage11_2D : public TextureStorage11
     TextureStorage11_2D(Renderer11 *renderer, SwapChain11 *swapchain, const std::string &label);
     TextureStorage11_2D(Renderer11 *renderer,
                         GLenum internalformat,
-                        bool renderTarget,
+                        BindFlags bindFlags,
                         GLsizei width,
                         GLsizei height,
                         int levels,
@@ -551,7 +552,7 @@ class TextureStorage11_Cube : public TextureStorage11
   public:
     TextureStorage11_Cube(Renderer11 *renderer,
                           GLenum internalformat,
-                          bool renderTarget,
+                          BindFlags bindFlags,
                           int size,
                           int levels,
                           bool hintLevelZeroOnly,
@@ -647,7 +648,7 @@ class TextureStorage11_3D : public TextureStorage11
   public:
     TextureStorage11_3D(Renderer11 *renderer,
                         GLenum internalformat,
-                        bool renderTarget,
+                        BindFlags bindFlags,
                         GLsizei width,
                         GLsizei height,
                         GLsizei depth,
@@ -720,7 +721,7 @@ class TextureStorage11_2DArray : public TextureStorage11
   public:
     TextureStorage11_2DArray(Renderer11 *renderer,
                              GLenum internalformat,
-                             bool renderTarget,
+                             BindFlags bindFlags,
                              GLsizei width,
                              GLsizei height,
                              GLsizei depth,

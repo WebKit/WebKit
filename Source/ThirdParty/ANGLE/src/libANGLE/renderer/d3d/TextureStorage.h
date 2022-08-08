@@ -47,6 +47,7 @@ class TextureStorage : public angle::Subject
 
     virtual int getTopLevel() const                   = 0;
     virtual bool isRenderTarget() const               = 0;
+    virtual bool isUnorderedAccess() const            = 0;
     virtual bool isManaged() const                    = 0;
     virtual bool supportsNativeMipmapFunction() const = 0;
     virtual int getLevelCount() const                 = 0;

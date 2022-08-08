@@ -273,10 +273,13 @@ angle::Result Texture::MakeTexture(ContextMtl *context,
     {
         return angle::Result::Stop;
     }
+
     ASSERT(refOut);
-    Texture *newTexture = new Texture(context, desc, mips, renderTargetOnly, allowFormatView, memoryLess);
+    Texture *newTexture =
+        new Texture(context, desc, mips, renderTargetOnly, allowFormatView, memoryLess);
     ANGLE_MTL_CHECK(context, newTexture->valid(), GL_OUT_OF_MEMORY);
     refOut->reset(newTexture);
+
     if (!mtlFormat.hasDepthAndStencilBits())
     {
         refOut->get()->setColorWritableMask(GetEmulatedColorWriteMask(mtlFormat));
@@ -300,6 +303,7 @@ angle::Result Texture::MakeTexture(ContextMtl *context,
                                    bool renderTargetOnly,
                                    TextureRef *refOut)
 {
+
     ASSERT(refOut);
     Texture *newTexture = new Texture(context, desc, surfaceRef, slice, renderTargetOnly);
     ANGLE_MTL_CHECK(context, newTexture->valid(), GL_OUT_OF_MEMORY);
@@ -328,7 +332,10 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
 /** static */
 TextureRef Texture::MakeFromMetal(id<MTLTexture> metalTexture)
 {
-    ANGLE_MTL_OBJC_SCOPE { return TextureRef(new Texture(metalTexture)); }
+    ANGLE_MTL_OBJC_SCOPE
+    {
+        return TextureRef(new Texture(metalTexture));
+    }
 }
 
 Texture::Texture(id<MTLTexture> metalTexture)
@@ -1070,5 +1077,5 @@ bool Buffer::useSharedMem() const
 {
     return get().storageMode == MTLStorageModeShared;
 }
-}
-}
+}  // namespace mtl
+}  // namespace rx

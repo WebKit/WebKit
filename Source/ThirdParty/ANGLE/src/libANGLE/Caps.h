@@ -152,6 +152,9 @@ struct Limitations
     // ETC1 texture support is emulated.
     bool emulatedEtc1 = false;
 
+    // ASTC texture support is emulated.
+    bool emulatedAstc = false;
+
     // No compressed TEXTURE_3D support.
     bool noCompressedTexture3D = false;
 

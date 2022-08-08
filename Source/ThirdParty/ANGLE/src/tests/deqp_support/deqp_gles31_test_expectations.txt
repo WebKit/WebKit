@@ -13,10 +13,30 @@
 
 1442 D3D11 : dEQP-GLES31.functional.image_load_store.3d.qualifiers.coherent_r32f = SKIP
 1442 D3D11 : dEQP-GLES31.functional.image_load_store.3d.qualifiers.volatile_r32f = SKIP
-1442 D3D11 : dEQP-GLES31.functional.image_load_store.2d.format_reinterpret.* = SKIP
-1442 D3D11 : dEQP-GLES31.functional.image_load_store.cube.format_reinterpret.* = SKIP
-1442 D3D11 : dEQP-GLES31.functional.image_load_store.3d.format_reinterpret.* = SKIP
-1442 D3D11 : dEQP-GLES31.functional.image_load_store.2d_array.format_reinterpret.* = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32f_rgba8ui = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32f_rgba8i = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32f_rgba8 = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32f_rgba8_snorm = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8ui_r32f = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8ui_r32ui = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8ui_r32i = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32ui_rgba8ui = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32ui_rgba8i = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32ui_rgba8 = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32ui_rgba8_snorm = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8i_r32f = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8i_r32ui = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8i_r32i = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32i_rgba8ui = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32i_rgba8i = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32i_rgba8 = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32i_rgba8_snorm = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_r32f = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_r32ui = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_r32i = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_snorm_r32f = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_snorm_r32ui = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_snorm_r32i = SKIP
 7345 NVIDIA D3D11 : dEQP-GLES31.functional.image_load_store.2d_array.qualifiers.volatile_r32f = SKIP
 7345 NVIDIA D3D11 : dEQP-GLES31.functional.image_load_store.2d_array.qualifiers.coherent_r32f = SKIP
 
@@ -167,8 +187,6 @@
 3586 AMD VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
 3586 INTEL VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
 3586 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
-3586 PIXEL6 VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
-
 ////
 //// AMD Vulkan expectations
 ////
@@ -204,6 +222,12 @@
 5276 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_eac* = FAIL
 5276 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_etc* = FAIL
 5276 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.mixed.*eac* = FAIL
+
+// Copy image tests fail on desktop cards where ASTC is emulated
+7415 AMD VULKAN : dEQP-GLES31.functional.copy_image.mixed.*astc* = FAIL
+7415 AMD VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_astc* = FAIL
+7415 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.mixed.*astc* = FAIL
+7415 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_astc* = FAIL
 
 // Vulkan Android failures with these formats
 5277 VULKAN ANDROID : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgb10_a2* = FAIL
@@ -378,7 +402,7 @@
 6910 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.linkage.es31.tessellation_geometry.varying.rules.different_precision = FAIL
 // This test fails on pre-release Android T drivers as of 3/25/22:
 6910 PIXEL6 VULKAN : dEQP-GLES31.functional.geometry_shading.layered.layer_provoking_vertex_* = FAIL
- 
+
 // Geometry shader support:
 // This fails on pre-release Android T drivers as of 3/25/22:
 5430 PIXEL6 VULKAN : dEQP-GLES31.functional.geometry_shading.query.primitives_generated_* = FAIL

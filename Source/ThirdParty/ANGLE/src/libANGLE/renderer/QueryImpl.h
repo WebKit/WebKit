@@ -37,6 +37,8 @@ class QueryImpl : angle::NonCopyable
     virtual angle::Result getResult(const gl::Context *context, GLuint64 *params)        = 0;
     virtual angle::Result isResultAvailable(const gl::Context *context, bool *available) = 0;
 
+    virtual angle::Result onLabelUpdate(const gl::Context *context);
+
     gl::QueryType getType() const { return mType; }
 
   protected:

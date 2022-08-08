@@ -51,15 +51,24 @@ void ConfigParameters::reset()
 }
 
 // GLWindowBase implementation.
-GLWindowBase::GLWindowBase(EGLint glesMajorVersion, EGLint glesMinorVersion)
-    : mClientMajorVersion(glesMajorVersion), mClientMinorVersion(glesMinorVersion)
+GLWindowBase::GLWindowBase(EGLenum clientType,
+                           GLint glesMajorVersion,
+                           EGLint glesMinorVersion,
+                           EGLint profileMask)
+    : mClientType(clientType),
+      mClientMajorVersion(glesMajorVersion),
+      mClientMinorVersion(glesMinorVersion),
+      mProfileMask(profileMask)
 {}
 
 GLWindowBase::~GLWindowBase() = default;
 
 // EGLWindow implementation.
-EGLWindow::EGLWindow(EGLint glesMajorVersion, EGLint glesMinorVersion)
-    : GLWindowBase(glesMajorVersion, glesMinorVersion),
+EGLWindow::EGLWindow(EGLenum clientType,
+                     EGLint glesMajorVersion,
+                     EGLint glesMinorVersion,
+                     EGLint profileMask)
+    : GLWindowBase(clientType, glesMajorVersion, glesMinorVersion, profileMask),
       mConfig(0),
       mDisplay(EGL_NO_DISPLAY),
       mSurface(EGL_NO_SURFACE),
@@ -495,7 +504,7 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
         return EGL_NO_CONTEXT;
     }
 
-    eglBindAPI(EGL_OPENGL_ES_API);
+    eglBindAPI(mClientType);
     if (eglGetError() != EGL_SUCCESS)
     {
         fprintf(stderr, "Error on eglBindAPI.\n");
@@ -517,6 +526,12 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
 
         contextAttributes.push_back(EGL_CONTEXT_MINOR_VERSION_KHR);
         contextAttributes.push_back(mClientMinorVersion);
+
+        if (mProfileMask != 0)
+        {
+            contextAttributes.push_back(EGL_CONTEXT_OPENGL_PROFILE_MASK);
+            contextAttributes.push_back(mProfileMask);
+        }
 
         // Note that the Android loader currently doesn't handle this flag despite reporting 1.5.
         // Work around this by only using the debug bit when we request a debug context.
@@ -743,19 +758,61 @@ EGLBoolean EGLWindow::destroyImageKHR(Image image)
     return eglDestroyImageKHR(getDisplay(), image);
 }
 
-bool EGLWindow::makeCurrent(EGLContext context)
+GLWindowBase::Surface EGLWindow::createPbufferSurface(const EGLint *attrib_list)
 {
+    return eglCreatePbufferSurface(getDisplay(), getConfig(), attrib_list);
+}
+
+EGLBoolean EGLWindow::destroySurface(Surface surface)
+{
+    return eglDestroySurface(getDisplay(), surface);
+}
+
+EGLBoolean EGLWindow::bindTexImage(EGLSurface surface, EGLint buffer)
+{
+    return eglBindTexImage(getDisplay(), surface, buffer);
+}
+
+EGLBoolean EGLWindow::releaseTexImage(EGLSurface surface, EGLint buffer)
+{
+    return eglReleaseTexImage(getDisplay(), surface, buffer);
+}
+
+bool EGLWindow::makeCurrent(EGLSurface draw, EGLSurface read, EGLContext context)
+{
+    if ((draw && !read) || (!draw && read))
+    {
+        fprintf(stderr, "eglMakeCurrent: setting only one of draw and read buffer is illegal\n");
+        return false;
+    }
+
+    // if the draw buffer is a nullptr and a context is given, then we use mSurface,
+    // because we didn't add this the gSurfaceMap, and it is the most likely
+    // case that we actually wanted the default surface here.
+    // TODO: This will need additional work when we want to support capture/replay
+    // with a sourfaceless context.
+    //
+    // If no context is given then we also don't assign a surface
+    if (!draw)
+    {
+        draw = read = context != EGL_NO_CONTEXT ? mSurface : EGL_NO_SURFACE;
+    }
+
     if (isGLInitialized())
     {
-        if (eglMakeCurrent(mDisplay, mSurface, mSurface, context) == EGL_FALSE ||
+        if (eglMakeCurrent(mDisplay, draw, read, context) == EGL_FALSE ||
             eglGetError() != EGL_SUCCESS)
         {
             fprintf(stderr, "Error during eglMakeCurrent.\n");
             return false;
         }
     }
-
     return true;
+}
+
+bool EGLWindow::makeCurrent(EGLContext context)
+{
+    return makeCurrent(mSurface, mSurface, context);
 }
 
 bool EGLWindow::setSwapInterval(EGLint swapInterval)
@@ -787,9 +844,12 @@ void GLWindowBase::Delete(GLWindowBase **window)
 }
 
 // static
-EGLWindow *EGLWindow::New(EGLint glesMajorVersion, EGLint glesMinorVersion)
+EGLWindow *EGLWindow::New(EGLenum clientType,
+                          EGLint glesMajorVersion,
+                          EGLint glesMinorVersion,
+                          EGLint profileMask)
 {
-    return new EGLWindow(glesMajorVersion, glesMinorVersion);
+    return new EGLWindow(clientType, glesMajorVersion, glesMinorVersion, profileMask);
 }
 
 // static

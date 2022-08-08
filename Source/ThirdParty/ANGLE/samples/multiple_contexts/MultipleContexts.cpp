@@ -107,7 +107,12 @@ class MultipleContextsSample : public SampleApplication
 {
   public:
     MultipleContextsSample(int argc, char **argv)
-        : SampleApplication("MultipleContexts", argc, argv, 3, 0, kWindowWidth, kWindowHeight)
+        : SampleApplication("MultipleContexts",
+                            argc,
+                            argv,
+                            ClientType::ES3_0,
+                            kWindowWidth,
+                            kWindowHeight)
     {}
 
     bool initialize() override

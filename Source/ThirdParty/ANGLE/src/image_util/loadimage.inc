@@ -159,4 +159,19 @@ inline void Initialize4ComponentData(size_t width, size_t height, size_t depth,
     }
 }
 
+template <size_t blockWidth, size_t blockHeight>
+inline void LoadASTCToRGBA8(size_t width,
+                            size_t height,
+                            size_t depth,
+                            const uint8_t *input,
+                            size_t inputRowPitch,
+                            size_t inputDepthPitch,
+                            uint8_t *output,
+                            size_t outputRowPitch,
+                            size_t outputDepthPitch)
+{
+    LoadASTCToRGBA8Inner(width, height, depth, blockWidth, blockHeight, input, inputRowPitch,
+                         inputDepthPitch, output, outputRowPitch, outputDepthPitch);
+}
+
 } // namespace angle

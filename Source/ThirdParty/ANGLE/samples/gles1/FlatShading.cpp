@@ -23,7 +23,7 @@ class FlatShadingSample : public SampleApplication
 {
   public:
     FlatShadingSample(int argc, char **argv)
-        : SampleApplication("FlatShadingSample", argc, argv, 1, 0)
+        : SampleApplication("FlatShadingSample", argc, argv, ClientType::ES1)
     {}
 
     bool initialize() override

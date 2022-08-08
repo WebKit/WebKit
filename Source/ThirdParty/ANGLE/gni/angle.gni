@@ -21,6 +21,9 @@ declare_args() {
   angle_enable_cl = false
 
   angle_restricted_traces = []
+
+  # Don't build dEQP by default.
+  build_angle_deqp_tests = false
 }
 
 if (angle_has_build) {
@@ -37,16 +40,16 @@ if (angle_has_build) {
     import("//build/config/win/visual_studio_version.gni")
   }
 
-  if (is_chromecast || ozone_platform_headless) {
+  if (is_castos || ozone_platform_headless) {
     angle_vulkan_display_mode = "headless"
   }
 
   declare_args() {
     angle_use_gbm = ozone_platform_gbm
-    angle_use_x11 = ozone_platform_x11 && !is_ggp &&
-                    (is_linux || is_chromeos) && !is_chromecast
+    angle_use_x11 =
+        ozone_platform_x11 && !is_ggp && (is_linux || is_chromeos) && !is_castos
     angle_use_wayland =
-        ozone_platform_wayland && !is_ggp && is_linux && !is_chromecast
+        ozone_platform_wayland && !is_ggp && is_linux && !is_castos
     angle_use_vulkan_display = (is_linux || is_chromeos) && !is_ggp
   }
 } else {
@@ -170,6 +173,11 @@ declare_args() {
 
   # Use glslang to generate SPIR-V
   angle_use_spirv_gen_through_glslang = false
+}
+
+declare_args() {
+  # ASTC emulation is only built on standalone non-android builds
+  angle_has_astc_encoder = angle_has_build && angle_standalone && !is_android
 }
 
 # OpenCL is not supported on Windows UWP, because the CL headers include DX9, which is not

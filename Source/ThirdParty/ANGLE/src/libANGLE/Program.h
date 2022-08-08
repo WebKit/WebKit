@@ -439,7 +439,7 @@ class Program final : public LabeledObject, public angle::Subject
 
     ShaderProgramID id() const;
 
-    void setLabel(const Context *context, const std::string &label) override;
+    angle::Result setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;
 
     ANGLE_INLINE rx::ProgramImpl *getImplementation() const

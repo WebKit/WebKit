@@ -87,7 +87,8 @@ egl::Error DisplayVkWin32::initialize(egl::Display *display)
         if (!mWindowClass)
         {
             return egl::EglNotInitialized()
-                   << "Failed to register intermediate OpenGL window class \"" << className.c_str()
+                   << "Failed to register intermediate OpenGL window class \""
+                   << gl::FmtHex<egl::Display *, char>(display)
                    << "\":" << gl::FmtErr(HRESULT_CODE(GetLastError()));
         }
     }

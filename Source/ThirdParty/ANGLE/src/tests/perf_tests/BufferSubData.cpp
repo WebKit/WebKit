@@ -350,6 +350,16 @@ BufferSubDataParams BufferUpdateD3D11Params()
     return params;
 }
 
+BufferSubDataParams BufferUpdateMetalParams()
+{
+    BufferSubDataParams params;
+    params.eglParameters        = egl_platform::METAL();
+    params.vertexType           = GL_FLOAT;
+    params.vertexComponentCount = 4;
+    params.vertexNormalized     = GL_FALSE;
+    return params;
+}
+
 BufferSubDataParams BufferUpdateOpenGLOrGLESParams()
 {
     BufferSubDataParams params;
@@ -377,6 +387,7 @@ TEST_P(BufferSubDataBenchmark, Run)
 
 ANGLE_INSTANTIATE_TEST(BufferSubDataBenchmark,
                        BufferUpdateD3D11Params(),
+                       BufferUpdateMetalParams(),
                        BufferUpdateOpenGLOrGLESParams(),
                        BufferUpdateVulkanParams());
 

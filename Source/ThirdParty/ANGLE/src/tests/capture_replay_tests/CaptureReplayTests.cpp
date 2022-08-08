@@ -64,6 +64,38 @@ EGLBoolean KHRONOS_APIENTRY EGLDestroyImageKHR(EGLDisplay display, EGLImage imag
 {
     return gEGLWindow->destroyImageKHR(image);
 }
+
+EGLSurface KHRONOS_APIENTRY EGLCreatePbufferSurface(EGLDisplay display,
+                                                    EGLConfig *config,
+                                                    const EGLint *attrib_list)
+{
+    return gEGLWindow->createPbufferSurface(attrib_list);
+}
+
+EGLBoolean KHRONOS_APIENTRY EGLDestroySurface(EGLDisplay display, EGLSurface surface)
+{
+    return gEGLWindow->destroySurface(surface);
+}
+
+EGLBoolean KHRONOS_APIENTRY EGLBindTexImage(EGLDisplay display, EGLSurface surface, EGLint buffer)
+{
+    return gEGLWindow->bindTexImage(surface, buffer);
+}
+
+EGLBoolean KHRONOS_APIENTRY EGLReleaseTexImage(EGLDisplay display,
+                                               EGLSurface surface,
+                                               EGLint buffer)
+{
+    return gEGLWindow->releaseTexImage(surface, buffer);
+}
+
+EGLBoolean KHRONOS_APIENTRY EGLMakeCurrent(EGLDisplay display,
+                                           EGLSurface draw,
+                                           EGLSurface read,
+                                           EGLContext context)
+{
+    return gEGLWindow->makeCurrent(draw, read, context);
+}
 }  // namespace
 
 angle::GenericProc KHRONOS_APIENTRY TraceLoadProc(const char *procName)
@@ -90,6 +122,26 @@ angle::GenericProc KHRONOS_APIENTRY TraceLoadProc(const char *procName)
         if (strcmp(procName, "eglDestroyImageKHR") == 0)
         {
             return reinterpret_cast<angle::GenericProc>(EGLDestroyImageKHR);
+        }
+        if (strcmp(procName, "eglCreatePbufferSurface") == 0)
+        {
+            return reinterpret_cast<angle::GenericProc>(EGLCreatePbufferSurface);
+        }
+        if (strcmp(procName, "eglDestroySurface") == 0)
+        {
+            return reinterpret_cast<angle::GenericProc>(EGLDestroySurface);
+        }
+        if (strcmp(procName, "eglBindTexImage") == 0)
+        {
+            return reinterpret_cast<angle::GenericProc>(EGLBindTexImage);
+        }
+        if (strcmp(procName, "eglReleaseTexImage") == 0)
+        {
+            return reinterpret_cast<angle::GenericProc>(EGLReleaseTexImage);
+        }
+        if (strcmp(procName, "eglMakeCurrent") == 0)
+        {
+            return reinterpret_cast<angle::GenericProc>(EGLMakeCurrent);
         }
         return gEGLWindow->getProcAddress(procName);
     }
@@ -134,8 +186,13 @@ class CaptureReplayTests
 
         if (!mEGLWindow)
         {
-            mEGLWindow = EGLWindow::New(traceInfo.contextClientMajorVersion,
-                                        traceInfo.contextClientMinorVersion);
+            // TODO: to support desktop OpenGL traces, capture the client api and profile mask in
+            // TraceInfo
+            const EGLenum testClientAPI  = EGL_OPENGL_ES_API;
+            const EGLint testProfileMask = 0;
+
+            mEGLWindow = EGLWindow::New(testClientAPI, traceInfo.contextClientMajorVersion,
+                                        traceInfo.contextClientMinorVersion, testProfileMask);
         }
 
         ConfigParameters configParams;

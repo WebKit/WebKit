@@ -111,6 +111,9 @@ extern SyncResourceMap gSyncMap;
 using ContextMap = std::unordered_map<uint32_t, EGLContext>;
 extern ContextMap gContextMap;
 
+using SurfaceMap = std::unordered_map<uint32_t, EGLSurface>;
+extern SurfaceMap gSurfaceMap;
+
 void UpdateClientArrayPointer(int arrayIndex, const void *data, uint64_t size);
 using BufferHandleMap = std::unordered_map<GLuint, void *>;
 extern BufferHandleMap gMappedBufferData;

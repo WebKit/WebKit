@@ -125,6 +125,11 @@ egl::Error SurfaceImpl::getBufferAge(const gl::Context *context, EGLint *age)
     return egl::NoError();
 }
 
+egl::Error SurfaceImpl::setAutoRefreshEnabled(bool enabled)
+{
+    return egl::EglBadMatch();
+}
+
 egl::Error SurfaceImpl::lockSurface(const egl::Display *display,
                                     EGLint usageHint,
                                     bool preservePixels,

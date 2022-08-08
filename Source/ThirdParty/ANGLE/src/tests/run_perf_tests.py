@@ -230,6 +230,9 @@ class Results:
         }
         self._test_results = {}
 
+    def has_failures(self):
+        return self._results['num_failures_by_type'][FAIL] > 0
+
     def has_result(self, test):
         return test in self._test_results
 
@@ -517,6 +520,8 @@ def main():
     end_time = time.time()
     logging.info('Elapsed time: %.2lf seconds.' % (end_time - start_time))
 
+    if results.has_failures():
+        return EXIT_FAILURE
     return EXIT_SUCCESS
 
 

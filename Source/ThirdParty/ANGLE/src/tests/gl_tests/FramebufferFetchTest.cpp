@@ -2054,6 +2054,115 @@ void main (void)
     ASSERT_GL_NO_ERROR();
 }
 
+// Verify that switching between single sampled framebuffer fetch and multi sampled framebuffer
+// fetch works fine
+TEST_P(FramebufferFetchES31, SingleSampledMultiSampledMixedTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+    setWhichExtension(COHERENT);
+
+    // Create a program that fetches from the framebuffer
+    GLProgram fetchProgram;
+    fetchProgram.makeRaster(k310VS, getFragmentShader(GLSL310_1ATTACHMENT));
+    GLint positionLocation = glGetAttribLocation(fetchProgram, "a_position");
+    GLint colorLocation    = glGetUniformLocation(fetchProgram, "u_color");
+    ASSERT_GL_NO_ERROR();
+
+    // Create two single sampled framebuffer
+    GLRenderbuffer singleSampledRenderbuffer1;
+    glBindRenderbuffer(GL_RENDERBUFFER, singleSampledRenderbuffer1);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kViewportWidth, kViewportHeight);
+    GLFramebuffer singleSampledFramebuffer1;
+    glBindFramebuffer(GL_FRAMEBUFFER, singleSampledFramebuffer1);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              singleSampledRenderbuffer1);
+
+    GLRenderbuffer singleSampledRenderbuffer2;
+    glBindRenderbuffer(GL_RENDERBUFFER, singleSampledRenderbuffer2);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kViewportWidth, kViewportHeight);
+    GLFramebuffer singleSampledFramebuffer2;
+    glBindFramebuffer(GL_FRAMEBUFFER, singleSampledFramebuffer2);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              singleSampledRenderbuffer2);
+
+    // Create one multi sampled framebuffer
+    GLRenderbuffer multiSampledRenderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, multiSampledRenderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kViewportWidth, kViewportHeight);
+    GLFramebuffer multiSampledFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, multiSampledFramebuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              multiSampledRenderbuffer);
+
+    // Create a singlesampled render buffer for blit and read
+    GLRenderbuffer resolvedRbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, resolvedRbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kViewportWidth, kViewportHeight);
+    GLFramebuffer resolvedFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolvedFbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, resolvedRbo);
+
+    // Clear three Framebuffers with different colors
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glBindFramebuffer(GL_FRAMEBUFFER, singleSampledFramebuffer1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::black);
+
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glBindFramebuffer(GL_FRAMEBUFFER, singleSampledFramebuffer2);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::blue);
+
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glBindFramebuffer(GL_FRAMEBUFFER, multiSampledFramebuffer);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolvedFbo);
+    glBlitFramebuffer(0, 0, kViewportWidth, kViewportHeight, 0, 0, kViewportWidth, kViewportHeight,
+                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolvedFbo);
+    EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::green);
+
+    // Bind first single sampled framebuffer, draw once with red, fetching black from the
+    // framebuffer
+    glUseProgram(fetchProgram);
+    glUniform4fv(colorLocation, 1, GLColor::red.toNormalizedVector().data());
+    glBindFramebuffer(GL_FRAMEBUFFER, singleSampledFramebuffer1);
+    render(positionLocation, false);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind the multi sampled framebuffer, draw once with red, fetching green from the framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, multiSampledFramebuffer);
+    render(positionLocation, false);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolvedFbo);
+    glBlitFramebuffer(0, 0, kViewportWidth, kViewportHeight, 0, 0, kViewportWidth, kViewportHeight,
+                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolvedFbo);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind the single sampled framebuffer, draw once with red, fetching blue from the framebuffer
+    glUniform4fv(colorLocation, 1, GLColor::red.toNormalizedVector().data());
+    glBindFramebuffer(GL_FRAMEBUFFER, singleSampledFramebuffer2);
+    render(positionLocation, false);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify the rendering result on all three framebuffers
+
+    // Verify the last framebuffer being drawn: singleSampledFramebuffer2
+    EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::magenta);
+
+    // Verify the second last framebuffer being drawn: multisampledFramebuffer
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, multiSampledFramebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolvedFbo);
+    glBlitFramebuffer(0, 0, kViewportWidth, kViewportHeight, 0, 0, kViewportWidth, kViewportHeight,
+                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolvedFbo);
+    EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::yellow);
+
+    // Verify the first framebuffer being drawn: singleSampledFramebuffer1
+    glBindFramebuffer(GL_FRAMEBUFFER, singleSampledFramebuffer1);
+    EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::red);
+}
+
 // Verify that calling glFramebufferFetchBarrierEXT without an open render pass is ok.
 TEST_P(FramebufferFetchES31, BarrierBeforeDraw)
 {

@@ -1,8 +1,8 @@
 {
     "Vendor": "Google Inc. (Intel)",
-    "Version": "OpenGL ES 3.2.0 (ANGLE 2.1.18778 git hash: 4784f091deba)",
-    "Renderer": "ANGLE (Intel, Vulkan 1.1.96 (Intel(R) HD Graphics 630 (Kaby Lake GT2) (0x00005912)), Intel open-source Mesa driver-19.0.2)",
-    "ShaderLanguageVersion": "OpenGL ES GLSL ES 3.20 (ANGLE 2.1.18778 git hash: 4784f091deba)",
+    "Version": "OpenGL ES 3.2.0 (ANGLE 2.1.19130 git hash: e3933465d88f)",
+    "Renderer": "ANGLE (Intel, Vulkan 1.2.131 (Intel(R) UHD Graphics 630 (CML GT2) (0x00009BC5)), Intel open-source Mesa driver-20.0.8)",
+    "ShaderLanguageVersion": "OpenGL ES GLSL ES 3.20 (ANGLE 2.1.19130 git hash: e3933465d88f)",
     "Extensions": [
         "GL_AMD_performance_monitor",
         "GL_ANGLE_base_vertex_base_instance",
@@ -42,6 +42,7 @@
         "GL_EXT_EGL_image_array",
         "GL_EXT_EGL_image_external_wrap_modes",
         "GL_EXT_EGL_image_storage",
+        "GL_EXT_base_instance",
         "GL_EXT_blend_func_extended",
         "GL_EXT_blend_minmax",
         "GL_EXT_buffer_storage",
@@ -60,6 +61,7 @@
         "GL_EXT_draw_elements_base_vertex",
         "GL_EXT_float_blend",
         "GL_EXT_frag_depth",
+        "GL_EXT_geometry_shader",
         "GL_EXT_gpu_shader5",
         "GL_EXT_instanced_arrays",
         "GL_EXT_map_buffer_range",
@@ -81,6 +83,7 @@
         "GL_EXT_shader_non_constant_global_initializers",
         "GL_EXT_shader_texture_lod",
         "GL_EXT_shadow_samplers",
+        "GL_EXT_tessellation_shader",
         "GL_EXT_texture_buffer",
         "GL_EXT_texture_compression_bptc",
         "GL_EXT_texture_compression_dxt1",
@@ -104,6 +107,7 @@
         "GL_NV_pack_subimage",
         "GL_NV_pixel_buffer_object",
         "GL_NV_read_depth",
+        "GL_NV_read_depth_stencil",
         "GL_NV_read_stencil",
         "GL_NV_shader_noperspective_interpolation",
         "GL_OES_EGL_image",
@@ -129,6 +133,7 @@
         "GL_OES_draw_elements_base_vertex",
         "GL_OES_element_index_uint",
         "GL_OES_fbo_render_mipmap",
+        "GL_OES_geometry_shader",
         "GL_OES_get_program_binary",
         "GL_OES_mapbuffer",
         "GL_OES_packed_depth_stencil",
@@ -153,7 +158,9 @@
         "GL_OES_texture_storage_multisample_2d_array",
         "GL_OES_vertex_array_object",
         "GL_OES_vertex_half_float",
-        "GL_OES_vertex_type_10_10_10_2"
+        "GL_OES_vertex_type_10_10_10_2",
+        "GL_OVR_multiview",
+        "GL_OVR_multiview2"
     ],
-    "DateRecorded": "June  1, 2022"
+    "DateRecorded": "July 23, 2022"
 }

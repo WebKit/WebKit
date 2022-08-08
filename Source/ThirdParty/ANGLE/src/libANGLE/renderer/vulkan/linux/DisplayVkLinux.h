@@ -25,6 +25,22 @@ class DisplayVkLinux : public DisplayVk
                                                          EGLenum target,
                                                          EGLClientBuffer buffer,
                                                          const egl::AttributeMap &attribs) override;
+    std::vector<VkDrmFormatModifierPropertiesEXT> GetDrmModifiers(const DisplayVk *displayVk,
+                                                                  VkFormat vkFormat);
+    bool SupportsDrmModifiers(VkPhysicalDevice device, VkFormat vkFormat);
+    std::vector<VkFormat> GetVkFormatsWithDrmModifiers(const RendererVk *rendererVk);
+    std::vector<EGLint> GetDrmFormats(const RendererVk *rendererVk);
+    bool supportsDmaBufFormat(EGLint format) const override;
+    egl::Error queryDmaBufFormats(EGLint maxFormats, EGLint *formats, EGLint *numFormats) override;
+    egl::Error queryDmaBufModifiers(EGLint format,
+                                    EGLint maxModifiers,
+                                    EGLuint64KHR *modifiers,
+                                    EGLBoolean *externalOnly,
+                                    EGLint *numModifiers) override;
+
+  private:
+    // Supported DRM formats
+    std::vector<EGLint> mDrmFormats;
 };
 
 }  // namespace rx

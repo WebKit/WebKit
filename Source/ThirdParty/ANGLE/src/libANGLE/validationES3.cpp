@@ -705,7 +705,7 @@ bool ValidateES3TexImageParametersBase(const Context *context,
             }
 
             // GL_EXT_compressed_ETC1_RGB8_sub_texture allows this format
-            if (actualInternalFormat == GL_ETC1_RGB8_OES &&
+            if (IsETC1Format(actualInternalFormat) &&
                 !context->getExtensions().compressedETC1RGB8SubTextureEXT)
             {
                 context->validationError(entryPoint, GL_INVALID_OPERATION, kInvalidInternalFormat);
@@ -732,6 +732,17 @@ bool ValidateES3TexImageParametersBase(const Context *context,
     }
     else
     {
+        // Compressed formats are not valid internal formats for glTexImage*D
+        if (!isSubImage)
+        {
+            const InternalFormat &internalFormatInfo = GetSizedInternalFormatInfo(internalformat);
+            if (internalFormatInfo.compressed)
+            {
+                context->validationError(entryPoint, GL_INVALID_VALUE, kInvalidInternalFormat);
+                return false;
+            }
+        }
+
         if (!ValidateTexImageFormatCombination(context, entryPoint, texType, actualInternalFormat,
                                                format, type))
         {
@@ -2860,7 +2871,20 @@ bool ValidateCompressedTexSubImage3D(const Context *context,
         return false;
     }
 
+    if (!ValidateES3TexImage3DParameters(context, entryPoint, target, level, GL_NONE, true, true,
+                                         xoffset, yoffset, zoffset, width, height, depth, 0, format,
+                                         GL_NONE, -1, data))
+    {
+        return false;
+    }
+
     const InternalFormat &formatInfo = GetSizedInternalFormatInfo(format);
+
+    if (!formatInfo.compressed)
+    {
+        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidCompressedFormat);
+        return false;
+    }
 
     GLuint blockSize = 0;
     if (!formatInfo.computeCompressedImageSize(Extents(width, height, depth), &blockSize))
@@ -2872,19 +2896,6 @@ bool ValidateCompressedTexSubImage3D(const Context *context,
     if (imageSize < 0 || static_cast<GLuint>(imageSize) != blockSize)
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kInvalidCompressedImageSize);
-        return false;
-    }
-
-    if (!ValidateES3TexImage3DParameters(context, entryPoint, target, level, GL_NONE, true, true,
-                                         xoffset, yoffset, zoffset, width, height, depth, 0, format,
-                                         GL_NONE, -1, data))
-    {
-        return false;
-    }
-
-    if (!formatInfo.compressed)
-    {
-        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidCompressedFormat);
         return false;
     }
 

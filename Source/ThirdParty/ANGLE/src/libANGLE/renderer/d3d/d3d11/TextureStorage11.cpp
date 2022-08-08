@@ -101,7 +101,7 @@ TextureStorage11::~TextureStorage11()
 
 DWORD TextureStorage11::GetTextureBindFlags(GLenum internalFormat,
                                             const Renderer11DeviceCaps &renderer11DeviceCaps,
-                                            bool renderTarget)
+                                            BindFlags flags)
 {
     UINT bindFlags = 0;
 
@@ -110,17 +110,15 @@ DWORD TextureStorage11::GetTextureBindFlags(GLenum internalFormat,
     {
         bindFlags |= D3D11_BIND_SHADER_RESOURCE;
     }
-    if (formatInfo.uavFormat != DXGI_FORMAT_UNKNOWN &&
-        renderer11DeviceCaps.featureLevel >= d3d11_gl::GetMinimumFeatureLevelForES31())
+    if (formatInfo.uavFormat != DXGI_FORMAT_UNKNOWN && flags.unorderedAccess)
     {
-        // If we find performance issues later on some specific GPUs, this may be the cause.
         bindFlags |= D3D11_BIND_UNORDERED_ACCESS;
     }
     if (formatInfo.dsvFormat != DXGI_FORMAT_UNKNOWN)
     {
         bindFlags |= D3D11_BIND_DEPTH_STENCIL;
     }
-    if (formatInfo.rtvFormat != DXGI_FORMAT_UNKNOWN && renderTarget)
+    if (formatInfo.rtvFormat != DXGI_FORMAT_UNKNOWN && flags.renderTarget)
     {
         bindFlags |= D3D11_BIND_RENDER_TARGET;
     }
@@ -130,13 +128,13 @@ DWORD TextureStorage11::GetTextureBindFlags(GLenum internalFormat,
 
 DWORD TextureStorage11::GetTextureMiscFlags(GLenum internalFormat,
                                             const Renderer11DeviceCaps &renderer11DeviceCaps,
-                                            bool renderTarget,
+                                            BindFlags bindFlags,
                                             int levels)
 {
     UINT miscFlags = 0;
 
     const d3d11::Format &formatInfo = d3d11::Format::Get(internalFormat, renderer11DeviceCaps);
-    if (renderTarget && levels > 1)
+    if (bindFlags.renderTarget)
     {
         if (d3d11::SupportsMipGen(formatInfo.texFormat, renderer11DeviceCaps.featureLevel))
         {
@@ -682,8 +680,9 @@ angle::Result TextureStorage11::generateMipmap(const gl::Context *context,
 
     RenderTarget11 *srcRT11                = GetAs<RenderTarget11>(source);
     RenderTarget11 *dstRT11                = GetAs<RenderTarget11>(dest);
-    const d3d11::SharedSRV &sourceSRV      = srcRT11->getBlitShaderResourceView(context);
     const d3d11::RenderTargetView &destRTV = dstRT11->getRenderTargetView();
+    const d3d11::SharedSRV *sourceSRV;
+    ANGLE_TRY(srcRT11->getBlitShaderResourceView(context, &sourceSRV));
 
     gl::Box sourceArea(0, 0, 0, source->getWidth(), source->getHeight(), source->getDepth());
     gl::Extents sourceSize(source->getWidth(), source->getHeight(), source->getDepth());
@@ -696,7 +695,7 @@ angle::Result TextureStorage11::generateMipmap(const gl::Context *context,
         gl::GetSizedInternalFormatInfo(source->getInternalFormat());
     GLenum format = sourceInternalFormat.format;
     GLenum type   = sourceInternalFormat.type;
-    return blitter->copyTexture(context, sourceSRV, sourceArea, sourceSize, format, destRTV,
+    return blitter->copyTexture(context, *sourceSRV, sourceArea, sourceSize, format, destRTV,
                                 destArea, destSize, nullptr, format, type, GL_LINEAR, false, false,
                                 false);
 }
@@ -1020,7 +1019,7 @@ TextureStorage11_2D::TextureStorage11_2D(Renderer11 *renderer,
 
 TextureStorage11_2D::TextureStorage11_2D(Renderer11 *renderer,
                                          GLenum internalformat,
-                                         bool renderTarget,
+                                         BindFlags bindFlags,
                                          GLsizei width,
                                          GLsizei height,
                                          int levels,
@@ -1028,10 +1027,10 @@ TextureStorage11_2D::TextureStorage11_2D(Renderer11 *renderer,
                                          bool hintLevelZeroOnly)
     : TextureStorage11(
           renderer,
-          GetTextureBindFlags(internalformat, renderer->getRenderer11DeviceCaps(), renderTarget),
+          GetTextureBindFlags(internalformat, renderer->getRenderer11DeviceCaps(), bindFlags),
           GetTextureMiscFlags(internalformat,
                               renderer->getRenderer11DeviceCaps(),
-                              renderTarget,
+                              bindFlags,
                               levels),
           internalformat,
           label),
@@ -1288,11 +1287,11 @@ angle::Result TextureStorage11_2D::ensureTextureExists(const gl::Context *contex
         ASSERT(mipLevels > 0);
 
         D3D11_TEXTURE2D_DESC desc;
-        desc.Width              = mTextureWidth;  // Compressed texture size constraints?
-        desc.Height             = mTextureHeight;
-        desc.MipLevels          = mipLevels;
-        desc.ArraySize          = 1;
-        desc.Format             = mFormatInfo.texFormat;
+        desc.Width     = mTextureWidth;  // Compressed texture size constraints?
+        desc.Height    = mTextureHeight;
+        desc.MipLevels = mipLevels;
+        desc.ArraySize = 1;
+        desc.Format    = isUnorderedAccess() ? mFormatInfo.typelessFormat : mFormatInfo.texFormat;
         desc.SampleDesc.Count   = 1;
         desc.SampleDesc.Quality = 0;
         desc.Usage              = D3D11_USAGE_DEFAULT;
@@ -2095,7 +2094,10 @@ angle::Result TextureStorage11_EGLImage::createSRVForSampler(const gl::Context *
 
         ASSERT(texture == renderTarget->getTexture());
 
-        *outSRV = renderTarget->getShaderResourceView(context).makeCopy();
+        const d3d11::SharedSRV *srv;
+        ANGLE_TRY(renderTarget->getShaderResourceView(context, &srv));
+
+        *outSRV = srv->makeCopy();
     }
 
     return angle::Result::Continue;
@@ -2120,17 +2122,17 @@ void TextureStorage11_EGLImage::onLabelUpdate()
 
 TextureStorage11_Cube::TextureStorage11_Cube(Renderer11 *renderer,
                                              GLenum internalformat,
-                                             bool renderTarget,
+                                             BindFlags bindFlags,
                                              int size,
                                              int levels,
                                              bool hintLevelZeroOnly,
                                              const std::string &label)
     : TextureStorage11(
           renderer,
-          GetTextureBindFlags(internalformat, renderer->getRenderer11DeviceCaps(), renderTarget),
+          GetTextureBindFlags(internalformat, renderer->getRenderer11DeviceCaps(), bindFlags),
           GetTextureMiscFlags(internalformat,
                               renderer->getRenderer11DeviceCaps(),
-                              renderTarget,
+                              bindFlags,
                               levels),
           internalformat,
           label),
@@ -2426,11 +2428,11 @@ angle::Result TextureStorage11_Cube::ensureTextureExists(const gl::Context *cont
         ASSERT(mMipLevels > 0);
 
         D3D11_TEXTURE2D_DESC desc;
-        desc.Width              = mTextureWidth;
-        desc.Height             = mTextureHeight;
-        desc.MipLevels          = mipLevels;
-        desc.ArraySize          = gl::kCubeFaceCount;
-        desc.Format             = mFormatInfo.texFormat;
+        desc.Width     = mTextureWidth;
+        desc.Height    = mTextureHeight;
+        desc.MipLevels = mipLevels;
+        desc.ArraySize = gl::kCubeFaceCount;
+        desc.Format    = isUnorderedAccess() ? mFormatInfo.typelessFormat : mFormatInfo.texFormat;
         desc.SampleDesc.Count   = 1;
         desc.SampleDesc.Quality = 0;
         desc.Usage              = D3D11_USAGE_DEFAULT;
@@ -2849,7 +2851,7 @@ void TextureStorage11_Cube::onLabelUpdate()
 
 TextureStorage11_3D::TextureStorage11_3D(Renderer11 *renderer,
                                          GLenum internalformat,
-                                         bool renderTarget,
+                                         BindFlags bindFlags,
                                          GLsizei width,
                                          GLsizei height,
                                          GLsizei depth,
@@ -2857,10 +2859,10 @@ TextureStorage11_3D::TextureStorage11_3D(Renderer11 *renderer,
                                          const std::string &label)
     : TextureStorage11(
           renderer,
-          GetTextureBindFlags(internalformat, renderer->getRenderer11DeviceCaps(), renderTarget),
+          GetTextureBindFlags(internalformat, renderer->getRenderer11DeviceCaps(), bindFlags),
           GetTextureMiscFlags(internalformat,
                               renderer->getRenderer11DeviceCaps(),
-                              renderTarget,
+                              bindFlags,
                               levels),
           internalformat,
           label)
@@ -2969,13 +2971,13 @@ angle::Result TextureStorage11_3D::getResource(const gl::Context *context,
         ASSERT(mMipLevels > 0);
 
         D3D11_TEXTURE3D_DESC desc;
-        desc.Width          = mTextureWidth;
-        desc.Height         = mTextureHeight;
-        desc.Depth          = mTextureDepth;
-        desc.MipLevels      = mMipLevels;
-        desc.Format         = mFormatInfo.texFormat;
-        desc.Usage          = D3D11_USAGE_DEFAULT;
-        desc.BindFlags      = getBindFlags();
+        desc.Width     = mTextureWidth;
+        desc.Height    = mTextureHeight;
+        desc.Depth     = mTextureDepth;
+        desc.MipLevels = mMipLevels;
+        desc.Format    = isUnorderedAccess() ? mFormatInfo.typelessFormat : mFormatInfo.texFormat;
+        desc.Usage     = D3D11_USAGE_DEFAULT;
+        desc.BindFlags = getBindFlags();
         desc.CPUAccessFlags = 0;
         desc.MiscFlags      = getMiscFlags();
 
@@ -3232,7 +3234,7 @@ void TextureStorage11_3D::onLabelUpdate()
 
 TextureStorage11_2DArray::TextureStorage11_2DArray(Renderer11 *renderer,
                                                    GLenum internalformat,
-                                                   bool renderTarget,
+                                                   BindFlags bindFlags,
                                                    GLsizei width,
                                                    GLsizei height,
                                                    GLsizei depth,
@@ -3240,10 +3242,10 @@ TextureStorage11_2DArray::TextureStorage11_2DArray(Renderer11 *renderer,
                                                    const std::string &label)
     : TextureStorage11(
           renderer,
-          GetTextureBindFlags(internalformat, renderer->getRenderer11DeviceCaps(), renderTarget),
+          GetTextureBindFlags(internalformat, renderer->getRenderer11DeviceCaps(), bindFlags),
           GetTextureMiscFlags(internalformat,
                               renderer->getRenderer11DeviceCaps(),
-                              renderTarget,
+                              bindFlags,
                               levels),
           internalformat,
           label)
@@ -3362,11 +3364,11 @@ angle::Result TextureStorage11_2DArray::getResource(const gl::Context *context,
         ASSERT(mMipLevels > 0);
 
         D3D11_TEXTURE2D_DESC desc;
-        desc.Width              = mTextureWidth;
-        desc.Height             = mTextureHeight;
-        desc.MipLevels          = mMipLevels;
-        desc.ArraySize          = mTextureDepth;
-        desc.Format             = mFormatInfo.texFormat;
+        desc.Width     = mTextureWidth;
+        desc.Height    = mTextureHeight;
+        desc.MipLevels = mMipLevels;
+        desc.ArraySize = mTextureDepth;
+        desc.Format    = isUnorderedAccess() ? mFormatInfo.typelessFormat : mFormatInfo.texFormat;
         desc.SampleDesc.Count   = 1;
         desc.SampleDesc.Quality = 0;
         desc.Usage              = D3D11_USAGE_DEFAULT;
@@ -3685,12 +3687,16 @@ TextureStorage11_2DMultisample::TextureStorage11_2DMultisample(Renderer11 *rende
                                                                int samples,
                                                                bool fixedSampleLocations,
                                                                const std::string &label)
-    : TextureStorage11ImmutableBase(
-          renderer,
-          GetTextureBindFlags(internalformat, renderer->getRenderer11DeviceCaps(), true),
-          GetTextureMiscFlags(internalformat, renderer->getRenderer11DeviceCaps(), true, levels),
-          internalformat,
-          label),
+    : TextureStorage11ImmutableBase(renderer,
+                                    GetTextureBindFlags(internalformat,
+                                                        renderer->getRenderer11DeviceCaps(),
+                                                        BindFlags::RenderTarget()),
+                                    GetTextureMiscFlags(internalformat,
+                                                        renderer->getRenderer11DeviceCaps(),
+                                                        BindFlags::RenderTarget(),
+                                                        levels),
+                                    internalformat,
+                                    label),
       mTexture(),
       mRenderTarget(nullptr)
 {
@@ -3904,12 +3910,16 @@ TextureStorage11_2DMultisampleArray::TextureStorage11_2DMultisampleArray(Rendere
                                                                          int samples,
                                                                          bool fixedSampleLocations,
                                                                          const std::string &label)
-    : TextureStorage11ImmutableBase(
-          renderer,
-          GetTextureBindFlags(internalformat, renderer->getRenderer11DeviceCaps(), true),
-          GetTextureMiscFlags(internalformat, renderer->getRenderer11DeviceCaps(), true, levels),
-          internalformat,
-          label),
+    : TextureStorage11ImmutableBase(renderer,
+                                    GetTextureBindFlags(internalformat,
+                                                        renderer->getRenderer11DeviceCaps(),
+                                                        BindFlags::RenderTarget()),
+                                    GetTextureMiscFlags(internalformat,
+                                                        renderer->getRenderer11DeviceCaps(),
+                                                        BindFlags::RenderTarget(),
+                                                        levels),
+                                    internalformat,
+                                    label),
       mTexture()
 {
     // There are no multisampled compressed formats, so there's no need to adjust texture size

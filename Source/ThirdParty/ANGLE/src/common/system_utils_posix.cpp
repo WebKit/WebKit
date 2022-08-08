@@ -277,6 +277,41 @@ std::string GetRootDirectory()
     return "/";
 }
 
+Optional<std::string> GetTempDirectory()
+{
+    const char *tmp = getenv("TMPDIR");
+    if (tmp != nullptr)
+    {
+        return std::string(tmp);
+    }
+
+#if defined(ANGLE_PLATFORM_ANDROID)
+    // Not used right now in the ANGLE test runner.
+    // return PathService::Get(DIR_CACHE, path);
+    return Optional<std::string>::Invalid();
+#else
+    return std::string("/tmp");
+#endif
+}
+
+Optional<std::string> CreateTemporaryFileInDirectory(const std::string &directory)
+{
+    std::string tempFileTemplate = directory + "/.angle.XXXXXX";
+
+    char tempFile[1000];
+    strcpy(tempFile, tempFileTemplate.c_str());
+
+    int fd = mkstemp(tempFile);
+    close(fd);
+
+    if (fd != -1)
+    {
+        return std::string(tempFile);
+    }
+
+    return Optional<std::string>::Invalid();
+}
+
 double GetCurrentProcessCpuTime()
 {
 #ifdef ANGLE_PLATFORM_FUCHSIA

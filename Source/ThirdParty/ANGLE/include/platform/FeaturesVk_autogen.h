@@ -59,6 +59,11 @@ struct FeaturesVk : FeatureSetBase
         "The depth value is not clamped to [0,1] for floating point depth buffers.", &members,
         "http://anglebug.com/3970"};
 
+    FeatureInfo mutableMipmapTextureUpload = {
+        "mutableMipmapTextureUpload", FeatureCategory::VulkanFeatures,
+        "Enable uploading the previously defined mutable mipmap texture.", &members,
+        "https://anglebug.com/7308"};
+
     FeatureInfo supportsRenderpass2 = {
         "supportsRenderpass2",
         FeatureCategory::VulkanFeatures,
@@ -216,11 +221,6 @@ struct FeaturesVk : FeatureSetBase
         "disableFifoPresentMode", FeatureCategory::VulkanWorkarounds,
         "VK_PRESENT_MODE_FIFO_KHR causes random timeouts", &members, "http://anglebug.com/3153"};
 
-    FeatureInfo bindEmptyForUnusedDescriptorSets = {
-        "bindEmptyForUnusedDescriptorSets", FeatureCategory::VulkanWorkarounds,
-        "Gaps in bound descriptor set indices causes the post-gap sets to misbehave", &members,
-        "http://anglebug.com/2727"};
-
     FeatureInfo forceD16TexFilter = {
         "forceD16TexFilter", FeatureCategory::VulkanWorkarounds,
         "VK_FORMAT_D16_UNORM does not support VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT, "
@@ -293,6 +293,11 @@ struct FeaturesVk : FeatureSetBase
         "persistentlyMappedBuffers", FeatureCategory::VulkanFeatures,
         "Persistently map buffer memory to reduce map/unmap IOCTL overhead.", &members,
         "http://anglebug.com/2162"};
+
+    FeatureInfo extraBufferLoggingAndChecking = {
+        "extraBufferLoggingAndChecking", FeatureCategory::VulkanFeatures,
+        "Enable extra buffer logging and checking to catch rare crashes", &members,
+        "https://issuetracker.google.com/236098131"};
 
     FeatureInfo enablePreRotateSurfaces = {"enablePreRotateSurfaces",
                                            FeatureCategory::VulkanFeatures,
@@ -597,6 +602,14 @@ struct FeaturesVk : FeatureSetBase
         "emulateAdvancedBlendEquations", FeatureCategory::VulkanFeatures,
         "Emulate GL_KHR_blend_equation_advanced", &members, "http://anglebug.com/3586"};
 
+    FeatureInfo precisionSafeDivision = {
+        "precisionSafeDivision",
+        FeatureCategory::VulkanWorkarounds,
+        "Special case handling for platforms that do not generate 1.0f even when the dividend and"
+        "divisor have the same value",
+        &members,
+    };
+
     FeatureInfo bottomLeftOriginPresentRegionRectangles = {
         "bottomLeftOriginPresentRegionRectangles",
         FeatureCategory::VulkanWorkarounds,
@@ -656,6 +669,13 @@ struct FeaturesVk : FeatureSetBase
         "preferLinearFilterForYUV",
         FeatureCategory::VulkanFeatures,
         "Prefer to use VK_FILTER_LINEAR for VkSamplerYcbcrConversion",
+        &members,
+    };
+
+    FeatureInfo supportsYuvTarget = {
+        "supportsYuvTarget",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_ANDROID_render_to_external_format and VK_EXT_ycbcr_attachment",
         &members,
     };
 };

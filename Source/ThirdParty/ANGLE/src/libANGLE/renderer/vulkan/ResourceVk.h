@@ -159,36 +159,6 @@ class SharedResourceUse final : angle::NonCopyable
     ResourceUse *mUse;
 };
 
-class SharedBufferSuballocationGarbage
-{
-  public:
-    SharedBufferSuballocationGarbage() = default;
-    SharedBufferSuballocationGarbage(SharedBufferSuballocationGarbage &&other)
-        : mLifetime(std::move(other.mLifetime)),
-          mSuballocation(std::move(other.mSuballocation)),
-          mBuffer(std::move(other.mBuffer))
-    {}
-    SharedBufferSuballocationGarbage(SharedResourceUse &&use,
-                                     BufferSuballocation &&suballocation,
-                                     Buffer &&buffer)
-        : mLifetime(std::move(use)),
-          mSuballocation(std::move(suballocation)),
-          mBuffer(std::move(buffer))
-    {}
-    ~SharedBufferSuballocationGarbage() = default;
-
-    bool destroyIfComplete(RendererVk *renderer, Serial completedSerial);
-    bool usedInRecordedCommands() const { return mLifetime.usedInRecordedCommands(); }
-    VkDeviceSize getSize() const { return mSuballocation.getSize(); }
-    bool isSuballocated() const { return mSuballocation.isSuballocated(); }
-
-  private:
-    SharedResourceUse mLifetime;
-    BufferSuballocation mSuballocation;
-    Buffer mBuffer;
-};
-using SharedBufferSuballocationGarbageList = std::queue<SharedBufferSuballocationGarbage>;
-
 class SharedGarbage
 {
   public:

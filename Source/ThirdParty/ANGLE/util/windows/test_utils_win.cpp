@@ -408,31 +408,6 @@ Process *LaunchProcess(const std::vector<const char *> &args, ProcessOutputCaptu
     return new WindowsProcess(args, captureOutput);
 }
 
-bool GetTempDir(char *tempDirOut, uint32_t maxDirNameLen)
-{
-    DWORD pathLen = ::GetTempPathA(maxDirNameLen, tempDirOut);
-    // Strip last path character if present.
-    if (pathLen > 0)
-    {
-        size_t lastChar = strlen(tempDirOut) - 1;
-        if (tempDirOut[lastChar] == '\\')
-        {
-            tempDirOut[lastChar] = 0;
-        }
-    }
-    return (pathLen < MAX_PATH && pathLen > 0);
-}
-
-bool CreateTemporaryFileInDir(const char *dir, char *tempFileNameOut, uint32_t maxFileNameLen)
-{
-    char fileName[MAX_PATH + 1];
-    if (::GetTempFileNameA(dir, "ANGLE", 0, fileName) == 0)
-        return false;
-
-    strncpy(tempFileNameOut, fileName, maxFileNameLen);
-    return true;
-}
-
 bool DeleteSystemFile(const char *path)
 {
     if (strlen(path) >= MAX_PATH)

@@ -356,6 +356,7 @@ class TType
     bool isAtomicCounter() const { return IsAtomicCounter(type); }
     bool isSamplerVideoWEBGL() const { return type == EbtSamplerVideoWEBGL; }
     bool isImage() const { return IsImage(type); }
+    bool isPixelLocal() const { return IsPixelLocal(type); }
 
   private:
     constexpr void invalidateMangledName() { mMangledName = nullptr; }

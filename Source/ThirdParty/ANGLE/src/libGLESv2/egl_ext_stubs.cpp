@@ -55,7 +55,7 @@ EGLImageKHR CreateImageKHR(Thread *thread,
     ANGLE_EGL_TRY_RETURN(thread, display->createImage(context, target, buffer, attributes, &image),
                          "", GetDisplayIfValid(display), EGL_NO_IMAGE);
 
-    ANGLE_CAPTURE_EGL(EGLCreateImage, thread, target, buffer, attributes, image);
+    ANGLE_CAPTURE_EGL(EGLCreateImage, thread, context, target, buffer, attributes, image);
 
     thread->setSuccess();
     return static_cast<EGLImage>(image);
@@ -211,6 +211,7 @@ EGLDisplay GetPlatformDisplayEXT(Thread *thread,
     {
         case EGL_PLATFORM_ANGLE_ANGLE:
         case EGL_PLATFORM_GBM_KHR:
+        case EGL_PLATFORM_WAYLAND_EXT:
         {
             return egl::Display::GetDisplayFromNativeDisplay(
                 platform, gl::bitCast<EGLNativeDisplayType>(native_display), attribMap);

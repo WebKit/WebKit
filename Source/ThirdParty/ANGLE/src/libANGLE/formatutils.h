@@ -427,7 +427,6 @@ ANGLE_INLINE bool IsETC1Format(const GLenum format)
     switch (format)
     {
         case GL_ETC1_RGB8_OES:
-        case GL_ETC1_SRGB8_NV:
             return true;
 
         default:

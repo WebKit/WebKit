@@ -33,11 +33,13 @@ class Builder
 {
   public:
     Builder(TCompiler *compiler,
+            ShCompileOptions compileOptions,
             TSymbolTable *symbolTable,
             const DriverUniform *driverUniforms,
             std::vector<ShaderVariable> *uniforms,
             const AdvancedBlendEquations &advancedBlendEquations)
         : mCompiler(compiler),
+          mCompileOptions(compileOptions),
           mSymbolTable(symbolTable),
           mDriverUniforms(driverUniforms),
           mUniforms(uniforms),
@@ -52,11 +54,13 @@ class Builder
     void generateHslHelperFunctions();
     void generateBlendFunctions();
     void insertGeneratedFunctions(TIntermBlock *root);
+    TIntermTyped *divideFloatNode(TIntermTyped *dividend, TIntermTyped *divisor);
     TIntermSymbol *premultiplyAlpha(TIntermBlock *blendBlock, TIntermTyped *var, const char *name);
     void generatePreamble(TIntermBlock *blendBlock);
     void generateEquationSwitch(TIntermBlock *blendBlock);
 
     TCompiler *mCompiler;
+    ShCompileOptions mCompileOptions;
     TSymbolTable *mSymbolTable;
     const DriverUniform *mDriverUniforms;
     std::vector<ShaderVariable> *mUniforms;
@@ -1019,6 +1023,16 @@ void Builder::insertGeneratedFunctions(TIntermBlock *root)
     }
 }
 
+// On some platforms 1.0f is not returned even when the dividend and divisor have the same value.
+// In such cases emit 1.0f when the dividend and divisor are equal, else return the divide node
+TIntermTyped *Builder::divideFloatNode(TIntermTyped *dividend, TIntermTyped *divisor)
+{
+    TIntermBinary *cond = new TIntermBinary(EOpEqual, dividend->deepCopy(), divisor->deepCopy());
+    TIntermBinary *divideExpr =
+        new TIntermBinary(EOpDiv, dividend->deepCopy(), divisor->deepCopy());
+    return new TIntermTernary(cond, CreateFloatNode(1.0f, EbpHigh), divideExpr->deepCopy());
+}
+
 TIntermSymbol *Builder::premultiplyAlpha(TIntermBlock *blendBlock,
                                          TIntermTyped *var,
                                          const char *name)
@@ -1026,17 +1040,39 @@ TIntermSymbol *Builder::premultiplyAlpha(TIntermBlock *blendBlock,
     const TPrecision precision = mOutputVar->getType().getPrecision();
     TType *vec3Type            = new TType(EbtFloat, precision, EvqTemporary, 3);
 
-    // Calculate alpha == 0 ? vec3(0) : rgb/alpha
-    TIntermTyped *alpha       = new TIntermSwizzle(var, {3});
-    TIntermTyped *rgb         = new TIntermSwizzle(var->deepCopy(), {0, 1, 2});
-    TIntermTyped *rgbDivAlpha = new TIntermBinary(EOpDiv, rgb, alpha);
+    // symbol = vec3(0)
+    // If alpha != 0 assign symbol based on SH_PRECISION_SAFE_DIVISION compile option.
+    TIntermTyped *alpha            = new TIntermSwizzle(var, {3});
+    TIntermSymbol *symbol          = MakeVariable(mSymbolTable, name, vec3Type);
+    TIntermTyped *alphaNotZero     = new TIntermBinary(EOpNotEqual, alpha, Float(0));
+    TIntermBlock *rgbDivAlphaBlock = new TIntermBlock;
 
-    TIntermTyped *alphaZero = new TIntermBinary(EOpEqual, alpha->deepCopy(), Float(0));
-    TIntermTyped *premultiplied =
-        new TIntermTernary(alphaZero, CreateZeroNode(*vec3Type), rgbDivAlpha);
+    constexpr int kColorChannels = 3;
+    if ((mCompileOptions & SH_PRECISION_SAFE_DIVISION) != 0)
+    {
+        // For each component:
+        // symbol.x = (var.x == var.w) ? 1.0 : var.x / var.w
+        for (int index = 0; index < kColorChannels; index++)
+        {
+            TIntermTyped *divideNode = divideFloatNode(new TIntermSwizzle(var, {index}), alpha);
+            TIntermBinary *assignDivideNode = new TIntermBinary(
+                EOpAssign, new TIntermSwizzle(symbol->deepCopy(), {index}), divideNode);
+            rgbDivAlphaBlock->appendStatement(assignDivideNode);
+        }
+    }
+    else
+    {
+        // symbol = rgb/alpha
+        TIntermTyped *rgb         = new TIntermSwizzle(var->deepCopy(), {0, 1, 2});
+        TIntermTyped *rgbDivAlpha = new TIntermBinary(EOpDiv, rgb, alpha->deepCopy());
+        rgbDivAlphaBlock->appendStatement(
+            new TIntermBinary(EOpAssign, symbol->deepCopy(), rgbDivAlpha));
+    }
 
-    TIntermSymbol *symbol = MakeVariable(mSymbolTable, name, vec3Type);
-    blendBlock->appendStatement(CreateTempInitDeclarationNode(&symbol->variable(), premultiplied));
+    TIntermIfElse *ifBlock = new TIntermIfElse(alphaNotZero, rgbDivAlphaBlock, nullptr);
+    blendBlock->appendStatement(
+        CreateTempInitDeclarationNode(&symbol->variable(), CreateZeroNode(*vec3Type)));
+    blendBlock->appendStatement(ifBlock);
 
     return symbol;
 }
@@ -1224,13 +1260,15 @@ void Builder::generateEquationSwitch(TIntermBlock *blendBlock)
 }  // anonymous namespace
 
 bool EmulateAdvancedBlendEquations(TCompiler *compiler,
+                                   ShCompileOptions compileOptions,
                                    TIntermBlock *root,
                                    TSymbolTable *symbolTable,
                                    const DriverUniform *driverUniforms,
                                    std::vector<ShaderVariable> *uniforms,
                                    const AdvancedBlendEquations &advancedBlendEquations)
 {
-    Builder builder(compiler, symbolTable, driverUniforms, uniforms, advancedBlendEquations);
+    Builder builder(compiler, compileOptions, symbolTable, driverUniforms, uniforms,
+                    advancedBlendEquations);
     return builder.build(root);
 }  // namespace
 

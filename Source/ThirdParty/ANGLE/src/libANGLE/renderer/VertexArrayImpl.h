@@ -50,6 +50,8 @@ class VertexArrayImpl : angle::NonCopyable
         mContentsObservers = observers;
     }
 
+    virtual angle::Result onLabelUpdate(const gl::Context *context);
+
   protected:
     const gl::VertexArrayState &mState;
     gl::VertexArrayBufferContentsObservers *mContentsObservers = nullptr;

@@ -23,7 +23,7 @@ using data from registry_xml.py and gl.xml.
 
 | Extension Name | NVIDIA 1660 Win10 | Intel 630 Win10 | NVIDIA 1660 Linux | Intel 630 Linux | SwiftShader Win10 | Pixel 4 Android 11 | Pixel 6 Android 13 |
 | -------------- | :---------------: | :-------------: | :---------------: | :-------------: | :---------------: | :----------------: | :----------------: |
-| [GL_EXT_base_instance](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_base_instance.txt) |  |  |  |  |  |  |  |
+| [GL_EXT_base_instance](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_base_instance.txt) | &#x2714; |  | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_KHR_blend_equation_advanced](https://khronos.org/registry/OpenGL/extensions/KHR/KHR_blend_equation_advanced.txt) | &#x2714; |  | &#x2714; |  | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_blend_func_extended](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_blend_func_extended.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  | &#x2714; |  |
 | [GL_EXT_blend_minmax](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_blend_minmax.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
@@ -72,7 +72,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_NV_EGL_stream_consumer_external](https://khronos.org/registry/OpenGL/extensions/NV/NV_EGL_stream_consumer_external.txt) |  |  |  |  |  |  |  |
 | [GL_OES_EGL_sync](https://khronos.org/registry/OpenGL/extensions/OES/OES_EGL_sync.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_element_index_uint](https://khronos.org/registry/OpenGL/extensions/OES/OES_element_index_uint.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| [GL_ANDROID_extension_pack_es31a](https://khronos.org/registry/OpenGL/extensions/ANDROID/ANDROID_extension_pack_es31a.txt) |  |  |  |  |  |  | &#x2714; |
+| [GL_ANDROID_extension_pack_es31a](https://khronos.org/registry/OpenGL/extensions/ANDROID/ANDROID_extension_pack_es31a.txt) | &#x2714; |  |  |  |  |  | &#x2714; |
 | [GL_EXT_external_buffer](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_external_buffer.txt) |  |  |  |  |  | &#x2714; | &#x2714; |
 | [GL_OES_fbo_render_mipmap](https://khronos.org/registry/OpenGL/extensions/OES/OES_fbo_render_mipmap.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_NV_fence](https://khronos.org/registry/OpenGL/extensions/NV/NV_fence.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
@@ -81,8 +81,8 @@ using data from registry_xml.py and gl.xml.
 | [GL_ANGLE_framebuffer_blit](https://khronos.org/registry/OpenGL/extensions/ANGLE/ANGLE_framebuffer_blit.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_NV_framebuffer_blit](https://khronos.org/registry/OpenGL/extensions/NV/NV_framebuffer_blit.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_MESA_framebuffer_flip_y](https://khronos.org/registry/OpenGL/extensions/MESA/MESA_framebuffer_flip_y.txt) |  |  |  |  |  |  |  |
-| [GL_EXT_geometry_shader](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_geometry_shader.txt) | &#x2714; | &#x2714; | &#x2714; |  |  |  | &#x2714; |
-| [GL_OES_geometry_shader](https://khronos.org/registry/OpenGL/extensions/OES/OES_geometry_shader.txt) | &#x2714; | &#x2714; | &#x2714; |  |  |  | &#x2714; |
+| [GL_EXT_geometry_shader](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_geometry_shader.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  |  | &#x2714; |
+| [GL_OES_geometry_shader](https://khronos.org/registry/OpenGL/extensions/OES/OES_geometry_shader.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  |  | &#x2714; |
 | [GL_OES_get_program_binary](https://khronos.org/registry/OpenGL/extensions/OES/OES_get_program_binary.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_gpu_shader5](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_gpu_shader5.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  | &#x2714; | &#x2714; |
 | [GL_ANGLE_instanced_arrays](https://khronos.org/registry/OpenGL/extensions/ANGLE/ANGLE_instanced_arrays.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
@@ -95,8 +95,8 @@ using data from registry_xml.py and gl.xml.
 | [GL_EXT_multisample_compatibility](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_multisample_compatibility.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_multisampled_render_to_texture](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_multisampled_render_to_texture.txt) | &#x2714; |  | &#x2714; | &#x2714; |  |  |  |
 | [GL_EXT_multisampled_render_to_texture2](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_multisampled_render_to_texture2.txt) | &#x2714; |  | &#x2714; | &#x2714; |  |  |  |
-| [GL_OVR_multiview](https://khronos.org/registry/OpenGL/extensions/OVR/OVR_multiview.txt) | &#x2714; | &#x2714; | &#x2714; |  | &#x2714; | &#x2714; | &#x2714; |
-| [GL_OVR_multiview2](https://khronos.org/registry/OpenGL/extensions/OVR/OVR_multiview2.txt) | &#x2714; | &#x2714; | &#x2714; |  | &#x2714; | &#x2714; | &#x2714; |
+| [GL_OVR_multiview](https://khronos.org/registry/OpenGL/extensions/OVR/OVR_multiview.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_OVR_multiview2](https://khronos.org/registry/OpenGL/extensions/OVR/OVR_multiview2.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_KHR_no_error](https://khronos.org/registry/OpenGL/extensions/KHR/KHR_no_error.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_occlusion_query_boolean](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_occlusion_query_boolean.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_packed_depth_stencil](https://khronos.org/registry/OpenGL/extensions/OES/OES_packed_depth_stencil.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
@@ -110,7 +110,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_EXT_protected_textures](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_protected_textures.txt) |  |  |  |  |  | &#x2714; |  |
 | [GL_EXT_pvrtc_sRGB](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_pvrtc_sRGB.txt) |  |  |  |  |  |  |  |
 | [GL_NV_read_depth](https://khronos.org/registry/OpenGL/extensions/NV/NV_read_depth.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| [GL_NV_read_depth_stencil](https://khronos.org/registry/OpenGL/extensions/NV/NV_read_depth_stencil.txt) |  |  |  |  |  |  |  |
+| [GL_NV_read_depth_stencil](https://khronos.org/registry/OpenGL/extensions/NV/NV_read_depth_stencil.txt) | &#x2714; |  | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_read_format_bgra](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_read_format_bgra.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_NV_read_stencil](https://khronos.org/registry/OpenGL/extensions/NV/NV_read_stencil.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_rgb8_rgba8](https://khronos.org/registry/OpenGL/extensions/OES/OES_rgb8_rgba8.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
@@ -138,15 +138,15 @@ using data from registry_xml.py and gl.xml.
 | [GL_OES_standard_derivatives](https://khronos.org/registry/OpenGL/extensions/OES/OES_standard_derivatives.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_surfaceless_context](https://khronos.org/registry/OpenGL/extensions/OES/OES_surfaceless_context.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ARB_sync](https://khronos.org/registry/OpenGL/extensions/ARB/ARB_sync.txt) |  |  |  |  |  |  |  |
-| [GL_EXT_tessellation_shader](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_tessellation_shader.txt) | &#x2714; | &#x2714; | &#x2714; |  |  |  | &#x2714; |
+| [GL_EXT_tessellation_shader](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_tessellation_shader.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  |  | &#x2714; |
 | [GL_OES_texture_3D](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_3D.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| [GL_EXT_texture_border_clamp](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_border_clamp.txt) | &#x2714; |  |  |  |  |  | &#x2714; |
-| [GL_OES_texture_border_clamp](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_border_clamp.txt) | &#x2714; |  |  |  |  |  | &#x2714; |
+| [GL_EXT_texture_border_clamp](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_border_clamp.txt) | &#x2714; |  |  |  | &#x2714; |  | &#x2714; |
+| [GL_OES_texture_border_clamp](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_border_clamp.txt) | &#x2714; |  |  |  | &#x2714; |  | &#x2714; |
 | [GL_EXT_texture_buffer](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_buffer.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_texture_buffer](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_buffer.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_texture_compression_astc](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_compression_astc.txt) |  |  |  |  |  |  |  |
 | [GL_KHR_texture_compression_astc_hdr](https://khronos.org/registry/OpenGL/extensions/KHR/KHR_texture_compression_astc_hdr.txt) |  |  |  |  |  |  |  |
-| [GL_KHR_texture_compression_astc_ldr](https://khronos.org/registry/OpenGL/extensions/KHR/KHR_texture_compression_astc_ldr.txt) |  | &#x2714; |  | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_KHR_texture_compression_astc_ldr](https://khronos.org/registry/OpenGL/extensions/KHR/KHR_texture_compression_astc_ldr.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_KHR_texture_compression_astc_sliced_3d](https://khronos.org/registry/OpenGL/extensions/KHR/KHR_texture_compression_astc_sliced_3d.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_texture_compression_bptc](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_compression_bptc.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  |  |
 | [GL_EXT_texture_compression_dxt1](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_compression_dxt1.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  |  |
@@ -223,6 +223,8 @@ using data from registry_xml.py and gl.xml.
 | [GL_ANGLE_robust_fragment_shader_output](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_robust_fragment_shader_output.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_robust_resource_initialization](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_robust_resource_initialization.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_semaphore_fuchsia](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_semaphore_fuchsia.txt) |  |  |  |  |  |  |  |
+| [GL_ANGLE_shader_pixel_local_storage](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_shader_pixel_local_storage.txt) |  |  |  |  |  |  |  |
+| [GL_ANGLE_shader_pixel_local_storage_coherent](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_shader_pixel_local_storage.txt) |  |  |  |  |  |  |  |
 | [GL_CHROMIUM_sync_query](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_sync_query.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_texture_compression_dxt3](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_texture_compression_dxt3.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  |  |
 | [GL_ANGLE_texture_compression_dxt5](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_texture_compression_dxt5.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  |  |
@@ -258,8 +260,8 @@ NVIDIA 1660 Win10:
 
  * `GL_RENDERER` is `ANGLE (NVIDIA, Vulkan 1.2.142 (NVIDIA GeForce GTX 1660 (0x00002184)), NVIDIA-456.38.0.0)`
  * `GL_VENDOR` is `Google Inc. (NVIDIA)`
- * `GL_VERSION` is `OpenGL ES 3.2.0 (ANGLE 2.1.18778 git hash: 4784f091deba)`
- * Data updated June  1, 2022
+ * `GL_VERSION` is `OpenGL ES 3.2.0 (ANGLE 2.1.19130 git hash: e3933465d88f)`
+ * Data updated July 23, 2022
 
 Intel 630 Win10:
 
@@ -272,36 +274,36 @@ NVIDIA 1660 Linux:
 
  * `GL_RENDERER` is `ANGLE (NVIDIA, Vulkan 1.1.119 (NVIDIA GeForce GTX 1660 (0x00002184)), NVIDIA-440.100.0.0)`
  * `GL_VENDOR` is `Google Inc. (NVIDIA)`
- * `GL_VERSION` is `OpenGL ES 3.2.0 (ANGLE 2.1.18778 git hash: 4784f091deba)`
- * Data updated June  1, 2022
+ * `GL_VERSION` is `OpenGL ES 3.2.0 (ANGLE 2.1.19130 git hash: e3933465d88f)`
+ * Data updated July 23, 2022
 
 Intel 630 Linux:
 
- * `GL_RENDERER` is `ANGLE (Intel, Vulkan 1.1.96 (Intel(R) HD Graphics 630 (Kaby Lake GT2) (0x00005912)), Intel open-source Mesa driver-19.0.2)`
+ * `GL_RENDERER` is `ANGLE (Intel, Vulkan 1.2.131 (Intel(R) UHD Graphics 630 (CML GT2) (0x00009BC5)), Intel open-source Mesa driver-20.0.8)`
  * `GL_VENDOR` is `Google Inc. (Intel)`
- * `GL_VERSION` is `OpenGL ES 3.2.0 (ANGLE 2.1.18778 git hash: 4784f091deba)`
- * Data updated June  1, 2022
+ * `GL_VERSION` is `OpenGL ES 3.2.0 (ANGLE 2.1.19130 git hash: e3933465d88f)`
+ * Data updated July 23, 2022
 
 SwiftShader Win10:
 
- * `GL_RENDERER` is `ANGLE (Google, Vulkan 1.2.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver-5.0.0)`
+ * `GL_RENDERER` is `ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver-5.0.0)`
  * `GL_VENDOR` is `Google Inc. (Google)`
- * `GL_VERSION` is `OpenGL ES 3.1.0 (ANGLE 2.1.18778 git hash: 4784f091deba)`
- * Data updated June  1, 2022
+ * `GL_VERSION` is `OpenGL ES 3.1.0 (ANGLE 2.1.19130 git hash: e3933465d88f)`
+ * Data updated July 23, 2022
 
 Pixel 4 Android 11:
 
  * `GL_RENDERER` is `ANGLE (Qualcomm, Vulkan 1.1.128 (Adreno (TM) 640 (0x06040001)), Qualcomm Technologies Inc. Adreno Vulkan Driver-512.490.0)`
  * `GL_VENDOR` is `Google Inc. (Qualcomm)`
- * `GL_VERSION` is `OpenGL ES 3.2.0 (ANGLE 2.1.18778 git hash: 4784f091deba)`
- * Data updated June  1, 2022
+ * `GL_VERSION` is `OpenGL ES 3.2.0 (ANGLE 2.1.19130 git hash: e3933465d88f)`
+ * Data updated July 24, 2022
 
 Pixel 6 Android 13:
 
  * `GL_RENDERER` is `ANGLE (ARM, Vulkan 1.1.201 (Mali-G78 (0x92020010)), Mali-G78-35.0.0)`
  * `GL_VENDOR` is `Google Inc. (ARM)`
- * `GL_VERSION` is `OpenGL ES 3.2.0 (ANGLE 2.1.18778 git hash: 4784f091deba)`
- * Data updated June  1, 2022
+ * `GL_VERSION` is `OpenGL ES 3.2.0 (ANGLE 2.1.19130 git hash: e3933465d88f)`
+ * Data updated July 24, 2022
 
 ## How to update supported extension data
 

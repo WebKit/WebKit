@@ -105,6 +105,9 @@ class GLMark2Benchmark : public testing::TestWithParam<GLMark2TestParams>
             case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
                 mBackend = "vulkan";
                 break;
+            case EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE:
+                mBackend = "metal";
+                break;
             default:
                 break;
         }
@@ -297,7 +300,7 @@ using namespace egl_platform;
 
 std::vector<GLMark2TestParams> gTestsWithInfo =
     CombineWithValues({GLMark2TestParams()}, kBenchmarks, CombineInfo);
-std::vector<EGLPlatformParameters> gEGLPlatforms = {D3D11(), OPENGLES(), VULKAN()};
+std::vector<EGLPlatformParameters> gEGLPlatforms = {D3D11(), METAL(), OPENGLES(), VULKAN()};
 std::vector<GLMark2TestParams> gTestsWithPlatform =
     CombineWithValues(gTestsWithInfo, gEGLPlatforms, CombineEGLPlatform);
 

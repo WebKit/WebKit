@@ -59,6 +59,7 @@ class Thread;
 
 using ContextSet = std::set<gl::Context *>;
 using SurfaceSet = std::set<Surface *>;
+using ThreadSet  = std::set<Thread *>;
 
 struct DisplayState final : private angle::NonCopyable
 {
@@ -134,13 +135,12 @@ class Display final : public LabeledObject,
     {
         Api,
         InternalCleanup,
-        ProcessExit,
+        NoActiveThreads,
 
         InvalidEnum,
         EnumCount = InvalidEnum,
     };
     Error terminate(Thread *thread, TerminateReason terminateReason);
-    Error destroyInvalidEglObjects();
     // Called before all display state dependent EGL functions. Backends can set up, for example,
     // thread-specific backend state through this function. Not called for functions that do not
     // need the state.
@@ -148,6 +148,10 @@ class Display final : public LabeledObject,
     // Called on eglReleaseThread. Backends can tear down thread-specific backend state through
     // this function.
     Error releaseThread();
+
+    // Helpers to maintain active thread set to assist with freeing invalid EGL objects.
+    void addActiveThread(Thread *thread);
+    void removeActiveThreadAndPerformCleanup(Thread *thread);
 
     static Display *GetDisplayFromDevice(Device *device, const AttributeMap &attribMap);
     static Display *GetDisplayFromNativeDisplay(EGLenum platform,
@@ -342,6 +346,8 @@ class Display final : public LabeledObject,
     void returnScratchBufferImpl(angle::ScratchBuffer scratchBuffer,
                                  std::vector<angle::ScratchBuffer> *bufferVector);
 
+    Error destroyInvalidEglObjects();
+
     DisplayState mState;
     rx::DisplayImpl *mImplementation;
     angle::ObserverBinding mGPUSwitchedBinding;
@@ -404,7 +410,9 @@ class Display final : public LabeledObject,
     std::mutex mDisplayGlobalMutex;
     std::mutex mProgramCacheMutex;
 
-    bool mIsTerminated;
+    std::atomic<bool> mTerminatedByApi;
+    std::mutex mActiveThreadsMutex;
+    ThreadSet mActiveThreads;
 };
 
 }  // namespace egl

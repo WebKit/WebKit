@@ -636,6 +636,15 @@ void DumpPipelineCacheGraph(ContextVk *contextVk, const std::ostringstream &grap
     out << "}\n";
 }
 
+bool BlendModeSupportsDither(const gl::State &state, size_t colorIndex)
+{
+    // Specific combinations of color blend modes are known to work with our dithering emulation.
+    // Note we specifically don't check alpha blend, as dither isn't applied to alpha.
+    // See http://b/232574868 for more discussion and reasoning.
+    return state.getBlendStateExt().getSrcColorIndexed(colorIndex) == GL_SRC_ALPHA &&
+           state.getBlendStateExt().getDstColorIndexed(colorIndex) == GL_ONE_MINUS_SRC_ALPHA;
+}
+
 }  // anonymous namespace
 
 void ContextVk::flushDescriptorSetUpdates()
@@ -758,7 +767,8 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
         DIRTY_BIT_DESCRIPTOR_SETS,
         DIRTY_BIT_DRIVER_UNIFORMS_BINDING,
     };
-    if (getFeatures().supportsTransformFeedbackExtension.enabled)
+    if (getFeatures().supportsTransformFeedbackExtension.enabled ||
+        getFeatures().emulateTransformFeedback.enabled)
     {
         mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS);
     }
@@ -1016,7 +1026,7 @@ void ContextVk::onDestroy(const gl::Context *context)
 
     for (vk::DynamicDescriptorPool &dynamicDescriptorPool : mDriverUniformsDescriptorPools)
     {
-        dynamicDescriptorPool.destroy(mRenderer, VulkanCacheType::DriverUniformsDescriptors);
+        dynamicDescriptorPool.destroy(mRenderer);
     }
 
     mDefaultUniformStorage.release(mRenderer);
@@ -1141,7 +1151,7 @@ angle::Result ContextVk::initialize()
         {
             ANGLE_TRY(mDriverUniformsDescriptorPools[pipeline].init(
                 this, descriptorPoolSizes.data(), descriptorPoolSizes.size(),
-                mDriverUniforms[pipeline].descriptorSetLayout.get().getHandle()));
+                mDriverUniforms[pipeline].descriptorSetLayout.get()));
         }
     }
 
@@ -1222,15 +1232,18 @@ angle::Result ContextVk::initialize()
 
 angle::Result ContextVk::flush(const gl::Context *context)
 {
-    // Skip the flush if there's nothing recorded.
+    // Skip the flush if there's nothing recorded.  For single-buffer swapchains, flush should
+    // ensure updates reach the screen, so even staged updates are considered something pending
+    // submission.
+    const bool isSingleBuffer =
+        mCurrentWindowSurface != nullptr && mCurrentWindowSurface->isSharedPresentMode();
+
     if (!mHasAnyCommandsPendingSubmission && !hasStartedRenderPass() &&
-        mOutsideRenderPassCommands->empty())
+        mOutsideRenderPassCommands->empty() &&
+        !(isSingleBuffer && mCurrentWindowSurface->hasStagedUpdates()))
     {
         return angle::Result::Continue;
     }
-
-    const bool isSingleBuffer =
-        (mCurrentWindowSurface != nullptr) && mCurrentWindowSurface->isSharedPresentMode();
 
     // Don't defer flushes in single-buffer mode.  In this mode, the application is not required to
     // call eglSwapBuffers(), and glFlush() is expected to ensure that work is submitted.
@@ -2089,7 +2102,8 @@ ANGLE_INLINE angle::Result ContextVk::handleDirtyTexturesImpl(
 
     if (executable->hasTextures())
     {
-        UpdatePreCacheActiveTextures(executable->getActiveSamplersMask(), mActiveTextures,
+        UpdatePreCacheActiveTextures(executable->getSamplerBindings(),
+                                     executable->getActiveSamplersMask(), mActiveTextures,
                                      mState.getSamplers(), &mActiveTexturesDesc);
 
         ProgramExecutableVk *executableVk = getExecutable();
@@ -2265,8 +2279,12 @@ angle::Result ContextVk::handleDirtyShaderResourcesImpl(CommandBufferHelperT *co
 
     ProgramExecutableVk *executableVk = getExecutable();
 
+    vk::SharedDescriptorSetCacheKey newSharedCacheKey;
     ANGLE_TRY(executableVk->updateShaderResourcesDescriptorSet(
-        this, &mUpdateDescriptorSetsBuilder, commandBufferHelper, mShaderBuffersDescriptorDesc));
+        this, &mUpdateDescriptorSetsBuilder, commandBufferHelper, mShaderBuffersDescriptorDesc,
+        &newSharedCacheKey));
+
+    mShaderBuffersDescriptorDesc.updateImagesAndBuffersWithSharedCacheKey(newSharedCacheKey);
 
     // Record usage of storage buffers and images in the command buffer to aid handling of
     // glMemoryBarrier.
@@ -2397,6 +2415,8 @@ angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersEmulation(
             mRenderPassCommands->bufferWrite(this, VK_ACCESS_SHADER_WRITE_BIT,
                                              vk::PipelineStage::VertexShader, bufferHelper);
         }
+
+        populateTransformFeedbackBufferSet(bufferCount, bufferHelpers);
     }
 
     ProgramExecutableVk *executableVk      = getExecutable();
@@ -2409,7 +2429,7 @@ angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersEmulation(
 
     return executableVk->updateUniformsAndXfbDescriptorSet(
         this, &mUpdateDescriptorSetsBuilder, mRenderPassCommands, currentUniformBuffer,
-        uniformsAndXfbDesc);
+        &uniformsAndXfbDesc);
 }
 
 angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersExtension(
@@ -2481,6 +2501,8 @@ angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersExtension(
 
     mRenderPassCommands->beginTransformFeedback(bufferCount, counterBufferHandles.data(),
                                                 counterBufferOffsets.data(), rebindBuffers);
+
+    populateTransformFeedbackBufferSet(bufferCount, buffers);
 
     return angle::Result::Continue;
 }
@@ -4309,6 +4331,20 @@ void ContextVk::updateSampleMaskWithRasterizationSamples(const uint32_t rasteriz
     mGraphicsPipelineDesc->updateSampleMask(&mGraphicsPipelineTransition, 0, mask);
 }
 
+void ContextVk::updateFrameBufferFetchSamples(const uint32_t prevSamples, const uint32_t curSamples)
+{
+    const bool isPrevMultisampled = prevSamples > 1;
+    const bool isCurMultisampled  = curSamples > 1;
+    if (isPrevMultisampled != isCurMultisampled)
+    {
+        // If we change from single sample to multisample, we need to use the Shader Program with
+        // ProgramTransformOptions.multisampleFramebufferFetch == true. Invalidate the graphics
+        // pipeline so that we can fetch the shader with the correct permutation option in
+        // handleDirtyGraphicsPipelineDesc()
+        invalidateCurrentGraphicsPipeline();
+    }
+}
+
 gl::Rectangle ContextVk::getCorrectedViewport(const gl::Rectangle &viewport) const
 {
     const gl::Caps &caps                   = getCaps();
@@ -4535,6 +4571,8 @@ void ContextVk::updateSampleShadingWithRasterizationSamples(const uint32_t raste
 // rasterization sample should be updated.
 void ContextVk::updateRasterizationSamples(const uint32_t rasterizationSamples)
 {
+    uint32_t prevSampleCount = mGraphicsPipelineDesc->getRasterizationSamples();
+    updateFrameBufferFetchSamples(prevSampleCount, rasterizationSamples);
     mGraphicsPipelineDesc->updateRasterizationSamples(&mGraphicsPipelineTransition,
                                                       rasterizationSamples);
     updateSampleShadingWithRasterizationSamples(rasterizationSamples);
@@ -4619,14 +4657,20 @@ void ContextVk::updateDither()
     uint16_t ditherControl = 0;
     if (mState.isDitherEnabled())
     {
-        // As dithering is emulated in the fragment shader itself, there are a number of situations
-        // that can lead to incorrect blending.  When blend is enabled, dither is not enabled to
-        // avoid such situations.
         const gl::DrawBufferMask attachmentMask =
-            framebufferVk->getState().getColorAttachmentsMask() &
-            ~mState.getBlendEnabledDrawBufferMask();
+            framebufferVk->getState().getColorAttachmentsMask();
+
         for (size_t colorIndex : attachmentMask)
         {
+            // As dithering is emulated in the fragment shader itself, there are a number of
+            // situations that can lead to incorrect blending.  We only allow blending with specific
+            // combinations know to not interfere with dithering.
+            if (mState.isBlendEnabledIndexed(static_cast<GLuint>(colorIndex)) &&
+                !BlendModeSupportsDither(mState, colorIndex))
+            {
+                continue;
+            }
+
             RenderTargetVk *attachment   = framebufferVk->getColorDrawRenderTarget(colorIndex);
             const angle::FormatID format = attachment->getImageActualFormatID();
 
@@ -5579,7 +5623,6 @@ angle::Result ContextVk::onFramebufferChange(FramebufferVk *framebufferVk, gl::C
     }
 
     onDrawFramebufferRenderPassDescChange(framebufferVk, nullptr);
-
     return angle::Result::Continue;
 }
 
@@ -5675,8 +5718,6 @@ angle::Result ContextVk::onBeginTransformFeedback(
     {
         ANGLE_TRY(flushCommandsAndEndRenderPass(RenderPassClosureReason::BufferUseThenXfbWrite));
     }
-
-    populateTransformFeedbackBufferSet(bufferCount, buffers);
 
     return angle::Result::Continue;
 }
@@ -6317,14 +6358,17 @@ angle::Result ContextVk::updateDriverUniformsDescriptorSet(
     desc.updateUniformWrite(1);
     desc.updateUniformBuffer(0, *driverUniforms.currentBuffer, driverUniformsSize);
 
-    vk::DescriptorCacheResult cacheResult;
+    vk::SharedDescriptorSetCacheKey newSharedCacheKey;
     ANGLE_TRY(mDriverUniformsDescriptorPools[pipelineType].getOrAllocateDescriptorSet(
         this, commandBufferHelper, desc.getDesc(), driverUniforms.descriptorSetLayout.get(),
-        &driverUniforms.descriptorPoolBinding, &driverUniforms.descriptorSet, &cacheResult));
-    if (cacheResult == vk::DescriptorCacheResult::CacheHit)
+        &driverUniforms.descriptorPoolBinding, &driverUniforms.descriptorSet, &newSharedCacheKey));
+
+    desc.updateImagesAndBuffersWithSharedCacheKey(newSharedCacheKey);
+
+    if (newSharedCacheKey == nullptr)
     {
-        // The descriptor pool that this descriptor set was allocated from needs to be retained each
-        // time the descriptor set is used in a new command.
+        // Cache hit. The descriptor pool that this descriptor set was allocated from needs to be
+        // retained each time the descriptor set is used in a new command.
         commandBufferHelper->retainResource(&driverUniforms.descriptorPoolBinding.get());
         return angle::Result::Continue;
     }
@@ -6967,19 +7011,6 @@ angle::Result ContextVk::flushCommandsAndEndRenderPassImpl(QueueSubmitType queue
     mGraphicsPipelineDesc->resetSubpass(&mGraphicsPipelineTransition);
 
     mCurrentTransformFeedbackBuffers.clear();
-
-    // Reset serials for XFB if active.
-    if (mState.isTransformFeedbackActiveUnpaused())
-    {
-        const gl::ProgramExecutable *executable = mState.getProgramExecutable();
-        ASSERT(executable);
-        size_t xfbBufferCount = executable->getTransformFeedbackBufferCount();
-
-        TransformFeedbackVk *transformFeedbackVk =
-            vk::GetImpl(mState.getCurrentTransformFeedback());
-
-        populateTransformFeedbackBufferSet(xfbBufferCount, transformFeedbackVk->getBufferHelpers());
-    }
 
     onRenderPassFinished(reason);
 

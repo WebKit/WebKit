@@ -263,12 +263,16 @@ bool ScopedVkLoaderEnvironment::setCustomExtensionsEnvironment()
 void ChoosePhysicalDevice(PFN_vkGetPhysicalDeviceProperties pGetPhysicalDeviceProperties,
                           const std::vector<VkPhysicalDevice> &physicalDevices,
                           vk::ICD preferredICD,
+                          uint32_t preferredVendorID,
+                          uint32_t preferredDeviceID,
                           VkPhysicalDevice *physicalDeviceOut,
                           VkPhysicalDeviceProperties *physicalDevicePropertiesOut)
 {
     ASSERT(!physicalDevices.empty());
 
     ICDFilterFunc filter = GetFilterForICD(preferredICD);
+
+    const bool shouldChooseByID = (preferredVendorID != 0 || preferredDeviceID != 0);
 
     for (const VkPhysicalDevice &physicalDevice : physicalDevices)
     {
@@ -277,6 +281,32 @@ void ChoosePhysicalDevice(PFN_vkGetPhysicalDeviceProperties pGetPhysicalDevicePr
         {
             *physicalDeviceOut = physicalDevice;
             return;
+        }
+
+        if (shouldChooseByID)
+        {
+            // NOTE: If the system has multiple GPUs with the same vendor and
+            // device IDs, this will arbitrarily select one of them.
+            bool matchVendorID = true;
+            bool matchDeviceID = true;
+
+            if (preferredVendorID != 0 &&
+                preferredVendorID != physicalDevicePropertiesOut->vendorID)
+            {
+                matchVendorID = false;
+            }
+
+            if (preferredDeviceID != 0 &&
+                preferredDeviceID != physicalDevicePropertiesOut->deviceID)
+            {
+                matchDeviceID = false;
+            }
+
+            if (matchVendorID && matchDeviceID)
+            {
+                *physicalDeviceOut = physicalDevice;
+                return;
+            }
         }
     }
 

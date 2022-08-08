@@ -48,7 +48,8 @@ class SwapChain11 final : public SwapChainD3D
 
     const TextureHelper11 &getOffscreenTexture();
     const d3d11::RenderTargetView &getRenderTarget();
-    const d3d11::SharedSRV &getRenderTargetShaderResource(d3d::Context *context);
+    angle::Result getRenderTargetShaderResource(d3d::Context *context,
+                                                const d3d11::SharedSRV **outSRV);
 
     const TextureHelper11 &getDepthStencilTexture();
     const d3d11::DepthStencilView &getDepthStencil();

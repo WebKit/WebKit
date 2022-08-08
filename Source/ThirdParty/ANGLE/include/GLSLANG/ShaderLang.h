@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 280
+#define ANGLE_SH_VERSION 283
 
 enum ShShaderSpec
 {
@@ -304,7 +304,8 @@ const ShCompileOptions SH_REMOVE_DYNAMIC_INDEXING_OF_SWIZZLED_VECTOR = UINT64_C(
 // This flag works around a slow fxc compile performance issue with dynamic uniform indexing.
 const ShCompileOptions SH_ALLOW_TRANSLATE_UNIFORM_BLOCK_TO_STRUCTUREDBUFFER = UINT64_C(1) << 46;
 
-// Note: bit 47 is unused
+// This flag allows us to add a decoration for layout(yuv) in shaders.
+const ShCompileOptions SH_ADD_VULKAN_YUV_LAYOUT_QUALIFIER = UINT64_C(1) << 47;
 
 // This flag allows disabling ARB_texture_rectangle on a per-compile basis. This is necessary
 // for WebGL contexts becuase ARB_texture_rectangle may be necessary for the WebGL implementation
@@ -351,6 +352,10 @@ const ShCompileOptions SH_ADD_EXPLICIT_BOOL_CASTS = UINT64_C(1) << 59;
 // Add round() after applying dither.  This works around a Qualcomm quirk where values can get
 // ceil()ed instead.
 const ShCompileOptions SH_ROUND_OUTPUT_AFTER_DITHERING = UINT64_C(1) << 60;
+
+// Even when the dividend and divisor have the same value some platforms do not return 1.0f.
+// Need to emit different division code for such platforms.
+const ShCompileOptions SH_PRECISION_SAFE_DIVISION = UINT64_C(1) << 61;
 
 // The 64 bits hash function. The first parameter is the input string; the
 // second parameter is the string length.
@@ -401,6 +406,7 @@ struct ShBuiltInResources
     int EXT_shader_non_constant_global_initializers;
     int OES_texture_storage_multisample_2d_array;
     int OES_texture_3D;
+    int ANGLE_shader_pixel_local_storage;
     int ANGLE_texture_multisample;
     int ANGLE_multi_draw;
     // TODO(angleproject:3402) remove after chromium side removal to pass compilation

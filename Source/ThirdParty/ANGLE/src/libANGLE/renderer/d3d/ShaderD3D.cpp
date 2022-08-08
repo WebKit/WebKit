@@ -8,6 +8,7 @@
 
 #include "libANGLE/renderer/d3d/ShaderD3D.h"
 
+#include "common/system_utils.h"
 #include "common/utilities.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Compiler.h"
@@ -280,7 +281,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
 #if !defined(ANGLE_ENABLE_WINDOWS_UWP)
     if (gl::DebugAnnotationsActive())
     {
-        sourcePath = getTempPath();
+        sourcePath = angle::CreateTemporaryFile().value();
         writeFile(sourcePath.c_str(), source.c_str(), source.length());
         additionalOptions |= SH_LINE_DIRECTIVES | SH_SOURCE_PATH;
     }

@@ -97,4 +97,9 @@ std::shared_ptr<WaitableCompileEvent> ShaderImpl::compileImpl(
         angle::WorkerThreadPool::PostWorkerTask(workerThreadPool, translateTask), translateTask);
 }
 
+angle::Result ShaderImpl::onLabelUpdate(const gl::Context *context)
+{
+    return angle::Result::Continue;
+}
+
 }  // namespace rx

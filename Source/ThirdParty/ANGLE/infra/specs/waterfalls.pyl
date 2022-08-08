@@ -62,10 +62,18 @@
         'test_suites': {
         },
       },
+      'linux-exp-intel': {
+        'os_type': 'linux',
+        'mixins': [
+          'linux_intel_uhd_630_stable',
+        ],
+        'test_suites': {
+        },
+      },
       'linux-intel': {
         'os_type': 'linux',
         'mixins': [
-          'linux_intel_hd_630_stable',
+          'linux_intel_uhd_630_stable',
         ],
         'test_suites': {
           'gtest_tests': 'linux_intel_gtests',
@@ -75,7 +83,7 @@
       'linux-intel-perf': {
         'os_type': 'linux',
         'mixins': [
-          'linux_intel_hd_630_stable',
+          'linux_intel_uhd_630_stable',
         ],
         'test_suites': {
           'isolated_scripts': 'angle_perf_isolated_scripts',
@@ -168,7 +176,6 @@
           'mac_mini_intel_gpu_experimental',
         ],
         'test_suites': {
-          'gtest_tests': 'mac_amd_and_intel_gtests',
         },
       },
       'mac-intel': {
