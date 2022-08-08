@@ -2012,13 +2012,25 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (!this.listItemElement || this._elementCloseTag)
             return;
 
+        let hadLayoutBadge = !!this._layoutBadgeElement;
+
         if (this._layoutBadgeElement) {
             this._layoutBadgeElement.remove();
             this._layoutBadgeElement = null;
         }
 
-        if (!this.representedObject.layoutContextType)
+        if (!this.representedObject.layoutContextType) {
+            if (hadLayoutBadge) {
+                this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateLayoutBadgeStatus, this);
+                this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateLayoutBadgeStatus, this);
+            }
             return;
+        }
+
+        if (!hadLayoutBadge) {
+            this.representedObject.addEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateLayoutBadgeStatus, this);
+            this.representedObject.addEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateLayoutBadgeStatus, this);
+        }
 
         this._layoutBadgeElement = this.title.appendChild(document.createElement("span"));
         this._layoutBadgeElement.className = "layout-badge";
@@ -2083,17 +2095,6 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
     _handleLayoutFlagsChanged(event)
     {
         this.listItemElement?.classList.toggle("rendered", this.representedObject.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered));
-
-        if (this._elementCloseTag)
-            return;
-
-        if (this.representedObject.layoutContextType && !this._layoutBadgeElement) {
-            this.representedObject.addEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateLayoutBadgeStatus, this);
-            this.representedObject.addEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateLayoutBadgeStatus, this);
-        } else if (!this.representedObject.layoutContextType && this._layoutBadgeElement) {
-            this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateLayoutBadgeStatus, this);
-            this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateLayoutBadgeStatus, this);
-        }
 
         this._updateLayoutBadge();
     }
