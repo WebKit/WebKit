@@ -85,6 +85,33 @@ TEST(RestoreScrollPositionTests, RestoreScrollPositionDuringResize)
     EXPECT_EQ(1000, contentOffsetAfterBack.y);
 }
 
+TEST(RestoreScrollPositionTests, RestoreScrollPositionAfterBack)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 390, 664)]);
+
+    [webView synchronouslyLoadTestPageNamed:@"simple-tall"];
+    [webView _setViewScale:1.15]; // Simulate MobileSafari setting view scale on every didCommitNavigation.
+    [webView waitForNextPresentationUpdate];
+
+    [[webView scrollView] setContentOffset:CGPointMake(0, 1000)];
+    [webView waitForNextPresentationUpdate];
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView _setViewScale:1.15];
+    [webView waitForNextPresentationUpdate];
+
+    CGPoint contentOffsetInNewPage = [webView scrollView].contentOffset;
+    EXPECT_EQ(0, contentOffsetInNewPage.x);
+    EXPECT_EQ(0, contentOffsetInNewPage.y);
+
+    [webView synchronouslyGoBack];
+    [webView _setViewScale:1.15];
+    [webView waitForNextPresentationUpdate];
+
+    CGPoint contentOffsetAfterBack = [webView scrollView].contentOffset;
+    EXPECT_EQ(0, contentOffsetAfterBack.x);
+    EXPECT_TRUE(WTF::areEssentiallyEqual<float>(contentOffsetAfterBack.y, 1000.0f, 1.0f)); // It can be 999.5 but that's OK.
+}
 #endif
 
 }
