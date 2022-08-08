@@ -81,6 +81,36 @@ static inline void fillRTCCodecStats(RTCStatsReport::CodecStats& stats, const Gs
     // stats.implementation =
 }
 
+static inline void fillRemoteInboundRTPStreamStats(RTCStatsReport::RemoteInboundRtpStreamStats& stats, const GstStructure* structure)
+{
+    unsigned value;
+    if (gst_structure_get_uint(structure, "ssrc", &value))
+        stats.ssrc = value;
+
+    double jitter;
+    if (gst_structure_get_double(structure, "jitter", &jitter))
+        stats.jitter = jitter;
+
+#if GST_CHECK_VERSION(1, 21, 0)
+    int64_t packetsLost;
+    if (gst_structure_get_int64(structure, "packets-lost", &packetsLost))
+        stats.packetsLost = packetsLost;
+#else
+    unsigned packetsLost;
+    if (gst_structure_get_uint(structure, "packets-lost", &packetsLost))
+        stats.packetsLost = packetsLost;
+#endif
+
+    double roundTripTime;
+    if (gst_structure_get_double(structure, "round-trip-time", &roundTripTime))
+        stats.roundTripTime = roundTripTime;
+
+    if (const char* localId = gst_structure_get_string(structure, "local-id"))
+        stats.localId = String::fromLatin1(localId);
+
+    // FIXME: Fill remaining fields.
+}
+
 static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRtpStreamStats& stats, const GstStructure* structure)
 {
     fillRTCRTPStreamStats(stats, structure);
@@ -302,15 +332,13 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
         break;
     }
     case GST_WEBRTC_STATS_REMOTE_INBOUND_RTP: {
-        RTCStatsReport::InboundRtpStreamStats stats;
-        fillInboundRTPStreamStats(stats, structure);
-        report.set<IDLDOMString, IDLDictionary<RTCStatsReport::InboundRtpStreamStats>>(stats.id, WTFMove(stats));
+        RTCStatsReport::RemoteInboundRtpStreamStats stats;
+        fillRemoteInboundRTPStreamStats(stats, structure);
+        report.set<IDLDOMString, IDLDictionary<RTCStatsReport::RemoteInboundRtpStreamStats>>(stats.id, WTFMove(stats));
         break;
     }
     case GST_WEBRTC_STATS_REMOTE_OUTBOUND_RTP: {
-        RTCStatsReport::OutboundRtpStreamStats stats;
-        fillOutboundRTPStreamStats(stats, structure);
-        report.set<IDLDOMString, IDLDictionary<RTCStatsReport::OutboundRtpStreamStats>>(stats.id, WTFMove(stats));
+        GST_FIXME("Remote outbound RTP stats not exposed yet");
         break;
     }
     case GST_WEBRTC_STATS_CSRC:
