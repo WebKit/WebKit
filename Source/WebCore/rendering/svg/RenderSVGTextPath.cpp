@@ -22,6 +22,7 @@
 
 #include "FloatQuad.h"
 #include "RenderBlock.h"
+#include "RenderLayer.h"
 #include "RenderSVGInlineInlines.h"
 #include "RenderSVGShape.h"
 #include "SVGElementTypeHelpers.h"
