@@ -341,6 +341,20 @@ WebGLBuffer* WebGL2RenderingContext::validateBufferDataTarget(const char* functi
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "no buffer");
         return nullptr;
     }
+    if (m_boundTransformFeedback->hasBoundIndexedTransformFeedbackBuffer(buffer)) {
+        ASSERT(buffer != m_boundVertexArrayObject->getElementArrayBuffer());
+        if (m_boundIndexedUniformBuffers.contains(buffer)
+            || m_boundVertexArrayObject->hasArrayBuffer(buffer)
+            || buffer == m_boundArrayBuffer
+            || buffer == m_boundCopyReadBuffer
+            || buffer == m_boundCopyWriteBuffer
+            || buffer == m_boundPixelPackBuffer
+            || buffer == m_boundPixelUnpackBuffer
+            || buffer == m_boundUniformBuffer) {
+            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "buffer is bound to an indexed transform feedback binding point and some other binding point");
+            return nullptr;
+        }
+    }
     return buffer;
 }
 
@@ -591,11 +605,12 @@ void WebGL2RenderingContext::copyBufferSubData(GCGLenum readTarget, GCGLenum wri
         return;
 
     RefPtr<WebGLBuffer> readBuffer = validateBufferDataParameters("copyBufferSubData", readTarget, GraphicsContextGL::STATIC_DRAW);
-    RefPtr<WebGLBuffer> writeBuffer = validateBufferDataParameters("copyBufferSubData", writeTarget, GraphicsContextGL::STATIC_DRAW);
-    if (!readBuffer || !writeBuffer) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "copyBufferSubData", "Invalid readTarget or writeTarget");
+    if (!readBuffer)
         return;
-    }
+
+    RefPtr<WebGLBuffer> writeBuffer = validateBufferDataParameters("copyBufferSubData", writeTarget, GraphicsContextGL::STATIC_DRAW);
+    if (!writeBuffer)
+        return;
 
     if (readOffset < 0 || writeOffset < 0 || size < 0) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "copyBufferSubData", "offset < 0");
@@ -636,10 +651,8 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
     if (isContextLostOrPending())
         return;
     RefPtr<WebGLBuffer> buffer = validateBufferDataParameters("getBufferSubData", target, GraphicsContextGL::STATIC_DRAW);
-    if (!buffer) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getBufferSubData", "No WebGLBuffer is bound to target");
+    if (!buffer)
         return;
-    }
 
     // FIXME: Implement "If target is TRANSFORM_FEEDBACK_BUFFER, and any transform feedback object is currently active, an INVALID_OPERATION error is generated."
 
@@ -3477,6 +3490,11 @@ void WebGL2RenderingContext::uncacheDeletedBuffer(const AbstractLocker& locker, 
     REMOVE_BUFFER_FROM_BINDING(m_boundTransformFeedbackBuffer);
     REMOVE_BUFFER_FROM_BINDING(m_boundUniformBuffer);
     m_boundTransformFeedback->unbindBuffer(locker, *buffer);
+
+    for (auto& boundBuffer : m_boundIndexedUniformBuffers) {
+        if (boundBuffer == buffer)
+            boundBuffer = nullptr;
+    }
 
     WebGLRenderingContextBase::uncacheDeletedBuffer(locker, buffer);
 }

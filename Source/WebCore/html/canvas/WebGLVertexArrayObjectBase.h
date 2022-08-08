@@ -77,6 +77,7 @@ public:
     void setVertexAttribEnabled(int index, bool flag);
     const VertexAttribState& getVertexAttribState(int index) { return m_vertexAttribState[index]; }
     void setVertexAttribState(const AbstractLocker&, GCGLuint, GCGLsizei, GCGLint, GCGLenum, GCGLboolean, GCGLsizei, GCGLintptr, bool, WebGLBuffer*);
+    bool hasArrayBuffer(WebGLBuffer* buffer) { return m_vertexAttribState.containsIf([&](auto& item) { return item.bufferBinding == buffer; }); }
     void unbindBuffer(const AbstractLocker&, WebGLBuffer&);
 
     void setVertexAttribDivisor(GCGLuint index, GCGLuint divisor);
