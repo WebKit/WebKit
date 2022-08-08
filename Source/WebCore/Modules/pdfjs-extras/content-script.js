@@ -23,7 +23,49 @@
  */
 
 const PDFJSContentScript = {
+    setPageMode({ pages, continuous }) {
+        PDFViewerApplication.pdfViewer.spreadMode = pages == "two" ? 1 : 0;
+
+        if (continuous) {
+            PDFViewerApplication.pdfViewer.scrollMode = 0;
+            PDFViewerApplication.pdfViewer.currentScaleValue = "page-width";
+        } else {
+            PDFViewerApplication.pdfViewer.scrollMode = 3;
+            PDFViewerApplication.pdfViewer.currentScaleValue = "page-fit";
+        }
+    },
+
     open(data) {
         PDFViewerApplication.open(data);
+    },
+
+    init() {
+        this.setPageMode({ pages: "single", continuous: true });
+
+        window.addEventListener("message", (event) => {
+            const { message, data } = event.data;
+            switch (message) {
+                case "open-pdf":
+                    this.open(data);
+                    break;
+                case "context-menu-single-page":
+                    this.setPageMode({ pages: "single", continuous: false });
+                    break;
+                case "context-menu-single-page-continuous":
+                    this.setPageMode({ pages: "single", continuous: true });
+                    break;
+                case "context-menu-two-pages":
+                    this.setPageMode({ pages: "two", continuous: false });
+                    break;
+                case "context-menu-two-pages-continuous":
+                    this.setPageMode({ pages: "two", continuous: true });
+                    break;
+                default:
+                    console.error("Unrecognized message:", event);
+                    break;
+            }
+        });
     }
 };
+
+PDFJSContentScript.init();

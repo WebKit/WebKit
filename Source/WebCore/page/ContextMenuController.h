@@ -92,6 +92,10 @@ private:
     void createAndAppendUnicodeSubMenu(ContextMenuItem&);
 #endif
 
+#if ENABLE(PDFJS)
+    void performPDFJSAction(Frame&, const String& action);
+#endif
+
     Page& m_page;
     ContextMenuClient& m_client;
     std::unique_ptr<ContextMenu> m_contextMenu;

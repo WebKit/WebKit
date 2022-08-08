@@ -19,7 +19,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -181,32 +181,40 @@ void PDFDocument::finishedParsing()
         sendPDFArrayBuffer();
 }
 
-void PDFDocument::sendPDFArrayBuffer()
+void PDFDocument::postMessageToIframe(const String& name, JSC::JSObject* data)
 {
-    using namespace JSC;
-
-    auto* frame = m_iframe->contentFrame();
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=236668 - Use postMessage
-    auto openFunction = frame->script().executeScriptIgnoringException("PDFJSContentScript.open"_s).getObject();
-
     auto globalObject = this->globalObject();
     auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
 
-    JSLockHolder lock(vm);
-    auto callData = JSC::getCallData(openFunction);
-    ASSERT(callData.type != CallData::Type::None);
-    MarkedArgumentBuffer arguments;
+    JSC::JSObject* message = constructEmptyObject(globalObject);
+    message->putDirect(vm, vm.propertyNames->message, JSC::jsNontrivialString(vm, name));
+    if (data)
+        message->putDirect(vm, JSC::Identifier::fromString(vm, "data"_s), data);
+
+    auto* contentWindow = m_iframe->contentFrame()->window();
+    auto* contentWindowGlobalObject = m_iframe->contentDocument()->globalObject();
+
+    WindowPostMessageOptions options;
+    if (data)
+        options = WindowPostMessageOptions { "/"_s, Vector { JSC::Strong<JSC::JSObject> { vm, data } } };
+    auto returnValue = contentWindow->postMessage(*contentWindowGlobalObject, *contentWindow, message, WTFMove(options));
+    if (returnValue.hasException())
+        returnValue.releaseException();
+}
+
+void PDFDocument::sendPDFArrayBuffer()
+{
     auto arrayBuffer = loader()->mainResourceData()->tryCreateArrayBuffer();
     if (!arrayBuffer) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto sharingMode = arrayBuffer->sharingMode();
-    arguments.append(JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(sharingMode), WTFMove(arrayBuffer)));
-    ASSERT(!arguments.hasOverflowed());
-
-    call(globalObject, openFunction, callData, globalObject, arguments);
+    auto& vm = globalObject()->vm();
+    JSC::JSLockHolder lock(vm);
+    auto* dataObject = JSC::JSArrayBuffer::create(vm, globalObject()->arrayBufferStructure(arrayBuffer->sharingMode()), WTFMove(arrayBuffer));
+    postMessageToIframe("open-pdf"_s, dataObject);
 }
 
 void PDFDocument::injectStyleAndContentScript()

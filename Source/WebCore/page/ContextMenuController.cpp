@@ -74,6 +74,10 @@
 #include <wtf/WallTime.h>
 #include <wtf/unicode/CharacterNames.h>
 
+#if ENABLE(PDFJS)
+#include "PDFDocument.h"
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
 #endif
@@ -549,6 +553,20 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         }
 #endif
         break;
+#if ENABLE(PDFJS)
+    case ContextMenuItemPDFSinglePage:
+        performPDFJSAction(*frame, "context-menu-single-page"_s);
+        break;
+    case ContextMenuItemPDFSinglePageContinuous:
+        performPDFJSAction(*frame, "context-menu-single-page-continuous"_s);
+        break;
+    case ContextMenuItemPDFTwoPages:
+        performPDFJSAction(*frame, "context-menu-two-pages"_s);
+        break;
+    case ContextMenuItemPDFTwoPagesContinuous:
+        performPDFJSAction(*frame, "context-menu-two-pages-continuous"_s);
+        break;
+#endif
     default:
         break;
     }
@@ -1562,6 +1580,17 @@ void ContextMenuController::showImageControlsMenu(Event& event)
     clearContextMenu();
     handleContextMenuEvent(event);
     m_client.showContextMenu();
+}
+
+#endif
+
+#if ENABLE(PDFJS)
+
+void ContextMenuController::performPDFJSAction(Frame& frame, const String& action)
+{
+    auto* pdfDocument = dynamicDowncast<PDFDocument>(frame.ownerElement()->document());
+    if (pdfDocument)
+        pdfDocument->postMessageToIframe(action, nullptr);
 }
 
 #endif
