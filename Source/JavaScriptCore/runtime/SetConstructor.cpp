@@ -67,8 +67,8 @@ JSC_DEFINE_HOST_FUNCTION(constructSet, (JSGlobalObject* globalObject, CallFrame*
     RETURN_IF_EXCEPTION(scope, { });
 
     JSValue iterable = callFrame->argument(0);
-    if (iterable.isUndefinedOrNull())
-        return JSValue::encode(JSSet::create(vm, setStructure));
+    if (iterable.isUndefinedOrNull()) 
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSSet::create(globalObject, vm, setStructure)));
 
     bool canPerformFastAdd = JSSet::isAddFastAndNonObservable(setStructure);
     if (auto* iterableSet = jsDynamicCast<JSSet*>(iterable)) {
@@ -76,7 +76,8 @@ JSC_DEFINE_HOST_FUNCTION(constructSet, (JSGlobalObject* globalObject, CallFrame*
             RELEASE_AND_RETURN(scope, JSValue::encode(iterableSet->clone(globalObject, vm, setStructure)));
     }
 
-    JSSet* set = JSSet::create(vm, setStructure);
+    JSSet* set = JSSet::create(globalObject, vm, setStructure);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue adderFunction;
     CallData adderFunctionCallData;

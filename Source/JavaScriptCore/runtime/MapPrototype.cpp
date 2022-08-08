@@ -121,7 +121,7 @@ JSC_DEFINE_HOST_FUNCTION(mapProtoFuncClear, (JSGlobalObject* globalObject, CallF
     JSMap* map = getMap(globalObject, callFrame->thisValue());
     if (!map)
         return JSValue::encode(jsUndefined());
-    map->clear(globalObject->vm());
+    map->clear(globalObject);
     return JSValue::encode(jsUndefined());
 }
 

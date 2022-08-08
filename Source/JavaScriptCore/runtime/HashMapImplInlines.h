@@ -137,25 +137,20 @@ ALWAYS_INLINE std::optional<uint32_t> concurrentJSMapHash(JSValue key)
     return wangsInt64Hash(rawValue);
 }
 
-static constexpr uint32_t hashMapInitialCapacity = 4;
-
 ALWAYS_INLINE uint32_t shouldShrink(uint32_t capacity, uint32_t keyCount)
 {
-    return 8 * keyCount <= capacity && capacity > hashMapInitialCapacity;
+    return 8 * keyCount <= capacity && capacity > 4;
 }
 
-ALWAYS_INLINE uint32_t shouldRehash(uint32_t capacity, uint32_t keyCount, uint32_t deleteCount)
+ALWAYS_INLINE uint32_t shouldRehashAfterAdd(uint32_t capacity, uint32_t keyCount, uint32_t deleteCount)
 {
     return 2 * (keyCount + deleteCount) >= capacity;
 }
 
 ALWAYS_INLINE uint32_t nextCapacity(uint32_t capacity, uint32_t keyCount)
 {
-    if (!capacity)
-        return hashMapInitialCapacity;
-
     if (shouldShrink(capacity, keyCount)) {
-        ASSERT((capacity / 2) >= hashMapInitialCapacity);
+        ASSERT((capacity / 2) >= 4);
         return capacity / 2;
     }
 
@@ -178,11 +173,17 @@ ALWAYS_INLINE uint32_t nextCapacity(uint32_t capacity, uint32_t keyCount)
 }
 
 template <typename HashMapBucketType>
-void HashMapImpl<HashMapBucketType>::finishCreation(VM& vm)
+void HashMapImpl<HashMapBucketType>::finishCreation(JSGlobalObject* globalObject, VM& vm)
 {
     ASSERT_WITH_MESSAGE(HashMapBucket<HashMapBucketDataKey>::offsetOfKey() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey(), "We assume this to be true in the DFG and FTL JIT.");
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
     Base::finishCreation(vm);
-    setUpHeadAndTail(vm);
+
+    makeAndSetNewBuffer(globalObject, vm);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    setUpHeadAndTail(globalObject, vm);
 }
 
 template <typename HashMapBucketType>
@@ -194,11 +195,12 @@ void HashMapImpl<HashMapBucketType>::finishCreation(JSGlobalObject* globalObject
     // This size should be the same to the case when you clone the map by calling add() repeatedly.
     uint32_t capacity = (Checked<uint32_t>(base->m_keyCount) * 2) + 1;
     RELEASE_ASSERT(capacity <= (1U << 31));
-    capacity = std::max<uint32_t>(WTF::roundUpToPowerOfTwo(capacity), hashMapInitialCapacity);
-    makeAndSetNewBuffer(globalObject, capacity, vm);
+    capacity = std::max<uint32_t>(WTF::roundUpToPowerOfTwo(capacity), 4U);
+    m_capacity = capacity;
+    makeAndSetNewBuffer(globalObject, vm);
     RETURN_IF_EXCEPTION(scope, void());
 
-    setUpHeadAndTail(vm);
+    setUpHeadAndTail(globalObject, vm);
 
     HashMapBucketType* bucket = base->m_head.get()->next();
     while (bucket) {
@@ -247,10 +249,17 @@ ALWAYS_INLINE bool HashMapImpl<HashMapBucketType>::has(JSGlobalObject* globalObj
 template <typename HashMapBucketType>
 ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::add(JSGlobalObject* globalObject, JSValue key, JSValue value)
 {
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     key = normalizeMapKey(key);
     addNormalizedInternal(globalObject, key, value, [&] (HashMapBucketType* bucket) {
         return !isDeleted(bucket) && areKeysEqual(globalObject, key, bucket->key());
     });
+    RETURN_IF_EXCEPTION(scope, void());
+    scope.release();
+    if (shouldRehashAfterAdd())
+        rehash(globalObject);
 }
 
 template <typename HashMapBucketType>
@@ -260,9 +269,12 @@ ALWAYS_INLINE HashMapBucketType* HashMapImpl<HashMapBucketType>::addNormalized(J
     ASSERT_WITH_MESSAGE(normalizeMapKey(key) == key, "We expect normalized values flowing into this function.");
     DEFER_TERMINATION_AND_ASSERT_WITH_MESSAGE(vm, jsMapHash(globalObject, getVM(globalObject), key) == hash, "We expect hash value is what we expect.");
 
-    return addNormalizedInternal(globalObject, key, value, hash, [&] (HashMapBucketType* bucket) {
+    auto* bucket = addNormalizedInternal(vm, key, value, hash, [&] (HashMapBucketType* bucket) {
         return !isDeleted(bucket) && areKeysEqual(globalObject, key, bucket->key());
     });
+    if (shouldRehashAfterAdd())
+        rehash(globalObject);
+    return bucket;
 }
 
 template <typename HashMapBucketType>
@@ -285,14 +297,15 @@ ALWAYS_INLINE bool HashMapImpl<HashMapBucketType>::remove(JSGlobalObject* global
     --m_keyCount;
 
     if (shouldShrink())
-        rehash(globalObject, RehashMode::AfterRemoval);
+        rehash(globalObject);
 
     return true;
 }
 
 template <typename HashMapBucketType>
-ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::clear(VM& vm)
+ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::clear(JSGlobalObject* globalObject)
 {
+    VM& vm = getVM(globalObject);
     m_keyCount = 0;
     m_deleteCount = 0;
     HashMapBucketType* head = m_head.get();
@@ -307,13 +320,13 @@ ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::clear(VM& vm)
     }
     m_head->setNext(vm, m_tail.get());
     m_tail->setPrev(vm, m_head.get());
-    m_buffer.clear();
-    m_capacity = 0;
+    m_capacity = 4;
+    makeAndSetNewBuffer(globalObject, vm);
     checkConsistency();
 }
 
 template <typename HashMapBucketType>
-ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::setUpHeadAndTail(VM& vm)
+ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::setUpHeadAndTail(JSGlobalObject*, VM& vm)
 {
     m_head.set(vm, this, HashMapBucketType::create(vm));
     m_tail.set(vm, this, HashMapBucketType::create(vm));
@@ -327,20 +340,7 @@ ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::setUpHeadAndTail(VM& vm)
 template <typename HashMapBucketType>
 ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::addNormalizedNonExistingForCloning(JSGlobalObject* globalObject, JSValue key, JSValue value)
 {
-    VM& vm = getVM(globalObject);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    uint32_t hash = jsMapHash(globalObject, vm, key);
-    RETURN_IF_EXCEPTION(scope, void());
-    scope.release();
-
-    addNormalizedNonExistingForCloningInternal(globalObject, key, value, hash);
-}
-
-template <typename HashMapBucketType>
-ALWAYS_INLINE HashMapBucketType* HashMapImpl<HashMapBucketType>::addNormalizedNonExistingForCloningInternal(JSGlobalObject* globalObject, JSValue key, JSValue value, uint32_t hash)
-{
-    return addNormalizedInternal(globalObject, key, value, hash, [&](HashMapBucketType*) {
+    addNormalizedInternal(globalObject, key, value, [&] (HashMapBucketType*) {
         return false;
     });
 }
@@ -355,49 +355,26 @@ ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::addNormalizedInternal(JSGloba
     uint32_t hash = jsMapHash(globalObject, vm, key);
     RETURN_IF_EXCEPTION(scope, void());
     scope.release();
-    addNormalizedInternal(globalObject, key, value, hash, canUseBucket);
+    addNormalizedInternal(vm, key, value, hash, canUseBucket);
 }
 
 template <typename HashMapBucketType>
 template<typename CanUseBucket>
-ALWAYS_INLINE HashMapBucketType* HashMapImpl<HashMapBucketType>::addNormalizedInternal(JSGlobalObject* globalObject, JSValue key, JSValue value, uint32_t hash, const CanUseBucket& canUseBucket)
+ALWAYS_INLINE HashMapBucketType* HashMapImpl<HashMapBucketType>::addNormalizedInternal(VM& vm, JSValue key, JSValue value, uint32_t hash, const CanUseBucket& canUseBucket)
 {
-    VM& vm = getVM(globalObject);
-    auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT_WITH_MESSAGE(normalizeMapKey(key) == key, "We expect normalized values flowing into this function.");
-
-    if (!m_capacity) {
-        makeAndSetNewBuffer(globalObject, hashMapInitialCapacity, vm);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
 
     const uint32_t mask = m_capacity - 1;
     uint32_t index = hash & mask;
     HashMapBucketType** buffer = this->buffer();
-    {
-        HashMapBucketType* bucket = buffer[index];
-        while (!isEmpty(bucket)) {
-            if (canUseBucket(bucket)) {
-                bucket->setValue(vm, value);
-                return bucket;
-            }
-            index = (index + 1) & mask;
-            bucket = buffer[index];
+    HashMapBucketType* bucket = buffer[index];
+    while (!isEmpty(bucket)) {
+        if (canUseBucket(bucket)) {
+            bucket->setValue(vm, value);
+            return bucket;
         }
-    }
-
-    if (JSC::shouldRehash(m_capacity, m_keyCount + 1, m_deleteCount)) {
-        rehash(globalObject, RehashMode::BeforeAddition);
-        RETURN_IF_EXCEPTION(scope, { });
-        // We ensure that (1) this map does not have deleted keys because of rehashing and (2) this map does not have the same key as |key| input.
-        // Thus, we can just search for empty bucket.
-        ASSERT(m_capacity);
-        ASSERT(isPowerOfTwo(m_capacity));
-        const uint32_t mask = m_capacity - 1;
-        index = hash & mask;
-        buffer = this->buffer();
-        while (!isEmpty(buffer[index]))
-            index = (index + 1) & mask;
+        index = (index + 1) & mask;
+        bucket = buffer[index];
     }
 
     HashMapBucketType* newEntry = m_tail.get();
@@ -418,9 +395,6 @@ ALWAYS_INLINE HashMapBucketType* HashMapImpl<HashMapBucketType>::addNormalizedIn
 template <typename HashMapBucketType>
 ALWAYS_INLINE HashMapBucketType** HashMapImpl<HashMapBucketType>::findBucketAlreadyHashedAndNormalized(JSGlobalObject* globalObject, JSValue key, uint32_t hash)
 {
-    if (!m_capacity)
-        return nullptr;
-
     const uint32_t mask = m_capacity - 1;
     uint32_t index = hash & mask;
     HashMapBucketType** buffer = this->buffer();
@@ -436,25 +410,20 @@ ALWAYS_INLINE HashMapBucketType** HashMapImpl<HashMapBucketType>::findBucketAlre
 }
 
 template <typename HashMapBucketType>
-void HashMapImpl<HashMapBucketType>::rehash(JSGlobalObject* globalObject, RehashMode mode)
+void HashMapImpl<HashMapBucketType>::rehash(JSGlobalObject* globalObject)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     uint32_t oldCapacity = m_capacity;
-    uint32_t newCapacity = nextCapacity(m_capacity, m_keyCount + (mode == RehashMode::BeforeAddition ? 1 : 0));
-    ASSERT(newCapacity);
+    m_capacity = nextCapacity(m_capacity, m_keyCount);
 
-    if (newCapacity != oldCapacity) {
-        makeAndSetNewBuffer(globalObject, newCapacity, vm);
+    if (m_capacity != oldCapacity) {
+        makeAndSetNewBuffer(globalObject, vm);
         RETURN_IF_EXCEPTION(scope, void());
     } else {
-        ASSERT(newCapacity);
-        ASSERT(oldCapacity);
-        ASSERT(m_capacity == newCapacity);
-        ASSERT(m_buffer);
-        m_buffer->reset(newCapacity);
-        assertBufferIsEmpty(buffer(), newCapacity);
+        m_buffer->reset(m_capacity);
+        assertBufferIsEmpty();
     }
 
     HashMapBucketType* iter = m_head->next();
@@ -497,28 +466,25 @@ ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::checkConsistency() const
 }
 
 template <typename HashMapBucketType>
-void HashMapImpl<HashMapBucketType>::makeAndSetNewBuffer(JSGlobalObject* globalObject, uint32_t newCapacity, VM& vm)
+void HashMapImpl<HashMapBucketType>::makeAndSetNewBuffer(JSGlobalObject* globalObject, VM& vm)
 {
-    ASSERT(!(newCapacity & (newCapacity - 1)));
+    ASSERT(!(m_capacity & (m_capacity - 1)));
 
-    HashMapBufferType* buffer = HashMapBufferType::tryCreate(globalObject, vm, newCapacity);
+    HashMapBufferType* buffer = HashMapBufferType::create(globalObject, vm, this, m_capacity);
     if (UNLIKELY(!buffer))
         return;
 
     m_buffer.set(vm, this, buffer);
-    m_capacity = newCapacity;
-    assertBufferIsEmpty(this->buffer(), newCapacity);
+    assertBufferIsEmpty();
 }
 
 template <typename HashMapBucketType>
-ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::assertBufferIsEmpty(HashMapBucketType** buffer, uint32_t capacity)
+ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::assertBufferIsEmpty() const
 {
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(capacity);
-#if ASSERT_ENABLED
-    for (unsigned i = 0; i < capacity; i++)
-        ASSERT(isEmpty(buffer[i]));
-#endif
+    if (ASSERT_ENABLED) {
+        for (unsigned i = 0; i < m_capacity; i++)
+            ASSERT(isEmpty(buffer()[i]));
+    }
 }
 
 } // namespace JSC

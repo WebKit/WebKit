@@ -45,7 +45,12 @@ std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingSet(JSC::JSGlob
     auto backingSet = setLike.getDirect(vm, builtinNames(vm).backingSetPrivateName());
     if (!backingSet) {
         auto& vm = lexicalGlobalObject.vm();
-        backingSet = JSC::JSSet::create(vm, lexicalGlobalObject.setStructure());
+        JSC::DeferTermination deferScope(vm);
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+
+        backingSet = JSC::JSSet::create(&lexicalGlobalObject, vm, lexicalGlobalObject.setStructure());
+        scope.releaseAssertNoException();
+
         setLike.putDirect(vm, builtinNames(vm).backingSetPrivateName(), backingSet, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
         return { true, *JSC::asObject(backingSet) };
     }

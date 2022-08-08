@@ -124,7 +124,7 @@ JSC_DEFINE_HOST_FUNCTION(setProtoFuncClear, (JSGlobalObject* globalObject, CallF
     JSSet* set = getSet(globalObject, callFrame->thisValue());
     if (!set)
         return JSValue::encode(jsUndefined());
-    set->clear(globalObject->vm());
+    set->clear(globalObject);
     return JSValue::encode(jsUndefined());
 }
 

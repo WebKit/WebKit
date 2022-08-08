@@ -47,10 +47,10 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSMapType, StructureFlags), info());
     }
 
-    static JSMap* create(VM& vm, Structure* structure)
+    static JSMap* create(JSGlobalObject* globalObject, VM& vm, Structure* structure)
     {
         JSMap* instance = new (NotNull, allocateCell<JSMap>(vm)) JSMap(vm, structure);
-        instance->finishCreation(vm);
+        instance->finishCreation(globalObject, vm);
         return instance;
     }
 

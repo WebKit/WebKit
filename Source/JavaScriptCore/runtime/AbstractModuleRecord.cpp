@@ -51,6 +51,9 @@ AbstractModuleRecord::AbstractModuleRecord(VM& vm, Structure* structure, const I
 
 void AbstractModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
 {
+    DeferTerminationForAWhile deferScope(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
@@ -59,7 +62,8 @@ void AbstractModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
     for (unsigned index = 0; index < values.size(); ++index)
         Base::internalField(index).set(vm, this, values[index]);
 
-    JSMap* map = JSMap::create(vm, globalObject->mapStructure());
+    JSMap* map = JSMap::create(globalObject, vm, globalObject->mapStructure());
+    scope.releaseAssertNoException();
     m_dependenciesMap.set(vm, this, map);
     putDirect(vm, Identifier::fromString(vm, "dependenciesMap"_s), m_dependenciesMap.get());
 }
