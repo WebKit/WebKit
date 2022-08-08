@@ -474,6 +474,35 @@ TEST(WebKit, FindTextInImageOverlay)
 
 @end
 
+@interface FindInPageTestWKWebView : TestWKWebView
+- (void)overrideSupportsTextReplacement:(BOOL)supportsTextReplacement;
+@end
+
+@implementation FindInPageTestWKWebView {
+    std::optional<BOOL> _supportsTextReplacementOverride;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
+{
+    if (!(self = [super initWithFrame:frame configuration:configuration]))
+        return nil;
+
+    self.findInteractionEnabled = YES;
+    return self;
+}
+
+- (void)overrideSupportsTextReplacement:(BOOL)supportsTextReplacement
+{
+    _supportsTextReplacementOverride = supportsTextReplacement;
+}
+
+- (BOOL)supportsTextReplacement
+{
+    return _supportsTextReplacementOverride.value_or(super.supportsTextReplacement);
+}
+
+@end
+
 static void traverseLayerTree(CALayer *layer, void(^block)(CALayer *))
 {
     for (CALayer *child in layer.sublayers)
@@ -827,6 +856,36 @@ TEST(WebKit, FindInPDF)
 
     auto searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birthday", searchOptions.get(), 0UL);
+}
+
+TEST(WebKit, FindInteractionSupportsTextReplacement)
+{
+    auto webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView synchronouslyLoadTestPageNamed:@"lots-of-text"];
+
+    auto findSessionSupportsReplacement = [&] {
+        auto *findInteraction = [webView findInteraction];
+        [findInteraction presentFindNavigatorShowingReplace:NO];
+        [webView waitForNextPresentationUpdate];
+
+        BOOL result = findInteraction.activeFindSession.supportsReplacement;
+        EXPECT_EQ([webView canPerformAction:@selector(findAndReplace:) withSender:nil], result);
+        [findInteraction dismissFindNavigator];
+        [webView waitForNextPresentationUpdate];
+        return result;
+    };
+
+    EXPECT_FALSE(findSessionSupportsReplacement());
+
+    [webView _setEditable:YES];
+    EXPECT_TRUE(findSessionSupportsReplacement());
+
+    [webView overrideSupportsTextReplacement:NO];
+    EXPECT_FALSE(findSessionSupportsReplacement());
+
+    [webView _setEditable:NO];
+    [webView overrideSupportsTextReplacement:YES];
+    EXPECT_TRUE(findSessionSupportsReplacement());
 }
 
 #endif // HAVE(UIFINDINTERACTION)
