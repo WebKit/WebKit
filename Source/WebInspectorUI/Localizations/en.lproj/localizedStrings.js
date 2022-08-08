@@ -348,6 +348,7 @@ localizedStrings["Click to show blackboxed call frame @ Debugger Call Stack"] = 
 localizedStrings["Click to show blackboxed call frames @ Debugger Call Stack"] = "Click to show %d blackboxed call frames";
 /* Tooltip to show purpose of the CSS documentation button */
 localizedStrings["Click to show documentation @ CSS Documentation Button"] = "Click to show documentation";
+localizedStrings["Click to view variable value"] = "Click to view variable value";
 localizedStrings["Click to view variable value\nShift-click to replace variable with value"] = "Click to view variable value\nShift-click to replace variable with value";
 localizedStrings["Clickable"] = "Clickable";
 localizedStrings["Clients"] = "Clients";
