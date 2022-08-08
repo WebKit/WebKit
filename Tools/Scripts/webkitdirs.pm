@@ -38,6 +38,7 @@ use Digest::MD5 qw(md5_hex);
 use FindBin;
 use File::Basename;
 use File::Find;
+use File::Glob qw(bsd_glob);
 use File::Path qw(make_path mkpath rmtree);
 use File::Spec;
 use File::Temp qw(tempdir);
@@ -645,8 +646,28 @@ sub parseAvailableXcodeSDKs($)
     return @result;
 }
 
+sub unversionedSDKNameFromSDK($)
+{
+    my $basename = shift;
+    if ($basename =~ /(\D+)(\d+\.[\d\.]+)(\D*)\.sdk/) {
+        if ($3) {
+            return lc "$1.$3";
+        } else {
+            return lc "$1";
+        }
+    }
+}
+
 sub availableXcodeSDKs
 {
+    # Looking for SDKs in known locations is much faster than calling through to xcodebuild.
+    chomp(my $developerDir = `xcode-select -p`);
+    my @availableSDKDirectories = bsd_glob("$developerDir/Platforms/*.platform/Developer/SDKs/*");
+    if (@availableSDKDirectories) {
+        return map { unversionedSDKNameFromSDK(basename $_) || () } @availableSDKDirectories;
+    }
+
+    # As a fallback, parse the SDK list provided by xcodebuild.
     my @output = `xcodebuild -showsdks`;
     return parseAvailableXcodeSDKs(\@output);
 }
