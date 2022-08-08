@@ -2518,4 +2518,8 @@ inline void WebPage::prepareToRunModalJavaScriptDialog() { }
 inline bool WebPage::shouldAvoidComputingPostLayoutDataForEditorState() const { return false; }
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+bool scalesAreEssentiallyEqual(float, float);
+#endif
+
 } // namespace WebKit

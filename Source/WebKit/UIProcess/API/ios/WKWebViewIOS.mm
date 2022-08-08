@@ -54,6 +54,7 @@
 #import "WKWebViewPrivateForTestingIOS.h"
 #import "WebBackForwardList.h"
 #import "WebIOSEventFactory.h"
+#import "WebPage.h"
 #import "WebPageProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import <WebCore/ColorCocoa.h>
@@ -956,7 +957,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     bool scrollingEnabled = _page->scrollingCoordinatorProxy()->hasScrollableOrZoomedMainFrame() || hasDockedInputView || isZoomed || scrollingNeededToRevealUI;
     [_scrollView _setScrollEnabledInternal:scrollingEnabled];
 
-    if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom] && !WTF::areEssentiallyEqual<float>([_scrollView zoomScale], layerTreeTransaction.pageScaleFactor())) {
+    if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom] && !WebKit::scalesAreEssentiallyEqual([_scrollView zoomScale], layerTreeTransaction.pageScaleFactor())) {
         LOG_WITH_STREAM(VisibleRects, stream << " updating scroll view with pageScaleFactor " << layerTreeTransaction.pageScaleFactor());
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
     }
@@ -975,7 +976,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         WebCore::FloatPoint scaledScrollOffset = _scrollOffsetToRestore.value();
         _scrollOffsetToRestore = std::nullopt;
 
-        if (WTF::areEssentiallyEqual<float>(contentZoomScale(self), _scaleToRestore)) {
+        if (WebKit::scalesAreEssentiallyEqual(contentZoomScale(self), _scaleToRestore)) {
             scaledScrollOffset.scale(_scaleToRestore);
             WebCore::FloatPoint contentOffsetInScrollViewCoordinates = scaledScrollOffset - WebCore::FloatSize(_obscuredInsetsWhenSaved.left(), _obscuredInsetsWhenSaved.top());
 
@@ -990,7 +991,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         WebCore::FloatPoint unobscuredCenterToRestore = _unobscuredCenterToRestore.value();
         _unobscuredCenterToRestore = std::nullopt;
 
-        if (WTF::areEssentiallyEqual<float>(contentZoomScale(self), _scaleToRestore)) {
+        if (WebKit::scalesAreEssentiallyEqual(contentZoomScale(self), _scaleToRestore)) {
             CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, _obscuredInsets);
             WebCore::FloatSize unobscuredContentSizeAtNewScale = WebCore::FloatSize(unobscuredRect.size) / _scaleToRestore;
             WebCore::FloatPoint topLeftInDocumentCoordinates = unobscuredCenterToRestore - unobscuredContentSizeAtNewScale / 2;
@@ -1763,7 +1764,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     // At this point, we have a page that asked for width = device-width. However,
     // if the content's width and height were large, we might have had to shrink it.
     // We'll enable double tap zoom whenever we're not at the actual initial scale.
-    return !WTF::areEssentiallyEqual<float>(contentZoomScale(self), _initialScaleFactor);
+    return !WebKit::scalesAreEssentiallyEqual(contentZoomScale(self), _initialScaleFactor);
 }
 
 #pragma mark UIScrollViewDelegate

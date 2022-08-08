@@ -194,6 +194,15 @@ static String plainTextForDisplay(const std::optional<SimpleRange>& range)
     return range ? plainTextForDisplay(*range) : emptyString();
 }
 
+// WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
+// we need to ignore differences that are within a small rounding error, with enough leeway
+// to handle rounding differences that may result from round-tripping through UIScrollView.
+bool scalesAreEssentiallyEqual(float a, float b)
+{
+    const auto scaleFactorEpsilon = 0.01f;
+    return WTF::areEssentiallyEqual(a, b, scaleFactorEpsilon);
+}
+
 void WebPage::platformDetach()
 {
     [m_mockAccessibilityElement setWebPage:nullptr];
@@ -488,6 +497,7 @@ void WebPage::restorePageState(const HistoryItem& historyItem)
             m_hasRestoredExposedContentRectAfterDidCommitLoad = true;
             scrollPosition = FloatPoint(historyItem.scrollPosition());
         }
+
         send(Messages::WebPageProxy::RestorePageState(scrollPosition, frameView.scrollOrigin(), historyItem.obscuredInsets(), boundedScale));
     } else {
         IntSize oldContentSize = historyItem.contentSize();
@@ -3602,13 +3612,6 @@ void WebPage::autofillLoginCredentials(const String& username, const String& pas
     }
 }
 
-// WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
-// we need to ignore differences that are within a small rounding error on floats.
-static inline bool areEssentiallyEqualAsFloat(float a, float b)
-{
-    return WTF::areEssentiallyEqual(a, b);
-}
-
 void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, double scaleFactor, double minimumEffectiveDeviceWidth)
 {
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier << " setViewportConfigurationViewLayoutSize " << size << " scaleFactor " << scaleFactor << " minimumEffectiveDeviceWidth " << minimumEffectiveDeviceWidth);
@@ -3655,7 +3658,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     IntSize oldContentSize = frameView.contentsSize();
     float oldPageScaleFactor = m_page->pageScaleFactor();
     auto oldUnobscuredContentRect = frameView.unobscuredContentRect();
-    bool wasAtInitialScale = areEssentiallyEqualAsFloat(oldPageScaleFactor, m_viewportConfiguration.initialScale());
+    bool wasAtInitialScale = scalesAreEssentiallyEqual(oldPageScaleFactor, m_viewportConfiguration.initialScale());
 
     m_dynamicSizeUpdateHistory.add(std::make_pair(oldContentSize, oldPageScaleFactor), frameView.scrollPosition());
 
@@ -3708,7 +3711,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     FloatRect newUnobscuredContentRect = targetUnobscuredRect;
     FloatRect newExposedContentRect = targetExposedContentRect;
 
-    bool scaleChanged = !areEssentiallyEqualAsFloat(scale, targetScale);
+    bool scaleChanged = !scalesAreEssentiallyEqual(scale, targetScale);
     if (scaleChanged) {
         // The target scale the UI is using cannot be reached by the content. We need to compute new targets based
         // on the viewport constraint and report everything back to the UIProcess.
@@ -3780,7 +3783,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
                 newExposedContentRect.setY(0);
             }
 
-            bool likelyResponsiveDesignViewport = newLayoutSize.width() == viewLayoutSize.width() && areEssentiallyEqualAsFloat(scale, 1);
+            bool likelyResponsiveDesignViewport = newLayoutSize.width() == viewLayoutSize.width() && scalesAreEssentiallyEqual(scale, 1);
             bool contentBleedsOutsideLayoutWidth = newContentSize.width() > newLayoutSize.width();
             bool originalScrollPositionWasOnTheLeftEdge = targetUnobscuredRect.x() <= 0;
             if (likelyResponsiveDesignViewport && contentBleedsOutsideLayoutWidth && originalScrollPositionWasOnTheLeftEdge) {
@@ -4160,7 +4163,7 @@ std::optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateI
     }
     
     scaleFromUIProcess = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), scaleFromUIProcess));
-    if (areEssentiallyEqualAsFloat(currentScale, scaleFromUIProcess))
+    if (scalesAreEssentiallyEqual(currentScale, scaleFromUIProcess))
         return std::nullopt;
 
     return scaleFromUIProcess;
@@ -4234,11 +4237,11 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         if (!m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage)
             return false;
 
-        if (areEssentiallyEqualAsFloat(scaleToUse, m_page->pageScaleFactor()))
+        if (scalesAreEssentiallyEqual(scaleToUse, m_page->pageScaleFactor()))
             return false;
 
         auto [transactionIdBeforeScalingPage, scaleBeforeScalingPage] = *m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
-        if (!areEssentiallyEqualAsFloat(scaleBeforeScalingPage, scaleToUse))
+        if (!scalesAreEssentiallyEqual(scaleBeforeScalingPage, scaleToUse))
             return false;
 
         return transactionIdBeforeScalingPage >= visibleContentRectUpdateInfo.lastLayerTreeTransactionID();
