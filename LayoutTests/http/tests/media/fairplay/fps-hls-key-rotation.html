@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-hls-key-rotation</title>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=eme2016.js></script>
+    <script src=support.js></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    async function startTest() {
+        video = document.querySelector('video');
+        video.src = 'content/rotation/prog_index.m3u8';
+        video.muted = true;
+        video.addEventListener('encrypted', encrypted);
+        video.addEventListener('ended', endTest);
+        await waitFor(video, 'canplay');
+        run('video.currentTime = 11');
+        await waitFor(video, 'seeked');
+    }
+
+    async function encrypted(event) {
+        try {
+            if (event.initDataType !== 'skd') {
+                consoleWrite('FAIL: expected event.initDataType === "skd", got ' + event.initDataType);
+                endTest();
+                return;
+            }
+
+            var initData = event.initData;
+            var keyURI = uInt8ArrayToString(new Uint8Array(initData));
+            var video = event.target;
+            var keys = video.mediaKeys;
+
+            if (!video.mediaKeys) {
+                var access = await navigator.requestMediaKeySystemAccess("com.apple.fps", [{
+                    initDataTypes: ['skd'],
+                    videoCapabilities: [{ contentType: 'application/vnd.apple.mpegurl', robustness: '' }],
+                    distinctiveIdentifier: 'not-allowed',
+                    persistentState: 'not-allowed',
+                    sessionTypes: ['temporary'],
+                }]);
+
+                keys = await access.createMediaKeys();
+                var certificateResponse = await fetch('resources/cert.der');
+
+                var arrayBuffer = await certificateResponse.arrayBuffer();
+
+                await keys.setServerCertificate(arrayBuffer);
+
+                video.setMediaKeys(keys);
+            }
+
+            var session = keys.createSession();
+
+            session.generateRequest('skd', initData);
+            let message = await waitFor(session, 'message', {silent: true});
+            let response = await getResponse(message, {silent: true});
+            await session.update(response);
+        } catch(e) {
+            failTest();
+        }
+    }
+    </script>
+</head>
+<body>
+    <video controls width="480"></video>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-mse-unmuxed-same-key</title>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=support.js></script>
+    <script src="eme2016.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    async function startTest() {
+        let video = document.querySelector('video');
+        let keys = await startEME({video: video, capabilities: [{
+            initDataTypes: ['sinf'],
+            audioCapabilities: [{ contentType: 'audio/mp4', robustness: '' }],
+            videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
+            distinctiveIdentifier: 'not-allowed',
+            persistentState: 'not-allowed',
+            sessionTypes: ['temporary'],
+        }]});
+
+        let mediaSource = new MediaSource;
+        video.srcObject = mediaSource;
+        consoleWrite('Created mediaSource');
+        await waitFor(mediaSource, 'sourceopen');
+
+        consoleWrite('-');
+        consoleWrite('Appending Encrypted Audio Header');
+
+        let {sourceBuffer: sourceBuffer1, session: session1} = await createBufferAppendAndWaitForEncrypted(video, mediaSource, 'audio/mp4', 'content/elementary-stream-audio-header-keyid-1.m4a');
+
+        consoleWrite('-');
+        consoleWrite('Appending Encrypted Video Header');
+
+        let sourceBuffer2 = await createBufferAndAppend(mediaSource, 'video/mp4', 'content/elementary-stream-video-header-keyid-1.m4v');
+
+        consoleWrite('-');
+        consoleWrite('Appending Encrypted Audio Payload');
+
+        await fetchAndAppend(sourceBuffer1, 'content/elementary-stream-audio-payload.m4a');
+
+        consoleWrite('-');
+        consoleWrite('Appending Encrypted Video Payload');
+
+        await fetchAndAppend(sourceBuffer2, 'content/elementary-stream-video-payload.m4v');
+    }
+    </script>
+</head>
+<body>
+    <video controls width="480"></video>
+</body>
+</html>

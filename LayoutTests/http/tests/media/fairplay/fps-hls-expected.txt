@@ -1,0 +1,13 @@
+
+EVENT(encrypted)
+PROMISE: requestMediaKeySystemAccess resolved
+PROMISE: createMediaKeys resolved
+FETCH: server certificate received
+PROMISE: arrayBuffer resolved
+PROMISE: setServerCertificate resolved
+EVENT(message)
+PROMISE: licenseResponse resolved
+PROMISE: session.update() resolved
+EVENT(canplay)
+END OF TEST
+
