@@ -28,6 +28,7 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "Document.h"
+#include "GCReachableRef.h"
 #include "LayoutRect.h"
 #include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
@@ -96,7 +97,7 @@ public:
 protected:
     friend class Document;
 
-    void dispatchFullscreenChangeOrErrorEvent(Deque<RefPtr<Node>>&, const AtomString& eventName, bool shouldNotifyMediaElement);
+    void dispatchFullscreenChangeOrErrorEvent(Deque<GCReachableRef<Node>>&, const AtomString& eventName, bool shouldNotifyMediaElement);
     void clearFullscreenElementStack();
     void popFullscreenElementStack();
     void pushFullscreenElementStack(Element&);
@@ -119,8 +120,8 @@ private:
     RefPtr<Element> m_fullscreenElement;
     Vector<RefPtr<Element>> m_fullscreenElementStack;
     WeakPtr<RenderFullScreen> m_fullscreenRenderer { nullptr };
-    Deque<RefPtr<Node>> m_fullscreenChangeEventTargetQueue;
-    Deque<RefPtr<Node>> m_fullscreenErrorEventTargetQueue;
+    Deque<GCReachableRef<Node>> m_fullscreenChangeEventTargetQueue;
+    Deque<GCReachableRef<Node>> m_fullscreenErrorEventTargetQueue;
     LayoutRect m_savedPlaceholderFrameRect;
     std::unique_ptr<RenderStyle> m_savedPlaceholderRenderStyle;
 

@@ -565,33 +565,30 @@ void FullscreenManager::dispatchFullscreenChangeEvents()
     // document will be detached and GC'd. We protect it here to make sure we
     // can finish the function successfully.
     Ref<Document> protectedDocument(document());
-    Deque<RefPtr<Node>> changeQueue;
+    Deque<GCReachableRef<Node>> changeQueue;
     m_fullscreenChangeEventTargetQueue.swap(changeQueue);
-    Deque<RefPtr<Node>> errorQueue;
+    Deque<GCReachableRef<Node>> errorQueue;
     m_fullscreenErrorEventTargetQueue.swap(errorQueue);
     dispatchFullscreenChangeOrErrorEvent(changeQueue, eventNames().webkitfullscreenchangeEvent, /* shouldNotifyMediaElement */ true);
     dispatchFullscreenChangeOrErrorEvent(errorQueue, eventNames().webkitfullscreenerrorEvent, /* shouldNotifyMediaElement */ false);
 }
 
-void FullscreenManager::dispatchFullscreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, const AtomString& eventName, bool shouldNotifyMediaElement)
+void FullscreenManager::dispatchFullscreenChangeOrErrorEvent(Deque<GCReachableRef<Node>>& queue, const AtomString& eventName, bool shouldNotifyMediaElement)
 {
     // Step 3 of https://fullscreen.spec.whatwg.org/#run-the-fullscreen-steps
     while (!queue.isEmpty()) {
-        RefPtr<Node> node = queue.takeFirst();
-        if (!node)
-            node = documentElement();
-        // The dispatchEvent below may have blown away our documentElement.
-        if (!node)
-            continue;
+        auto node = queue.takeFirst();
 
         // If the element was removed from our tree, also message the documentElement. Since we may
         // have a document hierarchy, check that node isn't in another document.
-        if (!node->isConnected())
-            queue.append(documentElement());
+        if (!node->isConnected()) {
+            if (auto* element = documentElement())
+                queue.append(*element);
+        }
 
 #if ENABLE(VIDEO)
-        if (shouldNotifyMediaElement && is<HTMLMediaElement>(*node))
-            downcast<HTMLMediaElement>(*node).enteredOrExitedFullscreen();
+        if (shouldNotifyMediaElement && is<HTMLMediaElement>(node.get()))
+            downcast<HTMLMediaElement>(node.get()).enteredOrExitedFullscreen();
 #else
         UNUSED_PARAM(shouldNotifyMediaElement);
 #endif
@@ -690,7 +687,7 @@ void FullscreenManager::addDocumentToFullscreenChangeEventQueue(Document& docume
         target = document.fullscreenManager().currentFullscreenElement();
     if (!target)
         target = &document;
-    m_fullscreenChangeEventTargetQueue.append(target);
+    m_fullscreenChangeEventTargetQueue.append(GCReachableRef(*target));
 }
 
 #if !RELEASE_LOG_DISABLED
