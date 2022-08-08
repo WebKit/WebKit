@@ -217,13 +217,26 @@ private:
             // Into
             //    ArithMul(x, 1 / constant)
             // if the operation has the same result.
-            if (m_node->isBinaryUseKind(DoubleRepUse)
-                && m_node->child2()->isNumberConstant()) {
-
+            if (m_node->isBinaryUseKind(DoubleRepUse) && m_node->child2()->isNumberConstant()) {
                 if (std::optional<double> reciprocal = safeReciprocalForDivByConst(m_node->child2()->asNumber())) {
                     Node* reciprocalNode = m_insertionSet.insertConstant(m_nodeIndex, m_node->origin, jsDoubleNumber(*reciprocal), DoubleConstant);
                     m_node->setOp(ArithMul);
                     m_node->child2() = Edge(reciprocalNode, DoubleRepUse);
+                    m_changed = true;
+                    break;
+                }
+            }
+
+            // Weaken arith mode if ArithDiv(x, constant) and constant is not zero.
+            if (m_node->isBinaryUseKind(Int32Use) && m_node->child2()->isNumberConstant()) {
+                double constant = m_node->child2()->asNumber();
+                if (constant != 0) {
+                    if (bytecodeCanTruncateInteger(m_node->arithNodeFlags()))
+                        m_node->setArithMode(Arith::Unchecked);
+                    else if (bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags()))
+                        m_node->setArithMode(Arith::CheckOverflow);
+                    else
+                        m_node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                     m_changed = true;
                     break;
                 }
