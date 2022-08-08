@@ -10538,6 +10538,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (BOOL)supportsTextReplacement
 {
+    return self.webView.supportsTextReplacement;
+}
+
+- (BOOL)supportsTextReplacementForWebView
+{
     return self.webView._editable;
 }
 

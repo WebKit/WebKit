@@ -369,7 +369,7 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
         return _findInteractionEnabled;
 
     if (action == @selector(findAndReplace:))
-        return _findInteractionEnabled && self._isEditable;
+        return _findInteractionEnabled && self.supportsTextReplacement;
 #endif
 
     return [super canPerformAction:action withSender:sender];
@@ -3013,7 +3013,15 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return _contentView.get();
 }
 
-#endif
+- (BOOL)supportsTextReplacement
+{
+    if ([_customContentView respondsToSelector:@selector(supportsTextReplacement)])
+        return [(id<UITextSearching>)_customContentView.get() supportsTextReplacement];
+
+    return [_contentView supportsTextReplacementForWebView];
+}
+
+#endif // HAVE(UIFINDINTERACTION)
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
 
