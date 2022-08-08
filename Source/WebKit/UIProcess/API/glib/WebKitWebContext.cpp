@@ -254,6 +254,8 @@ struct _WebKitWebContextPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
+std::unique_ptr<WebKitNotificationProvider> s_serviceWorkerNotificationProvider;
+
 #if ENABLE(REMOTE_INSPECTOR)
 class WebKitAutomationClient final : Inspector::RemoteInspector::Client {
     WTF_MAKE_FAST_ALLOCATED;
@@ -488,6 +490,8 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
 
     bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
     bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+
+    s_serviceWorkerNotificationProvider = makeUnique<WebKitNotificationProvider>(&WebNotificationManagerProxy::sharedServiceWorkerManager(), nullptr);
 
     gObjectClass->get_property = webkitWebContextGetProperty;
     gObjectClass->set_property = webkitWebContextSetProperty;

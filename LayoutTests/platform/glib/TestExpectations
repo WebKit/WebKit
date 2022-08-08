@@ -321,6 +321,17 @@ fast/css/accent-color/text.html [ Pass ]
 # Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
 media/video-with-alpha.html [ Pass ]
 
+# NOTIFICATION_EVENT tests
+http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
+http/tests/workers/service/shownotification-allowed.html [ Pass ]
+http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
+http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass ]
+imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Pass ]
+imported/w3c/web-platform-tests/notifications/idlharness.https.any.serviceworker.html [ Pass ]
+imported/w3c/web-platform-tests/notifications/idlharness.https.any.worker.html [ Pass ]
+http/tests/workers/service/getnotifications-stop.html [ Pass ]
+http/tests/workers/service/getnotifications.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////

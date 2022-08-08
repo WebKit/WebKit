@@ -167,6 +167,8 @@ bool NotificationService::showNotification(const WebNotification& notification)
         g_variant_builder_init(&hintsBuilder, G_VARIANT_TYPE("a{sv}"));
         if (applicationID)
             g_variant_builder_add(&hintsBuilder, "{sv}", "desktop-entry", g_variant_new_string(applicationID));
+        if (m_capabilities.contains(Capabilities::Persistence) && notification.isPersistentNotification())
+            g_variant_builder_add(&hintsBuilder, "{sv}", "resident", g_variant_new_boolean(TRUE));
 
         auto* value = static_cast<GValue*>(fastZeroedMalloc(sizeof(GValue)));
         g_value_init(value, G_TYPE_UINT64);
