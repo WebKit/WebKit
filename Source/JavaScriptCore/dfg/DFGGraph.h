@@ -381,8 +381,9 @@ public:
         Node* left = node->child1().node();
         Node* right = node->child2().node();
 
+        // FIXME: Using nodeCanSpeculateInt32ForDiv caused JetStream2 regression.
         return Node::shouldSpeculateInt32OrBooleanForArithmetic(left, right)
-            && nodeCanSpeculateInt32ForDiv(node->arithNodeFlags(), node->sourceFor(pass));
+            && node->canSpeculateInt32(node->sourceFor(pass));
     }
     
     bool binaryArithShouldSpeculateInt32(Node* node, PredictionPass pass)
