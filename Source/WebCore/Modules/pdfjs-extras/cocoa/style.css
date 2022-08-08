@@ -185,66 +185,8 @@ body {
     outline-offset: 2px;
 }
 
-/* Restyle the findbar */
+/* Remove the PDF.js findbar */
 
 #findbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: row-reverse;
-    background: var(--body-bg-color);
-    border-radius: 0;
-    box-shadow: none;
-
-    --main-color: rgba(249, 249, 250, 1);
-
-    --field-color: inherit;
-    --field-bg-color: rgba(0, 0, 0, 0.1);
-    --field-border-color: rgba(255,255,255,0.45);
-    --findbar-nextprevious-btn-bg-color: transparent;
-
-    --toggled-btn-color: rgba(255, 255, 255, 1);
-    --toggled-btn-bg-color: rgba(0, 0, 0, 0.3);
-    --button-hover-color: rgba(102, 102, 103, 1);
-    --toggled-hover-active-btn-color: rgba(0, 0, 0, 0.4);
-
-    --toolbar-icon-bg-color: rgba(255, 255, 255, 1);
-    --toolbar-icon-hover-bg-color: rgba(255, 255, 255, 1);
-}
-
-#findbar:not(.hidden) ~ #viewerContainer {
-    top: 32px;
-}
-
-#findbar::before,
-#findbar::after {
     display: none;
-}
-
-#findbarOptionsTwoContainer {
-    display: contents;
-}
-
-#findResultsCount,
-#findMsg {
-    background-color: transparent !important;
-    color: inherit !important;
-}
-
-#findbar .splitToolbarButton > .toolbarButton::before {
-    rotate: -90deg;
-    top: 4px;
-}
-
-#findInput:focus {
-    border-color: rgba(0, 103, 244, 0.48);
-    outline: 2px solid rgba(0, 103, 244, 0.48);
-}
-
-#findInput[data-status="notFound"] {
-    background: var(--field-bg-color);
-    color: var(--field-color);
 }

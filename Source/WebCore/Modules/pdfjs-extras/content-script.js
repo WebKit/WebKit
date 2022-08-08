@@ -23,6 +23,12 @@
  */
 
 const PDFJSContentScript = {
+    overrideSettings() {
+        // Disable the findbar provided by PDF.js
+        delete PDFViewerApplication.supportsIntegratedFind;
+        PDFViewerApplication.supportsIntegratedFind = true;
+    },
+
     setPageMode({ pages, continuous }) {
         PDFViewerApplication.pdfViewer.spreadMode = pages == "two" ? 1 : 0;
 
@@ -40,6 +46,8 @@ const PDFJSContentScript = {
     },
 
     init() {
+        this.overrideSettings();
+
         this.setPageMode({ pages: "single", continuous: true });
 
         window.addEventListener("message", (event) => {
