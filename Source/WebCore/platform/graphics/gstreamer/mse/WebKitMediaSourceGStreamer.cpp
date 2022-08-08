@@ -545,6 +545,8 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
 {
     ASSERT(isMainThread());
     bool skipFlush = false;
+    GST_DEBUG_OBJECT(stream->source, "Flush requested for stream '%s'. isSeekingFlush = %s",
+        stream->track->trackId().string().utf8().data(), boolForPrinting(isSeekingFlush));
 
     {
         DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
@@ -635,6 +637,9 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
         GST_DEBUG_OBJECT(stream->pad.get(), "Starting webKitMediaSrcLoop task and releasing the STREAM_LOCK.");
         gst_pad_start_task(stream->pad.get(), webKitMediaSrcLoop, stream->pad.get(), nullptr);
     }
+
+    GST_DEBUG_OBJECT(stream->source, "Flush request for stream '%s' (isSeekingFlush = %s) satisfied.",
+        stream->track->trackId().string().utf8().data(), boolForPrinting(isSeekingFlush));
 }
 
 void webKitMediaSrcFlush(WebKitMediaSrc* source, const AtomString& streamName)
