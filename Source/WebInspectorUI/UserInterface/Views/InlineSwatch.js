@@ -56,7 +56,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
         this._swatchElement.classList.add("inline-swatch", this._type.replace("inline-swatch-type-", ""));
 
-        if (!!readOnly)
+        if (readOnly && this._type !== WI.InlineSwatch.Type.Variable)
             this._swatchElement.classList.add("read-only");
         else {
             switch (this._type) {
@@ -89,7 +89,10 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 break;
 
             case WI.InlineSwatch.Type.Variable:
-                this._swatchElement.title = WI.UIString("Click to view variable value\nShift-click to replace variable with value");
+                if (readOnly)
+                    this._swatchElement.title = WI.UIString("Click to view variable value");
+                else
+                    this._swatchElement.title = WI.UIString("Click to view variable value\nShift-click to replace variable with value");
                 break;
 
             default:
@@ -246,7 +249,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 return;
             }
 
-            if (this._type === WI.InlineSwatch.Type.Variable) {
+            if (this._type === WI.InlineSwatch.Type.Variable && !this._readOnly) {
                 // Force the swatch to replace the displayed text with the variable's value.
                 this._swatchElement.remove();
                 this._updateSwatch();

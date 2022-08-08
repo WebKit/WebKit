@@ -201,7 +201,7 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
 
         for (let i = 0; i < properties.length; i++) {
             let property = properties[i];
-            let propertyView = new WI.SpreadsheetStyleProperty(this, property);
+            let propertyView = new WI.SpreadsheetStyleProperty(this, property, {readOnly: true});
 
             if (this._filterText) {
                 let matchesFilter = propertyView.applyFilter(this._filterText);
