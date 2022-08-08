@@ -277,6 +277,20 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
         localOrigin.move(0, extraOffset);
     }
 
+    // These decorations should match the visual overflows computed in visualOverflowForDecorations().
+    auto underlineRect = FloatRect { localOrigin, FloatSize(m_width, textDecorationThickness) };
+    auto overlineRect = underlineRect;
+    if (m_textBoxDecorations.contains(TextDecorationLine::Underline)) {
+        auto underlineOffset = underlineOffsetForTextBoxPainting(m_textBoxStyle, m_textBox);
+        auto wavyOffset = m_styles.underline.decorationStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0.f;
+        underlineRect.move(0.f, underlineOffset + wavyOffset);
+    }
+    if (m_textBoxDecorations.contains(TextDecorationLine::Overline)) {
+        float wavyOffset = m_styles.overline.decorationStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0;
+        float autoTextDecorationThickness = ceilToDevicePixel(TextDecorationThickness::createWithAuto().resolve(m_textBoxStyle.computedFontSize(), fontMetrics), m_deviceScaleFactor);
+        overlineRect.move(0, autoTextDecorationThickness - textDecorationThickness - wavyOffset);
+    }
+
     const ShadowData* shadow = m_shadow;
     do {
         if (shadow) {
@@ -294,23 +308,10 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
             m_context.setShadow(FloatSize(shadowX, shadowY - extraOffset), shadow->radius().value(), shadowColor);
             shadow = shadow->next();
         }
-
-        // These decorations should match the visual overflows computed in visualOverflowForDecorations().
-        if (m_textBoxDecorations.contains(TextDecorationLine::Underline)) {
-            auto underlineOffset = underlineOffsetForTextBoxPainting(m_textBoxStyle, m_textBox);
-            auto wavyOffset = m_styles.underline.decorationStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0.f;
-            auto underlineRect = FloatRect { localOrigin, FloatSize(m_width, textDecorationThickness) };
-            underlineRect.move(0.f, underlineOffset + wavyOffset);
+        if (m_textBoxDecorations.contains(TextDecorationLine::Underline))
             paintDecoration(TextDecorationLine::Underline, m_styles.underline.decorationStyle, m_styles.underline.color, underlineRect);
-        }
-        if (m_textBoxDecorations.contains(TextDecorationLine::Overline)) {
-            float wavyOffset = m_styles.overline.decorationStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0;
-            FloatRect rect(localOrigin, FloatSize(m_width, textDecorationThickness));
-            float autoTextDecorationThickness = ceilToDevicePixel(TextDecorationThickness::createWithAuto().resolve(m_textBoxStyle.computedFontSize(), fontMetrics), m_deviceScaleFactor);
-            rect.move(0, autoTextDecorationThickness - textDecorationThickness - wavyOffset);
-            paintDecoration(TextDecorationLine::Overline, m_styles.overline.decorationStyle, m_styles.overline.color, rect);
-        }
-
+        if (m_textBoxDecorations.contains(TextDecorationLine::Overline))
+            paintDecoration(TextDecorationLine::Overline, m_styles.overline.decorationStyle, m_styles.overline.color, overlineRect);
         // We only want to paint the shadow, hence the transparent color, not the actual line-through,
         // which will be painted in paintForegroundDecorations().
         if (shadow && m_textBoxDecorations.contains(TextDecorationLine::LineThrough))
