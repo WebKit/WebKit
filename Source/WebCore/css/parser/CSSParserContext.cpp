@@ -68,6 +68,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , colorContrastEnabled { document.settings().cssColorContrastEnabled() }
     , colorMixEnabled { document.settings().cssColorMixEnabled() }
     , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
+    , contentVisibilityEnabled { document.settings().cssContentVisibilityEnabled() }
     , counterStyleAtRuleImageSymbolsEnabled { document.settings().cssCounterStyleAtRuleImageSymbolsEnabled() }
     , cssColor4 { document.settings().cssColor4() }
     , relativeColorSyntaxEnabled { document.settings().cssRelativeColorSyntaxEnabled() }
@@ -100,6 +101,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.colorContrastEnabled == b.colorContrastEnabled
         && a.colorMixEnabled == b.colorMixEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
+        && a.contentVisibilityEnabled == b.contentVisibilityEnabled
         && a.counterStyleAtRuleImageSymbolsEnabled == b.counterStyleAtRuleImageSymbolsEnabled
         && a.cssColor4 == b.cssColor4
         && a.relativeColorSyntaxEnabled == b.relativeColorSyntaxEnabled
@@ -142,7 +144,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.gradientPremultipliedAlphaInterpolationEnabled << 16
         | context.gradientInterpolationColorSpacesEnabled   << 17
         | context.subgridEnabled                            << 18
-        | (uint64_t)context.mode                            << 19; // This is multiple bits, so keep it last.
+        | context.contentVisibilityEnabled                  << 19
+        | (uint64_t)context.mode                            << 20; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 
