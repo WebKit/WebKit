@@ -1,0 +1,4 @@
+
+
+FAIL Makes sure imageset blockable resources are not downloaded assert_equals: http://localhost:8800/images/smiley.png?picture expected 0 but got 1
+

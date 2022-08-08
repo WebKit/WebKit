@@ -1,0 +1,45 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/audio-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/beacon.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/fetch.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/img-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/link-css-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/link-prefetch-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/object-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/picture-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/script-tag-dynamic-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/script-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-classic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/video-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/websocket.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worker-classic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worker-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worker-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-animation-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-animation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-audio-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-audio.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-layout-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-layout.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-paint-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-paint.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/xhr.https.html

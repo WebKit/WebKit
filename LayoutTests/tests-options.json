@@ -4202,6 +4202,471 @@
     "imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-getSettings.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.http-rp/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.http-rp/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.http-rp/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.meta/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.meta/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.meta/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.meta/unset/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.meta/unset/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.meta/unset/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic.http-rp/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic.http-rp/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic.http-rp/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic.http-rp/unset/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic.http-rp/unset/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic.http-rp/unset/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.http-rp/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.http-rp/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.http-rp/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.meta/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.meta/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.meta/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.meta/unset/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.meta/unset/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.meta/unset/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module.http-rp/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module.http-rp/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module.http-rp/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module.http-rp/unset/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module.http-rp/unset/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module.http-rp/unset/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/audio-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/beacon.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/img-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/link-css-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/link-prefetch-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/object-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/picture-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/script-tag-dynamic-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/video-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-paint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/audio-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/beacon.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/img-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/link-css-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/link-prefetch-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/object-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/picture-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/script-tag-dynamic-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/video-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-paint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/audio-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/beacon.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/img-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/link-css-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/link-prefetch-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/object-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/picture-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/script-tag-dynamic-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/video-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-paint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic-data.http-rp/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic-data.http-rp/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic-data.http-rp/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic-data.meta/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic-data.meta/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic-data.meta/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic-data.meta/unset/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic-data.meta/unset/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic-data.meta/unset/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic.http-rp/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic.http-rp/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic.http-rp/opt-in/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic.http-rp/opt-in/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic.http-rp/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic.http-rp/unset/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic.http-rp/unset/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic.http-rp/unset/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic.http-rp/unset/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-classic.http-rp/unset/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module-data.http-rp/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module-data.http-rp/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module-data.http-rp/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module-data.meta/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module-data.meta/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module-data.meta/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module-data.meta/unset/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module-data.meta/unset/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module-data.meta/unset/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module.http-rp/opt-in/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module.http-rp/opt-in/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module.http-rp/opt-in/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module.http-rp/opt-in/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module.http-rp/opt-in/xhr.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module.http-rp/unset/fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module.http-rp/unset/websocket.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module.http-rp/unset/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module.http-rp/unset/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mixed-content/gen/worker-module.http-rp/unset/xhr.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest-timing.https.sub.html": [
         "slow"
     ],

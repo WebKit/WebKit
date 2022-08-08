@@ -373,7 +373,7 @@
     "web-platform-tests/mediasession": "import", 
     "web-platform-tests/microdata": "skip", 
     "web-platform-tests/mimesniff": "import", 
-    "web-platform-tests/mixed-content": "skip", 
+    "web-platform-tests/mixed-content": "import", 
     "web-platform-tests/mst-content-hint": "import", 
     "web-platform-tests/navigation-timing": "skip", 
     "web-platform-tests/netinfo": "skip", 

@@ -1,0 +1,5 @@
+
+PASS Mixed-Content: Expects allowed for sharedworker-import to same-https origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects blocked for sharedworker-import to cross-http origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects blocked for sharedworker-import to same-http origin and no-redirect redirection from https context.
+

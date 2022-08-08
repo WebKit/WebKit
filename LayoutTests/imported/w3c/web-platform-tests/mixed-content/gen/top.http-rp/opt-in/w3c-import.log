@@ -1,0 +1,74 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/audio-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/audio-tag.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/beacon.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/beacon.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/fetch.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/fetch.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/img-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/img-tag.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/link-css-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/link-css-tag.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/link-prefetch-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/link-prefetch-tag.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/object-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/object-tag.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/picture-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/picture-tag.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/script-tag-dynamic-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/script-tag-dynamic-import.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/script-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/script-tag.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-classic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-classic.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-import.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-module.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/video-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/video-tag.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/websocket.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/websocket.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worker-classic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worker-classic.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worker-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worker-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worker-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worker-import.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worker-module.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-animation-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-animation-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-animation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-animation.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-audio-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-audio-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-audio.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-audio.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-layout-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-layout-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-layout.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-layout.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-paint-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-paint-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-paint.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-paint.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/xhr.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/xhr.https.html.headers
