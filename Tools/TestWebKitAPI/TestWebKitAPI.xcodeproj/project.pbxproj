@@ -129,6 +129,7 @@
 		1D67BFDC2433E0A7006B5047 /* PreemptVideoFullscreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1D67BFDB2433E0A7006B5047 /* PreemptVideoFullscreen.mm */; };
 		1D67BFDD2433EE66006B5047 /* two-videos.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1D67BFD92433DFD8006B5047 /* two-videos.html */; };
 		1DAA52CC243BE805001A3159 /* one-video.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1DAA52CB243BE621001A3159 /* one-video.html */; };
+		1F0559E52890A11B002E279C /* image-with-text.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1F0559E42890A09D002E279C /* image-with-text.html */; };
 		26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */; };
 		26F52EAD1828827B0023D412 /* geolocationGetCurrentPosition.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EAC1828820E0023D412 /* geolocationGetCurrentPosition.html */; };
 		26F52EAF18288C230023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EAE18288C040023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html */; };
@@ -1439,6 +1440,7 @@
 				F491DBAE281DE0E80081705F /* image-controls.html in Copy Resources */,
 				F4DEF6ED1E9B4DB60048EF61 /* image-in-link-and-input.html in Copy Resources */,
 				F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */,
+				1F0559E52890A11B002E279C /* image-with-text.html in Copy Resources */,
 				3128A8152376413300D90D40 /* image.html in Copy Resources */,
 				71E88C4524B534B700665160 /* img-with-base64-url.html in Copy Resources */,
 				1C9C7F512891238500C4649E /* ImmediateFont.html in Copy Resources */,
@@ -1861,6 +1863,7 @@
 		1D67BFD92433DFD8006B5047 /* two-videos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "two-videos.html"; sourceTree = "<group>"; };
 		1D67BFDB2433E0A7006B5047 /* PreemptVideoFullscreen.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PreemptVideoFullscreen.mm; sourceTree = "<group>"; };
 		1DAA52CB243BE621001A3159 /* one-video.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "one-video.html"; sourceTree = "<group>"; };
+		1F0559E42890A09D002E279C /* image-with-text.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "image-with-text.html"; sourceTree = "<group>"; };
 		1F83571A1D3FFB0E00E3967B /* WKBackForwardList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKBackForwardList.mm; path = Tests/WebKit/WKBackForwardList.mm; sourceTree = SOURCE_ROOT; };
 		260BA5781B1D2E7B004FA07C /* DFACombiner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFACombiner.cpp; sourceTree = "<group>"; };
 		260BA57A1B1D2EE2004FA07C /* DFAHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFAHelpers.h; sourceTree = "<group>"; };
@@ -4278,6 +4281,7 @@
 				F491DBAD281DE0980081705F /* image-controls.html */,
 				F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */,
 				F45B63FA1F197F33009D38B9 /* image-map.html */,
+				1F0559E42890A09D002E279C /* image-with-text.html */,
 				3128A814237640FD00D90D40 /* image.html */,
 				1C9C7F4F2891234500C4649E /* ImmediateFont.html */,
 				49D7FBA7241FDDDA00AB67FA /* in-app-browser-privacy-local-file.html */,

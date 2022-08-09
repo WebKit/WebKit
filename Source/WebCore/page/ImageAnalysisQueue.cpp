@@ -38,6 +38,7 @@
 #include "RenderView.h"
 #include "TextRecognitionOptions.h"
 #include "Timer.h"
+#include <pal/HysteresisActivity.h>
 
 namespace WebCore {
 
@@ -109,10 +110,15 @@ void ImageAnalysisQueue::resumeProcessingSoon()
     m_resumeProcessingTimer.startOneShot(resumeProcessingDelay);
 }
 
-void ImageAnalysisQueue::enqueueAllImages(Document& document, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier)
+void ImageAnalysisQueue::enqueueAllImagesIfNeeded(Document& document, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier)
 {
     if (!m_page)
         return;
+
+    if (m_analysisOfAllImagesOnPageHasStarted)
+        return;
+
+    m_analysisOfAllImagesOnPageHasStarted = true;
 
     if (sourceLanguageIdentifier != m_sourceLanguageIdentifier || targetLanguageIdentifier != m_targetLanguageIdentifier)
         clear();
@@ -158,8 +164,24 @@ void ImageAnalysisQueue::resumeProcessing()
                 m_pendingRequestCount--;
 
             resumeProcessingSoon();
+
+            if (m_queue.isEmpty() && m_imageQueueEmptyHysteresis)
+                m_imageQueueEmptyHysteresis->impulse();
         });
     }
+}
+
+void ImageAnalysisQueue::setDidBecomeEmptyCallback(Function<void()>&& callback)
+{
+    m_imageQueueEmptyHysteresis = makeUnique<PAL::HysteresisActivity>([callback = WTFMove(callback)] (PAL::HysteresisState state) {
+        if (state == PAL::HysteresisState::Stopped)
+            callback();
+    }, 1_s);
+}
+
+void ImageAnalysisQueue::clearDidBecomeEmptyCallback()
+{
+    m_imageQueueEmptyHysteresis = nullptr;
 }
 
 void ImageAnalysisQueue::clear()
@@ -172,6 +194,8 @@ void ImageAnalysisQueue::clear()
     m_sourceLanguageIdentifier = { };
     m_targetLanguageIdentifier = { };
     m_currentTaskNumber = 0;
+    m_analysisOfAllImagesOnPageHasStarted = false;
+    m_imageQueueEmptyHysteresis = nullptr;
 }
 
 } // namespace WebCore

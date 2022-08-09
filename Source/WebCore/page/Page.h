@@ -86,6 +86,10 @@ namespace JSC {
 class Debugger;
 }
 
+namespace PAL {
+class HysteresisActivity;
+}
+
 namespace WTF {
 class TextStream;
 }
@@ -973,7 +977,7 @@ public:
     WEBCORE_EXPORT void forceRepaintAllFrames();
 
 #if ENABLE(IMAGE_ANALYSIS)
-    WEBCORE_EXPORT void analyzeImagesForFindInPage();
+    WEBCORE_EXPORT void analyzeImagesForFindInPage(Function<void()>&& callback);
 #endif
 private:
     struct Navigation {

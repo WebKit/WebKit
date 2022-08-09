@@ -32,6 +32,7 @@
 #import <WebKit/WKFindResult.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebView.h>
+#import <WebKit/_WKFindDelegate.h>
 #import <wtf/RetainPtr.h>
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -268,6 +269,19 @@ TEST(WKWebView, FindAPIForwardsCaseSensitive)
 #if ENABLE(IMAGE_ANALYSIS)
 static unsigned gDidProcessRequestCount = 0;
 
+@interface FindDelegate : NSObject<_WKFindDelegate>
+@property (nonatomic, readonly) int numberOfCallsToDidFindMatches;
+@end
+
+@implementation FindDelegate
+
+- (void)_webView:(WKWebView *)webView didFindMatches:(NSUInteger)matches forString:(NSString *)string withMatchIndex:(NSInteger)matchIndex
+{
+    _numCallsToDidFindMatches++;
+}
+
+@end
+
 static void processRequestWithResults(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
 {
     gDidProcessRequestCount++;
@@ -305,7 +319,10 @@ TEST(WKWebView, FindAPITextInImage)
     auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
 
     auto webView = createWebViewWithImageAnalysisDuringFindInPageEnabled();
-    [webView synchronouslyLoadTestPageNamed:@"image"];
+    [webView synchronouslyLoadTestPageNamed:@"image-with-text"];
+
+    auto findDelegate = adoptNS([[FindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
 
     __block bool done;
     [webView findString:@"text" withConfiguration:adoptNS([WKFindConfiguration new]).get() completionHandler:^(WKFindResult *) {
@@ -314,8 +331,8 @@ TEST(WKWebView, FindAPITextInImage)
 
     TestWebKitAPI::Util::run(&done);
     TestWebKitAPI::Util::waitForConditionWithLogging([&] {
-        return gDidProcessRequestCount == 1;
-    }, 1, @"Timed out waiting for image analysis to start.");
+        return gDidProcessRequestCount == 1 && [findDelegate numberOfCallsToDidFindMatches] == 2;
+    }, 1, @"Timed out waiting for image analysis to start and for search for string to be performed twice.");
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)

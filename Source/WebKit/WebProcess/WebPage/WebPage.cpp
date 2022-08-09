@@ -4859,7 +4859,7 @@ void WebPage::replaceStringMatchesFromInjectedBundle(const Vector<uint32_t>& mat
 
 void WebPage::findString(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)
 {
-    findController().findString(string, options, maxMatchCount, WTFMove(completionHandler));
+    findController().findString(string, options, maxMatchCount, FindController::TriggerImageAnalysis::Yes, WTFMove(completionHandler));
 }
 
 void WebPage::findStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount)
@@ -7912,7 +7912,7 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
 void WebPage::startVisualTranslation(const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier)
 {
     if (RefPtr document = m_mainFrame->coreFrame()->document())
-        corePage()->imageAnalysisQueue().enqueueAllImages(*document, sourceLanguageIdentifier, targetLanguageIdentifier);
+        corePage()->imageAnalysisQueue().enqueueAllImagesIfNeeded(*document, sourceLanguageIdentifier, targetLanguageIdentifier);
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)

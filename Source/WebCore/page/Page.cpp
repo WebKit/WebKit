@@ -807,11 +807,12 @@ bool Page::findString(const String& target, FindOptions options, DidWrap* didWra
 }
 
 #if ENABLE(IMAGE_ANALYSIS)
-void Page::analyzeImagesForFindInPage()
+void Page::analyzeImagesForFindInPage(Function<void()>&& callback)
 {
     if (settings().imageAnalysisDuringFindInPageEnabled()) {
-        if (RefPtr mainDocument = m_mainFrame->document(); mainDocument && !m_imageAnalysisQueue)
-            imageAnalysisQueue().enqueueAllImages(*mainDocument, { }, { });
+        imageAnalysisQueue().setDidBecomeEmptyCallback(WTFMove(callback));
+        if (RefPtr mainDocument = m_mainFrame->document())
+            imageAnalysisQueue().enqueueAllImagesIfNeeded(*mainDocument, { }, { });
     }
 }
 #endif

@@ -33,6 +33,10 @@
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
 
+namespace PAL {
+class HysteresisActivity;
+}
+
 namespace WebCore {
 
 class Document;
@@ -46,10 +50,13 @@ public:
     ImageAnalysisQueue(Page&);
     ~ImageAnalysisQueue();
 
-    WEBCORE_EXPORT void enqueueAllImages(Document&, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier);
+    WEBCORE_EXPORT void enqueueAllImagesIfNeeded(Document&, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier);
     void clear();
 
     void enqueueIfNeeded(HTMLImageElement&);
+
+    WEBCORE_EXPORT void setDidBecomeEmptyCallback(Function<void()>&&);
+    WEBCORE_EXPORT void clearDidBecomeEmptyCallback();
 
 private:
     void resumeProcessingSoon();
@@ -76,6 +83,8 @@ private:
     PriorityQueue<Task, firstIsHigherPriority> m_queue;
     unsigned m_pendingRequestCount { 0 };
     unsigned m_currentTaskNumber { 0 };
+    std::unique_ptr<PAL::HysteresisActivity> m_imageQueueEmptyHysteresis;
+    bool m_analysisOfAllImagesOnPageHasStarted { false };
 };
 
 inline bool ImageAnalysisQueue::firstIsHigherPriority(const Task& first, const Task& second)
