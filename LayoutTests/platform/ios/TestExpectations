@@ -3701,9 +3701,3 @@ webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html [ Pass Failure ]
 webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Pass Failure ]
 webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html [ Pass Failure ]
-
-webkit.org/b/243710 scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor.html [ Pass Failure ]
-webkit.org/b/243710 scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed.html [ Pass Failure ]
-webkit.org/b/243710 scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor.html [ Pass Failure ]
-webkit.org/b/243710 scrollingcoordinator/scrolling-tree/coordinated-frame.html [ Pass Failure ]
-
