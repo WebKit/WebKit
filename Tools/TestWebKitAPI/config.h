@@ -39,29 +39,18 @@
 #endif
 #endif
 
-#if defined(BUILDING_WITH_CMAKE)
-
-// CMake path
-#if defined(BUILDING_TestJSC)
+// Avoid unnecessary dependencies by only including relevant headers for test target being built.
+// "TestJSC", "TestWebCore", and "TestWebKit" are all CMake target names; the rest are Xcode targets.
+#if defined(BUILDING_TestJSC) || defined(BUILDING_TestWTFLibrary)
 #include <JavaScriptCore/JSExportMacros.h>
-#endif
 
-#if defined(BUILDING_TestWebCore)
+#elif defined(BUILDING_TestWebCore)
 #include <JavaScriptCore/JSExportMacros.h>
 #include <WebCore/PlatformExportMacros.h>
 #include <pal/ExportMacros.h>
-#endif
 
-#if defined(BUILDING_TestWebKit)
-#include <JavaScriptCore/JSExportMacros.h>
-#include <WebCore/PlatformExportMacros.h>
-#include <pal/ExportMacros.h>
-#include <WebKit/WebKit2_C.h>
-#endif
-
-#else
-
-// XCode path
+#elif defined(BUILDING_TestWebKit) || defined(BUILDING_TestWebKitAPI) || defined(BUILDING_TestWebKitAPILibrary) \
+    || defined(BUILDING_InjectedBundleTestWebKitAPI) || defined(BUILDING_WebProcessPlugIn)
 #include <JavaScriptCore/JSExportMacros.h>
 #include <WebCore/PlatformExportMacros.h>
 #include <pal/ExportMacros.h>
@@ -78,7 +67,7 @@
 #endif
 #endif
 
-#endif
+#endif // defined(BUILDING_*)
 
 #include <stdint.h>
 
