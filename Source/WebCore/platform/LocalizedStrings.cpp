@@ -488,6 +488,26 @@ String contextMenuItemTagInspectElement()
 }
 
 #if ENABLE(PDFJS)
+String contextMenuItemPDFAutoSize()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Automatically Resize", "_Automatically Resize", "Automatically Resize context menu item");
+}
+
+String contextMenuItemPDFZoomIn()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Zoom In", "_Zoom In", "Zoom In Continuous context menu item");
+}
+
+String contextMenuItemPDFZoomOut()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Zoom Out", "_Zoom Out", "Zoom Out context menu item");
+}
+
+String contextMenuItemPDFActualSize()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Actual Size", "_Actual Size", "Actual Size context menu item");
+}
+
 String contextMenuItemPDFSinglePage()
 {
     return WEB_UI_STRING_WITH_MNEMONIC("Single Page", "_Single Page", "Single Page context menu item");
@@ -506,6 +526,16 @@ String contextMenuItemPDFTwoPages()
 String contextMenuItemPDFTwoPagesContinuous()
 {
     return WEB_UI_STRING_WITH_MNEMONIC("Two Pages Continuous", "_Two Pages Continuous", "Two Pages Continuous context menu item");
+}
+
+String contextMenuItemPDFNextPage()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Next Page", "_Next Page", "Next Page context menu item");
+}
+
+String contextMenuItemPDFPreviousPage()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Previous Page", "_Previous Page", "Previous Page context menu item");
 }
 #endif
 

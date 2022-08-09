@@ -1703,6 +1703,14 @@
 "Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings." = "Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.";
 
 /* PDFJS strings */
+"Automatically Resize" = "Automatically Resize";
+
+"Zoom In" = "Zoom In";
+
+"Zoom Out" = "Zoom Out";
+
+"Actual Size" = "Actual Size";
+
 "Single Page" = "Single Page";
 
 "Single Page Continuous" = "Single Page Continuous";
@@ -1711,3 +1719,6 @@
 
 "Two Pages Continuous" = "Two Pages Continuous";
 
+"Next Page" = "Next Page";
+
+"Previous Page" = "Previous Page";

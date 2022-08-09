@@ -162,10 +162,16 @@ namespace WebCore {
 #endif // ENABLE(CONTEXT_MENUS)
 
 #if ENABLE(PDFJS)
-WEBCORE_EXPORT String contextMenuItemPDFSinglePage();
-WEBCORE_EXPORT String contextMenuItemPDFSinglePageContinuous();
-WEBCORE_EXPORT String contextMenuItemPDFTwoPages();
-WEBCORE_EXPORT String contextMenuItemPDFTwoPagesContinuous();
+    String contextMenuItemPDFAutoSize();
+    String contextMenuItemPDFZoomIn();
+    String contextMenuItemPDFZoomOut();
+    String contextMenuItemPDFActualSize();
+    String contextMenuItemPDFSinglePage();
+    String contextMenuItemPDFSinglePageContinuous();
+    String contextMenuItemPDFTwoPages();
+    String contextMenuItemPDFTwoPagesContinuous();
+    String contextMenuItemPDFNextPage();
+    String contextMenuItemPDFPreviousPage();
 #endif
 
 #if !PLATFORM(IOS_FAMILY)

@@ -554,6 +554,18 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
 #endif
         break;
 #if ENABLE(PDFJS)
+    case ContextMenuItemPDFAutoSize:
+        performPDFJSAction(*frame, "context-menu-auto-size"_s);
+        break;
+    case ContextMenuItemPDFZoomIn:
+        performPDFJSAction(*frame, "context-menu-zoom-in"_s);
+        break;
+    case ContextMenuItemPDFZoomOut:
+        performPDFJSAction(*frame, "context-menu-zoom-out"_s);
+        break;
+    case ContextMenuItemPDFActualSize:
+        performPDFJSAction(*frame, "context-menu-actual-size"_s);
+        break;
     case ContextMenuItemPDFSinglePage:
         performPDFJSAction(*frame, "context-menu-single-page"_s);
         break;
@@ -565,6 +577,12 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
     case ContextMenuItemPDFTwoPagesContinuous:
         performPDFJSAction(*frame, "context-menu-two-pages-continuous"_s);
+        break;
+    case ContextMenuItemPDFNextPage:
+        performPDFJSAction(*frame, "context-menu-next-page"_s);
+        break;
+    case ContextMenuItemPDFPreviousPage:
+        performPDFJSAction(*frame, "context-menu-previous-page"_s);
         break;
 #endif
     default:
@@ -832,10 +850,18 @@ void ContextMenuController::populate()
 #endif
 
 #if ENABLE(PDFJS)
-    ContextMenuItem SinglePageItem(ActionType, ContextMenuItemPDFSinglePage, contextMenuItemPDFSinglePage());
-    ContextMenuItem SinglePageContinuousItem(ActionType, ContextMenuItemPDFSinglePageContinuous, contextMenuItemPDFSinglePageContinuous());
-    ContextMenuItem TwoPagesItem(ActionType, ContextMenuItemPDFTwoPages, contextMenuItemPDFTwoPages());
-    ContextMenuItem TwoPagesContinuousItem(ActionType, ContextMenuItemPDFTwoPagesContinuous, contextMenuItemPDFTwoPagesContinuous());
+    ContextMenuItem PDFAutoSizeItem(ActionType, ContextMenuItemPDFAutoSize, contextMenuItemPDFAutoSize());
+    ContextMenuItem PDFZoomInItem(ActionType, ContextMenuItemPDFZoomIn, contextMenuItemPDFZoomIn());
+    ContextMenuItem PDFZoomOutItem(ActionType, ContextMenuItemPDFZoomOut, contextMenuItemPDFZoomOut());
+    ContextMenuItem PDFActualSizeItem(ActionType, ContextMenuItemPDFActualSize, contextMenuItemPDFActualSize());
+
+    ContextMenuItem PDFSinglePageItem(ActionType, ContextMenuItemPDFSinglePage, contextMenuItemPDFSinglePage());
+    ContextMenuItem PDFSinglePageContinuousItem(ActionType, ContextMenuItemPDFSinglePageContinuous, contextMenuItemPDFSinglePageContinuous());
+    ContextMenuItem PDFTwoPagesItem(ActionType, ContextMenuItemPDFTwoPages, contextMenuItemPDFTwoPages());
+    ContextMenuItem PDFTwoPagesContinuousItem(ActionType, ContextMenuItemPDFTwoPagesContinuous, contextMenuItemPDFTwoPagesContinuous());
+
+    ContextMenuItem PDFNextPageItem(ActionType, ContextMenuItemPDFNextPage, contextMenuItemPDFNextPage());
+    ContextMenuItem PDFPreviousPageItem(ActionType, ContextMenuItemPDFPreviousPage, contextMenuItemPDFPreviousPage());
 #endif
     
 #if ENABLE(APP_HIGHLIGHTS)
@@ -1031,14 +1057,13 @@ void ContextMenuController::populate()
                 appendItem(ReloadItem, m_contextMenu.get());
 #else
 
-                
-                if (isMainFrame || isPDFDocument) {
+                if (isMainFrame) {
                     if (page && page->backForward().canGoBackOrForward(-1))
                         appendItem(BackItem, m_contextMenu.get());
 
                     if (page && page->backForward().canGoBackOrForward(1))
                         appendItem(ForwardItem, m_contextMenu.get());
-                    
+
                     // Here we use isLoadingInAPISense rather than isLoading because Stop/Reload are
                     // intended to match WebKit's API, not WebCore's internal notion of loading status.
                     if (loader.documentLoader()->isLoadingInAPISense())
@@ -1058,10 +1083,22 @@ void ContextMenuController::populate()
             }
 #if ENABLE(PDFJS)
             if (isPDFDocument) {
-                appendItem(SinglePageItem, m_contextMenu.get());
-                appendItem(SinglePageContinuousItem, m_contextMenu.get());
-                appendItem(TwoPagesItem, m_contextMenu.get());
-                appendItem(TwoPagesContinuousItem, m_contextMenu.get());
+                if (m_contextMenu && !m_contextMenu->items().isEmpty())
+                    appendItem(*separatorItem(), m_contextMenu.get());
+                appendItem(PDFAutoSizeItem, m_contextMenu.get());
+                appendItem(PDFZoomInItem, m_contextMenu.get());
+                appendItem(PDFZoomOutItem, m_contextMenu.get());
+                appendItem(PDFActualSizeItem, m_contextMenu.get());
+                appendItem(*separatorItem(), m_contextMenu.get());
+
+                appendItem(PDFSinglePageItem, m_contextMenu.get());
+                appendItem(PDFSinglePageContinuousItem, m_contextMenu.get());
+                appendItem(PDFTwoPagesItem, m_contextMenu.get());
+                appendItem(PDFTwoPagesContinuousItem, m_contextMenu.get());
+                appendItem(*separatorItem(), m_contextMenu.get());
+
+                appendItem(PDFNextPageItem, m_contextMenu.get());
+                appendItem(PDFPreviousPageItem, m_contextMenu.get());
             }
 #endif
         } else if (!ShareMenuItem.isNull()) {
@@ -1234,6 +1271,11 @@ void ContextMenuController::addInspectElementItem()
     Page* page = frame->page();
     if (!page)
         return;
+
+#if ENABLE(PDFJS)
+    if (RefPtr ownerElement = frame->ownerElement(); ownerElement && ownerElement->document().isPDFDocument())
+        return;
+#endif
 
     ContextMenuItem InspectElementItem(ActionType, ContextMenuItemTagInspectElement, contextMenuItemTagInspectElement());
     if (m_contextMenu && !m_contextMenu->items().isEmpty())
