@@ -1,0 +1,28 @@
+
+
+PASS Deletes are processed in order
+PASS  - advance
+PASS  - continue
+PASS  - fresh advance still async
+PASS  - fresh continue still async
+PASS Single item get
+PASS Empty object store
+PASS Get all keys
+PASS maxCount=10
+PASS Get bound range
+PASS Get bound range with maxCount
+PASS Get upper excluded
+PASS Get lower excluded
+PASS Get bound range (generated) with maxCount
+PASS Non existent key
+PASS maxCount=0
+PASS Retrieve multiEntry key
+PASS Retrieve one key multiple values
+PASS IDBObjectStore.openKeyCursor() - forward iteration
+PASS IDBObjectStore.openKeyCursor() - reverse iteration
+PASS IDBObjectStore.openKeyCursor() - forward iteration with range
+PASS IDBObjectStore.openKeyCursor() - reverse iteration with range
+PASS IDBObjectStore.openKeyCursor() - invalid inputs
+PASS  - request gotten by the handler
+PASS  - request returned by open()
+

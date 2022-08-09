@@ -11,6 +11,78 @@
     "http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html": [
         "slow"
     ],
+    "imported/w3c/IndexedDB/database-names-by-origin.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/idb-binary-key-roundtrip.htm": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/idbcursor-continuePrimaryKey-exception-order.htm": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/idbdatabase_createObjectStore10-1000ends.htm": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/idbdatabase_createObjectStore8-parameters.htm": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/idbindex-multientry-big.htm": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/idbindex-rename.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/idbobjectstore-rename-store.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/idbobjectstore_createIndex15-autoincrement.htm": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/idbobjectstore_createIndex3-usable-right-away.htm": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/idbobjectstore_createIndex8-valid_keys.htm": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/interleaved-cursors-large.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/interleaved-cursors-small.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/key-conversion-exceptions.htm": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/key_valid.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/keypath_maxsize.htm": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/large-requests-abort.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/nested-cloning-large-multiple.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/nested-cloning-large.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/nested-cloning-small.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/parallel-cursors-upgrade.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/request-abort-ordering.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/request-event-ordering.html": [
+        "slow"
+    ],
+    "imported/w3c/IndexedDB/writer-starvation.htm": [
+        "slow"
+    ],
     "imported/w3c/css/css-color/color-resolving-hsl.html": [
         "slow"
     ],

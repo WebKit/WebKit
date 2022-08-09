@@ -1,0 +1,26 @@
+
+FAIL TypeError: TypeError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL TypeError: TypeError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL URIError: URIError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL URIError: URIError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS Array:
+PASS Array: 1,2,3
+PASS Array: foo,bar,,,,,,,,,true,false,,,,,,,,,123,456,,,,,,,,,
+PASS Array: foo,bar
+PASS Object: [object Object]
+PASS DOMMatrix: matrix(1, 0, 0, 1, 0, 0)
+PASS DOMMatrixReadOnly: matrix(1, 0, 0, 1, 0, 0)
+PASS DOMPoint: [object DOMPoint]
+PASS DOMPointReadOnly: [object DOMPointReadOnly]
+PASS DOMRect: [object DOMRect]
+PASS DOMRectReadOnly: [object DOMRectReadOnly]
+PASS ImageData: [object ImageData]
+PASS Blob: [object Blob]
+PASS File: [object File]
+PASS FileList: [object FileList]
+PASS Not serializable: function: function () {}
+PASS Not serializable: symbol: Symbol(desc)
+PASS Not serializable: Window: [object Window]
+PASS Not serializable: Event: [object Event]
+PASS Not serializable: MessageChannel: [object MessageChannel]
+

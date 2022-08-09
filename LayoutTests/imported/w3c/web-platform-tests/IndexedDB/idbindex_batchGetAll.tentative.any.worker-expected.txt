@@ -1,0 +1,9 @@
+
+FAIL Single getAll index.batchGetAll is not a function. (In 'index.batchGetAll(ranges, maxCount)', 'index.batchGetAll' is undefined)
+FAIL Multiple getAll index.batchGetAll is not a function. (In 'index.batchGetAll(ranges, maxCount)', 'index.batchGetAll' is undefined)
+FAIL Get bound range index.batchGetAll is not a function. (In 'index.batchGetAll(ranges, maxCount)', 'index.batchGetAll' is undefined)
+FAIL Get bound range with maxCount index.batchGetAll is not a function. (In 'index.batchGetAll(ranges, maxCount)', 'index.batchGetAll' is undefined)
+FAIL Non existent key index.batchGetAll is not a function. (In 'index.batchGetAll(ranges, maxCount)', 'index.batchGetAll' is undefined)
+FAIL Retrieve multiEntry key index.batchGetAll is not a function. (In 'index.batchGetAll(ranges, maxCount)', 'index.batchGetAll' is undefined)
+FAIL Retrieve one key multiple values index.batchGetAll is not a function. (In 'index.batchGetAll(ranges, maxCount)', 'index.batchGetAll' is undefined)
+

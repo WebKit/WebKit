@@ -1,0 +1,10 @@
+
+FAIL Single item get store.batchGetAll is not a function. (In 'store.batchGetAll(ranges, maxCount)', 'store.batchGetAll' is undefined)
+FAIL batchGetAll on empty object store store.batchGetAll is not a function. (In 'store.batchGetAll(ranges, maxCount)', 'store.batchGetAll' is undefined)
+FAIL batchGetAll with non-existing values store.batchGetAll is not a function. (In 'store.batchGetAll(ranges, maxCount)', 'store.batchGetAll' is undefined)
+FAIL Get bound range with maxCount store.batchGetAll is not a function. (In 'store.batchGetAll(ranges, maxCount)', 'store.batchGetAll' is undefined)
+FAIL Get bound range store.batchGetAll is not a function. (In 'store.batchGetAll(ranges, maxCount)', 'store.batchGetAll' is undefined)
+FAIL Get upper/lower excluded store.batchGetAll is not a function. (In 'store.batchGetAll(ranges, maxCount)', 'store.batchGetAll' is undefined)
+FAIL Get bound range (generated) with maxCount store.batchGetAll is not a function. (In 'store.batchGetAll(ranges, maxCount)', 'store.batchGetAll' is undefined)
+FAIL zero maxCount store.batchGetAll is not a function. (In 'store.batchGetAll(ranges, maxCount)', 'store.batchGetAll' is undefined)
+

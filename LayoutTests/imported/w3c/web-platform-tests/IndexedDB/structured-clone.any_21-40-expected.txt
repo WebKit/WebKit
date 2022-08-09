@@ -1,0 +1,22 @@
+
+PASS number: Infinity
+PASS bigint: -12345678901234567890
+PASS bigint: -1
+PASS bigint: 0
+PASS bigint: 1
+PASS bigint: 12345678901234567890
+PASS string:
+PASS string: this is a sample string
+PASS string: null(\0)
+PASS Boolean: false
+PASS Boolean: true
+PASS Number: NaN
+PASS Number: -Infinity
+PASS Number: -1.7976931348623157e+308
+PASS Number: -4294967295
+PASS Number: -2147483648
+PASS Number: -2147483647
+PASS Number: -1
+PASS Number: -5e-324
+PASS Number: -0
+
