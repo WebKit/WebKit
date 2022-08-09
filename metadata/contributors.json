@@ -6103,6 +6103,13 @@
    },
    {
       "emails" : [
+         "serakeri@gmail.com"
+      ],
+      "github" : "serakeri",
+      "name" : "Sara Kelley"
+   },
+   {
+      "emails" : [
          "satish@chromium.org"
       ],
       "name" : "Satish Sampath"
