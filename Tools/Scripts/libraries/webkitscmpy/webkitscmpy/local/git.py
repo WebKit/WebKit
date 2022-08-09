@@ -32,7 +32,7 @@ import time
 
 from collections import defaultdict
 
-from webkitcorepy import run, decorators, NestedFuzzyDict
+from webkitcorepy import run, decorators, NestedFuzzyDict, Version
 from webkitscmpy.local import Scm
 from webkitscmpy import remote, Commit, Contributor, log
 
@@ -318,6 +318,13 @@ class Git(Scm):
         return Scm.executable('git')
 
     @classmethod
+    @decorators.Memoize()
+    def version(cls):
+        output = run([cls.executable(), 'version'], capture_output=True, encoding='utf-8', check=True).stdout
+        assert output.startswith("git version ")
+        return Version.from_string(output.split()[2])
+
+    @classmethod
     def is_checkout(cls, path):
         return run([cls.executable(), 'rev-parse', '--show-toplevel'], cwd=path, capture_output=True).returncode == 0
 
@@ -527,7 +534,56 @@ class Git(Scm):
         return int(revision_count.stdout)
 
     @decorators.Memoize(cached=False)
-    def branches_for(self, hash=None, remote=True):
+    def branches_for(self, hash=None, remote=True, _use_legacy=False):
+        if _use_legacy or (hash is not None and self.version() < (2, 7)):
+            return self._legacy_branches_for(hash, remote)
+
+        if hash:
+            contains = ['--contains', hash]
+        else:
+            contains = []
+
+        group_remotes = False
+        if isinstance(remote, str):
+            patterns = ['refs/remotes/{}'.format(remote)]
+        else:
+            patterns = ['refs/heads']
+            if remote is not False:
+                patterns.append('refs/remotes')
+                group_remotes = remote is not True
+
+        refs = run(
+            [self.executable(), 'for-each-ref', '--format', '%(refname)'] + contains + patterns,
+            cwd=self.root_path,
+            capture_output=True,
+            encoding='utf-8',
+        )
+        if refs.returncode:
+            raise self.Exception('Failed to retrieve branch list for {}'.format(self.root_path))
+
+        results = set()
+        by_remote = defaultdict(set)
+
+        for line in refs.stdout.split("\n"):
+            if line.startswith("refs/heads/"):
+                results.add(line[len("refs/heads/"):])
+            elif line.startswith("refs/remotes/"):
+                ref_path = line.split("/", 3)
+                if len(ref_path) == 4:
+                    if group_remotes:
+                        by_remote[ref_path[2]].add(ref_path[3])
+                    else:
+                        results.add(ref_path[3])
+            elif line:
+                raise self.Exception("unexpected output from for-each-ref")
+
+        if group_remotes:
+            by_remote[None] = results
+            return by_remote
+
+        return sorted(results)
+
+    def _legacy_branches_for(self, hash=None, remote=True):
         branch = run(
             [self.executable(), 'branch'] + (['--contains', hash, '-a'] if hash else ['-a']),
             cwd=self.root_path,
