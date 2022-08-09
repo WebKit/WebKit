@@ -966,7 +966,7 @@ UseCGDisplayListOutOfLineSurfaces:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: true
+      default: false
 
 UseCGDisplayListsForDOMRendering:
   type: bool
