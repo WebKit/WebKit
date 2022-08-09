@@ -31,12 +31,14 @@
 # * A feature enabled here but not WebKitFeatures.cmake is EXPERIMENTAL.
 # * A feature enabled in WebKitFeatures.cmake but not here is a BUG.
 
+package webkitperl::FeatureList;
+
 use strict;
 use warnings;
 
 use FindBin;
 use lib $FindBin::Bin;
-use webkitdirs;
+use autouse 'webkitdirs' => qw(prohibitUnknownPort);
 
 BEGIN {
    use Exporter   ();
@@ -573,7 +575,7 @@ my @features = (
 
 sub getFeatureOptionList()
 {
-    prohibitUnknownPort();
+    webkitdirs::prohibitUnknownPort();
     return @features;
 }
 

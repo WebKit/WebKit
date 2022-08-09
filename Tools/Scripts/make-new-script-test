@@ -31,6 +31,7 @@ use warnings;
 use FindBin;
 use lib $FindBin::Bin;
 
+use Cwd;
 use File::Basename;
 use Getopt::Long;
 use webkitdirs;
