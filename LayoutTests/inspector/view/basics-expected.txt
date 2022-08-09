@@ -70,12 +70,30 @@ PASS: Parent attached to root view should have 1 dirty descendant.
 PASS: Root view should not be dirty.
 PASS: Parent attached to root view should be dirty.
 PASS: Child attached to parent view should be dirty.
+- Simulating layout.
+PASS: Root view should have 0 dirty descendants.
+PASS: Parent attached to root view should have 0 dirty descendants.
+PASS: Root view should not be dirty.
+PASS: Parent attached to root view should not be dirty.
+PASS: Child attached to parent view should not be dirty.
+- Dirtying parent.
+PASS: Root view should have 1 dirty descendant.
+PASS: Parent attached to root view should have 0 dirty descendant.
+PASS: Root view should not be dirty.
+PASS: Parent attached to root view should be dirty.
+PASS: Child attached to parent view should not be dirty.
 - Removing parent view from root view.
 PASS: Root view should have 0 dirty descendants.
 PASS: Parent detached from root view should have 0 dirty descendants.
 PASS: Root view should not be dirty.
 PASS: Parent detached from root view should not be dirty.
 PASS: Child attached to detached parent view should not be dirty.
+- Dirtying child.
+PASS: Root view should have 0 dirty descendants.
+PASS: Parent attached to root view should have 1 dirty descendants.
+PASS: Root view should not be dirty.
+PASS: Parent detached from root view should not be dirty.
+PASS: Child attached to parent view should be dirty.
 - Adding parent view to root view.
 PASS: Root view should have 1 dirty descendant.
 PASS: Parent detached from root view should have 0 dirty descendants.
