@@ -23,6 +23,7 @@
 #include "config.h"
 #include "Completion.h"
 
+#include "BuiltinNames.h"
 #include "BytecodeCacheError.h"
 #include "CatchScope.h"
 #include "CodeCache.h"
