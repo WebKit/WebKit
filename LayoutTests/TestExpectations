@@ -2710,8 +2710,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/letter-spacing/
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-nesting-002.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-end-of-line-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-nesting-003.xht [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-009.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-010.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-hyphens-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-shaping-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-016.html [ ImageOnlyFailure ]
@@ -3243,8 +3241,6 @@ imported/w3c/web-platform-tests/css/css-ui/text-overflow-028.html [ ImageOnlyFai
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-029.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/mediaqueries/viewport-script-dynamic.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/selectors/selection-image-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/selectors/selection-image-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/selector-structural-pseudo-root.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.html [ Pass Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker.html [ Pass Failure ]
@@ -3313,8 +3309,6 @@ webkit.org/b/189917 imported/w3c/web-platform-tests/html/webappapis/dynamic-mark
 imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-closed.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-2.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-2.html [ Skip ]
-
-imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ ImageOnlyFailure ]
 
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
 
@@ -4555,9 +4549,7 @@ webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-rules
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-text.html [ ImageOnlyFailure ]
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-table-cell-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-margin-root-001.html [ ImageOnlyFailure ]
 webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-iframe-root.html [ ImageOnlyFailure ]
-webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-root.html [ ImageOnlyFailure ]
 webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-transformed-root.html [ ImageOnlyFailure ]
 webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-will-change-root.html [ ImageOnlyFailure ]
 webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-gradient.html [ ImageOnlyFailure ]
@@ -4636,7 +4628,6 @@ webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overfl
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-scroll-vertical-lr-rtl-001.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-scroll-vertical-rl-001.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-scroll-vertical-rl-rtl-001.html [ ImageOnlyFailure ]
-webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-035.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-with-line-height.tentative.html [ ImageOnlyFailure ]
 
 webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-051.html [ ImageOnlyFailure ]
@@ -4760,7 +4751,6 @@ webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/prefers-col
 
 webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-values/ex-unit-004.html [ ImageOnlyFailure ]
 webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/formatting-context/shape-outside-formatting-context.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-display/display-first-line-002.html [ ImageOnlyFailure ]
 
 # WebKit2 only.
 js/throw-large-string-oom.html [ Skip ]
@@ -4904,8 +4894,6 @@ imported/w3c/web-platform-tests/css/css-contain/quote-scoping-001.html [ ImageOn
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-004.html [ ImageOnlyFailure ]
-# innerText bug
-webkit.org/b/238555 imported/w3c/web-platform-tests/css/css-contain/contain-flexbox-outline.html [ Failure ]
 
 # Container queries
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/custom-layout-container-001.https.html [ ImageOnlyFailure ]
@@ -5133,7 +5121,6 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-select
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-025.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-027.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-031.html [ ImageOnlyFailure ]
-webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-041.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-043.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-045.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-057.html [ ImageOnlyFailure ]
@@ -5204,15 +5191,12 @@ imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-invert.
 imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-clipped-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-after-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-delete.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/effect-reference-displacement-negative-scale-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-lighting-no-light.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/effect-reference-local-url-with-base-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-rename-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-rename-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/fecomposite-non-zero-inoffset-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-cb-abspos-inline-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-cb-abspos-inline-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-cb-dynamic-1b.html [ ImageOnlyFailure ]
