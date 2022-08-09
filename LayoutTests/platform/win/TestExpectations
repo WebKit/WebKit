@@ -5106,3 +5106,5 @@ webkit.org/b/241282 webanimations/accelerated-animations-and-motion-path.html [ 
 webkit.org/b/241377 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/241382 html5lib/generated/run-tests19-data.html [ Pass Crash ]
+
+webkit.org/b/243648 scrollbars/transparent-scrollbar.html [ ImageOnlyFailure ]
