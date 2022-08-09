@@ -54,6 +54,7 @@ RemoteScrollingCoordinatorProxy::RemoteScrollingCoordinatorProxy(WebPageProxy& w
 
 RemoteScrollingCoordinatorProxy::~RemoteScrollingCoordinatorProxy()
 {
+    m_scrollingTree->invalidate();
 }
 
 ScrollingNodeID RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const

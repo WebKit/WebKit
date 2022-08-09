@@ -57,8 +57,12 @@ RemoteScrollingTree::RemoteScrollingTree(RemoteScrollingCoordinatorProxy& scroll
 {
 }
 
-RemoteScrollingTree::~RemoteScrollingTree()
+RemoteScrollingTree::~RemoteScrollingTree() = default;
+
+void RemoteScrollingTree::invalidate()
 {
+    Locker locker { m_treeLock };
+    removeAllNodes();
 }
 
 #if PLATFORM(MAC)

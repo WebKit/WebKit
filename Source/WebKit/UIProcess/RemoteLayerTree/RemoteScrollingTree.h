@@ -46,6 +46,8 @@ public:
 
     bool isRemoteScrollingTree() const final { return true; }
 
+    void invalidate() final;
+
     void handleMouseEvent(const WebCore::PlatformMouseEvent&);
 
     const RemoteScrollingCoordinatorProxy& scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy; }
