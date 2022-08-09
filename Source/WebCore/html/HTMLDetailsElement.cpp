@@ -51,7 +51,7 @@ static const AtomString& summarySlotName()
     return summarySlot;
 }
 
-class DetailsSlotAssignment final : public SlotAssignment {
+class DetailsSlotAssignment final : public NamedSlotAssignment {
 private:
     void hostChildElementDidChange(const Element&, ShadowRoot&) override;
     const AtomString& slotNameForHostChild(const Node&) const override;
@@ -64,7 +64,7 @@ void DetailsSlotAssignment::hostChildElementDidChange(const Element& childElemen
         // since we don't know the answer when this function is called inside Element::removedFrom.
         didChangeSlot(summarySlotName(), shadowRoot);
     } else
-        didChangeSlot(SlotAssignment::defaultSlotName(), shadowRoot);
+        didChangeSlot(NamedSlotAssignment::defaultSlotName(), shadowRoot);
 }
 
 const AtomString& DetailsSlotAssignment::slotNameForHostChild(const Node& child) const
@@ -78,7 +78,7 @@ const AtomString& DetailsSlotAssignment::slotNameForHostChild(const Node& child)
         if (&child == childrenOfType<HTMLSummaryElement>(details).first())
             return summarySlotName();
     }
-    return SlotAssignment::defaultSlotName();
+    return NamedSlotAssignment::defaultSlotName();
 }
 
 Ref<HTMLDetailsElement> HTMLDetailsElement::create(const QualifiedName& tagName, Document& document)

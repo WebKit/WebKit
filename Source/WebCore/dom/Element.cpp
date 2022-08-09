@@ -2820,7 +2820,7 @@ void Element::childrenChanged(const ChildChange& change)
         case ChildChange::Type::TextInserted:
         case ChildChange::Type::TextRemoved:
         case ChildChange::Type::TextChanged:
-            shadowRoot->didChangeDefaultSlot();
+            shadowRoot->didMutateTextNodesOfShadowHost();
             break;
         case ChildChange::Type::NonContentsChildInserted:
         case ChildChange::Type::NonContentsChildRemoved:

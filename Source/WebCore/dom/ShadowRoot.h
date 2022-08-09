@@ -101,7 +101,7 @@ public:
     void willRemoveAssignedNode(const Node&);
 
     void didRemoveAllChildrenOfShadowHost();
-    void didChangeDefaultSlot();
+    void didMutateTextNodesOfShadowHost();
     void hostChildElementDidChange(const Element&);
     void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue);
 
