@@ -1919,3 +1919,6 @@ webkit.org/b/243494 [ Debug ] compositing/layer-creation/scale-rotation-animatio
 
 # Skip Compression Stream Tests on WK1
 imported/w3c/web-platform-tests/compression [ Skip ]
+
+# webkit.org/b/243733 [ Mac wk1 ] Many recently imported mixed-content WPT tests are failing on Mac wk1
+imported/w3c/web-platform-tests/mixed-content [ Skip ]
