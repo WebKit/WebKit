@@ -250,7 +250,7 @@ void ShadowRoot::addSlotElementByName(const AtomString& name, HTMLSlotElement& s
 {
     ASSERT(&slot.rootNode() == this);
     if (!m_slotAssignment)
-        m_slotAssignment = makeUnique<SlotAssignment>();
+        m_slotAssignment = makeUnique<NamedSlotAssignment>();
 
     return m_slotAssignment->addSlotElementByName(name, slot, *this);
 }

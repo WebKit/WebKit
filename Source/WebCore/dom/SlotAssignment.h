@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "RenderTreeUpdater.h"
 #include "ShadowRoot.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -43,29 +42,62 @@ class Node;
 class SlotAssignment {
     WTF_MAKE_NONCOPYABLE(SlotAssignment); WTF_MAKE_FAST_ALLOCATED;
 public:
-    SlotAssignment();
-    virtual ~SlotAssignment();
+    SlotAssignment() = default;
+    virtual ~SlotAssignment() = default;
 
-    static const AtomString& defaultSlotName() { return emptyAtom(); }
-
-    HTMLSlotElement* findAssignedSlot(const Node&);
-
-    void renameSlotElement(HTMLSlotElement&, const AtomString& oldName, const AtomString& newName, ShadowRoot&);
-    void addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&);
-    void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot&);
-    void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&);
-
+    // These functions are only useful for NamedSlotAssignment but it's here to avoid virtual function calls in perf critical code paths.
     void resolveSlotsBeforeNodeInsertionOrRemoval();
     void willRemoveAllChildren();
 
+    virtual HTMLSlotElement* findAssignedSlot(const Node&) = 0;
+    virtual const Vector<WeakPtr<Node>>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&) = 0;
+
+    virtual void renameSlotElement(HTMLSlotElement&, const AtomString& oldName, const AtomString& newName, ShadowRoot&) = 0;
+    virtual void addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&) = 0;
+    virtual void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot&) = 0;
+    virtual void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&) = 0;
+
+    virtual void hostChildElementDidChange(const Element&, ShadowRoot&) = 0;
+    virtual void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue, ShadowRoot&) = 0;
+
+    virtual void willRemoveAssignedNode(const Node&) = 0;
+    virtual void didRemoveAllChildrenOfShadowHost(ShadowRoot&) = 0;
+    virtual void didMutateTextNodesOfShadowHost(ShadowRoot&) = 0;
+
+protected:
+    // These flags are used by NamedSlotAssignment but it's here to avoid virtual function calls in perf critical code paths.
+    bool m_slotAssignmentsIsValid { false };
+    bool m_willBeRemovingAllChildren { false };
+    unsigned m_slotMutationVersion { 0 };
+};
+
+class NamedSlotAssignment : public SlotAssignment {
+    WTF_MAKE_NONCOPYABLE(NamedSlotAssignment); WTF_MAKE_FAST_ALLOCATED;
+public:
+    NamedSlotAssignment();
+    virtual ~NamedSlotAssignment();
+
+    static const AtomString& defaultSlotName() { return emptyAtom(); }
+
+protected:
     void didChangeSlot(const AtomString&, ShadowRoot&);
 
-    const Vector<WeakPtr<Node>>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&);
-    void willRemoveAssignedNode(const Node&);
-
-    virtual void hostChildElementDidChange(const Element&, ShadowRoot&);
-
 private:
+    HTMLSlotElement* findAssignedSlot(const Node&) final;
+
+    void renameSlotElement(HTMLSlotElement&, const AtomString& oldName, const AtomString& newName, ShadowRoot&) final;
+    void addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&) final;
+    void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot&) final;
+    void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&) final;
+
+    const Vector<WeakPtr<Node>>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&) final;
+    void willRemoveAssignedNode(const Node&) final;
+
+    void didRemoveAllChildrenOfShadowHost(ShadowRoot&) final;
+    void didMutateTextNodesOfShadowHost(ShadowRoot&) final;
+    void hostChildElementDidChange(const Element&, ShadowRoot&) override;
+    void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue, ShadowRoot&) final;
+
     struct Slot {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -93,17 +125,14 @@ private:
     void assignSlots(ShadowRoot&);
     void assignToSlot(Node& child, const AtomString& slotName);
 
+    unsigned m_slotResolutionVersion { 0 };
+    unsigned m_slotElementCount { 0 };
+
     HashMap<AtomString, std::unique_ptr<Slot>> m_slots;
 
 #if ASSERT_ENABLED
     HashSet<HTMLSlotElement*> m_slotElementsForConsistencyCheck;
 #endif
-
-    bool m_slotAssignmentsIsValid { false };
-    bool m_willBeRemovingAllChildren { false };
-    unsigned m_slotMutationVersion { 0 };
-    unsigned m_slotResolutionVersion { 0 };
-    unsigned m_slotElementCount { 0 };
 };
 
 inline void SlotAssignment::resolveSlotsBeforeNodeInsertionOrRemoval()
@@ -132,19 +161,19 @@ inline void ShadowRoot::willRemoveAllChildren(ContainerNode&)
 
 inline void ShadowRoot::didRemoveAllChildrenOfShadowHost()
 {
-    if (m_slotAssignment) // FIXME: This is incorrect when there were no elements or text nodes removed.
-        m_slotAssignment->didChangeSlot(nullAtom(), *this);
+    if (UNLIKELY(m_slotAssignment))
+        m_slotAssignment->didRemoveAllChildrenOfShadowHost(*this);
 }
 
-inline void ShadowRoot::didChangeDefaultSlot()
+inline void ShadowRoot::didMutateTextNodesOfShadowHost()
 {
-    if (m_slotAssignment)
-        m_slotAssignment->didChangeSlot(nullAtom(), *this);
+    if (UNLIKELY(m_slotAssignment))
+        m_slotAssignment->didMutateTextNodesOfShadowHost(*this);
 }
 
 inline void ShadowRoot::hostChildElementDidChange(const Element& childElement)
 {
-    if (m_slotAssignment)
+    if (UNLIKELY(m_slotAssignment))
         m_slotAssignment->hostChildElementDidChange(childElement, *this);
 }
 
@@ -152,9 +181,7 @@ inline void ShadowRoot::hostChildElementDidChangeSlotAttribute(Element& element,
 {
     if (!m_slotAssignment)
         return;
-    m_slotAssignment->didChangeSlot(oldValue, *this);
-    m_slotAssignment->didChangeSlot(newValue, *this);
-    RenderTreeUpdater::tearDownRenderers(element);
+    m_slotAssignment->hostChildElementDidChangeSlotAttribute(element, oldValue, newValue, *this);
 }
 
 inline void ShadowRoot::willRemoveAssignedNode(const Node& node)
