@@ -53,11 +53,14 @@ static void setDefaultsToConsistentValuesForTesting()
 
 static void disableAppNapInUIProcess()
 {
-    NSActivityOptions options = (NSActivityUserInitiatedAllowingIdleSystemSleep | NSActivityLatencyCritical) & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
-    static NeverDestroyed<RetainPtr<id>> assertion = [[NSProcessInfo processInfo] beginActivityWithOptions:options reason:@"WebKitTestRunner should not be subject to process suppression"];
+    static NeverDestroyed<RetainPtr<id>> assertion;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSActivityOptions options = (NSActivityUserInitiatedAllowingIdleSystemSleep | NSActivityLatencyCritical) & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
+        assertion.get() = [[NSProcessInfo processInfo] beginActivityWithOptions:options reason:@"WebKitTestRunner should not be subject to process suppression"];
+    });
     ASSERT_UNUSED(assertion, assertion.get());
 }
-
 
 int main(int argc, const char* argv[])
 {
