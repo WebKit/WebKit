@@ -138,8 +138,6 @@
 
 namespace WebCore {
 
-constexpr auto textFieldDidBeginEditingClientNotificationDelay = 500_ms;
-
 static bool dispatchBeforeInputEvent(Element& element, const AtomString& inputType, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)
 {
     auto event = InputEvent::create(eventNames().beforeinputEvent, inputType, cancelable, element.document().windowProxy(), data, WTFMove(dataTransfer), targetRanges, 0);
@@ -1248,7 +1246,6 @@ Editor::Editor(Document& document)
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
     , m_telephoneNumberDetectionUpdateTimer(*this, &Editor::scanSelectionForTelephoneNumbers, 0_s)
 #endif
-    , m_textFieldDidBeginEditingTimer(*this, &Editor::textFieldDidBeginEditingTimerFired)
 {
 }
 
@@ -3471,95 +3468,43 @@ void Editor::computeAndSetTypingStyle(StyleProperties& properties, EditAction ed
     return computeAndSetTypingStyle(EditingStyle::create(&properties), editingAction);
 }
 
-bool Editor::stopTextFieldDidBeginEditingTimer()
+void Editor::textFieldDidBeginEditing(Element& e)
 {
-    if (m_textFieldDidBeginEditingTimer.isActive()) {
-        m_textFieldDidBeginEditingTimer.stop();
-        return true;
-    }
-    return false;
+    if (client())
+        client()->textFieldDidBeginEditing(e);
 }
 
-void Editor::textFieldDidBeginEditingTimerFired()
-{
-    auto* client = this->client();
-    if (!client)
-        return;
-
-    if (RefPtr element = m_document.activeElement())
-        client->textFieldDidBeginEditing(*element);
-}
-
-void Editor::textFieldDidBeginEditing(Element& element)
-{
-    auto* client = this->client();
-    if (!client)
-        return;
-
-    if (isInSubframeWithoutUserInteraction()) {
-        m_textFieldDidBeginEditingTimer.startOneShot(textFieldDidBeginEditingClientNotificationDelay);
-        return;
-    }
-
-    client->textFieldDidBeginEditing(element);
-}
-
-void Editor::textFieldDidEndEditing(Element& element)
+void Editor::textFieldDidEndEditing(Element& e)
 {
     dismissCorrectionPanelAsIgnored();
-
-    auto* client = this->client();
-    if (!client)
-        return;
-
-    if (stopTextFieldDidBeginEditingTimer())
-        return;
-
-    client->textFieldDidEndEditing(element);
+    if (client())
+        client()->textFieldDidEndEditing(e);
 }
 
-void Editor::textDidChangeInTextField(Element& element)
+void Editor::textDidChangeInTextField(Element& e)
 {
-    auto* client = this->client();
-    if (!client)
-        return;
-
-    if (stopTextFieldDidBeginEditingTimer())
-        client->textFieldDidBeginEditing(element);
-    client->textDidChangeInTextField(element);
+    if (client())
+        client()->textDidChangeInTextField(e);
 }
 
-bool Editor::doTextFieldCommandFromEvent(Element& element, KeyboardEvent* event)
+bool Editor::doTextFieldCommandFromEvent(Element& e, KeyboardEvent* ke)
 {
-    auto* client = this->client();
-    if (!client)
-        return false;
+    if (client())
+        return client()->doTextFieldCommandFromEvent(e, ke);
 
-    if (stopTextFieldDidBeginEditingTimer())
-        client->textFieldDidBeginEditing(element);
-    return client->doTextFieldCommandFromEvent(element, event);
+    return false;
 }
 
 void Editor::textWillBeDeletedInTextField(Element& input)
 {
-    auto* client = this->client();
-    if (!client)
-        return;
-
-    if (stopTextFieldDidBeginEditingTimer())
-        client->textFieldDidBeginEditing(input);
-    client->textWillBeDeletedInTextField(input);
+    if (client())
+        client()->textWillBeDeletedInTextField(input);
 }
 
-void Editor::textDidChangeInTextArea(Element& element)
+void Editor::textDidChangeInTextArea(Element& e)
 {
-    auto* client = this->client();
-    if (!client)
-        return;
-
-    if (stopTextFieldDidBeginEditingTimer())
-        client->textFieldDidBeginEditing(element);
-    client->textDidChangeInTextArea(element);
+    if (client())
+        client()->textDidChangeInTextArea(e);
 }
 
 void Editor::applyEditingStyleToBodyElement() const
@@ -3747,11 +3692,6 @@ void Editor::selectionWillChange()
 }
 #endif
 
-bool Editor::isInSubframeWithoutUserInteraction() const
-{
-    return !m_hasHandledAnyEditing && !m_document.hasHadUserInteraction() && !m_document.isTopDocument();
-}
-
 void Editor::respondToChangedSelection(const VisibleSelection&, OptionSet<FrameSelection::SetSelectionOption> options)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -3771,7 +3711,7 @@ void Editor::respondToChangedSelection(const VisibleSelection&, OptionSet<FrameS
     setStartNewKillRingSequence(true);
     m_imageElementsToLoadBeforeRevealingSelection.clear();
 
-    if (isInSubframeWithoutUserInteraction())
+    if (!m_hasHandledAnyEditing && !m_document.hasHadUserInteraction() && !m_document.isTopDocument())
         return;
 
     if (m_editorUIUpdateTimer.isActive())
