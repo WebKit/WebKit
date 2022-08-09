@@ -277,7 +277,7 @@ static unsigned gDidProcessRequestCount = 0;
 
 - (void)_webView:(WKWebView *)webView didFindMatches:(NSUInteger)matches forString:(NSString *)string withMatchIndex:(NSInteger)matchIndex
 {
-    _numCallsToDidFindMatches++;
+    _numberOfCallsToDidFindMatches++;
 }
 
 @end
