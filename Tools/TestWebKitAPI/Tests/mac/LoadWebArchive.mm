@@ -32,6 +32,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKDragDestinationAction.h>
 #import <WebKit/WKNavigationPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -205,9 +206,9 @@ TEST(LoadWebArchive, DragNavigationReload)
     EXPECT_WK_STREQ(finalURL, "");
 }
 
-static NSData* constructArchive()
+static NSData* constructArchive(const char *script)
 {
-    NSString *js = @"alert('loaded http subresource successfully')";
+    auto *js = [NSString stringWithUTF8String:script];
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:[NSURL URLWithString:@"http://download/script.js"] MIMEType:@"application/javascript" expectedContentLength:js.length textEncodingName:@"utf-8"]);
     auto responseArchiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
     [responseArchiver encodeObject:response.get() forKey:@"WebResourceResponse"];
@@ -232,7 +233,7 @@ static NSData* constructArchive()
 
 TEST(LoadWebArchive, HTTPSUpgrade)
 {
-    NSData *data = constructArchive();
+    NSData *data = constructArchive("alert('loaded http subresource successfully')");
 
     auto webView = adoptNS([WKWebView new]);
     [webView loadData:data MIMEType:@"application/x-webarchive" characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"http://download/"]];
@@ -241,7 +242,7 @@ TEST(LoadWebArchive, HTTPSUpgrade)
 
 TEST(LoadWebArchive, DisallowedNetworkHosts)
 {
-    NSData *data = constructArchive();
+    NSData *data = constructArchive("alert('loaded http subresource successfully')");
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get()._allowedNetworkHosts = [NSSet set];
@@ -252,3 +253,7 @@ TEST(LoadWebArchive, DisallowedNetworkHosts)
 }
 
 } // namespace TestWebKitAPI
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/LoadWebArchiveAdditions.mm>
+#endif
