@@ -298,7 +298,7 @@ class Driver(object):
         child_processes = defaultdict(list)
 
         for line in output.splitlines():
-            m = re.match(b'^([^:]+): ([0-9]+)$', line)
+            m = re.match(r'^([^:]+): ([0-9]+)$', line)
             if m:
                 process_name = string_utils.decode(m.group(1), target_type=str)
                 process_id = string_utils.decode(m.group(2), target_type=str)

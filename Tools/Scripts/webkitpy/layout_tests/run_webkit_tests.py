@@ -477,10 +477,6 @@ def _set_up_derived_options(port, options):
     if port.port_name == "win":
         options.ignore_render_tree_dump_results = True
 
-    if options.leaks:
-        options.additional_env_var.append("JSC_usePoisoning=0")
-        options.additional_env_var.append("__XPC_JSC_usePoisoning=0")
-
 def run(port, options, args, logging_stream):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
