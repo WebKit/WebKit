@@ -81,10 +81,9 @@ private:
         if (optimizeForX86() || optimizeForARM64() || optimizeForARMv7IDIVSupported()) {
             fixIntOrBooleanEdge(leftChild);
             fixIntOrBooleanEdge(rightChild);
-            // We need to be careful about skipping overflow check because div / mod can generate non integer values
-            // from (Int32, Int32) inputs. For now, we always check non-zero divisor.
-            if (bytecodeCanTruncateInteger(node->arithNodeFlags()) && bytecodeCanIgnoreNaNAndInfinity(node->arithNodeFlags()) && bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
-                node->setArithMode(Arith::Unchecked);
+            // FIXME: We should attempt to remove checks.
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                node->setArithMode(Arith::CheckOverflow);
             else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                 node->setArithMode(Arith::CheckOverflow);
             else
@@ -124,7 +123,7 @@ private:
 
     void fixupArithDiv(Node* node, Edge& leftChild, Edge& rightChild)
     {
-        if (m_graph.divShouldSpeculateInt32(node, FixupPass)) {
+        if (m_graph.binaryArithShouldSpeculateInt32(node, FixupPass)) {
             fixupArithDivInt32(node, leftChild, rightChild);
             return;
         }
