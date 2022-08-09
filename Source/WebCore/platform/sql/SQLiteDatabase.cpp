@@ -36,19 +36,12 @@
 #include <mutex>
 #include <sqlite3.h>
 #include <thread>
-#include <wtf/FastMalloc.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Lock.h>
 #include <wtf/Scope.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
-
-#if !USE(SYSTEM_MALLOC)
-#include <bmalloc/BPlatform.h>
-// SQLITE_CONFIG_MALLOC requires malloc_size, which only libpas provides (not bmalloc).
-#define ENABLE_SQLITE_FAST_MALLOC BUSE(LIBPAS)
-#endif
 
 namespace WebCore {
 
@@ -82,28 +75,6 @@ static void initializeSQLiteIfNecessary()
 
 static Lock isDatabaseOpeningForbiddenLock;
 static bool isDatabaseOpeningForbidden WTF_GUARDED_BY_LOCK(isDatabaseOpeningForbiddenLock) { false };
-
-void SQLiteDatabase::useFastMalloc()
-{
-#if ENABLE(SQLITE_FAST_MALLOC)
-    int returnCode = sqlite3_config(SQLITE_CONFIG_LOOKASIDE, 0, 0);
-    RELEASE_LOG_ERROR_IF(returnCode != SQLITE_OK, SQLDatabase, "Unable to reduce lookaside buffer size: %d", returnCode);
-
-    static sqlite3_mem_methods fastMallocMethods = {
-        [](int n) { return fastMalloc(n); },
-        fastFree,
-        [](void *p, int n) { return fastRealloc(p, n); },
-        [](void *p) { return static_cast<int>(fastMallocSize(p)); },
-        [](int n) { return static_cast<int>(fastMallocGoodSize(n)); },
-        [](void*) { return SQLITE_OK; },
-        [](void*) { },
-        nullptr
-    };
-
-    returnCode = sqlite3_config(SQLITE_CONFIG_MALLOC, &fastMallocMethods);
-    RELEASE_LOG_ERROR_IF(returnCode != SQLITE_OK, SQLDatabase, "Unable to replace SQLite malloc: %d", returnCode);
-#endif
-}
 
 void SQLiteDatabase::setIsDatabaseOpeningForbidden(bool isForbidden)
 {

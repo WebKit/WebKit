@@ -189,9 +189,5 @@ BEXPORT void enableMiniMode();
 // Used for debugging only.
 BEXPORT void disableScavenger();
 
-#if BUSE(LIBPAS)
-BEXPORT size_t mallocSize(const void*);
-#endif
-
 } // namespace api
 } // namespace bmalloc

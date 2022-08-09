@@ -229,12 +229,5 @@ void disableScavenger()
 #endif
 }
 
-#if BUSE(LIBPAS)
-size_t mallocSize(const void* object)
-{
-    return bmalloc_get_allocation_size(const_cast<void*>(object));
-}
-#endif
-
 } } // namespace bmalloc::api
 
