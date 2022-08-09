@@ -165,8 +165,17 @@ void ScreenCaptureKitSharingSessionManager::pickerCanceledForSession(RetainPtr<S
     ASSERT(isMainThread());
     ASSERT(m_completionHandler);
 
+    RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::pickerCanceledForSession");
+
+    m_promptWatchdogTimer = nullptr;
     if (!m_completionHandler)
         return;
+
+    auto index = m_pendingCaptureSessions.findIf([session](auto pendingSession) {
+        return [pendingSession isEqual:session.get()];
+    });
+    if (index != notFound)
+        m_pendingCaptureSessions.remove(index);
 
     [m_promptHelper stopObservingSession:session.get()];
     [session end];
@@ -178,6 +187,8 @@ void ScreenCaptureKitSharingSessionManager::pickerCanceledForSession(RetainPtr<S
 void ScreenCaptureKitSharingSessionManager::sessionDidEnd(RetainPtr<SCContentSharingSession> session)
 {
     ASSERT(isMainThread());
+
+    RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::sessionDidEnd");
 
     [m_promptHelper stopObservingSession:session.get()];
 
@@ -194,10 +205,14 @@ void ScreenCaptureKitSharingSessionManager::sessionDidChangeContent(RetainPtr<SC
 {
     ASSERT(isMainThread());
 
+    m_promptWatchdogTimer = nullptr;
+
     if ([session content].type == SCContentFilterTypeNothing) {
         sessionDidEnd(session);
         return;
     }
+
+    RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::sessionDidChangeContent");
 
     auto index = m_pendingCaptureSessions.findIf([session](auto pendingSession) {
         return [pendingSession isEqual:session.get()];
@@ -246,6 +261,8 @@ void ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia(PromptType 
     ASSERT(isAvailable());
     ASSERT(!m_completionHandler);
 
+    RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia - %s", promptType == PromptType::Window ? "Window" : "Screen");
+
     if (!isAvailable()) {
         completionHandler(std::nullopt);
         return;
@@ -266,11 +283,23 @@ void ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia(PromptType 
     m_completionHandler = WTFMove(completionHandler);
 
     [session showPickerForType:promptType == PromptType::Window ? SCContentFilterTypeDesktopIndependentWindow : SCContentFilterTypeDisplay];
+
+    constexpr Seconds userPromptWatchdogInterval = 60_s;
+    m_promptWatchdogTimer = makeUnique<RunLoop::Timer<ScreenCaptureKitSharingSessionManager>>(RunLoop::main(), [this, weakThis = WeakPtr { *this }, session = RetainPtr { session }, interval = userPromptWatchdogInterval]() mutable {
+        if (!weakThis)
+            return;
+
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia nothing picked after %f seconds, cancelling.", interval.value());
+        pickerCanceledForSession(session);
+    });
+    m_promptWatchdogTimer->startOneShot(userPromptWatchdogInterval);
 }
 
 RetainPtr<SCContentSharingSession> ScreenCaptureKitSharingSessionManager::takeSharingSessionForFilter(SCContentFilter* filter)
 {
     ASSERT(isMainThread());
+
+    RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::takeSharingSessionForFilter");
 
     auto index = m_pendingCaptureSessions.findIf([filter](auto pendingSession) {
         return [filter isEqual:[pendingSession content]];
