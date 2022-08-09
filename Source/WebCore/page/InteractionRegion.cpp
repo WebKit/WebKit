@@ -105,10 +105,6 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         bounds.inflate(inlinePadding);
     }
 
-    bool hasLightBackground = true;
-    if (auto linkRange = makeRangeSelectingNode(*element))
-        hasLightBackground = estimatedBackgroundColorForRange(*linkRange, *element->document().frame()).luminance() > 0.5;
-
     float borderRadius = 0;
     if (const auto& renderBox = dynamicDowncast<RenderBox>(renderer))
         borderRadius = renderBox->borderRadii().minimumRadius();
@@ -119,7 +115,6 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     return { {
         element->identifier(),
         boundsRegion,
-        hasLightBackground,
         borderRadius
     } };
 }
@@ -127,7 +122,6 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 TextStream& operator<<(TextStream& ts, const InteractionRegion& interactionRegion)
 {
     ts.dumpProperty("region", interactionRegion.regionInLayerCoordinates);
-    ts.dumpProperty("hasLightBackground", interactionRegion.hasLightBackground);
     ts.dumpProperty("borderRadius", interactionRegion.borderRadius);
 
     return ts;

@@ -281,7 +281,6 @@ private:
         { "constrain"_s, "Constrain to Regions"_s, true },
         { "clip"_s, "Clip to Regions"_s, true },
         { "wash"_s, "Draw Wash"_s, false },
-        { "contextualColor"_s, "Contextual Color"_s, true },
         { "contextualSize"_s, "Contextual Size"_s, true },
         { "cursor"_s, "Show Cursor"_s, true },
         { "hover"_s, "CSS Hover"_s, false },
@@ -500,11 +499,11 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
             return gradientData;
         };
 
-        auto makeGradient = [&] (bool hasLightBackground, Gradient::RadialData gradientData) {
+        auto makeGradient = [&] (Gradient::RadialData gradientData) {
             auto gradient = Gradient::create(WTFMove(gradientData), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
             if (region && valueForSetting("wash"_s) && valueForSetting("clip"_s)) {
                 gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.5) });
-                gradient->addColorStop({ 1, hasLightBackground ? Color(Color::black).colorWithAlpha(0.05) : Color(Color::white).colorWithAlpha(0.1) });
+                gradient->addColorStop({ 1, Color(Color::white).colorWithAlpha(0.1) });
             } else if (!valueForSetting("clip"_s) || !valueForSetting("constrain"_s)) {
                 gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.2) });
                 gradient->addColorStop({ 1, Color(Color::white).colorWithAlpha(0) });
@@ -546,18 +545,14 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
             }
         }
 
-        bool hasLightBackground = false;
-        if (!shouldUseBackdropGradient && valueForSetting("contextualColor"_s))
-            hasLightBackground = region->hasLightBackground;
-
         if (shouldClip) {
             for (const auto& path : clipPaths) {
                 float radius = valueForSetting("contextualSize"_s) ? 1.5 * path.boundingRect().size().minDimension() : defaultRadius;
-                context.setFillGradient(makeGradient(hasLightBackground, gradientData(radius)));
+                context.setFillGradient(makeGradient(gradientData(radius)));
                 context.fillPath(path);
             }
         } else {
-            context.setFillGradient(makeGradient(hasLightBackground, gradientData(defaultRadius)));
+            context.setFillGradient(makeGradient(gradientData(defaultRadius)));
             context.fillRect(dirtyRect);
         }
     }

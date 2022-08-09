@@ -47,7 +47,6 @@ class RenderObject;
 struct InteractionRegion {
     ElementIdentifier elementIdentifier;
     Region regionInLayerCoordinates;
-    bool hasLightBackground { false };
     float borderRadius { 0 };
 
     WEBCORE_EXPORT ~InteractionRegion();
@@ -60,7 +59,6 @@ inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
 {
     return a.elementIdentifier == b.elementIdentifier
         && a.regionInLayerCoordinates == b.regionInLayerCoordinates
-        && a.hasLightBackground == b.hasLightBackground
         && a.borderRadius == b.borderRadius;
 }
 
@@ -73,7 +71,6 @@ void InteractionRegion::encode(Encoder& encoder) const
 {
     encoder << elementIdentifier;
     encoder << regionInLayerCoordinates;
-    encoder << hasLightBackground;
     encoder << borderRadius;
 }
 
@@ -90,11 +87,6 @@ std::optional<InteractionRegion> InteractionRegion::decode(Decoder& decoder)
     if (!regionInLayerCoordinates)
         return std::nullopt;
     
-    std::optional<bool> hasLightBackground;
-    decoder >> hasLightBackground;
-    if (!hasLightBackground)
-        return std::nullopt;
-    
     std::optional<float> borderRadius;
     decoder >> borderRadius;
     if (!borderRadius)
@@ -103,7 +95,6 @@ std::optional<InteractionRegion> InteractionRegion::decode(Decoder& decoder)
     return { {
         WTFMove(*elementIdentifier),
         WTFMove(*regionInLayerCoordinates),
-        WTFMove(*hasLightBackground),
         WTFMove(*borderRadius)
     } };
 }
