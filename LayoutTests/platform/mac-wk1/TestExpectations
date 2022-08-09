@@ -168,7 +168,6 @@ imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtas
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-success.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html [ Skip ]
-imported/w3c/web-platform-tests/wasm/serialization/module/broadcastchannel-success-and-failure.html [ Skip ]
 imported/w3c/web-platform-tests/web-locks/acquire.tentative.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/web-locks/held.tentative.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/web-locks/idlharness.tentative.https.any.sharedworker.html [ Skip ]
@@ -255,7 +254,6 @@ imported/w3c/web-platform-tests/workers/shared-worker-name-via-options.html [ Sk
 imported/w3c/web-platform-tests/workers/shared-worker-options-mismatch.html [ Skip ]
 imported/w3c/web-platform-tests/workers/shared-worker-parse-error-failure.html [ Skip ]
 imported/w3c/web-platform-tests/workers/shared-worker-partitioned.tentative.html [ Skip ]
-imported/w3c/web-platform-tests/wasm/serialization/module/window-sharedworker-failure.html [ Skip ]
 imported/w3c/web-platform-tests/xhr/idlharness.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/xhr/open-url-redirected-sharedworker-origin.htm [ Skip ]
 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.sharedworker.html [ Skip ]
@@ -595,7 +593,6 @@ imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtas
 imported/w3c/web-platform-tests/infrastructure/server/context.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/infrastructure/server/secure-context.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-failure.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/wasm/serialization/module/window-serviceworker-failure.https.html [ Skip ]
 imported/w3c/web-platform-tests/web-locks/acquire.tentative.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/web-locks/clientids.tentative.https.html [ Skip ]
 imported/w3c/web-platform-tests/web-locks/held.tentative.https.any.serviceworker.html [ Skip ]
@@ -1922,3 +1919,6 @@ imported/w3c/web-platform-tests/compression [ Skip ]
 
 # webkit.org/b/243733 [ Mac wk1 ] Many recently imported mixed-content WPT tests are failing on Mac wk1
 imported/w3c/web-platform-tests/mixed-content [ Skip ]
+
+# webkit.org/b/243738 [ macOS wk1 ] Multiple imported/w3c/web-platform-tests/wasm tests are a constant failure on Mac wk1
+imported/w3c/web-platform-tests/wasm [ Skip ]
