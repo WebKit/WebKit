@@ -71,19 +71,80 @@ class Branch(Command):
 
     @classmethod
     def branch_point(cls, repository, limit=None):
-        cnt = 0
-        commit = repository.commit(include_log=False, include_identifier=False)
-        while cls.editable(commit.branch, repository=repository):
-            cnt += 1
-            if limit and cnt > limit:
-                return None
-            commit = repository.find(argument='HEAD~{}'.format(cnt), include_log=False, include_identifier=False)
-            if cnt > 1 or commit.branch != repository.branch or cls.editable(commit.branch, repository=repository):
-                log.info('    Found {}...'.format(string_utils.pluralize(cnt, 'commit')))
-            else:
-                log.info('    No commits on editable branch')
+        """Find the closest parent which is on a non-editable branch"""
+        if not isinstance(repository, local.Git):
+            sys.stderr.write("Can only find the branch_point of a git repository\n")
+            return 1
 
-        return commit
+        if limit is None:
+            limit = 1000
+
+        head = repository.commit(include_log=False, include_identifier=False)
+        if not cls.editable(head.branch, repository=repository):
+            return head
+
+        possible_upstreams = []
+        if repository.default_branch:
+            possible_upstreams.append(repository.default_branch)
+            if repository.default_remote:
+                possible_upstreams.append(
+                    "{}/{}".format(repository.default_remote, repository.default_branch)
+                )
+
+        if possible_upstreams:
+            best = min(
+                possible_upstreams,
+                key=lambda x: repository._commit_count("{}..{}".format(x, head.hash)),
+            )
+            assert not cls.editable(best, repository=repository)
+            output = run(
+                [
+                    repository.executable(),
+                    "rev-list",
+                    "--max-count",
+                    str(limit),
+                    "^{}^".format(best),
+                    head.hash,
+                ],
+                cwd=repository.root_path,
+                capture_output=True,
+                encoding="utf-8",
+            )
+        else:
+            output = run(
+                [
+                    repository.executable(),
+                    "rev-list",
+                    "--max-count",
+                    str(limit),
+                    head.hash,
+                ],
+                cwd=repository.root_path,
+                capture_output=True,
+                encoding="utf-8",
+            )
+
+        revs = output.stdout.split("\n")
+
+        cnt = 0
+        lo = 0
+        hi = len(revs)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            commit = repository.find(
+                argument=revs[mid], include_log=False, include_identifier=False
+            )
+            if cls.editable(commit.branch, repository=repository):
+                lo = mid + 1
+            else:
+                hi = mid
+
+        if lo == len(revs):
+            return None
+
+        return repository.find(
+            argument=revs[lo], include_log=False, include_identifier=False
+        )
 
     @classmethod
     def to_branch_name(cls, value):
