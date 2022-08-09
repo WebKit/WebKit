@@ -2236,6 +2236,7 @@ platform/mediastream/RealtimeOutgoingAudioSource.cpp
 platform/mediastream/RealtimeOutgoingVideoSource.cpp
 platform/mediastream/RealtimeVideoCaptureSource.cpp
 platform/mediastream/RealtimeVideoSource.cpp
+platform/mediastream/WebRTCProvider.cpp
 platform/mediastream/libwebrtc/LibWebRTCDTMFSenderBackend.cpp
 platform/mediastream/libwebrtc/LibWebRTCProvider.cpp
 platform/mediastream/libwebrtc/VideoFrameLibWebRTC.cpp

@@ -127,7 +127,7 @@ class ImageOverlayController;
 class InspectorClient;
 class InspectorController;
 class IntSize;
-class LibWebRTCProvider;
+class WebRTCProvider;
 class LowPowerModeNotifier;
 class MediaCanStartListener;
 class MediaPlaybackTarget;
@@ -347,7 +347,7 @@ public:
 #if ENABLE(POINTER_LOCK)
     PointerLockController& pointerLockController() const { return *m_pointerLockController; }
 #endif
-    LibWebRTCProvider& libWebRTCProvider() { return m_libWebRTCProvider.get(); }
+    WebRTCProvider& webRTCProvider() { return m_webRTCProvider.get(); }
     RTCController& rtcController() { return m_rtcController; }
     WEBCORE_EXPORT void disableICECandidateFiltering();
     WEBCORE_EXPORT void enableICECandidateFiltering();
@@ -1071,7 +1071,7 @@ private:
     UniqueRef<SpeechRecognitionProvider> m_speechRecognitionProvider;
 
     UniqueRef<MediaRecorderProvider> m_mediaRecorderProvider;
-    UniqueRef<LibWebRTCProvider> m_libWebRTCProvider;
+    UniqueRef<WebRTCProvider> m_webRTCProvider;
     RTCController m_rtcController;
 
     PlatformDisplayID m_displayID { 0 };

@@ -98,7 +98,7 @@ ExceptionOr<Ref<RTCPeerConnection>> RTCPeerConnection::create(Document& document
             peerConnection->registerToController(page->rtcController());
 #if USE(LIBWEBRTC) && (!LOG_DISABLED || !RELEASE_LOG_DISABLED)
             if (!page->sessionID().isEphemeral())
-                page->libWebRTCProvider().setLoggingLevel(LogWebRTC.level);
+                page->webRTCProvider().setLoggingLevel(LogWebRTC.level);
 #endif
         }
     }

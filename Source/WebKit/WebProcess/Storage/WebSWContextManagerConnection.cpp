@@ -153,7 +153,7 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
         pageConfiguration.broadcastChannelRegistry = WebProcess::singleton().broadcastChannelRegistry();
         pageConfiguration.userContentProvider = m_userContentController;
 #if ENABLE(WEB_RTC)
-        pageConfiguration.libWebRTCProvider = makeUniqueRef<RemoteWorkerLibWebRTCProvider>();
+        pageConfiguration.webRTCProvider = makeUniqueRef<RemoteWorkerLibWebRTCProvider>();
 #endif
 
         auto effectiveUserAgent =  WTFMove(userAgent);

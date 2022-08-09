@@ -32,7 +32,6 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"
@@ -43,6 +42,7 @@
 #include "SharedWorkerContextManager.h"
 #include "SharedWorkerGlobalScope.h"
 #include "SharedWorkerThread.h"
+#include "WebRTCProvider.h"
 #include "WorkerFetchResult.h"
 #include "WorkerInitializationData.h"
 #include "WorkerThread.h"
@@ -157,7 +157,7 @@ RefPtr<CacheStorageConnection> SharedWorkerThreadProxy::createCacheStorageConnec
 RefPtr<RTCDataChannelRemoteHandlerConnection> SharedWorkerThreadProxy::createRTCDataChannelRemoteHandlerConnection()
 {
     ASSERT(isMainThread());
-    return m_page->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
+    return m_page->webRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
 void SharedWorkerThreadProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)

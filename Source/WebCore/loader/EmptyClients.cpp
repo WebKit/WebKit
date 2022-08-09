@@ -61,7 +61,6 @@
 #include "IDBConnectionToServer.h"
 #include "InspectorClient.h"
 #include "LibWebRTCAudioModule.h"
-#include "LibWebRTCProvider.h"
 #include "MediaRecorderPrivate.h"
 #include "MediaRecorderProvider.h"
 #include "ModalContainerTypes.h"
@@ -82,6 +81,7 @@
 #include "ThreadableWebSocketChannel.h"
 #include "UserContentProvider.h"
 #include "VisitedLinkStore.h"
+#include "WebRTCProvider.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
@@ -1195,7 +1195,7 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         sessionID,
         makeUniqueRef<EmptyEditorClient>(),
         SocketProvider::create(),
-        LibWebRTCProvider::create(),
+        WebRTCProvider::create(),
         CacheStorageProvider::create(),
         adoptRef(*new EmptyUserContentProvider),
         adoptRef(*new EmptyBackForwardClient),

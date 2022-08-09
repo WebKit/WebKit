@@ -35,7 +35,6 @@
 #include "FetchLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
@@ -45,6 +44,7 @@
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "Settings.h"
+#include "WebRTCProvider.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/MainThread.h>
@@ -152,7 +152,7 @@ RefPtr<CacheStorageConnection> ServiceWorkerThreadProxy::createCacheStorageConne
 RefPtr<RTCDataChannelRemoteHandlerConnection> ServiceWorkerThreadProxy::createRTCDataChannelRemoteHandlerConnection()
 {
     ASSERT(isMainThread());
-    return m_page->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
+    return m_page->webRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
 std::unique_ptr<FetchLoader> ServiceWorkerThreadProxy::createBlobLoader(FetchLoaderClient& client, const URL& blobURL)

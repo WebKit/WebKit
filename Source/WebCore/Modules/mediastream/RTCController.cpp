@@ -28,9 +28,9 @@
 #if ENABLE(WEB_RTC)
 
 #include "Document.h"
-#include "LibWebRTCProvider.h"
 #include "RTCNetworkManager.h"
 #include "RTCPeerConnection.h"
+#include "WebRTCProvider.h"
 
 namespace WebCore {
 
@@ -85,7 +85,7 @@ void RTCController::add(RTCPeerConnection& connection)
 
 void RTCController::disableICECandidateFilteringForAllOrigins()
 {
-    if (!LibWebRTCProvider::webRTCAvailable())
+    if (!WebRTCProvider::webRTCAvailable())
         return;
 
     m_shouldFilterICECandidates = false;
@@ -100,7 +100,7 @@ void RTCController::disableICECandidateFilteringForAllOrigins()
 
 void RTCController::disableICECandidateFilteringForDocument(Document& document)
 {
-    if (!LibWebRTCProvider::webRTCAvailable())
+    if (!WebRTCProvider::webRTCAvailable())
         return;
 
     if (auto* networkManager = document.rtcNetworkManager())
@@ -120,7 +120,7 @@ void RTCController::disableICECandidateFilteringForDocument(Document& document)
 
 void RTCController::enableICECandidateFiltering()
 {
-    if (!LibWebRTCProvider::webRTCAvailable())
+    if (!WebRTCProvider::webRTCAvailable())
         return;
 
     m_filteringDisabledOrigins.clear();

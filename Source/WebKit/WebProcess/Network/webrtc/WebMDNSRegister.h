@@ -28,9 +28,10 @@
 #if ENABLE(WEB_RTC)
 
 #include "MDNSRegisterIdentifier.h"
-#include <WebCore/LibWebRTCProvider.h>
+#include <WebCore/MDNSRegisterError.h>
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>

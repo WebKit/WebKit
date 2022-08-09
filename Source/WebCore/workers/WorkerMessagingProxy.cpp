@@ -37,13 +37,13 @@
 #include "ErrorEvent.h"
 #include "EventNames.h"
 #include "FetchRequestCredentials.h"
-#include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
 #include "MessageEvent.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
+#include "WebRTCProvider.h"
 #include "Worker.h"
 #include "WorkerInitializationData.h"
 #include "WorkerInspectorProxy.h"
@@ -246,7 +246,7 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerMessagingProxy::createRTCDat
     auto& document = downcast<Document>(*m_scriptExecutionContext);
     if (!document.page())
         return nullptr;
-    return document.page()->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
+    return document.page()->webRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
 void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)

@@ -25,12 +25,15 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC) && PLATFORM(COCOA)
+#if USE(LIBWEBRTC)
+
+#if PLATFORM(COCOA)
 #include <WebCore/LibWebRTCProviderCocoa.h>
-#elif USE(LIBWEBRTC) && USE(GSTREAMER)
+#elif USE(GSTREAMER)
 #include <WebCore/LibWebRTCProviderGStreamer.h>
+#endif
 #else
-#include <WebCore/LibWebRTCProvider.h>
+#include <WebCore/WebRTCProvider.h>
 #endif
 
 namespace WebKit {
@@ -79,7 +82,7 @@ inline UniqueRef<LibWebRTCProvider> createLibWebRTCProvider(WebPage& page)
     return makeUniqueRef<LibWebRTCProvider>(page);
 }
 #else
-using LibWebRTCProvider = WebCore::LibWebRTCProvider;
+using LibWebRTCProvider = WebCore::WebRTCProvider;
 
 inline UniqueRef<LibWebRTCProvider> createLibWebRTCProvider(WebPage&)
 {

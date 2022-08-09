@@ -1760,6 +1760,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/RealtimeVideoSource.h
     platform/mediastream/VideoPreset.h
     platform/mediastream/WebAudioSourceProvider.h
+    platform/mediastream/WebRTCProvider.h
+
+    platform/mediastream/gstreamer/GStreamerWebRTCProvider.h
 
     platform/mediastream/libwebrtc/LibWebRTCEnumTraits.h
     platform/mediastream/libwebrtc/LibWebRTCMacros.h

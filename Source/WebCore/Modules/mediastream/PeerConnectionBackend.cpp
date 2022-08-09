@@ -90,7 +90,7 @@ PeerConnectionBackend::PeerConnectionBackend(RTCPeerConnection& peerConnection)
 #if USE(LIBWEBRTC)
     auto* document = peerConnection.document();
     if (auto* page = document ? document->page() : nullptr)
-        m_shouldFilterICECandidates = page->libWebRTCProvider().isSupportingMDNS();
+        m_shouldFilterICECandidates = page->webRTCProvider().isSupportingMDNS();
 #endif
 }
 
@@ -446,7 +446,8 @@ void PeerConnectionBackend::generateCertificate(Document& document, const Certif
         return;
     }
 
-    LibWebRTCCertificateGenerator::generateCertificate(document.securityOrigin(), page->libWebRTCProvider(), info, [promise = WTFMove(promise)](auto&& result) mutable {
+    auto& webRTCProvider = static_cast<LibWebRTCProvider&>(page->webRTCProvider());
+    LibWebRTCCertificateGenerator::generateCertificate(document.securityOrigin(), webRTCProvider, info, [promise = WTFMove(promise)](auto&& result) mutable {
         promise.settle(WTFMove(result));
     });
 #elif USE(GSTREAMER_WEBRTC)

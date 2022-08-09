@@ -182,7 +182,6 @@
 #import <WebCore/JSNotification.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LegacySchemeRegistry.h>
-#import <WebCore/LibWebRTCProvider.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/MIMETypeRegistry.h>
@@ -230,6 +229,7 @@
 #import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreView.h>
+#import <WebCore/WebRTCProvider.h>
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebCore/Widget.h>
 #import <WebKitLegacy/DOM.h>
@@ -1529,7 +1529,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         [[self preferences] privateBrowsingEnabled] ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID(),
         makeUniqueRef<WebEditorClient>(self),
         WebCore::SocketProvider::create(),
-        WebCore::LibWebRTCProvider::create(),
+        WebCore::WebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
         _private->group->userContentController(),
         BackForwardList::create(self),
@@ -1810,7 +1810,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         [[self preferences] privateBrowsingEnabled] ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID(),
         makeUniqueRef<WebEditorClient>(self),
         WebCore::SocketProvider::create(),
-        WebCore::LibWebRTCProvider::create(),
+        WebCore::WebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
         _private->group->userContentController(),
         BackForwardList::create(self),

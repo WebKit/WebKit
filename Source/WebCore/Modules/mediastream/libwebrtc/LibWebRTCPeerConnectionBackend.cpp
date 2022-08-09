@@ -63,9 +63,10 @@ static std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectionBacke
     if (!page)
         return nullptr;
 
-    page->libWebRTCProvider().setEnableWebRTCEncryption(page->settings().webRTCEncryptionEnabled());
+    auto& webRTCProvider = static_cast<LibWebRTCProvider&>(page->webRTCProvider());
+    webRTCProvider.setEnableWebRTCEncryption(page->settings().webRTCEncryptionEnabled());
 
-    return makeUnique<LibWebRTCPeerConnectionBackend>(peerConnection, page->libWebRTCProvider());
+    return makeUnique<LibWebRTCPeerConnectionBackend>(peerConnection, webRTCProvider);
 }
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createLibWebRTCPeerConnectionBackend;
@@ -75,7 +76,7 @@ std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(Sc
     auto* page = downcast<Document>(context).page();
     if (!page)
         return { };
-    return page->libWebRTCProvider().receiverCapabilities(kind);
+    return page->webRTCProvider().receiverCapabilities(kind);
 }
 
 std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(ScriptExecutionContext& context, const String& kind)
@@ -83,7 +84,7 @@ std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(Scri
     auto* page = downcast<Document>(context).page();
     if (!page)
         return { };
-    return page->libWebRTCProvider().senderCapabilities(kind);
+    return page->webRTCProvider().senderCapabilities(kind);
 }
 
 LibWebRTCPeerConnectionBackend::LibWebRTCPeerConnectionBackend(RTCPeerConnection& peerConnection, LibWebRTCProvider& provider)
@@ -198,7 +199,8 @@ bool LibWebRTCPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration
     if (!page)
         return false;
 
-    return m_endpoint->setConfiguration(page->libWebRTCProvider(), configurationFromMediaEndpointConfiguration(WTFMove(configuration)));
+    auto& webRTCProvider = reinterpret_cast<LibWebRTCProvider&>(page->webRTCProvider());
+    return m_endpoint->setConfiguration(webRTCProvider, configurationFromMediaEndpointConfiguration(WTFMove(configuration)));
 }
 
 void LibWebRTCPeerConnectionBackend::gatherDecoderImplementationName(Function<void(String&&)>&& callback)
