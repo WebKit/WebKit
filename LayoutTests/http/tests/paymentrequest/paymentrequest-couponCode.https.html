@@ -9,6 +9,12 @@
 <script>
 setup({ explicit_done: true, explicit_timeout: true });
 
+test((test) => {
+    const method = validPaymentMethod();
+    method.data.features = ["paymentRequestCouponCode"];
+    new PaymentRequest([method], validPaymentDetails());
+}, "Should have a feature for `couponCode`.");
+
 user_activation_test(async (test) => {
     let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
     request.addEventListener("merchantvalidation", (event) => {

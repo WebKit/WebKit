@@ -9,6 +9,12 @@
 <script>
 setup({ explicit_done: true, explicit_timeout: true });
 
+test((test) => {
+    const method = validPaymentMethod();
+    method.data.features = ["paymentRequestAutomaticReload", "paymentTimingAutomaticReload"];
+    new PaymentRequest([method], validPaymentDetails());
+}, "Should have a feature for `automaticReloadPaymentRequest`.");
+
 const paymentDescription = "paymentDescription";
 const automaticReloadBilling = { label: "automaticReloadBilling", amount: "5", type: "final", paymentTiming: "automaticReload", automaticReloadPaymentThresholdAmount: "10", recurringPaymentIntervalUnit: "month", recurringPaymentIntervalCount: 1 };
 const billingAgreement = "billingAgreement";

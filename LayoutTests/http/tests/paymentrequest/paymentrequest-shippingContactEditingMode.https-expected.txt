@@ -1,4 +1,5 @@
 
+PASS Should have a feature for `shippingContactEditingMode`.
 PASS Should not have a default value for `shippingContactEditingMode`.
 PASS Should propagate `shippingContactEditingMode` if provided.
 

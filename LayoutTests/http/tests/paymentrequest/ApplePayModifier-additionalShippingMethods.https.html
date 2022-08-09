@@ -9,6 +9,12 @@
 <script>
 setup({ explicit_done: true, explicit_timeout: true });
 
+test((test) => {
+    const method = validPaymentMethod();
+    method.data.features = ["shippingMethodDateComponentsRange"];
+    new PaymentRequest([method], validPaymentDetails());
+}, "Should have a feature for `dateComponentsRange`.");
+
 const shippingMethod = {
     amount: "10.00",
     detail: "detail",

@@ -26,6 +26,8 @@
 [
     Conditional=APPLE_PAY,
 ] dictionary ApplePayRequestBase {
+    sequence<ApplePayFeature> features;
+
     required sequence<ApplePayMerchantCapability> merchantCapabilities;
     required sequence<DOMString> supportedNetworks; // FIXME: Should this be an sequence of enums?
     required DOMString countryCode;

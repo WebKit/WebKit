@@ -459,6 +459,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/applepay/ApplePayError.h
     Modules/applepay/ApplePayErrorCode.h
     Modules/applepay/ApplePayErrorContactField.h
+    Modules/applepay/ApplePayFeature.h
     Modules/applepay/ApplePayLineItem.h
     Modules/applepay/ApplePayPaymentMethodUpdate.h
     Modules/applepay/ApplePayPaymentOrderDetails.h
@@ -782,6 +783,7 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayError.idl
     Modules/applepay/ApplePayErrorCode.idl
     Modules/applepay/ApplePayErrorContactField.idl
+    Modules/applepay/ApplePayFeature.idl
     Modules/applepay/ApplePayInstallmentItem.idl
     Modules/applepay/ApplePayInstallmentItemType.idl
     Modules/applepay/ApplePayInstallmentConfiguration.idl
