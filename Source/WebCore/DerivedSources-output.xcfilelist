@@ -112,6 +112,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayErrorCode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayErrorCode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayErrorContactField.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayErrorContactField.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayFeature.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayFeature.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentConfiguration.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentConfiguration.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentItem.cpp

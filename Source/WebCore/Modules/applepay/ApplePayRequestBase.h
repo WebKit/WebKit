@@ -28,6 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayContactField.h"
+#include "ApplePayFeature.h"
 #include "ApplePayInstallmentConfigurationWebCore.h"
 #include "ApplePayMerchantCapability.h"
 #include "ApplePayPaymentContact.h"
@@ -39,6 +40,8 @@ class Document;
 class PaymentCoordinator;
 
 struct ApplePayRequestBase {
+    std::optional<Vector<ApplePayFeature>> features;
+
     Vector<ApplePayMerchantCapability> merchantCapabilities;
     Vector<String> supportedNetworks;
     String countryCode;

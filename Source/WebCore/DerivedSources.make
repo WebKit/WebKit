@@ -207,6 +207,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/applepay/ApplePayError.idl \
     $(WebCore)/Modules/applepay/ApplePayErrorCode.idl \
     $(WebCore)/Modules/applepay/ApplePayErrorContactField.idl \
+    $(WebCore)/Modules/applepay/ApplePayFeature.idl \
     $(WebCore)/Modules/applepay/ApplePayInstallmentConfiguration.idl \
     $(WebCore)/Modules/applepay/ApplePayInstallmentItem.idl \
     $(WebCore)/Modules/applepay/ApplePayInstallmentItemType.idl \

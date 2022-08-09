@@ -9,6 +9,12 @@
 <script>
 setup({ explicit_done: true, explicit_timeout: true });
 
+test((test) => {
+    const method = validPaymentMethod();
+    method.data.features = ["paymentRequestRecurring", "paymentTimingRecurring"];
+    new PaymentRequest([method], validPaymentDetails());
+}, "Should have a feature for `recurringPaymentRequest`.");
+
 const paymentDescription = "paymentDescription";
 const regularBilling = { label: "regularBilling", amount: "5", type: "final", paymentTiming: "recurring", recurringPaymentIntervalUnit: "year", recurringPaymentIntervalCount: 2 };
 const trialBilling = { label: "trialBilling", amount: "10", type: "final", paymentTiming: "recurring", recurringPaymentIntervalUnit: "year", recurringPaymentIntervalCount: 2 };

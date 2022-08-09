@@ -9,6 +9,12 @@
 <script>
 setup({ explicit_done: true, explicit_timeout: true });
 
+test((test) => {
+    const method = validPaymentMethod();
+    method.data.features = ["authorizationResultOrderDetails"];
+    new PaymentRequest([method], validPaymentDetails());
+}, "Should have a feature for `orderDetails`.");
+
 const orderTypeIdentifier = "orderTypeIdentifier";
 const orderIdentifier = "orderIdentifier";
 const webServiceURL = "https://apple.com";

@@ -9,6 +9,12 @@
 <script>
 setup({ explicit_done: true, explicit_timeout: true });
 
+test((test) => {
+    const method = validPaymentMethod();
+    method.data.features = ["paymentRequestShippingContactEditingMode", "shippingContactEditingModeEnabled", "shippingContactEditingModeStorePickup"];
+    new PaymentRequest([method], validPaymentDetails());
+}, "Should have a feature for `shippingContactEditingMode`.");
+
 user_activation_test(async (test) => {
     let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
     request.addEventListener("merchantvalidation", (event) => {

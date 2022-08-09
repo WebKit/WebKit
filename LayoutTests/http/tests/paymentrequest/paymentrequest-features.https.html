@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Tests for providing `features` as part of `ApplePayRequest`.");
+
+window.jsTestIsAsync = true;
+
+function logAndShouldThrow(setup, test) {
+    return activateThen(() => {
+        debug("SETUP: " + setup);
+        eval(setup);
+        shouldThrow(test);
+        debug("");
+    });
+}
+
+function logAndShouldNotThrow(setup, test) {
+    return activateThen(() => {
+        debug("SETUP: " + setup);
+        eval(setup);
+        shouldNotThrow(test);
+        debug("");
+    });
+}
+
+async function go() {
+    debug("Testing ApplePayRequest.features")
+    debug("")
+    await logAndShouldNotThrow("paymentMethod = validPaymentMethod(); delete paymentMethod.data.features", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldNotThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = [ ]", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldNotThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = [ 'lineItemPaymentTiming' ]", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldNotThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = [ 'lineItemPaymentTiming', 'paymentTimingImmediate' ]", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = [ '' ]", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = [ 'invalid' ]", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = [ 'null' ]", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = [ 7 ]", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = [ 'lineItemPaymentTiming', '' ]", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = [ 'lineItemPaymentTiming', 'invalid' ]", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = [ 'lineItemPaymentTiming', 'null' ]", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = [ 'lineItemPaymentTiming', 7 ]", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = { }", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.features = false", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+
+    document.querySelector("button").remove();
+
+    finishJSTest();
+}
+
+window.onload = function() {
+    UIHelper.activateElement(document.querySelector("button"));
+}
+
+</script>
+<button onclick='go()'>Go</button>
+</body>
+</html>
