@@ -6115,7 +6115,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         self.setUpCommonProperties()
         expected_remote_command_output = '    Reviewed by WebKit Contributor.\n'
         self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
-        self.expectOutcome(result=FAILURE, state_string="'WebKit Contributor' is not a reviewer")
+        self.expectOutcome(result=SUCCESS, state_string="'WebKit Contributor' is not a reviewer, still continuing")
         return self.runStep()
 
     def test_self_reviewer(self):

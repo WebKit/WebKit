@@ -5061,14 +5061,12 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
         elif rc == SUCCESS:
             if reviewers and not self.contributors:
                 self.summary = "Failed to load contributors.json, can't validate reviewers"
-                rc = FAILURE
             elif reviewers and any([not self.is_reviewer(reviewer) for reviewer in reviewers]):
-                self.summary = "'{}' is not a reviewer"
+                self.summary = "'{}' is not a reviewer, still continuing"
                 for reviewer in reviewers:
                     if not self.is_reviewer(reviewer):
                         self.summary = self.summary.format(reviewer)
                         break
-                rc = FAILURE
             elif reviewers and author and any([author.startswith(reviewer) for reviewer in reviewers]):
                 self.summary = f"'{author}' cannot review their own change"
                 rc = FAILURE
