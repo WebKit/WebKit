@@ -102,7 +102,7 @@ void WCTileGrid::clearDirtyRects()
 
 bool WCTileGrid::ensureTile(TileIndex index)
 {
-    return m_tiles.ensure(index, [&]() {
+    auto addResult = m_tiles.ensure(index, [&]() {
         int x1 = index.x() * tilePixelSize().width();
         int y1 = index.y() * tilePixelSize().height();
         int x2 = std::min(x1 + tilePixelSize().width(), m_size.width());
@@ -110,7 +110,10 @@ bool WCTileGrid::ensureTile(TileIndex index)
         WebCore::IntRect rect { x1, y1, x2 - x1, y2 - y1 };
         ASSERT(WebCore::IntRect({ }, m_size).contains(rect));
         return makeUnique<Tile>(rect);
-    }).isNewEntry;
+    });
+    if (!addResult.isNewEntry)
+        addResult.iterator->value->setWillRemove(false);
+    return addResult.isNewEntry;
 }
 
 bool WCTileGrid::setCoverageRect(const WebCore::IntRect& coverage)
@@ -119,8 +122,10 @@ bool WCTileGrid::setCoverageRect(const WebCore::IntRect& coverage)
     auto tileRect = tileRectFromPixelRect(coverage);
 
     for (auto& iterator : m_tiles) {
-        if (!tileRect.contains(iterator.key))
+        if (!tileRect.contains(iterator.key)) {
             iterator.value->setWillRemove(true);
+            needsToPaint = true;
+        }
     }
     for (int y = tileRect.y(); y < tileRect.maxY(); y++) {
         for (int x = tileRect.x(); x < tileRect.maxX(); x++) {
