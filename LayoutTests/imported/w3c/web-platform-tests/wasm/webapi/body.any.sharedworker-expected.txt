@@ -1,0 +1,6 @@
+
+PASS compileStreaming after consumption
+PASS compileStreaming before consumption
+PASS instantiateStreaming after consumption
+PASS instantiateStreaming before consumption
+

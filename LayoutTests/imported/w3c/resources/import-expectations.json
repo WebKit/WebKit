@@ -49,6 +49,7 @@
     "web-platform-tests/FileAPI": "import", 
     "web-platform-tests/FileAPI/blob": "import", 
     "web-platform-tests/IndexedDB": "import", 
+    "web-platform-tests/IndexedDB/resources": "import", 
     "web-platform-tests/WebCryptoAPI": "import", 
     "web-platform-tests/WebIDL": "import", 
     "web-platform-tests/WebIDL/invalid": "skip", 

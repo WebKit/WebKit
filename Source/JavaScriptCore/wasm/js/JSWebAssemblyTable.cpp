@@ -127,7 +127,7 @@ JSObject* JSWebAssemblyTable::type(JSGlobalObject* globalObject)
     JSString* elementString = nullptr;
     switch (element) {
     case Wasm::TableElementType::Funcref:
-        elementString = jsNontrivialString(vm, "anyfunc"_s);
+        elementString = jsNontrivialString(vm, "funcref"_s);
         break;
     case Wasm::TableElementType::Externref:
         elementString = jsNontrivialString(vm, "externref"_s);

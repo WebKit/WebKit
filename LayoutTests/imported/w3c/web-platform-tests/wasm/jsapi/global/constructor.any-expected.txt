@@ -6,6 +6,7 @@ PASS Calling
 PASS Order of evaluation
 PASS Invalid descriptor argument
 PASS Invalid type argument
+PASS Construct v128 global
 PASS i64 with default
 PASS Default value for type i32
 PASS Explicit value undefined for type i32

@@ -14,4 +14,15 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/cross-origin-helper-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/file_to_save.txt
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/idb-partitioned-basic-iframe.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/idb-partitioned-coverage-iframe.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/idb-partitioned-persistence-iframe.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/idbfactory-origin-isolation-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/idbworker.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/interleaved-cursors-common.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/nested-cloning-common.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/reading-autoincrement-common.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/support-promises.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/support.js

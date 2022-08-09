@@ -1,0 +1,51 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/execute-start.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/exported-names.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/invalid-bytecode.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/invalid-module.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-function-error.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-function-error.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-global.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-global.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-memory.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-memory.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-table.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-table.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-value.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-value.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/log.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/resolve-export.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-export-i64-global.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-export-to-wasm.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-error-from-wasm.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-from-wasm.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-func.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-func.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-global.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-global.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-memory.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-memory.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-table.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-table.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-js-cycle.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-js-cycle.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/worker-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/worker.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/worker.wasm

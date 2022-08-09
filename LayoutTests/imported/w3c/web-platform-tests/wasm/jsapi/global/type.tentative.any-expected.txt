@@ -9,7 +9,7 @@ PASS f64, mutable
 PASS f64, immutable
 PASS externref, mutable
 PASS externref, immutable
-PASS anyfunc, mutable
-PASS anyfunc, immutable
+PASS funcref, mutable
+PASS funcref, immutable
 PASS key ordering
 

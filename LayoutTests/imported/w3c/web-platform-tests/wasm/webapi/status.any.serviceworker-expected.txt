@@ -1,0 +1,18 @@
+
+PASS Response with status 0: compileStreaming
+PASS Response with status 300: compileStreaming
+PASS Response with status 400: compileStreaming
+PASS Response with status 404: compileStreaming
+PASS Response with status 500: compileStreaming
+PASS Response with status 600: compileStreaming
+PASS Response with status 700: compileStreaming
+PASS Response with status 999: compileStreaming
+PASS Response with status 0: instantiateStreaming
+PASS Response with status 300: instantiateStreaming
+PASS Response with status 400: instantiateStreaming
+PASS Response with status 404: instantiateStreaming
+PASS Response with status 500: instantiateStreaming
+PASS Response with status 600: instantiateStreaming
+PASS Response with status 700: instantiateStreaming
+PASS Response with status 999: instantiateStreaming
+
