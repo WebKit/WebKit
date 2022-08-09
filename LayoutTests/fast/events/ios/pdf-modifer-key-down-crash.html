@@ -7,7 +7,14 @@ if (!window.testRunner)
 else {
     testRunner.dumpAsText();
     testRunner.queueLoad("../..//images/resources/green_rectangle.pdf");
-    testRunner.queueLoadingScript('setTimeout("history.back()", 0); testRunner.runUIScript(`uiController.keyDown("", ["leftCommand"])`, () => {});');
+    testRunner.queueLoadingScript(`
+        (async function() {
+            setTimeout("history.back()", 0);
+            await new Promise(resolve => {
+                testRunner.runUIScript("uiController.keyDown('', ['leftCommand'])", resolve);
+            });
+        })();
+    `);
 } 
 </script>
 </head>
