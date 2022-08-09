@@ -77,9 +77,6 @@ public:
     void setDeviceOrientationAndMotionAccessState(WebCore::DeviceOrientationOrMotionPermissionState state) { m_deviceOrientationAndMotionAccessState = state; }
 #endif
 
-    const Vector<WebCore::HTTPHeaderField>& legacyCustomHeaderFields() const { return m_legacyCustomHeaderFields; }
-    void setLegacyCustomHeaderFields(Vector<WebCore::HTTPHeaderField>&& fields) { m_legacyCustomHeaderFields = WTFMove(fields); }
-
     const Vector<WebCore::CustomHeaderFields>& customHeaderFields() const { return m_customHeaderFields; }
     void setCustomHeaderFields(Vector<WebCore::CustomHeaderFields>&& fields) { m_customHeaderFields = WTFMove(fields); }
 
@@ -153,7 +150,6 @@ private:
 #if ENABLE(DEVICE_ORIENTATION)
     WebCore::DeviceOrientationOrMotionPermissionState m_deviceOrientationAndMotionAccessState { WebCore::DeviceOrientationOrMotionPermissionState::Prompt };
 #endif
-    Vector<WebCore::HTTPHeaderField> m_legacyCustomHeaderFields;
     Vector<WebCore::CustomHeaderFields> m_customHeaderFields;
     WebKit::WebsitePopUpPolicy m_popUpPolicy { WebKit::WebsitePopUpPolicy::Default };
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;

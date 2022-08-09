@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -59,8 +60,8 @@ WK_EXPORT WKWebsitePoliciesRef WKWebsitePoliciesCreate();
 WK_EXPORT bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef);
 WK_EXPORT void WKWebsitePoliciesSetContentBlockersEnabled(WKWebsitePoliciesRef, bool);
 
-WK_EXPORT WKDictionaryRef WKWebsitePoliciesCopyCustomHeaderFields(WKWebsitePoliciesRef);
-WK_EXPORT void WKWebsitePoliciesSetCustomHeaderFields(WKWebsitePoliciesRef, WKDictionaryRef);
+WK_EXPORT WKDictionaryRef WKWebsitePoliciesCopyCustomHeaderFields(WKWebsitePoliciesRef) WK_C_API_DEPRECATED;
+WK_EXPORT void WKWebsitePoliciesSetCustomHeaderFields(WKWebsitePoliciesRef, WKDictionaryRef) WK_C_API_DEPRECATED;
 
 WK_EXPORT WKWebsiteAutoplayQuirk WKWebsitePoliciesGetAllowedAutoplayQuirks(WKWebsitePoliciesRef);
 WK_EXPORT void WKWebsitePoliciesSetAllowedAutoplayQuirks(WKWebsitePoliciesRef, WKWebsiteAutoplayQuirk);

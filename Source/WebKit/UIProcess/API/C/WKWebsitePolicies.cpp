@@ -56,27 +56,13 @@ bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef websitePoli
     return toImpl(websitePolicies)->contentBlockersEnabled();
 }
 
-WK_EXPORT WKDictionaryRef WKWebsitePoliciesCopyCustomHeaderFields(WKWebsitePoliciesRef websitePolicies)
+WK_EXPORT WKDictionaryRef WKWebsitePoliciesCopyCustomHeaderFields(WKWebsitePoliciesRef)
 {
-    HashMap<WTF::String, RefPtr<API::Object>> fields;
-    for (const auto& field : toImpl(websitePolicies)->legacyCustomHeaderFields())
-        fields.add(field.name(), API::String::create(field.value()));
-    return toAPI(API::Dictionary::create(WTFMove(fields)).ptr());
+    return nullptr;
 }
 
-WK_EXPORT void WKWebsitePoliciesSetCustomHeaderFields(WKWebsitePoliciesRef websitePolicies, WKDictionaryRef dictionary)
+WK_EXPORT void WKWebsitePoliciesSetCustomHeaderFields(WKWebsitePoliciesRef, WKDictionaryRef)
 {
-    auto keys = adoptWK(WKDictionaryCopyKeys(dictionary));
-    size_t length = WKArrayGetSize(keys.get());
-    Vector<WebCore::HTTPHeaderField> fields;
-    fields.reserveInitialCapacity(length);
-    for (size_t i = 0; i < length; ++i) {
-        WKStringRef name = static_cast<WKStringRef>(WKArrayGetItemAtIndex(keys.get(), i));
-        auto field = WebCore::HTTPHeaderField::create(toImpl(name)->string(), toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(dictionary, name)))->string());
-        if (field && startsWithLettersIgnoringASCIICase(field->name(), "x-"_s))
-            fields.uncheckedAppend(WTFMove(*field));
-    }
-    toImpl(websitePolicies)->setLegacyCustomHeaderFields(WTFMove(fields));
 }
 
 void WKWebsitePoliciesSetAllowedAutoplayQuirks(WKWebsitePoliciesRef websitePolicies, WKWebsiteAutoplayQuirk allowedQuirks)

@@ -59,7 +59,6 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setWebsiteDataStore(m_websiteDataStore.get());
     policies->setUserContentController(m_userContentController.get());
     policies->setIdempotentModeAutosizingOnlyHonorsPercentages(m_idempotentModeAutosizingOnlyHonorsPercentages);
-    policies->setLegacyCustomHeaderFields(Vector<WebCore::HTTPHeaderField> { m_legacyCustomHeaderFields });
     policies->setCustomHeaderFields(Vector<WebCore::CustomHeaderFields> { m_customHeaderFields });
     policies->setAllowSiteSpecificQuirksToOverrideContentMode(m_allowSiteSpecificQuirksToOverrideContentMode);
     policies->setApplicationNameForDesktopUserAgent(m_applicationNameForDesktopUserAgent);
@@ -85,12 +84,9 @@ void WebsitePolicies::setUserContentController(RefPtr<WebKit::WebUserContentCont
 
 WebKit::WebsitePoliciesData WebsitePolicies::data()
 {
-    bool hasLegacyCustomHeaderFields = legacyCustomHeaderFields().size();
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
-    customHeaderFields.reserveInitialCapacity(this->customHeaderFields().size() + hasLegacyCustomHeaderFields);
+    customHeaderFields.reserveInitialCapacity(this->customHeaderFields().size());
     customHeaderFields.appendVector(this->customHeaderFields());
-    if (hasLegacyCustomHeaderFields)
-        customHeaderFields.uncheckedAppend({ legacyCustomHeaderFields(), { }});
 
     return {
         contentBlockersEnabled(),
