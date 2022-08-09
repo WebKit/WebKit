@@ -43,12 +43,12 @@ WTF_WEAK_LINK_FORCE_IMPORT(webrtc::setApplicationStatus);
 
 namespace WebCore {
 
-UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
+UniqueRef<WebRTCProvider> WebRTCProvider::create()
 {
     return makeUniqueRef<LibWebRTCProviderCocoa>();
 }
 
-void LibWebRTCProvider::setH264HardwareEncoderAllowed(bool allowed)
+void WebRTCProvider::setH264HardwareEncoderAllowed(bool allowed)
 {
     if (webRTCAvailable())
         webrtc::setH264HardwareEncoderAllowed(allowed);
@@ -80,13 +80,23 @@ std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProviderCocoa::createEncod
     return webrtc::createWebKitEncoderFactory(isSupportingH265() ? webrtc::WebKitH265::On : webrtc::WebKitH265::Off, vp9Support, DeprecatedGlobalSettings::webRTCH264LowLatencyEncoderEnabled() ? webrtc::WebKitH264LowLatency::On : webrtc::WebKitH264LowLatency::Off);
 }
 
+std::optional<MediaCapabilitiesInfo> LibWebRTCProviderCocoa::computeVPParameters(const VideoConfiguration& configuration)
+{
+    return WebCore::computeVPParameters(configuration);
+}
+
+bool LibWebRTCProviderCocoa::isVPSoftwareDecoderSmooth(const VideoConfiguration& configuration)
+{
+    return WebCore::isVPSoftwareDecoderSmooth(configuration);
+}
+
 void LibWebRTCProviderCocoa::setActive(bool value)
 {
     if (webRTCAvailable())
         webrtc::setApplicationStatus(value);
 }
 
-bool LibWebRTCProvider::webRTCAvailable()
+bool WebRTCProvider::webRTCAvailable()
 {
 #if PLATFORM(IOS)
     return true;

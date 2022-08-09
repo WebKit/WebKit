@@ -869,8 +869,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (!parameters.iceCandidateFilteringEnabled)
         m_page->disableICECandidateFiltering();
 #if USE(LIBWEBRTC)
-    if (parameters.enumeratingAllNetworkInterfacesEnabled)
-        m_page->libWebRTCProvider().enableEnumeratingAllNetworkInterfaces();
+    if (parameters.enumeratingAllNetworkInterfacesEnabled) {
+        auto& rtcProvider = static_cast<LibWebRTCProvider&>(m_page->webRTCProvider());
+        rtcProvider.enableEnumeratingAllNetworkInterfaces();
+    }
 #endif
 #endif
 

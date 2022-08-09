@@ -144,7 +144,6 @@
 #include "LayoutDisallowedScope.h"
 #include "LazyLoadImageObserver.h"
 #include "LegacySchemeRegistry.h"
-#include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MediaCanStartListener.h"
@@ -260,6 +259,7 @@
 #include "VisualViewport.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
+#include "WebRTCProvider.h"
 #include "WheelEvent.h"
 #include "WindowEventLoop.h"
 #include "WindowFeatures.h"
@@ -3610,7 +3610,7 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> Document::createRTCDataChannelRemo
     auto* page = this->page();
     if (!page)
         return nullptr;
-    return page->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
+    return page->webRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
 #if ENABLE(WEB_RTC)

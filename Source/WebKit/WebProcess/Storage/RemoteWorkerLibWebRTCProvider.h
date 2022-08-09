@@ -26,12 +26,24 @@
 #pragma once
 
 #include "RTCDataChannelRemoteManager.h"
+
+#if USE(LIBWEBRTC)
 #include <WebCore/LibWebRTCProvider.h>
+#elif USE(GSTREAMER_WEBRTC)
+#include <WebCore/GStreamerWebRTCProvider.h>
+#endif
 
 namespace WebKit {
 
 #if ENABLE(WEB_RTC)
-class RemoteWorkerLibWebRTCProvider final : public WebCore::LibWebRTCProvider {
+
+#if USE(LIBWEBRTC)
+using LibWebRTCProviderBase = WebCore::LibWebRTCProvider;
+#else
+using LibWebRTCProviderBase = WebCore::GStreamerWebRTCProvider;
+#endif
+
+class RemoteWorkerLibWebRTCProvider final : public LibWebRTCProviderBase {
 public:
     RemoteWorkerLibWebRTCProvider() = default;
 

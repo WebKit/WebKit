@@ -186,7 +186,7 @@ static void gatherDecodingInfo(Document& document, MediaDecodingConfiguration&& 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
     if (configuration.type == MediaDecodingType::WebRTC) {
         if (auto* page = document.page())
-            page->libWebRTCProvider().createDecodingConfiguration(WTFMove(configuration), WTFMove(decodingCallback));
+            page->webRTCProvider().createDecodingConfiguration(WTFMove(configuration), WTFMove(decodingCallback));
         return;
     }
 #else
@@ -206,7 +206,7 @@ static void gatherEncodingInfo(Document& document, MediaEncodingConfiguration&& 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
     if (configuration.type == MediaEncodingType::WebRTC) {
         if (auto* page = document.page())
-            page->libWebRTCProvider().createEncodingConfiguration(WTFMove(configuration), WTFMove(encodingCallback));
+            page->webRTCProvider().createEncodingConfiguration(WTFMove(configuration), WTFMove(encodingCallback));
         return;
     }
 #else

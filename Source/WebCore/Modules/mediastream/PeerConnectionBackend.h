@@ -36,6 +36,7 @@
 #include "IDLTypes.h"
 #include "LibWebRTCProvider.h"
 #include "RTCIceGatheringState.h"
+#include "RTCRtpCapabilities.h"
 #include "RTCRtpSendParameters.h"
 #include "RTCSessionDescription.h"
 #include "RTCSignalingState.h"

@@ -129,7 +129,6 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSImageData.h"
 #include "LegacySchemeRegistry.h"
-#include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
 #include "LocalizedStrings.h"
 #include "Location.h"
@@ -228,6 +227,7 @@
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 #include "WebCoreJSClientData.h"
+#include "WebRTCProvider.h"
 #include "WindowProxy.h"
 #include "WorkerThread.h"
 #include "WorkletGlobalScope.h"
@@ -608,18 +608,21 @@ void Internals::resetToConsistentState(Page& page)
 
     printContextForTesting() = nullptr;
 
+#if ENABLE(WEB_RTC)
+    auto& rtcProvider = page.webRTCProvider();
 #if USE(LIBWEBRTC)
-    auto& rtcProvider = page.libWebRTCProvider();
-    WebCore::useRealRTCPeerConnectionFactory(rtcProvider);
-    LibWebRTCProvider::setH264HardwareEncoderAllowed(true);
+    auto& webRTCProvider = reinterpret_cast<LibWebRTCProvider&>(rtcProvider);
+    WebCore::useRealRTCPeerConnectionFactory(webRTCProvider);
+    webRTCProvider.disableNonLocalhostConnections();
+#endif
+    WebRTCProvider::setH264HardwareEncoderAllowed(true);
     page.settings().setWebRTCEncryptionEnabled(true);
-    rtcProvider.disableNonLocalhostConnections();
     rtcProvider.setH265Support(true);
     rtcProvider.setVP9Support(true, true);
     rtcProvider.clearFactory();
-#elif USE(GSTREAMER_WEBRTC)
-    page.settings().setWebRTCEncryptionEnabled(true);
+#if USE(GSTREAMER_WEBRTC)
     page.settings().setPeerConnectionEnabled(true);
+#endif
 #endif
 
     page.setFullscreenAutoHideDuration(0_s);
@@ -1489,7 +1492,7 @@ void Internals::enableMockSpeechSynthesizer()
 
 void Internals::emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection& connection, const String& action)
 {
-    if (!LibWebRTCProvider::webRTCAvailable())
+    if (!WebRTCProvider::webRTCAvailable())
         return;
 
     connection.emulatePlatformEvent(action);
@@ -1497,12 +1500,12 @@ void Internals::emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection& connect
 
 void Internals::useMockRTCPeerConnectionFactory(const String& testCase)
 {
-    if (!LibWebRTCProvider::webRTCAvailable())
+    if (!WebRTCProvider::webRTCAvailable())
         return;
 
 #if USE(LIBWEBRTC)
     Document* document = contextDocument();
-    LibWebRTCProvider* provider = (document && document->page()) ? &document->page()->libWebRTCProvider() : nullptr;
+    auto* provider = (document && document->page()) ? &static_cast<LibWebRTCProvider&>(document->page()->webRTCProvider()) : nullptr;
     WebCore::useMockRTCPeerConnectionFactory(provider, testCase);
 #else
     UNUSED_PARAM(testCase);
@@ -1529,7 +1532,7 @@ void Internals::setEnumeratingAllNetworkInterfacesEnabled(bool enabled)
     auto* page = document->page();
     if (!page)
         return;
-    auto& rtcProvider = page->libWebRTCProvider();
+    auto& rtcProvider = static_cast<LibWebRTCProvider&>(page->webRTCProvider());
     if (enabled)
         rtcProvider.enableEnumeratingAllNetworkInterfaces();
     else
@@ -1547,10 +1550,8 @@ void Internals::stopPeerConnection(RTCPeerConnection& connection)
 
 void Internals::clearPeerConnectionFactory()
 {
-#if USE(LIBWEBRTC)
     if (auto* page = contextDocument()->page())
-        page->libWebRTCProvider().clearFactory();
-#endif
+        page->webRTCProvider().clearFactory();
 }
 
 void Internals::applyRotationForOutgoingVideoSources(RTCPeerConnection& connection)
@@ -1560,35 +1561,27 @@ void Internals::applyRotationForOutgoingVideoSources(RTCPeerConnection& connecti
 
 void Internals::setWebRTCH265Support(bool value)
 {
-#if USE(LIBWEBRTC)
     if (auto* page = contextDocument()->page()) {
-        page->libWebRTCProvider().setH265Support(value);
-        page->libWebRTCProvider().clearFactory();
+        page->webRTCProvider().setH265Support(value);
+        page->webRTCProvider().clearFactory();
     }
-#else
-    UNUSED_PARAM(value);
-#endif
 }
 
 void Internals::setWebRTCVP9Support(bool supportVP9Profile0, bool supportVP9Profile2)
 {
-#if USE(LIBWEBRTC)
     if (auto* page = contextDocument()->page()) {
-        page->libWebRTCProvider().setVP9Support(supportVP9Profile0, supportVP9Profile2);
-        page->libWebRTCProvider().clearFactory();
+        page->webRTCProvider().setVP9Support(supportVP9Profile0, supportVP9Profile2);
+        page->webRTCProvider().clearFactory();
     }
-#else
-    UNUSED_PARAM(supportVP9Profile0);
-    UNUSED_PARAM(supportVP9Profile2);
-#endif
 }
 
 void Internals::setWebRTCVP9VTBSupport(bool value)
 {
 #if USE(LIBWEBRTC)
     if (auto* page = contextDocument()->page()) {
-        page->libWebRTCProvider().setVP9VTBSupport(value);
-        page->libWebRTCProvider().clearFactory();
+        auto& rtcProvider = static_cast<LibWebRTCProvider&>(page->webRTCProvider());
+        rtcProvider.setVP9VTBSupport(value);
+        rtcProvider.clearFactory();
     }
 #else
     UNUSED_PARAM(value);
@@ -1598,8 +1591,10 @@ void Internals::setWebRTCVP9VTBSupport(bool value)
 bool Internals::isSupportingVP9VTB() const
 {
 #if USE(LIBWEBRTC)
-    if (auto* page = contextDocument()->page())
-        return page->libWebRTCProvider().isSupportingVP9VTB();
+    if (auto* page = contextDocument()->page()) {
+        auto& rtcProvider = static_cast<LibWebRTCProvider&>(page->webRTCProvider());
+        return rtcProvider.isSupportingVP9VTB();
+    }
 #endif
     return false;
 }
@@ -1643,13 +1638,14 @@ void Internals::setUseDTLS10(bool useDTLS10)
     auto* document = contextDocument();
     if (!document || !document->page())
         return;
-    document->page()->libWebRTCProvider().setUseDTLS10(useDTLS10);
+    auto& rtcProvider = static_cast<LibWebRTCProvider&>(document->page()->webRTCProvider());
+    rtcProvider.setUseDTLS10(useDTLS10);
 #else
     UNUSED_PARAM(useDTLS10);
 #endif
 }
 
-#endif
+#endif // ENABLE(WEB_RTC)
 
 #if ENABLE(MEDIA_STREAM)
 void Internals::setShouldInterruptAudioOnPageVisibilityChange(bool shouldInterrupt)
@@ -5542,7 +5538,7 @@ bool Internals::isPageActive() const
 #if ENABLE(WEB_RTC)
 void Internals::setH264HardwareEncoderAllowed(bool allowed)
 {
-    LibWebRTCProvider::setH264HardwareEncoderAllowed(allowed);
+    WebRTCProvider::setH264HardwareEncoderAllowed(allowed);
 }
 #endif
 

@@ -28,16 +28,14 @@
 
 #if USE(LIBWEBRTC) && USE(GSTREAMER)
 
-#include <wtf/UniqueRef.h>
-
 namespace WebCore {
 
-UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
+UniqueRef<WebRTCProvider> WebRTCProvider::create()
 {
     return makeUniqueRef<LibWebRTCProviderGStreamer>();
 }
 
-bool LibWebRTCProvider::webRTCAvailable()
+bool WebRTCProvider::webRTCAvailable()
 {
     return true;
 }

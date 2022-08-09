@@ -25,26 +25,18 @@
 
 #pragma once
 
-#include "LibWebRTCMacros.h"
-#include "MDNSRegisterError.h"
-#include "RTCDataChannelRemoteHandlerConnection.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
-#include <wtf/UniqueRef.h>
-#include <wtf/text/WTFString.h>
-
 #if USE(LIBWEBRTC)
 
-#include "RTCRtpCapabilities.h"
+#include "LibWebRTCMacros.h"
+#include "WebRTCProvider.h"
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 #include <webrtc/api/peer_connection_interface.h>
-#include <webrtc/api/video_codecs/video_encoder_factory.h>
-#include <webrtc/api/video_codecs/video_decoder_factory.h>
 #include <webrtc/api/scoped_refptr.h>
+#include <webrtc/api/video_codecs/video_decoder_factory.h>
+#include <webrtc/api/video_codecs/video_encoder_factory.h>
 
 ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_UNUSED_PARAMETERS_END
@@ -60,46 +52,33 @@ namespace webrtc {
 class AsyncResolverFactory;
 class PeerConnectionFactoryInterface;
 }
-#endif
 
 namespace WebCore {
 
-class ContentType;
 class LibWebRTCAudioModule;
-struct MediaCapabilitiesDecodingInfo;
-struct MediaCapabilitiesEncodingInfo;
-struct MediaDecodingConfiguration;
-struct MediaEncodingConfiguration;
 class RegistrableDomain;
 struct PeerConnectionFactoryAndThreads;
-struct RTCRtpCapabilities;
 
-class WEBCORE_EXPORT LibWebRTCProvider {
+class WEBCORE_EXPORT LibWebRTCProvider : public WebRTCProvider {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static UniqueRef<LibWebRTCProvider> create();
 
     virtual ~LibWebRTCProvider();
 
-    static bool webRTCAvailable();
     static void registerWebKitVP9Decoder();
     static void registerWebKitVP8Decoder();
-    static void setH264HardwareEncoderAllowed(bool);
+
     static void setRTCLogging(WTFLogLevel);
 
-    virtual void setActive(bool);
+    virtual void setEnableWebRTCEncryption(bool);
+    virtual void setUseDTLS10(bool);
+    virtual void disableNonLocalhostConnections();
 
-    using IPAddressOrError = Expected<String, MDNSRegisterError>;
-    using MDNSNameOrError = Expected<String, MDNSRegisterError>;
+    std::optional<RTCRtpCapabilities> receiverCapabilities(const String& kind) final;
+    std::optional<RTCRtpCapabilities> senderCapabilities(const String& kind) final;
+    void clearFactory() final;
 
-    virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() { return nullptr; }
-
-    using DecodingConfigurationCallback = Function<void(MediaCapabilitiesDecodingInfo&&)>;
-    using EncodingConfigurationCallback = Function<void(MediaCapabilitiesEncodingInfo&&)>;
-    void createDecodingConfiguration(MediaDecodingConfiguration&&, DecodingConfigurationCallback&&);
-    void createEncodingConfiguration(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&);
-
-#if USE(LIBWEBRTC)
     virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(ScriptExecutionContextIdentifier, webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
     webrtc::PeerConnectionFactoryInterface* factory();
@@ -114,32 +93,21 @@ public:
     // Used for mock testing
     void setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&&);
 
-    void disableEnumeratingAllNetworkInterfaces();
-    void enableEnumeratingAllNetworkInterfaces();
-    bool isEnumeratingAllNetworkInterfacesEnabled() const { return m_enableEnumeratingAllNetworkInterfaces; }
-
-    void setH265Support(bool);
-    void setVP9Support(bool supportsVP9Profile0, bool supportsVP9Profile2);
-    void setVP9VTBSupport(bool);
-    bool isSupportingH265() const { return m_supportsH265; }
-    bool isSupportingVP9Profile0() const { return m_supportsVP9Profile0; }
-    bool isSupportingVP9Profile2() const { return m_supportsVP9Profile2; }
-    bool isSupportingVP9VTB() const { return m_supportsVP9VTB; }
-    virtual void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
-
-    bool isSupportingMDNS() const { return m_supportsMDNS; }
-
     // Callback is executed on a background thread.
     void prepareCertificateGenerator(Function<void(rtc::RTCCertificateGenerator&)>&&);
 
-    std::optional<RTCRtpCapabilities> receiverCapabilities(const String& kind);
-    std::optional<RTCRtpCapabilities> senderCapabilities(const String& kind);
-
-    void clearFactory();
-
     virtual void setLoggingLevel(WTFLogLevel);
-    void setEnableWebRTCEncryption(bool);
-    void setUseDTLS10(bool);
+
+    WEBCORE_EXPORT void setVP9VTBSupport(bool);
+    virtual bool isSupportingVP9VTB() const;
+
+    WEBCORE_EXPORT void disableEnumeratingAllNetworkInterfaces();
+    WEBCORE_EXPORT void enableEnumeratingAllNetworkInterfaces();
+    bool isEnumeratingAllNetworkInterfacesEnabled() const;
+
+    bool m_enableEnumeratingAllNetworkInterfaces { false };
+    // FIXME: Remove m_useNetworkThreadWithSocketServer member variable and make it a global.
+    bool m_useNetworkThreadWithSocketServer { true };
 
     class SuspendableSocketFactory : public rtc::PacketSocketFactory {
     public:
@@ -148,7 +116,7 @@ public:
         virtual void resume() { };
         virtual void disableRelay() { };
     };
-    virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, bool /* isFirstParty */, RegistrableDomain&&) { return nullptr; }
+    virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, bool /* isFirstParty */, RegistrableDomain&&);
 
 protected:
     LibWebRTCProvider();
@@ -159,41 +127,32 @@ protected:
     virtual std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory();
     virtual std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory();
 
-    virtual void startedNetworkThread() { };
+    virtual void startedNetworkThread();
 
     PeerConnectionFactoryAndThreads& getStaticFactoryAndThreads(bool useNetworkThreadWithSocketServer);
-    std::optional<RTCRtpCapabilities>& audioDecodingCapabilities();
-    std::optional<RTCRtpCapabilities>& videoDecodingCapabilities();
-    std::optional<RTCRtpCapabilities>& audioEncodingCapabilities();
-    std::optional<RTCRtpCapabilities>& videoEncodingCapabilities();
-    std::optional<RTCRtpCodecCapability> codecCapability(const ContentType&, const std::optional<RTCRtpCapabilities>&);
-
-    bool m_enableEnumeratingAllNetworkInterfaces { false };
-    // FIXME: Remove m_useNetworkThreadWithSocketServer member variable and make it a global.
-    bool m_useNetworkThreadWithSocketServer { true };
 
     RefPtr<LibWebRTCAudioModule> m_audioModule;
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_factory;
-    bool m_disableNonLocalhostConnections { false };
-    bool m_supportsH265 { false };
-    bool m_supportsVP9Profile0 { false };
-    bool m_supportsVP9Profile2 { false };
+
+private:
+    void initializeAudioDecodingCapabilities() final;
+    void initializeVideoDecodingCapabilities() final;
+    void initializeAudioEncodingCapabilities() final;
+    void initializeVideoEncodingCapabilities() final;
+
+    std::optional<MediaCapabilitiesDecodingInfo> videoDecodingCapabilitiesOverride(const VideoConfiguration&) final;
+    std::optional<MediaCapabilitiesEncodingInfo> videoEncodingCapabilitiesOverride(const VideoConfiguration&) final;
+
     bool m_supportsVP9VTB { false };
     bool m_useDTLS10 { false };
-    bool m_supportsMDNS { false };
-
-    std::optional<RTCRtpCapabilities> m_audioDecodingCapabilities;
-    std::optional<RTCRtpCapabilities> m_videoDecodingCapabilities;
-    std::optional<RTCRtpCapabilities> m_audioEncodingCapabilities;
-    std::optional<RTCRtpCapabilities> m_videoEncodingCapabilities;
-#endif
+    bool m_disableNonLocalhostConnections { false };
 };
 
-#if USE(LIBWEBRTC)
 inline LibWebRTCAudioModule* LibWebRTCProvider::audioModule()
 {
     return m_audioModule.get();
 }
-#endif
 
 } // namespace WebCore
+
+#endif // USE(LIBWEBRTC)

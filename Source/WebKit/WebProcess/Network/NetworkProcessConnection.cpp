@@ -86,7 +86,7 @@ NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier c
 {
     m_connection->open();
 
-    if (LibWebRTCProvider::webRTCAvailable())
+    if (WebRTCProvider::webRTCAvailable())
         WebProcess::singleton().libWebRTCNetwork().setConnection(m_connection.copyRef());
 }
 

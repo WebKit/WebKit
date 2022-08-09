@@ -90,7 +90,6 @@
 #include "InspectorInstrumentation.h"
 #include "LayoutDisallowedScope.h"
 #include "LegacySchemeRegistry.h"
-#include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
 #include "LogInitialization.h"
 #include "Logging.h"
@@ -163,6 +162,7 @@
 #include "VisitedLinkStore.h"
 #include "VoidCallback.h"
 #include "WebCoreJSClientData.h"
+#include "WebRTCProvider.h"
 #include "WheelEventDeltaFilter.h"
 #include "WheelEventTestMonitor.h"
 #include "Widget.h"
@@ -291,7 +291,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #endif
     , m_speechRecognitionProvider((WTFMove(pageConfiguration.speechRecognitionProvider)))
     , m_mediaRecorderProvider((WTFMove(pageConfiguration.mediaRecorderProvider)))
-    , m_libWebRTCProvider(WTFMove(pageConfiguration.libWebRTCProvider))
+    , m_webRTCProvider(WTFMove(pageConfiguration.webRTCProvider))
     , m_domTimerAlignmentInterval(DOMTimer::defaultAlignmentInterval())
     , m_domTimerAlignmentIntervalIncreaseTimer(*this, &Page::domTimerAlignmentIntervalIncreaseTimerFired)
     , m_activityState(pageInitialActivityState())
@@ -592,8 +592,8 @@ Ref<DOMRectList> Page::passiveTouchEventListenerRectsForTesting()
 void Page::settingsDidChange()
 {
 #if USE(LIBWEBRTC)
-    m_libWebRTCProvider->setH265Support(settings().webRTCH265CodecEnabled());
-    m_libWebRTCProvider->setVP9Support(settings().webRTCVP9Profile0CodecEnabled(), settings().webRTCVP9Profile2CodecEnabled());
+    m_webRTCProvider->setH265Support(settings().webRTCH265CodecEnabled());
+    m_webRTCProvider->setVP9Support(settings().webRTCVP9Profile0CodecEnabled(), settings().webRTCVP9Profile2CodecEnabled());
 #endif
 }
 
@@ -3554,12 +3554,12 @@ void Page::applicationWillResignActive()
 
 void Page::applicationDidEnterBackground()
 {
-    m_libWebRTCProvider->setActive(false);
+    m_webRTCProvider->setActive(false);
 }
 
 void Page::applicationWillEnterForeground()
 {
-    m_libWebRTCProvider->setActive(true);
+    m_webRTCProvider->setActive(true);
 }
 
 void Page::applicationDidBecomeActive()
@@ -3693,7 +3693,7 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
 
 #if USE(LIBWEBRTC)
         if (channel == &LogWebRTC && m_mainFrame->document() && !sessionID().isEphemeral())
-            libWebRTCProvider().setLoggingLevel(LogWebRTC.level);
+            webRTCProvider().setLoggingLevel(LogWebRTC.level);
 #endif
     }
 

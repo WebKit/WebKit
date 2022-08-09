@@ -129,7 +129,6 @@
 #include <WebCore/JSElement.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/LegacySchemeRegistry.h>
-#include <WebCore/LibWebRTCProvider.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/Logging.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -171,6 +170,7 @@
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/WebCoreJITOperations.h>
 #include <WebCore/WebCoreTextRenderer.h>
+#include <WebCore/WebRTCProvider.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebCore/WindowsTouch.h>
 #include <comdef.h>
@@ -2899,7 +2899,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         PAL::SessionID::defaultSessionID(),
         makeUniqueRef<WebEditorClient>(this),
         SocketProvider::create(),
-        makeUniqueRef<LibWebRTCProvider>(),
+        makeUniqueRef<WebRTCProvider>(),
         CacheStorageProvider::create(),
         m_webViewGroup->userContentController(),
         BackForwardList::create(),
