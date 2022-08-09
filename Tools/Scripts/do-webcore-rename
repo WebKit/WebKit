@@ -31,6 +31,7 @@
 use strict;
 use warnings;
 
+use File::Basename;
 use File::Find;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
