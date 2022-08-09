@@ -5648,7 +5648,7 @@ void FrameView::clearSizeOverrideForCSSDefaultViewportUnits()
 
     m_defaultViewportSizeOverride = std::nullopt;
     if (auto* document = frame().document())
-        document->styleScope().didChangeStyleSheetEnvironment();
+        document->updateViewportUnitsOnResize();
 }
 
 void FrameView::setSizeForCSSDefaultViewportUnits(FloatSize size)
@@ -5674,7 +5674,7 @@ void FrameView::setOverrideSizeForCSSDefaultViewportUnits(OverrideViewportSize s
     m_defaultViewportSizeOverride = size;
 
     if (auto* document = frame().document())
-        document->styleScope().didChangeStyleSheetEnvironment();
+        document->updateViewportUnitsOnResize();
 }
 
 FloatSize FrameView::sizeForCSSDefaultViewportUnits() const
@@ -5689,7 +5689,7 @@ void FrameView::clearSizeOverrideForCSSSmallViewportUnits()
 
     m_smallViewportSizeOverride = std::nullopt;
     if (auto* document = frame().document())
-        document->styleScope().didChangeStyleSheetEnvironment();
+        document->updateViewportUnitsOnResize();
 }
 
 void FrameView::setSizeForCSSSmallViewportUnits(FloatSize size)
@@ -5715,7 +5715,7 @@ void FrameView::setOverrideSizeForCSSSmallViewportUnits(OverrideViewportSize siz
     m_smallViewportSizeOverride = size;
 
     if (auto* document = frame().document())
-        document->styleScope().didChangeStyleSheetEnvironment();
+        document->updateViewportUnitsOnResize();
 }
 
 FloatSize FrameView::sizeForCSSSmallViewportUnits() const
@@ -5730,7 +5730,7 @@ void FrameView::clearSizeOverrideForCSSLargeViewportUnits()
 
     m_largeViewportSizeOverride = std::nullopt;
     if (auto* document = frame().document())
-        document->styleScope().didChangeStyleSheetEnvironment();
+        document->updateViewportUnitsOnResize();
 }
 
 void FrameView::setSizeForCSSLargeViewportUnits(FloatSize size)
@@ -5756,7 +5756,7 @@ void FrameView::setOverrideSizeForCSSLargeViewportUnits(OverrideViewportSize siz
     m_largeViewportSizeOverride = size;
 
     if (auto* document = frame().document())
-        document->styleScope().didChangeStyleSheetEnvironment();
+        document->updateViewportUnitsOnResize();
 }
 
 FloatSize FrameView::sizeForCSSLargeViewportUnits() const
