@@ -1615,6 +1615,8 @@ static NSTrackingAreaOptions trackingAreaOptions()
     return options;
 }
 
+#pragma mark - Constructor
+
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
     : m_view(view)
     , m_pageClient(makeUnique<PageClientImpl>(view, outerWebView))
