@@ -220,93 +220,6 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 
 @end
 
-#if ENABLE(IMAGE_ANALYSIS)
-
-namespace WebKit {
-
-CocoaImageAnalyzer *WebViewImpl::ensureImageAnalyzer()
-{
-    if (!m_imageAnalyzer) {
-        m_imageAnalyzerQueue = WorkQueue::create("WebKit image analyzer queue");
-        m_imageAnalyzer = createImageAnalyzer();
-        [m_imageAnalyzer setCallbackQueue:m_imageAnalyzerQueue->dispatchQueue()];
-    }
-    return m_imageAnalyzer.get();
-}
-
-int32_t WebViewImpl::processImageAnalyzerRequest(CocoaImageAnalyzerRequest *request, CompletionHandler<void(CocoaImageAnalysis *, NSError *)>&& completion)
-{
-    return [ensureImageAnalyzer() processRequest:request progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion)] (CocoaImageAnalysis *result, NSError *error) mutable {
-        callOnMainRunLoop([completion = WTFMove(completion), result = RetainPtr { result }, error = RetainPtr { error }] () mutable {
-            completion(result.get(), error.get());
-        });
-    }).get()];
-}
-
-static RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef image, const URL& imageURL, const URL& pageURL, VKAnalysisTypes types)
-{
-    auto request = createImageAnalyzerRequest(image, types);
-    [request setImageURL:imageURL];
-    [request setPageURL:pageURL];
-    return request;
-}
-
-void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion)
-{
-    if (!isLiveTextAvailableAndEnabled()) {
-        completion({ });
-        return;
-    }
-
-    auto imageBitmap = ShareableBitmap::create(imageData);
-    if (!imageBitmap) {
-        completion({ });
-        return;
-    }
-
-    auto cgImage = imageBitmap->makeCGImage();
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if (!targetLanguageIdentifier.isEmpty())
-        return requestVisualTranslation(ensureImageAnalyzer(), imageURL, sourceLanguageIdentifier, targetLanguageIdentifier, cgImage.get(), WTFMove(completion));
-#else
-    UNUSED_PARAM(sourceLanguageIdentifier);
-    UNUSED_PARAM(targetLanguageIdentifier);
-#endif
-
-    auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeText);
-    auto startTime = MonotonicTime::now();
-    processImageAnalyzerRequest(request.get(), [completion = WTFMove(completion), startTime] (CocoaImageAnalysis *analysis, NSError *) mutable {
-        auto result = makeTextRecognitionResult(analysis);
-        RELEASE_LOG(ImageAnalysis, "Image analysis completed in %.0f ms (found text? %d)", (MonotonicTime::now() - startTime).milliseconds(), !result.isEmpty());
-        completion(WTFMove(result));
-    });
-}
-
-void WebViewImpl::computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
-{
-    if (!isLiveTextAvailableAndEnabled()) {
-        completion(false);
-        return;
-    }
-
-    auto cgImage = imageBitmap.makeCGImage();
-    auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeVisualSearch);
-    auto startTime = MonotonicTime::now();
-    [ensureImageAnalyzer() processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), startTime] (CocoaImageAnalysis *analysis, NSError *) mutable {
-        BOOL result = [analysis hasResultsForAnalysisTypes:VKAnalysisTypeVisualSearch];
-        CFRunLoopPerformBlock(CFRunLoopGetMain(), (__bridge CFStringRef)NSEventTrackingRunLoopMode, makeBlockPtr([completion = WTFMove(completion), result, startTime] () mutable {
-            RELEASE_LOG(ImageAnalysis, "Image analysis completed in %.0f ms (found visual search results? %d)", (MonotonicTime::now() - startTime).milliseconds(), result);
-            completion(result);
-        }).get());
-        CFRunLoopWakeUp(CFRunLoopGetMain());
-    }).get()];
-}
-
-} // namespace WebKit
-
-#endif // ENABLE(IMAGE_ANALYSIS)
-
 @interface WKAccessibilitySettingsObserver : NSObject {
     WebKit::WebViewImpl *_impl;
 }
@@ -658,6 +571,89 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
     _didReceiveUnhandledCommand = true;
     return YES;
+}
+
+@end
+
+@interface WKDOMPasteMenuDelegate : NSObject<NSMenuDelegate>
+- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)impl pasteAccessCategory:(WebCore::DOMPasteAccessCategory)category;
+@end
+
+@implementation WKDOMPasteMenuDelegate {
+    WeakPtr<WebKit::WebViewImpl> _impl;
+    WebCore::DOMPasteAccessCategory _category;
+}
+
+- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)impl pasteAccessCategory:(WebCore::DOMPasteAccessCategory)category
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _impl = impl;
+    _category = category;
+    return self;
+}
+
+- (void)menuDidClose:(NSMenu *)menu
+{
+    RunLoop::main().dispatch([impl = _impl] {
+        if (impl)
+            impl->hideDOMPasteMenuWithResult(WebCore::DOMPasteAccessResponse::DeniedForGesture);
+    });
+}
+
+- (NSInteger)numberOfItemsInMenu:(NSMenu *)menu
+{
+    return 1;
+}
+
+- (NSRect)confinementRectForMenu:(NSMenu *)menu onScreen:(NSScreen *)screen
+{
+    auto confinementRect = WebCore::enclosingIntRect(NSRect { NSEvent.mouseLocation, menu.size });
+    confinementRect.move(0, -confinementRect.height());
+    return confinementRect;
+}
+
+- (void)_web_grantDOMPasteAccess
+{
+    _impl->handleDOMPasteRequestForCategoryWithResult(_category, WebCore::DOMPasteAccessResponse::GrantedForGesture);
+}
+
+@end
+
+@interface WKPromisedAttachmentContext : NSObject {
+@private
+    RetainPtr<NSString> _fileName;
+    RetainPtr<NSString> _attachmentIdentifier;
+}
+
+- (instancetype)initWithIdentifier:(NSString *)identifier fileName:(NSString *)fileName;
+
+@property (nonatomic, readonly) NSString *fileName;
+@property (nonatomic, readonly) NSString *attachmentIdentifier;
+
+@end
+
+@implementation WKPromisedAttachmentContext
+
+- (instancetype)initWithIdentifier:(NSString *)identifier fileName:(NSString *)fileName
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _fileName = fileName;
+    _attachmentIdentifier = identifier;
+    return self;
+}
+
+- (NSString *)fileName
+{
+    return _fileName.get();
+}
+
+- (NSString *)attachmentIdentifier
+{
+    return _attachmentIdentifier.get();
 }
 
 @end
@@ -1020,88 +1016,27 @@ static const NSUInteger orderedListSegment = 2;
 
 @end
 
-@interface WKPromisedAttachmentContext : NSObject {
-@private
-    RetainPtr<NSString> _fileName;
-    RetainPtr<NSString> _attachmentIdentifier;
-}
-
-- (instancetype)initWithIdentifier:(NSString *)identifier fileName:(NSString *)fileName;
-
-@property (nonatomic, readonly) NSString *fileName;
-@property (nonatomic, readonly) NSString *attachmentIdentifier;
-
-@end
-
-@implementation WKPromisedAttachmentContext
-
-- (instancetype)initWithIdentifier:(NSString *)identifier fileName:(NSString *)fileName
+static NSArray<NSString *> *textTouchBarCustomizationAllowedIdentifiers()
 {
-    if (!(self = [super init]))
-        return nil;
-
-    _fileName = fileName;
-    _attachmentIdentifier = identifier;
-    return self;
+    return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierTextColorPicker, NSTouchBarItemIdentifierTextStyle, NSTouchBarItemIdentifierTextAlignment, NSTouchBarItemIdentifierTextList, NSTouchBarItemIdentifierFlexibleSpace ];
 }
 
-- (NSString *)fileName
+static NSArray<NSString *> *plainTextTouchBarDefaultItemIdentifiers()
 {
-    return _fileName.get();
+    return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierCandidateList ];
 }
 
-- (NSString *)attachmentIdentifier
+static NSArray<NSString *> *richTextTouchBarDefaultItemIdentifiers()
 {
-    return _attachmentIdentifier.get();
+    return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierTextFormat, NSTouchBarItemIdentifierCandidateList ];
 }
 
-@end
-
-@interface WKDOMPasteMenuDelegate : NSObject<NSMenuDelegate>
-- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)impl pasteAccessCategory:(WebCore::DOMPasteAccessCategory)category;
-@end
-
-@implementation WKDOMPasteMenuDelegate {
-    WeakPtr<WebKit::WebViewImpl> _impl;
-    WebCore::DOMPasteAccessCategory _category;
-}
-
-- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)impl pasteAccessCategory:(WebCore::DOMPasteAccessCategory)category
+static NSArray<NSString *> *passwordTextTouchBarDefaultItemIdentifiers()
 {
-    if (!(self = [super init]))
-        return nil;
-
-    _impl = impl;
-    _category = category;
-    return self;
+    return @[ NSTouchBarItemIdentifierCandidateList ];
 }
 
-- (void)menuDidClose:(NSMenu *)menu
-{
-    RunLoop::main().dispatch([impl = _impl] {
-        if (impl)
-            impl->hideDOMPasteMenuWithResult(WebCore::DOMPasteAccessResponse::DeniedForGesture);
-    });
-}
-
-- (NSInteger)numberOfItemsInMenu:(NSMenu *)menu
-{
-    return 1;
-}
-
-- (NSRect)confinementRectForMenu:(NSMenu *)menu onScreen:(NSScreen *)screen
-{
-    auto confinementRect = WebCore::enclosingIntRect(NSRect { NSEvent.mouseLocation, menu.size });
-    confinementRect.move(0, -confinementRect.height());
-    return confinementRect;
-}
-
-- (void)_web_grantDOMPasteAccess
-{
-    _impl->handleDOMPasteRequestForCategoryWithResult(_category, WebCore::DOMPasteAccessResponse::GrantedForGesture);
-}
-
-@end
+#endif // HAVE(TOUCH_BAR)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
@@ -1191,419 +1126,6 @@ static void* imageOverlayObservationContext = &imageOverlayObservationContext;
 
 namespace WebKit {
 
-NSTouchBar *WebViewImpl::makeTouchBar()
-{
-    if (!m_canCreateTouchBars) {
-        m_canCreateTouchBars = true;
-        updateTouchBar();
-    }
-    return m_currentTouchBar.get();
-}
-
-bool WebViewImpl::requiresUserActionForEditingControlsManager() const
-{
-    return m_page->configuration().requiresUserActionForEditingControlsManager();
-}
-
-void WebViewImpl::updateTouchBar()
-{
-    if (!m_canCreateTouchBars)
-        return;
-
-    NSTouchBar *touchBar = nil;
-    bool userActionRequirementsHaveBeenMet = !requiresUserActionForEditingControlsManager() || m_page->hasHadSelectionChangesFromUserInteraction();
-    if (m_page->editorState().isContentEditable && !m_page->isTouchBarUpdateSupressedForHiddenContentEditable()) {
-        updateTextTouchBar();
-        if (userActionRequirementsHaveBeenMet)
-            touchBar = textTouchBar();
-    }
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    else if (m_page->hasActiveVideoForControlsManager()) {
-        updateMediaTouchBar();
-        // If useMediaPlaybackControlsView() is true, then we are relying on the API client to display a popover version
-        // of the media timeline in their own function bar. If it is false, then we will display the media timeline in our
-        // function bar.
-        if (!useMediaPlaybackControlsView())
-            touchBar = [m_mediaTouchBarProvider respondsToSelector:@selector(touchBar)] ? [(id)m_mediaTouchBarProvider.get() touchBar] : [(id)m_mediaTouchBarProvider.get() touchBar];
-    } else if ([m_mediaTouchBarProvider playbackControlsController]) {
-        if (m_clientWantsMediaPlaybackControlsView) {
-            if ([m_view respondsToSelector:@selector(_web_didRemoveMediaControlsManager)] && m_view.getAutoreleased() == [m_view window].firstResponder)
-                [m_view _web_didRemoveMediaControlsManager];
-        }
-        [m_mediaTouchBarProvider setPlaybackControlsController:nil];
-        [m_mediaPlaybackControlsView setPlaybackControlsController:nil];
-    }
-#endif
-
-    if (touchBar == m_currentTouchBar)
-        return;
-
-    // If m_editableElementIsFocused is true, then we may have a non-editable selection right now just because
-    // the user is clicking or tabbing between editable fields.
-    if (m_editableElementIsFocused && touchBar != textTouchBar())
-        return;
-
-    m_currentTouchBar = touchBar;
-    [m_view willChangeValueForKey:@"touchBar"];
-    [m_view setTouchBar:m_currentTouchBar.get()];
-    [m_view didChangeValueForKey:@"touchBar"];
-}
-
-NSCandidateListTouchBarItem *WebViewImpl::candidateListTouchBarItem() const
-{
-    if (m_page->editorState().isInPasswordField)
-        return m_passwordTextCandidateListTouchBarItem.get();
-    return isRichlyEditableForTouchBar() ? m_richTextCandidateListTouchBarItem.get() : m_plainTextCandidateListTouchBarItem.get();
-}
-
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-AVTouchBarScrubber *WebViewImpl::mediaPlaybackControlsView() const
-{
-    if (m_page->hasActiveVideoForControlsManager())
-        return m_mediaPlaybackControlsView.get();
-    return nil;
-}
-#endif
-
-bool WebViewImpl::useMediaPlaybackControlsView() const
-{
-#if ENABLE(FULLSCREEN_API)
-    if (hasFullScreenWindowController())
-        return ![m_fullScreenWindowController isFullScreen];
-#endif
-    return m_clientWantsMediaPlaybackControlsView;
-}
-
-void WebViewImpl::dismissTextTouchBarPopoverItemWithIdentifier(NSString *identifier)
-{
-    NSTouchBarItem *foundItem = nil;
-    for (NSTouchBarItem *item in textTouchBar().items) {
-        if ([item.identifier isEqualToString:identifier]) {
-            foundItem = item;
-            break;
-        }
-
-        if ([item.identifier isEqualToString:NSTouchBarItemIdentifierTextFormat]) {
-            for (NSTouchBarItem *childItem in ((NSGroupTouchBarItem *)item).groupTouchBar.items) {
-                if ([childItem.identifier isEqualToString:identifier]) {
-                    foundItem = childItem;
-                    break;
-                }
-            }
-            break;
-        }
-    }
-
-    if ([foundItem isKindOfClass:[NSPopoverTouchBarItem class]])
-        [(NSPopoverTouchBarItem *)foundItem dismissPopover:nil];
-}
-
-static NSArray<NSString *> *textTouchBarCustomizationAllowedIdentifiers()
-{
-    return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierTextColorPicker, NSTouchBarItemIdentifierTextStyle, NSTouchBarItemIdentifierTextAlignment, NSTouchBarItemIdentifierTextList, NSTouchBarItemIdentifierFlexibleSpace ];
-}
-
-static NSArray<NSString *> *plainTextTouchBarDefaultItemIdentifiers()
-{
-    return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierCandidateList ];
-}
-
-static NSArray<NSString *> *richTextTouchBarDefaultItemIdentifiers()
-{
-    return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierTextFormat, NSTouchBarItemIdentifierCandidateList ];
-}
-
-static NSArray<NSString *> *passwordTextTouchBarDefaultItemIdentifiers()
-{
-    return @[ NSTouchBarItemIdentifierCandidateList ];
-}
-
-void WebViewImpl::updateTouchBarAndRefreshTextBarIdentifiers()
-{
-    if (m_richTextTouchBar)
-        setUpTextTouchBar(m_richTextTouchBar.get());
-
-    if (m_plainTextTouchBar)
-        setUpTextTouchBar(m_plainTextTouchBar.get());
-
-    if (m_passwordTextTouchBar)
-        setUpTextTouchBar(m_passwordTextTouchBar.get());
-
-    updateTouchBar();
-}
-
-void WebViewImpl::setUpTextTouchBar(NSTouchBar *touchBar)
-{
-    NSSet<NSTouchBarItem *> *templateItems = nil;
-    NSArray<NSTouchBarItemIdentifier> *defaultItemIdentifiers = nil;
-    NSArray<NSTouchBarItemIdentifier> *customizationAllowedItemIdentifiers = nil;
-
-    if (touchBar == m_passwordTextTouchBar.get()) {
-        templateItems = [NSMutableSet setWithObject:m_passwordTextCandidateListTouchBarItem.get()];
-        defaultItemIdentifiers = passwordTextTouchBarDefaultItemIdentifiers();
-    } else if (touchBar == m_richTextTouchBar.get()) {
-        templateItems = [NSMutableSet setWithObject:m_richTextCandidateListTouchBarItem.get()];
-        defaultItemIdentifiers = richTextTouchBarDefaultItemIdentifiers();
-        customizationAllowedItemIdentifiers = textTouchBarCustomizationAllowedIdentifiers();
-    } else if (touchBar == m_plainTextTouchBar.get()) {
-        templateItems = [NSMutableSet setWithObject:m_plainTextCandidateListTouchBarItem.get()];
-        defaultItemIdentifiers = plainTextTouchBarDefaultItemIdentifiers();
-        customizationAllowedItemIdentifiers = textTouchBarCustomizationAllowedIdentifiers();
-    }
-
-    [touchBar setDelegate:m_textTouchBarItemController.get()];
-    [touchBar setTemplateItems:templateItems];
-    [touchBar setDefaultItemIdentifiers:defaultItemIdentifiers];
-    [touchBar setCustomizationAllowedItemIdentifiers:customizationAllowedItemIdentifiers];
-
-    if (NSGroupTouchBarItem *textFormatItem = (NSGroupTouchBarItem *)[touchBar itemForIdentifier:NSTouchBarItemIdentifierTextFormat])
-        textFormatItem.groupTouchBar.customizationIdentifier = @"WKTextFormatTouchBar";
-}
-
-bool WebViewImpl::isRichlyEditableForTouchBar() const
-{
-    return m_page->editorState().isContentRichlyEditable && !m_page->isNeverRichlyEditableForTouchBar();
-}
-
-NSTouchBar *WebViewImpl::textTouchBar() const
-{
-    if (m_page->editorState().isInPasswordField)
-        return m_passwordTextTouchBar.get();
-    return isRichlyEditableForTouchBar() ? m_richTextTouchBar.get() : m_plainTextTouchBar.get();
-}
-
-static NSTextAlignment nsTextAlignmentFromTextAlignment(TextAlignment textAlignment)
-{
-    switch (textAlignment) {
-    case NoAlignment:
-        return NSTextAlignmentNatural;
-    case LeftAlignment:
-        return NSTextAlignmentLeft;
-    case RightAlignment:
-        return NSTextAlignmentRight;
-    case CenterAlignment:
-        return NSTextAlignmentCenter;
-    case JustifiedAlignment:
-        return NSTextAlignmentJustified;
-    }
-    ASSERT_NOT_REACHED();
-    return NSTextAlignmentNatural;
-}
-
-void WebViewImpl::updateTextTouchBar()
-{
-    if (!m_page->editorState().isContentEditable)
-        return;
-
-    if (m_isUpdatingTextTouchBar)
-        return;
-
-    SetForScope isUpdatingTextFunctionBar(m_isUpdatingTextTouchBar, true);
-
-    if (!m_textTouchBarItemController)
-        m_textTouchBarItemController = adoptNS([[WKTextTouchBarItemController alloc] initWithWebViewImpl:this]);
-
-    if (!m_startedListeningToCustomizationEvents) {
-        [[NSNotificationCenter defaultCenter] addObserver:m_textTouchBarItemController.get() selector:@selector(touchBarDidExitCustomization:) name:NSTouchBarDidExitCustomization object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:m_textTouchBarItemController.get() selector:@selector(touchBarWillEnterCustomization:) name:NSTouchBarWillEnterCustomization object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:m_textTouchBarItemController.get() selector:@selector(didChangeAutomaticTextCompletion:) name:NSSpellCheckerDidChangeAutomaticTextCompletionNotification object:nil];
-
-        m_startedListeningToCustomizationEvents = true;
-    }
-
-    if (!m_richTextCandidateListTouchBarItem || !m_plainTextCandidateListTouchBarItem || !m_passwordTextCandidateListTouchBarItem) {
-        m_richTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
-        [m_richTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
-        m_plainTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
-        [m_plainTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
-        m_passwordTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
-        [m_passwordTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
-        requestCandidatesForSelectionIfNeeded();
-    }
-
-    if (!m_richTextTouchBar) {
-        m_richTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
-        setUpTextTouchBar(m_richTextTouchBar.get());
-        [m_richTextTouchBar setCustomizationIdentifier:@"WKRichTextTouchBar"];
-    }
-
-    if (!m_plainTextTouchBar) {
-        m_plainTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
-        setUpTextTouchBar(m_plainTextTouchBar.get());
-        [m_plainTextTouchBar setCustomizationIdentifier:@"WKPlainTextTouchBar"];
-    }
-
-    if ([NSSpellChecker isAutomaticTextCompletionEnabled] && !m_isCustomizingTouchBar) {
-        BOOL showCandidatesList = !m_page->editorState().selectionIsRange || m_isHandlingAcceptedCandidate;
-        [candidateListTouchBarItem() updateWithInsertionPointVisibility:showCandidatesList];
-        [m_view _didUpdateCandidateListVisibility:showCandidatesList];
-    }
-
-    if (m_page->editorState().isInPasswordField) {
-        if (!m_passwordTextTouchBar) {
-            m_passwordTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
-            setUpTextTouchBar(m_passwordTextTouchBar.get());
-        }
-        [m_passwordTextCandidateListTouchBarItem setCandidates:@[ ] forSelectedRange:NSMakeRange(0, 0) inString:nil];
-    }
-
-    NSTouchBar *textTouchBar = this->textTouchBar();
-    BOOL isShowingCombinedTextFormatItem = [textTouchBar.defaultItemIdentifiers containsObject:NSTouchBarItemIdentifierTextFormat];
-    [textTouchBar setPrincipalItemIdentifier:isShowingCombinedTextFormatItem ? NSTouchBarItemIdentifierTextFormat : nil];
-
-    // Set current typing attributes for rich text. This will ensure that the buttons reflect the state of
-    // the text when changing selection throughout the document.
-    if (isRichlyEditableForTouchBar()) {
-        const EditorState& editorState = m_page->editorState();
-        if (!editorState.isMissingPostLayoutData) {
-            [m_textTouchBarItemController setTextIsBold:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeBold)];
-            [m_textTouchBarItemController setTextIsItalic:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeItalics)];
-            [m_textTouchBarItemController setTextIsUnderlined:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeUnderline)];
-            [m_textTouchBarItemController setTextColor:cocoaColor(editorState.postLayoutData().textColor).get()];
-            [[m_textTouchBarItemController textListTouchBarViewController] setCurrentListType:(ListType)m_page->editorState().postLayoutData().enclosingListType];
-            [m_textTouchBarItemController setCurrentTextAlignment:nsTextAlignmentFromTextAlignment((TextAlignment)editorState.postLayoutData().textAlignment)];
-        }
-        BOOL isShowingCandidateListItem = [textTouchBar.defaultItemIdentifiers containsObject:NSTouchBarItemIdentifierCandidateList] && [NSSpellChecker isAutomaticTextReplacementEnabled];
-        [m_textTouchBarItemController setUsesNarrowTextStyleItem:isShowingCombinedTextFormatItem && isShowingCandidateListItem];
-    }
-}
-
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-
-bool WebViewImpl::isPictureInPictureActive()
-{
-    return [m_playbackControlsManager isPictureInPictureActive];
-}
-
-void WebViewImpl::togglePictureInPicture()
-{
-    [m_playbackControlsManager togglePictureInPicture];
-}
-
-void WebViewImpl::updateMediaPlaybackControlsManager()
-{
-    if (!m_page->hasActiveVideoForControlsManager())
-        return;
-
-    if (!m_playbackControlsManager) {
-        m_playbackControlsManager = adoptNS([[WebPlaybackControlsManager alloc] init]);
-        [m_playbackControlsManager setAllowsPictureInPicturePlayback:m_page->preferences().allowsPictureInPictureMediaPlayback()];
-        [m_playbackControlsManager setCanTogglePictureInPicture:NO];
-    }
-
-    if (PlatformPlaybackSessionInterface* interface = m_page->playbackSessionManager()->controlsManagerInterface()) {
-        [m_playbackControlsManager setPlaybackSessionInterfaceMac:interface];
-        interface->updatePlaybackControlsManagerCanTogglePictureInPicture();
-    }
-}
-
-#endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-
-void WebViewImpl::updateMediaTouchBar()
-{
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && ENABLE(VIDEO_PRESENTATION_MODE)
-    if (!m_mediaTouchBarProvider) {
-        m_mediaTouchBarProvider = adoptNS([allocAVTouchBarPlaybackControlsProviderInstance() init]);
-    }
-
-    if (!m_mediaPlaybackControlsView) {
-        m_mediaPlaybackControlsView = adoptNS([allocAVTouchBarScrubberInstance() init]);
-        // FIXME: Remove this once setCanShowMediaSelectionButton: is declared in an SDK used by Apple's buildbot.
-        if ([m_mediaPlaybackControlsView respondsToSelector:@selector(setCanShowMediaSelectionButton:)])
-            [m_mediaPlaybackControlsView setCanShowMediaSelectionButton:YES];
-    }
-
-    updateMediaPlaybackControlsManager();
-
-    [m_mediaTouchBarProvider setPlaybackControlsController:m_playbackControlsManager.get()];
-    [m_mediaPlaybackControlsView setPlaybackControlsController:m_playbackControlsManager.get()];
-
-    if (!useMediaPlaybackControlsView()) {
-#if ENABLE(FULLSCREEN_API)
-        // If we can't have a media popover function bar item, it might be because we are in full screen.
-        // If so, customize the escape key.
-        NSTouchBar *touchBar = [m_mediaTouchBarProvider respondsToSelector:@selector(touchBar)] ? [(id)m_mediaTouchBarProvider.get() touchBar] : [(id)m_mediaTouchBarProvider.get() touchBar];
-        if (hasFullScreenWindowController() && [m_fullScreenWindowController isFullScreen]) {
-            if (!m_exitFullScreenButton) {
-                m_exitFullScreenButton = adoptNS([[NSCustomTouchBarItem alloc] initWithIdentifier:WKMediaExitFullScreenItem]);
-
-                NSImage *image = [NSImage imageNamed:NSImageNameTouchBarExitFullScreenTemplate];
-                [image setTemplate:YES];
-
-                NSButton *exitFullScreenButton = [NSButton buttonWithTitle:image ? @"" : @"Exit" image:image target:m_fullScreenWindowController.get() action:@selector(requestExitFullScreen)];
-                [exitFullScreenButton setAccessibilityTitle:WebCore::exitFullScreenButtonAccessibilityTitle()];
-
-                [[exitFullScreenButton.widthAnchor constraintLessThanOrEqualToConstant:exitFullScreenButtonWidth] setActive:YES];
-                [m_exitFullScreenButton setView:exitFullScreenButton];
-            }
-            touchBar.escapeKeyReplacementItem = m_exitFullScreenButton.get();
-        } else
-            touchBar.escapeKeyReplacementItem = nil;
-#endif
-        // The rest of the work to update the media function bar only applies to the popover version, so return early.
-        return;
-    }
-
-    if (m_playbackControlsManager && m_view.getAutoreleased() == [m_view window].firstResponder && [m_view respondsToSelector:@selector(_web_didAddMediaControlsManager:)])
-        [m_view _web_didAddMediaControlsManager:m_mediaPlaybackControlsView.get()];
-#endif
-}
-
-bool WebViewImpl::canTogglePictureInPicture()
-{
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    return [m_playbackControlsManager canTogglePictureInPicture];
-#else
-    return NO;
-#endif
-}
-
-void WebViewImpl::forceRequestCandidatesForTesting()
-{
-    m_canCreateTouchBars = true;
-    updateTouchBar();
-}
-
-bool WebViewImpl::shouldRequestCandidates() const
-{
-    return !m_page->editorState().isInPasswordField && candidateListTouchBarItem().candidateListVisible;
-}
-
-void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
-{
-    m_editableElementIsFocused = editableElementIsFocused;
-
-    // If the editable elements have blurred, then we might need to get rid of the editing function bar.
-    if (!m_editableElementIsFocused)
-        updateTouchBar();
-}
-
-} // namespace WebKit
-
-#else // !HAVE(TOUCH_BAR)
-
-namespace WebKit {
-
-void WebViewImpl::forceRequestCandidatesForTesting()
-{
-}
-
-bool WebViewImpl::shouldRequestCandidates() const
-{
-    return false;
-}
-
-void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
-{
-    m_editableElementIsFocused = editableElementIsFocused;
-}
-
-} // namespace WebKit
-
-#endif // HAVE(TOUCH_BAR)
-
-namespace WebKit {
-
 static NSTrackingAreaOptions trackingAreaOptions()
 {
     // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
@@ -1614,8 +1136,6 @@ static NSTrackingAreaOptions trackingAreaOptions()
         options |= NSTrackingActiveInKeyWindow;
     return options;
 }
-
-#pragma mark - Constructor
 
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
     : m_view(view)
@@ -5824,6 +5344,394 @@ bool WebViewImpl::effectiveUserInterfaceLevelIsElevated()
     return false;
 }
 
+#if HAVE(TOUCH_BAR)
+
+NSTouchBar *WebViewImpl::makeTouchBar()
+{
+    if (!m_canCreateTouchBars) {
+        m_canCreateTouchBars = true;
+        updateTouchBar();
+    }
+    return m_currentTouchBar.get();
+}
+
+bool WebViewImpl::requiresUserActionForEditingControlsManager() const
+{
+    return m_page->configuration().requiresUserActionForEditingControlsManager();
+}
+
+void WebViewImpl::updateTouchBar()
+{
+    if (!m_canCreateTouchBars)
+        return;
+
+    NSTouchBar *touchBar = nil;
+    bool userActionRequirementsHaveBeenMet = !requiresUserActionForEditingControlsManager() || m_page->hasHadSelectionChangesFromUserInteraction();
+    if (m_page->editorState().isContentEditable && !m_page->isTouchBarUpdateSupressedForHiddenContentEditable()) {
+        updateTextTouchBar();
+        if (userActionRequirementsHaveBeenMet)
+            touchBar = textTouchBar();
+    }
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    else if (m_page->hasActiveVideoForControlsManager()) {
+        updateMediaTouchBar();
+        // If useMediaPlaybackControlsView() is true, then we are relying on the API client to display a popover version
+        // of the media timeline in their own function bar. If it is false, then we will display the media timeline in our
+        // function bar.
+        if (!useMediaPlaybackControlsView())
+            touchBar = [m_mediaTouchBarProvider respondsToSelector:@selector(touchBar)] ? [(id)m_mediaTouchBarProvider.get() touchBar] : [(id)m_mediaTouchBarProvider.get() touchBar];
+    } else if ([m_mediaTouchBarProvider playbackControlsController]) {
+        if (m_clientWantsMediaPlaybackControlsView) {
+            if ([m_view respondsToSelector:@selector(_web_didRemoveMediaControlsManager)] && m_view.getAutoreleased() == [m_view window].firstResponder)
+                [m_view _web_didRemoveMediaControlsManager];
+        }
+        [m_mediaTouchBarProvider setPlaybackControlsController:nil];
+        [m_mediaPlaybackControlsView setPlaybackControlsController:nil];
+    }
+#endif
+
+    if (touchBar == m_currentTouchBar)
+        return;
+
+    // If m_editableElementIsFocused is true, then we may have a non-editable selection right now just because
+    // the user is clicking or tabbing between editable fields.
+    if (m_editableElementIsFocused && touchBar != textTouchBar())
+        return;
+
+    m_currentTouchBar = touchBar;
+    [m_view willChangeValueForKey:@"touchBar"];
+    [m_view setTouchBar:m_currentTouchBar.get()];
+    [m_view didChangeValueForKey:@"touchBar"];
+}
+
+NSCandidateListTouchBarItem *WebViewImpl::candidateListTouchBarItem() const
+{
+    if (m_page->editorState().isInPasswordField)
+        return m_passwordTextCandidateListTouchBarItem.get();
+    return isRichlyEditableForTouchBar() ? m_richTextCandidateListTouchBarItem.get() : m_plainTextCandidateListTouchBarItem.get();
+}
+
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+AVTouchBarScrubber *WebViewImpl::mediaPlaybackControlsView() const
+{
+    if (m_page->hasActiveVideoForControlsManager())
+        return m_mediaPlaybackControlsView.get();
+    return nil;
+}
+#endif
+
+bool WebViewImpl::useMediaPlaybackControlsView() const
+{
+#if ENABLE(FULLSCREEN_API)
+    if (hasFullScreenWindowController())
+        return ![m_fullScreenWindowController isFullScreen];
+#endif
+    return m_clientWantsMediaPlaybackControlsView;
+}
+
+void WebViewImpl::dismissTextTouchBarPopoverItemWithIdentifier(NSString *identifier)
+{
+    NSTouchBarItem *foundItem = nil;
+    for (NSTouchBarItem *item in textTouchBar().items) {
+        if ([item.identifier isEqualToString:identifier]) {
+            foundItem = item;
+            break;
+        }
+
+        if ([item.identifier isEqualToString:NSTouchBarItemIdentifierTextFormat]) {
+            for (NSTouchBarItem *childItem in ((NSGroupTouchBarItem *)item).groupTouchBar.items) {
+                if ([childItem.identifier isEqualToString:identifier]) {
+                    foundItem = childItem;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
+    if ([foundItem isKindOfClass:[NSPopoverTouchBarItem class]])
+        [(NSPopoverTouchBarItem *)foundItem dismissPopover:nil];
+}
+
+void WebViewImpl::updateTouchBarAndRefreshTextBarIdentifiers()
+{
+    if (m_richTextTouchBar)
+        setUpTextTouchBar(m_richTextTouchBar.get());
+
+    if (m_plainTextTouchBar)
+        setUpTextTouchBar(m_plainTextTouchBar.get());
+
+    if (m_passwordTextTouchBar)
+        setUpTextTouchBar(m_passwordTextTouchBar.get());
+
+    updateTouchBar();
+}
+
+void WebViewImpl::setUpTextTouchBar(NSTouchBar *touchBar)
+{
+    NSSet<NSTouchBarItem *> *templateItems = nil;
+    NSArray<NSTouchBarItemIdentifier> *defaultItemIdentifiers = nil;
+    NSArray<NSTouchBarItemIdentifier> *customizationAllowedItemIdentifiers = nil;
+
+    if (touchBar == m_passwordTextTouchBar.get()) {
+        templateItems = [NSMutableSet setWithObject:m_passwordTextCandidateListTouchBarItem.get()];
+        defaultItemIdentifiers = passwordTextTouchBarDefaultItemIdentifiers();
+    } else if (touchBar == m_richTextTouchBar.get()) {
+        templateItems = [NSMutableSet setWithObject:m_richTextCandidateListTouchBarItem.get()];
+        defaultItemIdentifiers = richTextTouchBarDefaultItemIdentifiers();
+        customizationAllowedItemIdentifiers = textTouchBarCustomizationAllowedIdentifiers();
+    } else if (touchBar == m_plainTextTouchBar.get()) {
+        templateItems = [NSMutableSet setWithObject:m_plainTextCandidateListTouchBarItem.get()];
+        defaultItemIdentifiers = plainTextTouchBarDefaultItemIdentifiers();
+        customizationAllowedItemIdentifiers = textTouchBarCustomizationAllowedIdentifiers();
+    }
+
+    [touchBar setDelegate:m_textTouchBarItemController.get()];
+    [touchBar setTemplateItems:templateItems];
+    [touchBar setDefaultItemIdentifiers:defaultItemIdentifiers];
+    [touchBar setCustomizationAllowedItemIdentifiers:customizationAllowedItemIdentifiers];
+
+    if (NSGroupTouchBarItem *textFormatItem = (NSGroupTouchBarItem *)[touchBar itemForIdentifier:NSTouchBarItemIdentifierTextFormat])
+        textFormatItem.groupTouchBar.customizationIdentifier = @"WKTextFormatTouchBar";
+}
+
+bool WebViewImpl::isRichlyEditableForTouchBar() const
+{
+    return m_page->editorState().isContentRichlyEditable && !m_page->isNeverRichlyEditableForTouchBar();
+}
+
+NSTouchBar *WebViewImpl::textTouchBar() const
+{
+    if (m_page->editorState().isInPasswordField)
+        return m_passwordTextTouchBar.get();
+
+    return isRichlyEditableForTouchBar() ? m_richTextTouchBar.get() : m_plainTextTouchBar.get();
+}
+
+static NSTextAlignment nsTextAlignmentFromTextAlignment(TextAlignment textAlignment)
+{
+    switch (textAlignment) {
+    case NoAlignment:
+        return NSTextAlignmentNatural;
+    case LeftAlignment:
+        return NSTextAlignmentLeft;
+    case RightAlignment:
+        return NSTextAlignmentRight;
+    case CenterAlignment:
+        return NSTextAlignmentCenter;
+    case JustifiedAlignment:
+        return NSTextAlignmentJustified;
+    }
+    ASSERT_NOT_REACHED();
+    return NSTextAlignmentNatural;
+}
+
+void WebViewImpl::updateTextTouchBar()
+{
+    if (!m_page->editorState().isContentEditable)
+        return;
+
+    if (m_isUpdatingTextTouchBar)
+        return;
+
+    SetForScope isUpdatingTextFunctionBar(m_isUpdatingTextTouchBar, true);
+
+    if (!m_textTouchBarItemController)
+        m_textTouchBarItemController = adoptNS([[WKTextTouchBarItemController alloc] initWithWebViewImpl:this]);
+
+    if (!m_startedListeningToCustomizationEvents) {
+        [[NSNotificationCenter defaultCenter] addObserver:m_textTouchBarItemController.get() selector:@selector(touchBarDidExitCustomization:) name:NSTouchBarDidExitCustomization object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:m_textTouchBarItemController.get() selector:@selector(touchBarWillEnterCustomization:) name:NSTouchBarWillEnterCustomization object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:m_textTouchBarItemController.get() selector:@selector(didChangeAutomaticTextCompletion:) name:NSSpellCheckerDidChangeAutomaticTextCompletionNotification object:nil];
+
+        m_startedListeningToCustomizationEvents = true;
+    }
+
+    if (!m_richTextCandidateListTouchBarItem || !m_plainTextCandidateListTouchBarItem || !m_passwordTextCandidateListTouchBarItem) {
+        m_richTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
+        [m_richTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
+        m_plainTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
+        [m_plainTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
+        m_passwordTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
+        [m_passwordTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
+        requestCandidatesForSelectionIfNeeded();
+    }
+
+    if (!m_richTextTouchBar) {
+        m_richTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
+        setUpTextTouchBar(m_richTextTouchBar.get());
+        [m_richTextTouchBar setCustomizationIdentifier:@"WKRichTextTouchBar"];
+    }
+
+    if (!m_plainTextTouchBar) {
+        m_plainTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
+        setUpTextTouchBar(m_plainTextTouchBar.get());
+        [m_plainTextTouchBar setCustomizationIdentifier:@"WKPlainTextTouchBar"];
+    }
+
+    if ([NSSpellChecker isAutomaticTextCompletionEnabled] && !m_isCustomizingTouchBar) {
+        BOOL showCandidatesList = !m_page->editorState().selectionIsRange || m_isHandlingAcceptedCandidate;
+        [candidateListTouchBarItem() updateWithInsertionPointVisibility:showCandidatesList];
+        [m_view _didUpdateCandidateListVisibility:showCandidatesList];
+    }
+
+    if (m_page->editorState().isInPasswordField) {
+        if (!m_passwordTextTouchBar) {
+            m_passwordTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
+            setUpTextTouchBar(m_passwordTextTouchBar.get());
+        }
+        [m_passwordTextCandidateListTouchBarItem setCandidates:@[ ] forSelectedRange:NSMakeRange(0, 0) inString:nil];
+    }
+
+    NSTouchBar *textTouchBar = this->textTouchBar();
+    BOOL isShowingCombinedTextFormatItem = [textTouchBar.defaultItemIdentifiers containsObject:NSTouchBarItemIdentifierTextFormat];
+    [textTouchBar setPrincipalItemIdentifier:isShowingCombinedTextFormatItem ? NSTouchBarItemIdentifierTextFormat : nil];
+
+    // Set current typing attributes for rich text. This will ensure that the buttons reflect the state of
+    // the text when changing selection throughout the document.
+    if (isRichlyEditableForTouchBar()) {
+        const EditorState& editorState = m_page->editorState();
+        if (!editorState.isMissingPostLayoutData) {
+            [m_textTouchBarItemController setTextIsBold:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeBold)];
+            [m_textTouchBarItemController setTextIsItalic:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeItalics)];
+            [m_textTouchBarItemController setTextIsUnderlined:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeUnderline)];
+            [m_textTouchBarItemController setTextColor:cocoaColor(editorState.postLayoutData().textColor).get()];
+            [[m_textTouchBarItemController textListTouchBarViewController] setCurrentListType:(ListType)m_page->editorState().postLayoutData().enclosingListType];
+            [m_textTouchBarItemController setCurrentTextAlignment:nsTextAlignmentFromTextAlignment((TextAlignment)editorState.postLayoutData().textAlignment)];
+        }
+        BOOL isShowingCandidateListItem = [textTouchBar.defaultItemIdentifiers containsObject:NSTouchBarItemIdentifierCandidateList] && [NSSpellChecker isAutomaticTextReplacementEnabled];
+        [m_textTouchBarItemController setUsesNarrowTextStyleItem:isShowingCombinedTextFormatItem && isShowingCandidateListItem];
+    }
+}
+
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+
+bool WebViewImpl::isPictureInPictureActive()
+{
+    return [m_playbackControlsManager isPictureInPictureActive];
+}
+
+void WebViewImpl::togglePictureInPicture()
+{
+    [m_playbackControlsManager togglePictureInPicture];
+}
+
+void WebViewImpl::updateMediaPlaybackControlsManager()
+{
+    if (!m_page->hasActiveVideoForControlsManager())
+        return;
+
+    if (!m_playbackControlsManager) {
+        m_playbackControlsManager = adoptNS([[WebPlaybackControlsManager alloc] init]);
+        [m_playbackControlsManager setAllowsPictureInPicturePlayback:m_page->preferences().allowsPictureInPictureMediaPlayback()];
+        [m_playbackControlsManager setCanTogglePictureInPicture:NO];
+    }
+
+    if (PlatformPlaybackSessionInterface* interface = m_page->playbackSessionManager()->controlsManagerInterface()) {
+        [m_playbackControlsManager setPlaybackSessionInterfaceMac:interface];
+        interface->updatePlaybackControlsManagerCanTogglePictureInPicture();
+    }
+}
+
+#endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+
+void WebViewImpl::updateMediaTouchBar()
+{
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && ENABLE(VIDEO_PRESENTATION_MODE)
+    if (!m_mediaTouchBarProvider) {
+        m_mediaTouchBarProvider = adoptNS([allocAVTouchBarPlaybackControlsProviderInstance() init]);
+    }
+
+    if (!m_mediaPlaybackControlsView) {
+        m_mediaPlaybackControlsView = adoptNS([allocAVTouchBarScrubberInstance() init]);
+        // FIXME: Remove this once setCanShowMediaSelectionButton: is declared in an SDK used by Apple's buildbot.
+        if ([m_mediaPlaybackControlsView respondsToSelector:@selector(setCanShowMediaSelectionButton:)])
+            [m_mediaPlaybackControlsView setCanShowMediaSelectionButton:YES];
+    }
+
+    updateMediaPlaybackControlsManager();
+
+    [m_mediaTouchBarProvider setPlaybackControlsController:m_playbackControlsManager.get()];
+    [m_mediaPlaybackControlsView setPlaybackControlsController:m_playbackControlsManager.get()];
+
+    if (!useMediaPlaybackControlsView()) {
+#if ENABLE(FULLSCREEN_API)
+        // If we can't have a media popover function bar item, it might be because we are in full screen.
+        // If so, customize the escape key.
+        NSTouchBar *touchBar = [m_mediaTouchBarProvider respondsToSelector:@selector(touchBar)] ? [(id)m_mediaTouchBarProvider.get() touchBar] : [(id)m_mediaTouchBarProvider.get() touchBar];
+        if (hasFullScreenWindowController() && [m_fullScreenWindowController isFullScreen]) {
+            if (!m_exitFullScreenButton) {
+                m_exitFullScreenButton = adoptNS([[NSCustomTouchBarItem alloc] initWithIdentifier:WKMediaExitFullScreenItem]);
+
+                NSImage *image = [NSImage imageNamed:NSImageNameTouchBarExitFullScreenTemplate];
+                [image setTemplate:YES];
+
+                NSButton *exitFullScreenButton = [NSButton buttonWithTitle:image ? @"" : @"Exit" image:image target:m_fullScreenWindowController.get() action:@selector(requestExitFullScreen)];
+                [exitFullScreenButton setAccessibilityTitle:WebCore::exitFullScreenButtonAccessibilityTitle()];
+
+                [[exitFullScreenButton.widthAnchor constraintLessThanOrEqualToConstant:exitFullScreenButtonWidth] setActive:YES];
+                [m_exitFullScreenButton setView:exitFullScreenButton];
+            }
+            touchBar.escapeKeyReplacementItem = m_exitFullScreenButton.get();
+        } else
+            touchBar.escapeKeyReplacementItem = nil;
+#endif
+        // The rest of the work to update the media function bar only applies to the popover version, so return early.
+        return;
+    }
+
+    if (m_playbackControlsManager && m_view.getAutoreleased() == [m_view window].firstResponder && [m_view respondsToSelector:@selector(_web_didAddMediaControlsManager:)])
+        [m_view _web_didAddMediaControlsManager:m_mediaPlaybackControlsView.get()];
+#endif
+}
+
+bool WebViewImpl::canTogglePictureInPicture()
+{
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    return [m_playbackControlsManager canTogglePictureInPicture];
+#else
+    return NO;
+#endif
+}
+
+void WebViewImpl::forceRequestCandidatesForTesting()
+{
+    m_canCreateTouchBars = true;
+    updateTouchBar();
+}
+
+bool WebViewImpl::shouldRequestCandidates() const
+{
+    return !m_page->editorState().isInPasswordField && candidateListTouchBarItem().candidateListVisible;
+}
+
+void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
+{
+    m_editableElementIsFocused = editableElementIsFocused;
+
+    // If the editable elements have blurred, then we might need to get rid of the editing function bar.
+    if (!m_editableElementIsFocused)
+        updateTouchBar();
+}
+
+#else // !HAVE(TOUCH_BAR)
+
+void WebViewImpl::forceRequestCandidatesForTesting()
+{
+}
+
+bool WebViewImpl::shouldRequestCandidates() const
+{
+    return false;
+}
+
+void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
+{
+    m_editableElementIsFocused = editableElementIsFocused;
+}
+
+#endif // HAVE(TOUCH_BAR)
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 void WebViewImpl::setMediaSessionCoordinatorForTesting(MediaSessionCoordinatorProxyPrivate* coordinator)
 {
@@ -5928,6 +5836,90 @@ void WebViewImpl::didFinishPresentation(WKRevealItemPresenter *presenter)
 }
 
 #endif // ENABLE(REVEAL)
+
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+CocoaImageAnalyzer *WebViewImpl::ensureImageAnalyzer()
+{
+    if (!m_imageAnalyzer) {
+        m_imageAnalyzerQueue = WorkQueue::create("WebKit image analyzer queue");
+        m_imageAnalyzer = createImageAnalyzer();
+        [m_imageAnalyzer setCallbackQueue:m_imageAnalyzerQueue->dispatchQueue()];
+    }
+    return m_imageAnalyzer.get();
+}
+
+int32_t WebViewImpl::processImageAnalyzerRequest(CocoaImageAnalyzerRequest *request, CompletionHandler<void(CocoaImageAnalysis *, NSError *)>&& completion)
+{
+    return [ensureImageAnalyzer() processRequest:request progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion)] (CocoaImageAnalysis *result, NSError *error) mutable {
+        callOnMainRunLoop([completion = WTFMove(completion), result = RetainPtr { result }, error = RetainPtr { error }] () mutable {
+            completion(result.get(), error.get());
+        });
+    }).get()];
+}
+
+static RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef image, const URL& imageURL, const URL& pageURL, VKAnalysisTypes types)
+{
+    auto request = createImageAnalyzerRequest(image, types);
+    [request setImageURL:imageURL];
+    [request setPageURL:pageURL];
+    return request;
+}
+
+void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion)
+{
+    if (!isLiveTextAvailableAndEnabled()) {
+        completion({ });
+        return;
+    }
+
+    auto imageBitmap = ShareableBitmap::create(imageData);
+    if (!imageBitmap) {
+        completion({ });
+        return;
+    }
+
+    auto cgImage = imageBitmap->makeCGImage();
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if (!targetLanguageIdentifier.isEmpty())
+        return requestVisualTranslation(ensureImageAnalyzer(), imageURL, sourceLanguageIdentifier, targetLanguageIdentifier, cgImage.get(), WTFMove(completion));
+#else
+    UNUSED_PARAM(sourceLanguageIdentifier);
+    UNUSED_PARAM(targetLanguageIdentifier);
+#endif
+
+    auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeText);
+    auto startTime = MonotonicTime::now();
+    processImageAnalyzerRequest(request.get(), [completion = WTFMove(completion), startTime] (CocoaImageAnalysis *analysis, NSError *) mutable {
+        auto result = makeTextRecognitionResult(analysis);
+        RELEASE_LOG(ImageAnalysis, "Image analysis completed in %.0f ms (found text? %d)", (MonotonicTime::now() - startTime).milliseconds(), !result.isEmpty());
+        completion(WTFMove(result));
+    });
+}
+
+void WebViewImpl::computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
+{
+    if (!isLiveTextAvailableAndEnabled()) {
+        completion(false);
+        return;
+    }
+
+    auto cgImage = imageBitmap.makeCGImage();
+    auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeVisualSearch);
+    auto startTime = MonotonicTime::now();
+    [ensureImageAnalyzer() processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), startTime] (CocoaImageAnalysis *analysis, NSError *) mutable {
+        BOOL result = [analysis hasResultsForAnalysisTypes:VKAnalysisTypeVisualSearch];
+        CFRunLoopPerformBlock(CFRunLoopGetMain(), (__bridge CFStringRef)NSEventTrackingRunLoopMode, makeBlockPtr([completion = WTFMove(completion), result, startTime] () mutable {
+            RELEASE_LOG(ImageAnalysis, "Image analysis completed in %.0f ms (found visual search results? %d)", (MonotonicTime::now() - startTime).milliseconds(), result);
+            completion(result);
+        }).get());
+        CFRunLoopWakeUp(CFRunLoopGetMain());
+    }).get()];
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 bool WebViewImpl::imageAnalysisOverlayViewHasCursorAtPoint(NSPoint locationInView) const
 {
