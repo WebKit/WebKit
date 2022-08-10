@@ -534,3 +534,5 @@ fast/css/dir-pseudo-on-input-element.html [ Failure ]
 
 # Skip Compression Stream Tests on WK1
 imported/w3c/web-platform-tests/compression [ Skip ]
+
+fast/dom/HTMLLinkElement/link-preload-load-once.html [ Failure ]
