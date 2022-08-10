@@ -133,7 +133,9 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
 
     String messageWithSource = message;
     if (m_stackTrace && !m_stackTrace->isEmpty() && hasSourceAppender()) {
-        auto [callFrame, bytecodeIndex] = getBytecodeIndex(vm, vm.topCallFrame);
+        BytecodeIndex bytecodeIndex;
+        CallFrame* callFrame;
+        getBytecodeIndex(vm, vm.topCallFrame, m_stackTrace.get(), callFrame, bytecodeIndex);
         if (callFrame && callFrame->codeBlock() && !callFrame->callee().isWasm())
             messageWithSource = appendSourceToErrorMessage(callFrame, this, bytecodeIndex, message);
     }
