@@ -24,7 +24,6 @@
 
 #include "Color.h"
 #include "FloatPoint.h"
-#include "InlineIteratorTextBox.h"
 #include "RenderStyleConstants.h"
 #include <wtf/OptionSet.h>
 
@@ -32,22 +31,19 @@ namespace WebCore {
 
 class FilterOperations;
 class FontCascade;
-class FloatRect;
 class GraphicsContext;
-class LegacyInlineTextBox;
 class RenderObject;
 class RenderStyle;
-class RenderText;
 class ShadowData;
 class TextRun;
     
 class TextDecorationPainter {
 public:
     struct Styles;
-    TextDecorationPainter(GraphicsContext&, const FontCascade&, InlineIterator::TextBoxIterator, float width, const ShadowData*, const FilterOperations*, Styles);
+    TextDecorationPainter(GraphicsContext&, const RenderStyle&, const FontCascade&, const ShadowData*, const FilterOperations*, Styles, bool isPrinting, bool isHorizontal, float deviceScaleFactor);
 
-    void paintBackgroundDecorations(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin);
-    void paintForegroundDecorations(const FloatPoint& boxOrigin);
+    void paintBackgroundDecorations(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin, float width, float underlineOffset, float wavyOffset);
+    void paintForegroundDecorations(const FloatPoint& boxOrigin, float width);
 
     struct Styles {
         bool operator==(const Styles&) const;
@@ -61,27 +57,24 @@ public:
         DecorationStyleAndColor overline;
         DecorationStyleAndColor linethrough;
     };
+    OptionSet<TextDecorationLine> textDecorations() const { return m_textDecorations; }
     static Color decorationColor(const RenderStyle&);
     static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);
 
 private:
-    void paintLineThrough(const Color&, float thickness, const FloatPoint& localOrigin);
+    void paintLineThrough(const Color&, float thickness, const FloatPoint& localOrigin, float width);
 
     GraphicsContext& m_context;
-    OptionSet<TextDecorationLine> m_textBoxDecorations;
-    float m_wavyOffset { 0 };
-    float m_width { 0 };
-    FloatPoint m_boxOrigin;
+    OptionSet<TextDecorationLine> m_textDecorations;
     bool m_isPrinting { false };
     bool m_isHorizontal { true };
     const ShadowData* m_shadow { nullptr };
     const FilterOperations* m_shadowColorFilter { nullptr };
-    InlineIterator::TextBoxIterator m_textBox;
     const FontCascade& m_font;
     float m_deviceScaleFactor { 0 };
 
     Styles m_styles;
-    const RenderStyle& m_textBoxStyle;
+    const RenderStyle& m_textDecorationStyle;
 };
     
 } // namespace WebCore
