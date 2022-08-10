@@ -39,19 +39,7 @@ class TextRun;
     
 class TextDecorationPainter {
 public:
-    struct Styles;
-    TextDecorationPainter(GraphicsContext&, const RenderStyle&, const FontCascade&, const ShadowData*, const FilterOperations*, Styles, bool isPrinting, bool isHorizontal, float deviceScaleFactor);
-
-    struct BackgroundDecorationGeometry {
-        FloatPoint textOrigin;
-        FloatPoint boxOrigin;
-        float textBoxWidth { 0.f };
-        float textDecorationThickness { 0.f };
-        float underlineOffset { 0.f };
-        float overlineOffset { 0.f };
-    };
-    void paintBackgroundDecorations(const TextRun&, const BackgroundDecorationGeometry&);
-    void paintForegroundDecorations(const FloatPoint& boxOrigin, float width);
+    TextDecorationPainter(GraphicsContext&, const RenderStyle&, const FontCascade&, const ShadowData*, const FilterOperations*, bool isPrinting, bool isHorizontal, float deviceScaleFactor);
 
     struct Styles {
         bool operator==(const Styles&) const;
@@ -65,16 +53,25 @@ public:
         DecorationStyleAndColor overline;
         DecorationStyleAndColor linethrough;
     };
-    const Styles& overrideStyles() const { return m_styles; }
-    OptionSet<TextDecorationLine> textDecorations() const { return m_textDecorations; }
+    struct BackgroundDecorationGeometry {
+        FloatPoint textOrigin;
+        FloatPoint boxOrigin;
+        float textBoxWidth { 0.f };
+        float textDecorationThickness { 0.f };
+        float underlineOffset { 0.f };
+        float overlineOffset { 0.f };
+    };
+    void paintBackgroundDecorations(const TextRun&, const BackgroundDecorationGeometry&, OptionSet<TextDecorationLine>, const Styles&);
+    void paintForegroundDecorations(const FloatPoint& boxOrigin, float width, OptionSet<TextDecorationLine>, const Styles&);
+
     static Color decorationColor(const RenderStyle&);
     static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);
+    static OptionSet<TextDecorationLine> textDecorationsInEffectForStyle(const TextDecorationPainter::Styles&);
 
 private:
-    void paintLineThrough(const Color&, float thickness, const FloatPoint& localOrigin, float width);
+    void paintLineThrough(const Color&, float thickness, const FloatPoint& localOrigin, float width, const Styles&);
 
     GraphicsContext& m_context;
-    OptionSet<TextDecorationLine> m_textDecorations;
     bool m_isPrinting { false };
     bool m_isHorizontal { true };
     const ShadowData* m_shadow { nullptr };
@@ -82,8 +79,7 @@ private:
     const FontCascade& m_font;
     float m_deviceScaleFactor { 0 };
 
-    Styles m_styles;
-    const RenderStyle& m_textDecorationStyle;
+    const RenderStyle& m_renderTextStyle;
 };
-    
+
 } // namespace WebCore

@@ -69,7 +69,7 @@ protected:
     void paintForeground(const StyledMarkedText&);
     TextDecorationPainter createDecorationPainter(const StyledMarkedText&, const FloatRect&);
     void paintBackgroundDecorations(TextDecorationPainter&, const StyledMarkedText&, const FloatRect&);
-    void paintForegroundDecorations(TextDecorationPainter&, const FloatRect&);
+    void paintForegroundDecorations(TextDecorationPainter&, const StyledMarkedText&, const FloatRect&);
     void paintCompositionUnderline(const CompositionUnderline&);
     void paintPlatformDocumentMarker(const MarkedText&);
 
