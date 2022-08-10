@@ -42,7 +42,15 @@ public:
     struct Styles;
     TextDecorationPainter(GraphicsContext&, const RenderStyle&, const FontCascade&, const ShadowData*, const FilterOperations*, Styles, bool isPrinting, bool isHorizontal, float deviceScaleFactor);
 
-    void paintBackgroundDecorations(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin, float width, float underlineOffset, float wavyOffset);
+    struct BackgroundDecorationGeometry {
+        FloatPoint textOrigin;
+        FloatPoint boxOrigin;
+        float textBoxWidth { 0.f };
+        float textDecorationThickness { 0.f };
+        float underlineOffset { 0.f };
+        float overlineOffset { 0.f };
+    };
+    void paintBackgroundDecorations(const TextRun&, const BackgroundDecorationGeometry&);
     void paintForegroundDecorations(const FloatPoint& boxOrigin, float width);
 
     struct Styles {
@@ -57,6 +65,7 @@ public:
         DecorationStyleAndColor overline;
         DecorationStyleAndColor linethrough;
     };
+    const Styles& overrideStyles() const { return m_styles; }
     OptionSet<TextDecorationLine> textDecorations() const { return m_textDecorations; }
     static Color decorationColor(const RenderStyle&);
     static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);
