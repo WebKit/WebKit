@@ -1087,7 +1087,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::SplitGroup:
     case AccessibilityRole::Splitter:
     case AccessibilityRole::Subscript:
-    case AccessibilityRole::Suggestion:
     case AccessibilityRole::Superscript:
     case AccessibilityRole::Summary:
     case AccessibilityRole::SystemWide:
@@ -2761,64 +2760,6 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
     return self.axBackingObject->identifierAttribute();
-}
-
-- (BOOL)accessibilityIsInsertion
-{
-    if (![self _prepareAccessibilityCall])
-        return NO;
-    
-    return Accessibility::findAncestor(*self.axBackingObject, false, [] (const auto& object) {
-        return object.roleValue() == AccessibilityRole::Insertion;
-    });
-}
-
-- (BOOL)accessibilityIsDeletion
-{
-    if (![self _prepareAccessibilityCall])
-        return NO;
-    
-    return Accessibility::findAncestor(*self.axBackingObject, false, [] (const auto& object) {
-        return object.roleValue() == AccessibilityRole::Deletion;
-    });
-}
-
-- (BOOL)accessibilityIsFirstItemInSuggestion
-{
-    if (![self _prepareAccessibilityCall])
-        return NO;
-
-    auto* object = self.axBackingObject;
-    auto* parent = object->parentObjectUnignored();
-    
-    while (parent) {
-        if (!parent->children().size() || parent->children()[0] != object)
-            return NO;
-        if (parent->roleValue() == AccessibilityRole::Suggestion)
-            return YES;
-        object = parent;
-        parent = object->parentObjectUnignored();
-    }
-    return NO;
-}
-
-- (BOOL)accessibilityIsLastItemInSuggestion
-{
-    if (![self _prepareAccessibilityCall])
-        return NO;
-    
-    auto* object = self.axBackingObject;
-    auto* parent = object->parentObjectUnignored();
-    
-    while (parent) {
-        if (!parent->children().size() || parent->children()[parent->children().size() - 1] != object)
-            return NO;
-        if (parent->roleValue() == AccessibilityRole::Suggestion)
-            return YES;
-        object = parent;
-        parent = object->parentObjectUnignored();
-    }
-    return NO;
 }
 
 - (NSArray<NSString *> *)accessibilitySpeechHint

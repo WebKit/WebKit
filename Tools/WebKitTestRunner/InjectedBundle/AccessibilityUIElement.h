@@ -401,11 +401,6 @@ public:
     RefPtr<AccessibilityUIElement> fieldsetAncestorElement();
 
     bool isIsolatedObject() const;
-    
-    bool isInsertion() const;
-    bool isDeletion() const;
-    bool isFirstItemInSuggestion() const;
-    bool isLastItemInSuggestion() const;
 private:
     AccessibilityUIElement(PlatformUIElement);
     AccessibilityUIElement(const AccessibilityUIElement&);

@@ -2223,9 +2223,6 @@ String AccessibilityNodeObject::text() const
             return textOrder[0].text;
     }
 
-    if (isStaticText())
-        return textUnderElement();
-    
     if (!isTextControl())
         return String();
 

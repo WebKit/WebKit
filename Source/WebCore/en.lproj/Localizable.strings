@@ -1351,9 +1351,6 @@
 /* accessibility role description for a footer */
 "footer" = "footer";
 
-/* Suggestion role description for a suggestion group */
-"suggestion" = "suggestion";
-
 /* HTTP result code string */
 "forbidden" = "forbidden";
 
