@@ -97,7 +97,7 @@ AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibi
     if (!element || !element->inRenderedDocument())
         return nullptr;
 
-    return downcast<AccessibilityMenuListOption>(document()->axObjectCache()->getOrCreate(element));
+    return dynamicDowncast<AccessibilityMenuListOption>(document()->axObjectCache()->getOrCreate(element));
 }
 
 bool AccessibilityMenuListPopup::press()
@@ -114,13 +114,13 @@ void AccessibilityMenuListPopup::addChildren()
     if (!m_parent)
         return;
     
-    Node* selectNode = m_parent->node();
-    if (!selectNode)
+    auto* parentNode = m_parent->node();
+    if (!is<HTMLSelectElement>(parentNode))
         return;
 
     m_childrenInitialized = true;
 
-    for (const auto& listItem : downcast<HTMLSelectElement>(*selectNode).listItems()) {
+    for (const auto& listItem : downcast<HTMLSelectElement>(*parentNode).listItems()) {
         if (auto* menuListOptionObject = menuListOptionAccessibilityObject(listItem)) {
             menuListOptionObject->setParent(this);
             addChild(menuListOptionObject, DescendIfIgnored::No);
@@ -130,9 +130,12 @@ void AccessibilityMenuListPopup::addChildren()
 
 void AccessibilityMenuListPopup::handleChildrenChanged()
 {
-    AXObjectCache* cache = axObjectCache();
+    auto* cache = axObjectCache();
+    if (!cache)
+        return;
+
     for (size_t i = m_children.size(); i > 0 ; --i) {
-        AXCoreObject* child = m_children[i - 1].get();
+        auto* child = m_children[i - 1].get();
         if (child->actionElement() && !child->actionElement()->inRenderedDocument()) {
             child->detachFromParent();
             cache->remove(child->objectID());
