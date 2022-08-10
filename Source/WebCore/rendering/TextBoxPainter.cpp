@@ -448,16 +448,38 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Clockwise));
 
     auto textRun = m_paintTextRun.subRun(markedText.startOffset, markedText.endOffset - markedText.startOffset);
-    auto textOrigin = textOriginFromPaintRect(snappedSelectionRect);
-    auto boxOrigin = snappedSelectionRect.location();
-    auto boxWidth = snappedSelectionRect.width();
-    auto underlineOffset = [&] {
-        if (!decorationPainter.textDecorations().contains(TextDecorationLine::Underline))
-            return 0.f;
+    auto computedBackgroundDecorationGeometry = [&] {
+        auto deviceScaleFactor = m_renderer.document().deviceScaleFactor();
         auto& styleToUse = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
-        return underlineOffsetForTextBoxPainting(styleToUse, makeIterator());
+        auto& fontMetrics = styleToUse.metricsOfPrimaryFont();
+        auto textDecorations = decorationPainter.textDecorations();
+        auto& overrideStyles = decorationPainter.overrideStyles();
+
+        auto textDecorationThickness = ceilToDevicePixel(styleToUse.textDecorationThickness().resolve(styleToUse.computedFontSize(), fontMetrics), deviceScaleFactor);
+        auto underlineOffset = [&] {
+            if (!textDecorations.contains(TextDecorationLine::Underline))
+                return 0.f;
+            auto baseOffset = underlineOffsetForTextBoxPainting(styleToUse, makeIterator());
+            auto wavyOffset = overrideStyles.underline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f;
+            return baseOffset + wavyOffset;
+        };
+        auto overlineOffset = [&] {
+            if (!textDecorations.contains(TextDecorationLine::Overline))
+                return 0.f;
+            auto autoTextDecorationThickness = ceilToDevicePixel(TextDecorationThickness::createWithAuto().resolve(styleToUse.computedFontSize(), fontMetrics), deviceScaleFactor);
+            return autoTextDecorationThickness - textDecorationThickness - (overrideStyles.overline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f);
+        };
+
+        return TextDecorationPainter::BackgroundDecorationGeometry {
+            textOriginFromPaintRect(snappedSelectionRect),
+            snappedSelectionRect.location(),
+            snappedSelectionRect.width(),
+            textDecorationThickness,
+            underlineOffset(),
+            overlineOffset()
+        };
     };
-    decorationPainter.paintBackgroundDecorations(textRun, textOrigin, boxOrigin, boxWidth, underlineOffset(), wavyOffsetFromDecoration());
+    decorationPainter.paintBackgroundDecorations(textRun, computedBackgroundDecorationGeometry());
 
     if (m_isCombinedText)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Counterclockwise));

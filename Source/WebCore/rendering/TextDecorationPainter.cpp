@@ -219,13 +219,9 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const Ren
 }
 
 // Paint text-shadow, underline, overline
-void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, const FloatPoint& textOrigin, const FloatPoint& boxOrigin, float width, float underlineOffset, float wavyOffset)
+void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry)
 {
-    const auto& fontMetrics = m_textDecorationStyle.metricsOfPrimaryFont();
-    auto textDecorationThickness = ceilToDevicePixel(m_textDecorationStyle.textDecorationThickness().resolve(m_textDecorationStyle.computedFontSize(), fontMetrics), m_deviceScaleFactor);
-    FloatPoint localOrigin = boxOrigin;
-
-    auto paintDecoration = [&] (TextDecorationLine decoration, TextDecorationStyle style, const Color& color, const FloatRect& rect) {
+    auto paintDecoration = [&] (auto decoration, auto style, auto& color, auto& rect) {
         m_context.setStrokeColor(color);
 
         auto strokeStyle = textDecorationStyleToStrokeStyle(style);
@@ -235,8 +231,8 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
         else if (decoration == TextDecorationLine::Underline || decoration == TextDecorationLine::Overline) {
             if ((m_textDecorationStyle.textDecorationSkipInk() == TextDecorationSkipInk::Auto || m_textDecorationStyle.textDecorationSkipInk() == TextDecorationSkipInk::All) && m_isHorizontal) {
                 if (!m_context.paintingDisabled()) {
-                    FloatRect underlineBoundingBox = m_context.computeUnderlineBoundsForText(rect, m_isPrinting);
-                    DashArray intersections = m_font.dashesForIntersectionsWithRect(textRun, textOrigin, underlineBoundingBox);
+                    auto underlineBoundingBox = m_context.computeUnderlineBoundsForText(rect, m_isPrinting);
+                    DashArray intersections = m_font.dashesForIntersectionsWithRect(textRun, decorationGeometry.textOrigin, underlineBoundingBox);
                     DashArray boundaries = translateIntersectionPointsToSkipInkBoundaries(intersections, underlineBoundingBox.height(), rect.width());
                     ASSERT(!(boundaries.size() % 2));
                     // We don't use underlineBoundingBox here because drawLinesForText() will run computeUnderlineBoundsForText() internally.
@@ -250,20 +246,22 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
             ASSERT_NOT_REACHED();
     };
 
-    bool areLinesOpaque = !m_isPrinting && (!m_textDecorations.contains(TextDecorationLine::Underline) || m_styles.underline.color.isOpaque())
+    auto areLinesOpaque = !m_isPrinting && (!m_textDecorations.contains(TextDecorationLine::Underline) || m_styles.underline.color.isOpaque())
         && (!m_textDecorations.contains(TextDecorationLine::Overline) || m_styles.overline.color.isOpaque())
         && (!m_textDecorations.contains(TextDecorationLine::LineThrough) || m_styles.linethrough.color.isOpaque());
 
-    float extraOffset = 0;
-    bool clipping = !areLinesOpaque && m_shadow && m_shadow->next();
+    float extraOffset = 0.f;
+    auto boxOrigin = decorationGeometry.boxOrigin;
+    bool clipping = m_shadow && m_shadow->next() && !areLinesOpaque;
     if (clipping) {
-        FloatRect clipRect(localOrigin, FloatSize(width, fontMetrics.ascent() + 2));
+        auto& fontMetrics = m_textDecorationStyle.metricsOfPrimaryFont();
+        auto clipRect = FloatRect { boxOrigin, FloatSize { decorationGeometry.textBoxWidth, fontMetrics.ascent() + 2.f } };
         for (const ShadowData* shadow = m_shadow; shadow; shadow = shadow->next()) {
-            int shadowExtent = shadow->paintingExtent();
-            FloatRect shadowRect(localOrigin, FloatSize(width, fontMetrics.ascent() + 2));
+            auto shadowExtent = shadow->paintingExtent();
+            auto shadowRect = clipRect;
             shadowRect.inflate(shadowExtent);
-            float shadowX = LayoutUnit(m_isHorizontal ? shadow->x().value() : shadow->y().value());
-            float shadowY = LayoutUnit(m_isHorizontal ? shadow->y().value() : -shadow->x().value());
+            auto shadowX = m_isHorizontal ? shadow->x().value() : shadow->y().value();
+            auto shadowY = m_isHorizontal ? shadow->y().value() : -shadow->x().value();
             shadowRect.move(shadowX, shadowY);
             clipRect.unite(shadowRect);
             extraOffset = std::max(extraOffset, std::max(0.f, shadowY) + shadowExtent);
@@ -271,36 +269,38 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
         m_context.save();
         m_context.clip(clipRect);
         extraOffset += fontMetrics.ascent() + 2;
-        localOrigin.move(0, extraOffset);
+        boxOrigin.move(0.f, extraOffset);
     }
 
     // These decorations should match the visual overflows computed in visualOverflowForDecorations().
-    auto underlineRect = FloatRect { localOrigin, FloatSize(width, textDecorationThickness) };
+    auto underlineRect = FloatRect { boxOrigin, FloatSize { decorationGeometry.textBoxWidth, decorationGeometry.textDecorationThickness } };
     auto overlineRect = underlineRect;
     if (m_textDecorations.contains(TextDecorationLine::Underline))
-        underlineRect.move(0.f, underlineOffset + (m_styles.underline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffset : 0.f));
-    if (m_textDecorations.contains(TextDecorationLine::Overline)) {
-        auto autoTextDecorationThickness = ceilToDevicePixel(TextDecorationThickness::createWithAuto().resolve(m_textDecorationStyle.computedFontSize(), fontMetrics), m_deviceScaleFactor);
-        overlineRect.move(0.f, autoTextDecorationThickness - textDecorationThickness - (m_styles.overline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffset : 0.f));
-    }
+        underlineRect.move(0.f, decorationGeometry.underlineOffset);
+    if (m_textDecorations.contains(TextDecorationLine::Overline))
+        overlineRect.move(0.f, decorationGeometry.overlineOffset);
 
-    const ShadowData* shadow = m_shadow;
+    auto* shadow = m_shadow;
     do {
-        if (shadow) {
+        auto applyShadowIfNeeded = [&] {
+            if (!shadow)
+                return;
             if (!shadow->next()) {
                 // The last set of lines paints normally inside the clip.
-                localOrigin.move(0, -extraOffset);
+                boxOrigin.move(0, -extraOffset);
                 extraOffset = 0;
             }
-            float shadowX = LayoutUnit(m_isHorizontal ? shadow->x().value() : shadow->y().value());
-            float shadowY = LayoutUnit(m_isHorizontal ? shadow->y().value() : -shadow->x().value());
-            
-            Color shadowColor = shadow->color();
+            auto shadowColor = shadow->color();
             if (m_shadowColorFilter)
                 m_shadowColorFilter->transformColor(shadowColor);
-            m_context.setShadow(FloatSize(shadowX, shadowY - extraOffset), shadow->radius().value(), shadowColor);
+
+            auto shadowX = m_isHorizontal ? shadow->x().value() : shadow->y().value();
+            auto shadowY = m_isHorizontal ? shadow->y().value() : -shadow->x().value();
+            m_context.setShadow(FloatSize { shadowX, shadowY - extraOffset }, shadow->radius().value(), shadowColor);
             shadow = shadow->next();
-        }
+        };
+        applyShadowIfNeeded();
+
         if (m_textDecorations.contains(TextDecorationLine::Underline))
             paintDecoration(TextDecorationLine::Underline, m_styles.underline.decorationStyle, m_styles.underline.color, underlineRect);
         if (m_textDecorations.contains(TextDecorationLine::Overline))
@@ -308,7 +308,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
         // We only want to paint the shadow, hence the transparent color, not the actual line-through,
         // which will be painted in paintForegroundDecorations().
         if (shadow && m_textDecorations.contains(TextDecorationLine::LineThrough))
-            paintLineThrough(Color::transparentBlack, textDecorationThickness, localOrigin, width);
+            paintLineThrough(Color::transparentBlack, decorationGeometry.textDecorationThickness, boxOrigin, decorationGeometry.textBoxWidth);
     } while (shadow);
 
     if (clipping)
