@@ -33,6 +33,10 @@
 #include "VideoFrameCV.h"
 #endif
 
+#if USE(GSTREAMER)
+#include "VideoFrameGStreamer.h"
+#endif
+
 namespace WebCore {
 
 RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& source, bool shouldUseIOSurface)
@@ -171,9 +175,9 @@ void RealtimeVideoSource::sourceStopped()
     });
 }
 
-#if PLATFORM(COCOA)
 RefPtr<VideoFrame> RealtimeVideoSource::adaptVideoFrame(VideoFrame& videoFrame)
 {
+#if PLATFORM(COCOA)
     if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != videoFrame.pixelFormat())
         m_imageTransferSession = ImageTransferSessionVT::create(videoFrame.pixelFormat(), m_shouldUseIOSurface);
 
@@ -182,11 +186,16 @@ RefPtr<VideoFrame> RealtimeVideoSource::adaptVideoFrame(VideoFrame& videoFrame)
         return nullptr;
 
     auto newVideoFrame = m_imageTransferSession->convertVideoFrame(videoFrame, size());
+#elif USE(GSTREAMER)
+    auto newVideoFrame = reinterpret_cast<VideoFrameGStreamer&>(videoFrame).resizeTo(size());
+#else
+    notImplemented();
+    return nullptr;
+#endif
     ASSERT(newVideoFrame);
 
     return newVideoFrame;
 }
-#endif
 
 void RealtimeVideoSource::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata metadata)
 {
@@ -198,7 +207,7 @@ void RealtimeVideoSource::videoFrameAvailable(VideoFrame& videoFrame, VideoFrame
     if (!m_frameDecimation)
         m_frameDecimation = 1;
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(GSTREAMER)
     auto size = this->size();
     if (!size.isEmpty() && size != expandedIntSize(videoFrame.presentationSize())) {
         if (auto newVideoFrame = adaptVideoFrame(videoFrame)) {

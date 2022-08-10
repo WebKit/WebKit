@@ -74,9 +74,7 @@ private:
     // RealtimeMediaSource::VideoFrameObserver
     void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
 
-#if PLATFORM(COCOA)
     RefPtr<VideoFrame> adaptVideoFrame(VideoFrame&);
-#endif
 
 #if !RELEASE_LOG_DISABLED
     void setLogger(const Logger&, const void*) final;

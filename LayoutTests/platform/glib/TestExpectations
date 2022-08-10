@@ -870,8 +870,6 @@ webkit.org/b/230028 media/media-source/media-source-seek-twice.html [ Pass Timeo
 
 # rvfc related failures
 imported/w3c/web-platform-tests/video-rvfc [ Pass ]
-fast/mediastream/getUserMedia-rvfc.html [ Pass Failure ]
-webrtc/peerConnection-rvfc.html [ Failure ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
