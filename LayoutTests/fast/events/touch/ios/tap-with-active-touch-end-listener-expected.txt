@@ -13,7 +13,7 @@ Tap on Target1 (green)
   (max layout viewport origin (0,0))
   (synchronous event dispatch region for event touchend
     at (0,0) size 300x100)
-  (behavior for fixed 0)
+  (behavior for fixed 1)
 )
 Listener target1 received cancelable event touchend targetting eventTarget1
 Done
@@ -32,7 +32,7 @@ Tap on Target2 (red)
   (max layout viewport origin (0,0))
   (synchronous event dispatch region for event touchend
     at (0,0) size 300x100)
-  (behavior for fixed 0)
+  (behavior for fixed 1)
 )
 Listener target1 received cancelable event touchend targetting eventTarget2
 Done
@@ -51,7 +51,7 @@ Tap on Target3 (blue)
   (max layout viewport origin (0,0))
   (synchronous event dispatch region for event touchend
     at (0,0) size 300x100)
-  (behavior for fixed 0)
+  (behavior for fixed 1)
 )
 Listener target1 received cancelable event touchend targetting eventTarget3
 
