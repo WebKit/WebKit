@@ -75,12 +75,6 @@ CSSFilter::CSSFilter(Vector<Ref<FilterFunction>>&& functions)
 {
 }
 
-static IntOutsets calculateBlurEffectOutsets(const BlurFilterOperation& blurOperation)
-{
-    float stdDeviation = floatValueForLength(blurOperation.stdDeviation(), 0);
-    return FEGaussianBlur::calculateOutsets({ stdDeviation, stdDeviation });
-}
-
 static RefPtr<FilterEffect> createBlurEffect(const BlurFilterOperation& blurOperation, Filter::ClipOperation clipOperation)
 {
     float stdDeviation = floatValueForLength(blurOperation.stdDeviation(), 0);
@@ -108,12 +102,6 @@ static RefPtr<FilterEffect> createContrastEffect(const BasicComponentTransferFil
 
     ComponentTransferFunction nullFunction;
     return FEComponentTransfer::create(transferFunction, transferFunction, transferFunction, nullFunction);
-}
-
-static IntOutsets calculateDropShadowEffectOutsets(const DropShadowFilterOperation& dropShadowOperation)
-{
-    float stdDeviation = dropShadowOperation.stdDeviation();
-    return FEDropShadow::calculateOutsets(FloatSize(dropShadowOperation.x(), dropShadowOperation.y()), { stdDeviation, stdDeviation });
 }
 
 static RefPtr<FilterEffect> createDropShadowEffect(const DropShadowFilterOperation& dropShadowOperation)
@@ -428,22 +416,12 @@ IntOutsets CSSFilter::calculateOutsets(RenderElement& renderer, const FilterOper
     IntOutsets outsets;
 
     for (auto& operation : operations.operations()) {
-        switch (operation->type()) {
-        case FilterOperation::BLUR:
-            outsets += calculateBlurEffectOutsets(downcast<BlurFilterOperation>(*operation));
-            break;
-
-        case FilterOperation::DROP_SHADOW:
-            outsets += calculateDropShadowEffectOutsets(downcast<DropShadowFilterOperation>(*operation));
-            break;
-
-        case FilterOperation::REFERENCE:
+        if (operation->type() == FilterOperation::REFERENCE) {
             outsets += calculateReferenceFilterOutsets(downcast<ReferenceFilterOperation>(*operation), renderer, targetBoundingBox);
-            break;
-
-        default:
-            break;
+            continue;
         }
+
+        outsets += operation->outsets();
     }
 
     return outsets;

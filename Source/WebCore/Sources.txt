@@ -800,7 +800,6 @@ css/DeprecatedCSSOMValueList.cpp
 css/FontFace.cpp
 css/FontFaceSet.cpp
 css/FontVariantBuilder.cpp
-css/LengthFunctions.cpp
 css/MediaFeatureNames.cpp
 css/MediaList.cpp
 css/MediaQuery.cpp
@@ -1899,6 +1898,7 @@ platform/LayoutUnit.cpp
 platform/LegacySchemeRegistry.cpp
 platform/Length.cpp
 platform/LengthBox.cpp
+platform/LengthFunctions.cpp
 platform/LengthPoint.cpp
 platform/LengthSize.cpp
 platform/LocalizedStrings.cpp

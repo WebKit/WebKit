@@ -33,8 +33,11 @@
 #include "ColorConversion.h"
 #include "ColorMatrix.h"
 #include "ColorTypes.h"
+#include "FEDropShadow.h"
+#include "FEGaussianBlur.h"
 #include "FilterEffect.h"
 #include "ImageBuffer.h"
+#include "LengthFunctions.h"
 #include "SVGURIReference.h"
 #include <wtf/text/TextStream.h>
 
@@ -72,6 +75,13 @@ bool ReferenceFilterOperation::isIdentity() const
     return false;
 }
 
+IntOutsets ReferenceFilterOperation::outsets() const
+{
+    // Answering this question requires access to the renderer and the referenced filterElement.
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 void ReferenceFilterOperation::loadExternalDocumentIfNeeded(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
     if (m_cachedSVGDocumentReference)
@@ -106,6 +116,11 @@ RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOpera
         break;
     }
     return BasicColorMatrixFilterOperation::create(blendedAmount, m_type);
+}
+
+bool BasicColorMatrixFilterOperation::isIdentity() const
+{
+    return m_type == SATURATE ? (m_amount == 1) : !m_amount;
 }
 
 bool BasicColorMatrixFilterOperation::transformColor(SRGBA<float>& color) const
@@ -183,6 +198,11 @@ RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const Filte
         break;
     }
     return BasicComponentTransferFilterOperation::create(blendedAmount, m_type);
+}
+
+bool BasicComponentTransferFilterOperation::isIdentity() const
+{
+    return m_type == INVERT ? !m_amount : (m_amount == 1);
 }
 
 bool BasicComponentTransferFilterOperation::transformColor(SRGBA<float>& color) const
@@ -380,7 +400,18 @@ RefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, 
     Length fromLength = fromOperation ? fromOperation->m_stdDeviation : Length(lengthType);
     return BlurFilterOperation::create(WebCore::blend(fromLength, m_stdDeviation, context, ValueRange::NonNegative));
 }
-    
+
+bool BlurFilterOperation::isIdentity() const
+{
+    return floatValueForLength(m_stdDeviation, 0) <= 0;
+}
+
+IntOutsets BlurFilterOperation::outsets() const
+{
+    float stdDeviation = floatValueForLength(m_stdDeviation, 0);
+    return FEGaussianBlur::calculateOutsets({ stdDeviation, stdDeviation });
+}
+
 bool DropShadowFilterOperation::operator==(const FilterOperation& operation) const
 {
     if (!isSameType(operation))
@@ -409,6 +440,16 @@ RefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation* 
         WebCore::blend(fromLocation, m_location, context),
         std::max(WebCore::blend(fromStdDeviation, m_stdDeviation, context), 0),
         WebCore::blend(fromColor, m_color, context));
+}
+
+bool DropShadowFilterOperation::isIdentity() const
+{
+    return m_stdDeviation < 0 || (!m_stdDeviation && m_location.isZero());
+}
+
+IntOutsets DropShadowFilterOperation::outsets() const
+{
+    return FEDropShadow::calculateOutsets(FloatSize(x(), y()), FloatSize(m_stdDeviation, m_stdDeviation));
 }
 
 TextStream& operator<<(TextStream& ts, const FilterOperation& filter)
