@@ -55,7 +55,7 @@ static bool isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderO
     return false;
 }
 
-static float minLogicalTopForTextDecorationLine(const InlineIterator::LineBoxIterator& lineBox, float textRunLogicalTop, const RenderElement& decoratingBoxRenderer)
+static float minLogicalTopForTextDecorationLineUnder(const InlineIterator::LineBoxIterator& lineBox, float textRunLogicalTop, const RenderElement& decoratingBoxRendererForUnderline)
 {
     auto minLogicalTop = textRunLogicalTop;
     for (auto run = lineBox->firstLeafBox(); run; run.traverseNextOnLine()) {
@@ -63,9 +63,9 @@ static float minLogicalTopForTextDecorationLine(const InlineIterator::LineBoxIte
             continue; // Positioned placeholders don't affect calculations.
 
         if (!run->style().textDecorationsInEffect().contains(TextDecorationLine::Underline))
-            continue; // If the text decoration isn't in effect on the child, then it must be outside of |decoratingBoxRenderer|'s hierarchy.
+            continue; // If the text decoration isn't in effect on the child, then it must be outside of |decoratingBoxRendererForUnderline|'s hierarchy.
 
-        if (decoratingBoxRenderer.isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(decoratingBoxRenderer), &run->renderer()))
+        if (decoratingBoxRendererForUnderline.isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(decoratingBoxRendererForUnderline), &run->renderer()))
             continue;
 
         if (run->isText() || run->style().textDecorationSkipInk() == TextDecorationSkipInk::None)
@@ -74,7 +74,7 @@ static float minLogicalTopForTextDecorationLine(const InlineIterator::LineBoxIte
     return minLogicalTop;
 }
 
-static float maxLogicalBottomForTextDecorationLine(const InlineIterator::LineBoxIterator& lineBox, float textRunLogicalBottom, const RenderElement& decoratingBoxRenderer)
+static float maxLogicalBottomForTextDecorationLineUnder(const InlineIterator::LineBoxIterator& lineBox, float textRunLogicalBottom, const RenderElement& decoratingBoxRendererForUnderline)
 {
     auto maxLogicalBottom = textRunLogicalBottom;
     for (auto run = lineBox->firstLeafBox(); run; run.traverseNextOnLine()) {
@@ -82,9 +82,9 @@ static float maxLogicalBottomForTextDecorationLine(const InlineIterator::LineBox
             continue; // Positioned placeholders don't affect calculations.
 
         if (!run->style().textDecorationsInEffect().contains(TextDecorationLine::Underline))
-            continue; // If the text decoration isn't in effect on the child, then it must be outside of |decoratingBoxRenderer|'s hierarchy.
+            continue; // If the text decoration isn't in effect on the child, then it must be outside of |decoratingBoxRendererForUnderline|'s hierarchy.
 
-        if (decoratingBoxRenderer.isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(decoratingBoxRenderer), &run->renderer()))
+        if (decoratingBoxRendererForUnderline.isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(decoratingBoxRendererForUnderline), &run->renderer()))
             continue;
 
         if (run->isText() || run->style().textDecorationSkipInk() == TextDecorationSkipInk::None)
@@ -93,7 +93,7 @@ static float maxLogicalBottomForTextDecorationLine(const InlineIterator::LineBox
     return maxLogicalBottom;
 }
 
-static const RenderElement* enclosingRendererWithTextDecoration(const RenderText& renderer, bool firstLine)
+static const RenderElement* enclosingRendererWithTextDecoration(const RenderText& renderer)
 {
     for (auto* ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
         if (ancestor->isRenderBlock())
@@ -109,8 +109,7 @@ static const RenderElement* enclosingRendererWithTextDecoration(const RenderText
                 // <font> and <a> are always considered decorating boxes.
                 return true;
             }
-            auto& styleToUse = firstLine ? ancestor->firstLineStyle() : ancestor->style();
-            return styleToUse.textDecorationLine().contains(TextDecorationLine::Underline);
+            return ancestor->style().textDecorationLine().contains(TextDecorationLine::Underline);
         };
         if (isDecoratingInlineBox())
             return ancestor;
@@ -119,20 +118,17 @@ static const RenderElement* enclosingRendererWithTextDecoration(const RenderText
     return nullptr;
 }
 
-static float textRunOffsetFromBottomMostWithinDecoratingBox(const InlineIterator::LineBoxIterator& lineBox, const RenderElement& decoratingBoxRenderer, bool isFlippedLinesWritingMode, float textBoxLogicalTop, float textBoxLogicalBottom)
-{
-    if (isFlippedLinesWritingMode)
-        return textBoxLogicalTop - minLogicalTopForTextDecorationLine(lineBox, textBoxLogicalTop, decoratingBoxRenderer);
-    return maxLogicalBottomForTextDecorationLine(lineBox, textBoxLogicalBottom, decoratingBoxRenderer) - textBoxLogicalBottom;
-}
-
 static float textRunOffsetFromBottomMost(const InlineIterator::LineBoxIterator& lineBox, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom)
 {
-    auto* decoratingBoxRenderer = enclosingRendererWithTextDecoration(renderer, lineBox->isFirst());
-    if (!decoratingBoxRenderer)
+    auto* decoratingBoxRendererForUnderline = enclosingRendererWithTextDecoration(renderer);
+    if (!decoratingBoxRendererForUnderline)
         return 0.f;
-    return textRunOffsetFromBottomMostWithinDecoratingBox(lineBox, *decoratingBoxRenderer, decoratingBoxRenderer->style().isFlippedLinesWritingMode(), textBoxLogicalTop, textBoxLogicalBottom);
+
+    if (renderer.style().isFlippedLinesWritingMode())
+        return textBoxLogicalTop - minLogicalTopForTextDecorationLineUnder(lineBox, textBoxLogicalTop, *decoratingBoxRendererForUnderline);
+    return maxLogicalBottomForTextDecorationLineUnder(lineBox, textBoxLogicalBottom, *decoratingBoxRendererForUnderline) - textBoxLogicalBottom;
 }
+
 
 static inline float defaultGap(const RenderStyle& style)
 {
@@ -301,22 +297,11 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& style)
 
 float underlineOffsetForTextBoxPainting(const RenderStyle& style, const InlineIterator::TextBoxIterator& textBox)
 {
-    // 1. Find the decorating box for this text run (for root inline box content, it's the containing block, for text inside an inline box, it's mostly the parent inline box itself)
-    // 2. compute the underline offset.
-    auto& textBoxRenderer = textBox->renderer();
-    auto lineBox = textBox->lineBox();
-    auto isFirstLine = lineBox->isFirst();
-    auto* decoratingBoxRenderer = enclosingRendererWithTextDecoration(textBoxRenderer, isFirstLine);
-    if (!decoratingBoxRenderer) {
-        ASSERT_NOT_REACHED();
-        return 0.f;
-    }
-
     auto textUnderlinePositionUnder = std::optional<TextUnderlinePositionUnder> { };
-    auto underlinePositionValue = resolvedUnderlinePosition(style, lineBox->baselineType());
+    auto underlinePositionValue = resolvedUnderlinePosition(style, textBox->lineBox()->baselineType());
 
     if (underlinePositionValue == TextUnderlinePosition::Under) {
-        auto textRunOffset = textRunOffsetFromBottomMost(lineBox, textBoxRenderer, textBox->logicalTop(), textBox->logicalBottom());
+        auto textRunOffset = textRunOffsetFromBottomMost(textBox->lineBox(), textBox->renderer(), textBox->logicalTop(), textBox->logicalBottom());
         textUnderlinePositionUnder = TextUnderlinePositionUnder { textBox->logicalBottom() - textBox->logicalTop(), textRunOffset };
     }
 
