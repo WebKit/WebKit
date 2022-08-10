@@ -84,11 +84,13 @@ void KeepaliveRequestTracker::notifyFinished(CachedResource& resource, const Net
 void KeepaliveRequestTracker::unregisterRequest(CachedResource& resource)
 {
     ASSERT(resource.options().keepAlive);
-    resource.removeClient(*this);
-    bool wasRemoved = m_inflightKeepaliveRequests.removeFirst(&resource);
-    ASSERT_UNUSED(wasRemoved, wasRemoved);
+
     m_inflightKeepaliveBytes -= resource.resourceRequest().httpBody()->lengthInBytes();
     ASSERT(m_inflightKeepaliveBytes <= maxInflightKeepaliveBytes);
+
+    resource.removeClient(*this);
+    bool wasRemoved = m_inflightKeepaliveRequests.removeFirst(&resource); // May destroy |resource|.
+    ASSERT_UNUSED(wasRemoved, wasRemoved);
 }
 
 }
