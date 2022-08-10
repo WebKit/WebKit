@@ -34,6 +34,26 @@ use 5.8.8;
 use FindBin;
 use Config;
 
+sub build_flatpak_args
+{
+    my $type;
+    my $args = ();
+    for my $argv (@_) {
+       next if $argv eq "--no-flatpak-check";
+       next if $argv eq "--wpe" || $argv eq "--gtk";
+       if ($argv eq "--release" || $argv eq "--debug") {
+          $type = ucfirst(substr($argv, 2));
+          next;
+       }
+       $args->{$argv} = "";
+    }
+
+    if (!exists($args->{"--jsc"})) {
+       $args->{"--jsc"} = "/app/webkit/WebKitBuild/$type/bin/jsc";
+    }
+    return %$args;
+}
+
 BEGIN {
     use lib $FindBin::Bin;
     use File::Spec::Functions qw(catfile);
@@ -67,6 +87,10 @@ BEGIN {
     unshift @INC, "$FindBin::Bin/test262";
 
     $ENV{LOAD_ROUTES} = 1;
+}
+
+if (grep(/^--no-flatpak-check$/,  @ARGV)) {
+    @ARGV = build_flatpak_args(@ARGV);
 }
 
 use Runner;
