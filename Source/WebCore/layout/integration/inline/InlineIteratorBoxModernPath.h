@@ -212,6 +212,27 @@ public:
         return last;
     }
 
+    BoxModernPath parentInlineBox() const
+    {
+        ASSERT(!atEnd());
+
+        auto candidate = *this;
+
+        if (isRootInlineBox()) {
+            candidate.setAtEnd();
+            return candidate;
+        }
+
+        auto& parentLayoutBox = box().layoutBox().parent();
+        do {
+            candidate.traversePreviousBox();
+        } while (!candidate.atEnd() && &candidate.box().layoutBox() != &parentLayoutBox);
+
+        ASSERT(candidate.atEnd() || candidate.box().isInlineBox());
+
+        return candidate;
+    }
+
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
     bool isFirstLine() const { return !box().lineIndex(); }
 
