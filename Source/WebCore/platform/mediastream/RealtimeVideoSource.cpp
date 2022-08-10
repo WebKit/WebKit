@@ -187,7 +187,7 @@ RefPtr<VideoFrame> RealtimeVideoSource::adaptVideoFrame(VideoFrame& videoFrame)
 
     auto newVideoFrame = m_imageTransferSession->convertVideoFrame(videoFrame, size());
 #elif USE(GSTREAMER)
-    auto newVideoFrame = reinterpret_cast<VideoFrameGStreamer&>(videoFrame).resizeTo(size());
+    RefPtr<VideoFrameGStreamer> newVideoFrame = reinterpret_cast<VideoFrameGStreamer&>(videoFrame).resizeTo(size());
 #else
     notImplemented();
     return nullptr;
