@@ -41,7 +41,7 @@
 #if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
 #include <WebKitAdditions/SystemContentSandbox-macos.defs>
 #endif
- 
+
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)
   (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))

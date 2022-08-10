@@ -755,6 +755,9 @@
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76782530>
 )
 
+(deny sysctl-read (with no-report)
+    (sysctl-name "vm.task_no_footprint_for_debug"))
+
 (allow iokit-get-properties
     (iokit-property "AAPL,DisplayPipe")
     (iokit-property "AAPL,OpenCLdisabled")
@@ -1204,7 +1207,7 @@
         (syscall-unix-rarely-in-use-need-backtrace))
 )
 
-(deny syscall-unix (syscall-number
+(deny syscall-unix (with no-report) (syscall-number
     SYS_connect
     SYS_socket))
 

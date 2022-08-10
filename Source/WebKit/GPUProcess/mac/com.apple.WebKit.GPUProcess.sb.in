@@ -513,6 +513,7 @@
             "avd-version"
             "clock-gates"
             "clock-ids"
+            "coprovider-group"
             "decode-samples-per-second"
             "function-avd_reset"
             "function-mcc_dataset"
@@ -790,7 +791,8 @@
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
 
 (deny file-read* (with no-report)
-    (home-literal "/Library/Preferences/com.apple.networkd.plist"))
+    (home-literal "/Library/Preferences/com.apple.networkd.plist")
+    (literal "/Library/Preferences/com.apple.networkd.plist"))
 
 #if PLATFORM(MAC)
 (allow mach-lookup
