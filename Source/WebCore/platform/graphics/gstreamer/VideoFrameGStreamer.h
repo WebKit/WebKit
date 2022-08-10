@@ -30,6 +30,7 @@ typedef struct _GstSample GstSample;
 namespace WebCore {
 
 class PixelBuffer;
+class IntSize;
 
 class VideoFrameGStreamer final : public VideoFrame {
 public:
@@ -50,6 +51,9 @@ public:
     }
 
     static Ref<VideoFrameGStreamer> createFromPixelBuffer(Ref<PixelBuffer>&&, CanvasContentType canvasContentType, Rotation videoRotation, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt);
+
+
+    Ref<VideoFrameGStreamer> resizeTo(const IntSize&);
 
     GstSample* sample() const { return m_sample.get(); }
     RefPtr<JSC::Uint8ClampedArray> computeRGBAImageData() const;
