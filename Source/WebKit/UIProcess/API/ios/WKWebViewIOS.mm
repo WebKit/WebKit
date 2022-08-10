@@ -1693,6 +1693,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 #endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+- (void)_setInteractionRegionsEnabled:(BOOL)enabled
+{
+    WKWEBVIEW_RELEASE_LOG("%p -[WKWebView _setInteractionRegionsEnabled] page - %p", self, _page.get());
+    if (_page && _page->preferences().interactionRegionsEnabled())
+        _page->setInteractionRegionsEnabled(enabled);
+}
+#endif // ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+
+
 - (void)_setOpaqueInternal:(BOOL)opaque
 {
     [super setOpaque:opaque];

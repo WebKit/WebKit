@@ -696,4 +696,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
     SetIsWindowResizingEnabled(bool hasResizableWindows)
 #endif
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    SetInteractionRegionsEnabled(bool enable)
+#endif
 }

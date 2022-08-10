@@ -1554,6 +1554,10 @@ public:
     void setIsWindowResizingEnabled(bool);
 #endif
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    void setInteractionRegionsEnabled(bool);
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 

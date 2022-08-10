@@ -11600,6 +11600,15 @@ void WebPageProxy::setIsWindowResizingEnabled(bool hasResizableWindows)
 
 #endif
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+
+void WebPageProxy::setInteractionRegionsEnabled(bool enable)
+{
+    send(Messages::WebPage::SetInteractionRegionsEnabled(enable));
+}
+
+#endif // ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+
 bool WebPageProxy::shouldAvoidSynchronouslyWaitingToPreventDeadlock() const
 {
     if (m_isRunningModalJavaScriptDialog)

@@ -8162,6 +8162,19 @@ void WebPage::setIsWindowResizingEnabled(bool value)
 
 #endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+
+void WebPage::setInteractionRegionsEnabled(bool enable)
+{
+    WEBPAGE_RELEASE_LOG(Process, "setInteractionRegionsEnabled: enable state = %d for page %p", (int)enable, (void*)m_page.get());
+    if (!m_page)
+        return;
+
+    m_page->setInteractionRegionsEnabled(enable);
+}
+
+#endif // ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+
 bool WebPage::handlesPageScaleGesture()
 {
 #if !ENABLE(PDFKIT_PLUGIN)

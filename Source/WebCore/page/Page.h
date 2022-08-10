@@ -913,6 +913,7 @@ public:
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     bool shouldBuildInteractionRegions() const;
+    WEBCORE_EXPORT void setInteractionRegionsEnabled(bool);
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)

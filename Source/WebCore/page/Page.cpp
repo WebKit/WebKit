@@ -1105,7 +1105,15 @@ bool Page::shouldBuildInteractionRegions() const
 {
     return m_settings->interactionRegionsEnabled();
 }
-#endif
+
+void Page::setInteractionRegionsEnabled(bool enable)
+{
+    bool needsUpdate = enable && !shouldBuildInteractionRegions();
+    m_settings->setInteractionRegionsEnabled(enable);
+    if (needsUpdate)
+        mainFrame().invalidateContentEventRegionsIfNeeded(Frame::InvalidateContentEventRegionsReason::Layout);
+}
+#endif // ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 
 const VisibleSelection& Page::selection() const
 {
