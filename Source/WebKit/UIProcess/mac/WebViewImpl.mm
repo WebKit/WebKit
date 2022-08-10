@@ -121,6 +121,7 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/NSTouchBarSPI.h>
+#import <pal/spi/cocoa/VisionKitCoreSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>

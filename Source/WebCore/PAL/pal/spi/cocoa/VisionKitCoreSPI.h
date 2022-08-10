@@ -37,11 +37,22 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
+#elif PLATFORM(MAC)
+#import <AppKit/AppKit.h>
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef int32_t VKImageAnalysisRequestID;
+
+typedef NS_OPTIONS(NSUInteger, VKImageAnalysisInteractionTypes) {
+    VKImageAnalysisInteractionTypeTextSelection = 1 << 0,
+    VKImageAnalysisInteractionTypeDataDetectors = 1 << 1,
+    VKImageAnalysisInteractionTypeVisualSearch  = 1 << 2,
+    VKImageAnalysisInteractionTypeImageSubject  = 1 << 3,
+    VKImageAnalysisInteractionTypeNone = 0,
+    VKImageAnalysisInteractionTypeAll = NSUIntegerMax,
+};
 
 typedef NS_OPTIONS(NSUInteger, VKAnalysisTypes) {
     VKAnalysisTypeText                 = 1 << 0,
@@ -156,6 +167,8 @@ NS_ASSUME_NONNULL_END
 #import <VisionKitCore/VKCImageAnalysisTranslation.h>
 #else
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface VKCTranslatedParagraph : NSObject
 @property (nonatomic, readonly) VKQuad *quad;
 @property (nonatomic, readonly) NSString *text;
@@ -166,7 +179,9 @@ NS_ASSUME_NONNULL_END
 @end
 #endif
 
-@interface VKCImageAnalysis (Staging_93280734)
+@interface VKCImageAnalysis : VKImageAnalysis
+- (NSAttributedString *)_attributedStringForRange:(NSRange)range;
+- (void)translateTo:(NSString *)targetLanguage withCompletion:(void (^)(VKCImageAnalysisTranslation *translation, NSError * _Nullable))completion;
 - (void)translateFrom:(NSString *)sourceLanguage to:(NSString *)targetLanguage withCompletion:(void (^)(VKCImageAnalysisTranslation *translation, NSError *))completion;
 @end
 
@@ -174,13 +189,19 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, readonly) BOOL isPassthrough;
 @end
 
+NS_ASSUME_NONNULL_END
+
 #if __has_include(<VisionKitCore/VKImageClass_Private.h>)
 #import <VisionKitCore/VKImageClass_Private.h>
 #else
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef void (^VKCGImageRemoveBackgroundCompletion)(CGImageRef, CGRect cropRect, NSError *);
-extern void vk_cgImageRemoveBackground(CGImageRef, BOOL cropToFit, VKCGImageRemoveBackgroundCompletion);
-extern void vk_cgImageRemoveBackgroundWithDownsizing(CGImageRef, BOOL canDownsize, BOOL cropToFit, void(^completion)(CGImageRef, NSError *));
+extern "C" void vk_cgImageRemoveBackground(CGImageRef, BOOL cropToFit, VKCGImageRemoveBackgroundCompletion);
+extern "C" void vk_cgImageRemoveBackgroundWithDownsizing(CGImageRef, BOOL canDownsize, BOOL cropToFit, void(^completion)(CGImageRef, NSError *));
+
+NS_ASSUME_NONNULL_END
 
 #endif
 
@@ -189,6 +210,9 @@ extern void vk_cgImageRemoveBackgroundWithDownsizing(CGImageRef, BOOL canDownsiz
 #import <VisionKitCore/VKCRemoveBackgroundRequestHandler.h>
 #import <VisionKitCore/VKCRemoveBackgroundResult.h>
 #else
+
+NS_ASSUME_NONNULL_BEGIN
+
 @interface VKCRemoveBackgroundResult : NSObject
 @property (nonatomic, readonly) CGRect cropRect;
 - (CGImageRef)createCGImage;
@@ -202,7 +226,61 @@ extern void vk_cgImageRemoveBackgroundWithDownsizing(CGImageRef, BOOL canDownsiz
 @interface VKCRemoveBackgroundRequestHandler : NSObject
 - (void)performRequest:(VKCRemoveBackgroundRequest *)request completion:(void (^)(VKCRemoveBackgroundResult *result, NSError *error))completion;
 @end
+
+NS_ASSUME_NONNULL_END
+
 #endif
+
+#if __has_include(<VisionKitCore/VKCImageAnalyzer.h>)
+#import <VisionKitCore/VKCImageAnalyzer.h>
+#import <VisionKitCore/VKCImageAnalyzerRequest.h>
+#else
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface VKCImageAnalyzerRequest : NSObject <NSCopying, VKFeedbackAssetsProvider>
+@property (nonatomic, copy, nullable) NSURL *imageURL;
+@property (nonatomic, copy, nullable) NSURL *pageURL;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithCGImage:(CGImageRef)image orientation:(VKImageOrientation)orientation requestType:(VKAnalysisTypes)analysisType;
+@end
+
+@interface VKCImageAnalyzer : NSObject
+@property (nonatomic, strong, nullable) dispatch_queue_t callbackQueue;
+@property (nonatomic, class, readonly) NSArray<NSString *> *supportedRecognitionLanguages;
+- (void)cancelRequestID:(VKImageAnalysisRequestID)requestID;
+- (VKImageAnalysisRequestID)processRequest:(VKCImageAnalyzerRequest *)request progressHandler:(void (^_Nullable)(double progress))progressHandler completionHandler:(void (^)(VKCImageAnalysis* _Nullable analysis, NSError * _Nullable error))completionHandler;
+@end
+
+NS_ASSUME_NONNULL_END
+#endif
+
+#if PLATFORM(MAC)
+#if __has_include(<VisionKitCore/VKCImageAnalysisOverlayView.h>)
+#import <VisionKitCore/VKCImageAnalysisOverlayView.h>
+#else
+
+NS_ASSUME_NONNULL_BEGIN
+
+@protocol VKCImageAnalysisOverlayViewDelegate <NSObject>
+@end
+
+@interface VKCImageAnalysisOverlayView : NSView
+@property (nonatomic) VKImageAnalysisInteractionTypes activeInteractionTypes;
+@property (nonatomic) BOOL actionInfoLiveTextButtonDisabled;
+@property (nonatomic) BOOL actionInfoQuickActionsDisabled;
+@property (nullable, nonatomic, strong) VKCImageAnalysis *analysis;
+@property (nonatomic, weak) id<VKCImageAnalysisOverlayViewDelegate> delegate;
+@property (nonatomic) BOOL wantsAutomaticContentsRectCalculation;
+
+- (BOOL)interactableItemExistsAtPoint:(CGPoint)point;
+- (void)setActionInfoViewHidden:(BOOL)hidden animated:(BOOL)animated;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif
+#endif // PLATFORM(MAC)
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
