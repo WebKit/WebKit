@@ -59,9 +59,9 @@ public:
 #endif
         bool avoidIOSurfaceSizeCheckInWebProcessForTesting = false;
 
-        enum class UseOutOfLineSurfaces : bool { No, Yes };
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-        UseOutOfLineSurfaces useOutOfLineSurfacesForCGDisplayLists;
+        enum class UseCGDisplayListImageCache : bool { No, Yes };
+        UseCGDisplayListImageCache useCGDisplayListImageCache;
 #endif
 
         CreationContext(HostWindow* window = nullptr
@@ -70,7 +70,7 @@ public:
 #endif
             , bool avoidCheck = false
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-            , UseOutOfLineSurfaces useOutOfLineSurfacesForCGDisplayLists = UseOutOfLineSurfaces::No
+            , UseCGDisplayListImageCache useCGDisplayListImageCache = UseCGDisplayListImageCache::No
 #endif
         )
             : hostWindow(window)
@@ -79,7 +79,7 @@ public:
 #endif
             , avoidIOSurfaceSizeCheckInWebProcessForTesting(avoidCheck)
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-            , useOutOfLineSurfacesForCGDisplayLists(useOutOfLineSurfacesForCGDisplayLists)
+            , useCGDisplayListImageCache(useCGDisplayListImageCache)
 #endif
         { }
     };

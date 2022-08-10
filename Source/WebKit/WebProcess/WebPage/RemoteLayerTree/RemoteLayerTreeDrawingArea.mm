@@ -173,7 +173,7 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore& pr
     m_rootLayer->setShowDebugBorder(settings.showDebugBorders());
 
     m_remoteLayerTreeContext->setUseCGDisplayListsForDOMRendering(preferences.getBoolValueForKey(WebPreferencesKey::useCGDisplayListsForDOMRenderingKey()));
-    m_remoteLayerTreeContext->setUseCGDisplayListOutOfLineSurfaces(preferences.getBoolValueForKey(WebPreferencesKey::useCGDisplayListOutOfLineSurfacesKey()) && !preferences.getBoolValueForKey(WebPreferencesKey::replayCGDisplayListsIntoBackingStoreKey()));
+    m_remoteLayerTreeContext->setUseCGDisplayListImageCache(preferences.getBoolValueForKey(WebPreferencesKey::useCGDisplayListImageCacheKey()) && !preferences.getBoolValueForKey(WebPreferencesKey::replayCGDisplayListsIntoBackingStoreKey()));
 
     DebugPageOverlays::settingsChanged(*m_webPage.corePage());
 }

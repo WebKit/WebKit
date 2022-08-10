@@ -87,13 +87,14 @@ std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend
     if (parameters.logicalSize.isEmpty())
         return nullptr;
 
-    return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, creationContext.useOutOfLineSurfacesForCGDisplayLists));
+    return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, creationContext));
 }
 
-CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameters& parameters, UseOutOfLineSurfaces useOutOfLineSurfaces)
+CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameters& parameters, const WebCore::ImageBuffer::CreationContext& creationContext)
     : ImageBufferCGBackend { parameters }
-    , m_useOutOfLineSurfaces { useOutOfLineSurfaces }
 {
+    if (creationContext.useCGDisplayListImageCache == UseCGDisplayListImageCache::Yes)
+        m_resourceCache = bridge_id_cast(adoptCF(WKCGCommandsCacheCreate(nullptr)));
 }
 
 ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(SharedMemory::Protection) const
@@ -102,10 +103,11 @@ ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(Sh
 
     RetainPtr<NSDictionary> options;
     RetainPtr<NSMutableArray> ports;
-    if (m_useOutOfLineSurfaces == UseOutOfLineSurfaces::Yes) {
+    if (m_resourceCache) {
         ports = adoptNS([[NSMutableArray alloc] init]);
         options = @{
-            @"ports": ports.get()
+            @"ports": ports.get(),
+            @"cache": m_resourceCache.get()
         };
     }
 
@@ -114,11 +116,11 @@ ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(Sh
 
 #if !RELEASE_LOG_DISABLED
     auto size = backendSize();
-    RELEASE_LOG(RemoteLayerTree, "CGDisplayListImageBufferBackend of size %dx%d encoded display list of %ld bytes with %ld surfaces (useOutOfLineSurfaces: %s)", size.width(), size.height(), CFDataGetLength(data.get()), [ports count], m_useOutOfLineSurfaces == UseOutOfLineSurfaces::Yes ? "yes" : "no");
+    RELEASE_LOG(RemoteLayerTree, "CGDisplayListImageBufferBackend of size %dx%d encoded display list of %ld bytes with %ld surfaces (useImageCache: %s)", size.width(), size.height(), CFDataGetLength(data.get()), [ports count], m_resourceCache ? "yes" : "no");
 #endif
 
     Vector<MachSendRight> sendRights;
-    if (m_useOutOfLineSurfaces == UseOutOfLineSurfaces::Yes) {
+    if (m_resourceCache) {
         sendRights = makeVector(ports.get(), [] (id port) -> std::optional<MachSendRight> {
             // We `create` instead of `adopt` because CAMachPort has no API to leak its reference.
             return { MachSendRight::create(CAMachPortGetPort(checked_cf_cast<CAMachPortRef>(port))) };

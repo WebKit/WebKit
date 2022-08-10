@@ -957,10 +957,10 @@ UseARKitForModel:
     WebKit:
       default: true
 
-UseCGDisplayListOutOfLineSurfaces:
+UseCGDisplayListImageCache:
   type: bool
-  humanReadableName: "CG Display Lists: Out-of-line Surfaces"
-  humanReadableDescription: "Encode surfaces out-of-line for CG Display List image buffers."
+  humanReadableName: "CG Display Lists: Image Cache"
+  humanReadableDescription: "Cache and transmit surfaces out-of-line for CG Display List image buffers."
   webcoreBinding: none
   condition: ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
   exposed: [ WebKit ]

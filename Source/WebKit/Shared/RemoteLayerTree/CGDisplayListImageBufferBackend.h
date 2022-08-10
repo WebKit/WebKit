@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-using UseOutOfLineSurfaces = WebCore::ImageBuffer::CreationContext::UseOutOfLineSurfaces;
+using UseCGDisplayListImageCache = WebCore::ImageBuffer::CreationContext::UseCGDisplayListImageCache;
 
 class CGDisplayListImageBufferBackend final : public WebCore::ImageBufferCGBackend, public ImageBufferBackendHandleSharing {
     WTF_MAKE_ISO_ALLOCATED(CGDisplayListImageBufferBackend);
@@ -56,7 +56,7 @@ public:
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
 
 protected:
-    CGDisplayListImageBufferBackend(const Parameters&, UseOutOfLineSurfaces);
+    CGDisplayListImageBufferBackend(const Parameters&, const WebCore::ImageBuffer::CreationContext&);
 
     unsigned bytesPerRow() const final;
 
@@ -64,7 +64,7 @@ protected:
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
     mutable std::unique_ptr<WebCore::GraphicsContext> m_context;
-    UseOutOfLineSurfaces m_useOutOfLineSurfaces;
+    RetainPtr<id> m_resourceCache;
 };
 
 }

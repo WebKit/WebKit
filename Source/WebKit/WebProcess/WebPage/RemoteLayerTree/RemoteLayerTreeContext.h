@@ -80,8 +80,8 @@ public:
     bool useCGDisplayListsForDOMRendering() const { return m_useCGDisplayListsForDOMRendering; }
     void setUseCGDisplayListsForDOMRendering(bool useCGDisplayLists) { m_useCGDisplayListsForDOMRendering = useCGDisplayLists; }
 
-    bool useCGDisplayListOutOfLineSurfaces() const { return m_useCGDisplayListOutOfLineSurfaces; }
-    void setUseCGDisplayListOutOfLineSurfaces(bool useOutOfLineSurfaces) { m_useCGDisplayListOutOfLineSurfaces = useOutOfLineSurfaces; }
+    bool useCGDisplayListImageCache() const { return m_useCGDisplayListImageCache; }
+    void setUseCGDisplayListImageCache(bool useCGDisplayListImageCache) { m_useCGDisplayListImageCache = useCGDisplayListImageCache; }
     
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const;
@@ -109,7 +109,7 @@ private:
 
     bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
     bool m_useCGDisplayListsForDOMRendering { false };
-    bool m_useCGDisplayListOutOfLineSurfaces { false };
+    bool m_useCGDisplayListImageCache { false };
 };
 
 } // namespace WebKit

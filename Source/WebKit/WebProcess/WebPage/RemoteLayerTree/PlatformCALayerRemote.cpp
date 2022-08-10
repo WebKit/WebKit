@@ -235,16 +235,21 @@ void PlatformCALayerRemote::updateBackingStore()
 
     ASSERT(m_properties.backingStoreAttached);
 
-    auto type = m_acceleratesDrawing ? RemoteLayerBackingStore::Type::IOSurface : RemoteLayerBackingStore::Type::Bitmap;
-    auto includeDisplayList = RemoteLayerBackingStore::IncludeDisplayList::No;
-    auto useOutOfLineSurfaces = UseOutOfLineSurfaces::No;
+    RemoteLayerBackingStore::Parameters parameters;
+    parameters.type = m_acceleratesDrawing ? RemoteLayerBackingStore::Type::IOSurface : RemoteLayerBackingStore::Type::Bitmap;
+    parameters.size = m_properties.bounds.size();
+    parameters.scale = m_properties.contentsScale;
+    parameters.deepColor = m_wantsDeepColorBackingStore;
+    parameters.isOpaque = m_properties.opaque;
+
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     if (m_context->useCGDisplayListsForDOMRendering())
-        includeDisplayList = RemoteLayerBackingStore::IncludeDisplayList::Yes;
-    if (m_context->useCGDisplayListOutOfLineSurfaces())
-        useOutOfLineSurfaces = UseOutOfLineSurfaces::Yes;
+        parameters.includeDisplayList = RemoteLayerBackingStore::IncludeDisplayList::Yes;
+    if (m_context->useCGDisplayListImageCache())
+        parameters.useCGDisplayListImageCache = UseCGDisplayListImageCache::Yes;
 #endif
-    m_properties.backingStore->ensureBackingStore(type, m_properties.bounds.size(), m_properties.contentsScale, m_wantsDeepColorBackingStore, m_properties.opaque, includeDisplayList, useOutOfLineSurfaces);
+
+    m_properties.backingStore->ensureBackingStore(parameters);
 }
 
 void PlatformCALayerRemote::setNeedsDisplayInRect(const FloatRect& rect)
