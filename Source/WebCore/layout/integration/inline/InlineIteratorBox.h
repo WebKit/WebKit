@@ -99,6 +99,8 @@ public:
     LeafBoxIterator nextOnLineIgnoringLineBreak() const;
     LeafBoxIterator previousOnLineIgnoringLineBreak() const;
 
+    InlineBoxIterator parentInlineBox() const;
+
     LineBoxIterator lineBox() const;
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)

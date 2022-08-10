@@ -81,6 +81,13 @@ LeafBoxIterator Box::previousOnLineIgnoringLineBreak() const
     return LeafBoxIterator(*this).traversePreviousOnLineIgnoringLineBreak();
 }
 
+InlineBoxIterator Box::parentInlineBox() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> InlineBoxIterator {
+        return { path.parentInlineBox() };
+    });
+}
+
 LineBoxIterator Box::lineBox() const
 {
     return WTF::switchOn(m_pathVariant, [](const BoxLegacyPath& path) {

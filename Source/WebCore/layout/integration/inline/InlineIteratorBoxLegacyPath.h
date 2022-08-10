@@ -118,6 +118,11 @@ public:
         return { inlineFlowBox()->lastLeafDescendant() };
     }
 
+    BoxLegacyPath parentInlineBox() const
+    {
+        return { m_inlineBox->parent() };
+    }
+
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
     bool isFirstLine() const { return !rootInlineBox().prevRootBox(); }
 
