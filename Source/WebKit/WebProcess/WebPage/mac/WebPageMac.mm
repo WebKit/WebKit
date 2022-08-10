@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "ApplicationServicesSPI.h"
 #import "ContextMenuContextData.h"
 #import "DataReference.h"
 #import "EditingRange.h"
@@ -107,6 +108,8 @@
 #endif
 
 #import "PDFKitSoftLink.h"
+
+extern "C" AXError _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatus);
 
 namespace WebKit {
 using namespace WebCore;
@@ -1123,6 +1126,13 @@ void WebPage::removePDFHUD(PDFPlugin& plugin)
 }
 
 #endif // ENABLE(UI_PROCESS_PDF_HUD)
+
+void WebPage::notifyProcessWillChangeSuspendState(bool suspended)
+{
+    if (!WebCore::AXObjectCache::accessibilityEnabled())
+        return;
+    _AXUIElementNotifyProcessSuspendStatus(suspended ? AXSuspendStatusSuspended : AXSuspendStatusRunning);
+}
 
 } // namespace WebKit
 

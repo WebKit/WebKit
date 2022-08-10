@@ -1367,8 +1367,10 @@ public:
     SendSyncResult sendSyncWithDelayedReply(T&& message, typename T::Reply&& reply, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
     {
         cancelCurrentInteractionInformationRequest();
-        sendSyncOptions = sendSyncOptions | IPC::SendSyncOption::InformPlatformProcessWillSuspend;
-        return sendSync(WTFMove(message), WTFMove(reply), Seconds::infinity(), sendSyncOptions);
+        notifyProcessWillChangeSuspendState(true);
+        auto result = sendSync(WTFMove(message), WTFMove(reply), Seconds::infinity(), sendSyncOptions);
+        notifyProcessWillChangeSuspendState(false);
+        return result;
     }
 
     WebCore::DOMPasteAccessResponse requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const String& originIdentifier);
@@ -2028,6 +2030,7 @@ private:
 
     bool hasPendingEditorStateUpdate() const;
     bool shouldAvoidComputingPostLayoutDataForEditorState() const;
+    void notifyProcessWillChangeSuspendState(bool suspended);
 
     WebCore::PageIdentifier m_identifier;
 

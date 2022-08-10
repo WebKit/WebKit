@@ -34,7 +34,6 @@
 #import "MachUtilities.h"
 #import "ReasonSPI.h"
 #import "WKCrashReporter.h"
-#import <WebCore/AXObjectCache.h>
 #import <mach/mach_error.h>
 #import <mach/vm_map.h>
 #import <sys/mman.h>
@@ -46,24 +45,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "ProcessAssertion.h"
-#import <UIKit/UIAccessibility.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <AXRuntime/AXDefines.h>
-#import <AXRuntime/AXNotificationConstants.h>
-#else
-#define kAXPidStatusChangedNotification 0
 #endif
-
-#endif
-
-#if PLATFORM(MAC)
-
-#import "ApplicationServicesSPI.h"
-
-extern "C" AXError _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatus);
-
-#endif // PLATFORM(MAC)
 
 namespace IPC {
 
@@ -656,25 +638,12 @@ bool Connection::kill()
 void AccessibilityProcessSuspendedNotification(bool suspended)
 {
 #if PLATFORM(MAC)
-    _AXUIElementNotifyProcessSuspendStatus(suspended ? AXSuspendStatusSuspended : AXSuspendStatusRunning);
 #elif PLATFORM(IOS_FAMILY)
-    UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });
 #else
     UNUSED_PARAM(suspended);
 #endif
 }
 
-void Connection::willSendSyncMessage(OptionSet<SendSyncOption> sendSyncOptions)
-{
-    if (sendSyncOptions.contains(IPC::SendSyncOption::InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
-        AccessibilityProcessSuspendedNotification(true);
-}
-
-void Connection::didReceiveSyncReply(OptionSet<SendSyncOption> sendSyncOptions)
-{
-    if (sendSyncOptions.contains(IPC::SendSyncOption::InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
-        AccessibilityProcessSuspendedNotification(false);
-}
 
 pid_t Connection::remoteProcessID() const
 {

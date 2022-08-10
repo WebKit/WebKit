@@ -8178,6 +8178,12 @@ void WebPage::clearNotificationPermissionState()
 }
 #endif
 
+#if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
+void WebPage::notifyProcessWillChangeSuspendState(bool)
+{
+}
+#endif
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG
