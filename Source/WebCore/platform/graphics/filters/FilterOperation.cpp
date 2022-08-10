@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,16 +33,18 @@
 #include "ColorConversion.h"
 #include "ColorMatrix.h"
 #include "ColorTypes.h"
+#include "FEColorMatrix.h"
+#include "FEComponentTransfer.h"
 #include "FEDropShadow.h"
 #include "FEGaussianBlur.h"
-#include "FilterEffect.h"
+#include "Filter.h"
 #include "ImageBuffer.h"
 #include "LengthFunctions.h"
 #include "SVGURIReference.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
-    
+
 bool DefaultFilterOperation::operator==(const FilterOperation& operation) const
 {
     if (!isSameType(operation))
@@ -80,6 +82,13 @@ IntOutsets ReferenceFilterOperation::outsets() const
     // Answering this question requires access to the renderer and the referenced filterElement.
     ASSERT_NOT_REACHED();
     return { };
+}
+
+RefPtr<FilterFunction> ReferenceFilterOperation::createFilterFunction(const Filter&) const
+{
+    // A reference filter should create an SVGFilter which requires access to the renderer and the referenced filterElement.
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 void ReferenceFilterOperation::loadExternalDocumentIfNeeded(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
@@ -121,6 +130,111 @@ RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOpera
 bool BasicColorMatrixFilterOperation::isIdentity() const
 {
     return m_type == SATURATE ? (m_amount == 1) : !m_amount;
+}
+
+static RefPtr<FilterEffect> createGrayScaleEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)
+{
+    double oneMinusAmount = clampTo(1 - colorMatrixOperation.amount(), 0.0, 1.0);
+
+    // See https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#grayscaleEquivalent
+    // for information on parameters.
+
+    Vector<float> inputParameters {
+        narrowPrecisionToFloat(0.2126 + 0.7874 * oneMinusAmount),
+        narrowPrecisionToFloat(0.7152 - 0.7152 * oneMinusAmount),
+        narrowPrecisionToFloat(0.0722 - 0.0722 * oneMinusAmount),
+        0,
+        0,
+
+        narrowPrecisionToFloat(0.2126 - 0.2126 * oneMinusAmount),
+        narrowPrecisionToFloat(0.7152 + 0.2848 * oneMinusAmount),
+        narrowPrecisionToFloat(0.0722 - 0.0722 * oneMinusAmount),
+        0,
+        0,
+
+        narrowPrecisionToFloat(0.2126 - 0.2126 * oneMinusAmount),
+        narrowPrecisionToFloat(0.7152 - 0.7152 * oneMinusAmount),
+        narrowPrecisionToFloat(0.0722 + 0.9278 * oneMinusAmount),
+        0,
+        0,
+
+        0,
+        0,
+        0,
+        1,
+        0,
+    };
+
+    return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
+}
+
+static RefPtr<FilterEffect> createSepiaEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)
+{
+    double oneMinusAmount = clampTo(1 - colorMatrixOperation.amount(), 0.0, 1.0);
+
+    // See https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#sepiaEquivalent
+    // for information on parameters.
+
+    Vector<float> inputParameters {
+        narrowPrecisionToFloat(0.393 + 0.607 * oneMinusAmount),
+        narrowPrecisionToFloat(0.769 - 0.769 * oneMinusAmount),
+        narrowPrecisionToFloat(0.189 - 0.189 * oneMinusAmount),
+        0,
+        0,
+
+        narrowPrecisionToFloat(0.349 - 0.349 * oneMinusAmount),
+        narrowPrecisionToFloat(0.686 + 0.314 * oneMinusAmount),
+        narrowPrecisionToFloat(0.168 - 0.168 * oneMinusAmount),
+        0,
+        0,
+
+        narrowPrecisionToFloat(0.272 - 0.272 * oneMinusAmount),
+        narrowPrecisionToFloat(0.534 - 0.534 * oneMinusAmount),
+        narrowPrecisionToFloat(0.131 + 0.869 * oneMinusAmount),
+        0,
+        0,
+
+        0,
+        0,
+        0,
+        1,
+        0,
+    };
+
+    return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
+}
+
+static RefPtr<FilterEffect> createSaturateEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)
+{
+    Vector<float> inputParameters { narrowPrecisionToFloat(colorMatrixOperation.amount()) };
+    return FEColorMatrix::create(FECOLORMATRIX_TYPE_SATURATE, WTFMove(inputParameters));
+}
+
+static RefPtr<FilterEffect> createHueRotateEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)
+{
+    Vector<float> inputParameters { narrowPrecisionToFloat(colorMatrixOperation.amount()) };
+    return FEColorMatrix::create(FECOLORMATRIX_TYPE_HUEROTATE, WTFMove(inputParameters));
+}
+
+RefPtr<FilterFunction> BasicColorMatrixFilterOperation::createFilterFunction(const Filter&) const
+{
+    switch (m_type) {
+    case GRAYSCALE:
+        return createGrayScaleEffect(*this);
+
+    case SEPIA:
+        return createSepiaEffect(*this);
+
+    case SATURATE:
+        return createSaturateEffect(*this);
+
+    case HUE_ROTATE:
+        return createHueRotateEffect(*this);
+
+    default:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 }
 
 bool BasicColorMatrixFilterOperation::transformColor(SRGBA<float>& color) const
@@ -203,6 +317,74 @@ RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const Filte
 bool BasicComponentTransferFilterOperation::isIdentity() const
 {
     return m_type == INVERT ? !m_amount : (m_amount == 1);
+}
+
+static RefPtr<FilterEffect> createInvertEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
+{
+    ComponentTransferFunction transferFunction;
+    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+    float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
+    transferFunction.slope = 1 - 2 * amount;
+    transferFunction.intercept = amount;
+
+    ComponentTransferFunction nullFunction;
+    return FEComponentTransfer::create(transferFunction, transferFunction, transferFunction, nullFunction);
+}
+
+static RefPtr<FilterEffect> createOpacityEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
+{
+    ComponentTransferFunction transferFunction;
+    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+    float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
+    transferFunction.slope = amount;
+    transferFunction.intercept = 0;
+
+    ComponentTransferFunction nullFunction;
+    return FEComponentTransfer::create(nullFunction, nullFunction, nullFunction, transferFunction);
+}
+
+static RefPtr<FilterEffect> createBrightnessEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
+{
+    ComponentTransferFunction transferFunction;
+    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+    transferFunction.slope = narrowPrecisionToFloat(componentTransferOperation.amount());
+    transferFunction.intercept = 0;
+
+    ComponentTransferFunction nullFunction;
+    return FEComponentTransfer::create(transferFunction, transferFunction, transferFunction, nullFunction);
+}
+
+static RefPtr<FilterEffect> createContrastEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
+{
+    ComponentTransferFunction transferFunction;
+    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+    float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
+    transferFunction.slope = amount;
+    transferFunction.intercept = -0.5 * amount + 0.5;
+
+    ComponentTransferFunction nullFunction;
+    return FEComponentTransfer::create(transferFunction, transferFunction, transferFunction, nullFunction);
+}
+
+RefPtr<FilterFunction> BasicComponentTransferFilterOperation::createFilterFunction(const Filter&) const
+{
+    switch (m_type) {
+    case INVERT:
+        return createInvertEffect(*this);
+
+    case OPACITY:
+        return createOpacityEffect(*this);
+
+    case CONTRAST:
+        return createContrastEffect(*this);
+
+    case BRIGHTNESS:
+        return createBrightnessEffect(*this);
+
+    default:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 }
 
 bool BasicComponentTransferFilterOperation::transformColor(SRGBA<float>& color) const
@@ -412,6 +594,12 @@ IntOutsets BlurFilterOperation::outsets() const
     return FEGaussianBlur::calculateOutsets({ stdDeviation, stdDeviation });
 }
 
+RefPtr<FilterFunction> BlurFilterOperation::createFilterFunction(const Filter& filter) const
+{
+    float stdDeviation = floatValueForLength(m_stdDeviation, 0);
+    return FEGaussianBlur::create(stdDeviation, stdDeviation, filter.clipOperation() == Filter::ClipOperation::Unite ? EdgeModeType::None : EdgeModeType::Duplicate);
+}
+    
 bool DropShadowFilterOperation::operator==(const FilterOperation& operation) const
 {
     if (!isSameType(operation))
@@ -450,6 +638,11 @@ bool DropShadowFilterOperation::isIdentity() const
 IntOutsets DropShadowFilterOperation::outsets() const
 {
     return FEDropShadow::calculateOutsets(FloatSize(x(), y()), FloatSize(m_stdDeviation, m_stdDeviation));
+}
+    
+RefPtr<FilterFunction> DropShadowFilterOperation::createFilterFunction(const Filter&) const
+{
+    return FEDropShadow::create(stdDeviation(), stdDeviation(), x(), y(), color(), 1);
 }
 
 TextStream& operator<<(TextStream& ts, const FilterOperation& filter)
