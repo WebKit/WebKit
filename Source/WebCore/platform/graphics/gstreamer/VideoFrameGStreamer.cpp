@@ -129,7 +129,7 @@ VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const
 {
 }
 
-Ref<VideoFrameGStreamer> VideoFrameGStreamer::resizeTo(const IntSize& destinationSize)
+RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::resizeTo(const IntSize& destinationSize)
 {
     auto* caps = gst_sample_get_caps(m_sample.get());
 
@@ -165,7 +165,7 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::resizeTo(const IntSize& destinatio
     auto presentationTime = this->presentationTime();
     setBufferFields(outputBuffer.get(), presentationTime, frameRate);
     auto sample = adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr));
-    return adoptRef(*new VideoFrameGStreamer(WTFMove(sample), presentationTime, rotation()));
+    return VideoFrameGStreamer::create(WTFMove(sample), destinationSize, presentationTime, rotation(), isMirrored());
 }
 
 RefPtr<JSC::Uint8ClampedArray> VideoFrameGStreamer::computeRGBAImageData() const
