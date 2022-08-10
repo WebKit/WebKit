@@ -71,22 +71,6 @@ static std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectionBacke
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createLibWebRTCPeerConnectionBackend;
 
-std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(ScriptExecutionContext& context, const String& kind)
-{
-    auto* page = downcast<Document>(context).page();
-    if (!page)
-        return { };
-    return page->webRTCProvider().receiverCapabilities(kind);
-}
-
-std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(ScriptExecutionContext& context, const String& kind)
-{
-    auto* page = downcast<Document>(context).page();
-    if (!page)
-        return { };
-    return page->webRTCProvider().senderCapabilities(kind);
-}
-
 LibWebRTCPeerConnectionBackend::LibWebRTCPeerConnectionBackend(RTCPeerConnection& peerConnection, LibWebRTCProvider& provider)
     : PeerConnectionBackend(peerConnection)
     , m_endpoint(LibWebRTCMediaEndpoint::create(*this, provider))

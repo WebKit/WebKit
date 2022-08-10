@@ -23,6 +23,7 @@
 #if USE(GSTREAMER_WEBRTC)
 #include "GStreamerWebRTCProvider.h"
 
+#include "GStreamerRegistryScanner.h"
 #include "MediaCapabilitiesDecodingInfo.h"
 #include "MediaCapabilitiesEncodingInfo.h"
 #include "MediaDecodingConfiguration.h"
@@ -54,30 +55,57 @@ void WebRTCProvider::setActive(bool)
 
 std::optional<RTCRtpCapabilities> GStreamerWebRTCProvider::receiverCapabilities(const String& kind)
 {
-    UNUSED_PARAM(kind);
+    if (kind == "audio"_s)
+        return audioDecodingCapabilities();
+    if (kind == "video"_s)
+        return videoDecodingCapabilities();
+
     return { };
 }
 
 std::optional<RTCRtpCapabilities> GStreamerWebRTCProvider::senderCapabilities(const String& kind)
 {
-    UNUSED_PARAM(kind);
+    if (kind == "audio"_s)
+        return audioEncodingCapabilities();
+    if (kind == "video"_s)
+        return videoEncodingCapabilities();
     return { };
 }
 
 void GStreamerWebRTCProvider::initializeAudioEncodingCapabilities()
 {
+    m_audioEncodingCapabilities = GStreamerRegistryScanner::singleton().audioRtpCapabilities(GStreamerRegistryScanner::Configuration::Encoding);
 }
 
 void GStreamerWebRTCProvider::initializeVideoEncodingCapabilities()
 {
+    m_videoEncodingCapabilities = GStreamerRegistryScanner::singleton().videoRtpCapabilities(GStreamerRegistryScanner::Configuration::Encoding);
+    m_videoEncodingCapabilities->codecs.removeAllMatching([isSupportingVP9Profile0 = isSupportingVP9Profile0(), isSupportingVP9Profile2 = isSupportingVP9Profile2()](const auto& codec) {
+        if (!isSupportingVP9Profile0 && codec.sdpFmtpLine == "profile-id=0"_s)
+            return true;
+        if (!isSupportingVP9Profile2 && codec.sdpFmtpLine == "profile-id=2"_s)
+            return true;
+
+        return false;
+    });
 }
 
 void GStreamerWebRTCProvider::initializeAudioDecodingCapabilities()
 {
+    m_audioDecodingCapabilities = GStreamerRegistryScanner::singleton().audioRtpCapabilities(GStreamerRegistryScanner::Configuration::Decoding);
 }
 
 void GStreamerWebRTCProvider::initializeVideoDecodingCapabilities()
 {
+    m_videoDecodingCapabilities = GStreamerRegistryScanner::singleton().videoRtpCapabilities(GStreamerRegistryScanner::Configuration::Decoding);
+    m_videoDecodingCapabilities->codecs.removeAllMatching([isSupportingVP9Profile0 = isSupportingVP9Profile0(), isSupportingVP9Profile2 = isSupportingVP9Profile2()](const auto& codec) {
+        if (!isSupportingVP9Profile0 && codec.sdpFmtpLine == "profile-id=0"_s)
+            return true;
+        if (!isSupportingVP9Profile2 && codec.sdpFmtpLine == "profile-id=2"_s)
+            return true;
+
+        return false;
+    });
 }
 
 } // namespace WebCore

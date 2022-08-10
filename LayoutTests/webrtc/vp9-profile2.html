@@ -15,6 +15,7 @@
         <script>
 let vp9Profile2;
 test(() => {
+    internals.setWebRTCVP9Support(false, true);
     codecs = RTCRtpSender.getCapabilities("video").codecs;
     vp9Profiles = codecs.filter(codec => { return codec.mimeType === "video/VP9" && codec.sdpFmtpLine === "profile-id=2"; });
     assert_equals(vp9Profiles.length, 1);

@@ -21,9 +21,10 @@
 
 #if USE(GSTREAMER)
 
+#include "GStreamerCommon.h"
 #include "MediaConfiguration.h"
-
 #include "MediaPlayerEnums.h"
+#include "RTCRtpCapabilities.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -64,6 +65,11 @@ public:
     MediaPlayerEnums::SupportsType isContentTypeSupported(Configuration, const ContentType&, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const;
     bool areAllCodecsSupported(Configuration, const Vector<String>& codecs, bool shouldCheckForHardwareUse = false) const;
 
+#if USE(GSTREAMER_WEBRTC)
+    RTCRtpCapabilities audioRtpCapabilities(Configuration);
+    RTCRtpCapabilities videoRtpCapabilities(Configuration);
+#endif
+
 protected:
     struct ElementFactories {
         enum class Type {
@@ -75,7 +81,9 @@ protected:
             AudioEncoder = 1 << 5,
             VideoEncoder = 1 << 6,
             Muxer        = 1 << 7,
-            All          = (1 << 8) - 1
+            RtpPayloader = 1 << 8,
+            RtpDepayloader = 1 << 9,
+            All          = (1 << 9) - 1
         };
 
         explicit ElementFactories(OptionSet<Type>);
@@ -95,6 +103,8 @@ protected:
         GList* audioEncoderFactories { nullptr };
         GList* videoEncoderFactories { nullptr };
         GList* muxerFactories { nullptr };
+        GList* rtpPayloaderFactories { nullptr };
+        GList* rtpDepayloaderFactories { nullptr };
     };
 
     void initializeDecoders(const ElementFactories&);
@@ -115,6 +125,32 @@ protected:
 private:
     const char* configurationNameForLogging(Configuration) const;
     bool supportsFeatures(const String& features) const;
+
+#if USE(GSTREAMER_WEBRTC)
+    void fillAudioRtpCapabilities(Configuration, RTCRtpCapabilities&);
+    void fillVideoRtpCapabilities(Configuration, RTCRtpCapabilities&);
+
+    Vector<const char*> m_allAudioRtpExtensions { "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01",
+        "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time",
+        "urn:ietf:params:rtp-hdrext:sdes:mid",
+        "urn:ietf:params:rtp-hdrext:ssrc-audio-level"
+    };
+    Vector<const char*> m_allVideoRtpExtensions { "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01",
+        "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time",
+        "http://www.webrtc.org/experiments/rtp-hdrext/color-space",
+        "http://www.webrtc.org/experiments/rtp-hdrext/playout-delay",
+        "http://www.webrtc.org/experiments/rtp-hdrext/video-content-type",
+        "http://www.webrtc.org/experiments/rtp-hdrext/video-timing",
+        "urn:3gpp:video-orientation",
+        "urn:ietf:params:rtp-hdrext:sdes:mid",
+        "urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id",
+        "urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id",
+        "urn:ietf:params:rtp-hdrext:toffset",
+    };
+
+    std::optional<Vector<RTCRtpCapabilities::HeaderExtensionCapability>> m_audioRtpExtensions;
+    std::optional<Vector<RTCRtpCapabilities::HeaderExtensionCapability>> m_videoRtpExtensions;
+#endif
 
     bool m_isMediaSource { false };
     HashSet<String, ASCIICaseInsensitiveHash> m_decoderMimeTypeSet;

@@ -945,8 +945,6 @@ webkit.org/b/235885 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.ht
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpParameters-maxFramerate.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-priority/RTCRtpParameters-encodings.html [ Failure ]
-webkit.org/b/235885 imported/w3c/web-platform-tests/media-capabilities/decodingInfo.webrtc.html [ Failure ]
-webkit.org/b/235885 imported/w3c/web-platform-tests/media-capabilities/encodingInfo.webrtc.html [ Failure ]
 webkit.org/b/235885 webrtc/addTransceiver-then-addTrack.html [ Failure ]
 webkit.org/b/235885 webrtc/audio-video-element-playing.html [ Timeout ]
 webkit.org/b/235885 webrtc/candidate-stats.html [ Failure ]
@@ -978,10 +976,9 @@ webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
 webkit.org/b/235885 webrtc/vp9-svc.html [ Failure ]
-webkit.org/b/235885 webrtc/vp9.html [ Failure ]
 
-# Hits an ASSERT because we don't have a WebRTC provider handling WebRTC-related media-capabilities.
-webkit.org/b/235885 [ Debug ] media/mediacapabilities/mock-encodingInfo.html [ Crash ]
+# Failing until additional WebRTC end-point patches have landed.
+webkit.org/b/235885 webrtc/vp9.html [ Skip ]
 
 # Expected to pass with GStreamer 1.22.
 webkit.org/b/235885 webrtc/no-port-zero-in-upd-candidates.html [ Failure ]
