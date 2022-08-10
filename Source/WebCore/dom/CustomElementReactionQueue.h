@@ -78,6 +78,10 @@ public:
     static void enqueuePostUpgradeReactions(Element&);
 
     bool observesStyleAttribute() const;
+    bool isElementInternalsDisabled() const;
+    bool isElementInternalsAttached() const;
+    void setElementInternalsAttached();
+
     void invokeAll(Element&);
     void clear();
     bool isEmpty() const { return m_items.isEmpty(); }
@@ -92,6 +96,7 @@ private:
 
     Ref<JSCustomElementInterface> m_interface;
     Vector<CustomElementReactionQueueItem> m_items;
+    bool m_elementInternalsAttached { false };
 };
 
 class CustomElementReactionDisallowedScope {

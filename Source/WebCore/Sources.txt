@@ -972,6 +972,7 @@ dom/DocumentType.cpp
 dom/DragEvent.cpp
 dom/Element.cpp
 dom/ElementData.cpp
+dom/ElementInternals.cpp
 dom/ElementRareData.cpp
 dom/ErrorEvent.cpp
 dom/Event.cpp
@@ -3166,6 +3167,7 @@ JSEcdsaParams.cpp
 JSEffectTiming.cpp
 JSElement.cpp
 JSElementCSSInlineStyle.cpp
+JSElementInternals.cpp
 JSEndingType.cpp
 JSErrorCallback.cpp
 JSErrorEvent.cpp

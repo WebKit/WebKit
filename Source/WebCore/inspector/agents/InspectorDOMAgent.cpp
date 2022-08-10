@@ -1775,9 +1775,9 @@ static Protocol::DOM::CustomElementState customElementState(const Element& eleme
 {
     if (element.isDefinedCustomElement())
         return Protocol::DOM::CustomElementState::Custom;
-    if (element.isFailedCustomElement())
+    if (element.isFailedOrPrecustomizedCustomElement())
         return Protocol::DOM::CustomElementState::Failed;
-    if (element.isUndefinedCustomElement() || element.isCustomElementUpgradeCandidate())
+    if (element.isCustomElementUpgradeCandidate())
         return Protocol::DOM::CustomElementState::Waiting;
     return Protocol::DOM::CustomElementState::Builtin;
 }

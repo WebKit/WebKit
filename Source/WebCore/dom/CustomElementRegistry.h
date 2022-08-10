@@ -44,6 +44,7 @@ namespace WebCore {
 class CustomElementRegistry;
 class DOMWindow;
 class DeferredPromise;
+class Document;
 class Element;
 class JSCustomElementInterface;
 class Node;
@@ -53,6 +54,8 @@ class CustomElementRegistry : public RefCounted<CustomElementRegistry>, public C
 public:
     static Ref<CustomElementRegistry> create(DOMWindow&, ScriptExecutionContext*);
     ~CustomElementRegistry();
+
+    Document* document() const;
 
     RefPtr<DeferredPromise> addElementDefinition(Ref<JSCustomElementInterface>&&);
 

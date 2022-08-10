@@ -81,8 +81,17 @@ public:
     bool observesAttribute(const AtomString& name) const { return m_observedAttributes.contains(name); }
     void invokeAttributeChangedCallback(Element&, const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
 
+    void disableElementInternals() { m_isElementInternalsDisabled = true; }
+    bool isElementInternalsDisabled() const { return m_isElementInternalsDisabled; }
+
     void disableShadow() { m_isShadowDisabled = true; }
     bool isShadowDisabled() const { return m_isShadowDisabled; }
+
+    void setIsFormAssociated() { m_isFormAssociated = true; }
+    void setFormAssociatedCallback(JSC::JSObject*);
+    void setFormResetCallback(JSC::JSObject*);
+    void setFormDisabledCallback(JSC::JSObject*);
+    void setFormStateRestoreCallback(JSC::JSObject*);
 
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
     JSC::JSObject* constructor() { return m_constructor.get(); }
@@ -108,10 +117,16 @@ private:
     JSC::Weak<JSC::JSObject> m_disconnectedCallback;
     JSC::Weak<JSC::JSObject> m_adoptedCallback;
     JSC::Weak<JSC::JSObject> m_attributeChangedCallback;
+    JSC::Weak<JSC::JSObject> m_formAssociatedCallback;
+    JSC::Weak<JSC::JSObject> m_formResetCallback;
+    JSC::Weak<JSC::JSObject> m_formDisabledCallback;
+    JSC::Weak<JSC::JSObject> m_formStateRestoreCallback;
     Ref<DOMWrapperWorld> m_isolatedWorld;
     Vector<RefPtr<Element>, 1> m_constructionStack;
     MemoryCompactRobinHoodHashSet<AtomString> m_observedAttributes;
+    bool m_isElementInternalsDisabled : 1;
     bool m_isShadowDisabled : 1;
+    bool m_isFormAssociated : 1;
 };
 
 } // namespace WebCore

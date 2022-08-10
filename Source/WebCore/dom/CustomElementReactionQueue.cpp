@@ -233,6 +233,21 @@ bool CustomElementReactionQueue::observesStyleAttribute() const
     return m_interface->observesAttribute(HTMLNames::styleAttr->localName());
 }
 
+bool CustomElementReactionQueue::isElementInternalsDisabled() const
+{
+    return m_interface->isElementInternalsDisabled();
+}
+
+bool CustomElementReactionQueue::isElementInternalsAttached() const
+{
+    return m_elementInternalsAttached;
+}
+
+void CustomElementReactionQueue::setElementInternalsAttached()
+{
+    m_elementInternalsAttached = true;
+}
+
 void CustomElementReactionQueue::invokeAll(Element& element)
 {
     while (!m_items.isEmpty()) {

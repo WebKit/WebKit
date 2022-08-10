@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class ElementInternals;
 class FormAssociatedElement;
 class FormNamedItem;
 class HTMLFormElement;
@@ -133,6 +134,8 @@ public:
     void setEnterKeyHint(const AtomString& value);
 
     WEBCORE_EXPORT static bool shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
+
+    WEBCORE_EXPORT ExceptionOr<Ref<ElementInternals>> attachInternals();
 
 #if PLATFORM(IOS_FAMILY)
     static SelectionRenderingBehavior selectionRenderingBehavior(const Node*);

@@ -46,8 +46,7 @@
 
     [CEReactions] attribute [LegacyNullToEmptyString] DOMString innerText;
 
-    // FIXME: Implement 'attachInternals'.
-    // ElementInternals attachInternals();
+    [EnabledBySetting=FormAssociatedCustomElementsEnabled] ElementInternals attachInternals();
 
     // Experimental: https://github.com/WICG/inert/blob/master/README.md
     [CEReactions, Reflect, EnabledBySetting=InertAttributeEnabled] attribute boolean inert;

@@ -930,6 +930,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Element+PointerLock.idl
     dom/Element.idl
     dom/ElementContentEditable.idl
+    dom/ElementInternals.idl
     dom/ErrorEvent.idl
     dom/Event.idl
     dom/EventInit.idl

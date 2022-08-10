@@ -1,5 +1,48 @@
-CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
 
-Harness Error (FAIL), message = TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
-
+FAIL role is defined in ElementInternals assert_inherits: property "role" not found in prototype chain
+FAIL ariaActiveDescendantElement is defined in ElementInternals assert_inherits: property "ariaActiveDescendantElement" not found in prototype chain
+FAIL ariaAtomic is defined in ElementInternals assert_inherits: property "ariaAtomic" not found in prototype chain
+FAIL ariaAutoComplete is defined in ElementInternals assert_inherits: property "ariaAutoComplete" not found in prototype chain
+FAIL ariaBusy is defined in ElementInternals assert_inherits: property "ariaBusy" not found in prototype chain
+FAIL ariaChecked is defined in ElementInternals assert_inherits: property "ariaChecked" not found in prototype chain
+FAIL ariaColCount is defined in ElementInternals assert_inherits: property "ariaColCount" not found in prototype chain
+FAIL ariaColIndex is defined in ElementInternals assert_inherits: property "ariaColIndex" not found in prototype chain
+FAIL ariaColSpan is defined in ElementInternals assert_inherits: property "ariaColSpan" not found in prototype chain
+FAIL ariaControlsElements is defined in ElementInternals assert_inherits: property "ariaControlsElements" not found in prototype chain
+FAIL ariaCurrent is defined in ElementInternals assert_inherits: property "ariaCurrent" not found in prototype chain
+FAIL ariaDescribedByElements is defined in ElementInternals assert_inherits: property "ariaDescribedByElements" not found in prototype chain
+FAIL ariaDetailsElements is defined in ElementInternals assert_inherits: property "ariaDetailsElements" not found in prototype chain
+FAIL ariaDisabled is defined in ElementInternals assert_inherits: property "ariaDisabled" not found in prototype chain
+FAIL ariaErrorMessageElement is defined in ElementInternals assert_inherits: property "ariaErrorMessageElement" not found in prototype chain
+FAIL ariaExpanded is defined in ElementInternals assert_inherits: property "ariaExpanded" not found in prototype chain
+FAIL ariaFlowToElements is defined in ElementInternals assert_inherits: property "ariaFlowToElements" not found in prototype chain
+FAIL ariaHasPopup is defined in ElementInternals assert_inherits: property "ariaHasPopup" not found in prototype chain
+FAIL ariaHidden is defined in ElementInternals assert_inherits: property "ariaHidden" not found in prototype chain
+FAIL ariaInvalid is defined in ElementInternals assert_inherits: property "ariaInvalid" not found in prototype chain
+FAIL ariaKeyShortcuts is defined in ElementInternals assert_inherits: property "ariaKeyShortcuts" not found in prototype chain
+FAIL ariaLabel is defined in ElementInternals assert_inherits: property "ariaLabel" not found in prototype chain
+FAIL ariaLabelledByElements is defined in ElementInternals assert_inherits: property "ariaLabelledByElements" not found in prototype chain
+FAIL ariaLevel is defined in ElementInternals assert_inherits: property "ariaLevel" not found in prototype chain
+FAIL ariaLive is defined in ElementInternals assert_inherits: property "ariaLive" not found in prototype chain
+FAIL ariaModal is defined in ElementInternals assert_inherits: property "ariaModal" not found in prototype chain
+FAIL ariaMultiLine is defined in ElementInternals assert_inherits: property "ariaMultiLine" not found in prototype chain
+FAIL ariaMultiSelectable is defined in ElementInternals assert_inherits: property "ariaMultiSelectable" not found in prototype chain
+FAIL ariaOrientation is defined in ElementInternals assert_inherits: property "ariaOrientation" not found in prototype chain
+FAIL ariaOwnsElements is defined in ElementInternals assert_inherits: property "ariaOwnsElements" not found in prototype chain
+FAIL ariaPlaceholder is defined in ElementInternals assert_inherits: property "ariaPlaceholder" not found in prototype chain
+FAIL ariaPosInSet is defined in ElementInternals assert_inherits: property "ariaPosInSet" not found in prototype chain
+FAIL ariaPressed is defined in ElementInternals assert_inherits: property "ariaPressed" not found in prototype chain
+FAIL ariaReadOnly is defined in ElementInternals assert_inherits: property "ariaReadOnly" not found in prototype chain
+FAIL ariaRelevant is defined in ElementInternals assert_inherits: property "ariaRelevant" not found in prototype chain
+FAIL ariaRequired is defined in ElementInternals assert_inherits: property "ariaRequired" not found in prototype chain
+FAIL ariaRoleDescription is defined in ElementInternals assert_inherits: property "ariaRoleDescription" not found in prototype chain
+FAIL ariaRowCount is defined in ElementInternals assert_inherits: property "ariaRowCount" not found in prototype chain
+FAIL ariaRowIndex is defined in ElementInternals assert_inherits: property "ariaRowIndex" not found in prototype chain
+FAIL ariaRowSpan is defined in ElementInternals assert_inherits: property "ariaRowSpan" not found in prototype chain
+FAIL ariaSelected is defined in ElementInternals assert_inherits: property "ariaSelected" not found in prototype chain
+FAIL ariaSort is defined in ElementInternals assert_inherits: property "ariaSort" not found in prototype chain
+FAIL ariaValueMax is defined in ElementInternals assert_inherits: property "ariaValueMax" not found in prototype chain
+FAIL ariaValueMin is defined in ElementInternals assert_inherits: property "ariaValueMin" not found in prototype chain
+FAIL ariaValueNow is defined in ElementInternals assert_inherits: property "ariaValueNow" not found in prototype chain
+FAIL ariaValueText is defined in ElementInternals assert_inherits: property "ariaValueText" not found in prototype chain
 

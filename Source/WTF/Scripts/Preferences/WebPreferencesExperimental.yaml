@@ -659,6 +659,18 @@ FocusVisibleEnabled:
     WebCore:
       default: true
 
+FormAssociatedCustomElementsEnabled:
+  type: bool
+  humanReadableName: "Form-associated custom elements"
+  humanReadableDescription: "Support for form-associated custom elements"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 GenericCueAPIEnabled:
   type: bool

@@ -52,7 +52,9 @@ JSCustomElementInterface::JSCustomElementInterface(const QualifiedName& name, JS
     , m_name(name)
     , m_constructor(constructor)
     , m_isolatedWorld(globalObject->world())
+    , m_isElementInternalsDisabled(false)
     , m_isShadowDisabled(false)
+    , m_isFormAssociated(false)
 {
 }
 
@@ -176,10 +178,13 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 {
     ASSERT(element.tagQName().matches(name()));
 
-    if (element.isDefinedCustomElement() || element.isFailedCustomElement())
-        return; // If element's custom element state is not "undefined" or "uncustomized", then return.
+    if (!element.isCustomElementUpgradeCandidate() && !element.isUncustomizedCustomElement())
+        return;
 
+    // FIXME: This assertion always seem to pass, even though the check above is more allowable.
+    // It would be great to figure out why: a spec bug, lack of test coverage, or the fact we don't support customized built-ins.
     ASSERT(element.isCustomElementUpgradeCandidate());
+
     if (!canInvokeCallback())
         return;
 
@@ -207,9 +212,9 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     CustomElementReactionQueue::enqueuePostUpgradeReactions(element);
 
-    // Unlike spec, set element's custom element state to "failed" after enqueueing post-upgrade reactions
+    // Unlike spec, set element's custom element state to "failed" / "precustomized" after enqueueing post-upgrade reactions
     // to avoid hitting debug assertions in enqueuePostUpgradeReactions.
-    element.setIsFailedCustomElementWithoutClearingReactionQueue();
+    element.setIsFailedOrPrecustomizedCustomElementWithoutClearingReactionQueue();
 
     m_constructionStack.append(&element);
 
@@ -329,6 +334,26 @@ void JSCustomElementInterface::invokeAttributeChangedCallback(Element& element, 
         args.append(toJS<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, newValue));
         args.append(toJS<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, attributeName.namespaceURI()));
     });
+}
+
+void JSCustomElementInterface::setFormAssociatedCallback(JSObject* callback)
+{
+    m_formAssociatedCallback = callback;
+}
+
+void JSCustomElementInterface::setFormResetCallback(JSObject* callback)
+{
+    m_formResetCallback = callback;
+}
+
+void JSCustomElementInterface::setFormDisabledCallback(JSObject* callback)
+{
+    m_formDisabledCallback = callback;
+}
+
+void JSCustomElementInterface::setFormStateRestoreCallback(JSObject* callback)
+{
+    m_formStateRestoreCallback = callback;
 }
 
 void JSCustomElementInterface::didUpgradeLastElementInConstructionStack()

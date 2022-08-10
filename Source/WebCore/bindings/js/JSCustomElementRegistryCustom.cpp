@@ -161,6 +161,9 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
     if (!disabledFeaturesValue.isUndefined()) {
         auto disabledFeatures = convert<IDLSequence<IDLDOMString>>(lexicalGlobalObject, disabledFeaturesValue);
         RETURN_IF_EXCEPTION(scope, { });
+
+        if (disabledFeatures.contains("internals"_s))
+            elementInterface->disableElementInternals();
         if (disabledFeatures.contains("shadow"_s))
             elementInterface->disableShadow();
     }
@@ -171,6 +174,39 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
             globalObject()->putDirect(vm, uniquePrivateName, objectToAdd);
         }
     };
+
+    if (registry.document() && registry.document()->settings().formAssociatedCustomElementsEnabled()) {
+        auto formAssociatedValue = constructor->get(&lexicalGlobalObject, Identifier::fromString(vm, "formAssociated"_s));
+        RETURN_IF_EXCEPTION(scope, { });
+        if (formAssociatedValue.toBoolean(&lexicalGlobalObject)) {
+            elementInterface->setIsFormAssociated();
+
+            auto* formAssociatedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "formAssociatedCallback"_s));
+            RETURN_IF_EXCEPTION(scope, { });
+            if (formAssociatedCallback)
+                elementInterface->setFormAssociatedCallback(formAssociatedCallback);
+
+            auto* formResetCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "formResetCallback"_s));
+            RETURN_IF_EXCEPTION(scope, { });
+            if (formResetCallback)
+                elementInterface->setFormResetCallback(formResetCallback);
+
+            auto* formDisabledCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "formDisabledCallback"_s));
+            RETURN_IF_EXCEPTION(scope, { });
+            if (formDisabledCallback)
+                elementInterface->setFormDisabledCallback(formDisabledCallback);
+
+            auto* formStateRestoreCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "formStateRestoreCallback"_s));
+            RETURN_IF_EXCEPTION(scope, { });
+            if (formStateRestoreCallback)
+                elementInterface->setFormStateRestoreCallback(formStateRestoreCallback);
+
+            addToGlobalObjectWithPrivateName(formAssociatedCallback);
+            addToGlobalObjectWithPrivateName(formResetCallback);
+            addToGlobalObjectWithPrivateName(formDisabledCallback);
+            addToGlobalObjectWithPrivateName(formStateRestoreCallback);
+        }
+    }
 
     addToGlobalObjectWithPrivateName(constructor);
     addToGlobalObjectWithPrivateName(connectedCallback);

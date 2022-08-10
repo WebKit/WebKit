@@ -259,7 +259,7 @@ PASS HTMLElement interface: attribute spellcheck
 PASS HTMLElement interface: attribute autocapitalize
 PASS HTMLElement interface: attribute innerText
 PASS HTMLElement interface: attribute outerText
-FAIL HTMLElement interface: operation attachInternals() assert_own_property: interface prototype object missing non-static operation expected property "attachInternals" missing
+PASS HTMLElement interface: operation attachInternals()
 PASS HTMLElement interface: attribute onabort
 FAIL HTMLElement interface: attribute onauxclick assert_true: The prototype object must have a property "onauxclick" expected true got false
 PASS HTMLElement interface: attribute onblur
@@ -356,7 +356,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "autocapitalize" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "innerText" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "outerText" with the proper type
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "attachInternals()" with the proper type assert_inherits: property "attachInternals" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "attachInternals()" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onabort" with the proper type
 FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onauxclick" with the proper type assert_inherits: property "onauxclick" not found in prototype chain
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onblur" with the proper type
@@ -4344,22 +4344,22 @@ PASS CustomElementRegistry interface: operation define(DOMString, CustomElementC
 PASS CustomElementRegistry interface: operation get(DOMString)
 PASS CustomElementRegistry interface: operation whenDefined(DOMString)
 PASS CustomElementRegistry interface: operation upgrade(Node)
-FAIL ElementInternals interface: existence and properties of interface object assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface object length assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface object name assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: attribute shadowRoot assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: operation setFormValue((File or USVString or FormData)?, optional (File or USVString or FormData)?) assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: attribute form assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: operation setValidity(optional ValidityStateFlags, optional DOMString, optional HTMLElement) assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: attribute willValidate assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: attribute validity assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: attribute validationMessage assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: operation checkValidity() assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: operation reportValidity() assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
-FAIL ElementInternals interface: attribute labels assert_own_property: self does not have own property "ElementInternals" expected property "ElementInternals" missing
+PASS ElementInternals interface: existence and properties of interface object
+PASS ElementInternals interface object length
+PASS ElementInternals interface object name
+PASS ElementInternals interface: existence and properties of interface prototype object
+PASS ElementInternals interface: existence and properties of interface prototype object's "constructor" property
+PASS ElementInternals interface: existence and properties of interface prototype object's @@unscopables property
+PASS ElementInternals interface: attribute shadowRoot
+FAIL ElementInternals interface: operation setFormValue((File or USVString or FormData)?, optional (File or USVString or FormData)?) assert_own_property: interface prototype object missing non-static operation expected property "setFormValue" missing
+FAIL ElementInternals interface: attribute form assert_true: The prototype object must have a property "form" expected true got false
+FAIL ElementInternals interface: operation setValidity(optional ValidityStateFlags, optional DOMString, optional HTMLElement) assert_own_property: interface prototype object missing non-static operation expected property "setValidity" missing
+FAIL ElementInternals interface: attribute willValidate assert_true: The prototype object must have a property "willValidate" expected true got false
+FAIL ElementInternals interface: attribute validity assert_true: The prototype object must have a property "validity" expected true got false
+FAIL ElementInternals interface: attribute validationMessage assert_true: The prototype object must have a property "validationMessage" expected true got false
+FAIL ElementInternals interface: operation checkValidity() assert_own_property: interface prototype object missing non-static operation expected property "checkValidity" missing
+FAIL ElementInternals interface: operation reportValidity() assert_own_property: interface prototype object missing non-static operation expected property "reportValidity" missing
+FAIL ElementInternals interface: attribute labels assert_true: The prototype object must have a property "labels" expected true got false
 PASS DataTransfer interface: existence and properties of interface object
 PASS DataTransfer interface object length
 PASS DataTransfer interface object name

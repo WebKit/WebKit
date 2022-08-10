@@ -54,6 +54,11 @@ CustomElementRegistry::CustomElementRegistry(DOMWindow& window, ScriptExecutionC
 
 CustomElementRegistry::~CustomElementRegistry() = default;
 
+Document* CustomElementRegistry::document() const
+{
+    return m_window.document();
+}
+
 // https://dom.spec.whatwg.org/#concept-shadow-including-tree-order
 static void enqueueUpgradeInShadowIncludingTreeOrder(ContainerNode& node, JSCustomElementInterface& elementInterface)
 {

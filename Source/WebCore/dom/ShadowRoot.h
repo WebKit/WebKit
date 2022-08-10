@@ -49,11 +49,12 @@ class ShadowRoot final : public DocumentFragment, public TreeScope {
 public:
 
     enum class DelegatesFocus : uint8_t { Yes, No };
+    enum class AvailableToElementInternals : uint8_t { Yes, No };
 
     static Ref<ShadowRoot> create(Document& document, ShadowRootMode type,
-        SlotAssignmentMode assignmentMode = SlotAssignmentMode::Named, DelegatesFocus delegatesFocus = DelegatesFocus::No)
+        SlotAssignmentMode assignmentMode = SlotAssignmentMode::Named, DelegatesFocus delegatesFocus = DelegatesFocus::No, AvailableToElementInternals availableToElementInternals = AvailableToElementInternals::No)
     {
-        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus));
+        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, availableToElementInternals));
     }
 
     static Ref<ShadowRoot> create(Document& document, std::unique_ptr<SlotAssignment>&& assignment)
@@ -75,6 +76,8 @@ public:
     bool delegatesFocus() const { return m_delegatesFocus; }
     bool containsFocusedElement() const { return m_containsFocusedElement; }
     void setContainsFocusedElement(bool flag) { m_containsFocusedElement = flag; }
+
+    bool isAvailableToElementInternals() const { return m_availableToElementInternals; }
 
     Element* host() const { return m_host.get(); }
     void setHost(WeakPtr<Element>&& host) { m_host = WTFMove(host); }
@@ -121,7 +124,7 @@ public:
     Vector<RefPtr<WebAnimation>> getAnimations();
 
 private:
-    ShadowRoot(Document&, ShadowRootMode, SlotAssignmentMode, DelegatesFocus);
+    ShadowRoot(Document&, ShadowRootMode, SlotAssignmentMode, DelegatesFocus, AvailableToElementInternals);
     ShadowRoot(Document&, std::unique_ptr<SlotAssignment>&&);
 
     bool childTypeAllowed(NodeType) const override;
@@ -137,6 +140,7 @@ private:
     bool m_hasBegunDeletingDetachedChildren { false };
     bool m_delegatesFocus { false };
     bool m_containsFocusedElement { false };
+    bool m_availableToElementInternals { false };
     ShadowRootMode m_type { ShadowRootMode::UserAgent };
     SlotAssignmentMode m_slotAssignmentMode { SlotAssignmentMode::Named };
 

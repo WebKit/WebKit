@@ -33,9 +33,11 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CommonAtomStrings.h"
+#include "CustomElementReactionQueue.h"
 #include "DOMTokenList.h"
 #include "DocumentFragment.h"
 #include "ElementAncestorIterator.h"
+#include "ElementInternals.h"
 #include "EnterKeyHint.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -1147,6 +1149,25 @@ bool HTMLElement::shouldExtendSelectionToTargetNode(const Node& targetNode, cons
         return ImageOverlay::isOverlayText(targetNode);
 
     return true;
+}
+
+ExceptionOr<Ref<ElementInternals>> HTMLElement::attachInternals()
+{
+    auto* queue = reactionQueue();
+    if (!queue)
+        return Exception { NotSupportedError, "attachInternals is only supported on a custom element instance"_s };
+
+    if (queue->isElementInternalsDisabled())
+        return Exception { NotSupportedError, "attachInternals is disabled"_s };
+
+    if (queue->isElementInternalsAttached())
+        return Exception { NotSupportedError, "There is already an existing ElementInternals"_s };
+
+    if (!isPrecustomizedOrDefinedCustomElement())
+        return Exception { NotSupportedError, "Custom element is in an invalid state"_s };
+
+    queue->setElementInternalsAttached();
+    return ElementInternals::create(*this);
 }
 
 #if PLATFORM(IOS_FAMILY)
