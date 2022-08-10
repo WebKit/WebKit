@@ -292,7 +292,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
                 TextDecorationPainter decorationPainter = createDecorationPainter(markedText, textDecorationSelectionClipOutRect);
                 paintBackgroundDecorations(decorationPainter, markedText, snappedSelectionRect);
                 paintForeground(markedText);
-                paintForegroundDecorations(decorationPainter, snappedSelectionRect);
+                paintForegroundDecorations(decorationPainter, markedText, snappedSelectionRect);
             }
         }
     } else {
@@ -438,7 +438,7 @@ TextDecorationPainter TextBoxPainter<TextBoxPath>::createDecorationPainter(const
     auto* colorFilter = markedText.style.textShadow && m_style.hasAppleColorFilter() ? &m_style.appleColorFilter() : nullptr;
     auto& document = m_renderer.document();
     auto& styleToUse = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
-    return { context, styleToUse, fontCascade(), shadow, colorFilter, markedText.style.textDecorationStyles, document.printing(), m_renderer.isHorizontalWritingMode(), document.deviceScaleFactor() };
+    return { context, styleToUse, fontCascade(), shadow, colorFilter, document.printing(), m_renderer.isHorizontalWritingMode(), document.deviceScaleFactor() };
 }
 
 template<typename TextBoxPath>
@@ -448,26 +448,30 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Clockwise));
 
     auto textRun = m_paintTextRun.subRun(markedText.startOffset, markedText.endOffset - markedText.startOffset);
+    auto& styleToUse = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
+    const auto& textDecorationStyles = markedText.style.textDecorationStyles;
+    auto computedTextDecorationType = [&] {
+        auto textDecorations = styleToUse.textDecorationsInEffect();
+        textDecorations.add(TextDecorationPainter::textDecorationsInEffectForStyle(textDecorationStyles));
+        return textDecorations;
+    }();
     auto computedBackgroundDecorationGeometry = [&] {
         auto deviceScaleFactor = m_renderer.document().deviceScaleFactor();
-        auto& styleToUse = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
         auto& fontMetrics = styleToUse.metricsOfPrimaryFont();
-        auto textDecorations = decorationPainter.textDecorations();
-        auto& overrideStyles = decorationPainter.overrideStyles();
 
         auto textDecorationThickness = ceilToDevicePixel(styleToUse.textDecorationThickness().resolve(styleToUse.computedFontSize(), fontMetrics), deviceScaleFactor);
         auto underlineOffset = [&] {
-            if (!textDecorations.contains(TextDecorationLine::Underline))
+            if (!computedTextDecorationType.contains(TextDecorationLine::Underline))
                 return 0.f;
             auto baseOffset = underlineOffsetForTextBoxPainting(styleToUse, makeIterator());
-            auto wavyOffset = overrideStyles.underline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f;
+            auto wavyOffset = textDecorationStyles.underline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f;
             return baseOffset + wavyOffset;
         };
         auto overlineOffset = [&] {
-            if (!textDecorations.contains(TextDecorationLine::Overline))
+            if (!computedTextDecorationType.contains(TextDecorationLine::Overline))
                 return 0.f;
             auto autoTextDecorationThickness = ceilToDevicePixel(TextDecorationThickness::createWithAuto().resolve(styleToUse.computedFontSize(), fontMetrics), deviceScaleFactor);
-            return autoTextDecorationThickness - textDecorationThickness - (overrideStyles.overline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f);
+            return autoTextDecorationThickness - textDecorationThickness - (textDecorationStyles.overline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f);
         };
 
         return TextDecorationPainter::BackgroundDecorationGeometry {
@@ -479,19 +483,26 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
             overlineOffset()
         };
     };
-    decorationPainter.paintBackgroundDecorations(textRun, computedBackgroundDecorationGeometry());
+
+    decorationPainter.paintBackgroundDecorations(textRun, computedBackgroundDecorationGeometry(), computedTextDecorationType, textDecorationStyles);
 
     if (m_isCombinedText)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Counterclockwise));
 }
 
 template<typename TextBoxPath>
-void TextBoxPainter<TextBoxPath>::paintForegroundDecorations(TextDecorationPainter& decorationPainter, const FloatRect& snappedSelectionRect)
+void TextBoxPainter<TextBoxPath>::paintForegroundDecorations(TextDecorationPainter& decorationPainter, const StyledMarkedText& markedText, const FloatRect& snappedSelectionRect)
 {
     if (m_isCombinedText)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Clockwise));
 
-    decorationPainter.paintForegroundDecorations(snappedSelectionRect.location(), snappedSelectionRect.width());
+    auto computedTextDecorationType = [&] {
+        auto& styleToUse = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
+        auto textDecorations = styleToUse.textDecorationsInEffect();
+        textDecorations.add(TextDecorationPainter::textDecorationsInEffectForStyle(markedText.style.textDecorationStyles));
+        return textDecorations;
+    };
+    decorationPainter.paintForegroundDecorations(snappedSelectionRect.location(), snappedSelectionRect.width(), computedTextDecorationType(), markedText.style.textDecorationStyles);
 
     if (m_isCombinedText)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Counterclockwise));
