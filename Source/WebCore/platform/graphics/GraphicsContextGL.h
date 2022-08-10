@@ -824,6 +824,18 @@ public:
     // GL_ANGLE_request_extension
     static constexpr GCGLenum REQUESTABLE_EXTENSIONS_ANGLE = 0x93A8;
 
+    // ANGLE special internal format
+    static constexpr GCGLenum BGRA8_SRGB_ANGLEX = 0x6AC0;
+
+    // GL_OES_depth32
+    static constexpr GCGLenum DEPTH_COMPONENT32_OES = 0x81A7;
+
+    // GL_APPLE_texture_format_BGRA8888
+    static constexpr GCGLenum BGRA8_EXT = 0x93A1;
+
+    // GL_ANGLE_rgbx_internal_format
+    static constexpr GCGLenum RGBX8_ANGLE = 0x96BA;
+
     // Attempt to enumerate all possible native image formats to
     // reduce the amount of temporary allocations during texture
     // uploading. This enum must be public because it is accessed

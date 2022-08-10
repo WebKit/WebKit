@@ -803,6 +803,16 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
         return nullptr;
     }
 
+    // These formats are never exposed to WebGL apps but may be accepted by ANGLE.
+    switch (internalformat) {
+    case GraphicsContextGL::BGRA8_SRGB_ANGLEX:
+    case GraphicsContextGL::DEPTH_COMPONENT32_OES:
+    case GraphicsContextGL::BGRA8_EXT:
+    case GraphicsContextGL::RGBX8_ANGLE:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getInternalformatParameter", "invalid internalformat");
+        return nullptr;
+    }
+
     m_context->moveErrorsToSyntheticErrorList();
     GCGLint numValues = m_context->getInternalformati(target, internalformat, GraphicsContextGL::NUM_SAMPLE_COUNTS);
     if (m_context->moveErrorsToSyntheticErrorList() || numValues < 0)
