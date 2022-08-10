@@ -54,6 +54,7 @@
 #include "UserContentURLPattern.h"
 #include "ValidationMessageClient.h"
 #include "VisitedLinkStore.h"
+#include "WebRTCProvider.h"
 #if ENABLE(WEBGL)
 #include "WebGLStateTracker.h"
 #endif
