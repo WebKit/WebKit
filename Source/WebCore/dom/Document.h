@@ -465,6 +465,10 @@ public:
 
     void setContent(const String&);
 
+    // https://html.spec.whatwg.org/multipage/interaction.html#blocked-by-a-modal-dialog
+    HTMLDialogElement* blockedByDialogElement() const;
+    void setBlockedByDialogElement(HTMLDialogElement*);
+
     String suggestedMIMEType() const;
 
     void overrideMIMEType(const String&);
@@ -2287,6 +2291,7 @@ private:
     Vector<Function<void()>> m_whenIsVisibleHandlers;
 
     WeakHashSet<Element> m_elementsWithPendingUserAgentShadowTreeUpdates;
+    WeakPtr<HTMLDialogElement> m_blockedByDialogElement; // https://html.spec.whatwg.org/multipage/interaction.html#blocked-by-a-modal-dialog
 };
 
 Element* eventTargetElementForDocument(Document*);

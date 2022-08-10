@@ -9219,6 +9219,16 @@ bool Document::isSameSiteForCookies(const URL& url) const
     return domain.matches(url);
 }
 
+HTMLDialogElement* Document::blockedByDialogElement() const
+{
+    return m_blockedByDialogElement.get();
+}
+
+void Document::setBlockedByDialogElement(HTMLDialogElement* dialog)
+{
+    m_blockedByDialogElement = dialog;
+}
+
 } // namespace WebCore
 
 #undef DOCUMENT_RELEASE_LOG

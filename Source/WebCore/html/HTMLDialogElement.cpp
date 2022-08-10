@@ -79,6 +79,8 @@ ExceptionOr<void> HTMLDialogElement::showModal()
 
     setIsModal(true);
 
+    document().setBlockedByDialogElement(this);
+
     if (!isInTopLayer())
         addToTopLayer();
 
@@ -97,6 +99,9 @@ void HTMLDialogElement::close(const String& result)
     setBooleanAttribute(openAttr, false);
 
     setIsModal(false);
+
+    if (document().blockedByDialogElement() == this)
+        document().setBlockedByDialogElement(nullptr);
 
     if (!result.isNull())
         m_returnValue = result;
@@ -148,6 +153,8 @@ void HTMLDialogElement::removedFromAncestor(RemovalType removalType, ContainerNo
 {
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     setIsModal(false);
+    if (document().blockedByDialogElement() == this)
+        document().setBlockedByDialogElement(nullptr);
 }
 
 void HTMLDialogElement::setIsModal(bool newValue)

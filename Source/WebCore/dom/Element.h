@@ -352,6 +352,7 @@ public:
     bool isBeingDragged() const { return isUserActionElement() && isUserActionElementDragged(); }
     bool hasFocusVisible() const { return isUserActionElement() && isUserActionElementHasFocusVisible(); }
     bool hasFocusWithin() const { return isUserActionElement() && isUserActionElementHasFocusWithin(); };
+    bool isInert() const;
 
     virtual void setActive(bool = true, Style::InvalidationScope = Style::InvalidationScope::All);
     virtual void setHovered(bool = true, Style::InvalidationScope = Style::InvalidationScope::All, HitTestRequest = {});

@@ -745,9 +745,27 @@ Vector<String> Element::getAttributeNames() const
     return attributesVector;
 }
 
+bool Element::isInert() const
+{
+    // FIXME: The inert attribute should also be taken into account.
+    // https://html.spec.whatwg.org/multipage/interaction.html#the-inert-attribute
+
+    if (!isConnected())
+        return false;
+
+    auto* blockedByDialogElement = document().blockedByDialogElement();
+    if (LIKELY(!blockedByDialogElement))
+        return false;
+
+    return blockedByDialogElement != this && !isDescendantOrShadowDescendantOf(*blockedByDialogElement);
+}
+
 bool Element::isFocusable() const
 {
     if (!isConnected() || !supportsFocus())
+        return false;
+
+    if (isInert())
         return false;
 
     if (!renderer()) {
