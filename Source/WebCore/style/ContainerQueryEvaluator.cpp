@@ -59,7 +59,7 @@ bool ContainerQueryEvaluator::evaluate(const CQ::ContainerQuery& containerQuery)
     if (!container)
         return false;
 
-    return evaluateCondition(containerQuery.condition, *container) == EvaluationResult::True;
+    return evaluateCondition(containerQuery.condition, *container) == MQ::EvaluationResult::True;
 }
 
 auto ContainerQueryEvaluator::selectContainer(const CQ::ContainerQuery& containerQuery) const -> std::optional<SelectedContainer>
@@ -164,50 +164,15 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes
     return { };
 }
 
-auto ContainerQueryEvaluator::evaluateQueryInParens(const CQ::QueryInParens& queryInParens, const SelectedContainer& container) const -> EvaluationResult
+auto ContainerQueryEvaluator::evaluateQueryInParens(const CQ::QueryInParens& queryInParens, const SelectedContainer& container) const -> MQ::EvaluationResult
 {
     return WTF::switchOn(queryInParens, [&](const CQ::ContainerCondition& containerCondition) {
         return evaluateCondition(containerCondition, container);
     }, [&](const CQ::SizeFeature& sizeFeature) {
         return evaluateSizeFeature(sizeFeature, container);
     }, [&](const CQ::UnknownQuery&) {
-        return EvaluationResult::Unknown;
+        return MQ::EvaluationResult::Unknown;
     });
-}
-
-template<typename ConditionType>
-auto ContainerQueryEvaluator::evaluateCondition(const ConditionType& condition, const SelectedContainer& container) const -> EvaluationResult
-{
-    if (condition.queries.isEmpty())
-        return EvaluationResult::Unknown;
-
-    switch (condition.logicalOperator) {
-    case CQ::LogicalOperator::Not:
-        return !evaluateQueryInParens(condition.queries.first(), container);
-    case CQ::LogicalOperator::And: {
-        auto result = EvaluationResult::True;
-        for (auto query : condition.queries) {
-            auto queryResult = evaluateQueryInParens(query, container);
-            if (queryResult == EvaluationResult::False)
-                return EvaluationResult::False;
-            if (queryResult == EvaluationResult::Unknown)
-                result = EvaluationResult::Unknown;
-        }
-        return result;
-    }
-    case CQ::LogicalOperator::Or: {
-        auto result = EvaluationResult::False;
-        for (auto query : condition.queries) {
-            auto queryResult = evaluateQueryInParens(query, container);
-            if (queryResult == EvaluationResult::True)
-                return EvaluationResult::True;
-            if (queryResult == EvaluationResult::Unknown)
-                result = EvaluationResult::Unknown;
-        }
-        return result;
-    }
-    }
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static std::optional<LayoutUnit> computeSize(const CSSValue* value, const CSSToLengthConversionData& conversionData)
@@ -227,14 +192,14 @@ static std::optional<LayoutUnit> computeSize(const CSSValue* value, const CSSToL
     return primitiveValue.computeLength<LayoutUnit>(conversionData);
 }
 
-auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFeature, const SelectedContainer& container) const -> EvaluationResult
+auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFeature, const SelectedContainer& container) const -> MQ::EvaluationResult
 {
     // "If the query container does not have a principal box, or the principal box is not a layout containment box,
     // or the query container does not support container size queries on the relevant axes, then the result of
     // evaluating the size feature is unknown."
     // https://drafts.csswg.org/css-contain-3/#size-container
     if (!container.renderer)
-        return EvaluationResult::Unknown;
+        return MQ::EvaluationResult::Unknown;
 
     auto& renderer = *container.renderer;
 
@@ -253,7 +218,7 @@ auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFea
     };
 
     if (!hasEligibleContainment())
-        return EvaluationResult::Unknown;
+        return MQ::EvaluationResult::Unknown;
 
     auto compare = [](CQ::ComparisonOperator op, auto left, auto right) {
         switch (op) {
@@ -274,19 +239,19 @@ auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFea
     enum class Side : uint8_t { Left, Right };
     auto evaluateSizeComparison = [&](LayoutUnit size, const std::optional<CQ::Comparison>& comparison, Side side) {
         if (!comparison)
-            return EvaluationResult::True;
+            return MQ::EvaluationResult::True;
         auto expressionSize = computeSize(comparison->value.get(), container.conversionData);
         if (!expressionSize)
-            return EvaluationResult::Unknown;
+            return MQ::EvaluationResult::Unknown;
         auto left = side == Side::Left ? *expressionSize : size;
         auto right = side == Side::Left ? size : *expressionSize;
 
-        return toEvaluationResult(compare(comparison->op, left, right));
+        return MQ::toEvaluationResult(compare(comparison->op, left, right));
     };
 
     auto evaluateSize = [&](LayoutUnit size) {
         if (!sizeFeature.leftComparison && !sizeFeature.rightComparison)
-            return toEvaluationResult(!!size);
+            return MQ::toEvaluationResult(!!size);
 
         auto leftResult = evaluateSizeComparison(size, sizeFeature.leftComparison, Side::Left);
         auto rightResult = evaluateSizeComparison(size, sizeFeature.rightComparison, Side::Right);
@@ -296,27 +261,27 @@ auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFea
 
     auto evaluateAspectRatioComparison = [&](double aspectRatio, const std::optional<CQ::Comparison>& comparison, Side side) {
         if (!comparison)
-            return EvaluationResult::True;
+            return MQ::EvaluationResult::True;
 
         if (!is<CSSValueList>(comparison->value))
-            return EvaluationResult::Unknown;
+            return MQ::EvaluationResult::Unknown;
 
         auto& ratioList = downcast<CSSValueList>(*comparison->value);
         if (ratioList.length() != 2)
-            return EvaluationResult::Unknown;
+            return MQ::EvaluationResult::Unknown;
 
         auto first = dynamicDowncast<CSSPrimitiveValue>(ratioList.item(0));
         auto second = dynamicDowncast<CSSPrimitiveValue>(ratioList.item(1));
 
         if (!first || !second || !first->isNumberOrInteger() || !second->isNumberOrInteger())
-            return EvaluationResult::Unknown;
+            return MQ::EvaluationResult::Unknown;
 
         auto expressionRatio = first->doubleValue() / second->doubleValue();
 
         auto left = side == Side::Left ? expressionRatio : aspectRatio;
         auto right = side == Side::Left ? aspectRatio : expressionRatio;
 
-        return toEvaluationResult(compare(comparison->op, left, right));
+        return MQ::toEvaluationResult(compare(comparison->op, left, right));
     };
 
     if (sizeFeature.name == CQ::FeatureNames::width())
@@ -335,7 +300,7 @@ auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFea
         auto boxRatio = renderer.contentWidth().toDouble() / renderer.contentHeight().toDouble();
         
         if (!sizeFeature.leftComparison && !sizeFeature.rightComparison)
-            return toEvaluationResult(!!boxRatio);
+            return MQ::toEvaluationResult(!!boxRatio);
 
         auto leftResult = evaluateAspectRatioComparison(boxRatio, sizeFeature.leftComparison, Side::Left);
         auto rightResult = evaluateAspectRatioComparison(boxRatio, sizeFeature.rightComparison, Side::Right);
@@ -345,25 +310,25 @@ auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFea
 
     if (sizeFeature.name == CQ::FeatureNames::orientation()) {
         if (!sizeFeature.rightComparison)
-            return EvaluationResult::Unknown;
+            return MQ::EvaluationResult::Unknown;
 
         auto& comparison = *sizeFeature.rightComparison;
 
         if (!is<CSSPrimitiveValue>(comparison.value) || comparison.op != CQ::ComparisonOperator::Equal)
-            return EvaluationResult::Unknown;
+            return MQ::EvaluationResult::Unknown;
 
         auto& value = downcast<CSSPrimitiveValue>(*sizeFeature.rightComparison->value);
 
         bool isPortrait = renderer.contentHeight() >= renderer.contentWidth();
         if (value.valueID() == CSSValuePortrait)
-            return toEvaluationResult(isPortrait);
+            return MQ::toEvaluationResult(isPortrait);
         if (value.valueID() == CSSValueLandscape)
-            return toEvaluationResult(!isPortrait);
+            return MQ::toEvaluationResult(!isPortrait);
 
-        return EvaluationResult::Unknown;
+        return MQ::EvaluationResult::Unknown;
     }
 
-    return EvaluationResult::Unknown;
+    return MQ::EvaluationResult::Unknown;
 }
 
 }

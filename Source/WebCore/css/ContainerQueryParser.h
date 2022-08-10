@@ -27,24 +27,24 @@
 #include "CSSParserContext.h"
 #include "CSSParserToken.h"
 #include "ContainerQuery.h"
+#include "GenericMediaQueryParser.h"
 
 namespace WebCore {
 
-class CSSParserTokenRange;
+class ContainerQueryParser;
 
-class ContainerQueryParser {
+class ContainerQueryParser : public MQ::GenericMediaQueryParser<ContainerQueryParser>  {
 public:
     static std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&, const CSSParserContext&);
 
-private:
     std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&);
     std::optional<CQ::QueryInParens> consumeQueryInParens(CSSParserTokenRange&);
-    template<typename ConditionType> std::optional<ConditionType> consumeCondition(CSSParserTokenRange&);
     std::optional<CQ::SizeFeature> consumeSizeFeature(CSSParserTokenRange&);
     std::optional<CQ::SizeFeature> consumePlainSizeFeature(CSSParserTokenRange&);
     std::optional<CQ::SizeFeature> consumeRangeSizeFeature(CSSParserTokenRange&);
     RefPtr<CSSValue> consumeValue(CSSParserTokenRange&);
 
+private:
     ContainerQueryParser(const CSSParserContext& context)
         : m_context(context) { }
 

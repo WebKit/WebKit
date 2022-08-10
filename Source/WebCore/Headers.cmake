@@ -601,6 +601,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/parser/CSSParserToken.h
     css/parser/CSSParserTokenRange.h
 
+    css/query/GenericMediaQueryTypes.h
+
     cssjit/CompiledSelector.h
 
     display/DisplayTree.h

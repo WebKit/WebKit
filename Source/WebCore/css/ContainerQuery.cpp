@@ -173,7 +173,7 @@ void serialize(StringBuilder& builder, const SizeFeature& sizeFeature)
 template<typename ConditionType>
 void serialize(StringBuilder& builder, const ConditionType& condition)
 {
-    if (condition.queries.size() == 1 && condition.logicalOperator == LogicalOperator::Not) {
+    if (condition.queries.size() == 1 && condition.logicalOperator == MQ::LogicalOperator::Not) {
         builder.append("not ");
         serialize(builder, condition.queries.first());
         return;
@@ -181,7 +181,7 @@ void serialize(StringBuilder& builder, const ConditionType& condition)
 
     for (auto& query : condition.queries) {
         if (&query != &condition.queries.first())
-            builder.append(condition.logicalOperator == LogicalOperator::And ? " and " : " or ");
+            builder.append(condition.logicalOperator == MQ::LogicalOperator::And ? " and " : " or ");
         serialize(builder, query);
     }
 }

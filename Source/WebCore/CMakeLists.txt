@@ -87,6 +87,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/css"
     "${WEBCORE_DIR}/css/calc"
     "${WEBCORE_DIR}/css/parser"
+    "${WEBCORE_DIR}/css/query"
     "${WEBCORE_DIR}/css/typedom"
     "${WEBCORE_DIR}/css/typedom/color"
     "${WEBCORE_DIR}/css/typedom/numeric"

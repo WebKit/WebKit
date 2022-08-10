@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "GenericMediaQueryTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/text/AtomString.h>
@@ -46,12 +47,11 @@ struct UnknownQuery {
 
 using QueryInParens = std::variant<ContainerCondition, SizeFeature, UnknownQuery>;
 
-enum class LogicalOperator : uint8_t { And, Or, Not };
 enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, GreaterThan, GreaterThanOrEqual };
 enum class Syntax : uint8_t { Boolean, Colon, Range };
 
 struct ContainerCondition {
-    LogicalOperator logicalOperator { LogicalOperator::And };
+    MQ::LogicalOperator logicalOperator { MQ::LogicalOperator::And };
     Vector<QueryInParens> queries;
 };
 

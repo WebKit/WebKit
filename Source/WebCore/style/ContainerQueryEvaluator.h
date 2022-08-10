@@ -25,6 +25,7 @@
 #pragma once
 
 #include "ContainerQuery.h"
+#include "GenericMediaQueryEvaluator.h"
 #include "SelectorMatchingState.h"
 #include "StyleScopeOrdinal.h"
 #include <wtf/Ref.h>
@@ -35,9 +36,7 @@ class Element;
 
 namespace Style {
 
-enum class EvaluationResult : uint8_t { False, True, Unknown };
-
-class ContainerQueryEvaluator {
+class ContainerQueryEvaluator : public MQ::GenericMediaQueryEvaluator<ContainerQueryEvaluator> {
 public:
     enum class SelectionMode : bool { Element, PseudoElement };
     ContainerQueryEvaluator(const Element&, SelectionMode, ScopeOrdinal, SelectorMatchingState*);
@@ -46,46 +45,18 @@ public:
 
     static const Element* selectContainer(OptionSet<CQ::Axis>, const String& name, const Element&, SelectionMode = SelectionMode::Element, ScopeOrdinal = ScopeOrdinal::Element, const CachedQueryContainers* = nullptr);
 
-private:
     struct SelectedContainer;
-    std::optional<SelectedContainer> selectContainer(const CQ::ContainerQuery&) const;
+    MQ::EvaluationResult evaluateQueryInParens(const CQ::QueryInParens&, const SelectedContainer&) const;
+    MQ::EvaluationResult evaluateSizeFeature(const CQ::SizeFeature&, const SelectedContainer&) const;
 
-    EvaluationResult evaluateQueryInParens(const CQ::QueryInParens&, const SelectedContainer&) const;
-    template<typename ConditionType> EvaluationResult evaluateCondition(const ConditionType&, const SelectedContainer&) const;
-    EvaluationResult evaluateSizeFeature(const CQ::SizeFeature&, const SelectedContainer&) const;
+private:
+    std::optional<SelectedContainer> selectContainer(const CQ::ContainerQuery&) const;
 
     const Ref<const Element> m_element;
     const SelectionMode m_selectionMode;
     const ScopeOrdinal m_scopeOrdinal;
     SelectorMatchingState* m_selectorMatchingState;
 };
-
-inline EvaluationResult toEvaluationResult(bool boolean)
-{
-    return boolean ? EvaluationResult::True : EvaluationResult::False;
-};
-
-inline EvaluationResult operator&(EvaluationResult left, EvaluationResult right)
-{
-    if (left == EvaluationResult::Unknown || right == EvaluationResult::Unknown)
-        return EvaluationResult::Unknown;
-    if (left == EvaluationResult::True && right == EvaluationResult::True)
-        return EvaluationResult::True;
-    return EvaluationResult::False;
-}
-
-inline EvaluationResult operator!(EvaluationResult result)
-{
-    switch (result) {
-    case EvaluationResult::True:
-        return EvaluationResult::False;
-    case EvaluationResult::False:
-        return EvaluationResult::True;
-    case EvaluationResult::Unknown:
-        return EvaluationResult::Unknown;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
 
 }
 }

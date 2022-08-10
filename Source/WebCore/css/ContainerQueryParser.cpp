@@ -87,64 +87,6 @@ std::optional<CQ::QueryInParens> ContainerQueryParser::consumeQueryInParens(CSSP
     return { };
 }
 
-template<typename ConditionType>
-std::optional<ConditionType> ContainerQueryParser::consumeCondition(CSSParserTokenRange& range)
-{
-    auto consumeQuery = [&](CSSParserTokenRange& range) {
-        if constexpr (std::is_same_v<CQ::ContainerCondition, ConditionType>)
-            return consumeQueryInParens(range);
-        // Style query support would be here.
-    };
-
-    if (range.peek().type() == IdentToken) {
-        if (range.peek().id() == CSSValueNot) {
-            range.consumeIncludingWhitespace();
-            if (auto query = consumeQuery(range))
-                return ConditionType { CQ::LogicalOperator::Not, { *query } };
-            return { };
-        }
-    }
-
-    ConditionType condition;
-
-    auto query = consumeQuery(range);
-    if (!query)
-        return { };
-
-    condition.queries.append(*query);
-    range.consumeWhitespace();
-
-    auto consumeOperator = [&]() -> std::optional<CQ::LogicalOperator> {
-        auto operatorToken = range.consumeIncludingWhitespace();
-        if (operatorToken.type() != IdentToken)
-            return { };
-        if (operatorToken.id() == CSSValueAnd)
-            return CQ::LogicalOperator::And;
-        if (operatorToken.id() == CSSValueOr)
-            return CQ::LogicalOperator::Or;
-        return { };
-    };
-
-    while (!range.atEnd()) {
-        auto op = consumeOperator();
-        if (!op)
-            return { };
-        if (condition.queries.size() > 1 && condition.logicalOperator != *op)
-            return { };
-
-        condition.logicalOperator = *op;
-
-        auto query = consumeQuery(range);
-        if (!query)
-            return { };
-
-        condition.queries.append(*query);
-        range.consumeWhitespace();
-    }
-
-    return condition;
-}
-
 std::optional<CQ::SizeFeature> ContainerQueryParser::consumeSizeFeature(CSSParserTokenRange& range)
 {
     auto consume = [&] {
