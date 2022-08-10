@@ -6907,6 +6907,16 @@
    },
    {
       "emails" : [
+         "vitor.roriz@apple.com"
+      ],
+      "github" : "vitorroriz",
+      "name" : "Vitor Roriz",
+      "nicks" : [
+         "vitorroriz"
+      ]
+   },
+   {
+      "emails" : [
          "vivekg@webkit.org",
          "vivek.vg@samsung.com"
       ],
