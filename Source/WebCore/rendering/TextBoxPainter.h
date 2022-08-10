@@ -67,7 +67,7 @@ protected:
     void paintBackground(unsigned startOffset, unsigned endOffset, const Color&, BackgroundStyle = BackgroundStyle::Normal);
     void paintBackground(const StyledMarkedText&);
     void paintForeground(const StyledMarkedText&);
-    TextDecorationPainter createDecorationPainter(const StyledMarkedText&, const FloatRect&, const FloatRect&);
+    TextDecorationPainter createDecorationPainter(const StyledMarkedText&, const FloatRect&);
     void paintBackgroundDecorations(TextDecorationPainter&, const StyledMarkedText&, const FloatRect&);
     void paintForegroundDecorations(TextDecorationPainter&, const FloatRect&);
     void paintCompositionUnderline(const CompositionUnderline&);

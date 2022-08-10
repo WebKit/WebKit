@@ -31,6 +31,7 @@
 #include "EventRegion.h"
 #include "GraphicsContext.h"
 #include "InlineIteratorLineBox.h"
+#include "InlineTextBoxStyle.h"
 #include "LegacyInlineTextBox.h"
 #include "LineSelection.h"
 #include "PaintInfo.h"
@@ -288,7 +289,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
                     snappedSelectionRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, m_document.deviceScaleFactor(), m_paintTextRun.ltr());
                 }
 
-                TextDecorationPainter decorationPainter = createDecorationPainter(markedText, textDecorationSelectionClipOutRect, snappedSelectionRect);
+                TextDecorationPainter decorationPainter = createDecorationPainter(markedText, textDecorationSelectionClipOutRect);
                 paintBackgroundDecorations(decorationPainter, markedText, snappedSelectionRect);
                 paintForeground(markedText);
                 paintForegroundDecorations(decorationPainter, snappedSelectionRect);
@@ -414,7 +415,7 @@ void TextBoxPainter<TextBoxPath>::paintForeground(const StyledMarkedText& marked
 }
 
 template<typename TextBoxPath>
-TextDecorationPainter TextBoxPainter<TextBoxPath>::createDecorationPainter(const StyledMarkedText& markedText, const FloatRect& clipOutRect, const FloatRect& snappedSelectionRect)
+TextDecorationPainter TextBoxPainter<TextBoxPath>::createDecorationPainter(const StyledMarkedText& markedText, const FloatRect& clipOutRect)
 {
     GraphicsContext& context = m_paintInfo.context();
 
@@ -435,7 +436,9 @@ TextDecorationPainter TextBoxPainter<TextBoxPath>::createDecorationPainter(const
     // Create painter
     auto* shadow = markedText.style.textShadow ? &markedText.style.textShadow.value() : nullptr;
     auto* colorFilter = markedText.style.textShadow && m_style.hasAppleColorFilter() ? &m_style.appleColorFilter() : nullptr;
-    return { context, fontCascade(), makeIterator(), snappedSelectionRect.width(), shadow, colorFilter, markedText.style.textDecorationStyles };
+    auto& document = m_renderer.document();
+    auto& styleToUse = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
+    return { context, styleToUse, fontCascade(), shadow, colorFilter, markedText.style.textDecorationStyles, document.printing(), m_renderer.isHorizontalWritingMode(), document.deviceScaleFactor() };
 }
 
 template<typename TextBoxPath>
@@ -444,7 +447,17 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
     if (m_isCombinedText)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Clockwise));
 
-    decorationPainter.paintBackgroundDecorations(m_paintTextRun.subRun(markedText.startOffset, markedText.endOffset - markedText.startOffset), textOriginFromPaintRect(snappedSelectionRect), snappedSelectionRect.location());
+    auto textRun = m_paintTextRun.subRun(markedText.startOffset, markedText.endOffset - markedText.startOffset);
+    auto textOrigin = textOriginFromPaintRect(snappedSelectionRect);
+    auto boxOrigin = snappedSelectionRect.location();
+    auto boxWidth = snappedSelectionRect.width();
+    auto underlineOffset = [&] {
+        if (!decorationPainter.textDecorations().contains(TextDecorationLine::Underline))
+            return 0.f;
+        auto& styleToUse = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
+        return underlineOffsetForTextBoxPainting(styleToUse, makeIterator());
+    };
+    decorationPainter.paintBackgroundDecorations(textRun, textOrigin, boxOrigin, boxWidth, underlineOffset(), wavyOffsetFromDecoration());
 
     if (m_isCombinedText)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Counterclockwise));
@@ -456,7 +469,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundDecorations(TextDecorationPaint
     if (m_isCombinedText)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Clockwise));
 
-    decorationPainter.paintForegroundDecorations(snappedSelectionRect.location());
+    decorationPainter.paintForegroundDecorations(snappedSelectionRect.location(), snappedSelectionRect.width());
 
     if (m_isCombinedText)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Counterclockwise));
