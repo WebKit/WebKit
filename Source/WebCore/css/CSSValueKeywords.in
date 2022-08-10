@@ -1172,6 +1172,10 @@ hover
 progressive
 interlace
 
+// (forced-colors:) media feature.
+// none
+active
+
 // blend modes
 // normal
 multiply

@@ -69,6 +69,8 @@ static inline bool isValidValueForIdentMediaFeature(const AtomString& feature, c
         return valueID == CSSValueHigh || valueID == CSSValueStandard;
     if (feature == MediaFeatureNames::scan)
         return valueID == CSSValueProgressive || valueID == CSSValueInterlace;
+    if (feature == MediaFeatureNames::forcedColors)
+        return valueID == CSSValueNone || valueID == CSSValueActive;
 
     return false;
 }
@@ -95,7 +97,8 @@ static inline bool featureWithValidIdent(const AtomString& mediaFeature, const C
         || mediaFeature == MediaFeatureNames::prefersReducedMotion
         || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)))
         || mediaFeature == MediaFeatureNames::dynamicRange
-        || mediaFeature == MediaFeatureNames::scan;
+        || mediaFeature == MediaFeatureNames::scan
+        || mediaFeature == MediaFeatureNames::forcedColors;
 }
 
 static inline bool featureWithValidDensity(const String& mediaFeature, const CSSPrimitiveValue& value)
@@ -214,6 +217,7 @@ static inline bool isFeatureValidWithoutValue(const AtomString& mediaFeature, co
         || mediaFeature == MediaFeatureNames::displayMode
 #endif
         || mediaFeature == MediaFeatureNames::scan
+        || mediaFeature == MediaFeatureNames::forcedColors
         || mediaFeature == MediaFeatureNames::videoPlayableInline;
 }
 

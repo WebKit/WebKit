@@ -48,6 +48,7 @@
     macro(devicePixelRatio, "-webkit-device-pixel-ratio") \
     macro(deviceWidth, "device-width") \
     macro(dynamicRange, "dynamic-range") \
+    macro(forcedColors, "forced-colors") \
     macro(grid, "grid") \
     macro(height, "height") \
     macro(hover, "hover") \

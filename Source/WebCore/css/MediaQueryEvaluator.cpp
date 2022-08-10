@@ -489,6 +489,16 @@ static bool scanEvaluate(CSSValue* value, const CSSToLengthConversionData&, Fram
     return primitiveValue->valueID() == CSSValueProgressive;
 }
 
+static bool forcedColorsEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix)
+{
+    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+    if (!primitiveValue)
+        return false;
+
+    // On Cocoa platforms, there is no concept of "forced colors".
+    return primitiveValue->valueID() == CSSValueNone;
+}
+
 static bool gridEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix op)
 {
     return zeroEvaluate(value, op);
