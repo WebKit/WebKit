@@ -25,6 +25,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "SVGElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGUseElement.h"
 #include "XLinkNames.h"
 #include <wtf/URL.h>

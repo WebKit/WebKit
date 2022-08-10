@@ -28,6 +28,7 @@
 
 #include "GeometryUtilities.h"
 #include "SVGElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGPathData.h"
 #include "SVGPathElement.h"
 

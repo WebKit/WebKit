@@ -30,6 +30,7 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyParser.h"
+#include "Document.h"
 #include "Element.h"
 #include "RenderStyle.h"
 #include "StylePropertyShorthand.h"
