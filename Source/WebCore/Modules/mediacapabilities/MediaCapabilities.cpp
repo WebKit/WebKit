@@ -32,7 +32,6 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaCapabilitiesDecodingInfo.h"
 #include "JSMediaCapabilitiesEncodingInfo.h"
-#include "LibWebRTCProvider.h"
 #include "Logging.h"
 #include "MediaCapabilitiesDecodingInfo.h"
 #include "MediaCapabilitiesEncodingInfo.h"
@@ -42,6 +41,7 @@
 #include "MediaEngineConfigurationFactory.h"
 #include "Page.h"
 #include "Settings.h"
+#include "WebRTCProvider.h"
 #include <wtf/Logger.h>
 #include <wtf/SortedArrayMap.h>
 
@@ -183,14 +183,12 @@ static void gatherDecodingInfo(Document& document, MediaDecodingConfiguration&& 
     configuration.canExposeVP9 = document.settings().vp9DecoderEnabled();
 #endif
 
-#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC)
     if (configuration.type == MediaDecodingType::WebRTC) {
         if (auto* page = document.page())
             page->webRTCProvider().createDecodingConfiguration(WTFMove(configuration), WTFMove(decodingCallback));
         return;
     }
-#else
-    UNUSED_PARAM(document);
 #endif
     MediaEngineConfigurationFactory::createDecodingConfiguration(WTFMove(configuration), WTFMove(decodingCallback));
 }
@@ -203,7 +201,7 @@ static void gatherEncodingInfo(Document& document, MediaEncodingConfiguration&& 
         callback(WTFMove(result));
     };
 
-#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC)
     if (configuration.type == MediaEncodingType::WebRTC) {
         if (auto* page = document.page())
             page->webRTCProvider().createEncodingConfiguration(WTFMove(configuration), WTFMove(encodingCallback));

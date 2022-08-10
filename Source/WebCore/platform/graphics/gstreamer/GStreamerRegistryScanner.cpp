@@ -30,6 +30,10 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+#if USE(GSTREAMER_WEBRTC)
+#include <gst/rtp/rtp.h>
+#endif
+
 namespace WebCore {
 
 GST_DEBUG_CATEGORY_STATIC(webkit_media_gst_registry_scanner_debug);
@@ -76,6 +80,10 @@ GStreamerRegistryScanner::ElementFactories::ElementFactories(OptionSet<ElementFa
         videoEncoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_ENCODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO, GST_RANK_MARGINAL);
     if (types.contains(Type::Muxer))
         muxerFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_MUXER, GST_RANK_MARGINAL);
+    if (types.contains(Type::RtpPayloader))
+        rtpPayloaderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_PAYLOADER, GST_RANK_MARGINAL);
+    if (types.contains(Type::RtpDepayloader))
+        rtpDepayloaderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DEPAYLOADER, GST_RANK_MARGINAL);
 }
 
 GStreamerRegistryScanner::ElementFactories::~ElementFactories()
@@ -88,6 +96,8 @@ GStreamerRegistryScanner::ElementFactories::~ElementFactories()
     gst_plugin_feature_list_free(audioEncoderFactories);
     gst_plugin_feature_list_free(videoEncoderFactories);
     gst_plugin_feature_list_free(muxerFactories);
+    gst_plugin_feature_list_free(rtpPayloaderFactories);
+    gst_plugin_feature_list_free(rtpDepayloaderFactories);
 }
 
 const char* GStreamerRegistryScanner::ElementFactories::elementFactoryTypeToString(GStreamerRegistryScanner::ElementFactories::Type factoryType)
@@ -109,6 +119,10 @@ const char* GStreamerRegistryScanner::ElementFactories::elementFactoryTypeToStri
         return "video encoder";
     case Type::Muxer:
         return "muxer";
+    case Type::RtpPayloader:
+        return "RTP payloader";
+    case Type::RtpDepayloader:
+        return "RTP depayloader";
     case Type::All:
         break;
     }
@@ -135,6 +149,10 @@ GList* GStreamerRegistryScanner::ElementFactories::factory(GStreamerRegistryScan
         return videoEncoderFactories;
     case GStreamerRegistryScanner::ElementFactories::Type::Muxer:
         return muxerFactories;
+    case GStreamerRegistryScanner::ElementFactories::Type::RtpPayloader:
+        return rtpPayloaderFactories;
+    case GStreamerRegistryScanner::ElementFactories::Type::RtpDepayloader:
+        return rtpDepayloaderFactories;
     case GStreamerRegistryScanner::ElementFactories::Type::All:
         break;
     }
@@ -149,7 +167,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
         return { };
 
     GstPadDirection padDirection = GST_PAD_SINK;
-    if (factoryType == Type::AudioEncoder || factoryType == Type::VideoEncoder || factoryType == Type::Muxer)
+    if (factoryType == Type::AudioEncoder || factoryType == Type::VideoEncoder || factoryType == Type::Muxer || factoryType == Type::RtpDepayloader)
         padDirection = GST_PAD_SRC;
 
     GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string(capsString));
@@ -720,6 +738,106 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isConfi
 
     return { isSupported, isUsingHardware };
 }
+
+#if USE(GSTREAMER_WEBRTC)
+RTCRtpCapabilities GStreamerRegistryScanner::audioRtpCapabilities(Configuration configuration)
+{
+    RTCRtpCapabilities capabilies;
+    fillAudioRtpCapabilities(configuration, capabilies);
+    return capabilies;
+}
+
+RTCRtpCapabilities GStreamerRegistryScanner::videoRtpCapabilities(Configuration configuration)
+{
+    RTCRtpCapabilities capabilies;
+    fillVideoRtpCapabilities(configuration, capabilies);
+    return capabilies;
+}
+
+static inline Vector<RTCRtpCapabilities::HeaderExtensionCapability> probeRtpExtensions(const Vector<const char*>& candidates)
+{
+    Vector<RTCRtpCapabilities::HeaderExtensionCapability> extensions;
+    for (const auto& uri : candidates) {
+        if (auto extension = adoptGRef(gst_rtp_header_extension_create_from_uri(uri)))
+            extensions.append({ String::fromLatin1(uri) });
+    }
+    return extensions;
+}
+
+void GStreamerRegistryScanner::fillAudioRtpCapabilities(Configuration configuration, RTCRtpCapabilities& capabilities)
+{
+    if (!m_audioRtpExtensions)
+        m_audioRtpExtensions = probeRtpExtensions(m_allAudioRtpExtensions);
+    if (m_audioRtpExtensions)
+        capabilities.headerExtensions = copyToVector(*m_audioRtpExtensions);
+
+    auto codecElement = ElementFactories::Type::AudioDecoder;
+    auto rtpElement = ElementFactories::Type::RtpDepayloader;
+    if (configuration == Configuration::Encoding) {
+        codecElement = ElementFactories::Type::AudioEncoder;
+        rtpElement = ElementFactories::Type::RtpPayloader;
+    }
+
+    auto factories = ElementFactories({ codecElement, rtpElement });
+    if (factories.hasElementForMediaType(codecElement, "audio/x-opus") && factories.hasElementForMediaType(rtpElement, "audio/x-opus"))
+        capabilities.codecs.append({ .mimeType = "audio/OPUS"_s, .clockRate = 48000, .channels = 2, .sdpFmtpLine = emptyString() });
+
+    if (factories.hasElementForMediaType(codecElement, "audio/isac") && factories.hasElementForMediaType(rtpElement, "audio/isac"))
+        capabilities.codecs.append({ .mimeType = "audio/ISAC"_s, .clockRate = 16000, .channels = 1, .sdpFmtpLine = emptyString() });
+
+    if (factories.hasElementForMediaType(codecElement, "audio/G722") && factories.hasElementForMediaType(rtpElement, "audio/G722"))
+        capabilities.codecs.append({ .mimeType = "audio/G722"_s, .clockRate = 8000, .channels = 1, .sdpFmtpLine = emptyString() });
+
+    if (factories.hasElementForMediaType(codecElement, "audio/x-mulaw") && factories.hasElementForMediaType(rtpElement, "audio/x-mulaw"))
+        capabilities.codecs.append({ .mimeType = "audio/PCMU"_s, .clockRate = 8000, .channels = 1, .sdpFmtpLine = emptyString() });
+
+    if (factories.hasElementForMediaType(codecElement, "audio/x-alaw") && factories.hasElementForMediaType(rtpElement, "audio/x-alaw"))
+        capabilities.codecs.append({ .mimeType = "audio/PCMA"_s, .clockRate = 8000, .channels = 1, .sdpFmtpLine = emptyString() });
+}
+
+void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configuration, RTCRtpCapabilities& capabilities)
+{
+    if (!m_videoRtpExtensions)
+        m_videoRtpExtensions = probeRtpExtensions(m_allVideoRtpExtensions);
+    if (m_videoRtpExtensions)
+        capabilities.headerExtensions = copyToVector(*m_videoRtpExtensions);
+
+    auto codecElement = ElementFactories::Type::VideoDecoder;
+    auto rtpElement = ElementFactories::Type::RtpDepayloader;
+    if (configuration == Configuration::Encoding) {
+        codecElement = ElementFactories::Type::VideoEncoder;
+        rtpElement = ElementFactories::Type::RtpPayloader;
+    }
+
+    auto factories = ElementFactories({ codecElement, rtpElement });
+
+    if (factories.hasElementForMediaType(codecElement, "video/x-h264") && factories.hasElementForMediaType(rtpElement, "video/x-h264")) {
+        // FIXME: Profile levels are hardcoded here for the time being. It might be a good idea to
+        // actually probe those on the selected encoder.
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=640c1f"_s });
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f"_s });
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=640c1f"_s });
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42e01f"_s });
+    }
+
+    // FIXME: Probe for video/H265 capabilies.
+    // FIXME: Probe for video/AV1 capabilies.
+
+    if (factories.hasElementForMediaType(codecElement, "video/x-vp8") && factories.hasElementForMediaType(rtpElement, "video/x-vp8"))
+        capabilities.codecs.append({ .mimeType = "video/VP8"_s, .clockRate = 90000 });
+
+    if (factories.hasElementForMediaType(codecElement, "video/x-vp9") && factories.hasElementForMediaType(rtpElement, "video/x-vp9")) {
+        // FIXME: Profile levels are hardcoded here for the time being. It might be a good idea to
+        // actually probe those on the selected encoder.
+        capabilities.codecs.append({ .mimeType = "video/VP9"_s, .clockRate = 90000, .sdpFmtpLine = "profile-id=0"_s });
+        capabilities.codecs.append({ .mimeType = "video/VP9"_s, .clockRate = 90000, .sdpFmtpLine = "profile-id=2"_s });
+    }
+}
+#endif // USE(GSTREAMER_WEBRTC)
 
 }
 #endif

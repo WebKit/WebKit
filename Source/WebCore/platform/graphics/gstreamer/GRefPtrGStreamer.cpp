@@ -28,6 +28,7 @@
 #endif
 
 #if USE(GSTREAMER_WEBRTC)
+#include <gst/rtp/rtp.h>
 #define GST_USE_UNSTABLE_API
 #include <gst/webrtc/webrtc.h>
 #undef GST_USE_UNSTABLE_API
@@ -730,6 +731,25 @@ template<> void derefGPtr<GstPromise>(GstPromise* ptr)
 {
     if (ptr)
         gst_promise_unref(ptr);
+}
+
+template<> GRefPtr<GstRTPHeaderExtension> adoptGRef(GstRTPHeaderExtension* ptr)
+{
+    return GRefPtr<GstRTPHeaderExtension>(ptr, GRefPtrAdopt);
+}
+
+template<> GstRTPHeaderExtension* refGPtr<GstRTPHeaderExtension>(GstRTPHeaderExtension* ptr)
+{
+    if (ptr)
+        gst_object_ref(GST_OBJECT(ptr));
+
+    return ptr;
+}
+
+template<> void derefGPtr<GstRTPHeaderExtension>(GstRTPHeaderExtension* ptr)
+{
+    if (ptr)
+        gst_object_unref(ptr);
 }
 
 #endif // USE(GSTREAMER_WEBRTC)

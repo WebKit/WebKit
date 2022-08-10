@@ -48,6 +48,7 @@
 #include "RTCSctpTransportBackend.h"
 #include "RTCSessionDescriptionInit.h"
 #include "RTCTrackEvent.h"
+#include "WebRTCProvider.h"
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -58,7 +59,25 @@
 
 namespace WebCore {
 
-#if !USE(LIBWEBRTC) && !USE(GSTREAMER_WEBRTC)
+#if USE(LIBWEBRTC) || USE(GSTREAMER_WEBRTC)
+
+std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(ScriptExecutionContext& context, const String& kind)
+{
+    auto* page = downcast<Document>(context).page();
+    if (!page)
+        return { };
+    return page->webRTCProvider().receiverCapabilities(kind);
+}
+
+std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(ScriptExecutionContext& context, const String& kind)
+{
+    auto* page = downcast<Document>(context).page();
+    if (!page)
+        return { };
+    return page->webRTCProvider().senderCapabilities(kind);
+}
+
+#else
 
 static std::unique_ptr<PeerConnectionBackend> createNoPeerConnectionBackend(RTCPeerConnection&)
 {
@@ -78,7 +97,7 @@ std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(Scri
     ASSERT_NOT_REACHED();
     return { };
 }
-#endif
+#endif // USE(LIBWEBRTC) || USE(GSTREAMER_WEBRTC)
 
 PeerConnectionBackend::PeerConnectionBackend(RTCPeerConnection& peerConnection)
     : m_peerConnection(peerConnection)
