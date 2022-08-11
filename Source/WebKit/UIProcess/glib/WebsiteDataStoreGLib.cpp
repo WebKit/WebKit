@@ -89,7 +89,7 @@ WTF::String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
     return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "databases");
 }
 
-WTF::String WebsiteDataStore::defaultHSTSDirectory()
+WTF::String WebsiteDataStore::defaultHSTSStorageDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S);
 }
