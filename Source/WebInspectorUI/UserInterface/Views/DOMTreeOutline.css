@@ -87,13 +87,13 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-with
     color: var(--selected-secondary-text-color);
 }
 
-.tree-outline.dom li:not(.rendered) > span > *:not(.html-comment) {
+.content-view.dom-tree .tree-outline.dom li:not(.rendered) > span > *:not(.html-comment) {
     filter: grayscale();
 }
 
-.tree-outline.dom li:not(.rendered, .selected) > span > *:not(.html-comment),
-.tree-outline.dom:not(:focus-within) li.selected:not(.rendered) > span > *:not(.html-comment),
-body:is(.window-inactive, .window-docked-inactive) .tree-outline.dom li.selected:not(.rendered) > span > *:not(.html-comment) {
+.content-view.dom-tree .tree-outline.dom li:not(.rendered, .selected) > span > *:not(.html-comment),
+.content-view.dom-tree .tree-outline.dom:not(:focus-within) li.selected:not(.rendered) > span > *:not(.html-comment),
+body:is(.window-inactive, .window-docked-inactive) .content-view.dom-tree .tree-outline.dom li.selected:not(.rendered) > span > *:not(.html-comment) {
     opacity: 0.7;
 }
 
