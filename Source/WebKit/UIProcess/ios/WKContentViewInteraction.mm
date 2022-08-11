@@ -141,6 +141,7 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <pal/spi/ios/BarcodeSupportSPI.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
@@ -10956,6 +10957,19 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     } forRequest:request];
 }
 
+#if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAnalysis *result)
+{
+#if HAVE(BCS_LIVE_CAMERA_ONLY_ACTION_SPI)
+    return [result.barcodeActions indexOfObjectPassingTest:^BOOL(BCSAction *action, NSUInteger index, BOOL *stop) {
+        return [action respondsToSelector:@selector(isLiveCameraOnlyAction)] && [(id)action isLiveCameraOnlyAction];
+    }] == NSNotFound;
+#else // not HAVE(BCS_LIVE_CAMERA_ONLY_ACTION_SPI)
+    return YES;
+#endif // HAVE(BCS_LIVE_CAMERA_ONLY_ACTION_SPI)
+}
+#endif // ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+
 - (void)_completeImageAnalysisRequestForContextMenu:(CGImageRef)image requestIdentifier:(WebKit::ImageAnalysisRequestIdentifier)requestIdentifier hasTextResults:(BOOL)hasTextResults
 {
     _waitingForDynamicImageAnalysisContextMenuActions = YES;
@@ -11033,7 +11047,8 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
             return;
 
 #if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-        data->machineReadableCodeMenu = result.mrcMenu;
+        if (shouldUseMachineReadableCodeMenuFromImageAnalysisResult(result))
+            data->machineReadableCodeMenu = result.mrcMenu;
 #endif
 #if USE(QUICK_LOOK)
         data->hasVisualSearchResults = hasVisualSearchResults;
