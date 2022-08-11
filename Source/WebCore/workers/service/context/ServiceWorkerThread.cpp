@@ -83,6 +83,7 @@ static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData&
 {
     return {
         contextData.scriptURL,
+        URL(), // FIXME: Should pass owner URL.
         emptyString(),
         "serviceworker:" + Inspector::IdentifiersFactory::createIdentifier(),
         WTFMove(userAgent),

@@ -50,6 +50,7 @@ WorkerParameters WorkerParameters::isolatedCopy() const
 {
     return {
         scriptURL.isolatedCopy(),
+        ownerURL.isolatedCopy(),
         name.isolatedCopy(),
         inspectorIdentifier.isolatedCopy(),
         userAgent.isolatedCopy(),

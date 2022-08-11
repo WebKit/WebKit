@@ -49,6 +49,7 @@ struct ServiceWorkerClientData {
     ServiceWorkerClientType type;
     ServiceWorkerClientFrameType frameType;
     URL url;
+    URL ownerURL;
     std::optional<PageIdentifier> pageIdentifier;
     std::optional<FrameIdentifier> frameIdentifier;
     LastNavigationWasAppInitiated lastNavigationWasAppInitiated;
@@ -69,7 +70,7 @@ struct ServiceWorkerClientData {
 template<class Encoder>
 void ServiceWorkerClientData::encode(Encoder& encoder) const
 {
-    encoder << identifier << type << frameType << url << pageIdentifier << frameIdentifier << lastNavigationWasAppInitiated << isVisible << isFocused << focusOrder << ancestorOrigins;
+    encoder << identifier << type << frameType << url << ownerURL << pageIdentifier << frameIdentifier << lastNavigationWasAppInitiated << isVisible << isFocused << focusOrder << ancestorOrigins;
 }
 
 template<class Decoder>
@@ -93,6 +94,11 @@ std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& 
     std::optional<URL> url;
     decoder >> url;
     if (!url)
+        return std::nullopt;
+
+    std::optional<URL> ownerURL;
+    decoder >> ownerURL;
+    if (!ownerURL)
         return std::nullopt;
 
     std::optional<std::optional<PageIdentifier>> pageIdentifier;
@@ -130,7 +136,7 @@ std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& 
     if (!ancestorOrigins)
         return std::nullopt;
 
-    return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url), WTFMove(*pageIdentifier), WTFMove(*frameIdentifier), WTFMove(*lastNavigationWasAppInitiated), WTFMove(*isVisible), WTFMove(*isFocused), WTFMove(*focusOrder), WTFMove(*ancestorOrigins) } };
+    return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url), WTFMove(*ownerURL), WTFMove(*pageIdentifier), WTFMove(*frameIdentifier), WTFMove(*lastNavigationWasAppInitiated), WTFMove(*isVisible), WTFMove(*isFocused), WTFMove(*focusOrder), WTFMove(*ancestorOrigins) } };
 }
 
 using ServiceWorkerClientsMatchAllCallback = CompletionHandler<void(Vector<ServiceWorkerClientData>&&)>;
