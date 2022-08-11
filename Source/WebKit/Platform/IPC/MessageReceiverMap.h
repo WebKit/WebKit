@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "StringReference.h"
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/CString.h>

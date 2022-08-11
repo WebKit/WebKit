@@ -28,6 +28,7 @@
 
 #include "ArgumentCoders.h"
 #include "Logging.h"
+#include "WebCoreArgumentCoders.h"
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/SharedBuffer.h>
 #include <mach/mach_error.h>

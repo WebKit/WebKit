@@ -53,11 +53,6 @@
     <DisplayString>{m_impl}</DisplayString>
   </Type>
 
-  <Type Name="IPC::StringReference">
-    <DisplayString Condition="!m_size">empty</DisplayString>
-    <DisplayString>{m_data,[m_size]s8}</DisplayString>
-  </Type>
-  
   <Type Name="IPC::Decoder">
     <DisplayString>{m_messageReceiverName}::{m_messageName}(ID={m_destination})</DisplayString>
   </Type>
