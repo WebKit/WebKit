@@ -53,7 +53,7 @@ struct WavyStrokeParameters {
     // wider as font size increases.
     float step { 0.f };
 };
-WavyStrokeParameters getWavyStrokeParameters(float fontSize);
+WavyStrokeParameters wavyStrokeParameters(float fontSize);
 
 struct TextUnderlinePositionUnder {
     float textRunLogicalHeight { 0.f };

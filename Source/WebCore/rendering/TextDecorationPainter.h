@@ -24,6 +24,7 @@
 
 #include "Color.h"
 #include "FloatPoint.h"
+#include "InlineTextBoxStyle.h"
 #include "RenderStyleConstants.h"
 #include <wtf/OptionSet.h>
 
@@ -39,7 +40,7 @@ class TextRun;
     
 class TextDecorationPainter {
 public:
-    TextDecorationPainter(GraphicsContext&, const RenderStyle&, const FontCascade&, const ShadowData*, const FilterOperations*, bool isPrinting, bool isHorizontal);
+    TextDecorationPainter(GraphicsContext&, const FontCascade&, const ShadowData*, const FilterOperations*, bool isPrinting, bool isHorizontal);
 
     struct Styles {
         bool operator==(const Styles&) const;
@@ -47,11 +48,13 @@ public:
 
         struct DecorationStyleAndColor {
             Color color;
-            TextDecorationStyle decorationStyle;
+            TextDecorationStyle decorationStyle { TextDecorationStyle::Solid };
         };
         DecorationStyleAndColor underline;
         DecorationStyleAndColor overline;
         DecorationStyleAndColor linethrough;
+
+        TextDecorationSkipInk skipInk { TextDecorationSkipInk::None };
     };
     struct BackgroundDecorationGeometry {
         FloatPoint textOrigin;
@@ -61,6 +64,8 @@ public:
         float underlineOffset { 0.f };
         float overlineOffset { 0.f };
         float linethroughCenter { 0.f };
+        float clippingOffset { 0.f };
+        WavyStrokeParameters wavyStrokeParameters;
     };
     void paintBackgroundDecorations(const TextRun&, const BackgroundDecorationGeometry&, OptionSet<TextDecorationLine>, const Styles&);
 
@@ -69,6 +74,7 @@ public:
         float textBoxWidth { 0.f };
         float textDecorationThickness { 0.f };
         float linethroughCenter { 0.f };
+        WavyStrokeParameters wavyStrokeParameters;
     };
     void paintForegroundDecorations(const ForegroundDecorationGeometry&, const Styles&);
 
@@ -85,8 +91,6 @@ private:
     const ShadowData* m_shadow { nullptr };
     const FilterOperations* m_shadowColorFilter { nullptr };
     const FontCascade& m_font;
-
-    const RenderStyle& m_renderTextStyle;
 };
 
 } // namespace WebCore
