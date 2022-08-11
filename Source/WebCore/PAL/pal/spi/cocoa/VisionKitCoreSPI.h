@@ -39,6 +39,10 @@
 #import <UIKit/UIKit.h>
 #endif
 
+#if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+@class BCSAction;
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef int32_t VKImageAnalysisRequestID;
@@ -139,6 +143,7 @@ typedef NS_ENUM(NSInteger, VKImageOrientation) {
 #if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 @property (nonatomic) UIMenu *mrcMenu;
 @property (nonatomic, nullable, weak) UIViewController *presentingViewControllerForMrcAction;
+@property (nonatomic, readonly) NSArray<BCSAction *> *barcodeActions;
 #endif
 @end
 
