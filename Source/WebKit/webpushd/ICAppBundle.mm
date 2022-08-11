@@ -195,7 +195,9 @@ void ICAppBundle::checkForExistingBundle()
 
 void ICAppBundle::deleteExistingBundle()
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [IXAppInstallCoordinator uninstallAppWithBundleID:(NSString *)getBundleIdentifier() requestUserConfirmation:NO completion:[this, protectedThis = Ref { *this }] (NSError *error) {
+ALLOW_DEPRECATED_DECLARATIONS_END
         callOnMainRunLoop([this, protectedThis = Ref { *this }, error = RetainPtr<NSError>(error)] {
             didDeleteExistingBundleWithError(error.get());
         });
@@ -224,11 +226,15 @@ void ICAppBundle::createBundle()
 
     // Cancel any previous install coordinator that might've been left hanging in a partially finished state
     NSError *error = nil;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [IXAppInstallCoordinator cancelCoordinatorForAppWithBundleID:bundleIdentifier.get() withReason:[NSError errorWithDomain:@"WKErrorDomain" code:1 userInfo:nil] client:IXClientIdentifierAppliedFor error:&error];
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     BOOL created = NO;
     error = nil;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     m_appInstallCoordinator = [IXRestoringDemotedAppInstallCoordinator coordinatorForAppWithBundleID:bundleIdentifier.get() withClientID:IXClientIdentifierAppliedFor createIfNotExisting:YES created:&created error:&error];
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!m_appInstallCoordinator || error) {
         broadcastDebugMessage(makeString("Unable to create install coordinatior for app bundle identifier ", String(bundleIdentifier.get())));
