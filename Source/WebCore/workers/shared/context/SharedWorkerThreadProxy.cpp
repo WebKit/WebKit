@@ -61,6 +61,7 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
     RELEASE_ASSERT(document.sessionID());
     return {
         workerFetchResult.lastRequestURL,
+        document.url(),
         workerOptions.name,
         "sharedworker:" + Inspector::IdentifiersFactory::createIdentifier(),
         WTFMove(initializationData.userAgent),

@@ -125,7 +125,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
 
     SocketProvider* socketProvider = document.socketProvider();
 
-    WorkerParameters params { scriptURL, name, identifier, WTFMove(initializationData.userAgent), platformStrategies()->loaderStrategy()->isOnLine(), contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, crossOriginEmbedderPolicy, timeOrigin, referrerPolicy, workerType, credentials, document.settingsValues(), WorkerThreadMode::CreateNewThread, sessionID,
+    WorkerParameters params { scriptURL, document.url(), name, identifier, WTFMove(initializationData.userAgent), platformStrategies()->loaderStrategy()->isOnLine(), contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, crossOriginEmbedderPolicy, timeOrigin, referrerPolicy, workerType, credentials, document.settingsValues(), WorkerThreadMode::CreateNewThread, sessionID,
 #if ENABLE(SERVICE_WORKER)
         WTFMove(initializationData.serviceWorkerData),
 #endif
