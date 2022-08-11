@@ -2307,3 +2307,5 @@ webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/se
 webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Pass Crash ]
 webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/service-worker-header.https.html [ Pass Crash ]
 webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/update-import-scripts.https.html [ Pass Crash ]
+
+webkit.org/b/243841 [ Release ] imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Failure ]
