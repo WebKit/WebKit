@@ -1,0 +1,13 @@
+This tests that the documents in srcdoc are always in strict mode
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frame1.contentDocument.compatMode is "CSS1Compat"
+PASS frame2.contentDocument.compatMode is "CSS1Compat"
+PASS frame3.contentDocument.compatMode is "CSS1Compat"
+PASS frame4.contentDocument.compatMode is "CSS1Compat"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -342,6 +342,11 @@ void HTMLConstructionSite::setCompatibilityModeFromDoctype(const String& name, c
     // Limited Quirks - This mode is identical to no-quirks mode except for its treatment of line-height in the inline box model.  
     // No Quirks - no quirks apply. Web pages will obey the specifications to the letter.
 
+    if (m_document.isSrcdocDocument()) {
+        setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);
+        return;
+    }
+
     // Check for Quirks Mode.
     if (name != "html"_s
         || startsWithLettersIgnoringASCIICase(publicId, "+//silmaril//dtd html pro v0r11 19970101//"_s)
@@ -445,7 +450,7 @@ void HTMLConstructionSite::insertDoctype(AtomHTMLToken&& token)
     if (m_isParsingFragment)
         return;
 
-    if (token.forceQuirks())
+    if (token.forceQuirks() && !m_document.isSrcdocDocument())
         setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     else
         setCompatibilityModeFromDoctype(token.name(), publicId, systemId);

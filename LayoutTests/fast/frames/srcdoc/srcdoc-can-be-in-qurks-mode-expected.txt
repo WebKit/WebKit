@@ -1,2 +1,2 @@
-ALERT: BackCompat
+ALERT: CSS1Compat
 Normally srcdoc documents default to standards mode, but they can end up in quirks mode with a sufficiently nutty DocType.
