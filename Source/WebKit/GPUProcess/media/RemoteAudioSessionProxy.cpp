@@ -90,8 +90,10 @@ void RemoteAudioSessionProxy::setPreferredBufferSize(uint64_t size)
 
 void RemoteAudioSessionProxy::tryToSetActive(bool active, SetActiveCompletion&& completion)
 {
-    m_active = audioSessionManager().tryToSetActiveForProcess(*this, active);
-    completion(m_active);
+    auto success = audioSessionManager().tryToSetActiveForProcess(*this, active);
+    if (success)
+        m_active = active;
+    completion(success);
 
     audioSessionManager().updatePresentingProcesses();
 }
