@@ -456,7 +456,7 @@ static void overrideDefaults()
 
 #if !ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     Options::useWebAssemblyFastMemory() = false;
-    Options::useSharedArrayBuffer() = false;
+    Options::useWasmFaultSignalHandler() = false;
 #endif
 
 #if !HAVE(MACH_EXCEPTIONS)
@@ -667,6 +667,21 @@ void Options::recomputeDependentOptions()
 
     if (Options::verboseVerifyGC())
         Options::verifyGC() = true;
+
+#if ASAN_ENABLED && OS(LINUX) && ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
+    if (Options::useWasmFaultSignalHandler()) {
+        const char* asanOptions = getenv("ASAN_OPTIONS");
+        bool okToUseWebAssemblyFastMemory = asanOptions
+            && (strstr(asanOptions, "allow_user_segv_handler=1") || strstr(asanOptions, "handle_segv=0"));
+        if (!okToUseWebAssemblyFastMemory) {
+            dataLogLn("WARNING: ASAN interferes with JSC signal handlers; useWebAssemblyFastMemory and useWasmFaultSignalHandler will be disabled.");
+            Options::useWasmFaultSignalHandler() = false;
+        }
+    }
+#endif
+
+    if (!Options::useWasmFaultSignalHandler())
+        Options::useWebAssemblyFastMemory() = false;
 }
 
 inline void* Options::addressOfOption(Options::ID id)
@@ -766,19 +781,6 @@ void Options::initialize()
 #if HAVE(MACH_EXCEPTIONS)
             if (Options::useMachForExceptions())
                 handleSignalsWithMach();
-#endif
-
-#if ASAN_ENABLED && OS(LINUX) && ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
-            if (Options::useWebAssemblyFastMemory() || Options::useSharedArrayBuffer()) {
-                const char* asanOptions = getenv("ASAN_OPTIONS");
-                bool okToUseWebAssemblyFastMemory = asanOptions
-                    && (strstr(asanOptions, "allow_user_segv_handler=1") || strstr(asanOptions, "handle_segv=0"));
-                if (!okToUseWebAssemblyFastMemory) {
-                    dataLogLn("WARNING: ASAN interferes with JSC signal handlers; useWebAssemblyFastMemory and useSharedArrayBuffer will be disabled.");
-                    Options::useWebAssemblyFastMemory() = false;
-                    Options::useSharedArrayBuffer() = false;
-                }
-            }
 #endif
 
 #if CPU(X86_64) && OS(DARWIN)

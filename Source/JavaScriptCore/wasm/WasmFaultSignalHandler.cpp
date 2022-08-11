@@ -113,7 +113,7 @@ void activateSignalingMemory()
         if (!Wasm::isSupported())
             return;
 
-        if (!Options::useWebAssemblyFastMemory() && !Options::useSharedArrayBuffer())
+        if (!Options::useWasmFaultSignalHandler())
             return;
 
         activateSignalHandlersFor(Signal::AccessFault);
@@ -129,7 +129,7 @@ void prepareSignalingMemory()
         if (!Wasm::isSupported())
             return;
 
-        if (!Options::useWebAssemblyFastMemory() && !Options::useSharedArrayBuffer())
+        if (!Options::useWasmFaultSignalHandler())
             return;
 
         addSignalHandler(Signal::AccessFault, [] (Signal signal, SigInfo& sigInfo, PlatformRegisters& ucontext) {

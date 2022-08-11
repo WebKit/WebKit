@@ -193,7 +193,7 @@ auto SectionParser::parseResizableLimits(uint32_t& initial, std::optional<uint32
     WASM_PARSER_FAIL_IF(!parseVarUInt32(initial), "can't parse resizable limits initial page count");
 
     isShared = flags == 0x3;
-    WASM_PARSER_FAIL_IF(isShared && !Options::useSharedArrayBuffer(), "shared memory is not enabled");
+    WASM_PARSER_FAIL_IF(isShared && !Options::useWasmFaultSignalHandler(), "shared memory is not enabled");
 
     if (flags) {
         uint32_t maximumInt;

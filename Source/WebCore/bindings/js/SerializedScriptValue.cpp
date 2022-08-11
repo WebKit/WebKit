@@ -1311,6 +1311,11 @@ private:
                     return true;
                 
                 if (arrayBuffer->isShared() && m_context == SerializationContext::WorkerPostMessage) {
+                    // https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeinternal
+                    if (!JSC::Options::useSharedArrayBuffer()) {
+                        code = SerializationReturnCode::DataCloneError;
+                        return true;
+                    }
                     uint32_t index = m_sharedBuffers.size();
                     ArrayBufferContents contents;
                     if (arrayBuffer->shareWith(contents)) {
@@ -1393,7 +1398,7 @@ private:
                 return true;
             }
             if (JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(obj)) {
-                if (memory->memory().sharingMode() != JSC::Wasm::MemorySharingMode::Shared) {
+                if (!JSC::Options::useSharedArrayBuffer() || memory->memory().sharingMode() != JSC::Wasm::MemorySharingMode::Shared) {
                     code = SerializationReturnCode::DataCloneError;
                     return true;
                 }
@@ -3722,7 +3727,7 @@ private:
         case WasmMemoryTag: {
             uint32_t index;
             bool indexSuccessfullyRead = read(index);
-            if (!indexSuccessfullyRead || !m_wasmMemoryHandles || index >= m_wasmMemoryHandles->size()) {
+            if (!indexSuccessfullyRead || !m_wasmMemoryHandles || index >= m_wasmMemoryHandles->size() || !JSC::Options::useSharedArrayBuffer()) {
                 fail();
                 return JSValue();
             }
@@ -3776,9 +3781,10 @@ private:
             return getJSValue(m_arrayBuffers[index].get());
         }
         case SharedArrayBufferTag: {
+            // https://html.spec.whatwg.org/multipage/structured-data.html#structureddeserialize
             uint32_t index = UINT_MAX;
             bool indexSuccessfullyRead = read(index);
-            if (!indexSuccessfullyRead || !m_sharedBuffers || index >= m_sharedBuffers->size()) {
+            if (!indexSuccessfullyRead || !m_sharedBuffers || index >= m_sharedBuffers->size() || !JSC::Options::useSharedArrayBuffer()) {
                 fail();
                 return JSValue();
             }

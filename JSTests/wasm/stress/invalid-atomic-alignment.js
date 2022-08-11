@@ -1,3 +1,4 @@
+//@ skip if $architecture != "arm64" && $architecture != "x86-64"
 import * as assert from '../assert.js';
 import { instantiate } from "../wabt-wrapper.js";
 
