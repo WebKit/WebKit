@@ -104,6 +104,7 @@ public:
 
     virtual ~JSCustomElementInterface();
 
+    template<typename Visitor> void visitJSFunctions(Visitor&) const;
 private:
     JSCustomElementInterface(const QualifiedName&, JSC::JSObject* callback, JSDOMGlobalObject*);
 

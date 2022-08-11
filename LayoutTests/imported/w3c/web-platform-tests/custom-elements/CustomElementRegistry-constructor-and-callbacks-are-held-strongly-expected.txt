@@ -1,0 +1,8 @@
+
+
+PASS constructor
+PASS connectedCallback
+PASS attributeChangedCallback
+PASS disconnectedCallback
+PASS adoptedCallback
+

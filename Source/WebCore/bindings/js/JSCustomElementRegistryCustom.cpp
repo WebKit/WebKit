@@ -168,13 +168,6 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
             elementInterface->disableShadow();
     }
 
-    auto addToGlobalObjectWithPrivateName = [&] (JSObject* objectToAdd) {
-        if (objectToAdd) {
-            PrivateName uniquePrivateName;
-            globalObject()->putDirect(vm, uniquePrivateName, objectToAdd);
-        }
-    };
-
     if (registry.document() && registry.document()->settings().formAssociatedCustomElementsEnabled()) {
         auto formAssociatedValue = constructor->get(&lexicalGlobalObject, Identifier::fromString(vm, "formAssociated"_s));
         RETURN_IF_EXCEPTION(scope, { });
@@ -200,19 +193,8 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
             RETURN_IF_EXCEPTION(scope, { });
             if (formStateRestoreCallback)
                 elementInterface->setFormStateRestoreCallback(formStateRestoreCallback);
-
-            addToGlobalObjectWithPrivateName(formAssociatedCallback);
-            addToGlobalObjectWithPrivateName(formResetCallback);
-            addToGlobalObjectWithPrivateName(formDisabledCallback);
-            addToGlobalObjectWithPrivateName(formStateRestoreCallback);
         }
     }
-
-    addToGlobalObjectWithPrivateName(constructor);
-    addToGlobalObjectWithPrivateName(connectedCallback);
-    addToGlobalObjectWithPrivateName(disconnectedCallback);
-    addToGlobalObjectWithPrivateName(adoptedCallback);
-    addToGlobalObjectWithPrivateName(attributeChangedCallback);
 
     if (auto promise = registry.addElementDefinition(WTFMove(elementInterface)))
         promise->resolveWithJSValue(constructor);
@@ -266,5 +248,13 @@ JSValue JSCustomElementRegistry::whenDefined(JSGlobalObject& lexicalGlobalObject
 
     return promise;
 }
+
+template<typename Visitor>
+void JSCustomElementRegistry::visitAdditionalChildren(Visitor& visitor)
+{
+    wrapped().visitJSCustomElementInterfaces(visitor);
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSCustomElementRegistry);
 
 } // namespace WebCore

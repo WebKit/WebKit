@@ -27,6 +27,7 @@
 
 #include "ContextDestructionObserver.h"
 #include "QualifiedName.h"
+#include <wtf/Lock.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/AtomString.h>
@@ -73,16 +74,18 @@ public:
     MemoryCompactRobinHoodHashMap<AtomString, Ref<DeferredPromise>>& promiseMap() { return m_promiseMap; }
     bool isShadowDisabled(const AtomString& name) const { return m_disabledShadowSet.contains(name); }
 
+    template<typename Visitor> void visitJSCustomElementInterfaces(Visitor&) const;
 private:
     CustomElementRegistry(DOMWindow&, ScriptExecutionContext*);
 
     DOMWindow& m_window;
     HashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;
-    HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap;
+    HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap WTF_GUARDED_BY_LOCK(m_constructorMapLock);
     MemoryCompactRobinHoodHashMap<AtomString, Ref<DeferredPromise>> m_promiseMap;
     MemoryCompactRobinHoodHashSet<AtomString> m_disabledShadowSet;
 
     bool m_elementDefinitionIsRunning { false };
+    mutable Lock m_constructorMapLock;
 
     friend class ElementDefinitionIsRunningSetForScope;
 };

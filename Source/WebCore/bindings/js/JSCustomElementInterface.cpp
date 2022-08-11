@@ -361,4 +361,21 @@ void JSCustomElementInterface::didUpgradeLastElementInConstructionStack()
     m_constructionStack.last() = nullptr;
 }
 
+template<typename Visitor>
+void JSCustomElementInterface::visitJSFunctions(Visitor& visitor) const
+{
+    visitor.append(m_constructor);
+    visitor.append(m_connectedCallback);
+    visitor.append(m_disconnectedCallback);
+    visitor.append(m_adoptedCallback);
+    visitor.append(m_attributeChangedCallback);
+    visitor.append(m_formAssociatedCallback);
+    visitor.append(m_formResetCallback);
+    visitor.append(m_formDisabledCallback);
+    visitor.append(m_formStateRestoreCallback);
+}
+
+template void JSCustomElementInterface::visitJSFunctions(JSC::AbstractSlotVisitor&) const;
+template void JSCustomElementInterface::visitJSFunctions(JSC::SlotVisitor&) const;
+
 } // namespace WebCore

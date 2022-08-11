@@ -25,6 +25,7 @@
 
 [
     GenerateIsReachable=ImplScriptExecutionContext,
+    JSCustomMarkFunction,
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface CustomElementRegistry {
