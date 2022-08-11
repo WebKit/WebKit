@@ -9,11 +9,6 @@ description('Check that we properly handle nested document loads during unload e
 
 window.jsTestIsAsync = true;
 
-function finishTest() {
-    testPassed('Load succeeded.');
-    finishJSTest();
-}
-
 function runTest() {
     let topFrame = document.documentElement.appendChild(document.createElement("iframe"));
     topFrame.id = 'topFrame';
@@ -24,7 +19,15 @@ function runTest() {
     aFrame.contentWindow.onunload = () => {
         topFrame.src = "javascript:''";
 
-        let bFrame = topFrame.contentDocument.appendChild(document.createElement("iframe"));
+        let bFrame;
+
+        try {
+            bFrame = topFrame.contentDocument.appendChild(document.createElement("iframe"));
+        } catch (e) {
+            testPassed("Threw exception: " + e);
+            finishJSTest();
+            return;
+        }
         bFrame.id = 'bFrame';
 
         bFrame.contentWindow.onunload = () => {

@@ -108,7 +108,12 @@ public:
     JSC::JSValue evaluateInWorldIgnoringException(const ScriptSourceCode&, DOMWrapperWorld&);
 
     // This asserts that URL argument is a JavaScript URL.
-    void executeJavaScriptURL(const URL&, RefPtr<SecurityOrigin> = nullptr, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
+    void executeJavaScriptURL(const URL&, RefPtr<SecurityOrigin>, ShouldReplaceDocumentIfJavaScriptURL, bool& didReplaceDocument);
+    void executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigin> securityOrigin = nullptr, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL)
+    {
+        bool didReplaceDocument = false;
+        executeJavaScriptURL(url, securityOrigin, shouldReplaceDocumentIfJavaScriptURL, didReplaceDocument);
+    }
 
     static void initializeMainThread();
 

@@ -576,7 +576,7 @@ bool ContentSecurityPolicy::allowObjectFromSource(const URL& url, RedirectRespon
 
 bool ContentSecurityPolicy::allowChildFrameFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived) const
 {
-    if (LegacySchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+    if (LegacySchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()) || url.protocolIsJavaScript())
         return true;
     String sourceURL;
     TextPosition sourcePosition(OrdinalNumber::beforeFirst(), OrdinalNumber());

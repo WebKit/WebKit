@@ -993,6 +993,7 @@ void FrameLoader::loadURLIntoChildFrame(const URL& url, const String& referer, F
     FrameLoadRequest frameLoadRequest { *m_frame.document(), m_frame.document()->securityOrigin(), { url }, selfTargetFrameName(), initiatedByMainFrame };
     frameLoadRequest.setNewFrameOpenerPolicy(NewFrameOpenerPolicy::Suppress);
     frameLoadRequest.setLockBackForwardList(LockBackForwardList::Yes);
+    frameLoadRequest.setIsInitialFrameSrcLoad(true);
     childFrame->loader().loadURL(WTFMove(frameLoadRequest), referer, FrameLoadType::RedirectWithLockedBackForwardList, nullptr, { }, std::nullopt, [] { });
 }
 
@@ -1373,6 +1374,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     action.setLockHistory(frameLoadRequest.lockHistory());
     action.setLockBackForwardList(frameLoadRequest.lockBackForwardList());
     action.setShouldReplaceDocumentIfJavaScriptURL(frameLoadRequest.shouldReplaceDocumentIfJavaScriptURL());
+    action.setIsInitialFrameSrcLoad(frameLoadRequest.isInitialFrameSrcLoad());
     if (privateClickMeasurement && m_frame.isMainFrame())
         action.setPrivateClickMeasurement(WTFMove(*privateClickMeasurement));
 
@@ -1502,9 +1504,8 @@ void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, Navig
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithNavigationAction: frame load started");
 
-    if (request.url().protocolIsJavaScript()) {
-        m_frame.script().executeJavaScriptURL(request.url(), action.requester() ? action.requester()->securityOrigin.ptr() : nullptr, action.shouldReplaceDocumentIfJavaScriptURL());
-        m_quickRedirectComing = false;
+    if (request.url().protocolIsJavaScript() && !action.isInitialFrameSrcLoad()) {
+        executeJavaScriptURL(request.url(), action);
         return completionHandler();
     }
 
@@ -3472,6 +3473,31 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
     return chrome.runBeforeUnloadConfirmPanel(text, m_frame);
 }
 
+void FrameLoader::executeJavaScriptURL(const URL& url, const NavigationAction& action)
+{
+    ASSERT(url.protocolIsJavaScript());
+
+    bool isFirstNavigationInFrame = m_stateMachine.isDisplayingInitialEmptyDocument();
+
+    RefPtr ownerDocument = m_frame.ownerElement() ? &m_frame.ownerElement()->document() : nullptr;
+    if (ownerDocument)
+        ownerDocument->incrementLoadEventDelayCount();
+
+    bool didReplaceDocument = false;
+    m_frame.script().executeJavaScriptURL(url, action.requester() ? action.requester()->securityOrigin.ptr() : nullptr, action.shouldReplaceDocumentIfJavaScriptURL(), didReplaceDocument);
+
+    // We need to communicate that a load happened, even if the JavaScript URL execution didn't end up replacing the document.
+    if (auto* document = m_frame.document(); isFirstNavigationInFrame && !didReplaceDocument)
+        document->dispatchWindowLoadEvent();
+
+    checkCompleted();
+
+    if (ownerDocument)
+        ownerDocument->decrementLoadEventDelayCount();
+
+    m_quickRedirectComing = false;
+}
+
 void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& request, FormState* formState, NavigationPolicyDecision navigationPolicyDecision, AllowNavigationToInvalidURL allowNavigationToInvalidURL)
 {
     // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a
@@ -3519,6 +3545,13 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
                     page->backForward().setCurrentItem(*resetItem);
             }
         }
+        return;
+    }
+
+    if (request.url().protocolIsJavaScript()) {
+        auto action = m_policyDocumentLoader->triggeringAction();
+        setPolicyDocumentLoader(nullptr);
+        executeJavaScriptURL(request.url(), action);
         return;
     }
 

@@ -293,6 +293,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::QuotaIncreaseRequestIdentifier',
         'WebCore::PluginLoadClientPolicy',
         'WebCore::PointerID',
+        'WebCore::PolicyCheckIdentifier',
         'WebCore::PushSubscriptionIdentifier',
         'WebCore::ProcessIdentifier',
         'WebCore::RealtimeMediaSourceIdentifier',

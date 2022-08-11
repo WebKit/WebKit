@@ -72,47 +72,9 @@ enum class FrameLoadType : uint8_t {
 enum class IsMetaRefresh : bool { No, Yes };
 enum class WillContinueLoading : bool { No, Yes };
 
-class PolicyCheckIdentifier {
-public:
-    PolicyCheckIdentifier() = default;
-
-    static PolicyCheckIdentifier create();
-
-    bool isValidFor(PolicyCheckIdentifier);
-    bool operator==(const PolicyCheckIdentifier& other) const { return m_process == other.m_process && m_policyCheck == other.m_policyCheck; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PolicyCheckIdentifier> decode(Decoder&);
-
-private:
-    PolicyCheckIdentifier(ProcessIdentifier process, uint64_t policyCheck)
-        : m_process(process)
-        , m_policyCheck(policyCheck)
-    { }
-
-    ProcessIdentifier m_process;
-    uint64_t m_policyCheck { 0 };
-};
-
-template<class Encoder>
-void PolicyCheckIdentifier::encode(Encoder& encoder) const
-{
-    encoder << m_process << m_policyCheck;
-}
-
-template<class Decoder>
-std::optional<PolicyCheckIdentifier> PolicyCheckIdentifier::decode(Decoder& decoder)
-{
-    auto process = ProcessIdentifier::decode(decoder);
-    if (!process)
-        return std::nullopt;
-
-    uint64_t policyCheck;
-    if (!decoder.decode(policyCheck))
-        return std::nullopt;
-
-    return PolicyCheckIdentifier { *process, policyCheck };
-}
+enum LocalPolicyCheckIdentifierType { };
+using LocalPolicyCheckIdentifier = ObjectIdentifier<LocalPolicyCheckIdentifierType>;
+using PolicyCheckIdentifier = ProcessQualified<LocalPolicyCheckIdentifier>;
 
 enum class ShouldContinuePolicyCheck : bool {
     Yes,

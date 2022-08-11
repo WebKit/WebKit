@@ -773,7 +773,7 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     return m_frame.loader().client().allowScript(m_frame.settings().isScriptEnabled());
 }
 
-void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigin> requesterSecurityOrigin, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)
+void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigin> requesterSecurityOrigin, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL, bool& didReplaceDocument)
 {
     ASSERT(url.protocolIsJavaScript());
 
@@ -828,8 +828,10 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
 
         // DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL can cause the DocumentLoader to get deref'ed and possible destroyed,
         // so protect it with a RefPtr.
-        if (RefPtr<DocumentLoader> loader = m_frame.document()->loader())
+        if (RefPtr<DocumentLoader> loader = m_frame.document()->loader()) {
             loader->writer().replaceDocumentWithResultOfExecutingJavascriptURL(scriptResult, ownerDocument.get());
+            didReplaceDocument = true;
+        }
     }
 }
 

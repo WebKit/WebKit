@@ -332,6 +332,8 @@ private:
         MayNotAttemptCacheOnlyLoadForFormSubmissionItem
     };
 
+    void executeJavaScriptURL(const URL&, const NavigationAction&);
+
     bool allChildrenAreComplete() const; // immediate children, not all descendants
 
     void checkTimerFired();

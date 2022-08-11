@@ -3,7 +3,7 @@ Check that we properly handle nested document loads during unload events. Passes
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS Load succeeded.
+PASS Threw exception: HierarchyRequestError: The operation would yield an incorrect node tree.
 PASS successfullyParsed is true
 
 TEST COMPLETE

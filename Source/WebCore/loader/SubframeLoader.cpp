@@ -61,6 +61,16 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
+static bool canLoadJavaScriptURL(HTMLFrameOwnerElement& ownerElement, const URL& url)
+{
+    ASSERT(url.protocolIsJavaScript());
+    if (!ownerElement.document().contentSecurityPolicy()->allowJavaScriptURLs(aboutBlankURL().string(), { }, url.string(), &ownerElement))
+        return false;
+    if (!ownerElement.canLoadScriptURL(url))
+        return false;
+    return true;
+}
+
 FrameLoader::SubframeLoader::SubframeLoader(Frame& frame)
     : m_frame(frame)
 {
@@ -74,44 +84,16 @@ void FrameLoader::SubframeLoader::clear()
 bool FrameLoader::SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerElement, const String& urlString, const AtomString& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
 {
     // Support for <frame src="javascript:string">
-    URL scriptURL;
-    URL url;
-    if (WTF::protocolIsJavaScript(urlString)) {
-        scriptURL = completeURL(urlString); // completeURL() encodes the URL.
-        url = aboutBlankURL();
-    } else
-        url = completeURL(urlString);
+    URL url = completeURL(urlString);
 
     if (shouldConvertInvalidURLsToBlank() && !url.isValid())
         url = aboutBlankURL();
 
     // Check the CSP of the embedder to determine if we allow execution of javascript: URLs via child frame navigation.
-    if (!scriptURL.isEmpty() && !ownerElement.document().contentSecurityPolicy()->allowJavaScriptURLs(aboutBlankURL().string(), { }, scriptURL.string(), &ownerElement))
-        scriptURL = URL();
+    if (url.protocolIsJavaScript() && !canLoadJavaScriptURL(ownerElement, url))
+        url = aboutBlankURL();
 
-    // If we will schedule a JavaScript URL load, we need to delay the firing of the load event at least until we've run the JavaScript in the URL.
-    CompletionHandlerCallingScope stopDelayingLoadEvent;
-    if (!scriptURL.isEmpty()) {
-        ownerElement.document().incrementLoadEventDelayCount();
-        stopDelayingLoadEvent = CompletionHandlerCallingScope([ownerDocument = Ref { ownerElement.document() }] {
-            ownerDocument->decrementLoadEventDelayCount();
-        });
-    }
-
-    Frame* frame = loadOrRedirectSubframe(ownerElement, url, frameName, lockHistory, lockBackForwardList);
-    if (!frame)
-        return false;
-
-    if (!scriptURL.isEmpty() && ownerElement.canLoadScriptURL(scriptURL)) {
-        // FIXME: Some sites rely on the javascript:'' loading synchronously, which is why we have this special case.
-        // Blink has the same workaround (https://bugs.chromium.org/p/chromium/issues/detail?id=923585).
-        if (urlString == "javascript:''"_s || urlString == "javascript:\"\""_s)
-            frame->script().executeJavaScriptURL(scriptURL);
-        else
-            frame->navigationScheduler().scheduleLocationChange(ownerElement.document(), ownerElement.document().securityOrigin(), scriptURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList, stopDelayingLoadEvent.release());
-    }
-
-    return true;
+    return loadOrRedirectSubframe(ownerElement, url, frameName, lockHistory, lockBackForwardList);
 }
     
 bool FrameLoader::SubframeLoader::resourceWillUsePlugin(const String& url, const String& mimeType)
@@ -246,9 +228,16 @@ Frame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement
     initiatingDocument.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(upgradedRequestURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
     RefPtr frame = ownerElement.contentFrame();
-    if (frame)
-        frame->navigationScheduler().scheduleLocationChange(initiatingDocument, initiatingDocument.securityOrigin(), upgradedRequestURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList);
-    else
+    if (frame) {
+        CompletionHandler<void()> stopDelayingLoadEvent = [] { };
+        if (upgradedRequestURL.protocolIsJavaScript()) {
+            ownerElement.document().incrementLoadEventDelayCount();
+            stopDelayingLoadEvent = [ownerDocument = Ref { ownerElement.document() }] {
+                ownerDocument->decrementLoadEventDelayCount();
+            };
+        }
+        frame->navigationScheduler().scheduleLocationChange(initiatingDocument, initiatingDocument.securityOrigin(), upgradedRequestURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList, WTFMove(stopDelayingLoadEvent));
+    } else
         frame = loadSubframe(ownerElement, upgradedRequestURL, frameName, m_frame.loader().outgoingReferrer());
 
     if (!frame)
