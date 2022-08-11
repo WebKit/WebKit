@@ -115,10 +115,10 @@ static const char* stringForRareDataUseType(NodeRareData::UseType useType)
         return "NodeList";
     case NodeRareData::UseType::MutationObserver:
         return "MutationObserver";
+    case NodeRareData::UseType::ManuallyAssignedSlot:
+        return "ManuallyAssignedSlot";
     case NodeRareData::UseType::TabIndex:
         return "TabIndex";
-    case NodeRareData::UseType::MinimumSize:
-        return "MinimumSize";
     case NodeRareData::UseType::ScrollingPosition:
         return "ScrollingPosition";
     case NodeRareData::UseType::ComputedStyle:
@@ -147,6 +147,8 @@ static const char* stringForRareDataUseType(NodeRareData::UseType useType)
         return "PartList";
     case NodeRareData::UseType::PartNames:
         return "PartNames";
+    case NodeRareData::UseType::Nonce:
+        return "Nonce";
     case NodeRareData::UseType::ExplicitlySetAttrElementsMap:
         return "ExplicitlySetAttrElementsMap";
     }
@@ -1210,6 +1212,18 @@ HTMLSlotElement* Node::assignedSlotForBindings() const
     if (shadowRoot && shadowRoot->mode() == ShadowRootMode::Open)
         return shadowRoot->findAssignedSlot(*this);
     return nullptr;
+}
+
+HTMLSlotElement* Node::manuallyAssignedSlot() const
+{
+    if (!hasRareData())
+        return nullptr;
+    return rareData()->manuallyAssignedSlot();
+}
+
+void Node::setManuallyAssignedSlot(HTMLSlotElement* slotElement)
+{
+    ensureRareData().setManuallyAssignedSlot(slotElement);
 }
 
 ContainerNode* Node::parentInComposedTree() const

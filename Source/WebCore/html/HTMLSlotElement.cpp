@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "MutationObserver.h"
 #include "ShadowRoot.h"
+#include "SlotAssignment.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
@@ -162,6 +163,28 @@ Vector<Ref<Element>> HTMLSlotElement::assignedElements(const AssignedNodesOption
             return nullptr;
         return static_reference_cast<Element>(WTFMove(node));
     });
+}
+
+void HTMLSlotElement::assign(FixedVector<std::reference_wrapper<Node>>&& nodes)
+{
+    for (auto& node : m_manuallyAssignedNodes)
+        node->setManuallyAssignedSlot(nullptr);
+
+    auto previous = std::exchange(m_manuallyAssignedNodes, { });
+    HashSet<Ref<Node>> seenNodes;
+    m_manuallyAssignedNodes = WTF::compactMap(nodes, [&](Node& node) -> std::optional<WeakPtr<Node>> {
+        if (seenNodes.contains(node))
+            return std::nullopt;
+        seenNodes.add(node);
+        return WeakPtr { node };
+    });
+    if (RefPtr shadowRoot = containingShadowRoot())
+        shadowRoot->slotManualAssignmentDidChange(*this, previous, m_manuallyAssignedNodes);
+}
+
+void HTMLSlotElement::removeManuallyAssignedNode(Node& node)
+{
+    m_manuallyAssignedNodes.removeFirst(&node);
 }
 
 void HTMLSlotElement::enqueueSlotChangeEvent()

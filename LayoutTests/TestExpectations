@@ -535,9 +535,6 @@ fast/history/page-cache-active-fetch-response-blobReadAsBlob.html [ DumpJSConsol
 fast/dom/navigator-detached-no-crash.html [ DumpJSConsoleLogInStdErr ]
 webaudio/audioworket-out-of-memory.html [ DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/242376 imported/w3c/web-platform-tests/shadow-dom/imperative-slot-layout-invalidation-001.html [ ImageOnlyFailure ]
-webkit.org/b/243460 imported/w3c/web-platform-tests/shadow-dom/slot-fallback-content-006.html [ ImageOnlyFailure ]
-
 # Newly imported WPT tests that are timing out.
 imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-disabled-by-feature-policy.tentative.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy-attribute-cross-origin-tentative.https.sub.html [ Skip ]

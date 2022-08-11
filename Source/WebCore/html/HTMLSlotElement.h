@@ -25,7 +25,6 @@
 
 #pragma once
 
-
 #include "HTMLElement.h"
 
 namespace WebCore {
@@ -41,6 +40,10 @@ public:
     };
     Vector<Ref<Node>> assignedNodes(const AssignedNodesOptions&) const;
     Vector<Ref<Element>> assignedElements(const AssignedNodesOptions&) const;
+
+    void assign(FixedVector<std::reference_wrapper<Node>>&&);
+    const Vector<WeakPtr<Node>>& manuallyAssignedNodes() const { return m_manuallyAssignedNodes; }
+    void removeManuallyAssignedNode(Node&);
 
     void enqueueSlotChangeEvent();
     void didRemoveFromSignalSlotList() { m_inSignalSlotList = false; }
@@ -59,6 +62,7 @@ private:
 
     bool m_inSignalSlotList { false };
     bool m_isInInsertedIntoAncestor { false };
+    Vector<WeakPtr<Node>> m_manuallyAssignedNodes;
 };
 
 }

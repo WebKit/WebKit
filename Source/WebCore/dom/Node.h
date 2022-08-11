@@ -246,6 +246,8 @@ public:
 
     HTMLSlotElement* assignedSlot() const;
     HTMLSlotElement* assignedSlotForBindings() const;
+    HTMLSlotElement* manuallyAssignedSlot() const;
+    void setManuallyAssignedSlot(HTMLSlotElement*);
 
     bool isUncustomizedCustomElement() const { return customElementState() == CustomElementState::Uncustomized; }
     bool isCustomElementUpgradeCandidate() const { return customElementState() == CustomElementState::Undefined; }

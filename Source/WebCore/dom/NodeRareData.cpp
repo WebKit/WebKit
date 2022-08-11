@@ -39,6 +39,7 @@ struct SameSizeAsNodeRareData {
     uint32_t m_tabIndex;
     uint32_t m_childIndexAndIsElementRareDataFlag;
     void* m_pointer[2];
+    WeakPtr<Node> m_weakPointer;
 };
 
 static_assert(sizeof(NodeRareData) == sizeof(SameSizeAsNodeRareData), "NodeRareData should stay small");

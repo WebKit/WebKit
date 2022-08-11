@@ -271,6 +271,10 @@ void NamedSlotAssignment::resolveSlotsAfterSlotMutation(ShadowRoot& shadowRoot, 
     }
 }
 
+void NamedSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node>>&, Vector<WeakPtr<Node>>&, ShadowRoot&)
+{
+}
+
 void NamedSlotAssignment::slotFallbackDidChange(HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
 {
     if (shadowRoot.mode() == ShadowRootMode::UserAgent)
@@ -412,6 +416,133 @@ void NamedSlotAssignment::assignToSlot(Node& child, const AtomString& slotName)
         return makeUnique<Slot>();
     });
     addResult.iterator->value->assignedNodes.append(child);
+}
+
+HTMLSlotElement* ManualSlotAssignment::findAssignedSlot(const Node& node)
+{
+    auto* slot = node.manuallyAssignedSlot();
+    if (!slot)
+        return nullptr;
+    auto* containingShadowRoot = slot->containingShadowRoot();
+    return containingShadowRoot && containingShadowRoot->host() == node.parentNode() ? slot : nullptr;
+}
+
+static Vector<WeakPtr<Node>> effectiveAssignedNodes(ShadowRoot& shadowRoot, const Vector<WeakPtr<Node>>& manuallyAssingedNodes)
+{
+    return WTF::compactMap(manuallyAssingedNodes, [&](auto& node) -> std::optional<WeakPtr<Node>> {
+        if (node->parentNode() != shadowRoot.host())
+            return std::nullopt;
+        return WeakPtr { node.get() };
+    });
+}
+
+const Vector<WeakPtr<Node>>* ManualSlotAssignment::assignedNodesForSlot(const HTMLSlotElement& slot, ShadowRoot& shadowRoot)
+{
+    auto addResult = m_slots.ensure(slot, []() {
+        return Slot { };
+    });
+    if (addResult.isNewEntry || addResult.iterator->value.cachedVersion != m_slottableVersion) {
+        addResult.iterator->value.cachedAssignment = effectiveAssignedNodes(shadowRoot, slot.manuallyAssignedNodes());
+        addResult.iterator->value.cachedVersion = m_slottableVersion;
+    }
+    auto& cachedAssignment = addResult.iterator->value.cachedAssignment;
+    return cachedAssignment.size() ? &cachedAssignment : nullptr;
+}
+
+void ManualSlotAssignment::renameSlotElement(HTMLSlotElement&, const AtomString&, const AtomString&, ShadowRoot&)
+{
+}
+
+void ManualSlotAssignment::addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&)
+{
+}
+
+void ManualSlotAssignment::removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode*, ShadowRoot&)
+{
+}
+
+void ManualSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement& slot, Vector<WeakPtr<Node>>& previous, Vector<WeakPtr<Node>>& current, ShadowRoot& shadowRoot)
+{
+    for (auto& node : previous)
+        node->setManuallyAssignedSlot(nullptr);
+
+    auto effectivePrevious = effectiveAssignedNodes(shadowRoot, previous);
+    for (auto& node : effectivePrevious) {
+        if (RefPtr element = dynamicDowncast<Element>(*node))
+            RenderTreeUpdater::tearDownRenderers(*element);
+        else if (RefPtr text = dynamicDowncast<Text>(*node))
+            RenderTreeUpdater::tearDownRenderer(*text);
+    }
+
+    HashSet<Ref<HTMLSlotElement>> affectedSlots;
+    for (auto& node : current) {
+        if (auto* previousSlot = node->manuallyAssignedSlot()) {
+            RELEASE_ASSERT(previousSlot != &slot); // Duplicate entries must have been removed in HTMLSlotElement::assign.
+            previousSlot->removeManuallyAssignedNode(*node);
+            if (previousSlot->isInShadowTree() && previousSlot->containingShadowRoot() == slot.containingShadowRoot())
+                affectedSlots.add(*previousSlot);
+        }
+        node->setManuallyAssignedSlot(&slot);
+    }
+
+    ++m_slottableVersion;
+    auto effectiveCurrent = assignedNodesForSlot(slot, shadowRoot);
+
+    auto scheduleSlotChangeEventIfNeeded = [&]() {
+        if (effectivePrevious.size() != (effectiveCurrent ? effectiveCurrent->size() : 0)) {
+            slot.enqueueSlotChangeEvent();
+            return;
+        }
+        for (unsigned i = 0; i < effectivePrevious.size();++i) {
+            if (effectivePrevious[i] != effectiveCurrent->at(i)) {
+                slot.enqueueSlotChangeEvent();
+                return;
+            }
+        }
+    };
+
+    RenderTreeUpdater::tearDownRenderersAfterSlotChange(*shadowRoot.host());
+    shadowRoot.host()->invalidateStyleForSubtree();
+
+    if (affectedSlots.isEmpty()) {
+        scheduleSlotChangeEventIfNeeded();
+        return;
+    }
+    for (auto& currentSlot : descendantsOfType<HTMLSlotElement>(shadowRoot)) {
+        if (affectedSlots.contains(currentSlot))
+            currentSlot.enqueueSlotChangeEvent();
+        else if (&currentSlot == &slot)
+            scheduleSlotChangeEventIfNeeded();
+    }
+}
+
+void ManualSlotAssignment::slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&)
+{
+    ++m_slottableVersion;
+}
+
+void ManualSlotAssignment::hostChildElementDidChange(const Element&, ShadowRoot&)
+{
+    ++m_slottableVersion;
+}
+
+void ManualSlotAssignment::hostChildElementDidChangeSlotAttribute(Element&, const AtomString&, const AtomString&, ShadowRoot&)
+{
+}
+
+void ManualSlotAssignment::willRemoveAssignedNode(const Node&)
+{
+    ++m_slottableVersion;
+}
+
+void ManualSlotAssignment::didRemoveAllChildrenOfShadowHost(ShadowRoot&)
+{
+    ++m_slottableVersion;
+}
+
+void ManualSlotAssignment::didMutateTextNodesOfShadowHost(ShadowRoot&)
+{
+    ++m_slottableVersion;
 }
 
 }

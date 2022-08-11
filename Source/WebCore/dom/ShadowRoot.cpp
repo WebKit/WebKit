@@ -250,8 +250,12 @@ void ShadowRoot::renameSlotElement(HTMLSlotElement& slot, const AtomString& oldN
 void ShadowRoot::addSlotElementByName(const AtomString& name, HTMLSlotElement& slot)
 {
     ASSERT(&slot.rootNode() == this);
-    if (!m_slotAssignment)
-        m_slotAssignment = makeUnique<NamedSlotAssignment>();
+    if (!m_slotAssignment) {
+        if (m_slotAssignmentMode == SlotAssignmentMode::Named)
+            m_slotAssignment = makeUnique<NamedSlotAssignment>();
+        else
+            m_slotAssignment = makeUnique<ManualSlotAssignment>();
+    }
 
     return m_slotAssignment->addSlotElementByName(name, slot, *this);
 }
@@ -260,6 +264,12 @@ void ShadowRoot::removeSlotElementByName(const AtomString& name, HTMLSlotElement
 {
     ASSERT(m_slotAssignment);
     return m_slotAssignment->removeSlotElementByName(name, slot, &oldParentOfRemovedTree, *this);
+}
+
+void ShadowRoot::slotManualAssignmentDidChange(HTMLSlotElement& slot, Vector<WeakPtr<Node>>& previous, Vector<WeakPtr<Node>>& current)
+{
+    ASSERT(m_slotAssignment);
+    m_slotAssignment->slotManualAssignmentDidChange(slot, previous, current, *this);
 }
 
 void ShadowRoot::slotFallbackDidChange(HTMLSlotElement& slot)

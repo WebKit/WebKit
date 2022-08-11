@@ -3898,7 +3898,7 @@ PASS HTMLSlotElement interface: existence and properties of interface prototype 
 PASS HTMLSlotElement interface: attribute name
 PASS HTMLSlotElement interface: operation assignedNodes(optional AssignedNodesOptions)
 PASS HTMLSlotElement interface: operation assignedElements(optional AssignedNodesOptions)
-FAIL HTMLSlotElement interface: operation assign((Element or Text)...) assert_own_property: interface prototype object missing non-static operation expected property "assign" missing
+PASS HTMLSlotElement interface: operation assign((Element or Text)...)
 PASS HTMLSlotElement must be primary interface of document.createElement("slot")
 PASS Stringification of document.createElement("slot")
 PASS HTMLSlotElement interface: document.createElement("slot") must inherit property "name" with the proper type
@@ -3906,8 +3906,8 @@ PASS HTMLSlotElement interface: document.createElement("slot") must inherit prop
 PASS HTMLSlotElement interface: calling assignedNodes(optional AssignedNodesOptions) on document.createElement("slot") with too few arguments must throw TypeError
 PASS HTMLSlotElement interface: document.createElement("slot") must inherit property "assignedElements(optional AssignedNodesOptions)" with the proper type
 PASS HTMLSlotElement interface: calling assignedElements(optional AssignedNodesOptions) on document.createElement("slot") with too few arguments must throw TypeError
-FAIL HTMLSlotElement interface: document.createElement("slot") must inherit property "assign((Element or Text)...)" with the proper type assert_inherits: property "assign" not found in prototype chain
-FAIL HTMLSlotElement interface: calling assign((Element or Text)...) on document.createElement("slot") with too few arguments must throw TypeError assert_inherits: property "assign" not found in prototype chain
+PASS HTMLSlotElement interface: document.createElement("slot") must inherit property "assign((Element or Text)...)" with the proper type
+PASS HTMLSlotElement interface: calling assign((Element or Text)...) on document.createElement("slot") with too few arguments must throw TypeError
 PASS HTMLCanvasElement interface: existence and properties of interface object
 PASS HTMLCanvasElement interface object length
 PASS HTMLCanvasElement interface object name
@@ -5901,4 +5901,3 @@ PASS Document interface: documentWithHandlers must inherit property "oncut" with
 PASS Document interface: documentWithHandlers must inherit property "onpaste" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "activeElement" with the proper type
 PASS ShadowRoot interface: attribute activeElement
-
