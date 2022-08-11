@@ -436,8 +436,7 @@ TextDecorationPainter TextBoxPainter<TextBoxPath>::createDecorationPainter(const
     // Create painter
     auto* shadow = markedText.style.textShadow ? &markedText.style.textShadow.value() : nullptr;
     auto* colorFilter = markedText.style.textShadow && m_style.hasAppleColorFilter() ? &m_style.appleColorFilter() : nullptr;
-    auto& styleToUse = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
-    return { context, styleToUse, fontCascade(), shadow, colorFilter, m_document.printing(), m_renderer.isHorizontalWritingMode() };
+    return { context, fontCascade(), shadow, colorFilter, m_document.printing(), m_renderer.isHorizontalWritingMode() };
 }
 
 static inline float computedTextDecorationThickness(const RenderStyle& styleToUse, float deviceScaleFactor)
@@ -495,7 +494,9 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
             textDecorationThickness,
             underlineOffset(),
             overlineOffset(),
-            computedLinethroughCenter(styleToUse, textDecorationThickness, autoTextDecorationThickness)
+            computedLinethroughCenter(styleToUse, textDecorationThickness, autoTextDecorationThickness),
+            styleToUse.metricsOfPrimaryFont().ascent() + 2.f,
+            wavyStrokeParameters(styleToUse.computedFontPixelSize())
         };
     };
 
@@ -524,7 +525,11 @@ void TextBoxPainter<TextBoxPath>::paintForegroundDecorations(TextDecorationPaint
     auto deviceScaleFactor = m_document.deviceScaleFactor();
     auto textDecorationThickness = computedTextDecorationThickness(styleToUse, deviceScaleFactor);
     auto linethroughCenter = computedLinethroughCenter(styleToUse, textDecorationThickness, computedAutoTextDecorationThickness(styleToUse, deviceScaleFactor));
-    decorationPainter.paintForegroundDecorations({ snappedSelectionRect.location(), snappedSelectionRect.width(), textDecorationThickness, linethroughCenter }, markedText.style.textDecorationStyles);
+    decorationPainter.paintForegroundDecorations({ snappedSelectionRect.location()
+        , snappedSelectionRect.width()
+        , textDecorationThickness
+        , linethroughCenter
+        , wavyStrokeParameters(styleToUse.computedFontPixelSize()) }, markedText.style.textDecorationStyles);
 
     if (m_isCombinedText)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Counterclockwise));

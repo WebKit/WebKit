@@ -186,7 +186,7 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
     return computedUnderlineOffset;
 }
 
-WavyStrokeParameters getWavyStrokeParameters(float fontSize)
+WavyStrokeParameters wavyStrokeParameters(float fontSize)
 {
     WavyStrokeParameters result;
     // More information is in the WavyStrokeParameters definition.
@@ -214,7 +214,7 @@ static GlyphOverflow computedVisualOverflowForDecorations(const RenderStyle& lin
     GlyphOverflow overflowResult;
 
     if (decorationStyle == TextDecorationStyle::Wavy) {
-        wavyStrokeParameters = getWavyStrokeParameters(lineStyle.computedFontPixelSize());
+        wavyStrokeParameters = WebCore::wavyStrokeParameters(lineStyle.computedFontPixelSize());
         wavyOffset = wavyOffsetFromDecoration();
         overflowResult.left = strokeThickness;
         overflowResult.right = strokeThickness;
