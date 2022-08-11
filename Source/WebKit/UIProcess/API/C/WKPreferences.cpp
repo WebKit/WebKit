@@ -575,14 +575,14 @@ bool WKPreferencesGetDOMTimersThrottlingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->domTimersThrottlingEnabled();
 }
 
-void WKPreferencesSetWebArchiveTestingModeEnabled(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setWebArchiveTestingModeEnabled(enabled);
+    toImpl(preferencesRef)->setWebArchiveDebugModeEnabled(enabled);
 }
 
-bool WKPreferencesGetWebArchiveTestingModeEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->webArchiveTestingModeEnabled();
+    return toImpl(preferencesRef)->webArchiveDebugModeEnabled();
 }
 
 void WKPreferencesSetLocalFileContentSniffingEnabled(WKPreferencesRef preferencesRef, bool enabled)
@@ -2206,11 +2206,12 @@ bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef)
     return false;
 }
 
-void WKPreferencesSetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
+    toImpl(preferencesRef)->setRequestVideoFrameCallbackEnabled(enabled);
 }
 
-bool WKPreferencesGetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferencesRef)
 {
-    return false;
+    return toImpl(preferencesRef)->requestVideoFrameCallbackEnabled();
 }
