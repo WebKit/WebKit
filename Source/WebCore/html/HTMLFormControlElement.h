@@ -113,8 +113,10 @@ public:
     void updateValidity();
     void setCustomValidity(const String&) override;
 
-    bool isReadOnly() const { return m_isReadOnly; }
-    bool isDisabledOrReadOnly() const { return isDisabledFormControl() || m_isReadOnly; }
+    virtual bool supportsReadOnly() const { return false; }
+    bool isReadOnly() const { return supportsReadOnly() && m_hasReadOnlyAttribute; }
+    bool isMutable() const { return !isDisabledFormControl() && !isReadOnly(); }
+    void updateReadOnlyState();
 
     WEBCORE_EXPORT String autocomplete() const;
     WEBCORE_EXPORT void setAutocomplete(const AtomString&);
@@ -197,7 +199,7 @@ private:
     bool m_isFocusingWithValidationMessage { false };
 
     unsigned m_disabled : 1;
-    unsigned m_isReadOnly : 1;
+    unsigned m_hasReadOnlyAttribute : 1;
     unsigned m_isRequired : 1;
     unsigned m_valueMatchesRenderer : 1;
     unsigned m_disabledByAncestorFieldset : 1;

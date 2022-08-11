@@ -64,7 +64,7 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     : LabelableElement(tagName, document)
     , FormAssociatedElement(form)
     , m_disabled(false)
-    , m_isReadOnly(false)
+    , m_hasReadOnlyAttribute(false)
     , m_isRequired(false)
     , m_valueMatchesRenderer(false)
     , m_disabledByAncestorFieldset(false)
@@ -167,10 +167,11 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
             }
         }
     } else if (name == readonlyAttr) {
-        bool newReadOnly = !value.isNull();
-        if (m_isReadOnly != newReadOnly) {
-            Style::PseudoClassChangeInvalidation readOnlyInvalidation(*this, { { CSSSelector::PseudoClassReadOnly, newReadOnly }, { CSSSelector::PseudoClassReadWrite, !newReadOnly } });
-            m_isReadOnly = newReadOnly;
+        bool newHasReadOnlyAttribute = !value.isNull();
+        if (m_hasReadOnlyAttribute != newHasReadOnlyAttribute) {
+            bool newMatchesReadWrite = supportsReadOnly() && !newHasReadOnlyAttribute;
+            Style::PseudoClassChangeInvalidation readWriteInvalidation(*this, { { CSSSelector::PseudoClassReadWrite, newMatchesReadWrite }, { CSSSelector::PseudoClassReadOnly, !newMatchesReadWrite } });
+            m_hasReadOnlyAttribute = newHasReadOnlyAttribute;
             readOnlyStateChanged();
         }
     } else if (name == requiredAttr) {
@@ -377,7 +378,8 @@ bool HTMLFormControlElement::computeWillValidate() const
         m_dataListAncestorState = NotInsideDataList;
 #endif
     }
-    return m_dataListAncestorState == NotInsideDataList && !isDisabledOrReadOnly();
+    // readonly bars constraint validation for *all* <input> elements, regardless of the <input> type, for compat reasons.
+    return m_dataListAncestorState == NotInsideDataList && !isDisabledFormControl() && !m_hasReadOnlyAttribute;
 }
 
 bool HTMLFormControlElement::willValidate() const

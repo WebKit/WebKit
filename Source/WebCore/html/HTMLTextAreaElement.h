@@ -86,6 +86,8 @@ private:
     void setNonDirtyValue(const String&, TextControlSetValueSelection);
     void setValueCommon(const String&, TextFieldEventBehavior, TextControlSetValueSelection);
 
+    bool supportsReadOnly() const final { return true; }
+
     bool supportsPlaceholder() const final { return true; }
     HTMLElement* placeholderElement() const final;
     void updatePlaceholderText() final;
@@ -128,7 +130,7 @@ private:
     bool shouldUseInputMethod() final;
     bool matchesReadWritePseudoClass() const final;
 
-    bool valueMissing(const String& value) const { return isRequiredFormControl() && !isDisabledOrReadOnly() && value.isEmpty(); }
+    bool valueMissing(const String& value) const { return isRequiredFormControl() && isMutable() && value.isEmpty(); }
     bool tooShort(StringView, NeedsToCheckDirtyFlag) const;
     bool tooLong(StringView, NeedsToCheckDirtyFlag) const;
 

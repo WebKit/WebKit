@@ -573,7 +573,7 @@ void HTMLTextFormControlElement::readOnlyStateChanged()
 
 bool HTMLTextFormControlElement::isInnerTextElementEditable() const
 {
-    return !isDisabledOrReadOnly();
+    return isMutable();
 }
 
 void HTMLTextFormControlElement::updateInnerTextElementEditability()
