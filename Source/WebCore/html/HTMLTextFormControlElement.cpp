@@ -348,7 +348,11 @@ bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
         }
     }
 
-    bool didChange = cacheSelection(start, end, direction);
+    auto previousSelectionStart = m_cachedSelectionStart;
+    auto previousSelectionEnd = m_cachedSelectionEnd;
+    auto previousSelectionDirection = m_cachedSelectionDirection;
+
+    cacheSelection(start, end, direction);
     Position startPosition = positionForIndex(innerText.get(), start);
     Position endPosition;
     if (start == end)
@@ -364,7 +368,7 @@ bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
     if (RefPtr<Frame> frame = document().frame())
         frame->selection().moveWithoutValidationTo(startPosition, endPosition, direction != SelectionHasNoDirection, !hasFocus, revealMode, intent);
 
-    return didChange;
+    return m_cachedSelectionStart != previousSelectionStart || m_cachedSelectionEnd != previousSelectionEnd || m_cachedSelectionDirection != previousSelectionDirection;
 }
 
 bool HTMLTextFormControlElement::cacheSelection(unsigned start, unsigned end, TextFieldSelectionDirection direction)
