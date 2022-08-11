@@ -294,6 +294,7 @@ Total elements to be tested: 122.
     controlledNodeIds.length: 1
     focused: false
     ownedNodeIds.length: 1
+    parentNodeId: exists
     required: false
     isPopUpButton: true
 
@@ -304,6 +305,7 @@ Total elements to be tested: 122.
     label:
     role: button
     focused: false
+    parentNodeId: exists
     required: false
     isPopUpButton: true
 
@@ -334,28 +336,33 @@ Total elements to be tested: 122.
     ignored: true
     ignoredByDefault: true
     hidden: true
+    parentNodeId: exists
 
 <img src="data:image/gif..." alt="x">
     exists: true
     label: x
     role: image
+    parentNodeId: exists
 
 <img src="data:image/gif..." alt="">
     exists: true
     label:
     role: presentation
     ignored: true
+    parentNodeId: exists
 
 <img src="data:image/gif...">
     exists: true
     label:
     role: image
+    parentNodeId: exists
 
 <img src="./404.gif">
     exists: true
     label:
     role: presentation
     ignored: true
+    parentNodeId: exists
 
 <input style="display:none;">
     exists: false
@@ -370,6 +377,7 @@ Total elements to be tested: 122.
     ignored: true
     ignoredByDefault: true
     hidden: true
+    parentNodeId: exists
     required: false
 
 <div role="radio" aria-checked="false">unchecked</div>
@@ -410,6 +418,7 @@ Total elements to be tested: 122.
     role: radio
     checked: true
     focused: false
+    parentNodeId: exists
     required: false
 
 <input type="radio">
@@ -418,6 +427,7 @@ Total elements to be tested: 122.
     role: radio
     checked: false
     focused: false
+    parentNodeId: exists
     required: false
 
 <div role="doc-toc">doc-toc</div>
@@ -730,6 +740,7 @@ Total elements to be tested: 122.
     role: checkbox
     checked: true
     focused: false
+    parentNodeId: exists
     required: false
 
 <input type="checkbox">
@@ -738,6 +749,7 @@ Total elements to be tested: 122.
     role: checkbox
     checked: false
     focused: false
+    parentNodeId: exists
     required: false
 
 <div role="textbox" tabindex="0" aria-disabled="true">disabled</div>
@@ -755,6 +767,7 @@ Total elements to be tested: 122.
     role:
     childNodeIds.length: 1
     disabled: true
+    parentNodeId: exists
     required: false
 
 <div role="textbox" tabindex="0" aria-readonly="true">readonly</div>
@@ -772,6 +785,7 @@ Total elements to be tested: 122.
     role:
     childNodeIds.length: 1
     focused: false
+    parentNodeId: exists
     readonly: true
     required: false
 
@@ -782,6 +796,7 @@ Total elements to be tested: 122.
     childNodeIds.length: 1
     focused: false
     invalid: true
+    parentNodeId: exists
     required: false
 
 <input aria-invalid="spelling" value="invalid spelling">
@@ -791,6 +806,7 @@ Total elements to be tested: 122.
     childNodeIds.length: 1
     focused: false
     invalid: spelling
+    parentNodeId: exists
     required: false
 
 <input aria-required="true" value="required">
@@ -799,6 +815,7 @@ Total elements to be tested: 122.
     role:
     childNodeIds.length: 1
     focused: false
+    parentNodeId: exists
     required: true
 
 <input required="">
@@ -806,6 +823,7 @@ Total elements to be tested: 122.
     label:
     role:
     focused: false
+    parentNodeId: exists
     required: true
 
 <input>
@@ -813,6 +831,7 @@ Total elements to be tested: 122.
     label:
     role:
     focused: false
+    parentNodeId: exists
     required: false
 
 <div role="button" tabindex="0" aria-haspopup="true">Popup Button.</div>
@@ -829,12 +848,14 @@ Total elements to be tested: 122.
     label:
     role: button
     focused: false
+    parentNodeId: exists
 
 <button></button>
     exists: true
     label:
     role: button
     focused: false
+    parentNodeId: exists
 
 <div role="button" tabindex="0" aria-pressed="false">Not Pressed.</div>
     exists: true
@@ -974,6 +995,7 @@ Total elements to be tested: 122.
     label:
     role:
     ignored: true
+    ignoredByDefault: true
     parentNodeId: exists
 
 <script></script>
