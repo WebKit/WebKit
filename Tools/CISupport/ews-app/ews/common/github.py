@@ -150,18 +150,18 @@ class GitHubEWS(GitHub):
     ICON_BUILD_WAITING = u'\U000023F3'
     ICON_BUILD_ONGOING = u'![loading](https://user-images.githubusercontent.com/3098702/171232313-daa606f1-8fd6-4b0f-a20b-2cb93c43d19b.png)'
     ICON_BUILD_ERROR = u'\U0001F6D1'  # FIXME: Update this icon with a better one
-    STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],
-                          ['webkitpy', 'ios-sim', 'mac-debug', 'gtk', 'wincairo'],
+    STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],  # FIXME: generate this list dynamically to have merge queue show up on top
+                          ['bindings', 'ios-sim', 'mac-debug', 'gtk', 'wincairo'],
                           ['webkitperl', 'ios-wk2', 'mac-AS-debug', 'api-gtk', ''],
-                          ['bindings', 'api-ios', 'api-mac', '', ''],
+                          ['webkitpy', 'api-ios', 'api-mac', '', ''],
                           ['services', 'tv', 'mac-wk1', '', ''],
-                          ['', 'tv-sim', 'mac-wk2', '', ''],
-                          ['', 'watch', 'mac-AS-debug-wk2', '', ''],
+                          ['merge', 'tv-sim', 'mac-wk2', '', ''],
+                          ['unsafe-merge', 'watch', 'mac-AS-debug-wk2', '', ''],
                           ['', 'watch-sim', '', '', '']]
 
     def generate_comment_text_for_change(self, change):
         comment = 'https://github.com/WebKit/WebKit/commit/{}'.format(change.change_id)
-        comment += '\n\n| Tests | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
+        comment += '\n\n| Misc | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
 
         for row in self.STATUS_BUBBLE_ROWS:
@@ -191,6 +191,8 @@ class GitHubEWS(GitHub):
         hover_over_text = ''
         status = GitHubEWS.ICON_BUILD_WAITING
         if not build:
+            if queue in ['merge', 'unsafe-merge']:
+                return u'| '
             status = GitHubEWS.ICON_BUILD_WAITING
             queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
             if queue_full_name:
