@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InlineIteratorBox.h"
 
+#include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationLineLayout.h"
