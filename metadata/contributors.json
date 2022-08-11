@@ -5799,6 +5799,16 @@
    },
    {
       "emails" : [
+         "richard_robinson2@apple.com"
+      ],
+      "github" : "rr-codes",
+      "name" : "Richard Robinson",
+      "nicks" : [
+         "rr-codes"
+      ]
+   },
+   {
+      "emails" : [
          "rjw@apple.com"
       ],
       "name" : "Richard Williamson",
