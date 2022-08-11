@@ -2285,7 +2285,7 @@ void RenderBlock::offsetForContents(LayoutPoint& offset) const
 void RenderBlock::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     ASSERT(!childrenInline());
-    auto shouldIgnoreDescendantContentForLogicalWidth = shouldApplySizeOrStyleContainment({ Containment::Size, Containment::InlineSize });
+    auto shouldIgnoreDescendantContentForLogicalWidth = shouldApplySizeOrInlineSizeContainment();
     if (!shouldIgnoreDescendantContentForLogicalWidth)
         computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
 
