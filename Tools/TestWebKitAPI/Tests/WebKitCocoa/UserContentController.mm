@@ -40,6 +40,7 @@
 #import <WebKit/WKUserScriptPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserContentWorld.h>
 #import <WebKit/_WKUserStyleSheet.h>
@@ -958,6 +959,35 @@ TEST(WKUserContentController, UserScriptNotification)
     // If this is broken, two alerts would appear back-to-back with the same text due to the frame.
     EXPECT_WK_STREQ([delegate waitForAlert], "waited for notification");
     EXPECT_WK_STREQ([delegate waitForAlert], "document parsing ended");
+}
+
+TEST(WKUserContentController, AddUserScriptInWorldWithGlobalObjectAvailableInIframe)
+{
+    RetainPtr<WKContentWorld> testWorld = [WKContentWorld worldWithName:@"testWorld"];
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ContentWorldPlugIn"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+
+    auto delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    isDoneWithNavigation = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+
+    auto contentScript = adoptNS([[WKUserScript alloc] _initWithSource:@"window.worldName" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:nil contentWorld:testWorld.get() deferRunningUntilNotification:NO]);
+    [[webView configuration].userContentController _addUserScriptImmediately:contentScript.get()];
+
+    __block bool done = false;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        [webView _evaluateJavaScript:@"window.worldName" inFrame:mainFrame.childFrames[0] inContentWorld:testWorld.get() completionHandler:^(id result, NSError *error) {
+            EXPECT_WK_STREQ(result, "testWorld");
+            done = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
 }
 
 @interface AsyncScriptMessageHandler : NSObject <WKScriptMessageHandlerWithReply>
