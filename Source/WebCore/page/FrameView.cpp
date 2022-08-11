@@ -112,6 +112,7 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "TiledBacking.h"
 #include "VelocityData.h"
@@ -198,6 +199,7 @@ FrameView::FrameView(Frame& frame)
     , m_delayedScrollEventTimer(*this, &FrameView::scheduleScrollEvent)
     , m_delayedScrollToFocusedElementTimer(*this, &FrameView::scrollToFocusedElementTimerFired)
     , m_speculativeTilingEnableTimer(*this, &FrameView::speculativeTilingEnableTimerFired)
+    , m_delayedTextFragmentIndicatorTimer(*this, &FrameView::textFragmentIndicatorTimerFired)
 {
     init();
 
@@ -264,6 +266,7 @@ void FrameView::reset()
     m_delayedScrollEventTimer.stop();
     m_shouldScrollToFocusedElement = false;
     m_delayedScrollToFocusedElementTimer.stop();
+    m_delayedTextFragmentIndicatorTimer.stop();
     m_lastViewportSize = IntSize();
     m_lastZoomFactor = 1.0f;
     m_isTrackingRepaints = false;
@@ -2241,8 +2244,12 @@ bool FrameView::scrollToFragment(const URL& url)
                 document->fragmentHighlightRegister().addAnnotationHighlightWithRange(StaticRange::create(range));
             
             if (highlightRanges.size()) {
-                TemporarySelectionChange selectionChange(document, { highlightRanges.first() }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::SmoothScroll, TemporarySelectionOption::RevealSelectionBounds });
-                // FIXME: add a textIndicator after the scroll has completed.
+                auto range = highlightRanges.first();
+                TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered });
+                m_pendingTextFragmentIndicatorRange = range;
+                m_pendingTextFragmentIndicatorText = plainText(range);
+                if (frame().settings().scrollToTextFragmentIndicatorEnabled())
+                    m_delayedTextFragmentIndicatorTimer.startOneShot(100_ms);
             }
             
         } else
@@ -2319,7 +2326,7 @@ void FrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
     if (!m_maintainScrollPositionAnchor)
         return;
 
-    cancelScheduledScrollToFocusedElement();
+    cancelScheduledScrolls();
 
     // We need to update the layout before scrolling, otherwise we could
     // really mess things up if an anchor scroll comes at a bad moment.
@@ -2352,7 +2359,7 @@ void FrameView::setScrollPosition(const ScrollPosition& scrollPosition, const Sc
     setCurrentScrollType(options.type);
 
     m_maintainScrollPositionAnchor = nullptr;
-    cancelScheduledScrollToFocusedElement();
+    cancelScheduledScrolls();
 
     Page* page = frame().page();
     if (page && page->isMonitoringWheelEvents())
@@ -2399,6 +2406,12 @@ void FrameView::scheduleScrollToFocusedElement(SelectionRevealMode selectionReve
         return;
     m_shouldScrollToFocusedElement = true;
     m_delayedScrollToFocusedElementTimer.startOneShot(0_s);
+}
+
+void FrameView::cancelScheduledScrolls()
+{
+    cancelScheduledScrollToFocusedElement();
+    cancelScheduledTextFragmentIndicatorTimer();
 }
 
 void FrameView::cancelScheduledScrollToFocusedElement()
@@ -2449,6 +2462,33 @@ void FrameView::scrollToFocusedElementInternal()
     bool insideFixed;
     LayoutRect absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
     FrameView::scrollRectToVisible(absoluteBounds, *renderer, insideFixed, { m_selectionRevealModeForFocusedElement, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No });
+}
+
+void FrameView::textFragmentIndicatorTimerFired()
+{
+    Ref protectedThis { *this };
+    
+    ASSERT(frame().document());
+    auto& document = *frame().document();
+    
+    if (!m_pendingTextFragmentIndicatorRange)
+        return;
+    
+    if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value()))
+        return;
+    
+    auto textIndicator = TextIndicator::createWithRange(m_pendingTextFragmentIndicatorRange.value(), { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);
+    if (textIndicator)
+        document.page()->chrome().client().setTextIndicator(textIndicator->data());
+    
+    cancelScheduledTextFragmentIndicatorTimer();
+}
+
+void FrameView::cancelScheduledTextFragmentIndicatorTimer()
+{
+    m_pendingTextFragmentIndicatorRange.reset();
+    m_pendingTextFragmentIndicatorText = String();
+    m_delayedTextFragmentIndicatorTimer.stop();
 }
 
 bool FrameView::scrollRectToVisible(const LayoutRect& absoluteRect, const RenderObject& renderer, bool insideFixed, const ScrollRectToVisibleOptions& options)
@@ -3422,7 +3462,7 @@ void FrameView::scrollToAnchor()
     if (!anchorNode->renderer())
         return;
 
-    cancelScheduledScrollToFocusedElement();
+    cancelScheduledScrolls();
 
     LayoutRect rect;
     bool insideFixed = false;
@@ -3446,7 +3486,7 @@ void FrameView::scrollToAnchor()
     // scrollRectToVisible can call into setScrollPosition(), which resets m_maintainScrollPositionAnchor.
     LOG_WITH_STREAM(Scrolling, stream << " restoring anchor node to " << anchorNode.get());
     m_maintainScrollPositionAnchor = anchorNode;
-    cancelScheduledScrollToFocusedElement();
+    cancelScheduledScrolls();
 }
 
 void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
@@ -4428,7 +4468,7 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
 {
     LOG(Scrolling, "FrameView::setWasScrolledByUser at %d", wasScrolledByUser);
 
-    cancelScheduledScrollToFocusedElement();
+    cancelScheduledScrolls();
     if (currentScrollType() == ScrollType::Programmatic)
         return;
     m_maintainScrollPositionAnchor = nullptr;
