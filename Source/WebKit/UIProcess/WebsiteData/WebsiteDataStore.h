@@ -348,8 +348,8 @@ public:
     static WTF::String defaultAlternativeServicesDirectory();
     static WTF::String defaultApplicationCacheDirectory();
     static WTF::String defaultWebSQLDatabaseDirectory();
-#if USE(GLIB)
-    static WTF::String defaultHSTSDirectory();
+#if USE(GLIB) || PLATFORM(COCOA)
+    static WTF::String defaultHSTSStorageDirectory();
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     static WTF::String defaultModelElementCacheDirectory();

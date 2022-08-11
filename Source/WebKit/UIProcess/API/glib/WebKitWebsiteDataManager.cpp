@@ -736,7 +736,7 @@ const gchar* webkit_website_data_manager_get_hsts_cache_directory(WebKitWebsiteD
         return nullptr;
 
     if (!priv->hstsCacheDirectory)
-        priv->hstsCacheDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultHSTSDirectory().utf8().data()));
+        priv->hstsCacheDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultHSTSStorageDirectory().utf8().data()));
     return priv->hstsCacheDirectory.get();
 }
 

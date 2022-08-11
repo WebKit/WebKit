@@ -448,4 +448,11 @@ TEST(WKWebsiteDataStore, DoNotCreateDefaultDataStore)
     EXPECT_FALSE([WKWebsiteDataStore _defaultDataStoreExists]);
 }
 
+TEST(WebKit, DefaultHSTSStorageDirectory)
+{
+    auto configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    EXPECT_FALSE(configuration.get().hstsStorageDirectory == nil);
+    EXPECT_GT(configuration.get().hstsStorageDirectory.absoluteString.length, 0U);
+}
+
 } // namespace TestWebKitAPI

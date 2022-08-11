@@ -41,6 +41,9 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
         setCacheStorageDirectory(WebsiteDataStore::defaultCacheStorageDirectory());
         setGeneralStorageDirectory(WebsiteDataStore::defaultGeneralStorageDirectory());
         setNetworkCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory());
+#if USE(GLIB) || PLATFORM(COCOA)
+        setHSTSStorageDirectory(WebsiteDataStore::defaultHSTSStorageDirectory());
+#endif
         setAlternativeServicesDirectory(WebsiteDataStore::defaultAlternativeServicesDirectory());
         setMediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory());
         setIndexedDBDatabaseDirectory(WebsiteDataStore::defaultIndexedDBDatabaseDirectory());

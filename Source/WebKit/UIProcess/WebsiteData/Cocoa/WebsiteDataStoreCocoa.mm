@@ -298,6 +298,11 @@ String WebsiteDataStore::defaultAlternativeServicesDirectory()
     return cacheDirectoryFileSystemRepresentation("AlternativeServices"_s, ShouldCreateDirectory::No);
 }
 
+String WebsiteDataStore::defaultHSTSStorageDirectory()
+{
+    return cacheDirectoryFileSystemRepresentation("HSTS"_s);
+}
+
 String WebsiteDataStore::defaultMediaCacheDirectory()
 {
     return tempDirectoryFileSystemRepresentation("MediaCache"_s);
