@@ -519,6 +519,10 @@ void HTMLInputElement::updateType()
     removeFromRadioButtonGroup();
     resignStrongPasswordAppearance();
 
+    bool didSupportReadOnly = m_inputType->supportsReadOnly();
+    bool willSupportReadOnly = newType->supportsReadOnly();
+    std::optional<Style::PseudoClassChangeInvalidation> readWriteInvalidation;
+
     bool didStoreValue = m_inputType->storesValueSeparateFromAttribute();
     bool willStoreValue = newType->storesValueSeparateFromAttribute();
     bool neededSuspensionCallback = needsSuspensionCallback();
@@ -535,6 +539,11 @@ void HTMLInputElement::updateType()
 
     m_inputType = WTFMove(newType);
     m_inputType->createShadowSubtreeIfNeeded();
+
+    if (UNLIKELY(didSupportReadOnly != willSupportReadOnly && hasAttributeWithoutSynchronization(readonlyAttr))) {
+        emplace(readWriteInvalidation, *this, { { CSSSelector::PseudoClassReadWrite, !willSupportReadOnly }, { CSSSelector::PseudoClassReadOnly, willSupportReadOnly } });
+        readOnlyStateChanged();
+    }
 
     updateWillValidateAndValidity();
 
@@ -805,6 +814,11 @@ void HTMLInputElement::readOnlyStateChanged()
 {
     HTMLTextFormControlElement::readOnlyStateChanged();
     m_inputType->readOnlyStateChanged();
+}
+
+bool HTMLInputElement::supportsReadOnly() const
+{
+    return m_inputType->supportsReadOnly();
 }
 
 void HTMLInputElement::parserDidSetAttributes()
@@ -1243,7 +1257,7 @@ ExceptionOr<void> HTMLInputElement::showPicker()
     if (!frame)
         return { };
 
-    if (isDisabledOrReadOnly())
+    if (!isMutable())
         return Exception { InvalidStateError, "Input showPicker() cannot be used on immutable controls."_s };
 
     // In cross-origin iframes it should throw a "SecurityError" DOMException except on file and color. In same-origin iframes it should work fine.
@@ -1502,7 +1516,7 @@ bool HTMLInputElement::isRequiredFormControl() const
 
 bool HTMLInputElement::matchesReadWritePseudoClass() const
 {
-    return m_inputType->supportsReadOnly() && !isDisabledOrReadOnly();
+    return supportsReadOnly() && isMutable();
 }
 
 void HTMLInputElement::addSearchResult()
@@ -2152,7 +2166,7 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
 
     textBlockStyle.setDisplay(DisplayType::Block);
 
-    if (hasAutoFillStrongPasswordButton() && !isDisabledOrReadOnly()) {
+    if (hasAutoFillStrongPasswordButton() && isMutable()) {
         textBlockStyle.setDisplay(DisplayType::InlineBlock);
         textBlockStyle.setMaxWidth(Length { 100, LengthType::Percent });
         textBlockStyle.setColor(Color::black.colorWithAlphaByte(153));

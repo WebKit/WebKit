@@ -545,7 +545,7 @@ HTMLElement* HTMLTextAreaElement::placeholderElement() const
 
 bool HTMLTextAreaElement::matchesReadWritePseudoClass() const
 {
-    return !isDisabledOrReadOnly();
+    return isMutable();
 }
 
 void HTMLTextAreaElement::updatePlaceholderText()
