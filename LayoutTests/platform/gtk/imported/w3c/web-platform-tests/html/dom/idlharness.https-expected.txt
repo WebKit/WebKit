@@ -5901,3 +5901,4 @@ PASS Document interface: documentWithHandlers must inherit property "oncut" with
 PASS Document interface: documentWithHandlers must inherit property "onpaste" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "activeElement" with the proper type
 PASS ShadowRoot interface: attribute activeElement
+

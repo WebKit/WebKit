@@ -95,8 +95,6 @@ media/remove-video-element-in-pip-from-document.html [ Pass ]
 
 webkit.org/b/228622 [ Debug ] accessibility/ios-simulator/scroll-in-overflow-div.html [ Crash ]
 
-webkit.org/b/197960 imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Failure ]
-
 webkit.org/b/228663 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
 
 webkit.org/b/231611 [ Debug ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html [ Pass Failure ]
