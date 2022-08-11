@@ -191,14 +191,13 @@ bool TextDecorationPainter::Styles::operator==(const Styles& other) const
         && underline.decorationStyle == other.underline.decorationStyle && overline.decorationStyle == other.overline.decorationStyle && linethrough.decorationStyle == other.linethrough.decorationStyle;
 }
 
-TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const RenderStyle& renderTextStyle, const FontCascade& font, const ShadowData* shadow, const FilterOperations* colorFilter, bool isPrinting, bool isHorizontal, float deviceScaleFactor)
+TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const RenderStyle& renderTextStyle, const FontCascade& font, const ShadowData* shadow, const FilterOperations* colorFilter, bool isPrinting, bool isHorizontal)
     : m_context(context)
     , m_isPrinting(isPrinting)
     , m_isHorizontal(isHorizontal)
     , m_shadow(shadow)
     , m_shadowColorFilter(colorFilter)
     , m_font(font)
-    , m_deviceScaleFactor(deviceScaleFactor)
     , m_renderTextStyle(renderTextStyle)
 {
 }
@@ -293,7 +292,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
         // We only want to paint the shadow, hence the transparent color, not the actual line-through,
         // which will be painted in paintForegroundDecorations().
         if (shadow && decorationType.contains(TextDecorationLine::LineThrough))
-            paintLineThrough(Color::transparentBlack, decorationGeometry.textDecorationThickness, boxOrigin, decorationGeometry.textBoxWidth, decorationStyle);
+            paintLineThrough({ boxOrigin, decorationGeometry.textBoxWidth, decorationGeometry.textDecorationThickness, decorationGeometry.linethroughCenter }, Color::transparentBlack, decorationStyle);
     } while (shadow);
 
     if (clipping)
@@ -302,22 +301,15 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
         m_context.clearShadow();
 }
 
-void TextDecorationPainter::paintForegroundDecorations(const FloatPoint& boxOrigin, float width, OptionSet<TextDecorationLine> decorationType, const Styles& decorationStyle)
+void TextDecorationPainter::paintForegroundDecorations(const ForegroundDecorationGeometry& foregroundDecorationGeometry, const Styles& decorationStyle)
 {
-    if (!decorationType.contains(TextDecorationLine::LineThrough))
-        return;
-
-    auto textDecorationThickness = ceilToDevicePixel(m_renderTextStyle.textDecorationThickness().resolve(m_renderTextStyle.computedFontSize(), m_renderTextStyle.metricsOfPrimaryFont()), m_deviceScaleFactor);
-    paintLineThrough(decorationStyle.linethrough.color, textDecorationThickness, boxOrigin, width, decorationStyle);
+    paintLineThrough(foregroundDecorationGeometry, decorationStyle.linethrough.color, decorationStyle);
 }
 
-void TextDecorationPainter::paintLineThrough(const Color& color, float thickness, const FloatPoint& localOrigin, float width, const Styles& decorationStyle)
+void TextDecorationPainter::paintLineThrough(const ForegroundDecorationGeometry& foregroundDecorationGeometry, const Color& color, const Styles& decorationStyle)
 {
-    const auto& fontMetrics = m_renderTextStyle.metricsOfPrimaryFont();
-    FloatRect rect(localOrigin, FloatSize(width, thickness));
-    auto autoTextDecorationThickness = ceilToDevicePixel(TextDecorationThickness::createWithAuto().resolve(m_renderTextStyle.computedFontSize(), fontMetrics), m_deviceScaleFactor);
-    auto center = 2 * fontMetrics.floatAscent() / 3 + autoTextDecorationThickness / 2;
-    rect.move(0, center - thickness / 2);
+    auto rect = FloatRect { foregroundDecorationGeometry.boxOrigin, FloatSize { foregroundDecorationGeometry.textBoxWidth, foregroundDecorationGeometry.textDecorationThickness } };
+    rect.move(0.f, foregroundDecorationGeometry.linethroughCenter);
 
     m_context.setStrokeColor(color);
 
