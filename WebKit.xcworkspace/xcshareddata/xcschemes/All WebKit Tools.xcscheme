@@ -4,7 +4,7 @@
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "YES">
+      buildImplicitDependencies = "NO">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -70,9 +70,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7C83E02B1D0A5E1000FEBCF3"
-               BuildableName = "All"
-               BlueprintName = "All"
+               BlueprintIdentifier = "8DD76F960486AA7600D96B5E"
+               BuildableName = "TestWebKitAPI"
+               BlueprintName = "TestWebKitAPI"
                ReferencedContainer = "container:Tools/TestWebKitAPI/TestWebKitAPI.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
