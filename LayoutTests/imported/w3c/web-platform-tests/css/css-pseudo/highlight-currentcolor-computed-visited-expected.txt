@@ -1,0 +1,12 @@
+
+PASS getComputedStyle() for ::selection at #target1
+PASS getComputedStyle() for ::selection at #target2
+PASS getComputedStyle() for ::target-text at #target1
+PASS getComputedStyle() for ::target-text at #target2
+PASS getComputedStyle() for ::spelling-error at #target1
+PASS getComputedStyle() for ::spelling-error at #target2
+PASS getComputedStyle() for ::grammar-error at #target1
+PASS getComputedStyle() for ::grammar-error at #target2
+PASS getComputedStyle() for ::highlight(foo) at #target1
+PASS getComputedStyle() for ::highlight(foo) at #target2
+

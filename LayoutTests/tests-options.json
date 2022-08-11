@@ -89,6 +89,9 @@
     "imported/w3c/css/css-font-loading/idlharness.https.html": [
         "slow"
     ],
+    "imported/w3c/css/css-pseudo/idlharness.html": [
+        "slow"
+    ],
     "imported/w3c/css/css-transforms/animation/rotate-interpolation.html": [
         "slow"
     ],
