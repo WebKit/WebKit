@@ -22,6 +22,7 @@ use warnings;
 use Cwd qw(realpath);
 use Digest::MD5 qw(md5_hex);
 use File::Basename;
+use File::Path qw(mkpath);
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
