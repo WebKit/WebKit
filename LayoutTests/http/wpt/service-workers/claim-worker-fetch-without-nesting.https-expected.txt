@@ -1,0 +1,4 @@
+
+PASS fetch() in Worker should be intercepted after the client is claimed.
+PASS fetch() in blob URL Worker should be intercepted after the client is claimed.
+

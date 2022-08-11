@@ -82,6 +82,7 @@ public:
     virtual Type type() const = 0;
 
     const URL& url() const final { return m_url; }
+    const URL& ownerURL() const { return m_ownerURL; }
     String origin() const;
     const String& inspectorIdentifier() const { return m_inspectorIdentifier; }
 
@@ -198,6 +199,7 @@ private:
     void stopIndexedDatabase();
 
     URL m_url;
+    URL m_ownerURL;
     String m_inspectorIdentifier;
     String m_userAgent;
 

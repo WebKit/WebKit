@@ -64,6 +64,7 @@ struct WorkerThreadStartupData;
 struct WorkerParameters {
 public:
     URL scriptURL;
+    URL ownerURL;
     String name;
     String inspectorIdentifier;
     String userAgent;

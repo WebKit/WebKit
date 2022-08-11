@@ -95,6 +95,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
 WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
     : WorkerOrWorkletGlobalScope(type, params.sessionID, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), &thread, params.clientIdentifier)
     , m_url(params.scriptURL)
+    , m_ownerURL(params.ownerURL)
     , m_inspectorIdentifier(params.inspectorIdentifier)
     , m_userAgent(params.userAgent)
     , m_isOnline(params.isOnline)
