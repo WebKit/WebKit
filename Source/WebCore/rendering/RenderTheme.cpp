@@ -924,10 +924,9 @@ bool RenderTheme::isIndeterminate(const RenderObject& o) const
 
 bool RenderTheme::isEnabled(const RenderObject& renderer) const
 {
-    Node* node = renderer.node();
-    if (!is<Element>(node))
-        return true;
-    return !downcast<Element>(*node).isDisabledFormControl();
+    if (auto* element = dynamicDowncast<Element>(renderer.node()))
+        return !element->isDisabledFormControl();
+    return true;
 }
 
 bool RenderTheme::isFocused(const RenderObject& renderer) const
@@ -947,48 +946,39 @@ bool RenderTheme::isFocused(const RenderObject& renderer) const
 
 bool RenderTheme::isPressed(const RenderObject& renderer) const
 {
-    if (!is<Element>(renderer.node()))
-        return false;
-    return downcast<Element>(*renderer.node()).active();
+    if (auto* element = dynamicDowncast<Element>(renderer.node()))
+        return element->active();
+    return false;
 }
 
 bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject& renderer) const
 {
-    Node* node = renderer.node();
-    if (!is<Element>(node))
-        return false;
-    Element& element = downcast<Element>(*node);
-    if (!element.active() || !is<SpinButtonElement>(element))
-        return false;
-    return downcast<SpinButtonElement>(element).upDownState() == SpinButtonElement::Up;
+    if (auto* spinButton = dynamicDowncast<SpinButtonElement>(renderer.node()))
+        return spinButton->active() && spinButton->upDownState() == SpinButtonElement::Up;
+    return false;
 }
 
 bool RenderTheme::isReadOnlyControl(const RenderObject& renderer) const
 {
-    Node* node = renderer.node();
-    if (!is<HTMLFormControlElement>(node))
-        return false;
-    return !downcast<Element>(*node).matchesReadWritePseudoClass();
+    if (auto* element = dynamicDowncast<HTMLFormControlElement>(renderer.node()))
+        return !static_cast<Element&>(*element).matchesReadWritePseudoClass();
+    return false;
 }
 
 bool RenderTheme::isHovered(const RenderObject& renderer) const
 {
-    Node* node = renderer.node();
-    if (!is<Element>(node))
-        return false;
-    Element& element = downcast<Element>(*node);
-    if (!is<SpinButtonElement>(element))
-        return element.hovered();
-    SpinButtonElement& spinButton = downcast<SpinButtonElement>(element);
-    return spinButton.hovered() && spinButton.upDownState() != SpinButtonElement::Indeterminate;
+    if (auto* spinButton = dynamicDowncast<SpinButtonElement>(renderer.node()))
+        return spinButton->hovered() && spinButton->upDownState() != SpinButtonElement::Indeterminate;
+    if (auto* element = dynamicDowncast<Element>(renderer.node()))
+        return element->hovered();
+    return false;
 }
 
 bool RenderTheme::isSpinUpButtonPartHovered(const RenderObject& renderer) const
 {
-    Node* node = renderer.node();
-    if (!is<SpinButtonElement>(node))
-        return false;
-    return downcast<SpinButtonElement>(*node).upDownState() == SpinButtonElement::Up;
+    if (auto* spinButton = dynamicDowncast<SpinButtonElement>(renderer.node()))
+        return spinButton->upDownState() == SpinButtonElement::Up;
+    return false;
 }
 
 bool RenderTheme::isPresenting(const RenderObject& o) const
@@ -1173,7 +1163,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     double max = input.maximum();
     ControlPart part = o.style().effectiveAppearance();
     // We don't support ticks on alternate sliders like MediaVolumeSliders.
-    if (part !=  SliderHorizontalPart && part != SliderVerticalPart)
+    if (part != SliderHorizontalPart && part != SliderVerticalPart)
         return;
     bool isHorizontal = part ==  SliderHorizontalPart;
 
