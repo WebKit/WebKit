@@ -1086,7 +1086,7 @@ void HTMLMediaElement::setSrcObject(MediaProvider&& mediaProvider)
     m_mediaStreamSrcObject = nullptr;
 #endif
 #if ENABLE(MEDIA_SOURCE)
-    m_mediaSource = nullptr;
+    detachMediaSource();
 #endif
     m_blob = nullptr;
 
