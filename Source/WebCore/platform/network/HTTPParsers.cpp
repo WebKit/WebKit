@@ -867,6 +867,7 @@ bool isForbiddenHeaderName(const String& name)
         case HTTPHeaderName::KeepAlive:
         case HTTPHeaderName::Origin:
         case HTTPHeaderName::Referer:
+        case HTTPHeaderName::SetCookie:
         case HTTPHeaderName::TE:
         case HTTPHeaderName::Trailer:
         case HTTPHeaderName::TransferEncoding:

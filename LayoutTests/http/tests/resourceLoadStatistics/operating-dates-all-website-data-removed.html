@@ -195,7 +195,7 @@
     async function writeWebsiteDataAndContinue() {
         // Write cookies.
         await fetch("/cookies/resources/set-http-only-cookie.py?cookieName=" + httpOnlyCookieName, { credentials: "same-origin" });
-        await fetch("/cookies/resources/setCookies.cgi", { headers: { "Set-Cookie": serverSideCookieName + "=1; path=/;" }, credentials: "same-origin" });
+        await fetch("/cookies/resources/setCookies.cgi", { headers: { "X-Set-Cookie": serverSideCookieName + "=1; path=/;" }, credentials: "same-origin" });
         document.cookie = clientSideCookieName + "=1";
 
         checkCookies(false);

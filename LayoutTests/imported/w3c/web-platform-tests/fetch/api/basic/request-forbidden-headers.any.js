@@ -41,3 +41,4 @@ requestForbiddenHeaders("Proxy- is a forbidden request header", {"Proxy-": "valu
 requestForbiddenHeaders("Proxy-Test is a forbidden request header", {"Proxy-Test": "value"});
 requestForbiddenHeaders("Sec- is a forbidden request header", {"Sec-": "value"});
 requestForbiddenHeaders("Sec-Test is a forbidden request header", {"Sec-Test": "value"});
+requestForbiddenHeaders("Set-Cookie is a forbidden request header", {"Set-Cookie": "cookie=none"});

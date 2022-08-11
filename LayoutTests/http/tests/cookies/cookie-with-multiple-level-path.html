@@ -45,7 +45,7 @@
         const url = '/cookies/resources/setCookies.cgi';
         const cookie = prepareCookieHeader(name, value, path, 60);
 
-        return fetch(url, {headers: {"Set-Cookie": cookie}});
+        return fetch(url, {headers: {"X-Set-Cookie": cookie}});
     }
 
     function prepareCookieHeader(name, value, path, maxAge = 30) {

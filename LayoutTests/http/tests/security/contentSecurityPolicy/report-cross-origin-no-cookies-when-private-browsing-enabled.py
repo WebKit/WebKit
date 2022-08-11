@@ -18,7 +18,7 @@ sys.stdout.write(
     '    testRunner.setStatisticsShouldDowngradeReferrer(false, function () {\n'
     '        var xhr = new XMLHttpRequest();\n'
     '        xhr.open("GET", "http://localhost:8080/cookies/resources/setCookies.cgi", false);\n'
-    '        xhr.setRequestHeader("SET-COOKIE", "hello=world;path=/");\n'
+    '        xhr.setRequestHeader("X-SET-COOKIE", "hello=world;path=/");\n'
     '        xhr.send(null);\n'
     '\n'
     '        // This image will generate a CSP violation report.\n'

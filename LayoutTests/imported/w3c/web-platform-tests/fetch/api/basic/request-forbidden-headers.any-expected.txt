@@ -23,4 +23,5 @@ PASS Proxy- is a forbidden request header
 PASS Proxy-Test is a forbidden request header
 PASS Sec- is a forbidden request header
 PASS Sec-Test is a forbidden request header
+PASS Set-Cookie is a forbidden request header
 

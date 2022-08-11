@@ -51,7 +51,7 @@ async function setCookie(name, value, additionalProperties={})
     let promise = new Promise((resolved, rejected) => {
         let xhr = new XMLHttpRequest;
         xhr.open("GET", "/cookies/resources/setCookies.cgi");
-        xhr.setRequestHeader("SET-COOKIE", cookie);
+        xhr.setRequestHeader("X-SET-COOKIE", cookie);
         xhr.onload = () => resolved(xhr.responseText);
         xhr.onerror = rejected;
         xhr.send(null);

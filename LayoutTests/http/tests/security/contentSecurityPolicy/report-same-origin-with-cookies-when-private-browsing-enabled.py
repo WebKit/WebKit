@@ -12,7 +12,7 @@ sys.stdout.write(
     '<script>\n'
     '    var xhr = new XMLHttpRequest();\n'
     '    xhr.open("GET", "/cookies/resources/setCookies.cgi", false);\n'
-    '    xhr.setRequestHeader("SET-COOKIE", "hello=world;path=/");\n'
+    '    xhr.setRequestHeader("X-SET-COOKIE", "hello=world;path=/");\n'
     '    xhr.send(null);\n'
     '</script>\n'
     '\n'

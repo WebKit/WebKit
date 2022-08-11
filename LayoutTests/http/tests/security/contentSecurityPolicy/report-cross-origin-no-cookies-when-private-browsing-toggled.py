@@ -15,7 +15,7 @@ print('''<!DOCTYPE html>
     // Normal browsing mode
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "http://localhost:8080/cookies/resources/setCookies.cgi", false);
-    xhr.setRequestHeader("SET-COOKIE", "hello=world;path=/");
+    xhr.setRequestHeader("X-SET-COOKIE", "hello=world;path=/");
     xhr.send(null);
 
     if (window.testRunner)
