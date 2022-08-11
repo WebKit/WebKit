@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+    <div id="parent1">
+        <div id="myDiv" data-target1>ID Div 1</div>
+        <div class="myDiv" data-target2>Class Div 1</div>
+    </div>
+    <div id="parent2">
+        <div id="myDiv" data-target3>ID Div 2</div>
+        <div class="myDiv" data-target4>Class Div 2</div>
+    </div>
+</body>
+<script>
+description('Verify that querySelector only returns elements in the subtree of the element on which the function was called..');
+
+debug("Simple query on #id rooted on 'parent1'.");
+shouldBe('document.getElementById("parent1").querySelectorAll("#myDiv").length', '1');
+shouldBeTrue('document.getElementById("parent1").querySelectorAll("#myDiv")[0].hasAttribute("data-target1")');
+debug("");
+
+debug("Simple query on .class rooted on 'parent1'.");
+shouldBe('document.getElementById("parent1").querySelectorAll(".myDiv").length', '1');
+shouldBeTrue('document.getElementById("parent1").querySelectorAll(".myDiv")[0].hasAttribute("data-target2")');
+debug("");
+
+debug("Scoped query on #id rooted on 'parent1'.");
+shouldBe('document.getElementById("parent1").querySelectorAll(":scope > #myDiv").length', '1');
+shouldBeTrue('document.getElementById("parent1").querySelectorAll(":scope > #myDiv")[0].hasAttribute("data-target1")');
+
+shouldBe('document.getElementById("parent1").querySelectorAll(":scope > * >  #myDiv").length', '0');
+debug("");
+
+debug("Scoped query on .class rooted on 'parent1'.");
+shouldBe('document.getElementById("parent1").querySelectorAll(":scope > .myDiv").length', '1');
+shouldBeTrue('document.getElementById("parent1").querySelectorAll(":scope > .myDiv")[0].hasAttribute("data-target2")');
+
+shouldBe('document.getElementById("parent1").querySelectorAll(":scope > * >  .myDiv").length', '0');
+debug("");
+
+debug("Simple query on #id rooted on 'parent2'. The id we are looking for is duplicated in the document.");
+shouldBe('document.getElementById("parent2").querySelectorAll("#myDiv").length', '1');
+shouldBeTrue('document.getElementById("parent2").querySelectorAll("#myDiv")[0].hasAttribute("data-target3")');
+debug("");
+
+debug("Simple query on .class rooted on 'parent2'. The id we are looking for is duplicated in the document.");
+shouldBe('document.getElementById("parent2").querySelectorAll(".myDiv").length', '1');
+shouldBeTrue('document.getElementById("parent2").querySelectorAll(".myDiv")[0].hasAttribute("data-target4")');
+debug("");
+
+debug("Scoped query on #id rooted on 'parent2'.");
+shouldBe('document.getElementById("parent2").querySelectorAll(":scope > #myDiv").length', '1');
+shouldBeTrue('document.getElementById("parent2").querySelectorAll(":scope > #myDiv")[0].hasAttribute("data-target3")');
+
+shouldBe('document.getElementById("parent2").querySelectorAll(":scope > * >  #myDiv").length', '0');
+debug("");
+
+debug("Scoped query on .class rooted on 'parent2'.");
+shouldBe('document.getElementById("parent2").querySelectorAll(":scope > .myDiv").length', '1');
+shouldBeTrue('document.getElementById("parent2").querySelectorAll(":scope > .myDiv")[0].hasAttribute("data-target4")');
+
+shouldBe('document.getElementById("parent2").querySelectorAll(":scope > * >  .myDiv").length', '0');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>
