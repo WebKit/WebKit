@@ -23,7 +23,7 @@ PASS input[type=url] showPicker() throws when disabled
 PASS input[type=week] showPicker() throws when disabled
 PASS input[type=button] showPicker() doesn't throw when readonly
 PASS input[type=checkbox] showPicker() doesn't throw when readonly
-PASS input[type=color] showPicker() doesn't throw when readonly
+FAIL input[type=color] showPicker() doesn't throw when readonly assert_throws_dom: function "() => { input.showPicker(); }" threw object "InvalidStateError: Input showPicker() cannot be used on immutable controls." that is not a DOMException NotAllowedError: property "code" is equal to 11, expected 0
 PASS input[type=date] showPicker() throws when readonly
 PASS input[type=datetime-local] showPicker() throws when readonly
 PASS input[type=email] showPicker() throws when readonly

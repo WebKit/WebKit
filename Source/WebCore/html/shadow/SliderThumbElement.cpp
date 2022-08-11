@@ -471,7 +471,7 @@ void SliderThumbElement::handleTouchEvent(TouchEvent& touchEvent)
 {
     auto input = hostInput();
     ASSERT(input);
-    if (input->isReadOnly() || input->isDisabledFormControl()) {
+    if (!input->isMutable()) {
         clearExclusiveTouchIdentifier();
         stopDragging();
         touchEvent.setDefaultHandled();

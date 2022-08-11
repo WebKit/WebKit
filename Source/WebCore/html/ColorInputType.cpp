@@ -95,9 +95,6 @@ bool ColorInputType::isKeyboardFocusable(KeyboardEvent*) const
 {
     ASSERT(element());
 #if PLATFORM(IOS_FAMILY)
-    if (element()->isReadOnly())
-        return false;
-
     return element()->isTextFormControlFocusable();
 #else
     return false;

@@ -138,7 +138,7 @@ HTMLElement* SearchInputType::cancelButtonElement() const
 auto SearchInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
     ASSERT(element());
-    if (element()->isDisabledOrReadOnly())
+    if (!element()->isMutable())
         return TextFieldInputType::handleKeydownEvent(event);
 
     const String& key = event.keyIdentifier();

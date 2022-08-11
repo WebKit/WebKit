@@ -428,6 +428,7 @@ private:
     void registerForSuspensionCallbackIfNeeded();
     void unregisterForSuspensionCallbackIfNeeded();
 
+    bool supportsReadOnly() const final;
     bool supportsMinLength() const { return isTextType(); }
     bool supportsMaxLength() const { return isTextType(); }
     bool tooShort(StringView, NeedsToCheckDirtyFlag) const;
