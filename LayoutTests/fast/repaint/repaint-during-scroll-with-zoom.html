@@ -17,34 +17,35 @@
     </style>
 </head>
 <body>
-    <iframe src="javascript:void(0);"></iframe>
+    <iframe src="about:blank"></iframe>
     <script>
-        var frame = window.frames[0];
-        var doc = frame.document;
-        doc.body.style.backgroundColor = 'white';
-        doc.body.style.width = '2000px';
-        doc.body.style.height = '2000px';
-        doc.body.appendChild(doc.createTextNode('scroll me'));
-        frame.scrollBy(100, 100);
-    </script>
-    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
         function testScrollRepaint()
         {
-            if (window.testRunner) {
-                testRunner.waitUntilDone();
-                frame.onscroll = function() {
-                    if (window.testRunner)
-                        testRunner.notifyDone();
-                };
-            }
+            var frame = window.frames[0];
+            frame.onscroll = function() {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            };
             frame.scrollBy(-90, -90);
         }
+        onload = () => {
+            var frame = window.frames[0];
+            var doc = frame.document;
+            doc.body.style.backgroundColor = 'white';
+            doc.body.style.width = '2000px';
+            doc.body.style.height = '2000px';
+            doc.body.appendChild(doc.createTextNode('scroll me'));
+            frame.scrollBy(100, 100);
 
-        if (window.testRunner) {
-            testRunner.displayAndTrackRepaints();
-            testScrollRepaint();
-        } else {
-            setTimeout(testScrollRepaint, 100);
+            if (window.testRunner) {
+                testRunner.displayAndTrackRepaints();
+                testScrollRepaint();
+            } else {
+                setTimeout(testScrollRepaint, 100);
+            }
         }
     </script>
 </body>
