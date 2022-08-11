@@ -436,9 +436,24 @@ TextDecorationPainter TextBoxPainter<TextBoxPath>::createDecorationPainter(const
     // Create painter
     auto* shadow = markedText.style.textShadow ? &markedText.style.textShadow.value() : nullptr;
     auto* colorFilter = markedText.style.textShadow && m_style.hasAppleColorFilter() ? &m_style.appleColorFilter() : nullptr;
-    auto& document = m_renderer.document();
     auto& styleToUse = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
-    return { context, styleToUse, fontCascade(), shadow, colorFilter, document.printing(), m_renderer.isHorizontalWritingMode(), document.deviceScaleFactor() };
+    return { context, styleToUse, fontCascade(), shadow, colorFilter, m_document.printing(), m_renderer.isHorizontalWritingMode() };
+}
+
+static inline float computedTextDecorationThickness(const RenderStyle& styleToUse, float deviceScaleFactor)
+{
+    return ceilToDevicePixel(styleToUse.textDecorationThickness().resolve(styleToUse.computedFontSize(), styleToUse.metricsOfPrimaryFont()), deviceScaleFactor);
+}
+
+static inline float computedAutoTextDecorationThickness(const RenderStyle& styleToUse, float deviceScaleFactor)
+{
+    return ceilToDevicePixel(TextDecorationThickness::createWithAuto().resolve(styleToUse.computedFontSize(), styleToUse.metricsOfPrimaryFont()), deviceScaleFactor);
+}
+
+static inline float computedLinethroughCenter(const RenderStyle& styleToUse, float textDecorationThickness, float autoTextDecorationThickness)
+{
+    auto center = 2 * styleToUse.metricsOfPrimaryFont().floatAscent() / 3 + autoTextDecorationThickness / 2;
+    return center - textDecorationThickness / 2;
 }
 
 template<typename TextBoxPath>
@@ -456,10 +471,9 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
         return textDecorations;
     }();
     auto computedBackgroundDecorationGeometry = [&] {
-        auto deviceScaleFactor = m_renderer.document().deviceScaleFactor();
-        auto& fontMetrics = styleToUse.metricsOfPrimaryFont();
+        auto deviceScaleFactor = m_document.deviceScaleFactor();
 
-        auto textDecorationThickness = ceilToDevicePixel(styleToUse.textDecorationThickness().resolve(styleToUse.computedFontSize(), fontMetrics), deviceScaleFactor);
+        auto textDecorationThickness = computedTextDecorationThickness(styleToUse, deviceScaleFactor);
         auto underlineOffset = [&] {
             if (!computedTextDecorationType.contains(TextDecorationLine::Underline))
                 return 0.f;
@@ -467,10 +481,10 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
             auto wavyOffset = textDecorationStyles.underline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f;
             return baseOffset + wavyOffset;
         };
+        auto autoTextDecorationThickness = computedAutoTextDecorationThickness(styleToUse, deviceScaleFactor);
         auto overlineOffset = [&] {
             if (!computedTextDecorationType.contains(TextDecorationLine::Overline))
                 return 0.f;
-            auto autoTextDecorationThickness = ceilToDevicePixel(TextDecorationThickness::createWithAuto().resolve(styleToUse.computedFontSize(), fontMetrics), deviceScaleFactor);
             return autoTextDecorationThickness - textDecorationThickness - (textDecorationStyles.overline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f);
         };
 
@@ -480,7 +494,8 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
             snappedSelectionRect.width(),
             textDecorationThickness,
             underlineOffset(),
-            overlineOffset()
+            overlineOffset(),
+            computedLinethroughCenter(styleToUse, textDecorationThickness, autoTextDecorationThickness)
         };
     };
 
@@ -493,16 +508,23 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
 template<typename TextBoxPath>
 void TextBoxPainter<TextBoxPath>::paintForegroundDecorations(TextDecorationPainter& decorationPainter, const StyledMarkedText& markedText, const FloatRect& snappedSelectionRect)
 {
-    if (m_isCombinedText)
-        m_paintInfo.context().concatCTM(rotation(m_paintRect, Clockwise));
-
+    auto& styleToUse = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
     auto computedTextDecorationType = [&] {
-        auto& styleToUse = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
         auto textDecorations = styleToUse.textDecorationsInEffect();
         textDecorations.add(TextDecorationPainter::textDecorationsInEffectForStyle(markedText.style.textDecorationStyles));
         return textDecorations;
-    };
-    decorationPainter.paintForegroundDecorations(snappedSelectionRect.location(), snappedSelectionRect.width(), computedTextDecorationType(), markedText.style.textDecorationStyles);
+    }();
+
+    if (!computedTextDecorationType.contains(TextDecorationLine::LineThrough))
+        return;
+
+    if (m_isCombinedText)
+        m_paintInfo.context().concatCTM(rotation(m_paintRect, Clockwise));
+
+    auto deviceScaleFactor = m_document.deviceScaleFactor();
+    auto textDecorationThickness = computedTextDecorationThickness(styleToUse, deviceScaleFactor);
+    auto linethroughCenter = computedLinethroughCenter(styleToUse, textDecorationThickness, computedAutoTextDecorationThickness(styleToUse, deviceScaleFactor));
+    decorationPainter.paintForegroundDecorations({ snappedSelectionRect.location(), snappedSelectionRect.width(), textDecorationThickness, linethroughCenter }, markedText.style.textDecorationStyles);
 
     if (m_isCombinedText)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Counterclockwise));

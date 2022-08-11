@@ -39,7 +39,7 @@ class TextRun;
     
 class TextDecorationPainter {
 public:
-    TextDecorationPainter(GraphicsContext&, const RenderStyle&, const FontCascade&, const ShadowData*, const FilterOperations*, bool isPrinting, bool isHorizontal, float deviceScaleFactor);
+    TextDecorationPainter(GraphicsContext&, const RenderStyle&, const FontCascade&, const ShadowData*, const FilterOperations*, bool isPrinting, bool isHorizontal);
 
     struct Styles {
         bool operator==(const Styles&) const;
@@ -60,16 +60,24 @@ public:
         float textDecorationThickness { 0.f };
         float underlineOffset { 0.f };
         float overlineOffset { 0.f };
+        float linethroughCenter { 0.f };
     };
     void paintBackgroundDecorations(const TextRun&, const BackgroundDecorationGeometry&, OptionSet<TextDecorationLine>, const Styles&);
-    void paintForegroundDecorations(const FloatPoint& boxOrigin, float width, OptionSet<TextDecorationLine>, const Styles&);
+
+    struct ForegroundDecorationGeometry {
+        FloatPoint boxOrigin;
+        float textBoxWidth { 0.f };
+        float textDecorationThickness { 0.f };
+        float linethroughCenter { 0.f };
+    };
+    void paintForegroundDecorations(const ForegroundDecorationGeometry&, const Styles&);
 
     static Color decorationColor(const RenderStyle&);
     static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);
     static OptionSet<TextDecorationLine> textDecorationsInEffectForStyle(const TextDecorationPainter::Styles&);
 
 private:
-    void paintLineThrough(const Color&, float thickness, const FloatPoint& localOrigin, float width, const Styles&);
+    void paintLineThrough(const ForegroundDecorationGeometry&, const Color&, const Styles&);
 
     GraphicsContext& m_context;
     bool m_isPrinting { false };
@@ -77,7 +85,6 @@ private:
     const ShadowData* m_shadow { nullptr };
     const FilterOperations* m_shadowColorFilter { nullptr };
     const FontCascade& m_font;
-    float m_deviceScaleFactor { 0 };
 
     const RenderStyle& m_renderTextStyle;
 };
