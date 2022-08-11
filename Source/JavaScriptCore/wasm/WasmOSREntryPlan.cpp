@@ -46,11 +46,12 @@ namespace WasmOSREntryPlanInternal {
 static constexpr bool verbose = false;
 }
 
-OSREntryPlan::OSREntryPlan(Context* context, Ref<Module>&& module, Ref<Callee>&& callee, uint32_t functionIndex, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
+OSREntryPlan::OSREntryPlan(Context* context, Ref<Module>&& module, Ref<Callee>&& callee, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
     : Base(context, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
     , m_module(WTFMove(module))
     , m_calleeGroup(*m_module->calleeGroupFor(mode))
     , m_callee(WTFMove(callee))
+    , m_hasExceptionHandlers(hasExceptionHandlers)
     , m_functionIndex(functionIndex)
     , m_loopIndex(loopIndex)
 {
@@ -78,7 +79,7 @@ void OSREntryPlan::work(CompilationEffort)
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
     unsigned osrEntryScratchBufferSize = 0;
-    auto parseAndCompileResult = parseAndCompile(context, function, signature, unlinkedCalls, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, targetCompilationMode, m_functionIndex, m_loopIndex);
+    auto parseAndCompileResult = parseAndCompile(context, function, signature, unlinkedCalls, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, targetCompilationMode, m_functionIndex, m_hasExceptionHandlers, m_loopIndex);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
