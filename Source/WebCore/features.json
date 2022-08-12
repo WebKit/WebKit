@@ -608,16 +608,6 @@
         "description": "An API to allow web content to observe system-wide user presence signals."
     },
     {
-        "name": "Imperative Slot API",
-        "status": {
-            "status": "In Development",
-            "enabled-by-default": false
-        },
-        "specification": "Web Components",
-        "url": "https://dom.spec.whatwg.org/#enumdef-slotassignmentmode",
-        "webkit-url": "https://webkit.org/b/218692"
-    },
-    {
         "name": "Indexed Database",
         "status": {
             "status": "Supported"
@@ -1600,6 +1590,18 @@
             "email": "web-evangelist@apple.com",
             "twitter": "@jonathandavis"
         }
+    },
+    {
+        "name": "Imperative Slot API",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "specification": "Web Components",
+        "category": "webapps",
+        "description": "An API to manually assign nodes to a slot.",
+        "url": "https://dom.spec.whatwg.org/#enumdef-slotassignmentmode",
+        "webkit-url": "https://webkit.org/b/218692"
     },
     {
         "name": "Initial Letter",
