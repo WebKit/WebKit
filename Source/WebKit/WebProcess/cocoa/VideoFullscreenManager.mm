@@ -301,7 +301,9 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     FloatRect videoLayerFrame = FloatRect(0, 0, videoRect.width(), videoRect.height());
 
 #if PLATFORM(IOS)
-    if (!allowLayeredFullscreenVideos)
+    if (allowLayeredFullscreenVideos)
+        interface->setTargetIsFullscreen(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
+    else
 #endif
         setCurrentlyInFullscreen(*interface, mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
 
