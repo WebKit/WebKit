@@ -231,7 +231,7 @@ class GitHubEWS(GitHub):
         return u'| [{status} {name}]({url} "{hover_over_text}") '.format(status=status, name=name, url=url, hover_over_text=hover_over_text)
 
     @classmethod
-    def add_or_update_comment_for_change_id(self, sha, pr_id, pr_project=None):
+    def add_or_update_comment_for_change_id(self, sha, pr_id, pr_project=None, allow_new_comment=False):
         if not pr_id or pr_id == -1:
             _log.error('Invalid pr_id: {}'.format(pr_id))
             return -1
@@ -244,6 +244,9 @@ class GitHubEWS(GitHub):
         comment_text = gh.generate_comment_text_for_change(change)
         comment_id = change.comment_id
         if comment_id == -1:
+            if not allow_new_comment:
+                # FIXME: improve this logic to use locking instead
+                return -1
             _log.info('Adding comment for hash: {}, pr_id: {}, pr_id from db: {}.'.format(sha, pr_id, change.pr_id))
             new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, comment_text)
             if new_comment_id != -1:

@@ -76,7 +76,8 @@ class Results(View):
                    state_string=data['state_string'], started_at=data['started_at'], complete_at=data['complete_at'], pr_id=pr_id, pr_project=pr_project)
         if rc == SUCCESS and pr_id and pr_id != -1:
             # For PR builds leave comment on PR
-            GitHubEWS.add_or_update_comment_for_change_id(change_id, pr_id, pr_project)
+            allow_new_comment = (data['status'] == 'started' and data['builder_display_name'] in ['services', 'ios-wk2'])
+            GitHubEWS.add_or_update_comment_for_change_id(change_id, pr_id, pr_project, allow_new_comment)
         return HttpResponse("Saved data for change: {}.\n".format(change_id))
 
     def step_event(self, data):
