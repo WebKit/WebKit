@@ -42,19 +42,22 @@ struct Effect {
         return { readRange, HeapRange::none() };
     }
 
-    constexpr static Effect forReadKinds(DFG::AbstractHeapKind read1 = DFG::InvalidAbstractHeap, DFG::AbstractHeapKind read2 = DFG::InvalidAbstractHeap, DFG::AbstractHeapKind read3 = DFG::InvalidAbstractHeap, DFG::AbstractHeapKind read4 = DFG::InvalidAbstractHeap)
+    template<uint8_t N>
+    constexpr static Effect forReadDFG(const DFG::AbstractHeapKind* kinds)
     {
-        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), { read1, read2, read3, read4 } };
+        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), kinds, N };
     }
 
-    constexpr static Effect forWriteKinds(DFG::AbstractHeapKind write1 = DFG::InvalidAbstractHeap, DFG::AbstractHeapKind write2 = DFG::InvalidAbstractHeap, DFG::AbstractHeapKind write3 = DFG::InvalidAbstractHeap, DFG::AbstractHeapKind write4 = DFG::InvalidAbstractHeap)
+    template<uint8_t N>
+    constexpr static Effect forWriteDFG(const DFG::AbstractHeapKind* kinds)
     {
-        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), {}, { write1, write2, write3, write4 } };
+        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), nullptr, 0, kinds, N };
     }
 
-    constexpr static Effect forReadWriteKinds(const DFG::AbstractHeapKind reads[4], const DFG::AbstractHeapKind writes[4])
+    template<uint8_t N, uint8_t M>
+    constexpr static Effect forReadWriteDFG(const DFG::AbstractHeapKind* reads, const DFG::AbstractHeapKind* writes)
     {
-        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), { reads[0], reads[1], reads[2], reads[3] }, { writes[0], writes[1], writes[2], writes[3] } };
+        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), reads, N, writes, M };
     }
 
     constexpr static Effect forReadWrite(HeapRange readRange, HeapRange writeRange)
@@ -94,8 +97,10 @@ struct Effect {
     HeapRange domReads { HeapRange::top() };
     HeapRange domWrites { HeapRange::top() };
     HeapRange def { HeapRange::top() };
-    DFG::AbstractHeapKind reads[4] { DFG::InvalidAbstractHeap };
-    DFG::AbstractHeapKind writes[4] { DFG::InvalidAbstractHeap };
+    const DFG::AbstractHeapKind* readsKind { nullptr };
+    uint8_t readsLen { 0 };
+    const DFG::AbstractHeapKind* writesKind { nullptr };
+    uint8_t writesLen { 0 };
 };
 
 }
