@@ -44,7 +44,7 @@
 #endif // OS(DARWIN)
 #endif // ENABLE(JIT_CAGE)
 
-#if OS(DARWIN)
+#if PLATFORM(COCOA)
 #include <wtf/spi/cocoa/MachVMSPI.h>
 #endif
 
