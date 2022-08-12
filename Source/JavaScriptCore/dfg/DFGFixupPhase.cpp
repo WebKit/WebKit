@@ -4416,7 +4416,7 @@ private:
             case SpecUint32Array: 
             case SpecFloat32Array: 
             case SpecFloat64Array: {
-                fixEdge<KnownCellUse>(edge);
+                fixEdge<CellUse>(edge);
                 break;
             }
             default:
