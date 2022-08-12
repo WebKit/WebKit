@@ -581,7 +581,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
 
 bool RenderLayer::shouldBeCSSStackingContext() const
 {
-    return !renderer().style().hasAutoUsedZIndex() || renderer().shouldApplyPaintContainment() || isRenderViewLayer();
+    return !renderer().style().hasAutoUsedZIndex() || renderer().shouldApplyLayoutOrPaintContainment() || isRenderViewLayer();
 }
 
 bool RenderLayer::setIsNormalFlowOnly(bool isNormalFlowOnly)

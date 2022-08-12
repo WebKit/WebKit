@@ -511,10 +511,6 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         style.setUsedZIndex(0);
 #endif
 
-    // contain: layout creates a stacking context.
-    if (style.hasAutoUsedZIndex() && style.containsLayout())
-        style.setUsedZIndex(0);
-
     // Cull out any useless layers and also repeat patterns into additional layers.
     style.adjustBackgroundLayers();
     style.adjustMaskLayers();
