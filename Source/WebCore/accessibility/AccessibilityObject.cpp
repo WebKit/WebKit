@@ -804,21 +804,6 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRange() const
     return computedRange;
 }
 
-#if PLATFORM(IOS_FAMILY)
-static const RenderStyle* styleFromNode(Node* node)
-{
-    if (auto* textNode = dynamicDowncast<Text>(node)) {
-        if (auto* renderer = textNode->renderer())
-            return &renderer->style();
-    }
-
-    if (auto* element = dynamicDowncast<Element>(node))
-        return element->computedStyle();
-
-    return nullptr;
-}
-#endif
-
 std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(const std::optional<SimpleRange>& range, const FloatRect& contentRect, const IntRect& startingElementRect) const
 {
     if (!range || !contentRect.intersects(startingElementRect))
@@ -828,12 +813,6 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(co
     auto startBoundary = range->start;
     auto endBoundary = range->end;
 
-#if PLATFORM(IOS_FAMILY)
-    auto* style = styleFromNode(node());
-    // If we can't get style for this object, assume a horizontal writing mode.
-    bool isHorizontalWritingMode = style ? style->isHorizontalWritingMode() : true;
-#endif
-
     // Origin isn't contained in visible rect, start moving forward by line.
     while (!contentRect.contains(elementRect.location())) {
         auto nextLinePosition = nextLineEndPosition(VisiblePosition(makeContainerOffsetPosition(startBoundary)));
@@ -841,23 +820,47 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(co
         if (!testStartBoundary || !contains(*range, *testStartBoundary))
             break;
 
-#if PLATFORM(IOS_FAMILY)
-        float lastX = elementRect.x();
-#endif
-
         // testStartBoundary is valid, so commit it and update the elementRect.
         startBoundary = *testStartBoundary;
         elementRect = boundsForRange(SimpleRange(startBoundary, range->end));
         if (elementRect.isEmpty() || elementRect.x() < 0 || elementRect.y() < 0)
             break;
+    }
 
-#if PLATFORM(IOS_FAMILY)
-        // If the x-coordinate of the element's frame has grown, we should break because that likely means
-        // we have crossed a viewport boundary (e.g. moved to a new page in Books).
-        // FIXME: We should investigate further to understand if this is the correct behavior for all platforms.
-        if (isHorizontalWritingMode && lastX < elementRect.x())
-            break;
-#endif
+    bool didCorrectStartBoundary = false;
+    // Sometimes we shrink one line too far -- check the previous line start to see if it's in bounds.
+    auto previousLineStartPosition = previousLineStartPositionInternal(VisiblePosition(makeContainerOffsetPosition(startBoundary)));
+    if (previousLineStartPosition) {
+        if (auto previousLineStartBoundaryPoint = makeBoundaryPoint(*previousLineStartPosition)) {
+            auto lineStartRect = boundsForRange(SimpleRange(*previousLineStartBoundaryPoint, range->end));
+            if (previousLineStartBoundaryPoint->container.ptr() == startBoundary.container.ptr() && contentRect.contains(lineStartRect.location())) {
+                elementRect = lineStartRect;
+                startBoundary = *previousLineStartBoundaryPoint;
+                didCorrectStartBoundary = true;
+            }
+        }
+    }
+
+    if (!didCorrectStartBoundary) {
+        // We iterated to a line-end position above. We must also check if the start of this line is in bounds.
+        auto startBoundaryLineStartPosition = startOfLine(VisiblePosition(makeContainerOffsetPosition(startBoundary)));
+        auto lineStartBoundaryPoint = makeBoundaryPoint(startBoundaryLineStartPosition);
+        if (lineStartBoundaryPoint && lineStartBoundaryPoint->container.ptr() == startBoundary.container.ptr()) {
+            auto lineStartRect = boundsForRange(SimpleRange(*lineStartBoundaryPoint, range->end));
+            if (contentRect.contains(lineStartRect.location())) {
+                elementRect = lineStartRect;
+                startBoundary = *lineStartBoundaryPoint;
+            } else if (lineStartBoundaryPoint->offset < lineStartBoundaryPoint->container->length()) {
+                // Sometimes we're one character off from being in-bounds. Check for this too.
+                lineStartBoundaryPoint->offset = lineStartBoundaryPoint->offset + 1;
+                lineStartRect = boundsForRange(SimpleRange(*lineStartBoundaryPoint, range->end));
+                lineStartBoundaryPoint->offset = lineStartBoundaryPoint->offset - 1;
+                if (contentRect.contains(lineStartRect.location())) {
+                    elementRect = lineStartRect;
+                    startBoundary = *lineStartBoundaryPoint;
+                }
+            }
+        }
     }
 
     // Computing previous line start positions is cheap relative to computing boundsForRange, so compute the end boundary by
@@ -883,6 +886,16 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(co
         }
         boundaryPoints = previousLineStartBoundaryPoints(VisiblePosition(makeContainerOffsetPosition(lastBoundaryPoint)), *range, 64);
     } while (!boundaryPoints.isEmpty());
+
+    // Sometimes we shrink one line too far. Check the next line end to see if it's in bounds.
+    auto nextLineEndPosition = this->nextLineEndPosition(VisiblePosition(makeContainerOffsetPosition(endBoundary)));
+    auto nextLineEndBoundaryPoint = makeBoundaryPoint(nextLineEndPosition);
+    if (nextLineEndBoundaryPoint && nextLineEndBoundaryPoint->container.ptr() == endBoundary.container.ptr()) {
+        auto lineEndRect = boundsForRange(SimpleRange(startBoundary, *nextLineEndBoundaryPoint));
+
+        if (contentRect.contains(lineEndRect.location() + lineEndRect.size()))
+            endBoundary = *nextLineEndBoundaryPoint;
+    }
 
     return { { startBoundary, endBoundary } };
 }
