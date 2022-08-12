@@ -26,6 +26,7 @@
 
 #include <glib-object.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitForwardDeclarations.h>
 #include <webkit2/WebKitWebView.h>
 
 G_BEGIN_DECLS
@@ -37,7 +38,6 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_PRINT_OPERATION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_PRINT_OPERATION))
 #define WEBKIT_PRINT_OPERATION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_PRINT_OPERATION, WebKitPrintOperationClass))
 
-typedef struct _WebKitPrintOperation        WebKitPrintOperation;
 typedef struct _WebKitPrintOperationClass   WebKitPrintOperationClass;
 typedef struct _WebKitPrintOperationPrivate WebKitPrintOperationPrivate;
 
