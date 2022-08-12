@@ -5764,7 +5764,7 @@ void FrameView::clearSizeOverrideForCSSDefaultViewportUnits()
 
     m_defaultViewportSizeOverride = std::nullopt;
     if (auto* document = frame().document())
-        document->updateViewportUnitsOnResize();
+        document->styleScope().didChangeStyleSheetEnvironment();
 }
 
 void FrameView::setSizeForCSSDefaultViewportUnits(FloatSize size)
@@ -5790,7 +5790,7 @@ void FrameView::setOverrideSizeForCSSDefaultViewportUnits(OverrideViewportSize s
     m_defaultViewportSizeOverride = size;
 
     if (auto* document = frame().document())
-        document->updateViewportUnitsOnResize();
+        document->styleScope().didChangeStyleSheetEnvironment();
 }
 
 FloatSize FrameView::sizeForCSSDefaultViewportUnits() const
