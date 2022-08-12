@@ -16291,6 +16291,17 @@ IGNORE_CLANG_WARNINGS_END
                 case SpecBoolean:
                     operands.append(lowBoolean(edge));
                     break;
+                case SpecInt8Array: 
+                case SpecInt16Array: 
+                case SpecInt32Array: 
+                case SpecUint8Array: 
+                case SpecUint8ClampedArray: 
+                case SpecUint16Array: 
+                case SpecUint32Array: 
+                case SpecFloat32Array: 
+                case SpecFloat64Array: 
+                    operands.append(lowCell(edge));
+                    break;
                 default:
                     RELEASE_ASSERT_NOT_REACHED();
                     break;

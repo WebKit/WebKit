@@ -11351,6 +11351,71 @@ void SpeculativeJIT::compileCallDOM(Node* node)
         operands.append(OperandVariant(std::in_place_type<SpeculateBooleanOperand>, WTFMove(operand)));
     };
 
+    auto appendInt8Array = [&](Edge& edge) {
+        SpeculateCellOperand operand(this, edge);
+        GPRReg gpr = operand.gpr();
+        regs.append(gpr);
+        speculateCellTypeWithoutTypeFiltering(edge, gpr, JSType::Int8ArrayType);
+        operands.append(OperandVariant(std::in_place_type<SpeculateCellOperand>, WTFMove(operand)));
+    };
+    auto appendInt16Array = [&](Edge& edge) {
+        SpeculateCellOperand operand(this, edge);
+        GPRReg gpr = operand.gpr();
+        regs.append(gpr);
+        speculateCellTypeWithoutTypeFiltering(edge, gpr, JSType::Int16ArrayType);
+        operands.append(OperandVariant(std::in_place_type<SpeculateCellOperand>, WTFMove(operand)));
+    };
+    auto appendInt32Array = [&](Edge& edge) {
+        SpeculateCellOperand operand(this, edge);
+        GPRReg gpr = operand.gpr();
+        regs.append(gpr);
+        speculateCellTypeWithoutTypeFiltering(edge, gpr, JSType::Int32ArrayType);
+        operands.append(OperandVariant(std::in_place_type<SpeculateCellOperand>, WTFMove(operand)));
+    };
+    auto appendUint8Array = [&](Edge& edge) {
+        SpeculateCellOperand operand(this, edge);
+        GPRReg gpr = operand.gpr();
+        regs.append(gpr);
+        speculateCellTypeWithoutTypeFiltering(edge, gpr, JSType::Uint8ArrayType);
+        operands.append(OperandVariant(std::in_place_type<SpeculateCellOperand>, WTFMove(operand)));
+    };
+    auto appendUint8ClampedArray = [&](Edge& edge) {
+        SpeculateCellOperand operand(this, edge);
+        GPRReg gpr = operand.gpr();
+        regs.append(gpr);
+        speculateCellTypeWithoutTypeFiltering(edge, gpr, JSType::Uint8ClampedArrayType);
+        operands.append(OperandVariant(std::in_place_type<SpeculateCellOperand>, WTFMove(operand)));
+    };
+    auto appendUint16Array = [&](Edge& edge) {
+        SpeculateCellOperand operand(this, edge);
+        GPRReg gpr = operand.gpr();
+        regs.append(gpr);
+        speculateCellTypeWithoutTypeFiltering(edge, gpr, JSType::Uint16ArrayType);
+        operands.append(OperandVariant(std::in_place_type<SpeculateCellOperand>, WTFMove(operand)));
+    };
+    auto appendUint32Array = [&](Edge& edge) {
+        SpeculateCellOperand operand(this, edge);
+        GPRReg gpr = operand.gpr();
+        regs.append(gpr);
+        speculateCellTypeWithoutTypeFiltering(edge, gpr, JSType::Uint32ArrayType);
+        operands.append(OperandVariant(std::in_place_type<SpeculateCellOperand>, WTFMove(operand)));
+    };
+    auto appendFloat32Array = [&](Edge& edge) {
+        SpeculateCellOperand operand(this, edge);
+        GPRReg gpr = operand.gpr();
+        regs.append(gpr);
+        speculateCellTypeWithoutTypeFiltering(edge, gpr, JSType::Float32ArrayType);
+        operands.append(OperandVariant(std::in_place_type<SpeculateCellOperand>, WTFMove(operand)));
+    };
+    auto appendFloat64Array = [&](Edge& edge) {
+        SpeculateCellOperand operand(this, edge);
+        GPRReg gpr = operand.gpr();
+        regs.append(gpr);
+        speculateCellTypeWithoutTypeFiltering(edge, gpr, JSType::Float64ArrayType);
+        operands.append(OperandVariant(std::in_place_type<SpeculateCellOperand>, WTFMove(operand)));
+    };
+    
+
     unsigned index = 0;
     m_graph.doToChildren(node, [&](Edge edge) {
         if (!index)
@@ -11365,6 +11430,33 @@ void SpeculativeJIT::compileCallDOM(Node* node)
                 break;
             case SpecBoolean:
                 appendBoolean(edge);
+                break;
+            case SpecInt8Array: 
+                appendInt8Array(edge);
+                break;
+            case SpecInt16Array: 
+                appendInt16Array(edge);
+                break;
+            case SpecInt32Array: 
+                appendInt32Array(edge);
+                break;
+            case SpecUint8Array: 
+                appendUint8Array(edge);
+                break;
+            case SpecUint8ClampedArray: 
+                appendUint8ClampedArray(edge);
+                break;
+            case SpecUint16Array: 
+                appendUint16Array(edge);
+                break;
+            case SpecUint32Array: 
+                appendUint32Array(edge);
+                break;
+            case SpecFloat32Array: 
+                appendFloat32Array(edge);
+                break;
+            case SpecFloat64Array: 
+                appendFloat64Array(edge);
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
