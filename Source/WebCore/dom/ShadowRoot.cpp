@@ -272,6 +272,12 @@ void ShadowRoot::slotManualAssignmentDidChange(HTMLSlotElement& slot, Vector<Wea
     m_slotAssignment->slotManualAssignmentDidChange(slot, previous, current, *this);
 }
 
+void ShadowRoot::didRemoveManuallyAssignedNode(HTMLSlotElement& slot, const Node& node)
+{
+    ASSERT(m_slotAssignment);
+    m_slotAssignment->didRemoveManuallyAssignedNode(slot, node, *this);
+}
+
 void ShadowRoot::slotFallbackDidChange(HTMLSlotElement& slot)
 {
     ASSERT(&slot.rootNode() == this);

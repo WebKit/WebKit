@@ -65,6 +65,7 @@
 #include "RenderBlock.h"
 #include "RenderBox.h"
 #include "RenderTextControl.h"
+#include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "SVGElement.h"
 #include "ScopedEventQueue.h"
@@ -1223,6 +1224,11 @@ HTMLSlotElement* Node::manuallyAssignedSlot() const
 
 void Node::setManuallyAssignedSlot(HTMLSlotElement* slotElement)
 {
+    if (RefPtr element = dynamicDowncast<Element>(*this))
+        RenderTreeUpdater::tearDownRenderers(*element);
+    else if (RefPtr text = dynamicDowncast<Text>(*this))
+        RenderTreeUpdater::tearDownRenderer(*text);
+
     ensureRareData().setManuallyAssignedSlot(slotElement);
 }
 

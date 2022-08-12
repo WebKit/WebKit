@@ -167,8 +167,12 @@ Vector<Ref<Element>> HTMLSlotElement::assignedElements(const AssignedNodesOption
 
 void HTMLSlotElement::assign(FixedVector<std::reference_wrapper<Node>>&& nodes)
 {
-    for (auto& node : m_manuallyAssignedNodes)
-        node->setManuallyAssignedSlot(nullptr);
+    RefPtr shadowRoot = containingShadowRoot();
+    RefPtr host = shadowRoot ? shadowRoot->host() : nullptr;
+    for (auto& node : m_manuallyAssignedNodes) {
+        if (RefPtr protectedNode = node.get())
+            protectedNode->setManuallyAssignedSlot(nullptr);
+    }
 
     auto previous = std::exchange(m_manuallyAssignedNodes, { });
     HashSet<Ref<Node>> seenNodes;
@@ -178,8 +182,19 @@ void HTMLSlotElement::assign(FixedVector<std::reference_wrapper<Node>>&& nodes)
         seenNodes.add(node);
         return WeakPtr { node };
     });
+
     if (RefPtr shadowRoot = containingShadowRoot())
         shadowRoot->slotManualAssignmentDidChange(*this, previous, m_manuallyAssignedNodes);
+    else {
+        for (auto& node : m_manuallyAssignedNodes) {
+            if (auto previousSlot = node->manuallyAssignedSlot()) {
+                previousSlot->removeManuallyAssignedNode(*node);
+                if (RefPtr shadowRootOfPreviousSlot = previousSlot->containingShadowRoot(); shadowRootOfPreviousSlot && node->parentNode() == shadowRootOfPreviousSlot->host())
+                    shadowRootOfPreviousSlot->didRemoveManuallyAssignedNode(*previousSlot, *node);
+            }
+            node->setManuallyAssignedSlot(this);
+        }
+    }
 }
 
 void HTMLSlotElement::removeManuallyAssignedNode(Node& node)

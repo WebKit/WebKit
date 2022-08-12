@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container"></div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+
+promise_test(async () => {
+    let logs = [];
+    function logger(event) { logs.push(this); }
+
+    container.innerHTML = `<div id="hostA"><div id="childA1"></div><div id="childA2"></div></div><div id="hostB"></div>`;
+
+    const shadowRootA = hostA.attachShadow({mode: 'closed', slotAssignment: 'manual'});
+    const slotA = shadowRootA.appendChild(document.createElement('slot'));
+    slotA.id = 'A';
+    slotA.assign(childA1, childA2);
+    slotA.addEventListener('slotchange', logger);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    assert_array_equals(logs, [slotA]);
+    logs = [];
+
+    const shadowRootB = hostB.attachShadow({mode: 'closed', slotAssignment: 'manual'});
+    const slotB = shadowRootB.appendChild(document.createElement('slot'));
+    slotB.id = 'B';
+    slotB.assign(childA1);
+    slotB.addEventListener('slotchange', logger);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    assert_array_equals(logs, [slotA]);
+}, 'slot assigned of nodes in other shadow trees');
+
+promise_test(async () => {
+    let logs = [];
+    function logger(event) { logs.push(this); }
+
+    container.innerHTML = `<div id="hostA"><div id="child1"></div><div id="child2"></div></div>`;
+
+    const shadowRootA = hostA.attachShadow({mode: 'closed', slotAssignment: 'manual'});
+    const slotA = shadowRootA.appendChild(document.createElement('slot'));
+    slotA.id = 'A';
+    slotA.assign(child1, child2);
+    slotA.addEventListener('slotchange', logger);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    assert_array_equals(logs, [slotA]);
+    logs = [];
+
+    const slotB = document.createElement('slot');
+    slotB.assign(child2);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    assert_array_equals(logs, [slotA]);
+}, 'orphan slot assigned of nodes in another shadow tree');
+
+promise_test(async () => {
+    let logs = [];
+    function logger(event) { logs.push(this); }
+
+    container.innerHTML = `<div id="hostA"><div id="childA1"></div><div id="childA2"></div><div id="childA3"></div><div id="childA4"></div></div>
+<div id="hostB"><div id="childB1"></div><div id="childB2"></div></div>
+<div id="hostC"></div>`;
+
+    const shadowRootB = hostB.attachShadow({mode: 'closed', slotAssignment: 'manual'});
+    const slotB = shadowRootB.appendChild(document.createElement('slot'));
+    slotB.id = 'B';
+    slotB.assign(childB1, childB2);
+    slotB.addEventListener('slotchange', logger);
+
+    const shadowRootA = hostA.attachShadow({mode: 'closed', slotAssignment: 'manual'});
+    const slotA1 = shadowRootA.appendChild(document.createElement('slot'));
+    slotA1.id = 'A1';
+    slotA1.assign(childA1, childA2);
+    slotA1.addEventListener('slotchange', logger);
+
+    const slotA2 = shadowRootA.appendChild(document.createElement('slot'));
+    slotA2.id = 'A2';
+    slotA2.assign(childA3, childA4);
+    slotA2.addEventListener('slotchange', logger);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    assert_array_equals(logs, [slotB, slotA1, slotA2]);
+    logs = [];
+
+    const slotC = document.createElement('slot');
+    slotC.assign(childB1, childA3, childA2);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    assert_array_equals(logs, [slotB, slotA2, slotA1]);
+}, 'orphan slot assigned of nodes in multiple other shadow trees');
+
+promise_test(async () => {
+    let logs = [];
+    function logger(event) { logs.push(this); }
+
+    container.innerHTML = `<div id="hostA"><div id="childA1"></div><div id="childA2"></div><div id="childA3"></div><div id="childA4"></div></div>
+<div id="hostB"><div id="childB1"></div><div id="childB2"></div></div>
+<div id="hostC"></div>`;
+
+    const shadowRootB = hostB.attachShadow({mode: 'closed', slotAssignment: 'manual'});
+    const slotB = shadowRootB.appendChild(document.createElement('slot'));
+    slotB.id = 'B';
+    slotB.assign(childB1, childB2);
+    slotB.addEventListener('slotchange', logger);
+
+    const shadowRootA = hostA.attachShadow({mode: 'closed', slotAssignment: 'manual'});
+    const slotA1 = shadowRootA.appendChild(document.createElement('slot'));
+    slotA1.id = 'A1';
+    slotA1.assign(childA1, childA2);
+    slotA1.addEventListener('slotchange', logger);
+
+    const slotA2 = shadowRootA.appendChild(document.createElement('slot'));
+    slotA2.id = 'A2';
+    slotA2.assign(childA3, childA4);
+    slotA2.addEventListener('slotchange', logger);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    assert_array_equals(logs, [slotB, slotA1, slotA2]);
+    logs = [];
+
+    const shadowRootC = hostC.attachShadow({mode: 'closed', slotAssignment: 'manual'});
+    const slotC = shadowRootC.appendChild(document.createElement('slot'));
+    slotC.assign(childB1, childA3, childA2);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    assert_array_equals(logs, [slotB, slotA2, slotA1]);
+}, 'slot assigned of nodes in multiple other shadow trees');
+
+</script>
+</body>
+</html>

@@ -99,6 +99,7 @@ public:
     void addSlotElementByName(const AtomString&, HTMLSlotElement&);
     void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode& oldParentOfRemovedTree);
     void slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node>>& previous, Vector<WeakPtr<Node>>& current);
+    void didRemoveManuallyAssignedNode(HTMLSlotElement&, const Node&);
     void slotFallbackDidChange(HTMLSlotElement&);
     void resolveSlotsBeforeNodeInsertionOrRemoval();
     void willRemoveAllChildren(ContainerNode&);

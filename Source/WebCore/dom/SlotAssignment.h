@@ -56,12 +56,13 @@ public:
     virtual void addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&) = 0;
     virtual void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot&) = 0;
     virtual void slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node>>& previous, Vector<WeakPtr<Node>>& current, ShadowRoot&) = 0;
+    virtual void didRemoveManuallyAssignedNode(HTMLSlotElement&, const Node&, ShadowRoot&) = 0;
     virtual void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&) = 0;
 
     virtual void hostChildElementDidChange(const Element&, ShadowRoot&) = 0;
     virtual void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue, ShadowRoot&) = 0;
 
-    virtual void willRemoveAssignedNode(const Node&) = 0;
+    virtual void willRemoveAssignedNode(const Node&, ShadowRoot&) = 0;
     virtual void didRemoveAllChildrenOfShadowHost(ShadowRoot&) = 0;
     virtual void didMutateTextNodesOfShadowHost(ShadowRoot&) = 0;
 
@@ -90,10 +91,11 @@ private:
     void addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&) final;
     void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot&) final;
     void slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node>>& previous, Vector<WeakPtr<Node>>& current, ShadowRoot&) final;
+    void didRemoveManuallyAssignedNode(HTMLSlotElement&, const Node&, ShadowRoot&) final;
     void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&) final;
 
     const Vector<WeakPtr<Node>>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&) final;
-    void willRemoveAssignedNode(const Node&) final;
+    void willRemoveAssignedNode(const Node&, ShadowRoot&) final;
 
     void didRemoveAllChildrenOfShadowHost(ShadowRoot&) final;
     void didMutateTextNodesOfShadowHost(ShadowRoot&) final;
@@ -148,12 +150,13 @@ public:
     void addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&) final;
     void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode*, ShadowRoot&) final;
     void slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node>>& previous, Vector<WeakPtr<Node>>& current, ShadowRoot&) final;
+    void didRemoveManuallyAssignedNode(HTMLSlotElement&, const Node&, ShadowRoot&) final;
     void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&) final;
 
     void hostChildElementDidChange(const Element&, ShadowRoot&) final;
     void hostChildElementDidChangeSlotAttribute(Element&, const AtomString&, const AtomString&, ShadowRoot&) final;
 
-    void willRemoveAssignedNode(const Node&) final;
+    void willRemoveAssignedNode(const Node&, ShadowRoot&) final;
     void didRemoveAllChildrenOfShadowHost(ShadowRoot&) final;
     void didMutateTextNodesOfShadowHost(ShadowRoot&) final;
 
@@ -164,6 +167,7 @@ private:
     };
     WeakHashMap<HTMLSlotElement, Slot> m_slots;
     uint64_t m_slottableVersion { 0 };
+    unsigned m_slotElementCount { 0 };
 };
 
 inline void SlotAssignment::resolveSlotsBeforeNodeInsertionOrRemoval()
@@ -218,7 +222,7 @@ inline void ShadowRoot::hostChildElementDidChangeSlotAttribute(Element& element,
 inline void ShadowRoot::willRemoveAssignedNode(const Node& node)
 {
     if (m_slotAssignment)
-        m_slotAssignment->willRemoveAssignedNode(node);
+        m_slotAssignment->willRemoveAssignedNode(node, *this);
 }
 
 } // namespace WebCore
