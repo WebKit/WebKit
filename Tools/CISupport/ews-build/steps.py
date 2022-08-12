@@ -1005,7 +1005,7 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
         if rebase_target_hash and base_hash and rebase_target_hash != base_hash:
             commands += [
                 ['git', 'config', 'merge.changelog.driver', 'perl Tools/Scripts/resolve-ChangeLogs --merge-driver -c %O %A %B'],
-                ['git', 'rebase', '--onto', rebase_target_hash, base_hash, pr_branch],
+                ['git', 'rebase', '--onto', rebase_target_hash, '{}^'.format(pr_branch)],
             ]
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
