@@ -1,0 +1,20 @@
+This directory contains unifdef.h and unifdef.c from:
+
+https://github.com/fanf2/unifdef
+
+With this customization:
+
+-#define endsym(c) (!isalnum((unsigned char)c) && c != '_')
++#define endsym(c) (!isalnum((unsigned char)c) && c != '_' && c != '(' && c != ')')
+
+This change allows us to use parentheses in preprocessor symbols, e.g.
+PLATFORM(WPE) or USE(GTK4).
+
+unifdef allows us to avoid keeping a bunch of different copies of our public
+headers for each desired build configuration. Instead of having one set of
+headers for GTK 3, one set for GTK 4, and another for WPE, we can have just one
+set of .h.in templates, use #if guards in the templates, and generate the real
+headers using unifdef.
+
+Warning: unifdef does not work inside comments. If part of a comment needs to
+differ, you must copy the entirety of the comment.

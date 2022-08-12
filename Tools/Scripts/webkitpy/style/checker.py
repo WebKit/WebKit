@@ -260,7 +260,6 @@ _PATH_RULES_SPECIFIER = [
 
     # For third-party code, keep only the following checks--
     #
-    #   No tabs: to avoid having to set the SVN allow-tabs property.
     #   No trailing white space: since this is easy to correct.
     #   No carriage-return line endings: since this is easy to correct.
     #
@@ -269,10 +268,10 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'ThirdParty', 'ANGLE'),
       os.path.join('Source', 'ThirdParty', 'libwebrtc'),
       os.path.join('Source', 'ThirdParty', 'openvr'),
+      os.path.join('Source', 'ThirdParty', 'unifdef'),
       os.path.join('Source', 'ThirdParty', 'xdgmime'),
       os.path.join('Tools', 'WebGPUAPIStructure')],
      ["-",
-      "+pep8/W191",  # Tabs
       "+pep8/W291",  # Trailing white space
       "+whitespace/carriage_return"]),
 

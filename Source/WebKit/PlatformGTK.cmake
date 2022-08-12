@@ -1,3 +1,4 @@
+include(GLib.cmake)
 include(InspectorGResources.cmake)
 
 if (ENABLE_PDFJS)
@@ -19,7 +20,6 @@ file(MAKE_DIRECTORY ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-${WEBKITGTK_A
 file(MAKE_DIRECTORY ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-webextension)
 
 configure_file(Shared/glib/BuildRevision.h.in ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/BuildRevision.h)
-configure_file(UIProcess/API/gtk/WebKitVersion.h.in ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitVersion.h)
 configure_file(gtk/webkit2gtk.pc.in ${WebKit2_PKGCONFIG_FILE} @ONLY)
 configure_file(gtk/webkit2gtk-web-extension.pc.in ${WebKit2WebExtension_PKGCONFIG_FILE} @ONLY)
 
@@ -47,6 +47,20 @@ if (NOT DEVELOPER_MODE AND NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
 endif ()
 
 set(WebKit_USE_PREFIX_HEADER ON)
+
+set(API_INCLUDE_PREFIX "webkit2")
+set(API_SINGLE_HEADER_CHECK "#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+#error \"Only <webkit2/webkit2.h> can be included directly.\"
+#endif"
+)
+set(INJECTED_BUNDLE_API_SINGLE_HEADER_CHECK "#if !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+#error \"Only <webkit2/webkit-web-extension.h> can be included directly.\"
+#endif"
+)
+set(SHARED_API_SINGLE_HEADER_CHECK "#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__)
+#error \"Only <webkit2/webkit2.h> can be included directly.\"
+#endif"
+)
 
 list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
     "SourcesGTK.txt"
@@ -114,94 +128,99 @@ else ()
     set(GTK_PKGCONFIG_PACKAGE gtk+-3.0)
 endif ()
 
+set(WebKit2GTK_HEADER_TEMPLATES
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitApplicationInfo.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitAuthenticationRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitAutocleanups.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitAutomationSession.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitBackForwardList.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitBackForwardListItem.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitCredential.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitContextMenu.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitContextMenuActions.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitContextMenuItem.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitCookieManager.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitDefines.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitDeviceInfoPermissionRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitDownload.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitEditingCommands.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitEditorState.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitError.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFaviconDatabase.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFileChooserRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFindController.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFormSubmissionRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitGeolocationManager.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitGeolocationPermissionRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitHitTestResult.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitInputMethodContext.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitJavascriptResult.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMediaKeySystemPermissionRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMemoryPressureSettings.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMimeInfo.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNavigationAction.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNavigationPolicyDecision.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNetworkProxySettings.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNotificationPermissionRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNotification.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitOptionMenu.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitOptionMenuItem.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPermissionRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPlugin.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPolicyDecision.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitResponsePolicyDecision.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitScriptDialog.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitSecurityManager.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitSecurityOrigin.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitSettings.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitURIRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitURIResponse.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitURISchemeRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitURISchemeResponse.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitURIUtilities.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserContent.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserContentFilterStore.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserContentManager.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserMediaPermissionRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserMessage.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitVersion.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebContext.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebResource.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebView.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebViewSessionState.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebsiteData.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebsiteDataAccessPermissionRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebsiteDataManager.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWindowProperties.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebsitePolicies.h.in
+    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebViewBase.h.in
+)
+
 set(WebKit2GTK_INSTALLED_HEADERS
     ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitEnumTypes.h
-    ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitVersion.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk${GTK_API_VERSION}/WebKitContextMenuItem.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk${GTK_API_VERSION}/WebKitInputMethodContext.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk${GTK_API_VERSION}/WebKitWebViewBase.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitApplicationInfo.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitAuthenticationRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitAutocleanups.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitAutomationSession.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitBackForwardList.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitBackForwardListItem.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitColorChooserRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitCredential.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitContextMenu.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitContextMenuActions.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitCookieManager.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitDefines.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitDeviceInfoPermissionRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitDownload.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitEditingCommands.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitEditorState.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitError.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitFaviconDatabase.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitFileChooserRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitFindController.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitFormSubmissionRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitForwardDeclarations.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitGeolocationManager.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitGeolocationPermissionRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitHitTestResult.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitJavascriptResult.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitMediaKeySystemPermissionRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitMemoryPressureSettings.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitMimeInfo.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitNavigationAction.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitNavigationPolicyDecision.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitNetworkProxySettings.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitNotificationPermissionRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitNotification.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitOptionMenu.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitOptionMenuItem.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPermissionRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPlugin.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPointerLockPermissionRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPolicyDecision.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPrintCustomWidget.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPrintOperation.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitResponsePolicyDecision.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitScriptDialog.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitSecurityManager.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitSecurityOrigin.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitSettings.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIResponse.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURISchemeRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURISchemeResponse.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIUtilities.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitUserContent.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitUserContentFilterStore.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitUserContentManager.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitUserMediaPermissionRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitUserMessage.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebContext.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebInspector.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebResource.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebView.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebViewSessionState.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebsiteData.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebsiteDataAccessPermissionRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebsiteDataManager.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWindowProperties.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebsitePolicies.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/webkit2.h
 )
 
 set(WebKit2WebExtension_INSTALLED_HEADERS
     ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitWebProcessEnumTypes.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitConsoleMessage.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitFrame.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebEditor.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionAutocleanups.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebHitTestResult.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h
+)
+
+set(WebKit2WebExtension_HEADER_TEMPLATES
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.h.in
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitFrame.h.in
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.h.in
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebEditor.h.in
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.h.in
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebExtensionAutocleanups.h.in
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.h.in
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebPage.h.in
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/webkit-web-extension.h.in
 )
 
 set(WebKitDOM_INSTALLED_HEADERS
@@ -455,7 +474,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/C/glib"
     "${WEBKIT_DIR}/UIProcess/API/C/gtk"
     "${WEBKIT_DIR}/UIProcess/API/glib"
-    "${WEBKIT_DIR}/UIProcess/API/gtk${GTK_API_VERSION}"
     "${WEBKIT_DIR}/UIProcess/API/gtk"
     "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT_DIR}/UIProcess/Inspector/glib"
@@ -543,6 +561,22 @@ if (ENABLE_MEDIA_STREAM)
         WebProcess/glib/UserMediaCaptureManager
     )
 endif ()
+
+GENERATE_API_HEADERS(WebKit2GTK_HEADER_TEMPLATES
+    ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit
+    WebKit2GTK_INSTALLED_HEADERS
+    "-DPLATFORM(GTK)=1"
+    "-DPLATFORM(WPE)=0"
+    "-DUSE(GTK4)=$<BOOL:${USE_GTK4}>"
+)
+
+GENERATE_API_HEADERS(WebKit2WebExtension_HEADER_TEMPLATES
+    ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit
+    WebKit2WebExtension_INSTALLED_HEADERS
+    "-DPLATFORM(GTK)=1"
+    "-DPLATFORM(WPE)=0"
+    "-DUSE(GTK4)=$<BOOL:${USE_GTK4}>"
+)
 
 # To generate WebKitEnumTypes.h we want to use all installed headers, except WebKitEnumTypes.h itself.
 set(WebKit2GTK_ENUM_GENERATION_HEADERS ${WebKit2GTK_INSTALLED_HEADERS})
@@ -685,11 +719,6 @@ add_custom_command(
     COMMAND ln -n -s -f ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit2
 )
 add_custom_command(
-    OUTPUT ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}/webkit2
-    DEPENDS ${WEBKIT_DIR}/UIProcess/API/gtk${GTK_API_VERSION}
-    COMMAND ln -n -s -f ${WEBKIT_DIR}/UIProcess/API/gtk${GTK_API_VERSION} ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}/webkit2
-)
-add_custom_command(
     OUTPUT ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-webextension/webkit2
     DEPENDS ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk
     COMMAND ln -n -s -f ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-webextension/webkit2
@@ -702,7 +731,6 @@ add_custom_command(
 add_custom_target(WebKit-fake-api-headers
     DEPENDS ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2
             ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit2
-            ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}/webkit2
             ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-webextension/webkit2
             ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-webextension/webkitdom
 )
@@ -744,19 +772,19 @@ GI_INTROSPECT(WebKit2WebExtension ${WEBKITGTK_API_VERSION} webkit2/webkit-web-ex
     SOURCES
         ${WebKitDOM_INSTALLED_HEADERS}
         ${WebKit2WebExtension_INSTALLED_HEADERS}
+        ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitContextMenu.h
+        ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitContextMenuActions.h
+        ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitContextMenuItem.h
+        ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitHitTestResult.h
+        ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitUserMessage.h
+        ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitURIRequest.h
+        ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitURIResponse.h
         Shared/API/glib/WebKitContextMenu.cpp
         Shared/API/glib/WebKitContextMenuItem.cpp
         Shared/API/glib/WebKitHitTestResult.cpp
         Shared/API/glib/WebKitUserMessage.cpp
         Shared/API/glib/WebKitURIRequest.cpp
         Shared/API/glib/WebKitURIResponse.cpp
-        UIProcess/API/gtk${GTK_API_VERSION}/WebKitContextMenuItem.h
-        UIProcess/API/gtk/WebKitContextMenu.h
-        UIProcess/API/gtk/WebKitContextMenuActions.h
-        UIProcess/API/gtk/WebKitHitTestResult.h
-        UIProcess/API/gtk/WebKitUserMessage.h
-        UIProcess/API/gtk/WebKitURIRequest.h
-        UIProcess/API/gtk/WebKitURIResponse.h
         WebProcess/InjectedBundle/API/glib
         WebProcess/InjectedBundle/API/glib/DOM
     NO_IMPLICIT_SOURCES
