@@ -396,7 +396,7 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_isExternalScript ? &document : nullptr);
     CurrentScriptIncrementer currentScriptIncrementer(document, *this);
 
-    WTFBeginSignpost(this, "Execute Script Element", "executing classic script from URL: %{public}s async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8().data() : "inline", hasAsyncAttribute(), hasDeferAttribute());
+    WTFBeginSignpost(this, "Execute Script Element", "executing classic script from URL: %" PRIVATE_LOG_STRING " async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8().data() : "inline", hasAsyncAttribute(), hasDeferAttribute());
     frame->script().evaluateIgnoringException(sourceCode);
     WTFEndSignpost(this, "Execute Script Element");
 }
