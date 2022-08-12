@@ -136,6 +136,8 @@ jobs:
           cd ${{runner.temp}}
           echo "#define BUN_WEBKIT_VERSION \"${{github.sha}}\"" >> bun-webkit/include/cmakeconfig.h
           echo '{ "name": "${{matrix.label}}", "version": "0.0.1+${{github.sha}}", "os": "linux", "arch": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > bun-webkit/package.json
+          rm -rf bun-webkit/lib/*.so
+          rm -rf bun-webkit/lib/*.so.*
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
@@ -227,15 +229,47 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "16.x"
+          registry-url: "https://registry.npmjs.org"
       - run: |
-          npm publish ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz --tag next --access=public
-          npm publish ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz --tag next --access=public
-          npm publish ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz --tag next --access=public
-          npm publish ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz --tag next --access=public
-          npm publish ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz --tag next --access=public
-          npm publish ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz --tag next --access=public
-          npm publish ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz --tag next --access=public
-          npm publish ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz --tag next --access=public
+          rm -rf ${{runner.temp}}/bun-webkit && \
+            cd ${{runner.temp}} && tar -xzf bun-webkit-linux-amd64-lto.tar.gz && \
+            cd bun-webkit && \
+            npm publish --tag next --access=public
+
+          rm -rf ${{runner.temp}}/bun-webkit && \
+            cd ${{runner.temp}} && tar -xzf bun-webkit-linux-arm64-lto.tar.gz && \
+            cd bun-webkit && \
+            npm publish --tag next --access=public
+
+          rm -rf ${{runner.temp}}/bun-webkit && \
+            cd ${{runner.temp}} && tar -xzf bun-webkit-macos-arm64-lto.tar.gz && \
+            cd bun-webkit && \
+            npm publish --tag next --access=public
+
+          rm -rf ${{runner.temp}}/bun-webkit && \
+            cd ${{runner.temp}} && tar -xzf bun-webkit-macos-amd64-lto.tar.gz && \
+            cd bun-webkit && \
+            npm publish --tag next --access=public
+
+          rm -rf ${{runner.temp}}/bun-webkit && \
+            cd ${{runner.temp}} && tar -xzf bun-webkit-linux-amd64.tar.gz && \
+            cd bun-webkit && \
+            npm publish  --tag next --access=public
+
+          rm -rf ${{runner.temp}}/bun-webkit && \
+            cd ${{runner.temp}} && tar -xzf bun-webkit-linux-arm64.tar.gz && \
+            cd bun-webkit && \
+            npm publish  --tag next --access=public
+
+          rm -rf ${{runner.temp}}/bun-webkit && \
+            cd ${{runner.temp}} && tar -xzf bun-webkit-macos-arm64.tar.gz && \
+            cd bun-webkit && \
+            npm publish  --tag next --access=public
+            
+          rm -rf ${{runner.temp}}/bun-webkit && \
+            cd ${{runner.temp}} && tar -xzf bun-webkit-macos-amd64.tar.gz && \
+            cd bun-webkit && \
+            npm publish  --tag next --access=public
 
           rm -rf ${{runner.temp}}/bun-webkit-lto ${{runner.temp}}/bun-webkit
           mkdir -p ${{runner.temp}}/bun-webkit-lto ${{runner.temp}}/bun-webkit
