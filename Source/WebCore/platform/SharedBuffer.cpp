@@ -265,7 +265,16 @@ void FragmentedSharedBuffer::forEachSegment(const Function<void(const Span<const
 {
     auto segments = m_segments;
     for (auto& segment : segments)
-        apply(Span { segment.segment->data(), segment.segment->size() });
+        segment.segment->iterate(apply);
+}
+
+void DataSegment::iterate(const Function<void(const Span<const uint8_t>&)>& apply) const
+{
+#if USE(FOUNDATION)
+    if (auto* data = std::get_if<RetainPtr<CFDataRef>>(&m_immutableData))
+        return iterate(data->get(), apply);
+#endif
+    apply({ data(), size() });
 }
 
 void FragmentedSharedBuffer::forEachSegmentAsSharedBuffer(const Function<void(Ref<SharedBuffer>&&)>& apply) const

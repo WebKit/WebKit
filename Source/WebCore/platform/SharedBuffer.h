@@ -102,6 +102,11 @@ public:
     WEBCORE_EXPORT bool containsMappedFileData() const;
 
 private:
+    void iterate(const Function<void(const Span<const uint8_t>&)>& apply) const;
+#if USE(FOUNDATION)
+    void iterate(CFDataRef, const Function<void(const Span<const uint8_t>&)>& apply) const;
+#endif
+
     explicit DataSegment(Vector<uint8_t>&& data)
         : m_immutableData(WTFMove(data)) { }
 #if USE(CF)

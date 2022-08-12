@@ -87,8 +87,9 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
     FileSystem::makeAllDirectories(FileSystem::parentPath(scriptPath));
 
     auto iterateOverBufferAndWriteData = [&](const Function<bool(Span<const uint8_t>)>& writeData) {
-        for (auto& entry : *script.buffer())
-            writeData({ entry.segment->data(), entry.segment->size() });
+        script.buffer()->forEachSegment([&](Span<const uint8_t> span) {
+            writeData(span);
+        });
     };
 
     // Make sure we delete the file before writing as there may be code using a mmap'd version of this file.

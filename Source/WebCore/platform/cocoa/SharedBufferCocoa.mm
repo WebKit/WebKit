@@ -173,6 +173,13 @@ RetainPtr<NSData> DataSegment::createNSData() const
     return adoptNS([[WebCoreSharedBufferData alloc] initWithDataSegment:*this position:0 size:size()]);
 }
 
+void DataSegment::iterate(CFDataRef data, const Function<void(const Span<const uint8_t>&)>& apply) const
+{
+    [(__bridge NSData *)data enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *) {
+        apply({ static_cast<const uint8_t*>(bytes), byteRange.length });
+    }];
+}
+
 RetainPtr<NSData> SharedBufferDataView::createNSData() const
 {
     return adoptNS([[WebCoreSharedBufferData alloc] initWithDataSegment:m_segment.get() position:m_positionWithinSegment size:size()]);
