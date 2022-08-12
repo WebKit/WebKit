@@ -29,6 +29,10 @@
 #include <string.h>
 #include <wtf/CheckedArithmetic.h>
 
+#if OS(DARWIN)
+#include <malloc/malloc.h>
+#endif
+
 #if OS(WINDOWS)
 #include <windows.h>
 #else
