@@ -79,8 +79,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     find $WEBKIT_OUT_DIR/JavaScriptCore/PrivateHeaders/JavaScriptCore/ -name "*.h" -exec cp {} /output/include/JavaScriptCore/ \; && \
     cp -r $WEBKIT_OUT_DIR/WTF/Headers/wtf/ /output/include && \
     cp -r $WEBKIT_OUT_DIR/bmalloc/Headers/bmalloc/ /output/include && \
-    mkdir -p /output/Source/JavaScriptCore/Scripts && \
-    cp /webkit/Source/JavaScriptCore/Scripts/generate-js-builtins.py /output/Source/JavaScriptCore/Scripts && \
+    cp -r /webkit/Source/JavaScriptCore/Scripts /output/Source/JavaScriptCore && \
     cp /webkit/Source/JavaScriptCore/create_hash_table /output/Source/JavaScriptCore && \
     echo "";
 
