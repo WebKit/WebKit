@@ -24,27 +24,11 @@
 */
 
 #import "config.h"
-#import <wtf/SystemTracing.h>
+#import "SystemTracing.h"
 
-#import <cstdlib>
+#if HAVE(OS_SIGNPOST) && HAVE(KDEBUG_H)
+
 #import <dispatch/dispatch.h>
-#import <wtf/spi/darwin/OSVariantSPI.h>
-
-bool WTFSignpostsEnabled()
-{
-    static dispatch_once_t once;
-    static bool enabled;
-
-    dispatch_once(&once, ^{
-        // Signposts may contain sensitive info that we don't want to emit to logd except when
-        // profiling (such as URLs). To guard against accidental leakage, only enable them on Apple
-        // internal builds when an environment variable is set.
-        if (os_variant_allows_internal_security_policies("com.apple.WebKit"))
-            enabled = !strcmp(getenv("WEBKIT_SIGNPOSTS_ENABLED") ?: "0", "1");
-    });
-
-    return enabled;
-}
 
 os_log_t WTFSignpostLogHandle()
 {
@@ -57,3 +41,5 @@ os_log_t WTFSignpostLogHandle()
 
     return handle;
 }
+
+#endif

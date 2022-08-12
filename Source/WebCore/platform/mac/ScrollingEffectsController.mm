@@ -182,7 +182,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     auto momentumPhase = wheelEvent.momentumPhase();
     
     if (momentumPhase == PlatformWheelEventPhase::Began)
-        WTFBeginAnimationSignpostIntervalAlways("Momentum scroll", "");
+        WTFBeginAnimationSignpostAlways(nullptr, "Momentum scroll", "");
     
     if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed))
         m_momentumScrollInProgress = true;
@@ -226,7 +226,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     }
 
     if (m_momentumScrollInProgress && momentumPhase == PlatformWheelEventPhase::Ended) {
-        WTFEndSignpostIntervalAlways("Momentum scroll", "");
+        WTFEndSignpostAlways(nullptr, "Momentum scroll");
         m_momentumScrollInProgress = false;
         m_ignoreMomentumScrolls = false;
         m_lastMomentumScrollTimestamp = { };
