@@ -74,7 +74,7 @@ WPEQtViewBackend::WPEQtViewBackend(const QSizeF& size, EGLDisplay display, EGLCo
     , m_view(view)
     , m_size(size)
 {
-    wpe_loader_init("libWPEBackend-fdo-1.0.so");
+    wpe_loader_init("libWPEBackend-fdo-1.0.so.1");
 
     imageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
 
