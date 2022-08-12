@@ -91,7 +91,7 @@ jobs:
           mkdir -p $RUNNER_TEMP/bun-webkit/Source/JavaScriptCore
           cp -r $THIS_DIR/Source/JavaScriptCore/Scripts $RUNNER_TEMP/bun-webkit/Source/JavaScriptCore
           cp $THIS_DIR/Source/JavaScriptCore/create_hash_table $RUNNER_TEMP/bun-webkit/Source/JavaScriptCore
-          echo '{ "name": "@oven-sh/${{matrix.label}}", "version": "0.0.1+${{github.sha}}", "os": "darwin", "arch": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > $RUNNER_TEMP/bun-webkit/package.json
+          echo '{ "name": "${{matrix.label}}", "version": "0.0.1+${{github.sha}}", "os": "darwin", "arch": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > $RUNNER_TEMP/bun-webkit/package.json
           cd $RUNNER_TEMP
           tar -czf bun-webkit.tar.gz bun-webkit
       - uses: actions/upload-artifact@v3
@@ -135,7 +135,7 @@ jobs:
           CPU="native" cpu=native LTO_FLAG=${{matrix.lto_flag}} temp=${{runner.temp}} bash release.sh
           cd ${{runner.temp}}
           echo "#define BUN_WEBKIT_VERSION \"${{github.sha}}\"" >> bun-webkit/include/cmakeconfig.h
-          echo '{ "name": "@oven-sh/${{matrix.label}}", "version": "0.0.1+${{github.sha}}", "os": "linux", "arch": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > bun-webkit/package.json
+          echo '{ "name": "${{matrix.label}}", "version": "0.0.1+${{github.sha}}", "os": "linux", "arch": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > bun-webkit/package.json
           tar -czf bun-webkit.tar.gz bun-webkit
           rm -rf bun-webkit
       - uses: actions/upload-artifact@v3
@@ -227,9 +227,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "16.x"
-          registry-url: "https://npm.pkg.github.com"
-          # Defaults to the user or organization that owns the workflow file
-          scope: "@oven-sh"
       - run: |
           npm publish ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz --tag next --access=public
           npm publish ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz --tag next --access=public
@@ -243,8 +240,8 @@ jobs:
           rm -rf ${{runner.temp}}/bun-webkit-lto ${{runner.temp}}/bun-webkit
           mkdir -p ${{runner.temp}}/bun-webkit-lto ${{runner.temp}}/bun-webkit
 
-          echo '{ "name": "@oven-sh/bun-webkit", "version": "0.0.1+${{github.sha}}", "repository": "https://github.com/${{github.repository}}", "optionalDependencies": {"bun-webkit-linux-amd64": "0.0.1-${{github.sha}}", "@oven-sh/bun-webkit-linux-arm64": "0.0.1-${{github.sha}}", "@oven-sh/bun-webkit-macos-arm64": "0.0.1-${{github.sha}}", "@oven-sh/bun-webkit-macos-amd64": "0.0.1-${{github.sha}}"} }' > ${{runner.temp}}/bun-webkit/package.json
-          echo '{ "name": "@oven-sh/bun-webkit-lto", "version": "0.0.1+${{github.sha}}", "repository": "https://github.com/${{github.repository}}", "optionalDependencies": {"bun-webkit-lto-linux-amd64": "0.0.1-${{github.sha}}", "@oven-sh/bun-webkit-lto-linux-arm64": "0.0.1-${{github.sha}}", "@oven-sh/bun-webkit-lto-macos-arm64": "0.0.1-${{github.sha}}", "@oven-sh/bun-webkit-lto-macos-amd64": "0.0.1-${{github.sha}}"} }' > ${{runner.temp}}/bun-webkit-lto/package.json
+          echo '{ "name": "bun-webkit", "version": "0.0.1+${{github.sha}}", "repository": "https://github.com/${{github.repository}}", "optionalDependencies": {"bun-webkit-linux-amd64": "0.0.1-${{github.sha}}", "bun-webkit-linux-arm64": "0.0.1-${{github.sha}}", "bun-webkit-macos-arm64": "0.0.1-${{github.sha}}", "bun-webkit-macos-amd64": "0.0.1-${{github.sha}}"} }' > ${{runner.temp}}/bun-webkit/package.json
+          echo '{ "name": "bun-webkit-lto", "version": "0.0.1+${{github.sha}}", "repository": "https://github.com/${{github.repository}}", "optionalDependencies": {"bun-webkit-lto-linux-amd64": "0.0.1-${{github.sha}}", "bun-webkit-lto-linux-arm64": "0.0.1-${{github.sha}}", "bun-webkit-lto-macos-arm64": "0.0.1-${{github.sha}}", "bun-webkit-lto-macos-amd64": "0.0.1-${{github.sha}}"} }' > ${{runner.temp}}/bun-webkit-lto/package.json
 
           echo "$README_TEXT" > ${{runner.temp}}/bun-webkit/README.md
           echo "$README_TEXT" > ${{runner.temp}}/bun-webkit-lto/README.md
@@ -260,6 +257,10 @@ jobs:
           README_TEXT: |
             # WebKit
 
-            This is Bun's WebKit build.
-
             [Bun](https://bun.sh) is a new all-in-one JavaScript runtime.
+
+            This is Bun's WebKit build. The optional dependencies of this package have prebuilt JavaScriptCore/WebKit static libraries.
+
+            The goal of this package is to simplify contributing to Bun. Instead of cloning and building WebKit yourself, you can use this package.
+
+            This version corresponds to #[${{github.sha}}](https://github.com/${{github.repository}}/commit/${{github.sha}}).
