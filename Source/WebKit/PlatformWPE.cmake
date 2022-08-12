@@ -399,6 +399,15 @@ if (ENABLE_MEDIA_STREAM)
     )
 endif ()
 
+if (ENABLE_BREAKPAD)
+    list(APPEND WebKit_SOURCES
+        Shared/unix/BreakpadExceptionHandler.cpp
+    )
+    list(APPEND WebKit_LIBRARIES
+        Breakpad::Breakpad
+    )
+endif ()
+
 WEBKIT_BUILD_INSPECTOR_GRESOURCES(${WebInspectorUI_DERIVED_SOURCES_DIR})
 list(APPEND WPEWebInspectorResources_DERIVED_SOURCES
     ${WebInspectorUI_DERIVED_SOURCES_DIR}/InspectorGResourceBundle.c

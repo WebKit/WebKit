@@ -36,6 +36,7 @@ namespace WebKit {
 
 class AuxiliaryProcessMainCommon {
 public:
+    AuxiliaryProcessMainCommon();
     bool parseCommandLine(int argc, char** argv);
 
 protected:

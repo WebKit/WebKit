@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+AuxiliaryProcessMainCommon::AuxiliaryProcessMainCommon() { }
+
 bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
 {
     for (int i = 0; i < argc; i++) {

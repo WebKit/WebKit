@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright 2020 RDK Management
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,49 +24,44 @@
  */
 
 #include "config.h"
-#include "AuxiliaryProcessMain.h"
-
-#include <JavaScriptCore/Options.h>
-#include <WebCore/ProcessIdentifier.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
+#include "BreakpadExceptionHandler.h"
 
 #if ENABLE(BREAKPAD)
-#include "unix/BreakpadExceptionHandler.h"
-#endif
+
+#include <breakpad/client/linux/handler/exception_handler.h>
+#include <mutex>
+#include <signal.h>
+#include <wtf/FileSystem.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
-AuxiliaryProcessMainCommon::AuxiliaryProcessMainCommon()
+void installBreakpadExceptionHandler()
 {
-#if ENABLE(BREAKPAD)
-    installBreakpadExceptionHandler();
+    static std::once_flag onceFlag;
+    static MainThreadLazyNeverDestroyed<google_breakpad::ExceptionHandler> exceptionHandler;
+    static String breakpadMinidumpDir = String::fromUTF8(getenv("BREAKPAD_MINIDUMP_DIR"));
+
+#ifdef BREAKPAD_MINIDUMP_DIR
+    if (breakpadMinidumpDir.isEmpty())
+        breakpadMinidumpDir = StringImpl::createFromCString(BREAKPAD_MINIDUMP_DIR);
 #endif
+
+    if (breakpadMinidumpDir.isEmpty())
+        return;
+
+    if (FileSystem::fileType(breakpadMinidumpDir) != FileSystem::FileType::Directory) {
+        WTFLogAlways("Breakpad dir \"%s\" is not a directory, not installing handler", breakpadMinidumpDir.utf8().data());
+        return;
+    }
+
+    std::call_once(onceFlag, []() {
+        exceptionHandler.construct(google_breakpad::MinidumpDescriptor(breakpadMinidumpDir.utf8().data()), nullptr,
+            [](const google_breakpad::MinidumpDescriptor&, void*, bool succeeded) -> bool {
+                return succeeded;
+            }, nullptr, true, -1);
+    });
 }
-
-bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
-{
-    ASSERT(argc >= 3);
-    if (argc < 3)
-        return false;
-
-    m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(atoll(argv[1]));
-    m_parameters.connectionIdentifier = atoi(argv[2]);
-#if ENABLE(DEVELOPER_MODE)
-    if (argc > 3 && !strcmp(argv[3], "--configure-jsc-for-testing"))
-        JSC::Config::configureForTesting();
+}
 #endif
-    return true;
-}
 
-void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters&)
-{
-    struct sigaction signalAction;
-    memset(&signalAction, 0, sizeof(signalAction));
-    RELEASE_ASSERT(!sigemptyset(&signalAction.sa_mask));
-    signalAction.sa_handler = SIG_IGN;
-    RELEASE_ASSERT(!sigaction(SIGPIPE, &signalAction, nullptr));
-}
-
-} // namespace WebKit
