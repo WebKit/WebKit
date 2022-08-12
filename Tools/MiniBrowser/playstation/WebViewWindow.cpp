@@ -34,7 +34,7 @@
 #include <WebKit/WKPreferencesRef.h>
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKURL.h>
-#include <cairo/cairo.h>
+#include <cairo.h>
 #include <map>
 #include <toolkitten/Application.h>
 #include <toolkitten/Cursor.h>

@@ -33,7 +33,7 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <WebKit/WKImageCairo.h>
-#include <cairo/cairo.h>
+#include <cairo.h>
 #include <cstdio>
 #include <wtf/Assertions.h>
 #include <wtf/SHA1.h>
