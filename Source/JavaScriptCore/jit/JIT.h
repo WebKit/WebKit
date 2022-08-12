@@ -148,6 +148,8 @@ namespace JSC {
         BaselineUnlinkedCallLinkInfo* unlinkedCallLinkInfo;
     };
 
+    void ctiPatchCallByReturnAddress(ReturnAddressPtr, FunctionPtr<CFunctionPtrTag> newCalleeFunction);
+
     class JIT final : public JSInterfaceJIT {
         friend class JITSlowPathCall;
         friend class JITStubCall;
