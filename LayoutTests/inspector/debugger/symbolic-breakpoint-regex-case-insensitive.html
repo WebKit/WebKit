@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/breakpoint-options-utilities.js"></script>
+<script>
+function triggerSymbolicBreakpoint() {
+    TestPage.dispatchEventToFrontend("TestPage-SymbolicBreakpoint");
+}
+
+function test()
+{
+    WI.settings.experimentalEnableSymbolicBreakpoints.value = true;
+
+    function triggerBreakpoint() {
+        return Promise.all([
+            InspectorTest.awaitEvent("TestPage-SymbolicBreakpoint"),
+            InspectorTest.evaluateInPage(`triggerSymbolicBreakpoint()`),
+        ]);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SymbolicBreakpoint");
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.RegexCaseInsensitive.Hit",
+        async test() {
+            let pauseCount = 0;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                ++pauseCount;
+                WI.debuggerManager.resume();
+            });
+
+            InspectorTest.log("Adding breakpoint...");
+            let breakpoint = new WI.SymbolicBreakpoint("tRiGgEr\\w+", {caseSensitive: false, isRegex: true});
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            InspectorTest.assert(WI.debuggerManager.symbolicBreakpointsForSymbol("triggerSymbolicBreakpoint")[0] === breakpoint, "Should match breakpoint.");
+
+            InspectorTest.log("Triggering breakpoint...");
+            await triggerBreakpoint();
+            InspectorTest.expectEqual(pauseCount, 1, "Should pause.");
+
+            InspectorTest.newline();
+
+            InspectorTest.log("Removing breakpoint...");
+            breakpoint.remove();
+
+            InspectorTest.log("Triggering breakpoint...");
+            await triggerBreakpoint();
+            InspectorTest.expectEqual(pauseCount, 1, "Should not pause.");
+
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        testCaseNamePrefix: "RegexCaseInsensitive.Hit.",
+        createBreakpoint() {
+            return new WI.SymbolicBreakpoint("tRiGgEr\\w+", {caseSensitive: false, isRegex: true});
+        },
+        triggerBreakpoint,
+    });
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.RegexCaseInsensitive.Miss",
+        async test() {
+            let pauseCount = 0;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                ++pauseCount;
+                WI.debuggerManager.resume();
+            });
+
+            InspectorTest.log("Adding breakpoint...");
+            let breakpoint = new WI.SymbolicBreakpoint("tRiGgEr\\w+_DOES_NOT_EXIST", {caseSensitive: false, isRegex: true});
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("triggerSymbolicBreakpoint").length, "Should not match breakpoint.");
+
+            InspectorTest.log("Triggering breakpoint...");
+            await triggerBreakpoint();
+            InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+
+            InspectorTest.newline();
+
+            InspectorTest.log("Removing breakpoint...");
+            breakpoint.remove();
+
+            InspectorTest.log("Triggering breakpoint...");
+            await triggerBreakpoint();
+            InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.RegexCaseInsensitive.Disabled",
+        async test() {
+            let pauseCount = 0;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                ++pauseCount;
+                WI.debuggerManager.resume();
+            });
+
+            InspectorTest.log("Adding breakpoint...");
+            let breakpoint = new WI.SymbolicBreakpoint("tRiGgEr\\w+", {caseSensitive: false, isRegex: true, disabled: true});
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("triggerSymbolicBreakpoint").length, "Should not match breakpoint.");
+
+            InspectorTest.log("Triggering breakpoint...");
+            await triggerBreakpoint();
+            InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+
+            InspectorTest.newline();
+
+            InspectorTest.log("Removing breakpoint...");
+            breakpoint.remove();
+
+            InspectorTest.log("Triggering breakpoint...");
+            await triggerBreakpoint();
+            InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for SymbolicBreakpoint.</p>
+</body>
+</html>

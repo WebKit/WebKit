@@ -240,6 +240,14 @@ void Debugger::registerCodeBlock(CodeBlock* codeBlock)
         codeBlock->setSteppingMode(CodeBlock::SteppingModeEnabled);
 }
 
+void Debugger::forEachRegisteredCodeBlock(const Function<void(CodeBlock*)>& callback)
+{
+    m_vm.heap.forEachCodeBlock([&] (CodeBlock* codeBlock) {
+        if (codeBlock->globalObject()->debugger() == this)
+            callback(codeBlock);
+    });
+}
+
 void Debugger::setClient(Client* client)
 {
     ASSERT(!!m_client != !!client);
@@ -390,6 +398,10 @@ void Debugger::applyBreakpoints(CodeBlock* codeBlock)
 {
     for (auto& breakpoint : m_breakpoints)
         toggleBreakpoint(codeBlock, breakpoint, BreakpointEnabled);
+
+    dispatchFunctionToObservers([&] (Observer& observer) {
+        observer.applyBreakpoints(codeBlock);
+    });
 }
 
 class Debugger::ToggleBreakpointFunctor {
@@ -1133,6 +1145,12 @@ void Debugger::callEvent(CallFrame* callFrame)
         return;
 
     updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, NoPause);
+
+    if (callFrame) {
+        dispatchFunctionToObservers([&] (Observer& observer) {
+            observer.willEnter(callFrame);
+        });
+    }
 }
 
 void Debugger::returnEvent(CallFrame* callFrame)

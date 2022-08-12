@@ -56,6 +56,8 @@ localizedStrings["%s (%s)"] = "%s (%s)";
 localizedStrings["%s (%s, %s)"] = "%s (%s, %s)";
 /* Label for case-insensitive URL match pattern of a local override. */
 localizedStrings["%s (Case Insensitive) @ Local Override"] = "%s (Case Insensitive)";
+/* Label for case-insensitive match pattern of a symbolic breakpoint. */
+localizedStrings["%s (Case Insensitive) @ Symbolic Breakpoint"] = "%s (Case Insensitive)";
 /* Label for the IP address of a proxy server used to retrieve a network resource. */
 localizedStrings["%s (Proxy) @ Resource Remote Address"] = "%s (Proxy)";
 localizedStrings["%s (default)"] = "%s (default)";
@@ -166,6 +168,8 @@ localizedStrings["All items in \u0022%s\u0022 must be valid DOM nodes"] = "All i
 /* Label for setting that allows the user to inspect the Web Inspector user interface. */
 localizedStrings["Allow Inspecting Web Inspector @ Experimental Settings"] = "Allow Inspecting Web Inspector";
 localizedStrings["Allow Media Capture on Insecure Sites"] = "Allow Media Capture on Insecure Sites";
+/* Label for checkbox that controls whether symbolic breakpoint functionality is enabled. */
+localizedStrings["Allow Symbolic Breakpoints"] = "Allow Symbolic Breakpoints";
 /* Label for checkbox that controls whether network throttling functionality is enabled. */
 localizedStrings["Allow throttling"] = "Allow throttling";
 localizedStrings["Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint's location."] = "Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint's location.";
@@ -280,6 +284,8 @@ localizedStrings["Cached"] = "Cached";
 localizedStrings["Call Stack"] = "Call Stack";
 localizedStrings["Call Stack Unavailable"] = "Call Stack Unavailable";
 localizedStrings["Call Trees"] = "Call Trees";
+/* Label shown when JavaScript execution is paused due to a symbolic breakpoint. */
+localizedStrings["Calling Function \u201C%s\u201D @ Sources Navigation Sidebar Panel"] = "Calling Function \u201C%s\u201D";
 localizedStrings["Cancel Automatic Continue"] = "Cancel Automatic Continue";
 localizedStrings["Cancel comparison"] = "Cancel comparison";
 /* Tooltip for a timestamp marker that represents when a CSS animation/transition is canceled */
@@ -462,6 +468,7 @@ localizedStrings["Debugger Statement"] = "Debugger Statement";
 localizedStrings["Debugger Statements @ JavaScript Breakpoint"] = "Debugger Statements";
 localizedStrings["Debugger disabled during Audit"] = "Debugger disabled during Audit";
 localizedStrings["Debugger disabled during Timeline recording"] = "Debugger disabled during Timeline recording";
+localizedStrings["Debugger:"] = "Debugger:";
 localizedStrings["Debugging:"] = "Debugging:";
 localizedStrings["Debugs"] = "Debugs";
 localizedStrings["Decoded"] = "Decoded";
@@ -1533,6 +1540,9 @@ localizedStrings["Suggest property names based on usage"] = "Suggest property na
 localizedStrings["Summary"] = "Summary";
 /* Property value for `font-variant-position: super`. */
 localizedStrings["Superscript @ Font Details Sidebar Property Value"] = "Superscript";
+localizedStrings["Symbol"] = "Symbol";
+/* Context menu item for creating a new symbolic breakpoint. */
+localizedStrings["Symbolic Breakpoint\u2026 @ Sources Navigation Sidebar Panel"] = "Symbolic Breakpoint\u2026";
 /* Label of dropdown item used for forcing Web Inspector to be shown using the system's theme */
 localizedStrings["System @ Settings General Appearance"] = "System";
 localizedStrings["TCP"] = "TCP";

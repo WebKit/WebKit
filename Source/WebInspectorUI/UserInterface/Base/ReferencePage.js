@@ -93,6 +93,9 @@ WI.ReferencePage.LayersTab = new WI.ReferencePage("layers-tab");
 WI.ReferencePage.LocalOverrides = new WI.ReferencePage("local-overrides");
 WI.ReferencePage.LocalOverrides.ConfiguringLocalOverrides = new WI.ReferencePage(WI.ReferencePage.LocalOverrides, {topic: "configuring-local-overrides"});
 
+WI.ReferencePage.SymbolicBreakpoints = new WI.ReferencePage("symbolic-breakpoints");
+WI.ReferencePage.SymbolicBreakpoints.Configuration = new WI.ReferencePage(WI.ReferencePage.SymbolicBreakpoints, {topic: "configuration"});
+
 WI.ReferencePage.TimelinesTab = new WI.ReferencePage("timelines-tab");
 WI.ReferencePage.TimelinesTab.CPUTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "cpu-timeline"});
 WI.ReferencePage.TimelinesTab.EventsView = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "events-view"});

@@ -661,6 +661,90 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::removeBreakpoint(const Pro
     return { };
 }
 
+static String functionName(JSC::CodeBlock* codeBlock)
+{
+    if (!codeBlock)
+        return nullString();
+
+    if (codeBlock->codeType() != JSC::CodeType::FunctionCode)
+        return nullString();
+
+    return JSC::jsCast<JSC::FunctionExecutable*>(codeBlock->ownerExecutable())->ecmaName().string();
+}
+
+static String functionName(JSC::CallFrame* callFrame)
+{
+    if (!callFrame)
+        return nullString();
+
+    if (auto* codeBlock = callFrame->codeBlock())
+        return functionName(codeBlock);
+
+    return nullString();
+}
+
+Protocol::ErrorStringOr<void> InspectorDebuggerAgent::addSymbolicBreakpoint(const String& symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options)
+{
+    Protocol::ErrorString errorString;
+
+    auto breakpoint = debuggerBreakpointFromPayload(errorString, WTFMove(options));
+    if (!breakpoint)
+        return makeUnexpected(errorString);
+
+    {
+        SymbolicBreakpoint symbolicBreakpoint;
+        symbolicBreakpoint.symbol = symbol;
+        if (caseSensitive)
+            symbolicBreakpoint.caseSensitive = *caseSensitive;
+        if (isRegex)
+            symbolicBreakpoint.isRegex = *isRegex;
+        symbolicBreakpoint.specialBreakpoint = WTFMove(breakpoint);
+
+        if (!m_symbolicBreakpoints.appendIfNotContains(WTFMove(symbolicBreakpoint)))
+            return makeUnexpected("Symbolic breakpoint for given symbol, given caseSensitive, and given isRegex already exists"_s);
+    }
+
+    auto& symbolicBreakpoint = m_symbolicBreakpoints.last();
+
+    {
+        JSC::JSLockHolder locker(m_debugger.vm());
+
+        m_debugger.forEachRegisteredCodeBlock([&] (JSC::CodeBlock* codeBlock) {
+            if (symbolicBreakpoint.matches(functionName(codeBlock)))
+                codeBlock->addBreakpoint(1);
+        });
+    }
+
+    // FIXME: <https://webkit.org/b/243716> Web Inspector: Debugger: symbolic breakpoints should work with native functions
+    // FIXME: <https://webkit.org/b/243717> Web Inspector: Debugger: symbolic breakpoints should work when functions change their `name`
+
+    return { };
+}
+
+Protocol::ErrorStringOr<void> InspectorDebuggerAgent::removeSymbolicBreakpoint(const String& symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
+{
+    SymbolicBreakpoint symbolicBreakpoint;
+    symbolicBreakpoint.symbol = symbol;
+    if (caseSensitive)
+        symbolicBreakpoint.caseSensitive = *caseSensitive;
+    if (isRegex)
+        symbolicBreakpoint.isRegex = *isRegex;
+
+    if (!m_symbolicBreakpoints.removeAll(symbolicBreakpoint))
+        return makeUnexpected("Missing symbolic breakpoint for given symbol, given caseSensitive, and given isRegex"_s);
+
+    {
+        JSC::JSLockHolder locker(m_debugger.vm());
+
+        m_debugger.forEachRegisteredCodeBlock([&] (JSC::CodeBlock* codeBlock) {
+            if (symbolicBreakpoint.matches(functionName(codeBlock)))
+                codeBlock->removeBreakpoint(1);
+        });
+    }
+
+    return { };
+}
+
 Protocol::ErrorStringOr<void> InspectorDebuggerAgent::continueUntilNextRunLoop()
 {
     Protocol::ErrorString errorString;
@@ -1186,6 +1270,32 @@ void InspectorDebuggerAgent::failedToParseSource(const String& url, const String
     m_frontendDispatcher->scriptFailedToParse(url, data, firstLine, errorLine, errorMessage);
 }
 
+void InspectorDebuggerAgent::willEnter(JSC::CallFrame* callFrame)
+{
+    if (!breakpointsActive())
+        return;
+
+    if (m_symbolicBreakpoints.isEmpty())
+        return;
+
+    auto symbol = functionName(callFrame);
+    if (symbol.isEmpty())
+        return;
+
+    auto index = m_symbolicBreakpoints.findIf([&] (const auto& symbolicBreakpoint) {
+        return symbolicBreakpoint.knownMatchingSymbols.contains(symbol);
+    });
+    if (index == notFound)
+        return;
+
+    ASSERT(m_symbolicBreakpoints[index].specialBreakpoint);
+
+    auto pauseData = JSON::Object::create();
+    pauseData->setString("name"_s, symbol);
+
+    schedulePauseForSpecialBreakpoint(*m_symbolicBreakpoints[index].specialBreakpoint, DebuggerFrontendDispatcher::Reason::FunctionCall, WTFMove(pauseData));
+}
+
 void InspectorDebuggerAgent::didQueueMicrotask(JSC::JSGlobalObject* globalObject, const JSC::Microtask& microtask)
 {
     if (!breakpointsActive())
@@ -1319,6 +1429,21 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
     if (stopwatch.isActive()) {
         stopwatch.stop();
         m_didPauseStopwatch = true;
+    }
+}
+
+void InspectorDebuggerAgent::applyBreakpoints(JSC::CodeBlock* codeBlock)
+{
+    if (m_symbolicBreakpoints.isEmpty())
+        return;
+
+    auto symbol = functionName(codeBlock);
+    if (symbol.isEmpty())
+        return;
+
+    for (auto& symbolicBreakpoint : m_symbolicBreakpoints) {
+        if (symbolicBreakpoint.matches(symbol))
+            codeBlock->addBreakpoint(1);
     }
 }
 
@@ -1458,6 +1583,25 @@ void InspectorDebuggerAgent::clearAsyncStackTraceData()
     m_currentAsyncCallIdentifierStack.clear();
 
     didClearAsyncStackTraceData();
+}
+
+bool InspectorDebuggerAgent::SymbolicBreakpoint::matches(const String& symbol)
+{
+    if (symbol.isEmpty())
+        return false;
+
+    if (knownMatchingSymbols.contains(symbol))
+        return true;
+
+    if (!m_symbolMatchRegex) {
+        auto searchStringType = isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ExactString;
+        m_symbolMatchRegex = ContentSearchUtilities::createRegularExpressionForSearchString(this->symbol, caseSensitive, searchStringType);
+    }
+    if (m_symbolMatchRegex->match(symbol) == -1)
+        return false;
+
+    knownMatchingSymbols.add(symbol);
+    return true;
 }
 
 } // namespace Inspector

@@ -58,6 +58,8 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
             popover = new WI.EventBreakpointPopover(delegate, breakpoint);
         else if (breakpoint instanceof WI.URLBreakpoint)
             popover = new WI.URLBreakpointPopover(delegate, breakpoint);
+        else if (breakpoint instanceof WI.SymbolicBreakpoint)
+            popover = new WI.SymbolicBreakpointPopover(delegate, breakpoint);
         else
             popover = new WI.BreakpointPopover(delegate, breakpoint);
         popover.show(targetElement);

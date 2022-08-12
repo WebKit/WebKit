@@ -35,6 +35,7 @@
 #include "InspectorAgentBase.h"
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
+#include "RegularExpression.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -75,6 +76,8 @@ public:
     Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<JSON::ArrayOf<Protocol::Debugger::Location>>>> setBreakpointByUrl(int lineNumber, const String& url, const String& urlRegex, std::optional<int>&& columnNumber, RefPtr<JSON::Object>&& options) final;
     Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<Protocol::Debugger::Location>>> setBreakpoint(Ref<JSON::Object>&& location, RefPtr<JSON::Object>&& options) final;
     Protocol::ErrorStringOr<void> removeBreakpoint(const Protocol::Debugger::BreakpointId&) final;
+    Protocol::ErrorStringOr<void> addSymbolicBreakpoint(const String& symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
+    Protocol::ErrorStringOr<void> removeSymbolicBreakpoint(const String& symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
     Protocol::ErrorStringOr<void> continueUntilNextRunLoop() final;
     Protocol::ErrorStringOr<void> continueToLocation(Ref<JSON::Object>&& location) final;
     Protocol::ErrorStringOr<void> stepNext() final;
@@ -102,11 +105,13 @@ public:
     // JSC::Debugger::Observer
     void didParseSource(JSC::SourceID, const JSC::Debugger::Script&) final;
     void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) final;
+    void willEnter(JSC::CallFrame*) final;
     void didQueueMicrotask(JSC::JSGlobalObject*, const JSC::Microtask&) final;
     void willRunMicrotask(JSC::JSGlobalObject*, const JSC::Microtask&) final;
     void didRunMicrotask(JSC::JSGlobalObject*, const JSC::Microtask&) final;
     void didPause(JSC::JSGlobalObject*, JSC::DebuggerCallFrame&, JSC::JSValue exceptionOrCaughtValue) final;
     void didContinue() final;
+    void applyBreakpoints(JSC::CodeBlock*) final;
     void breakpointActionSound(JSC::BreakpointActionID) final;
     void breakpointActionProbe(JSC::JSGlobalObject*, JSC::BreakpointActionID, unsigned batchId, unsigned sampleId, JSC::JSValue sample) final;
     void didDeferBreakpointPause(JSC::BreakpointID) final;
@@ -284,6 +289,31 @@ private:
 
     RefPtr<JSC::Breakpoint> m_pauseOnAssertionsBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnMicrotasksBreakpoint;
+
+    struct SymbolicBreakpoint {
+        String symbol;
+        bool caseSensitive { true };
+        bool isRegex { false };
+
+        // This is only used for the breakpoint configuration (i.e. it's irrelevant when comparing).
+        RefPtr<JSC::Breakpoint> specialBreakpoint;
+
+        // Avoid having to (re)match the regex each time a function as called.
+        HashSet<String> knownMatchingSymbols;
+
+        inline bool operator==(const SymbolicBreakpoint& other) const
+        {
+            return symbol == other.symbol
+                && caseSensitive == other.caseSensitive
+                && isRegex == other.isRegex;
+        }
+
+        bool matches(const String&);
+
+    private:
+        std::optional<JSC::Yarr::RegularExpression> m_symbolMatchRegex;
+    };
+    Vector<SymbolicBreakpoint> m_symbolicBreakpoints;
 
     bool m_enabled { false };
     bool m_enablePauseWhenIdle { false };

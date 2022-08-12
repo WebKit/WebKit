@@ -385,6 +385,8 @@
     <g id="StyleRulePseudoUserAgent-light" class="light red"><use href="#box"/><use href="#P"/></g>
     <g id="StyleRulePseudoInspector-dark" class="dark green"><use href="#box"/><use href="#P"/></g>
     <g id="StyleRulePseudoInspector-light" class="light green"><use href="#box"/><use href="#P"/></g>
+    <g id="SymbolicBreakpoint-dark" class="dark blue"><use href="#box"/><use href="#f"/></g>
+    <g id="SymbolicBreakpoint-light" class="light blue"><use href="#box"/><use href="#f"/></g>
     <g id="TailDeletedFunction-dark" class="dark grey"><use href="#box"/><use href="#f"/></g>
     <g id="TailDeletedFunction-light" class="light grey"><use href="#box"/><use href="#f"/></g>
     <g id="TimelineRecordAnimationFrame-dark" class="dark purple"><use href="#box"/><use href="#A"/></g>

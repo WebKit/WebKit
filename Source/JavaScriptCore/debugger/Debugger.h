@@ -143,6 +143,7 @@ public:
     JS_EXPORT_PRIVATE void didRunMicrotask(JSGlobalObject*, const Microtask&);
 
     void registerCodeBlock(CodeBlock*);
+    void forEachRegisteredCodeBlock(const Function<void(CodeBlock*)>&);
 
     class Client {
     public:
@@ -179,6 +180,8 @@ public:
         virtual void didParseSource(SourceID, const Debugger::Script&) { }
         virtual void failedToParseSource(const String& /* url */, const String& /* data */, int /* firstLine */, int /* errorLine */, const String& /* errorMessage */) { }
 
+        virtual void willEnter(CallFrame*) { }
+
         virtual void didQueueMicrotask(JSGlobalObject*, const Microtask&) { }
         virtual void willRunMicrotask(JSGlobalObject*, const Microtask&) { }
         virtual void didRunMicrotask(JSGlobalObject*, const Microtask&) { }
@@ -186,6 +189,7 @@ public:
         virtual void didPause(JSGlobalObject*, DebuggerCallFrame&, JSValue /* exceptionOrCaughtValue */) { }
         virtual void didContinue() { }
 
+        virtual void applyBreakpoints(CodeBlock*) { }
         virtual void breakpointActionLog(JSGlobalObject*, const String& /* data */) { }
         virtual void breakpointActionSound(BreakpointActionID) { }
         virtual void breakpointActionProbe(JSGlobalObject*, BreakpointActionID, unsigned /* batchId */, unsigned /* sampleId */, JSValue /* result */) { }

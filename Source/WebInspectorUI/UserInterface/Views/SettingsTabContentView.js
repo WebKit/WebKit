@@ -404,6 +404,14 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             experimentalSettingsView.addSeparator();
         }
 
+        let hasSymbolicBreakpoint = InspectorBackend.hasCommand("Debugger.addSymbolicBreakpoint");
+        if (hasSymbolicBreakpoint) {
+            let debuggerGroup = experimentalSettingsView.addGroup(WI.UIString("Debugger:"));
+            debuggerGroup.addSetting(WI.settings.experimentalEnableSymbolicBreakpoints, WI.UIString("Allow Symbolic Breakpoints", "Label for checkbox that controls whether symbolic breakpoint functionality is enabled."));
+
+            experimentalSettingsView.addSeparator();
+        }
+
         let diagnosticsGroup = experimentalSettingsView.addGroup(WI.UIString("Diagnostics:", "Diagnostics: @ Experimental Settings", "Category label for experimental settings related to Web Inspector diagnostics."));
         diagnosticsGroup.addSetting(WI.settings.experimentalAllowInspectingInspector, WI.UIString("Allow Inspecting Web Inspector", "Allow Inspecting Web Inspector @ Experimental Settings", "Label for setting that allows the user to inspect the Web Inspector user interface."));
         experimentalSettingsView.addSeparator();
@@ -431,6 +439,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         if (hasNetworkEmulatedCondition)
             listenForChange(WI.settings.experimentalEnableNetworkEmulatedCondition);
+
+        if (hasSymbolicBreakpoint)
+            listenForChange(WI.settings.experimentalEnableSymbolicBreakpoints);
 
         this._createReferenceLink(experimentalSettingsView);
 

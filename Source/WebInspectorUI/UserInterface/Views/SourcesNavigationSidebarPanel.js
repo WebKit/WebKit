@@ -315,11 +315,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
 
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointAdded, this._handleDebuggerBreakpointAdded, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.SymbolicBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
         WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
         WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.EventBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
         WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.URLBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
 
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.SymbolicBreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
         WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
         WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
         WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.URLBreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
@@ -476,11 +478,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
 
         WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BreakpointAdded, this._handleDebuggerBreakpointAdded, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.SymbolicBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
         WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
         WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.EventBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
         WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.URLBreakpointAdded, this._handleDebuggerBreakpointAdded, this);
 
         WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.SymbolicBreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
         WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
         WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
         WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.URLBreakpointRemoved, this._handleDebuggerBreakpointRemoved, this);
@@ -851,7 +855,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return;
         }
 
-        console.assert();
+        if (popover instanceof WI.SymbolicBreakpointPopover) {
+            this._willDismissSymbolicBreakpointPopover(popover);
+            return;
+        }
+
+        console.assert(false, "not reached", popover);
     }
 
     // Private
@@ -899,6 +908,18 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
 
         if (!WI.domDebuggerManager.addURLBreakpoint(breakpoint))
+            InspectorFrontendHost.beep();
+    }
+
+    _willDismissSymbolicBreakpointPopover(popover)
+    {
+        let breakpoint = popover.breakpoint;
+        if (!breakpoint) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        if (!WI.debuggerManager.addSymbolicBreakpoint(breakpoint))
             InspectorFrontendHost.beep();
     }
 
@@ -1261,7 +1282,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.allExceptionsBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.uncaughtExceptionsBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.assertionFailuresBreakpoint,
-                (treeElement) => treeElement instanceof WI.JavaScriptBreakpointTreeElement || treeElement instanceof WI.ResourceTreeElement || treeElement instanceof WI.ScriptTreeElement,
+                (treeElement) => treeElement instanceof WI.ResourceTreeElement || treeElement instanceof WI.ScriptTreeElement || (treeElement instanceof WI.JavaScriptBreakpointTreeElement && !treeElement.representedObject.special),
+                (treeElement) => treeElement instanceof WI.SymbolicBreakpointTreeElement,
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.allMicrotasksBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allAnimationFramesBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allTimeoutsBreakpoint,
@@ -1363,6 +1385,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             }
         } else if (breakpoint instanceof WI.URLBreakpoint)
             constructor = WI.URLBreakpointTreeElement;
+        else if (breakpoint instanceof WI.SymbolicBreakpoint)
+            constructor = WI.SymbolicBreakpointTreeElement;
         else {
             let sourceCode = breakpoint.sourceCodeLocation && breakpoint.sourceCodeLocation.displaySourceCode;
             if (!sourceCode)
@@ -1794,6 +1818,31 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return true;
         }
 
+        case WI.DebuggerManager.PauseReason.FunctionCall: {
+            console.assert(pauseData, "Expected data with an event listener, but found none.");
+            if (!pauseData)
+                break;
+
+            let symbolicBreakpoint = WI.debuggerManager.symbolicBreakpointsForSymbol(pauseData.name)[0];
+            console.assert(symbolicBreakpoint, "Expected Symbolic breakpoint for function name.", pauseData.name);
+            if (!symbolicBreakpoint)
+                break;
+
+            this._pauseReasonTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
+
+            let symbolicBreakpointTreeElement = new WI.SymbolicBreakpointTreeElement(symbolicBreakpoint, {
+                classNames: ["paused"],
+                title: WI.UIString("Calling Function \u201C%s\u201D", "Calling Function \u201C%s\u201D @ Sources Navigation Sidebar Panel", "Label shown when JavaScript execution is paused due to a symbolic breakpoint.").format(pauseData.name),
+            });
+            this._pauseReasonTreeOutline.appendChild(symbolicBreakpointTreeElement);
+
+            let symbolicBreakpointRow = new WI.DetailsSectionRow;
+            symbolicBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
+
+            this._pauseReasonGroup.rows = [symbolicBreakpointRow];
+            return true;
+        }
+
         case WI.DebuggerManager.PauseReason.Interval: {
             this._pauseReasonTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
 
@@ -1934,7 +1983,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (treeElement instanceof WI.DOMNodeTreeElement
             || treeElement instanceof WI.DOMBreakpointTreeElement
             || treeElement instanceof WI.EventBreakpointTreeElement
-            || treeElement instanceof WI.URLBreakpointTreeElement)
+            || treeElement instanceof WI.URLBreakpointTreeElement
+            || treeElement instanceof WI.SymbolicBreakpointTreeElement)
             return;
 
         if (treeElement.representedObject === SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject)
@@ -2039,6 +2089,15 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 else
                     callback();
             }, !!breakpoint);
+        }
+
+        if (WI.SymbolicBreakpoint.supported()) {
+            contextMenu.appendItem(WI.UIString("Symbolic Breakpoint\u2026", "Symbolic Breakpoint\u2026 @ Sources Navigation Sidebar Panel", "Context menu item for creating a new symbolic breakpoint."), () => {
+                let popover = new WI.SymbolicBreakpointPopover(this);
+                popover.show(this._createBreakpointButton.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
+            });
+
+            contextMenu.appendSeparator();
         }
 
         addToggleForSpecialBreakpoint(WI.repeatedUIString.assertionFailures(), WI.debuggerManager.assertionFailuresBreakpoint, () => {
