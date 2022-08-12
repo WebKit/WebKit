@@ -1271,7 +1271,7 @@ bool RenderFlexibleBox::hasAutoMarginsInCrossAxis(const RenderBox& child) const
     return child.style().marginLeft().isAuto() || child.style().marginRight().isAuto();
 }
 
-LayoutUnit RenderFlexibleBox::availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, const RenderBox& child)
+LayoutUnit RenderFlexibleBox::availableAlignmentSpaceForChild(const LayoutUnit lineCrossAxisExtent, const RenderBox& child) const
 {
     LayoutUnit childCrossExtent = crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child);
     return lineCrossAxisExtent - childCrossExtent;
@@ -1731,10 +1731,42 @@ LayoutUnit RenderFlexibleBox::staticMainAxisPositionForPositionedChild(const Ren
     return offset;
 }
 
-LayoutUnit RenderFlexibleBox::staticCrossAxisPositionForPositionedChild(const RenderBox& child)
+LayoutUnit RenderFlexibleBox::staticCrossAxisPositionForPositionedChild(const RenderBox& child) const
 {
     auto availableSpace = availableAlignmentSpaceForChild(crossAxisContentExtent(), child);
-    return alignmentOffset(availableSpace, alignmentForChild(child), 0_lu, 0_lu, style().flexWrap() == FlexWrap::Reverse);
+    auto alignContentDistribution = style().resolvedAlignContentDistribution(contentAlignmentNormalBehavior());
+    bool isReversed = style().flexWrap() == FlexWrap::Reverse;
+
+    // This computes static positioning given a flex container's align-content property except for the case
+    // of align-content: stretch.
+    // https://drafts.csswg.org/css-flexbox-1/#align-content-property
+    const auto alignContentOffset = [&] {
+        auto alignContentPosition = style().resolvedAlignContentPosition(contentAlignmentNormalBehavior());
+
+        if (alignContentPosition == ContentPosition::FlexStart
+            || alignContentDistribution == ContentDistribution::SpaceBetween)
+            return isReversed ? availableSpace : 0_lu;
+
+        if (alignContentPosition == ContentPosition::FlexEnd)
+            return isReversed ? 0_lu : availableSpace;
+
+        if (alignContentPosition == ContentPosition::End)
+            return availableSpace;
+
+        if (alignContentPosition == ContentPosition::Center
+            || alignContentDistribution == ContentDistribution::SpaceEvenly
+            || alignContentDistribution == ContentDistribution::SpaceAround)
+            return availableSpace / 2;
+
+        return 0_lu;
+    };
+
+    if (isMultiline() && alignContentDistribution != ContentDistribution::Stretch)
+        return alignContentOffset();
+
+    // For the align-content: stretch case, this leads to unspecified but web compatible behavior.
+    // https://bugs.webkit.org/show_bug.cgi?id=243882
+    return alignmentOffset(availableSpace, alignmentForChild(child), 0_lu, 0_lu, isReversed);
 }
 
 LayoutUnit RenderFlexibleBox::staticInlinePositionForPositionedChild(const RenderBox& child)
@@ -2108,7 +2140,7 @@ void RenderFlexibleBox::layoutColumnReverse(const Vector<FlexItem>& children, La
         }
     }
 }
-    
+
 static LayoutUnit initialAlignContentOffset(LayoutUnit availableFreeSpace, ContentPosition alignContent, ContentDistribution alignContentDistribution, unsigned numberOfLines, bool isReversed)
 {
     if (alignContent == ContentPosition::FlexEnd
