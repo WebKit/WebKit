@@ -1,0 +1,7 @@
+
+PASS Manually assign a node to a named slot
+PASS Assign a node to a manual slot by slot name
+PASS Manually assigning a node to a named slot
+PASS Manually assigning a node, which was previously assgined to a manual slot, to a default slot
+PASS Manually assigning a node, which was previously assgined to a manual slot, and another node to a default slot
+

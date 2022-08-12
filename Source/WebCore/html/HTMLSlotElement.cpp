@@ -183,7 +183,7 @@ void HTMLSlotElement::assign(FixedVector<std::reference_wrapper<Node>>&& nodes)
         return WeakPtr { node };
     });
 
-    if (RefPtr shadowRoot = containingShadowRoot())
+    if (RefPtr shadowRoot = containingShadowRoot(); shadowRoot && shadowRoot->slotAssignmentMode() == SlotAssignmentMode::Manual)
         shadowRoot->slotManualAssignmentDidChange(*this, previous, m_manuallyAssignedNodes);
     else {
         for (auto& node : m_manuallyAssignedNodes) {

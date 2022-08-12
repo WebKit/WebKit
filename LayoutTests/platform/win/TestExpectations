@@ -3314,6 +3314,7 @@ webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Skip ]
 
 # Imperative slot API isn't enabled on Windows yet.
 fast/shadow-dom/manual-assignment-multiple-shadow-roots.html [ Failure ]
+fast/shadow-dom/imperative-named-slot-mixture.html [ Failure ]
 
 # The SVG -> OTF Font converter outputs 'kern' tables instead of 'GPOS' tables.
 webkit.org/b/137204 fast/text/svg-font-face-with-kerning.html [ Failure ]
