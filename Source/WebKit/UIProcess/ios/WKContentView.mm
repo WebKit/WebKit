@@ -34,6 +34,7 @@
 #import "GPUProcessProxy.h"
 #import "InputViewUpdateDeferrer.h"
 #import "Logging.h"
+#import "ModelProcessProxy.h"
 #import "PageClientImplIOS.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
@@ -142,6 +143,9 @@
 #if ENABLE(GPU_PROCESS)
     RetainPtr<_UILayerHostView> _visibilityPropagationViewForGPUProcess;
 #endif // ENABLE(GPU_PROCESS)
+#if ENABLE(MODEL_PROCESS)
+    RetainPtr<_UILayerHostView> _visibilityPropagationViewForModelProcess;
+#endif // ENABLE(MODEL_PROCESS)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
     WebCore::HistoricalVelocityData _historicalKinematicData;
@@ -213,6 +217,9 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 #if ENABLE(GPU_PROCESS)
     [self _setupVisibilityPropagationViewForGPUProcess];
 #endif
+#if ENABLE(MODEL_PROCESS)
+    [self _setupVisibilityPropagationViewForModelProcess];
+#endif
 #endif
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];
@@ -263,6 +270,27 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 }
 #endif // ENABLE(GPU_PROCESS)
 
+#if ENABLE(MODEL_PROCESS)
+- (void)_setupVisibilityPropagationViewForModelProcess
+{
+    auto* modelProcess = _page->process().modelProcess();
+    if (!modelProcess)
+        return;
+    auto processIdentifier = modelProcess->processIdentifier();
+    auto contextID = _page->contextIDForVisibilityPropagationInModelProcess();
+    if (!processIdentifier || !contextID)
+        return;
+
+    if (_visibilityPropagationViewForModelProcess)
+        return;
+
+    // Propagate the view's visibility state to the model process so that it is marked as "Foreground Running" when necessary.
+    _visibilityPropagationViewForModelProcess = adoptNS([[_UILayerHostView alloc] initWithFrame:CGRectZero pid:processIdentifier contextID:contextID]);
+    RELEASE_LOG(Process, "Created visibility propagation view %p (contextID=%u) for model process with PID=%d", _visibilityPropagationViewForModelProcess.get(), contextID, processIdentifier);
+    [self addSubview:_visibilityPropagationViewForModelProcess.get()];
+}
+#endif // ENABLE(MODEL_PROCESS)
+
 - (void)_removeVisibilityPropagationViewForWebProcess
 {
     if (!_visibilityPropagationViewForWebProcess)
@@ -281,6 +309,16 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     RELEASE_LOG(Process, "Removing visibility propagation view %p", _visibilityPropagationViewForGPUProcess.get());
     [_visibilityPropagationViewForGPUProcess removeFromSuperview];
     _visibilityPropagationViewForGPUProcess = nullptr;
+}
+
+- (void)_removeVisibilityPropagationViewForModelProcess
+{
+    if (!_visibilityPropagationViewForModelProcess)
+        return;
+
+    RELEASE_LOG(Process, "Removing visibility propagation view %p", _visibilityPropagationViewForModelProcess.get());
+    [_visibilityPropagationViewForModelProcess removeFromSuperview];
+    _visibilityPropagationViewForModelProcess = nullptr;
 }
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
@@ -708,6 +746,15 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 }
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+- (void)_modelProcessDidExit
+{
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    [self _removeVisibilityPropagationViewForModelProcess];
+#endif
+}
+#endif
+
 - (void)_processWillSwap
 {
     // FIXME: Should we do something differently?
@@ -723,6 +770,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 #if ENABLE(GPU_PROCESS)
     [self _setupVisibilityPropagationViewForGPUProcess];
 #endif
+#if ENABLE(MODEL_PROCESS)
+    [self _setupVisibilityPropagationViewForModelProcess];
+#endif
 #endif
 }
 
@@ -735,6 +785,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 - (void)_gpuProcessDidCreateContextForVisibilityPropagation
 {
     [self _setupVisibilityPropagationViewForGPUProcess];
+}
+
+- (void)_modelProcessDidCreateContextForVisibilityPropagation
+{
+    [self _setupVisibilityPropagationViewForModelProcess];
 }
 #endif
 

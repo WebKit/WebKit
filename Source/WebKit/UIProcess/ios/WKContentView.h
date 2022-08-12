@@ -102,6 +102,9 @@ enum class ViewStabilityFlag : uint8_t;
 #if ENABLE(GPU_PROCESS)
 - (void)_gpuProcessDidExit;
 #endif
+#if ENABLE(MODEL_PROCESS)
+- (void)_modelProcessDidExit;
+#endif
 - (void)_processWillSwap;
 - (void)_didRelaunchProcess;
 
@@ -110,6 +113,9 @@ enum class ViewStabilityFlag : uint8_t;
 #if ENABLE(GPU_PROCESS)
 - (void)_gpuProcessDidCreateContextForVisibilityPropagation;
 #endif // ENABLE(GPU_PROCESS)
+#if ENABLE(MODEL_PROCESS)
+- (void)_modelProcessDidCreateContextForVisibilityPropagation;
+#endif // ENABLE(MODEL_PROCESS)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView;

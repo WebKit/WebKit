@@ -77,6 +77,11 @@ GPUProcess/media/ios/RemoteMediaSessionHelperProxy.cpp
 GPUProcess/webrtc/LibWebRTCCodecsProxy.mm @no-unify
 GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp
 
+ModelProcess/EntryPoint/Cocoa/XPCService/ModelServiceEntryPoint.mm
+ModelProcess/cocoa/ModelProcessCocoa.mm
+ModelProcess/ios/ModelProcessIOS.mm
+ModelProcess/mac/ModelProcessMac.mm
+
 Platform/cf/ModuleCF.cpp
 
 Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
@@ -674,6 +679,7 @@ WebProcess/Inspector/mac/WebInspectorUIMac.mm
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
 WebProcess/Model/ARKitInlinePreviewModelPlayer.mm
+WebProcess/Model/WebModelPlayer.mm
 WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.mm
 WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm
 
@@ -738,6 +744,10 @@ GPUProcessMessageReceiver.cpp
 LibWebRTCCodecsProxyMessageReceiver.cpp
 LibWebRTCCodecsMessageReceiver.cpp
 MessageNames.cpp
+ModelConnectionToWebProcessMessageReceiver.cpp
+ModelProcessConnectionMessageReceiver.cpp
+ModelProcessProxyMessageReceiver.cpp
+ModelProcessMessageReceiver.cpp
 RemoteAudioDestinationManagerMessageReceiver.cpp
 RemoteAudioHardwareListenerMessageReceiver.cpp
 RemoteAudioSessionMessageReceiver.cpp

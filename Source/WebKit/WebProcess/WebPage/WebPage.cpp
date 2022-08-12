@@ -390,6 +390,10 @@
 #include "WebPreferencesDefaultValuesIOS.h"
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+#include "ModelProcessConnection.h"
+#endif
+
 #if USE(CG)
 // FIXME: Move the CG-specific PDF painting code out of WebPage.cpp.
 #include <WebCore/GraphicsContextCG.h>
@@ -958,6 +962,17 @@ void WebPage::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuPr
 }
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+void WebPage::modelProcessConnectionDidBecomeAvailable(ModelProcessConnection& modelProcessConnection)
+{
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    modelProcessConnection.createVisibilityPropagationContextForPage(*this);
+#else
+    UNUSED_PARAM(modelProcessConnection);
+#endif
+}
+#endif
+
 void WebPage::requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&& completionHandler)
 {
     if (!m_page->mediaPlaybackExists())
@@ -1100,6 +1115,11 @@ WebPage::~WebPage()
     if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
         gpuProcessConnection->destroyVisibilityPropagationContextForPage(*this);
 #endif // ENABLE(GPU_PROCESS)
+
+#if ENABLE(MODEL_PROCESS) && HAVE(VISIBILITY_PROPAGATION_VIEW)
+    if (auto* modelProcessConnection = WebProcess::singleton().existingModelProcessConnection())
+        modelProcessConnection->destroyVisibilityPropagationContextForPage(*this);
+#endif // ENABLE(MODEL_PROCESS)
     
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     if (m_playbackSessionManager)
@@ -4258,6 +4278,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     WebProcess::singleton().parentProcessConnection()->setIgnoreInvalidMessageForTesting();
     if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
         gpuProcessConnection->connection().setIgnoreInvalidMessageForTesting();
+    if (auto* modelProcessConnection = WebProcess::singleton().existingModelProcessConnection())
+        modelProcessConnection->connection().setIgnoreInvalidMessageForTesting();
 #endif
 
 #if ENABLE(WEB_AUTHN) && PLATFORM(IOS)
@@ -7675,6 +7697,11 @@ void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelSt
 #if ENABLE(GPU_PROCESS)
     if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
         gpuProcessConnection->configureLoggingChannel(channelName, state, level);
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    if (auto* modelProcessConnection = WebProcess::singleton().existingModelProcessConnection())
+        modelProcessConnection->configureLoggingChannel(channelName, state, level);
 #endif
 
     send(Messages::WebPageProxy::ConfigureLoggingChannel(channelName, state, level));

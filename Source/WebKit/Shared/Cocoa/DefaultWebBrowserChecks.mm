@@ -70,8 +70,13 @@ static bool isInWebKitChildProcess()
     dispatch_once(&once, ^{
         NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
         isInSubProcess = [bundleIdentifier hasPrefix:@"com.apple.WebKit.WebContent"]
-            || [bundleIdentifier hasPrefix:@"com.apple.WebKit.Networking"]
-            || [bundleIdentifier hasPrefix:@"com.apple.WebKit.GPU"];
+            || [bundleIdentifier hasPrefix:@"com.apple.WebKit.Networking"];
+#if ENABLE(GPU_PROCESS)
+        isInSubProcess |= [bundleIdentifier hasPrefix:@"com.apple.WebKit.GPU"];
+#endif
+#if ENABLE(MODEL_PROCESS)
+        isInSubProcess |= [bundleIdentifier hasPrefix:@"com.apple.WebKit.Model"];
+#endif
     });
 
     return isInSubProcess;

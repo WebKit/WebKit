@@ -122,6 +122,26 @@ function mac_process_gpu_entitlements()
     fi
 }
 
+function mac_process_model_entitlements()
+{
+    if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
+    then
+        plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
+        plistbuddy Add :com.apple.rootless.storage.WebKitWebContentSandbox bool YES
+        plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
+        then
+            plistbuddy Add :com.apple.pac.shared_region_id string WebContent
+            plistbuddy Add :com.apple.private.pac.exception bool YES
+            plistbuddy Add :com.apple.private.security.message-filter bool YES
+            plistbuddy Add :com.apple.avfoundation.allow-system-wide-context bool YES
+            plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
+        fi
+    fi
+
+    mac_process_webcontent_shared_entitlements
+}
+
 function mac_process_network_entitlements()
 {
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
@@ -289,6 +309,22 @@ function maccatalyst_process_gpu_entitlements()
     fi
 }
 
+function maccatalyst_process_model_entitlements()
+{
+    plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+    plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
+    plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
+
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
+    then
+        plistbuddy Add :com.apple.pac.shared_region_id string WebContent
+        plistbuddy Add :com.apple.private.pac.exception bool YES
+        plistbuddy Add :com.apple.private.security.message-filter bool YES
+        plistbuddy Add :com.apple.UIKit.view-service-wants-custom-idiom-and-scale bool YES
+        plistbuddy Add :com.apple.QuartzCore.webkit-limited-types bool YES
+    fi
+}
+
 function maccatalyst_process_network_entitlements()
 {
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
@@ -394,6 +430,11 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.private.attribution.explicitly-assumed-identities:0:type string wildcard
 }
 
+function ios_family_process_model_entitlements()
+{
+    ios_family_process_webcontent_shared_entitlements
+}
+
 function ios_family_process_adattributiond_entitlements()
 {
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.adattributiond
@@ -448,6 +489,7 @@ then
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.CaptivePortal ]]; then mac_process_webcontent_captiveportal_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then mac_process_network_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then mac_process_gpu_entitlements
+    elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Model ]]; then mac_process_model_entitlements
     elif [[ "${PRODUCT_NAME}" == webpushd ]]; then mac_process_webpushd_entitlements
     elif [[ "${PRODUCT_NAME}" != adattributiond ]]; then echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
@@ -460,6 +502,7 @@ then
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.CaptivePortal ]]; then maccatalyst_process_webcontent_captiveportal_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then maccatalyst_process_network_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then maccatalyst_process_gpu_entitlements
+    elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Model ]]; then maccatalyst_process_model_entitlements
     else echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
 elif [[ "${WK_PLATFORM_NAME}" == iphoneos ||
@@ -471,6 +514,7 @@ then
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.CaptivePortal ]]; then ios_family_process_webcontent_captiveportal_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then ios_family_process_network_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then ios_family_process_gpu_entitlements
+    elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Model ]]; then ios_family_process_model_entitlements
     elif [[ "${PRODUCT_NAME}" == adattributiond ]]; then
         ios_family_process_adattributiond_entitlements
     elif [[ "${PRODUCT_NAME}" == webpushd ]]; then

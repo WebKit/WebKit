@@ -86,6 +86,7 @@ using PlatformDisplayID = uint32_t;
 namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
+class ModelProcessProxy;
 class ObjCObjectGraph;
 class PageClient;
 class ProvisionalPageProxy;
@@ -103,6 +104,7 @@ class WebUserContentControllerProxy;
 class WebsiteDataStore;
 struct BackForwardListItemState;
 struct GPUProcessConnectionParameters;
+struct ModelProcessConnectionParameters;
 struct UserMessage;
 struct WebNavigationDataStore;
 struct WebPageCreationParameters;
@@ -333,6 +335,8 @@ public:
     void didSetAssertionType(ProcessAssertionType) final;
     ASCIILiteral clientName() const final { return "WebProcess"_s; }
 
+    ProcessAssertionType currentProcessAssertionType();
+
 #if PLATFORM(COCOA)
     enum SandboxExtensionType : uint32_t {
         None = 0,
@@ -385,6 +389,14 @@ public:
 #if ENABLE(GPU_PROCESS)
     void gpuProcessDidFinishLaunching();
     void gpuProcessExited(ProcessTerminationReason);
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    void modelProcessDidFinishLaunching(ProcessID);
+    void modelProcessExited(ProcessID, ProcessTerminationReason);
+
+    ModelProcessProxy& ensureModelProcess();
+    ModelProcessProxy* modelProcess() const { return m_modelProcess.get(); }
 #endif
 
     bool hasSleepDisabler() const;
@@ -490,7 +502,11 @@ private:
     void getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnectionDelayedReply&&);
 
 #if ENABLE(GPU_PROCESS)
-    void createGPUProcessConnection(IPC::Attachment&& connectionIdentifier, WebKit::GPUProcessConnectionParameters&&);
+    void createGPUProcessConnection(IPC::Attachment&& connectionIdentifier, GPUProcessConnectionParameters&&);
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    void createModelProcessConnection(IPC::Attachment&& connectionIdentifier, ModelProcessConnectionParameters&&);
 #endif
 
     bool shouldAllowNonValidInjectedCode() const;
@@ -683,6 +699,10 @@ private:
     std::unique_ptr<WebLockRegistryProxy> m_webLockRegistry;
     std::unique_ptr<WebPermissionControllerProxy> m_webPermissionController;
     bool m_isConnectedToHardwareConsole { true };
+
+#if ENABLE(MODEL_PROCESS)
+    RefPtr<ModelProcessProxy> m_modelProcess;
+#endif
 };
 
 } // namespace WebKit

@@ -70,6 +70,7 @@
 #include "LoadParameters.h"
 #include "LogInitialization.h"
 #include "Logging.h"
+#include "ModelProcessProxy.h"
 #include "NativeWebGestureEvent.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
@@ -676,6 +677,19 @@ ProcessID WebPageProxy::gpuProcessIdentifier() const
 #if ENABLE(GPU_PROCESS)
     if (auto* gpuProcess = process().processPool().gpuProcess())
         return gpuProcess->processIdentifier();
+#endif
+
+    return 0;
+}
+
+ProcessID WebPageProxy::modelProcessIdentifier() const
+{
+    if (m_isClosed)
+        return 0;
+
+#if ENABLE(MODEL_PROCESS)
+    if (auto* modelProcess = process().modelProcess())
+        return modelProcess->processIdentifier();
 #endif
 
     return 0;
@@ -11238,6 +11252,22 @@ void WebPageProxy::gpuProcessExited(ProcessTerminationReason)
 #endif
     }
 #endif
+}
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+void WebPageProxy::modelProcessDidFinishLaunching()
+{
+    pageClient().modelProcessDidFinishLaunching();
+}
+
+void WebPageProxy::modelProcessExited(ProcessTerminationReason)
+{
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    m_contextIDForVisibilityPropagationInModelProcess = 0;
+#endif
+
+    pageClient().modelProcessDidExit();
 }
 #endif
 

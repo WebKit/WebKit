@@ -77,6 +77,9 @@ public:
 #if ENABLE(BUBBLEWRAP_SANDBOX)
         DBusProxy,
 #endif
+#if ENABLE(MODEL_PROCESS)
+        Model,
+#endif
     };
 
     struct LaunchOptions {

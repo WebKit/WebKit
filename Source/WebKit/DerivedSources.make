@@ -28,6 +28,8 @@ VPATH = \
     $(WebKit2)/GPUProcess/media \
     $(WebKit2)/GPUProcess/media/ios \
     $(WebKit2)/GPUProcess/webrtc \
+    $(WebKit2)/ModelProcess \
+    $(WebKit2)/ModelProcess/mac \
     $(WebKit2)/NetworkProcess \
     $(WebKit2)/NetworkProcess/Cookies \
     $(WebKit2)/NetworkProcess/cache \
@@ -63,6 +65,7 @@ VPATH = \
     $(WebKit2)/WebProcess/MediaCache \
     $(WebKit2)/WebProcess/MediaSession \
     $(WebKit2)/WebProcess/MediaStream \
+    $(WebKit2)/WebProcess/Model \
     $(WebKit2)/WebProcess/Network \
     $(WebKit2)/WebProcess/Network/webrtc \
     $(WebKit2)/WebProcess/Notifications \
@@ -92,6 +95,7 @@ VPATH = \
     $(WebKit2)/UIProcess/Media \
     $(WebKit2)/UIProcess/Media/cocoa \
     $(WebKit2)/UIProcess/MediaStream \
+    $(WebKit2)/UIProcess/Model \
     $(WebKit2)/UIProcess/Network \
     $(WebKit2)/UIProcess/Network/CustomProtocols \
     $(WebKit2)/UIProcess/Notifications \
@@ -181,6 +185,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/Downloads/DownloadProxy \
 	UIProcess/Media/AudioSessionRoutingArbitratorProxy \
 	UIProcess/Media/RemoteMediaSessionCoordinatorProxy \
+	UIProcess/Model/ModelProcessProxy \
 	UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager \
 	UIProcess/SpeechRecognitionServer \
 	UIProcess/XR/PlatformXRSystem \
@@ -212,6 +217,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/Inspector/WebInspector \
 	WebProcess/Inspector/RemoteWebInspectorUI \
 	WebProcess/MediaSession/RemoteMediaSessionCoordinator \
+	WebProcess/Model/ModelProcessConnection \
 	WebProcess/Network/WebSocketChannel \
 	WebProcess/Network/NetworkProcessConnection \
 	WebProcess/Network/WebSocketStream \
@@ -302,6 +308,8 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/media/RemoteMediaSourceProxy \
 	GPUProcess/media/RemoteRemoteCommandListenerProxy \
 	GPUProcess/media/RemoteSourceBufferProxy \
+	ModelProcess/ModelConnectionToWebProcess \
+	ModelProcess/ModelProcess \
 #
 
 GENERATE_MESSAGE_RECEIVER_SCRIPT = $(WebKit2)/Scripts/generate-message-receiver.py
@@ -350,13 +358,15 @@ endif
 
 SANDBOX_PROFILES = \
 	com.apple.WebProcess.sb \
-	com.apple.WebKit.NetworkProcess.sb \
 	com.apple.WebKit.GPUProcess.sb \
+	com.apple.WebKit.ModelProcess.sb \
+	com.apple.WebKit.NetworkProcess.sb \
 	com.apple.WebKit.webpushd.sb
 	
 SANDBOX_PROFILES_IOS = \
 	com.apple.WebKit.adattributiond.sb \
 	com.apple.WebKit.GPU.sb \
+	com.apple.WebKit.Model.sb \
 	com.apple.WebKit.Networking.sb \
 	com.apple.WebKit.WebContent.sb
 

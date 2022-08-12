@@ -74,6 +74,10 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
     case ProcessLauncher::ProcessType::GPU:
         return "com.apple.WebKit.GPU";
 #endif
+#if ENABLE(MODEL_PROCESS)
+    case ProcessLauncher::ProcessType::Model:
+        return "com.apple.WebKit.Model";
+#endif
     }
 }
 
@@ -85,9 +89,13 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
     // right priorities.
     return false;
 #else
-    // On Mac, leak a boost onto the NetworkProcess and GPUProcess.
+    // On Mac, leak a boost onto the NetworkProcess, GPUProcess, and ModelProcess.
 #if ENABLE(GPU_PROCESS)
     if (launchOptions.processType == ProcessLauncher::ProcessType::GPU)
+        return true;
+#endif
+#if ENABLE(MODEL_PROCESS)
+    if (launchOptions.processType == ProcessLauncher::ProcessType::Model)
         return true;
 #endif
     return launchOptions.processType == ProcessLauncher::ProcessType::Network;

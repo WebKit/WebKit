@@ -172,6 +172,20 @@ void PageClientImplCocoa::gpuProcessDidExit()
 }
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+void PageClientImplCocoa::modelProcessDidFinishLaunching()
+{
+    [m_webView willChangeValueForKey:@"_modelProcessIdentifier"];
+    [m_webView didChangeValueForKey:@"_modelProcessIdentifier"];
+}
+
+void PageClientImplCocoa::modelProcessDidExit()
+{
+    [m_webView willChangeValueForKey:@"_modelProcessIdentifier"];
+    [m_webView didChangeValueForKey:@"_modelProcessIdentifier"];
+}
+#endif
+
 WebCore::DictationContext PageClientImplCocoa::addDictationAlternatives(NSTextAlternatives *alternatives)
 {
     return m_alternativeTextUIController->addAlternatives(alternatives);

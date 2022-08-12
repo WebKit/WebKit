@@ -821,3 +821,8 @@
 #if (!defined(ENABLE_LOCKDOWN_MODE_API) && (PLATFORM(MAC) || PLATFORM(IOS)))
 #define ENABLE_LOCKDOWN_MODE_API 1
 #endif
+
+#if !defined(ENABLE_MODEL_PROCESS)
+#define ENABLE_MODEL_PROCESS 1
+#endif
+

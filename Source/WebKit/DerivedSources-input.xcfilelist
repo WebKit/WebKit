@@ -79,6 +79,9 @@ $(PROJECT_DIR)/GPUProcess/webrtc/RemoteMediaRecorder.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
+$(PROJECT_DIR)/ModelProcess/ModelConnectionToWebProcess.messages.in
+$(PROJECT_DIR)/ModelProcess/ModelProcess.messages.in
+$(PROJECT_DIR)/ModelProcess/mac/com.apple.WebKit.ModelProcess.sb.in
 $(PROJECT_DIR)/NetworkProcess/Cookies/WebCookieManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkBroadcastChannelRegistry.messages.in
@@ -106,6 +109,7 @@ $(PROJECT_DIR)/PluginProcess/PluginProcess.messages.in
 $(PROJECT_DIR)/PluginProcess/WebProcessConnection.messages.in
 $(PROJECT_DIR)/PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in
 $(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb.in
+$(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.Model.sb.in
 $(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb.in
 $(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb.in
 $(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in
@@ -150,6 +154,7 @@ $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.messag
 $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Media/AudioSessionRoutingArbitratorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Media/RemoteMediaSessionCoordinatorProxy.messages.in
+$(PROJECT_DIR)/UIProcess/Model/ModelProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/NetworkProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Plugins/PluginProcessProxy.messages.in
@@ -211,6 +216,7 @@ $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorInterruptDispatcher.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUI.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUIExtensionController.messages.in
 $(PROJECT_DIR)/WebProcess/MediaSession/RemoteMediaSessionCoordinator.messages.in
+$(PROJECT_DIR)/WebProcess/Model/ModelProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebResourceLoader.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebSocketChannel.messages.in

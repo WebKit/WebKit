@@ -282,6 +282,7 @@ class GeolocationPermissionRequestManager;
 class LayerHostingContext;
 class MediaDeviceSandboxExtensions;
 class MediaKeySystemPermissionRequestManager;
+class ModelProcessConnection;
 class NotificationPermissionRequestManager;
 class PDFPlugin;
 class PageBanner;
@@ -1492,6 +1493,10 @@ public:
 #if ENABLE(GPU_PROCESS)
     void gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection&);
     RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy();
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    void modelProcessConnectionDidBecomeAvailable(ModelProcessConnection&);
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
