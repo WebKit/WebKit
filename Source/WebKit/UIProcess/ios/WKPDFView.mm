@@ -34,6 +34,7 @@
 #import "UIKitSPI.h"
 #import "WKActionSheetAssistant.h"
 #import "WKKeyboardScrollingAnimator.h"
+#import "WKScrollView.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebEvent.h"
 #import "WKWebViewIOS.h"
@@ -192,7 +193,7 @@
 
     UIColor *backgroundColor = PDFHostViewController.backgroundColor;
     self.backgroundColor = backgroundColor;
-    webView.scrollView.backgroundColor = backgroundColor;
+    [webView._wkScrollView _setBackgroundColorInternal:backgroundColor];
 
     _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] initWithScrollView:webView.scrollView]);
 

@@ -28,7 +28,7 @@
 #import "ClassMethodSwizzler.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
-#import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
@@ -171,6 +171,23 @@ TEST(WebKit, WKPDFViewFindActions)
 }
 
 #endif
+
+TEST(WKPDFView, BackgroundColor)
+{
+    auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"red" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    EXPECT_TRUE(CGColorEqualToColor([webView scrollView].backgroundColor.CGColor, redColor.get()));
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]]];
+    EXPECT_FALSE(CGColorEqualToColor([webView scrollView].backgroundColor.CGColor, redColor.get()));
+
+    [webView synchronouslyGoBack];
+    EXPECT_TRUE(CGColorEqualToColor([webView scrollView].backgroundColor.CGColor, redColor.get()));
+}
 
 #endif
 
