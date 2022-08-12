@@ -30,6 +30,8 @@
 #include "CcidService.h"
 #include <WebCore/MockWebAuthenticationConfiguration.h>
 
+OBJC_CLASS NSData;
+
 namespace WebKit {
 
 class MockCcidService final : public CcidService {

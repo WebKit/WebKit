@@ -31,6 +31,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 
+OBJC_CLASS NSArray;
 OBJC_CLASS TKSmartCardSlot;
 OBJC_CLASS TKSmartCard;
 
