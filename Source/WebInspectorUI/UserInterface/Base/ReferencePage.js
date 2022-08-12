@@ -79,6 +79,9 @@ WI.ReferencePage.DOMBreakpoints.Configuration = new WI.ReferencePage(WI.Referenc
 WI.ReferencePage.DeviceSettings = new WI.ReferencePage("device-settings");
 WI.ReferencePage.DeviceSettings.Configuration = new WI.ReferencePage(WI.ReferencePage.DeviceSettings, {topic: "configuration"});
 
+WI.ReferencePage.ElementsTab = new WI.ReferencePage("elements-tab");
+WI.ReferencePage.ElementsTab.DOMTree = new WI.ReferencePage(WI.ReferencePage.ElementsTab, {topic: "dom-tree"});
+
 WI.ReferencePage.EventBreakpoints = new WI.ReferencePage("event-breakpoints");
 WI.ReferencePage.EventBreakpoints.Configuration = new WI.ReferencePage(WI.ReferencePage.EventBreakpoints, {topic: "configuration"});
 

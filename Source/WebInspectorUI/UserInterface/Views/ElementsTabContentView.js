@@ -117,6 +117,13 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         super.detached();
     }
 
+    initialLayout()
+    {
+        super.initialLayout();
+
+        this.element.appendChild(WI.ReferencePage.ElementsTab.DOMTree.createLinkElement());
+    }
+
     closed()
     {
         super.closed();
