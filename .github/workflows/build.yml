@@ -256,7 +256,7 @@ jobs:
           npm publish --tag next --access=public
 
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           README_TEXT: |
             # WebKit
 
