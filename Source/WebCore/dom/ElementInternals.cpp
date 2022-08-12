@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ElementInternals.h"
 
+#include "ShadowRoot.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

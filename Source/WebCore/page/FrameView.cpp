@@ -112,6 +112,7 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "TextIndicator.h"
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "TiledBacking.h"
