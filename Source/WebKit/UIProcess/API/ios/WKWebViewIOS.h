@@ -59,6 +59,7 @@ enum class TapHandlingResult : uint8_t;
 - (void)_processWillSwap;
 - (void)_didRelaunchProcess;
 
+- (WKScrollView *)_wkScrollView;
 - (UIView *)_currentContentView;
 
 - (void)_didCommitLoadForMainFrame;

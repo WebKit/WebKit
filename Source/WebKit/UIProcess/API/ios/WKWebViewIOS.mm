@@ -440,6 +440,11 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     return CGSizeMake(floorToDevicePixel(contentSize.width, deviceScaleFactor), floorToDevicePixel(contentSize.height, deviceScaleFactor));
 }
 
+- (WKScrollView *)_wkScrollView
+{
+    return _scrollView.get();
+}
+
 - (UIView *)_currentContentView
 {
     return _customContentView ? [_customContentView web_contentView] : _contentView.get();
@@ -609,8 +614,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 {
     auto newScrollViewBackgroundColor = scrollViewBackgroundColor(self, AllowPageBackgroundColorOverride::Yes);
     if (_scrollViewBackgroundColor != newScrollViewBackgroundColor) {
-        _scrollViewBackgroundColor = newScrollViewBackgroundColor;
         [_scrollView _setBackgroundColorInternal:cocoaColor(newScrollViewBackgroundColor).get()];
+        _scrollViewBackgroundColor = newScrollViewBackgroundColor;
     }
 
     [self _updateScrollViewIndicatorStyle];

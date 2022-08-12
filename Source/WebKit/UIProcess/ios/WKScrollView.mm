@@ -245,6 +245,8 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
         return;
 
     super.backgroundColor = backgroundColor;
+
+    [_internalDelegate _resetCachedScrollViewBackgroundColor];
 }
 
 - (void)setIndicatorStyle:(UIScrollViewIndicatorStyle)indicatorStyle
