@@ -1704,8 +1704,9 @@ IGNORE_WARNINGS_END
         };
         LOG(Plugins, "arguments:\n%@", arguments);
     }
+    (void)arguments;
 
-    return [pluginController plugInViewWithArguments:arguments fromPluginPackage:pluginPackage];
+    return nil;
 }
 
 class PluginWidget : public WebCore::PluginViewBase {

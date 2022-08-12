@@ -103,60 +103,11 @@ static RetainPtr<NSMutableSet>& pluginViews()
     return pluginViews;
 }
 
-#if PLATFORM(IOS_FAMILY)
-static void initializeAudioSession()
-{
-    static bool wasAudioSessionInitialized;
-    if (wasAudioSessionInitialized)
-        return;
-
-    wasAudioSessionInitialized = true;
-    if (!WebCore::IOSApplication::isMobileSafari())
-        return;
-
-    WebCore::AudioSession::sharedSession().setCategory(WebCore::AudioSession::CategoryType::MediaPlayback, WebCore::RouteSharingPolicy::Default);
-}
-#endif
-
 @implementation WebPluginController
 
 - (NSView *)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)pluginPackage
 {
-#if PLATFORM(IOS_FAMILY)
-    initializeAudioSession();
-#endif
-
-    [pluginPackage load];
-
-    NSView *view = nil;
-
-#if PLATFORM(IOS_FAMILY)
-    {
-        WebView *webView = [_documentView _webView];
-        JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
-        view = [[webView _UIKitDelegateForwarder] webView:webView plugInViewWithArguments:arguments fromPlugInPackage:pluginPackage];
-    }
-#else
-    Class viewFactory = [pluginPackage viewFactory];
-    if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
-        JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
-        view = [viewFactory plugInViewWithArguments:arguments];
-    } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
-        JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
-        view = [viewFactory pluginViewWithArguments:arguments];
-    }
-#endif
-
-    if (view == nil) {
-        return nil;
-    }
-    
-    auto& views = pluginViews();
-    if (!views)
-        views = adoptNS([[NSMutableSet alloc] init]);
-    [views addObject:view];
-
-    return view;
+    return nil;
 }
 
 #if PLATFORM(IOS_FAMILY)
