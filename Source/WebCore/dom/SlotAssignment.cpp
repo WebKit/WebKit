@@ -463,6 +463,10 @@ void ManualSlotAssignment::addSlotElementByName(const AtomString&, HTMLSlotEleme
         shadowRoot.host()->setHasShadowRootContainingSlots(true);
     ++m_slotElementCount;
     ++m_slottableVersion;
+
+    if (!shadowRoot.shouldFireSlotchangeEvent())
+        return;
+
     if (assignedNodesForSlot(slot, shadowRoot))
         slot.enqueueSlotChangeEvent();
 }
@@ -472,6 +476,10 @@ void ManualSlotAssignment::removeSlotElementByName(const AtomString&, HTMLSlotEl
     RELEASE_ASSERT(m_slotElementCount);
     --m_slotElementCount;
     ++m_slottableVersion;
+
+    if (!shadowRoot.shouldFireSlotchangeEvent())
+        return;
+
     for (auto& node : slot.manuallyAssignedNodes()) {
         if (node && node->parentNode() == shadowRoot.host()) {
             slot.enqueueSlotChangeEvent();
@@ -517,6 +525,9 @@ void ManualSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement& slot, 
     RenderTreeUpdater::tearDownRenderersAfterSlotChange(*shadowRoot.host());
     shadowRoot.host()->invalidateStyleForSubtree();
 
+    if (!shadowRoot.shouldFireSlotchangeEvent())
+        return;
+
     if (affectedSlots.isEmpty()) {
         scheduleSlotChangeEventIfNeeded();
         return;
@@ -536,7 +547,8 @@ void ManualSlotAssignment::didRemoveManuallyAssignedNode(HTMLSlotElement& slot, 
     ++m_slottableVersion;
     RenderTreeUpdater::tearDownRenderersAfterSlotChange(*shadowRoot.host());
     shadowRoot.host()->invalidateStyleForSubtree();
-    slot.enqueueSlotChangeEvent();
+    if (shadowRoot.shouldFireSlotchangeEvent())
+        slot.enqueueSlotChangeEvent();
 }
 
 void ManualSlotAssignment::slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&)
@@ -556,7 +568,7 @@ void ManualSlotAssignment::hostChildElementDidChangeSlotAttribute(Element&, cons
 void ManualSlotAssignment::willRemoveAssignedNode(const Node& node, ShadowRoot& shadowRoot)
 {
     ++m_slottableVersion;
-    if (RefPtr slot = node.assignedSlot(); slot && slot->containingShadowRoot() == &shadowRoot)
+    if (RefPtr slot = node.assignedSlot(); slot && slot->containingShadowRoot() == &shadowRoot && shadowRoot.shouldFireSlotchangeEvent())
         slot->enqueueSlotChangeEvent();
 }
 
