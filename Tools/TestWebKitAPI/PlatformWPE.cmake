@@ -116,8 +116,11 @@ set(TestJSC_LIBRARIES
 set(TestJSC_FRAMEWORKS
     JavaScriptCore
     WTF
-    bmalloc
 )
+
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND TestJSC_FRAMEWORKS bmalloc)
+endif ()
 
 set(TestJSC_DEFINITIONS
     WEBKIT_SRC_DIR="${CMAKE_SOURCE_DIR}"
