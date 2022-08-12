@@ -1,5 +1,0 @@
-PASS if you see this text only once.
-(repaint rects
-  (rect 8 8 784 404)
-)
-

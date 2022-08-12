@@ -1,3 +1,0 @@
-
-PASS Send data on a WebSocket - Connection should be closed
-

@@ -1,3 +1,0 @@
-
-PASS Verify WebSocket handshake channel does not get intercepted
-

@@ -1,3 +1,0 @@
-
-PASS Send 65K binary data on a WebSocket - ArrayBuffer - Connection should be closed
-
