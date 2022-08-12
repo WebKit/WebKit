@@ -25,12 +25,12 @@
 
 #pragma once
 
+#include "DFGAbstractHeap.h"
 #include "DOMJITHeapRange.h"
 
 namespace JSC { namespace DOMJIT {
 
 struct Effect {
-
     constexpr static Effect forWrite(HeapRange writeRange)
     {
         return { HeapRange::none(), writeRange };
@@ -39,6 +39,24 @@ struct Effect {
     constexpr static Effect forRead(HeapRange readRange)
     {
         return { readRange, HeapRange::none() };
+    }
+
+    template<uint8_t N>
+    constexpr static Effect forReadDFG(const DFG::AbstractHeapKind* kinds)
+    {
+        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), kinds, N };
+    }
+
+    template<uint8_t N>
+    constexpr static Effect forWriteDFG(const DFG::AbstractHeapKind* kinds)
+    {
+        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), nullptr, 0, kinds, N };
+    }
+
+    template<uint8_t N, uint8_t M>
+    constexpr static Effect forReadWriteDFG(const DFG::AbstractHeapKind* reads, const DFG::AbstractHeapKind* writes)
+    {
+        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), reads, N, writes, M };
     }
 
     constexpr static Effect forReadWrite(HeapRange readRange, HeapRange writeRange)
@@ -69,6 +87,10 @@ struct Effect {
     HeapRange reads { HeapRange::top() };
     HeapRange writes { HeapRange::top() };
     HeapRange def { HeapRange::top() };
+    const DFG::AbstractHeapKind* readsKind { nullptr };
+    uint8_t readsLen { 0 };
+    const DFG::AbstractHeapKind* writesKind { nullptr };
+    uint8_t writesLen { 0 };
 };
 
 } }
