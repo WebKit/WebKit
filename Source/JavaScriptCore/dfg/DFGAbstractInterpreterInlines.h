@@ -3791,7 +3791,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CallDOMGetter: {
         CallDOMGetterData* callDOMGetterData = node->callDOMGetterData();
         DOMJIT::CallDOMGetterSnippet* snippet = callDOMGetterData->snippet;
-        if (!snippet || snippet->effect.writes)
+        if (!snippet || snippet->effect.isTop())
             clobberWorld();
         if (callDOMGetterData->domJIT)
             setTypeForNode(node, callDOMGetterData->domJIT->resultType());
@@ -3801,7 +3801,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
     case CallDOM: {
         const DOMJIT::Signature* signature = node->signature();
-        if (signature->effect.writes)
+        if (signature->effect.isTop())
             clobberWorld();
         setTypeForNode(node, signature->result);
         break;

@@ -4310,15 +4310,15 @@ private:
                 } else {
                     switch (signature->arguments[index - 2]) {
                     case SpecString:
-                        if (edge->shouldSpeculateNotString())
+                        if (!edge->shouldSpeculateNotString())
                             shouldConvertToCallDOM = false;
                         break;
                     case SpecInt32Only:
-                        if (edge->shouldSpeculateNotInt32())
+                        if (!edge->shouldSpeculateNotInt32())
                             shouldConvertToCallDOM = false;
                         break;
                     case SpecBoolean:
-                        if (edge->shouldSpeculateNotBoolean())
+                        if (!edge->shouldSpeculateNotBoolean())
                             shouldConvertToCallDOM = false;
                         break;
                     case SpecInt8Array: {
@@ -4416,7 +4416,7 @@ private:
             case SpecUint32Array: 
             case SpecFloat32Array: 
             case SpecFloat64Array: {
-                fixEdge<KnownCellUse>(edge);
+                fixEdge<CellUse>(edge);
                 break;
             }
             default:

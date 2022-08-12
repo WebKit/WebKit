@@ -28,7 +28,8 @@
 #include "DFGAbstractHeap.h"
 #include "DOMJITHeapRange.h"
 
-namespace JSC { namespace DOMJIT {
+namespace JSC {
+namespace DOMJIT {
 
 struct Effect {
     constexpr static Effect forWrite(HeapRange writeRange)
@@ -41,22 +42,19 @@ struct Effect {
         return { readRange, HeapRange::none() };
     }
 
-    template<uint8_t N>
-    constexpr static Effect forReadDFG(const DFG::AbstractHeapKind* kinds)
+    constexpr static Effect forReadKinds(DFG::AbstractHeapKind read1 = DFG::InvalidAbstractHeap, DFG::AbstractHeapKind read2 = DFG::InvalidAbstractHeap, DFG::AbstractHeapKind read3 = DFG::InvalidAbstractHeap, DFG::AbstractHeapKind read4 = DFG::InvalidAbstractHeap)
     {
-        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), kinds, N };
+        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), { read1, read2, read3, read4 } };
     }
 
-    template<uint8_t N>
-    constexpr static Effect forWriteDFG(const DFG::AbstractHeapKind* kinds)
+    constexpr static Effect forWriteKinds(DFG::AbstractHeapKind write1 = DFG::InvalidAbstractHeap, DFG::AbstractHeapKind write2 = DFG::InvalidAbstractHeap, DFG::AbstractHeapKind write3 = DFG::InvalidAbstractHeap, DFG::AbstractHeapKind write4 = DFG::InvalidAbstractHeap)
     {
-        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), nullptr, 0, kinds, N };
+        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), {}, { write1, write2, write3, write4 } };
     }
 
-    template<uint8_t N, uint8_t M>
-    constexpr static Effect forReadWriteDFG(const DFG::AbstractHeapKind* reads, const DFG::AbstractHeapKind* writes)
+    constexpr static Effect forReadWriteKinds(const DFG::AbstractHeapKind reads[4], const DFG::AbstractHeapKind writes[4])
     {
-        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), reads, N, writes, M };
+        return { HeapRange::none(), HeapRange::none(), HeapRange::none(), { reads[0], reads[1], reads[2], reads[3] }, { writes[0], writes[1], writes[2], writes[3] } };
     }
 
     constexpr static Effect forReadWrite(HeapRange readRange, HeapRange writeRange)
@@ -81,16 +79,24 @@ struct Effect {
 
     constexpr bool mustGenerate() const
     {
-        return !!writes;
+        return !!domWrites;
     }
 
-    HeapRange reads { HeapRange::top() };
-    HeapRange writes { HeapRange::top() };
+    constexpr bool isTop() const
+    {
+        return domWrites == HeapRange::top() ||
+            writes[0] == DFG::Heap ||
+            writes[1] == DFG::Heap ||
+            writes[2] == DFG::Heap ||
+            writes[3] == DFG::Heap;
+    }
+
+    HeapRange domReads { HeapRange::top() };
+    HeapRange domWrites { HeapRange::top() };
     HeapRange def { HeapRange::top() };
-    const DFG::AbstractHeapKind* readsKind { nullptr };
-    uint8_t readsLen { 0 };
-    const DFG::AbstractHeapKind* writesKind { nullptr };
-    uint8_t writesLen { 0 };
+    DFG::AbstractHeapKind reads[4] { DFG::InvalidAbstractHeap };
+    DFG::AbstractHeapKind writes[4] { DFG::InvalidAbstractHeap };
 };
 
-} }
+}
+}
