@@ -219,7 +219,12 @@ class GitHubEWS(GitHub):
             if re.search(r'Pull request .* doesn\'t have relevant changes', build.state_string):
                 return u'| '
             name = u'~~{}~~'.format(name)
-        # FIXME: Handle other cases like EXCEPTION, RETRY etc.
+        elif build.result == Buildbot.RETRY:
+            hover_over_text = 'Build is being retried.'
+            status = GitHubEWS.ICON_BUILD_ONGOING
+        elif build.result == Buildbot.EXCEPTION:
+            hover_over_text = 'An unexpected error occured.'
+            status = GitHubEWS.ICON_BUILD_ERROR
         else:
             status = GitHubEWS.ICON_BUILD_ERROR
 
