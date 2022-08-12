@@ -1283,11 +1283,11 @@ RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDo
         // Unfortunately, that's an implementation detail of the parser.
         // We achieve that effect here by passing in a fake body element as context for the fragment.
         auto fakeBody = HTMLBodyElement::create(outputDoc);
-        fragment->parseHTML(WTFMove(sourceString), fakeBody.ptr());
+        fragment->parseHTML(WTFMove(sourceString), fakeBody.ptr(), AllowScriptingContentAndDoNotMarkAlreadyStarted);
     } else if (sourceMIMEType == textPlainContentTypeAtom())
         fragment->parserAppendChild(Text::create(outputDoc, WTFMove(sourceString)));
     else {
-        bool successfulParse = fragment->parseXML(WTFMove(sourceString), 0);
+        bool successfulParse = fragment->parseXML(WTFMove(sourceString), nullptr, AllowScriptingContentAndDoNotMarkAlreadyStarted);
         if (!successfulParse)
             return nullptr;
     }
