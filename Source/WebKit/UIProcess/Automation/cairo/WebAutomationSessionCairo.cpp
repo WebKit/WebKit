@@ -28,7 +28,7 @@
 
 #include "ViewSnapshotStore.h"
 #include <WebCore/RefPtrCairo.h>
-#include <cairo/cairo.h>
+#include <cairo.h>
 #include <wtf/text/Base64.h>
 
 namespace WebKit {
