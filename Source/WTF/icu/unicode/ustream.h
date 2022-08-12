@@ -17,6 +17,10 @@
 #ifndef USTREAM_H
 #define USTREAM_H
 
+#include "unicode/utypes.h"
+
+#if U_SHOW_CPLUSPLUS_API
+
 #include "unicode/unistr.h"
 
 #if !UCONFIG_NO_CONVERSION  // not available without conversion
@@ -59,5 +63,7 @@ U_NAMESPACE_END
 #endif
 
 /* No operator for UChar because it can conflict with wchar_t  */
+
+#endif /* U_SHOW_CPLUSPLUS_API */
 
 #endif
