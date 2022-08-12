@@ -59,29 +59,8 @@ skip:
     # Slightly different formatting. We should update test262 side.
     - test/intl402/DateTimeFormat/prototype/formatRangeToParts/en-US.js
     - test/intl402/DateTimeFormat/prototype/formatRangeToParts/fractionalSecondDigits.js
-    - test/intl402/NumberFormat/prototype/format/signDisplay-currency-de-DE.js
-    - test/intl402/NumberFormat/prototype/format/signDisplay-currency-en-US.js
-    - test/intl402/NumberFormat/prototype/format/signDisplay-currency-ja-JP.js
-    - test/intl402/NumberFormat/prototype/format/signDisplay-currency-ko-KR.js
-    - test/intl402/NumberFormat/prototype/format/signDisplay-currency-zh-TW.js
-    - test/intl402/NumberFormat/prototype/format/signDisplay-de-DE.js
-    - test/intl402/NumberFormat/prototype/format/signDisplay-en-US.js
-    - test/intl402/NumberFormat/prototype/format/signDisplay-ja-JP.js
-    - test/intl402/NumberFormat/prototype/format/signDisplay-ko-KR.js
-    - test/intl402/NumberFormat/prototype/format/signDisplay-rounding.js
-    - test/intl402/NumberFormat/prototype/format/signDisplay-zh-TW.js
     - test/intl402/NumberFormat/prototype/format/unit-ja-JP.js
     - test/intl402/NumberFormat/prototype/format/unit-zh-TW.js
-    - test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-de-DE.js
-    - test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-en-US.js
-    - test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-ja-JP.js
-    - test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-ko-KR.js
-    - test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-zh-TW.js
-    - test/intl402/NumberFormat/prototype/formatToParts/signDisplay-de-DE.js
-    - test/intl402/NumberFormat/prototype/formatToParts/signDisplay-en-US.js
-    - test/intl402/NumberFormat/prototype/formatToParts/signDisplay-ja-JP.js
-    - test/intl402/NumberFormat/prototype/formatToParts/signDisplay-ko-KR.js
-    - test/intl402/NumberFormat/prototype/formatToParts/signDisplay-zh-TW.js
     - test/intl402/NumberFormat/prototype/formatToParts/unit-ja-JP.js
     - test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js
 
@@ -89,9 +68,6 @@ skip:
     - test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js
     - test/intl402/Locale/constructor-non-iana-canon.js
     - test/intl402/Locale/likely-subtags.js
-
-    # The spec is changed, but the test is not updated yet. https://github.com/tc39/proposal-intl-locale-info/pull/44
-    - test/intl402/Locale/prototype/weekInfo/output-object-keys.js
 
     # Pass only in ICU 68~
     - test/intl402/Locale/constructor-options-region-valid.js
@@ -106,12 +82,6 @@ skip:
     # ICU canonicalization bug
     # https://unicode-org.atlassian.net/browse/ICU-21367
     - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-yes-to-true.js
-
-    # Intl.NumberFormat v3 changes the behavior.
-    - test/intl402/PluralRules/prototype/resolvedOptions/order.js
-    - test/intl402/NumberFormat/prototype/resolvedOptions/basic.js
-    - test/intl402/NumberFormat/prototype/resolvedOptions/order.js
-    - test/intl402/NumberFormat/test-option-useGrouping.js
 
     # Failing because we are building WebKit with very old ICU headers
     - test/intl402/ListFormat/constructor/constructor/locales-invalid.js
