@@ -2240,7 +2240,7 @@ bool FrameView::scrollToFragment(const URL& url)
             
             auto parsedTextDirectives = fragmentDirectiveParser.parsedTextDirectives();
             
-            auto highlightRanges = FragmentDirectiveRangeFinder::rangesForFragments(parsedTextDirectives, document);
+            auto highlightRanges = FragmentDirectiveRangeFinder::findRangesFromTextDirectives(parsedTextDirectives, document);
             for (auto range : highlightRanges)
                 document->fragmentHighlightRegister().addAnnotationHighlightWithRange(StaticRange::create(range));
             

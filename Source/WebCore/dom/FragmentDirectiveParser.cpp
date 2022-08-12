@@ -63,6 +63,7 @@ FragmentDirectiveParser::FragmentDirectiveParser(const URL& url)
     m_isValid = true;
 }
 
+// https://wicg.github.io/scroll-to-text-fragment/#parse-a-text-directive
 void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirective)
 {
     LOG_WITH_STREAM(TextFragment, stream << " parseFragmentDirective: ");
@@ -101,7 +102,7 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
         
         if (tokens.first().endsWith('-') && tokens.first().length() > 1) {
             auto takenFirstToken = tokens.takeFirst();
-            if (auto prefix = WTF::URLParser::formURLDecode(StringView(takenFirstToken).left(takenFirstToken.length() - 2)))
+            if (auto prefix = WTF::URLParser::formURLDecode(StringView(takenFirstToken).left(takenFirstToken.length() - 1)))
                 parsedTextDirective.prefix = WTFMove(*prefix);
             else
                 LOG_WITH_STREAM(TextFragment, stream << " could not decode prefix ");

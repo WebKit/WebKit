@@ -1565,6 +1565,7 @@ public:
     bool isDisplayFlexibleOrGridBox() const { return isDisplayFlexibleOrGridBox(display()); }
     bool isDisplayFlexibleBoxIncludingDeprecatedOrGridBox() const { return isDisplayFlexibleOrGridBox() || isDisplayDeprecatedFlexibleBox(display()); }
     bool isDisplayRegionType() const;
+    bool isDisplayBlockLevel() const;
     bool isDisplayTableOrTablePart() const { return isDisplayTableOrTablePart(display()); }
     bool isOriginalDisplayListItemType() const { return isDisplayListItemType(originalDisplay()); }
 
@@ -2448,6 +2449,13 @@ inline bool RenderStyle::isDisplayRegionType() const
     return display() == DisplayType::Block || display() == DisplayType::InlineBlock
         || display() == DisplayType::TableCell || display() == DisplayType::TableCaption
         || display() == DisplayType::ListItem;
+}
+
+inline bool RenderStyle::isDisplayBlockLevel() const
+{
+    return display() == DisplayType::Block || display() == DisplayType::Table
+        || display() == DisplayType::FlowRoot || display() == DisplayType::Grid
+        || display() == DisplayType::Flex || display() == DisplayType::ListItem;
 }
 
 inline bool RenderStyle::setWritingMode(WritingMode v)
