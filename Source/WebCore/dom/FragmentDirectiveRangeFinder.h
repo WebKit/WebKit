@@ -34,7 +34,8 @@ namespace WebCore {
 
 namespace FragmentDirectiveRangeFinder {
 
-const Vector<SimpleRange> rangesForFragments(Vector<ParsedTextDirective>& parsedTextDirectives, Document&);
+const Vector<SimpleRange> findRangesFromTextDirectives(Vector<ParsedTextDirective>& parsedTextDirectives, Document&);
+std::optional<SimpleRange> findRangeFromTextDirective(ParsedTextDirective, Document&);
 
 }
 

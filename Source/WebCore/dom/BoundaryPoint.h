@@ -68,6 +68,11 @@ inline bool operator==(const BoundaryPoint& a, const BoundaryPoint& b)
     return a.container.ptr() == b.container.ptr() && a.offset == b.offset;
 }
 
+inline bool operator!=(const BoundaryPoint& a, const BoundaryPoint& b)
+{
+    return !(a == b);
+}
+
 inline BoundaryPoint makeBoundaryPointBeforeNodeContents(Node& node)
 {
     return { node, 0 };

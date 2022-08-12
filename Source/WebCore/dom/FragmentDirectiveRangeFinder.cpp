@@ -28,42 +28,381 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ComposedTreeIterator.h"
 #include "Document.h"
+#include "DocumentType.h"
 #include "Editor.h"
-#include "FindOptions.h"
+#include "HTMLAudioElement.h"
+#include "HTMLIFrameElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLMeterElement.h"
+#include "HTMLObjectElement.h"
+#include "HTMLProgressElement.h"
+#include "HTMLScriptElement.h"
+#include "HTMLStyleElement.h"
+#include "HTMLVideoElement.h"
+#include "Position.h"
 #include "SimpleRange.h"
+#include "TextBoundaries.h"
 #include "TextIterator.h"
 
 namespace WebCore {
 namespace FragmentDirectiveRangeFinder {
 
-static SimpleRange collapseIfRootsDiffer(SimpleRange&& range)
+enum class BoundaryPointIsAtEnd { No, Yes };
+enum class WordBounded : bool { No, Yes };
+
+// https://wicg.github.io/scroll-to-text-fragment/#search-invisible
+static bool isSearchInvisible(const Node& node)
 {
-    return &range.start.container->rootNode() == &range.end.container->rootNode()
-        ? WTFMove(range) : SimpleRange { range.start, range.start };
+    // FIXME: The computed value of its display property is none.
+    
+    // FIXME: If the node serializes as void.
+    
+    if (is<HTMLIFrameElement>(node)
+        || is<HTMLImageElement>(node)
+        || is<HTMLMeterElement>(node)
+        || is<HTMLObjectElement>(node)
+        || is<HTMLProgressElement>(node)
+        || is<HTMLStyleElement>(node)
+        || is<HTMLScriptElement>(node)
+        || is<HTMLVideoElement>(node)
+        || is<HTMLAudioElement>(node))
+        return true;
+    
+    // FIXME: Is a select element whose multiple content attribute is absent.
+    
+    return false;
 }
 
-static std::optional<SimpleRange> rangeOfString(const String& target, Document& document)
+// https://wicg.github.io/scroll-to-text-fragment/#non-searchable-subtree
+static bool isNonSearchableSubtree(const Node& node)
 {
-    if (target.isEmpty())
+    const Node* traversingNode = &node;
+    while (traversingNode) {
+        if (isSearchInvisible(*traversingNode))
+            return true;
+        traversingNode = traversingNode->parentOrShadowHostNode();
+    }
+    return false;
+}
+
+// https://wicg.github.io/scroll-to-text-fragment/#nearest-block-ancestor
+static const Node& nearestBlockAncestor(const Node& node)
+{
+    const Node* currentNode = &node;
+    while (currentNode) {
+        if (!currentNode->isTextNode() && currentNode->renderer() && currentNode->renderer()->style().isDisplayBlockLevel())
+            return *currentNode;
+        currentNode = currentNode->parentNode();
+    }
+    return node.document();
+}
+
+// https://wicg.github.io/scroll-to-text-fragment/#get-boundary-point-at-index
+static std::optional<BoundaryPoint> boundaryPointAtIndexInNodes(unsigned index, const Vector<Ref<Node>>& textNodeList, BoundaryPointIsAtEnd isEnd)
+{
+    unsigned currentLength = 0;
+    
+    for (auto& currentNode : textNodeList) {
+        unsigned nodeEnd = currentLength + currentNode->length();
+        if (isEnd == BoundaryPointIsAtEnd::Yes)
+            nodeEnd++;
+        if (nodeEnd > index)
+            return BoundaryPoint(currentNode.get(), index - currentLength);
+        currentLength += currentNode->length();
+    }
+    return std::nullopt;
+}
+
+// https://wicg.github.io/scroll-to-text-fragment/#is-at-a-word-boundary
+static bool indexIsAtWordBoundary(const String& string, unsigned index)
+{
+    UBreakIterator* it = wordBreakIterator(string);
+    return ubrk_isBoundary(it, index);
+}
+
+// https://wicg.github.io/scroll-to-text-fragment/#visible-text-node
+static bool isVisibleTextNode(const Node& node)
+{
+    return node.isTextNode() && node.renderer() && node.renderer()->style().visibility() == Visibility::Visible;
+}
+
+// https://wicg.github.io/scroll-to-text-fragment/#find-a-range-from-a-node-list
+static std::optional<SimpleRange> findRangeFromNodeList(const String& query, const SimpleRange& searchRange, Vector<Ref<Node>>& nodes, WordBounded wordStartBounded, WordBounded wordEndBounded)
+{
+    String searchBuffer;
+    
+    if (nodes.size() < 1)
         return std::nullopt;
-
-    auto searchRange = makeRangeSelectingNodeContents(document);
     
-    FindOptions findOptions { DoNotRevealSelection };
+    StringBuilder searchBufferBuilder;
+    for (auto& node : nodes)
+        searchBufferBuilder.append(downcast<Text>(node.get()).data());
+    // FIXME: try to use SearchBuffer in TextIterator.h instead.
+    searchBuffer = searchBufferBuilder.toString();
     
-    auto resultRange = collapseIfRootsDiffer(findPlainText(searchRange, target, findOptions));
+    unsigned searchStart = 0;
+    
+    if (nodes[0].ptr() == &searchRange.startContainer())
+        searchStart = searchRange.startOffset();
+    
+    std::optional<BoundaryPoint> start;
+    std::optional<BoundaryPoint> end;
+    
+    std::optional<unsigned> matchIndex;
+    
+    while (!matchIndex) {
+        // FIXME: find only using the base characters i.e. also fold accents and others.
+        auto potentialIndex = searchBuffer.findIgnoringASCIICase(query, searchStart);
 
-    return resultRange.collapsed() ? std::nullopt : std::make_optional(resultRange);
+        if (potentialIndex == notFound)
+            return std::nullopt;
+        matchIndex = potentialIndex;
+        
+        start = boundaryPointAtIndexInNodes(*matchIndex, nodes, BoundaryPointIsAtEnd::No);
+        end = boundaryPointAtIndexInNodes(*matchIndex + query.length(), nodes, BoundaryPointIsAtEnd::Yes);
+        
+        if (((wordStartBounded == WordBounded::Yes) && !indexIsAtWordBoundary(searchBuffer, *matchIndex))
+            || ((wordEndBounded == WordBounded::Yes) && !indexIsAtWordBoundary(searchBuffer, *matchIndex + query.length()))) {
+            searchStart = *matchIndex + 1;
+            matchIndex = std::nullopt;
+        }
+    }
+        
+    unsigned endInset = 0;
+    if (nodes.last().ptr() == &searchRange.endContainer())
+        endInset = searchRange.endContainer().length() - searchRange.endOffset();
+    
+    if (*matchIndex + query.length() > searchBuffer.length() - endInset)
+        return std::nullopt;
+    
+    ASSERT_WITH_MESSAGE(start, "Scroll To Text Fragment: Start cannot be null");
+    ASSERT_WITH_MESSAGE(end, "Scroll To Text Fragment: End cannot be null");
+    
+    ASSERT_WITH_MESSAGE(contains(searchRange, start.value()), "Scroll To Text Fragment: Start is within SearchRange.");
+    ASSERT_WITH_MESSAGE(contains(searchRange, end.value()), "Scroll To Text Fragment: End is within SearchRange.");
+    
+    if (!start || !end || !contains(searchRange, start.value()) || !contains(searchRange, end.value()))
+        return std::nullopt;
+    
+    return SimpleRange(*start, *end);
+    
+}
+// https://wicg.github.io/scroll-to-text-fragment/#find-a-string-in-range
+static std::optional<SimpleRange> rangeOfStringInRange(const String& query, SimpleRange& searchRange, WordBounded wordStartBounded, WordBounded wordEndBounded)
+{
+    while (!searchRange.collapsed()) {
+        RefPtr<Node> currentNode = &searchRange.startContainer();
+        
+        if (isNonSearchableSubtree(*currentNode)) {
+            if (auto newStart = NodeTraversal::nextSkippingChildren(*currentNode))
+                searchRange.start = { *newStart, 0 };
+            else
+                return std::nullopt;
+            continue;
+        }
+        
+        if (!isVisibleTextNode(*currentNode)) {
+            do {
+                if (auto newStart = NodeTraversal::next(*currentNode)) {
+                    searchRange.start = { *newStart, 0 };
+                    currentNode = newStart;
+                } else
+                    return std::nullopt;
+            } while (is<DocumentType>(currentNode));
+            continue;
+        }
+        
+        auto& blockAncestor = nearestBlockAncestor(*currentNode);
+        Vector<Ref<Node>> textNodeList;
+        // FIXME: this is O^2 since treeOrder will also do traversal, optimize.
+        while (currentNode && currentNode->isDescendantOf(blockAncestor) && is_lteq(treeOrder(BoundaryPoint(*currentNode, 0), searchRange.end))) {
+            if (currentNode->renderer() && is<Element>(currentNode) && currentNode->renderer()->style().isDisplayBlockLevel())
+                break;
+
+            if (isSearchInvisible(*currentNode)) {
+                currentNode = NodeTraversal::nextSkippingChildren(*currentNode);
+                continue;
+            }
+            if (currentNode->isTextNode() && isVisibleTextNode(*currentNode))
+                textNodeList.append(*currentNode);
+            currentNode = NodeTraversal::next(*currentNode);
+        }
+
+        if (auto range = findRangeFromNodeList(query, searchRange, textNodeList, wordStartBounded, wordEndBounded))
+            return range;
+
+        if (!currentNode)
+            break;
+        
+        ASSERT_WITH_MESSAGE(is_gt(treeOrder(*currentNode, searchRange.start.container)), "Scroll To Text Fragment: Current node must follow start.");
+        
+        if (!is_gt(treeOrder(*currentNode, searchRange.start.container)))
+            return std::nullopt;
+        
+        searchRange.start = { *currentNode, 0 };
+    }
+    return std::nullopt;
 }
 
-const Vector<SimpleRange> rangesForFragments(Vector<ParsedTextDirective>& parsedTextDirectives, Document& document)
+// https://wicg.github.io/scroll-to-text-fragment/#next-non-whitespace-position
+static std::optional<SimpleRange> advanceRangeStartToNextNonWhitespace(SimpleRange& range)
+{
+    auto newRange = range;
+    while (!newRange.collapsed()) {
+        auto& node = newRange.startContainer();
+        auto offset = newRange.startOffset();
+        
+        // This check is not in the spec.
+        // I believe there is an error in the spec which I have filed an issue for
+        // https://github.com/WICG/scroll-to-text-fragment/issues/189
+        if (offset == node.length()) {
+            if (auto newStart = NodeTraversal::next(node)) {
+                newRange.start = { *newStart, 0 };
+                continue;
+            }
+            return newRange;
+        }
+        
+        if (isNonSearchableSubtree(node)) {
+            if (auto newStart = NodeTraversal::next(node))
+                newRange.start = { *newStart, 0 };
+            else
+                return newRange;
+            continue;
+        }
+
+        if (!isVisibleTextNode(node)) {
+            if (auto newStart = NodeTraversal::next(node))
+                newRange.start = { *newStart, 0 };
+            else
+                return newRange;
+            continue;
+        }
+
+        auto string = node.textContent();
+
+        if (string.substringSharingImpl(offset, 6) == "&nbsp;"_s)
+            offset += 6;
+
+        if (string.substringSharingImpl(offset, 5) == "&nbsp"_s)
+            offset += 5;
+        
+        if (!isSpaceOrNewline(string[offset]))
+            return newRange;
+        offset++;
+        
+        if (offset >= node.length()) {
+            if (auto newStart = NodeTraversal::next(node))
+                newRange.start = { *newStart, 0 };
+            else
+                return newRange;
+        } else
+            newRange.start = { node, offset };
+    }
+    return newRange;
+}
+
+// https://wicg.github.io/scroll-to-text-fragment/#find-a-range-from-a-text-directive
+std::optional<SimpleRange> findRangeFromTextDirective(const ParsedTextDirective parsedTextDirective, Document& document)
+{
+    auto searchRange = makeRangeSelectingNodeContents(document);
+    std::optional<SimpleRange> matchRange;
+    WordBounded mustEndAtWordBoundary = (!parsedTextDirective.textEnd.isNull() || parsedTextDirective.suffix.isNull()) ? WordBounded::Yes : WordBounded::No;
+    std::optional<SimpleRange> potentialMatch;
+    
+    while (!searchRange.collapsed()) {
+        if (!parsedTextDirective.prefix.isNull()) {
+            auto prefixMatch = rangeOfStringInRange(parsedTextDirective.prefix, searchRange, WordBounded::Yes, WordBounded::No);
+            if (!prefixMatch)
+                return std::nullopt;
+            
+            // .next() does a bit  more than just find the next boundary point, so we differ from the spec here slightly.
+            auto newStart = makeBoundaryPoint(makeContainerOffsetPosition(prefixMatch->start).next());
+            if (!newStart)
+                return std::nullopt;
+            
+            searchRange.start = newStart.value();
+            matchRange = makeSimpleRange(prefixMatch->end, searchRange.end);
+            ASSERT(matchRange);
+            matchRange = advanceRangeStartToNextNonWhitespace(matchRange.value());
+            if (!matchRange)
+                return std::nullopt;
+            
+            if (matchRange->collapsed())
+                return std::nullopt;
+            
+            ASSERT(matchRange->start.container->isTextNode(), "MatchRange start is not a Text Node");
+            
+            potentialMatch = rangeOfStringInRange(parsedTextDirective.textStart, matchRange.value(), WordBounded::No, mustEndAtWordBoundary);
+
+            if (!potentialMatch)
+                return std::nullopt;
+            if (potentialMatch->start != matchRange->start)
+                continue;
+        } else {
+            potentialMatch = rangeOfStringInRange(parsedTextDirective.textStart, searchRange, WordBounded::Yes, mustEndAtWordBoundary);
+            if (!potentialMatch)
+                return std::nullopt;
+            
+            // .next() does a bit  more than just find the next boundary point, so we differ from the spec here slightly.
+            auto newStart = makeBoundaryPoint(makeContainerOffsetPosition(potentialMatch->start).next());
+            if (!newStart)
+                return std::nullopt;
+            searchRange.start = newStart.value();
+        }
+        
+        auto rangeEndSearchRange = makeSimpleRange(potentialMatch->end, searchRange.end);
+        while (!rangeEndSearchRange.collapsed()) {
+            if (!parsedTextDirective.textEnd.isNull()) {
+                mustEndAtWordBoundary = !parsedTextDirective.suffix ? WordBounded::Yes : WordBounded::No;
+                auto textEndMatch = rangeOfStringInRange(parsedTextDirective.textEnd, rangeEndSearchRange, WordBounded::Yes, mustEndAtWordBoundary);
+                if (!textEndMatch)
+                    return std::nullopt;
+                
+                potentialMatch->end = textEndMatch->end;
+            }
+            // FIXME: Assert: potentialMatch represents a range exactly containing an instance of matching text.
+            ASSERT_WITH_MESSAGE(potentialMatch && !potentialMatch->collapsed(), "Scroll To Text Fragment: potentialMatch cannot be null or collapsed");
+            if (!potentialMatch || potentialMatch->collapsed())
+                return std::nullopt;
+            
+            if (!parsedTextDirective.suffix)
+                return potentialMatch;
+            
+            std::optional<SimpleRange> suffixRange = makeSimpleRange(potentialMatch->end, searchRange.end);
+            suffixRange = advanceRangeStartToNextNonWhitespace(suffixRange.value());
+            if (!suffixRange)
+                return std::nullopt;
+            auto suffixMatch = rangeOfStringInRange(parsedTextDirective.suffix, suffixRange.value(), WordBounded::No, WordBounded::Yes);
+            
+            if (!suffixMatch)
+                return std::nullopt;
+            
+            if (suffixMatch->start == suffixRange->start)
+                return potentialMatch;
+            
+            if (parsedTextDirective.textEnd.isNull())
+                break;
+            
+            rangeEndSearchRange.start = potentialMatch->end;
+        }
+        
+        if (rangeEndSearchRange.collapsed()) {
+            ASSERT(!parsedTextDirective.textEnd.isNull());
+            return std::nullopt;
+        }
+    }
+    return std::nullopt;
+}
+
+const Vector<SimpleRange> findRangesFromTextDirectives(Vector<ParsedTextDirective>& parsedTextDirectives, Document& document)
 {
     Vector<SimpleRange> ranges;
     
     for (auto directive : parsedTextDirectives) {
-        // FIXME: do full algorithm to find the exact text phrase, rather than just searching for the first place that the text is
-        auto range = rangeOfString(directive.textStart, document);
+        auto range = findRangeFromTextDirective(directive, document);
         if (range && !range->collapsed())
             ranges.append(range.value());
     }
@@ -71,6 +410,6 @@ const Vector<SimpleRange> rangesForFragments(Vector<ParsedTextDirective>& parsed
     return ranges;
 }
 
-}
+} // FragmentDirectiveRangeFinder
 
 } // WebCore
