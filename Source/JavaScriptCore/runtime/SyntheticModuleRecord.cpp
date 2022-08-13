@@ -96,6 +96,9 @@ SyntheticModuleRecord* SyntheticModuleRecord::tryCreateWithExportNamesAndValues(
     ASSERT(exportNames.size() == exportValues.size());
 
     auto* moduleRecord = create(globalObject, vm, globalObject->syntheticModuleRecordStructure(), moduleKey);
+    for (auto& exportName : exportNames) {
+        moduleRecord->addExportEntry(ExportEntry::createLocal(exportName, exportName));
+    }
 
     SymbolTable* exportSymbolTable = SymbolTable::create(vm);
     {
