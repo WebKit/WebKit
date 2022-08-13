@@ -84,20 +84,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FB39D0D01200F0E300088E69"
-               BuildableName = "libwebrtc.dylib"
-               BlueprintName = "libwebrtc"
-               ReferencedContainer = "container:Source/ThirdParty/libwebrtc/libwebrtc.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "41816F7913859C550057AAA4"
                BuildableName = "All"
                BlueprintName = "All"
