@@ -11,7 +11,5 @@ PASS instantiateStreaming receive promise with response created from ArrayBuffer
 PASS instantiateStreaming using ReadableStream with Uint8Array chunks
 FAIL instantiateStreaming using ReadableStream with ArrayBuffer chunk assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS instantiateStreaming using blob
-FAIL instantiateStreaming using FormData promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function CompileError() {
-    [native code]
-}" ("CompileError")
+PASS instantiateStreaming using FormData
 

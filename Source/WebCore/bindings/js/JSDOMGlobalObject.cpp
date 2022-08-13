@@ -425,7 +425,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
     }
 
     // FIXME: for efficiency, we should load blobs directly instead of going through the readableStream path.
-    if (inputResponse->isBlobBody()) {
+    if (inputResponse->isBlobBody() || inputResponse->isBlobFormData()) {
         auto streamOrException = inputResponse->readableStream(*globalObject);
         if (UNLIKELY(streamOrException.hasException())) {
             deferred->reject(streamOrException.releaseException());
@@ -475,15 +475,8 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
     }
 
     auto body = inputResponse->consumeBody();
-    WTF::switchOn(body, [&](Ref<FormData>& formData) {
-        if (auto buffer = formData->asSharedBuffer()) {
-            compiler->addBytes(buffer->data(), buffer->size());
-            compiler->finalize(globalObject);
-            return;
-        }
-        // FIXME: Support FormData loading.
-        // https://bugs.webkit.org/show_bug.cgi?id=221248
-        compiler->fail(globalObject, createDOMException(*globalObject, Exception { NotSupportedError, "Not implemented"_s  }));
+    WTF::switchOn(body, [&](Ref<FormData>&) {
+        RELEASE_ASSERT_NOT_REACHED();
     }, [&](Ref<SharedBuffer>& buffer) {
         compiler->addBytes(buffer->data(), buffer->size());
         compiler->finalize(globalObject);
