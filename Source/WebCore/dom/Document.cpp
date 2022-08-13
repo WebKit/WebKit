@@ -7268,7 +7268,8 @@ bool Document::hasRecentUserInteractionForNavigationFromJS() const
     if (UserGestureIndicator::processingUserGesture(this))
         return true;
 
-    return (MonotonicTime::now() - lastHandledUserGestureTimestamp()) <= UserGestureToken::maximumIntervalForUserGestureForwarding;
+    static constexpr Seconds maximumItervalForUserGestureForwarding { 10_s };
+    return (MonotonicTime::now() - lastHandledUserGestureTimestamp()) <= maximumItervalForUserGestureForwarding;
 }
 
 void Document::startTrackingStyleRecalcs()
