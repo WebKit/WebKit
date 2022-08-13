@@ -32,6 +32,8 @@ namespace WebCore {
 class HTMLSlotElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLSlotElement);
 public:
+    using ElementOrText = std::variant<RefPtr<Element>, RefPtr<Text>>;
+
     static Ref<HTMLSlotElement> create(const QualifiedName&, Document&);
 
     const Vector<WeakPtr<Node>>* assignedNodes() const;
@@ -41,7 +43,7 @@ public:
     Vector<Ref<Node>> assignedNodes(const AssignedNodesOptions&) const;
     Vector<Ref<Element>> assignedElements(const AssignedNodesOptions&) const;
 
-    void assign(FixedVector<std::reference_wrapper<Node>>&&);
+    void assign(FixedVector<ElementOrText>&&);
     const Vector<WeakPtr<Node>>& manuallyAssignedNodes() const { return m_manuallyAssignedNodes; }
     void removeManuallyAssignedNode(Node&);
 

@@ -30,7 +30,7 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     sequence<Node> assignedNodes(optional AssignedNodesOptions options);
     sequence<Element> assignedElements(optional AssignedNodesOptions options);
-    [EnabledBySetting=ImperativeSlotAPIEnabled] undefined assign(Node... nodes); // FIXME: This should be (Element or Text) instead of Node.
+    [EnabledBySetting=ImperativeSlotAPIEnabled] undefined assign((Element or Text)... nodes);
 };
 
 dictionary AssignedNodesOptions {

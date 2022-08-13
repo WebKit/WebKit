@@ -36,6 +36,7 @@
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -165,7 +166,7 @@ Vector<Ref<Element>> HTMLSlotElement::assignedElements(const AssignedNodesOption
     });
 }
 
-void HTMLSlotElement::assign(FixedVector<std::reference_wrapper<Node>>&& nodes)
+void HTMLSlotElement::assign(FixedVector<ElementOrText>&& nodes)
 {
     RefPtr shadowRoot = containingShadowRoot();
     RefPtr host = shadowRoot ? shadowRoot->host() : nullptr;
@@ -175,12 +176,19 @@ void HTMLSlotElement::assign(FixedVector<std::reference_wrapper<Node>>&& nodes)
     }
 
     auto previous = std::exchange(m_manuallyAssignedNodes, { });
-    HashSet<Ref<Node>> seenNodes;
-    m_manuallyAssignedNodes = WTF::compactMap(nodes, [&](Node& node) -> std::optional<WeakPtr<Node>> {
-        if (seenNodes.contains(node))
-            return std::nullopt;
-        seenNodes.add(node);
-        return WeakPtr { node };
+    HashSet<RefPtr<Node>> seenNodes;
+    m_manuallyAssignedNodes = WTF::compactMap(nodes, [&seenNodes](ElementOrText& node) -> std::optional<WeakPtr<Node>> {
+        auto mapper = [&seenNodes]<typename T>(RefPtr<T>& node) -> std::optional<WeakPtr<Node>> {
+            if (seenNodes.contains(node))
+                return std::nullopt;
+            seenNodes.add(node);
+            return WeakPtr { node };
+        };
+
+        return WTF::switchOn(node,
+            [&mapper](RefPtr<Element>& node) { return mapper(node); },
+            [&mapper](RefPtr<Text>& node) { return mapper(node); }
+        );
     });
 
     if (RefPtr shadowRoot = containingShadowRoot(); shadowRoot && shadowRoot->slotAssignmentMode() == SlotAssignmentMode::Manual)
