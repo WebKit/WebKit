@@ -1,0 +1,7 @@
+
+PASS hit testing of rectangle with 'translate' and 'rotate'
+PASS hit testing of rectangle with 'transform'
+PASS hit testing of rectangle with 'translate' and 'rotate' and 'scale' and 'transform'
+PASS hit testing of square with 'rotate'
+PASS hit testing of square with 'scale'
+
