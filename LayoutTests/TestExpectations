@@ -4112,11 +4112,6 @@ webkit.org/b/207262 imported/w3c/web-platform-tests/web-animations/timing-model/
 webkit.org/b/210963 imported/w3c/web-platform-tests/css/css-animations/animation-important-002.html [ ImageOnlyFailure ]
 webkit.org/b/235110 imported/w3c/web-platform-tests/css/css-animations/flip-running-animation-via-variable.html [ ImageOnlyFailure ]
 
-# These are references
-imported/w3c/web-platform-tests/css/css-transforms/transform-compound-notref-1.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-transforms/transform-compound-notref-2.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-001.ref.html [ Skip ]
-
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-transformed-tbody-contains-fixed-position.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-transformed-tfoot-contains-fixed-position.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-transformed-thead-contains-fixed-position.html [ ImageOnlyFailure ]
