@@ -386,11 +386,16 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
     ASSERT(initial);
     RELEASE_ASSERT(!maximum || maximum >= initial); // This should be guaranteed by our caller.
 
-    const size_t initialBytes = initial.bytes();
-    const size_t maximumBytes = maximum ? maximum.bytes() : 0;
+    const uint64_t initialBytes = initial.bytes();
+    const uint64_t maximumBytes = maximum ? maximum.bytes() : 0;
 
     if (initialBytes > MAX_ARRAY_BUFFER_SIZE)
         return nullptr; // Client will throw OOMError.
+
+#if USE(JSVALUE32_64)
+    if (maximumBytes > MAX_ARRAY_BUFFER_SIZE)
+        return nullptr; // Client will throw OOMError.
+#endif
 
     if (maximum && !maximumBytes) {
         // User specified a zero maximum, initial size must also be zero.
