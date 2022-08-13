@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div role="spinbutton"
+     tabindex="0"
+     aria-valuenow="2022"
+     aria-valuemin="2000"
+     aria-valuemax="2040"
+     aria-label="Year"
+     id="spinbutton">
+    2022
+</div>
+
+<script>
+    var testOutput = "This test ensures that increment and decrement simulate up and down keypresses for ARIA spinbuttons.\n\n";
+
+    function handleKeyDown(event) {
+        testOutput += `Key event received: {keyIdentifier: ${event.keyIdentifier}, key: ${event.key}, keyCode: ${event.keyCode}}\n`;
+
+        const spinbutton = document.getElementById("spinbutton");
+        if (event.keyIdentifier === "Up")
+            spinbutton.ariaValueNow = Number(spinbutton.ariaValueNow) + 1;
+        else if (event.keyIdentifier === "Down")
+            spinbutton.ariaValueNow = Number(spinbutton.ariaValueNow) - 1;
+        else
+            debug(`FAIL: Unexpected keypress ${event.keyIdentifier}`);
+
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        document.getElementById("spinbutton").addEventListener("keydown", handleKeyDown);
+        var axSpinbutton = accessibilityController.accessibleElementById("spinbutton");
+
+        let lastKnownValue = axSpinbutton.stringValue;
+        testOutput += `#spinbutton initial value: ${lastKnownValue}\n\n`;
+        axSpinbutton.increment();
+
+        setTimeout(async () => {
+            await waitFor(() => axSpinbutton.stringValue !== lastKnownValue);
+            lastKnownValue = axSpinbutton.stringValue;
+
+            testOutput += `#spinbutton value after increment: ${lastKnownValue}\n\n`;
+            axSpinbutton.decrement();
+            await waitFor(() => axSpinbutton.stringValue !== lastKnownValue);
+            testOutput += `#spinbutton value after decrement: ${axSpinbutton.stringValue}\n`;
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+</html>

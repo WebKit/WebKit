@@ -483,6 +483,9 @@ accessibility/aria-multiline.html [ Skip ]
 accessibility/list-with-dynamically-changing-content.html [ Skip ]
 accessibility/ignored-aria-role-description.html [ Skip ]
 
+# Failing since added in https://bugs.webkit.org/show_bug.cgi?id=243768.
+accessibility/spinbutton-increment-decrement.html [ Skip ]
+
 # Need to implement AccessibilityUIElement::clearSelectedChildren()
 accessibility/aria-listbox-clear-selection-crash.html [ Skip ]
 accessibility/listbox-clear-selection.html [ Skip ]

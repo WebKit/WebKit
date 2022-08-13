@@ -878,6 +878,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         traits |= [self _axStaticTextTrait];
         break;
     case AccessibilityRole::Slider:
+    case AccessibilityRole::SpinButton:
         traits |= [self _axAdjustableTrait];
         break;
     case AccessibilityRole::MenuButton:
