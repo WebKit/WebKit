@@ -27,14 +27,6 @@
 
 #if ENABLE(JIT)
 
-// We've run into some problems where changing the size of the class JIT leads to
-// performance fluctuations. Try forcing alignment in an attempt to stabilize this.
-#if COMPILER(GCC_COMPATIBLE)
-#define JIT_CLASS_ALIGNMENT alignas(32)
-#else
-#define JIT_CLASS_ALIGNMENT
-#endif
-
 #define ASSERT_JIT_OFFSET(actual, expected) ASSERT_WITH_MESSAGE(actual == expected, "JIT Offset \"%s\" should be %d, not %d.\n", #expected, static_cast<int>(expected), static_cast<int>(actual));
 
 #include "BaselineJITCode.h"
@@ -158,7 +150,7 @@ namespace JSC {
 
     void ctiPatchCallByReturnAddress(ReturnAddressPtr, FunctionPtr<CFunctionPtrTag> newCalleeFunction);
 
-    class JIT_CLASS_ALIGNMENT JIT : public JSInterfaceJIT {
+    class JIT final : public JSInterfaceJIT {
         friend class JITSlowPathCall;
         friend class JITStubCall;
         friend class JITThunks;
