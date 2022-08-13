@@ -34,6 +34,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
+#include "ArgList.h"
 
 namespace JSC {
 
@@ -46,7 +47,7 @@ class UnlinkedFunctionCodeBlock;
         Module,
         WebAssembly,
         JSON,
-        ImportMap,
+        Synthetic
     };
 
     using BytecodeCacheGenerator = Function<RefPtr<CachedBytecode>()>;
@@ -131,6 +132,42 @@ class UnlinkedFunctionCodeBlock;
 
     private:
         Ref<StringImpl> m_source;
+    };
+
+    class SyntheticSourceProvider final : public SourceProvider {
+    public:
+        using SyntheticSourceGenerator = WTF::Function<void(JSGlobalObject*, Identifier, Vector<Identifier, 4>& exportNames, MarkedArgumentBuffer& exportValues)>;
+
+        static Ref<SyntheticSourceProvider> create(SyntheticSourceGenerator&& generator, const SourceOrigin& sourceOrigin, String sourceURL)
+        {
+            return adoptRef(*new SyntheticSourceProvider(WTFMove(generator), sourceOrigin, WTFMove(sourceURL)));
+        }
+
+        unsigned hash() const final
+        {
+            return m_source.impl()->hash();
+        }
+
+        StringView source() const final
+        {
+            return m_source;
+        }
+
+        void generate(JSGlobalObject* globalObject, Identifier moduleKey, Vector<Identifier, 4>& exportNames, MarkedArgumentBuffer& exportValues) {
+            m_generator(globalObject, moduleKey, exportNames, exportValues);
+        }
+
+    
+    private:
+        JS_EXPORT_PRIVATE SyntheticSourceProvider(SyntheticSourceGenerator&& generator, const SourceOrigin& sourceOrigin, String&& sourceURL)
+            : SourceProvider(sourceOrigin, WTFMove(sourceURL), TextPosition(), SourceProviderSourceType::Synthetic)
+            , m_source("[native code]"_s)
+            , m_generator(WTFMove(generator))
+        {
+        }
+
+        String m_source;
+        SyntheticSourceGenerator m_generator;
     };
 
 #if ENABLE(WEBASSEMBLY)
