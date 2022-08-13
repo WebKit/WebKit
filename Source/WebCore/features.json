@@ -1594,8 +1594,7 @@
     {
         "name": "Imperative Slot API",
         "status": {
-            "status": "In Development",
-            "enabled-by-default": false
+            "status": "Supported"
         },
         "specification": "Web Components",
         "category": "webapps",

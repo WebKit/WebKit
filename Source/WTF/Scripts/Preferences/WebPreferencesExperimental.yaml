@@ -750,11 +750,11 @@ ImperativeSlotAPIEnabled:
   humanReadableDescription: "Imperative Shadow DOM Distribution API"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 InProcessCookieCacheEnabled:
