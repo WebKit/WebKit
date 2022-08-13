@@ -168,8 +168,9 @@ protected:
     virtual AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
     bool isDescendantOfBarrenParent() const override;
-    void alterSliderValue(bool increase);
-    void changeValueByStep(bool increase);
+    enum class StepAction : bool { Decrement, Increment };
+    void alterRangeValue(StepAction);
+    void changeValueByStep(StepAction);
     // This returns true if it's focusable but it's not content editable and it's not a control or ARIA control.
     bool isGenericFocusableElement() const;
 
@@ -208,8 +209,8 @@ private:
     bool computeAccessibilityIsIgnored() const override;
     bool usesAltTagForTextComputation() const;
     bool roleIgnoresTitle() const;
-    bool postKeyboardKeysForValueChange(bool increase);
-    void setNodeValue(bool increase, float value);
+    bool postKeyboardKeysForValueChange(StepAction);
+    void setNodeValue(StepAction, float);
     bool performDismissAction() final;
     bool hasTextAlternative() const;
     

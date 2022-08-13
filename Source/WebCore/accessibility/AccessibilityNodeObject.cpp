@@ -1202,9 +1202,9 @@ bool AccessibilityNodeObject::isDescendantOfBarrenParent() const
     return false;
 }
 
-void AccessibilityNodeObject::alterSliderValue(bool increase)
+void AccessibilityNodeObject::alterRangeValue(StepAction stepAction)
 {
-    if (roleValue() != AccessibilityRole::Slider)
+    if (roleValue() != AccessibilityRole::Slider && roleValue() != AccessibilityRole::SpinButton)
         return;
     
     auto element = this->element();
@@ -1212,21 +1212,21 @@ void AccessibilityNodeObject::alterSliderValue(bool increase)
         return;
 
     if (!getAttribute(stepAttr).isEmpty())
-        changeValueByStep(increase);
+        changeValueByStep(stepAction);
     else
-        changeValueByPercent(increase ? 5 : -5);
+        changeValueByPercent(stepAction == StepAction::Increment ? 5 : -5);
 }
     
 void AccessibilityNodeObject::increment()
 {
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, document());
-    alterSliderValue(true);
+    alterRangeValue(StepAction::Increment);
 }
 
 void AccessibilityNodeObject::decrement()
 {
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, document());
-    alterSliderValue(false);
+    alterRangeValue(StepAction::Decrement);
 }
 
 static bool dispatchSimulatedKeyboardUpDownEvent(AccessibilityObject* object, const KeyboardEvent::Init& keyInit)
@@ -1273,24 +1273,28 @@ bool AccessibilityNodeObject::performDismissAction()
 }
 
 // Fire a keyboard event if we were not able to set this value natively.
-bool AccessibilityNodeObject::postKeyboardKeysForValueChange(bool increase)
+bool AccessibilityNodeObject::postKeyboardKeysForValueChange(StepAction stepAction)
 {
     auto keyInit = KeyboardEvent::Init();
-    bool vertical = orientation() == AccessibilityOrientation::Vertical;
     bool isLTR = page()->userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::LTR;
-    
+    // https://w3c.github.io/aria/#spinbutton
+    // `spinbutton` elements don't have an implicit orientation, but the spec does say:
+    //     > Authors SHOULD also ensure the up and down arrows on a keyboard perform the increment and decrement functions
+    // So let's force a vertical orientation for `spinbutton`s so we simulate the correct keypress (either up or down).
+    bool vertical = orientation() == AccessibilityOrientation::Vertical || roleValue() == AccessibilityRole::SpinButton;
+
     // The goal is to mimic existing keyboard dispatch completely, so that this is indistinguishable from a real key press.
     typedef enum { left = 37, up = 38, right = 39, down = 40 } keyCode;
-    keyInit.key = increase ? (vertical ? "ArrowUp"_s : (isLTR ? "ArrowRight"_s : "ArrowLeft"_s)) : (vertical ? "ArrowDown"_s : (isLTR ? "ArrowLeft"_s : "ArrowRight"_s));
-    keyInit.keyCode = increase ? (vertical ? keyCode::up : (isLTR ? keyCode::right : keyCode::left)) : (vertical ? keyCode::down : (isLTR ? keyCode::left : keyCode::right));
-    keyInit.keyIdentifier = increase ? (vertical ? "Up"_s : (isLTR ? "Right"_s : "Left"_s)) : (vertical ? "Down"_s : (isLTR ? "Left"_s : "Right"_s));
+    keyInit.key = stepAction == StepAction::Increment ? (vertical ? "ArrowUp"_s : (isLTR ? "ArrowRight"_s : "ArrowLeft"_s)) : (vertical ? "ArrowDown"_s : (isLTR ? "ArrowLeft"_s : "ArrowRight"_s));
+    keyInit.keyCode = stepAction == StepAction::Increment ? (vertical ? keyCode::up : (isLTR ? keyCode::right : keyCode::left)) : (vertical ? keyCode::down : (isLTR ? keyCode::left : keyCode::right));
+    keyInit.keyIdentifier = stepAction == StepAction::Increment ? (vertical ? "Up"_s : (isLTR ? "Right"_s : "Left"_s)) : (vertical ? "Down"_s : (isLTR ? "Left"_s : "Right"_s));
 
     InitializeLegacyKeyInitProperties(keyInit, *this);
 
     return dispatchSimulatedKeyboardUpDownEvent(this, keyInit);
 }
 
-void AccessibilityNodeObject::setNodeValue(bool increase, float value)
+void AccessibilityNodeObject::setNodeValue(StepAction stepAction, float value)
 {
     bool didSet = setValue(String::number(value));
     
@@ -1298,20 +1302,23 @@ void AccessibilityNodeObject::setNodeValue(bool increase, float value)
         if (auto* cache = axObjectCache())
             cache->postNotification(this, document(), AXObjectCache::AXValueChanged);
     } else
-        postKeyboardKeysForValueChange(increase);
+        postKeyboardKeysForValueChange(stepAction);
 }
 
-void AccessibilityNodeObject::changeValueByStep(bool increase)
+void AccessibilityNodeObject::changeValueByStep(StepAction stepAction)
 {
     float step = stepValueForRange();
     float value = valueForRange();
 
-    value += increase ? step : -step;
-    setNodeValue(increase, value);
+    value += stepAction == StepAction::Increment ? step : -step;
+    setNodeValue(stepAction, value);
 }
 
 void AccessibilityNodeObject::changeValueByPercent(float percentChange)
 {
+    if (!percentChange)
+        return;
+
     float range = maxValueForRange() - minValueForRange();
     float step = range * (percentChange / 100);
     float value = valueForRange();
@@ -1321,7 +1328,7 @@ void AccessibilityNodeObject::changeValueByPercent(float percentChange)
         step = std::abs(percentChange) * (1 / percentChange);
 
     value += step;
-    setNodeValue(percentChange > 0, value);
+    setNodeValue(percentChange > 0 ? StepAction::Increment : StepAction::Decrement, value);
 }
 
 bool AccessibilityNodeObject::elementAttributeValue(const QualifiedName& attributeName) const
