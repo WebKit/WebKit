@@ -33,12 +33,11 @@ namespace WebCore {
 class FilterOperations;
 class GraphicsContext;
 class RenderElement;
-class SourceGraphic;
 
 class CSSFilter final : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<CSSFilter> create(RenderElement&, const FilterOperations&, RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
+    static RefPtr<CSSFilter> create(RenderElement&, const FilterOperations&, FilterMode, const FloatSize& filterScale, ClipOperation, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
     WEBCORE_EXPORT static RefPtr<CSSFilter> create(Vector<Ref<FilterFunction>>&&);
 
     const Vector<Ref<FilterFunction>>& functions() const { return m_functions; }
@@ -50,18 +49,19 @@ public:
 
     FilterEffectVector effectsOfType(FilterFunction::Type) const final;
 
+    OptionSet<FilterMode> supportedFilterModes() const final;
+
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
+    FilterStyleVector createFilterStyles(const FilterStyle& sourceStyle) const final;
 
     static bool isIdentity(RenderElement&, const FilterOperations&);
     static IntOutsets calculateOutsets(RenderElement&, const FilterOperations&, const FloatRect& targetBoundingBox);
 
 private:
-    CSSFilter(RenderingMode, const FloatSize& filterScale, ClipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
+    CSSFilter(FilterMode, const FloatSize& filterScale, ClipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
     CSSFilter(Vector<Ref<FilterFunction>>&&);
 
     bool buildFilterFunctions(RenderElement&, const FilterOperations&, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
-
-    bool supportsAcceleratedRendering() const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
 

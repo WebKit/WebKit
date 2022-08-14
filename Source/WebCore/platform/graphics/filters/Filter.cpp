@@ -29,13 +29,14 @@
 #include "FilterEffect.h"
 #include "FilterImage.h"
 #include "FilterResults.h"
+#include "GraphicsContext.h"
 #include "ImageBuffer.h"
 
 namespace WebCore {
 
-Filter::Filter(Filter::Type filterType, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion)
+Filter::Filter(Filter::Type filterType, FilterMode filterMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion)
     : FilterFunction(filterType)
-    , m_renderingMode(renderingMode)
+    , m_filterMode(filterMode)
     , m_filterScale(filterScale)
     , m_clipOperation(clipOperation)
     , m_filterRegion(filterRegion)
@@ -100,6 +101,40 @@ RefPtr<FilterImage> Filter::apply(ImageBuffer* sourceImage, const FloatRect& sou
     result->correctPremultipliedPixelBuffer();
     result->transformToColorSpace(DestinationColorSpace::SRGB());
     return result;
+}
+
+FilterStyleVector Filter::createFilterStyles(const FloatRect& sourceImageRect) const
+{
+    auto input = FilterStyle { std::nullopt, m_filterRegion, sourceImageRect };
+    auto result = createFilterStyles(input);
+    if (result.isEmpty())
+        return { };
+
+    result.reverse();
+    result.shrinkToFit();
+    return result;
+}
+
+unsigned Filter::applyStyles(GraphicsContext& context, const FloatRect& sourceImageRect) const
+{
+    auto filterStyles = createFilterStyles(sourceImageRect);
+
+    for (auto& filterStyle : filterStyles) {
+        context.save();
+        context.clip(filterStyle.imageRect);
+        context.setStyle(filterStyle.style);
+        context.beginTransparencyLayer(1);
+    }
+
+    return filterStyles.size();
+}
+
+void Filter::removeStyles(GraphicsContext& context, unsigned size) const
+{
+    for (; size; --size) {
+        context.endTransparencyLayer();
+        context.restore();
+    }
 }
 
 } // namespace WebCore

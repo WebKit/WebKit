@@ -46,6 +46,7 @@ public:
 
     RefPtr<SVGFilter> filter;
     FilterResults results;
+    unsigned sylesSize { 0 };
 
     RefPtr<ImageBuffer> sourceImage;
     FloatRect sourceImageRect;

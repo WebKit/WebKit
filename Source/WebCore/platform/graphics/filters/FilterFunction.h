@@ -28,6 +28,8 @@
 #include "FilterEffectGeometry.h"
 #include "FilterImage.h"
 #include "FilterImageVector.h"
+#include "FilterMode.h"
+#include "FilterStyle.h"
 #include "FloatRect.h"
 #include "LengthBox.h"
 #include <wtf/RefCounted.h>
@@ -93,8 +95,10 @@ public:
     static AtomString sourceGraphicName() { return filterName(Type::SourceGraphic); }
     AtomString filterName() const { return filterName(m_filterType); }
 
-    virtual bool supportsAcceleratedRendering() const { return false; }
+    virtual OptionSet<FilterMode> supportedFilterModes() const { return { FilterMode::Software }; }
+
     virtual RefPtr<FilterImage> apply(const Filter&, FilterImage&, FilterResults&) { return nullptr; }
+    virtual FilterStyleVector createFilterStyles(const Filter&, const FilterStyle&) const { return { }; }
 
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation = FilterRepresentation::TestOutput) const = 0;
 
