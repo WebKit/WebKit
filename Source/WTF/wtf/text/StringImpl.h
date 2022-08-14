@@ -31,6 +31,7 @@
 #include <wtf/Expected.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Packed.h>
+#include <wtf/Span.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIIFastPath.h>
@@ -40,6 +41,7 @@
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/StringHasher.h>
 #include <wtf/text/UTF8ConversionError.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 #if USE(CF)
 typedef const struct __CFString * CFStringRef;
@@ -321,6 +323,8 @@ public:
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(const LChar* characters, unsigned length);
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode = LenientConversion);
 
+    template<typename Func>
+    Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> tryGetUtf8ForRange(const Func&, unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
     WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUtf8ForRange(unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
     WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUtf8(ConversionMode = LenientConversion) const;
     WTF_EXPORT_PRIVATE CString utf8(ConversionMode = LenientConversion) const;
@@ -1352,6 +1356,64 @@ inline Ref<StringImpl> StringImpl::createByReplacingInCharacters(const UChar* ch
         data[i] = character == target ? replacement : character;
     }
     return newImpl;
+}
+
+template<typename Func>
+inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> StringImpl::tryGetUtf8ForRange(const Func& function, unsigned offset, unsigned length, ConversionMode mode) const
+{
+    ASSERT(offset <= this->length());
+    ASSERT(offset + length <= this->length());
+
+    if (!length) {
+        const char* const emptyString = "";
+        return function(Span<const char> { emptyString, emptyString });
+    }
+
+    // Allocate a buffer big enough to hold all the characters
+    // (an individual UTF-16 UChar can only expand to 3 UTF-8 bytes).
+    // Optimization ideas, if we find this function is hot:
+    //  * We could speculatively create a CStringBuffer to contain 'length'
+    //    characters, and resize if necessary (i.e. if the buffer contains
+    //    non-ascii characters). (Alternatively, scan the buffer first for
+    //    ascii characters, so we know this will be sufficient).
+    //  * We could allocate a CStringBuffer with an appropriate size to
+    //    have a good chance of being able to write the string into the
+    //    buffer without reallocing (say, 1.5 x length).
+    if (length > MaxLength / 3)
+        return makeUnexpected(UTF8ConversionError::OutOfMemory);
+
+    if (is8Bit()) {
+        const LChar* characters = this->characters8() + offset;
+#if CPU(ARM64)
+        if (const LChar* nonASCII = find8NonASCII(characters, length)) {
+            size_t prefixLength = nonASCII - characters;
+            size_t remainingLength = length - prefixLength;
+            Vector<char, 1024> bufferVector(prefixLength + remainingLength * 3);
+            char* buffer = bufferVector.data();
+
+            memcpy(buffer, characters, prefixLength);
+            buffer += prefixLength;
+
+            auto success = Unicode::convertLatin1ToUTF8(&nonASCII, characters + length, &buffer, buffer + (bufferVector.size() - prefixLength));
+            ASSERT_UNUSED(success, success); // (length * 3) should be sufficient for any conversion
+            return function(Span<const char> { bufferVector.data(), buffer });
+        } else
+            return function(Span<const char> { bitwise_cast<const char*>(characters), bitwise_cast<const char*>(characters + length) });
+#else
+        Vector<char, 1024> bufferVector(length * 3);
+        char* buffer = bufferVector.data();
+        auto success = Unicode::convertLatin1ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size());
+        ASSERT_UNUSED(success, success); // (length * 3) should be sufficient for any conversion
+        return function(Span<const char> { bufferVector.data(), buffer });
+#endif
+    }
+
+    Vector<char, 1024> bufferVector(length * 3);
+    char* buffer = bufferVector.data();
+    UTF8ConversionError error = utf8Impl(this->characters16() + offset, length, buffer, bufferVector.size(), mode);
+    if (error != UTF8ConversionError::None)
+        return makeUnexpected(error);
+    return function(Span<const char> { bufferVector.data(), buffer });
 }
 
 } // namespace WTF

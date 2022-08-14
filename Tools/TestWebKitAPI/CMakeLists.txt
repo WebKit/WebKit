@@ -94,6 +94,7 @@ set(TestWTF_SOURCES
     Tests/WTF/Span.cpp
     Tests/WTF/StdLibExtras.cpp
     Tests/WTF/StringBuilder.cpp
+    Tests/WTF/StringCommon.cpp
     Tests/WTF/StringConcatenate.cpp
     Tests/WTF/StringHasher.cpp
     Tests/WTF/StringImpl.cpp

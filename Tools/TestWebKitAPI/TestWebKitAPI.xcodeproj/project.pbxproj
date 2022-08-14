@@ -1019,6 +1019,7 @@
 		E3A1E78221B25B7A008C6007 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A1E78021B25B79008C6007 /* URL.cpp */; };
 		E3A1E78521B25B91008C6007 /* URLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A1E78421B25B91008C6007 /* URLParser.cpp */; };
 		E3C21A7C21B25CA2003B31A3 /* URLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3C21A7B21B25CA2003B31A3 /* URLExtras.mm */; };
+		E3DE273C28A8D67800873DF2 /* StringCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DE273B28A8D67700873DF2 /* StringCommon.cpp */; };
 		E3DEA8111F0A589000CBC2E8 /* ThreadGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DEA8101F0A588000CBC2E8 /* ThreadGroup.cpp */; };
 		E3EFB02F25506503003C2F96 /* SystemBeep.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3EFB02E25506503003C2F96 /* SystemBeep.mm */; };
 		E3F8AB92241AB9CE003E2A7E /* AccessibilityRemoteUIApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3F8AB91241AB9CE003E2A7E /* AccessibilityRemoteUIApp.mm */; };
@@ -3132,6 +3133,7 @@
 		E3A1E78021B25B79008C6007 /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
 		E3A1E78421B25B91008C6007 /* URLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParser.cpp; sourceTree = "<group>"; };
 		E3C21A7B21B25CA2003B31A3 /* URLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = URLExtras.mm; sourceTree = "<group>"; };
+		E3DE273B28A8D67700873DF2 /* StringCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringCommon.cpp; sourceTree = "<group>"; };
 		E3DEA8101F0A588000CBC2E8 /* ThreadGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGroup.cpp; sourceTree = "<group>"; };
 		E3EFB02E25506503003C2F96 /* SystemBeep.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemBeep.mm; sourceTree = "<group>"; };
 		E3F8AB91241AB9CE003E2A7E /* AccessibilityRemoteUIApp.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityRemoteUIApp.mm; sourceTree = "<group>"; };
@@ -4858,6 +4860,7 @@
 				BCA30C7D266D2F43000D230C /* Span.cpp */,
 				FE2BCDC62470FC7000DEC33B /* StdLibExtras.cpp */,
 				81B50192140F232300D9EB58 /* StringBuilder.cpp */,
+				E3DE273B28A8D67700873DF2 /* StringCommon.cpp */,
 				7CD4C26C1E2C0E6E00929470 /* StringConcatenate.cpp */,
 				93ABA80816DDAB91002DB2FA /* StringHasher.cpp */,
 				26F1B44315CA434F00D1E4BF /* StringImpl.cpp */,
@@ -5739,6 +5742,7 @@
 				BCA30C7E266D2F43000D230C /* Span.cpp in Sources */,
 				FE2BCDC72470FDA300DEC33B /* StdLibExtras.cpp in Sources */,
 				7C83DF321D0A590C00FEBCF3 /* StringBuilder.cpp in Sources */,
+				E3DE273C28A8D67800873DF2 /* StringCommon.cpp in Sources */,
 				7CD4C26E1E2C0E6E00929470 /* StringConcatenate.cpp in Sources */,
 				7C83DF361D0A590C00FEBCF3 /* StringHasher.cpp in Sources */,
 				7C83DF371D0A590C00FEBCF3 /* StringImpl.cpp in Sources */,
