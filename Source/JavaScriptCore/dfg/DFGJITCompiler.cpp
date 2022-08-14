@@ -535,7 +535,7 @@ void JITCompiler::compileFunction()
     m_speculative->linkOSREntries(*linkBuffer);
     
     if (requiresArityFixup)
-        linkBuffer->link(callArityFixup, FunctionPtr<JITThunkPtrTag>(vm().getCTIStub(arityFixupGenerator).code()));
+        linkBuffer->link(callArityFixup, vm().getCTIStub(arityFixupGenerator).code().toFunctionPtr());
 
     disassemble(*linkBuffer);
 

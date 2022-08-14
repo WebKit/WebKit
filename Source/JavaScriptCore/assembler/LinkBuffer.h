@@ -187,7 +187,7 @@ public:
     template<PtrTag tag>
     void link(Call call, CodeLocationLabel<tag> label)
     {
-        link(call, FunctionPtr<tag>(label));
+        link(call, label.toFunctionPtr());
     }
     
     template<PtrTag tag>

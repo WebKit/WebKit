@@ -2154,27 +2154,27 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
                 RELEASE_ASSERT(m_identifier);
                 if (Options::useJITCage()) {
-                    jit.setupArguments<PropertySlot::GetValueFuncWithPtr>(
+                    jit.setupArguments<GetValueFuncWithPtr>(
                         CCallHelpers::TrustedImmPtr(globalObject),
                         CCallHelpers::CellValue(baseForCustom),
                         CCallHelpers::TrustedImmPtr(uid()),
                         CCallHelpers::TrustedImmPtr(this->as<GetterSetterAccessCase>().m_customAccessor.executableAddress()));
                 } else {
-                    jit.setupArguments<PropertySlot::GetValueFunc>(
+                    jit.setupArguments<GetValueFunc>(
                         CCallHelpers::TrustedImmPtr(globalObject),
                         CCallHelpers::CellValue(baseForCustom),
                         CCallHelpers::TrustedImmPtr(uid()));
                 }
             } else {
                 if (Options::useJITCage()) {
-                    jit.setupArguments<PutPropertySlot::PutValueFuncWithPtr>(
+                    jit.setupArguments<PutValueFuncWithPtr>(
                         CCallHelpers::TrustedImmPtr(globalObject),
                         CCallHelpers::CellValue(baseForCustom),
                         valueRegs,
                         CCallHelpers::TrustedImmPtr(uid()),
                         CCallHelpers::TrustedImmPtr(this->as<GetterSetterAccessCase>().m_customAccessor.executableAddress()));
                 } else {
-                    jit.setupArguments<PutPropertySlot::PutValueFunc>(
+                    jit.setupArguments<PutValueFunc>(
                         CCallHelpers::TrustedImmPtr(globalObject),
                         CCallHelpers::CellValue(baseForCustom),
                         valueRegs,

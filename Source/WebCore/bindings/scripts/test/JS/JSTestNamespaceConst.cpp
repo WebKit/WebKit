@@ -49,8 +49,8 @@ using JSTestNamespaceConstDOMConstructor = JSDOMConstructorNotCallable<JSTestNam
 
 static const HashTableValue JSTestNamespaceConstConstructorTableValues[] =
 {
-    { "TEST_FLAG"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(false) } },
-    { "TEST_BIT_MASK"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(0x0000fc00) } },
+    { "TEST_FLAG"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, false } },
+    { "TEST_BIT_MASK"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 0x0000fc00 } },
 };
 
 static_assert(TestNamespaceConst::TEST_FLAG == false, "TEST_FLAG in TestNamespaceConst does not match value from IDL");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@ struct CallData {
     enum class Type : uint8_t { None, Native, JS };
     Type type { Type::None };
 
+    CallData() { } // Needed for the anonymous union below.
     union {
         struct {
             TaggedNativeFunction function;

@@ -7324,8 +7324,8 @@ sub GenerateHashTableValueArray
 
     my $i = 0;
     foreach my $key (@{$keys}) {
-        my $firstTargetType;
-        my $secondTargetType = "";
+        my $typeTag;
+        my $hasSecondValue = 1;
         my $conditional;
 
         if ($conditionals) {
@@ -7337,47 +7337,47 @@ sub GenerateHashTableValueArray
         }
 
         if ("@$specials[$i]" =~ m/DOMJITFunction/) {
-            $firstTargetType = "static_cast<RawNativeFunction>";
-            $secondTargetType = "static_cast<const JSC::DOMJIT::Signature*>";
+            $typeTag = "DOMJITFunction";
         } elsif ("@$specials[$i]" =~ m/Function/) {
-            $firstTargetType = "static_cast<RawNativeFunction>";
+            $typeTag = "NativeFunction";
         } elsif ("@$specials[$i]" =~ m/Builtin/) {
-            $firstTargetType = "static_cast<BuiltinGenerator>";
+            $typeTag = ("@$specials[$i]" =~ m/Accessor/) ? "BuiltinAccessor" : "BuiltinGenerator";
         } elsif ("@$specials[$i]" =~ m/ConstantInteger/) {
-            $firstTargetType = "";
+            $typeTag = "Constant";
+            $hasSecondValue = 0;
         } elsif ("@$specials[$i]" =~ m/DOMJITAttribute/) {
-            $firstTargetType = "static_cast<const JSC::DOMJIT::GetterSetter*>";
+            $typeTag = "DOMJITAttribute";
         } else {
-            $firstTargetType = "static_cast<PropertySlot::GetValueFunc>";
-            $secondTargetType = "static_cast<PutPropertySlot::PutValueFunc>";
+            $typeTag = "GetterSetter";
             $hasSetter = "true";
         }
         if ("@$specials[$i]" =~ m/ConstantInteger/) {
-            push(@implContent, "    { \"$key\"_s, @$specials[$i], NoIntrinsic, { (long long)" . $firstTargetType . "(@$value1[$i]) } },\n");
+            push(@implContent, "    { \"$key\"_s, @$specials[$i], NoIntrinsic, { HashTableValue::" . $typeTag . "Type, @$value1[$i] } },\n");
         } else {
             my $readWriteConditional = $readWriteConditionals ? $readWriteConditionals->{$key} : undef;
             if ($readWriteConditional) {
                 my $readWriteConditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($readWriteConditional);
                 push(@implContent, "#if ${readWriteConditionalString}\n");
             }
-
-            push(@implContent, "    { \"$key\"_s, @$specials[$i], NoIntrinsic, { (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) " . $secondTargetType . "(@$value2[$i]) } },\n");
+            my $secondValue = $hasSecondValue ? ", @$value2[$i]" : "";
+            push(@implContent, "    { \"$key\"_s, @$specials[$i], NoIntrinsic, { HashTableValue::" . $typeTag . "Type, @$value1[$i]$secondValue } },\n");
 
             if ($readWriteConditional) {
                 push(@implContent, "#else\n") ;
-                push(@implContent, "    { \"$key\"_s, JSC::PropertyAttribute::ReadOnly | @$specials[$i], NoIntrinsic, { (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },\n");
+                my $secondValue = $hasSecondValue ? ", 0" : "";
+                push(@implContent, "    { \"$key\"_s, JSC::PropertyAttribute::ReadOnly | @$specials[$i], NoIntrinsic, { HashTableValue::" . $typeTag . "Type, @$value1[$i]$secondValue } },\n");
                 push(@implContent, "#endif\n");
             }
         }
         if ($conditional) {
             push(@implContent, "#else\n");
-            push(@implContent, "    { { }, 0, NoIntrinsic, { 0, 0 } },\n");
+            push(@implContent, "    { { }, 0, NoIntrinsic, { HashTableValue::End } },\n");
             push(@implContent, "#endif\n");
         }
         ++$i;
     }
 
-    push(@implContent, "    { { }, 0, NoIntrinsic, { 0, 0 } }\n") if (!$packedSize);
+    push(@implContent, "    { { }, 0, NoIntrinsic, { HashTableValue::End } }\n") if (!$packedSize);
     push(@implContent, "};\n\n");
 
     return $hasSetter;

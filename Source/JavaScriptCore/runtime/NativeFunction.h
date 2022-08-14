@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,36 +27,14 @@
 
 #include "JSCJSValue.h"
 #include "JSCPtrTag.h"
+#include <wtf/FunctionPtr.h>
 #include <wtf/Hasher.h>
 
 namespace JSC {
 
 class CallFrame;
 
-using RawNativeFunction = EncodedJSValue(JSC_HOST_CALL_ATTRIBUTES*)(JSGlobalObject*, CallFrame*);
-
-class NativeFunction {
-public:
-    NativeFunction() = default;
-    NativeFunction(std::nullptr_t) : m_ptr(nullptr) { }
-    explicit NativeFunction(uintptr_t bits) : m_ptr(bitwise_cast<RawNativeFunction>(bits)) { }
-    NativeFunction(RawNativeFunction other) : m_ptr(other) { }
-
-    explicit operator intptr_t() const { return reinterpret_cast<intptr_t>(m_ptr); }
-    explicit operator bool() const { return !!m_ptr; }
-    bool operator!() const { return !m_ptr; }
-    bool operator==(NativeFunction other) const { return m_ptr == other.m_ptr; }
-    bool operator!=(NativeFunction other) const { return m_ptr == other.m_ptr; }
-
-    EncodedJSValue operator()(JSGlobalObject* globalObject, CallFrame* callFrame) { return m_ptr(globalObject, callFrame); }
-
-    void* rawPointer() const { return reinterpret_cast<void*>(m_ptr); }
-
-private:
-    RawNativeFunction m_ptr;
-
-    friend class TaggedNativeFunction;
-};
+using NativeFunction = TypedFunctionPtr<CFunctionPtrTag, EncodedJSValue(JSGlobalObject*, CallFrame*), FunctionAttributes::JSCHostCall>;
 
 struct NativeFunctionHash {
     static unsigned hash(NativeFunction key) { return computeHash(key); }
@@ -64,37 +42,7 @@ struct NativeFunctionHash {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-class TaggedNativeFunction {
-public:
-    TaggedNativeFunction() = default;
-    TaggedNativeFunction(std::nullptr_t) : m_ptr(nullptr) { }
-    explicit TaggedNativeFunction(intptr_t bits) : m_ptr(bitwise_cast<void*>(bits)) { }
-
-    TaggedNativeFunction(NativeFunction func)
-        : m_ptr(tagCFunctionPtr<void*, HostFunctionPtrTag>(func.m_ptr))
-    { }
-    TaggedNativeFunction(RawNativeFunction func)
-        : m_ptr(tagCFunctionPtr<void*, HostFunctionPtrTag>(func))
-    { }
-
-    explicit operator bool() const { return !!m_ptr; }
-    bool operator!() const { return !m_ptr; }
-    bool operator==(TaggedNativeFunction other) const { return m_ptr == other.m_ptr; }
-    bool operator!=(TaggedNativeFunction other) const { return m_ptr != other.m_ptr; }
-
-    EncodedJSValue operator()(JSGlobalObject* globalObject, CallFrame* callFrame) { return NativeFunction(*this)(globalObject, callFrame); }
-
-    explicit operator NativeFunction()
-    {
-        ASSERT(m_ptr);
-        return untagCFunctionPtr<NativeFunction, HostFunctionPtrTag>(m_ptr);
-    }
-
-    void* rawPointer() const { return m_ptr; }
-
-private:
-    void* m_ptr;
-};
+using TaggedNativeFunction = TypedFunctionPtr<HostFunctionPtrTag, EncodedJSValue(JSGlobalObject*, CallFrame*), FunctionAttributes::JSCHostCall>;
 
 struct TaggedNativeFunctionHash {
     static unsigned hash(TaggedNativeFunction key) { return computeHash(key); }
@@ -105,13 +53,18 @@ struct TaggedNativeFunctionHash {
 static_assert(sizeof(NativeFunction) == sizeof(void*));
 static_assert(sizeof(TaggedNativeFunction) == sizeof(void*));
 
+static inline TaggedNativeFunction toTagged(NativeFunction function)
+{
+    return function.retagged<HostFunctionPtrTag>();
+}
+
 } // namespace JSC
 
 namespace WTF {
 
 inline void add(Hasher& hasher, JSC::NativeFunction key)
 {
-    add(hasher, bitwise_cast<uintptr_t>(key));
+    add(hasher, key.executableAddress());
 }
 
 template<typename> struct DefaultHash;
@@ -119,11 +72,10 @@ template<> struct DefaultHash<JSC::NativeFunction> : JSC::NativeFunctionHash { }
 
 inline void add(Hasher& hasher, JSC::TaggedNativeFunction key)
 {
-    add(hasher, bitwise_cast<uintptr_t>(key));
+    add(hasher, key.executableAddress());
 }
 
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<JSC::TaggedNativeFunction> : JSC::TaggedNativeFunctionHash { };
 
 } // namespace WTF
-

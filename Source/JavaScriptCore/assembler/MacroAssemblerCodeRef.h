@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "ExecutableMemoryHandle.h"
 #include "JSCPtrTag.h"
 #include <wtf/DataLog.h>
+#include <wtf/FunctionPtr.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
@@ -39,14 +40,11 @@
 // into the processor are decorated with the bottom bit set, while traditional ARM has
 // the lower bit clear. Since we don't know what kind of pointer, we check for both
 // decorated and undecorated null.
-#define ASSERT_NULL_OR_VALID_CODE_POINTER(ptr) \
-    ASSERT(!ptr || reinterpret_cast<intptr_t>(ptr) & ~1)
 #define ASSERT_VALID_CODE_POINTER(ptr) \
     ASSERT(reinterpret_cast<intptr_t>(ptr) & ~1)
 #define ASSERT_VALID_CODE_OFFSET(offset) \
     ASSERT(!(offset & 1)) // Must be multiple of 2.
 #else
-#define ASSERT_NULL_OR_VALID_CODE_POINTER(ptr) // Anything goes!
 #define ASSERT_VALID_CODE_POINTER(ptr) \
     ASSERT(ptr)
 #define ASSERT_VALID_CODE_OFFSET(offset) // Anything goes!
@@ -62,171 +60,6 @@ class CodeBlock;
 template<PtrTag> class MacroAssemblerCodePtr;
 
 enum OpcodeID : unsigned;
-
-// CFunctionPtr can only be used to hold C/C++ functions.
-class CFunctionPtr {
-public:
-    using Ptr = void(*)();
-
-    constexpr CFunctionPtr() = default;
-    constexpr CFunctionPtr(std::nullptr_t) { }
-
-    template<typename ReturnType, typename... Arguments>
-    constexpr CFunctionPtr(ReturnType(&ptr)(Arguments...))
-        : m_ptr(reinterpret_cast<Ptr>(&ptr))
-    { }
-
-    template<typename ReturnType, typename... Arguments>
-    explicit CFunctionPtr(ReturnType(*ptr)(Arguments...))
-        : m_ptr(reinterpret_cast<Ptr>(ptr))
-    {
-        assertIsCFunctionPtr(m_ptr);
-    }
-
-    // MSVC doesn't seem to treat functions with different calling conventions as
-    // different types; these methods are already defined for fastcall, below.
-#if CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
-    template<typename ReturnType, typename... Arguments>
-    constexpr CFunctionPtr(ReturnType(CDECL &ptr)(Arguments...))
-        : m_ptr(reinterpret_cast<Ptr>(&ptr))
-    { }
-
-    template<typename ReturnType, typename... Arguments>
-    explicit CFunctionPtr(ReturnType(CDECL *ptr)(Arguments...))
-        : m_ptr(reinterpret_cast<Ptr>(ptr))
-    {
-        assertIsCFunctionPtr(m_ptr);
-    }
-
-#endif // CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
-
-#if COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
-    template<typename ReturnType, typename... Arguments>
-    constexpr CFunctionPtr(ReturnType(FASTCALL &ptr)(Arguments...))
-        : m_ptr(reinterpret_cast<Ptr>(&ptr))
-    { }
-
-    template<typename ReturnType, typename... Arguments>
-    explicit CFunctionPtr(ReturnType(FASTCALL *ptr)(Arguments...))
-        : m_ptr(reinterpret_cast<Ptr>(ptr))
-    {
-        assertIsCFunctionPtr(m_ptr);
-    }
-#endif // COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
-
-    constexpr Ptr get() const { return m_ptr; }
-    void* address() const { return reinterpret_cast<void*>(m_ptr); }
-
-    explicit operator bool() const { return !!m_ptr; }
-    bool operator!() const { return !m_ptr; }
-
-    bool operator==(const CFunctionPtr& other) const { return m_ptr == other.m_ptr; }
-    bool operator!=(const CFunctionPtr& other) const { return m_ptr != other.m_ptr; }
-
-private:
-    Ptr m_ptr { nullptr };
-};
-
-
-// FunctionPtr:
-//
-// FunctionPtr should be used to wrap pointers to C/C++ functions in JSC
-// (particularly, the stub functions).
-template<PtrTag tag = CFunctionPtrTag>
-class FunctionPtr {
-public:
-    constexpr FunctionPtr() = default;
-    constexpr FunctionPtr(std::nullptr_t) { }
-
-    template<typename ReturnType, typename... Arguments>
-    FunctionPtr(ReturnType(*value)(Arguments...))
-        : m_value(tagCFunctionPtr<void*, tag>(value))
-    {
-        assertIsNullOrCFunctionPtr(value);
-        ASSERT_NULL_OR_VALID_CODE_POINTER(m_value);
-    }
-
-// MSVC doesn't seem to treat functions with different calling conventions as
-// different types; these methods already defined for fastcall, below.
-#if CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
-
-    template<typename ReturnType, typename... Arguments>
-    FunctionPtr(ReturnType(CDECL *value)(Arguments...))
-        : m_value(tagCFunctionPtr<void*, tag>(value))
-    {
-        assertIsNullOrCFunctionPtr(value);
-        ASSERT_NULL_OR_VALID_CODE_POINTER(m_value);
-    }
-
-#endif // CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
-
-#if COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
-
-    template<typename ReturnType, typename... Arguments>
-    FunctionPtr(ReturnType(FASTCALL *value)(Arguments...))
-        : m_value(tagCFunctionPtr<void*, tag>(value))
-    {
-        assertIsNullOrCFunctionPtr(value);
-        ASSERT_NULL_OR_VALID_CODE_POINTER(m_value);
-    }
-
-#endif // COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
-
-    template<typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value && !std::is_function<typename std::remove_pointer<PtrType>::type>::value>>
-    explicit FunctionPtr(PtrType value)
-        // Using a C-ctyle cast here to avoid compiler error on RVTC:
-        // Error:  #694: reinterpret_cast cannot cast away const or other type qualifiers
-        // (I guess on RVTC function pointers have a different constness to GCC/MSVC?)
-        : m_value(tagCFunctionPtr<void*, tag>(value))
-    {
-        assertIsNullOrCFunctionPtr(value);
-        ASSERT_NULL_OR_VALID_CODE_POINTER(m_value);
-    }
-
-    explicit FunctionPtr(MacroAssemblerCodePtr<tag>);
-
-    template<PtrTag otherTag>
-    FunctionPtr<otherTag> retagged() const
-    {
-        if (!m_value)
-            return FunctionPtr<otherTag>();
-        return FunctionPtr<otherTag>(*this);
-    }
-
-    void* executableAddress() const
-    {
-        return m_value;
-    }
-
-    template<PtrTag newTag>
-    void* retaggedExecutableAddress() const
-    {
-        return retagCodePtr<tag, newTag>(m_value);
-    }
-
-    explicit operator bool() const { return !!m_value; }
-    bool operator!() const { return !m_value; }
-
-    bool operator==(const FunctionPtr& other) const { return m_value == other.m_value; }
-    bool operator!=(const FunctionPtr& other) const { return m_value != other.m_value; }
-
-private:
-    template<PtrTag otherTag>
-    explicit FunctionPtr(const FunctionPtr<otherTag>& other)
-        : m_value(retagCodePtr<otherTag, tag>(other.executableAddress()))
-    {
-        ASSERT_NULL_OR_VALID_CODE_POINTER(m_value);
-    }
-
-    void* m_value { nullptr };
-
-    template<PtrTag> friend class FunctionPtr;
-};
-
-static_assert(sizeof(FunctionPtr<CFunctionPtrTag>) == sizeof(void*));
-#if COMPILER_SUPPORTS(BUILTIN_IS_TRIVIALLY_COPYABLE)
-static_assert(__is_trivially_copyable(FunctionPtr<CFunctionPtrTag>));
-#endif
 
 // ReturnAddressPtr:
 //
@@ -377,8 +210,15 @@ public:
 
     // Disallow any casting operations (except for booleans). Instead, the client
     // should be asking executableAddress() explicitly.
-    template<typename T, typename = std::enable_if_t<!std::is_same<T, bool>::value>>
+    template<typename T, typename = std::enable_if_t<!std::is_same<T, bool>::value && !std::is_same<T, FunctionPtr<tag>>::value>>
     operator T() = delete;
+
+    FunctionPtr<tag> toFunctionPtr() const
+    {
+        return FunctionPtr<tag>::fromAlreadyTaggedPointer(executableAddress());
+    }
+
+    operator FunctionPtr<tag>() const { return toFunctionPtr(); }
 
     void dumpWithName(const char* name, PrintStream& out) const
     {
@@ -540,12 +380,6 @@ private:
 
     template<PtrTag> friend class MacroAssemblerCodeRef;
 };
-
-template<PtrTag tag>
-inline FunctionPtr<tag>::FunctionPtr(MacroAssemblerCodePtr<tag> ptr)
-    : m_value(ptr.executableAddress())
-{
-}
 
 bool shouldDumpDisassemblyFor(CodeBlock*);
 bool shouldDumpDisassemblyFor(Wasm::CompilationMode);

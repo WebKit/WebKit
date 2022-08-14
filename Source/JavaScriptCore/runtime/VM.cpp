@@ -654,14 +654,14 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVis
 #if ENABLE(JIT)
     if (Options::useJIT()) {
         return jitStubs->hostFunctionStub(
-            *this, function, constructor,
+            *this, toTagged(function), toTagged(constructor),
             intrinsic != NoIntrinsic ? thunkGeneratorForIntrinsic(intrinsic) : nullptr,
             implementationVisibility, intrinsic, signature, name);
     }
 #endif // ENABLE(JIT)
     UNUSED_PARAM(intrinsic);
     UNUSED_PARAM(signature);
-    return NativeExecutable::create(*this, jitCodeForCallTrampoline(), function, jitCodeForConstructTrampoline(), constructor, implementationVisibility, name);
+    return NativeExecutable::create(*this, jitCodeForCallTrampoline(), toTagged(function), jitCodeForConstructTrampoline(), toTagged(constructor), implementationVisibility, name);
 }
 
 NativeExecutable* VM::getBoundFunction(bool isJSFunction, bool canConstruct)
