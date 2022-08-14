@@ -629,6 +629,50 @@ ALWAYS_INLINE const double* findDouble(const double* pointer, double target, siz
 }
 #endif
 
+#if CPU(ARM64)
+WTF_EXPORT_PRIVATE const LChar* find8NonASCIIAlignedImpl(const LChar* pointer, size_t length);
+
+ALWAYS_INLINE const LChar* find8NonASCII(const LChar* pointer, size_t length)
+{
+    constexpr size_t thresholdLength = 16;
+    static_assert(!(thresholdLength % (16 / sizeof(LChar))), "length threshold should be 16-byte aligned to make find8NonASCIIAlignedImpl simpler");
+    uintptr_t unaligned = reinterpret_cast<uintptr_t>(pointer) & 0xf;
+
+    size_t index = 0;
+    size_t runway = std::min(thresholdLength - (unaligned / sizeof(LChar)), length);
+    for (; index < runway; ++index) {
+        if (!isASCII(pointer[index]))
+            return pointer + index;
+    }
+    if (runway == length)
+        return nullptr;
+
+    ASSERT(index < length);
+    return find8NonASCIIAlignedImpl(pointer + index, length - index);
+}
+
+WTF_EXPORT_PRIVATE const UChar* find16NonASCIIAlignedImpl(const UChar* pointer, size_t length);
+
+ALWAYS_INLINE const UChar* find16NonASCII(const UChar* pointer, size_t length)
+{
+    constexpr size_t thresholdLength = 16;
+    static_assert(!(thresholdLength % (16 / sizeof(UChar))), "length threshold should be 16-byte aligned to make find16NonASCIIAlignedImpl simpler");
+    uintptr_t unaligned = reinterpret_cast<uintptr_t>(pointer) & 0xf;
+
+    size_t index = 0;
+    size_t runway = std::min(thresholdLength - (unaligned / sizeof(UChar)), length);
+    for (; index < runway; ++index) {
+        if (!isASCII(pointer[index]))
+            return pointer + index;
+    }
+    if (runway == length)
+        return nullptr;
+
+    ASSERT(index < length);
+    return find16NonASCIIAlignedImpl(pointer + index, length - index);
+}
+#endif
+
 template<typename CharacterType, std::enable_if_t<std::is_integral_v<CharacterType>>* = nullptr>
 inline size_t find(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned index = 0)
 {

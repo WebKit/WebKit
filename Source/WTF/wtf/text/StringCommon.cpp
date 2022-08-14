@@ -212,6 +212,66 @@ const double* findDoubleAlignedImpl(const double* pointer, double target, size_t
     } while (length < oldLength);
     return nullptr;
 }
+
+SUPPRESS_ASAN
+const LChar* find8NonASCIIAlignedImpl(const LChar* pointer, size_t length)
+{
+    constexpr uint8x16_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+
+    ASSERT(length);
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
+    ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
+    const uint8_t* cursor = bitwise_cast<const uint8_t*>(pointer);
+    constexpr size_t stride = 16 / sizeof(uint8_t);
+
+    uint8x16_t charactersVector = vdupq_n_u8(0x80);
+
+    size_t oldLength;
+    do {
+        uint8x16_t value = vld1q_u8(cursor);
+        uint8x16_t mask = vcgeq_u8(value, charactersVector);
+        if (vmaxvq_u8(mask)) {
+            uint8x16_t ranked = vornq_u8(indexMask, mask);
+            uint8_t index = vminvq_u8(ranked);
+            return bitwise_cast<const LChar*>((index < length) ? cursor + index : nullptr);
+        }
+        oldLength = length;
+        length -= stride;
+        cursor += stride;
+    } while (length < oldLength);
+    return nullptr;
+}
+
+SUPPRESS_ASAN
+const UChar* find16NonASCIIAlignedImpl(const UChar* pointer, size_t length)
+{
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0x1));
+
+    constexpr uint16x8_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7 };
+
+    ASSERT(length);
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
+    ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
+    const uint16_t* cursor = bitwise_cast<const uint16_t*>(pointer);
+    constexpr size_t stride = 16 / sizeof(uint16_t);
+
+    uint16x8_t charactersVector = vdupq_n_u16(0x80);
+
+    size_t oldLength;
+    do {
+        uint16x8_t value = vld1q_u16(cursor);
+        uint16x8_t mask = vcgeq_u16(value, charactersVector);
+        if (vget_lane_u64(vreinterpret_u64_u8(vmovn_u16(mask)), 0)) {
+            uint16x8_t ranked = vornq_u16(indexMask, mask);
+            uint16_t index = vminvq_u16(ranked);
+            return bitwise_cast<const UChar*>((index < length) ? cursor + index : nullptr);
+        }
+        oldLength = length;
+        length -= stride;
+        cursor += stride;
+    } while (length < oldLength);
+    return nullptr;
+}
 #endif
 
 } // namespace WTF
