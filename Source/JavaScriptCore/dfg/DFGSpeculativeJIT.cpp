@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10999,7 +10999,7 @@ void SpeculativeJIT::compileCallDOM(Node* node)
 
     // FIXME: Revisit JSGlobalObject.
     // https://bugs.webkit.org/show_bug.cgi?id=203204
-    auto function = CFunctionPtr(signature->functionWithoutTypeCheck);
+    auto function = signature->functionWithoutTypeCheck();
     unsigned argumentCountIncludingThis = signature->argumentCount + 1;
     switch (argumentCountIncludingThis) {
     case 1:
@@ -11042,7 +11042,7 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
         if (Options::useJITCage())
             m_jit.appendCall(vmEntryCustomGetter);
         else {
-            FunctionPtr<OperationPtrTag> bypassedFunction = FunctionPtr<OperationPtrTag>(MacroAssemblerCodePtr<OperationPtrTag>(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(getter.executableAddress()))));
+            FunctionPtr<OperationPtrTag> bypassedFunction = MacroAssemblerCodePtr<OperationPtrTag>(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(getter.executableAddress()))).toFunctionPtr();
             m_jit.appendOperationCall(bypassedFunction);
         }
         m_jit.setupResults(resultRegs);

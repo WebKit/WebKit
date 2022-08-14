@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,7 +91,7 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedNearCall(CodePtr<NoPtrTag> target)
 {
     ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
     Call nakedCall = nearCall();
-    m_nearCalls.append(NearCallRecord(nakedCall, FunctionPtr<JSInternalPtrTag>(target.retagged<JSInternalPtrTag>())));
+    m_nearCalls.append(NearCallRecord(nakedCall, target.retagged<JSInternalPtrTag>().toFunctionPtr()));
     return nakedCall;
 }
 
@@ -99,7 +99,7 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedNearTailCall(CodePtr<NoPtrTag> target)
 {
     ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
     Call nakedCall = nearTailCall();
-    m_nearCalls.append(NearCallRecord(nakedCall, FunctionPtr<JSInternalPtrTag>(target.retagged<JSInternalPtrTag>())));
+    m_nearCalls.append(NearCallRecord(nakedCall, target.retagged<JSInternalPtrTag>().toFunctionPtr()));
     return nakedCall;
 }
 

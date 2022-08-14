@@ -778,7 +778,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
 
         bool hasProperty = false;
         unsigned attributes;
-        PutPropertySlot::PutValueFunc customSetter = nullptr;
+        PutValueFunc customSetter = nullptr;
         PropertyOffset offset = structure->get(vm, propertyName, attributes);
         if (isValidOffset(offset)) {
             hasProperty = true;
@@ -874,7 +874,7 @@ static NEVER_INLINE bool definePropertyOnReceiverSlow(JSGlobalObject* globalObje
             return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
 
         if (slot.attributes() & PropertyAttribute::CustomValue) {
-            PutPropertySlot::PutValueFunc customSetter = slot.customSetter();
+            PutValueFunc customSetter = slot.customSetter();
             if (customSetter)
                 RELEASE_AND_RETURN(scope, customSetter(receiver->globalObject(), JSValue::encode(receiver), JSValue::encode(value), propertyName));
         }

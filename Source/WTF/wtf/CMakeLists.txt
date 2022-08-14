@@ -84,6 +84,7 @@ set(WTF_PUBLIC_HEADERS
     Forward.h
     Function.h
     FunctionDispatcher.h
+    FunctionPtr.h
     FunctionTraits.h
     GenerateProfiles.h
     GenericHashKey.h

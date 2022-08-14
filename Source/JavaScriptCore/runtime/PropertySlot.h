@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@
 #include "ScopeOffset.h"
 #include <wtf/Assertions.h>
 #include <wtf/ForbidHeapAllocation.h>
+#include <wtf/FunctionPtr.h>
 
 namespace JSC {
 class GetterSetter;
@@ -85,11 +86,11 @@ inline unsigned attributesForStructure(unsigned attributes)
     return static_cast<uint8_t>(attributes);
 }
 
-using GetValueFunc = EncodedJSValue(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
-using GetValueFuncWithPtr = EncodedJSValue(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName, void*);
+using GetValueFunc = TypedFunctionPtr<GetValueFuncPtrTag, EncodedJSValue(JSGlobalObject*, EncodedJSValue, PropertyName), FunctionAttributes::JITOperation>;
+using GetValueFuncWithPtr = TypedFunctionPtr<GetValueFuncWithPtrPtrTag, EncodedJSValue(JSGlobalObject*, EncodedJSValue, PropertyName, void*), FunctionAttributes::JITOperation>;
 
-using PutValueFunc = bool (JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue baseObject, EncodedJSValue value, PropertyName);
-using PutValueFuncWithPtr = bool (JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue baseObject, EncodedJSValue value, PropertyName, void*);
+using PutValueFunc = TypedFunctionPtr<PutValueFuncPtrTag, bool(JSGlobalObject*, EncodedJSValue, EncodedJSValue, PropertyName), FunctionAttributes::JITOperation>;
+using PutValueFuncWithPtr = TypedFunctionPtr<PutValueFuncWithPtrPtrTag, bool(JSGlobalObject*, EncodedJSValue, EncodedJSValue, PropertyName, void*), FunctionAttributes::JITOperation>;
 
 class PropertySlot {
 
@@ -126,9 +127,6 @@ public:
         if (isVMInquiry())
             disallowVMEntry.emplace(*vmForInquiry);
     }
-
-    using GetValueFunc = JSC::GetValueFunc;
-    using GetValueFuncWithPtr = JSC::GetValueFuncWithPtr;
 
     JSValue getValue(JSGlobalObject*, PropertyName) const;
     JSValue getValue(JSGlobalObject*, uint64_t propertyName) const;
@@ -265,9 +263,9 @@ public:
         ASSERT(attributes == attributesForStructure(attributes));
         
         ASSERT(getValue);
-        assertIsCFunctionPtr(getValue);
+        assertIsTaggedWith<GetValueFuncPtrTag>(bitwise_cast<void*>(getValue));
         m_data.custom.getValue = getValue;
-        assertIsNullOrCFunctionPtr(putValue);
+        assertIsNullOrTaggedWith<PutValueFuncPtrTag>(bitwise_cast<void*>(putValue));
         m_data.custom.putValue = putValue;
         m_attributes = attributes;
 
@@ -289,9 +287,7 @@ public:
         ASSERT(attributes == attributesForStructure(attributes));
         
         ASSERT(getValue);
-        assertIsCFunctionPtr(getValue);
         m_data.custom.getValue = getValue;
-        assertIsNullOrCFunctionPtr(putValue);
         m_data.custom.putValue = putValue;
         m_attributes = attributes;
 
@@ -369,7 +365,8 @@ private:
     JS_EXPORT_PRIVATE JSValue functionGetter(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE JSValue customGetter(VM&, PropertyName) const;
 
-    union {
+    union Data {
+        Data() { } // Needed because of GetValueFunc and PutValueFunc.
         EncodedJSValue value;
         struct {
             GetterSetter* getterSetter;

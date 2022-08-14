@@ -37,8 +37,8 @@ public:
     using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    using CustomGetter = PropertySlot::GetValueFunc;
-    using CustomSetter = PutPropertySlot::PutValueFunc;
+    using CustomGetter = GetValueFunc;
+    using CustomSetter = PutValueFunc;
 
     template<typename CellType, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)

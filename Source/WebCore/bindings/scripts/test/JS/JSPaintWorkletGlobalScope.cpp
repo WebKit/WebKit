@@ -68,8 +68,8 @@ static const struct CompactHashIndex JSPaintWorkletGlobalScopeTableIndex[4] = {
 
 static const HashTableValue JSPaintWorkletGlobalScopeTableValues[] =
 {
-    { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsPaintWorkletGlobalScope_ExposedStarConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "PaintWorkletGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsPaintWorkletGlobalScope_ExposedStarConstructor, 0 } },
+    { "PaintWorkletGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor, 0 } },
 };
 
 static const HashTable JSPaintWorkletGlobalScopeTable = { 2, 3, true, JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopeTableValues, JSPaintWorkletGlobalScopeTableIndex };
@@ -99,7 +99,7 @@ static const struct CompactHashIndex JSPaintWorkletGlobalScopePrototypeTableInde
 
 static const HashTableValue JSPaintWorkletGlobalScopePrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsPaintWorkletGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsPaintWorkletGlobalScopeConstructor, 0 } },
 };
 
 static const HashTable JSPaintWorkletGlobalScopePrototypeTable = { 1, 1, true, JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopePrototypeTableValues, JSPaintWorkletGlobalScopePrototypeTableIndex };

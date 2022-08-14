@@ -1050,7 +1050,7 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
         ASSERT(jitCode == callData.js.functionExecutable->generatedJITCodeForCall().ptr());
         result = jitCode->execute(&vm, &protoCallFrame);
     } else {
-        result = JSValue::decode(vmEntryToNative(callData.native.function.rawPointer(), &vm, &protoCallFrame));
+        result = JSValue::decode(vmEntryToNative(callData.native.function.executableAddress(), &vm, &protoCallFrame));
         RETURN_IF_EXCEPTION(throwScope, JSValue());
     }
 
@@ -1129,7 +1129,7 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
         ASSERT(jitCode == constructData.js.functionExecutable->generatedJITCodeForConstruct().ptr());
         result = jitCode->execute(&vm, &protoCallFrame);
     } else {
-        result = JSValue::decode(vmEntryToNative(constructData.native.function.rawPointer(), &vm, &protoCallFrame));
+        result = JSValue::decode(vmEntryToNative(constructData.native.function.executableAddress(), &vm, &protoCallFrame));
 
         if (LIKELY(!throwScope.exception()))
             RELEASE_ASSERT(result.isObject());
