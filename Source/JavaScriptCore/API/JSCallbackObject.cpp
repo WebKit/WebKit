@@ -51,50 +51,50 @@ template<> const bool JSCallbackObject<JSNonFinalObject>::needsDestruction = tru
 template<> const bool JSCallbackObject<JSGlobalObject>::needsDestruction = true;
 
 template<>
-RawNativeFunction JSCallbackObject<JSNonFinalObject>::getCallFunction()
+NativeFunction::Ptr JSCallbackObject<JSNonFinalObject>::getCallFunction()
 {
     return callJSNonFinalObjectCallbackObject;
 }
 
 template<>
-RawNativeFunction JSCallbackObject<JSNonFinalObject>::getConstructFunction()
+NativeFunction::Ptr JSCallbackObject<JSNonFinalObject>::getConstructFunction()
 {
     return constructJSNonFinalObjectCallbackObject;
 }
 
 template <>
-PropertySlot::GetValueFunc JSCallbackObject<JSNonFinalObject>::getCallbackGetter()
+GetValueFunc JSCallbackObject<JSNonFinalObject>::getCallbackGetter()
 {
     return callbackGetterJSNonFinalObjectCallbackObject;
 }
 
 template <>
-PropertySlot::GetValueFunc JSCallbackObject<JSNonFinalObject>::getStaticFunctionGetter()
+GetValueFunc JSCallbackObject<JSNonFinalObject>::getStaticFunctionGetter()
 {
     return staticFunctionGetterJSNonFinalObjectCallbackObject;
 }
 
 
 template<>
-RawNativeFunction JSCallbackObject<JSGlobalObject>::getCallFunction()
+NativeFunction::Ptr JSCallbackObject<JSGlobalObject>::getCallFunction()
 {
     return callJSGlobalObjectCallbackObject;
 }
 
 template<>
-RawNativeFunction JSCallbackObject<JSGlobalObject>::getConstructFunction()
+NativeFunction::Ptr JSCallbackObject<JSGlobalObject>::getConstructFunction()
 {
     return constructJSGlobalObjectCallbackObject;
 }
 
 template <>
-PropertySlot::GetValueFunc JSCallbackObject<JSGlobalObject>::getCallbackGetter()
+GetValueFunc JSCallbackObject<JSGlobalObject>::getCallbackGetter()
 {
     return callbackGetterJSGlobalObjectCallbackObject;
 }
 
 template <>
-PropertySlot::GetValueFunc JSCallbackObject<JSGlobalObject>::getStaticFunctionGetter()
+GetValueFunc JSCallbackObject<JSGlobalObject>::getStaticFunctionGetter()
 {
     return staticFunctionGetterJSGlobalObjectCallbackObject;
 }

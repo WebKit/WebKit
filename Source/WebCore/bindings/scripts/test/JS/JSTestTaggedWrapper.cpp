@@ -104,7 +104,7 @@ template<> void JSTestTaggedWrapperDOMConstructor::initializeProperties(VM& vm, 
 
 static const HashTableValue JSTestTaggedWrapperPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTaggedWrapperConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestTaggedWrapperConstructor, 0 } },
 };
 
 const ClassInfo JSTestTaggedWrapperPrototype::s_info = { "TestTaggedWrapper"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapperPrototype) };

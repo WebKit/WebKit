@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,7 +70,7 @@ public:
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
-    static constexpr RawNativeFunction callConstructor()
+    static constexpr NativeFunction::Ptr callConstructor()
     {
         switch (ViewClass::TypedArrayStorageType) {
         case TypeInt8:
@@ -103,7 +103,7 @@ public:
         }
     }
 
-    static constexpr RawNativeFunction constructConstructor()
+    static constexpr NativeFunction::Ptr constructConstructor()
     {
         switch (ViewClass::TypedArrayStorageType) {
         case TypeInt8:

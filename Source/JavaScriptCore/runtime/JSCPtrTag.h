@@ -39,7 +39,6 @@ using PtrTag = WTF::PtrTag;
 
 #define FOR_EACH_JSC_PTRTAG(v) \
     /* Callee:Native Caller:None */ \
-    v(DOMJITFunctionPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::None) \
     v(DisassemblyPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::None) \
     /* Callee:JIT Caller:None */ \
     v(JITCompilationPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
@@ -52,6 +51,10 @@ using PtrTag = WTF::PtrTag;
     /* Callee:Native Caller:Native */ \
     v(BytecodePtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(CustomAccessorPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
+    v(GetValueFuncPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
+    v(GetValueFuncWithPtrPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
+    v(PutValueFuncPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
+    v(PutValueFuncWithPtrPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(HostFunctionPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(JITProbePtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(JITProbePCPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \

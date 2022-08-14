@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,7 @@ bool JSRemoteDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, P
 
     // We only allow setting "location" attribute cross-origin.
     if (propertyName == builtinNames(vm).locationPublicName()) {
-        auto* setter = s_info.staticPropHashTable->entry(propertyName)->propertyPutter();
+        auto setter = s_info.staticPropHashTable->entry(propertyName)->propertyPutter();
         scope.release();
         setter(lexicalGlobalObject, JSValue::encode(slot.thisValue()), JSValue::encode(value), propertyName);
         return true;

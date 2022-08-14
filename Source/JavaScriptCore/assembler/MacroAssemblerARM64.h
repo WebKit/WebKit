@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -4643,7 +4643,7 @@ public:
     template<PtrTag resultTag, PtrTag locationTag>
     static FunctionPtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
     {
-        return FunctionPtr<resultTag>(MacroAssemblerCodePtr<resultTag>(Assembler::readCallTarget(call.dataLocation())));
+        return MacroAssemblerCodePtr<resultTag>(Assembler::readCallTarget(call.dataLocation())).toFunctionPtr();
     }
 
     template<PtrTag tag>
@@ -5383,9 +5383,9 @@ protected:
         if (!call.isFlagSet(Call::Near))
             Assembler::linkPointer(code, call.m_label.labelAtOffset(REPATCH_OFFSET_CALL_TO_POINTER), function.executableAddress());
         else if (call.isFlagSet(Call::Tail))
-            Assembler::linkJump(code, call.m_label, function.template retaggedExecutableAddress<NoPtrTag>());
+            Assembler::linkJump(code, call.m_label, function.untaggedExecutableAddress());
         else
-            Assembler::linkCall(code, call.m_label, function.template retaggedExecutableAddress<NoPtrTag>());
+            Assembler::linkCall(code, call.m_label, function.untaggedExecutableAddress());
     }
 
     JS_EXPORT_PRIVATE static void collectCPUFeatures();

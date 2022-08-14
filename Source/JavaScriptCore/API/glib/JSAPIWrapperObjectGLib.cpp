@@ -79,25 +79,25 @@ template <> const ClassInfo JSCallbackObject<JSAPIWrapperObject>::s_info = { "JS
 template<> const bool JSCallbackObject<JSAPIWrapperObject>::needsDestruction = true;
 
 template <>
-RawNativeFunction JSCallbackObject<JSAPIWrapperObject>::getCallFunction()
+NativeFunction::Ptr JSCallbackObject<JSAPIWrapperObject>::getCallFunction()
 {
     return callJSAPIWrapperObjectCallbackObject;
 }
 
 template <>
-RawNativeFunction JSCallbackObject<JSAPIWrapperObject>::getConstructFunction()
+NativeFunction::Ptr JSCallbackObject<JSAPIWrapperObject>::getConstructFunction()
 {
     return constructJSAPIWrapperObjectCallbackObject;
 }
 
 template <>
-PropertySlot::GetValueFunc JSCallbackObject<JSAPIWrapperObject>::getCallbackGetter()
+GetValueFunc JSCallbackObject<JSAPIWrapperObject>::getCallbackGetter()
 {
     return callbackGetterJSAPIWrapperObjectCallbackObject;
 }
 
 template <>
-PropertySlot::GetValueFunc JSCallbackObject<JSAPIWrapperObject>::getStaticFunctionGetter()
+GetValueFunc JSCallbackObject<JSAPIWrapperObject>::getStaticFunctionGetter()
 {
     return staticFunctionGetterJSAPIWrapperObjectCallbackObject;
 }

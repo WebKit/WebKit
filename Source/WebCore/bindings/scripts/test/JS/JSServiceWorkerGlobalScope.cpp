@@ -68,8 +68,8 @@ static const struct CompactHashIndex JSServiceWorkerGlobalScopeTableIndex[4] = {
 
 static const HashTableValue JSServiceWorkerGlobalScopeTableValues[] =
 {
-    { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsServiceWorkerGlobalScope_ExposedStarConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "ServiceWorkerGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsServiceWorkerGlobalScope_ExposedStarConstructor, 0 } },
+    { "ServiceWorkerGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstructor, 0 } },
 };
 
 static const HashTable JSServiceWorkerGlobalScopeTable = { 2, 3, true, JSServiceWorkerGlobalScope::info(), JSServiceWorkerGlobalScopeTableValues, JSServiceWorkerGlobalScopeTableIndex };
@@ -99,7 +99,7 @@ static const struct CompactHashIndex JSServiceWorkerGlobalScopePrototypeTableInd
 
 static const HashTableValue JSServiceWorkerGlobalScopePrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsServiceWorkerGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsServiceWorkerGlobalScopeConstructor, 0 } },
 };
 
 static const HashTable JSServiceWorkerGlobalScopePrototypeTable = { 1, 1, true, JSServiceWorkerGlobalScope::info(), JSServiceWorkerGlobalScopePrototypeTableValues, JSServiceWorkerGlobalScopePrototypeTableIndex };

@@ -5,7 +5,7 @@
 # (c) 2000-2002 by Harri Porten <porten@kde.org> and
 #                  David Faure <faure@kde.org>
 # Modified (c) 2004 by Nikolas Zimmermann <wildfox@kde.org>
-# Copyright (C) 2007-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2007-2022 Apple Inc. All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -290,49 +290,51 @@ sub output() {
     } else {
         # MSVC dislikes empty arrays.
         print "static const struct HashTableValue ${nameEntries}\[1\] = {\n";
-        print "    { { }, 0, NoIntrinsic, { 0, 0 } }\n";
+        print "    { { }, 0, NoIntrinsic, { HashTableValue::End } }\n";
     }
     my $i = 0;
     foreach my $key (@keys) {
+        my $typeTag = "";
         my $firstValue = "";
         my $secondValue = "";
-        my $firstCastStr = "";
-        my $secondCastStr = "";
+        my $hasSecondValue = 1;
         my $intrinsic = "NoIntrinsic";
 
         if ($values[$i]{"type"} eq "PropertyAttribute::Function") {
-            $firstCastStr = "static_cast<RawNativeFunction>";
+            $typeTag = "NativeFunction";
             $firstValue = $values[$i]{"function"};
             $secondValue = $values[$i]{"params"};
             $intrinsic = $values[$i]{"intrinsic"};
         } elsif ($values[$i]{"type"} eq "PropertyAttribute::Property") {
-            $firstCastStr = "static_cast<PropertySlot::GetValueFunc>";
-            $secondCastStr = "static_cast<PutPropertySlot::PutValueFunc>";
+            $typeTag = "GetterSetter";
             $firstValue = $values[$i]{"get"};
             $secondValue = $values[$i]{"put"};
         } elsif ($values[$i]{"type"} eq "Lexer") {
+            $typeTag = "Lexer";
             $firstValue = $values[$i]{"value"};
-            $secondValue = "0";
+            $hasSecondValue = 0;
         } elsif ($values[$i]{"type"} eq "PropertyAttribute::CellProperty" || $values[$i]{"type"} eq "PropertyAttribute::ClassStructure") {
+            $typeTag = ($values[$i]{"type"} eq "PropertyAttribute::CellProperty") ? "LazyCellProperty" : "LazyClassStructure";
             $values[$i]{"property"} =~ /\A([a-zA-Z0-9_]+)::(.*)\Z/ or die;
             $firstValue = "OBJECT_OFFSETOF($1, $2)";
-            $secondValue = "0";
+            $hasSecondValue = 0;
         } elsif ($values[$i]{"type"} eq "PropertyAttribute::PropertyCallback") {
-            $firstCastStr = "static_cast<LazyPropertyCallback>";
+            $typeTag = "LazyProperty";
             $firstValue = $values[$i]{"cback"};
-            $secondValue = "0";
+            $hasSecondValue = 0;
         }
 
         my $attributes = "PropertyAttribute::" . $attrs[$i];
         $attributes =~ s/\|/\|PropertyAttribute::/g;
         $attributes = "static_cast<unsigned>(" . $attributes . ")";
         if ($values[$i]{"type"} eq "PropertyAttribute::Function" && $firstValue eq "JSBuiltin")  {
+            $typeTag = "BuiltinGenerator";
             my $tableHead = $name;
             $tableHead =~ s/Table$//;
-            print "   { \"$key\"_s, (($attributes) & ~PropertyAttribute::Function) | PropertyAttribute::Builtin, $intrinsic, { (intptr_t)static_cast<BuiltinGenerator>(" . $tableHead . ucfirst($key) . "CodeGenerator), (intptr_t)$secondValue } },\n";
+            print "   { \"$key\"_s, (($attributes) & ~PropertyAttribute::Function) | PropertyAttribute::Builtin, $intrinsic, { HashTableValue::" . $typeTag . "Type, " . $tableHead . ucfirst($key) . "CodeGenerator, $secondValue } },\n";
         }
         else {
-            print "   { \"$key\"_s, $attributes, $intrinsic, { (intptr_t)" . $firstCastStr . "($firstValue), (intptr_t)" . $secondCastStr . "($secondValue) } },\n";
+            print "   { \"$key\"_s, $attributes, $intrinsic, { HashTableValue::" . $typeTag . "Type, $firstValue" . ($hasSecondValue ? ", " . $secondValue : "") . " } },\n";
         }
         $i++;
     }

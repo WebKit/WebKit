@@ -67,7 +67,7 @@ static const struct CompactHashIndex JSShadowRealmGlobalScopeTableIndex[2] = {
 
 static const HashTableValue JSShadowRealmGlobalScopeTableValues[] =
 {
-    { "ShadowRealmGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsShadowRealmGlobalScope_ShadowRealmGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "ShadowRealmGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsShadowRealmGlobalScope_ShadowRealmGlobalScopeConstructor, 0 } },
 };
 
 static const HashTable JSShadowRealmGlobalScopeTable = { 1, 1, true, JSShadowRealmGlobalScope::info(), JSShadowRealmGlobalScopeTableValues, JSShadowRealmGlobalScopeTableIndex };
