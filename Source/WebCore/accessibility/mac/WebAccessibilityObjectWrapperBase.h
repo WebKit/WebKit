@@ -35,6 +35,8 @@
 
 namespace WebCore {
 struct AccessibilitySearchCriteria;
+class AccessibilityObject;
+class AXIsolatedObject;
 class Document;
 class IntRect;
 class FloatPoint;
@@ -62,10 +64,10 @@ bool AXAttributedStringRangeIsValid(NSAttributedString *, const NSRange&);
 void AXAttributedStringSetFont(NSMutableAttributedString *, CTFontRef, const NSRange&);
 
 @interface WebAccessibilityObjectWrapperBase : NSObject {
-    WebCore::AXCoreObject* m_axObject;
+    WebCore::AccessibilityObject* m_axObject;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    WebCore::AXCoreObject* m_isolatedObject;
+    WebCore::AXIsolatedObject* m_isolatedObject;
     // To be accessed only on the main thread.
     bool m_isolatedObjectInitialized;
 #endif
@@ -73,9 +75,9 @@ void AXAttributedStringSetFont(NSMutableAttributedString *, CTFontRef, const NSR
     WebCore::AXID _identifier;
 }
 
-- (id)initWithAccessibilityObject:(WebCore::AXCoreObject*)axObject;
+- (id)initWithAccessibilityObject:(WebCore::AccessibilityObject*)axObject;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-- (void)attachIsolatedObject:(WebCore::AXCoreObject*)isolatedObject;
+- (void)attachIsolatedObject:(WebCore::AXIsolatedObject*)isolatedObject;
 #endif
 
 - (void)detach;

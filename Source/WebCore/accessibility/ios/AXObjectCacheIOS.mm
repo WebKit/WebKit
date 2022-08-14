@@ -36,10 +36,10 @@
 
 namespace WebCore {
     
-void AXObjectCache::attachWrapper(AXCoreObject* obj)
+void AXObjectCache::attachWrapper(AccessibilityObject* object)
 {
-    RetainPtr<AccessibilityObjectWrapper> wrapper = adoptNS([[WebAccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj]);
-    obj->setWrapper(wrapper.get());
+    RetainPtr<AccessibilityObjectWrapper> wrapper = adoptNS([[WebAccessibilityObjectWrapper alloc] initWithAccessibilityObject:object]);
+    object->setWrapper(wrapper.get());
 }
 
 ASCIILiteral AXObjectCache::notificationPlatformName(AXNotification notification)
