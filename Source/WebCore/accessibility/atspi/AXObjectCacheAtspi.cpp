@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-void AXObjectCache::attachWrapper(AXCoreObject* axObject)
+void AXObjectCache::attachWrapper(AccessibilityObject* axObject)
 {
     auto wrapper = AccessibilityObjectAtspi::create(axObject, document().page()->accessibilityRootObject());
     axObject->setWrapper(wrapper.ptr());

@@ -50,7 +50,7 @@ void AXObjectCache::detachWrapper(AXCoreObject* obj, AccessibilityDetachmentType
         wrapper->detach();
 }
 
-void AXObjectCache::attachWrapper(AXCoreObject*)
+void AXObjectCache::attachWrapper(AccessibilityObject*)
 {
     // On Windows, AccessibilityObjects are wrapped when the accessibility
     // software requests them via get_accChild.

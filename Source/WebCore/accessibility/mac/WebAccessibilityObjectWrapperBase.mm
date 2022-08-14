@@ -31,6 +31,7 @@
 
 #if ENABLE(ACCESSIBILITY)
 
+#import "AXIsolatedObject.h"
 #import "AXObjectCache.h"
 #import "AccessibilityARIAGridRow.h"
 #import "AccessibilityList.h"
@@ -58,6 +59,7 @@
 #import "TextCheckerClient.h"
 #import "TextIterator.h"
 #import "VisibleUnits.h"
+#import <Accessibility/Accessibility.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(MAC)
@@ -280,7 +282,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 
 @synthesize identifier = _identifier;
 
-- (id)initWithAccessibilityObject:(AXCoreObject*)axObject
+- (id)initWithAccessibilityObject:(AccessibilityObject*)axObject
 {
     ASSERT(isMainThread());
 
@@ -290,7 +292,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
     return self;
 }
 
-- (void)attachAXObject:(AXCoreObject*)axObject
+- (void)attachAXObject:(AccessibilityObject*)axObject
 {
     ASSERT(axObject && (!_identifier.isValid() || _identifier == axObject->objectID()));
     m_axObject = axObject;
@@ -299,7 +301,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-- (void)attachIsolatedObject:(AXCoreObject*)isolatedObject
+- (void)attachIsolatedObject:(AXIsolatedObject*)isolatedObject
 {
     ASSERT(isolatedObject && (!_identifier.isValid() || _identifier == isolatedObject->objectID()));
     m_isolatedObject = isolatedObject;
