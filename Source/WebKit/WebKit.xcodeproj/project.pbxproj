@@ -4925,7 +4925,7 @@
 		51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourceLoader.h; sourceTree = "<group>"; };
 		5252A51727E048740094BEB9 /* VirtualHidConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VirtualHidConnection.h; sourceTree = "<group>"; };
 		5252A51827E048740094BEB9 /* VirtualHidConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VirtualHidConnection.cpp; sourceTree = "<group>"; };
-		52688AB327D7CE40003577A2 /* _WKResidentKeyRequirement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = _WKResidentKeyRequirement.h; path = UIProcess/API/Cocoa/_WKResidentKeyRequirement.h; sourceTree = "<group>"; };
+		52688AB327D7CE40003577A2 /* _WKResidentKeyRequirement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKResidentKeyRequirement.h; sourceTree = "<group>"; };
 		526C5718284AD09500E08955 /* CcidConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CcidConnection.h; sourceTree = "<group>"; };
 		526C5719284AD09500E08955 /* CcidConnection.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = CcidConnection.mm; sourceTree = "<group>"; };
 		526C571C284AD0C000E08955 /* CcidService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CcidService.h; sourceTree = "<group>"; };
@@ -7545,7 +7545,6 @@
 		0867D691FE84028FC02AAC07 /* WebKit2 */ = {
 			isa = PBXGroup;
 			children = (
-				52688AB327D7CE40003577A2 /* _WKResidentKeyRequirement.h */,
 				5C157A0A2717C9F100ED5280 /* webpushd */,
 				B396EA5512E0ED2D00F4FEB7 /* config.h */,
 				2D7DEBE021269D5F00B9F73C /* Sources.txt */,
@@ -9522,6 +9521,7 @@
 				A55BA80C1BA12BE1007CD33D /* _WKRemoteWebInspectorViewController.h */,
 				A55BA80D1BA12BE1007CD33D /* _WKRemoteWebInspectorViewController.mm */,
 				990E1E082384A88B004602DF /* _WKRemoteWebInspectorViewControllerPrivate.h */,
+				52688AB327D7CE40003577A2 /* _WKResidentKeyRequirement.h */,
 				5CB7AFDF23C52CBC00E49CF3 /* _WKResourceLoadDelegate.h */,
 				5CB7AFE323C67D3700E49CF3 /* _WKResourceLoadInfo.h */,
 				5CB7AFE223C67D3700E49CF3 /* _WKResourceLoadInfo.mm */,
