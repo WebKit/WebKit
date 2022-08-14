@@ -25,9 +25,11 @@
 #pragma once
 
 #include "FloatRect.h"
+#include "InlineIteratorInlineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "RenderObject.h"
 #include "TextBoxSelectableRange.h"
+#include "TextDecorationPainter.h"
 #include "TextRun.h"
 
 namespace WebCore {
@@ -39,7 +41,6 @@ class RenderCombineText;
 class RenderStyle;
 class RenderText;
 class ShadowData;
-class TextDecorationPainter;
 struct CompositionUnderline;
 struct MarkedText;
 struct PaintInfo;
@@ -80,6 +81,15 @@ protected:
     const FontCascade& fontCascade() const;
     FloatPoint textOriginFromPaintRect(const FloatRect&) const;
 
+    struct DecoratingBox {
+        InlineIterator::InlineBoxIterator inlineBox;
+        const RenderStyle& style;
+        TextDecorationPainter::Styles textDecorationStyles;
+        FloatPoint location;
+    };
+    using DecoratingBoxList = Vector<DecoratingBox>;
+    void collectDecoratingBoxesForTextBox(DecoratingBoxList&, const InlineIterator::TextBoxIterator&, FloatPoint textBoxLocation, const TextDecorationPainter::Styles&);
+
     const ShadowData* debugTextShadow() const;
 
     const TextBoxPath m_textBox;
@@ -90,6 +100,7 @@ protected:
     const TextRun m_paintTextRun;
     PaintInfo& m_paintInfo;
     const TextBoxSelectableRange m_selectableRange;
+    const LayoutPoint m_paintOffset;
     const FloatRect m_paintRect;
     const bool m_isFirstLine;
     const bool m_isCombinedText;

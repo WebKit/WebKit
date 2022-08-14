@@ -25,17 +25,13 @@
 
 #pragma once
 
-#include "FontCascade.h"
-#include "InlineIteratorBox.h"
+#include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "RenderStyleConstants.h"
 
 namespace WebCore {
     
-class LegacyInlineTextBox;
-class RenderElement;
 class RenderStyle;
-class TextUnderlineOffset;
 
 inline float wavyOffsetFromDecoration()
 {
@@ -65,6 +61,6 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle&);
 GlyphOverflow visualOverflowForDecorations(const RenderStyle&, FontBaseline, TextUnderlinePositionUnder);
 GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator&, const RenderText&, float textBoxLogicalTop, float textBoxLogicalBottom);
 
-float underlineOffsetForTextBoxPainting(const RenderStyle&, const InlineIterator::TextBoxIterator&);
+float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox&, const RenderStyle&);
 
 } // namespace WebCore

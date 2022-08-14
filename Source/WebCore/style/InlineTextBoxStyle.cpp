@@ -29,6 +29,7 @@
 #include "FontCascade.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLNames.h"
+#include "InlineIteratorInlineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
@@ -118,17 +119,21 @@ static const RenderElement* enclosingRendererWithTextDecoration(const RenderText
     return nullptr;
 }
 
+static float boxOffsetFromBottomMost(const InlineIterator::LineBoxIterator& lineBox, const RenderElement& decoratingInlineBoxRenderer, float boxLogicalTop, float boxLogicalBottom)
+{
+    if (decoratingInlineBoxRenderer.style().isFlippedLinesWritingMode())
+        return boxLogicalTop - minLogicalTopForTextDecorationLineUnder(lineBox, boxLogicalTop, decoratingInlineBoxRenderer);
+    return maxLogicalBottomForTextDecorationLineUnder(lineBox, boxLogicalBottom, decoratingInlineBoxRenderer) - boxLogicalBottom;
+}
+
 static float textRunOffsetFromBottomMost(const InlineIterator::LineBoxIterator& lineBox, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom)
 {
     auto* decoratingBoxRendererForUnderline = enclosingRendererWithTextDecoration(renderer);
     if (!decoratingBoxRendererForUnderline)
         return 0.f;
 
-    if (renderer.style().isFlippedLinesWritingMode())
-        return textBoxLogicalTop - minLogicalTopForTextDecorationLineUnder(lineBox, textBoxLogicalTop, *decoratingBoxRendererForUnderline);
-    return maxLogicalBottomForTextDecorationLineUnder(lineBox, textBoxLogicalBottom, *decoratingBoxRendererForUnderline) - textBoxLogicalBottom;
+    return boxOffsetFromBottomMost(lineBox, *decoratingBoxRendererForUnderline, textBoxLogicalTop, textBoxLogicalBottom);
 }
-
 
 static inline float defaultGap(const RenderStyle& style)
 {
@@ -295,14 +300,14 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& style)
     return computedVisualOverflowForDecorations(style, underlineOffset);
 }
 
-float underlineOffsetForTextBoxPainting(const RenderStyle& style, const InlineIterator::TextBoxIterator& textBox)
+float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const RenderStyle& style)
 {
     auto textUnderlinePositionUnder = std::optional<TextUnderlinePositionUnder> { };
-    auto underlinePositionValue = resolvedUnderlinePosition(style, textBox->lineBox()->baselineType());
+    auto underlinePositionValue = resolvedUnderlinePosition(style, inlineBox.lineBox()->baselineType());
 
     if (underlinePositionValue == TextUnderlinePosition::Under) {
-        auto textRunOffset = textRunOffsetFromBottomMost(textBox->lineBox(), textBox->renderer(), textBox->logicalTop(), textBox->logicalBottom());
-        textUnderlinePositionUnder = TextUnderlinePositionUnder { textBox->logicalBottom() - textBox->logicalTop(), textRunOffset };
+        auto textRunOffset = boxOffsetFromBottomMost(inlineBox.lineBox(), inlineBox.renderer(), inlineBox.logicalTop(), inlineBox.logicalBottom());
+        textUnderlinePositionUnder = TextUnderlinePositionUnder { inlineBox.logicalHeight(), textRunOffset };
     }
 
     return computedUnderlineOffset({ style, underlinePositionValue, defaultGap(style), textUnderlinePositionUnder });
