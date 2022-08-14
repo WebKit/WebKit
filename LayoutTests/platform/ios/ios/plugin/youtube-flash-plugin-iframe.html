@@ -26,7 +26,7 @@ function testEmbedYouTubeVideoInsideIframe()
         '<body>',
         '<p>Normal Embed:<br><embed id="normal-embed" src="http://www.youtube.com/v/N0gb9v4LI4o" type="application/x-shockwave-flash" width="425" height="350"></p>',
         '<script>',
-        'window.setTimeout(window.parent.checkEmbeddedYouTubeVideoInsideIframe, 0);',
+        'onload = () => setTimeout(window.parent.checkEmbeddedYouTubeVideoInsideIframe, 0);',
         '</' + 'script>',
         '</body>',
     ];
