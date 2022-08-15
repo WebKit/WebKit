@@ -30,6 +30,7 @@ from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.results.upload import Upload
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager
+from webkitpy.xcode.device_type import DeviceType
 
 _log = logging.getLogger(__name__)
 
@@ -150,7 +151,11 @@ class Manager(object):
                 self._stream.writeln('')
 
     def _initialize_devices(self):
-        if 'simulator' in self._port.port_name:
+        if any(port in self._port.port_name for port in ['iphone-simulator', 'ios-simulator']):
+            SimulatedDeviceManager.initialize_devices(DeviceRequest(DeviceType(hardware_family='iPhone', hardware_type='12'), allow_incomplete_match=False), self.host, simulator_ui=True)
+        elif 'ipad-simulator' in self._port.port_name:
+            SimulatedDeviceManager.initialize_devices(DeviceRequest(DeviceType(hardware_family='iPad', hardware_type='(5th generation)'), allow_incomplete_match=False), self.host, simulator_ui=True)
+        elif 'simulator' in self._port.port_name:
             SimulatedDeviceManager.initialize_devices(DeviceRequest(self._port.DEVICE_TYPE, allow_incomplete_match=True), self.host, simulator_ui=False)
         elif 'device' in self._port.port_name:
             raise RuntimeError('Running api tests on {} is not supported'.format(self._port.port_name))
