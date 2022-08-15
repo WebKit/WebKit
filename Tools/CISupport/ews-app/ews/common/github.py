@@ -117,7 +117,7 @@ class GitHub(object):
             return None
         return response
 
-    def update_or_leave_comment_on_pr(self, pr_number, content, repository_url=None, comment_id=-1):
+    def update_or_leave_comment_on_pr(self, pr_number, ews_comment, repository_url=None, comment_id=-1):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
             return False
@@ -132,7 +132,7 @@ class GitHub(object):
             response = requests.request(
                 'POST', comment_url, timeout=60, auth=auth,
                 headers=dict(Accept='application/vnd.github.v3+json'),
-                json=dict(body=content),
+                json=dict(body=ews_comment),
             )
             if response.status_code // 100 != 2:
                 _log.error("Failed to post comment to PR {}. Unexpected response code from GitHub: {}\n".format(pr_number, response.status_code))
@@ -143,6 +143,43 @@ class GitHub(object):
             _log.error("Error in posting comment to PR {}\n".format(pr_number))
         return -1
 
+    def update_pr_description_with_status_bubble(self, pr_number, ews_comment, repository_url=None):
+        api_url = GitHub.api_url(repository_url)
+        if not api_url:
+            return -1
+
+        description_url = '{api_url}/issues/{pr_number}'.format(api_url=api_url, pr_number=pr_number)
+        try:
+            username, access_token = GitHub.credentials()
+            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
+
+            response = requests.request(
+                'GET', description_url, timeout=60, auth=auth,
+                headers=dict(Accept='application/vnd.github.v3+json'),
+            )
+            if response.status_code // 100 != 2:
+                _log.error('Failed to get PR {} description. Unexpected response code from GitHub: {}\n'.format(pr_number, response.status_code))
+                return -1
+
+            description = response.json().get('body')
+            description = GitHubEWS.generate_updated_pr_description(description, ews_comment)
+
+            response = requests.request(
+                'POST', description_url, timeout=60, auth=auth,
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=dict(body=description),
+            )
+
+            if response.status_code // 100 != 2:
+                _log.error('Failed to update PR {} description. Unexpected response code from GitHub: {}\n'.format(pr_number, response.status_code))
+                return -1
+
+            _log.info('Updated description for PR {}\n'.format(pr_number))
+            return 0
+        except Exception as e:
+            _log.error('Error in updating PR description for PR {}: {}\n'.format(pr_number, e))
+        return -1
+
 
 class GitHubEWS(GitHub):
     ICON_BUILD_PASS = u'\U00002705'
@@ -150,6 +187,8 @@ class GitHubEWS(GitHub):
     ICON_BUILD_WAITING = u'\U000023F3'
     ICON_BUILD_ONGOING = u'![loading](https://user-images.githubusercontent.com/3098702/171232313-daa606f1-8fd6-4b0f-a20b-2cb93c43d19b.png)'
     ICON_BUILD_ERROR = u'\U0001F6D1'  # FIXME: Update this icon with a better one
+    STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
+    STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
     STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],  # FIXME: generate this list dynamically to have merge queue show up on top
                           ['bindings', 'ios-sim', 'mac-debug', 'gtk', 'wincairo'],
                           ['webkitperl', 'ios-wk2', 'mac-AS-debug', 'api-gtk', ''],
@@ -158,6 +197,11 @@ class GitHubEWS(GitHub):
                           ['merge', 'tv-sim', 'mac-wk2', '', ''],
                           ['unsafe-merge', 'watch', 'mac-AS-debug-wk2', '', ''],
                           ['', 'watch-sim', '', '', '']]
+
+    @classmethod
+    def generate_updated_pr_description(self, description, ews_comment):
+        description = description.split(self.STATUS_BUBBLE_START)[0]
+        return u'{}\n{}\n{}\n{}'.format(description, self.STATUS_BUBBLE_START, ews_comment, self.STATUS_BUBBLE_END)
 
     def generate_comment_text_for_change(self, change):
         comment = 'https://github.com/WebKit/WebKit/commit/{}'.format(change.change_id)
@@ -264,4 +308,6 @@ class GitHubEWS(GitHub):
             _log.info('Updating comment for hash: {}, pr_id: {}, pr_id from db: {}.'.format(sha, pr_id, change.pr_id))
             new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, comment_text, comment_id=comment_id)
 
+        if not change.obsolete:
+            gh.update_pr_description_with_status_bubble(pr_id, comment_text)
         return comment_id
