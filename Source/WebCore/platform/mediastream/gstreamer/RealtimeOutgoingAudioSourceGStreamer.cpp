@@ -23,6 +23,7 @@
 #if USE(GSTREAMER_WEBRTC)
 
 #include "GStreamerAudioCaptureSource.h"
+#include "GStreamerCommon.h"
 #include <wtf/text/StringToIntegerConversion.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
@@ -43,8 +44,8 @@ RealtimeOutgoingAudioSourceGStreamer::RealtimeOutgoingAudioSourceGStreamer(Ref<M
     for (auto& [encodingName, clockRate] : encodings)
         gst_caps_append_structure(m_allowedCaps.get(), gst_structure_new("application/x-rtp", "media", G_TYPE_STRING, "audio", "encoding-name", G_TYPE_STRING, encodingName, "clock-rate", G_TYPE_INT, clockRate, nullptr));
 
-    m_audioconvert = gst_element_factory_make("audioconvert", nullptr);
-    m_audioresample = gst_element_factory_make("audioresample", nullptr);
+    m_audioconvert = makeGStreamerElement("audioconvert", nullptr);
+    m_audioresample = makeGStreamerElement("audioresample", nullptr);
     gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_audioconvert.get(), m_audioresample.get(), nullptr);
     setSource(WTFMove(source));
 }

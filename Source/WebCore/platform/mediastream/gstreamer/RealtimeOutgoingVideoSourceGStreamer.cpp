@@ -22,6 +22,7 @@
 
 #if USE(GSTREAMER_WEBRTC)
 
+#include "GStreamerCommon.h"
 #include "GStreamerVideoCaptureSource.h"
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
@@ -34,9 +35,9 @@ RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(Ref<M
 {
     registerWebKitGStreamerElements();
 
-    m_videoConvert = gst_element_factory_make("videoconvert", nullptr);
+    m_videoConvert = makeGStreamerElement("videoconvert", nullptr);
 
-    m_videoFlip = gst_element_factory_make("videoflip", nullptr);
+    m_videoFlip = makeGStreamerElement("videoflip", nullptr);
     gst_util_set_object_arg(G_OBJECT(m_videoFlip.get()), "method", "automatic");
 
     m_encoder = gst_element_factory_make("webrtcvideoencoder", nullptr);

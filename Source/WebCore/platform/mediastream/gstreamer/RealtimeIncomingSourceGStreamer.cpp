@@ -22,6 +22,7 @@
 #if USE(GSTREAMER_WEBRTC)
 #include "RealtimeIncomingSourceGStreamer.h"
 
+#include "GStreamerCommon.h"
 #include <gst/app/gstappsink.h>
 #include <wtf/text/WTFString.h>
 
@@ -65,7 +66,7 @@ void RealtimeIncomingSourceGStreamer::registerClient()
 {
     GST_DEBUG("Registering new client");
     auto* queue = gst_element_factory_make("queue", nullptr);
-    auto* sink = gst_element_factory_make("appsink", nullptr);
+    auto* sink = makeGStreamerElement("appsink", nullptr);
     g_object_set(sink, "enable-last-sample", FALSE, "emit-signals", TRUE, "max-buffers", 1, nullptr);
     g_signal_connect_swapped(sink, "new-sample", G_CALLBACK(+[](RealtimeIncomingSourceGStreamer* self, GstElement* sink) -> GstFlowReturn {
         auto sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
