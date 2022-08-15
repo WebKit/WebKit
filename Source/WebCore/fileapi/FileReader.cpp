@@ -180,7 +180,8 @@ void FileReader::didFinishLoading()
         if (m_state == DONE)
             return;
         m_finishedLoading = true;
-        fireEvent(eventNames().progressEvent);
+        if (m_loader->bytesLoaded())
+            fireEvent(eventNames().progressEvent);
         if (m_state == DONE)
             return;
         m_state = DONE;
