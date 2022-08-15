@@ -8,19 +8,19 @@ layer at (0,0) size 800x600
           text run at (0,0) width 762: "Test appearances of spin buttons. Disabled state and read-only state should have appearances different from the normal"
           text run at (0,18) width 34: "state."
       RenderBlock {DIV} at (0,52) size 784x29
-        RenderInline {LABEL} at (0,0) size 335x18
+        RenderInline {LABEL} at (0,0) size 334x18
           RenderTextControl {INPUT} at (0,0) size 248x29 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderFlexibleBox {DIV} at (3,0) size 242x29
               RenderBlock {DIV} at (0,3) size 223x23
-          RenderText {#text} at (247,8) size 88x18
-            text run at (247,8) width 88: " Normal state"
+          RenderText {#text} at (247,8) size 87x18
+            text run at (247,8) width 87: " Normal state"
       RenderBlock {DIV} at (0,81) size 784x29
-        RenderInline {LABEL} at (0,0) size 342x18
+        RenderInline {LABEL} at (0,0) size 341x18
           RenderTextControl {INPUT} at (0,0) size 247x29 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderFlexibleBox {DIV} at (3,0) size 241x29
               RenderBlock {DIV} at (0,3) size 222x23
-          RenderText {#text} at (246,8) size 96x18
-            text run at (246,8) width 96: " Disabled state"
+          RenderText {#text} at (246,8) size 95x18
+            text run at (246,8) width 95: " Disabled state"
       RenderBlock {DIV} at (0,110) size 784x29
         RenderInline {LABEL} at (0,0) size 351x18
           RenderTextControl {INPUT} at (0,0) size 247x29 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
