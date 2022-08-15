@@ -8,7 +8,7 @@
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 10.00 10.00)
+          (position 8.00 8.00)
           (anchor 0.50 0.50)
           (bounds 125.50 20.00)
           (drawsContent 1)

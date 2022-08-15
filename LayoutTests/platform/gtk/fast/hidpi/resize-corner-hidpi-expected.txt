@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 465x17
           text run at (0,0) width 465: "This test passes if the resize corner icon appears high-resolution in HiDPI."
-      RenderBlock (anonymous) at (0,18) size 784x46
+      RenderBlock (anonymous) at (0,18) size 784x42
         RenderText {#text} at (0,0) size 0x0
-layer at (10,28) size 201x42 clip at (11,29) size 199x40
-  RenderTextControl {TEXTAREA} at (2,2) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (8,26) size 201x42 clip at (9,27) size 199x40
+  RenderTextControl {TEXTAREA} at (0,0) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 195x18

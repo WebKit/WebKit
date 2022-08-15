@@ -26,7 +26,7 @@
         function startTest() {
         	var iframe = document.getElementById("iframe");
         	frameButton = iframe.contentWindow.accessibilityController.accessibleElementById("frame-button");
-            shouldBe("frameButton.stringAttributeValue('AXVisibleContentRect')", "'{62.00, 10.00, 200.00, 200.00}'");
+		shouldBe("frameButton.stringAttributeValue('AXVisibleContentRect')", "'{58.00, 10.00, 200.00, 200.00}'");
         	finishJSTest();
         }
     }

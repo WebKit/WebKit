@@ -75,14 +75,14 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,36) size 91x18 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x17
                 text run at (0,0) width 4: " "
-      RenderBlock (anonymous) at (0,124) size 784x31
-        RenderButton {BUTTON} at (2,2) size 54x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderBlock (anonymous) at (0,124) size 784x27
+        RenderButton {BUTTON} at (0,0) size 54x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 38x18
             RenderText {#text} at (0,0) size 38x17
               text run at (0,0) width 38: "show"
-        RenderText {#text} at (58,6) size 4x17
-          text run at (58,6) width 4: " "
-        RenderButton {BUTTON} at (64,2) size 47x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderText {#text} at (54,4) size 4x17
+          text run at (54,4) width 4: " "
+        RenderButton {BUTTON} at (58,0) size 47x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 31x18
             RenderText {#text} at (0,0) size 31x17
               text run at (0,0) width 31: "hide"

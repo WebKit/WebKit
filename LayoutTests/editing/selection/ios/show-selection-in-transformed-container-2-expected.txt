@@ -4,8 +4,8 @@ This test verifies that after focusing a visible input field in a display: flex 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS caretRect.left is 12
-PASS caretRect.top is 6
+PASS caretRect.left is 10
+PASS caretRect.top is 4
 PASS caretRect.width is 2
 PASS caretRect.height is 24
 PASS successfullyParsed is true

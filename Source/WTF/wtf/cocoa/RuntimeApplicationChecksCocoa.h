@@ -45,6 +45,7 @@ enum class SDKAlignedBehavior {
     DisallowsSettingAnyXHRHeaderFromFileURLs,
     DoesNotDrainTheMicrotaskQueueWhenCallingObjC,
     DoesNotParseStringEndingWithFullStopAsFloatingPointNumber,
+    DoesNotAddIntrinsicMarginsToFormControls,
     DOMWindowReuseRestriction,
     DownloadDelegatesCalledOnTheMainThread,
     DropToNavigateDisallowedByDefault,

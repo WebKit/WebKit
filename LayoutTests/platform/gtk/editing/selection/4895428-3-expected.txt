@@ -11,15 +11,15 @@ layer at (0,0) size 800x600
         RenderInline {B} at (0,0) size 652x17
           RenderText {#text} at (0,36) size 652x17
             text run at (0,36) width 652: "To run manually, select everything from 'foo' though 'baz', then mouse down inside the text field."
-      RenderBlock {DIV} at (0,70) size 784x64
+      RenderBlock {DIV} at (0,70) size 784x60
         RenderBlock {DIV} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 21x17
             text run at (0,0) width 21: "foo"
-        RenderBlock (anonymous) at (0,18) size 784x28
-          RenderTextControl {INPUT} at (2,2) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderBlock {DIV} at (0,46) size 784x18
+        RenderBlock (anonymous) at (0,18) size 784x24
+          RenderTextControl {INPUT} at (0,0) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderBlock {DIV} at (0,42) size 784x18
           RenderText {#text} at (0,0) size 22x17
             text run at (0,0) width 22: "baz"
-layer at (13,101) size 186x18
+layer at (11,99) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
 caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 2 {DIV} of body
