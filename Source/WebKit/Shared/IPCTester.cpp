@@ -32,6 +32,7 @@
 #include "IPCConnectionTester.h"
 #include "IPCStreamTester.h"
 #include "IPCTesterMessages.h"
+#include "IPCUtilities.h"
 
 #include <atomic>
 #include <dlfcn.h>
@@ -53,7 +54,6 @@ struct SendMessageContext {
     std::atomic<bool>& shouldStop;
 };
 
-static std::atomic<unsigned> ongoingIPCTests { 0 };
 }
 
 extern "C" {
@@ -121,9 +121,9 @@ void IPCTester::startMessageTesting(IPC::Connection& connection, String&& driver
     if (!m_testQueue)
         m_testQueue = WorkQueue::create("IPC testing work queue");
     m_testQueue->dispatch([connection = Ref { connection }, &shouldStop = m_shouldStop, driverName = WTFMove(driverName)]() mutable {
-        ongoingIPCTests++;
+        IPC::startTestingIPC();
         runMessageTesting(connection, shouldStop, WTFMove(driverName));
-        ongoingIPCTests--;
+        IPC::stopTestingIPC();
     });
 }
 
@@ -138,7 +138,7 @@ void IPCTester::createStreamTester(IPC::Connection& connection, IPCStreamTesterI
     auto addResult = m_streamTesters.ensure(identifier, [&] {
         return IPC::ScopedActiveMessageReceiveQueue<IPCStreamTester> { IPCStreamTester::create(connection, identifier, WTFMove(stream)) };
     });
-    ASSERT_UNUSED(addResult, addResult.isNewEntry || isTestingIPC());
+    ASSERT_UNUSED(addResult, addResult.isNewEntry || IPC::isTestingIPC());
 }
 
 void IPCTester::releaseStreamTester(IPCStreamTesterIdentifier identifier, CompletionHandler<void()>&& completionHandler)
@@ -174,7 +174,7 @@ void IPCTester::createConnectionTester(IPC::Connection& connection, IPCConnectio
     auto addResult = m_connectionTesters.ensure(identifier, [&] {
         return IPC::ScopedActiveMessageReceiveQueue<IPCConnectionTester> { IPCConnectionTester::create(connection, identifier, WTFMove(testedConnectionIdentifier)) };
     });
-    ASSERT_UNUSED(addResult, addResult.isNewEntry || isTestingIPC());
+    ASSERT_UNUSED(addResult, addResult.isNewEntry || IPC::isTestingIPC());
 }
 
 void IPCTester::createConnectionTesterAndSendAsyncMessages(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Attachment&& testedConnectionIdentifier, uint32_t messageCount)
@@ -202,11 +202,6 @@ void IPCTester::stopIfNeeded()
         m_testQueue->dispatchSync([] { });
         m_testQueue = nullptr;
     }
-}
-
-bool isTestingIPC()
-{
-    return ongoingIPCTests;
 }
 
 }

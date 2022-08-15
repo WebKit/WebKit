@@ -30,7 +30,7 @@
 #include "Decoder.h"
 #include "IPCStreamTesterMessages.h"
 #include "IPCStreamTesterProxyMessages.h"
-#include "IPCTester.h"
+#include "IPCUtilities.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamServerConnection.h"
 

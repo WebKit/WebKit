@@ -29,7 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && PLATFORM(COCOA)
 
 #include "GPUConnectionToWebProcess.h"
-#include "IPCTester.h"
+#include "IPCUtilities.h"
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
 

@@ -45,13 +45,7 @@
 
 namespace WebKit {
 
-#define ASSERT_IS_TESTING_IPC() ASSERT(WebKit::isTestingIPC(), "Untrusted connection sent invalid data. Should only happen when testing IPC.")
-
 #if ENABLE(IPC_TESTING_API)
-
-// Function to check when asserting IPC-related failures, so that IPC testing skips the assertions
-// and exposes bugs underneath.
-bool isTestingIPC();
 
 class IPCConnectionTester;
 class IPCStreamTester;
@@ -88,13 +82,6 @@ private:
     using ConnectionTesterMap = HashMap<IPCConnectionTesterIdentifier, IPC::ScopedActiveMessageReceiveQueue<IPCConnectionTester>>;
     ConnectionTesterMap m_connectionTesters;
 };
-
-#else
-
-constexpr inline bool isTestingIPC()
-{
-    return false;
-}
 
 #endif
 

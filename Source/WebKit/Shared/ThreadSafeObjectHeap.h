@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "IPCTester.h"
+#include "IPCUtilities.h"
 #include "ObjectIdentifierReferenceTracker.h"
 #include <wtf/Condition.h>
 #include <wtf/HashMap.h>

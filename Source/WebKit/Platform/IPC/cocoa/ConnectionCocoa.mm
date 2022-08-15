@@ -27,7 +27,7 @@
 #import "Connection.h"
 
 #import "DataReference.h"
-#import "IPCTester.h"
+#import "IPCUtilities.h"
 #import "ImportanceAssertion.h"
 #import "Logging.h"
 #import "MachMessage.h"

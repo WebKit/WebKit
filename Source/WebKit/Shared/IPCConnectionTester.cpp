@@ -28,7 +28,7 @@
 
 #if ENABLE(IPC_TESTING_API)
 #include "IPCConnectionTesterMessages.h"
-#include "IPCTester.h"
+#include "IPCUtilities.h"
 
 namespace WebKit {
 

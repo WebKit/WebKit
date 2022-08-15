@@ -30,7 +30,7 @@
 
 #import "GPUConnectionToWebProcess.h"
 #import "GPUProcess.h"
-#import "IPCTester.h"
+#import "IPCUtilities.h"
 #import "LibWebRTCCodecsMessages.h"
 #import "LibWebRTCCodecsProxyMessages.h"
 #import "RemoteVideoFrameIdentifier.h"
@@ -111,7 +111,7 @@ void LibWebRTCCodecsProxy::createH264Decoder(RTCDecoderIdentifier identifier, bo
 {
     assertIsCurrent(workQueue());
     auto result = m_decoders.add(identifier, webrtc::createLocalH264Decoder(makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames)).get()));
-    ASSERT_UNUSED(result, result.isNewEntry || isTestingIPC());
+    ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
 }
 
@@ -119,7 +119,7 @@ void LibWebRTCCodecsProxy::createH265Decoder(RTCDecoderIdentifier identifier, bo
 {
     assertIsCurrent(workQueue());
     auto result = m_decoders.add(identifier, webrtc::createLocalH265Decoder(makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames)).get()));
-    ASSERT_UNUSED(result, result.isNewEntry || isTestingIPC());
+    ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
 }
 
@@ -127,7 +127,7 @@ void LibWebRTCCodecsProxy::createVP9Decoder(RTCDecoderIdentifier identifier, boo
 {
     assertIsCurrent(workQueue());
     auto result = m_decoders.add(identifier, webrtc::createLocalVP9Decoder(makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames)).get()));
-    ASSERT_UNUSED(result, result.isNewEntry || isTestingIPC());
+    ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
 }
 
@@ -178,7 +178,7 @@ void LibWebRTCCodecsProxy::createEncoder(RTCEncoderIdentifier identifier, const 
     }).get());
     webrtc::setLocalEncoderLowLatency(encoder, useLowLatency);
     auto result = m_encoders.add(identifier, Encoder { encoder, makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner) });
-    ASSERT_UNUSED(result, result.isNewEntry || isTestingIPC());
+    ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
 }
 
