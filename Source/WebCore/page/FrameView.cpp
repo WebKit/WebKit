@@ -916,21 +916,11 @@ void FrameView::updateSnapOffsets()
     if (!frame().document())
         return;
 
-    auto& document = *frame().document();
-    auto* documentElement = document.documentElement();
-    RenderBox* bodyRenderer = document.bodyOrFrameset() ? document.bodyOrFrameset()->renderBox() : nullptr;
-    RenderBox* rootRenderer = documentElement ? documentElement->renderBox() : nullptr;
-    auto hasScrollSnap = [](const RenderObject* renderer) {
-        return renderer && renderer->style().scrollSnapType().strictness != ScrollSnapStrictness::None;
-    };
+    auto* documentElement = frame().document()->documentElement();
+    auto* rootRenderer = documentElement ? documentElement->renderBox() : nullptr;
 
     const RenderStyle* styleToUse = nullptr;
-    if (hasScrollSnap(bodyRenderer)) {
-        //  The specification doesn't allow setting scroll-snap-type on the body, but
-        //  we do this to ensure backwards compatibility with an earlier version of the
-        //  specification: See webkit.org/b/200643.
-        styleToUse = &bodyRenderer->style();
-    } else if (hasScrollSnap(rootRenderer))
+    if (rootRenderer && rootRenderer->style().scrollSnapType().strictness != ScrollSnapStrictness::None)
         styleToUse = &rootRenderer->style();
 
     if (!styleToUse || !documentElement) {
