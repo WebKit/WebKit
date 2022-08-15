@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ElementInternals.h"
 
+#include "ElementRareData.h"
 #include "ShadowRoot.h"
 #include <wtf/IsoMallocInlines.h>
 

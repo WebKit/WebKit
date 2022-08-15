@@ -29,6 +29,7 @@
 #include "ElementTraversal.h"
 #include "NodeRenderStyle.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "RenderElement.h"
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
 #include "StyleResolver.h"
