@@ -1156,6 +1156,9 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     [NSApp registerServicesMenuSendTypes:PasteboardTypes::forSelection() returnTypes:PasteboardTypes::forEditing()];
 
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"] boolValue])
+        m_drawingAreaType = DrawingAreaType::RemoteLayerTree;
+
     [view addTrackingArea:m_primaryTrackingArea.get()];
 
     for (NSView *subview in view.subviews) {
@@ -1644,16 +1647,20 @@ CGSize WebViewImpl::fixedLayoutSize() const
 
 std::unique_ptr<WebKit::DrawingAreaProxy> WebViewImpl::createDrawingAreaProxy(WebProcessProxy& process)
 {
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"] boolValue])
+    switch (m_drawingAreaType) {
+    case DrawingAreaType::TiledCoreAnimation:
+        return makeUnique<TiledCoreAnimationDrawingAreaProxy>(m_page, process);
+    case DrawingAreaType::RemoteLayerTree:
         return makeUnique<RemoteLayerTreeDrawingAreaProxy>(m_page, process);
+    }
 
-    return makeUnique<TiledCoreAnimationDrawingAreaProxy>(m_page, process);
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 bool WebViewImpl::isUsingUISideCompositing() const
 {
-    auto* drawingArea = m_page->drawingArea();
-    return drawingArea && drawingArea->type() == DrawingAreaType::RemoteLayerTree;
+    return m_drawingAreaType == DrawingAreaType::RemoteLayerTree;
 }
 
 void WebViewImpl::setDrawingAreaSize(CGSize size)
