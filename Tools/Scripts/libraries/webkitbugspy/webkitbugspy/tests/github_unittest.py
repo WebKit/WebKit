@@ -391,3 +391,16 @@ What version of 'WebKit' should the bug be associated with?:
             self.assertEqual(github.Tracker(self.URL, redact={'project:WebKit': True}).issue(1).redacted, True)
             self.assertEqual(github.Tracker(self.URL, redact={'component:Text': True}).issue(1).redacted, True)
             self.assertEqual(github.Tracker(self.URL, redact={'version:Other': True}).issue(1).redacted, True)
+
+    def test_parse_error(self):
+        error_json = {'message': 'Validation Failed', 'errors': [{'resource': 'Issue', 'code': 'custom', 'field': 'body', 'message': 'body is too long (maximum is 65536 characters)'}], 'documentation_url': 'https://docs.github.com/rest/reference/pulls#create-a-pull-request'}
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
+            parsed_error = '''Error Message: Validation Failed
+---\tERROR\t---
+Type: body is too long (maximum is 65536 characters)
+Resource: Issue
+Field: body
+---\t---\t---
+Documentation URL: https://docs.github.com/rest/reference/pulls#create-a-pull-request
+'''
+            self.assertEqual(github.Tracker(self.URL).parse_error(error_json), parsed_error)
