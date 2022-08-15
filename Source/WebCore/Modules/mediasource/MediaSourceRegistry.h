@@ -32,6 +32,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "ScriptExecutionContextIdentifier.h"
 #include "URLRegistry.h"
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/StringHash.h>
