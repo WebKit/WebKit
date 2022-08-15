@@ -3,7 +3,7 @@ Test for http://bugs.webkit.org/show_bug.cgi?id=9284 Quirksmode (CSS1): Removing
 Starting with a declaration containing all properties that are constituents of shortcuts, see what is removed when a shortcut property is removed. The shortcut’s constituents and only them should be removed.
 
 Removing background
-removes "background-image, background-attachment, background-color, background-position, background-repeat"
+removes "background-image, background-repeat, background-attachment, background-color, background-position"
 and adds "".
 Removing background-position
 removes "background-position"
@@ -54,7 +54,7 @@ Removing margin
 removes "margin"
 and adds "".
 Removing -webkit-mask
-removes "mask-image, -webkit-mask-position-x, -webkit-mask-position-y, mask-repeat-x, mask-repeat-y, -webkit-mask"
+removes "mask-image, -webkit-mask-position-x, -webkit-mask-position-y, mask-repeat, -webkit-mask"
 and adds "".
 Removing -webkit-mask-position
 removes "-webkit-mask-position-x, -webkit-mask-position-y, -webkit-mask"

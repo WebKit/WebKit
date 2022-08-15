@@ -26,6 +26,7 @@
 #include "CSSComputedStyleDeclaration.h"
 
 #include "BasicShapeFunctions.h"
+#include "CSSBackgroundRepeatValue.h"
 #include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
 #include "CSSBorderImageSliceValue.h"
@@ -1975,21 +1976,23 @@ static Ref<CSSValue> hangingPunctuationToCSSValue(OptionSet<HangingPunctuation> 
     return list;
 }
     
-static Ref<CSSValue> fillRepeatToCSSValue(FillRepeat xRepeat, FillRepeat yRepeat)
+static Ref<CSSValue> fillRepeatToCSSValue(FillRepeatXY repeat)
 {
     // For backwards compatibility, if both values are equal, just return one of them. And
     // if the two values are equivalent to repeat-x or repeat-y, just return the shorthand.
     auto& cssValuePool = CSSValuePool::singleton();
-    if (xRepeat == yRepeat)
-        return cssValuePool.createValue(xRepeat);
-    if (xRepeat == FillRepeat::Repeat && yRepeat == FillRepeat::NoRepeat)
+    if (repeat.x == repeat.y)
+        return cssValuePool.createValue(repeat.x);
+
+    if (repeat.x == FillRepeat::Repeat && repeat.y == FillRepeat::NoRepeat)
         return cssValuePool.createIdentifierValue(CSSValueRepeatX);
-    if (xRepeat == FillRepeat::NoRepeat && yRepeat == FillRepeat::Repeat)
+
+    if (repeat.x == FillRepeat::NoRepeat && repeat.y == FillRepeat::Repeat)
         return cssValuePool.createIdentifierValue(CSSValueRepeatY);
 
     auto list = CSSValueList::createSpaceSeparated();
-    list->append(cssValuePool.createValue(xRepeat));
-    list->append(cssValuePool.createValue(yRepeat));
+    list->append(cssValuePool.createValue(repeat.x));
+    list->append(cssValuePool.createValue(repeat.y));
     return list;
 }
 
@@ -2982,10 +2985,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyMaskRepeat: {
             auto& layers = propertyID == CSSPropertyMaskRepeat ? style.maskLayers() : style.backgroundLayers();
             if (!layers.next())
-                return fillRepeatToCSSValue(layers.repeatX(), layers.repeatY());
+                return fillRepeatToCSSValue(layers.repeat());
             auto list = CSSValueList::createCommaSeparated();
             for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-                list->append(fillRepeatToCSSValue(currLayer->repeatX(), currLayer->repeatY()));
+                list->append(fillRepeatToCSSValue(currLayer->repeat()));
             return list;
         }
         case CSSPropertyWebkitMaskSourceType: {
@@ -4249,8 +4252,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return nullptr;
 
         // Internal properties should be handled by isCSSPropertyExposed above.
-        case CSSPropertyBackgroundRepeatX:
-        case CSSPropertyBackgroundRepeatY:
         case CSSPropertyWebkitFontSizeDelta:
         case CSSPropertyWebkitMarqueeDirection:
         case CSSPropertyWebkitMarqueeIncrement:
@@ -4294,8 +4295,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         /* Unimplemented -webkit- properties */
         case CSSPropertyWebkitBorderRadius:
         case CSSPropertyWebkitMask:
-        case CSSPropertyMaskRepeatX:
-        case CSSPropertyMaskRepeatY:
         case CSSPropertyPerspectiveOriginX:
         case CSSPropertyPerspectiveOriginY:
         case CSSPropertyWebkitTextStroke:

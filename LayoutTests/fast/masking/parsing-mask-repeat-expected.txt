@@ -1,0 +1,34 @@
+This tests checks that all of the input values for mask-repeat parse correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test("mask-repeat: repeat-x;") is "repeat-x"
+PASS testPropertyCount("mask-repeat: repeat-x;") is 1
+PASS test("mask-repeat: repeat-x, repeat-y;") is "repeat-x, repeat-y"
+PASS testPropertyCount("mask-repeat: repeat-x;") is 1
+PASS test("mask-image: url(test1.gif); mask-repeat: repeat-x;") is "repeat-x"
+PASS testPropertyCount("mask-image: url(test1.gif); mask-repeat: repeat-x;") is 2
+PASS test("mask-image: url(test1.gif), url(test1.gif); mask-repeat: repeat-x;") is "repeat-x"
+PASS test("mask-repeat: repeat-y;") is "repeat-y"
+PASS test("mask-repeat: repeat;") is "repeat"
+PASS test("mask-repeat: no-repeat;") is "no-repeat"
+PASS test("mask-repeat: round;") is "round"
+PASS test("mask-repeat: space;") is "space"
+PASS test("mask-repeat: repeat repeat;") is "repeat"
+PASS test("mask-repeat: no-repeat space;") is "no-repeat space"
+PASS test("mask-repeat: round round;") is "round"
+PASS test("mask-repeat: space repeat;") is "space repeat"
+PASS test("mask: url(resources/gradient.gif) repeat-x top left") is "repeat-x"
+PASS test("mask: url(resources/gradient.gif) repeat-y 50% 50%") is "repeat-y"
+PASS test("mask: url(resources/gradient.gif) repeat center") is "repeat"
+PASS test("mask: url(resources/gradient.gif) no-repeat 12px") is "no-repeat"
+PASS test("mask: url(resources/gradient.gif) round left 50px") is "round"
+PASS test("mask: url(resources/gradient.gif) space 25px 25px") is "space"
+PASS testPropertyCount("mask: url(resources/gradient.gif) space 25px 25px;") is 9
+PASS test("mask-repeat: 45;") is ""
+PASS test("mask-repeat: coconut;") is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

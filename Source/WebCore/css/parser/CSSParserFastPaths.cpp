@@ -601,9 +601,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
             || valueID == CSSValueMiddle || (valueID >= CSSValueBeforeEdge && valueID <= CSSValueMathematical);
     case CSSPropertyAll:
         return false; // Only accepts css-wide keywords
-    case CSSPropertyBackgroundRepeatX: // repeat | no-repeat
-    case CSSPropertyBackgroundRepeatY: // repeat | no-repeat
-        return valueID == CSSValueRepeat || valueID == CSSValueNoRepeat;
     case CSSPropertyBorderCollapse: // collapse | separate
         return valueID == CSSValueCollapse || valueID == CSSValueSeparate;
     case CSSPropertyBorderTopStyle: // <border-style>

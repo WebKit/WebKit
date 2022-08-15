@@ -29,6 +29,7 @@
 #include "CSSToStyleMap.h"
 
 #include "Animation.h"
+#include "CSSBackgroundRepeatValue.h"
 #include "CSSBorderImageSliceValue.h"
 #include "CSSBorderImageWidthValue.h"
 #include "CSSImageGeneratorValue.h"
@@ -154,30 +155,20 @@ void CSSToStyleMap::mapFillImage(CSSPropertyID propertyID, FillLayer& layer, CSS
     layer.setImage(styleImage(value));
 }
 
-void CSSToStyleMap::mapFillRepeatX(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
+void CSSToStyleMap::mapFillRepeat(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
 {
     if (value.treatAsInitialValue(propertyID)) {
-        layer.setRepeatX(FillLayer::initialFillRepeatX(layer.type()));
+        layer.setRepeat(FillLayer::initialFillRepeat(layer.type()));
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(value))
+    if (!is<CSSBackgroundRepeatValue>(value))
         return;
 
-    layer.setRepeatX(downcast<CSSPrimitiveValue>(value));
-}
-
-void CSSToStyleMap::mapFillRepeatY(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
-{
-    if (value.treatAsInitialValue(propertyID)) {
-        layer.setRepeatY(FillLayer::initialFillRepeatY(layer.type()));
-        return;
-    }
-
-    if (!is<CSSPrimitiveValue>(value))
-        return;
-
-    layer.setRepeatY(downcast<CSSPrimitiveValue>(value));
+    auto& backgroundRepeatValue = downcast<CSSBackgroundRepeatValue>(value);
+    FillRepeat repeatX = backgroundRepeatValue.xValue();
+    FillRepeat repeatY = backgroundRepeatValue.yValue();
+    layer.setRepeat(FillRepeatXY { repeatX, repeatY });
 }
 
 static inline bool convertToLengthSize(const CSSPrimitiveValue& primitiveValue, CSSToLengthConversionData conversionData, LengthSize& size)

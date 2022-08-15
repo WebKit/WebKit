@@ -3354,9 +3354,10 @@ FrameView::ExtendedBackgroundMode FrameView::calculateExtendedBackgroundMode() c
         return ExtendedBackgroundModeNone;
 
     ExtendedBackgroundMode mode = ExtendedBackgroundModeNone;
-    if (rootBackgroundRenderer->style().backgroundRepeatX() == FillRepeat::Repeat)
+    auto backgroundRepeat = rootBackgroundRenderer->style().backgroundRepeat();
+    if (backgroundRepeat.x == FillRepeat::Repeat)
         mode |= ExtendedBackgroundModeHorizontal;
-    if (rootBackgroundRenderer->style().backgroundRepeatY() == FillRepeat::Repeat)
+    if (backgroundRepeat.y == FillRepeat::Repeat)
         mode |= ExtendedBackgroundModeVertical;
 
     return mode;

@@ -89,6 +89,7 @@ public:
         
 
     bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }
+    bool isBackgroundRepeatValue() const { return m_classType == BackgroundRepeatClass; }
     bool isBorderImageSliceValue() const { return m_classType == BorderImageSliceClass; }
     bool isBorderImageWidthValue() const { return m_classType == BorderImageWidthClass; }
     bool isCanvasValue() const { return m_classType == CanvasClass; }
@@ -192,6 +193,7 @@ protected:
 
         // Other class types.
         AspectRatioClass,
+        BackgroundRepeatClass,
         BorderImageSliceClass,
         BorderImageWidthClass,
         FontFeatureClass,

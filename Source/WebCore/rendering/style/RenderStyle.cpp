@@ -619,7 +619,7 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate(std::optional<AutosizeStat
         return false;
     }
 
-    if (hasBackgroundImage() && backgroundRepeatX() == FillRepeat::NoRepeat && backgroundRepeatY() == FillRepeat::NoRepeat)
+    if (hasBackgroundImage() && backgroundRepeat() == FillRepeatXY { FillRepeat::NoRepeat, FillRepeat::NoRepeat })
         return false;
 
     return true;

@@ -50,6 +50,13 @@ struct FillSize {
     LengthSize size;
 };
 
+struct FillRepeatXY {
+    FillRepeat x { FillRepeat::Repeat };
+    FillRepeat y { FillRepeat::Repeat };
+    
+    bool operator==(const FillRepeatXY& other) const { return x == other.x && y == other.y; }
+};
+
 inline bool operator==(const FillSize& a, const FillSize& b)
 {
     return a.type == b.type && a.size == b.size;
@@ -78,8 +85,7 @@ public:
     FillAttachment attachment() const { return static_cast<FillAttachment>(m_attachment); }
     FillBox clip() const { return static_cast<FillBox>(m_clip); }
     FillBox origin() const { return static_cast<FillBox>(m_origin); }
-    FillRepeat repeatX() const { return static_cast<FillRepeat>(m_repeatX); }
-    FillRepeat repeatY() const { return static_cast<FillRepeat>(m_repeatY); }
+    FillRepeatXY repeat() const { return m_repeat; }
     CompositeOperator composite() const { return static_cast<CompositeOperator>(m_composite); }
     BlendMode blendMode() const { return static_cast<BlendMode>(m_blendMode); }
     const LengthSize& sizeLength() const { return m_sizeLength; }
@@ -107,8 +113,7 @@ public:
     bool isAttachmentSet() const { return m_attachmentSet; }
     bool isClipSet() const { return m_clipSet; }
     bool isOriginSet() const { return m_originSet; }
-    bool isRepeatXSet() const { return m_repeatXSet; }
-    bool isRepeatYSet() const { return m_repeatYSet; }
+    bool isRepeatSet() const { return m_repeatSet; }
     bool isCompositeSet() const { return m_compositeSet; }
     bool isBlendModeSet() const { return m_blendModeSet; }
     bool isSizeSet() const { return static_cast<FillSizeType>(m_sizeType) != FillSizeType::None; }
@@ -124,8 +129,7 @@ public:
     void setAttachment(FillAttachment attachment) { m_attachment = static_cast<unsigned>(attachment); m_attachmentSet = true; }
     void setClip(FillBox b) { m_clip = static_cast<unsigned>(b); m_clipSet = true; }
     void setOrigin(FillBox b) { m_origin = static_cast<unsigned>(b); m_originSet = true; }
-    void setRepeatX(FillRepeat r) { m_repeatX = static_cast<unsigned>(r); m_repeatXSet = true; }
-    void setRepeatY(FillRepeat r) { m_repeatY = static_cast<unsigned>(r); m_repeatYSet = true; }
+    void setRepeat(FillRepeatXY r) { m_repeat = r; m_repeatSet = true; }
     void setComposite(CompositeOperator c) { m_composite = static_cast<unsigned>(c); m_compositeSet = true; }
     void setBlendMode(BlendMode b) { m_blendMode = static_cast<unsigned>(b); m_blendModeSet = true; }
     void setSizeType(FillSizeType b) { m_sizeType = static_cast<unsigned>(b); }
@@ -141,8 +145,7 @@ public:
     void clearAttachment() { m_attachmentSet = false; }
     void clearClip() { m_clipSet = false; }
     void clearOrigin() { m_originSet = false; }
-    void clearRepeatX() { m_repeatXSet = false; }
-    void clearRepeatY() { m_repeatYSet = false; }
+    void clearRepeat() { m_repeatSet = false; }
     void clearComposite() { m_compositeSet = false; }
     void clearBlendMode() { m_blendModeSet = false; }
     void clearSize() { m_sizeType = static_cast<unsigned>(FillSizeType::None); }
@@ -171,8 +174,7 @@ public:
     static FillAttachment initialFillAttachment(FillLayerType) { return FillAttachment::ScrollBackground; }
     static FillBox initialFillClip(FillLayerType) { return FillBox::Border; }
     static FillBox initialFillOrigin(FillLayerType type) { return type == FillLayerType::Background ? FillBox::Padding : FillBox::Border; }
-    static FillRepeat initialFillRepeatX(FillLayerType) { return FillRepeat::Repeat; }
-    static FillRepeat initialFillRepeatY(FillLayerType) { return FillRepeat::Repeat; }
+    static FillRepeatXY initialFillRepeat(FillLayerType) { return { FillRepeat::Repeat, FillRepeat::Repeat }; }
     static CompositeOperator initialFillComposite(FillLayerType) { return CompositeOperator::SourceOver; }
     static BlendMode initialFillBlendMode(FillLayerType) { return BlendMode::Normal; }
     static FillSize initialFillSize(FillLayerType) { return { }; }
@@ -199,12 +201,12 @@ private:
     Length m_yPosition;
 
     LengthSize m_sizeLength;
+    
+    FillRepeatXY m_repeat;
 
     unsigned m_attachment : 2; // FillAttachment
     unsigned m_clip : 3; // FillBox
     unsigned m_origin : 2; // FillBox
-    unsigned m_repeatX : 3; // FillRepeat
-    unsigned m_repeatY : 3; // FillRepeat
     unsigned m_composite : 4; // CompositeOperator
     unsigned m_sizeType : 2; // FillSizeType
     unsigned m_blendMode : 5; // BlendMode
@@ -214,8 +216,7 @@ private:
     unsigned m_attachmentSet : 1;
     unsigned m_clipSet : 1;
     unsigned m_originSet : 1;
-    unsigned m_repeatXSet : 1;
-    unsigned m_repeatYSet : 1;
+    unsigned m_repeatSet : 1;
     unsigned m_xPosSet : 1;
     unsigned m_yPosSet : 1;
     unsigned m_backgroundXOriginSet : 1;
@@ -232,6 +233,7 @@ private:
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, FillSize);
+WTF::TextStream& operator<<(WTF::TextStream&, FillRepeatXY);
 WTF::TextStream& operator<<(WTF::TextStream&, const FillLayer&);
 
 } // namespace WebCore

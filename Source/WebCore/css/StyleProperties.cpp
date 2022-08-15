@@ -213,8 +213,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID, Document* doc
         return borderSpacingValue(borderSpacingShorthand());
     case CSSPropertyBackgroundPosition:
         return getLayeredShorthandValue(backgroundPositionShorthand());
-    case CSSPropertyBackgroundRepeat:
-        return getLayeredShorthandValue(backgroundRepeatShorthand());
     case CSSPropertyBackground:
         return getLayeredShorthandValue(backgroundShorthand());
     case CSSPropertyBorder:
@@ -345,8 +343,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID, Document* doc
         return getLayeredShorthandValue(maskPositionShorthand());
     case CSSPropertyWebkitMaskPosition:
         return getLayeredShorthandValue(webkitMaskPositionShorthand());
-    case CSSPropertyMaskRepeat:
-        return getLayeredShorthandValue(maskRepeatShorthand());
     case CSSPropertyMask:
     case CSSPropertyWebkitMask:
         return getLayeredShorthandValue(shorthandForProperty(propertyID));
@@ -832,36 +828,6 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
                             value = nullptr;
                     } else if (i) // Other singletons only belong in the first layer.
                         value = nullptr;
-                }
-            }
-
-            // We need to report background-repeat as it was written in the CSS.
-            // If the property is implicit, then it was written with only one value. Here we figure out which value that was so we can report back correctly.
-            if (value && j < size - 1 && (property == CSSPropertyBackgroundRepeatX || property == CSSPropertyMaskRepeatX) && isPropertyImplicit(property)) {
-                // Make sure the value was not reset in the layer check just above.
-                auto nextProperty = shorthand.properties()[j + 1];
-                if (nextProperty == CSSPropertyBackgroundRepeatY || nextProperty == CSSPropertyMaskRepeatY) {
-                    if (auto yValue = values[j + 1]) {
-                        if (is<CSSValueList>(*yValue))
-                            yValue = downcast<CSSValueList>(*yValue).item(i);
-                        if (!is<CSSPrimitiveValue>(*value) || !yValue || !is<CSSPrimitiveValue>(*yValue))
-                            continue;
-
-                        auto xId = downcast<CSSPrimitiveValue>(*value).valueID();
-                        auto yId = downcast<CSSPrimitiveValue>(*yValue).valueID();
-                        if (xId != yId) {
-                            if (xId == CSSValueRepeat && yId == CSSValueNoRepeat) {
-                                useRepeatXShorthand = true;
-                                ++j;
-                            } else if (xId == CSSValueNoRepeat && yId == CSSValueRepeat) {
-                                useRepeatYShorthand = true;
-                                continue;
-                            }
-                        } else {
-                            useSingleWordShorthand = true;
-                            ++j;
-                        }
-                    }
                 }
             }
 
@@ -1500,8 +1466,6 @@ StringBuilder StyleProperties::asTextInternal() const
 
     int positionXPropertyIndex = -1;
     int positionYPropertyIndex = -1;
-    int repeatXPropertyIndex = -1;
-    int repeatYPropertyIndex = -1;
 
     std::bitset<numCSSProperties> shorthandPropertyUsed;
     std::bitset<numCSSProperties> shorthandPropertyAppeared;
@@ -1552,12 +1516,6 @@ StringBuilder StyleProperties::asTextInternal() const
                 continue;
             case CSSPropertyBackgroundPositionY:
                 positionYPropertyIndex = n;
-                continue;
-            case CSSPropertyBackgroundRepeatX:
-                repeatXPropertyIndex = n;
-                continue;
-            case CSSPropertyBackgroundRepeatY:
-                repeatYPropertyIndex = n;
                 continue;
             case CSSPropertyBorderTopWidth:
             case CSSPropertyBorderRightWidth:
@@ -1746,8 +1704,6 @@ StringBuilder StyleProperties::asTextInternal() const
                 break;
             case CSSPropertyWebkitMaskPositionX:
             case CSSPropertyWebkitMaskPositionY:
-            case CSSPropertyMaskRepeatX:
-            case CSSPropertyMaskRepeatY:
             case CSSPropertyMaskImage:
             case CSSPropertyMaskRepeat:
             case CSSPropertyMaskPosition:
@@ -1809,7 +1765,8 @@ StringBuilder StyleProperties::asTextInternal() const
     }
 
     // FIXME: This is a not-so-nice way to turn x/y positions into single background-position/repeat in output.
-    // In 2007 we decided this was required because background-position/repeat-x/y are non-standard properties and WebKit generated output would not work in Firefox (<rdar://problem/5143183>).
+    // In 2007 we decided this was required because background-position-x/y are non-standard properties and WebKit generated output would not work in Firefox (<rdar://problem/5143183>).
+    // FIXME: This can probably be cleaned up now that background-position-x/y are standardized.
     auto appendPositionOrProperty = [&] (int xIndex, int yIndex, const char* name, const StylePropertyShorthand& shorthand) {
         if (xIndex != -1 && yIndex != -1 && propertyAt(xIndex).isImportant() == propertyAt(yIndex).isImportant()) {
             String value;
@@ -1844,7 +1801,6 @@ StringBuilder StyleProperties::asTextInternal() const
     };
 
     appendPositionOrProperty(positionXPropertyIndex, positionYPropertyIndex, "background-position", backgroundPositionShorthand());
-    appendPositionOrProperty(repeatXPropertyIndex, repeatYPropertyIndex, "background-repeat", backgroundRepeatShorthand());
 
     ASSERT(!numDecls ^ !result.isEmpty());
     return result;

@@ -53,8 +53,7 @@ public:
     void mapFillBlendMode(CSSPropertyID, FillLayer&, const CSSValue&);
     void mapFillOrigin(CSSPropertyID, FillLayer&, const CSSValue&);
     void mapFillImage(CSSPropertyID, FillLayer&, CSSValue&);
-    void mapFillRepeatX(CSSPropertyID, FillLayer&, const CSSValue&);
-    void mapFillRepeatY(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillRepeat(CSSPropertyID, FillLayer&, const CSSValue&);
     void mapFillSize(CSSPropertyID, FillLayer&, const CSSValue&);
     void mapFillXPosition(CSSPropertyID, FillLayer&, const CSSValue&);
     void mapFillYPosition(CSSPropertyID, FillLayer&, const CSSValue&);

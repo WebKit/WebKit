@@ -711,6 +711,7 @@ css/BasicShapeFunctions.cpp
 css/ContainerQuery.cpp
 css/ContainerQueryParser.cpp
 css/CSSAspectRatioValue.cpp
+css/CSSBackgroundRepeatValue.cpp
 css/CSSBasicShapes.cpp
 css/CSSBorderImage.cpp
 css/CSSBorderImageSliceValue.cpp

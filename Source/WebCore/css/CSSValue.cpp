@@ -30,6 +30,7 @@
 #include "CSSValue.h"
 
 #include "CSSAspectRatioValue.h"
+#include "CSSBackgroundRepeatValue.h"
 #include "CSSBorderImageSliceValue.h"
 #include "CSSBorderImageWidthValue.h"
 #include "CSSCalcValue.h"
@@ -144,6 +145,8 @@ bool CSSValue::equals(const CSSValue& other) const
         switch (m_classType) {
         case AspectRatioClass:
             return compareCSSValues<CSSAspectRatioValue>(*this, other);
+        case BackgroundRepeatClass:
+            return compareCSSValues<CSSBackgroundRepeatValue>(*this, other);
         case BorderImageSliceClass:
             return compareCSSValues<CSSBorderImageSliceValue>(*this, other);
         case BorderImageWidthClass:
@@ -251,6 +254,8 @@ String CSSValue::cssText(Document* document) const
     switch (classType()) {
     case AspectRatioClass:
         return downcast<CSSAspectRatioValue>(*this).customCSSText();
+    case BackgroundRepeatClass:
+        return downcast<CSSBackgroundRepeatValue>(*this).customCSSText();
     case BorderImageSliceClass:
         return downcast<CSSBorderImageSliceValue>(*this).customCSSText();
     case BorderImageWidthClass:
@@ -365,6 +370,9 @@ void CSSValue::destroy()
     switch (classType()) {
     case AspectRatioClass:
         delete downcast<CSSAspectRatioValue>(this);
+        return;
+    case BackgroundRepeatClass:
+        delete downcast<CSSBackgroundRepeatValue>(this);
         return;
     case BorderImageSliceClass:
         delete downcast<CSSBorderImageSliceValue>(this);

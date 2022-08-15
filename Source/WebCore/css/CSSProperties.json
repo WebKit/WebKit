@@ -1077,8 +1077,7 @@
                     "background-position-x",
                     "background-position-y",
                     "background-size",
-                    "background-repeat-x",
-                    "background-repeat-y",
+                    "background-repeat",
                     "background-attachment",
                     "background-origin",
                     "background-clip",
@@ -1205,10 +1204,6 @@
             "specification": {
                 "category": "css-backgrounds",
                 "url": "https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position-x"
-            },
-            "status": {
-                "status": "experimental",
-                "enabled-by-default": true
             }
         },
         "background-position-y": {
@@ -1219,50 +1214,16 @@
             "specification": {
                 "category": "css-backgrounds",
                 "url": "https://drafts.csswg.org/css-backgrounds-4/#propdef-background-position-y"
-            },
-            "status": {
-                "status": "experimental",
-                "enabled-by-default": true
             }
         },
         "background-repeat": {
             "codegen-properties": {
-                "longhands": [
-                    "background-repeat-x",
-                    "background-repeat-y"
-                ]
+                "name-for-methods": "Repeat",
+                "fill-layer-property": true
             },
             "specification": {
                 "category": "css-backgrounds",
                 "url": "https://www.w3.org/TR/css3-background/#background-repeat"
-            }
-        },
-        "background-repeat-x": {
-            "codegen-properties": {
-                "name-for-methods": "RepeatX",
-                "fill-layer-property": true,
-                "internal-only": true
-            },
-            "specification": {
-                "category": "css-backgrounds"
-            },
-            "status": {
-                "status": "experimental",
-                "enabled-by-default": true
-            }
-        },
-        "background-repeat-y": {
-            "codegen-properties": {
-                "name-for-methods": "RepeatY",
-                "fill-layer-property": true,
-                "internal-only": true
-            },
-            "specification": {
-                "category": "css-backgrounds"
-            },
-            "status": {
-                "status": "experimental",
-                "enabled-by-default": true
             }
         },
         "background-size": {
@@ -3335,8 +3296,7 @@
                     "-webkit-mask-position-x",
                     "-webkit-mask-position-y",
                     "mask-size",
-                    "mask-repeat-x",
-                    "mask-repeat-y",
+                    "mask-repeat",
                     "mask-origin",
                     "mask-clip",
                     "mask-composite",
@@ -3470,28 +3430,12 @@
                 "aliases":[
                     "-webkit-mask-repeat"
                 ],
-                "longhands": [
-                    "mask-repeat-x",
-                    "mask-repeat-y"
-                ]
+                "name-for-methods": "Repeat",
+                "fill-layer-property": true
             },
             "specification": {
                 "category": "css-masking",
                 "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-repeat"
-            }
-        },
-        "mask-repeat-x": {
-            "codegen-properties": {
-                "name-for-methods": "RepeatX",
-                "fill-layer-property": true,
-                "internal-only": true
-            }
-        },
-        "mask-repeat-y": {
-            "codegen-properties": {
-                "name-for-methods": "RepeatY",
-                "fill-layer-property": true,
-                "internal-only": true
             }
         },
         "mask-size": {
@@ -6556,8 +6500,7 @@
                     "-webkit-mask-position-x",
                     "-webkit-mask-position-y",
                     "mask-size",
-                    "mask-repeat-x",
-                    "mask-repeat-y",
+                    "mask-repeat",
                     "mask-origin",
                     "-webkit-mask-clip"
                 ],

@@ -1307,8 +1307,8 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
     if (StyleImage* layerImage = fillLayer.image())
         layerImage->setContainerContextForRenderer(*clientForBackgroundImage, tileSize, style().effectiveZoom());
     
-    FillRepeat backgroundRepeatX = fillLayer.repeatX();
-    FillRepeat backgroundRepeatY = fillLayer.repeatY();
+    FillRepeat backgroundRepeatX = fillLayer.repeat().x;
+    FillRepeat backgroundRepeatY = fillLayer.repeat().y;
     LayoutUnit availableWidth = positioningAreaSize.width() - tileSize.width();
     LayoutUnit availableHeight = positioningAreaSize.height() - tileSize.height();
 

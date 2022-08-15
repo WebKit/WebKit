@@ -3106,8 +3106,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionY, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
         new FillLayersPropertyWrapper(CSSPropertyMaskSize, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
 
-        new DiscretePropertyWrapper<FillRepeat>(CSSPropertyMaskRepeatX, &RenderStyle::maskRepeatX, &RenderStyle::setMaskRepeatX),
-        new DiscretePropertyWrapper<FillRepeat>(CSSPropertyMaskRepeatY, &RenderStyle::maskRepeatY, &RenderStyle::setMaskRepeatY),
+        new DiscretePropertyWrapper<FillRepeatXY>(CSSPropertyMaskRepeat, &RenderStyle::maskRepeat, &RenderStyle::setMaskRepeat),
 
         new LengthPointPropertyWrapper(CSSPropertyObjectPosition, &RenderStyle::objectPosition, &RenderStyle::setObjectPosition),
 
@@ -3239,8 +3238,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<FillAttachment>(CSSPropertyBackgroundAttachment, &RenderStyle::backgroundAttachment, &RenderStyle::setBackgroundAttachment),
         new DiscretePropertyWrapper<FillBox>(CSSPropertyBackgroundClip, &RenderStyle::backgroundClip, &RenderStyle::setBackgroundClip),
         new DiscretePropertyWrapper<FillBox>(CSSPropertyBackgroundOrigin, &RenderStyle::backgroundOrigin, &RenderStyle::setBackgroundOrigin),
-        new DiscretePropertyWrapper<FillRepeat>(CSSPropertyBackgroundRepeatX, &RenderStyle::backgroundRepeatX, &RenderStyle::setBackgroundRepeatX),
-        new DiscretePropertyWrapper<FillRepeat>(CSSPropertyBackgroundRepeatY, &RenderStyle::backgroundRepeatY, &RenderStyle::setBackgroundRepeatY),
+        new DiscretePropertyWrapper<FillRepeatXY>(CSSPropertyBackgroundRepeat, &RenderStyle::backgroundRepeat, &RenderStyle::setBackgroundRepeat),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderBottomStyle, &RenderStyle::borderBottomStyle, &RenderStyle::setBorderBottomStyle),
         new DiscretePropertyWrapper<BorderCollapse>(CSSPropertyBorderCollapse, &RenderStyle::borderCollapse, &RenderStyle::setBorderCollapse),
         new BorderImageRepeatWrapper,
@@ -3362,13 +3360,11 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
     static const CSSPropertyID animatableShorthandProperties[] = {
         CSSPropertyBackground, // for background-color, background-position, background-image
         CSSPropertyBackgroundPosition,
-        CSSPropertyBackgroundRepeat,
         CSSPropertyFont, // for font-size, font-weight
         CSSPropertyMask, // for mask-position
         CSSPropertyWebkitMask, // for mask-position
         CSSPropertyMaskPosition,
         CSSPropertyWebkitMaskPosition,
-        CSSPropertyMaskRepeat,
         CSSPropertyBorderTop, CSSPropertyBorderRight, CSSPropertyBorderBottom, CSSPropertyBorderLeft,
         CSSPropertyBorderBlockStart, CSSPropertyBorderBlockEnd, CSSPropertyBorderInlineStart, CSSPropertyBorderInlineEnd,
         CSSPropertyBorderColor,

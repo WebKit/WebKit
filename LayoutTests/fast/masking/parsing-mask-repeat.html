@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This tests checks that all of the input values for mask-repeat parse correctly.");
+
+function test(value)
+{
+    var div = document.createElement("div");
+    div.setAttribute("style", value);
+    document.body.appendChild(div);
+    
+    var result = div.style.getPropertyValue("mask-repeat");
+    document.body.removeChild(div);
+    return result;
+}
+
+function testPropertyCount(value)
+{
+    var div = document.createElement("div");
+    div.setAttribute("style", value);
+    document.body.appendChild(div);
+    
+    var result = div.style.length;
+    document.body.removeChild(div);
+    return result;
+}
+
+shouldBe('test("mask-repeat: repeat-x;")', '"repeat-x"');
+shouldBe('testPropertyCount("mask-repeat: repeat-x;")', '1');
+
+shouldBe('test("mask-repeat: repeat-x, repeat-y;")', '"repeat-x, repeat-y"');
+shouldBe('testPropertyCount("mask-repeat: repeat-x;")', '1');
+
+shouldBe('test("mask-image: url(test1.gif); mask-repeat: repeat-x;")', '"repeat-x"');
+shouldBe('testPropertyCount("mask-image: url(test1.gif); mask-repeat: repeat-x;")', '2');
+
+shouldBe('test("mask-image: url(test1.gif), url(test1.gif); mask-repeat: repeat-x;")', '"repeat-x"');
+
+shouldBe('test("mask-repeat: repeat-y;")', '"repeat-y"');
+shouldBe('test("mask-repeat: repeat;")', '"repeat"');
+shouldBe('test("mask-repeat: no-repeat;")', '"no-repeat"');
+shouldBe('test("mask-repeat: round;")', '"round"');
+shouldBe('test("mask-repeat: space;")', '"space"');
+
+shouldBe('test("mask-repeat: repeat repeat;")', '"repeat"');
+shouldBe('test("mask-repeat: no-repeat space;")', '"no-repeat space"');
+shouldBe('test("mask-repeat: round round;")', '"round"');
+shouldBe('test("mask-repeat: space repeat;")', '"space repeat"');
+
+shouldBe('test("mask: url(resources/gradient.gif) repeat-x top left")', '"repeat-x"');
+shouldBe('test("mask: url(resources/gradient.gif) repeat-y 50% 50%")', '"repeat-y"');
+shouldBe('test("mask: url(resources/gradient.gif) repeat center")', '"repeat"');
+shouldBe('test("mask: url(resources/gradient.gif) no-repeat 12px")', '"no-repeat"');
+shouldBe('test("mask: url(resources/gradient.gif) round left 50px")', '"round"');
+shouldBe('test("mask: url(resources/gradient.gif) space 25px 25px")', '"space"');
+
+shouldBe('testPropertyCount("mask: url(resources/gradient.gif) space 25px 25px;")', '9');
+
+shouldBe('test("mask-repeat: 45;")', '""');
+shouldBe('test("mask-repeat: coconut;")', '""');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
