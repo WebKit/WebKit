@@ -231,6 +231,7 @@ imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-d
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-frame-owner.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-worker-owner.https.html
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-document.https.html [ Skip ]
 
 # Only Mac and iOS have an implementation of UIScriptController::doAsyncTask().
 fast/harness/uiscriptcontroller [ Skip ]
@@ -457,7 +458,6 @@ imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unh
 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.any.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/webappapis/user-prompts/print-during-beforeunload.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/reporting/disconnect.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/readable-streams/patched-global.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/transform-streams/terminate.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/writable-streams/write.any.html [ DumpJSConsoleLogInStdErr ]
@@ -526,6 +526,20 @@ imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.http-rp/upgrad
 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic-data.meta/unset/xhr.https.html [ Skip ]
 imported/w3c/web-platform-tests/upgrade-insecure-requests/link-upgrade.sub.https.html [ Skip ]
 
+imported/w3c/web-platform-tests/reporting/disconnect.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/reporting/document-reporting-destroy-after-document-close.https.sub.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/block-local-documents-inheriting-none.https.html [ DumpJSConsoleLogInStdErr ]
+
+# Skip some reporting tests that now timeout
+imported/w3c/web-platform-tests/reporting/cross-origin-same-site-credentials.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/document-reporting-bypass-report-to.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/document-reporting-default-endpoint.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/document-reporting-named-endpoints.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/document-reporting-override-endpoint.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/document-reporting-path-absolute.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/nestedReport.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/order.html [ Skip ]
+
 fast/files/file-reader-back-forward-cache.html [ DumpJSConsoleLogInStdErr ]
 fast/history/page-cache-createImageBitmap.html [ DumpJSConsoleLogInStdErr ]
 http/tests/navigation/page-cache-xhr-in-loading-iframe.html [ DumpJSConsoleLogInStdErr ]
@@ -571,7 +585,6 @@ imported/w3c/web-platform-tests/content-security-policy/inside-worker/servicewor
 imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-script-src.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-blocked-by-default.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-blocked-by-default.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.worker.html [ Skip ]
@@ -691,8 +704,6 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-inline-sizi
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_navigate_ancestor-1.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/historical-search-event.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/anchor-with-inline-element.html [ Skip ]
-imported/w3c/web-platform-tests/reporting/cross-origin-same-site-credentials.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/reporting/path-absolute-endpoint.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/same-site-cookies.https.html [ Skip ]
 imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/message-module-Error.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-svg.html [ Skip ]
@@ -1017,7 +1028,11 @@ imported/w3c/web-platform-tests/content-security-policy/navigate-to/href-locatio
 imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-blocked-error-event.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-dedicated-worker.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect-upgrade-reporting.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/reporting/post-redirect-stacktrace.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-src.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-blocked.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-allowed.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-blocked.html [ Skip ]
@@ -1040,7 +1055,6 @@ imported/w3c/web-platform-tests/content-security-policy/navigate-to/meta-refresh
 imported/w3c/web-platform-tests/content-security-policy/navigate-to/unsafe-allow-redirects/allowed-end-of-chain-because-of-same-origin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/navigate-to/unsafe-allow-redirects/allowed-end-of-chain.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/navigate-to/unsafe-allow-redirects/blocked-end-of-chain.sub.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-src.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/script-sample-no-opt-in.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/script-sample.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-image-from-script.sub.html [ Skip ]
@@ -1138,6 +1152,7 @@ imported/w3c/web-platform-tests/fetch/metadata/style.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/redirect/redirect-http-upgrade.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/window-open.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/redirect/ [ Skip ]
+imported/w3c/web-platform-tests/fetch/stale-while-revalidate/revalidate-not-blocked-by-csp.html [ Skip ]
 
 # Not supported
 imported/w3c/web-platform-tests/background-fetch [ Skip ]

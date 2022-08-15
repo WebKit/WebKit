@@ -1264,6 +1264,18 @@ RemotePlaybackEnabled:
     WebCore:
       default: true
 
+ReportingEnabled:
+  type: bool
+  humanReadableName: "Reporting API"
+  humanReadableDescription: "Enable Reporting API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 RequestIdleCallbackEnabled:
   type: bool
   humanReadableName: "requestIdleCallback"

@@ -1,30 +1,30 @@
 
 PASS idl_test setup
 PASS idl_test validation
-FAIL ReportBody interface: existence and properties of interface object assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
-FAIL ReportBody interface object length assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
-FAIL ReportBody interface object name assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
-FAIL ReportBody interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
-FAIL ReportBody interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
-FAIL ReportBody interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
-FAIL ReportBody interface: operation toJSON() assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
-FAIL Report interface: existence and properties of interface object assert_own_property: self does not have own property "Report" expected property "Report" missing
-FAIL Report interface object length assert_own_property: self does not have own property "Report" expected property "Report" missing
-FAIL Report interface object name assert_own_property: self does not have own property "Report" expected property "Report" missing
-FAIL Report interface: existence and properties of interface prototype object assert_own_property: self does not have own property "Report" expected property "Report" missing
-FAIL Report interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "Report" expected property "Report" missing
-FAIL Report interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "Report" expected property "Report" missing
-FAIL Report interface: operation toJSON() assert_own_property: self does not have own property "Report" expected property "Report" missing
-FAIL Report interface: attribute type assert_own_property: self does not have own property "Report" expected property "Report" missing
-FAIL Report interface: attribute url assert_own_property: self does not have own property "Report" expected property "Report" missing
-FAIL Report interface: attribute body assert_own_property: self does not have own property "Report" expected property "Report" missing
-FAIL ReportingObserver interface: existence and properties of interface object assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
-FAIL ReportingObserver interface object length assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
-FAIL ReportingObserver interface object name assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
-FAIL ReportingObserver interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
-FAIL ReportingObserver interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
-FAIL ReportingObserver interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
-FAIL ReportingObserver interface: operation observe() assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
-FAIL ReportingObserver interface: operation disconnect() assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
-FAIL ReportingObserver interface: operation takeRecords() assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
+PASS ReportBody interface: existence and properties of interface object
+PASS ReportBody interface object length
+PASS ReportBody interface object name
+PASS ReportBody interface: existence and properties of interface prototype object
+PASS ReportBody interface: existence and properties of interface prototype object's "constructor" property
+PASS ReportBody interface: existence and properties of interface prototype object's @@unscopables property
+PASS ReportBody interface: operation toJSON()
+PASS Report interface: existence and properties of interface object
+PASS Report interface object length
+PASS Report interface object name
+PASS Report interface: existence and properties of interface prototype object
+PASS Report interface: existence and properties of interface prototype object's "constructor" property
+PASS Report interface: existence and properties of interface prototype object's @@unscopables property
+PASS Report interface: operation toJSON()
+PASS Report interface: attribute type
+PASS Report interface: attribute url
+PASS Report interface: attribute body
+PASS ReportingObserver interface: existence and properties of interface object
+PASS ReportingObserver interface object length
+PASS ReportingObserver interface object name
+PASS ReportingObserver interface: existence and properties of interface prototype object
+PASS ReportingObserver interface: existence and properties of interface prototype object's "constructor" property
+PASS ReportingObserver interface: existence and properties of interface prototype object's @@unscopables property
+PASS ReportingObserver interface: operation observe()
+PASS ReportingObserver interface: operation disconnect()
+PASS ReportingObserver interface: operation takeRecords()
 

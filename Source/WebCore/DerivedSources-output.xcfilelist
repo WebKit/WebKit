@@ -2168,6 +2168,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlayback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlayback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlaybackAvailabilityCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlaybackAvailabilityCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReport.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReport.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportBody.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportBody.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportingObserver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportingObserver.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportingObserverCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportingObserverCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestAnimationFrameCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestAnimationFrameCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestCookieConsentOptions.cpp

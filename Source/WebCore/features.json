@@ -806,6 +806,20 @@
         "description": "A sensor API to monitor the presence of nearby physical objects without physical contact."
     },
     {
+        "name": "Reporting API",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://w3c.github.io/reporting/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=189365",
+        "keywords": ["reporting", "reporting-endpoints"],
+        "description": "A generic reporting framework to associate a set of named reporting endpoints with an origin.",
+        "contact": {
+            "name": "Brent Fulgham",
+            "email": "bfulgham@apple.com"
+        }
+    },
+    {
         "name": "Resize Observer",
         "status": {
             "status": "Supported"

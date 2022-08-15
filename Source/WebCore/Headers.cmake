@@ -315,6 +315,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/push-api/PushSubscriptionData.h
     Modules/push-api/PushSubscriptionIdentifier.h
 
+    Modules/reporting/Report.h
+    Modules/reporting/ReportBody.h
+    Modules/reporting/ReportingObserver.h
+    Modules/reporting/ReportingObserverCallback.h
+
     Modules/speech/SpeechRecognitionCaptureSource.h
     Modules/speech/SpeechRecognitionCaptureSourceImpl.h
     Modules/speech/SpeechRecognitionConnection.h

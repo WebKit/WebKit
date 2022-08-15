@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/reporting/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/reporting/README.md
 /LayoutTests/imported/w3c/web-platform-tests/reporting/bufferSize.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.https.sub.html.sub.headers
@@ -38,8 +39,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/reporting/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/reporting/nestedReport.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/order.html
-/LayoutTests/imported/w3c/web-platform-tests/reporting/path-absolute-endpoint.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/reporting/path-absolute-endpoint.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/reporting/reporting-isolated-across-navigations.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/same-origin-cross-site-credentials.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/same-origin-report-credentials.https.sub.html

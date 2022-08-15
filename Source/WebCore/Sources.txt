@@ -275,6 +275,8 @@ Modules/push-api/PushSubscriptionOptions.cpp
 Modules/push-api/PushManager.cpp
 Modules/push-api/ServiceWorkerRegistrationPushAPI.cpp
 Modules/remoteplayback/RemotePlayback.cpp
+Modules/reporting/Report.cpp
+Modules/reporting/ReportingObserver.cpp
 Modules/speech/SpeechRecognition.cpp
 Modules/speech/SpeechRecognitionAlternative.cpp
 Modules/speech/SpeechRecognitionErrorEvent.cpp
@@ -604,6 +606,7 @@ bindings/js/JSRangeCustom.cpp
 bindings/js/JSReadableStreamSourceCustom.cpp
 bindings/js/JSRemoteDOMWindowBase.cpp
 bindings/js/JSRemoteDOMWindowCustom.cpp
+bindings/js/JSReportBodyCustom.cpp
 bindings/js/JSResizeObserverCustom.cpp
 bindings/js/JSResizeObserverEntryCustom.cpp
 bindings/js/JSSVGPathSegCustom.cpp
@@ -3756,6 +3759,10 @@ JSReadableStreamSource.cpp
 JSRemoteDOMWindow.cpp
 JSRemotePlayback.cpp
 JSRemotePlaybackAvailabilityCallback.cpp
+JSReport.cpp
+JSReportBody.cpp
+JSReportingObserver.cpp
+JSReportingObserverCallback.cpp
 JSRequestAnimationFrameCallback.cpp
 JSRequestCookieConsentOptions.cpp
 JSResidentKeyRequirement.cpp

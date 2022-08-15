@@ -311,6 +311,9 @@ namespace WebCore {
     macro(PushSubscription) \
     macro(PushSubscriptionChangeEvent) \
     macro(PushSubscriptionOptions) \
+    macro(Report) \
+    macro(ReportBody) \
+    macro(ReportingObserver) \
     macro(ResizeObserver) \
     macro(ResizeObserverEntry) \
     macro(RTCCertificate) \

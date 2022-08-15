@@ -58,6 +58,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/plugins"
     "${WEBCORE_DIR}/Modules/push-api"
     "${WEBCORE_DIR}/Modules/remoteplayback"
+    "${WEBCORE_DIR}/Modules/reporting"
     "${WEBCORE_DIR}/Modules/speech"
     "${WEBCORE_DIR}/Modules/storage"
     "${WEBCORE_DIR}/Modules/streams"
@@ -224,6 +225,7 @@ set(WebCore_IDL_INCLUDES
     Modules/paymentrequest
     Modules/permissions
     Modules/push-api
+    Modules/reporting
     Modules/speech
     Modules/storage
     Modules/streams
@@ -546,6 +548,11 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/remoteplayback/RemotePlayback.idl
     Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
+
+    Modules/reporting/Report.idl
+    Modules/reporting/ReportBody.idl
+    Modules/reporting/ReportingObserver.idl
+    Modules/reporting/ReportingObserverCallback.idl
 
     Modules/speech/DOMWindow+SpeechSynthesis.idl
     Modules/speech/SpeechRecognitionErrorEvent.idl
