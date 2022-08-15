@@ -46,21 +46,6 @@ class StatusBubble(View):
     ALL_QUEUES = ['style', 'ios', 'ios-sim', 'mac', 'mac-debug', 'mac-AS-debug', 'tv', 'tv-sim', 'watch', 'watch-sim', 'gtk', 'wpe', 'wincairo', 'win',
                   'ios-wk2', 'mac-wk1', 'mac-wk2', 'mac-wk2-stress', 'mac-AS-debug-wk2', 'gtk-wk2', 'api-ios', 'api-mac', 'api-gtk',
                   'bindings', 'jsc', 'jsc-armv7', 'jsc-armv7-tests', 'jsc-mips', 'jsc-mips-tests', 'jsc-i386', 'webkitperl', 'webkitpy', 'services']
-    # FIXME: Auto-generate the queue's trigger relationship
-    QUEUE_TRIGGERS = {
-        'api-ios': 'ios-sim',
-        'ios-wk2': 'ios-sim',
-        'api-mac': 'mac',
-        'mac-wk1': 'mac',
-        'mac-wk2': 'mac',
-        'mac-wk2-stress': 'mac',
-        'mac-debug-wk1': 'mac-debug',
-        'mac-AS-debug-wk2': 'mac-AS-debug',
-        'api-gtk': 'gtk',
-        'gtk-wk2': 'gtk',
-        'jsc-mips-tests': 'jsc-mips',
-        'jsc-armv7-tests': 'jsc-armv7',
-    }
 
     STEPS_TO_HIDE = ['^Archived built product$', '^Uploaded built product$', '^Transferred archive to S3$',
                      '^Archived test results$', '^Uploaded test results$', '^Extracted test results$',
@@ -92,7 +77,7 @@ class StatusBubble(View):
             if is_builder_queue:
                 bubble['name'] = StatusBubble.BUILDER_ICON + '  ' + bubble['name']
 
-        builds, is_parent_build = self.get_all_builds_for_queue(change, queue, self._get_parent_queue(queue))
+        builds, is_parent_build = self.get_all_builds_for_queue(change, queue, Buildbot.get_parent_queue(queue))
         build = None
         if builds:
             build = builds[0]
@@ -102,13 +87,13 @@ class StatusBubble(View):
 
         if not build:
             bubble['state'] = 'none'
-            queue_position = self._queue_position(change, queue, self._get_parent_queue(queue))
+            queue_position = self._queue_position(change, queue, Buildbot.get_parent_queue(queue))
             if not queue_position:
                 return None
             if queue_position != StatusBubble.UNKNOWN_QUEUE_POSITION:
                 bubble['queue_position'] = queue_position
-            if self._get_parent_queue(queue):
-                queue = self._get_parent_queue(queue)
+            if Buildbot.get_parent_queue(queue):
+                queue = Buildbot.get_parent_queue(queue)
             queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
             if queue_full_name:
                 bubble['url'] = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
@@ -202,9 +187,6 @@ class StatusBubble(View):
                 bubble['details_message'] += '\n\n' + timestamp
 
         return bubble
-
-    def _get_parent_queue(self, queue):
-        return StatusBubble.QUEUE_TRIGGERS.get(queue)
 
     def get_os_details(self, build):
         for step in build.step_set.all():

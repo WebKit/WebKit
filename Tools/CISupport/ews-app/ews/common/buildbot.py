@@ -42,6 +42,22 @@ class Buildbot():
     queue_name_by_shortname_mapping = {}
     builder_name_to_id_mapping = {}
 
+    # FIXME: Auto-generate the queue's trigger relationship
+    QUEUE_TRIGGERS = {
+        'api-ios': 'ios-sim',
+        'ios-wk2': 'ios-sim',
+        'api-mac': 'mac',
+        'mac-wk1': 'mac',
+        'mac-wk2': 'mac',
+        'mac-wk2-stress': 'mac',
+        'mac-debug-wk1': 'mac-debug',
+        'mac-AS-debug-wk2': 'mac-AS-debug',
+        'api-gtk': 'gtk',
+        'gtk-wk2': 'gtk',
+        'jsc-mips-tests': 'jsc-mips',
+        'jsc-armv7-tests': 'jsc-armv7',
+    }
+
     @classmethod
     def send_patch_to_buildbot(cls, patch_path, send_to_commit_queue=False, properties=None):
         properties = properties or []
@@ -179,3 +195,7 @@ class Buildbot():
     def is_builder_queue(self, queue):
         icon = Buildbot.icons_for_queues_mapping.get(queue)
         return icon in ['buildOnly', 'buildAndTest']
+
+    @classmethod
+    def get_parent_queue(self, queue):
+        return Buildbot.QUEUE_TRIGGERS.get(queue)

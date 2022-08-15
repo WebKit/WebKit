@@ -181,7 +181,7 @@ class GitHubEWS(GitHub):
         if Buildbot.is_builder_queue(queue):
             name = StatusBubble.BUILDER_ICON + ' ' + name
 
-        builds, is_parent_build = StatusBubble().get_all_builds_for_queue(change, queue)
+        builds, is_parent_build = StatusBubble().get_all_builds_for_queue(change, queue, Buildbot.get_parent_queue(queue))
         # FIXME: Handle parent build case
         build = None
         if builds:
@@ -193,7 +193,8 @@ class GitHubEWS(GitHub):
         if not build:
             if queue in ['merge', 'unsafe-merge']:
                 return u'| '
-            status = GitHubEWS.ICON_BUILD_WAITING
+            if Buildbot.get_parent_queue(queue):
+                queue = Buildbot.get_parent_queue(queue)
             queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
             if queue_full_name:
                 url = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
@@ -206,7 +207,14 @@ class GitHubEWS(GitHub):
             hover_over_text = 'Build is in progress'
             status = GitHubEWS.ICON_BUILD_ONGOING
         elif build.result == Buildbot.SUCCESS:
-            status = GitHubEWS.ICON_BUILD_PASS
+            if is_parent_build:
+                status = GitHubEWS.ICON_BUILD_ONGOING
+                hover_over_text = 'Waiting to run tests.'
+                queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
+                if queue_full_name:
+                    url = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
+            else:
+                status = GitHubEWS.ICON_BUILD_PASS
         elif build.result == Buildbot.WARNINGS:
             status = GitHubEWS.ICON_BUILD_PASS
         elif build.result == Buildbot.FAILURE:
