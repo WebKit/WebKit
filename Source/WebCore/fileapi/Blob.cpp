@@ -45,6 +45,8 @@
 #include "ThreadableBlobRegistry.h"
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Lock.h>
+#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/CString.h>
@@ -55,21 +57,55 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Blob);
 
 class BlobURLRegistry final : public URLRegistry {
 public:
-    void registerURL(ScriptExecutionContext&, const URL&, URLRegistrable&) final;
+    void registerURL(const ScriptExecutionContext&, const URL&, URLRegistrable&) final;
     void unregisterURL(const URL&) final;
+    void unregisterURLsForContext(const ScriptExecutionContext&) final;
 
     static URLRegistry& registry();
+
+    Lock m_urlsPerContextLock;
+    HashMap<ScriptExecutionContextIdentifier, HashSet<URL>> m_urlsPerContext WTF_GUARDED_BY_LOCK(m_urlsPerContextLock);
 };
 
-void BlobURLRegistry::registerURL(ScriptExecutionContext& context, const URL& publicURL, URLRegistrable& blob)
+void BlobURLRegistry::registerURL(const ScriptExecutionContext& context, const URL& publicURL, URLRegistrable& blob)
 {
     ASSERT(&blob.registry() == this);
+    {
+        Locker locker { m_urlsPerContextLock };
+        m_urlsPerContext.add(context.identifier(), HashSet<URL>()).iterator->value.add(publicURL.isolatedCopy());
+    }
     ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), context.policyContainer(), publicURL, static_cast<Blob&>(blob).url());
 }
 
 void BlobURLRegistry::unregisterURL(const URL& url)
 {
+    bool isURLRegistered = false;
+    {
+        Locker locker { m_urlsPerContextLock };
+        for (auto& [contextIdentifier, urls] : m_urlsPerContext) {
+            if (!urls.remove(url))
+                continue;
+            if (urls.isEmpty())
+                m_urlsPerContext.remove(contextIdentifier);
+            isURLRegistered = true;
+            break;
+        }
+    }
+    if (!isURLRegistered)
+        return;
+
     ThreadableBlobRegistry::unregisterBlobURL(url);
+}
+
+void BlobURLRegistry::unregisterURLsForContext(const ScriptExecutionContext& context)
+{
+    HashSet<URL> urlsForContext;
+    {
+        Locker locker { m_urlsPerContextLock };
+        urlsForContext = m_urlsPerContext.take(context.identifier());
+    }
+    for (auto& url : urlsForContext)
+        ThreadableBlobRegistry::unregisterBlobURL(url);
 }
 
 URLRegistry& BlobURLRegistry::registry()

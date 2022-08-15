@@ -48,27 +48,60 @@ MediaSourceRegistry& MediaSourceRegistry::registry()
     return instance;
 }
 
-void MediaSourceRegistry::registerURL(ScriptExecutionContext&, const URL& url, URLRegistrable& registrable)
+void MediaSourceRegistry::registerURL(const ScriptExecutionContext& context, const URL& url, URLRegistrable& registrable)
 {
     ASSERT(&registrable.registry() == this);
     ASSERT(isMainThread());
 
+    auto& urlString = url.string();
+    m_urlsPerContext.add(context.identifier(), HashSet<String>()).iterator->value.add(urlString);
+
     MediaSource& source = static_cast<MediaSource&>(registrable);
     source.addedToRegistry();
-    m_mediaSources.set(url.string(), &source);
+    m_mediaSources.add(urlString, std::pair { RefPtr { &source }, context.identifier() });
 }
 
 void MediaSourceRegistry::unregisterURL(const URL& url)
 {
-    ASSERT(isMainThread());
-    if (auto source = m_mediaSources.take(url.string()))
+    // MediaSource objects are not exposed to workers.
+    if (!isMainThread())
+        return;
+
+    auto& urlString = url.string();
+    auto [source, contextIdentifier] = m_mediaSources.take(urlString);
+    if (!source)
+        return;
+
+    source->removedFromRegistry();
+
+    auto m_urlsPerContextIterator = m_urlsPerContext.find(contextIdentifier);
+    ASSERT(m_urlsPerContextIterator != m_urlsPerContext.end());
+    ASSERT(m_urlsPerContextIterator->value.contains(urlString));
+    m_urlsPerContextIterator->value.remove(urlString);
+    if (m_urlsPerContextIterator->value.isEmpty())
+        m_urlsPerContext.remove(m_urlsPerContextIterator);
+}
+
+void MediaSourceRegistry::unregisterURLsForContext(const ScriptExecutionContext& context)
+{
+    // MediaSource objects are not exposed to workers.
+    if (!isMainThread())
+        return;
+
+    auto urls = m_urlsPerContext.take(context.identifier());
+    for (auto& url : urls) {
+        ASSERT(m_mediaSources.contains(url));
+        auto [source, contextIdentifier] = m_mediaSources.take(url);
         source->removedFromRegistry();
+    }
 }
 
 URLRegistrable* MediaSourceRegistry::lookup(const String& url) const
 {
     ASSERT(isMainThread());
-    return m_mediaSources.get(url);
+    if (auto it = m_mediaSources.find(url); it != m_mediaSources.end())
+        return it->value.first.get();
+    return nullptr;
 }
 
 MediaSourceRegistry::MediaSourceRegistry()
