@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -46,9 +47,14 @@ public:
 class URLRegistry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~URLRegistry() = default;
-    virtual void registerURL(ScriptExecutionContext&, const URL&, URLRegistrable&) = 0;
+    static void forEach(const Function<void(URLRegistry&)>&);
+
+    URLRegistry();
+
+    virtual ~URLRegistry();
+    virtual void registerURL(const ScriptExecutionContext&, const URL&, URLRegistrable&) = 0;
     virtual void unregisterURL(const URL&) = 0;
+    virtual void unregisterURLsForContext(const ScriptExecutionContext&) = 0;
 
     // This is an optional API
     virtual URLRegistrable* lookup(const String&) const { ASSERT_NOT_REACHED(); return 0; }
