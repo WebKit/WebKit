@@ -35,6 +35,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaSource.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
