@@ -66,6 +66,8 @@
 #import "WebProcess.h"
 #import "WebTouchEvent.h"
 #import <CoreText/CTFont.h>
+#import <UIKit/UIAccessibility.h>
+#import <WebCore/AXObjectCache.h>
 #import <WebCore/Autofill.h>
 #import <WebCore/AutofillElements.h>
 #import <WebCore/Chrome.h>
@@ -163,10 +165,19 @@
 #import <WebCore/PromisedAttachmentInfo.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <AXRuntime/AXDefines.h>
+#import <AXRuntime/AXNotificationConstants.h>
+#endif
+
 #import <pal/cocoa/RevealSoftLink.h>
 
 #define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebPage::" fmt, this, ##__VA_ARGS__)
 #define WEBPAGE_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - WebPage::" fmt, this, ##__VA_ARGS__)
+
+#if !USE(APPLE_INTERNAL_SDK)
+#define kAXPidStatusChangedNotification 0
+#endif
 
 namespace WebKit {
 
@@ -4897,6 +4908,13 @@ void WebPage::animationDidFinishForElement(const WebCore::Element& animatedEleme
     RefPtr endContainer = selection.end().containerNode();
     if (startContainer != endContainer)
         scheduleEditorStateUpdateForStartOrEndContainerNodeIfNeeded(endContainer.get());
+}
+
+void WebPage::notifyProcessWillChangeSuspendState(bool suspended)
+{
+    if (!WebCore::AXObjectCache::accessibilityEnabled())
+        return;
+    UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });
 }
 
 } // namespace WebKit

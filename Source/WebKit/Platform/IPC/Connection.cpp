@@ -686,8 +686,6 @@ std::unique_ptr<Decoder> Connection::waitForSyncReply(SyncRequestID syncRequestI
 {
     timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
 
-    willSendSyncMessage(sendSyncOptions);
-    
     bool timedOut = false;
     while (!timedOut) {
         // First, check if we have any messages that we need to process.
@@ -703,10 +701,8 @@ std::unique_ptr<Decoder> Connection::waitForSyncReply(SyncRequestID syncRequestI
             ASSERT_UNUSED(syncRequestID, pendingSyncReply.syncRequestID == syncRequestID);
             
             // We found the sync reply, or the connection was closed.
-            if (pendingSyncReply.didReceiveReply || !m_shouldWaitForSyncReplies) {
-                didReceiveSyncReply(sendSyncOptions);
+            if (pendingSyncReply.didReceiveReply || !m_shouldWaitForSyncReplies)
                 return WTFMove(pendingSyncReply.replyDecoder);
-            }
         }
 
         // Processing a sync message could cause the connection to be invalidated.
@@ -715,7 +711,6 @@ std::unique_ptr<Decoder> Connection::waitForSyncReply(SyncRequestID syncRequestI
         // any more incoming messages.
         if (!isValid()) {
             RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Connection no longer valid, id=%" PRIu64, syncRequestID.toUInt64());
-            didReceiveSyncReply(sendSyncOptions);
             return nullptr;
         }
 
@@ -730,9 +725,6 @@ std::unique_ptr<Decoder> Connection::waitForSyncReply(SyncRequestID syncRequestI
 #else
     RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %s, id=%" PRIu64, description(messageName), syncRequestID.toUInt64());
 #endif
-
-    didReceiveSyncReply(sendSyncOptions);
-
     return nullptr;
 }
 
