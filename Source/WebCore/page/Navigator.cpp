@@ -162,7 +162,7 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
     }
 
     if (m_hasPendingShare) {
-        promise->reject(NotAllowedError);
+        promise->reject(InvalidStateError, "share() is already in progress"_s);
         return;
     }
 
@@ -209,16 +209,22 @@ void Navigator::showShareData(ExceptionOr<ShareDataWithParsedURL&> readData, Ref
     if (!frame || !frame->page())
         return;
 
+    m_hasPendingShare = true;
+
     if (frame->page()->isControlledByAutomation()) {
-        promise->resolve();
+        RunLoop::main().dispatch([promise = WTFMove(promise), weakThis = WeakPtr { *this }] {
+            if (weakThis)
+                weakThis->m_hasPendingShare = false;
+            promise->resolve();
+        });
         return;
     }
     
-    m_hasPendingShare = true;
     auto shareData = readData.returnValue();
     
-    frame->page()->chrome().showShareSheet(shareData, [promise = WTFMove(promise), this] (bool completed) {
-        m_hasPendingShare = false;
+    frame->page()->chrome().showShareSheet(shareData, [promise = WTFMove(promise), weakThis = WeakPtr { *this }] (bool completed) {
+        if (weakThis)
+            weakThis->m_hasPendingShare = false;
         if (completed) {
             promise->resolve();
             return;

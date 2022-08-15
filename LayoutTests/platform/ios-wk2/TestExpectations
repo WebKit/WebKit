@@ -1781,8 +1781,6 @@ imported/w3c/web-platform-tests/web-share/share-url-noscheme-manual.https.html [
 imported/w3c/web-platform-tests/web-share/share-url-pathonly-manual.https.html [ Skip ]
 imported/w3c/web-platform-tests/web-share/share-url-relative-manual.https.html [ Skip ]
 
-imported/w3c/web-platform-tests/web-share/share-sharePromise-internal-slot.https.html [ DumpJSConsoleLogInStdErr ]
-
 # rdar://problem/59595496
 quicklook/keynote-09.html [ Failure ]
 quicklook/keynote.html [ ImageOnlyFailure ]
