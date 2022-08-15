@@ -107,7 +107,7 @@ private:
     ~NetworkStorageManager();
     void writeOriginToFileIfNecessary(const WebCore::ClientOrigin&, StorageAreaBase* = nullptr);
     enum class ShouldWriteOriginFile : bool { No, Yes };
-    OriginStorageManager& localOriginStorageManager(const WebCore::ClientOrigin&, ShouldWriteOriginFile = ShouldWriteOriginFile::Yes);
+    OriginStorageManager& originStorageManager(const WebCore::ClientOrigin&, ShouldWriteOriginFile = ShouldWriteOriginFile::Yes);
     bool removeOriginStorageManagerIfPossible(const WebCore::ClientOrigin&);
 
     void forEachOriginDirectory(const Function<void(const String&)>&);
@@ -183,7 +183,7 @@ private:
     String m_path;
     FileSystem::Salt m_salt;
     bool m_closed { false };
-    HashMap<WebCore::ClientOrigin, std::unique_ptr<OriginStorageManager>> m_localOriginStorageManagers;
+    HashMap<WebCore::ClientOrigin, std::unique_ptr<OriginStorageManager>> m_originStorageManagers;
     WeakHashSet<IPC::Connection> m_connections; // Main thread only.
     std::unique_ptr<FileSystemStorageHandleRegistry> m_fileSystemStorageHandleRegistry;
     std::unique_ptr<StorageAreaRegistry> m_storageAreaRegistry;
