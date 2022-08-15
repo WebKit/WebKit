@@ -675,6 +675,7 @@ def argument_coder_headers_for_type(type):
 
     special_cases = {
         'String': '"ArgumentCoders.h"',
+        'MachSendRight': '"ArgumentCodersDarwin.h"',
         'WebKit::ScriptMessageHandlerHandle': '"WebScriptMessageHandler.h"',
     }
 

@@ -275,26 +275,6 @@ bool ArgumentCoder<WebCore::Credential>::decodePlatformData(Decoder& decoder, We
     return true;
 }
 
-void ArgumentCoder<MachSendRight>::encode(Encoder& encoder, const MachSendRight& sendRight)
-{
-    encoder << Attachment { sendRight };
-}
-
-void ArgumentCoder<MachSendRight>::encode(Encoder& encoder, MachSendRight&& sendRight)
-{
-    encoder << Attachment { WTFMove(sendRight) };
-}
-
-bool ArgumentCoder<MachSendRight>::decode(Decoder& decoder, MachSendRight& sendRight)
-{
-    Attachment attachment;
-    if (!decoder.decode(attachment))
-        return false;
-
-    sendRight = WTFMove(attachment);
-    return true;
-}
-
 void ArgumentCoder<WebCore::KeypressCommand>::encode(Encoder& encoder, const WebCore::KeypressCommand& keypressCommand)
 {
     encoder << keypressCommand.commandName << keypressCommand.text;

@@ -40,6 +40,10 @@
 #include <wtf/Unexpected.h>
 #include <wtf/WallTime.h>
 
+#if OS(DARWIN)
+#include "ArgumentCodersDarwin.h"
+#endif
+
 namespace IPC {
 
 // An argument coder works on POD types
@@ -1010,13 +1014,6 @@ template<> struct ArgumentCoder<SHA1::Digest> {
     static void encode(Encoder&, const SHA1::Digest&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, SHA1::Digest&);
 };
-
-#if HAVE(AUDIT_TOKEN)
-template<> struct ArgumentCoder<audit_token_t> {
-    static void encode(Encoder&, const audit_token_t&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, audit_token_t&);
-};
-#endif
 
 template<> struct ArgumentCoder<std::monostate> {
     template<typename Encoder>

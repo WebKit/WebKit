@@ -99,10 +99,6 @@
 
 #if PLATFORM(COCOA)
 #include "ArgumentCodersCF.h"
-
-namespace WTF {
-class MachSendRight;
-}
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
@@ -438,12 +434,6 @@ template<> struct ArgumentCoder<WebCore::DragData> {
 #endif
 
 #if PLATFORM(COCOA)
-
-template<> struct ArgumentCoder<WTF::MachSendRight> {
-    static void encode(Encoder&, const WTF::MachSendRight&);
-    static void encode(Encoder&, WTF::MachSendRight&&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WTF::MachSendRight&);
-};
 
 template<> struct ArgumentCoder<WebCore::KeypressCommand> {
     static void encode(Encoder&, const WebCore::KeypressCommand&);

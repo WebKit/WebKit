@@ -26,6 +26,9 @@
 #include "TestWithStream.h"
 
 #include "ArgumentCoders.h" // NOLINT
+#if PLATFORM(COCOA)
+#include "ArgumentCodersDarwin.h" // NOLINT
+#endif
 #include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
 #include "TestWithStreamMessages.h" // NOLINT
