@@ -127,6 +127,8 @@ protected:
         , m_url { url }
         , m_referrer { referrer }
     {
+        if (m_url.protocolIsBlob())
+            m_blobURLLifetimeExtender = m_url;
     }
 
     void didStartTimer(Frame& frame, Timer& timer) override
@@ -163,6 +165,7 @@ private:
     Ref<Document> m_initiatingDocument;
     RefPtr<SecurityOrigin> m_securityOrigin;
     URL m_url;
+    BlobURLHandle m_blobURLLifetimeExtender;
     String m_referrer;
     bool m_haveToldClient { false };
 };
