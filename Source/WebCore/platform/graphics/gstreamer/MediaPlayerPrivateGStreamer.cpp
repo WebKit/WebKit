@@ -2815,11 +2815,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     g_object_set(m_pipeline.get(), "audio-sink", m_audioSink.get(), "video-sink", createVideoSink(), nullptr);
 
     if (m_shouldPreservePitch) {
-        GstElement* scale = gst_element_factory_make("scaletempo", nullptr);
-
-        if (!scale)
-            GST_WARNING("Failed to create scaletempo");
-        else
+        GstElement* scale = makeGStreamerElement("scaletempo", nullptr);
+        if (scale)
             g_object_set(m_pipeline.get(), "audio-filter", scale, nullptr);
     }
 
@@ -3899,7 +3896,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
 
     GstElement* videoSink = nullptr;
     if (!webkitGstCheckVersion(1, 18, 0)) {
-        m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
+        m_fpsSink = makeGStreamerElement("fpsdisplaysink", "sink");
         if (m_fpsSink) {
             g_object_set(m_fpsSink.get(), "silent", TRUE , nullptr);
 

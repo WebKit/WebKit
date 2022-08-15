@@ -50,8 +50,8 @@ GStreamerAudioCapturer::GStreamerAudioCapturer()
 GstElement* GStreamerAudioCapturer::createConverter()
 {
     auto* bin = gst_bin_new(nullptr);
-    auto* audioconvert = gst_element_factory_make("audioconvert", nullptr);
-    auto* audioresample = gst_element_factory_make("audioresample", nullptr);
+    auto* audioconvert = makeGStreamerElement("audioconvert", nullptr);
+    auto* audioresample = makeGStreamerElement("audioresample", nullptr);
     gst_bin_add_many(GST_BIN_CAST(bin), audioconvert, audioresample, nullptr);
     gst_element_link(audioconvert, audioresample);
 
