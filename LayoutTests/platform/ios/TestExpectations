@@ -3703,5 +3703,3 @@ webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 webkit.org/b/243828 fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-after-changing-initial-scale.html [ Pass Failure ]
 
 webkit.org/b/243836 imported/w3c/web-platform-tests/css/css-flexbox/negative-overflow-002.html [ Pass Failure ]
-
-webkit.org/b/243946 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/implicit-submission.optional.html [ Pass Failure ]
