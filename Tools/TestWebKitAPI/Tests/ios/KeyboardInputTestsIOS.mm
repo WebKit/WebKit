@@ -453,7 +453,7 @@ TEST(KeyboardInputTests, HandleKeyEventsWhileSwappingWebProcess)
 TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponderWithRetainActiveFocusedState)
 {
     // This difference in caret width is due to the fact that we don't zoom in to the input field on iPad, but do on iPhone.
-    auto expectedCaretRect = CGRectMake(16, 13, UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? 3 : 2, 15);
+    auto expectedCaretRect = CGRectMake(14, 11, UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? 3 : 2, 15);
     auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     [webView waitForCaretViewFrameToBecome:expectedCaretRect];
@@ -489,7 +489,7 @@ TEST(KeyboardInputTests, RangedSelectionRectAfterRestoringFirstResponderWithReta
 TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponder)
 {
     // This difference in caret width is due to the fact that we don't zoom in to the input field on iPad, but do on iPhone.
-    auto expectedCaretRect = CGRectMake(16, 13, UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? 3 : 2, 15);
+    auto expectedCaretRect = CGRectMake(14, 11, UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? 3 : 2, 15);
     auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     [webView waitForCaretViewFrameToBecome:expectedCaretRect];
@@ -673,8 +673,8 @@ TEST(KeyboardInputTests, SelectionClipRectsWhenPresentingInputView)
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><input>"];
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.querySelector('input').focus()"];
 
-    EXPECT_EQ(11, selectionClipRect.origin.x);
-    EXPECT_EQ(11, selectionClipRect.origin.y);
+    EXPECT_EQ(9, selectionClipRect.origin.x);
+    EXPECT_EQ(9, selectionClipRect.origin.y);
     EXPECT_EQ(153, selectionClipRect.size.width);
     EXPECT_EQ(20, selectionClipRect.size.height);
 }

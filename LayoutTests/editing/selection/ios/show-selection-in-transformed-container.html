@@ -52,8 +52,8 @@ addEventListener("load", async () => {
     // Tap the input and wait for the caret.
     await UIHelper.activateAndWaitForInputSessionAt(20, 20);
     caretBefore = await waitForCaretToAppear();
-    shouldBe("caretBefore.left", "20");
-    shouldBe("caretBefore.top", "14");
+    shouldBe("caretBefore.left", "18");
+    shouldBe("caretBefore.top", "12");
     shouldBe("caretBefore.width", "2");
     shouldBe("caretBefore.height", "24");
 
@@ -62,8 +62,8 @@ addEventListener("load", async () => {
     await UIHelper.waitForKeyboardToHide();
     await UIHelper.activateAndWaitForInputSessionAt(20, 20);
     caretAfter = await waitForCaretToAppear();
-    shouldBe("caretAfter.left", "20");
-    shouldBe("caretAfter.top", "14");
+    shouldBe("caretAfter.left", "18");
+    shouldBe("caretAfter.top", "12");
     shouldBe("caretAfter.width", "2");
     shouldBe("caretAfter.height", "24");
 

@@ -63,6 +63,10 @@
 #include "WebAnimationTypes.h"
 #include <wtf/RobinHoodHashSet.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 namespace Style {
 
@@ -76,6 +80,7 @@ Adjuster::Adjuster(const Document& document, const RenderStyle& parentStyle, con
 {
 }
 
+#if PLATFORM(COCOA)
 static void addIntrinsicMargins(RenderStyle& style)
 {
     // Intrinsic margin value.
@@ -97,6 +102,7 @@ static void addIntrinsicMargins(RenderStyle& style)
             style.setMarginBottom(Length(intrinsicMargin, LengthType::Fixed));
     }
 }
+#endif
 
 static DisplayType equivalentBlockDisplay(const RenderStyle& style, const Document& document)
 {
@@ -519,14 +525,18 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     style.adjustAnimations();
     style.adjustTransitions();
 
-    // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
-    // alter fonts and heights/widths.
-    if (is<HTMLFormControlElement>(m_element) && style.computedFontPixelSize() >= 11) {
-        // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
-        // so we have to treat all image buttons as though they were explicitly sized.
-        if (!is<HTMLInputElement>(*m_element) || !downcast<HTMLInputElement>(*m_element).isImageButton())
-            addIntrinsicMargins(style);
+#if PLATFORM(COCOA)
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotAddIntrinsicMarginsToFormControls)) {
+        // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
+        // alter fonts and heights/widths.
+        if (is<HTMLFormControlElement>(m_element) && style.computedFontPixelSize() >= 11) {
+            // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
+            // so we have to treat all image buttons as though they were explicitly sized.
+            if (!is<HTMLInputElement>(*m_element) || !downcast<HTMLInputElement>(*m_element).isImageButton())
+                addIntrinsicMargins(style);
+        }
     }
+#endif
 
     // Let the theme also have a crack at adjusting the style.
     if (style.hasAppearance())

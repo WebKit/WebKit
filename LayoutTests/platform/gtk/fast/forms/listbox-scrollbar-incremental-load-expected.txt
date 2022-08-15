@@ -22,6 +22,6 @@ layer at (0,0) size 800x600
           text run at (493,0) width 287: "\x{201C}Seven\x{201D}. The scroller should be at the bottom"
           text run at (0,18) width 102: "of the scroll bar "
           text run at (102,18) width 85: "to reflect this."
-      RenderBlock (anonymous) at (0,104) size 784x77
-        RenderListBox {SELECT} at (2,2) size 67x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBlock (anonymous) at (0,104) size 784x73
+        RenderListBox {SELECT} at (0,0) size 67x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (0,0) size 0x0

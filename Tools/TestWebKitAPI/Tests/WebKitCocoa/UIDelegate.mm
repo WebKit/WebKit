@@ -936,7 +936,7 @@ TEST(WebKit, ClickAutoFillButton)
     [webView setUIDelegate:delegate.get()];
     [webView evaluateJavaScript:@"" completionHandler: nil]; // Ensure the WebProcess and injected bundle are running.
     TestWebKitAPI::Util::run(&readyForClick);
-    NSPoint buttonLocation = NSMakePoint(130, 575);
+    NSPoint buttonLocation = NSMakePoint(130, 577);
     [webView mouseDownAtPoint:buttonLocation simulatePressure:NO];
     [webView mouseUpAtPoint:buttonLocation];
     TestWebKitAPI::Util::run(&done);

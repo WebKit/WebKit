@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 323x18
           text run at (0,0) width 323: "This list box should be tall enough to fit 6 options."
-      RenderBlock (anonymous) at (0,86) size 784x89
-        RenderListBox {SELECT} at (2,2) size 48x85 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBlock (anonymous) at (0,86) size 784x85
+        RenderListBox {SELECT} at (0,0) size 48x85 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

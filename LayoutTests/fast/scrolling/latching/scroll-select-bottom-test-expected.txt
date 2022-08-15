@@ -8,7 +8,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 div display height = 111
-Mouse moved to (30, 378)
+Mouse moved to (28, 376)
 PASS Page did not receive wheel events.
 PASS successfullyParsed is true
 

@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 382x17
           text run at (0,0) width 382: "Focus field with a placeholder, then type, then delete all text."
-      RenderBlock {DIV} at (0,34) size 784x46
+      RenderBlock {DIV} at (0,34) size 784x42
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (10,44) size 201x42 clip at (11,45) size 199x40
-  RenderTextControl {TEXTAREA} at (2,2) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (8,42) size 201x42 clip at (9,43) size 199x40
+  RenderTextControl {TEXTAREA} at (0,0) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 195x18
       RenderBR {BR} at (0,0) size 0x17
     RenderBlock {DIV} at (3,3) size 195x18 [color=#A9A9A9]
