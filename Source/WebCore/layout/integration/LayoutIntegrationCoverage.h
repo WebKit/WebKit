@@ -98,7 +98,7 @@ enum class AvoidanceReason : uint64_t {
     ContentIsSVG                                 = 1LLU  << 56,
     // Unused                                    = 1LLU  << 57,
     // Unused                                    = 1LLU  << 58,
-    InlineBoxNeedsLayer                          = 1LLU  << 59,
+    // Unused                                    = 1LLU  << 59,
     BoxDecorationBreakClone                      = 1LLU  << 60,
     FlowIsUnsupportedListItem                    = 1LLU  << 61,
     EndOfReasons                                 = 1LLU  << 62

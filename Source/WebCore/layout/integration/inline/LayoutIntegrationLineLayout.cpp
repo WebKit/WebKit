@@ -740,7 +740,57 @@ static LayoutPoint flippedContentOffsetIfNeeded(const RenderBlockFlow& root, con
     return contentOffset;
 }
 
-void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+class LayerPaintScope {
+public:
+    LayerPaintScope(const BoxTree& boxTree, const RenderInline* layerRenderer)
+        : m_boxTree(boxTree)
+        , m_layerInlineBox(layerRenderer ? &boxTree.layoutBoxForRenderer(*layerRenderer) : nullptr)
+    { }
+
+    bool includes(const InlineDisplay::Box& box)
+    {
+        auto isInside = [](auto& displayBox, auto& inlineBox)
+        {
+            ASSERT(inlineBox.isInlineBox());
+
+            if (displayBox.isRootInlineBox())
+                return false;
+
+            for (auto* box = &displayBox.layoutBox().parent(); box->isInlineBox(); box = &box->parent()) {
+                if (box == &inlineBox)
+                    return true;
+            }
+            return false;
+        };
+
+        if (m_layerInlineBox == &box.layoutBox())
+            return true;
+        if (m_layerInlineBox && !isInside(box, *m_layerInlineBox))
+            return false;
+        if (m_currentExcludedInlineBox && isInside(box, *m_currentExcludedInlineBox))
+            return false;
+
+        m_currentExcludedInlineBox = nullptr;
+
+        if (box.isRootInlineBox() || box.isText() || box.isLineBreak())
+            return true;
+
+        auto* renderer = dynamicDowncast<RenderLayerModelObject>(m_boxTree.rendererForLayoutBox(box.layoutBox()));
+        bool hasSelfPaintingLayer = renderer && renderer->hasSelfPaintingLayer();
+
+        if (hasSelfPaintingLayer && box.isNonRootInlineBox())
+            m_currentExcludedInlineBox = &downcast<Layout::ContainerBox>(box.layoutBox());
+
+        return !hasSelfPaintingLayer;
+    }
+
+private:
+    const BoxTree& m_boxTree;
+    const Layout::ContainerBox* const m_layerInlineBox;
+    const Layout::ContainerBox* m_currentExcludedInlineBox { nullptr };
+};
+
+void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const RenderInline* layerRenderer)
 {
     if (!m_inlineContent)
         return;
@@ -752,6 +802,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         case PaintPhase::Foreground:
         case PaintPhase::EventRegion:
         case PaintPhase::TextClip:
+        case PaintPhase::Mask:
         case PaintPhase::Selection:
         case PaintPhase::Outline:
         case PaintPhase::ChildOutlines:
@@ -782,9 +833,12 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         case PaintPhase::ChildOutlines: return box.isNonRootInlineBox();
         case PaintPhase::SelfOutline: return box.isRootInlineBox();
         case PaintPhase::Outline: return box.isInlineBox();
+        case PaintPhase::Mask: return box.isInlineBox();
         default: return true;
         }
     };
+
+    LayerPaintScope layerPaintScope(m_boxTree, layerRenderer);
 
     ListHashSet<RenderInline*> outlineObjects;
 
@@ -793,6 +847,9 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             continue;
 
         if (box.isLineBreak())
+            continue;
+
+        if (!layerPaintScope.includes(box))
             continue;
 
         if (box.isInlineBox()) {
@@ -817,10 +874,9 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             continue;
         }
 
-        if (auto& renderer = m_boxTree.rendererForLayoutBox(box.layoutBox()); is<RenderBox>(renderer) && renderer.isReplacedOrInlineBlock()) {
-            auto& renderBox = downcast<RenderBox>(renderer);
-            if (!renderBox.hasSelfPaintingLayer() && paintInfo.shouldPaintWithinRoot(renderBox))
-                renderBox.paintAsInlineBlock(paintInfo, flippedContentOffsetIfNeeded(flow(), renderBox, paintOffset));
+        if (auto* renderer = dynamicDowncast<RenderBox>(m_boxTree.rendererForLayoutBox(box.layoutBox())); renderer && renderer->isReplacedOrInlineBlock()) {
+            if (paintInfo.shouldPaintWithinRoot(*renderer))
+                renderer->paintAsInlineBlock(paintInfo, flippedContentOffsetIfNeeded(flow(), *renderer, paintOffset));
         }
     }
 
@@ -835,7 +891,7 @@ static LayoutRect flippedRectForWritingMode(const RenderBlockFlow& root, const F
     return flippedRect;
 }
 
-bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction, const RenderInline* layerRenderer)
 {
     if (hitTestAction != HitTestForeground)
         return false;
@@ -847,10 +903,12 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     hitTestBoundingBox.moveBy(-accumulatedOffset);
     auto boxRange = m_inlineContent->boxesForRect(hitTestBoundingBox);
 
+    LayerPaintScope layerPaintScope(m_boxTree, layerRenderer);
+
     for (auto& box : makeReversedRange(boxRange)) {
         auto& renderer = m_boxTree.rendererForLayoutBox(box.layoutBox());
 
-        if (!box.isRootInlineBox() && is<RenderLayerModelObject>(renderer) && downcast<RenderLayerModelObject>(renderer).hasSelfPaintingLayer())
+        if (!layerPaintScope.includes(box))
             continue;
 
         if (box.isAtomicInlineLevelBox()) {

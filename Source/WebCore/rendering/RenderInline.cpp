@@ -228,6 +228,12 @@ bool RenderInline::mayAffectLayout() const
 
 void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
+        lineLayout->paint(paintInfo, paintOffset, this);
+        return;
+    }
+#endif
     m_lineBoxes.paint(this, paintInfo, paintOffset);
 }
 
@@ -421,7 +427,8 @@ bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
 {
     ASSERT(layer());
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    ASSERT(!LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)));
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+        return lineLayout->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction, this);
 #endif
     return m_lineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }

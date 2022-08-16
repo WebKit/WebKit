@@ -36,6 +36,7 @@ namespace WebCore {
 
 class RenderBlock;
 class RenderBoxModelObject;
+class RenderInline;
 
 namespace LayoutIntegration {
 
@@ -57,6 +58,9 @@ public:
 
     const Layout::Box& layoutBoxForRenderer(const RenderObject&) const;
     Layout::Box& layoutBoxForRenderer(const RenderObject&);
+
+    const Layout::ContainerBox& layoutBoxForRenderer(const RenderInline&) const;
+    Layout::ContainerBox& layoutBoxForRenderer(const RenderInline&);
 
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     RenderObject& rendererForLayoutBox(const Layout::Box&);

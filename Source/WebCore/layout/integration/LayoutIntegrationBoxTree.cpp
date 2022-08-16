@@ -266,6 +266,16 @@ const Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer) c
     return const_cast<BoxTree&>(*this).layoutBoxForRenderer(renderer);
 }
 
+const Layout::ContainerBox& BoxTree::layoutBoxForRenderer(const RenderInline& renderer) const
+{
+    return downcast<Layout::ContainerBox>(layoutBoxForRenderer(static_cast<const RenderObject&>(renderer)));
+}
+
+Layout::ContainerBox& BoxTree::layoutBoxForRenderer(const RenderInline& renderer)
+{
+    return downcast<Layout::ContainerBox>(layoutBoxForRenderer(static_cast<const RenderObject&>(renderer)));
+}
+
 RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box)
 {
     if (&box == &m_root)
