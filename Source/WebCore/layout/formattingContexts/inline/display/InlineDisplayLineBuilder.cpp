@@ -69,7 +69,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
             };
             if (lineBox.hasContent() && hasScrollableContent()) {
                 // Empty lines (e.g. continuation pre/post blocks) don't expect scrollbar overflow.
-                scrollableOverflowRect.expandToContain(borderBox);
+                scrollableOverflowRect.expandVerticallyToContain(borderBox);
             }
         } else
             ASSERT_NOT_REACHED();
