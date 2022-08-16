@@ -25,12 +25,11 @@
 
 #pragma once
 
+#include "ReportBody.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class ReportBody;
 
 class Report : public RefCounted<Report> {
     WTF_MAKE_FAST_ALLOCATED;
