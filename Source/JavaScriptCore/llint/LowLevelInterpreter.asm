@@ -640,7 +640,7 @@ const NotInitialization = constexpr InitializationMode::NotInitialization
 
 const MarkedBlockSize = constexpr MarkedBlock::blockSize
 const MarkedBlockMask = ~(MarkedBlockSize - 1)
-const MarkedBlockFooterOffset = constexpr MarkedBlock::offsetOfFooter
+const MarkedBlockHeaderOffset = constexpr MarkedBlock::offsetOfHeader
 const PreciseAllocationHeaderSize = constexpr (PreciseAllocation::headerSize())
 const PreciseAllocationVMOffset = (PreciseAllocation::m_weakSet + WeakSet::m_vm - PreciseAllocationHeaderSize)
 
@@ -1507,7 +1507,7 @@ end
 macro convertCalleeToVM(callee)
     btpnz callee, (constexpr PreciseAllocation::halfAlignment), .preciseAllocation
     andp MarkedBlockMask, callee
-    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[callee], callee
+    loadp MarkedBlockHeaderOffset + MarkedBlock::Header::m_vm[callee], callee
     jmp .done
 .preciseAllocation:
     loadp PreciseAllocationVMOffset[callee], callee

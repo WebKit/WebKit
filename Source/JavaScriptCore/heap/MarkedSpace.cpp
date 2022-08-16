@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ static Vector<size_t> sizeClasses()
 
     if (UNLIKELY(Options::dumpSizeClasses())) {
         dataLog("Block size: ", MarkedBlock::blockSize, "\n");
-        dataLog("Footer size: ", sizeof(MarkedBlock::Footer), "\n");
+        dataLog("Header size: ", sizeof(MarkedBlock::Header), "\n");
     }
     
     auto add = [&] (size_t sizeClass) {

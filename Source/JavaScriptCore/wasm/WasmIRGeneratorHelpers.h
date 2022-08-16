@@ -116,7 +116,7 @@ static inline void emitRethrowImpl(CCallHelpers& jit)
     {
         auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, scratch, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
         jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), scratch);
-        jit.loadPtr(CCallHelpers::Address(scratch, MarkedBlock::offsetOfFooter + MarkedBlock::Footer::offsetOfVM()), scratch);
+        jit.loadPtr(CCallHelpers::Address(scratch, MarkedBlock::offsetOfHeader + MarkedBlock::Header::offsetOfVM()), scratch);
         auto loadedCase = jit.jump();
 
         preciseAllocationCase.link(&jit);
@@ -144,7 +144,7 @@ static inline void emitThrowImpl(CCallHelpers& jit, unsigned exceptionIndex)
     {
         auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, scratch, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
         jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), scratch);
-        jit.loadPtr(CCallHelpers::Address(scratch, MarkedBlock::offsetOfFooter + MarkedBlock::Footer::offsetOfVM()), scratch);
+        jit.loadPtr(CCallHelpers::Address(scratch, MarkedBlock::offsetOfHeader + MarkedBlock::Header::offsetOfVM()), scratch);
         auto loadedCase = jit.jump();
 
         preciseAllocationCase.link(&jit);
@@ -184,7 +184,7 @@ static inline void emitCatchPrologueShared(B3::Air::Code& code, CCallHelpers& ji
         // https://bugs.webkit.org/show_bug.cgi?id=231213
         auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
         jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), GPRInfo::regT0);
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, MarkedBlock::offsetOfFooter + MarkedBlock::Footer::offsetOfVM()), GPRInfo::regT0);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, MarkedBlock::offsetOfHeader + MarkedBlock::Header::offsetOfVM()), GPRInfo::regT0);
         auto loadedCase = jit.jump();
 
         preciseAllocationCase.link(&jit);

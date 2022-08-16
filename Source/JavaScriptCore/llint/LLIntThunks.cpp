@@ -225,7 +225,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueThunk()
 
         auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
         jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), GPRInfo::regT0);
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, MarkedBlock::offsetOfFooter + MarkedBlock::Footer::offsetOfVM()), GPRInfo::regT0);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, MarkedBlock::offsetOfHeader + MarkedBlock::Header::offsetOfVM()), GPRInfo::regT0);
         auto loadedCase = jit.jump();
 
         preciseAllocationCase.link(&jit);

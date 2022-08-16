@@ -173,7 +173,7 @@ ALWAYS_INLINE void auditCell(VM&, JSValue);
 ALWAYS_INLINE void auditStructureID(StructureID);
 
 #if ENABLE(EXTRA_INTEGRITY_CHECKS) && USE(JSVALUE64)
-template<typename T> ALWAYS_INLINE T audit(T value) { return doAudit(value); }
+template<typename T> ALWAYS_INLINE T audit(T value) { return bitwise_cast<T>(doAudit(value)); }
 #else
 template<typename T> ALWAYS_INLINE T audit(T value) { return value; }
 #endif
