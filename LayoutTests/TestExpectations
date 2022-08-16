@@ -432,6 +432,7 @@ imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [
 http/tests/security/cookie-module-import-propagate.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ DumpJSConsoleLogInStdErr ]
 http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/anonymous-iframe/embedding.tentative.https.window.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr Failure Pass ]
@@ -3013,9 +3014,6 @@ fast/table/colspanMinWidth-vertical.html [ Skip ]
 
 # Test only works on iOS WK2. webkit.org/b/165535
 fast/forms/range/range-remove-on-drag.html [ Skip ]
-
-# FileAPI
-imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html [ Failure ]
 
 # Secure Contexts tests that timeout
 imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.html [ Skip ]
