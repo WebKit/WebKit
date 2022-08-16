@@ -309,6 +309,7 @@ class GitHubEWS(GitHub):
             if new_comment_id != -1:
                 change.set_comment_id(new_comment_id)
                 _log.info('Set new comment id as {} for hash: {}.'.format(new_comment_id, sha))
+            Change.mark_old_changes_as_obsolete(pr_id, sha)
         else:
             _log.info('Updating comment for hash: {}, pr_id: {}, pr_id from db: {}.'.format(sha, pr_id, change.pr_id))
             new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, comment_text, comment_id=comment_id)
