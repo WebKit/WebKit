@@ -29,6 +29,7 @@
 #pragma once
 
 #include "AbortSignal.h"
+#include "BlobURL.h"
 #include "ExceptionOr.h"
 #include "FetchBodyOwner.h"
 #include "FetchIdentifier.h"
@@ -93,12 +94,14 @@ private:
     ExceptionOr<void> setBody(FetchBody::Init&&);
     ExceptionOr<void> setBody(FetchRequest&);
 
+    void stop() final;
     const char* activeDOMObjectName() const final;
 
     ResourceRequest m_request;
     FetchOptions m_options;
     String m_referrer;
     mutable String m_requestURL;
+    BlobURLHandle m_requestBlobURLLifetimeExtender;
     Ref<AbortSignal> m_signal;
     FetchIdentifier m_navigationPreloadIdentifier;
 };
@@ -111,6 +114,8 @@ inline FetchRequest::FetchRequest(ScriptExecutionContext* context, std::optional
     , m_signal(AbortSignal::create(context))
 {
     m_request.setRequester(ResourceRequest::Requester::Fetch);
+    if (m_request.url().protocolIsBlob())
+        m_requestBlobURLLifetimeExtender = m_request.url();
     updateContentType();
 }
 
