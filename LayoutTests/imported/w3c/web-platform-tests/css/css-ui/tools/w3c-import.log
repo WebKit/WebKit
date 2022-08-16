@@ -15,3 +15,4 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/tools/appearance-build-webkit-reftests.py
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/tools/build-compute-kind-widget-fallback-props.py

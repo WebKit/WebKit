@@ -45,7 +45,6 @@ fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Pass ]
 
 # accent-color is currently only supported on Cocoa platforms
 fast/css/accent-color [ Pass ]
-imported/w3c/web-platform-tests/css/css-ui/accent-color-checkbox-checked-001.tentative.html [ Pass ]
 
 fast/css/ios [ Pass ]
 fast/media/ios [ Pass ]
