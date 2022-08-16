@@ -60,14 +60,14 @@ bool pas_segregated_page_config_kind_for_each(
     return true;    
 }
 
-const pas_segregated_page_config* pas_segregated_page_config_kind_for_config_table[
+const pas_page_base_config* pas_segregated_page_config_kind_for_config_table[
     0
 #define PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(name, value) + 1
 #include "pas_segregated_page_config_kind.def"
 #undef PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND
     ] = {
 #define PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(name, value) \
-    (const pas_segregated_page_config*)(value).base.page_config_ptr,
+    (value).base.page_config_ptr,
 #include "pas_segregated_page_config_kind.def"
 #undef PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND
 };

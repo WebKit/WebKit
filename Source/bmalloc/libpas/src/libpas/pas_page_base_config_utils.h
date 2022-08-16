@@ -54,16 +54,12 @@ typedef struct {
                                             are dealing with. */
 } pas_basic_page_base_config_declarations_arguments;
 
-#define PAS_BASIC_PAGE_BASE_CONFIG_DECLARATIONS(name, config_value, ...) \
-    static const pas_page_header_placement_mode name ## _header_placement_mode = \
-        ((pas_basic_page_base_config_declarations_arguments){__VA_ARGS__}) \
-        .header_placement_mode; \
-    \
+#define PAS_BASIC_PAGE_BASE_CONFIG_DECLARATIONS(name, config_value, header_placement_mode_value, header_table_value) \
+    static const pas_page_header_placement_mode name ## _header_placement_mode = (header_placement_mode_value); \
     static PAS_ALWAYS_INLINE pas_page_base* \
     name ## _page_header_for_boundary(void* boundary) \
     { \
-        pas_basic_page_base_config_declarations_arguments arguments = \
-            ((pas_basic_page_base_config_declarations_arguments){__VA_ARGS__}); \
+        pas_basic_page_base_config_declarations_arguments arguments = { .header_placement_mode = (header_placement_mode_value), .header_table = (header_table_value) }; \
         pas_page_base_config config; \
         \
         config = (config_value); \
@@ -90,8 +86,7 @@ typedef struct {
     static PAS_ALWAYS_INLINE void* \
     name ## _boundary_for_page_header(pas_page_base* page) \
     { \
-        pas_basic_page_base_config_declarations_arguments arguments = \
-            ((pas_basic_page_base_config_declarations_arguments){__VA_ARGS__}); \
+        pas_basic_page_base_config_declarations_arguments arguments = { .header_placement_mode = (header_placement_mode_value), .header_table = (header_table_value) }; \
         pas_page_base_config config; \
         \
         config = (config_value); \
