@@ -220,9 +220,11 @@ class GitHubEWS(GitHub):
 
     def github_status_for_queue(self, change, queue):
         name = queue
-        if Buildbot.is_tester_queue(queue):
+        is_tester_queue = Buildbot.is_tester_queue(queue)
+        is_builder_queue = Buildbot.is_builder_queue(queue)
+        if is_tester_queue:
             name = StatusBubble.TESTER_ICON + ' ' + name
-        if Buildbot.is_builder_queue(queue):
+        if is_builder_queue:
             name = StatusBubble.BUILDER_ICON + ' ' + name
 
         builds, is_parent_build = StatusBubble().get_all_builds_for_queue(change, queue, Buildbot.get_parent_queue(queue))
@@ -242,7 +244,7 @@ class GitHubEWS(GitHub):
             queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
             if queue_full_name:
                 url = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
-            hover_over_text = 'Waiting in queue, processing has not started yet.'
+            hover_over_text = 'Waiting in queue, processing has not started yet'
             return u'| [{status} {name} ]({url} "{hover_over_text}") '.format(status=status, name=name, url=url, hover_over_text=hover_over_text)
 
         url = 'https://{}/#/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, build.builder_id, build.number)
@@ -253,32 +255,51 @@ class GitHubEWS(GitHub):
         elif build.result == Buildbot.SUCCESS:
             if is_parent_build:
                 status = GitHubEWS.ICON_BUILD_ONGOING
-                hover_over_text = 'Waiting to run tests.'
+                hover_over_text = 'Waiting to run tests'
                 queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
                 if queue_full_name:
                     url = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
             else:
                 status = GitHubEWS.ICON_BUILD_PASS
+                if is_builder_queue and is_tester_queue:
+                    hover_over_text = 'Built successfully and passed tests'
+                elif is_builder_queue:
+                    hover_over_text = 'Built successfully'
+                elif is_tester_queue:
+                    if queue == 'style':
+                        hover_over_text = 'Passed style check'
+                    else:
+                        hover_over_text = 'Passed tests'
+                else:
+                    hover_over_text = 'Pass'
         elif build.result == Buildbot.WARNINGS:
             status = GitHubEWS.ICON_BUILD_PASS
         elif build.result == Buildbot.FAILURE:
             status = GitHubEWS.ICON_BUILD_FAIL
+            hover_over_text = build.state_string
         elif build.result == Buildbot.CANCELLED:
             status = GitHubEWS.ICON_BUILD_PASS
             name = u'~~{}~~'.format(name)
+            hover_over_text = 'Build was cancelled'
         elif build.result == Buildbot.SKIPPED:
             status = GitHubEWS.ICON_BUILD_PASS
             if re.search(r'Pull request .* doesn\'t have relevant changes', build.state_string):
                 return u'| '
             name = u'~~{}~~'.format(name)
+            hover_over_text = 'The change is no longer eligible for processing.'
+            if re.search(r'Pull request .* is already closed', build.state_string):
+                hover_over_text += ' Pull Request was already closed when EWS attempted to process it.'
+            elif re.search(r'Hash .* on PR .* is outdated', build.state_string):
+                hover_over_text += ' Commit was outdated when EWS attempted to process it.'
         elif build.result == Buildbot.RETRY:
-            hover_over_text = 'Build is being retried.'
+            hover_over_text = 'Build is being retried'
             status = GitHubEWS.ICON_BUILD_ONGOING
         elif build.result == Buildbot.EXCEPTION:
-            hover_over_text = 'An unexpected error occured.'
+            hover_over_text = 'An unexpected error occured'
             status = GitHubEWS.ICON_BUILD_ERROR
         else:
             status = GitHubEWS.ICON_BUILD_ERROR
+            hover_over_text = 'An unexpected error occured'
 
         return u'| [{status} {name}]({url} "{hover_over_text}") '.format(status=status, name=name, url=url, hover_over_text=hover_over_text)
 
