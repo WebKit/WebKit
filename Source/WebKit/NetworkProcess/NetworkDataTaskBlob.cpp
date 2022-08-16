@@ -266,6 +266,7 @@ void NetworkDataTaskBlob::dispatchDidReceiveResponse(Error errorCode)
         response.setHTTPStatusText(isRangeRequest ? httpPartialContentText : httpOKText);
 
         response.setHTTPHeaderField(HTTPHeaderName::ContentType, m_blobData->contentType());
+        response.setTextEncodingName(extractCharsetFromMediaType(m_blobData->contentType()).toAtomString());
         response.setHTTPHeaderField(HTTPHeaderName::ContentLength, String::number(m_totalRemainingSize));
         addCrossOriginOpenerPolicyHeaders(response, m_blobData->policyContainer().crossOriginOpenerPolicy);
         addCrossOriginEmbedderPolicyHeaders(response, m_blobData->policyContainer().crossOriginEmbedderPolicy);
