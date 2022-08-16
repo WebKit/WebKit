@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
