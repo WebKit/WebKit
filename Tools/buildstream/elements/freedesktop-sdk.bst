@@ -3,7 +3,7 @@ sources:
 - kind: git_tag
   url: gitlab_com:freedesktop-sdk/freedesktop-sdk.git
   track: 'release/21.08'
-  ref: freedesktop-sdk-21.08.13-31-g21fed0ebe165b748f4bbf1edd0f275dbabc26086
+  ref: freedesktop-sdk-21.08.15-13-g376b04010f0971ab03d08802f3ad728f9044f130
 - kind: patch
   path: patches/fdo-0001-Bump-libnice-to-current-git-master-HEAD.patch
 - kind: patch
