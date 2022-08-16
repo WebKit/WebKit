@@ -75,6 +75,7 @@ namespace WebCore {
     M(Inspector) \
     M(Layers) \
     M(Layout) \
+    M(LazyLoading) \
     M(FormattingContextLayout) \
     M(Loading) \
     M(Media) \

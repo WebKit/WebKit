@@ -1493,20 +1493,19 @@ void CachedResourceLoader::loadDone(LoadCompletionType type, bool shouldPerformP
 // remove it from the map.
 void CachedResourceLoader::garbageCollectDocumentResources()
 {
-    LOG(ResourceLoading, "CachedResourceLoader %p garbageCollectDocumentResources", this);
-
     typedef Vector<String, 10> StringVector;
     StringVector resourcesToDelete;
 
     for (auto& resourceEntry : m_documentResources) {
         auto& resource = *resourceEntry.value;
-        LOG(ResourceLoading, "  cached resource %p - hasOneHandle %d", &resource, resource.hasOneHandle());
 
         if (resource.hasOneHandle() && !resource.loader() && !resource.isPreloaded()) {
             resourcesToDelete.append(resourceEntry.key);
             m_resourceTimingInfo.removeResourceTiming(resource);
         }
     }
+
+    LOG_WITH_STREAM(ResourceLoading, stream << "CachedResourceLoader " << this << " garbageCollectDocumentResources - deleting " << resourcesToDelete.size() << " resources");
 
     for (auto& resource : resourcesToDelete)
         m_documentResources.remove(resource);

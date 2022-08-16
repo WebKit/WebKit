@@ -42,12 +42,14 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LazyLoadImageObserver.h"
+#include "Logging.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
 #include "Settings.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
+#include <wtf/text/TextStream.h>
 
 #if ENABLE(VIDEO)
 #include "RenderVideo.h"
@@ -71,6 +73,30 @@ template<> struct ValueCheck<WebCore::ImageLoader*> {
 #endif // ASSERT_ENABLED
 
 namespace WebCore {
+
+#if !LOG_DISABLED
+static TextStream& operator<<(TextStream& ts, LazyImageLoadState state)
+{
+    switch (state) {
+    case LazyImageLoadState::None: ts << "None"; break;
+    case LazyImageLoadState::Deferred: ts << "Deferred"; break;
+    case LazyImageLoadState::LoadImmediately: ts << "LoadImmediately"; break;
+    case LazyImageLoadState::FullImage: ts << "FullImage"; break;
+    }
+
+    return ts;
+}
+
+static TextStream& operator<<(TextStream& ts, ImageLoading loading)
+{
+    switch (loading) {
+    case ImageLoading::Immediate: ts << "Immediate"; break;
+    case ImageLoading::DeferredUntilVisible: ts << "DeferredUntilVisible"; break;
+    }
+
+    return ts;
+}
+#endif // !LOG_DISABLED
 
 // FIXME: beforeload event no longer exists. Delete this code.
 static ImageEventSender& beforeLoadEventSender()
@@ -139,6 +165,8 @@ void ImageLoader::clearImage()
 
 void ImageLoader::clearImageWithoutConsideringPendingLoadEvent()
 {
+    LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " clearImageWithoutConsideringPendingLoadEvent");
+
     ASSERT(m_failedLoadURL.isEmpty());
     CachedImage* oldImage = m_image.get();
     if (oldImage) {
@@ -173,6 +201,8 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         return;
 
     AtomString attr = element().imageSourceURL();
+
+    LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " updateFromElement, current URI is " << sourceURI(attr));
 
     // Avoid loading a URL we already failed to load.
     if (!m_failedLoadURL.isEmpty() && attr == m_failedLoadURL)
@@ -212,6 +242,9 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
             document.cachedResourceLoader().m_documentResources.set(newImage->url().string(), newImage.get());
             document.cachedResourceLoader().setAutoLoadImages(autoLoadOtherImages);
         } else {
+#if !LOG_DISABLED
+            auto oldState = m_lazyImageLoadState;
+#endif
             if (m_lazyImageLoadState == LazyImageLoadState::None && isImageElement) {
                 auto& imageElement = downcast<HTMLImageElement>(element());
                 if (imageElement.isLazyLoadable() && document.settings().lazyImageLoadingEnabled()) {
@@ -221,6 +254,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
             }
             auto imageLoading = (m_lazyImageLoadState == LazyImageLoadState::Deferred) ? ImageLoading::DeferredUntilVisible : ImageLoading::Immediate;
             newImage = document.cachedResourceLoader().requestImage(WTFMove(request), imageLoading).value_or(nullptr);
+            LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " updateFromElement " << element() << " - state changed from " << oldState << " to " << m_lazyImageLoadState << ", loading is" << imageLoading << " new image " << newImage.get());
         }
 
         // If we do not have an image here, it means that a cross-site
@@ -245,10 +279,14 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
 
 void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, CachedResourceHandle<CachedImage>&& newImage)
 {
+    LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " didUpdateCachedImage " << newImage.get());
+
     auto& document = element().document();
 
     CachedImage* oldImage = m_image.get();
     if (newImage != oldImage || relevantMutation == RelevantMutation::Yes) {
+        LOG_WITH_STREAM(LazyLoading, stream << " switching from old image " << oldImage << " to image " << newImage.get() << " " << (newImage ? newImage->url() : URL()));
+
         if (m_hasPendingBeforeLoadEvent) {
             beforeLoadEventSender().cancelEvent(*this);
             m_hasPendingBeforeLoadEvent = false;
@@ -336,12 +374,15 @@ inline void ImageLoader::rejectDecodePromises(ASCIILiteral message)
 
 void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
+    LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " notifyFinished - hasPendingBeforeLoadEvent " << hasPendingBeforeLoadEvent() << " hasPendingLoadEvent " << m_hasPendingLoadEvent);
+
     ASSERT(m_failedLoadURL.isEmpty());
     ASSERT_UNUSED(resource, &resource == m_image.get());
 
     if (isDeferred()) {
         LazyLoadImageObserver::unobserve(element(), element().document());
         m_lazyImageLoadState = LazyImageLoadState::FullImage;
+        LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " notifyFinished() for element " << element() << " setting lazy load state to " << m_lazyImageLoadState);
     }
 
     m_imageComplete = true;
@@ -586,6 +627,8 @@ inline void ImageLoader::clearFailedLoadURL()
 
 void ImageLoader::loadDeferredImage()
 {
+    LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " loadDeferredImage - state is " << m_lazyImageLoadState);
+
     if (m_lazyImageLoadState != LazyImageLoadState::Deferred)
         return;
     m_lazyImageLoadState = LazyImageLoadState::LoadImmediately;
@@ -594,6 +637,8 @@ void ImageLoader::loadDeferredImage()
 
 void ImageLoader::resetLazyImageLoading(Document& document)
 {
+    LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " resetLazyImageLoading - state is " << m_lazyImageLoadState);
+
     if (isDeferred())
         LazyLoadImageObserver::unobserve(element(), document);
     m_lazyImageLoadState = LazyImageLoadState::None;

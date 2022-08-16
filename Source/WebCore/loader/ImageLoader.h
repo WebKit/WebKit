@@ -41,6 +41,7 @@ template<typename T> class EventSender;
 using ImageEventSender = EventSender<ImageLoader>;
 
 enum class RelevantMutation : bool { No, Yes };
+enum class LazyImageLoadState : uint8_t { None, Deferred, LoadImmediately, FullImage };
 
 class ImageLoader : public CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -92,7 +93,6 @@ protected:
 
 private:
     void resetLazyImageLoading(Document&);
-    enum class LazyImageLoadState : uint8_t { None, Deferred, LoadImmediately, FullImage };
 
     virtual void dispatchLoadEvent() = 0;
     virtual String sourceURI(const AtomString&) const = 0;
