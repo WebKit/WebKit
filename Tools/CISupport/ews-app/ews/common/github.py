@@ -288,6 +288,11 @@ class GitHubEWS(GitHub):
             _log.error('Invalid pr_id: {}'.format(pr_id))
             return -1
 
+        if pr_project and pr_project != 'WebKit/WebKit':
+            _log.error('custom pr_project is not support yet.')
+            # FIXME: Add support for custom pr_project (e.g.: apple/WebKit) https://bugs.webkit.org/show_bug.cgi?id=243987
+            return -1
+
         change = Change.get_change(sha)
         if not change:
             _log.error('Change not found for hash: {}. Unable to generate github comment.'.format(sha))
