@@ -28,6 +28,7 @@
 
 #include "ReportingObserverCallback.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
