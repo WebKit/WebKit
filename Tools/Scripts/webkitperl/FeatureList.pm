@@ -123,6 +123,7 @@ my (
     $memorySamplerSupport,
     $meterElementSupport,
     $mhtmlSupport,
+    $mmodelElementSupport,
     $mouseCursorScaleSupport,
     $navigatorStandaloneSupport,
     $netscapePluginAPISupport,
@@ -391,6 +392,9 @@ my @features = (
 
     { option => "mhtml", desc => "Toggle MHTML support",
       define => "ENABLE_MHTML", value => \$mhtmlSupport },
+    
+    { option => "model", desc => "Toggle <model> support",
+      define => "MODEL_ELEMENT", value => \$mmodelElementSupport },
 
     { option => "mouse-cursor-scale", desc => "Toggle Scaled mouse cursor support",
       define => "ENABLE_MOUSE_CURSOR_SCALE", value => \$mouseCursorScaleSupport },
