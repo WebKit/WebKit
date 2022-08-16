@@ -75,7 +75,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
             RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Received unexpected XPC event type: %{public}s", xpc_type_get_name(type));
             if (type == XPC_TYPE_ERROR) {
                 if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_TERMINATION_IMMINENT) {
-                    RELEASE_LOG_ERROR(IPC, "Exiting: Received XPC event type: %{public}s", event == XPC_ERROR_CONNECTION_INVALID ? "XPC_ERROR_CONNECTION_INVALID" : "XPC_ERROR_TERMINATION_IMMINENT");
+                    RELEASE_LOG_FAULT(IPC, "Exiting: Received XPC event type: %{public}s", event == XPC_ERROR_CONNECTION_INVALID ? "XPC_ERROR_CONNECTION_INVALID" : "XPC_ERROR_TERMINATION_IMMINENT");
                     // FIXME: Handle this case more gracefully.
                     [[NSRunLoop mainRunLoop] performBlock:^{
                         exit(EXIT_FAILURE);
