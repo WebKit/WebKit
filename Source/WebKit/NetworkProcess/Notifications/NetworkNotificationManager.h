@@ -37,6 +37,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class NotificationResources;
 struct SecurityOriginData;
 }
 
@@ -72,7 +73,7 @@ private:
     NetworkNotificationManager(NetworkSession&, const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&&);
 
     void requestSystemNotificationPermission(const String& originString, CompletionHandler<void(bool)>&&) final;
-    void showNotification(IPC::Connection&, const WebCore::NotificationData&, CompletionHandler<void()>&&) final;
+    void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) final;
     void cancelNotification(const UUID& notificationID) final;
     void clearNotifications(const Vector<UUID>& notificationIDs) final;
     void didDestroyNotification(const UUID& notificationID) final;

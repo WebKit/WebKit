@@ -103,14 +103,14 @@ static WebPageProxyIdentifier identifierForPagePointer(WebPageProxy* webPage)
     return webPage ? webPage->identifier() : WebPageProxyIdentifier();
 }
 
-void WebNotificationManagerProxy::show(WebPageProxy* webPage, IPC::Connection& connection, const WebCore::NotificationData& notificationData)
+void WebNotificationManagerProxy::show(WebPageProxy* webPage, IPC::Connection& connection, const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources>&& notificationResources)
 {
     LOG(Notifications, "WebPageProxy (%p) asking to show notification (%s)", webPage, notificationData.notificationID.toString().utf8().data());
 
     auto notification = WebNotification::create(notificationData, identifierForPagePointer(webPage), connection);
     m_globalNotificationMap.set(notification->notificationID(), notification->coreNotificationID());
     m_notifications.set(notification->coreNotificationID(), notification);
-    m_provider->show(webPage, notification.get());
+    m_provider->show(webPage, notification.get(), WTFMove(notificationResources));
 }
 
 void WebNotificationManagerProxy::cancel(WebPageProxy* page, const UUID& pageNotificationID)

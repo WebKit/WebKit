@@ -53,7 +53,7 @@ WebsiteDataStore* ServiceWorkerNotificationHandler::dataStoreForNotificationID(c
     return WebsiteDataStore::existingDataStoreForSessionID(iterator->value);
 }
 
-void ServiceWorkerNotificationHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data, CompletionHandler<void()>&& callback)
+void ServiceWorkerNotificationHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&& callback)
 {
     auto scope = makeScopeExit([&callback] { callback(); });
 

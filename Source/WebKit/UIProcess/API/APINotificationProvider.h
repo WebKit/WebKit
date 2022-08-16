@@ -35,6 +35,10 @@ class WebNotificationManagerProxy;
 class WebPageProxy;
 }
 
+namespace WebCore {
+class NotificationResources;
+}
+
 namespace API {
 
 class NotificationProvider {
@@ -42,7 +46,7 @@ class NotificationProvider {
 public:
     virtual ~NotificationProvider() = default;
 
-    virtual void show(WebKit::WebPageProxy*, WebKit::WebNotification&) { }
+    virtual void show(WebKit::WebPageProxy*, WebKit::WebNotification&, RefPtr<WebCore::NotificationResources>&&) { }
     virtual void cancel(WebKit::WebNotification&) { }
     virtual void didDestroyNotification(WebKit::WebNotification&) { }
     virtual void clearNotifications(const Vector<uint64_t>& /*notificationIDs*/) { }

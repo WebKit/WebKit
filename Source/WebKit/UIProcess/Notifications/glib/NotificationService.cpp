@@ -27,13 +27,21 @@
 #include "NotificationService.h"
 
 #include "WebNotification.h"
+#include <WebCore/Image.h>
+#include <WebCore/NotificationResources.h>
+#include <WebCore/RefPtrCairo.h>
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
 #include <mutex>
+#include <unistd.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/RunLoop.h>
+#include <wtf/SafeStrerror.h>
 #include <wtf/Seconds.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/Sandbox.h>
 #include <wtf/text/CString.h>
 
@@ -44,6 +52,175 @@
 namespace WebKit {
 
 static const Seconds s_dbusCallTimeout = 20_ms;
+
+class IconCache {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    IconCache()
+        : m_timer(RunLoop::main(), this, &IconCache::timerFired)
+    {
+        m_timer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
+    }
+
+    ~IconCache()
+    {
+        removeUnusedIcons(true);
+    }
+
+    const char* iconPath(const String& iconURL, const RefPtr<WebCore::Image>& icon)
+    {
+        if (!icon)
+            return nullptr;
+
+        auto writeIconToTemporaryFile = [](const RefPtr<WebCore::Image>& icon) -> CString {
+            auto nativeImage = icon->nativeImage();
+            if (!nativeImage)
+                return { };
+
+            auto surface = nativeImage->platformImage();
+            if (!surface)
+                return { };
+
+            int fd;
+            GUniqueOutPtr<char> filename;
+            GUniqueOutPtr<GError> error;
+            if ((fd = g_file_open_tmp(nullptr, &filename.outPtr(), &error.outPtr())) == -1) {
+                g_warning("Failed to create temporary file for notification icon: %s", error->message);
+                return { };
+            }
+
+            auto status = cairo_surface_write_to_png_stream(surface.get(), [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
+                int fd = *static_cast<int*>(userData);
+                while (length) {
+                    auto written = write(fd, data, length);
+                    if (written == -1)
+                        return CAIRO_STATUS_WRITE_ERROR;
+
+                    length -= written;
+                    data += written;
+                }
+                return CAIRO_STATUS_SUCCESS;
+            }, &fd);
+
+            close(fd);
+
+            return status == CAIRO_STATUS_SUCCESS ? filename.get() : CString();
+        };
+
+        auto addResult = m_iconCache.add(iconURL, std::pair<uint32_t, CString>({ 0, CString() }));
+        if (addResult.isNewEntry) {
+            auto path = writeIconToTemporaryFile(icon);
+            if (path.isNull()) {
+                m_iconCache.remove(addResult.iterator);
+                return nullptr;
+            }
+            addResult.iterator->value = { 1, WTFMove(path) };
+        } else
+            addResult.iterator->value.first++;
+
+        return std::get<CString>(addResult.iterator->value.second).data();
+    }
+
+    GBytes* iconBytes(const String& iconURL, const RefPtr<WebCore::Image>& icon)
+    {
+        if (!icon)
+            return nullptr;
+
+        auto writeIconToBuffer = [](const RefPtr<WebCore::Image>& icon) -> GRefPtr<GBytes> {
+            auto nativeImage = icon->nativeImage();
+            if (!nativeImage)
+                return nullptr;
+
+            auto surface = nativeImage->platformImage();
+            if (!surface)
+                return nullptr;
+
+            GRefPtr<GByteArray> buffer = adoptGRef(g_byte_array_new());
+            auto status = cairo_surface_write_to_png_stream(surface.get(), [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
+                auto* buffer = static_cast<GByteArray*>(userData);
+                g_byte_array_append(buffer, data, length);
+                return CAIRO_STATUS_SUCCESS;
+            }, buffer.get());
+
+            if (status != CAIRO_STATUS_SUCCESS)
+                return nullptr;
+
+            return adoptGRef(g_byte_array_free_to_bytes(buffer.leakRef()));
+        };
+
+        auto addResult = m_iconCache.add(iconURL, std::pair<uint32_t, GRefPtr<GBytes>>({ 0, nullptr }));
+        if (addResult.isNewEntry) {
+            auto bytes = writeIconToBuffer(icon);
+            if (!bytes) {
+                m_iconCache.remove(addResult.iterator);
+                return nullptr;
+            }
+            addResult.iterator->value = { 1, WTFMove(bytes) };
+        } else
+            addResult.iterator->value.first++;
+
+        return std::get<GRefPtr<GBytes>>(addResult.iterator->value.second).get();
+    }
+
+    void unuseIcon(const String& iconURL)
+    {
+        auto it = m_iconCache.find(iconURL);
+        if (it == m_iconCache.end())
+            return;
+
+        if (!it->value.first)
+            return;
+
+        bool isNull = WTF::switchOn(it->value.second,
+            [](const CString& path) {
+                return path.isNull();
+            },
+            [](const GRefPtr<GBytes>& bytes) {
+                return !bytes.get();
+            });
+        if (isNull)
+            return;
+
+        if (--it->value.first)
+            return;
+
+        m_timer.startOneShot(5_min);
+    }
+
+    void removeUnusedIcons(bool force)
+    {
+        m_iconCache.removeIf([force](auto& it) -> bool {
+            if (!it.value.first || force) {
+                WTF::switchOn(it.value.second,
+                    [](const CString& path) {
+                        if (!path.isNull()) {
+                            if (unlink(path.data()) == -1)
+                                WTFLogAlways("Failed to remove cached notification icon %s: %s", path.data(), safeStrerror(errno).data());
+                        }
+                    },
+                    [](const GRefPtr<GBytes>&) {
+                    });
+                return true;
+            }
+            return false;
+        });
+    }
+
+    void timerFired()
+    {
+        removeUnusedIcons(false);
+    }
+
+private:
+    HashMap<String, std::pair<uint32_t, std::variant<CString, GRefPtr<GBytes>>>> m_iconCache;
+    RunLoop::Timer<IconCache> m_timer;
+};
+
+static IconCache& iconCache()
+{
+    static std::unique_ptr<IconCache> cache = makeUnique<IconCache>();
+    return *cache;
+}
 
 NotificationService& NotificationService::singleton()
 {
@@ -112,7 +289,7 @@ void NotificationService::processCapabilities(GVariant* variant)
     }
 }
 
-bool NotificationService::showNotification(const WebNotification& notification)
+bool NotificationService::showNotification(const WebNotification& notification, const RefPtr<WebCore::NotificationResources>& resources)
 {
     if (!m_proxy)
         return false;
@@ -129,10 +306,11 @@ bool NotificationService::showNotification(const WebNotification& notification)
             }
         }
 
-        return notificationID ? m_notifications.take(notificationID) : Notification({ 0, { }, tag });
+        return notificationID ? m_notifications.take(notificationID) : Notification({ 0, { }, tag, { } });
     };
 
     auto addResult = m_notifications.add(notification.notificationID(), findNotificationByTag(notification.tag()));
+    addResult.iterator->value.iconURL = notification.iconURL();
 
     if (shouldUsePortal()) {
         GVariantBuilder builder;
@@ -141,6 +319,12 @@ bool NotificationService::showNotification(const WebNotification& notification)
         g_variant_builder_add(&builder, "{sv}", "title", g_variant_new_string(notification.title().utf8().data()));
         g_variant_builder_add(&builder, "{sv}", "body", g_variant_new_string(notification.body().utf8().data()));
         g_variant_builder_add(&builder, "{sv}", "default-action", g_variant_new_string("default"));
+        if (resources) {
+            if (auto* bytes = iconCache().iconBytes(notification.iconURL(), resources->icon())) {
+                GRefPtr<GIcon> icon = adoptGRef(g_bytes_icon_new(bytes));
+                g_variant_builder_add(&builder, "{sv}", "icon", g_icon_serialize(icon.get()));
+            }
+        }
         addResult.iterator->value.portalID = createVersion4UUIDString();
         g_dbus_proxy_call(m_proxy.get(), "AddNotification", g_variant_new("(s@a{sv})", addResult.iterator->value.portalID.utf8().data(), g_variant_builder_end(&builder)),
             G_DBUS_CALL_FLAGS_NONE, -1, nullptr, [](GObject* source, GAsyncResult* result, gpointer) {
@@ -169,6 +353,10 @@ bool NotificationService::showNotification(const WebNotification& notification)
             g_variant_builder_add(&hintsBuilder, "{sv}", "desktop-entry", g_variant_new_string(applicationID));
         if (m_capabilities.contains(Capabilities::Persistence) && notification.isPersistentNotification())
             g_variant_builder_add(&hintsBuilder, "{sv}", "resident", g_variant_new_boolean(TRUE));
+        if (resources && m_capabilities.contains(Capabilities::IconStatic)) {
+            if (const char* iconPath = iconCache().iconPath(notification.iconURL(), resources->icon()))
+                g_variant_builder_add(&hintsBuilder, "{sv}", "image-path", g_variant_new_string(iconPath));
+        }
 
         auto* value = static_cast<GValue*>(fastZeroedMalloc(sizeof(GValue)));
         g_value_init(value, G_TYPE_UINT64);
@@ -314,7 +502,9 @@ void NotificationService::didCloseNotification(uint64_t notificationID)
     for (auto* observer : m_observers)
         observer->didCloseNotification(notificationID);
 
-    m_notifications.remove(notificationID);
+    auto notification = m_notifications.take(notificationID);
+    if (!notification.iconURL.isEmpty())
+        iconCache().unuseIcon(notification.iconURL);
 }
 
 void NotificationService::addObserver(Observer& observer)

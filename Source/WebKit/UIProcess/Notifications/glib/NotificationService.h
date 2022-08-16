@@ -34,6 +34,10 @@
 typedef struct _GDBusProxy GDBusProxy;
 typedef struct _GVariant GVariant;
 
+namespace WebCore {
+class NotificationResources;
+}
+
 namespace WebKit {
 
 class WebNotification;
@@ -45,7 +49,7 @@ class NotificationService {
 public:
     static NotificationService& singleton();
 
-    bool showNotification(const WebNotification&);
+    bool showNotification(const WebNotification&, const RefPtr<WebCore::NotificationResources>&);
     void cancelNotification(uint64_t);
 
     class Observer {
@@ -63,6 +67,7 @@ private:
         uint32_t id { 0 };
         String portalID;
         String tag;
+        String iconURL;
     };
 
     enum class Capabilities : uint16_t {

@@ -37,7 +37,7 @@ private:
     explicit WebNotificationManagerMessageHandler(WebPageProxy&);
 
     void requestSystemNotificationPermission(const String&, CompletionHandler<void(bool)>&&) final;
-    void showNotification(IPC::Connection&, const WebCore::NotificationData&, CompletionHandler<void()>&&) final;
+    void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) final;
     void cancelNotification(const UUID& notificationID) final;
     void clearNotifications(const Vector<UUID>& notificationIDs) final;
     void didDestroyNotification(const UUID& notificationID) final;

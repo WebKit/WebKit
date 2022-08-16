@@ -45,6 +45,7 @@
 #include "NotificationData.h"
 #include "NotificationEvent.h"
 #include "NotificationPermissionCallback.h"
+#include "NotificationResourcesLoader.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "WindowEventLoop.h"
 #include "WindowFocusAllowedIndicator.h"
@@ -131,6 +132,16 @@ Notification::Notification(ScriptExecutionContext& context, UUID identifier, Str
 
 Notification::~Notification()
 {
+    stopResourcesLoader();
+}
+
+void Notification::stopResourcesLoader()
+{
+    if (!m_resourcesLoader)
+        return;
+
+    m_resourcesLoader->stop();
+    ASSERT(!m_resourcesLoader);
 }
 
 void Notification::showSoon()
@@ -174,14 +185,24 @@ void Notification::show(CompletionHandler<void()>&& callback)
         return;
     }
 
-    if (client->show(*this, scope.release()))
-        m_state = Showing;
+    // Wait for any fetches to complete and notification's image resource, icon resource, and badge resource to be set (if any),
+    // as well as the icon resources for the notification's actions (if any).
+    m_resourcesLoader = makeUnique<NotificationResourcesLoader>(*this);
+    m_resourcesLoader->start([this, client, callback = scope.release()](RefPtr<NotificationResources>&& resources) mutable {
+        CompletionHandlerCallingScope scope { WTFMove(callback) };
+
+        m_resources = WTFMove(resources);
+        if (m_state == Idle && client->show(*this, scope.release()))
+            m_state = Showing;
+        m_resourcesLoader = nullptr;
+    });
 }
 
 void Notification::close()
 {
     switch (m_state) {
     case Idle:
+        stopResourcesLoader();
         break;
     case Showing:
         if (auto* client = clientFromContext())
@@ -207,6 +228,8 @@ const char* Notification::activeDOMObjectName() const
 void Notification::stop()
 {
     ActiveDOMObject::stop();
+
+    stopResourcesLoader();
 
     if (!m_serviceWorkerRegistrationURL.isNull())
         return;
