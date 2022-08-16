@@ -384,6 +384,8 @@ public:
 
     DrawingArea* drawingArea() const { return m_drawingArea.get(); }
 
+    void updateFindResults();
+
 #if ENABLE(ASYNC_SCROLLING)
     WebCore::ScrollingCoordinator* scrollingCoordinator() const;
 #endif

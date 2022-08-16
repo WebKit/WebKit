@@ -46,7 +46,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebFoundTextRangeController : private WebCore::PageOverlay::Client {
+class WebFoundTextRangeController : private WebCore::PageOverlay::Client, public CanMakeWeakPtr<WebFoundTextRangeController> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebFoundTextRangeController);
 
@@ -85,6 +85,8 @@ private:
 
     WebCore::Document* documentForFoundTextRange(const WebFoundTextRange&) const;
     std::optional<WebCore::SimpleRange> simpleRangeFromFoundTextRange(WebFoundTextRange);
+
+    void updateFindResults();
 
     WeakPtr<WebPage> m_webPage;
     RefPtr<WebCore::PageOverlay> m_findPageOverlay;

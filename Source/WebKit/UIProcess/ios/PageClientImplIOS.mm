@@ -636,6 +636,14 @@ void PageClientImpl::elementDidFocus(const FocusedElementInformation& nodeInform
     [m_contentView _elementDidFocus:nodeInformation userIsInteracting:userIsInteracting blurPreviousNode:blurPreviousNode activityStateChanges:activityStateChanges userObject:userObject];
 }
 
+void PageClientImpl::updateFindResults()
+{
+#if HAVE(UIFINDINTERACTION)
+    auto findInteraction = [m_webView findInteraction];
+    [findInteraction presentFindNavigatorShowingReplace:NO];
+#endif
+}
+
 void PageClientImpl::updateInputContextAfterBlurringAndRefocusingElement()
 {
     [m_contentView _updateInputContextAfterBlurringAndRefocusingElement];

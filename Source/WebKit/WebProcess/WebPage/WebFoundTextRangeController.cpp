@@ -52,8 +52,20 @@ WebFoundTextRangeController::WebFoundTextRangeController(WebPage& webPage)
 {
 }
 
+void WebFoundTextRangeController::updateFindResults()
+{
+    m_webPage->updateFindResults();
+}
+
 void WebFoundTextRangeController::findTextRangesForStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&& completionHandler)
 {
+#if ENABLE(IMAGE_ANALYSIS)
+    m_webPage->corePage()->analyzeImagesForFindInPage([weakThis = WeakPtr { *this }] {
+        if (weakThis)
+            weakThis->updateFindResults();
+    });
+#endif
+
     auto result = m_webPage->corePage()->findTextMatches(string, core(options), maxMatchCount, false);
     Vector<WebCore::SimpleRange> findMatches = WTFMove(result.ranges);
 

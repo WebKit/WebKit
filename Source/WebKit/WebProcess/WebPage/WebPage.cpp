@@ -4931,6 +4931,11 @@ void WebPage::removeLayerForFindOverlay(CompletionHandler<void()>&& completionHa
     completionHandler();
 }
 
+void WebPage::updateFindResults()
+{
+    send(Messages::WebPageProxy::UpdateFindResults());
+}
+
 void WebPage::getImageForFindMatch(uint32_t matchIndex)
 {
     findController().getImageForFindMatch(matchIndex);

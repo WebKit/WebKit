@@ -117,6 +117,7 @@ private:
     WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) override;
     WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) override;
     WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) override;
+
 #if PLATFORM(MAC)
     WebCore::IntRect rootViewToWindow(const WebCore::IntRect&) override;
 #endif

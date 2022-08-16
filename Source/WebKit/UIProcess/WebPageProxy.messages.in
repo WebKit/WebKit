@@ -245,6 +245,7 @@ messages -> WebPageProxy {
     DidFailToFindString(String string)
     DidFindStringMatches(String string, Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection)
     DidGetImageForFindMatch(struct WebCore::ImageBufferBackend::Parameters parameters, WebKit::ShareableBitmap::Handle contentImageHandle, uint32_t matchIndex)
+    UpdateFindResults()
 
     # PopupMenu messages
     ShowPopupMenu(WebCore::IntRect rect, uint64_t textDirection, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, struct WebKit::PlatformPopupMenuData data)

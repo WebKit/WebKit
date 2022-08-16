@@ -337,6 +337,8 @@ public:
     virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) = 0;
     virtual WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) = 0;
     virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) = 0;
+
+    virtual void updateFindResults() { }
 #if PLATFORM(MAC)
     virtual WebCore::IntRect rootViewToWindow(const WebCore::IntRect&) = 0;
 #endif
