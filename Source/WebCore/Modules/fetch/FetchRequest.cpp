@@ -198,6 +198,9 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
             return setBodyResult.releaseException();
     }
 
+    if (requestURL.protocolIsBlob())
+        m_requestBlobURLLifetimeExtender = requestURL;
+
     updateContentType();
     return { };
 }
@@ -235,6 +238,9 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     auto setBodyResult = init.body ? setBody(WTFMove(*init.body)) : setBody(input);
     if (setBodyResult.hasException())
         return setBodyResult;
+
+    if (m_request.url().protocolIsBlob())
+        m_requestBlobURLLifetimeExtender = m_request.url();
 
     updateContentType();
     return { };
@@ -338,6 +344,12 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone()
     clone->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
     clone->m_signal->signalFollow(m_signal);
     return clone;
+}
+
+void FetchRequest::stop()
+{
+    m_requestBlobURLLifetimeExtender.clear();
+    FetchBodyOwner::stop();
 }
 
 const char* FetchRequest::activeDOMObjectName() const
