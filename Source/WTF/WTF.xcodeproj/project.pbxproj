@@ -83,6 +83,9 @@
 		5CC0EE892162BC2200A1A842 /* URLCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE862162BC2200A1A842 /* URLCocoa.mm */; };
 		5CC0EE8A2162BC2200A1A842 /* NSURLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE882162BC2200A1A842 /* NSURLExtras.mm */; };
 		5FAD3AE221B9636600BEE178 /* URLHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FAD3AE121B9636600BEE178 /* URLHelpers.cpp */; };
+		6311592628989A55006A9A12 /* LibraryPathDiagnostics.h in Headers */ = {isa = PBXBuildFile; fileRef = 6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6311592728989A55006A9A12 /* LibraryPathDiagnostics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */; };
+		63F9BED42898D96400371416 /* CFPrivSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 63F9BED32898D96400371416 /* CFPrivSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		641C2E5B27FBAAA5002E0814 /* GenerateProfiles.h in Headers */ = {isa = PBXBuildFile; fileRef = 641C2E5A27FBAAA5002E0814 /* GenerateProfiles.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */; };
 		70ECA60D1B02426800449739 /* AtomStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70ECA60A1B02426800449739 /* AtomStringImpl.cpp */; };
@@ -1148,6 +1151,9 @@
 		5D247B7314689C4700E78B76 /* WTF.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WTF.xcconfig; sourceTree = "<group>"; };
 		5FAD3AE021B9636600BEE178 /* URLHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLHelpers.h; sourceTree = "<group>"; };
 		5FAD3AE121B9636600BEE178 /* URLHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLHelpers.cpp; sourceTree = "<group>"; };
+		6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LibraryPathDiagnostics.h; sourceTree = "<group>"; };
+		6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LibraryPathDiagnostics.mm; sourceTree = "<group>"; };
+		63F9BED32898D96400371416 /* CFPrivSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPrivSPI.h; sourceTree = "<group>"; };
 		641C2E5A27FBAAA5002E0814 /* GenerateProfiles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenerateProfiles.h; sourceTree = "<group>"; };
 		70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolRegistry.cpp; sourceTree = "<group>"; };
 		70A993FD1AD7151300FA615B /* SymbolRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolRegistry.h; sourceTree = "<group>"; };
@@ -1799,6 +1805,8 @@
 		37C7CC281EA40A54007BD956 /* darwin */ = {
 			isa = PBXGroup;
 			children = (
+				6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */,
+				6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */,
 				37C7CC291EA40A73007BD956 /* WeakLinking.h */,
 			);
 			path = darwin;
@@ -2729,6 +2737,7 @@
 			isa = PBXGroup;
 			children = (
 				DDF306C327C08654006A526F /* CFBundleSPI.h */,
+				63F9BED32898D96400371416 /* CFPrivSPI.h */,
 				DDF306C227C08654006A526F /* CFRunLoopSPI.h */,
 				DDF306C127C08654006A526F /* CFStringSPI.h */,
 			);
@@ -2867,6 +2876,7 @@
 				DD3DC8E927A4BF8E007E5B61 /* CallbackAggregator.h in Headers */,
 				DD3DC99B27A4BF8E007E5B61 /* CancellableTask.h in Headers */,
 				DDF306DA27C08654006A526F /* CFBundleSPI.h in Headers */,
+				63F9BED42898D96400371416 /* CFPrivSPI.h in Headers */,
 				DDF306D927C08654006A526F /* CFRunLoopSPI.h in Headers */,
 				DDF306D827C08654006A526F /* CFStringSPI.h in Headers */,
 				DDF3071327C086CC006A526F /* CFURLExtras.h in Headers */,
@@ -2995,6 +3005,7 @@
 				DD3DC8BF27A4BF8E007E5B61 /* Language.h in Headers */,
 				DDF307D327C086DF006A526F /* LChar.h in Headers */,
 				DD3DC88927A4BF8E007E5B61 /* LEBDecoder.h in Headers */,
+				6311592628989A55006A9A12 /* LibraryPathDiagnostics.h in Headers */,
 				DD3DC8B427A4BF8E007E5B61 /* LikelyDenseUnsignedIntegerSet.h in Headers */,
 				DDF307DD27C086DF006A526F /* LineBreakIteratorPoolICU.h in Headers */,
 				DDF307D527C086DF006A526F /* LineEnding.h in Headers */,
@@ -3637,6 +3648,7 @@
 				C2BCFC401F61D13000C9222C /* Language.cpp in Sources */,
 				C2BCFC421F61D61600C9222C /* LanguageCF.cpp in Sources */,
 				1C503BE623AAE0AE0072E66B /* LanguageCocoa.mm in Sources */,
+				6311592728989A55006A9A12 /* LibraryPathDiagnostics.mm in Sources */,
 				337B2D6A26546EB300DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp in Sources */,
 				E3B8E41D24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp in Sources */,
 				C2BCFC551F621F3F00C9222C /* LineEnding.cpp in Sources */,
