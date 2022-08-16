@@ -97,16 +97,16 @@
     cursor: pointer;
 }
 
-body.shift-key-pressed .network-table > .table:hover li:not(:hover, .selected, .initiated) .cell {
+.network-table.highlight-initiated > .table li:not(:hover, .selected, .initiated) .cell {
     color: var(--text-color-transparent);
 }
 
-body.shift-key-pressed .network-table > .table:hover li:not(:hover, .selected, .initiated) .cell > * {
+.network-table.highlight-initiated > .table li:not(:hover, .selected, .initiated) .cell > * {
     color: var(--text-color);
     opacity: 0.4;
 }
 
-body.shift-key-pressed .network-table > .table:hover li.initiated .cell.name::after {
+.network-table.highlight-initiated > .table li.initiated .cell.name::after {
     display: inline-block;
     float: right;
     width: 4px;

@@ -1587,9 +1587,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _highlightRelatedResourcesForHoveredResource()
     {
+        let highlightInitiated = !isNaN(this._hoveredRowIndex) && WI.modifierKeys.shiftKey;
+        this.element.classList.toggle("highlight-initiated", highlightInitiated);
+
         let needsRestyle = false;
 
-        if (isNaN(this._hoveredRowIndex) || !WI.modifierKeys.shiftKey) {
+        if (!highlightInitiated) {
             for (let entry of this._activeCollection.entries) {
                 if (entry.rowClassNames.length)
                     needsRestyle = true;
@@ -1994,7 +1997,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         let rowClassNames = [];
 
-        if (this._hoveredRowIndex) {
+        if (!isNaN(this._hoveredRowIndex) && WI.modifierKeys.shiftKey) {
             let hoveredEntry = this._activeCollection.filteredEntries[this._hoveredRowIndex];
             if (hoveredEntry?.resource?.initiatedResources.includes(resource))
                 rowClassNames.push("initiated");
