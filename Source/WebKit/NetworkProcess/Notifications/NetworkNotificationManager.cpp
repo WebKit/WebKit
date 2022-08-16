@@ -117,7 +117,7 @@ void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(c
     sendMessageWithReply<WebPushD::MessageType::GetPendingPushMessages>(WTFMove(replyHandler));
 }
 
-void NetworkNotificationManager::showNotification(IPC::Connection&, const WebCore::NotificationData&, CompletionHandler<void()>&& callback)
+void NetworkNotificationManager::showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<NotificationResources>&&, CompletionHandler<void()>&& callback)
 {
     callback();
 

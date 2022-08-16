@@ -36,6 +36,7 @@
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+class NotificationResources;
 struct NotificationData;
 }
 
@@ -63,7 +64,7 @@ public:
     void setProvider(std::unique_ptr<API::NotificationProvider>&&);
     HashMap<String, bool> notificationPermissions();
 
-    void show(WebPageProxy*, IPC::Connection&, const WebCore::NotificationData&);
+    void show(WebPageProxy*, IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
     void cancel(WebPageProxy*, const UUID& pageNotificationID);
     void clearNotifications(WebPageProxy*);
     void clearNotifications(WebPageProxy*, const Vector<UUID>& pageNotificationIDs);

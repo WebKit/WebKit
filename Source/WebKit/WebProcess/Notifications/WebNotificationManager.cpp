@@ -170,7 +170,7 @@ bool WebNotificationManager::show(Notification& notification, WebPage* page, Com
     if (page && !page->corePage()->settings().notificationsEnabled())
         return false;
 
-    if (!sendNotificationMessageWithAsyncReply(Messages::NotificationManagerMessageHandler::ShowNotification(notification.data()), notification, page, WTFMove(callback)))
+    if (!sendNotificationMessageWithAsyncReply(Messages::NotificationManagerMessageHandler::ShowNotification(notification.data(), notification.resources()), notification, page, WTFMove(callback)))
         return false;
 
     if (!notification.isPersistent()) {

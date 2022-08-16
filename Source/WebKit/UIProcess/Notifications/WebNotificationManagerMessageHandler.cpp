@@ -41,13 +41,13 @@ void WebNotificationManagerMessageHandler::requestSystemNotificationPermission(c
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void WebNotificationManagerMessageHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data, CompletionHandler<void()>&& callback)
+void WebNotificationManagerMessageHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data, RefPtr<WebCore::NotificationResources>&& resources, CompletionHandler<void()>&& callback)
 {
     if (!data.serviceWorkerRegistrationURL.isEmpty()) {
-        ServiceWorkerNotificationHandler::singleton().showNotification(connection, data, WTFMove(callback));
+        ServiceWorkerNotificationHandler::singleton().showNotification(connection, data, WTFMove(resources), WTFMove(callback));
         return;
     }
-    m_webPageProxy.showNotification(connection, data);
+    m_webPageProxy.showNotification(connection, data, WTFMove(resources));
     callback();
 }
 

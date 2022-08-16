@@ -2102,7 +2102,7 @@ public:
     bool isQuarantinedAndNotUserApproved(const String&);
 #endif
 
-    void showNotification(IPC::Connection&, const WebCore::NotificationData&);
+    void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
     void cancelNotification(const UUID& notificationID);
     void clearNotifications(const Vector<UUID>& notificationIDs);
     void didDestroyNotification(const UUID& notificationID);

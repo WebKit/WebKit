@@ -135,6 +135,7 @@ class HTTPHeaderMap;
 class KeyframeValueList;
 class LinearTimingFunction;
 class Notification;
+class NotificationResources;
 class PasteboardCustomData;
 class PaymentInstallmentConfiguration;
 class ProtectionSpace;
@@ -761,6 +762,11 @@ template<> struct ArgumentCoder<WebCore::SystemImage> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::SystemImage&);
     static std::optional<Ref<WebCore::SystemImage>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::NotificationResources> {
+    static void encode(Encoder&, const WebCore::NotificationResources&);
+    static std::optional<RefPtr<WebCore::NotificationResources>> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)

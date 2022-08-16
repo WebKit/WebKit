@@ -37,6 +37,7 @@
 #include "EventTarget.h"
 #include "NotificationDirection.h"
 #include "NotificationPermission.h"
+#include "NotificationResources.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "SerializedScriptValue.h"
 #include <wtf/CompletionHandler.h>
@@ -50,6 +51,7 @@ class DeferredPromise;
 class Document;
 class NotificationClient;
 class NotificationPermissionCallback;
+class NotificationResourcesLoader;
 
 struct NotificationData;
 
@@ -101,6 +103,7 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     WEBCORE_EXPORT NotificationData data() const;
+    RefPtr<NotificationResources> resources() const { return m_resources; }
 
     using ThreadSafeRefCounted::ref;
     using ThreadSafeRefCounted::deref;
@@ -117,6 +120,8 @@ private:
 
     NotificationClient* clientFromContext();
     EventTargetInterface eventTargetInterface() const final { return NotificationEventTargetInterfaceType; }
+
+    void stopResourcesLoader();
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
@@ -150,6 +155,8 @@ private:
     NotificationSource m_notificationSource;
     ScriptExecutionContextIdentifier m_contextIdentifier;
     URL m_serviceWorkerRegistrationURL;
+    std::unique_ptr<NotificationResourcesLoader> m_resourcesLoader;
+    RefPtr<NotificationResources> m_resources;
 };
 
 } // namespace WebCore

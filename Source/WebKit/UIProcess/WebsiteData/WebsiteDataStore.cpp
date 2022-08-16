@@ -54,6 +54,7 @@
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/NotificationResources.h>
 #include <WebCore/OriginLock.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOrigin.h>
@@ -2044,7 +2045,7 @@ bool WebsiteDataStore::shouldMakeNextNetworkProcessLaunchFailForTesting()
 
 void WebsiteDataStore::showServiceWorkerNotification(IPC::Connection& connection, const WebCore::NotificationData& notificationData)
 {
-    WebNotificationManagerProxy::sharedServiceWorkerManager().show(nullptr, connection, notificationData);
+    WebNotificationManagerProxy::sharedServiceWorkerManager().show(nullptr, connection, notificationData, nullptr);
 }
 
 void WebsiteDataStore::cancelServiceWorkerNotification(const UUID& notificationID)

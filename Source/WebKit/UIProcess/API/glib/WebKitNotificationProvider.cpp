@@ -48,9 +48,9 @@ public:
     }
 
 private:
-    void show(WebPageProxy* page, WebNotification& notification) override
+    void show(WebPageProxy* page, WebNotification& notification, RefPtr<WebCore::NotificationResources>&& resources) override
     {
-        m_provider.show(page, notification);
+        m_provider.show(page, notification, WTFMove(resources));
     }
 
     void cancel(WebNotification& notification) override
@@ -125,11 +125,11 @@ void WebKitNotificationProvider::withdrawAnyPreviousAPINotificationMatchingTag(c
 #endif
 }
 
-void WebKitNotificationProvider::show(WebPageProxy* page, WebNotification& webNotification)
+void WebKitNotificationProvider::show(WebPageProxy* page, WebNotification& webNotification, RefPtr<WebCore::NotificationResources>&& resources)
 {
     if (!page || !m_webContext) {
         // FIXME: glib API needs to find their own solution to handling pageless notifications.
-        show(webNotification);
+        show(webNotification, resources);
         return;
     }
 
@@ -149,18 +149,18 @@ void WebKitNotificationProvider::show(WebPageProxy* page, WebNotification& webNo
         m_notificationManager->providerDidShowNotification(webNotification.notificationID());
     else {
         g_signal_handlers_disconnect_by_data(notification.get(), this);
-        show(webNotification);
+        show(webNotification, resources);
     }
 }
 
-void WebKitNotificationProvider::show(WebNotification& webNotification)
+void WebKitNotificationProvider::show(WebNotification& webNotification, const RefPtr<WebCore::NotificationResources>& resources)
 {
     if (!m_observerRegistered) {
         NotificationService::singleton().addObserver(*this);
         m_observerRegistered = true;
     }
 
-    if (NotificationService::singleton().showNotification(webNotification))
+    if (NotificationService::singleton().showNotification(webNotification, resources))
         m_notificationManager->providerDidShowNotification(webNotification.notificationID());
 }
 

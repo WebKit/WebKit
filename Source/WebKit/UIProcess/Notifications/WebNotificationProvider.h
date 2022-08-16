@@ -48,7 +48,7 @@ class WebNotificationProvider : public API::NotificationProvider, public API::Cl
 public:
     explicit WebNotificationProvider(const WKNotificationProviderBase*);
 
-    void show(WebPageProxy*, WebNotification&) override;
+    void show(WebPageProxy*, WebNotification&, RefPtr<WebCore::NotificationResources>&&) override;
     void cancel(WebNotification&) override;
     void didDestroyNotification(WebNotification&) override;
     void clearNotifications(const Vector<uint64_t>& notificationIDs) override;
