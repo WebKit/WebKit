@@ -45,6 +45,7 @@
 #import "WKFullScreenWindowControllerIOS.h"
 #import <WebCore/FloatRect.h>
 #import <WebCore/LengthBox.h>
+#import <WebCore/ViewportArguments.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -117,6 +118,65 @@ class ViewGestureController;
 @protocol _WKInputDelegate;
 @protocol _WKAppHighlightDelegate;
 
+#if PLATFORM(IOS_FAMILY)
+struct LiveResizeParameters {
+    CGFloat viewWidth;
+    CGPoint initialScrollPosition;
+};
+
+// This holds state that should be reset when the web process exits.
+struct PerWebProcessState {
+    CGFloat viewportMetaTagWidth { WebCore::ViewportArguments::ValueAuto };
+    CGFloat initialScaleFactor { 1 };
+    BOOL hasCommittedLoadForMainFrame { NO };
+    BOOL needsResetViewStateAfterCommitLoadForMainFrame { NO };
+
+    WebKit::DynamicViewportUpdateMode dynamicViewportUpdateMode { WebKit::DynamicViewportUpdateMode::NotResizing };
+
+    BOOL waitingForEndAnimatedResize { NO };
+    BOOL waitingForCommitAfterAnimatedResize { NO };
+
+    CGFloat animatedResizeOriginalContentWidth { 0 };
+
+    CGRect animatedResizeOldBounds { CGRectZero }; // FIXME: Use std::optional<>
+
+    std::optional<WebCore::FloatPoint> scrollOffsetToRestore;
+    std::optional<WebCore::FloatPoint> unobscuredCenterToRestore;
+
+    WebCore::Color scrollViewBackgroundColor;
+
+    BOOL invokingUIScrollViewDelegateCallback { NO };
+
+    BOOL didDeferUpdateVisibleContentRectsForUIScrollViewDelegateCallback { NO };
+    BOOL didDeferUpdateVisibleContentRectsForAnyReason { NO };
+    BOOL didDeferUpdateVisibleContentRectsForUnstableScrollView { NO };
+
+    BOOL currentlyAdjustingScrollViewInsetsForKeyboard { NO };
+
+    BOOL hasScheduledVisibleRectUpdate { NO };
+    BOOL commitDidRestoreScrollPosition { NO };
+
+    BOOL avoidsUnsafeArea { YES };
+
+    std::optional<WebCore::FloatSize> lastSentViewLayoutSize;
+    std::optional<int32_t> lastSentDeviceOrientation;
+
+    std::optional<CGRect> frozenVisibleContentRect;
+    std::optional<CGRect> frozenUnobscuredContentRect;
+
+    WebKit::TransactionID firstPaintAfterCommitLoadTransactionID;
+    WebKit::TransactionID lastTransactionID;
+
+    std::optional<WebKit::TransactionID> firstTransactionIDAfterPageRestore;
+
+    WebCore::GraphicsLayer::PlatformLayerID pendingFindLayerID { 0 };
+    WebCore::GraphicsLayer::PlatformLayerID committedFindLayerID { 0 };
+
+    std::optional<LiveResizeParameters> liveResizeParameters;
+};
+
+#endif // PLATFORM(IOS_FAMILY)
+
 @interface WKWebView () WK_WEB_VIEW_PROTOCOLS {
 
 @package
@@ -167,21 +227,18 @@ class ViewGestureController;
     RetainPtr<UIFindInteraction> _findInteraction;
 #endif
 
-    WebCore::GraphicsLayer::PlatformLayerID _pendingFindLayerID;
-    WebCore::GraphicsLayer::PlatformLayerID _committedFindLayerID;
-
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
+    
+    PerWebProcessState _perProcessState;
 
     std::optional<CGSize> _viewLayoutSizeOverride;
-    std::optional<WebCore::FloatSize> _lastSentViewLayoutSize;
     std::optional<CGSize> _minimumUnobscuredSizeOverride;
     std::optional<CGSize> _maximumUnobscuredSizeOverride;
     CGRect _inputViewBoundsInWindow;
 
-    CGFloat _viewportMetaTagWidth;
+    // FIXME: More of these should move into _perProcessState.
     BOOL _viewportMetaTagWidthWasExplicit;
     BOOL _viewportMetaTagCameFromImageDocument;
-    CGFloat _initialScaleFactor;
     BOOL _fastClickingIsDisabled;
 
     BOOL _allowsLinkPreview;
@@ -192,46 +249,26 @@ class ViewGestureController;
 
     UIEdgeInsets _unobscuredSafeAreaInsets;
     BOOL _haveSetUnobscuredSafeAreaInsets;
-    BOOL _avoidsUnsafeArea;
     BOOL _needsToPresentLockdownModeMessage;
     UIRectEdge _obscuredInsetEdgesAffectedBySafeArea;
 
     UIInterfaceOrientation _interfaceOrientationOverride;
     BOOL _overridesInterfaceOrientation;
-    std::optional<int32_t> _lastSentDeviceOrientation;
 
     BOOL _allowsViewportShrinkToFit;
 
-    BOOL _hasCommittedLoadForMainFrame;
-    BOOL _needsResetViewStateAfterCommitLoadForMainFrame;
-    WebKit::TransactionID _firstPaintAfterCommitLoadTransactionID;
-    WebKit::TransactionID _lastTransactionID;
-    WebKit::DynamicViewportUpdateMode _dynamicViewportUpdateMode;
     WebKit::DynamicViewportSizeUpdateID _currentDynamicViewportSizeUpdateID;
     CATransform3D _resizeAnimationTransformAdjustments;
-    CGFloat _animatedResizeOriginalContentWidth;
-    CGRect _animatedResizeOldBounds;
     CGFloat _animatedResizeOldMinimumEffectiveDeviceWidth;
     int32_t _animatedResizeOldOrientation;
     UIEdgeInsets _animatedResizeOldObscuredInsets;
     RetainPtr<UIView> _resizeAnimationView;
     CGFloat _lastAdjustmentForScroller;
-    std::optional<CGRect> _frozenVisibleContentRect;
-    std::optional<CGRect> _frozenUnobscuredContentRect;
 
-    struct LiveResizeParameters {
-        CGFloat viewWidth;
-        CGPoint initialScrollPosition;
-    };
-    std::optional<LiveResizeParameters> _liveResizeParameters;
     RetainPtr<id> _endLiveResizeNotificationObserver;
 
-    BOOL _commitDidRestoreScrollPosition;
-    std::optional<WebCore::FloatPoint> _scrollOffsetToRestore;
     WebCore::FloatBoxExtent _obscuredInsetsWhenSaved;
 
-    std::optional<WebCore::FloatPoint> _unobscuredCenterToRestore;
-    std::optional<WebKit::TransactionID> _firstTransactionIDAfterPageRestore;
     double _scaleToRestore;
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -246,30 +283,21 @@ class ViewGestureController;
     RetainPtr<NSTimer> _enclosingScrollViewScrollTimer;
     BOOL _didScrollSinceLastTimerFire;
 
-    WebCore::Color _scrollViewBackgroundColor;
 
     // This value tracks the current adjustment added to the bottom inset due to the keyboard sliding out from the bottom
     // when computing obscured content insets. This is used when updating the visible content rects where we should not
     // include this adjustment.
     CGFloat _totalScrollViewBottomInsetAdjustmentForKeyboard;
-    BOOL _currentlyAdjustingScrollViewInsetsForKeyboard;
 
-    BOOL _invokingUIScrollViewDelegateCallback;
-    BOOL _didDeferUpdateVisibleContentRectsForUIScrollViewDelegateCallback;
-    BOOL _didDeferUpdateVisibleContentRectsForAnyReason;
-    BOOL _didDeferUpdateVisibleContentRectsForUnstableScrollView;
     BOOL _alwaysSendNextVisibleContentRectUpdate;
     BOOL _contentViewShouldBecomeFirstResponderAfterNavigationGesture;
 
-    BOOL _waitingForEndAnimatedResize;
-    BOOL _waitingForCommitAfterAnimatedResize;
 
     Vector<WTF::Function<void ()>> _callbacksDeferredDuringResize;
     RetainPtr<NSMutableArray> _stableStatePresentationUpdateCallbacks;
 
     RetainPtr<WKPasswordView> _passwordView;
 
-    BOOL _hasScheduledVisibleRectUpdate;
     OptionSet<WebKit::ViewStabilityFlag> _viewStabilityWhenVisibleContentRectUpdateScheduled;
 
     std::optional<WebCore::WheelScrollGestureState> _currentScrollGestureState;
