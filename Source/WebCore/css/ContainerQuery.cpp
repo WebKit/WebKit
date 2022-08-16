@@ -106,22 +106,22 @@ static void serialize(StringBuilder& builder, const QueryInParens& query)
 
 void serialize(StringBuilder& builder, const SizeFeature& sizeFeature)
 {
-    auto serializeRangeComparisonOperator = [&](ComparisonOperator op) {
+    auto serializeRangeComparisonOperator = [&](MQ::ComparisonOperator op) {
         builder.append(' ');
         switch (op) {
-        case ComparisonOperator::LessThan:
+        case MQ::ComparisonOperator::LessThan:
             builder.append('<');
             break;
-        case ComparisonOperator::LessThanOrEqual:
+        case MQ::ComparisonOperator::LessThanOrEqual:
             builder.append("<=");
             break;
-        case ComparisonOperator::Equal:
+        case MQ::ComparisonOperator::Equal:
             builder.append('=');
             break;
-        case ComparisonOperator::GreaterThan:
+        case MQ::ComparisonOperator::GreaterThan:
             builder.append('>');
             break;
-        case ComparisonOperator::GreaterThanOrEqual:
+        case MQ::ComparisonOperator::GreaterThanOrEqual:
             builder.append(">=");
             break;
         }
@@ -129,22 +129,22 @@ void serialize(StringBuilder& builder, const SizeFeature& sizeFeature)
     };
 
     switch (sizeFeature.syntax) {
-    case Syntax::Boolean:
+    case MQ::Syntax::Boolean:
         serializeIdentifier(sizeFeature.name, builder);
         break;
 
-    case Syntax::Colon:
+    case MQ::Syntax::Plain:
         switch (sizeFeature.rightComparison->op) {
-        case ComparisonOperator::LessThanOrEqual:
+        case MQ::ComparisonOperator::LessThanOrEqual:
             builder.append("max-");
             break;
-        case ComparisonOperator::Equal:
+        case MQ::ComparisonOperator::Equal:
             break;
-        case ComparisonOperator::GreaterThanOrEqual:
+        case MQ::ComparisonOperator::GreaterThanOrEqual:
             builder.append("min-");
             break;
-        case ComparisonOperator::LessThan:
-        case ComparisonOperator::GreaterThan:
+        case MQ::ComparisonOperator::LessThan:
+        case MQ::ComparisonOperator::GreaterThan:
             ASSERT_NOT_REACHED();
             break;
         }
@@ -154,7 +154,7 @@ void serialize(StringBuilder& builder, const SizeFeature& sizeFeature)
         builder.append(sizeFeature.rightComparison->value->cssText());
         break;
 
-    case Syntax::Range:
+    case MQ::Syntax::Range:
         if (sizeFeature.leftComparison) {
             builder.append(sizeFeature.leftComparison->value->cssText());
             serializeRangeComparisonOperator(sizeFeature.leftComparison->op);

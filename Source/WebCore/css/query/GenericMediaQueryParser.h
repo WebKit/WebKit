@@ -27,13 +27,33 @@
 #include "CSSParserContext.h"
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
+#include "GenericMediaQueryTypes.h"
 
 namespace WebCore {
 namespace MQ {
 
-template<typename ConcreteParser>
-class GenericMediaQueryParser {
+class GenericMediaQueryParserBase {
 public:
+    GenericMediaQueryParserBase(const CSSParserContext& context)
+        : m_context(context)
+    { }
+
+protected:
+    std::optional<Feature> consumeFeature(CSSParserTokenRange&);
+    std::optional<Feature> consumeBooleanOrPlainFeature(CSSParserTokenRange&);
+    std::optional<Feature> consumeRangeFeature(CSSParserTokenRange&);
+    RefPtr<CSSValue> consumeValue(CSSParserTokenRange&);
+
+    const CSSParserContext& m_context;
+};
+
+template<typename ConcreteParser>
+class GenericMediaQueryParser : public GenericMediaQueryParserBase {
+public:
+    GenericMediaQueryParser(const CSSParserContext& context)
+        : GenericMediaQueryParserBase(context)
+    { }
+
     template<typename ConditionType> std::optional<ConditionType> consumeCondition(CSSParserTokenRange&);
 
 private:

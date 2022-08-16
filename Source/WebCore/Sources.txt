@@ -860,6 +860,8 @@ css/parser/MediaQueryBlockWatcher.cpp
 css/parser/MediaQueryParser.cpp
 css/parser/SizesAttributeParser.cpp
 css/parser/SizesCalcParser.cpp
+css/query/GenericMediaQueryEvaluator.cpp
+css/query/GenericMediaQueryParser.cpp
 css/typedom/ComputedStylePropertyMapReadOnly.cpp
 css/typedom/StylePropertyMapReadOnly.cpp
 css/typedom/CSSKeywordValue.cpp

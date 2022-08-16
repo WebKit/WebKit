@@ -36,9 +36,10 @@ class Element;
 
 namespace CQ {
 
+using SizeFeature = MQ::Feature;
+
 struct ContainerCondition;
 struct SizeCondition;
-struct SizeFeature;
 
 struct UnknownQuery {
     String name;
@@ -47,24 +48,9 @@ struct UnknownQuery {
 
 using QueryInParens = std::variant<ContainerCondition, SizeFeature, UnknownQuery>;
 
-enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, GreaterThan, GreaterThanOrEqual };
-enum class Syntax : uint8_t { Boolean, Colon, Range };
-
 struct ContainerCondition {
     MQ::LogicalOperator logicalOperator { MQ::LogicalOperator::And };
     Vector<QueryInParens> queries;
-};
-
-struct Comparison {
-    ComparisonOperator op { ComparisonOperator::Equal };
-    RefPtr<CSSValue> value;
-};
-
-struct SizeFeature {
-    AtomString name;
-    Syntax syntax;
-    std::optional<Comparison> leftComparison;
-    std::optional<Comparison> rightComparison;
 };
 
 namespace FeatureNames {

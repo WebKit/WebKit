@@ -24,13 +24,26 @@
 
 #pragma once
 
+#include "GenericMediaQueryTypes.h"
+#include "LayoutUnit.h"
+
 namespace WebCore {
+
+class CSSToLengthConversionData;
+
 namespace MQ {
 
 enum class EvaluationResult : uint8_t { False, True, Unknown };
 
+class GenericMediaQueryEvaluatorBase {
+public:
+    EvaluationResult evaluateLengthFeature(const Feature&, LayoutUnit, const CSSToLengthConversionData&) const;
+    EvaluationResult evaluateRatioFeature(const Feature&, double) const;
+    EvaluationResult evaluateDiscreteFeature(const Feature&, CSSValueID) const;
+};
+
 template<typename ConcreteEvaluator>
-class GenericMediaQueryEvaluator {
+class GenericMediaQueryEvaluator : public GenericMediaQueryEvaluatorBase {
 public:
     template<typename ConditionType, typename Context> EvaluationResult evaluateCondition(const ConditionType&, const Context&) const;
 

@@ -24,8 +24,24 @@
 
 #pragma once
 
+#include "CSSValue.h"
+
 namespace WebCore::MQ {
 
 enum class LogicalOperator : uint8_t { And, Or, Not };
+enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, GreaterThan, GreaterThanOrEqual };
+enum class Syntax : uint8_t { Boolean, Plain, Range };
+
+struct Comparison {
+    ComparisonOperator op;
+    RefPtr<CSSValue> value;
+};
+
+struct Feature {
+    AtomString name;
+    Syntax syntax;
+    std::optional<Comparison> leftComparison;
+    std::optional<Comparison> rightComparison;
+};
 
 }
