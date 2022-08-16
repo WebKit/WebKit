@@ -36,20 +36,20 @@ NavigatorPermissions::NavigatorPermissions(Navigator& navigator)
 {
 }
 
-RefPtr<Permissions> NavigatorPermissions::permissions(Navigator& navigator)
+Permissions& NavigatorPermissions::permissions(Navigator& navigator)
 {
-    return NavigatorPermissions::from(navigator)->permissions();
+    return NavigatorPermissions::from(navigator).permissions();
 }
 
-RefPtr<Permissions> NavigatorPermissions::permissions()
+Permissions& NavigatorPermissions::permissions()
 {
     if (!m_permissions)
         m_permissions = Permissions::create(m_navigator);
 
-    return m_permissions;
+    return *m_permissions;
 }
 
-NavigatorPermissions* NavigatorPermissions::from(Navigator& navigator)
+NavigatorPermissions& NavigatorPermissions::from(Navigator& navigator)
 {
     auto* supplement = static_cast<NavigatorPermissions*>(Supplement<Navigator>::from(&navigator, supplementName()));
     if (!supplement) {
@@ -58,7 +58,7 @@ NavigatorPermissions* NavigatorPermissions::from(Navigator& navigator)
         provideTo(&navigator, supplementName(), WTFMove(newSupplement));
     }
 
-    return supplement;
+    return *supplement;
 }
 
 const char* NavigatorPermissions::supplementName()

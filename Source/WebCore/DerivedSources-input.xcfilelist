@@ -584,6 +584,7 @@ $(PROJECT_DIR)/Modules/permissions/PermissionName.idl
 $(PROJECT_DIR)/Modules/permissions/PermissionState.idl
 $(PROJECT_DIR)/Modules/permissions/PermissionStatus.idl
 $(PROJECT_DIR)/Modules/permissions/Permissions.idl
+$(PROJECT_DIR)/Modules/permissions/WorkerNavigator+Permissions.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/Document+PictureInPicture.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/DocumentOrShadowRoot+PictureInPicture.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl

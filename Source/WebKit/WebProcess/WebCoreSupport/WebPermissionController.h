@@ -32,6 +32,11 @@
 #include <wtf/Deque.h>
 #include <wtf/WeakHashSet.h>
 
+namespace WebCore {
+enum class PermissionState : uint8_t;
+class Page;
+}
+
 namespace WebKit {
 
 class WebPermissionController final : public CanMakeWeakPtr<WebPermissionController>, public WebCore::PermissionController {

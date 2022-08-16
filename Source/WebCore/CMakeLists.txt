@@ -524,6 +524,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/permissions/PermissionState.idl
     Modules/permissions/PermissionStatus.idl
     Modules/permissions/Permissions.idl
+    Modules/permissions/WorkerNavigator+Permissions.idl
 
     Modules/pictureinpicture/Document+PictureInPicture.idl
     Modules/pictureinpicture/DocumentOrShadowRoot+PictureInPicture.idl

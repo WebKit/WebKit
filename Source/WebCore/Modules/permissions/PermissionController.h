@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "PermissionState.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
+enum class PermissionState : uint8_t;
 class Page;
 class PermissionObserver;
 struct ClientOrigin;

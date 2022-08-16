@@ -33,6 +33,7 @@
 #include "PermissionController.h"
 #include "SecurityOrigin.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -53,13 +54,17 @@ PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionSt
     auto* origin = context.securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };
     m_origin = ClientOrigin { context.topOrigin().data(), WTFMove(originData) };
-
-    PermissionController::shared().addObserver(*this);
+    
+    // FIXME: Add support for workers. Currently, this only works for Window objects.
+    if (isMainThread())
+        PermissionController::shared().addObserver(*this);
 }
 
 PermissionStatus::~PermissionStatus()
 {
-    PermissionController::shared().removeObserver(*this);
+    // FIXME: Add support for workers. Currently, this only works for Window objects.
+    if (isMainThread())
+        PermissionController::shared().removeObserver(*this);
 }
 
 void PermissionStatus::stateChanged(PermissionState newState)
