@@ -3541,7 +3541,8 @@ void MediaPlayerPrivateAVFoundationObjC::metadataGroupDidArrive(const RetainPtr<
     for (AVDateRangeMetadataGroup *group in groups.get()) {
         auto groupStartDate = group.startDate.timeIntervalSince1970;
         auto groupEndDate = group.endDate.timeIntervalSince1970;
-        auto groupDuration = MediaTime::createWithDouble(groupEndDate - groupStartDate);
+
+        INFO_LOG(LOGIDENTIFIER, "start date: ", groupStartDate, " end date: ", groupEndDate);
 
         // A manifest without a #EXT-X-PROGRAM-DATE-TIME won't have a start date, so if currentDate
         // is zero assume the metadata items start at the beginning of the stream.
@@ -3549,6 +3550,7 @@ void MediaPlayerPrivateAVFoundationObjC::metadataGroupDidArrive(const RetainPtr<
         if (auto currentDate = m_avPlayerItem.get().currentDate.timeIntervalSince1970)
             groupStartTime = groupStartDate - currentDate - currentTime.toDouble();
 
+        auto groupDuration = MediaTime::createWithDouble(groupEndDate - groupStartDate);
         auto groupCopy = adoptNS([[NSMutableArray alloc] init]);
         for (AVMetadataItem *item in group.items) {
             RetainPtr<AVMutableMetadataItem> itemCopy = adoptNS([item mutableCopy]);
@@ -4113,7 +4115,13 @@ NSArray* playerKVOProperties()
     if (!m_player || !metadataGroups)
         return;
 
-    m_player->queueTaskOnEventLoop([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
+    auto currentTime = m_player->currentMediaTime();
+    if (m_player->logger().willLog(m_player->logChannel(), WTFLogLevel::Info)) {
+        auto identifier = Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "metadataCollector", m_player->logIdentifier());
+        m_player->logger().info(m_player->logChannel(), identifier, currentTime);
+    }
+
+    m_player->queueTaskOnEventLoop([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = WTFMove(currentTime)] {
         if (!player)
             return;
 
@@ -4134,7 +4142,13 @@ NSArray* playerKVOProperties()
     if (!m_player || !metadataGroups)
         return;
 
-    m_player->queueTaskOnEventLoop([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
+    auto currentTime = m_player->currentMediaTime();
+    if (m_player->logger().willLog(m_player->logChannel(), WTFLogLevel::Info)) {
+        auto identifier = Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "metadataCollector", m_player->logIdentifier());
+        m_player->logger().info(m_player->logChannel(), identifier, currentTime);
+    }
+
+    m_player->queueTaskOnEventLoop([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = WTFMove(currentTime)] {
         if (!player)
             return;
 
