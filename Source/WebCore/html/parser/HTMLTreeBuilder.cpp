@@ -1226,7 +1226,7 @@ void HTMLTreeBuilder::processStartTag(AtomHTMLToken&& token)
             ASSERT_UNUSED(didProcess, didProcess);
             return;
         }
-        if (token.name() == htmlTag || token.name() == noscriptTag) {
+        if (token.name() == headTag || token.name() == noscriptTag) {
             parseError(token);
             return;
         }
