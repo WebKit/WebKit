@@ -1022,10 +1022,10 @@ ModelDocumentEnabled:
   webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
       "ENABLE(SEPARATED_MODEL)": true
-      default: false
+      default: true
 
 ModelElementEnabled:
   type: bool
@@ -1034,12 +1034,12 @@ ModelElementEnabled:
   condition: ENABLE(MODEL_ELEMENT)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
       "ENABLE(SEPARATED_MODEL)": true
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 OpusDecoderEnabled:
   type: bool

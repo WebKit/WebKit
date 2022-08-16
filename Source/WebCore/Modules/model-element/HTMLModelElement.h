@@ -61,6 +61,9 @@ public:
     const URL& currentSrc() const { return m_sourceURL; }
     bool complete() const { return m_dataComplete; }
 
+    WEBCORE_EXPORT unsigned width(bool ignorePendingStylesheets = false);
+    WEBCORE_EXPORT unsigned height(bool ignorePendingStylesheets = false);
+
     // MARK: DOM Functions and Attributes
 
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<HTMLModelElement>>;
@@ -115,7 +118,7 @@ public:
 
 private:
     HTMLModelElement(const QualifiedName&, Document&);
-
+    unsigned setWidthOrHeight(const QualifiedName& name, bool ignorePendingStylesheets);
     void setSourceURL(const URL&);
     void modelDidChange();
     void createModelPlayer();
@@ -153,6 +156,9 @@ private:
     void setAnimationIsPlaying(bool, DOMPromiseDeferred<void>&&);
 
     LayoutSize contentSize() const;
+
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
 
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;

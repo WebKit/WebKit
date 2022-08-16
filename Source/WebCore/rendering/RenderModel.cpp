@@ -62,10 +62,18 @@ void RenderModel::updateFromElement()
 
 void RenderModel::update()
 {
+    WTFLogAlways("marcosxxxx> update()");
     if (renderTreeBeingDestroyed())
         return;
     
     contentChanged(ModelChanged);
+}
+
+void RenderModel::layout()
+{
+    WTFLogAlways("marcosxxxx> layout()");
+
+    RenderReplaced::layout();
 }
 
 }

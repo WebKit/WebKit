@@ -42,6 +42,7 @@ public:
     HTMLModelElement& modelElement() const;
 
 private:
+    void layout() final;
     void element() const = delete;
     ASCIILiteral renderName() const final { return "RenderModel"_s; }
     bool isRenderModel() const final { return true; }

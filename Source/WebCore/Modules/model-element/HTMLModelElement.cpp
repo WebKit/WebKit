@@ -67,6 +67,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLModelElement);
 
+using namespace HTMLNames;
+
 HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(document)
@@ -667,6 +669,58 @@ LayoutSize HTMLModelElement::contentSize() const
 {
     ASSERT(renderer());
     return downcast<RenderReplaced>(*renderer()).replacedContentRect().size();
+}
+
+bool HTMLModelElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
+{
+    WTFLogAlways("marcosxxxx> HTMLModelElement::hasPresentationalHintsForAttribute()");
+    if (name == widthAttr || name == heightAttr)
+        return true;
+    return HTMLElement::hasPresentationalHintsForAttribute(name);
+}
+
+void HTMLModelElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+{
+    WTFLogAlways("marcosxxxx> HTMLModelElement::collectPresentationalHintsForAttribute()");
+    if (name == widthAttr)
+        applyAspectRatioWithoutDimensionalRulesFromWidthAndHeightAttributesToStyle(value, attributeWithoutSynchronization(heightAttr), style);
+    else if (name == heightAttr)
+        applyAspectRatioWithoutDimensionalRulesFromWidthAndHeightAttributesToStyle(attributeWithoutSynchronization(widthAttr), value, style);
+    else
+        HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
+}
+
+unsigned HTMLModelElement::width(bool ignorePendingStylesheets)
+{
+    return setWidthOrHeight(widthAttr, ignorePendingStylesheets);
+}
+
+unsigned HTMLModelElement::height(bool ignorePendingStylesheets)
+{
+    return setWidthOrHeight(heightAttr, ignorePendingStylesheets);
+}
+
+unsigned HTMLModelElement::setWidthOrHeight(const QualifiedName& name, bool ignorePendingStylesheets)
+{
+    WTFLogAlways("marcosxxxx> HTMLModelElement::setWidthOrHeight()");
+    if (!renderer()) {
+        auto parsedResult = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(name));
+        if (parsedResult)
+            return parsedResult.value();
+    }
+
+    if (ignorePendingStylesheets)
+        document().updateLayoutIgnorePendingStylesheets();
+    else
+        document().updateLayout();
+
+    RenderBox* box = renderBox();
+    if (!box)
+        return 0;
+    LayoutRect contentRect = box->contentBoxRect();
+    auto rect = snappedIntRect(contentRect);
+    auto value = name == widthAttr ? rect.width() : rect.height(); 
+    return adjustForAbsoluteZoom(value, *box);
 }
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
