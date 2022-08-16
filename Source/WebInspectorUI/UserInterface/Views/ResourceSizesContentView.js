@@ -249,3 +249,5 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
         this.needsLayout();
     }
 };
+
+WI.ResourceSizesContentView.ReferencePage = WI.ReferencePage.NetworkTab.SizesPane;

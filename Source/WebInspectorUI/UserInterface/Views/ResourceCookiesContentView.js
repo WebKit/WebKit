@@ -293,3 +293,5 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
         this._refreshResponseCookiesSection();
     }
 };
+
+WI.ResourceCookiesContentView.ReferencePage = WI.ReferencePage.NetworkTab.CookiesPane;

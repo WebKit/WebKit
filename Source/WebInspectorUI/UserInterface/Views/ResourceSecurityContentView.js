@@ -355,3 +355,5 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
         this.needsLayout();
     }
 };
+
+WI.ResourceSecurityContentView.ReferencePage = WI.ReferencePage.NetworkTab.SecurityPane;

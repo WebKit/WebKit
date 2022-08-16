@@ -86,6 +86,7 @@ WI.NetworkDetailView = class NetworkDetailView extends WI.View
 
         const element = null;
         this._contentBrowser = new WI.ContentBrowser(element, this, {hideBackForwardButtons: true, flexibleNavigationItem, contentViewNavigationItemGroup});
+        this._contentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentContentViewDidChange, this._handleCurrentContentViewDidChange, this);
 
         // Insert all of our custom navigation items at the start of the ContentBrowser's NavigationBar.
         let index = 0;
@@ -142,6 +143,12 @@ WI.NetworkDetailView = class NetworkDetailView extends WI.View
 
         console.assert(firstNavigationItem, "Should have found at least one navigation item above");
         this._contentBrowser.navigationBar.selectedNavigationItem = firstNavigationItem;
+    }
+
+    _handleCurrentContentViewDidChange(event)
+    {
+        // Redispatch this event since this view is basically just a wrapper.
+        this.dispatchEventToListeners(event.type, event.data);
     }
 
     _navigationItemSelected(event)

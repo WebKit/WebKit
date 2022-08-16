@@ -1327,6 +1327,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let statisticsContainer = this.element.appendChild(document.createElement("div"));
         statisticsContainer.className = "statistics";
 
+        this._referencePageLinkElement = statisticsContainer.appendChild(document.createElement("div"));
+        this._handleCurrentResourceDetailViewDidChange();
+
         let createStatisticElement = (name, image) => {
             let statistic = this._statistics[name];
             if (!statistic)
@@ -1640,6 +1643,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this.removeSubview(this._detailView);
         this._detailView = null;
+        this._handleCurrentResourceDetailViewDidChange();
 
         this._table.updateLayout(WI.View.LayoutReason.Resize);
         this._table.reloadVisibleColumnCells(this._waterfallColumn);
@@ -1654,9 +1658,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
 
         if (!this._detailView) {
-            if (object instanceof WI.Resource)
+            if (object instanceof WI.Resource) {
                 this._detailView = new WI.NetworkResourceDetailView(object, this);
-            else if (object instanceof WI.DOMNode) {
+                this._detailView.addEventListener(WI.ContentBrowser.Event.CurrentContentViewDidChange, this._handleCurrentResourceDetailViewDidChange, this);
+            } else if (object instanceof WI.DOMNode) {
                 this._detailView = new WI.NetworkDOMNodeDetailView(object, this);
             }
 
@@ -1678,6 +1683,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         // Currently the ResourceDetailView is in the heirarchy but has not yet done a layout so we
         // end up seeing the table behind it. This forces us to layout now instead of after a beat.
         this.updateLayout();
+
+        if (!oldDetailView)
+            this._handleCurrentResourceDetailViewDidChange();
     }
 
     _positionDetailView()
@@ -2663,6 +2671,16 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     _handleGlobalModifierKeysDidChange(event)
     {
         this._highlightRelatedResourcesForHoveredResource();
+    }
+
+    _handleCurrentResourceDetailViewDidChange(event)
+    {
+        let oldReferencePageLinkElement = this._referencePageLinkElement;
+
+        let referencePage = this._detailView?.referencePage ?? WI.ReferencePage.NetworkTab;
+        this._referencePageLinkElement = referencePage.createLinkElement();
+
+        oldReferencePageLinkElement.parentNode.replaceChild(this._referencePageLinkElement, oldReferencePageLinkElement);
     }
 };
 

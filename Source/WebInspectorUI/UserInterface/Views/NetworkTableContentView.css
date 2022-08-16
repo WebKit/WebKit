@@ -421,6 +421,11 @@ body[dir=rtl] .waterfall.network .block {
     font-variant-numeric: tabular-nums;
 }
 
+.network-table .reference-page-link-container {
+    position: absolute;
+    inset-inline-end: 6px;
+}
+
 @media (prefers-color-scheme: dark) {
     .content-view.tab.network > .content-browser > .navigation-bar .hierarchical-path .icon {
         filter: invert(88%);

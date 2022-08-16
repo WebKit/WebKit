@@ -110,3 +110,5 @@ WI.ResourceTimingContentView = class ResourceTimingContentView extends WI.Conten
         this.needsLayout();
     }
 };
+
+WI.ResourceTimingContentView.ReferencePage = WI.ReferencePage.NetworkTab.TimingPane;

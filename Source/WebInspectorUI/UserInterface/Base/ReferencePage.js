@@ -93,6 +93,14 @@ WI.ReferencePage.LayersTab = new WI.ReferencePage("layers-tab");
 WI.ReferencePage.LocalOverrides = new WI.ReferencePage("local-overrides");
 WI.ReferencePage.LocalOverrides.ConfiguringLocalOverrides = new WI.ReferencePage(WI.ReferencePage.LocalOverrides, {topic: "configuring-local-overrides"});
 
+WI.ReferencePage.NetworkTab = new WI.ReferencePage("network-tab");
+WI.ReferencePage.NetworkTab.CookiesPane = new WI.ReferencePage(WI.ReferencePage.NetworkTab, {topic: "cookies-pane"});
+WI.ReferencePage.NetworkTab.HeadersPane = new WI.ReferencePage(WI.ReferencePage.NetworkTab, {topic: "headers-pane"});
+WI.ReferencePage.NetworkTab.PreviewPane = new WI.ReferencePage(WI.ReferencePage.NetworkTab, {topic: "preview-pane"});
+WI.ReferencePage.NetworkTab.SecurityPane = new WI.ReferencePage(WI.ReferencePage.NetworkTab, {topic: "security-pane"});
+WI.ReferencePage.NetworkTab.SizesPane = new WI.ReferencePage(WI.ReferencePage.NetworkTab, {topic: "sizes-pane"});
+WI.ReferencePage.NetworkTab.TimingPane = new WI.ReferencePage(WI.ReferencePage.NetworkTab, {topic: "timing-pane"});
+
 WI.ReferencePage.SymbolicBreakpoints = new WI.ReferencePage("symbolic-breakpoints");
 WI.ReferencePage.SymbolicBreakpoints.Configuration = new WI.ReferencePage(WI.ReferencePage.SymbolicBreakpoints, {topic: "configuration"});
 
