@@ -240,8 +240,6 @@ WI.View = class View extends WI.Object
         if (this._parentView === parentView)
             return;
 
-        console.assert(this._parentView || !(this._isDirty || this._dirtyDescendantsCount));
-
         let dirtyDescendantsCount = this._dirtyDescendantsCount;
         if (this._dirty)
             ++dirtyDescendantsCount;
