@@ -30,6 +30,7 @@
 #include <WebCore/Image.h>
 #include <WebCore/NotificationResources.h>
 #include <WebCore/RefPtrCairo.h>
+#include <gio/gdesktopappinfo.h>
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
 #include <mutex>
@@ -289,6 +290,47 @@ void NotificationService::processCapabilities(GVariant* variant)
     }
 }
 
+static const char* applicationIcon(const char* applicationID)
+{
+    static std::optional<CString> appIcon;
+    if (!appIcon) {
+        appIcon = [applicationID]() -> CString {
+            if (!applicationID)
+                return { };
+
+#if PLATFORM(GTK)
+            if (auto* iconTheme = gtk_icon_theme_get_for_display(gdk_display_get_default())) {
+                if (gtk_icon_theme_has_icon(iconTheme, applicationID))
+                    return applicationID;
+            }
+#endif
+
+            GUniquePtr<char> desktopFileID(g_strdup_printf("%s.desktop", applicationID));
+            GRefPtr<GDesktopAppInfo> appInfo = adoptGRef(g_desktop_app_info_new(desktopFileID.get()));
+            if (!appInfo)
+                return { };
+
+            auto* icon = g_app_info_get_icon(G_APP_INFO(appInfo.get()));
+            if (!icon)
+                return { };
+
+            if (G_IS_FILE_ICON(icon)) {
+                GUniquePtr<char> uri(g_file_get_uri(g_file_icon_get_file(G_FILE_ICON(icon))));
+                return uri.get();
+            }
+
+            if (G_IS_THEMED_ICON(icon)) {
+                const char* const* iconNames = g_themed_icon_get_names(G_THEMED_ICON(icon));
+                return iconNames[0];
+            }
+
+            return { };
+        }();
+    }
+
+    return appIcon->data();
+}
+
 bool NotificationService::showNotification(const WebNotification& notification, const RefPtr<WebCore::NotificationResources>& resources)
 {
     if (!m_proxy)
@@ -366,15 +408,11 @@ bool NotificationService::showNotification(const WebNotification& notification, 
         if (m_capabilities.contains(Capabilities::Body))
             body = notification.body().utf8();
 
-        const char* applicationIcon = nullptr;
-#if PLATFORM(GTK)
-        if (auto* iconTheme = gtk_icon_theme_get_for_display(gdk_display_get_default()))
-            applicationIcon = applicationID && gtk_icon_theme_has_icon(iconTheme, applicationID) ? applicationID : nullptr;
-#endif
+        const char* appIcon = applicationIcon(applicationID);
 
         g_dbus_proxy_call(m_proxy.get(), "Notify", g_variant_new(
             "(susssasa{sv}i)",
-            g_get_application_name(), addResult.iterator->value.id, applicationIcon ? applicationIcon : "",
+            g_get_application_name(), addResult.iterator->value.id, appIcon ? appIcon : "",
             notification.title().utf8().data(), body.data(),
             &actionsBuilder, &hintsBuilder, -1
             ), G_DBUS_CALL_FLAGS_NONE, -1, nullptr, [](GObject* source, GAsyncResult* result, gpointer userData) {
