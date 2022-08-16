@@ -45,6 +45,10 @@
 #include <wtf/linux/RealTimeThreads.h>
 #endif
 
+#if OS(DARWIN)
+#include <wtf/darwin/LibraryPathDiagnostics.h>
+#endif
+
 #if !USE(SYSTEM_MALLOC)
 #include <bmalloc/BPlatform.h>
 #if BENABLE(LIBPAS)
@@ -480,6 +484,9 @@ void initialize()
         Thread::initializePlatformThreading();
 #if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
         SignalHandlers::initialize();
+#endif
+#if OS(DARWIN)
+        initializeLibraryPathDiagnostics();
 #endif
     });
 }

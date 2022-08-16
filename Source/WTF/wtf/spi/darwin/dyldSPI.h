@@ -241,5 +241,9 @@ WTF_EXTERN_C_BEGIN
 
 uint32_t dyld_get_program_sdk_version();
 bool dyld_program_sdk_at_least(dyld_build_version_t);
+extern const char* dyld_shared_cache_file_path(void);
+extern const struct mach_header* _dyld_get_dlopen_image_header(void* handle);
+extern bool _dyld_get_image_uuid(const struct mach_header* mh, uuid_t);
+extern bool _dyld_get_shared_cache_uuid(uuid_t);
 
 WTF_EXTERN_C_END
