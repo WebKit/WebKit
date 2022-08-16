@@ -671,6 +671,8 @@ set(bmalloc_INTERFACE_LIBRARIES bmalloc)
 set(bmalloc_INTERFACE_INCLUDE_DIRECTORIES ${bmalloc_FRAMEWORK_HEADERS_DIR})
 set(bmalloc_INTERFACE_DEPENDENCIES bmalloc_CopyHeaders)
 
+add_definitions(-D_GNU_SOURCE)
+
 WEBKIT_FRAMEWORK_DECLARE(bmalloc)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
@@ -685,15 +687,11 @@ WEBKIT_FRAMEWORK_TARGET(bmalloc)
 
 set_source_files_properties(
     libpas/src/libpas/pas_bitfit_page_config_kind.c
-    libpas/src/libpas/pas_thread_local_cache.c
     libpas/src/libpas/jit_heap.c
-    libpas/src/libpas/jit_heap_config.c
     libpas/src/libpas/bmalloc_heap.c
     libpas/src/libpas/bmalloc_heap_config.c
-    libpas/src/libpas/pas_utility_heap_config.c
     libpas/src/libpas/pas_heap_config_kind.c
     libpas/src/libpas/pas_segregated_page_config_kind.c
-    libpas/src/libpas/pas_fast_megapage_cache.c
     PROPERTIES LANGUAGE CXX)
 
 WEBKIT_ADD_TARGET_CXX_FLAGS(bmalloc

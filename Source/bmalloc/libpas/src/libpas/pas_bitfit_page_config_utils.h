@@ -45,13 +45,7 @@ typedef struct {
 
 #define PAS_BASIC_BITFIT_PAGE_CONFIG_DECLARATIONS(name, config_value, ...) \
     PAS_BASIC_PAGE_BASE_CONFIG_DECLARATIONS( \
-        name, (config_value).base, \
-        .header_placement_mode = \
-            ((pas_basic_bitfit_page_config_declarations_arguments){__VA_ARGS__}) \
-            .header_placement_mode, \
-        .header_table = \
-            ((pas_basic_bitfit_page_config_declarations_arguments){__VA_ARGS__}) \
-            .header_table)
+        name, (config_value).base, __VA_ARGS__)
 
 PAS_END_EXTERN_C;
 

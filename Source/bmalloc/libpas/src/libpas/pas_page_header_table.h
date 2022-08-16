@@ -45,10 +45,10 @@ struct pas_page_header_table {
 };
 
 #define PAS_PAGE_HEADER_TABLE_INITIALIZER(passed_page_size) \
-    ((pas_page_header_table){ \
+    { \
          .page_size = (passed_page_size), \
          .hashtable = PAS_LOCK_FREE_READ_PTR_PTR_HASHTABLE_INITIALIZER \
-     })
+    }
 
 static inline unsigned pas_page_header_table_hash(const void* key, void* arg)
 {
