@@ -168,7 +168,7 @@ public:
     void enableRemoteWorkers(RemoteWorkerType, const UserContentControllerIdentifier&);
     void disableRemoteWorkers(RemoteWorkerType);
 
-    WebsiteDataStore* websiteDataStore() const;
+    WebsiteDataStore* websiteDataStore() const { ASSERT(m_websiteDataStore); return m_websiteDataStore.get(); }
     void setWebsiteDataStore(WebsiteDataStore&);
     
     PAL::SessionID sessionID() const;
@@ -620,7 +620,7 @@ private:
     Vector<CompletionHandler<void(bool webProcessIsResponsive)>> m_isResponsiveCallbacks;
 
     VisibleWebPageCounter m_visiblePageCounter;
-    std::optional<PAL::SessionID> m_sessionID;
+    RefPtr<WebsiteDataStore> m_websiteDataStore;
 
     bool m_isUnderMemoryPressure { false };
 

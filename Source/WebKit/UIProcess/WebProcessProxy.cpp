@@ -242,6 +242,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
 #endif
     , m_isResponsive(NoOrMaybe::Maybe)
     , m_visiblePageCounter([this](RefCounterEvent) { updateBackgroundResponsivenessTimer(); })
+    , m_websiteDataStore(websiteDataStore)
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     , m_userMediaCaptureManagerProxy(makeUnique<UserMediaCaptureManagerProxy>(makeUniqueRef<UIProxyForCapture>(*this)))
 #endif
@@ -260,8 +261,6 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
 
     WebPasteboardProxy::singleton().addWebProcessProxy(*this);
 
-    if (websiteDataStore)
-        m_sessionID = websiteDataStore->sessionID();
     platformInitialize();
 }
 
@@ -349,19 +348,11 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
     }
 }
 
-WebsiteDataStore* WebProcessProxy::websiteDataStore() const
-{
-    if (!m_sessionID)
-        return nullptr;
-
-    return WebsiteDataStore::existingDataStoreForSessionID(*m_sessionID);
-}
-
 void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
 {
-    ASSERT(!m_sessionID);
+    ASSERT(!m_websiteDataStore);
     WEBPROCESSPROXY_RELEASE_LOG(Process, "setWebsiteDataStore() dataStore=%p, sessionID=%" PRIu64, &dataStore, dataStore.sessionID().toUInt64());
-    m_sessionID = dataStore.sessionID();
+    m_websiteDataStore = &dataStore;
     updateRegistrationWithDataStore();
     send(Messages::WebProcess::SetWebsiteDataStoreParameters(processPool().webProcessDataStoreParameters(*this, dataStore)), 0);
 
@@ -372,7 +363,7 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
 
 bool WebProcessProxy::isDummyProcessProxy() const
 {
-    return m_sessionID && processPool().dummyProcessProxy(*m_sessionID) == this;
+    return m_websiteDataStore && processPool().dummyProcessProxy(m_websiteDataStore->sessionID()) == this;
 }
 
 void WebProcessProxy::updateRegistrationWithDataStore()
@@ -587,7 +578,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     ASSERT(!m_pageMap.contains(webPage.identifier()));
     ASSERT(!globalPageMap().contains(webPage.identifier()));
     RELEASE_ASSERT(!m_isInProcessCache);
-    ASSERT(!m_sessionID || websiteDataStore() == &webPage.websiteDataStore());
+    ASSERT(!m_websiteDataStore || websiteDataStore() == &webPage.websiteDataStore());
 
     if (beginsUsingDataStore == BeginsUsingDataStore::Yes) {
         RELEASE_ASSERT(m_processPool);
@@ -802,9 +793,11 @@ void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& item
 void WebProcessProxy::getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {
     auto* dataStore = websiteDataStore();
-    if (!dataStore)
+    if (!dataStore) {
+        ASSERT_NOT_REACHED();
+        RELEASE_LOG_FAULT(Process, "WebProcessProxy should always have a WebsiteDataStore when used by a web process requesting a network process connection");
         return reply({ });
-
+    }
     dataStore->getNetworkProcessConnection(*this, WTFMove(reply));
 }
 
@@ -1735,8 +1728,8 @@ WebProcessPool& WebProcessProxy::processPool() const
 
 PAL::SessionID WebProcessProxy::sessionID() const
 {
-    ASSERT(m_sessionID);
-    return *m_sessionID;
+    ASSERT(m_websiteDataStore);
+    return m_websiteDataStore->sessionID();
 }
 
 void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdentifier identifier)
