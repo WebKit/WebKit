@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "XPCUtilities.h"
 
-#if USE(APPLE_INTERNAL_SDK)
+namespace WebKit {
 
-#include <sys/reason.h>
-
-// FIXME: Remove this ifndef once rdar://75717715 is available on bots.
-#ifndef OS_REASON_WEBKIT
-#define OS_REASON_WEBKIT 31
-#endif
-
-#else
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-int terminate_with_reason(int pid, uint32_t reasonNamespace, uint64_t reasonCode, const char *reasonString, uint64_t reasonFlags);
-
-#ifdef __cplusplus
+void terminateWithReason(xpc_connection_t connection, ReasonCode, const char*)
+{
+    // This could use ReasonSPI.h, but currently does not as the SPI is blocked by the sandbox.
+    // See https://bugs.webkit.org/show_bug.cgi?id=224499 rdar://76396241
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    xpc_connection_kill(connection, SIGKILL);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
-#endif
 
-#define OS_REASON_FLAG_NO_CRASH_REPORT 0x1
-
-#define OS_REASON_WEBKIT 31
-
-#endif
+}

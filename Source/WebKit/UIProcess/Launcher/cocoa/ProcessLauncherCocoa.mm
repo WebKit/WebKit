@@ -27,8 +27,8 @@
 #import "ProcessLauncher.h"
 
 #import "Logging.h"
-#import "ReasonSPI.h"
 #import "WebPreferencesDefaultValues.h"
+#import "XPCUtilities.h"
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
@@ -339,13 +339,6 @@ void ProcessLauncher::terminateXPCConnection()
     xpc_connection_cancel(m_xpcConnection.get());
     terminateWithReason(m_xpcConnection.get(), WebKit::ReasonCode::Invalidation, "ProcessLauncher::platformInvalidate");
     m_xpcConnection = nullptr;
-}
-
-void terminateWithReason(xpc_connection_t connection, ReasonCode, const char*)
-{
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    xpc_connection_kill(connection, SIGKILL);
-    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 } // namespace WebKit

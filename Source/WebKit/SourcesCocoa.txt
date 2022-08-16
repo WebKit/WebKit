@@ -91,6 +91,7 @@ Platform/cocoa/SharedMemoryCocoa.cpp
 Platform/cocoa/WKCrashReporter.mm
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm
 Platform/cocoa/WebKitAdditions.mm @no-unify
+Platform/cocoa/XPCUtilities.mm
 
 Platform/foundation/LoggingFoundation.mm
 

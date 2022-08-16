@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,16 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK)
+#include <wtf/spi/darwin/XPCSPI.h>
 
-#include <sys/reason.h>
+namespace WebKit {
 
-// FIXME: Remove this ifndef once rdar://75717715 is available on bots.
-#ifndef OS_REASON_WEBKIT
-#define OS_REASON_WEBKIT 31
-#endif
+enum class ReasonCode : uint64_t {
+    WatchdogTimerFired,
+    Invalidation,
+    ConnectionKilled,
+};
 
-#else
+void terminateWithReason(xpc_connection_t, ReasonCode, const char* reason);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-int terminate_with_reason(int pid, uint32_t reasonNamespace, uint64_t reasonCode, const char *reasonString, uint64_t reasonFlags);
-
-#ifdef __cplusplus
 }
-#endif
-
-#define OS_REASON_FLAG_NO_CRASH_REPORT 0x1
-
-#define OS_REASON_WEBKIT 31
-
-#endif

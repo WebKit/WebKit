@@ -5481,6 +5481,8 @@
 		7B9FC5AC28A3B440007570E7 /* IPCUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPCUtilities.cpp; sourceTree = "<group>"; };
 		7B9FC5E128A54BCC007570E7 /* ArgumentCodersDarwin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersDarwin.h; sourceTree = "<group>"; };
 		7B9FC5E228A54BCC007570E7 /* ArgumentCodersDarwin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersDarwin.mm; sourceTree = "<group>"; };
+		7B9FC5DF28A54373007570E7 /* XPCUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCUtilities.h; sourceTree = "<group>"; };
+		7B9FC5E028A54373007570E7 /* XPCUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPCUtilities.cpp; sourceTree = "<group>"; };
 		7BAB110F25DD02B2008FC479 /* ScopedActiveMessageReceiveQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedActiveMessageReceiveQueue.h; sourceTree = "<group>"; };
 		7BBA63DC280E93B500B04823 /* IPCConnectionTesterIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCConnectionTesterIdentifier.h; sourceTree = "<group>"; };
 		7BBA63DD280E93B600B04823 /* IPCConnectionTester.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPCConnectionTester.cpp; sourceTree = "<group>"; };
@@ -10019,6 +10021,8 @@
 				A1FB68231F6E518200C43F9F /* WKCrashReporter.mm */,
 				A1798B47222E530A000764BD /* WKPaymentAuthorizationDelegate.h */,
 				A1798B48222E530A000764BD /* WKPaymentAuthorizationDelegate.mm */,
+				7B9FC5E028A54373007570E7 /* XPCUtilities.cpp */,
+				7B9FC5DF28A54373007570E7 /* XPCUtilities.h */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
