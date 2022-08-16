@@ -999,8 +999,8 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     [self _updateScrollViewForTransaction:layerTreeTransaction];
 
     _perProcessState.viewportMetaTagWidth = layerTreeTransaction.viewportMetaTagWidth();
-    _viewportMetaTagWidthWasExplicit = layerTreeTransaction.viewportMetaTagWidthWasExplicit();
-    _viewportMetaTagCameFromImageDocument = layerTreeTransaction.viewportMetaTagCameFromImageDocument();
+    _perProcessState.viewportMetaTagWidthWasExplicit = layerTreeTransaction.viewportMetaTagWidthWasExplicit();
+    _perProcessState.viewportMetaTagCameFromImageDocument = layerTreeTransaction.viewportMetaTagCameFromImageDocument();
     _perProcessState.initialScaleFactor = layerTreeTransaction.initialScaleFactor();
 
     if (_page->inStableState() && layerTreeTransaction.isInStableState() && [_stableStatePresentationUpdateCallbacks count]) {
@@ -1714,7 +1714,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return NO;
 
     // If the viewport width was not explicit, we allow double tap gestures.
-    if (!_viewportMetaTagWidthWasExplicit || _viewportMetaTagCameFromImageDocument)
+    if (!_perProcessState.viewportMetaTagWidthWasExplicit || _perProcessState.viewportMetaTagCameFromImageDocument)
         return YES;
 
     // If the page set a viewport width that wasn't the device width, then it was

@@ -158,6 +158,9 @@ struct PerWebProcessState {
 
     BOOL avoidsUnsafeArea { YES };
 
+    BOOL viewportMetaTagWidthWasExplicit { NO };
+    BOOL viewportMetaTagCameFromImageDocument { NO };
+
     std::optional<WebCore::FloatSize> lastSentViewLayoutSize;
     std::optional<int32_t> lastSentDeviceOrientation;
 
@@ -236,11 +239,7 @@ struct PerWebProcessState {
     std::optional<CGSize> _maximumUnobscuredSizeOverride;
     CGRect _inputViewBoundsInWindow;
 
-    // FIXME: More of these should move into _perProcessState.
-    BOOL _viewportMetaTagWidthWasExplicit;
-    BOOL _viewportMetaTagCameFromImageDocument;
     BOOL _fastClickingIsDisabled;
-
     BOOL _allowsLinkPreview;
 
     UIEdgeInsets _obscuredInsets;
