@@ -483,7 +483,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
 
     for (unsigned index = 0; index < moduleInformation.internalExceptionTypeIndices.size(); ++index) {
         Wasm::TypeIndex typeIndex = moduleInformation.internalExceptionTypeIndices[index];
-        m_instance->instance().setTag(moduleInformation.importExceptionCount() + index, Wasm::Tag::create(Wasm::TypeInformation::get(typeIndex)));
+        m_instance->instance().setTag(moduleInformation.importExceptionCount() + index, Wasm::Tag::create(Wasm::TypeInformation::get(typeIndex).expand()));
     }
 
     unsigned functionImportCount = calleeGroup->functionImportCount();

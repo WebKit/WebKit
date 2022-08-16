@@ -232,6 +232,7 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
         // https://bugs.webkit.org/show_bug.cgi?id=165510
         uint32_t functionIndex = segment.functionIndices[srcIndex];
         TypeIndex typeIndex = m_module->typeIndexFromFunctionIndexSpace(functionIndex);
+        const auto& signature = TypeInformation::getFunctionSignature(typeIndex);
         if (isImportFunction(functionIndex)) {
             JSObject* functionImport = importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
             if (isWebAssemblyHostFunction(functionImport)) {
@@ -257,7 +258,6 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
 
         Callee& embedderEntrypointCallee = calleeGroup()->embedderEntrypointCalleeFromFunctionIndexSpace(functionIndex);
         WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
-        const auto& signature = TypeInformation::getFunctionSignature(typeIndex);
         // FIXME: Say we export local function "foo" at function index 0.
         // What if we also set it to the table an Element w/ index 0.
         // Does (new Instance(...)).exports.foo === table.get(0)?
