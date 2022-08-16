@@ -2121,3 +2121,4 @@ fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Failure ]
 webgl/2.0.y/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-instance.html [ Failure ]
 
+webkit.org/b/243992 fast/text/punctuation-break-all.html [ ImageOnlyFailure ]
