@@ -3086,8 +3086,10 @@ void AccessibilityRenderObject::updateAttachmentViewParents()
         return;
     
     for (const auto& child : m_children) {
-        if (child->isAttachment())
-            child->overrideAttachmentParent(this);
+        if (child->isAttachment()) {
+            if (auto* liveChild = dynamicDowncast<AccessibilityObject>(child.get()))
+                liveChild->overrideAttachmentParent(this);
+        }
     }
 }
 #endif

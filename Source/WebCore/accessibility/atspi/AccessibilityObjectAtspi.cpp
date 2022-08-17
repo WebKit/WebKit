@@ -752,6 +752,8 @@ uint64_t AccessibilityObjectAtspi::state() const
         return states;
     }
 
+    auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
+
     if (m_coreObject->isEnabled()) {
         addState(Atspi::State::Enabled);
         addState(Atspi::State::Sensitive);
@@ -782,7 +784,7 @@ uint64_t AccessibilityObjectAtspi::state() const
 
         if (m_coreObject->isTextControl() || m_coreObject->isNonNativeTextControl())
             addState(Atspi::State::Editable);
-    } else if (m_coreObject->supportsReadOnly())
+    } else if (liveObject && liveObject->supportsReadOnly())
         addState(Atspi::State::ReadOnly);
 
     if (m_coreObject->isChecked())
@@ -847,7 +849,7 @@ uint64_t AccessibilityObjectAtspi::state() const
     if (m_coreObject->invalidStatus() != "false"_s)
         addState(Atspi::State::InvalidEntry);
 
-    if (m_coreObject->supportsAutoComplete() && m_coreObject->autoCompleteValue() != "none"_s)
+    if (liveObject && liveObject->supportsAutoComplete() && liveObject->autoCompleteValue() != "none"_s)
         addState(Atspi::State::SupportsAutocompletion);
 
     return states;
@@ -879,6 +881,8 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
 #endif
     if (!m_coreObject)
         return map;
+
+    auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
 
     String tagName = m_coreObject->tagName();
     if (!tagName.isEmpty())
@@ -925,7 +929,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
     if (!placeholder.isEmpty())
         map.add("placeholder-text"_s, placeholder);
 
-    if (m_coreObject->supportsAutoComplete())
+    if (liveObject && liveObject->supportsAutoComplete())
         map.add("autocomplete"_s, m_coreObject->autoCompleteValue());
 
     if (m_coreObject->supportsHasPopup())
@@ -1004,12 +1008,13 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
     if (!keyShortcuts.isEmpty())
         map.add("keyshortcuts"_s, keyShortcuts);
 
-    if (m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSuperscript) || m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSubscript))
+    if (liveObject && (liveObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSuperscript) || liveObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSubscript)))
         map.add("multiscript-type"_s, "pre"_s);
-    else if (m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSuperscript) || m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSubscript))
+    else if (liveObject && (liveObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSuperscript) || liveObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSubscript)))
         map.add("multiscript-type"_s, "post"_s);
 
-    if (auto* liveContainer = m_coreObject->liveRegionAncestor(false)) {
+    auto* liveContainer = liveObject ? liveObject->liveRegionAncestor(false) : nullptr;
+    if (liveContainer) {
         auto liveStatus = liveContainer->liveRegionStatus();
         map.add("container-live"_s, liveStatus);
         auto relevant = liveContainer->liveRegionRelevant();
@@ -1200,6 +1205,8 @@ std::optional<unsigned> AccessibilityObjectAtspi::effectiveRole() const
     if (m_coreObject->isPasswordField())
         return Atspi::Role::PasswordText;
 
+    auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
+
     switch (m_coreObject->roleValue()) {
     case AccessibilityRole::Form:
         if (m_coreObject->ariaRoleAttribute() != AccessibilityRole::Unknown)
@@ -1224,13 +1231,13 @@ std::optional<unsigned> AccessibilityObjectAtspi::effectiveRole() const
             return Atspi::Role::MathFraction;
         if (m_coreObject->isMathSquareRoot() || m_coreObject->isMathRoot())
             return Atspi::Role::MathRoot;
-        if (m_coreObject->isMathScriptObject(AccessibilityMathScriptObjectType::Subscript)
-            || m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSubscript)
-            || m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSubscript))
+        if (liveObject && (liveObject->isMathScriptObject(AccessibilityMathScriptObjectType::Subscript)
+            || liveObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSubscript)
+            || liveObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSubscript)))
             return Atspi::Role::Subscript;
-        if (m_coreObject->isMathScriptObject(AccessibilityMathScriptObjectType::Superscript)
-            || m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSuperscript)
-            || m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSuperscript))
+        if (liveObject && (liveObject->isMathScriptObject(AccessibilityMathScriptObjectType::Superscript)
+            || liveObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSuperscript)
+            || liveObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSuperscript)))
             return Atspi::Role::Superscript;
         if (m_coreObject->isMathToken())
             return Atspi::Role::Static;

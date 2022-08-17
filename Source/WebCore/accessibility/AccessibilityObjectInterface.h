@@ -1302,7 +1302,6 @@ public:
     virtual AXCoreObject* firstAnonymousBlockChild() const = 0;
 
     virtual std::optional<String> attributeValue(const String&) const = 0;
-    virtual bool hasTagName(const QualifiedName&) const = 0;
     virtual AtomString tagName() const = 0;
 
     virtual VisiblePositionRange visiblePositionRange() const = 0;
@@ -1368,14 +1367,6 @@ public:
 
     virtual String computedRoleString() const = 0;
 
-    // MSAA
-    virtual String stringValueForMSAA() const = 0;
-    virtual String stringRoleForMSAA() const = 0;
-    virtual String nameForMSAA() const = 0;
-    virtual String descriptionForMSAA() const = 0;
-    virtual AccessibilityRole roleValueForMSAA() const = 0;
-
-    virtual String passwordFieldValue() const = 0;
     virtual bool isValueAutofillAvailable() const = 0;
     virtual AutoFillButtonType valueAutofillButtonType() const = 0;
     virtual bool hasARIAValueNow() const = 0;
@@ -1388,21 +1379,12 @@ public:
     // ARIA live-region features.
     virtual bool supportsLiveRegion(bool excludeIfOff = true) const = 0;
     virtual bool isInsideLiveRegion(bool excludeIfOff = true) const = 0;
-    virtual AXCoreObject* liveRegionAncestor(bool excludeIfOff = true) const = 0;
     virtual const String liveRegionStatus() const = 0;
     virtual const String liveRegionRelevant() const = 0;
     virtual bool liveRegionAtomic() const = 0;
     virtual bool isBusy() const = 0;
-
-    virtual bool hasContentEditableAttributeSet() const = 0;
-
-    virtual bool supportsReadOnly() const = 0;
     virtual String readOnlyValue() const = 0;
-
-    virtual bool supportsAutoComplete() const = 0;
     virtual String autoCompleteValue() const = 0;
-
-    virtual bool supportsARIAAttributes() const = 0;
 
     // CSS3 Speech properties.
     virtual OptionSet<SpeakAs> speakAsProperty() const = 0;
@@ -1414,13 +1396,7 @@ public:
     // Scroll this object to a given point in global coordinates of the top-level window.
     virtual void scrollToGlobalPoint(const IntPoint&) const = 0;
 
-    enum class ScrollByPageDirection { Up, Down, Left, Right };
-    virtual bool scrollByPage(ScrollByPageDirection) const = 0;
-    virtual IntPoint scrollPosition() const = 0;
     virtual AccessibilityChildrenVector contents() = 0;
-    virtual IntSize scrollContentsSize() const = 0;
-    virtual IntRect scrollVisibleContentRect() const = 0;
-    virtual void scrollToMakeVisible(const ScrollRectToVisibleOptions&) const = 0;
 
     // All math elements return true for isMathElement().
     virtual bool isMathElement() const = 0;
@@ -1442,8 +1418,6 @@ public:
     virtual bool isMathTableCell() const = 0;
     virtual bool isMathMultiscript() const = 0;
     virtual bool isMathToken() const = 0;
-    virtual bool isMathScriptObject(AccessibilityMathScriptObjectType) const = 0;
-    virtual bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const = 0;
 
     // Root components.
     virtual std::optional<AccessibilityChildrenVector> mathRadicand() = 0;
@@ -1474,11 +1448,6 @@ public:
     virtual void mathPrescripts(AccessibilityMathMultiscriptPairs&) = 0;
     virtual void mathPostscripts(AccessibilityMathMultiscriptPairs&) = 0;
 
-    // Visibility.
-    virtual bool isAXHidden() const = 0;
-    virtual bool isDOMHidden() const = 0;
-    virtual bool isHidden() const = 0;
-
 #if ENABLE(ACCESSIBILITY)
     AccessibilityObjectWrapper* wrapper() const { return m_wrapper.get(); }
     void setWrapper(AccessibilityObjectWrapper* wrapper) { m_wrapper = wrapper; }
@@ -1488,13 +1457,6 @@ public:
     void setWrapper(AccessibilityObjectWrapper*) { }
     void detachWrapper(AccessibilityDetachmentType) { }
 #endif
-
-    virtual void overrideAttachmentParent(AXCoreObject* parent) = 0;
-
-    // a platform-specific method for determining if an attachment is ignored
-    virtual bool accessibilityIgnoreAttachment() const = 0;
-    // gives platforms the opportunity to indicate if and how an object should be included
-    virtual AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const = 0;
 
 #if PLATFORM(IOS_FAMILY)
     virtual int accessibilityPasswordFieldLength() = 0;
@@ -1529,13 +1491,8 @@ public:
     virtual AXCoreObject* editableAncestor() = 0;
     virtual AXCoreObject* highestEditableAncestor() = 0;
 
-    virtual const AccessibilityScrollView* ancestorAccessibilityScrollView(bool includeSelf) const = 0;
     virtual AXCoreObject* webAreaObject() const = 0;
 
-    virtual void setIsIgnoredFromParentData(AccessibilityIsIgnoredFromParentData&) = 0;
-    virtual void clearIsIgnoredFromParentData() = 0;
-    virtual void setIsIgnoredFromParentDataForChild(AXCoreObject*) = 0;
-    
     virtual PAL::SessionID sessionID() const = 0;
     virtual String documentURI() const = 0;
     virtual String documentEncoding() const = 0;

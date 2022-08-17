@@ -40,6 +40,8 @@
     uint64_t m_accessibilityTraitsFromAncestor;
 }
 
+- (WebCore::AccessibilityObject *)axBackingObject;
+
 - (id)accessibilityHitTest:(CGPoint)point;
 - (AccessibilityObjectWrapper *)accessibilityPostProcessHitTest:(CGPoint)point;
 - (BOOL)accessibilityCanFuzzyHitTest;

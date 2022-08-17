@@ -611,39 +611,10 @@ private:
 
     AXCoreObject* firstAnonymousBlockChild() const override;
     std::optional<String> attributeValue(const String&) const override;
-    bool hasTagName(const QualifiedName&) const override;
-    String stringValueForMSAA() const override;
-    String stringRoleForMSAA() const override;
-    String nameForMSAA() const override;
-    String descriptionForMSAA() const override;
-    AccessibilityRole roleValueForMSAA() const override;
-    String passwordFieldValue() const override;
-    AXCoreObject* liveRegionAncestor(bool excludeIfOff = true) const override;
-    bool hasContentEditableAttributeSet() const override;
-    bool supportsReadOnly() const override;
-    bool supportsAutoComplete() const override;
-    bool supportsARIAAttributes() const override;
-    bool scrollByPage(ScrollByPageDirection) const override;
-    IntPoint scrollPosition() const override;
-    IntSize scrollContentsSize() const override;
-    IntRect scrollVisibleContentRect() const override;
-    void scrollToMakeVisible(const ScrollRectToVisibleOptions&) const override;
-    bool isMathScriptObject(AccessibilityMathScriptObjectType) const override;
-    bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const override;
-    bool isAXHidden() const override;
-    bool isDOMHidden() const override;
-    bool isHidden() const override;
-    void overrideAttachmentParent(AXCoreObject* parent) override;
-    bool accessibilityIgnoreAttachment() const override;
-    AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const override;
 #if PLATFORM(COCOA)
     bool hasApplePDFAnnotationAttribute() const override { return boolAttributeValue(AXPropertyName::HasApplePDFAnnotationAttribute); }
 #endif
-    const AccessibilityScrollView* ancestorAccessibilityScrollView(bool includeSelf) const override;
     AXCoreObject* webAreaObject() const override { return objectAttributeValue(AXPropertyName::WebArea); }
-    void setIsIgnoredFromParentData(AccessibilityIsIgnoredFromParentData&) override;
-    void clearIsIgnoredFromParentData() override;
-    void setIsIgnoredFromParentDataForChild(AXCoreObject*) override;
 
 #if PLATFORM(COCOA) && ENABLE(MODEL_ELEMENT)
     Vector<RetainPtr<id>> modelElementChildren() override;
