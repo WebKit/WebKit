@@ -29,6 +29,7 @@
 #include "HTMLNameCache.h"
 #include "HTMLNames.h"
 #include "HTMLToken.h"
+#include "KnownTag.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -238,7 +239,7 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
     case Type::StartTag:
     case Type::EndTag:
         m_selfClosing = token.selfClosing();
-        m_name = HTMLNames::findHTMLTag(token.name());
+        m_name = findTag(token.name());
         if (UNLIKELY(m_name.isNull()))
             m_name = AtomString(token.name().data(), token.name().size());
         initializeAttributes(token.attributes());

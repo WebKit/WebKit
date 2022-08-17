@@ -46,9 +46,10 @@ sub readTags($);
 sub readAttrs($);
 
 my $printFactory = 0; 
+my $printKnownTags = 0;
 my $printWrapperFactory = 0; 
 my $fontNamesIn = "";
-my $tagsFile = "";
+my @tagsFiles = ();
 my $attrsFile = "";
 my $outputDir = ".";
 my %parsedTags = ();
@@ -72,12 +73,13 @@ if ($ENV{CC}) {
 }
 
 GetOptions(
-    'tags=s' => \$tagsFile, 
+    'tags=s' => \@tagsFiles,
     'attrs=s' => \$attrsFile,
     'factory' => \$printFactory,
     'outputDir=s' => \$outputDir,
     'wrapperFactory' => \$printWrapperFactory,
-    'fonts=s' => \$fontNamesIn
+    'fonts=s' => \$fontNamesIn,
+    'knownTags' => \$printKnownTags
 );
 
 mkpath($outputDir);
@@ -167,10 +169,12 @@ END
     exit 0;
 }
 
-die "You must specify at least one of --tags <file> or --attrs <file>" unless (length($tagsFile) || length($attrsFile));
+die "You must specify at least one of --tags <file> or --attrs <file>" unless (@tagsFiles || length($attrsFile));
+die "--knownTags must not be specified with --attrs, --factory, --wrapperFactory, or --fonts" if $printKnownTags && (length($attrsFile) || $printFactory || $printWrapperFactory || length($fontNamesIn));
 
-if (length($tagsFile)) {
-    %allTags = %{readTags($tagsFile)};
+if (!$printKnownTags && @tagsFiles) {
+    die "You must not specify multiple --tags <file> arguments unless --knownTags is also specified" unless @tagsFiles == 1;
+    %allTags = %{readTags($tagsFiles[0])};
     namesToStrings(\%allTags, \%allStrings);
 }
 
@@ -179,29 +183,43 @@ if (length($attrsFile)) {
     namesToStrings(\%allAttrs, \%allStrings);
 }
 
-die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $parameters{namespace};
-die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $parameters{namespaceURI};
+if ($printKnownTags) {
+    %allTags = %{readKnownTags(@tagsFiles)};
+    namesToStrings(\%allTags, \%allStrings);
+}
+
+die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $printKnownTags || $parameters{namespace};
+die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $printKnownTags || $parameters{namespaceURI};
 
 $parameters{namespacePrefix} = $parameters{namespace} unless $parameters{namespacePrefix};
 $parameters{fallbackJSInterfaceName} = $parameters{fallbackInterfaceName} unless $parameters{fallbackJSInterfaceName};
 
-my $typeHelpersBasePath = "$outputDir/$parameters{namespace}ElementTypeHelpers";
-my $namesBasePath = "$outputDir/$parameters{namespace}Names";
-my $factoryBasePath = "$outputDir/$parameters{namespace}ElementFactory";
-my $wrapperFactoryFileName = "$parameters{namespace}ElementWrapperFactory";
+if (!$printKnownTags) {
+    my $typeHelpersBasePath = "$outputDir/$parameters{namespace}ElementTypeHelpers";
+    my $namesBasePath = "$outputDir/$parameters{namespace}Names";
 
-printNamesHeaderFile("$namesBasePath.h");
-printNamesCppFile("$namesBasePath.cpp");
-printTypeHelpersHeaderFile("$typeHelpersBasePath.h");
+    printNamesHeaderFile("$namesBasePath.h");
+    printNamesCppFile("$namesBasePath.cpp");
+    printTypeHelpersHeaderFile("$typeHelpersBasePath.h");
+}
 
 if ($printFactory) {
+    my $factoryBasePath = "$outputDir/$parameters{namespace}ElementFactory";
+
     printFactoryCppFile("$factoryBasePath.cpp");
     printFactoryHeaderFile("$factoryBasePath.h");
 }
 
 if ($printWrapperFactory) {
+    my $wrapperFactoryFileName = "$parameters{namespace}ElementWrapperFactory";
+
     printWrapperFactoryCppFile($outputDir, $wrapperFactoryFileName);
     printWrapperFactoryHeaderFile($outputDir, $wrapperFactoryFileName);
+}
+
+if ($printKnownTags) {
+    printKnownTagsHeaderFile("$outputDir/KnownTag.h");
+    printKnownTagsCppFile("$outputDir/KnownTag.cpp");
 }
 
 ### Hash initialization
@@ -354,6 +372,30 @@ sub readTags($)
     my ($namesFile) = @_;
     %parsedTags = ();
     return readNames($namesFile, \%parsedTags, \&tagsHandler);
+}
+
+sub readKnownTags
+{
+    my @namesFiles = @_;
+    my %allParsedTags = ();
+
+    for my $namesFile (@namesFiles) {
+        readNames($namesFile, \%parsedTags, \&tagsHandler);
+
+        # Ignore duplicate tag names in susbequent files.
+        for my $tag (keys %parsedTags) {
+            unless ($allParsedTags{$tag}) {
+                $allParsedTags{$tag} = $parsedTags{$tag};
+                $allParsedTags{$tag}{namespace} = $parameters{namespace};
+            }
+        }
+
+        %parsedTags = ();
+        %parameters = ();
+    }
+
+    %parsedTags = %allParsedTags;
+    return \%parsedTags;
 }
 
 sub printMacros
@@ -745,9 +787,6 @@ END
     if (keys %allTags) {
         print F "const unsigned $parameters{namespace}TagsCount = ", scalar(keys %allTags), ";\n";
         print F "const WebCore::$parameters{namespace}QualifiedName* const* get$parameters{namespace}Tags();\n";
-        if ($parameters{namespace} eq "HTML") {
-            print F "AtomString find$parameters{namespace}Tag(Span<const UChar>);\n"
-        }
     }
 
     if (keys %allAttrs) {
@@ -759,12 +798,27 @@ END
     close F;
 }
 
+sub printKnownTagsHeaderFile
+{
+    my ($headerPath) = shift;
+    my $F;
+    open F, ">$headerPath";
+
+    printLicenseHeader($F);
+    print F "#include <wtf/text/AtomString.h>\n";
+    print F "\n";
+    print F "namespace WebCore {\n";
+    print F "\n";
+    print F "AtomString findTag(Span<const UChar>);\n";
+    print F "\n";
+    print F "} // namespace WebCore\n";
+    close F;
+}
+
 sub findMaxTagLength
 {
-    my $allTags = shift;
-
     my $maxLength = 0;
-    foreach my $tagName (keys %{$allTags}) {
+    foreach my $tagName (keys %allTags) {
         my $tagLength = length($tagName);
         $maxLength = $tagLength if $tagLength > $maxLength;
     }
@@ -773,14 +827,8 @@ sub findMaxTagLength
 
 sub tagsWithLength
 {
-    my $allAttrs = shift;
     my $expectedLength = shift;
-
-    my @tags = (); 
-    foreach my $tagName (sort keys %{$allAttrs}) {
-        push(@tags, $tagName) if length($tagName) == $expectedLength;
-    }
-    return @tags;
+    return grep { length == $expectedLength } sort keys %allTags;
 }
 
 sub generateFindTagForLength
@@ -799,28 +847,31 @@ sub generateFindTagForLength
             my $lengthToCompare = $length - $currentIndex;
             if ($lengthToCompare == 1) {
                 my $letter = substr($tag, $currentIndex, 1);
+                $letter =~ s/_/-/;
                 print F "${indent}if (buffer[$currentIndex] == '$letter') {\n";
             } else {
                 my $bufferStart = $currentIndex > 0 ? "buffer.data() + $currentIndex" : "buffer.data()";
                 print F "${indent}static constexpr UChar ${tag}Rest[] = { ";
                 for (my $index = $currentIndex; $index < $length; $index = $index + 1) {
                     my $letter = substr($tag, $index, 1);
+                    $letter =~ s/_/-/;
                     print F "'$letter', ";
                 }
                 print F "};\n";
                 print F "${indent}if (!memcmp($bufferStart, ${tag}Rest, $lengthToCompare * sizeof(UChar))) {\n";
             }
-            print F "$indent    return ${tag}Tag->localName();\n";
+            print F "$indent    return $allTags{$tag}{namespace}Names::${tag}Tag->localName();\n";
             print F "$indent}\n";
             print F "${indent}return { };\n";
         } else {
-            print F "${indent}return ${tag}Tag->localName();\n";
+            print F "${indent}return $allTags{$tag}{namespace}Names::${tag}Tag->localName();\n";
         }
         return;
     }
     for (my $i = 0; $i < $tagCount;) {
         my $tag = $tags[$i];
         my $letterAtIndex = substr($tag, $currentIndex, 1);
+        $letterAtIndex =~ s/_/-/;
         print F "${indent}if (buffer[$currentIndex] == '$letterAtIndex') {\n";
         my @tagsWithPrefix = ($tag);
         for ($i = $i + 1; $i < $tagCount; $i = $i + 1) {
@@ -868,25 +919,6 @@ sub printNamesCppFile
         print F "    };\n";
         print F "    return $parameters{namespace}Tags;\n";
         print F "}\n";
-
-        if ($parameters{namespace} eq "HTML") {
-            print F "\nAtomString find$parameters{namespace}Tag(Span<const UChar> buffer)\n{\n";
-            my $maxTagLength = findMaxTagLength(\%allTags);
-            print F "    switch (buffer.size()) {\n";
-            for (my $length = 1; $length <= $maxTagLength; $length = $length + 1) {
-                my @tags = tagsWithLength(\%allTags, $length);
-                next unless scalar @tags > 0;
-                print F "    case $length: {\n";
-                generateFindTagForLength("        ", \@tags, $length, 0);
-                print F "        break;\n";
-                print F "    }\n";
-            }
-            print F "    default:\n";
-            print F "        break;\n";
-            print F "    };\n";
-            print F "    return { };\n";
-            print F "}\n";
-        }
     }
 
     if (keys %allAttrs) {
@@ -923,6 +955,44 @@ sub printNamesCppFile
     }
 
     print F "}\n\n} }\n\n";
+    close F;
+}
+
+sub printKnownTagsCppFile
+{
+    my $cppPath = shift;
+    my $F;
+    open F, ">$cppPath";
+
+    printLicenseHeader($F);
+    print F "#include \"config.h\"\n";
+    print F "#include \"KnownTag.h\"\n";
+    print F "\n";
+    my %allNamespaces = map { $_->{namespace} => 1 } values %allTags;
+    for my $namespace (sort keys %allNamespaces) {
+        print F "#include \"${namespace}Names.h\"\n";
+    }
+    print F "\n";
+    print F "namespace WebCore {\n";
+    print F "\n";
+    print F "AtomString findTag(Span<const UChar> buffer)\n{\n";
+    my $maxTagLength = findMaxTagLength();
+    print F "    switch (buffer.size()) {\n";
+    for (my $length = 1; $length <= $maxTagLength; $length = $length + 1) {
+        my @tags = tagsWithLength($length);
+        next unless scalar @tags > 0;
+        print F "    case $length: {\n";
+        generateFindTagForLength("        ", \@tags, $length, 0);
+        print F "        break;\n";
+        print F "    }\n";
+    }
+    print F "    default:\n";
+    print F "        break;\n";
+    print F "    };\n";
+    print F "    return { };\n";
+    print F "}\n";
+    print F "\n";
+    print F "} // namespace WebCore\n";
     close F;
 }
 

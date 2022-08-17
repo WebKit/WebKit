@@ -1622,6 +1622,8 @@ all : \
     JSMathMLElementWrapperFactory.h \
     JSSVGElementWrapperFactory.cpp \
     JSSVGElementWrapperFactory.h \
+    KnownTag.cpp \
+    KnownTag.h \
     LocalizableAdditions.strings.out \
     SVGElementFactory.cpp \
     SVGElementFactory.h \
@@ -2084,6 +2086,20 @@ MATH_ML_GENERATED_PATTERNS = $(subst .,%,$(MATH_ML_GENERATED_FILES))
 all : $(MATH_ML_GENERATED_FILES)
 $(MATH_ML_GENERATED_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/mathml/mathtags.in $(WebCore)/mathml/mathattrs.in
 	$(PERL) $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory
+
+# --------
+
+# All known tag names
+
+KNOWN_TAGS_GENERATED_FILES = \
+    KnownTag.cpp \
+    KnownTag.h \
+#
+KNOWN_TAGS_GENERATED_PATTERNS = $(subst .,%,$(KNOWN_TAGS_GENERATED_FILES))
+
+all : $(KNOWN_TAGS_GENERATED_FILES)
+$(KNOWN_TAGS_GENERATED_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/html/HTMLTagNames.in $(WebCore)/svg/svgtags.in $(WebCore)/mathml/mathtags.in
+	$(PERL) $< --knownTags --tags $(WebCore)/html/HTMLTagNames.in --tags $(WebCore)/svg/svgtags.in --tags $(WebCore)/mathml/mathtags.in
 
 # --------
 

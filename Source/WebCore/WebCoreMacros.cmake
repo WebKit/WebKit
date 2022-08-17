@@ -241,3 +241,20 @@ function(GENERATE_DOM_NAMES _namespace _attrs)
         COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --outputDir ${WebCore_DERIVED_SOURCES_DIR} ${_arguments} ${_additionArguments}
         VERBATIM)
 endfunction()
+
+
+macro(GENERATE_KNOWN_TAGS _tagsfiles)
+    set(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_names.pl)
+    set(_arguments --knownTags)
+    foreach (f ${_tagsfiles})
+        set(_arguments "${_arguments}" --tags ${f})
+    endforeach ()
+    set(_outputfiles ${WebCore_DERIVED_SOURCES_DIR}/KnownTag.cpp ${WebCore_DERIVED_SOURCES_DIR}/KnownTag.h)
+
+    add_custom_command(
+        OUTPUT  ${_outputfiles}
+        MAIN_DEPENDENCY ${_tagsfiles}
+        DEPENDS ${MAKE_NAMES_DEPENDENCIES} ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
+        COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --outputDir ${WebCore_DERIVED_SOURCES_DIR} ${_arguments}
+        VERBATIM)
+endmacro()

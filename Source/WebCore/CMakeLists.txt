@@ -2573,6 +2573,9 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/XMLNSNames.cpp)
 GENERATE_DOM_NAMES(XML ${WEBCORE_DIR}/xml/xmlattrs.in)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/XMLNames.cpp)
 
+GENERATE_KNOWN_TAGS(${WEBCORE_DIR}/html/HTMLTagNames.in ${WEBCORE_DIR}/svg/svgtags.in ${WEBCORE_DIR}/mathml/mathtags.in)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/KnownTag.cpp)
+
 WEBKIT_COMPUTE_SOURCES(WebCore)
 
 if (MSVC)
