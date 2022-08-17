@@ -52,7 +52,7 @@ Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSSSelecto
     return keys;
 };
 
-void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClassType pseudoClass, bool value, InvalidationScope invalidationScope)
+void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClassType pseudoClass, Value value, InvalidationScope invalidationScope)
 {
     bool shouldInvalidateCurrent = false;
     bool mayAffectStyleInShadowTree = false;
@@ -76,7 +76,7 @@ void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClass
         collectRuleSets(key, value, invalidationScope);
 }
 
-void PseudoClassChangeInvalidation::collectRuleSets(const PseudoClassInvalidationKey& key, bool value, InvalidationScope invalidationScope)
+void PseudoClassChangeInvalidation::collectRuleSets(const PseudoClassInvalidationKey& key, Value value, InvalidationScope invalidationScope)
 {
     auto& ruleSets = m_element.styleResolver().ruleSets();
     auto* invalidationRuleSets = ruleSets.pseudoClassInvalidationRuleSets(key);
@@ -101,7 +101,13 @@ void PseudoClassChangeInvalidation::collectRuleSets(const PseudoClassInvalidatio
         if (!shouldInvalidate)
             continue;
 
-        bool invalidateBeforeChange = invalidationRuleSet.isNegation == IsNegation::Yes ? value : !value;
+        if (value == Value::Any) {
+            Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
+            Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
+            continue;
+        }
+
+        bool invalidateBeforeChange = invalidationRuleSet.isNegation == IsNegation::Yes ? value == Value::True : value == Value::False;
         if (invalidateBeforeChange)
             Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
         else

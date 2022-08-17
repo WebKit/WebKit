@@ -204,7 +204,7 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const Vector<A
         language = downcast<WebVTTElement>(element).language();
     else
 #endif
-        language = element.computeInheritedLanguage();
+        language = element.effectiveLang();
 
     if (language.isEmpty())
         return false;

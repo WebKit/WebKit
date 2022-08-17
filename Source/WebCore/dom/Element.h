@@ -420,6 +420,7 @@ public:
     void setChildIndex(unsigned);
 
     WEBCORE_EXPORT AtomString computeInheritedLanguage() const;
+    AtomString effectiveLang() const;
     Locale& locale() const;
 
     virtual bool accessKeyAction(bool /*sendToAnyEvent*/) { return false; }
