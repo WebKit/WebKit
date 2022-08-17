@@ -106,6 +106,7 @@
 #include "ScriptedAnimationController.h"
 #include "ScrollAnchoringController.h"
 #include "ScrollAnimator.h"
+#include "ScrollLogicalPosition.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollbarTheme.h"
 #include "ScrollingCoordinator.h"
@@ -2446,13 +2447,29 @@ void FrameView::scrollToFocusedElementInternal()
     if (!updateTarget)
         return;
 
+    // Get the scroll-margin of the shadow host when we're inside a user agent shadow root.
+    if (updateTarget->containingShadowRoot() && updateTarget->containingShadowRoot()->mode() == ShadowRootMode::UserAgent)
+        updateTarget = updateTarget->shadowHost();
+
     auto* renderer = updateTarget->renderer();
     if (!renderer || renderer->isWidget())
         return;
 
+    auto writingMode = renderer->style().writingMode();
+    auto alignX = toScrollAlignmentForInlineDirection(std::nullopt, writingMode, renderer->style().isLeftToRightDirection());
+    auto alignY = toScrollAlignmentForBlockDirection(std::nullopt, writingMode);
+
+    bool isHorizontal = renderer->style().isHorizontalWritingMode();
+    ScrollRectToVisibleOptions visibleOptions {
+        m_selectionRevealModeForFocusedElement,
+        isHorizontal ? alignX : alignY,
+        isHorizontal ? alignY : alignX,
+        ShouldAllowCrossOriginScrolling::No,
+    };
+
     bool insideFixed;
     LayoutRect absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
-    FrameView::scrollRectToVisible(absoluteBounds, *renderer, insideFixed, { m_selectionRevealModeForFocusedElement, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No });
+    FrameView::scrollRectToVisible(absoluteBounds, *renderer, insideFixed, visibleOptions);
 }
 
 void FrameView::textFragmentIndicatorTimerFired()

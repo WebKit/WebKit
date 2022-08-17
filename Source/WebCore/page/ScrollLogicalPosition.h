@@ -19,13 +19,18 @@
 
 #pragma once
 
-namespace WebCore {
+#include "ScrollAlignment.h"
+#include "WritingMode.h"
 
+namespace WebCore {
 enum class ScrollLogicalPosition : uint8_t {
     Start = 0,
     Center,
     End,
     Nearest
 };
+
+ScrollAlignment toScrollAlignmentForInlineDirection(std::optional<ScrollLogicalPosition>, WritingMode, bool isRTL);
+ScrollAlignment toScrollAlignmentForBlockDirection(std::optional<ScrollLogicalPosition>, WritingMode);
 
 }

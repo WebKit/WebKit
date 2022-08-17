@@ -1823,6 +1823,7 @@ page/ResourceUsageOverlay.cpp
 page/ResourceUsageThread.cpp
 page/Screen.cpp
 page/ScrollBehavior.cpp
+page/ScrollLogicalPosition.cpp
 page/SecurityOrigin.cpp
 page/SecurityOriginData.cpp
 page/SecurityPolicy.cpp
