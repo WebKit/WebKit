@@ -60,6 +60,7 @@ depends:
 - sdk/ruby-webrick.bst
 - sdk/sccache.bst
 - sdk/sparkle-cdm.bst
+- sdk/unifdef.bst
 - sdk/webrtc-audio-processing-1.bst
 - sdk/woff2.bst
 - sdk/wpebackend-fdo.bst
