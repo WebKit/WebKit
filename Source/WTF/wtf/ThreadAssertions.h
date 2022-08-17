@@ -43,7 +43,7 @@ namespace WTF {
 // private:
 //     void doTaskImpl() WTF_REQUIRES_CAPABILITY(m_ownerThread);
 //     int m_value WTF_GUARDED_BY_CAPABILITY(m_ownerThread) { 0 };
-//     NO_UNIQUE_ADDRESS ThreadAssertion m_ownerThread;
+//     [[no_unique_address]] ThreadAssertion m_ownerThread;
 // };
 class WTF_CAPABILITY("is current") ThreadAssertion {
 public:
