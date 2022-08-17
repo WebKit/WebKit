@@ -32,21 +32,19 @@
 #include "DataReference.h"
 
 namespace WebKit {
+static size_t ruleListDataSize(size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize)
+{
+    return topURLFiltersBytecodeOffset + topURLFiltersBytecodeSize;
+}
 
 void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
 {
+    ASSERT(data->size() >= ruleListDataSize(topURLFiltersBytecodeOffset, topURLFiltersBytecodeSize));
     encoder << identifier;
 
     SharedMemory::Handle handle;
     data->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    
-#if OS(DARWIN) || OS(WINDOWS)
-    // Exact data size is the last bytecode offset plus its size.
-    uint64_t dataSize = topURLFiltersBytecodeOffset + topURLFiltersBytecodeSize;
-#else
-    uint64_t dataSize = 0;
-#endif
-    encoder << SharedMemory::IPCHandle { WTFMove(handle), dataSize };
+    encoder << handle;
 
     encoder << actionsOffset;
     encoder << actionsSize;
@@ -65,11 +63,8 @@ std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::de
     if (!identifier)
         return std::nullopt;
 
-    SharedMemory::IPCHandle ipcHandle;
-    if (!decoder.decode(ipcHandle))
-        return std::nullopt;
-    auto data = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
-    if (!data)
+    SharedMemory::Handle handle;
+    if (!decoder.decode(handle))
         return std::nullopt;
 
     std::optional<size_t> actionsOffset;
@@ -111,7 +106,11 @@ std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::de
     decoder >> frameURLFiltersBytecodeSize;
     if (!frameURLFiltersBytecodeSize)
         return std::nullopt;
-
+    auto data = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    if (!data)
+        return std::nullopt;
+    if (data->size() < ruleListDataSize(*topURLFiltersBytecodeOffset, *topURLFiltersBytecodeSize))
+        return std::nullopt;
     return {{
         WTFMove(*identifier),
         data.releaseNonNull(),

@@ -621,16 +621,16 @@ void WebPageProxy::performActionOnElement(uint32_t action)
     });
 }
 
-void WebPageProxy::saveImageToLibrary(const SharedMemory::IPCHandle& imageHandle, const String& authorizationToken)
+void WebPageProxy::saveImageToLibrary(const SharedMemory::Handle& imageHandle, const String& authorizationToken)
 {
-    MESSAGE_CHECK(!imageHandle.handle.isNull());
+    MESSAGE_CHECK(!imageHandle.isNull());
     MESSAGE_CHECK(isValidPerformActionOnElementAuthorizationToken(authorizationToken));
 
-    auto sharedMemoryBuffer = SharedMemory::map(imageHandle.handle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemoryBuffer = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return;
 
-    auto buffer = sharedMemoryBuffer->createSharedBuffer(imageHandle.dataSize);
+    auto buffer = sharedMemoryBuffer->createSharedBuffer(sharedMemoryBuffer->size());
     pageClient().saveImageToLibrary(WTFMove(buffer));
 }
 

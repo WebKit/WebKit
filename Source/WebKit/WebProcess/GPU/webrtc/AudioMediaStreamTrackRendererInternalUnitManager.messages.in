@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 messages -> AudioMediaStreamTrackRendererInternalUnitManager NotRefCounted {
-    AudioStorageChanged(WebKit::SharedMemory::IPCHandle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames, IPC::Semaphore captureSemaphore, MediaTime mediaTime, size_t frameChunkSize);
+    AudioStorageChanged(WebKit::SharedMemory::Handle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames, IPC::Semaphore captureSemaphore, MediaTime mediaTime, size_t frameChunkSize);
 }
 
 #endif

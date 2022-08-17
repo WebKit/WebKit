@@ -149,7 +149,6 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     NSURLResponse *response = image->response().nsURLResponse();
     
     auto imageBuffer = image->image()->data();
-    size_t imageSize = imageBuffer->size();
 
     SharedMemory::Handle imageHandle;
     {
@@ -160,13 +159,11 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     }
     RetainPtr<CFDataRef> data = archive ? archive->rawDataRepresentation() : 0;
     SharedMemory::Handle archiveHandle;
-    size_t archiveSize = 0;
     if (data) {
         auto archiveBuffer = SharedBuffer::create((__bridge NSData *)data.get());
         auto archiveSharedMemoryBuffer = SharedMemory::copyBuffer(archiveBuffer.get());
         if (!archiveSharedMemoryBuffer)
             return;
-        archiveSize = archiveBuffer->size();
         archiveSharedMemoryBuffer->createHandle(archiveHandle, SharedMemory::Protection::ReadOnly);
     }
 
@@ -177,7 +174,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
             filename = downloadFilename;
     }
 
-    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, SharedMemory::IPCHandle { WTFMove(imageHandle), imageSize }, filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url), SharedMemory::IPCHandle { WTFMove(archiveHandle), archiveSize }, element.document().originIdentifierForPasteboard()));
+    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTFMove(imageHandle), filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url), WTFMove(archiveHandle), element.document().originIdentifierForPasteboard()));
 }
 
 #else
