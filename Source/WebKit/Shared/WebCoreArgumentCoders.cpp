@@ -37,7 +37,6 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
-#include <WebCore/ByteArrayPixelBuffer.h>
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/CacheStorageConnection.h>
 #include <WebCore/CompositionUnderline.h>
@@ -3198,26 +3197,5 @@ std::optional<UnixFileDescriptor> ArgumentCoder<UnixFileDescriptor>::decode(Deco
 }
 
 #endif
-
-template<class Encoder>
-void ArgumentCoder<PixelBuffer>::encode(Encoder& encoder, const PixelBuffer& pixelBuffer)
-{
-    if (LIKELY(is<const ByteArrayPixelBuffer>(pixelBuffer))) {
-        downcast<const ByteArrayPixelBuffer>(pixelBuffer).encode(encoder);
-        return;
-    }
-    ASSERT_NOT_REACHED();
-}
-
-std::optional<Ref<PixelBuffer>> ArgumentCoder<PixelBuffer>::decode(Decoder& decoder)
-{
-    return ByteArrayPixelBuffer::decode(decoder);
-}
-
-template
-void ArgumentCoder<PixelBuffer>::encode<Encoder>(Encoder&, const PixelBuffer&);
-
-template
-void ArgumentCoder<PixelBuffer>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const PixelBuffer&);
 
 } // namespace IPC

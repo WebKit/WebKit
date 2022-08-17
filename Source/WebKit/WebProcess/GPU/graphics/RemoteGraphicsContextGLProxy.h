@@ -85,6 +85,7 @@ public:
     void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei> countsOffsetsAndInstanceCounts, GCGLenum type) final;
     void multiDrawArraysInstancedBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei, const GCGLuint> firstsCountsInstanceCountsAndBaseInstances) final;
     void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei, const GCGLint, const GCGLuint> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, GCGLenum type) final;
+    RefPtr<WebCore::PixelBuffer> paintRenderingResultsToPixelBuffer() final;
 
     // Functions with a generated implementation. This list is used by generate-gpup-webgl script.
     bool moveErrorsToSyntheticErrorList() final;
@@ -333,7 +334,6 @@ public:
     void drawArraysInstancedBaseInstanceANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei instanceCount, GCGLuint baseInstance) final;
     void drawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei instanceCount, GCGLint baseVertex, GCGLuint baseInstance) final;
     void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLSpan<GCGLint> params) final;
-    RefPtr<WebCore::PixelBuffer> paintRenderingResultsToPixelBuffer() final;
     // End of list used by generate-gpup-webgl script.
 
     static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);

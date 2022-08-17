@@ -138,6 +138,7 @@ protected:
     void multiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& countsOffsetsAndInstanceCounts, uint32_t type);
     void multiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t>&& firstsCountsInstanceCountsAndBaseInstances);
     void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t>&& countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type);
+    void paintRenderingResultsToPixelBuffer(CompletionHandler<void(std::optional<IPC::PixelBufferReference>&&)>&&);
 
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
 

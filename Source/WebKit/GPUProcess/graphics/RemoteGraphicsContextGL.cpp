@@ -33,7 +33,6 @@
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteGraphicsContextGLProxyMessages.h"
 #include "StreamConnectionWorkQueue.h"
-#include <WebCore/ByteArrayPixelBuffer.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsContextGLOpenGL.h>
 #include <WebCore/NotImplemented.h>
@@ -387,6 +386,15 @@ void RemoteGraphicsContextGL::multiDrawElementsInstancedBaseVertexBaseInstanceAN
     const Vector<GCGLint> baseVertices = vectorCopyCast<GCGLint, 3>(countsOffsetsInstanceCountsBaseVerticesAndBaseInstances);
     const Vector<GCGLuint> baseInstances = vectorCopyCast<GCGLuint, 4>(countsOffsetsInstanceCountsBaseVerticesAndBaseInstances);
     m_context->multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, GCGLSpanTuple { counts.data(), offsets, instanceCounts.data(), baseVertices.data(), baseInstances.data(), counts.size() }, type);
+}
+
+void RemoteGraphicsContextGL::paintRenderingResultsToPixelBuffer(CompletionHandler<void(std::optional<IPC::PixelBufferReference>&&)>&& completionHandler)
+{
+    std::optional<IPC::PixelBufferReference> returnValue;
+    assertIsCurrent(workQueue());
+    if (auto pixelBuffer = m_context->paintRenderingResultsToPixelBuffer())
+        returnValue = pixelBuffer.releaseNonNull();
+    completionHandler(WTFMove(returnValue));
 }
 
 } // namespace WebKit
