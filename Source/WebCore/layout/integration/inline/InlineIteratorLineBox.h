@@ -63,6 +63,7 @@ public:
     float contentLogicalLeft() const;
     float contentLogicalRight() const;
     float contentLogicalWidth() const;
+    float contentLogicalHeight() const;
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const;
     float contentLogicalBottomAdjustedForFollowingLineBox() const;
@@ -214,6 +215,11 @@ inline float LineBox::contentLogicalRight() const
 inline float LineBox::contentLogicalWidth() const
 {
     return contentLogicalRight() - contentLogicalLeft();
+}
+
+inline float LineBox::contentLogicalHeight() const
+{
+    return contentLogicalBottom() - contentLogicalTop();
 }
 
 inline bool LineBox::isHorizontal() const

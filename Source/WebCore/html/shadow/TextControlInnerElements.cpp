@@ -221,6 +221,8 @@ std::optional<Style::ElementStyle> TextControlPlaceholderElement::resolveCustomS
     if (is<HTMLInputElement>(controlElement)) {
         auto& inputElement = downcast<HTMLInputElement>(controlElement);
         style.renderStyle->setTextOverflow(inputElement.shouldTruncateText(*shadowHostStyle) ? TextOverflow::Ellipsis : TextOverflow::Clip);
+        style.renderStyle->setPaddingTop(Length { 0, LengthType::Fixed });
+        style.renderStyle->setPaddingBottom(Length { 0, LengthType::Fixed });
     }
     return style;
 }

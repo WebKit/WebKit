@@ -32,6 +32,7 @@
 #include "FrameView.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "InlineIteratorLineBox.h"
 #include "LocalizedStrings.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
@@ -198,7 +199,9 @@ void RenderTextControlSingleLine::layout()
         auto* containerBox = innerTextRenderer ? innerTextRenderer : innerBlockRenderer ? innerBlockRenderer : containerRenderer;
         if (containerBox) {
             // Center vertical align the placeholder content.
-            auto logicalTop = placeholderTopLeft.y() + (containerBox->logicalHeight() / 2 - placeholderBox->logicalHeight() / 2);
+            auto placeholderLineBox = InlineIterator::firstLineBoxFor(downcast<RenderBlockFlow>(*placeholderBox));
+            auto placeholderLineLogicalHeight = LayoutUnit { placeholderLineBox->contentLogicalHeight() };
+            auto logicalTop = placeholderTopLeft.y() + (containerBox->logicalHeight() / 2 - placeholderLineLogicalHeight / 2);
             placeholderBox->setLogicalTop(logicalTop);
         }
         if (!placeholderBoxHadLayout && placeholderBox->checkForRepaintDuringLayout()) {
