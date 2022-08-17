@@ -1834,8 +1834,12 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.shouldUseCustomStoragePaths = m_configuration->shouldUseCustomStoragePaths();
     networkSessionParameters.perOriginStorageQuota = perOriginStorageQuota();
     networkSessionParameters.perThirdPartyOriginStorageQuota = perThirdPartyOriginStorageQuota();
-    networkSessionParameters.localStorageDirectory = resolvedLocalStorageDirectory();
-    createHandleFromResolvedPathIfPossible(networkSessionParameters.localStorageDirectory, networkSessionParameters.localStorageDirectoryExtensionHandle);
+    if (auto directory = resolvedLocalStorageDirectory(); !directory.isEmpty()) {
+        networkSessionParameters.localStorageDirectory = directory;
+        // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(directory))
+            networkSessionParameters.localStorageDirectoryExtensionHandle = WTFMove(*handle);
+    }
     networkSessionParameters.indexedDBDirectory = resolvedIndexedDBDatabaseDirectory();
     createHandleFromResolvedPathIfPossible(networkSessionParameters.indexedDBDirectory, networkSessionParameters.indexedDBDirectoryExtensionHandle);
     networkSessionParameters.generalStorageDirectory = resolvedGeneralStorageDirectory();
