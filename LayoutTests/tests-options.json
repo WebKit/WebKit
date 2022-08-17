@@ -482,6 +482,18 @@
     "imported/w3c/html/syntax/xmldecl/xmldecl-3.html": [
         "slow"
     ],
+    "imported/w3c/quirks/hashless-hex-color/limited-quirks.html": [
+        "slow"
+    ],
+    "imported/w3c/quirks/hashless-hex-color/no-quirks.html": [
+        "slow"
+    ],
+    "imported/w3c/quirks/hashless-hex-color/quirks.html": [
+        "slow"
+    ],
+    "imported/w3c/quirks/unitless-length/no-quirks.html": [
+        "slow"
+    ],
     "imported/w3c/web-animations/timing-model/animations/updating-the-finished-state.html": [
         "slow"
     ],
