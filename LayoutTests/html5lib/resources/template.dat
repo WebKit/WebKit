@@ -1338,3 +1338,16 @@
 |   <body>
 |     <template>
 |       content
+
+#data
+<template><a><table><a>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       content
+|         <a>
+|           <a>
+|           <table>
+|   <body>
