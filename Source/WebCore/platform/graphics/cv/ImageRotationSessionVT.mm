@@ -82,6 +82,7 @@ void ImageRotationSessionVT::initialize(const RotationProperties& rotation, Floa
         size = size.transposedSize();
 
     m_rotatedSize = expandedIntSize(size);
+    m_rotationPool = nullptr;
 
     VTImageRotationSessionRef rawRotationSession = nullptr;
     VTImageRotationSessionCreate(kCFAllocatorDefault, m_rotationProperties.angle, &rawRotationSession);
