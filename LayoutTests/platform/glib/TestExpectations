@@ -1244,8 +1244,6 @@ webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/238738 http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
 webkit.org/b/238738238738 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Failure ]
 
-webkit.org/b/208369 http/tests/workers/service/basic-timeout.https.html [ Failure Timeout Pass ]
-
 webkit.org/b/215638 http/tests/websocket/tests/hybi/invalid-continuation.html [ Failure ]
 webkit.org/b/215638 http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html [ Failure ]
 

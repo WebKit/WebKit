@@ -1,14 +1,13 @@
+Tests various navigation time out cases for service workers.
 
-URL 0 - https://127.0.0.1:8443/workers/service/resources/timeout-fallback.html
-Status code 0 - 200
-Source' header 0 - null
-URL 1 - https://127.0.0.1:8443/workers/service/resources/timeout-no-fallback.html
-Status code 1 - 404
-Source' header 1 - null
-URL 2 - https://127.0.0.1:8443/workers/service/resources/succeed-fallback-check.py
-Status code 2 - 200
-Source' header 2 - network
-URL 3 - https://127.0.0.1:8443/workers/service/resources/succeed-fallback-check.py
-Status code 3 - 200
-Source' header 3 - network
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frameText(testFrame1) is "Timeout resource fetched from network"
+PASS frameText(testFrame2) is "Not Found"
+PASS frameText(testFrame3) is "Success!"
+PASS frameText(testFrame4) is "Success!"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

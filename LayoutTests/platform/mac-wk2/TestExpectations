@@ -993,8 +993,6 @@ webkit.org/b/199089 [ Debug ] plugins/window-open.html [ Skip ]
 
 webkit.org/b/205808 fast/text/international/unicode-bidi-other-neutrals.html [ Pass Failure ]
 
-webkit.org/b/206864 http/tests/workers/service/basic-timeout.https.html [ Pass Failure Timeout ]
-
 # <rdar://problem/60929239> [ macOS wk2 ] editing/selection/caret-at-bidi-boundary.html is a flaky timeout
 webkit.org/b/206696 editing/selection/caret-at-bidi-boundary.html [ Pass Timeout ]
 
