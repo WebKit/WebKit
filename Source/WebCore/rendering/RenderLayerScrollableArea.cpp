@@ -1663,7 +1663,7 @@ void RenderLayerScrollableArea::updateScrollableAreaSet(bool hasOverflow)
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     if (addedOrRemoved) {
-        if (isScrollable && !canUseCompositedScrolling())
+        if (needsToBeRegistered && !canUseCompositedScrolling())
             registerAsTouchEventListenerForScrolling();
         else {
             // We only need the touch listener for unaccelerated overflow scrolling, so if we became
