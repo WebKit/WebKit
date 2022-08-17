@@ -244,6 +244,19 @@ index ade92ae2dbfa4d27cfe40442f5811e94a84ca6ec..648613409c9da7800f5645db0d1ccf24
      if (@available(ios 14.0, macOS 11.0, *))
      {
          return [mMetalDevice supports32BitFloatFiltering];
+diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
+index 3032feb4fc1fb7761e2e3127c75ebf10cf5fe2b8..696df7dd99727e3220b219e93605c4a67c27553a 100644
+--- a/src/libANGLE/renderer/metal/ProgramMtl.mm
++++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
+@@ -173,7 +173,7 @@ void InitArgumentBufferEncoder(mtl::Context *context,
+                                uint32_t bufferIndex,
+                                ProgramArgumentBufferEncoderMtl *encoder)
+ {
+-    encoder->metalArgBufferEncoder = [function newArgumentEncoderWithBufferIndex:bufferIndex];
++    encoder->metalArgBufferEncoder = mtl::adoptObjCObj([function newArgumentEncoderWithBufferIndex:bufferIndex]);
+     if (encoder->metalArgBufferEncoder)
+     {
+         encoder->bufferPool.initialize(context, encoder->metalArgBufferEncoder.get().encodedLength,
 diff --git a/src/libANGLE/renderer/metal/mtl_buffer_pool.h b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
 index c3be11f78156c7fab4ee8a90733de2f3b049de7e..204ebb949873112c010242b2b16b0860cd40c00a 100644
 --- a/src/libANGLE/renderer/metal/mtl_buffer_pool.h
