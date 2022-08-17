@@ -186,7 +186,7 @@ class GitHubEWS(GitHub):
     ICON_BUILD_FAIL = u'\U0000274C'
     ICON_BUILD_WAITING = u'\U000023F3'
     ICON_BUILD_ONGOING = u'![loading](https://user-images.githubusercontent.com/3098702/171232313-daa606f1-8fd6-4b0f-a20b-2cb93c43d19b.png)'
-    ICON_BUILD_ERROR = u'\U0001F6D1'  # FIXME: Update this icon with a better one
+    ICON_BUILD_ERROR = u'\U0001F4A5'
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
     STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
     STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],  # FIXME: generate this list dynamically to have merge queue show up on top
