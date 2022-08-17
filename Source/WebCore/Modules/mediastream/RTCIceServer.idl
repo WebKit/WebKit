@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+enum RTCIceCredentialType {
+  "password"
+};
+
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
@@ -31,5 +35,5 @@
     required (DOMString or sequence<DOMString>) urls;
     DOMString username;
     DOMString credential;
-    // FIXME 169662: missing credentialType
+    RTCIceCredentialType credentialType = "password";
 };

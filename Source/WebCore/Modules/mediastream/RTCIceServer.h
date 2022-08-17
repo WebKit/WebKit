@@ -34,9 +34,12 @@
 namespace WebCore {
 
 struct RTCIceServer {
+    enum class CredentialType { Password };
+
     std::variant<String, Vector<String>> urls;
-    String credential;
     String username;
+    String credential;
+    CredentialType credentialType { CredentialType::Password };
 };
 
 } // namespace WebCore
