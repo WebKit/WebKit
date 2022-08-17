@@ -26,13 +26,14 @@
 #pragma once
 
 #if USE(APPLE_INTERNAL_SDK)
-#include <System/sys/kdebug.h>
+#include <sys/kdebug_private.h>
 #define HAVE_KDEBUG_H 1
 #endif
 
 // No namespaces because this file has to be includable from C and Objective-C.
 
-// Reserved component code. Do not change this.
+// Reserved kdebug codes. Do not change these.
+#define DBG_APPS_WEBKIT_MISC 0xFF
 #define WEBKIT_COMPONENT 47
 
 // Trace point codes can be up to 14 bits (0-16383).
@@ -201,10 +202,8 @@ WTF_EXTERN_C_END
 // intervals with the same name (i.e. used to create an os_signpost_id). If you don't care about
 // handling nested intervals, then pass `nullptr` as the pointer argument.
 
-// These macros emit signposts into logd's buffer only when WebKit's ktrace filter is enabled
-// (matching the behavior of WTF::tracePoint and WTF::TraceScope). You should probably use these
-// macros instead of the `SignpostAlways` variants below to reduce the chances of bloating the
-// persistent log.
+// These macros emit signposts into logd's buffer only when tracing is enabled. You should generally
+// prefer using these macros instead of the SignpostAlways variants to avoid unnecessary log bloat.
 #define WTFEmitSignpost(pointer, name, ...) \
     WTFEmitSignpostWithFunction(os_signpost_event_emit, (pointer), name, ##__VA_ARGS__)
 
@@ -219,7 +218,7 @@ WTF_EXTERN_C_END
 
 #define WTFEmitSignpostWithFunction(emitFunc, pointer, name, ...) \
 do { \
-    if (UNLIKELY(kdebug_is_enabled(ARIADNEDBG_CODE(WEBKIT_COMPONENT, 0)))) { \
+    if (UNLIKELY(kdebug_is_enabled(KDBG_EVENTID(DBG_APPS, DBG_APPS_WEBKIT_MISC, 0)))) { \
         WTFEmitSignpostAlwaysWithFunction(emitFunc, pointer, name, ##__VA_ARGS__); \
     } \
 } while (0)
