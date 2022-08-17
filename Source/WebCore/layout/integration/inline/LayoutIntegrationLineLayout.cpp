@@ -268,12 +268,9 @@ static inline LayoutSize scrollbarLogicalSize(const RenderBox& renderer)
     // Scrollbars eat into the padding box area. They never stretch the border box but they may shrink the padding box.
     // In legacy render tree, RenderBox::contentWidth/contentHeight values are adjusted to accomodate the scrollbar width/height.
     // e.g. <div style="width: 10px; overflow: scroll;">content</div>, RenderBox::contentWidth() won't be returning the value of 10px but instead 0px (10px - 15px).
-    auto isHorizontalWritingMode = renderer.style().isHorizontalWritingMode();
-    auto visualHorizontalSpaceReservedForScrollbar = renderer.paddingBoxRectIncludingScrollbar().width() - renderer.paddingBoxWidth();
-    auto visualVerticalSpaceReservedForScrollbar = renderer.paddingBoxRectIncludingScrollbar().height() - renderer.paddingBoxHeight();
-    if (isHorizontalWritingMode)
-        return { visualHorizontalSpaceReservedForScrollbar, visualVerticalSpaceReservedForScrollbar };
-    return { visualVerticalSpaceReservedForScrollbar, visualHorizontalSpaceReservedForScrollbar };
+    auto horizontalSpaceReservedForScrollbar = std::max(0_lu, renderer.paddingBoxRectIncludingScrollbar().width() - renderer.paddingBoxWidth());
+    auto verticalSpaceReservedForScrollbar = std::max(0_lu, renderer.paddingBoxRectIncludingScrollbar().height() - renderer.paddingBoxHeight());
+    return { horizontalSpaceReservedForScrollbar, verticalSpaceReservedForScrollbar };
 }
 
 void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBlock)
