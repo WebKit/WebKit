@@ -14,6 +14,10 @@
             width: 400%;
             background-image: repeating-linear-gradient(to right, white, silver 250px);
         }
+        
+        body.changed .contents {
+            height: 120%;
+        }
     </style>
     <script src="../../../resources/ui-helper.js"></script>
     <script src="../../../resources/js-test-pre.js"></script>
@@ -32,6 +36,8 @@
                 left: 500,
                 behavior: 'smooth'
             });
+            
+            document.body.classList.add('changed');
             
             await UIHelper.waitForScrollCompletion();
             

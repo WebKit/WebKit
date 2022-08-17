@@ -1645,10 +1645,10 @@ void RenderLayerScrollableArea::updateScrollableAreaSet(bool hasOverflow)
     if (HTMLFrameOwnerElement* owner = frameView.frame().ownerElement())
         isVisibleToHitTest &= owner->renderer() && owner->renderer()->visibleToHitTesting();
 
-    bool isScrollable = hasOverflow && isVisibleToHitTest;
+    bool needsToBeRegistered = (hasOverflow && isVisibleToHitTest) || scrollAnimationStatus() == ScrollAnimationStatus::Animating;
     bool addedOrRemoved = false;
 
-    if (isScrollable) {
+    if (needsToBeRegistered) {
         if (!m_registeredScrollableArea) {
             addedOrRemoved = frameView.addScrollableArea(this);
             m_registeredScrollableArea = true;
