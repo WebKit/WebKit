@@ -1,12 +1,4 @@
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-<style>
-select {
-    margin: 2px;
-}
-option {
-    margin: 2px;
-}
-</style>
 </script>
 <p>This tests smart paste of a fragment that ends in a select element.  There should be spaces added before and after the inserted content.</p>
 <div contenteditable="true" id="copy"><select><option>1</option><option>2</option><option>3</option></select></div>
@@ -14,7 +6,7 @@ option {
 
 <script>
 var copy = document.getElementById("copy");
-doubleClick(copy.offsetLeft, copy.offsetTop);
+doubleClick(copy.offsetLeft + copy.offsetWidth / 2, copy.offsetTop + copy.offsetHeight / 2);
 document.execCommand("Copy");
 
 var paste = document.getElementById("paste");
