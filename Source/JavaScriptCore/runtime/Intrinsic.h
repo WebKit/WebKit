@@ -100,6 +100,7 @@ enum Intrinsic : uint8_t {
     ObjectGetPrototypeOfIntrinsic,
     ObjectIsIntrinsic,
     ObjectKeysIntrinsic,
+    ObjectToStringIntrinsic,
     ReflectGetPrototypeOfIntrinsic,
     StringPrototypeCodePointAtIntrinsic,
     StringPrototypeValueOfIntrinsic,
