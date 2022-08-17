@@ -1377,6 +1377,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/OperandsInlines.h
     bytecode/Operands.h
     domjit/DOMJITHeapRange.h
+    runtime/JSModuleNamespaceObject.h
 )
 
 
