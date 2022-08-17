@@ -2393,6 +2393,17 @@ void RemoteGraphicsContextGLProxy::getInternalformativ(GCGLenum target, GCGLenum
     }
 }
 
+RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::paintRenderingResultsToPixelBuffer()
+{
+    RefPtr<WebCore::PixelBuffer> returnValue = { };
+    if (!isContextLost()) {
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintRenderingResultsToPixelBuffer(), Messages::RemoteGraphicsContextGL::PaintRenderingResultsToPixelBuffer::Reply(returnValue));
+        if (!sendResult)
+            markContextLost();
+    }
+    return returnValue;
+}
+
 }
 
 #endif
