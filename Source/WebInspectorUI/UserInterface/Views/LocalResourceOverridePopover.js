@@ -564,7 +564,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
                 if (!contentTypeDataGridNode.parent)
                     this._headersDataGrid.insertChild(contentTypeDataGridNode, 0);
 
-                isPassthroughLabelText.textContent = WI.UIString("Include original repsonse data");
+                isPassthroughLabelText.textContent = WI.UIString("Include original response data");
             }
 
             toggleHeadersDataGridVisibility();
