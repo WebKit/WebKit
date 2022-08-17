@@ -150,9 +150,12 @@ class _BiDirectionalQueue(object):
                 return self.incoming.get(block=False)
 
             difference = Timeout.difference()
-            if difference is not None:
-                return self.incoming.get(timeout=difference)
-            return self.incoming.get()
+            try:
+                if difference is not None:
+                    return self.incoming.get(timeout=difference)
+                return self.incoming.get()
+            except Queue.Empty:
+                pass
 
     def close(self):
         with OutputCapture():
