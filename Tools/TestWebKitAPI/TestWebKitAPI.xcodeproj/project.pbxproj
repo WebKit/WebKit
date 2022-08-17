@@ -219,6 +219,7 @@
 		41848F4424891879000E2588 /* open-window-with-file-url-with-host.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 41848F4324891815000E2588 /* open-window-with-file-url-with-host.html */; };
 		41D2A21F27906F9F0088FCCE /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 144D40EC221B46A7004B474F /* UUID.cpp */; };
 		41E67A8525D16E83007B0A4C /* STUNMessageParsingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41E67A8425D16E83007B0A4C /* STUNMessageParsingTest.cpp */; };
+		41EBA9F228ABA06700953013 /* ImageRotationSessionVT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41EBA9F128ABA06500953013 /* ImageRotationSessionVT.cpp */; };
 		44077BB123144B5000179E2D /* DataDetectorsTestIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */; };
 		4433A396208044140091ED57 /* SynchronousTimeoutTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */; };
 		44449DC12718B4B700E821B5 /* OSObjectPtrCocoaARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44449DBF2718B4B600E821B5 /* OSObjectPtrCocoaARC.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -2129,6 +2130,7 @@
 		4198524F27AD7B70005477B7 /* getUserMediaPermission.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMediaPermission.html; sourceTree = "<group>"; };
 		41BAF4E225AC9DB800D82F32 /* getUserMedia2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMedia2.html; sourceTree = "<group>"; };
 		41E67A8425D16E83007B0A4C /* STUNMessageParsingTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = STUNMessageParsingTest.cpp; sourceTree = "<group>"; };
+		41EBA9F128ABA06500953013 /* ImageRotationSessionVT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageRotationSessionVT.cpp; sourceTree = "<group>"; };
 		44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsTestIOS.mm; sourceTree = "<group>"; };
 		442BBF681C91CAD90017087F /* RefLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefLogger.cpp; sourceTree = "<group>"; };
 		4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SynchronousTimeoutTests.mm; sourceTree = "<group>"; };
@@ -5259,6 +5261,7 @@
 				31F865E526701E73003BFC6D /* CoreCryptoSPI.h */,
 				510A667A27D2FC7A00D22629 /* CoreMediaUtilities.mm */,
 				751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */,
+				41EBA9F128ABA06500953013 /* ImageRotationSessionVT.cpp */,
 				57F1C91025DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm */,
 				5769C50A1D9B0001000847FB /* SerializedCryptoKeyWrap.mm */,
 				A17991861E1C994E00A505ED /* SharedBuffer.mm */,
@@ -5940,6 +5943,7 @@
 				7CCE7EC21A411A7E00447C4C /* HTMLFormCollectionNamedItem.mm in Sources */,
 				7C83E0501D0A641800FEBCF3 /* HTMLParserIdioms.cpp in Sources */,
 				5CA1DEC81F71F70100E71BD3 /* HTTPHeaderField.cpp in Sources */,
+				41EBA9F228ABA06700953013 /* ImageRotationSessionVT.cpp in Sources */,
 				46FA2FEE23846CA5000CCB0C /* HTTPHeaderMap.cpp in Sources */,
 				6B9ABE122086952F00D75DE6 /* HTTPParsers.cpp in Sources */,
 				5C7C24FC237C975400599C91 /* HTTPServer.mm in Sources */,
