@@ -465,8 +465,7 @@ void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 
 static FloatRect localQuadForTextRun(const InlineIterator::TextBox& run, unsigned start, unsigned end, bool useSelectionHeight)
 {
-    unsigned realEnd = std::min(run.end(), end);
-    LayoutRect boxSelectionRect = run.selectionRect(start, realEnd);
+    LayoutRect boxSelectionRect = run.selectionRect(start, end);
     if (!boxSelectionRect.height())
         return { };
     if (useSelectionHeight)
