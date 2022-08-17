@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSValueKeywords.h"
 #include "GenericMediaQueryTypes.h"
 #include "LayoutUnit.h"
 

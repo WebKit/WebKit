@@ -23,6 +23,7 @@
 #if USE(ATSPI)
 #include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
+#include "AccessibilityObject.h"
 #include "AccessibilityObjectInterface.h"
 #include "Document.h"
 #include "FrameView.h"
