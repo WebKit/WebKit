@@ -76,7 +76,9 @@ public:
 
         bool isNull() const;
 
+#if (OS(DARWIN) || OS(WINDOWS)) && !USE(UNIX_DOMAIN_SOCKETS)
         size_t size() const { return m_size; }
+#endif
 
         // Take/Set ownership of the memory for jetsam purposes.
         void takeOwnershipOfMemory(MemoryLedger) const;
@@ -92,18 +94,31 @@ public:
         static void encodeHandle(IPC::Encoder&, HANDLE);
         static std::optional<HANDLE> decodeHandle(IPC::Decoder&);
 #endif
-        void encode(IPC::Encoder&) const;
-        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Handle&);
     private:
         friend class SharedMemory;
 #if USE(UNIX_DOMAIN_SOCKETS)
         mutable IPC::Attachment m_attachment;
 #elif OS(DARWIN)
         mutable mach_port_t m_port { MACH_PORT_NULL };
+        size_t m_size;
 #elif OS(WINDOWS)
         mutable HANDLE m_handle;
-#endif
         size_t m_size;
+#endif
+    };
+
+    struct IPCHandle {
+        IPCHandle() = default;
+        IPCHandle(Handle&& handle, uint64_t dataSize)
+            : handle(WTFMove(handle))
+            , dataSize(dataSize)
+        {
+        }
+        void encode(IPC::Encoder&) const;
+        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, IPCHandle&);
+
+        Handle handle;
+        uint64_t dataSize { 0 };
     };
 
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.

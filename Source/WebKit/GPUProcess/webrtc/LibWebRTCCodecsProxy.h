@@ -90,7 +90,7 @@ private:
     void encodeFrame(RTCEncoderIdentifier, SharedVideoFrame&&, uint32_t timeStamp, bool shouldEncodeAsKeyFrame);
     void setEncodeRates(RTCEncoderIdentifier, uint32_t bitRate, uint32_t frameRate);
     void setSharedVideoFrameSemaphore(RTCEncoderIdentifier, IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(RTCEncoderIdentifier, const SharedMemory::Handle&);
+    void setSharedVideoFrameMemory(RTCEncoderIdentifier, const SharedMemory::IPCHandle&);
     void setRTCLoggingLevel(WTFLogLevel);
 
     struct Encoder {

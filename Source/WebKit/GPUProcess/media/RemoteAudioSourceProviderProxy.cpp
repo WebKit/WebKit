@@ -72,7 +72,14 @@ void RemoteAudioSourceProviderProxy::storageChanged(SharedMemory* memory, const 
     SharedMemory::Handle handle;
     if (memory)
         memory->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    m_connection->send(Messages::RemoteAudioSourceProviderManager::AudioStorageChanged { m_identifier, handle, format, frameCount }, 0);
+
+    // FIXME: Send the actual data size with IPCHandle.
+#if OS(DARWIN) || OS(WINDOWS)
+    uint64_t dataSize = handle.size();
+#else
+    uint64_t dataSize = 0;
+#endif
+    m_connection->send(Messages::RemoteAudioSourceProviderManager::AudioStorageChanged { m_identifier, SharedMemory::IPCHandle { WTFMove(handle),  dataSize }, format, frameCount }, 0);
 }
 
 } // namespace WebKit

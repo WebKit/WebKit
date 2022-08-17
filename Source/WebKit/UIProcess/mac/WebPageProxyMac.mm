@@ -245,24 +245,24 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const SharedMemory::Handle& imageHandle, const String& filename, const String& extension,
-    const String& title, const String& url, const String& visibleURL, const SharedMemory::Handle& archiveHandle, const String& originIdentifier)
+void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const SharedMemory::IPCHandle& imageHandle, const String& filename, const String& extension,
+    const String& title, const String& url, const String& visibleURL, const SharedMemory::IPCHandle& archiveHandle, const String& originIdentifier)
 {
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(visibleURL);
-    MESSAGE_CHECK(!imageHandle.isNull());
+    MESSAGE_CHECK(!imageHandle.handle.isNull());
 
-    auto sharedMemoryImage = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemoryImage = SharedMemory::map(imageHandle.handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryImage)
         return;
-    auto imageBuffer = sharedMemoryImage->createSharedBuffer(sharedMemoryImage->size());
+    auto imageBuffer = sharedMemoryImage->createSharedBuffer(imageHandle.dataSize);
 
     RefPtr<FragmentedSharedBuffer> archiveBuffer;
-    if (!archiveHandle.isNull()) {
-        auto sharedMemoryArchive = SharedMemory::map(archiveHandle, SharedMemory::Protection::ReadOnly);
+    if (!archiveHandle.handle.isNull()) {
+        auto sharedMemoryArchive = SharedMemory::map(archiveHandle.handle, SharedMemory::Protection::ReadOnly);
         if (!sharedMemoryArchive)
             return;
-        archiveBuffer = sharedMemoryArchive->createSharedBuffer(sharedMemoryArchive->size());
+        archiveBuffer = sharedMemoryArchive->createSharedBuffer(archiveHandle.dataSize);
     }
     pageClient().setPromisedDataForImage(pasteboardName, WTFMove(imageBuffer), ResourceResponseBase::sanitizeSuggestedFilename(filename), extension, title, url, visibleURL, WTFMove(archiveBuffer), originIdentifier);
 }

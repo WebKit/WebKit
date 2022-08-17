@@ -86,9 +86,9 @@ void RemoteVideoFrameObjectHeapProxyProcessor::setSharedVideoFrameSemaphore(IPC:
     m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
 }
 
-void RemoteVideoFrameObjectHeapProxyProcessor::setSharedVideoFrameMemory(const SharedMemory::Handle& handle)
+void RemoteVideoFrameObjectHeapProxyProcessor::setSharedVideoFrameMemory(const SharedMemory::IPCHandle& ipcHandle)
 {
-    m_sharedVideoFrameReader.setSharedMemory(handle);
+    m_sharedVideoFrameReader.setSharedMemory(ipcHandle);
 }
 
 RemoteVideoFrameObjectHeapProxyProcessor::Callback RemoteVideoFrameObjectHeapProxyProcessor::takeCallback(RemoteVideoFrameIdentifier identifier)

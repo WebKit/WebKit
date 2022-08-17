@@ -202,7 +202,14 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::storageChanged(Sha
     SharedMemory::Handle handle;
     if (memory)
         memory->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { m_identifier, WTFMove(handle), format, frameCount, *m_semaphore }, 0);
+
+    // FIXME: Send the actual data size with IPCHandle.
+#if OS(DARWIN) || OS(WINDOWS)
+    uint64_t dataSize = handle.size();
+#else
+    uint64_t dataSize = 0;
+#endif
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { m_identifier, SharedMemory::IPCHandle { WTFMove(handle),  dataSize }, format, frameCount, *m_semaphore }, 0);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::stop()

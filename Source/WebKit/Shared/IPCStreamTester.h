@@ -58,7 +58,7 @@ private:
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
 
     // Messages.
-    void syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(SharedMemory::Handle)>&&);
+    void syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(SharedMemory::IPCHandle)>&&);
     void syncCrashOnZero(int32_t, CompletionHandler<void(int32_t)>&&);
     void checkAutoreleasePool(CompletionHandler<void(int32_t)>&&);
 

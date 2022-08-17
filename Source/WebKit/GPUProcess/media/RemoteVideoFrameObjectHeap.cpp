@@ -180,9 +180,9 @@ void RemoteVideoFrameObjectHeap::setSharedVideoFrameSemaphore(IPC::Semaphore&& s
     m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
 }
 
-void RemoteVideoFrameObjectHeap::setSharedVideoFrameMemory(const SharedMemory::Handle& handle)
+void RemoteVideoFrameObjectHeap::setSharedVideoFrameMemory(const SharedMemory::IPCHandle& ipcHandle)
 {
-    m_sharedVideoFrameReader.setSharedMemory(handle);
+    m_sharedVideoFrameReader.setSharedMemory(ipcHandle);
 }
 
 #endif

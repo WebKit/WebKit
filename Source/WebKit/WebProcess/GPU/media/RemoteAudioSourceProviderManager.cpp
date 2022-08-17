@@ -90,7 +90,7 @@ void RemoteAudioSourceProviderManager::removeProvider(MediaPlayerIdentifier iden
     });
 }
 
-void RemoteAudioSourceProviderManager::audioStorageChanged(MediaPlayerIdentifier identifier, const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteAudioSourceProviderManager::audioStorageChanged(MediaPlayerIdentifier identifier, const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
     ASSERT(!WTF::isMainRunLoop());
 
@@ -99,7 +99,7 @@ void RemoteAudioSourceProviderManager::audioStorageChanged(MediaPlayerIdentifier
         RELEASE_LOG_ERROR(Media, "Unable to find provider %llu for storageChanged", identifier.toUInt64());
         return;
     }
-    iterator->value->setStorage(handle, description, numberOfFrames);
+    iterator->value->setStorage(ipcHandle.handle, description, numberOfFrames);
 }
 
 void RemoteAudioSourceProviderManager::audioSamplesAvailable(MediaPlayerIdentifier identifier, uint64_t startFrame, uint64_t numberOfFrames)

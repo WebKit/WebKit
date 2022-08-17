@@ -93,9 +93,9 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    void audioSamplesStorageChanged(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+    void audioSamplesStorageChanged(const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
     {
-        m_ringBuffer = WebCore::CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames);
+        m_ringBuffer = WebCore::CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(ipcHandle.handle), description, numberOfFrames);
     }
 #endif
 
@@ -211,10 +211,10 @@ void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationI
 }
 
 #if PLATFORM(COCOA)
-void RemoteAudioDestinationManager::audioSamplesStorageChanged(RemoteAudioDestinationIdentifier identifier, const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteAudioDestinationManager::audioSamplesStorageChanged(RemoteAudioDestinationIdentifier identifier, const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
     if (auto* item = m_audioDestinations.get(identifier))
-        item->audioSamplesStorageChanged(handle, description, numberOfFrames);
+        item->audioSamplesStorageChanged(ipcHandle, description, numberOfFrames);
 }
 #endif
 

@@ -2915,7 +2915,7 @@ void ArgumentCoder<WebCore::FragmentedSharedBuffer>::encode(Encoder& encoder, co
         auto sharedMemoryBuffer = SharedMemory::copyBuffer(buffer);
         sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
     }
-    encoder << WTFMove(handle);
+    encoder << SharedMemory::IPCHandle { WTFMove(handle), bufferSize };
 #endif
 }
 
@@ -2939,11 +2939,11 @@ std::optional<Ref<WebCore::FragmentedSharedBuffer>> ArgumentCoder<WebCore::Fragm
 
     return SharedBuffer::create(WTFMove(data));
 #else
-    SharedMemory::Handle handle;
-    if (!decoder.decode(handle))
+    SharedMemory::IPCHandle ipcHandle;
+    if (!decoder.decode(ipcHandle))
         return std::nullopt;
 
-    auto sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemoryBuffer = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return std::nullopt;
 

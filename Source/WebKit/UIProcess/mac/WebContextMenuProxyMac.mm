@@ -419,8 +419,8 @@ void WebContextMenuProxyMac::getShareMenuItem(CompletionHandler<void(NSMenuItem 
             [items addObject:(NSURL *)downloadableMediaURL];
     }
 
-    if (hitTestData.imageSharedMemory) {
-        if (auto image = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:(unsigned char*)hitTestData.imageSharedMemory->data() length:hitTestData.imageSharedMemory->size()]]))
+    if (hitTestData.imageSharedMemory && hitTestData.imageSize) {
+        if (auto image = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:(unsigned char*)hitTestData.imageSharedMemory->data() length:hitTestData.imageSize]]))
             [items addObject:image.get()];
     }
 

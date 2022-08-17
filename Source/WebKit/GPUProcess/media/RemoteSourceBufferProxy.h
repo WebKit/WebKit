@@ -89,7 +89,7 @@ private:
     void setActive(bool);
     void canSwitchToType(const WebCore::ContentType&, CompletionHandler<void(bool)>&&);
     void setMode(WebCore::SourceBufferAppendMode);
-    void append(IPC::SharedBufferReference&&, CompletionHandler<void(std::optional<WebKit::SharedMemory::Handle>&&)>&&);
+    void append(IPC::SharedBufferReference&&, CompletionHandler<void(std::optional<WebKit::SharedMemory::IPCHandle>&&)>&&);
     void abort();
     void resetParserState();
     void removedFromMediaSource();

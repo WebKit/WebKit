@@ -194,12 +194,15 @@ void RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged(bool flag)
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedDirtyChanged(flag), m_identifier);
 }
 
-void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(std::optional<SharedMemory::Handle>&&)>&& completionHandler)
+void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(std::optional<SharedMemory::IPCHandle>&&)>&& completionHandler)
 {
     SharedMemory::Handle handle;
 
     auto invokeCallbackAtScopeExit = makeScopeExit([&] {
-        completionHandler(WTFMove(handle));
+        std::optional<SharedMemory::IPCHandle> response;
+        if (!handle.isNull())
+            response = SharedMemory::IPCHandle { WTFMove(handle), buffer.size() };
+        completionHandler(WTFMove(response));
     });
 
     auto sharedMemory = buffer.sharedCopy();

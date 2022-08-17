@@ -48,15 +48,16 @@ void ShareableBitmap::Handle::takeOwnershipOfMemory(MemoryLedger ledger) const
 
 void ShareableBitmap::Handle::encode(IPC::Encoder& encoder) const
 {
-    encoder << m_handle;
+    SharedMemory::IPCHandle ipcHandle(WTFMove(m_handle), numBytesForSize(m_size, m_configuration));
+    encoder << ipcHandle;
     encoder << m_size;
     encoder << m_configuration;
 }
 
 bool ShareableBitmap::Handle::decode(IPC::Decoder& decoder, Handle& handle)
 {
-    SharedMemory::Handle memoryHandle;
-    if (!decoder.decode(memoryHandle))
+    SharedMemory::IPCHandle ipcHandle;
+    if (!decoder.decode(ipcHandle))
         return false;
     if (!decoder.decode(handle.m_size))
         return false;
@@ -64,12 +65,8 @@ bool ShareableBitmap::Handle::decode(IPC::Decoder& decoder, Handle& handle)
         return false;
     if (!decoder.decode(handle.m_configuration))
         return false;
-    auto numBytes = numBytesForSize(handle.m_size, handle.m_configuration);
-    if (numBytes.hasOverflowed())
-        return false;
-    if (memoryHandle.size() < numBytes)
-        return false;
-    handle.m_handle = WTFMove(memoryHandle);
+    
+    handle.m_handle = WTFMove(ipcHandle.handle);
     return true;
 }
 

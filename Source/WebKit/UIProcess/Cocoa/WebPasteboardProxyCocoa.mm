@@ -690,19 +690,19 @@ std::optional<WebPasteboardProxy::PasteboardAccessType> WebPasteboardProxy::Past
 }
 
 #if ENABLE(IPC_TESTING_API)
-void WebPasteboardProxy::testIPCSharedMemory(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, SharedMemory::Handle&& handle, std::optional<PageIdentifier> pageID, CompletionHandler<void(int64_t, String)>&& completionHandler)
+void WebPasteboardProxy::testIPCSharedMemory(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, SharedMemory::IPCHandle&& handle, std::optional<PageIdentifier> pageID, CompletionHandler<void(int64_t, String)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), completionHandler(-1, makeString("error")));
     MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler(-1, makeString("error")));
 
-    auto sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemoryBuffer = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer) {
         completionHandler(-1, makeString("error EOM"));
         return;
     }
 
-    String message = { static_cast<char*>(sharedMemoryBuffer->data()), static_cast<unsigned>(sharedMemoryBuffer->size()) };
-    completionHandler(sharedMemoryBuffer->size(), WTFMove(message));
+    String message = { static_cast<char*>(sharedMemoryBuffer->data()), unsigned(handle.dataSize) };
+    completionHandler(handle.dataSize, WTFMove(message));
 }
 #endif
 

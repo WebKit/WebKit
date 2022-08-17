@@ -186,7 +186,15 @@ void RemoteAudioDestinationProxy::storageChanged(SharedMemory* storage, const We
     SharedMemory::Handle handle;
     if (storage)
         storage->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, WTFMove(handle), format, frameCount }, 0);
+
+    // FIXME: Send the actual data size with IPCHandle.
+#if OS(DARWIN) || OS(WINDOWS)
+    uint64_t dataSize = handle.size();
+#else
+    uint64_t dataSize = 0;
+#endif
+
+    m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, SharedMemory::IPCHandle { WTFMove(handle), dataSize }, format, frameCount }, 0);
 }
 #endif
 

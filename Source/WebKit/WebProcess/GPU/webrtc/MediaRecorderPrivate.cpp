@@ -152,7 +152,14 @@ void MediaRecorderPrivate::storageChanged(SharedMemory* storage, const WebCore::
     SharedMemory::Handle handle;
     if (storage)
         storage->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { WTFMove(handle), format, frameCount }, m_identifier);
+
+    // FIXME: Send the actual data size with IPCHandle.
+#if OS(DARWIN) || OS(WINDOWS)
+    uint64_t dataSize = handle.size();
+#else
+    uint64_t dataSize = 0;
+#endif
+    m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { SharedMemory::IPCHandle { WTFMove(handle), dataSize }, format, frameCount }, m_identifier);
 }
 
 void MediaRecorderPrivate::fetchData(CompletionHandler<void(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& mimeType, double)>&& completionHandler)
