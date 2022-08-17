@@ -39,7 +39,7 @@ PASS addTransceiver('audio'): transceiver.stopped is false
 PASS addTrack reuses reusable transceivers
 PASS addTransceiver does not reuse reusable transceivers
 PASS Can setup two-way call using a single transceiver
-FAIL Closing the PC stops the transceivers assert_equals: expected (object) null but got (string) "inactive"
+FAIL Closing the PC stops the transceivers assert_equals: expected "stopped" but got "inactive"
 PASS Changing transceiver direction to 'sendrecv' makes ontrack fire
 PASS transceiver.sender.track does not revert to an old state
 PASS transceiver.direction does not revert to an old state

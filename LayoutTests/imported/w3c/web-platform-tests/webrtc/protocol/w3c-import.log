@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/crypto-suite.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/dtls-fingerprint-validation.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/dtls-setup.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/handover-datachannel.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/handover.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html
@@ -32,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtp-demuxing.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtp-extension-support.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtp-payloadtypes.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtx-codecs.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/sctp-format.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/sdes-dont-dont-dont.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/simulcast-answer.html

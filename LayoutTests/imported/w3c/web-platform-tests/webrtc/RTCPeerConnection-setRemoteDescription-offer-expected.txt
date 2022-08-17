@@ -12,4 +12,5 @@ PASS setRemoteDescription(offer) from have-local-offer is glare-proof
 FAIL setRemoteDescription(invalidOffer) from have-local-offer does not undo rollback Test bug: unrecognized DOMException code name or name "RTCError" passed to assert_throws_dom()
 PASS repeated sRD(offer) works
 PASS sRD(reoffer) with candidates and without trickle works
+PASS Transceivers added by sRD(offer) should not show up until sRD resolves
 

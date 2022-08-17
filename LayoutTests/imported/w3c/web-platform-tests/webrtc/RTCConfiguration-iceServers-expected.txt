@@ -1,11 +1,11 @@
 
-PASS new RTCPeerConnection() should have default configuration.iceServers of undefined
+FAIL new RTCPeerConnection() should have default configuration.iceServers of undefined assert_array_equals: value is undefined, expected array
 PASS new RTCPeerConnection(config) - {} should succeed
 PASS setConfiguration(config) - {} should succeed
 PASS new RTCPeerConnection(config) - { iceServers: null } should throw TypeError
 PASS setConfiguration(config) - { iceServers: null } should throw TypeError
-PASS new RTCPeerConnection(config) - { iceServers: undefined } should succeed
-PASS setConfiguration(config) - { iceServers: undefined } should succeed
+FAIL new RTCPeerConnection(config) - { iceServers: undefined } should succeed assert_array_equals: value is undefined, expected array
+FAIL setConfiguration(config) - { iceServers: undefined } should succeed assert_array_equals: value is undefined, expected array
 PASS new RTCPeerConnection(config) - { iceServers: [] } should succeed
 PASS setConfiguration(config) - { iceServers: [] } should succeed
 PASS new RTCPeerConnection(config) - { iceServers: [null] } should throw TypeError

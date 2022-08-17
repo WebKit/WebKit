@@ -5702,6 +5702,9 @@
     "imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webrtc/RTCConfiguration-iceTransportPolicy.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.html": [
         "slow"
     ],
@@ -5729,10 +5732,16 @@
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-SLD-SRD-timing.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-capture-video.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState-disconnected.https.html": [
@@ -5742,6 +5751,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ondatachannel.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare-linear.https.html": [
@@ -5795,6 +5807,9 @@
     "imported/w3c/web-platform-tests/webrtc/protocol/candidate-exchange.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html": [
         "slow"
     ],
@@ -5802,6 +5817,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/protocol/rtp-demuxing.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/protocol/sdes-dont-dont-dont.html": [

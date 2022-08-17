@@ -1,4 +1,6 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS new RTCPeerConnection() should have default iceTransportPolicy all
 PASS new RTCPeerConnection({ iceTransportPolicy: undefined }) should have default iceTransportPolicy all
 PASS new RTCPeerConnection({ iceTransportPolicy: 'all' }) should succeed
@@ -15,4 +17,10 @@ PASS setConfiguration(config) - with null iceTransportPolicy should throw TypeEr
 PASS new RTCPeerConnection({ iceTransports: 'relay' }) should have no effect
 PASS new RTCPeerConnection({ iceTransports: 'invalid' }) should have no effect
 PASS new RTCPeerConnection({ iceTransports: null }) should have no effect
+PASS iceTransportPolicy "relay" on offerer should prevent candidate gathering
+PASS iceTransportPolicy "relay" on answerer should prevent candidate gathering
+TIMEOUT Changing iceTransportPolicy from "all" to "relay" causes an ICE restart which should fail, with no new candidates Test timed out
+NOTRUN Changing iceTransportPolicy from "relay" to "all" causes an ICE restart which should succeed
+NOTRUN Changing iceTransportPolicy from "all" to "relay", and back to "all" prompts an ICE restart
+NOTRUN Changing iceTransportPolicy from "all" to "relay" on the answerer has no effect on a subsequent offer/answer
 

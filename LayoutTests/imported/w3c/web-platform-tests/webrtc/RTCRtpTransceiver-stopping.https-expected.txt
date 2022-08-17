@@ -1,0 +1,18 @@
+
+FAIL [audio] Locally stopped transceiver goes from stopping to stopped assert_equals: direction after stop() expected "stopped" but got "inactive"
+PASS [audio] Locally stopping a transceiver ends the track
+PASS [audio] Remotely stopping a transceiver ends the track
+FAIL [audio] Remotely stopped transceiver goes directly to stopped assert_equals: direction during negotiation expected "stopped" but got "inactive"
+PASS [audio] Rollback when transceiver is not removed does not end track
+FAIL [audio] Rollback when removing transceiver does end the track assert_equals: expected 0 but got 1
+FAIL [audio] Rollback when removing transceiver makes it stopped assert_equals: expected 0 but got 1
+PASS [audio] Glare when transceiver is not removed does not end track
+FAIL [video] Locally stopped transceiver goes from stopping to stopped assert_equals: direction after stop() expected "stopped" but got "inactive"
+PASS [video] Locally stopping a transceiver ends the track
+PASS [video] Remotely stopping a transceiver ends the track
+FAIL [video] Remotely stopped transceiver goes directly to stopped assert_equals: direction during negotiation expected "stopped" but got "inactive"
+PASS [video] Rollback when transceiver is not removed does not end track
+FAIL [video] Rollback when removing transceiver does end the track assert_equals: expected 0 but got 1
+FAIL [video] Rollback when removing transceiver makes it stopped assert_equals: expected 0 but got 1
+PASS [video] Glare when transceiver is not removed does not end track
+
