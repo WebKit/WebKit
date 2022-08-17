@@ -33,7 +33,7 @@ namespace WebCore {
 class FilterEffect;
 class SVGFilterPrimitiveStandardAttributes;
 
-class RenderSVGResourceFilterPrimitive final : public RenderSVGHiddenContainer {
+class RenderSVGResourceFilterPrimitive final : public LegacyRenderSVGHiddenContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceFilterPrimitive);
 public:
     RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, RenderStyle&&);

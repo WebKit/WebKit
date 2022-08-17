@@ -22,7 +22,9 @@
 
 #pragma once
 
+#include "PaintPhase.h"
 #include "RenderElement.h"
+#include <wtf/StdUnorderedSet.h>
 
 namespace WebCore {
 
@@ -73,6 +75,10 @@ public:
     void suspendAnimations(MonotonicTime = MonotonicTime()) override;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // Single source of truth deciding if a SVG renderer should be painted. All SVG renderers
+    // use this method to test if they should continue processing in the paint() function or stop.
+    bool shouldPaintSVGRenderer(const PaintInfo&, const StdUnorderedSet<PaintPhase>& relevantPaintPhases) const;
+
     // Provides the SVG implementation for computeVisibleRectInContainer().
     // This lives in RenderLayerModelObject, which is the common base-class for all SVG renderers.
     std::optional<LayoutRect> computeVisibleRectInSVGContainer(const LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const;

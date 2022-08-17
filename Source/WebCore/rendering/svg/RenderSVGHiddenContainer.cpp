@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (c) 2022 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +21,8 @@
 #include "config.h"
 #include "RenderSVGHiddenContainer.h"
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+#include "RenderLayer.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
@@ -28,7 +31,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGHiddenContainer);
 
 RenderSVGHiddenContainer::RenderSVGHiddenContainer(SVGElement& element, RenderStyle&& style)
-    : LegacyRenderSVGContainer(element, WTFMove(style))
+    : RenderSVGContainer(element, WTFMove(style))
 {
 }
 
@@ -36,23 +39,20 @@ void RenderSVGHiddenContainer::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
-    SVGRenderSupport::layoutChildren(*this, selfNeedsLayout());
+
+    layoutChildren();
     clearNeedsLayout();    
 }
 
-void RenderSVGHiddenContainer::paint(PaintInfo&, const LayoutPoint&)
+void RenderSVGHiddenContainer::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    // This subtree does not paint.
-}
+    RenderSVGContainer::styleDidChange(diff, oldStyle);
 
-void RenderSVGHiddenContainer::absoluteQuads(Vector<FloatQuad>&, bool*) const
-{
-    // This subtree does not take up space or paint
-}
-
-bool RenderSVGHiddenContainer::nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint&, HitTestAction)
-{
-    return false;
+    // Ensure that descendants with layers are rooted within our layer.
+    if (hasLayer())
+        layer()->setIsOpportunisticStackingContext(true);
 }
 
 }
+
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

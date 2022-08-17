@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGSymbolElement.h"
 
+#include "LegacyRenderSVGHiddenContainer.h"
 #include "RenderSVGHiddenContainer.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
@@ -56,7 +57,11 @@ bool SVGSymbolElement::selfHasRelativeLengths() const
 
 RenderPtr<RenderElement> SVGSymbolElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
+#endif
+    return createRenderer<LegacyRenderSVGHiddenContainer>(*this, WTFMove(style));
 }
 
 }

@@ -789,6 +789,8 @@ bool SVGSVGElement::isValid() const
 
 void SVGSVGElement::didAttachRenderers()
 {
+    SVGGraphicsElement::didAttachRenderers();
+
     if (auto* renderer = this->renderer())
         renderer->updateFromElement();
 }

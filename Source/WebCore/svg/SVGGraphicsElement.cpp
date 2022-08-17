@@ -23,6 +23,8 @@
 #include "SVGGraphicsElement.h"
 
 #include "LegacyRenderSVGPath.h"
+#include "RenderAncestorIterator.h"
+#include "RenderLayer.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGMatrix.h"
@@ -189,8 +191,17 @@ RenderPtr<RenderElement> SVGGraphicsElement::createElementRenderer(RenderStyle&&
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGPath>(*this, WTFMove(style));
 #endif
-
     return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
+}
+
+void SVGGraphicsElement::didAttachRenderers()
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (auto* svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()); svgRenderer && lineageOfType<RenderSVGHiddenContainer>(*svgRenderer).first())
+            svgRenderer->layer()->dirtyVisibleContentStatus();
+    }
+#endif
 }
 
 Path SVGGraphicsElement::toClipPath()

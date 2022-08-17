@@ -103,8 +103,8 @@
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderReplica.h"
-#include "RenderSVGContainer.h"
 #include "RenderSVGForeignObject.h"
+#include "RenderSVGHiddenContainer.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
 #include "RenderSVGResourceClipper.h"
@@ -349,10 +349,19 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     if (isRenderViewLayer())
         m_boxScrollingScope = m_contentsScrollingScope = nextScrollingScope();
 
-    if (!renderer.firstChild()) {
-        m_visibleContentStatusDirty = false;
-        m_hasVisibleContent = renderer.style().visibility() == Visibility::Visible;
-    }
+    if (renderer.firstChild())
+        return;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // Leave m_visibleContentStatusDirty = true in any case. The associated renderer needs to be inserted into the
+    // render tree, before we can determine the visible content status. The visible content status of a SVG renderer
+    // depends on its ancestors (all children of RenderSVGHiddenContainer are recursively invisible, no matter what).
+    if (renderer.isSVGLayerAwareRenderer() && renderer.document().settings().layerBasedSVGEngineEnabled())
+        return;
+#endif
+
+    m_visibleContentStatusDirty = false;
+    m_hasVisibleContent = renderer.style().visibility() == Visibility::Visible;
 }
 
 RenderLayer::~RenderLayer()
@@ -1602,6 +1611,11 @@ void RenderLayer::updateDescendantDependentFlags()
 
 bool RenderLayer::computeHasVisibleContent() const
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // FIXME: [LBSE] Eventually cache if we're part of a RenderSVGHiddenContainer subtree to avoid tree walks.
+    if (renderer().document().settings().layerBasedSVGEngineEnabled() && lineageOfType<RenderSVGHiddenContainer>(renderer()).first())
+        return false;
+#endif
     if (renderer().style().visibility() == Visibility::Visible)
         return true;
 

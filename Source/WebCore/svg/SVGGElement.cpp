@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGGElement.h"
 
+#include "LegacyRenderSVGHiddenContainer.h"
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGResource.h"
@@ -54,8 +55,11 @@ RenderPtr<RenderElement> SVGGElement::createElementRenderer(RenderStyle&& style,
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     // FIXME: [LBSE] Support hidden containers
-    if (document().settings().layerBasedSVGEngineEnabled())
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (style.display() == DisplayType::None)
+            return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
         return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
+    }
 #endif
 
     // SVG 1.1 testsuite explicitly uses constructs like <g display="none"><linearGradient>
@@ -63,8 +67,7 @@ RenderPtr<RenderElement> SVGGElement::createElementRenderer(RenderStyle&& style,
     // subtree may be hidden - we only want the resource renderers to exist so they can be
     // referenced from somewhere else.
     if (style.display() == DisplayType::None)
-        return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
-
+        return createRenderer<LegacyRenderSVGHiddenContainer>(*this, WTFMove(style));
     return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 

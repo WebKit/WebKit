@@ -44,6 +44,20 @@ layer at (-29,46) size 57x18 backgroundClip at (0,0) size 480x360 clip at (0,0) 
       chunk 1 (middle anchor) text run 1 at (-28.57,60.00) startOffset 0 endOffset 7 width 57.14: "<image>"
 layer at (-37,-27) size 76x92 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (5,2) size 76x92
+layer at (0,-14) size 41x19 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGHiddenContainer {defs} at (37,13) size 41x19
+layer at (0,-14) size 40x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 41x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 41x18
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 40.44: "Use A"
+layer at (0,-14) size 40x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 40x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 40x18
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 39.55: "Use B"
+layer at (0,-14) size 40x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 40x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 40x18
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 39.55: "Use C"
 layer at (-37,-27) size 75x35 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {use} at (0,0) size 75x35
 layer at (-37,-27) size 74x35 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

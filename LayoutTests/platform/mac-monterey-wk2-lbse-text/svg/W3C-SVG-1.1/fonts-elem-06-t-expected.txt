@@ -10,6 +10,12 @@ layer at (125,23) size 230x35
   RenderSVGText {text} at (129,52) size 230x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x35
       chunk 1 (middle anchor) text run 1 at (125.20,50.00) startOffset 0 endOffset 18 width 229.60: "<font> horiz-adv-x"
+layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGHiddenContainer {defs} at (0,26) size 8x9
+layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-4,-30) size 424x35 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 424x35
 layer at (-4,-30) size 304x35 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

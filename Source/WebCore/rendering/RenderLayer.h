@@ -878,6 +878,8 @@ public:
 
     String debugDescription() const;
 
+    bool setIsOpportunisticStackingContext(bool);
+
 private:
 
     void setNextSibling(RenderLayer* next) { m_next = next; }
@@ -896,7 +898,6 @@ private:
     // Return true if changed.
     bool setIsNormalFlowOnly(bool);
 
-    bool setIsOpportunisticStackingContext(bool);
     bool setIsCSSStackingContext(bool);
     
     void isStackingContextChanged();

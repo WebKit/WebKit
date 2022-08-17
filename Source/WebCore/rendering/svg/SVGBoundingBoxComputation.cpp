@@ -24,6 +24,7 @@
 #include "RenderChildIterator.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGForeignObject.h"
+#include "RenderSVGHiddenContainer.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGResourceClipper.h"
@@ -165,9 +166,7 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
     //    - Otherwise, set box to be the union of box and the result of invoking the algorithm to compute a bounding box with child
     //      as the element and the same values for space, fill, stroke, markers and clipped as the corresponding algorithm input values.
     for (auto& child : childrenOfType<RenderLayerModelObject>(m_renderer)) {
-        // FIXME: [LBSE] Upstream new RenderSVGHiddenContainer implementation
-        // if (is<RenderSVGHiddenContainer>(child) || (is<RenderSVGShape>(child) && downcast<RenderSVGShape>(child).isRenderingDisabled()))
-        if (is<RenderSVGShape>(child) && downcast<RenderSVGShape>(child).isRenderingDisabled())
+        if (is<RenderSVGHiddenContainer>(child) || (is<RenderSVGShape>(child) && downcast<RenderSVGShape>(child).isRenderingDisabled()))
             continue;
 
         SVGBoundingBoxComputation childBoundingBoxComputation(child);

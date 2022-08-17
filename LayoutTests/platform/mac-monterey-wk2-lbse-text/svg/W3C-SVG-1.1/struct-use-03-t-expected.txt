@@ -6,6 +6,10 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 380x100
   RenderSVGTransformableContainer {g} at (0,0) size 380x100
+layer at (0,0) size 100x100
+  RenderSVGHiddenContainer {defs} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#C82828] [stroke width=20.00]}] [fill={[type=SOLID] [color=#FADC00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
 layer at (88,46) size 64x18
   RenderSVGText {text} at (87,46) size 66x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 65x18

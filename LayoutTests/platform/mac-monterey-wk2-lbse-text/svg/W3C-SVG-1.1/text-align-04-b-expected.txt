@@ -10,6 +10,12 @@ layer at (5,4) size 348x45
   RenderSVGText {text} at (8,0) size 350x45 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 349x45
       chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 21 width 348.75: "Test of 'text-anchor'"
+layer at (0,-14) size 78x19 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGHiddenContainer {defs} at (3,-18) size 78x19
+layer at (0,-14) size 77x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 78x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 78x18
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 13 width 77.30: "end text tref"
 layer at (20,53) size 218x34
   RenderSVGText {text} at (23,49) size 219x34 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 219x34

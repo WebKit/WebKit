@@ -6,6 +6,22 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (-21,-14) size 296x64 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (-21,-14) size 296x64
+layer at (-2,-2) size 203x52 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGHiddenContainer {defs} at (18,12) size 203x52
+layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 4x4
+layer at (0,0) size 12x0
+  RenderSVGPath {line} at (2,2) size 12x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=12.00] [y2=0.00]
+layer at (-2,-2) size 4x4 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 4x4 [fill={[type=SOLID] [color=#FF0000]}] [x=-2.00] [y=-2.00] [width=4.00] [height=4.00]
+layer at (0,0) size 200x50
+  RenderSVGTransformableContainer {g} at (2,2) size 200x50
+layer at (0,0) size 200x20
+  RenderSVGRect {rect} at (0,0) size 200x20 [fill={[type=SOLID] [color=#EEEEEE]}] [x=0.00] [y=0.00] [width=200.00] [height=20.00]
+layer at (0,20) size 200x30
+  RenderSVGRect {rect} at (0,20) size 200x30 [fill={[type=SOLID] [color=#CCCCCC]}] [x=0.00] [y=20.00] [width=200.00] [height=30.00]
+layer at (0,0) size 200x50
+  RenderSVGRect {rect} at (0,0) size 200x50 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=200.00] [height=50.00]
 layer at (206,12) size 68x23
   RenderSVGText {text} at (226,26) size 69x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 69x23

@@ -259,6 +259,23 @@ void RenderLayerModelObject::updateLayerTransform()
 }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+bool RenderLayerModelObject::shouldPaintSVGRenderer(const PaintInfo& paintInfo, const StdUnorderedSet<PaintPhase>& relevantPaintPhases) const
+{
+    if (paintInfo.context().paintingDisabled())
+        return false;
+
+    if (!relevantPaintPhases.contains(paintInfo.phase))
+        return false;
+
+    if (!paintInfo.shouldPaintWithinRoot(*this))
+        return false;
+
+    if (style().visibility() == Visibility::Hidden || style().display() == DisplayType::None)
+        return false;
+
+    return true;
+}
+
 std::optional<LayoutRect> RenderLayerModelObject::computeVisibleRectInSVGContainer(const LayoutRect& rect, const RenderLayerModelObject* container, RenderObject::VisibleRectContext context) const
 {
     ASSERT(is<RenderSVGModelObject>(this) || is<RenderSVGBlock>(this));

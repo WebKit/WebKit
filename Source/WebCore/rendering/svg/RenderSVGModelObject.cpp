@@ -211,22 +211,6 @@ void RenderSVGModelObject::addFocusRingRects(Vector<LayoutRect>& rects, const La
     rects.append(LayoutRect(additionalOffset, repaintBoundingBox.size()));
 }
 
-bool RenderSVGModelObject::shouldPaintSVGRenderer(const PaintInfo& paintInfo) const
-{
-    ASSERT(!paintInfo.context().paintingDisabled());
-
-    if ((paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::ClippingMask && paintInfo.phase != PaintPhase::Mask && paintInfo.phase != PaintPhase::Outline && paintInfo.phase != PaintPhase::SelfOutline))
-        return false;
-
-    if (!paintInfo.shouldPaintWithinRoot(*this))
-        return false;
-
-    if (style().visibility() == Visibility::Hidden || style().display() == DisplayType::None)
-        return false;
-
-    return true;
-}
-
 // FloatRect::intersects does not consider horizontal or vertical lines (because of isEmpty()).
 // So special-case handling of such lines.
 static bool intersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)

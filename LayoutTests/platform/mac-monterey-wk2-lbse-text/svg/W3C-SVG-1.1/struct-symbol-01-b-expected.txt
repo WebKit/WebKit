@@ -7,6 +7,14 @@ layer at (0,0) size 480x360
 layer at (0,0) size 1000x1000 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 1000x1000
 layer at (0,0) size 1000x1000 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGHiddenContainer {symbol} at (0,0) size 1000x1000
+layer at (0,0) size 1000x1000 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 1000x1000 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1000.00] [height=1000.00]
+layer at (0,0) size 1000x1000 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGHiddenContainer {symbol} at (0,0) size 1000x1000
+layer at (0,0) size 500x500 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 500x500 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=500.00] [height=500.00]
+layer at (0,0) size 1000x1000 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 1000x1000
 layer at (0,0) size 240x150
   RenderSVGViewportContainer {svg} at (0,0) size 240x150

@@ -500,23 +500,11 @@ VisiblePosition RenderSVGText::positionForPoint(const LayoutPoint& pointInConten
 
 void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.context().paintingDisabled())
-        return;
-
-    if (paintInfo.phase != PaintPhase::ClippingMask && paintInfo.phase != PaintPhase::Mask && paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Outline && paintInfo.phase != PaintPhase::SelfOutline)
-        return;
-
-    if (!paintInfo.shouldPaintWithinRoot(*this))
-        return;
-
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        if (style().visibility() == Visibility::Hidden || style().display() == DisplayType::None)
+        StdUnorderedSet<PaintPhase> relevantPaintPhases { PaintPhase::Foreground, PaintPhase::ClippingMask, PaintPhase::Mask, PaintPhase::Outline, PaintPhase::SelfOutline };
+        if (!shouldPaintSVGRenderer(paintInfo, relevantPaintPhases))
             return;
-
-        // FIXME: [LBSE] Upstream SVGRenderSupport changes
-        // if (!SVGRenderSupport::shouldPaintHiddenRenderer(*this))
-        //     return;
 
         if (paintInfo.phase == PaintPhase::ClippingMask) {
             // FIXME: [LBSE] Upstream SVGRenderSupport changes
@@ -536,6 +524,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             return;
         }
 
+        ASSERT(paintInfo.phase == PaintPhase::Foreground);
         GraphicsContextStateSaver stateSaver(paintInfo.context());
 
         auto coordinateSystemOriginTranslation = adjustedPaintOffset - nominalSVGLayoutLocation();
@@ -547,6 +536,15 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 #else
     UNUSED_PARAM(paintOffset);
 #endif
+
+    if (paintInfo.context().paintingDisabled())
+        return;
+
+    if (paintInfo.phase != PaintPhase::ClippingMask && paintInfo.phase != PaintPhase::Mask && paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Outline && paintInfo.phase != PaintPhase::SelfOutline)
+        return;
+
+    if (!paintInfo.shouldPaintWithinRoot(*this))
+        return;
 
     PaintInfo blockInfo(paintInfo);
     GraphicsContextStateSaver stateSaver(blockInfo.context());

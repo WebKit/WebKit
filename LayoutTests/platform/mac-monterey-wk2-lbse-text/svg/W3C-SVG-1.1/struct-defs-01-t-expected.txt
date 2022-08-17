@@ -6,8 +6,16 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (140,80) size 200x200
   RenderSVGTransformableContainer {g} at (140,80) size 200x200
+layer at (0,0) size 480x360
+  RenderSVGHiddenContainer {defs} at (-140,-80) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=480.00] [height=360.00]
 layer at (140,80) size 200x200
   RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=140.00] [y=80.00] [width=200.00] [height=200.00]
+layer at (160,100) size 160x160
+  RenderSVGHiddenContainer {defs} at (20,20) size 160x160
+layer at (160,100) size 160x160
+  RenderSVGRect {rect} at (0,0) size 160x160 [fill={[type=SOLID] [color=#008000]}] [x=160.00] [y=100.00] [width=160.00] [height=160.00]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

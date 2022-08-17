@@ -55,6 +55,26 @@ layer at (250,10) size 0x161
 layer at (247,160) size 6x11
   RenderSVGPath {path} at (237,152) size 6x11 [fill={[type=SOLID] [color=#B4B4B4]}] [data="M 250 170 L 247 160 L 253 160 Z"]
 layer at (10,10) size 20x41
+  RenderSVGHiddenContainer {defs} at (0,2) size 20x41
+layer at (10,10) size 20x40
+  RenderSVGPath {line} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#105D8C] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=30.00] [y1=50.00] [x2=10.00] [y2=10.00]
+layer at (10,60) size 60x21
+  RenderSVGHiddenContainer {defs} at (0,52) size 60x21
+layer at (10,60) size 60x20
+  RenderSVGRect {rect} at (0,0) size 60x20 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=10.00] [y=60.00] [width=60.00] [height=20.00]
+layer at (10,90) size 20x21
+  RenderSVGHiddenContainer {defs} at (0,82) size 20x21
+layer at (10,90) size 20x20
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#105D8C]}] [cx=20.00] [cy=100.00] [r=10.00]
+layer at (200,20) size 20x41
+  RenderSVGHiddenContainer {defs} at (190,12) size 20x41
+layer at (200,20) size 20x40
+  RenderSVGPath {polyline} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#105D8C] [stroke width=2.00]}] [points="200 20 200 40 220 40 220 60"]
+layer at (240,20) size 20x21
+  RenderSVGHiddenContainer {defs} at (230,12) size 20x21
+layer at (240,20) size 20x20
+  RenderSVGPath {polygon} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFFFFF]}] [points="240 20 240 40 260 40 260 20"]
+layer at (10,10) size 20x41
   RenderSVGTransformableContainer {use} at (0,2) size 20x41
 layer at (10,10) size 20x40
   RenderSVGPath {line} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#105D8C] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=30.00] [y1=50.00] [x2=10.00] [y2=10.00]

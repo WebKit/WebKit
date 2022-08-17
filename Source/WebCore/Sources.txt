@@ -2532,6 +2532,7 @@ rendering/style/WillChangeData.cpp
 rendering/svg/LegacyRenderSVGContainer.cpp
 rendering/svg/LegacyRenderSVGEllipse.cpp
 rendering/svg/LegacyRenderSVGModelObject.cpp
+rendering/svg/LegacyRenderSVGHiddenContainer.cpp
 rendering/svg/LegacyRenderSVGPath.cpp
 rendering/svg/LegacyRenderSVGRect.cpp
 rendering/svg/LegacyRenderSVGRoot.cpp

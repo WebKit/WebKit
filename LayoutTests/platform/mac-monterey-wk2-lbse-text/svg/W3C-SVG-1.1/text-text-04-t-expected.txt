@@ -30,6 +30,10 @@ layer at (0,-20) size 60x25 backgroundClip at (0,0) size 480x360 clip at (0,0) s
   RenderSVGText {text} at (4,0) size 60x26 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 60x26
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 4 width 60.00: "1234"
+layer at (-4,-4) size 9x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGHiddenContainer {defs} at (106,26) size 9x9
+layer at (-4,-4) size 8x8 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#000000]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
 layer at (-58,-20) size 154x26 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (52,10) size 154x26
 layer at (-4,-4) size 8x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

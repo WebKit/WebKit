@@ -6,6 +6,38 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (-88,-23) size 135x268 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (-89,-23) size 135x268
+layer at (0,-14) size 30x35 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGHiddenContainer {defs} at (88,8) size 30x35
+layer at (0,-14) size 30x34 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 30x34
+layer at (0,0) size 20x20
+  RenderSVGRect {rect} at (0,14) size 20x20 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,0) size 20x20
+  RenderSVGEllipse {circle} at (0,14) size 20x20 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=10.00] [r=10.00]
+layer at (0,0) size 20x20
+  RenderSVGEllipse {ellipse} at (0,14) size 20x20 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=10.00] [rx=10.00] [ry=10.00]
+layer at (0,10) size 20x0
+  RenderSVGPath {line} at (0,24) size 20x0 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x1=0.00] [y1=10.00] [x2=20.00] [y2=10.00]
+layer at (0,0) size 20x20
+  RenderSVGPath {path} at (0,14) size 20x20 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 20 0 L 20 20 L 0 20 Z"]
+layer at (0,0) size 20x20
+  RenderSVGPath {polygon} at (0,14) size 20x20 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [points="0 0 20 0 20 20 0 20 0 0"]
+layer at (0,0) size 20x20
+  RenderSVGPath {polyline} at (0,14) size 20x20 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [points="0 0 20 0 20 20"]
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {g} at (0,14) size 20x20
+layer at (0,0) size 10x20
+  RenderSVGRect {rect} at (0,0) size 10x20 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=20.00]
+layer at (10,0) size 10x20
+  RenderSVGRect {rect} at (10,0) size 10x20 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=0.00] [width=10.00] [height=20.00]
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {use} at (0,14) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGRect {rect} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,-14) size 29x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 30x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 30x18
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 4 width 29.32: "Text"
 layer at (-88,-18) size 89x264 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,4) size 89x264
 layer at (-88,-18) size 89x263 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

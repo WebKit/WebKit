@@ -74,6 +74,7 @@ protected:
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
+    void didAttachRenderers() override;
 
 private:
     bool isSVGGraphicsElement() const override { return true; }

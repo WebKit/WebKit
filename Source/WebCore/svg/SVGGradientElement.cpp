@@ -24,7 +24,6 @@
 #include "SVGGradientElement.h"
 
 #include "ElementIterator.h"
-#include "RenderSVGHiddenContainer.h"
 #include "RenderSVGResourceLinearGradient.h"
 #include "RenderSVGResourceRadialGradient.h"
 #include "SVGElementTypeHelpers.h"

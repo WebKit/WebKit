@@ -43,18 +43,18 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceFilterPrimitive);
 
 RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement, RenderStyle&& style)
-    : RenderSVGHiddenContainer(filterPrimitiveElement, WTFMove(style))
+    : LegacyRenderSVGHiddenContainer(filterPrimitiveElement, WTFMove(style))
 {
 }
 
 SVGFilterPrimitiveStandardAttributes& RenderSVGResourceFilterPrimitive::filterPrimitiveElement() const
 {
-    return static_cast<SVGFilterPrimitiveStandardAttributes&>(RenderSVGHiddenContainer::element());
+    return static_cast<SVGFilterPrimitiveStandardAttributes&>(LegacyRenderSVGHiddenContainer::element());
 }
 
 void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
+    LegacyRenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 
     if (diff == StyleDifference::Equal || !oldStyle)
         return;

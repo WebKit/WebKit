@@ -6,6 +6,16 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (-25,0) size 1124x724 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (-25,0) size 1124x724
+layer at (0,0) size 150x150
+  RenderSVGHiddenContainer {defs} at (25,0) size 150x150
+layer at (0,0) size 150x150
+  RenderSVGPath {path} at (0,0) size 150x150 [fill={[type=SOLID] [color=#00FFFF]}] [data="M 0 0 L 150 0 L 150 150 Z"]
+layer at (0,0) size 150x150
+  RenderSVGPath {path} at (0,0) size 150x150 [fill={[type=SOLID] [color=#FF00FF]}] [data="M 0 0 L 0 150 L 150 0 Z"]
+layer at (0,0) size 150x150
+  RenderSVGPath {path} at (0,0) size 150x150 [fill={[type=SOLID] [color=#00FFFF] [opacity=0.50]}] [data="M 0 0 L 150 0 L 150 150 Z"]
+layer at (0,0) size 150x150
+  RenderSVGPath {path} at (0,0) size 150x150 [fill={[type=SOLID] [color=#FF00FF] [opacity=0.50]}] [data="M 0 0 L 0 150 L 150 0 Z"]
 layer at (-25,0) size 1124x724 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 1124x724
 layer at (1,1) size 1098x723 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

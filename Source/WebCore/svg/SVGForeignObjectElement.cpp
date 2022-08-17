@@ -114,7 +114,8 @@ bool SVGForeignObjectElement::rendererIsNeeded(const RenderStyle& style)
     // parentOrShadowHostElement() instead.
     RefPtr ancestor = parentElement();
     while (ancestor && ancestor->isSVGElement()) {
-        if (ancestor->renderer() && ancestor->renderer()->isSVGHiddenContainer())
+        // FIXME: [LBSE] Upstream foreignObject support.
+        if (ancestor->renderer() && ancestor->renderer()->isLegacySVGHiddenContainer())
             return false;
 
         ancestor = ancestor->parentElement();

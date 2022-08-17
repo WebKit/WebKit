@@ -65,6 +65,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderMedia.h"
 #include "RenderModel.h"
+#include "RenderSVGHiddenContainer.h"
 #include "RenderSVGModelObject.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
@@ -2694,9 +2695,10 @@ bool RenderLayerBacking::paintsContent(RenderLayer::PaintedContentRequest& reque
         return paintsContent;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // FIXME: [LBSE] Eventually refine the logic to end up with a narrower set of conditions (webkit.org/b/243417).
     if (is<RenderSVGModelObject>(m_owningLayer.renderer())) {
-        paintsContent = true;
+        // FIXME: [LBSE] Eventually cache if we're part of a RenderSVGHiddenContainer subtree to avoid tree walks.
+        // FIXME: [LBSE] Eventually refine the logic to end up with a narrower set of conditions (webkit.org/b/243417).
+        paintsContent = m_owningLayer.hasVisibleContent() && !lineageOfType<RenderSVGHiddenContainer>(m_owningLayer.renderer()).first();
         request.setHasPaintedContent();
     }
 

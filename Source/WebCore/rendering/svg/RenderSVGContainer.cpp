@@ -109,29 +109,10 @@ void RenderSVGContainer::layoutChildren()
     containerLayout.positionChildrenRelativeToContainer();
 }
 
-bool RenderSVGContainer::selfWillPaint()
-{
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
-    return resources && resources->filter();
-}
-
 void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.context().paintingDisabled())
-        return;
-
-    if (!paintInfo.shouldPaintWithinRoot(*this))
-        return;
-
-    if (style().display() == DisplayType::None)
-        return;
-
-    // FIXME: [LBSE] Upstream SVGRenderSupport changes
-    // if (!SVGRenderSupport::shouldPaintHiddenRenderer(*this))
-    //     return;
-
-    // Spec: groups w/o children still may render filter content.
-    if (!firstChild() && !selfWillPaint())
+    StdUnorderedSet<PaintPhase> relevantPaintPhases { PaintPhase::Foreground, PaintPhase::ClippingMask, PaintPhase::Mask, PaintPhase::Outline, PaintPhase::SelfOutline };
+    if (!shouldPaintSVGRenderer(paintInfo, relevantPaintPhases))
         return;
 
     if (paintInfo.phase == PaintPhase::ClippingMask) {
@@ -155,7 +136,10 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
     if (paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) {
         // FIXME: [LBSE] Upstream outline painting
         // paintSVGOutline(paintInfo, adjustedPaintOffset);
+        return;
     }
+
+    ASSERT(paintInfo.phase == PaintPhase::Foreground);
 }
 
 bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

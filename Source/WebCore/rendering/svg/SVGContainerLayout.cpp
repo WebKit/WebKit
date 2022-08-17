@@ -33,7 +33,6 @@
 #include "RenderAncestorIterator.h"
 #include "RenderChildIterator.h"
 #include "RenderSVGForeignObject.h"
-#include "RenderSVGHiddenContainer.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
 #include "RenderSVGRoot.h"
@@ -61,10 +60,8 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
 
     m_positionedChildren.clear();
     for (auto& child : childrenOfType<RenderObject>(m_container)) {
-        if (child.isSVGLayerAwareRenderer()) {
-            ASSERT(child.hasLayer());
+        if (child.isSVGLayerAwareRenderer())
             m_positionedChildren.append(downcast<RenderLayerModelObject>(child));
-        }
 
         bool needsLayout = containerNeedsLayout;
         bool childEverHadLayout = child.everHadLayout();

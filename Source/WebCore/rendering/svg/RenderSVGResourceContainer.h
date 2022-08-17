@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "RenderSVGHiddenContainer.h"
+#include "LegacyRenderSVGHiddenContainer.h"
 #include "RenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
 
@@ -27,7 +27,7 @@ namespace WebCore {
 
 class RenderLayer;
 
-class RenderSVGResourceContainer : public RenderSVGHiddenContainer,
+class RenderSVGResourceContainer : public LegacyRenderSVGHiddenContainer,
                                    public RenderSVGResource {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceContainer);
 public:

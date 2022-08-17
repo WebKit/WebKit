@@ -242,7 +242,7 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
     GraphicsContext& context = paintInfo.context();
     if (context.detectingContentfulPaint()) {
         for (auto& current : childrenOfType<RenderObject>(*this)) {
-            if (!current.isSVGHiddenContainer()) {
+            if (!current.isLegacySVGHiddenContainer()) {
                 context.setContentfulPaintDetected();
                 return;
             }

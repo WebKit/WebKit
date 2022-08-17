@@ -712,7 +712,7 @@ bool RenderElement::layerCreationAllowedForSubtree() const
 {
     RenderElement* parentRenderer = parent();
     while (parentRenderer) {
-        if (parentRenderer->isSVGHiddenContainer())
+        if (parentRenderer->isLegacySVGHiddenContainer())
             return false;
         parentRenderer = parentRenderer->parent();
     }
