@@ -85,8 +85,8 @@ void HTMLFormattingElementList::swapTo(Element& oldElement, HTMLStackItem&& newI
         return;
     }
     size_t index = &bookmark.mark() - &first();
-    ASSERT_WITH_SECURITY_IMPLICATION(index < size());
-    m_entries.insert(index + 1, WTFMove(newItem));
+    ASSERT_WITH_SECURITY_IMPLICATION(index <= size());
+    m_entries.insert(index, WTFMove(newItem));
     remove(oldElement);
 }
 

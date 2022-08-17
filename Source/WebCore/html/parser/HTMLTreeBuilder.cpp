@@ -1435,85 +1435,90 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomHTMLToken& token)
 
     // 4 is covered by the for() loop.
     for (int i = 0; i < outerIterationLimit; ++i) {
-        // 4.
+        // 4.3.
         RefPtr<Element> formattingElement = m_tree.activeFormattingElements().closestElementInScopeWithName(token.name());
-        // 4.a
         if (!formattingElement)
             return processAnyOtherEndTagForInBody(WTFMove(token));
-        // 4.c
+        // 4.5.
         if ((m_tree.openElements().contains(*formattingElement)) && !m_tree.openElements().inScope(*formattingElement)) {
             parseError(token);
             notImplemented(); // Check the stack of open elements for a more specific parse error.
             return;
         }
-        // 4.b
+        // 4.4.
         auto* formattingElementRecord = m_tree.openElements().find(*formattingElement);
         if (!formattingElementRecord) {
             parseError(token);
             m_tree.activeFormattingElements().remove(*formattingElement);
             return;
         }
-        // 4.d
+        // 4.6.
         if (formattingElement != &m_tree.currentElement())
             parseError(token);
-        // 5.
+        // 4.7.
         auto* furthestBlock = m_tree.openElements().furthestBlockForFormattingElement(*formattingElement);
-        // 6.
+        // 4.8.
         if (!furthestBlock) {
             m_tree.openElements().popUntilPopped(*formattingElement);
             m_tree.activeFormattingElements().remove(*formattingElement);
             return;
         }
-        // 7.
+        // 4.9.
         ASSERT(furthestBlock->isAbove(*formattingElementRecord));
         auto& commonAncestor = formattingElementRecord->next()->stackItem();
-        // 8.
+        // 4.10.
         HTMLFormattingElementList::Bookmark bookmark = m_tree.activeFormattingElements().bookmarkFor(*formattingElement);
-        // 9.
+        // 4.11.
         auto* node = furthestBlock;
-        auto* nextNode = node->next();
         auto* lastNode = furthestBlock;
-        // 9.1, 9.2, 9.3 and 9.11 are covered by the for() loop.
-        for (int i = 0; i < innerIterationLimit; ++i) {
-            // 9.4
+        auto* nextNode = node->next();
+        // 4.13.
+        unsigned innerLoopCounter = 0;
+        while (true) {
+            ++innerLoopCounter;
+            // 4.13.2.
             node = nextNode;
             ASSERT(node);
-            nextNode = node->next(); // Save node->next() for the next iteration in case node is deleted in 9.5.
-            // 9.5
-            if (!m_tree.activeFormattingElements().contains(node->element())) {
-                m_tree.openElements().remove(node->element());
-                node = 0;
-                continue;
-            }
-            // 9.6
+            nextNode = node->next(); // Save node->next() for the next iteration in case node is deleted in the next step.
+            // 4.13.3.
             if (node == formattingElementRecord)
                 break;
-            // 9.7
+            // 4.13.4.
+            bool nodeIsInListOfActiveFormattingElements = m_tree.activeFormattingElements().contains(node->element());
+            if (innerLoopCounter > innerIterationLimit && nodeIsInListOfActiveFormattingElements)
+                m_tree.activeFormattingElements().remove(node->element());
+            // 4.13.5.
+            auto* nodeEntry = m_tree.activeFormattingElements().find(node->element());
+            if (!nodeEntry) {
+                m_tree.openElements().remove(node->element());
+                node = nullptr;
+                continue;
+            }
+            // 4.13.6.
             auto newItem = m_tree.createElementFromSavedToken(node->stackItem());
 
-            HTMLFormattingElementList::Entry* nodeEntry = m_tree.activeFormattingElements().find(node->element());
             nodeEntry->replaceElement(HTMLStackItem(newItem));
             node->replaceElement(WTFMove(newItem));
 
-            // 9.8
+            // 4.13.7.
             if (lastNode == furthestBlock)
                 bookmark.moveToAfter(*nodeEntry);
-            // 9.9
+            // 4.13.8.
             m_tree.reparent(*node, *lastNode);
-            // 9.10
+            // 4.13.9.
             lastNode = node;
         }
-        // 10.
-        m_tree.insertAlreadyParsedChild(commonAncestor, *lastNode);
-        // 11.
-        auto newItem = m_tree.createElementFromSavedToken(formattingElementRecord->stackItem());
-        // 12. & 13.
-        m_tree.takeAllChildrenAndReparent(newItem, *furthestBlock);
         // 14.
-        m_tree.activeFormattingElements().swapTo(*formattingElement, HTMLStackItem(newItem), bookmark);
+        m_tree.insertAlreadyParsedChild(commonAncestor, *lastNode);
         // 15.
+        auto newItem = m_tree.createElementFromSavedToken(formattingElementRecord->stackItem());
+        // 16.
+        m_tree.takeAllChildrenAndReparent(newItem, *furthestBlock);
+        m_tree.openElements().insertAbove(HTMLStackItem(newItem), *furthestBlock);
+        // 18.
+        m_tree.activeFormattingElements().swapTo(*formattingElement, WTFMove(newItem), bookmark);
+        // 19.
         m_tree.openElements().remove(*formattingElement);
-        m_tree.openElements().insertAbove(WTFMove(newItem), *furthestBlock);
     }
 }
 
