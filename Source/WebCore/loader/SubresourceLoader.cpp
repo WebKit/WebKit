@@ -293,7 +293,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
 
         if (!m_documentLoader->cachedResourceLoader().updateRequestAfterRedirection(m_resource->type(), newRequest, options(), originalRequest().url())) {
             SUBRESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because CachedResourceLoader::updateRequestAfterRedirection (really CachedResourceLoader::canRequestAfterRedirection) said no");
-            cancel();
+            cancel(ResourceError { String(), 0, request().url(), "Redirect was not allowed"_s, ResourceError::Type::AccessControl });
             return completionHandler(WTFMove(newRequest));
         }
 
