@@ -137,7 +137,7 @@ void BBQPlan::work(CompilationEffort effort)
 
     size_t functionIndexSpace = m_functionIndex + m_moduleInformation->importFunctionCount();
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
-    const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
+    const TypeDefinition& signature = TypeInformation::get(typeIndex);
     function->entrypoint.compilation = makeUnique<Compilation>(
         FINALIZE_WASM_CODE_FOR_MODE(CompilationMode::BBQMode, linkBuffer, JITCompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
@@ -206,7 +206,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
     if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->referencedFunctions().contains(functionIndex)) {
         Locker locker { m_lock };
         TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
-        const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
+        const TypeDefinition& signature = TypeInformation::get(typeIndex);
 
         m_compilationContexts[functionIndex].embedderEntrypointJIT = makeUnique<CCallHelpers>();
         auto embedderToWasmInternalFunction = createJSToWasmWrapper(*m_compilationContexts[functionIndex].embedderEntrypointJIT, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex);

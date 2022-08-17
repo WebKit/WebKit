@@ -3066,10 +3066,9 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
     return { };
 }
 
-auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& originalSignature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
     Value* calleeIndex = get(args.takeLast());
-    const TypeDefinition& signature = originalSignature.expand();
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
 
     m_makesCalls = true;
@@ -3128,7 +3127,7 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& o
 
         // Check the signature matches the value we expect.
         {
-            Value* expectedSignatureIndex = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), TypeInformation::get(originalSignature));
+            Value* expectedSignatureIndex = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), TypeInformation::get(signature));
             CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
                 m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), calleeSignatureIndex, expectedSignatureIndex));
 

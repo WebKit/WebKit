@@ -661,7 +661,6 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Func:
         case TypeKind::Struct:
         case TypeKind::I31ref:
-        case TypeKind::Rec:
             RELEASE_ASSERT_NOT_REACHED();
         }
     };
@@ -721,7 +720,6 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Func:
         case TypeKind::Struct:
         case TypeKind::I31ref:
-        case TypeKind::Rec:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -753,7 +751,6 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Func:
         case TypeKind::Struct:
         case TypeKind::I31ref:
-        case TypeKind::Rec:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -813,7 +810,6 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
         case TypeKind::Func:
         case TypeKind::Struct:
         case TypeKind::I31ref:
-        case TypeKind::Rec:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -866,7 +862,6 @@ auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
         case TypeKind::Func:
         case TypeKind::Struct:
         case TypeKind::I31ref:
-        case TypeKind::Rec:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -1381,17 +1376,16 @@ auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
 {
     ExpressionType calleeIndex = args.takeLast();
 
-    const auto& functionSignature = *signature.expand().as<FunctionSignature>();
-    ASSERT(functionSignature.argumentCount() == args.size());
+    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
     ASSERT(m_info.tableCount() > tableIndex);
     ASSERT(m_info.tables[tableIndex].type() == TableElementType::Funcref);
 
-    LLIntCallInformation info = callInformationForCaller(functionSignature);
+    LLIntCallInformation info = callInformationForCaller(*signature.as<FunctionSignature>());
     unifyValuesWithBlock(info.arguments, args);
     if (Context::useFastTLS())
-        WasmCallIndirect::emit(this, calleeIndex, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments, tableIndex);
+        WasmCallIndirect::emit(this, calleeIndex, m_codeBlock->addSignature(*signature.as<FunctionSignature>()), info.stackOffset, info.numberOfStackArguments, tableIndex);
     else
-        WasmCallIndirectNoTls::emit(this, calleeIndex, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments, tableIndex);
+        WasmCallIndirectNoTls::emit(this, calleeIndex, m_codeBlock->addSignature(*signature.as<FunctionSignature>()), info.stackOffset, info.numberOfStackArguments, tableIndex);
     info.commitResults(results);
 
     return { };
@@ -1401,13 +1395,12 @@ auto LLIntGenerator::addCallRef(const TypeDefinition& signature, Vector<Expressi
 {
     ExpressionType callee = args.takeLast();
 
-    const auto& functionSignature = *signature.expand().as<FunctionSignature>();
-    LLIntCallInformation info = callInformationForCaller(functionSignature);
+    LLIntCallInformation info = callInformationForCaller(*signature.as<FunctionSignature>());
     unifyValuesWithBlock(info.arguments, args);
     if (Context::useFastTLS())
-        WasmCallRef::emit(this, callee, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments);
+        WasmCallRef::emit(this, callee, m_codeBlock->addSignature(*signature.as<FunctionSignature>()), info.stackOffset, info.numberOfStackArguments);
     else
-        WasmCallRefNoTls::emit(this, callee, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments);
+        WasmCallRefNoTls::emit(this, callee, m_codeBlock->addSignature(*signature.as<FunctionSignature>()), info.stackOffset, info.numberOfStackArguments);
     info.commitResults(results);
 
     return { };

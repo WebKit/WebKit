@@ -44,8 +44,6 @@ namespace Wasm {
 
 using FunctionArgCount = uint32_t;
 using StructFieldCount = uint32_t;
-using RecursionGroupCount = uint32_t;
-using ProjectionIndex = uint32_t;
 
 class FunctionSignature {
 public:
@@ -125,93 +123,20 @@ private:
     StructFieldCount m_fieldCount;
 };
 
-class RecursionGroup {
-public:
-    RecursionGroup(TypeIndex* payload, RecursionGroupCount typeCount)
-        : m_payload(payload)
-        , m_typeCount(typeCount)
-    {
-    }
-
-    RecursionGroupCount typeCount() const { return m_typeCount; }
-    TypeIndex type(RecursionGroupCount i) const { return const_cast<RecursionGroup*>(this)->getType(i); }
-
-    WTF::String toString() const;
-    void dump(WTF::PrintStream& out) const;
-
-    TypeIndex& getType(RecursionGroupCount i) { ASSERT(i < typeCount());; return *storage(i); }
-    TypeIndex* storage(RecursionGroupCount i) { return i + m_payload; }
-    const TypeIndex* storage(RecursionGroupCount i) const { return const_cast<RecursionGroup*>(this)->storage(i); }
-
-private:
-    TypeIndex* m_payload;
-    RecursionGroupCount m_typeCount;
-};
-
-// This class represents a projection into a recursion group. That is, if a recursion
-// group is defined as $r = (rec (type $s ...) (type $t ...)), then a projection accesses
-// the inner types. For example $r.$s or $r.$t, or $r.0 or $r.1 with numeric indices.
-//
-// See https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md#type-contexts
-//
-// We store projections rather than the implied unfolding because the actual type being
-// represented may be recursive and infinite. Projections are unfolded into a concrete type
-// when operations on the type require a specific concrete type.
-class Projection {
-public:
-    Projection(TypeIndex* payload)
-        : m_payload(payload)
-    {
-    }
-
-    TypeIndex recursionGroup() const { return const_cast<Projection*>(this)->getRecursionGroup(); }
-    ProjectionIndex index() const { return const_cast<Projection*>(this)->getIndex(); }
-
-    WTF::String toString() const;
-    void dump(WTF::PrintStream& out) const;
-
-    TypeIndex& getRecursionGroup() { return *storage(0); }
-    ProjectionIndex& getIndex() { return *reinterpret_cast<ProjectionIndex*>(storage(1)); }
-    TypeIndex* storage(uint32_t i) { ASSERT(i <= 1); return i + m_payload; }
-    const TypeIndex* storage(uint32_t i) const { return const_cast<Projection*>(this)->storage(i); }
-
-private:
-    TypeIndex* m_payload;
-};
-static_assert(sizeof(ProjectionIndex) <= sizeof(TypeIndex));
-
-enum class TypeDefinitionKind : uint8_t {
-    FunctionSignature,
-    StructType,
-    RecursionGroup,
-    Projection
-};
-
 class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
     WTF_MAKE_FAST_ALLOCATED;
 
     TypeDefinition() = delete;
     TypeDefinition(const TypeDefinition&) = delete;
 
-    TypeDefinition(TypeDefinitionKind kind, FunctionArgCount retCount, FunctionArgCount argCount)
+    TypeDefinition(FunctionArgCount retCount, FunctionArgCount argCount)
         : m_typeHeader { FunctionSignature { static_cast<Type*>(payload()), argCount, retCount } }
     {
-        RELEASE_ASSERT(kind == TypeDefinitionKind::FunctionSignature);
     }
 
-    TypeDefinition(TypeDefinitionKind kind, uint32_t fieldCount)
-        : m_typeHeader { StructType { static_cast<StructField*>(payload()), static_cast<StructFieldCount>(fieldCount) } }
+    TypeDefinition(StructFieldCount fieldCount)
+        : m_typeHeader { StructType { static_cast<StructField*>(payload()), fieldCount } }
     {
-        if (kind == TypeDefinitionKind::RecursionGroup)
-            m_typeHeader = { RecursionGroup { static_cast<TypeIndex*>(payload()), static_cast<RecursionGroupCount>(fieldCount) } };
-        else
-            RELEASE_ASSERT(kind == TypeDefinitionKind::StructType);
-    }
-
-    TypeDefinition(TypeDefinitionKind kind)
-        : m_typeHeader { Projection { static_cast<TypeIndex*>(payload()) } }
-    {
-        RELEASE_ASSERT(kind == TypeDefinitionKind::Projection);
     }
 
     // Payload starts past end of this object.
@@ -219,8 +144,6 @@ class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
 
     static size_t allocatedFunctionSize(Checked<FunctionArgCount> retCount, Checked<FunctionArgCount> argCount) { return sizeof(TypeDefinition) + (retCount + argCount) * sizeof(Type); }
     static size_t allocatedStructSize(Checked<StructFieldCount> fieldCount) { return sizeof(TypeDefinition) + fieldCount * sizeof(StructField); }
-    static size_t allocatedRecursionGroupSize(Checked<RecursionGroupCount> typeCount) { return sizeof(TypeDefinition) + typeCount * sizeof(TypeIndex); }
-    static size_t allocatedProjectionSize() { return sizeof(TypeDefinition) + 2 * sizeof(TypeIndex); }
 
 public:
     template <typename T>
@@ -239,9 +162,6 @@ public:
     bool operator==(const TypeDefinition& rhs) const { return this == &rhs; }
     unsigned hash() const;
 
-    const TypeDefinition& replacePlaceholders(TypeIndex) const;
-    const TypeDefinition& expand() const;
-
     // Type definitions are uniqued and, for call_indirect, validated at runtime. Tables can create invalid TypeIndex values which cause call_indirect to fail. We use 0 as the invalidIndex so that the codegen can easily test for it and trap, and we add a token invalid entry in TypeInformation.
     static const constexpr TypeIndex invalidIndex = 0;
 
@@ -249,17 +169,11 @@ private:
     friend class TypeInformation;
     friend struct FunctionParameterTypes;
     friend struct StructParameterTypes;
-    friend struct RecursionGroupParameterTypes;
-    friend struct ProjectionParameterTypes;
 
     static RefPtr<TypeDefinition> tryCreateFunctionSignature(FunctionArgCount returnCount, FunctionArgCount argumentCount);
     static RefPtr<TypeDefinition> tryCreateStructType(StructFieldCount);
-    static RefPtr<TypeDefinition> tryCreateRecursionGroup(RecursionGroupCount);
-    static RefPtr<TypeDefinition> tryCreateProjection();
 
-    static Type substitute(Type, TypeIndex);
-
-    std::variant<FunctionSignature, StructType, RecursionGroup, Projection> m_typeHeader;
+    std::variant<FunctionSignature, StructType> m_typeHeader;
     // Payload is stored here.
 };
 
@@ -309,8 +223,6 @@ public:
 
     static RefPtr<TypeDefinition> typeDefinitionForFunction(const Vector<Type, 1>& returnTypes, const Vector<Type>& argumentTypes);
     static RefPtr<TypeDefinition> typeDefinitionForStruct(const Vector<StructField>& fields);
-    static RefPtr<TypeDefinition> typeDefinitionForRecursionGroup(const Vector<TypeIndex>& types);
-    static RefPtr<TypeDefinition> typeDefinitionForProjection(TypeIndex, ProjectionIndex);
     ALWAYS_INLINE const TypeDefinition* thunkFor(Type type) const { return thunkTypes[linearizeType(type.kind)]; }
 
     static const TypeDefinition& get(TypeIndex);

@@ -64,12 +64,6 @@ public:
     size_t offset() const { return m_offset; }
 
 protected:
-    struct RecursionGroupInformation {
-        bool inRecursionGroup;
-        uint32_t start;
-        uint32_t end;
-    };
-
     Parser(const uint8_t*, size_t);
 
     bool WARN_UNUSED_RETURN consumeCharacter(char);
@@ -119,10 +113,6 @@ private:
     size_t m_sourceLength;
     // We keep a local reference to the global table so we don't have to fetch it to find thunk types.
     const TypeInformation& m_typeInformation;
-
-protected:
-    // Used to track whether we are in a recursion group and the group's type indices, if any.
-    RecursionGroupInformation m_recursionGroupInformation;
 };
 
 template<typename SuccessType>
@@ -130,7 +120,6 @@ ALWAYS_INLINE Parser<SuccessType>::Parser(const uint8_t* sourceBuffer, size_t so
     : m_source(sourceBuffer)
     , m_sourceLength(sourceLength)
     , m_typeInformation(TypeInformation::singleton())
-    , m_recursionGroupInformation({ })
 {
 }
 
@@ -323,7 +312,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseHeapType(const ModuleInformation& i
         return false;
     }
 
-    if (static_cast<size_t>(heapType) >= info.typeCount() && (!m_recursionGroupInformation.inRecursionGroup || !(static_cast<uint32_t>(heapType) >= m_recursionGroupInformation.start && static_cast<uint32_t>(heapType) <= m_recursionGroupInformation.end)))
+    if (static_cast<size_t>(heapType) >= info.typeCount())
         return false;
 
     result = heapType;
@@ -350,19 +339,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& 
         int32_t heapType;
         if (!parseHeapType(info, heapType))
             return false;
-        if (heapType < 0)
-            typeIndex = static_cast<TypeIndex>(heapType);
-        else {
-            // For recursive references inside recursion groups, we re-use the
-            // `rec` type code to be the internal representation of `rec.<i>`
-            // in the formal semantics. These should not leak out, as they are
-            // replaced with real type indices during type unrolling/expansion.
-            if (m_recursionGroupInformation.inRecursionGroup && static_cast<uint32_t>(heapType) >= m_recursionGroupInformation.start) {
-                typeKind = TypeKind::Rec;
-                typeIndex = static_cast<TypeIndex>(heapType - m_recursionGroupInformation.start);
-            } else
-                typeIndex = TypeInformation::get(info.typeSignatures[heapType].get());
-        }
+        typeIndex = heapType < 0 ? static_cast<TypeIndex>(heapType) : TypeInformation::get(info.typeSignatures[heapType].get());
     }
 
     Type type = { typeKind, static_cast<Nullable>(isNullable), typeIndex };

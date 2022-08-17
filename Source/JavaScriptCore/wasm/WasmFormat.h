@@ -74,10 +74,6 @@ inline bool isValueType(Type type)
     case TypeKind::Ref:
     case TypeKind::RefNull:
         return Options::useWebAssemblyTypedFunctionReferences();
-    // Rec type kinds are used internally to represent `rec.<i>` references
-    // within recursion groups. They are invalid in other contexts.
-    case TypeKind::Rec:
-        return Options::useWebAssemblyGC();
     default:
         break;
     }
