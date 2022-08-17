@@ -103,7 +103,7 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyConta
 {
     // If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
     if (origin && isBlobURLContainsNullOrigin(url))
-        originMap()->add(url.string(), origin);
+        originMap()->add<StringViewHashTranslator>(url.viewWithoutFragmentIdentifier(), origin);
 
     if (isMainThread()) {
         blobRegistry().registerBlobURL(url, srcURL, policyContainer);
@@ -153,7 +153,7 @@ unsigned long long ThreadableBlobRegistry::blobSize(const URL& url)
 void ThreadableBlobRegistry::unregisterBlobURL(const URL& url)
 {
     if (isBlobURLContainsNullOrigin(url))
-        originMap()->remove(url.string());
+        originMap()->remove<StringViewHashTranslator>(url.viewWithoutFragmentIdentifier());
 
     ensureOnMainThread([url = url.isolatedCopy()] {
         blobRegistry().unregisterBlobURL(url);
@@ -176,7 +176,7 @@ void ThreadableBlobRegistry::unregisterBlobURLHandle(const URL& url)
 
 RefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& url)
 {
-    if (auto cachedOrigin = originMap()->get(url.string()))
+    if (auto cachedOrigin = originMap()->get<StringViewHashTranslator>(url.viewWithoutFragmentIdentifier()))
         return cachedOrigin;
 
     if (!url.protocolIsBlob() || !isBlobURLContainsNullOrigin(url))

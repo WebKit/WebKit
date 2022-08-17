@@ -176,6 +176,7 @@ public:
     template<typename HashTranslator, typename T> bool contains(const T&) const;
     template<typename HashTranslator, typename T> MappedPeekType get(const T&) const;
     template<typename HashTranslator, typename T> MappedPeekType inlineGet(const T&) const;
+    template<typename HashTranslator, typename T> bool remove(const T&);
 
     // An alternate version of add() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion if the object is already
@@ -361,6 +362,17 @@ template<typename HashTranslator, typename TYPE>
 inline bool HashMap<T, U, V, W, X, Y>::contains(const TYPE& value) const
 {
     return m_impl.template contains<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value);
+}
+
+template<typename T, typename U, typename V, typename W, typename X, typename Y>
+template<typename HashTranslator, typename TYPE>
+inline bool HashMap<T, U, V, W, X, Y>::remove(const TYPE& value)
+{
+    auto it = find<HashTranslator>(value);
+    if (it == end())
+        return false;
+    remove(it);
+    return true;
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg>

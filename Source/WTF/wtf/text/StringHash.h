@@ -237,6 +237,12 @@ namespace WTF {
         {
             return a == b;
         }
+
+        static void translate(String& location, StringView view, unsigned hash)
+        {
+            location = view.toString();
+            location.impl()->setHash(hash);
+        }
     };
 
     // FIXME: Find a way to incorporate this functionality into ASCIICaseInsensitiveHash and allow

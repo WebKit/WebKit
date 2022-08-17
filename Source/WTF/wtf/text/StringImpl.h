@@ -71,6 +71,7 @@ struct CStringTranslator;
 struct HashAndUTF8CharactersTranslator;
 struct HashTranslatorASCIILiteral;
 struct LCharBufferTranslator;
+struct StringViewHashTranslator;
 struct SubstringTranslator;
 struct UCharBufferTranslator;
 
@@ -190,6 +191,7 @@ class StringImpl : private StringImplShape {
     friend struct WTF::HashAndUTF8CharactersTranslator;
     friend struct WTF::HashTranslatorASCIILiteral;
     friend struct WTF::LCharBufferTranslator;
+    friend struct WTF::StringViewHashTranslator;
     friend struct WTF::SubstringTranslator;
     friend struct WTF::UCharBufferTranslator;
 
