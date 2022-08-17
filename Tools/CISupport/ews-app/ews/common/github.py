@@ -204,8 +204,8 @@ class GitHubEWS(GitHub):
         return u'{}\n{}\n{}\n{}'.format(description, self.STATUS_BUBBLE_START, ews_comment, self.STATUS_BUBBLE_END)
 
     def generate_comment_text_for_change(self, change):
-        comment = 'https://github.com/WebKit/WebKit/commit/{}'.format(change.change_id)
-        comment += '\n\n| Misc | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
+        hash_url = 'https://github.com/WebKit/WebKit/commit/{}'.format(change.change_id)
+        comment = '\n\n| Misc | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
 
         for row in self.STATUS_BUBBLE_ROWS:
@@ -216,7 +216,11 @@ class GitHubEWS(GitHub):
                     continue
                 comment_for_row += self.github_status_for_queue(change, queue)
             comment += comment_for_row
-        return comment
+
+        if change.obsolete:
+            return u'EWS run on previous version of this PR (hash {})<details>{}</details>'.format(hash_url, comment)
+
+        return u'{}{}'.format(hash_url, comment)
 
     def github_status_for_queue(self, change, queue):
         name = queue
@@ -330,7 +334,12 @@ class GitHubEWS(GitHub):
             if new_comment_id != -1:
                 change.set_comment_id(new_comment_id)
                 _log.info('Set new comment id as {} for hash: {}.'.format(new_comment_id, sha))
-            Change.mark_old_changes_as_obsolete(pr_id, sha)
+            obsolete_changes = Change.mark_old_changes_as_obsolete(pr_id, sha)
+            for obsolete_change in obsolete_changes:
+                obsolete_comment_text = gh.generate_comment_text_for_change(obsolete_change)
+                gh.update_or_leave_comment_on_pr(pr_id, obsolete_comment_text, comment_id=obsolete_change.comment_id)
+                _log.info('Updated obsolete status-bubble on pr {} for hash: {}'.format(pr_id, obsolete_change.change_id))
+
         else:
             _log.info('Updating comment for hash: {}, pr_id: {}, pr_id from db: {}.'.format(sha, pr_id, change.pr_id))
             new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, comment_text, comment_id=comment_id)

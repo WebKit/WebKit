@@ -100,7 +100,7 @@ class Change(models.Model):
     def mark_old_changes_as_obsolete(cls, pr_id, change_id):
         changes = Change.objects.filter(pr_id=pr_id).order_by('-created')
         if not changes or len(changes) == 1:
-            return
+            return []
         for change in changes[1:]:
             if not change.obsolete:
                 if change.change_id == change_id:
@@ -108,6 +108,7 @@ class Change(models.Model):
                 change.obsolete = True
                 change.save()
                 _log.info('Marked change {} on pr {} as obsolete'.format(change.change_id, pr_id))
+        return changes[1:]
 
     @classmethod
     def set_sent_to_buildbot(cls, change_id, value, commit_queue=False):
