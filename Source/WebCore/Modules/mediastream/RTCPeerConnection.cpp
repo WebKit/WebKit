@@ -555,7 +555,7 @@ ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(String&& l
     // FIXME: Provide better error reporting.
     auto channelHandler = m_backend->createDataChannelHandler(label, options);
     if (!channelHandler)
-        return Exception { NotSupportedError };
+        return Exception { OperationError };
 
     return RTCDataChannel::create(*document(), WTFMove(channelHandler), WTFMove(label), WTFMove(options));
 }

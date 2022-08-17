@@ -23,7 +23,7 @@ PASS createDataChannel with id 65534 and negotiated not set should succeed, but 
 PASS createDataChannel with id 65535 and negotiated not set should succeed, but not set the channel's id
 PASS createDataChannel with id 0 and negotiated true should succeed, and set the channel's id
 PASS createDataChannel with id 1 and negotiated true should succeed, and set the channel's id
-FAIL createDataChannel with id 65534 and negotiated true should succeed, and set the channel's id The operation is not supported.
+FAIL createDataChannel with id 65534 and negotiated true should succeed, and set the channel's id The operation failed for an operation-specific reason.
 PASS createDataChannel with id -1 and negotiated not set should throw TypeError
 PASS createDataChannel with id 65536 and negotiated not set should throw TypeError
 PASS createDataChannel with id -1 should throw TypeError
@@ -40,21 +40,9 @@ PASS createDataChannel with negotiated false should succeed
 PASS createDataChannel with negotiated false and id 42 should ignore the id
 PASS createDataChannel with negotiated true and id not defined should throw TypeError
 PASS Channels created (after setRemoteDescription) should have id assigned
-FAIL Reusing a data channel id that is in use should throw OperationError assert_throws_dom: function "() =>
-    pc.createDataChannel('channel-3', {
-      negotiated: true,
-      id: 42,
-    })" threw object "NotSupportedError: The operation is not supported." that is not a DOMException OperationError: property "code" is equal to 9, expected 0
-FAIL Reusing a data channel id that is in use (after setRemoteDescription) should throw OperationError assert_throws_dom: function "() =>
-    pc1.createDataChannel('channel-3', {
-      negotiated: true,
-      id: 42,
-    })" threw object "NotSupportedError: The operation is not supported." that is not a DOMException OperationError: property "code" is equal to 9, expected 0
-FAIL Reusing a data channel id that is in use (after setRemoteDescription, negotiated via DCEP) should throw OperationError assert_throws_dom: function "() =>
-    pc1.createDataChannel('channel-2', {
-      negotiated: true,
-      id: dc1.id,
-    })" threw object "NotSupportedError: The operation is not supported." that is not a DOMException OperationError: property "code" is equal to 9, expected 0
+PASS Reusing a data channel id that is in use should throw OperationError
+PASS Reusing a data channel id that is in use (after setRemoteDescription) should throw OperationError
+PASS Reusing a data channel id that is in use (after setRemoteDescription, negotiated via DCEP) should throw OperationError
 PASS New datachannel should be in the connecting state after creation (after connection establishment)
 PASS addTrack, then creating datachannel, should negotiate properly
 PASS addTrack, then creating datachannel, should negotiate properly when max-bundle is used
