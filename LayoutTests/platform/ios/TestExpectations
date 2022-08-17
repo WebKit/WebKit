@@ -3718,3 +3718,5 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-left-color-001.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-right-color-001.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-top-color-001.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/244065 fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-readonly.html [ Pass ImageOnlyFailure ]
