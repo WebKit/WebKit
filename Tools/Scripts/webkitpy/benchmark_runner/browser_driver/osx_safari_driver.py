@@ -23,12 +23,28 @@ class OSXSafariDriver(OSXBrowserDriver):
         self._maximize_window()
 
     def launch_url(self, url, options, browser_build_path, browser_path):
-        safari_app_path = '/Applications/Safari.app'
-        safari_binary_path = os.path.join(safari_app_path, 'Contents/MacOS/Safari')
+        if browser_build_path or browser_path:
+            self._launch_url_with_custom_path(self, url, options, browser_build_path, browser_path)
+            return
+
         env = {}
         for key, value in os.environ.items():
             if re.match(r"^__XPC_", key):
                 env[key] = value
+
+        self._safari_process = self._launch_process(None, "Safari.app", url, ["--url", url, "--args"] + self._safari_preferences, env=env)
+
+    def _launch_url_with_custom_path(self, url, options, browser_build_path, browser_path):
+        safari_app_path = '/Applications/Safari.app'
+        safari_binary_path = os.path.join(safari_app_path, 'Contents/MacOS/Safari')
+
+        _log.info("WARNING: Using custom paths to launch Safari (--browser-path or --build-directory) can return inaccurate results if the test is run remotely.")
+
+        env = {}
+        for key, value in os.environ.items():
+            if re.match(r"^__XPC_", key):
+                env[key] = value
+
         if browser_build_path:
             browser_build_absolute_path = os.path.abspath(browser_build_path)
             safari_app_path = os.path.join(browser_build_absolute_path, 'Safari.app')
@@ -53,10 +69,11 @@ class OSXSafariDriver(OSXBrowserDriver):
                 raise Exception('Could not find Safari.app at {}'.format(safari_app_path))
 
         args = [safari_binary_path] + self._safari_preferences
-
         _log.info('Launching safari: %s with url: %s' % (safari_binary_path, url))
-        self._safari_process = OSXSafariDriver._launch_process_with_caffeinate(args, env)
-
+        try:
+            self._safari_process = subprocess.Popen(args, env=env)
+        except Exception as error:
+            _log.error('Popen failed: {error}'.format(error=error))
         # Stop for initialization of the safari process, otherwise, open
         # command may use the system safari.
         time.sleep(3)

@@ -5,6 +5,8 @@ import shutil
 import subprocess
 import time
 
+from contextlib import contextmanager
+
 from webkitpy.benchmark_runner.browser_driver.browser_driver import BrowserDriver
 from webkitpy.benchmark_runner.utils import write_defaults
 
@@ -70,16 +72,20 @@ class OSXBrowserDriver(BrowserDriver):
         self._save_screenshot_to_path(diagnose_directory, 'test-failure-screenshot-{}.jpg'.format(int(time.time())))
 
     @classmethod
-    def _launch_process(cls, build_dir, app_name, url, args):
+    def _launch_process(cls, build_dir, app_name, url, args, env=None):
         if not build_dir:
             build_dir = '/Applications/'
         app_path = os.path.join(build_dir, app_name)
 
-        _log.info('Launching "%s" with url "%s"' % (app_path, url))
-
+        _log.info('Launching {} with url {}. args:{}'.format(app_path, url, " ".join(args)))
         # FIXME: May need to be modified for a local build such as setting up DYLD libraries
         args = ['open', '-a', app_path] + args
-        cls._launch_process_with_caffeinate(args)
+        try:
+            process = subprocess.Popen(args, env=env)
+        except Exception as error:
+            _log.error('Popen failed: {error}'.format(error=error))
+
+        return process
 
     @classmethod
     def _launch_webdriver(cls, url, driver):
@@ -102,16 +108,13 @@ class OSXBrowserDriver(BrowserDriver):
                 _log.error("Terminate failed.  Killing.")
                 subprocess.call(['/usr/bin/killall', process_name])
 
-    @classmethod
-    def _launch_process_with_caffeinate(cls, args, env=None):
+    @contextmanager
+    def prevent_sleep(self, timeout):
         try:
-            process = subprocess.Popen(args, env=env)
-        except Exception as error:
-            _log.error('Popen failed: {error}'.format(error=error))
-            return
-
-        subprocess.Popen(["/usr/bin/caffeinate", "-disw", str(process.pid)])
-        return process
+            subprocess.Popen(["/usr/bin/caffeinate", "-dist", str(timeout)])
+            yield
+        finally:
+            subprocess.call(["pkill", "-9", "caffeinate"])
 
     @classmethod
     def _screen_size(cls):

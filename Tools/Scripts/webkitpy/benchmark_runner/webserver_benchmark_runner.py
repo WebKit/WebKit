@@ -52,7 +52,8 @@ class WebServerBenchmarkRunner(BenchmarkRunner):
             self._http_server_driver.serve(web_root)
             url = urljoin(self._http_server_driver.base_url(), self._plan_name + '/' + test_file)
             self._browser_driver.launch_url(url, self._plan['options'], self._build_dir, self._browser_path)
-            with Timeout(self._plan['timeout']):
+            timeout = self._plan['timeout']
+            with Timeout(timeout), self._browser_driver.prevent_sleep(timeout):
                 result = self._get_result(url)
         except Exception as error:
             self._browser_driver.diagnose_test_failure(self._diagnose_dir, error)
