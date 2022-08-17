@@ -732,8 +732,8 @@ public:
     // Gives platforms the opportunity to indicate if an object should be included.
     AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const;
 #else
-    bool accessibilityIgnoreAttachment() const override { return true; }
-    AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const override { return AccessibilityObjectInclusion::DefaultBehavior; }
+    bool accessibilityIgnoreAttachment() const { return true; }
+    AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const { return AccessibilityObjectInclusion::DefaultBehavior; }
 #endif
 
 #if PLATFORM(IOS_FAMILY)
