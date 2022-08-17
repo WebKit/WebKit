@@ -485,17 +485,25 @@ void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<Fragmen
         return;
     }
 
-    flushCompressedSampleBuffers([weakThis = WeakPtr { *this }]() mutable {
-        if (!weakThis)
-            return;
+    if (m_videoCompressor)
+        m_videoCompressor->flush();
+    if (m_audioCompressor)
+        m_audioCompressor->flush();
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [weakThis->m_writer flush];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+    // We hop to the main thread since flushing the video compressor might trigger starting the writer asynchronously.
+    callOnMainThread([this, weakThis = WeakPtr { *this }]() mutable {
+        flushCompressedSampleBuffers([weakThis = WTFMove(weakThis)]() mutable {
+            if (!weakThis)
+                return;
 
-        callOnMainThread([weakThis = WTFMove(weakThis)] {
-            if (weakThis)
-                weakThis->completeFetchData();
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            [weakThis->m_writer flush];
+            ALLOW_DEPRECATED_DECLARATIONS_END
+
+            callOnMainThread([weakThis = WTFMove(weakThis)] {
+                if (weakThis)
+                    weakThis->completeFetchData();
+            });
         });
     });
 }

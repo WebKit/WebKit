@@ -41,7 +41,8 @@ public:
     ~AudioSampleBufferCompressor();
 
     void setBitsPerSecond(unsigned);
-    void finish();
+    void finish() { flushInternal(true); }
+    void flush() { flushInternal(false); }
     void addSampleBuffer(CMSampleBufferRef);
     CMSampleBufferRef getOutputSampleBuffer();
     RetainPtr<CMSampleBufferRef> takeOutputSampleBuffer();
@@ -63,6 +64,7 @@ private:
     RetainPtr<CMSampleBufferRef> sampleBufferWithNumPackets(UInt32 numPackets, AudioBufferList);
     void processSampleBuffersUntilLowWaterTime(CMTime);
     OSStatus provideSourceDataNumOutputPackets(UInt32*, AudioBufferList*, AudioStreamPacketDescription**);
+    void flushInternal(bool isFinished);
 
     Ref<WorkQueue> m_serialDispatchQueue;
     CMTime m_lowWaterTime { kCMTimeInvalid };

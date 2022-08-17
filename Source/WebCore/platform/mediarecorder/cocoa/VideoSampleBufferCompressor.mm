@@ -92,11 +92,14 @@ void VideoSampleBufferCompressor::setBitsPerSecond(unsigned bitRate)
     m_outputBitRate = bitRate;
 }
 
-void VideoSampleBufferCompressor::finish()
+void VideoSampleBufferCompressor::flushInternal(bool isFinished)
 {
-    m_serialDispatchQueue->dispatchSync([this] {
+    m_serialDispatchQueue->dispatchSync([this, isFinished] {
         auto error = PAL::VTCompressionSessionCompleteFrames(m_vtSession.get(), PAL::kCMTimeInvalid);
         RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTCompressionSessionCompleteFrames failed with %d", error);
+
+        if (!isFinished)
+            return;
 
         error = PAL::CMBufferQueueMarkEndOfData(m_outputBufferQueue.get());
         RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor CMBufferQueueMarkEndOfData failed with %d", error);

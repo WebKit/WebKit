@@ -85,10 +85,14 @@ bool AudioSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callba
     return true;
 }
 
-void AudioSampleBufferCompressor::finish()
+void AudioSampleBufferCompressor::flushInternal(bool isFinished)
 {
-    m_serialDispatchQueue->dispatchSync([this] {
+    m_serialDispatchQueue->dispatchSync([this, isFinished] {
         processSampleBuffersUntilLowWaterTime(PAL::kCMTimeInvalid);
+
+        if (!isFinished)
+            return;
+
         auto error = PAL::CMBufferQueueMarkEndOfData(m_outputBufferQueue.get());
         RELEASE_LOG_ERROR_IF(error, MediaStream, "AudioSampleBufferCompressor CMBufferQueueMarkEndOfData failed %d", error);
         m_isEncoding = false;

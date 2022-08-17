@@ -42,7 +42,8 @@ public:
     ~VideoSampleBufferCompressor();
 
     void setBitsPerSecond(unsigned);
-    void finish();
+    void finish() { flushInternal(true); }
+    void flush() { flushInternal(false); }
     void addSampleBuffer(CMSampleBufferRef);
     CMSampleBufferRef getOutputSampleBuffer();
     RetainPtr<CMSampleBufferRef> takeOutputSampleBuffer();
@@ -58,6 +59,7 @@ private:
     void processSampleBuffer(CMSampleBufferRef);
     bool initCompressionSession(CMVideoFormatDescriptionRef);
     CFStringRef vtProfileLevel() const;
+    void flushInternal(bool isFinished);
 
     static void videoCompressionCallback(void *refCon, void*, OSStatus, VTEncodeInfoFlags, CMSampleBufferRef);
 

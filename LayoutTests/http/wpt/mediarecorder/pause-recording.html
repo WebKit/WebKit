@@ -62,7 +62,35 @@ promise_test(async (test) => {
     assert_greater_than(blob.size, 1400);
 }, "Calling requestData once after pausing should lead to more than header data");
 
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
 
+    const recorder = new MediaRecorder(stream);
+    let dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    const startPromise = new Promise(resolve => recorder.onstart = resolve);
+    recorder.start();
+    await startPromise;
+
+    await waitFor(1000);
+
+    const pausePromise = new Promise(resolve => recorder.onpause = resolve);
+    recorder.pause();
+
+    recorder.requestData();
+
+    await pausePromise;
+    const blobWithData = await dataPromise;
+    assert_greater_than(blobWithData.size, 0);
+
+    recorder.requestData();
+    const blobWithNoDataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+    await waitFor(100);
+
+    const blobWithNoData = await blobWithNoDataPromise;
+    assert_equals(blobWithNoData.size, 0);
+
+}, "Once paused, the second requestData call should lead to a zero size blob");
     </script>
 </body>
 </html>

@@ -2,4 +2,5 @@
 
 PASS Pausing and resuming the recording should impact the video duration
 PASS Calling requestData once after pausing should lead to more than header data
+PASS Once paused, the second requestData call should lead to a zero size blob
 
