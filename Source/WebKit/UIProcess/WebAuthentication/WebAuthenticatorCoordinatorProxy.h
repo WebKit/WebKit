@@ -73,7 +73,7 @@ private:
     // Receivers.
     void makeCredential(WebCore::FrameIdentifier, FrameInfoData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialCreationOptions&&, bool processingUserGesture, RequestCompletionHandler&&);
     void getAssertion(WebCore::FrameIdentifier, FrameInfoData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialRequestOptions&&, WebCore::CredentialRequestOptions::MediationRequirement, std::optional<WebCore::SecurityOriginData>, bool processingUserGesture, RequestCompletionHandler&&);
-    void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&);
+    void isUserVerifyingPlatformAuthenticatorAvailable(const WebCore::SecurityOriginData&, QueryCompletionHandler&&);
     void isConditionalMediationAvailable(QueryCompletionHandler&&);
 
     void handleRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);

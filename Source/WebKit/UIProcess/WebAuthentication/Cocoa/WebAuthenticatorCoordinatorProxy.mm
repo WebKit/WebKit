@@ -517,10 +517,10 @@ void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(QueryComp
     handler([getASCWebKitSPISupportClass() shouldUseAlternateCredentialStore]);
 }
 
-void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(const SecurityOriginData& data, QueryCompletionHandler&& handler)
 {
     if ([getASCWebKitSPISupportClass() shouldUseAlternateCredentialStore]) {
-        handler(true);
+        handler(![getASCWebKitSPISupportClass() arePasskeysDisallowedForRelyingParty:data.securityOrigin()->domain()]);
         return;
     }
 

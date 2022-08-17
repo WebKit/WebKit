@@ -114,7 +114,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
 }
 
 #if !HAVE(UNIFIED_ASC_AUTH_UI)
-void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(const SecurityOriginData&, QueryCompletionHandler&& handler)
 {
     handler(LocalService::isAvailable());
 }

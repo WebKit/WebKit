@@ -265,7 +265,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     m_client->getAssertion(*frame, callerOrigin, clientDataJsonHash, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
 }
 
-void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&& promise) const
+void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(const Document& document, DOMPromiseDeferred<IDLBoolean>&& promise) const
 {
     // The following implements https://www.w3.org/TR/webauthn/#isUserVerifyingPlatformAuthenticatorAvailable
     // as of 5 December 2017.
@@ -279,8 +279,9 @@ void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(DOM
     auto completionHandler = [promise = WTFMove(promise)] (bool result) mutable {
         promise.resolve(result);
     };
+
     // Async operation are dispatched and handled in the messenger.
-    m_client->isUserVerifyingPlatformAuthenticatorAvailable(WTFMove(completionHandler));
+    m_client->isUserVerifyingPlatformAuthenticatorAvailable(document.securityOrigin(), WTFMove(completionHandler));
 }
 
 

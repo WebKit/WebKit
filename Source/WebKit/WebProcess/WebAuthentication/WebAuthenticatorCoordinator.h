@@ -43,7 +43,7 @@ private:
     void makeCredential(const WebCore::Frame&, const WebCore::SecurityOrigin&, const Vector<uint8_t>&, const WebCore::PublicKeyCredentialCreationOptions&, WebCore::RequestCompletionHandler&&) final;
     void getAssertion(const WebCore::Frame&, const WebCore::SecurityOrigin&, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, WebCore::MediationRequirement, const std::pair<WebAuthn::Scope, std::optional<WebCore::SecurityOriginData>>&, WebCore::RequestCompletionHandler&&) final;
     void isConditionalMediationAvailable(WebCore::QueryCompletionHandler&&) final;
-    void isUserVerifyingPlatformAuthenticatorAvailable(WebCore::QueryCompletionHandler&&) final;
+    void isUserVerifyingPlatformAuthenticatorAvailable(const WebCore::SecurityOrigin&, WebCore::QueryCompletionHandler&&) final;
     void resetUserGestureRequirement() final { m_requireUserGesture = false; }
 
     bool processingUserGesture(const WebCore::Frame&, const WebCore::FrameIdentifier&);

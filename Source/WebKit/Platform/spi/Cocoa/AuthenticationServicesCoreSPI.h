@@ -32,6 +32,7 @@
 #else
 @interface ASCWebKitSPISupport : NSObject
 @property (class, nonatomic) BOOL shouldUseAlternateCredentialStore;
++ (BOOL)arePasskeysDisallowedForRelyingParty:(nonnull NSString *)relyingParty;
 @end
 #endif
 
