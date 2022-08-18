@@ -56,6 +56,7 @@ bool pas_scavenger_eligibility_notification_has_been_deferred = false;
 pas_scavenger_state pas_scavenger_current_state = pas_scavenger_state_no_thread;
 unsigned pas_scavenger_should_suspend_count = 0;
 pas_scavenger_data* pas_scavenger_data_instance = NULL;
+uint32_t pas_scavenger_thread_local_cache_decommit_tick_bit = 7; /* Roughly speaking, in non-mini mode, it runs once per 13 seconds. */
 
 double pas_scavenger_deep_sleep_timeout_in_milliseconds = 10. * 1000.;
 #ifdef PAS_LIBMALLOC
@@ -71,8 +72,6 @@ uint64_t pas_scavenger_max_epoch_delta = 300ll * 1000ll * 1000ll;
 #endif
 
 static uint32_t pas_scavenger_tick_count = 0;
-/* Run thread-local-cache decommit once a N. It should be power of two. */
-#define PAS_THREAD_LOCAL_CACHE_DECOMMIT_PERIOD_COUNT 128 /* Roughly speaking, it runs once per 13 seconds. */
 
 #if PAS_OS(DARWIN)
 static _Atomic qos_class_t pas_scavenger_requested_qos_class = QOS_CLASS_USER_INITIATED;
@@ -237,7 +236,7 @@ static void* scavenger_thread_main(void* arg)
                                                 pas_lock_is_not_held);
         
         thread_local_cache_decommit_action = pas_thread_local_cache_decommit_no_action;
-        if ((pas_scavenger_tick_count % PAS_THREAD_LOCAL_CACHE_DECOMMIT_PERIOD_COUNT) == 0) {
+        if (!(pas_scavenger_tick_count & ((1U << pas_scavenger_thread_local_cache_decommit_tick_bit) - 1))) {
             if (verbose)
                 printf("Attempt to decommit unused TLC\n");
             thread_local_cache_decommit_action = pas_thread_local_cache_decommit_if_possible_action;

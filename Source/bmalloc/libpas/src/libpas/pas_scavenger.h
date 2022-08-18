@@ -72,6 +72,9 @@ PAS_API extern double pas_scavenger_period_in_milliseconds; /* How long to sleep
 PAS_API extern uint64_t pas_scavenger_max_epoch_delta; /* How much to subtract from the current epoch
                                                           to compute the max epoch. */
 
+PAS_API extern uint32_t pas_scavenger_thread_local_cache_decommit_tick_bit; /* Run TLC decommit per N tick, and N is computed
+                                                                               as (1 << pas_scavenger_thread_local_cache_decommit_tick_bit). */
+
 #if PAS_OS(DARWIN)
 /* It's legal to set this anytime. */
 PAS_API void pas_scavenger_set_requested_qos_class(qos_class_t);
