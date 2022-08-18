@@ -4,7 +4,7 @@
 <script src="../resources/testharnessreport.js"></script>
 
 <style>
-body {
+:root {
     color-scheme: light dark;
 }
 
@@ -41,12 +41,12 @@ test(function() {
 }, "Set view to transparent");
 
 test(function() {
-    test_prop(document.body, "color-scheme", "light dark");
-}, "Body Element color scheme is light and dark");
+    test_prop(document.documentElement, "color-scheme", "light dark");
+}, "Document Element color scheme is light and dark");
 
 test(function() {
-    test_prop(document.documentElement, "color-scheme", "auto");
-}, "Document Element color scheme is auto");
+    test_prop(document.body, "color-scheme", "light dark");
+}, "Body Element color scheme is light and dark (inherited from document element)");
 
 test(function() {
     if (!window.internals)
@@ -74,9 +74,9 @@ test(function() {
 
 test(function() {
     let styleElement = document.createElement("style");
-    styleElement.textContent = ":root { color-scheme: light }";
+    styleElement.textContent = ":root { color-scheme: light } \n body { color-scheme: light dark; }";
     document.head.appendChild(styleElement);
-}, "Set color scheme to light on the document element");
+}, "Set color scheme to light on the document element, but to light/dark on body");
 
 test(function() {
     test_prop(document.body, "color-scheme", "light dark");

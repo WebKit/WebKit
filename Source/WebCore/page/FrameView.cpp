@@ -2073,8 +2073,7 @@ RenderObject* FrameView::rendererForColorScheme() const
     auto* documentElementRenderer = documentElement ? documentElement->renderer() : nullptr;
     if (documentElementRenderer && documentElementRenderer->style().hasExplicitlySetColorScheme())
         return documentElementRenderer;
-    auto* bodyElement = document ? document->bodyOrFrameset() : nullptr;
-    return bodyElement ? bodyElement->renderer() : nullptr;
+    return nullptr;
 }
 #endif
 
