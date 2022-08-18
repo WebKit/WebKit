@@ -36,6 +36,9 @@ typedef struct pas_fast_tls pas_fast_tls;
 
 #if PAS_HAVE_PTHREAD_MACHDEP_H
 
+#define PAS_HAVE_THREAD_KEYWORD 0
+#define PAS_HAVE_PTHREAD_TLS 0
+
 struct pas_fast_tls {
     bool is_initialized;
 };
