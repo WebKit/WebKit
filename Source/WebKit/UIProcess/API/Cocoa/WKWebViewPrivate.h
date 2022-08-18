@@ -310,6 +310,8 @@ for this property.
 
 - (void)_getApplicationManifestWithCompletionHandler:(void (^)(_WKApplicationManifest *))completionHandler WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
+- (void)_getTextFragmentMatchWithCompletionHandler:(void (^)(NSString *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @property (nonatomic, setter=_setPaginationMode:) _WKPaginationMode _paginationMode;
 // Whether the column-break-{before,after} properties are respected instead of the
 // page-break-{before,after} properties.

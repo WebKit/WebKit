@@ -184,6 +184,8 @@
 #include <WebCore/FontAttributeChanges.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/FormState.h>
+#include <WebCore/FragmentDirectiveParser.h>
+#include <WebCore/FragmentDirectiveRangeFinder.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -7556,6 +7558,35 @@ void WebPage::getApplicationManifest(CompletionHandler<void(const std::optional<
 }
 
 #endif // ENABLE(APPLICATION_MANIFEST)
+
+void WebPage::getTextFragmentMatch(CompletionHandler<void(const String&)>&& completionHandler)
+{
+    if (!m_mainFrame->coreFrame()) {
+        completionHandler({ });
+        return;
+    }
+
+    Document* document = m_mainFrame->coreFrame()->document();
+    if (!document) {
+        completionHandler({ });
+        return;
+    }
+
+    FragmentDirectiveParser fragmentDirectiveParser(mainWebFrame().url());
+    if (!fragmentDirectiveParser.isValid()) {
+        completionHandler({ });
+        return;
+    }
+
+    auto parsedTextDirectives = fragmentDirectiveParser.parsedTextDirectives();
+    auto highlightRanges = FragmentDirectiveRangeFinder::findRangesFromTextDirectives(parsedTextDirectives, *document);
+    if (highlightRanges.isEmpty()) {
+        completionHandler({ });
+        return;
+    }
+
+    completionHandler(plainText(highlightRanges.first()));
+}
 
 void WebPage::updateCurrentModifierState(OptionSet<PlatformEvent::Modifier> modifiers)
 {

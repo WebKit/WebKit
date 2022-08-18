@@ -238,6 +238,7 @@ Tests/WebKitCocoa/TabOutOfWebView.mm
 Tests/WebKitCocoa/TestAwakener.mm
 Tests/WebKitCocoa/TestSOAuthorization.mm
 Tests/WebKitCocoa/TestURLSchemeHandler.mm
+Tests/WebKitCocoa/TextFragments.mm
 Tests/WebKitCocoa/TextManipulation.mm
 Tests/WebKitCocoa/TextSize.mm
 Tests/WebKitCocoa/TextWidth.mm

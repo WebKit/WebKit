@@ -10717,6 +10717,11 @@ void WebPageProxy::getApplicationManifest(CompletionHandler<void(const std::opti
 }
 #endif
 
+void WebPageProxy::getTextFragmentMatch(CompletionHandler<void(const String&)>&& callback)
+{
+    sendWithAsyncReply(Messages::WebPage::GetTextFragmentMatch(), WTFMove(callback));
+}
+
 #if ENABLE(APP_HIGHLIGHTS)
 void WebPageProxy::storeAppHighlight(const WebCore::AppHighlight& highlight)
 {

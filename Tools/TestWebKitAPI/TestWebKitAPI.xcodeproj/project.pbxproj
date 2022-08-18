@@ -1997,6 +1997,7 @@
 		2D7FD19222419087007887F1 /* DocumentEditingContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DocumentEditingContext.mm; sourceTree = "<group>"; };
 		2D8104CB1BEC13E70020DA46 /* FindInPage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindInPage.mm; sourceTree = "<group>"; };
 		2D838B1E1EEF3A5B009B980E /* WKContentViewEditingActions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentViewEditingActions.mm; sourceTree = "<group>"; };
+		2D9846FB28AE0F2F00CBA70C /* TextFragments.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextFragments.mm; sourceTree = "<group>"; };
 		2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShrinkToFit.mm; sourceTree = "<group>"; };
 		2DA2586E225C67DC00B45C1C /* OverrideViewportArguments.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OverrideViewportArguments.mm; sourceTree = "<group>"; };
 		2DADF26221CB8F32003D3E3A /* GetResourceData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetResourceData.mm; sourceTree = "<group>"; };
@@ -3835,6 +3836,7 @@
 				5774AA6721FBBF7800AF2A1B /* TestSOAuthorization.mm */,
 				F4CD74C720FDB49600DE3794 /* TestURLSchemeHandler.h */,
 				F4CD74C820FDB49600DE3794 /* TestURLSchemeHandler.mm */,
+				2D9846FB28AE0F2F00CBA70C /* TextFragments.mm */,
 				9B02E0D5235FA47D004044B2 /* TextManipulation.mm */,
 				5C16F8FB230C942B0074C4A8 /* TextSize.mm */,
 				C22FA32A228F8708009D7988 /* TextWidth.mm */,
@@ -5943,11 +5945,11 @@
 				7CCE7EC21A411A7E00447C4C /* HTMLFormCollectionNamedItem.mm in Sources */,
 				7C83E0501D0A641800FEBCF3 /* HTMLParserIdioms.cpp in Sources */,
 				5CA1DEC81F71F70100E71BD3 /* HTTPHeaderField.cpp in Sources */,
-				41EBA9F228ABA06700953013 /* ImageRotationSessionVT.cpp in Sources */,
 				46FA2FEE23846CA5000CCB0C /* HTTPHeaderMap.cpp in Sources */,
 				6B9ABE122086952F00D75DE6 /* HTTPParsers.cpp in Sources */,
 				5C7C24FC237C975400599C91 /* HTTPServer.mm in Sources */,
 				7B18417C2673860200ED4F8D /* ImageBufferTests.cpp in Sources */,
+				41EBA9F228ABA06700953013 /* ImageRotationSessionVT.cpp in Sources */,
 				F44A9AF72649BBDD00E7CB16 /* ImmediateActionTests.mm in Sources */,
 				7A95BDE11E9BEC5F00865498 /* InjectedBundleAppleEvent.cpp in Sources */,
 				7CCE7EFB1A411AE600447C4C /* InjectedBundleBasic.cpp in Sources */,

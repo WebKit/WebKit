@@ -693,6 +693,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ExceptionData.h
     dom/ExceptionOr.h
     dom/FocusOptions.h
+    dom/FragmentDirectiveParser.h
+    dom/FragmentDirectiveRangeFinder.h
     dom/FragmentScriptingPermission.h
     dom/FullscreenManager.h
     dom/GCReachableRef.h

@@ -616,6 +616,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GetApplicationManifest() -> (std::optional<WebCore::ApplicationManifest> manifest)
 #endif
 
+    GetTextFragmentMatch() -> (String match)
+
     SetDefersLoading(bool defersLoading)
 
 #if ENABLE(UI_PROCESS_PDF_HUD)

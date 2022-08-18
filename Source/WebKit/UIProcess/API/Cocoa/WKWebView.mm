@@ -3197,6 +3197,14 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 #endif
 }
 
+- (void)_getTextFragmentMatchWithCompletionHandler:(void (^)(NSString *))completionHandler
+{
+    THROW_IF_SUSPENDED;
+    _page->getTextFragmentMatch([completionHandler = makeBlockPtr(completionHandler)](const String& textFragmentMatch) {
+        completionHandler(textFragmentMatch);
+    });
+}
+
 - (_WKPaginationMode)_paginationMode
 {
     switch (_page->paginationMode()) {

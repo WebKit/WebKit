@@ -1349,6 +1349,8 @@ public:
     void getApplicationManifest(CompletionHandler<void(const std::optional<WebCore::ApplicationManifest>&)>&&);
 #endif
 
+    void getTextFragmentMatch(CompletionHandler<void(const String&)>&&);
+
 #if USE(WPE_RENDERER)
     int hostFileDescriptor() const { return m_hostFileDescriptor.fd().value(); }
 #endif
