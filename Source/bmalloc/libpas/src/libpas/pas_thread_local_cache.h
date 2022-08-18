@@ -97,7 +97,14 @@ struct pas_thread_local_cache {
 
 PAS_API extern pas_fast_tls pas_thread_local_cache_fast_tls;
 
+#if PAS_HAVE_PTHREAD_MACHDEP_H
 #define PAS_THREAD_LOCAL_KEY __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY4
+#endif
+
+#if PAS_HAVE_THREAD_KEYWORD
+PAS_API extern __thread void* pas_thread_local_cache_pointer;
+#define PAS_THREAD_LOCAL_KEY pas_thread_local_cache_pointer
+#endif
 
 static PAS_ALWAYS_INLINE pas_thread_local_cache* pas_thread_local_cache_try_get_impl(void)
 {

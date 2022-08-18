@@ -53,6 +53,10 @@
 
 PAS_BEGIN_EXTERN_C;
 
+#if PAS_HAVE_THREAD_KEYWORD
+__thread void* pas_thread_local_cache_pointer = NULL;
+#endif
+
 pas_fast_tls pas_thread_local_cache_fast_tls = PAS_FAST_TLS_INITIALIZER;
 
 size_t pas_thread_local_cache_size_for_allocator_index_capacity(unsigned allocator_index_capacity)
@@ -131,8 +135,11 @@ static void destructor(void* arg)
     static const bool verbose = false;
 
     pas_thread_local_cache* thread_local_cache;
-    
+
     thread_local_cache = (pas_thread_local_cache*)arg;
+
+    if (verbose)
+        pas_log("[%d] Destructor call for TLS %p\n", getpid(), thread_local_cache);
 
 #ifndef PAS_THREAD_LOCAL_CACHE_CAN_DETECT_THREAD_EXIT
     /* If pthread_self_is_exiting_np does not exist, we set PAS_THREAD_LOCAL_CACHE_DESTROYED in the TLS so that
