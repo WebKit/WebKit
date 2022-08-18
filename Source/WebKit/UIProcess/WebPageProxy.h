@@ -1807,6 +1807,8 @@ public:
     void getApplicationManifest(CompletionHandler<void(const std::optional<WebCore::ApplicationManifest>&)>&&);
 #endif
 
+    void getTextFragmentMatch(CompletionHandler<void(const String&)>&&);
+
     WebPreferencesStore preferencesStore() const;
 
     void setDefersLoadingForTesting(bool);
