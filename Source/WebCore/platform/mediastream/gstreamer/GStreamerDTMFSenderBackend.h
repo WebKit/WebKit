@@ -36,13 +36,13 @@ public:
 private:
     // RTCDTMFSenderBackend
     bool canInsertDTMF() final;
-    void playTone(const String& tone, size_t duration, size_t interToneGap) final;
-    void onTonePlayed(Function<void(const String&)>&&) final;
+    void playTone(const char tone, size_t duration, size_t interToneGap) final;
+    void onTonePlayed(Function<void()>&&) final;
     String tones() const final;
     size_t duration() const final;
     size_t interToneGap() const final;
 
-    Function<void(const String&)> m_onTonePlayed;
+    Function<void()> m_onTonePlayed;
 };
 
 } // namespace WebCore

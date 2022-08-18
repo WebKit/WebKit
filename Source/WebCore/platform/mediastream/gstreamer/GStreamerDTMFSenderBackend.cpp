@@ -43,7 +43,7 @@ bool GStreamerDTMFSenderBackend::canInsertDTMF()
     return false;
 }
 
-void GStreamerDTMFSenderBackend::playTone(const String&, size_t, size_t)
+void GStreamerDTMFSenderBackend::playTone(const char, size_t, size_t)
 {
     notImplemented();
 }
@@ -66,7 +66,7 @@ size_t GStreamerDTMFSenderBackend::interToneGap() const
     return 0;
 }
 
-void GStreamerDTMFSenderBackend::onTonePlayed(Function<void(const String&)>&& onTonePlayed)
+void GStreamerDTMFSenderBackend::onTonePlayed(Function<void()>&& onTonePlayed)
 {
     m_onTonePlayed = WTFMove(onTonePlayed);
 }
