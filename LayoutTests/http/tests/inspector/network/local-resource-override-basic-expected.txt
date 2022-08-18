@@ -79,7 +79,7 @@ Content: PASS
 Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
 Triggering load...
 Resource Loaded:
-URL: http://127.0.0.1:8000/inspector/network/resources/override.txt#frag
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
 MIME Type: text/plain
 Status: 200 OK
 Response Source: Symbol(inspector-override)

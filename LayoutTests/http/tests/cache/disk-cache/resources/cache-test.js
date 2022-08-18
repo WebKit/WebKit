@@ -58,10 +58,25 @@ function generateTestURL(test)
     return testURL;
 }
 
+function requireFragment(tests) {
+    for (var i = 0; i < tests.length; ++i) {
+        tests[i].fragment = true;
+    }
+}
+
+function addFragmentToURL(testURL) {
+    testURL = testURL.split("#")[0];
+    testURL += "#" + Math.floor((Math.random() * 1000000000000));
+    return testURL;
+}
+
 function loadResource(test, onload)
 {
     if (!test.url)
         test.url = generateTestURL(test);
+
+    if (test.fragment)
+        test.url = addFragmentToURL(test.url);
 
     test.xhr = new XMLHttpRequest();
     test.xhr.onload = onload;
