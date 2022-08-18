@@ -1713,6 +1713,14 @@ webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/with-ports/021.
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/without-ports/020.html [ Skip ]
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/without-ports/021.html [ Skip ]
 
+webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/body-fills-html-quirk-vertical.html [ ImageOnlyFailure ]
+webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/body-fills-html-quirk.html [ ImageOnlyFailure ]
+webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/line-height-in-list-item.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/line-height-trailing-collapsable-whitespace.html [ ImageOnlyFailure ]
+webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/percentage-height-quirk-excludes-flex-grid-001.html [ ImageOnlyFailure ]
+webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/text-decoration-doesnt-propagate-into-tables/quirks.html [ ImageOnlyFailure ]
+webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/text-decoration-doesnt-propagate-into-tables/standards.html [ ImageOnlyFailure ]
+
 # WPT tests requiring DTR/WTR to allow other URLs than localhost to not be blocked and be reachable (www2.localhost)
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import.https.html [ Skip ]
