@@ -5039,15 +5039,12 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
         if (m_unpackFlipY)
             adjustedSourceImageRect.setY(pixels->height() - adjustedSourceImageRect.maxY());
 
+        auto imageData = std::make_optional<GCGLSpan<const GCGLvoid>>(pixels->data().data(), pixels->data().byteLength());
         Vector<uint8_t> data;
-        bool needConversion = true;
-        GCGLsizei byteLength = 0;
+
         // The data from ImageData is always of format RGBA8.
         // No conversion is needed if destination format is RGBA and type is USIGNED_BYTE and no Flip or Premultiply operation is required.
-        if (!m_unpackFlipY && !m_unpackPremultiplyAlpha && format == GraphicsContextGL::RGBA && type == GraphicsContextGL::UNSIGNED_BYTE && !selectingSubRectangle && depth == 1) {
-            needConversion = false;
-            byteLength = pixels->data().byteLength();
-        } else {
+        if (m_unpackFlipY || m_unpackPremultiplyAlpha || format != GraphicsContextGL::RGBA || type != GraphicsContextGL::UNSIGNED_BYTE || selectingSubRectangle || depth != 1) {
             if (type == GraphicsContextGL::UNSIGNED_INT_10F_11F_11F_REV) {
                 // The UNSIGNED_INT_10F_11F_11F_REV type pack/unpack isn't implemented.
                 type = GraphicsContextGL::FLOAT;
@@ -5056,29 +5053,29 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
                 synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "bad image data");
                 return { };
             }
-            byteLength = data.size();
+            imageData.emplace(data);
         }
         ScopedUnpackParametersResetRestore temporaryResetUnpack(this);
         if (functionID == TexImageFunctionID::TexImage2D) {
             texImage2DBase(target, level, internalformat,
                 adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), 0,
-                format, type, byteLength, needConversion ? data.data() : pixels->data().data());
+                format, type, imageData.value());
         } else if (functionID == TexImageFunctionID::TexSubImage2D) {
             texSubImage2DBase(target, level, xoffset, yoffset,
                 adjustedSourceImageRect.width(), adjustedSourceImageRect.height(),
-                format, format, type, byteLength, needConversion ? data.data() : pixels->data().data());
+                format, format, type, imageData.value());
         } else {
 #if USE(ANGLE)
             // 3D functions.
             if (functionID == TexImageFunctionID::TexImage3D) {
-                texImage3DBase(target, level, internalformat,
+                m_context->texImage3D(target, level, internalformat,
                     adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), depth, 0,
-                    format, type, byteLength, needConversion ? data.data() : pixels->data().data());
+                    format, type, imageData.value());
             } else {
                 ASSERT(functionID == TexImageFunctionID::TexSubImage3D);
-                texSubImage3DBase(target, level, xoffset, yoffset, zoffset,
+                m_context->texSubImage3D(target, level, xoffset, yoffset, zoffset,
                     adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), depth,
-                    internalformat, format, type, byteLength, needConversion ? data.data() : pixels->data().data());
+                    format, type, imageData.value());
             }
 #else
             // WebGL 2.0 is only supported with the ANGLE backend.
@@ -5209,34 +5206,17 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
     return std::visit(visitor, source);
 }
 
-bool WebGLRenderingContextBase::computeImageSizeInBytes(TexImageDimension texDim, GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height, GCGLsizei depth, unsigned* imageSizeInBytes)
-{
-    ASSERT(imageSizeInBytes);
-    unsigned totalBytesRequired, skipBytes;
-    GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, depth, getUnpackPixelStoreParams(texDim), &totalBytesRequired, nullptr, &skipBytes);
-    if (error != GraphicsContextGL::NO_ERROR)
-        return false;
-    CheckedUint32 total = totalBytesRequired;
-    total += skipBytes;
-    if (total.hasOverflowed())
-        return false;
-    *imageSizeInBytes = total;
-    return true;
-}
-
 void WebGLRenderingContextBase::texImageArrayBufferViewHelper(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, RefPtr<ArrayBufferView>&& pixels, NullDisposition nullDisposition, GCGLuint srcOffset)
 {
     if (isContextLostOrPending())
         return;
+
     const char* functionName = getTexImageFunctionName(functionID);
     auto texture = validateTexImageBinding(functionName, functionID, target);
     if (!texture)
         return;
-    TexImageFunctionType functionType;
-    if (functionID == TexImageFunctionID::TexImage2D || functionID == TexImageFunctionID::TexImage3D)
-        functionType = TexImageFunctionType::TexImage;
-    else
-        functionType = TexImageFunctionType::TexSubImage;
+
+    auto functionType = (functionID == TexImageFunctionID::TexImage2D || functionID == TexImageFunctionID::TexImage3D) ? TexImageFunctionType::TexImage : TexImageFunctionType::TexSubImage;
 #if !USE(ANGLE)
     if (functionType == TexImageFunctionType::TexSubImage)
         internalformat = texture->getInternalFormat(target, level);
@@ -5244,25 +5224,15 @@ void WebGLRenderingContextBase::texImageArrayBufferViewHelper(TexImageFunctionID
 
     if (!validateTexFunc(functionName, functionType, SourceArrayBufferView, target, level, internalformat, width, height, depth, border, format, type, xoffset, yoffset, zoffset))
         return;
-    TexImageDimension sourceType;
-    if (functionID == TexImageFunctionID::TexImage2D || functionID == TexImageFunctionID::TexSubImage2D)
-        sourceType = TexImageDimension::Tex2D;
-    else
-        sourceType = TexImageDimension::Tex3D;
-    if (!validateTexFuncData(functionName, sourceType, width, height, depth, format, type, pixels.get(), nullDisposition, srcOffset))
+
+    auto sourceType = (functionID == TexImageFunctionID::TexImage2D || functionID == TexImageFunctionID::TexSubImage2D) ? TexImageDimension::Tex2D : TexImageDimension::Tex3D;
+    auto data = validateTexFuncData(functionName, sourceType, width, height, depth, format, type, pixels.get(), nullDisposition, srcOffset);
+    if (!data)
         return;
-    auto data = static_cast<uint8_t*>(pixels ? pixels->baseAddress() : nullptr);
-    GCGLsizei byteLength = pixels ? pixels->byteLength() : 0;
-    if (srcOffset) {
-        ASSERT(pixels);
-        // No need to check overflow because validateTexFuncData() already did.
-        auto offset = srcOffset * JSC::elementSize(pixels->getType());
-        data += offset;
-        byteLength -= offset;
-    }
+
     Vector<uint8_t> tempData;
     bool changeUnpackParams = false;
-    if (data && width && height
+    if (data->data && width && height
         && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
         ASSERT(sourceType == TexImageDimension::Tex2D);
         // Only enter here if width or height is non-zero. Otherwise, call to the
@@ -5273,30 +5243,29 @@ void WebGLRenderingContextBase::texImageArrayBufferViewHelper(TexImageFunctionID
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "Invalid unpack params combination.");
             return;
         }
-        if (!m_context->extractTextureData(width, height, format, type, unpackParams, m_unpackFlipY, m_unpackPremultiplyAlpha, data, tempData)) {
+        if (!m_context->extractTextureData(width, height, format, type, unpackParams, m_unpackFlipY, m_unpackPremultiplyAlpha, data.value(), tempData)) {
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "Invalid format/type combination.");
             return;
         }
-        data = tempData.data();
-        byteLength = tempData.size();
+        data.emplace(tempData);
         changeUnpackParams = true;
     }
 #if USE(ANGLE)
     if (functionID == TexImageFunctionID::TexImage3D) {
-        texImage3DBase(target, level, internalformat, width, height, depth, border, format, type, byteLength, data);
+        m_context->texImage3D(target, level, internalformat, width, height, depth, border, format, type, data.value());
         return;
     }
     if (functionID == TexImageFunctionID::TexSubImage3D) {
-        texSubImage3DBase(target, level, xoffset, yoffset, zoffset, width, height, depth, internalformat, format, type, byteLength, data);
+        m_context->texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data.value());
         return;
     }
 #endif // USE(ANGLE)
     ScopedUnpackParametersResetRestore temporaryResetUnpack(this, changeUnpackParams);
     if (functionID == TexImageFunctionID::TexImage2D)
-        texImage2DBase(target, level, internalformat, width, height, border, format, type, byteLength, data);
+        texImage2DBase(target, level, internalformat, width, height, border, format, type, data.value());
     else {
         ASSERT(functionID == TexImageFunctionID::TexSubImage2D);
-        texSubImage2DBase(target, level, xoffset, yoffset, width, height, format, format, type, byteLength, data);
+        texSubImage2DBase(target, level, xoffset, yoffset, width, height, format, format, type, data.value());
     }
 }
 
@@ -5336,40 +5305,36 @@ void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGL
     GraphicsContextGL::AlphaOp alphaOp = imageExtractor.imageAlphaOp();
     const void* imagePixelData = imageExtractor.imagePixelData();
 
-    bool needConversion = true;
-    GCGLsizei byteLength = 0;
-    if (type == GraphicsContextGL::UNSIGNED_BYTE && sourceDataFormat == GraphicsContextGL::DataFormat::RGBA8 && format == GraphicsContextGL::RGBA && alphaOp == GraphicsContextGL::AlphaOp::DoNothing && !flipY && !selectingSubRectangle && depth == 1) {
-        needConversion = false;
-        byteLength = imageExtractor.imageWidth() * imageExtractor.imageHeight() * 4;
-    } else {
+    auto pixels = std::make_optional<GCGLSpan<const GCGLvoid>>(imagePixelData, imageExtractor.imageWidth() * imageExtractor.imageHeight() * 4);
+    if (type != GraphicsContextGL::UNSIGNED_BYTE || sourceDataFormat != GraphicsContextGL::DataFormat::RGBA8 || format != GraphicsContextGL::RGBA || alphaOp != GraphicsContextGL::AlphaOp::DoNothing || flipY || selectingSubRectangle || depth != 1) {
         if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), adjustedSourceImageRect, depth, imageExtractor.imageSourceUnpackAlignment(), unpackImageHeight, data)) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "packImage error");
             return;
         }
-        byteLength = data.size();
+        pixels.emplace(data);
     }
 
     ScopedUnpackParametersResetRestore temporaryResetUnpack(this, true);
     if (functionID == TexImageFunctionID::TexImage2D) {
         texImage2DBase(target, level, internalformat,
             adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), 0,
-            format, type, byteLength, needConversion ? data.data() : imagePixelData);
+            format, type, pixels.value());
     } else if (functionID == TexImageFunctionID::TexSubImage2D) {
         texSubImage2DBase(target, level, xoffset, yoffset,
             adjustedSourceImageRect.width(), adjustedSourceImageRect.height(),
-            format, format, type, byteLength, needConversion ? data.data() : imagePixelData);
+            format, format, type, pixels.value());
     } else {
 #if USE(ANGLE)
         // 3D functions.
         if (functionID == TexImageFunctionID::TexImage3D) {
-            texImage3DBase(target, level, internalformat,
+            m_context->texImage3D(target, level, internalformat,
                 adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), depth, 0,
-                format, type, byteLength, needConversion ? data.data() : imagePixelData);
+                format, type, pixels.value());
         } else {
             ASSERT(functionID == TexImageFunctionID::TexSubImage3D);
-            texSubImage3DBase(target, level, xoffset, yoffset, zoffset,
-                adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), depth, internalformat,
-                format, type, byteLength, needConversion ? data.data() : imagePixelData);
+            m_context->texSubImage3D(target, level, xoffset, yoffset, zoffset,
+                adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), depth,
+                format, type, pixels.value());
         }
 #else
         UNUSED_PARAM(zoffset);
@@ -5379,33 +5344,23 @@ void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGL
     }
 }
 
-void WebGLRenderingContextBase::texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLsizei byteLength, const void* pixels)
+void WebGLRenderingContextBase::texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels)
 {
 #if USE(ANGLE)
-    unsigned bytesRequired = 0;
-    bool ok = computeImageSizeInBytes(TexImageDimension::Tex2D, format, type, width, height, 1, &bytesRequired);
-    ASSERT_UNUSED(ok, ok, "Parameters should already have been validated!");
-    // ANGLE robust API uses signed int for byte count.
-    if (!isInBounds<GCGLsizei>(bytesRequired)) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "pixel transfer amount out of range");
-        return;
-    }
-    byteLength = std::min(byteLength, (GCGLsizei) bytesRequired);
-    m_context->texImage2D(target, level, internalFormat, width, height, border, format, type, makeGCGLSpan(pixels, byteLength));
+    m_context->texImage2D(target, level, internalFormat, width, height, border, format, type, pixels);
 #else
-    UNUSED_PARAM(byteLength);
     // FIXME: For now we ignore any errors returned.
     auto tex = validateTexture2DBinding("texImage2D", target);
     ASSERT(validateTexFuncParameters("texImage2D", TexImageFunctionType::TexImage, SourceArrayBufferView, target, level, internalFormat, width, height, 1, border, format, type));
     ASSERT(tex);
     ASSERT(validateNPOTTextureLevel(width, height, level, "texImage2D"));
-    if (!pixels) {
+    if (!pixels.data) {
         if (!static_cast<GraphicsContextGLOpenGL*>(m_context.get())->texImage2DResourceSafe(target, level, internalFormat, width, height, border, format, type, m_unpackAlignment))
             return;
     } else {
         ASSERT(validateSettableTexInternalFormat("texImage2D", internalFormat));
         m_context->moveErrorsToSyntheticErrorList();
-        m_context->texImage2D(target, level, internalFormat, width, height, border, format, type, makeGCGLSpan(pixels, byteLength));
+        m_context->texImage2D(target, level, internalFormat, width, height, border, format, type, pixels);
         if (m_context->moveErrorsToSyntheticErrorList()) {
             // The texImage2D function failed. Tell the WebGLTexture it doesn't have the data for this level.
             tex->markInvalid(target, level);
@@ -5416,53 +5371,13 @@ void WebGLRenderingContextBase::texImage2DBase(GCGLenum target, GCGLint level, G
 #endif // USE(ANGLE)
 }
 
-void WebGLRenderingContextBase::texImage3DBase(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLsizei byteLength, const void* pixels)
-{
-#if USE(ANGLE)
-    unsigned bytesRequired = 0;
-    bool ok = computeImageSizeInBytes(TexImageDimension::Tex3D, format, type, width, height, depth, &bytesRequired);
-    ASSERT_UNUSED(ok, ok, "Parameters should already have been validated!");
-    // ANGLE robust API uses signed int for byte count.
-    if (!isInBounds<GCGLsizei>(bytesRequired)) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage3D", "pixel transfer amount out of range");
-        return;
-    }
-    byteLength = std::min(byteLength, (GCGLsizei) bytesRequired);
-    m_context->texImage3D(target, level, internalFormat, width, height, depth, border, format, type, makeGCGLSpan(pixels, byteLength));
-#else
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(internalFormat);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(depth);
-    UNUSED_PARAM(border);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(byteLength);
-    UNUSED_PARAM(pixels);
-    
-    ASSERT_NOT_REACHED();
-#endif // USE(ANGLE)
-}
-
-void WebGLRenderingContextBase::texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalFormat, GCGLenum format, GCGLenum type, GCGLsizei byteLength, const void* pixels)
+void WebGLRenderingContextBase::texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalFormat, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels)
 {
     ASSERT(!isContextLost());
 #if USE(ANGLE)
     UNUSED_PARAM(internalFormat);
-    unsigned bytesRequired = 0;
-    bool ok = computeImageSizeInBytes(TexImageDimension::Tex2D, format, type, width, height, 1, &bytesRequired);
-    ASSERT_UNUSED(ok, ok, "Parameters should already have been validated!");
-    // ANGLE robust API uses signed int for byte count.
-    if (!isInBounds<GCGLsizei>(bytesRequired)) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texSubImage2D", "pixel transfer amount out of range");
-        return;
-    }
-    byteLength = std::min(byteLength, (GCGLsizei) bytesRequired);
-    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, makeGCGLSpan(pixels, byteLength));
+    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
 #else
-    UNUSED_PARAM(byteLength);
     ASSERT(validateTexFuncParameters("texSubImage2D", TexImageFunctionType::TexSubImage, SourceArrayBufferView, target, level, internalFormat, width, height, 1, 0, format, type));
     ASSERT(validateSize("texSubImage2D", xoffset, yoffset));
     ASSERT(validateSettableTexInternalFormat("texSubImage2D", internalFormat));
@@ -5477,41 +5392,7 @@ void WebGLRenderingContextBase::texSubImage2DBase(GCGLenum target, GCGLint level
     ASSERT(tex->getHeight(target, level) >= (yoffset + height));
     if (!isWebGL2())
         ASSERT_UNUSED(internalFormat, tex->getInternalFormat(target, level) == internalFormat);
-    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, makeGCGLSpan(pixels, byteLength));
-#endif
-}
-
-void WebGLRenderingContextBase::texSubImage3DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum internalFormat, GCGLenum format, GCGLenum type, GCGLsizei byteLength, const void* pixels)
-{
-    ASSERT(!isContextLost());
-#if USE(ANGLE)
-    UNUSED_PARAM(internalFormat);
-    unsigned bytesRequired = 0;
-    bool ok = computeImageSizeInBytes(TexImageDimension::Tex3D, format, type, width, height, depth, &bytesRequired);
-    ASSERT_UNUSED(ok, ok, "Parameters should already have been validated!");
-    // ANGLE robust API uses signed int for byte count.
-    if (!isInBounds<GCGLsizei>(bytesRequired)) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texSubImage3D", "pixel transfer amount out of range");
-        return;
-    }
-    byteLength = std::min(byteLength, (GCGLsizei) bytesRequired);
-    m_context->texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, makeGCGLSpan(pixels, byteLength));
-#else
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(xoffset);
-    UNUSED_PARAM(yoffset);
-    UNUSED_PARAM(zoffset);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(depth);
-    UNUSED_PARAM(internalFormat);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(byteLength);
-    UNUSED_PARAM(pixels);
-
-    ASSERT_NOT_REACHED();
+    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
 #endif
 }
 
@@ -5675,38 +5556,60 @@ bool WebGLRenderingContextBase::validateArrayBufferType(const char* functionName
     return true;
 }
 
-bool WebGLRenderingContextBase::validateTexFuncData(const char* functionName, TexImageDimension texDimension, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, ArrayBufferView* pixels, NullDisposition disposition, GCGLuint srcOffset)
+std::optional<GCGLSpan<const GCGLvoid>> WebGLRenderingContextBase::validateTexFuncData(const char* functionName, TexImageDimension texDimension, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, ArrayBufferView* pixels, NullDisposition disposition, GCGLuint srcOffset)
 {
     // All calling functions check isContextLostOrPending, so a duplicate check is not
     // needed here.
-    if (!pixels) {
+    if (!pixels && disposition != NullAllowed) {
         ASSERT(disposition != NullNotReachable);
-        if (disposition == NullAllowed)
-            return true;
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "no pixels");
-        return false;
+        return std::nullopt;
     }
 
-    if (!validateSettableTexInternalFormat(functionName, format))
-        return false;
-    if (!validateArrayBufferType(functionName, type, pixels ? std::optional<JSC::TypedArrayType>(pixels->getType()) : std::nullopt))
-        return false;
+    // validateTexFuncFormatAndType handles validating the combination of internalformat, format and type.
+    // validateSettableTexInternalFormat rejects initialize of combinations with pixel data that can't
+    // accept anything other than null.
+    if (pixels && !validateSettableTexInternalFormat(functionName, format))
+        return std::nullopt;
+
+    auto arrayType = pixels ? std::make_optional(pixels->getType()) : std::nullopt;
+    if (!validateArrayBufferType(functionName, type, arrayType))
+        return std::nullopt;
 
     unsigned totalBytesRequired, skipBytes;
     GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, depth, getUnpackPixelStoreParams(texDimension), &totalBytesRequired, nullptr, &skipBytes);
     if (error != GraphicsContextGL::NO_ERROR) {
         synthesizeGLError(error, functionName, "invalid texture dimensions");
-        return false;
+        return std::nullopt;
     }
-    CheckedUint32 total = srcOffset;
-    total *= JSC::elementSize(pixels->getType());
+
+    CheckedSize total = srcOffset;
+    total *= pixels ? JSC::elementSize(pixels->getType()) : 0;
     total += totalBytesRequired;
     total += skipBytes;
-    if (total.hasOverflowed() || pixels->byteLength() < total) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "ArrayBufferView not big enough for request");
-        return false;
+
+    if (total.hasOverflowed() || !isInBounds<GCGLsizei>(total)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "image too large");
+        return std::nullopt;
     }
-    return true;
+
+    if (!pixels)
+        return std::make_optional<GCGLSpan<const GCGLvoid>>(nullptr, 0);
+
+    if (pixels->byteLength() < total) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "ArrayBufferView not big enough for request");
+        return std::nullopt;
+    }
+
+    auto data = static_cast<uint8_t*>(pixels->baseAddress());
+    GCGLsizei byteLength = pixels->byteLength();
+    if (srcOffset) {
+        size_t offset = srcOffset * JSC::elementSize(*arrayType);
+        data += offset;
+        byteLength -= offset;
+    }
+
+    return std::make_optional<GCGLSpan<const GCGLvoid>>(data, byteLength);
 }
 
 bool WebGLRenderingContextBase::validateTexFuncParameters(const char* functionName,

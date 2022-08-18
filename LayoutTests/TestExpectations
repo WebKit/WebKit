@@ -3938,6 +3938,8 @@ webgl/2.0.0/conformance/programs/program-test.html [ Skip ]
 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Failure ]
 webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Failure ]
 
+webkit.org/b/243819 webgl/2.0.y/deqp/functional/gles3/negativetextureapi.html [ Pass ]
+
 # pre-wrap progression. Other rendering engines agree with the result.
 webkit.org/b/206168 [ Debug ] fast/dom/insert-span-into-long-text-bug-28245.html [ Skip ]
 
