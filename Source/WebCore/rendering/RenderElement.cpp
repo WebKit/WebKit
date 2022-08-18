@@ -882,11 +882,19 @@ static inline bool areCursorsEqual(const RenderStyle* a, const RenderStyle* b)
 
 void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    updateFillImages(oldStyle ? &oldStyle->backgroundLayers() : nullptr, m_style.backgroundLayers());
-    updateFillImages(oldStyle ? &oldStyle->maskLayers() : nullptr, m_style.maskLayers());
-    updateImage(oldStyle ? oldStyle->borderImage().image() : nullptr, m_style.borderImage().image());
-    updateImage(oldStyle ? oldStyle->maskBoxImage().image() : nullptr, m_style.maskBoxImage().image());
-    updateShapeImage(oldStyle ? oldStyle->shapeOutside() : nullptr, m_style.shapeOutside());
+    auto registerImages = [this](auto& style, auto* oldStyle) {
+        updateFillImages(oldStyle ? &oldStyle->backgroundLayers() : nullptr, style.backgroundLayers());
+        updateFillImages(oldStyle ? &oldStyle->maskLayers() : nullptr, style.maskLayers());
+        updateImage(oldStyle ? oldStyle->borderImage().image() : nullptr, style.borderImage().image());
+        updateImage(oldStyle ? oldStyle->maskBoxImage().image() : nullptr, style.maskBoxImage().image());
+        updateShapeImage(oldStyle ? oldStyle->shapeOutside() : nullptr, style.shapeOutside());
+    };
+
+    registerImages(style(), oldStyle);
+
+    // Are there other pseudo-elements that need the resources to be registered?
+    if (auto* firstLineStyle = style().getCachedPseudoStyle(PseudoId::FirstLine))
+        registerImages(*firstLineStyle, oldStyle ? oldStyle->getCachedPseudoStyle(PseudoId::FirstLine) : nullptr);
 
     SVGRenderSupport::styleChanged(*this, oldStyle);
 
@@ -1012,24 +1020,29 @@ void RenderElement::willBeDestroyed()
 
     clearSubtreeLayoutRootIfNeeded();
 
+    auto unregisterImage = [this](auto* image) {
+        if (image)
+            image->removeClient(*this);
+    };
+
+    auto unregisterImages = [&](auto& style) {
+        for (auto* backgroundLayer = &style.backgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next())
+            unregisterImage(backgroundLayer->image());
+        for (auto* maskLayer = &style.maskLayers(); maskLayer; maskLayer = maskLayer->next())
+            unregisterImage(maskLayer->image());
+        unregisterImage(style.borderImage().image());
+        unregisterImage(style.maskBoxImage().image());
+        if (auto shapeValue = style.shapeOutside())
+            unregisterImage(shapeValue->image());
+    };
+
     if (hasInitializedStyle()) {
-        for (auto* bgLayer = &m_style.backgroundLayers(); bgLayer; bgLayer = bgLayer->next()) {
-            if (auto* backgroundImage = bgLayer->image())
-                backgroundImage->removeClient(*this);
-        }
-        for (auto* maskLayer = &m_style.maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
-            if (auto* maskImage = maskLayer->image())
-                maskImage->removeClient(*this);
-        }
-        if (auto* borderImage = m_style.borderImage().image())
-            borderImage->removeClient(*this);
-        if (auto* maskBoxImage = m_style.maskBoxImage().image())
-            maskBoxImage->removeClient(*this);
-        if (auto shapeValue = m_style.shapeOutside()) {
-            if (auto shapeImage = shapeValue->image())
-                shapeImage->removeClient(*this);
-        }
+        unregisterImages(m_style);
+
+        if (auto* firstLineStyle = style().getCachedPseudoStyle(PseudoId::FirstLine))
+            unregisterImages(*firstLineStyle);
     }
+
     if (m_hasPausedImageAnimations)
         view().removeRendererWithPausedImageAnimations(*this);
 }

@@ -1799,7 +1799,6 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-color-repaint.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-backgrounds/background-color-body-propagation-006.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-backgrounds/background-color-root-propagation-002.html [ Skip ]
-webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-first-line.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-none-gradient-repaint.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-dynamic-from-no-radius.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-backgrounds/child-move-reveals-parent-background.html [ Skip ]
