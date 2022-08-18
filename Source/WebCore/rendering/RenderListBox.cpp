@@ -276,13 +276,60 @@ LayoutUnit RenderListBox::baselinePosition(FontBaseline baselineType, bool first
     return baseline;
 }
 
-LayoutRect RenderListBox::itemBoundingBoxRect(const LayoutPoint& additionalOffset, int index)
+LayoutRect RenderListBox::itemBoundingBoxRect(const LayoutPoint& additionalOffset, int index) const
 {
     LayoutUnit x = additionalOffset.x() + borderLeft() + paddingLeft();
     if (shouldPlaceVerticalScrollbarOnLeft() && m_vBar)
         x += m_vBar->occupiedWidth();
     LayoutUnit y = additionalOffset.y() + borderTop() + paddingTop() + itemHeight() * (index - m_indexOffset);
     return LayoutRect(x, y, contentWidth(), itemHeight());
+}
+
+std::optional<int> RenderListBox::optionRowIndex(const HTMLOptionElement& optionElement) const
+{
+    // We can't use optionElement.index(), because it doesn't account for optgroup items.
+    int rowIndex = 0;
+    for (auto* item : selectElement().listItems()) {
+        if (item == &optionElement)
+            return rowIndex;
+
+        ++rowIndex;
+    }
+
+    return { };
+}
+
+std::optional<LayoutRect> RenderListBox::localBoundsOfOption(const HTMLOptionElement& optionElement) const
+{
+    auto rowIndex = optionRowIndex(optionElement);
+    if (!rowIndex)
+        return { };
+
+    return itemBoundingBoxRect({ }, *rowIndex);
+}
+
+std::optional<LayoutRect> RenderListBox::localBoundsOfOptGroup(const HTMLOptGroupElement& optGroupElement) const
+{
+    if (optGroupElement.ownerSelectElement() != &selectElement())
+        return { };
+
+    std::optional<LayoutRect> boundingBox;
+    int rowIndex = 0;
+
+    for (auto* item : selectElement().listItems()) {
+        if (is<HTMLOptGroupElement>(*item)) {
+            if (item == &optGroupElement)
+                boundingBox = itemBoundingBoxRect({ }, rowIndex);
+        } else if (is<HTMLOptionElement>(*item)) {
+            if (item->parentNode() != &optGroupElement)
+                break;
+
+            boundingBox->setHeight(boundingBox->height() + itemBoundingBoxRect({ }, rowIndex).height());
+        }
+        ++rowIndex;
+    }
+
+    return boundingBox;
 }
 
 void RenderListBox::paintItem(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const PaintFunction& paintFunction)
@@ -480,7 +527,7 @@ bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const Layout
     return true;
 }
 
-int RenderListBox::listIndexAtOffset(const LayoutSize& offset)
+int RenderListBox::listIndexAtOffset(const LayoutSize& offset) const
 {
     if (!numItems())
         return -1;

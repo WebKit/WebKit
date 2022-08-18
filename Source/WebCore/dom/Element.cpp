@@ -1664,42 +1664,31 @@ LayoutRect Element::absoluteEventHandlerBounds(bool& includesFixedPositionElemen
 
 static std::optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundingBox(const Element& element)
 {
-    HTMLSelectElement* selectElement;
-    bool isGroup;
-    if (is<HTMLOptionElement>(element)) {
-        selectElement = downcast<HTMLOptionElement>(element).ownerSelectElement();
-        isGroup = false;
-    } else if (is<HTMLOptGroupElement>(element)) {
-        selectElement = downcast<HTMLOptGroupElement>(element).ownerSelectElement();
-        isGroup = true;
-    } else
-        return std::nullopt;
+    auto owningSelectElement = [](const Element& element) -> HTMLSelectElement* {
+        if (is<HTMLOptionElement>(element))
+            return downcast<HTMLOptionElement>(element).ownerSelectElement();
+        
+        if (is<HTMLOptGroupElement>(element))
+            return downcast<HTMLOptGroupElement>(element).ownerSelectElement();
 
+        return nullptr;
+    };
+
+    auto* selectElement = owningSelectElement(element);
     if (!selectElement || !selectElement->renderer() || !is<RenderListBox>(selectElement->renderer()))
         return std::nullopt;
 
-    auto& renderer = downcast<RenderListBox>(*selectElement->renderer());
+    auto& listBoxRenderer = downcast<RenderListBox>(*selectElement->renderer());
     std::optional<LayoutRect> boundingBox;
-    int optionIndex = 0;
-    for (auto* item : selectElement->listItems()) {
-        if (item == &element) {
-            LayoutPoint additionOffset;
-            boundingBox = renderer.itemBoundingBoxRect(additionOffset, optionIndex);
-            if (!isGroup)
-                break;
-        } else if (isGroup && boundingBox) {
-            if (item->parentNode() != &element)
-                break;
-            LayoutPoint additionOffset;
-            boundingBox->setHeight(boundingBox->height() + renderer.itemBoundingBoxRect(additionOffset, optionIndex).height());
-        }
-        ++optionIndex;
-    }
+    if (is<HTMLOptionElement>(element))
+        boundingBox = listBoxRenderer.localBoundsOfOption(downcast<HTMLOptionElement>(element));
+    else if (is<HTMLOptGroupElement>(element))
+        boundingBox = listBoxRenderer.localBoundsOfOptGroup(downcast<HTMLOptGroupElement>(element));
 
     if (!boundingBox)
-        return std::nullopt;
+        return { };
 
-    return std::pair<RenderObject*, LayoutRect> { &renderer, boundingBox.value() };
+    return std::pair<RenderObject*, LayoutRect> { &listBoxRenderer, boundingBox.value() };
 }
 
 Ref<DOMRectList> Element::getClientRects()

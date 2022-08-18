@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+class HTMLOptGroupElement;
+class HTMLOptionElement;
 class HTMLSelectElement;
 
 class RenderListBox final : public RenderBlockFlow, public ScrollableArea {
@@ -49,8 +51,11 @@ public:
 
     void setOptionsChanged(bool changed) { m_optionsChanged = changed; }
 
-    int listIndexAtOffset(const LayoutSize&);
-    LayoutRect itemBoundingBoxRect(const LayoutPoint&, int index);
+    int listIndexAtOffset(const LayoutSize&) const;
+    LayoutRect itemBoundingBoxRect(const LayoutPoint&, int index) const;
+
+    std::optional<LayoutRect> localBoundsOfOption(const HTMLOptionElement&) const;
+    std::optional<LayoutRect> localBoundsOfOptGroup(const HTMLOptGroupElement&) const;
 
     bool scrollToRevealElementAtListIndex(int index);
     bool listIndexIsVisible(int index);
@@ -171,6 +176,9 @@ private:
     int numVisibleItems(ConsiderPadding = ConsiderPadding::No) const;
     int numItems() const;
     LayoutUnit listHeight() const;
+
+    std::optional<int> optionRowIndex(const HTMLOptionElement&) const;
+
     void paintScrollbar(PaintInfo&, const LayoutPoint&);
     void paintItemForeground(PaintInfo&, const LayoutPoint&, int listIndex);
     void paintItemBackground(PaintInfo&, const LayoutPoint&, int listIndex);
