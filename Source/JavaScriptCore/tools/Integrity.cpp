@@ -121,17 +121,25 @@ void auditCellMinimallySlow(VM&, JSCell* cell)
 
 #if USE(JSVALUE64)
 
+#if ENABLE(EXTRA_INTEGRITY_CHECKS)
+// toJS will trigger an audit if ENABLE(EXTRA_INTEGRITY_CHECKS).
+#define DO_AUDIT(value) toJS(value)
+#else
+// Else, we'll need to explicit call doAudit.
+#define DO_AUDIT(value) doAudit(toJS(value))
+#endif
+
 JSContextRef doAudit(JSContextRef ctx)
 {
     IA_ASSERT(ctx, "NULL JSContextRef");
-    toJS(ctx); // toJS will trigger an audit.
+    DO_AUDIT(ctx);
     return ctx;
 }
 
 JSGlobalContextRef doAudit(JSGlobalContextRef ctx)
 {
     IA_ASSERT(ctx, "NULL JSGlobalContextRef");
-    toJS(ctx); // toJS will trigger an audit.
+    DO_AUDIT(ctx);
     return ctx;
 }
 
@@ -139,7 +147,7 @@ JSObjectRef doAudit(JSObjectRef objectRef)
 {
     if (!objectRef)
         return objectRef;
-    toJS(objectRef); // toJS will trigger an audit.
+    DO_AUDIT(objectRef);
     return objectRef;
 }
 
@@ -148,10 +156,12 @@ JSValueRef doAudit(JSValueRef valueRef)
 #if CPU(ADDRESS64)
     if (!valueRef)
         return valueRef;
-    toJS(valueRef); // toJS will trigger an audit.
+    DO_AUDIT(valueRef);
 #endif
     return valueRef;
 }
+
+#undef DO_AUDIT
 
 JSValue doAudit(JSValue value)
 {
