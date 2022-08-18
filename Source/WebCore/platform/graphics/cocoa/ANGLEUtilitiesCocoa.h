@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGL)
+#if USE(ANGLE)
 
 #include "GraphicsTypesGL.h"
 
