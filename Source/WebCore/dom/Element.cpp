@@ -1907,15 +1907,6 @@ static inline bool isElementsArrayReflectionAttribute(const QualifiedName& name)
         || name == HTMLNames::aria_ownsAttr;
 }
 
-static inline AtomString effectiveLangFromAttribute(const Element& element)
-{
-    if (auto* elementData = element.elementData()) {
-        if (auto* attribute = elementData->findLanguageAttribute())
-            return attribute->value();
-    }
-    return nullAtom();
-}
-
 void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
 {
     bool valueIsSameAsBefore = oldValue == newValue;
@@ -1959,28 +1950,6 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
             if (auto* shadowRoot = this->shadowRoot()) {
                 shadowRoot->invalidatePartMappings();
                 Style::Invalidator::invalidateShadowParts(*shadowRoot);
-            }
-        } else if (name == HTMLNames::langAttr || name.matches(XMLNames::langAttr)) {
-            Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
-            AtomString newValue = effectiveLangFromAttribute(*this);
-            auto setEffectiveLang = [&](Element& element) {
-                if (!newValue.isNull())
-                    element.ensureElementRareData().setEffectiveLang(newValue);
-                else if (hasRareData())
-                    element.elementRareData()->setEffectiveLang(nullAtom());                
-            };
-            setEffectiveLang(*this);
-            for (auto it = descendantsOfType<Element>(*this).begin(); it;) {
-                auto& element = *it;
-                if (auto* elementData = element.elementData()) {
-                    if (auto* attribute = elementData->findLanguageAttribute()) {
-                        it.traverseNextSkippingChildren();
-                        continue;
-                    }
-                }
-                Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
-                setEffectiveLang(element);
-                it.traverseNext();
             }
         }
     }
@@ -2505,20 +2474,6 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
             CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
     }
 
-    [&]() {
-        if (auto* parent = parentOrShadowHostElement(); parent && UNLIKELY(parent->hasRareData())) {
-            auto lang = parent->elementRareData()->effectiveLang();
-            if (!lang.isNull() && effectiveLangFromAttribute(*this).isNull()) {
-                ensureElementRareData().setEffectiveLang(lang);
-                return;
-            }
-        }
-        if (UNLIKELY(hasRareData())) {
-            if (!elementRareData()->effectiveLang().isNull() && effectiveLangFromAttribute(*this).isNull())
-                ensureElementRareData().setEffectiveLang(nullAtom());
-        }
-    }();
-
     if (shouldAutofocus(*this))
         document().topDocument().appendAutofocusCandidate(*this);
 
@@ -2582,11 +2537,6 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     clearAfterPseudoElement();
 
     ContainerNode::removedFromAncestor(removalType, oldParentOfRemovedTree);
-
-    if (UNLIKELY(hasRareData()) && !elementRareData()->effectiveLang().isNull()) {
-        if (effectiveLangFromAttribute(*this).isNull())
-            elementRareData()->setEffectiveLang(nullAtom());
-    }
 
     if (hasPendingResources())
         document().accessSVGExtensions().removeElementFromPendingResources(*this);
@@ -3862,16 +3812,6 @@ AtomString Element::computeInheritedLanguage() const
             if (auto* attribute = elementData->findLanguageAttribute())
                 return attribute->value();
         }
-    }
-    return document().contentLanguage();
-}
-
-AtomString Element::effectiveLang() const
-{
-    if (hasRareData()) {
-        auto lang = elementRareData()->effectiveLang();
-        if (!lang.isNull())
-            return lang;
     }
     return document().contentLanguage();
 }

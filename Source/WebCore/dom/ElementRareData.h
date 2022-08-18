@@ -72,9 +72,6 @@ public:
     RenderStyle* computedStyle() const { return m_computedStyle.get(); }
     void setComputedStyle(std::unique_ptr<RenderStyle> computedStyle) { m_computedStyle = WTFMove(computedStyle); }
 
-    const AtomString& effectiveLang() const { return m_effectiveLang; }
-    void setEffectiveLang(const AtomString& lang) { m_effectiveLang = lang; }
-
     DOMTokenList* classList() const { return m_classList.get(); }
     void setClassList(std::unique_ptr<DOMTokenList> classList) { m_classList = WTFMove(classList); }
 
@@ -122,12 +119,10 @@ public:
             result.add(UseType::ScrollingPosition);
         if (m_computedStyle)
             result.add(UseType::ComputedStyle);
-        if (m_effectiveLang)
-            result.add(UseType::LangEffective);
-        if (m_classList)
-            result.add(UseType::ClassList);
         if (m_dataset)
             result.add(UseType::Dataset);
+        if (m_classList)
+            result.add(UseType::ClassList);
         if (m_shadowRoot)
             result.add(UseType::ShadowRoot);
         if (m_customElementReactionQueue)
@@ -164,7 +159,6 @@ private:
     IntPoint m_savedLayerScrollPosition;
     std::unique_ptr<RenderStyle> m_computedStyle;
 
-    AtomString m_effectiveLang;
     std::unique_ptr<DatasetDOMStringMap> m_dataset;
     std::unique_ptr<DOMTokenList> m_classList;
     RefPtr<ShadowRoot> m_shadowRoot;
