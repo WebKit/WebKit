@@ -49,7 +49,7 @@ const QualifiedName& pseudoElementTagName()
 
 PseudoElement::PseudoElement(Element& host, PseudoId pseudoId)
     : Element(pseudoElementTagName(), host.document(), CreatePseudoElement)
-    , m_hostElement(&host)
+    , m_hostElement(host)
     , m_pseudoId(pseudoId)
 {
     ASSERT(pseudoId == PseudoId::Before || pseudoId == PseudoId::After);
@@ -75,7 +75,7 @@ void PseudoElement::clearHostElement()
     InspectorInstrumentation::pseudoElementDestroyed(document().page(), *this);
 
     Styleable::fromElement(*this).elementWasRemoved();
-    
+
     m_hostElement = nullptr;
 }
 
@@ -84,8 +84,8 @@ bool PseudoElement::rendererIsNeeded(const RenderStyle& style)
     if (pseudoElementRendererIsNeeded(&style))
         return true;
 
-    if (m_hostElement) {
-        if (auto* stack = m_hostElement->keyframeEffectStack(pseudoId()))
+    if (RefPtr element = m_hostElement.get()) {
+        if (auto* stack = element->keyframeEffectStack(pseudoId()))
             return stack->requiresPseudoElement();
     }
     return false;
