@@ -16,7 +16,7 @@ class CssLanguage extends HyperLanguage {
 
         // The following does not conform to the specs but it is necessary
         // else numbers wouldn't be recognized any more.
-        $nmstart = '-?[a-z]';
+        $nmstart = '-{0,2}[a-z]';
         $nmchar = '[a-z0-9-]';
         $hex = '[0-9a-f]';
         list($string, $strmod) = preg_strip(Rule::STRING);
