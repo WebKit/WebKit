@@ -352,8 +352,6 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
     if (renderInline.isRubyInline())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-    if (renderInline.isInFlowPositioned())
-        SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons);
 
     auto styleReasons = canUseForStyle(renderInline, includeReasons);
     if (styleReasons)
