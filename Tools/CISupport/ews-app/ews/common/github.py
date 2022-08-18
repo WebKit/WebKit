@@ -191,12 +191,12 @@ class GitHubEWS(GitHub):
     STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
     STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],  # FIXME: generate this list dynamically to have merge queue show up on top
                           ['bindings', 'ios-sim', 'mac-debug', 'gtk', 'wincairo'],
-                          ['webkitperl', 'ios-wk2', 'mac-AS-debug', 'api-gtk', ''],
-                          ['webkitpy', 'api-ios', 'api-mac', '', ''],
-                          ['services', 'tv', 'mac-wk1', '', ''],
-                          ['merge', 'tv-sim', 'mac-wk2', '', ''],
-                          ['unsafe-merge', 'watch', 'mac-AS-debug-wk2', '', ''],
-                          ['', 'watch-sim', '', '', '']]
+                          ['webkitperl', 'ios-wk2', 'mac-AS-debug', 'gtk-wk2', ''],
+                          ['webkitpy', 'api-ios', 'api-mac', 'api-gtk', ''],
+                          ['jsc', 'tv', 'mac-wk1', 'jsc-armv7', ''],
+                          ['services', 'tv-sim', 'mac-wk2', 'jsc-armv7-tests', ''],
+                          ['merge', 'watch', 'mac-AS-debug-wk2', 'jsc-mips', ''],
+                          ['unsafe-merge', 'watch-sim', 'mac-wk2-stress', 'jsc-mips-tests', '']]
 
     @classmethod
     def generate_updated_pr_description(self, description, ews_comment):
