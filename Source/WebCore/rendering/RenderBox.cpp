@@ -1997,9 +1997,19 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
         markShapeOutsideDependentsForLayout();
     }
 
-    bool didFullRepaint = repaintLayerRectsForImage(image, style().backgroundLayers(), true);
-    if (!didFullRepaint)
-        repaintLayerRectsForImage(image, style().maskLayers(), false);
+    bool didFullRepaint = false;
+
+    auto repaintForBackgroundAndMask = [&](auto& style) {
+        if (!didFullRepaint)
+            didFullRepaint = repaintLayerRectsForImage(image, style.backgroundLayers(), true);
+        if (!didFullRepaint)
+            didFullRepaint = repaintLayerRectsForImage(image, style.maskLayers(), false);
+    };
+
+    repaintForBackgroundAndMask(style());
+
+    if (auto* firstLineStyle = style().getCachedPseudoStyle(PseudoId::FirstLine))
+        repaintForBackgroundAndMask(*firstLineStyle);
 
     if (!isComposited())
         return;
