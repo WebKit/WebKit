@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -375,6 +375,10 @@ void GPUProcess::setOrientationForMediaCapture(uint64_t orientation)
 
 void GPUProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID, CompletionHandler<void()>&& completionHandler)
 {
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    ensureAVCaptureServerConnection();
+#endif
+
     if (auto* connection = webProcessConnection(processID)) {
         connection->updateCaptureAccess(allowAudioCapture, allowVideoCapture, allowDisplayCapture);
         return completionHandler();
@@ -398,10 +402,6 @@ void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& ext
 {
     for (auto& extension : extensions)
         SandboxExtension::consumePermanently(extension);
-
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    sandboxWasUpatedForCapture();
-#endif
 }
 
 void GPUProcess::addMockMediaDevice(const WebCore::MockMediaDevice& device)
