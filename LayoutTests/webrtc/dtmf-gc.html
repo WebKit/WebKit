@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+        <script src="../resources/gc.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsInline></video>
+        <script src ="routines.js"></script>
+        <script>
+
+promise_test(async (test) => {
+    let sender;
+    const localStream = await navigator.mediaDevices.getUserMedia({audio:true, video:true});
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            sender = firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = stream;
+    await video.play();
+
+    const string = '0123456789ABCD';
+    let counter = 0;
+    const promise = new Promise((resolve, reject) => {
+        sender.dtmf.ontonechange = () => {
+            if (++counter === string.length)
+                resolve();
+        };
+        setTimeout(() => reject('dtmf timed out with counter ' + counter), 5000);
+    });
+    sender.dtmf.insertDTMF(string);
+
+    gc();
+    gc();
+    gc();
+
+    return promise;
+}, "Make sure DTMF does not get GCed while it can fire events");
+        </script>
+    </body>
+</html>

@@ -61,6 +61,7 @@ private:
 
     EventTargetInterface eventTargetInterface() const final { return RTCDTMFSenderEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    bool virtualHasPendingActivity() const final { return m_isPendingPlayoutTask; }
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

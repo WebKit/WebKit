@@ -145,6 +145,7 @@ void RTCDTMFSender::toneTimerFired()
 
 void RTCDTMFSender::stop()
 {
+    m_isPendingPlayoutTask = false;
     m_backend = nullptr;
     m_toneTimer.stop();
 }
