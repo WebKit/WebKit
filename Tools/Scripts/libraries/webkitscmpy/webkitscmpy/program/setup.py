@@ -203,7 +203,7 @@ class Setup(Command):
         global_config = local.Git.config()
         result = 0
 
-        email = os.environ.get('EMAIL_ADDRESS') or global_config.get('user.email') or local_config.get('user.email')
+        email = os.environ.get('EMAIL_ADDRESS') or local_config.get('user.email') or global_config.get('user.email')
         log.info('Setting git user email for {}...'.format(repository.root_path))
         if not email or args.defaults is False or (not args.defaults and args.all and Terminal.choose(
             "Set '{}' as the git user email for this repository".format(email),
@@ -226,7 +226,7 @@ class Setup(Command):
         if contributor:
             name = contributor.name
         else:
-            name = global_config.get('user.name') or local_config.get('user.name')
+            name = local_config.get('user.name') or global_config.get('user.name')
         log.info('Setting git user name for {}...'.format(repository.root_path))
         if not name or args.defaults is False or (not args.defaults and args.all and Terminal.choose(
             "Set '{}' as the git user name for this repository".format(name),
