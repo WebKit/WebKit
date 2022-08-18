@@ -35,8 +35,8 @@ namespace WebCore {
 class RTCDTMFSenderBackend {
 public:
     virtual bool canInsertDTMF() = 0;
-    virtual void playTone(const String& tone, size_t duration, size_t interToneGap) = 0;
-    virtual void onTonePlayed(Function<void(const String&)>&&) = 0;
+    virtual void playTone(const char tone, size_t duration, size_t interToneGap) = 0;
+    virtual void onTonePlayed(Function<void()>&&) = 0;
 
     virtual String tones() const = 0;
     virtual size_t duration() const = 0;

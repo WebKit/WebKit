@@ -53,9 +53,9 @@ bool LibWebRTCDTMFSenderBackend::canInsertDTMF()
     return m_sender->CanInsertDtmf();
 }
 
-void LibWebRTCDTMFSenderBackend::playTone(const String& tone, size_t duration, size_t interToneGap)
+void LibWebRTCDTMFSenderBackend::playTone(const char tone, size_t duration, size_t interToneGap)
 {
-    bool ok = m_sender->InsertDtmf(tone.utf8().data(), duration, interToneGap);
+    bool ok = m_sender->InsertDtmf(std::string(1, tone), duration, interToneGap);
     ASSERT_UNUSED(ok, ok);
 }
 
@@ -79,15 +79,13 @@ void LibWebRTCDTMFSenderBackend::OnToneChange(const std::string& tone, const std
     // We are just interested in notifying the end of the tone, which corresponds to the empty string.
     if (!tone.empty())
         return;
-    callOnMainThread([this, weakThis = WeakPtr { *this }, tone = toWTFString(tone)] {
-        if (!weakThis)
-            return;
-        if (m_onTonePlayed)
-            m_onTonePlayed(tone);
+    callOnMainThread([this, weakThis = WeakPtr { *this }] {
+        if (weakThis && m_onTonePlayed)
+            m_onTonePlayed();
     });
 }
 
-void LibWebRTCDTMFSenderBackend::onTonePlayed(Function<void(const String&)>&& onTonePlayed)
+void LibWebRTCDTMFSenderBackend::onTonePlayed(Function<void()>&& onTonePlayed)
 {
     m_onTonePlayed = WTFMove(onTonePlayed);
 }

@@ -55,7 +55,7 @@ RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext& context, RTCRtpSender& send
     , m_sender(sender)
     , m_backend(WTFMove(backend))
 {
-    m_backend->onTonePlayed([this](const String&) {
+    m_backend->onTonePlayed([this] {
         onTonePlayed();
     });
 }
@@ -129,7 +129,7 @@ void RTCDTMFSender::playNextTone()
     auto currentTone = m_tones.left(1);
     m_tones = m_tones.substring(1);
 
-    m_backend->playTone(currentTone, m_duration, m_interToneGap);
+    m_backend->playTone(currentTone[0], m_duration, m_interToneGap);
     dispatchEvent(RTCDTMFToneChangeEvent::create(currentTone));
 }
 
