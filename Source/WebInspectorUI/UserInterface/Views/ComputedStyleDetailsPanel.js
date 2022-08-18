@@ -42,16 +42,16 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
     static displayNameForVariablesGroupType(variablesGroupType)
     {
         switch (variablesGroupType) {
-        case WI.DOMNodeStyles.VariablesGroupType.Colors:
+        case WI.CSSStyleDeclaration.VariablesGroupType.Colors:
             return WI.UIString("Colors", "Colors @ Computed Style variables section", "Section header for the group of CSS variables with colors as values");
 
-        case WI.DOMNodeStyles.VariablesGroupType.Dimensions:
+        case WI.CSSStyleDeclaration.VariablesGroupType.Dimensions:
             return WI.UIString("Dimensions", "Dimensions @ Computed style variables section", "Section header for the group of CSS variables with dimensions as values");
 
-        case WI.DOMNodeStyles.VariablesGroupType.Numbers:
+        case WI.CSSStyleDeclaration.VariablesGroupType.Numbers:
             return WI.UIString("Numbers", "Numbers @ Computed Style variables section", "Section header for the group of CSS variables with numbers as values");
 
-        case WI.DOMNodeStyles.VariablesGroupType.Other:
+        case WI.CSSStyleDeclaration.VariablesGroupType.Other:
             return WI.UIString("Other", "Other @ Computed Style variables section", "Section header for the generic group of CSS variables");
         }
 
@@ -89,10 +89,33 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
     refresh(significantChange)
     {
-        // We only need to do a rebuild on significant changes. Other changes are handled
-        // by the sections and text editors themselves.
+        super.refresh(significantChange);
+
+        // We only need to do a rebuild on significant changes.
+        // Sections update their contents in response to changes to `DOMNodesStyles.computedStyle`.
+        // Sections for variable groups are added/removed based on available data to avoid needless updates.
         if (!significantChange) {
-            super.refresh();
+            switch (this.variablesGroupingMode) {
+            case WI.ComputedStyleDetailsPanel.VariablesGroupingMode.Ungrouped:
+                if (!this._variablesStyleSectionForGroupTypeMap.has(WI.CSSStyleDeclaration.VariablesGroupType.Ungrouped))
+                    this._createVariablesStyleSection(WI.CSSStyleDeclaration.VariablesGroupType.Ungrouped);
+                break;
+
+            case WI.ComputedStyleDetailsPanel.VariablesGroupingMode.ByType:
+                for (let type of Object.values(WI.CSSStyleDeclaration.VariablesGroupType)) {
+                    if (type === WI.CSSStyleDeclaration.VariablesGroupType.Ungrouped)
+                        continue;
+
+                    let variablesList = this.nodeStyles.computedStyle.variablesForType(type);
+                    let variablesStyleSection = this._variablesStyleSectionForGroupTypeMap.get(type);
+                    if (variablesList.length && !variablesStyleSection)
+                        this._createVariablesStyleSection(type, WI.ComputedStyleDetailsPanel.displayNameForVariablesGroupType(type));
+                    else if (!variablesList.length && variablesStyleSection)
+                        this._removeVariablesStyleSection(variablesStyleSection);
+                }
+                break;
+            }
+
             return;
         }
 
@@ -101,35 +124,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         this._propertiesSection.element.classList.toggle("hidden", !this._computedStyleSection.propertiesToRender.length);
         this._boxModelDiagramRow.nodeStyles = this.nodeStyles;
 
-        let styleGroups = new Map;
-
-        switch (this.variablesGroupingMode) {
-        case WI.ComputedStyleDetailsPanel.VariablesGroupingMode.Ungrouped:
-            styleGroups.set(this._variablesStyleSectionForGroupTypeMap.get(WI.DOMNodeStyles.VariablesGroupType.Ungrouped), this.nodeStyles.computedStyle);
-            break;
-
-        case WI.ComputedStyleDetailsPanel.VariablesGroupingMode.ByType:
-            styleGroups = this.nodeStyles.variableStylesByType;
-            break;
-        }
-
-        for (let [type, style] of styleGroups) {
-            let variablesStyleSection = this._variablesStyleSectionForGroupTypeMap.get(type);
-            if (!variablesStyleSection) {
-                this.needsLayout();
-                break;
-            }
-
-            variablesStyleSection.style = style;
-
-            let detailsSection = this._detailsSectionByStyleSectionMap.get(variablesStyleSection);
-            detailsSection.element.classList.toggle("hidden", !variablesStyleSection.propertiesToRender.length);
-        }
-
-        if (this._filterText)
-            this.applyFilter(this._filterText);
-
-        super.refresh();
+        this.needsLayout();
     }
 
     applyFilter(filterText)
@@ -225,30 +220,40 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
             if (styleSection === this._computedStyleSection)
                 continue;
 
-            // WI.ComputedStyleSection is a view but its element is attached to a WI.DetailsSection which isn't. Reparent it before removing.
-            // FIXME: <https://webkit.org/b/152269> - Web Inspector: Convert DetailsSection classes to use View
-            this.element.appendChild(styleSection.element);
-            this.removeSubview(styleSection);
-            styleSection.element.remove();
-            this._detailsSectionByStyleSectionMap.delete(styleSection);
-            detailsSection.element.remove();
+            this._removeVariablesStyleSection(styleSection);
         }
 
-        this._variablesStyleSectionForGroupTypeMap.clear();
+        if (!this.nodeStyles.computedStyle)
+            return;
 
         switch (this.variablesGroupingMode) {
         case WI.ComputedStyleDetailsPanel.VariablesGroupingMode.Ungrouped:
-            this._renderVariablesStyleSectionGroup(this.nodeStyles.computedStyle, WI.DOMNodeStyles.VariablesGroupType.Ungrouped);
+            this._createVariablesStyleSection(WI.CSSStyleDeclaration.VariablesGroupType.Ungrouped);
             break;
 
         case WI.ComputedStyleDetailsPanel.VariablesGroupingMode.ByType:
-            for (let [type, style] of this.nodeStyles.variableStylesByType)
-                this._renderVariablesStyleSectionGroup(style, type, WI.ComputedStyleDetailsPanel.displayNameForVariablesGroupType(type));
+            for (let type of Object.values(WI.CSSStyleDeclaration.VariablesGroupType)) {
+                if (type === WI.CSSStyleDeclaration.VariablesGroupType.Ungrouped)
+                    continue;
+
+                this._createVariablesStyleSection(type, WI.ComputedStyleDetailsPanel.displayNameForVariablesGroupType(type));
+            }
             break;
         }
 
         if (this._filterText)
             this.applyFilter(this._filterText);
+    }
+
+    didLayoutSubtree()
+    {
+        super.didLayoutSubtree();
+
+        for (let [styleSection, detailsSection] of this._detailsSectionByStyleSectionMap)
+            detailsSection.element.classList.toggle("hidden", styleSection.isEmpty);
+
+        let areVariableSectionsAllEmpty = Array.from(this._variablesStyleSectionForGroupTypeMap.values()).every((styleSection) => styleSection.isEmpty);
+        this._variablesSection.element.classList.toggle("hidden", areVariableSectionsAllEmpty);
     }
 
     filterDidChange(filterBar)
@@ -258,26 +263,41 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
     // Private
 
-    _renderVariablesStyleSectionGroup(style, groupType, label)
+    _createVariablesStyleSection(variablesGroupType, label)
     {
-        let variablesStyleSection = new WI.ComputedStyleSection(this);
+        let variablesStyleSection = new WI.ComputedStyleSection(this, {variablesGroupType});
         variablesStyleSection.propertyVisibilityMode = WI.ComputedStyleSection.PropertyVisibilityMode.HideNonVariables;
         variablesStyleSection.hideFilterNonMatchingProperties = true;
         variablesStyleSection.addEventListener(WI.ComputedStyleSection.Event.FilterApplied, this._handleEditorFilterApplied, this);
         variablesStyleSection.element.dir = "ltr";
-        variablesStyleSection.style = style;
+        variablesStyleSection.style = this.nodeStyles.computedStyle;
 
         this.addSubview(variablesStyleSection);
 
         let detailsSectionRow = new WI.DetailsSectionRow;
         let detailsSectionGroup = new WI.DetailsSectionGroup([detailsSectionRow]);
-        let detailsSection = new WI.DetailsSection(`computed-style-variables-group-${groupType}`, label, [detailsSectionGroup]);
+        let detailsSection = new WI.DetailsSection(`computed-style-variables-group-${variablesGroupType}`, label, [detailsSectionGroup]);
         detailsSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handleDetailsSectionCollapsedStateChanged, this);
         detailsSectionRow.element.appendChild(variablesStyleSection.element);
         this._variablesRow.element.appendChild(detailsSection.element);
 
         this._detailsSectionByStyleSectionMap.set(variablesStyleSection, detailsSection);
-        this._variablesStyleSectionForGroupTypeMap.set(groupType, variablesStyleSection);
+        this._variablesStyleSectionForGroupTypeMap.set(variablesGroupType, variablesStyleSection);
+    }
+
+    _removeVariablesStyleSection(styleSection)
+    {
+        let detailsSection = this._detailsSectionByStyleSectionMap.take(styleSection);
+        console.assert(detailsSection, styleSection);
+
+        let variablesStyleSection = this._variablesStyleSectionForGroupTypeMap.take(styleSection.variablesGroupType);
+        console.assert(variablesStyleSection, styleSection.variablesGroupType);
+
+        this.removeSubview(styleSection);
+        styleSection.removeEventListener(WI.ComputedStyleSection.Event.FilterApplied, this._handleEditorFilterApplied, this);
+
+        detailsSection.element.remove();
+        detailsSection.removeEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handleDetailsSectionCollapsedStateChanged, this);
     }
 
     _computePropertyTraces(orderedDeclarations)

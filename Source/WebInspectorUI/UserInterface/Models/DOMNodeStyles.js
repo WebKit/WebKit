@@ -48,7 +48,6 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         this._propertyNameToEffectivePropertyMap = {};
         this._usedCSSVariables = new Set;
         this._allCSSVariables = new Set;
-        this._variableStylesByType = null;
 
         this._pendingRefreshTask = null;
         this.refresh();
@@ -143,67 +142,6 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     get uniqueOrderedStyles()
     {
         return WI.DOMNodeStyles.uniqueOrderedStyles(this._orderedStyles);
-    }
-
-    get variableStylesByType()
-    {
-        if (this._variableStylesByType)
-            return this._variableStylesByType;
-
-        let properties = this._computedStyle?.properties;
-        if (!properties)
-            return new Map;
-
-        // Will iterate in order through type checkers for each CSS variable to identify its type.
-        // The catch-all "other" must always be last.
-        const typeCheckFunctions = [
-            {
-                type: WI.DOMNodeStyles.VariablesGroupType.Colors,
-                checker: (property) => WI.Color.fromString(property.value),
-            },
-            {
-                type: WI.DOMNodeStyles.VariablesGroupType.Dimensions,
-                // FIXME: <https://webkit.org/b/233576> build RegExp from `WI.CSSCompletions.lengthUnits`.
-                checker: (property) => /^-?\d+(\.\d+)?\D+$/.test(property.value),
-            },
-            {
-                type: WI.DOMNodeStyles.VariablesGroupType.Numbers,
-                checker: (property) => /^-?\d+(\.\d+)?$/.test(property.value),
-            },
-            {
-                type: WI.DOMNodeStyles.VariablesGroupType.Other,
-                checker: (property) => true,
-            },
-        ];
-
-        let variablesForType = {};
-        for (let property of properties) {
-            if (!property.isVariable)
-                continue;
-
-            for (let {type, checker} of typeCheckFunctions) {
-                if (checker(property)) {
-                    variablesForType[type] ||= [];
-                    variablesForType[type].push(property);
-                    break;
-                }
-            }
-        }
-
-        this._variableStylesByType = new Map;
-        for (let {type} of typeCheckFunctions) {
-            if (!variablesForType[type]?.length)
-                continue;
-
-            const ownerStyleSheet = null;
-            const id = null;
-            const inherited = false;
-            const text = null;
-            let style = new WI.CSSStyleDeclaration(this, ownerStyleSheet, id, WI.CSSStyleDeclaration.Type.Computed, this._node, inherited, text, variablesForType[type]);
-            this._variableStylesByType.set(type, style);
-        }
-
-        return this._variableStylesByType;
     }
 
     refreshIfNeeded()
@@ -376,9 +314,6 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                     break;
                 }
             }
-
-            if (significantChange)
-                this._variableStylesByType = null;
 
             this._previousStylesMap = null;
             this._includeUserAgentRulesOnNextRefresh = false;
@@ -1056,12 +991,4 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 WI.DOMNodeStyles.Event = {
     NeedsRefresh: "dom-node-styles-needs-refresh",
     Refreshed: "dom-node-styles-refreshed"
-};
-
-WI.DOMNodeStyles.VariablesGroupType = {
-    Ungrouped: "ungrouped",
-    Colors: "colors",
-    Dimensions: "dimensions",
-    Numbers: "numbers",
-    Other: "other",
 };

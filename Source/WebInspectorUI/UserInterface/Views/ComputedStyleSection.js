@@ -25,8 +25,11 @@
 
 WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
 {
-    constructor(delegate)
+    constructor(delegate, {variablesGroupType} = {})
     {
+        console.assert(!variablesGroupType || Object.values(WI.CSSStyleDeclaration.VariablesGroupType).includes(variablesGroupType), variablesGroupType);
+        console.assert(delegate);
+
         super();
 
         this.element.classList.add(WI.ComputedStyleSection.StyleClassName);
@@ -43,9 +46,13 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
         this._propertyVisibilityMode = WI.ComputedStyleSection.PropertyVisibilityMode.ShowAll;
         this._hideFilterNonMatchingProperties = false;
         this._filterText = null;
+        this._filterCleared = false;
+        this._variablesGroupType = variablesGroupType || null;
     }
 
     // Public
+
+    get variablesGroupType() { return this._variablesGroupType; }
 
     get style()
     {
@@ -129,16 +136,29 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
         this.needsLayout();
     }
 
+    get isEmpty()
+    {
+        return !this._propertyViews.length;
+    }
+
+    get properties()
+    {
+        if (this._variablesGroupType && this._variablesGroupType !== WI.CSSStyleDeclaration.VariablesGroupType.Ungrouped)
+            return this._style.variablesForType(this._variablesGroupType);
+
+        if (this._style.styleSheetTextRange)
+            return this._style.visibleProperties;
+        
+        return this._style.properties;
+    }
+
     get propertiesToRender()
     {
         let properties = [];
         if (!this._style)
             return properties;
 
-        if (this._style._styleSheetTextRange)
-            properties = this._style.visibleProperties;
-        else
-            properties = this._style.properties;
+        properties = this.properties || [];
 
         let propertyNameMap = new Map(properties.map((property) => [property.canonicalName, property]));
 
@@ -221,11 +241,18 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
             expandableView.element.classList.add("computed-property-item");
             this.element.append(expandableView.element);
         }
+
+        if (this._filterText || this._filterCleared)
+            this.dispatchEventToListeners(WI.ComputedStyleSection.Event.FilterApplied, {matches: !this.isEmpty});
+
+        this._filterCleared = false;
     }
 
     detached()
     {
         super.detached();
+
+        this._propertiesChangedDebouncer?.cancel();
 
         for (let propertyView of this._propertyViews)
             propertyView.detached();
@@ -233,6 +260,9 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
 
     applyFilter(filterText)
     {
+        if (this._filterText && !filterText)
+            this._filterCleared = true;
+
         this._filterText = filterText;
 
         if (!this.didInitialLayout)
@@ -297,7 +327,8 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
 
     _handlePropertiesChanged(event)
     {
-        this.needsLayout();
+        this._propertiesChangedDebouncer ||= new Debouncer(this.needsLayout.bind(this));
+        this._propertiesChangedDebouncer.delayForTime(250);
     }
 
 };

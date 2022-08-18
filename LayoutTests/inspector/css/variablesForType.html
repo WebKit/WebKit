@@ -6,7 +6,7 @@
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("DOMNodeStyles.variableStylesByType");
+    let suite = InspectorTest.createAsyncSuite("CSSStyleDeclaration.variableStylesByType");
 
     function addTestCase({name, description, selector, expected})
     {
@@ -19,13 +19,14 @@ function test()
                 let domNode = await WI.domManager.nodeForId(nodeId);
                 InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
 
-                let cssStyles = WI.cssManager.stylesForNode(domNode);
-                await cssStyles.refreshIfNeeded();
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                await domNodeStyles.refreshIfNeeded();
 
-                let styleGroups = cssStyles.variableStylesByType;
+                domNodeStyles.computedStyle.useVariablesGrouping = true;
+
                 for (let {groupType, variables} of expected) {
-                    let propertyNames = styleGroups.get(groupType).properties.map(property => property.name);
-                    InspectorTest.expectTrue(styleGroups.has(groupType), `Should have "${groupType}" variables group.`);
+                    let propertyNames = domNodeStyles.computedStyle.variablesForType(groupType).map(property => property.name);
+                    InspectorTest.expectTrue(!!propertyNames.length, `Should have "${groupType}" variables group.`);
                     InspectorTest.expectShallowEqual(propertyNames.sort(), variables.sort(), "Group should include all expected variables.");
                 }
             },
@@ -33,72 +34,72 @@ function test()
     }
 
     addTestCase({
-        name: "DOMNodeStyles.variableStylesByType.Colors",
+        name: "CSSStyleDeclaration.variableStylesByType.Colors",
         description: "Check that variables with color values are correctly identified.",
         selector: "#colors",
         expected: [
             {
-                groupType: WI.DOMNodeStyles.VariablesGroupType.Colors,
+                groupType: WI.CSSStyleDeclaration.VariablesGroupType.Colors,
                 variables: ["--colorName", "--colorHEX", "--colorRGB", "--colorRGBA", "--colorHSL", "--colorHSLA"],
             },
         ],
     });
 
     addTestCase({
-        name: "DOMNodeStyles.variableStylesByType.Dimensions",
+        name: "CSSStyleDeclaration.variableStylesByType.Dimensions",
         description: "Check that variables with dimension values are correctly identified.",
         selector: "#dimensions",
         expected: [
             {
-                groupType: WI.DOMNodeStyles.VariablesGroupType.Dimensions,
+                groupType: WI.CSSStyleDeclaration.VariablesGroupType.Dimensions,
                 variables: ["--dimensionPX", "--dimensionPercent", "--dimensionFloat", "--dimensionNegative", "--dimensionNegativeFloat"],
             },
         ],
     });
 
     addTestCase({
-        name: "DOMNodeStyles.variableStylesByType.Numbers",
+        name: "CSSStyleDeclaration.variableStylesByType.Numbers",
         description: "Check that variables with number values are correctly identified.",
         selector: "#numbers",
         expected: [
             {
-                groupType: WI.DOMNodeStyles.VariablesGroupType.Numbers,
+                groupType: WI.CSSStyleDeclaration.VariablesGroupType.Numbers,
                 variables: ["--number", "--numberFloat", "--numberNegative", "--numberNegativeFloat"],
             },
         ],
     });
 
     addTestCase({
-        name: "DOMNodeStyles.variableStylesByType.Other",
+        name: "CSSStyleDeclaration.variableStylesByType.Other",
         description: "Check that variables with values with unmatched types are placed in the fallback group.",
         selector: "#other",
         expected: [
             {
-                groupType: WI.DOMNodeStyles.VariablesGroupType.Other,
+                groupType: WI.CSSStyleDeclaration.VariablesGroupType.Other,
                 variables: ["--shadow", "--font-family", "--font-shorthand", "--keyword"],
             },
         ],
     });
 
     addTestCase({
-        name: "DOMNodeStyles.variableStylesByType.Mixed",
+        name: "CSSStyleDeclaration.variableStylesByType.Mixed",
         description: "Check that all type groups have variables allocated.",
         selector: "#mixed",
         expected: [
             {
-                groupType: WI.DOMNodeStyles.VariablesGroupType.Colors,
+                groupType: WI.CSSStyleDeclaration.VariablesGroupType.Colors,
                 variables: ["--color"],
             },
             {
-                groupType: WI.DOMNodeStyles.VariablesGroupType.Dimensions,
+                groupType: WI.CSSStyleDeclaration.VariablesGroupType.Dimensions,
                 variables: ["--dimension"],
             },
             {
-                groupType: WI.DOMNodeStyles.VariablesGroupType.Numbers,
+                groupType: WI.CSSStyleDeclaration.VariablesGroupType.Numbers,
                 variables: ["--number"],
             },
             {
-                groupType: WI.DOMNodeStyles.VariablesGroupType.Other,
+                groupType: WI.CSSStyleDeclaration.VariablesGroupType.Other,
                 variables: ["--font-family"],
             },
         ],
@@ -169,7 +170,7 @@ div#mixed {
 </style>
 </head>
 <body onload="runTest();">
-<p>Test for DOMNodeStyles.variableStylesByType</p>
+<p>Test for CSSStyleDeclaration.variableStylesByType</p>
 <div>
     <div id="colors"></div>
     <div id="dimensions"></div>

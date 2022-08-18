@@ -31,6 +31,12 @@ PASS: Parent view should have 0 dirty descendants.
 PASS: Child view should have 0 dirty descendants.
 PASS: Parent view should have started a layout.
 PASS: Child view should have completed 1 layout.
+Parent view completed a layout.
+PASS: Root view should have 0 dirty descendants.
+PASS: Root view should have 0 dirty descendants.
+PASS: Root view should have 0 dirty descendants.
+PASS: Parent view should have completed 1 layout.
+PASS: Parent view should not have a pending layout.
 Child view completed a layout.
 PASS: Root view should have 0 dirty descendants.
 PASS: Parent view should have 0 dirty descendants.
@@ -49,4 +55,13 @@ Schedule parent view update.
 Layout complete.
 PASS: Chlid view should do an initial layout.
 PASS: Child view should update its layout.
+
+-- Running test case: View.didLayoutSubtree.parentView
+Flush pending layout on parent view.
+Schedule child view update.
+Layout complete.
+PASS: Child view should update its layout twice.
+PASS: Parent view should update its layout once.
+PASS: Child view should call didLayoutSubtree twice.
+PASS: Parent view should call didLayoutSubtree twice.
 

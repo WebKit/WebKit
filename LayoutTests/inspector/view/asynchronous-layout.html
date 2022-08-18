@@ -115,7 +115,18 @@ function test()
                 InspectorTest.expectEqual(parentView.layoutCount, 1, "Parent view should have completed 1 layout.");
                 InspectorTest.expectFalse(parentView.layoutPending, "Parent view should not have a pending layout.");
 
-                resolve();
+                parentView.evaluateAfterLayout(() => {
+                    InspectorTest.log("Parent view completed a layout.");
+
+                    InspectorTest.expectEqual(rootView._dirtyDescendantsCount, 0, "Root view should have 0 dirty descendants.");
+                    InspectorTest.expectEqual(parentView._dirtyDescendantsCount, 0, "Root view should have 0 dirty descendants.");
+                    InspectorTest.expectEqual(childView._dirtyDescendantsCount, 0, "Root view should have 0 dirty descendants.");
+
+                    InspectorTest.expectEqual(parentView.layoutCount, 1, "Parent view should have completed 1 layout.");
+                    InspectorTest.expectFalse(parentView.layoutPending, "Parent view should not have a pending layout.");
+
+                    resolve();
+                });
             });
         }
     });
@@ -134,6 +145,31 @@ function test()
                 InspectorTest.log("Layout complete.");
                 InspectorTest.expectEqual(child.initialLayoutCount, 1, "Chlid view should do an initial layout.");
                 InspectorTest.expectEqual(child.layoutCount, 1, "Child view should update its layout.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "View.didLayoutSubtree.parentView",
+        test(resolve, reject) {
+            let parent = new WI.TestView;
+            let child = new WI.TestView;
+            WI.View.rootView().addSubview(parent);
+            parent.addSubview(child);
+
+            InspectorTest.log("Flush pending layout on parent view.");
+            parent.updateLayout();
+
+            InspectorTest.log("Schedule child view update.");
+            child.needsLayout();
+
+            parent.evaluateAfterLayout(() => {
+                InspectorTest.log("Layout complete.");
+                InspectorTest.expectEqual(child.layoutCount, 2, "Child view should update its layout twice.");
+                InspectorTest.expectEqual(parent.layoutCount, 1, "Parent view should update its layout once.");
+                InspectorTest.expectEqual(child.didLayoutSubtreeCount, 2, "Child view should call didLayoutSubtree twice.");
+                InspectorTest.expectEqual(parent.didLayoutSubtreeCount, 2, "Parent view should call didLayoutSubtree twice.");
                 resolve();
             });
         }

@@ -50,6 +50,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         this._properties = [];
         this._enabledProperties = null;
         this._visibleProperties = null;
+        this._variablesForType = new Map;
 
         this.update(text, properties, styleSheetTextRange, {dontFireEvents: true});
     }
@@ -113,6 +114,54 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
     get locked() { return this._locked; }
     set locked(value) { this._locked = value; }
 
+    variablesForType(type)
+    {
+        console.assert(Object.values(WI.CSSStyleDeclaration.VariablesGroupType).includes(type), type);
+
+        let variables = this._variablesForType.get(type);
+        if (variables)
+            return variables;
+
+        // Will iterate in order through type checkers for each CSS variable to identify its type.
+        // The catch-all "other" must always be last.
+        const typeCheckFunctions = [
+            {
+                type: WI.CSSStyleDeclaration.VariablesGroupType.Colors,
+                checker: (property) => WI.Color.fromString(property.value),
+            },
+            {
+                type: WI.CSSStyleDeclaration.VariablesGroupType.Dimensions,
+                checker: (property) => /^-?\d+(\.\d+)?\D+$/.test(property.value),
+            },
+            {
+                type: WI.CSSStyleDeclaration.VariablesGroupType.Numbers,
+                checker: (property) => /^-?\d+(\.\d+)?$/.test(property.value),
+            },
+            {
+                type: WI.CSSStyleDeclaration.VariablesGroupType.Other,
+                checker: (property) => true,
+            },
+        ];
+
+        // Ensure all types have a list. Empty lists are a signal to views to skip rendering.
+        for (let {type} of typeCheckFunctions)
+            this._variablesForType.set(type, []);
+
+        for (let property of this._properties) {
+            if (!property.isVariable)
+                continue;
+
+            for (let {type, checker} of typeCheckFunctions) {
+                if (checker(property)) {
+                    this._variablesForType.get(type).push(property);
+                    break;
+                }
+            }
+        }
+
+        return this._variablesForType.get(type);
+    }
+
     update(text, properties, styleSheetTextRange, options = {})
     {
         let dontFireEvents = options.dontFireEvents || false;
@@ -145,6 +194,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
         this._styleSheetTextRange = styleSheetTextRange;
         this._propertyNameMap = {};
+        this._variablesForType.clear();
 
         this._enabledProperties = null;
         this._visibleProperties = null;
@@ -564,4 +614,12 @@ WI.CSSStyleDeclaration.Type = {
     Inline: "css-style-declaration-type-inline",
     Attribute: "css-style-declaration-type-attribute",
     Computed: "css-style-declaration-type-computed"
+};
+
+WI.CSSStyleDeclaration.VariablesGroupType = {
+    Ungrouped: "ungrouped",
+    Colors: "colors",
+    Dimensions: "dimensions",
+    Numbers: "numbers",
+    Other: "other",
 };

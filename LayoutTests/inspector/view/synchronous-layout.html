@@ -71,6 +71,25 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "View.didLayoutSubtree.parentView",
+        test() {
+            let parent = new WI.TestView;
+            let child = new WI.TestView;
+            parent.addSubview(child);
+
+            InspectorTest.log("Update child view layout.");
+            child.updateLayout();
+
+            InspectorTest.expectEqual(child.layoutCount, 1, "Child view should update its layout once.");
+            InspectorTest.expectEqual(parent.layoutCount, 0, "Parent view should not update its layout.");
+            InspectorTest.expectEqual(child.didLayoutSubtreeCount, 1, "Child view should call didLayoutSubtree once.");
+            InspectorTest.expectEqual(parent.didLayoutSubtreeCount, 1, "Parent view should call didLayoutSubtree once.");
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

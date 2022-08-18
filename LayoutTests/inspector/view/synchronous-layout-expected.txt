@@ -22,3 +22,10 @@ PASS: View should update if an initial layout never happened.
 PASS: View should update if a layout is pending.
 PASS: View should not update if no layout is pending.
 
+-- Running test case: View.didLayoutSubtree.parentView
+Update child view layout.
+PASS: Child view should update its layout once.
+PASS: Parent view should not update its layout.
+PASS: Child view should call didLayoutSubtree once.
+PASS: Parent view should call didLayoutSubtree once.
+
