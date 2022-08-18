@@ -5039,7 +5039,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
         if (m_unpackFlipY)
             adjustedSourceImageRect.setY(pixels->height() - adjustedSourceImageRect.maxY());
 
-        auto imageData = std::make_optional<GCGLSpan<const GCGLvoid>>(pixels->data().data(), pixels->data().byteLength());
+        GCGLSpan<const GCGLvoid> imageData { pixels->data() };
         Vector<uint8_t> data;
 
         // The data from ImageData is always of format RGBA8.
@@ -5053,29 +5053,29 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
                 synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "bad image data");
                 return { };
             }
-            imageData.emplace(data);
+            imageData = GCGLSpan { data };
         }
         ScopedUnpackParametersResetRestore temporaryResetUnpack(this);
         if (functionID == TexImageFunctionID::TexImage2D) {
             texImage2DBase(target, level, internalformat,
                 adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), 0,
-                format, type, imageData.value());
+                format, type, imageData);
         } else if (functionID == TexImageFunctionID::TexSubImage2D) {
             texSubImage2DBase(target, level, xoffset, yoffset,
                 adjustedSourceImageRect.width(), adjustedSourceImageRect.height(),
-                format, format, type, imageData.value());
+                format, format, type, imageData);
         } else {
 #if USE(ANGLE)
             // 3D functions.
             if (functionID == TexImageFunctionID::TexImage3D) {
                 m_context->texImage3D(target, level, internalformat,
                     adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), depth, 0,
-                    format, type, imageData.value());
+                    format, type, imageData);
             } else {
                 ASSERT(functionID == TexImageFunctionID::TexSubImage3D);
                 m_context->texSubImage3D(target, level, xoffset, yoffset, zoffset,
                     adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), depth,
-                    format, type, imageData.value());
+                    format, type, imageData);
             }
 #else
             // WebGL 2.0 is only supported with the ANGLE backend.
@@ -5305,36 +5305,36 @@ void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGL
     GraphicsContextGL::AlphaOp alphaOp = imageExtractor.imageAlphaOp();
     const void* imagePixelData = imageExtractor.imagePixelData();
 
-    auto pixels = std::make_optional<GCGLSpan<const GCGLvoid>>(imagePixelData, imageExtractor.imageWidth() * imageExtractor.imageHeight() * 4);
+    GCGLSpan<const GCGLvoid> pixels { imagePixelData, imageExtractor.imageWidth() * imageExtractor.imageHeight() * 4 };
     if (type != GraphicsContextGL::UNSIGNED_BYTE || sourceDataFormat != GraphicsContextGL::DataFormat::RGBA8 || format != GraphicsContextGL::RGBA || alphaOp != GraphicsContextGL::AlphaOp::DoNothing || flipY || selectingSubRectangle || depth != 1) {
         if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), adjustedSourceImageRect, depth, imageExtractor.imageSourceUnpackAlignment(), unpackImageHeight, data)) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "packImage error");
             return;
         }
-        pixels.emplace(data);
+        pixels = GCGLSpan { data };
     }
 
     ScopedUnpackParametersResetRestore temporaryResetUnpack(this, true);
     if (functionID == TexImageFunctionID::TexImage2D) {
         texImage2DBase(target, level, internalformat,
             adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), 0,
-            format, type, pixels.value());
+            format, type, pixels);
     } else if (functionID == TexImageFunctionID::TexSubImage2D) {
         texSubImage2DBase(target, level, xoffset, yoffset,
             adjustedSourceImageRect.width(), adjustedSourceImageRect.height(),
-            format, format, type, pixels.value());
+            format, format, type, pixels);
     } else {
 #if USE(ANGLE)
         // 3D functions.
         if (functionID == TexImageFunctionID::TexImage3D) {
             m_context->texImage3D(target, level, internalformat,
                 adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), depth, 0,
-                format, type, pixels.value());
+                format, type, pixels);
         } else {
             ASSERT(functionID == TexImageFunctionID::TexSubImage3D);
             m_context->texSubImage3D(target, level, xoffset, yoffset, zoffset,
                 adjustedSourceImageRect.width(), adjustedSourceImageRect.height(), depth,
-                format, type, pixels.value());
+                format, type, pixels);
         }
 #else
         UNUSED_PARAM(zoffset);

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <cstdint>
 #include <limits>
 #include <type_traits>
@@ -118,10 +119,13 @@ struct GCGLSpan<T, gcGLSpanDynamicExtent> {
         : data(array.data())
         , bufSize(array.size())
     { }
+    GCGLSpan(const ArrayBufferView& view)
+        : GCGLSpan(view.baseAddress(), view.byteLength())
+    { }
     T& operator[](size_t i) { RELEASE_ASSERT(data && i < bufSize); return data[i]; }
     T& operator*() { RELEASE_ASSERT(data && bufSize); return *data; }
     T* data;
-    const size_t bufSize;
+    size_t bufSize;
 };
 
 template<>
@@ -145,8 +149,11 @@ struct GCGLSpan<GCGLvoid> {
         : data(array.data())
         , bufSize(array.size() * sizeof(U))
     { }
+    GCGLSpan(const ArrayBufferView& view)
+        : GCGLSpan(view.baseAddress(), view.byteLength())
+    { }
     GCGLvoid* data;
-    const size_t bufSize;
+    size_t bufSize;
 };
 
 template<>
@@ -169,8 +176,11 @@ struct GCGLSpan<const GCGLvoid> {
         : data(other.data)
         , bufSize(other.bufSize * sizeof(U))
     { }
+    GCGLSpan(const ArrayBufferView& view)
+        : GCGLSpan(view.baseAddress(), view.byteLength())
+    { }
     const GCGLvoid* data;
-    const size_t bufSize;
+    size_t bufSize;
 };
 
 template<typename T, size_t N>
