@@ -258,7 +258,7 @@ class GitHubEWS(GitHub):
             status = GitHubEWS.ICON_BUILD_ONGOING
         elif build.result == Buildbot.SUCCESS:
             if is_parent_build:
-                status = GitHubEWS.ICON_BUILD_ONGOING
+                status = GitHubEWS.ICON_BUILD_WAITING
                 hover_over_text = 'Waiting to run tests'
                 queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
                 if queue_full_name:
