@@ -167,8 +167,11 @@ void DocumentTimeline::scheduleAnimationResolution()
     if (animationsAreSuspended() || m_animationResolutionScheduled || !m_document || !m_document->page())
         return;
 
+    bool havePendingActivity = shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState();
+    LOG_WITH_STREAM(Animations, stream << "DocumentTimeline " << this << " scheduleAnimationResolution - havePendingActivity " << havePendingActivity);
+
     // We need some relevant animations or pending events to proceed.
-    if (!shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
+    if (!havePendingActivity)
         return;
 
     m_document->page()->scheduleRenderingUpdate(RenderingUpdateStep::Animations);
@@ -342,6 +345,8 @@ void DocumentTimeline::scheduleNextTick()
         return std::nullopt;
     };
 
+    auto animationInterval = this->animationInterval();
+    
     for (const auto& animation : m_animations) {
         if (!animation->isRelevant())
             continue;
@@ -364,15 +369,19 @@ void DocumentTimeline::scheduleNextTick()
                 animationTimeToNextRequiredTick = *timeToNextPossibleTickAccountingForFrameRate - nextTickTimeEpsilon;
         }
 
-        if (animationTimeToNextRequiredTick < animationInterval()) {
+        if (animationTimeToNextRequiredTick < animationInterval) {
+            LOG_WITH_STREAM(Animations, stream << "DocumentTimeline " << this << " scheduleNextTick - scheduleAnimationResolution now");
             scheduleAnimationResolution();
             return;
         }
         scheduleDelay = std::min(scheduleDelay, animationTimeToNextRequiredTick);
     }
 
-    if (scheduleDelay < Seconds::infinity())
+    if (scheduleDelay < Seconds::infinity()) {
+        scheduleDelay = std::max(scheduleDelay - animationInterval, 0_s);
+        LOG_WITH_STREAM(Animations, stream << "DocumentTimeline " << this << " scheduleNextTick - scheduleDelay " << scheduleDelay);
         m_tickScheduleTimer.startOneShot(scheduleDelay);
+    }
 }
 
 void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& animation)
