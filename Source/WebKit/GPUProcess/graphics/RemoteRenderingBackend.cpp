@@ -233,11 +233,10 @@ void RemoteRenderingBackend::destroyGetPixelBufferSharedMemory()
     m_getPixelBufferSharedMemory = nullptr;
 }
 
-void RemoteRenderingBackend::putPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, IPC::PixelBufferReference&& pixelBufferReference, IntRect&& srcRect, IntPoint&& destPoint, AlphaPremultiplication destFormat)
+void RemoteRenderingBackend::putPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, Ref<PixelBuffer>&& pixelBuffer, IntRect&& srcRect, IntPoint&& destPoint, AlphaPremultiplication destFormat)
 {
     QualifiedRenderingResourceIdentifier qualifiedImageBuffer { imageBuffer, m_gpuConnectionToWebProcess->webProcessIdentifier() };
     if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(qualifiedImageBuffer)) {
-        auto pixelBuffer = pixelBufferReference.takePixelBuffer();
         imageBuffer->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
     }
 }

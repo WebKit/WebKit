@@ -174,7 +174,7 @@ bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResource
 
 void RemoteRenderingBackendProxy::putPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    sendToStream(Messages::RemoteRenderingBackend::PutPixelBufferForImageBuffer(imageBuffer, IPC::PixelBufferReference { Ref { const_cast<PixelBuffer&>(pixelBuffer) } }, srcRect, destPoint, destFormat));
+    sendToStream(Messages::RemoteRenderingBackend::PutPixelBufferForImageBuffer(imageBuffer, Ref { const_cast<PixelBuffer&>(pixelBuffer) }, srcRect, destPoint, destFormat));
 }
 
 std::optional<SharedMemory::Handle> RemoteRenderingBackendProxy::updateSharedMemoryForGetPixelBuffer(size_t dataSize)

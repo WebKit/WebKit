@@ -260,7 +260,6 @@ def types_that_cannot_be_forward_declared():
         'IPC::DataReference',
         'IPC::FilterReference',
         'IPC::FontReference',
-        'IPC::PixelBufferReference',
         'IPC::Semaphore',
         'MachSendRight',
         'MediaTime',
