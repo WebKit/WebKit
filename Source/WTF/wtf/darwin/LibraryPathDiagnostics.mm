@@ -59,6 +59,13 @@ static char const * const libraryListEnvironmentVariableName = "LIBRARY_PATH_DIA
 #endif
 static char const * const bundleListEnvironmentVariableName = "LIBRARY_PATH_DIAGNOSTICS_BUNDLES";
 
+static String uuidToString(const uuid_t& uuid)
+{
+    uuid_string_t uuid_string = { };
+    uuid_unparse(uuid, uuid_string);
+    return String::fromUTF8(uuid_string);
+}
+
 class LibraryPathDiagnosticsLogger final {
 public:
     LibraryPathDiagnosticsLogger();
@@ -147,7 +154,7 @@ void LibraryPathDiagnosticsLogger::logDYLDSharedCacheInfo(void)
 
     auto sharedCacheInfo = JSON::Object::create();
     sharedCacheInfo->setString("Path"_s, FileSystem::realPath(String::fromUTF8(dyld_shared_cache_file_path())));
-    sharedCacheInfo->setString("UUID"_s, UUID(Span<const uint8_t, 16> { uuid }).toString());
+    sharedCacheInfo->setString("UUID"_s, uuidToString(uuid));
 
     logObject({ "SharedCache"_s }, WTFMove(sharedCacheInfo));
 }
@@ -188,7 +195,7 @@ void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(const String& installNa
     auto libraryObject = JSON::Object::create();
 
     libraryObject->setString("Path"_s, FileSystem::realPath(String::fromUTF8(info.dli_fname)));
-    libraryObject->setString("UUID"_s, UUID(Span<const uint8_t, 16> { uuid }).toString());
+    libraryObject->setString("UUID"_s, uuidToString(uuid));
 
 #if HAVE(SHARED_REGION_SPI)
     libraryObject->setBoolean("InSharedCache"_s, isAddressInSharedRegion(header));
