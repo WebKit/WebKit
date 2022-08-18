@@ -10,7 +10,7 @@ find_package(CURL 7.77.0 REQUIRED)
 find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
 find_package(JPEG 1.5.2 REQUIRED)
 find_package(LibXml2 2.9.7 REQUIRED)
-find_package(OpenSSL 2.0.0 REQUIRED)
+find_package(OpenSSL REQUIRED)
 find_package(PNG 1.6.34 REQUIRED)
 find_package(SQLite3 3.23.1 REQUIRED)
 find_package(ZLIB 1.2.11 REQUIRED)
@@ -66,6 +66,13 @@ SET_AND_EXPOSE_TO_BUILD(USE_INSPECTOR_SOCKET_SERVER ${ENABLE_REMOTE_INSPECTOR})
 SET_AND_EXPOSE_TO_BUILD(ENABLE_DEVELOPER_MODE ${DEVELOPER_MODE})
 
 SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
+
+# See if OpenSSL implementation is BoringSSL
+cmake_push_check_state()
+set(CMAKE_REQUIRED_INCLUDES "${OPENSSL_INCLUDE_DIR}")
+set(CMAKE_REQUIRED_LIBRARIES "${OPENSSL_LIBRARIES}")
+WEBKIT_CHECK_HAVE_SYMBOL(USE_BORINGSSL OPENSSL_IS_BORINGSSL openssl/ssl.h)
+cmake_pop_check_state()
 
 # CoreFoundation is required when building WebKitLegacy
 if (ENABLE_WEBKIT_LEGACY)
