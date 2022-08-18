@@ -821,10 +821,8 @@ String HTMLTextFormControlElement::directionForFormData() const
                 return TextDirection::RTL;
             if (equalLettersIgnoringASCIICase(value, "ltr"_s))
                 return TextDirection::LTR;
-            if (equalLettersIgnoringASCIICase(value, "auto"_s)) {
-                bool isAuto;
-                return element.directionalityIfhasDirAutoAttribute(isAuto);
-            }
+            if (equalLettersIgnoringASCIICase(value, "auto"_s))
+                return element.directionalityIfDirIsAuto().value();
         }
         return TextDirection::LTR;
     }();

@@ -813,8 +813,7 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
     bool wasInRange = isInRange(element()->value());
     bool inRange = isInRange(sanitizedValue);
 
-    bool dummy;
-    auto oldDirection = element()->directionalityIfhasDirAutoAttribute(dummy);
+    auto oldDirection = element()->directionalityIfDirIsAuto();
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (wasInRange != inRange)
@@ -822,7 +821,7 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
 
     element()->setValueInternal(sanitizedValue, eventBehavior);
 
-    if (oldDirection != element()->directionalityIfhasDirAutoAttribute(dummy))
+    if (oldDirection.value_or(TextDirection::LTR) != element()->directionalityIfDirIsAuto().value_or(TextDirection::LTR))
         element()->invalidateStyleInternal();
 
     switch (eventBehavior) {
