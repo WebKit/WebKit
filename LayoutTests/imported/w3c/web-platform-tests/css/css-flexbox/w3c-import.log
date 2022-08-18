@@ -146,6 +146,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/baseline-synthesis-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/baseline-synthesis-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/baseline-synthesis-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/baseline-synthesis-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/baseline-synthesis-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/baseline-synthesis-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/baseline-synthesis-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/box-sizing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/box-sizing-min-max-sizes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/break-nested-float-in-flex-item-001-print-expected.html
