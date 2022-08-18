@@ -293,7 +293,7 @@ void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& s
 void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     auto willCollapseCompletely = [&] {
-        if (m_runs.isEmpty() && inlineTextItem.isEmpty()) {
+        if (inlineTextItem.isEmpty()) {
             // Some generated content initiates empty text items. They are truly collapsible.
             return true;
         }
