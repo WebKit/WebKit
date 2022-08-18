@@ -161,7 +161,7 @@ public:
             m_processedMediaSamples = { };
         }
 
-        void reset()
+        virtual void reset()
         {
             resetCompletedFramesState();
             m_completePacketSize = std::nullopt;
@@ -240,12 +240,16 @@ public:
 
     private:
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&) final;
+        void reset() final;
         void resetCompletedFramesState() final;
         const char* logClassName() const { return "AudioTrackData"; }
 
         MediaTime m_packetDuration;
         uint8_t m_framesPerPacket { 0 };
         Seconds m_frameDuration { 0_s };
+        size_t m_frames { 0 };
+        bool m_inBlock { false };
+        MediaTime m_lastFrameTime { MediaTime::invalidTime() };
         size_t mNumFramesInCompleteBlock { 0 };
     };
 

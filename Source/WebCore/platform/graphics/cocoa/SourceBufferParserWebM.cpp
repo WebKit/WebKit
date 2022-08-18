@@ -540,22 +540,21 @@ WebMParser::~WebMParser()
 void WebMParser::resetState()
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    if (m_parser)
-        m_parser->DidSeek();
-    m_reader->reset();
     m_state = m_initializationSegmentProcessed ? State::ReadingSegment : State::None;
     m_initializationSegment = nullptr;
     m_initializationSegmentEncountered = false;
     m_currentBlock.reset();
-    for (auto& track : m_tracks)
-        track->reset();
+    reset();
 }
 
 void WebMParser::reset()
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (m_parser)
+        m_parser->DidSeek();
     m_reader->reset();
-    m_parser->DidSeek();
+    for (auto& track : m_tracks)
+        track->reset();
 }
 
 void WebMParser::createByteRangeSamples()
@@ -1176,6 +1175,13 @@ void WebMParser::VideoTrackData::flushPendingSamples()
     m_lastPresentationTime.reset();
 }
 
+void WebMParser::AudioTrackData::reset()
+{
+    m_frames = 0;
+    m_lastFrameTime = MediaTime::invalidTime();
+    TrackData::reset();
+}
+
 void WebMParser::AudioTrackData::resetCompletedFramesState()
 {
     mNumFramesInCompleteBlock = 0;
@@ -1245,12 +1251,34 @@ webm::Status WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, 
         }
     }
 
+    ASSERT(formatDescription());
     if (!m_processedMediaSamples.info())
         m_processedMediaSamples.setInfo(formatDescription());
-    else if (formatDescription() && *formatDescription() != *m_processedMediaSamples.info())
+    else if (*formatDescription() != *m_processedMediaSamples.info())
         drainPendingSamples();
 
-    m_processedMediaSamples.append({ presentationTime, MediaTime::invalidTime(), m_packetDuration, WTFMove(m_completeFrameData), MediaSample::SampleFlags::IsSync });
+    auto rate = downcast<const AudioInfo>(*formatDescription()).rate;
+    auto framesPerPacket = downcast<const AudioInfo>(*formatDescription()).framesPerPacket;
+    auto lastFrameTime = (m_lastFrameTime.isValid() ? m_lastFrameTime : presentationTime);
+    MediaTime lastEndTime = lastFrameTime + MediaTime(m_frames, rate);
+    if (m_lastFrameTime == presentationTime)
+        m_inBlock = true;
+    else if (!m_lastFrameTime.isValid())
+        m_lastFrameTime = presentationTime;
+    else if (m_lastFrameTime != presentationTime) {
+        // We are starting a new block.
+        // If the gap between the real previous frame's end and the new presentation time is less than the smallest possible value
+        // in the container timescale, we can assume a rounding error has occurred and we will calculate the actual presentation time
+        // according to the number of frames parsed so far.
+        if (m_inBlock || (presentationTime > lastEndTime && presentationTime - lastEndTime > MediaTime(1, presentationTime.timeScale()))) {
+            m_frames = 0;
+            lastEndTime = m_lastFrameTime = presentationTime;
+        }
+        m_inBlock = false;
+    }
+
+    m_processedMediaSamples.append({ lastEndTime, MediaTime::invalidTime(), m_packetDuration, WTFMove(m_completeFrameData), MediaSample::SampleFlags::IsSync });
+    m_frames += framesPerPacket;
 
     drainPendingSamples();
 
@@ -1542,7 +1570,7 @@ void SourceBufferParserWebM::setLogger(const Logger& newLogger, const void* newL
     m_logger = &newLogger;
     m_logIdentifier = newLogIdentifier;
     ALWAYS_LOG(LOGIDENTIFIER);
-    
+
     m_parser.setLogger(newLogger, newLogIdentifier);
 }
 
