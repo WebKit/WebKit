@@ -107,7 +107,6 @@ public:
     LayoutRect elementRect() const override;
     IntPoint clickPoint() override;
     
-    void setRenderer(RenderObject*);
     RenderObject* renderer() const override { return m_renderer.get(); }
     RenderBoxModelObject* renderBoxModelObject() const;
     Node* node() const override;

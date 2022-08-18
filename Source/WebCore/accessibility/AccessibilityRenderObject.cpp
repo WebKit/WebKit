@@ -160,12 +160,6 @@ RenderBoxModelObject* AccessibilityRenderObject::renderBoxModelObject() const
     return downcast<RenderBoxModelObject>(renderer());
 }
 
-void AccessibilityRenderObject::setRenderer(RenderObject* renderer)
-{
-    m_renderer = renderer;
-    setNode(renderer->node());
-}
-
 static inline bool isInlineWithContinuation(RenderObject& object)
 {
     return is<RenderInline>(object) && downcast<RenderInline>(object).continuation();
