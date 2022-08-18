@@ -913,10 +913,6 @@ webkit.org/b/239750 media/media-source/media-mp4-xhe-aac.html [ Skip ]
 webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Skip ]
 webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Skip ]
 
-# resignFirstResponder is not implemented on GTK+
-fast/shadow-dom/focus-ring-on-shadow-host.html [ Skip ]
-fast/shadow-dom/focus-ring-on-shadow-host-focuswithin.html [ Skip ]
-fast/shadow-dom/focus-ring-on-shadow-host-sibling.html [ Skip ]
 # Changes to logical height/width computations (https://bugs.webkit.org/show_bug.cgi?id=241601)
 webkit.org/b/241601 svg/wicd/rightsizing-grid.xhtml [ Failure ]
 webkit.org/b/241601 svg/wicd/test-rightsizing-b.xhtml [ Failure ]

@@ -2089,6 +2089,11 @@ webanimations/accelerated-animations-and-composite.html [ Skip ]
 # OT-SVG is not implemented on GTK/WPE
 fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
 
+# resignFirstResponder is not implemented on GLIB
+fast/shadow-dom/focus-ring-on-shadow-host.html [ Skip ]
+fast/shadow-dom/focus-ring-on-shadow-host-focuswithin.html [ Skip ]
+fast/shadow-dom/focus-ring-on-shadow-host-sibling.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////
