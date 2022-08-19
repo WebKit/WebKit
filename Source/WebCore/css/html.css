@@ -224,6 +224,7 @@ table {
     border-spacing: 2px;
     border-color: gray;
     text-indent: initial;
+    box-sizing: border-box;
 }
 
 thead {
