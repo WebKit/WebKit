@@ -204,7 +204,6 @@ private:
     Vector<Observer*> m_observers;
 
     MediaTrackConstraints m_constraints;
-    std::unique_ptr<DOMPromiseDeferred<void>> m_promise;
 
     State m_readyState { State::Live };
     bool m_muted { false };
