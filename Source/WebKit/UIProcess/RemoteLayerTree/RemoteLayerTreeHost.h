@@ -77,8 +77,8 @@ public:
 
     bool replayCGDisplayListsIntoBackingStore() const;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    const HashMap<WebCore::GraphicsLayer::PlatformLayerID, CGRect>& overlayRegionsWithIDs() const { return m_overlayRegionsWithIDs; }
-    void updateOverlayRegionsWithIDs(const HashMap<WebCore::GraphicsLayer::PlatformLayerID, CGRect> &overlayRegions) { m_overlayRegionsWithIDs = overlayRegions; }
+    const HashSet<WebCore::GraphicsLayer::PlatformLayerID>& overlayRegionIDs() const { return m_overlayRegionIDs; }
+    void updateOverlayRegionIDs(const HashSet<WebCore::GraphicsLayer::PlatformLayerID> &overlayRegionNodes) { m_overlayRegionIDs = overlayRegionNodes; }
 #endif
 
 private:
@@ -94,7 +94,7 @@ private:
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<RemoteLayerTreeNode>> m_nodes;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, CGRect> m_overlayRegionsWithIDs;
+    HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_overlayRegionIDs;
 #endif
     bool m_isDebugLayerTreeHost { false };
 };

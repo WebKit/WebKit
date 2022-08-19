@@ -1054,7 +1054,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 }
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-static void addOverlayEventRegions(WebCore::GraphicsLayer::PlatformLayerID layerID, const WebKit::RemoteLayerTreeTransaction::LayerPropertiesMap& changedLayerPropertiesMap, HashMap<WebCore::GraphicsLayer::PlatformLayerID, CGRect>& overlayRegionsWithIDs, const WebKit::RemoteLayerTreeHost& layerTreeHost, UIView *rootView)
+static void addOverlayEventRegions(WebCore::GraphicsLayer::PlatformLayerID layerID, const WebKit::RemoteLayerTreeTransaction::LayerPropertiesMap& changedLayerPropertiesMap, HashSet<WebCore::GraphicsLayer::PlatformLayerID>& overlayRegionIDs, const WebKit::RemoteLayerTreeHost& layerTreeHost)
 {
     using WebKit::RemoteLayerTreeTransaction;
     const auto& it = changedLayerPropertiesMap.find(layerID);
@@ -1063,13 +1063,11 @@ static void addOverlayEventRegions(WebCore::GraphicsLayer::PlatformLayerID layer
 
     const auto& layerProperties = *it->value;
     CGRect rect = layerProperties.eventRegion.region().bounds();
-    if ((layerProperties.changedProperties & RemoteLayerTreeTransaction::EventRegionChanged) && !CGRectIsEmpty(rect)) {
-        if (const auto* node = layerTreeHost.nodeForID(layerID))
-            overlayRegionsWithIDs.set(layerID, [node->uiView() convertRect:rect toView:rootView]);
-    }
+    if ((layerProperties.changedProperties & RemoteLayerTreeTransaction::EventRegionChanged) && !CGRectIsEmpty(rect))
+        overlayRegionIDs.add(layerID);
 
     for (auto childLayerID : layerProperties.children)
-        addOverlayEventRegions(childLayerID, changedLayerPropertiesMap, overlayRegionsWithIDs, layerTreeHost, rootView);
+        addOverlayEventRegions(childLayerID, changedLayerPropertiesMap, overlayRegionIDs, layerTreeHost);
 }
 
 - (void)_updateOverlayRegions:(const WebKit::RemoteLayerTreeTransaction::LayerPropertiesMap&)changedLayerPropertiesMap destroyedLayers:(const Vector<WebCore::GraphicsLayer::PlatformLayerID>&)destroyedLayers
@@ -1086,19 +1084,21 @@ static void addOverlayEventRegions(WebCore::GraphicsLayer::PlatformLayerID layer
     scrollingCoordinatorProxy->removeFixedScrollingNodeLayerIDs(destroyedLayers);
     const auto& fixedIDs = scrollingCoordinatorProxy->fixedScrollingNodeLayerIDs();
 
-    auto overlayRegionsWithIDs = layerTreeHost.overlayRegionsWithIDs();
+    auto overlayRegionIDs = layerTreeHost.overlayRegionIDs();
     for (auto layerID : destroyedLayers)
-        overlayRegionsWithIDs.remove(layerID);
+        overlayRegionIDs.remove(layerID);
 
     for (auto layerID : fixedIDs)
-        addOverlayEventRegions(layerID, changedLayerPropertiesMap, overlayRegionsWithIDs, layerTreeHost, self);
+        addOverlayEventRegions(layerID, changedLayerPropertiesMap, overlayRegionIDs, layerTreeHost);
 
     Vector<CGRect> overlayRegions;
-    for (const auto& [layerID, rect] : overlayRegionsWithIDs)
-        overlayRegions.append(rect);
+    for (const auto layerID : overlayRegionIDs) {
+        if (const auto* node = layerTreeHost.nodeForID(layerID))
+            overlayRegions.append([node->uiView() convertRect:node->eventRegion().region().bounds() toView:self]);
+    }
 
     if ([_scrollView _updateOverlayRegions:overlayRegions])
-        layerTreeProxy.updateOverlayRegionsWithIDs(overlayRegionsWithIDs);
+        layerTreeProxy.updateOverlayRegionIDs(overlayRegionIDs);
 }
 #endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 
