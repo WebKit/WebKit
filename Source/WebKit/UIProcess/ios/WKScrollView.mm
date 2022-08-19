@@ -555,11 +555,36 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 #endif // HAVE(PEPPER_UI_CORE)
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+static void addDebugOverlays(CALayer *layer, const Vector<CGRect>& overlayRegions)
+{
+    NSString *overlayDebugKey = @"WKOverlayRegionDebugFill";
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:overlayDebugKey])
+        return;
+
+    Vector<CALayer *> layersToRemove;
+    for (CALayer *sublayer in layer.sublayers) {
+        if ([sublayer valueForKey:overlayDebugKey])
+            layersToRemove.append(sublayer);
+    }
+
+    for (CALayer *sublayer : layersToRemove)
+        [sublayer removeFromSuperlayer];
+
+    for (CGRect rect : overlayRegions) {
+        auto debugLayer = adoptNS([[CALayer alloc] init]);
+        [debugLayer setFrame:rect];
+        [debugLayer setBackgroundColor:WebCore::cachedCGColor({ WebCore::SRGBA<float>(1, 0, 0, .3) }).get()];
+        [debugLayer setValue:@YES forKey:overlayDebugKey];
+        [layer addSublayer:debugLayer.get()];
+    }
+}
+
 - (bool)_updateOverlayRegions:(const Vector<CGRect> &)overlayRegions
 {
     if (_overlayRegions == overlayRegions)
         return false;
 
+    addDebugOverlays(_internalDelegate.layer, overlayRegions);
     [self willChangeValueForKey:@"overlayRegions"];
     _overlayRegions = overlayRegions;
     [self didChangeValueForKey:@"overlayRegions"];
