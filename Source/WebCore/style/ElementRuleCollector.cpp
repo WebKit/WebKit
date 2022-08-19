@@ -595,10 +595,9 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
         addElementStyleProperties(styledElement.additionalPresentationalHintStyle(), RuleSet::cascadeLayerPriorityForPresentationalHints);
 
         if (is<HTMLElement>(styledElement)) {
-            bool isAuto;
-            auto textDirection = downcast<HTMLElement>(styledElement).directionalityIfhasDirAutoAttribute(isAuto);
-            auto& properties = textDirection == TextDirection::LTR ? leftToRightDeclaration() : rightToLeftDeclaration();
-            if (isAuto)
+            auto result = downcast<HTMLElement>(styledElement).directionalityIfDirIsAuto();
+            auto& properties = result.value_or(TextDirection::LTR) == TextDirection::LTR ? leftToRightDeclaration() : rightToLeftDeclaration();
+            if (result)
                 addMatchedProperties({ &properties }, DeclarationOrigin::Author);
         }
     }

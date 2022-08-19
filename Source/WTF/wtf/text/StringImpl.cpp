@@ -1493,25 +1493,17 @@ bool equalIgnoringASCIICaseNonNull(const StringImpl* a, const StringImpl* b)
     return equalIgnoringASCIICase(*a, *b);
 }
 
-UCharDirection StringImpl::defaultWritingDirection(bool* hasStrongDirectionality)
+std::optional<UCharDirection> StringImpl::defaultWritingDirection()
 {
     for (auto codePoint : StringView(this).codePoints()) {
         auto charDirection = u_charDirection(codePoint);
-        if (charDirection == U_LEFT_TO_RIGHT) {
-            if (hasStrongDirectionality)
-                *hasStrongDirectionality = true;
+        if (charDirection == U_LEFT_TO_RIGHT)
             return U_LEFT_TO_RIGHT;
-        }
         if (charDirection == U_RIGHT_TO_LEFT || charDirection == U_RIGHT_TO_LEFT_ARABIC) {
-            if (hasStrongDirectionality)
-                *hasStrongDirectionality = true;
             return U_RIGHT_TO_LEFT;
         }
     }
-
-    if (hasStrongDirectionality)
-        *hasStrongDirectionality = false;
-    return U_LEFT_TO_RIGHT;
+    return std::nullopt;
 }
 
 Ref<StringImpl> StringImpl::adopt(StringBuffer<LChar>&& buffer)

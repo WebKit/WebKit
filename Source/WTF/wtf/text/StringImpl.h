@@ -475,7 +475,7 @@ public:
     WTF_EXPORT_PRIVATE Ref<StringImpl> replace(StringView, StringView);
     WTF_EXPORT_PRIVATE Ref<StringImpl> replace(unsigned start, unsigned length, StringView);
 
-    WTF_EXPORT_PRIVATE UCharDirection defaultWritingDirection(bool* hasStrongDirectionality = nullptr);
+    WTF_EXPORT_PRIVATE std::optional<UCharDirection> defaultWritingDirection();
 
 #if USE(CF)
     RetainPtr<CFStringRef> createCFString();

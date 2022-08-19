@@ -300,7 +300,7 @@ public:
     WTF_EXPORT_PRIVATE static String fromCodePoint(UChar32 codePoint);
 
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
-    UCharDirection defaultWritingDirection(bool* hasStrongDirectionality = nullptr) const;
+    std::optional<UCharDirection> defaultWritingDirection() const;
 
     bool isAllASCII() const { return !m_impl || m_impl->isAllASCII(); }
     bool isAllLatin1() const { return !m_impl || m_impl->isAllLatin1(); }
@@ -497,13 +497,11 @@ template<size_t inlineCapacity> inline String String::make8BitFrom16BitSource(co
     return make8BitFrom16BitSource(buffer.data(), buffer.size());
 }
 
-inline UCharDirection String::defaultWritingDirection(bool* hasStrongDirectionality) const
+inline std::optional<UCharDirection> String::defaultWritingDirection() const
 {
     if (m_impl)
-        return m_impl->defaultWritingDirection(hasStrongDirectionality);
-    if (hasStrongDirectionality)
-        *hasStrongDirectionality = false;
-    return U_LEFT_TO_RIGHT;
+        return m_impl->defaultWritingDirection();
+    return std::nullopt;
 }
 
 inline void String::clearImplIfNotShared()
