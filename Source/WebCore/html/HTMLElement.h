@@ -90,7 +90,8 @@ public:
 
     TextDirection computeDirectionality() const;
     bool hasDirectionAuto() const;
-    TextDirection directionalityIfhasDirAutoAttribute(bool& isAuto) const;
+
+    std::optional<TextDirection> directionalityIfDirIsAuto() const;
 
     virtual bool isTextControlInnerTextElement() const { return false; }
     virtual bool isSearchFieldResultsButtonElement() const { return false; }
@@ -181,7 +182,12 @@ private:
     void dirAttributeChanged(const AtomString&);
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
     void adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChange::Type);
-    TextDirection directionality(Node** strongDirectionalityTextNode= 0) const;
+
+    struct TextDirectionWithStrongDirectionalityNode {
+        TextDirection direction;
+        RefPtr<Node> strongDirectionalityNode;
+    };
+    TextDirectionWithStrongDirectionalityNode directionality() const;
 
     enum class AllowPercentage : bool { No, Yes };
     enum class UseCSSPXAsUnitType : bool { No, Yes };
