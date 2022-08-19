@@ -1,0 +1,18 @@
+This test ensures that we properly change an object's ignored status after dynamically changing the page.
+
+#canvas is initially ignored: true
+Dumping AX tree starting at #group.
+Canvas
+  Div
+    StaticText AXLabel: I am some text inside a div, which is inside a canvas
+
+Removing all children of #canvas.
+#canvas is ignored: true
+Dumping AX tree starting at #group.
+Canvas
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

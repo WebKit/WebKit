@@ -282,6 +282,7 @@ public:
     // Use accessibilityIsIgnored as the word of law when determining if an object is ignored.
     virtual bool computeAccessibilityIsIgnored() const { return true; }
     bool accessibilityIsIgnored() const override;
+    void recomputeIsIgnored();
     AccessibilityObjectInclusion defaultObjectInclusion() const override;
     bool accessibilityIsIgnoredByDefault() const override;
 
@@ -661,10 +662,6 @@ public:
     IntRect scrollVisibleContentRect() const;
     void scrollToMakeVisible(const ScrollRectToVisibleOptions&) const;
 
-    bool lastKnownIsIgnoredValue();
-    void setLastKnownIsIgnoredValue(bool);
-    bool hasIgnoredValueChanged();
-
     // All math elements return true for isMathElement().
     bool isMathElement() const override { return false; }
     bool isMathFraction() const override { return false; }
@@ -829,6 +826,9 @@ private:
     std::optional<BoundaryPoint> lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>&, const BoundaryPoint&, const FloatRect&, int, int) const;
     std::optional<BoundaryPoint> lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>& boundaryPoints, const BoundaryPoint& startBoundaryPoint, const FloatRect& targetRect) const;
 
+    // Note that "withoutCache" refers to the lack of referencing AXComputedObjectAttributeCache in the function, not the AXObjectCache parameter we pass in here.
+    bool accessibilityIsIgnoredWithoutCache(AXObjectCache*) const;
+    void setLastKnownIsIgnoredValue(bool);
     void ariaTreeRows(AccessibilityChildrenVector& rows, AccessibilityChildrenVector& ancestors);
 
 protected: // FIXME: Make the data members private.
@@ -856,6 +856,12 @@ inline bool AccessibilityObject::hasDisplayContents() const
     return is<Element>(node()) && downcast<Element>(node())->hasDisplayContents();
 }
 
+inline void AccessibilityObject::recomputeIsIgnored()
+{
+    // accessibilityIsIgnoredWithoutCache will update m_lastKnownIsIgnoredValue and perform any necessary actions if it has changed.
+    accessibilityIsIgnoredWithoutCache(axObjectCache());
+}
+
 inline std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>& boundaryPoints, const BoundaryPoint& startBoundaryPoint, const FloatRect& targetRect) const
 {
     return lastBoundaryPointContainedInRect(boundaryPoints, startBoundaryPoint, targetRect, 0, boundaryPoints.size() - 1);
@@ -867,6 +873,7 @@ inline VisiblePosition AccessibilityObject::previousLineStartPosition(const Visi
 }
 #else
 inline bool AccessibilityObject::hasDisplayContents() const { return false; }
+inline void AccessibilityObject::recomputeIsIgnored() { }
 inline std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>&, const BoundaryPoint&, const FloatRect&) const { return std::nullopt; }
 inline VisiblePosition AccessibilityObject::previousLineStartPosition(const VisiblePosition&) const { return { }; }
 #endif

@@ -470,6 +470,9 @@ http/tests/misc/image-checks-for-accept.html [ Skip ]
 # Timing out since added in https://bugs.webkit.org/show_bug.cgi?id=240750 (likely some missing AccessibilityUIElement implementation).
 accessibility/table-exposure-updates-dynamically.html [ Skip ]
 
+# Failing since added in https://bugs.webkit.org/show_bug.cgi?id=244069.
+accessibility/dynamically-ignored-canvas.html [ Skip ]
+
 # Failing since added in https://bugs.webkit.org/show_bug.cgi?id=241022.
 accessibility/node-only-inert-object.html [ Failure ]
 

@@ -366,6 +366,9 @@ accessibility/text-updates-after-dynamic-change.html [ Skip ]
 # Failing since added in https://bugs.webkit.org/show_bug.cgi?id=241428.
 accessibility/aria-multiline.html [ Skip ]
 
+# Failing since added in https://bugs.webkit.org/show_bug.cgi?id=244069.
+accessibility/dynamically-ignored-canvas.html [ Skip ]
+
 # Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
 accessibility/aria-modal-with-text-crash.html [ Skip ]
 accessibility/display-contents-object-ordering.html [ Skip ]

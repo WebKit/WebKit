@@ -245,8 +245,10 @@ JSValueRef AccessibilityUIElement::children() const
 void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
 {
     NSInteger childCount = [m_element accessibilityElementCount];
-    for (NSInteger k = 0; k < childCount; ++k)
-        elementVector.append(AccessibilityUIElement::create([m_element accessibilityElementAtIndex:k]));
+    for (NSInteger k = 0; k < childCount; ++k) {
+        if (id child = [m_element accessibilityElementAtIndex:k])
+            elementVector.append(AccessibilityUIElement::create(child));
+    }
 }
 
 void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >& elementVector, unsigned location, unsigned length)

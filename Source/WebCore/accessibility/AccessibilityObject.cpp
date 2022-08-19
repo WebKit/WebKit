@@ -3652,28 +3652,9 @@ bool AccessibilityObject::scrollByPage(ScrollByPageDirection direction) const
     return false;
 }
 
-
-bool AccessibilityObject::lastKnownIsIgnoredValue()
-{
-    if (m_lastKnownIsIgnoredValue == AccessibilityObjectInclusion::DefaultBehavior)
-        m_lastKnownIsIgnoredValue = accessibilityIsIgnored() ? AccessibilityObjectInclusion::IgnoreObject : AccessibilityObjectInclusion::IncludeObject;
-
-    return m_lastKnownIsIgnoredValue == AccessibilityObjectInclusion::IgnoreObject;
-}
-
 void AccessibilityObject::setLastKnownIsIgnoredValue(bool isIgnored)
 {
     m_lastKnownIsIgnoredValue = isIgnored ? AccessibilityObjectInclusion::IgnoreObject : AccessibilityObjectInclusion::IncludeObject;
-}
-
-bool AccessibilityObject::hasIgnoredValueChanged()
-{
-    bool isIgnored = accessibilityIsIgnored();
-    if (lastKnownIsIgnoredValue() != isIgnored) {
-        setLastKnownIsIgnoredValue(isIgnored);
-        return true;
-    }
-    return false;
 }
 
 bool AccessibilityObject::pressedIsPresent() const
@@ -3783,9 +3764,9 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
 bool AccessibilityObject::accessibilityIsIgnored() const
 {
     AXComputedObjectAttributeCache* attributeCache = nullptr;
-    AXObjectCache* cache = axObjectCache();
-    if (cache)
-        attributeCache = cache->computedObjectAttributeCache();
+    auto* axObjectCache = this->axObjectCache();
+    if (axObjectCache)
+        attributeCache = axObjectCache->computedObjectAttributeCache();
     
     if (attributeCache) {
         AccessibilityObjectInclusion ignored = attributeCache->getIgnored(objectID());
@@ -3799,6 +3780,17 @@ bool AccessibilityObject::accessibilityIsIgnored() const
         }
     }
 
+    bool ignored = accessibilityIsIgnoredWithoutCache(axObjectCache);
+
+    // Refetch the attribute cache in case it was enabled as part of computing accessibilityIsIgnored.
+    if (axObjectCache && (attributeCache = axObjectCache->computedObjectAttributeCache()))
+        attributeCache->setIgnored(objectID(), ignored ? AccessibilityObjectInclusion::IgnoreObject : AccessibilityObjectInclusion::IncludeObject);
+
+    return ignored;
+}
+
+bool AccessibilityObject::accessibilityIsIgnoredWithoutCache(AXObjectCache* cache) const
+{
     // If we are in the midst of retrieving the current modal node, we only need to consider whether the object
     // is inherently ignored via computeAccessibilityIsIgnored. Also, calling ignoredFromModalPresence
     // in this state would cause infinite recursion.
@@ -3806,9 +3798,13 @@ bool AccessibilityObject::accessibilityIsIgnored() const
     if (!ignored)
         ignored = computeAccessibilityIsIgnored();
 
-    // In case computing axIsIgnored disables attribute caching, we should refetch the object to see if it exists.
-    if (cache && (attributeCache = cache->computedObjectAttributeCache()))
-        attributeCache->setIgnored(objectID(), ignored ? AccessibilityObjectInclusion::IgnoreObject : AccessibilityObjectInclusion::IncludeObject);
+    auto previousLastKnownIsIgnoredValue = m_lastKnownIsIgnoredValue;
+    const_cast<AccessibilityObject*>(this)->setLastKnownIsIgnoredValue(ignored);
+
+    if (cache
+        && ((previousLastKnownIsIgnoredValue == AccessibilityObjectInclusion::IgnoreObject && !ignored)
+        || (previousLastKnownIsIgnoredValue == AccessibilityObjectInclusion::IncludeObject && ignored)))
+        cache->childrenChanged(parentObject());
 
     return ignored;
 }

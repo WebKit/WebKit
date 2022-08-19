@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!--
+  This test fails on ITM because we have a bug where the AXObjectCache never receives a children changed notification
+  for the <canvas> element, despite the fact all of its children are removed. One place we could start sending those
+  notifications is in ContainerNode::childrenChanged. I briefly experimented with this and it did fix this test in ITM,
+  but to confidently make that change we need to investigate more.
+
+  For example, that function is very hot, so we need to make sure hooking into it doesn't kill performance.
+  There may also be better candidates for getting these updates.
+-->
+
+<div id="group" role="group">
+    <canvas id="canvas"><div>I am some text inside a div, which is inside a canvas</div></canvas>
+</div>
+
+<script>
+    // This test uses a <canvas> to dynamically change ignored status, but the goal is to ensure that any element
+    // that changes ignored status dynamically results in that element's parent getting a childrenChanged call. Then the
+    // AX tree should be updated appropriately, either removing or adding the ignored or un-ignored element respectively.
+    var testOutput = "This test ensures that we properly change an object's ignored status after dynamically changing the page.\n\n";
+
+    function isIgnored(id) {
+        const axElement = accessibilityController.accessibleElementById(id);
+        if (!axElement)
+            return true;
+        return axElement.isIgnored;
+    }
+
+    function addTreeToOutput(axElement, indent = 0) {
+        if (!axElement)
+            return;
+
+        let indentStr = "";
+        for (let i = 0; i < indent; i++)
+            indentStr += "  ";
+
+        for (let i = 0; i < axElement.childrenCount; i++) {
+            const child = axElement.childAtIndex(i);
+            testOutput += `${indentStr}${child.role}`;
+            if (child.role && child.role.includes("StaticText"))
+                testOutput += ` ${accessibilityController.platformName === "ios" ? child.description : child.stringValue}`;
+            testOutput += "\n";
+            addTreeToOutput(child, indent + 1);
+        }
+    }
+
+    function addGroupTreeToOutput() {
+        const group = accessibilityController.accessibleElementById("group");
+        addTreeToOutput(group);
+        testOutput += "\n";
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        testOutput += `#canvas is initially ignored: ${isIgnored("canvas")}\n`;
+        testOutput += "Dumping AX tree starting at #group.\n";
+        addGroupTreeToOutput();
+
+        testOutput += `Removing all children of #canvas.\n`;
+        const canvasElement = document.getElementById("canvas");
+        while (canvasElement.firstChild) { canvasElement.removeChild(canvasElement.firstChild); }
+        setTimeout(async function() {
+            await waitFor(() => {
+                const axCanvas = accessibilityController.accessibleElementById("canvas");
+                return !axCanvas || !axCanvas.childrenCount;
+            });
+            testOutput += `#canvas is ignored: ${isIgnored("canvas")}\n`;
+            // Removing the <canvas> fallback content makes it ignored, so the canvas should send a notification to its parent
+            // that it needs to update its children.
+            testOutput += "Dumping AX tree starting at #group.\n";
+            addGroupTreeToOutput();
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+
