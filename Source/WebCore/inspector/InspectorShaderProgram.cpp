@@ -123,10 +123,10 @@ bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderTyp
                         auto& contextWebGLBase = downcast<WebGLRenderingContextBase>(*context);
                         contextWebGLBase.shaderSource(*shader, source);
                         contextWebGLBase.compileShader(*shader);
-                        if (shader->isValid()) {
+                        auto compileStatus = contextWebGLBase.getShaderParameter(*shader, GraphicsContextGL::COMPILE_STATUS);
+                        if (std::holds_alternative<bool>(compileStatus) && std::get<bool>(compileStatus))
                             contextWebGLBase.linkProgramWithoutInvalidatingAttribLocations(&program);
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }

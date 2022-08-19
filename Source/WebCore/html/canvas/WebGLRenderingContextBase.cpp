@@ -2007,6 +2007,8 @@ void WebGLRenderingContextBase::compileShader(WebGLShader& shader)
     if (!validateWebGLProgramOrShader("compileShader", &shader))
         return;
     m_context->compileShader(shader.object());
+
+#if !USE(ANGLE)
     GCGLint value = m_context->getShaderi(shader.object(), GraphicsContextGL::COMPILE_STATUS);
     shader.setValid(value);
 
@@ -2019,6 +2021,7 @@ void WebGLRenderingContextBase::compileShader(WebGLShader& shader)
         for (auto error : StringView(errors).split('\n'))
             canvas->document().addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Error, "WebGL: " + error, stackTrace.copyRef()));
     }
+#endif
 }
 
 void WebGLRenderingContextBase::compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, ArrayBufferView& data)

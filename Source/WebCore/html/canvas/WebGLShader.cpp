@@ -45,7 +45,6 @@ WebGLShader::WebGLShader(WebGLRenderingContextBase& ctx, GCGLenum type)
     : WebGLSharedObject(ctx)
     , m_type(type)
     , m_source(emptyString())
-    , m_isValid(false)
 {
     setObject(ctx.graphicsContextGL()->createShader(type));
 }

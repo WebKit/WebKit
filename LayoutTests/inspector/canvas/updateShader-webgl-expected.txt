@@ -21,12 +21,10 @@ WebGL tests for Canvas.updateShader command.
 
 
 -- Running test case: Canvas.updateShader.WebGL.Vertex.Invalid
-PASS: Should produce error.
-Error: Failed to update shader of given shaderType for given programId
+INVALID
 
 -- Running test case: Canvas.updateShader.WebGL.Fragment.Invalid
-PASS: Should produce error.
-Error: Failed to update shader of given shaderType for given programId
+INVALID
 
 -- Running test case: Canvas.updateShader.WebGL.ShaderType.Invalid
 PASS: Should produce an error.

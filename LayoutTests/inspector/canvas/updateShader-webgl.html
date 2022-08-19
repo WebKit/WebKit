@@ -78,11 +78,13 @@ function test() {
                     return;
                 }
 
-                CanvasAgent.updateShader(shaderProgram.identifier, shaderType, source, (error) => {
-                    InspectorTest.expectThat(error, "Should produce error.");
-                    InspectorTest.log("Error: " + error);
-                    resolve();
-                });
+                let programId = shaderProgram.identifier;
+
+                // FIXME: Add UI for reporting shader errors <https://webkit.org/b/244077> 
+                CanvasAgent.updateShader(programId, shaderType, source)
+                .then(() => CanvasAgent.requestShaderSource(programId, shaderType))
+                .then(({source}) => InspectorTest.log(source))
+                .then(resolve, reject);
             }
         });
     }
