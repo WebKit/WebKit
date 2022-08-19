@@ -1,3 +1,16 @@
+=================
+WebKitGTK 2.37.90
+=================
+
+What's new in WebKitGTK 2.37.90?
+
+  - Remove libnotify dependency.
+  - Add support for service worker notifications.
+  - Add support for loading the notification icon.
+  - Add support for pac proxy type in WebDriver.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Swedish.
+
 ================
 WebKitGTK 2.37.1
 ================
