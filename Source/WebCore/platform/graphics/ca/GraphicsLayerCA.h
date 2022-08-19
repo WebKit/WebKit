@@ -345,6 +345,7 @@ private:
     bool recursiveVisibleRectChangeRequiresFlush(const CommitState&, const TransformState&) const;
     
     bool isPageTiledBackingLayer() const { return type() == Type::PageTiledBacking; }
+    bool isStructuralLayer() const { return type() == Type::Structural; }
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {

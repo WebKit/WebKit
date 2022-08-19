@@ -77,6 +77,7 @@ bool GraphicsLayer::supportsLayerType(Type type)
 {
     switch (type) {
     case Type::Normal:
+    case Type::Structural:
     case Type::PageTiledBacking:
     case Type::ScrollContainer:
     case Type::ScrolledContents:
@@ -135,7 +136,7 @@ GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& layerClient)
     , m_beingDestroyed(false)
     , m_contentsOpaque(false)
     , m_supportsSubpixelAntialiasedText(false)
-    , m_preserves3D(false)
+    , m_preserves3D(type == Type::Structural)
     , m_backfaceVisibility(true)
     , m_masksToBounds(false)
     , m_drawsContent(false)
@@ -351,6 +352,24 @@ void GraphicsLayer::removeFromParentInternal()
     }
 }
 
+void GraphicsLayer::setPreserves3D(bool b)
+{
+    ASSERT_IMPLIES(m_type == Type::Structural, b);
+    m_preserves3D = b;
+}
+
+void GraphicsLayer::setMasksToBounds(bool b)
+{
+    ASSERT_IMPLIES(m_type == Type::Structural, false);
+    m_masksToBounds = b;
+}
+
+void GraphicsLayer::setDrawsContent(bool b)
+{
+    ASSERT_IMPLIES(m_type == Type::Structural, false);
+    m_drawsContent = b;
+}
+
 const TransformationMatrix& GraphicsLayer::transform() const
 {
     return m_transform ? *m_transform : TransformationMatrix::identity;
@@ -375,6 +394,19 @@ void GraphicsLayer::setChildrenTransform(const TransformationMatrix& matrix)
         *m_childrenTransform = matrix;
     else
         m_childrenTransform = makeUnique<TransformationMatrix>(matrix);
+}
+
+bool GraphicsLayer::setFilters(const FilterOperations& filters)
+{
+    ASSERT(m_type != Type::Structural);
+    m_filters = filters;
+    return true;
+}
+
+void GraphicsLayer::setOpacity(float opacity)
+{
+    ASSERT(m_type != Type::Structural);
+    m_opacity = opacity;
 }
 
 void GraphicsLayer::removeFromParent()
@@ -518,6 +550,7 @@ void GraphicsLayer::setSize(const FloatSize& size)
 
 void GraphicsLayer::setBackgroundColor(const Color& color)
 {
+    ASSERT(m_type != Type::Structural);
     m_backgroundColor = color;
 }
 
