@@ -27,8 +27,13 @@
 #if USE(LIBWEBRTC)
 
 #include "ExceptionCode.h"
+#include "RTCIceCandidateFields.h"
 #include <webrtc/api/media_types.h>
 #include <wtf/text/WTFString.h>
+
+namespace cricket {
+class Candidate;
+}
 
 namespace webrtc {
 struct RtpParameters;
@@ -74,6 +79,8 @@ inline String fromStdString(const std::string& value)
 {
     return String::fromUTF8(value.data(), value.length());
 }
+
+RTCIceCandidateFields convertIceCandidate(const cricket::Candidate&);
 
 } // namespace WebCore
 

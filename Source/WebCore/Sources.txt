@@ -208,6 +208,7 @@ Modules/mediastream/RTCEncodedVideoFrame.cpp
 Modules/mediastream/RTCError.cpp
 Modules/mediastream/RTCErrorEvent.cpp
 Modules/mediastream/RTCIceCandidate.cpp
+Modules/mediastream/RTCIceCandidateFields.cpp
 Modules/mediastream/RTCIceTransport.cpp
 Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/RTCPeerConnectionIceEvent.cpp

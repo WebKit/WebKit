@@ -331,12 +331,12 @@ PASS RTCIceTransport interface: attribute state
 PASS RTCIceTransport interface: attribute gatheringState
 FAIL RTCIceTransport interface: operation getLocalCandidates() assert_own_property: interface prototype object missing non-static operation expected property "getLocalCandidates" missing
 FAIL RTCIceTransport interface: operation getRemoteCandidates() assert_own_property: interface prototype object missing non-static operation expected property "getRemoteCandidates" missing
-FAIL RTCIceTransport interface: operation getSelectedCandidatePair() assert_own_property: interface prototype object missing non-static operation expected property "getSelectedCandidatePair" missing
+PASS RTCIceTransport interface: operation getSelectedCandidatePair()
 FAIL RTCIceTransport interface: operation getLocalParameters() assert_own_property: interface prototype object missing non-static operation expected property "getLocalParameters" missing
 FAIL RTCIceTransport interface: operation getRemoteParameters() assert_own_property: interface prototype object missing non-static operation expected property "getRemoteParameters" missing
 PASS RTCIceTransport interface: attribute onstatechange
 PASS RTCIceTransport interface: attribute ongatheringstatechange
-FAIL RTCIceTransport interface: attribute onselectedcandidatepairchange assert_true: The prototype object must have a property "onselectedcandidatepairchange" expected true got false
+PASS RTCIceTransport interface: attribute onselectedcandidatepairchange
 PASS RTCIceTransport must be primary interface of idlTestObjects.iceTransport
 PASS Stringification of idlTestObjects.iceTransport
 FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "role" with the proper type assert_inherits: property "role" not found in prototype chain
@@ -345,12 +345,12 @@ PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit propert
 PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "gatheringState" with the proper type
 FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getLocalCandidates()" with the proper type assert_inherits: property "getLocalCandidates" not found in prototype chain
 FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getRemoteCandidates()" with the proper type assert_inherits: property "getRemoteCandidates" not found in prototype chain
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getSelectedCandidatePair()" with the proper type assert_inherits: property "getSelectedCandidatePair" not found in prototype chain
+PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getSelectedCandidatePair()" with the proper type
 FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getLocalParameters()" with the proper type assert_inherits: property "getLocalParameters" not found in prototype chain
 FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getRemoteParameters()" with the proper type assert_inherits: property "getRemoteParameters" not found in prototype chain
 PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "onstatechange" with the proper type
 PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "ongatheringstatechange" with the proper type
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "onselectedcandidatepairchange" with the proper type assert_inherits: property "onselectedcandidatepairchange" not found in prototype chain
+PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "onselectedcandidatepairchange" with the proper type
 PASS RTCTrackEvent interface: existence and properties of interface object
 PASS RTCTrackEvent interface object length
 PASS RTCTrackEvent interface object name

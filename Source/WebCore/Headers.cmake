@@ -273,6 +273,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/mediastream/RTCDataChannelRemoteSource.h
     Modules/mediastream/RTCError.h
     Modules/mediastream/RTCErrorDetailType.h
+    Modules/mediastream/RTCIceCandidateFields.h
+    Modules/mediastream/RTCIceCandidateType.h
+    Modules/mediastream/RTCIceComponent.h
+    Modules/mediastream/RTCIceProtocol.h
+    Modules/mediastream/RTCIceTcpCandidateType.h
     Modules/mediastream/RTCNetworkManager.h
     Modules/mediastream/STUNMessageParsing.h
     Modules/mediastream/UserMediaClient.h

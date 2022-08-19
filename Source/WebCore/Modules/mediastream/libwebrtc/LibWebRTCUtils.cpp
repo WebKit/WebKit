@@ -403,13 +403,9 @@ static inline std::optional<RTCIceCandidateType> toRTCIceCandidateType(const std
     return RTCIceCandidateType::Relay;
 }
 
-std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
+RTCIceCandidateFields convertIceCandidate(const cricket::Candidate& candidate)
 {
-    cricket::Candidate candidate;
-    if (!webrtc::ParseCandidate(sdp.utf8().data(), &candidate, nullptr, true))
-        return { };
-
-    RTCIceCandidate::Fields fields;
+    RTCIceCandidateFields fields;
     fields.foundation = fromStdString(candidate.foundation());
     fields.component = toRTCIceComponent(candidate.component());
     fields.priority = candidate.priority();

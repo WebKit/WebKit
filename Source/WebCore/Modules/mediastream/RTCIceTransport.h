@@ -35,6 +35,7 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "RTCIceCandidate.h"
 #include "RTCIceGatheringState.h"
 #include "RTCIceTransportBackend.h"
 #include "RTCIceTransportState.h"
@@ -61,6 +62,12 @@ public:
     using RefCounted<RTCIceTransport>::ref;
     using RefCounted<RTCIceTransport>::deref;
 
+    struct CandidatePair {
+        RefPtr<RTCIceCandidate> local;
+        RefPtr<RTCIceCandidate> remote;
+    };
+    std::optional<CandidatePair> getSelectedCandidatePair();
+
 private:
     RTCIceTransport(ScriptExecutionContext&, UniqueRef<RTCIceTransportBackend>&&, RTCPeerConnection&);
 
@@ -78,12 +85,14 @@ private:
     // RTCIceTransportBackend::Client
     void onStateChanged(RTCIceTransportState) final;
     void onGatheringStateChanged(RTCIceGatheringState) final;
+    void onSelectedCandidatePairChanged(RefPtr<RTCIceCandidate>&&, RefPtr<RTCIceCandidate>&&) final;
 
     bool m_isStopped { false };
     UniqueRef<RTCIceTransportBackend> m_backend;
     WeakPtr<RTCPeerConnection> m_connection;
     RTCIceTransportState m_transportState { RTCIceTransportState::New };
     RTCIceGatheringState m_gatheringState { RTCIceGatheringState::New };
+    std::optional<CandidatePair> m_selectedCandidatePair;
 };
 
 } // namespace WebCore

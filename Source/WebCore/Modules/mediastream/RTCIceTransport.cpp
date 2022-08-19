@@ -97,6 +97,26 @@ void RTCIceTransport::onGatheringStateChanged(RTCIceGatheringState state)
     });
 }
 
+void RTCIceTransport::onSelectedCandidatePairChanged(RefPtr<RTCIceCandidate>&& local, RefPtr<RTCIceCandidate>&& remote)
+{
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, local = WTFMove(local), remote = WTFMove(remote)]() mutable {
+        if (m_isStopped)
+            return;
+
+        m_selectedCandidatePair = CandidatePair { WTFMove(local), WTFMove(remote) };
+        dispatchEvent(Event::create(eventNames().selectedcandidatepairchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+    });
+}
+
+std::optional<RTCIceTransport::CandidatePair> RTCIceTransport::getSelectedCandidatePair()
+{
+    if (m_transportState == RTCIceTransportState::Closed)
+        return { };
+
+    ASSERT(m_transportState != RTCIceTransportState::New || !m_selectedCandidatePair);
+    return m_selectedCandidatePair;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

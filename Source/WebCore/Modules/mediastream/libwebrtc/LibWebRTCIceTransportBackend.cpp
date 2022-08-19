@@ -26,6 +26,8 @@
 #include "LibWebRTCIceTransportBackend.h"
 
 #include "LibWebRTCProvider.h"
+#include "LibWebRTCUtils.h"
+#include "RTCIceCandidate.h"
 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
@@ -88,6 +90,9 @@ private:
 
     void onIceTransportStateChanged(cricket::IceTransportInternal*);
     void onGatheringStateChanged(cricket::IceTransportInternal*);
+    void onSelectedCandidatePairChanged(const cricket::CandidatePairChangeEvent&);
+
+    void processSelectedCandidatePairChanged(const cricket::Candidate&, const cricket::Candidate&);
 
     rtc::scoped_refptr<webrtc::IceTransportInterface> m_backend;
     WeakPtr<RTCIceTransportBackend::Client> m_client;
@@ -108,6 +113,8 @@ void LibWebRTCIceTransportBackendObserver::start()
             return;
         internal->SignalIceTransportStateChanged.connect(this, &LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged);
         internal->SignalGatheringState.connect(this, &LibWebRTCIceTransportBackendObserver::onGatheringStateChanged);
+        internal->SignalCandidatePairChanged.connect(this, &LibWebRTCIceTransportBackendObserver::onSelectedCandidatePairChanged);
+
         auto transportState = internal->GetIceTransportState();
         // We start observing a bit late and might miss the checking state. Synthesize it as needed.
         if (transportState > webrtc::IceTransportState::kChecking && transportState != webrtc::IceTransportState::kClosed) {
@@ -122,6 +129,9 @@ void LibWebRTCIceTransportBackendObserver::start()
             protectedThis->m_client->onStateChanged(toRTCIceTransportState(transportState));
             protectedThis->m_client->onGatheringStateChanged(toRTCIceGatheringState(gatheringState));
         });
+
+        if (auto candidatePair = internal->GetSelectedCandidatePair())
+            processSelectedCandidatePairChanged(candidatePair->local, candidatePair->remote);
     });
 }
 
@@ -134,6 +144,7 @@ void LibWebRTCIceTransportBackendObserver::stop()
             return;
         internal->SignalIceTransportStateChanged.disconnect(this);
         internal->SignalGatheringState.disconnect(this);
+        internal->SignalCandidatePairChanged.disconnect(this);
     });
 }
 
@@ -150,6 +161,23 @@ void LibWebRTCIceTransportBackendObserver::onGatheringStateChanged(cricket::IceT
     callOnMainThread([protectedThis = Ref { *this }, state = internal->gathering_state()] {
         if (protectedThis->m_client)
             protectedThis->m_client->onGatheringStateChanged(toRTCIceGatheringState(state));
+    });
+}
+
+void LibWebRTCIceTransportBackendObserver::onSelectedCandidatePairChanged(const cricket::CandidatePairChangeEvent& event)
+{
+    processSelectedCandidatePairChanged(event.selected_candidate_pair.local, event.selected_candidate_pair.remote);
+}
+
+void LibWebRTCIceTransportBackendObserver::processSelectedCandidatePairChanged(const cricket::Candidate& local, const cricket::Candidate& remote)
+{
+    callOnMainThread([protectedThis = Ref { *this }, localSdp = fromStdString(local.ToString()).isolatedCopy(), remoteSdp = fromStdString(remote.ToString()).isolatedCopy(), localFields = convertIceCandidate(local).isolatedCopy(), remoteFields = convertIceCandidate(remote).isolatedCopy()]() mutable {
+        if (!protectedThis->m_client)
+            return;
+
+        auto local = RTCIceCandidate::create(localSdp, emptyString(), WTFMove(localFields));
+        auto remote = RTCIceCandidate::create(remoteSdp, emptyString(), WTFMove(remoteFields));
+        protectedThis->m_client->onSelectedCandidatePairChanged(WTFMove(local), WTFMove(remote));
     });
 }
 

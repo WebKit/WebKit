@@ -238,6 +238,7 @@ namespace WebCore {
     macro(seeked) \
     macro(seeking) \
     macro(select) \
+    macro(selectedcandidatepairchange) \
     macro(selectend) \
     macro(selectionchange) \
     macro(selectstart) \

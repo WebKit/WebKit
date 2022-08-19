@@ -27,6 +27,15 @@ typedef RTCIceTransportState IceTransportState;
 typedef RTCIceGatheringState IceGatheringState;
 
 [
+    Conditional=WEB_RTC,
+    EnabledBySetting=PeerConnectionEnabled,
+    JSGenerateToJSObject
+] dictionary RTCIceCandidatePair {
+    RTCIceCandidate local;
+    RTCIceCandidate remote;
+};
+
+[
     ActiveDOMObject,
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
@@ -39,10 +48,10 @@ typedef RTCIceGatheringState IceGatheringState;
     readonly attribute IceGatheringState gatheringState;
     // FIXME 169662: missing sequence<RTCIceCandidate> getLocalCandidates();
     // FIXME 169662: missing sequence<RTCIceCandidate> getRemoteCandidates();
-    // FIXME 169662: missing RTCIceCandidatePair? getSelectedCandidatePair();
+    RTCIceCandidatePair? getSelectedCandidatePair();
     // FIXME 169662: missing RTCIceParameters? getLocalParameters();
     // FIXME 169662: missing RTCIceParameters? getRemoteParameters();
     attribute EventHandler onstatechange;
     attribute EventHandler ongatheringstatechange;
-    // FIXME 169662: missing attribute EventHandler onselectedcandidatepairchange;
+    attribute EventHandler onselectedcandidatepairchange;
 };

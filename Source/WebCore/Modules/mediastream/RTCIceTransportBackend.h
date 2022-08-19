@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class RTCIceCandidate;
+
 class RTCIceTransportBackend {
 public:
     virtual ~RTCIceTransportBackend() = default;
@@ -42,6 +44,7 @@ public:
         virtual ~Client() = default;
         virtual void onStateChanged(RTCIceTransportState) = 0;
         virtual void onGatheringStateChanged(RTCIceGatheringState) = 0;
+        virtual void onSelectedCandidatePairChanged(RefPtr<RTCIceCandidate>&&, RefPtr<RTCIceCandidate>&&) = 0;
     };
     virtual void registerClient(Client&) = 0;
     virtual void unregisterClient() = 0;
