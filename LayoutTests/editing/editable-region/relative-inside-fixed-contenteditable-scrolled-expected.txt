@@ -16,10 +16,10 @@
           (bounds 792.00 143.00)
           (drawsContent 1)
           (event region
-            (rect (0,0) width=802 height=42)
-            (rect (21,121) width=800 height=22)
+            (rect (0,0) width=792 height=42)
+            (rect (21,121) width=771 height=22)
           (editable region
-            (rect (21,121) width=800 height=22)
+            (rect (21,121) width=771 height=22)
           )
           )
         )

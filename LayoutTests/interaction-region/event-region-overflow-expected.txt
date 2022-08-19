@@ -1,0 +1,46 @@
+(GraphicsLayer
+  (children 2
+    (GraphicsLayer
+      (position 0.00 59.00)
+      (anchor 0.00 0.00)
+      (bounds 956.00 604.00)
+      (backgroundColor #FFFFFF)
+    )
+    (GraphicsLayer
+      (position 0.00 59.00)
+      (anchor 0.00 0.00)
+      (bounds 956.00 663.00)
+      (event region
+        (rect (0,0) width=956 height=663)
+      )
+      (children 1
+        (GraphicsLayer
+          (anchor 0.00 0.00)
+          (children 1
+            (GraphicsLayer
+              (anchor 0.00 0.00)
+              (bounds 956.00 604.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 956.00 604.00)
+                  (contentsOpaque 1)
+                  (drawsContent 1)
+                  (backgroundColor #FFFFFF)
+                  (event region
+                    (rect (0,0) width=956 height=604)
+
+                  (interaction regions [
+                    (region 
+                        (rect (31,21) width=46 height=50)
+)
+                    (borderRadius 0.00)])
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)

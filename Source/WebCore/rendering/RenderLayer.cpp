@@ -3797,11 +3797,15 @@ void RenderLayer::paintOverflowControlsForFragments(const LayerFragments& layerF
 void RenderLayer::collectEventRegionForFragments(const LayerFragments& layerFragments, GraphicsContext& context, const LayerPaintingInfo& localPaintingInfo, OptionSet<PaintBehavior> paintBehavior)
 {
     ASSERT(localPaintingInfo.eventRegionContext);
-
     for (const auto& fragment : layerFragments) {
         PaintInfo paintInfo(context, fragment.foregroundRect.rect(), PaintPhase::EventRegion, paintBehavior);
         paintInfo.eventRegionContext = localPaintingInfo.eventRegionContext;
+        if (localPaintingInfo.clipToDirtyRect)
+            paintInfo.eventRegionContext->pushClip(enclosingIntRect(fragment.backgroundRect.rect()));
+
         renderer().paint(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
+        if (localPaintingInfo.clipToDirtyRect)
+            paintInfo.eventRegionContext->popClip();
     }
 }
 

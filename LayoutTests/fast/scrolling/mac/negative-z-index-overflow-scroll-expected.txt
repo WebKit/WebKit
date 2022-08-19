@@ -17,7 +17,7 @@
               (bounds 792.00 402.00)
               (drawsContent 1)
               (event region
-                (rect (0,0) width=802 height=402)
+                (rect (0,0) width=792 height=402)
               )
               (children 2
                 (GraphicsLayer
