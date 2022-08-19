@@ -46,14 +46,18 @@ struct Box {
         size_t start() const { return m_start; }
         size_t end() const { return start() + length(); }
         size_t length() const { return m_length; }
+        std::optional<size_t> truncatedLength() const { return m_truncatedLength; }
         StringView originalContent() const { return StringView(m_originalContent).substring(m_start, m_length); }
         StringView renderedContent() const { return m_adjustedContentToRender.isNull() ? originalContent() : m_adjustedContentToRender; }
 
         bool hasHyphen() const { return m_hasHyphen; }
 
     private:
+        friend struct Box;
+
         size_t m_start { 0 };
         size_t m_length { 0 };
+        std::optional<size_t> m_truncatedLength { };
         bool m_hasHyphen { false };
         String m_originalContent;
         String m_adjustedContentToRender;
@@ -120,7 +124,7 @@ struct Box {
         m_inkOverflow.move({ offset, { } });
     }
     void adjustInkOverflow(const FloatRect& childBorderBox) { return m_inkOverflow.uniteEvenIfEmpty(childBorderBox); }
-    void truncate(float truncatedwidth = 0.f);
+    void truncate(float truncatedWidth = 0.f, std::optional<size_t> truncatedLength = std::nullopt);
     void setLeft(float pysicalLeft)
     {
         auto offset = pysicalLeft - left();
@@ -211,9 +215,15 @@ inline Box::Text::Text(size_t start, size_t length, const String& originalConten
 {
 }
 
-inline void Box::truncate(float truncatedwidth)
+inline void Box::truncate(float truncatedWidth, std::optional<size_t> truncatedLength)
 {
-    m_unflippedVisualRect.setWidth(truncatedwidth);
+    if (m_text) {
+        ASSERT(!truncatedLength || m_text->m_length > *truncatedLength);
+        m_text->m_truncatedLength = truncatedLength.value_or(0);
+        m_text->m_hasHyphen = false;
+    }
+
+    m_unflippedVisualRect.setWidth(truncatedWidth);
     m_inkOverflow.shiftMaxXEdgeTo(m_unflippedVisualRect.maxY());
 }
 

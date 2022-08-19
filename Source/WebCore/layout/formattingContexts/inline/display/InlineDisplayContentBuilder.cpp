@@ -786,13 +786,14 @@ void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& 
             continue;
         }
 
-        auto truncatedWidth = InlineLayoutUnit { };
         if (displayBox.isText()) {
             auto text = *displayBox.text();
             // FIXME: Check if it needs adjustment for RTL direction.
-            truncatedWidth = TextUtil::breakWord(downcast<InlineTextBox>(displayBox.layoutBox()), text.start(), text.length(), displayBox.width(), availableRoomForEllipsis - ellipsisWidth, { }, displayBox.style().fontCascade()).logicalWidth;
-        }
-        displayBox.truncate(truncatedWidth);
+            auto truncatedContent = TextUtil::breakWord(downcast<InlineTextBox>(displayBox.layoutBox()), text.start(), text.length(), displayBox.width(), availableRoomForEllipsis - ellipsisWidth, { }, displayBox.style().fontCascade());
+            displayBox.truncate(truncatedContent.logicalWidth, truncatedContent.length);
+        } else
+            displayBox.truncate();
+
         firstTruncatedBoxIndex = index;
         break;
     }
