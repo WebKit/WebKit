@@ -269,6 +269,7 @@ public:
         Nonce = 1 << 18,
         ComputedStyleMap = 1 << 19,
         ExplicitlySetAttrElementsMap = 1 << 20,
+        EffectiveLang = 1 << 21,
     };
 #endif
 
