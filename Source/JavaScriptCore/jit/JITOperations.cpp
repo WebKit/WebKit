@@ -552,9 +552,9 @@ JSC_DEFINE_JIT_OPERATION(operationInByIdOptimize, EncodedJSValue, (JSGlobalObjec
 
     LOG_IC((ICEvent::OperationInByIdOptimize, baseObject->classInfo(), ident));
 
-    scope.release();
     PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
     bool found = baseObject->getPropertySlot(globalObject, ident, slot);
+    RETURN_IF_EXCEPTION(scope, { });
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (stubInfo->considerCachingBy(vm, codeBlock, baseObject->structure(), identifier))
         repatchInBy(globalObject, codeBlock, baseObject, identifier, found, slot, *stubInfo, InByKind::ById);
