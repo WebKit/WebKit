@@ -323,6 +323,7 @@ bool GraphicsLayer::supportsLayerType(Type type)
 {
     switch (type) {
     case Type::Normal:
+    case Type::Structural:
     case Type::PageTiledBacking:
     case Type::ScrollContainer:
     case Type::ScrolledContents:
@@ -435,6 +436,11 @@ void GraphicsLayerCA::initialize(Type layerType)
     PlatformCALayer::LayerType platformLayerType;
     switch (layerType) {
     case Type::Normal:
+        platformLayerType = PlatformCALayer::LayerType::LayerTypeWebLayer;
+        break;
+    case Type::Structural:
+        platformLayerType = PlatformCALayer::LayerType::LayerTypeTransformLayer;
+        break;
     case Type::ScrolledContents:
         platformLayerType = PlatformCALayer::LayerType::LayerTypeWebLayer;
         break;
@@ -2672,7 +2678,7 @@ bool GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
 
 GraphicsLayerCA::StructuralLayerPurpose GraphicsLayerCA::structuralLayerPurpose() const
 {
-    if (preserves3D())
+    if (preserves3D() && m_type != Type::Structural)
         return StructuralLayerForPreserves3D;
     
     if (isReplicated())
