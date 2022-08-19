@@ -1,3 +1,17 @@
+==================
+WPE WebKit 2.37.90
+==================
+
+What's new in WPE WebKit 2.37.90?
+
+  - Remove the libnotify dependency.
+  - Add support for generating crash reports using Breakpad.
+  - Add support for service worker notifications.
+  - Add support for loading notification icons.
+  - Add support for PAC proxy in the WebDriver implementation.
+  - Fix the build with USE_SYSTEM_MALLOC=ON.
+  - Fix several crashes and rendering issues.
+
 =================
 WPE WebKit 2.37.1
 =================
