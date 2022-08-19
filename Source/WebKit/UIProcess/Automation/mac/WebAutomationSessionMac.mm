@@ -39,6 +39,7 @@
 #import <WebCore/IntSize.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <objc/runtime.h>
+#import <pal/spi/mac/NSEventSPI.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -133,6 +134,19 @@ bool WebAutomationSession::wasEventSynthesizedForAutomation(NSEvent *event)
 
 #pragma mark Platform-dependent Implementations
 
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS) || ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+
+static WebCore::IntPoint viewportLocationToWindowLocation(WebCore::IntPoint locationInViewport, WebPageProxy& page)
+{
+    IntRect windowRect;
+
+    IntPoint locationInView = locationInViewport + IntPoint(0, page.topContentInset());
+    page.rootViewToWindow(IntRect(locationInView, IntSize()), windowRect);
+    return windowRect.location();
+}
+
+#endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS) || ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
 static WebMouseEvent::Button automationMouseButtonToPlatformMouseButton(MouseButton button)
@@ -150,11 +164,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
 {
     UNUSED_PARAM(pointerType);
 
-    IntRect windowRect;
-
-    IntPoint locationInView = locationInViewport + IntPoint(0, page.topContentInset());
-    page.rootViewToWindow(IntRect(locationInView, IntSize()), windowRect);
-    IntPoint locationInWindow = windowRect.location();
+    auto locationInWindow = viewportLocationToWindowLocation(locationInViewport, page);
 
     NSEventModifierFlags modifiers = 0;
     if (keyModifiers.contains(WebEvent::Modifier::MetaKey))
@@ -788,6 +798,29 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
 }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+
+void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, const WebCore::IntPoint& locationInViewport, const WebCore::IntSize& delta)
+{
+    static constexpr auto scrollWheelCount = 2;
+    auto cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(nullptr, kCGScrollEventUnitPixel, scrollWheelCount, -delta.height(), -delta.width()));
+
+    auto locationInWindow = viewportLocationToWindowLocation(locationInViewport, page);
+    NSWindow *window = page.platformWindow();
+
+    // Set the CGEvent location in flipped coords relative to the first screen, which compensates for the behavior of
+    // +[NSEvent eventWithCGEvent:] when the event has no associated window. See <rdar://problem/17180591>.
+    auto locationOnScreen = [window convertPointToScreen:locationInWindow];
+    locationOnScreen = CGPointMake(locationOnScreen.x, NSScreen.screens.firstObject.frame.size.height - locationOnScreen.y);
+    CGEventSetLocation(cgScrollEvent.get(), locationOnScreen);
+
+    NSEvent *scrollEvent = [[NSEvent eventWithCGEvent:cgScrollEvent.get()] _eventRelativeToWindow:window];
+
+    sendSynthesizedEventsToPage(page, @[scrollEvent]);
+}
+
+#endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 
 } // namespace WebKit
 
