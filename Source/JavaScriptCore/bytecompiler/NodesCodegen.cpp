@@ -4694,6 +4694,10 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         }
 
         generator.emitProfileControlFlow(m_tryBlock->endOffset() + 1);
+
+        if (generator.shouldBeConcernedWithCompletionValue())
+            generator.emitLoad(tryCatchDst.get(), jsUndefined());
+
         if (m_finallyBlock)
             generator.emitNode(tryCatchDst.get(), m_catchBlock);
         else
