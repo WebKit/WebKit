@@ -274,7 +274,7 @@ PASS <table><tbody><tr><td> - text-indent
 PASS <table><tbody><tr><td> - text-shadow
 PASS <table><tbody><tr><td> - text-align
 PASS <table><tbody><tr><td> - display
-FAIL <table><tbody><tr><td> - box-sizing assert_equals: expected "border-box" but got "content-box"
+PASS <table><tbody><tr><td> - box-sizing
 PASS <tbody><tr><td> (in <table>) - letter-spacing
 PASS <tbody><tr><td> (in <table>) - word-spacing
 PASS <tbody><tr><td> (in <table>) - line-height
