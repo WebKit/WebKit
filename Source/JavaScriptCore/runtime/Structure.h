@@ -866,7 +866,11 @@ private:
     PropertyOffset attributeChange(VM&, PropertyName, unsigned attributes, const Func&);
     PropertyOffset attributeChange(VM&, PropertyName, unsigned attributes);
 
+#if ASSERT_ENABLED
     void checkConsistency();
+#else
+    ALWAYS_INLINE void checkConsistency() { }
+#endif
 
     // This may grab the lock, or not. Do not call when holding the Structure's lock.
     PropertyTable* ensurePropertyTableIfNotEmpty(VM& vm)
