@@ -72,6 +72,7 @@
 #include "FrameView.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
+#include "HTMLDialogElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -3867,7 +3868,7 @@ Element* RenderLayer::enclosingElement() const
 Vector<RenderLayer*> RenderLayer::topLayerRenderLayers(const RenderView& renderView)
 {
     Vector<RenderLayer*> layers;
-    auto topLayerElements = renderView.document().topLayerElements();
+    auto& topLayerElements = renderView.document().topLayerElements();
     for (auto& element : topLayerElements) {
         auto* renderer = element->renderer();
         if (!renderer)

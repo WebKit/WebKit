@@ -1552,9 +1552,9 @@ public:
     WEBCORE_EXPORT DocumentTimelinesController& ensureTimelinesController();
     void keyframesRuleDidChange(const String& name);
 
-    void addTopLayerElement(Element&);
-    void removeTopLayerElement(Element&);
-    const ListHashSet<Ref<Element>>& topLayerElements() const { return m_topLayerElements; }
+    void addTopLayerElement(HTMLDialogElement&);
+    void removeTopLayerElement(HTMLDialogElement&);
+    const ListHashSet<Ref<HTMLDialogElement>>& topLayerElements() const { return m_topLayerElements; }
     bool hasTopLayerElement() const { return !m_topLayerElements.isEmpty(); }
 
     HTMLDialogElement* activeModalDialog() const;
@@ -2275,7 +2275,7 @@ private:
         
     String m_fragmentDirective;
 
-    ListHashSet<Ref<Element>> m_topLayerElements;
+    ListHashSet<Ref<HTMLDialogElement>> m_topLayerElements;
     UniqueRef<WhitespaceCache> m_whitespaceCache;
 
 #if ENABLE(WEB_RTC)

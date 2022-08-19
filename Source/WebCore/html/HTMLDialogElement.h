@@ -43,7 +43,7 @@ public:
     ExceptionOr<void> showModal();
     void close(const String&);
 
-    bool isModal() const { return m_isModal; };
+    bool isModal() const { return m_isModal; }
 
     void queueCancelTask();
 
@@ -51,6 +51,9 @@ public:
 
 private:
     HTMLDialogElement(const QualifiedName&, Document&);
+
+    void addToTopLayer();
+    void removeFromTopLayer();
 
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
     void setIsModal(bool newValue);

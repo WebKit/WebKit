@@ -38,6 +38,7 @@
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "Element.h"
+#include "HTMLDialogElement.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
 #include "RenderElement.h"

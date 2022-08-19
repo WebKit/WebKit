@@ -2589,9 +2589,6 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
             scrollLatchingController->removeLatchingStateForTarget(*this);
     }
 #endif
-
-    if (UNLIKELY(isInTopLayer()))
-        removeFromTopLayer();
 }
 
 void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
@@ -3555,82 +3552,6 @@ void Element::willBecomeFullscreenElement()
 {
     for (auto& child : descendantsOfType<Element>(*this))
         child.ancestorWillEnterFullscreen();
-}
-
-static void forEachRenderLayer(Element& element, const std::function<void(RenderLayer&)>& function)
-{
-    auto* renderer = element.renderer();
-    if (!renderer || !is<RenderLayerModelObject>(renderer))
-        return;
-        
-    auto& layerModelObject = downcast<RenderLayerModelObject>(*renderer);
-
-    if (!is<RenderBoxModelObject>(layerModelObject)) {
-        if (layerModelObject.hasLayer())
-            function(*layerModelObject.layer());
-        return;
-    }
-
-    RenderBoxModelObject::forRendererAndContinuations(downcast<RenderBoxModelObject>(*renderer), [function](RenderBoxModelObject& renderer) {
-        if (renderer.hasLayer())
-            function(*renderer.layer());
-    });
-}
-
-void Element::addToTopLayer()
-{
-    RELEASE_ASSERT(!isInTopLayer());
-    ScriptDisallowedScope scriptDisallowedScope;
-
-    forEachRenderLayer(*this, [](RenderLayer& layer) {
-        layer.establishesTopLayerWillChange();
-    });
-
-    document().addTopLayerElement(*this);
-    setNodeFlag(NodeFlag::IsInTopLayer);
-
-    // Invalidate inert state
-    invalidateStyleInternal();
-    if (document().documentElement())
-        document().documentElement()->invalidateStyleInternal();
-
-    forEachRenderLayer(*this, [](RenderLayer& layer) {
-        layer.establishesTopLayerDidChange();
-    });
-}
-
-void Element::removeFromTopLayer()
-{
-    RELEASE_ASSERT(isInTopLayer());
-    ScriptDisallowedScope scriptDisallowedScope;
-
-    forEachRenderLayer(*this, [](RenderLayer& layer) {
-        layer.establishesTopLayerWillChange();
-    });
-
-    // We need to call Styleable::fromRenderer() while this element is still contained in
-    // Document::topLayerElements(), since Styleable::fromRenderer() relies on this to
-    // find the backdrop's associated element.
-    if (auto* renderer = this->renderer()) {
-        if (auto backdrop = renderer->backdropRenderer()) {
-            if (auto styleable = Styleable::fromRenderer(*backdrop))
-                styleable->cancelDeclarativeAnimations();
-        }
-    }
-
-    document().removeTopLayerElement(*this);
-    clearNodeFlag(NodeFlag::IsInTopLayer);
-
-    // Invalidate inert state
-    invalidateStyleInternal();
-    if (document().documentElement())
-        document().documentElement()->invalidateStyleInternal();
-    if (auto* modalElement = document().activeModalDialog())
-        modalElement->invalidateStyleInternal();
-
-    forEachRenderLayer(*this, [](RenderLayer& layer) {
-        layer.establishesTopLayerDidChange();
-    });
 }
 
 static PseudoElement* beforeOrAfterPseudoElement(const Element& host, PseudoId pseudoElementSpecifier)

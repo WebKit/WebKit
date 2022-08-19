@@ -8666,7 +8666,7 @@ void Document::keyframesRuleDidChange(const String& name)
     }
 }
 
-void Document::addTopLayerElement(Element& element)
+void Document::addTopLayerElement(HTMLDialogElement& element)
 {
     RELEASE_ASSERT(&element.document() == this && element.isConnected() && !element.isInTopLayer());
     // To add an element to a top layer, remove it from top layer and then append it to top layer.
@@ -8674,7 +8674,7 @@ void Document::addTopLayerElement(Element& element)
     RELEASE_ASSERT(result.isNewEntry);
 }
 
-void Document::removeTopLayerElement(Element& element)
+void Document::removeTopLayerElement(HTMLDialogElement& element)
 {
     RELEASE_ASSERT(&element.document() == this && element.isInTopLayer());
     auto didRemove = m_topLayerElements.remove(element);
@@ -8683,11 +8683,8 @@ void Document::removeTopLayerElement(Element& element)
 
 HTMLDialogElement* Document::activeModalDialog() const
 {
-    for (auto& element : makeReversedRange(m_topLayerElements)) {
-        if (is<HTMLDialogElement>(element))
-            return downcast<HTMLDialogElement>(element.ptr());
-    }
-
+    for (auto& element : makeReversedRange(m_topLayerElements))
+        return element.ptr();
     return nullptr;
 }
 

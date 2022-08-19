@@ -34,7 +34,10 @@
 #include "HTMLNames.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
+#include "RenderLayer.h"
 #include "ScopedEventQueue.h"
+#include "ScriptDisallowedScope.h"
+#include "Styleable.h"
 #include "TypedElementDescendantIterator.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -43,6 +46,23 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDialogElement);
 
 using namespace HTMLNames;
+
+static void forEachRenderLayer(Element& element, const std::function<void(RenderLayer&)>& function)
+{
+    auto* layerModelObject = dynamicDowncast<RenderLayerModelObject>(element.renderer());
+    if (!layerModelObject)
+        return;
+
+    if (auto* renderBoxModelObject = dynamicDowncast<RenderBoxModelObject>(*layerModelObject)) {
+        RenderBoxModelObject::forRendererAndContinuations(*renderBoxModelObject, [&function](RenderBoxModelObject& renderer) {
+            if (renderer.hasLayer())
+                function(*renderer.layer());
+        });
+        return;
+    }
+    if (layerModelObject->hasLayer())
+        function(*layerModelObject->layer());
+}
 
 HTMLDialogElement::HTMLDialogElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
@@ -148,6 +168,9 @@ void HTMLDialogElement::removedFromAncestor(RemovalType removalType, ContainerNo
 {
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     setIsModal(false);
+
+    if (isInTopLayer())
+        removeFromTopLayer();
 }
 
 void HTMLDialogElement::setIsModal(bool newValue)
@@ -158,4 +181,60 @@ void HTMLDialogElement::setIsModal(bool newValue)
     m_isModal = newValue;
 }
 
+void HTMLDialogElement::addToTopLayer()
+{
+    RELEASE_ASSERT(!isInTopLayer());
+    ScriptDisallowedScope scriptDisallowedScope;
+
+    forEachRenderLayer(*this, [](RenderLayer& layer) {
+        layer.establishesTopLayerWillChange();
+    });
+
+    document().addTopLayerElement(*this);
+    setNodeFlag(NodeFlag::IsInTopLayer);
+
+    // Invalidate inert state
+    invalidateStyleInternal();
+    if (auto* documentElement = document().documentElement())
+        documentElement->invalidateStyleInternal();
+
+    forEachRenderLayer(*this, [](RenderLayer& layer) {
+        layer.establishesTopLayerDidChange();
+    });
 }
+
+void HTMLDialogElement::removeFromTopLayer()
+{
+    RELEASE_ASSERT(isInTopLayer());
+    ScriptDisallowedScope scriptDisallowedScope;
+
+    forEachRenderLayer(*this, [](RenderLayer& layer) {
+        layer.establishesTopLayerWillChange();
+    });
+
+    // We need to call Styleable::fromRenderer() while this element is still contained in
+    // Document::topLayerElements(), since Styleable::fromRenderer() relies on this to
+    // find the backdrop's associated element.
+    if (auto* renderer = this->renderer()) {
+        if (auto backdrop = renderer->backdropRenderer()) {
+            if (auto styleable = Styleable::fromRenderer(*backdrop))
+                styleable->cancelDeclarativeAnimations();
+        }
+    }
+
+    document().removeTopLayerElement(*this);
+    clearNodeFlag(NodeFlag::IsInTopLayer);
+
+    // Invalidate inert state
+    invalidateStyleInternal();
+    if (document().documentElement())
+        document().documentElement()->invalidateStyleInternal();
+    if (auto* modalElement = document().activeModalDialog())
+        modalElement->invalidateStyleInternal();
+
+    forEachRenderLayer(*this, [](RenderLayer& layer) {
+        layer.establishesTopLayerDidChange();
+    });
+}
+
+} // namespace WebCore

@@ -551,8 +551,6 @@ public:
     bool hasPendingKeyframesUpdate(PseudoId) const;
 
     bool isInTopLayer() const { return hasNodeFlag(NodeFlag::IsInTopLayer); }
-    void addToTopLayer();
-    void removeFromTopLayer();
 
 #if ENABLE(FULLSCREEN_API)
     bool containsFullScreenElement() const { return hasNodeFlag(NodeFlag::ContainsFullScreenElement); }
