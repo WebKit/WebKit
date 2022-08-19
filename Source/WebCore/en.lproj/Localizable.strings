@@ -907,6 +907,9 @@
 /* Show fonts context menu item */
 "Show Fonts" = "Show Fonts";
 
+/* Media stats context menu item */
+"Show Media Stats" = "Show Media Stats";
+
 /* menu item title */
 "Show Spelling and Grammar" = "Show Spelling and Grammar";
 

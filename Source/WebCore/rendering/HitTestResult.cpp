@@ -465,6 +465,14 @@ void HitTestResult::toggleMediaLoopPlayback() const
 #endif
 }
 
+void HitTestResult::toggleShowMediaStats() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        mediaElt->setShowingStats(!mediaElt->showingStats());
+#endif
+}
+
 bool HitTestResult::mediaIsInFullscreen() const
 {
 #if ENABLE(VIDEO)
@@ -514,6 +522,15 @@ bool HitTestResult::mediaLoopEnabled() const
 #if ENABLE(VIDEO)
     if (HTMLMediaElement* mediaElt = mediaElement())
         return mediaElt->loop();
+#endif
+    return false;
+}
+
+bool HitTestResult::mediaStatsShowing() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        return mediaElt->showingStats();
 #endif
     return false;
 }

@@ -1,7 +1,15 @@
-const UIStrings = {
+var UIStrings = {
+    "%s / %s / %s": "%s / %s / %s",
+    "%s dropped of %s": "%s dropped of %s",
+    "%s\u00d7": "%s\u00d7",
+    "%s\u00d7%s": "%s\u00d7%s",
+    "%sfps": "%sfps",
+    "(%s)": "(%s)",
     "AirPlay": "AirPlay",
     "Apple TV": "Apple TV",
     "Audio Controls": "Audio Controls",
+    "Codecs": "Codecs",
+    "Color": "Color",
     "Duration: %s": "Duration: %s",
     "Enter Full Screen": "Enter Full Screen",
     "Enter Picture in Picture": "Enter Picture in Picture",
@@ -9,6 +17,7 @@ const UIStrings = {
     "Exit Full Screen": "Exit Full Screen",
     "Error": "Error",
     "Forward": "Forward",
+    "Frames": "Frames",
     "Invalid": "Invalid",
     "Live Broadcast": "Live Broadcast",
     "Loading\u2026": "Loading\u2026",
@@ -19,6 +28,7 @@ const UIStrings = {
     "Picture in Picture": "Picture in Picture",
     "Play": "Play",
     "Remaining: %s": "Remaining: %s",
+    "Resolution": "Resolution",
     "Rewind": "Rewind",
     "Skip Back 10 Seconds": "Skip Back 10 Seconds",
     "Skip Back 15 Seconds": "Skip Back 15 Seconds",
@@ -29,4 +39,5 @@ const UIStrings = {
     "This video is playing on \u201C%s\u201D.": "This video is playing on \u201C%s\u201D.",
     "Unmute": "Unmute",
     "Video Controls": "Video Controls",
+    "Viewport": "Viewport",
 };

@@ -66,7 +66,9 @@ class OverflowSupport extends MediaControllerSupport
     {
         this.control.enabled = this.mediaController.canShowMediaControlsContextMenu;
 
-        let defaultContextMenuOptions = {};
+        let defaultContextMenuOptions = {
+            includeShowMediaStats: true,
+        };
 
         if (this._includePlaybackRates)
             defaultContextMenuOptions.includePlaybackRates = true;

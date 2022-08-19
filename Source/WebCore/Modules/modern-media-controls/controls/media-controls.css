@@ -122,6 +122,37 @@
     mix-blend-mode: plus-lighter;
 }
 
+.stats-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(100% - 40px);
+    height: calc(100% - 40px);
+    padding: 20px;
+    pointer-events: none;
+}
+
+.stats-container > table {
+    padding: 5px;
+    font-size: 11px;
+    font-family: sans-serif;
+    color: hsl(0, 0%, 95%);
+    background-color: hsla(0, 0%, 25%, 0.6);
+    border-radius: 5px;
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.stats-container > table > tr > :is(th, td) {
+    margin: 0;
+    padding: 0;
+    pointer-events: auto;
+}
+
+.stats-container > table > tr > th {
+    padding-inline-end: 5px;
+    text-align: end;
+}
+
 @keyframes fade-in {
     from { opacity: 0 }
     to   { opacity: 1 }

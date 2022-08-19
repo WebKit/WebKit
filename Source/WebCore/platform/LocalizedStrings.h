@@ -346,6 +346,7 @@ namespace WebCore {
     String audioTrackKindCommentaryDisplayName();
     String addAudioTrackKindCommentarySuffix(const String&);
 #endif // USE(CF)
+    String contextMenuItemTagShowMediaStats();
 #endif // ENABLE(VIDEO)
 
     String snapshottedPlugInLabelTitle();

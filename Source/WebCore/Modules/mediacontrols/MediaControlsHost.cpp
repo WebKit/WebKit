@@ -46,6 +46,7 @@
 #include "HTMLElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
+#include "InspectorController.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MediaControlTextTrackContainerElement.h"
@@ -513,6 +514,8 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
         x2_0,
     };
 
+    enum class ShowMediaStatsTag { IncludeShowMediaStats };
+
     using MenuData = std::variant<
 #if ENABLE(VIDEO_PRESENTATION_MODE)
         PictureInPictureTag,
@@ -520,7 +523,8 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
         RefPtr<AudioTrack>,
         RefPtr<TextTrack>,
         RefPtr<VTTCue>,
-        PlaybackSpeed
+        PlaybackSpeed,
+        ShowMediaStatsTag
     >;
     HashMap<MenuItemIdentifier, MenuData> idMap;
 
@@ -542,6 +546,14 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #elif ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
         UNUSED_PARAM(icon);
         return { CheckableActionType, static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id), title, /* enabled */ true, checked };
+#endif
+    };
+
+    auto createSeparator = [] () -> MenuItem {
+#if USE(UICONTEXTMENU)
+        return { MediaControlsContextMenuItem::invalidID, /* title */ nullString(), /* icon */ nullString(), /* checked */ false, /* children */ { } };
+#elif ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
+        return { SeparatorType, ContextMenuItemTagNoAction, /* title */ nullString() };
 #endif
     };
 
@@ -650,6 +662,11 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
     }
 #endif // ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
 
+    if (page->settings().showMediaStatsContextMenuItemEnabled() && page->settings().developerExtrasEnabled() && optionsJSONObject->getBoolean("includeShowMediaStats"_s).value_or(false)) {
+        items.append(createSeparator());
+        items.append(createMenuItem(ShowMediaStatsTag::IncludeShowMediaStats, contextMenuItemTagShowMediaStats(), mediaElement.showingStats(), "chart.bar.xaxis"_s));
+    }
+
     if (items.isEmpty())
         return false;
 
@@ -729,6 +746,9 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
                 }
 
                 ASSERT_NOT_REACHED();
+            },
+            [&] (ShowMediaStatsTag) {
+                mediaElement.setShowingStats(!mediaElement.showingStats());
             }
         );
 

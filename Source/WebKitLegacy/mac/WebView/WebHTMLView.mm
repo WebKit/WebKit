@@ -419,9 +419,6 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
 {
     using namespace WebCore;
     switch (action) {
-    case ContextMenuItemTagNoAction:
-        return std::nullopt;
-
     case ContextMenuItemTagOpenLinkInNewWindow:
         return WebMenuItemTagOpenLinkInNewWindow;
     case ContextMenuItemTagDownloadLinkToDisk:
@@ -590,21 +587,12 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagDictationAlternative;
     case ContextMenuItemTagToggleVideoFullscreen:
         return WebMenuItemTagToggleVideoFullscreen;
-    case ContextMenuItemTagAddHighlightToCurrentQuickNote:
-    case ContextMenuItemTagAddHighlightToNewQuickNote:
-        return std::nullopt;
     case ContextMenuItemTagShareMenu:
         return WebMenuItemTagShareMenu;
     case ContextMenuItemTagToggleVideoEnhancedFullscreen:
         return WebMenuItemTagToggleVideoEnhancedFullscreen;
     case ContextMenuItemTagTranslate:
         return WebMenuItemTagTranslate;
-    case ContextMenuItemTagCopySubject:
-    case ContextMenuItemTagLookUpImage:
-    case ContextMenuItemPDFSinglePageContinuous:
-    case ContextMenuItemPDFTwoPages:
-    case ContextMenuItemPDFTwoPagesContinuous:
-        return std::nullopt;
 
     case ContextMenuItemBaseCustomTag ... ContextMenuItemLastCustomTag:
         // We just pass these through.
@@ -612,6 +600,10 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
 
     case ContextMenuItemBaseApplicationTag:
         ASSERT_NOT_REACHED();
+        break;
+
+    default:
+        break;
     }
 
     return std::nullopt;

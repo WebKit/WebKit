@@ -58,7 +58,7 @@ public:
     void populate();
     WEBCORE_EXPORT void didDismissContextMenu();
     WEBCORE_EXPORT void contextMenuItemSelected(ContextMenuAction, const String& title);
-    void addInspectElementItem();
+    void addDebuggingItems();
 
     WEBCORE_EXPORT void checkOrEnableIfNeeded(ContextMenuItem&) const;
 

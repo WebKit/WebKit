@@ -179,8 +179,8 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
 
 void ContextMenuController::showContextMenu(Event& event)
 {
-    if ((!m_menuProvider || m_menuProvider->contextMenuContextType() == ContextMenuContext::Type::ContextMenu) && m_page.inspectorController().enabled())
-        addInspectElementItem();
+    if ((!m_menuProvider || m_menuProvider->contextMenuContextType() == ContextMenuContext::Type::ContextMenu) && m_page.settings().developerExtrasEnabled())
+        addDebuggingItems();
 
     event.setDefaultHandled();
 }
@@ -288,6 +288,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
     case ContextMenuItemTagToggleMediaLoop:
         m_context.hitTestResult().toggleMediaLoopPlayback();
+        break;
+    case ContextMenuItemTagShowMediaStats:
+        m_context.hitTestResult().toggleShowMediaStats();
         break;
     case ContextMenuItemTagToggleVideoFullscreen:
         m_context.hitTestResult().toggleMediaFullscreenState();
@@ -1258,7 +1261,7 @@ void ContextMenuController::populate()
     }
 }
 
-void ContextMenuController::addInspectElementItem()
+void ContextMenuController::addDebuggingItems()
 {
     Node* node = m_context.hitTestResult().innerNonSharedNode();
     if (!node)
@@ -1271,16 +1274,23 @@ void ContextMenuController::addInspectElementItem()
     Page* page = frame->page();
     if (!page)
         return;
+    ASSERT(page->inspectorController().enabled());
 
 #if ENABLE(PDFJS)
     if (RefPtr ownerElement = frame->ownerElement(); ownerElement && ownerElement->document().isPDFDocument())
         return;
 #endif
 
-    ContextMenuItem InspectElementItem(ActionType, ContextMenuItemTagInspectElement, contextMenuItemTagInspectElement());
     if (m_contextMenu && !m_contextMenu->items().isEmpty())
         appendItem(*separatorItem(), m_contextMenu.get());
+
+    ContextMenuItem InspectElementItem(ActionType, ContextMenuItemTagInspectElement, contextMenuItemTagInspectElement());
     appendItem(InspectElementItem, m_contextMenu.get());
+
+    if (page->settings().showMediaStatsContextMenuItemEnabled() && !m_context.hitTestResult().absoluteMediaURL().isEmpty()) {
+        ContextMenuItem ShowMediaStats(CheckableActionType, ContextMenuItemTagShowMediaStats, contextMenuItemTagShowMediaStats());
+        appendItem(ShowMediaStats, m_contextMenu.get());
+    }
 }
 
 void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
@@ -1528,6 +1538,9 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagToggleMediaLoop:
             shouldCheck = m_context.hitTestResult().mediaLoopEnabled();
+            break;
+        case ContextMenuItemTagShowMediaStats:
+            shouldCheck = m_context.hitTestResult().mediaStatsShowing();
             break;
         case ContextMenuItemTagToggleVideoFullscreen:
 #if SUPPORTS_TOGGLE_VIDEO_FULLSCREEN

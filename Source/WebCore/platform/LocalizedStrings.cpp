@@ -1361,6 +1361,11 @@ String addAudioTrackKindCommentarySuffix(const String& text)
 
 #endif // USE(CF)
 
+String contextMenuItemTagShowMediaStats()
+{
+    return WEB_UI_STRING("Show Media Stats", "Media stats context menu item");
+}
+
 #endif // ENABLE(VIDEO)
 
 String snapshottedPlugInLabelTitle()

@@ -1430,6 +1430,18 @@ ShouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint:
     WebCore:
       default: true
 
+ShowMediaStatsContextMenuItemEnabled:
+  type: bool
+  humanReadableName: "Show Media Stats"
+  humanReadableDescription: "Adds a 'Media Stats' context menu item to <video> when the Develop menu is enabled"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 SpeechRecognitionEnabled:
   type: bool
   humanReadableName: "SpeechRecognition API"

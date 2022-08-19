@@ -4295,6 +4295,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_useSceneKitForModel = store.getBoolValueForKey(WebPreferencesKey::useSceneKitForModelKey());
 #endif
 
+    if (settings.showMediaStatsContextMenuItemEnabled())
+        settings.setTrackConfigurationEnabled(true);
+
     m_page->settingsDidChange();
 }
 
