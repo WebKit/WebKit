@@ -977,15 +977,55 @@ inline ScrollAlignment toScrollAlignmentForBlockDirection(std::optional<ScrollLo
     }
 }
 
+static std::optional<std::pair<RenderElement*, LayoutRect>> listBoxElementScrollIntoView(const Element& element)
+{
+    auto owningSelectElement = [](const Element& element) -> HTMLSelectElement* {
+        if (is<HTMLOptionElement>(element))
+            return downcast<HTMLOptionElement>(element).ownerSelectElement();
+
+        if (is<HTMLOptGroupElement>(element))
+            return downcast<HTMLOptGroupElement>(element).ownerSelectElement();
+
+        return nullptr;
+    };
+
+    auto* selectElement = owningSelectElement(element);
+    if (!selectElement || !selectElement->renderer() || !is<RenderListBox>(selectElement->renderer()))
+        return { };
+
+    auto& renderListBox = downcast<RenderListBox>(*selectElement->renderer());
+    
+    auto itemIndex = selectElement->listItems().find(&element);
+    if (itemIndex != notFound)
+        renderListBox.scrollToRevealElementAtListIndex(itemIndex);
+    else
+        itemIndex = 0;
+
+    auto itemLocalRect = renderListBox.itemBoundingBoxRect({ }, itemIndex);
+    return std::pair<RenderElement*, LayoutRect> { &renderListBox, itemLocalRect };
+}
+
 void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOptions>>&& arg)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    if (!renderer())
-        return;
+    RenderElement* renderer = nullptr;
+    bool insideFixed = false;
+    LayoutRect absoluteBounds;
 
-    bool insideFixed;
-    LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
+    if (auto listBoxScrollResult = listBoxElementScrollIntoView(*this)) {
+        renderer = listBoxScrollResult->first;
+        absoluteBounds = listBoxScrollResult->second;
+
+        auto listBoxAbsoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
+        absoluteBounds.moveBy(listBoxAbsoluteBounds.location());
+    } else {
+        renderer = this->renderer();
+        if (!renderer)
+            return;
+
+        absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
+    }
 
     ScrollIntoViewOptions options;
     if (arg) {
@@ -996,20 +1036,20 @@ void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOpti
             options.blockPosition = ScrollLogicalPosition::End;
     }
 
-    auto writingMode = renderer()->style().writingMode();
-    ScrollAlignment alignX = toScrollAlignmentForInlineDirection(options.inlinePosition, writingMode, renderer()->style().isLeftToRightDirection());
-    ScrollAlignment alignY = toScrollAlignmentForBlockDirection(options.blockPosition, writingMode);
+    auto writingMode = renderer->style().writingMode();
+    auto alignX = toScrollAlignmentForInlineDirection(options.inlinePosition, writingMode, renderer->style().isLeftToRightDirection());
+    auto alignY = toScrollAlignmentForBlockDirection(options.blockPosition, writingMode);
     alignX.disableLegacyHorizontalVisibilityThreshold();
 
-    bool isHorizontal = renderer()->style().isHorizontalWritingMode();
-    ScrollRectToVisibleOptions visibleOptions {
+    bool isHorizontal = renderer->style().isHorizontalWritingMode();
+    auto visibleOptions = ScrollRectToVisibleOptions {
         SelectionRevealMode::Reveal,
         isHorizontal ? alignX : alignY,
         isHorizontal ? alignY : alignX,
         ShouldAllowCrossOriginScrolling::No,
         options.behavior.value_or(ScrollBehavior::Auto)
     };
-    FrameView::scrollRectToVisible(absoluteBounds, *renderer(), insideFixed, visibleOptions);
+    FrameView::scrollRectToVisible(absoluteBounds, *renderer, insideFixed, visibleOptions);
 }
 
 void Element::scrollIntoView(bool alignToTop) 
