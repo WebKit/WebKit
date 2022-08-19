@@ -321,6 +321,9 @@ fast/css/accent-color/text.html [ Pass ]
 # Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
 media/video-with-alpha.html [ Pass ]
 
+# Only glib platforms fail (detected by this test) on corrupt aac encapsulated in MP4 because of GStreamer fdkaacdec.
+media/media-source/media-source-append-play-corrupt-aac.html [ Pass ]
+
 # NOTIFICATION_EVENT tests
 http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
 http/tests/workers/service/shownotification-allowed.html [ Pass ]
