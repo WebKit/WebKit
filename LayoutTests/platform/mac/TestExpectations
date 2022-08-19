@@ -2298,5 +2298,3 @@ webkit.org/b/243515 [ Monterey+ ] svg/compositing/outermost-svg-directly-composi
 webkit.org/b/244012 imported/w3c/web-platform-tests/css/css-transforms/transform-3d-rotateY-stair-below-001.xht [ Pass ImageOnlyFailure ]
 
 webkit.org/b/244014 [ Debug ] imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style-load-after-mutate.html  [ Pass Failure ]
-
-webkit.org/b/244013 fast/css/style-element-process-crash.html [ Pass Timeout ]
