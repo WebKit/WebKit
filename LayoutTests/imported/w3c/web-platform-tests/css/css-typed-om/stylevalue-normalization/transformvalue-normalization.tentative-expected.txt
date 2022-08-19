@@ -24,6 +24,7 @@ FAIL Normalizing a skew() with X and Y returns a CSSSkew assert_equals: expected
 FAIL Normalizing a skewX() returns a CSSSkewX assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
 FAIL Normalizing a skewY() returns a CSSSkewY assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
 FAIL Normalizing a perspective() returns a CSSPerspective assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
+FAIL Normalizing a perspective(none) returns a CSSPerspective assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
 FAIL Normalizing a <transform-list> returns a CSSTransformValue containing all the transforms assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
 FAIL Normalizing transforms with calc values contains CSSMathValues assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
 

@@ -228,15 +228,19 @@ PASS CSSMathMax interface: existence and properties of interface prototype objec
 PASS CSSMathMax interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSMathMax interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSMathMax interface: attribute values
-FAIL CSSMathClamp interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
-FAIL CSSMathClamp interface object length assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
-FAIL CSSMathClamp interface object name assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
-FAIL CSSMathClamp interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
-FAIL CSSMathClamp interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
-FAIL CSSMathClamp interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
-FAIL CSSMathClamp interface: attribute min assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
-FAIL CSSMathClamp interface: attribute val assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
-FAIL CSSMathClamp interface: attribute max assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
+PASS CSSMathClamp interface: existence and properties of interface object
+PASS CSSMathClamp interface object length
+PASS CSSMathClamp interface object name
+PASS CSSMathClamp interface: existence and properties of interface prototype object
+PASS CSSMathClamp interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSMathClamp interface: existence and properties of interface prototype object's @@unscopables property
+FAIL CSSMathClamp interface: attribute min assert_throws_js: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL CSSMathClamp interface: attribute val assert_true: The prototype object must have a property "val" expected true got false
+FAIL CSSMathClamp interface: attribute max assert_throws_js: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
 PASS CSSNumericArray interface: existence and properties of interface object
 PASS CSSNumericArray interface object length
 PASS CSSNumericArray interface object name

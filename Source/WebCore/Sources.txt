@@ -882,6 +882,7 @@ css/typedom/color/CSSLab.cpp
 css/typedom/color/CSSOKLCH.cpp
 css/typedom/color/CSSOKLab.cpp
 css/typedom/color/CSSRGB.cpp
+css/typedom/numeric/CSSMathClamp.cpp
 css/typedom/numeric/CSSMathInvert.cpp
 css/typedom/numeric/CSSMathMax.cpp
 css/typedom/numeric/CSSMathMin.cpp
@@ -4013,7 +4014,6 @@ JSTransitionEvent.cpp
 JSTreeWalker.cpp
 JSCSSKeywordValue.cpp
 JSCSSStyleImageValue.cpp
-JSCSSMathInvert.cpp
 JSCSSColor.cpp
 JSCSSColorValue.cpp
 JSCSSHSL.cpp
@@ -4023,6 +4023,8 @@ JSCSSLab.cpp
 JSCSSOKLCH.cpp
 JSCSSOKLab.cpp
 JSCSSRGB.cpp
+JSCSSMathClamp.cpp
+JSCSSMathInvert.cpp
 JSCSSMathMax.cpp
 JSCSSMathMin.cpp
 JSCSSMathNegate.cpp

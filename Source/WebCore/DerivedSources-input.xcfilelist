@@ -994,6 +994,7 @@ $(PROJECT_DIR)/css/typedom/color/CSSLab.idl
 $(PROJECT_DIR)/css/typedom/color/CSSOKLCH.idl
 $(PROJECT_DIR)/css/typedom/color/CSSOKLab.idl
 $(PROJECT_DIR)/css/typedom/color/CSSRGB.idl
+$(PROJECT_DIR)/css/typedom/numeric/CSSMathClamp.idl
 $(PROJECT_DIR)/css/typedom/numeric/CSSMathInvert.idl
 $(PROJECT_DIR)/css/typedom/numeric/CSSMathMax.idl
 $(PROJECT_DIR)/css/typedom/numeric/CSSMathMin.idl

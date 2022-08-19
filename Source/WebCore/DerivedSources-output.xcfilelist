@@ -344,6 +344,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSLayerBlockRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSLayerBlockRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSLayerStatementRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSLayerStatementRule.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMathClamp.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMathClamp.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMathInvert.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMathInvert.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMathMax.cpp

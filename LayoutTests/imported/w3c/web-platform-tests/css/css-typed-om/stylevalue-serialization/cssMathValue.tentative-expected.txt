@@ -1,10 +1,15 @@
 
 PASS CSSMathMax with one argument serializes correctly
 PASS CSSMathMax with more than one argument serializes correctly
+PASS CSSMathMax with pixel arguments serializes correctly
 PASS CSSMathMax containing nested CSSMathValues serializes correctly
 PASS CSSMathMin with one argument serializes correctly
 PASS CSSMathMin with more than one argument serializes correctly
+PASS CSSMathMin with pixel arguments serializes correctly
 PASS CSSMathMin containing nested CSSMathValues serializes correctly
+PASS CSSMathClamp with lower, value and upper arguments serializes correctly
+PASS CSSMathClamp with pixel arguments serializes correctly
+PASS CSSMathClamp containing nested CSSMathValues serializes correctly
 PASS CSSMathSum with one argument serializes correctly
 PASS CSSMathSum with more than one argument serializes correctly
 PASS CSSMathSum with a CSSMathNegate as first value serializes correctly

@@ -31,5 +31,6 @@
     "negate",
     "invert",
     "min",
-    "max"
+    "max",
+    "clamp"
 };

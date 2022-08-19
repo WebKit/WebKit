@@ -29,13 +29,14 @@
 
 namespace WebCore {
 
-enum class CSSMathOperator: uint8_t {
+enum class CSSMathOperator : uint8_t {
     Sum,
     Product,
     Negate,
     Invert,
     Min,
-    Max
+    Max,
+    Clamp
 };
 
 } // namespace WebCore

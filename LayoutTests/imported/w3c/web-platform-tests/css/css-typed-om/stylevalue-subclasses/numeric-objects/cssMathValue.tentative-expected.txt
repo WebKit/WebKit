@@ -19,4 +19,7 @@ PASS CSSMathNegate can be constructed from a single numberish value
 PASS CSSMathNegate.operator is readonly
 PASS CSSMathInvert can be constructed from a single numberish value
 PASS CSSMathInvert.operator is readonly
+PASS Constructing a CSSMathClamp with less than 3 arguments throws a SyntaxError
+PASS Constructing a CSSMathClamp with different unit arguments throws a SyntaxError
+PASS CSSMathClamp.operator is readonly
 

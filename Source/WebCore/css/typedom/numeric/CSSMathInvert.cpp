@@ -112,7 +112,6 @@ bool CSSMathInvert::equals(const CSSNumericValue& other) const
     if (!otherInvert)
         return false;
     return m_value->equals(otherInvert->value());
-
 }
 
 } // namespace WebCore

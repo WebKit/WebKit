@@ -120,6 +120,7 @@ namespace WebCore {
     macro(CSSKeywordValue) \
     macro(CSSLCH) \
     macro(CSSLab) \
+    macro(CSSMathClamp) \
     macro(CSSMathInvert) \
     macro(CSSMathMax) \
     macro(CSSMathMin) \

@@ -853,6 +853,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/typedom/color/CSSOKLab.idl
     css/typedom/color/CSSRGB.idl
 
+    css/typedom/numeric/CSSMathClamp.idl
     css/typedom/numeric/CSSMathInvert.idl
     css/typedom/numeric/CSSMathMax.idl
     css/typedom/numeric/CSSMathMin.idl

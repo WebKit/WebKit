@@ -44,6 +44,7 @@ enum class CSSStyleValueType : uint8_t {
     CSSStyleValue,
     CSSStyleImageValue,
     CSSTransformValue,
+    CSSMathClamp,
     CSSMathInvert,
     CSSMathMin,
     CSSMathMax,
@@ -58,6 +59,7 @@ enum class CSSStyleValueType : uint8_t {
 inline bool isCSSNumericValue(CSSStyleValueType type)
 {
     switch (type) {
+    case CSSStyleValueType::CSSMathClamp:
     case CSSStyleValueType::CSSMathInvert:
     case CSSStyleValueType::CSSMathMin:
     case CSSStyleValueType::CSSMathMax:
@@ -79,6 +81,7 @@ inline bool isCSSNumericValue(CSSStyleValueType type)
 inline bool isCSSMathValue(CSSStyleValueType type)
 {
     switch (type) {
+    case CSSStyleValueType::CSSMathClamp:
     case CSSStyleValueType::CSSMathInvert:
     case CSSStyleValueType::CSSMathMin:
     case CSSStyleValueType::CSSMathMax:
