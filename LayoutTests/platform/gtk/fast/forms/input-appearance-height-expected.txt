@@ -85,15 +85,15 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (66,261) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 186x18
             RenderBlock {DIV} at (0,0) size 186x18
-        RenderText {#text} at (260,264) size 4x17
-          text run at (260,264) width 4: " "
-        RenderBR {BR} at (264,264) size 0x17
-        RenderText {#text} at (0,292) size 44x17
-          text run at (0,292) width 44: "search "
-        RenderTextControl {INPUT} at (46,289) size 208x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderFlexibleBox {DIV} at (3,3) size 202x18
+        RenderText {#text} at (256,238) size 4x17
+          text run at (256,238) width 4: " "
+        RenderBR {BR} at (260,238) size 0x17
+        RenderText {#text} at (0,262) size 44x17
+          text run at (0,262) width 44: "search "
+        RenderTextControl {INPUT} at (44,259) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 186x18
             RenderBlock {DIV} at (0,9) size 0x0
-            RenderBlock {DIV} at (0,0) size 186x18
+            RenderBlock {DIV} at (0,0) size 170x18
         RenderText {#text} at (0,0) size 0x0
 layer at (49,31) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
@@ -103,5 +103,5 @@ layer at (62,262) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
 layer at (77,290) size 186x18
   RenderBlock {DIV} at (0,0) size 186x18
-layer at (57,318) size 186x18
-  RenderBlock {DIV} at (0,0) size 186x18
+layer at (55,288) size 170x18
+  RenderBlock {DIV} at (0,0) size 170x18

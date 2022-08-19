@@ -1,54 +1,54 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x66
-  RenderBlock {HTML} at (0,0) size 800x66
-    RenderBody {BODY} at (8,8) size 784x50
-      RenderBlock {DIV} at (0,0) size 784x25
-        RenderText {#text} at (619,1) size 165x19
-          text run at (619,1) width 9 RTL: ": "
-          text run at (627,1) width 157: "right to left search fields"
-        RenderTextControl {INPUT} at (453,2) size 165x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-          RenderFlexibleBox {DIV} at (6,3) size 152x15
-            RenderBlock {DIV} at (139,1) size 12x12
-            RenderBlock {DIV} at (0,0) size 136x14
+layer at (0,0) size 800x60
+  RenderBlock {HTML} at (0,0) size 800x60
+    RenderBody {BODY} at (8,8) size 784x44
+      RenderBlock {DIV} at (0,0) size 784x22
+        RenderText {#text} at (619,0) size 165x19
+          text run at (619,0) width 9 RTL: ": "
+          text run at (627,0) width 157: "right to left search fields"
+        RenderTextControl {INPUT} at (466,1) size 154x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+          RenderFlexibleBox {DIV} at (6,3) size 141x15
+            RenderBlock {DIV} at (128,1) size 12x12
+            RenderBlock {DIV} at (0,0) size 125x14
             RenderBlock {DIV} at (0,7) size 0x0
-        RenderText {#text} at (447,1) size 5x19
-          text run at (447,1) width 5 RTL: " "
-        RenderTextControl {INPUT} at (281,2) size 165x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-          RenderFlexibleBox {DIV} at (6,3) size 152x15
-            RenderBlock {DIV} at (139,1) size 12x12
-            RenderBlock {DIV} at (0,0) size 136x14
+        RenderText {#text} at (462,0) size 5x19
+          text run at (462,0) width 5 RTL: " "
+        RenderTextControl {INPUT} at (309,1) size 154x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+          RenderFlexibleBox {DIV} at (6,3) size 141x15
+            RenderBlock {DIV} at (128,1) size 12x12
+            RenderBlock {DIV} at (0,0) size 125x14
             RenderBlock {DIV} at (0,7) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,25) size 784x25
-        RenderText {#text} at (0,1) size 165x19
-          text run at (0,1) width 165: "left to right search fields: "
-        RenderTextControl {INPUT} at (166,2) size 167x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-          RenderFlexibleBox {DIV} at (6,3) size 154x15
+      RenderBlock {DIV} at (0,22) size 784x22
+        RenderText {#text} at (0,0) size 165x19
+          text run at (0,0) width 165: "left to right search fields: "
+        RenderTextControl {INPUT} at (164,1) size 156x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+          RenderFlexibleBox {DIV} at (6,3) size 143x15
             RenderBlock {DIV} at (0,1) size 11x12
-            RenderBlock {DIV} at (15,0) size 138x14
-            RenderBlock {DIV} at (152,7) size 0x0
-        RenderText {#text} at (334,1) size 5x19
-          text run at (334,1) width 5: " "
-        RenderTextControl {INPUT} at (340,2) size 167x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-          RenderFlexibleBox {DIV} at (6,3) size 154x15
+            RenderBlock {DIV} at (15,0) size 127x14
+            RenderBlock {DIV} at (141,7) size 0x0
+        RenderText {#text} at (319,0) size 5x19
+          text run at (319,0) width 5: " "
+        RenderTextControl {INPUT} at (323,1) size 156x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+          RenderFlexibleBox {DIV} at (6,3) size 143x15
             RenderBlock {DIV} at (0,1) size 11x12
-            RenderBlock {DIV} at (15,0) size 138x14
-            RenderBlock {DIV} at (152,7) size 0x0
+            RenderBlock {DIV} at (15,0) size 127x14
+            RenderBlock {DIV} at (141,7) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (468,13) size 136x14
-  RenderBlock {DIV} at (0,0) size 136x14
-    RenderText {#text} at (101,0) size 35x14
-      text run at (101,0) width 35: "foobar"
-layer at (296,13) size 136x14
-  RenderBlock {DIV} at (0,0) size 136x14
-    RenderText {#text} at (101,0) size 35x14
-      text run at (101,0) width 35: "foobar"
-layer at (196,38) size 138x14
-  RenderBlock {DIV} at (0,0) size 138x14
+layer at (481,12) size 125x14
+  RenderBlock {DIV} at (0,0) size 125x14
+    RenderText {#text} at (90,0) size 35x14
+      text run at (90,0) width 35: "foobar"
+layer at (324,12) size 125x14
+  RenderBlock {DIV} at (0,0) size 125x14
+    RenderText {#text} at (90,0) size 35x14
+      text run at (90,0) width 35: "foobar"
+layer at (194,34) size 127x14
+  RenderBlock {DIV} at (0,0) size 127x14
     RenderText {#text} at (0,0) size 35x14
       text run at (0,0) width 35: "foobar"
-layer at (370,38) size 138x14
-  RenderBlock {DIV} at (0,0) size 138x14
+layer at (353,34) size 127x14
+  RenderBlock {DIV} at (0,0) size 127x14
     RenderText {#text} at (0,0) size 35x14
       text run at (0,0) width 35: "foobar"
