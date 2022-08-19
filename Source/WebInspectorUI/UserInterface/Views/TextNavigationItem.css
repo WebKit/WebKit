@@ -32,3 +32,11 @@
     color: hsl(0, 0%, 18%);
     text-align: center;
 }
+
+.navigation-bar .item:first-child.text {
+    padding-inline-start: 2px;
+}
+
+.navigation-bar .item:last-child.text {
+    padding-inline-end: 2px;
+}

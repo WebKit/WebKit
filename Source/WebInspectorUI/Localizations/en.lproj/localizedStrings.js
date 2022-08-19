@@ -232,6 +232,8 @@ localizedStrings["Average: %s"] = "Average: %s";
 localizedStrings["BMP"] = "BMP";
 localizedStrings["Back (%s)"] = "Back (%s)";
 localizedStrings["Backtrace"] = "Backtrace";
+/* Label for navigation item that controls what badges are shown in the main DOM tree. */
+localizedStrings["Badges @ Elements Tab"] = "Badges";
 localizedStrings["Basic"] = "Basic";
 /* Section title for basic font properties. */
 localizedStrings["Basic Properties @ Font Details Sidebar Section"] = "Basic Properties";
@@ -321,6 +323,7 @@ localizedStrings["Child"] = "Child";
 localizedStrings["Child Layers"] = "Child Layers";
 localizedStrings["Child added to "] = "Child added to ";
 localizedStrings["Children"] = "Children";
+localizedStrings["Choose which badges are shown in the DOM tree"] = "Choose which badges are shown in the DOM tree";
 localizedStrings["Cipher"] = "Cipher";
 localizedStrings["Clamp to sRGB"] = "Clamp to sRGB";
 localizedStrings["Classes"] = "Classes";
@@ -629,6 +632,8 @@ localizedStrings["Enable paint flashing"] = "Enable paint flashing";
 localizedStrings["Enable source maps"] = "Enable source maps";
 localizedStrings["Enable:"] = "Enable:";
 localizedStrings["Enabled"] = "Enabled";
+/* Label for column showing the list of enabled timelines. */
+localizedStrings["Enabled Timelines @ Timelines Tab"] = "Enabled Timelines";
 localizedStrings["Encoded"] = "Encoded";
 localizedStrings["Encoding"] = "Encoding";
 localizedStrings["Energy Impact"] = "Energy Impact";

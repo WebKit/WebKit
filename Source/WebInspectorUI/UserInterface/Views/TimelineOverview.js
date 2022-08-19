@@ -55,13 +55,14 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._selectedTimelineRecord = null;
         this._overviewGraphsByTypeMap = new Map;
 
-        this._editInstrumentsButton = new WI.ActivateButtonNavigationItem("toggle-edit-instruments", WI.UIString("Edit configuration"), WI.UIString("Save configuration"));
+        this._editInstrumentsButton = new WI.ActivateButtonNavigationItem("toggle-edit-instruments", WI.UIString("Edit configuration"), WI.UIString("Save configuration"), "Images/Pencil.svg", 16, 16);
         this._editInstrumentsButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleEditingInstruments, this);
         this._editingInstruments = false;
         this._updateEditInstrumentsButton();
 
         let instrumentsNavigationBar = new WI.NavigationBar;
         instrumentsNavigationBar.element.classList.add("timelines");
+        instrumentsNavigationBar.addNavigationItem(new WI.TextNavigationItem("enabled-timelines", WI.UIString("Enabled Timelines", "Enabled Timelines @ Timelines Tab", "Label for column showing the list of enabled timelines.")));
         instrumentsNavigationBar.addNavigationItem(new WI.FlexibleSpaceNavigationItem);
         instrumentsNavigationBar.addNavigationItem(this._editInstrumentsButton);
         this.addSubview(instrumentsNavigationBar);

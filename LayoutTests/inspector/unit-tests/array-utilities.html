@@ -309,6 +309,12 @@ function test()
             arr4.toggleIncludes(4, false);
             InspectorTest.expectShallowEqual(arr4, [1, 2, 3], "toggleIncludes of a nonexistent item with force false should have no effect.");
 
+            let arr5 = [1, 2, 3];
+            arr5.toggleIncludes(4);
+            InspectorTest.expectShallowEqual(arr5, [1, 2, 3, 4], "toggleIncludes with no 'force' should add the item if it's not present.");
+            arr5.toggleIncludes(4);
+            InspectorTest.expectShallowEqual(arr5, [1, 2, 3], "toggleIncludes with no 'force' should remove the item if it's present.");
+
             return true;
         }
     });

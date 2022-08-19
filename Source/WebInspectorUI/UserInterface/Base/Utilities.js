@@ -759,7 +759,8 @@ Object.defineProperty(Array.prototype, "toggleIncludes",
     value(value, force)
     {
         let exists = this.includes(value);
-        if (exists === !!force)
+
+        if (force !== undefined && exists === !!force)
             return;
 
         if (exists)

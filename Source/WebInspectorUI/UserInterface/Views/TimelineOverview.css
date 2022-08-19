@@ -48,6 +48,11 @@
     border-bottom: 1px solid var(--border-color);
 }
 
+.navigation-bar.timelines .item.text.enabled-timelines {
+    font-style: italic;
+    color: hsl(0, 0%, 50%);
+}
+
 .navigation-bar.timelines .item.button.toggle-edit-instruments:not(.disabled):matches(:focus, .activate.activated, .radio.selected) {
     color: var(--glyph-color-active);
 }

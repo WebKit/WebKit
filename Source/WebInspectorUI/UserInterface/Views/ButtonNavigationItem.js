@@ -163,10 +163,14 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 
     get totalMargin()
     {
-        let totalMargin = super.totalMargin;
+        return super.totalMargin + this.textMargin;
+    }
+
+    get textMargin()
+    {
         if (this._buttonStyle === ButtonNavigationItem.Style.Text)
-            return totalMargin + 4; /* .navigation-bar .item.button.text-only */
-        return totalMargin;
+            return 4; /* .navigation-bar .item.button.text-only */
+        return 0;
     }
 
     get additionalClassNames()

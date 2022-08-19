@@ -140,7 +140,7 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
             if (navigationBar.navigationItems[i] instanceof WI.FlexibleSpaceNavigationItem)
                 continue;
 
-            totalOtherItemsWidth += navigationBar.navigationItems[i].element.realOffsetWidth;
+            totalOtherItemsWidth += navigationBar.navigationItems[i].width;
         }
 
         // Calculate the width for all the components.

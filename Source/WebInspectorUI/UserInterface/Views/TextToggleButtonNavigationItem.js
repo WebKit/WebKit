@@ -54,6 +54,11 @@
 
         // Protected
 
+        get textMargin()
+        {
+            return 10; /* .navigation-bar .item.text-toggle.button.text-only */
+        }
+
         get additionalClassNames()
         {
             return ["text-toggle", "button"];

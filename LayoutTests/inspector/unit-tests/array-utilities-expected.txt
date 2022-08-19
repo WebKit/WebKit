@@ -142,6 +142,8 @@ PASS: toggleIncludes of an existing item with force true should have no effect.
 PASS: toggleIncludes of an existing item with force false should remove the item.
 PASS: toggleIncludes of a nonexistent item with force true should add the item.
 PASS: toggleIncludes of a nonexistent item with force false should have no effect.
+PASS: toggleIncludes with no 'force' should add the item if it's not present.
+PASS: toggleIncludes with no 'force' should remove the item if it's present.
 
 -- Running test case: Array.prototype.insertAtIndex
 PASS: insertAtIndex with index unspecified should insert at the beginning.

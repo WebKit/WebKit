@@ -58,10 +58,6 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-.content-view.audit .message-text-view .navigation-item-help:is(.start-editing-audits, .stop-editing-audits) .navigation-bar {
-    --navigation-item-help-navigation-bar-vertical-align: 0.5px;
-}
-
 .content-view.tab.audit .content-view > .audit-version {
     position: absolute;
     right: 0;

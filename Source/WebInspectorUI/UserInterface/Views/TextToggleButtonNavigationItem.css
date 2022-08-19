@@ -27,8 +27,11 @@
     width: auto;
     height: 17px;
     margin: auto;
-    margin-left: 8px;
-    margin-right: 8px;
+    margin-inline: 5px; /* WI.TextToggleButtonNavigationItem.prototype.get textMargin */
+}
+
+.navigation-bar .item.text-toggle.button.text-only:not(:hover, .selected) {
+    border-color: var(--border-color);
 }
 
 .navigation-bar .item.text-toggle.button.text-only:hover {

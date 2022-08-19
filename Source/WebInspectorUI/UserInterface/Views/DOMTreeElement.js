@@ -30,7 +30,7 @@
 
 WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 {
-    constructor(node, elementCloseTag)
+    constructor(node, elementCloseTag, {showBadges} = {})
     {
         super("", node);
 
@@ -51,7 +51,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this._highlightedAttributes = new Set;
         this._recentlyModifiedAttributes = new Map;
         this._closeTagTreeElement = null;
-        this._layoutBadgeElement = null;
+
+        this._showBadges = !!showBadges;
+        this._elementForBadgeType = new Map;
 
         node.addEventListener(WI.DOMNode.Event.EnabledPseudoClassesChanged, this._updatePseudoClassIndicator, this);
 
@@ -444,19 +446,21 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             this.listItemElement.addEventListener("dragstart", this);
         }
 
+        WI.settings.enabledDOMTreeBadgeTypes.addEventListener(WI.Setting.Event.Changed, this._handleShownDOMTreeBadgesChanged, this);
+
         this.representedObject.addEventListener(WI.DOMNode.Event.LayoutFlagsChanged, this._handleLayoutFlagsChanged, this);
         this._handleLayoutFlagsChanged();
-
-        this._updateLayoutBadge();
     }
 
     ondetach()
     {
-        if (this.representedObject.layoutContextType && !this._elementCloseTag) {
-            this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateLayoutBadgeStatus, this);
-            this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateLayoutBadgeStatus, this);
+        if (this._elementForBadgeType.size) {
+            this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateBadges, this);
+            this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateBadges, this);
         }
         this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutFlagsChanged, this._handleLayoutFlagsChanged, this);
+
+        WI.settings.enabledDOMTreeBadgeTypes.removeEventListener(WI.Setting.Event.Changed, this._handleShownDOMTreeBadgesChanged, this);
     }
 
     onpopulate()
@@ -482,7 +486,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     insertChildElement(child, index, closingTag)
     {
-        var newElement = new WI.DOMTreeElement(child, closingTag);
+        var newElement = new WI.DOMTreeElement(child, closingTag, {showBadges: this._showBadges});
         newElement.selectable = this.treeOutline.selectable;
         this.insertChild(newElement, index);
         return newElement;
@@ -1331,7 +1335,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             this.title.appendChild(this._nodeTitleInfo().titleDOM);
             this._highlightResult = undefined;
         }
-        this._updateLayoutBadge();
+        this._createBadges();
 
         // Setting this.title will implicitly remove all children. Clear the
         // selection element so that we properly recreate it if necessary.
@@ -2007,52 +2011,77 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this._animatingHighlight = false;
     }
 
-    _updateLayoutBadge()
+    _createBadge(badgeType)
     {
-        if (!this.listItemElement || this._elementCloseTag)
+        console.assert(!this._elementForBadgeType.has(badgeType), badgeType);
+
+        if (!badgeType || !WI.settings.enabledDOMTreeBadgeTypes.value.includes(badgeType))
             return;
 
-        let hadLayoutBadge = !!this._layoutBadgeElement;
+        let text = "";
+        let handleClick = null;
 
-        if (this._layoutBadgeElement) {
-            this._layoutBadgeElement.remove();
-            this._layoutBadgeElement = null;
+        switch (badgeType) {
+        case WI.DOMTreeElement.BadgeType.Flex:
+            console.assert(!this._elementForBadgeType.has(WI.DOMTreeElement.BadgeType.Grid));
+            text = WI.unlocalizedString("flex");
+            handleClick = this._layoutBadgeClicked.bind(this);
+            break;
+
+        case WI.DOMTreeElement.BadgeType.Grid:
+            console.assert(!this._elementForBadgeType.has(WI.DOMTreeElement.BadgeType.Flex));
+            text = WI.unlocalizedString("grid");
+            handleClick = this._layoutBadgeClicked.bind(this);
+            break;
         }
 
-        if (!this.representedObject.layoutContextType) {
-            if (hadLayoutBadge) {
-                this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateLayoutBadgeStatus, this);
-                this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateLayoutBadgeStatus, this);
+        let badgeElement = this.title.appendChild(document.createElement("span"));
+        badgeElement.className = "badge";
+        badgeElement.textContent = text;
+        if (handleClick) {
+            badgeElement.addEventListener("click", handleClick, true);
+            badgeElement.addEventListener("dblclick", this._layoutBadgeDoubleClicked, true);
+        }
+        this._elementForBadgeType.set(badgeType, badgeElement);
+    }
+
+    _createBadges()
+    {
+        if (!this._showBadges || !this.listItemElement || this._elementCloseTag)
+            return;
+
+        let hadBadge = this._elementForBadgeType.size;
+
+        for (let badgeElement of this._elementForBadgeType.values())
+            badgeElement.remove();
+        this._elementForBadgeType.clear();
+
+        for (let layoutFlag of this.representedObject.layoutFlags) {
+            switch (layoutFlag) {
+            case WI.DOMNode.LayoutFlag.Grid:
+                this._createBadge(WI.DOMTreeElement.BadgeType.Grid);
+                break;
+
+            case WI.DOMNode.LayoutFlag.Flex:
+                this._createBadge(WI.DOMTreeElement.BadgeType.Flex);
+                break;
+            }
+        }
+
+        if (!this._elementForBadgeType.size) {
+            if (hadBadge) {
+                this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateBadges, this);
+                this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateBadges, this);
             }
             return;
         }
 
-        if (!hadLayoutBadge) {
-            this.representedObject.addEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateLayoutBadgeStatus, this);
-            this.representedObject.addEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateLayoutBadgeStatus, this);
+        if (!hadBadge) {
+            this.representedObject.addEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateBadges, this);
+            this.representedObject.addEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateBadges, this);
         }
 
-        this._layoutBadgeElement = this.title.appendChild(document.createElement("span"));
-        this._layoutBadgeElement.className = "layout-badge";
-
-        switch (this.representedObject.layoutContextType) {
-        case WI.DOMNode.LayoutFlag.Grid:
-            this._layoutBadgeElement.textContent = WI.unlocalizedString("grid");
-            break;
-
-        case WI.DOMNode.LayoutFlag.Flex:
-            this._layoutBadgeElement.textContent = WI.unlocalizedString("flex");
-            break;
-
-        default:
-            console.assert(false, this.representedObject.layoutContextType);
-            break;
-        }
-
-        this._updateLayoutBadgeStatus();
-
-        this._layoutBadgeElement.addEventListener("click", this._layoutBadgeClicked.bind(this), true);
-        this._layoutBadgeElement.addEventListener("dblclick", this._layoutBadgeDoubleClicked, true);
+        this._updateBadges();
     }
 
     _layoutBadgeClicked(event)
@@ -2074,29 +2103,38 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         event.stop();
     }
 
-    _updateLayoutBadgeStatus()
+    _updateBadges()
     {
-        if (!this._layoutBadgeElement)
-            return;
-
-        let hasVisibleOverlay = this.representedObject.layoutOverlayShowing;
-        this._layoutBadgeElement.classList.toggle("activated", hasVisibleOverlay);
-
-        if (hasVisibleOverlay) {
-            let color = this.representedObject.layoutOverlayColor;
-            let hue = color.hsl[0];
-            this._layoutBadgeElement.style.borderColor = color.toString();
-            this._layoutBadgeElement.style.backgroundColor = `hsl(${hue}, 90%, 95%)`;
-            this._layoutBadgeElement.style.setProperty("color", `hsl(${hue}, 55%, 40%)`);
-        } else
-            this._layoutBadgeElement.removeAttribute("style");
+        for (let [badgeType, badgeElement] of this._elementForBadgeType) {
+            switch (badgeType) {
+            case WI.DOMTreeElement.BadgeType.Grid:
+            case WI.DOMTreeElement.BadgeType.Flex: {
+                let layoutOverlayShowing = this.representedObject.layoutOverlayShowing;
+                badgeElement.classList.toggle("activated", layoutOverlayShowing);
+                if (layoutOverlayShowing) {
+                    let color = this.representedObject.layoutOverlayColor;
+                    let hue = color.hsl[0];
+                    badgeElement.style.borderColor = color.toString();
+                    badgeElement.style.backgroundColor = `hsl(${hue}, 90%, 95%)`;
+                    badgeElement.style.setProperty("color", `hsl(${hue}, 55%, 40%)`);
+                } else
+                    badgeElement.removeAttribute("style");
+                break;
+            }
+            }
+        }
     }
 
     _handleLayoutFlagsChanged(event)
     {
         this.listItemElement?.classList.toggle("rendered", this.representedObject.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered));
 
-        this._updateLayoutBadge();
+        this._createBadges();
+    }
+
+    _handleShownDOMTreeBadgesChanged(event)
+    {
+        this._createBadges();
     }
 };
 
@@ -2121,6 +2159,12 @@ WI.DOMTreeElement.BreakpointStatus = {
     Breakpoint: Symbol("breakpoint"),
     DisabledBreakpoint: Symbol("disabled-breakpoint"),
 };
+
+WI.DOMTreeElement.BadgeType = {
+    Flex: "flex",
+    Grid: "grid",
+};
+WI.settings.enabledDOMTreeBadgeTypes = new WI.Setting("enabled-dom-tree-badge-types", [WI.DOMTreeElement.BadgeType.Flex, WI.DOMTreeElement.BadgeType.Grid]);
 
 WI.DOMTreeElement.HighlightStyleClassName = "highlight";
 WI.DOMTreeElement.SearchHighlightStyleClassName = "search-highlight";

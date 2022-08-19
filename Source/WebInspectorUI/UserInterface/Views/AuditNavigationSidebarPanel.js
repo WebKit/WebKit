@@ -59,7 +59,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             createAuditHelpElement.classList.add("create-audit");
             contentPlaceholder.appendChild(createAuditHelpElement);
 
-            let stopEditingAuditsNavigationItem = new WI.ButtonNavigationItem("stop-editing-audits", WI.UIString("Done"));
+            let stopEditingAuditsNavigationItem = new WI.ButtonNavigationItem("stop-editing-audits", WI.UIString("Done"), "Images/Pencil.svg", 16, 16);
             stopEditingAuditsNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleEditButtonNavigationItemClicked, this);
 
             let stopEditingAuditsHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to stop editing audits."), stopEditingAuditsNavigationItem);
@@ -86,7 +86,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             importAuditHelpElement.classList.add("import-audit");
             contentPlaceholder.appendChild(importAuditHelpElement);
 
-            let startEditingAuditsNavigationItem = new WI.ButtonNavigationItem("start-editing-audits", WI.UIString("Edit"));
+            let startEditingAuditsNavigationItem = new WI.ButtonNavigationItem("start-editing-audits", WI.UIString("Edit"), "Images/Pencil.svg", 16, 16);
             startEditingAuditsNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleEditButtonNavigationItemClicked, this);
 
             let startEditingAuditsHelpElement = WI.createNavigationItemHelp(hasEnabledAudit ? WI.UIString("Press %s to start editing audits.") : WI.UIString("Press %s to enable audits."), startEditingAuditsNavigationItem);
@@ -154,7 +154,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
         this.addSubview(controlsNavigationBar);
 
-        this._editButtonNavigationItem = new WI.ActivateButtonNavigationItem("edit-audits", WI.UIString("Edit"), WI.UIString("Done"));
+        this._editButtonNavigationItem = new WI.ActivateButtonNavigationItem("edit-audits", WI.UIString("Edit"), WI.UIString("Done"), "Images/Pencil.svg", 16, 16);
         this._editButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleEditButtonNavigationItemClicked, this);
         this.filterBar.addFilterNavigationItem(this._editButtonNavigationItem);
 

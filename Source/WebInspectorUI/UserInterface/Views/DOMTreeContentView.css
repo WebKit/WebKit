@@ -23,6 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.item.button.text-only.configure-dom-tree-badges {
+    border-color: var(--border-color);
+}
+
+.item.button.text-only.configure-dom-tree-badges:hover {
+    background-color: var(--background-color-alternate);
+}
+
 .content-view.dom-tree {
     overflow: auto;
 }

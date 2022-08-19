@@ -55,8 +55,8 @@
 }
 
 .navigation-bar .item.button.text-only {
-    padding: 1px 8px 3px;
-    margin: 0 2px; /* WI.ButtonNavigationItem.prototype.get totalMargin */
+    padding: 1px 4px 3px;
+    margin: 0 2px; /* WI.ButtonNavigationItem.prototype.get textMargin */
 
     height: initial;
     line-height: 11px;
