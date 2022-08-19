@@ -37,6 +37,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._initialState = null;
         this._modified = false;
         this._isUpdatingText = false;
+        this._isNewProperty = false;
 
         this.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, true);
     }
@@ -530,6 +531,9 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         }
         return this._shorthandPropertyNames;
     }
+
+    get isNewProperty() { return this._isNewProperty; }
+    set isNewProperty(value) { this._isNewProperty = value; }
 
     hasOtherVendorNameOrKeyword()
     {

@@ -430,9 +430,12 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._addCSSDocumentationButton();
 
         let focusedOutsideThisProperty = event.relatedTarget !== this._nameElement && event.relatedTarget !== this._valueElement;
-        if (focusedOutsideThisProperty && (!this._nameTextField.value.trim() || !this._valueTextField.value.trim())) {
-            this.remove();
-            return;
+        if (focusedOutsideThisProperty) {
+            if (!this._nameTextField.value.trim() || !this._valueTextField.value.trim()) {
+                this.remove();
+                return;
+            }
+            this._property.isNewProperty = false;
         }
 
         if (textField === this._valueTextField)
