@@ -140,6 +140,8 @@ private:
     ResourceError m_error;
     ScriptExecutionContextIdentifier m_clientIdentifier;
 #if ENABLE(SERVICE_WORKER)
+    bool m_isMatchingServiceWorkerRegistration { false };
+    std::optional<SecurityOriginData> m_topOriginForServiceWorkerRegistration;
     std::optional<ServiceWorkerData> m_activeServiceWorkerData;
 #endif
     String m_userAgentForSharedWorker;

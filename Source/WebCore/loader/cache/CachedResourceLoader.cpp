@@ -1188,15 +1188,8 @@ static void logResourceRevalidationDecision(CachedResource::RevalidationDecision
 }
 
 #if ENABLE(SERVICE_WORKER)
-static inline bool mustReloadFromServiceWorkerOptions(Document* document, const ResourceLoaderOptions& options, const ResourceLoaderOptions& cachedOptions)
+static inline bool mustReloadFromServiceWorkerOptions(const ResourceLoaderOptions& options, const ResourceLoaderOptions& cachedOptions)
 {
-    // When Loading a worker script and there is an active service worker, it is important to bypass the memory cache for the fetching of the script. If we
-    // don't then the worker won't be controlled by the service worker and the loads from the worker won't be intercepted by the service worker.
-    if ((cachedOptions.destination == FetchOptions::Destination::Worker || cachedOptions.destination == FetchOptions::Destination::Sharedworker)
-        && options.serviceWorkersMode != ServiceWorkersMode::None && document && document->activeServiceWorker()) {
-        return true;
-    }
-
     // FIXME: We should validate/specify this behavior.
     if (options.serviceWorkerRegistrationIdentifier != cachedOptions.serviceWorkerRegistrationIdentifier)
         return true;
@@ -1222,7 +1215,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
 
 #if ENABLE(SERVICE_WORKER)
-    if (mustReloadFromServiceWorkerOptions(document(), cachedResourceRequest.options(), existingResource->options())) {
+    if (mustReloadFromServiceWorkerOptions(cachedResourceRequest.options(), existingResource->options())) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because selected service worker may differ");
         return Reload;
     }

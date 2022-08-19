@@ -158,7 +158,8 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     // A service worker job can be executed from a worker context or a document context.
     options.serviceWorkersMode = serviceWorkerMode;
 #if ENABLE(SERVICE_WORKER)
-    if ((m_destination == FetchOptions::Destination::Worker || m_destination == FetchOptions::Destination::Sharedworker) && is<Document>(scriptExecutionContext)) {
+    if ((m_destination == FetchOptions::Destination::Worker || m_destination == FetchOptions::Destination::Sharedworker) && is<Document>(scriptExecutionContext) && downcast<Document>(scriptExecutionContext).settings().serviceWorkersEnabled()) {
+        m_topOriginForServiceWorkerRegistration = SecurityOriginData { scriptExecutionContext.topOrigin().data() };
         ASSERT(clientIdentifier);
         options.clientIdentifier = m_clientIdentifier = clientIdentifier;
         // In case of blob URLs, we reuse the document controlling service worker.
@@ -252,6 +253,26 @@ void WorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier,
     if (m_isCOEPEnabled)
         m_crossOriginEmbedderPolicy = obtainCrossOriginEmbedderPolicy(response, nullptr);
     m_referrerPolicy = response.httpHeaderField(HTTPHeaderName::ReferrerPolicy);
+
+#if ENABLE(SERVICE_WORKER)
+    if (m_topOriginForServiceWorkerRegistration && response.source() == ResourceResponse::Source::MemoryCache) {
+        m_isMatchingServiceWorkerRegistration = true;
+        ServiceWorkerProvider::singleton().serviceWorkerConnection().matchRegistration(WTFMove(*m_topOriginForServiceWorkerRegistration), response.url(), [this, protectedThis = Ref { *this }, response, identifier](auto&& registrationData) mutable {
+            m_isMatchingServiceWorkerRegistration = false;
+            if (registrationData && registrationData->activeWorker)
+                setControllingServiceWorker(WTFMove(*registrationData->activeWorker));
+
+            if (!m_client)
+                return;
+
+            m_client->didReceiveResponse(identifier, response);
+            if (m_client && m_finishing)
+                m_client->notifyFinished();
+        });
+        return;
+    }
+#endif
+
     if (m_client)
         m_client->didReceiveResponse(identifier, response);
 }
@@ -312,6 +333,11 @@ void WorkerScriptLoader::notifyFinished()
         return;
 
     m_finishing = true;
+#if ENABLE(SERVICE_WORKER)
+    if (m_isMatchingServiceWorkerRegistration)
+        return;
+#endif
+
     m_client->notifyFinished();
 }
 
