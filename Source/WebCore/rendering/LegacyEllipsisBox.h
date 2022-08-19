@@ -24,6 +24,10 @@
 
 namespace WebCore {
 
+namespace InlineIterator {
+class BoxLegacyPath;
+}
+
 class HitTestRequest;
 class HitTestResult;
 
@@ -38,6 +42,12 @@ public:
     RenderBlockFlow& blockFlow() const { return downcast<RenderBlockFlow>(LegacyInlineBox::renderer()); }
 
 private:
+    friend class InlineIterator::BoxLegacyPath;
+
+    bool isEllipsisBox() const final { return true; }
+
+    TextRun createTextRun() const;
+
     void paintMarkupBox(PaintInfo&, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, const RenderStyle&);
     int height() const { return m_height; }
     RenderObject::HighlightState selectionState() const override;
@@ -50,3 +60,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_INLINE_BOX(LegacyEllipsisBox, isEllipsisBox())

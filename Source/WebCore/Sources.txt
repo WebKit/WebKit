@@ -2340,6 +2340,7 @@ rendering/CaretRectComputation.cpp
 rendering/ClipRect.cpp
 rendering/ContentfulPaintChecker.cpp
 rendering/CounterNode.cpp
+rendering/EllipsisBoxPainter.cpp
 rendering/EventRegion.cpp
 rendering/FixedTableLayout.cpp
 rendering/FlexibleBoxAlgorithm.cpp

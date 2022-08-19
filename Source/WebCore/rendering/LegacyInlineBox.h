@@ -90,6 +90,7 @@ public:
     virtual bool isInlineElementBox() const { return false; }
     virtual bool isInlineFlowBox() const { return false; }
     virtual bool isInlineTextBox() const { return false; }
+    virtual bool isEllipsisBox() const { return false; }
     virtual bool isRootInlineBox() const { return false; }
     virtual bool isSVGInlineTextBox() const { return false; }
     virtual bool isSVGInlineFlowBox() const { return false; }
