@@ -72,7 +72,7 @@ void EllipsisBoxPainter<EllipsisBoxPath>::paint()
     m_ellipsisBox.containingBlock().flipForWritingMode(visualRect);
     auto textOrigin = visualRect.location();
     textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + style.metricsOfPrimaryFont().ascent());
-    context.drawBidiText(style.fontCascade(), m_ellipsisBox.createTextRun(InlineIterator::CreateTextRunMode::Painting), textOrigin);
+    context.drawBidiText(style.fontCascade(), m_ellipsisBox.textRun(), textOrigin);
 
     if (textColor != context.fillColor())
         context.setFillColor(textColor);

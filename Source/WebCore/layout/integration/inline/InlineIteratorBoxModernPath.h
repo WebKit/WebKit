@@ -63,7 +63,7 @@ public:
     unsigned char bidiLevel() const { return box().bidiLevel(); }
 
     bool hasHyphen() const { return box().text()->hasHyphen(); }
-    StringView text() const { return box().text()->originalContent(); }
+    StringView originalText() const { return box().text()->originalContent(); }
     unsigned start() const { return box().text()->start(); }
     unsigned end() const { return box().text()->end(); }
     unsigned length() const { return box().text()->length(); }
@@ -78,7 +78,7 @@ public:
         };
     }
 
-    TextRun createTextRun(CreateTextRunMode mode) const
+    TextRun textRun(TextRunMode mode = TextRunMode::Painting) const
     {
         auto& style = box().style();
         auto expansion = box().expansion();
@@ -86,14 +86,14 @@ public:
         auto xPos = rect.x() - (line().lineBoxLeft() + line().contentLogicalOffset());
 
         auto textForRun = [&] {
-            if (mode == CreateTextRunMode::Editing || !hasHyphen())
-                return text().toStringWithoutCopying();
+            if (mode == TextRunMode::Editing || !hasHyphen())
+                return originalText().toStringWithoutCopying();
 
-            return makeString(text(), style.hyphenString());
+            return makeString(originalText(), style.hyphenString());
         }();
 
         bool characterScanForCodePath = !renderText().canUseSimpleFontCodePath();
-        TextRun textRun { textForRun, xPos, expansion.horizontalExpansion, expansion.behavior, direction(), style.rtlOrdering() == Order::Visual, characterScanForCodePath };
+        auto textRun = TextRun { textForRun, xPos, expansion.horizontalExpansion, expansion.behavior, direction(), style.rtlOrdering() == Order::Visual, characterScanForCodePath };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         return textRun;
     };

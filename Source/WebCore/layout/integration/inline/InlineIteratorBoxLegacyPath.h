@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace InlineIterator {
 
-enum class CreateTextRunMode { Painting, Editing };
+enum class TextRunMode { Painting, Editing };
 
 class BoxLegacyPath {
 public:
@@ -59,17 +59,17 @@ public:
     unsigned char bidiLevel() const { return m_inlineBox->bidiLevel(); }
 
     bool hasHyphen() const { return inlineTextBox()->hasHyphen(); }
-    StringView text() const { return StringView(inlineTextBox()->renderer().text()).substring(inlineTextBox()->start(), inlineTextBox()->len()); }
+    StringView originalText() const { return StringView(inlineTextBox()->renderer().text()).substring(inlineTextBox()->start(), inlineTextBox()->len()); }
     unsigned start() const { return inlineTextBox()->start(); }
     unsigned end() const { return inlineTextBox()->end(); }
     unsigned length() const { return inlineTextBox()->len(); }
 
     TextBoxSelectableRange selectableRange() const { return inlineTextBox()->selectableRange(); }
 
-    TextRun createTextRun(CreateTextRunMode mode) const
+    TextRun textRun(TextRunMode mode = TextRunMode::Painting) const
     {
-        bool ignoreCombinedText = mode == CreateTextRunMode::Editing;
-        bool ignoreHyphen = mode == CreateTextRunMode::Editing;
+        bool ignoreCombinedText = mode == TextRunMode::Editing;
+        bool ignoreHyphen = mode == TextRunMode::Editing;
         if (isText())
             return inlineTextBox()->createTextRun(ignoreCombinedText, ignoreHyphen);
         if (isEllipsisBox())

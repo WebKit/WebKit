@@ -68,7 +68,7 @@ TextBoxPainter<TextBoxPath>::TextBoxPainter(TextBoxPath&& textBox, PaintInfo& pa
     , m_document(m_renderer.document())
     , m_style(m_textBox.style())
     , m_logicalRect(m_textBox.isHorizontal() ? m_textBox.visualRectIgnoringBlockDirection() : m_textBox.visualRectIgnoringBlockDirection().transposedRect())
-    , m_paintTextRun(m_textBox.createTextRun(InlineIterator::CreateTextRunMode::Painting))
+    , m_paintTextRun(m_textBox.textRun())
     , m_paintInfo(paintInfo)
     , m_selectableRange(m_textBox.selectableRange())
     , m_paintOffset(paintOffset)
@@ -778,8 +778,8 @@ FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator& t
 
     // Avoid measuring the text when the entire line box is selected as an optimization.
     if (markedText.startOffset || markedText.endOffset != textBox->selectableRange().clamp(textBox->end())) {
-        TextRun run = textBox->createTextRun();
-        LayoutRect selectionRect = LayoutRect(0, y, 0, height);
+        auto run = textBox->textRun();
+        auto selectionRect = LayoutRect { 0_lu, y, 0_lu, height };
         font.adjustSelectionRectForText(run, selectionRect, markedText.startOffset, markedText.endOffset);
         return selectionRect;
     }

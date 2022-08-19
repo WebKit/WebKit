@@ -571,8 +571,7 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
 
 void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> behavior)
 {
-    auto writeTextRun = [&](auto& textRenderer, auto& textRun)
-    {
+    auto writeTextRun = [&] (auto& textRenderer, auto& textRun) {
         auto rect = textRun.visualRectIgnoringBlockDirection();
         int x = rect.x();
         int y = rect.y();
@@ -586,7 +585,7 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         if (!textRun.isLeftToRightDirection())
             ts << " RTL";
         ts << ": "
-            << quoteAndEscapeNonPrintables(textRun.text());
+            << quoteAndEscapeNonPrintables(textRun.originalText());
         if (textRun.hasHyphen())
             ts << " + hyphen string " << quoteAndEscapeNonPrintables(textRenderer.style().hyphenString().string());
         ts << "\n";

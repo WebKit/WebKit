@@ -37,7 +37,7 @@ public:
     TextBox(PathVariant&&);
 
     bool hasHyphen() const;
-    StringView text() const;
+    StringView originalText() const;
 
     unsigned start() const;
     unsigned end() const;
@@ -52,7 +52,7 @@ public:
     bool isCombinedText() const;
     const FontCascade& fontCascade() const;
 
-    TextRun createTextRun(CreateTextRunMode = CreateTextRunMode::Painting) const;
+    TextRun textRun(TextRunMode = TextRunMode::Painting) const;
 
     const RenderText& renderer() const { return downcast<RenderText>(Box::renderer()); }
 
@@ -120,10 +120,10 @@ inline TextBox::TextBox(PathVariant&& path)
 {
 }
 
-inline StringView TextBox::text() const
+inline StringView TextBox::originalText() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.text();
+        return path.originalText();
     });
 }
 
@@ -155,10 +155,10 @@ inline TextBoxSelectableRange TextBox::selectableRange() const
     });
 }
 
-inline TextRun TextBox::createTextRun(CreateTextRunMode mode) const
+inline TextRun TextBox::textRun(TextRunMode mode) const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
-        return path.createTextRun(mode);
+        return path.textRun(mode);
     });
 }
 

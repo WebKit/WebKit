@@ -67,7 +67,7 @@ LayoutRect TextBox::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
     auto lineSelectionRect = LineSelection::logicalRect(*lineBox());
     auto selectionRect = LayoutRect { logicalLeft(), lineSelectionRect.y(), logicalWidth(), lineSelectionRect.height() };
 
-    TextRun textRun = createTextRun();
+    auto textRun = this->textRun();
     if (clampedStart || clampedEnd != textRun.length())
         fontCascade().adjustSelectionRectForText(textRun, selectionRect, clampedStart, clampedEnd);
 
@@ -82,7 +82,7 @@ unsigned TextBox::offsetForPosition(float x, bool includePartialGlyphs) const
         return isLeftToRightDirection() ? length() : 0;
     if (x - logicalLeft() < 0)
         return isLeftToRightDirection() ? 0 : length();
-    return fontCascade().offsetForPosition(createTextRun(CreateTextRunMode::Editing), x - logicalLeft(), includePartialGlyphs);
+    return fontCascade().offsetForPosition(textRun(TextRunMode::Editing), x - logicalLeft(), includePartialGlyphs);
 }
 
 float TextBox::positionForOffset(unsigned offset) const
@@ -101,7 +101,7 @@ float TextBox::positionForOffset(unsigned offset) const
 
     auto selectionRect = LayoutRect(logicalLeft(), 0, 0, 0);
     
-    auto textRun = createTextRun(CreateTextRunMode::Editing);
+    auto textRun = this->textRun(TextRunMode::Editing);
     fontCascade().adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
     return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
 }

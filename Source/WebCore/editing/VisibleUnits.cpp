@@ -259,9 +259,9 @@ static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePositi
     if (previousBox) {
         auto& previousTextBox = downcast<InlineIterator::TextBoxIterator>(previousBox);
         previousBoxLength = previousTextBox->length();
-        append(string, previousTextBox->text());
+        append(string, previousTextBox->originalText());
     }
-    append(string, textBox->text());
+    append(string, textBox->originalText());
 
     return wordBreakIterator(StringView(string.data(), string.size()));
 }
@@ -280,11 +280,11 @@ static UBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePositi
     }
 
     string.clear();
-    append(string, textBox->text());
+    append(string, textBox->originalText());
 
     if (nextBox) {
         auto& nextTextBox = downcast<InlineIterator::TextBoxIterator>(nextBox);
-        append(string, nextTextBox->text());
+        append(string, nextTextBox->originalText());
     }
 
     return wordBreakIterator(StringView(string.data(), string.size()));
@@ -354,7 +354,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         else if (offsetInBox == textBox->maximumCaretOffset())
             iter = wordBreakIteratorForMaxOffsetBoundary(adjacentCharacterPosition, textBox, nextBoxInDifferentLine, string);
         else if (movingIntoNewBox) {
-            iter = wordBreakIterator(textBox->text());
+            iter = wordBreakIterator(textBox->originalText());
             previouslyVisitedBox = box;
         }
 
