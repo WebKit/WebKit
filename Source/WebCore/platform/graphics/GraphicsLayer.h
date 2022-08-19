@@ -250,6 +250,7 @@ class GraphicsLayer : public RefCounted<GraphicsLayer> {
 public:
     enum class Type : uint8_t {
         Normal,
+        Structural, // Supports position and transform only, and doesn't flatten (i.e. behaves like preserves3D is true). Uses CATransformLayer on Cocoa platforms.
         PageTiledBacking,
         TiledBacking,
         ScrollContainer,
@@ -376,13 +377,13 @@ public:
     bool hasNonIdentityChildrenTransform() const { return m_childrenTransform && !m_childrenTransform->isIdentity(); }
 
     bool preserves3D() const { return m_preserves3D; }
-    virtual void setPreserves3D(bool b) { m_preserves3D = b; }
+    virtual void setPreserves3D(bool);
     
     bool masksToBounds() const { return m_masksToBounds; }
-    virtual void setMasksToBounds(bool b) { m_masksToBounds = b; }
+    virtual void setMasksToBounds(bool);
     
     bool drawsContent() const { return m_drawsContent; }
-    virtual void setDrawsContent(bool b) { m_drawsContent = b; }
+    virtual void setDrawsContent(bool);
 
     bool contentsAreVisible() const { return m_contentsVisible; }
     virtual void setContentsVisible(bool b) { m_contentsVisible = b; }
@@ -425,11 +426,11 @@ public:
     virtual void setBackfaceVisibility(bool b) { m_backfaceVisibility = b; }
 
     float opacity() const { return m_opacity; }
-    WEBCORE_EXPORT virtual void setOpacity(float opacity) { m_opacity = opacity; }
+    WEBCORE_EXPORT virtual void setOpacity(float);
 
     const FilterOperations& filters() const { return m_filters; }
     // Returns true if filter can be rendered by the compositor.
-    virtual bool setFilters(const FilterOperations& filters) { m_filters = filters; return true; }
+    virtual bool setFilters(const FilterOperations&);
 
     const FilterOperations& backdropFilters() const { return m_backdropFilters; }
     virtual bool setBackdropFilters(const FilterOperations& filters) { m_backdropFilters = filters; return true; }
@@ -531,7 +532,7 @@ public:
     void paintGraphicsLayerContents(GraphicsContext&, const FloatRect& clip, GraphicsLayerPaintBehavior = GraphicsLayerPaintNormal);
 
     // For hosting this GraphicsLayer in a native layer hierarchy.
-    virtual PlatformLayer* platformLayer() const { return 0; }
+    virtual PlatformLayer* platformLayer() const { return nullptr; }
 
     enum class CompositingCoordinatesOrientation : uint8_t { TopDown, BottomUp };
 

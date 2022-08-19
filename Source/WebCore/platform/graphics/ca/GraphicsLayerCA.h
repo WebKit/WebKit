@@ -349,6 +349,7 @@ private:
 
     bool isTiledBackingLayer() const { return type() == Type::TiledBacking; }
     bool isPageTiledBackingLayer() const { return type() == Type::PageTiledBacking; }
+    bool isStructuralLayer() const { return type() == Type::Structural; }
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {
