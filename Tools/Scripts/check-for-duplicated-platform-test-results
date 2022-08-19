@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2017 Igalia S.L.
 #
@@ -18,19 +18,22 @@
 # Boston, MA 02110-1301, USA.
 
 import hashlib
+import itertools
 import logging
 import optparse
 import os
 import sys
+from webkitpy.common import webkit_finder
 from webkitpy.common.host import Host
 from webkitpy.common.system.logutils import configure_logging
+from webkitpy.port.config import apple_additions
 
 _log = logging.getLogger(__name__)
 
 host = Host()
 host.initialize_scm()
-checkout_root = host.scm().checkout_root
-layout_tests_directory = os.path.join(checkout_root, 'LayoutTests')
+webkit_finder = webkit_finder.WebKitFinder(host.filesystem)
+layout_tests_directory = webkit_finder.layout_tests_dir()
 platform_directory = os.path.join(layout_tests_directory, 'platform')
 
 IGNORED_FILE_NAMES = {
@@ -46,12 +49,13 @@ def remove_layout_test_path_prefix(full_path):
 
 def check_duplicate(platform, baseline_search_path, platform_test_result):
     def sha1(path):
-        with file(path, 'rb') as f:
+        with open(path, 'rb') as f:
             return hashlib.sha1(f.read()).hexdigest()
 
     _log.debug('   Looking for duplicates of {0} in {1}'.format(remove_layout_test_path_prefix(platform_test_result), str(baseline_search_path)))
 
     prefix_len = len(os.path.join(platform_directory, platform)) + 1
+    assert platform_test_result[:prefix_len - 1] == os.path.join(platform_directory, platform)
     test_result_filename = platform_test_result[prefix_len:]
     test_result_filename_base, test_result_filename_ext = os.path.splitext(platform_test_result[prefix_len:])
     if test_result_filename_ext in txt_types:
@@ -92,11 +96,12 @@ def check_duplicate(platform, baseline_search_path, platform_test_result):
 
 
 def platform_list(platform):
+    platform_dirs = [platform_directory]
+    if apple_additions():
+        platform_dirs.append(apple_additions().layout_tests_path())
     if platform == 'all':
-        return os.listdir(platform_directory)
-    if os.path.isdir(os.path.join(platform_directory, platform)):
-        return [platform]
-    return []
+        return list(itertools.chain(*(os.listdir(path) for path in platform_dirs)))
+    return [platform]
 
 def find_duplicates_in_path(baseline_search_path):
     duplicates = []
@@ -136,8 +141,8 @@ def check_platform(options, baseline_search_paths_checked):
 
         try:
             baseline_search_path = tuple([p for p in port.baseline_search_path() if os.path.isdir(p)] + [layout_tests_directory])
-        except:
-            _log.warn('Error computing baseline search paths from {0}'.format(platform))
+        except Exception as e:
+            _log.warning('Error computing baseline search paths from {0}, {1}'.format(platform, e))
             continue
 
         _log.info('Checking search paths [{0}]'.format(', '.join(remove_layout_test_path_prefix(p) for p in baseline_search_path[:-1])))
