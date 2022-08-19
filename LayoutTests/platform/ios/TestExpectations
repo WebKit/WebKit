@@ -3723,3 +3723,4 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 webkit.org/b/244065 fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-readonly.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/244134 animations/no-style-recalc-during-accelerated-animation.html [ Pass Failure ]
+webkit.org/b/244134 animations/steps-transform-rendering-updates.html [ Pass Failure ]
