@@ -30,6 +30,7 @@
 #include <WebCore/Image.h>
 #include <WebCore/NotificationResources.h>
 #include <WebCore/RefPtrCairo.h>
+#include <cairo.h>
 #include <gio/gdesktopappinfo.h>
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
