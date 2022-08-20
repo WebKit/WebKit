@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DeprecatedGlobalSettings.h"
+#include "EllipsisBoxPainter.h"
 #include "EventRegion.h"
 #include "FloatingState.h"
 #include "HitTestLocation.h"
@@ -862,8 +863,14 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, con
             continue;
         }
 
-        if (box.text()) {
-            if (!box.text()->length() || !hasDamage(box))
+        if (box.isEllipsis()) {
+            ModernEllipsisBoxPainter { *m_inlineContent, box, paintInfo, paintOffset }.paint();
+            continue;
+        }
+
+        if (auto& textContent = box.text()) {
+            auto isEmptyTextBox = !textContent->length() || (textContent->truncatedLength().has_value() && !textContent->truncatedLength().value());
+            if (isEmptyTextBox || !hasDamage(box))
                 continue;
 
             ModernTextBoxPainter painter(*m_inlineContent, box, paintInfo, paintOffset);

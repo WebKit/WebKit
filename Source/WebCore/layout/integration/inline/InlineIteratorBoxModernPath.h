@@ -49,6 +49,7 @@ public:
     }
 
     bool isText() const { return box().isTextOrSoftLineBreak(); }
+    bool isEllipsisBox() const { return box().isEllipsis(); }
     bool isInlineBox() const { return box().isInlineBox(); }
     bool isRootInlineBox() const { return box().isRootInlineBox(); }
 
@@ -74,7 +75,8 @@ public:
             start(),
             length(),
             box().text()->hasHyphen() ? box().style().hyphenString().length() : 0,
-            box().isLineBreak()
+            box().isLineBreak(),
+            box().text()->truncatedLength()
         };
     }
 
@@ -84,16 +86,8 @@ public:
         auto expansion = box().expansion();
         auto rect = this->visualRectIgnoringBlockDirection();
         auto xPos = rect.x() - (line().lineBoxLeft() + line().contentLogicalOffset());
-
-        auto textForRun = [&] {
-            if (mode == TextRunMode::Editing || !hasHyphen())
-                return originalText().toStringWithoutCopying();
-
-            return makeString(originalText(), style.hyphenString());
-        }();
-
-        bool characterScanForCodePath = !renderText().canUseSimpleFontCodePath();
-        auto textRun = TextRun { textForRun, xPos, expansion.horizontalExpansion, expansion.behavior, direction(), style.rtlOrdering() == Order::Visual, characterScanForCodePath };
+        auto characterScanForCodePath = isText() && !renderText().canUseSimpleFontCodePath();
+        auto textRun = TextRun { mode == TextRunMode::Editing ? originalText() : box().text()->renderedContent(), xPos, expansion.horizontalExpansion, expansion.behavior, direction(), style.rtlOrdering() == Order::Visual, characterScanForCodePath };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         return textRun;
     };
