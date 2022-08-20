@@ -3867,8 +3867,7 @@ Element* RenderLayer::enclosingElement() const
 Vector<RenderLayer*> RenderLayer::topLayerRenderLayers(const RenderView& renderView)
 {
     Vector<RenderLayer*> layers;
-    auto topLayerElements = renderView.document().topLayerElements();
-    for (auto& element : topLayerElements) {
+    for (auto& element : renderView.document().topLayerElements()) {
         auto* renderer = element->renderer();
         if (!renderer)
             continue;
