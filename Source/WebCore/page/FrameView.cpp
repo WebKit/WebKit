@@ -3924,7 +3924,7 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
 
         Ref<OverflowEvent> overflowEvent = OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
             verticalOverflowChanged, verticalOverflow);
-        overflowEvent->setTarget(viewportRenderer->element());
+        overflowEvent->setTarget(RefPtr { viewportRenderer->element() });
 
         frame().document()->enqueueOverflowEvent(WTFMove(overflowEvent));
     }

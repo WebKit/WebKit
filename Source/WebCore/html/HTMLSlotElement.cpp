@@ -224,7 +224,7 @@ void HTMLSlotElement::dispatchSlotChangeEvent()
     m_inSignalSlotList = false;
 
     Ref<Event> event = Event::create(eventNames().slotchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No);
-    event->setTarget(this);
+    event->setTarget(Ref { *this });
     dispatchEvent(event);
 }
 

@@ -313,7 +313,7 @@ public:
             return;
 
         Ref<OverflowEvent> overflowEvent = OverflowEvent::create(horizontalLayoutOverflowChanged, hasHorizontalLayoutOverflow, verticalLayoutOverflowChanged, hasVerticalLayoutOverflow);
-        overflowEvent->setTarget(m_block->element());
+        overflowEvent->setTarget(RefPtr { m_block->element() });
         m_block->document().enqueueOverflowEvent(WTFMove(overflowEvent));
     }
 

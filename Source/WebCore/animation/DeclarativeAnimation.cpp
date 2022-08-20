@@ -341,7 +341,7 @@ void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds 
     auto pseudoId = pseudoIdAsString(m_owningPseudoId);
     auto timelineTime = timeline() ? timeline()->currentTime() : std::nullopt;
     auto event = createEvent(eventType, time, pseudoId, timelineTime);
-    event->setTarget(m_owningElement.get());
+    event->setTarget(RefPtr { m_owningElement.get() });
     enqueueAnimationEvent(WTFMove(event));
 }
 

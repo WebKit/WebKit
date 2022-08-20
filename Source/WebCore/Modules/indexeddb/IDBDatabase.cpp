@@ -271,13 +271,13 @@ void IDBDatabase::connectionToServerLost(const IDBError& error)
         transaction->connectionClosedFromServer(error);
 
     auto errorEvent = Event::create(m_eventNames.errorEvent, Event::CanBubble::Yes, Event::IsCancelable::No);
-    errorEvent->setTarget(this);
+    errorEvent->setTarget(Ref { * this });
 
     if (scriptExecutionContext())
         queueTaskToDispatchEvent(*this, TaskSource::DatabaseAccess, WTFMove(errorEvent));
 
     auto closeEvent = Event::create(m_eventNames.closeEvent, Event::CanBubble::Yes, Event::IsCancelable::No);
-    closeEvent->setTarget(this);
+    closeEvent->setTarget(Ref { * this });
 
     if (scriptExecutionContext())
         queueTaskToDispatchEvent(*this, TaskSource::DatabaseAccess, WTFMove(closeEvent));

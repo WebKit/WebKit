@@ -47,7 +47,7 @@ void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
 
     if (m_relatedTargetIsSet) {
         ASSERT(!m_relatedTarget || m_type == Type::MouseOrFocus);
-        event.setRelatedTarget(m_relatedTarget.get());
+        event.setRelatedTarget(m_relatedTarget.copyRef());
     }
 
 #if ENABLE(TOUCH_EVENTS)

@@ -65,7 +65,7 @@ private:
     EventInterface eventInterface() const final;
     bool isFocusEvent() const final;
 
-    void setRelatedTarget(EventTarget* relatedTarget) final { m_relatedTarget = relatedTarget; }
+    void setRelatedTarget(RefPtr<EventTarget>&& relatedTarget) final { m_relatedTarget = WTFMove(relatedTarget); }
 
     RefPtr<EventTarget> m_relatedTarget;
 };

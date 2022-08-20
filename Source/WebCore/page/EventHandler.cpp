@@ -3660,7 +3660,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     auto keydown = KeyboardEvent::create(keyDownEvent, &m_frame.windowProxy());
     if (matchedAnAccessKey)
         keydown->preventDefault();
-    keydown->setTarget(element);
+    keydown->setTarget(element.copyRef());
 
     auto setHasFocusVisibleIfNeeded = [initialKeyEvent, keydown](Element& element) {
         // If the user interacts with the page via the keyboard, the currently focused element should match :focus-visible.
@@ -3693,7 +3693,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     if (handledByInputMethod) {
         keyDownEvent.setWindowsVirtualKeyCode(CompositionEventKeyCode);
         keydown = KeyboardEvent::create(keyDownEvent, &m_frame.windowProxy());
-        keydown->setTarget(element);
+        keydown->setTarget(element.copyRef());
         keydown->setIsDefaultEventHandlerIgnored();
     }
     
@@ -3730,7 +3730,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     if (keyPressEvent.text().isEmpty())
         return keydownResult;
     auto keypress = KeyboardEvent::create(keyPressEvent, &m_frame.windowProxy());
-    keypress->setTarget(element);
+    keypress->setTarget(element.copyRef());
     if (keydownResult)
         keypress->preventDefault();
 #if PLATFORM(COCOA)

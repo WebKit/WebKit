@@ -2337,7 +2337,11 @@ void DOMWindow::dispatchEvent(Event& event, EventTarget* target)
     // FIXME: It doesn't seem right to have the inspector instrumentation here since not all
     // events dispatched to the window object are guaranteed to flow through this function.
     // But the instrumentation prevents us from calling EventDispatcher::dispatchEvent here.
-    event.setTarget(target ? target : this);
+    if (target)
+        event.setTarget(target);
+    else
+        event.setTarget(Ref { *this });
+
     event.setCurrentTarget(this);
     event.setEventPhase(Event::AT_TARGET);
     event.resetBeforeDispatch();

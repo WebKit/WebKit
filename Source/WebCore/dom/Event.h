@@ -146,7 +146,7 @@ public:
     bool isBeingDispatched() const { return eventPhase(); }
 
     virtual EventTarget* relatedTarget() const { return nullptr; }
-    virtual void setRelatedTarget(EventTarget*) { }
+    virtual void setRelatedTarget(RefPtr<EventTarget>&&) { }
 
     virtual String debugDescription() const;
 
