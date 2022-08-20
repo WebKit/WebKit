@@ -174,8 +174,13 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack& call
 void JSGlobalObjectInspectorController::reportAPIException(JSGlobalObject* globalObject, Exception* exception)
 {
     VM& vm = globalObject->vm();
-    if (vm.isTerminationException(exception) || !m_globalObject.inspectorDebuggable().remoteDebuggingAllowed())
+#if ENABLE(REMOTE_INSPECTOR)
+    if (vm.isTerminationException(exception) || !m_didCreateLazyAgents || !m_globalObject.inspectorDebuggable().remoteDebuggingAllowed())
         return;
+#else
+    if (vm.isTerminationException(exception) || !m_didCreateLazyAgents)
+        return;
+#endif
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
     ErrorHandlingScope errorScope(vm);
