@@ -35,7 +35,6 @@ public:
     static const unsigned defaultLengthLimit = 1 << 16;
 
     static Ref<Text> create(Document&, String&&);
-    static Ref<Text> createWithLengthLimit(Document&, const String&, unsigned positionInString, unsigned lengthLimit = defaultLengthLimit);
     static Ref<Text> createEditingText(Document&, String&&);
 
     virtual ~Text();
