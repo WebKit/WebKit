@@ -29,7 +29,13 @@ skip:
     - test/built-ins/Temporal/Calendar
     - test/built-ins/Temporal/Instant/prototype/toZonedDateTime
     - test/built-ins/Temporal/Instant/prototype/toZonedDateTimeISO
-    - test/built-ins/Temporal/Now
+    - test/built-ins/Temporal/Now/plainDate
+    - test/built-ins/Temporal/Now/plainDateISO
+    - test/built-ins/Temporal/Now/plainDateTime
+    - test/built-ins/Temporal/Now/plainDateTimeISO
+    - test/built-ins/Temporal/Now/plainTimeISO
+    - test/built-ins/Temporal/Now/zonedDateTime
+    - test/built-ins/Temporal/Now/zonedDateTimeISO
     - test/built-ins/Temporal/PlainDate
     - test/built-ins/Temporal/PlainDateTime
     - test/built-ins/Temporal/PlainMonthDay
@@ -254,11 +260,13 @@ skip:
     - test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-resolved-time-zone.js
 
     # Depends on Temporal.PlainDateTime
+    - test/built-ins/Temporal/Duration/prototype/add/balance-negative-result.js
     - test/built-ins/Temporal/Duration/prototype/add/calendar-dateuntil-called-with-singular-largestunit.js
     - test/built-ins/Temporal/Duration/prototype/add/infinity-throws-rangeerror.js
     - test/built-ins/Temporal/Duration/prototype/add/negative-infinity-throws-rangeerror.js
     - test/built-ins/Temporal/Duration/prototype/add/order-of-operations.js
     - test/built-ins/Temporal/Duration/prototype/round/dateuntil-field.js
+    - test/built-ins/Temporal/Duration/prototype/subtract/balance-negative-result.js
     - test/built-ins/Temporal/Duration/prototype/subtract/calendar-dateuntil-called-with-singular-largestunit.js
     - test/built-ins/Temporal/Duration/prototype/subtract/infinity-throws-rangeerror.js
     - test/built-ins/Temporal/Duration/prototype/subtract/negative-infinity-throws-rangeerror.js
@@ -332,16 +340,6 @@ skip:
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-non-integer.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-out-of-range.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-wrong-type.js
-
-    # awaiting resolution: https://github.com/tc39/proposal-temporal/issues/1715
-    - test/built-ins/Temporal/Duration/prototype/add/balance-negative-result.js
-    - test/built-ins/Temporal/Duration/prototype/negated/subclassing-ignored.js
-    - test/built-ins/Temporal/Duration/prototype/round/balance-negative-result.js
-    - test/built-ins/Temporal/Duration/prototype/round/round-negative-result.js
-    - test/built-ins/Temporal/Duration/prototype/subtract/balance-negative-result.js
-    - test/built-ins/Temporal/Instant/prototype/until/instant-string.js
-    - test/built-ins/Temporal/PlainTime/prototype/since/balance-negative-time-units.js
-    - test/built-ins/Temporal/PlainTime/prototype/until/balance-negative-time-units.js
 
     # Symbols as WeakMap keys proposal breaks existing tests https://github.com/tc39/proposal-symbols-as-weakmap-keys
     - test/built-ins/WeakMap/prototype/set/key-not-object-throw.js

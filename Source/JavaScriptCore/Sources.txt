@@ -1046,6 +1046,9 @@ runtime/TemporalObject.cpp
 runtime/TemporalPlainDate.cpp
 runtime/TemporalPlainDateConstructor.cpp
 runtime/TemporalPlainDatePrototype.cpp
+runtime/TemporalPlainDateTime.cpp
+runtime/TemporalPlainDateTimeConstructor.cpp
+runtime/TemporalPlainDateTimePrototype.cpp
 runtime/TemporalPlainTime.cpp
 runtime/TemporalPlainTimeConstructor.cpp
 runtime/TemporalPlainTimePrototype.cpp

@@ -193,6 +193,8 @@ $(PROJECT_DIR)/runtime/TemporalNow.cpp
 $(PROJECT_DIR)/runtime/TemporalObject.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainDateConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainDatePrototype.cpp
+$(PROJECT_DIR)/runtime/TemporalPlainDateTimeConstructor.cpp
+$(PROJECT_DIR)/runtime/TemporalPlainDateTimePrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainTimeConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainTimePrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalTimeZoneConstructor.cpp

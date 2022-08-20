@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,61 +31,59 @@
 
 namespace JSC {
 
-class TemporalPlainTime final : public JSNonFinalObject {
+class TemporalPlainDateTime final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        return vm.temporalPlainTimeSpace<mode>();
+        return vm.temporalPlainDateTimeSpace<mode>();
     }
 
-    static TemporalPlainTime* create(VM&, Structure*, ISO8601::PlainTime&&);
-    static TemporalPlainTime* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::Duration&&);
+    static TemporalPlainDateTime* create(VM&, Structure*, ISO8601::PlainDate&&, ISO8601::PlainTime&&);
+    static TemporalPlainDateTime* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::Duration&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    static ISO8601::PlainTime toPlainTime(JSGlobalObject*, const ISO8601::Duration&);
-    static ISO8601::Duration roundTime(ISO8601::PlainTime, double increment, TemporalUnit, RoundingMode, std::optional<double> dayLengthNs);
-
-    static TemporalPlainTime* from(JSGlobalObject*, JSValue, std::optional<TemporalOverflow>);
-    static int32_t compare(const ISO8601::PlainTime&, const ISO8601::PlainTime&);
+    static TemporalPlainDateTime* from(JSGlobalObject*, JSValue, std::optional<TemporalOverflow>);
+    static int32_t compare(TemporalPlainDateTime*, TemporalPlainDateTime*);
 
     TemporalCalendar* calendar() { return m_calendar.get(this); }
+    ISO8601::PlainDate plainDate() const { return m_plainDate; }
     ISO8601::PlainTime plainTime() const { return m_plainTime; }
+
+#define JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD(name, capitalizedName) \
+    unsigned name() const { return m_plainDate.name(); }
+    JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD);
+#undef JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_TIME_FIELD(name, capitalizedName) \
     unsigned name() const { return m_plainTime.name(); }
     JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_TIME_FIELD);
 #undef JSC_DEFINE_TEMPORAL_PLAIN_TIME_FIELD
 
-    ISO8601::PlainTime with(JSGlobalObject*, JSObject* temporalTimeLike, JSValue options) const;
-    ISO8601::PlainTime add(JSGlobalObject*, JSValue) const;
-    ISO8601::PlainTime subtract(JSGlobalObject*, JSValue) const;
-    ISO8601::PlainTime round(JSGlobalObject*, JSValue options) const;
+    String monthCode() const;
+    uint8_t dayOfWeek() const;
+    uint16_t dayOfYear() const;
+    uint8_t weekOfYear() const;
+
     String toString(JSGlobalObject*, JSValue options) const;
     String toString(std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const
     {
-        return ISO8601::temporalTimeToString(m_plainTime, precision);
+        return ISO8601::temporalDateTimeToString(m_plainDate, m_plainTime, precision);
     }
-
-    ISO8601::Duration until(JSGlobalObject*, TemporalPlainTime*, JSValue options) const;
-    ISO8601::Duration since(JSGlobalObject*, TemporalPlainTime*, JSValue options) const;
 
     DECLARE_VISIT_CHILDREN;
 
 private:
-    TemporalPlainTime(VM&, Structure*, ISO8601::PlainTime&&);
+    TemporalPlainDateTime(VM&, Structure*, ISO8601::PlainDate&&, ISO8601::PlainTime&&);
     void finishCreation(VM&);
 
-    template<typename CharacterType>
-    static std::optional<ISO8601::PlainTime> parse(StringParsingBuffer<CharacterType>&);
-    static ISO8601::PlainTime fromObject(JSGlobalObject*, JSObject*);
-
+    ISO8601::PlainDate m_plainDate;
     ISO8601::PlainTime m_plainTime;
-    LazyProperty<TemporalPlainTime, TemporalCalendar> m_calendar;
+    LazyProperty<TemporalPlainDateTime, TemporalCalendar> m_calendar;
 };
 
 } // namespace JSC

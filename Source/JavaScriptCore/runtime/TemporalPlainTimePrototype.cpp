@@ -117,7 +117,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncAdd, (JSGlobalObject* glo
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.add called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.add called on value that's not a PlainTime"_s);
 
     auto result = plainTime->add(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
@@ -133,7 +133,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncSubtract, (JSGlobalObject
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.subtract called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.subtract called on value that's not a PlainTime"_s);
 
     auto result = plainTime->subtract(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
@@ -149,7 +149,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncWith, (JSGlobalObject* gl
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.with called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.with called on value that's not a PlainTime"_s);
 
     JSValue temporalTimeLike  = callFrame->argument(0);
     if (!temporalTimeLike.isObject())
@@ -169,7 +169,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncUntil, (JSGlobalObject* g
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.until called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.until called on value that's not a PlainTime"_s);
 
     auto* other = TemporalPlainTime::from(globalObject, callFrame->argument(0), std::nullopt);
     RETURN_IF_EXCEPTION(scope, { });
@@ -188,7 +188,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncSince, (JSGlobalObject* g
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.since called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.since called on value that's not a PlainTime"_s);
 
     auto* other = TemporalPlainTime::from(globalObject, callFrame->argument(0), std::nullopt);
     RETURN_IF_EXCEPTION(scope, { });
@@ -207,7 +207,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncRound, (JSGlobalObject* g
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.round called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.round called on value that's not a PlainTime"_s);
 
     auto options = callFrame->argument(0);
     if (options.isUndefined())
@@ -227,7 +227,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncEquals, (JSGlobalObject* 
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.equals called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.equals called on value that's not a PlainTime"_s);
 
     auto* other = TemporalPlainTime::from(globalObject, callFrame->argument(0), std::nullopt);
     RETURN_IF_EXCEPTION(scope, { });
@@ -243,7 +243,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncGetISOFields, (JSGlobalOb
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.equals called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.equals called on value that's not a PlainTime"_s);
 
     JSObject* fields = constructEmptyObject(globalObject);
     fields->putDirect(vm, vm.propertyNames->calendar, plainTime->calendar());
@@ -264,7 +264,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncToString, (JSGlobalObject
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.toString called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.toString called on value that's not a PlainTime"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, plainTime->toString(globalObject, callFrame->argument(0)))));
 }
@@ -277,7 +277,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncToJSON, (JSGlobalObject* 
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.toJSON called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.toJSON called on value that's not a PlainTime"_s);
 
     return JSValue::encode(jsString(vm, plainTime->toString()));
 }
@@ -290,7 +290,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncToLocaleString, (JSGlobal
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.toLocaleString called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.toLocaleString called on value that's not a PlainTime"_s);
 
     return JSValue::encode(jsString(vm, plainTime->toString()));
 }
@@ -311,7 +311,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainTimePrototypeGetterHour, (JSGlobalObject* 
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(JSValue::decode(thisValue));
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.hour called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.hour called on value that's not a PlainTime"_s);
 
     return JSValue::encode(jsNumber(plainTime->hour()));
 }
@@ -323,7 +323,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainTimePrototypeGetterMinute, (JSGlobalObject
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(JSValue::decode(thisValue));
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.minute called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.minute called on value that's not a PlainTime"_s);
 
     return JSValue::encode(jsNumber(plainTime->minute()));
 }
@@ -335,7 +335,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainTimePrototypeGetterSecond, (JSGlobalObject
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(JSValue::decode(thisValue));
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.second called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.second called on value that's not a PlainTime"_s);
 
     return JSValue::encode(jsNumber(plainTime->second()));
 }
@@ -347,7 +347,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainTimePrototypeGetterMillisecond, (JSGlobalO
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(JSValue::decode(thisValue));
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.millisecond called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.millisecond called on value that's not a PlainTime"_s);
 
     return JSValue::encode(jsNumber(plainTime->millisecond()));
 }
@@ -359,7 +359,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainTimePrototypeGetterMicrosecond, (JSGlobalO
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(JSValue::decode(thisValue));
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.microsecond called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.microsecond called on value that's not a PlainTime"_s);
 
     return JSValue::encode(jsNumber(plainTime->microsecond()));
 }
@@ -371,7 +371,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainTimePrototypeGetterNanosecond, (JSGlobalOb
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(JSValue::decode(thisValue));
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.nanosecond called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.nanosecond called on value that's not a PlainTime"_s);
 
     return JSValue::encode(jsNumber(plainTime->nanosecond()));
 }
@@ -383,7 +383,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainTimePrototypeGetterCalendar, (JSGlobalObje
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(JSValue::decode(thisValue));
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.calendar called on value that's not a plainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.calendar called on value that's not a PlainTime"_s);
 
     return JSValue::encode(plainTime->calendar());
 }

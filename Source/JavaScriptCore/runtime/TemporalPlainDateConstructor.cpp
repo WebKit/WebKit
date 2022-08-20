@@ -159,7 +159,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateConstructorFuncCompare, (JSGlobalObjec
     auto* two = TemporalPlainDate::from(globalObject, callFrame->argument(1), std::nullopt);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return JSValue::encode(jsNumber(TemporalPlainDate::compare(one, two)));
+    return JSValue::encode(jsNumber(TemporalPlainDate::compare(one->plainDate(), two->plainDate())));
 }
 
 } // namespace JSC

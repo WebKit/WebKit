@@ -1272,6 +1272,11 @@ String temporalDateToString(PlainDate plainDate)
     return makeString(pad('0', 4, plainDate.year()), '-', pad('0', 2, plainDate.month()), '-', pad('0', 2, plainDate.day()));
 }
 
+String temporalDateTimeToString(PlainDate plainDate, PlainTime plainTime, std::tuple<Precision, unsigned> precision)
+{
+    return makeString(temporalDateToString(plainDate), 'T', temporalTimeToString(plainTime, precision));
+}
+
 String monthCode(uint32_t month)
 {
     return makeString('M', pad('0', 2, month));

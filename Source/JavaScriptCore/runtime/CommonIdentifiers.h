@@ -150,12 +150,15 @@
     macro(indices) \
     macro(inferredName) \
     macro(input) \
+    macro(isoDay) \
     macro(isoHour) \
     macro(isoMicrosecond) \
     macro(isoMillisecond) \
     macro(isoMinute) \
+    macro(isoMonth) \
     macro(isoNanosecond) \
     macro(isoSecond) \
+    macro(isoYear) \
     macro(instructionCount) \
     macro(isArray) \
     macro(isEnabled) \

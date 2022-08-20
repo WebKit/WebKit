@@ -1429,6 +1429,9 @@
 		A1D792FF1B43864B004516F5 /* IntlNumberFormatConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D792F91B43864B004516F5 /* IntlNumberFormatConstructor.h */; };
 		A1D793011B43864B004516F5 /* IntlNumberFormatPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D792FB1B43864B004516F5 /* IntlNumberFormatPrototype.h */; };
 		A321AA6D2626359B0023ADA2 /* IntlWorkaround.h in Headers */ = {isa = PBXBuildFile; fileRef = A321AA6C2626359B0023ADA2 /* IntlWorkaround.h */; };
+		A38120B728ADAD4B008064D5 /* TemporalPlainDateTimePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A38120B128ADAD4A008064D5 /* TemporalPlainDateTimePrototype.h */; };
+		A38120B828ADAD4B008064D5 /* TemporalPlainDateTimeConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A38120B228ADAD4A008064D5 /* TemporalPlainDateTimeConstructor.h */; };
+		A38120B928ADAD4B008064D5 /* TemporalPlainDateTime.h in Headers */ = {isa = PBXBuildFile; fileRef = A38120B328ADAD4B008064D5 /* TemporalPlainDateTime.h */; };
 		A382C5312667111D0042CD99 /* InByVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = E3305FB120B0F78800CEB82B /* InByVariant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A38CA59E26DD84DE00C8D84C /* ISO8601.h in Headers */ = {isa = PBXBuildFile; fileRef = A38CA59C26DD84DE00C8D84C /* ISO8601.h */; };
 		A38D250E25800D440042BFDD /* JSArrayBufferPrototypeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A38D250D25800D430042BFDD /* JSArrayBufferPrototypeInlines.h */; };
@@ -4665,6 +4668,12 @@
 		A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmContextInlines.h; sourceTree = "<group>"; };
 		A321AA6C2626359B0023ADA2 /* IntlWorkaround.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlWorkaround.h; sourceTree = "<group>"; };
 		A37619402625127C00CBCBA9 /* IntlWorkaround.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlWorkaround.cpp; sourceTree = "<group>"; };
+		A38120AE28ADAD4A008064D5 /* TemporalPlainDateTimeConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalPlainDateTimeConstructor.cpp; sourceTree = "<group>"; };
+		A38120AF28ADAD4A008064D5 /* TemporalPlainDateTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalPlainDateTime.cpp; sourceTree = "<group>"; };
+		A38120B028ADAD4A008064D5 /* TemporalPlainDateTimePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalPlainDateTimePrototype.cpp; sourceTree = "<group>"; };
+		A38120B128ADAD4A008064D5 /* TemporalPlainDateTimePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalPlainDateTimePrototype.h; sourceTree = "<group>"; };
+		A38120B228ADAD4A008064D5 /* TemporalPlainDateTimeConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalPlainDateTimeConstructor.h; sourceTree = "<group>"; };
+		A38120B328ADAD4B008064D5 /* TemporalPlainDateTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalPlainDateTime.h; sourceTree = "<group>"; };
 		A38CA59B26DD84DE00C8D84C /* ISO8601.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISO8601.cpp; sourceTree = "<group>"; };
 		A38CA59C26DD84DE00C8D84C /* ISO8601.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISO8601.h; sourceTree = "<group>"; };
 		A38D250D25800D430042BFDD /* JSArrayBufferPrototypeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayBufferPrototypeInlines.h; sourceTree = "<group>"; };
@@ -8328,6 +8337,12 @@
 				31770C4F27B94CE400308091 /* TemporalPlainDateConstructor.h */,
 				31770C5427B94CE500308091 /* TemporalPlainDatePrototype.cpp */,
 				31770C5127B94CE400308091 /* TemporalPlainDatePrototype.h */,
+				A38120AF28ADAD4A008064D5 /* TemporalPlainDateTime.cpp */,
+				A38120B328ADAD4B008064D5 /* TemporalPlainDateTime.h */,
+				A38120AE28ADAD4A008064D5 /* TemporalPlainDateTimeConstructor.cpp */,
+				A38120B228ADAD4A008064D5 /* TemporalPlainDateTimeConstructor.h */,
+				A38120B028ADAD4A008064D5 /* TemporalPlainDateTimePrototype.cpp */,
+				A38120B128ADAD4A008064D5 /* TemporalPlainDateTimePrototype.h */,
 				E386FD7726E867B700E4C28B /* TemporalPlainTime.cpp */,
 				E386FD7826E867B800E4C28B /* TemporalPlainTime.h */,
 				E386FD7426E867B700E4C28B /* TemporalPlainTimeConstructor.cpp */,
@@ -9938,6 +9953,7 @@
 				41DEA1321B9F3163006D65DD /* BuiltinUtils.h in Headers */,
 				9E72940B190F0514001A91B5 /* BundlePath.h in Headers */,
 				0FB7F39715ED8E4600F167B2 /* Butterfly.h in Headers */,
+				A38120B728ADAD4B008064D5 /* TemporalPlainDateTimePrototype.h in Headers */,
 				0FB7F39815ED8E4600F167B2 /* ButterflyInlines.h in Headers */,
 				C2FCAE1117A9C24E0034C735 /* BytecodeBasicBlock.h in Headers */,
 				1435952122A521CD00E8086D /* BytecodeCacheError.h in Headers */,
@@ -10347,6 +10363,7 @@
 				0FEA0A12170513DB00BB722C /* FTLState.h in Headers */,
 				A7FCC26D17A0B6AA00786D1A /* FTLSwitchCase.h in Headers */,
 				0F235BE217178E1C00690C7F /* FTLThunks.h in Headers */,
+				A38120B828ADAD4B008064D5 /* TemporalPlainDateTimeConstructor.h in Headers */,
 				0FEA0A201708B00700BB722C /* FTLTypedPointer.h in Headers */,
 				0FDB2CCA173DA523007B3C1B /* FTLValueFromBlock.h in Headers */,
 				0F5A6284188C98D40072C9DF /* FTLValueRange.h in Headers */,
@@ -11133,6 +11150,7 @@
 				0F766D3915AE4A1F008F363E /* StructureStubClearingWatchpoint.h in Headers */,
 				BCCF0D080EF0AAB900413C8F /* StructureStubInfo.h in Headers */,
 				BC9041480EB9250900FE26FA /* StructureTransitionTable.h in Headers */,
+				A38120B928ADAD4B008064D5 /* TemporalPlainDateTime.h in Headers */,
 				0F44767020C5E2B4008B2C36 /* StubInfoSummary.h in Headers */,
 				0F7DF1371E2970E10095951B /* Subspace.h in Headers */,
 				E39006212208BFC4001019CF /* SubspaceAccess.h in Headers */,

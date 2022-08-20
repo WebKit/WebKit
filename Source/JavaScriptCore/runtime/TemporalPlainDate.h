@@ -47,8 +47,10 @@ public:
 
     DECLARE_INFO;
 
+    static ISO8601::PlainDate toPlainDate(JSGlobalObject*, const ISO8601::Duration&);
+
     static TemporalPlainDate* from(JSGlobalObject*, JSValue, std::optional<TemporalOverflow>);
-    static int32_t compare(TemporalPlainDate*, TemporalPlainDate*);
+    static int32_t compare(const ISO8601::PlainDate&, const ISO8601::PlainDate&);
 
     TemporalCalendar* calendar() { return m_calendar.get(this); }
     ISO8601::PlainDate plainDate() const { return m_plainDate; }

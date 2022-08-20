@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2022 Apple Inc.
+ * Copyright (C) 2022 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +27,10 @@
 #include "config.h"
 #include "TemporalPlainDate.h"
 
-#include "AbstractSlotVisitor.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "LazyPropertyInlines.h"
-#include "TemporalDuration.h"
+#include "TemporalPlainDateTime.h"
 #include "VMTrapsInlines.h"
 
 namespace JSC {
@@ -84,7 +84,7 @@ void TemporalPlainDate::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 DEFINE_VISIT_CHILDREN(TemporalPlainDate);
 
 // https://tc39.es/proposal-temporal/#sec-temporal-isvalidisodate
-static ISO8601::PlainDate toPlainDate(JSGlobalObject* globalObject, ISO8601::Duration&& duration)
+ISO8601::PlainDate TemporalPlainDate::toPlainDate(JSGlobalObject* globalObject, const ISO8601::Duration& duration)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -131,7 +131,7 @@ TemporalPlainDate* TemporalPlainDate::tryCreateIfValid(JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto plainDate = toPlainDate(globalObject, WTFMove(duration));
+    auto plainDate = toPlainDate(globalObject, duration);
     RETURN_IF_EXCEPTION(scope, { });
 
     return TemporalPlainDate::create(vm, structure, WTFMove(plainDate));
@@ -162,6 +162,12 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
     if (itemValue.isObject()) {
         if (itemValue.inherits<TemporalPlainDate>())
             return jsCast<TemporalPlainDate*>(itemValue);
+
+        if (itemValue.inherits<TemporalPlainDateTime>()) {
+            ISO8601::PlainDate plainDate { jsCast<TemporalPlainDateTime*>(itemValue)->plainDate() };
+            return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(plainDate));
+        }
+
         throwRangeError(globalObject, scope, "unimplemented: from object"_s);
         return { };
     }
@@ -183,11 +189,9 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
     return { };
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-comparetemporaldate
-int32_t TemporalPlainDate::compare(TemporalPlainDate* plainDate1, TemporalPlainDate* plainDate2)
+// https://tc39.es/proposal-temporal/#sec-temporal-compareisodate
+int32_t TemporalPlainDate::compare(const ISO8601::PlainDate& d1, const ISO8601::PlainDate& d2)
 {
-    ISO8601::PlainDate d1 = plainDate1->plainDate();
-    ISO8601::PlainDate d2 = plainDate2->plainDate();
     if (d1.year() > d2.year())
         return 1;
     if (d1.year() < d2.year())

@@ -111,6 +111,7 @@
 #include "TemporalDuration.h"
 #include "TemporalInstant.h"
 #include "TemporalPlainDate.h"
+#include "TemporalPlainDateTime.h"
 #include "TemporalPlainTime.h"
 #include "TemporalTimeZone.h"
 #include "UnlinkedFunctionCodeBlock.h"

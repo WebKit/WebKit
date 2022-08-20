@@ -844,8 +844,8 @@ test/built-ins/Temporal/Duration/compare/options-wrong-type.js:
   default: 'Test262Error: TypeError on wrong options type object Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: TypeError on wrong options type object Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/compare/relativeto-hour.js:
-  default: 'TypeError: Right side of assignment cannot be destructured'
-  strict mode: 'TypeError: Right side of assignment cannot be destructured'
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
 test/built-ins/Temporal/Duration/compare/relativeto-month.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
@@ -871,8 +871,8 @@ test/built-ins/Temporal/Duration/compare/timezone-wrong-type.js:
   default: 'Test262Error: null does not convert to a valid ISO string Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: null does not convert to a valid ISO string Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/compare/twenty-five-hour-day.js:
-  default: 'TypeError: Right side of assignment cannot be destructured'
-  strict mode: 'TypeError: Right side of assignment cannot be destructured'
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(941187600_000_000_000n, tz)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(941187600_000_000_000n, tz)')"
 test/built-ins/Temporal/Duration/prototype/add/calendar-dateadd-called-with-plaindate-instance.js:
   default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
@@ -982,8 +982,8 @@ test/built-ins/Temporal/Duration/prototype/round/throws-in-balance-duration-when
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz, \"iso8601\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz, \"iso8601\")')"
 test/built-ins/Temporal/Duration/prototype/round/throws-in-unbalance-duration-relative-when-sign-mismatched.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(1970, 1, 1, 0, 0, 0, 0, 0, 0, cal)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(1970, 1, 1, 0, 0, 0, 0, 0, 0, cal)')"
+  default: 'Test262Error: Expected SameValue(«iso8601», «iso8601») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«iso8601», «iso8601») to be true'
 test/built-ins/Temporal/Duration/prototype/round/timezone-string-leap-second.js:
   default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
@@ -1125,9 +1125,6 @@ test/built-ins/Temporal/Instant/prototype/toString/timezone-string-multiple-offs
 test/built-ins/Temporal/PlainTime/compare/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/PlainTime/from/argument-plaindatetime.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321, calendar)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321, calendar)')"
 test/built-ins/Temporal/PlainTime/from/argument-string-with-calendar.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
@@ -1144,8 +1141,8 @@ test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-timezon
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
 test/built-ins/Temporal/getOwnPropertyNames.js:
-  default: 'Test262Error: PlainDateTime'
-  strict mode: 'Test262Error: PlainDateTime'
+  default: 'Test262Error: ZonedDateTime'
+  strict mode: 'Test262Error: ZonedDateTime'
 test/harness/temporalHelpers-one-shift-time-zone.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 3, 28, 1)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 3, 28, 1)')"

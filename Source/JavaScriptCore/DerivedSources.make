@@ -213,6 +213,8 @@ OBJECT_LUT_HEADERS = \
     TemporalObject.lut.h \
     TemporalPlainDateConstructor.lut.h \
     TemporalPlainDatePrototype.lut.h \
+    TemporalPlainDateTimeConstructor.lut.h \
+    TemporalPlainDateTimePrototype.lut.h \
     TemporalPlainTimeConstructor.lut.h \
     TemporalPlainTimePrototype.lut.h \
     TemporalTimeZoneConstructor.lut.h \

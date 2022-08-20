@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Apple Inc.
+ * Copyright (C) 2022 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +27,11 @@
 #include "config.h"
 #include "TemporalPlainTime.h"
 
-#include "AbstractSlotVisitor.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "LazyPropertyInlines.h"
 #include "TemporalDuration.h"
+#include "TemporalPlainDateTime.h"
 #include "VMTrapsInlines.h"
 
 namespace JSC {
@@ -84,7 +85,7 @@ void TemporalPlainTime::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 DEFINE_VISIT_CHILDREN(TemporalPlainTime);
 
 // https://tc39.es/proposal-temporal/#sec-temporal-isvalidtime
-static ISO8601::PlainTime toPlainTime(JSGlobalObject* globalObject, ISO8601::Duration&& duration)
+ISO8601::PlainTime TemporalPlainTime::toPlainTime(JSGlobalObject* globalObject, const ISO8601::Duration& duration)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -136,7 +137,7 @@ TemporalPlainTime* TemporalPlainTime::tryCreateIfValid(JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto plainTime = toPlainTime(globalObject, WTFMove(duration));
+    auto plainTime = toPlainTime(globalObject, duration);
     RETURN_IF_EXCEPTION(scope, { });
 
     return TemporalPlainTime::create(vm, structure, WTFMove(plainTime));
@@ -173,7 +174,7 @@ static ISO8601::Duration balanceTime(double hour, double minute, double second, 
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-roundtime
-static ISO8601::Duration roundTime(ISO8601::PlainTime plainTime, double increment, TemporalUnit unit, RoundingMode roundingMode, std::optional<double> dayLengthNs)
+ISO8601::Duration TemporalPlainTime::roundTime(ISO8601::PlainTime plainTime, double increment, TemporalUnit unit, RoundingMode roundingMode, std::optional<double> dayLengthNs)
 {
     auto fractionalSecond = [](ISO8601::PlainTime plainTime) -> double {
         return plainTime.second() + plainTime.millisecond() * 1e-3 + plainTime.microsecond() * 1e-6 + plainTime.nanosecond() * 1e-9;
@@ -266,7 +267,7 @@ ISO8601::PlainTime TemporalPlainTime::round(JSGlobalObject* globalObject, JSValu
     RETURN_IF_EXCEPTION(scope, { });
 
     auto duration = roundTime(m_plainTime, increment, smallestUnit, roundingMode, std::nullopt);
-    RELEASE_AND_RETURN(scope, toPlainTime(globalObject, WTFMove(duration)));
+    RELEASE_AND_RETURN(scope, toPlainTime(globalObject, duration));
 }
 
 String TemporalPlainTime::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
@@ -291,7 +292,7 @@ String TemporalPlainTime::toString(JSGlobalObject* globalObject, JSValue options
         return toString();
 
     auto duration = roundTime(m_plainTime, data.increment, data.unit, roundingMode, std::nullopt);
-    auto plainTime = toPlainTime(globalObject, WTFMove(duration));
+    auto plainTime = toPlainTime(globalObject, duration);
     RETURN_IF_EXCEPTION(scope, { });
 
     return ISO8601::temporalTimeToString(plainTime, data.precision);
@@ -386,7 +387,7 @@ static ISO8601::PlainTime regulateTime(JSGlobalObject* globalObject, ISO8601::Du
     case TemporalOverflow::Constrain:
         return constrainTime(WTFMove(duration));
     case TemporalOverflow::Reject:
-        return toPlainTime(globalObject, WTFMove(duration));
+        return TemporalPlainTime::toPlainTime(globalObject, duration);
     }
     return { };
 }
@@ -422,6 +423,12 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
     if (itemValue.isObject()) {
         if (itemValue.inherits<TemporalPlainTime>())
             return jsCast<TemporalPlainTime*>(itemValue);
+
+        if (itemValue.inherits<TemporalPlainDateTime>()) {
+            ISO8601::PlainTime plainTime { jsCast<TemporalPlainDateTime*>(itemValue)->plainTime() };
+            return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(plainTime));
+        }
+
         JSObject* calendar = getTemporalCalendarWithISODefault(globalObject, itemValue);
         RETURN_IF_EXCEPTION(scope, { });
         JSString* calendarString = calendar->toString(globalObject);
@@ -468,10 +475,8 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-comparetemporaltime
-int32_t TemporalPlainTime::compare(TemporalPlainTime* plainTime1, TemporalPlainTime* plainTime2)
+int32_t TemporalPlainTime::compare(const ISO8601::PlainTime& t1, const ISO8601::PlainTime& t2)
 {
-    ISO8601::PlainTime t1 = plainTime1->plainTime();
-    ISO8601::PlainTime t2 = plainTime2->plainTime();
     if (t1.hour() > t2.hour())
         return 1;
     if (t1.hour() < t2.hour())
