@@ -51,6 +51,8 @@
 #include "NotImplemented.h"
 #include "SVGElementInlines.h"
 #include "Text.h"
+#include <unicode/ubrk.h>
+#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 
@@ -579,6 +581,35 @@ void HTMLConstructionSite::insertForeignElement(AtomHTMLToken&& token, const Ato
         m_openElements.push(HTMLStackItem(WTFMove(element), WTFMove(token), namespaceURI));
 }
 
+static NEVER_INLINE unsigned findBreakIndexSlow(const String& string, unsigned currentPosition, unsigned proposedBreakIndex)
+{
+    unsigned stringLength = string.length();
+    // Check that we are not on an unbreakable boundary.
+    // Some text break iterator implementations work best if the passed buffer is as small as possible,
+    // see <https://bugs.webkit.org/show_bug.cgi?id=29092>.
+    // We need at least two characters look-ahead to account for UTF-16 surrogates.
+    unsigned breakSearchLength = std::min(proposedBreakIndex - currentPosition + 2, stringLength - currentPosition);
+    NonSharedCharacterBreakIterator it(StringView(string.characters16(), stringLength).substring(currentPosition, breakSearchLength));
+
+    unsigned stringLengthLimit = proposedBreakIndex - currentPosition;
+    if (ubrk_isBoundary(it, stringLengthLimit))
+        return proposedBreakIndex;
+
+    unsigned breakIndexInSubstring = ubrk_preceding(it, stringLengthLimit);
+    return currentPosition + breakIndexInSubstring;
+}
+
+static ALWAYS_INLINE unsigned findBreakIndex(const String& string, unsigned currentPosition, unsigned proposedBreakIndex)
+{
+    ASSERT(currentPosition < proposedBreakIndex);
+    ASSERT(proposedBreakIndex <= string.length());
+
+    if (LIKELY(proposedBreakIndex == string.length() || string.is8Bit()))
+        return proposedBreakIndex;
+
+    return findBreakIndexSlow(string, currentPosition, proposedBreakIndex);
+}
+
 void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMode whitespaceMode)
 {
     HTMLConstructionSiteTask task(HTMLConstructionSiteTask::Insert);
@@ -594,21 +625,25 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
     // for performance, see <https://bugs.webkit.org/show_bug.cgi?id=55898>.
 
     RefPtr<Node> previousChild = task.nextChild ? task.nextChild->previousSibling() : task.parent->lastChild();
-    if (is<Text>(previousChild)) {
-        // FIXME: We're only supposed to append to this text node if it
-        // was the last text node inserted by the parser.
-        currentPosition = downcast<Text>(*previousChild).parserAppendData(characters, 0, lengthLimit);
+    if (auto* previousTextChild = dynamicDowncast<Text>(previousChild.get()); previousTextChild && previousTextChild->length() < lengthLimit) {
+        // FIXME: We're only supposed to append to this text node if it was the last text node inserted by the parser.
+        unsigned proposedBreakIndex = std::min(characters.length(), lengthLimit - previousTextChild->length());
+        if (unsigned breakIndex = findBreakIndex(characters, 0, proposedBreakIndex)) {
+            previousTextChild->parserAppendData(StringView(characters).left(breakIndex));
+            currentPosition = breakIndex;
+        }
     }
 
     while (currentPosition < characters.length()) {
-        AtomString charactersAtom = m_whitespaceCache.lookup(characters, whitespaceMode);
-        auto textNode = Text::createWithLengthLimit(task.parent->document(), charactersAtom.isNull() ? characters : charactersAtom.string(), currentPosition, lengthLimit);
-        // If we have a whole string of unbreakable characters the above could lead to an infinite loop. Exceeding the length limit is the lesser evil.
-        if (!textNode->length()) {
-            String substring = characters.substring(currentPosition);
-            AtomString substringAtom = m_whitespaceCache.lookup(substring, whitespaceMode);
-            textNode = Text::create(task.parent->document(), substringAtom.isNull() ? WTFMove(substring) : substringAtom.releaseString());
-        }
+        unsigned proposedBreakIndex = std::min(currentPosition + lengthLimit, characters.length());
+        unsigned breakIndex = findBreakIndex(characters, currentPosition, proposedBreakIndex);
+        // If we couldn't find a break index (due to unbreakable characters), then we just don't split.
+        if (UNLIKELY(breakIndex == currentPosition))
+            breakIndex = characters.length();
+
+        auto substring = characters.substring(currentPosition, breakIndex - currentPosition);
+        AtomString substringAtom = m_whitespaceCache.lookup(substring, whitespaceMode);
+        auto textNode = Text::create(task.parent->document(), substringAtom.isNull() ? WTFMove(substring) : substringAtom.releaseString());
 
         currentPosition += textNode->length();
         ASSERT(currentPosition <= characters.length());
