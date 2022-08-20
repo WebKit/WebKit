@@ -2220,7 +2220,7 @@ webkit.org/b/230862 [ BigSur ] imported/w3c/web-platform-tests/resource-timing/s
 
 webkit.org/b/230984 [ BigSur Debug arm64 ] streams/readableStream-then.html [ Pass Crash ]
 
-webkit.org/b/231757 [ BigSur ] inspector/canvas/updateShader-webgl.html [ Pass Failure ]
+webkit.org/b/244159 inspector/canvas/updateShader-webgl.html [ Pass Failure ]
 
 webkit.org/b/237840 [ Monterey ] webgl/2.0.0/conformance2/glsl3/bool-type-cast-bug-uint-ivec-uvec.html [ Pass Crash ]
 
