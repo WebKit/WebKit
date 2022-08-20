@@ -3894,18 +3894,6 @@ unsigned Element::rareDataChildIndex() const
     return elementRareData()->childIndex();
 }
 
-AtomString Element::computeInheritedLanguage() const
-{
-    // The language property is inherited, so we iterate over the parents to find the first language.
-    for (auto* element = this; element; element = element->parentOrShadowHostElement()) {
-        if (auto* elementData = element->elementData()) {
-            if (auto* attribute = elementData->findLanguageAttribute())
-                return attribute->value();
-        }
-    }
-    return document().contentLanguage();
-}
-
 AtomString Element::effectiveLang() const
 {
     if (hasRareData()) {
@@ -3918,7 +3906,7 @@ AtomString Element::effectiveLang() const
 
 Locale& Element::locale() const
 {
-    return document().getCachedLocale(computeInheritedLanguage());
+    return document().getCachedLocale(effectiveLang());
 }
 
 void Element::normalizeAttributes()
