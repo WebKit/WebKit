@@ -50,6 +50,7 @@ public:
     const_iterator find(const ValueType& value) const { return m_impl.find(value); }
     bool contains(const ValueType& value) const { return m_impl.contains(value); }
 
+    bool isEmptyIgnoringNullReferences() const { return m_impl.isEmptyIgnoringNullReferences(); }
     unsigned computeSize() const { return m_impl.computeSize(); }
 
     // Increments the count if an equal value is already present.

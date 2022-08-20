@@ -303,10 +303,13 @@ public:
 
     bool isEmptyIgnoringNullReferences() const
     {
-        auto result = begin() == end();
-        if (UNLIKELY(result && m_map.size()))
+        if (m_map.isEmpty())
+            return true;
+
+        auto onlyContainsNullReferences = begin() == end();
+        if (UNLIKELY(onlyContainsNullReferences))
             const_cast<WeakHashMap&>(*this).clear();
-        return result;
+        return onlyContainsNullReferences;
     }
 
     bool hasNullReferences() const
