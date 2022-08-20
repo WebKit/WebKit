@@ -38,6 +38,7 @@
 #include "GraphicsLayer.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
+#include "Logging.h"
 #include "Node.h"
 #include "Page.h"
 #include "RenderBoxModelObject.h"
