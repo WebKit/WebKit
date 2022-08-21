@@ -38,11 +38,6 @@
 
 namespace JSC {
 
-static inline JSRunLoopTimer::Manager::EpochTime epochTime(Seconds delay)
-{
-    return MonotonicTime::now().secondsSinceEpoch() + delay;
-}
-
 JSRunLoopTimer::Manager::PerVMData::PerVMData(Manager& manager, RunLoop& runLoop)
     : runLoop(runLoop)
     , timer(makeUnique<RunLoop::Timer<Manager>>(runLoop, &manager, &JSRunLoopTimer::Manager::timerDidFireCallback))
@@ -73,32 +68,37 @@ void JSRunLoopTimer::Manager::timerDidFire()
 
     {
         Locker locker { m_lock };
-        RunLoop* currentRunLoop = &RunLoop::current();
-        EpochTime nowEpochTime = epochTime(0_s);
-        for (auto& entry : m_mapping) {
-            PerVMData& data = *entry.value;
-            if (data.runLoop.ptr() != currentRunLoop)
-                continue;
-            
-            EpochTime scheduleTime = epochTime(s_decade);
-            for (size_t i = 0; i < data.timers.size(); ++i) {
-                {
-                    auto& pair = data.timers[i];
-                    if (pair.second > nowEpochTime) {
-                        scheduleTime = std::min(pair.second, scheduleTime);
-                        continue;
+        if (!m_mapping.isEmpty()) {
+            RunLoop* currentRunLoop = &RunLoop::current();
+            MonotonicTime now = MonotonicTime::now();
+            for (auto& entry : m_mapping) {
+                PerVMData& data = *entry.value;
+                if (data.runLoop.ptr() != currentRunLoop)
+                    continue;
+
+                Seconds interval = s_decade;
+                if (!data.timers.isEmpty()) {
+                    MonotonicTime scheduleTime = now + s_decade;
+                    for (size_t i = 0; i < data.timers.size(); ++i) {
+                        {
+                            auto& pair = data.timers[i];
+                            if (pair.second > now) {
+                                scheduleTime = std::min(pair.second, scheduleTime);
+                                continue;
+                            }
+                            auto& last = data.timers.last();
+                            if (&last != &pair)
+                                std::swap(pair, last);
+                            --i;
+                        }
+
+                        auto pair = data.timers.takeLast();
+                        timersToFire.append(WTFMove(pair.first));
                     }
-                    auto& last = data.timers.last();
-                    if (&last != &pair)
-                        std::swap(pair, last);
-                    --i;
+                    interval = std::max(0_s, scheduleTime - now);
                 }
-
-                auto pair = data.timers.takeLast();
-                timersToFire.append(WTFMove(pair.first));
+                data.timer->startOneShot(interval);
             }
-
-            data.timer->startOneShot(std::max(0_s, scheduleTime - MonotonicTime::now().secondsSinceEpoch()));
         }
     }
 
@@ -136,14 +136,15 @@ void JSRunLoopTimer::Manager::unregisterVM(VM& vm)
 
 void JSRunLoopTimer::Manager::scheduleTimer(JSRunLoopTimer& timer, Seconds delay)
 {
-    EpochTime fireEpochTime = epochTime(delay);
+    MonotonicTime now = MonotonicTime::now();
+    MonotonicTime fireEpochTime = now + delay;
 
     Locker locker { m_lock };
     auto iter = m_mapping.find(timer.m_apiLock);
     RELEASE_ASSERT(iter != m_mapping.end()); // We don't allow calling this after the VM dies.
 
     PerVMData& data = *iter->value;
-    EpochTime scheduleTime = fireEpochTime;
+    MonotonicTime scheduleTime = fireEpochTime;
     bool found = false;
     for (auto& entry : data.timers) {
         if (entry.first.ptr() == &timer) {
@@ -156,7 +157,7 @@ void JSRunLoopTimer::Manager::scheduleTimer(JSRunLoopTimer& timer, Seconds delay
     if (!found)
         data.timers.append({ timer, fireEpochTime });
 
-    data.timer->startOneShot(std::max(0_s, scheduleTime - MonotonicTime::now().secondsSinceEpoch()));
+    data.timer->startOneShot(std::max(0_s, scheduleTime - now));
 }
 
 void JSRunLoopTimer::Manager::cancelTimer(JSRunLoopTimer& timer)
@@ -169,25 +170,29 @@ void JSRunLoopTimer::Manager::cancelTimer(JSRunLoopTimer& timer)
     }
 
     PerVMData& data = *iter->value;
-    EpochTime scheduleTime = epochTime(s_decade);
-    for (unsigned i = 0; i < data.timers.size(); ++i) {
-        {
-            auto& entry = data.timers[i];
-            if (entry.first.ptr() == &timer) {
-                RELEASE_ASSERT(timer.refCount() >= 2); // If we remove it from the entry below, we should not be the last thing pointing to it!
-                auto& last = data.timers.last();
-                if (&last != &entry)
-                    std::swap(entry, last);
-                data.timers.removeLast();
-                i--;
-                continue;
+    Seconds interval = s_decade;
+    if (!data.timers.isEmpty()) {
+        MonotonicTime now = MonotonicTime::now();
+        MonotonicTime scheduleTime = now + s_decade;
+        for (unsigned i = 0; i < data.timers.size(); ++i) {
+            {
+                auto& entry = data.timers[i];
+                if (entry.first.ptr() == &timer) {
+                    RELEASE_ASSERT(timer.refCount() >= 2); // If we remove it from the entry below, we should not be the last thing pointing to it!
+                    auto& last = data.timers.last();
+                    if (&last != &entry)
+                        std::swap(entry, last);
+                    data.timers.removeLast();
+                    i--;
+                    continue;
+                }
             }
+
+            scheduleTime = std::min(scheduleTime, data.timers[i].second);
         }
-
-        scheduleTime = std::min(scheduleTime, data.timers[i].second);
+        interval = std::max(0_s, scheduleTime - now);
     }
-
-    data.timer->startOneShot(std::max(0_s, scheduleTime - MonotonicTime::now().secondsSinceEpoch()));
+    data.timer->startOneShot(interval);
 }
 
 std::optional<Seconds> JSRunLoopTimer::Manager::timeUntilFire(JSRunLoopTimer& timer)
@@ -198,10 +203,8 @@ std::optional<Seconds> JSRunLoopTimer::Manager::timeUntilFire(JSRunLoopTimer& ti
 
     PerVMData& data = *iter->value;
     for (auto& entry : data.timers) {
-        if (entry.first.ptr() == &timer) {
-            EpochTime nowEpochTime = epochTime(0_s);
-            return entry.second - nowEpochTime;
-        }
+        if (entry.first.ptr() == &timer)
+            return entry.second - MonotonicTime::now();
     }
 
     return std::nullopt;

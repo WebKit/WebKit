@@ -53,8 +53,6 @@ public:
         void timerDidFire();
 
     public:
-        using EpochTime = Seconds;
-
         static Manager& shared();
         void registerVM(VM&);
         void unregisterVM(VM&);
@@ -75,7 +73,7 @@ public:
 
             Ref<WTF::RunLoop> runLoop;
             std::unique_ptr<RunLoop::Timer<Manager>> timer;
-            Vector<std::pair<Ref<JSRunLoopTimer>, EpochTime>> timers;
+            Vector<std::pair<Ref<JSRunLoopTimer>, MonotonicTime>> timers;
         };
 
         HashMap<Ref<JSLock>, std::unique_ptr<PerVMData>> m_mapping;
