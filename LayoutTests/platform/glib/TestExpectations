@@ -453,6 +453,9 @@ accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 accessibility/dialog-properties.html [ Skip ]
 accessibility/ignored-aria-role-description.html [ Skip ]
 
+# Failing since added in https://bugs.webkit.org/show_bug.cgi?id=244151.
+accessibility/ignored-textfield-still-accessible.html [ Skip ]
+
 webkit.org/b/229261 accessibility/element-line-rects-and-text.html [ Missing ]
 
 webkit.org/b/232249 accessibility/video-element-url-attribute.html [ Failure ]

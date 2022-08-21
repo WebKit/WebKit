@@ -526,6 +526,9 @@ accessibility/aria-required-updates-after-dynamic-change.html [ Skip ]
 # Missing AccessibilityUIElement::{isBusy, isAtomicLiveRegion, liveRegionStatus, liveRegionRelevant} implementations.
 accessibility/live-region-attributes-update-after-dynamic-change.html [ Skip ]
 
+# Failing since added in https://bugs.webkit.org/show_bug.cgi?id=244151.
+accessibility/ignored-textfield-still-accessible.html [ Skip ]
+
 # TODO Conic gradients
 http/wpt/css/css-images-4/conic-gradient-parsing.html [ Skip ]
 fast/gradients/conic-repeating.html [ Skip ]
