@@ -227,7 +227,7 @@ String BaseDateAndTimeInputType::visibleValue() const
 
 String BaseDateAndTimeInputType::sanitizeValue(const String& proposedValue) const
 {
-    return typeMismatchFor(proposedValue) ? String() : proposedValue;
+    return typeMismatchFor(proposedValue) ? emptyString() : proposedValue;
 }
 
 bool BaseDateAndTimeInputType::supportsReadOnly() const
