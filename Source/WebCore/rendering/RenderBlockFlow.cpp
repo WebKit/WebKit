@@ -3571,6 +3571,9 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         if (!renderer.needsLayout() && !needsUpdateReplacedDimensions)
             continue;
 
+        if (renderer.isOutOfFlowPositioned())
+            renderer.containingBlock()->insertPositionedObject(downcast<RenderBox>(renderer));
+
         if (is<RenderReplaced>(renderer)) {
             auto& replaced = downcast<RenderReplaced>(renderer);
             replaced.layoutIfNeeded();

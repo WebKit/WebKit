@@ -55,6 +55,7 @@
 #include "RenderDescendantIterator.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
+#include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"
 #include "RenderListItem.h"
@@ -407,7 +408,14 @@ void LineLayout::constructContent()
             continue;
 
         auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);
-        renderer.setLocation(Layout::BoxGeometry::borderBoxTopLeft(m_inlineFormattingState.boxGeometry(layoutBox)));
+        auto topLeft = Layout::BoxGeometry::borderBoxTopLeft(m_inlineFormattingState.boxGeometry(layoutBox));
+        if (layoutBox.isOutOfFlowPositioned()) {
+            auto& layer = *renderer.layer();
+            layer.setStaticBlockPosition(topLeft.y());
+            layer.setStaticInlinePosition(topLeft.x());
+            continue;
+        }
+        renderer.setLocation(topLeft);
     }
 
     m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();

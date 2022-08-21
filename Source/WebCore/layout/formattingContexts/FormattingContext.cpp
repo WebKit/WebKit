@@ -171,6 +171,12 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
     UNUSED_PARAM(escapeReason);
 #if ASSERT_ENABLED
     auto isOkToAccessBoxGeometry = [&] {
+        if (layoutBox.isOutOfFlowPositioned() && isInlineFormattingContext()) {
+            // This is the non-escape case of accessing a box's geometry information within the same formatting context when
+            // computing static position for out-of-flow boxes.
+            return true;
+        }
+
         if (!is<InitialContainingBlock>(layoutBox) && &layoutBox.formattingContextRoot() == &root()) {
             // This is the non-escape case of accessing a box's geometry information within the same formatting context.
             return true;

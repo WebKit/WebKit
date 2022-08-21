@@ -51,6 +51,7 @@ public:
     bool inlineLevelBoxAffectsLineBox(const InlineLevelBox&, const LineBox&) const;
 
     static InlineRect flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode);
+    static std::tuple<const InlineDisplay::Box*, const InlineDisplay::Box*> previousAndNextDisplayBoxForStaticPosition(const Box& outOfFlowBox, const DisplayBoxes&);
 
 private:
     const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingGeometry::formattingContext()); }

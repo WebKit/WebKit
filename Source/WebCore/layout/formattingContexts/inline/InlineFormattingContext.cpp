@@ -277,88 +277,35 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
     auto& boxes = formattingState.boxes();
 
     for (auto& outOfFlowBox : outOfFlowBoxes) {
-        auto& outOfFlowGeometry = formattingState.boxGeometry(outOfFlowBox);
-        // Both previous float and out-of-flow boxes are skipped here. A series of adjoining out-of-flow boxes should all be placed
-        // at the same static position (they don't affect next-sibling positions) and while floats do participate in the inline layout
-        // their positions have already been taken into account during the inline layout.
-        auto previousContentSkippingFloats = [&]() -> const Layout::Box* {
-            auto* previousSibling = outOfFlowBox->previousSibling();
-            for (; previousSibling && previousSibling->isFloatingPositioned(); previousSibling = previousSibling->previousSibling()) { }
-            if (previousSibling)
-                return previousSibling;
-            // Parent is either the root here or another inline box (e.g. <span><img style="position: absolute"></span>)
-            auto& parent = outOfFlowBox->parent();
-            return &parent == &root() ? nullptr : &parent;
-        }();
+        auto topLeft = LayoutPoint { };
+        auto [previousDisplayBox, nextDisplayBox] = InlineFormattingGeometry::previousAndNextDisplayBoxForStaticPosition(outOfFlowBox, boxes);
 
-        if (!previousContentSkippingFloats) {
-            // This is the first (non-float)child. Let's place it to the left of the first box.
-            // <div><img style="position: absolute">text content</div>
-            ASSERT(boxes.size());
-            outOfFlowGeometry.setLogicalTopLeft({ boxes[0].left(), lines[0].top() });
-            continue;
+        if (previousDisplayBox && nextDisplayBox) {
+            if (previousDisplayBox->isInlineBox()) {
+                // Special handling for cases when the previous content is an inline box:
+                // <div>text<span><img style="position: absolute">content</span></div>
+                // or
+                // <div>text<span>content</span><img style="position: absolute"></div>
+                auto isFirstContentInsideInlineBox = &outOfFlowBox->parent() == &previousDisplayBox->layoutBox();
+                auto& inlineBoxBoxGeometry = geometryForBox(previousDisplayBox->layoutBox());
+
+                topLeft = {
+                    isFirstContentInsideInlineBox ? BoxGeometry::borderBoxLeft(inlineBoxBoxGeometry) + inlineBoxBoxGeometry.contentBoxLeft() : BoxGeometry::marginBoxRect(inlineBoxBoxGeometry).right(),
+                    lines[previousDisplayBox->lineIndex()].top()
+                };
+            } else {
+                auto& currentLine = lines[previousDisplayBox->lineIndex()];
+                auto shouldFitLine = previousDisplayBox->lineIndex() == nextDisplayBox->lineIndex() || (previousDisplayBox->right() <= currentLine.left() && !previousDisplayBox->isLineBreakBox());
+                topLeft = shouldFitLine ? LayoutPoint { previousDisplayBox->right(), currentLine.top() } : LayoutPoint { nextDisplayBox->left(), lines[nextDisplayBox->lineIndex()].top() };
+            }
+        } else if (!previousDisplayBox)
+            topLeft = { boxes[0].left(), lines[0].top() };
+        else {
+            auto& currentLine = lines[previousDisplayBox->lineIndex()];
+            auto shouldFitLine = previousDisplayBox->right() <= currentLine.right() && !previousDisplayBox->isLineBreakBox();
+            topLeft = shouldFitLine ? LayoutPoint { previousDisplayBox->right(), currentLine.top() } : LayoutPoint { currentLine.left(), currentLine.bottom() };
         }
-
-        if (previousContentSkippingFloats->isOutOfFlowPositioned()) {
-            // Subsequent out-of-flow positioned boxes share the same static position.
-            // <div>text content<img style="position: absolute"><img style="position: absolute"></div>
-            outOfFlowGeometry.setLogicalTopLeft(BoxGeometry::borderBoxTopLeft(geometryForBox(*previousContentSkippingFloats)));
-            continue;
-        }
-
-        ASSERT(previousContentSkippingFloats->isInFlow());
-        auto placeOutOfFlowBoxAfterPreviousInFlowBox = [&] {
-            // The out-of-flow box should be placed after this inflow box.
-            // Skip to the last box of this layout box. The last box's geometry is used to compute the out-of-flow box's static position.
-            size_t lastBoxIndexOnPreviousLayoutBox = 0;
-            for (; lastBoxIndexOnPreviousLayoutBox < boxes.size() && &boxes[lastBoxIndexOnPreviousLayoutBox].layoutBox() != previousContentSkippingFloats; ++lastBoxIndexOnPreviousLayoutBox) { }
-            if (lastBoxIndexOnPreviousLayoutBox == boxes.size()) {
-                // FIXME: In very rare cases, the previous box's content might have been completely collapsed and left us with no box.
-                ASSERT_NOT_IMPLEMENTED_YET();
-                return;
-            }
-            for (; lastBoxIndexOnPreviousLayoutBox < boxes.size() && &boxes[lastBoxIndexOnPreviousLayoutBox].layoutBox() == previousContentSkippingFloats; ++lastBoxIndexOnPreviousLayoutBox) { }
-                --lastBoxIndexOnPreviousLayoutBox;
-            // Let's check if the previous box is the last box on the current line and use the next box's left instead.
-            auto& previousBox = boxes[lastBoxIndexOnPreviousLayoutBox];
-            auto* nextBox = lastBoxIndexOnPreviousLayoutBox + 1 < boxes.size() ? &boxes[lastBoxIndexOnPreviousLayoutBox + 1] : nullptr;
-
-            if (nextBox && nextBox->lineIndex() == previousBox.lineIndex()) {
-                // Previous and next boxes are on the same line. The out-of-flow box is right at the previous box's logical right.
-                // <div>text<img style="position: absolute">content</div>
-                auto left = previousBox.right();
-                if (previousContentSkippingFloats->isInlineBox() && !previousContentSkippingFloats->isAnonymous()) {
-                    // <div>text<span><img style="position: absolute">content</span></div>
-                    // or
-                    // <div>text<span>content</span><img style="position: absolute"></div>
-                    auto& inlineBoxBoxGeometry = geometryForBox(*previousContentSkippingFloats);
-                    left = previousContentSkippingFloats == &outOfFlowBox->parent()
-                        ? BoxGeometry::borderBoxLeft(inlineBoxBoxGeometry) + inlineBoxBoxGeometry.contentBoxLeft()
-                        : BoxGeometry::borderBoxRect(inlineBoxBoxGeometry).right();
-                }
-                outOfFlowGeometry.setLogicalTopLeft({ left, lines[previousBox.lineIndex()].top() });
-                return;
-            }
-
-            if (nextBox) {
-                // The out of flow box is placed at the beginning of the next line (where the first box on the line is).
-                // <div>text<br><img style="position: absolute"><img style="position: absolute">content</div>
-                outOfFlowGeometry.setLogicalTopLeft({ nextBox->left(), lines[nextBox->lineIndex()].top() });
-                return;
-            }
-
-            auto& lastLine = lines[previousBox.lineIndex()];
-            // This out-of-flow box is the last box.
-            // FIXME: Use isLineBreak instead to cover preserved new lines too.
-            if (previousBox.layoutBox().isLineBreakBox()) {
-                // <div>text<br><img style="position: absolute"><img style="position: absolute"></div>
-                outOfFlowGeometry.setLogicalTopLeft({ lastLine.left(), lastLine.bottom() });
-                return;
-            }
-            // FIXME: We may need to check if this box actually fits the last line and move it over to the "next" line.
-            outOfFlowGeometry.setLogicalTopLeft({ previousBox.right(), lastLine.top() });
-        };
-        placeOutOfFlowBoxAfterPreviousInFlowBox();
+        formattingState.boxGeometry(outOfFlowBox).setLogicalTopLeft(topLeft);
     }
 }
 

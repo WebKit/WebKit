@@ -175,7 +175,39 @@ InlineLayoutUnit InlineFormattingGeometry::computedTextIndent(IsIntrinsicWidthMo
         return { };
     }
     return { minimumValueForLength(textIndent, availableWidth) };
-};
+}
+
+std::tuple<const InlineDisplay::Box*, const InlineDisplay::Box*> InlineFormattingGeometry::previousAndNextDisplayBoxForStaticPosition(const Box& outOfFlowBox, const DisplayBoxes& displayBoxes)
+{
+    // Both previous float and out-of-flow boxes are skipped here. A series of adjoining out-of-flow boxes should all be placed
+    // at the same static position (they don't affect next-sibling positions) and while floats do participate in the inline layout
+    // their positions have already been taken into account during the inline layout.
+    auto previousInFlowBox = [&] () -> const Box* {
+        if (auto* previousInFlowSibling = outOfFlowBox.previousInFlowSibling())
+            return previousInFlowSibling;
+        // Parent is either the root here or another inline box (e.g. <span><img style="position: absolute"></span>)
+        auto& parent = outOfFlowBox.parent();
+        return parent.isInlineBox() ? &parent : nullptr;
+    }();
+
+    if (!previousInFlowBox) {
+        // This is the first content. It sits on the edge of the first root inline box. We don't need to provide the next display box.
+        return { nullptr, nullptr };
+    }
+
+    // This is supposed to find the last display box of the "inflowBox" and return it with the next display box (first box of the next inflow content).
+    auto foundFirstDisplayBox = false;
+    for (size_t index = 0; index < displayBoxes.size(); ++index) {
+        if (foundFirstDisplayBox && &displayBoxes[index].layoutBox() != previousInFlowBox) {
+            ASSERT(index);
+            return { &displayBoxes[index - 1], &displayBoxes[index] };
+        }
+        foundFirstDisplayBox = foundFirstDisplayBox || &displayBoxes[index].layoutBox() == previousInFlowBox;
+    }
+    if (foundFirstDisplayBox)
+        return { &displayBoxes[displayBoxes.size() - 1], nullptr };
+    return { nullptr, nullptr };
+}
 
 }
 }
