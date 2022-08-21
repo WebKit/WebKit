@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div::before { content: "FAIL"; display: block; width: 100px; height: 50px; background: red; }
+div::BEFORE { content: "PASS"; background: green; color: green; }
+div::after { content: "FAIL"; display: block; width: 100px; height: 50px; background: red; }
+div::AfTEr { content: "PASS"; background: green; color: green; }
+</style>
+</head>
+<body>
+<div></div>
+</body>
+</html>

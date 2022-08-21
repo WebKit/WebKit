@@ -446,6 +446,29 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
     AXPostNotificationWithUserInfo(object->wrapper(), macNotification, nil, skipSystemNotification);
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+static void createIsolatedObjectIfNeeded(AXCoreObject& object, std::optional<PageIdentifier> pageID)
+{
+    if (!is<AccessibilityObject>(object))
+        return;
+
+    // The wrapper associated with a published notification may not have an isolated object yet.
+    // This should only happen when the live object is ignored, meaning we will never create an isolated object for it.
+    // This is generally correct, but not in this case, since AX clients will try to query this wrapper but the wrapper
+    // will consider itself detached due to the lack of an isolated object.
+    //
+    // Detect this and create an isolated object if necessary.
+    id wrapper = object.wrapper();
+    if (!wrapper || [wrapper hasIsolatedObject])
+        return;
+
+    if (object.accessibilityIsIgnored()) {
+        if (auto tree = AXIsolatedTree::treeForPageID(pageID))
+            tree->addUnconnectedNode(downcast<AccessibilityObject>(object));
+    }
+}
+#endif
+
 void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
 {
     if (!object)
@@ -489,8 +512,12 @@ void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object
             [userInfo setObject:(id)textMarkerRange forKey:NSAccessibilitySelectedTextMarkerRangeAttribute];
     }
 
-    if (id wrapper = object->wrapper())
+    if (id wrapper = object->wrapper()) {
         [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        createIsolatedObjectIfNeeded(*object, m_pageID);
+#endif
+    }
 
     if (auto root = rootWebArea()) {
         AXPostNotificationWithUserInfo(rootWebArea()->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
@@ -539,15 +566,19 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     postTextReplacementPlatformNotification(object, AXTextEditTypeUnknown, emptyString(), type, text, position);
 }
 
-static void postUserInfoForChanges(AXCoreObject& rootWebArea, AXCoreObject& object, NSMutableArray* changes)
+static void postUserInfoForChanges(AXCoreObject& rootWebArea, AXCoreObject& object, NSMutableArray* changes, std::optional<PageIdentifier> pageID)
 {
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
     [userInfo setObject:@(platformChangeTypeForWebCoreChangeType(AXTextStateChangeTypeEdit)) forKey:NSAccessibilityTextStateChangeTypeKey];
     if (changes.count)
         [userInfo setObject:changes forKey:NSAccessibilityTextChangeValues];
 
-    if (id wrapper = object.wrapper())
+    if (id wrapper = object.wrapper()) {
         [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        createIsolatedObjectIfNeeded(object, pageID);
+#endif
+    }
 
     AXPostNotificationWithUserInfo(rootWebArea.wrapper(), NSAccessibilityValueChangedNotification, userInfo.get());
     if (rootWebArea.wrapper() != object.wrapper())
@@ -569,7 +600,7 @@ void AXObjectCache::postTextReplacementPlatformNotification(AXCoreObject* object
         [changes addObject:change];
 
     if (auto* root = rootWebArea())
-        postUserInfoForChanges(*root, *object, changes.get());
+        postUserInfoForChanges(*root, *object, changes.get(), m_pageID);
 }
 
 void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCoreObject* object, const String& deletedText, const String& insertedText, HTMLTextFormControlElement& textControl)
@@ -587,7 +618,7 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCore
         [changes addObject:change];
 
     if (auto* root = rootWebArea())
-        postUserInfoForChanges(*root, *object, changes.get());
+        postUserInfoForChanges(*root, *object, changes.get(), m_pageID);
 }
 
 void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* axFrameObject, AXLoadingEvent loadingEvent)

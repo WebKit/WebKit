@@ -395,7 +395,7 @@ auto Scope::collectActiveStyleSheets() -> ActiveStyleSheetCollection
             // (thus making it PREFERRED or ALTERNATE rather than
             // PERSISTENT).
             auto& rel = element.attributeWithoutSynchronization(relAttr);
-            if (!enabledViaScript && !title.isEmpty()) {
+            if (!enabledViaScript && sheet && !title.isEmpty()) {
                 // Yes, we have a title.
                 if (m_preferredStylesheetSetName.isEmpty()) {
                     // No preferred set has been established. If

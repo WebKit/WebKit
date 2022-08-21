@@ -78,6 +78,7 @@ void AXAttributedStringSetFont(NSMutableAttributedString *, CTFontRef, const NSR
 - (id)initWithAccessibilityObject:(WebCore::AccessibilityObject*)axObject;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)attachIsolatedObject:(WebCore::AXIsolatedObject*)isolatedObject;
+- (BOOL)hasIsolatedObject;
 #endif
 
 - (void)detach;

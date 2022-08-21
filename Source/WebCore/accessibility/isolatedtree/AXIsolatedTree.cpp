@@ -264,6 +264,32 @@ void AXIsolatedTree::queueChange(const NodeChange& nodeChange)
     m_pendingChildrenUpdates.append({ objectID, WTFMove(childrenIDs) });
 }
 
+void AXIsolatedTree::addUnconnectedNode(AccessibilityObject& axObject)
+{
+    ASSERT(isMainThread());
+
+    if (!axObject.objectID().isValid() || !axObject.wrapper()) {
+        AXLOG(makeString("AXIsolatedTree::addUnconnectedNode bailing because associated live object ID ", axObject.objectID().loggingString(), " had no wrapper or had an invalid ID. Object is:"));
+        AXLOG(&axObject);
+        return;
+    }
+    AXLOG(makeString("AXIsolatedTree::addUnconnectedNode creating isolated object from live object ID ", axObject.objectID().loggingString()));
+
+    // Because we are queuing a change for an object not intended to be connected to the rest of the tree,
+    // we don't need to update m_nodeMap or m_pendingChildrenUpdates for this object or its parent as is
+    // done in AXIsolatedTree::nodeChangeForObject and AXIsolatedTree::queueChange.
+    //
+    // Instead, just directly create and queue the node change so m_readerThreadNodeMap can hold a reference
+    // to it. It will be removed from m_readerThreadNodeMap when the corresponding DOM element, renderer, or
+    // other entity is removed from the page.
+    auto isolatedObject = AXIsolatedObject::create(axObject, this);
+    isolatedObject->attachPlatformWrapper(axObject.wrapper());
+
+    NodeChange nodeChange { isolatedObject, nullptr };
+    Locker locker { m_changeLogLock };
+    m_pendingAppends.append(WTFMove(nodeChange));
+}
+
 void AXIsolatedTree::queueRemovals(const Vector<AXID>& subtreeRemovals)
 {
     ASSERT(isMainThread());
