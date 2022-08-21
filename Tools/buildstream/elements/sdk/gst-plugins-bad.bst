@@ -6,6 +6,12 @@ sources:
 # https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/2341/
 - kind: patch
   path: patches/gst-plugins-bad-mr-2341.patch
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2918 (candidate for 1.20 backport)
+- kind: patch
+  path: patches/gst-plugins-bad-openh264-Register-debug-categories-earlier.patch
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2919 (candidate for 1.20 backport)
+- kind: patch
+  path: patches/gst-plugins-bad-openh264enc-Fix-constrained-high-encoding.patch
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
@@ -83,7 +89,6 @@ variables:
     -Dopenaptx=disabled
     -Dopencv=disabled
     -Dopenexr=disabled
-    -Dopenh264=disabled
     -Dopenmpt=disabled
     -Dopenni2=disabled
     -Dopensles=disabled

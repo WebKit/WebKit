@@ -9,7 +9,8 @@ depends:
 sources:
 - kind: git
   url: github_com:cisco/openh264.git
-  ref: 2122fe08cc8fe69899c3e257d0ee030c28a64174
+  track: master
+  ref: 2e637867315ffeda3cd8970825ec86acc3fc4a30
 variables:
   meson-local: >-
     -Dtests=disabled
