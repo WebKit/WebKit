@@ -1953,6 +1953,10 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         handleRoleChanged(element);
     else if (attrName == altAttr || attrName == titleAttr)
         handleTextChanged(getOrCreate(element));
+    else if (attrName == contenteditableAttr) {
+        if (auto* axObject = get(element))
+            axObject->updateRole();
+    }
     else if (attrName == disabledAttr)
         postNotification(element, AXObjectCache::AXDisabledStateChanged);
     else if (attrName == forAttr && is<HTMLLabelElement>(*element))
