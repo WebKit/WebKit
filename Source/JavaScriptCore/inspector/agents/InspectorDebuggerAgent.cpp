@@ -427,7 +427,6 @@ void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::JSGlobalObject* globalObj
         return;
 
     Ref<ScriptCallStack> callStack = createScriptCallStack(globalObject, m_asyncStackTraceDepth);
-    ASSERT(callStack->size());
     if (!callStack->size())
         return;
 

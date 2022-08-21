@@ -49,7 +49,7 @@ functionNakedConstructorRegExp = re.compile(r".*^@nakedConstructor", re.MULTILIN
 functionIntrinsicRegExp = re.compile(r".*^@intrinsic=(\w+)", re.MULTILINE | re.DOTALL)
 functionIsConstructorRegExp = re.compile(r".*^@constructor", re.MULTILINE | re.DOTALL)
 functionIsGetterRegExp = re.compile(r".*^@getter", re.MULTILINE | re.DOTALL)
-functionIsAsyncRegExp = re.compile(r"(async)?\s*function", re.MULTILINE | re.DOTALL)
+functionIsAsyncRegExp = re.compile(r".*^(async)?\s*function", re.MULTILINE | re.DOTALL)
 functionNameRegExp = re.compile(r"function\s+(\w+)\s*\(", re.MULTILINE | re.DOTALL)
 functionOverriddenNameRegExp = re.compile(r".*^@overriddenName=(\".+\")$", re.MULTILINE | re.DOTALL)
 functionParameterFinder = re.compile(r"^(?:async\s+)?function\s+(?:\w+)\s*\(((?:\s*\w+)?\s*(?:\s*,\s*\w+)*)?\s*\)", re.MULTILINE | re.DOTALL)

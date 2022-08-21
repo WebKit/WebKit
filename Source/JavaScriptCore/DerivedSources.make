@@ -188,7 +188,6 @@ OBJECT_LUT_HEADERS = \
     JSDataViewPrototype.lut.h \
     JSGlobalObject.lut.h \
     JSInternalPromiseConstructor.lut.h \
-    JSModuleLoader.lut.h \
     JSONObject.lut.h \
     JSPromiseConstructor.lut.h \
     JSPromisePrototype.lut.h \
