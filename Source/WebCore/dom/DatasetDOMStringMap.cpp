@@ -71,33 +71,6 @@ static String convertAttributeNameToPropertyName(const String& name)
     return stringBuilder.toString();
 }
 
-static bool propertyNameMatchesAttributeName(const String& propertyName, const String& attributeName)
-{
-    if (!attributeName.startsWith("data-"_s))
-        return false;
-
-    unsigned propertyLength = propertyName.length();
-    unsigned attributeLength = attributeName.length();
-
-    unsigned a = 5;
-    unsigned p = 0;
-    bool wordBoundary = false;
-    while (a < attributeLength && p < propertyLength) {
-        const UChar currentAttributeNameChar = attributeName[a];
-        if (currentAttributeNameChar == '-' && a + 1 < attributeLength && attributeName[a + 1] != '-')
-            wordBoundary = true;
-        else {
-            if ((wordBoundary ? toASCIIUpper(currentAttributeNameChar) : currentAttributeNameChar) != propertyName[p])
-                return false;
-            p++;
-            wordBoundary = false;
-        }
-        a++;
-    }
-
-    return (a == attributeLength && p == propertyLength);
-}
-
 static bool isValidPropertyName(const String& name)
 {
     unsigned length = name.length();
@@ -160,10 +133,9 @@ bool DatasetDOMStringMap::isSupportedPropertyName(const String& propertyName) co
 
     auto attributeIteratorAccessor = m_element.attributesIterator();
     if (attributeIteratorAccessor.attributeCount() == 1) {
-        // If the node has a single attribute, it is the dataset member accessed in most cases.
-        // Building a new AtomString in that case is overkill so we do a direct character comparison.
+        // Avoid creating AtomString when there is only one attribute.
         const auto& attribute = *attributeIteratorAccessor.begin();
-        if (propertyNameMatchesAttributeName(propertyName, attribute.localName()))
+        if (convertAttributeNameToPropertyName(attribute.localName()) == propertyName)
             return true;
     } else {
         auto attributeName = convertPropertyNameToAttributeName(propertyName);
@@ -197,10 +169,9 @@ const AtomString* DatasetDOMStringMap::item(const String& propertyName) const
         AttributeIteratorAccessor attributeIteratorAccessor = m_element.attributesIterator();
 
         if (attributeIteratorAccessor.attributeCount() == 1) {
-            // If the node has a single attribute, it is the dataset member accessed in most cases.
-            // Building a new AtomString in that case is overkill so we do a direct character comparison.
+            // Avoid creating AtomString when there is only one attribute.
             const Attribute& attribute = *attributeIteratorAccessor.begin();
-            if (propertyNameMatchesAttributeName(propertyName, attribute.localName()))
+            if (convertAttributeNameToPropertyName(attribute.localName()) == propertyName)
                 return &attribute.value();
         } else {
             AtomString attributeName = convertPropertyNameToAttributeName(propertyName);

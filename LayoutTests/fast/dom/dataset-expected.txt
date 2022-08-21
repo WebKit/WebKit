@@ -13,6 +13,10 @@ PASS testGet('data---foo---bar', '-Foo--Bar') is true
 PASS testGet('data-foo-', 'foo-') is true
 PASS testGet('data-foo--', 'foo--') is true
 PASS testGet('data-Foo', 'foo') is true
+PASS testGet('data-x-2', 'x-2') is true
+PASS testGet('data-2-x', '2X') is true
+PASS testGet('data-2', '2') is true
+PASS testGet('data-x3', 'x3') is true
 PASS testGet('data-', '') is true
 PASS testGet('data-à', 'à') is true
 PASS document.body.dataset.nonExisting is undefined.

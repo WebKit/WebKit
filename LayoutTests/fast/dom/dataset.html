@@ -24,6 +24,10 @@ shouldBeTrue("testGet('data---foo---bar', '-Foo--Bar')");
 shouldBeTrue("testGet('data-foo-', 'foo-')");
 shouldBeTrue("testGet('data-foo--', 'foo--')");
 shouldBeTrue("testGet('data-Foo', 'foo')"); // HTML lowercases all attributes.
+shouldBeTrue("testGet('data-x-2', 'x-2')");
+shouldBeTrue("testGet('data-2-x', '2X')");
+shouldBeTrue("testGet('data-2', '2')");
+shouldBeTrue("testGet('data-x3', 'x3')");
 shouldBeTrue("testGet('data-', '')");
 shouldBeTrue("testGet('data-\xE0', '\xE0')");
 shouldBeUndefined("document.body.dataset.nonExisting");
