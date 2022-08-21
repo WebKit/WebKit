@@ -113,6 +113,7 @@ struct SelectorPseudoTypeEntry {
 %readonly-tables
 %global-table
 %compare-strncmp
+%ignore-case
 %enum
 
 struct SelectorPseudoTypeEntry;
