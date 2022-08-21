@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="wrapper" role="group">
+    <div id="div"></div>
+</div>
+
+<script>
+    var testOutput = "This test ensures that we properly change an object's ignored status after dynamically changing its contenteditable attribute.\n\n";
+
+    function isIgnored(id) {
+        const axElement = accessibilityController.accessibleElementById(id);
+        if (!axElement)
+            return true;
+        return axElement.isIgnored;
+    }
+
+    function addWrapperChildrenToOutput() {
+        testOutput += "#wrapper children:\n";
+        const wrapper = accessibilityController.accessibleElementById("wrapper");
+        for (let i = 0; i < wrapper.childrenCount; i++)
+            testOutput += `${wrapper.childAtIndex(i).role}\n`;
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        testOutput += `#div is initially ignored: ${isIgnored("div")}\n`;
+        addWrapperChildrenToOutput();
+
+        testOutput += "\nAdding contenteditable='true' to #div.\n";
+        document.getElementById("div").contentEditable = "true";
+        setTimeout(async function() {
+            await waitFor(() => !isIgnored("div"));
+            testOutput += `#div is ignored: ${isIgnored("div")}\n`;
+            addWrapperChildrenToOutput();
+
+            testOutput += "\nRemoving contenteditable='true' from #div.\n";
+            document.getElementById("div").removeAttribute("contenteditable");
+
+            await waitFor(() => isIgnored("div"));
+            testOutput += `#div is ignored: ${isIgnored("div")}\n`;
+            addWrapperChildrenToOutput();
+
+            testOutput += "\nAdding role='button' to #div.\n";
+            document.getElementById("div").setAttribute("role", "button");
+
+            await waitFor(() => !isIgnored("div"));
+            testOutput += `#div is ignored: ${isIgnored("div")}\n`;
+            addWrapperChildrenToOutput();
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

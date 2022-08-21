@@ -312,6 +312,11 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
     if (!_identifier.isValid())
         _identifier = m_isolatedObject->objectID();
 }
+
+- (BOOL)hasIsolatedObject
+{
+    return !!m_isolatedObject;
+}
 #endif
 
 - (void)detach

@@ -2119,6 +2119,17 @@ static void testModuleBytecodeCache()
         NSURL *barFakePath = [NSURL fileURLWithPath:@"/directory/bar.js"];
         NSURL *bazFakePath = [NSURL fileURLWithPath:@"/otherDirectory/baz.js"];
 
+        NSFileManager* fileManager = [NSFileManager defaultManager];
+
+        // Clear out any potential old data left over from previous failed runs.
+        // This resets the slate clean for this run of the test.
+        [fileManager removeItemAtURL:fooPath error:nil];
+        [fileManager removeItemAtURL:barPath error:nil];
+        [fileManager removeItemAtURL:bazPath error:nil];
+        [fileManager removeItemAtURL:fooCachePath error:nil];
+        [fileManager removeItemAtURL:barCachePath error:nil];
+        [fileManager removeItemAtURL:bazCachePath error:nil];
+
         [fooSource writeToURL:fooPath atomically:NO encoding:NSASCIIStringEncoding error:nil];
         [barSource writeToURL:barPath atomically:NO encoding:NSASCIIStringEncoding error:nil];
         [bazSource writeToURL:bazPath atomically:NO encoding:NSASCIIStringEncoding error:nil];
@@ -2151,7 +2162,6 @@ static void testModuleBytecodeCache()
             JSC::Options::forceDiskCache() = false;
         }
 
-        NSFileManager* fileManager = [NSFileManager defaultManager];
         BOOL removedAll = true;
         removedAll &= [fileManager removeItemAtURL:fooPath error:nil];
         removedAll &= [fileManager removeItemAtURL:barPath error:nil];
