@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TemporalPlainDateTime.h"
 
+#include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "LazyPropertyInlines.h"
 #include "TemporalPlainDate.h"
