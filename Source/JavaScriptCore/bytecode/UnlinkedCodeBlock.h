@@ -154,6 +154,7 @@ public:
     bool hasTailCalls() const { return m_hasTailCalls; }
     void setHasTailCalls() { m_hasTailCalls = true; }
     bool allowDirectEvalCache() const { return !(m_features & NoEvalCacheFeature); }
+    bool usesImportMeta() const { return m_features & ImportMetaFeature; }
 
     bool hasExpressionInfo() { return m_expressionInfo.size(); }
     const FixedVector<ExpressionRangeInfo>& expressionInfo() { return m_expressionInfo; }

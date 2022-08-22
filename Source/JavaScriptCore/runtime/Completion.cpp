@@ -82,7 +82,7 @@ bool checkModuleSyntax(JSGlobalObject* globalObject, const SourceCode& source, P
         return false;
 
     PrivateName privateName(PrivateName::Description, "EntryPointModule"_s);
-    ModuleAnalyzer moduleAnalyzer(globalObject, Identifier::fromUid(privateName), source, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
+    ModuleAnalyzer moduleAnalyzer(globalObject, Identifier::fromUid(privateName), source, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables(), moduleProgramNode->features());
     moduleAnalyzer.analyze(*moduleProgramNode);
     return true;
 }

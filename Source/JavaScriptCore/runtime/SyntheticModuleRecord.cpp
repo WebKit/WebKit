@@ -96,7 +96,6 @@ SyntheticModuleRecord* SyntheticModuleRecord::tryCreateWithExportNamesAndValues(
     ASSERT(exportNames.size() == exportValues.size());
 
     auto* moduleRecord = create(globalObject, vm, globalObject->syntheticModuleRecordStructure(), moduleKey);
-    moduleRecord->addExportEntry(ExportEntry::createLocal(vm.propertyNames->defaultKeyword, vm.propertyNames->defaultKeyword));
 
     SymbolTable* exportSymbolTable = SymbolTable::create(vm);
     {
@@ -106,6 +105,7 @@ SyntheticModuleRecord* SyntheticModuleRecord::tryCreateWithExportNamesAndValues(
     for (auto& exportName : exportNames) {
         auto offset = exportSymbolTable->takeNextScopeOffset(NoLockingNecessary);
         exportSymbolTable->set(NoLockingNecessary, exportName.impl(), SymbolTableEntry(VarOffset(offset)));
+        moduleRecord->addExportEntry(ExportEntry::createLocal(exportName, exportName));
     }
 
     JSModuleEnvironment* moduleEnvironment = JSModuleEnvironment::create(vm, globalObject, nullptr, exportSymbolTable, jsTDZValue(), moduleRecord);

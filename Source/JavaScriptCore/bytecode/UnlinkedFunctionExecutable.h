@@ -280,7 +280,7 @@ private:
     unsigned m_typeProfilingEndOffset;
     unsigned m_parameterCount : 31;
     unsigned m_privateBrandRequirement : 1;
-    unsigned m_features : 14;
+    unsigned m_features : bitWidthOfCodeFeatures;
     unsigned m_constructorKind : 2;
     SourceParseMode m_sourceParseMode;
     unsigned m_implementationVisibility : bitWidthOfImplementationVisibility;
