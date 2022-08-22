@@ -103,11 +103,11 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
     auto summarySlot = HTMLSlotElement::create(slotTag, document());
     summarySlot->setAttributeWithoutSynchronization(nameAttr, summarySlotName());
-    m_summarySlot = summarySlot.ptr();
+    m_summarySlot = summarySlot.get();
 
     auto defaultSummary = HTMLSummaryElement::create(summaryTag, document());
     defaultSummary->appendChild(Text::create(document(), defaultDetailsSummaryText()));
-    m_defaultSummary = defaultSummary.ptr();
+    m_defaultSummary = defaultSummary.get();
 
     summarySlot->appendChild(defaultSummary);
     root.appendChild(summarySlot);
@@ -127,7 +127,7 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
     RefPtr slot = shadowRoot()->findAssignedSlot(summary);
     if (!slot)
         return false;
-    return slot == m_summarySlot;
+    return slot == m_summarySlot.get();
 }
 
 void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomString& value)
