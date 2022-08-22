@@ -1144,11 +1144,11 @@ test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: ZonedDateTime'
   strict mode: 'Test262Error: ZonedDateTime'
 test/harness/temporalHelpers-one-shift-time-zone.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 3, 28, 1)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 3, 28, 1)')"
+  default: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
+  strict mode: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
 test/intl402/DateTimeFormat/prototype/format/temporal-objects-timezone-getoffsetnanosecondsfor-not-callable.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(8, 4)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(8, 4)')"
 test/intl402/DateTimeFormat/prototype/formatRange/en-US.js:
   default: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
@@ -1156,14 +1156,14 @@ test/intl402/DateTimeFormat/prototype/formatRange/fractionalSecondDigits.js:
   default: 'Test262Error: no fractionalSecondDigits Expected SameValue(«02:03 – 02:13», «02:03 – 02:13») to be true'
   strict mode: 'Test262Error: no fractionalSecondDigits Expected SameValue(«02:03 – 02:13», «02:03 – 02:13») to be true'
 test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-timezone-getoffsetnanosecondsfor-not-callable.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(8, 4)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(8, 4)')"
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-timezone-getoffsetnanosecondsfor-not-callable.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(8, 4)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(8, 4)')"
 test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-timezone-getoffsetnanosecondsfor-not-callable.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(8, 4)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(8, 4)')"
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
