@@ -29,8 +29,21 @@ regenerate_changes_diff() {
         > changes.diff
 }
 
+usage() {
+    SCRIPT_NAME=$(basename "$0")
+    echo "USAGE: $SCRIPT_NAME [-h|--help] -[--regenerate-changes-diff[-main]]"
+    echo "  -h | --help                      Print this help message."
+    echo "  --regenerate-changes-diff        Regenerate ANGLE changes.diff to last upstream merge."
+    echo "  --regenerate-changes-diff-main   Regenerate ANGLE changes.diff to upstream origin/main."
+}
+
 if [ ! -z "$1" ] ; then
-    if [ "$1" = "--regenerate-changes-diff" ] ; then
+    if [ "$1" = "-h" -o "$1" = "--help" ] ; then
+        usage
+        exit 1
+    
+    
+    elif [ "$1" = "--regenerate-changes-diff" ] ; then
         echo "Regenerating Source/ThirdParty/ANGLE/changes.diff"
         PREVIOUS_ANGLE_COMMIT_HASH=$(grep -m 1 -o -E "[a-z0-9]{40}" ANGLE.plist)
         rm -rf .git
