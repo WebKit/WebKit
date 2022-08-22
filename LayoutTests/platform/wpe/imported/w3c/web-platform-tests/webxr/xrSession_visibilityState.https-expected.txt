@@ -1,0 +1,4 @@
+
+PASS Ensures that the XRSession's visibilityState is correctly reported and that the associated visibilitychange event fires. - webgl
+FAIL Ensures that the XRSession's visibilityState is correctly reported and that the associated visibilitychange event fires. - webgl2 assert_implements: webgl2 not supported. undefined
+

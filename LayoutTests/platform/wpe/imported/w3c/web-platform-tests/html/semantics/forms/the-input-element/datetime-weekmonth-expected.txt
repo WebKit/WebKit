@@ -1,0 +1,18 @@
+Date and Time Inputs
+
+
+FAIL month type support on input element assert_equals: expected "month" but got "text"
+PASS [month] The value must be a value that is a valid global date and time string
+PASS [month] The min attribute must have a value that is a valid global date and time string
+PASS [month] The max attribute must have a value that is a valid global date and time string
+PASS [month] The step attribute must be expressed in seconds
+PASS [month] stepUp method support on input 'month' element
+PASS [month] stepDown method support on input 'month' element
+FAIL week type support on input element assert_equals: expected "week" but got "text"
+PASS [week] The value must be a value that is a valid global date and time string
+PASS [week] The min attribute must have a value that is a valid global date and time string
+PASS [week] The max attribute must have a value that is a valid global date and time string
+PASS [week] The step attribute must be expressed in seconds
+PASS [week] stepUp method support on input 'week' element
+PASS [week] stepDown method support on input 'week' element
+

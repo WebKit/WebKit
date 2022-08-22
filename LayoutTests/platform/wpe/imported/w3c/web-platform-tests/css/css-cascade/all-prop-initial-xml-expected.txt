@@ -219,6 +219,7 @@ PASS outline-color
 PASS outline-offset
 PASS outline-style
 PASS outline-width
+PASS overflow-anchor
 PASS overflow-wrap
 PASS overflow-x
 PASS overflow-y
@@ -335,7 +336,6 @@ PASS x
 PASS y
 PASS z-index
 PASS zoom
-PASS -apple-color-filter
 PASS -webkit-backdrop-filter
 PASS -webkit-background-clip
 PASS -webkit-background-origin
