@@ -626,15 +626,13 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = {
 
 JSC_DEFINE_HOST_FUNCTION(enqueueJob, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    VM& vm = globalObject->vm();
-
     JSValue job = callFrame->argument(0);
     JSValue argument0 = callFrame->argument(1);
     JSValue argument1 = callFrame->argument(2);
     JSValue argument2 = callFrame->argument(3);
     JSValue argument3 = callFrame->argument(4);
 
-    globalObject->queueMicrotask(createJSMicrotask(vm, job, argument0, argument1, argument2, argument3));
+    globalObject->queueMicrotask(job, argument0, argument1, argument2, argument3);
 
     return encodedJSUndefined();
 }
@@ -2748,13 +2746,24 @@ void JSGlobalObject::queueMicrotask(Ref<Microtask>&& task)
 {
     auto& taskRef = task.get();
 
-    if (globalObjectMethodTable()->queueMicrotaskToEventLoop)
-        globalObjectMethodTable()->queueMicrotaskToEventLoop(*this, WTFMove(task));
-    else
-        vm().queueMicrotask(*this, WTFMove(task));
+    ASSERT(globalObjectMethodTable()->queueMicrotaskToEventLoop);
+    globalObjectMethodTable()->queueMicrotaskToEventLoop(*this, WTFMove(task));
 
     if (UNLIKELY(m_debugger))
-        m_debugger->didQueueMicrotask(this, taskRef);
+        m_debugger->didQueueMicrotask(this, taskRef.identifier());
+}
+
+void JSGlobalObject::queueMicrotask(JSValue job, JSValue argument0, JSValue argument1, JSValue argument2, JSValue argument3)
+{
+    if (globalObjectMethodTable()->queueMicrotaskToEventLoop) {
+        queueMicrotask(createJSMicrotask(vm(), job, argument0, argument1, argument2, argument3));
+        return;
+    }
+
+    auto microtaskIdentifier = MicrotaskIdentifier::generateThreadSafe();
+    vm().queueMicrotask(QueuedTask { microtaskIdentifier, job, argument0, argument1, argument2, argument3 });
+    if (UNLIKELY(m_debugger))
+        m_debugger->didQueueMicrotask(this, microtaskIdentifier);
 }
 
 void JSGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception* exception)

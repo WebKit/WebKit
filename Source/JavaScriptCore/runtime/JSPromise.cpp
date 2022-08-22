@@ -263,6 +263,7 @@ void JSPromise::performPromiseThen(JSGlobalObject* globalObject, JSFunction* onF
     arguments.append(onFulFilled);
     arguments.append(onRejected);
     arguments.append(resultCapability);
+    arguments.append(jsUndefined());
     ASSERT(!arguments.hasOverflowed());
     call(globalObject, performPromiseThenFunction, callData, jsUndefined(), arguments);
 }

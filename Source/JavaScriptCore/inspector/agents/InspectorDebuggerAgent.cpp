@@ -413,12 +413,12 @@ void InspectorDebuggerAgent::handleConsoleAssert(const String& message)
     breakProgram(DebuggerFrontendDispatcher::Reason::Assert, buildAssertPauseReason(message), m_pauseOnAssertionsBreakpoint.copyRef());
 }
 
-InspectorDebuggerAgent::AsyncCallIdentifier InspectorDebuggerAgent::asyncCallIdentifier(AsyncCallType asyncCallType, int callbackId)
+InspectorDebuggerAgent::AsyncCallIdentifier InspectorDebuggerAgent::asyncCallIdentifier(AsyncCallType asyncCallType, uint64_t callbackId)
 {
     return std::make_pair(static_cast<unsigned>(asyncCallType), callbackId);
 }
 
-void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::JSGlobalObject* globalObject, AsyncCallType asyncCallType, int callbackId, bool singleShot)
+void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::JSGlobalObject* globalObject, AsyncCallType asyncCallType, uint64_t callbackId, bool singleShot)
 {
     if (!m_asyncStackTraceDepth)
         return;
@@ -443,7 +443,7 @@ void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::JSGlobalObject* globalObj
     m_pendingAsyncCalls.set(identifier, WTFMove(asyncStackTrace));
 }
 
-void InspectorDebuggerAgent::didCancelAsyncCall(AsyncCallType asyncCallType, int callbackId)
+void InspectorDebuggerAgent::didCancelAsyncCall(AsyncCallType asyncCallType, uint64_t callbackId)
 {
     if (!m_asyncStackTraceDepth)
         return;
@@ -462,7 +462,7 @@ void InspectorDebuggerAgent::didCancelAsyncCall(AsyncCallType asyncCallType, int
     m_pendingAsyncCalls.remove(identifier);
 }
 
-void InspectorDebuggerAgent::willDispatchAsyncCall(AsyncCallType asyncCallType, int callbackId)
+void InspectorDebuggerAgent::willDispatchAsyncCall(AsyncCallType asyncCallType, uint64_t callbackId)
 {
     if (!m_asyncStackTraceDepth)
         return;
@@ -481,7 +481,7 @@ void InspectorDebuggerAgent::willDispatchAsyncCall(AsyncCallType asyncCallType, 
     m_currentAsyncCallIdentifierStack.append(WTFMove(identifier));
 }
 
-void InspectorDebuggerAgent::didDispatchAsyncCall(AsyncCallType asyncCallType, int callbackId)
+void InspectorDebuggerAgent::didDispatchAsyncCall(AsyncCallType asyncCallType, uint64_t callbackId)
 {
     if (!m_asyncStackTraceDepth)
         return;
@@ -1295,39 +1295,25 @@ void InspectorDebuggerAgent::willEnter(JSC::CallFrame* callFrame)
     schedulePauseForSpecialBreakpoint(*m_symbolicBreakpoints[index].specialBreakpoint, DebuggerFrontendDispatcher::Reason::FunctionCall, WTFMove(pauseData));
 }
 
-void InspectorDebuggerAgent::didQueueMicrotask(JSC::JSGlobalObject* globalObject, const JSC::Microtask& microtask)
+void InspectorDebuggerAgent::didQueueMicrotask(JSC::JSGlobalObject* globalObject, JSC::MicrotaskIdentifier identifier)
 {
     if (!breakpointsActive())
         return;
 
-    int identifier = m_nextMicrotaskIdentifier++;
-    auto result = m_identifierForMicrotask.set(&microtask, identifier);
-    ASSERT_UNUSED(result, result.isNewEntry);
-
-    didScheduleAsyncCall(globalObject, InspectorDebuggerAgent::AsyncCallType::Microtask, identifier, true);
+    didScheduleAsyncCall(globalObject, InspectorDebuggerAgent::AsyncCallType::Microtask, identifier.toUInt64(), true);
 }
 
-void InspectorDebuggerAgent::willRunMicrotask(JSC::JSGlobalObject*, const JSC::Microtask& microtask)
+void InspectorDebuggerAgent::willRunMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier identifier)
 {
-    auto it = m_identifierForMicrotask.find(&microtask);
-    if (it != m_identifierForMicrotask.end()) {
-        auto identifier = it->value;
-        willDispatchAsyncCall(AsyncCallType::Microtask, identifier);
-    }
+    willDispatchAsyncCall(AsyncCallType::Microtask, identifier.toUInt64());
 
     if (breakpointsActive() && m_pauseOnMicrotasksBreakpoint)
         schedulePauseForSpecialBreakpoint(*m_pauseOnMicrotasksBreakpoint, DebuggerFrontendDispatcher::Reason::Microtask);
 }
 
-void InspectorDebuggerAgent::didRunMicrotask(JSC::JSGlobalObject*, const JSC::Microtask& microtask)
+void InspectorDebuggerAgent::didRunMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier identifier)
 {
-    auto it = m_identifierForMicrotask.find(&microtask);
-    if (it != m_identifierForMicrotask.end()) {
-        auto identifier = it->value;
-        didDispatchAsyncCall(AsyncCallType::Microtask, identifier);
-
-        m_identifierForMicrotask.remove(it);
-    }
+    didDispatchAsyncCall(AsyncCallType::Microtask, identifier.toUInt64());
 
     if (breakpointsActive() && m_pauseOnMicrotasksBreakpoint)
         cancelPauseForSpecialBreakpoint(*m_pauseOnMicrotasksBreakpoint);
@@ -1549,8 +1535,6 @@ void InspectorDebuggerAgent::didClearGlobalObject()
 
 void InspectorDebuggerAgent::didClearAsyncStackTraceData()
 {
-    m_identifierForMicrotask.clear();
-    m_nextMicrotaskIdentifier = 1;
 }
 
 bool InspectorDebuggerAgent::assertPaused(Protocol::ErrorString& errorString)

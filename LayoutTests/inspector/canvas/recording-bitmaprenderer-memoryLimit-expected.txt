@@ -19,6 +19,5 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
         3: (anonymous function)
-        4: (anonymous function)
       snapshot: <filtered>
 

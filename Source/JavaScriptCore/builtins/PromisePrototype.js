@@ -49,7 +49,7 @@ function then(onFulfilled, onRejected)
         promise = promiseOrCapability.@promise;
     }
 
-    @performPromiseThen(this, onFulfilled, onRejected, promiseOrCapability);
+    @performPromiseThen(this, onFulfilled, onRejected, promiseOrCapability, @undefined);
     return promise;
 }
 

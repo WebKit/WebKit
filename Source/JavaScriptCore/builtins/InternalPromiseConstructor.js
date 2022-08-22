@@ -73,7 +73,7 @@ function internalAll(array)
                 var value = array[index];
                 @putByValDirect(values, index, @undefined);
                 ++remainingElementsCount;
-                @resolveWithoutPromise(value, newResolveElement(index), reject);
+                @resolveWithoutPromise(value, newResolveElement(index), reject, @undefined);
             }
         }
     } catch (error) {

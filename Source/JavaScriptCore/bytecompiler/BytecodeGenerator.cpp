@@ -707,6 +707,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
         emitNewGenerator(m_generatorRegister);
         emitNewPromise(promiseRegister(), m_isBuiltinFunction);
+        emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::Context), promiseRegister());
         break;
     }
 

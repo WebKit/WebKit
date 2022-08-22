@@ -69,6 +69,7 @@
 #include "JSImmutableButterfly.h"
 #include "JSLock.h"
 #include "JSMap.h"
+#include "JSMicrotask.h"
 #include "JSPromise.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSScriptFetchParameters.h"
@@ -1205,9 +1206,9 @@ void VM::dumpTypeProfilerData()
     typeProfiler()->dumpTypeProfilerData(*this);
 }
 
-void VM::queueMicrotask(JSGlobalObject& globalObject, Ref<Microtask>&& task)
+void VM::queueMicrotask(QueuedTask&& task)
 {
-    m_microtaskQueue.append(makeUnique<QueuedTask>(*this, &globalObject, WTFMove(task)));
+    m_microtaskQueue.enqueue(WTFMove(task));
 }
 
 void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
@@ -1253,7 +1254,8 @@ void VM::drainMicrotasks()
     else {
         do {
             while (!m_microtaskQueue.isEmpty()) {
-                m_microtaskQueue.takeFirst()->run();
+                auto task = m_microtaskQueue.dequeue();
+                task.run();
                 if (m_onEachMicrotaskTick)
                     m_onEachMicrotaskTick(*this);
             }
@@ -1261,11 +1263,6 @@ void VM::drainMicrotasks()
         } while (!m_microtaskQueue.isEmpty());
     }
     finalizeSynchronousJSExecution();
-}
-
-void QueuedTask::run()
-{
-    m_microtask->run(m_globalObject.get());
 }
 
 void sanitizeStackForVM(VM& vm)
@@ -1464,5 +1461,46 @@ void VM::removeLoopHintExecutionCounter(const JSInstruction* instruction)
     if (!iter->value.first)
         m_loopHintExecutionCounts.remove(iter);
 }
+
+void VM::beginMarking()
+{
+    m_microtaskQueue.beginMarking();
+}
+
+template<typename Visitor>
+void VM::visitAggregateImpl(Visitor& visitor)
+{
+    m_microtaskQueue.visitAggregate(visitor);
+}
+DEFINE_VISIT_AGGREGATE(VM);
+
+void QueuedTask::run()
+{
+    if (!m_job.isObject())
+        return;
+    JSObject* job = jsCast<JSObject*>(m_job);
+    JSGlobalObject* globalObject = job->globalObject();
+    runJSMicrotask(globalObject, m_identifier, job, m_arguments[0], m_arguments[1], m_arguments[2], m_arguments[3]);
+}
+
+template<typename Visitor>
+void MicrotaskQueue::visitAggregateImpl(Visitor& visitor)
+{
+    // Because content in the queue will not be changed, we need to scan it only once per an entry during one GC cycle.
+    // We record the previous scan's index, and restart scanning again in CollectorPhase::FixPoint from that.
+    // When new GC phase begins, this cursor is reset to zero (beginMarking). This optimization is introduced because
+    // some of application have massive size of MicrotaskQueue depth. For example, in parallel-promises-es2015-native.js
+    // benchmark, it becomes 251670 at most.
+    // This cursor is adjusted when an entry is dequeued. And we do not use any locking here, and that's fine: these
+    // values are read by GC when CollectorPhase::FixPoint and CollectorPhase::Begin, and both suspend the mutator, thus,
+    // there is no concurrency issue.
+    for (auto iterator = m_queue.begin() + m_markedBefore, end = m_queue.end(); iterator != end; ++iterator) {
+        auto& task = *iterator;
+        visitor.appendUnbarriered(task.m_job);
+        visitor.appendUnbarriered(task.m_arguments, QueuedTask::maxArguments);
+    }
+    m_markedBefore = m_queue.size();
+}
+DEFINE_VISIT_AGGREGATE(MicrotaskQueue);
 
 } // namespace JSC

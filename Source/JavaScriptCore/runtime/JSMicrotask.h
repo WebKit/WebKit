@@ -26,13 +26,14 @@
 #pragma once
 
 #include "JSCast.h"
+#include "Microtask.h"
 #include "Structure.h"
 
 namespace JSC {
 
-class Microtask;
 class JSArray;
 
 JS_EXPORT_PRIVATE Ref<Microtask> createJSMicrotask(VM&, JSValue job, JSValue, JSValue, JSValue, JSValue);
+JS_EXPORT_PRIVATE void runJSMicrotask(JSGlobalObject*, MicrotaskIdentifier, JSValue job, JSValue, JSValue, JSValue, JSValue);
 
 } // namespace JSC

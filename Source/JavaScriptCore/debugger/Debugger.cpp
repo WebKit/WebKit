@@ -1267,24 +1267,24 @@ void Debugger::didReachDebuggerStatement(CallFrame* callFrame)
     updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, AttemptPause);
 }
 
-void Debugger::didQueueMicrotask(JSGlobalObject* globalObject, const Microtask& microtask)
+void Debugger::didQueueMicrotask(JSGlobalObject* globalObject, MicrotaskIdentifier identifier)
 {
     dispatchFunctionToObservers([&] (Observer& observer) {
-        observer.didQueueMicrotask(globalObject, microtask);
+        observer.didQueueMicrotask(globalObject, identifier);
     });
 }
 
-void Debugger::willRunMicrotask(JSGlobalObject* globalObject, const Microtask& microtask)
+void Debugger::willRunMicrotask(JSGlobalObject* globalObject, MicrotaskIdentifier identifier)
 {
     dispatchFunctionToObservers([&] (Observer& observer) {
-        observer.willRunMicrotask(globalObject, microtask);
+        observer.willRunMicrotask(globalObject, identifier);
     });
 }
 
-void Debugger::didRunMicrotask(JSGlobalObject* globalObject, const Microtask& microtask)
+void Debugger::didRunMicrotask(JSGlobalObject* globalObject, MicrotaskIdentifier identifier)
 {
     dispatchFunctionToObservers([&] (Observer& observer) {
-        observer.didRunMicrotask(globalObject, microtask);
+        observer.didRunMicrotask(globalObject, identifier);
     });
 }
 
