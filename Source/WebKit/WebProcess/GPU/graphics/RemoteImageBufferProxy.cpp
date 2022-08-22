@@ -193,7 +193,9 @@ RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferForm
         return nullptr;
     auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
     mutableThis.flushDrawingContextAsync();
-    auto pixelBuffer = allocator.createPixelBuffer(destinationFormat, srcRect.size());
+    IntRect sourceRectScaled = srcRect;
+    sourceRectScaled.scale(resolutionScale());
+    auto pixelBuffer = allocator.createPixelBuffer(destinationFormat, sourceRectScaled.size());
     if (!pixelBuffer)
         return nullptr;
     if (!m_remoteRenderingBackendProxy->getPixelBufferForImageBuffer(m_renderingResourceIdentifier, destinationFormat, srcRect, { pixelBuffer->bytes(), pixelBuffer->sizeInBytes() }))
