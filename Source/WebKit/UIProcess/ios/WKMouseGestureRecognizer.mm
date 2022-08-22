@@ -187,15 +187,19 @@ static String pointerTypeForUITouchType(UITouchType)
 
 - (void)_hoverEntered:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
+    bool shouldBeginGesture = _currentHoverEvent == nil && touches.count == 1 && [event isKindOfClass:NSClassFromString(@"UIHoverEvent")];
     _cancelledOrExited = NO;
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove wasCancelled:NO];
-
-    if (_currentHoverEvent == nil && touches.count == 1 && [event isKindOfClass:NSClassFromString(@"UIHoverEvent")]) {
+    
+    if (shouldBeginGesture) {
         _currentHoverEvent = event;
         _currentTouch = touches.anyObject;
         _lastLocation = [self locationInView:self.view];
-        self.state = UIGestureRecognizerStateBegan;
     }
+
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove wasCancelled:NO];
+    
+    if (shouldBeginGesture)
+        self.state = UIGestureRecognizerStateBegan;
 }
 
 - (void)_hoverMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
