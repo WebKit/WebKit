@@ -41,8 +41,11 @@ static ::testing::AssertionResult imageBufferPixelIs(Color expected, ImageBuffer
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
     auto frontPixelBuffer = imageBuffer.getPixelBuffer(format, { x, y, 1, 1 });
     auto got = Color { SRGBA<uint8_t> { frontPixelBuffer->item(0), frontPixelBuffer->item(1), frontPixelBuffer->item(2), frontPixelBuffer->item(3) } };
-    if (got != expected)
+    if (got != expected) {
+        // Use this to debug the contents in the browser.
+        // WTFLogAlways("%s", imageBuffer.toDataURL("image/png"_s).latin1().data());
         return ::testing::AssertionFailure() << "color is not expected at (" << x << ", " << y << "). Got: " << got << ", expected: " << expected << ".";
+    }
     return ::testing::AssertionSuccess();
 }
 namespace {
@@ -282,6 +285,41 @@ TEST_P(PreserveResolutionOperationTest, SinkIntoImageWorks)
     EXPECT_TRUE(hasTestPattern(*verifyBuffer));
 }
 
+// ImageBuffer test fixture for tests that are variant to the image buffer device scale factor and options
+class AnyScaleTest : public testing::TestWithParam<std::tuple<float, TestImageBufferOptions>> {
+public:
+    float deviceScaleFactor() const { return std::get<0>(GetParam()); }
+    OptionSet<ImageBufferOptions> imageBufferOptions() const
+    {
+        auto testOptions = std::get<1>(GetParam());
+        if (testOptions == TestImageBufferOptions::Accelerated)
+            return ImageBufferOptions::Accelerated;
+        return { };
+    }
+};
+
+// Test that ImageBuffer::getPixelBuffer() returns PixelBuffer that is sized to the ImageBuffer::logicalSize() * ImageBuffer::resolutionScale().
+TEST_P(AnyScaleTest, GetPixelBufferDimensionsContainScale)
+{
+    IntSize testSize { 50, 57 };
+    auto buffer = ImageBuffer::create(testSize, RenderingPurpose::Unspecified, deviceScaleFactor(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8, imageBufferOptions());
+    ASSERT_NE(buffer, nullptr);
+    drawTestPattern(*buffer);
+
+    // Test that ImageBuffer::getPixelBuffer() returns pixel buffer with dimensions that are scaled to resolutionScale() of the source.
+    PixelBufferFormat testFormat { AlphaPremultiplication::Premultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    auto pixelBuffer = buffer->getPixelBuffer(testFormat, { { }, testSize });
+    IntSize expectedSize = testSize;
+    expectedSize.scale(deviceScaleFactor());
+    EXPECT_EQ(expectedSize, pixelBuffer->size());
+
+    // Test that the contents of the pixel buffer was as expected.
+    auto verifyBuffer = ImageBuffer::create(pixelBuffer->size(), RenderingPurpose::Unspecified, 1.f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    ASSERT_NE(verifyBuffer, nullptr);
+    verifyBuffer->putPixelBuffer(*pixelBuffer, { { }, pixelBuffer->size() });
+    EXPECT_TRUE(hasTestPattern(*verifyBuffer));
+}
+
 INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
     PreserveResolutionOperationTest,
     testing::Combine(
@@ -290,5 +328,11 @@ INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
         testing::Values(TestPreserveResolution::No, TestPreserveResolution::Yes)),
     TestParametersToStringFormatter());
 
+INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
+    AnyScaleTest,
+    testing::Combine(
+        testing::Values(0.5f, 1.f, 2.f, 5.f),
+        testing::Values(TestImageBufferOptions::NoOptions, TestImageBufferOptions::Accelerated)),
+    TestParametersToStringFormatter());
 
 }
