@@ -1168,11 +1168,11 @@ test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
 test/intl402/Intl/DateTimeFormat/prototype/formatRange/fails-on-distinct-temporal-types.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(5, 2)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(5, 2)')"
 test/intl402/Intl/DateTimeFormat/prototype/formatRangeToParts/fails-on-distinct-temporal-types.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(5, 2)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainMonthDay(5, 2)')"
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
