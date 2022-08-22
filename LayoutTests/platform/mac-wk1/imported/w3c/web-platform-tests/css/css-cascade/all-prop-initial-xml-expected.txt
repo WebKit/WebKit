@@ -103,6 +103,7 @@ PASS contain-intrinsic-width
 PASS container-name
 PASS container-type
 PASS content
+PASS content-visibility
 PASS counter-increment
 PASS counter-reset
 PASS cursor

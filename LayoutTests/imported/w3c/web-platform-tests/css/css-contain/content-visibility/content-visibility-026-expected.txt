@@ -1,4 +1,4 @@
 
-FAIL content-visibility:hidden does not affect computed value of 'contain' assert_equals: expected (string) "hidden" but got (undefined) undefined
-FAIL content-visibility:auto does not affect computed value of 'contain' assert_equals: expected (string) "auto" but got (undefined) undefined
+PASS content-visibility:hidden does not affect computed value of 'contain'
+PASS content-visibility:auto does not affect computed value of 'contain'
 
