@@ -31,6 +31,7 @@
 #include "APIUIClient.h"
 #include "AuthenticatorManager.h"
 #include "LocalService.h"
+#include "Logging.h"
 #include "WebAuthenticationFlags.h"
 #include "WebAuthenticatorCoordinatorProxyMessages.h"
 #include "WebPageProxy.h"
@@ -81,6 +82,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
                 auto context = contextForRequest(WTFMove(data));
                 if (context.get() == nullptr) {
                     handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
+                    RELEASE_LOG_ERROR(WebAuthn, "The origin of the document is not the same as its ancestors.");
                     return;
                 }
                 // performRequest calls out to ASCAgent which will then call [_WKWebAuthenticationPanel makeCredential/getAssertionWithChallenge]
@@ -91,6 +93,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
 #else
             if (data.parentOrigin && !authenticatorManager.isMock() && !authenticatorManager.isVirtual()) {
                 handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
+                RELEASE_LOG_ERROR(WebAuthn, "The origin of the document is not the same as its ancestors.");
                 return;
             }
 #endif // HAVE(UNIFIED_ASC_AUTH_UI)
@@ -103,8 +106,10 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
                     handler({ }, (AuthenticatorAttachment)0, exception);
                 });
             });
-        } else
+        } else {
             handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "This request has been cancelled by the user."_s });
+            RELEASE_LOG_ERROR(WebAuthn, "Request cancelled due to rejected prompt after lack of user gesture.");
+        }
     };
     
     if (!data.processingUserGesture && data.mediation != MediationRequirement::Conditional && !m_webPageProxy.websiteDataStore().authenticatorManager().isVirtual())
