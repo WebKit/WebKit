@@ -4146,8 +4146,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 #if ENABLE(DARK_MODE_CSS)
         case CSSPropertyColorScheme: {
             auto colorScheme = style.colorScheme();
-            if (colorScheme.isAuto())
-                return cssValuePool.createIdentifierValue(CSSValueAuto);
+            if (colorScheme.isNormal())
+                return cssValuePool.createIdentifierValue(CSSValueNormal);
 
             auto list = CSSValueList::createSpaceSeparated();
             if (colorScheme.contains(ColorScheme::Light))

@@ -4229,7 +4229,7 @@ static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
 
 static RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range)
 {
-    if (isAuto(range.peek().id()))
+    if (range.peek().id() == CSSValueNormal)
         return consumeIdent(range);
 
     Vector<CSSValueID, 3> identifiers;
@@ -4241,8 +4241,8 @@ static RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range)
         CSSValueID id = range.peek().id();
 
         switch (id) {
-        case CSSValueAuto:
-            // Auto is only allowed as a single value, and was handled earlier.
+        case CSSValueNormal:
+            // `normal` is only allowed as a single value, and was handled earlier.
             // Don't allow it in the list.
             return nullptr;
 

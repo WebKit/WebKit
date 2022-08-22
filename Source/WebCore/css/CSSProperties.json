@@ -6631,7 +6631,7 @@
         "color-scheme": {
             "inherited": true,
             "values": [
-                "auto",
+                "normal",
                 "light",
                 "dark",
                 "only"

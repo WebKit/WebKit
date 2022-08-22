@@ -48,7 +48,7 @@ public:
 
     bool operator!=(const StyleColorScheme& other) const { return !(*this == other); }
 
-    bool isAuto() const { return m_colorScheme.isEmpty() && m_allowsTransformations; }
+    bool isNormal() const { return m_colorScheme.isEmpty() && m_allowsTransformations; }
     bool isOnly() const { return m_colorScheme.isEmpty() && !m_allowsTransformations; }
 
     OptionSet<ColorScheme> colorScheme() const { return m_colorScheme; }
