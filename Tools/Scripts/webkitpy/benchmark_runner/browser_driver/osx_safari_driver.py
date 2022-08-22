@@ -24,7 +24,7 @@ class OSXSafariDriver(OSXBrowserDriver):
 
     def launch_url(self, url, options, browser_build_path, browser_path):
         if browser_build_path or browser_path:
-            self._launch_url_with_custom_path(self, url, options, browser_build_path, browser_path)
+            self._launch_url_with_custom_path(url, options, browser_build_path, browser_path)
             return
 
         env = {}
