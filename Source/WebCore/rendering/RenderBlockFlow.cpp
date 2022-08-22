@@ -690,6 +690,44 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
     handleAfterSideOfBlock(beforeEdge, afterEdge, marginInfo);
 }
 
+void RenderBlockFlow::simplifiedNormalFlowLayout()
+{
+    if (!childrenInline()) {
+        RenderBlock::simplifiedNormalFlowLayout();
+        return;
+    }
+
+    bool shouldUpdateOverflow = false;
+    ListHashSet<LegacyRootInlineBox*> lineBoxes;
+    for (InlineWalker walker(*this); !walker.atEnd(); walker.advance()) {
+        RenderObject& renderer = *walker.current();
+        if (!renderer.isOutOfFlowPositioned() && (renderer.isReplacedOrInlineBlock() || renderer.isFloating())) {
+            RenderBox& box = downcast<RenderBox>(renderer);
+            box.layoutIfNeeded();
+            shouldUpdateOverflow = true;
+            if (box.inlineBoxWrapper())
+                lineBoxes.add(&box.inlineBoxWrapper()->root());
+        } else if (is<RenderText>(renderer) || is<RenderInline>(renderer))
+            renderer.clearNeedsLayout();
+    }
+
+    if (!shouldUpdateOverflow)
+        return;
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = modernLineLayout()) {
+        lineLayout->updateOverflow();
+        return;
+    }
+#endif
+
+    GlyphOverflowAndFallbackFontsMap textBoxDataMap;
+    for (auto it = lineBoxes.begin(), end = lineBoxes.end(); it != end; ++it) {
+        LegacyRootInlineBox* box = *it;
+        box->computeOverflow(box->lineTop(), box->lineBottom(), textBoxDataMap);
+    }
+}
+
 void RenderBlockFlow::computeAndSetLineLayoutPath()
 {
     if (lineLayoutPath() != UndeterminedPath)

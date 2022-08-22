@@ -363,6 +363,12 @@ void LineLayout::updateStyle(const RenderBoxModelObject& renderer, const RenderS
     m_boxTree.updateStyle(renderer);
 }
 
+void LineLayout::updateOverflow()
+{
+    auto inlineContentBuilder = InlineContentBuilder { flow(), m_boxTree };
+    inlineContentBuilder.updateLineOverflow(m_inlineFormattingState, *m_inlineContent);
+}
+
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 {
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, nullptr };

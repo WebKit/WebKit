@@ -87,6 +87,7 @@ public:
     void updateListItemDimensions(const RenderListItem&);
     void updateListMarkerDimensions(const RenderListMarker&);
     void updateStyle(const RenderBoxModelObject&, const RenderStyle& oldStyle);
+    void updateOverflow();
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 

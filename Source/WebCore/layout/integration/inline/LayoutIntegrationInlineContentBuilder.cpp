@@ -82,6 +82,12 @@ void InlineContentBuilder::build(Layout::InlineFormattingState& inlineFormatting
     createDisplayLines(inlineFormattingState, inlineContent);
 }
 
+void InlineContentBuilder::updateLineOverflow(Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
+{
+    inlineContent.lines.clear();
+    createDisplayLines(inlineFormattingState, inlineContent);
+}
+
 void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
     auto& lines = inlineFormattingState.lines();

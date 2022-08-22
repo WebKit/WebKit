@@ -372,7 +372,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         return reasons;
 
     auto isSupportedFloatingOrPositioned = [&] (auto& renderer) {
-        if (renderer.isFloating() || renderer.isInFlowPositioned())
+        if (renderer.isFloating())
             return false;
         if (renderer.isOutOfFlowPositioned()) {
             if (!is<RenderReplaced>(renderer))
