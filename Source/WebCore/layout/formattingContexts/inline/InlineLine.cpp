@@ -172,6 +172,17 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
     m_contentLogicalWidth += accumulatedExpansion;
 }
 
+void Line::truncate(InlineLayoutUnit logicalRight)
+{
+    ASSERT(m_contentLogicalWidth > logicalRight);
+    for (auto& run : m_runs) {
+        if (run.isInlineBox())
+            continue;
+        if (run.logicalRight() > logicalRight)
+            run.truncate(logicalRight - run.logicalLeft());
+    }
+}
+
 void Line::removeTrailingTrimmableContent(ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk shouldApplyTrailingWhiteSpaceFollowedByBRQuirk)
 {
     if (m_trimmableTrailingContent.isEmpty() || m_runs.isEmpty())
@@ -693,7 +704,7 @@ std::optional<Line::Run> Line::Run::detachTrailingWhitespace()
     auto trailingWhitespaceRun = *this;
 
     auto leadingNonWhitespaceContentLength = m_textContent->length - m_trailingWhitespace->length;
-    trailingWhitespaceRun.m_textContent = { m_textContent->start + leadingNonWhitespaceContentLength, m_trailingWhitespace->length, false };
+    trailingWhitespaceRun.m_textContent = { m_textContent->start + leadingNonWhitespaceContentLength, m_trailingWhitespace->length, { }, false };
 
     trailingWhitespaceRun.m_logicalWidth = m_trailingWhitespace->width;
     trailingWhitespaceRun.m_logicalLeft = logicalRight() - m_trailingWhitespace->width;
@@ -753,6 +764,24 @@ InlineLayoutUnit Line::Run::removeTrailingWhitespace()
     m_trailingWhitespace = { };
     shrinkHorizontally(trimmedWidth);
     return trimmedWidth;
+}
+
+void Line::Run::truncate(InlineLayoutUnit visibledWidth)
+{
+    ASSERT(!visibledWidth || visibledWidth < m_logicalWidth);
+    m_isTruncated = true;
+    if (!isText() || visibledWidth <= 0.f)
+        return;
+    auto leftSide = TextUtil::breakWord(downcast<InlineTextBox>(*m_layoutBox)
+        , m_textContent->start
+        , m_textContent->length
+        , m_logicalWidth
+        , visibledWidth
+        , m_logicalLeft
+        , m_style.fontCascade());
+
+    if (leftSide.length)
+        m_textContent->partiallyVisibleContent = { leftSide.length, leftSide.logicalWidth };
 }
 
 }

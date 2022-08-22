@@ -826,14 +826,15 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, con
     damageRect.moveBy(-paintOffset);
 
     auto hasDamage = [&](auto& box) {
-        if (box.style().visibility() != Visibility::Visible)
-            return false;
         auto rect = enclosingLayoutRect(box.inkOverflow());
         flow().flipForWritingMode(rect);
         // FIXME: This should test for intersection but horizontal ink overflow is miscomputed in a few cases (like with negative letter-spacing).
         return damageRect.maxY() > rect.y() && damageRect.y() < rect.maxY();
     };
 
+    auto isVisuallyHidden = [&](auto& box) {
+        return box.isVisuallyHidden() == InlineDisplay::Box::IsVisuallyHidden::Yes || box.style().visibility() != Visibility::Visible;
+    };
     auto shouldPaintBoxForPhase = [&](auto& box) {
         switch (paintPhase) {
         case PaintPhase::ChildOutlines: return box.isNonRootInlineBox();
@@ -858,6 +859,9 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, con
         if (!layerPaintScope.includes(box))
             continue;
 
+        if (isVisuallyHidden(box))
+            continue;
+
         if (box.isInlineBox()) {
             if (!hasDamage(box))
                 continue;
@@ -872,13 +876,14 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, con
         }
 
         if (box.isEllipsis()) {
+            if (!hasDamage(box))
+                continue;
             ModernEllipsisBoxPainter { *m_inlineContent, box, paintInfo, paintOffset }.paint();
             continue;
         }
 
         if (auto& textContent = box.text()) {
-            auto isEmptyTextBox = !textContent->length() || (textContent->truncatedLength().has_value() && !textContent->truncatedLength().value());
-            if (isEmptyTextBox || !hasDamage(box))
+            if (!textContent->length() || !hasDamage(box))
                 continue;
 
             ModernTextBoxPainter painter(*m_inlineContent, box, paintInfo, paintOffset);

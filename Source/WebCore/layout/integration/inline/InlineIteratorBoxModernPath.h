@@ -76,7 +76,7 @@ public:
             length(),
             box().text()->hasHyphen() ? box().style().hyphenString().length() : 0,
             box().isLineBreak(),
-            box().text()->truncatedLength()
+            box().text()->visuallyVisibleLength()
         };
     }
 

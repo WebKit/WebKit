@@ -581,6 +581,15 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         lineEndsWithHyphen = lastTextContent && lastTextContent->needsHyphen;
     }
     m_successiveHyphenatedLineCount = lineEndsWithHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
+
+    auto needsTextOverflowAdjustment = !isInIntrinsicWidthMode && rootStyle.textOverflow() == TextOverflow::Ellipsis && horizontalAvailableSpace < m_line.contentLogicalWidth();
+    if (needsTextOverflowAdjustment) {
+        static MainThreadNeverDestroyed<const AtomString> ellipsisStr(&horizontalEllipsis, 1);
+        auto ellipsisRun = WebCore::TextRun { ellipsisStr->string() };
+        auto ellipsisWidth = isFirstLine() ? root().firstLineStyle().fontCascade().width(ellipsisRun) : rootStyle.fontCascade().width(ellipsisRun);
+        auto logicalRightForContentWithoutEllipsis = std::max(0.f, horizontalAvailableSpace - ellipsisWidth);
+        m_line.truncate(logicalRightForContentWithoutEllipsis);
+    }
     return lineRange;
 }
 
