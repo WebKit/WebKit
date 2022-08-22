@@ -72,7 +72,8 @@ if [ ! -z "$1" ] ; then
         echo "Success."
         exit 0
     fi
-    echo "Unrecognized argument: $1"
+    echo "ERROR: Unrecognized argument: $1"
+    usage
     exit 1
 fi
 
