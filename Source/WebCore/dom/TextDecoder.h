@@ -35,7 +35,7 @@ class TextCodec;
 
 namespace WebCore {
 
-class TextDecoder : public RefCounted<TextDecoder> {
+class TextDecoder final : public RefCounted<TextDecoder> {
 public:
     ~TextDecoder();
 
@@ -55,7 +55,7 @@ public:
     ExceptionOr<String> decode(std::optional<BufferSource::VariantType>, DecodeOptions);
 
 private:
-    TextDecoder(const char*, Options);
+    TextDecoder(StringView, Options);
 
     const PAL::TextEncoding m_textEncoding;
     const Options m_options;

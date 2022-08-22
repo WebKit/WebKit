@@ -92,7 +92,7 @@ static void printExpectedCStringHelper(PrintStream& out, const char* type, Expec
 
 void printInternal(PrintStream& out, StringView string)
 {
-    printExpectedCStringHelper(out, "StringView", string.tryGetUtf8());
+    printExpectedCStringHelper(out, "StringView", string.tryGetUTF8());
 }
 
 void printInternal(PrintStream& out, const CString& string)
@@ -102,12 +102,12 @@ void printInternal(PrintStream& out, const CString& string)
 
 void printInternal(PrintStream& out, const String& string)
 {
-    printExpectedCStringHelper(out, "String", string.tryGetUtf8());
+    printExpectedCStringHelper(out, "String", string.tryGetUTF8());
 }
 
 void printInternal(PrintStream& out, const AtomString& string)
 {
-    printExpectedCStringHelper(out, "String", string.string().tryGetUtf8());
+    printExpectedCStringHelper(out, "String", string.string().tryGetUTF8());
 }
 
 void printInternal(PrintStream& out, const StringImpl* string)
@@ -116,7 +116,7 @@ void printInternal(PrintStream& out, const StringImpl* string)
         printInternal(out, "(null StringImpl*)");
         return;
     }
-    printExpectedCStringHelper(out, "StringImpl*", string->tryGetUtf8());
+    printExpectedCStringHelper(out, "StringImpl*", string->tryGetUTF8());
 }
 
 void printInternal(PrintStream& out, bool value)

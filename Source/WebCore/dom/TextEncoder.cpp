@@ -38,13 +38,11 @@ String TextEncoder::encoding() const
 
 RefPtr<Uint8Array> TextEncoder::encode(String&& input) const
 {
-    if (StringImpl* impl = input.impl()) {
-        auto result = impl->tryGetUtf8ForRange([&](Span<const char> span) -> RefPtr<Uint8Array> {
-            return Uint8Array::tryCreate(reinterpret_cast<const uint8_t*>(span.data()), span.size());
-        }, 0, impl->length());
-        if (result)
-            return result.value();
-    }
+    auto result = input.tryGetUTF8ForRange([&](Span<const char> span) -> RefPtr<Uint8Array> {
+        return Uint8Array::tryCreate(reinterpret_cast<const uint8_t*>(span.data()), span.size());
+    }, 0, input.length());
+    if (result)
+        return result.value();
     return Uint8Array::tryCreate(nullptr, 0);
 }
 

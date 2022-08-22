@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-TextDecoder::TextDecoder(const char* label, Options options)
+TextDecoder::TextDecoder(StringView label, Options options)
     : m_textEncoding(label)
     , m_options(options)
 {
@@ -45,7 +45,7 @@ ExceptionOr<Ref<TextDecoder>> TextDecoder::create(const String& label, Options o
     const UChar nullCharacter = '\0';
     if (strippedLabel.contains(nullCharacter))
         return Exception { RangeError };
-    auto decoder = adoptRef(*new TextDecoder(strippedLabel.utf8().data(), options));
+    auto decoder = adoptRef(*new TextDecoder(strippedLabel, options));
     if (!decoder->m_textEncoding.isValid() || !strcmp(decoder->m_textEncoding.name(), "replacement"))
         return Exception { RangeError };
     return decoder;

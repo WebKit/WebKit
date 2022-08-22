@@ -482,7 +482,7 @@ std::string toMessage(BSTR message)
         return "";
     // Return "(null)" for an invalid UTF-16 sequence to align with WebKitTestRunner.
     // FIXME: Could probably take advantage of WC_ERR_INVALID_CHARS and avoid converting to UTF-8 twice.
-    if (!StringView(ucharFrom(message), length).tryGetUtf8(StrictConversion))
+    if (!StringView(ucharFrom(message), length).tryGetUTF8(StrictConversion))
         return "(null)";
     return toUTF8(message);
 }

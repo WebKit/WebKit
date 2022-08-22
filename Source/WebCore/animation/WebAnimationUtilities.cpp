@@ -109,7 +109,7 @@ static bool compareCSSTransitions(const CSSTransition& a, const CSSTransition& b
 
     // Otherwise, sort A and B in ascending order by the Unicode codepoints that make up the expanded transition property name of each transition
     // (i.e. without attempting case conversion and such that ‘-moz-column-width’ sorts before ‘column-width’).
-    return a.transitionProperty().utf8() < b.transitionProperty().utf8();
+    return codePointCompareLessThan(a.transitionProperty(), b.transitionProperty());
 }
 
 static bool compareCSSAnimations(const CSSAnimation& a, const CSSAnimation& b)

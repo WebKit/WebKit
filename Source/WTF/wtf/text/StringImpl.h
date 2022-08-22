@@ -326,9 +326,14 @@ public:
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode = LenientConversion);
 
     template<typename Func>
-    Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> tryGetUtf8ForRange(const Func&, unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
-    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUtf8ForRange(unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
-    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUtf8(ConversionMode = LenientConversion) const;
+    static Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> tryGetUTF8ForCharacters(const Func&, const LChar* characters, unsigned length);
+    template<typename Func>
+    static Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> tryGetUTF8ForCharacters(const Func&, const UChar* characters, unsigned length, ConversionMode = LenientConversion);
+
+    template<typename Func>
+    Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> tryGetUTF8ForRange(const Func&, unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
+    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUTF8ForRange(unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
+    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUTF8(ConversionMode = LenientConversion) const;
     WTF_EXPORT_PRIVATE CString utf8(ConversionMode = LenientConversion) const;
 
 private:
@@ -1361,14 +1366,22 @@ inline Ref<StringImpl> StringImpl::createByReplacingInCharacters(const UChar* ch
 }
 
 template<typename Func>
-inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> StringImpl::tryGetUtf8ForRange(const Func& function, unsigned offset, unsigned length, ConversionMode mode) const
+inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> StringImpl::tryGetUTF8ForRange(const Func& function, unsigned offset, unsigned length, ConversionMode mode) const
 {
     ASSERT(offset <= this->length());
-    ASSERT(offset + length <= this->length());
+    ASSERT(length <= (this->length() - offset));
 
+    if (is8Bit())
+        return tryGetUTF8ForCharacters(function, characters8() + offset, length);
+    return tryGetUTF8ForCharacters(function, characters16() + offset, length, mode);
+}
+
+template<typename Func>
+inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> StringImpl::tryGetUTF8ForCharacters(const Func& function, const LChar* characters, unsigned length)
+{
     if (!length) {
-        const char* const emptyString = "";
-        return function(Span<const char> { emptyString, emptyString });
+        constexpr const char* emptyString = "";
+        return function(Span { emptyString, emptyString });
     }
 
     // Allocate a buffer big enough to hold all the characters
@@ -1384,38 +1397,47 @@ inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionErro
     if (length > MaxLength / 3)
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
-    if (is8Bit()) {
-        const LChar* characters = this->characters8() + offset;
 #if CPU(ARM64)
-        if (const LChar* nonASCII = find8NonASCII(characters, length)) {
-            size_t prefixLength = nonASCII - characters;
-            size_t remainingLength = length - prefixLength;
-            Vector<char, 1024> bufferVector(prefixLength + remainingLength * 3);
-            char* buffer = bufferVector.data();
+    if (const LChar* nonASCII = find8NonASCII(characters, length)) {
+        size_t prefixLength = nonASCII - characters;
+        size_t remainingLength = length - prefixLength;
 
-            memcpy(buffer, characters, prefixLength);
-            buffer += prefixLength;
-
-            auto success = Unicode::convertLatin1ToUTF8(&nonASCII, characters + length, &buffer, buffer + (bufferVector.size() - prefixLength));
-            ASSERT_UNUSED(success, success); // (length * 3) should be sufficient for any conversion
-            return function(Span<const char> { bufferVector.data(), buffer });
-        } else
-            return function(Span<const char> { bitwise_cast<const char*>(characters), bitwise_cast<const char*>(characters + length) });
-#else
-        Vector<char, 1024> bufferVector(length * 3);
+        Vector<char, 1024> bufferVector(prefixLength + remainingLength * 3);
         char* buffer = bufferVector.data();
-        auto success = Unicode::convertLatin1ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size());
-        ASSERT_UNUSED(success, success); // (length * 3) should be sufficient for any conversion
-        return function(Span<const char> { bufferVector.data(), buffer });
-#endif
-    }
 
+        memcpy(buffer, characters, prefixLength);
+        buffer += prefixLength;
+
+        auto success = Unicode::convertLatin1ToUTF8(&nonASCII, characters + length, &buffer, buffer + (bufferVector.size() - prefixLength));
+        ASSERT_UNUSED(success, success); // (length * 3) should be sufficient for any conversion
+        return function(Span { bufferVector.data(), buffer });
+    }
+    return function(Span { bitwise_cast<const char*>(characters), bitwise_cast<const char*>(characters + length) });
+#else
     Vector<char, 1024> bufferVector(length * 3);
     char* buffer = bufferVector.data();
-    UTF8ConversionError error = utf8Impl(this->characters16() + offset, length, buffer, bufferVector.size(), mode);
+    const LChar* source = characters;
+    bool success = Unicode::convertLatin1ToUTF8(&source, source + length, &buffer, buffer + bufferVector.size());
+    ASSERT_UNUSED(success, success); // (length * 3) should be sufficient for any conversion
+    return function(Span { bufferVector.data(), buffer });
+#endif
+}
+
+template<typename Func>
+inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> StringImpl::tryGetUTF8ForCharacters(const Func& function, const UChar* characters, unsigned length, ConversionMode mode)
+{
+    if (!length) {
+        constexpr const char* emptyString = "";
+        return function(Span { emptyString, emptyString });
+    }
+    if (length > MaxLength / 3)
+        return makeUnexpected(UTF8ConversionError::OutOfMemory);
+    Vector<char, 1024> bufferVector(length * 3);
+    char* buffer = bufferVector.data();
+    UTF8ConversionError error = utf8Impl(characters, length, buffer, bufferVector.size(), mode);
     if (error != UTF8ConversionError::None)
         return makeUnexpected(error);
-    return function(Span<const char> { bufferVector.data(), buffer });
+    return function(Span { bufferVector.data(), buffer });
 }
 
 } // namespace WTF

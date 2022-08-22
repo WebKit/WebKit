@@ -52,8 +52,8 @@ Vector<uint8_t> convertArrayBufferToVector(ArrayBuffer* buffer)
 Vector<uint8_t> produceRpIdHash(const String& rpId)
 {
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    auto rpIdUtf8 = rpId.utf8();
-    crypto->addBytes(rpIdUtf8.data(), rpIdUtf8.length());
+    auto rpIdUTF8 = rpId.utf8();
+    crypto->addBytes(rpIdUTF8.data(), rpIdUTF8.length());
     return crypto->computeHash();
 }
 

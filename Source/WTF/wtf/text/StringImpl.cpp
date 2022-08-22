@@ -1593,66 +1593,33 @@ UTF8ConversionError StringImpl::utf8Impl(const UChar* characters, unsigned lengt
 
 Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(const LChar* characters, unsigned length)
 {
-    if (!length)
-        return CString("", 0);
-    if (length > MaxLength / 3)
-        return makeUnexpected(UTF8ConversionError::OutOfMemory);
-
-#if CPU(ARM64)
-    if (const LChar* nonASCII = find8NonASCII(characters, length)) {
-        size_t prefixLength = nonASCII - characters;
-        size_t remainingLength = length - prefixLength;
-
-        Vector<char, 1024> bufferVector(prefixLength + remainingLength * 3);
-        char* buffer = bufferVector.data();
-
-        memcpy(buffer, characters, prefixLength);
-        buffer += prefixLength;
-
-        auto success = Unicode::convertLatin1ToUTF8(&nonASCII, characters + length, &buffer, buffer + (bufferVector.size() - prefixLength));
-        ASSERT_UNUSED(success, success); // (length * 3) should be sufficient for any conversion
-        return CString(bufferVector.data(), buffer - bufferVector.data());
-    } else
-        return CString(bitwise_cast<const char*>(characters), length);
-#else
-    Vector<char, 1024> bufferVector(length * 3);
-    char* buffer = bufferVector.data();
-    const LChar* source = characters;
-    bool success = convertLatin1ToUTF8(&source, source + length, &buffer, buffer + bufferVector.size());
-    ASSERT_UNUSED(success, success); // (length * 3) should be sufficient for any conversion
-    return CString(bufferVector.data(), buffer - bufferVector.data());
-#endif
+    return StringImpl::tryGetUTF8ForCharacters([](Span<const char> span) -> CString {
+        return CString(span.data(), span.size());
+    }, characters, length);
 }
 
 Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode mode)
 {
-    if (!length)
-        return CString("", 0);
-    if (length > MaxLength / 3)
-        return makeUnexpected(UTF8ConversionError::OutOfMemory);
-    Vector<char, 1024> bufferVector(length * 3);
-    char* buffer = bufferVector.data();
-    UTF8ConversionError error = utf8Impl(characters, length, buffer, bufferVector.size(), mode);
-    if (error != UTF8ConversionError::None)
-        return makeUnexpected(error);
-    return CString(bufferVector.data(), buffer - bufferVector.data());
+    return StringImpl::tryGetUTF8ForCharacters([](Span<const char> span) -> CString {
+        return CString(span.data(), span.size());
+    }, characters, length, mode);
 }
 
-Expected<CString, UTF8ConversionError> StringImpl::tryGetUtf8ForRange(unsigned offset, unsigned length, ConversionMode mode) const
+Expected<CString, UTF8ConversionError> StringImpl::tryGetUTF8ForRange(unsigned offset, unsigned length, ConversionMode mode) const
 {
-    return tryGetUtf8ForRange([](Span<const char> span) -> CString {
+    return tryGetUTF8ForRange([](Span<const char> span) -> CString {
         return CString(span.data(), span.size());
     }, offset, length, mode);
 }
 
-Expected<CString, UTF8ConversionError> StringImpl::tryGetUtf8(ConversionMode mode) const
+Expected<CString, UTF8ConversionError> StringImpl::tryGetUTF8(ConversionMode mode) const
 {
-    return tryGetUtf8ForRange(0, length(), mode);
+    return tryGetUTF8ForRange(0, length(), mode);
 }
 
 CString StringImpl::utf8(ConversionMode mode) const
 {
-    auto expectedString = tryGetUtf8ForRange(0, length(), mode);
+    auto expectedString = tryGetUTF8ForRange(0, length(), mode);
     RELEASE_ASSERT(expectedString);
     return expectedString.value();
 }
