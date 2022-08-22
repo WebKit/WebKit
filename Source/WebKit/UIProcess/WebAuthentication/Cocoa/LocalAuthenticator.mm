@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#import "Logging.h"
 #import "AuthenticationServicesCoreSoftLink.h"
 #import <Security/SecItem.h>
 #import <WebCore/AuthenticatorAssertionResponse.h>
@@ -486,13 +487,15 @@ void LocalAuthenticator::getAssertion()
     auto allowCredentialIds = produceHashSet(requestOptions.allowCredentials);
     if (!requestOptions.allowCredentials.isEmpty() && allowCredentialIds.isEmpty()) {
         receiveException({ NotAllowedError, "No matched credentials are found in the platform attached authenticator."_s }, WebAuthenticationStatus::LANoCredential);
+        RELEASE_LOG_ERROR(WebAuthn, "No matched credentials are found in the platform attached authenticator.");
         return;
     }
 
     // Search Keychain for the RP ID.
     auto existingCredentials = getExistingCredentials(requestOptions.rpId);
     if (!existingCredentials) {
-        receiveException({ UnknownError, makeString("Couldn't get existing credentials") });
+        receiveException({ UnknownError, "Couldn't get existing credentials"_s });
+        RELEASE_LOG_ERROR(WebAuthn, "Couldn't get existing credentials");
         return;
     }
     m_existingCredentials = WTFMove(*existingCredentials);
@@ -511,6 +514,7 @@ void LocalAuthenticator::getAssertion()
     }
     if (assertionResponses.isEmpty()) {
         receiveException({ NotAllowedError, "No matched credentials are found in the platform attached authenticator."_s }, WebAuthenticationStatus::LANoCredential);
+        RELEASE_LOG_ERROR(WebAuthn, "No matched credentials are found in the platform attached authenticator.");
         return;
     }
 
@@ -591,6 +595,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &privateKeyRef);
         if (status) {
             receiveException({ UnknownError, makeString("Couldn't get the private key reference: ", status) });
+            RELEASE_LOG_ERROR(WebAuthn, "Couldn't get the private key reference: %d", status);
             return;
         }
         auto privateKey = adoptCF(privateKeyRef);
@@ -603,6 +608,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         signature = adoptCF(SecKeyCreateSignature((__bridge SecKeyRef)((id)privateKeyRef), kSecKeyAlgorithmECDSASignatureMessageX962SHA256, (__bridge CFDataRef)dataToSign, &errorRef));
         auto retainError = adoptCF(errorRef);
         if (errorRef) {
+            RELEASE_LOG_ERROR(WebAuthn, "Couldn't generate signature: %@", ((NSError*)errorRef).localizedDescription);
             receiveException({ UnknownError, makeString("Couldn't generate the signature: ", String(((NSError*)errorRef).localizedDescription)) });
             return;
         }
@@ -623,7 +629,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
     };
     auto status = SecItemUpdate((__bridge CFDictionaryRef)query, (__bridge CFDictionaryRef)updateParams);
     if (status)
-        LOG_ERROR("Couldn't update the Keychain item: %d", status);
+        RELEASE_LOG_ERROR(WebAuthn, "Couldn't update the Keychain item: %d", status);
 
     // Step 13.
     response->setAuthenticatorData(WTFMove(authData));
@@ -648,7 +654,7 @@ void LocalAuthenticator::receiveException(ExceptionData&& exception, WebAuthenti
 
         OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query.get());
         if (status)
-            LOG_ERROR(makeString("Couldn't delete provisional credential while handling error: "_s, status).utf8().data());
+            RELEASE_LOG_ERROR(WebAuthn, "Couldn't delete provisional credential while handling error: %d", status);
     }
 
     if (auto* observer = this->observer())
@@ -680,7 +686,7 @@ void LocalAuthenticator::deleteDuplicateCredential() const
 
         OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query);
         if (status && status != errSecItemNotFound)
-            LOG_ERROR(makeString("Couldn't delete older credential: "_s, status).utf8().data());
+            RELEASE_LOG_ERROR(WebAuthn, "Couldn't delete older credential: %d", status);
         return true;
     });
 }
@@ -695,6 +701,7 @@ bool LocalAuthenticator::validateUserVerification(LocalConnection::UserVerificat
 
     if (verification == LocalConnection::UserVerification::No) {
         receiveException({ NotAllowedError, "Couldn't verify user."_s });
+        RELEASE_LOG_ERROR(WebAuthn, "Could not verify user.");
         return false;
     }
 
