@@ -128,7 +128,7 @@ class GtkPort(Port):
                              'PLUGIN_PATH_1_0'):
             self._copy_value_from_environ_if_set(environment, 'GST_%s' % gst_variable)
 
-        gst_feature_rank_override = environment.get('GST_PLUGIN_FEATURE_RANK')
+        gst_feature_rank_override = os.environ.get('GST_PLUGIN_FEATURE_RANK')
         environment['GST_PLUGIN_FEATURE_RANK'] = 'fakeaudiosink:max'
         if gst_feature_rank_override:
             environment['GST_PLUGIN_FEATURE_RANK'] += ',%s' % gst_feature_rank_override
