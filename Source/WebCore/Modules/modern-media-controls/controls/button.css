@@ -55,8 +55,14 @@ button:focus {
 }
 
 button:focus > picture {
-    background-color: -webkit-focus-ring-color !important;
     mix-blend-mode: normal !important;
+}
+
+/* In GTK/WPE clicking a button brings focus to it, so in that case we want to avoid setting the
+   background color to focus-ring-color. That's why this CSS rule applies only to non-adwaita
+   layouts. */
+button:is(.mac, .ios, .watchos):focus > picture {
+    background-color: -webkit-focus-ring-color !important;
 }
 
 button.skip-back > picture,
