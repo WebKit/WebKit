@@ -11,7 +11,9 @@ aptIfElse() {
 }
 
 aptIfExists() {
-    local ret=$(apt show "$1" 2>/dev/null)
+    local ret
+
+    ret=$(apt show "$1" 2>/dev/null)
     if [[ $? -ne 0 ]]; then
         return
     fi
@@ -30,12 +32,15 @@ PACKAGES=(
     bubblewrap
     cmake
     gawk
+    $(aptIfExists gi-docgen)
     gperf
     gtk-doc-tools
     intltool
     itstool
     libasound2-dev
     libatk1.0-dev
+    $(aptIfExists libavif-dev)
+    $(aptIfExists libenchant-2-dev)
     libepoxy-dev
     libevent-dev
     libfile-copy-recursive-perl
@@ -46,9 +51,11 @@ PACKAGES=(
     libjpeg-dev
     libkate-dev
     liblcms2-dev
+    $(aptIfExists libmanette-0.2-dev)
     libopenjp2-7-dev
     libpng-dev
     libseccomp-dev
+    $(aptIfExists libsoup-3.0-dev)
     libsqlite3-dev
     libsystemd-dev
     libtasn1-6-dev
@@ -56,6 +63,8 @@ PACKAGES=(
     libwayland-dev
     libwebp-dev
     libwoff-dev
+    $(aptIfExists libwpe-1.0-dev)
+    $(aptIfExists libwpebackend-fdo-1.0-dev)
     libxml2-utils
     libxslt1-dev
     ninja-build
