@@ -1924,3 +1924,10 @@ imported/w3c/web-platform-tests/mixed-content [ Skip ]
 
 # webkit.org/b/243738 [ macOS wk1 ] Multiple imported/w3c/web-platform-tests/wasm tests are a constant failure on Mac wk1
 imported/w3c/web-platform-tests/wasm [ Skip ]
+
+webkit.org/b/244230 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/a-click-during-load.html [ Pass Failure ]
+webkit.org/b/244230 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/a-click-during-pageshow.html [ Pass Failure ]
+webkit.org/b/244230 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/a-click.html [ Pass Failure ]
+webkit.org/b/244230 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/history-pushstate-during-load.html [ Pass Failure ]
+webkit.org/b/244230 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/history-pushstate-during-pageshow.html [ Pass Failure ]
+webkit.org/b/244230 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/history-pushstate.html [ Pass Failure ]
