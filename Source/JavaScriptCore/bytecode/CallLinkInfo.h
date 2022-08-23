@@ -199,8 +199,8 @@ public:
 
     CodeLocationLabel<JSInternalPtrTag> doneLocation();
 
-    void setMonomorphicCallee(VM&, JSCell*, JSObject* callee, CodeBlock*, MacroAssemblerCodePtr<JSEntryPtrTag>);
-    void setSlowPathCallDestination(MacroAssemblerCodePtr<JSEntryPtrTag>);
+    void setMonomorphicCallee(VM&, JSCell*, JSObject* callee, CodeBlock*, CodePtr<JSEntryPtrTag>);
+    void setSlowPathCallDestination(CodePtr<JSEntryPtrTag>);
     void clearCallee();
     JSObject* callee();
 
@@ -383,7 +383,7 @@ protected:
 
     uint32_t m_maxArgumentCountIncludingThis { 0 }; // For varargs: the profiled maximum number of arguments. For direct: the number of stack slots allocated for arguments.
     CodeLocationLabel<JSInternalPtrTag> m_doneLocation;
-    MacroAssemblerCodePtr<JSEntryPtrTag> m_slowPathCallDestination;
+    CodePtr<JSEntryPtrTag> m_slowPathCallDestination;
     union UnionType {
         UnionType()
             : dataIC { nullptr, nullptr }
@@ -391,7 +391,7 @@ protected:
 
         struct DataIC {
             CodeBlock* m_codeBlock; // This is weekly held. And cleared whenever m_monomorphicCallDestination is changed.
-            MacroAssemblerCodePtr<JSEntryPtrTag> m_monomorphicCallDestination;
+            CodePtr<JSEntryPtrTag> m_monomorphicCallDestination;
         } dataIC;
 
         struct {

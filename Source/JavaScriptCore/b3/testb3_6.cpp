@@ -1677,8 +1677,8 @@ void testInterpreter()
             AllowMacroScratchRegisterUsage allowScratch(jit);
             Vector<Box<CCallHelpers::Label>> labels = params.successorLabels();
 
-            MacroAssemblerCodePtr<JSSwitchPtrTag>* jumpTable = bitwise_cast<MacroAssemblerCodePtr<JSSwitchPtrTag>*>(
-                params.proc().addDataSection(sizeof(MacroAssemblerCodePtr<JSSwitchPtrTag>) * labels.size()));
+            CodePtr<JSSwitchPtrTag>* jumpTable = bitwise_cast<CodePtr<JSSwitchPtrTag>*>(
+                params.proc().addDataSection(sizeof(CodePtr<JSSwitchPtrTag>) * labels.size()));
 
             GPRReg scratch = params.gpScratch(0);
 

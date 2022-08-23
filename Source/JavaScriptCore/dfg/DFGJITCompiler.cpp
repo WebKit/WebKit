@@ -329,7 +329,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         ASSERT(m_exitSiteLabels.size() == m_osrExit.size());
         for (unsigned i = 0; i < m_exitSiteLabels.size(); ++i) {
             Vector<Label>& labels = m_exitSiteLabels[i];
-            Vector<MacroAssemblerCodePtr<JSInternalPtrTag>> addresses;
+            Vector<CodePtr<JSInternalPtrTag>> addresses;
             for (unsigned j = 0; j < labels.size(); ++j)
                 addresses.append(linkBuffer.locationOf<JSInternalPtrTag>(labels[j]));
             m_graph.compilation()->addOSRExitSite(addresses);
@@ -535,11 +535,11 @@ void JITCompiler::compileFunction()
     m_speculative->linkOSREntries(*linkBuffer);
     
     if (requiresArityFixup)
-        linkBuffer->link(callArityFixup, vm().getCTIStub(arityFixupGenerator).code().toFunctionPtr());
+        linkBuffer->link(callArityFixup, vm().getCTIStub(arityFixupGenerator).code());
 
     disassemble(*linkBuffer);
 
-    MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = linkBuffer->locationOf<JSEntryPtrTag>(arityCheck);
+    CodePtr<JSEntryPtrTag> withArityCheck = linkBuffer->locationOf<JSEntryPtrTag>(arityCheck);
 
     m_jitCode->initializeCodeRefForDFG(
         FINALIZE_DFG_CODE(*linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data()),

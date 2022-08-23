@@ -379,7 +379,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
                 callFrame = static_cast<CallFrame*>(machineFrame);
                 auto instructionPointer = MachineContext::instructionPointer(registers);
                 if (instructionPointer)
-                    machinePC = instructionPointer->untaggedExecutableAddress();
+                    machinePC = instructionPointer->untaggedPtr();
                 else
                     machinePC = nullptr;
                 llintPC = removeCodePtrTag(MachineContext::llintInstructionPointer(registers));

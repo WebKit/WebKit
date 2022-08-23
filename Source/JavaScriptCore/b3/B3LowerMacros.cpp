@@ -602,7 +602,7 @@ private:
                     [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
 
-                        using JumpTableCodePtr = MacroAssemblerCodePtr<JSSwitchPtrTag>;
+                        using JumpTableCodePtr = CodePtr<JSSwitchPtrTag>;
                         JumpTableCodePtr* jumpTable = static_cast<JumpTableCodePtr*>(
                             params.proc().addDataSection(sizeof(JumpTableCodePtr) * tableSize));
 

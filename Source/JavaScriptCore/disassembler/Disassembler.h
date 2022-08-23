@@ -28,31 +28,31 @@
 #include "JSCPtrTag.h"
 #include "JSExportMacros.h"
 #include <functional>
+#include <wtf/CodePtr.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/CString.h>
 
 namespace JSC {
 
-template<PtrTag> class MacroAssemblerCodePtr;
 template<PtrTag> class MacroAssemblerCodeRef;
 
 #if ENABLE(DISASSEMBLER)
-bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>&, size_t, void* codeStart, void* codeEnd, const char* prefix, PrintStream&);
+bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>&, size_t, void* codeStart, void* codeEnd, const char* prefix, PrintStream&);
 #else
-inline bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>&, size_t, void*, void*, const char*, PrintStream&)
+inline bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>&, size_t, void*, void*, const char*, PrintStream&)
 {
     return false;
 }
 #endif
 
-inline bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& code, size_t size, const char* prefix, PrintStream& out)
+inline bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& code, size_t size, const char* prefix, PrintStream& out)
 {
     return tryToDisassemble(code, size, nullptr, nullptr, prefix, out);
 }
 
 // Prints either the disassembly, or a line of text indicating that disassembly failed and
 // the range of machine code addresses.
-void disassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>&, size_t, void* codeStart, void* codeEnd, const char* prefix, PrintStream& out);
+void disassemble(const CodePtr<DisassemblyPtrTag>&, size_t, void* codeStart, void* codeEnd, const char* prefix, PrintStream& out);
 
 // Asynchronous disassembly. This happens on another thread, and calls the provided
 // callback when the disassembly is done.

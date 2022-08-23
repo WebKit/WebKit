@@ -80,7 +80,7 @@ private:
 
 struct SignalContext {
 private:
-    SignalContext(PlatformRegisters& registers, MacroAssemblerCodePtr<PlatformRegistersPCPtrTag> machinePC)
+    SignalContext(PlatformRegisters& registers, CodePtr<PlatformRegistersPCPtrTag> machinePC)
         : registers(registers)
         , machinePC(machinePC)
         , stackPointer(MachineContext::stackPointer(registers))
@@ -140,16 +140,16 @@ public:
         log("x%d: %016llx fp: %016llx lr: %016llx",
             i, registers.__x[i],
             MachineContext::framePointer<uint64_t>(registers),
-            MachineContext::linkRegister(registers).untaggedExecutableAddress<uint64_t>());
+            MachineContext::linkRegister(registers).untaggedPtr<uint64_t>());
         log("sp: %016llx pc: %016llx cpsr: %08x",
             MachineContext::stackPointer<uint64_t>(registers),
-            machinePC.untaggedExecutableAddress<uint64_t>(),
+            machinePC.untaggedPtr<uint64_t>(),
             registers.__cpsr);
 #endif
     }
 
     PlatformRegisters& registers;
-    MacroAssemblerCodePtr<PlatformRegistersPCPtrTag> machinePC;
+    CodePtr<PlatformRegistersPCPtrTag> machinePC;
     void* stackPointer;
     void* framePointer;
 };
@@ -164,7 +164,7 @@ static void installCrashHandler()
         if (!signalContext)
             return SignalAction::NotHandled;
             
-        void* machinePC = signalContext->machinePC.untaggedExecutableAddress();
+        void* machinePC = signalContext->machinePC.untaggedPtr();
         if (!isJITPC(machinePC))
             return SignalAction::NotHandled;
 
@@ -185,7 +185,7 @@ struct SignalContext {
 
     void dump() { }
 
-    MacroAssemblerCodePtr<PlatformRegistersPCPtrTag> machinePC;
+    CodePtr<PlatformRegistersPCPtrTag> machinePC;
     void* stackPointer;
     void* framePointer;
 };
@@ -236,7 +236,7 @@ auto SigillCrashAnalyzer::analyze(SignalContext& context) -> CrashSource
         }
         Locker locker { AdoptLock, inspector.getLock() };
 
-        void* pc = context.machinePC.untaggedExecutableAddress();
+        void* pc = context.machinePC.untaggedPtr();
         auto isInJITMemory = inspector.isValidExecutableMemory(pc);
         if (!isInJITMemory) {
             log("ERROR: Timed out: not able to determine if pc %p is in valid JIT executable memory", pc);

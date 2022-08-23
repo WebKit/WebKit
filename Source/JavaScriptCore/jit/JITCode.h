@@ -67,7 +67,6 @@ static_assert(WTF::getMSBSetConstexpr(static_cast<std::underlying_type_t<JITType
 
 class JITCode : public ThreadSafeRefCounted<JITCode> {
 public:
-    template<PtrTag tag> using CodePtr = MacroAssemblerCodePtr<tag>;
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
     static ASCIILiteral typeName(JITType);

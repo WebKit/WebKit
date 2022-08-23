@@ -66,14 +66,14 @@ struct OSRExit;
 // Every CallLinkRecord contains a reference to the call instruction & the function
 // that it needs to be linked to.
 struct CallLinkRecord {
-    CallLinkRecord(MacroAssembler::Call call, FunctionPtr<OperationPtrTag> function)
+    CallLinkRecord(MacroAssembler::Call call, CodePtr<OperationPtrTag> function)
         : m_call(call)
         , m_function(function)
     {
     }
 
     MacroAssembler::Call m_call;
-    FunctionPtr<OperationPtrTag> m_function;
+    CodePtr<OperationPtrTag> m_function;
 };
 
 // === JITCompiler ===
@@ -141,14 +141,14 @@ public:
     }
 
     // Add a call out from JIT code, without an exception check.
-    Call appendCall(const FunctionPtr<CFunctionPtrTag> function)
+    Call appendCall(const CodePtr<CFunctionPtrTag> function)
     {
         Call functionCall = call(OperationPtrTag);
         m_calls.append(CallLinkRecord(functionCall, function.retagged<OperationPtrTag>()));
         return functionCall;
     }
 
-    Call appendOperationCall(const FunctionPtr<OperationPtrTag> function)
+    Call appendOperationCall(const CodePtr<OperationPtrTag> function)
     {
         Call functionCall = call(OperationPtrTag);
         m_calls.append(CallLinkRecord(functionCall, function));

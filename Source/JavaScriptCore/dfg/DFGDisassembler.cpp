@@ -162,7 +162,7 @@ void Disassembler::dumpDisassembly(PrintStream& out, const char* prefix, LinkBuf
         prefixBuffer[i + prefixLength] = ' ';
     prefixBuffer[prefixLength + amountOfNodeWhiteSpace] = 0;
     
-    void* codeStart = linkBuffer.entrypoint<DisassemblyPtrTag>().untaggedExecutableAddress();
+    void* codeStart = linkBuffer.entrypoint<DisassemblyPtrTag>().untaggedPtr();
     void* codeEnd = bitwise_cast<uint8_t*>(codeStart) +  linkBuffer.size();
 
     CodeLocationLabel<DisassemblyPtrTag> start = linkBuffer.locationOf<DisassemblyPtrTag>(previousLabel);

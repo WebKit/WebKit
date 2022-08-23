@@ -110,12 +110,12 @@ LLIntCallee::LLIntCallee(FunctionCodeBlockGenerator& generator, size_t index, st
     }
 }
 
-void LLIntCallee::setEntrypoint(MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint)
+void LLIntCallee::setEntrypoint(CodePtr<WasmEntryPtrTag> entrypoint)
 {
     m_entrypoint = entrypoint;
 }
 
-MacroAssemblerCodePtr<WasmEntryPtrTag> LLIntCallee::entrypoint() const
+CodePtr<WasmEntryPtrTag> LLIntCallee::entrypoint() const
 {
     return m_entrypoint;
 }

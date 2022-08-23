@@ -51,7 +51,7 @@ JITDisassembler::~JITDisassembler()
 
 void JITDisassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
 {
-    m_codeStart = linkBuffer.entrypoint<DisassemblyPtrTag>().untaggedExecutableAddress();
+    m_codeStart = linkBuffer.entrypoint<DisassemblyPtrTag>().untaggedPtr();
     m_codeEnd = bitwise_cast<uint8_t*>(m_codeStart) + linkBuffer.size();
 
     dumpHeader(out, linkBuffer);

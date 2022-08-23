@@ -72,13 +72,13 @@ namespace JSC {
     template<PtrTag tag>
     struct CallRecord {
         MacroAssembler::Call from;
-        FunctionPtr<tag> callee;
+        CodePtr<tag> callee;
 
         CallRecord()
         {
         }
 
-        CallRecord(MacroAssembler::Call from, FunctionPtr<tag> callee)
+        CallRecord(MacroAssembler::Call from, CodePtr<tag> callee)
             : from(from)
             , callee(callee)
         {
@@ -148,7 +148,7 @@ namespace JSC {
         UnlinkedCallLinkInfo* unlinkedCallLinkInfo;
     };
 
-    void ctiPatchCallByReturnAddress(ReturnAddressPtr, FunctionPtr<CFunctionPtrTag> newCalleeFunction);
+    void ctiPatchCallByReturnAddress(ReturnAddressPtr, CodePtr<CFunctionPtrTag> newCalleeFunction);
 
     class JIT final : public JSInterfaceJIT {
         friend class JITSlowPathCall;
@@ -198,7 +198,7 @@ namespace JSC {
         CompilationResult privateCompile(CodeBlock*, JITCompilationEffort);
 
         // Add a call out from JIT code, without an exception check.
-        Call appendCall(const FunctionPtr<CFunctionPtrTag> function)
+        Call appendCall(const CodePtr<CFunctionPtrTag> function)
         {
             Call functionCall = call(OperationPtrTag);
             m_farCalls.append(FarCallRecord(functionCall, function.retagged<OperationPtrTag>()));
@@ -211,7 +211,7 @@ namespace JSC {
         }
 
 #if OS(WINDOWS) && CPU(X86_64)
-        Call appendCallWithSlowPathReturnType(const FunctionPtr<CFunctionPtrTag> function)
+        Call appendCallWithSlowPathReturnType(const CodePtr<CFunctionPtrTag> function)
         {
             Call functionCall = callWithSlowPathReturnType(OperationPtrTag);
             m_farCalls.append(FarCallRecord(functionCall, function.retagged<OperationPtrTag>()));
@@ -693,13 +693,13 @@ namespace JSC {
             return hasAnySlowCases(m_slowCases, iter, m_bytecodeIndex);
         }
 
-        MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr<CFunctionPtrTag>);
+        MacroAssembler::Call appendCallWithExceptionCheck(const CodePtr<CFunctionPtrTag>);
         void appendCallWithExceptionCheck(Address);
-        MacroAssembler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr<CFunctionPtrTag>);
-        MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr<CFunctionPtrTag>, VirtualRegister result);
+        MacroAssembler::Call appendCallWithCallFrameRollbackOnException(const CodePtr<CFunctionPtrTag>);
+        MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const CodePtr<CFunctionPtrTag>, VirtualRegister result);
         void appendCallWithExceptionCheckSetJSValueResult(Address, VirtualRegister result);
         template<typename Bytecode>
-        MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResultWithProfile(const Bytecode&, const FunctionPtr<CFunctionPtrTag>, VirtualRegister result);
+        MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResultWithProfile(const Bytecode&, const CodePtr<CFunctionPtrTag>, VirtualRegister result);
         template<typename Bytecode>
         void appendCallWithExceptionCheckSetJSValueResultWithProfile(const Bytecode&, Address, VirtualRegister result);
         

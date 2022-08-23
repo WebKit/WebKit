@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,44 +20,27 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include <wtf/CodePtr.h>
 
-#if ENABLE(JIT)
+#include <wtf/PrintStream.h>
 
-#include "MacroAssemblerCodeRef.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
+namespace WTF {
 
-namespace JSC {
+void CodePtrBase::dumpWithName(void* executableAddress, void* dataLocation, const char* name, PrintStream& out)
+{
+    if (!executableAddress) {
+        out.print(name, "(null)");
+        return;
+    }
+    if (executableAddress == dataLocation) {
+        out.print(name, "(", RawPointer(executableAddress), ")");
+        return;
+    }
+    out.print(name, "(executable = ", RawPointer(executableAddress), ", dataLocation = ", RawPointer(dataLocation), ")");
+}
 
-class VM;
-
-class OpaqueByproducts;
-
-// This class is a way to keep the result of a compilation alive and runnable.
-
-class Compilation {
-    WTF_MAKE_NONCOPYABLE(Compilation);
-    WTF_MAKE_FAST_ALLOCATED;
-
-public:
-    JS_EXPORT_PRIVATE Compilation(MacroAssemblerCodeRef<JITCompilationPtrTag>, std::unique_ptr<OpaqueByproducts>);
-    JS_EXPORT_PRIVATE Compilation(Compilation&&);
-    JS_EXPORT_PRIVATE ~Compilation();
-
-    CodePtr<JITCompilationPtrTag> code() const { return m_codeRef.code(); }
-    MacroAssemblerCodeRef<JITCompilationPtrTag> codeRef() const { return m_codeRef; }
-    
-    CString disassembly() const { return m_codeRef.disassembly(); }
-
-private:
-    MacroAssemblerCodeRef<JITCompilationPtrTag> m_codeRef;
-    std::unique_ptr<OpaqueByproducts> m_byproducts;
-};
-
-} // namespace JSC
-
-#endif // ENABLE(JIT)
+} // namespace WTF

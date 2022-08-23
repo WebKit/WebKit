@@ -27,26 +27,20 @@
 
 #include "ExecutableMemoryHandle.h"
 #include "JSCPtrTag.h"
+#include <wtf/CodePtr.h>
 #include <wtf/DataLog.h>
-#include <wtf/FunctionPtr.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
 
-// ASSERT_VALID_CODE_POINTER checks that ptr is a non-null pointer, and that it is a valid
-// instruction address on the platform (for example, check any alignment requirements).
 #if CPU(ARM_THUMB2) && ENABLE(JIT)
 // ARM instructions must be 16-bit aligned. Thumb2 code pointers to be loaded into
 // into the processor are decorated with the bottom bit set, while traditional ARM has
 // the lower bit clear. Since we don't know what kind of pointer, we check for both
 // decorated and undecorated null.
-#define ASSERT_VALID_CODE_POINTER(ptr) \
-    ASSERT(reinterpret_cast<intptr_t>(ptr) & ~1)
 #define ASSERT_VALID_CODE_OFFSET(offset) \
     ASSERT(!(offset & 1)) // Must be multiple of 2.
 #else
-#define ASSERT_VALID_CODE_POINTER(ptr) \
-    ASSERT(ptr)
 #define ASSERT_VALID_CODE_OFFSET(offset) // Anything goes!
 #endif
 
@@ -57,7 +51,6 @@ enum class CompilationMode : uint8_t;
 } // namespace Wasm
 
 class CodeBlock;
-template<PtrTag> class MacroAssemblerCodePtr;
 
 enum OpcodeID : unsigned;
 
@@ -105,166 +98,6 @@ private:
     const void* m_value { nullptr };
 };
 
-// MacroAssemblerCodePtr:
-//
-// MacroAssemblerCodePtr should be used to wrap pointers to JIT generated code.
-class MacroAssemblerCodePtrBase {
-protected:
-    static void dumpWithName(void* executableAddress, void* dataLocation, const char* name, PrintStream& out);
-};
-
-// FIXME: Make JSC MacroAssemblerCodePtr injerit from MetaAllocatorPtr.
-// https://bugs.webkit.org/show_bug.cgi?id=185145
-template<PtrTag tag>
-class MacroAssemblerCodePtr : private MacroAssemblerCodePtrBase {
-public:
-    MacroAssemblerCodePtr() = default;
-    MacroAssemblerCodePtr(std::nullptr_t) : m_value(nullptr) { }
-
-    explicit MacroAssemblerCodePtr(const void* value)
-#if CPU(ARM_THUMB2)
-        // Decorate the pointer as a thumb code pointer.
-        : m_value(reinterpret_cast<const char*>(value) + 1)
-#else
-        : m_value(value)
-#endif
-    {
-        assertIsTaggedWith<tag>(value);
-        ASSERT(value);
-#if CPU(ARM_THUMB2)
-        ASSERT(!(reinterpret_cast<uintptr_t>(value) & 1));
-#endif
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    static MacroAssemblerCodePtr createFromExecutableAddress(const void* value)
-    {
-        ASSERT(value);
-        ASSERT_VALID_CODE_POINTER(value);
-        assertIsTaggedWith<tag>(value);
-        MacroAssemblerCodePtr result;
-        result.m_value = value;
-        return result;
-    }
-
-    explicit MacroAssemblerCodePtr(ReturnAddressPtr ra)
-        : m_value(retagCodePtr<ReturnAddressPtrTag, tag>(ra.value()))
-    {
-        ASSERT(ra.untaggedValue());
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    template<PtrTag newTag>
-    MacroAssemblerCodePtr<newTag> retagged() const
-    {
-        if (!m_value)
-            return MacroAssemblerCodePtr<newTag>();
-        return MacroAssemblerCodePtr<newTag>::createFromExecutableAddress(retaggedExecutableAddress<newTag>());
-    }
-
-    template<typename T = void*>
-    T executableAddress() const
-    {
-        return bitwise_cast<T>(m_value);
-    }
-
-    template<typename T = void*>
-    T untaggedExecutableAddress() const
-    {
-        return untagCodePtr<T, tag>(m_value);
-    }
-
-    template<PtrTag newTag, typename T = void*>
-    T retaggedExecutableAddress() const
-    {
-        return retagCodePtr<T, tag, newTag>(m_value);
-    }
-
-#if CPU(ARM_THUMB2)
-    // To use this pointer as a data address remove the decoration.
-    template<typename T = void*>
-    T dataLocation() const
-    {
-        ASSERT_VALID_CODE_POINTER(m_value);
-        return bitwise_cast<T>(m_value ? bitwise_cast<char*>(m_value) - 1 : nullptr);
-    }
-#else
-    template<typename T = void*>
-    T dataLocation() const
-    {
-        ASSERT_VALID_CODE_POINTER(m_value);
-        return untagCodePtr<T, tag>(m_value);
-    }
-#endif
-
-    bool operator!() const
-    {
-        return !m_value;
-    }
-    explicit operator bool() const { return !(!*this); }
-    
-    bool operator==(const MacroAssemblerCodePtr& other) const
-    {
-        return m_value == other.m_value;
-    }
-
-    // Disallow any casting operations (except for booleans). Instead, the client
-    // should be asking executableAddress() explicitly.
-    template<typename T, typename = std::enable_if_t<!std::is_same<T, bool>::value && !std::is_same<T, FunctionPtr<tag>>::value>>
-    operator T() = delete;
-
-    FunctionPtr<tag> toFunctionPtr() const
-    {
-        return FunctionPtr<tag>::fromAlreadyTaggedPointer(executableAddress());
-    }
-
-    operator FunctionPtr<tag>() const { return toFunctionPtr(); }
-
-    void dumpWithName(const char* name, PrintStream& out) const
-    {
-        if (m_value)
-            MacroAssemblerCodePtrBase::dumpWithName(executableAddress(), dataLocation(), name, out);
-        else
-            MacroAssemblerCodePtrBase::dumpWithName(nullptr, nullptr, name, out);
-    }
-
-    void dump(PrintStream& out) const { dumpWithName("CodePtr", out); }
-
-    enum EmptyValueTag { EmptyValue };
-    enum DeletedValueTag { DeletedValue };
-    
-    MacroAssemblerCodePtr(EmptyValueTag)
-        : m_value(emptyValue())
-    { }
-    
-    MacroAssemblerCodePtr(DeletedValueTag)
-        : m_value(deletedValue())
-    { }
-    
-    bool isEmptyValue() const { return m_value == emptyValue(); }
-    bool isDeletedValue() const { return m_value == deletedValue(); }
-
-    unsigned hash() const { return PtrHash<const void*>::hash(m_value); }
-
-    static void initialize();
-
-private:
-    static const void* emptyValue() { return bitwise_cast<void*>(static_cast<intptr_t>(1)); }
-    static const void* deletedValue() { return bitwise_cast<void*>(static_cast<intptr_t>(2)); }
-
-    const void* m_value { nullptr };
-};
-
-template<PtrTag tag>
-struct MacroAssemblerCodePtrHash {
-    static unsigned hash(const MacroAssemblerCodePtr<tag>& ptr) { return ptr.hash(); }
-    static bool equal(const MacroAssemblerCodePtr<tag>& a, const MacroAssemblerCodePtr<tag>& b)
-    {
-        return a == b;
-    }
-    static constexpr bool safeToCompareToEmptyOrDeleted = true;
-};
-
 // MacroAssemblerCodeRef:
 //
 // A reference to a section of JIT generated code.  A CodeRef consists of a
@@ -272,9 +105,9 @@ struct MacroAssemblerCodePtrHash {
 // was allocated.
 class MacroAssemblerCodeRefBase {
 protected:
-    static bool tryToDisassemble(MacroAssemblerCodePtr<DisassemblyPtrTag>, size_t, const char* prefix, PrintStream& out);
-    static bool tryToDisassemble(MacroAssemblerCodePtr<DisassemblyPtrTag>, size_t, const char* prefix);
-    JS_EXPORT_PRIVATE static CString disassembly(MacroAssemblerCodePtr<DisassemblyPtrTag>, size_t);
+    static bool tryToDisassemble(CodePtr<DisassemblyPtrTag>, size_t, const char* prefix, PrintStream& out);
+    static bool tryToDisassemble(CodePtr<DisassemblyPtrTag>, size_t, const char* prefix);
+    JS_EXPORT_PRIVATE static CString disassembly(CodePtr<DisassemblyPtrTag>, size_t);
 };
 
 template<PtrTag tag>
@@ -282,7 +115,7 @@ class MacroAssemblerCodeRef : private MacroAssemblerCodeRefBase {
 private:
     // This is private because it's dangerous enough that we want uses of it
     // to be easy to find - hence the static create method below.
-    explicit MacroAssemblerCodeRef(MacroAssemblerCodePtr<tag> codePtr)
+    explicit MacroAssemblerCodeRef(CodePtr<tag> codePtr)
         : m_codePtr(codePtr)
     {
         ASSERT(m_codePtr);
@@ -302,7 +135,7 @@ public:
     template<PtrTag otherTag>
     MacroAssemblerCodeRef& operator=(const MacroAssemblerCodeRef<otherTag>& otherCodeRef)
     {
-        m_codePtr = MacroAssemblerCodePtr<tag>::createFromExecutableAddress(otherCodeRef.code().template retaggedExecutableAddress<tag>());
+        m_codePtr = CodePtr<tag>::fromTaggedPtr(otherCodeRef.code().template retaggedPtr<tag>());
         m_executableMemory = otherCodeRef.m_executableMemory;
         return *this;
     }
@@ -310,7 +143,7 @@ public:
     // Use this only when you know that the codePtr refers to code that is
     // already being kept alive through some other means. Typically this means
     // that codePtr is immortal.
-    static MacroAssemblerCodeRef createSelfManagedCodeRef(MacroAssemblerCodePtr<tag> codePtr)
+    static MacroAssemblerCodeRef createSelfManagedCodeRef(CodePtr<tag> codePtr)
     {
         return MacroAssemblerCodeRef(codePtr);
     }
@@ -320,13 +153,13 @@ public:
         return m_executableMemory.get();
     }
     
-    MacroAssemblerCodePtr<tag> code() const
+    CodePtr<tag> code() const
     {
         return m_codePtr;
     }
 
     template<PtrTag newTag>
-    MacroAssemblerCodePtr<newTag> retaggedCode() const
+    CodePtr<newTag> retaggedCode() const
     {
         return m_codePtr.template retagged<newTag>();
     }
@@ -375,7 +208,7 @@ private:
         *this = otherCodeRef;
     }
 
-    MacroAssemblerCodePtr<tag> m_codePtr;
+    CodePtr<tag> m_codePtr;
     RefPtr<ExecutableMemoryHandle> m_executableMemory;
 
     template<PtrTag> friend class MacroAssemblerCodeRef;
@@ -385,13 +218,3 @@ bool shouldDumpDisassemblyFor(CodeBlock*);
 bool shouldDumpDisassemblyFor(Wasm::CompilationMode);
 
 } // namespace JSC
-
-namespace WTF {
-
-template<typename T> struct DefaultHash;
-template<JSC::PtrTag tag> struct DefaultHash<JSC::MacroAssemblerCodePtr<tag>> : JSC::MacroAssemblerCodePtrHash<tag> { };
-
-template<typename T> struct HashTraits;
-template<JSC::PtrTag tag> struct HashTraits<JSC::MacroAssemblerCodePtr<tag>> : public CustomHashTraits<JSC::MacroAssemblerCodePtr<tag>> { };
-
-} // namespace WTF

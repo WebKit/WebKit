@@ -142,14 +142,14 @@ public:
     }
 #endif
 
-    MacroAssemblerCodePtr<WasmEntryPtrTag>* entrypointLoadLocationFromFunctionIndexSpace(unsigned functionIndexSpace)
+    CodePtr<WasmEntryPtrTag>* entrypointLoadLocationFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
         return &m_wasmIndirectCallEntryPoints[calleeIndex];
     }
 
-    MacroAssemblerCodePtr<WasmEntryPtrTag> wasmToWasmExitStub(unsigned functionIndex)
+    CodePtr<WasmEntryPtrTag> wasmToWasmExitStub(unsigned functionIndex)
     {
         return m_wasmToWasmExitStubs[functionIndex].code();
     }
@@ -178,7 +178,7 @@ private:
 #endif
     RefPtr<LLIntCallees> m_llintCallees;
     HashMap<uint32_t, RefPtr<EmbedderEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderCallees;
-    FixedVector<MacroAssemblerCodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
+    FixedVector<CodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
     FixedVector<Vector<UnlinkedWasmToWasmCall>> m_wasmToWasmCallsites;
     FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
     RefPtr<EntryPlan> m_plan;

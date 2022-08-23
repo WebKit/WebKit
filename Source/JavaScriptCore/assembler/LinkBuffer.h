@@ -60,7 +60,6 @@ namespace JSC {
 class LinkBuffer {
     WTF_MAKE_NONCOPYABLE(LinkBuffer); WTF_MAKE_FAST_ALLOCATED;
     
-    template<PtrTag tag> using CodePtr = MacroAssemblerCodePtr<tag>;
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
     typedef MacroAssembler::Label Label;
     typedef MacroAssembler::Jump Jump;
@@ -127,7 +126,7 @@ public:
     }
 
     template<PtrTag tag>
-    LinkBuffer(MacroAssembler& macroAssembler, MacroAssemblerCodePtr<tag> code, size_t size, Profile profile = Profile::Uncategorized, JITCompilationEffort effort = JITCompilationMustSucceed, bool shouldPerformBranchCompaction = true)
+    LinkBuffer(MacroAssembler& macroAssembler, CodePtr<tag> code, size_t size, Profile profile = Profile::Uncategorized, JITCompilationEffort effort = JITCompilationMustSucceed, bool shouldPerformBranchCompaction = true)
         : m_size(size)
         , m_didAllocate(false)
 #ifndef NDEBUG
@@ -172,12 +171,12 @@ public:
     template<PtrTag tag, typename Func, typename = std::enable_if_t<std::is_function<typename std::remove_pointer<Func>::type>::value>>
     void link(Call call, Func funcName)
     {
-        FunctionPtr<tag> function(funcName);
+        CodePtr<tag> function(funcName);
         link(call, function);
     }
 
     template<PtrTag tag>
-    void link(Call call, FunctionPtr<tag> function)
+    void link(Call call, CodePtr<tag> function)
     {
         ASSERT(call.isFlagSet(Call::Linkable));
         call.m_label = applyOffset(call.m_label);
@@ -187,7 +186,7 @@ public:
     template<PtrTag tag>
     void link(Call call, CodeLocationLabel<tag> label)
     {
-        link(call, label.toFunctionPtr());
+        link(call, CodePtr<tag>(label));
     }
     
     template<PtrTag tag>
@@ -423,7 +422,7 @@ private:
     bool m_alreadyDisassembled { false };
     bool m_isThunk { false };
     Profile m_profile { Profile::Uncategorized };
-    MacroAssemblerCodePtr<LinkBufferPtrTag> m_code;
+    CodePtr<LinkBufferPtrTag> m_code;
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;
     Vector<RefPtr<SharedTask<void()>>> m_mainThreadFinalizationTasks;

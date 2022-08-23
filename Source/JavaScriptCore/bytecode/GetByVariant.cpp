@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-GetByVariant::GetByVariant(CacheableIdentifier identifier, const StructureSet& structureSet, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<CallLinkStatus> callLinkStatus, JSFunction* intrinsicFunction, FunctionPtr<CustomAccessorPtrTag> customAccessorGetter, std::unique_ptr<DOMAttributeAnnotation> domAttribute)
+GetByVariant::GetByVariant(CacheableIdentifier identifier, const StructureSet& structureSet, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<CallLinkStatus> callLinkStatus, JSFunction* intrinsicFunction, CodePtr<CustomAccessorPtrTag> customAccessorGetter, std::unique_ptr<DOMAttributeAnnotation> domAttribute)
     : m_structureSet(structureSet)
     , m_conditionSet(conditionSet)
     , m_offset(offset)
@@ -199,7 +199,7 @@ void GetByVariant::dumpInContext(PrintStream& out, DumpContext* context) const
     if (m_intrinsicFunction)
         out.print(", intrinsic = ", *m_intrinsicFunction);
     if (m_customAccessorGetter)
-        out.print(", customaccessorgetter = ", RawPointer(m_customAccessorGetter.executableAddress()));
+        out.print(", customaccessorgetter = ", RawPointer(m_customAccessorGetter.taggedPtr()));
     if (m_domAttribute) {
         out.print(", domclass = ", RawPointer(m_domAttribute->classInfo));
         if (m_domAttribute->domJIT)

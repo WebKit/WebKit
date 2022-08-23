@@ -109,7 +109,7 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
         bool m_valid { false };
         HandlerType m_type;
 #if ENABLE(JIT)
-        MacroAssemblerCodePtr<ExceptionHandlerPtrTag> m_nativeCode;
+        CodePtr<ExceptionHandlerPtrTag> m_nativeCode;
 #endif
 
         JSOrWasmInstruction m_catchPCForInterpreter;

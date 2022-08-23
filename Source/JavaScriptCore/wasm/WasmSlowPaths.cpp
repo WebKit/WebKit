@@ -165,7 +165,7 @@ WASM_SLOW_PATH_DECL(prologue_osr)
     if (!jitCompileAndSetHeuristics(callee, instance))
         WASM_RETURN_TWO(nullptr, nullptr);
 
-    WASM_RETURN_TWO(callee->replacement(instance->memory()->mode())->entrypoint().executableAddress(), nullptr);
+    WASM_RETURN_TWO(callee->replacement(instance->memory()->mode())->entrypoint().taggedPtr(), nullptr);
 }
 
 WASM_SLOW_PATH_DECL(loop_osr)
@@ -210,7 +210,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
         for (VirtualRegister reg : osrEntryData.values)
             buffer[index++] = READ(reg).encodedJSValue();
 
-        WASM_RETURN_TWO(buffer, bbqCallee->loopEntrypoints()[osrEntryData.loopIndex].executableAddress());
+        WASM_RETURN_TWO(buffer, bbqCallee->loopEntrypoints()[osrEntryData.loopIndex].taggedPtr());
     } else {
         const auto doOSREntry = [&](Wasm::OSREntryCallee* osrEntryCallee) {
             if (osrEntryCallee->loopIndex() != osrEntryData.loopIndex)
@@ -226,7 +226,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
             for (VirtualRegister reg : osrEntryData.values)
                 buffer[index++] = READ(reg).encodedJSValue();
 
-            WASM_RETURN_TWO(buffer, osrEntryCallee->entrypoint().executableAddress());
+            WASM_RETURN_TWO(buffer, osrEntryCallee->entrypoint().taggedPtr());
         };
 
         if (auto* osrEntryCallee = callee->osrEntryCallee(instance->memory()->mode()))
@@ -451,7 +451,7 @@ inline SlowPathReturnType doWasmCall(Wasm::Instance* instance, unsigned function
 {
     uint32_t importFunctionCount = instance->module().moduleInformation().importFunctionCount();
 
-    MacroAssemblerCodePtr<WasmEntryPtrTag> codePtr;
+    CodePtr<WasmEntryPtrTag> codePtr;
 
     if (functionIndex < importFunctionCount) {
         Wasm::Instance::ImportFunctionInfo* functionInfo = instance->importFunctionInfo(functionIndex);
@@ -467,7 +467,7 @@ inline SlowPathReturnType doWasmCall(Wasm::Instance* instance, unsigned function
         codePtr = *instance->calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
     }
 
-    WASM_CALL_RETURN(instance, codePtr.executableAddress(), WasmEntryPtrTag);
+    WASM_CALL_RETURN(instance, codePtr.taggedPtr(), WasmEntryPtrTag);
 }
 
 WASM_SLOW_PATH_DECL(call)
@@ -506,7 +506,7 @@ inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instanc
     if (targetInstance != instance)
         targetInstance->setCachedStackLimit(instance->cachedStackLimit());
 
-    WASM_CALL_RETURN(targetInstance, function.entrypointLoadLocation->executableAddress(), WasmEntryPtrTag);
+    WASM_CALL_RETURN(targetInstance, function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
 }
 
 WASM_SLOW_PATH_DECL(call_indirect)
@@ -543,7 +543,7 @@ inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* ca
 
     ASSERT(Wasm::TypeInformation::getFunctionSignature(function.typeIndex) == CALLEE()->signature(typeIndex));
     UNUSED_PARAM(typeIndex);
-    WASM_CALL_RETURN(calleeInstance, function.entrypointLoadLocation->executableAddress(), WasmEntryPtrTag);
+    WASM_CALL_RETURN(calleeInstance, function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
 }
 
 WASM_SLOW_PATH_DECL(call_ref)

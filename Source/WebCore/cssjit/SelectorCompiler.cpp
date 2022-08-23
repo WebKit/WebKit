@@ -276,7 +276,7 @@ struct SelectorFragment {
     Vector<const Vector<AtomString>*> languageArgumentsList;
     Vector<const AtomStringImpl*, 8> classNames;
     HashSet<unsigned> pseudoClasses;
-    Vector<FunctionPtr<JSC::OperationPtrTag>, 4> unoptimizedPseudoClasses;
+    Vector<CodePtr<JSC::OperationPtrTag>, 4> unoptimizedPseudoClasses;
     Vector<AttributeMatchingInfo, 4> attributes;
     Vector<std::pair<int, int>, 2> nthChildFilters;
     Vector<NthChildOfSelectorInfo> nthChildOfFilters;
@@ -369,7 +369,7 @@ private:
     void generateElementMatching(Assembler::JumpList& matchingTagNameFailureCases, Assembler::JumpList& matchingPostTagNameFailureCases, const SelectorFragment&);
     void generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementLinkMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
-    void generateElementFunctionCallTest(Assembler::JumpList& failureCases, FunctionPtr<JSC::OperationPtrTag>);
+    void generateElementFunctionCallTest(Assembler::JumpList& failureCases, CodePtr<JSC::OperationPtrTag>);
     void generateElementIsActive(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsEmpty(Assembler::JumpList& failureCases);
     void generateElementIsFirstChild(Assembler::JumpList& failureCases);
@@ -385,7 +385,7 @@ private:
     void generateElementAttributeMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, Assembler::RegisterID decIndexRegister, const AttributeMatchingInfo& attributeInfo);
     void generateElementAttributeValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AttributeMatchingInfo& attributeInfo);
     void generateElementAttributeValueExactMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomString& expectedValue, AttributeCaseSensitivity valueCaseSensitivity);
-    void generateElementAttributeFunctionCallValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomString& expectedValue, AttributeCaseSensitivity valueCaseSensitivity, FunctionPtr<JSC::OperationPtrTag> caseSensitiveTest, FunctionPtr<JSC::OperationPtrTag> caseInsensitiveTest);
+    void generateElementAttributeFunctionCallValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomString& expectedValue, AttributeCaseSensitivity valueCaseSensitivity, CodePtr<JSC::OperationPtrTag> caseSensitiveTest, CodePtr<JSC::OperationPtrTag> caseInsensitiveTest);
     void generateElementHasTagName(Assembler::JumpList& failureCases, const CSSSelector& tagMatchingSelector);
     void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomString& idToMatch);
     void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomStringImpl*, 8>& classNames);
@@ -433,7 +433,7 @@ private:
     Assembler m_assembler;
     RegisterAllocator m_registerAllocator;
     StackAllocator m_stackAllocator;
-    Vector<std::pair<Assembler::Call, FunctionPtr<JSC::OperationPtrTag>>, 32> m_functionCalls;
+    Vector<std::pair<Assembler::Call, CodePtr<JSC::OperationPtrTag>>, 32> m_functionCalls;
 
     SelectorContext m_selectorContext;
     FunctionType m_functionType;
@@ -816,138 +816,138 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     switch (type) {
     // Unoptimized pseudo selector. They are just function call to a simple testing function.
     case CSSSelector::PseudoClassAutofill:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsAutofilled));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsAutofilled));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassAutofillAndObscured:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsAutofilledAndObscured));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsAutofilledAndObscured));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassAutofillStrongPassword:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsAutofilledStrongPassword));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsAutofilledStrongPassword));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassAutofillStrongPasswordViewable:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsAutofilledStrongPasswordViewable));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsAutofilledStrongPasswordViewable));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassChecked:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsChecked));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsChecked));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassDefault:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesDefaultPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesDefaultPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassDisabled:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesDisabledPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesDisabledPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassEnabled:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesEnabledPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesEnabledPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassDefined:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsDefinedElement));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsDefinedElement));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassFocus:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesFocusPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFocusPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassFocusVisible:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesFocusVisiblePseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFocusVisiblePseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassFocusWithin:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesFocusWithinPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFocusWithinPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassFullPageMedia:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsMediaDocument));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsMediaDocument));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassInRange:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsInRange));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsInRange));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassIndeterminate:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesIndeterminatePseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesIndeterminatePseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassInvalid:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsInvalid));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsInvalid));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassOptional:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsOptionalFormControl));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsOptionalFormControl));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassOutOfRange:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsOutOfRange));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsOutOfRange));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassReadOnly:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesReadOnlyPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesReadOnlyPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassReadWrite:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesReadWritePseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesReadWritePseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassRequired:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsRequiredFormControl));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsRequiredFormControl));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassValid:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsValid));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsValid));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassWindowInactive:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationIsWindowInactive));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsWindowInactive));
         return FunctionType::SimpleSelectorChecker;
 
 #if ENABLE(FULLSCREEN_API)
     case CSSSelector::PseudoClassFullScreen:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesFullScreenPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassFullScreenDocument:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesFullScreenDocumentPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenDocumentPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassFullScreenAncestor:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesFullScreenAncestorPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenAncestorPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassAnimatingFullScreenTransition:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClassFullScreenControlsHidden:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesFullScreenControlsHiddenPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenControlsHiddenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
     case CSSSelector::PseudoClassPictureInPicture:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesPictureInPicturePseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesPictureInPicturePseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif
 
 #if ENABLE(VIDEO)
     case CSSSelector::PseudoClassFuture:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesFutureCuePseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFutureCuePseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassPast:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesPastCuePseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesPastCuePseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassPlaying:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesPlayingPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesPlayingPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassPaused:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesPausedPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesPausedPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassSeeking:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesSeekingPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesSeekingPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassBuffering:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesBufferingPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesBufferingPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassStalled:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesStalledPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesStalledPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassMuted:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesMutedPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesMutedPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassVolumeLocked:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesVolumeLockedPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesVolumeLockedPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     case CSSSelector::PseudoClassHasAttachment:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationHasAttachment));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationHasAttachment));
         return FunctionType::SimpleSelectorChecker;
 #endif
 
     case CSSSelector::PseudoClassModal:
-        fragment.unoptimizedPseudoClasses.append(FunctionPtr<JSC::OperationPtrTag>(operationMatchesModalPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesModalPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 
     // These pseudo-classes only have meaning with scrollbars.
@@ -3378,7 +3378,7 @@ void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler
     }
 }
 
-void SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomString& expectedValue, AttributeCaseSensitivity valueCaseSensitivity, FunctionPtr<JSC::OperationPtrTag> caseSensitiveTest, FunctionPtr<JSC::OperationPtrTag> caseInsensitiveTest)
+void SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomString& expectedValue, AttributeCaseSensitivity valueCaseSensitivity, CodePtr<JSC::OperationPtrTag> caseSensitiveTest, CodePtr<JSC::OperationPtrTag> caseInsensitiveTest)
 {
     LocalRegisterWithPreference expectedValueRegister(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
     m_assembler.move(Assembler::TrustedImmPtr(expectedValue.impl()), expectedValueRegister);
@@ -3434,7 +3434,7 @@ void SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching(As
     }
 }
 
-void SelectorCodeGenerator::generateElementFunctionCallTest(Assembler::JumpList& failureCases, FunctionPtr<JSC::OperationPtrTag> testFunction)
+void SelectorCodeGenerator::generateElementFunctionCallTest(Assembler::JumpList& failureCases, CodePtr<JSC::OperationPtrTag> testFunction)
 {
     Assembler::RegisterID elementAddress = elementAddressRegister;
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);

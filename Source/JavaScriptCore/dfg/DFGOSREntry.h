@@ -75,7 +75,7 @@ inline BytecodeIndex getOSREntryDataBytecodeIndex(OSREntryData* osrEntryData)
 struct CatchEntrypointData {
     // We use this when doing OSR entry at catch. We prove the arguments
     // are of the expected type before entering at a catch block.
-    MacroAssemblerCodePtr<ExceptionHandlerPtrTag> machineCode;
+    CodePtr<ExceptionHandlerPtrTag> machineCode;
     FixedVector<FlushFormat> argumentFormats;
     BytecodeIndex bytecodeIndex;
 };
@@ -85,9 +85,9 @@ struct CatchEntrypointData {
 void* prepareOSREntry(VM&, CallFrame*, CodeBlock*, BytecodeIndex);
 
 // If null is returned, we can't OSR enter. If it's not null, it's the PC to jump to.
-MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM&, CallFrame*, CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, BytecodeIndex);
+CodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM&, CallFrame*, CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, BytecodeIndex);
 #else
-inline MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareOSREntry(VM&, CallFrame*, CodeBlock*, BytecodeIndex) { return nullptr; }
+inline CodePtr<ExceptionHandlerPtrTag> prepareOSREntry(VM&, CallFrame*, CodeBlock*, BytecodeIndex) { return nullptr; }
 #endif
 
 } } // namespace JSC::DFG

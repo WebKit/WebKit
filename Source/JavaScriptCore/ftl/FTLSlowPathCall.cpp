@@ -114,7 +114,7 @@ SlowPathCallContext::~SlowPathCallContext()
     m_jit.addPtr(CCallHelpers::TrustedImm32(m_stackBytesNeeded), CCallHelpers::stackPointerRegister);
 }
 
-SlowPathCallKey SlowPathCallContext::keyWithTarget(FunctionPtr<CFunctionPtrTag> callTarget) const
+SlowPathCallKey SlowPathCallContext::keyWithTarget(CodePtr<CFunctionPtrTag> callTarget) const
 {
     uint8_t numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled = 0;
     if (UNLIKELY(Options::clobberAllRegsInFTLICSlowPath()))
@@ -130,7 +130,7 @@ SlowPathCallKey SlowPathCallContext::keyWithTarget(CCallHelpers::Address address
     return SlowPathCallKey(m_thunkSaveSet, nullptr, numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled, m_offset, address.offset);
 }
 
-SlowPathCall SlowPathCallContext::makeCall(VM& vm, FunctionPtr<CFunctionPtrTag> callTarget)
+SlowPathCall SlowPathCallContext::makeCall(VM& vm, CodePtr<CFunctionPtrTag> callTarget)
 {
     SlowPathCallKey key = keyWithTarget(callTarget);
     SlowPathCall result = SlowPathCall(m_jit.call(JITThunkPtrTag), key);

@@ -747,7 +747,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileFTLLazySlowPath, void*, (CallFrame* cal
     LazySlowPath& lazySlowPath = *jitCode->lazySlowPaths[index];
     lazySlowPath.generate(codeBlock);
 
-    return lazySlowPath.stub().code().executableAddress();
+    return lazySlowPath.stub().code().taggedPtr();
 }
 
 JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(operationReportBoundsCheckEliminationErrorAndCrash, NO_RETURN_DUE_TO_CRASH, void, (intptr_t codeBlockAsIntPtr, int32_t nodeIndex, int32_t child1Index, int32_t child2Index, int32_t checkedIndex, int32_t bounds))

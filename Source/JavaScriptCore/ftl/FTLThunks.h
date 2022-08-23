@@ -46,7 +46,7 @@ template<typename KeyTypeArgument>
 struct ThunkMap {
     typedef KeyTypeArgument KeyType;
     typedef HashMap<KeyType, MacroAssemblerCodeRef<JITThunkPtrTag>> ToThunkMap;
-    typedef HashMap<MacroAssemblerCodePtr<JITThunkPtrTag>, KeyType> FromThunkMap;
+    typedef HashMap<CodePtr<JITThunkPtrTag>, KeyType> FromThunkMap;
     
     ToThunkMap m_toThunk;
     FromThunkMap m_fromThunk;
@@ -67,7 +67,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> generateIfNecessary(
 }
 
 template<typename MapType>
-typename MapType::KeyType keyForThunk(MapType& map, MacroAssemblerCodePtr<JITThunkPtrTag> ptr)
+typename MapType::KeyType keyForThunk(MapType& map, CodePtr<JITThunkPtrTag> ptr)
 {
     typename MapType::FromThunkMap::iterator iter = map.m_fromThunk.find(ptr);
     RELEASE_ASSERT(iter != map.m_fromThunk.end());
@@ -85,7 +85,7 @@ public:
         return generateIfNecessary(vm, m_slowPathCallThunks, key, slowPathCallThunkGenerator);
     }
 
-    SlowPathCallKey keyForSlowPathCallThunk(MacroAssemblerCodePtr<JITThunkPtrTag> ptr)
+    SlowPathCallKey keyForSlowPathCallThunk(CodePtr<JITThunkPtrTag> ptr)
     {
         Locker locker { m_lock };
         return keyForThunk(m_slowPathCallThunks, ptr);

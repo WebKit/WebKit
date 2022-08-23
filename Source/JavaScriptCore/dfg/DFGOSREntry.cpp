@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ namespace JSC { namespace DFG {
 
 void OSREntryData::dumpInContext(PrintStream& out, DumpContext* context) const
 {
-    out.print(m_bytecodeIndex, ", machine code = ", RawPointer(m_machineCode.executableAddress()));
+    out.print(m_bytecodeIndex, ", machine code = ", RawPointer(m_machineCode.taggedPtr()));
     out.print(", stack rules = [");
     
     auto printOperand = [&] (VirtualRegister reg) {
@@ -252,8 +252,8 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     
     *bitwise_cast<size_t*>(scratch + 0) = frameSize;
     
-    void* targetPC = entry->m_machineCode.executableAddress();
-    RELEASE_ASSERT(codeBlock->jitCode()->contains(entry->m_machineCode.untaggedExecutableAddress()));
+    void* targetPC = entry->m_machineCode.taggedPtr();
+    RELEASE_ASSERT(codeBlock->jitCode()->contains(entry->m_machineCode.untaggedPtr()));
     dataLogLnIf(Options::verboseOSR(), "    OSR using target PC ", RawPointer(targetPC));
     RELEASE_ASSERT(targetPC);
     *bitwise_cast<void**>(scratch + 1) = tagCodePtrWithStackPointerForJITCall(untagCodePtr<OSREntryPtrTag>(targetPC), callFrame);
@@ -344,7 +344,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     return scratch;
 }
 
-MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, BytecodeIndex bytecodeIndex)
+CodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, BytecodeIndex bytecodeIndex)
 {
     ASSERT(optimizedCodeBlock->jitType() == JITType::DFGJIT || optimizedCodeBlock->jitType() == JITType::FTLJIT);
     ASSERT(optimizedCodeBlock->jitCode()->dfgCommon()->isStillValid());

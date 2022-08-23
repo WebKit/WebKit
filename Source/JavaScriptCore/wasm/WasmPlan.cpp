@@ -164,7 +164,7 @@ void Plan::updateCallSitesToCallUs(const AbstractLocker& calleeGroupLocker, Call
         for (auto& call : callsites) {
             dataLogLnIf(WasmPlanInternal::verbose, "Considering repatching call at: ", RawPointer(call.callLocation.dataLocation()), " that targets ", call.functionIndexSpace);
             if (call.functionIndexSpace == functionIndexSpace) {
-                dataLogLnIf(WasmPlanInternal::verbose, "Repatching call at: ", RawPointer(call.callLocation.dataLocation()), " to ", RawPointer(entrypoint.executableAddress()));
+                dataLogLnIf(WasmPlanInternal::verbose, "Repatching call at: ", RawPointer(call.callLocation.dataLocation()), " to ", RawPointer(entrypoint.taggedPtr()));
                 MacroAssembler::repatchNearCall(call.callLocation, stagedCalls.get(call.callLocation.dataLocation()));
             }
         }

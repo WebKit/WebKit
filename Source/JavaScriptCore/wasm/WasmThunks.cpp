@@ -57,7 +57,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromWasmThunkGenerator(const
     jit.breakpoint(); // We should not reach this.
 
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
-    linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationWasmToJSException));
+    linkBuffer.link<OperationPtrTag>(call, operationWasmToJSException);
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Throw exception from Wasm");
 }
 

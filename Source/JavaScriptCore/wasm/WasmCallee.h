@@ -55,7 +55,7 @@ public:
     IndexOrName indexOrName() const { return m_indexOrName; }
     CompilationMode compilationMode() const { return m_compilationMode; }
 
-    virtual MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint() const = 0;
+    virtual CodePtr<WasmEntryPtrTag> entrypoint() const = 0;
     virtual RegisterAtOffsetList* calleeSaveRegisters() = 0;
     virtual std::tuple<void*, void*> range() const = 0;
 
@@ -79,7 +79,7 @@ protected:
 
 class JITCallee : public Callee {
 public:
-    MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint() const override { return m_entrypoint.compilation->code().retagged<WasmEntryPtrTag>(); }
+    CodePtr<WasmEntryPtrTag> entrypoint() const override { return m_entrypoint.compilation->code().retagged<WasmEntryPtrTag>(); }
     RegisterAtOffsetList* calleeSaveRegisters() override { return &m_entrypoint.calleeSaveRegisters; }
     FixedVector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() { return m_wasmToWasmCallsites; }
 
@@ -225,8 +225,8 @@ public:
         return adoptRef(*new LLIntCallee(generator, index, WTFMove(name)));
     }
 
-    JS_EXPORT_PRIVATE void setEntrypoint(MacroAssemblerCodePtr<WasmEntryPtrTag>);
-    JS_EXPORT_PRIVATE MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint() const final;
+    JS_EXPORT_PRIVATE void setEntrypoint(CodePtr<WasmEntryPtrTag>);
+    JS_EXPORT_PRIVATE CodePtr<WasmEntryPtrTag> entrypoint() const final;
     JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegisters() final;
     JS_EXPORT_PRIVATE std::tuple<void*, void*> range() const final;
 
@@ -313,7 +313,7 @@ private:
     RefPtr<OptimizingJITCallee> m_replacements[Wasm::NumberOfMemoryModes];
     RefPtr<OSREntryCallee> m_osrEntryCallees[Wasm::NumberOfMemoryModes];
 #endif
-    MacroAssemblerCodePtr<WasmEntryPtrTag> m_entrypoint;
+    CodePtr<WasmEntryPtrTag> m_entrypoint;
 };
 
 using LLIntCallees = ThreadSafeRefCountedFixedVector<Ref<LLIntCallee>>;

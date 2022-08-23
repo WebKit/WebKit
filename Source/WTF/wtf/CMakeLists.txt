@@ -33,6 +33,7 @@ set(WTF_PUBLIC_HEADERS
     CheckedPtr.h
     CheckedRef.h
     ClockType.h
+    CodePtr.h
     CommaPrinter.h
     CompactPointerTuple.h
     CompactPtr.h
@@ -158,7 +159,6 @@ set(WTF_PUBLIC_HEADERS
     MessageQueue.h
     MetaAllocator.h
     MetaAllocatorHandle.h
-    MetaAllocatorPtr.h
     MonotonicTime.h
     NakedPtr.h
     NakedRef.h
@@ -417,6 +417,7 @@ set(WTF_SOURCES
     BitVector.cpp
     CPUTime.cpp
     ClockType.cpp
+    CodePtr.cpp
     CompilationThread.cpp
     ConcurrentBuffer.cpp
     ConcurrentPtrHashSet.cpp

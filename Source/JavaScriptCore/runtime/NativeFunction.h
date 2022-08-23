@@ -34,7 +34,7 @@ namespace JSC {
 
 class CallFrame;
 
-using NativeFunction = TypedFunctionPtr<CFunctionPtrTag, EncodedJSValue(JSGlobalObject*, CallFrame*), FunctionAttributes::JSCHostCall>;
+using NativeFunction = FunctionPtr<CFunctionPtrTag, EncodedJSValue(JSGlobalObject*, CallFrame*), FunctionAttributes::JSCHostCall>;
 
 struct NativeFunctionHash {
     static unsigned hash(NativeFunction key) { return computeHash(key); }
@@ -42,7 +42,7 @@ struct NativeFunctionHash {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-using TaggedNativeFunction = TypedFunctionPtr<HostFunctionPtrTag, EncodedJSValue(JSGlobalObject*, CallFrame*), FunctionAttributes::JSCHostCall>;
+using TaggedNativeFunction = FunctionPtr<HostFunctionPtrTag, EncodedJSValue(JSGlobalObject*, CallFrame*), FunctionAttributes::JSCHostCall>;
 
 struct TaggedNativeFunctionHash {
     static unsigned hash(TaggedNativeFunction key) { return computeHash(key); }
@@ -64,7 +64,7 @@ namespace WTF {
 
 inline void add(Hasher& hasher, JSC::NativeFunction key)
 {
-    add(hasher, key.executableAddress());
+    add(hasher, key.taggedPtr());
 }
 
 template<typename> struct DefaultHash;
@@ -72,7 +72,7 @@ template<> struct DefaultHash<JSC::NativeFunction> : JSC::NativeFunctionHash { }
 
 inline void add(Hasher& hasher, JSC::TaggedNativeFunction key)
 {
-    add(hasher, key.executableAddress());
+    add(hasher, key.taggedPtr());
 }
 
 template<typename> struct DefaultHash;

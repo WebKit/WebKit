@@ -56,12 +56,12 @@ public:
     JITThunks();
     ~JITThunks() final;
 
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeCall(VM&);
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeConstruct(VM&);
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeTailCall(VM&);
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeTailCallWithoutSavedTags(VM&);
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM&);
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM&);
+    CodePtr<JITThunkPtrTag> ctiNativeCall(VM&);
+    CodePtr<JITThunkPtrTag> ctiNativeConstruct(VM&);
+    CodePtr<JITThunkPtrTag> ctiNativeTailCall(VM&);
+    CodePtr<JITThunkPtrTag> ctiNativeTailCallWithoutSavedTags(VM&);
+    CodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM&);
+    CodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM&);
 
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, ThunkGenerator);
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiSlowPathFunctionStub(VM&, SlowPathFunction);

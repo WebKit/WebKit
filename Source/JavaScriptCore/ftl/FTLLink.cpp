@@ -100,9 +100,9 @@ void link(State& state)
                 state.allocationFailed = true;
                 return;
             }
-            linkBuffer->link(callArityCheck, FunctionPtr<OperationPtrTag>(codeBlock->isConstructor() ? operationConstructArityCheck : operationCallArityCheck));
+            linkBuffer->link<OperationPtrTag>(callArityCheck, codeBlock->isConstructor() ? operationConstructArityCheck : operationCallArityCheck);
             linkBuffer->link(jumpToExceptionHandler, CodeLocationLabel(vm.getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
-            linkBuffer->link(callArityFixup, vm.getCTIStub(arityFixupGenerator).code().toFunctionPtr());
+            linkBuffer->link(callArityFixup, vm.getCTIStub(arityFixupGenerator).code());
             linkBuffer->link(mainPathJumps, state.generatedFunction);
         }
 

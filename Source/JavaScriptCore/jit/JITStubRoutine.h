@@ -61,8 +61,7 @@ public:
     
     // Use this if you want to pass a CodePtr to someone who insists on taking
     // a RefPtr<JITStubRoutine>.
-    static Ref<JITStubRoutine> createSelfManagedRoutine(
-        MacroAssemblerCodePtr<JITStubRoutinePtrTag> rawCodePointer)
+    static Ref<JITStubRoutine> createSelfManagedRoutine(CodePtr<JITStubRoutinePtrTag> rawCodePointer)
     {
         return adoptRef(*new JITStubRoutine(MacroAssemblerCodeRef<JITStubRoutinePtrTag>::createSelfManagedCodeRef(rawCodePointer)));
     }
@@ -75,9 +74,9 @@ public:
     // the churn.
     const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code() const { return m_code; }
     
-    static MacroAssemblerCodePtr<JITStubRoutinePtrTag> asCodePtr(Ref<JITStubRoutine>&& stubRoutine)
+    static CodePtr<JITStubRoutinePtrTag> asCodePtr(Ref<JITStubRoutine>&& stubRoutine)
     {
-        MacroAssemblerCodePtr<JITStubRoutinePtrTag> result = stubRoutine->code().code();
+        CodePtr<JITStubRoutinePtrTag> result = stubRoutine->code().code();
         ASSERT(!!result);
         return result;
     }

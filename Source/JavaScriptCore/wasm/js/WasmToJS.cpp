@@ -268,7 +268,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
                 exceptionChecks.append(jit.emitJumpIfException(vm));
                 jit.storeValue(JSRInfo::returnValueJSR, calleeFrame.withOffset(calleeFrameOffset));
                 jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationConvertToBigInt));
+                    linkBuffer.link<OperationPtrTag>(call, operationConvertToBigInt);
                 });
             }
             calleeFrameOffset += sizeof(Register);
@@ -325,7 +325,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             jit.moveValueRegs(JSRInfo::returnValueJSR, dest);
 
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationConvertToI64));
+                linkBuffer.link<OperationPtrTag>(call, operationConvertToI64);
             });
             break;
         }
@@ -349,7 +349,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 #endif
 
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationConvertToI32));
+                linkBuffer.link<OperationPtrTag>(call, operationConvertToI32);
             });
 
             done.link(&jit);
@@ -381,7 +381,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             jit.move(FPRInfo::returnValueFPR , dest);
 
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationConvertToF32));
+                linkBuffer.link<OperationPtrTag>(call, operationConvertToF32);
             });
 
             done.link(&jit);
@@ -412,7 +412,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             jit.move(FPRInfo::returnValueFPR, dest);
 
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationConvertToF64));
+                linkBuffer.link<OperationPtrTag>(call, operationConvertToF64);
             });
 
             done.link(&jit);
@@ -441,7 +441,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         static_assert(noOverlap(savedResultsGPR, JSRInfo::returnValueJSR));
         ASSERT(wasmContextInstanceGPR != savedResultsGPR);
         jit.setupArguments<decltype(operationIterateResults)>(wasmContextInstanceGPR, CCallHelpers::TrustedImmPtr(&typeDefinition), JSRInfo::returnValueJSR, savedResultsGPR, CCallHelpers::framePointerRegister);
-        jit.callOperation(FunctionPtr<OperationPtrTag>(operationIterateResults));
+        jit.callOperation(operationIterateResults);
         if constexpr (maxFrameExtentForSlowPathCall)
             jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
 
@@ -470,7 +470,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         jit.jumpToExceptionHandler(vm);
 
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationWasmUnwind));
+            linkBuffer.link<OperationPtrTag>(call, operationWasmUnwind);
         });
     }
 
@@ -500,7 +500,7 @@ void emitThrowWasmToJSException(CCallHelpers& jit, GPRReg wasmInstance, Wasm::Ex
     jit.breakpoint(); // We should not reach this.
 
     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-        linkBuffer.link(call, FunctionPtr<OperationPtrTag>(Wasm::operationWasmToJSException));
+        linkBuffer.link<OperationPtrTag>(call, Wasm::operationWasmToJSException);
     });
 }
 

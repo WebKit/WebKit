@@ -353,7 +353,7 @@ void JSDOMGlobalObject::clearDOMGuardedObjects() const
 JSFunction* JSDOMGlobalObject::createCrossOriginFunction(JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, NativeFunction nativeFunction, unsigned length)
 {
     auto& vm = lexicalGlobalObject->vm();
-    CrossOriginMapKey key = std::make_pair(lexicalGlobalObject, nativeFunction.executableAddress());
+    CrossOriginMapKey key = std::make_pair(lexicalGlobalObject, nativeFunction.taggedPtr());
 
     // WeakGCMap::ensureValue's functor must not invoke GC since GC can modify WeakGCMap in the middle of HashMap::ensure.
     // We use DeferGC here (1) not to invoke GC when executing WeakGCMap::ensureValue and (2) to avoid looking up HashMap twice.
@@ -367,7 +367,7 @@ GetterSetter* JSDOMGlobalObject::createCrossOriginGetterSetter(JSGlobalObject* l
 {
     ASSERT(getter || setter);
     auto& vm = lexicalGlobalObject->vm();
-    CrossOriginMapKey key = std::make_pair(lexicalGlobalObject, getter ? getter.executableAddress() : setter.executableAddress());
+    CrossOriginMapKey key = std::make_pair(lexicalGlobalObject, getter ? getter.taggedPtr() : setter.taggedPtr());
 
     // WeakGCMap::ensureValue's functor must not invoke GC since GC can modify WeakGCMap in the middle of HashMap::ensure.
     // We use DeferGC here (1) not to invoke GC when executing WeakGCMap::ensureValue and (2) to avoid looking up HashMap twice.

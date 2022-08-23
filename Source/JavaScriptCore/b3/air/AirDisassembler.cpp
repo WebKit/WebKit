@@ -71,7 +71,7 @@ void Disassembler::addInst(Inst* inst, MacroAssembler::Label start, MacroAssembl
 
 void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, const char* airPrefix, const char* asmPrefix, const ScopedLambda<void(Inst&)>& doToEachInst)
 {
-    void* codeStart = linkBuffer.entrypoint<DisassemblyPtrTag>().untaggedExecutableAddress();
+    void* codeStart = linkBuffer.entrypoint<DisassemblyPtrTag>().untaggedPtr();
     void* codeEnd = bitwise_cast<uint8_t*>(codeStart) +  linkBuffer.size();
 
     auto dumpAsmRange = [&] (CCallHelpers::Label startLabel, CCallHelpers::Label endLabel) {

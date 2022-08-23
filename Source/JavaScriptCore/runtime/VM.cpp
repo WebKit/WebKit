@@ -718,7 +718,7 @@ NativeExecutable* VM::getRemoteFunction(bool isJSFunction)
     return getOrCreate(m_fastRemoteFunctionExecutable);
 }
 
-MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)
+CodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)
 {
 #if ENABLE(JIT)
     if (Options::useJIT()) {

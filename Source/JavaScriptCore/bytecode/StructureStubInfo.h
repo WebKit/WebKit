@@ -392,10 +392,10 @@ public:
 
     union {
         CodeLocationCall<JSInternalPtrTag> m_slowPathCallLocation;
-        FunctionPtr<OperationPtrTag> m_slowOperation;
+        CodePtr<OperationPtrTag> m_slowOperation;
     };
 
-    MacroAssemblerCodePtr<JITStubRoutinePtrTag> m_codePtr;
+    CodePtr<JITStubRoutinePtrTag> m_codePtr;
 
     RegisterSet usedRegisters;
 

@@ -74,7 +74,7 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
                 return;
             }
 
-            m_wasmIndirectCallEntryPoints = FixedVector<MacroAssemblerCodePtr<WasmEntryPtrTag>>(m_calleeCount);
+            m_wasmIndirectCallEntryPoints = FixedVector<CodePtr<WasmEntryPtrTag>>(m_calleeCount);
 
             for (unsigned i = 0; i < m_calleeCount; ++i)
                 m_wasmIndirectCallEntryPoints[i] = m_llintCallees->at(i)->entrypoint();
@@ -96,7 +96,7 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
                 return;
             }
 
-            m_wasmIndirectCallEntryPoints = FixedVector<MacroAssemblerCodePtr<WasmEntryPtrTag>>(m_calleeCount);
+            m_wasmIndirectCallEntryPoints = FixedVector<CodePtr<WasmEntryPtrTag>>(m_calleeCount);
 
             BBQPlan* bbqPlan = static_cast<BBQPlan*>(m_plan.get());
             bbqPlan->initializeCallees([&] (unsigned calleeIndex, RefPtr<EmbedderEntrypointCallee>&& embedderEntrypointCallee, RefPtr<BBQCallee>&& wasmEntrypoint) {

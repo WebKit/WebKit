@@ -28,7 +28,7 @@
 #include "ClassInfo.h"
 #include "DOMJITEffect.h"
 #include "SpeculatedType.h"
-#include <wtf/FunctionPtr.h>
+#include <wtf/CodePtr.h>
 
 namespace JSC { namespace DOMJIT {
 
@@ -40,11 +40,11 @@ namespace JSC { namespace DOMJIT {
 
 class Signature {
 public:
-    using FunctionPtr = WTF::FunctionPtr<CFunctionPtrTag>;
+    using CodePtr = WTF::CodePtr<CFunctionPtrTag>;
 
     template<typename... Arguments>
-    constexpr Signature(FunctionPtr functionWithoutTypeCheck, const ClassInfo* classInfo, Effect effect, SpeculatedType result, Arguments... arguments)
-        : functionWithoutTypeCheckPtr(functionWithoutTypeCheck.get())
+    constexpr Signature(CodePtr functionWithoutTypeCheck, const ClassInfo* classInfo, Effect effect, SpeculatedType result, Arguments... arguments)
+        : functionWithoutTypeCheckPtr(functionWithoutTypeCheck.untypedFunc())
         , classInfo(classInfo)
         , result(result)
         , arguments {static_cast<SpeculatedType>(arguments)...}
@@ -53,9 +53,9 @@ public:
     {
     }
 
-    FunctionPtr functionWithoutTypeCheck() const { return FunctionPtr(functionWithoutTypeCheckPtr); }
+    CodePtr functionWithoutTypeCheck() const { return CodePtr(functionWithoutTypeCheckPtr); }
 
-    const WTF_VTBL_FUNCPTR_PTRAUTH(DOMJITSignature) FunctionPtr::Ptr functionWithoutTypeCheckPtr;
+    const WTF_VTBL_FUNCPTR_PTRAUTH(DOMJITSignature) CodePtr::UntypedFunc functionWithoutTypeCheckPtr;
     const ClassInfo* const classInfo;
     const SpeculatedType result;
     const SpeculatedType arguments[JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS];
