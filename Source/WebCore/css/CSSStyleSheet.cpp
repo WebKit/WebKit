@@ -99,7 +99,7 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Node& ownerNode
     : m_contents(WTFMove(contents))
     , m_isInlineStylesheet(isInlineStylesheet)
     , m_isOriginClean(isOriginClean)
-    , m_ownerNode(&ownerNode)
+    , m_ownerNode(ownerNode)
     , m_startPosition(startPosition)
 {
     ASSERT(isAcceptableCSSStyleSheetParent(&ownerNode));
@@ -119,6 +119,11 @@ CSSStyleSheet::~CSSStyleSheet()
         m_mediaCSSOMWrapper->clearParentStyleSheet();
 
     m_contents->unregisterClient(this);
+}
+
+Node* CSSStyleSheet::ownerNode() const
+{
+    return m_ownerNode.get();
 }
 
 CSSStyleSheet::WhetherContentsWereClonedForMutation CSSStyleSheet::willMutateRules()
@@ -191,6 +196,11 @@ void CSSStyleSheet::didMutate()
 void CSSStyleSheet::clearOwnerNode()
 {
     m_ownerNode = nullptr;
+}
+
+CSSImportRule* CSSStyleSheet::ownerRule() const
+{
+    return m_ownerRule.get();
 }
 
 void CSSStyleSheet::reattachChildRuleCSSOMWrappers()
@@ -355,7 +365,8 @@ MediaList* CSSStyleSheet::media() const
 
 CSSStyleSheet* CSSStyleSheet::parentStyleSheet() const 
 { 
-    return m_ownerRule ? m_ownerRule->parentStyleSheet() : nullptr;
+    RefPtr ownerRule = m_ownerRule.get();
+    return ownerRule ? ownerRule->parentStyleSheet() : nullptr;
 }
 
 CSSStyleSheet& CSSStyleSheet::rootStyleSheet()
