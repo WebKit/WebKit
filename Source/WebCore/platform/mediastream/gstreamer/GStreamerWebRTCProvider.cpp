@@ -23,6 +23,7 @@
 #if USE(GSTREAMER_WEBRTC)
 #include "GStreamerWebRTCProvider.h"
 
+#include "ContentType.h"
 #include "GStreamerRegistryScanner.h"
 #include "MediaCapabilitiesDecodingInfo.h"
 #include "MediaCapabilitiesEncodingInfo.h"
@@ -106,6 +107,27 @@ void GStreamerWebRTCProvider::initializeVideoDecodingCapabilities()
 
         return false;
     });
+}
+
+std::optional<MediaCapabilitiesDecodingInfo> GStreamerWebRTCProvider::videoDecodingCapabilitiesOverride(const VideoConfiguration& configuration)
+{
+    MediaCapabilitiesDecodingInfo info;
+    ContentType contentType { configuration.contentType };
+    auto containerType = contentType.containerType();
+    if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s)) {
+        info.powerEfficient = false;
+        info.smooth = isVPSoftwareDecoderSmooth(configuration);
+    } else if (equalLettersIgnoringASCIICase(containerType, "video/vp9"_s)) {
+        auto decodingInfo = computeVPParameters(configuration);
+        info.powerEfficient = decodingInfo ? decodingInfo->powerEfficient : true;
+        info.smooth = decodingInfo ? decodingInfo->smooth : isVPSoftwareDecoderSmooth(configuration);
+    } else {
+        // FIXME: Provide more granular H.264 decoder information.
+        info.powerEfficient = true;
+        info.smooth = true;
+    }
+    info.supported = true;
+    return { info };
 }
 
 } // namespace WebCore
