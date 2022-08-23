@@ -555,6 +555,7 @@ void testTrappingLoadAddStore();
 void testTrappingLoadDCE();
 void testTrappingStoreElimination();
 void testMoveConstants();
+void testMoveConstantsWithLargeOffsets();
 void testPCOriginMapDoesntInsertNops();
 void testBitOrBitOrArgImmImm32(int, int, int c);
 void testBitOrImmBitOrArgImm32(int, int, int c);
