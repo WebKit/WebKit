@@ -95,6 +95,7 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
     initializeDebugCategory();
     auto pipelineName = makeString("WebAudioProvider_MediaStreamTrack_", source.id());
     m_pipeline = gst_element_factory_make("pipeline", pipelineName.utf8().data());
+    GST_DEBUG_OBJECT(m_pipeline.get(), "MediaStream WebAudio provider created");
     auto src = webkitMediaStreamSrcNew();
     webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC(src), &source, true);
 
@@ -252,7 +253,7 @@ void AudioSourceProviderGStreamer::setClient(AudioSourceProviderClient* newClien
     if (client() == newClient)
         return;
 
-    GST_DEBUG("Setting up client %p (previous: %p)", newClient, client());
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Setting up client %p (previous: %p)", newClient, client());
     bool previousClientWasValid = !!m_client;
     m_client = newClient;
 
@@ -340,7 +341,7 @@ void AudioSourceProviderGStreamer::setClient(AudioSourceProviderClient* newClien
 
 void AudioSourceProviderGStreamer::handleNewDeinterleavePad(GstPad* pad)
 {
-    GST_DEBUG("New pad %" GST_PTR_FORMAT, pad);
+    GST_DEBUG_OBJECT(m_pipeline.get(), "New pad %" GST_PTR_FORMAT, pad);
 
     // A new pad for a planar channel was added in deinterleave. Plug
     // in an appsink so we can pull the data from each
