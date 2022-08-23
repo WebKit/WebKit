@@ -142,31 +142,23 @@ void SharedMemory::Handle::clear()
     m_size = 0;
 }
 
-void SharedMemory::IPCHandle::encode(IPC::Encoder& encoder) const
+void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
 {
-    encoder << static_cast<uint64_t>(handle.m_size);
-    encoder << dataSize;
-    encoder << MachSendRight::adopt(handle.m_port);
-    handle.m_port = MACH_PORT_NULL;
+    encoder << static_cast<uint64_t>(m_size);
+    encoder << MachSendRight::adopt(m_port);
+    m_port = MACH_PORT_NULL;
 }
 
-bool SharedMemory::IPCHandle::decode(IPC::Decoder& decoder, IPCHandle& ipcHandle)
+bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
 {
-    ASSERT(!ipcHandle.handle.m_port);
-    ASSERT(!ipcHandle.handle.m_size);
-
-    SharedMemory::Handle handle;
-
+    ASSERT(!handle.m_port);
+    ASSERT(!handle.m_size);
     uint64_t bufferSize;
     if (!decoder.decode(bufferSize))
         return false;
 
-    uint64_t dataLength;
-    if (!decoder.decode(dataLength))
-        return false;
-
-    // SharedMemory::Handle::size() is rounded up to the nearest page.
-    if (dataLength > bufferSize)
+    auto roundedSize = safeRoundPage(bufferSize);
+    if (UNLIKELY(!roundedSize))
         return false;
 
     auto sendRight = decoder.decode<MachSendRight>();
@@ -175,8 +167,6 @@ bool SharedMemory::IPCHandle::decode(IPC::Decoder& decoder, IPCHandle& ipcHandle
     
     handle.m_size = bufferSize;
     handle.m_port = sendRight->leakSendRight();
-    ipcHandle.handle = WTFMove(handle);
-    ipcHandle.dataSize = dataLength;
     return true;
 }
 
@@ -298,10 +288,15 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
 {
     if (handle.isNull())
         return nullptr;
+    auto roundedSize = safeRoundPage(handle.m_size);
+    if (UNLIKELY(!roundedSize)) {
+        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::map: Failed to map %zu bytes due to overflow", nullptr, handle.m_size);
+        return nullptr;
+    }
 
     vm_prot_t vmProtection = machProtection(protection);
     mach_vm_address_t mappedAddress = 0;
-    kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, handle.m_size, 0, VM_FLAGS_ANYWHERE, handle.m_port, 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
+    kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, *roundedSize, 0, VM_FLAGS_ANYWHERE, handle.m_port, 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
 #if RELEASE_LOG_DISABLED
     if (kr != KERN_SUCCESS)
         return nullptr;
@@ -370,7 +365,7 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
         return false;
 
     handle.m_port = sendRight.leakSendRight();
-    handle.m_size = *roundedSize;
+    handle.m_size = m_size;
 
     return true;
 }

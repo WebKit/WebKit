@@ -3370,7 +3370,7 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
                 return;
             sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
         }
-        send(Messages::WebPageProxy::SaveImageToLibrary(SharedMemory::IPCHandle { WTFMove(handle), buffer->size() }, authorizationToken));
+        send(Messages::WebPageProxy::SaveImageToLibrary(WTFMove(handle), authorizationToken));
     }
 }
 
