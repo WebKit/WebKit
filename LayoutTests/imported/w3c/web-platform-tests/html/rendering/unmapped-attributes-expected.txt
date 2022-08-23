@@ -2,14 +2,14 @@
 
 PASS We should be in standards mode
 PASS Subframe should be in quirks mode
-FAIL <table hspace> should not be mapped to style marginLeft in CSS1Compat mode assert_equals: expected "0px" but got "200px"
-FAIL <table hspace> should not be mapped to style marginLeft in BackCompat mode assert_equals: expected "0px" but got "200px"
-FAIL <table hspace> should not be mapped to style marginRight in CSS1Compat mode assert_equals: expected "0px" but got "200px"
-FAIL <table hspace> should not be mapped to style marginRight in BackCompat mode assert_equals: expected "0px" but got "200px"
-FAIL <table vspace> should not be mapped to style marginTop in CSS1Compat mode assert_equals: expected "0px" but got "200px"
-FAIL <table vspace> should not be mapped to style marginTop in BackCompat mode assert_equals: expected "0px" but got "200px"
-FAIL <table vspace> should not be mapped to style marginBottom in CSS1Compat mode assert_equals: expected "0px" but got "200px"
-FAIL <table vspace> should not be mapped to style marginBottom in BackCompat mode assert_equals: expected "0px" but got "200px"
+PASS <table hspace> should not be mapped to style marginLeft in CSS1Compat mode
+PASS <table hspace> should not be mapped to style marginLeft in BackCompat mode
+PASS <table hspace> should not be mapped to style marginRight in CSS1Compat mode
+PASS <table hspace> should not be mapped to style marginRight in BackCompat mode
+PASS <table vspace> should not be mapped to style marginTop in CSS1Compat mode
+PASS <table vspace> should not be mapped to style marginTop in BackCompat mode
+PASS <table vspace> should not be mapped to style marginBottom in CSS1Compat mode
+PASS <table vspace> should not be mapped to style marginBottom in BackCompat mode
 PASS <embed border> should not be mapped to style borderTopWidth in CSS1Compat mode
 PASS <embed border> should not be mapped to style borderTopWidth in BackCompat mode
 PASS <embed border> should not be mapped to style borderRightWidth in CSS1Compat mode

@@ -2,5 +2,5 @@ x
 x
 x
 
-FAIL table vspace hspace (quirks mode) assert_equals: marginTop expected "0px" but got "25px"
+PASS table vspace hspace (quirks mode)
 
