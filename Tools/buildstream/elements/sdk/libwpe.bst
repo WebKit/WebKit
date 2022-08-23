@@ -1,8 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: wpe:libwpe-1.13.3.tar.xz
-  ref: 05f871922f6ca750c5689a38a346c3fba130417d3490dd52362b4fe22f334e96
+  url: wpe:libwpe-1.13.90.tar.xz
+  ref: 97af9fbea3a70093e5f3979fa89594343e255942645c3b781d4f3517df5388a1
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
