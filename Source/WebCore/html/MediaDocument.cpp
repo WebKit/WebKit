@@ -78,7 +78,7 @@ private:
     void appendBytes(DocumentWriter&, const uint8_t*, size_t) final;
     void createDocumentStructure();
 
-    HTMLMediaElement* m_mediaElement { nullptr };
+    WeakPtr<HTMLMediaElement> m_mediaElement;
     String m_outgoingReferrer;
 };
     
@@ -108,7 +108,7 @@ void MediaDocumentParser::createDocumentStructure()
     rootElement->appendChild(body);
 
     auto videoElement = HTMLVideoElement::create(document);
-    m_mediaElement = videoElement.ptr();
+    m_mediaElement = videoElement.get();
     videoElement->setAttributeWithoutSynchronization(controlsAttr, emptyAtom());
     videoElement->setAttributeWithoutSynchronization(autoplayAttr, emptyAtom());
     videoElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());

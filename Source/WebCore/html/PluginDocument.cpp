@@ -61,7 +61,7 @@ private:
     void appendBytes(DocumentWriter&, const uint8_t*, size_t) final;
     void createDocumentStructure();
 
-    HTMLEmbedElement* m_embedElement { nullptr };
+    WeakPtr<HTMLEmbedElement> m_embedElement;
 };
 
 void PluginDocumentParser::createDocumentStructure()
@@ -93,9 +93,9 @@ void PluginDocumentParser::createDocumentStructure()
         
     auto embedElement = HTMLEmbedElement::create(document);
         
-    m_embedElement = embedElement.ptr();
-    embedElement->setAttributeWithoutSynchronization(widthAttr, AtomString("100%", AtomString::ConstructFromLiteral));
-    embedElement->setAttributeWithoutSynchronization(heightAttr, AtomString("100%", AtomString::ConstructFromLiteral));
+    m_embedElement = embedElement.get();
+    embedElement->setAttributeWithoutSynchronization(widthAttr, "100%");
+    embedElement->setAttributeWithoutSynchronization(heightAttr, "100%");
     
     embedElement->setAttributeWithoutSynchronization(nameAttr, AtomString("plugin", AtomString::ConstructFromLiteral));
     embedElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());

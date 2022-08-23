@@ -123,14 +123,15 @@ inline Ref<ImageDocumentElement> ImageDocumentElement::create(ImageDocument& doc
 
 HTMLImageElement* ImageDocument::imageElement() const
 {
-    return m_imageElement;
+    return m_imageElement.get();
 }
 
 LayoutSize ImageDocument::imageSize()
 {
-    ASSERT(m_imageElement);
+    RefPtr imageElement = m_imageElement.get();
+    ASSERT(imageElement);
     updateStyleIfNeeded();
-    return m_imageElement->cachedImage()->imageSizeForRenderer(m_imageElement->renderer(), frame() ? frame()->pageZoomFactor() : 1);
+    return imageElement->cachedImage()->imageSizeForRenderer(imageElement->renderer(), frame() ? frame()->pageZoomFactor() : 1);
 }
 
 void ImageDocument::updateDuringParsing()
@@ -256,7 +257,7 @@ void ImageDocument::createDocumentStructure()
 #endif
     }
 
-    m_imageElement = imageElement.ptr();
+    m_imageElement = imageElement.get();
 }
 
 void ImageDocument::imageUpdated()

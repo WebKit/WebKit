@@ -70,7 +70,7 @@ private:
     void appendBytes(DocumentWriter&, const uint8_t*, size_t) final;
     void finish() final;
 
-    HTMLModelElement* m_modelElement { nullptr };
+    WeakPtr<HTMLModelElement> m_modelElement;
     String m_outgoingReferrer;
 };
 
@@ -105,7 +105,7 @@ void ModelDocumentParser::createDocumentStructure()
     rootElement->appendChild(body);
 
     auto modelElement = HTMLModelElement::create(HTMLNames::modelTag, document);
-    m_modelElement = modelElement.ptr();
+    m_modelElement = modelElement.get();
     modelElement->setAttributeWithoutSynchronization(interactiveAttr, emptyAtom());
 
     auto sourceElement = HTMLSourceElement::create(HTMLNames::sourceTag, document);
