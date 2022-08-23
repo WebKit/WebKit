@@ -451,6 +451,7 @@
 		2D0C56FE229F1DEA00BD33E7 /* DeviceManagementSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D0C56FC229F1DEA00BD33E7 /* DeviceManagementSoftLink.mm */; };
 		2D1087611D2C573E00B85F82 /* LoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D10875F1D2C573E00B85F82 /* LoadParameters.h */; };
 		2D11B7512126A282006F8878 /* UnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D7DEC9421269E4C00B9F73C /* UnifiedSource1-mm.mm */; };
+		2D11B7522126A282006F8878 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D7DED5B21269E4D00B9F73C /* UnifiedSource1.cpp */; };
 		2D11B7532126A282006F8878 /* UnifiedSource2-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D7DEC0321269E4B00B9F73C /* UnifiedSource2-mm.mm */; };
 		2D11B7542126A282006F8878 /* UnifiedSource2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D7DED3821269E4C00B9F73C /* UnifiedSource2.cpp */; };
 		2D11B7552126A282006F8878 /* UnifiedSource3-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D7DECCC21269E4C00B9F73C /* UnifiedSource3-mm.mm */; };
@@ -1325,23 +1326,12 @@
 		7B73123E25CC8525003B2796 /* StreamConnectionWorkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123525CC8524003B2796 /* StreamConnectionWorkQueue.h */; };
 		7B73124125CC8525003B2796 /* StreamServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123825CC8524003B2796 /* StreamServerConnection.h */; };
 		7B73124225CC8525003B2796 /* StreamConnectionEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123925CC8525003B2796 /* StreamConnectionEncoder.h */; };
-		7B9FC5A828A38D1E007570E7 /* PlatformUnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FC59628A28D13007570E7 /* PlatformUnifiedSource1.cpp */; };
-		7B9FC5BB28A5233B007570E7 /* libWebKitPlatform.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B9FC59D28A28F88007570E7 /* libWebKitPlatform.a */; };
-		7B9FC5D028A5300D007570E7 /* PlatformUnifiedSource2-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FC5C628A52702007570E7 /* PlatformUnifiedSource2-mm.mm */; };
-		7B9FC5D128A53014007570E7 /* PlatformUnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FC5C428A526F5007570E7 /* PlatformUnifiedSource1-mm.mm */; };
-		7B9FC5D228A53018007570E7 /* PlatformUnifiedSource4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FC5C228A5258B007570E7 /* PlatformUnifiedSource4.cpp */; };
-		7B9FC5D328A5301D007570E7 /* PlatformUnifiedSource3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FC5C028A52586007570E7 /* PlatformUnifiedSource3.cpp */; };
-		7B9FC5D428A53023007570E7 /* PlatformUnifiedSource2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FC5BE28A5257A007570E7 /* PlatformUnifiedSource2.cpp */; };
-		7B9FC5DC28A53C24007570E7 /* PlatformUnifiedSource5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FC5DA28A53C13007570E7 /* PlatformUnifiedSource5.cpp */; };
-		7B9FC5DE28A53CCD007570E7 /* PlatformUnifiedSource3-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FC5DD28A53CCD007570E7 /* PlatformUnifiedSource3-mm.mm */; };
-		7B9FC5F028ABB557007570E7 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D7DED5B21269E4D00B9F73C /* UnifiedSource1.cpp */; };
 		7BAB111025DD02B3008FC479 /* ScopedActiveMessageReceiveQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BAB110F25DD02B2008FC479 /* ScopedActiveMessageReceiveQueue.h */; };
 		7BBA63DF280E93D200B04823 /* IPCConnectionTesterIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BBA63DC280E93B500B04823 /* IPCConnectionTesterIdentifier.h */; };
 		7BBA63E0280E93D600B04823 /* IPCConnectionTester.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BBA63DE280E93B600B04823 /* IPCConnectionTester.h */; };
 		7BCF70DE2615D06E00E4FB70 /* ScopedRenderingResourcesRequestCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BCF70CB2614935E00E4FB70 /* ScopedRenderingResourcesRequestCocoa.mm */; };
 		7BE37F9327C7CA51007A6CD3 /* IPCStreamTesterIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BE37F9227C7C518007A6CD3 /* IPCStreamTesterIdentifier.h */; };
 		7BE9326327F5C75A00D5FEFB /* ReceiverMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BE9326227F5C75A00D5FEFB /* ReceiverMatcher.h */; };
-		7BEDA69E28B396BB00B41C7C /* WebCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
 		7C065F2C1C8CD95F00C2D950 /* WebUserContentControllerDataTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C065F2A1C8CD95F00C2D950 /* WebUserContentControllerDataTypes.h */; };
 		7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C135AA7173B0BCA00586AE2 /* WKPluginInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C1BA33E1A4A0E600043E249 /* APIDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1BA33C1A4A0E600043E249 /* APIDictionary.h */; };
@@ -2569,27 +2559,6 @@
 			remoteGlobalIDString = 7A7E8DE12748392500DCC97A;
 			remoteInfo = WebContent.CaptivePortal;
 		};
-		7B29EDB028B38E8A00750631 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C0CE72851247E66800BC0EC4;
-			remoteInfo = "Derived Sources";
-		};
-		7B9FC5A628A2A103007570E7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2D7DEBD821269C6B00B9F73C;
-			remoteInfo = "Generate Unified Sources";
-		};
-		7B9FC5BC28A5233B007570E7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7B9FC59C28A28F87007570E7;
-			remoteInfo = WebKitPlatform;
-		};
 		A15797402582AE7300528236 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2737,17 +2706,6 @@
 				7A7E8DF12748392500DCC97A /* MediaFormatReader.bundle in Copy Plug-ins */,
 			);
 			name = "Copy Plug-ins";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		7BEDA69D28B396AC00B41C7C /* Product Dependencies */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 16;
-			files = (
-				7BEDA69E28B396BB00B41C7C /* WebCore.framework in Product Dependencies */,
-			);
-			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A15797632582B1A500528236 /* Copy Plug-ins */ = {
@@ -5518,22 +5476,12 @@
 		7B904169254AFEA7006EEB8C /* RemoteGraphicsContextGL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGL.cpp; sourceTree = "<group>"; };
 		7B90416A254AFEA7006EEB8C /* RemoteGraphicsContextGL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGL.h; sourceTree = "<group>"; };
 		7B90416D2550108C006EEB8C /* RemoteGraphicsContextGLFunctionsGenerated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLFunctionsGenerated.h; sourceTree = "<group>"; };
-		7B9FC59628A28D13007570E7 /* PlatformUnifiedSource1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformUnifiedSource1.cpp; path = "DerivedSources/WebKit/unified-sources/PlatformUnifiedSource1.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B9FC59D28A28F88007570E7 /* libWebKitPlatform.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWebKitPlatform.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B9FC5A228A2A0B5007570E7 /* WebKitPlatform.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitPlatform.xcconfig; sourceTree = "<group>"; };
 		7B9FC5AB28A3B440007570E7 /* IPCUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCUtilities.h; sourceTree = "<group>"; };
 		7B9FC5AC28A3B440007570E7 /* IPCUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPCUtilities.cpp; sourceTree = "<group>"; };
-		7B9FC5BE28A5257A007570E7 /* PlatformUnifiedSource2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformUnifiedSource2.cpp; path = "DerivedSources/WebKit/unified-sources/PlatformUnifiedSource2.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B9FC5C028A52586007570E7 /* PlatformUnifiedSource3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformUnifiedSource3.cpp; path = "DerivedSources/WebKit/unified-sources/PlatformUnifiedSource3.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B9FC5C228A5258B007570E7 /* PlatformUnifiedSource4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformUnifiedSource4.cpp; path = "DerivedSources/WebKit/unified-sources/PlatformUnifiedSource4.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B9FC5C428A526F5007570E7 /* PlatformUnifiedSource1-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "PlatformUnifiedSource1-mm.mm"; path = "DerivedSources/WebKit/unified-sources/PlatformUnifiedSource1-mm.mm"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B9FC5C628A52702007570E7 /* PlatformUnifiedSource2-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "PlatformUnifiedSource2-mm.mm"; path = "DerivedSources/WebKit/unified-sources/PlatformUnifiedSource2-mm.mm"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B9FC5DA28A53C13007570E7 /* PlatformUnifiedSource5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformUnifiedSource5.cpp; path = "DerivedSources/WebKit/unified-sources/PlatformUnifiedSource5.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B9FC5DD28A53CCD007570E7 /* PlatformUnifiedSource3-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "PlatformUnifiedSource3-mm.mm"; path = "DerivedSources/WebKit/unified-sources/PlatformUnifiedSource3-mm.mm"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B9FC5DF28A54373007570E7 /* XPCUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCUtilities.h; sourceTree = "<group>"; };
-		7B9FC5E028A54373007570E7 /* XPCUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPCUtilities.cpp; sourceTree = "<group>"; };
 		7B9FC5E128A54BCC007570E7 /* ArgumentCodersDarwin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersDarwin.h; sourceTree = "<group>"; };
 		7B9FC5E228A54BCC007570E7 /* ArgumentCodersDarwin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersDarwin.mm; sourceTree = "<group>"; };
+		7B9FC5DF28A54373007570E7 /* XPCUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCUtilities.h; sourceTree = "<group>"; };
+		7B9FC5E028A54373007570E7 /* XPCUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPCUtilities.cpp; sourceTree = "<group>"; };
 		7BAB110F25DD02B2008FC479 /* ScopedActiveMessageReceiveQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedActiveMessageReceiveQueue.h; sourceTree = "<group>"; };
 		7BBA63DC280E93B500B04823 /* IPCConnectionTesterIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCConnectionTesterIdentifier.h; sourceTree = "<group>"; };
 		7BBA63DD280E93B600B04823 /* IPCConnectionTester.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPCConnectionTester.cpp; sourceTree = "<group>"; };
@@ -7338,13 +7286,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7B9FC59B28A28F87007570E7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DC2EF560486A6940098B216 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -7352,7 +7293,6 @@
 				52A69BEA286CFFAC00893E8F /* CryptoTokenKit.framework in Frameworks */,
 				3766F9EE189A1241003CF19B /* JavaScriptCore.framework in Frameworks */,
 				3766F9F1189A1254003CF19B /* libicucore.dylib in Frameworks */,
-				7B9FC5BB28A5233B007570E7 /* libWebKitPlatform.a in Frameworks */,
 				3766F9EF189A1244003CF19B /* QuartzCore.framework in Frameworks */,
 				37694525184FC6B600CDE21F /* Security.framework in Frameworks */,
 				37BEC4DD1948FC6A008B4286 /* WebCore.framework in Frameworks */,
@@ -7407,7 +7347,6 @@
 				7A7E8DF82748392500DCC97A /* com.apple.WebKit.WebContent.CaptivePortal.xpc */,
 				372EBB462017E64300085064 /* com.apple.WebKit.WebContent.Development.xpc */,
 				BC3DE46615A91763008D26FC /* com.apple.WebKit.WebContent.xpc */,
-				7B9FC59D28A28F88007570E7 /* libWebKitPlatform.a */,
 				CD95493526159004008372D9 /* libWebKitSwift.dylib */,
 				A16E66002581930800EE1749 /* MediaFormatReader.bundle */,
 				8DC2EF5B0486A6940098B216 /* WebKit.framework */,
@@ -7805,7 +7744,6 @@
 				372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */,
-				7B9FC5A228A2A0B5007570E7 /* WebKitPlatform.xcconfig */,
 				CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */,
 				37119A7C20CCB64E002C6DC9 /* WebKitTargetConditionals.xcconfig */,
 				5C1579DD27165BE500ED5280 /* webpushd.xcconfig */,
@@ -8887,14 +8825,6 @@
 		2D7DEBE221269E4B00B9F73C /* unified-sources */ = {
 			isa = PBXGroup;
 			children = (
-				7B9FC5C428A526F5007570E7 /* PlatformUnifiedSource1-mm.mm */,
-				7B9FC59628A28D13007570E7 /* PlatformUnifiedSource1.cpp */,
-				7B9FC5C628A52702007570E7 /* PlatformUnifiedSource2-mm.mm */,
-				7B9FC5BE28A5257A007570E7 /* PlatformUnifiedSource2.cpp */,
-				7B9FC5DD28A53CCD007570E7 /* PlatformUnifiedSource3-mm.mm */,
-				7B9FC5C028A52586007570E7 /* PlatformUnifiedSource3.cpp */,
-				7B9FC5C228A5258B007570E7 /* PlatformUnifiedSource4.cpp */,
-				7B9FC5DA28A53C13007570E7 /* PlatformUnifiedSource5.cpp */,
 				2D7DEC9421269E4C00B9F73C /* UnifiedSource1-mm.mm */,
 				2D7DED5B21269E4D00B9F73C /* UnifiedSource1.cpp */,
 				2D7DEC0321269E4B00B9F73C /* UnifiedSource2-mm.mm */,
@@ -13766,13 +13696,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7B9FC59928A28F87007570E7 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DC2EF500486A6940098B216 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -15673,26 +15596,6 @@
 			productReference = 7A7E8DF82748392500DCC97A /* com.apple.WebKit.WebContent.CaptivePortal.xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
-		7B9FC59C28A28F87007570E7 /* WebKitPlatform */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 7B9FC5A128A28F8A007570E7 /* Build configuration list for PBXNativeTarget "WebKitPlatform" */;
-			buildPhases = (
-				7B9FC59928A28F87007570E7 /* Headers */,
-				7B9FC59A28A28F87007570E7 /* Sources */,
-				7B9FC59B28A28F87007570E7 /* Frameworks */,
-				7BEDA69D28B396AC00B41C7C /* Product Dependencies */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				7B29EDB128B38E8A00750631 /* PBXTargetDependency */,
-				7B9FC5A728A2A103007570E7 /* PBXTargetDependency */,
-			);
-			name = WebKitPlatform;
-			productName = libWebKitPlatform;
-			productReference = 7B9FC59D28A28F88007570E7 /* libWebKitPlatform.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 		8DC2EF4F0486A6940098B216 /* WebKit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WebKit" */;
@@ -15734,7 +15637,6 @@
 				E1AC2E3E20F7B9C000B0897D /* PBXTargetDependency */,
 				37F7407912721F740093869B /* PBXTargetDependency */,
 				2D11BA052126A5AE006F8878 /* PBXTargetDependency */,
-				7B9FC5BD28A5233B007570E7 /* PBXTargetDependency */,
 			);
 			name = WebKit;
 			productInstallPath = "$(HOME)/Library/Frameworks";
@@ -15842,9 +15744,6 @@
 						CreatedOnToolsVersion = 10.1;
 						ProvisioningStyle = Automatic;
 					};
-					7B9FC59C28A28F87007570E7 = {
-						CreatedOnToolsVersion = 13.0;
-					};
 					8DC2EF4F0486A6940098B216 = {
 						LastSwiftMigration = 1300;
 					};
@@ -15898,7 +15797,6 @@
 				5CAF7A9926F93A750003F19E /* adattributiond */,
 				5C1579CC27165B2F00ED5280 /* webpushd */,
 				517B5F5A275A8D3E002DC22D /* webpushtool */,
-				7B9FC59C28A28F87007570E7 /* WebKitPlatform */,
 			);
 		};
 /* End PBXProject section */
@@ -16017,8 +15915,6 @@
 				"$(SRCROOT)/Scripts/generate-unified-sources.sh",
 				"$(SRCROOT)/Sources.txt",
 				"$(SRCROOT)/SourcesCocoa.txt",
-				"$(SRCROOT)/Platform/Sources.txt",
-				"$(SRCROOT)/Platform/SourcesCocoa.txt",
 				"$(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/wtf/Scripts/generate-unified-source-bundles.rb",
 			);
 			name = "Generate Unified Sources";
@@ -16876,21 +16772,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7B9FC59A28A28F87007570E7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7B9FC5D128A53014007570E7 /* PlatformUnifiedSource1-mm.mm in Sources */,
-				7B9FC5A828A38D1E007570E7 /* PlatformUnifiedSource1.cpp in Sources */,
-				7B9FC5D028A5300D007570E7 /* PlatformUnifiedSource2-mm.mm in Sources */,
-				7B9FC5D428A53023007570E7 /* PlatformUnifiedSource2.cpp in Sources */,
-				7B9FC5DE28A53CCD007570E7 /* PlatformUnifiedSource3-mm.mm in Sources */,
-				7B9FC5D328A5301D007570E7 /* PlatformUnifiedSource3.cpp in Sources */,
-				7B9FC5D228A53018007570E7 /* PlatformUnifiedSource4.cpp in Sources */,
-				7B9FC5DC28A53C24007570E7 /* PlatformUnifiedSource5.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DC2EF540486A6940098B216 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -17018,7 +16899,7 @@
 				93D6B782254CCCF40058DD3A /* SpeechRecognitionServerMessageReceiver.cpp in Sources */,
 				1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */,
 				2D11B7512126A282006F8878 /* UnifiedSource1-mm.mm in Sources */,
-				7B9FC5F028ABB557007570E7 /* UnifiedSource1.cpp in Sources */,
+				2D11B7522126A282006F8878 /* UnifiedSource1.cpp in Sources */,
 				2D11B7532126A282006F8878 /* UnifiedSource2-mm.mm in Sources */,
 				2D11B7542126A282006F8878 /* UnifiedSource2.cpp in Sources */,
 				2D11B7552126A282006F8878 /* UnifiedSource3-mm.mm in Sources */,
@@ -17459,21 +17340,6 @@
 			target = 7A7E8DE12748392500DCC97A /* WebContent.CaptivePortal */;
 			targetProxy = 7A7E8DFB27483A1200DCC97A /* PBXContainerItemProxy */;
 		};
-		7B29EDB128B38E8A00750631 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
-			targetProxy = 7B29EDB028B38E8A00750631 /* PBXContainerItemProxy */;
-		};
-		7B9FC5A728A2A103007570E7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2D7DEBD821269C6B00B9F73C /* Generate Unified Sources */;
-			targetProxy = 7B9FC5A628A2A103007570E7 /* PBXContainerItemProxy */;
-		};
-		7B9FC5BD28A5233B007570E7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7B9FC59C28A28F87007570E7 /* WebKitPlatform */;
-			targetProxy = 7B9FC5BC28A5233B007570E7 /* PBXContainerItemProxy */;
-		};
 		A15797412582AE7300528236 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
@@ -17813,27 +17679,6 @@
 			};
 			name = Production;
 		};
-		7B9FC59E28A28F8A007570E7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7B9FC5A228A2A0B5007570E7 /* WebKitPlatform.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		7B9FC59F28A28F8A007570E7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7B9FC5A228A2A0B5007570E7 /* WebKitPlatform.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		7B9FC5A028A28F8A007570E7 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7B9FC5A228A2A0B5007570E7 /* WebKitPlatform.xcconfig */;
-			buildSettings = {
-			};
-			name = Production;
-		};
 		942DB233257EE6D4009BD80A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -18149,16 +17994,6 @@
 				7A7E8DF52748392500DCC97A /* Debug */,
 				7A7E8DF62748392500DCC97A /* Release */,
 				7A7E8DF72748392500DCC97A /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		7B9FC5A128A28F8A007570E7 /* Build configuration list for PBXNativeTarget "WebKitPlatform" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				7B9FC59E28A28F8A007570E7 /* Debug */,
-				7B9FC59F28A28F8A007570E7 /* Release */,
-				7B9FC5A028A28F8A007570E7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

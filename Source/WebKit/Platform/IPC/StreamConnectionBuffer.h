@@ -25,14 +25,11 @@
 
 #pragma once
 
+#include "Decoder.h"
 #include "SharedMemory.h"
 #include <wtf/Atomics.h>
-#include <wtf/Ref.h>
-#include <wtf/Span.h>
 
 namespace IPC {
-class Decoder;
-class Encoder;
 
 // StreamConnectionBuffer is a shared "bi-partite" circular buffer supporting variable length messages, specific data
 // alignment with mandated minimum size. StreamClientConnection and StreamServerConnection use StreamConnectionBuffer to

@@ -77,18 +77,39 @@ GPUProcess/media/ios/RemoteMediaSessionHelperProxy.cpp
 GPUProcess/webrtc/LibWebRTCCodecsProxy.mm @no-unify
 GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp
 
+Platform/cf/ModuleCF.cpp
+
 Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
+Platform/cocoa/CocoaImage.mm
+Platform/cocoa/ImageAnalysisUtilities.mm
+Platform/cocoa/LayerHostingContext.mm
 Platform/cocoa/PaymentAuthorizationPresenter.mm
 Platform/cocoa/PaymentAuthorizationViewController.mm
+Platform/cocoa/SharedMemoryCocoa.cpp
+Platform/cocoa/WKCrashReporter.mm
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm
 Platform/cocoa/WebKitAdditions.mm @no-unify
+Platform/cocoa/XPCUtilities.mm
 
+Platform/foundation/LoggingFoundation.mm
+
+Platform/ios/AccessibilityIOS.mm
 Platform/ios/PaymentAuthorizationController.mm
 
+Platform/IPC/cocoa/ConnectionCocoa.mm
+Platform/IPC/cocoa/DaemonConnectionCocoa.mm
+Platform/IPC/cocoa/MachMessage.cpp
+
+Platform/IPC/darwin/ArgumentCodersDarwin.mm
+Platform/IPC/darwin/IPCSemaphoreDarwin.cpp
+
+Platform/mac/MachUtilities.cpp
 Platform/mac/MenuUtilities.mm
 Platform/mac/StringUtilities.mm
+
+Platform/unix/EnvironmentUtilities.cpp
 
 Shared/API/c/cf/WKErrorCF.cpp
 Shared/API/c/cf/WKStringCF.mm
@@ -718,6 +739,7 @@ GPUProcessProxyMessageReceiver.cpp
 GPUProcessMessageReceiver.cpp
 LibWebRTCCodecsProxyMessageReceiver.cpp
 LibWebRTCCodecsMessageReceiver.cpp
+MessageNames.cpp
 RemoteAudioDestinationManagerMessageReceiver.cpp
 RemoteAudioHardwareListenerMessageReceiver.cpp
 RemoteAudioSessionMessageReceiver.cpp
