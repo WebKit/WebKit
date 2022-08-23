@@ -391,7 +391,19 @@ void CoreAudioSharedUnit::checkTimestamps(const AudioTimeStamp& timeStamp, doubl
 
 OSStatus CoreAudioSharedUnit::provideSpeakerData(AudioUnitRenderActionFlags& flags, const AudioTimeStamp& timeStamp, UInt32 /*inBusNumber*/, UInt32 inNumberFrames, AudioBufferList& ioData)
 {
-    if (m_isReconfiguring || !m_speakerSamplesProducerLock.tryLock()) {
+    if (m_isReconfiguring || m_shouldNotifySpeakerSamplesProducer || !m_hasNotifiedSpeakerSamplesProducer || !m_speakerSamplesProducerLock.tryLock()) {
+        if (m_shouldNotifySpeakerSamplesProducer) {
+            m_shouldNotifySpeakerSamplesProducer = false;
+            callOnMainThread([this, weakThis = WeakPtr { *this }] {
+                if (!weakThis)
+                    return;
+                m_hasNotifiedSpeakerSamplesProducer = true;
+                Locker locker { m_speakerSamplesProducerLock };
+                if (m_speakerSamplesProducer)
+                    m_speakerSamplesProducer->captureUnitIsStarting();
+            });
+        }
+
         AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(inNumberFrames * m_speakerProcFormat.bytesPerFrame()));
         flags = kAudioUnitRenderAction_OutputIsSilence;
         return noErr;
@@ -528,11 +540,8 @@ OSStatus CoreAudioSharedUnit::startInternal()
 
     unduck();
 
-    {
-        Locker locker { m_speakerSamplesProducerLock };
-        if (m_speakerSamplesProducer)
-            m_speakerSamplesProducer->captureUnitIsStarting();
-    }
+    m_shouldNotifySpeakerSamplesProducer = true;
+    m_hasNotifiedSpeakerSamplesProducer = false;
 
     if (auto err = m_ioUnit->start()) {
         {
