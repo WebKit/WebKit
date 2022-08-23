@@ -135,18 +135,18 @@ class GitHub(object):
                 json=dict(body=ews_comment),
             )
             if response.status_code // 100 != 2:
-                _log.error("Failed to post comment to PR {}. Unexpected response code from GitHub: {}\n".format(pr_number, response.status_code))
+                _log.error('Failed to post comment to PR {}. Unexpected response code from GitHub: {}\n'.format(pr_number, response.status_code))
                 return -1
             new_comment_id = response.json().get('id')
             comment_url = 'https://github.com/WebKit/WebKit/pull/{}#issuecomment-{}'.format(pr_number, new_comment_id)
-            _log.info('Commented on PR {} for hash: {}, link: {}'.format(pr_number, sha, comment_url))
+            _log.info('Commented on PR {}, link: {}'.format(pr_number, comment_url))
 
             if comment_id == -1 and new_comment_id != -1 and change:
                 change.set_comment_id(new_comment_id)
-                _log.info('PR {}: set new comment id as {} for hash: {}.'.format(pr_number, new_comment_id, sha))
+                _log.info('PR {}: set new comment id as {} for hash: {}.'.format(pr_number, new_comment_id, change.change_id))
             return new_comment_id
         except Exception as e:
-            _log.error("Error in posting comment to PR {}\n".format(pr_number))
+            _log.error('Error in posting comment to PR {}: {}\n'.format(pr_number, e))
         return -1
 
     def update_pr_description_with_status_bubble(self, pr_number, ews_comment, repository_url=None):
@@ -180,7 +180,7 @@ class GitHub(object):
                 _log.error('Failed to update PR {} description. Unexpected response code from GitHub: {}\n'.format(pr_number, response.status_code))
                 return -1
 
-            _log.info('Updated description for PR {}\n'.format(pr_number))
+            _log.info('Updated description for PR {}'.format(pr_number))
             return 0
         except Exception as e:
             _log.error('Error in updating PR description for PR {}: {}\n'.format(pr_number, e))
@@ -208,7 +208,7 @@ class GitHubEWS(GitHub):
     @classmethod
     def generate_updated_pr_description(self, description, ews_comment):
         description = description.split(self.STATUS_BUBBLE_START)[0]
-        return u'{}\n{}\n{}\n{}'.format(description, self.STATUS_BUBBLE_START, ews_comment, self.STATUS_BUBBLE_END)
+        return u'{}{}\n{}\n{}'.format(description, self.STATUS_BUBBLE_START, ews_comment, self.STATUS_BUBBLE_END)
 
     def generate_comment_text_for_change(self, change):
         hash_url = 'https://github.com/WebKit/WebKit/commit/{}'.format(change.change_id)
@@ -246,7 +246,7 @@ class GitHubEWS(GitHub):
             builds = builds[:10]  # Limit number of builds to display in status-bubble hover over message
 
         hover_over_text = ''
-        status = GitHubEWS.ICON_BUILD_WAITING
+        icon = GitHubEWS.ICON_BUILD_WAITING
         if not build:
             if queue in ['merge', 'unsafe-merge']:
                 return u'| '
@@ -256,22 +256,22 @@ class GitHubEWS(GitHub):
             if queue_full_name:
                 url = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
             hover_over_text = 'Waiting in queue, processing has not started yet'
-            return u'| [{status} {name} ]({url} "{hover_over_text}") '.format(status=status, name=name, url=url, hover_over_text=hover_over_text)
+            return u'| [{icon} {name} ]({url} "{hover_over_text}") '.format(icon=icon, name=name, url=url, hover_over_text=hover_over_text)
 
         url = 'https://{}/#/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, build.builder_id, build.number)
 
         if build.result is None:
             hover_over_text = 'Build is in progress'
-            status = GitHubEWS.ICON_BUILD_ONGOING
+            icon = GitHubEWS.ICON_BUILD_ONGOING
         elif build.result == Buildbot.SUCCESS:
             if is_parent_build:
-                status = GitHubEWS.ICON_BUILD_WAITING
+                icon = GitHubEWS.ICON_BUILD_WAITING
                 hover_over_text = 'Waiting to run tests'
                 queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
                 if queue_full_name:
                     url = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
             else:
-                status = GitHubEWS.ICON_BUILD_PASS
+                icon = GitHubEWS.ICON_BUILD_PASS
                 if is_builder_queue and is_tester_queue:
                     hover_over_text = 'Built successfully and passed tests'
                 elif is_builder_queue:
@@ -284,16 +284,16 @@ class GitHubEWS(GitHub):
                 else:
                     hover_over_text = 'Pass'
         elif build.result == Buildbot.WARNINGS:
-            status = GitHubEWS.ICON_BUILD_PASS
+            icon = GitHubEWS.ICON_BUILD_PASS
         elif build.result == Buildbot.FAILURE:
-            status = GitHubEWS.ICON_BUILD_FAIL
+            icon = GitHubEWS.ICON_BUILD_FAIL
             hover_over_text = build.state_string
         elif build.result == Buildbot.CANCELLED:
-            status = GitHubEWS.ICON_EMPTY_SPACE
+            icon = GitHubEWS.ICON_EMPTY_SPACE
             name = u'~~{}~~'.format(name)
             hover_over_text = 'Build was cancelled'
         elif build.result == Buildbot.SKIPPED:
-            status = GitHubEWS.ICON_EMPTY_SPACE
+            icon = GitHubEWS.ICON_EMPTY_SPACE
             if re.search(r'Pull request .* doesn\'t have relevant changes', build.state_string):
                 return u'| '
             name = u'~~{}~~'.format(name)
@@ -304,15 +304,15 @@ class GitHubEWS(GitHub):
                 hover_over_text += ' Commit was outdated when EWS attempted to process it.'
         elif build.result == Buildbot.RETRY:
             hover_over_text = 'Build is being retried'
-            status = GitHubEWS.ICON_BUILD_ONGOING
+            icon = GitHubEWS.ICON_BUILD_ONGOING
         elif build.result == Buildbot.EXCEPTION:
             hover_over_text = 'An unexpected error occured'
-            status = GitHubEWS.ICON_BUILD_ERROR
+            icon = GitHubEWS.ICON_BUILD_ERROR
         else:
-            status = GitHubEWS.ICON_BUILD_ERROR
+            icon = GitHubEWS.ICON_BUILD_ERROR
             hover_over_text = 'An unexpected error occured'
 
-        return u'| [{status} {name}]({url} "{hover_over_text}") '.format(status=status, name=name, url=url, hover_over_text=hover_over_text)
+        return u'| [{icon} {name}]({url} "{hover_over_text}") '.format(icon=icon, name=name, url=url, hover_over_text=hover_over_text)
 
     @classmethod
     def add_or_update_comment_for_change_id(self, sha, pr_id, pr_project=None, allow_new_comment=False):
@@ -336,7 +336,7 @@ class GitHubEWS(GitHub):
             if not allow_new_comment:
                 # FIXME: improve this logic to use locking instead
                 return -1
-            _log.info('Adding comment for hash: {}, pr_id: {}, pr_id from db: {}.'.format(sha, pr_id, change.pr_id))
+            _log.info('Adding comment for hash: {}, PR: {}'.format(sha, pr_id))
             new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, comment_text, change=change)
             obsolete_changes = Change.mark_old_changes_as_obsolete(pr_id, sha)
             for obsolete_change in obsolete_changes:
