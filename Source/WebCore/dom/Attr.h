@@ -42,7 +42,7 @@ public:
 
     String name() const { return qualifiedName().toString(); }
     bool specified() const { return true; }
-    Element* ownerElement() const { return m_element; }
+    Element* ownerElement() const { return m_element.get(); }
 
     WEBCORE_EXPORT AtomString value() const;
     WEBCORE_EXPORT void setValue(const AtomString&);
@@ -74,11 +74,9 @@ private:
 
     bool isAttributeNode() const final { return true; }
 
-    Attribute& elementAttribute();
-
     // Attr wraps either an element/name, or a name/value pair (when it's a standalone Node.)
     // Note that m_name is always set, but m_element/m_standaloneValue may be null.
-    Element* m_element { nullptr };
+    WeakPtr<Element> m_element;
     QualifiedName m_name;
     AtomString m_standaloneValue;
 
