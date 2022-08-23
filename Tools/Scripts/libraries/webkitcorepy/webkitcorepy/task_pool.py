@@ -386,7 +386,7 @@ class TaskPool(object):
             ),
         ) for count in range(self._num_workers)]
 
-        with Timeout(seconds=10, patch=False, handler=self.Exception('Failed to start all workers')):
+        with Timeout(seconds=60, patch=False, handler=self.Exception('Failed to start all workers')):
             for worker in self.workers:
                 worker.start()
             while self._started < len(self.workers):
