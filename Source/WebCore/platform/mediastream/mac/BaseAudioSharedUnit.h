@@ -42,7 +42,7 @@ class CaptureDevice;
 class CoreAudioCaptureSource;
 class PlatformAudioData;
 
-class BaseAudioSharedUnit : public CanMakeWeakPtr<BaseAudioSharedUnit> {
+class BaseAudioSharedUnit : public CanMakeWeakPtr<BaseAudioSharedUnit, WeakPtrFactoryInitialization::Eager> {
 public:
     BaseAudioSharedUnit();
     virtual ~BaseAudioSharedUnit() = default;

@@ -146,6 +146,8 @@ private:
     Timer m_verifyCapturingTimer;
 
     bool m_isReconfiguring { false };
+    bool m_shouldNotifySpeakerSamplesProducer { false };
+    bool m_hasNotifiedSpeakerSamplesProducer { false };
     mutable Lock m_speakerSamplesProducerLock;
     CoreAudioSpeakerSamplesProducer* m_speakerSamplesProducer WTF_GUARDED_BY_LOCK(m_speakerSamplesProducerLock) { nullptr };
 };
