@@ -242,7 +242,7 @@ class MonomorphizeTraverser final : public TIntermTraverser
   public:
     explicit MonomorphizeTraverser(TCompiler *compiler,
                                    TSymbolTable *symbolTable,
-                                   ShCompileOptions compileOptions,
+                                   const ShCompileOptions &compileOptions,
                                    UnsupportedFunctionArgsBitSet unsupportedFunctionArgs,
                                    FunctionMap *functionMap)
         : TIntermTraverser(true, false, false, symbolTable),
@@ -345,8 +345,7 @@ class MonomorphizeTraverser final : public TIntermTraverser
         {
             // Monomorphize if the opaque uniform is a samplerCube and ES2's cube sampling emulation
             // is requested.
-            if (type.isSamplerCube() &&
-                (mCompileOptions & SH_EMULATE_SEAMFUL_CUBE_MAP_SAMPLING) != 0)
+            if (type.isSamplerCube() && mCompileOptions.emulateSeamfulCubeMapSampling)
             {
                 return true;
             }
@@ -435,7 +434,7 @@ class MonomorphizeTraverser final : public TIntermTraverser
     }
 
     TCompiler *mCompiler;
-    ShCompileOptions mCompileOptions;
+    const ShCompileOptions &mCompileOptions;
     UnsupportedFunctionArgsBitSet mUnsupportedFunctionArgs;
     bool mAnyMonomorphized = false;
 
@@ -555,7 +554,7 @@ void SortDeclarations(TIntermBlock *root)
 bool MonomorphizeUnsupportedFunctionsImpl(TCompiler *compiler,
                                           TIntermBlock *root,
                                           TSymbolTable *symbolTable,
-                                          ShCompileOptions compileOptions,
+                                          const ShCompileOptions &compileOptions,
                                           UnsupportedFunctionArgsBitSet unsupportedFunctionArgs)
 {
     // First, sort out the declarations such that all non-function declarations are placed before
@@ -598,7 +597,7 @@ bool MonomorphizeUnsupportedFunctionsImpl(TCompiler *compiler,
 bool MonomorphizeUnsupportedFunctions(TCompiler *compiler,
                                       TIntermBlock *root,
                                       TSymbolTable *symbolTable,
-                                      ShCompileOptions compileOptions,
+                                      const ShCompileOptions &compileOptions,
                                       UnsupportedFunctionArgsBitSet unsupportedFunctionArgs)
 {
     // This function actually applies multiple transformation, and the AST may not be valid until

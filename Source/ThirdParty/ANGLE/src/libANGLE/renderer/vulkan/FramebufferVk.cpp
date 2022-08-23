@@ -333,19 +333,19 @@ FramebufferVk::FramebufferVk(RendererVk *renderer,
       mBackbuffer(backbuffer),
       mActiveColorComponentMasksForClear(0),
       mReadOnlyDepthFeedbackLoopMode(false)
-{}
+{
+    if (mState.isDefault())
+    {
+        // These are immutable for system default framebuffer.
+        mCurrentFramebufferDesc.updateLayerCount(1);
+        mCurrentFramebufferDesc.updateIsMultiview(false);
+    }
+}
 
 FramebufferVk::~FramebufferVk() = default;
 
 void FramebufferVk::destroy(const gl::Context *context)
 {
-    ContextVk *contextVk = vk::GetImpl(context);
-    resetCache(contextVk);
-}
-
-void FramebufferVk::resetCache(ContextVk *contextVk)
-{
-    mFramebufferCacheManager.releaseKeys(contextVk);
     mCurrentFramebuffer.release();
 }
 
@@ -360,7 +360,6 @@ void FramebufferVk::insertCache(ContextVk *contextVk,
     // it can be destroyed promptly if those attachments change.
     const vk::SharedFramebufferCacheKey sharedFramebufferCacheKey =
         vk::CreateSharedFramebufferCacheKey(desc);
-    mFramebufferCacheManager.addKey(sharedFramebufferCacheKey);
 
     // Ask each attachment to hold a reference to the cache so that when any attachment is
     // released, the cache can be destroyed.
@@ -1934,7 +1933,7 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
             case gl::Framebuffer::DIRTY_BIT_DEFAULT_FIXED_SAMPLE_LOCATIONS:
                 // Invalidate the cache. If we have performance critical code hitting this path we
                 // can add related data (such as width/height) to the cache
-                resetCache(contextVk);
+                mCurrentFramebuffer.release();
                 break;
             case gl::Framebuffer::DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE:
                 shouldUpdateSrgbWriteControlMode = true;
@@ -1961,8 +1960,13 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
 
                 ANGLE_TRY(updateColorAttachment(context, colorIndexGL));
 
-                shouldUpdateColorMaskAndBlend = true;
-                shouldUpdateLayerCount        = true;
+                // Window system framebuffer only have one color attachment and its property should
+                // never change unless via DIRTY_BIT_DRAW_BUFFERS bit.
+                if (!mState.isDefault())
+                {
+                    shouldUpdateColorMaskAndBlend = true;
+                    shouldUpdateLayerCount        = true;
+                }
                 dirtyColorAttachments.set(colorIndexGL);
 
                 break;
@@ -3007,7 +3011,7 @@ void FramebufferVk::switchToFramebufferFetchMode(ContextVk *contextVk, bool hasF
     if (contextVk->getFeatures().permanentlySwitchToFramebufferFetchMode.enabled)
     {
         ASSERT(hasFramebufferFetch);
-        resetCache(contextVk);
+        mCurrentFramebuffer.release();
     }
 }
 }  // namespace rx

@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 283
+#define ANGLE_SH_VERSION 303
 
 enum ShShaderSpec
 {
@@ -79,283 +79,317 @@ enum ShShaderOutput
     SH_MSL_METAL_OUTPUT = 0x8B4D,
 };
 
+// For ANGLE_shader_pixel_local_storage_coherent.
+// Instructs the compiler which fragment synchronization method to use, if any.
+enum class ShFragmentSynchronizationType
+{
+    NoSynchronization,
+
+    FragmentShaderInterlock_NV_GL,
+    FragmentShaderOrdering_INTEL_GL,
+    FragmentShaderInterlock_ARB_GL,
+
+    InvalidEnum,
+    EnumCount = InvalidEnum,
+};
+
 // Compile options.
-// The Compile options type is defined in ShaderVars.h, to allow ANGLE to import the ShaderVars
-// header without needing the ShaderLang header. This avoids some conflicts with glslang.
-// SH_VALIDATE_LOOP_INDEXING: Validates loop and indexing in the shader to
-//                            ensure that they do not exceed the minimum
-//                            functionality mandated in GLSL 1.0 spec,
-//                            Appendix A, Section 4 and 5.
-//                            There is no need to specify this parameter when
-//                            compiling for WebGL - it is implied.
-// SH_OBJECT_CODE: Translates intermediate tree to glsl or hlsl shader, or SPIR-V binary.
-//                 Can be queried by calling sh::GetObjectCode().
-// SH_VARIABLES: Extracts attributes, uniforms, and varyings.
-//               Can be queried by calling ShGetVariableInfo().
-// SH_LINE_DIRECTIVES: Emits #line directives in HLSL.
-// SH_SOURCE_PATH: Tracks the source path for shaders.
-//                 Can be queried with getSourcePath().
-const ShCompileOptions SH_VALIDATE_LOOP_INDEXING = UINT64_C(1) << 0;
-const ShCompileOptions SH_INTERMEDIATE_TREE      = UINT64_C(1) << 1;
-const ShCompileOptions SH_OBJECT_CODE            = UINT64_C(1) << 2;
-const ShCompileOptions SH_VARIABLES              = UINT64_C(1) << 3;
-const ShCompileOptions SH_LINE_DIRECTIVES        = UINT64_C(1) << 4;
-const ShCompileOptions SH_SOURCE_PATH            = UINT64_C(1) << 5;
+struct ShCompileOptionsMetal
+{
+    // Direct-to-metal backend constants:
 
-// If requested, validates the AST after every transformation.  Useful for debugging.
-const ShCompileOptions SH_VALIDATE_AST = UINT64_C(1) << 6;
+    // Binding index for driver uniforms:
+    int driverUniformsBindingIndex;
+    // Binding index for default uniforms:
+    int defaultUniformsBindingIndex;
+    // Binding index for UBO's argument buffer
+    int UBOArgumentBufferBindingIndex;
+};
 
-// Due to spec difference between GLSL 4.1 or lower and ESSL3, some platforms (for example, Mac OSX
-// core profile) require a variable's "invariant"/"centroid" qualifiers to match between vertex and
-// fragment shader. A simple solution to allow such shaders to link is to omit the two qualifiers.
-// AMD driver in Linux requires invariant qualifier to match between vertex and fragment shaders,
-// while ESSL3 disallows invariant qualifier in fragment shader and GLSL >= 4.2 doesn't require
-// invariant qualifier to match between shaders. Remove invariant qualifier from vertex shader to
-// workaround AMD driver bug.
-// Note that the two flags take effect on ESSL3 input shaders translated to GLSL 4.1 or lower and to
-// GLSL 4.2 or newer on Linux AMD.
-// TODO(zmo): This is not a good long-term solution. Simply dropping these qualifiers may break some
-// developers' content. A more complex workaround of dynamically generating, compiling, and
-// re-linking shaders that use these qualifiers should be implemented.
-const ShCompileOptions SH_REMOVE_INVARIANT_AND_CENTROID_FOR_ESSL3 = UINT64_C(1) << 7;
+struct ShCompileOptionsPLS
+{
+    // For ANGLE_shader_pixel_local_storage_coherent.
+    ShFragmentSynchronizationType fragmentSynchronizationType;
+};
 
-// This flag works around bug in Intel Mac drivers related to abs(i) where
-// i is an integer.
-const ShCompileOptions SH_EMULATE_ABS_INT_FUNCTION = UINT64_C(1) << 8;
+struct ShCompileOptions
+{
+    // Translates intermediate tree to glsl, hlsl, msl, or SPIR-V binary.  Can be queried by
+    // calling sh::GetObjectCode().
+    uint64_t objectCode : 1;
 
-// Enforce the GLSL 1.017 Appendix A section 7 packing restrictions.
-// This flag only enforces (and can only enforce) the packing
-// restrictions for uniform variables in both vertex and fragment
-// shaders. ShCheckVariablesWithinPackingLimits() lets embedders
-// enforce the packing restrictions for varying variables during
-// program link time.
-const ShCompileOptions SH_ENFORCE_PACKING_RESTRICTIONS = UINT64_C(1) << 9;
+    // Extracts attributes, uniforms, and varyings.  Can be queried by calling ShGetVariableInfo().
+    uint64_t variables : 1;
 
-// This flag ensures all indirect (expression-based) array indexing
-// is clamped to the bounds of the array. This ensures, for example,
-// that you cannot read off the end of a uniform, whether an array
-// vec234, or mat234 type.
-const ShCompileOptions SH_CLAMP_INDIRECT_ARRAY_BOUNDS = UINT64_C(1) << 10;
+    // Tracks the source path for shaders.  Can be queried with getSourcePath().
+    uint64_t sourcePath : 1;
 
-// This flag limits the complexity of an expression.
-const ShCompileOptions SH_LIMIT_EXPRESSION_COMPLEXITY = UINT64_C(1) << 11;
+    // Whether the internal representation of the AST should be output.
+    uint64_t intermediateTree : 1;
 
-// This flag limits the depth of the call stack.
-const ShCompileOptions SH_LIMIT_CALL_STACK_DEPTH = UINT64_C(1) << 12;
+    // If requested, validates the AST after every transformation.  Useful for debugging.
+    uint64_t validateAST : 1;
 
-// This flag initializes gl_Position to vec4(0,0,0,0) at the
-// beginning of the vertex shader's main(), and has no effect in the
-// fragment shader. It is intended as a workaround for drivers which
-// incorrectly fail to link programs if gl_Position is not written.
-const ShCompileOptions SH_INIT_GL_POSITION = UINT64_C(1) << 13;
+    // Validates loop and indexing in the shader to ensure that they do not exceed the minimum
+    // functionality mandated in GLSL 1.0 spec, Appendix A, Section 4 and 5.  There is no need to
+    // specify this parameter when compiling for WebGL - it is implied.
+    uint64_t validateLoopIndexing : 1;
 
-// This flag replaces
-//   "a && b" with "a ? b : false",
-//   "a || b" with "a ? true : b".
-// This is to work around a MacOSX driver bug that |b| is executed
-// independent of |a|'s value.
-const ShCompileOptions SH_UNFOLD_SHORT_CIRCUIT = UINT64_C(1) << 14;
+    // Emits #line directives in HLSL.
+    uint64_t lineDirectives : 1;
 
-// This flag initializes output variables to 0 at the beginning of main().
-// It is to avoid undefined behaviors.
-const ShCompileOptions SH_INIT_OUTPUT_VARIABLES = UINT64_C(1) << 15;
+    // Due to spec difference between GLSL 4.1 or lower and ESSL3, some platforms (for example, Mac
+    // OSX core profile) require a variable's "invariant"/"centroid" qualifiers to match between
+    // vertex and fragment shader. A simple solution to allow such shaders to link is to omit the
+    // two qualifiers.  AMD driver in Linux requires invariant qualifier to match between vertex and
+    // fragment shaders, while ESSL3 disallows invariant qualifier in fragment shader and GLSL >=
+    // 4.2 doesn't require invariant qualifier to match between shaders. Remove invariant qualifier
+    // from vertex shader to workaround AMD driver bug.
+    // Note that the two flags take effect on ESSL3 input shaders translated to GLSL 4.1 or lower
+    // and to GLSL 4.2 or newer on Linux AMD.
+    // TODO(zmo): This is not a good long-term solution. Simply dropping these qualifiers may break
+    // some developers' content. A more complex workaround of dynamically generating, compiling, and
+    // re-linking shaders that use these qualifiers should be implemented.
+    uint64_t removeInvariantAndCentroidForESSL3 : 1;
 
-// This flag scalarizes vec/ivec/bvec/mat constructor args.
-// It is intended as a workaround for Linux/Mac driver bugs.
-const ShCompileOptions SH_SCALARIZE_VEC_AND_MAT_CONSTRUCTOR_ARGS = UINT64_C(1) << 16;
+    // This flag works around bug in Intel Mac drivers related to abs(i) where i is an integer.
+    uint64_t emulateAbsIntFunction : 1;
 
-// This flag overwrites a struct name with a unique prefix.
-// It is intended as a workaround for drivers that do not handle
-// struct scopes correctly, including all Mac drivers and Linux AMD.
-const ShCompileOptions SH_REGENERATE_STRUCT_NAMES = UINT64_C(1) << 17;
+    // Enforce the GLSL 1.017 Appendix A section 7 packing restrictions.  This flag only enforces
+    // (and can only enforce) the packing restrictions for uniform variables in both vertex and
+    // fragment shaders. ShCheckVariablesWithinPackingLimits() lets embedders enforce the packing
+    // restrictions for varying variables during program link time.
+    uint64_t enforcePackingRestrictions : 1;
 
-// This flag works around bugs in Mac drivers related to do-while by
-// transforming them into an other construct.
-const ShCompileOptions SH_REWRITE_DO_WHILE_LOOPS = UINT64_C(1) << 18;
+    // This flag ensures all indirect (expression-based) array indexing is clamped to the bounds of
+    // the array. This ensures, for example, that you cannot read off the end of a uniform, whether
+    // an array vec234, or mat234 type.
+    uint64_t clampIndirectArrayBounds : 1;
 
-// This flag works around a bug in the HLSL compiler optimizer that folds certain
-// constant pow expressions incorrectly. Only applies to the HLSL back-end. It works
-// by expanding the integer pow expressions into a series of multiplies.
-const ShCompileOptions SH_EXPAND_SELECT_HLSL_INTEGER_POW_EXPRESSIONS = UINT64_C(1) << 19;
+    // This flag limits the complexity of an expression.
+    uint64_t limitExpressionComplexity : 1;
 
-// Flatten "#pragma STDGL invariant(all)" into the declarations of
-// varying variables and built-in GLSL variables. This compiler
-// option is enabled automatically when needed.
-const ShCompileOptions SH_FLATTEN_PRAGMA_STDGL_INVARIANT_ALL = UINT64_C(1) << 20;
+    // This flag limits the depth of the call stack.
+    uint64_t limitCallStackDepth : 1;
 
-// Some drivers do not take into account the base level of the texture in the results of the
-// HLSL GetDimensions builtin.  This flag instructs the compiler to manually add the base level
-// offsetting.
-const ShCompileOptions SH_HLSL_GET_DIMENSIONS_IGNORES_BASE_LEVEL = UINT64_C(1) << 21;
+    // This flag initializes gl_Position to vec4(0,0,0,0) at the beginning of the vertex shader's
+    // main(), and has no effect in the fragment shader. It is intended as a workaround for drivers
+    // which incorrectly fail to link programs if gl_Position is not written.
+    uint64_t initGLPosition : 1;
 
-// This flag works around an issue in translating GLSL function texelFetchOffset on
-// INTEL drivers. It works by translating texelFetchOffset into texelFetch.
-const ShCompileOptions SH_REWRITE_TEXELFETCHOFFSET_TO_TEXELFETCH = UINT64_C(1) << 22;
+    // This flag replaces
+    //   "a && b" with "a ? b : false",
+    //   "a || b" with "a ? true : b".
+    // This is to work around a MacOSX driver bug that |b| is executed independent of |a|'s value.
+    uint64_t unfoldShortCircuit : 1;
 
-// This flag works around condition bug of for and while loops in Intel Mac OSX drivers.
-// Condition calculation is not correct. Rewrite it from "CONDITION" to "CONDITION && true".
-const ShCompileOptions SH_ADD_AND_TRUE_TO_LOOP_CONDITION = UINT64_C(1) << 23;
+    // This flag initializes output variables to 0 at the beginning of main().  It is to avoid
+    // undefined behaviors.
+    uint64_t initOutputVariables : 1;
 
-// This flag works around a bug in evaluating unary minus operator on integer on some INTEL
-// drivers. It works by translating -(int) into ~(int) + 1.
-const ShCompileOptions SH_REWRITE_INTEGER_UNARY_MINUS_OPERATOR = UINT64_C(1) << 24;
+    // This flag scalarizes vec/ivec/bvec/mat constructor args.  It is intended as a workaround for
+    // Linux/Mac driver bugs.
+    uint64_t scalarizeVecAndMatConstructorArgs : 1;
 
-// This flag works around a bug in evaluating isnan() on some INTEL D3D and Mac OSX drivers.
-// It works by using an expression to emulate this function.
-const ShCompileOptions SH_EMULATE_ISNAN_FLOAT_FUNCTION = UINT64_C(1) << 25;
+    // This flag overwrites a struct name with a unique prefix.  It is intended as a workaround for
+    // drivers that do not handle struct scopes correctly, including all Mac drivers and Linux AMD.
+    uint64_t regenerateStructNames : 1;
 
-// This flag will use all uniforms of unused std140 and shared uniform blocks at the
-// beginning of the vertex/fragment shader's main(). It is intended as a workaround for Mac
-// drivers with shader version 4.10. In those drivers, they will treat unused
-// std140 and shared uniform blocks' members as inactive. However, WebGL2.0 based on
-// OpenGL ES3.0.4 requires all members of a named uniform block declared with a shared or std140
-// layout qualifier to be considered active. The uniform block itself is also considered active.
-const ShCompileOptions SH_USE_UNUSED_STANDARD_SHARED_BLOCKS = UINT64_C(1) << 26;
+    // This flag works around bugs in Mac drivers related to do-while by transforming them into an
+    // other construct.
+    uint64_t rewriteDoWhileLoops : 1;
 
-// This flag works around a bug in unary minus operator on float numbers on Intel
-// Mac OSX 10.11 drivers. It works by translating -float into 0.0 - float.
-const ShCompileOptions SH_REWRITE_FLOAT_UNARY_MINUS_OPERATOR = UINT64_C(1) << 27;
+    // This flag works around a bug in the HLSL compiler optimizer that folds certain constant pow
+    // expressions incorrectly. Only applies to the HLSL back-end. It works by expanding the integer
+    // pow expressions into a series of multiplies.
+    uint64_t expandSelectHLSLIntegerPowExpressions : 1;
 
-// This flag works around a bug in evaluating atan(y, x) on some NVIDIA OpenGL drivers.
-// It works by using an expression to emulate this function.
-const ShCompileOptions SH_EMULATE_ATAN2_FLOAT_FUNCTION = UINT64_C(1) << 28;
+    // Flatten "#pragma STDGL invariant(all)" into the declarations of varying variables and
+    // built-in GLSL variables. This compiler option is enabled automatically when needed.
+    uint64_t flattenPragmaSTDGLInvariantAll : 1;
 
-// Set to initialize uninitialized local and global temporary variables. Should only be used with
-// GLSL output. In HLSL output variables are initialized regardless of if this flag is set.
-const ShCompileOptions SH_INITIALIZE_UNINITIALIZED_LOCALS = UINT64_C(1) << 29;
+    // Some drivers do not take into account the base level of the texture in the results of the
+    // HLSL GetDimensions builtin.  This flag instructs the compiler to manually add the base level
+    // offsetting.
+    uint64_t HLSLGetDimensionsIgnoresBaseLevel : 1;
 
-// The flag modifies the shader in the following way:
-// Every occurrence of gl_InstanceID is replaced by the global temporary variable InstanceID.
-// Every occurrence of gl_ViewID_OVR is replaced by the varying variable ViewID_OVR.
-// At the beginning of the body of main() in a vertex shader the following initializers are added:
-// ViewID_OVR = uint(gl_InstanceID) % num_views;
-// InstanceID = gl_InstanceID / num_views;
-// ViewID_OVR is added as a varying variable to both the vertex and fragment shaders.
-const ShCompileOptions SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW = UINT64_C(1) << 30;
+    // This flag works around an issue in translating GLSL function texelFetchOffset on INTEL
+    // drivers. It works by translating texelFetchOffset into texelFetch.
+    uint64_t rewriteTexelFetchOffsetToTexelFetch : 1;
 
-// With the flag enabled the GLSL/ESSL vertex shader is modified to include code for viewport
-// selection in the following way:
-// - Code to enable the extension ARB_shader_viewport_layer_array/NV_viewport_array2 is included.
-// - Code to select the viewport index or layer is inserted at the beginning of main after
-// ViewID_OVR's initialization.
-// - A declaration of the uniform multiviewBaseViewLayerIndex.
-// Note: The SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW flag also has to be enabled to have the
-// temporary variable ViewID_OVR declared and initialized.
-const ShCompileOptions SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER = UINT64_C(1) << 31;
+    // This flag works around condition bug of for and while loops in Intel Mac OSX drivers.
+    // Condition calculation is not correct. Rewrite it from "CONDITION" to "CONDITION && true".
+    uint64_t addAndTrueToLoopCondition : 1;
 
-// If the flag is enabled, gl_PointSize is clamped to the maximum point size specified in
-// ShBuiltInResources in vertex shaders.
-const ShCompileOptions SH_CLAMP_POINT_SIZE = UINT64_C(1) << 32;
+    // This flag works around a bug in evaluating unary minus operator on integer on some INTEL
+    // drivers. It works by translating -(int) into ~(int) + 1.
+    uint64_t rewriteIntegerUnaryMinusOperator : 1;
 
-// This flag indicates whether advanced blend equation should be emulated.  Currently only
-// implemented for the Vulkan backend.
-const ShCompileOptions SH_ADD_ADVANCED_BLEND_EQUATIONS_EMULATION = UINT64_C(1) << 33;
+    // This flag works around a bug in evaluating isnan() on some INTEL D3D and Mac OSX drivers.  It
+    // works by using an expression to emulate this function.
+    uint64_t emulateIsnanFloatFunction : 1;
 
-// Don't use loops to initialize uninitialized variables. Only has an effect if some kind of
-// variable initialization is turned on.
-const ShCompileOptions SH_DONT_USE_LOOPS_TO_INITIALIZE_VARIABLES = UINT64_C(1) << 34;
+    // This flag will use all uniforms of unused std140 and shared uniform blocks at the beginning
+    // of the vertex/fragment shader's main(). It is intended as a workaround for Mac drivers with
+    // shader version 4.10. In those drivers, they will treat unused std140 and shared uniform
+    // blocks' members as inactive. However, WebGL2.0 based on OpenGL ES3.0.4 requires all members
+    // of a named uniform block declared with a shared or std140 layout qualifier to be considered
+    // active. The uniform block itself is also considered active.
+    uint64_t useUnusedStandardSharedBlocks : 1;
 
-// Don't use D3D constant register zero when allocating space for uniforms. This is targeted to work
-// around a bug in NVIDIA D3D driver version 388.59 where in very specific cases the driver would
-// not handle constant register zero correctly. Only has an effect on HLSL translation.
-const ShCompileOptions SH_SKIP_D3D_CONSTANT_REGISTER_ZERO = UINT64_C(1) << 35;
+    // This flag works around a bug in unary minus operator on float numbers on Intel Mac OSX 10.11
+    // drivers. It works by translating -float into 0.0 - float.
+    uint64_t rewriteFloatUnaryMinusOperator : 1;
 
-// Clamp gl_FragDepth to the range [0.0, 1.0] in case it is statically used.
-const ShCompileOptions SH_CLAMP_FRAG_DEPTH = UINT64_C(1) << 36;
+    // This flag works around a bug in evaluating atan(y, x) on some NVIDIA OpenGL drivers.  It
+    // works by using an expression to emulate this function.
+    uint64_t emulateAtan2FloatFunction : 1;
 
-// Rewrite expressions like "v.x = z = expression;". Works around a bug in NVIDIA OpenGL drivers
-// prior to version 397.31.
-const ShCompileOptions SH_REWRITE_REPEATED_ASSIGN_TO_SWIZZLED = UINT64_C(1) << 37;
+    // Set to initialize uninitialized local and global temporary variables. Should only be used
+    // with GLSL output. In HLSL output variables are initialized regardless of if this flag is set.
+    uint64_t initializeUninitializedLocals : 1;
 
-// Rewrite gl_DrawID as a uniform int
-const ShCompileOptions SH_EMULATE_GL_DRAW_ID = UINT64_C(1) << 38;
+    // The flag modifies the shader in the following way:
+    //
+    // Every occurrence of gl_InstanceID is replaced by the global temporary variable InstanceID.
+    // Every occurrence of gl_ViewID_OVR is replaced by the varying variable ViewID_OVR.
+    // At the beginning of the body of main() in a vertex shader the following initializers are
+    // added:
+    //   ViewID_OVR = uint(gl_InstanceID) % num_views;
+    //   InstanceID = gl_InstanceID / num_views;
+    // ViewID_OVR is added as a varying variable to both the vertex and fragment shaders.
+    uint64_t initializeBuiltinsForInstancedMultiview : 1;
 
-// This flag initializes shared variables to 0.
-// It is to avoid ompute shaders being able to read undefined values that could be coming from
-// another webpage/application.
-const ShCompileOptions SH_INIT_SHARED_VARIABLES = UINT64_C(1) << 39;
+    // With the flag enabled the GLSL/ESSL vertex shader is modified to include code for viewport
+    // selection in the following way:
+    // - Code to enable the extension ARB_shader_viewport_layer_array/NV_viewport_array2 is
+    // included.
+    // - Code to select the viewport index or layer is inserted at the beginning of main after
+    //   ViewID_OVR's initialization.
+    // - A declaration of the uniform multiviewBaseViewLayerIndex.
+    // Note: The initializeBuiltinsForInstancedMultiview flag also has to be enabled to have the
+    // temporary variable ViewID_OVR declared and initialized.
+    uint64_t selectViewInNvGLSLVertexShader : 1;
 
-// Forces the value returned from an atomic operations to be always be resolved. This is targeted to
-// workaround a bug in NVIDIA D3D driver where the return value from
-// RWByteAddressBuffer.InterlockedAdd does not get resolved when used in the .yzw components of a
-// RWByteAddressBuffer.Store operation. Only has an effect on HLSL translation.
-// http://anglebug.com/3246
-const ShCompileOptions SH_FORCE_ATOMIC_VALUE_RESOLUTION = UINT64_C(1) << 40;
+    // If the flag is enabled, gl_PointSize is clamped to the maximum point size specified in
+    // ShBuiltInResources in vertex shaders.
+    uint64_t clampPointSize : 1;
 
-// Rewrite gl_BaseVertex and gl_BaseInstance as uniform int
-const ShCompileOptions SH_EMULATE_GL_BASE_VERTEX_BASE_INSTANCE = UINT64_C(1) << 41;
+    // This flag indicates whether advanced blend equation should be emulated.  Currently only
+    // implemented for the Vulkan backend.
+    uint64_t addAdvancedBlendEquationsEmulation : 1;
 
-// Emulate seamful cube map sampling for OpenGL ES2.0.  Currently only applies to the Vulkan
-// backend, as is done after samplers are moved out of structs.  Can likely be made to work on
-// the other backends as well.
-const ShCompileOptions SH_EMULATE_SEAMFUL_CUBE_MAP_SAMPLING = UINT64_C(1) << 42;
+    // Don't use loops to initialize uninitialized variables. Only has an effect if some kind of
+    // variable initialization is turned on.
+    uint64_t dontUseLoopsToInitializeVariables : 1;
 
-// This flag controls how to translate WEBGL_video_texture sampling function.
-const ShCompileOptions SH_TAKE_VIDEO_TEXTURE_AS_EXTERNAL_OES = UINT64_C(1) << 43;
+    // Don't use D3D constant register zero when allocating space for uniforms. This is targeted to
+    // work around a bug in NVIDIA D3D driver version 388.59 where in very specific cases the driver
+    // would not handle constant register zero correctly. Only has an effect on HLSL translation.
+    uint64_t skipD3DConstantRegisterZero : 1;
 
-// This flag works around a inconsistent behavior in Mac AMD driver where gl_VertexID doesn't
-// include base vertex value. It replaces gl_VertexID with (gl_VertexID + angle_BaseVertex)
-// when angle_BaseVertex is available.
-const ShCompileOptions SH_ADD_BASE_VERTEX_TO_VERTEX_ID = UINT64_C(1) << 44;
+    // Clamp gl_FragDepth to the range [0.0, 1.0] in case it is statically used.
+    uint64_t clampFragDepth : 1;
 
-// This works around the dynamic lvalue indexing of swizzled vectors on various platforms.
-const ShCompileOptions SH_REMOVE_DYNAMIC_INDEXING_OF_SWIZZLED_VECTOR = UINT64_C(1) << 45;
+    // Rewrite expressions like "v.x = z = expression;". Works around a bug in NVIDIA OpenGL drivers
+    // prior to version 397.31.
+    uint64_t rewriteRepeatedAssignToSwizzled : 1;
 
-// This flag works around a slow fxc compile performance issue with dynamic uniform indexing.
-const ShCompileOptions SH_ALLOW_TRANSLATE_UNIFORM_BLOCK_TO_STRUCTUREDBUFFER = UINT64_C(1) << 46;
+    // Rewrite gl_DrawID as a uniform int
+    uint64_t emulateGLDrawID : 1;
 
-// This flag allows us to add a decoration for layout(yuv) in shaders.
-const ShCompileOptions SH_ADD_VULKAN_YUV_LAYOUT_QUALIFIER = UINT64_C(1) << 47;
+    // This flag initializes shared variables to 0.  It is to avoid ompute shaders being able to
+    // read undefined values that could be coming from another webpage/application.
+    uint64_t initSharedVariables : 1;
 
-// This flag allows disabling ARB_texture_rectangle on a per-compile basis. This is necessary
-// for WebGL contexts becuase ARB_texture_rectangle may be necessary for the WebGL implementation
-// internally but shouldn't be exposed to WebGL user code.
-const ShCompileOptions SH_DISABLE_ARB_TEXTURE_RECTANGLE = UINT64_C(1) << 48;
+    // Forces the value returned from an atomic operations to be always be resolved. This is
+    // targeted to workaround a bug in NVIDIA D3D driver where the return value from
+    // RWByteAddressBuffer.InterlockedAdd does not get resolved when used in the .yzw components of
+    // a RWByteAddressBuffer.Store operation. Only has an effect on HLSL translation.
+    // http://anglebug.com/3246
+    uint64_t forceAtomicValueResolution : 1;
 
-// This flag works around a driver bug by rewriting uses of row-major matrices
-// as column-major in ESSL 3.00 and greater shaders.
-const ShCompileOptions SH_REWRITE_ROW_MAJOR_MATRICES = UINT64_C(1) << 49;
+    // Rewrite gl_BaseVertex and gl_BaseInstance as uniform int
+    uint64_t emulateGLBaseVertexBaseInstance : 1;
 
-// Drop any explicit precision qualifiers from shader.
-const ShCompileOptions SH_IGNORE_PRECISION_QUALIFIERS = UINT64_C(1) << 50;
+    // Emulate seamful cube map sampling for OpenGL ES2.0.  Currently only applies to the Vulkan
+    // backend, as is done after samplers are moved out of structs.  Can likely be made to work on
+    // the other backends as well.
+    uint64_t emulateSeamfulCubeMapSampling : 1;
 
-// Ask compiler to generate code for depth correction to conform to the Vulkan clip space.  If
-// VK_EXT_depth_clip_control is supported, this code is not generated, saving a uniform look up.
-const ShCompileOptions SH_ADD_VULKAN_DEPTH_CORRECTION = UINT64_C(1) << 51;
+    // This flag controls how to translate WEBGL_video_texture sampling function.
+    uint64_t takeVideoTextureAsExternalOES : 1;
 
-// Note: bit 52 is unused
+    // This flag works around a inconsistent behavior in Mac AMD driver where gl_VertexID doesn't
+    // include base vertex value. It replaces gl_VertexID with (gl_VertexID + angle_BaseVertex) when
+    // angle_BaseVertex is available.
+    uint64_t addBaseVertexToVertexID : 1;
 
-const ShCompileOptions SH_FORCE_SHADER_PRECISION_HIGHP_TO_MEDIUMP = UINT64_C(1) << 53;
+    // This works around the dynamic lvalue indexing of swizzled vectors on various platforms.
+    uint64_t removeDynamicIndexingOfSwizzledVector : 1;
 
-// Allow compiler to use specialization constant to do pre-rotation and y flip.
-const ShCompileOptions SH_USE_SPECIALIZATION_CONSTANT = UINT64_C(1) << 54;
+    // This flag works around a slow fxc compile performance issue with dynamic uniform indexing.
+    uint64_t allowTranslateUniformBlockToStructuredBuffer : 1;
 
-// Ask compiler to generate Vulkan transform feedback emulation support code.
-const ShCompileOptions SH_ADD_VULKAN_XFB_EMULATION_SUPPORT_CODE = UINT64_C(1) << 55;
+    // This flag allows us to add a decoration for layout(yuv) in shaders.
+    uint64_t addVulkanYUVLayoutQualifier : 1;
 
-// Ask compiler to generate Vulkan transform feedback support code when using the
-// VK_EXT_transform_feedback extension.
-const ShCompileOptions SH_ADD_VULKAN_XFB_EXTENSION_SUPPORT_CODE = UINT64_C(1) << 56;
+    // This flag allows disabling ARB_texture_rectangle on a per-compile basis. This is necessary
+    // for WebGL contexts becuase ARB_texture_rectangle may be necessary for the WebGL
+    // implementation internally but shouldn't be exposed to WebGL user code.
+    uint64_t disableARBTextureRectangle : 1;
 
-// This flag initializes fragment shader's output variables to zero at the beginning of the fragment
-// shader's main(). It is intended as a workaround for drivers which get context lost if
-// gl_FragColor is not written.
-const ShCompileOptions SH_INIT_FRAGMENT_OUTPUT_VARIABLES = UINT64_C(1) << 57;
+    // This flag works around a driver bug by rewriting uses of row-major matrices as column-major
+    // in ESSL 3.00 and greater shaders.
+    uint64_t rewriteRowMajorMatrices : 1;
 
-// Transitory flag to select between producing SPIR-V directly vs using glslang.  Ignored in
-// non-assert-enabled builds to avoid increasing ANGLE's binary size.
-const ShCompileOptions SH_GENERATE_SPIRV_THROUGH_GLSLANG = UINT64_C(1) << 58;
+    // Drop any explicit precision qualifiers from shader.
+    uint64_t ignorePrecisionQualifiers : 1;
 
-// Insert explicit casts for float/double/unsigned/signed int on macOS 10.15 with Intel driver
-const ShCompileOptions SH_ADD_EXPLICIT_BOOL_CASTS = UINT64_C(1) << 59;
+    // Ask compiler to generate code for depth correction to conform to the Vulkan clip space.  If
+    // VK_EXT_depth_clip_control is supported, this code is not generated, saving a uniform look up.
+    uint64_t addVulkanDepthCorrection : 1;
 
-// Add round() after applying dither.  This works around a Qualcomm quirk where values can get
-// ceil()ed instead.
-const ShCompileOptions SH_ROUND_OUTPUT_AFTER_DITHERING = UINT64_C(1) << 60;
+    uint64_t forceShaderPrecisionHighpToMediump : 1;
 
-// Even when the dividend and divisor have the same value some platforms do not return 1.0f.
-// Need to emit different division code for such platforms.
-const ShCompileOptions SH_PRECISION_SAFE_DIVISION = UINT64_C(1) << 61;
+    // Allow compiler to use specialization constant to do pre-rotation and y flip.
+    uint64_t useSpecializationConstant : 1;
+
+    // Ask compiler to generate Vulkan transform feedback emulation support code.
+    uint64_t addVulkanXfbEmulationSupportCode : 1;
+
+    // Ask compiler to generate Vulkan transform feedback support code when using the
+    // VK_EXT_transform_feedback extension.
+    uint64_t addVulkanXfbExtensionSupportCode : 1;
+
+    // This flag initializes fragment shader's output variables to zero at the beginning of the
+    // fragment shader's main(). It is intended as a workaround for drivers which get context lost
+    // if gl_FragColor is not written.
+    uint64_t initFragmentOutputVariables : 1;
+
+    // Transitory flag to select between producing SPIR-V directly vs using glslang.  Ignored in
+    // non-assert-enabled builds to avoid increasing ANGLE's binary size.
+    uint64_t generateSpirvThroughGlslang : 1;
+
+    // Insert explicit casts for float/double/unsigned/signed int on macOS 10.15 with Intel driver
+    uint64_t addExplicitBoolCasts : 1;
+
+    // Add round() after applying dither.  This works around a Qualcomm quirk where values can get
+    // ceil()ed instead.
+    uint64_t roundOutputAfterDithering : 1;
+
+    // Even when the dividend and divisor have the same value some platforms do not return 1.0f.
+    // Need to emit different division code for such platforms.
+    uint64_t precisionSafeDivision : 1;
+
+    // anglebug.com/7527: packUnorm4x8 fails on Pixel 4 if it is not passed a highp vec4.
+    // TODO(anglebug.com/7527): This workaround is currently only applied for pixel local storage.
+    // We may want to apply it generally.
+    uint64_t passHighpToPackUnormSnormBuiltins : 1;
+
+    ShCompileOptionsMetal metal;
+    ShCompileOptionsPLS pls;
+};
 
 // The 64 bits hash function. The first parameter is the input string; the
 // second parameter is the string length.
@@ -462,14 +496,14 @@ struct ShBuiltInResources
     // Default is NULL.
     ShHashFunction64 HashFunction;
 
-    // The maximum complexity an expression can be when SH_LIMIT_EXPRESSION_COMPLEXITY is turned on.
+    // The maximum complexity an expression can be when limitExpressionComplexity is turned on.
     int MaxExpressionComplexity;
 
     // The maximum depth a call stack can be.
     int MaxCallStackDepth;
 
-    // The maximum number of parameters a function can have when SH_LIMIT_EXPRESSION_COMPLEXITY is
-    // turned on.
+    // The maximum number of parameters a function can have when limitExpressionComplexity is turned
+    // on.
     int MaxFunctionParameters;
 
     // GLES 3.1 constants
@@ -596,15 +630,6 @@ struct ShBuiltInResources
     int MaxClipDistances;
     int MaxCullDistances;
     int MaxCombinedClipAndCullDistances;
-
-    // Direct-to-metal backend constants:
-
-    // Binding index for driver uniforms:
-    int DriverUniformsBindingIndex;
-    // Binding index for default uniforms:
-    int DefaultUniformsBindingIndex;
-    // Binding index for UBO's argument buffer
-    int UBOArgumentBufferBindingIndex;
 };
 
 //
@@ -674,7 +699,7 @@ void Destruct(ShHandle handle);
 bool Compile(const ShHandle handle,
              const char *const shaderStrings[],
              size_t numStrings,
-             ShCompileOptions compileOptions);
+             const ShCompileOptions &compileOptions);
 
 // Clears the results from the previous compilation.
 void ClearResults(const ShHandle handle);
@@ -736,8 +761,7 @@ uint32_t GetShaderSpecConstUsageBits(const ShHandle handle);
 
 // Returns true if the passed in variables pack in maxVectors followingthe packing rules from the
 // GLSL 1.017 spec, Appendix A, section 7.
-// Returns false otherwise. Also look at the SH_ENFORCE_PACKING_RESTRICTIONS
-// flag above.
+// Returns false otherwise. Also look at the enforcePackingRestrictions flag above.
 // Parameters:
 // maxVectors: the available rows of registers.
 // variables: an array of variables.
@@ -787,6 +811,7 @@ unsigned int GetImage2DRegisterIndex(const ShHandle handle);
 // handle: Specifies the compiler
 const std::set<std::string> *GetUsedImage2DFunctionNames(const ShHandle handle);
 
+bool HasDiscardInFragmentShader(const ShHandle handle);
 bool HasValidGeometryShaderInputPrimitiveType(const ShHandle handle);
 bool HasValidGeometryShaderOutputPrimitiveType(const ShHandle handle);
 bool HasValidGeometryShaderMaxVertices(const ShHandle handle);

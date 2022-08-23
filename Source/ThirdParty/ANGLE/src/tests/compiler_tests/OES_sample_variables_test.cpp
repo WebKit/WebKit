@@ -76,7 +76,12 @@ class OESSampleVariablesTest : public sh::ShaderExtensionTest
     {
         const char *shaderStrings[] = {testing::get<1>(GetParam()), pragma,
                                        testing::get<2>(GetParam())};
-        bool success = sh::Compile(mCompiler, shaderStrings, 3, SH_VARIABLES | SH_OBJECT_CODE);
+
+        ShCompileOptions compileOptions = {};
+        compileOptions.objectCode       = true;
+        compileOptions.variables        = true;
+
+        bool success = sh::Compile(mCompiler, shaderStrings, 3, compileOptions);
         if (success)
         {
             return ::testing::AssertionSuccess() << "Compilation success";

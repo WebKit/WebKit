@@ -2238,7 +2238,7 @@ void RenderPassCommandBufferHelper::invalidateRenderPassColorAttachment(
     // - Rasterizer-discard is not enabled
     const gl::BlendStateExt &blendStateExt = state.getBlendStateExt();
     const bool isColorWriteEnabled =
-        blendStateExt.getColorMaskIndexed(colorIndexGL) != 0 && state.isRasterizerDiscardEnabled();
+        blendStateExt.getColorMaskIndexed(colorIndexGL) != 0 && !state.isRasterizerDiscardEnabled();
     mColorAttachments[attachmentIndex].invalidate(invalidateArea, isColorWriteEnabled,
                                                   getRenderPassWriteCommandCount());
 }
@@ -3172,8 +3172,8 @@ DescriptorPoolHelper::DescriptorPoolHelper() : mValidDescriptorSets(0), mFreeDes
 
 DescriptorPoolHelper::~DescriptorPoolHelper()
 {
-    // Caller must have already freed all caches
-    ASSERT(mDescriptorSetCacheManager.empty());
+    // Caller must have already freed all caches. Clear call will assert that.
+    mDescriptorSetCacheManager.clear();
     ASSERT(mDescriptorSetGarbageList.empty());
 }
 
@@ -3314,7 +3314,7 @@ angle::Result DynamicDescriptorPool::init(Context *context,
     mPoolSizes.assign(setSizes, setSizes + setSizeCount);
     mCachedDescriptorSetLayout = descriptorSetLayout.getHandle();
 
-    mDescriptorPools.push_back(new RefCountedDescriptorPoolHelper());
+    mDescriptorPools.push_back(std::make_unique<RefCountedDescriptorPoolHelper>());
     mCurrentPoolIndex = mDescriptorPools.size() - 1;
     ANGLE_TRY(
         mDescriptorPools[mCurrentPoolIndex]->get().init(context, mPoolSizes, mMaxSetsPerPool));
@@ -3324,11 +3324,11 @@ angle::Result DynamicDescriptorPool::init(Context *context,
 
 void DynamicDescriptorPool::destroy(RendererVk *renderer)
 {
-    for (RefCountedDescriptorPoolHelper *pool : mDescriptorPools)
+    for (std::unique_ptr<RefCountedDescriptorPoolHelper> &pool : mDescriptorPools)
     {
         ASSERT(!pool->isReferenced());
         pool->get().destroy(renderer);
-        delete pool;
+        pool = nullptr;
     }
 
     mDescriptorPools.clear();
@@ -3357,12 +3357,12 @@ angle::Result DynamicDescriptorPool::allocateDescriptorSet(
         mDescriptorPools[mCurrentPoolIndex]->get().allocateDescriptorSet(
             context, descriptorSetLayout, descriptorSetOut))
     {
-        bindingOut->set(mDescriptorPools[mCurrentPoolIndex]);
+        bindingOut->set(mDescriptorPools[mCurrentPoolIndex].get());
         return angle::Result::Continue;
     }
 
     // Next try all existing pools
-    for (RefCountedDescriptorPoolHelper *pool : mDescriptorPools)
+    for (std::unique_ptr<RefCountedDescriptorPoolHelper> &pool : mDescriptorPools)
     {
         if (!pool->get().valid())
         {
@@ -3371,7 +3371,7 @@ angle::Result DynamicDescriptorPool::allocateDescriptorSet(
 
         if (pool->get().allocateDescriptorSet(context, descriptorSetLayout, descriptorSetOut))
         {
-            bindingOut->set(pool);
+            bindingOut->set(pool.get());
             return angle::Result::Continue;
         }
     }
@@ -3382,7 +3382,7 @@ angle::Result DynamicDescriptorPool::allocateDescriptorSet(
         context, descriptorSetLayout, descriptorSetOut);
     // Allocate from a new pool must succeed.
     ASSERT(success);
-    bindingOut->set(mDescriptorPools[mCurrentPoolIndex]);
+    bindingOut->set(mDescriptorPools[mCurrentPoolIndex].get());
 
     return angle::Result::Continue;
 }
@@ -3444,7 +3444,7 @@ angle::Result DynamicDescriptorPool::allocateNewPool(Context *context)
         ++poolIndex;
     }
 
-    mDescriptorPools.push_back(new RefCountedDescriptorPoolHelper());
+    mDescriptorPools.push_back(std::make_unique<RefCountedDescriptorPoolHelper>());
     mCurrentPoolIndex = mDescriptorPools.size() - 1;
 
     static constexpr size_t kMaxPools = 99999;
@@ -3512,7 +3512,7 @@ void DynamicDescriptorPool::checkAndReleaseUnusedPool(RendererVk *renderer,
     size_t poolIndex;
     for (poolIndex = 0; poolIndex < mDescriptorPools.size(); ++poolIndex)
     {
-        if (pool == mDescriptorPools[poolIndex])
+        if (pool == mDescriptorPools[poolIndex].get())
         {
             break;
         }

@@ -141,22 +141,19 @@ Additions to the OpenGL ES Specification, Version 3.0.6
 
     TBD
 
-      internalformat    format qualifier    Pixel Local Type     Bytes per Pixel
-      --------------------------------------------------------------------------
-      GL_RGBA8          rgba8               pixelLocalANGLE      4
-      GL_RGBA16F        rgba16f             pixelLocalANGLE      8
-      GL_R32F           r32f                pixelLocalANGLE      4
-      GL_RGBA32F        rgba32f             pixelLocalANGLE      16
-      GL_RGBA16I        rgba16i             ipixelLocalANGLE     8
-      GL_RGBA8I         rgba8i              ipixelLocalANGLE     4
-      GL_RGBA8UI        rgba8ui             upixelLocalANGLE     4
-      GL_RGBA16UI       rgba16ui            upixelLocalANGLE     8
-      GL_R32UI          r32ui               upixelLocalANGLE     4
-      GL_RGBA32UI       rgba32ui            upixelLocalANGLE     16
+      internalformat    format qualifier    Pixel Local Type
+     --------------------------------------------------------
+      GL_RGBA8          rgba8               pixelLocalANGLE
+      GL_RGBA8I         rgba8i              ipixelLocalANGLE
+      GL_RGBA8UI        rgba8ui             upixelLocalANGLE
+      GL_R32F           r32f                pixelLocalANGLE
+      GL_R32UI          r32ui               upixelLocalANGLE
 
       Table X.1, Supported pixel local storage internalformats, with
-      corresponding format layout qualifiers, associated pixel local types, and
-      bytes per pixel.
+      corresponding format layout qualifiers and pixel local types.
+
+      NOTE: r32i is excluded from this table because it is not supported by
+      EXT_shader_pixel_local_storage
 
 Additions to the OpenGL ES Shading Language Specification, Version 3.00
 
@@ -326,7 +323,8 @@ Additions to the OpenGL ES Shading Language Specification, Version 3.00
     Description:
 
       Replaces the current pixel's data with <value> in the PLS plane referenced
-      by <handle>.
+      by <handle>. If the magnitude of <value> is too large to be represented in
+      the PLS format, it is clamped.
 
     Modify Section 9 "Shading Language Grammar"
 

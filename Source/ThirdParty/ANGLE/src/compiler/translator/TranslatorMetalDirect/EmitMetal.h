@@ -24,7 +24,7 @@ namespace sh
                              const PipelineStructs &pipelineStructs,
                              SymbolEnv &symbolEnv,
                              const ProgramPreludeConfig &ppc,
-                             TSymbolTable *symbolTable);
+                             const ShCompileOptions &compileOptions);
 
 }  // namespace sh
 

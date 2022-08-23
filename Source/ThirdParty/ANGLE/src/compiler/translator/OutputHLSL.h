@@ -46,7 +46,7 @@ class OutputHLSL : public TIntermTraverser
                int numRenderTargets,
                int maxDualSourceDrawBuffers,
                const std::vector<ShaderVariable> &uniforms,
-               ShCompileOptions compileOptions,
+               const ShCompileOptions &compileOptions,
                sh::WorkGroupSize workGroupSize,
                TSymbolTable *symbolTable,
                PerformanceDiagnostics *perfDiagnostics,
@@ -160,7 +160,7 @@ class OutputHLSL : public TIntermTraverser
     const TExtensionBehavior &mExtensionBehavior;
     const char *mSourcePath;
     const ShShaderOutput mOutputType;
-    ShCompileOptions mCompileOptions;
+    const ShCompileOptions &mCompileOptions;
 
     bool mInsideFunction;
     bool mInsideMain;

@@ -367,6 +367,9 @@
 		7B76083D289832BD000012A1 /* VertexArrayImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B760838289832BD000012A1 /* VertexArrayImpl.cpp */; };
 		7B76083E289832BD000012A1 /* ProgramImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B760839289832BD000012A1 /* ProgramImpl.cpp */; };
 		7B76083F289832BD000012A1 /* TransformFeedbackImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */; };
+		7BCF49C528AD1C8C0090D34A /* apple_platform_utils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */; };
+		7BCF49C628AD1C8C0090D34A /* CircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */; };
+		7BCF49C728AD1C8C0090D34A /* apple_platform_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */; };
 		A3C49BF6255DF6C4005E8DF7 /* compression_utils_portable.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C49BF1255DEDC5005E8DF7 /* compression_utils_portable.h */; };
 		A3C49BFB255DF6E6005E8DF7 /* EGLReusableSync.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C3FE13255DDE0100B73018 /* EGLReusableSync.h */; };
 		A3C49BFC255DF6E6005E8DF7 /* EGLSyncImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C3FE14255DDE0200B73018 /* EGLSyncImpl.h */; };
@@ -1404,6 +1407,9 @@
 		7B760838289832BD000012A1 /* VertexArrayImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexArrayImpl.cpp; sourceTree = "<group>"; };
 		7B760839289832BD000012A1 /* ProgramImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramImpl.cpp; sourceTree = "<group>"; };
 		7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFeedbackImpl.cpp; sourceTree = "<group>"; };
+		7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = apple_platform_utils.mm; sourceTree = "<group>"; };
+		7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircularBuffer.h; sourceTree = "<group>"; };
+		7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform_utils.h; sourceTree = "<group>"; };
 		A1B89B89221E003A00EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
 		A264F89316974DED006FAA5A /* DiagnosticsBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiagnosticsBase.cpp; sourceTree = "<group>"; };
 		A264F89416974DED006FAA5A /* DiagnosticsBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticsBase.h; sourceTree = "<group>"; };
@@ -2624,7 +2630,10 @@
 				FFD0029627449E11002BE3BC /* angle_version_info.h */,
 				5C1DBBE71B0436EC00235552 /* angleutils.cpp */,
 				5CC7D45A19102620000B8C1F /* angleutils.h */,
+				7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */,
+				7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */,
 				31A331C01EA5ED2500FD2203 /* bitset_utils.h */,
+				7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */,
 				5CCD81871DBFEA10006066B8 /* Color.h */,
 				A30307082305F662002DA972 /* Color.inc */,
 				5CC7D45D19102620000B8C1F /* debug.cpp */,
@@ -3128,6 +3137,7 @@
 				FFD0029827449E12002BE3BC /* angle_version_info.h in Headers */,
 				31CD007F249184FD00486F27 /* angletypes.h in Headers */,
 				31CDFF542491848C00486F27 /* angleutils.h in Headers */,
+				7BCF49C728AD1C8C0090D34A /* apple_platform_utils.h in Headers */,
 				31CD0054249184FC00486F27 /* AttributeMap.h in Headers */,
 				31CDFFD5249184A700486F27 /* BaseTypes.h in Headers */,
 				31CD009B249184FD00486F27 /* BinaryStream.h in Headers */,
@@ -3145,6 +3155,7 @@
 				31CDFFD8249184A700486F27 /* BuiltinsWorkaroundGLSL.h in Headers */,
 				31CDFFF9249184A700486F27 /* CallDAG.h in Headers */,
 				31CD0061249184FC00486F27 /* Caps.h in Headers */,
+				7BCF49C628AD1C8C0090D34A /* CircularBuffer.h in Headers */,
 				FFD0024A274497CD002BE3BC /* ClampFragDepth.h in Headers */,
 				FF194FE027432CC3006A97A3 /* ClampIndirectIndices.h in Headers */,
 				31CDFF8A2491849800486F27 /* ClampPointSize.h in Headers */,
@@ -3673,6 +3684,7 @@
 				FFD0029927449E12002BE3BC /* angle_version_info.cpp in Sources */,
 				DF83E30F2639FE17000825EF /* angletypes.cpp in Sources */,
 				DF83E2242639FC74000825EF /* angleutils.cpp in Sources */,
+				7BCF49C528AD1C8C0090D34A /* apple_platform_utils.mm in Sources */,
 				DF83E2372639FCD5000825EF /* AstHelpers.cpp in Sources */,
 				DF83E3332639FE18000825EF /* AttributeMap.cpp in Sources */,
 				6E27925927EA43F500B1BA86 /* BaseTypes.cpp in Sources */,

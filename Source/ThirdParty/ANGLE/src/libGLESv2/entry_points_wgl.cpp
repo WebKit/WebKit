@@ -19,8 +19,8 @@
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/queryutils.h"
 #include "libANGLE/validationEGL.h"
-#include "libGL/proc_table_wgl.h"
 #include "libGLESv2/global_state.h"
+#include "libGLESv2/proc_table_wgl.h"
 
 using namespace wgl;
 using namespace egl;
@@ -131,6 +131,7 @@ HGLRC GL_APIENTRY wglCreateContext(HDC hDc)
     displayAttributes.push_back(EGL_NONE);
 
     const auto &attribMapDisplay = AttributeMap::CreateFromAttribArray(displayAttributes.data());
+    attribMapDisplay.initializeWithoutValidation();
 
     egl::Display *display =
         egl::Display::GetDisplayFromNativeDisplay(EGL_PLATFORM_ANGLE_ANGLE, hDc, attribMapDisplay);
@@ -146,6 +147,7 @@ HGLRC GL_APIENTRY wglCreateContext(HDC hDc)
     EGLint configCount;
     EGLConfig config;
     AttributeMap attribMapConfig = AttributeMap::CreateFromIntArray(configAttributes);
+    attribMapConfig.initializeWithoutValidation();
     ClipConfigs(display->chooseConfig(attribMapConfig), &config, 1, &configCount);
 
     Config *configuration = static_cast<Config *>(config);
@@ -155,6 +157,7 @@ HGLRC GL_APIENTRY wglCreateContext(HDC hDc)
     surfaceAttributes.push_back(EGL_NONE);
     surfaceAttributes.push_back(EGL_NONE);
     AttributeMap surfAttributes = AttributeMap::CreateFromIntArray(&surfaceAttributes[0]);
+    surfAttributes.initializeWithoutValidation();
 
     // Create first window surface
     egl::Surface *surface = nullptr;
@@ -169,6 +172,7 @@ HGLRC GL_APIENTRY wglCreateContext(HDC hDc)
 
     gl::Context *sharedGLContext = static_cast<gl::Context *>(nullptr);
     AttributeMap ctxAttributes   = AttributeMap::CreateFromIntArray(contextAttibutes);
+    ctxAttributes.initializeWithoutValidation();
 
     gl::Context *context = nullptr;
 

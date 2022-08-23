@@ -317,7 +317,7 @@ std::unique_ptr<LinkEvent> ProgramMtl::link(const gl::Context *context,
 {
     // Link resources before calling GetShaderSource to make sure they are ready for the set/binding
     // assignment done in that function.
-    linkResources(resources);
+    linkResources(context, resources);
 
     // NOTE(hqle): Parallelize linking.
     return std::make_unique<LinkEventDone>(linkImpl(context, resources, infoLog));
@@ -338,7 +338,7 @@ angle::Result ProgramMtl::linkImplSpirv(const gl::Context *glContext,
     gl::ShaderMap<const angle::spirv::Blob *> spirvBlobs;
     ShaderInterfaceVariableInfoMap variableInfoMap;
     ShaderInterfaceVariableInfoMap xfbOnlyVariableInfoMap;
-    mtl::GlslangGetShaderSpirvCode(mState, resources, &spirvBlobs, &variableInfoMap,
+    mtl::GlslangGetShaderSpirvCode(glContext, mState, resources, &spirvBlobs, &variableInfoMap,
                                    &xfbOnlyVariableInfoMap);
 
     // Convert GLSL to spirv code
@@ -384,7 +384,7 @@ angle::Result ProgramMtl::linkImplDirect(const gl::Context *glContext,
 
     gl::ShaderMap<std::string> shaderSources;
     gl::ShaderMap<std::string> translatedMslShaders;
-    mtl::MSLGetShaderSource(mState, resources, &shaderSources, &variableInfoMap);
+    mtl::MSLGetShaderSource(glContext, mState, resources, &shaderSources, &variableInfoMap);
 
     ANGLE_TRY(mtl::GlslangGetMSL(glContext, mState, contextMtl->getCaps(), shaderSources,
                                  variableInfoMap, &mMslShaderTranslateInfo, &translatedMslShaders,
@@ -400,7 +400,7 @@ angle::Result ProgramMtl::linkImplDirect(const gl::Context *glContext,
     return angle::Result::Continue;
 }
 
-void ProgramMtl::linkUpdateHasFlatAttributes()
+void ProgramMtl::linkUpdateHasFlatAttributes(const gl::Context *context)
 {
     mProgramHasFlatAttributes = false;
 
@@ -415,7 +415,7 @@ void ProgramMtl::linkUpdateHasFlatAttributes()
     }
 
     const auto &flatVaryings =
-        mState.getAttachedShader(gl::ShaderType::Vertex)->getOutputVaryings();
+        mState.getAttachedShader(gl::ShaderType::Vertex)->getOutputVaryings(context);
     for (auto &attribute : flatVaryings)
     {
         if (attribute.interpolation == sh::INTERPOLATION_FLAT)
@@ -443,7 +443,7 @@ angle::Result ProgramMtl::linkImpl(const gl::Context *glContext,
 #else
     ANGLE_TRY(linkImplDirect(glContext, resources, infoLog));
 #endif
-    linkUpdateHasFlatAttributes();
+    linkUpdateHasFlatAttributes(glContext);
     return angle::Result::Continue;
 }
 
@@ -479,12 +479,13 @@ mtl::BufferPool *ProgramMtl::getBufferPool(ContextMtl *context)
     }
     return mAuxBufferPool;
 }
-void ProgramMtl::linkResources(const gl::ProgramLinkedResources &resources)
+void ProgramMtl::linkResources(const gl::Context *context,
+                               const gl::ProgramLinkedResources &resources)
 {
     Std140BlockLayoutEncoderFactory std140EncoderFactory;
     gl::ProgramLinkedResourcesLinker linker(&std140EncoderFactory);
 
-    linker.linkResources(mState, resources);
+    linker.linkResources(context, mState, resources);
 }
 
 angle::Result ProgramMtl::initDefaultUniformBlocks(const gl::Context *glContext)
@@ -499,7 +500,7 @@ angle::Result ProgramMtl::initDefaultUniformBlocks(const gl::Context *glContext)
         gl::Shader *shader = mState.getAttachedShader(shaderType);
         if (shader)
         {
-            const std::vector<sh::Uniform> &uniforms = shader->getUniforms();
+            const std::vector<sh::Uniform> &uniforms = shader->getUniforms(glContext);
             InitDefaultUniformBlock(uniforms, shader, &layoutMap[shaderType],
                                     &requiredBufferSize[shaderType]);
         }

@@ -47,7 +47,7 @@ using UnsupportedFunctionArgsBitSet = angle::PackedEnumBitSet<UnsupportedFunctio
 [[nodiscard]] bool MonomorphizeUnsupportedFunctions(TCompiler *compiler,
                                                     TIntermBlock *root,
                                                     TSymbolTable *symbolTable,
-                                                    ShCompileOptions compileOptions,
+                                                    const ShCompileOptions &compileOptions,
                                                     UnsupportedFunctionArgsBitSet);
 }  // namespace sh
 

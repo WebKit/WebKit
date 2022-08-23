@@ -158,7 +158,8 @@ void GlslangAssignTransformFeedbackLocations(gl::ShaderType shaderType,
                                              ShaderInterfaceVariableInfoMap *variableInfoMapOut);
 #if ANGLE_ENABLE_METAL_SPIRV
 // Retrieves the compiled SPIR-V code for each shader stage, and calls |GlslangAssignLocations|.
-void GlslangGetShaderSpirvCode(const GlslangSourceOptions &options,
+void GlslangGetShaderSpirvCode(const gl::Context *context,
+                               const GlslangSourceOptions &options,
                                const gl::ProgramState &programState,
                                const gl::ProgramLinkedResources &resources,
                                GlslangProgramInterfaceInfo *programInterfaceInfo,

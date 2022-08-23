@@ -371,6 +371,7 @@ void ProgramPipeline::updateFragmentInoutRangeAndEnablesPerSampleShading()
 
     const ProgramExecutable &fragmentExecutable  = fragmentProgram->getExecutable();
     mState.mExecutable->mFragmentInoutRange      = fragmentExecutable.mFragmentInoutRange;
+    mState.mExecutable->mHasDiscard              = fragmentExecutable.mHasDiscard;
     mState.mExecutable->mEnablesPerSampleShading = fragmentExecutable.mEnablesPerSampleShading;
 }
 

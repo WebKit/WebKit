@@ -20,7 +20,7 @@ class PrunePureLiteralStatementsTest : public MatchOutputCodeTest
 {
   public:
     // The PrunePureLiteralStatements pass is used when outputting ESSL
-    PrunePureLiteralStatementsTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, 0, SH_ESSL_OUTPUT) {}
+    PrunePureLiteralStatementsTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_ESSL_OUTPUT) {}
 };
 
 // Most basic test for the pruning

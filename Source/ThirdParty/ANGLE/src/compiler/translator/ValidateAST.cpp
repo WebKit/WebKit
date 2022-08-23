@@ -157,6 +157,7 @@ ValidateAST::ValidateAST(TIntermNode *root,
     {
         mOptions.validateVariableReferences = false;
         mOptions.validateFunctionCall       = false;
+        mOptions.validateStructUsage        = false;
     }
 
     if (mOptions.validateSingleParent)

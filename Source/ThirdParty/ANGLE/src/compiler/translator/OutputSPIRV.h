@@ -13,7 +13,7 @@
 
 namespace sh
 {
-bool OutputSPIRV(TCompiler *compiler, TIntermBlock *root, ShCompileOptions compileOptions);
+bool OutputSPIRV(TCompiler *compiler, TIntermBlock *root, const ShCompileOptions &compileOptions);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_OUTPUTSPIRV_H_

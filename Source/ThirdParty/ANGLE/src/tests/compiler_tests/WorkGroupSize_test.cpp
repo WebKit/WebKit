@@ -35,10 +35,14 @@ class WorkGroupSizeTest : public testing::Test
     // Return true when compilation succeeds
     bool compile(const std::string &shaderString)
     {
+        ShCompileOptions compileOptions = {};
+        compileOptions.variables        = true;
+        compileOptions.intermediateTree = true;
+
         const char *shaderStrings[] = {shaderString.c_str()};
-        bool status = mTranslator->compile(shaderStrings, 1, SH_INTERMEDIATE_TREE | SH_VARIABLES);
-        TInfoSink &infoSink = mTranslator->getInfoSink();
-        mInfoLog            = infoSink.info.c_str();
+        bool status                 = mTranslator->compile(shaderStrings, 1, compileOptions);
+        TInfoSink &infoSink         = mTranslator->getInfoSink();
+        mInfoLog                    = infoSink.info.c_str();
         return status;
     }
 

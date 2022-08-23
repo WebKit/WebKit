@@ -114,9 +114,12 @@ class GeometryShaderTest : public ShaderCompileTreeTest
 class GeometryShaderOutputCodeTest : public MatchOutputCodeTest
 {
   public:
-    GeometryShaderOutputCodeTest()
-        : MatchOutputCodeTest(GL_GEOMETRY_SHADER_EXT, SH_OBJECT_CODE, SH_ESSL_OUTPUT)
+    GeometryShaderOutputCodeTest() : MatchOutputCodeTest(GL_GEOMETRY_SHADER_EXT, SH_ESSL_OUTPUT)
     {
+        ShCompileOptions defaultCompileOptions = {};
+        defaultCompileOptions.objectCode       = true;
+        setDefaultCompileOptions(defaultCompileOptions);
+
         getResources()->EXT_geometry_shader = 1;
     }
 };

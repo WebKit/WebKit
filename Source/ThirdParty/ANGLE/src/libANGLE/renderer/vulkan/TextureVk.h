@@ -552,7 +552,6 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                           const vk::ImageHelper *nextImage);
 
     vk::ImageAccess getRequiredImageAccess() const { return mRequiredImageAccess; }
-    bool imageHasActualImageFormat(angle::FormatID actualFormatID) const;
 
     void stageSelfAsSubresourceUpdates(ContextVk *contextVk);
 

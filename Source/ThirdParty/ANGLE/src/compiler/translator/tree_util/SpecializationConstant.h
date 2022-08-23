@@ -24,7 +24,7 @@ namespace sh
 class SpecConst
 {
   public:
-    SpecConst(TSymbolTable *symbolTable, ShCompileOptions compileOptions, GLenum shaderType);
+    SpecConst(TSymbolTable *symbolTable, const ShCompileOptions &compileOptions, GLenum shaderType);
     virtual ~SpecConst();
 
     // Flip/rotation
@@ -42,7 +42,7 @@ class SpecConst
 
     // If unsupported, this should be set to null.
     TSymbolTable *mSymbolTable;
-    ShCompileOptions mCompileOptions;
+    const ShCompileOptions &mCompileOptions;
 
     TVariable *mSurfaceRotationVar;
     TVariable *mDitherVar;

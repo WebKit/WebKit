@@ -35,7 +35,7 @@ std::string GetXfbBufferNameMtl(const uint32_t bufferIndex)
     return "xfbBuffer" + Str(bufferIndex);
 }
 
-}  //
+}  // namespace
 
 namespace mtl
 {
@@ -106,7 +106,8 @@ static std::string MSLGetMappedSamplerName(const std::string &originalName)
     return samplerName;
 }
 
-void MSLGetShaderSource(const gl::ProgramState &programState,
+void MSLGetShaderSource(const gl::Context *context,
+                        const gl::ProgramState &programState,
                         const gl::ProgramLinkedResources &resources,
                         gl::ShaderMap<std::string> *shaderSourcesOut,
                         ShaderInterfaceVariableInfoMap *variableInfoMapOut)
@@ -114,7 +115,7 @@ void MSLGetShaderSource(const gl::ProgramState &programState,
     for (const gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         gl::Shader *glShader            = programState.getAttachedShader(shaderType);
-        (*shaderSourcesOut)[shaderType] = glShader ? glShader->getTranslatedSource() : "";
+        (*shaderSourcesOut)[shaderType] = glShader ? glShader->getTranslatedSource(context) : "";
     }
 }
 

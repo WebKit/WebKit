@@ -21,7 +21,7 @@ ShaderNULL::~ShaderNULL() {}
 
 std::shared_ptr<WaitableCompileEvent> ShaderNULL::compile(const gl::Context *context,
                                                           gl::ShCompilerInstance *compilerInstance,
-                                                          ShCompileOptions options)
+                                                          ShCompileOptions *options)
 {
     return compileImpl(context, compilerInstance, mState.getSource(), options);
 }

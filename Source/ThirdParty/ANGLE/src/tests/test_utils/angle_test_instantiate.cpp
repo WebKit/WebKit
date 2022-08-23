@@ -440,7 +440,7 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
     }
 
 // Skip test configs that target the desktop OpenGL frontend when it's not enabled.
-#if !defined(ANGLE_ENABLE_OPENGL_DESKTOP)
+#if !defined(ANGLE_ENABLE_GL_DESKTOP_FRONTEND)
     if (param.isDesktopOpenGLFrontend())
     {
         return false;

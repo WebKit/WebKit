@@ -6,6 +6,8 @@
 import subprocess
 import sys
 
+import angle_path_util
+
 from skia_gold_common import skia_gold_properties
 
 
@@ -16,7 +18,7 @@ class ANGLESkiaGoldProperties(skia_gold_properties.SkiaGoldProperties):
         try:
             return subprocess.check_output(['git', 'rev-parse', 'origin/main'],
                                            shell=_IsWin(),
-                                           cwd=ANGLE_SRC_DIR).strip()
+                                           cwd=angle_path_util.ANGLE_ROOT_DIR).strip()
         except subprocess.CalledProcessError:
             return None
 

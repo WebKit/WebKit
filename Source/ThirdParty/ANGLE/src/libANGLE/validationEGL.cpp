@@ -1167,33 +1167,44 @@ bool ValidateCompatibleSurface(const ValidationContext *val,
     const Config *contextConfig = context->getConfig();
     const Config *surfaceConfig = surface->getConfig();
 
-    // Surface compatible with client API - only OPENGL_ES supported
-    switch (context->getClientMajorVersion())
+    if (context->getClientType() != EGL_OPENGL_API)
     {
-        case 1:
-            if (!(surfaceConfig->renderableType & EGL_OPENGL_ES_BIT))
-            {
-                val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL ES 1.x.");
+        // Surface compatible with client API - only OPENGL_ES supported
+        switch (context->getClientMajorVersion())
+        {
+            case 1:
+                if (!(surfaceConfig->renderableType & EGL_OPENGL_ES_BIT))
+                {
+                    val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL ES 1.x.");
+                    return false;
+                }
+                break;
+            case 2:
+                if (!(surfaceConfig->renderableType & EGL_OPENGL_ES2_BIT))
+                {
+                    val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL ES 2.x.");
+                    return false;
+                }
+                break;
+            case 3:
+                if (!(surfaceConfig->renderableType & (EGL_OPENGL_ES2_BIT | EGL_OPENGL_ES3_BIT)))
+                {
+                    val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL ES 3.x.");
+                    return false;
+                }
+                break;
+            default:
+                val->setError(EGL_BAD_MATCH, "Surface not compatible with Context API.");
                 return false;
-            }
-            break;
-        case 2:
-            if (!(surfaceConfig->renderableType & EGL_OPENGL_ES2_BIT))
-            {
-                val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL ES 2.x.");
-                return false;
-            }
-            break;
-        case 3:
-            if (!(surfaceConfig->renderableType & (EGL_OPENGL_ES2_BIT | EGL_OPENGL_ES3_BIT)))
-            {
-                val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL ES 3.x.");
-                return false;
-            }
-            break;
-        default:
-            val->setError(EGL_BAD_MATCH, "Surface not compatible with Context API.");
+        }
+    }
+    else
+    {
+        if (!(surfaceConfig->renderableType & EGL_OPENGL_BIT))
+        {
+            val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL Desktop.");
             return false;
+        }
     }
 
     // EGL KHR no config context

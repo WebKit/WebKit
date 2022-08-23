@@ -55,11 +55,13 @@ class TestSuiteTest : public testing::Test
             return false;
         }
 
-        std::stringstream tempFNameStream;
-        tempFNameStream << tempDirName.value() << GetPathSeparator() << "test_temp_" << rand()
-                        << ".json";
-        mTempFileName = tempFNameStream.str();
+        Optional<std::string> tempFile = CreateTemporaryFileInDirectory(tempDirName.value());
+        if (!tempFile.valid())
+        {
+            return false;
+        }
 
+        mTempFileName               = tempFile.value();
         std::string resultsFileName = "--results-file=" + mTempFileName;
 
         std::vector<const char *> args = {

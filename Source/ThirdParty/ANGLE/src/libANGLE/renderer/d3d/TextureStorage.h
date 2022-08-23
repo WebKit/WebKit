@@ -40,7 +40,7 @@ constexpr size_t kTextureStorageObserverMessageIndex = 0;
 class TextureStorage : public angle::Subject
 {
   public:
-    TextureStorage(const std::string &label) : mTextureLabel(label) {}
+    TextureStorage(const std::string &label) : mKHRDebugLabel(label) {}
     ~TextureStorage() override {}
 
     virtual angle::Result onDestroy(const gl::Context *context);
@@ -86,11 +86,14 @@ class TextureStorage : public angle::Subject
     virtual angle::Result resolveTexture(const gl::Context *context);
     virtual GLsizei getRenderToTextureSamples() const;
 
-    virtual void onLabelUpdate() {}
+    // Called by outer object when label has changed via KHR_debug extension
+    void setLabel(const std::string &newLabel);
 
   protected:
+    virtual void onLabelUpdate() {}
+
     const angle::Subject *mSubject;
-    const std::string mTextureLabel;
+    std::string mKHRDebugLabel;
 };
 
 inline angle::Result TextureStorage::onDestroy(const gl::Context *context)
@@ -117,6 +120,12 @@ inline angle::Result TextureStorage::resolveTexture(const gl::Context *context)
 inline GLsizei TextureStorage::getRenderToTextureSamples() const
 {
     return 0;
+}
+
+inline void TextureStorage::setLabel(const std::string &newLabel)
+{
+    mKHRDebugLabel = newLabel;
+    onLabelUpdate();
 }
 
 using TexStoragePointer = angle::UniqueObjectPointer<TextureStorage, gl::Context>;

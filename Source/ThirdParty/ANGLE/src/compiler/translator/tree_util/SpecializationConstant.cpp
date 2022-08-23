@@ -38,7 +38,9 @@ const TType *MakeSpecConst(const TType &type, vk::SpecializationConstantId id)
 }
 }  // anonymous namespace
 
-SpecConst::SpecConst(TSymbolTable *symbolTable, ShCompileOptions compileOptions, GLenum shaderType)
+SpecConst::SpecConst(TSymbolTable *symbolTable,
+                     const ShCompileOptions &compileOptions,
+                     GLenum shaderType)
     : mSymbolTable(symbolTable),
       mCompileOptions(compileOptions),
       mSurfaceRotationVar(nullptr),
@@ -50,7 +52,7 @@ SpecConst::SpecConst(TSymbolTable *symbolTable, ShCompileOptions compileOptions,
     }
 
     // Mark SpecConstUsage::Rotation unconditionally.  gl_Position is always rotated.
-    if ((mCompileOptions & SH_USE_SPECIALIZATION_CONSTANT) != 0)
+    if (mCompileOptions.useSpecializationConstant)
     {
         mUsageBits.set(vk::SpecConstUsage::Rotation);
     }
@@ -96,7 +98,7 @@ TIntermSymbol *SpecConst::getRotation()
 
 TIntermTyped *SpecConst::getSwapXY()
 {
-    if ((mCompileOptions & SH_USE_SPECIALIZATION_CONSTANT) == 0)
+    if (!mCompileOptions.useSpecializationConstant)
     {
         return nullptr;
     }

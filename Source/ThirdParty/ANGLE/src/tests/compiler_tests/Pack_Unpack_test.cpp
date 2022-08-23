@@ -20,7 +20,7 @@ namespace
 class PackUnpackTest : public MatchOutputCodeTest
 {
   public:
-    PackUnpackTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, 0, SH_GLSL_400_CORE_OUTPUT) {}
+    PackUnpackTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_GLSL_400_CORE_OUTPUT) {}
 };
 
 // Check if PackSnorm2x16 Emulation for GLSL < 4.2 compile correctly.

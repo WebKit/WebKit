@@ -41,7 +41,7 @@ const std::string &WaitableCompileEvent::getInfoLog()
 class TranslateTask : public angle::Closure
 {
   public:
-    TranslateTask(ShHandle handle, ShCompileOptions options, const std::string &source)
+    TranslateTask(ShHandle handle, const ShCompileOptions &options, const std::string &source)
         : mHandle(handle), mOptions(options), mSource(source), mResult(false)
     {}
 
@@ -83,15 +83,15 @@ std::shared_ptr<WaitableCompileEvent> ShaderImpl::compileImpl(
     const gl::Context *context,
     gl::ShCompilerInstance *compilerInstance,
     const std::string &source,
-    ShCompileOptions compileOptions)
+    ShCompileOptions *compileOptions)
 {
 #if defined(ANGLE_ENABLE_ASSERTS)
-    compileOptions |= SH_VALIDATE_AST;
+    compileOptions->validateAST = true;
 #endif
 
     auto workerThreadPool = context->getShaderCompileThreadPool();
     auto translateTask =
-        std::make_shared<TranslateTask>(compilerInstance->getHandle(), compileOptions, source);
+        std::make_shared<TranslateTask>(compilerInstance->getHandle(), *compileOptions, source);
 
     return std::make_shared<WaitableCompileEventImpl>(
         angle::WorkerThreadPool::PostWorkerTask(workerThreadPool, translateTask), translateTask);

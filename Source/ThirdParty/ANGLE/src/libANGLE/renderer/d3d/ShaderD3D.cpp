@@ -26,7 +26,7 @@ class TranslateTaskD3D : public angle::Closure
 {
   public:
     TranslateTaskD3D(ShHandle handle,
-                     ShCompileOptions options,
+                     const ShCompileOptions &options,
                      const std::string &source,
                      const std::string &sourcePath)
         : mHandle(handle),
@@ -88,52 +88,10 @@ class WaitableCompileEventD3D final : public WaitableCompileEvent
     std::shared_ptr<TranslateTaskD3D> mTranslateTask;
 };
 
-ShaderD3D::ShaderD3D(const gl::ShaderState &state,
-                     const angle::FeaturesD3D &features,
-                     const gl::Extensions &extensions)
-    : ShaderImpl(state), mAdditionalOptions(0)
+ShaderD3D::ShaderD3D(const gl::ShaderState &state, RendererD3D *renderer)
+    : ShaderImpl(state), mRenderer(renderer)
 {
     uncompile();
-
-    if (features.expandIntegerPowExpressions.enabled)
-    {
-        mAdditionalOptions |= SH_EXPAND_SELECT_HLSL_INTEGER_POW_EXPRESSIONS;
-    }
-
-    if (features.getDimensionsIgnoresBaseLevel.enabled)
-    {
-        mAdditionalOptions |= SH_HLSL_GET_DIMENSIONS_IGNORES_BASE_LEVEL;
-    }
-
-    if (features.preAddTexelFetchOffsets.enabled)
-    {
-        mAdditionalOptions |= SH_REWRITE_TEXELFETCHOFFSET_TO_TEXELFETCH;
-    }
-    if (features.rewriteUnaryMinusOperator.enabled)
-    {
-        mAdditionalOptions |= SH_REWRITE_INTEGER_UNARY_MINUS_OPERATOR;
-    }
-    if (features.emulateIsnanFloat.enabled)
-    {
-        mAdditionalOptions |= SH_EMULATE_ISNAN_FLOAT_FUNCTION;
-    }
-    if (features.skipVSConstantRegisterZero.enabled &&
-        mState.getShaderType() == gl::ShaderType::Vertex)
-    {
-        mAdditionalOptions |= SH_SKIP_D3D_CONSTANT_REGISTER_ZERO;
-    }
-    if (features.forceAtomicValueResolution.enabled)
-    {
-        mAdditionalOptions |= SH_FORCE_ATOMIC_VALUE_RESOLUTION;
-    }
-    if (features.allowTranslateUniformBlockToStructuredBuffer.enabled)
-    {
-        mAdditionalOptions |= SH_ALLOW_TRANSLATE_UNIFORM_BLOCK_TO_STRUCTUREDBUFFER;
-    }
-    if (extensions.multiviewOVR || extensions.multiview2OVR)
-    {
-        mAdditionalOptions |= SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW;
-    }
 }
 
 ShaderD3D::~ShaderD3D() {}
@@ -269,12 +227,13 @@ const std::set<std::string> &GetUsedImage2DFunctionNames(
 
 std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *context,
                                                          gl::ShCompilerInstance *compilerInstance,
-                                                         ShCompileOptions options)
+                                                         ShCompileOptions *options)
 {
     std::string sourcePath;
     uncompile();
 
-    ShCompileOptions additionalOptions = 0;
+    const angle::FeaturesD3D &features = mRenderer->getFeatures();
+    const gl::Extensions &extensions   = mRenderer->getNativeExtensions();
 
     const std::string &source = mState.getSource();
 
@@ -283,13 +242,50 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
     {
         sourcePath = angle::CreateTemporaryFile().value();
         writeFile(sourcePath.c_str(), source.c_str(), source.length());
-        additionalOptions |= SH_LINE_DIRECTIVES | SH_SOURCE_PATH;
+        options->lineDirectives = true;
+        options->sourcePath     = true;
     }
 #endif
 
-    additionalOptions |= mAdditionalOptions;
+    if (features.expandIntegerPowExpressions.enabled)
+    {
+        options->expandSelectHLSLIntegerPowExpressions = true;
+    }
 
-    options |= additionalOptions;
+    if (features.getDimensionsIgnoresBaseLevel.enabled)
+    {
+        options->HLSLGetDimensionsIgnoresBaseLevel = true;
+    }
+
+    if (features.preAddTexelFetchOffsets.enabled)
+    {
+        options->rewriteTexelFetchOffsetToTexelFetch = true;
+    }
+    if (features.rewriteUnaryMinusOperator.enabled)
+    {
+        options->rewriteIntegerUnaryMinusOperator = true;
+    }
+    if (features.emulateIsnanFloat.enabled)
+    {
+        options->emulateIsnanFloatFunction = true;
+    }
+    if (features.skipVSConstantRegisterZero.enabled &&
+        mState.getShaderType() == gl::ShaderType::Vertex)
+    {
+        options->skipD3DConstantRegisterZero = true;
+    }
+    if (features.forceAtomicValueResolution.enabled)
+    {
+        options->forceAtomicValueResolution = true;
+    }
+    if (features.allowTranslateUniformBlockToStructuredBuffer.enabled)
+    {
+        options->allowTranslateUniformBlockToStructuredBuffer = true;
+    }
+    if (extensions.multiviewOVR || extensions.multiview2OVR)
+    {
+        options->initializeBuiltinsForInstancedMultiview = true;
+    }
 
     auto postTranslateFunctor = [this](gl::ShCompilerInstance *compiler, std::string *infoLog) {
         // TODO(jmadill): We shouldn't need to cache this.
@@ -369,7 +365,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
     };
 
     auto workerThreadPool = context->getWorkerThreadPool();
-    auto translateTask = std::make_shared<TranslateTaskD3D>(compilerInstance->getHandle(), options,
+    auto translateTask = std::make_shared<TranslateTaskD3D>(compilerInstance->getHandle(), *options,
                                                             source, sourcePath);
 
     return std::make_shared<WaitableCompileEventD3D>(

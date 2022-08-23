@@ -165,7 +165,7 @@ TEST_F(ARBTextureRectangleTest, CompilerOption)
         precision mediump float;
         uniform sampler2DRect s;
         void main() {})";
-    mExtraCompileOptions |= SH_DISABLE_ARB_TEXTURE_RECTANGLE;
+    mCompileOptions.disableARBTextureRectangle = true;
     if (compile(shaderString))
     {
         FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
@@ -184,12 +184,12 @@ TEST_F(ARBTextureRectangleTest, ToggleCompilerOption)
     {
         FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
     }
-    mExtraCompileOptions |= SH_DISABLE_ARB_TEXTURE_RECTANGLE;
+    mCompileOptions.disableARBTextureRectangle = true;
     if (compile(shaderString))
     {
         FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
     }
-    mExtraCompileOptions &= ~SH_DISABLE_ARB_TEXTURE_RECTANGLE;
+    mCompileOptions.disableARBTextureRectangle = false;
     if (!compile(shaderString))
     {
         FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;

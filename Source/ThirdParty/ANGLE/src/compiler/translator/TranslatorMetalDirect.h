@@ -159,15 +159,15 @@ class TranslatorMetalDirect : public TCompiler
 
   protected:
     bool translate(TIntermBlock *root,
-                   ShCompileOptions compileOptions,
+                   const ShCompileOptions &compileOptions,
                    PerformanceDiagnostics *perfDiagnostics) override;
 
     // Need to collect variables so that RemoveInactiveInterfaceVariables works.
-    bool shouldCollectVariables(ShCompileOptions compileOptions) override { return true; }
+    bool shouldCollectVariables(const ShCompileOptions &compileOptions) override { return true; }
 
     [[nodiscard]] bool translateImpl(TInfoSinkBase &sink,
                                      TIntermBlock *root,
-                                     ShCompileOptions compileOptions,
+                                     const ShCompileOptions &compileOptions,
                                      PerformanceDiagnostics *perfDiagnostics,
                                      SpecConst *specConst,
                                      DriverUniformMetal *driverUniforms);

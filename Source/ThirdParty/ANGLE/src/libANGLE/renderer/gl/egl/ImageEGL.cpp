@@ -48,7 +48,7 @@ ImageEGL::~ImageEGL()
 egl::Error ImageEGL::initialize(const egl::Display *display)
 {
     EGLClientBuffer buffer = nullptr;
-    std::vector<EGLint> attributes;
+    angle::FastVector<EGLint, 8> attributes;
 
     if (egl::IsTextureTarget(mTarget))
     {
@@ -80,7 +80,14 @@ egl::Error ImageEGL::initialize(const egl::Display *display)
         mNativeInternalFormat = externalImageSibling->getFormat().info->sizedInternalFormat;
 
         // Add any additional attributes this type of image sibline requires
-        externalImageSibling->getImageCreationAttributes(&attributes);
+        std::vector<EGLint> tmp_attributes;
+        externalImageSibling->getImageCreationAttributes(&tmp_attributes);
+
+        attributes.reserve(attributes.size() + tmp_attributes.size());
+        for (EGLint attribute : tmp_attributes)
+        {
+            attributes.push_back(attribute);
+        }
     }
     else
     {

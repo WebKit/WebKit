@@ -18,13 +18,23 @@ using namespace sh;
 class MSLVertexOutputTest : public MatchOutputCodeTest
 {
   public:
-    MSLVertexOutputTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, 0, SH_MSL_METAL_OUTPUT) {}
+    MSLVertexOutputTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_MSL_METAL_OUTPUT)
+    {
+        ShCompileOptions defaultCompileOptions = {};
+        defaultCompileOptions.variables        = true;
+        setDefaultCompileOptions(defaultCompileOptions);
+    }
 };
 
 class MSLOutputTest : public MatchOutputCodeTest
 {
   public:
-    MSLOutputTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, 0, SH_MSL_METAL_OUTPUT) {}
+    MSLOutputTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_MSL_METAL_OUTPUT)
+    {
+        ShCompileOptions defaultCompileOptions = {};
+        defaultCompileOptions.variables        = true;
+        setDefaultCompileOptions(defaultCompileOptions);
+    }
 };
 
 // Test that having dynamic indexing of a vector inside the right hand side of logical or doesn't
@@ -40,7 +50,7 @@ TEST_F(MSLOutputTest, DynamicIndexingOfVectorOnRightSideOfLogicalOr)
         "   bvec4 v = bvec4(true, true, true, false);\n"
         "   my_FragColor = vec4(v[u1 + 1] || v[u1]);\n"
         "}\n";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 // Test that having an array constructor as a statement doesn't trigger an assert in MSL output.
@@ -55,7 +65,7 @@ TEST_F(MSLOutputTest, ArrayConstructorStatement)
             outColor = vec4(0.0, 0.0, 0.0, 1.0);
             float[1](outColor[1]++);
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 // Test an array of arrays constructor as a statement.
@@ -70,7 +80,7 @@ TEST_F(MSLOutputTest, ArrayOfArraysStatement)
             outColor = vec4(0.0, 0.0, 0.0, 1.0);
             float[2][2](float[2](outColor[1]++, 0.0), float[2](1.0, 2.0));
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 // Test dynamic indexing of a vector. This makes sure that helper functions added for dynamic
@@ -88,7 +98,7 @@ TEST_F(MSLOutputTest, VectorDynamicIndexing)
             foo[i] = foo[i + 1];
             outColor = foo;
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 // Test returning an array from a user-defined function. This makes sure that function symbols are
@@ -111,7 +121,7 @@ TEST_F(MSLOutputTest, ArrayReturnValue)
             float[2] arr = getArray(u);
             outColor = vec4(arr[0], arr[1], 0.0, 1.0);
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 // Test that writing parameters without a name doesn't assert.
@@ -130,7 +140,7 @@ TEST_F(MSLOutputTest, ParameterWithNoName)
         {
             gl_FragColor = s(v);
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, Macro)
@@ -147,7 +157,7 @@ TEST_F(MSLOutputTest, Macro)
         {
             outColor = FOO(1.0, 2.0, 3.0, 4.0);
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, UniformSimple)
@@ -163,7 +173,7 @@ TEST_F(MSLOutputTest, UniformSimple)
         {
             outColor = vec4(x, x, x, x);
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, FragmentOutSimple)
@@ -178,7 +188,7 @@ TEST_F(MSLOutputTest, FragmentOutSimple)
         {
             outColor = vec4(1.0, 2.0, 3.0, 4.0);
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, FragmentOutIndirect1)
@@ -203,7 +213,7 @@ TEST_F(MSLOutputTest, FragmentOutIndirect1)
         {
             bar();
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, FragmentOutIndirect2)
@@ -230,7 +240,7 @@ TEST_F(MSLOutputTest, FragmentOutIndirect2)
         {
             bar();
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, FragmentOutIndirect3)
@@ -266,7 +276,7 @@ TEST_F(MSLOutputTest, FragmentOutIndirect3)
         {
             identity(bar(baz()));
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, VertexInOut)
@@ -280,7 +290,7 @@ TEST_F(MSLOutputTest, VertexInOut)
         {
             out0 = in0;
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, SymbolSharing)
@@ -311,7 +321,7 @@ TEST_F(MSLOutputTest, SymbolSharing)
             foo.y = 2.0;
             doFoo(foo, 3.0);
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, StructDecl)
@@ -332,7 +342,7 @@ TEST_F(MSLOutputTest, StructDecl)
             out0 = foo.value;
         }
         )";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, Structs)
@@ -381,7 +391,7 @@ TEST_F(MSLOutputTest, Structs)
         }
 
         )";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, KeywordConflict)
@@ -416,7 +426,7 @@ TEST_F(MSLOutputTest, KeywordConflict)
         {
             metal(stage_in(stage_in(kernel * device.kernel)), foo.frag.kernel);
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLVertexOutputTest, Vertex)
@@ -428,7 +438,7 @@ TEST_F(MSLVertexOutputTest, Vertex)
         {
             gl_Position = vec4(1.0,1.0,1.0,1.0);
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLVertexOutputTest, LastReturn)
@@ -445,7 +455,7 @@ TEST_F(MSLVertexOutputTest, LastReturn)
             v_color = vec4(a_coords.xyz, 1.0);
             return;
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, LastReturn)
@@ -460,7 +470,7 @@ TEST_F(MSLOutputTest, LastReturn)
             o_color = vec4(v_coords.xyz, 1.0);
             return;
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, FragColor)
@@ -470,7 +480,7 @@ TEST_F(MSLOutputTest, FragColor)
         {
             gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, MatrixIn)
@@ -487,7 +497,7 @@ TEST_F(MSLOutputTest, MatrixIn)
             out0 = mat[0][0];
         }
         )";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, WhileTrue)
@@ -507,7 +517,7 @@ TEST_F(MSLOutputTest, WhileTrue)
                 break;
             }
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, ForTrue)
@@ -527,7 +537,7 @@ TEST_F(MSLOutputTest, ForTrue)
                 break;
             }
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, ForEmpty)
@@ -547,7 +557,7 @@ TEST_F(MSLOutputTest, ForEmpty)
                 break;
             }
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, ForComplex)
@@ -568,7 +578,7 @@ TEST_F(MSLOutputTest, ForComplex)
                 my_FragColor.x += float(i);
             }
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, ForSymbol)
@@ -589,7 +599,7 @@ TEST_F(MSLOutputTest, ForSymbol)
                 cond = false;
             }
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, DoWhileSymbol)
@@ -609,7 +619,7 @@ TEST_F(MSLOutputTest, DoWhileSymbol)
                 my_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
             } while (cond);
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
 }
 
 TEST_F(MSLOutputTest, AnonymousStruct)
@@ -622,7 +632,7 @@ TEST_F(MSLOutputTest, AnonymousStruct)
             anonStruct.v = vec4(0.0,1.0,0.0,1.0);
             gl_FragColor = anonStruct.v;
         })";
-    compile(shaderString, SH_VARIABLES);
+    compile(shaderString);
     // TODO(anglebug.com/6395): This success condition is expected to fail now.
     // When WebKit build is able to run the tests, this should be changed to something else.
     //    ASSERT_TRUE(foundInCode(SH_MSL_METAL_OUTPUT, "__unnamed"));

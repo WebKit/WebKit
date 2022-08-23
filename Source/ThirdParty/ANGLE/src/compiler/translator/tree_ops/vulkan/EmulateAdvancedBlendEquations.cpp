@@ -33,7 +33,7 @@ class Builder
 {
   public:
     Builder(TCompiler *compiler,
-            ShCompileOptions compileOptions,
+            const ShCompileOptions &compileOptions,
             TSymbolTable *symbolTable,
             const DriverUniform *driverUniforms,
             std::vector<ShaderVariable> *uniforms,
@@ -60,7 +60,7 @@ class Builder
     void generateEquationSwitch(TIntermBlock *blendBlock);
 
     TCompiler *mCompiler;
-    ShCompileOptions mCompileOptions;
+    const ShCompileOptions &mCompileOptions;
     TSymbolTable *mSymbolTable;
     const DriverUniform *mDriverUniforms;
     std::vector<ShaderVariable> *mUniforms;
@@ -1041,14 +1041,14 @@ TIntermSymbol *Builder::premultiplyAlpha(TIntermBlock *blendBlock,
     TType *vec3Type            = new TType(EbtFloat, precision, EvqTemporary, 3);
 
     // symbol = vec3(0)
-    // If alpha != 0 assign symbol based on SH_PRECISION_SAFE_DIVISION compile option.
+    // If alpha != 0 assign symbol based on precisionSafeDivision compile option.
     TIntermTyped *alpha            = new TIntermSwizzle(var, {3});
     TIntermSymbol *symbol          = MakeVariable(mSymbolTable, name, vec3Type);
     TIntermTyped *alphaNotZero     = new TIntermBinary(EOpNotEqual, alpha, Float(0));
     TIntermBlock *rgbDivAlphaBlock = new TIntermBlock;
 
     constexpr int kColorChannels = 3;
-    if ((mCompileOptions & SH_PRECISION_SAFE_DIVISION) != 0)
+    if (mCompileOptions.precisionSafeDivision)
     {
         // For each component:
         // symbol.x = (var.x == var.w) ? 1.0 : var.x / var.w
@@ -1101,7 +1101,7 @@ void Builder::generatePreamble(TIntermBlock *blendBlock)
 
     TIntermSequence subpassArguments  = {new TIntermSymbol(mSubpassInputVar)};
     TIntermTyped *subpassLoadFuncCall = CreateBuiltInFunctionCallNode(
-        "subpassLoad", &subpassArguments, *mSymbolTable, kESSLVulkanOnly);
+        "subpassLoad", &subpassArguments, *mSymbolTable, kESSLInternalBackendBuiltIns);
 
     blendBlock->appendStatement(
         CreateTempInitDeclarationNode(&subpassInputData->variable(), subpassLoadFuncCall));
@@ -1260,7 +1260,7 @@ void Builder::generateEquationSwitch(TIntermBlock *blendBlock)
 }  // anonymous namespace
 
 bool EmulateAdvancedBlendEquations(TCompiler *compiler,
-                                   ShCompileOptions compileOptions,
+                                   const ShCompileOptions &compileOptions,
                                    TIntermBlock *root,
                                    TSymbolTable *symbolTable,
                                    const DriverUniform *driverUniforms,

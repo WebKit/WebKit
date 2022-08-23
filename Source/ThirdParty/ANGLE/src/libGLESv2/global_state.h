@@ -133,7 +133,7 @@ namespace gl
 {
 ANGLE_INLINE Context *GetGlobalContext()
 {
-#if defined(ANGLE_PLATFORM_ANDROID)
+#if defined(ANGLE_USE_ANDROID_TLS_SLOT)
     // TODO: Replace this branch with a compile time flag (http://anglebug.com/4764)
     if (angle::gUseAndroidOpenGLTlsSlot)
     {
@@ -152,7 +152,7 @@ ANGLE_INLINE Context *GetGlobalContext()
 
 ANGLE_INLINE Context *GetValidGlobalContext()
 {
-#if defined(ANGLE_PLATFORM_ANDROID)
+#if defined(ANGLE_USE_ANDROID_TLS_SLOT)
     // TODO: Replace this branch with a compile time flag (http://anglebug.com/4764)
     if (angle::gUseAndroidOpenGLTlsSlot)
     {

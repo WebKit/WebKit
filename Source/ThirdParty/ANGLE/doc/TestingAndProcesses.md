@@ -94,6 +94,16 @@ You have two options for creating a CL to the expectations files:
 2. Otherwise please [check out the code](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/get_the_code.md)
    and [upload a CL](https://chromium.googlesource.com/chromium/src/+/refs/heads/main/docs/contributing.md#Creating-a-change)
 
+
+## "internal swarming failure" on one of the test shards
+
+This might be caused by a bad bot, clicking on link "Bot assigned to task" will show recent tasks which might look bad
+(for example, lots of BOT_DIED in [crbug.com/1350556](https://crbug.com/1350556)). The best course of action in this case is to
+stop the bot by clicking the "stop the bot gracefully" button which will result in a task that looks like
+"Terminate build117-a9", then open a bug in the Infra>Labs component.
+Googlers, see also: [go/gpu-pixel-wrangler-how-to#manually-taking-a-machine-out-of-the-swarming-pool](http://go/gpu-pixel-wrangler-how-to#manually-taking-a-machine-out-of-the-swarming-pool)
+
+
 # Requesting access to the Commit Queue and issue tracker
 
 If you need to request access for a user (or yourself) please ask a project owner to help. Googlers, email

@@ -83,7 +83,7 @@ class GenMetalTraverser : public TIntermTraverser
                       IdGen &idGen,
                       const PipelineStructs &pipelineStructs,
                       SymbolEnv &symbolEnv,
-                      TSymbolTable *symbolTable);
+                      const ShCompileOptions &compileOptions);
 
     void visitSymbol(TIntermSymbol *) override;
     void visitConstantUnion(TIntermConstantUnion *) override;
@@ -212,16 +212,16 @@ GenMetalTraverser::GenMetalTraverser(const TCompiler &compiler,
                                      IdGen &idGen,
                                      const PipelineStructs &pipelineStructs,
                                      SymbolEnv &symbolEnv,
-                                     TSymbolTable *symbolTable)
+                                     const ShCompileOptions &compileOptions)
     : TIntermTraverser(true, false, false),
       mOut(out),
       mCompiler(compiler),
       mPipelineStructs(pipelineStructs),
       mSymbolEnv(symbolEnv),
       mIdGen(idGen),
-      mMainUniformBufferIndex(symbolTable->getDefaultUniformsBindingIndex()),
-      mDriverUniformsBindingIndex(symbolTable->getDriverUniformsBindingIndex()),
-      mUBOArgumentBufferBindingIndex(symbolTable->getUBOArgumentBufferBindingIndex())
+      mMainUniformBufferIndex(compileOptions.metal.defaultUniformsBindingIndex),
+      mDriverUniformsBindingIndex(compileOptions.metal.driverUniformsBindingIndex),
+      mUBOArgumentBufferBindingIndex(compileOptions.metal.UBOArgumentBufferBindingIndex)
 {}
 
 void GenMetalTraverser::emitIndentation()
@@ -2481,7 +2481,7 @@ bool sh::EmitMetal(TCompiler &compiler,
                    const PipelineStructs &pipelineStructs,
                    SymbolEnv &symbolEnv,
                    const ProgramPreludeConfig &ppc,
-                   TSymbolTable *symbolTable)
+                   const ShCompileOptions &compileOptions)
 {
     TInfoSinkBase &out = compiler.getInfoSink().obj;
 
@@ -2538,7 +2538,8 @@ bool sh::EmitMetal(TCompiler &compiler,
 #else
         TInfoSinkBase &outWrapper = out;
 #endif
-        GenMetalTraverser gen(compiler, outWrapper, idGen, pipelineStructs, symbolEnv, symbolTable);
+        GenMetalTraverser gen(compiler, outWrapper, idGen, pipelineStructs, symbolEnv,
+                              compileOptions);
         root.traverse(&gen);
     }
 

@@ -96,6 +96,20 @@ void TExtensionGLSL::checkOperator(TIntermOperator *node)
             }
             break;
 
+        case EOpBeginInvocationInterlockNV:
+        case EOpEndInvocationInterlockNV:
+            mRequiredExtensions.insert("GL_NV_fragment_shader_interlock");
+            break;
+
+        case EOpBeginFragmentShaderOrderingINTEL:
+            mRequiredExtensions.insert("GL_INTEL_fragment_shader_ordering");
+            break;
+
+        case EOpBeginInvocationInterlockARB:
+        case EOpEndInvocationInterlockARB:
+            mRequiredExtensions.insert("GL_ARB_fragment_shader_interlock");
+            break;
+
         default:
             break;
     }

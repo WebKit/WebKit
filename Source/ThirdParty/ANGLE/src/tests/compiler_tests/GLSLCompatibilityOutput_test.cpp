@@ -18,7 +18,7 @@ class GLSLCompatibilityOutputTest : public MatchOutputCodeTest
 {
   public:
     GLSLCompatibilityOutputTest()
-        : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_VARIABLES, SH_GLSL_COMPATIBILITY_OUTPUT)
+        : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_GLSL_COMPATIBILITY_OUTPUT)
     {}
 };
 

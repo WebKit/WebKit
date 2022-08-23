@@ -21,10 +21,12 @@ class ScalarizeVecAndMatConstructorArgsTest : public MatchOutputCodeTest
 {
   public:
     ScalarizeVecAndMatConstructorArgsTest()
-        : MatchOutputCodeTest(GL_FRAGMENT_SHADER,
-                              SH_SCALARIZE_VEC_AND_MAT_CONSTRUCTOR_ARGS,
-                              SH_ESSL_OUTPUT)
-    {}
+        : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_ESSL_OUTPUT)
+    {
+        ShCompileOptions defaultCompileOptions                  = {};
+        defaultCompileOptions.scalarizeVecAndMatConstructorArgs = true;
+        setDefaultCompileOptions(defaultCompileOptions);
+    }
 };
 
 // Verifies scalarizing matrix inside a vector constructor.

@@ -19,21 +19,32 @@ class EmulateGLBaseVertexBaseInstanceTest : public MatchOutputCodeTest
 {
   public:
     EmulateGLBaseVertexBaseInstanceTest()
-        : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_VARIABLES, SH_GLSL_COMPATIBILITY_OUTPUT)
+        : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_GLSL_COMPATIBILITY_OUTPUT)
     {
+        ShCompileOptions defaultCompileOptions = {};
+        defaultCompileOptions.variables        = true;
+        setDefaultCompileOptions(defaultCompileOptions);
+
         getResources()->ANGLE_base_vertex_base_instance_shader_builtin = 1;
     }
 
   protected:
     void CheckCompileFailure(const std::string &shaderString,
-                             const char *expectedError       = nullptr,
-                             ShCompileOptions compileOptions = SH_VARIABLES)
+                             const char *expectedError        = nullptr,
+                             ShCompileOptions *compileOptions = nullptr)
     {
+        ShCompileOptions options = {};
+        if (compileOptions != nullptr)
+        {
+            options = *compileOptions;
+        }
+        options.variables = true;
+
         std::string translatedCode;
         std::string infoLog;
-        bool success = compileTestShader(GL_VERTEX_SHADER, SH_GLES3_SPEC,
-                                         SH_GLSL_COMPATIBILITY_OUTPUT, shaderString, getResources(),
-                                         compileOptions, &translatedCode, &infoLog);
+        bool success =
+            compileTestShader(GL_VERTEX_SHADER, SH_GLES3_SPEC, SH_GLSL_COMPATIBILITY_OUTPUT,
+                              shaderString, getResources(), options, &translatedCode, &infoLog);
         EXPECT_FALSE(success);
         if (expectedError)
         {
@@ -65,7 +76,12 @@ TEST_F(EmulateGLBaseVertexBaseInstanceTest, CheckCompile)
         "   gl_Position = vec4(float(gl_BaseVertex), float(gl_BaseInstance), 0.0, 1.0);\n"
         "}\n";
 
-    compile(shaderString, SH_OBJECT_CODE | SH_VARIABLES | SH_EMULATE_GL_BASE_VERTEX_BASE_INSTANCE);
+    ShCompileOptions compileOptions                = {};
+    compileOptions.objectCode                      = true;
+    compileOptions.variables                       = true;
+    compileOptions.emulateGLBaseVertexBaseInstance = true;
+
+    compile(shaderString, compileOptions);
 }
 
 // Check that compiling with the old extension doesn't work
@@ -78,8 +94,11 @@ TEST_F(EmulateGLBaseVertexBaseInstanceTest, CheckCompileOldExtension)
         "   gl_Position = vec4(float(gl_BaseVertex), float(gl_BaseInstance), 0.0, 1.0);\n"
         "}\n";
 
-    CheckCompileFailure(shaderString, "extension is not supported",
-                        SH_OBJECT_CODE | SH_VARIABLES | SH_EMULATE_GL_BASE_VERTEX_BASE_INSTANCE);
+    ShCompileOptions compileOptions                = {};
+    compileOptions.objectCode                      = true;
+    compileOptions.emulateGLBaseVertexBaseInstance = true;
+
+    CheckCompileFailure(shaderString, "extension is not supported", &compileOptions);
 }
 
 // Check that gl_BaseVertex and gl_BaseInstance is properly emulated
@@ -102,7 +121,12 @@ TEST_F(EmulateGLBaseVertexBaseInstanceTest, EmulatesUniform)
         "   gl_Position = vec4(float(gl_BaseVertex), float(gl_BaseInstance), 0.0, 1.0);\n"
         "}\n";
 
-    compile(shaderString, SH_OBJECT_CODE | SH_VARIABLES | SH_EMULATE_GL_BASE_VERTEX_BASE_INSTANCE);
+    ShCompileOptions compileOptions                = {};
+    compileOptions.objectCode                      = true;
+    compileOptions.variables                       = true;
+    compileOptions.emulateGLBaseVertexBaseInstance = true;
+
+    compile(shaderString, compileOptions);
 
     EXPECT_TRUE(notFoundInCode("gl_BaseVertex"));
     EXPECT_TRUE(foundInCode("angle_BaseVertex"));
@@ -221,7 +245,12 @@ TEST_F(EmulateGLBaseVertexBaseInstanceTest, AllowsUserDefinedANGLEDrawID)
         "           0.0, 1.0);\n"
         "}\n";
 
-    compile(shaderString, SH_OBJECT_CODE | SH_VARIABLES | SH_EMULATE_GL_BASE_VERTEX_BASE_INSTANCE);
+    ShCompileOptions compileOptions                = {};
+    compileOptions.objectCode                      = true;
+    compileOptions.variables                       = true;
+    compileOptions.emulateGLBaseVertexBaseInstance = true;
+
+    compile(shaderString, compileOptions);
 
     // " angle_BaseVertex" (note the space) should appear exactly twice:
     //    once in the declaration and once in the body.

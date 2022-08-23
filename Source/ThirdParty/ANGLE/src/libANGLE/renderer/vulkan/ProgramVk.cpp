@@ -195,14 +195,14 @@ std::unique_ptr<LinkEvent> ProgramVk::link(const gl::Context *context,
     ContextVk *contextVk = vk::GetImpl(context);
     // Link resources before calling GetShaderSource to make sure they are ready for the set/binding
     // assignment done in that function.
-    linkResources(resources);
+    linkResources(context, resources);
 
     reset(contextVk);
     mExecutable.clearVariableInfoMap();
 
     // Gather variable info and compiled SPIR-V binaries.
     gl::ShaderMap<const angle::spirv::Blob *> spirvBlobs;
-    GlslangWrapperVk::GetShaderCode(contextVk->getFeatures(), mState, resources,
+    GlslangWrapperVk::GetShaderCode(context, contextVk->getFeatures(), mState, resources,
                                     &mGlslangProgramInterfaceInfo, &spirvBlobs,
                                     &mExecutable.mVariableInfoMap);
 
@@ -238,12 +238,13 @@ std::unique_ptr<LinkEvent> ProgramVk::link(const gl::Context *context,
     return std::make_unique<LinkEventDone>(status);
 }
 
-void ProgramVk::linkResources(const gl::ProgramLinkedResources &resources)
+void ProgramVk::linkResources(const gl::Context *context,
+                              const gl::ProgramLinkedResources &resources)
 {
     Std140BlockLayoutEncoderFactory std140EncoderFactory;
     gl::ProgramLinkedResourcesLinker linker(&std140EncoderFactory);
 
-    linker.linkResources(mState, resources);
+    linker.linkResources(context, mState, resources);
 }
 
 angle::Result ProgramVk::initDefaultUniformBlocks(const gl::Context *glContext)
@@ -255,7 +256,7 @@ angle::Result ProgramVk::initDefaultUniformBlocks(const gl::Context *glContext)
     gl::ShaderMap<size_t> requiredBufferSize;
     requiredBufferSize.fill(0);
 
-    generateUniformLayoutMapping(layoutMap, requiredBufferSize);
+    generateUniformLayoutMapping(glContext, layoutMap, requiredBufferSize);
     initDefaultUniformLayoutMapping(layoutMap);
 
     // All uniform initializations are complete, now resize the buffers accordingly and return
@@ -263,7 +264,8 @@ angle::Result ProgramVk::initDefaultUniformBlocks(const gl::Context *glContext)
                                                 requiredBufferSize);
 }
 
-void ProgramVk::generateUniformLayoutMapping(gl::ShaderMap<sh::BlockLayoutMap> &layoutMap,
+void ProgramVk::generateUniformLayoutMapping(const gl::Context *context,
+                                             gl::ShaderMap<sh::BlockLayoutMap> &layoutMap,
                                              gl::ShaderMap<size_t> &requiredBufferSize)
 {
     const gl::ProgramExecutable &glExecutable = mState.getExecutable();
@@ -274,7 +276,7 @@ void ProgramVk::generateUniformLayoutMapping(gl::ShaderMap<sh::BlockLayoutMap> &
 
         if (shader)
         {
-            const std::vector<sh::ShaderVariable> &uniforms = shader->getUniforms();
+            const std::vector<sh::ShaderVariable> &uniforms = shader->getUniforms(context);
             InitDefaultUniformBlock(uniforms, &layoutMap[shaderType],
                                     &requiredBufferSize[shaderType]);
         }

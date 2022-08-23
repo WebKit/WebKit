@@ -28,7 +28,7 @@ class AdvancedBlendEquations;
 // which function to use at runtime.
 [[nodiscard]] bool EmulateAdvancedBlendEquations(
     TCompiler *compiler,
-    ShCompileOptions compileOptions,
+    const ShCompileOptions &compileOptions,
     TIntermBlock *root,
     TSymbolTable *symbolTable,
     const DriverUniform *driverUniforms,

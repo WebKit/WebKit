@@ -24,7 +24,7 @@ class ShaderMtl : public ShaderImpl
 
     std::shared_ptr<WaitableCompileEvent> compile(const gl::Context *context,
                                                   gl::ShCompilerInstance *compilerInstance,
-                                                  ShCompileOptions options) override;
+                                                  ShCompileOptions *options) override;
 
     sh::TranslatorMetalReflection *getTranslatorMetalReflection()
     {
@@ -39,7 +39,7 @@ class ShaderMtl : public ShaderImpl
     std::shared_ptr<WaitableCompileEvent> compileImplMtl(const gl::Context *context,
                                                          gl::ShCompilerInstance *compilerInstance,
                                                          const std::string &source,
-                                                         ShCompileOptions compileOptions);
+                                                         ShCompileOptions *compileOptions);
 };
 
 }  // namespace rx

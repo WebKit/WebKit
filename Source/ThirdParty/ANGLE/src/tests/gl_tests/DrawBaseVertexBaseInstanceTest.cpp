@@ -473,13 +473,13 @@ void main()
     std::vector<GLfloat> mVertices;
     std::vector<GLfloat> mNonIndexedVertices;
     // Used when gl_BaseInstance is not used
-    std::array<GLfloat, kCountX> mInstancedArrayId;
-    std::array<GLfloat, kCountX> mInstancedArrayColorId;
+    std::array<GLfloat, kCountX> mInstancedArrayId      = {};
+    std::array<GLfloat, kCountX> mInstancedArrayColorId = {};
     // Used for regular draw calls without base vertex base instance
     std::vector<GLushort> mRegularIndices;
-    GLint mPositionLoc;
-    GLuint mInstanceIDLoc;
-    GLuint mInstanceColorIDLoc;
+    GLint mPositionLoc         = 0;
+    GLuint mInstanceIDLoc      = 0;
+    GLuint mInstanceColorIDLoc = 0;
 };
 
 using DrawBaseInstanceTestParams = std::
@@ -809,13 +809,13 @@ void main()
     std::vector<GLfloat> mVertices;
     std::vector<GLfloat> mNonIndexedVertices;
     // Used when gl_BaseInstance is not used
-    std::array<GLfloat, kCountX> mInstancedArrayId;
-    std::array<GLfloat, kCountX> mInstancedArrayColorId;
+    std::array<GLfloat, kCountX> mInstancedArrayId      = {};
+    std::array<GLfloat, kCountX> mInstancedArrayColorId = {};
     // Used for regular draw calls without base vertex base instance
     std::vector<GLushort> mRegularIndices;
-    GLint mPositionLoc;
-    GLuint mInstanceIDLoc;
-    GLuint mInstanceColorIDLoc;
+    GLint mPositionLoc         = 0;
+    GLuint mInstanceIDLoc      = 0;
+    GLuint mInstanceColorIDLoc = 0;
 };
 
 // Tests that compile a program with the extension succeeds

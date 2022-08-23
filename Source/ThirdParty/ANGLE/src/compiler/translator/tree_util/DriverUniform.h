@@ -90,7 +90,6 @@ class DriverUniformExtended : public DriverUniform
     DriverUniformExtended(DriverUniformMode mode) : DriverUniform(mode) {}
     ~DriverUniformExtended() override {}
 
-    TIntermTyped *getViewport() const override;
     TIntermTyped *getXfbBufferOffsets() const override;
     TIntermTyped *getXfbVerticesPerInstance() const override;
 

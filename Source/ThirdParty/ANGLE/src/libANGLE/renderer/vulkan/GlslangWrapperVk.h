@@ -30,7 +30,8 @@ class GlslangWrapperVk
     static void ResetGlslangProgramInterfaceInfo(
         GlslangProgramInterfaceInfo *glslangProgramInterfaceInfo);
 
-    static void GetShaderCode(const angle::FeaturesVk &features,
+    static void GetShaderCode(const gl::Context *context,
+                              const angle::FeaturesVk &features,
                               const gl::ProgramState &programState,
                               const gl::ProgramLinkedResources &resources,
                               GlslangProgramInterfaceInfo *programInterfaceInfo,

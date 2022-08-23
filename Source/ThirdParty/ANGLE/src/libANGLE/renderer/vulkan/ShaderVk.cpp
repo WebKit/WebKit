@@ -23,90 +23,97 @@ ShaderVk::~ShaderVk() {}
 
 std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *context,
                                                         gl::ShCompilerInstance *compilerInstance,
-                                                        ShCompileOptions options)
+                                                        ShCompileOptions *options)
 {
-    ShCompileOptions compileOptions = 0;
-
     ContextVk *contextVk = vk::GetImpl(context);
 
     if (context->isWebGL())
     {
         // Only WebGL requires initialization of local variables, others don't.
         // Extra initialization in spirv shader may affect performance.
-        compileOptions |= SH_INITIALIZE_UNINITIALIZED_LOCALS;
+        options->initializeUninitializedLocals = true;
 
         // WebGL shaders may contain OOB array accesses which in turn cause undefined behavior,
         // which may result in security issues. See https://crbug.com/1189110.
-        compileOptions |= SH_CLAMP_INDIRECT_ARRAY_BOUNDS;
+        options->clampIndirectArrayBounds = true;
 
         if (mState.getShaderType() != gl::ShaderType::Compute)
         {
-            compileOptions |= SH_INIT_OUTPUT_VARIABLES;
+            options->initOutputVariables = true;
         }
     }
 
     if (contextVk->getFeatures().clampPointSize.enabled)
     {
-        compileOptions |= SH_CLAMP_POINT_SIZE;
+        options->clampPointSize = true;
     }
 
     if (contextVk->getFeatures().emulateAdvancedBlendEquations.enabled)
     {
-        compileOptions |= SH_ADD_ADVANCED_BLEND_EQUATIONS_EMULATION;
+        options->addAdvancedBlendEquationsEmulation = true;
     }
 
     if (contextVk->emulateSeamfulCubeMapSampling())
     {
-        compileOptions |= SH_EMULATE_SEAMFUL_CUBE_MAP_SAMPLING;
+        options->emulateSeamfulCubeMapSampling = true;
     }
 
     if (!contextVk->getFeatures().enablePrecisionQualifiers.enabled)
     {
-        compileOptions |= SH_IGNORE_PRECISION_QUALIFIERS;
+        options->ignorePrecisionQualifiers = true;
     }
 
     if (contextVk->getFeatures().forceFragmentShaderPrecisionHighpToMediump.enabled)
     {
-        compileOptions |= SH_FORCE_SHADER_PRECISION_HIGHP_TO_MEDIUMP;
+        options->forceShaderPrecisionHighpToMediump = true;
     }
 
     // Let compiler use specialized constant for pre-rotation.
     if (!contextVk->getFeatures().preferDriverUniformOverSpecConst.enabled)
     {
-        compileOptions |= SH_USE_SPECIALIZATION_CONSTANT;
+        options->useSpecializationConstant = true;
     }
 
     if (!contextVk->getFeatures().supportsDepthClipControl.enabled)
     {
-        compileOptions |= SH_ADD_VULKAN_DEPTH_CORRECTION;
+        options->addVulkanDepthCorrection = true;
     }
 
     if (contextVk->getFeatures().supportsTransformFeedbackExtension.enabled)
     {
-        compileOptions |= SH_ADD_VULKAN_XFB_EXTENSION_SUPPORT_CODE;
+        options->addVulkanXfbExtensionSupportCode = true;
     }
     else if (mState.getShaderType() == gl::ShaderType::Vertex &&
              contextVk->getFeatures().emulateTransformFeedback.enabled)
     {
-        compileOptions |= SH_ADD_VULKAN_XFB_EMULATION_SUPPORT_CODE;
+        options->addVulkanXfbEmulationSupportCode = true;
     }
 
     if (contextVk->getFeatures().generateSPIRVThroughGlslang.enabled)
     {
-        compileOptions |= SH_GENERATE_SPIRV_THROUGH_GLSLANG;
+        options->generateSpirvThroughGlslang = true;
     }
 
     if (contextVk->getFeatures().roundOutputAfterDithering.enabled)
     {
-        compileOptions |= SH_ROUND_OUTPUT_AFTER_DITHERING;
+        options->roundOutputAfterDithering = true;
     }
 
     if (contextVk->getFeatures().precisionSafeDivision.enabled)
     {
-        compileOptions |= SH_PRECISION_SAFE_DIVISION;
+        options->precisionSafeDivision = true;
     }
 
-    return compileImpl(context, compilerInstance, mState.getSource(), compileOptions | options);
+    if (contextVk->getExtensions().shaderPixelLocalStorageCoherentANGLE)
+    {
+        ASSERT(contextVk->getFeatures().supportsFragmentShaderPixelInterlock.enabled);
+        // GL_ARB_fragment_shader_interlock compiles to SPV_EXT_fragment_shader_interlock in both
+        // Vulkan GLSL and our own backend.
+        options->pls.fragmentSynchronizationType =
+            ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL;
+    }
+
+    return compileImpl(context, compilerInstance, mState.getSource(), options);
 }
 
 std::string ShaderVk::getDebugInfo() const

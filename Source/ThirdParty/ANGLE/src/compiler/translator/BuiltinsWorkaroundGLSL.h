@@ -17,7 +17,7 @@ namespace sh
 [[nodiscard]] bool ShaderBuiltinsWorkaround(TCompiler *compiler,
                                             TIntermBlock *root,
                                             TSymbolTable *symbolTable,
-                                            ShCompileOptions compileOptions);
+                                            const ShCompileOptions &compileOptions);
 
 }  // namespace sh
 

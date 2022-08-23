@@ -216,7 +216,7 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
     void saveShaderInternalInfo(gl::BinaryOutputStream *stream);
     void loadShaderInternalInfo(gl::BinaryInputStream *stream);
 
-    void linkUpdateHasFlatAttributes();
+    void linkUpdateHasFlatAttributes(const gl::Context *context);
 
 #if ANGLE_ENABLE_METAL_SPIRV
 
@@ -229,7 +229,7 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
                                  const gl::ProgramLinkedResources &resources,
                                  gl::InfoLog &infoLog);
 
-    void linkResources(const gl::ProgramLinkedResources &resources);
+    void linkResources(const gl::Context *context, const gl::ProgramLinkedResources &resources);
     angle::Result linkImpl(const gl::Context *glContext,
                            const gl::ProgramLinkedResources &resources,
                            gl::InfoLog &infoLog);

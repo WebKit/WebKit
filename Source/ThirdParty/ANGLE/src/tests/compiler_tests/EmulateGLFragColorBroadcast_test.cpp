@@ -23,9 +23,7 @@ class EmulateGLFragColorBroadcastTest : public MatchOutputCodeTest
 {
   public:
     EmulateGLFragColorBroadcastTest()
-        : MatchOutputCodeTest(GL_FRAGMENT_SHADER,
-                              0,  // compile options
-                              SH_GLSL_COMPATIBILITY_OUTPUT)
+        : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_GLSL_COMPATIBILITY_OUTPUT)
     {
         getResources()->MaxDrawBuffers   = kMaxDrawBuffers;
         getResources()->EXT_draw_buffers = 1;

@@ -6494,6 +6494,35 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Tests that rewriting samplers in structs works when passed as function argument.  In this test,
+// the function references another struct, which is not being modified.  Regression test for AST
+// validation applied to a multipass transformation, where references to declarations were attempted
+// to be validated without having the entire shader.  In this case, the reference to S2 was flagged
+// as invalid because S2's declaration was not visible.
+TEST_P(GLSLTest, SamplerInStructAsFunctionArg)
+{
+    const char kFS[] = R"(precision mediump float;
+struct S { sampler2D samp; bool b; };
+struct S2 { float f; };
+
+uniform S us;
+
+float f(S s)
+{
+    S2 s2;
+    s2.f = float(s.b);
+    return s2.f;
+}
+
+void main()
+{
+    gl_FragColor = vec4(f(us), 0, 0, 1);
+})";
+
+    CompileShader(GL_FRAGMENT_SHADER, kFS);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Tests two nameless struct uniforms.
 TEST_P(GLSLTest, TwoEmbeddedStructUniforms)
 {
@@ -9756,7 +9785,7 @@ foo
     ANGLE_GL_PROGRAM(program, kVS, kFS);
 }
 
-// Test that inactive output variables compile ok in combination with SH_INIT_OUTPUT_VARIABLES
+// Test that inactive output variables compile ok in combination with initOutputVariables
 // (which is enabled on WebGL).
 TEST_P(WebGL2GLSLTest, InactiveOutput)
 {
@@ -15907,6 +15936,76 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(testProgram, kVS, kFS);
+}
+
+// Tests adding a struct definition inline in a shader.
+// Metal backend contains a pass that separates struct definition and declaration.
+TEST_P(GLSLTest_ES3, StructInShader)
+{
+    const char kVS[] = R"(#version 300 es
+precision highp float;
+void main(void)
+{
+    struct structMain {
+        float i;
+    } testStruct;
+
+    testStruct.i = 5.0 ;
+    gl_Position = vec4(testStruct.i - 4.0, 0, 0, 1);
+})";
+
+    const char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 color;
+void main()
+{
+    color = vec4(0,1,0,0);
+})";
+
+    ANGLE_GL_PROGRAM(testProgram, kVS, kFS);
+}
+
+// Issue: A while loop's expression, and a branch
+// condition with EOpContinue were being deep
+// copied as part of monomorphize functions,
+// causing a crash, as they were not null-checked.
+// Tests transforming a function that will be monomorphized.
+TEST_P(GLSLTest_ES3, MonomorphizeForAndContinue)
+{
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+        
+        precision mediump float;
+        out vec4 fragOut;
+        struct aParam
+        {
+            sampler2D sampler;
+        };
+        uniform aParam theParam;
+
+        float monomorphizedFunction(aParam a)
+        {
+            int i = 0;
+            vec4 j = vec4(0);
+            for(;;)
+            {
+                if(i++ < 10)
+                {
+                    j += texture(a.sampler, vec2(0.0f,0.0f));
+                    continue;
+                }
+                break;
+            }
+            return j.a;
+        }
+        void main()
+        {
+            fragOut.a = monomorphizedFunction(theParam);
+        }        
+)";
+    CompileShader(GL_FRAGMENT_SHADER, kFS);
+    ASSERT_GL_NO_ERROR();
 }
 
 }  // anonymous namespace

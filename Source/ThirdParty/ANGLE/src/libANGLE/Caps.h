@@ -133,6 +133,9 @@ struct Limitations
     // and GL_CONSTANT_COLOR/GL_ONE_MINUS_CONSTANT_COLOR blend functions.
     bool noSimultaneousConstantColorAndAlphaBlendFunc = false;
 
+    // Renderer always clamps constant blend color.
+    bool noUnclampedBlendColor = false;
+
     // D3D9 does not support flexible varying register packing.
     bool noFlexibleVaryingPacking = false;
 
@@ -160,6 +163,8 @@ struct Limitations
 
     // D3D does not support compressed textures where the base mip level is not a multiple of 4
     bool compressedBaseMipLevelMultipleOfFour = false;
+
+    bool limitWebglMaxTextureSizeTo4096 = false;
 };
 
 struct TypePrecision
@@ -385,11 +390,6 @@ struct Caps
     // ES 3.2 Table 20.41: Implementation Dependent Values (cont.)
     GLint maxTextureBufferSize         = 0;
     GLint textureBufferOffsetAlignment = 0;
-
-    // Direct-to-metal constants:
-    GLuint driverUniformsBindingIndex    = 0;
-    GLuint defaultUniformsBindingIndex   = 0;
-    GLuint UBOArgumentBufferBindingIndex = 0;
 };
 
 Caps GenerateMinimumCaps(const Version &clientVersion, const Extensions &extensions);

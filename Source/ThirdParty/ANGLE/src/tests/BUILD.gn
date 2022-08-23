@@ -83,8 +83,8 @@ angle_static_library("angle_test_expectations") {
 config("angle_common_test_utils_config") {
   include_dirs = [ "." ]
   defines = []
-  if (angle_enable_gl_desktop) {
-    defines += [ "ANGLE_ENABLE_OPENGL_DESKTOP" ]
+  if (angle_enable_gl_desktop_backend) {
+    defines += [ "ANGLE_ENABLE_GL_DESKTOP_BACKEND" ]
   }
 }
 
@@ -283,13 +283,14 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
     }
 
     if (is_fuchsia) {
-      use_cfv2 = false
-      additional_manifest_fragments = [
-        # TODO(crbug.com/1185811): Figure out why jit_capabilities is needed.
-        "//build/config/fuchsia/test/jit_capabilities.test-cmx",
+      use_cfv1 = false
 
-        "//build/config/fuchsia/test/present_view_capabilities.test-cmx",
-        "//build/config/fuchsia/test/vulkan_capabilities.test-cmx",
+      # TODO(crbug.com/1185811): Investigate removing the requirement for
+      # job_policy_ambient_mark_vmo_exec.
+      test_runner_shard = "//build/config/fuchsia/test/elf_test_ambient_exec_runner.shard.test-cml"
+      additional_manifest_fragments = [
+        "//build/config/fuchsia/test/present_view.shard.test-cml",
+        "//third_party/fuchsia-sdk/sdk/pkg/vulkan/client.shard.cml",
       ]
     }
 
@@ -341,8 +342,10 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
 
 config("angle_maybe_has_histograms") {
   if (angle_has_histograms) {
-    defines = [ "ANGLE_HAS_HISTOGRAMS" ]
+    defines = [ "ANGLE_HAS_HISTOGRAMS=1" ]
     include_dirs = [ "$root_gen_dir" ]
+  } else {
+    defines = [ "ANGLE_HAS_HISTOGRAMS=0" ]
   }
 }
 
@@ -371,11 +374,15 @@ template("angle_perftests_common") {
       "test_utils/runner/TestSuite.h",
     ]
     public_deps = [
+      "$angle_root:angle_gl_enum_utils",
       "$angle_root/src/tests:angle_test_expectations",
       "$angle_root/third_party/rapidjson:rapidjson",
       "${invoker.test_utils}",
     ]
-    public_configs += [ "${angle_root}:libANGLE_config" ]
+    public_configs += [
+      ":angle_maybe_has_histograms",
+      "$angle_root:libANGLE_config",
+    ]
   }
 }
 
@@ -1533,21 +1540,21 @@ if (build_angle_deqp_tests && !is_fuchsia) {
   }
 
   template("angle_deqp_khr_gtest") {
-    split_target = string_split(target_name, "_")
-    _api = split_target[1]
     angle_deqp_gtest(target_name) {
       forward_variables_from(invoker, "*")
       deps = [ ":angle_deqp_khr_common" ]
       deps += angle_deqp_data_copy_targets
-      if (_api == "gles2") {
+      if (api == "gles2") {
         # Make sure we include something so that angle_deqp_libtester_main.cpp can find something.
         data = [ "$root_gen_dir/vk_gl_cts_data/data/gles2/shaders/misc.test" ]
-      } else if (_api == "gles3") {
+      } else if (api == "gles3") {
         data = angle_deqp_external_openglcts_data_gles3
-      } else if (_api == "gles31") {
+      } else if (api == "gles31") {
         data = angle_deqp_external_openglcts_data_gles31
-      } else if (_api == "gles32") {
+      } else if (api == "gles32") {
         data = angle_deqp_external_openglcts_data_gles32
+      } else if (api == "gl46") {
+        data = angle_deqp_external_openglcts_data_gl46
       } else {
         assert(false)
       }
@@ -1558,21 +1565,32 @@ if (build_angle_deqp_tests && !is_fuchsia) {
   angle_deqp_khr_gtest("khr_gles2") {
     defines = [ "ANGLE_DEQP_KHR_GLES2_TESTS" ]
     mustpass_name = "gles2-khr-master.txt"
+    api = "gles2"
   }
 
   angle_deqp_khr_gtest("khr_gles3") {
     defines = [ "ANGLE_DEQP_KHR_GLES3_TESTS" ]
     mustpass_name = "gles3-khr-master.txt"
+    api = "gles3"
   }
 
   angle_deqp_khr_gtest("khr_gles31") {
     defines = [ "ANGLE_DEQP_KHR_GLES31_TESTS" ]
     mustpass_name = "gles31-khr-master.txt"
+    api = "gles31"
   }
 
   angle_deqp_khr_gtest("khr_gles32") {
     defines = [ "ANGLE_DEQP_KHR_GLES32_TESTS" ]
     mustpass_name = "gles32-khr-master.txt"
+    api = "gles32"
+  }
+
+  # The core Desktop GL CTS is in the same category as these KHR tests.
+  angle_deqp_khr_gtest("gl46") {
+    defines = [ "ANGLE_DEQP_GL_TESTS" ]
+    mustpass_name = "gl46-khr-master.txt"
+    api = "gl46"
   }
 
   template("angle_deqp_rotate_gtest") {
@@ -1668,6 +1686,7 @@ group("angle_tests") {
   if (build_angle_deqp_tests && !is_fuchsia) {
     deps += [
       ":angle_deqp_egl_tests",
+      ":angle_deqp_gl46_tests",
       ":angle_deqp_gles2_tests",
       ":angle_deqp_gles31_tests",
       ":angle_deqp_gles3_tests",

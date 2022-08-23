@@ -20,14 +20,6 @@ struct FeaturesVk : FeatureSetBase
     FeaturesVk();
     ~FeaturesVk();
 
-    FeatureInfo basicGLLineRasterization = {
-        "basicGLLineRasterization",
-        FeatureCategory::VulkanFeatures,
-        "Enable the use of pixel shader patching to implement OpenGL basic line "
-        "rasterization rules",
-        &members,
-    };
-
     FeatureInfo bresenhamLineRasterization = {
         "bresenhamLineRasterization",
         FeatureCategory::VulkanFeatures,
@@ -357,6 +349,11 @@ struct FeaturesVk : FeatureSetBase
         "VkDevice supports VK_EXT_depth_clip_control extension.", &members,
         "http://anglebug.com/5421"};
 
+    FeatureInfo supportsPrimitiveTopologyListRestart = {
+        "supportsPrimitiveTopologyListRestart", FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_EXT_primitive_topology_list_restart extension.", &members,
+        "http://anglebug.com/3832"};
+
     FeatureInfo supportsBlendOperationAdvanced = {
         "supportsBlendOperationAdvanced", FeatureCategory::VulkanFeatures,
         "VkDevice supports VK_EXT_blend_operation_advanced extension.", &members,
@@ -515,6 +512,11 @@ struct FeaturesVk : FeatureSetBase
         "VkDevice supports VK_EXT_pipeline_creation_feedback extension", &members,
         "http://anglebug.com/5881"};
 
+    FeatureInfo supportsPrimitivesGeneratedQuery = {
+        "supportsPrimitivesGeneratedQuery", FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_EXT_primitives_generated_query extension", &members,
+        "http://anglebug.com/5430"};
+
     FeatureInfo supportsSurfaceCapabilities2Extension = {
         "supportsSurfaceCapabilities2Extension",
         FeatureCategory::VulkanFeatures,
@@ -650,6 +652,14 @@ struct FeaturesVk : FeatureSetBase
         "VkDevice supports VK_KHR_fragment_shading_rate extension", &members,
         "http://anglebug.com/7172"};
 
+    FeatureInfo supportsFragmentShaderPixelInterlock = {
+        "supportsFragmentShaderPixelInterlock",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_EXT_fragment_shader_interlock extension "
+        "and has the fragmentShaderPixelInterlock feature",
+        &members,
+    };
+
     FeatureInfo explicitlyEnablePerSampleShading = {
         "explicitlyEnablePerSampleShading", FeatureCategory::VulkanWorkarounds,
         "Explicitly enable per-sample shading if the fragment shader contains the "
@@ -665,6 +675,11 @@ struct FeaturesVk : FeatureSetBase
         "supportsImage2dViewOf3d", FeatureCategory::VulkanFeatures,
         "VkDevice supports VK_EXT_image_2d_view_of_3d", &members, "https://anglebug.com/7320"};
 
+    FeatureInfo supportsImagelessFramebuffer = {
+        "supportsImagelessFramebuffer", FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_KHR_imageless_framebuffer extension", &members,
+        "http://anglebug.com/7553"};
+
     FeatureInfo preferLinearFilterForYUV = {
         "preferLinearFilterForYUV",
         FeatureCategory::VulkanFeatures,
@@ -678,6 +693,12 @@ struct FeaturesVk : FeatureSetBase
         "VkDevice supports VK_ANDROID_render_to_external_format and VK_EXT_ycbcr_attachment",
         &members,
     };
+
+    FeatureInfo useNonZeroStencilWriteMaskStaticState = {
+        "useNonZeroStencilWriteMaskStaticState", FeatureCategory::VulkanWorkarounds,
+        "Work around a driver bug where 0 in stencil write mask static state would make the"
+        "corresponding dynamic state malfunction in the presence of discard or alpha to coverage",
+        &members, "http://anglebug.com/7556"};
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

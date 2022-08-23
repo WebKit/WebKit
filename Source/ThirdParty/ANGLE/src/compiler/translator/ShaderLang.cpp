@@ -402,7 +402,7 @@ const std::string &GetBuiltInResourcesString(const ShHandle handle)
 bool Compile(const ShHandle handle,
              const char *const shaderStrings[],
              size_t numStrings,
-             ShCompileOptions compileOptions)
+             const ShCompileOptions &compileOptions)
 {
     TCompiler *compiler = GetCompilerFromHandle(handle);
     ASSERT(compiler);
@@ -734,6 +734,17 @@ const std::set<std::string> *GetUsedImage2DFunctionNames(const ShHandle handle)
 #else
     return nullptr;
 #endif  // ANGLE_ENABLE_HLSL
+}
+
+bool HasDiscardInFragmentShader(const ShHandle handle)
+{
+    ASSERT(handle);
+
+    TShHandleBase *base = static_cast<TShHandleBase *>(handle);
+    TCompiler *compiler = base->getAsCompiler();
+    ASSERT(compiler);
+
+    return compiler->getShaderType() == GL_FRAGMENT_SHADER && compiler->hasDiscard();
 }
 
 bool HasValidGeometryShaderInputPrimitiveType(const ShHandle handle)

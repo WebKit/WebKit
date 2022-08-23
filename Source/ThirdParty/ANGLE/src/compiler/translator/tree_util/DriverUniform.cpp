@@ -32,7 +32,6 @@ constexpr const char kDither[]           = "dither";
 constexpr const char kMisc[]             = "misc";
 
 // Extended uniforms
-constexpr const char kViewport[]               = "viewport";
 constexpr const char kXfbBufferOffsets[]       = "xfbBufferOffsets";
 constexpr const char kXfbVerticesPerInstance[] = "xfbVerticesPerInstance";
 constexpr const char kUnused[]                 = "unused";
@@ -66,6 +65,7 @@ bool DriverUniform::addComputeDriverUniformsToShader(TIntermBlock *root, TSymbol
     // Define a driver uniform block "ANGLEUniformBlock" with instance name "ANGLEUniforms".
     TLayoutQualifier layoutQualifier = TLayoutQualifier::Create();
     layoutQualifier.blockStorage     = EbsStd140;
+    layoutQualifier.pushConstant     = true;
 
     mDriverUniforms = DeclareInterfaceBlock(root, symbolTable, driverFieldList, EvqUniform,
                                             layoutQualifier, TMemoryQualifier::Create(), 0,
@@ -167,6 +167,7 @@ bool DriverUniform::addGraphicsDriverUniformsToShader(TIntermBlock *root, TSymbo
         // Define a driver uniform block "ANGLEUniformBlock" with instance name "ANGLEUniforms".
         TLayoutQualifier layoutQualifier = TLayoutQualifier::Create();
         layoutQualifier.blockStorage     = EbsStd140;
+        layoutQualifier.pushConstant     = true;
 
         mDriverUniforms = DeclareInterfaceBlock(root, symbolTable, driverFieldList, EvqUniform,
                                                 layoutQualifier, TMemoryQualifier::Create(), 0,
@@ -377,14 +378,12 @@ TFieldList *DriverUniformExtended::createUniformFields(TSymbolTable *symbolTable
 {
     TFieldList *driverFieldList = DriverUniform::createUniformFields(symbolTable);
 
-    constexpr size_t kNumGraphicsDriverUniformsExt = 5;
+    constexpr size_t kNumGraphicsDriverUniformsExt = 4;
     constexpr std::array<const char *, kNumGraphicsDriverUniformsExt>
         kGraphicsDriverUniformNamesExt = {
-            {kViewport, kXfbBufferOffsets, kXfbVerticesPerInstance, kUnused, kUnused2}};
+            {kXfbBufferOffsets, kXfbVerticesPerInstance, kUnused, kUnused2}};
 
     const std::array<TType *, kNumGraphicsDriverUniformsExt> kDriverUniformTypesExt = {{
-        // viewport: vec4
-        new TType(EbtFloat, EbpHigh, EvqGlobal, 4),
         // xfbBufferOffsets: uvec4
         new TType(EbtInt, EbpHigh, EvqGlobal, 4),
         // xfbVerticesPerInstance: uint
@@ -404,11 +403,6 @@ TFieldList *DriverUniformExtended::createUniformFields(TSymbolTable *symbolTable
     }
 
     return driverFieldList;
-}
-
-TIntermTyped *DriverUniformExtended::getViewport() const
-{
-    return createDriverUniformRef(kViewport);
 }
 
 TIntermTyped *DriverUniformExtended::getXfbBufferOffsets() const

@@ -32,7 +32,7 @@
 namespace rx
 {
 
-ANGLE_MTL_UNUSED
+ANGLE_APPLE_UNUSED
 bool IsFrameCaptureEnabled()
 {
 #if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
@@ -48,7 +48,7 @@ bool IsFrameCaptureEnabled()
 #endif
 }
 
-ANGLE_MTL_UNUSED
+ANGLE_APPLE_UNUSED
 std::string GetMetalCaptureFile()
 {
 #if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
@@ -61,7 +61,7 @@ std::string GetMetalCaptureFile()
 #endif
 }
 
-ANGLE_MTL_UNUSED
+ANGLE_APPLE_UNUSED
 size_t MaxAllowedFrameCapture()
 {
 #if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
@@ -74,7 +74,7 @@ size_t MaxAllowedFrameCapture()
 #endif
 }
 
-ANGLE_MTL_UNUSED
+ANGLE_APPLE_UNUSED
 size_t MinAllowedFrameCapture()
 {
 #if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
@@ -87,7 +87,7 @@ size_t MinAllowedFrameCapture()
 #endif
 }
 
-ANGLE_MTL_UNUSED
+ANGLE_APPLE_UNUSED
 bool FrameCaptureDeviceScope()
 {
 #if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
@@ -100,10 +100,10 @@ bool FrameCaptureDeviceScope()
 #endif
 }
 
-ANGLE_MTL_UNUSED
+ANGLE_APPLE_UNUSED
 std::atomic<size_t> gFrameCaptured(0);
 
-ANGLE_MTL_UNUSED
+ANGLE_APPLE_UNUSED
 void StartFrameCapture(id<MTLDevice> metalDevice, id<MTLCommandQueue> metalCmdQueue)
 {
 #if ANGLE_METAL_FRAME_CAPTURE_ENABLED
@@ -160,16 +160,16 @@ void StartFrameCapture(id<MTLDevice> metalDevice, id<MTLCommandQueue> metalCmdQu
     else
 #    endif  // __MAC_10_15
         if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13))
-    {
-        auto captureDescriptor = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
-        captureDescriptor.get().captureObject = metalDevice;
-
-        NSError *error;
-        if (![captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
         {
-            NSLog(@"Failed to start capture, error %@", error);
+            auto captureDescriptor = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
+            captureDescriptor.get().captureObject = metalDevice;
+
+            NSError *error;
+            if (![captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
+            {
+                NSLog(@"Failed to start capture, error %@", error);
+            }
         }
-    }
 #endif  // ANGLE_METAL_FRAME_CAPTURE_ENABLED
 }
 
@@ -344,7 +344,7 @@ static angle::Result InitializeCompressedTextureContents(const gl::Context *cont
     return angle::Result::Continue;
 }
 
-}
+}  // namespace
 
 angle::Result InitializeTextureContents(const gl::Context *context,
                                         const TextureRef &texture,

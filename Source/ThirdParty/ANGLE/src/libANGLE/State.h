@@ -1009,6 +1009,8 @@ class State : angle::NonCopyable
     bool mScissorTest;
     Rectangle mScissor;
 
+    bool mNoUnclampedBlendColor;
+
     BlendState mBlendState;  // Buffer zero blend state legacy struct
     BlendStateExt mBlendStateExt;
     ColorF mBlendColor;

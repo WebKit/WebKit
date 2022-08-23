@@ -52,7 +52,8 @@ bool IsEmulatedTransformFeedbackQuery(ContextVk *contextVk, gl::QueryType type)
 
 bool IsPrimitivesGeneratedQueryShared(ContextVk *contextVk)
 {
-    return !contextVk->getFeatures().supportsPipelineStatisticsQuery.enabled;
+    return !contextVk->getFeatures().supportsPrimitivesGeneratedQuery.enabled &&
+           !contextVk->getFeatures().supportsPipelineStatisticsQuery.enabled;
 }
 
 QueryVk *GetShareQuery(ContextVk *contextVk, gl::QueryType type)

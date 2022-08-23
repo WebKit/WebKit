@@ -22,6 +22,7 @@ def initDataDirectories(dataDirectories):
     dataDirectories.append(os.path.join("external", "openglcts", "data", "gles3"))
     dataDirectories.append(os.path.join("external", "openglcts", "data", "gles31"))
     dataDirectories.append(os.path.join("external", "openglcts", "data", "gles32"))
+    dataDirectories.append(os.path.join("external", "openglcts", "data", "gl46"))
 
 
 def initPathReplacements(pathReplacements):

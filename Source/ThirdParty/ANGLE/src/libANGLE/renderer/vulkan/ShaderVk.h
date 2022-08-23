@@ -23,7 +23,7 @@ class ShaderVk : public ShaderImpl
 
     std::shared_ptr<WaitableCompileEvent> compile(const gl::Context *context,
                                                   gl::ShCompilerInstance *compilerInstance,
-                                                  ShCompileOptions options) override;
+                                                  ShCompileOptions *options) override;
 
     std::string getDebugInfo() const override;
 };

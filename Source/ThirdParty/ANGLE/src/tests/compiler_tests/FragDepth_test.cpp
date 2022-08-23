@@ -51,7 +51,7 @@ class FragDepthTest : public testing::TestWithParam<bool>
                                                const char *shader)
     {
         const char *shaderStrings[] = {version, pragma, shader};
-        bool success                = sh::Compile(mCompiler, shaderStrings, 3, 0);
+        bool success                = sh::Compile(mCompiler, shaderStrings, 3, {});
         if (success)
         {
             return ::testing::AssertionSuccess() << "Compilation success";

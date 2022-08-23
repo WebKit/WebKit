@@ -33,7 +33,7 @@ enum TFailCode
 
 static void usage();
 static sh::GLenum FindShaderType(const char *fileName);
-static bool CompileFile(char *fileName, ShHandle compiler, ShCompileOptions compileOptions);
+static bool CompileFile(char *fileName, ShHandle compiler, const ShCompileOptions &compileOptions);
 static void LogMsg(const char *msg, const char *name, const int num, const char *logName);
 static void PrintVariable(const std::string &prefix, size_t index, const sh::ShaderVariable &var);
 static void PrintActiveVariables(ShHandle compiler);
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 {
     TFailCode failCode = ESuccess;
 
-    ShCompileOptions compileOptions = 0;
+    ShCompileOptions compileOptions = {};
     int numCompiles                 = 0;
     ShHandle vertexCompiler         = 0;
     ShHandle fragmentCompiler       = 0;
@@ -105,13 +105,13 @@ int main(int argc, char *argv[])
             switch (argv[0][1])
             {
                 case 'i':
-                    compileOptions |= SH_INTERMEDIATE_TREE;
+                    compileOptions.intermediateTree = true;
                     break;
                 case 'o':
-                    compileOptions |= SH_OBJECT_CODE;
+                    compileOptions.objectCode = true;
                     break;
                 case 'u':
-                    compileOptions |= SH_VARIABLES;
+                    compileOptions.variables = true;
                     break;
                 case 's':
                     if (argv[0][2] == '=')
@@ -179,19 +179,19 @@ int main(int argc, char *argv[])
                         switch (argv[0][3])
                         {
                             case 'e':
-                                output = SH_ESSL_OUTPUT;
-                                compileOptions |= SH_INITIALIZE_UNINITIALIZED_LOCALS;
+                                output                                       = SH_ESSL_OUTPUT;
+                                compileOptions.initializeUninitializedLocals = true;
                                 break;
                             case 'g':
                                 if (!ParseGLSLOutputVersion(&argv[0][sizeof("-b=g") - 1], &output))
                                 {
                                     failCode = EFailUsage;
                                 }
-                                compileOptions |= SH_INITIALIZE_UNINITIALIZED_LOCALS;
+                                compileOptions.initializeUninitializedLocals = true;
                                 break;
                             case 'v':
                                 output = SH_SPIRV_VULKAN_OUTPUT;
-                                compileOptions |= SH_INITIALIZE_UNINITIALIZED_LOCALS;
+                                compileOptions.initializeUninitializedLocals = true;
                                 break;
                             case 'h':
                                 if (argv[0][4] == '1' && argv[0][5] == '1')
@@ -261,8 +261,8 @@ int main(int argc, char *argv[])
                       case 'm':
                           resources.OVR_multiview2 = 1;
                           resources.OVR_multiview = 1;
-                          compileOptions |= SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW;
-                          compileOptions |= SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER;
+                          compileOptions.initializeBuiltinsForInstancedMultiview = true;
+                          compileOptions.selectViewInNvGLSLVertexShader = true;
                           break;
                       case 'y': resources.EXT_YUV_target = 1; break;
                       case 's': resources.OES_sample_variables = 1; break;
@@ -332,7 +332,7 @@ int main(int argc, char *argv[])
                     case SH_HLSL_3_0_OUTPUT:
                     case SH_HLSL_4_1_OUTPUT:
                     case SH_HLSL_4_0_FL9_3_OUTPUT:
-                        compileOptions &= ~SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER;
+                        compileOptions.selectViewInNvGLSLVertexShader = false;
                         break;
                     default:
                         break;
@@ -346,7 +346,7 @@ int main(int argc, char *argv[])
                 LogMsg("END", "COMPILER", numCompiles, "INFO LOG");
                 printf("\n\n");
 
-                if (compiled && (compileOptions & SH_OBJECT_CODE))
+                if (compiled && compileOptions.objectCode)
                 {
                     LogMsg("BEGIN", "COMPILER", numCompiles, "OBJ CODE");
                     if (output != SH_SPIRV_VULKAN_OUTPUT)
@@ -362,7 +362,7 @@ int main(int argc, char *argv[])
                     LogMsg("END", "COMPILER", numCompiles, "OBJ CODE");
                     printf("\n\n");
                 }
-                if (compiled && (compileOptions & SH_VARIABLES))
+                if (compiled && compileOptions.variables)
                 {
                     LogMsg("BEGIN", "COMPILER", numCompiles, "VARIABLES");
                     PrintActiveVariables(compiler);
@@ -484,7 +484,7 @@ sh::GLenum FindShaderType(const char *fileName)
 //
 //   Read a file's data into a string, and compile it using sh::Compile
 //
-bool CompileFile(char *fileName, ShHandle compiler, ShCompileOptions compileOptions)
+bool CompileFile(char *fileName, ShHandle compiler, const ShCompileOptions &compileOptions)
 {
     ShaderSource source;
     if (!ReadShaderSource(fileName, source))

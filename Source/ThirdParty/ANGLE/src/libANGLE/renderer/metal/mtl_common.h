@@ -26,50 +26,16 @@
 #include "libANGLE/Version.h"
 #include "libANGLE/angletypes.h"
 
-#if TARGET_OS_IPHONE
-#    if !defined(__IPHONE_11_0)
-#        define __IPHONE_11_0 110000
-#    endif
-#    if !defined(ANGLE_IOS_DEPLOY_TARGET)
-#        define ANGLE_IOS_DEPLOY_TARGET __IPHONE_11_0
-#    endif
-#    if !defined(__IPHONE_OS_VERSION_MAX_ALLOWED)
-#        define __IPHONE_OS_VERSION_MAX_ALLOWED __IPHONE_11_0
-#    endif
-#    if !defined(__TV_OS_VERSION_MAX_ALLOWED)
-#        define __TV_OS_VERSION_MAX_ALLOWED __IPHONE_11_0
-#    endif
-#endif
-
-#if !defined(TARGET_OS_MACCATALYST)
-#    define TARGET_OS_MACCATALYST 0
-#endif
-
-#if defined(__ARM_ARCH)
-#    define ANGLE_MTL_ARM (__ARM_ARCH != 0)
-#else
-#    define ANGLE_MTL_ARM 0
-#endif
-
-#define ANGLE_MTL_OBJC_SCOPE @autoreleasepool
-
-#if !__has_feature(objc_arc)
-#    define ANGLE_MTL_AUTORELEASE autorelease
-#    define ANGLE_MTL_RETAIN retain
-#    define ANGLE_MTL_RELEASE release
-#else
-#    define ANGLE_MTL_AUTORELEASE self
-#    define ANGLE_MTL_RETAIN self
-#    define ANGLE_MTL_RELEASE self
-#endif
-
-#define ANGLE_MTL_UNUSED __attribute__((unused))
-
 #if defined(ANGLE_MTL_ENABLE_TRACE)
 #    define ANGLE_MTL_LOG(...) NSLog(@__VA_ARGS__)
 #else
 #    define ANGLE_MTL_LOG(...) (void)0
 #endif
+
+#define ANGLE_MTL_OBJC_SCOPE ANGLE_APPLE_OBJC_SCOPE
+#define ANGLE_MTL_AUTORELEASE ANGLE_APPLE_AUTORELEASE
+#define ANGLE_MTL_RETAIN ANGLE_APPLE_RETAIN
+#define ANGLE_MTL_RELEASE ANGLE_APPLE_RELEASE
 
 namespace egl
 {

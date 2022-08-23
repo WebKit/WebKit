@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2020 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -16,13 +16,26 @@ class Change_mock():
         return self.description_text
 
 
+class AffectedFile_mock():
+
+    def __init__(self, diff):
+        self.diff = diff
+
+    def GenerateScmDiff(self):
+        return self.diff
+
+
 class InputAPI_mock():
 
-    def __init__(self, description_text):
+    def __init__(self, description_text, source_files=[]):
         self.change = Change_mock(description_text)
+        self.source_files = source_files
 
     def PresubmitLocalPath(self):
         return self.cwd
+
+    def AffectedSourceFiles(self, source_filter):
+        return self.source_files
 
 
 class _PresubmitResult(object):

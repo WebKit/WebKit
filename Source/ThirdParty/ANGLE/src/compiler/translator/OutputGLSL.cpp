@@ -13,7 +13,7 @@ namespace sh
 
 TOutputGLSL::TOutputGLSL(TCompiler *compiler,
                          TInfoSinkBase &objSink,
-                         ShCompileOptions compileOptions)
+                         const ShCompileOptions &compileOptions)
     : TOutputGLSLBase(compiler, objSink, compileOptions)
 {}
 
@@ -67,7 +67,7 @@ ImmutableString TOutputGLSL::translateTextureFunction(const ImmutableString &nam
     // Check WEBGL_video_texture invocation first.
     if (name == "textureVideoWEBGL")
     {
-        if (option & SH_TAKE_VIDEO_TEXTURE_AS_EXTERNAL_OES)
+        if (option.takeVideoTextureAsExternalOES)
         {
             // TODO(http://anglebug.com/3889): Implement external image situation.
             UNIMPLEMENTED();
@@ -81,19 +81,19 @@ ImmutableString TOutputGLSL::translateTextureFunction(const ImmutableString &nam
     }
 
     static const char *simpleRename[]       = {"texture2DLodEXT",
-                                         "texture2DLod",
-                                         "texture2DProjLodEXT",
-                                         "texture2DProjLod",
-                                         "textureCubeLodEXT",
-                                         "textureCubeLod",
-                                         "texture2DGradEXT",
-                                         "texture2DGradARB",
-                                         "texture2DProjGradEXT",
-                                         "texture2DProjGradARB",
-                                         "textureCubeGradEXT",
-                                         "textureCubeGradARB",
-                                         nullptr,
-                                         nullptr};
+                                               "texture2DLod",
+                                               "texture2DProjLodEXT",
+                                               "texture2DProjLod",
+                                               "textureCubeLodEXT",
+                                               "textureCubeLod",
+                                               "texture2DGradEXT",
+                                               "texture2DGradARB",
+                                               "texture2DProjGradEXT",
+                                               "texture2DProjGradARB",
+                                               "textureCubeGradEXT",
+                                               "textureCubeGradARB",
+                                               nullptr,
+                                               nullptr};
     static const char *legacyToCoreRename[] = {
         "texture2D", "texture", "texture2DProj", "textureProj", "texture2DLod", "textureLod",
         "texture2DProjLod", "textureProjLod", "texture2DRect", "texture", "texture2DRectProj",

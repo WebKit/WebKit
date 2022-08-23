@@ -539,6 +539,89 @@ TEST_P(EGLLockSurface3Test, WindowSurfaceReadTest)
     OSWindow::Delete(&osWindow);
 }
 
+// Test default msaa surface resolve path.
+TEST_P(EGLLockSurface3Test, WindowMsaaSurfaceReadTest)
+{
+    ANGLE_SKIP_TEST_IF(!supportsLockSurface3Extension());
+
+    EGLint configAttribs[] = {EGL_RED_SIZE,
+                              8,
+                              EGL_GREEN_SIZE,
+                              8,
+                              EGL_BLUE_SIZE,
+                              8,
+                              EGL_ALPHA_SIZE,
+                              8,
+                              EGL_RENDERABLE_TYPE,
+                              (mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT),
+                              EGL_SAMPLE_BUFFERS,
+                              1,
+                              EGL_SAMPLES,
+                              4,
+                              EGL_SURFACE_TYPE,
+                              (EGL_WINDOW_BIT | EGL_LOCK_SURFACE_BIT_KHR),
+                              EGL_NONE};
+    EGLint count           = 0;
+    EGLConfig config       = EGL_NO_CONFIG_KHR;
+    EXPECT_EGL_TRUE(eglChooseConfig(mDisplay, configAttribs, &config, 1, &count));
+    ANGLE_SKIP_TEST_IF(config == EGL_NO_CONFIG_KHR);
+    EXPECT_GT(count, 0);
+
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("LockSurfaceTest", kWidth, kHeight);
+    EGLint winAttribs[] = {EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER, EGL_NONE};
+    EGLSurface windowSurface =
+        eglCreateWindowSurface(mDisplay, config, osWindow->getNativeWindow(), winAttribs);
+    EXPECT_NE(windowSurface, EGL_NO_SURFACE);
+
+    EGLint ctxAttribs[] = {EGL_CONTEXT_MAJOR_VERSION, mMajorVersion, EGL_NONE};
+    EGLContext context  = eglCreateContext(mDisplay, config, nullptr, ctxAttribs);
+    EXPECT_NE(context, EGL_NO_CONTEXT);
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, windowSurface, windowSurface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    glClearColor(kFloatGreen.R, kFloatGreen.G, kFloatGreen.B, kFloatGreen.A);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR() << "glClear failed";
+
+    const GLColor drawColor = GLColor::red;
+    GLuint texture          = createTexture();
+    EXPECT_TRUE(fillTexture(texture, drawColor));
+    renderTexture(texture);
+    eglSwapBuffers(mDisplay, windowSurface);
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+
+    EGLint lockAttribs[] = {EGL_LOCK_USAGE_HINT_KHR, EGL_READ_SURFACE_BIT_KHR,
+                            EGL_MAP_PRESERVE_PIXELS_KHR, EGL_TRUE, EGL_NONE};
+    EXPECT_EGL_TRUE(eglLockSurfaceKHR(mDisplay, windowSurface, lockAttribs));
+
+    EGLAttribKHR bitMap = 0;
+    EXPECT_EGL_TRUE(eglQuerySurface64KHR(mDisplay, windowSurface, EGL_BITMAP_POINTER_KHR, &bitMap));
+    EGLAttribKHR bitMapPitch = 0;
+    EXPECT_EGL_TRUE(
+        eglQuerySurface64KHR(mDisplay, windowSurface, EGL_BITMAP_PITCH_KHR, &bitMapPitch));
+
+    uint32_t *bitMapPtr = (uint32_t *)(bitMap);
+    EXPECT_TRUE(checkBitMapRGBA32(drawColor, bitMapPtr, bitMapPitch));
+
+    EXPECT_TRUE(eglUnlockSurfaceKHR(mDisplay, windowSurface));
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, windowSurface, windowSurface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+    EXPECT_TRUE(checkSurfaceRGBA32(drawColor));
+    EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, windowSurface));
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+
+    glDeleteTextures(1, &texture);
+
+    eglDestroySurface(mDisplay, windowSurface);
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+}
+
 // Create WindowSurface, Lock surface, Write pixels red, Unlock, check pixels,
 //  then swapbuffers to visually check.
 TEST_P(EGLLockSurface3Test, WindowSurfaceWritePreserveTest)

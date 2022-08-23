@@ -568,6 +568,8 @@ void State::initialize(Context *context)
         context->getLimitations().noSimultaneousConstantColorAndAlphaBlendFunc ||
         context->getExtensions().webglCompatibilityANGLE;
 
+    mNoUnclampedBlendColor = context->getLimitations().noUnclampedBlendColor;
+
     // GLES1 emulation: Initialize state for GLES1 if version applies
     // TODO(http://anglebug.com/3745): When on desktop client only do this in compatibility profile
     if (clientVersion < Version(2, 0) || mClientType == EGL_OPENGL_API)
@@ -990,7 +992,7 @@ void State::setBlendColor(float red, float green, float blue, float alpha)
     const bool hasFloatBlending =
         mExtensions.colorBufferFloatEXT || mExtensions.colorBufferHalfFloatEXT ||
         mExtensions.colorBufferFloatRgbCHROMIUM || mExtensions.colorBufferFloatRgbaCHROMIUM;
-    if (isES2 && !hasFloatBlending)
+    if ((isES2 && !hasFloatBlending) || mNoUnclampedBlendColor)
     {
         red   = clamp01(red);
         green = clamp01(green);

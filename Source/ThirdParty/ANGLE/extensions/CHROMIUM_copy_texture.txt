@@ -178,35 +178,40 @@ Additions to the OpenGL ES 2.0 Specification
 
         <internalFormat>
         ---------------
-        RGB
-        RGBA
-        RGB8
-        RGBA8
-        BGRA_EXT
+        ALPHA
         BGRA8_EXT
-        SRGB_EXT
-        SRGB_ALPHA_EXT
-        R8
-        R8UI
-        RG8
-        RG8UI
-        SRGB8
-        RGB565
-        RGB8UI
-        SRGB8_ALPHA8
-        RGB5_A1
-        RGBA4
-        RGBA8UI
-        RGB9_E5
+        BGRA_EXT
+        LUMINANCE
+        LUMINANCE_ALPHA
+        R11F_G11F_B10F
         R16F
         R32F
+        R8
+        R8UI
         RG16F
         RG32F
+        RG8
+        RG8UI
+        RGB
+        RGB10_A2
         RGB16F
         RGB32F
+        RGB565
+        RGB5_A1
+        RGB8
+        RGB8UI
+        RGB9_E5
+        RGBA
         RGBA16F
         RGBA32F
-        R11F_G11F_B10F
+        RGBA4
+        RGBA8
+        RGBA8UI
+        RGBX8_ANGLE
+        SRGB8
+        SRGB8_ALPHA8
+        SRGB_ALPHA_EXT
+        SRGB_EXT
 
     Table 1.1 Valid source texture internal formats for CopyTextureCHROMIUM and
     source and destination formats for CopySubTextureCHROMIUM:

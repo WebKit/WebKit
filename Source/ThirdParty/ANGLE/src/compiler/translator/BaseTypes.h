@@ -1364,7 +1364,8 @@ struct TLayoutQualifier
                invocations == 0 && maxVertices == -1 && vertices == 0 &&
                tesPrimitiveType == EtetUndefined && tesVertexSpacingType == EtetUndefined &&
                tesOrderingType == EtetUndefined && tesPointType == EtetUndefined && index == -1 &&
-               inputAttachmentIndex == -1 && noncoherent == false && !advancedBlendEquations.any();
+               inputAttachmentIndex == -1 && noncoherent == false &&
+               !advancedBlendEquations.any() && !pushConstant;
     }
 
     bool isCombinationValid() const
@@ -1404,6 +1405,8 @@ struct TLayoutQualifier
 
     int binding;
     int offset;
+
+    bool pushConstant;
 
     // Image format layout qualifier
     TLayoutImageInternalFormat imageInternalFormat;
@@ -1448,6 +1451,7 @@ struct TLayoutQualifier
           localSize(-1),
           binding(-1),
           offset(-1),
+          pushConstant(false),
           imageInternalFormat(EiifUnspecified),
           numViews(-1),
           yuv(false),

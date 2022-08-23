@@ -1,3 +1,18 @@
+diff --git a/src/common/apple_platform_utils.mm b/src/common/apple_platform_utils.mm
+index a9757cbb72b7c75f155a1cfedd84a2e98120b564..eebe70cdcc3e1db0d7922f083ae9287b3c0cb16d 100644
+--- a/src/common/apple_platform_utils.mm
++++ b/src/common/apple_platform_utils.mm
+@@ -67,6 +67,10 @@ bool IsMetalRendererAvailable()
+                     if ([device supportsFeatureSet:static_cast<MTLFeatureSet>(iosFamily3v1)])
+                         gpuFamilySufficient = true;
+                 }
++#elif defined(ANGLE_PLATFORM_IOS) && TARGET_OS_SIMULATOR
++                // FIXME: Currently we do not have good simulator query, as it does not support
++                // the whole feature set needed for iOS.
++                gpuFamilySufficient = true;
+ #endif
+             }
+         }
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
 index 6fa028f23f1473e358cbe6e1a8e39cbb98d20cb8..d576ef22114e0d3af42c74dc1bd5e6614d09846c 100644
 --- a/src/common/utilities.cpp
@@ -42,19 +57,6 @@ index 497ef881e2d9cf0efb669ca8c7c4f2669633baba..47213c90497c8c9d8f76baf0653fdbc3
  
  #ifdef ANGLE_ENABLE_METAL_SPIRV
  #    include "compiler/translator/TranslatorMetal.h"
-diff --git a/src/compiler/translator/IntermNode.cpp b/src/compiler/translator/IntermNode.cpp
-index f0adb8ee04c126e373d168b598a86863ebe32dfb..cee7d294c43475baf0e3d33ef82ebbd74ee10a59 100644
---- a/src/compiler/translator/IntermNode.cpp
-+++ b/src/compiler/translator/IntermNode.cpp
-@@ -1605,7 +1605,7 @@ TIntermLoop::TIntermLoop(const TIntermLoop &node)
-                   node.mInit ? node.mInit->deepCopy() : nullptr,
-                   node.mCond ? node.mCond->deepCopy() : nullptr,
-                   node.mExpr ? node.mExpr->deepCopy() : nullptr,
--                  node.mBody->deepCopy())
-+                  node.mBody ? node.mBody->deepCopy() : nullptr)
- {}
- 
- TIntermIfElse::TIntermIfElse(TIntermTyped *cond, TIntermBlock *trueB, TIntermBlock *falseB)
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
 index 5aacebed5475c819b35072b110cf71d3ba152050..d75a99cb07583ae874e39d61323ef91e654b4fd7 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
@@ -126,7 +128,7 @@ index 648c7190a9382f0ce020839322fae56acfbe40db..9ddc681d320550b171a2916cac8e9a4b
  {
  
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index feb3fa45ed7bdae995e301308508f5d41de54ff5..5499be7a9f74a756e301baa119c04340d42c855f 100644
+index 781e3e550b3b7a2b08b20c6c1cddf365f84b7bfb..69076ed40dfc6aa996009c46fdb4f521154f521e 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -173,7 +175,7 @@ index ce9c26e401ffd4fa59eb8308a5210998970bec8c..dcaa142fc2a5e0d45ddf7e8fcaac14bb
                                                                  uint32_t bufferIndex) const;
  
 diff --git a/src/libANGLE/renderer/glslang_wrapper_utils.h b/src/libANGLE/renderer/glslang_wrapper_utils.h
-index 4d685470a3f8c0754e9cf478e6042b38617d2f70..529c72d7fdeac46421a37db829a173aa91c1065b 100644
+index 448f08e7b51791fe83a35b0d756bafe15a6cf54a..d3d7669beaa1e3adee795ba3f9cb10b0bce30af4 100644
 --- a/src/libANGLE/renderer/glslang_wrapper_utils.h
 +++ b/src/libANGLE/renderer/glslang_wrapper_utils.h
 @@ -156,7 +156,7 @@ void GlslangAssignTransformFeedbackLocations(gl::ShaderType shaderType,
@@ -183,9 +185,9 @@ index 4d685470a3f8c0754e9cf478e6042b38617d2f70..529c72d7fdeac46421a37db829a173aa
 -
 +#if ANGLE_ENABLE_METAL_SPIRV
  // Retrieves the compiled SPIR-V code for each shader stage, and calls |GlslangAssignLocations|.
- void GlslangGetShaderSpirvCode(const GlslangSourceOptions &options,
-                                const gl::ProgramState &programState,
-@@ -169,6 +169,7 @@ angle::Result GlslangTransformSpirvCode(const GlslangSpirvOptions &options,
+ void GlslangGetShaderSpirvCode(const gl::Context *context,
+                                const GlslangSourceOptions &options,
+@@ -170,6 +170,7 @@ angle::Result GlslangTransformSpirvCode(const GlslangSpirvOptions &options,
                                          const ShaderInterfaceVariableInfoMap &variableInfoMap,
                                          const angle::spirv::Blob &initialSpirvBlob,
                                          angle::spirv::Blob *spirvBlobOut);
@@ -216,10 +218,10 @@ index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2
                  maxBuffers = 10;
                  mBufferPool.setAlwaysUseSharedMem();
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 4af875e23275bb98e69a3644be4c7f41a7e5c11c..7d722dc9cb89ec148d33cf69fc8b00fa9a7ad7bc 100644
+index 7a42a4dfa032925c449039fb74d25820c9811970..85d8475ecb729c47d7e1c22cd1fa3592e74c60b8 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1258,8 +1258,7 @@ bool IsMetalDisplayAvailable()
+@@ -1245,8 +1245,7 @@ bool IsMetalDisplayAvailable()
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -230,7 +232,7 @@ index 4af875e23275bb98e69a3644be4c7f41a7e5c11c..7d722dc9cb89ec148d33cf69fc8b00fa
      {
          return [mMetalDevice supports32BitFloatFiltering];
 diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
-index 3032feb4fc1fb7761e2e3127c75ebf10cf5fe2b8..696df7dd99727e3220b219e93605c4a67c27553a 100644
+index 28be9fe2a99431a834f0a7d701f6315fb2f5feb0..b88e1604660e85b808509fb71ead8159c8098c0f 100644
 --- a/src/libANGLE/renderer/metal/ProgramMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
 @@ -173,7 +173,7 @@ void InitArgumentBufferEncoder(mtl::Context *context,

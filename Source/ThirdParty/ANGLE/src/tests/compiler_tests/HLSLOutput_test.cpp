@@ -18,19 +18,19 @@ using namespace sh;
 class HLSLOutputTest : public MatchOutputCodeTest
 {
   public:
-    HLSLOutputTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, 0, SH_HLSL_4_1_OUTPUT) {}
+    HLSLOutputTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_HLSL_4_1_OUTPUT) {}
 };
 
 class HLSL30VertexOutputTest : public MatchOutputCodeTest
 {
   public:
-    HLSL30VertexOutputTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, 0, SH_HLSL_3_0_OUTPUT) {}
+    HLSL30VertexOutputTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_HLSL_3_0_OUTPUT) {}
 };
 
 class HLSL41VertexOutputTest : public MatchOutputCodeTest
 {
   public:
-    HLSL41VertexOutputTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, 0, SH_HLSL_4_1_OUTPUT) {}
+    HLSL41VertexOutputTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_HLSL_4_1_OUTPUT) {}
 };
 
 // Test that having dynamic indexing of a vector inside the right hand side of logical or doesn't

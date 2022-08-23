@@ -22,7 +22,8 @@ namespace mtl
 {
 
 // spirvBlobsOut is the SPIR-V code per shader stage.
-void GlslangGetShaderSpirvCode(const gl::ProgramState &programState,
+void GlslangGetShaderSpirvCode(const gl::Context *context,
+                               const gl::ProgramState &programState,
                                const gl::ProgramLinkedResources &resources,
                                gl::ShaderMap<const angle::spirv::Blob *> *spirvBlobsOut,
                                ShaderInterfaceVariableInfoMap *variableInfoMapOut,

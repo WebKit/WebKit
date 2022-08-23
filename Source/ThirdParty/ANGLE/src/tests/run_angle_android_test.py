@@ -42,9 +42,10 @@ def main():
 
     logging.basicConfig(level=args.log.upper())
 
-    android_helper.PrepareTestSuite(args.suite)
+    android_helper.Initialize(args.suite)
+    assert android_helper.IsAndroid()
 
-    tests = android_helper.ListTests()
+    tests = android_helper.ListTests(args.suite)
     if args.filter:
         tests = [test for test in tests if fnmatch.fnmatch(test, args.filter)]
 
@@ -58,7 +59,7 @@ def main():
         android_helper.PrepareRestrictedTraces(traces, check_hash=True)
 
     flags = ['--gtest_filter=' + args.filter] if args.filter else []
-    return android_helper.RunTests(flags + extra_flags)[0]
+    return android_helper.RunTests(args.suite, flags + extra_flags)[0]
 
 
 if __name__ == '__main__':

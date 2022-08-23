@@ -22,7 +22,7 @@ class SpecConst;
 class DriverUniform;
 
 [[nodiscard]] bool EmulateDithering(TCompiler *compiler,
-                                    ShCompileOptions compileOptions,
+                                    const ShCompileOptions &compileOptions,
                                     TIntermBlock *root,
                                     TSymbolTable *symbolTable,
                                     SpecConst *specConst,

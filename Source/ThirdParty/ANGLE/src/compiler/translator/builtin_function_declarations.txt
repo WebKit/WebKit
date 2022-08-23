@@ -19,8 +19,8 @@
 //
 //   Supported function metadata properties are:
 //     "essl_level"
-//         string, one of COMMON_BUILTINS, ESSL1_BUILTINS, ESSL3_BUILTINS and ESSL3_1_BUILTINS,
-//         ESSL3_2_BUILTINS.
+//         string, one of COMMON_BUILTINS, ESSL1_BUILTINS, ESSL3_BUILTINS, ESSL3_1_BUILTINS,
+//         ESSL3_2_BUILTINS, ESSL_INTERNAL_BACKEND_BUILTINS.
 //     "glsl_level"
 //         string, one of COMMON_BUILTINS, COMMON_BUILTINS, GLSL1_2_BUILTINS, GLSL1_3_BUILTINS,
 //         GLSL1_4_BUILTINS, GLSL1_5_BUILTINS, GLSL3_3_BUILTINS, GLSL4_BUILTINS, GLSL4_1_BUILTINS,
@@ -1156,6 +1156,17 @@ GROUP BEGIN PixelLocal {"queryFunction": true}
     GROUP END Store
 GROUP END PixelLocal
 
+// Desktop GLSL-only fragment synchronization functions. These are injected internally by the
+// compiler to make pixel local storage coherent.
+GROUP BEGIN FragmentSynchronization
+  DEFAULT METADATA {"essl_level": "ESSL_INTERNAL_BACKEND_BUILTINS", "hasSideEffects": "true"}
+    void beginInvocationInterlockNV();
+    void endInvocationInterlockNV();
+    void beginFragmentShaderOrderingINTEL();
+    void beginInvocationInterlockARB();
+    void endInvocationInterlockARB();
+GROUP END FragmentSynchronization
+
 GROUP BEGIN Noise
   DEFAULT METADATA {"glsl_level": "COMMON_BUILTINS", "hasSideEffects": "true"}
     float noise1(genType);
@@ -1199,7 +1210,7 @@ GROUP BEGIN GS {"shader_type": "GEOMETRY"}
 GROUP END GS
 
 GROUP BEGIN SubpassInput
-  DEFAULT METADATA {"glsl_level": "GLSL4_6_BUILTINS", "essl_level": "ESSL_VULKAN_BUILTINS", "hasSideEffects": "true"}
+  DEFAULT METADATA {"glsl_level": "GLSL4_6_BUILTINS", "essl_level": "ESSL_INTERNAL_BACKEND_BUILTINS", "hasSideEffects": "true"}
     gvec4 subpassLoad(gsubpassInput);
     gvec4 subpassLoad(gsubpassInputMS, int);
 GROUP END SubpassInput

@@ -3947,6 +3947,39 @@ TEST_P(FramebufferTest, BindAndDrawDifferentSizedFBOs)
     EXPECT_PIXEL_RECT_EQ(0, 0, kLargeWidth, kLargeHeight, GLColor::blue);
 }
 
+// Test FBOs with same attachments. Destroy one framebuffer should not affect the other framebuffer
+// (chromium:1351170).
+TEST_P(FramebufferTest_ES3, TwoFramebuffersWithSameAttachments)
+{
+    ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    glUseProgram(redProgram);
+
+    GLRenderbuffer rb;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 1, 1);
+
+    GLuint fbs[2];
+    glGenFramebuffers(2, fbs);
+    // Create fbos[0]
+    glBindFramebuffer(GL_FRAMEBUFFER, fbs[0]);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    const GLenum colorAttachment0 = {GL_COLOR_ATTACHMENT0};
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, &colorAttachment0);
+    // Create fbos[1] with same attachment as fbos[0]
+    glBindFramebuffer(GL_FRAMEBUFFER, fbs[1]);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, &colorAttachment0);
+    // Destroy fbos[0]
+    glDeleteFramebuffers(1, &fbs[0]);
+    // fbos[1] should still work, not crash.
+    GLuint data;
+    glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &data);
+    drawQuad(redProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Regression test based on a fuzzer failure.  A crash was encountered in the following situation:
 //
 // - Texture bound as sampler with MAX_LEVEL 0

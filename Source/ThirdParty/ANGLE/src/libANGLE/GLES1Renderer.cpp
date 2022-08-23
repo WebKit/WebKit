@@ -560,11 +560,11 @@ angle::Result GLES1Renderer::compileShader(Context *context,
 
     *shaderOut = shader;
 
-    if (!shaderObject->isCompiled())
+    if (!shaderObject->isCompiled(context))
     {
-        GLint infoLogLength = shaderObject->getInfoLogLength();
+        GLint infoLogLength = shaderObject->getInfoLogLength(context);
         std::vector<char> infoLog(infoLogLength, 0);
-        shaderObject->getInfoLog(infoLogLength - 1, nullptr, infoLog.data());
+        shaderObject->getInfoLog(context, infoLogLength - 1, nullptr, infoLog.data());
 
         ERR() << "Internal GLES 1 shader compile failed. Info log: " << infoLog.data();
         ANGLE_CHECK(context, false, "GLES1Renderer shader compile failed.", GL_INVALID_OPERATION);

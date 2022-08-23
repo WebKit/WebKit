@@ -238,7 +238,6 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
 
         {
             ANGLE_TRACE_EVENT1("gpu.angle", "D3DCompile", "source", hlsl);
-            SCOPED_ANGLE_HISTOGRAM_TIMER("GPU.ANGLE.D3DCompileMS");
             result = mD3DCompileFunc(hlsl.c_str(), hlsl.length(), gl::g_fakepath, macros, nullptr,
                                      "main", profile.c_str(), configs[i].flags, 0, &binary,
                                      &errorMessage);

@@ -106,6 +106,7 @@ TEST_P(FormatPrintTest, PrintAllSupportedFormats)
 }
 
 ANGLE_INSTANTIATE_TEST(FormatPrintTest, ES2_VULKAN(), ES3_VULKAN());
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FormatPrintTest);
 
 }  // anonymous namespace
 

@@ -104,6 +104,11 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
     virtual egl::Error waitNative(const gl::Context *context, EGLint engine) = 0;
     virtual gl::Version getMaxSupportedESVersion() const                     = 0;
     virtual gl::Version getMaxConformantESVersion() const                    = 0;
+    gl::Version getMaxSupportedDesktopVersion() const
+    {
+        // TODO(eddiehatfield): We should make this virtual and implement for all backends.
+        return {4, 6};
+    }
     const egl::Caps &getCaps() const;
 
     virtual void setBlobCacheFuncs(EGLSetBlobFuncANDROID set, EGLGetBlobFuncANDROID get) {}

@@ -8,7 +8,7 @@
 // entry_points_gl_1_autogen.cpp:
 //   Defines the Desktop GL 1.x entry points.
 
-#include "libGL/entry_points_gl_1_autogen.h"
+#include "libGLESv2/entry_points_gl_1_autogen.h"
 
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
@@ -46,31 +46,6 @@ void GL_APIENTRY GL_Accum(GLenum op, GLfloat value)
             context->accum(op, value);
         }
         ANGLE_CAPTURE_GL(Accum, isCallValid, context, op, value);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_AlphaFunc(GLenum func, GLfloat ref)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLAlphaFunc, "context = %d, func = %s, ref = %f", CID(context),
-          GLenumToString(GLenumGroup::AlphaFunction, func), ref);
-
-    if (context)
-    {
-        AlphaTestFunc funcPacked = PackParam<AlphaTestFunc>(func);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateAlphaFunc(context, angle::EntryPoint::GLAlphaFunc, funcPacked, ref));
-        if (isCallValid)
-        {
-            context->alphaFunc(funcPacked, ref);
-        }
-        ANGLE_CAPTURE_GL(AlphaFunc, isCallValid, context, funcPacked, ref);
     }
     else
     {
@@ -134,31 +109,6 @@ void GL_APIENTRY GL_Bitmap(GLsizei width,
     }
 }
 
-void GL_APIENTRY GL_BlendFunc(GLenum sfactor, GLenum dfactor)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLBlendFunc, "context = %d, sfactor = %s, dfactor = %s", CID(context),
-          GLenumToString(GLenumGroup::BlendingFactor, sfactor),
-          GLenumToString(GLenumGroup::BlendingFactor, dfactor));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateBlendFunc(context, angle::EntryPoint::GLBlendFunc, sfactor, dfactor));
-        if (isCallValid)
-        {
-            context->blendFunc(sfactor, dfactor);
-        }
-        ANGLE_CAPTURE_GL(BlendFunc, isCallValid, context, sfactor, dfactor);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_CallList(GLuint list)
 {
     Context *context = GetValidGlobalContext();
@@ -205,29 +155,6 @@ void GL_APIENTRY GL_CallLists(GLsizei n, GLenum type, const void *lists)
     }
 }
 
-void GL_APIENTRY GL_Clear(GLbitfield mask)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLClear, "context = %d, mask = %s", CID(context),
-          GLbitfieldToString(GLenumGroup::ClearBufferMask, mask).c_str());
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() || ValidateClear(context, angle::EntryPoint::GLClear, mask));
-        if (isCallValid)
-        {
-            context->clear(mask);
-        }
-        ANGLE_CAPTURE_GL(Clear, isCallValid, context, mask);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_ClearAccum(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 {
     Context *context = GetValidGlobalContext();
@@ -245,30 +172,6 @@ void GL_APIENTRY GL_ClearAccum(GLfloat red, GLfloat green, GLfloat blue, GLfloat
             context->clearAccum(red, green, blue, alpha);
         }
         ANGLE_CAPTURE_GL(ClearAccum, isCallValid, context, red, green, blue, alpha);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_ClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLClearColor, "context = %d, red = %f, green = %f, blue = %f, alpha = %f",
-          CID(context), red, green, blue, alpha);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateClearColor(context, angle::EntryPoint::GLClearColor, red, green, blue, alpha));
-        if (isCallValid)
-        {
-            context->clearColor(red, green, blue, alpha);
-        }
-        ANGLE_CAPTURE_GL(ClearColor, isCallValid, context, red, green, blue, alpha);
     }
     else
     {
@@ -313,28 +216,6 @@ void GL_APIENTRY GL_ClearIndex(GLfloat c)
             context->clearIndex(c);
         }
         ANGLE_CAPTURE_GL(ClearIndex, isCallValid, context, c);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_ClearStencil(GLint s)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLClearStencil, "context = %d, s = %d", CID(context), s);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateClearStencil(context, angle::EntryPoint::GLClearStencil, s));
-        if (isCallValid)
-        {
-            context->clearStencil(s);
-        }
-        ANGLE_CAPTURE_GL(ClearStencil, isCallValid, context, s);
     }
     else
     {
@@ -826,30 +707,6 @@ void GL_APIENTRY GL_Color4dv(const GLdouble *v)
     }
 }
 
-void GL_APIENTRY GL_Color4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLColor4f, "context = %d, red = %f, green = %f, blue = %f, alpha = %f",
-          CID(context), red, green, blue, alpha);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateColor4f(context, angle::EntryPoint::GLColor4f, red, green, blue, alpha));
-        if (isCallValid)
-        {
-            context->color4f(red, green, blue, alpha);
-        }
-        ANGLE_CAPTURE_GL(Color4f, isCallValid, context, red, green, blue, alpha);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_Color4fv(const GLfloat *v)
 {
     Context *context = GetValidGlobalContext();
@@ -957,30 +814,6 @@ void GL_APIENTRY GL_Color4sv(const GLshort *v)
             context->color4sv(v);
         }
         ANGLE_CAPTURE_GL(Color4sv, isCallValid, context, v);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Color4ub(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLColor4ub, "context = %d, red = %d, green = %d, blue = %d, alpha = %d",
-          CID(context), red, green, blue, alpha);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateColor4ub(context, angle::EntryPoint::GLColor4ub, red, green, blue, alpha));
-        if (isCallValid)
-        {
-            context->color4ub(red, green, blue, alpha);
-        }
-        ANGLE_CAPTURE_GL(Color4ub, isCallValid, context, red, green, blue, alpha);
     }
     else
     {
@@ -1102,31 +935,6 @@ void GL_APIENTRY GL_Color4usv(const GLushort *v)
     }
 }
 
-void GL_APIENTRY GL_ColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLColorMask, "context = %d, red = %s, green = %s, blue = %s, alpha = %s",
-          CID(context), GLbooleanToString(red), GLbooleanToString(green), GLbooleanToString(blue),
-          GLbooleanToString(alpha));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateColorMask(context, angle::EntryPoint::GLColorMask, red, green, blue, alpha));
-        if (isCallValid)
-        {
-            context->colorMask(red, green, blue, alpha);
-        }
-        ANGLE_CAPTURE_GL(ColorMask, isCallValid, context, red, green, blue, alpha);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_ColorMaterial(GLenum face, GLenum mode)
 {
     Context *context = GetValidGlobalContext();
@@ -1176,30 +984,6 @@ void GL_APIENTRY GL_CopyPixels(GLint x, GLint y, GLsizei width, GLsizei height, 
     }
 }
 
-void GL_APIENTRY GL_CullFace(GLenum mode)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLCullFace, "context = %d, mode = %s", CID(context),
-          GLenumToString(GLenumGroup::CullFaceMode, mode));
-
-    if (context)
-    {
-        CullFaceMode modePacked = PackParam<CullFaceMode>(mode);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateCullFace(context, angle::EntryPoint::GLCullFace, modePacked));
-        if (isCallValid)
-        {
-            context->cullFace(modePacked);
-        }
-        ANGLE_CAPTURE_GL(CullFace, isCallValid, context, modePacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_DeleteLists(GLuint list, GLsizei range)
 {
     Context *context = GetValidGlobalContext();
@@ -1223,51 +1007,6 @@ void GL_APIENTRY GL_DeleteLists(GLuint list, GLsizei range)
     }
 }
 
-void GL_APIENTRY GL_DepthFunc(GLenum func)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLDepthFunc, "context = %d, func = %s", CID(context),
-          GLenumToString(GLenumGroup::DepthFunction, func));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateDepthFunc(context, angle::EntryPoint::GLDepthFunc, func));
-        if (isCallValid)
-        {
-            context->depthFunc(func);
-        }
-        ANGLE_CAPTURE_GL(DepthFunc, isCallValid, context, func);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_DepthMask(GLboolean flag)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLDepthMask, "context = %d, flag = %s", CID(context), GLbooleanToString(flag));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateDepthMask(context, angle::EntryPoint::GLDepthMask, flag));
-        if (isCallValid)
-        {
-            context->depthMask(flag);
-        }
-        ANGLE_CAPTURE_GL(DepthMask, isCallValid, context, flag);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_DepthRange(GLdouble n, GLdouble f)
 {
     Context *context = GetValidGlobalContext();
@@ -1283,29 +1022,6 @@ void GL_APIENTRY GL_DepthRange(GLdouble n, GLdouble f)
             context->depthRange(n, f);
         }
         ANGLE_CAPTURE_GL(DepthRange, isCallValid, context, n, f);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Disable(GLenum cap)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLDisable, "context = %d, cap = %s", CID(context),
-          GLenumToString(GLenumGroup::EnableCap, cap));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateDisable(context, angle::EntryPoint::GLDisable, cap));
-        if (isCallValid)
-        {
-            context->disable(cap);
-        }
-        ANGLE_CAPTURE_GL(Disable, isCallValid, context, cap);
     }
     else
     {
@@ -1402,29 +1118,6 @@ void GL_APIENTRY GL_EdgeFlagv(const GLboolean *flag)
             context->edgeFlagv(flag);
         }
         ANGLE_CAPTURE_GL(EdgeFlagv, isCallValid, context, flag);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Enable(GLenum cap)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLEnable, "context = %d, cap = %s", CID(context),
-          GLenumToString(GLenumGroup::EnableCap, cap));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateEnable(context, angle::EntryPoint::GLEnable, cap));
-        if (isCallValid)
-        {
-            context->enable(cap);
-        }
-        ANGLE_CAPTURE_GL(Enable, isCallValid, context, cap);
     }
     else
     {
@@ -1773,96 +1466,6 @@ void GL_APIENTRY GL_FeedbackBuffer(GLsizei size, GLenum type, GLfloat *buffer)
     }
 }
 
-void GL_APIENTRY GL_Finish()
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLFinish, "context = %d", CID(context));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() || ValidateFinish(context, angle::EntryPoint::GLFinish));
-        if (isCallValid)
-        {
-            context->finish();
-        }
-        ANGLE_CAPTURE_GL(Finish, isCallValid, context);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Flush()
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLFlush, "context = %d", CID(context));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() || ValidateFlush(context, angle::EntryPoint::GLFlush));
-        if (isCallValid)
-        {
-            context->flush();
-        }
-        ANGLE_CAPTURE_GL(Flush, isCallValid, context);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Fogf(GLenum pname, GLfloat param)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLFogf, "context = %d, pname = %s, param = %f", CID(context),
-          GLenumToString(GLenumGroup::FogParameter, pname), param);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateFogf(context, angle::EntryPoint::GLFogf, pname, param));
-        if (isCallValid)
-        {
-            context->fogf(pname, param);
-        }
-        ANGLE_CAPTURE_GL(Fogf, isCallValid, context, pname, param);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Fogfv(GLenum pname, const GLfloat *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLFogfv, "context = %d, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::FogParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateFogfv(context, angle::EntryPoint::GLFogfv, pname, params));
-        if (isCallValid)
-        {
-            context->fogfv(pname, params);
-        }
-        ANGLE_CAPTURE_GL(Fogfv, isCallValid, context, pname, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_Fogi(GLenum pname, GLint param)
 {
     Context *context = GetValidGlobalContext();
@@ -1902,29 +1505,6 @@ void GL_APIENTRY GL_Fogiv(GLenum pname, const GLint *params)
             context->fogiv(pname, params);
         }
         ANGLE_CAPTURE_GL(Fogiv, isCallValid, context, pname, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_FrontFace(GLenum mode)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLFrontFace, "context = %d, mode = %s", CID(context),
-          GLenumToString(GLenumGroup::FrontFaceDirection, mode));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateFrontFace(context, angle::EntryPoint::GLFrontFace, mode));
-        if (isCallValid)
-        {
-            context->frontFace(mode);
-        }
-        ANGLE_CAPTURE_GL(FrontFace, isCallValid, context, mode);
     }
     else
     {
@@ -1991,30 +1571,6 @@ GLuint GL_APIENTRY GL_GenLists(GLsizei range)
     return returnValue;
 }
 
-void GL_APIENTRY GL_GetBooleanv(GLenum pname, GLboolean *data)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetBooleanv, "context = %d, pname = %s, data = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::GetPName, pname), (uintptr_t)data);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGetBooleanv(context, angle::EntryPoint::GLGetBooleanv, pname, data));
-        if (isCallValid)
-        {
-            context->getBooleanv(pname, data);
-        }
-        ANGLE_CAPTURE_GL(GetBooleanv, isCallValid, context, pname, data);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_GetClipPlane(GLenum plane, GLdouble *equation)
 {
     Context *context = GetValidGlobalContext();
@@ -2056,109 +1612,6 @@ void GL_APIENTRY GL_GetDoublev(GLenum pname, GLdouble *data)
             context->getDoublev(pname, data);
         }
         ANGLE_CAPTURE_GL(GetDoublev, isCallValid, context, pname, data);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-GLenum GL_APIENTRY GL_GetError()
-{
-    Context *context = GetGlobalContext();
-    EVENT(context, GLGetError, "context = %d", CID(context));
-
-    GLenum returnValue;
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() || ValidateGetError(context, angle::EntryPoint::GLGetError));
-        if (isCallValid)
-        {
-            returnValue = context->getError();
-        }
-        else
-        {
-            returnValue = GetDefaultReturnValue<angle::EntryPoint::GLGetError, GLenum>();
-        }
-        ANGLE_CAPTURE_GL(GetError, isCallValid, context, returnValue);
-    }
-    else
-    {
-
-        returnValue = GetDefaultReturnValue<angle::EntryPoint::GLGetError, GLenum>();
-    }
-    return returnValue;
-}
-
-void GL_APIENTRY GL_GetFloatv(GLenum pname, GLfloat *data)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetFloatv, "context = %d, pname = %s, data = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::GetPName, pname), (uintptr_t)data);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGetFloatv(context, angle::EntryPoint::GLGetFloatv, pname, data));
-        if (isCallValid)
-        {
-            context->getFloatv(pname, data);
-        }
-        ANGLE_CAPTURE_GL(GetFloatv, isCallValid, context, pname, data);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GetIntegerv(GLenum pname, GLint *data)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetIntegerv, "context = %d, pname = %s, data = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::GetPName, pname), (uintptr_t)data);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGetIntegerv(context, angle::EntryPoint::GLGetIntegerv, pname, data));
-        if (isCallValid)
-        {
-            context->getIntegerv(pname, data);
-        }
-        ANGLE_CAPTURE_GL(GetIntegerv, isCallValid, context, pname, data);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GetLightfv(GLenum light, GLenum pname, GLfloat *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetLightfv, "context = %d, light = %s, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::LightName, light),
-          GLenumToString(GLenumGroup::LightParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        LightParameter pnamePacked = PackParam<LightParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateGetLightfv(context, angle::EntryPoint::GLGetLightfv, light,
-                                               pnamePacked, params));
-        if (isCallValid)
-        {
-            context->getLightfv(light, pnamePacked, params);
-        }
-        ANGLE_CAPTURE_GL(GetLightfv, isCallValid, context, light, pnamePacked, params);
     }
     else
     {
@@ -2259,33 +1712,6 @@ void GL_APIENTRY GL_GetMapiv(GLenum target, GLenum query, GLint *v)
             context->getMapiv(target, query, v);
         }
         ANGLE_CAPTURE_GL(GetMapiv, isCallValid, context, target, query, v);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GetMaterialfv(GLenum face, GLenum pname, GLfloat *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetMaterialfv,
-          "context = %d, face = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::MaterialFace, face),
-          GLenumToString(GLenumGroup::MaterialParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        MaterialParameter pnamePacked = PackParam<MaterialParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateGetMaterialfv(context, angle::EntryPoint::GLGetMaterialfv, face,
-                                                  pnamePacked, params));
-        if (isCallValid)
-        {
-            context->getMaterialfv(face, pnamePacked, params);
-        }
-        ANGLE_CAPTURE_GL(GetMaterialfv, isCallValid, context, face, pnamePacked, params);
     }
     else
     {
@@ -2415,92 +1841,6 @@ void GL_APIENTRY GL_GetPolygonStipple(GLubyte *mask)
     }
 }
 
-const GLubyte *GL_APIENTRY GL_GetString(GLenum name)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetString, "context = %d, name = %s", CID(context),
-          GLenumToString(GLenumGroup::StringName, name));
-
-    const GLubyte *returnValue;
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateGetString(context, angle::EntryPoint::GLGetString, name));
-        if (isCallValid)
-        {
-            returnValue = context->getString(name);
-        }
-        else
-        {
-            returnValue = GetDefaultReturnValue<angle::EntryPoint::GLGetString, const GLubyte *>();
-        }
-        ANGLE_CAPTURE_GL(GetString, isCallValid, context, name, returnValue);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-        returnValue = GetDefaultReturnValue<angle::EntryPoint::GLGetString, const GLubyte *>();
-    }
-    return returnValue;
-}
-
-void GL_APIENTRY GL_GetTexEnvfv(GLenum target, GLenum pname, GLfloat *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetTexEnvfv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::TextureEnvTarget, target),
-          GLenumToString(GLenumGroup::TextureEnvParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        TextureEnvTarget targetPacked   = PackParam<TextureEnvTarget>(target);
-        TextureEnvParameter pnamePacked = PackParam<TextureEnvParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateGetTexEnvfv(context, angle::EntryPoint::GLGetTexEnvfv,
-                                                targetPacked, pnamePacked, params));
-        if (isCallValid)
-        {
-            context->getTexEnvfv(targetPacked, pnamePacked, params);
-        }
-        ANGLE_CAPTURE_GL(GetTexEnvfv, isCallValid, context, targetPacked, pnamePacked, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GetTexEnviv(GLenum target, GLenum pname, GLint *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetTexEnviv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::TextureEnvTarget, target),
-          GLenumToString(GLenumGroup::TextureEnvParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        TextureEnvTarget targetPacked   = PackParam<TextureEnvTarget>(target);
-        TextureEnvParameter pnamePacked = PackParam<TextureEnvParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateGetTexEnviv(context, angle::EntryPoint::GLGetTexEnviv,
-                                                targetPacked, pnamePacked, params));
-        if (isCallValid)
-        {
-            context->getTexEnviv(targetPacked, pnamePacked, params);
-        }
-        ANGLE_CAPTURE_GL(GetTexEnviv, isCallValid, context, targetPacked, pnamePacked, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_GetTexGendv(GLenum coord, GLenum pname, GLdouble *params)
 {
     Context *context = GetValidGlobalContext();
@@ -2603,147 +1943,6 @@ GL_GetTexImage(GLenum target, GLint level, GLenum format, GLenum type, void *pix
         }
         ANGLE_CAPTURE_GL(GetTexImage, isCallValid, context, targetPacked, level, format, type,
                          pixels);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GetTexLevelParameterfv(GLenum target,
-                                           GLint level,
-                                           GLenum pname,
-                                           GLfloat *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetTexLevelParameterfv,
-          "context = %d, target = %s, level = %d, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level,
-          GLenumToString(GLenumGroup::GetTextureParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGetTexLevelParameterfv(context, angle::EntryPoint::GLGetTexLevelParameterfv,
-                                            targetPacked, level, pname, params));
-        if (isCallValid)
-        {
-            context->getTexLevelParameterfv(targetPacked, level, pname, params);
-        }
-        ANGLE_CAPTURE_GL(GetTexLevelParameterfv, isCallValid, context, targetPacked, level, pname,
-                         params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GetTexLevelParameteriv(GLenum target, GLint level, GLenum pname, GLint *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetTexLevelParameteriv,
-          "context = %d, target = %s, level = %d, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level,
-          GLenumToString(GLenumGroup::GetTextureParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGetTexLevelParameteriv(context, angle::EntryPoint::GLGetTexLevelParameteriv,
-                                            targetPacked, level, pname, params));
-        if (isCallValid)
-        {
-            context->getTexLevelParameteriv(targetPacked, level, pname, params);
-        }
-        ANGLE_CAPTURE_GL(GetTexLevelParameteriv, isCallValid, context, targetPacked, level, pname,
-                         params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GetTexParameterfv(GLenum target, GLenum pname, GLfloat *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetTexParameterfv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::TextureTarget, target),
-          GLenumToString(GLenumGroup::GetTextureParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        TextureType targetPacked = PackParam<TextureType>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGetTexParameterfv(context, angle::EntryPoint::GLGetTexParameterfv,
-                                       targetPacked, pname, params));
-        if (isCallValid)
-        {
-            context->getTexParameterfv(targetPacked, pname, params);
-        }
-        ANGLE_CAPTURE_GL(GetTexParameterfv, isCallValid, context, targetPacked, pname, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GetTexParameteriv(GLenum target, GLenum pname, GLint *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetTexParameteriv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::TextureTarget, target),
-          GLenumToString(GLenumGroup::GetTextureParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        TextureType targetPacked = PackParam<TextureType>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGetTexParameteriv(context, angle::EntryPoint::GLGetTexParameteriv,
-                                       targetPacked, pname, params));
-        if (isCallValid)
-        {
-            context->getTexParameteriv(targetPacked, pname, params);
-        }
-        ANGLE_CAPTURE_GL(GetTexParameteriv, isCallValid, context, targetPacked, pname, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Hint(GLenum target, GLenum mode)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLHint, "context = %d, target = %s, mode = %s", CID(context),
-          GLenumToString(GLenumGroup::HintTarget, target),
-          GLenumToString(GLenumGroup::HintMode, mode));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateHint(context, angle::EntryPoint::GLHint, target, mode));
-        if (isCallValid)
-        {
-            context->hint(target, mode);
-        }
-        ANGLE_CAPTURE_GL(Hint, isCallValid, context, target, mode);
     }
     else
     {
@@ -2971,36 +2170,6 @@ void GL_APIENTRY GL_InitNames()
     }
 }
 
-GLboolean GL_APIENTRY GL_IsEnabled(GLenum cap)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLIsEnabled, "context = %d, cap = %s", CID(context),
-          GLenumToString(GLenumGroup::EnableCap, cap));
-
-    GLboolean returnValue;
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateIsEnabled(context, angle::EntryPoint::GLIsEnabled, cap));
-        if (isCallValid)
-        {
-            returnValue = context->isEnabled(cap);
-        }
-        else
-        {
-            returnValue = GetDefaultReturnValue<angle::EntryPoint::GLIsEnabled, GLboolean>();
-        }
-        ANGLE_CAPTURE_GL(IsEnabled, isCallValid, context, cap, returnValue);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-        returnValue = GetDefaultReturnValue<angle::EntryPoint::GLIsEnabled, GLboolean>();
-    }
-    return returnValue;
-}
-
 GLboolean GL_APIENTRY GL_IsList(GLuint list)
 {
     Context *context = GetValidGlobalContext();
@@ -3028,54 +2197,6 @@ GLboolean GL_APIENTRY GL_IsList(GLuint list)
         returnValue = GetDefaultReturnValue<angle::EntryPoint::GLIsList, GLboolean>();
     }
     return returnValue;
-}
-
-void GL_APIENTRY GL_LightModelf(GLenum pname, GLfloat param)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLLightModelf, "context = %d, pname = %s, param = %f", CID(context),
-          GLenumToString(GLenumGroup::LightModelParameter, pname), param);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateLightModelf(context, angle::EntryPoint::GLLightModelf, pname, param));
-        if (isCallValid)
-        {
-            context->lightModelf(pname, param);
-        }
-        ANGLE_CAPTURE_GL(LightModelf, isCallValid, context, pname, param);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_LightModelfv(GLenum pname, const GLfloat *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLLightModelfv, "context = %d, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::LightModelParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateLightModelfv(context, angle::EntryPoint::GLLightModelfv, pname, params));
-        if (isCallValid)
-        {
-            context->lightModelfv(pname, params);
-        }
-        ANGLE_CAPTURE_GL(LightModelfv, isCallValid, context, pname, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
 }
 
 void GL_APIENTRY GL_LightModeli(GLenum pname, GLint param)
@@ -3119,58 +2240,6 @@ void GL_APIENTRY GL_LightModeliv(GLenum pname, const GLint *params)
             context->lightModeliv(pname, params);
         }
         ANGLE_CAPTURE_GL(LightModeliv, isCallValid, context, pname, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Lightf(GLenum light, GLenum pname, GLfloat param)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLLightf, "context = %d, light = %s, pname = %s, param = %f", CID(context),
-          GLenumToString(GLenumGroup::LightName, light),
-          GLenumToString(GLenumGroup::LightParameter, pname), param);
-
-    if (context)
-    {
-        LightParameter pnamePacked = PackParam<LightParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateLightf(context, angle::EntryPoint::GLLightf, light, pnamePacked, param));
-        if (isCallValid)
-        {
-            context->lightf(light, pnamePacked, param);
-        }
-        ANGLE_CAPTURE_GL(Lightf, isCallValid, context, light, pnamePacked, param);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Lightfv(GLenum light, GLenum pname, const GLfloat *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLLightfv, "context = %d, light = %s, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::LightName, light),
-          GLenumToString(GLenumGroup::LightParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        LightParameter pnamePacked = PackParam<LightParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateLightfv(context, angle::EntryPoint::GLLightfv, light, pnamePacked, params));
-        if (isCallValid)
-        {
-            context->lightfv(light, pnamePacked, params);
-        }
-        ANGLE_CAPTURE_GL(Lightfv, isCallValid, context, light, pnamePacked, params);
     }
     else
     {
@@ -3252,28 +2321,6 @@ void GL_APIENTRY GL_LineStipple(GLint factor, GLushort pattern)
     }
 }
 
-void GL_APIENTRY GL_LineWidth(GLfloat width)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLLineWidth, "context = %d, width = %f", CID(context), width);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateLineWidth(context, angle::EntryPoint::GLLineWidth, width));
-        if (isCallValid)
-        {
-            context->lineWidth(width);
-        }
-        ANGLE_CAPTURE_GL(LineWidth, isCallValid, context, width);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_ListBase(GLuint base)
 {
     Context *context = GetValidGlobalContext();
@@ -3289,28 +2336,6 @@ void GL_APIENTRY GL_ListBase(GLuint base)
             context->listBase(base);
         }
         ANGLE_CAPTURE_GL(ListBase, isCallValid, context, base);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_LoadIdentity()
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLLoadIdentity, "context = %d", CID(context));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateLoadIdentity(context, angle::EntryPoint::GLLoadIdentity));
-        if (isCallValid)
-        {
-            context->loadIdentity();
-        }
-        ANGLE_CAPTURE_GL(LoadIdentity, isCallValid, context);
     }
     else
     {
@@ -3341,29 +2366,6 @@ void GL_APIENTRY GL_LoadMatrixd(const GLdouble *m)
     }
 }
 
-void GL_APIENTRY GL_LoadMatrixf(const GLfloat *m)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLLoadMatrixf, "context = %d, m = 0x%016" PRIxPTR "", CID(context),
-          (uintptr_t)m);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateLoadMatrixf(context, angle::EntryPoint::GLLoadMatrixf, m));
-        if (isCallValid)
-        {
-            context->loadMatrixf(m);
-        }
-        ANGLE_CAPTURE_GL(LoadMatrixf, isCallValid, context, m);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_LoadName(GLuint name)
 {
     Context *context = GetValidGlobalContext();
@@ -3379,30 +2381,6 @@ void GL_APIENTRY GL_LoadName(GLuint name)
             context->loadName(name);
         }
         ANGLE_CAPTURE_GL(LoadName, isCallValid, context, name);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_LogicOp(GLenum opcode)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLLogicOp, "context = %d, opcode = %s", CID(context),
-          GLenumToString(GLenumGroup::LogicOp, opcode));
-
-    if (context)
-    {
-        LogicalOperation opcodePacked = PackParam<LogicalOperation>(opcode);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateLogicOp(context, angle::EntryPoint::GLLogicOp, opcodePacked));
-        if (isCallValid)
-        {
-            context->logicOp(opcodePacked);
-        }
-        ANGLE_CAPTURE_GL(LogicOp, isCallValid, context, opcodePacked);
     }
     else
     {
@@ -3637,58 +2615,6 @@ void GL_APIENTRY GL_MapGrid2f(GLint un, GLfloat u1, GLfloat u2, GLint vn, GLfloa
     }
 }
 
-void GL_APIENTRY GL_Materialf(GLenum face, GLenum pname, GLfloat param)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLMaterialf, "context = %d, face = %s, pname = %s, param = %f", CID(context),
-          GLenumToString(GLenumGroup::MaterialFace, face),
-          GLenumToString(GLenumGroup::MaterialParameter, pname), param);
-
-    if (context)
-    {
-        MaterialParameter pnamePacked = PackParam<MaterialParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateMaterialf(context, angle::EntryPoint::GLMaterialf, face, pnamePacked, param));
-        if (isCallValid)
-        {
-            context->materialf(face, pnamePacked, param);
-        }
-        ANGLE_CAPTURE_GL(Materialf, isCallValid, context, face, pnamePacked, param);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Materialfv(GLenum face, GLenum pname, const GLfloat *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLMaterialfv, "context = %d, face = %s, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::MaterialFace, face),
-          GLenumToString(GLenumGroup::MaterialParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        MaterialParameter pnamePacked = PackParam<MaterialParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateMaterialfv(context, angle::EntryPoint::GLMaterialfv, face,
-                                               pnamePacked, params));
-        if (isCallValid)
-        {
-            context->materialfv(face, pnamePacked, params);
-        }
-        ANGLE_CAPTURE_GL(Materialfv, isCallValid, context, face, pnamePacked, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_Materiali(GLenum face, GLenum pname, GLint param)
 {
     Context *context = GetValidGlobalContext();
@@ -3739,31 +2665,6 @@ void GL_APIENTRY GL_Materialiv(GLenum face, GLenum pname, const GLint *params)
     }
 }
 
-void GL_APIENTRY GL_MatrixMode(GLenum mode)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLMatrixMode, "context = %d, mode = %s", CID(context),
-          GLenumToString(GLenumGroup::MatrixMode, mode));
-
-    if (context)
-    {
-        MatrixType modePacked = PackParam<MatrixType>(mode);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateMatrixMode(context, angle::EntryPoint::GLMatrixMode, modePacked));
-        if (isCallValid)
-        {
-            context->matrixMode(modePacked);
-        }
-        ANGLE_CAPTURE_GL(MatrixMode, isCallValid, context, modePacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_MultMatrixd(const GLdouble *m)
 {
     Context *context = GetValidGlobalContext();
@@ -3780,29 +2681,6 @@ void GL_APIENTRY GL_MultMatrixd(const GLdouble *m)
             context->multMatrixd(m);
         }
         ANGLE_CAPTURE_GL(MultMatrixd, isCallValid, context, m);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_MultMatrixf(const GLfloat *m)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLMultMatrixf, "context = %d, m = 0x%016" PRIxPTR "", CID(context),
-          (uintptr_t)m);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateMultMatrixf(context, angle::EntryPoint::GLMultMatrixf, m));
-        if (isCallValid)
-        {
-            context->multMatrixf(m);
-        }
-        ANGLE_CAPTURE_GL(MultMatrixf, isCallValid, context, m);
     }
     else
     {
@@ -3914,28 +2792,6 @@ void GL_APIENTRY GL_Normal3dv(const GLdouble *v)
             context->normal3dv(v);
         }
         ANGLE_CAPTURE_GL(Normal3dv, isCallValid, context, v);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Normal3f(GLfloat nx, GLfloat ny, GLfloat nz)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLNormal3f, "context = %d, nx = %f, ny = %f, nz = %f", CID(context), nx, ny, nz);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateNormal3f(context, angle::EntryPoint::GLNormal3f, nx, ny, nz));
-        if (isCallValid)
-        {
-            context->normal3f(nx, ny, nz);
-        }
-        ANGLE_CAPTURE_GL(Normal3f, isCallValid, context, nx, ny, nz);
     }
     else
     {
@@ -4203,30 +3059,6 @@ void GL_APIENTRY GL_PixelStoref(GLenum pname, GLfloat param)
     }
 }
 
-void GL_APIENTRY GL_PixelStorei(GLenum pname, GLint param)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLPixelStorei, "context = %d, pname = %s, param = %d", CID(context),
-          GLenumToString(GLenumGroup::PixelStoreParameter, pname), param);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidatePixelStorei(context, angle::EntryPoint::GLPixelStorei, pname, param));
-        if (isCallValid)
-        {
-            context->pixelStorei(pname, param);
-        }
-        ANGLE_CAPTURE_GL(PixelStorei, isCallValid, context, pname, param);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_PixelTransferf(GLenum pname, GLfloat param)
 {
     Context *context = GetValidGlobalContext();
@@ -4292,28 +3124,6 @@ void GL_APIENTRY GL_PixelZoom(GLfloat xfactor, GLfloat yfactor)
             context->pixelZoom(xfactor, yfactor);
         }
         ANGLE_CAPTURE_GL(PixelZoom, isCallValid, context, xfactor, yfactor);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_PointSize(GLfloat size)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLPointSize, "context = %d, size = %f", CID(context), size);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidatePointSize(context, angle::EntryPoint::GLPointSize, size));
-        if (isCallValid)
-        {
-            context->pointSize(size);
-        }
-        ANGLE_CAPTURE_GL(PointSize, isCallValid, context, size);
     }
     else
     {
@@ -4392,28 +3202,6 @@ void GL_APIENTRY GL_PopAttrib()
     }
 }
 
-void GL_APIENTRY GL_PopMatrix()
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLPopMatrix, "context = %d", CID(context));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidatePopMatrix(context, angle::EntryPoint::GLPopMatrix));
-        if (isCallValid)
-        {
-            context->popMatrix();
-        }
-        ANGLE_CAPTURE_GL(PopMatrix, isCallValid, context);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_PopName()
 {
     Context *context = GetValidGlobalContext();
@@ -4452,28 +3240,6 @@ void GL_APIENTRY GL_PushAttrib(GLbitfield mask)
             context->pushAttrib(mask);
         }
         ANGLE_CAPTURE_GL(PushAttrib, isCallValid, context, mask);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_PushMatrix()
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLPushMatrix, "context = %d", CID(context));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidatePushMatrix(context, angle::EntryPoint::GLPushMatrix));
-        if (isCallValid)
-        {
-            context->pushMatrix();
-        }
-        ANGLE_CAPTURE_GL(PushMatrix, isCallValid, context);
     }
     else
     {
@@ -5055,63 +3821,6 @@ void GL_APIENTRY GL_RasterPos4sv(const GLshort *v)
     }
 }
 
-void GL_APIENTRY GL_ReadBuffer(GLenum src)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLReadBuffer, "context = %d, src = %s", CID(context),
-          GLenumToString(GLenumGroup::ReadBufferMode, src));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateReadBuffer(context, angle::EntryPoint::GLReadBuffer, src));
-        if (isCallValid)
-        {
-            context->readBuffer(src);
-        }
-        ANGLE_CAPTURE_GL(ReadBuffer, isCallValid, context, src);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_ReadPixels(GLint x,
-                               GLint y,
-                               GLsizei width,
-                               GLsizei height,
-                               GLenum format,
-                               GLenum type,
-                               void *pixels)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLReadPixels,
-          "context = %d, x = %d, y = %d, width = %d, height = %d, format = %s, type = %s, pixels = "
-          "0x%016" PRIxPTR "",
-          CID(context), x, y, width, height, GLenumToString(GLenumGroup::PixelFormat, format),
-          GLenumToString(GLenumGroup::PixelType, type), (uintptr_t)pixels);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateReadPixels(context, angle::EntryPoint::GLReadPixels, x, y,
-                                               width, height, format, type, pixels));
-        if (isCallValid)
-        {
-            context->readPixels(x, y, width, height, format, type, pixels);
-        }
-        ANGLE_CAPTURE_GL(ReadPixels, isCallValid, context, x, y, width, height, format, type,
-                         pixels);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_Rectd(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2)
 {
     Context *context = GetValidGlobalContext();
@@ -5349,29 +4058,6 @@ void GL_APIENTRY GL_Rotated(GLdouble angle, GLdouble x, GLdouble y, GLdouble z)
     }
 }
 
-void GL_APIENTRY GL_Rotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLRotatef, "context = %d, angle = %f, x = %f, y = %f, z = %f", CID(context),
-          angle, x, y, z);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateRotatef(context, angle::EntryPoint::GLRotatef, angle, x, y, z));
-        if (isCallValid)
-        {
-            context->rotatef(angle, x, y, z);
-        }
-        ANGLE_CAPTURE_GL(Rotatef, isCallValid, context, angle, x, y, z);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_Scaled(GLdouble x, GLdouble y, GLdouble z)
 {
     Context *context = GetValidGlobalContext();
@@ -5387,52 +4073,6 @@ void GL_APIENTRY GL_Scaled(GLdouble x, GLdouble y, GLdouble z)
             context->scaled(x, y, z);
         }
         ANGLE_CAPTURE_GL(Scaled, isCallValid, context, x, y, z);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Scalef(GLfloat x, GLfloat y, GLfloat z)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLScalef, "context = %d, x = %f, y = %f, z = %f", CID(context), x, y, z);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateScalef(context, angle::EntryPoint::GLScalef, x, y, z));
-        if (isCallValid)
-        {
-            context->scalef(x, y, z);
-        }
-        ANGLE_CAPTURE_GL(Scalef, isCallValid, context, x, y, z);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Scissor(GLint x, GLint y, GLsizei width, GLsizei height)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLScissor, "context = %d, x = %d, y = %d, width = %d, height = %d", CID(context),
-          x, y, width, height);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateScissor(context, angle::EntryPoint::GLScissor, x, y, width, height));
-        if (isCallValid)
-        {
-            context->scissor(x, y, width, height);
-        }
-        ANGLE_CAPTURE_GL(Scissor, isCallValid, context, x, y, width, height);
     }
     else
     {
@@ -5457,103 +4097,6 @@ void GL_APIENTRY GL_SelectBuffer(GLsizei size, GLuint *buffer)
             context->selectBuffer(size, buffer);
         }
         ANGLE_CAPTURE_GL(SelectBuffer, isCallValid, context, size, buffer);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_ShadeModel(GLenum mode)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLShadeModel, "context = %d, mode = %s", CID(context),
-          GLenumToString(GLenumGroup::ShadingModel, mode));
-
-    if (context)
-    {
-        ShadingModel modePacked = PackParam<ShadingModel>(mode);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateShadeModel(context, angle::EntryPoint::GLShadeModel, modePacked));
-        if (isCallValid)
-        {
-            context->shadeModel(modePacked);
-        }
-        ANGLE_CAPTURE_GL(ShadeModel, isCallValid, context, modePacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_StencilFunc(GLenum func, GLint ref, GLuint mask)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLStencilFunc, "context = %d, func = %s, ref = %d, mask = %u", CID(context),
-          GLenumToString(GLenumGroup::StencilFunction, func), ref, mask);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateStencilFunc(context, angle::EntryPoint::GLStencilFunc, func, ref, mask));
-        if (isCallValid)
-        {
-            context->stencilFunc(func, ref, mask);
-        }
-        ANGLE_CAPTURE_GL(StencilFunc, isCallValid, context, func, ref, mask);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_StencilMask(GLuint mask)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLStencilMask, "context = %d, mask = %u", CID(context), mask);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateStencilMask(context, angle::EntryPoint::GLStencilMask, mask));
-        if (isCallValid)
-        {
-            context->stencilMask(mask);
-        }
-        ANGLE_CAPTURE_GL(StencilMask, isCallValid, context, mask);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_StencilOp(GLenum fail, GLenum zfail, GLenum zpass)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLStencilOp, "context = %d, fail = %s, zfail = %s, zpass = %s", CID(context),
-          GLenumToString(GLenumGroup::StencilOp, fail),
-          GLenumToString(GLenumGroup::StencilOp, zfail),
-          GLenumToString(GLenumGroup::StencilOp, zpass));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateStencilOp(context, angle::EntryPoint::GLStencilOp, fail, zfail, zpass));
-        if (isCallValid)
-        {
-            context->stencilOp(fail, zfail, zpass);
-        }
-        ANGLE_CAPTURE_GL(StencilOp, isCallValid, context, fail, zfail, zpass);
     }
     else
     {
@@ -6289,114 +4832,6 @@ void GL_APIENTRY GL_TexCoord4sv(const GLshort *v)
     }
 }
 
-void GL_APIENTRY GL_TexEnvf(GLenum target, GLenum pname, GLfloat param)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexEnvf, "context = %d, target = %s, pname = %s, param = %f", CID(context),
-          GLenumToString(GLenumGroup::TextureEnvTarget, target),
-          GLenumToString(GLenumGroup::TextureEnvParameter, pname), param);
-
-    if (context)
-    {
-        TextureEnvTarget targetPacked   = PackParam<TextureEnvTarget>(target);
-        TextureEnvParameter pnamePacked = PackParam<TextureEnvParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() || ValidateTexEnvf(context, angle::EntryPoint::GLTexEnvf,
-                                                          targetPacked, pnamePacked, param));
-        if (isCallValid)
-        {
-            context->texEnvf(targetPacked, pnamePacked, param);
-        }
-        ANGLE_CAPTURE_GL(TexEnvf, isCallValid, context, targetPacked, pnamePacked, param);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_TexEnvfv(GLenum target, GLenum pname, const GLfloat *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexEnvfv, "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureEnvTarget, target),
-          GLenumToString(GLenumGroup::TextureEnvParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        TextureEnvTarget targetPacked   = PackParam<TextureEnvTarget>(target);
-        TextureEnvParameter pnamePacked = PackParam<TextureEnvParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() || ValidateTexEnvfv(context, angle::EntryPoint::GLTexEnvfv,
-                                                           targetPacked, pnamePacked, params));
-        if (isCallValid)
-        {
-            context->texEnvfv(targetPacked, pnamePacked, params);
-        }
-        ANGLE_CAPTURE_GL(TexEnvfv, isCallValid, context, targetPacked, pnamePacked, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_TexEnvi(GLenum target, GLenum pname, GLint param)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexEnvi, "context = %d, target = %s, pname = %s, param = %d", CID(context),
-          GLenumToString(GLenumGroup::TextureEnvTarget, target),
-          GLenumToString(GLenumGroup::TextureEnvParameter, pname), param);
-
-    if (context)
-    {
-        TextureEnvTarget targetPacked   = PackParam<TextureEnvTarget>(target);
-        TextureEnvParameter pnamePacked = PackParam<TextureEnvParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() || ValidateTexEnvi(context, angle::EntryPoint::GLTexEnvi,
-                                                          targetPacked, pnamePacked, param));
-        if (isCallValid)
-        {
-            context->texEnvi(targetPacked, pnamePacked, param);
-        }
-        ANGLE_CAPTURE_GL(TexEnvi, isCallValid, context, targetPacked, pnamePacked, param);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_TexEnviv(GLenum target, GLenum pname, const GLint *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexEnviv, "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureEnvTarget, target),
-          GLenumToString(GLenumGroup::TextureEnvParameter, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        TextureEnvTarget targetPacked   = PackParam<TextureEnvTarget>(target);
-        TextureEnvParameter pnamePacked = PackParam<TextureEnvParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() || ValidateTexEnviv(context, angle::EntryPoint::GLTexEnviv,
-                                                           targetPacked, pnamePacked, params));
-        if (isCallValid)
-        {
-            context->texEnviv(targetPacked, pnamePacked, params);
-        }
-        ANGLE_CAPTURE_GL(TexEnviv, isCallValid, context, targetPacked, pnamePacked, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_TexGend(GLenum coord, GLenum pname, GLdouble param)
 {
     Context *context = GetValidGlobalContext();
@@ -6584,152 +5019,6 @@ void GL_APIENTRY GL_TexImage1D(GLenum target,
     }
 }
 
-void GL_APIENTRY GL_TexImage2D(GLenum target,
-                               GLint level,
-                               GLint internalformat,
-                               GLsizei width,
-                               GLsizei height,
-                               GLint border,
-                               GLenum format,
-                               GLenum type,
-                               const void *pixels)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexImage2D,
-          "context = %d, target = %s, level = %d, internalformat = %d, width = %d, height = %d, "
-          "border = %d, format = %s, type = %s, pixels = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level, internalformat,
-          width, height, border, GLenumToString(GLenumGroup::PixelFormat, format),
-          GLenumToString(GLenumGroup::PixelType, type), (uintptr_t)pixels);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateTexImage2D(context, angle::EntryPoint::GLTexImage2D, targetPacked, level,
-                                internalformat, width, height, border, format, type, pixels));
-        if (isCallValid)
-        {
-            context->texImage2D(targetPacked, level, internalformat, width, height, border, format,
-                                type, pixels);
-        }
-        ANGLE_CAPTURE_GL(TexImage2D, isCallValid, context, targetPacked, level, internalformat,
-                         width, height, border, format, type, pixels);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_TexParameterf(GLenum target, GLenum pname, GLfloat param)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexParameterf, "context = %d, target = %s, pname = %s, param = %f",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target),
-          GLenumToString(GLenumGroup::TextureParameterName, pname), param);
-
-    if (context)
-    {
-        TextureType targetPacked = PackParam<TextureType>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateTexParameterf(context, angle::EntryPoint::GLTexParameterf,
-                                                  targetPacked, pname, param));
-        if (isCallValid)
-        {
-            context->texParameterf(targetPacked, pname, param);
-        }
-        ANGLE_CAPTURE_GL(TexParameterf, isCallValid, context, targetPacked, pname, param);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_TexParameterfv(GLenum target, GLenum pname, const GLfloat *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexParameterfv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::TextureTarget, target),
-          GLenumToString(GLenumGroup::TextureParameterName, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        TextureType targetPacked = PackParam<TextureType>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateTexParameterfv(context, angle::EntryPoint::GLTexParameterfv,
-                                                   targetPacked, pname, params));
-        if (isCallValid)
-        {
-            context->texParameterfv(targetPacked, pname, params);
-        }
-        ANGLE_CAPTURE_GL(TexParameterfv, isCallValid, context, targetPacked, pname, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_TexParameteri(GLenum target, GLenum pname, GLint param)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexParameteri, "context = %d, target = %s, pname = %s, param = %d",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target),
-          GLenumToString(GLenumGroup::TextureParameterName, pname), param);
-
-    if (context)
-    {
-        TextureType targetPacked = PackParam<TextureType>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateTexParameteri(context, angle::EntryPoint::GLTexParameteri,
-                                                  targetPacked, pname, param));
-        if (isCallValid)
-        {
-            context->texParameteri(targetPacked, pname, param);
-        }
-        ANGLE_CAPTURE_GL(TexParameteri, isCallValid, context, targetPacked, pname, param);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_TexParameteriv(GLenum target, GLenum pname, const GLint *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexParameteriv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::TextureTarget, target),
-          GLenumToString(GLenumGroup::TextureParameterName, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        TextureType targetPacked = PackParam<TextureType>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateTexParameteriv(context, angle::EntryPoint::GLTexParameteriv,
-                                                   targetPacked, pname, params));
-        if (isCallValid)
-        {
-            context->texParameteriv(targetPacked, pname, params);
-        }
-        ANGLE_CAPTURE_GL(TexParameteriv, isCallValid, context, targetPacked, pname, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_Translated(GLdouble x, GLdouble y, GLdouble z)
 {
     Context *context = GetValidGlobalContext();
@@ -6745,28 +5034,6 @@ void GL_APIENTRY GL_Translated(GLdouble x, GLdouble y, GLdouble z)
             context->translated(x, y, z);
         }
         ANGLE_CAPTURE_GL(Translated, isCallValid, context, x, y, z);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_Translatef(GLfloat x, GLfloat y, GLfloat z)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTranslatef, "context = %d, x = %f, y = %f, z = %f", CID(context), x, y, z);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateTranslatef(context, angle::EntryPoint::GLTranslatef, x, y, z));
-        if (isCallValid)
-        {
-            context->translatef(x, y, z);
-        }
-        ANGLE_CAPTURE_GL(Translatef, isCallValid, context, x, y, z);
     }
     else
     {
@@ -7306,30 +5573,6 @@ void GL_APIENTRY GL_Vertex4sv(const GLshort *v)
     }
 }
 
-void GL_APIENTRY GL_Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLViewport, "context = %d, x = %d, y = %d, width = %d, height = %d",
-          CID(context), x, y, width, height);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateViewport(context, angle::EntryPoint::GLViewport, x, y, width, height));
-        if (isCallValid)
-        {
-            context->viewport(x, y, width, height);
-        }
-        ANGLE_CAPTURE_GL(Viewport, isCallValid, context, x, y, width, height);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 // GL 1.1
 GLboolean GL_APIENTRY GL_AreTexturesResident(GLsizei n,
                                              const GLuint *textures,
@@ -7390,59 +5633,6 @@ void GL_APIENTRY GL_ArrayElement(GLint i)
     }
 }
 
-void GL_APIENTRY GL_BindTexture(GLenum target, GLuint texture)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLBindTexture, "context = %d, target = %s, texture = %u", CID(context),
-          GLenumToString(GLenumGroup::TextureTarget, target), texture);
-
-    if (context)
-    {
-        TextureType targetPacked = PackParam<TextureType>(target);
-        TextureID texturePacked  = PackParam<TextureID>(texture);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateBindTexture(context, angle::EntryPoint::GLBindTexture,
-                                                targetPacked, texturePacked));
-        if (isCallValid)
-        {
-            context->bindTexture(targetPacked, texturePacked);
-        }
-        ANGLE_CAPTURE_GL(BindTexture, isCallValid, context, targetPacked, texturePacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_ColorPointer(GLint size, GLenum type, GLsizei stride, const void *pointer)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLColorPointer,
-          "context = %d, size = %d, type = %s, stride = %d, pointer = 0x%016" PRIxPTR "",
-          CID(context), size, GLenumToString(GLenumGroup::ColorPointerType, type), stride,
-          (uintptr_t)pointer);
-
-    if (context)
-    {
-        VertexAttribType typePacked = PackParam<VertexAttribType>(type);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateColorPointer(context, angle::EntryPoint::GLColorPointer, size,
-                                                 typePacked, stride, pointer));
-        if (isCallValid)
-        {
-            context->colorPointer(size, typePacked, stride, pointer);
-        }
-        ANGLE_CAPTURE_GL(ColorPointer, isCallValid, context, size, typePacked, stride, pointer);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_CopyTexImage1D(GLenum target,
                                    GLint level,
                                    GLenum internalformat,
@@ -7471,44 +5661,6 @@ void GL_APIENTRY GL_CopyTexImage1D(GLenum target,
         }
         ANGLE_CAPTURE_GL(CopyTexImage1D, isCallValid, context, target, level, internalformat, x, y,
                          width, border);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_CopyTexImage2D(GLenum target,
-                                   GLint level,
-                                   GLenum internalformat,
-                                   GLint x,
-                                   GLint y,
-                                   GLsizei width,
-                                   GLsizei height,
-                                   GLint border)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLCopyTexImage2D,
-          "context = %d, target = %s, level = %d, internalformat = %s, x = %d, y = %d, width = %d, "
-          "height = %d, border = %d",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level,
-          GLenumToString(GLenumGroup::InternalFormat, internalformat), x, y, width, height, border);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateCopyTexImage2D(context, angle::EntryPoint::GLCopyTexImage2D, targetPacked,
-                                    level, internalformat, x, y, width, height, border));
-        if (isCallValid)
-        {
-            context->copyTexImage2D(targetPacked, level, internalformat, x, y, width, height,
-                                    border);
-        }
-        ANGLE_CAPTURE_GL(CopyTexImage2D, isCallValid, context, targetPacked, level, internalformat,
-                         x, y, width, height, border);
     }
     else
     {
@@ -7545,147 +5697,6 @@ GL_CopyTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLint x, GLint y
     }
 }
 
-void GL_APIENTRY GL_CopyTexSubImage2D(GLenum target,
-                                      GLint level,
-                                      GLint xoffset,
-                                      GLint yoffset,
-                                      GLint x,
-                                      GLint y,
-                                      GLsizei width,
-                                      GLsizei height)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLCopyTexSubImage2D,
-          "context = %d, target = %s, level = %d, xoffset = %d, yoffset = %d, x = %d, y = %d, "
-          "width = %d, height = %d",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level, xoffset, yoffset,
-          x, y, width, height);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateCopyTexSubImage2D(context, angle::EntryPoint::GLCopyTexSubImage2D,
-                                       targetPacked, level, xoffset, yoffset, x, y, width, height));
-        if (isCallValid)
-        {
-            context->copyTexSubImage2D(targetPacked, level, xoffset, yoffset, x, y, width, height);
-        }
-        ANGLE_CAPTURE_GL(CopyTexSubImage2D, isCallValid, context, targetPacked, level, xoffset,
-                         yoffset, x, y, width, height);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_DeleteTextures(GLsizei n, const GLuint *textures)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLDeleteTextures, "context = %d, n = %d, textures = 0x%016" PRIxPTR "",
-          CID(context), n, (uintptr_t)textures);
-
-    if (context)
-    {
-        const TextureID *texturesPacked = PackParam<const TextureID *>(textures);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateDeleteTextures(context, angle::EntryPoint::GLDeleteTextures, n,
-                                                   texturesPacked));
-        if (isCallValid)
-        {
-            context->deleteTextures(n, texturesPacked);
-        }
-        ANGLE_CAPTURE_GL(DeleteTextures, isCallValid, context, n, texturesPacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_DisableClientState(GLenum array)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLDisableClientState, "context = %d, array = %s", CID(context),
-          GLenumToString(GLenumGroup::EnableCap, array));
-
-    if (context)
-    {
-        ClientVertexArrayType arrayPacked = PackParam<ClientVertexArrayType>(array);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateDisableClientState(
-                                context, angle::EntryPoint::GLDisableClientState, arrayPacked));
-        if (isCallValid)
-        {
-            context->disableClientState(arrayPacked);
-        }
-        ANGLE_CAPTURE_GL(DisableClientState, isCallValid, context, arrayPacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_DrawArrays(GLenum mode, GLint first, GLsizei count)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLDrawArrays, "context = %d, mode = %s, first = %d, count = %d", CID(context),
-          GLenumToString(GLenumGroup::PrimitiveType, mode), first, count);
-
-    if (context)
-    {
-        PrimitiveMode modePacked = PackParam<PrimitiveMode>(mode);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateDrawArrays(context, angle::EntryPoint::GLDrawArrays, modePacked,
-                                               first, count));
-        if (isCallValid)
-        {
-            context->drawArrays(modePacked, first, count);
-        }
-        ANGLE_CAPTURE_GL(DrawArrays, isCallValid, context, modePacked, first, count);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_DrawElements(GLenum mode, GLsizei count, GLenum type, const void *indices)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLDrawElements,
-          "context = %d, mode = %s, count = %d, type = %s, indices = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::PrimitiveType, mode), count,
-          GLenumToString(GLenumGroup::DrawElementsType, type), (uintptr_t)indices);
-
-    if (context)
-    {
-        PrimitiveMode modePacked    = PackParam<PrimitiveMode>(mode);
-        DrawElementsType typePacked = PackParam<DrawElementsType>(type);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateDrawElements(context, angle::EntryPoint::GLDrawElements,
-                                                 modePacked, count, typePacked, indices));
-        if (isCallValid)
-        {
-            context->drawElements(modePacked, count, typePacked, indices);
-        }
-        ANGLE_CAPTURE_GL(DrawElements, isCallValid, context, modePacked, count, typePacked,
-                         indices);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_EdgeFlagPointer(GLsizei stride, const void *pointer)
 {
     Context *context = GetValidGlobalContext();
@@ -7703,80 +5714,6 @@ void GL_APIENTRY GL_EdgeFlagPointer(GLsizei stride, const void *pointer)
             context->edgeFlagPointer(stride, pointer);
         }
         ANGLE_CAPTURE_GL(EdgeFlagPointer, isCallValid, context, stride, pointer);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_EnableClientState(GLenum array)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLEnableClientState, "context = %d, array = %s", CID(context),
-          GLenumToString(GLenumGroup::EnableCap, array));
-
-    if (context)
-    {
-        ClientVertexArrayType arrayPacked = PackParam<ClientVertexArrayType>(array);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateEnableClientState(
-                                context, angle::EntryPoint::GLEnableClientState, arrayPacked));
-        if (isCallValid)
-        {
-            context->enableClientState(arrayPacked);
-        }
-        ANGLE_CAPTURE_GL(EnableClientState, isCallValid, context, arrayPacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GenTextures(GLsizei n, GLuint *textures)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGenTextures, "context = %d, n = %d, textures = 0x%016" PRIxPTR "",
-          CID(context), n, (uintptr_t)textures);
-
-    if (context)
-    {
-        TextureID *texturesPacked = PackParam<TextureID *>(textures);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGenTextures(context, angle::EntryPoint::GLGenTextures, n, texturesPacked));
-        if (isCallValid)
-        {
-            context->genTextures(n, texturesPacked);
-        }
-        ANGLE_CAPTURE_GL(GenTextures, isCallValid, context, n, texturesPacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GetPointerv(GLenum pname, void **params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetPointerv, "context = %d, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::GetPointervPName, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGetPointerv(context, angle::EntryPoint::GLGetPointerv, pname, params));
-        if (isCallValid)
-        {
-            context->getPointerv(pname, params);
-        }
-        ANGLE_CAPTURE_GL(GetPointerv, isCallValid, context, pname, params);
     }
     else
     {
@@ -7879,87 +5816,6 @@ void GL_APIENTRY GL_InterleavedArrays(GLenum format, GLsizei stride, const void 
     }
 }
 
-GLboolean GL_APIENTRY GL_IsTexture(GLuint texture)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLIsTexture, "context = %d, texture = %u", CID(context), texture);
-
-    GLboolean returnValue;
-    if (context)
-    {
-        TextureID texturePacked = PackParam<TextureID>(texture);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateIsTexture(context, angle::EntryPoint::GLIsTexture, texturePacked));
-        if (isCallValid)
-        {
-            returnValue = context->isTexture(texturePacked);
-        }
-        else
-        {
-            returnValue = GetDefaultReturnValue<angle::EntryPoint::GLIsTexture, GLboolean>();
-        }
-        ANGLE_CAPTURE_GL(IsTexture, isCallValid, context, texturePacked, returnValue);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-        returnValue = GetDefaultReturnValue<angle::EntryPoint::GLIsTexture, GLboolean>();
-    }
-    return returnValue;
-}
-
-void GL_APIENTRY GL_NormalPointer(GLenum type, GLsizei stride, const void *pointer)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLNormalPointer,
-          "context = %d, type = %s, stride = %d, pointer = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::NormalPointerType, type), stride, (uintptr_t)pointer);
-
-    if (context)
-    {
-        VertexAttribType typePacked = PackParam<VertexAttribType>(type);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateNormalPointer(context, angle::EntryPoint::GLNormalPointer,
-                                                  typePacked, stride, pointer));
-        if (isCallValid)
-        {
-            context->normalPointer(typePacked, stride, pointer);
-        }
-        ANGLE_CAPTURE_GL(NormalPointer, isCallValid, context, typePacked, stride, pointer);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_PolygonOffset(GLfloat factor, GLfloat units)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLPolygonOffset, "context = %d, factor = %f, units = %f", CID(context), factor,
-          units);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidatePolygonOffset(context, angle::EntryPoint::GLPolygonOffset, factor, units));
-        if (isCallValid)
-        {
-            context->polygonOffset(factor, units);
-        }
-        ANGLE_CAPTURE_GL(PolygonOffset, isCallValid, context, factor, units);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_PopClientAttrib()
 {
     Context *context = GetValidGlobalContext();
@@ -8032,33 +5888,6 @@ void GL_APIENTRY GL_PushClientAttrib(GLbitfield mask)
     }
 }
 
-void GL_APIENTRY GL_TexCoordPointer(GLint size, GLenum type, GLsizei stride, const void *pointer)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexCoordPointer,
-          "context = %d, size = %d, type = %s, stride = %d, pointer = 0x%016" PRIxPTR "",
-          CID(context), size, GLenumToString(GLenumGroup::TexCoordPointerType, type), stride,
-          (uintptr_t)pointer);
-
-    if (context)
-    {
-        VertexAttribType typePacked = PackParam<VertexAttribType>(type);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateTexCoordPointer(context, angle::EntryPoint::GLTexCoordPointer,
-                                                    size, typePacked, stride, pointer));
-        if (isCallValid)
-        {
-            context->texCoordPointer(size, typePacked, stride, pointer);
-        }
-        ANGLE_CAPTURE_GL(TexCoordPointer, isCallValid, context, size, typePacked, stride, pointer);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_TexSubImage1D(GLenum target,
                                   GLint level,
                                   GLint xoffset,
@@ -8095,281 +5924,9 @@ void GL_APIENTRY GL_TexSubImage1D(GLenum target,
     }
 }
 
-void GL_APIENTRY GL_TexSubImage2D(GLenum target,
-                                  GLint level,
-                                  GLint xoffset,
-                                  GLint yoffset,
-                                  GLsizei width,
-                                  GLsizei height,
-                                  GLenum format,
-                                  GLenum type,
-                                  const void *pixels)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexSubImage2D,
-          "context = %d, target = %s, level = %d, xoffset = %d, yoffset = %d, width = %d, height = "
-          "%d, format = %s, type = %s, pixels = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level, xoffset, yoffset,
-          width, height, GLenumToString(GLenumGroup::PixelFormat, format),
-          GLenumToString(GLenumGroup::PixelType, type), (uintptr_t)pixels);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateTexSubImage2D(context, angle::EntryPoint::GLTexSubImage2D, targetPacked, level,
-                                   xoffset, yoffset, width, height, format, type, pixels));
-        if (isCallValid)
-        {
-            context->texSubImage2D(targetPacked, level, xoffset, yoffset, width, height, format,
-                                   type, pixels);
-        }
-        ANGLE_CAPTURE_GL(TexSubImage2D, isCallValid, context, targetPacked, level, xoffset, yoffset,
-                         width, height, format, type, pixels);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_VertexPointer(GLint size, GLenum type, GLsizei stride, const void *pointer)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLVertexPointer,
-          "context = %d, size = %d, type = %s, stride = %d, pointer = 0x%016" PRIxPTR "",
-          CID(context), size, GLenumToString(GLenumGroup::VertexPointerType, type), stride,
-          (uintptr_t)pointer);
-
-    if (context)
-    {
-        VertexAttribType typePacked = PackParam<VertexAttribType>(type);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateVertexPointer(context, angle::EntryPoint::GLVertexPointer, size,
-                                                  typePacked, stride, pointer));
-        if (isCallValid)
-        {
-            context->vertexPointer(size, typePacked, stride, pointer);
-        }
-        ANGLE_CAPTURE_GL(VertexPointer, isCallValid, context, size, typePacked, stride, pointer);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 // GL 1.2
-void GL_APIENTRY GL_CopyTexSubImage3D(GLenum target,
-                                      GLint level,
-                                      GLint xoffset,
-                                      GLint yoffset,
-                                      GLint zoffset,
-                                      GLint x,
-                                      GLint y,
-                                      GLsizei width,
-                                      GLsizei height)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLCopyTexSubImage3D,
-          "context = %d, target = %s, level = %d, xoffset = %d, yoffset = %d, zoffset = %d, x = "
-          "%d, y = %d, width = %d, height = %d",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level, xoffset, yoffset,
-          zoffset, x, y, width, height);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateCopyTexSubImage3D(
-                                context, angle::EntryPoint::GLCopyTexSubImage3D, targetPacked,
-                                level, xoffset, yoffset, zoffset, x, y, width, height));
-        if (isCallValid)
-        {
-            context->copyTexSubImage3D(targetPacked, level, xoffset, yoffset, zoffset, x, y, width,
-                                       height);
-        }
-        ANGLE_CAPTURE_GL(CopyTexSubImage3D, isCallValid, context, targetPacked, level, xoffset,
-                         yoffset, zoffset, x, y, width, height);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_DrawRangeElements(GLenum mode,
-                                      GLuint start,
-                                      GLuint end,
-                                      GLsizei count,
-                                      GLenum type,
-                                      const void *indices)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLDrawRangeElements,
-          "context = %d, mode = %s, start = %u, end = %u, count = %d, type = %s, indices = "
-          "0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::PrimitiveType, mode), start, end, count,
-          GLenumToString(GLenumGroup::DrawElementsType, type), (uintptr_t)indices);
-
-    if (context)
-    {
-        PrimitiveMode modePacked    = PackParam<PrimitiveMode>(mode);
-        DrawElementsType typePacked = PackParam<DrawElementsType>(type);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateDrawRangeElements(context, angle::EntryPoint::GLDrawRangeElements, modePacked,
-                                       start, end, count, typePacked, indices));
-        if (isCallValid)
-        {
-            context->drawRangeElements(modePacked, start, end, count, typePacked, indices);
-        }
-        ANGLE_CAPTURE_GL(DrawRangeElements, isCallValid, context, modePacked, start, end, count,
-                         typePacked, indices);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_TexImage3D(GLenum target,
-                               GLint level,
-                               GLint internalformat,
-                               GLsizei width,
-                               GLsizei height,
-                               GLsizei depth,
-                               GLint border,
-                               GLenum format,
-                               GLenum type,
-                               const void *pixels)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexImage3D,
-          "context = %d, target = %s, level = %d, internalformat = %d, width = %d, height = %d, "
-          "depth = %d, border = %d, format = %s, type = %s, pixels = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level, internalformat,
-          width, height, depth, border, GLenumToString(GLenumGroup::PixelFormat, format),
-          GLenumToString(GLenumGroup::PixelType, type), (uintptr_t)pixels);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateTexImage3D(context, angle::EntryPoint::GLTexImage3D,
-                                               targetPacked, level, internalformat, width, height,
-                                               depth, border, format, type, pixels));
-        if (isCallValid)
-        {
-            context->texImage3D(targetPacked, level, internalformat, width, height, depth, border,
-                                format, type, pixels);
-        }
-        ANGLE_CAPTURE_GL(TexImage3D, isCallValid, context, targetPacked, level, internalformat,
-                         width, height, depth, border, format, type, pixels);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_TexSubImage3D(GLenum target,
-                                  GLint level,
-                                  GLint xoffset,
-                                  GLint yoffset,
-                                  GLint zoffset,
-                                  GLsizei width,
-                                  GLsizei height,
-                                  GLsizei depth,
-                                  GLenum format,
-                                  GLenum type,
-                                  const void *pixels)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexSubImage3D,
-          "context = %d, target = %s, level = %d, xoffset = %d, yoffset = %d, zoffset = %d, width "
-          "= %d, height = %d, depth = %d, format = %s, type = %s, pixels = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level, xoffset, yoffset,
-          zoffset, width, height, depth, GLenumToString(GLenumGroup::PixelFormat, format),
-          GLenumToString(GLenumGroup::PixelType, type), (uintptr_t)pixels);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateTexSubImage3D(context, angle::EntryPoint::GLTexSubImage3D,
-                                                  targetPacked, level, xoffset, yoffset, zoffset,
-                                                  width, height, depth, format, type, pixels));
-        if (isCallValid)
-        {
-            context->texSubImage3D(targetPacked, level, xoffset, yoffset, zoffset, width, height,
-                                   depth, format, type, pixels);
-        }
-        ANGLE_CAPTURE_GL(TexSubImage3D, isCallValid, context, targetPacked, level, xoffset, yoffset,
-                         zoffset, width, height, depth, format, type, pixels);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
 
 // GL 1.3
-void GL_APIENTRY GL_ActiveTexture(GLenum texture)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLActiveTexture, "context = %d, texture = %s", CID(context),
-          GLenumToString(GLenumGroup::TextureUnit, texture));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateActiveTexture(context, angle::EntryPoint::GLActiveTexture, texture));
-        if (isCallValid)
-        {
-            context->activeTexture(texture);
-        }
-        ANGLE_CAPTURE_GL(ActiveTexture, isCallValid, context, texture);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_ClientActiveTexture(GLenum texture)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLClientActiveTexture, "context = %d, texture = %s", CID(context),
-          GLenumToString(GLenumGroup::TextureUnit, texture));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateClientActiveTexture(
-                                context, angle::EntryPoint::GLClientActiveTexture, texture));
-        if (isCallValid)
-        {
-            context->clientActiveTexture(texture);
-        }
-        ANGLE_CAPTURE_GL(ClientActiveTexture, isCallValid, context, texture);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_CompressedTexImage1D(GLenum target,
                                          GLint level,
                                          GLenum internalformat,
@@ -8407,86 +5964,6 @@ void GL_APIENTRY GL_CompressedTexImage1D(GLenum target,
     }
 }
 
-void GL_APIENTRY GL_CompressedTexImage2D(GLenum target,
-                                         GLint level,
-                                         GLenum internalformat,
-                                         GLsizei width,
-                                         GLsizei height,
-                                         GLint border,
-                                         GLsizei imageSize,
-                                         const void *data)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLCompressedTexImage2D,
-          "context = %d, target = %s, level = %d, internalformat = %s, width = %d, height = %d, "
-          "border = %d, imageSize = %d, data = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level,
-          GLenumToString(GLenumGroup::InternalFormat, internalformat), width, height, border,
-          imageSize, (uintptr_t)data);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateCompressedTexImage2D(
-                                context, angle::EntryPoint::GLCompressedTexImage2D, targetPacked,
-                                level, internalformat, width, height, border, imageSize, data));
-        if (isCallValid)
-        {
-            context->compressedTexImage2D(targetPacked, level, internalformat, width, height,
-                                          border, imageSize, data);
-        }
-        ANGLE_CAPTURE_GL(CompressedTexImage2D, isCallValid, context, targetPacked, level,
-                         internalformat, width, height, border, imageSize, data);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_CompressedTexImage3D(GLenum target,
-                                         GLint level,
-                                         GLenum internalformat,
-                                         GLsizei width,
-                                         GLsizei height,
-                                         GLsizei depth,
-                                         GLint border,
-                                         GLsizei imageSize,
-                                         const void *data)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLCompressedTexImage3D,
-          "context = %d, target = %s, level = %d, internalformat = %s, width = %d, height = %d, "
-          "depth = %d, border = %d, imageSize = %d, data = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level,
-          GLenumToString(GLenumGroup::InternalFormat, internalformat), width, height, depth, border,
-          imageSize, (uintptr_t)data);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateCompressedTexImage3D(context, angle::EntryPoint::GLCompressedTexImage3D,
-                                          targetPacked, level, internalformat, width, height, depth,
-                                          border, imageSize, data));
-        if (isCallValid)
-        {
-            context->compressedTexImage3D(targetPacked, level, internalformat, width, height, depth,
-                                          border, imageSize, data);
-        }
-        ANGLE_CAPTURE_GL(CompressedTexImage3D, isCallValid, context, targetPacked, level,
-                         internalformat, width, height, depth, border, imageSize, data);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_CompressedTexSubImage1D(GLenum target,
                                             GLint level,
                                             GLint xoffset,
@@ -8516,89 +5993,6 @@ void GL_APIENTRY GL_CompressedTexSubImage1D(GLenum target,
         }
         ANGLE_CAPTURE_GL(CompressedTexSubImage1D, isCallValid, context, target, level, xoffset,
                          width, format, imageSize, data);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_CompressedTexSubImage2D(GLenum target,
-                                            GLint level,
-                                            GLint xoffset,
-                                            GLint yoffset,
-                                            GLsizei width,
-                                            GLsizei height,
-                                            GLenum format,
-                                            GLsizei imageSize,
-                                            const void *data)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLCompressedTexSubImage2D,
-          "context = %d, target = %s, level = %d, xoffset = %d, yoffset = %d, width = %d, height = "
-          "%d, format = %s, imageSize = %d, data = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level, xoffset, yoffset,
-          width, height, GLenumToString(GLenumGroup::PixelFormat, format), imageSize,
-          (uintptr_t)data);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateCompressedTexSubImage2D(
-                                context, angle::EntryPoint::GLCompressedTexSubImage2D, targetPacked,
-                                level, xoffset, yoffset, width, height, format, imageSize, data));
-        if (isCallValid)
-        {
-            context->compressedTexSubImage2D(targetPacked, level, xoffset, yoffset, width, height,
-                                             format, imageSize, data);
-        }
-        ANGLE_CAPTURE_GL(CompressedTexSubImage2D, isCallValid, context, targetPacked, level,
-                         xoffset, yoffset, width, height, format, imageSize, data);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_CompressedTexSubImage3D(GLenum target,
-                                            GLint level,
-                                            GLint xoffset,
-                                            GLint yoffset,
-                                            GLint zoffset,
-                                            GLsizei width,
-                                            GLsizei height,
-                                            GLsizei depth,
-                                            GLenum format,
-                                            GLsizei imageSize,
-                                            const void *data)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLCompressedTexSubImage3D,
-          "context = %d, target = %s, level = %d, xoffset = %d, yoffset = %d, zoffset = %d, width "
-          "= %d, height = %d, depth = %d, format = %s, imageSize = %d, data = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level, xoffset, yoffset,
-          zoffset, width, height, depth, GLenumToString(GLenumGroup::PixelFormat, format),
-          imageSize, (uintptr_t)data);
-
-    if (context)
-    {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateCompressedTexSubImage3D(context, angle::EntryPoint::GLCompressedTexSubImage3D,
-                                             targetPacked, level, xoffset, yoffset, zoffset, width,
-                                             height, depth, format, imageSize, data));
-        if (isCallValid)
-        {
-            context->compressedTexSubImage3D(targetPacked, level, xoffset, yoffset, zoffset, width,
-                                             height, depth, format, imageSize, data);
-        }
-        ANGLE_CAPTURE_GL(CompressedTexSubImage3D, isCallValid, context, targetPacked, level,
-                         xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
     }
     else
     {
@@ -9353,30 +6747,6 @@ void GL_APIENTRY GL_MultiTexCoord4dv(GLenum target, const GLdouble *v)
     }
 }
 
-void GL_APIENTRY GL_MultiTexCoord4f(GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLMultiTexCoord4f, "context = %d, target = %s, s = %f, t = %f, r = %f, q = %f",
-          CID(context), GLenumToString(GLenumGroup::TextureUnit, target), s, t, r, q);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateMultiTexCoord4f(context, angle::EntryPoint::GLMultiTexCoord4f,
-                                                    target, s, t, r, q));
-        if (isCallValid)
-        {
-            context->multiTexCoord4f(target, s, t, r, q);
-        }
-        ANGLE_CAPTURE_GL(MultiTexCoord4f, isCallValid, context, target, s, t, r, q);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_MultiTexCoord4fv(GLenum target, const GLfloat *v)
 {
     Context *context = GetValidGlobalContext();
@@ -9497,112 +6867,7 @@ void GL_APIENTRY GL_MultiTexCoord4sv(GLenum target, const GLshort *v)
     }
 }
 
-void GL_APIENTRY GL_SampleCoverage(GLfloat value, GLboolean invert)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLSampleCoverage, "context = %d, value = %f, invert = %s", CID(context), value,
-          GLbooleanToString(invert));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateSampleCoverage(context, angle::EntryPoint::GLSampleCoverage, value, invert));
-        if (isCallValid)
-        {
-            context->sampleCoverage(value, invert);
-        }
-        ANGLE_CAPTURE_GL(SampleCoverage, isCallValid, context, value, invert);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 // GL 1.4
-void GL_APIENTRY GL_BlendColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLBlendColor, "context = %d, red = %f, green = %f, blue = %f, alpha = %f",
-          CID(context), red, green, blue, alpha);
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateBlendColor(context, angle::EntryPoint::GLBlendColor, red, green, blue, alpha));
-        if (isCallValid)
-        {
-            context->blendColor(red, green, blue, alpha);
-        }
-        ANGLE_CAPTURE_GL(BlendColor, isCallValid, context, red, green, blue, alpha);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_BlendEquation(GLenum mode)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLBlendEquation, "context = %d, mode = %s", CID(context),
-          GLenumToString(GLenumGroup::BlendEquationModeEXT, mode));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateBlendEquation(context, angle::EntryPoint::GLBlendEquation, mode));
-        if (isCallValid)
-        {
-            context->blendEquation(mode);
-        }
-        ANGLE_CAPTURE_GL(BlendEquation, isCallValid, context, mode);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_BlendFuncSeparate(GLenum sfactorRGB,
-                                      GLenum dfactorRGB,
-                                      GLenum sfactorAlpha,
-                                      GLenum dfactorAlpha)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLBlendFuncSeparate,
-          "context = %d, sfactorRGB = %s, dfactorRGB = %s, sfactorAlpha = %s, dfactorAlpha = %s",
-          CID(context), GLenumToString(GLenumGroup::BlendingFactor, sfactorRGB),
-          GLenumToString(GLenumGroup::BlendingFactor, dfactorRGB),
-          GLenumToString(GLenumGroup::BlendingFactor, sfactorAlpha),
-          GLenumToString(GLenumGroup::BlendingFactor, dfactorAlpha));
-
-    if (context)
-    {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateBlendFuncSeparate(context, angle::EntryPoint::GLBlendFuncSeparate, sfactorRGB,
-                                       dfactorRGB, sfactorAlpha, dfactorAlpha));
-        if (isCallValid)
-        {
-            context->blendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
-        }
-        ANGLE_CAPTURE_GL(BlendFuncSeparate, isCallValid, context, sfactorRGB, dfactorRGB,
-                         sfactorAlpha, dfactorAlpha);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_FogCoordPointer(GLenum type, GLsizei stride, const void *pointer)
 {
     Context *context = GetValidGlobalContext();
@@ -9778,56 +7043,6 @@ void GL_APIENTRY GL_MultiDrawElements(GLenum mode,
         }
         ANGLE_CAPTURE_GL(MultiDrawElements, isCallValid, context, modePacked, count, typePacked,
                          indices, drawcount);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_PointParameterf(GLenum pname, GLfloat param)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLPointParameterf, "context = %d, pname = %s, param = %f", CID(context),
-          GLenumToString(GLenumGroup::DefaultGroup, pname), param);
-
-    if (context)
-    {
-        PointParameter pnamePacked = PackParam<PointParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidatePointParameterf(context, angle::EntryPoint::GLPointParameterf,
-                                                    pnamePacked, param));
-        if (isCallValid)
-        {
-            context->pointParameterf(pnamePacked, param);
-        }
-        ANGLE_CAPTURE_GL(PointParameterf, isCallValid, context, pnamePacked, param);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_PointParameterfv(GLenum pname, const GLfloat *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLPointParameterfv, "context = %d, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::DefaultGroup, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        PointParameter pnamePacked = PackParam<PointParameter>(pname);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidatePointParameterfv(context, angle::EntryPoint::GLPointParameterfv,
-                                                     pnamePacked, params));
-        if (isCallValid)
-        {
-            context->pointParameterfv(pnamePacked, params);
-        }
-        ANGLE_CAPTURE_GL(PointParameterfv, isCallValid, context, pnamePacked, params);
     }
     else
     {
@@ -10662,295 +7877,6 @@ void GL_APIENTRY GL_WindowPos3sv(const GLshort *v)
 }
 
 // GL 1.5
-void GL_APIENTRY GL_BeginQuery(GLenum target, GLuint id)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLBeginQuery, "context = %d, target = %s, id = %u", CID(context),
-          GLenumToString(GLenumGroup::QueryTarget, target), id);
-
-    if (context)
-    {
-        QueryType targetPacked = PackParam<QueryType>(target);
-        QueryID idPacked       = PackParam<QueryID>(id);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateBeginQuery(context, angle::EntryPoint::GLBeginQuery, targetPacked, idPacked));
-        if (isCallValid)
-        {
-            context->beginQuery(targetPacked, idPacked);
-        }
-        ANGLE_CAPTURE_GL(BeginQuery, isCallValid, context, targetPacked, idPacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_BindBuffer(GLenum target, GLuint buffer)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLBindBuffer, "context = %d, target = %s, buffer = %u", CID(context),
-          GLenumToString(GLenumGroup::BufferTargetARB, target), buffer);
-
-    if (context)
-    {
-        BufferBinding targetPacked = PackParam<BufferBinding>(target);
-        BufferID bufferPacked      = PackParam<BufferID>(buffer);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateBindBuffer(context, angle::EntryPoint::GLBindBuffer,
-                                               targetPacked, bufferPacked));
-        if (isCallValid)
-        {
-            context->bindBuffer(targetPacked, bufferPacked);
-        }
-        ANGLE_CAPTURE_GL(BindBuffer, isCallValid, context, targetPacked, bufferPacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_BufferData(GLenum target, GLsizeiptr size, const void *data, GLenum usage)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLBufferData,
-          "context = %d, target = %s, size = %llu, data = 0x%016" PRIxPTR ", usage = %s",
-          CID(context), GLenumToString(GLenumGroup::BufferTargetARB, target),
-          static_cast<unsigned long long>(size), (uintptr_t)data,
-          GLenumToString(GLenumGroup::BufferUsageARB, usage));
-
-    if (context)
-    {
-        BufferBinding targetPacked = PackParam<BufferBinding>(target);
-        BufferUsage usagePacked    = PackParam<BufferUsage>(usage);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateBufferData(context, angle::EntryPoint::GLBufferData,
-                                               targetPacked, size, data, usagePacked));
-        if (isCallValid)
-        {
-            context->bufferData(targetPacked, size, data, usagePacked);
-        }
-        ANGLE_CAPTURE_GL(BufferData, isCallValid, context, targetPacked, size, data, usagePacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void *data)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLBufferSubData,
-          "context = %d, target = %s, offset = %llu, size = %llu, data = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::BufferTargetARB, target),
-          static_cast<unsigned long long>(offset), static_cast<unsigned long long>(size),
-          (uintptr_t)data);
-
-    if (context)
-    {
-        BufferBinding targetPacked = PackParam<BufferBinding>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateBufferSubData(context, angle::EntryPoint::GLBufferSubData,
-                                                  targetPacked, offset, size, data));
-        if (isCallValid)
-        {
-            context->bufferSubData(targetPacked, offset, size, data);
-        }
-        ANGLE_CAPTURE_GL(BufferSubData, isCallValid, context, targetPacked, offset, size, data);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_DeleteBuffers(GLsizei n, const GLuint *buffers)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLDeleteBuffers, "context = %d, n = %d, buffers = 0x%016" PRIxPTR "",
-          CID(context), n, (uintptr_t)buffers);
-
-    if (context)
-    {
-        const BufferID *buffersPacked = PackParam<const BufferID *>(buffers);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateDeleteBuffers(context, angle::EntryPoint::GLDeleteBuffers, n, buffersPacked));
-        if (isCallValid)
-        {
-            context->deleteBuffers(n, buffersPacked);
-        }
-        ANGLE_CAPTURE_GL(DeleteBuffers, isCallValid, context, n, buffersPacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_DeleteQueries(GLsizei n, const GLuint *ids)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLDeleteQueries, "context = %d, n = %d, ids = 0x%016" PRIxPTR "", CID(context),
-          n, (uintptr_t)ids);
-
-    if (context)
-    {
-        const QueryID *idsPacked = PackParam<const QueryID *>(ids);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateDeleteQueries(context, angle::EntryPoint::GLDeleteQueries, n, idsPacked));
-        if (isCallValid)
-        {
-            context->deleteQueries(n, idsPacked);
-        }
-        ANGLE_CAPTURE_GL(DeleteQueries, isCallValid, context, n, idsPacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_EndQuery(GLenum target)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLEndQuery, "context = %d, target = %s", CID(context),
-          GLenumToString(GLenumGroup::QueryTarget, target));
-
-    if (context)
-    {
-        QueryType targetPacked = PackParam<QueryType>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateEndQuery(context, angle::EntryPoint::GLEndQuery, targetPacked));
-        if (isCallValid)
-        {
-            context->endQuery(targetPacked);
-        }
-        ANGLE_CAPTURE_GL(EndQuery, isCallValid, context, targetPacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GenBuffers(GLsizei n, GLuint *buffers)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGenBuffers, "context = %d, n = %d, buffers = 0x%016" PRIxPTR "", CID(context),
-          n, (uintptr_t)buffers);
-
-    if (context)
-    {
-        BufferID *buffersPacked = PackParam<BufferID *>(buffers);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGenBuffers(context, angle::EntryPoint::GLGenBuffers, n, buffersPacked));
-        if (isCallValid)
-        {
-            context->genBuffers(n, buffersPacked);
-        }
-        ANGLE_CAPTURE_GL(GenBuffers, isCallValid, context, n, buffersPacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GenQueries(GLsizei n, GLuint *ids)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGenQueries, "context = %d, n = %d, ids = 0x%016" PRIxPTR "", CID(context), n,
-          (uintptr_t)ids);
-
-    if (context)
-    {
-        QueryID *idsPacked = PackParam<QueryID *>(ids);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGenQueries(context, angle::EntryPoint::GLGenQueries, n, idsPacked));
-        if (isCallValid)
-        {
-            context->genQueries(n, idsPacked);
-        }
-        ANGLE_CAPTURE_GL(GenQueries, isCallValid, context, n, idsPacked);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GetBufferParameteriv(GLenum target, GLenum pname, GLint *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetBufferParameteriv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::BufferTargetARB, target),
-          GLenumToString(GLenumGroup::DefaultGroup, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        BufferBinding targetPacked = PackParam<BufferBinding>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGetBufferParameteriv(context, angle::EntryPoint::GLGetBufferParameteriv,
-                                          targetPacked, pname, params));
-        if (isCallValid)
-        {
-            context->getBufferParameteriv(targetPacked, pname, params);
-        }
-        ANGLE_CAPTURE_GL(GetBufferParameteriv, isCallValid, context, targetPacked, pname, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GetBufferPointerv(GLenum target, GLenum pname, void **params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetBufferPointerv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::BufferTargetARB, target),
-          GLenumToString(GLenumGroup::DefaultGroup, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        BufferBinding targetPacked = PackParam<BufferBinding>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGetBufferPointerv(context, angle::EntryPoint::GLGetBufferPointerv,
-                                       targetPacked, pname, params));
-        if (isCallValid)
-        {
-            context->getBufferPointerv(targetPacked, pname, params);
-        }
-        ANGLE_CAPTURE_GL(GetBufferPointerv, isCallValid, context, targetPacked, pname, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
 void GL_APIENTRY GL_GetBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, void *data)
 {
     Context *context = GetValidGlobalContext();
@@ -11002,120 +7928,6 @@ void GL_APIENTRY GL_GetQueryObjectiv(GLuint id, GLenum pname, GLint *params)
     {}
 }
 
-void GL_APIENTRY GL_GetQueryObjectuiv(GLuint id, GLenum pname, GLuint *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetQueryObjectuiv,
-          "context = %d, id = %u, pname = %s, params = 0x%016" PRIxPTR "", CID(context), id,
-          GLenumToString(GLenumGroup::QueryObjectParameterName, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        QueryID idPacked = PackParam<QueryID>(id);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGetQueryObjectuiv(context, angle::EntryPoint::GLGetQueryObjectuiv, idPacked,
-                                       pname, params));
-        if (isCallValid)
-        {
-            context->getQueryObjectuiv(idPacked, pname, params);
-        }
-        ANGLE_CAPTURE_GL(GetQueryObjectuiv, isCallValid, context, idPacked, pname, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-void GL_APIENTRY GL_GetQueryiv(GLenum target, GLenum pname, GLint *params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetQueryiv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::QueryTarget, target),
-          GLenumToString(GLenumGroup::QueryParameterName, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        QueryType targetPacked = PackParam<QueryType>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateGetQueryiv(context, angle::EntryPoint::GLGetQueryiv,
-                                               targetPacked, pname, params));
-        if (isCallValid)
-        {
-            context->getQueryiv(targetPacked, pname, params);
-        }
-        ANGLE_CAPTURE_GL(GetQueryiv, isCallValid, context, targetPacked, pname, params);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-    }
-}
-
-GLboolean GL_APIENTRY GL_IsBuffer(GLuint buffer)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLIsBuffer, "context = %d, buffer = %u", CID(context), buffer);
-
-    GLboolean returnValue;
-    if (context)
-    {
-        BufferID bufferPacked = PackParam<BufferID>(buffer);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateIsBuffer(context, angle::EntryPoint::GLIsBuffer, bufferPacked));
-        if (isCallValid)
-        {
-            returnValue = context->isBuffer(bufferPacked);
-        }
-        else
-        {
-            returnValue = GetDefaultReturnValue<angle::EntryPoint::GLIsBuffer, GLboolean>();
-        }
-        ANGLE_CAPTURE_GL(IsBuffer, isCallValid, context, bufferPacked, returnValue);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-        returnValue = GetDefaultReturnValue<angle::EntryPoint::GLIsBuffer, GLboolean>();
-    }
-    return returnValue;
-}
-
-GLboolean GL_APIENTRY GL_IsQuery(GLuint id)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLIsQuery, "context = %d, id = %u", CID(context), id);
-
-    GLboolean returnValue;
-    if (context)
-    {
-        QueryID idPacked = PackParam<QueryID>(id);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateIsQuery(context, angle::EntryPoint::GLIsQuery, idPacked));
-        if (isCallValid)
-        {
-            returnValue = context->isQuery(idPacked);
-        }
-        else
-        {
-            returnValue = GetDefaultReturnValue<angle::EntryPoint::GLIsQuery, GLboolean>();
-        }
-        ANGLE_CAPTURE_GL(IsQuery, isCallValid, context, idPacked, returnValue);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-        returnValue = GetDefaultReturnValue<angle::EntryPoint::GLIsQuery, GLboolean>();
-    }
-    return returnValue;
-}
-
 void *GL_APIENTRY GL_MapBuffer(GLenum target, GLenum access)
 {
     Context *context = GetValidGlobalContext();
@@ -11145,38 +7957,6 @@ void *GL_APIENTRY GL_MapBuffer(GLenum target, GLenum access)
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
         returnValue = GetDefaultReturnValue<angle::EntryPoint::GLMapBuffer, void *>();
-    }
-    return returnValue;
-}
-
-GLboolean GL_APIENTRY GL_UnmapBuffer(GLenum target)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT(context, GLUnmapBuffer, "context = %d, target = %s", CID(context),
-          GLenumToString(GLenumGroup::BufferTargetARB, target));
-
-    GLboolean returnValue;
-    if (context)
-    {
-        BufferBinding targetPacked = PackParam<BufferBinding>(target);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateUnmapBuffer(context, angle::EntryPoint::GLUnmapBuffer, targetPacked));
-        if (isCallValid)
-        {
-            returnValue = context->unmapBuffer(targetPacked);
-        }
-        else
-        {
-            returnValue = GetDefaultReturnValue<angle::EntryPoint::GLUnmapBuffer, GLboolean>();
-        }
-        ANGLE_CAPTURE_GL(UnmapBuffer, isCallValid, context, targetPacked, returnValue);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext();
-        returnValue = GetDefaultReturnValue<angle::EntryPoint::GLUnmapBuffer, GLboolean>();
     }
     return returnValue;
 }

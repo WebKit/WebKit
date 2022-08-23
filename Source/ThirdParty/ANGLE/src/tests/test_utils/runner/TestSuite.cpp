@@ -1077,14 +1077,6 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
 
     mTestResults.currentTestTimeout = mTestTimeout;
 
-#if defined(ANGLE_PLATFORM_ANDROID)
-    // Workaround for the Android test runner requiring a GTest test list.
-    if (mListTests && filterArgIndex.valid())
-    {
-        DeleteArg(argc, argv, filterArgIndex.value());
-    }
-#endif  // defined(ANGLE_PLATFORM_ANDROID)
-
     if (!mDisableCrashHandler)
     {
         // Note that the crash callback must be owned and not use global constructors.

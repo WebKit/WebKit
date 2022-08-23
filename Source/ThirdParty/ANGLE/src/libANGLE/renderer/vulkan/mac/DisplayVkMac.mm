@@ -75,8 +75,7 @@ DisplayImpl *CreateVulkanMacDisplay(const egl::DisplayState &state)
 
 void DisplayVkMac::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
-    outExtensions->iosurfaceClientBuffer =
-        getRenderer()->getFeatures().supportsExternalMemoryHost.enabled;
+    outExtensions->iosurfaceClientBuffer = true;
 
     DisplayVk::generateExtensions(outExtensions);
 }

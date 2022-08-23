@@ -28,7 +28,7 @@ bool compileTestShader(GLenum type,
                        ShShaderOutput output,
                        const std::string &shaderString,
                        ShBuiltInResources *resources,
-                       ShCompileOptions compileOptions,
+                       const ShCompileOptions &compileOptions,
                        std::string *translatedCode,
                        std::string *infoLog);
 
@@ -36,24 +36,23 @@ bool compileTestShader(GLenum type,
                        ShShaderSpec spec,
                        ShShaderOutput output,
                        const std::string &shaderString,
-                       ShCompileOptions compileOptions,
+                       const ShCompileOptions &compileOptions,
                        std::string *translatedCode,
                        std::string *infoLog);
 
 class MatchOutputCodeTest : public testing::Test
 {
   protected:
-    MatchOutputCodeTest(GLenum shaderType,
-                        ShCompileOptions defaultCompileOptions,
-                        ShShaderOutput outputType);
+    MatchOutputCodeTest(GLenum shaderType, ShShaderOutput outputType);
 
+    void setDefaultCompileOptions(const ShCompileOptions &defaultCompileOptions);
     void addOutputType(const ShShaderOutput outputType);
 
     ShBuiltInResources *getResources();
 
     // Compile functions clear any results from earlier calls to them.
     void compile(const std::string &shaderString);
-    void compile(const std::string &shaderString, const ShCompileOptions compileOptions);
+    void compile(const std::string &shaderString, const ShCompileOptions &compileOptions);
 
     bool foundInESSLCode(const char *stringToFind) const
     {
@@ -94,7 +93,7 @@ class MatchOutputCodeTest : public testing::Test
   private:
     bool compileWithSettings(ShShaderOutput output,
                              const std::string &shaderString,
-                             ShCompileOptions compileOptions,
+                             const ShCompileOptions &compileOptions,
                              std::string *translatedCode,
                              std::string *infoLog);
 
