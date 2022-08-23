@@ -145,14 +145,11 @@ class GitHub(Scm):
                 ),
             )
             if response.status_code == 422:
-                sys.stderr.write('Validation failed when creating pull request\n')
-                sys.stderr.write('Does a pull request against this branch already exist?\n')
+                sys.stderr.write(self.tracker.parse_error(response.json()))
                 return None
             if response.status_code // 100 != 2:
                 sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
-                message = response.json().get('message')
-                if message:
-                    sys.stderr.write('Message: {}\n'.format(message))
+                sys.stderr.write(self.tracker.parse_error(response.json()))
                 sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
                 return None
             result = self.PullRequest(response.json())
@@ -193,13 +190,12 @@ class GitHub(Scm):
                 json=updates,
             )
             if response.status_code == 422:
+                sys.stderr.write(self.tracker.parse_error(response.json()))
                 pull_request._opened = False
                 return pull_request
             if response.status_code // 100 != 2:
                 sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
-                message = response.json().get('message')
-                if message:
-                    sys.stderr.write('Message: {}\n'.format(message))
+                sys.stderr.write(self.tracker.parse_error(response.json()))
                 sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
                 return None
             data = response.json()
