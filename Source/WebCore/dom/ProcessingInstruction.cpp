@@ -119,7 +119,7 @@ void ProcessingInstruction::checkStyleSheet()
             // to kick off import/include loads that can hang off some parent sheet.
             if (m_isXSL) {
                 URL finalURL({ }, m_localHref);
-                m_sheet = XSLStyleSheet::createEmbedded(this, finalURL);
+                m_sheet = XSLStyleSheet::createEmbedded(*this, finalURL);
                 m_loading = false;
                 document().scheduleToApplyXSLTransforms();
             }
@@ -227,7 +227,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
 void ProcessingInstruction::setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet)
 {
     ASSERT(m_isXSL);
-    m_sheet = XSLStyleSheet::create(this, href, baseURL);
+    m_sheet = XSLStyleSheet::create(*this, href, baseURL);
     Ref<Document> protect(document());
     parseStyleSheet(sheet);
 }

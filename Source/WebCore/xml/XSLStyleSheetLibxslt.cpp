@@ -45,15 +45,14 @@
 
 namespace WebCore {
 
-XSLStyleSheet::XSLStyleSheet(XSLImportRule* parentRule, const String& originalURL, const URL& finalURL)
+XSLStyleSheet::XSLStyleSheet(XSLStyleSheet* parentSheet, const String& originalURL, const URL& finalURL)
     : m_ownerNode(nullptr)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
     , m_embedded(false)
     , m_processed(false) // Child sheets get marked as processed when the libxslt engine has finally seen them.
+    , m_parentStyleSheet(parentSheet)
 {
-    if (parentRule)
-        m_parentStyleSheet = parentRule->parentStyleSheet();
 }
 
 XSLStyleSheet::XSLStyleSheet(Node* parentNode, const String& originalURL, const URL& finalURL,  bool embedded)
@@ -88,7 +87,7 @@ void XSLStyleSheet::checkLoaded()
 {
     if (isLoading())
         return;
-    if (XSLStyleSheet* styleSheet = parentStyleSheet())
+    if (RefPtr styleSheet = parentStyleSheet())
         styleSheet->checkLoaded();
     if (ownerNode())
         ownerNode()->sheetLoaded();
@@ -232,7 +231,7 @@ void XSLStyleSheet::loadChildSheets()
 
 void XSLStyleSheet::loadChildSheet(const String& href)
 {
-    auto childRule = makeUnique<XSLImportRule>(this, href);
+    auto childRule = makeUnique<XSLImportRule>(*this, href);
     m_children.append(childRule.release());
     m_children.last()->loadSheet();
 }
@@ -267,19 +266,18 @@ void XSLStyleSheet::setParentStyleSheet(XSLStyleSheet* parent)
 
 Document* XSLStyleSheet::ownerDocument()
 {
-    for (XSLStyleSheet* styleSheet = this; styleSheet; styleSheet = styleSheet->parentStyleSheet()) {
-        Node* node = styleSheet->ownerNode();
-        if (node)
+    for (RefPtr styleSheet = this; styleSheet; styleSheet = styleSheet->parentStyleSheet()) {
+        if (auto* node = styleSheet->ownerNode())
             return &node->document();
     }
-    return 0;
+    return nullptr;
 }
 
 xmlDocPtr XSLStyleSheet::locateStylesheetSubResource(xmlDocPtr parentDoc, const xmlChar* uri)
 {
     bool matchedParent = (parentDoc == document());
     for (auto& import : m_children) {
-        XSLStyleSheet* child = import->styleSheet();
+        RefPtr child = import->styleSheet();
         if (!child)
             continue;
         if (matchedParent) {
@@ -302,7 +300,7 @@ xmlDocPtr XSLStyleSheet::locateStylesheetSubResource(xmlDocPtr parentDoc, const 
             }
             continue;
         }
-        xmlDocPtr result = import->styleSheet()->locateStylesheetSubResource(parentDoc, uri);
+        xmlDocPtr result = child->locateStylesheetSubResource(parentDoc, uri);
         if (result)
             return result;
     }
