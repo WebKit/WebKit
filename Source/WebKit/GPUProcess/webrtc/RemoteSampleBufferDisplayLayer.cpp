@@ -143,9 +143,9 @@ void RemoteSampleBufferDisplayLayer::setSharedVideoFrameSemaphore(IPC::Semaphore
     m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
 }
 
-void RemoteSampleBufferDisplayLayer::setSharedVideoFrameMemory(const SharedMemory::IPCHandle& ipcHandle)
+void RemoteSampleBufferDisplayLayer::setSharedVideoFrameMemory(const SharedMemory::Handle& handle)
 {
-    m_sharedVideoFrameReader.setSharedMemory(ipcHandle);
+    m_sharedVideoFrameReader.setSharedMemory(handle);
 }
 
 }

@@ -117,7 +117,7 @@ public:
     Span<uint8_t> dataForTesting();
 
 private:
-    StreamConnectionBuffer(Ref<WebKit::SharedMemory>&&, size_t memorySize);
+    StreamConnectionBuffer(Ref<WebKit::SharedMemory>&&);
 
     struct Header {
         Atomic<ServerOffset> serverOffset;
