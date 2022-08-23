@@ -1720,3 +1720,4 @@ webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/se
 webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/service-worker-header.https.html [ Pass Crash ]
 webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/update-import-scripts.https.html [ Pass Crash ]
 
+webkit.org/b/244272 [ Monterey ] fast/images/text-recognition/mac/cursor-types-for-recognized-text.html [ Pass Failure ]
