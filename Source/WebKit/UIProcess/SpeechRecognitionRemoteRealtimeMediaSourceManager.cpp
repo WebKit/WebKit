@@ -108,10 +108,10 @@ uint64_t SpeechRecognitionRemoteRealtimeMediaSourceManager::messageSenderDestina
 
 #if PLATFORM(COCOA)
 
-void SpeechRecognitionRemoteRealtimeMediaSourceManager::setStorage(WebCore::RealtimeMediaSourceIdentifier identifier, const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void SpeechRecognitionRemoteRealtimeMediaSourceManager::setStorage(WebCore::RealtimeMediaSourceIdentifier identifier, const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
     if (auto source = m_sources.get(identifier))
-        source->setStorage(ipcHandle.handle, description, numberOfFrames);
+        source->setStorage(handle, description, numberOfFrames);
 }
 
 #endif

@@ -35,7 +35,7 @@ messages -> WebSWClientConnection {
     NotifyClientsOfControllerChange(HashSet<WebCore::ScriptExecutionContextIdentifier> contextIdentifiers, struct WebCore::ServiceWorkerData newController)
 
     SetSWOriginTableIsImported()
-    SetSWOriginTableSharedMemory(WebKit::SharedMemory::IPCHandle handle)
+    SetSWOriginTableSharedMemory(WebKit::SharedMemory::Handle handle)
     PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, struct WebCore::MessageWithMessagePorts message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
 
     SetServiceWorkerClientIsControlled(WebCore::ScriptExecutionContextIdentifier workerIdentifier, struct WebCore::ServiceWorkerRegistrationData data) -> (bool isSuccess)

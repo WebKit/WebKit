@@ -218,10 +218,10 @@ void RemoteRenderingBackend::getPixelBufferForImageBuffer(RenderingResourceIdent
     completionHandler();
 }
 
-void RemoteRenderingBackend::getPixelBufferForImageBufferWithNewMemory(RenderingResourceIdentifier imageBuffer, SharedMemory::IPCHandle&& handle, PixelBufferFormat&& destinationFormat, IntRect&& srcRect, CompletionHandler<void()>&& completionHandler)
+void RemoteRenderingBackend::getPixelBufferForImageBufferWithNewMemory(RenderingResourceIdentifier imageBuffer, SharedMemory::Handle&& handle, PixelBufferFormat&& destinationFormat, IntRect&& srcRect, CompletionHandler<void()>&& completionHandler)
 {
     m_getPixelBufferSharedMemory = nullptr;
-    auto sharedMemory = WebKit::SharedMemory::map(handle.handle, WebKit::SharedMemory::Protection::ReadWrite);
+    auto sharedMemory = WebKit::SharedMemory::map(handle, WebKit::SharedMemory::Protection::ReadWrite);
     MESSAGE_CHECK(sharedMemory, "Shared memory could not be mapped.");
     MESSAGE_CHECK(sharedMemory->size() <= HTMLCanvasElement::maxActivePixelMemory(), "Shared memory too big.");
     m_getPixelBufferSharedMemory = WTFMove(sharedMemory);

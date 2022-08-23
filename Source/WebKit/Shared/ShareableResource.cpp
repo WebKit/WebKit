@@ -30,6 +30,7 @@
 
 #include "ArgumentCoders.h"
 #include <WebCore/SharedBuffer.h>
+#include <wtf/CheckedArithmetic.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -38,20 +39,26 @@ ShareableResource::Handle::Handle() = default;
 
 void ShareableResource::Handle::encode(IPC::Encoder& encoder) const
 {
-    encoder << SharedMemory::IPCHandle { WTFMove(m_handle), m_size };
+    encoder << m_handle;
     encoder << m_offset;
+    encoder << m_size;
 }
 
 bool ShareableResource::Handle::decode(IPC::Decoder& decoder, Handle& handle)
 {
-    SharedMemory::IPCHandle ipcHandle;
-    if (!decoder.decode(ipcHandle))
+    SharedMemory::Handle memoryHandle;
+    if (UNLIKELY(!decoder.decode(memoryHandle)))
         return false;
-    if (!decoder.decode(handle.m_offset))
+    if (UNLIKELY(!decoder.decode(handle.m_offset)))
         return false;
-
-    handle.m_size = ipcHandle.dataSize;
-    handle.m_handle = WTFMove(ipcHandle.handle);
+    if (UNLIKELY(!decoder.decode(handle.m_size)))
+        return false;
+    auto neededSize = Checked<unsigned> { handle.m_offset } + handle.m_size;
+    if (UNLIKELY(neededSize.hasOverflowed()))
+        return false;
+    if (memoryHandle.size() < neededSize)
+        return false;
+    handle.m_handle = WTFMove(memoryHandle);
     return true;
 }
 
@@ -113,7 +120,6 @@ bool ShareableResource::createHandle(Handle& handle)
 
     handle.m_offset = m_offset;
     handle.m_size = m_size;
-
     return true;
 }
 

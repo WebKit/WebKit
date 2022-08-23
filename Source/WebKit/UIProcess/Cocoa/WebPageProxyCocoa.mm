@@ -258,7 +258,7 @@ void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmap::Ha
 // FIXME: Move these functions to WebPageProxyIOS.mm.
 #if PLATFORM(IOS_FAMILY)
 
-void WebPageProxy::setPromisedDataForImage(const String&, const SharedMemory::IPCHandle&, const String&, const String&, const String&, const String&, const String&, const SharedMemory::IPCHandle&, const String&)
+void WebPageProxy::setPromisedDataForImage(const String&, const SharedMemory::Handle&, const String&, const String&, const String&, const String&, const String&, const SharedMemory::Handle&, const String&)
 {
     notImplemented();
 }
@@ -716,11 +716,11 @@ void WebPageProxy::restoreAppHighlightsAndScrollToIndex(const Vector<Ref<SharedM
     if (!hasRunningProcess())
         return;
 
-    auto memoryHandles = WTF::compactMap(highlights, [](auto& highlight) -> std::optional<SharedMemory::IPCHandle> {
+    auto memoryHandles = WTF::compactMap(highlights, [](auto& highlight) -> std::optional<SharedMemory::Handle> {
         SharedMemory::Handle handle;
         if (!highlight->createHandle(handle, SharedMemory::Protection::ReadOnly))
             return std::nullopt;
-        return SharedMemory::IPCHandle { WTFMove(handle), highlight->size() };
+        return handle;
     });
     
     setUpHighlightsObserver();

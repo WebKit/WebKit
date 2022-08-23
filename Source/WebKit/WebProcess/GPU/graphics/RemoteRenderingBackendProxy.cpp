@@ -156,8 +156,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
 bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBufferFormat& destinationFormat, const IntRect& srcRect, Span<uint8_t> result)
 {
     if (auto handle = updateSharedMemoryForGetPixelBuffer(result.size())) {
-        SharedMemory::IPCHandle ipcHandle { WTFMove(*handle), m_getPixelBufferSharedMemory->size() };
-        auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetPixelBufferForImageBufferWithNewMemory(imageBuffer, ipcHandle, destinationFormat, srcRect),
+        auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetPixelBufferForImageBufferWithNewMemory(imageBuffer, WTFMove(*handle), destinationFormat, srcRect),
             Messages::RemoteRenderingBackend::GetPixelBufferForImageBufferWithNewMemory::Reply());
         if (!sendResult)
             return false;

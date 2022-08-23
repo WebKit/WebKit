@@ -64,13 +64,13 @@ RemoteMediaRecorder::~RemoteMediaRecorder()
 {
 }
 
-void RemoteMediaRecorder::audioSamplesStorageChanged(const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteMediaRecorder::audioSamplesStorageChanged(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
     MESSAGE_CHECK(m_ringBuffer);
 
     m_description = description;
 
-    m_ringBuffer = CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(ipcHandle.handle), description, numberOfFrames).moveToUniquePtr();
+    m_ringBuffer = CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames).moveToUniquePtr();
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_description);
 }
 
@@ -124,9 +124,9 @@ void RemoteMediaRecorder::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphor
     m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
 }
 
-void RemoteMediaRecorder::setSharedVideoFrameMemory(const SharedMemory::IPCHandle& ipcHandle)
+void RemoteMediaRecorder::setSharedVideoFrameMemory(const SharedMemory::Handle& handle)
 {
-    m_sharedVideoFrameReader.setSharedMemory(ipcHandle);
+    m_sharedVideoFrameReader.setSharedMemory(handle);
 }
 
 }

@@ -79,25 +79,19 @@ bool SharedMemory::Handle::isNull() const
     return m_attachment.isNull();
 }
 
-void SharedMemory::IPCHandle::encode(IPC::Encoder& encoder) const
+void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
 {
-    encoder << handle.releaseAttachment();
-    encoder << dataSize;
+    encoder << releaseAttachment();
 }
 
-bool SharedMemory::IPCHandle::decode(IPC::Decoder& decoder, IPCHandle& ipcHandle)
+bool SharedMemory::Handle::decode(IPC::Decoder& decoder, SharedMemory::Handle& handle)
 {
-    ASSERT_ARG(ipcHandle.handle, ipcHandle.handle.isNull());
+    ASSERT_ARG(handle, handle.isNull());
     IPC::Attachment attachment;
     if (!decoder.decode(attachment))
         return false;
-
-    uint64_t dataSize;
-    if (!decoder.decode(dataSize))
-        return false;
-
-    ipcHandle.handle.adoptAttachment(WTFMove(attachment));
-    ipcHandle.dataSize = dataSize;
+    handle.m_size = attachment.size();
+    handle.adoptAttachment(WTFMove(attachment));
     return true;
 }
 

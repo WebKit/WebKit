@@ -72,9 +72,9 @@ void IPCStreamTester::stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnecti
     workQueue().stopAndWaitForCompletion();
 }
 
-void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(SharedMemory::IPCHandle)>&& completionHandler)
+void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(SharedMemory::Handle)>&& completionHandler)
 {
-    auto result = [&]() -> SharedMemory::IPCHandle {
+    auto result = [&]() -> SharedMemory::Handle {
         auto sharedMemory = WebKit::SharedMemory::allocate(byteCount);
         if (!sharedMemory)
             return { };
@@ -86,7 +86,7 @@ void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, Comp
         uint8_t* data = static_cast<uint8_t*>(sharedMemory->data());
         for (size_t i = 0; i < sharedMemory->size(); ++i)
             data[i] = i;
-        return { WTFMove(handle), sharedMemory->size() };
+        return handle;
     }();
     completionHandler(WTFMove(result));
 }

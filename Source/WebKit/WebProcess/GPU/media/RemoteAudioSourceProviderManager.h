@@ -54,7 +54,7 @@ private:
     RemoteAudioSourceProviderManager();
 
     // Messages
-    void audioStorageChanged(WebCore::MediaPlayerIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
+    void audioStorageChanged(WebCore::MediaPlayerIdentifier, const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
     void audioSamplesAvailable(WebCore::MediaPlayerIdentifier, uint64_t startFrame, uint64_t numberOfFrames);
 
     void setConnection(IPC::Connection*);

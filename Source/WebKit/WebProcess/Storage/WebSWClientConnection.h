@@ -110,7 +110,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return 0; }
 
-    void setSWOriginTableSharedMemory(const SharedMemory::IPCHandle&);
+    void setSWOriginTableSharedMemory(const SharedMemory::Handle&);
     void setSWOriginTableIsImported();
 
     void clear();

@@ -61,7 +61,7 @@ private:
     void remoteCaptureFailed(WebCore::RealtimeMediaSourceIdentifier);
     void remoteSourceStopped(WebCore::RealtimeMediaSourceIdentifier);
 #if PLATFORM(COCOA)
-    void setStorage(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
+    void setStorage(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
 #endif
 
     // IPC::MessageReceiver.

@@ -222,14 +222,7 @@ private:
         SharedMemory::Handle handle;
         if (storage)
             storage->createHandle(handle, SharedMemory::Protection::ReadOnly);
-
-        // FIXME: Send the actual data size with IPCHandle.
-#if OS(DARWIN) || OS(WINDOWS)
-        uint64_t dataSize = handle.size();
-#else
-        uint64_t dataSize = 0;
-#endif
-        m_connection->send(Messages::RemoteCaptureSampleManager::AudioStorageChanged(m_id, SharedMemory::IPCHandle { WTFMove(handle),  dataSize }, format, frameCount, *m_captureSemaphore, m_startTime, m_frameChunkSize), 0);
+        m_connection->send(Messages::RemoteCaptureSampleManager::AudioStorageChanged(m_id, WTFMove(handle), format, frameCount, *m_captureSemaphore, m_startTime, m_frameChunkSize), 0);
     }
 
     bool preventSourceFromStopping()

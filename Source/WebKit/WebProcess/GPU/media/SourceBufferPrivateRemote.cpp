@@ -87,7 +87,7 @@ void SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
     m_gpuProcessConnection->connection().sendWithAsyncReply(Messages::RemoteSourceBufferProxy::Append(IPC::SharedBufferReference { WTFMove(data) }), [] (auto&& bufferHandle) {
         // Take ownership of shared memory and mark it as media-related memory.
         if (bufferHandle)
-            bufferHandle->handle.takeOwnershipOfMemory(MemoryLedger::Media);
+            bufferHandle->takeOwnershipOfMemory(MemoryLedger::Media);
     }, m_remoteSourceBufferIdentifier);
 }
 
