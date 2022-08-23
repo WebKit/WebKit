@@ -88,4 +88,7 @@ if sys.version_info >= (3, 6):
 else:
     AutoInstall.register(Package('keyring', Version(18, 0, 1)))
 
+if platform.system() == 'Windows':
+    AutoInstall.register(Package('pyreadline', Version(2, 1)))
+
 name = 'webkitcorepy'
