@@ -44,8 +44,8 @@ class RegLiveness {
     struct Actions {
         Actions() { }
         
-        RegisterSet use;
-        RegisterSet def;
+        RegisterSet128 use;
+        RegisterSet128 def;
     };
     
     typedef Vector<Actions, 0, UnsafeVectorOverflow> ActionsForBoundary;
@@ -63,7 +63,7 @@ public:
         {
         }
         
-        const RegisterSet& live() const
+        const RegisterSet128& live() const
         {
             return m_workset;
         }
@@ -75,7 +75,7 @@ public:
         
     protected:
         BasicBlock* m_block;
-        RegisterSet m_workset;
+        RegisterSet128 m_workset;
     };
     
     // This calculator has to be run in reverse.
@@ -111,19 +111,19 @@ public:
         UnifiedTmpLiveness::ActionsForBoundary& m_actions;
     };
     
-    const RegisterSet& liveAtHead(BasicBlock* block) const
+    const RegisterSet128& liveAtHead(BasicBlock* block) const
     {
         return m_liveAtHead[block];
     }
     
-    const RegisterSet& liveAtTail(BasicBlock* block) const
+    const RegisterSet128& liveAtTail(BasicBlock* block) const
     {
         return m_liveAtTail[block];
     }
     
 private:
-    IndexMap<BasicBlock*, RegisterSet> m_liveAtHead;
-    IndexMap<BasicBlock*, RegisterSet> m_liveAtTail;
+    IndexMap<BasicBlock*, RegisterSet128> m_liveAtHead;
+    IndexMap<BasicBlock*, RegisterSet128> m_liveAtTail;
     IndexMap<BasicBlock*, ActionsForBoundary> m_actions;
 };
 

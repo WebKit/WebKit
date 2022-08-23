@@ -75,17 +75,17 @@ export const falsy = (v, msg) => {
 
 export const eq = (lhs, rhs, msg) => {
     if (typeof lhs !== typeof rhs)
-        _fail(`Not the same: "${lhs}" and "${rhs}"`, msg);
+        _fail(`Not the same (type): "${lhs}": ${typeof lhs} and "${rhs}": ${typeof rhs}`, msg);
     if (Array.isArray(lhs) && Array.isArray(rhs) && (lhs.length === rhs.length)) {
         for (let i = 0; i !== lhs.length; ++i)
             eq(lhs[i], rhs[i], msg);
     } else if (lhs !== rhs) {
         if (typeof lhs === "number" && isNaN(lhs) && isNaN(rhs))
             return;
-        _fail(`Not the same: "${lhs}" and "${rhs}"`, msg);
+        _fail(`Not the same (val): "${lhs}" and "${rhs}"`, msg);
     } else {
         if (typeof lhs === "number" && (1.0 / lhs !== 1.0 / rhs)) // Distinguish -0.0 from 0.0.
-            _fail(`Not the same: "${lhs}" and "${rhs}"`, msg);
+            _fail(`Not the same (+/-0.0): "${lhs}" and "${rhs}"`, msg);
     }
 };
 
@@ -180,11 +180,11 @@ const printExn = (e) => {
     print(e.stack);
 };
 
-export const asyncTest = (promise) => asyncTestImpl(promise, harnessCall(asyncTestPassed), printExn);
+export const asyncTest = (promise) => asyncTestImpl(promise, harnessCall(() => asyncTestPassed()), printExn);
 export const asyncTestEq = (promise, expected) => {
     const thenCheck = (value) => {
         if (value === expected)
-            return harnessCall(asyncTestPassed);
+            return harnessCall(() => asyncTestPassed());
         print("Failed: got ", value, " but expected ", expected);
 
     }

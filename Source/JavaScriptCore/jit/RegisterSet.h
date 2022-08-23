@@ -31,12 +31,19 @@
 #include "MacroAssembler.h"
 #include "Reg.h"
 #include <wtf/Bitmap.h>
+#include <wtf/CommaPrinter.h>
 
 namespace JSC {
 
 typedef Bitmap<MacroAssembler::numGPRs + MacroAssembler::numFPRs> RegisterBitmap;
 class RegisterAtOffsetList;
 
+enum IncludedWidth : uint8_t {
+    ExcludeRegister = 0,
+    IncludeLower64Bits,
+    IncludeUpper64Bits,
+    IncludeRegister
+};
 class RegisterSet {
 public:
     constexpr RegisterSet() { }
@@ -68,36 +75,46 @@ public:
     static RegisterSet allRegisters();
     JS_EXPORT_PRIVATE static RegisterSet argumentGPRS();
 
-    static RegisterSet registersToNotSaveForJSCall();
-    static RegisterSet registersToNotSaveForCCall();
-    
-    void set(Reg reg, bool value = true)
+template<typename Self>
+class RegisterSetBase {
+public:
+    void set(Reg reg, IncludedWidth value = IncludeRegister)
     {
         ASSERT(!!reg);
-        m_bits.set(reg.index(), value);
+        if (reg.isGPR()) {
+            if (value == IncludeLower64Bits)
+                value = IncludeRegister;
+            ASSERT(value == ExcludeRegister || value == IncludeRegister);
+        }
+        static_cast<Self&>(*this).setImpl(reg.index(), value);
     }
     
-    void set(JSValueRegs regs, bool value = true)
+    void set(JSValueRegs regs, IncludedWidth value = IncludeRegister)
     {
         if (regs.tagGPR() != InvalidGPRReg)
             set(regs.tagGPR(), value);
         set(regs.payloadGPR(), value);
     }
+    void clear(JSValueRegs regs) { set(regs, ExcludeRegister); }
 
-    void set(const RegisterSet& other, bool value = true) { value ? merge(other) : exclude(other); }
+    void set(const Self& other, IncludedWidth value = IncludeRegister) { value == ExcludeRegister ? static_cast<Self&>(*this).exclude(other) : static_cast<Self&>(*this).merge(other); }
+    void clear(const Self& other) { set(other, ExcludeRegister); }
 
     void clear(Reg reg)
     {
         ASSERT(!!reg);
-        set(reg, false);
+        set(reg, ExcludeRegister);
     }
     
-    bool get(Reg reg) const
+    IncludedWidth get(Reg reg) const
     {
         ASSERT(!!reg);
-        return m_bits.get(reg.index());
+        auto value = static_cast<const Self&>(*this).getImpl(reg.index());
+        if (reg.isGPR())
+            ASSERT(value == ExcludeRegister || value == IncludeRegister);
+        return value;
     }
-    
+
     template<typename Iterable>
     void setAll(const Iterable& iterable)
     {
@@ -109,41 +126,60 @@ public:
     bool add(Reg reg)
     {
         ASSERT(!!reg);
-        return !m_bits.testAndSet(reg.index());
+        return !static_cast<Self&>(*this).testAndSet(reg);
     }
     bool remove(Reg reg)
     {
         ASSERT(!!reg);
-        return m_bits.testAndClear(reg.index());
+        return static_cast<Self&>(*this).testAndClear(reg);
     }
-    bool contains(Reg reg) const { return get(reg); }
+    bool contains(Reg reg) const { return get(reg) != ExcludeRegister; }
     
-    void merge(const RegisterSet& other) { m_bits.merge(other.m_bits); }
-    void filter(const RegisterSet& other) { m_bits.filter(other.m_bits); }
-    void exclude(const RegisterSet& other) { m_bits.exclude(other.m_bits); }
+    size_t numberOfSetGPRs() const
+    {
+        Self temp = static_cast<const Self&>(*this);
+        temp.filter(Self::allGPRs());
+        return temp.numberOfSetRegisters();
+    }
+    size_t numberOfSetFPRs() const
+    {
+        Self temp = static_cast<const Self&>(*this);
+        temp.filter(Self::allFPRs());
+        return temp.numberOfSetRegisters();
+    }
+    size_t numberOfSetRegisters() const { return static_cast<const Self&>(*this).allSet().count(); }
+    bool isEmpty() const { return !numberOfSetRegisters(); }
     
-    bool subsumes(const RegisterSet& other) const { return m_bits.subsumes(other.m_bits); }
-    
-    size_t numberOfSetGPRs() const;
-    size_t numberOfSetFPRs() const;
-    size_t numberOfSetRegisters() const { return m_bits.count(); }
-    
-    bool isEmpty() const { return m_bits.isEmpty(); }
-    
-    JS_EXPORT_PRIVATE void dump(PrintStream&) const;
-    
-    bool operator==(const RegisterSet& other) const { return m_bits == other.m_bits; }
-    bool operator!=(const RegisterSet& other) const { return m_bits != other.m_bits; }
-    
-    unsigned hash() const { return m_bits.hash(); }
+    JS_EXPORT_PRIVATE void dump(PrintStream& out) const
+    {
+        CommaPrinter comma;
+        out.print("[");
+        for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+            if (get(reg))
+                out.print(comma, reg, "(", static_cast<uint8_t>(get(reg)), ")");
+        }
+        out.print("]");
+    }
+
+    bool operator!=(const Self& other) const { return !(static_cast<const Self&>(*this) == other); }
     
     template<typename Func>
     void forEach(const Func& func) const
     {
-        m_bits.forEachSetBit(
+        static_cast<const Self&>(*this).allSet().forEachSetBit(
             [&] (size_t index) {
                 func(Reg::fromIndex(index));
             });
+    }
+    
+    template<typename Func>
+    void forEachWithWidth(const Func& func) const
+    {
+        for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+            auto value = get(reg);
+            if (value != ExcludeRegister)
+                func(reg, value);
+        }
     }
     
     class iterator {
@@ -152,22 +188,23 @@ public:
         {
         }
         
-        iterator(const RegisterBitmap::iterator& iter)
-            : m_iter(iter)
+        iterator(const RegisterBitmap& bitmap)
+            : m_bitmap(bitmap)
+            , m_iterator(m_bitmap.begin())
         {
         }
         
-        Reg operator*() const { return Reg::fromIndex(*m_iter); }
+        Reg operator*() const { return Reg::fromIndex(*m_iterator); }
         
         iterator& operator++()
         {
-            ++m_iter;
+            ++m_iterator;
             return *this;
         }
         
         bool operator==(const iterator& other) const
         {
-            return m_iter == other.m_iter;
+            return m_iterator == other.m_iterator;
         }
         
         bool operator!=(const iterator& other) const
@@ -175,31 +212,231 @@ public:
             return !(*this == other);
         }
         
+        iterator& end()
+        {
+            m_iterator = m_bitmap.end();
+            return *this;
+        }
+        
     private:
-        RegisterBitmap::iterator m_iter;
+        RegisterBitmap m_bitmap;
+        RegisterBitmap::iterator m_iterator;
     };
     
-    iterator begin() const { return iterator(m_bits.begin()); }
-    iterator end() const { return iterator(m_bits.end()); }
+    iterator begin() const { return iterator(static_cast<const Self&>(*this).allSet()); }
+    iterator end() const { return iterator(static_cast<const Self&>(*this).allSet()).end(); }
     
-private:
+protected:
     void setAny(Reg reg) { set(reg); }
     void setAny(JSValueRegs regs) { set(regs); }
-    void setAny(const RegisterSet& set) { merge(set); }
+    template<typename T>
+    typename std::enable_if_t<std::is_base_of<RegisterSetBase<T>, T>::value, void>
+    setAny(const T& set) { static_cast<Self&>(*this).merge(set); }
+    template<typename T>
+    typename std::enable_if_t<std::is_base_of<RegisterSetBase<T>, T>::value, void>
+    setAny(T&& set) { static_cast<Self&>(*this).merge(std::forward<T>(set)); }
     void setMany() { }
     template<typename RegType, typename... Regs>
-    void setMany(RegType reg, Regs... regs)
+    void setMany(RegType&& reg, Regs... regs)
     {
-        setAny(reg);
+        setAny(std::forward<RegType>(reg));
         setMany(regs...);
     }
 
     // These offsets mirror the logic in Reg.h.
     static constexpr unsigned gprOffset = 0;
     static constexpr unsigned fprOffset = gprOffset + MacroAssembler::numGPRs;
-    
-    RegisterBitmap m_bits;
 };
+
+class RegisterSet : public RegisterSetBase<RegisterSet> {
+public:
+
+    JS_EXPORT_PRIVATE static RegisterSet stackRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet reservedHardwareRegisters();
+    static RegisterSet runtimeTagRegisters();
+    static RegisterSet specialRegisters(); // The union of stack, reserved hardware, and runtime registers.
+    static RegisterAtOffsetList* vmCalleeSaveRegisterOffsets();
+    static RegisterSet llintBaselineCalleeSaveRegisters(); // Registers saved and used by the LLInt.
+    static RegisterSet dfgCalleeSaveRegisters(); // Registers saved and used by the DFG JIT.
+    static RegisterSet stubUnavailableRegisters(); // The union of callee saves and special registers.
+    JS_EXPORT_PRIVATE static RegisterSet macroScratchRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet allGPRs();
+    JS_EXPORT_PRIVATE static RegisterSet allFPRs();
+    static RegisterSet allRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet argumentGPRS();
+
+    constexpr RegisterSet() { }
+
+    template<typename... Regs>
+    constexpr explicit RegisterSet(Regs&&... regs)
+    {
+        setMany(std::forward<Regs>(regs)...);
+    }
+
+    bool operator==(const RegisterSet& other) const { return m_includeLower64Bits == other.m_includeLower64Bits; }
+    unsigned hash() const { return m_includeLower64Bits.hash(); }
+
+    void merge(const RegisterSet& other)
+    {
+        m_includeLower64Bits.merge(other.m_includeLower64Bits);
+    }
+
+    void filter(const RegisterSet& other)
+    {
+        m_includeLower64Bits.filter(other.m_includeLower64Bits);
+    }
+
+    void exclude(const RegisterSet& other)
+    {
+        m_includeLower64Bits.exclude(other.m_includeLower64Bits);
+    }
+
+    bool subsumes(const RegisterSet& other) const
+    {
+        return m_includeLower64Bits.subsumes(other.m_includeLower64Bits);
+    }
+
+protected:
+    RegisterBitmap allSet() const { return m_includeLower64Bits; }
+
+    void setImpl(unsigned index, IncludedWidth value = IncludeRegister)
+    {
+        ASSERT(value == IncludeRegister || value == ExcludeRegister);
+        m_includeLower64Bits.set(index, value & 0b01);
+    }
+
+    IncludedWidth getImpl(unsigned index) const { return static_cast<IncludedWidth>((m_includeLower64Bits.get(index) << 1) | m_includeLower64Bits.get(index)); }
+
+    bool testAndSet(Reg reg) { return m_includeLower64Bits.testAndSet(reg.index()); }
+    bool testAndClear(Reg reg) { return m_includeLower64Bits.testAndClear(reg.index()); }
+
+    RegisterBitmap m_includeLower64Bits;
+
+    friend RegisterSetBase<RegisterSet>;
+};
+
+static_assert(sizeof(RegisterSet) <= sizeof(uint64_t));
+
+class RegisterSet128 : public RegisterSetBase<RegisterSet128> {
+public:
+    constexpr RegisterSet128() { }
+
+    template<typename... Regs>
+    constexpr explicit RegisterSet128(Regs&&... regs)
+    {
+        setMany(std::forward<Regs>(regs)...);
+    }
+
+    static RegisterSet128 use128Bits(RegisterSet registerSet)
+    {
+        RegisterSet128 result;
+        registerSet.forEach([&] (Reg reg) {
+            result.set(reg);
+        });
+        return result;
+    }
+
+    static RegisterSet128 use64Bits(RegisterSet registerSet)
+    {
+        RegisterSet128 result;
+        registerSet.forEach([&] (Reg reg) {
+            result.set(reg, reg.isFPR() ? IncludeLower64Bits : IncludeRegister);
+        });
+        return result;
+    }
+
+    static RegisterSet128 allGPRs() { return use128Bits(RegisterSet::allGPRs()); }
+    static RegisterSet128 allFPRs() { return use128Bits(RegisterSet::allFPRs()); }
+    JS_EXPORT_PRIVATE static RegisterSet128 calleeSaveRegisters();
+    static RegisterSet128 vmCalleeSaveRegisters(); // Callee save registers that might be saved and used by any tier.
+    static RegisterSet128 ftlCalleeSaveRegisters(); // Registers that might be saved and used by the FTL JIT.
+    static RegisterSet128 volatileRegistersForJSCall();
+    static RegisterSet128 registersToNotSaveForJSCall();
+    static RegisterSet128 registersToNotSaveForCCall();
+#if ENABLE(WEBASSEMBLY)
+    static RegisterSet128 webAssemblyCalleeSaveRegisters(); // Registers saved and used by the WebAssembly JIT.
+#endif
+
+    bool operator==(const RegisterSet128& other) const { return m_includeLower64Bits == other.m_includeLower64Bits && m_includeUpper64Bits == other.m_includeUpper64Bits; }
+    unsigned hash() const { return m_includeLower64Bits.hash(); }
+    
+    void merge(Reg reg, IncludedWidth value)
+    {
+        ASSERT(!!reg);
+        set(reg, static_cast<IncludedWidth>(value | get(reg)));
+    }
+
+    void merge(const RegisterSet128& other)
+    {
+        m_includeLower64Bits.merge(other.m_includeLower64Bits);
+        m_includeUpper64Bits.merge(other.m_includeUpper64Bits);
+    }
+    
+    void merge(const RegisterSet& other)
+    {
+        merge(use128Bits(other));
+    }
+
+    void filter(const RegisterSet128& other)
+    {
+        m_includeLower64Bits.filter(other.m_includeLower64Bits);
+        m_includeUpper64Bits.filter(other.m_includeUpper64Bits);
+    }
+
+    void exclude(const RegisterSet128& other)
+    {
+        m_includeLower64Bits.exclude(other.m_includeLower64Bits);
+        m_includeUpper64Bits.exclude(other.m_includeUpper64Bits);
+    }
+
+    bool subsumes(const RegisterSet128& other) const
+    {
+        return m_includeLower64Bits.subsumes(other.m_includeLower64Bits) && m_includeUpper64Bits.subsumes(other.m_includeUpper64Bits);
+    }
+    
+    RegisterSet allRegisters() const {
+        RegisterSet result;
+        forEach([&] (Reg reg) {
+            result.set(reg);
+        });
+        return result;
+    }
+    
+    RegisterSet allFullRegisters() const {
+        RegisterSet result;
+        forEach([&] (Reg reg) {
+            if (get(reg) == IncludeRegister)
+                result.set(reg);
+        });
+        return result;
+    }
+
+protected:
+    RegisterBitmap allSet() const
+    {
+        RegisterBitmap all(m_includeLower64Bits);
+        all.merge(m_includeUpper64Bits);
+        return all;
+    }
+
+    void setImpl(unsigned index, IncludedWidth value = IncludeRegister)
+    {
+        m_includeLower64Bits.set(index, value & 0b01);
+        m_includeUpper64Bits.set(index, value & 0b10);
+    }
+
+    IncludedWidth getImpl(unsigned index) const { return static_cast<IncludedWidth>((m_includeUpper64Bits.get(index) << 1) | m_includeLower64Bits.get(index)); }
+
+    bool testAndSet(Reg reg) { return m_includeLower64Bits.testAndSet(reg.index()) | m_includeUpper64Bits.testAndSet(reg.index()); }
+    bool testAndClear(Reg reg) { return m_includeLower64Bits.testAndClear(reg.index()) | m_includeUpper64Bits.testAndClear(reg.index()); }
+
+    RegisterBitmap m_includeLower64Bits;
+    RegisterBitmap m_includeUpper64Bits;
+
+    friend RegisterSetBase<RegisterSet128>;
+};
+
+static_assert(sizeof(RegisterSet128) <= 2*sizeof(uint64_t));
 
 struct RegisterSetHash {
     static unsigned hash(const RegisterSet& set) { return set.hash(); }

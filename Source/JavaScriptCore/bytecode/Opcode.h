@@ -91,8 +91,8 @@ extern const unsigned wasmOpcodeLengths[];
 
 static_assert(NUMBER_OF_BYTECODE_IDS < 255);
 static constexpr OpcodeSize maxJSOpcodeIDWidth = OpcodeSize::Narrow;
-static_assert(NUMBER_OF_WASM_IDS < 255);
-static constexpr OpcodeSize maxWasmOpcodeIDWidth = OpcodeSize::Narrow;
+static_assert(NUMBER_OF_WASM_IDS < 1024);
+static constexpr OpcodeSize maxWasmOpcodeIDWidth = OpcodeSize::Wide16;
 static constexpr unsigned maxJSBytecodeStructLength = /* Opcode */ maxJSOpcodeIDWidth + /* Wide32 Opcode */ 1 + /* Operands */ MAX_LENGTH_OF_BYTECODE_IDS * 4;
 static constexpr unsigned maxWasmBytecodeStructLength = /* Opcode */ maxWasmOpcodeIDWidth + /* Wide32 Opcode */ 1 + /* Operands */ MAX_LENGTH_OF_WASM_IDS * 4;
 static constexpr unsigned maxBytecodeStructLength = std::max(maxJSBytecodeStructLength, maxWasmBytecodeStructLength);

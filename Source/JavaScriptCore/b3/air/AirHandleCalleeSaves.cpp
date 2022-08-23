@@ -36,7 +36,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 void handleCalleeSaves(Code& code)
 {
-    RegisterSet usedCalleeSaves;
+    RegisterSet128 usedCalleeSaves;
 
     for (BasicBlock* block : code) {
         for (Inst& inst : *block) {
@@ -56,25 +56,21 @@ void handleCalleeSaves(Code& code)
     handleCalleeSaves(code, WTFMove(usedCalleeSaves));
 }
 
-void handleCalleeSaves(Code& code, RegisterSet usedCalleeSaves)
+void handleCalleeSaves(Code& code, RegisterSet128 usedCalleeSaves)
 {
     // We filter to really get the callee saves.
-    usedCalleeSaves.filter(RegisterSet::calleeSaveRegisters());
-    usedCalleeSaves.filter(code.mutableRegs());
-    usedCalleeSaves.exclude(RegisterSet::stackRegisters()); // We don't need to save FP here.
+    usedCalleeSaves.filter(RegisterSet128::calleeSaveRegisters());
+    usedCalleeSaves.filter(RegisterSet128::use128Bits(code.mutableRegs()));
+    usedCalleeSaves.exclude(RegisterSet128::use128Bits(RegisterSet::stackRegisters())); // We don't need to save FP here.
 
     if (!usedCalleeSaves.numberOfSetRegisters())
         return;
 
     RegisterAtOffsetList calleeSaveRegisters = RegisterAtOffsetList(usedCalleeSaves);
 
-    size_t byteSize = 0;
-    for (const RegisterAtOffset& entry : calleeSaveRegisters)
-        byteSize = std::max(static_cast<size_t>(-entry.offset()), byteSize);
-
     code.setCalleeSaveRegisterAtOffsetList(
         WTFMove(calleeSaveRegisters),
-        code.addStackSlot(byteSize, StackSlotKind::Locked));
+        code.addStackSlot(calleeSaveRegisters.byteSize(), StackSlotKind::Locked));
 }
 
 } } } // namespace JSC::B3::Air

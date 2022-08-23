@@ -223,7 +223,7 @@ void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, cons
         registersToSpillForCCall.set(reg);
     if (jit.codeBlock()->useDataIC())
         registersToSpillForCCall.set(stubInfo.m_stubInfoGPR);
-    registersToSpillForCCall.exclude(RegisterSet::registersToNotSaveForCCall());
+    registersToSpillForCCall.exclude(RegisterSet128::registersToNotSaveForCCall().allFullRegisters());
 
     AccessCaseSnippetParams params(state.m_vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
     snippet->generator()->run(jit, params);

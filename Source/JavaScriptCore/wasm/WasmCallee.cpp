@@ -137,7 +137,7 @@ RegisterAtOffsetList* LLIntCallee::calleeSaveRegisters()
 #error Unsupported architecture.
 #endif
         ASSERT(registers.numberOfSetRegisters() == numberOfLLIntCalleeSaveRegisters);
-        calleeSaveRegisters.construct(WTFMove(registers));
+        calleeSaveRegisters.construct(RegisterSet128::use64Bits(registers));
     });
     return &calleeSaveRegisters.get();
 }

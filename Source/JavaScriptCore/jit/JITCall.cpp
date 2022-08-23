@@ -565,7 +565,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
 
     {
         RegisterSet usedRegisters(doneJSR, iterCallResultJSR);
-        ScratchRegisterAllocator scratchAllocator(usedRegisters);
+        ScratchRegisterAllocator scratchAllocator(RegisterSet128::use64Bits(usedRegisters));
         GPRReg scratch1 = scratchAllocator.allocateScratchGPR();
         GPRReg scratch2 = scratchAllocator.allocateScratchGPR();
         GPRReg globalGPR = scratchAllocator.allocateScratchGPR();

@@ -94,9 +94,9 @@ const RegisterSet& AccessGenerationState::liveRegistersToPreserveAtExceptionHand
 
 static RegisterSet calleeSaveRegisters()
 {
-    RegisterSet result = RegisterSet::registersToNotSaveForJSCall();
-    result.filter(RegisterSet::registersToNotSaveForCCall());
-    return result;
+    RegisterSet128 result = RegisterSet128::registersToNotSaveForJSCall();
+    result.filter(RegisterSet128::registersToNotSaveForCCall());
+    return result.allRegisters();
 }
 
 const RegisterSet& AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling()
@@ -109,7 +109,7 @@ const RegisterSet& AccessGenerationState::calculateLiveRegistersForCallAndExcept
         if (m_needsToRestoreRegistersIfException)
             RELEASE_ASSERT(JITCode::isOptimizingJIT(jit->codeBlock()->jitType()));
 
-        m_liveRegistersForCall = RegisterSet(m_liveRegistersToPreserveAtExceptionHandlingCallSite, allocator->usedRegisters());
+        m_liveRegistersForCall = RegisterSet(m_liveRegistersToPreserveAtExceptionHandlingCallSite, allocator->usedRegisters().allRegisters());
         if (jit->codeBlock()->useDataIC())
             m_liveRegistersForCall.add(stubInfo->m_stubInfoGPR);
         m_liveRegistersForCall.exclude(calleeSaveRegisters());
@@ -123,7 +123,7 @@ auto AccessGenerationState::preserveLiveRegistersToStackForCall(const RegisterSe
     liveRegisters.merge(extra);
 
     unsigned extraStackPadding = 0;
-    unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegisters, extraStackPadding);
+    unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, RegisterSet128::use64Bits(liveRegisters), extraStackPadding);
     return SpillState {
         WTFMove(liveRegisters),
         numberOfStackBytesUsedForRegisterPreservation
@@ -132,15 +132,15 @@ auto AccessGenerationState::preserveLiveRegistersToStackForCall(const RegisterSe
 
 auto AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions() -> SpillState
 {
-    RegisterSet liveRegisters = allocator->usedRegisters();
+    RegisterSet128 liveRegisters = allocator->usedRegisters();
     if (jit->codeBlock()->useDataIC())
         liveRegisters.add(stubInfo->m_stubInfoGPR);
-    liveRegisters.exclude(calleeSaveRegisters());
+    liveRegisters.exclude(RegisterSet128::use64Bits(calleeSaveRegisters()));
 
     constexpr unsigned extraStackPadding = 0;
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegisters, extraStackPadding);
     return SpillState {
-        WTFMove(liveRegisters),
+        liveRegisters.allRegisters(),
         numberOfStackBytesUsedForRegisterPreservation
     };
 }
@@ -166,7 +166,7 @@ void AccessGenerationState::restoreLiveRegistersFromStackForCallWithThrownExcept
 void AccessGenerationState::restoreLiveRegistersFromStackForCall(const SpillState& spillState, const RegisterSet& dontRestore)
 {
     unsigned extraStackPadding = 0;
-    ScratchRegisterAllocator::restoreRegistersFromStackForCall(*jit, spillState.spilledRegisters, dontRestore, spillState.numberOfStackBytesUsedForRegisterPreservation, extraStackPadding);
+    ScratchRegisterAllocator::restoreRegistersFromStackForCall(*jit, RegisterSet128::use64Bits(spillState.spilledRegisters), dontRestore, spillState.numberOfStackBytesUsedForRegisterPreservation, extraStackPadding);
 }
 
 CallSiteIndex AccessGenerationState::callSiteIndexForExceptionHandlingOrOriginal()
@@ -244,7 +244,7 @@ void AccessGenerationState::emitExplicitExceptionHandler()
 
 ScratchRegisterAllocator AccessGenerationState::makeDefaultScratchAllocator(GPRReg extraToLock)
 {
-    ScratchRegisterAllocator allocator(stubInfo->usedRegisters);
+    ScratchRegisterAllocator allocator(RegisterSet128::use64Bits(stubInfo->usedRegisters));
     allocator.lock(stubInfo->baseRegs());
     allocator.lock(valueRegs);
     allocator.lock(extraGPR);

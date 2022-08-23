@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(B3_JIT)
-
 #include "B3Type.h"
 #include "Reg.h"
 
@@ -46,6 +44,12 @@ void forEachBank(const Func& func)
     func(FP);
 }
 
+inline Bank bankForReg(Reg reg)
+{
+    return reg.isGPR() ? GP : FP;
+}
+
+#if ENABLE(B3_JIT)
 inline Bank bankForType(Type type)
 {
     switch (type.kind()) {
@@ -58,16 +62,13 @@ inline Bank bankForType(Type type)
         return GP;
     case Float:
     case Double:
+    case V128:
         return FP;
     }
     ASSERT_NOT_REACHED();
     return GP;
 }
-
-inline Bank bankForReg(Reg reg)
-{
-    return reg.isGPR() ? GP : FP;
-}
+#endif // ENABLE(B3_JIT)
 
 } } // namespace JSC::B3
 
@@ -78,6 +79,4 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::B3::Bank);
 
 } // namespace WTF
-
-#endif // ENABLE(B3_JIT)
 

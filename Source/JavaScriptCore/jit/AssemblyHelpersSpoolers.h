@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "b3/B3Width.h"
+#include "wtf/Assertions.h"
 #if ENABLE(JIT)
 
 #include "AssemblyHelpers.h"
@@ -70,7 +72,7 @@ struct RegDispatch<FPRReg> {
     template<typename Spooler> static FPRReg temp2(const Spooler* spooler) { return spooler->m_temp2FPR; }
     template<typename Spooler> static FPRReg& regToStore(Spooler* spooler) { return spooler->m_fprToStore; }
     static constexpr FPRReg invalid() { return InvalidFPRReg; }
-    static constexpr size_t regSize() { return sizeof(double); }
+    static constexpr size_t regSize() { return B3::bytesForWidth(B3::conservativeWidth(B3::FP)); }
 #if CPU(ARM64)
     static bool isValidLoadPairImm(int offset) { return ARM64Assembler::isValidLDPFPImm<64>(offset); }
     static bool isValidStorePairImm(int offset) { return ARM64Assembler::isValidSTPFPImm<64>(offset); }
@@ -91,29 +93,35 @@ public:
     { }
 
     template<typename RegType>
-    void execute(const RegisterAtOffset& entry)
+    void execute(const RegisterAtOffset& entry, unsigned bytesWidth)
     {
         RELEASE_ASSERT(RegDispatch<RegType>::hasSameType(entry.reg()));
         if constexpr (!hasPairOp)
-            return op().executeSingle(entry.offset(), RegDispatch<RegType>::get(entry.reg()));
+            return op().executeSingle(entry.offset(), RegDispatch<RegType>::get(entry.reg()), bytesWidth);
+        if (bytesWidth > 8)
+            return op().executeSingle(entry.offset(), RegDispatch<RegType>::get(entry.reg()), bytesWidth);
 
         if (!m_bufferedEntry.reg().isSet()) {
             m_bufferedEntry = entry;
+            m_bufferedBytesWidth = bytesWidth;
             return;
         }
-
-        constexpr ptrdiff_t regSize = RegDispatch<RegType>::regSize();
+        
+        ptrdiff_t regSize = bytesWidth;
+        ASSERT(bytesWidth <= RegDispatch<RegType>::regSize());
         RegType bufferedEntryReg = RegDispatch<RegType>::get(m_bufferedEntry.reg());
         RegType entryReg = RegDispatch<RegType>::get(entry.reg());
 
         if (entry.offset() == m_bufferedEntry.offset() + regSize) {
             op().executePair(m_bufferedEntry.offset(), bufferedEntryReg, entryReg);
             m_bufferedEntry = { };
+            m_bufferedBytesWidth = 0;
             return;
         }
         if (m_bufferedEntry.offset() == entry.offset() + regSize) {
             op().executePair(entry.offset(), entryReg, bufferedEntryReg);
             m_bufferedEntry = { };
+            m_bufferedBytesWidth = 0;
             return;
         }
 
@@ -121,7 +129,7 @@ public:
         // Execute the previous one as a single (finalize will do that), and then
         // buffer the current entry to potentially be paired with the next entry.
         finalize<RegType>();
-        execute<RegType>(entry);
+        execute<RegType>(entry, bytesWidth);
     }
 
     template<typename RegType>
@@ -129,8 +137,10 @@ public:
     {
         if constexpr (hasPairOp) {
             if (m_bufferedEntry.reg().isSet()) {
-                op().executeSingle(m_bufferedEntry.offset(), RegDispatch<RegType>::get(m_bufferedEntry.reg()));
+                ASSERT(m_bufferedBytesWidth);
+                op().executeSingle(m_bufferedEntry.offset(), RegDispatch<RegType>::get(m_bufferedEntry.reg()), m_bufferedBytesWidth);
                 m_bufferedEntry = { };
+                m_bufferedBytesWidth = 0;
             }
         }
     }
@@ -144,6 +154,7 @@ protected:
     JIT& m_jit;
     GPRReg m_baseGPR;
     RegisterAtOffset m_bufferedEntry;
+    unsigned m_bufferedBytesWidth;
 };
 
 class AssemblyHelpers::LoadRegSpooler : public AssemblyHelpers::Spooler<LoadRegSpooler> {
@@ -154,9 +165,9 @@ public:
         : Base(jit, baseGPR)
     { }
 
-    ALWAYS_INLINE void loadGPR(const RegisterAtOffset& entry) { execute<GPRReg>(entry); }
+    ALWAYS_INLINE void loadGPR(const RegisterAtOffset& entry) { execute<GPRReg>(entry, 8); }
     ALWAYS_INLINE void finalizeGPR() { finalize<GPRReg>(); }
-    ALWAYS_INLINE void loadFPR(const RegisterAtOffset& entry) { execute<FPRReg>(entry); }
+    ALWAYS_INLINE void loadFPR(const RegisterAtOffset& entry, unsigned bytesWidth) { execute<FPRReg>(entry, bytesWidth); }
     ALWAYS_INLINE void finalizeFPR() { finalize<FPRReg>(); }
 
 private:
@@ -178,7 +189,7 @@ private:
     ALWAYS_INLINE void executePair(ptrdiff_t, RegType, RegType) { }
 #endif
 
-    ALWAYS_INLINE void executeSingle(ptrdiff_t offset, GPRReg reg)
+    ALWAYS_INLINE void executeSingle(ptrdiff_t offset, GPRReg reg, size_t)
     {
 #if USE(JSVALUE64)
         m_jit.load64(Address(m_baseGPR, offset), reg);
@@ -187,9 +198,12 @@ private:
 #endif
     }
 
-    ALWAYS_INLINE void executeSingle(ptrdiff_t offset, FPRReg reg)
+    ALWAYS_INLINE void executeSingle(ptrdiff_t offset, FPRReg reg, size_t bytesWidth)
     {
-        m_jit.loadDouble(Address(m_baseGPR, offset), reg);
+        if (bytesWidth > 8)
+            m_jit.loadVector(Address(m_baseGPR, offset), reg);
+        else
+            m_jit.loadDouble(Address(m_baseGPR, offset), reg);
     }
 
     friend class AssemblyHelpers::Spooler<LoadRegSpooler>;
@@ -203,9 +217,9 @@ public:
         : Base(jit, baseGPR)
     { }
 
-    ALWAYS_INLINE void storeGPR(const RegisterAtOffset& entry) { execute<GPRReg>(entry); }
+    ALWAYS_INLINE void storeGPR(const RegisterAtOffset& entry) { execute<GPRReg>(entry, 8); }
     ALWAYS_INLINE void finalizeGPR() { finalize<GPRReg>(); }
-    ALWAYS_INLINE void storeFPR(const RegisterAtOffset& entry) { execute<FPRReg>(entry); }
+    ALWAYS_INLINE void storeFPR(const RegisterAtOffset& entry, unsigned bytesWidth) { execute<FPRReg>(entry, bytesWidth); }
     ALWAYS_INLINE void finalizeFPR() { finalize<FPRReg>(); }
 
 private:
@@ -227,7 +241,7 @@ private:
     ALWAYS_INLINE void executePair(ptrdiff_t, RegType, RegType) { }
 #endif
 
-    ALWAYS_INLINE void executeSingle(ptrdiff_t offset, GPRReg reg)
+    ALWAYS_INLINE void executeSingle(ptrdiff_t offset, GPRReg reg, size_t)
     {
 #if USE(JSVALUE64)
         m_jit.store64(reg, Address(m_baseGPR, offset));
@@ -236,9 +250,12 @@ private:
 #endif
     }
 
-    ALWAYS_INLINE void executeSingle(ptrdiff_t offset, FPRReg reg)
+    ALWAYS_INLINE void executeSingle(ptrdiff_t offset, FPRReg reg, size_t bytesWidth)
     {
-        m_jit.storeDouble(reg, Address(m_baseGPR, offset));
+        if (bytesWidth > 8)
+            m_jit.storeVector(reg, Address(m_baseGPR, offset));
+        else
+            m_jit.storeDouble(reg, Address(m_baseGPR, offset));
     }
 
     friend class AssemblyHelpers::Spooler<StoreRegSpooler>;
@@ -294,12 +311,19 @@ private:
     template<typename RegType> static bool isValidStorePairImm(int offset) { return RegDispatch<RegType>::isValidStorePairImm(offset); }
 
     template<typename RegType>
-    void load(int offset)
+    void load(int offset, unsigned bytesWidth)
     {
         if constexpr (!hasPairOp) {
             auto& regToStore = this->regToStore<RegType>();
             regToStore = temp1<RegType>();
-            load(offset, regToStore);
+            load(offset, regToStore, bytesWidth);
+            return;
+        }
+        
+        if (bytesWidth > 8) {
+            auto& regToStore = this->regToStore<RegType>();
+            regToStore = temp1<RegType>();
+            load(offset, regToStore, bytesWidth);
             return;
         }
 
@@ -308,7 +332,7 @@ private:
         source.offset = offset;
     }
 
-    void move(EncodedJSValue value)
+    void move(EncodedJSValue value, unsigned bytesWidth)
     {
         if constexpr (!hasPairOp) {
             auto& regToStore = this->regToStore<GPRReg>();
@@ -317,15 +341,23 @@ private:
             return;
         }
 
+        ASSERT_UNUSED(bytesWidth, bytesWidth <= sizeof(void*));
+
         auto& source = m_sources[m_currentSource++];
         source.type = Source::Type::EncodedJSValue;
         source.value = value;
     }
 
     template<typename RegType>
-    void copy(RegType reg)
+    void copy(RegType reg, unsigned bytesWidth)
     {
         if constexpr (!hasPairOp) {
+            auto& regToStore = this->regToStore<RegType>();
+            regToStore = reg;
+            return;
+        }
+        
+        if (bytesWidth > 8) {
             auto& regToStore = this->regToStore<RegType>();
             regToStore = reg;
             return;
@@ -337,11 +369,17 @@ private:
     }
 
     template<typename RegType>
-    void store(int storeOffset)
+    void store(int storeOffset, unsigned bytesWidth)
     {
         if constexpr (!hasPairOp) {
             auto regToStore = this->regToStore<RegType>();
-            store(regToStore, storeOffset);
+            store(regToStore, storeOffset, bytesWidth);
+            return;
+        }
+        
+        if (bytesWidth > 8) {
+            auto regToStore = this->regToStore<RegType>();
+            store(regToStore, storeOffset, bytesWidth);
             return;
         }
 
@@ -369,8 +407,8 @@ private:
             bool isValidOffset = isValidLoadPairImm<RegType>(minOffset);
 
             if (offsetDelta != registerSize || (!isValidOffset && m_bufferRegsAttr != BufferRegs::AllowModification)) {
-                load(srcOffset1, regToStore1);
-                load(srcOffset2, regToStore2);
+                load(srcOffset1, regToStore1, bytesWidth);
+                load(srcOffset2, regToStore2, bytesWidth);
             } else {
                 if (!isValidOffset) {
                     ASSERT(m_bufferRegsAttr == BufferRegs::AllowModification);
@@ -388,7 +426,7 @@ private:
             }
         } else if (source1.type == Source::Type::BufferOffset) {
             regToStore1 = temp1<RegType>();
-            load(srcOffset1, regToStore1);
+            load(srcOffset1, regToStore1, bytesWidth);
             if (source2.type == Source::Type::EncodedJSValue) {
                 if constexpr (regTypeIsGPR) {
                     regToStore2 = temp2<RegType>();
@@ -408,7 +446,7 @@ private:
             } else
                 regToStore1 = source1.getReg<RegType>();
             regToStore2 = temp2<RegType>();
-            load(srcOffset2, regToStore2);
+            load(srcOffset2, regToStore2, bytesWidth);
 
         } else {
             if (source1.type == Source::Type::EncodedJSValue) {
@@ -438,8 +476,8 @@ private:
         bool isValidOffset = isValidStorePairImm<RegType>(minOffset);
 
         if (offsetDelta != registerSize || (!isValidOffset && m_bufferRegsAttr != BufferRegs::AllowModification)) {
-            store(regToStore1, dstOffset1);
-            store(regToStore2, dstOffset2);
+            store(regToStore1, dstOffset1, bytesWidth);
+            store(regToStore2, dstOffset2, bytesWidth);
         } else {
             if (!isValidOffset) {
                 ASSERT(m_bufferRegsAttr == BufferRegs::AllowModification);
@@ -477,7 +515,7 @@ private:
 
         if (source.type == Source::Type::BufferOffset) {
             regToStore = temp1<RegType>();
-            load(srcOffset - m_srcOffsetAdjustment, regToStore);
+            load(srcOffset - m_srcOffsetAdjustment, regToStore, sizeof(void*));
         } else if (source.type == Source::Type::Reg)
             regToStore = source.getReg<RegType>();
         else if constexpr (regTypeIsGPR) {
@@ -486,20 +524,20 @@ private:
         } else
             RELEASE_ASSERT_NOT_REACHED();
 
-        store(regToStore, m_deferredStoreOffset - m_dstOffsetAdjustment);
+        store(regToStore, m_deferredStoreOffset - m_dstOffsetAdjustment, sizeof(void*));
         m_currentSource = 0;
     }
 
 public:
-    ALWAYS_INLINE void loadGPR(int srcOffset) { load<GPRReg>(srcOffset); }
-    ALWAYS_INLINE void copyGPR(GPRReg gpr) { copy<GPRReg>(gpr); }
-    ALWAYS_INLINE void moveConstant(EncodedJSValue value) { move(value); }
-    ALWAYS_INLINE void storeGPR(int dstOffset) { store<GPRReg>(dstOffset); }
+    ALWAYS_INLINE void loadGPR(int srcOffset) { load<GPRReg>(srcOffset, sizeof(void*)); }
+    ALWAYS_INLINE void copyGPR(GPRReg gpr) { copy<GPRReg>(gpr, sizeof(void*)); }
+    ALWAYS_INLINE void moveConstant(EncodedJSValue value) { move(value, sizeof(void*)); }
+    ALWAYS_INLINE void storeGPR(int dstOffset) { store<GPRReg>(dstOffset, sizeof(void*)); }
     ALWAYS_INLINE void finalizeGPR() { finalize<GPRReg>(); }
 
-    ALWAYS_INLINE void loadFPR(int srcOffset) { load<FPRReg>(srcOffset); }
-    ALWAYS_INLINE void copyFPR(FPRReg gpr) { copy<FPRReg>(gpr); }
-    ALWAYS_INLINE void storeFPR(int dstOffset) { store<FPRReg>(dstOffset); }
+    ALWAYS_INLINE void loadFPR(int srcOffset, unsigned bytesWidth) { load<FPRReg>(srcOffset, bytesWidth); }
+    ALWAYS_INLINE void copyFPR(FPRReg gpr, unsigned bytesWidth) { copy<FPRReg>(gpr, bytesWidth); }
+    ALWAYS_INLINE void storeFPR(int dstOffset, unsigned bytesWidth) { store<FPRReg>(dstOffset, bytesWidth); }
     ALWAYS_INLINE void finalizeFPR() { finalize<FPRReg>(); }
 
 protected:
@@ -512,24 +550,32 @@ protected:
     NO_RETURN_DUE_TO_CRASH void move(EncodedJSValue, GPRReg) { RELEASE_ASSERT_NOT_REACHED(); }
 #endif
 
-    ALWAYS_INLINE void load(int offset, GPRReg dest)
+    ALWAYS_INLINE void load(int offset, GPRReg dest, unsigned bytesWidth)
     {
+        ASSERT_UNUSED(bytesWidth, bytesWidth == sizeof(void*));
         m_jit.loadPtr(Address(m_srcBufferGPR, offset), dest);
     }
 
-    ALWAYS_INLINE void store(GPRReg src, int offset)
+    ALWAYS_INLINE void store(GPRReg src, int offset, unsigned bytesWidth)
     {
+        ASSERT_UNUSED(bytesWidth, bytesWidth == sizeof(void*));
         m_jit.storePtr(src, Address(m_dstBufferGPR, offset));
     }
 
-    ALWAYS_INLINE void load(int offset, FPRReg dest)
+    ALWAYS_INLINE void load(int offset, FPRReg dest, unsigned bytesWidth)
     {
-        m_jit.loadDouble(Address(m_srcBufferGPR, offset), dest);
+        if (bytesWidth > 8)
+            m_jit.loadVector(Address(m_srcBufferGPR, offset), dest);
+        else
+            m_jit.loadDouble(Address(m_srcBufferGPR, offset), dest);
     }
 
-    ALWAYS_INLINE void store(FPRReg src, int offset)
+    ALWAYS_INLINE void store(FPRReg src, int offset, unsigned bytesWidth)
     {
-        m_jit.storeDouble(src, Address(m_dstBufferGPR, offset));
+        if (bytesWidth > 8)
+            m_jit.storeVector(src, Address(m_dstBufferGPR, offset));
+        else
+            m_jit.storeDouble(src, Address(m_dstBufferGPR, offset));
     }
 
 #if CPU(ARM64) || CPU(ARM)
@@ -579,9 +625,6 @@ protected:
     FPRReg m_temp2FPR;
 
 private:
-    static constexpr int gprSize = static_cast<int>(sizeof(CPURegister));
-    static constexpr int fprSize = static_cast<int>(sizeof(double));
-
     // These point to which register to use.
     GPRReg m_gprToStore { InvalidGPRReg }; // Only used when !hasPairOp.
     FPRReg m_fprToStore { InvalidFPRReg }; // Only used when !hasPairOp.

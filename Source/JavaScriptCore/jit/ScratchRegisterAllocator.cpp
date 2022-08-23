@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-ScratchRegisterAllocator::ScratchRegisterAllocator(const RegisterSet& usedRegisters)
+ScratchRegisterAllocator::ScratchRegisterAllocator(const RegisterSet128& usedRegisters)
     : m_usedRegisters(usedRegisters)
     , m_numberOfReusedRegisters(0)
 {
@@ -101,7 +101,7 @@ ScratchRegisterAllocator::PreservedState ScratchRegisterAllocator::preserveReuse
     if (!didReuseRegisters())
         return PreservedState(0, extraStackSpace);
 
-    RegisterSet registersToSpill;
+    RegisterSet128 registersToSpill;
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         FPRReg reg = FPRInfo::toRegister(i);
         ASSERT(reg != InvalidFPRReg);
@@ -127,7 +127,7 @@ void ScratchRegisterAllocator::restoreReusedRegistersByPopping(AssemblyHelpers& 
     if (!didReuseRegisters())
         return;
 
-    RegisterSet registersToFill;
+    RegisterSet128 registersToFill;
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
         ASSERT(reg != InvalidGPRReg);
@@ -148,25 +148,26 @@ void ScratchRegisterAllocator::restoreReusedRegistersByPopping(AssemblyHelpers& 
         preservedState.numberOfBytesPreserved, extraStackBytesAtTopOfStack);
 }
 
-RegisterSet ScratchRegisterAllocator::usedRegistersForCall() const
+RegisterSet128 ScratchRegisterAllocator::usedRegistersForCall() const
 {
-    RegisterSet result = m_usedRegisters;
-    result.exclude(RegisterSet::registersToNotSaveForJSCall());
+    RegisterSet128 result = m_usedRegisters;
+    result.exclude(RegisterSet128::registersToNotSaveForJSCall());
     return result;
 }
 
 unsigned ScratchRegisterAllocator::desiredScratchBufferSizeForCall() const
 {
+    ASSERT(!usedRegistersForCall().numberOfSetFPRs());
     return usedRegistersForCall().numberOfSetRegisters() * sizeof(JSValue);
 }
 
-unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpers& jit, const RegisterSet& usedRegisters, unsigned extraBytesAtTopOfStack)
+unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpers& jit, const RegisterSet128& usedRegisters, unsigned extraBytesAtTopOfStack)
 {
     RELEASE_ASSERT(extraBytesAtTopOfStack % sizeof(void*) == 0);
     if (!usedRegisters.numberOfSetRegisters())
         return 0;
     
-    unsigned stackOffset = (usedRegisters.numberOfSetRegisters()) * sizeof(EncodedJSValue);
+    unsigned stackOffset = (usedRegisters.numberOfSetGPRs() * sizeof(EncodedJSValue)) + (usedRegisters.numberOfSetFPRs() * B3::bytesForWidth(B3::conservativeWidth(B3::FP)));
     stackOffset += extraBytesAtTopOfStack;
     stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset);
     jit.subPtr(
@@ -178,18 +179,20 @@ unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpe
     unsigned count = 0;
     for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
         if (usedRegisters.get(reg)) {
-            spooler.storeGPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * sizeof(EncodedJSValue))) });
+            spooler.storeGPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * sizeof(EncodedJSValue))), sizeof(EncodedJSValue) });
             count++;
         }
     }
     spooler.finalizeGPR();
 
+    unsigned fprCount = 0;
     for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
         if (usedRegisters.get(reg)) {
-            spooler.storeFPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * sizeof(EncodedJSValue))) });
-            count++;
+            spooler.storeFPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * sizeof(EncodedJSValue)) + (fprCount * B3::bytesForWidth(B3::conservativeWidth(B3::FP)))), B3::bytesForWidth(B3::conservativeWidth(B3::FP)) }, B3::bytesForWidth(B3::conservativeWidth(B3::FP)));
+            fprCount++;
         }
     }
+    count += fprCount;
     spooler.finalizeFPR();
 
     RELEASE_ASSERT(count == usedRegisters.numberOfSetRegisters());
@@ -197,7 +200,7 @@ unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpe
     return stackOffset;
 }
 
-void ScratchRegisterAllocator::restoreRegistersFromStackForCall(AssemblyHelpers& jit, const RegisterSet& usedRegisters, const RegisterSet& ignore, unsigned numberOfStackBytesUsedForRegisterPreservation, unsigned extraBytesAtTopOfStack)
+void ScratchRegisterAllocator::restoreRegistersFromStackForCall(AssemblyHelpers& jit, const RegisterSet128& usedRegisters, const RegisterSet& ignore, unsigned numberOfStackBytesUsedForRegisterPreservation, unsigned extraBytesAtTopOfStack)
 {
     RELEASE_ASSERT(extraBytesAtTopOfStack % sizeof(void*) == 0);
     if (!usedRegisters.numberOfSetRegisters()) {
@@ -211,22 +214,24 @@ void ScratchRegisterAllocator::restoreRegistersFromStackForCall(AssemblyHelpers&
     for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
         if (usedRegisters.get(reg)) {
             if (!ignore.get(reg))
-                spooler.loadGPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (sizeof(EncodedJSValue) * count)) });
+                spooler.loadGPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (sizeof(EncodedJSValue) * count)), sizeof(EncodedJSValue) });
             count++;
         }
     }
     spooler.finalizeGPR();
 
+    unsigned fprCount = 0;
     for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
         if (usedRegisters.get(reg)) {
             if (!ignore.get(reg))
-                spooler.loadFPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (sizeof(EncodedJSValue) * count)) });
-            count++;
+                spooler.loadFPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * sizeof(EncodedJSValue)) + (fprCount * B3::bytesForWidth(B3::conservativeWidth(B3::FP)))), B3::bytesForWidth(B3::conservativeWidth(B3::FP)) }, B3::bytesForWidth(B3::conservativeWidth(B3::FP)));
+            fprCount++;
         }
     }
+    count += fprCount;
     spooler.finalizeFPR();
 
-    unsigned stackOffset = (usedRegisters.numberOfSetRegisters()) * sizeof(EncodedJSValue);
+    unsigned stackOffset = (usedRegisters.numberOfSetGPRs() * sizeof(EncodedJSValue)) + (usedRegisters.numberOfSetFPRs() * B3::bytesForWidth(B3::conservativeWidth(B3::FP)));
     stackOffset += extraBytesAtTopOfStack;
     stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset);
 

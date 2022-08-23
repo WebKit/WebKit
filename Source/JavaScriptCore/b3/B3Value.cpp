@@ -173,6 +173,10 @@ void Value::dump(PrintStream& out) const
         out.print("$", asDouble(), "(");
         isConstant = true;
         break;
+    case Const128:
+        out.print("$[", asV128().u64x2[0], "::", asV128().u64x2[1], "](");
+        isConstant = true;
+        break;
     default:
         break;
     }
@@ -540,6 +544,7 @@ Effects Value::effects() const
     case Opaque:
     case Const32:
     case Const64:
+    case Const128:
     case ConstDouble:
     case ConstFloat:
     case BottomTuple:
@@ -589,6 +594,63 @@ Effects Value::effects() const
     case Extract:
     case FMin:
     case FMax:
+    case ZeroExtend64ToVector:
+    case VectorExtractLane:
+    case VectorReplaceLane:
+    case VectorEqual:
+    case VectorNotEqual:
+    case VectorLessThan:
+    case VectorLessThanOrEqual:
+    case VectorBelow:
+    case VectorBelowOrEqual:
+    case VectorGreaterThan:
+    case VectorGreaterThanOrEqual:
+    case VectorAbove:
+    case VectorAboveOrEqual:
+    case VectorAdd:
+    case VectorSub:
+    case VectorAddSat:
+    case VectorSubSat:
+    case VectorMul:
+    case VectorDotProduct:
+    case VectorDiv:
+    case VectorMin:
+    case VectorMax:
+    case VectorPmin:
+    case VectorPmax:
+    case VectorNarrow:
+    case VectorNot:
+    case VectorAnd:
+    case VectorAndnot:
+    case VectorOr:
+    case VectorXor:
+    case VectorShl:
+    case VectorShr:
+    case VectorAbs:
+    case VectorNeg:
+    case VectorPopcnt:
+    case VectorCeil:
+    case VectorFloor:
+    case VectorTrunc:
+    case VectorTruncSat:
+    case VectorConvert:
+    case VectorConvertLow:
+    case VectorNearest:
+    case VectorSqrt:
+    case VectorExtendLow:
+    case VectorExtendHigh:
+    case VectorPromote:
+    case VectorDemote:
+    case VectorSplat:
+    case VectorAnyTrue:
+    case VectorAllTrue:
+    case VectorAvgRound:
+    case VectorBitmask:
+    case VectorBitwiseSelect:
+    case VectorExtaddPairwise:
+    case VectorMulSat:
+    case VectorSwizzle:
+    case VectorShuffle:
         break;
     case Div:
     case UDiv:
@@ -890,6 +952,7 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
             return Int32;
         case Void:
         case Tuple:
+        case V128:
             ASSERT_NOT_REACHED();
         }
         return Void;

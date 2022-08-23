@@ -1710,6 +1710,7 @@ protected:
             switch (inst.kind.opcode) {
             case MoveFloat:
             case MoveDouble:
+            // case MoveVector: // OOPS
                 break;
             default:
                 return false;
@@ -1981,7 +1982,8 @@ private:
 
     static unsigned stackSlotMinimumWidth(Width width)
     {
-        return width <= Width32 ? 4 : 8;
+        unsigned bytes = bytesForWidth(width);
+        return bytes < 4 ? 4 : bytes;
     }
 
     template<Bank bank, typename AllocatorType>
@@ -2087,7 +2089,7 @@ private:
                             canUseMove32IfDidSpill = false;
                         
                         stackSlotEntry->value->ensureSize(
-                            canUseMove32IfDidSpill ? 4 : bytes(width));
+                            canUseMove32IfDidSpill ? 4 : bytesForWidth(width));
                         arg = Arg::stack(stackSlotEntry->value);
                         didSpill = true;
                         if (needScratchIfSpilledInPlace)
@@ -2106,6 +2108,7 @@ private:
                         break;
                     case MoveDouble:
                     case MoveFloat:
+                    case MoveVector:
                         instBank = FP;
                         break;
                     default:
@@ -2155,6 +2158,10 @@ private:
                         break;
                     case 8:
                         move = bank == GP ? Move : MoveDouble;
+                        break;
+                    case 16:
+                        RELEASE_ASSERT(bank == FP);
+                        move = MoveVector;
                         break;
                     default:
                         RELEASE_ASSERT_NOT_REACHED();

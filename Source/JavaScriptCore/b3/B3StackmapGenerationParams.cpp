@@ -35,7 +35,7 @@
 
 namespace JSC { namespace B3 {
 
-const RegisterSet& StackmapGenerationParams::usedRegisters() const
+const RegisterSet128& StackmapGenerationParams::usedRegisters() const
 {
     ASSERT(m_context.code->needsUsedRegisters());
     
@@ -44,9 +44,9 @@ const RegisterSet& StackmapGenerationParams::usedRegisters() const
 
 RegisterSet StackmapGenerationParams::unavailableRegisters() const
 {
-    RegisterSet result = usedRegisters();
+    RegisterSet128 result = usedRegisters();
     
-    RegisterSet unsavedCalleeSaves = RegisterSet::vmCalleeSaveRegisters();
+    RegisterSet128 unsavedCalleeSaves = RegisterSet128::vmCalleeSaveRegisters();
     unsavedCalleeSaves.exclude(m_context.code->calleeSaveRegisters());
 
     result.merge(unsavedCalleeSaves);
@@ -56,7 +56,7 @@ RegisterSet StackmapGenerationParams::unavailableRegisters() const
     for (FPRReg fpr : m_fpScratch)
         result.clear(fpr);
     
-    return result;
+    return result.allRegisters();
 }
 
 Vector<Box<MacroAssembler::Label>> StackmapGenerationParams::successorLabels() const

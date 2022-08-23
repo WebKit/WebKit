@@ -45,7 +45,7 @@ class Code;
 // We should make this interact with the client: https://bugs.webkit.org/show_bug.cgi?id=150459
 
 void handleCalleeSaves(Code&);
-void handleCalleeSaves(Code&, RegisterSet);
+void handleCalleeSaves(Code&, RegisterSet128);
 
 } } } // namespace JSC::B3::Air
 

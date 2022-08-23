@@ -259,6 +259,10 @@ def riscLowerMalformedAddressesDouble(list)
             case node.opcode
             when "loadd"
                 newList << Instruction.new(node.codeOrigin, "loadd", [node.operands[0].riscDoubleAddress(newList), node.operands[1]], node.annotation)
+            when "loadv"
+                newList << Instruction.new(node.codeOrigin, "loadv", [node.operands[0].riscDoubleAddress(newList), node.operands[1]], node.annotation)
+            when "storev"
+                newList << Instruction.new(node.codeOrigin, "storev", [node.operands[0], node.operands[1].riscDoubleAddress(newList)], node.annotation)
             when "loadf"
                 newList << Instruction.new(node.codeOrigin, "loadf", [node.operands[0].riscDoubleAddress(newList), node.operands[1]], node.annotation)
             when "stored"
@@ -436,7 +440,7 @@ def riscLowerOperandToRegister(insn, preList, postList, operandIndex, suffix, ne
     operand = insn.operands[operandIndex]
     return operand unless operand.address?
 
-    tmp = Tmp.new(insn.codeOrigin, if suffix == "d" then :fpr else :gpr end)
+    tmp = Tmp.new(insn.codeOrigin, if suffix == "d" or suffix == "v" then :fpr else :gpr end)
     preList << Instruction.new(insn.codeOrigin, "load" + suffix, [operand, tmp])
     if needStore
         postList << Instruction.new(insn.codeOrigin, "store" + suffix, [tmp, operand])

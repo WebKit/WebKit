@@ -76,6 +76,8 @@ all : \
     yarr/YarrCanonicalizeUnicode.cpp \
     WasmOps.h \
     WasmB3IRGeneratorInlines.h \
+    WasmAirIRGeneratorInlines.h \
+    WasmLLIntGeneratorSimdInlines.h \
 #
 
 # JavaScript builtins.
@@ -380,11 +382,17 @@ UnicodePatternTables.h: $(JavaScriptCore)/yarr/generateYarrUnicodePropertyTables
 yarr/YarrCanonicalizeUnicode.cpp: $(JavaScriptCore)/yarr/generateYarrCanonicalizeUnicode $(JavaScriptCore)/ucd/CaseFolding.txt
 	$(PYTHON) $(JavaScriptCore)/yarr/generateYarrCanonicalizeUnicode $(JavaScriptCore)/ucd/CaseFolding.txt ./yarr/YarrCanonicalizeUnicode.cpp
 
-WasmOps.h: $(JavaScriptCore)/wasm/generateWasmOpsHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json
+WasmOps.h: $(JavaScriptCore)/wasm/generateWasmOpsHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json $(JavaScriptCore)/wasm/generateSimdOpcodes.py
 	$(PYTHON) $(JavaScriptCore)/wasm/generateWasmOpsHeader.py $(JavaScriptCore)/wasm/wasm.json ./WasmOps.h
 
 WasmB3IRGeneratorInlines.h: $(JavaScriptCore)/wasm/generateWasmB3IRGeneratorInlinesHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json
 	$(PYTHON) $(JavaScriptCore)/wasm/generateWasmB3IRGeneratorInlinesHeader.py $(JavaScriptCore)/wasm/wasm.json ./WasmB3IRGeneratorInlines.h
+
+WasmAirIRGeneratorInlines.h: $(JavaScriptCore)/wasm/generateWasmAirIRGeneratorInlinesHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json
+	$(PYTHON) $(JavaScriptCore)/wasm/generateWasmAirIRGeneratorInlinesHeader.py $(JavaScriptCore)/wasm/wasm.json ./WasmAirIRGeneratorInlines.h
+
+WasmLLIntGeneratorSimdInlines.h: $(JavaScriptCore)/wasm/generateWasmSimdLLIntGeneratorInlinesHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json
+	$(PYTHON) $(JavaScriptCore)/wasm/generateWasmSimdLLIntGeneratorInlinesHeader.py $(JavaScriptCore)/wasm/wasm.json ./WasmLLIntGeneratorSimdInlines.h
 
 # Dynamically-defined targets are listed below. Static targets belong up top.
 

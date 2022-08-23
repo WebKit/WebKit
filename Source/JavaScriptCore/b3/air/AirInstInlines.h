@@ -44,13 +44,13 @@ void Inst::forEach(const Functor& functor)
         });
 }
 
-inline RegisterSet Inst::extraClobberedRegs()
+inline RegisterSet128 Inst::extraClobberedRegs()
 {
     ASSERT(kind.opcode == Patch);
     return args[0].special()->extraClobberedRegs(*this);
 }
 
-inline RegisterSet Inst::extraEarlyClobberedRegs()
+inline RegisterSet128 Inst::extraEarlyClobberedRegs()
 {
     ASSERT(kind.opcode == Patch);
     return args[0].special()->extraEarlyClobberedRegs(*this);
@@ -100,7 +100,7 @@ inline void Inst::forEachDefWithExtraClobberedRegs(
     }
 }
 
-inline void Inst::reportUsedRegisters(const RegisterSet& usedRegisters)
+inline void Inst::reportUsedRegisters(const RegisterSet128& usedRegisters)
 {
     ASSERT(kind.opcode == Patch);
     args[0].special()->reportUsedRegisters(*this, usedRegisters);
@@ -347,6 +347,16 @@ inline bool isBranchAtomicStrongCAS32Valid(const Inst& inst)
 inline bool isBranchAtomicStrongCAS64Valid(const Inst& inst)
 {
     return isBranchAtomicStrongCASValid(inst);
+}
+
+inline bool isVectorSwizzle2Valid(const Inst& inst)
+{
+#if CPU(ARM64)
+    return inst.args[0].fpr() == inst.args[0].fpr() + 1;
+#else
+    UNUSED_PARAM(inst);
+    return false;
+#endif
 }
 
 } } } // namespace JSC::B3::Air

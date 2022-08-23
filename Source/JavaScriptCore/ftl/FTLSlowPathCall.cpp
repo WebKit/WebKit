@@ -36,7 +36,7 @@
 namespace JSC { namespace FTL {
 
 // This code relies on us being 64-bit. FTL is currently always 64-bit.
-static constexpr size_t wordSize = 8;
+static constexpr size_t gprSize = 8;
 
 SlowPathCallContext::SlowPathCallContext(
     RegisterSet usedRegisters, CCallHelpers& jit, unsigned numArgs, GPRReg returnRegister, GPRReg indirectCallTargetRegister)
@@ -47,16 +47,17 @@ SlowPathCallContext::SlowPathCallContext(
     // We don't care that you're using callee-save, stack, or hardware registers.
     usedRegisters.exclude(RegisterSet::stackRegisters());
     usedRegisters.exclude(RegisterSet::reservedHardwareRegisters());
-    usedRegisters.exclude(RegisterSet::calleeSaveRegisters());
+    usedRegisters.exclude(RegisterSet128::calleeSaveRegisters().allRegisters());
         
     // The return register doesn't need to be saved.
     if (m_returnRegister != InvalidGPRReg)
         usedRegisters.clear(m_returnRegister);
         
-    size_t stackBytesNeededForReturnAddress = wordSize;
+    static constexpr size_t stackBytesNeededForReturnAddress = gprSize;
         
+    // Nothing we call is going to be a v128, so using 8 here is correct.
     m_offsetToSavingArea =
-        (std::max(m_numArgs, NUMBER_OF_ARGUMENT_REGISTERS) - NUMBER_OF_ARGUMENT_REGISTERS) * wordSize;
+        (std::max(m_numArgs, NUMBER_OF_ARGUMENT_REGISTERS) - NUMBER_OF_ARGUMENT_REGISTERS) * gprSize;
         
     for (unsigned i = std::min(NUMBER_OF_ARGUMENT_REGISTERS, numArgs); i--;)
         m_argumentRegisters.set(GPRInfo::toArgumentRegister(i));
@@ -67,17 +68,16 @@ SlowPathCallContext::SlowPathCallContext(
         m_callingConventionRegisters.set(indirectCallTargetRegister);
     m_callingConventionRegisters.filter(usedRegisters);
         
-    unsigned numberOfCallingConventionRegisters =
-        m_callingConventionRegisters.numberOfSetRegisters();
-        
-    size_t offsetToThunkSavingArea =
-        m_offsetToSavingArea +
-        numberOfCallingConventionRegisters * wordSize;
-        
+    unsigned numberOfCallingConventionRegisters = m_callingConventionRegisters.numberOfSetRegisters();
+    ASSERT(!m_callingConventionRegisters.numberOfSetFPRs());
+
+    size_t offsetToThunkSavingArea = m_offsetToSavingArea + numberOfCallingConventionRegisters * gprSize;
+
     m_stackBytesNeeded =
-        offsetToThunkSavingArea +
-        stackBytesNeededForReturnAddress +
-        (usedRegisters.numberOfSetRegisters() - numberOfCallingConventionRegisters) * wordSize;
+        offsetToThunkSavingArea
+        + stackBytesNeededForReturnAddress
+        + (usedRegisters.numberOfSetGPRs() - numberOfCallingConventionRegisters) * gprSize
+        + usedRegisters.numberOfSetFPRs() * B3::bytesForWidth(B3::conservativeWidthForC(B3::FP));
         
     m_stackBytesNeeded = (m_stackBytesNeeded + stackAlignmentBytes() - 1) & ~(stackAlignmentBytes() - 1);
         
@@ -91,7 +91,7 @@ SlowPathCallContext::SlowPathCallContext(
         GPRReg reg = GPRInfo::toRegister(i);
         if (!m_callingConventionRegisters.get(reg))
             continue;
-        m_jit.storePtr(reg, CCallHelpers::Address(CCallHelpers::stackPointerRegister, m_offsetToSavingArea + (stackIndex++) * wordSize));
+        m_jit.storePtr(reg, CCallHelpers::Address(CCallHelpers::stackPointerRegister, m_offsetToSavingArea + (stackIndex++) * gprSize));
         m_thunkSaveSet.clear(reg);
     }
         
@@ -108,7 +108,7 @@ SlowPathCallContext::~SlowPathCallContext()
         GPRReg reg = GPRInfo::toRegister(i);
         if (!m_callingConventionRegisters.get(reg))
             continue;
-        m_jit.loadPtr(CCallHelpers::Address(CCallHelpers::stackPointerRegister, m_offsetToSavingArea + (stackIndex++) * wordSize), reg);
+        m_jit.loadPtr(CCallHelpers::Address(CCallHelpers::stackPointerRegister, m_offsetToSavingArea + (stackIndex++) * gprSize), reg);
     }
     
     m_jit.addPtr(CCallHelpers::TrustedImm32(m_stackBytesNeeded), CCallHelpers::stackPointerRegister);

@@ -1,0 +1,237 @@
+Instruction,implemented,category,op,airOp,return,Imm,params,extendedOp,interpretation,signExtend,scalarTypeBase,scalarType,special,,
+v128.load,y,simd.mem,load,,v,,,0x00,v128,NA,void,void,y,,
+v128.load8x8_s,y,simd.mem,load_extend_8s,,v,m:memarg,,0x01,v128,S,void,void,y,,
+v128.load8x8_u,y,simd.mem,load_extend_8u,,v,m:memarg,,0x02,v128,U,void,void,y,,
+v128.load16x4_s,y,simd.mem,load_extend_16s,,v,m:memarg,,0x03,v128,S,void,void,y,,
+v128.load16x4_u,y,simd.mem,load_extend_16u,,v,m:memarg,,0x04,v128,U,void,void,y,,
+v128.load32x2_s,y,simd.mem,load_extend_32s,,v,m:memarg,,0x05,v128,S,void,void,y,,
+v128.load32x2_u,y,simd.mem,load_extend_32u,,v,m:memarg,,0x06,v128,U,void,void,y,,
+v128.load8_splat,y,simd.mem,load_splat8,,v,,,0x07,v128,NA,void,void,y,,
+v128.load16_splat,y,simd.mem,load_splat16,,v,,,0x08,v128,NA,void,void,y,,
+v128.load32_splat,y,simd.mem,load_splat32,,v,,,0x09,v128,NA,void,void,y,,
+v128.load64_splat,y,simd.mem,load_splat64,,v,,,0x0a,v128,NA,void,void,y,,
+v128.store,y,simd.mem,store,,,m:memarg,data:v,0x0b,v128,NA,void,void,y,,
+v128.const,y,simd.special,const,,v,i:ImmByte[16],,0x0c,v128,NA,void,void,y,,
+i8x16.shuffle,y,simd.lane,shuffle,,v,i:ImmLaneIdx32[16],"a:v,b:v",0x0d,i8x16,NA,i8,i32,y,,
+i8x16.swizzle,y,simd.lane,swizzle,,v,,"a:v,s:v",0x0e,i8x16,NA,i8,i32,n,,
+i8x16.splat,y,simd.splat,splat,,v,,x:s,0x0f,i8x16,NA,i8,i32,y,,
+i16x8.splat,y,simd.splat,splat,,v,,x:s,0x10,i16x8,NA,i16,i32,y,,
+i32x4.splat,y,simd.splat,splat,,v,,x:s,0x11,i32x4,NA,i32,i32,y,,
+i64x2.splat,y,simd.splat,splat,,v,,x:s,0x12,i64x2,NA,i64,i64,y,,
+f32x4.splat,y,simd.splat,splat,,v,,x:s,0x13,f32x4,NA,f32,f32,y,,
+f64x2.splat,y,simd.splat,splat,,v,,x:s,0x14,f64x2,NA,f64,f64,y,,
+i8x16.extract_lane_s,y,simd.lane,extract_lane,ExtractLaneSignedInt8,s,i:ImmLaneIdx16,a:v,0x15,i8x16,S,i8,i32,n,,
+i8x16.extract_lane_u,y,simd.lane,extract_lane,ExtractLaneUnsignedInt8,s,i:ImmLaneIdx16,a:v,0x16,i8x16,U,i8,i32,n,,
+i8x16.replace_lane,y,simd.lane,replace_lane,ReplaceLaneInt8,v,i:ImmLaneIdx16,"a:v, s:s",0x17,i8x16,NA,i8,i32,n,,
+i16x8.extract_lane_s,y,simd.lane,extract_lane,ExtractLaneSignedInt16,s,i:ImmLaneIdx8,a:v,0x18,i16x8,S,i16,i32,n,,
+i16x8.extract_lane_u,y,simd.lane,extract_lane,ExtractLaneUnsignedInt16,s,i:ImmLaneIdx8,a:v,0x19,i16x8,U,i16,i32,n,,
+i16x8.replace_lane,y,simd.lane,replace_lane,ReplaceLaneInt16,v,i:ImmLaneIdx8,"a:v, s:s",0x1a,i16x8,NA,i16,i32,n,,
+i32x4.extract_lane,y,simd.lane,extract_lane,ExtractLaneInt32,s,i:ImmLaneIdx4,a:v,0x1b,i32x4,NA,i32,i32,n,,
+i32x4.replace_lane,y,simd.lane,replace_lane,ReplaceLaneInt32,v,i:ImmLaneIdx4,"a:v, s:s",0x1c,i32x4,NA,i32,i32,n,,
+i64x2.extract_lane,y,simd.lane,extract_lane,ExtractLaneInt64,s,i:ImmLaneIdx2,a:v,0x1d,i64x2,NA,i64,i64,n,,
+i64x2.replace_lane,y,simd.lane,replace_lane,ReplaceLaneInt64,v,i:ImmLaneIdx2,"a:v, s:s",0x1e,i64x2,NA,i64,i64,n,,
+f32x4.extract_lane,y,simd.lane,extract_lane,ExtractLaneFloat32,s,i:ImmLaneIdx4,a:v,0x1f,f32x4,NA,f32,f32,n,,
+f32x4.replace_lane,y,simd.lane,replace_lane,ReplaceLaneFloat32,v,i:ImmLaneIdx4,"a:v, s:s",0x20,f32x4,NA,f32,f32,n,,
+f64x2.extract_lane,y,simd.lane,extract_lane,ExtractLaneFloat64,s,i:ImmLaneIdx2,a:v,0x21,f64x2,NA,f64,f64,n,,
+f64x2.replace_lane,y,simd.lane,replace_lane,ReplaceLaneFloat64,v,i:ImmLaneIdx2,"a:v, s:s",0x22,f64x2,NA,f64,f64,n,,
+i8x16.eq,y,simd.cmp,eq,,v,,"a:v, s:s",0x23,i8x16,NA,i8,i32,n,,eq
+i8x16.ne,y,simd.cmp,ne,,v,,"a:v,b:v",0x24,i8x16,NA,i8,i32,n,,ne
+i8x16.lt_s,y,simd.cmp,lt,,v,,"a:v,b:v",0x25,i8x16,S,i8,i32,n,,lt_s
+i8x16.lt_u,y,simd.cmp,lt,,v,,"a:v,b:v",0x26,i8x16,U,i8,i32,n,,lt_u
+i8x16.gt_s,y,simd.cmp,gt,,v,,"a:v,b:v",0x27,i8x16,S,i8,i32,n,,gt_s
+i8x16.gt_u,y,simd.cmp,gt,,v,,"a:v,b:v",0x28,i8x16,U,i8,i32,n,,gt_u
+i8x16.le_s,y,simd.cmp,le,,v,,"a:v,b:v",0x29,i8x16,S,i8,i32,n,,le_s
+i8x16.le_u,y,simd.cmp,le,,v,,"a:v,b:v",0x2a,i8x16,U,i8,i32,n,,le_u
+i8x16.ge_s,y,simd.cmp,ge,,v,,"a:v,b:v",0x2b,i8x16,S,i8,i32,n,,ge_s
+i8x16.ge_u,y,simd.cmp,ge,,v,,"a:v,b:v",0x2c,i8x16,U,i8,i32,n,,ge_u
+i16x8.eq,y,simd.cmp,eq,,v,,"a:v,b:v",0x2d,i16x8,NA,i16,i32,n,,eq
+i16x8.ne,y,simd.cmp,ne,,v,,"a:v,b:v",0x2e,i16x8,NA,i16,i32,n,,ne
+i16x8.lt_s,y,simd.cmp,lt,,v,,"a:v,b:v",0x2f,i16x8,S,i16,i32,n,,lt_s
+i16x8.lt_u,y,simd.cmp,lt,,v,,"a:v,b:v",0x30,i16x8,U,i16,i32,n,,lt_u
+i16x8.gt_s,y,simd.cmp,gt,,v,,"a:v,b:v",0x31,i16x8,S,i16,i32,n,,gt_s
+i16x8.gt_u,y,simd.cmp,gt,,v,,"a:v,b:v",0x32,i16x8,U,i16,i32,n,,gt_u
+i16x8.le_s,y,simd.cmp,le,,v,,"a:v,b:v",0x33,i16x8,S,i16,i32,n,,le_s
+i16x8.le_u,y,simd.cmp,le,,v,,"a:v,b:v",0x34,i16x8,U,i16,i32,n,,le_u
+i16x8.ge_s,y,simd.cmp,ge,,v,,"a:v,b:v",0x35,i16x8,S,i16,i32,n,,ge_s
+i16x8.ge_u,y,simd.cmp,ge,,v,,"a:v,b:v",0x36,i16x8,U,i16,i32,n,,ge_u
+i32x4.eq,y,simd.cmp,eq,,v,,"a:v,b:v",0x37,i32x4,NA,i32,i32,n,,eq
+i32x4.ne,y,simd.cmp,ne,,v,,"a:v,b:v",0x38,i32x4,NA,i32,i32,n,,ne
+i32x4.lt_s,y,simd.cmp,lt,,v,,"a:v,b:v",0x39,i32x4,S,i32,i32,n,,lt_s
+i32x4.lt_u,y,simd.cmp,lt,,v,,"a:v,b:v",0x3a,i32x4,U,i32,i32,n,,lt_u
+i32x4.gt_s,y,simd.cmp,gt,,v,,"a:v,b:v",0x3b,i32x4,S,i32,i32,n,,gt_s
+i32x4.gt_u,y,simd.cmp,gt,,v,,"a:v,b:v",0x3c,i32x4,U,i32,i32,n,,gt_u
+i32x4.le_s,y,simd.cmp,le,,v,,"a:v,b:v",0x3d,i32x4,S,i32,i32,n,,le_s
+i32x4.le_u,y,simd.cmp,le,,v,,"a:v,b:v",0x3e,i32x4,U,i32,i32,n,,le_u
+i32x4.ge_s,y,simd.cmp,ge,,v,,"a:v,b:v",0x3f,i32x4,S,i32,i32,n,,ge_s
+i32x4.ge_u,y,simd.cmp,ge,,v,,"a:v,b:v",0x40,i32x4,U,i32,i32,n,,ge_u
+f32x4.eq,y,simd.cmp,eq,,v,,"a:v,b:v",0x41,f32x4,NA,f32,f32,n,,eq
+f32x4.ne,y,simd.cmp,ne,,v,,"a:v,b:v",0x42,f32x4,NA,f32,f32,n,,ne
+f32x4.lt,y,simd.cmp,lt,,v,,"a:v,b:v",0x43,f32x4,NA,f32,f32,n,,lt
+f32x4.gt,y,simd.cmp,gt,,v,,"a:v,b:v",0x44,f32x4,NA,f32,f32,n,,gt
+f32x4.le,y,simd.cmp,le,,v,,"a:v,b:v",0x45,f32x4,NA,f32,f32,n,,le
+f32x4.ge,y,simd.cmp,ge,,v,,"a:v,b:v",0x46,f32x4,NA,f32,f32,n,,ge
+f64x2.eq,y,simd.cmp,eq,,v,,"a:v,b:v",0x47,f64x2,NA,f64,f64,n,,eq
+f64x2.ne,y,simd.cmp,ne,,v,,"a:v,b:v",0x48,f64x2,NA,f64,f64,n,,ne
+f64x2.lt,y,simd.cmp,lt,,v,,"a:v,b:v",0x49,f64x2,NA,f64,f64,n,,lt
+f64x2.gt,y,simd.cmp,gt,,v,,"a:v,b:v",0x4a,f64x2,NA,f64,f64,n,,gt
+f64x2.le,y,simd.cmp,le,,v,,"a:v,b:v",0x4b,f64x2,NA,f64,f64,n,,le
+f64x2.ge,y,simd.cmp,ge,,v,,"a:v,b:v",0x4c,f64x2,NA,f64,f64,n,,ge
+v128.not,y,simd.bitwise,not,,v,,a:v,0x4d,v128,NA,void,void,n,,not
+v128.and,y,simd.bitwise,and,,v,,"a:v,b:v",0x4e,v128,NA,void,void,n,,and
+v128.andnot,y,simd.bitwise,andnot,,v,,"a:v,b:v",0x4f,v128,NA,void,void,n,,andnot
+v128.or,y,simd.bitwise,or,,v,,"a:v,b:v",0x50,v128,NA,void,void,n,,or
+v128.xor,y,simd.bitwise,xor,,v,,"a:v,b:v",0x51,v128,NA,void,void,n,,xor
+v128.bitselect,y,simd.bitwise,bitwise_select,,v,,"v1:v,v2:v,c:v",0x52,v128,NA,void,void,n,,bitselect
+v128.any_true,y,simd.reduce,any_true,,i32,,a:v,0x53,v128,NA,void,void,n,,any_true
+v128.load8_lane,y,simd.mem,load_lane8,,v,,x:v,0x54,v128,NA,void,void,y,,load8_lane
+v128.load16_lane,y,simd.mem,load_lane16,,v,,x:v,0x55,v128,NA,void,void,y,,load16_lane
+v128.load32_lane,y,simd.mem,load_lane32,,v,,x:v,0x56,v128,NA,void,void,y,,load32_lane
+v128.load64_lane,y,simd.mem,load_lane64,,v,,x:v,0x57,v128,NA,void,void,y,,load64_lane
+v128.store8_lane,y,simd.mem,store_lane8,,,,data:v,0x58,v128,NA,void,void,y,,store8_lane
+v128.store16_lane,y,simd.mem,store_lane16,,,,data:v,0x59,v128,NA,void,void,y,,store16_lane
+v128.store32_lane,y,simd.mem,store_lane32,,,,data:v,0x5a,v128,NA,void,void,y,,store32_lane
+v128.store64_lane,y,simd.mem,store_lane64,,,,data:v,0x5b,v128,NA,void,void,y,,store64_lane
+v128.load32_zero,y,simd.mem,load_pad32,,v,m:memarg,,0x5c,v128,NA,void,void,y,,load32_zero
+v128.load64_zero,y,simd.mem,load_pad64,,v,m:memarg,,0x5d,v128,NA,void,void,y,,load64_zero
+f32x4.demote_f64x2_zero,y,simd.arith,demote,,v,,a:v,0x5e,f64x2,NA,f64,f64,n,,demote_f64x2_zero
+f64x2.promote_low_f32x4,y,simd.arith,promote,,v,,a:v,0x5f,f32x4,NA,f32,f32,n,,promote_low_f32x4
+i8x16.abs,y,simd.arith,abs,,v,,a:v,0x60,i8x16,NA,i8,i32,n,,abs
+i8x16.neg,y,simd.arith,neg,,v,,a:v,0x61,i8x16,NA,i8,i32,n,,neg
+i8x16.popcnt,y,simd.arith,popcnt,,v,,a:v,0x62,i8x16,NA,i8,i32,n,,popcnt
+i8x16.all_true,y,simd.bitwise,all_true,,i32,,a:v,0x63,i8x16,NA,i8,i32,n,,all_true
+i8x16.bitmask,y,simd.reduce,bitmask,,i32,,a:v,0x64,i8x16,NA,i8,i32,n,,bitmask
+i8x16.narrow_i16x8_s,y,simd.arith,narrow,,v,,"a:v, b:v",0x65,i16x8,S,i16,i32,n,,narrow_i16x8_s
+i8x16.narrow_i16x8_u,y,simd.arith,narrow,,v,,"a:v, b:v",0x66,i16x8,U,i16,i32,n,,narrow_i16x8_u
+f32x4.ceil,y,simd.arith,ceil,,v,,a:v,0x67,f32x4,NA,f32,f32,n,,ceil
+f32x4.floor,y,simd.arith,floor,,v,,a:v,0x68,f32x4,NA,f32,f32,n,,floor
+f32x4.trunc,y,simd.arith,trunc,,v,,a:v,0x69,f32x4,NA,f32,f32,n,,trunc
+f32x4.nearest,y,simd.arith,nearest,,v,,a:v,0x6a,f32x4,NA,f32,f32,n,,nearest
+i8x16.shl,y,simd.shift,shl,,v,,"a:v, b:i32",0x6b,i8x16,NA,i8,i32,y,,shl
+i8x16.shr_s,y,simd.shift,shr,,v,,"a:v, b:i32",0x6c,i8x16,S,i8,i32,y,,shr_s
+i8x16.shr_u,y,simd.shift,shr,,v,,"a:v, b:i32",0x6d,i8x16,U,i8,i32,y,,shr_u
+i8x16.add,y,simd.arith,add,,v,,"a:v, b:v",0x6e,i8x16,NA,i8,i32,n,,add
+i8x16.add_sat_s,y,simd.arith,add_sat,,v,,"a:v, b:v",0x6f,i8x16,S,i8,i32,n,,add_sat_s
+i8x16.add_sat_u,y,simd.arith,add_sat,,v,,"a:v, b:v",0x70,i8x16,U,i8,i32,n,,add_sat_u
+i8x16.sub,y,simd.arith,sub,,v,,"a:v, b:v",0x71,i8x16,NA,i8,i32,n,,sub
+i8x16.sub_sat_s,y,simd.arith,sub_sat,,v,,"a:v, b:v",0x72,i8x16,S,i8,i32,n,,sub_sat_s
+i8x16.sub_sat_u,y,simd.arith,sub_sat,,v,,"a:v, b:v",0x73,i8x16,U,i8,i32,n,,sub_sat_u
+f64x2.ceil,y,simd.arith,ceil,,v,,a:v,0x74,f64x2,NA,f64,f64,n,,ceil
+f64x2.floor,y,simd.arith,floor,,v,,a:v,0x75,f64x2,NA,f64,f64,n,,floor
+i8x16.min_s,y,simd.arith,min,,v,,"a:v, b:v",0x76,i8x16,S,i8,i32,n,,min_s
+i8x16.min_u,y,simd.arith,min,,v,,"a:v, b:v",0x77,i8x16,U,i8,i32,n,,min_u
+i8x16.max_s,y,simd.arith,max,,v,,"a:v, b:v",0x78,i8x16,S,i8,i32,n,,max_s
+i8x16.max_u,y,simd.arith,max,,v,,"a:v, b:v",0x79,i8x16,U,i8,i32,n,,max_u
+f64x2.trunc,y,simd.arith,trunc,,v,,a:v,0x7a,f64x2,NA,f64,f64,n,,trunc
+i8x16.avgr_u,y,simd.round,avg_round,,v,,"a:v,b:v",0x7b,i8x16,NA,i8,i32,n,,avgr_u
+i16x8.extadd_pairwise_i8x16_s,y,simd.extadd,extadd_pairwise,,v,,a:v,0x7c,i16x8,S,i16,i32,n,,extadd_pairwise_i8x16_s
+i16x8.extadd_pairwise_i8x16_u,y,simd.extadd,extadd_pairwise,,v,,a:v,0x7d,i16x8,U,i16,i32,n,,extadd_pairwise_i8x16_u
+i32x4.extadd_pairwise_i16x8_s,y,simd.extadd,extadd_pairwise,,v,,a:v,0x7e,i32x4,S,i32,i32,n,,extadd_pairwise_i16x8_s
+i32x4.extadd_pairwise_i16x8_u,y,simd.extadd,extadd_pairwise,,v,,a:v,0x7f,i32x4,U,i32,i32,n,,extadd_pairwise_i16x8_u
+i16x8.abs,y,simd.arith,abs,,v,,a:v,0x80,i16x8,NA,i16,i32,n,,abs
+i16x8.neg,y,simd.arith,neg,,v,,a:v,0x81,i16x8,NA,i16,i32,n,,neg
+i16x8.q15mulr_sat_s,y,simd.arith,mul_sat,,v,,"a:v, b:v",0x82,i16x8,NA,i16,i32,n,,q15mulr_sat_s
+i16x8.all_true,y,simd.bitwise,all_true,,i32,,a:v,0x83,i16x8,NA,i16,i32,n,,all_true
+i16x8.bitmask,y,simd.reduce,bitmask,,i32,,a:v,0x84,i16x8,NA,i16,i32,n,,bitmask
+i16x8.narrow_i32x4_s,y,simd.arith,narrow,,v,,"a:v, b:v",0x85,i32x4,S,i32,i32,n,,narrow_i32x4_s
+i16x8.narrow_i32x4_u,y,simd.arith,narrow,,v,,"a:v, b:v",0x86,i32x4,U,i32,i32,n,,narrow_i32x4_u
+i16x8.extend_low_i8x16_s,y,simd.arith,extend_low,,v,,a:v,0x87,i8x16,S,i8,i8,n,,extend_low_i8x16_s
+i16x8.extend_high_i8x16_s,y,simd.arith,extend_high,,v,,a:v,0x88,i8x16,S,i8,i8,n,,extend_high_i8x16_s
+i16x8.extend_low_i8x16_u,y,simd.arith,extend_low,,v,,a:v,0x89,i8x16,U,i8,i8,n,,extend_low_i8x16_u
+i16x8.extend_high_i8x16_u,y,simd.arith,extend_high,,v,,a:v,0x8a,i8x16,U,i8,i8,n,,extend_high_i8x16_u
+i16x8.shl,y,simd.shift,shl,,v,,"a:v, b:i32",0x8b,i16x8,NA,i16,i32,y,,shl
+i16x8.shr_s,y,simd.shift,shr,,v,,"a:v, b:i32",0x8c,i16x8,S,i16,i32,y,,shr_s
+i16x8.shr_u,y,simd.shift,shr,,v,,"a:v, b:i32",0x8d,i16x8,U,i16,i32,y,,shr_u
+i16x8.add,y,simd.arith,add,,v,,"a:v, b:v",0x8e,i16x8,NA,i16,i32,n,,add
+i16x8.add_sat_s,y,simd.arith,add_sat,,v,,"a:v, b:v",0x8f,i16x8,S,i16,i32,n,,add_sat_s
+i16x8.add_sat_u,y,simd.arith,add_sat,,v,,"a:v, b:v",0x90,i16x8,U,i16,i32,n,,add_sat_u
+i16x8.sub,y,simd.arith,sub,,v,,"a:v, b:v",0x91,i16x8,NA,i16,i32,n,,sub
+i16x8.sub_sat_s,y,simd.arith,sub_sat,,v,,"a:v, b:v",0x92,i16x8,S,i16,i32,n,,sub_sat_s
+i16x8.sub_sat_u,y,simd.arith,sub_sat,,v,,"a:v, b:v",0x93,i16x8,U,i16,i32,n,,sub_sat_u
+f64x2.nearest,y,simd.arith,nearest,,v,,a:v,0x94,f64x2,NA,f64,f64,n,,nearest
+i16x8.mul,y,simd.arith,mul,,v,,"a:v, b:v",0x95,i16x8,NA,i16,i32,n,,mul
+i16x8.min_s,y,simd.arith,min,,v,,"a:v, b:v",0x96,i16x8,S,i16,i32,n,,min_s
+i16x8.min_u,y,simd.arith,min,,v,,"a:v, b:v",0x97,i16x8,U,i16,i32,n,,min_u
+i16x8.max_s,y,simd.arith,max,,v,,"a:v, b:v",0x98,i16x8,S,i16,i32,n,,max_s
+i16x8.max_u,y,simd.arith,max,,v,,"a:v, b:v",0x99,i16x8,U,i16,i32,n,,max_u
+i16x8.avgr_u,y,simd.round,avg_round,,v,,"a:v,b:v",0x9b,i16x8,NA,i16,i32,n,,avgr_u
+i16x8.extmul_low_i8x16_s,y,simd.extmul,extmul_low,,v,,"a:v, b:v",0x9c,i8x16,S,i8,i32,y,,extmul_low_i8x16_s
+i16x8.extmul_high_i8x16_s,y,simd.extmul,extmul_high,,v,,"a:v, b:v",0x9d,i8x16,S,i8,i32,y,,extmul_high_i8x16_s
+i16x8.extmul_low_i8x16_u,y,simd.extmul,extmul_low,,v,,"a:v, b:v",0x9e,i8x16,U,i8,i32,y,,extmul_low_i8x16_u
+i16x8.extmul_high_i8x16_u,y,simd.extmul,extmul_high,,v,,"a:v, b:v",0x9f,i8x16,U,i8,i32,y,,extmul_high_i8x16_u
+i32x4.abs,y,simd.arith,abs,,v,,a:v,0xa0,i32x4,NA,i32,i32,n,,abs
+i32x4.neg,y,simd.arith,neg,,v,,a:v,0xa1,i32x4,NA,i32,i32,n,,neg
+i32x4.all_true,y,simd.bitwise,all_true,,i32,,a:v,0xa3,i32x4,NA,i32,i32,n,,all_true
+i32x4.bitmask,y,simd.reduce,bitmask,,i32,,a:v,0xa4,i32x4,NA,i32,i32,n,,bitmask
+i32x4.extend_low_i16x8_s,y,simd.arith,extend_low,,v,,a:v,0xa7,i16x8,S,i16,i16,n,,extend_low_i16x8_s
+i32x4.extend_high_i16x8_s,y,simd.arith,extend_high,,v,,a:v,0xa8,i16x8,S,i16,i16,n,,extend_high_i16x8_s
+i32x4.extend_low_i16x8_u,y,simd.arith,extend_low,,v,,a:v,0xa9,i16x8,U,i16,i16,n,,extend_low_i16x8_u
+i32x4.extend_high_i16x8_u,y,simd.arith,extend_high,,v,,a:v,0xaa,i16x8,U,i16,i16,n,,extend_high_i16x8_u
+i32x4.shl,y,simd.shift,shl,,v,,"a:v, b:i32",0xab,i32x4,NA,i32,i32,y,,shl
+i32x4.shr_s,y,simd.shift,shr,,v,,"a:v, b:i32",0xac,i32x4,S,i32,i32,y,,shr_s
+i32x4.shr_u,y,simd.shift,shr,,v,,"a:v, b:i32",0xad,i32x4,U,i32,i32,y,,shr_u
+i32x4.add,y,simd.arith,add,,v,,"a:v, b:v",0xae,i32x4,NA,i32,i32,n,,add
+i32x4.sub,y,simd.arith,sub,,v,,"a:v, b:v",0xb1,i32x4,NA,i32,i32,n,,sub
+i32x4.mul,y,simd.arith,mul,,v,,"a:v, b:v",0xb5,i32x4,NA,i32,i32,n,,mul
+i32x4.min_s,y,simd.arith,min,,v,,"a:v, b:v",0xb6,i32x4,S,i32,i32,n,,min_s
+i32x4.min_u,y,simd.arith,max,,v,,"a:v, b:v",0xb7,i32x4,U,i32,i32,n,,min_u
+i32x4.max_s,y,simd.arith,max,,v,,"a:v, b:v",0xb8,i32x4,S,i32,i32,n,,max_s
+i32x4.max_u,y,simd.arith,max,,v,,"a:v, b:v",0xb9,i32x4,U,i32,i32,n,,max_u
+i32x4.dot_i16x8_s,y,simd.arith,dot_product,DotProductInt32,v,,"a:v,b:v",0xba,i32x4,NA,i32,i32,n,,dot_i16x8_s
+i32x4.extmul_low_i16x8_s,y,simd.extmul,extmul_low,,v,,"a:v, b:v",0xbc,i16x8,S,i16,i32,y,,extmul_low_i16x8_s
+i32x4.extmul_high_i16x8_s,y,simd.extmul,extmul_high,,v,,"a:v, b:v",0xbd,i16x8,S,i16,i32,y,,extmul_high_i16x8_s
+i32x4.extmul_low_i16x8_u,y,simd.extmul,extmul_low,,v,,"a:v, b:v",0xbe,i16x8,U,i16,i32,y,,extmul_low_i16x8_u
+i32x4.extmul_high_i16x8_u,y,simd.extmul,extmul_high,,v,,"a:v, b:v",0xbf,i16x8,U,i16,i32,y,,extmul_high_i16x8_u
+i64x2.abs,y,simd.arith,abs,,v,,a:v,0xc0,i64x2,NA,i64,i64,n,,abs
+i64x2.neg,y,simd.arith,neg,,v,,a:v,0xc1,i64x2,NA,i64,i64,n,,neg
+i64x2.all_true,y,simd.bitwise,all_true,,i32,,a:v,0xc3,i64x2,NA,i64,i64,n,,all_true
+i64x2.bitmask,y,simd.reduce,bitmask,,i32,,a:v,0xc4,i64x2,NA,i64,i64,n,,bitmask
+i64x2.extend_low_i32x4_s,y,simd.arith,extend_low,,v,,a:v,0xc7,i32x4,S,i32,i32,n,,extend_low_i32x4_s
+i64x2.extend_high_i32x4_s,y,simd.arith,extend_high,,v,,a:v,0xc8,i32x4,S,i32,i32,n,,extend_high_i32x4_s
+i64x2.extend_low_i32x4_u,y,simd.arith,extend_low,,v,,a:v,0xc9,i32x4,U,i32,i32,n,,extend_low_i32x4_u
+i64x2.extend_high_i32x4_u,y,simd.arith,extend_high,,v,,a:v,0xca,i32x4,U,i32,i32,n,,extend_high_i32x4_u
+i64x2.shl,y,simd.shift,shl,,v,,"a:v, b:i32",0xcb,i64x2,NA,i64,i64,y,,shl
+i64x2.shr_s,y,simd.shift,shr,,v,,"a:v, b:i32",0xcc,i64x2,S,i64,i64,y,,shr_s
+i64x2.shr_u,y,simd.shift,shr,,v,,"a:v, b:i32",0xcd,i64x2,U,i64,i64,y,,shr_u
+i64x2.add,y,simd.arith,add,,v,,"a:v, b:v",0xce,i64x2,NA,i64,i64,n,,add
+i64x2.sub,y,simd.arith,sub,,v,,"a:v, b:v",0xd1,i64x2,NA,i64,i64,n,,sub
+i64x2.mul,y,simd.arith,mul,,v,,"a:v, b:v",0xd5,i64x2,NA,i64,i64,n,,mul
+i64x2.eq,y,simd.cmp,eq,,v,,"a:v, b:v",0xd6,i64x2,NA,i64,i64,n,,eq
+i64x2.ne,y,simd.cmp,ne,,v,,"a:v,b:v",0xd7,i64x2,NA,i64,i64,n,,ne
+i64x2.lt_s,y,simd.cmp,lt,,v,,"a:v,b:v",0xd8,i64x2,S,i64,i64,n,,lt_s
+i64x2.gt_s,y,simd.cmp,gt,,v,,"a:v,b:v",0xd9,i64x2,S,i64,i64,n,,gt_s
+i64x2.le_u,y,simd.cmp,le,,v,,"a:v,b:v",0xda,i64x2,U,i64,i64,n,,le_u
+i64x2.ge_u,y,simd.cmp,ge,,v,,"a:v,b:v",0xdb,i64x2,U,i64,i64,n,,ge_u
+i64x2.extmul_low_i32x4_s,y,simd.extmul,extmul_low,,v,,"a:v,b:v",0xdc,i32x4,S,i32,i32,y,,extmul_low_i32x4_s
+i64x2.extmul_high_i32x4_s,y,simd.extmul,extmul_high,,v,,"a:v,b:v",0xdd,i32x4,S,i32,i32,y,,extmul_high_i32x4_s
+i64x2.extmul_low_i32x4_u,y,simd.extmul,extmul_low,,v,,"a:v,b:v",0xde,i32x4,U,i32,i32,y,,extmul_low_i32x4_u
+i64x2.extmul_high_i32x4_u,y,simd.extmul,extmul_high,,v,,"a:v,b:v",0xdf,i32x4,U,i32,i32,y,,extmul_high_i32x4_u
+f32x4.abs,y,simd.arith,abs,,v,,a:v,0xe0,f32x4,NA,f32,f32,n,,abs
+f32x4.neg,y,simd.arith,neg,,v,,a:v,0xe1,f32x4,NA,f32,f32,n,,neg
+f32x4.sqrt,y,simd.arith,sqrt,,v,,a:v,0xe3,f32x4,NA,f32,f32,n,,sqrt
+f32x4.add,y,simd.arith,add,,v,,"a:v, b:v",0xe4,f32x4,NA,f32,f32,n,,add
+f32x4.sub,y,simd.arith,sub,,v,,"a:v, b:v",0xe5,f32x4,NA,f32,f32,n,,sub
+f32x4.mul,y,simd.arith,mul,,v,,"a:v, b:v",0xe6,f32x4,NA,f32,f32,n,,mul
+f32x4.div,y,simd.arith,div,,v,,"a:v, b:v",0xe7,f32x4,NA,f32,f32,n,,div
+f32x4.min,y,simd.arith,min,,v,,"a:v, b:v",0xe8,f32x4,NA,f32,f32,n,,min
+f32x4.max,y,simd.arith,max,,v,,"a:v, b:v",0xe9,f32x4,NA,f32,f32,n,,max
+f32x4.pmin,y,simd.arith,pmin,,v,,"a:v, b:v",0xea,f32x4,NA,f32,f32,n,,pmin
+f32x4.pmax,y,simd.arith,pmax,,v,,"a:v, b:v",0xeb,f32x4,NA,f32,f32,n,,
+f64x2.abs,y,simd.arith,abs,,v,,a:v,0xec,f64x2,NA,f64,f64,n,,
+f64x2.neg,y,simd.arith,neg,,v,,a:v,0xed,f64x2,NA,f64,f64,n,,
+f64x2.sqrt,y,simd.arith,sqrt,,v,,a:v,0xef,f64x2,NA,f64,f64,n,,
+f64x2.add,y,simd.arith,add,,v,,"a:v, b:v",0xf0,f64x2,NA,f64,f64,n,,
+f64x2.sub,y,simd.arith,sub,,v,,"a:v, b:v",0xf1,f64x2,NA,f64,f64,n,,
+f64x2.mul,y,simd.arith,mul,,v,,"a:v, b:v",0xf2,f64x2,NA,f64,f64,n,,
+f64x2.div,y,simd.arith,div,,v,,"a:v, b:v",0xf3,f64x2,NA,f64,f64,n,,
+f64x2.min,y,simd.arith,min,,v,,"a:v, b:v",0xf4,f64x2,NA,f64,f64,n,,
+f64x2.max,y,simd.arith,max,,v,,"a:v, b:v",0xf5,f64x2,NA,f64,f64,n,,
+f64x2.pmin,y,simd.arith,pmin,,v,,"a:v, b:v",0xf6,f64x2,NA,f64,f64,n,,
+f64x2.pmax,y,simd.arith,pmax,,v,,"a:v, b:v",0xf7,f64x2,NA,f64,f64,n,,
+i32x4.trunc_sat_f32x4_s,y,simd.arith,trunc_sat,,v,,a:v,0xf8,f32x4,S,f32,f32,n,,
+i32x4.trunc_sat_f32x4_u,y,simd.arith,trunc_sat,,v,,a:v,0xf9,f32x4,U,f32,f32,n,,
+f32x4.convert_i32x4_s,y,simd.arith,convert,,v,,a:v,0xfa,i32x4,S,i32,i32,n,,
+f32x4.convert_i32x4_u,y,simd.arith,convert,,v,,a:v,0xfb,i32x4,U,i32,i32,n,,
+i32x4.trunc_sat_f64x2_s_zero,y,simd.arith,trunc_sat,,v,,a:v,0xfc,f64x2,S,f64,f64,n,,
+i32x4.trunc_sat_f64x2_u_zero,y,simd.arith,trunc_sat,,v,,a:v,0xfd,f64x2,U,f64,f64,n,,
+f64x2.convert_low_i32x4_s,y,simd.arith,convert_low,,v,,a:v,0xfe,i32x4,S,i32,i32,n,,
+f64x2.convert_low_i32x4_u,y,simd.arith,convert_low,,v,,a:v,0xff,i32x4,U,i32,i32,n,,

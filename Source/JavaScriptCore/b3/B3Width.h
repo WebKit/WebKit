@@ -25,10 +25,9 @@
 
 #pragma once
 
-#if ENABLE(B3_JIT)
-
 #include "B3Bank.h"
 #include "B3Type.h"
+#include "RegisterSet.h"
 
 #if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
@@ -36,12 +35,18 @@ IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 
 namespace JSC { namespace B3 {
 
-enum Width : int8_t {
-    Width8 = 0,
+enum class Width {
+    Width8,
     Width16,
     Width32,
-    Width64
+    Width64,
+    Width128,
 };
+static constexpr Width Width8 = Width::Width8;
+static constexpr Width Width16 = Width::Width16;
+static constexpr Width Width32 = Width::Width32;
+static constexpr Width Width64 = Width::Width64;
+static constexpr Width Width128 = Width::Width128;
 
 constexpr Width pointerWidth()
 {
@@ -50,6 +55,7 @@ constexpr Width pointerWidth()
     return Width32;
 }
 
+#if ENABLE(B3_JIT)
 inline Width widthForType(Type type)
 {
     switch (type.kind()) {
@@ -63,10 +69,13 @@ inline Width widthForType(Type type)
     case Int64:
     case Double:
         return Width64;
+    case V128:
+        return Width128;
     }
     ASSERT_NOT_REACHED();
     return Width8;
 }
+#endif // ENABLE(B3_JIT)
 
 inline Width canonicalWidth(Width width)
 {
@@ -80,9 +89,9 @@ inline bool isCanonicalWidth(Width width)
 
 Type bestType(Bank bank, Width width);
 
-inline Width conservativeWidth(Bank bank)
+inline constexpr Width conservativeWidth(Bank bank)
 {
-    return bank == GP ? pointerWidth() : Width64;
+    return bank == GP ? pointerWidth() : Width128;
 }
 
 inline Width minimumWidth(Bank bank)
@@ -90,12 +99,7 @@ inline Width minimumWidth(Bank bank)
     return bank == GP ? Width8 : Width32;
 }
 
-inline unsigned bytes(Width width)
-{
-    return 1 << width;
-}
-
-inline Width widthForBytes(unsigned bytes)
+inline constexpr Width widthForBytes(unsigned bytes)
 {
     switch (bytes) {
     case 0:
@@ -106,12 +110,22 @@ inline Width widthForBytes(unsigned bytes)
     case 3:
     case 4:
         return Width32;
-    default:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
         return Width64;
+    default:
+        return Width128;
     }
 }
 
-inline unsigned bytesForWidth(Width width)
+inline constexpr Width conservativeWidthForC(Bank bank)
+{
+    return bank == GP ? pointerWidth() : Width64;
+}
+
+inline constexpr unsigned bytesForWidth(Width width)
 {
     switch (width) {
     case Width8:
@@ -122,8 +136,26 @@ inline unsigned bytesForWidth(Width width)
         return 4;
     case Width64:
         return 8;
+    case Width128:
+        return 16;
     }
-    return 1;
+}
+
+inline Width includedRegisterWidth(Bank bank, IncludedWidth ic)
+{
+    if (ic == IncludeRegister || ic == IncludeUpper64Bits)
+        return conservativeWidth(bank);
+    if (ic == IncludeLower64Bits)
+        return Width64;
+    ASSERT_NOT_REACHED();
+    return Width128;
+}
+
+inline IncludedWidth includeRegisterWithWidth(Width width)
+{
+    if (width == Width128)
+        return IncludeRegister;
+    return IncludeLower64Bits;
 }
 
 inline uint64_t mask(Width width)
@@ -137,6 +169,9 @@ inline uint64_t mask(Width width)
         return 0x00000000ffffffffllu;
     case Width64:
         return 0xffffffffffffffffllu;
+    case Width128:
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
     }
     ASSERT_NOT_REACHED();
 }
@@ -154,6 +189,4 @@ void printInternal(PrintStream&, JSC::B3::Width);
 #if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_END
 #endif
-
-#endif // ENABLE(B3_JIT)
 

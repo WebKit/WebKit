@@ -1861,7 +1861,7 @@ void testInvalidateCachedTempRegisters()
 
     // In Patchpoint, Load things[0] -> tmp. This will materialize the address in x17 (dataMemoryRegister).
     B3::PatchpointValue* patchpoint1 = patchPoint1Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint1->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint1->clobberFullWidth(RegisterSet::macroScratchRegisters());
     patchpoint1->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1876,7 +1876,7 @@ void testInvalidateCachedTempRegisters()
     // In Patchpoint, Load things[2] -> tmp. This should not reuse the prior contents of x17.
     B3::BasicBlock* patchPoint2Root = proc.addBlock();
     B3::PatchpointValue* patchpoint2 = patchPoint2Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint2->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint2->clobberFullWidth(RegisterSet::macroScratchRegisters());
     patchpoint2->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1890,7 +1890,7 @@ void testInvalidateCachedTempRegisters()
     // This will use and cache both x16 (dataMemoryRegister) and x17 (dataTempRegister).
     B3::BasicBlock* patchPoint3Root = proc.addBlock();
     B3::PatchpointValue* patchpoint3 = patchPoint3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint3->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint3->clobberFullWidth(RegisterSet::macroScratchRegisters());
     patchpoint3->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1906,7 +1906,7 @@ void testInvalidateCachedTempRegisters()
     // This should rematerialize both x16 (dataMemoryRegister) and x17 (dataTempRegister).
     B3::BasicBlock* patchPoint4Root = proc.addBlock();
     B3::PatchpointValue* patchpoint4 = patchPoint4Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint4->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint4->clobberFullWidth(RegisterSet::macroScratchRegisters());
     patchpoint4->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1936,7 +1936,7 @@ void testArgumentRegPinned()
 
     B3::BasicBlock* b3Root = proc.addBlock();
     B3::PatchpointValue* patchpoint = b3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint->clobber(RegisterSet(pinned));
+    patchpoint->clobber(RegisterSet128(pinned));
     patchpoint->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             jit.move(CCallHelpers::TrustedImm32(42), pinned);
@@ -1968,7 +1968,7 @@ void testArgumentRegPinned2()
 
     B3::BasicBlock* b3Root = proc.addBlock();
     B3::PatchpointValue* patchpoint = b3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint->clobber({ }); 
+    patchpoint->clobberFullWidth({ });
     patchpoint->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             jit.move(CCallHelpers::TrustedImm32(42), pinned);
@@ -2006,7 +2006,7 @@ void testArgumentRegPinned3()
 
     B3::BasicBlock* b3Root = proc.addBlock();
     B3::PatchpointValue* patchpoint = b3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint->clobber(RegisterSet(pinned));
+    patchpoint->clobber(RegisterSet128(pinned));
     patchpoint->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             jit.move(CCallHelpers::TrustedImm32(42), pinned);
@@ -2126,9 +2126,9 @@ void testElideHandlesEarlyClobber()
         root->append(Move, nullptr, Arg::imm(i), tmps[i]);
     }
 
-    RegisterSet registers = RegisterSet::allGPRs();
-    registers.exclude(RegisterSet::reservedHardwareRegisters());
-    registers.exclude(RegisterSet::stackRegisters());
+    RegisterSet128 registers = RegisterSet128::use64Bits(RegisterSet::allGPRs());
+    registers.exclude(RegisterSet128::use64Bits(RegisterSet::reservedHardwareRegisters()));
+    registers.exclude(RegisterSet128::use64Bits(RegisterSet::stackRegisters()));
     Reg firstCalleeSave;
     Reg lastCalleeSave;
     auto* patch = proc.add<B3::PatchpointValue>(B3::Int32, B3::Origin());
@@ -2142,7 +2142,7 @@ void testElideHandlesEarlyClobber()
     patch->earlyClobbered().clear(firstCalleeSave);
     patch->resultConstraints.append({ B3::ValueRep::reg(firstCalleeSave) });
     patch->earlyClobbered().clear(lastCalleeSave);
-    patch->clobber(RegisterSet(lastCalleeSave));
+    patch->clobber(RegisterSet128(lastCalleeSave));
 
     patch->setGenerator([=] (CCallHelpers& jit, const JSC::B3::StackmapGenerationParams&) {
         jit.probeDebug([=] (Probe::Context& context) {

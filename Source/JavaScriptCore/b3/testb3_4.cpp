@@ -143,7 +143,7 @@ void testStoreRelAddFenceLoadAcq8(int amount, B3::Opcode loadOpcode)
     Value* loadedValue = root->appendNew<MemoryValue>(
         proc, loadOpcode, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42));
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobberFullWidth(RegisterSet::macroScratchRegisters());
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -2512,7 +2512,7 @@ void testSimplePatchpointWithoutOuputClobbersGPArgs()
     Value* const2 = root->appendNew<Const64Value>(proc, Origin(), 13);
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
-    patchpoint->clobberLate(RegisterSet(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1));
+    patchpoint->clobberLate(RegisterSet128(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1));
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
     patchpoint->setGenerator(
@@ -2558,9 +2558,9 @@ void testSimplePatchpointWithOuputClobbersGPArgs()
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int64, Origin());
 
-    RegisterSet clobberAll = RegisterSet::allGPRs();
-    clobberAll.exclude(RegisterSet::stackRegisters());
-    clobberAll.exclude(RegisterSet::reservedHardwareRegisters());
+    RegisterSet128 clobberAll = RegisterSet128::use64Bits(RegisterSet::allGPRs());
+    clobberAll.exclude(RegisterSet128::use64Bits(RegisterSet::stackRegisters()));
+    clobberAll.exclude(RegisterSet128::use64Bits(RegisterSet::reservedHardwareRegisters()));
     clobberAll.clear(GPRInfo::argumentGPR2);
     patchpoint->clobberLate(clobberAll);
 
@@ -2599,7 +2599,7 @@ void testSimplePatchpointWithoutOuputClobbersFPArgs()
     Value* const2 = root->appendNew<ConstDoubleValue>(proc, Origin(), 13.1);
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
-    patchpoint->clobberLate(RegisterSet(FPRInfo::argumentFPR0, FPRInfo::argumentFPR1));
+    patchpoint->clobberLate(RegisterSet128(FPRInfo::argumentFPR0, FPRInfo::argumentFPR1));
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
     patchpoint->setGenerator(
@@ -2642,7 +2642,7 @@ void testSimplePatchpointWithOuputClobbersFPArgs()
     clobberAll.exclude(RegisterSet::stackRegisters());
     clobberAll.exclude(RegisterSet::reservedHardwareRegisters());
     clobberAll.clear(FPRInfo::argumentFPR2);
-    patchpoint->clobberLate(clobberAll);
+    patchpoint->clobberLate(RegisterSet128::use64Bits(clobberAll));
 
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
@@ -2679,7 +2679,7 @@ void testPatchpointWithEarlyClobber()
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
         patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
         patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
-        patchpoint->clobberEarly(RegisterSet(registerToClobber));
+        patchpoint->clobberEarly(RegisterSet128(registerToClobber));
         unsigned optLevel = proc.optLevel();
         patchpoint->setGenerator(
             [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -2859,7 +2859,7 @@ void testPatchpointLotsOfLateAnys()
     }
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobberFullWidth(RegisterSet::macroScratchRegisters());
     for (Value* value : values)
         patchpoint->append(ConstrainedValue(value, ValueRep::LateColdAny));
     patchpoint->setGenerator(

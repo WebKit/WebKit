@@ -93,9 +93,7 @@ void reportUsedRegisters(Code& code)
             }
             
             if (inst.kind.opcode == Patch) {
-                RegisterSet registerSet;
-                for (Reg reg : localCalc.live())
-                    registerSet.set(reg);
+                auto registerSet = localCalc.live();
                 inst.reportUsedRegisters(registerSet);
             }
             localCalc.execute(instIndex);

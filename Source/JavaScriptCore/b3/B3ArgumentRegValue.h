@@ -33,6 +33,7 @@
 namespace JSC { namespace B3 {
 
 class JS_EXPORT_PRIVATE ArgumentRegValue final : public Value {
+    struct VectorTag { };
 public:
     static bool accepts(Kind kind) { return kind == ArgumentReg; }
     
@@ -42,19 +43,30 @@ public:
 
     B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN
 
+    WTF_INTERNAL static constexpr VectorTag useFullRegister = { };
+
 private:
     void dumpMeta(CommaPrinter&, PrintStream&) const final;
 
     friend class Procedure;
     friend class Value;
-    
+
     static Opcode opcodeFromConstructor(Origin, Reg) { return ArgumentReg; }
+    static Opcode opcodeFromConstructor(Origin, Reg, VectorTag) { return ArgumentReg; }
 
     ArgumentRegValue(Origin origin, Reg reg)
         : Value(CheckedOpcode, ArgumentReg, reg.isGPR() ? pointerType() : Double, Zero, origin)
         , m_reg(reg)
     {
         ASSERT(reg.isSet());
+    }
+
+    ArgumentRegValue(Origin origin, Reg reg, VectorTag)
+        : Value(CheckedOpcode, ArgumentReg, V128, Zero, origin)
+        , m_reg(reg)
+    {
+        ASSERT(reg.isSet());
+        ASSERT(reg.isFPR());
     }
 
     Reg m_reg;

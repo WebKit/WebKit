@@ -31,7 +31,6 @@
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
 #include "RegisterAtOffsetList.h"
-#include <wtf/CommaPrinter.h>
 
 namespace JSC {
 
@@ -71,12 +70,12 @@ RegisterSet RegisterSet::specialRegisters()
         stackRegisters(), reservedHardwareRegisters(), runtimeTagRegisters());
 }
 
-RegisterSet RegisterSet::volatileRegistersForJSCall()
+RegisterSet128 RegisterSet128::volatileRegistersForJSCall()
 {
-    RegisterSet volatileRegisters = allRegisters();
-    volatileRegisters.exclude(RegisterSet::stackRegisters());
-    volatileRegisters.exclude(RegisterSet::reservedHardwareRegisters());
-    volatileRegisters.exclude(RegisterSet::vmCalleeSaveRegisters());
+    RegisterSet128 volatileRegisters = RegisterSet128::use128Bits(RegisterSet::allRegisters());
+    volatileRegisters.exclude(RegisterSet128::use128Bits(RegisterSet::stackRegisters()));
+    volatileRegisters.exclude(RegisterSet128::use128Bits(RegisterSet::reservedHardwareRegisters()));
+    volatileRegisters.exclude(RegisterSet128::vmCalleeSaveRegisters());
     return volatileRegisters;
 }
 
@@ -85,7 +84,7 @@ RegisterSet RegisterSet::stubUnavailableRegisters()
     // FIXME: This is overly conservative. We could subtract out those callee-saves that we
     // actually saved.
     // https://bugs.webkit.org/show_bug.cgi?id=185686
-    return RegisterSet(specialRegisters(), vmCalleeSaveRegisters());
+    return RegisterSet(specialRegisters(), RegisterSet128::vmCalleeSaveRegisters().allRegisters());
 }
 
 RegisterSet RegisterSet::macroScratchRegisters()
@@ -112,21 +111,21 @@ RegisterSet RegisterSet::macroScratchRegisters()
 #endif
 }
 
-RegisterSet RegisterSet::calleeSaveRegisters()
+RegisterSet128 RegisterSet128::calleeSaveRegisters()
 {
     RegisterSet result;
 
 #define SET_IF_CALLEESAVED(id, name, isReserved, isCalleeSaved)        \
-    if (isCalleeSaved)                                                 \
+    if constexpr (isCalleeSaved)                                       \
         result.set(RegisterNames::id);
     FOR_EACH_GP_REGISTER(SET_IF_CALLEESAVED)
     FOR_EACH_FP_REGISTER(SET_IF_CALLEESAVED)
 #undef SET_IF_CALLEESAVED
         
-    return result;
+    return RegisterSet128::use64Bits(result);
 }
 
-RegisterSet RegisterSet::vmCalleeSaveRegisters()
+RegisterSet128 RegisterSet128::vmCalleeSaveRegisters()
 {
     RegisterSet result;
 #if CPU(X86_64)
@@ -196,7 +195,7 @@ RegisterSet RegisterSet::vmCalleeSaveRegisters()
     result.set(FPRInfo::fpRegCS10);
     result.set(FPRInfo::fpRegCS11);
 #endif
-    return result;
+    return RegisterSet128::use64Bits(result);
 }
 
 RegisterAtOffsetList* RegisterSet::vmCalleeSaveRegisterOffsets()
@@ -204,7 +203,7 @@ RegisterAtOffsetList* RegisterSet::vmCalleeSaveRegisterOffsets()
     static RegisterAtOffsetList* result;
     static std::once_flag calleeSavesFlag;
     std::call_once(calleeSavesFlag, [] () {
-        result = new RegisterAtOffsetList(vmCalleeSaveRegisters(), RegisterAtOffsetList::ZeroBased);
+        result = new RegisterAtOffsetList(RegisterSet128::vmCalleeSaveRegisters(), RegisterAtOffsetList::ZeroBased);
     });
     return result;
 }
@@ -288,7 +287,7 @@ RegisterSet RegisterSet::dfgCalleeSaveRegisters()
     return result;
 }
 
-RegisterSet RegisterSet::ftlCalleeSaveRegisters()
+RegisterSet128 RegisterSet128::ftlCalleeSaveRegisters()
 {
     RegisterSet result;
 #if ENABLE(FTL_JIT)
@@ -355,7 +354,7 @@ RegisterSet RegisterSet::ftlCalleeSaveRegisters()
     UNREACHABLE_FOR_PLATFORM();
 #endif
 #endif
-    return result;
+    return RegisterSet128::use64Bits(result);
 }
 
 RegisterSet RegisterSet::argumentGPRS()
@@ -368,14 +367,14 @@ RegisterSet RegisterSet::argumentGPRS()
     return result;
 }
 
-RegisterSet RegisterSet::registersToNotSaveForJSCall()
+RegisterSet128 RegisterSet128::registersToNotSaveForJSCall()
 {
-    return RegisterSet(RegisterSet::vmCalleeSaveRegisters(), RegisterSet::stackRegisters(), RegisterSet::reservedHardwareRegisters());
+    return RegisterSet128(RegisterSet128::vmCalleeSaveRegisters(), RegisterSet::stackRegisters(), RegisterSet::reservedHardwareRegisters());
 }
 
-RegisterSet RegisterSet::registersToNotSaveForCCall()
+RegisterSet128 RegisterSet128::registersToNotSaveForCCall()
 {
-    return RegisterSet(RegisterSet::calleeSaveRegisters(), RegisterSet::stackRegisters(), RegisterSet::reservedHardwareRegisters());
+    return RegisterSet128(RegisterSet128::calleeSaveRegisters(), RegisterSet::stackRegisters(), RegisterSet::reservedHardwareRegisters());
 }
 
 RegisterSet RegisterSet::allGPRs()
@@ -400,31 +399,6 @@ RegisterSet RegisterSet::allRegisters()
     result.merge(allGPRs());
     result.merge(allFPRs());
     return result;
-}
-
-size_t RegisterSet::numberOfSetGPRs() const
-{
-    RegisterSet temp = *this;
-    temp.filter(allGPRs());
-    return temp.numberOfSetRegisters();
-}
-
-size_t RegisterSet::numberOfSetFPRs() const
-{
-    RegisterSet temp = *this;
-    temp.filter(allFPRs());
-    return temp.numberOfSetRegisters();
-}
-
-void RegisterSet::dump(PrintStream& out) const
-{
-    CommaPrinter comma;
-    out.print("[");
-    for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (get(reg))
-            out.print(comma, reg);
-    }
-    out.print("]");
 }
 
 } // namespace JSC

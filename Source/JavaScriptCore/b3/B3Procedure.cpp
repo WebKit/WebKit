@@ -144,6 +144,12 @@ Value* Procedure::addConstant(Origin origin, Type type, uint64_t bits)
         return add<ConstFloatValue>(origin, bitwise_cast<float>(static_cast<int32_t>(bits)));
     case Double:
         return add<ConstDoubleValue>(origin, bitwise_cast<double>(bits));
+    case V128: {
+        v128_t constant;
+        constant.u64x2[0] = bits;
+        constant.u64x2[1] = bits;
+        return add<Const128Value>(origin, constant);
+    }
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;

@@ -71,7 +71,14 @@ class Opcode
     end
 
     def capitalized_name
-        name.split('_').map(&:capitalize).join
+        (name.split('_').map do |s|
+            s = s.capitalize
+            if s.match(/^\d/)
+                i = s.match(/^\d+/)[0].size
+                s = s[0..i-1] + s[i..-1].capitalize
+            end
+            s
+        end).join
     end
 
     def typed_args

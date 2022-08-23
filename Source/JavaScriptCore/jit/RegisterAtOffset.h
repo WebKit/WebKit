@@ -25,8 +25,11 @@
 
 #pragma once
 
+#include <cstddef>
+#include <sys/_types/_intptr_t.h>
 #if ENABLE(ASSEMBLER)
 
+#include "B3Width.h"
 #include "Reg.h"
 #include <wtf/PrintStream.h>
 
@@ -39,16 +42,22 @@ public:
     {
     }
     
-    RegisterAtOffset(Reg reg, ptrdiff_t offset)
+    RegisterAtOffset(Reg reg, ptrdiff_t offset, size_t size)
         : m_reg(reg)
         , m_offset(offset)
+        , m_size(size)
     {
+        constexpr ptrdiff_t maxOffset = (1l << ((sizeof(ptrdiff_t) - sizeof(Reg) - 1) * CHAR_BIT)) - 1;
+        constexpr ptrdiff_t minOffset = -maxOffset + 1;
+        RELEASE_ASSERT(offset < maxOffset && offset > minOffset);
+        RELEASE_ASSERT(size <= B3::bytesForWidth(B3::conservativeWidth(B3::FP)));
     }
     
     bool operator!() const { return !m_reg; }
     
     Reg reg() const { return m_reg; }
     ptrdiff_t offset() const { return m_offset; }
+    ptrdiff_t byteSize() const { return m_size; }
     int offsetAsIndex() const { ASSERT(!(offset() % sizeof(CPURegister))); return offset() / static_cast<int>(sizeof(CPURegister)); }
     
     bool operator==(const RegisterAtOffset& other) const
@@ -69,7 +78,8 @@ public:
 
 private:
     Reg m_reg;
-    ptrdiff_t m_offset : (sizeof(ptrdiff_t) - sizeof(Reg)) * CHAR_BIT;
+    ptrdiff_t m_offset : (sizeof(ptrdiff_t) - sizeof(Reg) - 1) * CHAR_BIT;
+    size_t m_size : CHAR_BIT;
 };
 
 } // namespace JSC

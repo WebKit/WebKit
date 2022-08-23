@@ -57,10 +57,10 @@ private:
     bool isValid(Inst&) final;
     bool admitsStack(Inst&, unsigned argIndex) final;
     bool admitsExtendedOffsetAddr(Inst&, unsigned) final;
-    void reportUsedRegisters(Inst&, const RegisterSet&) final;
+    void reportUsedRegisters(Inst&, const RegisterSet128&) final;
     MacroAssembler::Jump generate(Inst&, CCallHelpers&, GenerationContext&) final;
-    RegisterSet extraEarlyClobberedRegs(Inst&) final;
-    RegisterSet extraClobberedRegs(Inst&) final;
+    RegisterSet128 extraEarlyClobberedRegs(Inst&) final;
+    RegisterSet128 extraClobberedRegs(Inst&) final;
 
     void dumpImpl(PrintStream&) const final;
     void deepDumpImpl(PrintStream&) const final;
@@ -76,7 +76,7 @@ private:
     static constexpr unsigned argArgOffset =
         numSpecialArgs + numCalleeArgs + numReturnGPArgs + numReturnFPArgs;
     
-    RegisterSet m_clobberedRegs;
+    RegisterSet128 m_clobberedRegs;
     RegisterSet m_emptyRegs;
 };
 

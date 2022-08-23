@@ -15856,8 +15856,8 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValu
     RegisterSet usedRegisters = this->usedRegisters();
     if (spillMode == DontSpill) {
         // We've already flushed registers to the stack, we don't need to spill these.
-        usedRegisters.set(baseGPR, false);
-        usedRegisters.set(valueRegs, false);
+        usedRegisters.clear(baseGPR);
+        usedRegisters.clear(valueRegs);
         if (stubInfoGPR != InvalidGPRReg)
             usedRegisters.set(stubInfoGPR, false);
         if (scratchGPR != InvalidGPRReg)

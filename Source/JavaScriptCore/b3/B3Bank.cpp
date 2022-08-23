@@ -26,8 +26,6 @@
 #include "config.h"
 #include "B3Bank.h"
 
-#if ENABLE(B3_JIT)
-
 #include <wtf/PrintStream.h>
 
 namespace WTF {
@@ -47,5 +45,3 @@ void printInternal(PrintStream& out, JSC::B3::Bank bank)
 }
 
 } // namespace WTF
-
-#endif // ENABLE(B3_JIT)

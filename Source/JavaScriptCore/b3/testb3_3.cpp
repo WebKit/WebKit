@@ -3522,9 +3522,9 @@ void testStorePartial8BitRegisterOnX86()
     patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::regT6) };
 
     // Give the allocator a good reason not to use any other register.
-    RegisterSet clobberSet = RegisterSet::allGPRs();
-    clobberSet.exclude(RegisterSet::stackRegisters());
-    clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
+    RegisterSet128 clobberSet = RegisterSet128::use64Bits(RegisterSet::allGPRs());
+    clobberSet.exclude(RegisterSet128::use64Bits(RegisterSet::stackRegisters()));
+    clobberSet.exclude(RegisterSet128::use64Bits(RegisterSet::reservedHardwareRegisters()));
     clobberSet.clear(GPRInfo::regT3);
     clobberSet.clear(GPRInfo::regT2);
     clobberSet.clear(GPRInfo::regT6);

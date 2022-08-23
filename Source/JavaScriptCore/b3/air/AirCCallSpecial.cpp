@@ -34,10 +34,10 @@ namespace JSC { namespace B3 { namespace Air {
 
 CCallSpecial::CCallSpecial()
 {
-    m_clobberedRegs = RegisterSet::allRegisters();
-    m_clobberedRegs.exclude(RegisterSet::stackRegisters());
-    m_clobberedRegs.exclude(RegisterSet::reservedHardwareRegisters());
-    m_clobberedRegs.exclude(RegisterSet::calleeSaveRegisters());
+    m_clobberedRegs = RegisterSet128::use128Bits(RegisterSet::allRegisters());
+    m_clobberedRegs.exclude(RegisterSet128::use128Bits(RegisterSet::stackRegisters()));
+    m_clobberedRegs.exclude(RegisterSet128::use128Bits(RegisterSet::reservedHardwareRegisters()));
+    m_clobberedRegs.exclude(RegisterSet128::calleeSaveRegisters());
     m_clobberedRegs.clear(GPRInfo::returnValueGPR);
     m_clobberedRegs.clear(GPRInfo::returnValueGPR2);
     m_clobberedRegs.clear(FPRInfo::returnValueFPR);
@@ -60,7 +60,7 @@ void CCallSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
         // For the type, we can just query the arg's bank. The arg will have a bank, because we
         // require these args to be argument registers.
         Bank bank = inst.args[i].bank();
-        callback(inst.args[i], Arg::Use, bank, conservativeWidth(bank));
+        callback(inst.args[i], Arg::Use, bank, conservativeWidthForC(bank));
     }
 }
 
@@ -126,7 +126,7 @@ bool CCallSpecial::admitsExtendedOffsetAddr(Inst& inst, unsigned argIndex)
     return admitsStack(inst, argIndex);
 }
 
-void CCallSpecial::reportUsedRegisters(Inst&, const RegisterSet&)
+void CCallSpecial::reportUsedRegisters(Inst&, const RegisterSet128&)
 {
 }
 
@@ -152,12 +152,12 @@ CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
     return CCallHelpers::Jump();
 }
 
-RegisterSet CCallSpecial::extraEarlyClobberedRegs(Inst&)
+RegisterSet128 CCallSpecial::extraEarlyClobberedRegs(Inst&)
 {
-    return m_emptyRegs;
+    return RegisterSet128::use128Bits(m_emptyRegs);
 }
 
-RegisterSet CCallSpecial::extraClobberedRegs(Inst&)
+RegisterSet128 CCallSpecial::extraClobberedRegs(Inst&)
 {
     return m_clobberedRegs;
 }

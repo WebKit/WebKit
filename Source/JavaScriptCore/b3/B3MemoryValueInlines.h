@@ -45,6 +45,7 @@ inline bool MemoryValue::isLegalOffsetImpl(int32_t offset) const
 
 inline bool MemoryValue::requiresSimpleAddr() const
 {
+    // OOPS: verify this is correct for Simd x86 addresses
     return !isX86() && isExotic();
 }
 

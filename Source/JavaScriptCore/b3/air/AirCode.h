@@ -228,7 +228,7 @@ public:
     RegisterAtOffsetList calleeSaveRegisterAtOffsetList() const;
     
     // This just tells you what the callee saves are.
-    RegisterSet calleeSaveRegisters() const { return m_calleeSaveRegisters; }
+    RegisterSet128 calleeSaveRegisters() const { return m_calleeSaveRegisters; }
 
     // Recomputes predecessors and deletes unreachable blocks.
     JS_EXPORT_PRIVATE void resetReachability();
@@ -402,7 +402,7 @@ private:
     bool m_preserveB3Origins { true };
     bool m_forceIRC { false };
     RegisterAtOffsetList m_uncorrectedCalleeSaveRegisterAtOffsetList;
-    RegisterSet m_calleeSaveRegisters;
+    RegisterSet128 m_calleeSaveRegisters;
     StackSlot* m_calleeSaveStackSlot { nullptr };
     Vector<FrequentedBlock> m_entrypoints; // This is empty until after lowerEntrySwitch().
     Vector<MacroAssembler::Label> m_entrypointLabels; // This is empty until code generation.

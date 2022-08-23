@@ -41,8 +41,8 @@ else
 end
 
 const NumberOfWasmArgumentFPRs = 8
-
 const NumberOfWasmArguments = NumberOfWasmArgumentJSRs + NumberOfWasmArgumentFPRs
+const WasmArgumentsSizeInRegisters = NumberOfWasmArgumentJSRs + 2*NumberOfWasmArgumentFPRs
 
 # All callee saves must match the definition in WasmCallee.cpp
 
@@ -96,21 +96,15 @@ macro forEachArgumentJSR(fn)
 end
 
 macro forEachArgumentFPR(fn)
-    if ARM64 or ARM64E
-        fn((NumberOfWasmArgumentJSRs + 0) * 8, wfa0, wfa1)
-        fn((NumberOfWasmArgumentJSRs + 2) * 8, wfa2, wfa3)
-        fn((NumberOfWasmArgumentJSRs + 4) * 8, wfa4, wfa5)
-        fn((NumberOfWasmArgumentJSRs + 6) * 8, wfa6, wfa7)
-    else
-        fn((NumberOfWasmArgumentJSRs + 0) * 8, wfa0)
-        fn((NumberOfWasmArgumentJSRs + 1) * 8, wfa1)
-        fn((NumberOfWasmArgumentJSRs + 2) * 8, wfa2)
-        fn((NumberOfWasmArgumentJSRs + 3) * 8, wfa3)
-        fn((NumberOfWasmArgumentJSRs + 4) * 8, wfa4)
-        fn((NumberOfWasmArgumentJSRs + 5) * 8, wfa5)
-        fn((NumberOfWasmArgumentJSRs + 6) * 8, wfa6)
-        fn((NumberOfWasmArgumentJSRs + 7) * 8, wfa7)
-    end
+    const base = NumberOfWasmArgumentJSRs * 8
+    fn(base + 0 * 16, -(base + 0 * 16 + 8), wfa0)
+    fn(base + 1 * 16, -(base + 1 * 16 + 8), wfa1)
+    fn(base + 2 * 16, -(base + 2 * 16 + 8), wfa2)
+    fn(base + 3 * 16, -(base + 3 * 16 + 8), wfa3)
+    fn(base + 4 * 16, -(base + 4 * 16 + 8), wfa4)
+    fn(base + 5 * 16, -(base + 5 * 16 + 8), wfa5)
+    fn(base + 6 * 16, -(base + 6 * 16 + 8), wfa6)
+    fn(base + 7 * 16, -(base + 7 * 16 + 8), wfa7)
 end
 
 # FIXME: Eventually this should be unified with the JS versions
@@ -132,13 +126,13 @@ macro wasmNextInstruction()
 end
 
 macro wasmNextInstructionWide16()
-    loadb OpcodeIDNarrowSize[PB, PC, 1], t0
+    loadh OpcodeIDNarrowSize[PB, PC, 1], t0
     leap _g_opcodeMapWide16, t1
     jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag, AddressDiversified
 end
 
 macro wasmNextInstructionWide32()
-    loadb OpcodeIDNarrowSize[PB, PC, 1], t0
+    loadh OpcodeIDNarrowSize[PB, PC, 1], t0
     leap _g_opcodeMapWide32, t1
     jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag, AddressDiversified
 end
@@ -175,13 +169,8 @@ else
                 load2ia -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], gpLsw, gprMsw
             end)
 end
-if ARM64 or ARM64E
-            forEachArgumentFPR(macro (offset, fpr1, fpr2)
-                loadpaird -offset - 16 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], fpr2, fpr1
-            end)
-else
-            forEachArgumentFPR(macro (offset, fpr)
-                loadd -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], fpr
+            forEachArgumentFPR(macro (offset, negOffset, fpr)
+                loadv negOffset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], fpr
             end)
 end
 
@@ -392,13 +381,8 @@ else
         store2ia gpLsw, gprMsw, -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
     end)
 end
-if ARM64 or ARM64E
-    forEachArgumentFPR(macro (offset, fpr1, fpr2)
-        storepaird fpr2, fpr1, -offset - 16 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
-    end)
-else
-    forEachArgumentFPR(macro (offset, fpr)
-        stored fpr, -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
+    forEachArgumentFPR(macro (offset, negOffset, fpr)
+        storev fpr, negOffset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
     end)
 end
 
@@ -409,14 +393,14 @@ end
     move 0, PC
 
     loadi Wasm::LLIntCallee::m_numVars[ws0], ws1
-    subi NumberOfWasmArguments + CalleeSaveSpaceAsVirtualRegisters, ws1
+    subi WasmArgumentsSizeInRegisters + CalleeSaveSpaceAsVirtualRegisters, ws1
     btiz ws1, .zeroInitializeLocalsDone
     lshifti 3, ws1
     negi ws1
 if JSVALUE64
     sxi2q ws1, ws1
 end
-    leap (NumberOfWasmArguments + CalleeSaveSpaceAsVirtualRegisters + 1) * -8[cfr], ws0
+    leap (WasmArgumentsSizeInRegisters + CalleeSaveSpaceAsVirtualRegisters + 1) * -8[cfr], ws0
 .zeroInitializeLocalsLoop:
     addp PtrSize, ws1
     storep 0, [ws0, ws1]
@@ -543,6 +527,13 @@ macro mloadd(ctx, field, dst)
     end)
 end
 
+macro mloadv(ctx, field, dst)
+    wgets(ctx, field, t5)
+    loadConstantOrVariable(ctx, t5, macro (from)
+        loadv from, dst
+    end)
+end
+
 # Typed returns
 
 if JSVALUE64
@@ -574,6 +565,12 @@ end
 macro returnd(ctx, value)
     wgets(ctx, m_dst, t5)
     stored value, [cfr, t5, 8]
+    dispatch(ctx)
+end
+
+macro returnv(ctx, value)
+    wgets(ctx, m_dst, t5)
+    storev value, [cfr, t5, 8]
     dispatch(ctx)
 end
 
@@ -741,9 +738,9 @@ _wasm_enter:
     checkStackPointerAlignment(t2, 0xdead00e1)
     loadp CodeBlock[cfr], t2                // t2<CodeBlock> = cfr.CodeBlock
     loadi Wasm::LLIntCallee::m_numVars[t2], t2      // t2<size_t> = t2<CodeBlock>.m_numVars
-    subi CalleeSaveSpaceAsVirtualRegisters + NumberOfWasmArguments, t2
+    subi CalleeSaveSpaceAsVirtualRegisters + WasmArgumentsSizeInRegisters, t2
     btiz t2, .opEnterDone
-    subp cfr, (CalleeSaveSpaceAsVirtualRegisters + NumberOfWasmArguments) * SlotSize, t1
+    subp cfr, (CalleeSaveSpaceAsVirtualRegisters + WasmArgumentsSizeInRegisters) * SlotSize, t1
     lshifti 3, t2
     negi t2
 if JSVALUE64
@@ -762,6 +759,11 @@ end
     wasmDispatchIndirect(1)
 
 unprefixedWasmOp(wasm_nop, WasmNop, macro(ctx)
+    dispatch(ctx)
+end)
+
+unprefixedWasmOp(wasm_break, WasmBreak, macro(ctx)
+    break
     dispatch(ctx)
 end)
 
@@ -834,13 +836,8 @@ else
         load2ia -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], gpLsw, gprMsw
     end)
 end
-if ARM64 or ARM64E
-    forEachArgumentFPR(macro (offset, fpr1, fpr2)
-        loadpaird -offset - 16 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], fpr2, fpr1
-    end)
-else
-    forEachArgumentFPR(macro (offset, fpr)
-        loadd -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], fpr
+    forEachArgumentFPR(macro (offset, negOffset, fpr)
+        loadv negOffset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], fpr
     end)
 end
     doReturn()
@@ -878,7 +875,7 @@ else
             subp cfr, ws1, sp
 end
 
-            wgetu(ctx, m_numberOfStackArgs, ws1)
+            wgetu(ctx, m_sizeOfStackArgs, ws1)
 
             # Preserve the current instance
             move wasmInstance, PB
@@ -901,13 +898,8 @@ else
                 load2ia CallFrameHeaderSize + 8 + offset[sp, ws1, 8], gpLsw, gprMsw
             end)
 end
-if ARM64 or ARM64E
-            forEachArgumentFPR(macro (offset, fpr1, fpr2)
-                loadpaird CallFrameHeaderSize + 8 + offset[ws1], fpr1, fpr2
-            end)
-else
-            forEachArgumentFPR(macro (offset, fpr)
-                loadd CallFrameHeaderSize + 8 + offset[sp, ws1, 8], fpr
+            forEachArgumentFPR(macro (offset, negOffset, fpr)
+                loadv CallFrameHeaderSize + 8 + offset[sp, ws1, 8], fpr
             end)
 end
 
@@ -969,7 +961,7 @@ end
 
             # Argument registers are also return registers, so they must be stored to the stack
             # in case they contain return values.
-            wgetu(ctx, m_numberOfStackArgs, ws0)
+            wgetu(ctx, m_sizeOfStackArgs, ws0)
 if ARMv7
             pop PC
 else
@@ -989,13 +981,8 @@ else
                 store2ia gpLsw, gprMsw, CallFrameHeaderSize + 8 + offset[ws1, ws0, 8]
             end)
 end
-if ARM64 or ARM64E
-            forEachArgumentFPR(macro (offset, fpr1, fpr2)
-                storepaird fpr1, fpr2, CallFrameHeaderSize + 8 + offset[ws1]
-            end)
-else
-            forEachArgumentFPR(macro (offset, fpr)
-                stored fpr, CallFrameHeaderSize + 8 + offset[ws1, ws0, 8]
+            forEachArgumentFPR(macro (offset, negOffset, fpr)
+                storev fpr, CallFrameHeaderSize + 8 + offset[ws1, ws0, 8]
             end)
 end
 
@@ -1062,6 +1049,78 @@ if JSVALUE64
 .isZero:
     mloadq(ctx, m_zero, t0)
     returnq(ctx, t0)
+end)
+
+# uses offset as scratch and returns result on pointer
+macro emitCheckAndPreparePointer(ctx, pointer, offset, size)
+    leap size - 1[pointer, offset], t5
+    bpb t5, boundsCheckingSize, .continuation
+    throwException(OutOfBoundsMemoryAccess)
+.continuation:
+    addp memoryBase, pointer
+end
+
+macro emitCheckAndPreparePointerAddingOffset(ctx, pointer, offset, size)
+    leap size - 1[pointer, offset], t5
+    bpb t5, boundsCheckingSize, .continuation
+.throw:
+    throwException(OutOfBoundsMemoryAccess)
+.continuation:
+    addp memoryBase, pointer
+    addp offset, pointer
+end
+
+macro emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, pointer, offset, size)
+    leap size - 1[pointer, offset], t5
+    bpb t5, boundsCheckingSize, .continuation
+.throw:
+    throwException(OutOfBoundsMemoryAccess)
+.continuation:
+    addp memoryBase, pointer
+    addp offset, pointer
+    btpnz pointer, (size - 1), .throw
+end
+
+macro wasmLoadOp(name, struct, size, fn)
+    wasmOp(name, struct, macro(ctx)
+        mloadi(ctx, m_pointer, t0)
+        wgetu(ctx, m_offset, t1)
+        emitCheckAndPreparePointer(ctx, t0, t1, size)
+        fn([t0, t1], t2)
+        returnq(ctx, t2)
+    end)
+end
+
+macro wasmMemoryOp(name, struct, size, fn)
+    wasmOp(name, struct, macro(ctx)
+        mloadi(ctx, m_pointer, t0)
+        wgetu(ctx, m_offset, t1)
+        emitCheckAndPreparePointer(ctx, t0, t1, size)
+        fn(ctx, [t0, t1])
+        break
+    end)
+end)
+
+wasmLoadOp(load8_u, WasmLoad8U, 1, macro(mem, dst) loadb mem, dst end)
+wasmLoadOp(load16_u, WasmLoad16U, 2, macro(mem, dst) loadh mem, dst end)
+wasmLoadOp(load32_u, WasmLoad32U, 4, macro(mem, dst) loadi mem, dst end)
+wasmLoadOp(load64_u, WasmLoad64U, 8, macro(mem, dst) loadq mem, dst end)
+
+wasmLoadOp(i32_load8_s, WasmI32Load8S, 1, macro(mem, dst) loadbsi mem, dst end)
+wasmLoadOp(i64_load8_s, WasmI64Load8S, 1, macro(mem, dst) loadbsq mem, dst end)
+wasmLoadOp(i32_load16_s, WasmI32Load16S, 2, macro(mem, dst) loadhsi mem, dst end)
+wasmLoadOp(i64_load16_s, WasmI64Load16S, 2, macro(mem, dst) loadhsq mem, dst end)
+wasmLoadOp(i64_load32_s, WasmI64Load32S, 4, macro(mem, dst) loadis mem, dst end)
+
+macro wasmStoreOp(name, struct, size, fn)
+    wasmOp(name, struct, macro(ctx)
+        mloadi(ctx, m_pointer, t0)
+        wgetu(ctx, m_offset, t1)
+        emitCheckAndPreparePointer(ctx, t0, t1, size)
+        mloadq(ctx, m_value, t2)
+        fn(t2, [t0, t1])
+        dispatch(ctx)
+    end)
 else
     mload2i(ctx, m_nonZero, t1, t0)
     return2i(ctx, t1, t0)
@@ -1069,7 +1128,6 @@ else
     mload2i(ctx, m_zero, t1, t0)
     return2i(ctx, t1, t0)
 end
-end)
 
 # Opcodes that don't have the `b3op` entry in wasm.json. This should be kept in sync
 
@@ -1915,6 +1973,592 @@ end)
 
 commonWasmOp(wasm_catch_all_no_tls, WasmCatchAll, macro() end, macro(ctx)
     catchAllImpl(ctx, macro(instance) end)
+end)
+
+
+# OOPS
+wasmOp(simd_extract_lane_i8x16_u, WasmSimdExtractLaneI8x16U, macro(ctx)
+    mloadv(ctx, m_v, ft0)
+    wgetu(ctx, m_lane, t0)
+    splat_lane_byte t0, ft1
+    swizzle_byte ft1, ft0
+    extract_lane_byte 0, ft0, t0
+    returni(ctx, t0)
+end)
+wasmOp(simd_extract_lane_i8x16_s, WasmSimdExtractLaneI8x16S, macro(ctx)
+end)
+wasmOp(simd_extract_lane_i16x8_u, WasmSimdExtractLaneI16x8U, macro(ctx)
+end)
+wasmOp(simd_extract_lane_i16x8_s, WasmSimdExtractLaneI16x8S, macro(ctx)
+end)
+wasmOp(simd_extract_lane_i32x4, WasmSimdExtractLaneI32x4, macro(ctx)
+end)
+wasmOp(simd_extract_lane_i64x2, WasmSimdExtractLaneI64x2, macro(ctx)
+end)
+wasmOp(simd_extract_lane_f32x4, WasmSimdExtractLaneF32x4, macro(ctx)
+    mloadv(ctx, m_v, ft0)
+    wgetu(ctx, m_lane, t0)
+    # TODO oh my god this is bad I'm sorry OOPS
+    bqa t0, 2, .three
+    bqa t0, 1, .two
+    bqa t0, 0, .one
+    extract_lane_int 0, ft0, t0
+    jmp .done
+.three:
+    extract_lane_int 3, ft0, t0
+    jmp .done
+.two:
+    extract_lane_int 2, ft0, t0
+    jmp .done
+.one:
+    extract_lane_int 1, ft0, t0
+    jmp .done
+.done:
+    fi2f t0, ft0
+    returnf(ctx, ft0)
+end)
+wasmOp(simd_extract_lane_f64x2, WasmSimdExtractLaneF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_replace_lane_i8x16, WasmSimdReplaceLaneI8x16, macro(ctx)
+end)
+wasmOp(simd_replace_lane_i16x8, WasmSimdReplaceLaneI16x8, macro(ctx)
+end)
+wasmOp(simd_replace_lane_i32x4, WasmSimdReplaceLaneI32x4, macro(ctx)
+end)
+wasmOp(simd_replace_lane_i64x2, WasmSimdReplaceLaneI64x2, macro(ctx)
+end)
+wasmOp(simd_replace_lane_f32x4, WasmSimdReplaceLaneF32x4, macro(ctx)
+end)
+wasmOp(simd_replace_lane_f64x2, WasmSimdReplaceLaneF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_eq_i8x16, WasmSimdEqI8x16, macro(ctx)
+end)
+wasmOp(simd_eq_i16x8, WasmSimdEqI16x8, macro(ctx)
+end)
+wasmOp(simd_eq_i32x4, WasmSimdEqI32x4, macro(ctx)
+end)
+wasmOp(simd_eq_i64x2, WasmSimdEqI64x2, macro(ctx)
+end)
+wasmOp(simd_eq_f32x4, WasmSimdEqF32x4, macro(ctx)
+end)
+wasmOp(simd_eq_f64x2, WasmSimdEqF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_ne_i8x16, WasmSimdNeI8x16, macro(ctx)
+end)
+wasmOp(simd_ne_i16x8, WasmSimdNeI16x8, macro(ctx)
+end)
+wasmOp(simd_ne_i32x4, WasmSimdNeI32x4, macro(ctx)
+end)
+wasmOp(simd_ne_i64x2, WasmSimdNeI64x2, macro(ctx)
+end)
+wasmOp(simd_ne_f32x4, WasmSimdNeF32x4, macro(ctx)
+end)
+wasmOp(simd_ne_f64x2, WasmSimdNeF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_lt_i8x16_u, WasmSimdLtI8x16U, macro(ctx)
+end)
+wasmOp(simd_lt_i8x16_s, WasmSimdLtI8x16S, macro(ctx)
+end)
+wasmOp(simd_lt_i16x8_u, WasmSimdLtI16x8U, macro(ctx)
+end)
+wasmOp(simd_lt_i16x8_s, WasmSimdLtI16x8S, macro(ctx)
+end)
+wasmOp(simd_lt_i32x4_u, WasmSimdLtI32x4U, macro(ctx)
+end)
+wasmOp(simd_lt_i32x4_s, WasmSimdLtI32x4S, macro(ctx)
+end)
+wasmOp(simd_lt_i64x2_u, WasmSimdLtI64x2U, macro(ctx)
+end)
+wasmOp(simd_lt_i64x2_s, WasmSimdLtI64x2S, macro(ctx)
+end)
+wasmOp(simd_lt_f32x4, WasmSimdLtF32x4, macro(ctx)
+end)
+wasmOp(simd_lt_f64x2, WasmSimdLtF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_gt_i8x16_u, WasmSimdGtI8x16U, macro(ctx)
+end)
+wasmOp(simd_gt_i8x16_s, WasmSimdGtI8x16S, macro(ctx)
+end)
+wasmOp(simd_gt_i16x8_u, WasmSimdGtI16x8U, macro(ctx)
+end)
+wasmOp(simd_gt_i16x8_s, WasmSimdGtI16x8S, macro(ctx)
+end)
+wasmOp(simd_gt_i32x4_u, WasmSimdGtI32x4U, macro(ctx)
+end)
+wasmOp(simd_gt_i32x4_s, WasmSimdGtI32x4S, macro(ctx)
+end)
+wasmOp(simd_gt_i64x2_u, WasmSimdGtI64x2U, macro(ctx)
+end)
+wasmOp(simd_gt_i64x2_s, WasmSimdGtI64x2S, macro(ctx)
+end)
+wasmOp(simd_gt_f32x4, WasmSimdGtF32x4, macro(ctx)
+end)
+wasmOp(simd_gt_f64x2, WasmSimdGtF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_le_i8x16_u, WasmSimdLeI8x16U, macro(ctx)
+end)
+wasmOp(simd_le_i8x16_s, WasmSimdLeI8x16S, macro(ctx)
+end)
+wasmOp(simd_le_i16x8_u, WasmSimdLeI16x8U, macro(ctx)
+end)
+wasmOp(simd_le_i16x8_s, WasmSimdLeI16x8S, macro(ctx)
+end)
+wasmOp(simd_le_i32x4_u, WasmSimdLeI32x4U, macro(ctx)
+end)
+wasmOp(simd_le_i32x4_s, WasmSimdLeI32x4S, macro(ctx)
+end)
+wasmOp(simd_le_i64x2_u, WasmSimdLeI64x2U, macro(ctx)
+end)
+wasmOp(simd_le_i64x2_s, WasmSimdLeI64x2S, macro(ctx)
+end)
+wasmOp(simd_le_f32x4, WasmSimdLeF32x4, macro(ctx)
+end)
+wasmOp(simd_le_f64x2, WasmSimdLeF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_ge_i8x16_u, WasmSimdGeI8x16U, macro(ctx)
+end)
+wasmOp(simd_ge_i8x16_s, WasmSimdGeI8x16S, macro(ctx)
+end)
+wasmOp(simd_ge_i16x8_u, WasmSimdGeI16x8U, macro(ctx)
+end)
+wasmOp(simd_ge_i16x8_s, WasmSimdGeI16x8S, macro(ctx)
+end)
+wasmOp(simd_ge_i32x4_u, WasmSimdGeI32x4U, macro(ctx)
+end)
+wasmOp(simd_ge_i32x4_s, WasmSimdGeI32x4S, macro(ctx)
+end)
+wasmOp(simd_ge_i64x2_u, WasmSimdGeI64x2U, macro(ctx)
+end)
+wasmOp(simd_ge_i64x2_s, WasmSimdGeI64x2S, macro(ctx)
+end)
+wasmOp(simd_ge_f32x4, WasmSimdGeF32x4, macro(ctx)
+end)
+wasmOp(simd_ge_f64x2, WasmSimdGeF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_add_i8x16, WasmSimdAddI8x16, macro(ctx)
+end)
+wasmOp(simd_add_i16x8, WasmSimdAddI16x8, macro(ctx)
+end)
+wasmOp(simd_add_i32x4, WasmSimdAddI32x4, macro(ctx)
+end)
+wasmOp(simd_add_i64x2, WasmSimdAddI64x2, macro(ctx)
+end)
+wasmOp(simd_add_f32x4, WasmSimdAddF32x4, macro(ctx)
+end)
+wasmOp(simd_add_f64x2, WasmSimdAddF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_sub_i8x16, WasmSimdSubI8x16, macro(ctx)
+end)
+wasmOp(simd_sub_i16x8, WasmSimdSubI16x8, macro(ctx)
+end)
+wasmOp(simd_sub_i32x4, WasmSimdSubI32x4, macro(ctx)
+end)
+wasmOp(simd_sub_i64x2, WasmSimdSubI64x2, macro(ctx)
+end)
+wasmOp(simd_sub_f32x4, WasmSimdSubF32x4, macro(ctx)
+end)
+wasmOp(simd_sub_f64x2, WasmSimdSubF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_mul_i16x8, WasmSimdMulI16x8, macro(ctx)
+end)
+wasmOp(simd_mul_i32x4, WasmSimdMulI32x4, macro(ctx)
+end)
+wasmOp(simd_mul_i64x2, WasmSimdMulI64x2, macro(ctx)
+end)
+wasmOp(simd_mul_f32x4, WasmSimdMulF32x4, macro(ctx)
+end)
+wasmOp(simd_mul_f64x2, WasmSimdMulF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_div_f32x4, WasmSimdDivF32x4, macro(ctx)
+end)
+wasmOp(simd_div_f64x2, WasmSimdDivF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_min_i8x16_u, WasmSimdMinI8x16U, macro(ctx)
+end)
+wasmOp(simd_min_i8x16_s, WasmSimdMinI8x16S, macro(ctx)
+end)
+wasmOp(simd_min_i16x8_u, WasmSimdMinI16x8U, macro(ctx)
+end)
+wasmOp(simd_min_i16x8_s, WasmSimdMinI16x8S, macro(ctx)
+end)
+wasmOp(simd_min_i32x4_u, WasmSimdMinI32x4U, macro(ctx)
+end)
+wasmOp(simd_min_i32x4_s, WasmSimdMinI32x4S, macro(ctx)
+end)
+wasmOp(simd_min_f32x4, WasmSimdMinF32x4, macro(ctx)
+end)
+wasmOp(simd_min_f64x2, WasmSimdMinF64x2, macro(ctx)
+end)
+    
+
+wasmOp(simd_max_i8x16_u, WasmSimdMaxI8x16U, macro(ctx)
+end)
+wasmOp(simd_max_i8x16_s, WasmSimdMaxI8x16S, macro(ctx)
+end)
+wasmOp(simd_max_i16x8_u, WasmSimdMaxI16x8U, macro(ctx)
+end)
+wasmOp(simd_max_i16x8_s, WasmSimdMaxI16x8S, macro(ctx)
+end)
+wasmOp(simd_max_i32x4_u, WasmSimdMaxI32x4U, macro(ctx)
+end)
+wasmOp(simd_max_i32x4_s, WasmSimdMaxI32x4S, macro(ctx)
+end)
+wasmOp(simd_max_f32x4, WasmSimdMaxF32x4, macro(ctx)
+end)
+wasmOp(simd_max_f64x2, WasmSimdMaxF64x2, macro(ctx)
+end)
+    
+
+wasmOp(simd_pmin_f32x4, WasmSimdPminF32x4, macro(ctx)
+end)
+wasmOp(simd_pmin_f64x2, WasmSimdPminF64x2, macro(ctx)
+end)
+    
+
+wasmOp(simd_pmax_f32x4, WasmSimdPmaxF32x4, macro(ctx)
+end)
+wasmOp(simd_pmax_f64x2, WasmSimdPmaxF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_not_v128, WasmSimdNotV128, macro(ctx)
+end)
+
+
+wasmOp(simd_and_v128, WasmSimdAndV128, macro(ctx)
+end)
+
+
+wasmOp(simd_andnot_v128, WasmSimdAndnotV128, macro(ctx)
+end)
+
+
+wasmOp(simd_or_v128, WasmSimdOrV128, macro(ctx)
+end)
+
+
+wasmOp(simd_xor_v128, WasmSimdXorV128, macro(ctx)
+end)
+
+
+wasmOp(simd_abs_i8x16, WasmSimdAbsI8x16, macro(ctx)
+end)
+wasmOp(simd_abs_i16x8, WasmSimdAbsI16x8, macro(ctx)
+end)
+wasmOp(simd_abs_i32x4, WasmSimdAbsI32x4, macro(ctx)
+end)
+wasmOp(simd_abs_i64x2, WasmSimdAbsI64x2, macro(ctx)
+end)
+wasmOp(simd_abs_f32x4, WasmSimdAbsF32x4, macro(ctx)
+end)
+wasmOp(simd_abs_f64x2, WasmSimdAbsF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_neg_i8x16, WasmSimdNegI8x16, macro(ctx)
+end)
+wasmOp(simd_neg_i16x8, WasmSimdNegI16x8, macro(ctx)
+end)
+wasmOp(simd_neg_i32x4, WasmSimdNegI32x4, macro(ctx)
+end)
+wasmOp(simd_neg_i64x2, WasmSimdNegI64x2, macro(ctx)
+end)
+wasmOp(simd_neg_f32x4, WasmSimdNegF32x4, macro(ctx)
+end)
+wasmOp(simd_neg_f64x2, WasmSimdNegF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_popcnt_i8x16, WasmSimdPopcntI8x16, macro(ctx)
+end)
+
+
+wasmOp(simd_ceil_f32x4, WasmSimdCeilF32x4, macro(ctx)
+end)
+wasmOp(simd_ceil_f64x2, WasmSimdCeilF64x2, macro(ctx)
+end)
+    
+
+wasmOp(simd_floor_f32x4, WasmSimdFloorF32x4, macro(ctx)
+end)
+wasmOp(simd_floor_f64x2, WasmSimdFloorF64x2, macro(ctx)
+end)
+    
+
+wasmOp(simd_trunc_f32x4, WasmSimdTruncF32x4, macro(ctx)
+end)
+wasmOp(simd_trunc_f64x2, WasmSimdTruncF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_nearest_f32x4, WasmSimdNearestF32x4, macro(ctx)
+end)
+wasmOp(simd_nearest_f64x2, WasmSimdNearestF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_sqrt_f32x4, WasmSimdSqrtF32x4, macro(ctx)
+end)
+wasmOp(simd_sqrt_f64x2, WasmSimdSqrtF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_extend_low_i8x16_u, WasmSimdExtendLowI8x16U, macro(ctx)
+end)
+wasmOp(simd_extend_low_i8x16_s, WasmSimdExtendLowI8x16S, macro(ctx)
+end)
+wasmOp(simd_extend_low_i16x8_u, WasmSimdExtendLowI16x8U, macro(ctx)
+end)
+wasmOp(simd_extend_low_i16x8_s, WasmSimdExtendLowI16x8S, macro(ctx)
+end)
+wasmOp(simd_extend_low_i32x4_u, WasmSimdExtendLowI32x4U, macro(ctx)
+end)
+wasmOp(simd_extend_low_i32x4_s, WasmSimdExtendLowI32x4S, macro(ctx)
+end)
+    
+
+wasmOp(simd_extend_high_i8x16_u, WasmSimdExtendHighI8x16U, macro(ctx)
+end)
+wasmOp(simd_extend_high_i8x16_s, WasmSimdExtendHighI8x16S, macro(ctx)
+end)
+wasmOp(simd_extend_high_i16x8_u, WasmSimdExtendHighI16x8U, macro(ctx)
+end)
+wasmOp(simd_extend_high_i16x8_s, WasmSimdExtendHighI16x8S, macro(ctx)
+end)
+wasmOp(simd_extend_high_i32x4_u, WasmSimdExtendHighI32x4U, macro(ctx)
+end)
+wasmOp(simd_extend_high_i32x4_s, WasmSimdExtendHighI32x4S, macro(ctx)
+end)
+
+
+wasmOp(simd_promote_f32x4, WasmSimdPromoteF32x4, macro(ctx)
+end)
+
+
+wasmOp(simd_demote_f64x2, WasmSimdDemoteF64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_splat_i8x16, WasmSimdSplatI8x16, macro(ctx)
+end)
+wasmOp(simd_splat_i16x8, WasmSimdSplatI16x8, macro(ctx)
+end)
+wasmOp(simd_splat_i32x4, WasmSimdSplatI32x4, macro(ctx)
+end)
+wasmOp(simd_splat_i64x2, WasmSimdSplatI64x2, macro(ctx)
+end)
+wasmOp(simd_splat_f32x4, WasmSimdSplatF32x4, macro(ctx)
+end)
+wasmOp(simd_splat_f64x2, WasmSimdSplatF64x2, macro(ctx)
+end)
+    
+
+wasmOp(simd_shl_i8x16, WasmSimdShlI8x16, macro(ctx)
+end)
+wasmOp(simd_shl_i16x8, WasmSimdShlI16x8, macro(ctx)
+end)
+wasmOp(simd_shl_i32x4, WasmSimdShlI32x4, macro(ctx)
+end)
+wasmOp(simd_shl_i64x2, WasmSimdShlI64x2, macro(ctx)
+end)
+
+
+wasmOp(simd_shr_i8x16_u, WasmSimdShrI8x16U, macro(ctx)
+end)
+wasmOp(simd_shr_i8x16_s, WasmSimdShrI8x16S, macro(ctx)
+end)
+wasmOp(simd_shr_i16x8_u, WasmSimdShrI16x8U, macro(ctx)
+end)
+wasmOp(simd_shr_i16x8_s, WasmSimdShrI16x8S, macro(ctx)
+end)
+wasmOp(simd_shr_i32x4_u, WasmSimdShrI32x4U, macro(ctx)
+end)
+wasmOp(simd_shr_i32x4_s, WasmSimdShrI32x4S, macro(ctx)
+end)
+wasmOp(simd_shr_i64x2_u, WasmSimdShrI64x2U, macro(ctx)
+end)
+wasmOp(simd_shr_i64x2_s, WasmSimdShrI64x2S, macro(ctx)
+end)
+
+
+wasmOp(simd_add_sat_i8x16_u, WasmSimdAddSatI8x16U, macro(ctx)
+end)
+wasmOp(simd_add_sat_i8x16_s, WasmSimdAddSatI8x16S, macro(ctx)
+end)
+wasmOp(simd_add_sat_i16x8_u, WasmSimdAddSatI16x8U, macro(ctx)
+end)
+wasmOp(simd_add_sat_i16x8_s, WasmSimdAddSatI16x8S, macro(ctx)
+end)
+    
+
+wasmOp(simd_sub_sat_i8x16_u, WasmSimdSubSatI8x16U, macro(ctx)
+end)
+wasmOp(simd_sub_sat_i8x16_s, WasmSimdSubSatI8x16S, macro(ctx)
+end)
+wasmOp(simd_sub_sat_i16x8_u, WasmSimdSubSatI16x8U, macro(ctx)
+end)
+wasmOp(simd_sub_sat_i16x8_s, WasmSimdSubSatI16x8S, macro(ctx)
+end)
+
+
+wasmOp(simd_trunc_sat_f32x4_s, WasmSimdTruncSatF32x4S, macro(ctx)
+end)
+wasmOp(simd_trunc_sat_f32x4_u, WasmSimdTruncSatF32x4U, macro(ctx)
+end)
+wasmOp(simd_trunc_sat_f64x2_s, WasmSimdTruncSatF64x2S, macro(ctx)
+end)
+wasmOp(simd_trunc_sat_f64x2_u, WasmSimdTruncSatF64x2U, macro(ctx)
+end)
+
+
+wasmOp(simd_convert_i32x4_u, WasmSimdConvertI32x4U, macro(ctx)
+end)
+wasmOp(simd_convert_i32x4_s, WasmSimdConvertI32x4S, macro(ctx)
+end)
+
+
+wasmOp(simd_convert_low_i32x4_u, WasmSimdConvertLowI32x4U, macro(ctx)
+end)
+wasmOp(simd_convert_low_i32x4_s, WasmSimdConvertLowI32x4S, macro(ctx)
+end)
+
+
+wasmOp(simd_narrow_i16x8_u, WasmSimdNarrowI16x8U, macro(ctx)
+end)
+wasmOp(simd_narrow_i16x8_s, WasmSimdNarrowI16x8S, macro(ctx)
+end)
+wasmOp(simd_narrow_i32x4_u, WasmSimdNarrowI32x4U, macro(ctx)
+end)
+wasmOp(simd_narrow_i32x4_s, WasmSimdNarrowI32x4S, macro(ctx)
+end)
+
+
+wasmMemoryOp(simd_load, WasmSimdLoad, 16, macro(ctx, mem)
+    loadv mem, ft0
+    returnv(ctx, ft0)
+end)
+
+wasmMemoryOp(simd_store, WasmSimdStore, 16, macro(ctx, mem)
+    mloadv(ctx, m_value, ft0)
+    storev ft0, mem
+    dispatch(ctx)
+end)
+
+
+wasmLoadOp(simd_load_splat8, WasmSimdLoadSplat8, 1, macro(mem, dst) 
+end)
+wasmLoadOp(simd_load_splat16, WasmSimdLoadSplat16, 2, macro(mem, dst) 
+end)
+wasmLoadOp(simd_load_splat32, WasmSimdLoadSplat32, 4, macro(mem, dst) 
+end)
+wasmLoadOp(simd_load_splat64, WasmSimdLoadSplat64, 8, macro(mem, dst) 
+end)
+
+
+wasmLoadOp(simd_load_lane8, WasmSimdLoadLane8, 1, macro(mem, dst) 
+end)
+wasmLoadOp(simd_load_lane16, WasmSimdLoadLane16, 2, macro(mem, dst) 
+end)
+wasmLoadOp(simd_load_lane32, WasmSimdLoadLane32, 4, macro(mem, dst) 
+end)
+wasmLoadOp(simd_load_lane64, WasmSimdLoadLane64, 8, macro(mem, dst) 
+end)
+
+wasmStoreOp(simd_store_lane8, WasmSimdStoreLane8, 1, macro(mem, dst) 
+end)
+wasmStoreOp(simd_store_lane16, WasmSimdStoreLane16, 2, macro(mem, dst) 
+end)
+wasmStoreOp(simd_store_lane32, WasmSimdStoreLane32, 4, macro(mem, dst) 
+end)
+wasmStoreOp(simd_store_lane64, WasmSimdStoreLane64, 8, macro(mem, dst) 
+end)
+
+wasmLoadOp(simd_load_extend_8u, WasmSimdLoadExtend8U, 8, macro(mem, dst)
+end)
+wasmLoadOp(simd_load_extend_8s, WasmSimdLoadExtend8S, 8, macro(mem, dst)
+end)
+wasmLoadOp(simd_load_extend_16u, WasmSimdLoadExtend16U, 8, macro(mem, dst)
+end)
+wasmLoadOp(simd_load_extend_16s, WasmSimdLoadExtend16S, 8, macro(mem, dst)
+end)
+wasmLoadOp(simd_load_extend_32u, WasmSimdLoadExtend32U, 8, macro(mem, dst)
+end)
+wasmLoadOp(simd_load_extend_32s, WasmSimdLoadExtend32S, 8, macro(mem, dst)
+end)
+
+wasmLoadOp(simd_load_pad32, WasmSimdLoadPad32, 8, macro(mem, dst)
+end)
+wasmLoadOp(simd_load_pad64, WasmSimdLoadPad64, 8, macro(mem, dst)
+end)
+
+wasmOp(simd_any_true_v128, WasmSimdAnyTrueV128, macro(ctx)
+end)
+
+wasmOp(simd_all_true_i8x16, WasmSimdAllTrueI8x16, macro(ctx)
+end)
+wasmOp(simd_all_true_i16x8, WasmSimdAllTrueI16x8, macro(ctx)
+end)
+wasmOp(simd_all_true_i32x4, WasmSimdAllTrueI32x4, macro(ctx)
+end)
+wasmOp(simd_all_true_i64x2, WasmSimdAllTrueI64x2, macro(ctx)
+end)
+
+wasmOp(simd_bitmask_i8x16, WasmSimdBitmaskI8x16, macro(ctx)
+end)
+wasmOp(simd_bitmask_i16x8, WasmSimdBitmaskI16x8, macro(ctx)
+end)
+wasmOp(simd_bitmask_i32x4, WasmSimdBitmaskI32x4, macro(ctx)
+end)
+wasmOp(simd_bitmask_i64x2, WasmSimdBitmaskI64x2, macro(ctx)
+end)
+
+wasmOp(simd_extadd_pairwise_i16x8_u, WasmSimdExtaddPairwiseI16x8U, macro(ctx)
+end)
+wasmOp(simd_extadd_pairwise_i16x8_s, WasmSimdExtaddPairwiseI16x8S, macro(ctx)
+end)
+wasmOp(simd_extadd_pairwise_i32x4_u, WasmSimdExtaddPairwiseI32x4U, macro(ctx)
+end)
+wasmOp(simd_extadd_pairwise_i32x4_s, WasmSimdExtaddPairwiseI32x4S, macro(ctx)
+end)
+
+wasmOp(simd_avg_round_i8x16, WasmSimdAvgRoundI8x16, macro(ctx)
+end)
+wasmOp(simd_avg_round_i16x8, WasmSimdAvgRoundI16x8, macro(ctx)
+end)
+
+wasmOp(simd_dot_product_i32x4, WasmSimdDotProductI32x4, macro(ctx)
+end)
+wasmOp(simd_mul_sat_i16x8, WasmSimdMulSatI16x8, macro(ctx)
+end)
+wasmOp(simd_swizzle_i8x16, WasmSimdSwizzleI8x16, macro(ctx)
+end)
+wasmOp(simd_shuffle_i16x8, WasmSimdShuffleI16x8, macro(ctx)
+end)
+wasmOp(simd_bitwise_select_v128, WasmSimdBitwiseSelectV128, macro(ctx)
 end)
 
 # Value-representation-specific code.

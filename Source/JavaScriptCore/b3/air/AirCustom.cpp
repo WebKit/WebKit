@@ -43,8 +43,8 @@ bool PatchCustom::isValidForm(Inst& inst)
         return false;
     if (!inst.args[0].special()->isValid(inst))
         return false;
-    RegisterSet clobberedEarly = inst.extraEarlyClobberedRegs();
-    RegisterSet clobberedLate = inst.extraClobberedRegs();
+    auto clobberedEarly = inst.extraEarlyClobberedRegs();
+    auto clobberedLate = inst.extraClobberedRegs();
     bool ok = true;
     inst.forEachTmp(
         [&] (Tmp& tmp, Arg::Role role, Bank, Width) {

@@ -65,7 +65,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(c
 {
     CCallHelpers jit;
 
-    int32_t stackSpace = WTF::roundUpToMultipleOf(stackAlignmentBytes(), RegisterSet::calleeSaveRegisters().numberOfSetRegisters() * sizeof(Register));
+    int32_t stackSpace = WTF::roundUpToMultipleOf(stackAlignmentBytes(), RegisterSet128::calleeSaveRegisters().numberOfSetRegisters() * sizeof(Register));
     ASSERT(static_cast<unsigned>(stackSpace) < Options::softReservedZoneSize());
     jit.addPtr(CCallHelpers::TrustedImm32(-stackSpace), GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
     jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ExceptionType::StackOverflow)), GPRInfo::argumentGPR1);
@@ -84,15 +84,15 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGenerator(const 
     jit.emitFunctionPrologue();
 
     const unsigned extraPaddingBytes = 0;
-    RegisterSet registersToSpill = RegisterSet::allRegisters();
-    registersToSpill.exclude(RegisterSet::registersToNotSaveForCCall());
+    RegisterSet128 registersToSpill = RegisterSet128::use128Bits(RegisterSet::allRegisters());
+    registersToSpill.exclude(RegisterSet128::registersToNotSaveForCCall());
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
     jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
     jit.move(MacroAssembler::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationWasmTriggerTierUpNow)), GPRInfo::argumentGPR2);
     jit.call(GPRInfo::argumentGPR2, OperationPtrTag);
 
-    ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, RegisterSet(), numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
+    ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, { }, numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
 
     jit.emitFunctionEpilogue();
     jit.ret();

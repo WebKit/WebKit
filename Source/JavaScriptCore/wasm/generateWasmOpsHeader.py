@@ -28,6 +28,7 @@
 from generateWasm import *
 import optparse
 import sys
+import re
 
 parser = optparse.OptionParser(usage="usage: %prog <wasm.json> <WasmOps.h>")
 (options, args) = parser.parse_args(sys.argv[0:])
@@ -43,17 +44,27 @@ wasmOpsHFile = open(args[2], "w")
 def cppType(type):
     if type == "bool":
         return "I32"
-    return type.capitalize()
+    def capitalizeWithNumbers(s):
+        s = s.capitalize()
+        m = re.compile("^\d+").search(s)
+        if m:
+            s = s[0:m.span()[1]] + s[m.span()[1]:].capitalize()
+        return s
+    return "".join(map(lambda x: capitalizeWithNumbers(x), type.split('_')))
 
 
-def cppMacro(wasmOpcode, value, b3, inc, *extraArgs):
+def cppMacro(wasmOpcode, value, b3, air, inc, *extraArgs):
     extraArgsStr = ", " + ", ".join(extraArgs) if len(extraArgs) else ""
-    return " \\\n    macro(" + wasm.toCpp(wasmOpcode) + ", " + hex(int(value)) + ", " + b3 + ", " + str(inc) + extraArgsStr + ")"
+    airStr = ""
+    if air:
+        airStr = air + ", "
+    return " \\\n    macro(" + toCpp(wasmOpcode) + ", " + hex(int(value)) + ", " + b3 + ", " + airStr + str(inc) + extraArgsStr + ")"
+
 
 def typeMacroizer():
     inc = 0
     for ty in wasm.types:
-        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc, ty)
+        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], None, inc, ty, str(wasm.types[ty]["size"]))
         inc += 1
 
 
@@ -71,16 +82,32 @@ type_definitions_except_funcref_externref.extend([t for t in typeMacroizerFilter
 type_definitions_except_funcref_externref = "".join(type_definitions_except_funcref_externref)
 
 
+simdLaneOperations = set([cppType(op['opcode']['simd_operation']) for op in wasm.opcodeIterator(isSimd)])
+simdLaneOperationsPrinter = """
+    static void dumpSimdLaneOperation(PrintStream& out, SimdLaneOperation op)
+    {
+        switch (op) {
+        """ + "\n        ".join(["case SimdLaneOperation::" + x + ": out.print(\"" + x  + "\"); break;" for x in simdLaneOperations]) + """
+        }
+    }
+    MAKE_PRINT_ADAPTOR(SimdLaneOperationDump, SimdLaneOperation, dumpSimdLaneOperation);
+"""
+simdLaneOperations = ",\n    ".join(simdLaneOperations)
+
+
 def opcodeMacroizer(filter, opcodeField="value", modifier=None):
     inc = 0
     for op in wasm.opcodeIterator(filter):
         b3op = "Oops"
+        airOp = None
         if isSimple(op["opcode"]):
             b3op = op["opcode"]["b3op"]
+            if "airOp" in op["opcode"]:
+                airOp = op["opcode"]["airOp"]
         extraArgs = []
         if modifier:
             extraArgs = modifier(op["opcode"])
-        yield cppMacro(op["name"], op["opcode"][opcodeField], b3op, inc, *extraArgs)
+        yield cppMacro(op["name"], op["opcode"][opcodeField], b3op, airOp, inc, *extraArgs)
         inc += 1
 
 
@@ -88,6 +115,7 @@ def opcodeWithTypesMacroizer(filter):
     def modifier(op):
         return [cppType(type) for type in op["parameter"] + op["return"]]
     return opcodeMacroizer(filter, modifier=modifier)
+
 
 def memoryLoadMacroizer():
     def modifier(op):
@@ -125,8 +153,33 @@ def atomicBinaryRMWMacroizer():
     return opcodeMacroizer(lambda op: isAtomicBinaryRMW(op), modifier=modifier, opcodeField="extendedOp")
 
 
+def simdMacrolizer():
+    def modifier(op):
+        returnType = "Types::" + cppType(op['return'][0]) if len(op["return"]) == 1 else "Types::Void"
+        immediates = list(map(lambda x: x["laneSize"], op["immediate"]))
+        immediatesArr = f"(std::array<int, {len(immediates)}>" + "{" + ','.join(immediates) + "})"
+        arguments = list(map(lambda x: f"&Types::{cppType(x)}", op["parameter"]))
+        argumentsArr = f"(std::array<const Type*, {len(arguments)}>" + "{" + ','.join(arguments) + "})"
+        return [op["wasmOp"], returnType, 
+            str(len(immediates)), immediatesArr, str(len(arguments)), argumentsArr, 
+            f"SimdLane::{ op['simd_lane_interpretation'] }", 
+            f"SimdSignMode::{ op['simd_sign_extend_mode'] }",
+            "true" if "extraAirArg" in op else "false",
+            op["extraAirArg"] if "extraAirArg" in op else "B3::Air::Arg()"]
+    return opcodeMacroizer(lambda op: isSimd(op) and not op["is_simd_special_op"], modifier=modifier, opcodeField="extendedOp")
+
+
+def simdSpecialMacrolizer():
+    def modifier(op):
+        return [
+            f"SimdLaneOperation::{cppType(op['simd_operation'])}", 
+            f"SimdLane::{ op['simd_lane_interpretation'] }", 
+            f"SimdSignMode::{ op['simd_sign_extend_mode'] }"]
+    return opcodeMacroizer(lambda op: isSimd(op) and op["is_simd_special_op"], modifier=modifier, opcodeField="extendedOp")
+
+
 defines = ["#define FOR_EACH_WASM_SPECIAL_OP(macro)"]
-defines.extend([op for op in opcodeMacroizer(lambda op: not (isUnary(op) or isBinary(op) or op["category"] == "control" or op["category"] == "memory" or op["value"] == 0xfc or op["category"] == "gc" or isAtomic(op)))])
+defines.extend([op for op in opcodeMacroizer(lambda op: not (isUnary(op) or isBinary(op) or op["category"] == "control" or op["category"] == "memory" or op["value"] == 0xfc or op["category"] == "gc" or isAtomic(op) or isSimd(op)))])
 defines.append("\n\n#define FOR_EACH_WASM_CONTROL_FLOW_OP(macro)")
 defines.extend([op for op in opcodeMacroizer(lambda op: op["category"] == "control")])
 defines.append("\n\n#define FOR_EACH_WASM_SIMPLE_UNARY_OP(macro)")
@@ -153,6 +206,10 @@ defines.append("\n\n#define FOR_EACH_WASM_EXT_ATOMIC_BINARY_RMW_OP(macro)")
 defines.extend([op for op in atomicBinaryRMWMacroizer()])
 defines.append("\n\n#define FOR_EACH_WASM_EXT_ATOMIC_OTHER_OP(macro)")
 defines.extend([op for op in opcodeMacroizer(lambda op: isAtomic(op) and (not isAtomicLoad(op) and not isAtomicStore(op) and not isAtomicBinaryRMW(op)), opcodeField="extendedOp")])
+defines.append("\n\n#define FOR_EACH_WASM_EXT_SIMD_OP(macro)")
+defines.extend([op for op in simdMacrolizer()])
+defines.append("\n\n#define FOR_EACH_WASM_EXT_SIMD_SPECIAL_OP(macro)")
+defines.extend([op for op in simdSpecialMacrolizer()])
 defines.append("\n\n#define FOR_EACH_WASM_GC_OP(macro)")
 defines.extend([op for op in opcodeMacroizer(lambda op: (op["category"] == "gc"), opcodeField="extendedOp")])
 defines.append("\n\n")
@@ -184,14 +241,14 @@ validOps = bitSet()
 def memoryLog2AlignmentGenerator(filter):
     result = []
     for op in wasm.opcodeIterator(filter):
-        result.append("    case " + wasm.toCpp(op["name"]) + ": return " + memoryLog2Alignment(op) + ";")
+        result.append("    case " + toCpp(op["name"]) + ": return " + memoryLog2Alignment(op) + ";")
     return "\n".join(result)
 
 
 def atomicMemoryLog2AlignmentGenerator(filter):
     result = []
     for op in wasm.opcodeIterator(filter):
-        result.append("    case ExtAtomicOpType::" + wasm.toCpp(op["name"]) + ": return " + memoryLog2Alignment(op) + ";")
+        result.append("    case ExtAtomicOpType::" + toCpp(op["name"]) + ": return " + memoryLog2Alignment(op) + ";")
     return "\n".join(result)
 
 
@@ -253,6 +310,21 @@ struct Type {
         return static_cast<bool>(nullable);
     }
 
+    size_t size() const {
+        switch (kind) {
+    #define CREATE_CASE(name, id, b3type, inc, wasmName, size, ...) case TypeKind::name: return size;
+    FOR_EACH_WASM_TYPE(CREATE_CASE)
+    #undef CREATE_CASE
+        }
+    }
+
+    void dump(PrintStream& out) const {
+        switch (kind) {
+    #define CREATE_CASE(name, id, b3type, inc, wasmName, size, ...) case TypeKind::name: out.print(#name); break;
+    FOR_EACH_WASM_TYPE(CREATE_CASE)
+    #undef CREATE_CASE
+        }
+    }
     // Use Wasm::isFuncref and Wasm::isExternref instead because they check againts all kind of representations of function referenes and external references.
 
     #define CREATE_PREDICATE(name, ...) bool is ## name() const { return kind == TypeKind::name; }
@@ -336,6 +408,8 @@ inline TypeKind linearizedToType(int i)
     FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \\
     FOR_EACH_WASM_MEMORY_STORE_OP(macro) \\
     macro(Ext1,  0xFC, Oops, 0) \\
+    macro(ExtAtomic, 0xFE, Oops, 0) \\
+    macro(ExtSimd, 0xFD, Oops, 0)
     macro(GCPrefix,  0xFB, Oops, 0) \\
     macro(ExtAtomic, 0xFE, Oops, 0)
 
@@ -385,7 +459,21 @@ enum class ExtAtomicOpType : uint8_t {
     FOR_EACH_WASM_EXT_ATOMIC_OTHER_OP(CREATE_ENUM_VALUE)
 };
 
+enum class ExtSimdOpType : uint8_t {
+    FOR_EACH_WASM_EXT_SIMD_OP(CREATE_ENUM_VALUE)
+    FOR_EACH_WASM_EXT_SIMD_SPECIAL_OP(CREATE_ENUM_VALUE)
+};
+
+enum class ExtWasmOpType : uint8_t {
+    FOR_EACH_WASM_EXT_SIMD_OP(CREATE_ENUM_VALUE)
+};
+
 #undef CREATE_ENUM_VALUE
+
+enum class SimdLaneOperation : uint8_t {
+    """ + simdLaneOperations + """
+};
+""" + simdLaneOperationsPrinter + """
 
 inline bool isControlOp(OpType op)
 {

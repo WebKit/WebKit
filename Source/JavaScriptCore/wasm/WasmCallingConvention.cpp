@@ -37,8 +37,8 @@ const JSCallingConvention& jsCallingConvention()
     static LazyNeverDestroyed<JSCallingConvention> staticJSCallingConvention;
     static std::once_flag staticJSCCallingConventionFlag;
     std::call_once(staticJSCCallingConventionFlag, [] () {
-        RegisterSet callerSaveRegisters = RegisterSet::allRegisters();
-        callerSaveRegisters.exclude(RegisterSet::calleeSaveRegisters());
+        RegisterSet128 callerSaveRegisters = RegisterSet128::use64Bits(RegisterSet::allRegisters());
+        callerSaveRegisters.exclude(RegisterSet128::calleeSaveRegisters());
 
         staticJSCallingConvention.construct(Vector<JSValueRegs>(), Vector<FPRReg>(), RegisterSet::calleeSaveRegisters(), WTFMove(callerSaveRegisters));
     });
@@ -92,8 +92,8 @@ const WasmCallingConvention& wasmCallingConvention()
         RELEASE_ASSERT(scratchGPRs.size() >= 3);
 #endif
 
-        RegisterSet callerSaveRegisters = RegisterSet::allRegisters();
-        callerSaveRegisters.exclude(RegisterSet::calleeSaveRegisters());
+        RegisterSet128 callerSaveRegisters = RegisterSet128::use64Bits(RegisterSet::allRegisters());
+        callerSaveRegisters.exclude(RegisterSet128::calleeSaveRegisters());
 
         staticWasmCallingConvention.construct(WTFMove(jsrArgumentRegisters), WTFMove(fprArgumentRegisters), WTFMove(scratchGPRs), RegisterSet::calleeSaveRegisters(), WTFMove(callerSaveRegisters));
     });

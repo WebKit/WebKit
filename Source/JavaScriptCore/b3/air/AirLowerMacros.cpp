@@ -114,7 +114,207 @@ void lowerMacros(Code& code)
                 case Int64:
                     insertionSet.insert(instIndex + 1, Move, value, result, resultDst);
                     break;
+                case V128:
+                    insertionSet.insert(instIndex + 1, MoveVector, value, result, resultDst);
+                    break;
                 }
+            };
+
+            auto handleVectorMul = [&] {
+                if (!isARM64())
+                    return;
+
+                Tmp lhs = inst.args[1].tmp();
+                Tmp rhs = inst.args[2].tmp();
+                Tmp dst = inst.args[3].tmp();
+                auto* origin = inst.origin;
+
+                Tmp lhsLower = code.newTmp(GP);
+                Tmp lhsUpper = code.newTmp(GP);
+                Tmp rhsLower = code.newTmp(GP);
+                Tmp rhsUpper = code.newTmp(GP);
+
+                insertionSet.insert(instIndex, VectorExtractLaneInt64, origin, Arg::imm(0), lhs, lhsLower);
+                insertionSet.insert(instIndex, VectorExtractLaneInt64, origin, Arg::imm(1), lhs, lhsUpper);
+                insertionSet.insert(instIndex, VectorExtractLaneInt64, origin, Arg::imm(0), rhs, rhsLower);
+                insertionSet.insert(instIndex, VectorExtractLaneInt64, origin, Arg::imm(1), rhs, rhsUpper);
+
+                insertionSet.insert(instIndex, Mul64, origin, lhsLower, rhsLower);
+                insertionSet.insert(instIndex, Mul64, origin, lhsUpper, rhsUpper);
+                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(0), rhsLower, dst);
+                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(1), rhsUpper, dst);
+
+                inst = Inst();
+            };
+
+            auto handleVectorExtadd = [&] {
+                if (!isARM64())
+                    return;
+
+                Tmp vec = inst.args[0].tmp();
+                Tmp dst = inst.args[1].tmp();
+                auto* origin = inst.origin;
+
+                Tmp lower = code.newTmp(FP);
+                Tmp upper = code.newTmp(FP);
+
+                insertionSet.insert(instIndex, VectorExtendLow, origin, vec, lower);
+                insertionSet.insert(instIndex, VectorExtendLow, origin, vec, upper);
+                insertionSet.insert(instIndex, VectorAddPairwise, origin, lower, upper, dst);
+
+                inst = Inst();
+            };
+
+            auto handleVectorAllTrue = [&] {
+                if (!isARM64())
+                    return;
+
+                SimdInfo simdInfo = inst.args[0].simdInfo();
+                Tmp vec = inst.args[1].tmp();
+                Tmp dst = inst.args[2].tmp();
+                auto* origin = inst.origin;
+
+                ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+                switch(simdInfo.lane) {
+                case SimdLane::i64x2:
+                    insertionSet.insert(instIndex, CompareIntegerVectorWithZero, origin, Arg::relCond(MacroAssembler::NotEqual), Arg::simdInfo(simdInfo), vec, vec);
+                    insertionSet.insert(instIndex, VectorUnsignedMin, origin, Arg::simdInfo({ SimdLane::i32x4, SimdSignMode::None }), vec, vec);
+                    break;
+                case SimdLane::i32x4:
+                case SimdLane::i16x8:
+                case SimdLane::i8x16:
+                    insertionSet.insert(instIndex, VectorUnsignedMin, origin, Arg::simdInfo(simdInfo), vec, vec);
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+
+                insertionSet.insert(instIndex, MoveFloatTo32, origin, vec, dst); // oops: this sucks
+                insertionSet.insert(instIndex, Compare32, origin, Arg::relCond(MacroAssembler::NotEqual), dst, Arg::imm(0), dst);
+
+                inst = Inst();
+            };
+
+            auto handleVectorAnyTrue = [&] {
+                if (!isARM64())
+                    return;
+
+                SimdInfo simdInfo = inst.args[0].simdInfo();
+                Tmp vec = inst.args[1].tmp();
+                Tmp dst = inst.args[2].tmp();
+                auto* origin = inst.origin;
+
+                ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+                insertionSet.insert(instIndex, VectorUnsignedMax, origin, Arg::simdInfo({ SimdLane::i32x4, SimdSignMode::None }), vec, vec);
+                insertionSet.insert(instIndex, MoveFloatTo32, origin, vec, dst); // oops: this sucks
+                insertionSet.insert(instIndex, Compare32, origin, Arg::relCond(MacroAssembler::NotEqual), dst, Arg::imm(0), dst);
+
+                inst = Inst();
+            };
+
+            auto handleVectorShuffle = [&] {
+                if (!isARM64())
+                    return;
+
+#if CPU(ARM64)
+                Tmp n(ARM64Registers::q0);
+                Tmp n2(ARM64Registers::q1);
+#else
+                RELEASE_ASSERT_NOT_REACHED();
+#endif
+
+                v128_t imm;
+                imm.u64x2[0] = inst.args[0].value();
+                imm.u64x2[1] = inst.args[1].value();
+                Tmp a = inst.args[2].tmp();
+                Tmp b = inst.args[3].tmp();
+                Tmp dst = inst.args[4].tmp();
+                auto* origin = inst.origin;
+
+                // OOPS: this is very bad
+                auto control = code.newTmp(FP);
+                insertionSet.insert(instIndex, MoveVector, origin, a, n);
+                insertionSet.insert(instIndex, MoveVector, origin, b, n2);
+
+                // OOPS: this is bad, we should load
+                auto gpTmp = code.newTmp(GP);
+                insertionSet.insert(instIndex, Move, origin, Arg::bigImm(imm.u64x2[0]), gpTmp);
+                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(0), gpTmp, control);
+                insertionSet.insert(instIndex, Move, origin, Arg::bigImm(imm.u64x2[1]), gpTmp);
+                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(1), gpTmp, control);
+
+                insertionSet.insert(instIndex, VectorSwizzle2, origin, n, n2, control, dst);
+                inst = Inst();
+            };
+
+            auto handleVectorBitmask = [&] {
+                if (!isARM64())
+                    return;
+
+                SimdInfo simdInfo = inst.args[0].simdInfo();
+                Tmp vector = inst.args[1].tmp();
+                Tmp dst = inst.args[2].tmp();
+                auto* origin = inst.origin;
+
+                if (simdInfo.lane == SimdLane::i64x2) {
+                    // Tmp lower = code.newTmp(GP);
+                    // Tmp upper = code.newTmp(GP);
+
+                    // insertionSet.insert(instIndex, VectorExtractLaneInt64, origin, Arg::imm(0), vector, lower);
+                    // insertionSet.insert(instIndex, VectorExtractLaneInt64, origin, Arg::imm(1), vector, upper);
+
+                    // insertionSet.insert(instIndex, Rshift64, origin, lower, Arg::imm(63), lower);
+                    // insertionSet.insert(instIndex, And64, origin, lower, Arg::imm(0b01), lower);
+                    // insertionSet.insert(instIndex, Rshift64, origin, upper, Arg::imm(63), upper);
+                    // insertionSet.insert(instIndex, And64, origin, upper, Arg::imm(0b10), upper);
+                    // insertionSet.insert(instIndex, Or64, origin, upper, lower, dst);
+                    Tmp vectorTmp = code.newTmp(FP);
+                    // This might look bad, but remember: every bit we destroy contributes to the heat death of the universe.
+                    insertionSet.insert(instIndex, VectorSshr, origin, Arg::simdInfo({ SimdLane::v128, SimdSignMode::None }), vector, Arg::imm(63), vectorTmp);
+                    insertionSet.insert(instIndex, MoveFloatTo32, origin, vectorTmp, dst);
+                    insertionSet.insert(instIndex, And32, origin, Arg::bitImm(0b11), dst, dst);
+                    inst = Inst();
+                    return;
+                }
+
+                Tmp maskTmp = code.newTmp(FP);
+
+                {
+                    v128_t towerOfPower;
+                    switch (simdInfo.lane) {
+                    case SimdLane::i32x4:
+                        for (unsigned i = 0; i < 4; ++i)
+                            towerOfPower.u32x4[i] = 1 << i;
+                        break;
+                    case SimdLane::i16x8:
+                        for (unsigned i = 0; i < 8; ++i)
+                            towerOfPower.u16x8[i] = 1 << i;
+                        break;
+                    case SimdLane::i8x16:
+                        for (unsigned i = 0; i < 16; ++i)
+                            towerOfPower.u8x16[i] = 1 << i;
+                        break;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                    }
+
+                    // OOPS: this is bad, we should load
+                    auto gpTmp = code.newTmp(GP);
+                    insertionSet.insert(instIndex, Move, origin, Arg::bigImm(towerOfPower.u64x2[0]), gpTmp);
+                    insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(0), gpTmp, maskTmp);
+                    insertionSet.insert(instIndex, Move, origin, Arg::bigImm(towerOfPower.u64x2[1]), gpTmp);
+                    insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(1), gpTmp, maskTmp);
+                }
+
+                Tmp vectorTmp = code.newTmp(FP);
+
+                insertionSet.insert(instIndex, VectorSshr, origin, Arg::simdInfo(simdInfo), vector, Arg::imm(elementByteSize(simdInfo.lane) * 8 - 1), vectorTmp);
+                insertionSet.insert(instIndex, VectorAnd, origin, Arg::simdInfo(simdInfo), vector, maskTmp, vectorTmp);
+
+                insertionSet.insert(instIndex, VectorHorizontalAdd, origin, Arg::simdInfo(simdInfo), vectorTmp, vectorTmp);
+                insertionSet.insert(instIndex, MoveFloatTo32, origin, vectorTmp, dst);
+
+                inst = Inst();
             };
 
             switch (inst.kind.opcode) {
@@ -125,6 +325,30 @@ void lowerMacros(Code& code)
                 
             case CCall:
                 handleCall();
+                break;
+
+            case VectorAllTrue:
+                handleVectorAllTrue();
+                break;
+            
+            case VectorAnyTrue:
+                handleVectorAnyTrue();
+                break;
+
+            case VectorMul:
+                handleVectorMul();
+                break;
+
+            case VectorBitmask:
+                handleVectorBitmask();
+                break;
+
+            case VectorShuffle:
+                handleVectorShuffle();
+                break;
+            
+            case VectorExtaddPairwise:
+                handleVectorExtadd();
                 break;
 
             default:

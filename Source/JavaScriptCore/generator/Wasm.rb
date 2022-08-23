@@ -64,7 +64,7 @@ module Wasm
 template<>
 auto LLIntGenerator::addOp<#{op_type(op)}>(ExpressionType lhs, ExpressionType rhs, ExpressionType& result) -> PartialResult
 {
-    result = push();
+    result = push(#{op_return(op)});
     #{op.capitalized_name}::emit(this, result, lhs, rhs);
     return { };
 }
@@ -76,7 +76,7 @@ auto LLIntGenerator::addOp<#{op_type(op)}>(ExpressionType lhs, ExpressionType rh
 template<>
 auto LLIntGenerator::addOp<#{op_type(op)}>(ExpressionType operand, ExpressionType& result) -> PartialResult
 {
-    result = push();
+    result = push(#{op_return(op)});
     #{op.capitalized_name}::emit(this, result, operand);
     return { };
 }
@@ -85,5 +85,13 @@ auto LLIntGenerator::addOp<#{op_type(op)}>(ExpressionType operand, ExpressionTyp
 
     def self.op_type(op)
         "OpType::#{op.unprefixed_name.gsub(/^.|[^a-z0-9]./) { |c| c[-1].upcase }}"
+    end
+
+    def self.op_return(op)
+        t = op.extras["return"][0]
+        if t == "bool" then
+            t = "i32"
+        end
+        "Types::#{t.upcase}"
     end
 end
