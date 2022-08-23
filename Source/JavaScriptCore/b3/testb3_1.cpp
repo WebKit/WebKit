@@ -760,6 +760,7 @@ void run(const char* filter)
     RUN(testTrappingLoadDCE());
     RUN(testTrappingStoreElimination());
     RUN(testMoveConstants());
+    RUN(testMoveConstantsWithLargeOffsets());
     RUN(testPCOriginMapDoesntInsertNops());
     RUN(testPinRegisters());
     RUN(testReduceStrengthReassociation(true));
