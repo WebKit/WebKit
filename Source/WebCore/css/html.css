@@ -1290,11 +1290,19 @@ input[type="file"]:focus::file-selector-button {
 a:any-link {
     color: -webkit-link;
     text-decoration: underline;
-    cursor: auto;
+    cursor: pointer;
 }
 
 a:any-link:active {
     color: -webkit-activelink;
+}
+
+a:any-link:read-write {
+    cursor: text;
+}
+
+area:any-link {
+    cursor: pointer;
 }
 
 /* HTML5 ruby elements */
