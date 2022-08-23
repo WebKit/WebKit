@@ -882,7 +882,8 @@
 (deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
 
 ;; Allow loading injected bundles.
-(allow file-map-executable)
+(with-filter (require-not (state-flag "WebContentProcessLaunched"))
+    (allow file-map-executable))
 
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 ;; Allow ManagedPreference access
