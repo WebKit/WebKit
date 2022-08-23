@@ -2839,6 +2839,32 @@ void testMoveConstants()
     }
 }
 
+extern "C" {
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(testMoveConstantsWithLargeOffsetsFunc, double, (double));
+}
+JSC_DEFINE_JIT_OPERATION(testMoveConstantsWithLargeOffsetsFunc, double, (double a))
+{
+    return a;
+}
+
+void testMoveConstantsWithLargeOffsets()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* result = root->appendNew<ConstDoubleValue>(proc, Origin(), 0);
+    double rhs = 0;
+    for (size_t i = 0; i < 4100; i++) {
+        rhs += i;
+        Value* callResult = root->appendNew<CCallValue>(proc, Double, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(testMoveConstantsWithLargeOffsetsFunc)),
+            root->appendNew<ConstDoubleValue>(proc, Origin(), i));
+        result = root->appendNew<Value>(proc, Add, Origin(), result, callResult);
+    }
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    CHECK_EQ(compileAndRun<double>(proc), rhs);
+}
+
 void testPCOriginMapDoesntInsertNops()
 {
     Procedure proc;
