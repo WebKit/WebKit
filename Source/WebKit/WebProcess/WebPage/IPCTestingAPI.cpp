@@ -1824,16 +1824,6 @@ static bool encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globa
     if (!jsSharedMemory)
         return false;
 
-    uint32_t dataSize = jsSharedMemory->size();
-
-    auto jsDataSizeValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "dataSize"_s));
-    if (scope.exception())
-        return false;
-    if (!jsDataSizeValue.isUndefined()) {
-        if (auto dataSizeValue = convertToUint64(jsDataSizeValue))
-            dataSize = *dataSizeValue;
-    }
-
     auto jsProtectionValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "protection"_s));
     if (scope.exception())
         return false;
