@@ -23,6 +23,7 @@
 #if ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
 
 #include "GStreamerWebRTCUtils.h"
+#include "NotImplemented.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -58,6 +59,9 @@ void GStreamerIceTransportBackend::iceTransportChanged()
     }), this);
     g_signal_connect_swapped(m_iceTransport.get(), "notify::gathering-state", G_CALLBACK(+[](GStreamerIceTransportBackend* backend) {
         backend->gatheringStateChanged();
+    }), this);
+    g_signal_connect_swapped(m_iceTransport.get(), "on-selected-candidate-pair-change", G_CALLBACK(+[](GStreamerIceTransportBackend* backend) {
+        backend->selectedCandidatePairChanged();
     }), this);
 }
 
@@ -115,6 +119,13 @@ void GStreamerIceTransportBackend::gatheringStateChanged() const
             return;
         weakThis->m_client->onGatheringStateChanged(toRTCIceGatheringState(gatheringState));
     });
+}
+
+void GStreamerIceTransportBackend::selectedCandidatePairChanged()
+{
+    // FIXME: call m_client->onSelectedCandidatePairChanged(). See also
+    // https://github.com/WebKit/WebKit/commit/0692fae10c8e53deba214fd080a35f7c54bd6985
+    notImplemented();
 }
 
 } // namespace WebCore
