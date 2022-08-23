@@ -23,6 +23,7 @@
 import contextlib
 import io
 import sys
+import readline
 
 from webkitcorepy import StringIO, run
 
