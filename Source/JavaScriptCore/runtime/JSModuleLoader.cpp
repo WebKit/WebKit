@@ -100,7 +100,7 @@ JSModuleLoader::JSModuleLoader(VM& vm, Structure* structure)
 void JSModuleLoader::finishCreation(JSGlobalObject* globalObject, VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSMap* map = JSMap::create(vm, globalObject->mapStructure());
     putDirect(vm, Identifier::fromString(vm, "registry"), map);
 }
