@@ -1674,7 +1674,7 @@ DMFWebsitePolicyMonitor *NetworkSessionCocoa::deviceManagementPolicyMonitor()
 }
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
-std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed)
+std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy)
 {
     ASSERT(!request.hasHTTPHeaderField(WebCore::HTTPHeaderName::SecWebSocketProtocol));
     auto nsRequest = retainPtr(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
@@ -1696,7 +1696,15 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
     appPrivacyReportTestingData().didLoadAppInitiatedRequest(nsRequest.get().attribution == NSURLRequestAttributionDeveloper);
 #endif
 
-    // FIXME: This function can make up to 3 copies of a request.
+#if HAVE(PROHIBIT_PRIVACY_PROXY)
+    if (!allowPrivacyProxy) {
+        RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
+        [mutableRequest _setProhibitPrivacyProxy:YES];
+        nsRequest = WTFMove(mutableRequest);
+    }
+#endif
+
+    // FIXME: This function can make up to 4 copies of a request.
     // Reduce that to one if the protocol is null, the request isn't app initiated,
     // or the main frame main resource was private relayed, then set all properties
     // on the one copy.

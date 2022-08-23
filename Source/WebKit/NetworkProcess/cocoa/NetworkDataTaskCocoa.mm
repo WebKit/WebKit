@@ -347,6 +347,11 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
             [mutableRequest _setPrivacyProxyFailClosedForUnreachableNonMainHosts:YES];
     }
 
+#if HAVE(PROHIBIT_PRIVACY_PROXY)
+    if (!parameters.allowPrivacyProxy)
+        [mutableRequest _setProhibitPrivacyProxy:YES];
+#endif
+
 #if ENABLE(APP_PRIVACY_REPORT)
     mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 #endif
