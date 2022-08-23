@@ -44,6 +44,7 @@ private:
     void stateChanged() const;
     void gatheringStateChanged() const;
     void iceTransportChanged();
+    void selectedCandidatePairChanged();
 
     GRefPtr<GstWebRTCDTLSTransport> m_backend;
     GRefPtr<GstWebRTCICETransport> m_iceTransport;
