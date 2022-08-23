@@ -419,7 +419,7 @@ public:
     void setStyleIsAffectedByPreviousSibling() { setStyleFlag(NodeStyleFlag::StyleIsAffectedByPreviousSibling); }
     void setChildIndex(unsigned);
 
-    AtomString effectiveLang() const;
+    WEBCORE_EXPORT AtomString computeInheritedLanguage() const;
     Locale& locale() const;
 
     virtual bool accessKeyAction(bool /*sendToAnyEvent*/) { return false; }

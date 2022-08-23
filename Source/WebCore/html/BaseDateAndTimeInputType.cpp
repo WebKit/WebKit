@@ -498,7 +498,7 @@ bool BaseDateAndTimeInputType::isEditControlOwnerReadOnly() const
 AtomString BaseDateAndTimeInputType::localeIdentifier() const
 {
     ASSERT(element());
-    return element()->effectiveLang();
+    return element()->computeInheritedLanguage();
 }
 
 void BaseDateAndTimeInputType::didChooseValue(StringView value)
@@ -530,7 +530,7 @@ bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserPar
     if (!document.settings().langAttributeAwareFormControlUIEnabled())
         parameters.locale = AtomString { defaultLanguage() };
     else {
-        AtomString computedLocale = element.effectiveLang();
+        AtomString computedLocale = element.computeInheritedLanguage();
         parameters.locale = computedLocale.isEmpty() ? AtomString(defaultLanguage()) : computedLocale;
     }
 
