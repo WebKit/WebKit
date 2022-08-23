@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TemplateContentDocumentFragment.h"
 
+#include "Element.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

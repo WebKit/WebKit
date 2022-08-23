@@ -34,16 +34,16 @@ namespace WebCore {
 class TemplateContentDocumentFragment final : public DocumentFragment {
     WTF_MAKE_ISO_ALLOCATED(TemplateContentDocumentFragment);
 public:
-    static Ref<TemplateContentDocumentFragment> create(Document& document, const Element* host)
+    static Ref<TemplateContentDocumentFragment> create(Document& document, const Element& host)
     {
         return adoptRef(*new TemplateContentDocumentFragment(document, host));
     }
 
-    const Element* host() const { return m_host; }
+    const Element* host() const { return m_host.get(); }
     void clearHost() { m_host = nullptr; }
 
 private:
-    TemplateContentDocumentFragment(Document& document, const Element* host)
+    TemplateContentDocumentFragment(Document& document, const Element& host)
         : DocumentFragment(document, CreateDocumentFragment)
         , m_host(host)
     {
@@ -51,7 +51,7 @@ private:
 
     bool isTemplateContent() const override { return true; }
 
-    const Element* m_host;
+    WeakPtr<const Element> m_host;
 };
 
 } // namespace WebCore
