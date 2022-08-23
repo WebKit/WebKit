@@ -25,8 +25,14 @@
 #pragma once
 
 #include "BufferSource.h"
+#if PLATFORM(COCOA)
+#include <compression.h>
+#endif
+#include <cstring>
 #include "ExceptionOr.h"
 #include "Formats.h"
+#include "SharedBuffer.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -46,8 +52,14 @@ public:
 
     ~DecompressionStreamDecoder()
     {
-        if (initailized)
-            deflateEnd(&zstream);
+        if (m_initialized) {
+            if (m_usingAppleCompressionFramework) {
+#if PLATFORM(COCOA)
+                compression_stream_destroy(&m_stream);
+#endif
+            } else
+                deflateEnd(&m_zstream);
+        }
     }
 
 private:
@@ -60,18 +72,37 @@ private:
     const size_t startingAllocationSize = 16384; // 16KB
     const size_t maxAllocationSize = 1073741824; // 1GB
     
-    bool initailized { false };
-    bool finish { false };
-    z_stream zstream;
+    bool m_initialized { false };
+    bool m_finish { false };
+    z_stream m_zstream;
+
+    bool m_usingAppleCompressionFramework { false };
+
+    inline ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompress(const uint8_t* input, const size_t inputLength);
+
+#if PLATFORM(COCOA)
+    compression_stream m_stream;
+    ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompressAppleCompressionFramework(const uint8_t* input, const size_t inputLength);
+    ExceptionOr<bool> initializeAppleCompressionFramework();
+#endif
 
     Formats::CompressionFormat m_format;
 
-    ExceptionOr<Vector<uint8_t>> decompress(const uint8_t* input, const size_t inputLength);
+    ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompressZlib(const uint8_t* input, const size_t inputLength);
     ExceptionOr<bool> initialize();
 
     explicit DecompressionStreamDecoder(unsigned char format) 
         : m_format(static_cast<Formats::CompressionFormat>(format))
     {
+
+    std::memset(&m_zstream, 0, sizeof(m_zstream));
+
+#if PLATFORM(COCOA)
+    std::memset(&m_stream, 0, sizeof(m_stream));
+
+    if (m_format == Formats::CompressionFormat::Deflate)
+        m_usingAppleCompressionFramework = true;
+#endif
     }
 };
 } // namespace WebCore
