@@ -3720,6 +3720,10 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-right-color-001.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-top-color-001.html [ Pass ImageOnlyFailure ]
 
+# iOS user agent styles are preventing these from passing for <input type=search>
+webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/appearance-textfield-001.html [ ImageOnlyFailure ]
+webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-textfield-001.html [ ImageOnlyFailure ]
+
 webkit.org/b/244065 fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-readonly.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/244134 animations/no-style-recalc-during-accelerated-animation.html [ Pass Failure ]
