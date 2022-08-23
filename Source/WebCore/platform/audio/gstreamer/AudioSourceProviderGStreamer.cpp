@@ -253,7 +253,9 @@ void AudioSourceProviderGStreamer::setClient(AudioSourceProviderClient* newClien
     if (client() == newClient)
         return;
 
+#if ENABLE(MEDIA_STREAM)
     GST_DEBUG_OBJECT(m_pipeline.get(), "Setting up client %p (previous: %p)", newClient, client());
+#endif
     bool previousClientWasValid = !!m_client;
     m_client = newClient;
 
@@ -341,7 +343,9 @@ void AudioSourceProviderGStreamer::setClient(AudioSourceProviderClient* newClien
 
 void AudioSourceProviderGStreamer::handleNewDeinterleavePad(GstPad* pad)
 {
+#if ENABLE(MEDIA_STREAM)
     GST_DEBUG_OBJECT(m_pipeline.get(), "New pad %" GST_PTR_FORMAT, pad);
+#endif
 
     // A new pad for a planar channel was added in deinterleave. Plug
     // in an appsink so we can pull the data from each
