@@ -64,7 +64,7 @@ class Clean(Command):
         match = cls.PR_RE.match(argument)
         if match:
             if not rmt:
-                sys.stderr.write("'{}' doesn't have a recognized remote\n".format(repository.root_path))
+                sys.stderr.write("'{}' doesn't have a recognized remote named '{}'\n".format(repository.root_path, remote_target or repository.default_remote))
                 return 1
             if not rmt.pull_requests:
                 sys.stderr.write("'{}' cannot generate pull-requests\n".format(rmt.url))
@@ -138,6 +138,9 @@ class DeletePRBranches(Command):
             return 1
 
         rmt = repository.remote(name=args.remote)
+        if not rmt:
+            sys.stderr.write("'{}' doesn't have a recognized remote named '{}'\n".format(repository.root_path, args.remote or repository.default_remote))
+            return 1
         if not rmt.pull_requests:
             sys.stderr.write("'{}' does not have associated pull-requests\n".format(rmt.url))
             return 1
