@@ -27,12 +27,19 @@
 #include "VideoFrameMetadataGStreamer.h"
 #include <gst/rtp/rtp.h>
 
+GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
+
 namespace WebCore {
 
 RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomString&& videoTrackId)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Video, WTFMove(videoTrackId))
     , RealtimeIncomingSourceGStreamer()
 {
+    static Atomic<uint64_t> sourceCounter = 0;
+    gst_element_set_name(bin(), makeString("incoming-video-source-", sourceCounter.exchangeAdd(1)).ascii().data());
+    GST_DEBUG_OBJECT(bin(), "New incoming video source created");
+
     RealtimeMediaSourceSupportedConstraints constraints;
     constraints.setSupportsWidth(true);
     constraints.setSupportsHeight(true);
@@ -60,11 +67,13 @@ RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomS
 
 void RealtimeIncomingVideoSourceGStreamer::startProducingData()
 {
+    GST_DEBUG_OBJECT(bin(), "Starting data flow");
     openValve();
 }
 
 void RealtimeIncomingVideoSourceGStreamer::stopProducingData()
 {
+    GST_DEBUG_OBJECT(bin(), "Stopping data flow");
     closeValve();
 }
 

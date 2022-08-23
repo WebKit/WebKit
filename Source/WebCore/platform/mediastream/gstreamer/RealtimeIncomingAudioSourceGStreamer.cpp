@@ -25,12 +25,18 @@
 #include "GStreamerAudioData.h"
 #include "GStreamerAudioStreamDescription.h"
 
+GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
+
 namespace WebCore {
 
 RealtimeIncomingAudioSourceGStreamer::RealtimeIncomingAudioSourceGStreamer(AtomString&& audioTrackId)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(audioTrackId))
     , RealtimeIncomingSourceGStreamer()
 {
+    static Atomic<uint64_t> sourceCounter = 0;
+    gst_element_set_name(bin(), makeString("incoming-audio-source-", sourceCounter.exchangeAdd(1)).ascii().data());
+    GST_DEBUG_OBJECT(bin(), "New incoming audio source created");
     start();
 }
 
