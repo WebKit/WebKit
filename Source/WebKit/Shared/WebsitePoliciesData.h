@@ -74,6 +74,7 @@ struct WebsitePoliciesData {
     WebCore::ModalContainerObservationPolicy modalContainerObservationPolicy { WebCore::ModalContainerObservationPolicy::Disabled };
     WebCore::ColorSchemePreference colorSchemePreference { WebCore::ColorSchemePreference::NoPreference };
     bool idempotentModeAutosizingOnlyHonorsPercentages { false };
+    bool allowPrivacyProxy { true };
 
     void encode(IPC::Encoder&) const;
     static std::optional<WebsitePoliciesData> decode(IPC::Decoder&);

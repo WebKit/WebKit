@@ -62,7 +62,7 @@ class NetworkLoadChecker : public CanMakeWeakPtr<NetworkLoadChecker> {
 public:
     enum class LoadType : bool { MainFrame, Other };
 
-    NetworkLoadChecker(NetworkProcess&, NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, WebPageProxyIdentifier, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy, String&& referrer, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
+    NetworkLoadChecker(NetworkProcess&, NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, WebPageProxyIdentifier, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy, String&& referrer, bool allowPrivacyProxy, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
     ~NetworkLoadChecker();
 
     struct RedirectionTriplet {
@@ -134,6 +134,7 @@ private:
 
     WebCore::FetchOptions m_options;
     WebCore::StoredCredentialsPolicy m_storedCredentialsPolicy;
+    bool m_allowPrivacyProxy;
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;
     WebPageProxyIdentifier m_webPageProxyID;

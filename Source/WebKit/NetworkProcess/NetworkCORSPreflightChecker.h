@@ -57,6 +57,7 @@ public:
         PAL::SessionID sessionID;
         WebPageProxyIdentifier webPageProxyID;
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;
+        bool allowPrivacyProxy { true };
     };
     using CompletionCallback = CompletionHandler<void(WebCore::ResourceError&&)>;
 

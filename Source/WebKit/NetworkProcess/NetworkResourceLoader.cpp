@@ -127,7 +127,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
 
     if (synchronousReply || m_parameters.shouldRestrictHTTPResponseAccess || m_parameters.options.keepAlive) {
         NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
-        m_networkLoadChecker = makeUnique<NetworkLoadChecker>(connection.networkProcess(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options }, sessionID(), m_parameters.webPageProxyID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
+        m_networkLoadChecker = makeUnique<NetworkLoadChecker>(connection.networkProcess(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options }, sessionID(), m_parameters.webPageProxyID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
         if (m_parameters.cspResponseHeaders)
             m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
         m_networkLoadChecker->setParentCrossOriginEmbedderPolicy(m_parameters.parentCrossOriginEmbedderPolicy);
@@ -279,7 +279,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     }
 
     LOADER_RELEASE_LOG("retrieveCacheEntry: Checking the HTTP disk cache");
-    m_cache->retrieve(request, globalFrameID(), m_parameters.isNavigatingToAppBoundDomain, [this, weakThis = WeakPtr { *this }, request = ResourceRequest { request }](auto entry, auto info) mutable {
+    m_cache->retrieve(request, globalFrameID(), m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, [this, weakThis = WeakPtr { *this }, request = ResourceRequest { request }](auto entry, auto info) mutable {
         if (!weakThis)
             return;
 

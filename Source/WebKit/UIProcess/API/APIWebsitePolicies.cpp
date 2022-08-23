@@ -68,6 +68,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setMouseEventPolicy(m_mouseEventPolicy);
     policies->setModalContainerObservationPolicy(m_modalContainerObservationPolicy);
     policies->setColorSchemePreference(m_colorSchemePreference);
+    policies->setAllowPrivacyProxy(m_allowPrivacyProxy);
     return policies;
 }
 
@@ -114,7 +115,8 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
         m_mouseEventPolicy,
         m_modalContainerObservationPolicy,
         m_colorSchemePreference,
-        m_idempotentModeAutosizingOnlyHonorsPercentages
+        m_idempotentModeAutosizingOnlyHonorsPercentages,
+        m_allowPrivacyProxy
     };
 }
 

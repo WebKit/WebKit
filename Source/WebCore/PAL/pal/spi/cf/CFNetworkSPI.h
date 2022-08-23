@@ -183,6 +183,9 @@ typedef enum {
 - (void)setBoundInterfaceIdentifier:(NSString *)identifier;
 - (void)_setPreventHSTSStorage:(BOOL)preventHSTSStorage;
 - (void)_setIgnoreHSTS:(BOOL)ignoreHSTS;
+#if HAVE(PROHIBIT_PRIVACY_PROXY)
+@property (setter=_setProhibitPrivacyProxy:) BOOL _prohibitPrivacyProxy;
+#endif
 @end
 
 @interface NSURLProtocol ()

@@ -299,13 +299,20 @@ bool WebLoaderStrategy::tryLoadingUsingPDFJSHandler(ResourceLoader& resourceLoad
 }
 #endif
 
-static void addParametersShared(const Frame* frame, NetworkResourceLoadParameters& parameters)
+static void addParametersShared(const Frame* frame, NetworkResourceLoadParameters& parameters, DocumentLoader* currentDocumentLoader = nullptr)
 {
     parameters.crossOriginAccessControlCheckEnabled = CrossOriginAccessControlCheckDisabler::singleton().crossOriginAccessControlCheckEnabled();
     parameters.hadMainFrameMainResourcePrivateRelayed = WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed();
 
     if (!frame)
         return;
+
+    // When loading the main frame, we need to get allowPrivacyProxy from currentDocumentLoader.
+    // Otherwise we need to get it from mainFrameDocumentLoader.
+    auto& mainFrame = frame->mainFrame();
+    auto* mainFrameDocumentLoader = mainFrame.document() ? mainFrame.document()->loader() : nullptr;
+    parameters.allowPrivacyProxy = (currentDocumentLoader ? currentDocumentLoader->allowPrivacyProxy() : true)
+    && (mainFrameDocumentLoader ? mainFrameDocumentLoader->allowPrivacyProxy() : true);
 
     if (auto* document = frame->document())
         parameters.crossOriginEmbedderPolicy = document->crossOriginEmbedderPolicy();
@@ -370,7 +377,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.maximumBufferingTime = maximumBufferingTime;
     loadParameters.options = resourceLoader.options();
     loadParameters.preflightPolicy = resourceLoader.options().preflightPolicy;
-    addParametersShared(frame, loadParameters);
+    addParametersShared(frame, loadParameters, resourceLoader.documentLoader());
 
 #if ENABLE(SERVICE_WORKER)
     loadParameters.serviceWorkersMode = resourceLoader.options().loadedFromOpaqueSource == LoadedFromOpaqueSource::No ? resourceLoader.options().serviceWorkersMode : ServiceWorkersMode::None;

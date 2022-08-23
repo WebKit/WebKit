@@ -493,6 +493,16 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     return _websitePolicies->captivePortalModeEnabled();
 }
 
+- (void)_setAllowPrivacyProxy:(BOOL)allow
+{
+    _websitePolicies->setAllowPrivacyProxy(allow);
+}
+
+- (BOOL)_allowPrivacyProxy
+{
+    return _websitePolicies->allowPrivacyProxy();
+}
+
 - (_WKWebsiteColorSchemePreference)_colorSchemePreference
 {
     switch (_websitePolicies->colorSchemePreference()) {
