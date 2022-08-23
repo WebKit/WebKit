@@ -117,7 +117,7 @@ class GitHub(object):
             return None
         return response
 
-    def update_or_leave_comment_on_pr(self, pr_number, ews_comment, repository_url=None, comment_id=-1):
+    def update_or_leave_comment_on_pr(self, pr_number, ews_comment, repository_url=None, comment_id=-1, change=None):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
             return False
@@ -137,8 +137,14 @@ class GitHub(object):
             if response.status_code // 100 != 2:
                 _log.error("Failed to post comment to PR {}. Unexpected response code from GitHub: {}\n".format(pr_number, response.status_code))
                 return -1
-            _log.info("Commented on PR {}\n".format(pr_number))
-            return response.json().get('id')
+            new_comment_id = response.json().get('id')
+            comment_url = 'https://github.com/WebKit/WebKit/pull/{}#issuecomment-{}'.format(pr_number, new_comment_id)
+            _log.info('Commented on PR {} for hash: {}, link: {}'.format(pr_number, sha, comment_url))
+
+            if comment_id == -1 and new_comment_id != -1 and change:
+                change.set_comment_id(new_comment_id)
+                _log.info('PR {}: set new comment id as {} for hash: {}.'.format(pr_number, new_comment_id, sha))
+            return new_comment_id
         except Exception as e:
             _log.error("Error in posting comment to PR {}\n".format(pr_number))
         return -1
@@ -331,14 +337,11 @@ class GitHubEWS(GitHub):
                 # FIXME: improve this logic to use locking instead
                 return -1
             _log.info('Adding comment for hash: {}, pr_id: {}, pr_id from db: {}.'.format(sha, pr_id, change.pr_id))
-            new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, comment_text)
-            if new_comment_id != -1:
-                change.set_comment_id(new_comment_id)
-                _log.info('Set new comment id as {} for hash: {}.'.format(new_comment_id, sha))
+            new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, comment_text, change=change)
             obsolete_changes = Change.mark_old_changes_as_obsolete(pr_id, sha)
             for obsolete_change in obsolete_changes:
                 obsolete_comment_text = gh.generate_comment_text_for_change(obsolete_change)
-                gh.update_or_leave_comment_on_pr(pr_id, obsolete_comment_text, comment_id=obsolete_change.comment_id)
+                gh.update_or_leave_comment_on_pr(pr_id, obsolete_comment_text, comment_id=obsolete_change.comment_id, change=change)
                 _log.info('Updated obsolete status-bubble on pr {} for hash: {}'.format(pr_id, obsolete_change.change_id))
 
         else:
