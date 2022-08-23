@@ -48,21 +48,7 @@ LegacyEllipsisBox::LegacyEllipsisBox(RenderBlockFlow& renderer, const AtomString
 
 void LegacyEllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-
-    if (selectionState() != RenderObject::HighlightState::None) {
-        auto& context = paintInfo.context();
-        auto& lineStyle = this->lineStyle();
-        paintSelection(context, paintOffset, lineStyle, lineStyle.fontCascade());
-
-        // Select the correct color for painting the text.
-        auto foreground = paintInfo.forceTextColor() ? paintInfo.forcedTextColor() : blockFlow().selectionForegroundColor();
-        auto textColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor);
-        if (foreground.isValid() && foreground != textColor)
-            context.setFillColor(foreground);
-    }
-
-    auto ellipsisPainter = LegacyEllipsisBoxPainter { *this, paintInfo, paintOffset };
-    ellipsisPainter.paint();
+    LegacyEllipsisBoxPainter { *this, paintInfo, paintOffset, selectionState(), blockFlow().selectionForegroundColor(), blockFlow().selectionBackgroundColor() }.paint();
 
     paintMarkupBox(paintInfo, paintOffset, lineTop, lineBottom, lineStyle());
 }
@@ -107,27 +93,6 @@ IntRect LegacyEllipsisBox::selectionRect() const
     font.adjustSelectionRectForText(RenderBlock::constructTextRun(m_str, lineStyle, ExpansionBehavior::allowRightOnly()), selectionRect);
     // FIXME: use directional pixel snapping instead.
     return enclosingIntRect(selectionRect);
-}
-
-void LegacyEllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoint& paintOffset, const RenderStyle& style, const FontCascade& font)
-{
-    Color textColor = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
-    Color c = blockFlow().selectionBackgroundColor();
-    if (!c.isVisible())
-        return;
-
-    // If the text color ends up being the same as the selection background, invert the selection
-    // background.
-    if (textColor == c)
-        c = c.invertedColorWithAlpha(1.0);
-
-    const LegacyRootInlineBox& rootBox = root();
-    GraphicsContextStateSaver stateSaver(context);
-    // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    LayoutRect selectionRect { LayoutUnit(x() + paintOffset.x()), rootBox.selectionTop() + paintOffset.y(), 0_lu, rootBox.selectionHeight() };
-    TextRun run = RenderBlock::constructTextRun(m_str, style, ExpansionBehavior::allowRightOnly());
-    font.adjustSelectionRectForText(run, selectionRect);
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c);
 }
 
 bool LegacyEllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)

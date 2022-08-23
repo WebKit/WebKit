@@ -36,25 +36,31 @@ class LegacyEllipsisBox;
 template<typename EllipsisBoxPath>
 class EllipsisBoxPainter {
 public:
-    EllipsisBoxPainter(EllipsisBoxPath&&, PaintInfo&, const LayoutPoint& paintOffset);
+    EllipsisBoxPainter(EllipsisBoxPath&&, PaintInfo&, const LayoutPoint& paintOffset, RenderObject::HighlightState selectionState, Color selectionForegroundColor, Color selectionBackgroundColor);
 
     void paint();
 
 private:
+    void paintSelection();
+    std::tuple<float, float> selectionTopAndBottom() const;
+
     EllipsisBoxPath m_ellipsisBox;
     PaintInfo& m_paintInfo;
     LayoutPoint m_paintOffset;
+    RenderObject::HighlightState m_selectionState { RenderObject::HighlightState::None };
+    Color m_selectionForegroundColor;
+    Color m_selectionBackgroundColor;
 };
 
 class LegacyEllipsisBoxPainter : public EllipsisBoxPainter<InlineIterator::BoxLegacyPath> {
 public:
-    LegacyEllipsisBoxPainter(const LegacyEllipsisBox&, PaintInfo&, const LayoutPoint& paintOffset);
+    LegacyEllipsisBoxPainter(const LegacyEllipsisBox&, PaintInfo&, const LayoutPoint& paintOffset, RenderObject::HighlightState selectionState, Color selectionForegroundColor, Color selectionBackgroundColor);
 };
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 class ModernEllipsisBoxPainter : public EllipsisBoxPainter<InlineIterator::BoxModernPath> {
 public:
-    ModernEllipsisBoxPainter(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&, PaintInfo&, const LayoutPoint& paintOffset);
+    ModernEllipsisBoxPainter(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&, PaintInfo&, const LayoutPoint& paintOffset, RenderObject::HighlightState selectionState, Color selectionForegroundColor, Color selectionBackgroundColor);
 };
 #endif
 
