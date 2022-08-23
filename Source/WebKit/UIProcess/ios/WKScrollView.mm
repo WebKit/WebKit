@@ -449,6 +449,13 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     return systemContentInset;
 }
 
+- (BOOL)isScrollEnabled
+{
+    if (!self.panGestureRecognizer.allowedTouchTypes.count)
+        return NO;
+    return [super isScrollEnabled];
+}
+
 - (void)setScrollEnabled:(BOOL)value
 {
     _scrollEnabledByClient = value;
