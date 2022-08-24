@@ -5,7 +5,7 @@
       function runTest()
       {
           if (window.internals)
-              internals.settings.setScrollAnimatorEnabled(false);
+              internals.settings.setScrollAnimatorEnabled(true);
           frames[0].focus();
           if (window.eventSender) {
               window.eventSender.keyDown("pageDown");

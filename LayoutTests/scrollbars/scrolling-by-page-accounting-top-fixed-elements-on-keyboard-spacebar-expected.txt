@@ -3,7 +3,7 @@ Test scrolling with page granularity by using the space bar excludes the height 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS Scrolled to 480
+PASS Scrolled to 560
 PASS successfullyParsed is true
 
 TEST COMPLETE

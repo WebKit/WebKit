@@ -56,14 +56,14 @@
 
                     failTimeoutId = setTimeout(function() {
                         testFailed("The scrollview failed to scroll in response to the event.");
-                        debug("window.scrollY = " + window.scrollY + " excepted value around " + (1000 - (window.innerHeight - 120)));
+                        debug("window.scrollY = " + window.scrollY + " excepted value around " + (1000 - (window.innerHeight - 40)));
                         finishJSTest();
                     }, 1000);
                 }
             }
 
             window.addEventListener("scroll", function() {
-                if (window.scrollY == 1000 - (window.innerHeight - 120)) {
+                if (window.scrollY == 1000 - (window.innerHeight - 40)) {
                     testPassed("Scrolled to " + window.scrollY);
                     clearTimeout(failTimeoutId);
                     finishJSTest();
