@@ -100,6 +100,7 @@ private:
     Ref<CSSValue> getBackgroundShorthandValue();
     Ref<CSSValue> getMaskShorthandValue();
     Ref<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&);
+    Ref<CSSValue> fontVariantShorthandValue();
 
     RefPtr<Element> m_element;
     PseudoId m_pseudoElementSpecifier;

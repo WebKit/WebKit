@@ -2188,190 +2188,18 @@ static Ref<CSSFontStyleValue> fontStyleFromStyle(const RenderStyle& style)
     return ComputedStyleExtractor::fontStyleFromStyleValue(style.fontDescription().italic(), style.fontDescription().fontStyleAxis());
 }
 
-static Ref<CSSValue> fontVariantFromStyle(const RenderStyle& style)
+Ref<CSSValue> ComputedStyleExtractor::fontVariantShorthandValue()
 {
-    if (style.fontDescription().variantSettings().isAllNormal())
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
-
     auto list = CSSValueList::createSpaceSeparated();
-
-    switch (style.fontDescription().variantCommonLigatures()) {
-    case FontVariantLigatures::Normal:
-        break;
-    case FontVariantLigatures::Yes:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueCommonLigatures));
-        break;
-    case FontVariantLigatures::No:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueNoCommonLigatures));
-        break;
+    auto shorthand = fontVariantShorthand();
+    for (size_t i = 0; i < shorthand.length(); ++i) {
+        auto value = propertyValue(shorthand.properties()[i], DoNotUpdateLayout);
+        if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(*value).valueID() == CSSValueNormal)
+            continue;
+        list->append(value.releaseNonNull());
     }
-
-    switch (style.fontDescription().variantDiscretionaryLigatures()) {
-    case FontVariantLigatures::Normal:
-        break;
-    case FontVariantLigatures::Yes:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueDiscretionaryLigatures));
-        break;
-    case FontVariantLigatures::No:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueNoDiscretionaryLigatures));
-        break;
-    }
-
-    switch (style.fontDescription().variantHistoricalLigatures()) {
-    case FontVariantLigatures::Normal:
-        break;
-    case FontVariantLigatures::Yes:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueHistoricalLigatures));
-        break;
-    case FontVariantLigatures::No:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueNoHistoricalLigatures));
-        break;
-    }
-
-    switch (style.fontDescription().variantContextualAlternates()) {
-    case FontVariantLigatures::Normal:
-        break;
-    case FontVariantLigatures::Yes:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueContextual));
-        break;
-    case FontVariantLigatures::No:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueNoContextual));
-        break;
-    }
-
-    switch (style.fontDescription().variantPosition()) {
-    case FontVariantPosition::Normal:
-        break;
-    case FontVariantPosition::Subscript:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSub));
-        break;
-    case FontVariantPosition::Superscript:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSuper));
-        break;
-    }
-
-    switch (style.fontDescription().variantCaps()) {
-    case FontVariantCaps::Normal:
-        break;
-    case FontVariantCaps::Small:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSmallCaps));
-        break;
-    case FontVariantCaps::AllSmall:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueAllSmallCaps));
-        break;
-    case FontVariantCaps::Petite:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValuePetiteCaps));
-        break;
-    case FontVariantCaps::AllPetite:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueAllPetiteCaps));
-        break;
-    case FontVariantCaps::Unicase:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueUnicase));
-        break;
-    case FontVariantCaps::Titling:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueTitlingCaps));
-        break;
-    }
-
-    switch (style.fontDescription().variantNumericFigure()) {
-    case FontVariantNumericFigure::Normal:
-        break;
-    case FontVariantNumericFigure::LiningNumbers:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueLiningNums));
-        break;
-    case FontVariantNumericFigure::OldStyleNumbers:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueOldstyleNums));
-        break;
-    }
-
-    switch (style.fontDescription().variantNumericSpacing()) {
-    case FontVariantNumericSpacing::Normal:
-        break;
-    case FontVariantNumericSpacing::ProportionalNumbers:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueProportionalNums));
-        break;
-    case FontVariantNumericSpacing::TabularNumbers:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueTabularNums));
-        break;
-    }
-
-    switch (style.fontDescription().variantNumericFraction()) {
-    case FontVariantNumericFraction::Normal:
-        break;
-    case FontVariantNumericFraction::DiagonalFractions:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueDiagonalFractions));
-        break;
-    case FontVariantNumericFraction::StackedFractions:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueStackedFractions));
-        break;
-    }
-
-    switch (style.fontDescription().variantNumericOrdinal()) {
-    case FontVariantNumericOrdinal::Normal:
-        break;
-    case FontVariantNumericOrdinal::Yes:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueOrdinal));
-        break;
-    }
-
-    switch (style.fontDescription().variantNumericSlashedZero()) {
-    case FontVariantNumericSlashedZero::Normal:
-        break;
-    case FontVariantNumericSlashedZero::Yes:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSlashedZero));
-        break;
-    }
-
-    switch (style.fontDescription().variantAlternates()) {
-    case FontVariantAlternates::Normal:
-        break;
-    case FontVariantAlternates::HistoricalForms:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueHistoricalForms));
-        break;
-    }
-
-    switch (style.fontDescription().variantEastAsianVariant()) {
-    case FontVariantEastAsianVariant::Normal:
-        break;
-    case FontVariantEastAsianVariant::Jis78:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueJis78));
-        break;
-    case FontVariantEastAsianVariant::Jis83:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueJis83));
-        break;
-    case FontVariantEastAsianVariant::Jis90:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueJis90));
-        break;
-    case FontVariantEastAsianVariant::Jis04:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueJis04));
-        break;
-    case FontVariantEastAsianVariant::Simplified:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSimplified));
-        break;
-    case FontVariantEastAsianVariant::Traditional:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueTraditional));
-        break;
-    }
-
-    switch (style.fontDescription().variantEastAsianWidth()) {
-    case FontVariantEastAsianWidth::Normal:
-        break;
-    case FontVariantEastAsianWidth::Full:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueFullWidth));
-        break;
-    case FontVariantEastAsianWidth::Proportional:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueProportionalWidth));
-        break;
-    }
-
-    switch (style.fontDescription().variantEastAsianRuby()) {
-    case FontVariantEastAsianRuby::Normal:
-        break;
-    case FontVariantEastAsianRuby::Yes:
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueRuby));
-        break;
-    }
-
+    if (!list->length())
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
     return list;
 }
 
@@ -3279,7 +3107,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyFontStretch:
             return fontStretchFromStyle(style);
         case CSSPropertyFontVariant:
-            return fontVariantFromStyle(style);
+            return fontVariantShorthandValue();
         case CSSPropertyFontWeight:
             return fontNonKeywordWeightFromStyle(style);
         case CSSPropertyFontPalette:
