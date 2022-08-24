@@ -5015,10 +5015,12 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
     def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         base_ref = self.getProperty('github.base.ref', f'origin/{DEFAULT_BRANCH}')
         head_ref = self.getProperty('github.head.ref', 'HEAD')
+        reviewers = self.getProperty('reviewers_full_names', None)
+        reviewer_error_msg = '' if reviewers else ' and no reviewer found'
 
         self.commands = []
         commands = [
-            f"git log {head_ref} ^{base_ref} | grep -q '{self.OOPS_RE}' && echo 'Commit message contains (OOPS!) and no reviewer found' || test $? -eq 1",
+            f"git log {head_ref} ^{base_ref} | grep -q '{self.OOPS_RE}' && echo 'Commit message contains (OOPS!){reviewer_error_msg}' || test $? -eq 1",
             "git log {} ^{} | grep -q '\\({}\\)' || echo 'No reviewer information in commit message'".format(
                 head_ref, base_ref,
                 '\\|'.join(self.REVIEWED_STRINGS),
