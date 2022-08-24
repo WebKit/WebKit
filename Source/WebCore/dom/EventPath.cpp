@@ -72,8 +72,8 @@ private:
 
     void checkConsistency(Node& currentTarget);
 
-    Node& m_relatedNode;
-    Node* m_retargetedRelatedNode;
+    Ref<Node> m_relatedNode;
+    RefPtr<Node> m_retargetedRelatedNode;
     Vector<TreeScope*, 8> m_ancestorTreeScopes;
     unsigned m_lowestCommonAncestorIndex { 0 };
     bool m_hasDifferentTreeRoot { false };
@@ -104,14 +104,14 @@ void EventPath::buildPath(Node& originalTarget, Event& event)
         return EventContext::Type::Normal;
     }();
 
-    Node* node = nodeOrHostIfPseudoElement(&originalTarget);
-    Node* target = node ? eventTargetRespectingTargetRules(*node) : nullptr;
+    RefPtr node = nodeOrHostIfPseudoElement(&originalTarget);
+    RefPtr target = node ? eventTargetRespectingTargetRules(*node) : nullptr;
     int closedShadowDepth = 0;
     // Depths are used to decided which nodes are excluded in event.composedPath when the tree is mutated during event dispatching.
     // They could be negative for nodes outside the shadow tree of the target node.
     while (node) {
         while (node) {
-            m_path.append(EventContext { contextType, *node, eventTargetRespectingTargetRules(*node), target, closedShadowDepth });
+            m_path.append(EventContext { contextType, *node, eventTargetRespectingTargetRules(*node), target.get(), closedShadowDepth });
 
             if (is<ShadowRoot>(*node))
                 break;
@@ -123,13 +123,13 @@ void EventPath::buildPath(Node& originalTarget, Event& event)
                     ASSERT(target);
                     if (target) {
                         if (auto* window = downcast<Document>(*node).domWindow())
-                            m_path.append(EventContext { EventContext::Type::Window, node, window, target, closedShadowDepth });
+                            m_path.append(EventContext { EventContext::Type::Window, node.get(), window, target.get(), closedShadowDepth });
                     }
                 }
                 return;
             }
 
-            if (auto* shadowRootOfParent = parent->shadowRoot(); UNLIKELY(shadowRootOfParent)) {
+            if (RefPtr shadowRootOfParent = parent->shadowRoot(); UNLIKELY(shadowRootOfParent)) {
                 if (auto* assignedSlot = shadowRootOfParent->findAssignedSlot(*node)) {
                     if (shadowRootOfParent->mode() != ShadowRootMode::Open)
                         closedShadowDepth++;
@@ -234,9 +234,9 @@ void EventPath::retargetTouchLists(const TouchEvent& event)
 // Any node whose depth computed in EventPath::buildPath is greater than the context object is excluded.
 // Because we can exit out of a closed shadow tree and re-enter another closed shadow tree via a slot,
 // we decrease the *allowed depth* whenever we moved to a "shallower" (closer-to-document) tree.
-Vector<EventTarget*> EventPath::computePathUnclosedToTarget(const EventTarget& target) const
+Vector<Ref<EventTarget>> EventPath::computePathUnclosedToTarget(const EventTarget& target) const
 {
-    Vector<EventTarget*> path;
+    Vector<Ref<EventTarget>> path;
     auto pathSize = m_path.size();
     RELEASE_ASSERT(pathSize);
     path.reserveInitialCapacity(pathSize);
@@ -255,7 +255,7 @@ Vector<EventTarget*> EventPath::computePathUnclosedToTarget(const EventTarget& t
         bool movedOutOfShadowTree = depth < currentDepthAllowed;
         if (movedOutOfShadowTree)
             currentDepthAllowed = depth;
-        path.uncheckedAppend(currentContext.currentTarget());
+        path.uncheckedAppend(*currentContext.currentTarget());
     };
 
     auto currentDepthAllowed = currentTargetDepth;
@@ -294,8 +294,8 @@ RelatedNodeRetargeter::RelatedNodeRetargeter(Node& relatedNode, Node& target)
     , m_retargetedRelatedNode(&relatedNode)
 {
     auto& targetTreeScope = target.treeScope();
-    TreeScope* currentTreeScope = &m_relatedNode.treeScope();
-    if (LIKELY(currentTreeScope == &targetTreeScope && target.isConnected() && m_relatedNode.isConnected()))
+    TreeScope* currentTreeScope = &m_relatedNode->treeScope();
+    if (LIKELY(currentTreeScope == &targetTreeScope && target.isConnected() && m_relatedNode->isConnected()))
         return;
 
     if (&currentTreeScope->documentScope() != &targetTreeScope.documentScope()) {
@@ -345,7 +345,7 @@ RelatedNodeRetargeter::RelatedNodeRetargeter(Node& relatedNode, Node& target)
 inline Node* RelatedNodeRetargeter::currentNode(Node& currentTarget)
 {
     checkConsistency(currentTarget);
-    return m_retargetedRelatedNode;
+    return m_retargetedRelatedNode.get();
 }
 
 void RelatedNodeRetargeter::moveToNewTreeScope(TreeScope* previousTreeScope, TreeScope& newTreeScope)
@@ -372,7 +372,7 @@ void RelatedNodeRetargeter::moveToNewTreeScope(TreeScope* previousTreeScope, Tre
                 ASSERT(&newTreeScope == &m_retargetedRelatedNode->treeScope());
             }
         } else
-            ASSERT(m_retargetedRelatedNode == &m_relatedNode);
+            ASSERT(m_retargetedRelatedNode == m_relatedNode.ptr());
     } else {
         ASSERT(previousTreeScope->parentTreeScope() == &newTreeScope);
         m_lowestCommonAncestorIndex++;
@@ -385,7 +385,7 @@ void RelatedNodeRetargeter::moveToNewTreeScope(TreeScope* previousTreeScope, Tre
 inline Node* RelatedNodeRetargeter::nodeInLowestCommonAncestor()
 {
     if (!m_lowestCommonAncestorIndex)
-        return &m_relatedNode;
+        return m_relatedNode.ptr();
     auto& rootNode = m_ancestorTreeScopes[m_lowestCommonAncestorIndex - 1]->rootNode();
     return downcast<ShadowRoot>(rootNode).host();
 }
@@ -393,7 +393,7 @@ inline Node* RelatedNodeRetargeter::nodeInLowestCommonAncestor()
 void RelatedNodeRetargeter::collectTreeScopes()
 {
     ASSERT(m_ancestorTreeScopes.isEmpty());
-    for (TreeScope* currentTreeScope = &m_relatedNode.treeScope(); currentTreeScope; currentTreeScope = currentTreeScope->parentTreeScope())
+    for (TreeScope* currentTreeScope = &m_relatedNode->treeScope(); currentTreeScope; currentTreeScope = currentTreeScope->parentTreeScope())
         m_ancestorTreeScopes.append(currentTreeScope);
     ASSERT_WITH_SECURITY_IMPLICATION(!m_ancestorTreeScopes.isEmpty());
 }
@@ -411,7 +411,7 @@ void RelatedNodeRetargeter::checkConsistency(Node& currentTarget)
     if (!m_retargetedRelatedNode)
         return;
     ASSERT(!currentTarget.isClosedShadowHidden(*m_retargetedRelatedNode));
-    ASSERT(m_retargetedRelatedNode == currentTarget.treeScope().retargetToScope(m_relatedNode).ptr());
+    ASSERT(m_retargetedRelatedNode == currentTarget.treeScope().retargetToScope(m_relatedNode.get()).ptr());
 }
 
 #endif // ASSERT_ENABLED
