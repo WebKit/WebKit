@@ -1679,7 +1679,7 @@ webkit.org/b/240123 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrat
 
 webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Pass Crash ]
 
-webkit.org/b/240821 [ Monterey Release ] webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Slow ]
+webkit.org/b/240821 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Pass Failure Timeout ]
 
 webkit.org/b/240830 [ Monterey ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer-offsets.html [ Pass Timeout ]
 
