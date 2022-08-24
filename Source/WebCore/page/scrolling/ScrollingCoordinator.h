@@ -108,6 +108,8 @@ public:
     virtual void willStartPlatformRenderingUpdate() { }
     virtual void didCompletePlatformRenderingUpdate() { }
 
+    virtual void setKeyboardScrollAnimationInProgress(ScrollableArea&, bool) { }
+
 #if ENABLE(KINETIC_SCROLLING)
     // Dispatched by the scrolling tree during handleWheelEvent. This is required as long as scrollbars are painted on the main thread.
     virtual void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) { }

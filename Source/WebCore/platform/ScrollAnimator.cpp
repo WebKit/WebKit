@@ -213,9 +213,9 @@ bool ScrollAnimator::handleSteppedScrolling(const PlatformWheelEvent& wheelEvent
     return handled;
 }
 
-void ScrollAnimator::stopKeyboardScrollAnimation()
+void ScrollAnimator::stopKeyboardScrollAnimation(Function<void()>&& callback)
 {
-    m_scrollController.stopKeyboardScrolling();
+    m_scrollController.stopKeyboardScrolling(WTFMove(callback));
 }
 
 #if ENABLE(TOUCH_EVENTS)

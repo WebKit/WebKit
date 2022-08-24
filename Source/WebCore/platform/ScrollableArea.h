@@ -100,7 +100,7 @@ public:
     void resnapAfterLayout();
     void doPostThumbMoveSnapping(ScrollbarOrientation);
 
-    void stopKeyboardScrollAnimation();
+    void stopKeyboardScrollAnimation(Function<void()>&&);
 
 #if ENABLE(TOUCH_EVENTS)
     virtual bool handleTouchEvent(const PlatformTouchEvent&);

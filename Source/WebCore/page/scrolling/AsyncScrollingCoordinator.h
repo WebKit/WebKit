@@ -73,6 +73,8 @@ public:
 
     virtual void hasNodeWithAnimatedScrollChanged(bool) { };
 
+    void setKeyboardScrollAnimationInProgress(ScrollableArea&, bool) override;
+
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);
 

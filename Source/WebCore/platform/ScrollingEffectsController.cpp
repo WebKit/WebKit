@@ -205,12 +205,12 @@ void ScrollingEffectsController::setIsAnimatingKeyboardScrolling(bool isAnimatin
     startOrStopAnimationCallbacks();
 }
 
-void ScrollingEffectsController::stopKeyboardScrolling()
+void ScrollingEffectsController::stopKeyboardScrolling(Function<void()>&& callback)
 {
     if (!m_isAnimatingKeyboardScrolling)
         return;
 
-    m_client.keyboardScrollingAnimator()->handleKeyUpEvent();
+    m_client.keyboardScrollingAnimator()->handleKeyUpEvent(WTFMove(callback));
 }
 
 void ScrollingEffectsController::contentsSizeChanged()

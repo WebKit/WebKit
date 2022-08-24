@@ -74,6 +74,17 @@ void AsyncScrollingCoordinator::scrollingThreadAddedPendingUpdate()
     scheduleRenderingUpdate();
 }
 
+void AsyncScrollingCoordinator::setKeyboardScrollAnimationInProgress(ScrollableArea& scrollableArea, bool inProgress)
+{
+    auto scrollingNodeID = scrollableArea.scrollingNodeID();
+    if (!scrollingNodeID)
+        return false;
+    auto* stateNode = downcast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
+    if (!stateNode)
+        return false;
+    stateNode->setKeyboardScrollAnimationInProgress(inProgress);
+}
+
 #if PLATFORM(COCOA)
 void AsyncScrollingCoordinator::handleWheelEventPhase(ScrollingNodeID nodeID, PlatformWheelEventPhase phase)
 {

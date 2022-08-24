@@ -2511,7 +2511,13 @@ void Page::stopKeyboardScrollAnimation()
         if (!frameView)
             continue;
 
-        frameView->stopKeyboardScrollAnimation();
+        frameView->stopKeyboardScrollAnimation([this] {
+            auto page = m_frame.page();
+            if (!page)
+                return;
+            if (auto scrollingCoordinator = m_frame.page()->scrollingCoordinator())
+                scrollingCoordinator->setKeyboardScrollAnimationInProgress(*(m_frame.view()), false);
+        });
 
         auto scrollableAreas = frameView->scrollableAreas();
         if (!scrollableAreas)
@@ -2520,7 +2526,13 @@ void Page::stopKeyboardScrollAnimation()
         for (auto& scrollableArea : *scrollableAreas) {
             // First call stopAsyncAnimatedScroll() to prepare for the keyboard scroller running on the scrolling thread.
             scrollableArea->stopAsyncAnimatedScroll();
-            scrollableArea->stopKeyboardScrollAnimation();
+            scrollableArea->stopKeyboardScrollAnimation([this] {
+                auto page = m_frame.page();
+                if (!page)
+                    return;
+                if (auto scrollingCoordinator = m_frame.page()->scrollingCoordinator())
+                    scrollingCoordinator->setKeyboardScrollAnimationInProgress(*(m_frame.view()), false);
+            });
         }
     }
 }

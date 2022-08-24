@@ -35,6 +35,7 @@
 #include "WebTouchEvent.h"
 #include "WebWheelEvent.h"
 #include <WebCore/DisplayUpdate.h>
+#include <WebCore/KeyboardScrollingAnimator.h>
 #include <WebCore/Page.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/MainThread.h>
@@ -104,6 +105,7 @@ void EventDispatcher::initializeConnection(IPC::Connection* connection)
 void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges, WheelEventOrigin wheelEventOrigin)
 {
     auto processingSteps = OptionSet<WebCore::WheelEventProcessingSteps> { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
+
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
     do {
         auto platformWheelEvent = platform(wheelEvent);

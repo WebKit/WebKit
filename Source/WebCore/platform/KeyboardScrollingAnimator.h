@@ -54,9 +54,10 @@ class KeyboardScrollingAnimator : public CanMakeWeakPtr<KeyboardScrollingAnimato
 public:
     KeyboardScrollingAnimator(ScrollAnimator&, ScrollingEffectsController&);
 
-    bool beginKeyboardScrollGesture(ScrollDirection, ScrollGranularity);
-    void handleKeyUpEvent();
+    bool beginKeyboardScrollGesture(ScrollDirection, ScrollGranularity, Function<void()>&&);
+    void handleKeyUpEvent(Function<void()>&&);
     void updateKeyboardScrollPosition(MonotonicTime);
+    WEBCORE_EXPORT void stopScrollingImmediately();
 
 private:
     void stopKeyboardScrollAnimation();
@@ -72,6 +73,7 @@ private:
     MonotonicTime m_timeAtLastFrame;
     FloatPoint m_idealPositionForMinimumTravel;
     FloatPoint m_idealPosition;
+    Function<void()> m_endOfKeyboardScrollCallback = { };
 };
 
 } // namespace WebCore

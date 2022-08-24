@@ -68,6 +68,9 @@ public:
 
     const ScrollableAreaParameters& scrollableAreaParameters() const { return m_scrollableAreaParameters; }
     WEBCORE_EXPORT void setScrollableAreaParameters(const ScrollableAreaParameters& params);
+    
+    bool keyboardScrollAnimationInProgress() const { return m_keyboardScrollAnimationInProgress; }
+    void setKeyboardScrollAnimationInProgress(bool);
 
 #if ENABLE(SCROLLING_THREAD)
     OptionSet<SynchronousScrollingReason> synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
@@ -124,6 +127,7 @@ private:
     LayerRepresentation m_scrolledContentsLayer;
     LayerRepresentation m_horizontalScrollbarLayer;
     LayerRepresentation m_verticalScrollbarLayer;
+    bool m_keyboardScrollAnimationInProgress;
 
 #if PLATFORM(MAC)
     RetainPtr<NSScrollerImp> m_verticalScrollerImp;
@@ -136,6 +140,7 @@ private:
     OptionSet<SynchronousScrollingReason> m_synchronousScrollingReasons;
 #endif
     bool m_isMonitoringWheelEvents { false };
+    bool m_keyboardScrollAnimationInProgress { false };
 };
 
 } // namespace WebCore

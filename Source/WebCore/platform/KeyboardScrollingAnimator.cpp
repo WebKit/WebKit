@@ -27,6 +27,7 @@
 #include "KeyboardScrollingAnimator.h"
 
 #include "EventNames.h"
+#include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "ScrollTypes.h"
 #include "ScrollableArea.h"
@@ -220,6 +221,7 @@ void KeyboardScrollingAnimator::updateKeyboardScrollPosition(MonotonicTime curre
     if (!m_scrollTriggeringKeyIsPressed && m_velocity.diagonalLengthSquared() < 1) {
         m_scrollController.didStopKeyboardScrolling();
         m_velocity = { };
+        m_endOfKeyboardScrollCallback();
     }
 }
 
@@ -260,7 +262,7 @@ std::optional<KeyboardScroll> KeyboardScrollingAnimator::makeKeyboardScroll(Scro
     return scroll;
 }
 
-bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direction, ScrollGranularity granularity)
+bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direction, ScrollGranularity granularity, Function<void()>&& callback)
 {
     auto scroll = makeKeyboardScroll(direction, granularity);
     if (!scroll)
@@ -270,9 +272,7 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
 
     auto scrollableDirections = scrollableDirectionsFromPosition(m_scrollAnimator.currentPosition());
     if (!scrollableDirections.at(boxSideForDirection(direction))) {
-        m_scrollTriggeringKeyIsPressed = false;
-        m_scrollController.didStopKeyboardScrolling();
-        m_velocity = { };
+        stopScrollingImmediately();
         return false;
     }
 
@@ -292,6 +292,8 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
 
     m_idealPositionForMinimumTravel = m_scrollAnimator.currentPosition() + m_currentKeyboardScroll->offset;
     m_scrollController.willBeginKeyboardScrolling();
+
+    callback();
 
     return true;
 }
@@ -339,13 +341,21 @@ void KeyboardScrollingAnimator::stopKeyboardScrollAnimation()
     m_currentKeyboardScroll = std::nullopt;
 }
 
-void KeyboardScrollingAnimator::handleKeyUpEvent()
+void KeyboardScrollingAnimator::handleKeyUpEvent(Function<void()>&& callback)
 {
     if (!m_scrollTriggeringKeyIsPressed)
         return;
 
-    stopKeyboardScrollAnimation();
+    m_endOfKeyboardScrollCallback = WTFMove(callback);
+
     m_scrollTriggeringKeyIsPressed = false;
+}
+
+void KeyboardScrollingAnimator::stopScrollingImmediately()
+{
+    m_scrollTriggeringKeyIsPressed = false;
+    m_scrollController.didStopKeyboardScrolling();
+    m_velocity = { };
 }
 
 } // namespace WebCore

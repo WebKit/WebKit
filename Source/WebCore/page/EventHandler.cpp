@@ -4339,17 +4339,33 @@ void EventHandler::stopKeyboardScrolling()
 {
     auto animator = m_frame.page()->currentKeyboardScrollingAnimator();
     if (animator)
-        animator->handleKeyUpEvent();
+        animator->handleKeyUpEvent([this] {
+            auto page = m_frame.page();
+            if (!page)
+                return;
+            if (auto scrollingCoordinator = m_frame.page()->scrollingCoordinator())
+                scrollingCoordinator->setKeyboardScrollAnimationInProgress(*(m_frame.view()), false);
+        });
 }
 
 bool EventHandler::beginKeyboardScrollGesture(KeyboardScrollingAnimator* animator, ScrollDirection direction, ScrollGranularity granularity)
 {
-    if (animator && animator->beginKeyboardScrollGesture(direction, granularity)) {
-        m_frame.page()->setCurrentKeyboardScrollingAnimator(animator);
-        return true;
+    bool scrollSuccessfullyStarted = false;
+
+    if (animator) {
+        scrollSuccessfullyStarted = animator->beginKeyboardScrollGesture(direction, granularity, [this] {
+            auto page = m_frame.page();
+            if (!page)
+                return;
+            if (auto scrollingCoordinator = m_frame.page()->scrollingCoordinator())
+                scrollingCoordinator->setKeyboardScrollAnimationInProgress(*(m_frame.view()), true);
+        });
     }
 
-    return false;
+    if (scrollSuccessfullyStarted)
+        m_frame.page()->setCurrentKeyboardScrollingAnimator(animator);
+
+    return scrollSuccessfullyStarted;
 }
 
 bool EventHandler::startKeyboardScrollAnimationOnDocument(ScrollDirection direction, ScrollGranularity granularity)

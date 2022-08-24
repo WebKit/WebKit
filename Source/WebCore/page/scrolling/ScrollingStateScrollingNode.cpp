@@ -47,6 +47,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_scrollPosition(stateNode.scrollPosition())
     , m_scrollOrigin(stateNode.scrollOrigin())
     , m_snapOffsetsInfo(stateNode.m_snapOffsetsInfo)
+    , m_KeyboardScrollAnimationInProgress(stateNode.keyboardScrollAnimationInProgress())
 #if PLATFORM(MAC)
     , m_verticalScrollerImp(stateNode.verticalScrollerImp())
     , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
@@ -99,7 +100,8 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateScrollingNode::applicableP
         Property::ScrolledContentsLayer,
         Property::HorizontalScrollbarLayer,
         Property::VerticalScrollbarLayer,
-        Property::PainterForScrollbar
+        Property::PainterForScrollbar,
+        Property::KeyboardScrollAnimationInProgress
     };
 
     auto properties = ScrollingStateNode::applicableProperties();
@@ -186,6 +188,15 @@ void ScrollingStateScrollingNode::setScrollableAreaParameters(const ScrollableAr
 
     m_scrollableAreaParameters = parameters;
     setPropertyChanged(Property::ScrollableAreaParams);
+}
+
+void ScrollingStateScrollingNode::setKeyboardScrollAnimationInProgress(bool inProgress)
+{
+    if (inProgress == m_keyboardScrollAnimationInProgress)
+        return;
+
+    m_keyboardScrollAnimationInProgress = inProgress;
+    setPropertyChanged(Property::KeyboardScrollAnimationInProgress);
 }
 
 #if ENABLE(SCROLLING_THREAD)
@@ -329,6 +340,9 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<Scrol
 
     if (m_isMonitoringWheelEvents)
         ts.dumpProperty("expects wheel event test trigger", m_isMonitoringWheelEvents);
+    
+    if (m_keyboardScrollAnimationInProgress)
+        ts.dumpProperty("keyboard scroll is in progress", m_keyboardScrollAnimationInProgress);
 
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeLayerIDs) {
         if (m_scrollContainerLayer.layerID())

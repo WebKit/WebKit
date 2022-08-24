@@ -140,7 +140,7 @@ public:
     void stopAnimatedScroll();
     void stopAnimatedNonRubberbandingScroll();
 
-    void stopKeyboardScrolling();
+    void stopKeyboardScrolling(Function<void()>&&);
 
     bool startMomentumScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const Function<FloatPoint(const FloatPoint&)>& destinationModifier);
 

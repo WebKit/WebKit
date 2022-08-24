@@ -215,9 +215,9 @@ bool ScrollableArea::handleWheelEventForScrolling(const PlatformWheelEvent& whee
     return handledEvent;
 }
 
-void ScrollableArea::stopKeyboardScrollAnimation()
+void ScrollableArea::stopKeyboardScrollAnimation(Function<void()>&& callback)
 {
-    scrollAnimator().stopKeyboardScrollAnimation();
+    scrollAnimator().stopKeyboardScrollAnimation(WTFMove(callback));
 }
 
 #if ENABLE(TOUCH_EVENTS)
