@@ -137,10 +137,15 @@ void Event::setCurrentTarget(EventTarget* currentTarget, std::optional<bool> isI
     m_currentTargetIsInShadowTree = isInShadowTree ? *isInShadowTree : (is<Node>(currentTarget) && downcast<Node>(*currentTarget).isInShadowTree());
 }
 
-Vector<EventTarget*> Event::composedPath() const
+void Event::setEventPath(const EventPath& path)
+{
+    m_eventPath = &path;
+}
+
+Vector<Ref<EventTarget>> Event::composedPath() const
 {
     if (!m_eventPath)
-        return Vector<EventTarget*>();
+        return Vector<Ref<EventTarget>>();
     return m_eventPath->computePathUnclosedToTarget(*m_currentTarget);
 }
 
