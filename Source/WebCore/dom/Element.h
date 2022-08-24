@@ -523,11 +523,6 @@ public:
 
     virtual bool childShouldCreateRenderer(const Node&) const;
 
-    bool hasPendingResources() const { return hasNodeFlag(NodeFlag::HasPendingResources); }
-    void setHasPendingResources() { setNodeFlag(NodeFlag::HasPendingResources); }
-    void clearHasPendingResources() { clearNodeFlag(NodeFlag::HasPendingResources); }
-    virtual void buildPendingResource() { };
-
     KeyframeEffectStack* keyframeEffectStack(PseudoId) const;
     KeyframeEffectStack& ensureKeyframeEffectStack(PseudoId);
     bool hasKeyframeEffects(PseudoId) const;

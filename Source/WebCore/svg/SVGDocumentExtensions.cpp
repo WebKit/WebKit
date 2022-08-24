@@ -139,12 +139,12 @@ void SVGDocumentExtensions::reportError(const String& message)
     reportMessage(m_document, MessageLevel::Error, "Error: " + message);
 }
 
-void SVGDocumentExtensions::addPendingResource(const AtomString& id, Element& element)
+void SVGDocumentExtensions::addPendingResource(const AtomString& id, SVGElement& element)
 {
     if (id.isEmpty())
         return;
 
-    auto result = m_pendingResources.add(id, WeakHashSet<Element> { });
+    auto result = m_pendingResources.add(id, WeakHashSet<SVGElement> { });
     result.iterator->value.add(element);
 
     element.setHasPendingResources();
@@ -158,7 +158,7 @@ bool SVGDocumentExtensions::isIdOfPendingResource(const AtomString& id) const
     return m_pendingResources.contains(id);
 }
 
-bool SVGDocumentExtensions::isElementWithPendingResources(Element& element) const
+bool SVGDocumentExtensions::isElementWithPendingResources(SVGElement& element) const
 {
     // This algorithm takes time proportional to the number of pending resources and need not.
     // If performance becomes an issue we can keep a counted set of elements and answer the question efficiently.
@@ -167,7 +167,7 @@ bool SVGDocumentExtensions::isElementWithPendingResources(Element& element) cons
     });
 }
 
-bool SVGDocumentExtensions::isPendingResource(Element& element, const AtomString& id) const
+bool SVGDocumentExtensions::isPendingResource(SVGElement& element, const AtomString& id) const
 {
     if (id.isEmpty())
         return false;
@@ -179,13 +179,13 @@ bool SVGDocumentExtensions::isPendingResource(Element& element, const AtomString
     return it->value.contains(element);
 }
 
-void SVGDocumentExtensions::clearHasPendingResourcesIfPossible(Element& element)
+void SVGDocumentExtensions::clearHasPendingResourcesIfPossible(SVGElement& element)
 {
     if (!isElementWithPendingResources(element))
         element.clearHasPendingResources();
 }
 
-void SVGDocumentExtensions::removeElementFromPendingResources(Element& element)
+void SVGDocumentExtensions::removeElementFromPendingResources(SVGElement& element)
 {
     // Remove the element from pending resources.
     if (!m_pendingResources.isEmpty() && element.hasPendingResources()) {
@@ -232,7 +232,7 @@ void SVGDocumentExtensions::markPendingResourcesForRemoval(const AtomString& id)
         m_pendingResourcesForRemoval.add(id, WTFMove(existing));
 }
 
-RefPtr<Element> SVGDocumentExtensions::takeElementFromPendingResourcesForRemovalMap(const AtomString& id)
+RefPtr<SVGElement> SVGDocumentExtensions::takeElementFromPendingResourcesForRemovalMap(const AtomString& id)
 {
     if (id.isEmpty())
         return nullptr;

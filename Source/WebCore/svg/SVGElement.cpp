@@ -178,6 +178,11 @@ SVGElement::~SVGElement()
         m_svgRareData = nullptr;
     }
     document().accessSVGExtensions().removeElementToRebuild(*this);
+
+    if (hasPendingResources()) {
+        document().accessSVGExtensions().removeElementFromPendingResources(*this);
+        ASSERT(!hasPendingResources());
+    }
 }
 
 void SVGElement::willRecalcStyle(Style::Change change)
@@ -257,6 +262,9 @@ void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& old
         updateRelativeLengthsInformation(false, *this);
 
     StyledElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+
+    if (hasPendingResources())
+        document().accessSVGExtensions().removeElementFromPendingResources(*this);
 
     if (removalType.disconnectedFromDocument) {
         auto& extensions = document().accessSVGExtensions();

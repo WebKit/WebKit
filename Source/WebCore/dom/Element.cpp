@@ -255,11 +255,6 @@ Element::~Element()
             map->clearElement();
     }
 #endif
-
-    if (hasPendingResources()) {
-        document().accessSVGExtensions().removeElementFromPendingResources(*this);
-        ASSERT(!hasPendingResources());
-    }
 }
 
 inline ElementRareData& Element::ensureElementRareData()
@@ -2577,9 +2572,6 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     clearAfterPseudoElement();
 
     ContainerNode::removedFromAncestor(removalType, oldParentOfRemovedTree);
-
-    if (hasPendingResources())
-        document().accessSVGExtensions().removeElementFromPendingResources(*this);
 
     Styleable::fromElement(*this).elementWasRemoved();
 

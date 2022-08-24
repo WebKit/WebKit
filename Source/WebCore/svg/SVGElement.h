@@ -66,6 +66,11 @@ public:
     void setInstanceUpdatesBlocked(bool);
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
 
+    bool hasPendingResources() const { return hasNodeFlag(NodeFlag::HasPendingResources); }
+    void setHasPendingResources() { setNodeFlag(NodeFlag::HasPendingResources); }
+    void clearHasPendingResources() { clearNodeFlag(NodeFlag::HasPendingResources); }
+    virtual void buildPendingResource() { }
+
     virtual bool isSVGGraphicsElement() const { return false; }
     virtual bool isSVGGeometryElement() const { return false; }
     virtual bool isFilterEffect() const { return false; }
