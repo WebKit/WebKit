@@ -327,12 +327,6 @@ void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedNam
     } else if (name == cellspacingAttr) {
         if (!value.isEmpty())
             addHTMLPixelsToStyle(style, CSSPropertyBorderSpacing, value);
-    } else if (name == vspaceAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
-        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
-    } else if (name == hspaceAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
-        addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
     } else if (name == alignAttr) {
         if (!value.isEmpty()) {
             if (equalLettersIgnoringASCIICase(value, "center"_s)) {
