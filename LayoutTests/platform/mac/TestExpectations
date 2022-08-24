@@ -2280,7 +2280,7 @@ webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Tim
 
 webkit.org/b/240989 http/tests/media/hls/hls-webvtt-flashing.html [ Pass Failure ]
 
-[ Monterey+ ] fast/text/bulgarian-system-language-shaping.html [ Pass ]
+webkit.org/b/241253 [ Monterey+ ] fast/text/bulgarian-system-language-shaping.html [ Pass ]
 
 webkit.org/b/242249 [ BigSur+ ] webanimations/accelerated-animation-after-forward-filling-animation.html [ Pass ImageOnlyFailure ]
 

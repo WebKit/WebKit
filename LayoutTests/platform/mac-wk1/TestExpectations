@@ -1933,3 +1933,5 @@ webkit.org/b/244230 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 webkit.org/b/244230 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/history-pushstate.html [ Pass Failure ]
 
 webkit.org/b/244277 http/tests/webgpu/webgpu/api/validation/createTexture.html [ Pass Timeout Crash ]
+
+webkit.org/b/241253 fast/text/bulgarian-system-language-shaping.html [ Pass ]
