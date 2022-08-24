@@ -500,7 +500,7 @@ inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instanc
         WASM_THROW(Wasm::ExceptionType::NullTableEntry);
 
     const auto& callSignature = CALLEE()->signature(typeIndex);
-    if (callSignature != Wasm::TypeInformation::getFunctionSignature(function.typeIndex))
+    if (callSignature.index() != function.typeIndex)
         WASM_THROW(Wasm::ExceptionType::BadSignature);
 
     if (targetInstance != instance)
@@ -541,7 +541,7 @@ inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* ca
     if (calleeInstance != callerInstance)
         calleeInstance->setCachedStackLimit(callerInstance->cachedStackLimit());
 
-    ASSERT(Wasm::TypeInformation::getFunctionSignature(function.typeIndex) == CALLEE()->signature(typeIndex));
+    ASSERT(function.typeIndex == CALLEE()->signature(typeIndex).index());
     UNUSED_PARAM(typeIndex);
     WASM_CALL_RETURN(calleeInstance, function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
 }

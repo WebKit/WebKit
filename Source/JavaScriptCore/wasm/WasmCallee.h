@@ -265,7 +265,7 @@ public:
 
     LLIntTierUpCounter& tierUpCounter() { return m_tierUpCounter; }
 
-    const FunctionSignature& signature(unsigned index) const
+    const TypeDefinition& signature(unsigned index) const
     {
         return *m_signatures[index];
     }
@@ -304,7 +304,7 @@ private:
     std::unique_ptr<WasmInstructionStream> m_instructions;
     const void* m_instructionsRawPointer { nullptr };
     FixedVector<WasmInstructionStream::Offset> m_jumpTargets;
-    FixedVector<const FunctionSignature*> m_signatures;
+    FixedVector<const TypeDefinition*> m_signatures;
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     LLIntTierUpCounter m_tierUpCounter;
     FixedVector<JumpTable> m_jumpTables;

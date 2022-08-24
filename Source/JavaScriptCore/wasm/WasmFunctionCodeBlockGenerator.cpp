@@ -51,7 +51,7 @@ WasmInstructionStream::Offset FunctionCodeBlockGenerator::outOfLineJumpOffset(Wa
     return m_outOfLineJumpTargets.get(bytecodeOffset);
 }
 
-unsigned FunctionCodeBlockGenerator::addSignature(const FunctionSignature& signature)
+unsigned FunctionCodeBlockGenerator::addSignature(const TypeDefinition& signature)
 {
     unsigned index = m_signatures.size();
     m_signatures.append(&signature);
