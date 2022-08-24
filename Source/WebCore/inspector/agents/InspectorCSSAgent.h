@@ -35,7 +35,9 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -50,6 +52,7 @@ class CSSStyleRule;
 class CSSStyleSheet;
 class Document;
 class Element;
+class EventTarget;
 class Node;
 class NodeList;
 class RenderObject;
@@ -86,8 +89,6 @@ public:
 
     static CSSStyleRule* asCSSStyleRule(CSSRule&);
 
-    static RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> layoutFlagsForNode(Node&);
-
     static std::optional<Inspector::Protocol::CSS::PseudoId> protocolValueForPseudoId(PseudoId);
 
     // InspectorAgentBase
@@ -123,10 +124,21 @@ public:
     void activeStyleSheetsUpdated(Document&);
     bool forcePseudoState(const Element&, CSSSelector::PseudoClassType);
     void didChangeRendererForDOMNode(Node&);
+    void didAddEventListener(EventTarget&);
+    void willRemoveEventListener(EventTarget&);
 
     // InspectorDOMAgent hooks
     void didRemoveDOMNode(Node&, Inspector::Protocol::DOM::NodeId);
     void didModifyDOMAttr(Element&);
+
+    enum class LayoutFlag : uint8_t {
+        Rendered = 1 << 0,
+        Flex = 1 << 1,
+        Grid = 1 << 2,
+        Event = 1 << 3,
+    };
+    OptionSet<LayoutFlag> layoutFlagsForNode(Node&);
+    RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> protocolLayoutFlagsForNode(Node&);
 
     void reset();
 
@@ -162,6 +174,7 @@ private:
     Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> buildArrayForMatchedRuleList(const Vector<RefPtr<const StyleRule>>&, Style::Resolver&, Element&, PseudoId);
     RefPtr<Inspector::Protocol::CSS::CSSStyle> buildObjectForAttributesStyle(StyledElement&);
 
+    void nodeHasLayoutFlagsChange(Node&);
     void nodesWithPendingLayoutFlagsChangeDispatchTimerFired();
 
     void resetPseudoStates();
@@ -181,6 +194,7 @@ private:
     int m_lastStyleSheetId { 1 };
     bool m_creatingViaInspectorStyleSheet { false };
 
+    WeakHashMap<Node, OptionSet<LayoutFlag>> m_lastLayoutFlagsForNode;
     WeakHashSet<Node> m_nodesWithPendingLayoutFlagsChange;
     Timer m_nodesWithPendingLayoutFlagsChangeDispatchTimer;
 

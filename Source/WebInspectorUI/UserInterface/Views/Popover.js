@@ -114,7 +114,7 @@ WI.Popover = class Popover extends WI.Object
             previouslyFocusedElement.focus();
     }
 
-    present(targetFrame, preferredEdges)
+    present(targetFrame, preferredEdges, {updateContent, shouldAnimate} = {})
     {
         this._targetFrame = targetFrame;
         this._preferredEdges = preferredEdges;
@@ -124,7 +124,10 @@ WI.Popover = class Popover extends WI.Object
 
         this._addListenersIfNeeded();
 
-        this._update();
+        if (updateContent && this.visible)
+            this.update(shouldAnimate);
+        else
+            this._update(shouldAnimate);
     }
 
     presentNewContentWithFrame(content, targetFrame, preferredEdges)

@@ -353,6 +353,8 @@ void InspectorInstrumentation::didAddEventListenerImpl(InstrumentingAgents& inst
         webDebuggerAgent->didAddEventListener(target, eventType, listener, capture);
     if (auto* domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->didAddEventListener(target);
+    if (auto* cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->didAddEventListener(target);
 }
 
 void InspectorInstrumentation::willRemoveEventListenerImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
@@ -361,6 +363,8 @@ void InspectorInstrumentation::willRemoveEventListenerImpl(InstrumentingAgents& 
         webDebuggerAgent->willRemoveEventListener(target, eventType, listener, capture);
     if (auto* domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->willRemoveEventListener(target, eventType, listener, capture);
+    if (auto* cssAgent = instrumentingAgents.enabledCSSAgent())
+        cssAgent->willRemoveEventListener(target);
 }
 
 bool InspectorInstrumentation::isEventListenerDisabledImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)

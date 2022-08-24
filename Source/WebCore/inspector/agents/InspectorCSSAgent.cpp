@@ -44,6 +44,7 @@
 #include "ElementAncestorIterator.h"
 #include "ElementChildIterator.h"
 #include "ElementRareData.h"
+#include "EventTarget.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "FontCascade.h"
@@ -297,6 +298,7 @@ void InspectorCSSAgent::reset()
     m_nodeToInspectorStyleSheet.clear();
     m_documentToInspectorStyleSheet.clear();
     m_documentToKnownCSSStyleSheets.clear();
+    m_lastLayoutFlagsForNode.clear();
     m_nodesWithPendingLayoutFlagsChange.clear();
     if (m_nodesWithPendingLayoutFlagsChangeDispatchTimer.isActive())
         m_nodesWithPendingLayoutFlagsChangeDispatchTimer.stop();
@@ -936,36 +938,83 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM:
     return { };
 }
 
-static std::optional<Protocol::CSS::LayoutFlag> layoutFlagContextTypeForRenderer(RenderObject* renderer)
+static std::optional<InspectorCSSAgent::LayoutFlag> layoutFlagContextType(RenderObject* renderer)
 {
     if (auto* renderFlexibleBox = dynamicDowncast<RenderFlexibleBox>(renderer)) {
         // Subclasses of RenderFlexibleBox (buttons, selection inputs, etc.) should not be considered flex containers,
         // as it is an internal implementation detail.
         if (renderFlexibleBox->isFlexibleBoxImpl())
             return std::nullopt;
-        return Protocol::CSS::LayoutFlag::Flex;
+        return InspectorCSSAgent::LayoutFlag::Flex;
     }
     if (is<RenderGrid>(renderer))
-        return Protocol::CSS::LayoutFlag::Grid;
+        return InspectorCSSAgent::LayoutFlag::Grid;
     return std::nullopt;
 }
 
-RefPtr<JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>> InspectorCSSAgent::layoutFlagsForNode(Node& node)
+static bool layoutFlagsContainLayoutContextType(OptionSet<InspectorCSSAgent::LayoutFlag> layoutFlags)
+{
+    return layoutFlags.containsAny({
+        InspectorCSSAgent::LayoutFlag::Flex,
+        InspectorCSSAgent::LayoutFlag::Grid,
+    });
+}
+
+static bool hasJSEventListener(Node& node)
+{
+    if (const auto* eventTargetData = node.eventTargetData()) {
+        for (const auto& type : eventTargetData->eventListenerMap.eventTypes()) {
+            for (const auto& listener : node.eventListeners(type)) {
+                if (listener->callback().type() == EventListener::JSEventListenerType)
+                    return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+OptionSet<InspectorCSSAgent::LayoutFlag> InspectorCSSAgent::layoutFlagsForNode(Node& node)
 {
     auto* renderer = node.renderer();
 
-    auto layoutFlags = JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>::create();
+    OptionSet<LayoutFlag> layoutFlags;
 
     if (renderer)
-        layoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Rendered));
+        layoutFlags.add(InspectorCSSAgent::LayoutFlag::Rendered);
 
-    if (auto layoutFlagContextType = layoutFlagContextTypeForRenderer(renderer))
-        layoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(*layoutFlagContextType));
+    if (auto contextType = layoutFlagContextType(renderer))
+        layoutFlags.add(*contextType);
 
-    if (!layoutFlags->length())
-        return nullptr;
+    if (hasJSEventListener(node))
+        layoutFlags.add(InspectorCSSAgent::LayoutFlag::Event);
 
     return layoutFlags;
+}
+
+static RefPtr<JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>> toProtocol(OptionSet<InspectorCSSAgent::LayoutFlag> layoutFlags)
+{
+    if (layoutFlags.isEmpty())
+        return nullptr;
+
+    auto protocolLayoutFlags = JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>::create();
+    if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Rendered))
+        protocolLayoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Rendered));
+    if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Flex))
+        protocolLayoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Flex));
+    if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Grid))
+        protocolLayoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Grid));
+    if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Event))
+        protocolLayoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Event));
+    return protocolLayoutFlags;
+}
+
+RefPtr<JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>> InspectorCSSAgent::protocolLayoutFlagsForNode(Node& node)
+{
+    auto layoutFlags = layoutFlagsForNode(node);
+    if (!layoutFlags.isEmpty())
+        m_lastLayoutFlagsForNode.set(node, layoutFlags);
+    return toProtocol(layoutFlags);
 }
 
 static void pushChildrenNodesToFrontendIfLayoutFlagIsRelevant(InspectorDOMAgent& domAgent, ContainerNode& node)
@@ -973,7 +1022,7 @@ static void pushChildrenNodesToFrontendIfLayoutFlagIsRelevant(InspectorDOMAgent&
     for (auto& child : childrenOfType<Element>(node))
         pushChildrenNodesToFrontendIfLayoutFlagIsRelevant(domAgent, child);
     
-    if (layoutFlagContextTypeForRenderer(node.renderer()))
+    if (layoutFlagContextType(node.renderer()))
         domAgent.pushNodeToFrontend(&node);
 }
 
@@ -998,6 +1047,22 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::setLayoutContextTypeChangedMode
 
 void InspectorCSSAgent::didChangeRendererForDOMNode(Node& node)
 {
+    nodeHasLayoutFlagsChange(node);
+}
+
+void InspectorCSSAgent::didAddEventListener(EventTarget& target)
+{
+    if (auto* node = dynamicDowncast<Node>(target))
+        nodeHasLayoutFlagsChange(*node);
+}
+void InspectorCSSAgent::willRemoveEventListener(EventTarget& target)
+{
+    if (auto* node = dynamicDowncast<Node>(target))
+        nodeHasLayoutFlagsChange(*node);
+}
+
+void InspectorCSSAgent::nodeHasLayoutFlagsChange(Node& node)
+{
     m_nodesWithPendingLayoutFlagsChange.add(node);
     if (!m_nodesWithPendingLayoutFlagsChangeDispatchTimer.isActive())
         m_nodesWithPendingLayoutFlagsChangeDispatchTimer.startOneShot(0_s);
@@ -1010,15 +1075,21 @@ void InspectorCSSAgent::nodesWithPendingLayoutFlagsChangeDispatchTimerFired()
         return;
 
     for (auto&& node : std::exchange(m_nodesWithPendingLayoutFlagsChange, { })) {
+        auto layoutFlags = layoutFlagsForNode(node);
+        auto lastLayoutFlags = m_lastLayoutFlagsForNode.get(node);
+        if (lastLayoutFlags == layoutFlags)
+            continue;
+
         auto nodeId = domAgent->boundNodeId(&node);
-        if (!nodeId && m_layoutContextTypeChangedMode == Protocol::CSS::LayoutContextTypeChangedMode::All && layoutFlagContextTypeForRenderer(node.renderer())) {
+        if (!nodeId && m_layoutContextTypeChangedMode == Protocol::CSS::LayoutContextTypeChangedMode::All && layoutFlagsContainLayoutContextType(layoutFlags)) {
             // FIXME: <https://webkit.org/b/189687> Preserve DOM.NodeId if a node is removed and re-added
             nodeId = domAgent->identifierForNode(node);
         }
         if (!nodeId)
             continue;
 
-        m_frontendDispatcher->nodeLayoutFlagsChanged(nodeId, layoutFlagsForNode(node));
+        m_lastLayoutFlagsForNode.set(node, layoutFlags);
+        m_frontendDispatcher->nodeLayoutFlagsChanged(nodeId, toProtocol(layoutFlags));
     }
 }
 

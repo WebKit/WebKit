@@ -23,6 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.event-listener-section > .header > .event-listener-options {
+    display: none;
+    width: 15px;
+    height: 15px;
+}
+
+.event-listener-section:hover > .header > .event-listener-options {
+    display: block;
+}
+
 .event-listener-section > .content > .group > .row.simple > .value {
     white-space: nowrap;
     overflow: hidden;

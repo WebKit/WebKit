@@ -48,6 +48,18 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-with
     color: var(--text-color);
 }
 
+.event-badge-popover-content {
+    overflow: hidden;
+}
+
+.event-badge-popover-content > .details-section.event-listeners {
+    max-height: calc(100vh - var(--tab-bar-height) - var(--console-prompt-min-height));
+    overflow: auto;
+}
+
+.event-badge-popover-content > .details-section.event-listeners .details-section {
+    border-inline: 1px solid var(--border-color);
+}
 
 @media (prefers-color-scheme: dark) {
     .tree-outline.dom .badge {

@@ -2033,6 +2033,11 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             text = WI.unlocalizedString("grid");
             handleClick = this._layoutBadgeClicked.bind(this);
             break;
+
+        case WI.DOMTreeElement.BadgeType.Event:
+            text = WI.UIString("Event");
+            handleClick = this._handleEventBadgeClicked.bind(this);
+            break;
         }
 
         let badgeElement = this.title.appendChild(document.createElement("span"));
@@ -2040,7 +2045,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         badgeElement.textContent = text;
         if (handleClick) {
             badgeElement.addEventListener("click", handleClick, true);
-            badgeElement.addEventListener("dblclick", this._layoutBadgeDoubleClicked, true);
+            badgeElement.addEventListener("dblclick", this._handleBadgeDoubleClicked, true);
         }
         this._elementForBadgeType.set(badgeType, badgeElement);
     }
@@ -2064,6 +2069,10 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
             case WI.DOMNode.LayoutFlag.Flex:
                 this._createBadge(WI.DOMTreeElement.BadgeType.Flex);
+                break;
+
+            case WI.DOMNode.LayoutFlag.Event:
+                this._createBadge(WI.DOMTreeElement.BadgeType.Event);
                 break;
             }
         }
@@ -2098,7 +2107,40 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             this.representedObject.showLayoutOverlay();
     }
 
-    _layoutBadgeDoubleClicked(event)
+    async _handleEventBadgeClicked(event)
+    {
+        let {listeners} = await this.representedObject.getEventListeners({includeAncestors: false});
+        console.assert(listeners.length, listeners);
+
+        const preferredEdges = [WI.RectEdge.MAX_X, WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y];
+        let calculateTargetFrame = () => {
+            return WI.Rect.rectFromClientRect(this._elementForBadgeType.get(WI.DOMTreeElement.BadgeType.Event).getBoundingClientRect()).pad(2);
+        };
+
+        let popover = new WI.Popover(this);
+        popover.windowResizeHandler = function(event) {
+            popover.present(calculateTargetFrame(), preferredEdges, {updateContent: true, shouldAnimate: false});
+        };
+
+        let sections = WI.EventListenerSectionGroup.groupIntoSectionsByEvent(listeners);
+        for (let section of sections) {
+            section.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, function(event) {
+                const shouldAnimate = false;
+                this.update(shouldAnimate);
+            }, popover);
+        }
+
+        const title = "";
+        let detailsSection = new WI.DetailsSection("event-listeners", title, sections);
+
+        let contentElement = document.createElement("div");
+        contentElement.className = "event-badge-popover-content";
+        contentElement.appendChild(detailsSection.element);
+
+        popover.presentNewContentWithFrame(contentElement, calculateTargetFrame(), preferredEdges)
+    }
+
+    _handleBadgeDoubleClicked(event)
     {
         event.stop();
     }
@@ -2163,8 +2205,9 @@ WI.DOMTreeElement.BreakpointStatus = {
 WI.DOMTreeElement.BadgeType = {
     Flex: "flex",
     Grid: "grid",
+    Event: "event",
 };
-WI.settings.enabledDOMTreeBadgeTypes = new WI.Setting("enabled-dom-tree-badge-types", [WI.DOMTreeElement.BadgeType.Flex, WI.DOMTreeElement.BadgeType.Grid]);
+WI.settings.enabledDOMTreeBadgeTypes = new WI.Setting("enabled-dom-tree-badge-types", [WI.DOMTreeElement.BadgeType.Flex, WI.DOMTreeElement.BadgeType.Grid, WI.DOMTreeElement.BadgeType.Event]);
 
 WI.DOMTreeElement.HighlightStyleClassName = "highlight";
 WI.DOMTreeElement.SearchHighlightStyleClassName = "search-highlight";
