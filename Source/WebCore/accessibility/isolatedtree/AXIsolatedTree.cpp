@@ -546,7 +546,11 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     if (axAncestor != &axObject) {
         AXLOG(makeString("Original object with ID ", axObject.objectID().loggingString(), " wasn't in the isolated tree, so instead updating the closest in-isolated-tree ancestor:"));
         AXLOG(axAncestor);
-        for (auto& child : axObject.children()) {
+
+        // An explicit copy is necessary here because the nested calls to updateChildren
+        // can cause this objects children to be invalidated as we iterate.
+        auto childrenCopy = axObject.children();
+        for (auto& child : childrenCopy) {
             Ref liveChild = downcast<AccessibilityObject>(*child);
             if (liveChild->childrenInitialized())
                 continue;
