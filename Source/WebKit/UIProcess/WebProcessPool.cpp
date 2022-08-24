@@ -1816,8 +1816,6 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigat
             configuration().setClientWouldBenefitFromAutomaticProcessPrewarming(true);
         }
 
-        page->websiteDataStore().networkProcess().send(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process->coreProcessIdentifier(), RegistrableDomain(navigation->currentRequest().url())), 0);
-
         if (m_configuration->alwaysKeepAndReuseSwappedProcesses() && process.ptr() != sourceProcess.ptr()) {
             static std::once_flag onceFlag;
             std::call_once(onceFlag, [] {

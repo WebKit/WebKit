@@ -205,7 +205,6 @@ void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebP
 {
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
-    m_allowedFirstPartiesForCookies.remove(connection.webProcessIdentifier());
 }
 
 bool NetworkProcess::shouldTerminate()
@@ -337,9 +336,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     setPrivateClickMeasurementEnabled(parameters.enablePrivateClickMeasurement);
     m_ftpEnabled = parameters.ftpEnabled;
 
-    for (auto [processIdentifier, domain] : parameters.allowedFirstPartiesForCookies)
-        addAllowedFirstPartyForCookies(processIdentifier, WTFMove(domain));
-
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
 
@@ -394,36 +390,6 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
 
     if (auto* session = networkSession(sessionID))
         session->storageManager().startReceivingMessageFromConnection(connection.connection());
-}
-
-void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies)
-{
-    m_allowedFirstPartiesForCookies.ensure(processIdentifier, [] {
-        return HashSet<RegistrableDomain> { };
-    }).iterator->value.add(WTFMove(firstPartyForCookies));
-}
-
-bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty)
-{
-    if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-    auto iterator = m_allowedFirstPartiesForCookies.find(processIdentifier);
-    if (iterator == m_allowedFirstPartiesForCookies.end()) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-    if (firstParty.isNull())
-        return true; // FIXME: This shouldn't be allowed.
-    RegistrableDomain firstPartyDomain(firstParty);
-    if (!decltype(iterator->value)::isValidValue(firstPartyDomain)) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-    auto result = iterator->value.contains(firstPartyDomain);
-    ASSERT(result);
-    return result;
 }
 
 void NetworkProcess::clearCachedCredentials(PAL::SessionID sessionID)

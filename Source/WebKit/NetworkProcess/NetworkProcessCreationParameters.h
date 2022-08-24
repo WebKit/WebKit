@@ -86,8 +86,6 @@ struct NetworkProcessCreationParameters {
     bool enablePrivateClickMeasurement { true };
     bool ftpEnabled { false };
 
-    Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;
-
     Vector<WebsiteDataStoreParameters> websiteDataStoreParameters;
 };
 
