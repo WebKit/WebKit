@@ -47,8 +47,8 @@ public:
 
     ~CompressionStreamEncoder()
     {
-        if (initailized)
-            deflateEnd(&zstream);
+        if (m_initialized)
+            deflateEnd(&m_zstream);
     }
 
 private:
@@ -56,19 +56,22 @@ private:
     // Very small input sizes can result in a larger output than their input. This would require an additional 
     // encode call then, which is not desired.
     const size_t startingAllocationSize = 16384; // 16KB
+    const size_t maxAllocationSize = 1073741824; // 1GB
 
-    bool initailized { false };
-    bool finish { false };
-    z_stream zstream;
+
+    bool m_initialized { false };
+    bool m_finish { false };
+    z_stream m_zstream;
 
     Formats::CompressionFormat m_format;
 
-    ExceptionOr<Vector<uint8_t>> compress(const uint8_t* input, const size_t inputLength);
+    ExceptionOr<RefPtr<JSC::ArrayBuffer>> compress(const uint8_t* input, const size_t inputLength);
     ExceptionOr<bool> initialize();
 
     explicit CompressionStreamEncoder(unsigned char format) 
         : m_format(static_cast<Formats::CompressionFormat>(format))
     {
+        std::memset(&m_zstream, 0, sizeof(m_zstream));
     }
 };
 } // namespace WebCore
