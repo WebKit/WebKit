@@ -1,0 +1,43 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/client-redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive-target.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/force-load-at-top-target.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/force-load-at-top-target.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/force-load-at-top.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/force-load-at-top.js
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/iframe-scroll.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/iframe-target.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/iframes.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/navigate-back.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/no-force-load-at-top-target.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/no-force-load-at-top-target.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/non-html-documents.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/redirects-target.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/redirects-target2.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/redirects.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/same-document-tests.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-api.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-same-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-security.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-target.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/stash.js
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/stash.py

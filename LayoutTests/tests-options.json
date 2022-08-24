@@ -4856,6 +4856,12 @@
     "imported/w3c/web-platform-tests/resources/test/tests/unit/throwing-assertions.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/cache-storage/common.https.html": [
         "slow"
     ],
