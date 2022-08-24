@@ -247,6 +247,7 @@ LegacyInlineBox* LegacyInlineBox::previousLeafOnLine() const
 
 RenderObject::HighlightState LegacyInlineBox::selectionState() const
 {
+    ASSERT(!is<LegacyEllipsisBox>(*this));
     return renderer().selectionState();
 }
 

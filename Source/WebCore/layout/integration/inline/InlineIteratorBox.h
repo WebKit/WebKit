@@ -59,6 +59,8 @@ public:
     bool isText() const;
     bool isInlineBox() const;
     bool isRootInlineBox() const;
+    bool isEllipsisBox() const;
+    bool isLineBreak() const;
 
     FloatRect visualRect() const;
     FloatRect visualRectIgnoringBlockDirection() const;
@@ -71,7 +73,6 @@ public:
     float logicalHeight() const { return isHorizontal() ? visualRectIgnoringBlockDirection().height() : visualRectIgnoringBlockDirection().width(); }
 
     bool isHorizontal() const;
-    bool isLineBreak() const;
 
     unsigned minimumCaretOffset() const;
     unsigned maximumCaretOffset() const;
@@ -183,6 +184,13 @@ inline bool Box::isRootInlineBox() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.isRootInlineBox();
+    });
+}
+
+inline bool Box::isEllipsisBox() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) {
+        return path.isEllipsisBox();
     });
 }
 
