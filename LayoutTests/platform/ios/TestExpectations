@@ -3724,8 +3724,5 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/appearance-textfield-001.html [ ImageOnlyFailure ]
 webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-textfield-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/244134 animations/no-style-recalc-during-accelerated-animation.html [ Pass Failure ]
-webkit.org/b/244134 animations/steps-transform-rendering-updates.html [ Pass Failure ]
-
 webkit.org/b/244208 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass Failure Slow ]
 webkit.org/b/244208 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure Slow ]

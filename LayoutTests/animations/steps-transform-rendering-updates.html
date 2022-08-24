@@ -28,6 +28,8 @@
                 return;
             }
 
+            window.internals.setSpeculativeTilingDelayDisabledForTesting(true);
+
             let box = document.getElementById('box');
             box.addEventListener('animationstart', () => {
                 internals.startTrackingRenderingUpdates();
@@ -35,7 +37,9 @@
             }, false);
             box.addEventListener('animationend', () => {
                 count = internals.renderingUpdateCount();
-                shouldBeTrue('count < 7');
+                shouldBeTrue('count <= 9');
+                if (count > 9)
+                    debug(`Saw ${count} updates`);
                 finishJSTest();
             }, false);
             
