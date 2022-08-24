@@ -144,14 +144,14 @@ class User(object):
         if isinstance(other, str):
             ref_value = other
         elif isinstance(other, User):
-            ref_value = other.username or self.name
+            ref_value = str(other.username or self.name or '')
         elif other is None:
             ref_value = ''
         else:
             raise ValueError('Cannot compare {} with {}'.format(User, type(other)))
-        if (self.username or self.name) == ref_value:
+        if str(self.username or self.name or '') == str(ref_value):
             return 0
-        return 1 if (self.username or self.name) > ref_value else -1
+        return 1 if str(self.username or self.name or '') > ref_value else -1
 
     def __eq__(self, other):
         return self.__cmp__(other) == 0
