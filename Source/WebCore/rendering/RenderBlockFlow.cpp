@@ -2296,6 +2296,21 @@ FloatingObject* RenderBlockFlow::insertFloatingObject(RenderBox& floatBox)
     return m_floatingObjects->add(WTFMove(floatingObject));
 }
 
+FloatingObject& RenderBlockFlow::insertFloatingObjectForIFC(RenderBox& floatBox)
+{
+    ASSERT(floatBox.isFloating());
+
+    if (!m_floatingObjects)
+        createFloatingObjects();
+
+    auto& floatingObjectSet = m_floatingObjects->set();
+    auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(floatBox);
+    if (it != floatingObjectSet.end())
+        return *it->get();
+
+    return *m_floatingObjects->add(FloatingObject::create(floatBox));
+}
+
 void RenderBlockFlow::removeFloatingObject(RenderBox& floatBox)
 {
     if (m_floatingObjects) {

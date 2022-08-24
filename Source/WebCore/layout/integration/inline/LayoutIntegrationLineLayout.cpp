@@ -410,11 +410,21 @@ void LineLayout::constructContent()
     auto& boxAndRendererList = m_boxTree.boxAndRendererList();
     for (auto& boxAndRenderer : boxAndRendererList) {
         auto& layoutBox = boxAndRenderer.box.get();
-        if (!layoutBox.isReplacedBox())
+        if (!layoutBox.isReplacedBox() && !layoutBox.isFloatingPositioned())
             continue;
 
         auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);
-        auto topLeft = Layout::BoxGeometry::borderBoxTopLeft(m_inlineFormattingState.boxGeometry(layoutBox));
+        auto rect = LayoutRect { Layout::BoxGeometry::borderBoxRect(m_inlineFormattingState.boxGeometry(layoutBox)) };
+
+        if (layoutBox.isFloatingPositioned()) {
+            auto& floatingObject = flow().insertFloatingObjectForIFC(renderer);
+            auto visualRect = flow().style().isHorizontalWritingMode() ? rect : rect.transposedRect();
+            floatingObject.setFrameRect(visualRect);
+            floatingObject.setIsPlaced(true);
+            continue;
+        }
+
+        auto topLeft = rect.location();
         if (layoutBox.isOutOfFlowPositioned()) {
             auto& layer = *renderer.layer();
             layer.setStaticBlockPosition(topLeft.y());
