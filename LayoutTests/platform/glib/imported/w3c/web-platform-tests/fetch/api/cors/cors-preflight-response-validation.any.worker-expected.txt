@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: Header Access-Control-Allow-Headers has an invalid value: x-force-preflight,Bad value
-CONSOLE MESSAGE: Header Access-Control-Allow-Methods has an invalid value: Bad value
-
-PASS Preflight response with a bad Access-Control-Allow-Headers
-PASS Preflight response with a bad Access-Control-Allow-Methods
-

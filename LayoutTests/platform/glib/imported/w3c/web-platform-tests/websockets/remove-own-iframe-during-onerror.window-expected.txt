@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://web-platform.test:49001/does-not-exist' failed: The server did not accept the WebSocket handshake.
-
-PASS removing an iframe from within an onerror handler should work
-

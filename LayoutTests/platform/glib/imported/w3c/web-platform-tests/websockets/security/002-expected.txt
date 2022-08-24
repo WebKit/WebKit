@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Refused to set unsafe header "Sec-WebSocket-Key"
-
-PASS WebSockets: check Sec-WebSocket-Key
-

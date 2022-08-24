@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: Response served by service worker is opaque
-CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/simple.txt due to access control checks.
-CONSOLE MESSAGE: Response served by service worker is opaque
-CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/simple.txt due to access control checks.
-
-PASS Opaque responses should not be reused for XHRs, loading case
-PASS Opaque responses should not be reused for XHRs, done case
-

@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: Error resolving “nonexistent.web-platform.test”: No address associated with hostname
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://nonexistent.web-platform.test:8800/ due to access control checks.
-
-PASS XMLHttpRequest: event - error (order of events)
-

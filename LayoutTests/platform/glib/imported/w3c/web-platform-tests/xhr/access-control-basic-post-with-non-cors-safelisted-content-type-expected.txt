@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: Preflight response is not successful. Status code: 400
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.web-platform.test:8800/xhr/resources/access-control-basic-options-not-supported.py due to access control checks.
-
-PASS Same-origin request with non-safelisted content type succeeds
-PASS CORS request with non-safelisted content type sends preflight and fails
-

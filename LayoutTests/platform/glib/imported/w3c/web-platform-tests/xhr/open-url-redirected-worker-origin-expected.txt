@@ -1,5 +1,0 @@
-
-PASS Referer header
-PASS Origin header
-PASS Request URL test
-

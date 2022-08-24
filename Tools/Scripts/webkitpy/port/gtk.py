@@ -52,7 +52,6 @@ _log = logging.getLogger(__name__)
 
 class GtkPort(Port):
     port_name = "gtk"
-    supports_localhost_aliases = True
 
     def __init__(self, *args, **kwargs):
         super(GtkPort, self).__init__(*args, **kwargs)

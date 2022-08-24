@@ -1,5 +1,0 @@
-
-
-PASS Data URL not shared by cross-origin SharedWorkers
-PASS Data URLs shared by same-origin SharedWorkers
-

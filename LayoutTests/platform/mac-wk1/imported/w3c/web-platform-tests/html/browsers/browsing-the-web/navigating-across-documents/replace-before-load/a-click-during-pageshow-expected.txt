@@ -1,4 +1,0 @@
-
-
-PASS aElement.click() during the pageshow event must NOT replace
-

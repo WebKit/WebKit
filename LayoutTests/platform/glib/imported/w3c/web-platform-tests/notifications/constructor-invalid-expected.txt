@@ -1,3 +1,0 @@
-
-NOTRUN Called the notification constructor with no arguments. You must allow notifications for this origin before running this test.
-

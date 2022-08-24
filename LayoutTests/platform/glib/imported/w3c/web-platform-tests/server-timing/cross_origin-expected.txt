@@ -1,5 +1,0 @@
-
-PASS Expected entry count for http://web-platform.test:8800/server-timing/resources/blue.png: 1
-PASS Expected entry count for http://www1.web-platform.test:8800/server-timing/resources/blue.png: 0
-PASS Expected entry count for http://www1.web-platform.test:8800/server-timing/resources/blue_tao.png: 1
-

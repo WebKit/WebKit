@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://web-platform.test:49001/wrong_accept_key' failed: Server returned incorrect “Sec-WebSocket-Accept” key
-
-PASS WebSockets: wrong accept key
-

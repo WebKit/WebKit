@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://web-platform.test:49001/invalid' failed: The server did not accept the WebSocket handshake.
-
-PASS WebSockets: invalid handshake
-

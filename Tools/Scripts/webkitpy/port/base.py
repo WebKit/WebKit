@@ -82,9 +82,6 @@ class Port(object):
     DEVICE_TYPE = None
     DEFAULT_DEVICE_TYPES = []
 
-    # Do test runners support alias hostnames such as web-platform.test
-    supports_localhost_aliases = False
-
     helper = None
     _web_platform_test_server = None
     _websocket_secure_server = None
@@ -967,11 +964,11 @@ class Port(object):
     def web_platform_test_server_doc_root(self):
         return web_platform_test_server.doc_root(self).replace('\\', self.TEST_PATH_SEPARATOR) + self.TEST_PATH_SEPARATOR
 
-    def web_platform_test_server_base_http_url(self, localhost_only=False):
-        return web_platform_test_server.base_http_url(self, localhost_only)
+    def web_platform_test_server_base_http_url(self):
+        return web_platform_test_server.base_http_url(self)
 
-    def web_platform_test_server_base_https_url(self, localhost_only=False):
-        return web_platform_test_server.base_https_url(self, localhost_only)
+    def web_platform_test_server_base_https_url(self):
+        return web_platform_test_server.base_https_url(self)
 
     def http_server_supports_ipv6(self):
         # Cygwin is the only platform to still use Apache 1.3, which only supports IPV4.
@@ -1134,19 +1131,6 @@ class Port(object):
 
     def experimental_feature(self):
         return self.get_option("experimental_feature", [])
-
-    def localhost_aliases(self):
-        if not self.supports_localhost_aliases or self.get_option("disable_wpt_hostname_aliases"):
-            return []
-
-        # Documented here: https://github.com/web-platform-tests/wpt/blob/master/docs/writing-tests/server-features.md#tests-involving-multiple-origins
-        domains = []
-        for domain in ("web-platform.test", "not-web-platform.test"):
-            domains.append(domain)
-            for subdomain in ("www", "www1", "www2", "xn--n8j6ds53lwwkrqhv28a", "xn--lve-6lad"):
-                domains.append(subdomain + "." + domain)
-
-        return domains
 
     def default_configuration(self):
         return self._config.default_configuration()

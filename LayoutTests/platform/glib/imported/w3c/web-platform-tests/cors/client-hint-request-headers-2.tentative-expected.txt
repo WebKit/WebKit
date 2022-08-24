@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: Request header field save-data is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://not-web-platform.test:8800/cors/resources/cors-makeheader.py?headers=x-print, due to access control checks.
-Request headers
-
-
-FAIL Client hint headers are simple headers  A network error occurred.
-

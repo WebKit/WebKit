@@ -1,7 +1,0 @@
-
-PASS Property list-style value 'none'
-PASS Property list-style value 'inside'
-PASS Property list-style value 'url("https://web-platform.test/")'
-PASS Property list-style value 'square'
-PASS Property list-style value 'inside url("https://web-platform.test/") square'
-

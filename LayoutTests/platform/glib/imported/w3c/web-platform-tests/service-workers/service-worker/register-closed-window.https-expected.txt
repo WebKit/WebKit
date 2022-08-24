@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: serviceWorker.register() must be called with a valid relative script URL
-
-PASS Call register() on ServiceWorkerContainer owned by closed window.
-

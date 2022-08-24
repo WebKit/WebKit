@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: XMLHttpRequest.timeout cannot be set for synchronous HTTP(S) requests made from the window context.
-CONSOLE MESSAGE: Synchronous XMLHttpRequests must not have a timeout value set.
-
-PASS setting timeout attribute on sync request
-PASS open() with async false when timeout is set
-

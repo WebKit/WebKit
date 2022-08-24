@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Wrong url scheme for WebSocket http://web-platform.test:8800/websockets/web-platform.test
-
-PASS Create WebSocket - Pass a non absolute URL - SYNTAX_ERR is thrown
-

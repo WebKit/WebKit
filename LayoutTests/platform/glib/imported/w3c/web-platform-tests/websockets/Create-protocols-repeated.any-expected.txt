@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: WebSocket protocols contain duplicates: 'echo'
-
-PASS Create WebSocket - Pass a valid URL and an array of protocol strings with repeated values - SYNTAX_ERR is thrown
-

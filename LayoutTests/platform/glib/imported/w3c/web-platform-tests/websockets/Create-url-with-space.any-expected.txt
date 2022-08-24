@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Invalid url for WebSocket ws://web platform.test:49001/echo
-
-PASS Create WebSocket - Pass a URL with a space - SYNTAX_ERR should be thrown
-

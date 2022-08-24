@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Wrong protocol for WebSocket 'ec ho'
-
-PASS Create WebSocket - Pass a valid URL and a protocol string with a space in it - SYNTAX_ERR is thrown
-

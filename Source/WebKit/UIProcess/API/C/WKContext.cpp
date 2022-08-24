@@ -571,14 +571,3 @@ void WKContextSetUseSeparateServiceWorkerProcess(WKContextRef, bool useSeparateS
 void WKContextSetPrimaryWebsiteDataStore(WKContextRef, WKWebsiteDataStoreRef)
 {
 }
-
-WKArrayRef WKContextCopyLocalhostAliases(WKContextRef)
-{
-    return WebKit::toAPI(&API::Array::createStringArray(copyToVector(WebKit::LegacyGlobalSettings::singleton().hostnamesToRegisterAsLocal())).leakRef());
-}
-
-void WKContextSetLocalhostAliases(WKContextRef, WKArrayRef localhostAliases)
-{
-    for (const auto& hostname : WebKit::toImpl(localhostAliases)->toStringVector())
-        WebKit::LegacyGlobalSettings::singleton().registerHostnameAsLocal(hostname);
-}

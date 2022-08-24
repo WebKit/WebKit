@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://web-platform.test:49001/echo_raw' failed: Received invalid WebSocket response from the server
-
-PASS open, message, error and close events
-
