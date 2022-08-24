@@ -2330,3 +2330,5 @@ webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/se
 
 webkit.org/b/244228 [ Release arm64 ] imported/w3c/web-platform-tests/css/css-transforms/transforms-skewY.html [ Pass ImageOnlyFailure ]
 webkit.org/b/244228 [ Release arm64 ] imported/w3c/web-platform-tests/css/css-transforms/css-skew-002.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/244297 [ Release arm64 ] svg/transforms/transformed-text-fill-gradient.html [ Pass ImageOnlyFailure ]
