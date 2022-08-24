@@ -5547,8 +5547,10 @@ bool WebGLRenderingContextBase::validateArrayBufferType(const char* functionName
     case GraphicsContextGL::HALF_FLOAT:
         TYPE_VALIDATION_CASE(TypeUint16);
     case GraphicsContextGL::FLOAT_32_UNSIGNED_INT_24_8_REV:
-        if (arrayType)
+        if (arrayType) {
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "type FLOAT_32_UNSIGNED_INT_24_8_REV but ArrayBufferView is not null");
+            return false;
+        }
         break;
     default:
         // This can now be reached in readPixels' ANGLE code path.
