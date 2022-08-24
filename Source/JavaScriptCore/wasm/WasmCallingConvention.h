@@ -34,6 +34,7 @@
 #include "RegisterSet.h"
 #include "WasmFormat.h"
 #include "WasmTypeDefinition.h"
+#include "WasmTypeDefinitionInlines.h"
 #include "WasmValueLocation.h"
 
 namespace JSC { namespace Wasm {
@@ -72,6 +73,8 @@ struct CallInformation {
 
     bool argumentsIncludeI64 { false };
     bool resultsIncludeI64 { false };
+    bool argumentsIncludeGCTypeIndex { false };
+    bool resultsIncludeGCTypeIndex { false };
     Vector<ArgumentLocation> params;
     Vector<ArgumentLocation, 1> results;
     // As a callee this includes CallerFrameAndPC as a caller it does not.
@@ -131,6 +134,8 @@ public:
         const auto& signature = *type.as<FunctionSignature>();
         bool argumentsIncludeI64 = false;
         bool resultsIncludeI64 = false;
+        bool argumentsIncludeGCTypeIndex = false;
+        bool resultsIncludeGCTypeIndex = false;
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
         size_t argStackOffset = headerSizeInBytes + sizeof(Register);
@@ -140,6 +145,7 @@ public:
         Vector<ArgumentLocation> params(signature.argumentCount());
         for (size_t i = 0; i < signature.argumentCount(); ++i) {
             argumentsIncludeI64 |= signature.argumentType(i).isI64();
+            argumentsIncludeGCTypeIndex |= isRefWithTypeIndex(signature.argumentType(i)) && !TypeInformation::get(signature.argumentType(i).index).is<FunctionSignature>();
             params[i] = marshallLocation(role, signature.argumentType(i), gpArgumentCount, fpArgumentCount, argStackOffset);
         }
         gpArgumentCount = 0;
@@ -151,12 +157,15 @@ public:
         Vector<ArgumentLocation, 1> results(signature.returnCount());
         for (size_t i = 0; i < signature.returnCount(); ++i) {
             resultsIncludeI64 |= signature.returnType(i).isI64();
+            resultsIncludeGCTypeIndex |= isRefWithTypeIndex(signature.returnType(i)) && !TypeInformation::get(signature.returnType(i).index).is<FunctionSignature>();
             results[i] = marshallLocation(role, signature.returnType(i), gpArgumentCount, fpArgumentCount, resultStackOffset);
         }
 
         CallInformation result(WTFMove(params), WTFMove(results), std::max(argStackOffset, resultStackOffset));
         result.argumentsIncludeI64 = argumentsIncludeI64;
         result.resultsIncludeI64 = resultsIncludeI64;
+        result.argumentsIncludeGCTypeIndex = argumentsIncludeGCTypeIndex;
+        result.resultsIncludeGCTypeIndex = resultsIncludeGCTypeIndex;
         return result;
     }
 

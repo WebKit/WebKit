@@ -66,13 +66,26 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
             break;
         }
         default: {
-            if (isFuncref(type) || isExternref(type) || isI31ref(type))
+            if (isRefType(type))
                 jit.moveValueRegs(src.jsr(), dst);
             else
                 jit.breakpoint();
         }
         }
     };
+
+    // GC support is experimental and currently will throw a runtime error when struct
+    // and array type indices are exported via a function signature to JS.
+    if (Options::useWebAssemblyGC() && (wasmFrameConvention.argumentsIncludeGCTypeIndex || wasmFrameConvention.resultsIncludeGCTypeIndex)) {
+        GPRReg wasmContextInstanceGPR = PinnedRegisterInfo::get().wasmContextInstancePointer;
+        if (Context::useFastTLS()) {
+            wasmContextInstanceGPR = GPRInfo::argumentGPR2;
+            jit.loadWasmContextInstance(wasmContextInstanceGPR);
+        }
+
+        emitThrowWasmToJSException(jit, wasmContextInstanceGPR, ExceptionType::InvalidGCTypeUse);
+        return;
+    }
 
     if (signature.returnsVoid())
         jit.moveTrustedValue(jsUndefined(), JSRInfo::returnValueJSR);

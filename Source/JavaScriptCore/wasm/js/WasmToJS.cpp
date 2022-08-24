@@ -53,6 +53,25 @@ static void materializeImportJSCell(JIT& jit, unsigned importIndex, GPRReg resul
     jit.loadPtr(JIT::Address(result, Instance::offsetOfImportFunction(importIndex)), result);
 }
 
+static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBadGCTypeIndexUse(VM& vm, JIT& jit, unsigned importIndex)
+{
+    jit.loadWasmContextInstance(GPRInfo::argumentGPR2);
+
+    // Store Callee.
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, Instance::offsetOfOwner()), GPRInfo::argumentGPR0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfModule()), GPRInfo::argumentGPR1);
+    jit.prepareCallOperation(vm);
+    jit.emitPutToCallFrameHeader(GPRInfo::argumentGPR1, CallFrameSlot::callee);
+
+    emitThrowWasmToJSException(jit, GPRInfo::argumentGPR2, Wasm::ExceptionType::InvalidGCTypeUse);
+
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
+    if (UNLIKELY(linkBuffer.didFailToAllocate()))
+        return makeUnexpected(BindingFailure::OutOfMemory);
+
+    return FINALIZE_WASM_CODE(linkBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript invalid use of struct or array type definition in import[%i]", importIndex);
+}
+
 Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm, Bag<OptimizingCallLinkInfo>& callLinkInfos, TypeIndex typeIndex, unsigned importIndex)
 {
     // FIXME: This function doesn't properly abstract away the calling convention.
@@ -76,6 +95,11 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     jit.emitFunctionPrologue();
     jit.emitZeroToCallFrameHeader(CallFrameSlot::codeBlock); // FIXME Stop using 0 as codeBlocks. https://bugs.webkit.org/show_bug.cgi?id=165321
+
+    // GC support is experimental and currently will throw a runtime error when struct
+    // and array type indices are exported via a function signature to JS.
+    if (Options::useWebAssemblyGC() && (wasmCallInfo.argumentsIncludeGCTypeIndex || wasmCallInfo.resultsIncludeGCTypeIndex))
+        return handleBadGCTypeIndexUse(vm, jit, importIndex);
 
     // Here we assume that the JS calling convention saves at least all the wasm callee saved. We therefore don't need to save and restore more registers since the wasm callee already took care of this.
     RegisterSet missingCalleeSaves = wasmCC.calleeSaveRegisters;
@@ -120,9 +144,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case TypeKind::RefNull:
             case TypeKind::Ref:
-                if (static_cast<TypeKind>(argType.index) != TypeKind::I31ref)
-                    RELEASE_ASSERT_NOT_REACHED();
-                FALLTHROUGH;
             case TypeKind::Externref:
             case TypeKind::Funcref:
             case TypeKind::I32:
@@ -205,9 +226,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case TypeKind::RefNull:
             case TypeKind::Ref:
-                if (static_cast<TypeKind>(argType.index) != TypeKind::I31ref)
-                    RELEASE_ASSERT_NOT_REACHED();
-                FALLTHROUGH;
             case TypeKind::Externref:
             case TypeKind::Funcref:
             case TypeKind::I32:
@@ -419,7 +437,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             break;
         }
         default:  {
-            if (Wasm::isFuncref(returnType) || Wasm::isExternref(returnType) || Wasm::isI31ref(returnType))
+            if (Wasm::isRefType(returnType))
                 jit.moveValueRegs(JSRInfo::returnValueJSR, wasmCallInfo.results[0].jsr());
             else
                 // For the JavaScript embedding, imports with these types in their type definition return are a WebAssembly.Module validation error.
@@ -492,6 +510,10 @@ void emitThrowWasmToJSException(CCallHelpers& jit, GPRReg wasmInstance, Wasm::Ex
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0), GPRInfo::argumentGPR0);
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR0);
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+    if (wasmInstance != GPRInfo::argumentGPR2)
+        jit.move(wasmInstance, GPRInfo::argumentGPR2);
+
     jit.move(CCallHelpers::TrustedImm32(static_cast<int32_t>(type)), GPRInfo::argumentGPR1);
 
     CCallHelpers::Call call = jit.call(OperationPtrTag);

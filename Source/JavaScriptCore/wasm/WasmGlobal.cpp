@@ -31,6 +31,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyRuntimeError.h"
+#include "WasmTypeDefinitionInlines.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace Wasm {
@@ -94,7 +95,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
                 return;
             }
             m_value.m_externref.set(m_owner->vm(), m_owner, argument);
-        } else if (isFuncref(m_type) || isRefWithTypeIndex(m_type)) {
+        } else if (isFuncref(m_type) || (isRefWithTypeIndex(m_type) && TypeInformation::get(m_type.index).is<FunctionSignature>())) {
             RELEASE_ASSERT(m_owner);
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
@@ -112,6 +113,9 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
                 }
             }
             m_value.m_externref.set(m_owner->vm(), m_owner, argument);
+        } else if (isRefWithTypeIndex(m_type)) {
+            throwVMException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Unsupported use of struct or array type"_s));
+            return;
         } else if (Wasm::isI31ref(m_type)) {
             throwVMException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "I31ref import from JS currently unsupported"_s));
             return;
