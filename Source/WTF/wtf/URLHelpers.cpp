@@ -623,7 +623,7 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
     if (length && (U_FAILURE(uerror) || processingDetails.errors & ~allowedErrors))
         return std::nullopt;
     
-    if (numCharactersConverted == static_cast<int32_t>(length) && !memcmp(sourceBuffer.data(), destinationBuffer, length * sizeof(UChar)))
+    if (numCharactersConverted == static_cast<int32_t>(length) && equal(sourceBuffer.data(), destinationBuffer, length))
         return String();
 
     if (!decodeFunction && !allCharactersInAllowedIDNScriptList(destinationBuffer, numCharactersConverted) && !allCharactersAllowedByTLDRules(destinationBuffer, numCharactersConverted))

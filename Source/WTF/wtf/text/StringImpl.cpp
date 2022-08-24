@@ -1658,7 +1658,7 @@ bool equalIgnoringNullity(const UChar* a, size_t aLength, StringImpl* b)
         }
         return true;
     }
-    return !memcmp(a, b->characters16(), b->length() * sizeof(UChar));
+    return equal(a, b->characters16(), b->length());
 }
 
 } // namespace WTF
