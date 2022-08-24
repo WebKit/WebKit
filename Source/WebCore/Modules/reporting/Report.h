@@ -31,23 +31,55 @@
 
 namespace WebCore {
 
-class Report : public RefCounted<Report> {
-    WTF_MAKE_FAST_ALLOCATED;
+class WEBCORE_EXPORT Report : public RefCounted<Report> {
+    WTF_MAKE_ISO_ALLOCATED(Report);
 public:
-    static Ref<Report> create(const String& type, const String& url, const RefPtr<ReportBody>&);
+    static Ref<Report> create(const AtomString& type, const String& url, RefPtr<ReportBody>&&);
 
-    virtual ~Report();
+    ~Report();
 
-    const String& type() const { return m_type; }
-    const String& url() const { return m_url; }
-    const RefPtr<ReportBody> body() { return m_body; }
+    const AtomString& type() const;
+    const String& url() const;
+    const RefPtr<ReportBody>& body();
+
+    template<typename Encoder> void WEBCORE_EXPORT encode(Encoder&) const;
+    template<typename Decoder> static WEBCORE_EXPORT std::optional<Ref<WebCore::Report>> decode(Decoder&);
 
 private:
-    explicit Report(const String& type, const String& url, const RefPtr<ReportBody>&);
+    explicit Report(const AtomString& type, const String& url, RefPtr<ReportBody>&&);
 
-    String m_type;
+    AtomString m_type;
     String m_url;
     RefPtr<ReportBody> m_body;
 };
 
+template<typename Encoder>
+void Report::encode(Encoder& encoder) const
+{
+    encoder << m_type;
+    encoder << m_url;
+    encoder << m_body;
 }
+
+template<typename Decoder>
+std::optional<Ref<WebCore::Report>> Report::decode(Decoder& decoder)
+{
+    std::optional<AtomString> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    std::optional<String> url;
+    decoder >> url;
+    if (!url)
+        return std::nullopt;
+
+    std::optional<RefPtr<ReportBody>> body;
+    decoder >> body;
+    if (!body)
+        return std::nullopt;
+
+    return Report::create(WTFMove(*type), WTFMove(*url), WTFMove(*body));
+}
+
+} // namespace WebCore

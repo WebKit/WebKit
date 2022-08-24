@@ -1,0 +1,7 @@
+Blocked access to external URL http://www1.localhost:8800/reporting/resources/report.py?op=put&reportID=GENERATED_REPORT_ID
+
+
+PASS Image should not load
+FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')
+PASS Test report cookies.
+

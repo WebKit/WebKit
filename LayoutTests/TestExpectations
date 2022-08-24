@@ -531,6 +531,7 @@ imported/w3c/web-platform-tests/upgrade-insecure-requests/link-upgrade.sub.https
 imported/w3c/web-platform-tests/reporting/disconnect.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/reporting/document-reporting-destroy-after-document-close.https.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/block-local-documents-inheriting-none.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html [ DumpJSConsoleLogInStdErr ]
 
 # Skip some reporting tests that now timeout
 imported/w3c/web-platform-tests/reporting/cross-origin-same-site-credentials.https.sub.html [ Skip ]
@@ -950,7 +951,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/l
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross-origin-to-whom.window.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross-origin-to-whom-part-2.window.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-popup-position-with-zoom.tentative.html [ Failure Pass ]
-imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-ancestors.https.sub.html [ Failure Pass ]
+#imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-ancestors.https.sub.html [ Failure Pass ]
 imported/w3c/web-platform-tests/user-timing/clearMarks.html [ Failure Pass ]
 imported/w3c/web-platform-tests/user-timing/mark.html [ Failure Pass ]
 imported/w3c/web-platform-tests/user-timing/measure_associated_with_navigation_timing.html [ Failure Pass ]
@@ -1031,10 +1032,7 @@ imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-inli
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-dedicated-worker.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect-upgrade-reporting.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/reporting/post-redirect-stacktrace.https.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-src.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-blocked.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-allowed.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-blocked.html [ Skip ]

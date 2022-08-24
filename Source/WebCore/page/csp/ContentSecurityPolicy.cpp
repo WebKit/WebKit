@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google, Inc. All rights reserved.
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "ContentSecurityPolicy.h"
 
 #include "BlobURL.h"
+#include "CSPViolationReportBody.h"
 #include "ContentSecurityPolicyClient.h"
 #include "ContentSecurityPolicyDirective.h"
 #include "ContentSecurityPolicyDirectiveList.h"
@@ -48,11 +49,15 @@
 #include "LegacySchemeRegistry.h"
 #include "ParsingUtilities.h"
 #include "PingLoader.h"
+#include "Report.h"
+#include "Reporting.h"
+#include "ReportingClient.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicyViolationEvent.h"
 #include "Settings.h"
 #include "SubresourceIntegrity.h"
+#include "WorkerGlobalScope.h"
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <pal/crypto/CryptoDigest.h>
@@ -82,8 +87,9 @@ static String consoleMessageForViolation(const ContentSecurityPolicyDirective& v
         isDefaultSrc ? " directive nor the default-src directive of the Content Security Policy." : " directive of the Content Security Policy.");
 }
 
-ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ContentSecurityPolicyClient* client)
+ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ContentSecurityPolicyClient* client, ReportingClient* reportingClient)
     : m_client { client }
+    , m_reportingClient { reportingClient }
     , m_protectedURL { WTFMove(protectedURL) }
 {
     updateSourceSelf(SecurityOrigin::create(m_protectedURL).get());
@@ -750,6 +756,18 @@ void ContentSecurityPolicy::reportViolation(const ContentSecurityPolicyDirective
     return reportViolation(violatedDirective.nameForReporting().convertToASCIILowercase(), violatedDirective.directiveList(), blockedURL, consoleMessage, sourceURL, sourceContent, sourcePosition, state, preRedirectURL, element);
 }
 
+static Reporting& reportingForContext(ScriptExecutionContext& scriptExecutionContext)
+{
+    if (auto document = dynamicDowncast<Document>(scriptExecutionContext))
+        return document->reporting();
+
+    if (auto workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
+        return workerGlobalScope->reporting();
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+
 void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const String& blockedURLString, const String& consoleMessage, const String& sourceURL, const StringView& sourceContent, const TextPosition& sourcePosition, JSC::JSGlobalObject* state, const URL& preRedirectURL, Element* element) const
 {
     logToConsole(consoleMessage, sourceURL, sourcePosition.m_line, sourcePosition.m_column, state);
@@ -757,7 +775,6 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     if (!m_isReportingEnabled)
         return;
 
-    // FIXME: Support sending reports from worker.
     CSPInfo info;
 
     String blockedURI;
@@ -773,10 +790,12 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     info.columnNumber = sourcePosition.m_column.oneBasedInt();
     info.sample = violatedDirectiveList.shouldReportSample(effectiveViolatedDirective) ? sourceContent.left(40).toString() : emptyString();
 
+    bool usesReportTo = !violatedDirectiveList.reportToTokens().isEmpty();
+
     if (m_client)
         m_client->willSendCSPViolationReport(info);
     else {
-        if (!is<Document>(m_scriptExecutionContext))
+        if (!usesReportTo && !is<Document>(m_scriptExecutionContext))
             return;
 
         auto& document = downcast<Document>(*m_scriptExecutionContext);
@@ -798,6 +817,10 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
     unsigned short httpStatusCode = m_selfSourceProtocol == "http"_s ? m_httpStatusCode : 0;
+    
+    // WPT says modern tests expect valid status code, regardless of protocol:
+    if (usesReportTo)
+        httpStatusCode = m_httpStatusCode;
 
     // 1. Dispatch violation event.
     SecurityPolicyViolationEventInit violationEventInit;
@@ -807,7 +830,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     violationEventInit.violatedDirective = effectiveViolatedDirective; // Historical alias to effectiveDirective: https://www.w3.org/TR/CSP3/#violation-events.
     violationEventInit.effectiveDirective = effectiveViolatedDirective;
     violationEventInit.originalPolicy = violatedDirectiveList.header();
-    violationEventInit.sourceFile = info.sourceFile;
+    violationEventInit.sourceFile = info.sourceFile.isNull() ? info.documentURI : info.sourceFile;
     violationEventInit.disposition = violatedDirectiveList.isReportOnly() ? SecurityPolicyViolationEventDisposition::Report : SecurityPolicyViolationEventDisposition::Enforce;
     violationEventInit.statusCode = httpStatusCode;
     violationEventInit.lineNumber =  info.lineNumber;
@@ -815,6 +838,34 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     violationEventInit.sample = info.sample;
     violationEventInit.bubbles = true;
     violationEventInit.composed = true;
+
+    Vector<String> reportURIs;
+    if (usesReportTo) {
+        if (m_reportingClient) {
+            m_reportingClient->notifyReportObservers(Report::create(CSPViolationReportBody::cspReportType(), info.documentURI, CSPViolationReportBody::create(SecurityPolicyViolationEventInit { violationEventInit })));
+
+            for (auto token : violatedDirectiveList.reportToTokens()) {
+                auto reportToURI = m_reportingClient->endpointForToken(token);
+                if (reportToURI.isNull() || reportToURI.isEmpty())
+                    continue;
+                
+                reportURIs.append(WTFMove(reportToURI));
+            }
+        } else {
+            auto& reporting = reportingForContext(*m_scriptExecutionContext);
+            reporting.notifyReportObservers(Report::create(CSPViolationReportBody::cspReportType(), info.documentURI, CSPViolationReportBody::create(SecurityPolicyViolationEventInit { violationEventInit })));
+            
+            for (auto token : violatedDirectiveList.reportToTokens()) {
+                auto reportToURI = reporting.endpointForToken(token);
+                if (reportToURI.isNull() || reportToURI.isEmpty())
+                    continue;
+                
+                reportURIs.append(WTFMove(reportToURI));
+            }
+        }
+    } else
+        reportURIs = violatedDirectiveList.reportURIs();
+
     if (m_client)
         m_client->enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));
     else {
@@ -826,38 +877,12 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     }
 
     // 2. Send violation report (if applicable).
-    auto& reportURIs = violatedDirectiveList.reportURIs();
     if (reportURIs.isEmpty())
         return;
 
-    // We need to be careful here when deciding what information to send to the
-    // report-uri. Currently, we send only the current document's URL and the
-    // directive that was violated. The document's URL is safe to send because
-    // it's the document itself that's requesting that it be sent. You could
-    // make an argument that we shouldn't send HTTPS document URLs to HTTP
-    // report-uris (for the same reasons that we suppress the Referer in that
-    // case), but the Referer is sent implicitly whereas this request is only
-    // sent explicitly. As for which directive was violated, that's pretty
-    // harmless information.
+    auto reportURL = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer() : blockedURI;
 
-    auto cspReport = JSON::Object::create();
-    cspReport->setString("document-uri"_s, info.documentURI);
-    cspReport->setString("referrer"_s, m_referrer);
-    cspReport->setString("violated-directive"_s, effectiveViolatedDirective);
-    cspReport->setString("effective-directive"_s, effectiveViolatedDirective);
-    cspReport->setString("original-policy"_s, violatedDirectiveList.header());
-    cspReport->setString("blocked-uri"_s, blockedURI);
-    cspReport->setInteger("status-code"_s, httpStatusCode);
-    if (!info.sourceFile.isNull()) {
-        cspReport->setString("source-file"_s, info.sourceFile);
-        cspReport->setInteger("line-number"_s, info.lineNumber);
-        cspReport->setInteger("column-number"_s, info.columnNumber);
-    }
-
-    auto reportObject = JSON::Object::create();
-    reportObject->setObject("csp-report"_s, WTFMove(cspReport));
-
-    auto report = FormData::create(reportObject->toJSONString().utf8());
+    auto report = CSPViolationReportBody::createReportFormDataForViolation(info, usesReportTo, violatedDirectiveList.isReportOnly(), effectiveViolatedDirective, m_referrer, violatedDirectiveList.header(), blockedURI, httpStatusCode);
 
     if (m_client) {
         for (const auto& url : reportURIs)
@@ -945,6 +970,11 @@ void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiv
 void ContentSecurityPolicy::reportMissingReportURI(const String& policy) const
 {
     logToConsole("The Content Security Policy '" + policy + "' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.");
+}
+
+void ContentSecurityPolicy::reportMissingReportToTokens(const String& policy) const
+{
+    logToConsole("The Content Security Policy '" + policy + "' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.");
 }
 
 void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const OrdinalNumber& contextLine, const OrdinalNumber& contextColumn, JSC::JSGlobalObject* state) const

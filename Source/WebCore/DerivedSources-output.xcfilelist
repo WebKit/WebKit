@@ -304,6 +304,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSByteLengthQueuingStrategy.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSByteLengthQueuingStrategy.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCDATASection.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCDATASection.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSPViolationReportBody.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSPViolationReportBody.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSColor.cpp
@@ -2528,6 +2530,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollToOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollToOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSecurityPolicyViolationEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSecurityPolicyViolationEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSecurityPolicyViolationEventDisposition.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSecurityPolicyViolationEventDisposition.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorker.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerClient.cpp

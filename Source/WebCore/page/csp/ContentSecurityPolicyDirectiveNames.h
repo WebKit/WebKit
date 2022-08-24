@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,7 @@ extern ASCIILiteral mediaSrc;
 extern ASCIILiteral objectSrc;
 extern ASCIILiteral pluginTypes;
 extern ASCIILiteral reportURI;
+extern ASCIILiteral reportTo;
 extern ASCIILiteral sandbox;
 extern ASCIILiteral scriptSrc;
 extern ASCIILiteral scriptSrcElem;

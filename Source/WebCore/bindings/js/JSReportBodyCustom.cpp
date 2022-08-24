@@ -26,10 +26,25 @@
 #include "config.h"
 #include "JSReportBody.h"
 
-#include "NotImplemented.h"
+#include "CSPViolationReportBody.h"
+#include "JSCSPViolationReportBody.h"
+#include "JSDOMBinding.h"
+#include "ReportBody.h"
 
 namespace WebCore {
 using namespace JSC;
+
+JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<ReportBody>&& reportBody)
+{
+    if (is<CSPViolationReportBody>(reportBody))
+        return createWrapper<CSPViolationReportBody>(globalObject, WTFMove(reportBody));
+    return createWrapper<ReportBody>(globalObject, WTFMove(reportBody));
+}
+
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, ReportBody& reportBody)
+{
+    return wrap(lexicalGlobalObject, globalObject, reportBody);
+}
 
 JSValue JSReportBody::toJSON(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {

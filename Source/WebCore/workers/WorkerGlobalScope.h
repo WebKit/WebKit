@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,7 @@ class FileSystemStorageConnection;
 class FontFaceSet;
 class MessagePortChannelProvider;
 class Performance;
+class Reporting;
 class ScheduledAction;
 class ScriptBuffer;
 class ScriptBufferSourceProvider;
@@ -134,6 +135,7 @@ public:
 
     Crypto& crypto();
     Performance& performance() const;
+    Reporting& reporting() const { return m_reporting.get(); }
 
     void prepareForDestruction() override;
 
@@ -216,6 +218,7 @@ private:
     RefPtr<SocketProvider> m_socketProvider;
 
     RefPtr<Performance> m_performance;
+    Ref<Reporting> m_reporting;
     mutable RefPtr<Crypto> m_crypto;
 
     WeakPtr<ScriptBufferSourceProvider> m_mainScriptSourceProvider;

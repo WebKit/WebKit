@@ -1240,6 +1240,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/WindowFeatures.h
     page/WindowOrWorkerGlobalScope.h
 
+    page/csp/CSPViolationReportBody.h
     page/csp/ContentSecurityPolicy.h
     page/csp/ContentSecurityPolicyClient.h
     page/csp/ContentSecurityPolicyHash.h

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,9 @@
 #pragma once
 
 #include "Event.h"
+#include "SecurityPolicyViolationEventDisposition.h"
 
 namespace WebCore {
-
-enum class SecurityPolicyViolationEventDisposition : bool { Enforce, Report };
 
 struct SecurityPolicyViolationEventInit : EventInit {
     SecurityPolicyViolationEventInit() { }
@@ -164,15 +163,3 @@ bool SecurityPolicyViolationEventInit::decode(Decoder& decoder, SecurityPolicyVi
 }
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::SecurityPolicyViolationEventDisposition> {
-    using values = EnumValues<
-    WebCore::SecurityPolicyViolationEventDisposition,
-    WebCore::SecurityPolicyViolationEventDisposition::Enforce,
-    WebCore::SecurityPolicyViolationEventDisposition::Report
-    >;
-};
-
-}

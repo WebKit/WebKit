@@ -194,6 +194,7 @@
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "Reporting.h"
 #include "RequestAnimationFrameCallback.h"
 #include "ResizeObserver.h"
 #include "ResourceLoadObserver.h"
@@ -587,6 +588,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_editor(makeUniqueRef<Editor>(*this))
     , m_selection(makeUniqueRef<FrameSelection>(this))
     , m_whitespaceCache(makeUniqueRef<WhitespaceCache>())
+    , m_reporting(Reporting::create(*this))
 {
     addToDocumentsMap();
 
@@ -2725,6 +2727,8 @@ void Document::removeAllEventListeners()
     if (m_domWindow)
         m_domWindow->removeAllEventListeners();
 
+    m_reporting->removeAllObservers();
+    
 #if ENABLE(IOS_TOUCH_EVENTS)
     clearTouchEventHandlersAndListeners();
 #endif
@@ -3888,6 +3892,10 @@ void Document::processMetaHttpEquiv(const String& equiv, const AtomString& conte
     case HTTPHeaderName::ContentSecurityPolicy:
         if (isInDocumentHead)
             contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta, referrer(), httpStatusCode);
+        break;
+
+    case HTTPHeaderName::ReportingEndpoints:
+        reporting().parseReportingEndpoints(content);
         break;
 
     default:

@@ -988,6 +988,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/Range.idl \
     $(WebCore)/dom/RequestAnimationFrameCallback.idl \
     $(WebCore)/dom/SecurityPolicyViolationEvent.idl \
+    $(WebCore)/dom/SecurityPolicyViolationEventDisposition.idl \
     $(WebCore)/dom/ShadowRoot.idl \
     $(WebCore)/dom/ShadowRootInit.idl \
     $(WebCore)/dom/ShadowRootMode.idl \
@@ -1316,6 +1317,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/WindowOrWorkerGlobalScope.idl \
     $(WebCore)/page/WindowSessionStorage.idl \
     $(WebCore)/page/WorkerNavigator.idl \
+    $(WebCore)/page/csp/CSPViolationReportBody.idl \
     $(WebCore)/plugins/DOMMimeType.idl \
     $(WebCore)/plugins/DOMMimeTypeArray.idl \
     $(WebCore)/plugins/DOMPlugin.idl \
