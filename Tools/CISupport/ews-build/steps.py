@@ -991,7 +991,6 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
         remote = self.getProperty('github.head.repo.full_name', 'origin').split('/')[0]
         project = self.getProperty('github.head.repo.full_name', self.getProperty('project'))
         pr_branch = self.getProperty('github.head.ref', DEFAULT_BRANCH)
-        base_hash = self.getProperty('github.base.sha')
         rebase_target_hash = self.getProperty('ews_revision') or self.getProperty('got_revision')
 
         commands = [
@@ -1001,12 +1000,9 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
             ['git', 'fetch', remote, '--prune'],
             ['git', 'branch', '-f', pr_branch, 'remotes/{}/{}'.format(remote, pr_branch)],
             ['git', 'checkout', pr_branch],
+            ['git', 'config', 'merge.changelog.driver', 'perl Tools/Scripts/resolve-ChangeLogs --merge-driver -c %O %A %B'],
+            ['git', 'rebase', rebase_target_hash, pr_branch],
         ]
-        if rebase_target_hash and base_hash and rebase_target_hash != base_hash:
-            commands += [
-                ['git', 'config', 'merge.changelog.driver', 'perl Tools/Scripts/resolve-ChangeLogs --merge-driver -c %O %A %B'],
-                ['git', 'rebase', '--onto', rebase_target_hash, base_hash, pr_branch],
-            ]
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
 
@@ -2080,7 +2076,7 @@ class Trigger(trigger.Trigger):
             property_names += ['patch_id', 'bug_id', 'owner']
         if pull_request:
             property_names += [
-                'github.base.ref', 'github.base.sha', 'github.head.ref', 'github.head.sha',
+                'github.base.ref', 'github.head.ref', 'github.head.sha',
                 'github.head.repo.full_name', 'github.number', 'github.title',
                 'repository', 'project', 'owners',
             ]
