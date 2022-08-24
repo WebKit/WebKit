@@ -47,6 +47,8 @@
 #include "RenderTable.h"
 #include "RenderView.h"
 #include "WritingMode.h"
+#include "platform/LayoutUnit.h"
+#include "rendering/RenderBox.h"
 #include <limits>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
@@ -1390,11 +1392,26 @@ std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeFlexItemMinMaxSizes(
         // ensure it's valid through the virtual calls of computeIntrinsicLogicalContentHeightUsing.
         LayoutUnit contentSize;
         Length childCrossSizeLength = crossSizeLengthForChild(MainOrPreferredSize, child);
-        if (child.isRenderReplaced() && childHasComputableAspectRatio(child) && childCrossSizeIsDefinite(child, childCrossSizeLength))
-            contentSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
+
+
+        
+        bool mainSizeAxisIsInline = mainAxisIsChildInlineAxis(child);
+        bool canComputeSizeThroughAspectRatio = childHasComputableAspectRatio(child) && childCrossSizeIsDefinite(child, childCrossSizeLength);
+        auto computeMinContentSize = [this](RenderBox &child) -> LayoutUnit {
+            return computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).value_or(0);
+        };
+        auto computeSizeThroughAspectRatio = [this, canComputeSizeThroughAspectRatio] (RenderBox &child, Length childCrossSizeLength) {
+            return canComputeSizeThroughAspectRatio ? computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength) : 0_lu; 
+        };
+        
+        if (mainSizeAxisIsInline && canComputeSizeThroughAspectRatio)
+            contentSize = computeSizeThroughAspectRatio(child, childCrossSizeLength);
+        else if (mainSizeAxisIsInline)
+            contentSize = computeMinContentSize(child);
         else
-            contentSize = computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).value_or(0);
-        if (child.hasIntrinsicAspectRatio() && child.intrinsicSize().height())
+            contentSize = std::max(computeSizeThroughAspectRatio(child, childCrossSizeLength), computeMinContentSize(child));
+
+        if (childHasComputableAspectRatio(child) && (!crossSizeLengthForChild(MinSize, child).isAuto() || !crossSizeLengthForChild(MaxSize, child).isAuto()))
             contentSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, contentSize);
         ASSERT(contentSize >= 0);
         contentSize = std::min(contentSize, maxExtent.value_or(contentSize));
