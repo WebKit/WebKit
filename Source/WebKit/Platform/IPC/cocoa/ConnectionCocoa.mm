@@ -73,41 +73,6 @@ static const size_t inlineMessageMaxSize = 4096;
 constexpr mach_msg_id_t inlineBodyMessageID = 0xdba0dba;
 constexpr mach_msg_id_t outOfLineBodyMessageID = 0xdba1dba;
 
-// ConnectionTerminationWatchdog does two things:
-// 1) It sets a watchdog timer to kill the peered process.
-// 2) On iOS, make the process runnable for the duration of the watchdog
-//    to ensure it has a chance to terminate cleanly.
-class ConnectionTerminationWatchdog {
-public:
-    static void createConnectionTerminationWatchdog(OSObjectPtr<xpc_connection_t>& xpcConnection, Seconds interval)
-    {
-        new ConnectionTerminationWatchdog(xpcConnection, interval);
-    }
-    
-private:
-    ConnectionTerminationWatchdog(OSObjectPtr<xpc_connection_t>& xpcConnection, Seconds interval)
-        : m_xpcConnection(xpcConnection)
-        , m_watchdogTimer(RunLoop::main(), this, &ConnectionTerminationWatchdog::watchdogTimerFired)
-#if PLATFORM(IOS_FAMILY)
-        , m_assertion(WebKit::ProcessAndUIAssertion::create(xpc_connection_get_pid(m_xpcConnection.get()), "ConnectionTerminationWatchdog"_s, WebKit::ProcessAssertionType::Background))
-#endif
-    {
-        m_watchdogTimer.startOneShot(interval);
-    }
-    
-    void watchdogTimerFired()
-    {
-        terminateWithReason(m_xpcConnection.get(), WebKit::ReasonCode::WatchdogTimerFired, "ConnectionTerminationWatchdog::watchdogTimerFired");
-        delete this;
-    }
-
-    OSObjectPtr<xpc_connection_t> m_xpcConnection;
-    RunLoop::Timer<ConnectionTerminationWatchdog> m_watchdogTimer;
-#if PLATFORM(IOS_FAMILY)
-    Ref<WebKit::ProcessAndUIAssertion> m_assertion;
-#endif
-};
-    
 void Connection::platformInvalidate()
 {
     if (!m_isConnected) {
@@ -158,13 +123,7 @@ void Connection::cancelReceiveSource()
     m_receiveSource = nullptr;
     m_receivePort = MACH_PORT_NULL;
 }
-    
-void Connection::terminateSoon(Seconds interval)
-{
-    if (m_xpcConnection)
-        ConnectionTerminationWatchdog::createConnectionTerminationWatchdog(m_xpcConnection, interval);
-}
-    
+
 void Connection::platformInitialize(Identifier identifier)
 {
     if (!MACH_PORT_VALID(identifier.port))

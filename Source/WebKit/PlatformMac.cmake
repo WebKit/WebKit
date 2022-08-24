@@ -79,6 +79,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/Cocoa/WKShareSheet.mm
     UIProcess/Cocoa/WKStorageAccessAlert.mm
     UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
+    UIProcess/Cocoa/XPCConnectionTerminationWatchdog.mm
 
     UIProcess/PDF/WKPDFHUDView.mm
 
