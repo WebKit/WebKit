@@ -106,3 +106,16 @@ class TestClean(testing.PathTestCase):
                 path=self.path,
             ))
             self.assertNotIn('eng/pr-branch', repo.commits)
+
+    def test_delete_pr_branches_invalid_remote(self):
+        with OutputCapture() as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ), mocks.local.Svn():
+            self.assertEqual(1, program.main(
+                args=('delete-pr-branches', '-v', '--remote=all'),
+                path=self.path,
+            ))
+
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), "'{}' doesn't have a recognized remote named 'all'\n".format(self.path))

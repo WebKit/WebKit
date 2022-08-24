@@ -65,6 +65,7 @@ add_action('wp_head', function() {
             if (isset($matches[2][0]))
                 $image_url = $matches[2][0];
         }
+
         $categories = wp_get_object_terms(get_the_ID(), 'category', array('fields' => 'names'));
         $tags = wp_get_object_terms(get_the_ID(), 'post_tag', array('fields' => 'names'));
 
@@ -88,10 +89,8 @@ add_action('wp_head', function() {
 <?php endif; ?>
 
     <!-- Twitter Card data -->
-<?php if ($image_url): // Twitter summary card with large image must be at least 280x150px ?>
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image:src" content="<?php echo esc_url($image_url); ?>">
-<?php endif; ?>
+    <meta name="twitter:image:src" content="<?php echo esc_url(!empty($image_url) ? $image_url : get_stylesheet_directory_uri() . '/images/twitter-card.png'); ?>">
     <meta name="twitter:site" content="@webkit">
     <meta name="twitter:title" content="<?php echo esc_attr($title); ?>">
 <?php if ($description): ?>

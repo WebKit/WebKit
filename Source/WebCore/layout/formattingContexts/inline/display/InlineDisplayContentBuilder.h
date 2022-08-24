@@ -54,7 +54,7 @@ public:
 private:
     void processNonBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, DisplayBoxes&);
     void processBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, DisplayBoxes&);
-    void processOverflownRunsForEllipsis(const LineBuilder::LineContent&, DisplayBoxes&, InlineLayoutUnit lineBoxRight);
+    void processOverflownRunsForEllipsis(const LineBuilder::LineContent&, DisplayBoxes&, const InlineDisplay::Line&);
     void collectInkOverflowForInlineBoxes(DisplayBoxes&);
     void collectInkOverflowForTextDecorations(DisplayBoxes&, const InlineDisplay::Line&);
 

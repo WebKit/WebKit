@@ -55,7 +55,7 @@ function initializeDecompressionStream(format)
 
         try {
             const decoder = @getByIdDirectPrivate(this, "DecompressionStreamDecoder");
-            let buffer = decoder.@decode(chunk);
+            const buffer = decoder.@decode(chunk);
 
             if (buffer) {
                 const transformStream = @getByIdDirectPrivate(this, "DecompressionStreamTransform");
@@ -68,19 +68,18 @@ function initializeDecompressionStream(format)
 
         return @Promise.@resolve();
     };
-    const flushAlgorithm = () => {
-        const decoder = @getByIdDirectPrivate(this, "DecompressionStreamDecoder");
-        
-        let buffer;
+    const flushAlgorithm = () => {        
         try {
-        buffer = decoder.@flush();
+            const decoder = @getByIdDirectPrivate(this, "DecompressionStreamDecoder");
+            const buffer = decoder.@flush();
+
+            if (buffer) {
+                const transformStream = @getByIdDirectPrivate(this, "DecompressionStreamTransform");
+                const controller = @getByIdDirectPrivate(transformStream, "controller");
+                @transformStreamDefaultControllerEnqueue(controller, buffer);
+            }
         } catch (e) {
             return @Promise.@reject(@makeTypeError(e.message));
-        }
-        if (buffer) {
-            const transformStream = @getByIdDirectPrivate(this, "DecompressionStreamTransform");
-            const controller = @getByIdDirectPrivate(transformStream, "controller");
-            @transformStreamDefaultControllerEnqueue(controller, buffer);
         }
 
         return @Promise.@resolve();

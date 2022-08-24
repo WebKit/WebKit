@@ -30,6 +30,8 @@
 
 #include "FilterReference.h"
 #include "RemoteDisplayListRecorderMessages.h"
+#include "RemoteImageBufferProxy.h"
+#include "RemoteRenderingBackendProxy.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListDrawingContext.h>
@@ -44,7 +46,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(ImageBuffer& imageBuffer, RemoteRenderingBackendProxy& renderingBackend, const FloatRect& initialClip, const AffineTransform& initialCTM)
+RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteImageBufferProxy& imageBuffer, RemoteRenderingBackendProxy& renderingBackend, const FloatRect& initialClip, const AffineTransform& initialCTM)
     : DisplayList::Recorder({ }, initialClip, initialCTM, DrawGlyphsMode::DeconstructUsingDrawGlyphsCommands)
     , m_destinationBufferIdentifier(imageBuffer.renderingResourceIdentifier())
     , m_imageBuffer(imageBuffer)
@@ -60,6 +62,16 @@ void RemoteDisplayListRecorderProxy::convertToLuminanceMask()
 void RemoteDisplayListRecorderProxy::transformToColorSpace(const WebCore::DestinationColorSpace& colorSpace)
 {
     send(Messages::RemoteDisplayListRecorder::TransformToColorSpace(colorSpace));
+}
+
+template<typename T>
+ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
+{
+    if (UNLIKELY(!(m_renderingBackend && m_imageBuffer)))
+        return;
+
+    m_imageBuffer->backingStoreWillChange();
+    m_renderingBackend->sendToStream(WTFMove(message), m_destinationBufferIdentifier);
 }
 
 RenderingMode RemoteDisplayListRecorderProxy::renderingMode() const

@@ -67,6 +67,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
     encoder << enablePrivateClickMeasurement;
     encoder << ftpEnabled;
+    encoder << allowedFirstPartiesForCookies;
     encoder << websiteDataStoreParameters;
 }
 
@@ -119,6 +120,12 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     if (!decoder.decode(result.ftpEnabled))
         return false;
+
+    std::optional<Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>>> allowedFirstPartiesForCookies;
+    decoder >> allowedFirstPartiesForCookies;
+    if (!allowedFirstPartiesForCookies)
+        return false;
+    result.allowedFirstPartiesForCookies = WTFMove(*allowedFirstPartiesForCookies);
 
     std::optional<Vector<WebsiteDataStoreParameters>> websiteDataStoreParameters;
     decoder >> websiteDataStoreParameters;

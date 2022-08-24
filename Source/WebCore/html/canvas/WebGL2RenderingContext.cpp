@@ -803,15 +803,8 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
         return nullptr;
     }
 
-    // These formats are never exposed to WebGL apps but may be accepted by ANGLE.
-    switch (internalformat) {
-    case GraphicsContextGL::BGRA8_SRGB_ANGLEX:
-    case GraphicsContextGL::DEPTH_COMPONENT32_OES:
-    case GraphicsContextGL::BGRA8_EXT:
-    case GraphicsContextGL::RGBX8_ANGLE:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getInternalformatParameter", "invalid internalformat");
+    if (!validateForbiddenInternalFormats("getInternalformatParameter", internalformat))
         return nullptr;
-    }
 
     m_context->moveErrorsToSyntheticErrorList();
     GCGLint numValues = m_context->getInternalformati(target, internalformat, GraphicsContextGL::NUM_SAMPLE_COUNTS);
@@ -921,6 +914,9 @@ void WebGL2RenderingContext::texStorage2D(GCGLenum target, GCGLsizei levels, GCG
     if (!texture)
         return;
 
+    if (!validateForbiddenInternalFormats("texStorage2D", internalFormat))
+        return;
+
     m_context->texStorage2D(target, levels, internalFormat, width, height);
 }
 
@@ -931,6 +927,9 @@ void WebGL2RenderingContext::texStorage3D(GCGLenum target, GCGLsizei levels, GCG
 
     auto texture = validateTexture3DBinding("texStorage3D", target);
     if (!texture)
+        return;
+
+    if (!validateForbiddenInternalFormats("texStorage3D", internalFormat))
         return;
 
     m_context->texStorage3D(target, levels, internalFormat, width, height, depth);

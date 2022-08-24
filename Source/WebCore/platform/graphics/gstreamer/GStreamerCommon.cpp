@@ -66,6 +66,10 @@
 #include "WebKitWebSourceGStreamer.h"
 #endif
 
+#if USE(GSTREAMER_WEBRTC)
+#include <gst/webrtc/webrtc-enumtypes.h>
+#endif
+
 GST_DEBUG_CATEGORY(webkit_gst_common_debug);
 #define GST_CAT_DEFAULT webkit_gst_common_debug
 
@@ -647,6 +651,13 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
 
     if (valueType == G_TYPE_STRING)
         return JSON::Value::create(makeString(g_value_get_string(value)))->asValue();
+
+#if USE(GSTREAMER_WEBRTC)
+    if (valueType == GST_TYPE_WEBRTC_STATS_TYPE) {
+        GUniquePtr<char> statsType(g_enum_to_string(GST_TYPE_WEBRTC_STATS_TYPE, g_value_get_enum(value)));
+        return JSON::Value::create(makeString(statsType.get()))->asValue();
+    }
+#endif
 
     GST_WARNING("Unhandled GValue type: %s", G_VALUE_TYPE_NAME(value));
     return { };

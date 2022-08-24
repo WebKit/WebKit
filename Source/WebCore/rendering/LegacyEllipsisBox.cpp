@@ -48,7 +48,7 @@ LegacyEllipsisBox::LegacyEllipsisBox(RenderBlockFlow& renderer, const AtomString
 
 void LegacyEllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    LegacyEllipsisBoxPainter { *this, paintInfo, paintOffset, selectionState(), blockFlow().selectionForegroundColor(), blockFlow().selectionBackgroundColor() }.paint();
+    LegacyEllipsisBoxPainter { *this, paintInfo, paintOffset, blockFlow().selectionForegroundColor(), blockFlow().selectionBackgroundColor() }.paint();
 
     paintMarkupBox(paintInfo, paintOffset, lineTop, lineBottom, lineStyle());
 }
@@ -118,23 +118,6 @@ bool LegacyEllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult
     }
 
     return false;
-}
-
-RenderObject::HighlightState LegacyEllipsisBox::selectionState() const
-{
-    auto* lastSelectedBox = root().lastSelectedBox();
-    if (!is<LegacyInlineTextBox>(lastSelectedBox))
-        return RenderObject::HighlightState::None;
-
-    auto& textBox = downcast<LegacyInlineTextBox>(*lastSelectedBox);
-
-    auto truncation = textBox.truncation();
-    auto [selectionStart, selectionEnd] = textBox.selectionStartEnd();
-
-    if (truncation && selectionEnd >= *truncation && selectionStart <= *truncation)
-        return RenderObject::HighlightState::Inside;
-
-    return RenderObject::HighlightState::None;
 }
 
 TextRun LegacyEllipsisBox::createTextRun() const

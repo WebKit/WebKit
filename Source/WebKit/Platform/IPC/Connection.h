@@ -307,7 +307,6 @@ public:
 
 #if PLATFORM(COCOA)
     bool kill();
-    void terminateSoon(Seconds);
 #endif
 
     bool isValid() const { return m_isValid; }

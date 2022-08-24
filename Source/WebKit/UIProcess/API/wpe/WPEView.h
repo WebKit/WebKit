@@ -108,6 +108,9 @@ public:
 #endif
 
     WebKit::TouchGestureController& touchGestureController() const { return *m_touchGestureController; }
+#if ENABLE(GAMEPAD)
+    static WebKit::WebPageProxy* platformWebPageProxyForGamepadInput();
+#endif
 
 private:
     View(struct wpe_view_backend*, const API::PageConfiguration&);

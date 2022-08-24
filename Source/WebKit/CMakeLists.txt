@@ -128,8 +128,6 @@ set(PROTOCOL_GENERATOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
 
 list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
     "Sources.txt"
-
-    "Platform/Sources.txt"
 )
 
 set(WebKit_MESSAGES_IN_FILES

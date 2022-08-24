@@ -187,6 +187,7 @@ private:
 
     void populateOverrideLanguagesLaunchOptions(ProcessLauncher::LaunchOptions&) const;
     Vector<String> platformOverrideLanguages() const;
+    void platformStartConnectionTerminationWatchdog();
 
     ResponsivenessTimer m_responsivenessTimer;
     Vector<PendingMessage> m_pendingMessages;

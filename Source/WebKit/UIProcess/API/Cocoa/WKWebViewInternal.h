@@ -312,6 +312,8 @@ struct PerWebProcessState {
 
     NSUInteger _focusPreservationCount;
     NSUInteger _activeFocusedStateRetainCount;
+
+    RetainPtr<NSArray<NSNumber *>> _scrollViewDefaultAllowedTouchTypes;
 #endif
 }
 

@@ -141,6 +141,9 @@ public:
     bool idempotentModeAutosizingOnlyHonorsPercentages() const { return m_idempotentModeAutosizingOnlyHonorsPercentages; }
     void setIdempotentModeAutosizingOnlyHonorsPercentages(bool idempotentModeAutosizingOnlyHonorsPercentages) { m_idempotentModeAutosizingOnlyHonorsPercentages = idempotentModeAutosizingOnlyHonorsPercentages; }
 
+    bool allowPrivacyProxy() const { return m_allowPrivacyProxy; }
+    void setAllowPrivacyProxy(bool allow) { m_allowPrivacyProxy = allow; }
+
 private:
     // FIXME: replace most or all of these members with a WebsitePoliciesData.
     bool m_contentBlockersEnabled { true };
@@ -171,6 +174,7 @@ private:
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
     std::optional<bool> m_captivePortalModeEnabled;
     WebCore::ColorSchemePreference m_colorSchemePreference { WebCore::ColorSchemePreference::NoPreference };
+    bool m_allowPrivacyProxy { true };
 };
 
 } // namespace API

@@ -40,6 +40,7 @@ class ImageBuffer;
 
 namespace WebKit {
 
+class RemoteImageBufferProxy;
 class RemoteRenderingBackendProxy;
 
 class RemoteResourceCacheProxy : public WebCore::NativeImage::Observer, public WebCore::DecomposedGlyphs::Observer {
@@ -47,9 +48,9 @@ public:
     RemoteResourceCacheProxy(RemoteRenderingBackendProxy&);
     ~RemoteResourceCacheProxy();
 
-    void cacheImageBuffer(WebCore::ImageBuffer&);
-    WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
-    void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
+    void cacheImageBuffer(RemoteImageBufferProxy&);
+    RemoteImageBufferProxy* cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
+    void releaseImageBuffer(RemoteImageBufferProxy&);
 
     void recordNativeImageUse(WebCore::NativeImage&);
     void recordFontUse(WebCore::Font&);
@@ -64,7 +65,7 @@ public:
     unsigned imagesCount() const { return m_nativeImages.size(); }
 
 private:
-    using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::ImageBuffer>>;
+    using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<RemoteImageBufferProxy>>;
     using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::NativeImage>>;
     using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, uint64_t>;
     using DecomposedGlyphsHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::DecomposedGlyphs>>;

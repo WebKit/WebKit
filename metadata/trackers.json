@@ -4,7 +4,9 @@
         "url" : "https://bugs.webkit.org",
         "res" : [
             "\\Awebkit.org/b/(?P<id>\\d+)\\Z",
-            "\\Ahttps?://webkit.org/b/(?P<id>\\d+)\\Z"
+            "\\Ahttps?://webkit.org/b/(?P<id>\\d+)\\Z",
+            "\\A<webkit.org/b/(?P<id>\\d+)>\\Z",
+            "\\A<https?://webkit.org/b/(?P<id>\\d+)>\\Z"
         ],
         "redact" : {
             "product:Security": true

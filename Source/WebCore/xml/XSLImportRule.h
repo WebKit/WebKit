@@ -35,13 +35,13 @@ class CachedXSLStyleSheet;
 class XSLImportRule : private CachedStyleSheetClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    XSLImportRule(XSLStyleSheet* parentSheet, const String& href);
+    XSLImportRule(XSLStyleSheet& parentSheet, const String& href);
     virtual ~XSLImportRule();
     
     const String& href() const { return m_strHref; }
     XSLStyleSheet* styleSheet() const { return m_styleSheet.get(); }
 
-    XSLStyleSheet* parentStyleSheet() const { return m_parentStyleSheet; }
+    XSLStyleSheet* parentStyleSheet() const { return m_parentStyleSheet.get(); }
     void setParentStyleSheet(XSLStyleSheet* styleSheet) { m_parentStyleSheet = styleSheet; }
 
     bool isLoading();
@@ -50,11 +50,11 @@ public:
 private:
     void setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet) override;
     
-    XSLStyleSheet* m_parentStyleSheet;
+    WeakPtr<XSLStyleSheet> m_parentStyleSheet;
     String m_strHref;
     RefPtr<XSLStyleSheet> m_styleSheet;
     CachedResourceHandle<CachedXSLStyleSheet> m_cachedSheet;
-    bool m_loading;
+    bool m_loading { false };
 };
 
 } // namespace WebCore

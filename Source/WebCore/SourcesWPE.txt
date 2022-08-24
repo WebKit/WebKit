@@ -62,6 +62,9 @@ platform/UserAgentQuirks.cpp
 platform/adwaita/ScrollbarThemeAdwaita.cpp
 platform/adwaita/ThemeAdwaita.cpp
 
+platform/gamepad/wpe/WPEGamepad.cpp
+platform/gamepad/wpe/WPEGamepadProvider.cpp
+
 platform/generic/ScrollbarsControllerGeneric.cpp
 
 platform/graphics/ANGLEWebKitBridge.cpp
