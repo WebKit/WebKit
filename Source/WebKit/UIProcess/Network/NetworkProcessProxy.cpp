@@ -206,6 +206,7 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
     parameters.urlSchemesRegisteredAsNoAccess = copyToVector(LegacyGlobalSettings::singleton().schemesToRegisterAsNoAccess());
     parameters.cacheModel = LegacyGlobalSettings::singleton().cacheModel();
     parameters.urlSchemesRegisteredForCustomProtocols = WebProcessPool::urlSchemesWithCustomProtocolHandlers();
+    parameters.localhostAliasesForTesting = LegacyGlobalSettings::singleton().hostnamesToRegisterAsLocal();
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE) // GTK and WPE don't use defaultNetworkProcess
     parameters.websiteDataStoreParameters = WebsiteDataStore::parametersFromEachWebsiteDataStore();

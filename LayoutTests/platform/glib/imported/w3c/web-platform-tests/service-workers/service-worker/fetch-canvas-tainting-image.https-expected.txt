@@ -1,0 +1,89 @@
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: Cannot load https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&reject.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: Cannot load https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&reject.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: Cannot load https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&reject.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Cannot load image https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&ignore due to access control checks.
+CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Cannot load image https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&ignore due to access control checks.
+CONSOLE MESSAGE: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: Cannot load image https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&ACAOrigin=https://web-platform.test:9443&ignore due to access control checks.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Blocked https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&Auth&ignore from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 401
+CONSOLE MESSAGE: Cannot load image https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&Auth&ignore due to access control checks.
+CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Cannot load image https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&Auth&ignore due to access control checks.
+CONSOLE MESSAGE: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: Cannot load image https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&Auth&ACAOrigin=https://web-platform.test:9443&ignore due to access control checks.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Cannot load image https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Cannot load image https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE due to access control checks.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Cannot load image https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Cannot load image https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE due to access control checks.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Load failed
+CONSOLE MESSAGE: Cannot load https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Load failed
+CONSOLE MESSAGE: Cannot load https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Load failed
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Load failed
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443.
+
+PASS initialize global state
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&reject" with crossOrigin "" should be LOAD_ERROR
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&reject" with crossOrigin "anonymous" should be LOAD_ERROR
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&reject" with crossOrigin "use-credentials" should be LOAD_ERROR
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&ignore" with crossOrigin "" should be NOT_TAINTED
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&ignore" with crossOrigin "" should be TAINTED
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&ignore" with crossOrigin "anonymous" should be LOAD_ERROR
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&ACAOrigin=https://web-platform.test:9443&ignore" with crossOrigin "anonymous" should be NOT_TAINTED
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&ignore" with crossOrigin "use-credentials" should be LOAD_ERROR
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&ACAOrigin=https://web-platform.test:9443&ignore" with crossOrigin "use-credentials" should be LOAD_ERROR
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&ACAOrigin=https://web-platform.test:9443&ACACredentials=true&ignore" with crossOrigin "use-credentials" should be NOT_TAINTED
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&Auth&ignore" with crossOrigin "" should be NOT_TAINTED
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&Auth&ignore" with crossOrigin "" should be TAINTED
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&Auth&ignore" with crossOrigin "anonymous" should be LOAD_ERROR
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&Auth&ignore" with crossOrigin "use-credentials" should be LOAD_ERROR
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&Auth&ACAOrigin=https://web-platform.test:9443&ignore" with crossOrigin "use-credentials" should be LOAD_ERROR
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&Auth&ACAOrigin=https://web-platform.test:9443&ACACredentials=true&ignore" with crossOrigin "use-credentials" should be NOT_TAINTED
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=same-origin&url=https%3A%2F%2Fweb-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE" with crossOrigin "" should be NOT_TAINTED
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=same-origin&url=https%3A%2F%2Fweb-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE" with crossOrigin "anonymous" should be NOT_TAINTED
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=same-origin&url=https%3A%2F%2Fweb-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE" with crossOrigin "use-credentials" should be NOT_TAINTED
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=same-origin&url=https%3A%2F%2Fweb-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE" with crossOrigin "" should be NOT_TAINTED
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=same-origin&url=https%3A%2F%2Fweb-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE" with crossOrigin "anonymous" should be NOT_TAINTED
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=same-origin&url=https%3A%2F%2Fweb-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE" with crossOrigin "use-credentials" should be NOT_TAINTED
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE" with crossOrigin "" should be TAINTED
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE" with crossOrigin "anonymous" should be LOAD_ERROR
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE" with crossOrigin "use-credentials" should be LOAD_ERROR
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE" with crossOrigin "" should be TAINTED
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE" with crossOrigin "anonymous" should be LOAD_ERROR
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE" with crossOrigin "use-credentials" should be LOAD_ERROR
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443" with crossOrigin "" should be LOAD_ERROR
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&credentials=same-origin&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443" with crossOrigin "" should be NOT_TAINTED
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443" with crossOrigin "anonymous" should be NOT_TAINTED
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443" with crossOrigin "use-credentials" should be LOAD_ERROR
+PASS url "https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACACredentials%3Dtrue%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443" with crossOrigin "use-credentials" should be NOT_TAINTED
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443" with crossOrigin "" should be LOAD_ERROR
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&credentials=same-origin&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443" with crossOrigin "" should be NOT_TAINTED
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443" with crossOrigin "anonymous" should be NOT_TAINTED
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443" with crossOrigin "use-credentials" should be LOAD_ERROR
+PASS url "https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26ACACredentials%3Dtrue%26ACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443" with crossOrigin "use-credentials" should be NOT_TAINTED
+PASS restore global state
+

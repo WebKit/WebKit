@@ -1,0 +1,17 @@
+
+PASS Non-secure same-origin script => No headers
+PASS Non-secure same-origin script => No headers: sec-fetch-dest
+PASS Non-secure same-origin script => No headers: sec-fetch-mode
+PASS Non-secure same-origin script => No headers: sec-fetch-site
+PASS Non-secure same-origin script => No headers: sec-fetch-user
+PASS Non-secure same-site script => No headers
+PASS Non-secure same-site script => No headers: sec-fetch-dest
+PASS Non-secure same-site script => No headers: sec-fetch-mode
+PASS Non-secure same-site script => No headers: sec-fetch-site
+PASS Non-secure same-site script => No headers: sec-fetch-user
+PASS Non-secure cross-site script => No headers
+PASS Non-secure cross-site script => No headers: sec-fetch-dest
+PASS Non-secure cross-site script => No headers: sec-fetch-mode
+PASS Non-secure cross-site script => No headers: sec-fetch-site
+PASS Non-secure cross-site script => No headers: sec-fetch-user
+

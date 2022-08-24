@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.web-platform.test:8800/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&1 due to access control checks.
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8801/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&2 due to access control checks.
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.web-platform.test:8801/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&3 due to access control checks.
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://web-platform.test:9443/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&5 due to access control checks.
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&4 due to access control checks.
+
+FAIL Same domain basic usage assert_true: Got CORS-allowed response expected true got false
+PASS Cross domain basic usage
+PASS Same domain different port
+PASS Cross domain different port
+PASS Cross domain different protocol
+PASS Same domain different protocol different port
+

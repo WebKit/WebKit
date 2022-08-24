@@ -16,7 +16,8 @@ function get_host_info() {
   var HTTP_PORT2_ELIDED = HTTP_PORT2 == "80" ? "" : (":" + HTTP_PORT2);
   var HTTPS_PORT_ELIDED = HTTPS_PORT == "443" ? "" : (":" + HTTPS_PORT);
   var PORT_ELIDED = IS_HTTPS ? HTTPS_PORT_ELIDED : HTTP_PORT_ELIDED;
-  var ORIGINAL_HOST = '{{host}}';
+  /* WebKit runs its private WPT tests against localhost for now. */
+  var ORIGINAL_HOST = (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1') ? 'localhost' : '{{host}}';
   var REMOTE_HOST = (ORIGINAL_HOST === 'localhost') ? '127.0.0.1' : ('www1.' + ORIGINAL_HOST);
   var OTHER_HOST = '{{domains[www2]}}';
   var NOTSAMESITE_HOST = (ORIGINAL_HOST === 'localhost') ? '127.0.0.1' : ('{{hosts[alt][]}}');

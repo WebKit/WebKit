@@ -1,0 +1,87 @@
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?reject.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?reject.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?reject.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?reject.
+CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?throw due to access control checks.
+CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?throw due to access control checks.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: Returned response is null.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: Returned response is null.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: Returned response is null.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: Returned response is null.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null.
+CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?ignore due to access control checks.
+CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?ignore due to access control checks.
+CONSOLE MESSAGE: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=https://web-platform.test:9443&ignore due to access control checks.
+CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 401
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ignore due to access control checks.
+CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ignore due to access control checks.
+CONSOLE MESSAGE: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ACAOrigin=https://web-platform.test:9443&ignore due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py due to access control checks.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Load failed
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Load failed
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443.
+
+PASS Verify CORS XHR of fetch() in a Service Worker
+PASS test 1: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?reject with credentials false must be FAIL
+PASS test 2: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?reject with credentials true must be FAIL
+PASS test 3: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?reject with credentials false must be FAIL
+PASS test 4: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?reject with credentials true must be FAIL
+PASS test 5: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?throw with credentials false must be SUCCESS
+PASS test 6: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?throw with credentials true must be SUCCESS
+PASS test 7: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?throw with credentials false must be FAIL
+PASS test 8: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?throw with credentials true must be FAIL
+PASS test 9: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null with credentials false must be FAIL
+PASS test 10: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null with credentials true must be FAIL
+PASS test 11: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null with credentials false must be FAIL
+PASS test 12: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null with credentials true must be FAIL
+PASS test 13: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?ignore with credentials false must be SUCCESS
+PASS test 14: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?ignore with credentials true must be SUCCESS
+PASS test 15: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?ignore with credentials false must be FAIL
+PASS test 16: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?ignore with credentials true must be FAIL
+PASS test 17: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=https://web-platform.test:9443&ignore with credentials false must be SUCCESS
+PASS test 18: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=https://web-platform.test:9443&ignore with credentials true must be FAIL
+PASS test 19: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=https://web-platform.test:9443&ACACredentials=true&ignore with credentials true must be SUCCESS
+PASS test 20: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ignore with credentials false must be SUCCESS
+PASS test 21: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ignore with credentials true must be SUCCESS
+PASS test 22: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ignore with credentials false must be FAIL
+PASS test 23: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ignore with credentials true must be FAIL
+PASS test 24: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ACAOrigin=https://web-platform.test:9443&ignore with credentials false must be STATUS401
+PASS test 25: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ACAOrigin=https://web-platform.test:9443&ignore with credentials true must be FAIL
+PASS test 26: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ACAOrigin=https://web-platform.test:9443&ACACredentials=true&ignore with credentials true must be SUCCESS
+PASS test 27: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=same-origin&url=https%3A%2F%2Fweb-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be SUCCESS
+PASS test 28: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=same-origin&url=https%3A%2F%2Fweb-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be SUCCESS
+PASS test 29: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=same-origin&url=https%3A%2F%2Fweb-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be SUCCESS
+PASS test 30: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=same-origin&url=https%3A%2F%2Fweb-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be SUCCESS
+PASS test 31: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be FAIL
+PASS test 32: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be FAIL
+PASS test 33: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be FAIL
+PASS test 34: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=no-cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be FAIL
+PASS test 35: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443 with credentials false must be SUCCESS
+PASS test 36: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443 with credentials true must be FAIL
+PASS test 37: https://web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443%26ACACredentials%3Dtrue with credentials true must be SUCCESS
+PASS test 38: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443 with credentials false must be SUCCESS
+PASS test 39: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443 with credentials true must be FAIL
+PASS test 40: https://www1.web-platform.test:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2Fwww1.web-platform.test%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Fweb-platform.test%3A9443%26ACACredentials%3Dtrue with credentials true must be SUCCESS
+

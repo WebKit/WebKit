@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: undefined_variable
+
+PASS window.onerror - runtime error in cross-origin setInterval
+

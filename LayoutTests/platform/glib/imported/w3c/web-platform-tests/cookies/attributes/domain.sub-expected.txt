@@ -1,0 +1,59 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test cookie domain attribute parsing
+PASS Return cookie for a domain match
+PASS No cookie returned for domain mismatch (subdomains differ post-redirect)
+PASS Return cookie for a domain match with leading '.'
+TIMEOUT Return cookie for domain match (domain attribute is suffix of the host name and first level subdomain) Test timed out
+NOTRUN Return cookie for domain match (domain attribute is suffix of the host name and first level subdomain, with leading '.')
+NOTRUN No cookie returned for domain mismatch (subdomains differ, with leading '.')
+NOTRUN No cookie returned for domain mismatch when cookie was created (which would match after the redirect, with one subdomain level)
+NOTRUN Return cookie for domain match (domain attribute is suffix of the host name, with leading '.')
+NOTRUN Return cookie for domain match (domain attribute is suffix of the host name)
+NOTRUN No cookie returned for domain attribute with double leading '.'
+NOTRUN No cookie returned for domain attribute with subdomain followed by ..
+NOTRUN Return cookie for a domain match with leading whitespace and '.'
+NOTRUN No cookie returned for domain attribute with whitespace that surrounds a leading '.'
+NOTRUN No cookie returned for domain attribute with trailing '.'
+NOTRUN No cookie returned for domain attribute with trailing '..'
+NOTRUN No cookie returned for domain attribute with trailing whitespace and '.'
+NOTRUN No cookie returned for domain attribute with TLD as value
+NOTRUN No cookie returned for domain attribute with TLD as value, with leading '.'
+NOTRUN No cookie returned for domain attribute with TLD as value, with leading and trailing '.'
+NOTRUN Return multiple cookies that match on domain (without and with leading '.')
+NOTRUN Return multiple cookies that match on domain (with and without leading '.')
+NOTRUN No cookie returned for domain attribute value between quotes
+NOTRUN Return multiple cookies that match on subdomain and domain (without and with leading '.')
+NOTRUN Return multiple cookies that match on domain and subdomain (with and without leading '.')
+NOTRUN No cookie returned when domain attribute does not domain-match (and first does)
+NOTRUN Return cookie for domain attribute match (first does not, but second does)
+NOTRUN Return cookie for domain match (with bizarre capitalization for domain attribute value)
+NOTRUN No cookie returned for domain attribute value with port
+NOTRUN No cookie returned for domain mismatch when cookie was created (which would match after the redirect, with two subdomain levels)
+NOTRUN No cookie returned for cookie set on different domain (with no domain attribute)
+NOTRUN Return cookie set with bare domain= attribute
+NOTRUN Return cookie that domain-matches with bizarre-cased URL
+NOTRUN No cookie returned for domain attribute mismatch (first attribute matches, but second does not)
+NOTRUN Return cookie for domain match (first attribute doesn't, but second does)
+NOTRUN Return cookie for domain match (first attribute matches, second doesn't, third does)
+NOTRUN No cookie returned for domain attribute mismatch (first attribute doesn't, second does, third doesn't)
+NOTRUN Return cookie for domain match (with two identical domain attributes)
+NOTRUN Return cookie for domain match (with first domain attribute a match for host name and second as suffix of host name)
+NOTRUN Return cookie for domain match (with first domain attribute as suffix of host name and second a match for host name)
+NOTRUN No cookie set on domain mismatch before a (domain matching) redirect
+NOTRUN No cookie set on domain mismatch before a (domain matching) redirect (for second level subdomain)
+NOTRUN Return cookie for domain match (with first domain attribute as suffix of host name and second a bare attribute)
+NOTRUN Cookie returned for bare domain attribute following mismatched domain attribute (after redirect to same-origin page).
+NOTRUN No cookie returned for domain mismatch (first attribute is a different subdomain and second is bare)
+NOTRUN Cookies with same name, path, and domain (differing only in leading '.') overwrite each other ('.' second)
+NOTRUN Cookies with same name, path, and domain (differing only in leading '.') overwrite each other ('.' first)
+NOTRUN No cookie returned for domain with single dot ('.') value.
+NOTRUN Return cookie with valid domain after domain with single dot ('.') value.
+NOTRUN Empty domain treated as host cookie 1
+NOTRUN Empty domain treated as host cookie 2
+NOTRUN Empty domain treated as host cookie 3
+NOTRUN No host cookies returned for host cookies after non-host redirect 1
+NOTRUN No host cookies returned for host cookies after non-host redirect 2
+NOTRUN No host cookies returned for host cookies after non-host redirect 3
+

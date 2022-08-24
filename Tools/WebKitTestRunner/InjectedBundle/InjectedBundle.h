@@ -168,6 +168,8 @@ private:
 
     void setUpInjectedBundleClients(WKBundlePageRef);
 
+    void setAllowedHosts(WKDictionaryRef settings);
+
     void platformInitialize(WKTypeRef initializationUserData);
 
     enum class BegingTestingMode { New, Resume };

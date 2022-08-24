@@ -42,6 +42,7 @@ from webkitcorepy import decorators
 
 class WPEPort(Port):
     port_name = "wpe"
+    supports_localhost_aliases = True
 
     def __init__(self, *args, **kwargs):
         super(WPEPort, self).__init__(*args, **kwargs)

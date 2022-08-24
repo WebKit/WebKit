@@ -88,7 +88,7 @@ promise_test(async (test) => {
     frame.contentWindow.fetch(url2 + "?fetch-cors", { mode : "cors" });
     assert_array_equals(await data, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
         "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy",
-        "SourceMap","Timing-Allow-Origin","X-SourceMap","x-Header1"]);
+        "SourceMap","Timing-Allow-Origin","X-SourceMap","x-header1"]);
 }, "Test cors cross-origin fetch");
 
 promise_test(async (test) => {
@@ -136,7 +136,7 @@ promise_test(async (test) => {
     frame.contentWindow.loadScript(url2 + "?script-cors", "anonymous");
     assert_array_equals(await data, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
         "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy",
-        "SourceMap","Timing-Allow-Origin","X-SourceMap","x-Header1"]);
+        "SourceMap","Timing-Allow-Origin","X-SourceMap","x-header1"]);
 }, "Test cors script load");
 
 promise_test(async (test) => {

@@ -1,0 +1,14 @@
+
+PASS Same-host images are strictly same-site
+FAIL Subdomain images are strictly same-site promise_test: Unhandled rejection with value: "'samesite_unsupported_none=0.9461741832459153' not present on https://www1.web-platform.test:9443"
+FAIL Cross-site images are cross-site promise_test: Unhandled rejection with value: "'samesite_unsupported_none=0.15416837618644896' not present on https://not-web-platform.test:9443"
+PASS Same-host redirecting to same-host images are strictly same-site
+PASS Subdomain redirecting to same-host images are strictly same-site
+FAIL Cross-site redirecting to same-host images are cross-site promise_test: Unhandled rejection with value: "'samesite_unsupported_strict=0.9128603605361648' present on https://not-web-platform.test:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Fweb-platform.test%3A9443"
+FAIL Same-host redirecting to subdomain images are strictly same-site promise_test: Unhandled rejection with value: "'samesite_lax_none=0.6160098487329845' not present on https://web-platform.test:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Fwww1.web-platform.test%3A9443"
+FAIL Subdomain redirecting to subdomain images are strictly same-site promise_test: Unhandled rejection with value: "'samesite_lax_none=0.9271041586941191' not present on https://www1.web-platform.test:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Fwww1.web-platform.test%3A9443"
+FAIL Cross-site redirecting to subdomain images are cross-site promise_test: Unhandled rejection with value: "'samesite_unsupported_none=0.9202590972658778' not present on https://not-web-platform.test:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Fwww1.web-platform.test%3A9443"
+FAIL Same-host redirecting to cross-site images are cross-site promise_test: Unhandled rejection with value: "'samesite_unsupported_none=0.575747092237195' not present on https://web-platform.test:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Fnot-web-platform.test%3A9443"
+FAIL Subdomain redirecting to cross-site images are cross-site promise_test: Unhandled rejection with value: "'samesite_lax_none=0.46015385667924924' not present on https://www1.web-platform.test:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Fnot-web-platform.test%3A9443"
+FAIL Cross-site redirecting to cross-site images are cross-site promise_test: Unhandled rejection with value: "'samesite_lax_none=0.6858247441410427' not present on https://not-web-platform.test:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Fnot-web-platform.test%3A9443"
+

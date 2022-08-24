@@ -1,0 +1,6 @@
+
+PASS Permissions.state is "prompt" with allow="geolocation" in same-origin iframes.
+PASS Permissions.state is "prompt" with allow="geolocation" in cross-origin iframes.
+PASS Permission.state is "prompt" in same-origin iframes.
+PASS Permission.state is "denied" in cross-origin iframes.
+
