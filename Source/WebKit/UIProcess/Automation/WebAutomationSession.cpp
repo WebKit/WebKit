@@ -1113,6 +1113,52 @@ void WebAutomationSession::computeElementLayout(const Inspector::Protocol::Autom
     page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ComputeElementLayout(page->webPageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, coordinateSystem.value()), WTFMove(completionHandler));
 }
 
+void WebAutomationSession::getComputedRole(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, Ref<GetComputedRoleCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    if (frameNotFound)
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
+
+    WTF::CompletionHandler<void(std::optional<String>, std::optional<String>)> completionHandler = [callback](std::optional<String> errorType, std::optional<String> role) mutable {
+        if (errorType) {
+            callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(*errorType));
+            return;
+        }
+
+        callback->sendSuccess(*role);
+    };
+
+    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetComputedRole(page->webPageID(), frameID, nodeHandle), WTFMove(completionHandler));
+}
+
+void WebAutomationSession::getComputedLabel(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, Ref<GetComputedLabelCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    if (frameNotFound)
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
+
+    WTF::CompletionHandler<void(std::optional<String>, std::optional<String>)> completionHandler = [callback](std::optional<String> errorType, std::optional<String> label) mutable {
+        if (errorType) {
+            callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(*errorType));
+            return;
+        }
+
+        callback->sendSuccess(*label);
+    };
+
+    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetComputedLabel(page->webPageID(), frameID, nodeHandle), WTFMove(completionHandler));
+}
+
 void WebAutomationSession::selectOptionElement(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, Ref<SelectOptionElementCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);

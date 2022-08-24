@@ -643,6 +643,32 @@
             "async": true
         },
         {
+            "name": "getComputedRole",
+            "description": "Get the computed WAI-ARIA role of the element.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame that contains the element. The main frame is used if this parameter is empty string." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the element to get the role of." }
+            ],
+            "returns": [
+                { "name": "role", "type": "string", "description": "The computed WAI-ARIA role of the element." }
+            ],
+            "async": true
+        },
+        {
+            "name": "getComputedLabel",
+            "description": "Get the Accessible Name and Description Computation computed accessible name of the element.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame that contains the element. The main frame is used if this parameter is empty string." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the element to get the label of." }
+            ],
+            "returns": [
+                { "name": "label", "type": "string", "description": "The computed label for the element." }
+            ],
+            "async": true
+        },
+        {
             "name": "selectOptionElement",
             "description": "Selects the given option element. In case of container with multiple options enabled, the element selectedness is toggled.",
             "parameters": [
