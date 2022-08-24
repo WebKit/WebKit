@@ -617,6 +617,8 @@ int codePointCompare(const StringImpl*, const StringImpl*);
 // Most WebKit callers don't want that would use isASCIISpace or isHTMLSpace instead.
 bool isSpaceOrNewline(UChar32);
 bool isNotSpaceOrNewline(UChar32);
+// FIXME: rdar://99002825 (Investigate if isSpaceOrNewline should be including 0xA0 non-breaking space in check.)
+bool isUnicodeWhitespace(UChar32);
 
 // StringHash is the default hash for StringImpl* and RefPtr<StringImpl>
 template<typename> struct DefaultHash;
@@ -781,6 +783,12 @@ inline bool isSpaceOrNewline(UChar32 character)
 inline bool isNotSpaceOrNewline(UChar32 character)
 {
     return !isSpaceOrNewline(character);
+}
+
+// FIXME: For LChar, isASCIISpace(character) || character == noBreakSpace would be enough
+inline bool isUnicodeWhitespace(UChar32 character)
+{
+    return isASCII(character) ? isASCIISpace(character) : u_isUWhiteSpace(character);
 }
 
 inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, const LChar* data8, unsigned hashAndFlags)
@@ -1361,3 +1369,4 @@ using WTF::StringImpl;
 using WTF::equal;
 using WTF::isNotSpaceOrNewline;
 using WTF::isSpaceOrNewline;
+using WTF::isUnicodeWhitespace;

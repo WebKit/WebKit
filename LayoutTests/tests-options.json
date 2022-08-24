@@ -4262,6 +4262,12 @@
     "imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc/protocol/ice-ufragpwd.html": [
         "slow"
     ],

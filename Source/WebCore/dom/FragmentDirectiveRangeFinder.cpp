@@ -289,7 +289,7 @@ static std::optional<SimpleRange> advanceRangeStartToNextNonWhitespace(SimpleRan
         if (string.substringSharingImpl(offset, 5) == "&nbsp"_s)
             offset += 5;
         
-        if (!isSpaceOrNewline(string[offset]))
+        if (!isUnicodeWhitespace(string[offset]))
             return newRange;
         offset++;
         
