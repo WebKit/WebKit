@@ -2091,6 +2091,20 @@ void WebProcessProxy::getNotifications(const URL& registrationURL, const String&
     WebNotificationManagerProxy::sharedServiceWorkerManager().getNotifications(registrationURL, tag, sessionID(), WTFMove(callback));
 }
 
+const WeakHashSet<WebProcessProxy>* WebProcessProxy::serviceWorkerClientProcesses() const
+{
+    if (m_serviceWorkerInformation)
+        return &m_serviceWorkerInformation.value().clientProcesses;
+    return nullptr;
+}
+
+const WeakHashSet<WebProcessProxy>* WebProcessProxy::sharedWorkerClientProcesses() const
+{
+    if (m_sharedWorkerInformation)
+        return &m_sharedWorkerInformation.value().clientProcesses;
+    return nullptr;
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

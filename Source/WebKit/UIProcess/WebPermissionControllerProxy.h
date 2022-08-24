@@ -29,13 +29,16 @@
 #include "WebPageProxyIdentifier.h"
 
 namespace WebCore {
+enum class PermissionQuerySource : uint8_t;
 enum class PermissionState : uint8_t;
 struct ClientOrigin;
 struct PermissionDescriptor;
+struct SecurityOriginData;
 }
 
 namespace WebKit {
 
+class WebPageProxy;
 class WebProcessProxy;
 
 class WebPermissionControllerProxy final : public IPC::MessageReceiver {
@@ -46,8 +49,10 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
+    WebPageProxy* mostReasonableWebPageProxy(const WebCore::SecurityOriginData&, WebCore::PermissionQuerySource) const;
+
     // IPC Message handlers.
-    void query(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, WebPageProxyIdentifier, CompletionHandler<void(std::optional<WebCore::PermissionState>, bool shouldCache)>&&);
+    void query(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, std::optional<WebPageProxyIdentifier>, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>, bool shouldCache)>&&);
 
     WebProcessProxy& m_process;
 };

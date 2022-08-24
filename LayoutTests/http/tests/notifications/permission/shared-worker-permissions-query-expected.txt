@@ -1,0 +1,17 @@
+This test checks that Permissions::query() works for shared workers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS message.data is "prompt"
+PASS receivedPostMessageResponse became true
+PASS requestPermissionResult is "granted"
+PASS message.data is "granted"
+PASS receivedPostMessageResponse became true
+PASS requestPermissionResult is "denied"
+PASS message.data is "denied"
+PASS receivedPostMessageResponse became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

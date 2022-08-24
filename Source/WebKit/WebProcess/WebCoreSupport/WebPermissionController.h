@@ -25,14 +25,15 @@
 
 #pragma once
 
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/ClientOrigin.h>
-#include <WebCore/PageIdentifier.h>
 #include <WebCore/PermissionController.h>
 #include <WebCore/PermissionDescriptor.h>
 #include <wtf/Deque.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
+enum class PermissionQuerySource : uint8_t;
 enum class PermissionState : uint8_t;
 class Page;
 }
@@ -47,7 +48,7 @@ private:
     WebPermissionController();
 
     // WebCore::PermissionController
-    void query(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor&&, WebCore::Page&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
+    void query(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor&&, WebCore::Page*, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
     void addObserver(WebCore::PermissionObserver&) final;
     void removeObserver(WebCore::PermissionObserver&) final;
 
@@ -64,7 +65,8 @@ private:
     struct PermissionRequest {
         WebCore::ClientOrigin origin;
         WebCore::PermissionDescriptor descriptor;
-        WebCore::PageIdentifier identifier;
+        std::optional<WebPageProxyIdentifier> identifier;
+        WebCore::PermissionQuerySource source;
         CompletionHandler<void(std::optional<WebCore::PermissionState>)> completionHandler;
         bool isWaitingForReply { false };
     };

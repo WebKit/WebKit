@@ -309,6 +309,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/permissions/PermissionDescriptor.h
     Modules/permissions/PermissionName.h
     Modules/permissions/PermissionObserver.h
+    Modules/permissions/PermissionQuerySource.h
     Modules/permissions/PermissionState.h
 
     Modules/plugins/PluginReplacement.h

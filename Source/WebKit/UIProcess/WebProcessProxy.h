@@ -446,6 +446,9 @@ public:
     void hardwareConsoleStateChanged();
 #endif
 
+    const WeakHashSet<WebProcessProxy>* serviceWorkerClientProcesses() const;
+    const WeakHashSet<WebProcessProxy>* sharedWorkerClientProcesses() const;
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, CaptivePortalMode);
 
