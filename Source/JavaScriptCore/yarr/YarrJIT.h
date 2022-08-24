@@ -204,12 +204,12 @@ extern "C" SlowPathReturnType vmEntryToYarrJIT(const void* input, UCPURegister s
 extern "C" void vmEntryToYarrJITAfter(void);
 #endif
 
-class YarrBoyerMoyerData {
+class YarrBoyerMooreData {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(YarrBoyerMoyerData);
+    WTF_MAKE_NONCOPYABLE(YarrBoyerMooreData);
 
 public:
-    YarrBoyerMoyerData() = default;
+    YarrBoyerMooreData() = default;
 
     void saveMaps(Vector<UniqueRef<BoyerMooreBitmap::Map>> maps)
     {
@@ -236,7 +236,7 @@ private:
     Vector<UniqueRef<BoyerMooreBitmap::Map>> m_maps;
 };
 
-class YarrCodeBlock : public YarrBoyerMoyerData {
+class YarrCodeBlock : public YarrBoyerMooreData {
     struct InlineStats {
         InlineStats()
             : m_insnCount(0)
@@ -441,7 +441,7 @@ void jitCompile(YarrPattern&, StringView patternString, CharSize, VM*, YarrCodeB
 
 class YarrJITRegisters;
 
-void jitCompileInlinedTest(StackCheck*, StringView, OptionSet<Yarr::Flags>, CharSize, const VM*, YarrBoyerMoyerData&, CCallHelpers&, YarrJITRegisters&);
+void jitCompileInlinedTest(StackCheck*, StringView, OptionSet<Yarr::Flags>, CharSize, const VM*, YarrBoyerMooreData&, CCallHelpers&, YarrJITRegisters&);
 #endif
 
 } } // namespace JSC::Yarr
