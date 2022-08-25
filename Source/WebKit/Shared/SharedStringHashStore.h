@@ -57,7 +57,7 @@ public:
     void flushPendingChanges();
 
 private:
-    void resizeTable(unsigned newTableSize);
+    void resizeTable(unsigned newTableLength);
     void processPendingOperations();
 
     struct Operation {
@@ -68,7 +68,7 @@ private:
 
     Client& m_client;
     unsigned m_keyCount { 0 };
-    unsigned m_tableSize { 0 };
+    unsigned m_tableLength { 0 };
     SharedStringHashTable m_table;
     Vector<Operation> m_pendingOperations;
     RunLoop::Timer<SharedStringHashStore> m_pendingOperationsTimer;
