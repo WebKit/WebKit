@@ -3666,7 +3666,7 @@ webkit.org/b/242270 fast/encoding/char-after-fast-path-ascii-decoding.html [ Pas
 webkit.org/b/242273 fast/events/ios/dragstart-on-image-by-long-pressing.html [ Pass Failure ]
 
 # Requires platform support (see rdar://94324932).
-http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]
+http/tests/media/media-source/mediasource-rvfc.html [ Pass Failure ]
 
 webkit.org/b/242825 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
 
