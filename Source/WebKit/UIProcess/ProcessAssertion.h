@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/ProcessID.h>
@@ -88,6 +89,7 @@ protected:
     void acquireSync();
 
 #if PLATFORM(IOS_FAMILY)
+    void acquireTimerFired();
     void processAssertionWillBeInvalidated();
     virtual void processAssertionWasInvalidated();
 #endif
@@ -100,6 +102,7 @@ private:
     RetainPtr<RBSAssertion> m_rbsAssertion;
     RetainPtr<WKRBSAssertionDelegate> m_delegate;
     bool m_wasInvalidated { false };
+    WebCore::Timer m_acquireTimer;
 #endif
     Function<void()> m_prepareForInvalidationHandler;
     Function<void()> m_invalidationHandler;
