@@ -64,7 +64,7 @@ private:
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
     Ref<StyleRuleFontFace> m_fontFaceRule;
-    SVGFontElement* m_fontElement;
+    WeakPtr<SVGFontElement> m_fontElement;
 };
 
 } // namespace WebCore
