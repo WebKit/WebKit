@@ -30,6 +30,7 @@
 #include "CaptureDevice.h"
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceSettings.h"
+#include "UserActivity.h"
 #include <wtf/Observer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -152,6 +153,7 @@ private:
     Seconds m_elapsedTime { 0_s };
 
     RunLoop::Timer<DisplayCaptureSourceCocoa> m_timer;
+    UserActivity m_userActivity;
 
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
 };
