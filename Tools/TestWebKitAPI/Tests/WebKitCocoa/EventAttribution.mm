@@ -586,7 +586,7 @@ static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigatio
     [viewConfiguration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:YES];
 
     [webView synchronouslyLoadHTMLString:@"<body>"
-        "<a href='https://apps.apple.com/app/id1234567890' id='anchorid' attributiondestination='https://destination/' attributionSourceNonce='MTIzNDU2Nzg5MDEyMzQ1Ng'>anchor</a>"
+        "<a href='https://apps.apple.com/app/apple-store/id1234567890' id='anchorid' attributiondestination='https://destination/' attributionSourceNonce='MTIzNDU2Nzg5MDEyMzQ1Ng'>anchor</a>"
         "</body>" baseURL:[NSURL URLWithString:@"https://example.com/"]];
 
     while (consoleMessages.isEmpty())
