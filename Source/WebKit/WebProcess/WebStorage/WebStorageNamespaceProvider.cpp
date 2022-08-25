@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebStorageNamespaceProvider.h"
 
+#include "NetworkProcessConnection.h"
+#include "NetworkStorageManagerMessages.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
 #include "WebProcess.h"

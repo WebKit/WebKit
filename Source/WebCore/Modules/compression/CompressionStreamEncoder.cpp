@@ -27,6 +27,7 @@
 
 #include "BufferSource.h"
 #include "Exception.h"
+#include "SharedBuffer.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
