@@ -1625,7 +1625,10 @@ webkit.org/b/229425 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Pass T
 
 webkit.org/b/238689 storage/websql/change-version.html [ Pass Timeout ]
 
-webkit.org/b/239871 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-003.html  [ Pass ImageOnlyFailure ]
+webkit.org/b/239871 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-003.html [ Pass ImageOnlyFailure ]
+webkit.org/b/239871 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-007.html [ Pass ImageOnlyFailure ]
+webkit.org/b/239871 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-015.html [ Pass ImageOnlyFailure ]
+webkit.org/b/239871 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-102.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/244365 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-007.html [ Pass ImageOnlyFailure ]
 
