@@ -54,6 +54,10 @@
     filter: grayscale();
 }
 
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.breakpoint.selected .status > .status-image.resolved {
+    stroke: var(--selected-foreground-color);
+}
+
 .item.breakpoint.paused .icon {
     content: url(../Images/TypeIcons.svg#PausedBreakpoint-light);
 }
