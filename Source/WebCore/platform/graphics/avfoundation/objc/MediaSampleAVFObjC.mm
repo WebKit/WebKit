@@ -51,46 +51,60 @@ namespace WebCore {
 MediaSampleAVFObjC::MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&& sample)
     : m_sample(WTFMove(sample))
 {
+    initializeTimes();
 }
+
 MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample)
     : m_sample(sample)
 {
+    initializeTimes();
 }
+
 MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, AtomString trackID)
     : m_sample(sample)
     , m_id(trackID)
 {
+    initializeTimes();
 }
+
 MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, uint64_t trackID)
     : m_sample(sample)
     , m_id(AtomString::number(trackID))
 {
+    initializeTimes();
 }
 
 MediaSampleAVFObjC::~MediaSampleAVFObjC() = default;
 
+void MediaSampleAVFObjC::initializeTimes()
+{
+    auto presentationTime = PAL::CMSampleBufferGetOutputPresentationTimeStamp(m_sample.get());
+    if (CMTIME_IS_INVALID(presentationTime))
+        presentationTime = PAL::CMSampleBufferGetPresentationTimeStamp(m_sample.get());
+    m_presentationTime = PAL::toMediaTime(presentationTime);
+    
+    auto decodeTime = PAL::CMSampleBufferGetDecodeTimeStamp(m_sample.get());
+    m_decodeTime = !CMTIME_IS_INVALID(decodeTime) ? PAL::toMediaTime(decodeTime) : m_presentationTime;
+    
+    auto duration = PAL::CMSampleBufferGetOutputDuration(m_sample.get());
+    if (CMTIME_IS_INVALID(duration))
+        duration = PAL::CMSampleBufferGetDuration(m_sample.get());
+    m_duration = PAL::toMediaTime(duration);
+}
+
 MediaTime MediaSampleAVFObjC::presentationTime() const
 {
-    auto timeStamp = PAL::CMSampleBufferGetOutputPresentationTimeStamp(m_sample.get());
-    if (CMTIME_IS_INVALID(timeStamp))
-        timeStamp = PAL::CMSampleBufferGetPresentationTimeStamp(m_sample.get());
-    return PAL::toMediaTime(timeStamp);
+    return m_presentationTime;
 }
 
 MediaTime MediaSampleAVFObjC::decodeTime() const
 {
-    auto timeStamp = PAL::CMSampleBufferGetDecodeTimeStamp(m_sample.get());
-    if (CMTIME_IS_INVALID(timeStamp))
-        return presentationTime();
-    return PAL::toMediaTime(timeStamp);
+    return m_decodeTime;
 }
 
 MediaTime MediaSampleAVFObjC::duration() const
 {
-    auto duration = PAL::CMSampleBufferGetOutputDuration(m_sample.get());
-    if (CMTIME_IS_INVALID(duration))
-        duration = PAL::CMSampleBufferGetDuration(m_sample.get());
-    return PAL::toMediaTime(duration);
+    return m_duration;
 }
 
 size_t MediaSampleAVFObjC::sizeInBytes() const
@@ -191,6 +205,8 @@ void MediaSampleAVFObjC::offsetTimestampsBy(const MediaTime& offset)
     if (noErr != PAL::CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, m_sample.get(), itemCount, timingInfoArray.data(), &newSample))
         return;
     
+    m_presentationTime += offset;
+    m_decodeTime += offset;
     m_sample = adoptCF(newSample);
 }
 
@@ -214,6 +230,8 @@ void MediaSampleAVFObjC::setTimestamps(const WTF::MediaTime &presentationTimesta
     if (noErr != PAL::CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, m_sample.get(), itemCount, timingInfoArray.data(), &newSample))
         return;
     
+    m_presentationTime = presentationTimestamp;
+    m_decodeTime = decodeTimestamp;
     m_sample = adoptCF(newSample);
 }
 
