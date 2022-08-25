@@ -1,10 +1,10 @@
 
 PASS hidden-ua-stylesheet
-FAIL div.removeAttribute('hidden') assert_equals: div.removeAttribute('hidden') should not affect the div's content-visibility property. expected (string) "visible" but got (undefined) undefined
-FAIL div.setAttribute('hidden', '') assert_equals: div.setAttribute('hidden', '') should not affect the div's content-visibility property. expected (string) "visible" but got (undefined) undefined
-FAIL div.setAttribute('hidden', 'asdf') assert_equals: div.setAttribute('hidden', 'asdf') should not affect the div's content-visibility property. expected (string) "visible" but got (undefined) undefined
+PASS div.removeAttribute('hidden')
+PASS div.setAttribute('hidden', '')
+PASS div.setAttribute('hidden', 'asdf')
 FAIL div.setAttribute('hidden', 'until-found') assert_equals: div.setAttribute('hidden', 'until-found') should not affect the div's display property. expected "block" but got "none"
 FAIL div.setAttribute('hidden', 'UNTIL-FOUND') assert_equals: div.setAttribute('hidden', 'UNTIL-FOUND') should not affect the div's display property. expected "block" but got "none"
 FAIL div.setAttribute('hidden', 'UnTiL-FoUnD') assert_equals: div.setAttribute('hidden', 'UnTiL-FoUnD') should not affect the div's display property. expected "block" but got "none"
-FAIL div.setAttribute('hidden', '0') assert_equals: div.setAttribute('hidden', '0') should not affect the div's content-visibility property. expected (string) "visible" but got (undefined) undefined
+PASS div.setAttribute('hidden', '0')
 
