@@ -1,12 +1,12 @@
-EXPECTED (document.defaultView.getComputedStyle(span, null).getPropertyValue('width') == 'auto') OK
-EXPECTED (document.defaultView.getComputedStyle(span, null).getPropertyValue('height') == 'auto') OK
+EXPECTED (document.defaultView.getComputedStyle(span, null).getPropertyValue('bottom') == 'auto') OK
+EXPECTED (document.defaultView.getComputedStyle(span, null).getPropertyValue('right') == 'auto') OK
 RUN(span.webkitRequestFullscreen())
 EVENT(webkitfullscreenchange)
-EXPECTED (document.defaultView.getComputedStyle(span, null).getPropertyValue('width') == '100%') OK
-EXPECTED (document.defaultView.getComputedStyle(span, null).getPropertyValue('height') == '100%') OK
+EXPECTED (document.defaultView.getComputedStyle(span, null).getPropertyValue('bottom') == '0px') OK
+EXPECTED (document.defaultView.getComputedStyle(span, null).getPropertyValue('right') == '0px') OK
 RUN(document.webkitExitFullscreen())
 EVENT(webkitfullscreenchange)
-EXPECTED (document.defaultView.getComputedStyle(span, null).getPropertyValue('width') == 'auto') OK
-EXPECTED (document.defaultView.getComputedStyle(span, null).getPropertyValue('height') == 'auto') OK
+EXPECTED (document.defaultView.getComputedStyle(span, null).getPropertyValue('bottom') == 'auto') OK
+EXPECTED (document.defaultView.getComputedStyle(span, null).getPropertyValue('right') == 'auto') OK
 END OF TEST
 

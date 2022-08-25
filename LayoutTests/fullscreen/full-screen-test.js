@@ -158,7 +158,7 @@ function waitForEventTestAndEnd(element, eventName, testFuncString)
 {
     waitForEventAndTest(element, eventName, testFuncString, true);
 }
-  
+
 var testEnded = false;
 
 function endTest()
