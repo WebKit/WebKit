@@ -341,7 +341,7 @@ class GitHubEWS(GitHub):
             obsolete_changes = Change.mark_old_changes_as_obsolete(pr_id, sha)
             for obsolete_change in obsolete_changes:
                 obsolete_comment_text = gh.generate_comment_text_for_change(obsolete_change)
-                gh.update_or_leave_comment_on_pr(pr_id, obsolete_comment_text, comment_id=obsolete_change.comment_id, change=change)
+                gh.update_or_leave_comment_on_pr(pr_id, obsolete_comment_text, comment_id=obsolete_change.comment_id, change=obsolete_change)
                 _log.info('Updated obsolete status-bubble on pr {} for hash: {}'.format(pr_id, obsolete_change.change_id))
 
         else:
