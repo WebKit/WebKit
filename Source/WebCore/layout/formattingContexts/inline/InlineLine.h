@@ -48,6 +48,7 @@ public:
     void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
 
     bool hasContent() const;
+    bool isContentTruncated() const { return m_contentIsTruncated; }
 
     bool contentNeedsBidiReordering() const { return m_hasNonDefaultBidiLevelRun; }
 
@@ -253,6 +254,7 @@ private:
     bool m_hasNonDefaultBidiLevelRun { false };
     // Note that this is only needed for the special (and ancient and not supported by other browsers) "-webkit-nbsp-mode: space".
     bool m_collapseLeadingNonBreakingSpace { false };
+    bool m_contentIsTruncated { false };
 };
 
 

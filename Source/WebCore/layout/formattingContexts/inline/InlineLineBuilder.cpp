@@ -395,6 +395,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , m_line.nonSpanningInlineLevelBoxCount()
         , computedVisualOrder()
         , inlineBaseDirectionForLineContent()
+        , m_line.isContentTruncated()
         , lineRuns };
 }
 

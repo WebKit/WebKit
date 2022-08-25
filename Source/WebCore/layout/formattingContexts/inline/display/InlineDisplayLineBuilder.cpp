@@ -107,7 +107,38 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         , contentVisualLeft
         , rootInlineBox.logicalWidth()
         , lineBox.isHorizontal()
+        , trailingEllipsisRect(lineContent, lineBox)
     };
+}
+
+// FIXME: for bidi content, we may need to run this code after we finished constructing the display boxes
+// and also run truncation on the (visual)display box list and not on the (logical)line runs.
+std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisRect(const LineBuilder::LineContent& lineContent, const LineBox& lineBox) const
+{
+    if (!lineContent.contentNeedsTrailingEllipsis)
+        return { };
+
+    auto ellipsisStart = 0.f;
+    for (auto& lineRun : lineContent.runs) {
+        if (lineRun.isInlineBox())
+            continue;
+        if (lineRun.isTruncated()) {
+            if (lineRun.isText())
+                ellipsisStart = std::max(ellipsisStart, lineRun.logicalLeft() + lineRun.textContent()->partiallyVisibleContent->width);
+            break;
+        }
+        ellipsisStart = std::max(ellipsisStart, lineRun.logicalRight());
+    }
+    static MainThreadNeverDestroyed<const AtomString> ellipsisStr(&horizontalEllipsis, 1);
+    auto ellipsisWidth = !lineBox.lineIndex() ? root().firstLineStyle().fontCascade().width(TextRun { ellipsisStr->string() }) : root().style().fontCascade().width(TextRun { ellipsisStr->string() });
+    auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
+    auto lineBoxRect = lineBox.logicalRect();
+    auto ellipsisRect = FloatRect { lineBoxRect.left() + ellipsisStart, lineBoxRect.top() + rootInlineBoxRect.top(), ellipsisWidth, rootInlineBoxRect.height() };
+
+    if (root().style().isLeftToRightDirection())
+        return ellipsisRect;
+    ellipsisRect.setX(lineBoxRect.right() - (ellipsisStart + ellipsisRect.width()));
+    return ellipsisRect;
 }
 
 InlineRect InlineDisplayLineBuilder::flipLogicalLineRectToVisualForWritingMode(const InlineRect& lineLogicalRect, WritingMode writingMode) const

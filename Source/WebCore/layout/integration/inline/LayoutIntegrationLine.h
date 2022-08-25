@@ -36,7 +36,7 @@ namespace LayoutIntegration {
 class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth, bool isHorizontal, bool isFirstAfterPageBreak = false)
+    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth, bool isHorizontal, std::optional<FloatRect> ellipsisVisualRect, bool isFirstAfterPageBreak = false)
         : m_firstBoxIndex(firstBoxIndex)
         , m_boxCount(boxCount)
         , m_lineBoxRect(lineBoxRect)
@@ -49,6 +49,7 @@ public:
         , m_contentLogicalWidth(contentLogicalWidth)
         , m_baselineType(baselineType)
         , m_isHorizontal(isHorizontal)
+        , m_ellipsisVisualRect(ellipsisVisualRect)
         , m_isFirstAfterPageBreak(isFirstAfterPageBreak)
     {
     }
@@ -71,6 +72,14 @@ public:
 
     float baseline() const { return m_baseline; }
     FontBaseline baselineType() const { return m_baselineType; }
+
+    bool hasEllipsis() const { return m_ellipsisVisualRect.has_value(); }
+    FloatRect ellipsisVisualRect() const { return *m_ellipsisVisualRect; }
+    TextRun ellipsisText() const
+    {
+        static MainThreadNeverDestroyed<const AtomString> ellipsisStr(&horizontalEllipsis, 1);
+        return TextRun { ellipsisStr->string() };
+    }
 
     bool isHorizontal() const { return m_isHorizontal; }
 
@@ -96,6 +105,8 @@ private:
     float m_contentLogicalWidth { 0 };
     FontBaseline m_baselineType { AlphabeticBaseline };
     bool m_isHorizontal { true };
+    // This is visual rect ignoring block direction.
+    std::optional<FloatRect> m_ellipsisVisualRect { };
     // FIXME: This is to match paginated legacy lines. Move it to some other, paginated related structure.
     bool m_isFirstAfterPageBreak { false };
 };

@@ -41,7 +41,7 @@ public:
         float top { 0 };
         float bottom { 0 };
     };
-    Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth, bool isHorizontal);
+    Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth, bool isHorizontal, std::optional<FloatRect> ellipsisVisualRect);
 
     float left() const { return m_lineBoxRect.x(); }
     float right() const { return m_lineBoxRect.maxX(); }
@@ -59,6 +59,8 @@ public:
     FontBaseline baselineType() const { return m_baselineType; }
 
     bool isHorizontal() const { return m_isHorizontal; }
+
+    std::optional<FloatRect> ellipsisVisualRect() const { return m_ellipsisVisualRect; }
 
     float contentLogicalOffset() const { return m_contentLogicalOffset; }
     float contentLogicalWidth() const { return m_contentLogicalWidth; }
@@ -78,9 +80,11 @@ private:
     float m_contentLogicalWidth { 0 };
     FontBaseline m_baselineType { AlphabeticBaseline };
     bool m_isHorizontal { true };
+    // This is visual rect ignoring block direction.
+    std::optional<FloatRect> m_ellipsisVisualRect { };
 };
 
-inline Line::Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth, bool isHorizontal)
+inline Line::Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth, bool isHorizontal, std::optional<FloatRect> ellipsisVisualRect)
     : m_lineBoxRect(lineBoxRect)
     , m_scrollableOverflow(scrollableOverflow)
     , m_enclosingTopAndBottom(enclosingTopAndBottom)
@@ -89,6 +93,7 @@ inline Line::Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverf
     , m_contentLogicalWidth(contentLogicalWidth)
     , m_baselineType(baselineType)
     , m_isHorizontal(isHorizontal)
+    , m_ellipsisVisualRect(ellipsisVisualRect)
 {
 }
 

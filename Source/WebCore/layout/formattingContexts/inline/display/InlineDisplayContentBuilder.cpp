@@ -104,7 +104,6 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
         processBidiContent(lineContent, lineBox, displayLine, boxes);
     else
         processNonBidiContent(lineContent, lineBox, displayLine, boxes);
-    processOverflownRunsForEllipsis(lineContent, boxes, displayLine);
     collectInkOverflowForTextDecorations(boxes, displayLine);
     collectInkOverflowForInlineBoxes(boxes);
     return boxes;
@@ -754,65 +753,6 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
         }
     };
     handleTrailingOpenInlineBoxes();
-}
-
-void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(const LineBuilder::LineContent& lineContent, DisplayBoxes& boxes, const InlineDisplay::Line& displayLine)
-{
-    if (root().style().textOverflow() != TextOverflow::Ellipsis)
-        return;
-    auto& rootInlineBox = boxes[0];
-    auto isLeftToRightDirection = rootInlineBox.style().isLeftToRightDirection();
-    ASSERT(rootInlineBox.isRootInlineBox());
-
-    if (displayLine.contentLogicalWidth() <= displayLine.lineBoxRect().width()) {
-        ASSERT(lineContent.runs.isEmpty() || !lineContent.runs[lineContent.runs.size() - 1].isTruncated());
-        return;
-    }
-
-    static MainThreadNeverDestroyed<const AtomString> ellipsisStr(&horizontalEllipsis, 1);
-    auto ellipsisRun = WebCore::TextRun { ellipsisStr->string() };
-    auto ellipsisWidth = !m_lineIndex ? root().firstLineStyle().fontCascade().width(ellipsisRun) : root().style().fontCascade().width(ellipsisRun);
-
-    auto ellipsisVisualLeft = [&] {
-        auto ellipsedContentWidth = [&] () -> float {
-            for (auto& lineRun : lineContent.runs) {
-                if (lineRun.isTruncated())
-                    return lineRun.isText() ? lineRun.textContent()->partiallyVisibleContent->width : 0.f;
-            }
-            return { };
-        };
-        auto ellipsisStart = isLeftToRightDirection ? 0.f : displayLine.right();
-        for (size_t i = 0; i < boxes.size(); ++i) {
-            auto& box = isLeftToRightDirection ? boxes[i] : boxes[boxes.size() - 1 - i];
-            if (box.isInlineBox())
-                continue;
-            switch (box.isVisuallyHidden()) {
-            case InlineDisplay::Box::IsVisuallyHidden::No:
-                ellipsisStart = isLeftToRightDirection ? std::max(ellipsisStart, box.right()) : std::min(ellipsisStart, box.left());
-                break;
-            case InlineDisplay::Box::IsVisuallyHidden::Partially:
-                ellipsisStart = isLeftToRightDirection ? std::max(ellipsisStart, box.left() + ellipsedContentWidth()) : std::min(ellipsisStart, box.right() - ellipsedContentWidth());
-                FALLTHROUGH;
-            case InlineDisplay::Box::IsVisuallyHidden::Yes:
-                return isLeftToRightDirection ? ellipsisStart : ellipsisStart - ellipsisWidth;
-            default:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-        }
-        ASSERT_NOT_REACHED();
-        return ellipsisStart;
-    }();
-    auto ellispisBoxRect = InlineRect { rootInlineBox.top(), ellipsisVisualLeft, ellipsisWidth, rootInlineBox.height() };
-
-    boxes.append({ m_lineIndex
-        , InlineDisplay::Box::Type::Ellipsis
-        , root()
-        , UBIDI_DEFAULT_LTR
-        , ellispisBoxRect
-        , ellispisBoxRect
-        , { }
-        , InlineDisplay::Box::Text { 0, 1, ellipsisStr->string() } });
 }
 
 void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(DisplayBoxes& boxes)

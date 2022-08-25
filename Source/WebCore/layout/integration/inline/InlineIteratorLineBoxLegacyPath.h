@@ -53,15 +53,16 @@ public:
     float inkOverflowTop() const { return m_rootInlineBox->logicalTopVisualOverflow(); }
     float inkOverflowBottom() const { return m_rootInlineBox->logicalBottomVisualOverflow(); }
 
+    bool hasEllipsis() const { return !!m_rootInlineBox->ellipsisBox(); }
     FloatRect ellipsisVisualRectIgnoringBlockDirection() const
     {
-        ASSERT(m_rootInlineBox->ellipsisBox());
+        ASSERT(hasEllipsis());
         return m_rootInlineBox->ellipsisBox()->frameRect();
     }
 
     TextRun ellipsisText() const
     {
-        ASSERT(m_rootInlineBox->ellipsisBox());
+        ASSERT(hasEllipsis());
         return m_rootInlineBox->ellipsisBox()->createTextRun();
     }
 

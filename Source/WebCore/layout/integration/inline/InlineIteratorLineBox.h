@@ -73,6 +73,7 @@ public:
 
     const RenderStyle& style() const { return isFirst() ? containingBlock().firstLineStyle() : containingBlock().style(); }
 
+    bool hasEllipsis() const;
     enum AdjustedForSelection : uint8_t { No, Yes };
     FloatRect ellipsisVisualRect(AdjustedForSelection = AdjustedForSelection::No) const;
     TextRun ellipsisText() const;
@@ -205,8 +206,17 @@ inline float LineBox::inkOverflowBottom() const
     });
 }
 
+inline bool LineBox::hasEllipsis() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.hasEllipsis();
+    });
+}
+
 inline FloatRect LineBox::ellipsisVisualRect(AdjustedForSelection adjustedForSelection) const
 {
+    ASSERT(hasEllipsis());
+
     auto visualRect = WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.ellipsisVisualRectIgnoringBlockDirection();
     });
@@ -227,6 +237,8 @@ inline FloatRect LineBox::ellipsisVisualRect(AdjustedForSelection adjustedForSel
 
 inline TextRun LineBox::ellipsisText() const
 {
+    ASSERT(hasEllipsis());
+
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.ellipsisText();
     });

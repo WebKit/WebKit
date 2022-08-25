@@ -85,6 +85,8 @@ public:
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
 
+    size_t lineIndex() const { return m_lineIndex; }
+
 private:
     friend class LineBoxBuilder;
     friend class LineBoxVerticalAligner;
@@ -104,6 +106,7 @@ private:
     InlineLayoutUnit inlineLevelBoxAbsoluteTop(const InlineLevelBox&) const;
 
 private:
+    size_t m_lineIndex { 0 };
     bool m_hasContent { false };
     InlineRect m_logicalRect;
     OptionSet<InlineLevelBox::Type> m_boxTypes;
