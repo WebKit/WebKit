@@ -3726,3 +3726,5 @@ webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance
 
 webkit.org/b/244208 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass Failure Slow ]
 webkit.org/b/244208 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure Slow ]
+
+webkit.org/b/244346 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html [ Pass Failure ]
