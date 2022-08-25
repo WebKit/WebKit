@@ -2131,6 +2131,7 @@
 		4198524F27AD7B70005477B7 /* getUserMediaPermission.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMediaPermission.html; sourceTree = "<group>"; };
 		41BAF4E225AC9DB800D82F32 /* getUserMedia2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMedia2.html; sourceTree = "<group>"; };
 		41E67A8425D16E83007B0A4C /* STUNMessageParsingTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = STUNMessageParsingTest.cpp; sourceTree = "<group>"; };
+		41E9EE1A28B4DBF8006A2298 /* PermissionsAPI.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PermissionsAPI.mm; sourceTree = "<group>"; };
 		41EBA9F128ABA06500953013 /* ImageRotationSessionVT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageRotationSessionVT.cpp; sourceTree = "<group>"; };
 		44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsTestIOS.mm; sourceTree = "<group>"; };
 		442BBF681C91CAD90017087F /* RefLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefLogger.cpp; sourceTree = "<group>"; };
@@ -3777,6 +3778,7 @@
 				9B2346411F943A2400DB1D23 /* PasteWebArchive.mm */,
 				51D8C18F2267B26700797E40 /* PDFLinkReferrer.mm */,
 				516281262325C19100BB7E42 /* PDFSnapshot.mm */,
+				41E9EE1A28B4DBF8006A2298 /* PermissionsAPI.mm */,
 				3FCC4FE41EC4E8520076E37C /* PictureInPictureDelegate.mm */,
 				DFB8FF312492F51A00F00B0D /* Preconnect.mm */,
 				C95501BE19AD2FAF0049BE3E /* Preferences.mm */,

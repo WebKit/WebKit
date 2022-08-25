@@ -189,6 +189,7 @@ Tests/WebKitCocoa/PasteImage.mm
 Tests/WebKitCocoa/PasteMixedContent.mm
 Tests/WebKitCocoa/PasteRTFD.mm
 Tests/WebKitCocoa/PasteWebArchive.mm
+Tests/WebKitCocoa/PermissionsAPI.mm
 Tests/WebKitCocoa/PictureInPictureDelegate.mm
 Tests/WebKitCocoa/Preconnect.mm
 Tests/WebKitCocoa/Preferences.mm
