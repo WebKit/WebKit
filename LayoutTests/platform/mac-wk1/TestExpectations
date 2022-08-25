@@ -1945,3 +1945,4 @@ webkit.org/b/244312 http/tests/media/fairplay/fps-mse-unmuxed-same-key.html [ Pa
 webkit.org/b/244312 http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Pass Failure ]
 webkit.org/b/244312 http/tests/media/fairplay/fps-hls.html [ Pass Failure ]
 
+webkit.org/b/244336 fast/canvas/canvas-createPattern-video-loading.html [ Pass Timeout ]
