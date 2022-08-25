@@ -29,6 +29,7 @@
 #include "InlineIteratorBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBlockFlow.h"
+#include "RenderView.h"
 
 namespace WebCore {
 namespace InlineIterator {

@@ -37,6 +37,7 @@
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
+#include "NodeRenderStyle.h"
 #include "RenderSearchField.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowPseudoIds.h"

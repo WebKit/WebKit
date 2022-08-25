@@ -28,6 +28,7 @@
 #pragma once
 
 #include "DocumentFragment.h"
+#include "Element.h"
 
 namespace WebCore {
 
