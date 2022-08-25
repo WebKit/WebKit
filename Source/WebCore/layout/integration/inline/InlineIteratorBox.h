@@ -59,7 +59,6 @@ public:
     bool isText() const;
     bool isInlineBox() const;
     bool isRootInlineBox() const;
-    bool isEllipsisBox() const;
     bool isLineBreak() const;
 
     FloatRect visualRect() const;
@@ -184,13 +183,6 @@ inline bool Box::isRootInlineBox() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.isRootInlineBox();
-    });
-}
-
-inline bool Box::isEllipsisBox() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.isEllipsisBox();
     });
 }
 

@@ -27,6 +27,7 @@
 
 #include "InlineIteratorBoxLegacyPath.h"
 #include "LayoutIntegrationInlineContent.h"
+#include "LegacyEllipsisBox.h"
 #include "LegacyRootInlineBox.h"
 
 namespace WebCore {
@@ -51,6 +52,18 @@ public:
     float bottom() const { return m_rootInlineBox->lineBoxBottom().toFloat(); }
     float inkOverflowTop() const { return m_rootInlineBox->logicalTopVisualOverflow(); }
     float inkOverflowBottom() const { return m_rootInlineBox->logicalBottomVisualOverflow(); }
+
+    FloatRect ellipsisVisualRectIgnoringBlockDirection() const
+    {
+        ASSERT(m_rootInlineBox->ellipsisBox());
+        return m_rootInlineBox->ellipsisBox()->frameRect();
+    }
+
+    TextRun ellipsisText() const
+    {
+        ASSERT(m_rootInlineBox->ellipsisBox());
+        return m_rootInlineBox->ellipsisBox()->createTextRun();
+    }
 
     float contentLogicalLeft() const { return m_rootInlineBox->logicalLeft(); }
     float contentLogicalRight() const { return m_rootInlineBox->logicalRight(); }

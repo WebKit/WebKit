@@ -891,13 +891,6 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, con
             continue;
         }
 
-        if (box.isEllipsis()) {
-            if (!hasDamage(box))
-                continue;
-            ModernEllipsisBoxPainter { *m_inlineContent, box, paintInfo, paintOffset, flow().selectionForegroundColor(), flow().selectionBackgroundColor() }.paint();
-            continue;
-        }
-
         if (auto& textContent = box.text()) {
             if (!textContent->length() || !hasDamage(box))
                 continue;

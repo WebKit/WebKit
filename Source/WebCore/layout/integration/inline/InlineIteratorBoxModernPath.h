@@ -49,7 +49,6 @@ public:
     }
 
     bool isText() const { return box().isTextOrSoftLineBreak(); }
-    bool isEllipsisBox() const { return box().isEllipsis(); }
     bool isInlineBox() const { return box().isInlineBox(); }
     bool isRootInlineBox() const { return box().isRootInlineBox(); }
 

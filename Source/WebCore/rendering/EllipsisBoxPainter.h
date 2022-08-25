@@ -24,44 +24,26 @@
 
 #pragma once
 
-#include "InlineIteratorBoxLegacyPath.h"
-#include "InlineIteratorBoxModernPath.h"
-#include "LayoutIntegrationInlineContent.h"
+#include "InlineIteratorLineBox.h"
 
 namespace WebCore {
 
 struct PaintInfo;
-class LegacyEllipsisBox;
 
-template<typename EllipsisBoxPath>
 class EllipsisBoxPainter {
 public:
-    EllipsisBoxPainter(EllipsisBoxPath&&, PaintInfo&, const LayoutPoint& paintOffset, Color selectionForegroundColor, Color selectionBackgroundColor);
+    EllipsisBoxPainter(const InlineIterator::LineBox&, PaintInfo&, const LayoutPoint& paintOffset, Color selectionForegroundColor, Color selectionBackgroundColor);
 
     void paint();
 
 private:
     void paintSelection();
-    RenderObject::HighlightState selectionState() const;
-    std::tuple<float, float> selectionTopAndBottom() const;
 
-    EllipsisBoxPath m_ellipsisBox;
+    const InlineIterator::LineBox& m_lineBox;
     PaintInfo& m_paintInfo;
     LayoutPoint m_paintOffset;
     Color m_selectionForegroundColor;
     Color m_selectionBackgroundColor;
 };
-
-class LegacyEllipsisBoxPainter : public EllipsisBoxPainter<InlineIterator::BoxLegacyPath> {
-public:
-    LegacyEllipsisBoxPainter(const LegacyEllipsisBox&, PaintInfo&, const LayoutPoint& paintOffset, Color selectionForegroundColor, Color selectionBackgroundColor);
-};
-
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-class ModernEllipsisBoxPainter : public EllipsisBoxPainter<InlineIterator::BoxModernPath> {
-public:
-    ModernEllipsisBoxPainter(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&, PaintInfo&, const LayoutPoint& paintOffset, Color selectionForegroundColor, Color selectionBackgroundColor);
-};
-#endif
 
 }

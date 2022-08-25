@@ -71,6 +71,13 @@ public:
     float inkOverflowTop() const;
     float inkOverflowBottom() const;
 
+    const RenderStyle& style() const { return isFirst() ? containingBlock().firstLineStyle() : containingBlock().style(); }
+
+    enum AdjustedForSelection : uint8_t { No, Yes };
+    FloatRect ellipsisVisualRect(AdjustedForSelection = AdjustedForSelection::No) const;
+    TextRun ellipsisText() const;
+    RenderObject::HighlightState ellipsisSelectionState() const;
+
     const RenderBlockFlow& containingBlock() const;
     RenderFragmentContainer* containingFragment() const;
 
@@ -195,6 +202,33 @@ inline float LineBox::inkOverflowBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.inkOverflowBottom();
+    });
+}
+
+inline FloatRect LineBox::ellipsisVisualRect(AdjustedForSelection adjustedForSelection) const
+{
+    auto visualRect = WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.ellipsisVisualRectIgnoringBlockDirection();
+    });
+
+    // FIXME: Add pixel snapping here.
+    if (adjustedForSelection == AdjustedForSelection::No) {
+        containingBlock().flipForWritingMode(visualRect);
+        return visualRect;
+    }
+    auto selectionTop = containingBlock().adjustEnclosingTopForPrecedingBlock(LayoutUnit { contentLogicalTopAdjustedForPrecedingLineBox() });
+    auto selectionBottom = contentLogicalBottomAdjustedForFollowingLineBox();
+
+    visualRect.setY(selectionTop);
+    visualRect.setHeight(selectionBottom - selectionTop);
+    containingBlock().flipForWritingMode(visualRect);
+    return visualRect;
+}
+
+inline TextRun LineBox::ellipsisText() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.ellipsisText();
     });
 }
 

@@ -56,6 +56,9 @@ public:
     float inkOverflowTop() const { return line().inkOverflow().y(); }
     float inkOverflowBottom() const { return line().inkOverflow().maxY(); }
 
+    FloatRect ellipsisVisualRectIgnoringBlockDirection() const { return { }; }
+    TextRun ellipsisText() const { return TextRun { emptyString() }; }
+
     float contentLogicalTopAdjustedForPrecedingLineBox() const { return !m_lineIndex ? contentLogicalTop() : LineBoxIteratorModernPath(*m_inlineContent, m_lineIndex - 1).contentLogicalBottomAdjustedForFollowingLineBox(); }
     // FIXME: Implement.
     float contentLogicalBottomAdjustedForFollowingLineBox() const { return contentLogicalBottom(); }

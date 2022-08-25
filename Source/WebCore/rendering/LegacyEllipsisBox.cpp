@@ -48,8 +48,8 @@ LegacyEllipsisBox::LegacyEllipsisBox(RenderBlockFlow& renderer, const AtomString
 
 void LegacyEllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    LegacyEllipsisBoxPainter { *this, paintInfo, paintOffset, blockFlow().selectionForegroundColor(), blockFlow().selectionBackgroundColor() }.paint();
-
+    auto lineBox = InlineIterator::LineBox { InlineIterator::LineBoxIteratorLegacyPath { &root() } };
+    EllipsisBoxPainter { lineBox, paintInfo, paintOffset, blockFlow().selectionForegroundColor(), blockFlow().selectionBackgroundColor() }.paint();
     paintMarkupBox(paintInfo, paintOffset, lineTop, lineBottom, lineStyle());
 }
 

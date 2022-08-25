@@ -116,23 +116,6 @@ RenderObject::HighlightState Box::selectionState() const
         auto& renderer = text.renderer();
         return renderer.view().selection().highlightStateForTextBox(renderer, text.selectableRange());
     }
-    if (isEllipsisBox()) {
-        auto lastLeafBoxOnLine = lineBox()->lastLeafBox();
-        ASSERT(lastLeafBoxOnLine);
-        if (!lastLeafBoxOnLine->isText())
-            return RenderObject::HighlightState::None;
-
-        auto& text = downcast<TextBox>(*lastLeafBoxOnLine);
-        if (text.selectionState() == RenderObject::HighlightState::None)
-            return RenderObject::HighlightState::None;
-
-        auto selectionRange = text.selectableRange();
-        if (!selectionRange.truncation)
-            return RenderObject::HighlightState::None;
-
-        auto [selectionStart, selectionEnd] = renderer().view().selection().rangeForTextBox(text.renderer(), selectionRange);
-        return selectionStart <= *selectionRange.truncation && selectionEnd >= *selectionRange.truncation ? RenderObject::HighlightState::Inside : RenderObject::HighlightState::None;
-    }
     return renderer().selectionState();
 }
 

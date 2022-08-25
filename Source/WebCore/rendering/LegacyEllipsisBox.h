@@ -25,7 +25,7 @@
 namespace WebCore {
 
 namespace InlineIterator {
-class BoxLegacyPath;
+class LineBoxIteratorLegacyPath;
 }
 
 class HitTestRequest;
@@ -42,7 +42,7 @@ public:
     RenderBlockFlow& blockFlow() const { return downcast<RenderBlockFlow>(LegacyInlineBox::renderer()); }
 
 private:
-    friend class InlineIterator::BoxLegacyPath;
+    friend class InlineIterator::LineBoxIteratorLegacyPath;
 
     bool isEllipsisBox() const final { return true; }
 
