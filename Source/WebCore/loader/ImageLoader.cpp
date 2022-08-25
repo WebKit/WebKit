@@ -42,6 +42,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LazyLoadImageObserver.h"
+#include "LegacyRenderSVGImage.h"
 #include "Logging.h"
 #include "Page.h"
 #include "RenderImage.h"
@@ -440,8 +441,13 @@ RenderImageResource* ImageLoader::renderImageResource()
     if (is<RenderImage>(*renderer) && !downcast<RenderImage>(*renderer).isGeneratedContent())
         return &downcast<RenderImage>(*renderer).imageResource();
 
-    if (is<RenderSVGImage>(*renderer))
-        return &downcast<RenderSVGImage>(*renderer).imageResource();
+    if (auto* svgImage = dynamicDowncast<LegacyRenderSVGImage>(renderer))
+        return &svgImage->imageResource();
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (auto* svgImage = dynamicDowncast<RenderSVGImage>(renderer))
+        return &svgImage->imageResource();
+#endif
 
 #if ENABLE(VIDEO)
     if (is<RenderVideo>(*renderer))

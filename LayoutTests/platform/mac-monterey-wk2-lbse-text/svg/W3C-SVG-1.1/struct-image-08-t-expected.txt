@@ -4,14 +4,20 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (0,50) size 480x170
-  RenderSVGTransformableContainer {g} at (0,50) size 480x170
+layer at (0,50) size 482x170 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,50) size 482x170
 layer at (0,50) size 160x170
   RenderSVGRect {rect} at (0,0) size 160x170 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=50.00] [width=160.00] [height=170.00]
 layer at (160,50) size 160x170
   RenderSVGRect {rect} at (160,0) size 160x170 [fill={[type=SOLID] [color=#992200]}] [x=160.00] [y=50.00] [width=160.00] [height=170.00]
 layer at (320,50) size 160x170
   RenderSVGRect {rect} at (320,0) size 160x170 [fill={[type=SOLID] [color=#002299]}] [x=320.00] [y=50.00] [width=160.00] [height=170.00]
+layer at (0,60) size 162x150
+  RenderSVGImage {image} at (0,10) size 162x150
+layer at (160,60) size 162x150
+  RenderSVGImage {image} at (160,10) size 162x150
+layer at (320,60) size 162x150 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGImage {image} at (320,10) size 162x150
 layer at (10,304) size 283x46
   RenderSVGText {text} at (10,304) size 284x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 284x46

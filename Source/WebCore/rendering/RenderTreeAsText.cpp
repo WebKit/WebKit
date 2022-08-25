@@ -39,6 +39,7 @@
 #include "InlineIteratorTextBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRenderSVGContainer.h"
+#include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
 #include "Logging.h"
@@ -61,7 +62,6 @@
 #include "RenderRuby.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStop.h"
-#include "RenderSVGImage.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGRoot.h"
@@ -620,8 +620,8 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         writeSVGInlineText(ts, downcast<RenderSVGInlineText>(o), behavior);
         return;
     }
-    if (is<RenderSVGImage>(o)) {
-        writeSVGImage(ts, downcast<RenderSVGImage>(o), behavior);
+    if (is<LegacyRenderSVGImage>(o)) {
+        writeSVGImage(ts, downcast<LegacyRenderSVGImage>(o), behavior);
         return;
     }
 

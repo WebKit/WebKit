@@ -36,10 +36,12 @@ layer at (-13,46) size 26x18 backgroundClip at (0,0) size 480x360 clip at (0,0) 
   RenderSVGText {text} at (17,76) size 26x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 26x18
       chunk 1 (middle anchor) text run 1 at (-12.57,60.00) startOffset 0 endOffset 3 width 25.15: "<a>"
+layer at (-30,-30) size 61x94 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (12,0) size 61x94
+layer at (-30,-30) size 60x60 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGImage {image} at (0,0) size 60x60
 layer at (-29,46) size 58x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (14,76) size 58x18
-layer at (-29,46) size 57x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGText {text} at (0,0) size 58x18 contains 1 chunk(s)
+  RenderSVGText {text} at (1,76) size 58x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 58x18
       chunk 1 (middle anchor) text run 1 at (-28.57,60.00) startOffset 0 endOffset 7 width 57.14: "<image>"
 layer at (-37,-27) size 76x92 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -88,10 +90,12 @@ layer at (-13,46) size 26x18 backgroundClip at (0,0) size 480x360 clip at (0,0) 
   RenderSVGText {text} at (17,76) size 26x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 26x18
       chunk 1 (middle anchor) text run 1 at (-12.57,60.00) startOffset 0 endOffset 3 width 25.15: "<a>"
+layer at (-30,-30) size 61x94 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (12,0) size 61x94
+layer at (-30,-30) size 60x60 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGImage {image} at (0,0) size 60x60
 layer at (-29,46) size 58x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (14,76) size 58x18
-layer at (-29,46) size 57x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGText {text} at (0,0) size 58x18 contains 1 chunk(s)
+  RenderSVGText {text} at (1,76) size 58x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 58x18
       chunk 1 (middle anchor) text run 1 at (-28.57,60.00) startOffset 0 endOffset 7 width 57.14: "<image>"
 layer at (-37,-27) size 76x92 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

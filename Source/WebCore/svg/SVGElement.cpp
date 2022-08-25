@@ -561,6 +561,7 @@ static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> createSVGLayerAwareEl
         defsTag.get(),
         ellipseTag.get(),
         gTag.get(),
+        imageTag.get(),
         lineTag.get(),
         pathTag.get(),
         polygonTag.get(),

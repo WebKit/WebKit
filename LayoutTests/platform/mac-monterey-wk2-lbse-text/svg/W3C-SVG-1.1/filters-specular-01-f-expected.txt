@@ -24,6 +24,12 @@ layer at (205,30) size 50x30
   RenderSVGRect {rect} at (115,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
 layer at (320,30) size 50x30
   RenderSVGRect {rect} at (230,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (90,30) size 50x30
+  RenderSVGImage {image} at (0,19) size 50x30
+layer at (205,30) size 50x30
+  RenderSVGImage {image} at (115,19) size 50x30
+layer at (320,30) size 50x30
+  RenderSVGImage {image} at (230,19) size 50x30
 layer at (90,11) size 311x50
   RenderSVGTransformableContainer {g} at (0,1) size 311x50
 layer at (90,11) size 310x18
@@ -38,6 +44,12 @@ layer at (205,30) size 50x30
   RenderSVGRect {rect} at (115,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
 layer at (320,30) size 50x30
   RenderSVGRect {rect} at (230,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (90,30) size 50x30
+  RenderSVGImage {image} at (0,19) size 50x30
+layer at (205,30) size 50x30
+  RenderSVGImage {image} at (115,19) size 50x30
+layer at (320,30) size 50x30
+  RenderSVGImage {image} at (230,19) size 50x30
 layer at (90,11) size 315x50
   RenderSVGTransformableContainer {g} at (0,1) size 315x50
 layer at (90,11) size 315x18
@@ -52,6 +64,12 @@ layer at (205,30) size 50x30
   RenderSVGRect {rect} at (115,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
 layer at (320,30) size 50x30
   RenderSVGRect {rect} at (230,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (90,30) size 50x30
+  RenderSVGImage {image} at (0,19) size 50x30
+layer at (205,30) size 50x30
+  RenderSVGImage {image} at (115,19) size 50x30
+layer at (320,30) size 50x30
+  RenderSVGImage {image} at (230,19) size 50x30
 layer at (90,11) size 348x50
   RenderSVGTransformableContainer {g} at (0,1) size 348x50
 layer at (90,11) size 348x18
@@ -66,6 +84,12 @@ layer at (205,30) size 50x30
   RenderSVGRect {rect} at (115,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
 layer at (320,30) size 50x30
   RenderSVGRect {rect} at (230,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (90,30) size 50x30
+  RenderSVGImage {image} at (0,19) size 50x30
+layer at (205,30) size 50x30
+  RenderSVGImage {image} at (115,19) size 50x30
+layer at (320,30) size 50x30
+  RenderSVGImage {image} at (230,19) size 50x30
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

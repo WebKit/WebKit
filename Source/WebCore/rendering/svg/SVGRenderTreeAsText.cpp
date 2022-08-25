@@ -31,6 +31,7 @@
 
 #include "ColorSerialization.h"
 #include "GraphicsTypes.h"
+#include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShapeInlines.h"
 #include "NodeRenderStyle.h"
@@ -38,7 +39,6 @@
 #include "RenderIterator.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStopInlines.h"
-#include "RenderSVGImage.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResourceClipperInlines.h"
 #include "RenderSVGResourceFilterInlines.h"
@@ -567,7 +567,7 @@ void writeSVGInlineText(TextStream& ts, const RenderSVGInlineText& text, OptionS
     writeSVGInlineTextBoxes(ts, text);
 }
 
-void writeSVGImage(TextStream& ts, const RenderSVGImage& image, OptionSet<RenderAsTextFlag> behavior)
+void writeSVGImage(TextStream& ts, const LegacyRenderSVGImage& image, OptionSet<RenderAsTextFlag> behavior)
 {
     writeStandardPrefix(ts, image, behavior);
     writePositionAndStyle(ts, image, behavior);

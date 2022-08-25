@@ -34,6 +34,8 @@ layer at (0,0) size 20x20
   RenderSVGTransformableContainer {use} at (0,14) size 20x20
 layer at (0,0) size 20x20
   RenderSVGRect {rect} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,0) size 20x20
+  RenderSVGImage {image} at (0,14) size 20x20
 layer at (0,-14) size 29x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 30x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 30x18
@@ -82,6 +84,10 @@ layer at (0,0) size 20x21
   RenderSVGTransformableContainer {use} at (0,22) size 20x21
 layer at (0,0) size 20x20
   RenderSVGPath {path} at (0,0) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [data="M 0 0 L 20 0 L 20 20 L 0 20 Z"]
+layer at (0,0) size 20x21
+  RenderSVGTransformableContainer {use} at (0,22) size 20x21
+layer at (0,0) size 20x20
+  RenderSVGImage {image} at (0,0) size 20x20
 layer at (0,-23) size 46x29 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {use} at (0,0) size 46x29
 layer at (0,-23) size 46x29 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

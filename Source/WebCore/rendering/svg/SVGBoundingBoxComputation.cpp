@@ -70,9 +70,7 @@ FloatRect SVGBoundingBoxComputation::computeDecoratedBoundingBox(const SVGBoundi
 
     // - "foreignObject"
     // - "image"
-    // FIXME: [LBSE] Upstream new RenderSVGImage implementation
-    // if (is<RenderSVGForeignObject>(m_renderer) || is<RenderSVGImage>(m_renderer))
-    if (is<RenderSVGForeignObject>(m_renderer))
+    if (is<RenderSVGForeignObject>(m_renderer) || is<RenderSVGImage>(m_renderer))
         return handleForeignObjectOrImage(options, boundingBoxValid);
 
     ASSERT_NOT_REACHED();
