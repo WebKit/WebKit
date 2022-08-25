@@ -175,8 +175,8 @@ void FullscreenZoomInitialFrame::runTest(View view)
 
     EXPECT_EQ(300, initialFrame.size.width);
     EXPECT_EQ(300, initialFrame.size.height);
-    EXPECT_EQ(400, finalFrame.size.width);
-    EXPECT_EQ(400, finalFrame.size.height);
+    EXPECT_EQ(view.bounds.size.width, finalFrame.size.width);
+    EXPECT_EQ(view.bounds.size.height, finalFrame.size.height);
 
     isWaitingForPageSignalToContinue = true;
     didGetPageSignalToContinue = false;
