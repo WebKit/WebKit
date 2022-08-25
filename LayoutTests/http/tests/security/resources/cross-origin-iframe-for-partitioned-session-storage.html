@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <script>
+        window.addEventListener('message', (event) => {
+            /* Allow messages from all origins */
+            let testValue = `4321, ${window.origin}`;
+            let {step, testKey} = event.data;
+            switch (step) {
+            case 1:
+            case 2: {
+                let result = window.sessionStorage.getItem(testKey);
+                event.source.postMessage({"step": step, "result": result}, event.origin);
+                break;
+            }
+            case 3:
+            case 4: {
+                window.sessionStorage.setItem(testKey, testValue);
+                event.source.postMessage({"step": step, "testValue": testValue}, event.origin);
+                break;
+            }
+            case 5:
+            case 6: {
+                window.sessionStorage.setItem(testKey, testValue);
+                event.source.postMessage({"step": step}, event.origin);
+                break;
+            }
+            case 8:
+            case 9:
+            case 11:
+            case 12: {
+                let result = window.sessionStorage.getItem(testKey);
+                event.source.postMessage({"step": step, "result": result}, event.origin);
+                break;
+            }
+            default:
+                document.write(`Reached unexpected default case. step: ${step}, data: ${event.data}`);
+            }
+        }, false);
+
+        //window.top.postMessage("go", "*");
+    </script>
+</body>
+</head>

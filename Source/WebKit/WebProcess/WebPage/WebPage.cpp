@@ -693,6 +693,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
+    WebStorageNamespaceProvider::incrementUseCount(*m_pageGroup, sessionStorageNamespaceIdentifier());
+
 #if PLATFORM(IOS)
     setAllowsDeprecatedSynchronousXMLHttpRequestDuringUnload(parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload);
 #endif
@@ -1093,6 +1095,8 @@ WebPage::~WebPage()
     if (m_footerBanner)
         m_footerBanner->detachFromPage();
 #endif
+
+    WebStorageNamespaceProvider::decrementUseCount(*m_pageGroup, sessionStorageNamespaceIdentifier());
 
 #ifndef NDEBUG
     webPageCounter.decrement();
