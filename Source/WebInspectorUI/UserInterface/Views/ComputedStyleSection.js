@@ -206,7 +206,7 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
             return true;
         });
 
-        properties.sort((a, b) => a.name.extendedLocaleCompare(b.name));
+        properties.sort((a, b) => WI.CSSProperty.sortPreferringNonPrefixed(a.name, b.name));
         return properties;
     }
 
