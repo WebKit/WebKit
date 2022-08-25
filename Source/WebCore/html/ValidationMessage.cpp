@@ -54,7 +54,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-ValidationMessage::ValidationMessage(HTMLFormControlElement* element)
+ValidationMessage::ValidationMessage(HTMLFormControlElement& element)
     : m_element(element)
 {
     ASSERT(m_element);
