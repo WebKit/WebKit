@@ -432,7 +432,7 @@ bool setExcludedFromBackup(const String&, bool)
 
 #endif
 
-MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(Span<const uint8_t>)>&)>&& apply, PlatformFileHandle* outputHandle)
+MappedFileData createMappedFileData(const String& path, size_t bytesSize, PlatformFileHandle* outputHandle)
 {
     constexpr bool failIfFileExists = true;
     auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::ReadWrite, FileSystem::FileAccessPermission::User, failIfFileExists);
@@ -453,15 +453,17 @@ MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(con
         return { };
     }
 
-    void* map = const_cast<void*>(mappedFile.data());
-    uint8_t* mapData = static_cast<uint8_t*>(map);
+    if (outputHandle)
+        *outputHandle = handle;
+    else
+        FileSystem::closeFile(handle);
 
-    apply([&mapData](Span<const uint8_t> chunk) {
-        memcpy(mapData, chunk.data(), chunk.size());
-        mapData += chunk.size();
-        return true;
-    });
+    return mappedFile;
+}
 
+void finalizeMappedFileData(MappedFileData& mappedFileData, size_t bytesSize)
+{
+    void* map = const_cast<void*>(mappedFileData.data());
 #if OS(WINDOWS)
     DWORD oldProtection;
     VirtualProtect(map, bytesSize, FILE_MAP_READ, &oldProtection);
@@ -473,11 +475,24 @@ MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(con
     // Flush (asynchronously) to file, turning this into clean memory.
     msync(map, bytesSize, MS_ASYNC);
 #endif
+}
 
-    if (outputHandle)
-        *outputHandle = handle;
-    else
-        FileSystem::closeFile(handle);
+MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(Span<const uint8_t>)>&)>&& apply, PlatformFileHandle* outputHandle)
+{
+    auto mappedFile = createMappedFileData(path, bytesSize, outputHandle);
+    if (!mappedFile)
+        return { };
+
+    void* map = const_cast<void*>(mappedFile.data());
+    uint8_t* mapData = static_cast<uint8_t*>(map);
+
+    apply([&mapData](Span<const uint8_t> chunk) {
+        memcpy(mapData, chunk.data(), chunk.size());
+        mapData += chunk.size();
+        return true;
+    });
+
+    finalizeMappedFileData(mappedFile, bytesSize);
 
     return mappedFile;
 }

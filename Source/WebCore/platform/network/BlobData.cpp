@@ -60,15 +60,25 @@ long long BlobDataItem::length() const
     return m_length;
 }
 
-void BlobData::appendData(const ThreadSafeDataBuffer& data)
+void BlobData::appendData(Ref<DataSegment>&& data)
 {
-    size_t dataSize = data.data() ? data.data()->size() : 0;
-    appendData(data, 0, dataSize);
+    auto dataSize = data->size();
+    appendData(WTFMove(data), 0, dataSize);
 }
 
-void BlobData::appendData(const ThreadSafeDataBuffer& data, long long offset, long long length)
+void BlobData::appendData(Ref<DataSegment>&& data, long long offset, long long length)
 {
-    m_items.append(BlobDataItem(data, offset, length));
+    m_items.append(BlobDataItem(WTFMove(data), offset, length));
+}
+
+void BlobData::replaceData(const DataSegment& oldData, Ref<DataSegment>&& newData)
+{
+    for (auto& blobItem : m_items) {
+        if (blobItem.data() == &oldData) {
+            blobItem.m_data = WTFMove(newData);
+            break;
+        }
+    }
 }
 
 void BlobData::appendFile(Ref<BlobDataFileReference>&& file)

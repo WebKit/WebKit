@@ -348,14 +348,14 @@ void NetworkDataTaskBlob::read()
 
 void NetworkDataTaskBlob::readData(const BlobDataItem& item)
 {
-    ASSERT(item.data().data());
+    ASSERT(item.data());
 
     long long bytesToRead = item.length() - m_currentItemReadSize;
     ASSERT(bytesToRead >= 0);
     if (bytesToRead > m_totalRemainingSize)
         bytesToRead = m_totalRemainingSize;
 
-    auto* data = item.data().data()->data() + item.offset() + m_currentItemReadSize;
+    auto* data = item.data()->data() + item.offset() + m_currentItemReadSize;
     m_currentItemReadSize = 0;
 
     consumeData(data, static_cast<int>(bytesToRead));

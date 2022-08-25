@@ -99,7 +99,7 @@ void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItem
         long long currentLength = iter->length() - offset;
         long long newLength = currentLength > length ? length : currentLength;
         if (iter->type() == BlobDataItem::Type::Data)
-            blobData->appendData(iter->data(), iter->offset() + offset, newLength);
+            blobData->appendData(*iter->data(), iter->offset() + offset, newLength);
         else {
             ASSERT(iter->type() == BlobDataItem::Type::File);
             blobData->appendFile(iter->file(), iter->offset() + offset, newLength);
@@ -120,6 +120,42 @@ void BlobRegistryImpl::registerFileBlobURL(const URL& url, Ref<BlobDataFileRefer
     addBlobData(url.string(), WTFMove(blobData));
 }
 
+static FileSystem::MappedFileData storeInMappedFileData(const String& path, const uint8_t* data, size_t size)
+{
+    auto mappedFileData = FileSystem::createMappedFileData(path, size);
+    if (!mappedFileData)
+        return { };
+    FileSystem::deleteFile(path);
+
+    memcpy(const_cast<void*>(mappedFileData.data()), data, size);
+
+    FileSystem::finalizeMappedFileData(mappedFileData, size);
+    return mappedFileData;
+}
+
+Ref<DataSegment> BlobRegistryImpl::createDataSegment(Vector<uint8_t>&& movedData, BlobData& blobData)
+{
+    ASSERT(isMainThread());
+
+    auto data = DataSegment::create(WTFMove(movedData));
+    if (m_fileDirectory.isEmpty())
+        return data;
+
+    static uint64_t blobMappingFileCounter;
+    static NeverDestroyed<Ref<WorkQueue>> workQueue(WorkQueue::create("BlobRegistryImpl Data Queue"));
+    auto filePath = FileSystem::pathByAppendingComponent(m_fileDirectory, makeString("mapping-file-", ++blobMappingFileCounter, ".blob"));
+    workQueue.get()->dispatch([blobData = Ref { blobData }, data, filePath = WTFMove(filePath).isolatedCopy()]() mutable {
+        auto mappedFileData = storeInMappedFileData(filePath, data->data(), data->size());
+        if (!mappedFileData)
+            return;
+        ASSERT(mappedFileData.size() == data->size());
+        callOnMainThread([blobData = WTFMove(blobData), data = WTFMove(data), newData = DataSegment::create(WTFMove(mappedFileData))]() mutable {
+            blobData->replaceData(data.get(), WTFMove(newData));
+        });
+    });
+    return data;
+}
+
 void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
 {
     ASSERT(isMainThread());
@@ -136,9 +172,7 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart>&& blobPa
     for (BlobPart& part : blobParts) {
         switch (part.type()) {
         case BlobPart::Type::Data: {
-            auto movedData = part.moveData();
-            auto data = ThreadSafeDataBuffer::create(WTFMove(movedData));
-            blobData->appendData(data);
+            blobData->appendData(createDataSegment(part.moveData(), blobData));
             break;
         }
         case BlobPart::Type::Blob: {
@@ -281,7 +315,7 @@ bool BlobRegistryImpl::populateBlobsForFileWriting(const Vector<String>& blobURL
     return true;
 }
 
-static bool writeFilePathsOrDataBuffersToFile(const Vector<std::pair<String, ThreadSafeDataBuffer>>& filePathsOrDataBuffers, FileSystem::PlatformFileHandle file, const String& path)
+static bool writeFilePathsOrDataBuffersToFile(const Vector<std::pair<String, RefPtr<DataSegment>>>& filePathsOrDataBuffers, FileSystem::PlatformFileHandle file, const String& path)
 {
     auto fileCloser = makeScopeExit([file]() mutable {
         FileSystem::closeFile(file);
@@ -293,9 +327,9 @@ static bool writeFilePathsOrDataBuffersToFile(const Vector<std::pair<String, Thr
     }
 
     for (auto& part : filePathsOrDataBuffers) {
-        if (part.second.data()) {
-            int length = part.second.data()->size();
-            if (FileSystem::writeToFile(file, part.second.data()->data(), length) != length) {
+        if (part.second) {
+            int length = part.second->size();
+            if (FileSystem::writeToFile(file, part.second->data(), length) != length) {
                 LOG_ERROR("Failed writing a Blob to temporary file");
                 return false;
             }
