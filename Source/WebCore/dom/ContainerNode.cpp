@@ -81,7 +81,7 @@ unsigned ScriptDisallowedScope::s_count = 0;
 ScriptDisallowedScope::EventAllowedScope* ScriptDisallowedScope::EventAllowedScope::s_currentScope = nullptr;
 #endif
 
-ALWAYS_INLINE void ContainerNode::removeAllChildrenWithScriptAssertion(ChildChange::Source source, NodeVector& children, DeferChildrenChanged deferChildrenChanged)
+ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChange::Source source, NodeVector& children, DeferChildrenChanged deferChildrenChanged) -> DidRemoveElements
 {
     ASSERT(children.isEmpty());
     collectChildNodes(*this, children);
@@ -90,15 +90,20 @@ ALWAYS_INLINE void ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         RELEASE_ASSERT(!connectedSubframeCount() && !hasRareData() && !wrapper());
         ASSERT(!weakPtrFactory().isInitialized());
-        while (RefPtr<Node> child = m_firstChild)
+        bool hadElementChild = false;
+        while (RefPtr<Node> child = m_firstChild) {
+            hadElementChild |= is<Element>(*child);
             removeBetween(nullptr, child->nextSibling(), *child);
+        }
         document().incDOMTreeVersion();
-        return;
+        return hadElementChild ? DidRemoveElements::Yes : DidRemoveElements::No;
     }
 
+    bool hadElementChild = false;
     if (source == ChildChange::Source::API) {
         ChildListMutationScope mutation(*this);
         for (auto& child : children) {
+            hadElementChild |= is<Element>(child);
             mutation.willRemoveChild(child.get());
             child->notifyMutationObserversNodeWillDetach();
             dispatchChildRemovalEvents(child);
@@ -108,14 +113,17 @@ ALWAYS_INLINE void ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         if (UNLIKELY(document().hasMutationObserversOfType(MutationObserverOptionType::ChildList))) {
             ChildListMutationScope mutation(*this);
-            for (auto& child : children)
+            for (auto& child : children) {
+                hadElementChild |= is<Element>(child);
                 mutation.willRemoveChild(child.get());
-        }
+            }
+        } else
+            hadElementChild = children.containsIf([](auto& child) { return is<Element>(child); });
     }
 
     disconnectSubframesIfNeeded(*this, DescendantsOnly);
 
-    ContainerNode::ChildChange childChange { ChildChange::Type::AllChildrenRemoved, nullptr, nullptr, nullptr, source };
+    ContainerNode::ChildChange childChange { ChildChange::Type::AllChildrenRemoved, nullptr, nullptr, nullptr, source, hadElementChild ? ContainerNode::ChildChange::AffectsElements::Yes : ContainerNode::ChildChange::AffectsElements::No };
 
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -139,6 +147,8 @@ ALWAYS_INLINE void ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
 
     if (deferChildrenChanged == DeferChildrenChanged::No)
         childrenChanged(childChange);
+
+    return hadElementChild ? DidRemoveElements::Yes : DidRemoveElements::No;
 }
 
 static ContainerNode::ChildChange makeChildChangeForRemoval(Node& childToRemove, ContainerNode::ChildChange::Source source)
@@ -156,7 +166,8 @@ static ContainerNode::ChildChange makeChildChangeForRemoval(Node& childToRemove,
         dynamicDowncast<Element>(childToRemove),
         ElementTraversal::previousSibling(childToRemove),
         ElementTraversal::nextSibling(childToRemove),
-        source
+        source,
+        changeType == ContainerNode::ChildChange::Type::ElementRemoved ? ContainerNode::ChildChange::AffectsElements::Yes : ContainerNode::ChildChange::AffectsElements::No
     };
 }
 
@@ -222,12 +233,12 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
     return true;
 }
 
-enum class ReplacedAllChildren { No, Yes };
+enum class ReplacedAllChildren { No, YesIncludingElements, YesNotIncludingElements };
 
 static ContainerNode::ChildChange makeChildChangeForInsertion(ContainerNode& containerNode, Node& child, Node* beforeChild, ContainerNode::ChildChange::Source source, ReplacedAllChildren replacedAllChildren)
 {
-    if (replacedAllChildren == ReplacedAllChildren::Yes)
-        return { ContainerNode::ChildChange::Type::AllChildrenReplaced, nullptr, nullptr, nullptr, source };
+    if (replacedAllChildren != ReplacedAllChildren::No)
+        return { ContainerNode::ChildChange::Type::AllChildrenReplaced, nullptr, nullptr, nullptr, source, replacedAllChildren == ReplacedAllChildren::YesIncludingElements ? ContainerNode::ChildChange::AffectsElements::Yes : ContainerNode::ChildChange::AffectsElements::No };
 
     auto changeType = [&] {
         if (is<Element>(child))
@@ -242,7 +253,8 @@ static ContainerNode::ChildChange makeChildChangeForInsertion(ContainerNode& con
         dynamicDowncast<Element>(child),
         beforeChild ? ElementTraversal::previousSibling(*beforeChild) : ElementTraversal::lastChild(containerNode),
         !beforeChild || is<Element>(*beforeChild) ? downcast<Element>(beforeChild) : ElementTraversal::nextSibling(*beforeChild),
-        source
+        source,
+        changeType == ContainerNode::ChildChange::Type::ElementInserted ? ContainerNode::ChildChange::AffectsElements::Yes : ContainerNode::ChildChange::AffectsElements::No
     };
 }
 
@@ -716,9 +728,11 @@ void ContainerNode::replaceAll(Node* node)
     Ref<ContainerNode> protectedThis(*this);
     ChildListMutationScope mutation(*this);
     NodeVector removedChildren;
-    removeAllChildrenWithScriptAssertion(ChildChange::Source::API, removedChildren, DeferChildrenChanged::Yes);
+    auto didRemoveElements = removeAllChildrenWithScriptAssertion(ChildChange::Source::API, removedChildren, DeferChildrenChanged::Yes);
 
-    executeNodeInsertionWithScriptAssertion(*this, *node, nullptr, ChildChange::Source::API, ReplacedAllChildren::Yes, [&] {
+    auto replacedAllChildren = is<Element>(*node) || didRemoveElements == DidRemoveElements::Yes ? ReplacedAllChildren::YesIncludingElements : ReplacedAllChildren::YesNotIncludingElements;
+
+    executeNodeInsertionWithScriptAssertion(*this, *node, nullptr, ChildChange::Source::API, replacedAllChildren, [&] {
         InspectorInstrumentation::willInsertDOMNode(document(), *this);
         node->setTreeScopeRecursively(treeScope());
         appendChildCommon(*node);
@@ -839,7 +853,7 @@ void ContainerNode::childrenChanged(const ChildChange& change)
 {
     document().incDOMTreeVersion();
 
-    if (change.affectsElements())
+    if (change.affectsElements == ChildChange::AffectsElements::Yes)
         document().invalidateAccessKeyCache();
 
     // FIXME: Unclear why it's always safe to skip this when parser is adding children.
@@ -848,7 +862,14 @@ void ContainerNode::childrenChanged(const ChildChange& change)
     if (change.source == ChildChange::Source::API && change.type != ChildChange::Type::TextChanged)
         document().updateRangesAfterChildrenChanged(*this);
 
-    invalidateNodeListAndCollectionCachesInAncestors();
+    if (change.affectsElements == ChildChange::AffectsElements::Yes)
+        invalidateNodeListAndCollectionCachesInAncestors();
+    else if (change.type != ChildChange::Type::TextChanged) {
+        if (hasRareData()) {
+            if (auto* lists = rareData()->nodeLists())
+                lists->clearChildNodeListCache();
+        }
+    }
 }
 
 void ContainerNode::cloneChildNodes(ContainerNode& clone)

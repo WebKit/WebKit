@@ -84,7 +84,8 @@ static ContainerNode::ChildChange makeChildChange(CharacterData& characterData, 
         nullptr,
         ElementTraversal::previousSibling(characterData),
         ElementTraversal::nextSibling(characterData),
-        source
+        source,
+        ContainerNode::ChildChange::AffectsElements::No
     };
 }
 
