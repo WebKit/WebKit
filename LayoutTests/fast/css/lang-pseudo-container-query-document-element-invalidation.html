@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+<meta http-equiv="content-language" content="fr">
+</head>
+<body>
+    <div><span></span></div>
+    <style>
+        div { width: 100px; height: 100px; }
+        div:has(*:lang(fr)) { background: red; }
+        div:has(*:lang(en)) { background: green; }
+    </style>
+    <script>
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                document.documentElement.lang = 'en';
+                document.documentElement.className = '';
+            }, 0);
+        });
+    </script>
+</body>
+</html>

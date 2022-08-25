@@ -1986,6 +1986,32 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
                 shadowRoot->invalidatePartMappings();
                 Style::Invalidator::invalidateShadowParts(*shadowRoot);
             }
+        } else if (name == HTMLNames::langAttr || name.matches(XMLNames::langAttr)) {
+            if (document().documentElement() == this)
+                document().setDocumentElementLanguage(newValue);
+            else {
+                Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
+                AtomString newValue = langFromAttribute();
+                auto setEffectiveLang = [&](Element& element) {
+                    if (!newValue.isNull())
+                        element.ensureElementRareData().setEffectiveLang(newValue);
+                    else if (hasRareData())
+                        element.elementRareData()->setEffectiveLang(nullAtom());
+                };
+                setEffectiveLang(*this);
+                for (auto it = descendantsOfType<Element>(*this).begin(); it;) {
+                    auto& element = *it;
+                    if (auto* elementData = element.elementData()) {
+                        if (auto* attribute = elementData->findLanguageAttribute()) {
+                            it.traverseNextSkippingChildren();
+                            continue;
+                        }
+                    }
+                    Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
+                    setEffectiveLang(element);
+                    it.traverseNext();
+                }
+            }
         }
     }
 
@@ -2509,6 +2535,20 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
             CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
     }
 
+    [&]() {
+        if (auto* parent = parentOrShadowHostElement(); parent && parent != document().documentElement() && UNLIKELY(parent->hasRareData())) {
+            auto lang = parent->elementRareData()->effectiveLang();
+            if (!lang.isNull() && langFromAttribute().isNull()) {
+                ensureElementRareData().setEffectiveLang(lang);
+                return;
+            }
+        }
+        if (UNLIKELY(hasRareData())) {
+            if (!elementRareData()->effectiveLang().isNull() && langFromAttribute().isNull())
+                ensureElementRareData().setEffectiveLang(nullAtom());
+        }
+    }();
+
     if (shouldAutofocus(*this))
         document().topDocument().appendAutofocusCandidate(*this);
 
@@ -2572,6 +2612,11 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     clearAfterPseudoElement();
 
     ContainerNode::removedFromAncestor(removalType, oldParentOfRemovedTree);
+
+    if (UNLIKELY(hasRareData()) && !elementRareData()->effectiveLang().isNull()) {
+        if (langFromAttribute().isNull())
+            elementRareData()->setEffectiveLang(nullAtom());
+    }
 
     Styleable::fromElement(*this).elementWasRemoved();
 
@@ -3836,21 +3881,28 @@ unsigned Element::rareDataChildIndex() const
     return elementRareData()->childIndex();
 }
 
-AtomString Element::computeInheritedLanguage() const
+AtomString Element::effectiveLang() const
 {
-    // The language property is inherited, so we iterate over the parents to find the first language.
-    for (auto* element = this; element; element = element->parentOrShadowHostElement()) {
-        if (auto* elementData = element->elementData()) {
-            if (auto* attribute = elementData->findLanguageAttribute())
-                return attribute->value();
-        }
+    if (hasRareData()) {
+        auto lang = elementRareData()->effectiveLang();
+        if (!lang.isNull())
+            return lang;
     }
-    return document().contentLanguage();
+    return isConnected() ? document().effectiveDocumentElementLanguage() : nullAtom();
+}
+
+AtomString Element::langFromAttribute() const
+{
+    if (auto* data = elementData()) {
+        if (auto* attribute = data->findLanguageAttribute())
+            return attribute->value();
+    }
+    return nullAtom();
 }
 
 Locale& Element::locale() const
 {
-    return document().getCachedLocale(computeInheritedLanguage());
+    return document().getCachedLocale(effectiveLang());
 }
 
 void Element::normalizeAttributes()

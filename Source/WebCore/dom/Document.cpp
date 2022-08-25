@@ -980,6 +980,7 @@ void Document::childrenChanged(const ChildChange& change)
     if (newDocumentElement == m_documentElement)
         return;
     m_documentElement = newDocumentElement;
+    setDocumentElementLanguage(m_documentElement ? m_documentElement->langFromAttribute() : nullAtom());
     // The root style used for media query matching depends on the document element.
     styleScope().clearResolver();
 }
@@ -1502,6 +1503,26 @@ void Document::setContentLanguage(const AtomString& language)
     if (m_contentLanguage == language)
         return;
     m_contentLanguage = language;
+
+    // Recalculate style so language is used when selecting the initial font.
+    m_styleScope->didChangeStyleSheetEnvironment();
+}
+
+const AtomString& Document::effectiveDocumentElementLanguage() const
+{
+    if (!m_documentElementLanguage.isNull())
+        return m_documentElementLanguage;
+    return m_contentLanguage;
+}
+
+void Document::setDocumentElementLanguage(const AtomString& language)
+{
+    if (m_documentElementLanguage == language)
+        return;
+    m_documentElementLanguage = language;
+
+    if (m_contentLanguage == language)
+        return;
 
     // Recalculate style so language is used when selecting the initial font.
     m_styleScope->didChangeStyleSheetEnvironment();

@@ -36,13 +36,16 @@ namespace Style {
 class PseudoClassChangeInvalidation {
 public:
     PseudoClassChangeInvalidation(Element&, CSSSelector::PseudoClassType, bool value, InvalidationScope = InvalidationScope::All);
+    enum AnyValueTag { AnyValue };
+    PseudoClassChangeInvalidation(Element&, CSSSelector::PseudoClassType, AnyValueTag);
     PseudoClassChangeInvalidation(Element&, std::initializer_list<std::pair<CSSSelector::PseudoClassType, bool>>);
 
     ~PseudoClassChangeInvalidation();
 
 private:
-    void computeInvalidation(CSSSelector::PseudoClassType, bool value, Style::InvalidationScope);
-    void collectRuleSets(const PseudoClassInvalidationKey&, bool value, InvalidationScope);
+    enum class Value : uint8_t { False, True, Any };
+    void computeInvalidation(CSSSelector::PseudoClassType, Value, Style::InvalidationScope);
+    void collectRuleSets(const PseudoClassInvalidationKey&, Value, InvalidationScope);
     void invalidateBeforeChange();
     void invalidateAfterChange();
 
@@ -67,7 +70,18 @@ inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& ele
 {
     if (!m_isEnabled)
         return;
-    computeInvalidation(pseudoClass, value, invalidationScope);
+    computeInvalidation(pseudoClass, value ? Value::True : Value::False, invalidationScope);
+    invalidateBeforeChange();
+}
+
+inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& element, CSSSelector::PseudoClassType pseudoClass, AnyValueTag)
+    : m_isEnabled(element.needsStyleInvalidation())
+    , m_element(element)
+
+{
+    if (!m_isEnabled)
+        return;
+    computeInvalidation(pseudoClass, Value::Any, InvalidationScope::All);
     invalidateBeforeChange();
 }
 
@@ -78,7 +92,7 @@ inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& ele
     if (!m_isEnabled)
         return;
     for (auto pseudoClass : pseudoClasses)
-        computeInvalidation(pseudoClass.first, pseudoClass.second, Style::InvalidationScope::All);
+        computeInvalidation(pseudoClass.first, pseudoClass.second ? Value::True : Value::False, Style::InvalidationScope::All);
     invalidateBeforeChange();
 }
 

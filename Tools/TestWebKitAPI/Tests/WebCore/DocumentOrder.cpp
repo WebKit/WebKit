@@ -32,6 +32,7 @@
 #include <WebCore/HTMLHtmlElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/Position.h>
+#include <WebCore/ProcessWarming.h>
 #include <WebCore/Settings.h>
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/SimpleRange.h>
@@ -52,9 +53,7 @@ using namespace WebCore;
 
 static Ref<Document> createDocument()
 {
-    HTMLNames::init();
-    WebKitFontFamilyNames::init();
-    initializeCommonAtomStrings();
+    ProcessWarming::initializeNames();
 
     auto settings = Settings::create(nullptr);
     auto document = Document::create(settings.get(), aboutBlankURL());
