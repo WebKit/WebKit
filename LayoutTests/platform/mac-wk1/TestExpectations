@@ -1631,6 +1631,8 @@ webkit.org/b/239871 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/239871 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-102.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/244365 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-007.html [ Pass ImageOnlyFailure ]
+webkit.org/b/244365 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-003.html [ Pass ImageOnlyFailure ]
+webkit.org/b/244365 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-014.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/229519 media/media-session/actionHandlerInternalMappings.html [ Pass Failure ]
 
