@@ -1,7 +1,7 @@
 ifeq ($(USE_WORKSPACE),YES)
 
 include ../Makefile.shared
-SCHEME = All WebKit Tools
+SCHEME = All Tools
 
 else
 
