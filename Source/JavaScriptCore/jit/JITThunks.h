@@ -57,7 +57,9 @@ public:
     ~JITThunks() final;
 
     CodePtr<JITThunkPtrTag> ctiNativeCall(VM&);
+    CodePtr<JITThunkPtrTag> ctiNativeCallWithDebuggerHook(VM&);
     CodePtr<JITThunkPtrTag> ctiNativeConstruct(VM&);
+    CodePtr<JITThunkPtrTag> ctiNativeConstructWithDebuggerHook(VM&);
     CodePtr<JITThunkPtrTag> ctiNativeTailCall(VM&);
     CodePtr<JITThunkPtrTag> ctiNativeTailCallWithoutSavedTags(VM&);
     CodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM&);

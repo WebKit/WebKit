@@ -139,6 +139,11 @@ const RegisterAtOffsetList* JITCode::calleeSaveRegisters() const
 #endif
 }
 
+JITCode::CodeRef<JSEntryPtrTag> JITCode::swapCodeRefForDebugger(JITCode::CodeRef<JSEntryPtrTag>)
+{
+    return CodeRef<JSEntryPtrTag>();
+}
+
 JITCodeWithCodeRef::JITCodeWithCodeRef(JITType jitType)
     : JITCode(jitType)
 {
@@ -193,6 +198,15 @@ bool JITCodeWithCodeRef::contains(void* address)
 {
     RELEASE_ASSERT(m_ref);
     return m_ref.executableMemory()->contains(address);
+}
+
+JITCode::CodeRef<JSEntryPtrTag> JITCodeWithCodeRef::swapCodeRefForDebugger(JITCode::CodeRef<JSEntryPtrTag> ref)
+{
+    RELEASE_ASSERT(m_ref);
+    RELEASE_ASSERT(ref);
+    auto old = m_ref;
+    m_ref = ref;
+    return old;
 }
 
 DirectJITCode::DirectJITCode(JITType jitType)

@@ -55,7 +55,9 @@ function test()
     InspectorTest.BreakpointOptions.addTestCases(suite, {
         testCaseNamePrefix: "ExactCaseInsensitive.Hit.",
         createBreakpoint() {
-            return new WI.SymbolicBreakpoint("tRiGgErSyMbOlIcBrEaKpOiNt", {caseSensitive: false});
+            let breakpoint = new WI.SymbolicBreakpoint("tRiGgErSyMbOlIcBrEaKpOiNt", {caseSensitive: false});
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            return breakpoint;
         },
         triggerBreakpoint,
     });

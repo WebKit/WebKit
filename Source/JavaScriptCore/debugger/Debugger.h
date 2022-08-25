@@ -27,6 +27,7 @@
 #include "DebuggerParseData.h"
 #include "DebuggerPrimitives.h"
 #include "JSCJSValue.h"
+#include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 
@@ -40,7 +41,7 @@ class Microtask;
 class SourceProvider;
 class VM;
 
-class Debugger {
+class Debugger : public DoublyLinkedListNode<Debugger> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     JS_EXPORT_PRIVATE Debugger(VM&);
@@ -145,6 +146,9 @@ public:
     void registerCodeBlock(CodeBlock*);
     void forEachRegisteredCodeBlock(const Function<void(CodeBlock*)>&);
 
+    void didCreateNativeExecutable(NativeExecutable&);
+    void willCallNativeExecutable(CallFrame*);
+
     class Client {
     public:
         virtual ~Client() = default;
@@ -179,6 +183,9 @@ public:
 
         virtual void didParseSource(SourceID, const Debugger::Script&) { }
         virtual void failedToParseSource(const String& /* url */, const String& /* data */, int /* firstLine */, int /* errorLine */, const String& /* errorMessage */) { }
+
+        virtual void didCreateNativeExecutable(NativeExecutable&) { }
+        virtual void willCallNativeExecutable(CallFrame*) { }
 
         virtual void willEnter(CallFrame*) { }
 
@@ -244,7 +251,7 @@ protected:
     // or some other async operation in a pure JSContext) we can ignore exceptions reported here.
     virtual void reportException(JSGlobalObject*, Exception*) const { }
 
-    bool doneProcessingDebuggerEvents() const { return m_doneProcessingDebuggerEvents; }
+    bool m_doneProcessingDebuggerEvents { true };
 
 private:
     JSValue exceptionOrCaughtValue(JSGlobalObject*);
@@ -349,16 +356,17 @@ private:
     RefPtr<JSC::DebuggerCallFrame> m_currentDebuggerCallFrame;
 
     HashSet<Observer*> m_observers;
-    bool m_dispatchingFunctionToObservers { false };
 
     Client* m_client { nullptr };
     ProfilingClient* m_profilingClient { nullptr };
 
-    bool m_doneProcessingDebuggerEvents { true };
+    Debugger* m_prev; // Required by DoublyLinkedListNode.
+    Debugger* m_next; // Required by DoublyLinkedListNode.
 
     friend class DebuggerPausedScope;
     friend class TemporaryPausedState;
     friend class LLIntOffsetsExtractor;
+    friend class WTF::DoublyLinkedListNode<Debugger>;
 };
 
 } // namespace JSC

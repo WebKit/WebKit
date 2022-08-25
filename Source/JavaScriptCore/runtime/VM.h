@@ -123,6 +123,7 @@ class JSPropertyNameEnumerator;
 class JITSizeStatistics;
 class JITThunks;
 class NativeExecutable;
+class Debugger;
 class DeferredWorkTimer;
 class RegExp;
 class RegExpCache;
@@ -902,6 +903,10 @@ public:
     void beginMarking();
     DECLARE_VISIT_AGGREGATE;
 
+    void addDebugger(Debugger&);
+    void removeDebugger(Debugger&);
+    void forEachDebugger(Function<void(Debugger&)>&&);
+
 private:
     VM(VMType, HeapType, WTF::RunLoop* = nullptr, bool* success = nullptr);
     static VM*& sharedInstanceInternal();
@@ -1028,6 +1033,8 @@ private:
 #if ENABLE(DFG_DOES_GC_VALIDATION)
     DoesGCCheck m_doesGC;
 #endif
+
+    DoublyLinkedList<Debugger> m_debuggers;
 
     VM* m_prev; // Required by DoublyLinkedListNode.
     VM* m_next; // Required by DoublyLinkedListNode.

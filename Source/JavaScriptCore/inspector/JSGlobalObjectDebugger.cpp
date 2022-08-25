@@ -63,7 +63,7 @@ void JSGlobalObjectDebugger::runEventLoopWhilePaused()
     // Drop all locks so another thread can work in the VM while we are nested.
     JSC::JSLock::DropAllLocks dropAllLocks(&m_globalObject.vm());
 
-    while (!doneProcessingDebuggerEvents()) {
+    while (!m_doneProcessingDebuggerEvents) {
         if (RunLoop::cycle(JSGlobalObjectDebugger::runLoopMode()) == RunLoop::CycleResult::Stop)
             break;
     }
