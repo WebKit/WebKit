@@ -97,11 +97,6 @@ void WebStorageNamespaceProvider::syncLocalStorage()
     }
 }
 
-Ref<StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page& page, unsigned quota)
-{
-    return StorageNamespaceImpl::createSessionStorageNamespace(quota, page.sessionID());
-}
-
 Ref<StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota, PAL::SessionID sessionID)
 {
     return StorageNamespaceImpl::getOrCreateLocalStorageNamespace(m_localStorageDatabasePath, quota, sessionID);
@@ -112,6 +107,47 @@ Ref<StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNa
     // FIXME: A smarter implementation would create a special namespace type instead of just piggy-backing off
     // SessionStorageNamespace here.
     return StorageNamespaceImpl::createSessionStorageNamespace(quota, sessionID);
+}
+
+RefPtr<StorageNamespace> WebStorageNamespaceProvider::sessionStorageNamespace(const SecurityOrigin& topLevelOrigin, Page& page, ShouldCreateNamespace shouldCreate)
+{
+    ASSERT(sessionStorageQuota() != WebCore::StorageMap::noQuota);
+
+    if (m_sessionStorageNamespaces.find(page) == m_sessionStorageNamespaces.end()) {
+        if (shouldCreate == ShouldCreateNamespace::No)
+            return nullptr;
+        HashMap<SecurityOriginData, RefPtr<StorageNamespace>> map;
+        m_sessionStorageNamespaces.set(page, map);
+    }
+    auto& sessionStorageNamespaces = m_sessionStorageNamespaces.find(page)->value;
+
+    auto sessionStorageNamespaceIt = sessionStorageNamespaces.find(topLevelOrigin.data());
+    if (sessionStorageNamespaceIt == sessionStorageNamespaces.end()) {
+        if (shouldCreate == ShouldCreateNamespace::No)
+            return nullptr;
+        return sessionStorageNamespaces.add(topLevelOrigin.data(), StorageNamespaceImpl::createSessionStorageNamespace(sessionStorageQuota(), page.sessionID())).iterator->value;
+    }
+    return sessionStorageNamespaceIt->value;
+}
+
+void WebStorageNamespaceProvider::copySessionStorageNamespace(WebCore::Page& srcPage, WebCore::Page& dstPage)
+{
+    ASSERT(sessionStorageQuota() != WebCore::StorageMap::noQuota);
+
+    auto& srcSessionStorageNamespaces = static_cast<WebStorageNamespaceProvider&>(srcPage.storageNamespaceProvider()).m_sessionStorageNamespaces;
+    auto srcPageIt = srcSessionStorageNamespaces.find(srcPage);
+    if (srcPageIt == srcSessionStorageNamespaces.end())
+        return;
+
+    auto& srcPageSessionStorageNamespaces = srcPageIt->value;
+
+    auto& dstSessionStorageNamespaces = static_cast<WebStorageNamespaceProvider&>(dstPage.storageNamespaceProvider()).m_sessionStorageNamespaces;
+    ASSERT(dstSessionStorageNamespaces.find(dstPage) == dstSessionStorageNamespaces.end());
+
+    HashMap<SecurityOriginData, RefPtr<StorageNamespace>> map;
+    auto& dstPageSessionStorageNamespaces = dstSessionStorageNamespaces.add(dstPage, map).iterator->value;
+    for (auto& [origin, srcNamespace] : srcPageSessionStorageNamespaces)
+        dstPageSessionStorageNamespaces.set(origin, srcNamespace->copy(dstPage));
 }
 
 }

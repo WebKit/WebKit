@@ -848,7 +848,7 @@ ExceptionOr<Storage*> DOMWindow::sessionStorage()
     if (!page)
         return nullptr;
 
-    auto storageArea = page->sessionStorage()->storageArea(document->securityOrigin());
+    auto storageArea = page->storageNamespaceProvider().sessionStorageArea(*document);
     m_sessionStorage = Storage::create(*this, WTFMove(storageArea));
     if (hasEventListeners(eventNames().storageEvent))
         windowsInterestedInStorageEvents().add(*this);

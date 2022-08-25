@@ -60,6 +60,15 @@ Ref<StorageArea> StorageNamespaceProvider::localStorageArea(Document& document)
     return storageNamespace->storageArea(document.securityOrigin());
 }
 
+Ref<StorageArea> StorageNamespaceProvider::sessionStorageArea(Document& document)
+{
+    // This StorageNamespaceProvider was retrieved from the Document's Page,
+    // so the Document had better still actually have a Page.
+    ASSERT(document.page());
+
+    return sessionStorageNamespace(document.topOrigin(), *document.page())->storageArea(document.securityOrigin());
+}
+
 StorageNamespace& StorageNamespaceProvider::localStorageNamespace(PAL::SessionID sessionID)
 {
     if (!m_localStorageNamespace)
