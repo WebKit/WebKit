@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+CSSFontFaceSrcValue::~CSSFontFaceSrcValue() = default;
+
 bool CSSFontFaceSrcValue::isSVGFontFaceSrc() const
 {
     return equalLettersIgnoringASCIICase(m_format, "svg"_s);
@@ -62,6 +64,16 @@ bool CSSFontFaceSrcValue::isSupportedFormat() const
     }
 
     return FontCustomPlatformData::supportsFormat(m_format) || isSVGFontFaceSrc();
+}
+
+SVGFontFaceElement* CSSFontFaceSrcValue::svgFontFaceElement() const
+{
+    return m_svgFontFaceElement.get();
+}
+
+void CSSFontFaceSrcValue::setSVGFontFaceElement(SVGFontFaceElement* element)
+{
+    m_svgFontFaceElement = element;
 }
 
 String CSSFontFaceSrcValue::customCSSText() const
