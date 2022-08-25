@@ -84,7 +84,7 @@ class Results(View):
         if not self.is_valid_result(data):
             _log.warn('Incomplete step event data')
             return HttpResponse('Incomplete data.')
-        _log.info('Step event received, step-id: {}'.format(data['step_id'])
+        _log.info('Step event received, step-id: {}'.format(data['step_id']))
 
         Step.save_step(hostname=data['hostname'], step_id=data['step_id'], build_id=data['build_id'], result=data['result'],
                    state_string=data['state_string'], started_at=data['started_at'], complete_at=data['complete_at'])
