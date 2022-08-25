@@ -35,6 +35,7 @@ from .squash import Squash
 from .checkout import Checkout
 from .credentials import Credentials
 from .find import Find, Info
+from .pickable import Pickable
 from .install_git_lfs import InstallGitLFS
 from .land import Land
 from .log import Log
@@ -80,7 +81,8 @@ def main(
         Blame, Branch, Canonicalize, Checkout,
         Clean, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Setup, InstallGitLFS,
-        Credentials, Commit, DeletePRBranches, Squash
+        Credentials, Commit, DeletePRBranches, Squash,
+        Pickable,
     ]
     if subversion:
         programs.append(SetupGitSvn)
