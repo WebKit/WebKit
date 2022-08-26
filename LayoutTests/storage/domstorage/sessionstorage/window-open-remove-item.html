@@ -11,7 +11,9 @@ sessionStorage.clear();
 localStorage.clear();
 
 sessionStorage.setItem("key", "value");
-window.open("resources/window-open-remove-item.html");
+onload = () => {
+    window.open("resources/window-open-remove-item.html");
+};
 
 addEventListener('storage', event => { 
     shouldBeEqualToString("localStorage.getItem('result')", "pass");
