@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2018 Metrological Group B.V.
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2022 Metrological Group B.V.
+ * Copyright (C) 2022 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,44 +27,15 @@
  */
 
 #include "config.h"
-#include "NicosiaImageBackingTextureMapperImpl.h"
+#include "NicosiaImageBackingStore.h"
 
 #if USE(TEXTURE_MAPPER)
 
 namespace Nicosia {
 
-auto ImageBackingTextureMapperImpl::createFactory() -> Factory
-{
-    return Factory(
-        [](ImageBacking&) {
-            return makeUnique<ImageBackingTextureMapperImpl>();
-        });
-}
-
-ImageBackingTextureMapperImpl::ImageBackingTextureMapperImpl() = default;
-ImageBackingTextureMapperImpl::~ImageBackingTextureMapperImpl() = default;
-
-void ImageBackingTextureMapperImpl::flushUpdate()
-{
-    Locker locker { m_update.lock };
-
-    // If the update happens for the same image and there's no buffer, keep the current one
-    // so it can be received by the CoordinatedGraphicsScene. In that case we only need to update
-    // the isVisible flag.
-    if ((m_layerState.update.nativeImageID == m_update.update.nativeImageID) && !m_layerState.update.imageBackingStore) {
-        m_update.update.isVisible = m_layerState.update.isVisible;
-        return;
-    }
-
-    m_update.update = WTFMove(m_layerState.update);
-}
-
-auto ImageBackingTextureMapperImpl::takeUpdate() -> Update
-{
-    Locker locker { m_update.lock };
-    return WTFMove(m_update.update);
-}
+ImageBackingStore::ImageBackingStore() = default;
+ImageBackingStore::~ImageBackingStore() = default;
 
 } // namespace Nicosia
 
-#endif
+#endif // USE(TEXTURE_MAPPER)

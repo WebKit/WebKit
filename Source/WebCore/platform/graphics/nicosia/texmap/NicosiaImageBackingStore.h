@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2018 Metrological Group B.V.
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2022 Metrological Group B.V.
+ * Copyright (C) 2022 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,45 +26,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "NicosiaImageBackingTextureMapperImpl.h"
+#pragma once
 
 #if USE(TEXTURE_MAPPER)
 
+#include "CoordinatedBackingStore.h"
+#include <wtf/ThreadSafeRefCounted.h>
+
 namespace Nicosia {
 
-auto ImageBackingTextureMapperImpl::createFactory() -> Factory
-{
-    return Factory(
-        [](ImageBacking&) {
-            return makeUnique<ImageBackingTextureMapperImpl>();
-        });
-}
+class Buffer;
 
-ImageBackingTextureMapperImpl::ImageBackingTextureMapperImpl() = default;
-ImageBackingTextureMapperImpl::~ImageBackingTextureMapperImpl() = default;
+class ImageBackingStore : public ThreadSafeRefCounted<ImageBackingStore> {
+public:
+    ImageBackingStore();
+    ~ImageBackingStore();
 
-void ImageBackingTextureMapperImpl::flushUpdate()
-{
-    Locker locker { m_update.lock };
+    struct BackingStoreState {
+        RefPtr<Nicosia::Buffer> buffer;
+    };
+    BackingStoreState& backingStoreState() { return m_backingStoreState; }
 
-    // If the update happens for the same image and there's no buffer, keep the current one
-    // so it can be received by the CoordinatedGraphicsScene. In that case we only need to update
-    // the isVisible flag.
-    if ((m_layerState.update.nativeImageID == m_update.update.nativeImageID) && !m_layerState.update.imageBackingStore) {
-        m_update.update.isVisible = m_layerState.update.isVisible;
-        return;
-    }
+    struct BackingStoreContainer : public ThreadSafeRefCounted<BackingStoreContainer> {
+        RefPtr<WebCore::CoordinatedBackingStore> backingStore;
+    };
 
-    m_update.update = WTFMove(m_layerState.update);
-}
+    struct CompositionState {
+        CompositionState()
+            : backingStoreContainer(adoptRef(*new BackingStoreContainer))
+        { }
 
-auto ImageBackingTextureMapperImpl::takeUpdate() -> Update
-{
-    Locker locker { m_update.lock };
-    return WTFMove(m_update.update);
-}
+        Ref<BackingStoreContainer> backingStoreContainer;
+    };
+    CompositionState& compositionState() { return m_compositionState; }
+
+private:
+    BackingStoreState m_backingStoreState;
+    CompositionState m_compositionState;
+};
 
 } // namespace Nicosia
 
-#endif
+#endif // USE(TEXTURE_MAPPER)

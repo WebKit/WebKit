@@ -23,7 +23,6 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "GraphicsLayer.h"
-#include "NicosiaBuffer.h"
 #include "TextureMapper.h"
 #include "TextureMapperGL.h"
 
