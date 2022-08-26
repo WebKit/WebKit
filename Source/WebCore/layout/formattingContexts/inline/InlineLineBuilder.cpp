@@ -829,7 +829,9 @@ void LineBuilder::handleFloatContent(const InlineItem& floatItem)
     ASSERT(formattingState());
     auto& boxGeometry = formattingState()->boxGeometry(floatBox);
     // Set static position first.
-    boxGeometry.setLogicalTopLeft(LayoutPoint { m_lineLogicalRect.topLeft() });
+    auto staticPosition = LayoutPoint { m_lineLogicalRect.topLeft() };
+    staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
+    boxGeometry.setLogicalTopLeft(staticPosition);
     // Float it.
     ASSERT(m_rootHorizontalConstraints);
     auto floatingContext = FloatingContext { formattingContext(), *floatingState };
