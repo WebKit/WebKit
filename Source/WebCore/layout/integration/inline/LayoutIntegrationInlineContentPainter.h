@@ -40,13 +40,16 @@ public:
     void paint();
 
 private:
+    void paintDisplayBox(const InlineDisplay::Box&);
     LayoutPoint flippedContentOffsetIfNeeded(const RenderBox&) const;
 
     PaintInfo& m_paintInfo;
     const LayoutPoint m_paintOffset;
+    LayoutRect m_damageRect;
     const RenderInline* m_layerRenderer { nullptr };
     const InlineContent& m_inlineContent;
     const BoxTree& m_boxTree;
+    ListHashSet<RenderInline*> m_outlineObjects;
 };
 
 class LayerPaintScope {

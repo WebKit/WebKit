@@ -770,6 +770,25 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, con
 {
     if (!m_inlineContent)
         return;
+
+    auto shouldPaintForPhase = [&] {
+        switch (paintInfo.phase) {
+        case PaintPhase::Foreground:
+        case PaintPhase::EventRegion:
+        case PaintPhase::TextClip:
+        case PaintPhase::Mask:
+        case PaintPhase::Selection:
+        case PaintPhase::Outline:
+        case PaintPhase::ChildOutlines:
+        case PaintPhase::SelfOutline:
+            return true;
+        default:
+            return false;
+        }
+    };
+    if (!shouldPaintForPhase())
+        return;
+
     InlineContentPainter { paintInfo, paintOffset, layerRenderer, *m_inlineContent, m_boxTree }.paint();
 }
 
