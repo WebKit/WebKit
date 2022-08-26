@@ -1,12 +1,21 @@
 
 Testing <img id="inside-link">
-PASS cursor is "IBeam"
+PASS cursor is "Hand"
 
 Testing <img id="cursor-zoom-in">
 PASS cursor is "ZoomIn"
 
 Testing <img id="user-select-none-in-link">
 PASS cursor is "Hand"
+
+Testing overlay from <img id="inside-link">
+PASS cursor is "IBeam"
+
+Testing overlay from <img id="cursor-zoom-in">
+PASS cursor is "IBeam"
+
+Testing overlay from <img id="user-select-none-in-link">
+PASS cursor is "Pointer"
 PASS successfullyParsed is true
 
 TEST COMPLETE
