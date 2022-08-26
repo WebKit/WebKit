@@ -39,7 +39,7 @@ struct ParsedTextDirective {
 
 class FragmentDirectiveParser {
 public:
-    WEBCORE_EXPORT explicit FragmentDirectiveParser(const URL&);
+    WEBCORE_EXPORT explicit FragmentDirectiveParser(StringView);
     
     const Vector<ParsedTextDirective>& parsedTextDirectives() const { return m_parsedTextDirectives; };
     StringView fragmentDirective() const { return m_fragmentDirective; };

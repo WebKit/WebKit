@@ -7579,7 +7579,12 @@ void WebPage::getTextFragmentMatch(CompletionHandler<void(const String&)>&& comp
         return;
     }
 
-    FragmentDirectiveParser fragmentDirectiveParser(mainWebFrame().url());
+    auto fragmentDirective = document->fragmentDirective();
+    if (fragmentDirective.isEmpty()) {
+        completionHandler({ });
+        return;
+    }
+    FragmentDirectiveParser fragmentDirectiveParser(fragmentDirective);
     if (!fragmentDirectiveParser.isValid()) {
         completionHandler({ });
         return;
