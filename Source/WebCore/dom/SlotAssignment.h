@@ -136,7 +136,7 @@ private:
     HashMap<AtomString, std::unique_ptr<Slot>> m_slots;
 
 #if ASSERT_ENABLED
-    HashSet<HTMLSlotElement*> m_slotElementsForConsistencyCheck;
+    WeakHashSet<HTMLSlotElement> m_slotElementsForConsistencyCheck;
 #endif
 };
 
