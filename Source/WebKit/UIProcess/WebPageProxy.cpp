@@ -1806,7 +1806,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
         navigation->setUserContentExtensionsEnabled(false);
 
     m_process->markProcessAsRecentlyUsed();
-    send(Messages::WebPage::Reload(navigation->navigationID(), options.toRaw(), sandboxExtensionHandle));
+    send(Messages::WebPage::Reload(navigation->navigationID(), options, sandboxExtensionHandle));
     m_process->startResponsivenessTimer();
 
 #if ENABLE(SPEECH_SYNTHESIS)
