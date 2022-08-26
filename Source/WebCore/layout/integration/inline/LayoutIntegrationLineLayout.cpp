@@ -29,13 +29,11 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DeprecatedGlobalSettings.h"
-#include "EllipsisBoxPainter.h"
 #include "EventRegion.h"
 #include "FloatingState.h"
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
-#include "InlineBoxPainter.h"
 #include "InlineDamage.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
@@ -43,6 +41,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationCoverage.h"
 #include "LayoutIntegrationInlineContentBuilder.h"
+#include "LayoutIntegrationInlineContentPainter.h"
 #include "LayoutIntegrationPagination.h"
 #include "LayoutListMarkerBox.h"
 #include "LayoutReplacedBox.h"
@@ -66,8 +65,6 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "TextBoxPainter.h"
-#include "TextDecorationPainter.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -762,159 +759,18 @@ static LayoutPoint flippedContentOffsetIfNeeded(const RenderBlockFlow& root, con
     return contentOffset;
 }
 
-class LayerPaintScope {
-public:
-    LayerPaintScope(const BoxTree& boxTree, const RenderInline* layerRenderer)
-        : m_boxTree(boxTree)
-        , m_layerInlineBox(layerRenderer ? &boxTree.layoutBoxForRenderer(*layerRenderer) : nullptr)
-    { }
-
-    bool includes(const InlineDisplay::Box& box)
-    {
-        auto isInside = [](auto& displayBox, auto& inlineBox)
-        {
-            ASSERT(inlineBox.isInlineBox());
-
-            if (displayBox.isRootInlineBox())
-                return false;
-
-            for (auto* box = &displayBox.layoutBox().parent(); box->isInlineBox(); box = &box->parent()) {
-                if (box == &inlineBox)
-                    return true;
-            }
-            return false;
-        };
-
-        if (m_layerInlineBox == &box.layoutBox())
-            return true;
-        if (m_layerInlineBox && !isInside(box, *m_layerInlineBox))
-            return false;
-        if (m_currentExcludedInlineBox && isInside(box, *m_currentExcludedInlineBox))
-            return false;
-
-        m_currentExcludedInlineBox = nullptr;
-
-        if (box.isRootInlineBox() || box.isText() || box.isLineBreak())
-            return true;
-
-        auto* renderer = dynamicDowncast<RenderLayerModelObject>(m_boxTree.rendererForLayoutBox(box.layoutBox()));
-        bool hasSelfPaintingLayer = renderer && renderer->hasSelfPaintingLayer();
-
-        if (hasSelfPaintingLayer && box.isNonRootInlineBox())
-            m_currentExcludedInlineBox = &downcast<Layout::ContainerBox>(box.layoutBox());
-
-        return !hasSelfPaintingLayer;
-    }
-
-private:
-    const BoxTree& m_boxTree;
-    const Layout::ContainerBox* const m_layerInlineBox;
-    const Layout::ContainerBox* m_currentExcludedInlineBox { nullptr };
-};
-
-void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const RenderInline* layerRenderer)
-{
-    if (!m_inlineContent)
-        return;
-
-    auto paintPhase = paintInfo.phase;
-
-    auto shouldPaintForPhase = [&] {
-        switch (paintPhase) {
-        case PaintPhase::Foreground:
-        case PaintPhase::EventRegion:
-        case PaintPhase::TextClip:
-        case PaintPhase::Mask:
-        case PaintPhase::Selection:
-        case PaintPhase::Outline:
-        case PaintPhase::ChildOutlines:
-        case PaintPhase::SelfOutline:
-            return true;
-        default:
-            return false;
-        }
-    };
-
-    if (!shouldPaintForPhase())
-        return;
-
-    auto damageRect = paintInfo.rect;
-    damageRect.moveBy(-paintOffset);
-
-    auto hasDamage = [&](auto& box) {
-        auto rect = enclosingLayoutRect(box.inkOverflow());
-        flow().flipForWritingMode(rect);
-        // FIXME: This should test for intersection but horizontal ink overflow is miscomputed in a few cases (like with negative letter-spacing).
-        return damageRect.maxY() > rect.y() && damageRect.y() < rect.maxY();
-    };
-
-    auto isVisuallyHidden = [&](auto& box) {
-        return box.isVisuallyHidden() == InlineDisplay::Box::IsVisuallyHidden::Yes || box.style().visibility() != Visibility::Visible;
-    };
-    auto shouldPaintBoxForPhase = [&](auto& box) {
-        switch (paintPhase) {
-        case PaintPhase::ChildOutlines: return box.isNonRootInlineBox();
-        case PaintPhase::SelfOutline: return box.isRootInlineBox();
-        case PaintPhase::Outline: return box.isInlineBox();
-        case PaintPhase::Mask: return box.isInlineBox();
-        default: return true;
-        }
-    };
-
-    LayerPaintScope layerPaintScope(m_boxTree, layerRenderer);
-
-    ListHashSet<RenderInline*> outlineObjects;
-
-    for (auto& box : m_inlineContent->boxesForRect(damageRect)) {
-        if (!shouldPaintBoxForPhase(box))
-            continue;
-
-        if (box.isLineBreak())
-            continue;
-
-        if (!layerPaintScope.includes(box))
-            continue;
-
-        if (isVisuallyHidden(box))
-            continue;
-
-        if (box.isInlineBox()) {
-            if (!hasDamage(box))
-                continue;
-
-            PaintInfo inlineBoxPaintInfo(paintInfo);
-            inlineBoxPaintInfo.phase = paintPhase == PaintPhase::ChildOutlines ? PaintPhase::Outline : paintPhase;
-            inlineBoxPaintInfo.outlineObjects = &outlineObjects;
-
-            InlineBoxPainter painter(*m_inlineContent, box, inlineBoxPaintInfo, paintOffset);
-            painter.paint();
-            continue;
-        }
-
-        if (auto& textContent = box.text()) {
-            if (!textContent->length() || !hasDamage(box))
-                continue;
-
-            ModernTextBoxPainter painter(*m_inlineContent, box, paintInfo, paintOffset);
-            painter.paint();
-            continue;
-        }
-
-        if (auto* renderer = dynamicDowncast<RenderBox>(m_boxTree.rendererForLayoutBox(box.layoutBox())); renderer && renderer->isReplacedOrInlineBlock()) {
-            if (paintInfo.shouldPaintWithinRoot(*renderer))
-                renderer->paintAsInlineBlock(paintInfo, flippedContentOffsetIfNeeded(flow(), *renderer, paintOffset));
-        }
-    }
-
-    for (auto* renderInline : outlineObjects)
-        renderInline->paintOutline(paintInfo, paintOffset);
-}
-
 static LayoutRect flippedRectForWritingMode(const RenderBlockFlow& root, const FloatRect& rect)
 {
     auto flippedRect = LayoutRect { rect };
     root.flipForWritingMode(flippedRect);
     return flippedRect;
+}
+
+void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const RenderInline* layerRenderer)
+{
+    if (!m_inlineContent)
+        return;
+    InlineContentPainter { paintInfo, paintOffset, layerRenderer, *m_inlineContent, m_boxTree }.paint();
 }
 
 bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction, const RenderInline* layerRenderer)

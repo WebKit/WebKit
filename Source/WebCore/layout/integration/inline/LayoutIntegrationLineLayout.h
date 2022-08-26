@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-class GraphicsContext;
 class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
