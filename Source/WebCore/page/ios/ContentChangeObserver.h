@@ -141,11 +141,11 @@ private:
     bool isObservedPropertyForTransition(CSSPropertyID propertyId) const { return propertyId == CSSPropertyLeft || propertyId == CSSPropertyOpacity; }
     void domTimerExecuteDidStart(const DOMTimer&);
     void domTimerExecuteDidFinish(const DOMTimer&);
-    void registerDOMTimer(const DOMTimer& timer) { m_DOMTimerList.add(&timer); }
-    void unregisterDOMTimer(const DOMTimer& timer) { m_DOMTimerList.remove(&timer); }
-    void clearObservedDOMTimers() { m_DOMTimerList.clear(); }
+    void registerDOMTimer(const DOMTimer&);
+    void unregisterDOMTimer(const DOMTimer&);
+    void clearObservedDOMTimers();
     void clearObservedTransitions() { m_elementsWithTransition.clear(); }
-    bool containsObservedDOMTimer(const DOMTimer& timer) const { return m_DOMTimerList.contains(&timer); }
+    bool containsObservedDOMTimer(const DOMTimer&) const;
 
     void styleRecalcDidStart();
     void styleRecalcDidFinish();
@@ -162,8 +162,8 @@ private:
     void setHasVisibleChangeState() { m_observedContentState = WKContentVisibilityChange; } 
 
     bool hasVisibleChangeState() const { return observedContentChange() == WKContentVisibilityChange; }
-    bool hasObservedDOMTimer() const { return !m_DOMTimerList.isEmpty(); }
-    bool hasObservedTransition() const { return !m_elementsWithTransition.isEmpty(); }
+    bool hasObservedDOMTimer() const;
+    bool hasObservedTransition() const { return !m_elementsWithTransition.computesEmpty(); }
 
     void setIsBetweenTouchEndAndMouseMoved(bool isBetween) { m_isBetweenTouchEndAndMouseMoved = isBetween; }
     bool isBetweenTouchEndAndMouseMoved() const { return m_isBetweenTouchEndAndMouseMoved; }
@@ -179,7 +179,7 @@ private:
 
     void completeDurationBasedContentObservation();
 
-    bool visibleRendererWasDestroyed(const Element& element) const { return m_elementsWithDestroyedVisibleRenderer.contains(&element); }
+    bool visibleRendererWasDestroyed(const Element& element) const { return m_elementsWithDestroyedVisibleRenderer.contains(element); }
     bool shouldObserveVisibilityChangeForElement(const Element&);
 
     enum class ElementHadRenderer { No, Yes };
@@ -210,10 +210,9 @@ private:
 
     Document& m_document;
     Timer m_contentObservationTimer;
-    HashSet<const DOMTimer*> m_DOMTimerList;
-    // FIXME: Move over to WeakHashSet when it starts supporting const.
-    HashSet<const Element*> m_elementsWithTransition;
-    HashSet<const Element*> m_elementsWithDestroyedVisibleRenderer;
+    WeakHashSet<const DOMTimer> m_DOMTimerList;
+    WeakHashSet<const Element> m_elementsWithTransition;
+    WeakHashSet<const Element> m_elementsWithDestroyedVisibleRenderer;
     WKContentChange m_observedContentState { WKContentNoChange };
     WeakPtr<Element> m_hiddenTouchTargetElement;
     WeakHashSet<Element> m_visibilityCandidateList;
