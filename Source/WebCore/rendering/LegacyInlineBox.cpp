@@ -23,6 +23,7 @@
 #include "FontMetrics.h"
 #include "Frame.h"
 #include "HitTestResult.h"
+#include "LegacyEllipsisBox.h"
 #include "LegacyInlineFlowBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderBlockFlow.h"
