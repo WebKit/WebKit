@@ -74,10 +74,11 @@
         } else {
           // With the 'report-uri' directive, the report is contained in
           // `data[0]["csp-report"]`. With the 'report-to' directive, the report
-          // is contained in `data[0]["body"]`.
-          const reportBody = data[0]["body"]
+          // is contained in `data[0]["body"]`. If the test times-out, then the
+          // payload is an empty array and data[0] is undefined.
+          const reportBody = data[0]?.["body"]
                 ? data[0]["body"]
-                : data[0]["csp-report"];
+                : data[0]?.["csp-report"];
 
           assert_true(reportBody !== undefined,
                       "No CSP report sent, but expecting one.");
