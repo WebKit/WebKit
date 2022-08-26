@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D6BFF60280A93DF00A1A74F /* video_coding.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45B234C81710028A615 /* video_coding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2D6BFF61280A93EC00A1A74F /* video_codec_initializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45E234C81720028A615 /* video_codec_initializer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2D6BFF62280A93F400A1A74F /* video_codec_interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45F234C81720028A615 /* video_codec_interface.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2D6BFF63280A93FA00A1A74F /* video_coding_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45D234C81720028A615 /* video_coding_defines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2D6BFF64280A93FE00A1A74F /* video_error_codes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45C234C81720028A615 /* video_error_codes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		410091CF242CFD6500C5EDA2 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A391FA1EFC493000C4516A /* internal.h */; };
 		410091D2242CFF6F00C5EDA2 /* gcm_nohw.c in Sources */ = {isa = PBXBuildFile; fileRef = 410091D0242CFD8200C5EDA2 /* gcm_nohw.c */; };
 		410091D3242D000600C5EDA2 /* aes_nohw.c in Sources */ = {isa = PBXBuildFile; fileRef = 410091CD242CFD5E00C5EDA2 /* aes_nohw.c */; };
@@ -815,11 +820,6 @@
 		4131C457234C81180028A615 /* turn_port_factory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4131C452234C81180028A615 /* turn_port_factory.cc */; };
 		4131C458234C81180028A615 /* turn_port_factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C453234C81180028A615 /* turn_port_factory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4131C459234C81180028A615 /* basic_port_allocator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4131C454234C81180028A615 /* basic_port_allocator.cc */; };
-		2D6BFF60280A93DF00A1A74F /* video_coding.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45B234C81710028A615 /* video_coding.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2D6BFF64280A93FE00A1A74F /* video_error_codes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45C234C81720028A615 /* video_error_codes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2D6BFF63280A93FA00A1A74F /* video_coding_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45D234C81720028A615 /* video_coding_defines.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2D6BFF61280A93EC00A1A74F /* video_codec_initializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45E234C81720028A615 /* video_codec_initializer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2D6BFF62280A93F400A1A74F /* video_codec_interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45F234C81720028A615 /* video_codec_interface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4131C466234C81720028A615 /* video_codec_interface.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4131C460234C81720028A615 /* video_codec_interface.cc */; };
 		4131C46F234C81B60028A615 /* rtc_event.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C468234C81B40028A615 /* rtc_event.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4131C470234C81B60028A615 /* rtc_event.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4131C469234C81B40028A615 /* rtc_event.cc */; };
