@@ -267,8 +267,6 @@ imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-store-cursors.an
 imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-store.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.sharedworker.html [ Skip ]
 
-webkit.org/b/244397 workers/worker-web-lock-released-on-reload.html [ Crash ]
-
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 fast/history/page-cache-media-recorder.html [ Skip ]
