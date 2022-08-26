@@ -23,7 +23,7 @@
 #include "CSSValue.h"
 #include "IntPoint.h"
 #include "ResourceLoaderOptions.h"
-#include <wtf/HashSet.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -64,7 +64,7 @@ private:
     URL m_originalURL;
     Ref<CSSValue> m_imageValue;
     std::optional<IntPoint> m_hotSpot;
-    HashSet<SVGCursorElement*> m_cursorElements;
+    WeakHashSet<SVGCursorElement> m_cursorElements;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
 };
 
