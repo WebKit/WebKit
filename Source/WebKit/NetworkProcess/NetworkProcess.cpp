@@ -2293,7 +2293,7 @@ void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const U
     auto oldOrigin = WebCore::SecurityOriginData::fromURL(oldName);
     auto newOrigin = WebCore::SecurityOriginData::fromURL(newName);
 
-    if (oldOrigin.isEmpty() || newOrigin.isEmpty())
+    if (oldOrigin.isNull() || newOrigin.isNull())
         return;
 
     if (auto* session = networkSession(sessionID))

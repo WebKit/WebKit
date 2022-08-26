@@ -47,7 +47,7 @@ namespace WebKit {
 
 static bool isValidClientOrigin(const WebCore::ClientOrigin& clientOrigin)
 {
-    return !clientOrigin.topOrigin.isEmpty() && !clientOrigin.clientOrigin.isEmpty();
+    return !clientOrigin.topOrigin.isNull() && !clientOrigin.clientOrigin.isNull();
 }
 
 NetworkBroadcastChannelRegistry::NetworkBroadcastChannelRegistry(NetworkProcess& networkProcess)

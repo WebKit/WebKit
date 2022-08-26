@@ -8840,12 +8840,6 @@ void WebPageProxy::revokeGeolocationAuthorizationToken(const String& authorizati
     m_geolocationPermissionRequestManager.revokeAuthorizationToken(authorizationToken);
 }
 
-static bool isOriginUnique(const SecurityOriginData& origin)
-{
-    ASSERT(!origin.isEmpty());
-    return origin.protocol == emptyString() && origin.host == emptyString() && !origin.port;
-}
-
 void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const PermissionDescriptor& descriptor, CompletionHandler<void(std::optional<PermissionState>, bool shouldCache)>&& completionHandler)
 {
     bool canAPISucceed = true;
@@ -8903,7 +8897,7 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
         completionHandler(*result, false);
     };
 
-    if (isOriginUnique(clientOrigin.topOrigin)) {
+    if (clientOrigin.topOrigin.isUnique()) {
         callback(PermissionState::Prompt);
         return;
     }

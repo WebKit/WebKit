@@ -76,11 +76,15 @@ struct SecurityOriginData {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<SecurityOriginData> decode(Decoder&);
 
-    bool isEmpty() const
+    bool isNull() const
     {
         return protocol.isNull() && host.isNull() && port == std::nullopt;
     }
-    
+    bool isUnique() const
+    {
+        return protocol == emptyString() && host == emptyString() && !port;
+    }
+
     bool isHashTableDeletedValue() const
     {
         return protocol.isHashTableDeletedValue();
@@ -139,7 +143,7 @@ std::optional<SecurityOriginData> SecurityOriginData::decode(Decoder& decoder)
 struct SecurityOriginDataHashTraits : SimpleClassHashTraits<SecurityOriginData> {
     static const bool hasIsEmptyValueFunction = true;
     static const bool emptyValueIsZero = false;
-    static bool isEmptyValue(const SecurityOriginData& data) { return data.isEmpty(); }
+    static bool isEmptyValue(const SecurityOriginData& data) { return data.isNull(); }
 };
 
 struct SecurityOriginDataHash {
