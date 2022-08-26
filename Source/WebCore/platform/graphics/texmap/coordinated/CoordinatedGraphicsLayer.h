@@ -33,11 +33,13 @@
 #include "NicosiaBuffer.h"
 #include "NicosiaPlatformLayer.h"
 #include "TransformationMatrix.h"
+#include <wtf/Function.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringHash.h>
 
 namespace Nicosia {
 class Animations;
+class ImageBackingStore;
 class PaintingEngine;
 }
 
@@ -51,6 +53,7 @@ public:
     virtual void detachLayer(CoordinatedGraphicsLayer*) = 0;
     virtual void attachLayer(CoordinatedGraphicsLayer*) = 0;
     virtual Nicosia::PaintingEngine& paintingEngine() = 0;
+    virtual RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) = 0;
     virtual void syncLayerState() = 0;
 };
 
