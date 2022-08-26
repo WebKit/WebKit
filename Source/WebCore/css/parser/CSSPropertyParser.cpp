@@ -4793,8 +4793,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyContain:
         return consumeContain(m_range);
     case CSSPropertyContentVisibility:
-        if (!m_context.contentVisibilityEnabled)
-            return nullptr;
         return consumeContentVisibility(m_range);
     case CSSPropertyTextEmphasisPosition:
         return consumeTextEmphasisPosition(m_range);

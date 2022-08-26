@@ -58,7 +58,6 @@ struct CSSParserContext {
     bool colorContrastEnabled { false };
     bool colorMixEnabled { false };
     bool constantPropertiesEnabled { false };
-    bool contentVisibilityEnabled { false };
     bool counterStyleAtRuleImageSymbolsEnabled { false };
     bool cssColor4 { false };
     bool relativeColorSyntaxEnabled { false };
