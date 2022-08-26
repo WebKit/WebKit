@@ -36,12 +36,10 @@ protected:
     void willBeDestroyed() override;
 
     void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) override;
+    void updateFromStyle() override;
 
 private:
     void element() const = delete;
-
-    void updateFromStyle() final;
-
     bool isRenderSVGBlock() const final { return true; }
 
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;

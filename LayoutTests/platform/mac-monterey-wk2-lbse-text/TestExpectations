@@ -1,13 +1,21 @@
-# This TestExpectations file reflects the current status of the 'Layer-based SVG engine' (LBSE) in WebKit
+# This TestExpectations file reflects the current status of the 'Layer-Based SVG Engine' (LBSE) in WebKit
 #
 # 1. Run tests against legacy SVG engine
-#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-pixel --pixel-tests --tolerance=0 svg/W3C-SVG-1.1 svg/compositing svg/z-index
+#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-pixel --pixel-tests --tolerance=0 \
+#                       svg/W3C-SVG-1.1 svg/compositing svg/foreignObject svg/z-index
 #
 # 2. Run tests against LBSE
-#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-pixel \
-#                       --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-lbse-text \
+#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-lbse-text \
+#                       --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-pixel \
 #                       --additional-expectations=$PWD/LayoutTests/platform/mac-monterey-wk2-lbse-text/TestExpectations \
-#                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true svg/W3C-SVG-1.1 svg/compositing svg/z-index
+#                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true \
+#                       svg/W3C-SVG-1.1 svg/compositing svg/foreignObject svg/z-index
+#
+# Notes:
+# - 'platform/mac-monterey-wk2-pixel' contains only pixel test results (-expected.png) generated on macOS Monterey using legacy SVG engine
+# - 'platform/mac-monterey-wk2-lbse-text' contains mostly text results (-expected.txt) which are intrinsically different between LBSE / legacy
+#                                         SVG engine plus a few pixel test results (-expected.png) that differ from the legacy SVG engine
+#                                         (e.g. progressions in individual tests)
 
 svg/W3C-SVG-1.1/animate-elem-02-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-03-t.svg       [ Pass ]
@@ -287,3 +295,6 @@ svg/W3C-SVG-1.1/text-tspan-01-b.svg         [ Pass ]
 svg/W3C-SVG-1.1/text-ws-01-t.svg            [ Pass ]
 svg/W3C-SVG-1.1/text-ws-02-t.svg            [ Pass ]
 svg/W3C-SVG-1.1/types-basicDOM-01-b.svg     [ ImageOnlyFailure ]
+svg/foreignObject/clip.html                 [ ImageOnlyFailure ]
+svg/foreignObject/filter.html               [ ImageOnlyFailure ]
+svg/foreignObject/mask.html                 [ ImageOnlyFailure ]

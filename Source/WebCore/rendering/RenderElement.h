@@ -476,7 +476,7 @@ inline bool RenderElement::canContainFixedPositionObjects() const
     return isRenderView()
         || (canEstablishContainingBlockWithTransform() && hasTransformRelatedProperty())
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned()) // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
-        || isSVGForeignObject()
+        || isSVGForeignObjectOrLegacySVGForeignObject()
         || shouldApplyLayoutOrPaintContainment();
 }
 
@@ -486,7 +486,7 @@ inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
         || style().position() != PositionType::Static
         || (canEstablishContainingBlockWithTransform() && hasTransformRelatedProperty())
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForAbsolutelyPositioned()) // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
-        || isSVGForeignObject()
+        || isSVGForeignObjectOrLegacySVGForeignObject()
         || shouldApplyLayoutOrPaintContainment();
 }
 

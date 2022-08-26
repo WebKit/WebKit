@@ -40,7 +40,7 @@
 namespace WebCore {
 
 // Most renderers in the SVG rendering tree will inherit from this class
-// but not all. RenderSVGForeignObject, RenderSVGBlock, etc. inherit from
+// but not all. LegacyRenderSVGForeignObject, RenderSVGBlock, etc. inherit from
 // existing RenderBlock classes, that all inherit from RenderLayerModelObject
 // directly, without RenderSVGModelObject inbetween. Therefore code which
 // needs to be shared between all SVG renderers goes to RenderLayerModelObject.
