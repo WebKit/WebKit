@@ -760,6 +760,8 @@ public:
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
     bool hasTransformedAncestor() const { return m_hasTransformedAncestor; }
 
+    bool hasFixedContainingBlockAncestor() const { return m_hasFixedContainingBlockAncestor; }
+
     bool hasFilter() const { return renderer().hasFilter(); }
     bool hasFilterOutsets() const { return !filterOutsets().isZero(); }
     IntOutsets filterOutsets() const;
@@ -971,9 +973,10 @@ private:
         ContainingClippingLayerChangedSize  = 1 << 2,
         UpdatePagination                    = 1 << 3,
         SeenFixedLayer                      = 1 << 4,
-        SeenTransformedLayer                = 1 << 5,
-        Seen3DTransformedLayer              = 1 << 6,
-        SeenCompositedScrollingLayer        = 1 << 7,
+        SeenFixedContainingBlockLayer       = 1 << 5,
+        SeenTransformedLayer                = 1 << 6,
+        Seen3DTransformedLayer              = 1 << 7,
+        SeenCompositedScrollingLayer        = 1 << 8,
     };
     static OptionSet<UpdateLayerPositionsFlag> flagsForUpdateLayerPositions(RenderLayer& startingLayer);
 
@@ -1235,6 +1238,7 @@ private:
     bool m_hasCompositedNonContainedDescendants : 1;
     bool m_hasCompositedScrollingAncestor : 1; // In the layer-order tree.
 
+    bool m_hasFixedContainingBlockAncestor : 1;
     bool m_hasTransformedAncestor : 1;
     bool m_has3DTransformedAncestor : 1;
 

@@ -324,6 +324,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     , m_hasCompositingDescendant(false)
     , m_hasCompositedNonContainedDescendants(false)
     , m_hasCompositedScrollingAncestor(false)
+    , m_hasFixedContainingBlockAncestor(false)
     , m_hasTransformedAncestor(false)
     , m_has3DTransformedAncestor(false)
     , m_insideSVGForeignObject(false)
@@ -901,13 +902,16 @@ OptionSet<RenderLayer::UpdateLayerPositionsFlag> RenderLayer::flagsForUpdateLaye
     OptionSet<UpdateLayerPositionsFlag> flags = { CheckForRepaint };
 
     if (auto* parent = startingLayer.parent()) {
+        if (parent->hasFixedContainingBlockAncestor() || parent->renderer().canContainFixedPositionObjects())
+            flags.add(SeenFixedContainingBlockLayer);
+
         if (parent->hasTransformedAncestor() || parent->transform())
             flags.add(SeenTransformedLayer);
 
         if (parent->has3DTransformedAncestor() || (parent->transform() && !parent->transform()->isAffine()))
             flags.add(Seen3DTransformedLayer);
 
-        if (parent->behavesAsFixed() || (parent->renderer().isFixedPositioned() && !parent->hasTransformedAncestor()))
+        if (parent->behavesAsFixed() || (parent->renderer().isFixedPositioned() && !parent->hasFixedContainingBlockAncestor()))
             flags.add(SeenFixedLayer);
 
         if (parent->hasCompositedScrollingAncestor() || parent->hasCompositedScrollableOverflow())
@@ -1019,6 +1023,7 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
         clearRepaintRects();
 
     m_repaintStatus = NeedsNormalRepaint;
+    m_hasFixedContainingBlockAncestor = flags.contains(SeenFixedContainingBlockLayer);
     m_hasTransformedAncestor = flags.contains(SeenTransformedLayer);
     m_has3DTransformedAncestor = flags.contains(Seen3DTransformedLayer);
     m_behavesAsFixed = flags.contains(SeenFixedLayer);
@@ -1033,14 +1038,18 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
         flags.add(UpdatePagination);
     }
 
-    if (transform()) {
-        flags.add(SeenTransformedLayer);
-        if (!transform()->isAffine())
-            flags.add(Seen3DTransformedLayer);
+    if (!isRenderViewLayer() && renderer().canContainFixedPositionObjects()) {
+        flags.add(SeenFixedContainingBlockLayer);
+
+        if (transform()) {
+            flags.add(SeenTransformedLayer);
+            if (!transform()->isAffine())
+                flags.add(Seen3DTransformedLayer);
+        }
     }
 
     // Fixed inside transform behaves like absolute (per spec).
-    if (renderer().isFixedPositioned() && !m_hasTransformedAncestor) {
+    if (renderer().isFixedPositioned() && !m_hasFixedContainingBlockAncestor) {
         m_behavesAsFixed = true;
         flags.add(SeenFixedLayer);
     }
