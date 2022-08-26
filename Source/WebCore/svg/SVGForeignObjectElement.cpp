@@ -23,6 +23,7 @@
 #include "SVGForeignObjectElement.h"
 
 #include "CSSPropertyNames.h"
+#include "LegacyRenderSVGForeignObject.h"
 #include "RenderSVGForeignObject.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInlines.h"
@@ -92,7 +93,11 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
 RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     document().setMayHaveRenderedSVGForeignObjects();
-    return createRenderer<RenderSVGForeignObject>(*this, WTFMove(style));
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGForeignObject>(*this, WTFMove(style));
+#endif
+    return createRenderer<LegacyRenderSVGForeignObject>(*this, WTFMove(style));
 }
 
 bool SVGForeignObjectElement::childShouldCreateRenderer(const Node& child) const
@@ -114,8 +119,7 @@ bool SVGForeignObjectElement::rendererIsNeeded(const RenderStyle& style)
     // parentOrShadowHostElement() instead.
     RefPtr ancestor = parentElement();
     while (ancestor && ancestor->isSVGElement()) {
-        // FIXME: [LBSE] Upstream foreignObject support.
-        if (ancestor->renderer() && ancestor->renderer()->isLegacySVGHiddenContainer())
+        if (ancestor->renderer() && (ancestor->renderer()->isSVGHiddenContainer() || ancestor->renderer()->isLegacySVGHiddenContainer()))
             return false;
 
         ancestor = ancestor->parentElement();

@@ -56,7 +56,7 @@ void RenderSVGBlock::updateFromStyle()
     // Render(SVGText|ForeignObject) return 'false' on 'requiresLayer'. Fine for RenderSVGText.
     //
     // If we want to support overflow rules for <foreignObject> we can choose between two solutions:
-    // a) make RenderSVGForeignObject require layers and SVG layer aware
+    // a) make LegacyRenderSVGForeignObject require layers and SVG layer aware
     // b) refactor overflow logic out of RenderLayer (as suggested by dhyatt), which is a large task
     //
     // Until this is resolved, disable overflow support. Opera/FF don't support it as well at the moment (Feb 2010).
@@ -161,8 +161,14 @@ std::optional<FloatRect> RenderSVGBlock::computeFloatVisibleRectInContainer(cons
     return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context);
 }
 
-void RenderSVGBlock::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode>, bool* wasFixed) const
+void RenderSVGBlock::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        RenderBlock::mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
+        return;
+    }
+#endif
     SVGRenderSupport::mapLocalToContainer(*this, ancestorContainer, transformState, wasFixed);
 }
 
@@ -170,7 +176,7 @@ const RenderObject* RenderSVGBlock::pushMappingToContainer(const RenderLayerMode
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
-        return RenderBox::pushMappingToContainer(ancestorToStopAt, geometryMap);
+        return RenderBlock::pushMappingToContainer(ancestorToStopAt, geometryMap);
 #endif
 
     return SVGRenderSupport::pushMappingToContainer(*this, ancestorToStopAt, geometryMap);

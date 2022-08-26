@@ -286,7 +286,7 @@ AccessibilityRole AccessibilitySVGElement::determineAccessibilityRole()
 
     if (m_renderer->isSVGShapeOrLegacySVGShape() || m_renderer->isSVGPathOrLegacySVGPath() || m_renderer->isSVGImageOrLegacySVGImage() || is<SVGUseElement>(svgElement))
         return AccessibilityRole::Image;
-    if (m_renderer->isSVGForeignObject() || is<SVGGElement>(svgElement))
+    if (m_renderer->isSVGForeignObjectOrLegacySVGForeignObject() || is<SVGGElement>(svgElement))
         return AccessibilityRole::Group;
     if (m_renderer->isSVGText())
         return AccessibilityRole::SVGText;

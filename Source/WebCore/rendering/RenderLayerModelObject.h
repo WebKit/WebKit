@@ -77,7 +77,7 @@ public:
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     // Single source of truth deciding if a SVG renderer should be painted. All SVG renderers
     // use this method to test if they should continue processing in the paint() function or stop.
-    bool shouldPaintSVGRenderer(const PaintInfo&, const StdUnorderedSet<PaintPhase>& relevantPaintPhases) const;
+    bool shouldPaintSVGRenderer(const PaintInfo&, const std::optional<StdUnorderedSet<PaintPhase>>& relevantPaintPhases = std::nullopt) const;
 
     // Provides the SVG implementation for computeVisibleRectInContainer().
     // This lives in RenderLayerModelObject, which is the common base-class for all SVG renderers.
