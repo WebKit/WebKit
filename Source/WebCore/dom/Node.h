@@ -742,10 +742,6 @@ private:
 
     WEBCORE_EXPORT void notifyInspectorOfRendererChange();
     
-    struct NodeRareDataDeleter {
-        void operator()(NodeRareData*) const;
-    };
-
     mutable uint32_t m_refCountAndParentBit { s_refCountIncrement };
     mutable OptionSet<NodeFlag> m_nodeFlags;
 
@@ -754,7 +750,7 @@ private:
     Node* m_previous { nullptr };
     Node* m_next { nullptr };
     CompactPointerTuple<RenderObject*, uint16_t> m_rendererWithStyleFlags;
-    CompactUniquePtrTuple<NodeRareData, uint16_t, NodeRareDataDeleter> m_rareDataWithBitfields;
+    CompactUniquePtrTuple<NodeRareData, uint16_t> m_rareDataWithBitfields;
 };
 
 bool connectedInSameTreeScope(const Node*, const Node*);
