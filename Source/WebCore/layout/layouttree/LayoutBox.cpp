@@ -204,7 +204,7 @@ bool Box::isRightFloatingPositioned() const
 
 bool Box::hasFloatClear() const
 {
-    return m_style.clear() != Clear::None;
+    return m_style.clear() != Clear::None && (isBlockLevelBox() || isLineBreakBox());
 }
 
 bool Box::isFloatAvoider() const

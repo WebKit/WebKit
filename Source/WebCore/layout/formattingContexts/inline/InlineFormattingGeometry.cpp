@@ -54,7 +54,7 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuild
     if (lineContent.runs.isEmpty())
         return previousLineLogicalBottom;
     auto& lastRunLayoutBox = lineContent.runs.last().layoutBox(); 
-    if (lastRunLayoutBox.style().clear() == Clear::None)
+    if (!lastRunLayoutBox.hasFloatClear())
         return previousLineLogicalBottom;
     auto positionWithClearance = floatingContext.verticalPositionWithClearance(lastRunLayoutBox);
     if (!positionWithClearance)

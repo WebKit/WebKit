@@ -487,21 +487,16 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     // Printing does pagination without a flow thread.
     if (flow.document().paginated())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsPaginated, reasons, includeReasons);
-    // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
-    // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
-    auto contentHasFloat = flow.containsFloats();
+
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
         if (auto childReasons = canUseForChild(child, includeReasons))
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
-        auto nonLineBreakBoxWithFloatClear = contentHasFloat && !is<RenderLineBreak>(child) && RenderStyle::usedClear(child) != UsedClear::None;
-        if (nonLineBreakBoxWithFloatClear)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
     }
     auto styleReasons = canUseForStyle(flow, includeReasons);
     if (styleReasons)
         ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
-    // We can't use the code path if any lines would need to be shifted below floats. This is because we don't keep per-line y coordinates.
+
     if (flow.containsFloats()) {
         for (auto& floatingObject : *flow.floatingObjectSet()) {
             ASSERT(floatingObject);
