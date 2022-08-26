@@ -540,8 +540,8 @@ class SimulatedDevice(object):
     ]
 
     UI_MANAGER_SERVICE = {
-        'iOS': 'com.apple.SpringBoard',
-        'watchOS': 'com.apple.Carousel',
+        'iOS': 'com.apple.Preferences',
+        'watchOS': 'com.apple.NanoSettings',
     }
 
     def __init__(self, name, udid, host, device_type, build_version):
@@ -595,8 +595,9 @@ class SimulatedDevice(object):
         if not service:
             _log.debug(u'{} has no service to check if the device is usable'.format(self.device_type.software_variant))
             return True
-
-        exit_code = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'list', service], return_exit_code=True)
+        exit_code = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'launch', self.udid, service], return_exit_code=True)
+        time.sleep(.7)
+        self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'terminate', self.udid, service])
         if exit_code == 0:
             return True
         return False
