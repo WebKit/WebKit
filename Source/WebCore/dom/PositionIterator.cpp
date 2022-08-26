@@ -46,14 +46,14 @@ PositionIterator::operator Position() const
         ASSERT(m_nodeAfterPositionInAnchor->parentNode() == m_anchorNode);
         // FIXME: This check is inadaquete because any ancestor could be ignored by editing
         if (positionBeforeOrAfterNodeIsCandidate(*m_anchorNode))
-            return positionBeforeNode(m_anchorNode);
-        return positionInParentBeforeNode(m_nodeAfterPositionInAnchor);
+            return positionBeforeNode(m_anchorNode.get());
+        return positionInParentBeforeNode(m_nodeAfterPositionInAnchor.get());
     }
     if (positionBeforeOrAfterNodeIsCandidate(*m_anchorNode))
-        return atStartOfNode() ? positionBeforeNode(m_anchorNode) : positionAfterNode(m_anchorNode);
+        return atStartOfNode() ? positionBeforeNode(m_anchorNode.get()) : positionAfterNode(m_anchorNode.get());
     if (m_anchorNode->hasChildNodes())
-        return lastPositionInOrAfterNode(m_anchorNode);
-    return makeDeprecatedLegacyPosition(m_anchorNode, m_offsetInAnchor);
+        return lastPositionInOrAfterNode(m_anchorNode.get());
+    return makeDeprecatedLegacyPosition(m_anchorNode.get(), m_offsetInAnchor);
 }
 
 void PositionIterator::increment()
@@ -69,7 +69,7 @@ void PositionIterator::increment()
     }
 
     if (m_anchorNode->renderer() && !m_anchorNode->hasChildNodes() && m_offsetInAnchor < lastOffsetForEditing(*m_anchorNode))
-        m_offsetInAnchor = Position::uncheckedNextOffset(m_anchorNode, m_offsetInAnchor);
+        m_offsetInAnchor = Position::uncheckedNextOffset(m_anchorNode.get(), m_offsetInAnchor);
     else {
         m_nodeAfterPositionInAnchor = m_anchorNode;
         m_anchorNode = m_nodeAfterPositionInAnchor->parentNode();
@@ -101,7 +101,7 @@ void PositionIterator::decrement()
         m_offsetInAnchor = m_anchorNode->hasChildNodes()? 0: lastOffsetForEditing(*m_anchorNode);
     } else {
         if (m_offsetInAnchor && m_anchorNode->renderer())
-            m_offsetInAnchor = Position::uncheckedPreviousOffset(m_anchorNode, m_offsetInAnchor);
+            m_offsetInAnchor = Position::uncheckedPreviousOffset(m_anchorNode.get(), m_offsetInAnchor);
         else {
             m_nodeAfterPositionInAnchor = m_anchorNode;
             m_anchorNode = m_anchorNode->parentNode();
@@ -162,7 +162,7 @@ bool PositionIterator::isCandidate() const
         return Position(*this).isCandidate();
 
     if (is<RenderText>(*renderer))
-        return !Position::nodeIsUserSelectNone(m_anchorNode) && downcast<RenderText>(*renderer).containsCaretOffset(m_offsetInAnchor);
+        return !Position::nodeIsUserSelectNone(m_anchorNode.get()) && downcast<RenderText>(*renderer).containsCaretOffset(m_offsetInAnchor);
 
     if (positionBeforeOrAfterNodeIsCandidate(*m_anchorNode))
         return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsUserSelectNone(m_anchorNode->parentNode());
@@ -174,13 +174,13 @@ bool PositionIterator::isCandidate() const
         auto& block = downcast<RenderBlock>(*renderer);
         if (block.logicalHeight() || is<HTMLBodyElement>(*m_anchorNode) || m_anchorNode->isRootEditableElement()) {
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(block))
-                return atStartOfNode() && !Position::nodeIsUserSelectNone(m_anchorNode);
-            return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(m_anchorNode) && Position(*this).atEditingBoundary();
+                return atStartOfNode() && !Position::nodeIsUserSelectNone(m_anchorNode.get());
+            return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(m_anchorNode.get()) && Position(*this).atEditingBoundary();
         }
         return false;
     }
 
-    return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(m_anchorNode) && Position(*this).atEditingBoundary();
+    return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(m_anchorNode.get()) && Position(*this).atEditingBoundary();
 }
 
 } // namespace WebCore
