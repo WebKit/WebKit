@@ -1958,3 +1958,4 @@ webkit.org/b/244338 [ Debug ] storage/domstorage/sessionstorage/window-open-remo
 
 webkit.org/b/244347 [ Release ] storage/domstorage/sessionstorage/window-open-remove-item.html [ Pass Failure ]
 
+webkit.org/b/244372 imported/w3c/web-platform-tests/intersection-observer/target-in-different-window.html [ Pass Failure ]
