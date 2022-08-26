@@ -547,13 +547,15 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     auto isLastLine = isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
     auto isInIntrinsicWidthMode = this->isInIntrinsicWidthMode();
-    // Legacy line layout quirk: keep the trailing whitespace around when it is followed by a line break, unless the content overflows the line.
-    // This quirk however should not be applied when running intrinsic width computation.
-    // FIXME: webkit.org/b/233261
-    auto shouldApplyTrailingWhiteSpaceFollowedByBRQuirk = isInIntrinsicWidthMode || !layoutState().isInlineFormattingContextIntegration()
-        ? Line::ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::No
-        : Line::ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::Yes;
-    m_line.removeTrailingTrimmableContent(shouldApplyTrailingWhiteSpaceFollowedByBRQuirk);
+    auto shouldApplyTrailingWhiteSpaceFollowedByBRQuirk = [&] {
+        // Legacy line layout quirk: keep the trailing whitespace around when it is followed by a line break, unless the content overflows the line.
+        // This quirk however should not be applied when running intrinsic width computation.
+        // FIXME: webkit.org/b/233261
+        if (isInIntrinsicWidthMode || !layoutState().isInlineFormattingContextIntegration())
+            return false;
+        return horizontalAvailableSpace >= m_line.contentLogicalWidth();
+    };
+    m_line.removeTrailingTrimmableContent(shouldApplyTrailingWhiteSpaceFollowedByBRQuirk() ? Line::ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::Yes : Line::ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::No);
 
     if (isInIntrinsicWidthMode) {
         // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit.
