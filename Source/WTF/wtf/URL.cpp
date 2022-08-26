@@ -238,6 +238,24 @@ StringView URL::fragmentIdentifier() const
     return StringView(m_string).substring(m_queryEnd + 1);
 }
 
+// https://wicg.github.io/scroll-to-text-fragment/#the-fragment-directive
+String URL::consumefragmentDirective()
+{
+    ASCIILiteral fragmentDirectiveDelimiter = ":~:"_s;
+    auto fragment = fragmentIdentifier();
+    
+    auto fragmentDirectiveStart = fragment.find(fragmentDirectiveDelimiter);
+    
+    if (fragmentDirectiveStart == notFound)
+        return { };
+    
+    auto fragmentDirective = fragment.substring(fragmentDirectiveStart + fragmentDirectiveDelimiter.length()).toString();
+    
+    setFragmentIdentifier(fragment.left(fragmentDirectiveStart));
+    
+    return fragmentDirective;
+}
+
 URL URL::truncatedForUseAsBase() const
 {
     return URL(m_string.left(m_pathAfterLastSlash));
