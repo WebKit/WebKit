@@ -45,100 +45,77 @@ InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoi
     , m_inlineContent(inlineContent)
     , m_boxTree(boxTree)
 {
+    m_damageRect = m_paintInfo.rect;
+    m_damageRect.moveBy(-m_paintOffset);
 }
 
-void InlineContentPainter::paint()
+void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
 {
-    auto paintPhase = m_paintInfo.phase;
-
-    auto shouldPaintForPhase = [&] {
-        switch (paintPhase) {
-        case PaintPhase::Foreground:
-        case PaintPhase::EventRegion:
-        case PaintPhase::TextClip:
-        case PaintPhase::Mask:
-        case PaintPhase::Selection:
-        case PaintPhase::Outline:
-        case PaintPhase::ChildOutlines:
-        case PaintPhase::SelfOutline:
-            return true;
-        default:
-            return false;
-        }
-    };
-
-    if (!shouldPaintForPhase())
-        return;
-
-    auto damageRect = m_paintInfo.rect;
-    damageRect.moveBy(-m_paintOffset);
-
     auto hasDamage = [&](auto& box) {
         auto rect = enclosingLayoutRect(box.inkOverflow());
         m_boxTree.rootRenderer().flipForWritingMode(rect);
         // FIXME: This should test for intersection but horizontal ink overflow is miscomputed in a few cases (like with negative letter-spacing).
-        return damageRect.maxY() > rect.y() && damageRect.y() < rect.maxY();
+        return m_damageRect.maxY() > rect.y() && m_damageRect.y() < rect.maxY();
     };
 
-    auto isVisuallyHidden = [&](auto& box) {
-        return box.isVisuallyHidden() == InlineDisplay::Box::IsVisuallyHidden::Yes || box.style().visibility() != Visibility::Visible;
-    };
-    auto shouldPaintBoxForPhase = [&](auto& box) {
-        switch (paintPhase) {
-        case PaintPhase::ChildOutlines: return box.isNonRootInlineBox();
-        case PaintPhase::SelfOutline: return box.isRootInlineBox();
-        case PaintPhase::Outline: return box.isInlineBox();
-        case PaintPhase::Mask: return box.isInlineBox();
-        default: return true;
-        }
-    };
+    auto isVisuallyHidden = box.isVisuallyHidden() == InlineDisplay::Box::IsVisuallyHidden::Yes || box.style().visibility() != Visibility::Visible;
+    if (isVisuallyHidden || box.isLineBreak())
+        return;
 
-    auto layerPaintScope = LayerPaintScope { m_boxTree, m_layerRenderer };
+    if (box.isInlineBox()) {
+        if (!hasDamage(box))
+            return;
 
-    ListHashSet<RenderInline*> outlineObjects;
+        auto inlineBoxPaintInfo = PaintInfo { m_paintInfo };
+        inlineBoxPaintInfo.phase = m_paintInfo.phase == PaintPhase::ChildOutlines ? PaintPhase::Outline : m_paintInfo.phase;
+        inlineBoxPaintInfo.outlineObjects = &m_outlineObjects;
 
-    for (auto& box : m_inlineContent.boxesForRect(damageRect)) {
-        if (!shouldPaintBoxForPhase(box))
-            continue;
-
-        if (box.isLineBreak())
-            continue;
-
-        if (!layerPaintScope.includes(box))
-            continue;
-
-        if (isVisuallyHidden(box))
-            continue;
-
-        if (box.isInlineBox()) {
-            if (!hasDamage(box))
-                continue;
-
-            auto inlineBoxPaintInfo = PaintInfo { m_paintInfo };
-            inlineBoxPaintInfo.phase = paintPhase == PaintPhase::ChildOutlines ? PaintPhase::Outline : paintPhase;
-            inlineBoxPaintInfo.outlineObjects = &outlineObjects;
-
-            InlineBoxPainter { m_inlineContent, box, inlineBoxPaintInfo, m_paintOffset }.paint();
-            continue;
-        }
-
-        if (auto& textContent = box.text()) {
-            if (!textContent->length() || !hasDamage(box))
-                continue;
-
-            ModernTextBoxPainter { m_inlineContent, box, m_paintInfo, m_paintOffset }.paint();
-            continue;
-        }
-
-        if (auto* renderer = dynamicDowncast<RenderBox>(m_boxTree.rendererForLayoutBox(box.layoutBox())); renderer && renderer->isReplacedOrInlineBlock()) {
-            if (m_paintInfo.shouldPaintWithinRoot(*renderer)) {
-                // FIXME: Painting should not require a non-const renderer.
-                const_cast<RenderBox*>(renderer)->paintAsInlineBlock(m_paintInfo, flippedContentOffsetIfNeeded(*renderer));
-            }
-        }
+        InlineBoxPainter { m_inlineContent, box, inlineBoxPaintInfo, m_paintOffset }.paint();
+        return;
     }
 
-    for (auto* renderInline : outlineObjects)
+    if (box.isText()) {
+        if (!box.text()->length() || !hasDamage(box))
+            return;
+
+        ModernTextBoxPainter { m_inlineContent, box, m_paintInfo, m_paintOffset }.paint();
+        return;
+    }
+
+    if (auto* renderer = dynamicDowncast<RenderBox>(m_boxTree.rendererForLayoutBox(box.layoutBox())); renderer && renderer->isReplacedOrInlineBlock()) {
+        if (m_paintInfo.shouldPaintWithinRoot(*renderer)) {
+            // FIXME: Painting should not require a non-const renderer.
+            const_cast<RenderBox*>(renderer)->paintAsInlineBlock(m_paintInfo, flippedContentOffsetIfNeeded(*renderer));
+        }
+    }
+}
+
+void InlineContentPainter::paint()
+{
+    auto layerPaintScope = LayerPaintScope { m_boxTree, m_layerRenderer };
+
+    for (auto& box : m_inlineContent.boxesForRect(m_damageRect)) {
+        auto shouldPaintBoxForPhase = [&] {
+            switch (m_paintInfo.phase) {
+            case PaintPhase::ChildOutlines:
+                return box.isNonRootInlineBox();
+            case PaintPhase::SelfOutline:
+                return box.isRootInlineBox();
+            case PaintPhase::Outline:
+                return box.isInlineBox();
+            case PaintPhase::Mask:
+                return box.isInlineBox();
+            default:
+                return true;
+            }
+        };
+        if (!shouldPaintBoxForPhase() || !layerPaintScope.includes(box))
+            continue;
+
+        paintDisplayBox(box);
+    }
+
+    for (auto* renderInline : m_outlineObjects)
         renderInline->paintOutline(m_paintInfo, m_paintOffset);
 }
 
