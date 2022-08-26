@@ -836,6 +836,11 @@
     (global-name "com.apple.coremedia.samplebufferconsumer.xpc")
 #endif
     (global-name "com.apple.coremedia.volumecontroller.xpc")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
+    (global-name "com.apple.timesync.expositor")
+    (global-name "com.apple.timesync.manager")
+    (global-name "com.apple.timesync.ptp.manager")
+#endif
 )
 
 #if PLATFORM(MAC)
