@@ -96,7 +96,7 @@ inline bool SlotAssignment::hasAssignedNodes(ShadowRoot& shadowRoot, Slot& slot)
 
 void SlotAssignment::renameSlotElement(HTMLSlotElement& slotElement, const AtomString& oldName, const AtomString& newName, ShadowRoot& shadowRoot)
 {
-    ASSERT(m_slotElementsForConsistencyCheck.contains(&slotElement));
+    ASSERT(m_slotElementsForConsistencyCheck.contains(slotElement));
 
     m_slotMutationVersion++;
 
@@ -107,8 +107,8 @@ void SlotAssignment::renameSlotElement(HTMLSlotElement& slotElement, const AtomS
 void SlotAssignment::addSlotElementByName(const AtomString& name, HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
 {
 #if ASSERT_ENABLED
-    ASSERT(!m_slotElementsForConsistencyCheck.contains(&slotElement));
-    m_slotElementsForConsistencyCheck.add(&slotElement);
+    ASSERT(!m_slotElementsForConsistencyCheck.contains(slotElement));
+    m_slotElementsForConsistencyCheck.add(slotElement);
 #endif
 
     // FIXME: We should be able to do a targeted reconstruction.
@@ -142,8 +142,8 @@ void SlotAssignment::addSlotElementByName(const AtomString& name, HTMLSlotElemen
 void SlotAssignment::removeSlotElementByName(const AtomString& name, HTMLSlotElement& slotElement, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot& shadowRoot)
 {
 #if ASSERT_ENABLED
-    ASSERT(m_slotElementsForConsistencyCheck.contains(&slotElement));
-    m_slotElementsForConsistencyCheck.remove(&slotElement);
+    ASSERT(m_slotElementsForConsistencyCheck.contains(slotElement));
+    m_slotElementsForConsistencyCheck.remove(slotElement);
 #endif
 
     ASSERT(m_slotElementCount > 0);
@@ -343,7 +343,7 @@ const AtomString& SlotAssignment::slotNameForHostChild(const Node& child) const
 
 HTMLSlotElement* SlotAssignment::findFirstSlotElement(Slot& slot)
 {
-    ASSERT(!slot.element || m_slotElementsForConsistencyCheck.contains(slot.element.get()));
+    ASSERT(!slot.element || m_slotElementsForConsistencyCheck.contains(*slot.element));
 
     return slot.element.get();
 }
