@@ -35,28 +35,8 @@
 
 namespace WebCore {
 
-FragmentDirectiveParser::FragmentDirectiveParser(const URL& url)
+FragmentDirectiveParser::FragmentDirectiveParser(StringView fragmentDirective)
 {
-    ASCIILiteral fragmentDirectiveDelimiter = ":~:"_s;
-    auto fragmentIdentifier = url.fragmentIdentifier();
-    
-    if (fragmentIdentifier.isEmpty()) {
-        m_remainingURLFragment = fragmentIdentifier;
-        return;
-    }
-        
-    auto fragmentDirectiveStart = fragmentIdentifier.find(StringView(fragmentDirectiveDelimiter));
-    
-    if (fragmentDirectiveStart == notFound) {
-        m_remainingURLFragment = fragmentIdentifier;
-        return;
-    }
-    
-    auto fragmentDirective = fragmentIdentifier.substring(fragmentDirectiveStart + fragmentDirectiveDelimiter.length());
-    
-    // FIXME: this needs to be set on the original URL
-    m_remainingURLFragment = fragmentIdentifier.left(fragmentDirectiveStart);
-    
     parseFragmentDirective(fragmentDirective);
     
     m_fragmentDirective = fragmentDirective;

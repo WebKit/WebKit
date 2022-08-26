@@ -2219,14 +2219,12 @@ bool FrameView::scrollToFragment(const URL& url)
     Ref document = *frame().document();
     
     auto fragmentIdentifier = url.fragmentIdentifier();
+    auto fragmentDirective = document->fragmentDirective();
     
-    if (document->settings().scrollToTextFragmentEnabled()) {
-        FragmentDirectiveParser fragmentDirectiveParser(url);
+    if (document->settings().scrollToTextFragmentEnabled() && !fragmentDirective.isEmpty()) {
+        FragmentDirectiveParser fragmentDirectiveParser(fragmentDirective);
         
         if (fragmentDirectiveParser.isValid()) {
-            auto fragmentDirective = fragmentDirectiveParser.fragmentDirective().toString();
-            document->setFragmentDirective(fragmentDirective);
-            
             auto parsedTextDirectives = fragmentDirectiveParser.parsedTextDirectives();
             
             auto highlightRanges = FragmentDirectiveRangeFinder::findRangesFromTextDirectives(parsedTextDirectives, document);
@@ -2240,10 +2238,9 @@ bool FrameView::scrollToFragment(const URL& url)
                 m_pendingTextFragmentIndicatorText = plainText(range);
                 if (frame().settings().scrollToTextFragmentIndicatorEnabled())
                     m_delayedTextFragmentIndicatorTimer.startOneShot(100_ms);
+                return true;
             }
-            
-        } else
-            fragmentIdentifier = fragmentDirectiveParser.remainingURLFragment();
+        }
     }
     
     if (scrollToFragmentInternal(fragmentIdentifier))

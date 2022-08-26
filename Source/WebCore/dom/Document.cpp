@@ -3479,9 +3479,11 @@ void Document::logExceptionToConsole(const String& errorMessage, const String& s
 
 void Document::setURL(const URL& url)
 {
-    const URL& newURL = url.isEmpty() ? aboutBlankURL() : url;
+    URL newURL = url.isEmpty() ? aboutBlankURL() : url;
     if (newURL == m_url)
         return;
+    
+    m_fragmentDirective = newURL.consumefragmentDirective();
 
     m_url = newURL;
     if (SecurityOrigin::shouldIgnoreHost(m_url))
