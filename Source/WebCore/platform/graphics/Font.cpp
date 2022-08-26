@@ -560,7 +560,7 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
 }
 
 #if !PLATFORM(COCOA) && !USE(FREETYPE)
-bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantCaps, UChar32) const
+bool Font::variantCapsSupportedForSynthesis(FontVariantCaps fontVariantCaps) const
 {
     switch (fontVariantCaps) {
     case FontVariantCaps::Small:

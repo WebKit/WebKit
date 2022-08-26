@@ -122,7 +122,7 @@ public:
         return const_cast<Font*>(this);
     }
 
-    bool variantCapsSupportsCharacterForSynthesis(FontVariantCaps, UChar32) const;
+    bool variantCapsSupportedForSynthesis(FontVariantCaps) const;
 
     const Font& verticalRightOrientationFont() const;
     const Font& uprightOrientationFont() const;
@@ -189,10 +189,10 @@ public:
 #if PLATFORM(COCOA)
     CTFontRef getCTFont() const { return m_platformData.font(); }
     RetainPtr<CFDictionaryRef> getCFStringAttributes(bool enableKerning, FontOrientation, const AtomString& locale) const;
-    const BitVector& glyphsSupportedBySmallCaps() const;
-    const BitVector& glyphsSupportedByAllSmallCaps() const;
-    const BitVector& glyphsSupportedByPetiteCaps() const;
-    const BitVector& glyphsSupportedByAllPetiteCaps() const;
+    bool supportsSmallCaps() const;
+    bool supportsAllSmallCaps() const;
+    bool supportsPetiteCaps() const;
+    bool supportsAllPetiteCaps() const;
 #endif
 
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
@@ -310,10 +310,15 @@ private:
     mutable std::unique_ptr<DerivedFonts> m_derivedFontData;
 
 #if PLATFORM(COCOA)
-    mutable std::optional<BitVector> m_glyphsSupportedBySmallCaps;
-    mutable std::optional<BitVector> m_glyphsSupportedByAllSmallCaps;
-    mutable std::optional<BitVector> m_glyphsSupportedByPetiteCaps;
-    mutable std::optional<BitVector> m_glyphsSupportedByAllPetiteCaps;
+    enum class SupportsFeature {
+        No,
+        Yes,
+        Unknown
+    };
+    mutable SupportsFeature m_supportsSmallCaps { SupportsFeature::Unknown };
+    mutable SupportsFeature m_supportsAllSmallCaps { SupportsFeature::Unknown };
+    mutable SupportsFeature m_supportsPetiteCaps { SupportsFeature::Unknown };
+    mutable SupportsFeature m_supportsAllPetiteCaps { SupportsFeature::Unknown };
     mutable std::optional<PAL::OTSVGTable> m_otSVGTable;
     mutable std::optional<ComplexColorFormatGlyphs> m_glyphsWithComplexColorFormat; // SVG and sbix
 #endif
