@@ -74,6 +74,7 @@ $maxCppBundleCount = nil
 $maxCBundleCount = nil
 $maxObjCBundleCount = nil
 $denseBundleFilters = []
+$bundleFilenamePrefix = ''
 
 def log(text)
     $stderr.puts text if $verbose
@@ -91,7 +92,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--max-cpp-bundle-count', GetoptLong::REQUIRED_ARGUMENT],
                ['--max-c-bundle-count', GetoptLong::REQUIRED_ARGUMENT],
                ['--max-obj-c-bundle-count', GetoptLong::REQUIRED_ARGUMENT],
-               ['--dense-bundle-filter', GetoptLong::REQUIRED_ARGUMENT]).each {
+               ['--dense-bundle-filter', GetoptLong::REQUIRED_ARGUMENT],
+               ['--bundle-filename-prefix', GetoptLong::REQUIRED_ARGUMENT]).each {
     | opt, arg |
     case opt
     when '--help'
@@ -121,6 +123,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $maxObjCBundleCount = arg.to_i
     when '--dense-bundle-filter'
         $denseBundleFilters.push(arg)
+    when '--bundle-filename-prefix'
+        $bundleFilenamePrefix = arg
     end
 }
 
@@ -225,7 +229,7 @@ class BundleManager
                 hash = Digest::SHA1.hexdigest(@currentDirectory.to_s)[0..7]
                 "-#{hash}-#{@bundleCount}"
             end
-        @extension == "cpp" ? "UnifiedSource#{id}.#{extension}" : "UnifiedSource#{id}-#{extension}.#{extension}"
+        @extension == "cpp" ? "#{$bundleFilenamePrefix}UnifiedSource#{id}.#{extension}" : "#{$bundleFilenamePrefix}UnifiedSource#{id}-#{extension}.#{extension}"
     end
 
     def flush

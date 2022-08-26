@@ -29,6 +29,8 @@
 #if USE(PASSKIT) && ENABLE(APPLE_PAY)
 
 #import "WKPaymentAuthorizationDelegate.h"
+#import <wtf/CompletionHandler.h>
+
 #import <pal/cocoa/PassKitSoftLink.h>
 
 @interface WKPaymentAuthorizationViewControllerDelegate : WKPaymentAuthorizationDelegate <PKPaymentAuthorizationViewControllerDelegate, PKPaymentAuthorizationViewControllerPrivateDelegate>
