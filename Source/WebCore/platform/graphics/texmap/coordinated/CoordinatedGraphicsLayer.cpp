@@ -907,16 +907,19 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
         layerState.imageID = imageID;
         layerState.update.isVisible = transformedVisibleRect().intersects(IntRect(contentsRect()));
         if (layerState.update.isVisible && layerState.update.nativeImageID != nativeImageID) {
-            auto buffer = Nicosia::Buffer::create(IntSize(image.size()),
-                !image.currentFrameKnownToBeOpaque() ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
-            Nicosia::PaintingContext::paint(buffer,
-                [&image](GraphicsContext& context)
-                {
-                    IntRect rect { { }, IntSize { image.size() } };
-                    context.drawImage(image, rect, rect, ImagePaintingOptions(CompositeOperator::Copy));
-                });
             layerState.update.nativeImageID = nativeImageID;
-            layerState.update.buffer = WTFMove(buffer);
+            layerState.update.imageBackingStore = m_coordinator->imageBackingStore(nativeImageID,
+                [&] {
+                    auto buffer = Nicosia::Buffer::create(IntSize(image.size()),
+                        !image.currentFrameKnownToBeOpaque() ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
+                    Nicosia::PaintingContext::paint(buffer,
+                        [&image](GraphicsContext& context)
+                        {
+                            IntRect rect { { }, IntSize { image.size() } };
+                            context.drawImage(image, rect, rect, ImagePaintingOptions(CompositeOperator::Copy));
+                        });
+                    return buffer;
+                });
             m_nicosia.delta.imageBackingChanged = true;
         }
     } else if (m_nicosia.imageBacking) {
