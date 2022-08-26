@@ -29,6 +29,7 @@
 
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
+#include <wtf/Logging.h>
 #include <wtf/Scope.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -436,27 +437,31 @@ MappedFileData createMappedFileData(const String& path, size_t bytesSize, Platfo
 {
     constexpr bool failIfFileExists = true;
     auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::ReadWrite, FileSystem::FileAccessPermission::User, failIfFileExists);
-    if (!FileSystem::isHandleValid(handle) || !FileSystem::truncateFile(handle, bytesSize)) {
+
+    auto fileCloser = WTF::makeScopeExit([&handle]() {
         FileSystem::closeFile(handle);
+    });
+
+    if (!FileSystem::isHandleValid(handle))
+        return { };
+
+    if (!FileSystem::truncateFile(handle, bytesSize)) {
+        RELEASE_LOG_FAULT(MemoryPressure, "Unable to truncate file");
         return { };
     }
 
-    if (!FileSystem::makeSafeToUseMemoryMapForPath(path)) {
-        FileSystem::closeFile(handle);
+    if (!FileSystem::makeSafeToUseMemoryMapForPath(path))
         return { };
-    }
 
     bool success;
     FileSystem::MappedFileData mappedFile(handle, FileSystem::FileOpenMode::ReadWrite, FileSystem::MappedFileMode::Shared, success);
-    if (!success) {
-        FileSystem::closeFile(handle);
+    if (!success)
         return { };
-    }
 
-    if (outputHandle)
+    if (outputHandle) {
+        fileCloser.release();
         *outputHandle = handle;
-    else
-        FileSystem::closeFile(handle);
+    }
 
     return mappedFile;
 }
