@@ -46,7 +46,7 @@ public:
     void increment();
     void decrement();
 
-    Node* node() const { return m_anchorNode; }
+    Node* node() const { return m_anchorNode.get(); }
     int offsetInLeafNode() const { return m_offsetInAnchor; }
 
     bool atStart() const;
@@ -56,8 +56,8 @@ public:
     bool isCandidate() const;
 
 private:
-    Node* m_anchorNode { nullptr };
-    Node* m_nodeAfterPositionInAnchor { nullptr }; // If this is non-null, m_nodeAfterPositionInAnchor->parentNode() == m_anchorNode;
+    RefPtr<Node> m_anchorNode;
+    RefPtr<Node> m_nodeAfterPositionInAnchor; // If this is non-null, m_nodeAfterPositionInAnchor->parentNode() == m_anchorNode;
     int m_offsetInAnchor { 0 };
 };
 
