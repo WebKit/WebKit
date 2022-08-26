@@ -60,6 +60,7 @@ static constexpr unsigned StructureIsImmortal = 1 << 17;
 static constexpr unsigned OverridesPut = 1 << 18;
 static constexpr unsigned OverridesGetPrototype = 1 << 19;
 static constexpr unsigned GetOwnPropertySlotMayBeWrongAboutDontEnum = 1 << 20;
+static constexpr unsigned SlowPutArrayStorageVectorPropertiesAreReadOnly = 1 << 21;
 
 static constexpr unsigned numberOfInlineBits = 8;
 static constexpr unsigned OverridesGetPrototypeOutOfLine = OverridesGetPrototype >> numberOfInlineBits;
@@ -109,6 +110,7 @@ public:
     bool getOwnPropertySlotIsImpure() const { return isSetOnFlags2<GetOwnPropertySlotIsImpure>(); }
     bool getOwnPropertySlotIsImpureForPropertyAbsence() const { return isSetOnFlags2<GetOwnPropertySlotIsImpureForPropertyAbsence>(); }
     bool getOwnPropertySlotMayBeWrongAboutDontEnum() const { return isSetOnFlags2<GetOwnPropertySlotMayBeWrongAboutDontEnum>(); }
+    bool slowPutArrayStorageVectorPropertiesAreReadOnly() const { return isSetOnFlags2<SlowPutArrayStorageVectorPropertiesAreReadOnly>(); }
     bool newImpurePropertyFiresWatchpoints() const { return isSetOnFlags2<NewImpurePropertyFiresWatchpoints>(); }
     bool isImmutablePrototypeExoticObject() const { return isSetOnFlags2<IsImmutablePrototypeExoticObject>(); }
     bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags2<InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero>(); }

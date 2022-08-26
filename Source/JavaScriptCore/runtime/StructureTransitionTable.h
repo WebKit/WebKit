@@ -99,7 +99,7 @@ inline IndexingType newIndexingType(IndexingType oldType, TransitionKind transit
         ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType) || hasInt32(oldType) || hasDouble(oldType) || hasContiguous(oldType));
         return (oldType & ~IndexingShapeAndWritabilityMask) | ArrayStorageShape;
     case TransitionKind::AllocateSlowPutArrayStorage:
-        ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType) || hasInt32(oldType) || hasDouble(oldType) || hasContiguous(oldType));
+        ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType) || hasInt32(oldType) || hasDouble(oldType) || hasAnyContiguous(oldType));
         return (oldType & ~IndexingShapeAndWritabilityMask) | SlowPutArrayStorageShape;
     case TransitionKind::SwitchToSlowPutArrayStorage:
         ASSERT(hasArrayStorage(oldType));

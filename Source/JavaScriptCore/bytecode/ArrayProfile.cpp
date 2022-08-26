@@ -69,6 +69,8 @@ void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
         out.print(comma, "NonArrayWithDouble");
     if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithContiguous))
         out.print(comma, "NonArrayWithContiguous");
+    if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithAlwaysSlowPutContiguous))
+        out.print(comma, "NonArrayWithAlwaysSlowPutContiguous");
     if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithArrayStorage))
         out.print(comma, "NonArrayWithArrayStorage");
     if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithSlowPutArrayStorage))
@@ -142,7 +144,8 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock
         lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero();
     JSGlobalObject* globalObject = codeBlock->globalObject();
     if (!globalObject->isOriginalArrayStructure(lastSeenStructure)
-        && !globalObject->isOriginalTypedArrayStructure(lastSeenStructure))
+        && !globalObject->isOriginalTypedArrayStructure(lastSeenStructure)
+        && !(hasAlwaysSlowPutContiguous(lastSeenStructure->indexingMode()) && globalObject->isOriginalSlowPutContigiousStructure(lastSeenStructure)))
         m_usesOriginalArrayStructures = false;
 }
 
