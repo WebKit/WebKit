@@ -163,7 +163,7 @@ public:
     ClientOrigin clientOrigin() const { return { topOrigin().data(), securityOrigin()->data() }; }
 
 protected:
-    WorkerGlobalScope(WorkerThreadType, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    WorkerGlobalScope(WorkerThreadType, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, IdentifierProvider*);
 
     void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
     void updateSourceProviderBuffers(const ScriptBuffer& mainScript, const HashMap<URL, ScriptBuffer>& importedScripts);
@@ -188,6 +188,8 @@ private:
     String resourceRequestIdentifier() const final { return m_inspectorIdentifier; }
     SocketProvider* socketProvider() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
+    
+    IdentifierProvider* identifierProvider() final;
 
     bool shouldBypassMainWorldContentSecurityPolicy() const final { return m_shouldBypassMainWorldContentSecurityPolicy; }
 
@@ -215,6 +217,8 @@ private:
 
     RefPtr<SocketProvider> m_socketProvider;
 
+    RefPtr<IdentifierProvider> m_identifierProvider;
+    
     RefPtr<Performance> m_performance;
     mutable RefPtr<Crypto> m_crypto;
 

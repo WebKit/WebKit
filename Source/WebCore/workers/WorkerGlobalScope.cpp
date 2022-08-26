@@ -39,6 +39,7 @@
 #include "FontCustomPlatformData.h"
 #include "FontFaceSet.h"
 #include "IDBConnectionProxy.h"
+#include "IdentifierProvider.h"
 #include "ImageBitmapOptions.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMExceptionHandling.h"
@@ -92,7 +93,7 @@ static WorkQueue& sharedFileSystemStorageQueue()
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
 
-WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
+WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, IdentifierProvider* identifierProvider)
     : WorkerOrWorkletGlobalScope(type, params.sessionID, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), &thread, params.clientIdentifier)
     , m_url(params.scriptURL)
     , m_ownerURL(params.ownerURL)
@@ -103,6 +104,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     , m_topOrigin(WTFMove(topOrigin))
     , m_connectionProxy(connectionProxy)
     , m_socketProvider(socketProvider)
+    , m_identifierProvider(identifierProvider)
     , m_performance(Performance::create(this, params.timeOrigin))
     , m_referrerPolicy(params.referrerPolicy)
     , m_settingsValues(params.settingsValues)
@@ -208,6 +210,11 @@ String WorkerGlobalScope::userAgent(const URL&) const
 SocketProvider* WorkerGlobalScope::socketProvider()
 {
     return m_socketProvider.get();
+}
+
+IdentifierProvider* WorkerGlobalScope::identifierProvider()
+{
+    return m_identifierProvider.get();
 }
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerGlobalScope::createRTCDataChannelRemoteHandlerConnection()

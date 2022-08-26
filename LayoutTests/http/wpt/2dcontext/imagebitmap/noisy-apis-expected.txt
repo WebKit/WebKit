@@ -1,0 +1,4 @@
+
+PASS Noisy getImageData is different from original
+PASS Noisy getImageData is within 5% of original
+

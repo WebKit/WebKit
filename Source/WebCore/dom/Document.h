@@ -734,6 +734,8 @@ public:
     SocketProvider* socketProvider() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
 
+    IdentifierProvider* identifierProvider() final;
+
 #if ENABLE(WEB_RTC)
     RTCNetworkManager* rtcNetworkManager() { return m_rtcNetworkManager.get(); }
     WEBCORE_EXPORT void setRTCNetworkManager(Ref<RTCNetworkManager>&&);
@@ -2089,6 +2091,7 @@ private:
     Timer m_cookieCacheExpiryTimer;
 
     RefPtr<SocketProvider> m_socketProvider;
+    RefPtr<IdentifierProvider> m_identifierProvider;
 
     String m_cachedDOMCookies;
 

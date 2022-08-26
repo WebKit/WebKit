@@ -124,6 +124,8 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
     IDBClient::IDBConnectionProxy* proxy = document.idbConnectionProxy();
 
     SocketProvider* socketProvider = document.socketProvider();
+    
+    IdentifierProvider* identifierProvider = document.identifierProvider();
 
     WorkerParameters params { scriptURL, document.url(), name, identifier, WTFMove(initializationData.userAgent), platformStrategies()->loaderStrategy()->isOnLine(), contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, crossOriginEmbedderPolicy, timeOrigin, referrerPolicy, workerType, credentials, document.settingsValues(), WorkerThreadMode::CreateNewThread, sessionID,
 #if ENABLE(SERVICE_WORKER)
@@ -131,7 +133,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
 #endif
         initializationData.clientIdentifier.value_or(ScriptExecutionContextIdentifier { })
     };
-    auto thread = DedicatedWorkerThread::create(params, sourceCode, *this, *this, *this, startMode, document.topOrigin(), proxy, socketProvider, runtimeFlags);
+    auto thread = DedicatedWorkerThread::create(params, sourceCode, *this, *this, *this, startMode, document.topOrigin(), proxy, socketProvider, identifierProvider, runtimeFlags);
 
     workerThreadCreated(thread.get());
     thread->start();

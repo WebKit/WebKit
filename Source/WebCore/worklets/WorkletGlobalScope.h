@@ -80,6 +80,8 @@ public:
 
     SocketProvider* socketProvider() final { return nullptr; }
 
+    IdentifierProvider* identifierProvider() final { return nullptr; }
+
     bool isSecureContext() const final { return false; }
 
     JSC::RuntimeFlags jsRuntimeFlags() const { return m_jsRuntimeFlags; }

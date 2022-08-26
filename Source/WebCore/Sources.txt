@@ -1775,6 +1775,7 @@ page/FrameTree.cpp
 page/FrameView.cpp
 page/FrameViewLayoutContext.cpp
 page/History.cpp
+page/IdentifierProvider.cpp
 page/ImageAnalysisQueue.cpp
 page/ImageOverlayController.cpp
 page/InteractionRegion.cpp

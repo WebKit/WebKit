@@ -28,6 +28,7 @@
 #include "WorkerThread.h"
 
 #include "IDBConnectionProxy.h"
+#include "IdentifierProvider.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "SocketProvider.h"
@@ -93,7 +94,7 @@ WorkerThreadStartupData::WorkerThreadStartupData(const WorkerParameters& other, 
 {
 }
 
-WorkerThread::WorkerThread(const WorkerParameters& params, const ScriptBuffer& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerDebuggerProxy& workerDebuggerProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
+WorkerThread::WorkerThread(const WorkerParameters& params, const ScriptBuffer& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerDebuggerProxy& workerDebuggerProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, IdentifierProvider* identifierProvider, JSC::RuntimeFlags runtimeFlags)
     : WorkerOrWorkletThread(params.inspectorIdentifier.isolatedCopy(), params.workerThreadMode)
     , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerDebuggerProxy(workerDebuggerProxy)
@@ -102,6 +103,7 @@ WorkerThread::WorkerThread(const WorkerParameters& params, const ScriptBuffer& s
     , m_startupData(makeUnique<WorkerThreadStartupData>(params, sourceCode, startMode, topOrigin))
     , m_idbConnectionProxy(connectionProxy)
     , m_socketProvider(socketProvider)
+    , m_identifierProvider(identifierProvider)
 {
     ++workerThreadCounter;
 }
@@ -187,6 +189,11 @@ IDBClient::IDBConnectionProxy* WorkerThread::idbConnectionProxy()
 SocketProvider* WorkerThread::socketProvider()
 {
     return m_socketProvider.get();
+}
+
+IdentifierProvider* WorkerThread::identifierProvider()
+{
+    return m_identifierProvider.get();
 }
 
 WorkerGlobalScope* WorkerThread::globalScope()

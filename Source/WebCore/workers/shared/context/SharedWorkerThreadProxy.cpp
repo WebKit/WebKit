@@ -97,7 +97,7 @@ SharedWorkerThreadProxy::SharedWorkerThreadProxy(UniqueRef<Page>&& page, SharedW
     : m_page(WTFMove(page))
     , m_document(*m_page->mainFrame().document())
     , m_contextIdentifier(*initializationData.clientIdentifier)
-    , m_workerThread(SharedWorkerThread::create(sharedWorkerIdentifier, generateWorkerParameters(workerFetchResult, WTFMove(workerOptions), WTFMove(initializationData), m_document), WTFMove(workerFetchResult.script), *this, *this, *this, WorkerThreadStartMode::Normal, clientOrigin.topOrigin.securityOrigin(), m_document->idbConnectionProxy(), m_document->socketProvider(), JSC::RuntimeFlags::createAllEnabled()))
+    , m_workerThread(SharedWorkerThread::create(sharedWorkerIdentifier, generateWorkerParameters(workerFetchResult, WTFMove(workerOptions), WTFMove(initializationData), m_document), WTFMove(workerFetchResult.script), *this, *this, *this, WorkerThreadStartMode::Normal, clientOrigin.topOrigin.securityOrigin(), m_document->idbConnectionProxy(), m_document->socketProvider(), m_document->identifierProvider(), JSC::RuntimeFlags::createAllEnabled()))
     , m_cacheStorageProvider(cacheStorageProvider)
 {
     ASSERT(!allSharedWorkerThreadProxies().contains(m_contextIdentifier));

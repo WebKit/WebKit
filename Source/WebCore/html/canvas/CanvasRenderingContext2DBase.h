@@ -42,6 +42,7 @@
 #include "FontSelectorClient.h"
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
+#include "IdentifierProvider.h"
 #include "ImageBuffer.h"
 #include "ImageDataSettings.h"
 #include "ImageSmoothingQuality.h"

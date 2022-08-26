@@ -20,6 +20,35 @@ function testDrawImageBitmap(source)
     });
 }
 
+function testCanvasPixelsApprox(canvas, r, g, b, a, tolerance)
+{
+    let ctx = canvas.getContext("2d")
+    let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let colour = r+","+g+","+b+","+a;
+
+    for (var i = 0; i < imgData.data.length; i += 4) {
+        let c = [imgData.data[i], imgData.data[i+1], imgData.data[i+2], imgData.data[i+3]];
+        assert_approx_equals(c[0], r, tolerance, 'Red channel');
+        assert_approx_equals(c[1], g, tolerance, 'Green channel');
+        assert_approx_equals(c[2], b, tolerance, 'Blue channel');
+        assert_approx_equals(c[3], a, tolerance, 'Alpha channel');
+    }
+}
+
+function testCanvasPixelsDifferent(canvas, r, g, b, a)
+{
+    // Return true at the first different pixel
+    let ctx = canvas.getContext("2d")
+    let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    for (var i = 0; i < imgData.data.length; i += 4) {
+        let c = [imgData.data[i], imgData.data[i+1], imgData.data[i+2], imgData.data[i+3]];
+        if (c[0] != r || c[1] != g || c[2] != b || c[3] != a)
+            return true;
+    }
+    return false;
+}
+
 function initializeTestCanvas(testCanvas)
 {
     testCanvas.width = 20;
@@ -55,6 +84,13 @@ function initializeImageData(imgData, width, height)
     for (var i = halfHeight; i < height; i++)
         for (var j = 0; j < halfWidth; j++)
             imgData.data[i * width * 4 + j * 4 + 2] = 255;
+}
+
+function initializeSolidCanvas(canvas, r, g, b, a)
+{
+    let ctx = canvas.getContext("2d");
+    ctx.fillStyle = "rgba("+r+", "+g+", "+b+", "+a+")";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function createCanvasOfSize(width, height)

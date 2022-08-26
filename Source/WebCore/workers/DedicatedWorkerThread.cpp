@@ -39,8 +39,8 @@
 
 namespace WebCore {
 
-DedicatedWorkerThread::DedicatedWorkerThread(const WorkerParameters& params, const ScriptBuffer& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerDebuggerProxy& workerDebuggerProxy, WorkerObjectProxy& workerObjectProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
-    : WorkerThread(params, sourceCode, workerLoaderProxy, workerDebuggerProxy, workerObjectProxy, startMode, topOrigin, connectionProxy, socketProvider, runtimeFlags)
+DedicatedWorkerThread::DedicatedWorkerThread(const WorkerParameters& params, const ScriptBuffer& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerDebuggerProxy& workerDebuggerProxy, WorkerObjectProxy& workerObjectProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, IdentifierProvider* identifierProvider, JSC::RuntimeFlags runtimeFlags)
+    : WorkerThread(params, sourceCode, workerLoaderProxy, workerDebuggerProxy, workerObjectProxy, startMode, topOrigin, connectionProxy, socketProvider, identifierProvider, runtimeFlags)
     , m_workerObjectProxy(workerObjectProxy)
 {
 }
@@ -49,7 +49,7 @@ DedicatedWorkerThread::~DedicatedWorkerThread() = default;
 
 Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const WorkerParameters& params, Ref<SecurityOrigin>&& origin, Ref<SecurityOrigin>&& topOrigin)
 {
-    auto scope = DedicatedWorkerGlobalScope::create(params, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider());
+    auto scope = DedicatedWorkerGlobalScope::create(params, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider(), identifierProvider());
 #if ENABLE(SERVICE_WORKER)
     if (params.serviceWorkerData)
         scope->setActiveServiceWorker(ServiceWorker::getOrCreate(scope.get(), ServiceWorkerData { *params.serviceWorkerData }));

@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-SharedWorkerThread::SharedWorkerThread(SharedWorkerIdentifier identifier, const WorkerParameters& parameters, const ScriptBuffer& sourceCode, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, WorkerObjectProxy& objectProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
-    : WorkerThread(parameters, sourceCode, loaderProxy, debuggerProxy, objectProxy, startMode, topOrigin, connectionProxy, socketProvider, runtimeFlags)
+SharedWorkerThread::SharedWorkerThread(SharedWorkerIdentifier identifier, const WorkerParameters& parameters, const ScriptBuffer& sourceCode, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, WorkerObjectProxy& objectProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, IdentifierProvider* identifierProvider, JSC::RuntimeFlags runtimeFlags)
+    : WorkerThread(parameters, sourceCode, loaderProxy, debuggerProxy, objectProxy, startMode, topOrigin, connectionProxy, socketProvider, identifierProvider, runtimeFlags)
     , m_identifier(identifier)
     , m_name(parameters.name.isolatedCopy())
 {
@@ -44,7 +44,7 @@ SharedWorkerThread::SharedWorkerThread(SharedWorkerIdentifier identifier, const 
 Ref<WorkerGlobalScope> SharedWorkerThread::createWorkerGlobalScope(const WorkerParameters& parameters, Ref<SecurityOrigin>&& origin, Ref<SecurityOrigin>&& topOrigin)
 {
     RELEASE_LOG(SharedWorker, "%p - SharedWorkerThread::createWorkerGlobalScope: m_identifier=%" PRIu64, this, m_identifier.toUInt64());
-    auto scope = SharedWorkerGlobalScope::create(std::exchange(m_name, { }), parameters, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider());
+    auto scope = SharedWorkerGlobalScope::create(std::exchange(m_name, { }), parameters, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider(), identifierProvider());
 #if ENABLE(SERVICE_WORKER)
     if (parameters.serviceWorkerData)
         scope->setActiveServiceWorker(ServiceWorker::getOrCreate(scope.get(), ServiceWorkerData { *parameters.serviceWorkerData }));

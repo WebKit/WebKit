@@ -59,6 +59,8 @@ public:
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final { return nullptr; }
     SocketProvider* socketProvider() final { return nullptr; }
+    
+    IdentifierProvider* identifierProvider() final { return nullptr; }
 
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final { }
     void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final { };

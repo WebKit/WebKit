@@ -82,6 +82,7 @@
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "IDBConnectionToServer.h"
+#include "IdentifierProvider.h"
 #include "ImageAnalysisQueue.h"
 #include "ImageOverlay.h"
 #include "ImageOverlayController.h"
@@ -347,6 +348,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_attachmentElementClient(WTFMove(pageConfiguration.attachmentElementClient))
 #endif
     , m_contentSecurityPolicyModeForExtension(WTFMove(pageConfiguration.contentSecurityPolicyModeForExtension))
+    , m_identifierProvider(IdentifierProvider::create())
 {
     updateTimerThrottlingState();
 

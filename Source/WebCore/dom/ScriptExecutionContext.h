@@ -69,6 +69,7 @@ class EventQueue;
 class EventLoopTaskGroup;
 class EventTarget;
 class FontLoadRequest;
+class IdentifierProvider;
 class MessagePort;
 class NotificationClient;
 class PublicURLManager;
@@ -128,6 +129,8 @@ public:
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
 
     virtual SocketProvider* socketProvider() = 0;
+    
+    virtual IdentifierProvider* identifierProvider() = 0;
 
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection();
 

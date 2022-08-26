@@ -126,6 +126,7 @@ class Frame;
 class HTMLElement;
 class HTMLMediaElement;
 class HistoryItem;
+class IdentifierProvider;
 class ImageAnalysisQueue;
 class ImageOverlayController;
 class InspectorClient;
@@ -774,7 +775,9 @@ public:
     SocketProvider& socketProvider() { return m_socketProvider; }
     MediaRecorderProvider& mediaRecorderProvider() { return m_mediaRecorderProvider; }
     CookieJar& cookieJar() { return m_cookieJar.get(); }
-
+    
+    IdentifierProvider& identifierProvider() { return m_identifierProvider; }
+    
     StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
 
     PluginInfoProvider& pluginInfoProvider();
@@ -1341,6 +1344,9 @@ private:
 #endif
 
     ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { ContentSecurityPolicyModeForExtension::None };
+    
+    Ref<IdentifierProvider> m_identifierProvider;
+    
 };
 
 inline PageGroup& Page::group()

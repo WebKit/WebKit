@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ NoisyAPIsEnabled=true ] -->
+<title>Canvas test: noisy APIs</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/html/canvas/resources/canvas-tests.js"></script>
+<script src="common.js"></script>
+<body>
+<script>
+String.prototype.hash = function() {
+  var hash = 0, i, chr;
+  if (this.length === 0) return hash;
+  for (i = 0; i < this.length; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+
+(function() {
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let canvas = createCanvasOfSize(10, 10);
+            initializeSolidCanvas(canvas, 255,0,0,255);
+            resolve(canvas);
+        }).then(function(canvas) {
+            _assert(testCanvasPixelsDifferent(canvas, 255,0,0,255), "testCanvasPixelsDifferent");
+        });
+    }, "Noisy getImageData is different from original");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let canvasR = createCanvasOfSize(10, 10);
+            let canvasG = createCanvasOfSize(10, 10);
+            let canvasB = createCanvasOfSize(10, 10);
+
+            initializeSolidCanvas(canvasR, 255,0,0,255);
+            initializeSolidCanvas(canvasG, 0,255,0,255);
+            initializeSolidCanvas(canvasB, 0,0,255,255);
+
+            resolve([canvasR, canvasG, canvasB]);
+        }).then(function([canvasR, canvasG, canvasB]) {
+            let tolerance = 13
+            testCanvasPixelsApprox(canvasR, 255,0,0,255, tolerance);
+            testCanvasPixelsApprox(canvasG, 0,255,0,255, tolerance);
+            testCanvasPixelsApprox(canvasB, 0,0,255,255, tolerance);
+        });
+    }, "Noisy getImageData is within 5% of original");
+
+})();
+</script>
+</body>
+</html>

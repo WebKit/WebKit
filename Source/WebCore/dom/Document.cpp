@@ -130,6 +130,7 @@
 #include "HitTestResult.h"
 #include "IDBConnectionProxy.h"
 #include "IDBOpenDBRequest.h"
+#include "IdentifierProvider.h"
 #include "IdleCallbackController.h"
 #include "ImageBitmapRenderingContext.h"
 #include "ImageLoader.h"
@@ -580,6 +581,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_didAssociateFormControlsTimer(*this, &Document::didAssociateFormControlsTimerFired)
     , m_cookieCacheExpiryTimer(*this, &Document::invalidateDOMCookieCache)
     , m_socketProvider(page() ? &page()->socketProvider() : nullptr)
+    , m_identifierProvider(page() ? &page()->identifierProvider() : nullptr)
     , m_isSynthesized(constructionFlags & Synthesized)
     , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
     , m_orientationNotifier(currentOrientation(frame))
@@ -614,6 +616,20 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
 
     InspectorInstrumentation::addEventListenersToNode(*this);
     setStorageBlockingPolicy(m_settings->storageBlockingPolicy());
+
+    if (page())
+        m_identifierProvider->setShouldUseNoisyAPIs(page()->settings().noisyAPIsEnabled());
+    // FIXME: Only call for mainframe.
+    if (m_identifierProvider && m_identifierProvider->shouldUseNoisyAPIs() && isHTMLDocument() && !m_url.isEmpty()) {
+        auto domain = RegistrableDomain { m_url };
+        
+        unsigned hashedDomain = domain.hash();
+        if (hashedDomain) {
+            // FIXME: Salt must stay the same until browser is restarted/browser data is deleted.
+            uint64_t salt = cryptographicallyRandomNumber();
+            m_identifierProvider->setDomainIdentifier(hashedDomain, salt);
+        }
+    }
 }
 
 void Document::createNewIdentifier()
@@ -3611,6 +3627,12 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> Document::createRTCDataChannelRemo
     if (!page)
         return nullptr;
     return page->webRTCProvider().createRTCDataChannelRemoteHandlerConnection();
+}
+
+
+IdentifierProvider* Document::identifierProvider()
+{
+    return m_identifierProvider.get();
 }
 
 #if ENABLE(WEB_RTC)

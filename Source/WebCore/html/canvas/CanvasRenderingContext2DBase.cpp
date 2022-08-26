@@ -45,6 +45,7 @@
 #include "ColorSerialization.h"
 #include "DOMMatrix.h"
 #include "DOMMatrix2DInit.h"
+#include "DeprecatedGlobalSettings.h"
 #include "DisplayListDrawingContext.h"
 #include "DisplayListRecorder.h"
 #include "DisplayListReplayer.h"
@@ -75,6 +76,10 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
+
+#if ENABLE(NOISY_APIS)
+#include <wtf/WeakRandom.h>
+#endif
 
 namespace WebCore {
 
@@ -2222,7 +2227,36 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));
 
-    return { { ImageData::create(static_reference_cast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull())) } };
+    auto imageData = ImageData::create(static_reference_cast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull()));
+    
+#if ENABLE(NOISY_APIS)
+    auto* identifierProvider = canvasBase().scriptExecutionContext()->identifierProvider();
+
+    if (identifierProvider && identifierProvider->shouldUseNoisyAPIs()) {
+        
+        auto& data = imageData->pixelBuffer()->data();
+        identifierProvider->setCanvasIdentifier(data);
+        
+        // Using WeakRandom as I could explicitly set the seed.
+        auto randomNumberGenerator = WeakRandom(identifierProvider->canvasIdentifier());
+
+        for (size_t i = 0; i < data.length(); i += 4) {
+            if (randomNumberGenerator.get() > 0.75) {
+                int fivePercentOffset = static_cast<int>(randomNumberGenerator.get() * 26 - 13);
+                size_t channel = i + static_cast<size_t>(randomNumberGenerator.get() * 3);
+                
+                if (data.item(channel) + fivePercentOffset > 255)
+                    data.set(channel, 255);
+                else if (data.item(channel) + fivePercentOffset < 0)
+                    data.set(channel, 0);
+                else
+                    data.set(channel, (data.item(channel) + fivePercentOffset));
+            }
+        }
+    }
+#endif // ENABLE(NOISY_APIS)
+    
+    return imageData;
 }
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)
