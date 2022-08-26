@@ -240,7 +240,7 @@ NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPrefe
 NSString *WebKitMediaCacheDirectoryDefaultsKey = @"WebKitMediaCacheDirectory";
 NSString *WebKitMediaKeysStorageDirectoryDefaultsKey = @"WebKitMediaKeysStorageDirectory";
 
-String WebsiteDataStore::defaultApplicationCacheDirectory()
+String WebsiteDataStore::defaultApplicationCacheDirectory(const String&)
 {
 #if PLATFORM(IOS_FAMILY)
     // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
@@ -257,19 +257,19 @@ String WebsiteDataStore::defaultApplicationCacheDirectory()
     return cacheDirectoryFileSystemRepresentation("OfflineWebApplicationCache"_s);
 }
 
-String WebsiteDataStore::defaultCacheStorageDirectory()
+String WebsiteDataStore::defaultCacheStorageDirectory(const String&)
 {
     return cacheDirectoryFileSystemRepresentation("CacheStorage"_s);
 }
 
-String WebsiteDataStore::defaultGeneralStorageDirectory()
+String WebsiteDataStore::defaultGeneralStorageDirectory(const String&)
 {
     auto directory = websiteDataDirectoryFileSystemRepresentation("Default"_s);
 
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         // This is the old storage directory, and there might be files left here.
-        auto oldDirectory = cacheDirectoryFileSystemRepresentation("Storage"_s, ShouldCreateDirectory::No);
+        auto oldDirectory = cacheDirectoryFileSystemRepresentation("Storage"_s, { }, ShouldCreateDirectory::No);
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSArray *files = [fileManager contentsOfDirectoryAtPath:oldDirectory error:0];
         if (files) {
@@ -288,68 +288,68 @@ String WebsiteDataStore::defaultGeneralStorageDirectory()
     return directory;
 }
 
-String WebsiteDataStore::defaultNetworkCacheDirectory()
+String WebsiteDataStore::defaultNetworkCacheDirectory(const String&)
 {
     return cacheDirectoryFileSystemRepresentation("NetworkCache"_s);
 }
 
-String WebsiteDataStore::defaultAlternativeServicesDirectory()
+String WebsiteDataStore::defaultAlternativeServicesDirectory(const String&)
 {
-    return cacheDirectoryFileSystemRepresentation("AlternativeServices"_s, ShouldCreateDirectory::No);
+    return cacheDirectoryFileSystemRepresentation("AlternativeServices"_s, { }, ShouldCreateDirectory::No);
 }
 
-String WebsiteDataStore::defaultHSTSStorageDirectory()
+String WebsiteDataStore::defaultHSTSStorageDirectory(const String&)
 {
     return cacheDirectoryFileSystemRepresentation("HSTS"_s);
 }
 
-String WebsiteDataStore::defaultMediaCacheDirectory()
+String WebsiteDataStore::defaultMediaCacheDirectory(const String&)
 {
     return tempDirectoryFileSystemRepresentation("MediaCache"_s);
 }
 
-String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
+String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String&)
 {
     return websiteDataDirectoryFileSystemRepresentation("IndexedDB"_s);
 }
 
-String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()
+String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(const String&)
 {
     return cacheDirectoryFileSystemRepresentation("ServiceWorkers"_s);
 }
 
-String WebsiteDataStore::defaultLocalStorageDirectory()
+String WebsiteDataStore::defaultLocalStorageDirectory(const String&)
 {
     return websiteDataDirectoryFileSystemRepresentation("LocalStorage"_s);
 }
 
-String WebsiteDataStore::defaultMediaKeysStorageDirectory()
+String WebsiteDataStore::defaultMediaKeysStorageDirectory(const String&)
 {
     return websiteDataDirectoryFileSystemRepresentation("MediaKeys"_s);
 }
 
-String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
+String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String&)
 {
     return websiteDataDirectoryFileSystemRepresentation("DeviceIdHashSalts"_s);
 }
 
-String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
+String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String&)
 {
-    return websiteDataDirectoryFileSystemRepresentation("WebSQL"_s, ShouldCreateDirectory::No);
+    return websiteDataDirectoryFileSystemRepresentation("WebSQL"_s, { }, ShouldCreateDirectory::No);
 }
 
-String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
+String WebsiteDataStore::defaultResourceLoadStatisticsDirectory(const String&)
 {
     return websiteDataDirectoryFileSystemRepresentation("ResourceLoadStatistics"_s);
 }
 
-String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
+String WebsiteDataStore::defaultJavaScriptConfigurationDirectory(const String&)
 {
     return tempDirectoryFileSystemRepresentation("JavaScriptCoreDebug"_s, ShouldCreateDirectory::No);
 }
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
-String WebsiteDataStore::defaultModelElementCacheDirectory()
+String WebsiteDataStore::defaultModelElementCacheDirectory(const String&)
 {
     return tempDirectoryFileSystemRepresentation("ModelElement"_s, ShouldCreateDirectory::No);
 }
@@ -384,7 +384,7 @@ String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& dir
     return url.absoluteURL.path;
 }
 
-String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
+String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, const String&, ShouldCreateDirectory shouldCreateDirectory)
 {
     static dispatch_once_t onceToken;
     static NeverDestroyed<RetainPtr<NSURL>> cacheURL;
@@ -412,7 +412,7 @@ String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& di
     return url.absoluteURL.path;
 }
 
-String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
+String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, const String&, ShouldCreateDirectory shouldCreateDirectory)
 {
     static dispatch_once_t onceToken;
     static NeverDestroyed<RetainPtr<NSURL>> websiteDataURL;

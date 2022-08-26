@@ -36,7 +36,11 @@ WKTypeID WKWebsiteDataStoreConfigurationGetTypeID()
 
 WKWebsiteDataStoreConfigurationRef WKWebsiteDataStoreConfigurationCreate()
 {
+#if PLATFORM(COCOA)
     auto configuration = WebKit::WebsiteDataStoreConfiguration::create(WebKit::IsPersistent::Yes);
+#else
+    auto configuration = WebKit::WebsiteDataStoreConfiguration::createWithBaseDirectories(nullString(), nullString());
+#endif
     return toAPI(&configuration.leakRef());
 }
 

@@ -185,6 +185,20 @@ static WeakPtr<WebsiteDataStore>& globalDefaultDataStore()
     return globalDefaultDataStore.get();
 }
 
+static IsPersistent defaultDataStoreIsPersistent()
+{
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    // GTK and WPE ports require explicit configuration of a WebsiteDataStore. All default storage
+    // locations are relative to the base directories configured by the
+    // WebsiteDataStoreConfiguration. The default data store should (probably?) only be used for
+    // prewarmed processes, and should certainly never be allowed to store anything on disk.
+    return IsPersistent::No;
+#else
+    // Other ports allow general use of the default WebsiteDataStore, and so need to persist data.
+    return IsPersistent::Yes;
+#endif
+}
+
 Ref<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
 {
     InitializeWebKit2();
@@ -192,7 +206,7 @@ Ref<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
     if (globalDatasStore)
         return Ref { *globalDatasStore };
 
-    auto newDataStore = adoptRef(new WebsiteDataStore(WebsiteDataStoreConfiguration::create(IsPersistent::Yes), PAL::SessionID::defaultSessionID()));
+    auto newDataStore = adoptRef(new WebsiteDataStore(WebsiteDataStoreConfiguration::create(defaultDataStoreIsPersistent()), PAL::SessionID::defaultSessionID()));
     globalDatasStore = newDataStore.get();
     protectedDefaultDataStore() = newDataStore.get();
 
@@ -1925,19 +1939,19 @@ void WebsiteDataStore::clearStorage(CompletionHandler<void()>&& completionHandle
 }
 
 #if !PLATFORM(COCOA)
-String WebsiteDataStore::defaultMediaCacheDirectory()
+String WebsiteDataStore::defaultMediaCacheDirectory(const String&)
 {
     // FIXME: Implement. https://bugs.webkit.org/show_bug.cgi?id=156369 and https://bugs.webkit.org/show_bug.cgi?id=156370
     return String();
 }
 
-String WebsiteDataStore::defaultAlternativeServicesDirectory()
+String WebsiteDataStore::defaultAlternativeServicesDirectory(const String&)
 {
     // FIXME: Implement.
     return String();
 }
 
-String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
+String WebsiteDataStore::defaultJavaScriptConfigurationDirectory(const String&)
 {
     // FIXME: Implement.
     return String();
@@ -1955,7 +1969,7 @@ bool WebsiteDataStore::defaultShouldUseCustomStoragePaths()
 #endif // !PLATFORM(COCOA)
 
 #if !USE(GLIB) && !PLATFORM(COCOA)
-String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
+String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String&)
 {
     // Not implemented.
     return String();

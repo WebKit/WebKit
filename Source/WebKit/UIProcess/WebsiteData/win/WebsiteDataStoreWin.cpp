@@ -46,63 +46,87 @@ void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
     notImplemented();
 }
 
-String WebsiteDataStore::defaultApplicationCacheDirectory()
+String WebsiteDataStore::defaultApplicationCacheDirectory(const String& baseCacheDirectory)
 {
+    if (!baseCacheDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseCacheDirectory, "ApplicationCache"_s);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ApplicationCache"_s);
 }
 
-String WebsiteDataStore::defaultCacheStorageDirectory()
+String WebsiteDataStore::defaultCacheStorageDirectory(const String& baseCacheDirectory)
 {
+    if (!baseCacheDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseCacheDirectory, "CacheStorage"_s);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "CacheStorage"_s);
 }
 
-String WebsiteDataStore::defaultGeneralStorageDirectory()
+String WebsiteDataStore::defaultNetworkCacheDirectory(const String& baseCacheDirectory)
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "Storage"_s);
-}
-
-String WebsiteDataStore::defaultNetworkCacheDirectory()
-{
+    if (!baseCacheDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseCacheDirectory, "NetworkCache"_s);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "NetworkCache"_s);
 }
 
-String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
+String WebsiteDataStore::defaultGeneralStorageDirectory(const String& baseDataDirectory)
 {
+    if (!baseDataDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseDataDirectory, "Storage"_s);
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "Storage"_s);
+}
+
+String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String& baseDataDirectory)
+{
+    if (!baseDataDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseDataDirectory, "IndexedDB"_s);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "IndexedDB"_s);
 }
 
-String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()
+String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(const String& baseDataDirectory)
 {
+    if (!baseDataDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseDataDirectory, "ServiceWorkers"_s);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ServiceWorkers"_s);
 }
 
-String WebsiteDataStore::defaultLocalStorageDirectory()
+String WebsiteDataStore::defaultLocalStorageDirectory(const String& baseDataDirectory)
 {
+    if (!baseDataDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseDataDirectory, "LocalStorage"_s);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "LocalStorage"_s);
 }
 
-String WebsiteDataStore::defaultMediaKeysStorageDirectory()
+String WebsiteDataStore::defaultMediaKeysStorageDirectory(const String& baseDataDirectory)
 {
+    if (!baseDataDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseDataDirectory, "MediaKeyStorage"_s);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "MediaKeyStorage"_s);
 }
 
-String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
+String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String& baseDataDirectory)
 {
+    if (!baseDataDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseDataDirectory, "WebSQL"_s);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "WebSQL"_s);
 }
 
-String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
+String WebsiteDataStore::defaultResourceLoadStatisticsDirectory(const String& baseDataDirectory)
 {
+    if (!baseDataDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseDataDirectory, "ResourceLoadStatistics"_s);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ResourceLoadStatistics"_s);
 }
 
-String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory)
+String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, const String& baseCacheDirectory, ShouldCreateDirectory)
 {
+    if (!baseCacheDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseCacheDirectory, directoryName);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), directoryName);
 }
 
-String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory)
+String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, const String& baseDataDirectory, ShouldCreateDirectory)
 {
+    if (!baseDataDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseDataDirectory, directoryName);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), directoryName);
 }
 

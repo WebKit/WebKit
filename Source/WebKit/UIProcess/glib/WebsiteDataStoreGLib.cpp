@@ -29,84 +29,94 @@
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
 
-#if PLATFORM(GTK)
-#define BASE_DIRECTORY "webkitgtk"_s
-#elif PLATFORM(WPE)
-#define BASE_DIRECTORY "wpe"_s
-#endif
-
 namespace WebKit {
 
-WTF::String WebsiteDataStore::defaultApplicationCacheDirectory()
+String WebsiteDataStore::defaultApplicationCacheDirectory(const String& baseCacheDirectory)
 {
-    return cacheDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "applications");
+    return cacheDirectoryFileSystemRepresentation("applications"_s, baseCacheDirectory);
 }
 
-// FIXME: The other directories in this file are shared between all applications using WebKitGTK.
-// Why is only this directory namespaced to a particular application?
-WTF::String WebsiteDataStore::defaultNetworkCacheDirectory()
+String WebsiteDataStore::defaultNetworkCacheDirectory(const String& baseCacheDirectory)
 {
-    return cacheDirectoryFileSystemRepresentation(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_prgname()), "WebKitCache"_s));
+    return cacheDirectoryFileSystemRepresentation("WebKitCache"_s, baseCacheDirectory);
 }
 
-WTF::String WebsiteDataStore::defaultCacheStorageDirectory()
+String WebsiteDataStore::defaultCacheStorageDirectory(const String& baseCacheDirectory)
 {
-    return cacheDirectoryFileSystemRepresentation(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_prgname()), "CacheStorage"_s));
+    return cacheDirectoryFileSystemRepresentation("CacheStorage"_s, baseCacheDirectory);
 }
 
-WTF::String WebsiteDataStore::defaultGeneralStorageDirectory()
+String WebsiteDataStore::defaultHSTSStorageDirectory(const String& baseCacheDirectory)
 {
-    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "storage");
+    return websiteDataDirectoryFileSystemRepresentation(""_s, baseCacheDirectory);
 }
 
-WTF::String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
+String WebsiteDataStore::defaultGeneralStorageDirectory(const String& baseDataDirectory)
 {
-    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "databases" G_DIR_SEPARATOR_S "indexeddb");
+    return websiteDataDirectoryFileSystemRepresentation("storage"_s, baseDataDirectory);
 }
 
-WTF::String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()
+String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String& baseDataDirectory)
 {
-    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "serviceworkers");
+    return websiteDataDirectoryFileSystemRepresentation(String::fromUTF8("databases" G_DIR_SEPARATOR_S "indexeddb"), baseDataDirectory);
 }
 
-WTF::String WebsiteDataStore::defaultLocalStorageDirectory()
+String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(const String& baseDataDirectory)
 {
-    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "localstorage");
+    return websiteDataDirectoryFileSystemRepresentation("serviceworkers"_s, baseDataDirectory);
 }
 
-WTF::String WebsiteDataStore::defaultMediaKeysStorageDirectory()
+String WebsiteDataStore::defaultLocalStorageDirectory(const String& baseDataDirectory)
 {
-    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "mediakeys");
+    return websiteDataDirectoryFileSystemRepresentation("localstorage"_s, baseDataDirectory);
 }
 
-String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
+String WebsiteDataStore::defaultMediaKeysStorageDirectory(const String& baseDataDirectory)
 {
-    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "deviceidhashsalts");
+    return websiteDataDirectoryFileSystemRepresentation("mediakeys"_s, baseDataDirectory);
 }
 
-WTF::String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
+String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String& baseDataDirectory)
 {
-    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "databases");
+    return websiteDataDirectoryFileSystemRepresentation("deviceidhashsalts"_s, baseDataDirectory);
 }
 
-WTF::String WebsiteDataStore::defaultHSTSStorageDirectory()
+String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String& baseDataDirectory)
 {
-    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S);
+    return websiteDataDirectoryFileSystemRepresentation("databases"_s, baseDataDirectory);
 }
 
-WTF::String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
+String WebsiteDataStore::defaultResourceLoadStatisticsDirectory(const String& baseDataDirectory)
 {
-    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "itp");
+    return websiteDataDirectoryFileSystemRepresentation("itp"_s, baseDataDirectory);
 }
 
-WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory)
+static String programName()
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::userCacheDirectory(), directoryName);
+    if (auto* prgname = g_get_prgname())
+        return String::fromUTF8(prgname);
+
+#if PLATFORM(GTK)
+    return "webkitgtk"_s;
+#elif PLATFORM(WPE)
+    return "wpe"_s;
+#else
+    return "WebKit"_s;
+#endif
 }
 
-WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory)
+String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, const String& baseCacheDirectory, ShouldCreateDirectory)
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), directoryName);
+    if (!baseCacheDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseCacheDirectory, directoryName);
+    return FileSystem::pathByAppendingComponents(FileSystem::userCacheDirectory(), { programName(), directoryName });
+}
+
+String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, const String& baseDataDirectory, ShouldCreateDirectory)
+{
+    if (!baseDataDirectory.isNull())
+        return FileSystem::pathByAppendingComponent(baseDataDirectory, directoryName);
+    return FileSystem::pathByAppendingComponents(FileSystem::userDataDirectory(), { programName(), directoryName });
 }
 
 void WebsiteDataStore::platformRemoveRecentSearches(WallTime)

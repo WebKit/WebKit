@@ -144,17 +144,7 @@ static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
     String baseCacheDirectory = FileSystem::pathByAppendingComponent(FileSystem::userCacheDirectory(), versionedDirectory);
     String baseDataDirectory = FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), versionedDirectory);
 
-    auto configuration = WebsiteDataStoreConfiguration::create(IsPersistent::Yes, WillCopyPathsFromExistingConfiguration::Yes);
-    configuration->setNetworkCacheDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "WebKitCache"_s));
-    configuration->setApplicationCacheDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "applications"_s));
-    configuration->setHSTSStorageDirectory(String(baseCacheDirectory));
-    configuration->setCacheStorageDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "CacheStorage"_s));
-    configuration->setLocalStorageDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "localstorage"_s));
-    configuration->setIndexedDBDatabaseDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "indexeddb"_s));
-    configuration->setWebSQLDatabaseDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "databases"_s));
-    configuration->setResourceLoadStatisticsDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "itp"_s));
-    configuration->setServiceWorkerRegistrationDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "serviceworkers"_s));
-    configuration->setDeviceIdHashSaltsStorageDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "deviceidhashsalts"_s));
+    auto configuration = WebsiteDataStoreConfiguration::createWithBaseDirectories(baseCacheDirectory, baseDataDirectory);
     return WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::generatePersistentSessionID());
 }
 
