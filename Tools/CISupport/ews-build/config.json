@@ -21,6 +21,7 @@
     { "name": "igalia12-gtk-wk2-ews", "platform": "gtk" },
     { "name": "igalia13-gtk-wk2-ews", "platform": "gtk" },
     { "name": "aperez-gtk-ews", "platform": "gtk" },
+    { "name": "csaavedra-gtk-ews", "platform": "gtk" },
     { "name": "igalia-wpe-ews", "platform": "wpe" },
     { "name": "igalia2-wpe-ews", "platform": "wpe" },
     { "name": "aperez-wpe-ews", "platform": "wpe" },
@@ -124,7 +125,7 @@
       "factory": "GTKBuildFactory", "platform": "gtk",
       "configuration": "release", "architectures": ["x86_64"],
       "triggers": ["api-tests-gtk-ews", "gtk-wk2-tests-ews"],
-      "workernames": ["aperez-gtk-ews", "igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "igalia13-gtk-wk2-ews"]
+      "workernames": ["aperez-gtk-ews", "csaavedra-gtk-ews", "igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "igalia13-gtk-wk2-ews"]
     },
     {
       "name": "GTK-WK2-Tests-EWS", "shortname": "gtk-wk2", "icon": "testOnly",
