@@ -67,6 +67,10 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+#include "FullscreenManager.h"
+#endif
+
 namespace WebCore {
 namespace Style {
 
@@ -581,6 +585,10 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             return true;
         if (hasInertAttribute(element))
             return true;
+#if ENABLE(FULLSCREEN_API)
+        if (m_document.fullscreenManager().fullscreenElement() && element == m_document.documentElement())
+            return true;
+#endif
         return false;
     };
     if (isInertSubtreeRoot(m_element))
@@ -590,6 +598,11 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         // Make sure the active dialog is interactable when the whole document is blocked by the modal dialog
         if (m_element == m_document.activeModalDialog() && !hasInertAttribute(m_element))
             style.setEffectiveInert(false);
+
+#if ENABLE(FULLSCREEN_API)
+        if (m_element == m_document.fullscreenManager().fullscreenElement() && !hasInertAttribute(m_element))
+            style.setEffectiveInert(false);
+#endif
 
         style.setEventListenerRegionTypes(computeEventListenerRegionTypes(m_document, style, *m_element, m_parentStyle.eventListenerRegionTypes()));
 
