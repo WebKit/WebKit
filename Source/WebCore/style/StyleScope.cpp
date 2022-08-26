@@ -226,9 +226,9 @@ void Scope::addPendingSheet(const Element& element)
     LOG_WITH_STREAM(StyleSheets, stream << "Scope " << this << " addPendingSheet() " << element << " isInHead " << isInHead);
 
     if (isInHead)
-        m_elementsInHeadWithPendingSheets.add(&element);
+        m_elementsInHeadWithPendingSheets.add(element);
     else
-        m_elementsInBodyWithPendingSheets.add(&element);
+        m_elementsInBodyWithPendingSheets.add(element);
 }
 
 // This method is called whenever a top-level stylesheet has finished loading.
@@ -236,26 +236,41 @@ void Scope::removePendingSheet(const Element& element)
 {
     ASSERT(hasPendingSheet(element));
 
-    if (!m_elementsInHeadWithPendingSheets.remove(&element))
-        m_elementsInBodyWithPendingSheets.remove(&element);
+    if (!m_elementsInHeadWithPendingSheets.remove(element))
+        m_elementsInBodyWithPendingSheets.remove(element);
 
     didRemovePendingStylesheet();
 }
 
 void Scope::addPendingSheet(const ProcessingInstruction& processingInstruction)
 {
-    ASSERT(!m_processingInstructionsWithPendingSheets.contains(&processingInstruction));
+    ASSERT(!m_processingInstructionsWithPendingSheets.contains(processingInstruction));
 
-    m_processingInstructionsWithPendingSheets.add(&processingInstruction);
+    m_processingInstructionsWithPendingSheets.add(processingInstruction);
 }
 
 void Scope::removePendingSheet(const ProcessingInstruction& processingInstruction)
 {
-    ASSERT(m_processingInstructionsWithPendingSheets.contains(&processingInstruction));
+    ASSERT(m_processingInstructionsWithPendingSheets.contains(processingInstruction));
 
-    m_processingInstructionsWithPendingSheets.remove(&processingInstruction);
+    m_processingInstructionsWithPendingSheets.remove(processingInstruction);
 
     didRemovePendingStylesheet();
+}
+
+bool Scope::hasPendingSheets() const
+{
+    return hasPendingSheetsBeforeBody() || !m_elementsInBodyWithPendingSheets.computesEmpty();
+}
+
+bool Scope::hasPendingSheetsBeforeBody() const
+{
+    return !m_elementsInHeadWithPendingSheets.computesEmpty() || !m_processingInstructionsWithPendingSheets.computesEmpty();
+}
+
+bool Scope::hasPendingSheetsInBody() const
+{
+    return !m_elementsInBodyWithPendingSheets.computesEmpty();
 }
 
 void Scope::didRemovePendingStylesheet()
@@ -271,17 +286,17 @@ void Scope::didRemovePendingStylesheet()
 
 bool Scope::hasPendingSheet(const Element& element) const
 {
-    return m_elementsInHeadWithPendingSheets.contains(&element) || hasPendingSheetInBody(element);
+    return m_elementsInHeadWithPendingSheets.contains(element) || hasPendingSheetInBody(element);
 }
 
 bool Scope::hasPendingSheetInBody(const Element& element) const
 {
-    return m_elementsInBodyWithPendingSheets.contains(&element);
+    return m_elementsInBodyWithPendingSheets.contains(element);
 }
 
 bool Scope::hasPendingSheet(const ProcessingInstruction& processingInstruction) const
 {
-    return m_processingInstructionsWithPendingSheets.contains(&processingInstruction);
+    return m_processingInstructionsWithPendingSheets.contains(processingInstruction);
 }
 
 void Scope::addStyleSheetCandidateNode(Node& node, bool createdByParser)

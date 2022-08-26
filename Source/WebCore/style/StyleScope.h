@@ -40,6 +40,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -200,9 +201,9 @@ private:
     // Sheets loaded using the @import directive are not included in this count.
     // We use this count of pending sheets to detect when we can begin attaching
     // elements and when it is safe to execute scripts.
-    HashSet<const ProcessingInstruction*> m_processingInstructionsWithPendingSheets;
-    HashSet<const Element*> m_elementsInHeadWithPendingSheets;
-    HashSet<const Element*> m_elementsInBodyWithPendingSheets;
+    WeakHashSet<const ProcessingInstruction> m_processingInstructionsWithPendingSheets;
+    WeakHashSet<const Element> m_elementsInHeadWithPendingSheets;
+    WeakHashSet<const Element> m_elementsInBodyWithPendingSheets;
 
     ListHashSet<Node*> m_styleSheetCandidateNodes;
 
@@ -224,21 +225,6 @@ private:
 
 HTMLSlotElement* assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);
 Element* hostForScopeOrdinal(const Element&, ScopeOrdinal);
-
-inline bool Scope::hasPendingSheets() const
-{
-    return hasPendingSheetsBeforeBody() || !m_elementsInBodyWithPendingSheets.isEmpty();
-}
-
-inline bool Scope::hasPendingSheetsBeforeBody() const
-{
-    return !m_elementsInHeadWithPendingSheets.isEmpty() || !m_processingInstructionsWithPendingSheets.isEmpty();
-}
-
-inline bool Scope::hasPendingSheetsInBody() const
-{
-    return !m_elementsInBodyWithPendingSheets.isEmpty();
-}
 
 inline void Scope::flushPendingUpdate()
 {
