@@ -51,8 +51,8 @@ Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& imageValue,
 
 CSSCursorImageValue::~CSSCursorImageValue()
 {
-    for (auto* element : m_cursorElements)
-        element->removeClient(*this);
+    for (auto& element : m_cursorElements)
+        element.removeClient(*this);
 }
 
 String CSSCursorImageValue::customCSSText() const
@@ -72,7 +72,7 @@ SVGCursorElement* CSSCursorImageValue::updateCursorElement(const Document& docum
 
     // FIXME: Not right to keep old cursor elements as clients. The new one should replace the old, not join it in a set.
     auto& cursorElement = downcast<SVGCursorElement>(*element);
-    if (m_cursorElements.add(&cursorElement).isNewEntry) {
+    if (m_cursorElements.add(cursorElement).isNewEntry) {
         cursorElementChanged(cursorElement);
         cursorElement.addClient(*this);
     }
@@ -82,7 +82,7 @@ SVGCursorElement* CSSCursorImageValue::updateCursorElement(const Document& docum
 void CSSCursorImageValue::cursorElementRemoved(SVGCursorElement& cursorElement)
 {
     // FIXME: Not right to stay a client of a cursor element until the element is destroyed. We'd want to stop being a client once it's no longer a valid target, like when it's disconnected.
-    m_cursorElements.remove(&cursorElement);
+    m_cursorElements.remove(cursorElement);
 }
 
 void CSSCursorImageValue::cursorElementChanged(SVGCursorElement& cursorElement)
