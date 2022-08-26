@@ -41,8 +41,15 @@
 
 namespace WebCore {
 
+static bool isFilePasteboardType(const String& type)
+{
+    return [legacyFilenamesPasteboardType() isEqualToString:type] || [legacyFilesPromisePasteboardType() isEqualToString:type];
+}
+
 static bool canWritePasteboardType(const String& type)
 {
+    if (isFilePasteboardType(type))
+        return false;
     auto cfString = type.createCFString();
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (UTTypeIsDeclared(cfString.get()) || UTTypeIsDynamic(cfString.get()))
@@ -50,6 +57,13 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     return [(__bridge NSString *)cfString.get() lengthOfBytesUsingEncoding:NSString.defaultCStringEncoding];
+}
+
+static bool canWriteAllPasteboardTypes(const Vector<String>& types)
+{
+    return !types.containsIf([](auto& type) {
+        return !canWritePasteboardType(type);
+    });
 }
 
 void PlatformPasteboard::performAsDataOwner(DataOwnerType, Function<void()>&& actions)
@@ -100,6 +114,8 @@ int PlatformPasteboard::numberOfFiles() const
 
 void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType) const
 {
+    if (!isFilePasteboardType(pasteboardType))
+        return;
     id paths = [m_pasteboard propertyListForType:pasteboardType];
     if ([paths isKindOfClass:[NSString class]]) {
         pathnames.append((NSString *)paths);
@@ -329,15 +345,15 @@ int64_t PlatformPasteboard::copy(const String& fromPasteboard)
 
 int64_t PlatformPasteboard::addTypes(const Vector<String>& pasteboardTypes)
 {
+    if (!canWriteAllPasteboardTypes(pasteboardTypes))
+        return 0;
     return [m_pasteboard addTypes:createNSArray(pasteboardTypes).get() owner:nil];
 }
 
 int64_t PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
 {
-    for (auto& pasteboardType : pasteboardTypes) {
-        if (!canWritePasteboardType(pasteboardType))
-            return [m_pasteboard declareTypes:@[] owner:nil];
-    }
+    if (!canWriteAllPasteboardTypes(pasteboardTypes))
+        return [m_pasteboard declareTypes:@[] owner:nil];
     return [m_pasteboard declareTypes:createNSArray(pasteboardTypes).get() owner:nil];
 }
 
