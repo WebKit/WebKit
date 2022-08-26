@@ -54,8 +54,6 @@ public:
 #if ENABLE(NOTIFICATIONS)
     void startRequest(const WebCore::SecurityOriginData&, PermissionHandler&&);
 #endif
-    
-    Permission permissionLevel(const WebCore::SecurityOriginData&);
 
     // For testing purposes only.
     void setPermissionLevelForTesting(const String& originString, bool allowed);

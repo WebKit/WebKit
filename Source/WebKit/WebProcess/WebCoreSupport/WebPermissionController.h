@@ -44,16 +44,21 @@ class WebPermissionController final : public CanMakeWeakPtr<WebPermissionControl
 public:
     static Ref<WebPermissionController> create();
 
+    void updateCache(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, WebCore::PermissionState);
+    void removeEntryFromCache(const WebCore::ClientOrigin&);
+    void clearCache();
+
 private:
     WebPermissionController();
 
     // WebCore::PermissionController
     void query(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor&&, WebCore::Page*, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
+    std::optional<WebCore::PermissionState> querySync(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor&&, WebCore::Page*, WebCore::PermissionQuerySource) final;
     void addObserver(WebCore::PermissionObserver&) final;
     void removeObserver(WebCore::PermissionObserver&) final;
 
+    std::optional<WebPageProxyIdentifier> webPageProxyIdentifier(WebCore::Page*, WebCore::PermissionQuerySource);
     WebCore::PermissionState queryCache(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&);
-    void updateCache(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, WebCore::PermissionState);
     void tryProcessingRequests();
     void permissionChanged(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, WebCore::PermissionState);
 
@@ -74,3 +79,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebPermissionController)
+    static bool isType(const WebCore::PermissionController&) { return true; }
+SPECIALIZE_TYPE_TRAITS_END()

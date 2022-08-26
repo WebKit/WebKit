@@ -30,9 +30,15 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include "WebPermissionController.h"
 #include "WebProcess.h"
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/Notification.h>
 #include <WebCore/Page.h>
+#include <WebCore/PermissionController.h>
+#include <WebCore/PermissionDescriptor.h>
+#include <WebCore/PermissionName.h>
+#include <WebCore/PermissionState.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
@@ -85,7 +91,9 @@ void NotificationPermissionRequestManager::startRequest(const SecurityOriginData
     m_page->sendWithAsyncReply(Messages::WebPageProxy::RequestNotificationPermission(securityOrigin.toString()), [this, protectedThis = Ref { *this }, securityOrigin, permissionHandler = WTFMove(permissionHandler)](bool allowed) mutable {
 
         auto innerPermissionHandler = [this, protectedThis = Ref { *this }, securityOrigin, permissionHandler = WTFMove(permissionHandler)] (bool allowed) mutable {
-            WebProcess::singleton().supplement<WebNotificationManager>()->didUpdateNotificationDecision(securityOrigin.toString(), allowed);
+            auto permissionState = allowed ? PermissionState::Granted : PermissionState::Denied;
+            auto& webPermissionController = downcast<WebPermissionController>(PermissionController::shared());
+            webPermissionController.updateCache(ClientOrigin { securityOrigin, SecurityOriginData { } }, PermissionDescriptor { PermissionName::Notifications }, permissionState);
 
             auto permissionHandlers = m_requestsPerOrigin.take(securityOrigin);
             callPermissionHandlersWith(permissionHandlers, allowed ? Permission::Granted : Permission::Denied);
@@ -107,19 +115,6 @@ void NotificationPermissionRequestManager::callPermissionHandlersWith(Permission
         permissionHandler(permission);
 }
 #endif
-
-auto NotificationPermissionRequestManager::permissionLevel(const SecurityOriginData& securityOrigin) -> Permission
-{
-#if ENABLE(NOTIFICATIONS)
-    if (!m_page->corePage()->settings().notificationsEnabled())
-        return Permission::Denied;
-    
-    return WebProcess::singleton().supplement<WebNotificationManager>()->policyForOrigin(securityOrigin.toString());
-#else
-    UNUSED_PARAM(securityOrigin);
-    return Permission::Denied;
-#endif
-}
 
 void NotificationPermissionRequestManager::setPermissionLevelForTesting(const String& originString, bool allowed)
 {

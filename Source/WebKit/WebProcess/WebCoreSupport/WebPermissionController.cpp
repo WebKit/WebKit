@@ -27,7 +27,6 @@
 #include "WebPermissionController.h"
 
 #include "WebPage.h"
-#include "WebPageProxyMessages.h"
 #include "WebPermissionControllerProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/Page.h>
@@ -51,14 +50,32 @@ void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::Per
     if (cachedResult != WebCore::PermissionState::Prompt)
         return completionHandler(cachedResult);
 
-    std::optional<WebPageProxyIdentifier> proxyIdentifier;
-    if (source == WebCore::PermissionQuerySource::Window || source == WebCore::PermissionQuerySource::DedicatedWorker) {
-        ASSERT(page);
-        proxyIdentifier = WebPage::fromCorePage(*page).webPageProxyIdentifier();
-    }
-
-    m_requests.append(PermissionRequest { WTFMove(origin), WTFMove(descriptor), proxyIdentifier, source, WTFMove(completionHandler) });
+    m_requests.append(PermissionRequest { WTFMove(origin), WTFMove(descriptor), webPageProxyIdentifier(page, source), source, WTFMove(completionHandler) });
     tryProcessingRequests();
+}
+
+std::optional<WebCore::PermissionState> WebPermissionController::querySync(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor&& descriptor, WebCore::Page* page, WebCore::PermissionQuerySource source)
+{
+    auto cachedResult = queryCache(origin, descriptor);
+    if (cachedResult != WebCore::PermissionState::Prompt)
+        return cachedResult;
+
+    std::optional<WebCore::PermissionState> state;
+    bool shouldCache;
+    WebProcess::singleton().sendSync(Messages::WebPermissionControllerProxy::QuerySync(origin, descriptor, webPageProxyIdentifier(page, source), source), Messages::WebPermissionControllerProxy::QuerySync::Reply(state, shouldCache));
+    if (shouldCache && state)
+        updateCache(origin, descriptor, *state);
+
+    return state;
+}
+
+std::optional<WebPageProxyIdentifier> WebPermissionController::webPageProxyIdentifier(WebCore::Page* page, WebCore::PermissionQuerySource source)
+{
+    if (source == WebCore::PermissionQuerySource::SharedWorker || source == WebCore::PermissionQuerySource::ServiceWorker)
+        return std::nullopt;
+
+    ASSERT(page);
+    return WebPage::fromCorePage(*page).webPageProxyIdentifier();
 }
 
 WebCore::PermissionState WebPermissionController::queryCache(const WebCore::ClientOrigin& origin, const WebCore::PermissionDescriptor& descriptor)
@@ -91,6 +108,16 @@ void WebPermissionController::updateCache(const WebCore::ClientOrigin& origin, c
     }
 }
 
+void WebPermissionController::removeEntryFromCache(const WebCore::ClientOrigin& origin)
+{
+    m_cachedPermissionEntries.remove(origin);
+}
+
+void WebPermissionController::clearCache()
+{
+    m_cachedPermissionEntries.clear();
+}
+
 void WebPermissionController::tryProcessingRequests()
 {
     while (!m_requests.isEmpty()) {
@@ -112,9 +139,9 @@ void WebPermissionController::tryProcessingRequests()
                 return;
 
             auto takenRequest = m_requests.takeFirst();
-            takenRequest.completionHandler(state);
             if (shouldCache && state)
                 updateCache(takenRequest.origin, takenRequest.descriptor, *state);
+            takenRequest.completionHandler(state);
 
             tryProcessingRequests();
         });

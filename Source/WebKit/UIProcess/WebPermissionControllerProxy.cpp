@@ -52,6 +52,11 @@ WebPermissionControllerProxy::~WebPermissionControllerProxy()
     m_process.removeMessageReceiver(Messages::WebPermissionControllerProxy::messageReceiverName());
 }
 
+void WebPermissionControllerProxy::querySync(const WebCore::ClientOrigin& clientOrigin, const WebCore::PermissionDescriptor& descriptor, std::optional<WebPageProxyIdentifier> identifier, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>, bool shouldCache)>&& completionHandler)
+{
+    query(clientOrigin, descriptor, identifier, source, WTFMove(completionHandler));
+}
+
 void WebPermissionControllerProxy::query(const WebCore::ClientOrigin& clientOrigin, const WebCore::PermissionDescriptor& descriptor, std::optional<WebPageProxyIdentifier> identifier, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>, bool shouldCache)>&& completionHandler)
 {
     RefPtr webPageProxy = identifier ? m_process.webPage(identifier.value()) : mostReasonableWebPageProxy(clientOrigin.topOrigin, source);

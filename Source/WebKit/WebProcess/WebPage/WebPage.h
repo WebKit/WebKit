@@ -1565,10 +1565,6 @@ private:
 
     void updateThrottleState();
 
-#if ENABLE(NOTIFICATIONS)
-    void clearNotificationPermissionState();
-#endif
-
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;

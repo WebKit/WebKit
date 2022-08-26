@@ -1032,6 +1032,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "DenyNotificationPermissionOnPrompt"))
         return adoptWK(WKBooleanCreate(TestController::singleton().denyNotificationPermissionOnPrompt(stringValue(messageBody))));
 
+    if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllWebNotificationPermissions")) {
+        TestController::singleton().removeAllWebNotificationPermissions();
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "IsDoingMediaCapture"))
         return adoptWK(WKBooleanCreate(TestController::singleton().isDoingMediaCapture()));
     

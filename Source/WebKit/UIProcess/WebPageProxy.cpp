@@ -8845,6 +8845,7 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
     bool canAPISucceed = true;
     bool shouldChangeDeniedToPrompt = true;
     bool shouldChangePromptToGrant = false;
+    bool shouldCache = false;
     String name;
     if (descriptor.name == PermissionName::Camera) {
 #if ENABLE(MEDIA_STREAM)
@@ -8868,6 +8869,7 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
 #if ENABLE(NOTIFICATIONS)
         name = "notifications"_s;
 
+        shouldCache = true;
         // Ensure that the true permission state of the Notifications API is returned if
         // this topOrigin has requested permission to use the Notifications API previously.
         if (m_notificationPermissionRequesters.contains(clientOrigin.topOrigin))
@@ -8876,25 +8878,25 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
     }
 
     if (name.isNull()) {
-        completionHandler({ }, false);
+        completionHandler({ }, shouldCache);
         return;
     }
 
     if (!canAPISucceed) {
-        completionHandler(shouldChangeDeniedToPrompt ? PermissionState::Prompt : PermissionState::Denied, false);
+        completionHandler(shouldChangeDeniedToPrompt ? PermissionState::Prompt : PermissionState::Denied, shouldCache);
         return;
     }
 
-    CompletionHandler<void(std::optional<WebCore::PermissionState>)> callback = [clientOrigin, shouldChangeDeniedToPrompt, shouldChangePromptToGrant, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    CompletionHandler<void(std::optional<WebCore::PermissionState>)> callback = [clientOrigin, shouldChangeDeniedToPrompt, shouldChangePromptToGrant, shouldCache, completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result) {
-            completionHandler({ }, false);
+            completionHandler({ }, shouldCache);
             return;
         }
         if (*result == PermissionState::Denied && shouldChangeDeniedToPrompt)
             result = PermissionState::Prompt;
         else if (*result == PermissionState::Prompt && shouldChangePromptToGrant)
             result = PermissionState::Granted;
-        completionHandler(*result, false);
+        completionHandler(*result, shouldCache);
     };
 
     if (clientOrigin.topOrigin.isUnique()) {
@@ -9092,7 +9094,6 @@ void WebPageProxy::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<
 void WebPageProxy::clearNotificationPermissionState()
 {
     m_notificationPermissionRequesters.clear();
-    send(Messages::WebPage::ClearNotificationPermissionState());
 }
 #endif
 
