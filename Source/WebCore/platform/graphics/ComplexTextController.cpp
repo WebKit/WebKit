@@ -336,7 +336,7 @@ static bool shouldSynthesize(bool dontSynthesizeSmallCaps, const Font* nextFont,
         return false;
     if (!engageAllSmallCapsProcessing && !capitalizedBase)
         return false;
-    return !nextFont->variantCapsSupportsCharacterForSynthesis(fontVariantCaps, baseCharacter);
+    return !nextFont->variantCapsSupportedForSynthesis(fontVariantCaps);
 }
 
 void ComplexTextController::collectComplexTextRuns()
