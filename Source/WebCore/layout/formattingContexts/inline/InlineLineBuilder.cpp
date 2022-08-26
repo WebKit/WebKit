@@ -987,7 +987,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         auto needsRevert = m_line.trimmableTrailingWidth() && !m_line.runs().isEmpty() && m_line.runs().last().isInlineBoxStart();
         if (needsRevert && m_wrapOpportunityList.size() > 1) {
             m_wrapOpportunityList.removeLast();
-            return { InlineContentBreaker::IsEndOfLine::Yes, { rebuildLine(layoutRange, *m_wrapOpportunityList.last()), true } };
+            return { InlineContentBreaker::IsEndOfLine::Yes, { rebuildLineWithInlineContent(layoutRange, *m_wrapOpportunityList.last()), true } };
         }
         return { InlineContentBreaker::IsEndOfLine::Yes, { }, { }, eligibleOverflowWidthAsLeading() };
     }
@@ -1003,7 +1003,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
         // Not only this content can't be placed on the current line, but we even need to revert the line back to an earlier position.
         ASSERT(!m_wrapOpportunityList.isEmpty());
-        return { InlineContentBreaker::IsEndOfLine::Yes, { rebuildLine(layoutRange, *m_wrapOpportunityList.last()), true } };
+        return { InlineContentBreaker::IsEndOfLine::Yes, { rebuildLineWithInlineContent(layoutRange, *m_wrapOpportunityList.last()), true } };
     }
     if (result.action == InlineContentBreaker::Result::Action::RevertToLastNonOverflowingWrapOpportunity) {
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
@@ -1057,27 +1057,30 @@ void LineBuilder::commitPartialContent(const InlineContentBreaker::ContinuousCon
     }
 }
 
-size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange, const InlineItem& lastInlineItemToAdd)
+size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRange, const InlineItem& lastInlineItemToAdd)
 {
     ASSERT(!m_wrapOpportunityList.isEmpty());
+    size_t numberOfInlineItemsOnLine = 0;
     // We might already have added floats. They shrink the available horizontal space for the line.
     // Let's just reuse what the line has at this point.
     m_line.initialize(m_lineSpanningInlineBoxes, m_previousLine && !m_previousLine->endsWithLineBreak);
-    auto currentItemIndex = layoutRange.start;
     if (m_partialLeadingTextItem) {
         m_line.append(*m_partialLeadingTextItem, m_partialLeadingTextItem->style(), inlineItemWidth(*m_partialLeadingTextItem, { }));
+        ++numberOfInlineItemsOnLine;
         if (&m_partialLeadingTextItem.value() == &lastInlineItemToAdd)
-            return 1;
-        ++currentItemIndex;
+            return numberOfInlineItemsOnLine;
     }
-    for (; currentItemIndex < layoutRange.end; ++currentItemIndex) {
-        auto& inlineItem = m_inlineItems[currentItemIndex];
+    for (size_t index = layoutRange.start + numberOfInlineItemsOnLine; index < layoutRange.end; ++index) {
+        auto& inlineItem = m_inlineItems[index];
+        if (inlineItem.isFloat())
+            continue;
         auto& style = isFirstLine() ? inlineItem.firstLineStyle() : inlineItem.style();
         m_line.append(inlineItem, style, inlineItemWidth(inlineItem, m_line.contentLogicalRight()));
+        ++numberOfInlineItemsOnLine;
         if (&inlineItem == &lastInlineItemToAdd)
-            return currentItemIndex - layoutRange.start + 1;
+            break;
     }
-    return layoutRange.size();
+    return numberOfInlineItemsOnLine;
 }
 
 size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange)
@@ -1092,7 +1095,7 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
         auto& softWrapOpportunityItem = *m_wrapOpportunityList[i];
         // FIXME: If this turns out to be a perf issue, we could also traverse the wrap list and keep adding the items
         // while watching the available width very closely.
-        auto committedCount = rebuildLine(layoutRange, softWrapOpportunityItem);
+        auto committedCount = rebuildLineWithInlineContent(layoutRange, softWrapOpportunityItem);
         auto availableWidth = m_lineLogicalRect.width() - m_line.contentLogicalRight();
         auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth();
         // Check if the trailing hyphen now fits the line (or we don't need hyphen anymore).
@@ -1103,7 +1106,7 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
         }
     }
     // Have at least some content on the line.
-    auto committedCount = rebuildLine(layoutRange, *m_wrapOpportunityList.first());
+    auto committedCount = rebuildLineWithInlineContent(layoutRange, *m_wrapOpportunityList.first());
     if (auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth())
         m_line.addTrailingHyphen(*trailingSoftHyphenWidth);
     return committedCount;
