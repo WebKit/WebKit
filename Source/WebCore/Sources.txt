@@ -1614,6 +1614,7 @@ layout/integration/inline/InlineIteratorLogicalOrderTraversal.cpp
 layout/integration/inline/InlineIteratorTextBox.cpp
 layout/integration/inline/LayoutIntegrationInlineContentBuilder.cpp
 layout/integration/inline/LayoutIntegrationInlineContent.cpp
+layout/integration/inline/LayoutIntegrationInlineContentPainter.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
 layout/integration/inline/LayoutIntegrationPagination.cpp
 layout/integration/LayoutIntegrationBoxTree.cpp
