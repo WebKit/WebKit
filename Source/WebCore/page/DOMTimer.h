@@ -32,6 +32,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ class Document;
 class HTMLPlugInElement;
 class ScheduledAction;
 
-class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimerBase {
+class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimerBase, public CanMakeWeakPtr<DOMTimer> {
     WTF_MAKE_NONCOPYABLE(DOMTimer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
