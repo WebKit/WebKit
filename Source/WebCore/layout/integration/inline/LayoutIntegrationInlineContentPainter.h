@@ -27,11 +27,28 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutPoint.h"
+
 namespace WebCore {
+
+class RenderBox;
+class RenderInline;
 
 struct PaintInfo;
 
+namespace InlineDisplay {
+struct Box;
+};
+
+namespace Layout {
+class ContainerBox;
+};
+
 namespace LayoutIntegration {
+
+class BoxTree;
+
+struct InlineContent;
 
 class InlineContentPainter {
 public:

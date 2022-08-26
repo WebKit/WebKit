@@ -29,6 +29,8 @@
 
 #include "FloatRect.h"
 #include "LayoutBox.h"
+#include "TextRun.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 namespace LayoutIntegration {

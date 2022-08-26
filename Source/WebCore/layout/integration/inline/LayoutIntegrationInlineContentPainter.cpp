@@ -30,6 +30,7 @@
 
 #include "EllipsisBoxPainter.h"
 #include "InlineBoxPainter.h"
+#include "LayoutIntegrationBoxTree.h"
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderInline.h"
