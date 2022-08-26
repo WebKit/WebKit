@@ -235,11 +235,11 @@ void ContentChangeObserver::didAddTransition(const Element& element, const Anima
     if (!isVisuallyHidden(element))
         return;
     // In case of multiple transitions, the first tranistion wins (and it has to produce a visible content change in order to show up as hover).
-    if (m_elementsWithTransition.contains(&element))
+    if (m_elementsWithTransition.contains(element))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "didAddTransition: transition created on " << &element << " (" << transitionEnd.milliseconds() << "ms).");
 
-    m_elementsWithTransition.add(&element);
+    m_elementsWithTransition.add(element);
     adjustObservedState(Event::AddedTransition);
 }
 
@@ -247,7 +247,7 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
 {
     if (!isObservedPropertyForTransition(propertyID))
         return;
-    if (!m_elementsWithTransition.take(&element))
+    if (!m_elementsWithTransition.remove(element))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "didFinishTransition: transition finished (" << &element << ").");
 
@@ -269,7 +269,7 @@ void ContentChangeObserver::didRemoveTransition(const Element& element, CSSPrope
 {
     if (!isObservedPropertyForTransition(propertyID))
         return;
-    if (!m_elementsWithTransition.take(&element))
+    if (!m_elementsWithTransition.remove(element))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "didRemoveTransition: transition got interrupted (" << &element << ").");
 
@@ -331,6 +331,31 @@ void ContentChangeObserver::domTimerExecuteDidFinish(const DOMTimer& timer)
     m_observedDomTimerIsBeingExecuted = false;
     unregisterDOMTimer(timer);
     adjustObservedState(Event::EndedDOMTimerExecution);
+}
+
+void ContentChangeObserver::registerDOMTimer(const DOMTimer& timer)
+{
+    m_DOMTimerList.add(timer);
+}
+
+void ContentChangeObserver::unregisterDOMTimer(const DOMTimer& timer)
+{
+    m_DOMTimerList.remove(timer);
+}
+
+void ContentChangeObserver::clearObservedDOMTimers()
+{
+    m_DOMTimerList.clear();
+}
+
+bool ContentChangeObserver::containsObservedDOMTimer(const DOMTimer& timer) const
+{
+    return m_DOMTimerList.contains(timer);
+}
+
+bool ContentChangeObserver::hasObservedDOMTimer() const
+{
+    return !m_DOMTimerList.computesEmpty();
 }
 
 void ContentChangeObserver::styleRecalcDidStart()
@@ -406,7 +431,7 @@ void ContentChangeObserver::rendererWillBeDestroyed(const Element& element)
     LOG_WITH_STREAM(ContentObservation, stream << "rendererWillBeDestroyed element: " << &element);
 
     if (!isVisuallyHidden(element))
-        m_elementsWithDestroyedVisibleRenderer.add(&element);
+        m_elementsWithDestroyedVisibleRenderer.add(element);
     elementDidBecomeHidden(element);
 }
 
