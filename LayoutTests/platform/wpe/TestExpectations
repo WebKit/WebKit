@@ -1141,7 +1141,6 @@ Bug(WPE) css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
 Bug(WPE) css3/font-variant-all.html [ ImageOnlyFailure ]
 Bug(WPE) css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
 Bug(WPE) css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
-Bug(WPE) css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 Bug(WPE) css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 Bug(WPE) css3/zoom-coords.xhtml [ Failure ]
 
