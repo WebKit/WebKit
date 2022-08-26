@@ -244,6 +244,15 @@ template<> struct EnumTraits<WebCore::PolicyAction> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::ReloadOption> {
+    using values = EnumValues<
+        WebCore::ReloadOption,
+        WebCore::ReloadOption::ExpiredOnly,
+        WebCore::ReloadOption::FromOrigin,
+        WebCore::ReloadOption::DisableContentBlockers
+    >;
+};
+
 template<> struct EnumTraits<WebCore::BrowsingContextGroupSwitchDecision> {
     using values = EnumValues<
         WebCore::BrowsingContextGroupSwitchDecision,
