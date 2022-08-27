@@ -10,23 +10,49 @@ Top Left Right bottom
       (transform [0.80 0.00 0.00 0.00] [0.00 0.80 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (children 4
         (GraphicsLayer
-          (bounds 1000.00 100.00)
-          (drawsContent 1)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 1000.00 100.00)
+              (drawsContent 1)
+            )
+          )
         )
         (GraphicsLayer
           (position 0.00 200.00)
-          (bounds 100.00 100.00)
-          (drawsContent 1)
+          (bounds origin 0.00 200.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (position 0.00 200.00)
+              (bounds 100.00 100.00)
+              (drawsContent 1)
+            )
+          )
         )
         (GraphicsLayer
           (position 900.00 200.00)
-          (bounds 100.00 100.00)
-          (drawsContent 1)
+          (bounds origin 900.00 200.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (position 900.00 200.00)
+              (bounds 100.00 100.00)
+              (drawsContent 1)
+            )
+          )
         )
         (GraphicsLayer
           (position 0.00 1900.00)
-          (bounds 1000.00 100.00)
-          (drawsContent 1)
+          (bounds origin 0.00 1900.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (position 0.00 1900.00)
+              (bounds 1000.00 100.00)
+              (drawsContent 1)
+            )
+          )
         )
       )
     )
