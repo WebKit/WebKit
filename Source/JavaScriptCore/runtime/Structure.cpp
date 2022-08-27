@@ -70,7 +70,7 @@ inline void StructureTransitionTable::setSingleTransition(Structure* structure)
     m_data = bitwise_cast<intptr_t>(impl) | UsingSingleSlotFlag;
 }
 
-bool StructureTransitionTable::contains(UniquedStringImpl* rep, unsigned attributes, TransitionKind transitionKind) const
+bool StructureTransitionTable::contains(void* rep, unsigned attributes, TransitionKind transitionKind) const
 {
     if (isUsingSingleSlot()) {
         Structure* transition = singleTransition();
@@ -97,7 +97,7 @@ void StructureTransitionTable::add(VM& vm, Structure* structure)
     }
 
     // Add the structure to the map.
-    map()->set(StructureTransitionTable::Hash::Key(structure->m_transitionPropertyName.get(), structure->transitionPropertyAttributes(), structure->transitionKind()), structure);
+    map()->set(StructureTransitionTable::Hash::Key::createFromStructure(structure), structure);
 }
 
 void Structure::dumpStatistics()
@@ -222,6 +222,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     setTransitionWatchpointIsLikelyToBeFired(false);
     setHasBeenDictionary(false);
     setProtectPropertyTableWhileTransitioning(false);
+    setDidChangePrototype(false);
     setTransitionOffset(vm, invalidOffset);
     setMaxOffset(vm, invalidOffset);
  
@@ -264,6 +265,7 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     setTransitionWatchpointIsLikelyToBeFired(false);
     setHasBeenDictionary(false);
     setProtectPropertyTableWhileTransitioning(false);
+    setDidChangePrototype(false);
     setTransitionOffset(vm, invalidOffset);
     setMaxOffset(vm, invalidOffset);
  
@@ -305,6 +307,7 @@ Structure::Structure(VM& vm, Structure* previous)
     setStaticPropertiesReified(previous->staticPropertiesReified());
     setHasBeenDictionary(previous->hasBeenDictionary());
     setProtectPropertyTableWhileTransitioning(false);
+    setDidChangePrototype(previous->didChangePrototype());
     setTransitionOffset(vm, invalidOffset);
     setMaxOffset(vm, invalidOffset);
  
@@ -665,20 +668,61 @@ Structure* Structure::removeNewPropertyTransition(VM& vm, Structure* structure, 
     return transition;
 }
 
+bool Structure::shouldChainChangePrototypeTransition()
+{
+    if (didChangePrototype() || hasBeenDictionary() || hasPolyProto() || typeInfo().type() == GlobalObjectType)
+        return false;
+    return true;
+}
+
+Structure* Structure::changePrototypeTransitionToExistingStructure(Structure* structure, JSObject* prototype)
+{
+    ASSERT(structure->isObject());
+
+    if (!structure->shouldChainChangePrototypeTransition())
+        return nullptr;
+
+    return structure->m_transitionTable.get(prototype, 0, TransitionKind::ChangePrototype);
+}
+
 Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JSValue prototype, DeferredStructureTransitionWatchpointFire& deferred)
 {
     ASSERT(isValidPrototype(prototype));
 
     DeferGC deferGC(vm);
-    Structure* transition = create(vm, structure, &deferred);
+    JSObject* key = prototype.isNull() ? nullptr : asObject(prototype);
 
+    if (Structure* existingTransition = changePrototypeTransitionToExistingStructure(structure, key)) {
+        existingTransition->checkOffsetConsistency();
+        return existingTransition;
+    }
+
+    Structure* transition = create(vm, structure, &deferred);
     transition->m_prototype.set(vm, transition, prototype);
 
-    PropertyTable* table = structure->copyPropertyTableForPinning(vm);
-    transition->pin(Locker { transition->m_lock }, vm, table);
+    {
+        ConcurrentJSLocker locker(transition->m_lock);
+        transition->setProtectPropertyTableWhileTransitioning(true);
+    }
+
+    transition->setDidChangePrototype(true);
+    transition->setTransitionKind(TransitionKind::ChangePrototype);
+    transition->setPropertyTable(vm, structure->takePropertyTableOrCloneIfPinned(vm));
     transition->setMaxOffset(vm, structure->maxOffset());
-    
+
+    // Now that everything is fine with the new structure's bookkeeping, the GC is free to blow the
+    // table away if it wants. We can now rebuild it fine.
+    WTF::storeStoreFence();
+    transition->setProtectPropertyTableWhileTransitioning(false);
+
+    checkOffset(transition->transitionOffset(), transition->inlineCapacity());
+    if (structure->shouldChainChangePrototypeTransition()) {
+        GCSafeConcurrentJSLocker locker(structure->m_lock, vm);
+        structure->m_transitionTable.add(vm, transition);
+    }
+
     transition->checkOffsetConsistency();
+    structure->checkOffsetConsistency();
     return transition;
 }
 

@@ -717,6 +717,16 @@ ALWAYS_INLINE Structure* Structure::addPropertyTransitionToExistingStructureConc
     return addPropertyTransitionToExistingStructureImpl(structure, uid, attributes, offset);
 }
 
+ALWAYS_INLINE StructureTransitionTable::Hash::Key StructureTransitionTable::Hash::Key::createFromStructure(Structure* structure)
+{
+    switch (structure->transitionKind()) {
+    case TransitionKind::ChangePrototype:
+        return { structure->storedPrototype().isNull() ? nullptr : asObject(structure->storedPrototype()), structure->transitionPropertyAttributes(), structure->transitionKind() };
+    default:
+        return { structure->m_transitionPropertyName.get(), structure->transitionPropertyAttributes(), structure->transitionKind() };
+    }
+}
+
 inline Structure* StructureTransitionTable::singleTransition() const
 {
     ASSERT(isUsingSingleSlot());
@@ -727,11 +737,11 @@ inline Structure* StructureTransitionTable::singleTransition() const
     return nullptr;
 }
 
-inline Structure* StructureTransitionTable::get(UniquedStringImpl* rep, unsigned attributes, TransitionKind transitionKind) const
+inline Structure* StructureTransitionTable::get(void* rep, unsigned attributes, TransitionKind transitionKind) const
 {
     if (isUsingSingleSlot()) {
         Structure* transition = singleTransition();
-        return (transition && transition->m_transitionPropertyName == rep && transition->transitionPropertyAttributes() == attributes && transition->transitionKind() == transitionKind) ? transition : nullptr;
+        return (transition && Hash::Key::createFromStructure(transition) == Hash::Key { rep, attributes, transitionKind }) ? transition : nullptr;
     }
     return map()->get(StructureTransitionTable::Hash::Key(rep, attributes, transitionKind));
 }

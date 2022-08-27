@@ -56,9 +56,10 @@ enum class TransitionKind : uint8_t {
     PreventExtensions,
     Seal,
     Freeze,
+    ChangePrototype,
 
     // Support for transitions related with private brand
-    SetBrand
+    SetBrand,
 };
 
 static constexpr auto FirstNonPropertyTransitionKind = TransitionKind::AllocateUndecided;
@@ -150,7 +151,7 @@ class StructureTransitionTable {
     
 #if CPU(ADDRESS64)
     struct Hash {
-        // Logically, Key is a tuple of (1) UniquedStringImpl*, (2) unsigned attributes, and (3) transitionKind.
+        // Logically, Key is a tuple of (1) void* (at least it needs to be 8-byte aligned), (2) unsigned attributes, and (3) transitionKind.
         struct Key {
             friend struct Hash;
             static_assert(WTF_OS_CONSTANT_EFFECTIVE_ADDRESS_WIDTH <= 48);
@@ -160,11 +161,11 @@ class StructureTransitionTable {
             static constexpr uintptr_t hashTableDeletedValue = 0x2;
             static_assert(sizeof(TransitionPropertyAttributes) * 8 <= 8);
             static_assert(sizeof(TransitionKind) * 8 <= 8);
-            static_assert(hashTableDeletedValue < alignof(UniquedStringImpl));
+            static_assert(hashTableDeletedValue < 8);
 
             // Highest 8 bits are for TransitionKind; next 8 belong to TransitionPropertyAttributes.
-            // Remaining bits are for UniquedStringImpl*.
-            Key(UniquedStringImpl* impl, unsigned attributes, TransitionKind transitionKind)
+            // Remaining bits are for void*.
+            Key(void* impl, unsigned attributes, TransitionKind transitionKind)
                 : m_encodedData(bitwise_cast<uintptr_t>(impl) | (static_cast<uintptr_t>(attributes) << attributesShift) | (static_cast<uintptr_t>(transitionKind) << transitionKindShift))
             {
                 ASSERT(impl == this->impl());
@@ -182,7 +183,7 @@ class StructureTransitionTable {
 
             bool isHashTableDeletedValue() const { return m_encodedData == hashTableDeletedValue; }
 
-            UniquedStringImpl* impl() const { return bitwise_cast<UniquedStringImpl*>(m_encodedData & stringMask); }
+            void* impl() const { return bitwise_cast<void*>(m_encodedData & stringMask); }
             TransitionPropertyAttributes attributes() const { return (m_encodedData >> attributesShift) & UINT8_MAX; }
             TransitionKind transitionKind() const { return static_cast<TransitionKind>(m_encodedData >> transitionKindShift); }
 
@@ -195,6 +196,8 @@ class StructureTransitionTable {
             {
                 return a.m_encodedData != b.m_encodedData;
             }
+
+            static Key createFromStructure(Structure* structure);
 
         private:
             uintptr_t m_encodedData { 0 };
@@ -215,12 +218,12 @@ class StructureTransitionTable {
     };
 #else
     struct Hash {
-        using Key = std::tuple<UniquedStringImpl*, unsigned, TransitionKind>;
+        using Key = std::tuple<void*, unsigned, TransitionKind>;
         using KeyTraits = HashTraits<Key>;
         
         static unsigned hash(const Key& p)
         {
-            return PtrHash<UniquedStringImpl*>::hash(std::get<0>(p)) + std::get<1>(p) + static_cast<unsigned>(std::get<2>(p));
+            return PtrHash<void*>::hash(std::get<0>(p)) + std::get<1>(p) + static_cast<unsigned>(std::get<2>(p));
         }
 
         static bool equal(const Key& a, const Key& b)
@@ -254,8 +257,8 @@ public:
     }
 
     void add(VM&, Structure*);
-    bool contains(UniquedStringImpl*, unsigned attributes, TransitionKind) const;
-    Structure* get(UniquedStringImpl*, unsigned attributes, TransitionKind) const;
+    bool contains(void*, unsigned attributes, TransitionKind) const;
+    Structure* get(void*, unsigned attributes, TransitionKind) const;
 
 private:
     friend class SingleSlotTransitionWeakOwner;
