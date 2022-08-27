@@ -51,6 +51,7 @@ Line::~Line()
 
 void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool collapseLeadingNonBreakingSpace)
 {
+    m_contentIsTruncated = false;
     m_collapseLeadingNonBreakingSpace = collapseLeadingNonBreakingSpace;
     m_inlineBoxListWithClonedDecorationEnd.clear();
     m_clonedEndDecorationWidthForInlineBoxRuns = { };
