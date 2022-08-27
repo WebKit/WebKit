@@ -50,11 +50,19 @@ InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoi
     m_damageRect.moveBy(-m_paintOffset);
 }
 
+void InlineContentPainter::paintEllipsis(size_t lineIndex)
+{
+    auto lineBox = InlineIterator::LineBox { InlineIterator::LineBoxIteratorModernPath { m_inlineContent, lineIndex } };
+    if (!lineBox.hasEllipsis())
+        return;
+    EllipsisBoxPainter { lineBox, m_paintInfo, m_paintOffset, root().selectionForegroundColor(), root().selectionBackgroundColor() }.paint();
+}
+
 void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
 {
     auto hasDamage = [&](auto& box) {
         auto rect = enclosingLayoutRect(box.inkOverflow());
-        m_boxTree.rootRenderer().flipForWritingMode(rect);
+        root().flipForWritingMode(rect);
         // FIXME: This should test for intersection but horizontal ink overflow is miscomputed in a few cases (like with negative letter-spacing).
         return m_damageRect.maxY() > rect.y() && m_damageRect.y() < rect.maxY();
     };
@@ -94,6 +102,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
 void InlineContentPainter::paint()
 {
     auto layerPaintScope = LayerPaintScope { m_boxTree, m_layerRenderer };
+    auto lastBoxLineIndex = std::optional<size_t> { };
 
     for (auto& box : m_inlineContent.boxesForRect(m_damageRect)) {
         auto shouldPaintBoxForPhase = [&] {
@@ -110,11 +119,20 @@ void InlineContentPainter::paint()
                 return true;
             }
         };
-        if (!shouldPaintBoxForPhase() || !layerPaintScope.includes(box))
-            continue;
 
-        paintDisplayBox(box);
+        if (shouldPaintBoxForPhase() && layerPaintScope.includes(box)) {
+            auto finishedPaintingLine = lastBoxLineIndex && *lastBoxLineIndex != box.lineIndex();
+            if (finishedPaintingLine) {
+                // Paint the ellipsis as the line item on the previous line.
+                paintEllipsis(*lastBoxLineIndex);
+            }
+            paintDisplayBox(box);
+        }
+        lastBoxLineIndex = box.lineIndex();
     }
+
+    if (lastBoxLineIndex)
+        paintEllipsis(*lastBoxLineIndex);
 
     for (auto* renderInline : m_outlineObjects)
         renderInline->paintOutline(m_paintInfo, m_paintOffset);
@@ -122,8 +140,8 @@ void InlineContentPainter::paint()
 
 LayoutPoint InlineContentPainter::flippedContentOffsetIfNeeded(const RenderBox& childRenderer) const
 {
-    if (m_boxTree.rootRenderer().style().isFlippedBlocksWritingMode())
-        return m_boxTree.rootRenderer().flipForWritingModeForChild(childRenderer, m_paintOffset);
+    if (root().style().isFlippedBlocksWritingMode())
+        return root().flipForWritingModeForChild(childRenderer, m_paintOffset);
     return m_paintOffset;
 }
 
