@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Configurations">
+   </FileRef>
+   <FileRef
       location = "group:Source/bmalloc/bmalloc.xcodeproj">
    </FileRef>
    <FileRef

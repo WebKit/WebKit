@@ -23,7 +23,7 @@
 
 #include? "../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
 #include? "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/PlatformSupport.xcconfig"
-#include "SDKVariant.xcconfig"
+#include "../../../Configurations/SDKVariant.xcconfig"
 #include "WebKitTargetConditionals.xcconfig"
 
 CODE_SIGN_IDENTITY = -;

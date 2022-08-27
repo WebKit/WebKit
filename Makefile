@@ -43,5 +43,6 @@ clean:
 
 installsrc:
 	$(build_target_for_each_module)
+	ditto Configurations "$(SRCROOT)/Configurations"
 
 endif # USE_WORKSPACE

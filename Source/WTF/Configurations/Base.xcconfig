@@ -22,7 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include? "../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
-#include "SDKVariant.xcconfig"
+#include "../../../Configurations/SDKVariant.xcconfig"
 
 CODE_SIGN_IDENTITY = -;
 
