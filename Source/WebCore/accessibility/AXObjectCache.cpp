@@ -916,6 +916,18 @@ void AXObjectCache::remove(RenderObject* renderer)
 void AXObjectCache::remove(Node& node)
 {
     AXTRACE(makeString("AXObjectCache::remove 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+
+    removeNodeForUse(node);
+    remove(m_nodeObjectMapping.take(&node));
+    remove(node.renderer());
+
+    // If we're in the middle of a cache update, don't modify any of these vectors because we are currently
+    // iterating over them. They will be cleared at the end of the cache update, so not removing them here is fine.
+    if (m_performingDeferredCacheUpdate) {
+        AXLOG("Bailing out before removing node from m_deferred* vectors as we are in the middle of a cache update.");
+        return;
+    }
+
     if (is<Element>(node)) {
         m_deferredTextFormControlValue.remove(downcast<Element>(&node));
         m_deferredAttributeChange.removeAllMatching([&node] (const auto& entry) {
@@ -939,11 +951,6 @@ void AXObjectCache::remove(Node& node)
         if (entry.first == &node)
             entry.first = nullptr;
     });
-
-    removeNodeForUse(node);
-
-    remove(m_nodeObjectMapping.take(&node));
-    remove(node.renderer());
 }
 
 void AXObjectCache::remove(Widget* view)
@@ -1941,7 +1948,7 @@ bool AXObjectCache::shouldProcessAttributeChange(Element* element, const Qualifi
 void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName& attrName)
 {
     AXTRACE(makeString("AXObjectCache::handleAttributeChange 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
-    AXLOG(makeString("attribute ", attrName.localName().string(), " for element ", element->debugDescription()));
+    AXLOG(makeString("attribute ", attrName.localName().string(), " for element ", element ? element->debugDescription() : String("nullptr"_s)));
 
     if (!shouldProcessAttributeChange(element, attrName))
         return;
