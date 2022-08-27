@@ -26,7 +26,9 @@
 #import "config.h"
 #import "TestsController.h"
 
+#ifndef BUILDING_TestWTF
 #import <WebKit/WKProcessPoolPrivate.h>
+#endif
 #import <wtf/RetainPtr.h>
 
 extern "C" void _BeginEventReceiptOnThread(void);
@@ -55,7 +57,7 @@ int main(int argc, char** argv)
         [argumentDomain addEntriesFromDictionary:dict];
         [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain.get() forName:NSArgumentDomain];
 
-#ifndef BUILDING_TEST_WTF
+#ifndef BUILDING_TestWTF
         [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
 #endif
 
