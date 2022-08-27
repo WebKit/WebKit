@@ -26,7 +26,6 @@
 #include "config.h"
 #include "NativeExecutable.h"
 
-#include "Debugger.h"
 #include "ExecutableBaseInlines.h"
 #include "JSCInlines.h"
 
@@ -39,11 +38,6 @@ NativeExecutable* NativeExecutable::create(VM& vm, Ref<JITCode>&& callThunk, Tag
     NativeExecutable* executable;
     executable = new (NotNull, allocateCell<NativeExecutable>(vm)) NativeExecutable(vm, function, constructor, implementationVisibility);
     executable->finishCreation(vm, WTFMove(callThunk), WTFMove(constructThunk), name);
-
-    vm.forEachDebugger([&] (Debugger& debugger) {
-        debugger.didCreateNativeExecutable(*executable);
-    });
-
     return executable;
 }
 

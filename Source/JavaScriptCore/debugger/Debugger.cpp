@@ -127,13 +127,10 @@ Debugger::Debugger(VM& vm)
     , m_lastExecutedSourceID(noSourceID)
     , m_pausingBreakpointID(noBreakpointID)
 {
-    m_vm.addDebugger(*this);
 }
 
 Debugger::~Debugger()
 {
-    m_vm.removeDebugger(*this);
-
     HashSet<JSGlobalObject*>::iterator end = m_globalObjects.end();
     for (HashSet<JSGlobalObject*>::iterator it = m_globalObjects.begin(); it != end; ++it)
         (*it)->setDebugger(nullptr);
@@ -251,20 +248,6 @@ void Debugger::forEachRegisteredCodeBlock(const Function<void(CodeBlock*)>& call
     });
 }
 
-void Debugger::didCreateNativeExecutable(NativeExecutable& nativeExecutable)
-{
-    dispatchFunctionToObservers([&] (Observer& observer) {
-        observer.didCreateNativeExecutable(nativeExecutable);
-    });
-}
-
-void Debugger::willCallNativeExecutable(CallFrame* callFrame)
-{
-    dispatchFunctionToObservers([&] (Observer& observer) {
-        observer.willCallNativeExecutable(callFrame);
-    });
-}
-
 void Debugger::setClient(Client* client)
 {
     ASSERT(!!m_client != !!client);
@@ -291,13 +274,15 @@ void Debugger::removeObserver(Observer& observer, bool isBeingDestroyed)
 
 bool Debugger::canDispatchFunctionToObservers() const
 {
-    return !m_observers.isEmpty();
+    return !m_dispatchingFunctionToObservers && !m_observers.isEmpty();
 }
 
 void Debugger::dispatchFunctionToObservers(Function<void(Observer&)> func)
 {
     if (!canDispatchFunctionToObservers())
         return;
+
+    SetForScope change(m_dispatchingFunctionToObservers, true);
 
     for (auto* observer : copyToVector(m_observers))
         func(*observer);

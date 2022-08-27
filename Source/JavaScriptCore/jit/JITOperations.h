@@ -336,8 +336,6 @@ JSC_DECLARE_JIT_OPERATION(operationValueSubNoOptimize, EncodedJSValue, (JSGlobal
 JSC_DECLARE_JIT_OPERATION(operationValueSubProfiledOptimize, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITSubIC*));
 JSC_DECLARE_JIT_OPERATION(operationValueSubProfiledNoOptimize, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITSubIC*));
 
-JSC_DECLARE_JIT_OPERATION(operationDebuggerWillCallNativeExecutable, void, (CallFrame*));
-
 JSC_DECLARE_JIT_OPERATION(operationProcessTypeProfilerLog, void, (VM*));
 JSC_DECLARE_JIT_OPERATION(operationProcessShadowChickenLog, void, (VM*));
 

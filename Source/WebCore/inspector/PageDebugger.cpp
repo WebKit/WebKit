@@ -124,7 +124,7 @@ void PageDebugger::runEventLoopWhilePausedInternal()
 
     m_page.incrementNestedRunLoopCount();
 
-    while (!m_doneProcessingDebuggerEvents) {
+    while (!doneProcessingDebuggerEvents()) {
         if (!platformShouldContinueRunningEventLoopWhilePaused())
             break;
     }

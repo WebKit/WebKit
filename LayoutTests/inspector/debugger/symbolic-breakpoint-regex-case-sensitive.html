@@ -55,9 +55,7 @@ function test()
     InspectorTest.BreakpointOptions.addTestCases(suite, {
         testCaseNamePrefix: "RegexCaseSensitive.Hit.",
         createBreakpoint() {
-            let breakpoint = new WI.SymbolicBreakpoint("trigger\\w+", {isRegex: true});
-            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
-            return breakpoint;
+            return new WI.SymbolicBreakpoint("trigger\\w+", {isRegex: true});
         },
         triggerBreakpoint,
     });

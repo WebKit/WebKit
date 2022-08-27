@@ -1285,8 +1285,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         console.assert(!breakpoint.disabled, breakpoint);
         console.assert(WI.SymbolicBreakpoint.supported(target), target);
 
-        if (!this._restoringBreakpoints && !this.breakpointsDisabledTemporarily)
-            this.breakpointsEnabled = true;
+        if (!this._restoringBreakpoints && !WI.debuggerManager.breakpointsDisabledTemporarily)
+            WI.debuggerManager.breakpointsEnabled = true;
 
         target.DebuggerAgent.addSymbolicBreakpoint.invoke({
             symbol: breakpoint.symbol,
@@ -1521,7 +1521,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._handleSymbolicBreakpointEditablePropertyChanged(event);
 
-        this.updateProbesForBreakpoint(breakpoint);
+        WI.debuggerManager.updateProbesForBreakpoint(breakpoint);
     }
 
     _startDisablingBreakpointsTemporarily()

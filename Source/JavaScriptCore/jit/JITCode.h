@@ -161,9 +161,6 @@ public:
     }
 
     virtual const DOMJIT::Signature* signature() const { return nullptr; }
-
-    virtual bool canSwapCodeRefForDebugger() const { return false; }
-    virtual CodeRef<JSEntryPtrTag> swapCodeRefForDebugger(CodeRef<JSEntryPtrTag>);
     
     enum class ShareAttribute : uint8_t {
         NotShared,
@@ -249,8 +246,6 @@ public:
     size_t size() override;
     bool contains(void*) override;
 
-    CodeRef<JSEntryPtrTag> swapCodeRefForDebugger(CodeRef<JSEntryPtrTag>) override;
-
 protected:
     CodeRef<JSEntryPtrTag> m_ref;
 };
@@ -280,8 +275,6 @@ public:
     ~NativeJITCode() override;
 
     CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
-
-    bool canSwapCodeRefForDebugger() const override { return true; }
 };
 
 class NativeDOMJITCode final : public NativeJITCode {
