@@ -195,6 +195,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
 
 void ScriptExecutionContext::processMessageWithMessagePortsSoon()
 {
+    ASSERT(isContextThread());
     if (m_willprocessMessageWithMessagePortsSoon)
         return;
 
@@ -206,6 +207,7 @@ void ScriptExecutionContext::processMessageWithMessagePortsSoon()
 
 void ScriptExecutionContext::dispatchMessagePortEvents()
 {
+    ASSERT(isContextThread());
     checkConsistency();
 
     Ref<ScriptExecutionContext> protectedThis(*this);
