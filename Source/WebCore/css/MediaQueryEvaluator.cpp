@@ -519,7 +519,7 @@ static std::optional<double> computeLength(CSSValue* value, bool strict, const C
     }
 
     if (primitiveValue.isLength())
-        return primitiveValue.computeLength<double>(conversionData);
+        return primitiveValue.computeLength<double>(conversionData.zoom());
 
     return std::nullopt;
 }
