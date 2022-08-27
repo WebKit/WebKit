@@ -3617,7 +3617,7 @@ static void forEachRenderLayer(Element& element, const std::function<void(Render
 void Element::addToTopLayer()
 {
     RELEASE_ASSERT(!isInTopLayer());
-    ScriptDisallowedScope scriptDisallowedScope;
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     forEachRenderLayer(*this, [](RenderLayer& layer) {
         layer.establishesTopLayerWillChange();
@@ -3639,7 +3639,7 @@ void Element::addToTopLayer()
 void Element::removeFromTopLayer()
 {
     RELEASE_ASSERT(isInTopLayer());
-    ScriptDisallowedScope scriptDisallowedScope;
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     forEachRenderLayer(*this, [](RenderLayer& layer) {
         layer.establishesTopLayerWillChange();

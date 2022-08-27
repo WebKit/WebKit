@@ -2025,7 +2025,7 @@ void Document::updateRenderTree(std::unique_ptr<const Style::Update> styleUpdate
 
 void Document::resolveStyle(ResolveStyleType type)
 {
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    ScriptDisallowedScope::InMainThreadOfWebProcess scriptDisallowedScope;
 
     ASSERT(!view() || !view()->isPainting());
 
@@ -2048,19 +2048,24 @@ void Document::resolveStyle(ResolveStyleType type)
     // FIXME: We should update style on our ancestor chain before proceeding, however doing so at
     // the time this comment was originally written caused several tests to crash.
 
-    // FIXME: Do this user agent shadow tree update per tree scope.
-    for (auto& element : copyToVectorOf<Ref<Element>>(m_elementsWithPendingUserAgentShadowTreeUpdates))
-        element->updateUserAgentShadowTree();
+    {
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    styleScope().flushPendingUpdate();
-    frameView.willRecalcStyle();
+        // FIXME: Do this user agent shadow tree update per tree scope.
+        for (auto& element : copyToVectorOf<Ref<Element>>(m_elementsWithPendingUserAgentShadowTreeUpdates))
+            element->updateUserAgentShadowTree();
 
-    InspectorInstrumentation::willRecalculateStyle(*this);
+        styleScope().flushPendingUpdate();
+        frameView.willRecalcStyle();
+
+        InspectorInstrumentation::willRecalculateStyle(*this);
+    }
 
     bool updatedCompositingLayers = false;
     {
         Style::PostResolutionCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
         m_inStyleRecalc = true;
 
