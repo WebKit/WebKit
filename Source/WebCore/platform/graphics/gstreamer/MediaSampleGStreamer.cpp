@@ -38,8 +38,8 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
     , m_presentationSize(presentationSize)
 {
     ASSERT(sample);
-    const GstClockTime minimumDuration = 1000; // 1 us
     m_sample = sample;
+    const GstClockTime minimumDuration = 1000; // 1 us
     auto* buffer = gst_sample_get_buffer(m_sample.get());
     RELEASE_ASSERT(buffer);
 
@@ -64,8 +64,6 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
     }
 
     m_size = gst_buffer_get_size(buffer);
-    m_sample = adoptGRef(gst_sample_new(buffer, gst_sample_get_caps(m_sample.get()), nullptr,
-        gst_sample_get_info(m_sample.get()) ? gst_structure_copy(gst_sample_get_info(m_sample.get())) : nullptr));
 
     if (GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT))
         m_flags = MediaSample::None;
