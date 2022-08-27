@@ -26,6 +26,7 @@
 #import "ProcessCheck.h"
 
 #import <Foundation/Foundation.h>
+#import <cstdlib>
 #import <mutex>
 
 namespace bmalloc {
@@ -52,6 +53,19 @@ bool gigacageEnabledForProcess()
     return isOptInBinary;
 }
 #endif // !BPLATFORM(WATCHOS)
+
+bool shouldAllowMiniMode()
+{
+    // Mini mode is mainly meant for constraining memory usage in bursty daemons that use JavaScriptCore.
+    // It's also contributed to power regressions when enabled for large application processes. So we
+    // disable it for application processes.
+    bool isApplication = false;
+    if (const char* serviceName = getenv("XPC_SERVICE_NAME")) {
+        static constexpr char appPrefix[] = "application.";
+        isApplication = !strncmp(serviceName, appPrefix, sizeof(appPrefix) - 1);
+    }
+    return !isApplication;
+}
 
 #if BPLATFORM(IOS_FAMILY)
 bool shouldProcessUnconditionallyUseBmalloc()
