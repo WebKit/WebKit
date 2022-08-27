@@ -142,47 +142,6 @@ namespace JSC {
         bytecode.metadata(codeBlock).profileName.m_buckets[0] = JSValue::encode(value); \
     } while (false)
 
-static void throwArityCheckStackOverflowError(JSGlobalObject* globalObject, ThrowScope& scope)
-{
-    JSObject* error = createStackOverflowError(globalObject);
-    throwException(globalObject, scope, error);
-#if LLINT_TRACING
-    if (UNLIKELY(Options::traceLLIntSlowPath()))
-        dataLog("Throwing exception ", JSValue(scope.exception()), ".\n");
-#endif
-}
-
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_call_arityCheck)
-{
-    BEGIN();
-    int slotsToAdd = CommonSlowPaths::arityCheckFor(vm, callFrame, CodeForCall);
-    if (UNLIKELY(slotsToAdd < 0)) {
-        CodeBlock* codeBlock = CommonSlowPaths::codeBlockFromCallFrameCallee(callFrame, CodeForCall);
-        callFrame->convertToStackOverflowFrame(vm, codeBlock);
-        SlowPathFrameTracer tracer(vm, callFrame);
-        ErrorHandlingScope errorScope(vm);
-        throwScope.release();
-        throwArityCheckStackOverflowError(globalObject, throwScope);
-        RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), callFrame);
-    }
-    RETURN_TWO(nullptr, bitwise_cast<void*>(static_cast<uintptr_t>(slotsToAdd)));
-}
-
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_construct_arityCheck)
-{
-    BEGIN();
-    int slotsToAdd = CommonSlowPaths::arityCheckFor(vm, callFrame, CodeForConstruct);
-    if (UNLIKELY(slotsToAdd < 0)) {
-        CodeBlock* codeBlock = CommonSlowPaths::codeBlockFromCallFrameCallee(callFrame, CodeForConstruct);
-        callFrame->convertToStackOverflowFrame(vm, codeBlock);
-        SlowPathFrameTracer tracer(vm, callFrame);
-        ErrorHandlingScope errorScope(vm);
-        throwArityCheckStackOverflowError(globalObject, throwScope);
-        RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), callFrame);
-    }
-    RETURN_TWO(nullptr, bitwise_cast<void*>(static_cast<uintptr_t>(slotsToAdd)));
-}
-
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_direct_arguments)
 {
     BEGIN();

@@ -2314,6 +2314,57 @@ LLINT_SLOW_PATH_DECL(slow_path_out_of_line_jump_target)
     LLINT_END_IMPL();
 }
 
+static void throwArityCheckStackOverflowError(JSGlobalObject* globalObject, ThrowScope& scope)
+{
+    JSObject* error = createStackOverflowError(globalObject);
+    throwException(globalObject, scope, error);
+#if LLINT_TRACING
+    if (UNLIKELY(Options::traceLLIntSlowPath()))
+        dataLog("Throwing exception ", JSValue(scope.exception()), ".\n");
+#endif
+}
+
+ALWAYS_INLINE int numberOfExtraSlots(int argumentCountIncludingThis)
+{
+    int frameSize = argumentCountIncludingThis + CallFrame::headerSizeInRegisters;
+    int alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
+    return alignedFrameSize - frameSize;
+}
+
+ALWAYS_INLINE int numberOfStackPaddingSlotsWithExtraSlots(CodeBlock* codeBlock, int argumentCountIncludingThis)
+{
+    if (static_cast<unsigned>(argumentCountIncludingThis) >= codeBlock->numParameters())
+        return 0;
+    return CommonSlowPaths::numberOfStackPaddingSlots(codeBlock, argumentCountIncludingThis) + numberOfExtraSlots(argumentCountIncludingThis);
+}
+
+static ALWAYS_INLINE int arityCheckFor(VM& vm, CallFrame* callFrame, CodeBlock* newCodeBlock)
+{
+    ASSERT(callFrame->argumentCountIncludingThis() < static_cast<unsigned>(newCodeBlock->numParameters()));
+    int padding = numberOfStackPaddingSlotsWithExtraSlots(newCodeBlock, callFrame->argumentCountIncludingThis());
+
+    Register* newStack = callFrame->registers() - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), padding);
+
+    if (UNLIKELY(!vm.ensureStackCapacityFor(newStack)))
+        return -1;
+    return padding;
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_arityCheck)
+{
+    LLINT_BEGIN();
+    int slotsToAdd = arityCheckFor(vm, callFrame, codeBlock);
+    if (UNLIKELY(slotsToAdd < 0)) {
+        callFrame->convertToStackOverflowFrame(vm, codeBlock);
+        SlowPathFrameTracer tracer(vm, callFrame);
+        ErrorHandlingScope errorScope(vm);
+        throwScope.release();
+        throwArityCheckStackOverflowError(globalObject, throwScope);
+        LLINT_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), callFrame);
+    }
+    LLINT_RETURN_TWO(nullptr, bitwise_cast<void*>(static_cast<uintptr_t>(slotsToAdd)));
+}
+
 template<typename Opcode>
 static void handleVarargsCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject* globalObject, const Opcode& bytecode, CheckpointOSRExitSideState& sideState)
 {

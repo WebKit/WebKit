@@ -162,9 +162,9 @@ public:
     
     void exceptionCheck();
 
-    void exceptionCheckWithCallFrameRollback()
+    void exceptionJumpWithCallFrameRollback()
     {
-        m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck(vm()));
+        m_exceptionChecksWithCallFrameRollback.append(jump());
     }
 
     OSRExitCompilationInfo& appendExitInfo(MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList())

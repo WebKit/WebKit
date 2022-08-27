@@ -969,18 +969,14 @@ public:
         appendCall(CCallHelpers::Address(GPRInfo::nonArgGPR0, address.offset));
     }
 
-    JITCompiler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_Cb operation, GPRReg codeBlockGPR)
+    JITCompiler::Call callThrowOperationWithCallFrameRollback(V_JITOperation_Cb operation, GPRReg codeBlockGPR)
     {
         m_jit.setupArguments<V_JITOperation_Cb>(codeBlockGPR);
-        return appendCallWithCallFrameRollbackOnException(operation);
+        JITCompiler::Call call = appendCall(operation);
+        m_jit.exceptionJumpWithCallFrameRollback();
+        return call;
     }
 
-    JITCompiler::Call callOperationWithCallFrameRollbackOnException(Z_JITOperation_G operation, GPRReg result, GPRReg globalObjectGPR)
-    {
-        m_jit.setupArguments<Z_JITOperation_G>(globalObjectGPR);
-        return appendCallWithCallFrameRollbackOnExceptionSetResult(operation, result);
-    }
-    
     void prepareForExternalCall()
     {
 #if !defined(NDEBUG) && !CPU(ARM_THUMB2) && !CPU(MIPS)
@@ -1019,21 +1015,6 @@ public:
         prepareForExternalCall();
         m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
         return m_jit.appendOperationCall(function);
-    }
-
-    JITCompiler::Call appendCallWithCallFrameRollbackOnException(const CodePtr<CFunctionPtrTag> function)
-    {
-        JITCompiler::Call call = appendCall(function);
-        m_jit.exceptionCheckWithCallFrameRollback();
-        return call;
-    }
-
-    JITCompiler::Call appendCallWithCallFrameRollbackOnExceptionSetResult(const CodePtr<CFunctionPtrTag> function, GPRReg result)
-    {
-        JITCompiler::Call call = appendCallWithCallFrameRollbackOnException(function);
-        if ((result != InvalidGPRReg) && (result != GPRInfo::returnValueGPR))
-            m_jit.move(GPRInfo::returnValueGPR, result);
-        return call;
     }
 
     void appendCallSetResult(CCallHelpers::Address address, GPRReg result)

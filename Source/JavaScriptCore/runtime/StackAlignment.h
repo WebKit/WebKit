@@ -38,6 +38,7 @@ constexpr unsigned stackAlignmentRegisters()
 {
     return stackAlignmentBytes() / sizeof(EncodedJSValue);
 }
+static_assert(stackAlignmentRegisters() == 2, "LLInt, CLoop, and JIT rely on this");
 
 // Align argument count taking into account the CallFrameHeaderSize may be
 // an "unaligned" count of registers.

@@ -1437,6 +1437,35 @@ void AssemblyHelpers::emitSaveOrCopyLLIntBaselineCalleeSavesFor(CodeBlock* codeB
     spooler.finalizeGPR();
 }
 
+void AssemblyHelpers::getArityPadding(VM& vm, unsigned numberOfParameters, GPRReg argumentCountIncludingThisGPR, GPRReg paddingOutputGPR, GPRReg scratchGPR0, GPRReg scratchGPR1, JumpList& stackOverflow)
+{
+    ASSERT(argumentCountIncludingThisGPR != paddingOutputGPR);
+    ASSERT(numberOfParameters >= 1);
+
+    // padding is `align2(numParameters + CallFrame::headerSizeInRegisters) - (argumentCountIncludingThis + CallFrame::headerSizeInRegisters)`
+    //
+    // 1. If `align2(numParameters + CallFrame::headerSizeInRegisters)` == argumentCountIncludingThis + CallFrame::headerSizeInRegisters, then
+    //    padding is `numParameters + CallFrame::headerSizeInRegisters - argumentCountIncludingThis - CallFrame::headerSizeInRegisters` == `numParameters - argumentCountIncludingThis`.
+    //    Since we already checked `numParameters > argumentCountIncludingThis`, it will be 1~.
+    // 2. If `align2(numParameters + CallFrame::headerSizeInRegisters)` == argumentCountIncludingThis + CallFrame::headerSizeInRegisters + 1, then
+    //    padding is `numParameters + CallFrame::headerSizeInRegisters + 1 - argumentCountIncludingThis - CallFrame::headerSizeInRegisters` == `numParameters + 1 - argumentCountIncludingThis`.
+    //    Since we already checked `numParameters > argumentCountIncludingThis`, it will be 2~.
+    //
+    //  Then, we return align2(padding).
+    static_assert(stackAlignmentRegisters() == 2);
+    if (WTF::roundUpToMultipleOf(stackAlignmentRegisters(), numberOfParameters + CallFrame::headerSizeInRegisters) == numberOfParameters + CallFrame::headerSizeInRegisters)
+        move(TrustedImm32(numberOfParameters), paddingOutputGPR);
+    else
+        move(TrustedImm32(numberOfParameters + 1), paddingOutputGPR);
+    sub32(paddingOutputGPR, argumentCountIncludingThisGPR, paddingOutputGPR);
+
+    add32(TrustedImm32(1), paddingOutputGPR, scratchGPR0);
+    and32(TrustedImm32(~1U), scratchGPR0);
+    lshiftPtr(TrustedImm32(3), scratchGPR0);
+    subPtr(GPRInfo::callFrameRegister, scratchGPR0, scratchGPR1);
+    stackOverflow.append(branchPtr(Above, AbsoluteAddress(vm.addressOfSoftStackLimit()), scratchGPR1));
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)
