@@ -53,23 +53,51 @@
       (children 4
         (GraphicsLayer
           (position 0.00 230.00)
-          (bounds 785.00 100.00)
-          (contentsOpaque 1)
+          (bounds origin 0.00 230.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (position 0.00 230.00)
+              (bounds 785.00 100.00)
+              (contentsOpaque 1)
+            )
+          )
         )
         (GraphicsLayer
           (position 0.00 715.00)
-          (bounds 785.00 100.00)
-          (contentsOpaque 1)
+          (bounds origin 0.00 715.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (position 0.00 715.00)
+              (bounds 785.00 100.00)
+              (contentsOpaque 1)
+            )
+          )
         )
         (GraphicsLayer
           (position 0.00 230.00)
-          (bounds 100.00 585.00)
-          (contentsOpaque 1)
+          (bounds origin 0.00 230.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (position 0.00 230.00)
+              (bounds 100.00 585.00)
+              (contentsOpaque 1)
+            )
+          )
         )
         (GraphicsLayer
           (position 685.00 230.00)
-          (bounds 100.00 585.00)
-          (contentsOpaque 1)
+          (bounds origin 685.00 230.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (position 685.00 230.00)
+              (bounds 100.00 585.00)
+              (contentsOpaque 1)
+            )
+          )
         )
       )
     )

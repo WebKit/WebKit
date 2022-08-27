@@ -11,7 +11,14 @@ Image
       (children 2
         (GraphicsLayer
           (position 8.00 8.00)
-          (bounds 1024.00 1042.00)
+          (bounds origin 8.00 8.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (position 8.00 8.00)
+              (bounds 1024.00 1042.00)
+            )
+          )
         )
         (GraphicsLayer
           (position 8.00 8.00)

@@ -11,13 +11,27 @@
       (children 2
         (GraphicsLayer
           (position 265.00 50.00)
-          (bounds 100.00 100.00)
-          (contentsOpaque 1)
+          (bounds origin 265.00 50.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (position 265.00 50.00)
+              (bounds 100.00 100.00)
+              (contentsOpaque 1)
+            )
+          )
         )
         (GraphicsLayer
           (position 265.00 50.00)
-          (bounds 100.00 100.00)
-          (contentsOpaque 1)
+          (bounds origin 265.00 50.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (position 265.00 50.00)
+              (bounds 100.00 100.00)
+              (contentsOpaque 1)
+            )
+          )
         )
       )
     )
