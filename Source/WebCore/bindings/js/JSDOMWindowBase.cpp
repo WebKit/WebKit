@@ -58,6 +58,7 @@
 #include <JavaScriptCore/JSWebAssembly.h>
 #include <JavaScriptCore/Microtask.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/VMTrapsInlines.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 

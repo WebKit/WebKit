@@ -38,6 +38,7 @@
 #include "PointerEventsHitRules.h"
 #include "RenderImageResource.h"
 #include "RenderLayer.h"
+#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceFilter.h"
 #include "SVGElementTypeHelpers.h"

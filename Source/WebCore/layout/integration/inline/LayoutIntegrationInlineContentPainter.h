@@ -27,10 +27,14 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutIntegrationBoxTree.h"
 #include "LayoutPoint.h"
+#include "LayoutRect.h"
+#include <wtf/ListHashSet.h>
 
 namespace WebCore {
 
+class RenderBlock;
 class RenderBox;
 class RenderInline;
 
@@ -45,8 +49,6 @@ class ContainerBox;
 };
 
 namespace LayoutIntegration {
-
-class BoxTree;
 
 struct InlineContent;
 
