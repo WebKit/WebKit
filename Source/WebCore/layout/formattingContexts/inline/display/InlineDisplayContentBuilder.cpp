@@ -104,6 +104,8 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
         processBidiContent(lineContent, lineBox, displayLine, boxes);
     else
         processNonBidiContent(lineContent, lineBox, displayLine, boxes);
+    processFloatBoxes(lineContent);
+
     collectInkOverflowForTextDecorations(boxes, displayLine);
     collectInkOverflowForInlineBoxes(boxes);
     return boxes;
@@ -753,6 +755,25 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
         }
     };
     handleTrailingOpenInlineBoxes();
+}
+
+void InlineDisplayContentBuilder::processFloatBoxes(const LineBuilder::LineContent& lineContent)
+{
+    // Float boxes are not part of the inline content so we don't construct inline display boxes for them.
+    // However box geometry still needs flipping from logical to visual.
+    auto writingMode = root().style().writingMode();
+    if (WebCore::isHorizontalWritingMode(writingMode)) {
+        // FIXME: Add right-to-left support
+        return;
+    }
+
+    for (auto* floatBox : lineContent.floats) {
+        auto& boxGeometry = formattingState().boxGeometry(*floatBox);
+        auto borderBoxLogicalRect = LayoutRect { BoxGeometry::borderBoxRect(boxGeometry) };
+        auto visualRect = flipLogicalRectToVisualForWritingMode(InlineRect { borderBoxLogicalRect }, writingMode);
+
+        boxGeometry.setLogicalTopLeft(toLayoutPoint(visualRect.topLeft()));
+    }
 }
 
 void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(DisplayBoxes& boxes)

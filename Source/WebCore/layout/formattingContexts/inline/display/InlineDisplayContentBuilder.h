@@ -54,6 +54,7 @@ public:
 private:
     void processNonBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, DisplayBoxes&);
     void processBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, DisplayBoxes&);
+    void processFloatBoxes(const LineBuilder::LineContent&);
     void collectInkOverflowForInlineBoxes(DisplayBoxes&);
     void collectInkOverflowForTextDecorations(DisplayBoxes&, const InlineDisplay::Line&);
 
