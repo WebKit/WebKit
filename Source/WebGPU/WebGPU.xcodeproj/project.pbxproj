@@ -682,9 +682,9 @@
 		1CEBD8252716CACC00A5254D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				664C92FC286A66090008D143 /* IOSurface.framework */,
 				1CEBD82B2716CAFB00A5254D /* CoreFoundation.framework */,
 				1CEBD82D2716CB1600A5254D /* Foundation.framework */,
+				664C92FC286A66090008D143 /* IOSurface.framework */,
 				1C023D4A274495B9001DB734 /* JavaScriptCore.framework */,
 				1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */,
 				1CEBD8302716CB3800A5254D /* libicucore.tbd */,

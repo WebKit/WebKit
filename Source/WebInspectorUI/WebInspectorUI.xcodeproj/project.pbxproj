@@ -20,8 +20,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
-				DDE9931A278D0D8000F60D26 /* libWebKitAdditions.a in Product Dependencies */,
 				DDE9931D278D0DA400F60D26 /* JavaScriptCore.framework in Product Dependencies */,
+				DDE9931A278D0D8000F60D26 /* libWebKitAdditions.a in Product Dependencies */,
 			);
 			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
