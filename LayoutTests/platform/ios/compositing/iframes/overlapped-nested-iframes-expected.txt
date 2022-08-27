@@ -159,7 +159,14 @@
         )
         (GraphicsLayer
           (position 0.00 100.00)
-          (bounds 800.00 120.00)
+          (bounds origin 0.00 100.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (position 0.00 100.00)
+              (bounds 800.00 120.00)
+            )
+          )
         )
       )
     )

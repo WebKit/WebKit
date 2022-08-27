@@ -7,7 +7,12 @@
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (bounds 200.00 200.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 200.00 200.00)
+            )
+          )
         )
       )
     )
