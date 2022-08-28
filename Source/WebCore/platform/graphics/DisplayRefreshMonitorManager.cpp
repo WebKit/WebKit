@@ -105,7 +105,7 @@ std::optional<FramesPerSecond> DisplayRefreshMonitorManager::nominalFramesPerSec
 {
     auto* monitor = ensureMonitorForDisplayID(displayID, factory);
     if (monitor)
-        monitor->displayNominalFramesPerSecond();
+        return monitor->displayNominalFramesPerSecond();
 
     return std::nullopt;
 }
