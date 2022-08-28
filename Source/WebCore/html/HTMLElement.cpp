@@ -719,9 +719,16 @@ FormAssociatedElement* HTMLElement::asFormAssociatedElement()
     return nullptr;
 }
 
+static bool isValidDirValue(const AtomString& direction)
+{
+    return equalLettersIgnoringASCIICase(direction, "ltr"_s)
+        || equalLettersIgnoringASCIICase(direction, "rtl"_s)
+        || equalLettersIgnoringASCIICase(direction, "auto"_s);
+}
+
 static bool elementAffectsDirectionality(const HTMLElement& element)
 {
-    return is<HTMLBDIElement>(element) || element.hasAttributeWithoutSynchronization(dirAttr);
+    return is<HTMLBDIElement>(element) || isValidDirValue(element.attributeWithoutSynchronization(dirAttr));
 }
 
 static bool elementAffectsDirectionality(const Node& node)
@@ -736,9 +743,6 @@ static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastN
     RefPtr<Node> node = firstNode->firstChild();
 
     while (node) {
-        if (node->selfOrPrecedingNodesAffectDirAuto() == flag)
-            return;
-
         if (elementAffectsDirectionality(*node)) {
             if (node == lastNode)
                 return;
@@ -756,13 +760,6 @@ void HTMLElement::childrenChanged(const ChildChange& change)
 {
     StyledElement::childrenChanged(change);
     adjustDirectionalityIfNeededAfterChildrenChanged(change.previousSiblingElement, change.type);
-}
-
-static bool isValidDirValue(const AtomString& direction)
-{
-    return equalLettersIgnoringASCIICase(direction, "ltr"_s)
-        || equalLettersIgnoringASCIICase(direction, "rtl"_s)
-        || equalLettersIgnoringASCIICase(direction, "auto"_s);
 }
 
 bool HTMLElement::hasDirectionAuto() const
@@ -840,7 +837,7 @@ void HTMLElement::dirAttributeChanged(const AtomString& value)
 {
     RefPtr<Element> parent = parentElement();
 
-    if (is<HTMLElement>(parent) && parent->selfOrPrecedingNodesAffectDirAuto())
+    if (is<HTMLElement>(parent) && parent->selfOrPrecedingNodesAffectDirAuto() && isValidDirValue(value))
         downcast<HTMLElement>(*parent).adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
 
     if (equalLettersIgnoringASCIICase(value, "auto"_s))
