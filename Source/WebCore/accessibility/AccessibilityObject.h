@@ -298,7 +298,7 @@ public:
     float stepValueForRange() const override { return 0.0f; }
     AXCoreObject* selectedRadioButton() override { return nullptr; }
     AXCoreObject* selectedTabItem() override { return nullptr; }
-    AXCoreObject* selectedListItem() override;
+    AccessibilityObject* selectedListItem();
     int layoutCount() const override { return 0; }
     double loadingProgress() const override { return 0; }
     WEBCORE_EXPORT static bool isARIAControl(AccessibilityRole);
@@ -306,7 +306,7 @@ public:
 
     bool supportsARIARoleDescription() const;
     bool supportsARIAOwns() const override { return false; }
-    bool isActiveDescendantOfFocusedContainer() const override;
+    bool isActiveDescendantOfFocusedContainer() const;
 
     bool hasPopup() const override { return false; }
     String popupValue() const override;

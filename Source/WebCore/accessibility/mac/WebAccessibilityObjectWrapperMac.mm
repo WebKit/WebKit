@@ -2606,9 +2606,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:@"AXReadOnlyValue"])
         return backingObject->readOnlyValue();
 
-    if ([attributeName isEqualToString:@"AXIsActiveDescendantOfFocusedContainer"])
-        return [NSNumber numberWithBool:backingObject->isActiveDescendantOfFocusedContainer()];
-
     if ([attributeName isEqualToString:AXHasDocumentRoleAncestorAttribute])
         return [NSNumber numberWithBool:backingObject->hasDocumentRoleAncestor()];
 

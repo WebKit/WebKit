@@ -769,7 +769,7 @@ uint64_t AccessibilityObjectAtspi::state() const
 
     if (m_coreObject->isFocused() && !m_coreObject->activeDescendant())
         addState(Atspi::State::Focused);
-    else if (m_coreObject->isActiveDescendantOfFocusedContainer()) {
+    else if (liveObject->isActiveDescendantOfFocusedContainer()) {
         addState(Atspi::State::Focusable);
         addState(Atspi::State::Focused);
     }

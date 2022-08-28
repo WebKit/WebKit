@@ -127,7 +127,6 @@ enum class AXPropertyName : uint16_t {
     IncrementButton,
     InnerHTML,
     InvalidStatus,
-    IsActiveDescendantOfFocusedContainer,
     IsAnonymousMathOperator,
     IsGrabbed,
     IsARIATreeGridRow,
