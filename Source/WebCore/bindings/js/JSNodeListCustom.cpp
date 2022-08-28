@@ -37,84 +37,6 @@
 namespace WebCore {
 using namespace JSC;
 
-// FIXME: Instead of handpicking methods from JSNodeList / JSObject, extract JSNodeListBase and make
-// JSStaticNodeList / JSLiveNodeList extend it (which would require massive changes to CodeGeneratorJS.pm though).
-const ClassInfo JSStaticNodeList::s_info = {
-    "NodeList"_s,
-    &Base::s_info,
-    nullptr,
-    nullptr,
-    std::nullopt, {
-        &JSStaticNodeList::destroy,
-        &JSStaticNodeList::getCallData,
-        &JSStaticNodeList::getConstructData,
-        &JSStaticNodeList::put,
-        &JSStaticNodeList::putByIndex,
-        &JSStaticNodeList::deleteProperty,
-        &JSStaticNodeList::deletePropertyByIndex,
-        &Base::Base::getOwnPropertySlot,
-        &Base::Base::getOwnPropertySlotByIndex,
-        &JSStaticNodeList::toThis,
-        &Base::Base::getOwnPropertyNames,
-        &Base::Base::getOwnSpecialPropertyNames,
-        &JSStaticNodeList::customHasInstance,
-        &JSStaticNodeList::defineOwnProperty,
-        &JSStaticNodeList::preventExtensions,
-        &JSStaticNodeList::isExtensible,
-        &JSStaticNodeList::setPrototype,
-        &JSStaticNodeList::getPrototype,
-        &JSStaticNodeList::dumpToStream,
-        &JSStaticNodeList::analyzeHeap,
-        &JSStaticNodeList::estimatedSize,
-        &JSStaticNodeList::visitChildren,
-        &JSStaticNodeList::visitChildren,
-        &JSStaticNodeList::visitOutputConstraints,
-        &JSStaticNodeList::visitOutputConstraints,
-    },
-    sizeof(JSStaticNodeList),
-};
-
-JSObject* JSStaticNodeList::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
-{
-    return Base::prototype(vm, globalObject);
-}
-
-JSStaticNodeList::JSStaticNodeList(Structure* structure, JSDOMGlobalObject& globalObject, Ref<StaticNodeList>&& impl)
-    : Base(structure, globalObject, WTFMove(impl))
-{
-}
-
-void JSStaticNodeList::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-
-    auto& nodeList = wrapped();
-    unsigned length = nodeList.length();
-
-    IndexingHeader indexingHeader;
-    indexingHeader.setVectorLength(length);
-    indexingHeader.setPublicLength(length);
-    auto* butterfly = Butterfly::tryCreate(vm, nullptr, 0, structure()->outOfLineCapacity(), true, indexingHeader, sizeof(EncodedJSValue) * length);
-    if (UNLIKELY(!butterfly))
-        return;
-
-    auto* globalObject = this->globalObject();
-    auto contiguousValues = butterfly->contiguous();
-
-    for (unsigned i = 0; i < length; ++i)
-        contiguousValues.atUnsafe(i).clear();
-
-    setButterfly(vm, butterfly);
-
-    for (unsigned i = 0; i < length; ++i) {
-        auto jsNode = toJS(globalObject, globalObject, *nodeList.item(i));
-        contiguousValues.atUnsafe(i).set(vm, this, jsNode);
-    }
-
-    if (UNLIKELY(needsSlowPutIndexing()))
-        ensureArrayStorageExistsAndEnterDictionaryIndexingMode(vm);
-}
-
 bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
 {
     JSNodeList* jsNodeList = jsCast<JSNodeList*>(handle.slot()->asCell());
@@ -146,8 +68,6 @@ bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
 
 JSC::JSValue createWrapper(JSDOMGlobalObject& globalObject, Ref<NodeList>&& nodeList)
 {
-    if (nodeList->isStaticNodeList())
-        return createWrapper<StaticNodeList>(&globalObject, WTFMove(nodeList));
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
     // https://bugs.webkit.org/show_bug.cgi?id=142595
     globalObject.vm().heap.deprecatedReportExtraMemory(nodeList->memoryCost());

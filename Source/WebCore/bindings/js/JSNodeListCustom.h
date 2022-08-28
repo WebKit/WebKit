@@ -26,39 +26,8 @@
 #pragma once
 
 #include "JSDOMBinding.h"
-#include "JSNodeList.h"
-#include "StaticNodeList.h"
 
 namespace WebCore {
-
-class JSStaticNodeList final : public JSNodeList {
-public:
-    using Base = JSNodeList;
-    static constexpr unsigned StructureFlags = Base::Base::StructureFlags | JSC::SlowPutArrayStorageVectorPropertiesAreReadOnly;
-    static JSStaticNodeList* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<StaticNodeList>&& impl)
-    {
-        JSStaticNodeList* ptr = new (NotNull, JSC::allocateCell<JSStaticNodeList>(globalObject->vm())) JSStaticNodeList(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
-    DECLARE_INFO;
-
-    static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
-    {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info(), JSC::NonArrayWithAlwaysSlowPutContiguous);
-    }
-protected:
-    JSStaticNodeList(JSC::Structure*, JSDOMGlobalObject&, Ref<StaticNodeList>&&);
-
-    void finishCreation(JSC::VM&);
-};
-
-template<> struct JSDOMWrapperConverterTraits<StaticNodeList> {
-    using WrapperClass = JSStaticNodeList;
-    using ToWrappedReturnType = StaticNodeList*;
-};
 
 WEBCORE_EXPORT JSC::JSValue createWrapper(JSDOMGlobalObject&, Ref<NodeList>&&);
 
