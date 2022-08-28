@@ -271,6 +271,8 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
             appendTextBasedContent();
             inlineItemOffsetList.uncheckedAppend({ inlineTextBoxOffset + downcast<InlineSoftLineBreakItem>(inlineItem).position() });
         } else if (inlineItem.isHardLineBreak()) {
+            // Bidi handling requires us to close all the nested bidi contexts at the end of the line triggered by forced line breaks
+            // and re-open it for the content on the next line (i.e. paragraph handling).
             auto copyOfBidiStack = bidiContextStack;
 
             size_t blockLevelBidiContextIndex = 0;
@@ -288,6 +290,16 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
                     --unwindingIndex;
                 }
                 blockLevelBidiContextIndex = unwindingIndex; 
+                // and unwind the block entries as well.
+                do {
+                    ASSERT(copyOfBidiStack[unwindingIndex].isBlockLevel);
+                    handleEnterExitBidiContext(paragraphContentBuilder
+                        , copyOfBidiStack[unwindingIndex].unicodeBidi
+                        , copyOfBidiStack[unwindingIndex].isLeftToRightDirection
+                        , EnterExitType::ExitingBlock
+                        , bidiContextStack
+                    );
+                } while (unwindingIndex--);
             };
             unwindBidiContextStack();
 
@@ -295,10 +307,19 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
             paragraphContentBuilder.append(newlineCharacter);
 
             auto rewindBidiContextStack = [&] {
-                for (size_t index = blockLevelBidiContextIndex + 1; index < copyOfBidiStack.size(); ++index) {
+                for (size_t blockLevelIndex = 0; blockLevelIndex <= blockLevelBidiContextIndex; ++blockLevelIndex) {
                     handleEnterExitBidiContext(paragraphContentBuilder
-                        , copyOfBidiStack[index].unicodeBidi
-                        , copyOfBidiStack[index].isLeftToRightDirection
+                        , copyOfBidiStack[blockLevelIndex].unicodeBidi
+                        , copyOfBidiStack[blockLevelIndex].isLeftToRightDirection
+                        , EnterExitType::EnteringBlock
+                        , bidiContextStack
+                    );
+                }
+
+                for (size_t inlineLevelIndex = blockLevelBidiContextIndex + 1; inlineLevelIndex < copyOfBidiStack.size(); ++inlineLevelIndex) {
+                    handleEnterExitBidiContext(paragraphContentBuilder
+                        , copyOfBidiStack[inlineLevelIndex].unicodeBidi
+                        , copyOfBidiStack[inlineLevelIndex].isLeftToRightDirection
                         , EnterExitType::EnteringInlineBox
                         , bidiContextStack
                     );
