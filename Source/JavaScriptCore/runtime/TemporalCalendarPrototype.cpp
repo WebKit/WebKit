@@ -31,6 +31,7 @@
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "TemporalCalendar.h"
+#include "TemporalPlainDate.h"
 
 namespace JSC {
 
