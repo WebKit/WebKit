@@ -188,8 +188,9 @@ function resolvePromise(promise, resolution)
         return @fulfillPromise(promise, resolution);
 
     if (@isPromise(resolution)) {
-        if (resolution.constructor === @Promise || resolution.constructor === @InternalPromise) {
-           return @performPromiseThen(resolution, @undefined, @undefined, promise);
+        var constructor = resolution.constructor;
+        if (constructor === @Promise || constructor === @InternalPromise) {
+           return @performPromiseThen(resolution, @undefined, @undefined, promise, @undefined);
         }
     }
 
@@ -340,9 +341,9 @@ function resolveWithoutPromise(resolution, onFulfilled, onRejected, context)
     }
 
     if (@isPromise(resolution)) {
-        if (resolution.constructor === @Promise || resolution.constructor === @InternalPromise) {
-           return @performPromiseThen(resolution, onFulfilled, onRejected, @undefined);
-        }
+        var constructor = resolution.constructor;
+        if (constructor === @Promise || constructor === @InternalPromise)
+            return @performPromiseThen(resolution, onFulfilled, onRejected, @undefined, context);
     }
 
     var then;
