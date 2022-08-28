@@ -737,12 +737,12 @@ static bool elementAffectsDirectionality(const Node& node)
 
 static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastNode = nullptr)
 {
-    firstNode->setSelfOrAncestorHasDirAutoAttribute(flag);
+    firstNode->setSelfOrPrecedingNodesAffectDirAuto(flag);
 
     RefPtr<Node> node = firstNode->firstChild();
 
     while (node) {
-        if (node->selfOrAncestorHasDirAutoAttribute() == flag)
+        if (node->selfOrPrecedingNodesAffectDirAuto() == flag)
             return;
 
         if (elementAffectsDirectionality(*node)) {
@@ -751,7 +751,7 @@ static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastN
             node = NodeTraversal::nextSkippingChildren(*node, firstNode);
             continue;
         }
-        node->setSelfOrAncestorHasDirAutoAttribute(flag);
+        node->setSelfOrPrecedingNodesAffectDirAuto(flag);
         if (node == lastNode)
             return;
         node = NodeTraversal::next(*node, firstNode);
@@ -799,7 +799,7 @@ TextDirection HTMLElement::computeDirectionality() const
 
 std::optional<TextDirection> HTMLElement::directionalityIfDirIsAuto() const
 {
-    if (!(selfOrAncestorHasDirAutoAttribute() && hasDirectionAuto()))
+    if (!(selfOrPrecedingNodesAffectDirAuto() && hasDirectionAuto()))
         return std::nullopt;
     return directionality().direction;
 }
@@ -846,7 +846,7 @@ void HTMLElement::dirAttributeChanged(const AtomString& value)
 {
     RefPtr<Element> parent = parentElement();
 
-    if (is<HTMLElement>(parent) && parent->selfOrAncestorHasDirAutoAttribute())
+    if (is<HTMLElement>(parent) && parent->selfOrPrecedingNodesAffectDirAuto())
         downcast<HTMLElement>(*parent).adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
 
     if (equalLettersIgnoringASCIICase(value, "auto"_s))
@@ -855,7 +855,7 @@ void HTMLElement::dirAttributeChanged(const AtomString& value)
 
 void HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child)
 {
-    ASSERT(selfOrAncestorHasDirAutoAttribute());
+    ASSERT(selfOrPrecedingNodesAffectDirAuto());
     auto textDirection = directionality().direction;
     setHasDirAutoFlagRecursively(child, false);
     if (!renderer() || renderer()->style().direction() == textDirection)
@@ -880,7 +880,7 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* befo
 {
     // FIXME: This function looks suspicious.
 
-    if (!selfOrAncestorHasDirAutoAttribute())
+    if (!selfOrPrecedingNodesAffectDirAuto())
         return;
 
     RefPtr<Node> oldMarkedNode;

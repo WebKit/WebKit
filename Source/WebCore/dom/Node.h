@@ -286,8 +286,8 @@ public:
     // Returns the parent node, but null if the parent node is a ShadowRoot.
     ContainerNode* nonShadowBoundaryParentNode() const;
 
-    bool selfOrAncestorHasDirAutoAttribute() const { return hasNodeFlag(NodeFlag::SelfOrAncestorHasDirAuto); }
-    void setSelfOrAncestorHasDirAutoAttribute(bool flag) { setNodeFlag(NodeFlag::SelfOrAncestorHasDirAuto, flag); }
+    bool selfOrPrecedingNodesAffectDirAuto() const { return hasNodeFlag(NodeFlag::SelfOrPrecedingNodesAffectDirAuto); }
+    void setSelfOrPrecedingNodesAffectDirAuto(bool flag) { setNodeFlag(NodeFlag::SelfOrPrecedingNodesAffectDirAuto, flag); }
 
     // Returns the enclosing event parent Element (or self) that, when clicked, would trigger a navigation.
     WEBCORE_EXPORT Element* enclosingLinkEventParentOrSelf();
@@ -576,7 +576,7 @@ protected:
         IsUserActionElement = 1 << 17,
         IsParsingChildrenFinished = 1 << 18,
         HasSyntheticAttrChildNodes = 1 << 19,
-        SelfOrAncestorHasDirAuto = 1 << 20,
+        SelfOrPrecedingNodesAffectDirAuto = 1 << 20,
 
         HasCustomStyleResolveCallbacks = 1 << 21,
 

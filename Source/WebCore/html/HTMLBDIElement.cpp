@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,17 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLBDIElement);
+
+Ref<HTMLBDIElement> HTMLBDIElement::create(const QualifiedName& name, Document& document)
+{
+    return adoptRef(*new HTMLBDIElement(name, document));
+}
+
+HTMLBDIElement::HTMLBDIElement(const QualifiedName& name, Document& document)
+    : HTMLElement(name, document)
+{
+    setSelfOrPrecedingNodesAffectDirAuto(true);
+}
 
 } // namespace WebCore
 
