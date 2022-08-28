@@ -218,16 +218,10 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
     } else if (name == dirAttr) {
         if (equalLettersIgnoringASCIICase(value, "auto"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(*this));
-        else {
-            auto unicodeBidiValue = CSSValueEmbed;
-
-            if (equalLettersIgnoringASCIICase(value, "rtl"_s) || equalLettersIgnoringASCIICase(value, "ltr"_s)) {
-                addPropertyToPresentationalHintStyle(style, CSSPropertyDirection, value);
-                unicodeBidiValue = CSSValueIsolate;
-            } 
-
+        else if (equalLettersIgnoringASCIICase(value, "rtl"_s) || equalLettersIgnoringASCIICase(value, "ltr"_s)) {
+            addPropertyToPresentationalHintStyle(style, CSSPropertyDirection, value);
             if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
-                addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, unicodeBidiValue);
+                addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, CSSValueIsolate);
         }
     } else if (name.matches(XMLNames::langAttr))
         mapLanguageAttributeToLocale(value, style);
