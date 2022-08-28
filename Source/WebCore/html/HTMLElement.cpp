@@ -779,7 +779,7 @@ TextDirection HTMLElement::computeDirectionality() const
     for (const Element* element = this; element; element = const_cast<Element*>(element)->parentOrShadowHostElement()) {
         auto direction = element->attributeWithoutSynchronization(dirAttr);
         if ((element->hasTagName(bdiTag) && !isValidDirValue(direction)) || equalLettersIgnoringASCIICase(direction, "auto"_s))
-            return directionality().direction;
+            return computeDirectionalityFromText().direction;
         if (equalLettersIgnoringASCIICase(direction, "ltr"_s))
             return TextDirection::LTR;
         if (equalLettersIgnoringASCIICase(direction, "rtl"_s))
@@ -792,10 +792,10 @@ std::optional<TextDirection> HTMLElement::directionalityIfDirIsAuto() const
 {
     if (!(selfOrPrecedingNodesAffectDirAuto() && hasDirectionAuto()))
         return std::nullopt;
-    return directionality().direction;
+    return computeDirectionalityFromText().direction;
 }
 
-auto HTMLElement::directionality() const -> TextDirectionWithStrongDirectionalityNode
+auto HTMLElement::computeDirectionalityFromText() const -> TextDirectionWithStrongDirectionalityNode
 {
     if (auto* textControl = dynamicDowncast<HTMLTextFormControlElement>(const_cast<HTMLElement*>(this))) {
         auto* inputElement = dynamicDowncast<HTMLInputElement>(textControl);
@@ -841,13 +841,13 @@ void HTMLElement::dirAttributeChanged(const AtomString& value)
         downcast<HTMLElement>(*parent).adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
 
     if (equalLettersIgnoringASCIICase(value, "auto"_s))
-        calculateAndAdjustDirectionality();
+        updateEffectiveDirectionalityOfDirAuto();
 }
 
 void HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child)
 {
     ASSERT(selfOrPrecedingNodesAffectDirAuto());
-    auto textDirection = directionality().direction;
+    auto textDirection = computeDirectionalityFromText().direction;
     setHasDirAutoFlagRecursively(child, false);
     if (!renderer() || renderer()->style().direction() == textDirection)
         return;
@@ -859,9 +859,9 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged(Element
     }
 }
 
-void HTMLElement::calculateAndAdjustDirectionality()
+void HTMLElement::updateEffectiveDirectionalityOfDirAuto()
 {
-    auto result = directionality();
+    auto result = computeDirectionalityFromText();
     setHasDirAutoFlagRecursively(this, true, result.strongDirectionalityNode.get());
     if (renderer() && renderer()->style().direction() != result.direction)
         invalidateStyleForSubtree();
@@ -885,7 +885,7 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* befo
 
     for (auto& elementToAdjust : lineageOfType<HTMLElement>(*this)) {
         if (elementAffectsDirectionality(elementToAdjust)) {
-            elementToAdjust.calculateAndAdjustDirectionality();
+            elementToAdjust.updateEffectiveDirectionalityOfDirAuto();
             return;
         }
     }
