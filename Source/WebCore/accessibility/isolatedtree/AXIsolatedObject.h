@@ -229,7 +229,6 @@ private:
     int layoutCount() const override { return intAttributeValue(AXPropertyName::LayoutCount); }
     double loadingProgress() const override { return tree()->loadingProgress(); }
     bool supportsARIAOwns() const override { return boolAttributeValue(AXPropertyName::SupportsARIAOwns); }
-    bool isActiveDescendantOfFocusedContainer() const override { return boolAttributeValue(AXPropertyName::IsActiveDescendantOfFocusedContainer); }
     bool hasPopup() const override { return boolAttributeValue(AXPropertyName::HasPopup); }
     String popupValue() const override { return stringAttributeValue(AXPropertyName::PopupValue); }
     bool pressedIsPresent() const override { return boolAttributeValue(AXPropertyName::PressedIsPresent); }
@@ -542,7 +541,6 @@ private:
     AccessibilityObjectInclusion defaultObjectInclusion() const override;
     bool accessibilityIsIgnoredByDefault() const override;
     float stepValueForRange() const override;
-    AXCoreObject* selectedListItem() override;
 
     AccessibilityChildrenVector relatedObjects(AXRelationType) const override;
 

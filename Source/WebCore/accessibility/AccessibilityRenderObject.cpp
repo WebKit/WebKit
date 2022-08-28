@@ -3272,7 +3272,11 @@ void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& re
 
     // Get all the rows.
     auto rowsIteration = [&](const auto& rows) {
-        for (auto& row : rows) {
+        for (auto& rowCoreObject : rows) {
+            auto* row = dynamicDowncast<AccessibilityObject>(rowCoreObject.get());
+            if (!row)
+                continue;
+
             if (row->isSelected() || row->isActiveDescendantOfFocusedContainer()) {
                 result.append(row);
                 if (!isMulti)
@@ -3297,10 +3301,13 @@ void AccessibilityRenderObject::ariaListboxSelectedChildren(AccessibilityChildre
 
     for (const auto& child : children()) {
         // Every child should have aria-role option, and if so, check for selected attribute/state.
-        if (child->ariaRoleAttribute() == AccessibilityRole::ListBoxOption && (child->isSelected() || child->isActiveDescendantOfFocusedContainer())) {
-            result.append(child);
-            if (!isMulti)
-                return;
+        if (child->ariaRoleAttribute() == AccessibilityRole::ListBoxOption) {
+            auto* childAxObject = dynamicDowncast<AccessibilityObject>(child.get());
+            if (childAxObject->isSelected() || childAxObject->isActiveDescendantOfFocusedContainer()) {
+                result.append(childAxObject);
+                if (!isMulti)
+                    return;
+            }
         }
     }
 }

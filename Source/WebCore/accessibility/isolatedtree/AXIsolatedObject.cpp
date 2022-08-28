@@ -86,7 +86,6 @@ void AXIsolatedObject::initializeProperties(Ref<AXCoreObject> coreObject, IsRoot
         setProperty(AXPropertyName::AncestorFlags, object.computeAncestorFlagsWithTraversal());
 
     setProperty(AXPropertyName::HasARIAValueNow, object.hasARIAValueNow());
-    setProperty(AXPropertyName::IsActiveDescendantOfFocusedContainer, object.isActiveDescendantOfFocusedContainer());
     setProperty(AXPropertyName::IsAttachment, object.isAttachment());
     setProperty(AXPropertyName::IsBusy, object.isBusy());
     setProperty(AXPropertyName::IsButton, object.isButton());
@@ -1853,12 +1852,6 @@ float AXIsolatedObject::stepValueForRange() const
 {
     ASSERT_NOT_REACHED();
     return 0;
-}
-
-AXCoreObject* AXIsolatedObject::selectedListItem()
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
 }
 
 bool AXIsolatedObject::hasDatalist() const
