@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2020 Apple Inc. All rights reserved.
+// Copyright (C) 2009-2022 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
 #include? "../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
 #include? "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/PlatformSupport.xcconfig"
 #include "../../../Configurations/SDKVariant.xcconfig"
-#include "WebKitTargetConditionals.xcconfig"
+#include "../../../Configurations/WebKitTargetConditionals.xcconfig"
 
 USE_INTERNAL_SDK = $(USE_INTERNAL_SDK_$(CONFIGURATION));
 USE_INTERNAL_SDK_Production = YES;

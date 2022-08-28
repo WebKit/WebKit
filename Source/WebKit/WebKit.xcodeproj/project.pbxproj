@@ -4312,7 +4312,6 @@
 		370F34A11829BE1E009027C8 /* WKNavigationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationData.h; sourceTree = "<group>"; };
 		370F34A41829BEA3009027C8 /* WKNavigationDataInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationDataInternal.h; sourceTree = "<group>"; };
 		370F34A61829CFF3009027C8 /* WKBrowsingContextHistoryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHistoryDelegate.h; sourceTree = "<group>"; };
-		37119A7C20CCB64E002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		37183D54182F4E700080C811 /* WKNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSURLExtras.mm; sourceTree = "<group>"; };
 		37183D55182F4E700080C811 /* WKNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLExtras.h; sourceTree = "<group>"; };
 		371A193F1824D29300F32A5E /* WKNSDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSDictionary.mm; sourceTree = "<group>"; };
@@ -7808,7 +7807,6 @@
 				BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */,
 				7B9FC5A228A2A0B5007570E7 /* WebKitPlatform.xcconfig */,
 				CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */,
-				37119A7C20CCB64E002C6DC9 /* WebKitTargetConditionals.xcconfig */,
 				5C1579DD27165BE500ED5280 /* webpushd.xcconfig */,
 				517B5F6A275AA199002DC22D /* webpushtool.xcconfig */,
 			);

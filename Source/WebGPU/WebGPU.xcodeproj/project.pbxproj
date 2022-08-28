@@ -138,7 +138,6 @@
 		1C023D4A274495B9001DB734 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C0F41EC280940650005886D /* HardwareCapabilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HardwareCapabilities.mm; sourceTree = "<group>"; };
 		1C0F41ED280940650005886D /* HardwareCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareCapabilities.h; sourceTree = "<group>"; };
-		1C1C323E2824F28D007C9E7E /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		1C2CEDED271E8A7300EDC16F /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		1C33755D27FA23B8002F1644 /* IsValidToUseWith.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsValidToUseWith.h; sourceTree = "<group>"; };
 		1C5319BD27BDC6CB00CD127E /* CommandLinePlayground */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CommandLinePlayground; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -670,7 +669,6 @@
 				1CEBD7FB2716B5B400A5254D /* DebugRelease.xcconfig */,
 				1CC0C8CA273A819100D0B481 /* Version.xcconfig */,
 				1CEBD7FC2716B64400A5254D /* WebGPU.xcconfig */,
-				1C1C323E2824F28D007C9E7E /* WebKitTargetConditionals.xcconfig */,
 				1CEBD7FD2716B64F00A5254D /* WGSL.xcconfig */,
 				1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */,
 			);
