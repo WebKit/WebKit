@@ -75,7 +75,7 @@ TemporalPlainDateTimeConstructor::TemporalPlainDateTimeConstructor(VM& vm, Struc
 
 void TemporalPlainDateTimeConstructor::finishCreation(VM& vm, TemporalPlainDateTimePrototype* plainDateTimePrototype)
 {
-    Base::finishCreation(vm, 0, "PlainDateTime"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 3, "PlainDateTime"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, plainDateTimePrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     plainDateTimePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }

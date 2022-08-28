@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ISO8601.h"
 #include "IntlObject.h"
 #include "JSObject.h"
 
@@ -44,6 +45,10 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
+
+    static JSObject* toTemporalCalendarWithISODefault(JSGlobalObject*, JSValue);
+    static JSObject* getTemporalCalendarWithISODefault(JSGlobalObject*, JSValue);
+    static ISO8601::PlainDate isoDateFromFields(JSGlobalObject*, JSObject*, TemporalOverflow);
 
     CalendarID identifier() const { return m_identifier; }
     bool isISO8601() const { return m_identifier == iso8601CalendarID(); }

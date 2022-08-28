@@ -28,6 +28,9 @@
 
 #include "JSObjectInlines.h"
 #include "StructureInlines.h"
+#include "TemporalPlainDate.h"
+#include "TemporalPlainDateTime.h"
+#include "TemporalPlainTime.h"
 
 namespace JSC {
 
@@ -53,6 +56,32 @@ TemporalCalendar::TemporalCalendar(VM& vm, Structure* structure, CalendarID iden
     : Base(vm, structure)
     , m_identifier(identifier)
 {
+}
+
+JSObject* TemporalCalendar::toTemporalCalendarWithISODefault(JSGlobalObject* globalObject, JSValue temporalCalendarLike)
+{
+    if (temporalCalendarLike.isUndefined())
+        return TemporalCalendar::create(globalObject->vm(), globalObject->calendarStructure(), iso8601CalendarID());
+    return TemporalCalendar::from(globalObject, temporalCalendarLike);
+}
+
+JSObject* TemporalCalendar::getTemporalCalendarWithISODefault(JSGlobalObject* globalObject, JSValue itemValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (itemValue.inherits<TemporalPlainDate>())
+        return jsCast<TemporalPlainDate*>(itemValue)->calendar();
+
+    if (itemValue.inherits<TemporalPlainDateTime>())
+        return jsCast<TemporalPlainDateTime*>(itemValue)->calendar();
+
+    if (itemValue.inherits<TemporalPlainTime>())
+        return jsCast<TemporalPlainTime*>(itemValue)->calendar();
+
+    JSValue calendar = itemValue.get(globalObject, vm.propertyNames->calendar);
+    RETURN_IF_EXCEPTION(scope, { });
+    RELEASE_AND_RETURN(scope, toTemporalCalendarWithISODefault(globalObject, calendar));
 }
 
 std::optional<CalendarID> TemporalCalendar::isBuiltinCalendar(StringView string)
@@ -112,6 +141,94 @@ JSObject* TemporalCalendar::from(JSGlobalObject* globalObject, JSValue calendarL
 
     ASSERT(calendarId);
     return TemporalCalendar::create(vm, globalObject->calendarStructure(), calendarId.value());
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-isodatefromfields
+ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObject, JSObject* temporalDateLike, TemporalOverflow overflow)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue dayProperty = temporalDateLike->get(globalObject, vm.propertyNames->day);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (dayProperty.isUndefined()) {
+        throwTypeError(globalObject, scope, "day property must be present"_s);
+        return { };
+    }
+
+    double day = dayProperty.toIntegerOrInfinity(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!(day > 0 && std::isfinite(day))) {
+        throwRangeError(globalObject, scope, "Temporal.PlainDate day property must be positive and finite"_s);
+        return { };
+    }
+
+    JSValue monthProperty = temporalDateLike->get(globalObject, vm.propertyNames->month);
+    RETURN_IF_EXCEPTION(scope, { });
+    double month = 0;
+    if (!monthProperty.isUndefined()) {
+        month = monthProperty.toIntegerOrInfinity(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    JSValue monthCodeProperty = temporalDateLike->get(globalObject, vm.propertyNames->monthCode);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (monthCodeProperty.isUndefined()) {
+        if (monthProperty.isUndefined()) {
+            throwTypeError(globalObject, scope, "Either month or monthCode property must be provided"_s);
+            return { };
+        }
+
+        if (!(month > 0 && std::isfinite(month))) {
+            throwRangeError(globalObject, scope, "Temporal.PlainDate month property must be positive and finite"_s);
+            return { };
+        }
+    } else {
+        auto monthCode = monthCodeProperty.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        auto otherMonth = ISO8601::monthFromCode(monthCode);
+        if (!otherMonth) {
+            throwRangeError(globalObject, scope, "Invalid monthCode property"_s);
+            return { };
+        }
+
+        if (monthProperty.isUndefined())
+            month = otherMonth;
+        else if (otherMonth != month) {
+            throwRangeError(globalObject, scope, "month and monthCode properties must match if both are provided"_s);
+            return { };
+        }
+    }
+
+    JSValue yearProperty = temporalDateLike->get(globalObject, vm.propertyNames->year);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (yearProperty.isUndefined()) {
+        throwTypeError(globalObject, scope, "year property must be present"_s);
+        return { };
+    }
+
+    double year = yearProperty.toIntegerOrInfinity(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!std::isfinite(year)) {
+        throwRangeError(globalObject, scope, "Temporal.PlainDate year property must be finite"_s);
+        return { };
+    }
+
+    if (overflow == TemporalOverflow::Constrain) {
+        month = std::min<unsigned>(month, 12);
+        day = std::min<unsigned>(day, ISO8601::daysInMonth(year, month));
+    }
+
+    auto plainDate = TemporalPlainDate::toPlainDate(globalObject, ISO8601::Duration(year, month, 0, day, 0, 0, 0, 0, 0, 0));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!ISO8601::isDateTimeWithinLimits(plainDate.year(), plainDate.month(), plainDate.day(), 12, 0, 0, 0, 0, 0)) {
+        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
+        return { };
+    }
+
+    return plainDate;
 }
 
 } // namespace JSC

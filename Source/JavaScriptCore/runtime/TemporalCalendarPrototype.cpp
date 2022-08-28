@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TemporalCalendarPrototype.h"
 
-#include "BuiltinNames.h"
+#include "IntlObjectInlines.h"
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
@@ -34,6 +34,7 @@
 
 namespace JSC {
 
+static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateFromFields);
 static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncFields);
 static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncMergeFields);
 static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncToString);
@@ -50,11 +51,12 @@ const ClassInfo TemporalCalendarPrototype::s_info = { "Temporal.Calendar"_s, &Ba
 
 /* Source for TemporalCalendarPrototype.lut.h
 @begin temporalCalendarPrototypeTable
-    fields          temporalCalendarPrototypeFuncFields       DontEnum|Function 1
-    mergeFields     temporalCalendarPrototypeFuncMergeFields  DontEnum|Function 2
-    toString        temporalCalendarPrototypeFuncToString     DontEnum|Function 0
-    toJSON          temporalCalendarPrototypeFuncToJSON       DontEnum|Function 0
-    id              temporalCalendarPrototypeGetterId         ReadOnly|DontEnum|CustomAccessor
+    dateFromFields      temporalCalendarPrototypeFuncDateFromFields      DontEnum|Function 1
+    fields              temporalCalendarPrototypeFuncFields              DontEnum|Function 1
+    mergeFields         temporalCalendarPrototypeFuncMergeFields         DontEnum|Function 2
+    toString            temporalCalendarPrototypeFuncToString            DontEnum|Function 0
+    toJSON              temporalCalendarPrototypeFuncToJSON              DontEnum|Function 0
+    id                  temporalCalendarPrototypeGetterId                ReadOnly|DontEnum|CustomAccessor
 @end
 */
 
@@ -86,6 +88,36 @@ void TemporalCalendarPrototype::finishCreation(VM& vm, JSGlobalObject*)
 JSC_DEFINE_CUSTOM_GETTER(temporalCalendarPrototypeGetterId, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     return JSValue::encode(JSValue::decode(thisValue).toString(globalObject));
+}
+
+// https://tc39.es/proposal-temporal/#sup-temporal.calendar.prototype.datefromfields
+JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateFromFields, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
+    if (!calendar)
+        return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.dateFromFields called on value that's not a Calendar"_s);
+
+    // FIXME: Implement after fleshing out the rest of Temporal.Calendar.
+    if (!calendar->isISO8601())
+        return throwVMRangeError(globalObject, scope, "unimplemented: non-ISO8601 calendar"_s);
+
+    JSValue value = callFrame->argument(0);
+    if (!value.isObject())
+        return throwVMTypeError(globalObject, scope, "First argument to Temporal.Calendar.prototype.dateFromFields must be an object"_s);
+
+    JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    ISO8601::PlainDate plainDate = calendar->isoDateFromFields(globalObject, asObject(value), overflow);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(plainDate))));
 }
 
 // https://tc39.es/proposal-temporal/#sup-temporal.calendar.prototype.fields
