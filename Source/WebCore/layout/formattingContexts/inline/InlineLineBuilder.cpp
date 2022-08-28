@@ -553,6 +553,8 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         // FIXME: webkit.org/b/233261
         if (isInIntrinsicWidthMode || !layoutState().isInlineFormattingContextIntegration())
             return false;
+        if (m_line.contentNeedsBidiReordering())
+            return false;
         return horizontalAvailableSpace >= m_line.contentLogicalWidth();
     };
     m_line.removeTrailingTrimmableContent(shouldApplyTrailingWhiteSpaceFollowedByBRQuirk() ? Line::ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::Yes : Line::ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::No);

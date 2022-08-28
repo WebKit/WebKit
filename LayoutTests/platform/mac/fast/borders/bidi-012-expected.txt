@@ -28,15 +28,14 @@ layer at (0,0) size 800x447
               text run at (11,122) width 139: "kkk lll mmm nnn ooo"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {P} at (16,214) size 184x166 [bgcolor=#FFFFCC] [border: (3px solid #000000)]
-          RenderInline {SPAN} at (0,0) size 155x86 [color=#000080] [border: (3px solid #000080)]
-            RenderText {#text} at (30,26) size 136x18
+          RenderInline {SPAN} at (0,0) size 151x86 [color=#000080] [border: (3px solid #000080)]
+            RenderText {#text} at (30,26) size 132x18
               text run at (30,26) width 26: "aaa "
               text run at (55,26) width 29: "bbb "
               text run at (83,26) width 26: "ccc "
               text run at (108,26) width 25 RTL: "ddd"
               text run at (132,26) width 30 RTL: "\x{202E} eee "
-              text run at (161,26) width 5: " "
-            RenderBR {BR} at (165,26) size 1x18
+            RenderBR {BR} at (161,26) size 1x18
             RenderText {#text} at (11,74) size 20x18
               text run at (11,74) width 20: "fff "
           RenderText {#text} at (49,74) size 74x18
@@ -44,9 +43,9 @@ layer at (0,0) size 800x447
             text run at (77,74) width 29: "hhh "
             text run at (105,74) width 18: "iii "
           RenderInline {SPAN} at (0,0) size 162x86 [color=#FFA500] [border: (3px solid #FFA500)]
-            RenderText {#text} at (141,74) size 19x18
-              text run at (141,74) width 19: "jjj "
-            RenderBR {BR} at (159,74) size 1x18
+            RenderText {#text} at (141,74) size 15x18
+              text run at (141,74) width 15: "jjj"
+            RenderBR {BR} at (155,74) size 1x18
             RenderText {#text} at (11,122) size 143x18
               text run at (11,122) width 28: "kkk "
               text run at (39,122) width 63: "lll \x{202C} mmm "
