@@ -383,4 +383,9 @@ WebCoreOpaqueRoot root(Blob* blob)
     return WebCoreOpaqueRoot { blob };
 }
 
+size_t Blob::memoryCost() const
+{
+    return size();
+}
+
 } // namespace WebCore

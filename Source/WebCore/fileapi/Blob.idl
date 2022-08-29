@@ -32,10 +32,11 @@ typedef (BufferSource or Blob or USVString) BlobPart;
 
 [
     ActiveDOMObject,
+    CustomToJSObject,
     ExportToWrappedFunction,
     Exposed=(Window,Worker),
     GenerateIsReachable=Impl,
-    CustomToJSObject,
+    ReportExtraMemoryCost
 ] interface Blob {
     [CallWith=CurrentScriptExecutionContext] constructor(optional sequence<BlobPart> blobParts, optional BlobPropertyBag options);
 

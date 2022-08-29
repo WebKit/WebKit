@@ -118,6 +118,8 @@ public:
     void arrayBuffer(Ref<DeferredPromise>&&);
     ExceptionOr<Ref<ReadableStream>> stream();
 
+    size_t memoryCost() const;
+
     // Keeping the handle alive will keep the Blob data alive (but not the Blob object).
     BlobURLHandle handle() const;
 
