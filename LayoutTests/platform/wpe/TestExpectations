@@ -1237,28 +1237,13 @@ webkit.org/b/202736 http/wpt/cache-storage/cache-quota-after-restart.any.html [ 
 webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element/datalistoptions.html [ Failure ]
 
 # WEBGL2 is disabled
-webkit.org/b/208188 fast/canvas/webgl/webgl2 [ Skip ]
-webkit.org/b/208188 fast/canvas/webgl/bufferData-offset-length.html [ Skip ]
-webkit.org/b/208188 fast/canvas/webgl/copyBufferSubData.html [ Skip ]
-webkit.org/b/208188 fast/canvas/webgl/getBufferSubData-webgl1.html [ Skip ]
-webkit.org/b/208188 fast/canvas/webgl/webgl2-buffer-targets.html [ Skip ]
-webkit.org/b/208188 fast/canvas/webgl/webgl2-buffers.html [ Skip ]
-webkit.org/b/208188 fast/canvas/webgl/webgl2-context-creation.html [ Skip ]
-webkit.org/b/208188 fast/canvas/webgl/webgl2-getActiveUniforms.html [ Skip ]
-webkit.org/b/208188 fast/canvas/webgl/webgl2-runtime-flag.html [ Skip ]
-webkit.org/b/208188 fast/canvas/webgl/webgl2-texStorage.html [ Skip ]
-webkit.org/b/208188 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Skip ]
 webkit.org/b/208188 inspector/canvas/requestContent-webgl2.html [ Skip ]
 webkit.org/b/208188 inspector/canvas/create-context-webgl2.html [ Skip ]
 webkit.org/b/208188 inspector/canvas/recording-webgl2-snapshots.html [ Skip ]
 webkit.org/b/208188 inspector/canvas/resolveContext-webgl2.html [ Skip ]
 webkit.org/b/208188 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Skip ]
-webkit.org/b/208188 webgl/webgl2-rendering-context-defined.html [ Skip ]
-webkit.org/b/208188 webgl/webgl2-rendering-context-obtain.html [ Skip ]
 webkit.org/b/208188 webgl/2.0.0 [ Skip ]
 webkit.org/b/208188 webgl/2.0.y [ Skip ]
-webkit.org/b/208188 webgl/pending/conformance2 [ Skip ]
-webkit.org/b/166536 http/tests/webgl/2.0.y/ [ Skip ]
 
 webkit.org/b/212080 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
 webkit.org/b/212080 mathml/presentation/href-style.html [ ImageOnlyFailure ]
@@ -1349,6 +1334,10 @@ webkit.org/b/244476 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [
 webkit.org/b/244479 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
 
 webkit.org/b/244482 webgl/webgl2-primitive-restart.html [ ImageOnlyFailure ]
+
+webkit.org/b/244489 fast/canvas/webgl/bufferData-offset-length.html [ Failure ]
+webkit.org/b/244490 fast/canvas/webgl/copyBufferSubData.html [ Failure ]
+webkit.org/b/244491 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 
 ######################################################
 # Test failures from turning GPU Process on by default
