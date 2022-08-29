@@ -2002,7 +2002,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
                 for (auto it = descendantsOfType<Element>(*this).begin(); it;) {
                     auto& element = *it;
                     if (auto* elementData = element.elementData()) {
-                        if (auto* attribute = elementData->findLanguageAttribute()) {
+                        if (elementData->findLanguageAttribute()) {
                             it.traverseNextSkippingChildren();
                             continue;
                         }

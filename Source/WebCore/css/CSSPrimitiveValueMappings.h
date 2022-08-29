@@ -5646,6 +5646,8 @@ constexpr CSSValueID toCSSValueID(ContentVisibility contentVisibility)
     case ContentVisibility::Auto:
         return CSSValueAuto;
     }
+    ASSERT_NOT_REACHED();
+    return CSSValueVisible;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ContentVisibility contentVisibility)
