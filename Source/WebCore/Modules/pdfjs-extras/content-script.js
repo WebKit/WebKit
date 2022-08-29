@@ -33,18 +33,19 @@ const PDFJSContentScript = {
     },
 
     setPageMode({ pages, continuous }) {
-        PDFViewerApplication.pdfViewer.spreadMode = pages == "two" ? 1 : 0;
+        const { SpreadMode, ScrollMode } = PDFViewerApplicationConstants;
+        PDFViewerApplication.pdfViewer.spreadMode = pages == "two" ? SpreadMode.ODD : SpreadMode.NONE;
 
         if (continuous)
-            PDFViewerApplication.pdfViewer.scrollMode = 0;
+            PDFViewerApplication.pdfViewer.scrollMode = ScrollMode.VERTICAL;
         else
-            PDFViewerApplication.pdfViewer.scrollMode = 3;
+            PDFViewerApplication.pdfViewer.scrollMode = ScrollMode.PAGE;
 
         this.autoResize();
     },
 
     autoResize() {
-        if (PDFViewerApplication.pdfViewer.spreadMode == 1) // Two pages.
+        if (PDFViewerApplication.pdfViewer.spreadMode == PDFViewerApplicationConstants.SpreadMode.ODD)
             PDFViewerApplication.pdfViewer.currentScaleValue = "page-fit";
         else
             PDFViewerApplication.pdfViewer.currentScaleValue = "page-width";
