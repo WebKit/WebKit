@@ -1474,6 +1474,9 @@ webkit.org/b/229052 webgl/1.0.x/conformance/textures/misc/texture-corner-case-vi
 webgl/webgl-via-metal-flag-on.html [ Skip ]
 webgl/webgl-via-metal-flag-off.html [ Skip ]
 
+# Remove after ANGLE is the default backend.
+inspector/canvas/updateShader-webgl.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
