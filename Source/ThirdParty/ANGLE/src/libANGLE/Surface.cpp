@@ -753,6 +753,9 @@ void Surface::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMess
         case angle::SubjectMessage::SurfaceChanged:
             onStateChange(angle::SubjectMessage::SurfaceChanged);
             break;
+        case angle::SubjectMessage::SwapchainImageChanged:
+            onStateChange(angle::SubjectMessage::SwapchainImageChanged);
+            break;
         default:
             UNREACHABLE();
             break;

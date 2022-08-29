@@ -67,6 +67,11 @@ declare_args() {
   # angle_deqp_tests contains threading related tests.
   angle_enable_share_context_lock =
       !build_with_chromium || build_angle_deqp_tests
+
+  if (is_android) {
+    # Use Android TLS slot to store current context.
+    angle_use_android_tls_slot = !build_with_chromium
+  }
 }
 
 if (angle_build_all) {
@@ -142,6 +147,12 @@ config("internal_config") {
 
   if (angle_enable_share_context_lock) {
     defines += [ "ANGLE_ENABLE_SHARE_CONTEXT_LOCK=1" ]
+  }
+
+  if (is_android) {
+    if (angle_use_android_tls_slot) {
+      defines += [ "ANGLE_USE_ANDROID_TLS_SLOT=1" ]
+    }
   }
 
   # Enables debug/trace-related functionality, including logging every GLES/EGL API command to the
@@ -448,6 +459,10 @@ angle_static_library("angle_common") {
 
   if (using_sanitizer && !build_with_chromium) {
     data_deps = [ "//build/config/clang:llvm-symbolizer_data($host_toolchain)" ]
+  }
+
+  if (is_apple) {
+    frameworks = [ "Metal.framework" ]
   }
 }
 
@@ -941,10 +956,13 @@ angle_source_set("libANGLE_base") {
   if (angle_enable_cl) {
     sources += libangle_cl_sources
   }
+  defines = []
+  if (angle_enable_gl_desktop_frontend) {
+    defines += [ "ANGLE_ENABLE_GL_DESKTOP_FRONTEND" ]
+  }
 
   include_dirs = []
   libs = []
-  defines = []
   if (angle_link_glx) {
     libs += [ "GL" ]
     defines += [ "ANGLE_LINK_GLX" ]
@@ -1239,6 +1257,11 @@ config("library_name_config") {
       "ANGLE_EGL_LIBRARY_NAME=\"libEGL${angle_libs_suffix}.cr\"",
       "ANGLE_GLESV2_LIBRARY_NAME=\"libGLESv2${angle_libs_suffix}.cr\"",
     ]
+  } else if (angle_expose_wgl_entry_points) {
+    defines = [
+      "ANGLE_EGL_LIBRARY_NAME=\"libEGL\"",
+      "ANGLE_GLESV2_LIBRARY_NAME=\"opengl32\"",
+    ]
   } else {
     defines = [
       "ANGLE_EGL_LIBRARY_NAME=\"libEGL${angle_libs_suffix}\"",
@@ -1266,10 +1289,9 @@ set_defaults("angle_libGLESv2") {
 
 template("angle_libGLESv2") {
   angle_shared_library(target_name) {
-    sources = libglesv2_sources + invoker.sources
-    if (angle_enable_cl) {
-      sources += libglesv2_cl_sources
-    }
+    sources = invoker.sources + libglesv2_sources
+    deps = invoker.deps + [ ":includes" ]
+    defines = [ "LIBGLESV2_IMPLEMENTATION" ]
 
     output_name = "${invoker.output_name}${angle_libs_suffix}"
     if (angle_glesv2_extension != "") {
@@ -1282,9 +1304,24 @@ template("angle_libGLESv2") {
       ":gl_prototypes",
     ]
 
-    defines = [ "LIBGLESV2_IMPLEMENTATION" ]
+    if (angle_enable_gl_desktop_frontend) {
+      sources += libglesv2_gl_sources
+      defines += [ "ANGLE_ENABLE_GL_DESKTOP_FRONTEND" ]
+    }
 
-    deps = invoker.deps + [ ":includes" ]
+    if (angle_expose_wgl_entry_points) {
+      sources += [
+        "src/libGLESv2/entry_points_wgl.cpp",
+        "src/libGLESv2/entry_points_wgl.h",
+        "src/libGLESv2/proc_table_wgl.h",
+        "src/libGLESv2/proc_table_wgl_autogen.cpp",
+      ]
+      defines += [ "ANGLE_EXPOSE_WGL_ENTRY_POINTS" ]
+    }
+
+    if (angle_enable_cl) {
+      sources += libglesv2_cl_sources
+    }
 
     if (is_win) {
       sources += [
@@ -1317,37 +1354,33 @@ if (angle_has_frame_capture) {
   }
 }
 
-if (is_win && !angle_is_winuwp) {
-  angle_shared_library("libGL") {
-    sources = libgl_sources
-
-    output_name = "openGL32"
-    output_dir = "$root_out_dir/angle_libs"
-
-    configs += [
-      ":angle_gl_visibility_config",
-      ":debug_annotations_config",
-      ":gl_prototypes",
-    ]
-
-    defines = [
-      "ANGLE_CAPTURE_ENABLED=0",
-      "LIBGL_IMPLEMENTATION",
-    ]
-
-    deps = [
-      ":includes",
-      ":libANGLE",
-    ]
-
+if (angle_enable_gl_desktop_frontend) {
+  angle_libGLESv2("libGL") {
     if (is_win) {
-      deps += [ ":angle_version" ]
+      output_name = "opengl32"
+    } else {
+      output_name = "libGL"
     }
+
+    deps = [ ":libANGLE" ]
   }
 }
 
 angle_static_library("libGLESv2_static") {
   sources = libglesv2_sources
+  if (angle_enable_gl_desktop_frontend) {
+    sources += libglesv2_gl_sources
+    defines = [ "ANGLE_ENABLE_GL_DESKTOP_FRONTEND" ]
+  }
+  if (angle_expose_wgl_entry_points) {
+    sources += [
+      "src/libGLESv2/entry_points_wgl.cpp",
+      "src/libGLESv2/entry_points_wgl.h",
+      "src/libGLESv2/proc_table_wgl.h",
+      "src/libGLESv2/proc_table_wgl_autogen.cpp",
+    ]
+    defines += [ "ANGLE_EXPOSE_WGL_ENTRY_POINTS" ]
+  }
   if (angle_enable_cl) {
     sources += libglesv2_cl_sources
   }

@@ -65,7 +65,7 @@ public:
         CCallHelpers::Call operationCall = jit.call(OperationPtrTag);
         auto function = m_function;
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(function));
+            linkBuffer.link<OperationPtrTag>(operationCall, function);
         });
 
         jit.setupResults(m_result);

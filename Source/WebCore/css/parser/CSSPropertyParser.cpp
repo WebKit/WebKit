@@ -4178,6 +4178,11 @@ static RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange& range)
     return list;
 }
 
+static RefPtr<CSSValue> consumeContentVisibility(CSSParserTokenRange& range)
+{
+    return consumeIdent<CSSValueVisible, CSSValueAuto, CSSValueHidden>(range);
+}
+
 static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
 {
     bool foundOverOrUnder = false;
@@ -4229,7 +4234,7 @@ static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
 
 static RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range)
 {
-    if (isAuto(range.peek().id()))
+    if (range.peek().id() == CSSValueNormal)
         return consumeIdent(range);
 
     Vector<CSSValueID, 3> identifiers;
@@ -4241,8 +4246,8 @@ static RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range)
         CSSValueID id = range.peek().id();
 
         switch (id) {
-        case CSSValueAuto:
-            // Auto is only allowed as a single value, and was handled earlier.
+        case CSSValueNormal:
+            // `normal` is only allowed as a single value, and was handled earlier.
             // Don't allow it in the list.
             return nullptr;
 
@@ -4787,6 +4792,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeAspectRatio(m_range);
     case CSSPropertyContain:
         return consumeContain(m_range);
+    case CSSPropertyContentVisibility:
+        return consumeContentVisibility(m_range);
     case CSSPropertyTextEmphasisPosition:
         return consumeTextEmphasisPosition(m_range);
 #if ENABLE(DARK_MODE_CSS)
@@ -5331,7 +5338,9 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
 {
     if (identMatches<CSSValueNormal, CSSValueNone>(m_range.peek().id())) {
         addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFontVariant, consumeIdent(m_range).releaseNonNull(), important);
+        addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
         addProperty(CSSPropertyFontVariantCaps, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
+        addProperty(CSSPropertyFontVariantAlternates, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
         addProperty(CSSPropertyFontVariantEastAsian, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
         addProperty(CSSPropertyFontVariantPosition, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
         return m_range.atEnd();

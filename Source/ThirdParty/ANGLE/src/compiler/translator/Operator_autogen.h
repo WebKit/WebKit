@@ -428,6 +428,13 @@ enum TOperator : uint16_t
     // Group PixelLocalStore
     EOpPixelLocalStoreANGLE,
 
+    // Group FragmentSynchronization
+    EOpBeginInvocationInterlockNV,
+    EOpEndInvocationInterlockNV,
+    EOpBeginFragmentShaderOrderingINTEL,
+    EOpBeginInvocationInterlockARB,
+    EOpEndInvocationInterlockARB,
+
     // Group Noise
     EOpNoise1,
     EOpNoise2,

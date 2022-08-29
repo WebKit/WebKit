@@ -762,8 +762,6 @@ String AccessibilityRenderObject::stringValue() const
     if (isPasswordField())
         return passwordFieldValue();
 
-    RenderBoxModelObject* cssBox = renderBoxModelObject();
-
     if (isARIAStaticText()) {
         String staticText = text();
         if (!staticText.length())
@@ -771,28 +769,28 @@ String AccessibilityRenderObject::stringValue() const
         return staticText;
     }
         
-    if (is<RenderText>(*m_renderer))
+    if (is<RenderText>(m_renderer.get()))
         return textUnderElement();
 
-    if (is<RenderMenuList>(cssBox)) {
+    if (auto* renderMenuList = dynamicDowncast<RenderMenuList>(m_renderer.get())) {
         // RenderMenuList will go straight to the text() of its selected item.
         // This has to be overridden in the case where the selected item has an ARIA label.
-        HTMLSelectElement& selectElement = downcast<HTMLSelectElement>(*m_renderer->node());
+        auto& selectElement = renderMenuList->selectElement();
         int selectedIndex = selectElement.selectedIndex();
-        const Vector<HTMLElement*>& listItems = selectElement.listItems();
+        const auto& listItems = selectElement.listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
             const AtomString& overriddenDescription = listItems[selectedIndex]->attributeWithoutSynchronization(aria_labelAttr);
             if (!overriddenDescription.isNull())
                 return overriddenDescription;
         }
-        return downcast<RenderMenuList>(*m_renderer).text();
+        return renderMenuList->text();
     }
 
-    if (is<RenderListMarker>(*m_renderer)) {
+    if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(m_renderer.get())) {
 #if USE(ATSPI)
-        return downcast<RenderListMarker>(*m_renderer).textWithSuffix().toString();
+        return renderListMarker->textWithSuffix().toString();
 #else
-        return downcast<RenderListMarker>(*m_renderer).textWithoutSuffix().toString();
+        return renderListMarker->textWithoutSuffix().toString();
 #endif
     }
 
@@ -806,9 +804,9 @@ String AccessibilityRenderObject::stringValue() const
     if (isInputTypePopupButton())
         return textUnderElement();
 #endif
-    
-    if (is<RenderFileUploadControl>(*m_renderer))
-        return downcast<RenderFileUploadControl>(*m_renderer).fileTextValue();
+
+    if (auto* renderFileUploadControl = dynamicDowncast<RenderFileUploadControl>(m_renderer.get()))
+        return renderFileUploadControl->fileTextValue();
     
     // FIXME: We might need to implement a value here for more types
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
@@ -3274,7 +3272,11 @@ void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& re
 
     // Get all the rows.
     auto rowsIteration = [&](const auto& rows) {
-        for (auto& row : rows) {
+        for (auto& rowCoreObject : rows) {
+            auto* row = dynamicDowncast<AccessibilityObject>(rowCoreObject.get());
+            if (!row)
+                continue;
+
             if (row->isSelected() || row->isActiveDescendantOfFocusedContainer()) {
                 result.append(row);
                 if (!isMulti)
@@ -3299,10 +3301,13 @@ void AccessibilityRenderObject::ariaListboxSelectedChildren(AccessibilityChildre
 
     for (const auto& child : children()) {
         // Every child should have aria-role option, and if so, check for selected attribute/state.
-        if (child->ariaRoleAttribute() == AccessibilityRole::ListBoxOption && (child->isSelected() || child->isActiveDescendantOfFocusedContainer())) {
-            result.append(child);
-            if (!isMulti)
-                return;
+        if (child->ariaRoleAttribute() == AccessibilityRole::ListBoxOption) {
+            auto* childAxObject = dynamicDowncast<AccessibilityObject>(child.get());
+            if (childAxObject->isSelected() || childAxObject->isActiveDescendantOfFocusedContainer()) {
+                result.append(childAxObject);
+                if (!isMulti)
+                    return;
+            }
         }
     }
 }

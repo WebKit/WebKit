@@ -30,7 +30,9 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <variant>
 #include <wtf/Forward.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -104,10 +104,10 @@ static tcu::TestPackage *createES32Package(tcu::TestContext &testCtx)
 // {
 //     return new gl4cts::GL45TestPackage(testCtx, "KHR-GL45");
 // }
-// static tcu::TestPackage* createGL46Package(tcu::TestContext& testCtx)
-// {
-//     return new gl4cts::GL46TestPackage(testCtx, "KHR-GL46");
-// }
+static tcu::TestPackage *createGL46Package(tcu::TestContext &testCtx)
+{
+    return new gl4cts::GL46TestPackage(testCtx, "KHR-GL46");
+}
 
 void registerPackages(void)
 {
@@ -136,7 +136,7 @@ void registerPackages(void)
     // registry->registerPackage("KHR-GL43", createGL43Package);
     // registry->registerPackage("KHR-GL44", createGL44Package);
     // registry->registerPackage("KHR-GL45", createGL45Package);
-    // registry->registerPackage("KHR-GL46", createGL46Package);
+    registry->registerPackage("KHR-GL46", createGL46Package);
 }
 }  // namespace glcts
 

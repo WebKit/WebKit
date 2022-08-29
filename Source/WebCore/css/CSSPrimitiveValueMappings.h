@@ -5636,4 +5636,40 @@ template<> inline CSSPrimitiveValue::operator ContainerType() const
     return ContainerType::Normal;
 }
 
+constexpr CSSValueID toCSSValueID(ContentVisibility contentVisibility)
+{
+    switch (contentVisibility) {
+    case ContentVisibility::Visible:
+        return CSSValueVisible;
+    case ContentVisibility::Hidden:
+        return CSSValueHidden;
+    case ContentVisibility::Auto:
+        return CSSValueAuto;
+    }
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ContentVisibility contentVisibility)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    m_value.valueID = toCSSValueID(contentVisibility);
+}
+
+template<> inline CSSPrimitiveValue::operator ContentVisibility() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueVisible:
+        return ContentVisibility::Visible;
+    case CSSValueHidden:
+        return ContentVisibility::Hidden;
+    case CSSValueAuto:
+        return ContentVisibility::Auto;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return ContentVisibility::Visible;
+}
+
 }

@@ -307,7 +307,8 @@
             "name": "getEventListenersForNode",
             "description": "Returns event listeners relevant to the node.",
             "parameters": [
-                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get listeners for." }
+                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get listeners for." },
+                { "name": "includeAncestors", "type": "boolean", "optional": true, "description": "Controls whether ancestor event listeners are included. Defaults to true." }
             ],
             "returns": [
                 { "name": "listeners", "type": "array", "items": { "$ref": "EventListener"}, "description": "Array of relevant listeners." }

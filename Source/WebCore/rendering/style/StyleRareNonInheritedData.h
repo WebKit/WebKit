@@ -213,7 +213,8 @@ public:
 
     unsigned textDecorationStyle : 3; // TextDecorationStyle
 
-    unsigned aspectRatioType : 3;
+    unsigned aspectRatioType : 2; // AspectRatioType
+    unsigned contentVisibility : 2; // ContentVisibility
 
 #if ENABLE(CSS_COMPOSITING)
     unsigned effectiveBlendMode: 5; // EBlendMode

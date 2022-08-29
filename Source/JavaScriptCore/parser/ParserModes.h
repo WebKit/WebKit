@@ -330,9 +330,11 @@ const CodeFeatures SuperCallFeature =              1 << 8;
 const CodeFeatures SuperPropertyFeature =          1 << 9;
 const CodeFeatures NewTargetFeature =              1 << 10;
 const CodeFeatures NoEvalCacheFeature =            1 << 11;
+const CodeFeatures ImportMetaFeature =             1 << 12;
 
-const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | NonSimpleParameterListFeature | ShadowsArgumentsFeature | ArrowFunctionFeature | AwaitFeature | SuperCallFeature | SuperPropertyFeature | NewTargetFeature | NoEvalCacheFeature;
-static_assert(AllFeatures < (1 << 14), "CodeFeatures must be 14bits");
+const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | NonSimpleParameterListFeature | ShadowsArgumentsFeature | ArrowFunctionFeature | AwaitFeature | SuperCallFeature | SuperPropertyFeature | NewTargetFeature | NoEvalCacheFeature | ImportMetaFeature;
+static constexpr unsigned bitWidthOfCodeFeatures = 14;
+static_assert(AllFeatures <= (1 << bitWidthOfCodeFeatures) - 1, "CodeFeatures must fit within 14 bits");
 
 typedef uint8_t InnerArrowFunctionCodeFeatures;
     

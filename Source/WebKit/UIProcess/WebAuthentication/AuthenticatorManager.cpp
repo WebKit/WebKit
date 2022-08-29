@@ -404,6 +404,7 @@ void AuthenticatorManager::requestLAContextForUserVerification(CompletionHandler
 void AuthenticatorManager::cancelRequest()
 {
     invokePendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by the user."_s });
+    RELEASE_LOG_ERROR(WebAuthn, "Request cancelled due to AuthenticatorManager::cancelRequest being called.");
     clearState();
     m_requestTimeOutTimer.stop();
 }

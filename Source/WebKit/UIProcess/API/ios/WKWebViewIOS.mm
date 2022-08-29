@@ -177,6 +177,8 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
         [_scrollView _setAvoidsJumpOnInterruptedBounce:YES];
     }
 
+    _scrollViewDefaultAllowedTouchTypes = [_scrollView panGestureRecognizer].allowedTouchTypes;
+
     [self _updateScrollViewInsetAdjustmentBehavior];
 
     [self addSubview:_scrollView.get()];
@@ -485,6 +487,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 
         _perProcessState.scrollViewBackgroundColor = WebCore::Color();
         [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
+        [_scrollView panGestureRecognizer].allowedTouchTypes = _scrollViewDefaultAllowedTouchTypes.get();
         [_scrollView _setScrollEnabledInternal:YES];
 
         [self _setAvoidsUnsafeArea:NO];
@@ -919,7 +922,10 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     }
 
     bool scrollingEnabled = _page->scrollingCoordinatorProxy()->hasScrollableOrZoomedMainFrame() || hasDockedInputView || isZoomed || scrollingNeededToRevealUI;
-    [_scrollView _setScrollEnabledInternal:scrollingEnabled];
+
+    // FIXME: <rdar://99001670> Get the default list of allowed touch types from UIKit instead of caching the returned value.
+    [_scrollView panGestureRecognizer].allowedTouchTypes = scrollingEnabled ? _scrollViewDefaultAllowedTouchTypes.get() : @[ ];
+    [_scrollView _setScrollEnabledInternal:YES];
 
     if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom] && !WebKit::scalesAreEssentiallyEqual([_scrollView zoomScale], layerTreeTransaction.pageScaleFactor())) {
         LOG_WITH_STREAM(VisibleRects, stream << " updating scroll view with pageScaleFactor " << layerTreeTransaction.pageScaleFactor());
@@ -1872,8 +1878,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 - (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion
 {
+    BOOL isHandledByDefault = !scrollView.scrollEnabled;
+
     if (scrollEvent.phase == UIScrollPhaseMayBegin) {
-        completion(NO);
+        completion(isHandledByDefault);
         return;
     }
 
@@ -1886,7 +1894,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     auto eventListeners = WebKit::eventListenerTypesAtPoint(_contentView.get(), scrollLocation);
     bool hasWheelHandlers = eventListeners.contains(WebCore::EventListenerRegionType::Wheel);
     if (!hasWheelHandlers) {
-        completion(NO);
+        completion(isHandledByDefault);
         return;
     }
 
@@ -1896,7 +1904,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     // EventHandler::handleWheelEventInAppropriateEnclosingBox.
     CGVector deltaVector = [scrollEvent _adjustedAcceleratedDeltaInView:_contentView.get()];
     if (!deltaVector.dx && !deltaVector.dy && scrollEvent.phase != UIScrollPhaseEnded)  {
-        completion(NO);
+        completion(isHandledByDefault);
         return;
     }
 
@@ -1912,22 +1920,22 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     auto event = WebIOSEventFactory::createWebWheelEvent(scrollEvent, _contentView.get(), overridePhase);
 
     _wheelEventCountInCurrentScrollGesture++;
-    _page->dispatchWheelEventWithoutScrolling(event, [weakSelf = WeakObjCPtr<WKWebView>(self), strongCompletion = makeBlockPtr(completion), isCancelable](bool handled) {
+    _page->dispatchWheelEventWithoutScrolling(event, [weakSelf = WeakObjCPtr<WKWebView>(self), strongCompletion = makeBlockPtr(completion), isCancelable, isHandledByDefault](bool handled) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf) {
-            strongCompletion(NO);
+            strongCompletion(isHandledByDefault);
             return;
         }
 
         if (isCancelable) {
             if (!strongSelf->_currentScrollGestureState)
                 strongSelf->_currentScrollGestureState = handled ? WebCore::WheelScrollGestureState::Blocking : WebCore::WheelScrollGestureState::NonBlocking;
-            strongCompletion(handled);
+            strongCompletion(isHandledByDefault || handled);
         }
     });
 
     if (!isCancelable)
-        completion(NO);
+        completion(isHandledByDefault);
 }
 #endif // HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 

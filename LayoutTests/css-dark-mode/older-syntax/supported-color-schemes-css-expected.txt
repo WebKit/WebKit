@@ -14,7 +14,7 @@ PASS Dark color scheme enabled 3
 PASS Element colors are correct in dark color scheme with only dark supported color scheme
 PASS Supported color schemes changed to light and a bogus value
 PASS Element colors are correct in dark color scheme with only light supported color scheme 2
-PASS Supported color schemes changed to auto value
+PASS Supported color schemes changed to normal value
 PASS Element colors are correct in dark color scheme with implicit light supported color scheme
 PASS Supported color schemes changed to light and dark via <meta> element
 PASS Element colors are correct in dark color scheme with light and dark supported color scheme via <meta> element

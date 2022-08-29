@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+enum class PermissionQuerySource : uint8_t;
 enum class PermissionState : uint8_t;
 class Page;
 class PermissionObserver;
@@ -43,7 +44,7 @@ public:
     WEBCORE_EXPORT static void setSharedController(Ref<PermissionController>&&);
     
     virtual ~PermissionController() = default;
-    virtual void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, Page&, CompletionHandler<void(std::optional<PermissionState>)>&&) = 0;
+    virtual void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, Page*, PermissionQuerySource, CompletionHandler<void(std::optional<PermissionState>)>&&) = 0;
     virtual void addObserver(PermissionObserver&) = 0;
     virtual void removeObserver(PermissionObserver&) = 0;
 protected:
@@ -55,7 +56,7 @@ public:
     static Ref<DummyPermissionController> create() { return adoptRef(*new DummyPermissionController); }
 private:
     DummyPermissionController() = default;
-    void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, Page&, CompletionHandler<void(std::optional<PermissionState>)>&& callback) final { callback({ }); }
+    void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, Page*, PermissionQuerySource, CompletionHandler<void(std::optional<PermissionState>)>&& callback) final { callback({ }); }
     void addObserver(PermissionObserver&) final { }
     void removeObserver(PermissionObserver&) final { }
 };

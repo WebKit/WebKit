@@ -130,7 +130,7 @@ public:
         return generatedJITCodeForConstruct();
     }
 
-    MacroAssemblerCodePtr<JSEntryPtrTag> entrypointFor(CodeSpecializationKind kind, ArityCheckMode arity)
+    CodePtr<JSEntryPtrTag> entrypointFor(CodeSpecializationKind kind, ArityCheckMode arity)
     {
         // Check if we have a cached result. We only have it for arity check because we use the
         // no-arity entrypoint in non-virtual calls, which will "cache" this value directly in
@@ -138,16 +138,16 @@ public:
         if (arity == MustCheckArity) {
             switch (kind) {
             case CodeForCall:
-                if (MacroAssemblerCodePtr<JSEntryPtrTag> result = m_jitCodeForCallWithArityCheck)
+                if (CodePtr<JSEntryPtrTag> result = m_jitCodeForCallWithArityCheck)
                     return result;
                 break;
             case CodeForConstruct:
-                if (MacroAssemblerCodePtr<JSEntryPtrTag> result = m_jitCodeForConstructWithArityCheck)
+                if (CodePtr<JSEntryPtrTag> result = m_jitCodeForConstructWithArityCheck)
                     return result;
                 break;
             }
         }
-        MacroAssemblerCodePtr<JSEntryPtrTag> result = generatedJITCodeFor(kind)->addressForCall(arity);
+        CodePtr<JSEntryPtrTag> result = generatedJITCodeFor(kind)->addressForCall(arity);
         if (arity == MustCheckArity) {
             // Cache the result; this is necessary for the JIT's virtual call optimizations.
             switch (kind) {
@@ -203,8 +203,8 @@ public:
 protected:
     RefPtr<JITCode> m_jitCodeForCall;
     RefPtr<JITCode> m_jitCodeForConstruct;
-    MacroAssemblerCodePtr<JSEntryPtrTag> m_jitCodeForCallWithArityCheck;
-    MacroAssemblerCodePtr<JSEntryPtrTag> m_jitCodeForConstructWithArityCheck;
+    CodePtr<JSEntryPtrTag> m_jitCodeForCallWithArityCheck;
+    CodePtr<JSEntryPtrTag> m_jitCodeForConstructWithArityCheck;
 };
 
 } // namespace JSC

@@ -11,8 +11,13 @@
           (drawsContent 1)
           (children 2
             (GraphicsLayer
-              (bounds 10.00 10.00)
-              (contentsOpaque 1)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 10.00 10.00)
+                  (contentsOpaque 1)
+                )
+              )
             )
             (GraphicsLayer
               (bounds 785.00 1021.00)

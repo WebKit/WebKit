@@ -11,8 +11,6 @@
 // Crashing Tests
 1442 OPENGL : dEQP-GLES31.functional.program_interface_query.transform_feedback_varying.resource_list.vertex_fragment.builtin_gl_position = SKIP
 
-1442 D3D11 : dEQP-GLES31.functional.image_load_store.3d.qualifiers.coherent_r32f = SKIP
-1442 D3D11 : dEQP-GLES31.functional.image_load_store.3d.qualifiers.volatile_r32f = SKIP
 1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32f_rgba8ui = SKIP
 1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32f_rgba8i = SKIP
 1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32f_rgba8 = SKIP
@@ -37,8 +35,7 @@
 1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_snorm_r32f = SKIP
 1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_snorm_r32ui = SKIP
 1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_snorm_r32i = SKIP
-7345 NVIDIA D3D11 : dEQP-GLES31.functional.image_load_store.2d_array.qualifiers.volatile_r32f = SKIP
-7345 NVIDIA D3D11 : dEQP-GLES31.functional.image_load_store.2d_array.qualifiers.coherent_r32f = SKIP
+7345 D3D11 : dEQP-GLES31.functional.image_load_store.*.qualifiers.* = SKIP
 
 // Times out shader compilation because it uses so many resources.
 3445 : dEQP-GLES31.functional.ssbo.layout.random.all_shared_buffer.48 = SKIP

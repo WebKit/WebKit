@@ -26,7 +26,7 @@
 #pragma once
 
 #if USE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
-#include <wtf/MetaAllocatorPtr.h>
+#include <wtf/CodePtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #else
 #include <wtf/MetaAllocatorHandle.h>
@@ -39,7 +39,7 @@ class ExecutableMemoryHandle : public ThreadSafeRefCounted<ExecutableMemoryHandl
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ExecutableMemoryHandle);
 
 public:
-    using MemoryPtr = MetaAllocatorPtr<WTF::HandleMemoryPtrTag>;
+    using MemoryPtr = CodePtr<WTF::HandleMemoryPtrTag>;
 
     // Don't call this directly - for proper accounting it's necessary to call
     // ExecutableAllocator::allocate().
@@ -54,7 +54,7 @@ public:
 
     MemoryPtr end() const
     {
-        return MemoryPtr::makeFromRawPointer(reinterpret_cast<void*>(endAsInteger()));
+        return MemoryPtr::fromUntaggedPtr(reinterpret_cast<void*>(endAsInteger()));
     }
 
     uintptr_t startAsInteger() const

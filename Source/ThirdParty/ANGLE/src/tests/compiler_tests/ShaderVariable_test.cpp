@@ -15,7 +15,21 @@
 namespace sh
 {
 
-TEST(ShaderVariableTest, FindInfoByMappedName)
+class ShaderVariableTest : public testing::Test
+{
+  public:
+    ShaderVariableTest() : mVariablesCompileOptions{}, mObjectCodeCompileOptions{}
+    {
+        mVariablesCompileOptions.variables   = true;
+        mObjectCodeCompileOptions.objectCode = true;
+    }
+
+  protected:
+    ShCompileOptions mVariablesCompileOptions;
+    ShCompileOptions mObjectCodeCompileOptions;
+};
+
+TEST_F(ShaderVariableTest, FindInfoByMappedName)
 {
     // struct A {
     //   float x[2];
@@ -78,7 +92,7 @@ TEST(ShaderVariableTest, FindInfoByMappedName)
     EXPECT_STREQ("uni[0].a[1].y", originalFullName.c_str());
 }
 
-TEST(ShaderVariableTest, IsSameUniformWithDifferentFieldOrder)
+TEST_F(ShaderVariableTest, IsSameUniformWithDifferentFieldOrder)
 {
     // struct A {
     //   float x;
@@ -125,7 +139,7 @@ TEST(ShaderVariableTest, IsSameUniformWithDifferentFieldOrder)
     EXPECT_FALSE(vx_a.isSameUniformAtLinkTime(fx_a));
 }
 
-TEST(ShaderVariableTest, IsSameUniformWithDifferentStructNames)
+TEST_F(ShaderVariableTest, IsSameUniformWithDifferentStructNames)
 {
     // struct A {
     //   float x;
@@ -178,7 +192,7 @@ TEST(ShaderVariableTest, IsSameUniformWithDifferentStructNames)
     EXPECT_FALSE(vx_a.isSameUniformAtLinkTime(fx_a));
 }
 
-TEST(ShaderVariableTest, IsSameVaryingWithDifferentInvariance)
+TEST_F(ShaderVariableTest, IsSameVaryingWithDifferentInvariance)
 {
     // invariant varying float vary;
     ShaderVariable vx;
@@ -212,7 +226,7 @@ TEST(ShaderVariableTest, IsSameVaryingWithDifferentInvariance)
 }
 
 // Test that using invariant varyings doesn't trigger a double delete.
-TEST(ShaderVariableTest, InvariantDoubleDeleteBug)
+TEST_F(ShaderVariableTest, InvariantDoubleDeleteBug)
 {
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
@@ -230,12 +244,12 @@ TEST(ShaderVariableTest, InvariantDoubleDeleteBug)
         "  gl_Position = position;\n"
         "}"};
 
-    EXPECT_TRUE(sh::Compile(compiler, program, 1, SH_OBJECT_CODE));
-    EXPECT_TRUE(sh::Compile(compiler, program, 1, SH_OBJECT_CODE));
+    EXPECT_TRUE(sh::Compile(compiler, program, 1, mObjectCodeCompileOptions));
+    EXPECT_TRUE(sh::Compile(compiler, program, 1, mObjectCodeCompileOptions));
     sh::Destruct(compiler);
 }
 
-TEST(ShaderVariableTest, IllegalInvariantVarying)
+TEST_F(ShaderVariableTest, IllegalInvariantVarying)
 {
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
@@ -265,12 +279,12 @@ TEST(ShaderVariableTest, IllegalInvariantVarying)
         "  gl_Position = v_varying;\n"
         "}"};
 
-    EXPECT_TRUE(sh::Compile(compiler, program1, 1, SH_VARIABLES));
-    EXPECT_FALSE(sh::Compile(compiler, program2, 1, SH_VARIABLES));
+    EXPECT_TRUE(sh::Compile(compiler, program1, 1, mVariablesCompileOptions));
+    EXPECT_FALSE(sh::Compile(compiler, program2, 1, mVariablesCompileOptions));
     sh::Destruct(compiler);
 }
 
-TEST(ShaderVariableTest, InvariantLeakAcrossShaders)
+TEST_F(ShaderVariableTest, InvariantLeakAcrossShaders)
 {
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
@@ -291,7 +305,7 @@ TEST(ShaderVariableTest, InvariantLeakAcrossShaders)
         "  gl_Position = v_varying;\n"
         "}"};
 
-    EXPECT_TRUE(sh::Compile(compiler, program1, 1, SH_VARIABLES));
+    EXPECT_TRUE(sh::Compile(compiler, program1, 1, mVariablesCompileOptions));
     const std::vector<sh::ShaderVariable> *varyings = sh::GetOutputVaryings(compiler);
     for (const sh::ShaderVariable &varying : *varyings)
     {
@@ -300,7 +314,7 @@ TEST(ShaderVariableTest, InvariantLeakAcrossShaders)
             EXPECT_TRUE(varying.isInvariant);
         }
     }
-    EXPECT_TRUE(sh::Compile(compiler, program2, 1, SH_VARIABLES));
+    EXPECT_TRUE(sh::Compile(compiler, program2, 1, mVariablesCompileOptions));
     varyings = sh::GetOutputVaryings(compiler);
     for (const sh::ShaderVariable &varying : *varyings)
     {
@@ -312,7 +326,7 @@ TEST(ShaderVariableTest, InvariantLeakAcrossShaders)
     sh::Destruct(compiler);
 }
 
-TEST(ShaderVariableTest, GlobalInvariantLeakAcrossShaders)
+TEST_F(ShaderVariableTest, GlobalInvariantLeakAcrossShaders)
 {
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
@@ -333,7 +347,7 @@ TEST(ShaderVariableTest, GlobalInvariantLeakAcrossShaders)
         "  gl_Position = v_varying;\n"
         "}"};
 
-    EXPECT_TRUE(sh::Compile(compiler, program1, 1, SH_VARIABLES));
+    EXPECT_TRUE(sh::Compile(compiler, program1, 1, mVariablesCompileOptions));
     const std::vector<sh::ShaderVariable> *varyings = sh::GetOutputVaryings(compiler);
     for (const sh::ShaderVariable &varying : *varyings)
     {
@@ -342,7 +356,7 @@ TEST(ShaderVariableTest, GlobalInvariantLeakAcrossShaders)
             EXPECT_TRUE(varying.isInvariant);
         }
     }
-    EXPECT_TRUE(sh::Compile(compiler, program2, 1, SH_VARIABLES));
+    EXPECT_TRUE(sh::Compile(compiler, program2, 1, mVariablesCompileOptions));
     varyings = sh::GetOutputVaryings(compiler);
     for (const sh::ShaderVariable &varying : *varyings)
     {
@@ -354,9 +368,8 @@ TEST(ShaderVariableTest, GlobalInvariantLeakAcrossShaders)
     sh::Destruct(compiler);
 }
 
-TEST(ShaderVariableTest, BuiltinInvariantVarying)
+TEST_F(ShaderVariableTest, BuiltinInvariantVarying)
 {
-
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
 
@@ -379,7 +392,7 @@ TEST(ShaderVariableTest, BuiltinInvariantVarying)
         "  gl_Position = vec4(0, 0, 0, 0);\n"
         "}"};
 
-    EXPECT_TRUE(sh::Compile(compiler, program1, 1, SH_VARIABLES));
+    EXPECT_TRUE(sh::Compile(compiler, program1, 1, mVariablesCompileOptions));
     const std::vector<sh::ShaderVariable> *varyings = sh::GetOutputVaryings(compiler);
     for (const sh::ShaderVariable &varying : *varyings)
     {
@@ -388,7 +401,7 @@ TEST(ShaderVariableTest, BuiltinInvariantVarying)
             EXPECT_TRUE(varying.isInvariant);
         }
     }
-    EXPECT_TRUE(sh::Compile(compiler, program2, 1, SH_VARIABLES));
+    EXPECT_TRUE(sh::Compile(compiler, program2, 1, mVariablesCompileOptions));
     varyings = sh::GetOutputVaryings(compiler);
     for (const sh::ShaderVariable &varying : *varyings)
     {
@@ -397,12 +410,12 @@ TEST(ShaderVariableTest, BuiltinInvariantVarying)
             EXPECT_FALSE(varying.isInvariant);
         }
     }
-    EXPECT_FALSE(sh::Compile(compiler, program3, 1, SH_VARIABLES));
+    EXPECT_FALSE(sh::Compile(compiler, program3, 1, mVariablesCompileOptions));
     sh::Destruct(compiler);
 }
 
 // Verify in ES3.1 two varyings with either same name or same declared location can match.
-TEST(ShaderVariableTest, IsSameVaryingWithDifferentName)
+TEST_F(ShaderVariableTest, IsSameVaryingWithDifferentName)
 {
     // Varying float vary1;
     ShaderVariable vx;
@@ -449,7 +462,7 @@ TEST(ShaderVariableTest, IsSameVaryingWithDifferentName)
 }
 
 // Test that using two consecutive underscores (__) can be used for declaring an identifier
-TEST(ShaderVariableTest, DoubleUnderscoresForIdentifier)
+TEST_F(ShaderVariableTest, DoubleUnderscoresForIdentifier)
 {
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
@@ -466,7 +479,7 @@ TEST(ShaderVariableTest, DoubleUnderscoresForIdentifier)
         "  v = 1.0;\n"
         "  gl_Position = __position;\n"
         "}"};
-    EXPECT_TRUE(sh::Compile(compiler, front_underscores, 1, SH_OBJECT_CODE));
+    EXPECT_TRUE(sh::Compile(compiler, front_underscores, 1, mObjectCodeCompileOptions));
 
     const char *middle_underscores[] = {
         "#version 300 es\n"
@@ -476,7 +489,7 @@ TEST(ShaderVariableTest, DoubleUnderscoresForIdentifier)
         "  v = 1.0;\n"
         "  gl_Position = position__in;\n"
         "}"};
-    EXPECT_TRUE(sh::Compile(compiler, middle_underscores, 1, SH_OBJECT_CODE));
+    EXPECT_TRUE(sh::Compile(compiler, middle_underscores, 1, mObjectCodeCompileOptions));
 
     const char *end_underscores[] = {
         "#version 300 es\n"
@@ -486,7 +499,7 @@ TEST(ShaderVariableTest, DoubleUnderscoresForIdentifier)
         "  v = 1.0;\n"
         "  gl_Position = position__;\n"
         "}"};
-    EXPECT_TRUE(sh::Compile(compiler, end_underscores, 1, SH_OBJECT_CODE));
+    EXPECT_TRUE(sh::Compile(compiler, end_underscores, 1, mObjectCodeCompileOptions));
 
     sh::Destruct(compiler);
 }

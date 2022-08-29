@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "ImageBufferBackendHandle.h"
 #include "RemoteDisplayListRecorderProxy.h"
 #include <WebCore/ImageBuffer.h>
 #include <wtf/Condition.h>
@@ -54,6 +55,12 @@ public:
 
     void waitForDidFlushOnSecondaryThread(WebCore::GraphicsContextFlushIdentifier);
 
+    WebCore::ImageBufferBackend* ensureBackendCreated() const final;
+    void didFlush(WebCore::GraphicsContextFlushIdentifier) final;
+
+    void clearBackend();
+    void backingStoreWillChange();
+    void didCreateImageBufferBackend(ImageBufferBackendHandle&&);
 private:
     RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&);
 
@@ -61,14 +68,7 @@ private:
     // only gets modified on the main thread.
     bool hasPendingFlush() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
 
-    void didFlush(WebCore::GraphicsContextFlushIdentifier) final;
-
-    void backingStoreWillChange() final;
-
     void waitForDidFlushWithTimeout();
-
-    WebCore::ImageBufferBackend* ensureBackendCreated() const final;
-    void clearBackend() final;
 
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
     RefPtr<WebCore::NativeImage> copyNativeImageForDrawing(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;

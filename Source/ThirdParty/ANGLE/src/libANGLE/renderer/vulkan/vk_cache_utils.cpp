@@ -257,14 +257,20 @@ void UnpackDepthStencilResolveAttachmentDesc(VkAttachmentDescription *desc,
     desc->finalLayout   = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 }
 
-void UnpackStencilState(const PackedStencilOpState &packedState, VkStencilOpState *stateOut)
+void UnpackStencilState(const PackedStencilOpState &packedState,
+                        VkStencilOpState *stateOut,
+                        bool writeMaskWorkaround)
 {
+    // Any non-zero value works for the purposes of the useNonZeroStencilWriteMaskStaticState driver
+    // bug workaround.
+    constexpr uint32_t kNonZeroWriteMaskForWorkaround = 1;
+
     stateOut->failOp      = static_cast<VkStencilOp>(packedState.ops.fail);
     stateOut->passOp      = static_cast<VkStencilOp>(packedState.ops.pass);
     stateOut->depthFailOp = static_cast<VkStencilOp>(packedState.ops.depthFail);
     stateOut->compareOp   = static_cast<VkCompareOp>(packedState.ops.compare);
     stateOut->compareMask = 0;
-    stateOut->writeMask   = 0;
+    stateOut->writeMask   = writeMaskWorkaround ? kNonZeroWriteMaskForWorkaround : 0;
     stateOut->reference   = 0;
 }
 
@@ -1036,7 +1042,8 @@ angle::Result InitializeRenderPassFromDesc(ContextVk *contextVk,
     bool isStencilInvalidated = false;
     const bool hasUnresolveAttachments =
         desc.getColorUnresolveAttachmentMask().any() || desc.hasDepthStencilUnresolveAttachment();
-    const bool canRemoveResolveAttachments = !hasUnresolveAttachments;
+    const bool canRemoveResolveAttachments =
+        isRenderToTextureThroughEmulation && !hasUnresolveAttachments;
 
     // Pack color attachments
     PackedAttachmentIndex attachmentCount(0);
@@ -1636,7 +1643,7 @@ void UnpackPipelineState(const vk::GraphicsPipelineDesc &state, UnpackedPipeline
     const PackedInputAssemblyAndRasterizationStateInfo &inputAndRaster =
         state.getInputAssemblyAndRasterizationStateInfoForLog();
     const PackedColorBlendStateInfo &colorBlend = state.getColorBlendStateInfoForLog();
-    const PackedDither &dither                  = state.getDitherForLog();
+    const PackedDitherAndWorkarounds &dither    = state.getDitherForLog();
     const PackedDynamicState &dynamicState      = state.getDynamicStateForLog();
 
     valuesOut->fill(0);
@@ -2668,8 +2675,9 @@ void GraphicsPipelineDesc::initDefaults(const ContextVk *contextVk)
               &mColorBlendStateInfo.attachments[gl::IMPLEMENTATION_MAX_DRAW_BUFFERS],
               blendAttachmentState);
 
-    mDither.emulatedDitherControl = 0;
-    mDither.unused                = 0;
+    mDitherAndWorkarounds.emulatedDitherControl             = 0;
+    mDitherAndWorkarounds.nonZeroStencilWriteMaskWorkaround = 0;
+    mDitherAndWorkarounds.unused                            = 0;
 
     SetBitField(mDynamicState.ds1And2.cullMode, VK_CULL_MODE_NONE);
     SetBitField(mDynamicState.ds1And2.frontFace, VK_FRONT_FACE_COUNTER_CLOCKWISE);
@@ -2905,15 +2913,6 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
     inputAssemblyState.sType    = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     inputAssemblyState.flags    = 0;
     inputAssemblyState.topology = static_cast<VkPrimitiveTopology>(inputAndRaster.misc.topology);
-    // http://anglebug.com/3832
-    // We currently hit a VK Validation here where VUID
-    // VUID-VkPipelineInputAssemblyStateCreateInfo-topology-00428 is flagged because we allow
-    // primitiveRestartEnable to be true for topologies VK_PRIMITIVE_TOPOLOGY_POINT_LIST,
-    // VK_PRIMITIVE_TOPOLOGY_LINE_LIST, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
-    // VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY,
-    // VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY and VK_PRIMITIVE_TOPOLOGY_PATCH_LIST
-    // However if we force primiteRestartEnable to FALSE we fail tests.
-    // Need to identify alternate fix.
     inputAssemblyState.primitiveRestartEnable =
         static_cast<VkBool32>(mDynamicState.ds1And2.primitiveRestartEnable);
 
@@ -3031,8 +3030,10 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
     depthStencilState.depthBoundsTestEnable =
         static_cast<VkBool32>(inputAndRaster.misc.depthBoundsTest);
     depthStencilState.stencilTestEnable = static_cast<VkBool32>(mDynamicState.ds1And2.stencilTest);
-    UnpackStencilState(mDynamicState.ds1.front, &depthStencilState.front);
-    UnpackStencilState(mDynamicState.ds1.back, &depthStencilState.back);
+    UnpackStencilState(mDynamicState.ds1.front, &depthStencilState.front,
+                       mDitherAndWorkarounds.nonZeroStencilWriteMaskWorkaround);
+    UnpackStencilState(mDynamicState.ds1.back, &depthStencilState.back,
+                       mDitherAndWorkarounds.nonZeroStencilWriteMaskWorkaround);
     depthStencilState.minDepthBounds = 0;
     depthStencilState.maxDepthBounds = 0;
 
@@ -3702,10 +3703,18 @@ void GraphicsPipelineDesc::updateEmulatedDitherControl(GraphicsPipelineTransitio
                                                        uint16_t value)
 {
     // Make sure we don't waste time resetting this to zero in the common no-dither case.
-    ASSERT(value != 0 || mDither.emulatedDitherControl != 0);
+    ASSERT(value != 0 || mDitherAndWorkarounds.emulatedDitherControl != 0);
 
-    mDither.emulatedDitherControl = value;
-    transition->set(ANGLE_GET_TRANSITION_BIT(mDither, emulatedDitherControl));
+    mDitherAndWorkarounds.emulatedDitherControl = value;
+    transition->set(ANGLE_GET_TRANSITION_BIT(mDitherAndWorkarounds, emulatedDitherControl));
+}
+
+void GraphicsPipelineDesc::updateNonZeroStencilWriteMaskWorkaround(
+    GraphicsPipelineTransitionBits *transition,
+    bool enabled)
+{
+    mDitherAndWorkarounds.nonZeroStencilWriteMaskWorkaround = enabled;
+    transition->set(ANGLE_GET_TRANSITION_BIT(mDitherAndWorkarounds, emulatedDitherControl));
 }
 
 void GraphicsPipelineDesc::updateRenderPassDesc(GraphicsPipelineTransitionBits *transition,

@@ -2250,7 +2250,7 @@ void FrameSelection::updateAppearance()
 #endif
 
     {
-        ScriptDisallowedScope scriptDisallowedScope;
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         auto* view = m_document->renderView();
         if (!view)
             return;

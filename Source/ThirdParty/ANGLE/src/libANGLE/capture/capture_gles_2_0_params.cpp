@@ -11,6 +11,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Shader.h"
 #include "libANGLE/formatutils.h"
+#include "libGLESv2/global_state.h"
 
 using namespace angle;
 
@@ -447,7 +448,7 @@ void CaptureGetShaderInfoLog_infoLog(const State &glState,
 {
     gl::Shader *shaderObj = glState.getShaderProgramManagerForCapture().getShader(shader);
     ASSERT(shaderObj);
-    paramCapture->readBufferSizeBytes = shaderObj->getInfoLogLength() + 1;
+    paramCapture->readBufferSizeBytes = shaderObj->getInfoLogLength(GetValidGlobalContext()) + 1;
 }
 
 void CaptureGetShaderPrecisionFormat_range(const State &glState,

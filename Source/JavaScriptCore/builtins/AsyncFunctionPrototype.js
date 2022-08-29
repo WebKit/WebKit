@@ -25,32 +25,36 @@
  */
 
 @linkTimeConstant
-function asyncFunctionResume(generator, promise, sentValue, resumeMode)
+function asyncFunctionResumeOnFulfilled(value, generator)
 {
     "use strict";
 
-    @assert(@isPromise(promise));
+    return @asyncFunctionResume(generator, value, @GeneratorResumeModeNormal);
+}
+
+@linkTimeConstant
+function asyncFunctionResumeOnRejected(error, generator)
+{
+    "use strict";
+
+    return @asyncFunctionResume(generator, error, @GeneratorResumeModeThrow);
+}
+
+@linkTimeConstant
+function asyncFunctionResume(generator, sentValue, resumeMode)
+{
+    "use strict";
 
     var state = @getGeneratorInternalField(generator, @generatorFieldState);
-    var value = @undefined;
 
     try {
         @putGeneratorInternalField(generator, @generatorFieldState, @GeneratorStateExecuting);
-        value = @getGeneratorInternalField(generator, @generatorFieldNext).@call(@getGeneratorInternalField(generator, @generatorFieldThis), generator, state, sentValue, resumeMode, @getGeneratorInternalField(generator, @generatorFieldFrame));
-        if (@getGeneratorInternalField(generator, @generatorFieldState) === @GeneratorStateExecuting) {
-            @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, value);
-            return promise;
-        }
+        var value = @getGeneratorInternalField(generator, @generatorFieldNext).@call(@getGeneratorInternalField(generator, @generatorFieldThis), generator, state, sentValue, resumeMode, @getGeneratorInternalField(generator, @generatorFieldFrame));
+        if (@getGeneratorInternalField(generator, @generatorFieldState) === @GeneratorStateExecuting)
+            return @resolvePromiseWithFirstResolvingFunctionCallCheck(@getGeneratorInternalField(generator, @generatorFieldContext), value);
     } catch (error) {
-        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error);
-        return promise;
+        return @rejectPromiseWithFirstResolvingFunctionCallCheck(@getGeneratorInternalField(generator, @generatorFieldContext), error);
     }
 
-    var capturedGenerator = generator;
-    var capturedPromise = promise;
-    @resolveWithoutPromiseForAsyncAwait(value,
-        function(value) { @asyncFunctionResume(capturedGenerator, capturedPromise, value, @GeneratorResumeModeNormal); },
-        function(error) { @asyncFunctionResume(capturedGenerator, capturedPromise, error, @GeneratorResumeModeThrow); });
-
-    return promise;
+    return @resolveWithoutPromiseForAsyncAwait(value, @asyncFunctionResumeOnFulfilled, @asyncFunctionResumeOnRejected, generator);
 }

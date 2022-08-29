@@ -96,7 +96,7 @@ public:
                 
                 m_parent->additionalPagesInHeap += numPages;
         
-                return FreeSpacePtr::makeFromRawPointer(result);
+                return FreeSpacePtr::fromUntaggedPtr(result);
             }
                 
             default:

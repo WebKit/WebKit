@@ -1,0 +1,8 @@
+
+FAIL Try importing JSON module with MIME type application/json+protobuf assert_unreached: Should have rejected: Import of a JSON module with MIME type application/json+protobuf should fail Reached unreachable code
+FAIL Try importing JSON module with MIME type application/json+blah assert_unreached: Should have rejected: Import of a JSON module with MIME type application/json+blah should fail Reached unreachable code
+PASS Try importing JSON module with MIME type text/x-json
+FAIL Try importing JSON module with MIME type text/json+blah assert_unreached: Should have rejected: Import of a JSON module with MIME type text/json+blah should fail Reached unreachable code
+PASS Try importing JSON module with MIME type application/blahjson
+PASS Try importing JSON module with MIME type image/json
+

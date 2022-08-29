@@ -29,7 +29,7 @@
 #pragma once
 
 #include <wtf/Assertions.h>
-#include <wtf/MetaAllocatorPtr.h>
+#include <wtf/CodePtr.h>
 #include <wtf/RedBlackTree.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -43,7 +43,7 @@ class MetaAllocatorHandle : public ThreadSafeRefCounted<MetaAllocatorHandle>, pu
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MetaAllocatorHandle);
 
 public:
-    using MemoryPtr = MetaAllocatorPtr<HandleMemoryPtrTag>;
+    using MemoryPtr = CodePtr<HandleMemoryPtrTag>;
 
     WTF_EXPORT_PRIVATE ~MetaAllocatorHandle();
 

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function all(iterable)
+@linkTimeConstant
+function promiseAllSlow(iterable)
 {
     "use strict";
 
@@ -76,6 +77,107 @@ function all(iterable)
     }
 
     return promiseCapability.@promise;
+}
+
+@linkTimeConstant
+function promiseOnRejectedWithContext(argument, context)
+{
+    "use strict";
+
+    return @rejectPromiseWithFirstResolvingFunctionCallCheck(context.globalContext.promise, argument);
+}
+
+@linkTimeConstant
+function promiseAllOnFulfilled(argument, context)
+{
+    "use strict";
+
+    var globalContext = context.globalContext;
+    var values = globalContext.values;
+
+    @putByValDirect(values, context.index, argument);
+
+    if (!--globalContext.remainingElementsCount)
+        return @resolvePromiseWithFirstResolvingFunctionCallCheck(globalContext.promise, values);
+}
+
+@linkTimeConstant
+function promiseNewOnRejected(promise)
+{
+    "use strict";
+
+    return function @reject(reason) {
+        return @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, reason);
+    };
+}
+
+@linkTimeConstant
+function promiseAllNewResolveElement(globalContext, index)
+{
+    "use strict";
+
+    var alreadyCalled = false;
+    return (argument) => {
+        if (alreadyCalled)
+            return @undefined;
+        alreadyCalled = true;
+
+        var values = globalContext.values;
+        @putByValDirect(values, index, argument);
+
+        if (!--globalContext.remainingElementsCount)
+            return @resolvePromiseWithFirstResolvingFunctionCallCheck(globalContext.promise, values);
+    };
+}
+
+function all(iterable)
+{
+    "use strict";
+
+    if (this !== @Promise)
+        return @tailCallForwardArguments(@promiseAllSlow, this);
+
+    var promise = @newPromise();
+    var values = [];
+    var globalContext = {
+        promise,
+        values,
+        remainingElementsCount: 1,
+    };
+    var index = 0;
+    var onRejected;
+
+    try {
+        var promiseResolve = this.resolve;
+        if (!@isCallable(promiseResolve))
+            @throwTypeError("Promise resolve is not a function");
+
+        for (var value of iterable) {
+            @putByValDirect(values, index, @undefined);
+            var nextPromise = promiseResolve.@call(this, value);
+            ++globalContext.remainingElementsCount;
+            var then = nextPromise.then;
+            if (@isPromise(nextPromise) && then === @defaultPromiseThen) {
+                var constructor = @speciesConstructor(nextPromise, @Promise);
+                var promiseOrCapability;
+                if (constructor !== @Promise)
+                    promiseOrCapability = @newPromiseCapabilitySlow(constructor);
+                @performPromiseThen(nextPromise, @promiseAllOnFulfilled, @promiseOnRejectedWithContext, promiseOrCapability, { globalContext, index });
+            } else {
+                if (!onRejected)
+                    onRejected = @promiseNewOnRejected(promise);
+                then.@call(nextPromise, @promiseAllNewResolveElement(globalContext, index), onRejected);
+            }
+            ++index;
+        }
+
+        if (!--globalContext.remainingElementsCount)
+            @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, values);
+    } catch (error) {
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error);
+    }
+
+    return promise;
 }
 
 function allSettled(iterable)

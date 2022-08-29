@@ -81,6 +81,7 @@ public:
         size_t nonSpanningInlineLevelBoxCount { 0 };
         Vector<int32_t> visualOrderList;
         TextDirection inlineBaseDirection { TextDirection::LTR };
+        bool contentNeedsTrailingEllipsis { false };
         const Line::RunList& runs;
     };
     LineContent layoutInlineContent(const InlineItemRange&, const InlineRect& lineLogicalRect, const std::optional<PreviousLine>&);
@@ -112,7 +113,7 @@ private:
 
     void handleFloatContent(const InlineItem&);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
-    size_t rebuildLine(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
+    size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
     void initialize(const UsedConstraints&, size_t leadingInlineTextItemIndex, const std::optional<PreviousLine>&);

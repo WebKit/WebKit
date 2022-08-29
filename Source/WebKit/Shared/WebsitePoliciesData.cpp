@@ -58,6 +58,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << modalContainerObservationPolicy;
     encoder << colorSchemePreference;
     encoder << idempotentModeAutosizingOnlyHonorsPercentages;
+    encoder << allowPrivacyProxy;
 }
 
 std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
@@ -164,6 +165,11 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
     if (!idempotentModeAutosizingOnlyHonorsPercentages)
         return std::nullopt;
 
+    std::optional<bool> allowPrivacyProxy;
+    decoder >> allowPrivacyProxy;
+    if (!allowPrivacyProxy)
+        return std::nullopt;
+
     return { {
         WTFMove(*contentBlockersEnabled),
         WTFMove(*activeContentRuleListActionPatterns),
@@ -187,6 +193,7 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
         WTFMove(*modalContainerObservationPolicy),
         WTFMove(*colorSchemePreference),
         WTFMove(*idempotentModeAutosizingOnlyHonorsPercentages),
+        WTFMove(*allowPrivacyProxy),
     } };
 }
 
@@ -196,6 +203,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     documentLoader.setCustomUserAgent(websitePolicies.customUserAgent);
     documentLoader.setCustomUserAgentAsSiteSpecificQuirks(websitePolicies.customUserAgentAsSiteSpecificQuirks);
     documentLoader.setCustomNavigatorPlatform(websitePolicies.customNavigatorPlatform);
+    documentLoader.setAllowPrivacyProxy(websitePolicies.allowPrivacyProxy);
 
 #if ENABLE(DEVICE_ORIENTATION)
     documentLoader.setDeviceOrientationAndMotionAccessState(websitePolicies.deviceOrientationAndMotionAccessState);

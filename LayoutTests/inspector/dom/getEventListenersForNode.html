@@ -4,21 +4,36 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 function test() {
-    let domNode = null;
-
     let suite = InspectorTest.createAsyncSuite("DOM.getEventListenersForNode");
 
-    suite.addTestCase({
-        name: "DOM.getEventListenersForNode.Basic",
-        description: "Ensure all applicable fields of each event listener is supplied.",
-        test(resolve, reject) {
-            DOMAgent.getEventListenersForNode(domNode.id, (error, eventListeners) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                for (let eventListener of eventListeners) {
+    [
+        {
+            name: "DOM.getEventListenersForNode.Child.IncludeAncestors",
+            selector: "#x",
+        },
+        {
+            name: "DOM.getEventListenersForNode.Child.ExcludeAncestors",
+            selector: "#x",
+            includeAncestors: false,
+        },
+        {
+            name: "DOM.getEventListenersForNode.Body.IncludeAncestors",
+            selector: "body",
+            includeAncestors: true,
+        },
+        {
+            name: "DOM.getEventListenersForNode.Body.ExcludeAncestors",
+            selector: "body",
+            includeAncestors: false,
+        },
+    ].forEach(({name, selector, includeAncestors}) => {
+        suite.addTestCase({
+            name,
+            async test(resolve, reject) {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let {listeners} = await DOMAgent.getEventListenersForNode(nodeId, includeAncestors);
+                for (let eventListener of listeners) {
                     InspectorTest.log(`Event: ${eventListener.type}`);
                     if (eventListener.nodeId) {
                         let node = WI.domManager.nodeForId(eventListener.nodeId);
@@ -40,25 +55,11 @@ function test() {
 
                     InspectorTest.log("");
                 }
-
-                resolve();
-            });
-        }
-    });
-
-    WI.domManager.requestDocument((documentNode) => {
-        documentNode.querySelector("div#x", (contentNodeId) => {
-            if (!contentNodeId) {
-                InspectorTest.fail("DOM node not found.");
-                InspectorTest.completeTest();
-                return;
-            }
-
-            domNode = WI.domManager.nodeForId(contentNodeId);
-
-            suite.runTestCasesAndFinish();
+            },
         });
     });
+
+    suite.runTestCasesAndFinish();
 }
 </script>
 </head>

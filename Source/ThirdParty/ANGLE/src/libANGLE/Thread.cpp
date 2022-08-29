@@ -15,7 +15,9 @@
 
 namespace angle
 {
+#if defined(ANGLE_USE_ANDROID_TLS_SLOT)
 bool gUseAndroidOpenGLTlsSlot;
+#endif
 
 void PthreadKeyDestructorCallback(void *ptr)
 {

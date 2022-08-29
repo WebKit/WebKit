@@ -66,13 +66,26 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
             break;
         }
         default: {
-            if (isFuncref(type) || isExternref(type) || isI31ref(type))
+            if (isRefType(type))
                 jit.moveValueRegs(src.jsr(), dst);
             else
                 jit.breakpoint();
         }
         }
     };
+
+    // GC support is experimental and currently will throw a runtime error when struct
+    // and array type indices are exported via a function signature to JS.
+    if (Options::useWebAssemblyGC() && (wasmFrameConvention.argumentsIncludeGCTypeIndex || wasmFrameConvention.resultsIncludeGCTypeIndex)) {
+        GPRReg wasmContextInstanceGPR = PinnedRegisterInfo::get().wasmContextInstancePointer;
+        if (Context::useFastTLS()) {
+            wasmContextInstanceGPR = GPRInfo::argumentGPR2;
+            jit.loadWasmContextInstance(wasmContextInstanceGPR);
+        }
+
+        emitThrowWasmToJSException(jit, wasmContextInstanceGPR, ExceptionType::InvalidGCTypeUse);
+        return;
+    }
 
     if (signature.returnsVoid())
         jit.moveTrustedValue(jsUndefined(), JSRInfo::returnValueJSR);
@@ -87,7 +100,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
                 jit.loadWasmContextInstance(wasmContextInstanceGPR);
             }
             jit.setupArguments<decltype(operationConvertToBigInt)>(wasmContextInstanceGPR, inputJSR);
-            jit.callOperation(FunctionPtr<OperationPtrTag>(operationConvertToBigInt));
+            jit.callOperation(operationConvertToBigInt);
         } else
             boxWasmResult(jit, signature.returnType(0), wasmFrameConvention.results[0], JSRInfo::returnValueJSR);
     } else {
@@ -202,7 +215,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
 
                 jit.loadValue(address, valueJSR);
                 jit.setupArguments<decltype(operationConvertToBigInt)>(wasmContextInstanceGPR, valueJSR);
-                jit.callOperation(FunctionPtr<OperationPtrTag>(operationConvertToBigInt));
+                jit.callOperation(operationConvertToBigInt);
                 jit.storeValue(JSRInfo::returnValueJSR, address);
             }
         }
@@ -220,7 +233,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
             jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
         ASSERT(wasmContextInstanceGPR != savedResultsGPR);
         jit.setupArguments<decltype(operationAllocateResultsArray)>(wasmContextInstanceGPR, CCallHelpers::TrustedImmPtr(&typeDefinition), indexingType, savedResultsGPR);
-        jit.callOperation(FunctionPtr<OperationPtrTag>(operationAllocateResultsArray));
+        jit.callOperation(operationAllocateResultsArray);
         if constexpr (maxFrameExtentForSlowPathCall)
             jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
 

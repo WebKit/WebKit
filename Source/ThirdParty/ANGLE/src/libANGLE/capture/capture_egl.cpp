@@ -128,7 +128,7 @@ angle::CallCapture CaptureCreateNativeClientBufferANDROID(const egl::AttributeMa
                               std::move(paramBuffer));
 }
 
-angle::CallCapture CaptureEGLCreateImage(gl::Context *context,
+angle::CallCapture CaptureEGLCreateImage(const gl::Context *context,
                                          EGLenum target,
                                          EGLClientBuffer buffer,
                                          const egl::AttributeMap &attributes,

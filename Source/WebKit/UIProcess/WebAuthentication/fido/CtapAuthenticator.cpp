@@ -307,15 +307,15 @@ void CtapAuthenticator::continueGetPinTokenAfterRequestPin(const String& pin, co
         return;
     }
 
-    auto pinUtf8 = pin::validateAndConvertToUTF8(pin);
-    if (!pinUtf8) {
+    auto pinUTF8 = pin::validateAndConvertToUTF8(pin);
+    if (!pinUTF8) {
         // Fake a pin invalid response from the authenticator such that clients could show some error to the user.
         if (auto* observer = this->observer())
             observer->authenticatorStatusUpdated(WebAuthenticationStatus::PinInvalid);
         tryRestartPin(CtapDeviceResponseCode::kCtap2ErrPinInvalid);
         return;
     }
-    auto tokenRequest = pin::TokenRequest::tryCreate(*pinUtf8, peerKey);
+    auto tokenRequest = pin::TokenRequest::tryCreate(*pinUTF8, peerKey);
     if (!tokenRequest) {
         receiveRespond(ExceptionData { UnknownError, "Cannot create a TokenRequest."_s });
         return;

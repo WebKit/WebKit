@@ -9,6 +9,10 @@
 #ifndef ANGLE_TESTS_TEST_UTILS_HISTOGRAM_WRITER_H_
 #define ANGLE_TESTS_TEST_UTILS_HISTOGRAM_WRITER_H_
 
+#if !defined(ANGLE_HAS_HISTOGRAMS)
+#    error "Requires ANGLE_HAS_HISTOGRAMS, see angle_maybe_has_histograms"
+#endif  // !defined(ANGLE_HAS_HISTOGRAMS)
+
 #include <map>
 #include <memory>
 #include <string>
@@ -37,13 +41,13 @@ class HistogramWriter
     void getAsJSON(rapidjson::Document *doc) const;
 
   private:
-#if defined(ANGLE_HAS_HISTOGRAMS)
+#if ANGLE_HAS_HISTOGRAMS
     std::map<std::string, std::unique_ptr<catapult::HistogramBuilder>> mHistograms;
-#endif  // defined(ANGLE_HAS_HISTOGRAMS)
+#endif  // ANGLE_HAS_HISTOGRAMS
 };
 
 // Define a stub implementation when histograms are compiled out.
-#if !defined(ANGLE_HAS_HISTOGRAMS)
+#if !ANGLE_HAS_HISTOGRAMS
 inline HistogramWriter::HistogramWriter()  = default;
 inline HistogramWriter::~HistogramWriter() = default;
 inline void HistogramWriter::addSample(const std::string &measurement,
@@ -52,7 +56,7 @@ inline void HistogramWriter::addSample(const std::string &measurement,
                                        const std::string &units)
 {}
 inline void HistogramWriter::getAsJSON(rapidjson::Document *doc) const {}
-#endif  // !defined(ANGLE_HAS_HISTOGRAMS)
+#endif  // !ANGLE_HAS_HISTOGRAMS
 
 }  // namespace angle
 

@@ -29,6 +29,8 @@
 #include "CacheModel.h"
 #include "SandboxExtension.h"
 #include <WebCore/Cookie.h>
+#include <WebCore/ProcessIdentifier.h>
+#include <WebCore/RegistrableDomain.h>
 #include <wtf/ProcessID.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

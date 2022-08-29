@@ -760,6 +760,8 @@
           '--use-angle=swiftshader',
           '--bot-mode',
           '--batch-timeout=600',
+          # Mitigate flaky crashes in TSAN. http://crbug.com/1275223
+          '--flaky-retries=2',
         ],
         'linux_args': [
           '--xvfb',

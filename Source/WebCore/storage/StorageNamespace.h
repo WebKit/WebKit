@@ -42,6 +42,7 @@ class StorageNamespace : public RefCounted<StorageNamespace> {
 public:
     virtual ~StorageNamespace() = default;
     virtual Ref<StorageArea> storageArea(const SecurityOrigin&) = 0;
+    virtual const SecurityOrigin* topLevelOrigin() const = 0;
 
     // FIXME: This is only valid for session storage and should probably be moved to a subclass.
     virtual Ref<StorageNamespace> copy(Page& newPage) = 0;

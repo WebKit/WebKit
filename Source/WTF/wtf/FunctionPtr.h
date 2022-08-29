@@ -45,7 +45,7 @@ enum class FunctionAttributes {
     JSCHostCall, // JSC_HOST_CALL_ATTRIBUTES
 };
 
-template<PtrTag tag, typename, FunctionAttributes = FunctionAttributes::None> class TypedFunctionPtr;
+template<PtrTag tag, typename, FunctionAttributes = FunctionAttributes::None> class FunctionPtr;
 
 template<FunctionAttributes, typename> struct FunctionCallConvention;
 
@@ -65,7 +65,7 @@ struct FunctionCallConvention<FunctionAttributes::JSCHostCall, Out(In...)> {
 };
 
 
-class TypedFunctionPtrBase {
+class FunctionPtrBase {
 public:
     // We need to declare this in this non-template base. Otherwise, every use of
     // AlreadyTaggedValueTag will require a specialized template qualification.
@@ -73,27 +73,27 @@ public:
 };
 
 template<PtrTag tag, typename Out, typename... In, FunctionAttributes attr>
-class TypedFunctionPtr<tag, Out(In...), attr> : public TypedFunctionPtrBase {
+class FunctionPtr<tag, Out(In...), attr> : public FunctionPtrBase {
 public:
     using Ptr = typename FunctionCallConvention<attr, Out(In...)>::Type;
 
-    constexpr TypedFunctionPtr() : m_ptr(nullptr) { }
-    constexpr TypedFunctionPtr(std::nullptr_t) : m_ptr(nullptr) { }
+    constexpr FunctionPtr() : m_ptr(nullptr) { }
+    constexpr FunctionPtr(std::nullptr_t) : m_ptr(nullptr) { }
 
-    constexpr TypedFunctionPtr(Out(*ptr)(In...))
+    constexpr FunctionPtr(Out(*ptr)(In...))
         : m_ptr(encode(ptr))
     { }
 
 // MSVC doesn't seem to treat functions with different calling conventions as
 // different types; these methods already defined for fastcall, below.
 #if CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
-    constexpr TypedFunctionPtr(Out(CDECL *ptr)(In...))
+    constexpr FunctionPtr(Out(CDECL *ptr)(In...))
         : m_ptr(encode(ptr))
     { }
 #endif
 
 #if COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
-    constexpr TypedFunctionPtr(Out(FASTCALL *ptr)(In...))
+    constexpr FunctionPtr(Out(FASTCALL *ptr)(In...))
         : m_ptr(encode(ptr))
     { }
 #endif
@@ -107,50 +107,50 @@ public:
     constexpr Ptr get() const { return decode(m_ptr); }
 
     template<PtrTag otherTag>
-    TypedFunctionPtr<otherTag, Out(In...), attr> retagged() const
+    FunctionPtr<otherTag, Out(In...), attr> retagged() const
     {
         static_assert(tag != otherTag);
-        return TypedFunctionPtr<otherTag, Out(In...), attr>(AlreadyTaggedValue, retaggedExecutableAddress<otherTag>());
+        return FunctionPtr<otherTag, Out(In...), attr>(AlreadyTaggedValue, retaggedPtr<otherTag>());
     }
 
-    constexpr void* executableAddress() const { return reinterpret_cast<void*>(m_ptr); }
+    constexpr void* taggedPtr() const { return reinterpret_cast<void*>(m_ptr); }
 
     template<PtrTag newTag>
-    void* retaggedExecutableAddress() const
+    void* retaggedPtr() const
     {
         static_assert(tag != newTag);
         return retagCodePtr<void*, tag, newTag>(m_ptr);
     }
 
-    void* untaggedExecutableAddress() const { return untagCodePtr<void*, tag>(m_ptr); }
+    void* untaggedPtr() const { return untagCodePtr<void*, tag>(m_ptr); }
 
     explicit operator bool() const { return !!m_ptr; }
     bool operator!() const { return !m_ptr; }
 
-    bool operator==(const TypedFunctionPtr& other) const { return m_ptr == other.m_ptr; }
-    bool operator!=(const TypedFunctionPtr& other) const { return m_ptr != other.m_ptr; }
+    bool operator==(const FunctionPtr& other) const { return m_ptr == other.m_ptr; }
+    bool operator!=(const FunctionPtr& other) const { return m_ptr != other.m_ptr; }
 
-    TypedFunctionPtr& operator=(Ptr ptr)
+    FunctionPtr& operator=(Ptr ptr)
     {
         m_ptr = encode(ptr);
         return *this;
     }
 
     template<PtrTag otherTag>
-    TypedFunctionPtr& operator=(const TypedFunctionPtr<otherTag, Out(In...), attr>& other)
+    FunctionPtr& operator=(const FunctionPtr<otherTag, Out(In...), attr>& other)
     {
         m_ptr = encode(other.get());
         return *this;
     }
 
-    TypedFunctionPtr& operator=(std::nullptr_t)
+    FunctionPtr& operator=(std::nullptr_t)
     {
         m_ptr = nullptr;
         return *this;
     }
 
 protected:
-    TypedFunctionPtr(AlreadyTaggedValueTag, void* ptr)
+    FunctionPtr(AlreadyTaggedValueTag, void* ptr)
         : m_ptr(bitwise_cast<Ptr>(ptr))
     {
         assertIsNullOrTaggedWith<tag>(ptr);
@@ -177,101 +177,25 @@ protected:
 
     Ptr m_ptr;
 
-    template<PtrTag, typename, FunctionAttributes> friend class TypedFunctionPtr;
+    template<PtrTag, typename, FunctionAttributes> friend class FunctionPtr;
 };
 
-static_assert(sizeof(TypedFunctionPtr<CFunctionPtrTag, void()>) == sizeof(void*));
+static_assert(sizeof(FunctionPtr<CFunctionPtrTag, void()>) == sizeof(void*));
 #if COMPILER_SUPPORTS(BUILTIN_IS_TRIVIALLY_COPYABLE)
-static_assert(__is_trivially_copyable(TypedFunctionPtr<CFunctionPtrTag, void()>));
+static_assert(__is_trivially_copyable(FunctionPtr<CFunctionPtrTag, void()>));
 #endif
 
-
-template<PtrTag tag, FunctionAttributes attr = FunctionAttributes::None>
-class FunctionPtr : public TypedFunctionPtr<tag, void(), attr> {
-    using Base = TypedFunctionPtr<tag, void()>;
-    using PtrType = void(*)();
-    using TypedFunctionPtrBase::AlreadyTaggedValue;
-public:
-    constexpr FunctionPtr() = default;
-    constexpr FunctionPtr(std::nullptr_t) : Base(nullptr) { }
-
-    constexpr FunctionPtr(void* ptr)
-        : Base(reinterpret_cast<PtrType>(ptr))
-    { }
-
-    template<typename Out, typename... In>
-    constexpr FunctionPtr(Out(*ptr)(In...))
-        : Base(reinterpret_cast<PtrType>(ptr))
-    { }
-
-// MSVC doesn't seem to treat functions with different calling conventions as
-// different types; these methods already defined for fastcall, below.
-#if CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
-    template<typename Out, typename... In>
-    constexpr FunctionPtr(Out(CDECL *ptr)(In...))
-        : Base(reinterpret_cast<PtrType>(ptr))
-    { }
-#endif
-
-#if COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
-    template<typename Out, typename... In>
-    constexpr FunctionPtr(Out(FASTCALL *ptr)(In...))
-        : Base(reinterpret_cast<PtrType>(ptr))
-    { }
-#endif
-
-#if ENABLE(JIT)
-    // These 2 constructors ignores the FunctionAttributes of the TypedFunctionPtr parameter when
-    // creating the FunctionPtr. In general, this can be a problem on x86 ports (especially for
-    // Windows). However, these constructors are only used in Repatch.cpp for ENABLE(JIT).
-    // Since we no longer support ENABLE(JIT) for x86, this is not really an issue.
-
-    template<typename Out, typename... In, FunctionAttributes otherAttr>
-    FunctionPtr(const TypedFunctionPtr<tag, Out(In...), otherAttr>& other)
-        : Base(AlreadyTaggedValue, other.executableAddress())
-    { }
-
-    template<PtrTag otherTag, typename Out, typename... In, FunctionAttributes otherAttr>
-    FunctionPtr(const TypedFunctionPtr<otherTag, Out(In...), otherAttr>& other)
-        : Base(AlreadyTaggedValue, other.template retaggedExecutableAddress<tag>())
-    { }
-#endif
-
-    static FunctionPtr fromAlreadyTaggedPointer(void* ptr)
-    {
-        assertIsTaggedWith<tag>(ptr);
-        return FunctionPtr(AlreadyTaggedValue, ptr);
-    }
-
-    template<PtrTag otherTag>
-    FunctionPtr<otherTag> retagged() const
-    {
-        return FunctionPtr<otherTag>(AlreadyTaggedValue, Base::template retaggedExecutableAddress<otherTag>());
-    }
-
-private:
-    FunctionPtr(typename Base::AlreadyTaggedValueTag, void* ptr)
-        : Base(AlreadyTaggedValue, ptr)
-    { }
-
-    template<typename Out, typename... In>
-    Out operator()(In...) const = delete;
-
-    template<PtrTag, FunctionAttributes> friend class FunctionPtr;
+template<PtrTag tag, typename Out, typename... In, FunctionAttributes attr>
+struct FunctionTraits<FunctionPtr<tag, Out(In...), attr>> : public FunctionTraits<Out(In...)> {
 };
 
 template<PtrTag tag, typename Out, typename... In, FunctionAttributes attr>
-struct FunctionTraits<TypedFunctionPtr<tag, Out(In...), attr>> : public FunctionTraits<Out(In...)> {
-};
-
-template<PtrTag tag, typename Out, typename... In, FunctionAttributes attr>
-void add(Hasher& hasher, const TypedFunctionPtr<tag, Out(In...), attr>& ptr)
+void add(Hasher& hasher, const FunctionPtr<tag, Out(In...), attr>& ptr)
 {
-    add(hasher, ptr.executableAddress());
+    add(hasher, ptr.taggedPtr());
 }
 
 } // namespace WTF
 
 using WTF::FunctionAttributes;
 using WTF::FunctionPtr;
-using WTF::TypedFunctionPtr;

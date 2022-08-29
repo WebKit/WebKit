@@ -8,8 +8,16 @@ layer at (0,0) size 480x300
   RenderSVGTransformableContainer {g} at (0,0) size 480x300
 layer at (0,0) size 240x225
   RenderSVGHiddenContainer {defs} at (0,0) size 240x225
+layer at (0,0) size 240x150
+  RenderSVGImage {image} at (0,0) size 240x150
 layer at (0,0) size 240x225
   RenderSVGViewportContainer {svg} at (0,0) size 240x225
+layer at (0,0) size 240x150
+  RenderSVGTransformableContainer {g} at (0,0) size 240x150
+layer at (0,0) size 240x150
+  RenderSVGTransformableContainer {use} at (0,0) size 240x150
+layer at (0,0) size 240x150
+  RenderSVGImage {image} at (0,0) size 240x150
 layer at (0,0) size 240x225
   RenderSVGTransformableContainer {g} at (0,0) size 240x225
 layer at (0,0) size 240x225

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@ namespace JSC { namespace FTL {
 
 void SlowPathCallKey::dump(PrintStream& out) const
 {
-    out.print("<usedRegisters = ", m_usedRegisters, ", offset = ", m_offset, ", indirectOffset = ", m_indirectOffset, ", callTarget = ", RawPointer(m_callTarget.executableAddress()));
+    out.print("<usedRegisters = ", m_usedRegisters, ", offset = ", m_offset, ", indirectOffset = ", m_indirectOffset, ", callTarget = ", RawPointer(m_callTarget.taggedPtr()));
     if (Options::clobberAllRegsInFTLICSlowPath())
         out.print(", argumentRegisters = ", argumentRegistersIfClobberingCheckIsEnabled());
     out.print(">");

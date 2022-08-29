@@ -939,6 +939,8 @@ webkit.org/b/207605 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.htm
 
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
+webkit.org/b/211942 webgl/1.0.3/conformance/more/functions/copyTexImage2DBadArgs.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1275,6 +1277,8 @@ webkit.org/b/219979 gamepad/gamepad-polling-access.html [ Timeout Pass ]
 # Test is flaky timing out. Also skipped in Mac and iOS.
 editing/selection/select-bidi-run.html [ Skip ]
 
+webkit.org/b/224071 webgl/pending/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1597,7 +1601,6 @@ webkit.org/b/94952 platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-s
 webkit.org/b/160251 fast/text/font-kerning.html [ ImageOnlyFailure ]
 
 webkit.org/b/161587 css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
-webkit.org/b/161588 css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 
 webkit.org/b/163186 editing/pasteboard/onpaste-text-html.html [ Failure ]
 
@@ -1843,6 +1846,35 @@ imported/w3c/web-platform-tests/css/css-pseudo/target-text-007.html [ Failure ]
 # WebGL on GTK renders pixels with opacity slightly differently
 fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 
+webkit.org/b/219251 fast/canvas/webgl/getIndexedParameter-crash.html [ Failure ]
+
+webkit.org/b/229050 fast/canvas/webgl/shader-with-comma-op.html [ Failure ]
+webkit.org/b/229050 fast/canvas/webgl/shader-with-struct-array.html [ Failure ]
+
+webkit.org/b/218318 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
+
+webkit.org/b/166536 webgl/webgl-allow-shared.html [ Failure ]
+
+webkit.org/b/217813 webgl/conformance/extensions/ext-texture-compression-rgtc.html [ Failure ]
+webkit.org/b/217813 webgl/conformance/extensions/s3tc-and-rgtc.html [ Failure ]
+webkit.org/b/217816 webgl/conformance2/uniforms/gl-uniform-arrays-sub-source.html [ Failure ]
+
+webkit.org/b/243487 webgl/1.0.x/conformance/extensions/webgl-multi-draw.html [ Failure ]
+
+webkit.org/b/229051 webgl/1.0.x/conformance/glsl/bugs/character-set.html [ Failure ]
+webkit.org/b/229051 webgl/1.0.x/conformance/misc/invalid-passed-params.html [ Failure ]
+
+webkit.org/b/169917 webgl/1.0.3/conformance/context/context-lost-restored.html [ Failure ]
+webkit.org/b/219340 webgl/1.0.3/conformance/extensions/angle-instanced-arrays-out-of-bounds.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-texture-half-float.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-compressed-texture-s3tc.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.3/conformance/misc/webgl-specific.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.3/conformance/rendering/point-no-attributes.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html [ Failure ]
+
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1919,3 +1951,11 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/cs
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/invalid-content-type.any.sharedworker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/invalid-content-type.any.worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.html [ Pass Failure ]
+
+# fails even with specific expectation.
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-048.html [ Pass Failure ]
+
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-01.html [ ImageOnlyFailure ]
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-03.html [ ImageOnlyFailure ]
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-05.html [ ImageOnlyFailure ]
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps.html [ ImageOnlyFailure ]

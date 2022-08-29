@@ -38,7 +38,7 @@ ALWAYS_INLINE JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame)
         vm->didEnterVM = true;
     });
     void* entryAddress;
-    entryAddress = addressForCall(MustCheckArity).executableAddress();
+    entryAddress = addressForCall(MustCheckArity).taggedPtr();
     JSValue result = JSValue::decode(vmEntryToJavaScript(entryAddress, vm, protoCallFrame));
     return scope.exception() ? jsNull() : result;
 }

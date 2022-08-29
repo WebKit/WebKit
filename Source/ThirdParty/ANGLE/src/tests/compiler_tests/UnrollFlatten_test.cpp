@@ -28,10 +28,13 @@ class UnrollFlattenTest : public testing::Test
   protected:
     void compile(const std::string &shaderString)
     {
+        ShCompileOptions compileOptions = {};
+        compileOptions.variables        = true;
+
         std::string infoLog;
         bool compilationSuccess =
             compileTestShader(GL_FRAGMENT_SHADER, mInputSpec, SH_HLSL_4_1_OUTPUT, shaderString,
-                              SH_VARIABLES, &mTranslatedSource, &infoLog);
+                              compileOptions, &mTranslatedSource, &infoLog);
         if (!compilationSuccess)
         {
             FAIL() << "Shader compilation failed " << infoLog;

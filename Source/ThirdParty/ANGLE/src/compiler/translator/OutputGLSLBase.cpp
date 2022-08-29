@@ -83,7 +83,7 @@ Stream &operator<<(Stream &out, CommaSeparatedListItemPrefixGenerator &gen)
 
 TOutputGLSLBase::TOutputGLSLBase(TCompiler *compiler,
                                  TInfoSinkBase &objSink,
-                                 ShCompileOptions compileOptions)
+                                 const ShCompileOptions &compileOptions)
     : TIntermTraverser(true, true, true, &compiler->getSymbolTable()),
       mObjSink(objSink),
       mDeclaringVariable(false),
@@ -330,7 +330,7 @@ void TOutputGLSLBase::writeQualifier(TQualifier qualifier, const TType &type, co
 const char *TOutputGLSLBase::mapQualifierToString(TQualifier qualifier)
 {
     if (sh::IsGLSL410OrOlder(mOutput) && mShaderVersion >= 300 &&
-        (mCompileOptions & SH_REMOVE_INVARIANT_AND_CENTROID_FOR_ESSL3) != 0)
+        mCompileOptions.removeInvariantAndCentroidForESSL3)
     {
         switch (qualifier)
         {
@@ -1295,9 +1295,9 @@ void TOutputGLSLBase::declareInterfaceBlock(const TType &type)
     out << "}";
 }
 
-void WritePragma(TInfoSinkBase &out, ShCompileOptions compileOptions, const TPragma &pragma)
+void WritePragma(TInfoSinkBase &out, const ShCompileOptions &compileOptions, const TPragma &pragma)
 {
-    if ((compileOptions & SH_FLATTEN_PRAGMA_STDGL_INVARIANT_ALL) == 0)
+    if (!compileOptions.flattenPragmaSTDGLInvariantAll)
     {
         if (pragma.stdgl.invariantAll)
             out << "#pragma STDGL invariant(all)\n";
@@ -1453,12 +1453,12 @@ void EmitMultiviewGLSL(const TCompiler &compiler,
         return;
 
     const bool isVertexShader = (compiler.getShaderType() == GL_VERTEX_SHADER);
-    if ((compileOptions & SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW) != 0)
+    if (compileOptions.initializeBuiltinsForInstancedMultiview)
     {
         // Emit ARB_shader_viewport_layer_array/NV_viewport_array2 in a vertex shader if the
         // SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER option is set and the
         // OVR_multiview(2) extension is requested.
-        if (isVertexShader && (compileOptions & SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER) != 0)
+        if (isVertexShader && compileOptions.selectViewInNvGLSLVertexShader)
         {
             sink << "#if defined(GL_ARB_shader_viewport_layer_array)\n"
                  << "#extension GL_ARB_shader_viewport_layer_array : require\n"

@@ -24,6 +24,14 @@ declare_args() {
 
   # Don't build dEQP by default.
   build_angle_deqp_tests = false
+
+  # Enable Desktop GL frontend support.
+  angle_enable_gl_desktop_frontend = false
+}
+
+declare_args() {
+  # Expose WGL entry points by default when using Desktop GL on Windows
+  angle_expose_wgl_entry_points = angle_enable_gl_desktop_frontend && is_win
 }
 
 if (angle_has_build) {
@@ -163,7 +171,7 @@ declare_args() {
 
   # Disable null backend to save space for official build.
   angle_enable_null = !is_official_build
-  angle_enable_gl_desktop = !is_android && !is_ios
+  angle_enable_gl_desktop_backend = !is_android && !is_ios
 
   # http://anglebug.com/2634
   angle_enable_metal = is_mac
@@ -196,7 +204,7 @@ declare_args() {
       angle_enable_vulkan && !is_android && !is_ggp && is_clang
 
   # Translator frontend support:
-  angle_enable_desktop_glsl = angle_enable_gl_desktop
+  angle_enable_desktop_glsl = angle_enable_gl_desktop_backend
 
   # Translator backend support:
   angle_enable_hlsl = angle_enable_d3d9 || angle_enable_d3d11
@@ -484,6 +492,7 @@ if (angle_standalone || build_with_chromium) {
 
       data = invoker.data + [
                "$angle_root/scripts/run_gtest_angle_test.py",
+               "$angle_root/src/tests/py_utils/android_helper.py",
                "$angle_root/src/tests/py_utils/angle_path_util.py",
                "$angle_root/src/tests/py_utils/angle_test_util.py",
                "//testing/scripts/common.py",

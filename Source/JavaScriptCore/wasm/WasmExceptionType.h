@@ -46,7 +46,8 @@ namespace Wasm {
     macro(DivisionByZero, "Division by zero"_s) \
     macro(IntegerOverflow, "Integer overflow"_s) \
     macro(StackOverflow, "Stack overflow"_s) \
-    macro(FuncrefNotWasm, "Funcref must be an exported wasm function"_s)
+    macro(FuncrefNotWasm, "Funcref must be an exported wasm function"_s) \
+    macro(InvalidGCTypeUse, "Unsupported use of struct or array type"_s)
 
 enum class ExceptionType : uint32_t {
 #define MAKE_ENUM(enumName, error) enumName,

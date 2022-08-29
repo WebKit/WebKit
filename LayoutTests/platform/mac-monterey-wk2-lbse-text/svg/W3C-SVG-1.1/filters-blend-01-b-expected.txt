@@ -4,26 +4,28 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (5,10) size 145x88
-  RenderSVGTransformableContainer {g} at (5,10) size 145x88
+layer at (5,5) size 145x98
+  RenderSVGTransformableContainer {g} at (5,5) size 145x98
+layer at (40,5) size 100x98
+  RenderSVGImage {image} at (35,0) size 100x98
 layer at (30,10) size 120x10
-  RenderSVGRect {rect} at (25,0) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=10.00] [width=120.00] [height=10.00]
+  RenderSVGRect {rect} at (25,5) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=10.00] [width=120.00] [height=10.00]
 layer at (30,23) size 120x10
-  RenderSVGRect {rect} at (25,13) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=23.00] [width=120.00] [height=10.00]
+  RenderSVGRect {rect} at (25,18) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=23.00] [width=120.00] [height=10.00]
 layer at (30,36) size 120x23
-  RenderSVGTransformableContainer {g} at (25,26) size 120x23
+  RenderSVGTransformableContainer {g} at (25,31) size 120x23
 layer at (30,36) size 120x10
   RenderSVGRect {rect} at (0,0) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=36.00] [width=120.00] [height=10.00]
 layer at (30,49) size 120x10
   RenderSVGRect {rect} at (0,13) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#FFFF00]}] [x=30.00] [y=49.00] [width=120.00] [height=10.00]
 layer at (30,62) size 120x10
-  RenderSVGRect {rect} at (25,52) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=62.00] [width=120.00] [height=10.00]
+  RenderSVGRect {rect} at (25,57) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=62.00] [width=120.00] [height=10.00]
 layer at (30,75) size 120x10
-  RenderSVGRect {rect} at (25,65) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=75.00] [width=120.00] [height=10.00]
+  RenderSVGRect {rect} at (25,70) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=75.00] [width=120.00] [height=10.00]
 layer at (30,88) size 120x10
-  RenderSVGRect {rect} at (25,78) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=88.00] [width=120.00] [height=10.00]
+  RenderSVGRect {rect} at (25,83) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=88.00] [width=120.00] [height=10.00]
 layer at (5,11) size 25x87
-  RenderSVGTransformableContainer {g} at (0,0) size 25x87
+  RenderSVGTransformableContainer {g} at (0,5) size 25x87
 layer at (5,11) size 21x8
   RenderSVGText {text} at (0,0) size 22x8 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 22x8

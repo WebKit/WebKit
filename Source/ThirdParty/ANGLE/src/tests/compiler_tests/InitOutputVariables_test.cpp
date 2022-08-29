@@ -191,11 +191,11 @@ class InitOutputVariablesWebGL2Test : public ShaderCompileTreeTest
   public:
     void SetUp() override
     {
-        mExtraCompileOptions |= SH_VARIABLES;
-        mExtraCompileOptions |= SH_INIT_OUTPUT_VARIABLES;
+        mCompileOptions.variables           = true;
+        mCompileOptions.initOutputVariables = true;
         if (getShaderType() == GL_VERTEX_SHADER)
         {
-            mExtraCompileOptions |= SH_INIT_GL_POSITION;
+            mCompileOptions.initGLPosition = true;
         }
         ShaderCompileTreeTest::SetUp();
     }
@@ -226,8 +226,8 @@ class InitOutputVariablesWebGL1FragmentShaderTest : public ShaderCompileTreeTest
   public:
     InitOutputVariablesWebGL1FragmentShaderTest()
     {
-        mExtraCompileOptions |= SH_VARIABLES;
-        mExtraCompileOptions |= SH_INIT_OUTPUT_VARIABLES;
+        mCompileOptions.variables           = true;
+        mCompileOptions.initOutputVariables = true;
     }
 
   protected:
@@ -245,9 +245,9 @@ class InitOutputVariablesVertexShaderClipDistanceTest : public ShaderCompileTree
   public:
     InitOutputVariablesVertexShaderClipDistanceTest()
     {
-        mExtraCompileOptions |= SH_VARIABLES;
-        mExtraCompileOptions |= SH_INIT_OUTPUT_VARIABLES;
-        mExtraCompileOptions |= SH_VALIDATE_AST;
+        mCompileOptions.variables           = true;
+        mCompileOptions.initOutputVariables = true;
+        mCompileOptions.validateAST         = true;
     }
 
   protected:

@@ -191,7 +191,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
     GetPDFFirstPageSize(WebCore::FrameIdentifier frameID) -> (WebCore::FloatSize size)
 
-    Reload(uint64_t navigationID, uint32_t reloadOptions, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    Reload(uint64_t navigationID, OptionSet<WebCore::ReloadOption> reloadOptions, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     StopLoading()
     StopLoadingDueToProcessSwap()
 
@@ -451,7 +451,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DrawToPDF(WebCore::FrameIdentifier frameID, std::optional<WebCore::FloatRect> rect) -> (RefPtr<WebCore::SharedBuffer> data)
 #endif
 #if PLATFORM(GTK)
-    DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (WebCore::ResourceError error)
+    DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (std::optional<WebKit::SharedMemory::Handle> data, WebCore::ResourceError error)
 #endif
 
     # Media
@@ -669,7 +669,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(APP_HIGHLIGHTS)
     CreateAppHighlightInSelectedRange(enum:bool WebCore::CreateNewGroupForHighlight createNewGroup, enum:bool WebCore::HighlightRequestOriginatedInApp requestOrigin)
-    RestoreAppHighlightsAndScrollToIndex(Vector<WebKit::SharedMemory::IPCHandle> memoryHandles, std::optional<unsigned> index)
+    RestoreAppHighlightsAndScrollToIndex(Vector<WebKit::SharedMemory::Handle> memoryHandles, std::optional<unsigned> index)
     SetAppHighlightsVisibility(enum:bool WebCore::HighlightVisibility highlightVisibility)
 #endif
 

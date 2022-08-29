@@ -22,10 +22,26 @@
 #include "libGLESv2/entry_points_gles_ext_autogen.h"
 #include "platform/PlatformMethods.h"
 
+#if defined(ANGLE_ENABLE_GL_DESKTOP_FRONTEND)
+#    include "libGLESv2/entry_points_gl_1_autogen.h"
+#    include "libGLESv2/entry_points_gl_2_autogen.h"
+#    include "libGLESv2/entry_points_gl_3_autogen.h"
+#    include "libGLESv2/entry_points_gl_4_autogen.h"
+#endif
+
+#include <iterator>
+
 #define P(FUNC) reinterpret_cast<__eglMustCastToProperFunctionPointerType>(FUNC)
+
+#if defined(ANGLE_ENABLE_GL_DESKTOP_FRONTEND)
+#    define DESKTOP_ONLY(func, angleFunc) {func, P(angleFunc)},
+#else
+#    define DESKTOP_ONLY(func, angleFunc)
+#endif
 
 namespace egl
 {
+// clang-format off
 const ProcEntry g_procTable[] = {
     {"ANGLEGetDisplayPlatform", P(ANGLEGetDisplayPlatform)},
     {"ANGLEResetDisplayPlatform", P(ANGLEResetDisplayPlatform)},
@@ -121,8 +137,7 @@ const ProcEntry g_procTable[] = {
     {"eglSignalSyncKHR", P(EGL_SignalSyncKHR)},
     {"eglStreamAttribKHR", P(EGL_StreamAttribKHR)},
     {"eglStreamConsumerAcquireKHR", P(EGL_StreamConsumerAcquireKHR)},
-    {"eglStreamConsumerGLTextureExternalAttribsNV",
-     P(EGL_StreamConsumerGLTextureExternalAttribsNV)},
+    {"eglStreamConsumerGLTextureExternalAttribsNV", P(EGL_StreamConsumerGLTextureExternalAttribsNV)},
     {"eglStreamConsumerGLTextureExternalKHR", P(EGL_StreamConsumerGLTextureExternalKHR)},
     {"eglStreamConsumerReleaseKHR", P(EGL_StreamConsumerReleaseKHR)},
     {"eglStreamPostD3DTextureANGLE", P(EGL_StreamPostD3DTextureANGLE)},
@@ -138,37 +153,53 @@ const ProcEntry g_procTable[] = {
     {"eglWaitNative", P(EGL_WaitNative)},
     {"eglWaitSync", P(EGL_WaitSync)},
     {"eglWaitSyncKHR", P(EGL_WaitSyncKHR)},
+    DESKTOP_ONLY("glAccum", GL_Accum)
     {"glAcquireTexturesANGLE", P(GL_AcquireTexturesANGLE)},
     {"glActiveShaderProgram", P(GL_ActiveShaderProgram)},
     {"glActiveShaderProgramEXT", P(GL_ActiveShaderProgramEXT)},
     {"glActiveTexture", P(GL_ActiveTexture)},
     {"glAlphaFunc", P(GL_AlphaFunc)},
     {"glAlphaFuncx", P(GL_AlphaFuncx)},
+    DESKTOP_ONLY("glAreTexturesResident", GL_AreTexturesResident)
+    DESKTOP_ONLY("glArrayElement", GL_ArrayElement)
     {"glAttachShader", P(GL_AttachShader)},
+    DESKTOP_ONLY("glBegin", GL_Begin)
+    DESKTOP_ONLY("glBeginConditionalRender", GL_BeginConditionalRender)
     {"glBeginPerfMonitorAMD", P(GL_BeginPerfMonitorAMD)},
     {"glBeginQuery", P(GL_BeginQuery)},
     {"glBeginQueryEXT", P(GL_BeginQueryEXT)},
+    DESKTOP_ONLY("glBeginQueryIndexed", GL_BeginQueryIndexed)
     {"glBeginTransformFeedback", P(GL_BeginTransformFeedback)},
     {"glBindAttribLocation", P(GL_BindAttribLocation)},
     {"glBindBuffer", P(GL_BindBuffer)},
     {"glBindBufferBase", P(GL_BindBufferBase)},
     {"glBindBufferRange", P(GL_BindBufferRange)},
+    DESKTOP_ONLY("glBindBuffersBase", GL_BindBuffersBase)
+    DESKTOP_ONLY("glBindBuffersRange", GL_BindBuffersRange)
+    DESKTOP_ONLY("glBindFragDataLocation", GL_BindFragDataLocation)
     {"glBindFragDataLocationEXT", P(GL_BindFragDataLocationEXT)},
+    DESKTOP_ONLY("glBindFragDataLocationIndexed", GL_BindFragDataLocationIndexed)
     {"glBindFragDataLocationIndexedEXT", P(GL_BindFragDataLocationIndexedEXT)},
     {"glBindFramebuffer", P(GL_BindFramebuffer)},
     {"glBindFramebufferOES", P(GL_BindFramebufferOES)},
     {"glBindImageTexture", P(GL_BindImageTexture)},
+    DESKTOP_ONLY("glBindImageTextures", GL_BindImageTextures)
     {"glBindProgramPipeline", P(GL_BindProgramPipeline)},
     {"glBindProgramPipelineEXT", P(GL_BindProgramPipelineEXT)},
     {"glBindRenderbuffer", P(GL_BindRenderbuffer)},
     {"glBindRenderbufferOES", P(GL_BindRenderbufferOES)},
     {"glBindSampler", P(GL_BindSampler)},
+    DESKTOP_ONLY("glBindSamplers", GL_BindSamplers)
     {"glBindTexture", P(GL_BindTexture)},
+    DESKTOP_ONLY("glBindTextureUnit", GL_BindTextureUnit)
+    DESKTOP_ONLY("glBindTextures", GL_BindTextures)
     {"glBindTransformFeedback", P(GL_BindTransformFeedback)},
     {"glBindUniformLocationCHROMIUM", P(GL_BindUniformLocationCHROMIUM)},
     {"glBindVertexArray", P(GL_BindVertexArray)},
     {"glBindVertexArrayOES", P(GL_BindVertexArrayOES)},
     {"glBindVertexBuffer", P(GL_BindVertexBuffer)},
+    DESKTOP_ONLY("glBindVertexBuffers", GL_BindVertexBuffers)
+    DESKTOP_ONLY("glBitmap", GL_Bitmap)
     {"glBlendBarrier", P(GL_BlendBarrier)},
     {"glBlendBarrierKHR", P(GL_BlendBarrierKHR)},
     {"glBlendColor", P(GL_BlendColor)},
@@ -191,66 +222,143 @@ const ProcEntry g_procTable[] = {
     {"glBlitFramebuffer", P(GL_BlitFramebuffer)},
     {"glBlitFramebufferANGLE", P(GL_BlitFramebufferANGLE)},
     {"glBlitFramebufferNV", P(GL_BlitFramebufferNV)},
+    DESKTOP_ONLY("glBlitNamedFramebuffer", GL_BlitNamedFramebuffer)
     {"glBufferData", P(GL_BufferData)},
+    DESKTOP_ONLY("glBufferStorage", GL_BufferStorage)
     {"glBufferStorageEXT", P(GL_BufferStorageEXT)},
     {"glBufferStorageExternalEXT", P(GL_BufferStorageExternalEXT)},
     {"glBufferStorageMemEXT", P(GL_BufferStorageMemEXT)},
     {"glBufferSubData", P(GL_BufferSubData)},
+    DESKTOP_ONLY("glCallList", GL_CallList)
+    DESKTOP_ONLY("glCallLists", GL_CallLists)
     {"glCheckFramebufferStatus", P(GL_CheckFramebufferStatus)},
     {"glCheckFramebufferStatusOES", P(GL_CheckFramebufferStatusOES)},
+    DESKTOP_ONLY("glCheckNamedFramebufferStatus", GL_CheckNamedFramebufferStatus)
+    DESKTOP_ONLY("glClampColor", GL_ClampColor)
     {"glClear", P(GL_Clear)},
+    DESKTOP_ONLY("glClearAccum", GL_ClearAccum)
+    DESKTOP_ONLY("glClearBufferData", GL_ClearBufferData)
+    DESKTOP_ONLY("glClearBufferSubData", GL_ClearBufferSubData)
     {"glClearBufferfi", P(GL_ClearBufferfi)},
     {"glClearBufferfv", P(GL_ClearBufferfv)},
     {"glClearBufferiv", P(GL_ClearBufferiv)},
     {"glClearBufferuiv", P(GL_ClearBufferuiv)},
     {"glClearColor", P(GL_ClearColor)},
     {"glClearColorx", P(GL_ClearColorx)},
+    DESKTOP_ONLY("glClearDepth", GL_ClearDepth)
     {"glClearDepthf", P(GL_ClearDepthf)},
     {"glClearDepthx", P(GL_ClearDepthx)},
+    DESKTOP_ONLY("glClearIndex", GL_ClearIndex)
+    DESKTOP_ONLY("glClearNamedBufferData", GL_ClearNamedBufferData)
+    DESKTOP_ONLY("glClearNamedBufferSubData", GL_ClearNamedBufferSubData)
+    DESKTOP_ONLY("glClearNamedFramebufferfi", GL_ClearNamedFramebufferfi)
+    DESKTOP_ONLY("glClearNamedFramebufferfv", GL_ClearNamedFramebufferfv)
+    DESKTOP_ONLY("glClearNamedFramebufferiv", GL_ClearNamedFramebufferiv)
+    DESKTOP_ONLY("glClearNamedFramebufferuiv", GL_ClearNamedFramebufferuiv)
     {"glClearStencil", P(GL_ClearStencil)},
+    DESKTOP_ONLY("glClearTexImage", GL_ClearTexImage)
+    DESKTOP_ONLY("glClearTexSubImage", GL_ClearTexSubImage)
     {"glClientActiveTexture", P(GL_ClientActiveTexture)},
     {"glClientWaitSync", P(GL_ClientWaitSync)},
+    DESKTOP_ONLY("glClipControl", GL_ClipControl)
     {"glClipControlEXT", P(GL_ClipControlEXT)},
+    DESKTOP_ONLY("glClipPlane", GL_ClipPlane)
     {"glClipPlanef", P(GL_ClipPlanef)},
     {"glClipPlanex", P(GL_ClipPlanex)},
+    DESKTOP_ONLY("glColor3b", GL_Color3b)
+    DESKTOP_ONLY("glColor3bv", GL_Color3bv)
+    DESKTOP_ONLY("glColor3d", GL_Color3d)
+    DESKTOP_ONLY("glColor3dv", GL_Color3dv)
+    DESKTOP_ONLY("glColor3f", GL_Color3f)
+    DESKTOP_ONLY("glColor3fv", GL_Color3fv)
+    DESKTOP_ONLY("glColor3i", GL_Color3i)
+    DESKTOP_ONLY("glColor3iv", GL_Color3iv)
+    DESKTOP_ONLY("glColor3s", GL_Color3s)
+    DESKTOP_ONLY("glColor3sv", GL_Color3sv)
+    DESKTOP_ONLY("glColor3ub", GL_Color3ub)
+    DESKTOP_ONLY("glColor3ubv", GL_Color3ubv)
+    DESKTOP_ONLY("glColor3ui", GL_Color3ui)
+    DESKTOP_ONLY("glColor3uiv", GL_Color3uiv)
+    DESKTOP_ONLY("glColor3us", GL_Color3us)
+    DESKTOP_ONLY("glColor3usv", GL_Color3usv)
+    DESKTOP_ONLY("glColor4b", GL_Color4b)
+    DESKTOP_ONLY("glColor4bv", GL_Color4bv)
+    DESKTOP_ONLY("glColor4d", GL_Color4d)
+    DESKTOP_ONLY("glColor4dv", GL_Color4dv)
     {"glColor4f", P(GL_Color4f)},
+    DESKTOP_ONLY("glColor4fv", GL_Color4fv)
+    DESKTOP_ONLY("glColor4i", GL_Color4i)
+    DESKTOP_ONLY("glColor4iv", GL_Color4iv)
+    DESKTOP_ONLY("glColor4s", GL_Color4s)
+    DESKTOP_ONLY("glColor4sv", GL_Color4sv)
     {"glColor4ub", P(GL_Color4ub)},
+    DESKTOP_ONLY("glColor4ubv", GL_Color4ubv)
+    DESKTOP_ONLY("glColor4ui", GL_Color4ui)
+    DESKTOP_ONLY("glColor4uiv", GL_Color4uiv)
+    DESKTOP_ONLY("glColor4us", GL_Color4us)
+    DESKTOP_ONLY("glColor4usv", GL_Color4usv)
     {"glColor4x", P(GL_Color4x)},
     {"glColorMask", P(GL_ColorMask)},
     {"glColorMaski", P(GL_ColorMaski)},
     {"glColorMaskiEXT", P(GL_ColorMaskiEXT)},
     {"glColorMaskiOES", P(GL_ColorMaskiOES)},
+    DESKTOP_ONLY("glColorMaterial", GL_ColorMaterial)
+    DESKTOP_ONLY("glColorP3ui", GL_ColorP3ui)
+    DESKTOP_ONLY("glColorP3uiv", GL_ColorP3uiv)
+    DESKTOP_ONLY("glColorP4ui", GL_ColorP4ui)
+    DESKTOP_ONLY("glColorP4uiv", GL_ColorP4uiv)
     {"glColorPointer", P(GL_ColorPointer)},
     {"glCompileShader", P(GL_CompileShader)},
     {"glCompressedCopyTextureCHROMIUM", P(GL_CompressedCopyTextureCHROMIUM)},
+    DESKTOP_ONLY("glCompressedTexImage1D", GL_CompressedTexImage1D)
     {"glCompressedTexImage2D", P(GL_CompressedTexImage2D)},
     {"glCompressedTexImage2DRobustANGLE", P(GL_CompressedTexImage2DRobustANGLE)},
     {"glCompressedTexImage3D", P(GL_CompressedTexImage3D)},
     {"glCompressedTexImage3DOES", P(GL_CompressedTexImage3DOES)},
     {"glCompressedTexImage3DRobustANGLE", P(GL_CompressedTexImage3DRobustANGLE)},
+    DESKTOP_ONLY("glCompressedTexSubImage1D", GL_CompressedTexSubImage1D)
     {"glCompressedTexSubImage2D", P(GL_CompressedTexSubImage2D)},
     {"glCompressedTexSubImage2DRobustANGLE", P(GL_CompressedTexSubImage2DRobustANGLE)},
     {"glCompressedTexSubImage3D", P(GL_CompressedTexSubImage3D)},
     {"glCompressedTexSubImage3DOES", P(GL_CompressedTexSubImage3DOES)},
     {"glCompressedTexSubImage3DRobustANGLE", P(GL_CompressedTexSubImage3DRobustANGLE)},
+    DESKTOP_ONLY("glCompressedTextureSubImage1D", GL_CompressedTextureSubImage1D)
+    DESKTOP_ONLY("glCompressedTextureSubImage2D", GL_CompressedTextureSubImage2D)
+    DESKTOP_ONLY("glCompressedTextureSubImage3D", GL_CompressedTextureSubImage3D)
     {"glCopyBufferSubData", P(GL_CopyBufferSubData)},
     {"glCopyImageSubData", P(GL_CopyImageSubData)},
     {"glCopyImageSubDataEXT", P(GL_CopyImageSubDataEXT)},
     {"glCopyImageSubDataOES", P(GL_CopyImageSubDataOES)},
+    DESKTOP_ONLY("glCopyNamedBufferSubData", GL_CopyNamedBufferSubData)
+    DESKTOP_ONLY("glCopyPixels", GL_CopyPixels)
     {"glCopySubTexture3DANGLE", P(GL_CopySubTexture3DANGLE)},
     {"glCopySubTextureCHROMIUM", P(GL_CopySubTextureCHROMIUM)},
+    DESKTOP_ONLY("glCopyTexImage1D", GL_CopyTexImage1D)
     {"glCopyTexImage2D", P(GL_CopyTexImage2D)},
+    DESKTOP_ONLY("glCopyTexSubImage1D", GL_CopyTexSubImage1D)
     {"glCopyTexSubImage2D", P(GL_CopyTexSubImage2D)},
     {"glCopyTexSubImage3D", P(GL_CopyTexSubImage3D)},
     {"glCopyTexSubImage3DOES", P(GL_CopyTexSubImage3DOES)},
     {"glCopyTexture3DANGLE", P(GL_CopyTexture3DANGLE)},
     {"glCopyTextureCHROMIUM", P(GL_CopyTextureCHROMIUM)},
+    DESKTOP_ONLY("glCopyTextureSubImage1D", GL_CopyTextureSubImage1D)
+    DESKTOP_ONLY("glCopyTextureSubImage2D", GL_CopyTextureSubImage2D)
+    DESKTOP_ONLY("glCopyTextureSubImage3D", GL_CopyTextureSubImage3D)
     {"glCoverageModulationCHROMIUM", P(GL_CoverageModulationCHROMIUM)},
+    DESKTOP_ONLY("glCreateBuffers", GL_CreateBuffers)
+    DESKTOP_ONLY("glCreateFramebuffers", GL_CreateFramebuffers)
     {"glCreateMemoryObjectsEXT", P(GL_CreateMemoryObjectsEXT)},
     {"glCreateProgram", P(GL_CreateProgram)},
+    DESKTOP_ONLY("glCreateProgramPipelines", GL_CreateProgramPipelines)
+    DESKTOP_ONLY("glCreateQueries", GL_CreateQueries)
+    DESKTOP_ONLY("glCreateRenderbuffers", GL_CreateRenderbuffers)
+    DESKTOP_ONLY("glCreateSamplers", GL_CreateSamplers)
     {"glCreateShader", P(GL_CreateShader)},
     {"glCreateShaderProgramv", P(GL_CreateShaderProgramv)},
     {"glCreateShaderProgramvEXT", P(GL_CreateShaderProgramvEXT)},
+    DESKTOP_ONLY("glCreateTextures", GL_CreateTextures)
+    DESKTOP_ONLY("glCreateTransformFeedbacks", GL_CreateTransformFeedbacks)
+    DESKTOP_ONLY("glCreateVertexArrays", GL_CreateVertexArrays)
     {"glCullFace", P(GL_CullFace)},
     {"glCurrentPaletteMatrixOES", P(GL_CurrentPaletteMatrixOES)},
     {"glDebugMessageCallback", P(GL_DebugMessageCallback)},
@@ -263,6 +371,7 @@ const ProcEntry g_procTable[] = {
     {"glDeleteFencesNV", P(GL_DeleteFencesNV)},
     {"glDeleteFramebuffers", P(GL_DeleteFramebuffers)},
     {"glDeleteFramebuffersOES", P(GL_DeleteFramebuffersOES)},
+    DESKTOP_ONLY("glDeleteLists", GL_DeleteLists)
     {"glDeleteMemoryObjectsEXT", P(GL_DeleteMemoryObjectsEXT)},
     {"glDeletePerfMonitorsAMD", P(GL_DeletePerfMonitorsAMD)},
     {"glDeleteProgram", P(GL_DeleteProgram)},
@@ -282,12 +391,16 @@ const ProcEntry g_procTable[] = {
     {"glDeleteVertexArraysOES", P(GL_DeleteVertexArraysOES)},
     {"glDepthFunc", P(GL_DepthFunc)},
     {"glDepthMask", P(GL_DepthMask)},
+    DESKTOP_ONLY("glDepthRange", GL_DepthRange)
+    DESKTOP_ONLY("glDepthRangeArrayv", GL_DepthRangeArrayv)
+    DESKTOP_ONLY("glDepthRangeIndexed", GL_DepthRangeIndexed)
     {"glDepthRangef", P(GL_DepthRangef)},
     {"glDepthRangex", P(GL_DepthRangex)},
     {"glDetachShader", P(GL_DetachShader)},
     {"glDisable", P(GL_Disable)},
     {"glDisableClientState", P(GL_DisableClientState)},
     {"glDisableExtensionANGLE", P(GL_DisableExtensionANGLE)},
+    DESKTOP_ONLY("glDisableVertexArrayAttrib", GL_DisableVertexArrayAttrib)
     {"glDisableVertexAttribArray", P(GL_DisableVertexAttribArray)},
     {"glDisablei", P(GL_Disablei)},
     {"glDisableiEXT", P(GL_DisableiEXT)},
@@ -299,9 +412,11 @@ const ProcEntry g_procTable[] = {
     {"glDrawArraysIndirect", P(GL_DrawArraysIndirect)},
     {"glDrawArraysInstanced", P(GL_DrawArraysInstanced)},
     {"glDrawArraysInstancedANGLE", P(GL_DrawArraysInstancedANGLE)},
+    DESKTOP_ONLY("glDrawArraysInstancedBaseInstance", GL_DrawArraysInstancedBaseInstance)
     {"glDrawArraysInstancedBaseInstanceANGLE", P(GL_DrawArraysInstancedBaseInstanceANGLE)},
     {"glDrawArraysInstancedBaseInstanceEXT", P(GL_DrawArraysInstancedBaseInstanceEXT)},
     {"glDrawArraysInstancedEXT", P(GL_DrawArraysInstancedEXT)},
+    DESKTOP_ONLY("glDrawBuffer", GL_DrawBuffer)
     {"glDrawBuffers", P(GL_DrawBuffers)},
     {"glDrawBuffersEXT", P(GL_DrawBuffersEXT)},
     {"glDrawElements", P(GL_DrawElements)},
@@ -311,15 +426,16 @@ const ProcEntry g_procTable[] = {
     {"glDrawElementsIndirect", P(GL_DrawElementsIndirect)},
     {"glDrawElementsInstanced", P(GL_DrawElementsInstanced)},
     {"glDrawElementsInstancedANGLE", P(GL_DrawElementsInstancedANGLE)},
+    DESKTOP_ONLY("glDrawElementsInstancedBaseInstance", GL_DrawElementsInstancedBaseInstance)
     {"glDrawElementsInstancedBaseInstanceEXT", P(GL_DrawElementsInstancedBaseInstanceEXT)},
     {"glDrawElementsInstancedBaseVertex", P(GL_DrawElementsInstancedBaseVertex)},
-    {"glDrawElementsInstancedBaseVertexBaseInstanceANGLE",
-     P(GL_DrawElementsInstancedBaseVertexBaseInstanceANGLE)},
-    {"glDrawElementsInstancedBaseVertexBaseInstanceEXT",
-     P(GL_DrawElementsInstancedBaseVertexBaseInstanceEXT)},
+    DESKTOP_ONLY("glDrawElementsInstancedBaseVertexBaseInstance", GL_DrawElementsInstancedBaseVertexBaseInstance)
+    {"glDrawElementsInstancedBaseVertexBaseInstanceANGLE", P(GL_DrawElementsInstancedBaseVertexBaseInstanceANGLE)},
+    {"glDrawElementsInstancedBaseVertexBaseInstanceEXT", P(GL_DrawElementsInstancedBaseVertexBaseInstanceEXT)},
     {"glDrawElementsInstancedBaseVertexEXT", P(GL_DrawElementsInstancedBaseVertexEXT)},
     {"glDrawElementsInstancedBaseVertexOES", P(GL_DrawElementsInstancedBaseVertexOES)},
     {"glDrawElementsInstancedEXT", P(GL_DrawElementsInstancedEXT)},
+    DESKTOP_ONLY("glDrawPixels", GL_DrawPixels)
     {"glDrawRangeElements", P(GL_DrawRangeElements)},
     {"glDrawRangeElementsBaseVertex", P(GL_DrawRangeElementsBaseVertex)},
     {"glDrawRangeElementsBaseVertexEXT", P(GL_DrawRangeElementsBaseVertexEXT)},
@@ -332,28 +448,61 @@ const ProcEntry g_procTable[] = {
     {"glDrawTexsvOES", P(GL_DrawTexsvOES)},
     {"glDrawTexxOES", P(GL_DrawTexxOES)},
     {"glDrawTexxvOES", P(GL_DrawTexxvOES)},
+    DESKTOP_ONLY("glDrawTransformFeedback", GL_DrawTransformFeedback)
+    DESKTOP_ONLY("glDrawTransformFeedbackInstanced", GL_DrawTransformFeedbackInstanced)
+    DESKTOP_ONLY("glDrawTransformFeedbackStream", GL_DrawTransformFeedbackStream)
+    DESKTOP_ONLY("glDrawTransformFeedbackStreamInstanced", GL_DrawTransformFeedbackStreamInstanced)
     {"glEGLImageTargetRenderbufferStorageOES", P(GL_EGLImageTargetRenderbufferStorageOES)},
     {"glEGLImageTargetTexStorageEXT", P(GL_EGLImageTargetTexStorageEXT)},
     {"glEGLImageTargetTexture2DOES", P(GL_EGLImageTargetTexture2DOES)},
     {"glEGLImageTargetTextureStorageEXT", P(GL_EGLImageTargetTextureStorageEXT)},
+    DESKTOP_ONLY("glEdgeFlag", GL_EdgeFlag)
+    DESKTOP_ONLY("glEdgeFlagPointer", GL_EdgeFlagPointer)
+    DESKTOP_ONLY("glEdgeFlagv", GL_EdgeFlagv)
     {"glEnable", P(GL_Enable)},
     {"glEnableClientState", P(GL_EnableClientState)},
+    DESKTOP_ONLY("glEnableVertexArrayAttrib", GL_EnableVertexArrayAttrib)
     {"glEnableVertexAttribArray", P(GL_EnableVertexAttribArray)},
     {"glEnablei", P(GL_Enablei)},
     {"glEnableiEXT", P(GL_EnableiEXT)},
     {"glEnableiOES", P(GL_EnableiOES)},
+    DESKTOP_ONLY("glEnd", GL_End)
+    DESKTOP_ONLY("glEndConditionalRender", GL_EndConditionalRender)
+    DESKTOP_ONLY("glEndList", GL_EndList)
     {"glEndPerfMonitorAMD", P(GL_EndPerfMonitorAMD)},
     {"glEndQuery", P(GL_EndQuery)},
     {"glEndQueryEXT", P(GL_EndQueryEXT)},
+    DESKTOP_ONLY("glEndQueryIndexed", GL_EndQueryIndexed)
     {"glEndTransformFeedback", P(GL_EndTransformFeedback)},
+    DESKTOP_ONLY("glEvalCoord1d", GL_EvalCoord1d)
+    DESKTOP_ONLY("glEvalCoord1dv", GL_EvalCoord1dv)
+    DESKTOP_ONLY("glEvalCoord1f", GL_EvalCoord1f)
+    DESKTOP_ONLY("glEvalCoord1fv", GL_EvalCoord1fv)
+    DESKTOP_ONLY("glEvalCoord2d", GL_EvalCoord2d)
+    DESKTOP_ONLY("glEvalCoord2dv", GL_EvalCoord2dv)
+    DESKTOP_ONLY("glEvalCoord2f", GL_EvalCoord2f)
+    DESKTOP_ONLY("glEvalCoord2fv", GL_EvalCoord2fv)
+    DESKTOP_ONLY("glEvalMesh1", GL_EvalMesh1)
+    DESKTOP_ONLY("glEvalMesh2", GL_EvalMesh2)
+    DESKTOP_ONLY("glEvalPoint1", GL_EvalPoint1)
+    DESKTOP_ONLY("glEvalPoint2", GL_EvalPoint2)
+    DESKTOP_ONLY("glFeedbackBuffer", GL_FeedbackBuffer)
     {"glFenceSync", P(GL_FenceSync)},
     {"glFinish", P(GL_Finish)},
     {"glFinishFenceNV", P(GL_FinishFenceNV)},
     {"glFlush", P(GL_Flush)},
     {"glFlushMappedBufferRange", P(GL_FlushMappedBufferRange)},
     {"glFlushMappedBufferRangeEXT", P(GL_FlushMappedBufferRangeEXT)},
+    DESKTOP_ONLY("glFlushMappedNamedBufferRange", GL_FlushMappedNamedBufferRange)
+    DESKTOP_ONLY("glFogCoordPointer", GL_FogCoordPointer)
+    DESKTOP_ONLY("glFogCoordd", GL_FogCoordd)
+    DESKTOP_ONLY("glFogCoorddv", GL_FogCoorddv)
+    DESKTOP_ONLY("glFogCoordf", GL_FogCoordf)
+    DESKTOP_ONLY("glFogCoordfv", GL_FogCoordfv)
     {"glFogf", P(GL_Fogf)},
     {"glFogfv", P(GL_Fogfv)},
+    DESKTOP_ONLY("glFogi", GL_Fogi)
+    DESKTOP_ONLY("glFogiv", GL_Fogiv)
     {"glFogx", P(GL_Fogx)},
     {"glFogxv", P(GL_Fogxv)},
     {"glFramebufferFetchBarrierEXT", P(GL_FramebufferFetchBarrierEXT)},
@@ -362,21 +511,25 @@ const ProcEntry g_procTable[] = {
     {"glFramebufferRenderbuffer", P(GL_FramebufferRenderbuffer)},
     {"glFramebufferRenderbufferOES", P(GL_FramebufferRenderbufferOES)},
     {"glFramebufferTexture", P(GL_FramebufferTexture)},
+    DESKTOP_ONLY("glFramebufferTexture1D", GL_FramebufferTexture1D)
     {"glFramebufferTexture2D", P(GL_FramebufferTexture2D)},
     {"glFramebufferTexture2DMultisampleEXT", P(GL_FramebufferTexture2DMultisampleEXT)},
     {"glFramebufferTexture2DOES", P(GL_FramebufferTexture2DOES)},
+    DESKTOP_ONLY("glFramebufferTexture3D", GL_FramebufferTexture3D)
     {"glFramebufferTexture3DOES", P(GL_FramebufferTexture3DOES)},
     {"glFramebufferTextureEXT", P(GL_FramebufferTextureEXT)},
     {"glFramebufferTextureLayer", P(GL_FramebufferTextureLayer)},
     {"glFramebufferTextureMultiviewOVR", P(GL_FramebufferTextureMultiviewOVR)},
     {"glFramebufferTextureOES", P(GL_FramebufferTextureOES)},
     {"glFrontFace", P(GL_FrontFace)},
+    DESKTOP_ONLY("glFrustum", GL_Frustum)
     {"glFrustumf", P(GL_Frustumf)},
     {"glFrustumx", P(GL_Frustumx)},
     {"glGenBuffers", P(GL_GenBuffers)},
     {"glGenFencesNV", P(GL_GenFencesNV)},
     {"glGenFramebuffers", P(GL_GenFramebuffers)},
     {"glGenFramebuffersOES", P(GL_GenFramebuffersOES)},
+    DESKTOP_ONLY("glGenLists", GL_GenLists)
     {"glGenPerfMonitorsAMD", P(GL_GenPerfMonitorsAMD)},
     {"glGenProgramPipelines", P(GL_GenProgramPipelines)},
     {"glGenProgramPipelinesEXT", P(GL_GenProgramPipelinesEXT)},
@@ -392,11 +545,17 @@ const ProcEntry g_procTable[] = {
     {"glGenVertexArraysOES", P(GL_GenVertexArraysOES)},
     {"glGenerateMipmap", P(GL_GenerateMipmap)},
     {"glGenerateMipmapOES", P(GL_GenerateMipmapOES)},
+    DESKTOP_ONLY("glGenerateTextureMipmap", GL_GenerateTextureMipmap)
+    DESKTOP_ONLY("glGetActiveAtomicCounterBufferiv", GL_GetActiveAtomicCounterBufferiv)
     {"glGetActiveAttrib", P(GL_GetActiveAttrib)},
+    DESKTOP_ONLY("glGetActiveSubroutineName", GL_GetActiveSubroutineName)
+    DESKTOP_ONLY("glGetActiveSubroutineUniformName", GL_GetActiveSubroutineUniformName)
+    DESKTOP_ONLY("glGetActiveSubroutineUniformiv", GL_GetActiveSubroutineUniformiv)
     {"glGetActiveUniform", P(GL_GetActiveUniform)},
     {"glGetActiveUniformBlockName", P(GL_GetActiveUniformBlockName)},
     {"glGetActiveUniformBlockiv", P(GL_GetActiveUniformBlockiv)},
     {"glGetActiveUniformBlockivRobustANGLE", P(GL_GetActiveUniformBlockivRobustANGLE)},
+    DESKTOP_ONLY("glGetActiveUniformName", GL_GetActiveUniformName)
     {"glGetActiveUniformsiv", P(GL_GetActiveUniformsiv)},
     {"glGetAttachedShaders", P(GL_GetAttachedShaders)},
     {"glGetAttribLocation", P(GL_GetAttribLocation)},
@@ -411,22 +570,30 @@ const ProcEntry g_procTable[] = {
     {"glGetBufferPointerv", P(GL_GetBufferPointerv)},
     {"glGetBufferPointervOES", P(GL_GetBufferPointervOES)},
     {"glGetBufferPointervRobustANGLE", P(GL_GetBufferPointervRobustANGLE)},
+    DESKTOP_ONLY("glGetBufferSubData", GL_GetBufferSubData)
+    DESKTOP_ONLY("glGetClipPlane", GL_GetClipPlane)
     {"glGetClipPlanef", P(GL_GetClipPlanef)},
     {"glGetClipPlanex", P(GL_GetClipPlanex)},
+    DESKTOP_ONLY("glGetCompressedTexImage", GL_GetCompressedTexImage)
     {"glGetCompressedTexImageANGLE", P(GL_GetCompressedTexImageANGLE)},
+    DESKTOP_ONLY("glGetCompressedTextureImage", GL_GetCompressedTextureImage)
+    DESKTOP_ONLY("glGetCompressedTextureSubImage", GL_GetCompressedTextureSubImage)
     {"glGetDebugMessageLog", P(GL_GetDebugMessageLog)},
     {"glGetDebugMessageLogKHR", P(GL_GetDebugMessageLogKHR)},
+    DESKTOP_ONLY("glGetDoublei_v", GL_GetDoublei_v)
+    DESKTOP_ONLY("glGetDoublev", GL_GetDoublev)
     {"glGetError", P(GL_GetError)},
     {"glGetFenceivNV", P(GL_GetFenceivNV)},
     {"glGetFixedv", P(GL_GetFixedv)},
+    DESKTOP_ONLY("glGetFloati_v", GL_GetFloati_v)
     {"glGetFloatv", P(GL_GetFloatv)},
     {"glGetFloatvRobustANGLE", P(GL_GetFloatvRobustANGLE)},
+    DESKTOP_ONLY("glGetFragDataIndex", GL_GetFragDataIndex)
     {"glGetFragDataIndexEXT", P(GL_GetFragDataIndexEXT)},
     {"glGetFragDataLocation", P(GL_GetFragDataLocation)},
     {"glGetFramebufferAttachmentParameteriv", P(GL_GetFramebufferAttachmentParameteriv)},
     {"glGetFramebufferAttachmentParameterivOES", P(GL_GetFramebufferAttachmentParameterivOES)},
-    {"glGetFramebufferAttachmentParameterivRobustANGLE",
-     P(GL_GetFramebufferAttachmentParameterivRobustANGLE)},
+    {"glGetFramebufferAttachmentParameterivRobustANGLE", P(GL_GetFramebufferAttachmentParameterivRobustANGLE)},
     {"glGetFramebufferParameteriv", P(GL_GetFramebufferParameteriv)},
     {"glGetFramebufferParameterivMESA", P(GL_GetFramebufferParameterivMESA)},
     {"glGetFramebufferParameterivRobustANGLE", P(GL_GetFramebufferParameterivRobustANGLE)},
@@ -441,16 +608,29 @@ const ProcEntry g_procTable[] = {
     {"glGetIntegeri_vRobustANGLE", P(GL_GetIntegeri_vRobustANGLE)},
     {"glGetIntegerv", P(GL_GetIntegerv)},
     {"glGetIntegervRobustANGLE", P(GL_GetIntegervRobustANGLE)},
+    DESKTOP_ONLY("glGetInternalformati64v", GL_GetInternalformati64v)
     {"glGetInternalformativ", P(GL_GetInternalformativ)},
     {"glGetInternalformativRobustANGLE", P(GL_GetInternalformativRobustANGLE)},
     {"glGetLightfv", P(GL_GetLightfv)},
+    DESKTOP_ONLY("glGetLightiv", GL_GetLightiv)
     {"glGetLightxv", P(GL_GetLightxv)},
+    DESKTOP_ONLY("glGetMapdv", GL_GetMapdv)
+    DESKTOP_ONLY("glGetMapfv", GL_GetMapfv)
+    DESKTOP_ONLY("glGetMapiv", GL_GetMapiv)
     {"glGetMaterialfv", P(GL_GetMaterialfv)},
+    DESKTOP_ONLY("glGetMaterialiv", GL_GetMaterialiv)
     {"glGetMaterialxv", P(GL_GetMaterialxv)},
     {"glGetMemoryObjectParameterivEXT", P(GL_GetMemoryObjectParameterivEXT)},
     {"glGetMultisamplefv", P(GL_GetMultisamplefv)},
     {"glGetMultisamplefvANGLE", P(GL_GetMultisamplefvANGLE)},
     {"glGetMultisamplefvRobustANGLE", P(GL_GetMultisamplefvRobustANGLE)},
+    DESKTOP_ONLY("glGetNamedBufferParameteri64v", GL_GetNamedBufferParameteri64v)
+    DESKTOP_ONLY("glGetNamedBufferParameteriv", GL_GetNamedBufferParameteriv)
+    DESKTOP_ONLY("glGetNamedBufferPointerv", GL_GetNamedBufferPointerv)
+    DESKTOP_ONLY("glGetNamedBufferSubData", GL_GetNamedBufferSubData)
+    DESKTOP_ONLY("glGetNamedFramebufferAttachmentParameteriv", GL_GetNamedFramebufferAttachmentParameteriv)
+    DESKTOP_ONLY("glGetNamedFramebufferParameteriv", GL_GetNamedFramebufferParameteriv)
+    DESKTOP_ONLY("glGetNamedRenderbufferParameteriv", GL_GetNamedRenderbufferParameteriv)
     {"glGetObjectLabel", P(GL_GetObjectLabel)},
     {"glGetObjectLabelEXT", P(GL_GetObjectLabelEXT)},
     {"glGetObjectLabelKHR", P(GL_GetObjectLabelKHR)},
@@ -462,9 +642,13 @@ const ProcEntry g_procTable[] = {
     {"glGetPerfMonitorCountersAMD", P(GL_GetPerfMonitorCountersAMD)},
     {"glGetPerfMonitorGroupStringAMD", P(GL_GetPerfMonitorGroupStringAMD)},
     {"glGetPerfMonitorGroupsAMD", P(GL_GetPerfMonitorGroupsAMD)},
+    DESKTOP_ONLY("glGetPixelMapfv", GL_GetPixelMapfv)
+    DESKTOP_ONLY("glGetPixelMapuiv", GL_GetPixelMapuiv)
+    DESKTOP_ONLY("glGetPixelMapusv", GL_GetPixelMapusv)
     {"glGetPointerv", P(GL_GetPointerv)},
     {"glGetPointervKHR", P(GL_GetPointervKHR)},
     {"glGetPointervRobustANGLERobustANGLE", P(GL_GetPointervRobustANGLERobustANGLE)},
+    DESKTOP_ONLY("glGetPolygonStipple", GL_GetPolygonStipple)
     {"glGetProgramBinary", P(GL_GetProgramBinary)},
     {"glGetProgramBinaryOES", P(GL_GetProgramBinaryOES)},
     {"glGetProgramInfoLog", P(GL_GetProgramInfoLog)},
@@ -476,15 +660,25 @@ const ProcEntry g_procTable[] = {
     {"glGetProgramPipelineivEXT", P(GL_GetProgramPipelineivEXT)},
     {"glGetProgramResourceIndex", P(GL_GetProgramResourceIndex)},
     {"glGetProgramResourceLocation", P(GL_GetProgramResourceLocation)},
+    DESKTOP_ONLY("glGetProgramResourceLocationIndex", GL_GetProgramResourceLocationIndex)
     {"glGetProgramResourceLocationIndexEXT", P(GL_GetProgramResourceLocationIndexEXT)},
     {"glGetProgramResourceName", P(GL_GetProgramResourceName)},
     {"glGetProgramResourceiv", P(GL_GetProgramResourceiv)},
+    DESKTOP_ONLY("glGetProgramStageiv", GL_GetProgramStageiv)
     {"glGetProgramiv", P(GL_GetProgramiv)},
     {"glGetProgramivRobustANGLE", P(GL_GetProgramivRobustANGLE)},
+    DESKTOP_ONLY("glGetQueryBufferObjecti64v", GL_GetQueryBufferObjecti64v)
+    DESKTOP_ONLY("glGetQueryBufferObjectiv", GL_GetQueryBufferObjectiv)
+    DESKTOP_ONLY("glGetQueryBufferObjectui64v", GL_GetQueryBufferObjectui64v)
+    DESKTOP_ONLY("glGetQueryBufferObjectuiv", GL_GetQueryBufferObjectuiv)
+    DESKTOP_ONLY("glGetQueryIndexediv", GL_GetQueryIndexediv)
+    DESKTOP_ONLY("glGetQueryObjecti64v", GL_GetQueryObjecti64v)
     {"glGetQueryObjecti64vEXT", P(GL_GetQueryObjecti64vEXT)},
     {"glGetQueryObjecti64vRobustANGLE", P(GL_GetQueryObjecti64vRobustANGLE)},
+    DESKTOP_ONLY("glGetQueryObjectiv", GL_GetQueryObjectiv)
     {"glGetQueryObjectivEXT", P(GL_GetQueryObjectivEXT)},
     {"glGetQueryObjectivRobustANGLE", P(GL_GetQueryObjectivRobustANGLE)},
+    DESKTOP_ONLY("glGetQueryObjectui64v", GL_GetQueryObjectui64v)
     {"glGetQueryObjectui64vEXT", P(GL_GetQueryObjectui64vEXT)},
     {"glGetQueryObjectui64vRobustANGLE", P(GL_GetQueryObjectui64vRobustANGLE)},
     {"glGetQueryObjectuiv", P(GL_GetQueryObjectuiv)},
@@ -517,13 +711,19 @@ const ProcEntry g_procTable[] = {
     {"glGetShaderivRobustANGLE", P(GL_GetShaderivRobustANGLE)},
     {"glGetString", P(GL_GetString)},
     {"glGetStringi", P(GL_GetStringi)},
+    DESKTOP_ONLY("glGetSubroutineIndex", GL_GetSubroutineIndex)
+    DESKTOP_ONLY("glGetSubroutineUniformLocation", GL_GetSubroutineUniformLocation)
     {"glGetSynciv", P(GL_GetSynciv)},
     {"glGetTexEnvfv", P(GL_GetTexEnvfv)},
     {"glGetTexEnviv", P(GL_GetTexEnviv)},
     {"glGetTexEnvxv", P(GL_GetTexEnvxv)},
+    DESKTOP_ONLY("glGetTexGendv", GL_GetTexGendv)
+    DESKTOP_ONLY("glGetTexGenfv", GL_GetTexGenfv)
     {"glGetTexGenfvOES", P(GL_GetTexGenfvOES)},
+    DESKTOP_ONLY("glGetTexGeniv", GL_GetTexGeniv)
     {"glGetTexGenivOES", P(GL_GetTexGenivOES)},
     {"glGetTexGenxvOES", P(GL_GetTexGenxvOES)},
+    DESKTOP_ONLY("glGetTexImage", GL_GetTexImage)
     {"glGetTexImageANGLE", P(GL_GetTexImageANGLE)},
     {"glGetTexLevelParameterfv", P(GL_GetTexLevelParameterfv)},
     {"glGetTexLevelParameterfvANGLE", P(GL_GetTexLevelParameterfvANGLE)},
@@ -544,11 +744,24 @@ const ProcEntry g_procTable[] = {
     {"glGetTexParameteriv", P(GL_GetTexParameteriv)},
     {"glGetTexParameterivRobustANGLE", P(GL_GetTexParameterivRobustANGLE)},
     {"glGetTexParameterxv", P(GL_GetTexParameterxv)},
+    DESKTOP_ONLY("glGetTextureImage", GL_GetTextureImage)
+    DESKTOP_ONLY("glGetTextureLevelParameterfv", GL_GetTextureLevelParameterfv)
+    DESKTOP_ONLY("glGetTextureLevelParameteriv", GL_GetTextureLevelParameteriv)
+    DESKTOP_ONLY("glGetTextureParameterIiv", GL_GetTextureParameterIiv)
+    DESKTOP_ONLY("glGetTextureParameterIuiv", GL_GetTextureParameterIuiv)
+    DESKTOP_ONLY("glGetTextureParameterfv", GL_GetTextureParameterfv)
+    DESKTOP_ONLY("glGetTextureParameteriv", GL_GetTextureParameteriv)
+    DESKTOP_ONLY("glGetTextureSubImage", GL_GetTextureSubImage)
     {"glGetTransformFeedbackVarying", P(GL_GetTransformFeedbackVarying)},
+    DESKTOP_ONLY("glGetTransformFeedbacki64_v", GL_GetTransformFeedbacki64_v)
+    DESKTOP_ONLY("glGetTransformFeedbacki_v", GL_GetTransformFeedbacki_v)
+    DESKTOP_ONLY("glGetTransformFeedbackiv", GL_GetTransformFeedbackiv)
     {"glGetTranslatedShaderSourceANGLE", P(GL_GetTranslatedShaderSourceANGLE)},
     {"glGetUniformBlockIndex", P(GL_GetUniformBlockIndex)},
     {"glGetUniformIndices", P(GL_GetUniformIndices)},
     {"glGetUniformLocation", P(GL_GetUniformLocation)},
+    DESKTOP_ONLY("glGetUniformSubroutineuiv", GL_GetUniformSubroutineuiv)
+    DESKTOP_ONLY("glGetUniformdv", GL_GetUniformdv)
     {"glGetUniformfv", P(GL_GetUniformfv)},
     {"glGetUniformfvRobustANGLE", P(GL_GetUniformfvRobustANGLE)},
     {"glGetUniformiv", P(GL_GetUniformiv)},
@@ -557,16 +770,36 @@ const ProcEntry g_procTable[] = {
     {"glGetUniformuivRobustANGLE", P(GL_GetUniformuivRobustANGLE)},
     {"glGetUnsignedBytei_vEXT", P(GL_GetUnsignedBytei_vEXT)},
     {"glGetUnsignedBytevEXT", P(GL_GetUnsignedBytevEXT)},
+    DESKTOP_ONLY("glGetVertexArrayIndexed64iv", GL_GetVertexArrayIndexed64iv)
+    DESKTOP_ONLY("glGetVertexArrayIndexediv", GL_GetVertexArrayIndexediv)
+    DESKTOP_ONLY("glGetVertexArrayiv", GL_GetVertexArrayiv)
     {"glGetVertexAttribIiv", P(GL_GetVertexAttribIiv)},
     {"glGetVertexAttribIivRobustANGLE", P(GL_GetVertexAttribIivRobustANGLE)},
     {"glGetVertexAttribIuiv", P(GL_GetVertexAttribIuiv)},
     {"glGetVertexAttribIuivRobustANGLE", P(GL_GetVertexAttribIuivRobustANGLE)},
+    DESKTOP_ONLY("glGetVertexAttribLdv", GL_GetVertexAttribLdv)
     {"glGetVertexAttribPointerv", P(GL_GetVertexAttribPointerv)},
     {"glGetVertexAttribPointervRobustANGLE", P(GL_GetVertexAttribPointervRobustANGLE)},
+    DESKTOP_ONLY("glGetVertexAttribdv", GL_GetVertexAttribdv)
     {"glGetVertexAttribfv", P(GL_GetVertexAttribfv)},
     {"glGetVertexAttribfvRobustANGLE", P(GL_GetVertexAttribfvRobustANGLE)},
     {"glGetVertexAttribiv", P(GL_GetVertexAttribiv)},
     {"glGetVertexAttribivRobustANGLE", P(GL_GetVertexAttribivRobustANGLE)},
+    DESKTOP_ONLY("glGetnColorTable", GL_GetnColorTable)
+    DESKTOP_ONLY("glGetnCompressedTexImage", GL_GetnCompressedTexImage)
+    DESKTOP_ONLY("glGetnConvolutionFilter", GL_GetnConvolutionFilter)
+    DESKTOP_ONLY("glGetnHistogram", GL_GetnHistogram)
+    DESKTOP_ONLY("glGetnMapdv", GL_GetnMapdv)
+    DESKTOP_ONLY("glGetnMapfv", GL_GetnMapfv)
+    DESKTOP_ONLY("glGetnMapiv", GL_GetnMapiv)
+    DESKTOP_ONLY("glGetnMinmax", GL_GetnMinmax)
+    DESKTOP_ONLY("glGetnPixelMapfv", GL_GetnPixelMapfv)
+    DESKTOP_ONLY("glGetnPixelMapuiv", GL_GetnPixelMapuiv)
+    DESKTOP_ONLY("glGetnPixelMapusv", GL_GetnPixelMapusv)
+    DESKTOP_ONLY("glGetnPolygonStipple", GL_GetnPolygonStipple)
+    DESKTOP_ONLY("glGetnSeparableFilter", GL_GetnSeparableFilter)
+    DESKTOP_ONLY("glGetnTexImage", GL_GetnTexImage)
+    DESKTOP_ONLY("glGetnUniformdv", GL_GetnUniformdv)
     {"glGetnUniformfv", P(GL_GetnUniformfv)},
     {"glGetnUniformfvEXT", P(GL_GetnUniformfvEXT)},
     {"glGetnUniformfvRobustANGLE", P(GL_GetnUniformfvRobustANGLE)},
@@ -580,9 +813,29 @@ const ProcEntry g_procTable[] = {
     {"glImportMemoryZirconHandleANGLE", P(GL_ImportMemoryZirconHandleANGLE)},
     {"glImportSemaphoreFdEXT", P(GL_ImportSemaphoreFdEXT)},
     {"glImportSemaphoreZirconHandleANGLE", P(GL_ImportSemaphoreZirconHandleANGLE)},
+    DESKTOP_ONLY("glIndexMask", GL_IndexMask)
+    DESKTOP_ONLY("glIndexPointer", GL_IndexPointer)
+    DESKTOP_ONLY("glIndexd", GL_Indexd)
+    DESKTOP_ONLY("glIndexdv", GL_Indexdv)
+    DESKTOP_ONLY("glIndexf", GL_Indexf)
+    DESKTOP_ONLY("glIndexfv", GL_Indexfv)
+    DESKTOP_ONLY("glIndexi", GL_Indexi)
+    DESKTOP_ONLY("glIndexiv", GL_Indexiv)
+    DESKTOP_ONLY("glIndexs", GL_Indexs)
+    DESKTOP_ONLY("glIndexsv", GL_Indexsv)
+    DESKTOP_ONLY("glIndexub", GL_Indexub)
+    DESKTOP_ONLY("glIndexubv", GL_Indexubv)
+    DESKTOP_ONLY("glInitNames", GL_InitNames)
     {"glInsertEventMarkerEXT", P(GL_InsertEventMarkerEXT)},
+    DESKTOP_ONLY("glInterleavedArrays", GL_InterleavedArrays)
+    DESKTOP_ONLY("glInvalidateBufferData", GL_InvalidateBufferData)
+    DESKTOP_ONLY("glInvalidateBufferSubData", GL_InvalidateBufferSubData)
     {"glInvalidateFramebuffer", P(GL_InvalidateFramebuffer)},
+    DESKTOP_ONLY("glInvalidateNamedFramebufferData", GL_InvalidateNamedFramebufferData)
+    DESKTOP_ONLY("glInvalidateNamedFramebufferSubData", GL_InvalidateNamedFramebufferSubData)
     {"glInvalidateSubFramebuffer", P(GL_InvalidateSubFramebuffer)},
+    DESKTOP_ONLY("glInvalidateTexImage", GL_InvalidateTexImage)
+    DESKTOP_ONLY("glInvalidateTexSubImage", GL_InvalidateTexSubImage)
     {"glInvalidateTextureANGLE", P(GL_InvalidateTextureANGLE)},
     {"glIsBuffer", P(GL_IsBuffer)},
     {"glIsEnabled", P(GL_IsEnabled)},
@@ -592,6 +845,7 @@ const ProcEntry g_procTable[] = {
     {"glIsFenceNV", P(GL_IsFenceNV)},
     {"glIsFramebuffer", P(GL_IsFramebuffer)},
     {"glIsFramebufferOES", P(GL_IsFramebufferOES)},
+    DESKTOP_ONLY("glIsList", GL_IsList)
     {"glIsMemoryObjectEXT", P(GL_IsMemoryObjectEXT)},
     {"glIsProgram", P(GL_IsProgram)},
     {"glIsProgramPipeline", P(GL_IsProgramPipeline)},
@@ -611,26 +865,49 @@ const ProcEntry g_procTable[] = {
     {"glLabelObjectEXT", P(GL_LabelObjectEXT)},
     {"glLightModelf", P(GL_LightModelf)},
     {"glLightModelfv", P(GL_LightModelfv)},
+    DESKTOP_ONLY("glLightModeli", GL_LightModeli)
+    DESKTOP_ONLY("glLightModeliv", GL_LightModeliv)
     {"glLightModelx", P(GL_LightModelx)},
     {"glLightModelxv", P(GL_LightModelxv)},
     {"glLightf", P(GL_Lightf)},
     {"glLightfv", P(GL_Lightfv)},
+    DESKTOP_ONLY("glLighti", GL_Lighti)
+    DESKTOP_ONLY("glLightiv", GL_Lightiv)
     {"glLightx", P(GL_Lightx)},
     {"glLightxv", P(GL_Lightxv)},
+    DESKTOP_ONLY("glLineStipple", GL_LineStipple)
     {"glLineWidth", P(GL_LineWidth)},
     {"glLineWidthx", P(GL_LineWidthx)},
     {"glLinkProgram", P(GL_LinkProgram)},
+    DESKTOP_ONLY("glListBase", GL_ListBase)
     {"glLoadIdentity", P(GL_LoadIdentity)},
+    DESKTOP_ONLY("glLoadMatrixd", GL_LoadMatrixd)
     {"glLoadMatrixf", P(GL_LoadMatrixf)},
     {"glLoadMatrixx", P(GL_LoadMatrixx)},
+    DESKTOP_ONLY("glLoadName", GL_LoadName)
     {"glLoadPaletteFromModelViewMatrixOES", P(GL_LoadPaletteFromModelViewMatrixOES)},
+    DESKTOP_ONLY("glLoadTransposeMatrixd", GL_LoadTransposeMatrixd)
+    DESKTOP_ONLY("glLoadTransposeMatrixf", GL_LoadTransposeMatrixf)
     {"glLogicOp", P(GL_LogicOp)},
     {"glLoseContextCHROMIUM", P(GL_LoseContextCHROMIUM)},
+    DESKTOP_ONLY("glMap1d", GL_Map1d)
+    DESKTOP_ONLY("glMap1f", GL_Map1f)
+    DESKTOP_ONLY("glMap2d", GL_Map2d)
+    DESKTOP_ONLY("glMap2f", GL_Map2f)
+    DESKTOP_ONLY("glMapBuffer", GL_MapBuffer)
     {"glMapBufferOES", P(GL_MapBufferOES)},
     {"glMapBufferRange", P(GL_MapBufferRange)},
     {"glMapBufferRangeEXT", P(GL_MapBufferRangeEXT)},
+    DESKTOP_ONLY("glMapGrid1d", GL_MapGrid1d)
+    DESKTOP_ONLY("glMapGrid1f", GL_MapGrid1f)
+    DESKTOP_ONLY("glMapGrid2d", GL_MapGrid2d)
+    DESKTOP_ONLY("glMapGrid2f", GL_MapGrid2f)
+    DESKTOP_ONLY("glMapNamedBuffer", GL_MapNamedBuffer)
+    DESKTOP_ONLY("glMapNamedBufferRange", GL_MapNamedBufferRange)
     {"glMaterialf", P(GL_Materialf)},
     {"glMaterialfv", P(GL_Materialfv)},
+    DESKTOP_ONLY("glMateriali", GL_Materiali)
+    DESKTOP_ONLY("glMaterialiv", GL_Materialiv)
     {"glMaterialx", P(GL_Materialx)},
     {"glMaterialxv", P(GL_Materialxv)},
     {"glMatrixIndexPointerOES", P(GL_MatrixIndexPointerOES)},
@@ -641,55 +918,148 @@ const ProcEntry g_procTable[] = {
     {"glMemoryObjectParameterivEXT", P(GL_MemoryObjectParameterivEXT)},
     {"glMinSampleShading", P(GL_MinSampleShading)},
     {"glMinSampleShadingOES", P(GL_MinSampleShadingOES)},
+    DESKTOP_ONLY("glMultMatrixd", GL_MultMatrixd)
     {"glMultMatrixf", P(GL_MultMatrixf)},
     {"glMultMatrixx", P(GL_MultMatrixx)},
+    DESKTOP_ONLY("glMultTransposeMatrixd", GL_MultTransposeMatrixd)
+    DESKTOP_ONLY("glMultTransposeMatrixf", GL_MultTransposeMatrixf)
+    DESKTOP_ONLY("glMultiDrawArrays", GL_MultiDrawArrays)
     {"glMultiDrawArraysANGLE", P(GL_MultiDrawArraysANGLE)},
+    DESKTOP_ONLY("glMultiDrawArraysIndirect", GL_MultiDrawArraysIndirect)
+    DESKTOP_ONLY("glMultiDrawArraysIndirectCount", GL_MultiDrawArraysIndirectCount)
     {"glMultiDrawArraysIndirectEXT", P(GL_MultiDrawArraysIndirectEXT)},
     {"glMultiDrawArraysInstancedANGLE", P(GL_MultiDrawArraysInstancedANGLE)},
-    {"glMultiDrawArraysInstancedBaseInstanceANGLE",
-     P(GL_MultiDrawArraysInstancedBaseInstanceANGLE)},
+    {"glMultiDrawArraysInstancedBaseInstanceANGLE", P(GL_MultiDrawArraysInstancedBaseInstanceANGLE)},
+    DESKTOP_ONLY("glMultiDrawElements", GL_MultiDrawElements)
     {"glMultiDrawElementsANGLE", P(GL_MultiDrawElementsANGLE)},
+    DESKTOP_ONLY("glMultiDrawElementsBaseVertex", GL_MultiDrawElementsBaseVertex)
     {"glMultiDrawElementsBaseVertexEXT", P(GL_MultiDrawElementsBaseVertexEXT)},
+    DESKTOP_ONLY("glMultiDrawElementsIndirect", GL_MultiDrawElementsIndirect)
+    DESKTOP_ONLY("glMultiDrawElementsIndirectCount", GL_MultiDrawElementsIndirectCount)
     {"glMultiDrawElementsIndirectEXT", P(GL_MultiDrawElementsIndirectEXT)},
     {"glMultiDrawElementsInstancedANGLE", P(GL_MultiDrawElementsInstancedANGLE)},
-    {"glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE",
-     P(GL_MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE)},
+    {"glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE", P(GL_MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE)},
+    DESKTOP_ONLY("glMultiTexCoord1d", GL_MultiTexCoord1d)
+    DESKTOP_ONLY("glMultiTexCoord1dv", GL_MultiTexCoord1dv)
+    DESKTOP_ONLY("glMultiTexCoord1f", GL_MultiTexCoord1f)
+    DESKTOP_ONLY("glMultiTexCoord1fv", GL_MultiTexCoord1fv)
+    DESKTOP_ONLY("glMultiTexCoord1i", GL_MultiTexCoord1i)
+    DESKTOP_ONLY("glMultiTexCoord1iv", GL_MultiTexCoord1iv)
+    DESKTOP_ONLY("glMultiTexCoord1s", GL_MultiTexCoord1s)
+    DESKTOP_ONLY("glMultiTexCoord1sv", GL_MultiTexCoord1sv)
+    DESKTOP_ONLY("glMultiTexCoord2d", GL_MultiTexCoord2d)
+    DESKTOP_ONLY("glMultiTexCoord2dv", GL_MultiTexCoord2dv)
+    DESKTOP_ONLY("glMultiTexCoord2f", GL_MultiTexCoord2f)
+    DESKTOP_ONLY("glMultiTexCoord2fv", GL_MultiTexCoord2fv)
+    DESKTOP_ONLY("glMultiTexCoord2i", GL_MultiTexCoord2i)
+    DESKTOP_ONLY("glMultiTexCoord2iv", GL_MultiTexCoord2iv)
+    DESKTOP_ONLY("glMultiTexCoord2s", GL_MultiTexCoord2s)
+    DESKTOP_ONLY("glMultiTexCoord2sv", GL_MultiTexCoord2sv)
+    DESKTOP_ONLY("glMultiTexCoord3d", GL_MultiTexCoord3d)
+    DESKTOP_ONLY("glMultiTexCoord3dv", GL_MultiTexCoord3dv)
+    DESKTOP_ONLY("glMultiTexCoord3f", GL_MultiTexCoord3f)
+    DESKTOP_ONLY("glMultiTexCoord3fv", GL_MultiTexCoord3fv)
+    DESKTOP_ONLY("glMultiTexCoord3i", GL_MultiTexCoord3i)
+    DESKTOP_ONLY("glMultiTexCoord3iv", GL_MultiTexCoord3iv)
+    DESKTOP_ONLY("glMultiTexCoord3s", GL_MultiTexCoord3s)
+    DESKTOP_ONLY("glMultiTexCoord3sv", GL_MultiTexCoord3sv)
+    DESKTOP_ONLY("glMultiTexCoord4d", GL_MultiTexCoord4d)
+    DESKTOP_ONLY("glMultiTexCoord4dv", GL_MultiTexCoord4dv)
     {"glMultiTexCoord4f", P(GL_MultiTexCoord4f)},
+    DESKTOP_ONLY("glMultiTexCoord4fv", GL_MultiTexCoord4fv)
+    DESKTOP_ONLY("glMultiTexCoord4i", GL_MultiTexCoord4i)
+    DESKTOP_ONLY("glMultiTexCoord4iv", GL_MultiTexCoord4iv)
+    DESKTOP_ONLY("glMultiTexCoord4s", GL_MultiTexCoord4s)
+    DESKTOP_ONLY("glMultiTexCoord4sv", GL_MultiTexCoord4sv)
     {"glMultiTexCoord4x", P(GL_MultiTexCoord4x)},
+    DESKTOP_ONLY("glMultiTexCoordP1ui", GL_MultiTexCoordP1ui)
+    DESKTOP_ONLY("glMultiTexCoordP1uiv", GL_MultiTexCoordP1uiv)
+    DESKTOP_ONLY("glMultiTexCoordP2ui", GL_MultiTexCoordP2ui)
+    DESKTOP_ONLY("glMultiTexCoordP2uiv", GL_MultiTexCoordP2uiv)
+    DESKTOP_ONLY("glMultiTexCoordP3ui", GL_MultiTexCoordP3ui)
+    DESKTOP_ONLY("glMultiTexCoordP3uiv", GL_MultiTexCoordP3uiv)
+    DESKTOP_ONLY("glMultiTexCoordP4ui", GL_MultiTexCoordP4ui)
+    DESKTOP_ONLY("glMultiTexCoordP4uiv", GL_MultiTexCoordP4uiv)
+    DESKTOP_ONLY("glNamedBufferData", GL_NamedBufferData)
+    DESKTOP_ONLY("glNamedBufferStorage", GL_NamedBufferStorage)
     {"glNamedBufferStorageExternalEXT", P(GL_NamedBufferStorageExternalEXT)},
+    DESKTOP_ONLY("glNamedBufferSubData", GL_NamedBufferSubData)
+    DESKTOP_ONLY("glNamedFramebufferDrawBuffer", GL_NamedFramebufferDrawBuffer)
+    DESKTOP_ONLY("glNamedFramebufferDrawBuffers", GL_NamedFramebufferDrawBuffers)
+    DESKTOP_ONLY("glNamedFramebufferParameteri", GL_NamedFramebufferParameteri)
+    DESKTOP_ONLY("glNamedFramebufferReadBuffer", GL_NamedFramebufferReadBuffer)
+    DESKTOP_ONLY("glNamedFramebufferRenderbuffer", GL_NamedFramebufferRenderbuffer)
+    DESKTOP_ONLY("glNamedFramebufferTexture", GL_NamedFramebufferTexture)
+    DESKTOP_ONLY("glNamedFramebufferTextureLayer", GL_NamedFramebufferTextureLayer)
+    DESKTOP_ONLY("glNamedRenderbufferStorage", GL_NamedRenderbufferStorage)
+    DESKTOP_ONLY("glNamedRenderbufferStorageMultisample", GL_NamedRenderbufferStorageMultisample)
+    DESKTOP_ONLY("glNewList", GL_NewList)
+    DESKTOP_ONLY("glNormal3b", GL_Normal3b)
+    DESKTOP_ONLY("glNormal3bv", GL_Normal3bv)
+    DESKTOP_ONLY("glNormal3d", GL_Normal3d)
+    DESKTOP_ONLY("glNormal3dv", GL_Normal3dv)
     {"glNormal3f", P(GL_Normal3f)},
+    DESKTOP_ONLY("glNormal3fv", GL_Normal3fv)
+    DESKTOP_ONLY("glNormal3i", GL_Normal3i)
+    DESKTOP_ONLY("glNormal3iv", GL_Normal3iv)
+    DESKTOP_ONLY("glNormal3s", GL_Normal3s)
+    DESKTOP_ONLY("glNormal3sv", GL_Normal3sv)
     {"glNormal3x", P(GL_Normal3x)},
+    DESKTOP_ONLY("glNormalP3ui", GL_NormalP3ui)
+    DESKTOP_ONLY("glNormalP3uiv", GL_NormalP3uiv)
     {"glNormalPointer", P(GL_NormalPointer)},
     {"glObjectLabel", P(GL_ObjectLabel)},
     {"glObjectLabelKHR", P(GL_ObjectLabelKHR)},
     {"glObjectPtrLabel", P(GL_ObjectPtrLabel)},
     {"glObjectPtrLabelKHR", P(GL_ObjectPtrLabelKHR)},
+    DESKTOP_ONLY("glOrtho", GL_Ortho)
     {"glOrthof", P(GL_Orthof)},
     {"glOrthox", P(GL_Orthox)},
+    DESKTOP_ONLY("glPassThrough", GL_PassThrough)
+    DESKTOP_ONLY("glPatchParameterfv", GL_PatchParameterfv)
     {"glPatchParameteri", P(GL_PatchParameteri)},
     {"glPatchParameteriEXT", P(GL_PatchParameteriEXT)},
     {"glPauseTransformFeedback", P(GL_PauseTransformFeedback)},
+    DESKTOP_ONLY("glPixelMapfv", GL_PixelMapfv)
+    DESKTOP_ONLY("glPixelMapuiv", GL_PixelMapuiv)
+    DESKTOP_ONLY("glPixelMapusv", GL_PixelMapusv)
+    DESKTOP_ONLY("glPixelStoref", GL_PixelStoref)
     {"glPixelStorei", P(GL_PixelStorei)},
+    DESKTOP_ONLY("glPixelTransferf", GL_PixelTransferf)
+    DESKTOP_ONLY("glPixelTransferi", GL_PixelTransferi)
+    DESKTOP_ONLY("glPixelZoom", GL_PixelZoom)
     {"glPointParameterf", P(GL_PointParameterf)},
     {"glPointParameterfv", P(GL_PointParameterfv)},
+    DESKTOP_ONLY("glPointParameteri", GL_PointParameteri)
+    DESKTOP_ONLY("glPointParameteriv", GL_PointParameteriv)
     {"glPointParameterx", P(GL_PointParameterx)},
     {"glPointParameterxv", P(GL_PointParameterxv)},
     {"glPointSize", P(GL_PointSize)},
     {"glPointSizePointerOES", P(GL_PointSizePointerOES)},
     {"glPointSizex", P(GL_PointSizex)},
+    DESKTOP_ONLY("glPolygonMode", GL_PolygonMode)
     {"glPolygonOffset", P(GL_PolygonOffset)},
+    DESKTOP_ONLY("glPolygonOffsetClamp", GL_PolygonOffsetClamp)
     {"glPolygonOffsetx", P(GL_PolygonOffsetx)},
+    DESKTOP_ONLY("glPolygonStipple", GL_PolygonStipple)
+    DESKTOP_ONLY("glPopAttrib", GL_PopAttrib)
+    DESKTOP_ONLY("glPopClientAttrib", GL_PopClientAttrib)
     {"glPopDebugGroup", P(GL_PopDebugGroup)},
     {"glPopDebugGroupKHR", P(GL_PopDebugGroupKHR)},
     {"glPopGroupMarkerEXT", P(GL_PopGroupMarkerEXT)},
     {"glPopMatrix", P(GL_PopMatrix)},
+    DESKTOP_ONLY("glPopName", GL_PopName)
     {"glPrimitiveBoundingBox", P(GL_PrimitiveBoundingBox)},
     {"glPrimitiveBoundingBoxEXT", P(GL_PrimitiveBoundingBoxEXT)},
     {"glPrimitiveBoundingBoxOES", P(GL_PrimitiveBoundingBoxOES)},
+    DESKTOP_ONLY("glPrimitiveRestartIndex", GL_PrimitiveRestartIndex)
+    DESKTOP_ONLY("glPrioritizeTextures", GL_PrioritizeTextures)
     {"glProgramBinary", P(GL_ProgramBinary)},
     {"glProgramBinaryOES", P(GL_ProgramBinaryOES)},
     {"glProgramParameteri", P(GL_ProgramParameteri)},
     {"glProgramParameteriEXT", P(GL_ProgramParameteriEXT)},
+    DESKTOP_ONLY("glProgramUniform1d", GL_ProgramUniform1d)
+    DESKTOP_ONLY("glProgramUniform1dv", GL_ProgramUniform1dv)
     {"glProgramUniform1f", P(GL_ProgramUniform1f)},
     {"glProgramUniform1fEXT", P(GL_ProgramUniform1fEXT)},
     {"glProgramUniform1fv", P(GL_ProgramUniform1fv)},
@@ -702,6 +1072,8 @@ const ProcEntry g_procTable[] = {
     {"glProgramUniform1uiEXT", P(GL_ProgramUniform1uiEXT)},
     {"glProgramUniform1uiv", P(GL_ProgramUniform1uiv)},
     {"glProgramUniform1uivEXT", P(GL_ProgramUniform1uivEXT)},
+    DESKTOP_ONLY("glProgramUniform2d", GL_ProgramUniform2d)
+    DESKTOP_ONLY("glProgramUniform2dv", GL_ProgramUniform2dv)
     {"glProgramUniform2f", P(GL_ProgramUniform2f)},
     {"glProgramUniform2fEXT", P(GL_ProgramUniform2fEXT)},
     {"glProgramUniform2fv", P(GL_ProgramUniform2fv)},
@@ -714,6 +1086,8 @@ const ProcEntry g_procTable[] = {
     {"glProgramUniform2uiEXT", P(GL_ProgramUniform2uiEXT)},
     {"glProgramUniform2uiv", P(GL_ProgramUniform2uiv)},
     {"glProgramUniform2uivEXT", P(GL_ProgramUniform2uivEXT)},
+    DESKTOP_ONLY("glProgramUniform3d", GL_ProgramUniform3d)
+    DESKTOP_ONLY("glProgramUniform3dv", GL_ProgramUniform3dv)
     {"glProgramUniform3f", P(GL_ProgramUniform3f)},
     {"glProgramUniform3fEXT", P(GL_ProgramUniform3fEXT)},
     {"glProgramUniform3fv", P(GL_ProgramUniform3fv)},
@@ -726,6 +1100,8 @@ const ProcEntry g_procTable[] = {
     {"glProgramUniform3uiEXT", P(GL_ProgramUniform3uiEXT)},
     {"glProgramUniform3uiv", P(GL_ProgramUniform3uiv)},
     {"glProgramUniform3uivEXT", P(GL_ProgramUniform3uivEXT)},
+    DESKTOP_ONLY("glProgramUniform4d", GL_ProgramUniform4d)
+    DESKTOP_ONLY("glProgramUniform4dv", GL_ProgramUniform4dv)
     {"glProgramUniform4f", P(GL_ProgramUniform4f)},
     {"glProgramUniform4fEXT", P(GL_ProgramUniform4fEXT)},
     {"glProgramUniform4fv", P(GL_ProgramUniform4fv)},
@@ -738,39 +1114,86 @@ const ProcEntry g_procTable[] = {
     {"glProgramUniform4uiEXT", P(GL_ProgramUniform4uiEXT)},
     {"glProgramUniform4uiv", P(GL_ProgramUniform4uiv)},
     {"glProgramUniform4uivEXT", P(GL_ProgramUniform4uivEXT)},
+    DESKTOP_ONLY("glProgramUniformMatrix2dv", GL_ProgramUniformMatrix2dv)
     {"glProgramUniformMatrix2fv", P(GL_ProgramUniformMatrix2fv)},
     {"glProgramUniformMatrix2fvEXT", P(GL_ProgramUniformMatrix2fvEXT)},
+    DESKTOP_ONLY("glProgramUniformMatrix2x3dv", GL_ProgramUniformMatrix2x3dv)
     {"glProgramUniformMatrix2x3fv", P(GL_ProgramUniformMatrix2x3fv)},
     {"glProgramUniformMatrix2x3fvEXT", P(GL_ProgramUniformMatrix2x3fvEXT)},
+    DESKTOP_ONLY("glProgramUniformMatrix2x4dv", GL_ProgramUniformMatrix2x4dv)
     {"glProgramUniformMatrix2x4fv", P(GL_ProgramUniformMatrix2x4fv)},
     {"glProgramUniformMatrix2x4fvEXT", P(GL_ProgramUniformMatrix2x4fvEXT)},
+    DESKTOP_ONLY("glProgramUniformMatrix3dv", GL_ProgramUniformMatrix3dv)
     {"glProgramUniformMatrix3fv", P(GL_ProgramUniformMatrix3fv)},
     {"glProgramUniformMatrix3fvEXT", P(GL_ProgramUniformMatrix3fvEXT)},
+    DESKTOP_ONLY("glProgramUniformMatrix3x2dv", GL_ProgramUniformMatrix3x2dv)
     {"glProgramUniformMatrix3x2fv", P(GL_ProgramUniformMatrix3x2fv)},
     {"glProgramUniformMatrix3x2fvEXT", P(GL_ProgramUniformMatrix3x2fvEXT)},
+    DESKTOP_ONLY("glProgramUniformMatrix3x4dv", GL_ProgramUniformMatrix3x4dv)
     {"glProgramUniformMatrix3x4fv", P(GL_ProgramUniformMatrix3x4fv)},
     {"glProgramUniformMatrix3x4fvEXT", P(GL_ProgramUniformMatrix3x4fvEXT)},
+    DESKTOP_ONLY("glProgramUniformMatrix4dv", GL_ProgramUniformMatrix4dv)
     {"glProgramUniformMatrix4fv", P(GL_ProgramUniformMatrix4fv)},
     {"glProgramUniformMatrix4fvEXT", P(GL_ProgramUniformMatrix4fvEXT)},
+    DESKTOP_ONLY("glProgramUniformMatrix4x2dv", GL_ProgramUniformMatrix4x2dv)
     {"glProgramUniformMatrix4x2fv", P(GL_ProgramUniformMatrix4x2fv)},
     {"glProgramUniformMatrix4x2fvEXT", P(GL_ProgramUniformMatrix4x2fvEXT)},
+    DESKTOP_ONLY("glProgramUniformMatrix4x3dv", GL_ProgramUniformMatrix4x3dv)
     {"glProgramUniformMatrix4x3fv", P(GL_ProgramUniformMatrix4x3fv)},
     {"glProgramUniformMatrix4x3fvEXT", P(GL_ProgramUniformMatrix4x3fvEXT)},
+    DESKTOP_ONLY("glProvokingVertex", GL_ProvokingVertex)
     {"glProvokingVertexANGLE", P(GL_ProvokingVertexANGLE)},
+    DESKTOP_ONLY("glPushAttrib", GL_PushAttrib)
+    DESKTOP_ONLY("glPushClientAttrib", GL_PushClientAttrib)
     {"glPushDebugGroup", P(GL_PushDebugGroup)},
     {"glPushDebugGroupKHR", P(GL_PushDebugGroupKHR)},
     {"glPushGroupMarkerEXT", P(GL_PushGroupMarkerEXT)},
     {"glPushMatrix", P(GL_PushMatrix)},
+    DESKTOP_ONLY("glPushName", GL_PushName)
+    DESKTOP_ONLY("glQueryCounter", GL_QueryCounter)
     {"glQueryCounterEXT", P(GL_QueryCounterEXT)},
     {"glQueryMatrixxOES", P(GL_QueryMatrixxOES)},
+    DESKTOP_ONLY("glRasterPos2d", GL_RasterPos2d)
+    DESKTOP_ONLY("glRasterPos2dv", GL_RasterPos2dv)
+    DESKTOP_ONLY("glRasterPos2f", GL_RasterPos2f)
+    DESKTOP_ONLY("glRasterPos2fv", GL_RasterPos2fv)
+    DESKTOP_ONLY("glRasterPos2i", GL_RasterPos2i)
+    DESKTOP_ONLY("glRasterPos2iv", GL_RasterPos2iv)
+    DESKTOP_ONLY("glRasterPos2s", GL_RasterPos2s)
+    DESKTOP_ONLY("glRasterPos2sv", GL_RasterPos2sv)
+    DESKTOP_ONLY("glRasterPos3d", GL_RasterPos3d)
+    DESKTOP_ONLY("glRasterPos3dv", GL_RasterPos3dv)
+    DESKTOP_ONLY("glRasterPos3f", GL_RasterPos3f)
+    DESKTOP_ONLY("glRasterPos3fv", GL_RasterPos3fv)
+    DESKTOP_ONLY("glRasterPos3i", GL_RasterPos3i)
+    DESKTOP_ONLY("glRasterPos3iv", GL_RasterPos3iv)
+    DESKTOP_ONLY("glRasterPos3s", GL_RasterPos3s)
+    DESKTOP_ONLY("glRasterPos3sv", GL_RasterPos3sv)
+    DESKTOP_ONLY("glRasterPos4d", GL_RasterPos4d)
+    DESKTOP_ONLY("glRasterPos4dv", GL_RasterPos4dv)
+    DESKTOP_ONLY("glRasterPos4f", GL_RasterPos4f)
+    DESKTOP_ONLY("glRasterPos4fv", GL_RasterPos4fv)
+    DESKTOP_ONLY("glRasterPos4i", GL_RasterPos4i)
+    DESKTOP_ONLY("glRasterPos4iv", GL_RasterPos4iv)
+    DESKTOP_ONLY("glRasterPos4s", GL_RasterPos4s)
+    DESKTOP_ONLY("glRasterPos4sv", GL_RasterPos4sv)
     {"glReadBuffer", P(GL_ReadBuffer)},
     {"glReadPixels", P(GL_ReadPixels)},
     {"glReadPixelsRobustANGLE", P(GL_ReadPixelsRobustANGLE)},
     {"glReadnPixels", P(GL_ReadnPixels)},
     {"glReadnPixelsEXT", P(GL_ReadnPixelsEXT)},
     {"glReadnPixelsRobustANGLE", P(GL_ReadnPixelsRobustANGLE)},
+    DESKTOP_ONLY("glRectd", GL_Rectd)
+    DESKTOP_ONLY("glRectdv", GL_Rectdv)
+    DESKTOP_ONLY("glRectf", GL_Rectf)
+    DESKTOP_ONLY("glRectfv", GL_Rectfv)
+    DESKTOP_ONLY("glRecti", GL_Recti)
+    DESKTOP_ONLY("glRectiv", GL_Rectiv)
+    DESKTOP_ONLY("glRects", GL_Rects)
+    DESKTOP_ONLY("glRectsv", GL_Rectsv)
     {"glReleaseShaderCompiler", P(GL_ReleaseShaderCompiler)},
     {"glReleaseTexturesANGLE", P(GL_ReleaseTexturesANGLE)},
+    DESKTOP_ONLY("glRenderMode", GL_RenderMode)
     {"glRenderbufferStorage", P(GL_RenderbufferStorage)},
     {"glRenderbufferStorageMultisample", P(GL_RenderbufferStorageMultisample)},
     {"glRenderbufferStorageMultisampleANGLE", P(GL_RenderbufferStorageMultisampleANGLE)},
@@ -778,6 +1201,7 @@ const ProcEntry g_procTable[] = {
     {"glRenderbufferStorageOES", P(GL_RenderbufferStorageOES)},
     {"glRequestExtensionANGLE", P(GL_RequestExtensionANGLE)},
     {"glResumeTransformFeedback", P(GL_ResumeTransformFeedback)},
+    DESKTOP_ONLY("glRotated", GL_Rotated)
     {"glRotatef", P(GL_Rotatef)},
     {"glRotatex", P(GL_Rotatex)},
     {"glSampleCoverage", P(GL_SampleCoverage)},
@@ -798,17 +1222,43 @@ const ProcEntry g_procTable[] = {
     {"glSamplerParameteri", P(GL_SamplerParameteri)},
     {"glSamplerParameteriv", P(GL_SamplerParameteriv)},
     {"glSamplerParameterivRobustANGLE", P(GL_SamplerParameterivRobustANGLE)},
+    DESKTOP_ONLY("glScaled", GL_Scaled)
     {"glScalef", P(GL_Scalef)},
     {"glScalex", P(GL_Scalex)},
     {"glScissor", P(GL_Scissor)},
+    DESKTOP_ONLY("glScissorArrayv", GL_ScissorArrayv)
+    DESKTOP_ONLY("glScissorIndexed", GL_ScissorIndexed)
+    DESKTOP_ONLY("glScissorIndexedv", GL_ScissorIndexedv)
+    DESKTOP_ONLY("glSecondaryColor3b", GL_SecondaryColor3b)
+    DESKTOP_ONLY("glSecondaryColor3bv", GL_SecondaryColor3bv)
+    DESKTOP_ONLY("glSecondaryColor3d", GL_SecondaryColor3d)
+    DESKTOP_ONLY("glSecondaryColor3dv", GL_SecondaryColor3dv)
+    DESKTOP_ONLY("glSecondaryColor3f", GL_SecondaryColor3f)
+    DESKTOP_ONLY("glSecondaryColor3fv", GL_SecondaryColor3fv)
+    DESKTOP_ONLY("glSecondaryColor3i", GL_SecondaryColor3i)
+    DESKTOP_ONLY("glSecondaryColor3iv", GL_SecondaryColor3iv)
+    DESKTOP_ONLY("glSecondaryColor3s", GL_SecondaryColor3s)
+    DESKTOP_ONLY("glSecondaryColor3sv", GL_SecondaryColor3sv)
+    DESKTOP_ONLY("glSecondaryColor3ub", GL_SecondaryColor3ub)
+    DESKTOP_ONLY("glSecondaryColor3ubv", GL_SecondaryColor3ubv)
+    DESKTOP_ONLY("glSecondaryColor3ui", GL_SecondaryColor3ui)
+    DESKTOP_ONLY("glSecondaryColor3uiv", GL_SecondaryColor3uiv)
+    DESKTOP_ONLY("glSecondaryColor3us", GL_SecondaryColor3us)
+    DESKTOP_ONLY("glSecondaryColor3usv", GL_SecondaryColor3usv)
+    DESKTOP_ONLY("glSecondaryColorP3ui", GL_SecondaryColorP3ui)
+    DESKTOP_ONLY("glSecondaryColorP3uiv", GL_SecondaryColorP3uiv)
+    DESKTOP_ONLY("glSecondaryColorPointer", GL_SecondaryColorPointer)
+    DESKTOP_ONLY("glSelectBuffer", GL_SelectBuffer)
     {"glSelectPerfMonitorCountersAMD", P(GL_SelectPerfMonitorCountersAMD)},
     {"glSemaphoreParameterui64vEXT", P(GL_SemaphoreParameterui64vEXT)},
     {"glSetFenceNV", P(GL_SetFenceNV)},
     {"glShadeModel", P(GL_ShadeModel)},
     {"glShaderBinary", P(GL_ShaderBinary)},
     {"glShaderSource", P(GL_ShaderSource)},
+    DESKTOP_ONLY("glShaderStorageBlockBinding", GL_ShaderStorageBlockBinding)
     {"glShadingRateQCOM", P(GL_ShadingRateQCOM)},
     {"glSignalSemaphoreEXT", P(GL_SignalSemaphoreEXT)},
+    DESKTOP_ONLY("glSpecializeShader", GL_SpecializeShader)
     {"glStencilFunc", P(GL_StencilFunc)},
     {"glStencilFuncSeparate", P(GL_StencilFuncSeparate)},
     {"glStencilMask", P(GL_StencilMask)},
@@ -822,6 +1272,46 @@ const ProcEntry g_procTable[] = {
     {"glTexBufferRange", P(GL_TexBufferRange)},
     {"glTexBufferRangeEXT", P(GL_TexBufferRangeEXT)},
     {"glTexBufferRangeOES", P(GL_TexBufferRangeOES)},
+    DESKTOP_ONLY("glTexCoord1d", GL_TexCoord1d)
+    DESKTOP_ONLY("glTexCoord1dv", GL_TexCoord1dv)
+    DESKTOP_ONLY("glTexCoord1f", GL_TexCoord1f)
+    DESKTOP_ONLY("glTexCoord1fv", GL_TexCoord1fv)
+    DESKTOP_ONLY("glTexCoord1i", GL_TexCoord1i)
+    DESKTOP_ONLY("glTexCoord1iv", GL_TexCoord1iv)
+    DESKTOP_ONLY("glTexCoord1s", GL_TexCoord1s)
+    DESKTOP_ONLY("glTexCoord1sv", GL_TexCoord1sv)
+    DESKTOP_ONLY("glTexCoord2d", GL_TexCoord2d)
+    DESKTOP_ONLY("glTexCoord2dv", GL_TexCoord2dv)
+    DESKTOP_ONLY("glTexCoord2f", GL_TexCoord2f)
+    DESKTOP_ONLY("glTexCoord2fv", GL_TexCoord2fv)
+    DESKTOP_ONLY("glTexCoord2i", GL_TexCoord2i)
+    DESKTOP_ONLY("glTexCoord2iv", GL_TexCoord2iv)
+    DESKTOP_ONLY("glTexCoord2s", GL_TexCoord2s)
+    DESKTOP_ONLY("glTexCoord2sv", GL_TexCoord2sv)
+    DESKTOP_ONLY("glTexCoord3d", GL_TexCoord3d)
+    DESKTOP_ONLY("glTexCoord3dv", GL_TexCoord3dv)
+    DESKTOP_ONLY("glTexCoord3f", GL_TexCoord3f)
+    DESKTOP_ONLY("glTexCoord3fv", GL_TexCoord3fv)
+    DESKTOP_ONLY("glTexCoord3i", GL_TexCoord3i)
+    DESKTOP_ONLY("glTexCoord3iv", GL_TexCoord3iv)
+    DESKTOP_ONLY("glTexCoord3s", GL_TexCoord3s)
+    DESKTOP_ONLY("glTexCoord3sv", GL_TexCoord3sv)
+    DESKTOP_ONLY("glTexCoord4d", GL_TexCoord4d)
+    DESKTOP_ONLY("glTexCoord4dv", GL_TexCoord4dv)
+    DESKTOP_ONLY("glTexCoord4f", GL_TexCoord4f)
+    DESKTOP_ONLY("glTexCoord4fv", GL_TexCoord4fv)
+    DESKTOP_ONLY("glTexCoord4i", GL_TexCoord4i)
+    DESKTOP_ONLY("glTexCoord4iv", GL_TexCoord4iv)
+    DESKTOP_ONLY("glTexCoord4s", GL_TexCoord4s)
+    DESKTOP_ONLY("glTexCoord4sv", GL_TexCoord4sv)
+    DESKTOP_ONLY("glTexCoordP1ui", GL_TexCoordP1ui)
+    DESKTOP_ONLY("glTexCoordP1uiv", GL_TexCoordP1uiv)
+    DESKTOP_ONLY("glTexCoordP2ui", GL_TexCoordP2ui)
+    DESKTOP_ONLY("glTexCoordP2uiv", GL_TexCoordP2uiv)
+    DESKTOP_ONLY("glTexCoordP3ui", GL_TexCoordP3ui)
+    DESKTOP_ONLY("glTexCoordP3uiv", GL_TexCoordP3uiv)
+    DESKTOP_ONLY("glTexCoordP4ui", GL_TexCoordP4ui)
+    DESKTOP_ONLY("glTexCoordP4uiv", GL_TexCoordP4uiv)
     {"glTexCoordPointer", P(GL_TexCoordPointer)},
     {"glTexEnvf", P(GL_TexEnvf)},
     {"glTexEnvfv", P(GL_TexEnvfv)},
@@ -829,16 +1319,25 @@ const ProcEntry g_procTable[] = {
     {"glTexEnviv", P(GL_TexEnviv)},
     {"glTexEnvx", P(GL_TexEnvx)},
     {"glTexEnvxv", P(GL_TexEnvxv)},
+    DESKTOP_ONLY("glTexGend", GL_TexGend)
+    DESKTOP_ONLY("glTexGendv", GL_TexGendv)
+    DESKTOP_ONLY("glTexGenf", GL_TexGenf)
     {"glTexGenfOES", P(GL_TexGenfOES)},
+    DESKTOP_ONLY("glTexGenfv", GL_TexGenfv)
     {"glTexGenfvOES", P(GL_TexGenfvOES)},
+    DESKTOP_ONLY("glTexGeni", GL_TexGeni)
     {"glTexGeniOES", P(GL_TexGeniOES)},
+    DESKTOP_ONLY("glTexGeniv", GL_TexGeniv)
     {"glTexGenivOES", P(GL_TexGenivOES)},
     {"glTexGenxOES", P(GL_TexGenxOES)},
     {"glTexGenxvOES", P(GL_TexGenxvOES)},
+    DESKTOP_ONLY("glTexImage1D", GL_TexImage1D)
     {"glTexImage2D", P(GL_TexImage2D)},
     {"glTexImage2DExternalANGLE", P(GL_TexImage2DExternalANGLE)},
+    DESKTOP_ONLY("glTexImage2DMultisample", GL_TexImage2DMultisample)
     {"glTexImage2DRobustANGLE", P(GL_TexImage2DRobustANGLE)},
     {"glTexImage3D", P(GL_TexImage3D)},
+    DESKTOP_ONLY("glTexImage3DMultisample", GL_TexImage3DMultisample)
     {"glTexImage3DOES", P(GL_TexImage3DOES)},
     {"glTexImage3DRobustANGLE", P(GL_TexImage3DRobustANGLE)},
     {"glTexParameterIiv", P(GL_TexParameterIiv)},
@@ -857,6 +1356,7 @@ const ProcEntry g_procTable[] = {
     {"glTexParameterivRobustANGLE", P(GL_TexParameterivRobustANGLE)},
     {"glTexParameterx", P(GL_TexParameterx)},
     {"glTexParameterxv", P(GL_TexParameterxv)},
+    DESKTOP_ONLY("glTexStorage1D", GL_TexStorage1D)
     {"glTexStorage1DEXT", P(GL_TexStorage1DEXT)},
     {"glTexStorage2D", P(GL_TexStorage2D)},
     {"glTexStorage2DEXT", P(GL_TexStorage2DEXT)},
@@ -874,32 +1374,62 @@ const ProcEntry g_procTable[] = {
     {"glTexStorageMemFlags2DMultisampleANGLE", P(GL_TexStorageMemFlags2DMultisampleANGLE)},
     {"glTexStorageMemFlags3DANGLE", P(GL_TexStorageMemFlags3DANGLE)},
     {"glTexStorageMemFlags3DMultisampleANGLE", P(GL_TexStorageMemFlags3DMultisampleANGLE)},
+    DESKTOP_ONLY("glTexSubImage1D", GL_TexSubImage1D)
     {"glTexSubImage2D", P(GL_TexSubImage2D)},
     {"glTexSubImage2DRobustANGLE", P(GL_TexSubImage2DRobustANGLE)},
     {"glTexSubImage3D", P(GL_TexSubImage3D)},
     {"glTexSubImage3DOES", P(GL_TexSubImage3DOES)},
     {"glTexSubImage3DRobustANGLE", P(GL_TexSubImage3DRobustANGLE)},
+    DESKTOP_ONLY("glTextureBarrier", GL_TextureBarrier)
+    DESKTOP_ONLY("glTextureBuffer", GL_TextureBuffer)
+    DESKTOP_ONLY("glTextureBufferRange", GL_TextureBufferRange)
+    DESKTOP_ONLY("glTextureParameterIiv", GL_TextureParameterIiv)
+    DESKTOP_ONLY("glTextureParameterIuiv", GL_TextureParameterIuiv)
+    DESKTOP_ONLY("glTextureParameterf", GL_TextureParameterf)
+    DESKTOP_ONLY("glTextureParameterfv", GL_TextureParameterfv)
+    DESKTOP_ONLY("glTextureParameteri", GL_TextureParameteri)
+    DESKTOP_ONLY("glTextureParameteriv", GL_TextureParameteriv)
+    DESKTOP_ONLY("glTextureStorage1D", GL_TextureStorage1D)
+    DESKTOP_ONLY("glTextureStorage2D", GL_TextureStorage2D)
+    DESKTOP_ONLY("glTextureStorage2DMultisample", GL_TextureStorage2DMultisample)
+    DESKTOP_ONLY("glTextureStorage3D", GL_TextureStorage3D)
+    DESKTOP_ONLY("glTextureStorage3DMultisample", GL_TextureStorage3DMultisample)
+    DESKTOP_ONLY("glTextureSubImage1D", GL_TextureSubImage1D)
+    DESKTOP_ONLY("glTextureSubImage2D", GL_TextureSubImage2D)
+    DESKTOP_ONLY("glTextureSubImage3D", GL_TextureSubImage3D)
+    DESKTOP_ONLY("glTextureView", GL_TextureView)
+    DESKTOP_ONLY("glTransformFeedbackBufferBase", GL_TransformFeedbackBufferBase)
+    DESKTOP_ONLY("glTransformFeedbackBufferRange", GL_TransformFeedbackBufferRange)
     {"glTransformFeedbackVaryings", P(GL_TransformFeedbackVaryings)},
+    DESKTOP_ONLY("glTranslated", GL_Translated)
     {"glTranslatef", P(GL_Translatef)},
     {"glTranslatex", P(GL_Translatex)},
+    DESKTOP_ONLY("glUniform1d", GL_Uniform1d)
+    DESKTOP_ONLY("glUniform1dv", GL_Uniform1dv)
     {"glUniform1f", P(GL_Uniform1f)},
     {"glUniform1fv", P(GL_Uniform1fv)},
     {"glUniform1i", P(GL_Uniform1i)},
     {"glUniform1iv", P(GL_Uniform1iv)},
     {"glUniform1ui", P(GL_Uniform1ui)},
     {"glUniform1uiv", P(GL_Uniform1uiv)},
+    DESKTOP_ONLY("glUniform2d", GL_Uniform2d)
+    DESKTOP_ONLY("glUniform2dv", GL_Uniform2dv)
     {"glUniform2f", P(GL_Uniform2f)},
     {"glUniform2fv", P(GL_Uniform2fv)},
     {"glUniform2i", P(GL_Uniform2i)},
     {"glUniform2iv", P(GL_Uniform2iv)},
     {"glUniform2ui", P(GL_Uniform2ui)},
     {"glUniform2uiv", P(GL_Uniform2uiv)},
+    DESKTOP_ONLY("glUniform3d", GL_Uniform3d)
+    DESKTOP_ONLY("glUniform3dv", GL_Uniform3dv)
     {"glUniform3f", P(GL_Uniform3f)},
     {"glUniform3fv", P(GL_Uniform3fv)},
     {"glUniform3i", P(GL_Uniform3i)},
     {"glUniform3iv", P(GL_Uniform3iv)},
     {"glUniform3ui", P(GL_Uniform3ui)},
     {"glUniform3uiv", P(GL_Uniform3uiv)},
+    DESKTOP_ONLY("glUniform4d", GL_Uniform4d)
+    DESKTOP_ONLY("glUniform4dv", GL_Uniform4dv)
     {"glUniform4f", P(GL_Uniform4f)},
     {"glUniform4fv", P(GL_Uniform4fv)},
     {"glUniform4i", P(GL_Uniform4i)},
@@ -907,49 +1437,180 @@ const ProcEntry g_procTable[] = {
     {"glUniform4ui", P(GL_Uniform4ui)},
     {"glUniform4uiv", P(GL_Uniform4uiv)},
     {"glUniformBlockBinding", P(GL_UniformBlockBinding)},
+    DESKTOP_ONLY("glUniformMatrix2dv", GL_UniformMatrix2dv)
     {"glUniformMatrix2fv", P(GL_UniformMatrix2fv)},
+    DESKTOP_ONLY("glUniformMatrix2x3dv", GL_UniformMatrix2x3dv)
     {"glUniformMatrix2x3fv", P(GL_UniformMatrix2x3fv)},
+    DESKTOP_ONLY("glUniformMatrix2x4dv", GL_UniformMatrix2x4dv)
     {"glUniformMatrix2x4fv", P(GL_UniformMatrix2x4fv)},
+    DESKTOP_ONLY("glUniformMatrix3dv", GL_UniformMatrix3dv)
     {"glUniformMatrix3fv", P(GL_UniformMatrix3fv)},
+    DESKTOP_ONLY("glUniformMatrix3x2dv", GL_UniformMatrix3x2dv)
     {"glUniformMatrix3x2fv", P(GL_UniformMatrix3x2fv)},
+    DESKTOP_ONLY("glUniformMatrix3x4dv", GL_UniformMatrix3x4dv)
     {"glUniformMatrix3x4fv", P(GL_UniformMatrix3x4fv)},
+    DESKTOP_ONLY("glUniformMatrix4dv", GL_UniformMatrix4dv)
     {"glUniformMatrix4fv", P(GL_UniformMatrix4fv)},
+    DESKTOP_ONLY("glUniformMatrix4x2dv", GL_UniformMatrix4x2dv)
     {"glUniformMatrix4x2fv", P(GL_UniformMatrix4x2fv)},
+    DESKTOP_ONLY("glUniformMatrix4x3dv", GL_UniformMatrix4x3dv)
     {"glUniformMatrix4x3fv", P(GL_UniformMatrix4x3fv)},
+    DESKTOP_ONLY("glUniformSubroutinesuiv", GL_UniformSubroutinesuiv)
     {"glUnmapBuffer", P(GL_UnmapBuffer)},
     {"glUnmapBufferOES", P(GL_UnmapBufferOES)},
+    DESKTOP_ONLY("glUnmapNamedBuffer", GL_UnmapNamedBuffer)
     {"glUseProgram", P(GL_UseProgram)},
     {"glUseProgramStages", P(GL_UseProgramStages)},
     {"glUseProgramStagesEXT", P(GL_UseProgramStagesEXT)},
     {"glValidateProgram", P(GL_ValidateProgram)},
     {"glValidateProgramPipeline", P(GL_ValidateProgramPipeline)},
     {"glValidateProgramPipelineEXT", P(GL_ValidateProgramPipelineEXT)},
+    DESKTOP_ONLY("glVertex2d", GL_Vertex2d)
+    DESKTOP_ONLY("glVertex2dv", GL_Vertex2dv)
+    DESKTOP_ONLY("glVertex2f", GL_Vertex2f)
+    DESKTOP_ONLY("glVertex2fv", GL_Vertex2fv)
+    DESKTOP_ONLY("glVertex2i", GL_Vertex2i)
+    DESKTOP_ONLY("glVertex2iv", GL_Vertex2iv)
+    DESKTOP_ONLY("glVertex2s", GL_Vertex2s)
+    DESKTOP_ONLY("glVertex2sv", GL_Vertex2sv)
+    DESKTOP_ONLY("glVertex3d", GL_Vertex3d)
+    DESKTOP_ONLY("glVertex3dv", GL_Vertex3dv)
+    DESKTOP_ONLY("glVertex3f", GL_Vertex3f)
+    DESKTOP_ONLY("glVertex3fv", GL_Vertex3fv)
+    DESKTOP_ONLY("glVertex3i", GL_Vertex3i)
+    DESKTOP_ONLY("glVertex3iv", GL_Vertex3iv)
+    DESKTOP_ONLY("glVertex3s", GL_Vertex3s)
+    DESKTOP_ONLY("glVertex3sv", GL_Vertex3sv)
+    DESKTOP_ONLY("glVertex4d", GL_Vertex4d)
+    DESKTOP_ONLY("glVertex4dv", GL_Vertex4dv)
+    DESKTOP_ONLY("glVertex4f", GL_Vertex4f)
+    DESKTOP_ONLY("glVertex4fv", GL_Vertex4fv)
+    DESKTOP_ONLY("glVertex4i", GL_Vertex4i)
+    DESKTOP_ONLY("glVertex4iv", GL_Vertex4iv)
+    DESKTOP_ONLY("glVertex4s", GL_Vertex4s)
+    DESKTOP_ONLY("glVertex4sv", GL_Vertex4sv)
+    DESKTOP_ONLY("glVertexArrayAttribBinding", GL_VertexArrayAttribBinding)
+    DESKTOP_ONLY("glVertexArrayAttribFormat", GL_VertexArrayAttribFormat)
+    DESKTOP_ONLY("glVertexArrayAttribIFormat", GL_VertexArrayAttribIFormat)
+    DESKTOP_ONLY("glVertexArrayAttribLFormat", GL_VertexArrayAttribLFormat)
+    DESKTOP_ONLY("glVertexArrayBindingDivisor", GL_VertexArrayBindingDivisor)
+    DESKTOP_ONLY("glVertexArrayElementBuffer", GL_VertexArrayElementBuffer)
+    DESKTOP_ONLY("glVertexArrayVertexBuffer", GL_VertexArrayVertexBuffer)
+    DESKTOP_ONLY("glVertexArrayVertexBuffers", GL_VertexArrayVertexBuffers)
+    DESKTOP_ONLY("glVertexAttrib1d", GL_VertexAttrib1d)
+    DESKTOP_ONLY("glVertexAttrib1dv", GL_VertexAttrib1dv)
     {"glVertexAttrib1f", P(GL_VertexAttrib1f)},
     {"glVertexAttrib1fv", P(GL_VertexAttrib1fv)},
+    DESKTOP_ONLY("glVertexAttrib1s", GL_VertexAttrib1s)
+    DESKTOP_ONLY("glVertexAttrib1sv", GL_VertexAttrib1sv)
+    DESKTOP_ONLY("glVertexAttrib2d", GL_VertexAttrib2d)
+    DESKTOP_ONLY("glVertexAttrib2dv", GL_VertexAttrib2dv)
     {"glVertexAttrib2f", P(GL_VertexAttrib2f)},
     {"glVertexAttrib2fv", P(GL_VertexAttrib2fv)},
+    DESKTOP_ONLY("glVertexAttrib2s", GL_VertexAttrib2s)
+    DESKTOP_ONLY("glVertexAttrib2sv", GL_VertexAttrib2sv)
+    DESKTOP_ONLY("glVertexAttrib3d", GL_VertexAttrib3d)
+    DESKTOP_ONLY("glVertexAttrib3dv", GL_VertexAttrib3dv)
     {"glVertexAttrib3f", P(GL_VertexAttrib3f)},
     {"glVertexAttrib3fv", P(GL_VertexAttrib3fv)},
+    DESKTOP_ONLY("glVertexAttrib3s", GL_VertexAttrib3s)
+    DESKTOP_ONLY("glVertexAttrib3sv", GL_VertexAttrib3sv)
+    DESKTOP_ONLY("glVertexAttrib4Nbv", GL_VertexAttrib4Nbv)
+    DESKTOP_ONLY("glVertexAttrib4Niv", GL_VertexAttrib4Niv)
+    DESKTOP_ONLY("glVertexAttrib4Nsv", GL_VertexAttrib4Nsv)
+    DESKTOP_ONLY("glVertexAttrib4Nub", GL_VertexAttrib4Nub)
+    DESKTOP_ONLY("glVertexAttrib4Nubv", GL_VertexAttrib4Nubv)
+    DESKTOP_ONLY("glVertexAttrib4Nuiv", GL_VertexAttrib4Nuiv)
+    DESKTOP_ONLY("glVertexAttrib4Nusv", GL_VertexAttrib4Nusv)
+    DESKTOP_ONLY("glVertexAttrib4bv", GL_VertexAttrib4bv)
+    DESKTOP_ONLY("glVertexAttrib4d", GL_VertexAttrib4d)
+    DESKTOP_ONLY("glVertexAttrib4dv", GL_VertexAttrib4dv)
     {"glVertexAttrib4f", P(GL_VertexAttrib4f)},
     {"glVertexAttrib4fv", P(GL_VertexAttrib4fv)},
+    DESKTOP_ONLY("glVertexAttrib4iv", GL_VertexAttrib4iv)
+    DESKTOP_ONLY("glVertexAttrib4s", GL_VertexAttrib4s)
+    DESKTOP_ONLY("glVertexAttrib4sv", GL_VertexAttrib4sv)
+    DESKTOP_ONLY("glVertexAttrib4ubv", GL_VertexAttrib4ubv)
+    DESKTOP_ONLY("glVertexAttrib4uiv", GL_VertexAttrib4uiv)
+    DESKTOP_ONLY("glVertexAttrib4usv", GL_VertexAttrib4usv)
     {"glVertexAttribBinding", P(GL_VertexAttribBinding)},
     {"glVertexAttribDivisor", P(GL_VertexAttribDivisor)},
     {"glVertexAttribDivisorANGLE", P(GL_VertexAttribDivisorANGLE)},
     {"glVertexAttribDivisorEXT", P(GL_VertexAttribDivisorEXT)},
     {"glVertexAttribFormat", P(GL_VertexAttribFormat)},
+    DESKTOP_ONLY("glVertexAttribI1i", GL_VertexAttribI1i)
+    DESKTOP_ONLY("glVertexAttribI1iv", GL_VertexAttribI1iv)
+    DESKTOP_ONLY("glVertexAttribI1ui", GL_VertexAttribI1ui)
+    DESKTOP_ONLY("glVertexAttribI1uiv", GL_VertexAttribI1uiv)
+    DESKTOP_ONLY("glVertexAttribI2i", GL_VertexAttribI2i)
+    DESKTOP_ONLY("glVertexAttribI2iv", GL_VertexAttribI2iv)
+    DESKTOP_ONLY("glVertexAttribI2ui", GL_VertexAttribI2ui)
+    DESKTOP_ONLY("glVertexAttribI2uiv", GL_VertexAttribI2uiv)
+    DESKTOP_ONLY("glVertexAttribI3i", GL_VertexAttribI3i)
+    DESKTOP_ONLY("glVertexAttribI3iv", GL_VertexAttribI3iv)
+    DESKTOP_ONLY("glVertexAttribI3ui", GL_VertexAttribI3ui)
+    DESKTOP_ONLY("glVertexAttribI3uiv", GL_VertexAttribI3uiv)
+    DESKTOP_ONLY("glVertexAttribI4bv", GL_VertexAttribI4bv)
     {"glVertexAttribI4i", P(GL_VertexAttribI4i)},
     {"glVertexAttribI4iv", P(GL_VertexAttribI4iv)},
+    DESKTOP_ONLY("glVertexAttribI4sv", GL_VertexAttribI4sv)
+    DESKTOP_ONLY("glVertexAttribI4ubv", GL_VertexAttribI4ubv)
     {"glVertexAttribI4ui", P(GL_VertexAttribI4ui)},
     {"glVertexAttribI4uiv", P(GL_VertexAttribI4uiv)},
+    DESKTOP_ONLY("glVertexAttribI4usv", GL_VertexAttribI4usv)
     {"glVertexAttribIFormat", P(GL_VertexAttribIFormat)},
     {"glVertexAttribIPointer", P(GL_VertexAttribIPointer)},
+    DESKTOP_ONLY("glVertexAttribL1d", GL_VertexAttribL1d)
+    DESKTOP_ONLY("glVertexAttribL1dv", GL_VertexAttribL1dv)
+    DESKTOP_ONLY("glVertexAttribL2d", GL_VertexAttribL2d)
+    DESKTOP_ONLY("glVertexAttribL2dv", GL_VertexAttribL2dv)
+    DESKTOP_ONLY("glVertexAttribL3d", GL_VertexAttribL3d)
+    DESKTOP_ONLY("glVertexAttribL3dv", GL_VertexAttribL3dv)
+    DESKTOP_ONLY("glVertexAttribL4d", GL_VertexAttribL4d)
+    DESKTOP_ONLY("glVertexAttribL4dv", GL_VertexAttribL4dv)
+    DESKTOP_ONLY("glVertexAttribLFormat", GL_VertexAttribLFormat)
+    DESKTOP_ONLY("glVertexAttribLPointer", GL_VertexAttribLPointer)
+    DESKTOP_ONLY("glVertexAttribP1ui", GL_VertexAttribP1ui)
+    DESKTOP_ONLY("glVertexAttribP1uiv", GL_VertexAttribP1uiv)
+    DESKTOP_ONLY("glVertexAttribP2ui", GL_VertexAttribP2ui)
+    DESKTOP_ONLY("glVertexAttribP2uiv", GL_VertexAttribP2uiv)
+    DESKTOP_ONLY("glVertexAttribP3ui", GL_VertexAttribP3ui)
+    DESKTOP_ONLY("glVertexAttribP3uiv", GL_VertexAttribP3uiv)
+    DESKTOP_ONLY("glVertexAttribP4ui", GL_VertexAttribP4ui)
+    DESKTOP_ONLY("glVertexAttribP4uiv", GL_VertexAttribP4uiv)
     {"glVertexAttribPointer", P(GL_VertexAttribPointer)},
     {"glVertexBindingDivisor", P(GL_VertexBindingDivisor)},
+    DESKTOP_ONLY("glVertexP2ui", GL_VertexP2ui)
+    DESKTOP_ONLY("glVertexP2uiv", GL_VertexP2uiv)
+    DESKTOP_ONLY("glVertexP3ui", GL_VertexP3ui)
+    DESKTOP_ONLY("glVertexP3uiv", GL_VertexP3uiv)
+    DESKTOP_ONLY("glVertexP4ui", GL_VertexP4ui)
+    DESKTOP_ONLY("glVertexP4uiv", GL_VertexP4uiv)
     {"glVertexPointer", P(GL_VertexPointer)},
     {"glViewport", P(GL_Viewport)},
+    DESKTOP_ONLY("glViewportArrayv", GL_ViewportArrayv)
+    DESKTOP_ONLY("glViewportIndexedf", GL_ViewportIndexedf)
+    DESKTOP_ONLY("glViewportIndexedfv", GL_ViewportIndexedfv)
     {"glWaitSemaphoreEXT", P(GL_WaitSemaphoreEXT)},
     {"glWaitSync", P(GL_WaitSync)},
-    {"glWeightPointerOES", P(GL_WeightPointerOES)}};
-
-const size_t g_numProcs = 917;
+    {"glWeightPointerOES", P(GL_WeightPointerOES)},
+    DESKTOP_ONLY("glWindowPos2d", GL_WindowPos2d)
+    DESKTOP_ONLY("glWindowPos2dv", GL_WindowPos2dv)
+    DESKTOP_ONLY("glWindowPos2f", GL_WindowPos2f)
+    DESKTOP_ONLY("glWindowPos2fv", GL_WindowPos2fv)
+    DESKTOP_ONLY("glWindowPos2i", GL_WindowPos2i)
+    DESKTOP_ONLY("glWindowPos2iv", GL_WindowPos2iv)
+    DESKTOP_ONLY("glWindowPos2s", GL_WindowPos2s)
+    DESKTOP_ONLY("glWindowPos2sv", GL_WindowPos2sv)
+    DESKTOP_ONLY("glWindowPos3d", GL_WindowPos3d)
+    DESKTOP_ONLY("glWindowPos3dv", GL_WindowPos3dv)
+    DESKTOP_ONLY("glWindowPos3f", GL_WindowPos3f)
+    DESKTOP_ONLY("glWindowPos3fv", GL_WindowPos3fv)
+    DESKTOP_ONLY("glWindowPos3i", GL_WindowPos3i)
+    DESKTOP_ONLY("glWindowPos3iv", GL_WindowPos3iv)
+    DESKTOP_ONLY("glWindowPos3s", GL_WindowPos3s)
+    DESKTOP_ONLY("glWindowPos3sv", GL_WindowPos3sv)
+};
+// clang-format on
+const size_t g_numProcs = std::size(g_procTable);
 }  // namespace egl

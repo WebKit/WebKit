@@ -112,7 +112,7 @@ void OSREntryPlan::work(CompilationEffort)
 
         Locker locker { m_calleeGroup->m_lock };
         for (auto& call : callee->wasmToWasmCallsites()) {
-            MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
+            CodePtr<WasmEntryPtrTag> entrypoint;
             if (call.functionIndexSpace < m_module->moduleInformation().importFunctionCount())
                 entrypoint = m_calleeGroup->m_wasmToWasmExitStubs[call.functionIndexSpace].code();
             else

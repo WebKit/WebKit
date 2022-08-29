@@ -4,8 +4,8 @@
 <script src="../resources/testharnessreport.js"></script>
 
 <style>
-#testAuto {
-    color-scheme: auto;
+#testNormal {
+    color-scheme: normal;
 }
 
 #testOnly {
@@ -52,12 +52,12 @@
     color-scheme: light baz only;
 }
 
-#testInvalidLightAuto {
-    color-scheme: light auto;
+#testInvalidLightNormal {
+    color-scheme: light normal;
 }
 
-#testInvalidAutoDark {
-    color-scheme: auto dark;
+#testInvalidNormalDark {
+    color-scheme: normal dark;
 }
 
 #testInvalidLightDarkLight {
@@ -77,7 +77,7 @@
 }
 </style>
 
-<div id="testAuto"></div>
+<div id="testNormal"></div>
 <div id="testOnly"></div>
 <div id="testLight"></div>
 <div id="testDark"></div>
@@ -89,8 +89,8 @@
 <div id="testLightUnknown"></div>
 <div id="testUnknownDarkOnly"></div>
 
-<div id="testInvalidLightAuto"></div>
-<div id="testInvalidAutoDark"></div>
+<div id="testInvalidLightNormal"></div>
+<div id="testInvalidNormalDark"></div>
 <div id="testInvalidLightDarkLight"></div>
 <div id="testInvalidNumber"></div>
 <div id="testInvalidString"></div>
@@ -102,7 +102,7 @@ function test_prop(id, property, expected) {
 }
 
 test(function() {
-    test_prop("testAuto", "color-scheme", "auto");
+    test_prop("testNormal", "color-scheme", "normal");
     test_prop("testOnly", "color-scheme", "light only");
     test_prop("testLight", "color-scheme", "light");
     test_prop("testDark", "color-scheme", "dark");
@@ -116,11 +116,11 @@ test(function() {
 }, "Test valid values");
 
 test(function() {
-    test_prop("testInvalidLightAuto", "color-scheme", "auto");
-    test_prop("testInvalidAutoDark", "color-scheme", "auto");
-    test_prop("testInvalidLightDarkLight", "color-scheme", "auto");
-    test_prop("testInvalidNumber", "color-scheme", "auto");
-    test_prop("testInvalidString", "color-scheme", "auto");
-    test_prop("testInvalidLightString", "color-scheme", "auto");
+    test_prop("testInvalidLightNormal", "color-scheme", "normal");
+    test_prop("testInvalidNormalDark", "color-scheme", "normal");
+    test_prop("testInvalidLightDarkLight", "color-scheme", "normal");
+    test_prop("testInvalidNumber", "color-scheme", "normal");
+    test_prop("testInvalidString", "color-scheme", "normal");
+    test_prop("testInvalidLightString", "color-scheme", "normal");
 }, "Test invalid values");
 </script>

@@ -52,6 +52,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_vulkan_gtests',
+          'isolated_scripts': 'angle_restricted_trace_gold_isolated_scripts',
         },
       },
       'linux-amd': {

@@ -37,7 +37,7 @@ TranslatorHLSL::TranslatorHLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutpu
 {}
 
 bool TranslatorHLSL::translate(TIntermBlock *root,
-                               ShCompileOptions compileOptions,
+                               const ShCompileOptions &compileOptions,
                                PerformanceDiagnostics *perfDiagnostics)
 {
     // A few transformations leave the tree in an inconsistent state.  For example, when unfolding
@@ -174,7 +174,7 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
         return false;
     }
 
-    if ((compileOptions & SH_EXPAND_SELECT_HLSL_INTEGER_POW_EXPRESSIONS) != 0)
+    if (compileOptions.expandSelectHLSLIntegerPowExpressions)
     {
         if (!sh::ExpandIntegerPowExpressions(this, root, &getSymbolTable()))
         {
@@ -182,7 +182,7 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
         }
     }
 
-    if ((compileOptions & SH_REWRITE_TEXELFETCHOFFSET_TO_TEXELFETCH) != 0)
+    if (compileOptions.rewriteTexelFetchOffsetToTexelFetch)
     {
         if (!sh::RewriteTexelFetchOffset(this, root, getSymbolTable(), getShaderVersion()))
         {
@@ -190,8 +190,7 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
         }
     }
 
-    if (((compileOptions & SH_REWRITE_INTEGER_UNARY_MINUS_OPERATOR) != 0) &&
-        getShaderType() == GL_VERTEX_SHADER)
+    if (compileOptions.rewriteIntegerUnaryMinusOperator && getShaderType() == GL_VERTEX_SHADER)
     {
         if (!sh::RewriteUnaryMinusOperatorInt(this, root))
         {
@@ -219,8 +218,7 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
     // In order to get the exact maximum of slots are available for shader resources, which would
     // been bound with StructuredBuffer, we only translate uniform block with a large array member
     // into StructuredBuffer when shader version is 300.
-    if (getShaderVersion() == 300 &&
-        (compileOptions & SH_ALLOW_TRANSLATE_UNIFORM_BLOCK_TO_STRUCTUREDBUFFER) != 0)
+    if (getShaderVersion() == 300 && compileOptions.allowTranslateUniformBlockToStructuredBuffer)
     {
         if (!sh::RecordUniformBlocksWithLargeArrayMember(root, mUniformBlockOptimizedMap,
                                                          mSlowCompilingUniformBlockSet))

@@ -561,7 +561,7 @@ void NetworkSession::removeLoaderWaitingWebProcessTransfer(NetworkResourceLoadId
         cachedResourceLoader->takeLoader()->abort();
 }
 
-std::unique_ptr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool)
+std::unique_ptr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool, bool)
 {
     return nullptr;
 }

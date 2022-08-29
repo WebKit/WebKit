@@ -51,7 +51,14 @@ inline const TypeDefinition& TypeInformation::get(TypeIndex index)
 
 inline const FunctionSignature& TypeInformation::getFunctionSignature(TypeIndex index)
 {
-    return *get(index).as<FunctionSignature>();
+    const TypeDefinition& signature = get(index);
+    if (signature.is<Projection>()) {
+        const TypeDefinition& expanded = signature.expand();
+        ASSERT(expanded.is<FunctionSignature>());
+        return *expanded.as<FunctionSignature>();
+    }
+    ASSERT(signature.is<FunctionSignature>());
+    return *signature.as<FunctionSignature>();
 }
 
 inline TypeIndex TypeInformation::get(const TypeDefinition& type)

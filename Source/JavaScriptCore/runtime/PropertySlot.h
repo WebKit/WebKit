@@ -86,11 +86,11 @@ inline unsigned attributesForStructure(unsigned attributes)
     return static_cast<uint8_t>(attributes);
 }
 
-using GetValueFunc = TypedFunctionPtr<GetValueFuncPtrTag, EncodedJSValue(JSGlobalObject*, EncodedJSValue, PropertyName), FunctionAttributes::JITOperation>;
-using GetValueFuncWithPtr = TypedFunctionPtr<GetValueFuncWithPtrPtrTag, EncodedJSValue(JSGlobalObject*, EncodedJSValue, PropertyName, void*), FunctionAttributes::JITOperation>;
+using GetValueFunc = FunctionPtr<GetValueFuncPtrTag, EncodedJSValue(JSGlobalObject*, EncodedJSValue, PropertyName), FunctionAttributes::JITOperation>;
+using GetValueFuncWithPtr = FunctionPtr<GetValueFuncWithPtrPtrTag, EncodedJSValue(JSGlobalObject*, EncodedJSValue, PropertyName, void*), FunctionAttributes::JITOperation>;
 
-using PutValueFunc = TypedFunctionPtr<PutValueFuncPtrTag, bool(JSGlobalObject*, EncodedJSValue, EncodedJSValue, PropertyName), FunctionAttributes::JITOperation>;
-using PutValueFuncWithPtr = TypedFunctionPtr<PutValueFuncWithPtrPtrTag, bool(JSGlobalObject*, EncodedJSValue, EncodedJSValue, PropertyName, void*), FunctionAttributes::JITOperation>;
+using PutValueFunc = FunctionPtr<PutValueFuncPtrTag, bool(JSGlobalObject*, EncodedJSValue, EncodedJSValue, PropertyName), FunctionAttributes::JITOperation>;
+using PutValueFuncWithPtr = FunctionPtr<PutValueFuncWithPtrPtrTag, bool(JSGlobalObject*, EncodedJSValue, EncodedJSValue, PropertyName, void*), FunctionAttributes::JITOperation>;
 
 class PropertySlot {
 

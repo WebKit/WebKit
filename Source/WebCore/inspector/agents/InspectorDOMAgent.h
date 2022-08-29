@@ -124,7 +124,7 @@ public:
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::DataBinding>>> getDataBindingsForNode(Inspector::Protocol::DOM::NodeId);
     Inspector::Protocol::ErrorStringOr<String> getAssociatedDataForNode(Inspector::Protocol::DOM::NodeId);
 #endif
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>> getEventListenersForNode(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>> getEventListenersForNode(Inspector::Protocol::DOM::NodeId, std::optional<bool>&& includeAncestors);
     Inspector::Protocol::ErrorStringOr<void> setEventListenerDisabled(Inspector::Protocol::DOM::EventListenerId, bool);
     Inspector::Protocol::ErrorStringOr<void> setBreakpointForEventListener(Inspector::Protocol::DOM::EventListenerId, RefPtr<JSON::Object>&& options);
     Inspector::Protocol::ErrorStringOr<void> removeBreakpointForEventListener(Inspector::Protocol::DOM::EventListenerId);

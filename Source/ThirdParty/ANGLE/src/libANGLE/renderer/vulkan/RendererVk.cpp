@@ -155,8 +155,6 @@ constexpr const char *kSkippedMessages[] = {
     "UNASSIGNED-CoreValidation-Shader-InputNotProduced",
     // http://anglebug.com/2796
     "UNASSIGNED-CoreValidation-Shader-PointSizeMissing",
-    // http://anglebug.com/3832
-    "VUID-VkPipelineInputAssemblyStateCreateInfo-topology-00428",
     // Best Practices Skips https://issuetracker.google.com/issues/166641492
     // https://issuetracker.google.com/issues/166793850
     "UNASSIGNED-BestPractices-vkCreateCommandPool-command-buffer-reset",
@@ -219,6 +217,13 @@ constexpr const char *kSkippedMessages[] = {
     "UNASSIGNED-BestPractices-vkCmdBeginRenderPass-ClearValueWithoutLoadOpClear",
     // http://anglebug.com/7513
     "VUID-VkGraphicsPipelineCreateInfo-pStages-06896",
+};
+
+// Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
+// not present.
+constexpr const char *kNoListRestartSkippedMessages[] = {
+    // http://anglebug.com/3832
+    "VUID-VkPipelineInputAssemblyStateCreateInfo-topology-00428",
 };
 
 // Some syncval errors are resolved in the presence of the NONE load or store render pass ops.  For
@@ -501,6 +506,16 @@ constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessages[] = {
         "SYNC_FRAGMENT_SHADER_UNIFORM_READ, "
         "command: vkCmdPipelineBarrier",
     },
+    // The validation layers don't properly account for VK_EXT_fragment_shader_interlock, which
+    // gives synchronization guarantees without the need for an image barrier. Suppress these
+    // syncval errors globally until it's fixed.
+    // https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/4387
+    {"SYNC-HAZARD-READ_AFTER_WRITE",
+     "type: VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, "
+     "imageLayout: VK_IMAGE_LAYOUT_GENERAL",
+     "Access info (usage: SYNC_FRAGMENT_SHADER_SHADER_STORAGE_READ, "
+     "prior_usage: SYNC_FRAGMENT_SHADER_SHADER_STORAGE_WRITE, "
+     "write_barriers: 0"},
 
 };
 
@@ -625,6 +640,21 @@ enum class DebugMessageReport
     Print,
 };
 
+bool IsMessageInSkipList(const char *message,
+                         const char *const skippedList[],
+                         size_t skippedListSize)
+{
+    for (size_t index = 0; index < skippedListSize; ++index)
+    {
+        if (strstr(message, skippedList[index]) != nullptr)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // Suppress validation errors that are known.  Returns DebugMessageReport::Ignore in that case.
 DebugMessageReport ShouldReportDebugMessage(RendererVk *renderer,
                                             const char *messageId,
@@ -636,12 +666,10 @@ DebugMessageReport ShouldReportDebugMessage(RendererVk *renderer,
     }
 
     // Check with non-syncval messages:
-    for (const char *msg : kSkippedMessages)
+    const std::vector<const char *> skippedMessages = renderer->getSkippedValidationMessages();
+    if (IsMessageInSkipList(message, skippedMessages.data(), skippedMessages.size()))
     {
-        if (strstr(message, msg) != nullptr)
-        {
-            return DebugMessageReport::Ignore;
-        }
+        return DebugMessageReport::Ignore;
     }
 
     // Then check with syncval messages:
@@ -1221,7 +1249,8 @@ RendererVk::RendererVk()
       mPipelineCacheInitialized(false),
       mValidationMessageCount(0),
       mCommandProcessor(this),
-      mSupportedVulkanPipelineStageMask(0)
+      mSupportedVulkanPipelineStageMask(0),
+      mSupportedVulkanShaderStageMask(0)
 {
     VkFormatProperties invalid = {0, 0, kInvalidFormatFeatureFlags};
     mFormatProperties.fill(invalid);
@@ -1940,6 +1969,14 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mDepthClipControlFeatures.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_CONTROL_FEATURES_EXT;
 
+    mPrimitivesGeneratedQueryFeatures = {};
+    mPrimitivesGeneratedQueryFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVES_GENERATED_QUERY_FEATURES_EXT;
+
+    mPrimitiveTopologyListRestartFeatures = {};
+    mPrimitiveTopologyListRestartFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_TOPOLOGY_LIST_RESTART_FEATURES_EXT;
+
     mBlendOperationAdvancedFeatures = {};
     mBlendOperationAdvancedFeatures.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT;
@@ -1959,6 +1996,14 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mFragmentShadingRateFeatures = {};
     mFragmentShadingRateFeatures.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR;
+
+    mFragmentShaderInterlockFeatures = {};
+    mFragmentShaderInterlockFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT;
+
+    mImagelessFramebufferFeatures = {};
+    mImagelessFramebufferFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES_KHR;
 
     if (!vkGetPhysicalDeviceProperties2KHR || !vkGetPhysicalDeviceFeatures2KHR)
     {
@@ -2092,6 +2137,16 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
         vk::AddToPNextChain(&deviceFeatures, &mDepthClipControlFeatures);
     }
 
+    if (ExtensionFound(VK_EXT_PRIMITIVES_GENERATED_QUERY_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(&deviceFeatures, &mPrimitivesGeneratedQueryFeatures);
+    }
+
+    if (ExtensionFound(VK_EXT_PRIMITIVE_TOPOLOGY_LIST_RESTART_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(&deviceFeatures, &mPrimitiveTopologyListRestartFeatures);
+    }
+
     if (ExtensionFound(VK_EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME, deviceExtensionNames))
     {
         vk::AddToPNextChain(&deviceFeatures, &mBlendOperationAdvancedFeatures);
@@ -2115,6 +2170,16 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     if (ExtensionFound(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME, deviceExtensionNames))
     {
         vk::AddToPNextChain(&deviceFeatures, &mFragmentShadingRateFeatures);
+    }
+
+    if (ExtensionFound(VK_EXT_FRAGMENT_SHADER_INTERLOCK_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(&deviceFeatures, &mFragmentShaderInterlockFeatures);
+    }
+
+    if (ExtensionFound(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(&deviceFeatures, &mImagelessFramebufferFeatures);
     }
 
     vkGetPhysicalDeviceFeatures2KHR(mPhysicalDevice, &deviceFeatures);
@@ -2144,11 +2209,15 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mProtectedMemoryProperties.pNext                 = nullptr;
     mHostQueryResetFeatures.pNext                    = nullptr;
     mDepthClipControlFeatures.pNext                  = nullptr;
+    mPrimitivesGeneratedQueryFeatures.pNext          = nullptr;
+    mPrimitiveTopologyListRestartFeatures.pNext      = nullptr;
     mBlendOperationAdvancedFeatures.pNext            = nullptr;
     mPipelineCreationCacheControlFeatures.pNext      = nullptr;
     mExtendedDynamicStateFeatures.pNext              = nullptr;
     mExtendedDynamicState2Features.pNext             = nullptr;
     mFragmentShadingRateFeatures.pNext               = nullptr;
+    mFragmentShaderInterlockFeatures.pNext           = nullptr;
+    mImagelessFramebufferFeatures.pNext              = nullptr;
 }
 
 angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueFamilyIndex)
@@ -2412,6 +2481,7 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
         mPhysicalDeviceFeatures.fragmentStoresAndAtomics;
     // Used to emulate the primitives generated query:
     mEnabledFeatures.features.pipelineStatisticsQuery =
+        !getFeatures().supportsPrimitivesGeneratedQuery.enabled &&
         getFeatures().supportsPipelineStatisticsQuery.enabled;
     // Used to support geometry shaders:
     mEnabledFeatures.features.geometryShader = mPhysicalDeviceFeatures.geometryShader;
@@ -2605,6 +2675,18 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
         vk::AddToPNextChain(&mEnabledFeatures, &mDepthClipControlFeatures);
     }
 
+    if (getFeatures().supportsPrimitivesGeneratedQuery.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_EXT_PRIMITIVES_GENERATED_QUERY_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mPrimitivesGeneratedQueryFeatures);
+    }
+
+    if (getFeatures().supportsPrimitiveTopologyListRestart.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_EXT_PRIMITIVE_TOPOLOGY_LIST_RESTART_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mPrimitiveTopologyListRestartFeatures);
+    }
+
     if (getFeatures().supportsBlendOperationAdvanced.enabled)
     {
         mEnabledDeviceExtensions.push_back(VK_EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME);
@@ -2627,6 +2709,18 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     {
         mEnabledDeviceExtensions.push_back(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME);
         vk::AddToPNextChain(&mEnabledFeatures, &mFragmentShadingRateFeatures);
+    }
+
+    if (getFeatures().supportsFragmentShaderPixelInterlock.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_EXT_FRAGMENT_SHADER_INTERLOCK_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mFragmentShaderInterlockFeatures);
+    }
+
+    if (getFeatures().supportsImagelessFramebuffer.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mImagelessFramebufferFeatures);
     }
 
     mCurrentQueueFamilyIndex = queueFamilyIndex;
@@ -2752,16 +2846,44 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     // transitions that cover many stages (such as AllGraphicsReadOnly) to mask out unsupported
     // stages, which avoids enumerating every possible combination of stages in the layouts.
     VkPipelineStageFlags unsupportedStages = 0;
+    mSupportedVulkanShaderStageMask =
+        VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_COMPUTE_BIT;
     if (!mPhysicalDeviceFeatures.tessellationShader)
     {
         unsupportedStages |= VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT |
                              VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT;
     }
+    else
+    {
+        mSupportedVulkanShaderStageMask |=
+            VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT | VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+    }
     if (!mPhysicalDeviceFeatures.geometryShader)
     {
         unsupportedStages |= VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT;
     }
+    else
+    {
+        mSupportedVulkanShaderStageMask |= VK_SHADER_STAGE_GEOMETRY_BIT;
+    }
     mSupportedVulkanPipelineStageMask = ~unsupportedStages;
+
+    initializeValidationMessageSuppressions();
+
+    return angle::Result::Continue;
+}
+
+void RendererVk::initializeValidationMessageSuppressions()
+{
+    // Build the list of validation errors that are currently expected and should be skipped.
+    mSkippedValidationMessages.insert(mSkippedValidationMessages.end(), kSkippedMessages,
+                                      kSkippedMessages + ArraySize(kSkippedMessages));
+    if (!getFeatures().supportsPrimitiveTopologyListRestart.enabled)
+    {
+        mSkippedValidationMessages.insert(
+            mSkippedValidationMessages.end(), kNoListRestartSkippedMessages,
+            kNoListRestartSkippedMessages + ArraySize(kNoListRestartSkippedMessages));
+    }
 
     // Build the list of syncval errors that are currently expected and should be skipped.
     mSkippedSyncvalMessages.insert(mSkippedSyncvalMessages.end(), kSkippedSyncvalMessages,
@@ -2781,8 +2903,6 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
             kSkippedSyncvalMessagesWithoutLoadStoreOpNone +
                 ArraySize(kSkippedSyncvalMessagesWithoutLoadStoreOpNone));
     }
-
-    return angle::Result::Continue;
 }
 
 angle::Result RendererVk::selectPresentQueueForSurface(DisplayVk *displayVk,
@@ -3148,12 +3268,6 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
                VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT);
         ANGLE_FEATURE_CONDITION(&mFeatures, bresenhamLineRasterization, true);
     }
-    else
-    {
-        // Use OpenGL line rasterization rules if extension not available by default.
-        // TODO(jmadill): Fix Android support. http://anglebug.com/2830
-        ANGLE_FEATURE_CONDITION(&mFeatures, basicGLLineRasterization, !IsAndroid() && !isPowerVR);
-    }
 
     if (mProvokingVertexFeatures.provokingVertexLast == VK_TRUE)
     {
@@ -3322,6 +3436,13 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsDepthClipControl,
                             mDepthClipControlFeatures.depthClipControl == VK_TRUE);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsPrimitivesGeneratedQuery,
+                            mPrimitivesGeneratedQueryFeatures.primitivesGeneratedQuery == VK_TRUE);
+
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsPrimitiveTopologyListRestart,
+        mPrimitiveTopologyListRestartFeatures.primitiveTopologyListRestart == VK_TRUE);
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsBlendOperationAdvanced,
@@ -3516,8 +3637,6 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsImageCubeArray,
                             mPhysicalDeviceFeatures.imageCubeArray == VK_TRUE);
 
-    // TODO: Only enable if VK_EXT_primitives_generated_query is not present.
-    // http://anglebug.com/5430
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsPipelineStatisticsQuery,
                             mPhysicalDeviceFeatures.pipelineStatisticsQuery == VK_TRUE);
 
@@ -3643,6 +3762,14 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsFragmentShadingRate,
                             canSupportFragmentShadingRate(deviceExtensionNames));
 
+    // We can use the interlock to support GL_ANGLE_shader_pixel_local_storage_coherent.
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsFragmentShaderPixelInterlock,
+        mFragmentShaderInterlockFeatures.fragmentShaderPixelInterlock == VK_TRUE);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsImagelessFramebuffer,
+                            mImagelessFramebufferFeatures.imagelessFramebuffer == VK_TRUE);
+
     // The following drivers are known to key the pipeline cache blobs with vertex input and
     // fragment output state, causing draw-time pipeline creation to miss the cache regardless of
     // warmup:
@@ -3664,6 +3791,11 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, warmUpPipelineCacheAtLink,
                             !isARM && !isPowerVR && !isQualcommProprietary &&
                                 !(IsLinux() && isIntel) && !(IsChromeOS() && isSwiftShader));
+
+    // On ARM, dynamic state for stencil write mask doesn't work correctly in the presence of
+    // discard or alpha to coverage, if the static state provided when creating the pipeline has a
+    // value of 0.
+    ANGLE_FEATURE_CONDITION(&mFeatures, useNonZeroStencilWriteMaskStaticState, isARM);
 
     // On ARM, per-sample shading is not enabled despite the presence of a Sample decoration.  As a
     // workaround, per-sample shading is inferred by ANGLE and explicitly enabled by the API.

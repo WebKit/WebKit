@@ -104,6 +104,7 @@ function newRegistryEntry(key)
     };
 }
 
+@visibility=PrivateRecursive
 function ensureRegistered(key)
 {
     // https://whatwg.github.io/loader/#ensure-registered
@@ -120,6 +121,7 @@ function ensureRegistered(key)
     return entry;
 }
 
+@linkTimeConstant
 function forceFulfillPromise(promise, value)
 {
     "use strict";
@@ -130,6 +132,7 @@ function forceFulfillPromise(promise, value)
         @fulfillPromise(promise, value);
 }
 
+@linkTimeConstant
 function fulfillFetch(entry, source)
 {
     // https://whatwg.github.io/loader/#fulfill-fetch
@@ -138,12 +141,13 @@ function fulfillFetch(entry, source)
 
     if (!entry.fetch)
         entry.fetch = @newPromiseCapability(@InternalPromise).@promise;
-    this.forceFulfillPromise(entry.fetch, source);
+    @forceFulfillPromise(entry.fetch, source);
     @setStateToMax(entry, @ModuleInstantiate);
 }
 
 // Loader.
 
+@visibility=PrivateRecursive
 function requestFetch(entry, parameters, fetcher)
 {
     // https://whatwg.github.io/loader/#request-fetch
@@ -181,6 +185,7 @@ function requestFetch(entry, parameters, fetcher)
     return fetchPromise;
 }
 
+@visibility=PrivateRecursive
 function requestInstantiate(entry, parameters, fetcher)
 {
     // https://whatwg.github.io/loader/#request-instantiate
@@ -207,7 +212,7 @@ function requestInstantiate(entry, parameters, fetcher)
         var dependencies = @newArrayWithSize(requestedModules.length);
         for (var i = 0, length = requestedModules.length; i < length; ++i) {
             var depName = requestedModules[i];
-            var depKey = this.resolveSync(depName, key, fetcher);
+            var depKey = this.resolve(depName, key, fetcher);
             var depEntry = this.ensureRegistered(depKey);
             @putByValDirect(dependencies, i, depEntry);
             dependenciesMap.@set(depName, depEntry);
@@ -220,6 +225,7 @@ function requestInstantiate(entry, parameters, fetcher)
     return instantiatePromise;
 }
 
+@visibility=PrivateRecursive
 function requestSatisfy(entry, parameters, fetcher, visited)
 {
     // https://html.spec.whatwg.org/#internal-module-script-graph-fetching-procedure
@@ -272,6 +278,7 @@ function requestSatisfy(entry, parameters, fetcher, visited)
 
 // Linking semantics.
 
+@visibility=PrivateRecursive
 function link(entry, fetcher)
 {
     // https://html.spec.whatwg.org/#fetch-the-descendants-of-and-instantiate-a-module-script
@@ -306,6 +313,7 @@ function link(entry, fetcher)
 
 // Module semantics.
 
+@visibility=PrivateRecursive
 function moduleEvaluation(entry, fetcher)
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduleevaluation
@@ -331,6 +339,7 @@ function moduleEvaluation(entry, fetcher)
         return this.asyncModuleEvaluation(entry, fetcher, dependencies);
 }
 
+@visibility=PrivateRecursive
 async function asyncModuleEvaluation(entry, fetcher, dependencies)
 {
     "use strict";
@@ -356,6 +365,7 @@ async function asyncModuleEvaluation(entry, fetcher, dependencies)
 
 // APIs to control the module loader.
 
+@visibility=PrivateRecursive
 function provideFetch(key, value)
 {
     "use strict";
@@ -364,9 +374,10 @@ function provideFetch(key, value)
 
     if (entry.state > @ModuleFetch)
         @throwTypeError("Requested module is already fetched.");
-    this.fulfillFetch(entry, value);
+    @fulfillFetch(entry, value);
 }
 
+@visibility=PrivateRecursive
 async function loadModule(moduleName, parameters, fetcher)
 {
     "use strict";
@@ -375,11 +386,12 @@ async function loadModule(moduleName, parameters, fetcher)
     // resolve: moduleName => Promise(moduleKey)
     // Take the name and resolve it to the unique identifier for the resource location.
     // For example, take the "jquery" and return the URL for the resource.
-    var key = await this.resolve(moduleName, @undefined, fetcher);
+    var key = this.resolve(moduleName, @undefined, fetcher);
     var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
     return entry.key;
 }
 
+@visibility=PrivateRecursive
 function linkAndEvaluateModule(key, fetcher)
 {
     "use strict";
@@ -392,6 +404,7 @@ function linkAndEvaluateModule(key, fetcher)
     return this.moduleEvaluation(entry, fetcher);
 }
 
+@visibility=PrivateRecursive
 async function loadAndEvaluateModule(moduleName, parameters, fetcher)
 {
     "use strict";
@@ -400,6 +413,7 @@ async function loadAndEvaluateModule(moduleName, parameters, fetcher)
     return await this.linkAndEvaluateModule(key, fetcher);
 }
 
+@visibility=PrivateRecursive
 async function requestImportModule(key, parameters, fetcher)
 {
     "use strict";
@@ -409,6 +423,7 @@ async function requestImportModule(key, parameters, fetcher)
     return this.getModuleNamespaceObject(entry.module);
 }
 
+@visibility=PrivateRecursive
 function dependencyKeysIfEvaluated(key)
 {
     "use strict";

@@ -21,7 +21,7 @@ class PruneEmptyDeclarationsTest : public MatchOutputCodeTest
 {
   public:
     PruneEmptyDeclarationsTest()
-        : MatchOutputCodeTest(GL_VERTEX_SHADER, 0, SH_GLSL_COMPATIBILITY_OUTPUT)
+        : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_GLSL_COMPATIBILITY_OUTPUT)
     {}
 };
 

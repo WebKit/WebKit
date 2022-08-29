@@ -4,6 +4,12 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
+layer at (240,0) size 240x300
+  RenderSVGTransformableContainer {g} at (240,0) size 240x300
+layer at (240,0) size 240x150
+  RenderSVGImage {image} at (0,0) size 240x150
+layer at (240,150) size 240x150
+  RenderSVGImage {image} at (0,150) size 240x150
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

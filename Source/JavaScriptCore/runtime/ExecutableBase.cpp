@@ -49,7 +49,7 @@ void ExecutableBase::dump(PrintStream& out) const
     switch (type()) {
     case NativeExecutableType: {
         NativeExecutable* native = jsCast<NativeExecutable*>(realThis);
-        out.print("NativeExecutable:", RawPointer(native->function().executableAddress()), "/", RawPointer(native->constructor().executableAddress()));
+        out.print("NativeExecutable:", RawPointer(native->function().taggedPtr()), "/", RawPointer(native->constructor().taggedPtr()));
         return;
     }
     case EvalExecutableType: {

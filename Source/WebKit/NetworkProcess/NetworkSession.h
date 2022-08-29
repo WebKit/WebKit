@@ -177,7 +177,7 @@ public:
     PrefetchCache& prefetchCache() { return m_prefetchCache; }
     void clearPrefetchCache() { m_prefetchCache.clear(); }
 
-    virtual std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed);
+    virtual std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy);
     virtual void removeWebSocketTask(SessionSet&, WebSocketTask&) { }
     virtual void addWebSocketTask(WebPageProxyIdentifier, WebSocketTask&) { }
 

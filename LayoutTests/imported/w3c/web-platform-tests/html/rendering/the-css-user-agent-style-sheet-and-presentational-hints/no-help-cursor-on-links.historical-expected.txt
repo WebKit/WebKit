@@ -1,4 +1,4 @@
 
-FAIL Unvisited help links must have pointer cursor, not help cursor assert_equals: expected "pointer" but got "auto"
-FAIL Visited help links must have pointer cursor, not help cursor assert_equals: expected "pointer" but got "auto"
+PASS Unvisited help links must have pointer cursor, not help cursor
+PASS Visited help links must have pointer cursor, not help cursor
 unvisited will be visited

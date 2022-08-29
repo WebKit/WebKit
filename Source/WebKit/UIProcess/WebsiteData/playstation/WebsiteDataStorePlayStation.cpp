@@ -46,62 +46,62 @@ void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
     notImplemented();
 }
 
-String WebsiteDataStore::defaultApplicationCacheDirectory()
+String WebsiteDataStore::defaultApplicationCacheDirectory(const String&)
 {
     return { };
 }
 
-String WebsiteDataStore::defaultCacheStorageDirectory()
+String WebsiteDataStore::defaultCacheStorageDirectory(const String&)
 {
     return { };
 }
 
-String WebsiteDataStore::defaultGeneralStorageDirectory()
+String WebsiteDataStore::defaultGeneralStorageDirectory(const String&)
 {
     return { };
 }
 
-String WebsiteDataStore::defaultNetworkCacheDirectory()
+String WebsiteDataStore::defaultNetworkCacheDirectory(const String&)
 {
     return { };
 }
 
-String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
+String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String&)
 {
     return { };
 }
 
-String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()
+String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(const String&)
 {
     return { };
 }
 
-String WebsiteDataStore::defaultLocalStorageDirectory()
+String WebsiteDataStore::defaultLocalStorageDirectory(const String&)
 {
     return { };
 }
 
-String WebsiteDataStore::defaultMediaKeysStorageDirectory()
+String WebsiteDataStore::defaultMediaKeysStorageDirectory(const String&)
 {
     return { };
 }
 
-String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
+String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String&)
 {
     return { };
 }
 
-String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
+String WebsiteDataStore::defaultResourceLoadStatisticsDirectory(const String&)
 {
     return { };
 }
 
-String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory)
+String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String&, const String&, ShouldCreateDirectory)
 {
     return { };
 }
 
-String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory)
+String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String&, const String&, ShouldCreateDirectory)
 {
     return { };
 }

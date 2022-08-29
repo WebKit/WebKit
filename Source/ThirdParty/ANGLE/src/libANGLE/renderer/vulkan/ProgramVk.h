@@ -129,7 +129,8 @@ class ProgramVk : public ProgramImpl
 
     void reset(ContextVk *contextVk);
     angle::Result initDefaultUniformBlocks(const gl::Context *glContext);
-    void generateUniformLayoutMapping(gl::ShaderMap<sh::BlockLayoutMap> &layoutMap,
+    void generateUniformLayoutMapping(const gl::Context *context,
+                                      gl::ShaderMap<sh::BlockLayoutMap> &layoutMap,
                                       gl::ShaderMap<size_t> &requiredBufferSize);
     void initDefaultUniformLayoutMapping(gl::ShaderMap<sh::BlockLayoutMap> &layoutMap);
 
@@ -138,7 +139,7 @@ class ProgramVk : public ProgramImpl
 
     template <typename T>
     void setUniformImpl(GLint location, GLsizei count, const T *v, GLenum entryPointType);
-    void linkResources(const gl::ProgramLinkedResources &resources);
+    void linkResources(const gl::Context *context, const gl::ProgramLinkedResources &resources);
 
     angle::Result createGraphicsPipelineWithDefaultState(const gl::Context *context,
                                                          PipelineCacheAccess *pipelineCache);

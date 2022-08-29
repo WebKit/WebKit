@@ -212,14 +212,11 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         Path path;
         if (properties.shapeRoundedRect)
             path.addRoundedRect(*properties.shapeRoundedRect);
-        ASSERT([layer isKindOfClass:[CAShapeLayer class]]);
-        [(CAShapeLayer *)layer setPath:path.platformPath()];
+        dynamic_objc_cast<CAShapeLayer>(layer).path = path.platformPath();
     }
 
-    if (properties.changedProperties & RemoteLayerTreeTransaction::ShapePathChanged) {
-        ASSERT([layer isKindOfClass:[CAShapeLayer class]]);
-        [(CAShapeLayer *)layer setPath:properties.shapePath.platformPath()];
-    }
+    if (properties.changedProperties & RemoteLayerTreeTransaction::ShapePathChanged)
+        dynamic_objc_cast<CAShapeLayer>(layer).path = properties.shapePath.platformPath();
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::MinificationFilterChanged)
         layer.minificationFilter = toCAFilterType(properties.minificationFilter);
@@ -231,15 +228,15 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         PlatformCAFilters::setBlendingFiltersOnLayer(layer, properties.blendMode);
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::WindRuleChanged) {
-        ASSERT([layer isKindOfClass:[CAShapeLayer class]]);
-        CAShapeLayer *shapeLayer = (CAShapeLayer *)layer;
-        switch (properties.windRule) {
-        case WindRule::NonZero:
-            shapeLayer.fillRule = kCAFillRuleNonZero;
-            break;
-        case WindRule::EvenOdd:
-            shapeLayer.fillRule = kCAFillRuleEvenOdd;
-            break;
+        if (auto *shapeLayer = dynamic_objc_cast<CAShapeLayer>(layer)) {
+            switch (properties.windRule) {
+            case WindRule::NonZero:
+                shapeLayer.fillRule = kCAFillRuleNonZero;
+                break;
+            case WindRule::EvenOdd:
+                shapeLayer.fillRule = kCAFillRuleEvenOdd;
+                break;
+            }
         }
     }
 

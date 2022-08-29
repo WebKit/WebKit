@@ -81,12 +81,16 @@
             _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
             [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
             _displayLink.paused = YES;
-            _displayLink.preferredFramesPerSecond = 60;
+
+            if (drawingAreaProxy && !drawingAreaProxy->page().preferences().preferPageRenderingUpdatesNear60FPSEnabled())
+                _displayLink.preferredFramesPerSecond = (1.0 / _displayLink.maximumRefreshRate);
+            else
+                _displayLink.preferredFramesPerSecond = 60;
         }
 
         if (drawingAreaProxy) {
             auto& page = drawingAreaProxy->page();
-            if (page.preferences().webAnimationsCustomFrameRateEnabled()) {
+            if (page.preferences().webAnimationsCustomFrameRateEnabled() || !page.preferences().preferPageRenderingUpdatesNear60FPSEnabled()) {
                 auto minimumRefreshInterval = _displayLink.maximumRefreshRate;
                 if (minimumRefreshInterval > 0) {
                     if (auto displayId = page.displayId()) {

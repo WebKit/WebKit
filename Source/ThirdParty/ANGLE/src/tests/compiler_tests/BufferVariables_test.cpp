@@ -34,7 +34,7 @@ class BufferVariablesTest : public ShaderCompileTreeTest
 class BufferVariablesMatchTest : public MatchOutputCodeTest
 {
   public:
-    BufferVariablesMatchTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, 0, SH_ESSL_OUTPUT)
+    BufferVariablesMatchTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_ESSL_OUTPUT)
     {
         getResources()->MaxShaderStorageBufferBindings = 8;
     }

@@ -5848,7 +5848,8 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
     }
 
 #if USE(ANGLE)
-    UNUSED_PARAM(internalFormat);
+    if (!validateForbiddenInternalFormats(functionName, internalFormat))
+        return false;
 #else
     // Verify that the combination of internalformat, format, and type is supported.
 #define INTERNAL_FORMAT_CASE(internalFormatMacro, formatMacro, type0, type1, type2, type3, type4) case GraphicsContextGL::internalFormatMacro: \
@@ -5955,6 +5956,25 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
     return true;
 }
 
+#if USE(ANGLE)
+bool WebGLRenderingContextBase::validateForbiddenInternalFormats(const char* functionName, GCGLenum internalformat)
+{
+    // These formats are never exposed to WebGL apps but may be accepted by ANGLE.
+    switch (internalformat) {
+    case GraphicsContextGL::BGRA4_ANGLEX:
+    case GraphicsContextGL::BGR5_A1_ANGLEX:
+    case GraphicsContextGL::BGRA8_SRGB_ANGLEX:
+    case GraphicsContextGL::BGRA_EXT:
+    case GraphicsContextGL::DEPTH_COMPONENT32_OES:
+    case GraphicsContextGL::BGRA8_EXT:
+    case GraphicsContextGL::RGBX8_ANGLE:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid internalformat");
+        return false;
+    }
+    return true;
+}
+#endif
+
 void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border)
 {
     if (isContextLostOrPending())
@@ -5962,6 +5982,9 @@ void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, G
 #if !USE(ANGLE)
     // Fake the source so that simple validation of the format/type is done. This is subsumed by ANGLE.
     if (!validateTexFuncParameters("copyTexImage2D", TexImageFunctionType::CopyTexImage, TexFuncValidationSourceType::SourceArrayBufferView, target, level, internalFormat, width, height, 1, border, internalFormat, GraphicsContextGL::UNSIGNED_BYTE))
+        return;
+#else
+    if (!validateForbiddenInternalFormats("copyTexImage2D", internalFormat))
         return;
 #endif
     if (!validateSettableTexInternalFormat("copyTexImage2D", internalFormat))

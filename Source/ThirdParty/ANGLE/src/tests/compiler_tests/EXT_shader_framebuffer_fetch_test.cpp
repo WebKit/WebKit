@@ -183,11 +183,15 @@ class EXTShaderFramebufferFetchNoncoherentTest : public sh::ShaderExtensionTest
 
     testing::AssertionResult TestShaderCompile(ShShaderOutput shaderOutputType, const char *pragma)
     {
+        ShCompileOptions compileOptions = {};
+        compileOptions.objectCode       = true;
+        compileOptions.variables        = true;
+
         const char *shaderStrings[] = {testing::get<1>(GetParam()), pragma,
                                        testing::get<2>(GetParam())};
 
-        bool success = sh::Compile(mCompilerList[shaderOutputType], shaderStrings, 3,
-                                   SH_VARIABLES | SH_OBJECT_CODE);
+        bool success =
+            sh::Compile(mCompilerList[shaderOutputType], shaderStrings, 3, compileOptions);
         if (success)
         {
             return ::testing::AssertionSuccess()

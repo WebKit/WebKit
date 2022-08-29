@@ -1903,7 +1903,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
         return completionHandler(WTFMove(sourceProcess), nullptr, "The treatAsSameOriginNavigation flag is set"_s);
 
     URL sourceURL;
-    if (page.isPageOpenedByDOMShowingInitialEmptyDocument() && !navigation.requesterOrigin().isEmpty())
+    if (page.isPageOpenedByDOMShowingInitialEmptyDocument() && !navigation.requesterOrigin().isNull())
         sourceURL = URL { navigation.requesterOrigin().toString() };
     else
         sourceURL = pageSourceURL;

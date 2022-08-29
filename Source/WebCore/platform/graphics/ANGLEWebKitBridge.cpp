@@ -160,7 +160,7 @@ void ANGLEWebKitBridge::setResources(const ShBuiltInResources& resources)
     m_resources = resources;
 }
 
-bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog, Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>>& symbols, uint64_t extraCompileOptions)
+bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog, Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>>& symbols, const ShCompileOptions& compileOptions)
 {
     if (!builtCompilers) {
         m_fragmentCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, m_shaderSpec, m_shaderOutput, &m_resources);
@@ -182,7 +182,7 @@ bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShade
 
     const char* const shaderSourceStrings[] = { shaderSource };
 
-    bool validateSuccess = sh::Compile(compiler, shaderSourceStrings, 1, SH_OBJECT_CODE | SH_VARIABLES | extraCompileOptions);
+    bool validateSuccess = sh::Compile(compiler, shaderSourceStrings, 1, compileOptions);
     if (!validateSuccess) {
         const std::string& log = sh::GetInfoLog(compiler);
         if (log.length())

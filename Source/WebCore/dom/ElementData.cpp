@@ -27,6 +27,7 @@
 #include "ElementData.h"
 
 #include "Attr.h"
+#include "Element.h"
 #include "HTMLNames.h"
 #include "StyleProperties.h"
 #include "XMLNames.h"

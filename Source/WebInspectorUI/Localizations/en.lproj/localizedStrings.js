@@ -64,7 +64,6 @@ localizedStrings["%s (default)"] = "%s (default)";
 localizedStrings["%s (hidden)"] = "%s (hidden)";
 localizedStrings["%s Callback"] = "%s Callback";
 localizedStrings["%s Event Dispatched"] = "%s Event Dispatched";
-localizedStrings["%s Fired"] = "%s Fired";
 localizedStrings["%s Prototype"] = "%s Prototype";
 /* Format string for the suggested filename when saving the content for a request local override. */
 localizedStrings["%s Request Data @ Local Override Request Content View"] = "%s Request Data";
@@ -205,7 +204,6 @@ localizedStrings["Assertion Failed"] = "Assertion Failed";
 localizedStrings["Assertion Failed: %s"] = "Assertion Failed: %s";
 /* Break (pause) when console.assert() fails */
 localizedStrings["Assertion Failures @ JavaScript Breakpoint"] = "Assertion Failures";
-localizedStrings["Assertion with message: %s"] = "Assertion with message: %s";
 localizedStrings["Assertive"] = "Assertive";
 localizedStrings["Associated Data"] = "Associated Data";
 localizedStrings["Async audits are not supported."] = "Async audits are not supported.";
@@ -1269,7 +1267,7 @@ localizedStrings["Request Data"] = "Request Data";
 localizedStrings["Request Headers"] = "Request Headers";
 /* Text indicating that the local override replaces the request of the network activity. */
 localizedStrings["Request Override @ Local Override Network Stage"] = "Request Override";
-localizedStrings["Requesting: %s"] = "Requesting: %s";
+localizedStrings["Requesting \u201C%s\u201D"] = "Requesting \u201C%s\u201D";
 localizedStrings["Required"] = "Required";
 /* Context menu action for resetting the breakpoint to its initial configuration. */
 localizedStrings["Reset Breakpoint @ Breakpoint Context Menu"] = "Reset Breakpoint";
@@ -1669,7 +1667,6 @@ localizedStrings["Traditional Forms @ Font Details Sidebar Property Value"] = "T
 localizedStrings["Transfer Size"] = "Transfer Size";
 localizedStrings["Transferred"] = "Transferred";
 localizedStrings["Triggered Breakpoint"] = "Triggered Breakpoint";
-localizedStrings["Triggered URL Breakpoint"] = "Triggered URL Breakpoint";
 localizedStrings["True"] = "True";
 localizedStrings["Type"] = "Type";
 localizedStrings["Type Issue"] = "Type Issue";

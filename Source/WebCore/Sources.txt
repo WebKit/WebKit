@@ -1614,6 +1614,7 @@ layout/integration/inline/InlineIteratorLogicalOrderTraversal.cpp
 layout/integration/inline/InlineIteratorTextBox.cpp
 layout/integration/inline/LayoutIntegrationInlineContentBuilder.cpp
 layout/integration/inline/LayoutIntegrationInlineContent.cpp
+layout/integration/inline/LayoutIntegrationInlineContentPainter.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
 layout/integration/inline/LayoutIntegrationPagination.cpp
 layout/integration/LayoutIntegrationBoxTree.cpp
@@ -2534,8 +2535,10 @@ rendering/style/TextSizeAdjustment.cpp
 rendering/style/WillChangeData.cpp
 rendering/svg/LegacyRenderSVGContainer.cpp
 rendering/svg/LegacyRenderSVGEllipse.cpp
-rendering/svg/LegacyRenderSVGModelObject.cpp
+rendering/svg/LegacyRenderSVGForeignObject.cpp
 rendering/svg/LegacyRenderSVGHiddenContainer.cpp
+rendering/svg/LegacyRenderSVGImage.cpp
+rendering/svg/LegacyRenderSVGModelObject.cpp
 rendering/svg/LegacyRenderSVGPath.cpp
 rendering/svg/LegacyRenderSVGRect.cpp
 rendering/svg/LegacyRenderSVGRoot.cpp

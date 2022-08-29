@@ -25,7 +25,7 @@ class RewriteDoWhileCrashTest : public ShaderCompileTreeTest
 
     void SetUp() override
     {
-        mExtraCompileOptions |= SH_REWRITE_DO_WHILE_LOOPS;
+        mCompileOptions.rewriteDoWhileLoops = true;
         ShaderCompileTreeTest::SetUp();
     }
 };

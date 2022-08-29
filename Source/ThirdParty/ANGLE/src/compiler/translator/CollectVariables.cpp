@@ -573,7 +573,7 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
                 recordBuiltInAttributeUsed(symbol->variable(), &mLocalInvocationIndexAdded);
                 return;
             case EvqInstanceID:
-                // Whenever the SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW option is set,
+                // Whenever the initializeBuiltinsForInstancedMultiview option is set,
                 // gl_InstanceID is added inside expressions to initialize ViewID_OVR and
                 // InstanceID. Note that gl_InstanceID is not added to the symbol table for ESSL1
                 // shaders.

@@ -135,7 +135,7 @@ public:
     FixedVector<JumpReplacement> m_jumpReplacements;
     Bag<StructureStubInfo> m_stubInfos;
     Bag<OptimizingCallLinkInfo> m_callLinkInfos;
-    Yarr::YarrBoyerMoyerData m_boyerMooreData;
+    Yarr::YarrBoyerMooreData m_boyerMooreData;
     
     ScratchBuffer* catchOSREntryBuffer;
     RefPtr<Profiler::Compilation> compilation;

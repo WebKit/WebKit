@@ -969,18 +969,14 @@ public:
         appendCall(CCallHelpers::Address(GPRInfo::nonArgGPR0, address.offset));
     }
 
-    JITCompiler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_Cb operation, GPRReg codeBlockGPR)
+    JITCompiler::Call callThrowOperationWithCallFrameRollback(V_JITOperation_Cb operation, GPRReg codeBlockGPR)
     {
         m_jit.setupArguments<V_JITOperation_Cb>(codeBlockGPR);
-        return appendCallWithCallFrameRollbackOnException(operation);
+        JITCompiler::Call call = appendCall(operation);
+        m_jit.exceptionJumpWithCallFrameRollback();
+        return call;
     }
 
-    JITCompiler::Call callOperationWithCallFrameRollbackOnException(Z_JITOperation_G operation, GPRReg result, GPRReg globalObjectGPR)
-    {
-        m_jit.setupArguments<Z_JITOperation_G>(globalObjectGPR);
-        return appendCallWithCallFrameRollbackOnExceptionSetResult(operation, result);
-    }
-    
     void prepareForExternalCall()
     {
 #if !defined(NDEBUG) && !CPU(ARM_THUMB2) && !CPU(MIPS)
@@ -1000,7 +996,7 @@ public:
     }
 
     // These methods add call instructions, optionally setting results, and optionally rolling back the call frame on an exception.
-    JITCompiler::Call appendCall(const FunctionPtr<CFunctionPtrTag> function)
+    JITCompiler::Call appendCall(const CodePtr<CFunctionPtrTag> function)
     {
         prepareForExternalCall();
         m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
@@ -1014,26 +1010,11 @@ public:
         m_jit.appendCall(address);
     }
 
-    JITCompiler::Call appendOperationCall(const FunctionPtr<OperationPtrTag> function)
+    JITCompiler::Call appendOperationCall(const CodePtr<OperationPtrTag> function)
     {
         prepareForExternalCall();
         m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
         return m_jit.appendOperationCall(function);
-    }
-
-    JITCompiler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr<CFunctionPtrTag> function)
-    {
-        JITCompiler::Call call = appendCall(function);
-        m_jit.exceptionCheckWithCallFrameRollback();
-        return call;
-    }
-
-    JITCompiler::Call appendCallWithCallFrameRollbackOnExceptionSetResult(const FunctionPtr<CFunctionPtrTag> function, GPRReg result)
-    {
-        JITCompiler::Call call = appendCallWithCallFrameRollbackOnException(function);
-        if ((result != InvalidGPRReg) && (result != GPRInfo::returnValueGPR))
-            m_jit.move(GPRInfo::returnValueGPR, result);
-        return call;
     }
 
     void appendCallSetResult(CCallHelpers::Address address, GPRReg result)
@@ -1058,7 +1039,7 @@ public:
 #endif
     }
 
-    JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, GPRReg result)
+    JITCompiler::Call appendCallSetResult(const CodePtr<CFunctionPtrTag> function, GPRReg result)
     {
         JITCompiler::Call call = appendCall(function);
         if (result != InvalidGPRReg)
@@ -1066,14 +1047,14 @@ public:
         return call;
     }
 
-    JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, GPRReg result1, GPRReg result2)
+    JITCompiler::Call appendCallSetResult(const CodePtr<CFunctionPtrTag> function, GPRReg result1, GPRReg result2)
     {
         JITCompiler::Call call = appendCall(function);
         m_jit.setupResults(result1, result2);
         return call;
     }
 
-    JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, JSValueRegs resultRegs)
+    JITCompiler::Call appendCallSetResult(const CodePtr<CFunctionPtrTag> function, JSValueRegs resultRegs)
     {
 #if USE(JSVALUE64)
         return appendCallSetResult(function, resultRegs.gpr());
@@ -1082,7 +1063,7 @@ public:
 #endif
     }
 
-    JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, FPRReg result)
+    JITCompiler::Call appendCallSetResult(const CodePtr<CFunctionPtrTag> function, FPRReg result)
     {
         JITCompiler::Call call = appendCall(function);
         if (result != InvalidFPRReg)

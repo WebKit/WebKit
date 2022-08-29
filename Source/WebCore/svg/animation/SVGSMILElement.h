@@ -57,7 +57,7 @@ public:
 
     SMILTimeContainer* timeContainer() { return m_timeContainer.get(); }
 
-    SVGElement* targetElement() const { return m_targetElement; }
+    SVGElement* targetElement() const { return m_targetElement.get(); }
     const QualifiedName& attributeName() const { return m_attributeName; }
 
     void beginByLinkActivation();
@@ -185,7 +185,7 @@ private:
 
     QualifiedName m_attributeName;
 
-    SVGElement* m_targetElement;
+    WeakPtr<SVGElement> m_targetElement;
 
     Vector<Condition> m_conditions;
     bool m_conditionsConnected;
@@ -193,7 +193,7 @@ private:
 
     bool m_isWaitingForFirstInterval;
 
-    HashSet<SVGSMILElement*> m_timeDependents;
+    WeakHashSet<SVGSMILElement> m_timeDependents;
 
     // Instance time lists
     Vector<SMILTimeWithOrigin> m_beginTimes;

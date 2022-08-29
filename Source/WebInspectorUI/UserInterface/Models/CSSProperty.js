@@ -90,6 +90,18 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         return names;
     }
 
+    static sortPreferringNonPrefixed(a, b)
+    {
+        let aIsPrefixed = a[0] === "-" && a[1] !== "-";
+        let bIsPrefixed = b[0] === "-" && b[1] !== "-";
+        if (!aIsPrefixed && bIsPrefixed)
+            return -1;
+        if (aIsPrefixed && !bIsPrefixed)
+            return 1;
+
+        return a.extendedLocaleCompare(b);
+    }
+
     static sortByPropertyNameUsageCount(propertyNameA, propertyNameB)
     {
         let countA = WI.CSSProperty._cachedNameCounts[propertyNameA];

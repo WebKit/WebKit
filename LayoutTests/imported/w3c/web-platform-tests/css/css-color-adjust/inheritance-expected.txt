@@ -1,5 +1,5 @@
 
-FAIL Property color-scheme has initial value normal assert_equals: expected "normal" but got "auto"
+PASS Property color-scheme has initial value normal
 PASS Property color-scheme inherits
 PASS Property color-adjust has initial value economy
 PASS Property color-adjust inherits

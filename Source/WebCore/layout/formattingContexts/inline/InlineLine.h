@@ -48,6 +48,7 @@ public:
     void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
 
     bool hasContent() const;
+    bool isContentTruncated() const { return m_contentIsTruncated; }
 
     bool contentNeedsBidiReordering() const { return m_hasNonDefaultBidiLevelRun; }
 
@@ -68,6 +69,7 @@ public:
     void removeHangingGlyphs();
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
     void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
+    void truncate(InlineLayoutUnit logicalRight);
 
     struct Run {
         enum class Type : uint8_t {
@@ -99,10 +101,17 @@ public:
         bool isContentful() const { return (isText() && textContent()->length) || isBox() || isLineBreak() || isListMarker(); }
         bool isGenerated() const { return isListMarker(); }
 
+        bool isTruncated() const { return m_isTruncated; }
+
         const Box& layoutBox() const { return *m_layoutBox; }
         struct Text {
             size_t start { 0 };
             size_t length { 0 };
+            struct PartiallyVisibleContent {
+                size_t length { 0 };
+                InlineLayoutUnit width { 0.f };
+            };
+            std::optional<PartiallyVisibleContent> partiallyVisibleContent { };
             bool needsHyphen { false };
         };
         const std::optional<Text>& textContent() const { return m_textContent; }
@@ -160,6 +169,8 @@ public:
         bool hasTrailingLetterSpacing() const;
         InlineLayoutUnit trailingLetterSpacing() const;
         InlineLayoutUnit removeTrailingLetterSpacing();
+        enum class CanFullyTruncate : uint8_t { Yes, No };
+        bool truncate(InlineLayoutUnit truncatedWidth, CanFullyTruncate = CanFullyTruncate::Yes);
 
         Type m_type { Type::Text };
         const Box* m_layoutBox { nullptr };
@@ -171,6 +182,7 @@ public:
         std::optional<TrailingWhitespace> m_trailingWhitespace { };
         std::optional<size_t> m_lastNonWhitespaceContentStart { };
         std::optional<Text> m_textContent;
+        bool m_isTruncated { false };
     };
     using RunList = Vector<Run, 10>;
     const RunList& runs() const { return m_runs; }
@@ -243,6 +255,7 @@ private:
     bool m_hasNonDefaultBidiLevelRun { false };
     // Note that this is only needed for the special (and ancient and not supported by other browsers) "-webkit-nbsp-mode: space".
     bool m_collapseLeadingNonBreakingSpace { false };
+    bool m_contentIsTruncated { false };
 };
 
 

@@ -335,6 +335,8 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
         features |= NoEvalCacheFeature;
     if (scope->hasNonSimpleParameterList())
         features |= NonSimpleParameterListFeature;
+    if (scope->usesImportMeta())
+        features |= ImportMetaFeature;
 
 #if ASSERT_ENABLED
     if (m_parsingBuiltin && isProgramParseMode(parseMode)) {
@@ -5211,6 +5213,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             if (matchContextualKeyword(m_vm.propertyNames->builtinNames().metaPublicName())) {
                 semanticFailIfFalse(m_scriptMode == JSParserScriptMode::Module, "import.meta is only valid inside modules");
                 base = context.createImportMetaExpr(location, createResolveAndUseVariable(context, &m_vm.propertyNames->metaPrivateName, false, expressionStart, location));
+                currentScope()->setUsesImportMeta();
                 next();
             } else {
                 failIfTrue(match(IDENT), "\"import.\" can only be followed with meta");

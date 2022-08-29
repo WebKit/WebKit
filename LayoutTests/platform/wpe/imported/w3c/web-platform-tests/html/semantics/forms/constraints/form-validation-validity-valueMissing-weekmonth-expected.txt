@@ -1,0 +1,22 @@
+
+PASS [INPUT in MONTH status] The required attribute is not set
+PASS [INPUT in MONTH status] Valid month string(2000-12)
+PASS [INPUT in MONTH status] Valid month string(9999-01)
+FAIL [INPUT in MONTH status] The value attribute is a number(1234567) assert_true: The validity.valueMissing should be true. expected true got false
+FAIL [INPUT in MONTH status] The value attribute is a Date object assert_true: The validity.valueMissing should be true. expected true got false
+FAIL [INPUT in MONTH status] Invalid month string(2000-99) assert_true: The validity.valueMissing should be true. expected true got false
+FAIL [INPUT in MONTH status] Invalid month string(37-01) assert_true: The validity.valueMissing should be true. expected true got false
+FAIL [INPUT in MONTH status] Invalid month string(2000/01) assert_true: The validity.valueMissing should be true. expected true got false
+PASS [INPUT in MONTH status] The value attribute is empty string
+PASS [INPUT in WEEK status] The required attribute is not set
+PASS [INPUT in WEEK status] Valid week string(2000-W12)
+PASS [INPUT in WEEK status] Valid week string(9999-W01)
+FAIL [INPUT in WEEK status] The value attribute is a number(1234567) assert_true: The validity.valueMissing should be true. expected true got false
+FAIL [INPUT in WEEK status] The value attribute is a Date object assert_true: The validity.valueMissing should be true. expected true got false
+FAIL [INPUT in WEEK status] Invalid week string(2000-W99) assert_true: The validity.valueMissing should be true. expected true got false
+FAIL [INPUT in WEEK status] invalid week string(2000-W00) assert_true: The validity.valueMissing should be true. expected true got false
+FAIL [INPUT in WEEK status] invalid week string(2000-w01) assert_true: The validity.valueMissing should be true. expected true got false
+PASS [INPUT in WEEK status] The value attribute is empty string
+PASS validationMessage should return empty string when willValidate is false and valueMissing is true
+
+

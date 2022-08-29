@@ -90,6 +90,11 @@ public:
         return m_identifier != other.m_identifier;
     }
 
+    bool operator>(const ObjectIdentifier& other) const
+    {
+        return toUInt64() > other.toUInt64();
+    }
+
     uint64_t toUInt64() const { return m_identifier; }
     explicit operator bool() const { return m_identifier; }
 

@@ -3396,6 +3396,20 @@ void WriteGroupSMaxNonUniformAMD(Blob *blob,
     blob->push_back(x);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupSMaxNonUniformAMD);
 }
+void WriteBeginInvocationInterlockEXT(Blob *blob)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpBeginInvocationInterlockEXT);
+}
+void WriteEndInvocationInterlockEXT(Blob *blob)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpEndInvocationInterlockEXT);
+}
 
 }  // namespace spirv
 }  // namespace angle

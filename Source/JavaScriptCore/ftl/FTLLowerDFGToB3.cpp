@@ -325,8 +325,8 @@ public:
 
                     jit.addLinkTask(
                         [=] (LinkBuffer& linkBuffer) {
-                            linkBuffer.link(throwCall, FunctionPtr<OperationPtrTag>(operationThrowStackOverflowError));
-                            linkBuffer.link(lookupExceptionHandlerCall, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame));
+                            linkBuffer.link<OperationPtrTag>(throwCall, operationThrowStackOverflowError);
+                            linkBuffer.link<OperationPtrTag>(lookupExceptionHandlerCall, operationLookupExceptionHandlerFromCallerFrame);
                     });
                 });
             });
@@ -2459,7 +2459,7 @@ private:
 #if ENABLE(MATH_IC_STATS)
                         auto slowPathEnd = jit.label();
                         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                            size_t size = linkBuffer.locationOf(slowPathEnd).executableAddress<char*>() - linkBuffer.locationOf(slowPathStart).executableAddress<char*>();
+                            size_t size = linkBuffer.locationOf(slowPathEnd).taggedPtr<char*>() - linkBuffer.locationOf(slowPathStart).taggedPtr<char*>();
                             mathIC->m_generatedCodeSize += size;
                         });
 #endif
@@ -2473,7 +2473,7 @@ private:
 #if ENABLE(MATH_IC_STATS)
                 auto inlineEnd = jit.label();
                 jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    size_t size = linkBuffer.locationOf(inlineEnd).executableAddress<char*>() - linkBuffer.locationOf(inlineStart).executableAddress<char*>();
+                    size_t size = linkBuffer.locationOf(inlineEnd).taggedPtr<char*>() - linkBuffer.locationOf(inlineStart).taggedPtr<char*>();
                     mathIC->m_generatedCodeSize += size;
                 });
 #endif
@@ -2570,7 +2570,7 @@ private:
 #if ENABLE(MATH_IC_STATS)
                         auto slowPathEnd = jit.label();
                         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                            size_t size = linkBuffer.locationOf(slowPathEnd).executableAddress<char*>() - linkBuffer.locationOf(slowPathStart).executableAddress<char*>();
+                            size_t size = linkBuffer.locationOf(slowPathEnd).taggedPtr<char*>() - linkBuffer.locationOf(slowPathStart).taggedPtr<char*>();
                             mathIC->m_generatedCodeSize += size;
                         });
 #endif
@@ -2584,7 +2584,7 @@ private:
 #if ENABLE(MATH_IC_STATS)
                 auto inlineEnd = jit.label();
                 jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    size_t size = linkBuffer.locationOf(inlineEnd).executableAddress<char*>() - linkBuffer.locationOf(inlineStart).executableAddress<char*>();
+                    size_t size = linkBuffer.locationOf(inlineEnd).taggedPtr<char*>() - linkBuffer.locationOf(inlineStart).taggedPtr<char*>();
                     mathIC->m_generatedCodeSize += size;
                 });
 #endif
@@ -15750,13 +15750,13 @@ IGNORE_CLANG_WARNINGS_END
         auto function = signature->functionWithoutTypeCheck();
         switch (argumentCountIncludingThis) {
         case 1:
-            result = vmCall(Int64, reinterpret_cast<J_JITOperation_GP>(function.get()), weakPointer(globalObject), operands[0]);
+            result = vmCall(Int64, reinterpret_cast<J_JITOperation_GP>(function.untypedFunc()), weakPointer(globalObject), operands[0]);
             break;
         case 2:
-            result = vmCall(Int64, reinterpret_cast<J_JITOperation_GPP>(function.get()), weakPointer(globalObject), operands[0], operands[1]);
+            result = vmCall(Int64, reinterpret_cast<J_JITOperation_GPP>(function.untypedFunc()), weakPointer(globalObject), operands[0], operands[1]);
             break;
         case 3:
-            result = vmCall(Int64, reinterpret_cast<J_JITOperation_GPPP>(function.get()), weakPointer(globalObject), operands[0], operands[1], operands[2]);
+            result = vmCall(Int64, reinterpret_cast<J_JITOperation_GPPP>(function.untypedFunc()), weakPointer(globalObject), operands[0], operands[1], operands[2]);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -15778,10 +15778,10 @@ IGNORE_CLANG_WARNINGS_END
             m_out.storePtr(m_callFrame, m_out.absolute(&vm().topCallFrame));
             if (Options::useJITCage()) {
                 setJSValue(
-                    vmCall(Int64, vmEntryCustomGetter, weakPointer(globalObject), lowCell(m_node->child1()), m_out.constIntPtr(m_graph.identifiers()[m_node->callDOMGetterData()->identifierNumber]), m_out.constIntPtr(m_node->callDOMGetterData()->customAccessorGetter.executableAddress())));
+                    vmCall(Int64, vmEntryCustomGetter, weakPointer(globalObject), lowCell(m_node->child1()), m_out.constIntPtr(m_graph.identifiers()[m_node->callDOMGetterData()->identifierNumber]), m_out.constIntPtr(m_node->callDOMGetterData()->customAccessorGetter.taggedPtr())));
             } else {
-                FunctionPtr<CustomAccessorPtrTag> getter = m_node->callDOMGetterData()->customAccessorGetter;
-                FunctionPtr<OperationPtrTag> bypassedFunction = MacroAssemblerCodePtr<OperationPtrTag>(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(getter.executableAddress()))).toFunctionPtr();
+                CodePtr<CustomAccessorPtrTag> getter = m_node->callDOMGetterData()->customAccessorGetter;
+                CodePtr<OperationPtrTag> bypassedFunction(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(getter.taggedPtr())));
                 setJSValue(vmCall(Int64, bypassedFunction, weakPointer(globalObject), lowCell(m_node->child1()), m_out.constIntPtr(m_graph.identifiers()[m_node->callDOMGetterData()->identifierNumber])));
             }
             return;
@@ -20522,7 +20522,7 @@ IGNORE_CLANG_WARNINGS_END
     LValue vmCall(LType type, OperationType function, Args&&... args)
     {
         static_assert(!std::is_same<OperationType, LValue>::value);
-        if constexpr (!std::is_same_v<FunctionPtr<OperationPtrTag>, OperationType>)
+        if constexpr (!std::is_same_v<CodePtr<OperationPtrTag>, OperationType>)
             static_assert(FunctionTraits<OperationType>::cCallArity() == sizeof...(Args), "Sanity check");
         callPreflight();
         LValue result = m_out.call(type, m_out.operation(function), std::forward<Args>(args)...);

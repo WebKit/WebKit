@@ -167,7 +167,8 @@ class DynamicHLSL : angle::NonCopyable
         std::vector<sh::ShaderVariable> &image2DUniforms,
         const gl::ImageUnitTextureTypeMap &image2DBindLayout,
         unsigned int baseUAVRegister) const;
-    void generateShaderLinkHLSL(const gl::Caps &caps,
+    void generateShaderLinkHLSL(const gl::Context *context,
+                                const gl::Caps &caps,
                                 const gl::ProgramState &programData,
                                 const ProgramD3DMetadata &programMetadata,
                                 const gl::VaryingPacking &varyingPacking,

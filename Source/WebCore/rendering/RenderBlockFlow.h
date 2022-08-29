@@ -71,6 +71,8 @@ protected:
     void layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom);
     void layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
+    void simplifiedNormalFlowLayout() override;
+
     // RenderBlockFlows override these methods, since they are the only class that supports margin collapsing.
     LayoutUnit collapsedMarginBefore() const final { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
     LayoutUnit collapsedMarginAfter() const final { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
@@ -282,6 +284,8 @@ public:
     void markSiblingsWithFloatsForLayout(RenderBox* floatToRemove = nullptr);
 
     const FloatingObjectSet* floatingObjectSet() const { return m_floatingObjects ? &m_floatingObjects->set() : nullptr; }
+
+    FloatingObject& insertFloatingObjectForIFC(RenderBox&);
 
     LayoutUnit logicalTopForFloat(const FloatingObject& floatingObject) const { return isHorizontalWritingMode() ? floatingObject.y() : floatingObject.x(); }
     LayoutUnit logicalBottomForFloat(const FloatingObject& floatingObject) const { return isHorizontalWritingMode() ? floatingObject.maxY() : floatingObject.maxX(); }

@@ -44,17 +44,18 @@ Structure* JSModuleRecord::createStructure(VM& vm, JSGlobalObject* globalObject,
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSModuleRecord* JSModuleRecord::create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
+JSModuleRecord* JSModuleRecord::create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables, CodeFeatures features)
 {
-    JSModuleRecord* instance = new (NotNull, allocateCell<JSModuleRecord>(vm)) JSModuleRecord(vm, structure, moduleKey, sourceCode, declaredVariables, lexicalVariables);
+    JSModuleRecord* instance = new (NotNull, allocateCell<JSModuleRecord>(vm)) JSModuleRecord(vm, structure, moduleKey, sourceCode, declaredVariables, lexicalVariables, features);
     instance->finishCreation(globalObject, vm);
     return instance;
 }
-JSModuleRecord::JSModuleRecord(VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
+JSModuleRecord::JSModuleRecord(VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables, CodeFeatures features)
     : Base(vm, structure, moduleKey)
     , m_sourceCode(sourceCode)
     , m_declaredVariables(declaredVariables)
     , m_lexicalVariables(lexicalVariables)
+    , m_features(features)
 {
 }
 
@@ -228,7 +229,7 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
         }
     }
 
-    {
+    if (m_features & ImportMetaFeature) {
         JSObject* metaProperties = globalObject->moduleLoader()->createImportMetaProperties(globalObject, identifierToJSValue(vm, moduleKey()), this, scriptFetcher);
         RETURN_IF_EXCEPTION(scope, void());
         bool putResult = false;

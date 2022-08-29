@@ -49,8 +49,6 @@ class ImageVk : public ImageImpl
     bool mOwnsImage;
     vk::ImageHelper *mImage;
 
-    std::vector<vk::Shared<vk::Fence>> mImageLastUseFences;
-
     const gl::Context *mContext;
 };
 

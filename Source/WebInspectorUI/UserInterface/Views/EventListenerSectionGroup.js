@@ -106,6 +106,110 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         this.rows = rows;
     }
 
+    // Static
+
+    static groupIntoSectionsByEvent(eventListeners)
+    {
+        let eventListenerTypes = new Map;
+        for (let eventListener of eventListeners) {
+            console.assert(eventListener.nodeId || eventListener.onWindow);
+            if (eventListener.nodeId)
+                eventListener.node = WI.domManager.nodeForId(eventListener.nodeId);
+
+            let eventListenersForType = eventListenerTypes.get(eventListener.type);
+            if (!eventListenersForType)
+                eventListenerTypes.set(eventListener.type, eventListenersForType = []);
+            eventListenersForType.push(eventListener);
+        }
+
+        let rows = [];
+
+        let types = Array.from(eventListenerTypes.keys());
+        types.sort();
+        for (let type of types)
+            rows.push(WI.EventListenerSectionGroup._createEventListenerSection(type, eventListenerTypes.get(type), {hideType: true}));
+
+        return rows;
+    }
+
+    static groupIntoSectionsByTarget(eventListeners, domNode)
+    {
+        const windowTargetIdentifier = Symbol("window");
+
+        let eventListenerTargets = new Map;
+        for (let eventListener of eventListeners) {
+            console.assert(eventListener.nodeId || eventListener.onWindow);
+            if (eventListener.nodeId)
+                eventListener.node = WI.domManager.nodeForId(eventListener.nodeId);
+
+            let target = eventListener.onWindow ? windowTargetIdentifier : eventListener.node;
+            let eventListenersForTarget = eventListenerTargets.get(target);
+            if (!eventListenersForTarget)
+                eventListenerTargets.set(target, eventListenersForTarget = []);
+            eventListenersForTarget.push(eventListener);
+        }
+
+        let rows = [];
+
+        function generateSectionForTarget(target) {
+            let eventListenersForTarget = eventListenerTargets.get(target);
+            if (!eventListenersForTarget)
+                return;
+
+            eventListenersForTarget.sort((a, b) => a.type.toLowerCase().extendedLocaleCompare(b.type.toLowerCase()));
+
+            let title = target === windowTargetIdentifier ? WI.unlocalizedString("window") : target.displayName;
+            let identifier = target === windowTargetIdentifier ? WI.unlocalizedString("window") : target.unescapedSelector;
+
+            let section = WI.EventListenerSectionGroup._createEventListenerSection(title, eventListenersForTarget, {hideTarget: true, identifier});
+            if (target instanceof WI.DOMNode)
+                WI.bindInteractionsForNodeToElement(target, section.titleElement, {ignoreClick: true});
+            rows.push(section);
+        }
+
+        let currentNode = domNode;
+        do {
+            generateSectionForTarget(currentNode);
+        } while (currentNode = currentNode.parentNode);
+
+        generateSectionForTarget(windowTargetIdentifier);
+
+        return rows;
+    }
+
+    static _createEventListenerSection(title, eventListeners, options = {})
+    {
+        let groups = eventListeners.map((eventListener) => new WI.EventListenerSectionGroup(eventListener, options));
+
+        let optionsElement = null;
+        if ((WI.DOMManager.supportsDisablingEventListeners() || WI.DOMManager.supportsEventListenerBreakpoints()) && groups.some((group) => group.supportsStateModification)) {
+            optionsElement = WI.ImageUtilities.useSVGSymbol("Images/Gear.svg", "event-listener-options", WI.UIString("Options"));
+            WI.addMouseDownContextMenuHandlers(optionsElement, (contextMenu) => {
+                if (WI.DOMManager.supportsDisablingEventListeners()) {
+                    let shouldDisable = groups.some((eventListener) => !eventListener.isEventListenerDisabled);
+                    contextMenu.appendItem(shouldDisable ? WI.UIString("Disable Event Listeners") : WI.UIString("Enable Event Listeners"), () => {
+                        for (let group of groups)
+                            group.isEventListenerDisabled = shouldDisable;
+                    });
+                }
+
+                if (WI.DOMManager.supportsEventListenerBreakpoints()) {
+                    let shouldBreakpoint = groups.some((eventListener) => !eventListener.hasEventListenerBreakpoint);
+                    contextMenu.appendItem(shouldBreakpoint ? WI.UIString("Add Breakpoints") : WI.UIString("Delete Breakpoints"), () => {
+                        for (let group of groups)
+                            group.hasEventListenerBreakpoint = shouldBreakpoint;
+                    });
+                }
+            });
+        }
+
+        const defaultCollapsedSettingValue = true;
+        let identifier = `${options.identifier ?? title}-event-listener-section`;
+        let section = new WI.DetailsSection(identifier, title, groups, optionsElement, defaultCollapsedSettingValue);
+        section.element.classList.add("event-listener-section");
+        return section;
+    }
+
     // Public
 
     get supportsStateModification()

@@ -80,7 +80,9 @@ class PreciseTest : public testing::TestWithParam<bool>
     {
         const char *shaderStrings[] = {shaderSource};
 
-        const ShCompileOptions options = SH_VARIABLES | SH_OBJECT_CODE;
+        ShCompileOptions options = {};
+        options.variables        = true;
+        options.objectCode       = true;
 
         bool success = sh::Compile(mCompilerList[shaderOutputType], shaderStrings, 1, options);
         if (success)

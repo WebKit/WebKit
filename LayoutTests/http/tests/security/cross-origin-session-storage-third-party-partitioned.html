@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        description("Tests that an origin's third-party sessionStorage area is partitioned from its first-party storage area.")
+        jsTestIsAsync = true;
+
+        const testResourcePath = "/security/resources/cross-origin-main-frame-for-partitioned-session-storage.html";
+        const testValue = "1234";
+        let frames = 2;
+        let testWindow;
+        let localhostWindowTestCompleted = false;
+
+        // Step:
+        //   1) Verify stored item in main frame is accessible in localhost subframe.
+        //   2) Verify stored item in main frame is not accessible in loopback subframe.
+        //   3) Store new item in subframe and verify it is accessible in localhost main frame.
+        //   4) Store new item in subframe and verify it is not accessible in loopback main frame.
+        //   5) Stored item in localhost subframe.
+        //   6) Stored item in loopback subframe.
+        //   7) Execute navigation to loopback URL in localhost window.
+        //   8) Verify item stored by localhost subframe is not accessible in main frame.
+        //   9) Verify item stored by loopback subframe is not accessible in main frame.
+        //  10) Return main frame to localhost.
+        //  11) Verify stored item is accessible in localhost subframe.
+        //  12) Verify stored item is accessible in loopback subframe.
+        var currentStep = 1;
+
+        let expectedResultStrings = [
+            undefined,
+            '1: Successfully retrieved sessionStorage from localhost frame: 1234.',
+            '2: Retrieving sessionStorage from loopback failed: null',
+            '3: Successfully retrieved sessionStorage from localhost frame: 4321, http://localhost:8000.',
+            '4: Retrieving sessionStorage from loopback failed: null',
+            undefined,
+            undefined,
+            undefined,
+            '8: Retrieving sessionStorage from localhost failed: null',
+            '9: Retrieving sessionStorage from loopback failed: null',
+            undefined,
+            '11: Successfully retrieved sessionStorage from localhost frame: 4321, http://localhost:8000.',
+            '12: Successfully retrieved sessionStorage from loopback frame: 4321, http://127.0.0.1:8000.'
+        ];
+
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.origin !== "http://localhost:8000" && event.origin !== "http://127.0.0.1:8000") {
+                testFailed(`Message from unexpected origin: ${event.origin}`);
+                return;
+            }
+
+            if (event.data === "loopbackFrame not defined." || event.data === "localhostFrame not defined.") {
+                testFailed(`Loading subframe failed: ${event.data}`);
+                return;
+            }
+
+            if (event.data.result)
+                shouldBeEqualToString('event.data.result', expectedResultStrings[currentStep-1]);
+            else
+                shouldBeUndefined('expectedResultStrings[currentStep-1]');
+
+            switch (currentStep) {
+            case 1:
+            case 2:
+                event.source.postMessage({'step': currentStep, 'testValue': testValue}, "*");
+                break;
+            case 3:
+            case 4:
+                event.source.postMessage({'step': currentStep}, "*");
+                break;
+            case 5:
+            case 6:
+                event.source.postMessage({'step': currentStep}, "*");
+                break;
+            case 7:
+                testWindow = window.open(`http://127.0.0.1:8000${testResourcePath}`, "testWindow");
+                break;
+            case 8:
+            case 9:
+            case 11:
+            case 12:
+                event.source.postMessage({'step': currentStep, 'testValue': testValue}, "*");
+                break;
+            case 10:
+                event.source.postMessage({'step': currentStep}, "*");
+                break;
+            case 13:
+                if (window.testRunner)
+                    testRunner.notifyDone();
+                break;
+            default:
+                testFailed(`Reached unexpected default case. step: ${currentStep}, data:`, event.data ? event.data : "no event data" );
+            }
+
+            currentStep += 1;
+        }, false);
+
+        // Begin with localhost main frame
+        testWindow = window.open(`http://localhost:8000${testResourcePath}`, "testWindow");
+
+    </script>
+</head>
+<body>
+    <div id="logging"></div>
+</body>
+</html>

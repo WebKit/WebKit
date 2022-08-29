@@ -28,6 +28,7 @@ enum class FeatureCategory
     FrontendFeatures,
     FrontendWorkarounds,
     OpenGLWorkarounds,
+    OpenGLFeatures,
     D3DWorkarounds,
     VulkanFeatures,
     VulkanWorkarounds,
@@ -39,6 +40,7 @@ enum class FeatureCategory
 constexpr char kFeatureCategoryFrontendWorkarounds[]  = "Frontend workarounds";
 constexpr char kFeatureCategoryFrontendFeatures[]     = "Frontend features";
 constexpr char kFeatureCategoryOpenGLWorkarounds[]    = "OpenGL workarounds";
+constexpr char kFeatureCategoryOpenGLFeatures[]       = "OpenGL features";
 constexpr char kFeatureCategoryD3DWorkarounds[]       = "D3D workarounds";
 constexpr char kFeatureCategoryVulkanAppWorkarounds[] = "Vulkan app workarounds";
 constexpr char kFeatureCategoryVulkanWorkarounds[]    = "Vulkan workarounds";
@@ -61,6 +63,10 @@ inline const char *FeatureCategoryToString(const FeatureCategory &fc)
 
         case FeatureCategory::OpenGLWorkarounds:
             return kFeatureCategoryOpenGLWorkarounds;
+            break;
+
+        case FeatureCategory::OpenGLFeatures:
+            return kFeatureCategoryOpenGLFeatures;
             break;
 
         case FeatureCategory::D3DWorkarounds:
@@ -169,7 +175,7 @@ struct FeatureSetBase
 
   private:
     // Non-copyable
-    FeatureSetBase(const FeatureSetBase &other) = delete;
+    FeatureSetBase(const FeatureSetBase &other)            = delete;
     FeatureSetBase &operator=(const FeatureSetBase &other) = delete;
 
   protected:

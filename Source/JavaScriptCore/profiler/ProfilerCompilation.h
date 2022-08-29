@@ -70,7 +70,7 @@ public:
     void addDescription(const CompiledBytecode&);
     void addDescription(const OriginStack&, const CString& description);
     ExecutionCounter* executionCounterFor(const OriginStack&);
-    void addOSRExitSite(const Vector<MacroAssemblerCodePtr<JSInternalPtrTag>>& codeAddresses);
+    void addOSRExitSite(const Vector<CodePtr<JSInternalPtrTag>>& codeAddresses);
     OSRExit* addOSRExit(unsigned id, const OriginStack&, ExitKind, bool isWatchpoint);
     
     void setJettisonReason(JettisonReason, const FireDetail*);

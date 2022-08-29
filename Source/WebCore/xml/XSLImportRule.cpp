@@ -31,11 +31,9 @@
 
 namespace WebCore {
 
-XSLImportRule::XSLImportRule(XSLStyleSheet* parent, const String& href)
+XSLImportRule::XSLImportRule(XSLStyleSheet& parent, const String& href)
     : m_parentStyleSheet(parent)
     , m_strHref(href)
-    , m_cachedSheet(nullptr)
-    , m_loading(false)
 {
 }
 
@@ -53,11 +51,9 @@ void XSLImportRule::setXSLStyleSheet(const String& href, const URL& baseURL, con
     if (m_styleSheet)
         m_styleSheet->setParentStyleSheet(nullptr);
 
-    m_styleSheet = XSLStyleSheet::create(this, href, baseURL);
-
-    XSLStyleSheet* parent = parentStyleSheet();
-    if (parent)
-        m_styleSheet->setParentStyleSheet(parent);
+    // FIXME: parentStyleSheet() should never be null here.
+    RefPtr parent = parentStyleSheet();
+    m_styleSheet = XSLStyleSheet::create(parent.get(), href, baseURL);
 
     m_styleSheet->parseString(sheet);
     m_loading = false;
@@ -73,27 +69,21 @@ bool XSLImportRule::isLoading()
 
 void XSLImportRule::loadSheet()
 {
-    CachedResourceLoader* cachedResourceLoader = nullptr;
+    RefPtr rootSheet = parentStyleSheet();
+    while (auto* parentSheet = rootSheet->parentStyleSheet())
+        rootSheet = parentSheet;
 
-    XSLStyleSheet* rootSheet = parentStyleSheet();
-
-    if (rootSheet) {
-        while (XSLStyleSheet* parentSheet = rootSheet->parentStyleSheet())
-            rootSheet = parentSheet;
-    }
-
-    if (rootSheet)
-        cachedResourceLoader = rootSheet->cachedResourceLoader();
+    RefPtr cachedResourceLoader = rootSheet->cachedResourceLoader();
 
     String absHref = m_strHref;
-    XSLStyleSheet* parentSheet = parentStyleSheet();
+    RefPtr parentSheet = parentStyleSheet();
     if (!parentSheet->baseURL().isNull())
         // use parent styleheet's URL as the base URL
         absHref = URL(parentSheet->baseURL(), m_strHref).string();
 
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
-    for (XSLStyleSheet* parentSheet = parentStyleSheet(); parentSheet; parentSheet = parentSheet->parentStyleSheet()) {
+    for (RefPtr parentSheet = parentStyleSheet(); parentSheet; parentSheet = parentSheet->parentStyleSheet()) {
         if (absHref == parentSheet->baseURL().string())
             return;
     }

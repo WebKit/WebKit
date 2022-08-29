@@ -4,7 +4,7 @@
 // found in the LICENSE file.
 //
 // UnfoldShortCircuitAST_test.cpp:
-//  Tests shader compilation with SH_UNFOLD_SHORT_CIRCUIT workaround on.
+//  Tests shader compilation with unfoldShortCircuit workaround on.
 
 #include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
@@ -16,9 +16,12 @@ using namespace sh;
 class UnfoldShortCircuitASTTest : public MatchOutputCodeTest
 {
   public:
-    UnfoldShortCircuitASTTest()
-        : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_UNFOLD_SHORT_CIRCUIT, SH_GLSL_330_CORE_OUTPUT)
-    {}
+    UnfoldShortCircuitASTTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_GLSL_330_CORE_OUTPUT)
+    {
+        ShCompileOptions defaultCompileOptions   = {};
+        defaultCompileOptions.unfoldShortCircuit = true;
+        setDefaultCompileOptions(defaultCompileOptions);
+    }
 };
 
 // Test unfolding the && operator.

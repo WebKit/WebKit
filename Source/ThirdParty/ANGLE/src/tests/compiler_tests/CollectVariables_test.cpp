@@ -56,8 +56,10 @@ class CollectVariablesTest : public testing::Test
     // For use in the gl_DepthRange tests.
     void validateDepthRangeShader(const std::string &shaderString)
     {
-        const char *shaderStrings[] = {shaderString.c_str()};
-        ASSERT_TRUE(mTranslator->compile(shaderStrings, 1, SH_VARIABLES));
+        const char *shaderStrings[]     = {shaderString.c_str()};
+        ShCompileOptions compileOptions = {};
+        compileOptions.variables        = true;
+        ASSERT_TRUE(mTranslator->compile(shaderStrings, 1, compileOptions));
 
         const std::vector<ShaderVariable> &uniforms = mTranslator->getUniforms();
         ASSERT_EQ(1u, uniforms.size());
@@ -106,8 +108,10 @@ class CollectVariablesTest : public testing::Test
                                          const char *varName,
                                          const ShaderVariable **outResult)
     {
-        const char *shaderStrings[] = {shaderString.c_str()};
-        ASSERT_TRUE(mTranslator->compile(shaderStrings, 1, SH_VARIABLES))
+        const char *shaderStrings[]     = {shaderString.c_str()};
+        ShCompileOptions compileOptions = {};
+        compileOptions.variables        = true;
+        ASSERT_TRUE(mTranslator->compile(shaderStrings, 1, compileOptions))
             << mTranslator->getInfoSink().info.str();
 
         const auto &outputVariables = mTranslator->getOutputVariables();
@@ -120,13 +124,19 @@ class CollectVariablesTest : public testing::Test
         *outResult = &outputVariable;
     }
 
-    void compile(const std::string &shaderString, ShCompileOptions compileOptions)
+    void compile(const std::string &shaderString, ShCompileOptions *compileOptions)
     {
+        compileOptions->variables = true;
+
         const char *shaderStrings[] = {shaderString.c_str()};
-        ASSERT_TRUE(mTranslator->compile(shaderStrings, 1, SH_VARIABLES | compileOptions));
+        ASSERT_TRUE(mTranslator->compile(shaderStrings, 1, *compileOptions));
     }
 
-    void compile(const std::string &shaderString) { compile(shaderString, 0u); }
+    void compile(const std::string &shaderString)
+    {
+        ShCompileOptions options = {};
+        compile(shaderString, &options);
+    }
 
     void checkUniformStaticallyUsedButNotActive(const char *name)
     {
@@ -1033,8 +1043,10 @@ TEST_F(CollectVertexVariablesTest, ViewID_OVR)
     resources.MaxViewsOVR        = 4;
     initTranslator(resources);
 
-    compile(shaderString, SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW |
-                              SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER);
+    ShCompileOptions compileOptions                        = {};
+    compileOptions.initializeBuiltinsForInstancedMultiview = true;
+    compileOptions.selectViewInNvGLSLVertexShader          = true;
+    compile(shaderString, &compileOptions);
 
     // The internal ViewID_OVR varying is not exposed through the ShaderVars interface.
     const auto &varyings = mTranslator->getOutputVaryings();

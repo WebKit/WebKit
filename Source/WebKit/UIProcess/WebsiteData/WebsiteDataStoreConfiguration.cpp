@@ -31,42 +31,70 @@
 
 namespace WebKit {
 
-WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPersistent, WillCopyPathsFromExistingConfiguration willCopyPaths)
+WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPersistent, ShouldInitializePaths shouldInitializePaths)
     : m_isPersistent(isPersistent)
     , m_shouldUseCustomStoragePaths(WebsiteDataStore::defaultShouldUseCustomStoragePaths())
     , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
 {
-    if (isPersistent == IsPersistent::Yes && willCopyPaths == WillCopyPathsFromExistingConfiguration::No) {
-        setApplicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory());
-        setCacheStorageDirectory(WebsiteDataStore::defaultCacheStorageDirectory());
-        setGeneralStorageDirectory(WebsiteDataStore::defaultGeneralStorageDirectory());
-        setNetworkCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory());
-#if USE(GLIB) || PLATFORM(COCOA)
-        setHSTSStorageDirectory(WebsiteDataStore::defaultHSTSStorageDirectory());
+    if (isPersistent == IsPersistent::Yes && shouldInitializePaths == ShouldInitializePaths::Yes) {
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        // Storing data outside the permitted base cache and data directories is a serious error.
+        // Use WebsiteDataStore::createWithBaseDirectories instead.
+        RELEASE_ASSERT_NOT_REACHED();
+#else
+        // Other ports do not require use of the base directories.
+        initializePaths();
 #endif
-        setAlternativeServicesDirectory(WebsiteDataStore::defaultAlternativeServicesDirectory());
-        setMediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory());
-        setIndexedDBDatabaseDirectory(WebsiteDataStore::defaultIndexedDBDatabaseDirectory());
-        setServiceWorkerRegistrationDirectory(WebsiteDataStore::defaultServiceWorkerRegistrationDirectory());
-        setWebSQLDatabaseDirectory(WebsiteDataStore::defaultWebSQLDatabaseDirectory());
-        setLocalStorageDirectory(WebsiteDataStore::defaultLocalStorageDirectory());
-        setMediaKeysStorageDirectory(WebsiteDataStore::defaultMediaKeysStorageDirectory());
-        setResourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory());
-        setDeviceIdHashSaltsStorageDirectory(WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory());
-        setJavaScriptConfigurationDirectory(WebsiteDataStore::defaultJavaScriptConfigurationDirectory());
-#if ENABLE(ARKIT_INLINE_PREVIEW)
-        setModelElementCacheDirectory(WebsiteDataStore::defaultModelElementCacheDirectory());
-#endif
+
 #if PLATFORM(IOS)
         setPCMMachServiceName("com.apple.webkit.adattributiond.service"_s);
 #endif
     }
 }
 
+#if !PLATFORM(COCOA)
+WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const String& baseCacheDirectory, const String& baseDataDirectory)
+    : m_isPersistent(IsPersistent::Yes)
+    , m_shouldUseCustomStoragePaths(WebsiteDataStore::defaultShouldUseCustomStoragePaths())
+    , m_baseCacheDirectory(baseCacheDirectory)
+    , m_baseDataDirectory(baseDataDirectory)
+    , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
+{
+    initializePaths();
+}
+#endif
+
+void WebsiteDataStoreConfiguration::initializePaths()
+{
+    setApplicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory(m_baseCacheDirectory));
+    setCacheStorageDirectory(WebsiteDataStore::defaultCacheStorageDirectory(m_baseCacheDirectory));
+    setGeneralStorageDirectory(WebsiteDataStore::defaultGeneralStorageDirectory(m_baseCacheDirectory));
+    setNetworkCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory(m_baseCacheDirectory));
+    setMediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory(m_baseCacheDirectory));
+#if USE(GLIB) || PLATFORM(COCOA)
+    setHSTSStorageDirectory(WebsiteDataStore::defaultHSTSStorageDirectory(m_baseCacheDirectory));
+#endif
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+    setModelElementCacheDirectory(WebsiteDataStore::defaultModelElementCacheDirectory());
+#endif
+
+    setAlternativeServicesDirectory(WebsiteDataStore::defaultAlternativeServicesDirectory(m_baseDataDirectory));
+    setIndexedDBDatabaseDirectory(WebsiteDataStore::defaultIndexedDBDatabaseDirectory(m_baseDataDirectory));
+    setServiceWorkerRegistrationDirectory(WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(m_baseDataDirectory));
+    setWebSQLDatabaseDirectory(WebsiteDataStore::defaultWebSQLDatabaseDirectory(m_baseDataDirectory));
+    setLocalStorageDirectory(WebsiteDataStore::defaultLocalStorageDirectory(m_baseDataDirectory));
+    setMediaKeysStorageDirectory(WebsiteDataStore::defaultMediaKeysStorageDirectory(m_baseDataDirectory));
+    setResourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory(m_baseDataDirectory));
+    setDeviceIdHashSaltsStorageDirectory(WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(m_baseDataDirectory));
+    setJavaScriptConfigurationDirectory(WebsiteDataStore::defaultJavaScriptConfigurationDirectory(m_baseDataDirectory));
+}
+
 Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
 {
-    auto copy = WebsiteDataStoreConfiguration::create(m_isPersistent, WillCopyPathsFromExistingConfiguration::Yes);
+    auto copy = WebsiteDataStoreConfiguration::create(m_isPersistent, ShouldInitializePaths::No);
 
+    copy->m_baseCacheDirectory = this->m_baseCacheDirectory;
+    copy->m_baseDataDirectory = this->m_baseDataDirectory;
     copy->m_serviceWorkerProcessTerminationDelayEnabled = this->m_serviceWorkerProcessTerminationDelayEnabled;
     copy->m_fastServerTrustEvaluationEnabled = this->m_fastServerTrustEvaluationEnabled;
     copy->m_networkCacheSpeculativeValidationEnabled = this->m_networkCacheSpeculativeValidationEnabled;

@@ -55,7 +55,7 @@ class ShaderImpl : angle::NonCopyable
 
     virtual std::shared_ptr<WaitableCompileEvent> compile(const gl::Context *context,
                                                           gl::ShCompilerInstance *compilerInstance,
-                                                          ShCompileOptions options) = 0;
+                                                          ShCompileOptions *options) = 0;
 
     virtual std::string getDebugInfo() const = 0;
 
@@ -67,7 +67,7 @@ class ShaderImpl : angle::NonCopyable
     std::shared_ptr<WaitableCompileEvent> compileImpl(const gl::Context *context,
                                                       gl::ShCompilerInstance *compilerInstance,
                                                       const std::string &source,
-                                                      ShCompileOptions compileOptions);
+                                                      ShCompileOptions *compileOptions);
 
     const gl::ShaderState &mState;
 };

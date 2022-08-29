@@ -138,9 +138,9 @@ public:
     void didExecuteProgram(CallFrame*);
     void didReachDebuggerStatement(CallFrame*);
 
-    JS_EXPORT_PRIVATE void didQueueMicrotask(JSGlobalObject*, const Microtask&);
-    JS_EXPORT_PRIVATE void willRunMicrotask(JSGlobalObject*, const Microtask&);
-    JS_EXPORT_PRIVATE void didRunMicrotask(JSGlobalObject*, const Microtask&);
+    JS_EXPORT_PRIVATE void didQueueMicrotask(JSGlobalObject*, MicrotaskIdentifier);
+    JS_EXPORT_PRIVATE void willRunMicrotask(JSGlobalObject*, MicrotaskIdentifier);
+    JS_EXPORT_PRIVATE void didRunMicrotask(JSGlobalObject*, MicrotaskIdentifier);
 
     void registerCodeBlock(CodeBlock*);
     void forEachRegisteredCodeBlock(const Function<void(CodeBlock*)>&);
@@ -182,9 +182,9 @@ public:
 
         virtual void willEnter(CallFrame*) { }
 
-        virtual void didQueueMicrotask(JSGlobalObject*, const Microtask&) { }
-        virtual void willRunMicrotask(JSGlobalObject*, const Microtask&) { }
-        virtual void didRunMicrotask(JSGlobalObject*, const Microtask&) { }
+        virtual void didQueueMicrotask(JSGlobalObject*, MicrotaskIdentifier) { }
+        virtual void willRunMicrotask(JSGlobalObject*, MicrotaskIdentifier) { }
+        virtual void didRunMicrotask(JSGlobalObject*, MicrotaskIdentifier) { }
 
         virtual void didPause(JSGlobalObject*, DebuggerCallFrame&, JSValue /* exceptionOrCaughtValue */) { }
         virtual void didContinue() { }

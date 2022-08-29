@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Permissions.h"
 
+#include "DedicatedWorkerGlobalScope.h"
 #include "Document.h"
 #include "Exception.h"
 #include "FeaturePolicy.h"
@@ -37,8 +38,11 @@
 #include "Page.h"
 #include "PermissionController.h"
 #include "PermissionDescriptor.h"
+#include "PermissionQuerySource.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "ServiceWorkerGlobalScope.h"
+#include "SharedWorkerGlobalScope.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
@@ -80,11 +84,32 @@ static bool isAllowedByFeaturePolicy(const Document& document, PermissionName na
     }
 }
 
+static std::optional<PermissionQuerySource> sourceFromContext(const ScriptExecutionContext& context)
+{
+    if (is<Document>(context))
+        return PermissionQuerySource::Window;
+    if (is<DedicatedWorkerGlobalScope>(context))
+        return PermissionQuerySource::DedicatedWorker;
+    if (is<SharedWorkerGlobalScope>(context))
+        return PermissionQuerySource::SharedWorker;
+#if ENABLE(SERVICE_WORKER)
+    if (is<ServiceWorkerGlobalScope>(context))
+        return PermissionQuerySource::ServiceWorker;
+#endif
+    return std::nullopt;
+}
+
 void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&& promise)
 {
     auto* context = m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
     if (!context || !context->globalObject()) {
         promise.reject(Exception { InvalidStateError, "The context is invalid"_s });
+        return;
+    }
+
+    auto source = sourceFromContext(*context);
+    if (!source) {
+        promise.reject(Exception { NotSupportedError, "Permissions::query is not supported in this context"_s  });
         return;
     }
 
@@ -116,7 +141,7 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
             return;
         }
 
-        PermissionController::shared().query(ClientOrigin { document->topOrigin().data(), WTFMove(originData) }, PermissionDescriptor { permissionDescriptor }, *document->page(), [document = Ref { *document }, permissionDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
+        PermissionController::shared().query(ClientOrigin { document->topOrigin().data(), WTFMove(originData) }, PermissionDescriptor { permissionDescriptor }, document->page(), *source, [document = Ref { *document }, permissionDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
             if (!permissionState)
                 promise.reject(Exception { NotSupportedError, "Permissions::query does not support this API"_s });
             else
@@ -126,7 +151,7 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
     }
 
     auto& workerGlobalScope = downcast<WorkerGlobalScope>(*context);
-    auto completionHandler = [originData = WTFMove(originData).isolatedCopy(), permissionDescriptor, contextIdentifier = workerGlobalScope.identifier(), promise = WTFMove(promise)] (auto& context) mutable {
+    auto completionHandler = [originData = WTFMove(originData).isolatedCopy(), permissionDescriptor, contextIdentifier = workerGlobalScope.identifier(), source = *source, promise = WTFMove(promise)] (auto& context) mutable {
         ASSERT(isMainThread());
 
         auto& document = downcast<Document>(context);
@@ -137,7 +162,7 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
             return;
         }
 
-        PermissionController::shared().query(ClientOrigin { document.topOrigin().data(), WTFMove(originData) }, PermissionDescriptor { permissionDescriptor }, *document.page(), [contextIdentifier, permissionDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
+        PermissionController::shared().query(ClientOrigin { document.topOrigin().data(), WTFMove(originData) }, PermissionDescriptor { permissionDescriptor }, document.page(), source, [contextIdentifier, permissionDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
             ScriptExecutionContext::postTaskTo(contextIdentifier, [promise = WTFMove(promise), permissionState, permissionDescriptor](auto& context) mutable {
                 if (!permissionState)
                     promise.reject(Exception { NotSupportedError, "Permissions::query does not support this API"_s });

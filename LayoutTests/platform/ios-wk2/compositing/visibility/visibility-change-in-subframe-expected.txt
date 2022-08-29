@@ -73,8 +73,13 @@
                                   )
                                 )
                                 (GraphicsLayer
-                                  (bounds 53.00 40.00)
-                                  (drawsContent 1)
+                                  (preserves3D 1)
+                                  (children 1
+                                    (GraphicsLayer
+                                      (bounds 53.00 40.00)
+                                      (drawsContent 1)
+                                    )
+                                  )
                                 )
                               )
                             )

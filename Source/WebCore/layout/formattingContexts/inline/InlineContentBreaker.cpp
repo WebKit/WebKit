@@ -265,7 +265,8 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         // Parent style drives the wrapping behavior here.
         // e.g. <div style="white-space: nowrap">some text<div style="display: inline-block; white-space: pre-wrap"></div></div>.
         // While the inline-block has pre-wrap which allows wrapping, the content lives in a nowrap context.
-        return TextUtil::isWrappingAllowed(continuousContent.runs()[overflowingRunIndex].style);
+        auto& parentLayoutBox = continuousContent.runs()[overflowingRunIndex].inlineItem.layoutBox().parent();
+        return TextUtil::isWrappingAllowed(parentLayoutBox.style());
     };
     if (shouldWrapUnbreakableContentToNextLine())
         return { Result::Action::Wrap, IsEndOfLine::Yes };

@@ -31,6 +31,7 @@ angle_source_set("sample_util") {
     "../:libGLESv1_CM",
     "../:libGLESv2",
   ]
+
   public_deps = [
     "../:angle_common",
     "../util:angle_test_utils",
@@ -42,6 +43,10 @@ angle_source_set("sample_util") {
     ":sample_util_config",
     "../:no_gl_prototypes",
   ]
+
+  if (angle_expose_wgl_entry_points) {
+    defines = [ "ANGLE_EXPOSE_WGL_ENTRY_POINTS" ]
+  }
 }
 
 template("angle_sample") {
@@ -88,6 +93,10 @@ set_defaults("angle_sample") {
 
 angle_sample("hello_triangle") {
   sources = [ "hello_triangle/HelloTriangle.cpp" ]
+}
+
+angle_sample("hello_triangle_gl") {
+  sources = [ "hello_triangle_gl/HelloTriangleGL.cpp" ]
 }
 
 angle_sample("mip_map_2d") {

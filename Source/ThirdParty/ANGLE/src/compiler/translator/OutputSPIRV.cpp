@@ -179,7 +179,7 @@ bool IsAccessChainRValue(const AccessChain &accessChain)
 class OutputSPIRVTraverser : public TIntermTraverser
 {
   public:
-    OutputSPIRVTraverser(TCompiler *compiler, ShCompileOptions compileOptions);
+    OutputSPIRVTraverser(TCompiler *compiler, const ShCompileOptions &compileOptions);
     ~OutputSPIRVTraverser() override;
 
     spirv::Blob getSpirv();
@@ -362,7 +362,7 @@ class OutputSPIRVTraverser : public TIntermTraverser
                                                uint32_t fieldIndex);
 
     TCompiler *mCompiler;
-    [[maybe_unused]] ShCompileOptions mCompileOptions;
+    [[maybe_unused]] const ShCompileOptions &mCompileOptions;
 
     SPIRVBuilder mBuilder;
 
@@ -479,15 +479,23 @@ spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
 
         default:
             // Uniform and storage buffers have the Uniform storage class.  Default uniforms are
-            // gathered in a uniform block as well.
+            // gathered in a uniform block as well. Push constants use the PushConstant storage
+            // class instead.
             ASSERT(type.getInterfaceBlock() != nullptr || qualifier == EvqUniform);
             // I/O blocks must have already been classified as input or output above.
             ASSERT(!IsShaderIoBlock(qualifier));
+
+            if (type.getLayoutQualifier().pushConstant)
+            {
+                ASSERT(type.getInterfaceBlock() != nullptr);
+                return spv::StorageClassPushConstant;
+            }
             return spv::StorageClassUniform;
     }
 }
 
-OutputSPIRVTraverser::OutputSPIRVTraverser(TCompiler *compiler, ShCompileOptions compileOptions)
+OutputSPIRVTraverser::OutputSPIRVTraverser(TCompiler *compiler,
+                                           const ShCompileOptions &compileOptions)
     : TIntermTraverser(true, true, true, &compiler->getSymbolTable()),
       mCompiler(compiler),
       mCompileOptions(compileOptions),
@@ -5806,6 +5814,22 @@ bool OutputSPIRVTraverser::visitAggregate(Visit visit, TIntermAggregate *node)
             UNIMPLEMENTED();
             break;
 
+        case EOpBeginInvocationInterlockARB:
+            // Set up a "pixel_interlock_ordered" execution mode, as that is the default
+            // interlocked execution mode in GLSL, and we don't currently expose an option to change
+            // that.
+            mBuilder.addExtension(SPIRVExtensions::FragmentShaderInterlockARB);
+            mBuilder.addCapability(spv::CapabilityFragmentShaderPixelInterlockEXT);
+            mBuilder.addExecutionMode(spv::ExecutionMode::ExecutionModePixelInterlockOrderedEXT);
+            // Compile GL_ARB_fragment_shader_interlock to SPV_EXT_fragment_shader_interlock.
+            spirv::WriteBeginInvocationInterlockEXT(mBuilder.getSpirvCurrentFunctionBlock());
+            break;
+
+        case EOpEndInvocationInterlockARB:
+            // Compile GL_ARB_fragment_shader_interlock to SPV_EXT_fragment_shader_interlock.
+            spirv::WriteEndInvocationInterlockEXT(mBuilder.getSpirvCurrentFunctionBlock());
+            break;
+
         default:
             result = visitOperator(node, resultTypeId);
             break;
@@ -5938,6 +5962,28 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
     {
         // Apply the Invariant decoration to output variables if specified or if globally enabled.
         decorations.push_back(spv::DecorationInvariant);
+    }
+    // Apply the declared memory qualifiers.
+    TMemoryQualifier memoryQualifier = type.getMemoryQualifier();
+    if (memoryQualifier.coherent)
+    {
+        decorations.push_back(spv::DecorationCoherent);
+    }
+    if (memoryQualifier.volatileQualifier)
+    {
+        decorations.push_back(spv::DecorationVolatile);
+    }
+    if (memoryQualifier.restrictQualifier)
+    {
+        decorations.push_back(spv::DecorationRestrict);
+    }
+    if (memoryQualifier.readonly)
+    {
+        decorations.push_back(spv::DecorationNonWritable);
+    }
+    if (memoryQualifier.writeonly)
+    {
+        decorations.push_back(spv::DecorationNonReadable);
     }
 
     const spirv::IdRef variableId = mBuilder.declareVariable(
@@ -6323,7 +6369,7 @@ spirv::Blob OutputSPIRVTraverser::getSpirv()
 }
 }  // anonymous namespace
 
-bool OutputSPIRV(TCompiler *compiler, TIntermBlock *root, ShCompileOptions compileOptions)
+bool OutputSPIRV(TCompiler *compiler, TIntermBlock *root, const ShCompileOptions &compileOptions)
 {
     // Find the list of nodes that require NoContraction (as a result of |precise|).
     if (compiler->hasAnyPreciseType())

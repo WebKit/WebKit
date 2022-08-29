@@ -46,26 +46,27 @@ RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
     clearDecomposedGlyphsMap();
 }
 
-void RemoteResourceCacheProxy::cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
+void RemoteResourceCacheProxy::cacheImageBuffer(RemoteImageBufferProxy& imageBuffer)
 {
     auto addResult = m_imageBuffers.add(imageBuffer.renderingResourceIdentifier(), imageBuffer);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-ImageBuffer* RemoteResourceCacheProxy::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
+RemoteImageBufferProxy* RemoteResourceCacheProxy::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_imageBuffers.get(renderingResourceIdentifier).get();
 }
 
-void RemoteResourceCacheProxy::releaseImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteResourceCacheProxy::releaseImageBuffer(RemoteImageBufferProxy& imageBuffer)
 {
-    auto iterator = m_imageBuffers.find(renderingResourceIdentifier);
+    auto identifier = imageBuffer.renderingResourceIdentifier();
+    auto iterator = m_imageBuffers.find(identifier);
     RELEASE_ASSERT(iterator != m_imageBuffers.end());
 
     auto success = m_imageBuffers.remove(iterator);
     ASSERT_UNUSED(success, success);
 
-    m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier);
+    m_remoteRenderingBackendProxy.releaseRemoteResource(identifier);
 }
 
 inline static RefPtr<ShareableBitmap> createShareableBitmapFromNativeImage(NativeImage& image)

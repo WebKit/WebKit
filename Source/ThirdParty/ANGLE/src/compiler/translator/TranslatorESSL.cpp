@@ -19,16 +19,16 @@ TranslatorESSL::TranslatorESSL(sh::GLenum type, ShShaderSpec spec)
 {}
 
 void TranslatorESSL::initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
-                                                 ShCompileOptions compileOptions)
+                                                 const ShCompileOptions &compileOptions)
 {
-    if ((compileOptions & SH_EMULATE_ATAN2_FLOAT_FUNCTION) != 0)
+    if (compileOptions.emulateAtan2FloatFunction)
     {
         InitBuiltInAtanFunctionEmulatorForGLSLWorkarounds(emu);
     }
 }
 
 bool TranslatorESSL::translate(TIntermBlock *root,
-                               ShCompileOptions compileOptions,
+                               const ShCompileOptions &compileOptions,
                                PerformanceDiagnostics * /*perfDiagnostics*/)
 {
     TInfoSinkBase &sink = getInfoSink().obj;
@@ -111,7 +111,7 @@ bool TranslatorESSL::shouldFlattenPragmaStdglInvariantAll()
     return true;
 }
 
-void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
+void TranslatorESSL::writeExtensionBehavior(const ShCompileOptions &compileOptions)
 {
     TInfoSinkBase &sink                   = getInfoSink().obj;
     const TExtensionBehavior &extBehavior = getExtensionBehavior();
@@ -162,13 +162,13 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
             else if (iter->first == TExtension::ANGLE_multi_draw)
             {
                 // Don't emit anything. This extension is emulated
-                ASSERT((compileOptions & SH_EMULATE_GL_DRAW_ID) != 0);
+                ASSERT(compileOptions.emulateGLDrawID);
                 continue;
             }
             else if (iter->first == TExtension::ANGLE_base_vertex_base_instance_shader_builtin)
             {
                 // Don't emit anything. This extension is emulated
-                ASSERT((compileOptions & SH_EMULATE_GL_BASE_VERTEX_BASE_INSTANCE) != 0);
+                ASSERT(compileOptions.emulateGLBaseVertexBaseInstance);
                 continue;
             }
             else if (iter->first == TExtension::ANGLE_shader_pixel_local_storage)

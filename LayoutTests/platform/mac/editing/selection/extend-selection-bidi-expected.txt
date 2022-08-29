@@ -23,11 +23,11 @@ layer at (0,0) size 800x600
             text run at (368,1) width 27: "abc "
             text run at (423,1) width 9: "1"
             text run at (447,1) width 31 RTL: "\x{5D0}\x{5D1}\x{5D2} "
-        RenderText {#text} at (394,1) size 112x18
+        RenderText {#text} at (394,1) size 108x18
           text run at (394,1) width 30 RTL: " \x{5D3}\x{5D4}\x{5D5}"
           text run at (431,1) width 17: "23"
-          text run at (477,1) width 29: " def "
-        RenderBR {BR} at (505,1) size 1x18
+          text run at (477,1) width 25: " def"
+        RenderBR {BR} at (501,1) size 1x18
         RenderBR {BR} at (0,19) size 0x18
       RenderBlock {DIV} at (0,37) size 784x57 [border: (2px solid #FF0000)]
         RenderInline {SPAN} at (0,0) size 200x28

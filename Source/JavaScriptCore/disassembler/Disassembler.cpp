@@ -55,12 +55,12 @@ static LabelMap& ensureLabelMap() WTF_REQUIRES_LOCK(labelMapLock)
 
 } // namespace Disassembler
 
-void disassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, size_t size, void* codeStart, void* codeEnd, const char* prefix, PrintStream& out)
+void disassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, void* codeStart, void* codeEnd, const char* prefix, PrintStream& out)
 {
     if (tryToDisassemble(codePtr, size, codeStart, codeEnd, prefix, out))
         return;
     
-    out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.untaggedExecutableAddress(), codePtr.untaggedExecutableAddress<char*>() + size);
+    out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.untaggedPtr(), codePtr.untaggedPtr<char*>() + size);
 }
 
 namespace {

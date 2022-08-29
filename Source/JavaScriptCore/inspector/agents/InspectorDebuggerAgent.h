@@ -35,6 +35,7 @@
 #include "InspectorAgentBase.h"
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
+#include "Microtask.h"
 #include "RegularExpression.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -106,9 +107,9 @@ public:
     void didParseSource(JSC::SourceID, const JSC::Debugger::Script&) final;
     void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) final;
     void willEnter(JSC::CallFrame*) final;
-    void didQueueMicrotask(JSC::JSGlobalObject*, const JSC::Microtask&) final;
-    void willRunMicrotask(JSC::JSGlobalObject*, const JSC::Microtask&) final;
-    void didRunMicrotask(JSC::JSGlobalObject*, const JSC::Microtask&) final;
+    void didQueueMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier) final;
+    void willRunMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier) final;
+    void didRunMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier) final;
     void didPause(JSC::JSGlobalObject*, JSC::DebuggerCallFrame&, JSC::JSValue exceptionOrCaughtValue) final;
     void didContinue() final;
     void applyBreakpoints(JSC::CodeBlock*) final;
@@ -131,10 +132,10 @@ public:
         Microtask,
     };
 
-    void didScheduleAsyncCall(JSC::JSGlobalObject*, AsyncCallType, int callbackId, bool singleShot);
-    void didCancelAsyncCall(AsyncCallType, int callbackId);
-    void willDispatchAsyncCall(AsyncCallType, int callbackId);
-    void didDispatchAsyncCall(AsyncCallType, int callbackId);
+    void didScheduleAsyncCall(JSC::JSGlobalObject*, AsyncCallType, uint64_t callbackId, bool singleShot);
+    void didCancelAsyncCall(AsyncCallType, uint64_t callbackId);
+    void willDispatchAsyncCall(AsyncCallType, uint64_t callbackId);
+    void didDispatchAsyncCall(AsyncCallType, uint64_t callbackId);
     AsyncStackTrace* currentParentStackTrace() const;
 
     void schedulePauseAtNextOpportunity(DebuggerFrontendDispatcher::Reason, RefPtr<JSON::Object>&& data = nullptr);
@@ -237,8 +238,8 @@ private:
     RefPtr<JSON::Object> buildBreakpointPauseReason(JSC::BreakpointID);
     RefPtr<JSON::Object> buildExceptionPauseReason(JSC::JSValue exception, const InjectedScript&);
 
-    typedef std::pair<unsigned, int> AsyncCallIdentifier;
-    static AsyncCallIdentifier asyncCallIdentifier(AsyncCallType, int callbackId);
+    using AsyncCallIdentifier = std::pair<unsigned, uint64_t>;
+    static AsyncCallIdentifier asyncCallIdentifier(AsyncCallType, uint64_t callbackId);
 
     std::unique_ptr<DebuggerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<DebuggerBackendDispatcher> m_backendDispatcher;
@@ -283,9 +284,6 @@ private:
     HashMap<AsyncCallIdentifier, RefPtr<AsyncStackTrace>> m_pendingAsyncCalls;
     Vector<AsyncCallIdentifier> m_currentAsyncCallIdentifierStack;
     int m_asyncStackTraceDepth { 0 };
-
-    HashMap<const JSC::Microtask*, int> m_identifierForMicrotask;
-    int m_nextMicrotaskIdentifier { 1 };
 
     RefPtr<JSC::Breakpoint> m_pauseOnAssertionsBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnMicrotasksBreakpoint;

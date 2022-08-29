@@ -1,13 +1,21 @@
-# This TestExpectations file reflects the current status of the 'Layer-based SVG engine' (LBSE) in WebKit
+# This TestExpectations file reflects the current status of the 'Layer-Based SVG Engine' (LBSE) in WebKit
 #
 # 1. Run tests against legacy SVG engine
-#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-pixel --pixel-tests --tolerance=0 svg/W3C-SVG-1.1 svg/compositing svg/z-index
+#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-pixel --pixel-tests --tolerance=0 \
+#                       svg/W3C-SVG-1.1 svg/compositing svg/foreignObject svg/z-index
 #
 # 2. Run tests against LBSE
-#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-pixel \
-#                       --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-lbse-text \
+#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-lbse-text \
+#                       --additional-platform-directory=$PWD/LayoutTests/platform/mac-monterey-wk2-pixel \
 #                       --additional-expectations=$PWD/LayoutTests/platform/mac-monterey-wk2-lbse-text/TestExpectations \
-#                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true svg/W3C-SVG-1.1 svg/compositing svg/z-index
+#                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true \
+#                       svg/W3C-SVG-1.1 svg/compositing svg/foreignObject svg/z-index
+#
+# Notes:
+# - 'platform/mac-monterey-wk2-pixel' contains only pixel test results (-expected.png) generated on macOS Monterey using legacy SVG engine
+# - 'platform/mac-monterey-wk2-lbse-text' contains mostly text results (-expected.txt) which are intrinsically different between LBSE / legacy
+#                                         SVG engine plus a few pixel test results (-expected.png) that differ from the legacy SVG engine
+#                                         (e.g. progressions in individual tests)
 
 svg/W3C-SVG-1.1/animate-elem-02-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-03-t.svg       [ Pass ]
@@ -37,15 +45,15 @@ svg/W3C-SVG-1.1/animate-elem-26-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-27-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-28-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-29-b.svg       [ Pass ]
-svg/W3C-SVG-1.1/animate-elem-30-t.svg       [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-30-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-31-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-32-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-33-t.svg       [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-34-t.svg       [ Pass ]
-svg/W3C-SVG-1.1/animate-elem-36-t.svg       [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-36-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-37-t.svg       [ Pass ]
-svg/W3C-SVG-1.1/animate-elem-39-t.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-40-t.svg       [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-39-t.svg       [ Pass ]
+svg/W3C-SVG-1.1/animate-elem-40-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-41-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-44-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-46-t.svg       [ ImageOnlyFailure ]
@@ -69,7 +77,7 @@ svg/W3C-SVG-1.1/animate-elem-82-t.svg       [ Pass ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-83-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/animate-elem-84-t.svg       [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-85-t.svg       [ Pass ]
-svg/W3C-SVG-1.1/color-prof-01-f.svg         [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/color-prof-01-f.svg         [ Pass ]
 svg/W3C-SVG-1.1/color-prop-01-b.svg         [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/color-prop-02-f.svg         [ Pass ]
 svg/W3C-SVG-1.1/color-prop-03-t.svg         [ Pass ]
@@ -85,7 +93,7 @@ svg/W3C-SVG-1.1/coords-units-01-b.svg       [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/coords-units-02-b.svg       [ Pass ]
 svg/W3C-SVG-1.1/coords-units-03-b.svg       [ Pass ]
 svg/W3C-SVG-1.1/coords-viewattr-01-b.svg    [ Pass ]
-svg/W3C-SVG-1.1/coords-viewattr-02-b.svg    [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/coords-viewattr-02-b.svg    [ Pass ]
 svg/W3C-SVG-1.1/coords-viewattr-03-b.svg    [ Pass ]
 svg/W3C-SVG-1.1/extend-namespace-01-f.svg   [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-blend-01-b.svg      [ ImageOnlyFailure ]
@@ -232,18 +240,18 @@ svg/W3C-SVG-1.1/struct-frag-06-t.svg        [ Pass ]
 svg/W3C-SVG-1.1/struct-group-01-t.svg       [ Pass ]
 svg/W3C-SVG-1.1/struct-group-02-b.svg       [ Pass ]
 svg/W3C-SVG-1.1/struct-group-03-t.svg       [ Pass ]
-svg/W3C-SVG-1.1/struct-image-01-t.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/struct-image-02-b.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/struct-image-03-t.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/struct-image-04-t.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/struct-image-05-b.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/struct-image-06-t.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/struct-image-07-t.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/struct-image-08-t.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/struct-image-09-t.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/struct-image-10-t.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/struct-symbol-01-b.svg      [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/struct-use-01-t.svg         [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/struct-image-01-t.svg       [ Pass ]
+svg/W3C-SVG-1.1/struct-image-02-b.svg       [ Pass ]
+svg/W3C-SVG-1.1/struct-image-03-t.svg       [ Pass ]
+svg/W3C-SVG-1.1/struct-image-04-t.svg       [ Pass ]
+svg/W3C-SVG-1.1/struct-image-05-b.svg       [ Pass ]
+svg/W3C-SVG-1.1/struct-image-06-t.svg       [ Pass ]
+svg/W3C-SVG-1.1/struct-image-07-t.svg       [ Pass ]
+svg/W3C-SVG-1.1/struct-image-08-t.svg       [ Pass ]
+svg/W3C-SVG-1.1/struct-image-09-t.svg       [ Pass ]
+svg/W3C-SVG-1.1/struct-image-10-t.svg       [ Pass ]
+svg/W3C-SVG-1.1/struct-symbol-01-b.svg      [ Pass ]
+svg/W3C-SVG-1.1/struct-use-01-t.svg         [ Pass ]
 svg/W3C-SVG-1.1/struct-use-03-t.svg         [ Pass ]
 svg/W3C-SVG-1.1/struct-use-05-b.svg         [ Pass ]
 svg/W3C-SVG-1.1/styling-css-01-b.svg        [ Pass ]
@@ -287,3 +295,6 @@ svg/W3C-SVG-1.1/text-tspan-01-b.svg         [ Pass ]
 svg/W3C-SVG-1.1/text-ws-01-t.svg            [ Pass ]
 svg/W3C-SVG-1.1/text-ws-02-t.svg            [ Pass ]
 svg/W3C-SVG-1.1/types-basicDOM-01-b.svg     [ ImageOnlyFailure ]
+svg/foreignObject/clip.html                 [ ImageOnlyFailure ]
+svg/foreignObject/filter.html               [ ImageOnlyFailure ]
+svg/foreignObject/mask.html                 [ ImageOnlyFailure ]

@@ -56,6 +56,7 @@ public:
 
     PAL::SessionID sessionID() const final { return m_sessionID; }
     void setSessionIDForTesting(PAL::SessionID) final;
+    const WebCore::SecurityOrigin* topLevelOrigin() const final { return nullptr; };
 
 private:
     StorageNamespaceImpl(WebCore::StorageType, const String& path, unsigned quota, PAL::SessionID);

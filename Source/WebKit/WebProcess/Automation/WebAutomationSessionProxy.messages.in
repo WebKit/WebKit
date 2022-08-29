@@ -30,6 +30,9 @@ messages -> WebAutomationSessionProxy NotRefCounted {
 
     ComputeElementLayout(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, enum:uint8_t WebKit::CoordinateSystem coordinateSystem) -> (std::optional<String> errorType, WebCore::IntRect rect, std::optional<WebCore::IntPoint> inViewCenterPoint, bool isObscured)
 
+    GetComputedRole(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (std::optional<String> role, std::optional<String> errorType)
+    GetComputedLabel(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (std::optional<String> role, std::optional<String> errorType)
+
     SelectOptionElement(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (std::optional<String> errorType)
 
     SetFilesForInputFileUpload(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, Vector<String> filenames) -> (std::optional<String> errorType)

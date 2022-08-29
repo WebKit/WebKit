@@ -227,8 +227,8 @@ if (angle_enable_gl_null) {
 
 config("angle_gl_backend_config") {
   defines = [ "ANGLE_ENABLE_OPENGL" ]
-  if (angle_enable_gl_desktop) {
-    defines += [ "ANGLE_ENABLE_OPENGL_DESKTOP" ]
+  if (angle_enable_gl_desktop_backend) {
+    defines += [ "ANGLE_ENABLE_GL_DESKTOP_BACKEND" ]
   }
   if (angle_enable_gl_null) {
     defines += [ "ANGLE_ENABLE_OPENGL_NULL" ]

@@ -139,6 +139,18 @@ SampleApplication::SampleApplication(std::string name,
             glMinorVersion = 3;
             profileMask    = EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT;
             break;
+        case ClientType::GL4_6_CORE:
+            eglClientType  = EGL_OPENGL_API;
+            glMajorVersion = 4;
+            glMinorVersion = 6;
+            profileMask    = EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT;
+            break;
+        case ClientType::GL4_6_COMPATIBILITY:
+            eglClientType  = EGL_OPENGL_API;
+            glMajorVersion = 4;
+            glMinorVersion = 6;
+            profileMask    = EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT;
+            break;
         default:
             UNREACHABLE();
     }
@@ -161,10 +173,16 @@ SampleApplication::SampleApplication(std::string name,
     }
     else
     {
-        mGLWindow = mEGLWindow =
+#if defined(ANGLE_EXPOSE_WGL_ENTRY_POINTS)
+        mGLWindow = WGLWindow::New(eglClientType, glMajorVersion, glMinorVersion, profileMask);
+        mEntryPointsLib.reset(angle::OpenSharedLibrary("opengl32", angle::SearchType::ModuleDir));
+        mDriverType = angle::GLESDriverType::SystemWGL;
+#else
+        mGLWindow   = mEGLWindow =
             EGLWindow::New(eglClientType, glMajorVersion, glMinorVersion, profileMask);
         mEntryPointsLib.reset(
             angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ModuleDir));
+#endif  // defined(ANGLE_EXPOSE_WGL_ENTRY_POINTS)
     }
 }
 

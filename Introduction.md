@@ -468,7 +468,13 @@ WebKit uses two primary management strategies when objects in other cases:
 
 ## Garbage collection in WebKit
 
-FIXME: Write this.
+See these blog posts:
+
+* [Understanding Garbage Collection in JavaScriptCore From Scratch](https://webkit.org/blog/12967/understanding-gc-in-jsc-from-scratch/):
+  Summary of how our GC is organized and how it works.
+* [Introducing Riptide: WebKit’s Retreating Wavefront Concurrent Garbage Collector](https://webkit.org/blog/7122/introducing-riptide-webkits-retreating-wavefront-concurrent-garbage-collector/):
+  Focusing on novel algorithms of our GC including how to tackle web browser specific problems (managing DOM objects, concurrency, etc.).
+
 
 ## Reference counting in WebKit
 

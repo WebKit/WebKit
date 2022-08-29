@@ -160,15 +160,19 @@ std::unique_ptr<RenderStyle> TreeResolver::styleForStyleable(const Styleable& st
 
 static void resetStyleForNonRenderedDescendants(Element& current)
 {
-    for (auto& child : childrenOfType<Element>(current)) {
-        if (child.needsStyleRecalc()) {
-            child.resetComputedStyle();
-            child.resetStyleRelations();
-            child.setHasValidStyle();
+    auto descendants = descendantsOfType<Element>(current);
+    for (auto it = descendants.begin(); it != descendants.end();) {
+        if (it->needsStyleRecalc()) {
+            it->resetComputedStyle();
+            it->resetStyleRelations();
+            it->setHasValidStyle();
         }
 
-        if (child.childNeedsStyleRecalc())
-            resetStyleForNonRenderedDescendants(child);
+        if (it->childNeedsStyleRecalc()) {
+            it->clearChildNeedsStyleRecalc();
+            it.traverseNext();
+        } else
+            it.traverseNextSkippingChildren();
     }
     current.clearChildNeedsStyleRecalc();
 }

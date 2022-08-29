@@ -414,6 +414,7 @@
     "web-platform-tests/screen-orientation": "skip", 
     "web-platform-tests/scroll-anchoring": "skip", 
     "web-platform-tests/scroll-into-view": "skip", 
+    "web-platform-tests/scroll-to-text-fragment": "import", 
     "web-platform-tests/secure-contexts": "import", 
     "web-platform-tests/selection": "skip", 
     "web-platform-tests/selectors": "skip", 

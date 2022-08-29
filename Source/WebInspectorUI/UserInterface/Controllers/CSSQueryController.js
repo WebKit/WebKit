@@ -72,7 +72,7 @@ WI.CSSQueryController = class CSSQueryController extends WI.QueryController
 
         return results.sort((a, b) => {
             if (a.rank === b.rank)
-                return a.value.extendedLocaleCompare(b.value);
+                return WI.CSSProperty.sortPreferringNonPrefixed(a.value, b.value);
             return b.rank - a.rank;
         });
     }

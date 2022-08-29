@@ -57,9 +57,9 @@ class Surface;
 class Sync;
 class Thread;
 
-using ContextSet = std::set<gl::Context *>;
-using SurfaceSet = std::set<Surface *>;
-using ThreadSet  = std::set<Thread *>;
+using ContextSet = angle::HashSet<gl::Context *>;
+using SurfaceSet = angle::HashSet<Surface *>;
+using ThreadSet  = angle::HashSet<Thread *>;
 
 struct DisplayState final : private angle::NonCopyable
 {
@@ -159,7 +159,7 @@ class Display final : public LabeledObject,
                                                 const AttributeMap &attribMap);
     static Display *GetExistingDisplayFromNativeDisplay(EGLNativeDisplayType nativeDisplay);
 
-    using EglDisplaySet = std::set<Display *>;
+    using EglDisplaySet = angle::HashSet<Display *>;
     static EglDisplaySet GetEglDisplaySet();
 
     static const ClientExtensions &GetClientExtensions();
@@ -356,13 +356,13 @@ class Display final : public LabeledObject,
 
     ConfigSet mConfigSet;
 
-    typedef std::set<Image *> ImageSet;
+    typedef angle::HashSet<Image *> ImageSet;
     ImageSet mImageSet;
 
-    typedef std::set<Stream *> StreamSet;
+    typedef angle::HashSet<Stream *> StreamSet;
     StreamSet mStreamSet;
 
-    typedef std::set<Sync *> SyncSet;
+    typedef angle::HashSet<Sync *> SyncSet;
     SyncSet mSyncSet;
 
     void destroyImageImpl(Image *image, ImageSet *images);

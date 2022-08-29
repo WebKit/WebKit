@@ -726,7 +726,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_throw_handlerGenerator(VM& vm)
     jit.jumpToExceptionHandler(vm);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationThrow));
+    patchBuffer.link<OperationPtrTag>(operation, operationThrow);
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: op_throw_handler");
 }
 
@@ -1311,10 +1311,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(operationWriteBarrierCall, FunctionPtr<OperationPtrTag>(operationWriteBarrierSlowPath));
+    patchBuffer.link<OperationPtrTag>(operationWriteBarrierCall, operationWriteBarrierSlowPath);
 #if ENABLE(DFG_JIT)
     if (Options::useDFGJIT())
-        patchBuffer.link(operationOptimizeCall, FunctionPtr<OperationPtrTag>(operationOptimize));
+        patchBuffer.link<OperationPtrTag>(operationOptimizeCall, operationOptimize);
 #endif
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: op_enter_handler");
 }
@@ -1559,7 +1559,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_check_traps_handlerGenerator(VM& v
     Jump exceptionCheck = jit.jump();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationHandleTraps));
+    patchBuffer.link<OperationPtrTag>(operation, operationHandleTraps);
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: op_check_traps_handler");
 }

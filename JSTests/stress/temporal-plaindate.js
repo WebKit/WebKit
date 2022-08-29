@@ -20,7 +20,7 @@ function shouldThrow(func, errorType, message) {
 }
 
 shouldBe(Temporal.PlainDate instanceof Function, true);
-shouldBe(Temporal.PlainDate.length, 0);
+shouldBe(Temporal.PlainDate.length, 3);
 shouldBe(Object.getOwnPropertyDescriptor(Temporal.PlainDate, 'prototype').writable, false);
 shouldBe(Object.getOwnPropertyDescriptor(Temporal.PlainDate, 'prototype').enumerable, false);
 shouldBe(Object.getOwnPropertyDescriptor(Temporal.PlainDate, 'prototype').configurable, false);
@@ -86,22 +86,29 @@ shouldBe(String(Temporal.PlainDate.from('2007-01-09[u-ca=japanese]')), `2007-01-
     let dateTime = Temporal.PlainDateTime.from('2007-01-09T03:24:30+01:00[Europe/Brussels]');
     shouldBe(Temporal.PlainDate.from(dateTime).toString(), date.toString());
 
+    let time = Temporal.PlainTime.from('2007-01-09T03:24:30+01:00[Europe/Brussels]');
+    shouldBe(date.toPlainDateTime(time).toString(), dateTime.toString());
+    shouldBe(date.toPlainDateTime().toString(), Temporal.PlainDateTime.from('2007-01-09').toString());
+
+    shouldBe(Temporal.PlainDate.from({ year: 2007, month: 1, day: 9 }).toString(), date.toString());
+    shouldBe(Temporal.PlainDate.from({ year: 2007, monthCode: 'M01', day: 9 }).toString(), date.toString());
+
+    shouldBe(Temporal.PlainDate.from({ year: 2007, month: 20, day: 40 }).toString(), '2007-12-31');
+    shouldBe(Temporal.PlainDate.from({ year: 2007, month: 20, day: 40 }, { overflow: 'constrain' }).toString(), '2007-12-31');
+
     shouldBe(date.toJSON(), date.toString());
     shouldBe(date.toLocaleString(), date.toString());
 }
 
-
-// FIXME: from(object) is note yet implemented.
-// {
-//     let date = Temporal.PlainDate.from({
-//       year: 2007,
-//       month: 1,
-//       day: 9
-//     });
-//     shouldBe(String(date), `2007-01-09`);
-// }
-shouldThrow(() => { Temporal.PlainDate.from({ year: 2007, month: 1, day: 9 }); }, RangeError);
-
+shouldThrow(() => { Temporal.PlainDate.from({ month: 1, day: 9 }); }, TypeError);
+shouldThrow(() => { Temporal.PlainDate.from({ year: 2007, day: 9 }); }, TypeError);
+shouldThrow(() => { Temporal.PlainDate.from({ year: 2007, month: 1 }); }, TypeError);
+shouldThrow(() => { Temporal.PlainDate.from({ year: Infinity, month: 1, day: 9 }); }, RangeError);
+shouldThrow(() => { Temporal.PlainDate.from({ year: 2007, month: 0, day: 9 }); }, RangeError);
+shouldThrow(() => { Temporal.PlainDate.from({ year: 2007, monthCode: 'M00', day: 9 }); }, RangeError);
+shouldThrow(() => { Temporal.PlainDate.from({ year: 2007, month: 1, day: 0 }); }, RangeError);
+shouldThrow(() => { Temporal.PlainDate.from({ year: 2007, month: 1, monthCode: 'M02', day: 9 }); }, RangeError);
+shouldThrow(() => { Temporal.PlainDate.from({ year: 2007, month: 20, day: 40 }, { overflow: 'reject' }); }, RangeError);
 
 shouldThrow(() => { new Temporal.PlainDate(-1); }, RangeError);
 shouldThrow(() => { new Temporal.PlainDate(); }, RangeError);
@@ -117,9 +124,9 @@ shouldThrow(() => { new Temporal.PlainDate(2007, -Infinity, 1); }, RangeError);
 shouldThrow(() => { new Temporal.PlainDate(2007, 1, Infinity); }, RangeError);
 shouldThrow(() => { new Temporal.PlainDate(2007, 1, -Infinity); }, RangeError);
 shouldThrow(() => { new Temporal.PlainDate(0x43530, 9, 14); }, RangeError);
-shouldBe(String(new Temporal.PlainDate(0x43530, 9, 13)), `275760-09-13`);
-shouldThrow(() => { new Temporal.PlainDate(-0x425cd, 4, 19); }, RangeError);
-shouldBe(String(new Temporal.PlainDate(-0x425cd, 4, 20)), `-271821-04-20`);
+shouldBe(String(new Temporal.PlainDate(0x43530, 9, 13)), `+275760-09-13`);
+shouldThrow(() => { new Temporal.PlainDate(-0x425cd, 4, 18); }, RangeError);
+shouldBe(String(new Temporal.PlainDate(-0x425cd, 4, 19)), `-271821-04-19`);
 shouldThrow(() => { new Temporal.PlainDate(0x80000000, 1, 1); }, RangeError);
 shouldThrow(() => { new Temporal.PlainDate(-0x80000000, 1, 1); }, RangeError);
 shouldThrow(() => { new Temporal.PlainDate(0x7fffffff, 1, 1); }, RangeError);

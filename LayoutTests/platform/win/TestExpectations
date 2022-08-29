@@ -492,6 +492,9 @@ accessibility/ignored-aria-role-description.html [ Skip ]
 # Failing since added in https://bugs.webkit.org/show_bug.cgi?id=243768.
 accessibility/spinbutton-increment-decrement.html [ Skip ]
 
+# Failing since added in https://bugs.webkit.org/show_bug.cgi?id=244421.
+accessibility/multiple-attribute-change-crash.html [ Skip ]
+
 # Need to implement AccessibilityUIElement::clearSelectedChildren()
 accessibility/aria-listbox-clear-selection-crash.html [ Skip ]
 accessibility/listbox-clear-selection.html [ Skip ]
@@ -3599,7 +3602,6 @@ tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failure ]
 css3/color/composited-solid-backgrounds.html [ ImageOnlyFailure ]
 css3/filters/drop-shadow.html [ ImageOnlyFailure ]
 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
-css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 editing/pasteboard/paste-image-using-image-data.html [ ImageOnlyFailure ]
 fast/borders/hidpi-outline-hairline-painting.html [ ImageOnlyFailure ]
 fast/images/image-map-outline-in-positioned-container.html [ ImageOnlyFailure ]

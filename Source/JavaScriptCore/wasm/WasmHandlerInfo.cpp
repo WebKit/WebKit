@@ -34,7 +34,7 @@
 namespace JSC {
 namespace Wasm {
 
-void HandlerInfo::initialize(const UnlinkedHandlerInfo& unlinkedInfo, MacroAssemblerCodePtr<ExceptionHandlerPtrTag> label)
+void HandlerInfo::initialize(const UnlinkedHandlerInfo& unlinkedInfo, CodePtr<ExceptionHandlerPtrTag> label)
 {
     m_type = unlinkedInfo.m_type;
     m_start = unlinkedInfo.m_start;

@@ -490,6 +490,8 @@ class Git(Scm):
     @decorators.Memoize()
     def remote(self, name=None):
         url = self.url(name=name)
+        if not url:
+            return None
         ssh_match = self.SSH_REMOTE.match(url)
         http_match = self.HTTP_REMOTE.match(url)
         if ssh_match:

@@ -101,7 +101,7 @@ static JSCell* webAssemblyOwner(JSCell* callee)
 
 void linkMonomorphicCall(
     VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
-    JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag> codePtr)
+    JSObject* callee, CodePtr<JSEntryPtrTag> codePtr)
 {
     ASSERT(!callLinkInfo.stub());
 
@@ -166,7 +166,7 @@ void unlinkCall(VM& vm, CallLinkInfo& callLinkInfo)
         revertCall(vm, callLinkInfo, vm.getCTILinkCall().retagged<JITStubRoutinePtrTag>());
 }
 
-MacroAssemblerCodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind kind, JSObject* callee)
+CodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind kind, JSObject* callee)
 {
 #if ENABLE(WEBASSEMBLY)
     if (!callee)
@@ -184,26 +184,25 @@ MacroAssemblerCodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind ki
 
 #if ENABLE(JIT)
 
-static FunctionPtr<CFunctionPtrTag> retagOperationWithValidation(FunctionPtr<OperationPtrTag> operation)
+static CodePtr<CFunctionPtrTag> retagOperationWithValidation(CodePtr<OperationPtrTag> operation)
 {
     JSC_RETURN_RETAGGED_OPERATION_WITH_VALIDATION(operation);
 }
 
-static FunctionPtr<CFunctionPtrTag> retagCallTargetWithValidation(CodeLocationCall<JSInternalPtrTag> call)
+static CodePtr<CFunctionPtrTag> retagCallTargetWithValidation(CodeLocationCall<JSInternalPtrTag> call)
 {
     JSC_RETURN_RETAGGED_CALL_TARGET_WITH_VALIDATION(call);
 }
 
-static FunctionPtr<CFunctionPtrTag> readPutICCallTarget(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+static CodePtr<CFunctionPtrTag> readPutICCallTarget(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
     if (codeBlock->useDataIC())
         return retagOperationWithValidation(stubInfo.m_slowOperation);
     CodeLocationCall<JSInternalPtrTag> call = stubInfo.m_slowPathCallLocation;
 #if ENABLE(FTL_JIT)
     if (codeBlock->jitType() == JITType::FTLJIT) {
-        FunctionPtr<JITThunkPtrTag> target = MacroAssembler::readCallTarget<JITThunkPtrTag>(call);
-        MacroAssemblerCodePtr<JITThunkPtrTag> thunk = MacroAssemblerCodePtr<JITThunkPtrTag>::createFromExecutableAddress(target.executableAddress());
-        return retagOperationWithValidation(codeBlock->vm().ftlThunks->keyForSlowPathCallThunk(thunk).callTarget());
+        CodePtr<JITThunkPtrTag> target = MacroAssembler::readCallTarget<JITThunkPtrTag>(call);
+        return retagOperationWithValidation(codeBlock->vm().ftlThunks->keyForSlowPathCallThunk(target).callTarget());
     }
 #else
     UNUSED_PARAM(codeBlock);
@@ -211,17 +210,16 @@ static FunctionPtr<CFunctionPtrTag> readPutICCallTarget(CodeBlock* codeBlock, St
     return retagCallTargetWithValidation(call);
 }
 
-void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall<JSInternalPtrTag> call, FunctionPtr<CFunctionPtrTag> newCalleeFunction)
+void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall<JSInternalPtrTag> call, CodePtr<CFunctionPtrTag> newCalleeFunction)
 {
 #if ENABLE(FTL_JIT)
     if (codeBlock->jitType() == JITType::FTLJIT) {
         VM& vm = codeBlock->vm();
         FTL::Thunks& thunks = *vm.ftlThunks;
-        FunctionPtr<JITThunkPtrTag> target = MacroAssembler::readCallTarget<JITThunkPtrTag>(call);
-        auto slowPathThunk = MacroAssemblerCodePtr<JITThunkPtrTag>::createFromExecutableAddress(target.executableAddress());
+        CodePtr<JITThunkPtrTag> slowPathThunk = MacroAssembler::readCallTarget<JITThunkPtrTag>(call);
         FTL::SlowPathCallKey key = thunks.keyForSlowPathCallThunk(slowPathThunk);
         key = key.withCallTarget(newCalleeFunction);
-        MacroAssembler::repatchCall(call, thunks.getSlowPathCallThunk(vm, key).code().toFunctionPtr());
+        MacroAssembler::repatchCall(call, thunks.getSlowPathCallThunk(vm, key).code());
         return;
     }
 #else // ENABLE(FTL_JIT)
@@ -230,7 +228,7 @@ void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall<JSInternalP
     MacroAssembler::repatchCall(call, newCalleeFunction.retagged<OperationPtrTag>());
 }
 
-static void repatchSlowPathCall(CodeBlock* codeBlock, StructureStubInfo& stubInfo, FunctionPtr<CFunctionPtrTag> newCalleeFunction)
+static void repatchSlowPathCall(CodeBlock* codeBlock, StructureStubInfo& stubInfo, CodePtr<CFunctionPtrTag> newCalleeFunction)
 {
     if (codeBlock->useDataIC()) {
         stubInfo.m_slowOperation = newCalleeFunction.retagged<OperationPtrTag>();
@@ -284,7 +282,7 @@ ALWAYS_INLINE static void fireWatchpointsAndClearStubIfNeeded(VM& vm, StructureS
     }
 }
 
-inline FunctionPtr<CFunctionPtrTag> appropriateOptimizingGetByFunction(GetByKind kind)
+inline CodePtr<CFunctionPtrTag> appropriateOptimizingGetByFunction(GetByKind kind)
 {
     switch (kind) {
     case GetByKind::ById:
@@ -305,7 +303,7 @@ inline FunctionPtr<CFunctionPtrTag> appropriateOptimizingGetByFunction(GetByKind
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline FunctionPtr<CFunctionPtrTag> appropriateGetByFunction(GetByKind kind)
+inline CodePtr<CFunctionPtrTag> appropriateGetByFunction(GetByKind kind)
 {
     switch (kind) {
     case GetByKind::ById:
@@ -542,9 +540,12 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                     if (kind == GetByKind::ByIdWithThis && type == AccessCase::CustomAccessorGetter && domAttribute)
                         return GiveUpOnCache;
 
+                    CodePtr<CustomAccessorPtrTag> customAccessor;
+                    if (slot.isCacheableCustom())
+                        customAccessor = slot.customGetter();
                     newCase = GetterSetterAccessCase::create(
                         vm, codeBlock, type, propertyName, offset, structure, conditionSet, loadTargetFromProxy,
-                        slot.watchpointSet(), slot.isCacheableCustom() ? FunctionPtr<CustomAccessorPtrTag>(slot.customGetter()) : nullptr,
+                        slot.watchpointSet(), customAccessor,
                         slot.isCacheableCustom() && slot.slotBase() != baseValue ? slot.slotBase() : nullptr,
                         domAttribute, WTFMove(prototypeAccessChain));
                 }
@@ -717,7 +718,7 @@ void repatchArrayGetByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JS
         repatchSlowPathCall(codeBlock, stubInfo, operationGetByValGeneric);
 }
 
-static FunctionPtr<CFunctionPtrTag> appropriateGenericPutByFunction(const PutPropertySlot &slot, PutByKind putByKind, PutKind putKind)
+static CodePtr<CFunctionPtrTag> appropriateGenericPutByFunction(const PutPropertySlot &slot, PutByKind putByKind, PutKind putKind)
 {
     switch (putByKind) {
     case PutByKind::ById: {
@@ -764,7 +765,7 @@ static FunctionPtr<CFunctionPtrTag> appropriateGenericPutByFunction(const PutPro
     return nullptr;
 }
 
-static FunctionPtr<CFunctionPtrTag> appropriateOptimizingPutByFunction(const PutPropertySlot &slot, PutByKind putByKind, PutKind putKind)
+static CodePtr<CFunctionPtrTag> appropriateOptimizingPutByFunction(const PutPropertySlot &slot, PutByKind putByKind, PutKind putKind)
 {
     switch (putByKind) {
     case PutByKind::ById:
@@ -1209,7 +1210,7 @@ void repatchDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeleteP
     }
 }
 
-inline FunctionPtr<CFunctionPtrTag> appropriateOptimizingInByFunction(InByKind kind)
+inline CodePtr<CFunctionPtrTag> appropriateOptimizingInByFunction(InByKind kind)
 {
     switch (kind) {
     case InByKind::ById:
@@ -1222,7 +1223,7 @@ inline FunctionPtr<CFunctionPtrTag> appropriateOptimizingInByFunction(InByKind k
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline FunctionPtr<CFunctionPtrTag> appropriateGenericInByFunction(InByKind kind)
+inline CodePtr<CFunctionPtrTag> appropriateGenericInByFunction(InByKind kind)
 {
     switch (kind) {
     case InByKind::ById:
@@ -1575,7 +1576,7 @@ void repatchInstanceOf(
 
 void linkDirectCall(
     CallFrame* callFrame, OptimizingCallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
-    MacroAssemblerCodePtr<JSEntryPtrTag> codePtr)
+    CodePtr<JSEntryPtrTag> codePtr)
 {
     ASSERT(!callLinkInfo.stub());
     
@@ -1618,7 +1619,7 @@ static void linkVirtualFor(VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkI
 namespace {
 struct CallToCodePtr {
     CCallHelpers::Call call;
-    MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
+    CodePtr<JSEntryPtrTag> codePtr;
 };
 } // annonymous namespace
 
@@ -1832,7 +1833,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
         PolymorphicCallCase& callCase = callCases[caseIndex];
         CallVariant variant = callCase.variant();
         
-        MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
+        CodePtr<JSEntryPtrTag> codePtr;
         if (variant.executable()) {
             ASSERT(variant.executable()->hasJITCodeForCall());
             
@@ -1916,7 +1917,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     // 3. If we're a data IC, then the return address is already correct
     // Thus we need to put it for the slow-path call.
     if (!isDataIC) {
-        stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.doneLocation().untaggedExecutableAddress()), GPRInfo::regT4);
+        stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.doneLocation().untaggedPtr()), GPRInfo::regT4);
         stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
     } else {
         // FIXME: We are not doing a real tail-call in this case. We leave stack entries in the caller, and we are not running prepareForTailCall, thus,
@@ -1929,7 +1930,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
                 ASSERT(!JITCode::isOptimizingJIT(callerCodeBlock->jitType()));
 #endif
             if (callLinkInfo.isTailCall()) {
-                stubJit.move(CCallHelpers::TrustedImmPtr(vm.getCTIStub(JIT::returnFromBaselineGenerator).code().untaggedExecutableAddress()), GPRInfo::regT4);
+                stubJit.move(CCallHelpers::TrustedImmPtr(vm.getCTIStub(JIT::returnFromBaselineGenerator).code().untaggedPtr()), GPRInfo::regT4);
                 stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
             }
             break;
@@ -1938,7 +1939,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
             // While Baseline / LLInt shares BaselineCallLinkInfo, OptimizingCallLinkInfo is exclusively used for one JIT code.
             // Thus, we can safely use doneLocation.
             if (callLinkInfo.isTailCall()) {
-                stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.doneLocation().untaggedExecutableAddress()), GPRInfo::regT4);
+                stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.doneLocation().untaggedPtr()), GPRInfo::regT4);
                 stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
             }
             break;
@@ -1956,7 +1957,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     
     RELEASE_ASSERT(callCases.size() == calls.size());
     for (CallToCodePtr callToCodePtr : calls)
-        patchBuffer.link(callToCodePtr.call, callToCodePtr.codePtr.toFunctionPtr());
+        patchBuffer.link(callToCodePtr.call, callToCodePtr.codePtr);
 
     if (!done.empty()) {
         ASSERT(!isDataIC);
@@ -1968,7 +1969,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
         FINALIZE_CODE_FOR(
             callerCodeBlock, patchBuffer, JITStubRoutinePtrTag,
             "Polymorphic call stub for %s, return point %p, targets %s",
-                isWebAssembly ? "WebAssembly" : toCString(*callerCodeBlock).data(), callLinkInfo.doneLocation().executableAddress(),
+                isWebAssembly ? "WebAssembly" : toCString(*callerCodeBlock).data(), callLinkInfo.doneLocation().taggedPtr(),
                 toCString(listDump(callCases)).data()),
         vm, owner, callFrame->callerFrame(), callLinkInfo, callCases,
         WTFMove(fastCounts)));
@@ -2008,11 +2009,11 @@ void resetGetBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByKind kin
 
 void resetPutBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, PutByKind kind)
 {
-    FunctionPtr<CFunctionPtrTag> optimizedFunction;
+    CodePtr<CFunctionPtrTag> optimizedFunction;
     switch (kind) {
     case PutByKind::ById: {
         using FunctionType = decltype(&operationPutByIdDirectStrictOptimize);
-        FunctionType unoptimizedFunction = reinterpret_cast<FunctionType>(readPutICCallTarget(codeBlock, stubInfo).executableAddress());
+        FunctionType unoptimizedFunction = reinterpret_cast<FunctionType>(readPutICCallTarget(codeBlock, stubInfo).taggedPtr());
         if (unoptimizedFunction == operationPutByIdStrict || unoptimizedFunction == operationPutByIdStrictOptimize)
             optimizedFunction = operationPutByIdStrictOptimize;
         else if (unoptimizedFunction == operationPutByIdNonStrict || unoptimizedFunction == operationPutByIdNonStrictOptimize)
@@ -2031,7 +2032,7 @@ void resetPutBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, PutByKind kin
     }
     case PutByKind::ByVal: {
         using FunctionType = decltype(&operationPutByValStrictOptimize);
-        FunctionType unoptimizedFunction = reinterpret_cast<FunctionType>(readPutICCallTarget(codeBlock, stubInfo).executableAddress());
+        FunctionType unoptimizedFunction = reinterpret_cast<FunctionType>(readPutICCallTarget(codeBlock, stubInfo).taggedPtr());
         if (unoptimizedFunction == operationPutByValStrictGeneric || unoptimizedFunction == operationPutByValStrictOptimize)
             optimizedFunction = operationPutByValStrictOptimize;
         else if (unoptimizedFunction == operationPutByValNonStrictGeneric || unoptimizedFunction == operationPutByValNonStrictOptimize)

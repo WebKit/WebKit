@@ -1490,7 +1490,7 @@ void QueryShaderiv(const Context *context, Shader *shader, GLenum pname, GLint *
             *params = shader->isFlaggedForDeletion();
             return;
         case GL_COMPILE_STATUS:
-            *params = shader->isCompiled() ? GL_TRUE : GL_FALSE;
+            *params = shader->isCompiled(context) ? GL_TRUE : GL_FALSE;
             return;
         case GL_COMPLETION_STATUS_KHR:
             if (context->isContextLost())
@@ -1503,13 +1503,13 @@ void QueryShaderiv(const Context *context, Shader *shader, GLenum pname, GLint *
             }
             return;
         case GL_INFO_LOG_LENGTH:
-            *params = shader->getInfoLogLength();
+            *params = shader->getInfoLogLength(context);
             return;
         case GL_SHADER_SOURCE_LENGTH:
             *params = shader->getSourceLength();
             return;
         case GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE:
-            *params = shader->getTranslatedSourceWithDebugInfoLength();
+            *params = shader->getTranslatedSourceWithDebugInfoLength(context);
             return;
         default:
             UNREACHABLE();
@@ -2033,7 +2033,8 @@ GLuint QueryProgramResourceIndex(const Program *program,
     }
 }
 
-void QueryProgramResourceName(const Program *program,
+void QueryProgramResourceName(const Context *context,
+                              const Program *program,
                               GLenum programInterface,
                               GLuint index,
                               GLsizei bufSize,
@@ -2063,7 +2064,7 @@ void QueryProgramResourceName(const Program *program,
             break;
 
         case GL_UNIFORM_BLOCK:
-            program->getActiveUniformBlockName({index}, bufSize, length, name);
+            program->getActiveUniformBlockName(context, {index}, bufSize, length, name);
             break;
 
         case GL_TRANSFORM_FEEDBACK_VARYING:

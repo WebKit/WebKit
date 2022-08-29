@@ -22,12 +22,38 @@ import time
 import angle_path_util
 
 
+class _Global(object):
+    initialized = False
+    is_android = False
+    current_suite = None
+
+
 def _ApkPath(suite_name):
     return os.path.join('%s_apk' % suite_name, '%s-debug.apk' % suite_name)
 
 
-def ApkFileExists(suite_name):
-    return os.path.exists(_ApkPath(suite_name))
+def Initialize(suite_name):
+    if _Global.initialized:
+        return
+
+    if os.path.exists(_ApkPath(suite_name)):
+        _Global.is_android = True
+        _GetAdbRoot()
+
+    _Global.initialized = True
+
+
+def IsAndroid():
+    assert _Global.initialized, 'Initialize not called'
+    return _Global.is_android
+
+
+def _EnsureTestSuite(suite_name):
+    assert IsAndroid()
+
+    if _Global.current_suite != suite_name:
+        _PrepareTestSuite(suite_name)
+        _Global.current_suite = suite_name
 
 
 def _Run(cmd):
@@ -107,9 +133,7 @@ def _AddRestrictedTracesJson():
     _AdbShell('r=/sdcard/chromium_tests_root; tar -xf $r/t.tar -C $r/ && rm $r/t.tar')
 
 
-def PrepareTestSuite(suite_name):
-    _GetAdbRoot()
-
+def _PrepareTestSuite(suite_name):
     apk_path = _ApkPath(suite_name)
     logging.info('Installing apk path=%s size=%s' % (apk_path, os.path.getsize(apk_path)))
 
@@ -254,7 +278,7 @@ def _RunInstrumentationWithTimeout(flags, timeout):
 
 
 def AngleSystemInfo(args):
-    PrepareTestSuite('angle_system_info_test')
+    _EnsureTestSuite('angle_system_info_test')
 
     with _TempDeviceDir() as temp_dir:
         _RunInstrumentation(args + ['--render-test-output-dir=' + temp_dir])
@@ -262,7 +286,9 @@ def AngleSystemInfo(args):
         return json.loads(_ReadDeviceFile(output_file))
 
 
-def ListTests():
+def ListTests(suite_name):
+    _EnsureTestSuite(suite_name)
+
     out_lines = _RunInstrumentation(["--list-tests"]).decode('ascii').split('\n')
 
     start = out_lines.index('Tests list:')
@@ -291,6 +317,8 @@ def _RemoveFlag(args, f):
 
 
 def RunSmokeTest():
+    _EnsureTestSuite('angle_perftests')
+
     test_name = 'TracePerfTest.Run/vulkan_words_with_friends_2'
     run_instrumentation_timeout = 60
 
@@ -318,7 +346,9 @@ def RunSmokeTest():
     logging.info('Smoke test passed')
 
 
-def RunTests(args, stdoutfile=None, output_dir=None, log_output=True):
+def RunTests(test_suite, args, stdoutfile=None, log_output=True):
+    _EnsureTestSuite(test_suite)
+
     args = args[:]
     test_output_path = _RemoveFlag(args, '--isolated-script-test-output')
     perf_output_path = _RemoveFlag(args, '--isolated-script-test-perf-output')

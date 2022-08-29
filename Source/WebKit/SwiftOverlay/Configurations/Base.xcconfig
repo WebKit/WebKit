@@ -21,7 +21,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "../Configurations/SDKVariant.xcconfig"
+#include "../../../../Configurations/SDKVariant.xcconfig"
 #include "../Configurations/Version.xcconfig"
 
 ALWAYS_SEARCH_USER_PATHS = NO;

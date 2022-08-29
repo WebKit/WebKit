@@ -143,7 +143,7 @@ bool RemoveInactiveInterfaceVariablesTraverser::visitDeclaration(Visit visit,
         {
             TType *structSpecifierType      = new TType(type.getStruct(), true);
             TVariable *emptyVariable        = new TVariable(mSymbolTable, kEmptyImmutableString,
-                                                     structSpecifierType, SymbolType::Empty);
+                                                            structSpecifierType, SymbolType::Empty);
             TIntermDeclaration *declaration = new TIntermDeclaration();
             declaration->appendDeclarator(new TIntermSymbol(emptyVariable));
             replacement.push_back(declaration);
@@ -158,7 +158,7 @@ bool RemoveInactiveInterfaceVariablesTraverser::visitDeclaration(Visit visit,
 
 bool RemoveInactiveInterfaceVariablesTraverser::visitBinary(Visit visit, TIntermBinary *node)
 {
-    // Remove any code that SH_INIT_OUTPUT_VARIABLES might have added corresponding to inactive
+    // Remove any code that initOutputVariables might have added corresponding to inactive
     // output variables.  This code is always in the form of `variable = ...;`.
     if (node->getOp() != EOpAssign)
     {

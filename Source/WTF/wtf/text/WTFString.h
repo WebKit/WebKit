@@ -132,8 +132,10 @@ public:
     WTF_EXPORT_PRIVATE CString utf8(ConversionMode) const;
     WTF_EXPORT_PRIVATE CString utf8() const;
 
-    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUtf8(ConversionMode) const;
-    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUtf8() const;
+    template<typename Func>
+    Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> tryGetUTF8ForRange(const Func&, unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
+    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUTF8(ConversionMode) const;
+    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUTF8() const;
 
     UChar characterAt(unsigned index) const;
     UChar operator[](unsigned index) const { return characterAt(index); }
@@ -508,6 +510,18 @@ inline void String::clearImplIfNotShared()
 {
     if (m_impl && m_impl->hasOneRef())
         m_impl = nullptr;
+}
+
+template<typename Func>
+inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> String::tryGetUTF8ForRange(const Func& function, unsigned offset, unsigned length, ConversionMode mode) const
+{
+    ASSERT(offset <= this->length());
+    ASSERT(length <= (this->length() - offset));
+    if (!m_impl) {
+        constexpr const char* emptyString = "";
+        return function(Span { emptyString, emptyString });
+    }
+    return m_impl->tryGetUTF8ForRange(function, offset, length, mode);
 }
 
 #ifdef __OBJC__

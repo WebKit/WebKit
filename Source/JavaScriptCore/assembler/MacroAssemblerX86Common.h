@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3931,13 +3931,13 @@ public:
     template<PtrTag tag>
     static void replaceWithVMHalt(CodeLocationLabel<tag> instructionStart)
     {
-        X86Assembler::replaceWithHlt(instructionStart.executableAddress());
+        X86Assembler::replaceWithHlt(instructionStart.taggedPtr());
     }
 
     template<PtrTag startTag, PtrTag destTag>
     static void replaceWithJump(CodeLocationLabel<startTag> instructionStart, CodeLocationLabel<destTag> destination)
     {
-        X86Assembler::replaceWithJump(instructionStart.executableAddress(), destination.executableAddress());
+        X86Assembler::replaceWithJump(instructionStart.taggedPtr(), destination.taggedPtr());
     }
     
     static ptrdiff_t maxJumpReplacementSize()

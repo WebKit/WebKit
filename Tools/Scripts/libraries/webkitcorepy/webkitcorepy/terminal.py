@@ -24,6 +24,9 @@ import contextlib
 import io
 import sys
 
+if not sys.platform.startswith('win'):
+    import readline
+
 from webkitcorepy import StringIO, run
 
 if sys.version_info > (3, 0):

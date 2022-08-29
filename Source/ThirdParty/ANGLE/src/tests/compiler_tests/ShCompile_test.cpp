@@ -39,7 +39,11 @@ class ShCompileTest : public testing::Test
 
     void testCompile(const char **shaderStrings, int stringCount, bool expectation)
     {
-        ShCompileOptions options      = SH_OBJECT_CODE | SH_VARIABLES | SH_INIT_OUTPUT_VARIABLES;
+        ShCompileOptions options    = {};
+        options.objectCode          = true;
+        options.variables           = true;
+        options.initOutputVariables = true;
+
         bool success                  = sh::Compile(mCompiler, shaderStrings, stringCount, options);
         const std::string &compileLog = sh::GetInfoLog(mCompiler);
         EXPECT_EQ(expectation, success) << compileLog;
@@ -201,10 +205,13 @@ TEST_F(ShCompileTest, DecimalSepLocale)
         {
             std::locale localizedLoc(locale);
 
+            ShCompileOptions compileOptions = {};
+            compileOptions.objectCode       = true;
+
             // std::locale::global() must be used instead of setlocale() to affect new streams'
             // default locale
             std::locale::global(std::locale::classic());
-            sh::Compile(mCompiler, parts, 1, SH_OBJECT_CODE);
+            sh::Compile(mCompiler, parts, 1, compileOptions);
             std::string referenceOut = sh::GetObjectCode(mCompiler);
             EXPECT_NE(referenceOut.find("1.9"), std::string::npos)
                 << "float formatted incorrectly with classic locale";
@@ -212,7 +219,7 @@ TEST_F(ShCompileTest, DecimalSepLocale)
             sh::ClearResults(mCompiler);
 
             std::locale::global(localizedLoc);
-            sh::Compile(mCompiler, parts, 1, SH_OBJECT_CODE);
+            sh::Compile(mCompiler, parts, 1, compileOptions);
             std::string localizedOut = sh::GetObjectCode(mCompiler);
             EXPECT_NE(localizedOut.find("1.9"), std::string::npos)
                 << "float formatted incorrectly with locale (" << localizedLoc.name() << ") set";

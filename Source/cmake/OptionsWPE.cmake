@@ -84,6 +84,10 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_RTC PRIVATE ${ENABLE_EXPERIMENTAL_FE
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBGL2 PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBXR PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
 
+if (WPE_VERSION VERSION_GREATER_EQUAL 1.13.90)
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_GAMEPAD PUBLIC ON)
+endif ()
+
 # Public options specific to the WPE port. Do not add any options here unless
 # there is a strong reason we should support changing the value of the option,
 # and the option is not relevant to other WebKit ports.
@@ -91,7 +95,7 @@ WEBKIT_OPTION_DEFINE(ENABLE_DOCUMENTATION "Whether to generate documentation." P
 WEBKIT_OPTION_DEFINE(ENABLE_INTROSPECTION "Whether to enable GObject introspection." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_JOURNALD_LOG "Whether to enable journald logging" PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WPE_QT_API "Whether to enable support for the Qt5/QML plugin" PUBLIC ${ENABLE_DEVELOPER_MODE})
-WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PUBLIC OFF)
+WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_AVIF "Whether to enable support for AVIF images." PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
 WEBKIT_OPTION_DEFINE(USE_JPEGXL "Whether to enable support for JPEG-XL images." PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
 WEBKIT_OPTION_DEFINE(USE_LCMS "Whether to enable support for image color management using libcms2." PUBLIC ON)
@@ -199,6 +203,10 @@ if (ENABLE_ACCESSIBILITY)
     endif ()
 endif ()
 
+if (ENABLE_GAMEPAD AND (NOT (WPE_VERSION VERSION_GREATER_EQUAL 1.13.90)))
+    message(FATAL_ERROR "libwpe>=1.13.90 is required for ENABLE_GAMEPAD")
+endif ()
+
 if (USE_JPEGXL)
     find_package(JPEGXL)
     if (NOT JPEGXL_FOUND)
@@ -252,11 +260,13 @@ endif ()
 
 
 if (ENABLE_WEBXR)
+    if (NOT ENABLE_GAMEPAD)
+        message(FATAL_ERROR "Gamepad is required to be enabled for WebXR support.")
+    endif ()
     find_package(OpenXR 1.0.9)
     if (NOT OPENXR_FOUND)
         message(FATAL_ERROR "OpenXR is required to enable WebXR support.")
     endif ()
-    SET_AND_EXPOSE_TO_BUILD(ENABLE_GAMEPAD ON)
     SET_AND_EXPOSE_TO_BUILD(USE_OPENXR ${OpenXR_FOUND})
     SET_AND_EXPOSE_TO_BUILD(XR_USE_PLATFORM_EGL TRUE)
     SET_AND_EXPOSE_TO_BUILD(XR_USE_GRAPHICS_API_OPENGL TRUE)

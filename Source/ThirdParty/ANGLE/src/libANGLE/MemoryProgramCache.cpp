@@ -161,8 +161,6 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
         angle::Result result =
             program->loadBinary(context, GL_PROGRAM_BINARY_ANGLE, uncompressedData.data(),
                                 static_cast<int>(uncompressedData.size()));
-        ANGLE_HISTOGRAM_BOOLEAN("GPU.ANGLE.ProgramCache.LoadBinarySuccess",
-                                result == angle::Result::Continue);
         ANGLE_TRY(result);
 
         if (result == angle::Result::Continue)
@@ -224,9 +222,6 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
         ERR() << "Error compressing binary data.";
         return angle::Result::Incomplete;
     }
-
-    ANGLE_HISTOGRAM_COUNTS("GPU.ANGLE.ProgramCache.ProgramBinarySizeBytes",
-                           static_cast<int>(compressedData.size()));
 
     // TODO(syoussefi): to be removed.  Compatibility for Chrome until it supports
     // EGL_ANDROID_blob_cache. http://anglebug.com/2516

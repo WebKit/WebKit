@@ -17,7 +17,7 @@ using namespace sh;
 class RecordConstantPrecisionTest : public MatchOutputCodeTest
 {
   public:
-    RecordConstantPrecisionTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, 0, SH_ESSL_OUTPUT) {}
+    RecordConstantPrecisionTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_ESSL_OUTPUT) {}
 };
 
 // The constant's precision must be specified if its precision is higher than the other operands,

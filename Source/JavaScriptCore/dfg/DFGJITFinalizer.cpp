@@ -36,7 +36,7 @@
 
 namespace JSC { namespace DFG {
 
-JITFinalizer::JITFinalizer(Plan& plan, Ref<JITCode>&& jitCode, std::unique_ptr<LinkBuffer> linkBuffer, MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck)
+JITFinalizer::JITFinalizer(Plan& plan, Ref<JITCode>&& jitCode, std::unique_ptr<LinkBuffer> linkBuffer, CodePtr<JSEntryPtrTag> withArityCheck)
     : Finalizer(plan)
     , m_jitCode(WTFMove(jitCode))
     , m_linkBuffer(WTFMove(linkBuffer))

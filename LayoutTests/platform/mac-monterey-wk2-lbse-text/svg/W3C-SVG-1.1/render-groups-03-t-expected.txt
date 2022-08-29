@@ -34,6 +34,8 @@ layer at (30,6) size 132x120
       chunk 1 text run 1 at (30.00,90.00) startOffset 0 endOffset 3 width 132.36: "SVG"
 layer at (70,55) size 130x71
   RenderSVGRect {rect} at (50,49) size 130x71 [fill={[type=SOLID] [color=#820032]}] [x=70.00] [y=55.00] [width=130.00] [height=70.00]
+layer at (162,75) size 80x81
+  RenderSVGImage {image} at (142,69) size 80x81
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

@@ -93,37 +93,37 @@ inline bool JITThunks::WeakNativeExecutableHash::equal(const Weak<NativeExecutab
     return aExecutable.function() == std::get<0>(b) && aExecutable.constructor() == std::get<1>(b) && aExecutable.implementationVisibility() == std::get<2>(b) && aExecutable.name() == std::get<3>(b);
 }
 
-MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiNativeCall(VM& vm)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeCall(VM& vm)
 {
     ASSERT(Options::useJIT());
     return ctiStub(vm, nativeCallGenerator).code();
 }
 
-MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiNativeConstruct(VM& vm)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeConstruct(VM& vm)
 {
     ASSERT(Options::useJIT());
     return ctiStub(vm, nativeConstructGenerator).code();
 }
 
-MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCall(VM& vm)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCall(VM& vm)
 {
     ASSERT(Options::useJIT());
     return ctiStub(vm, nativeTailCallGenerator).code();
 }
 
-MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCallWithoutSavedTags(VM& vm)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCallWithoutSavedTags(VM& vm)
 {
     ASSERT(Options::useJIT());
     return ctiStub(vm, nativeTailCallWithoutSavedTagsGenerator).code();
 }
 
-MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionCall(VM& vm)
+CodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionCall(VM& vm)
 {
     ASSERT(Options::useJIT());
     return ctiStub(vm, internalFunctionCallGenerator).code();
 }
 
-MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionConstruct(VM& vm)
+CodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionConstruct(VM& vm)
 {
     ASSERT(Options::useJIT());
     return ctiStub(vm, internalFunctionConstructGenerator).code();

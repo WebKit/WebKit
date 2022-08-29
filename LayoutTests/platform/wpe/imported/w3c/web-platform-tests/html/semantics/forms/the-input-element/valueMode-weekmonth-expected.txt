@@ -1,0 +1,6 @@
+
+FAIL value IDL attribute of input type month without value attribute assert_equals: expected "" but got "foo\0"
+FAIL value IDL attribute of input type month with value attribute assert_equals: expected "" but got "foo\0"
+FAIL value IDL attribute of input type week without value attribute assert_equals: expected "" but got "foo\0"
+FAIL value IDL attribute of input type week with value attribute assert_equals: expected "" but got "foo\0"
+

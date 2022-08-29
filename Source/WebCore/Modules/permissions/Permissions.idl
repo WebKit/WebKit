@@ -29,7 +29,7 @@
 [
     EnabledBySetting=PermissionsAPIEnabled,
     GenerateIsReachable=ReachableFromNavigator,
-    Exposed=(Window,DedicatedWorker)
+    Exposed=(Window,Worker)
 ] interface Permissions {
     Promise<PermissionStatus> query(object permissionDesc);
 };

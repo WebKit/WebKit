@@ -28,9 +28,10 @@ Several command-line arguments control how the tests run:
 * `--calibration`: Prints the number of steps a test runs in a fixed time. Used by `perf_test_runner.py`.
 * `--steps-per-trial x`: Fixed number of steps to run for each test trial.
 * `--max-steps-performed x`: Upper maximum on total number of steps for the entire test run.
-* `--screenshot-dir dir`: Directory to store test screenshots. Only implemented in `TracePerfTest`.
+* `--screenshot-dir dir`: Directory to store test screenshots. Implies `--save-screenshots`. On Android this directory is on device, not local (see also `--render-test-output-dir`). Only implemented in `TracePerfTest`.
+* `--save-screenshots`: Save screenshots. Only implemented in `TracePerfTest`.
 * `--screenshot-frame <frame>`: Which frame to capture a screenshot of. Defaults to first frame (1). Only implemented in `TracePerfTest`.
-* `--render-test-output-dir=dir`: Equivalent to `--screenshot-dir dir`.
+* `--render-test-output-dir=dir`: Directory to store test artifacts (including screenshots but unlike `--screenshot-dir`, `dir` here is always a local directory regardless of platform and `--save-screenshots` isn't implied).
 * `--verbose`: Print extra timing information.
 * `--warmup-loops x`: Number of times to warm up the test before starting timing. Defaults to 3.
 * `--warmup-steps x`: Maximum number of steps for the warmup loops. Defaults to unlimited.

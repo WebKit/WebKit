@@ -8,14 +8,6 @@
     ],
     "features": [
         {
-            "name": "basic_GL_line_rasterization",
-            "category": "Features",
-            "description": [
-                "Enable the use of pixel shader patching to implement OpenGL basic line ",
-                "rasterization rules"
-            ]
-        },
-        {
             "name": "bresenham_line_rasterization",
             "category": "Features",
             "description": [
@@ -466,6 +458,14 @@
             "issue": "http://anglebug.com/5421"
         },
         {
+            "name": "supports_primitive_topology_list_restart",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_primitive_topology_list_restart extension."
+            ],
+            "issue": "http://anglebug.com/3832"
+        },
+        {
             "name": "supports_blend_operation_advanced",
             "category": "Features",
             "description": [
@@ -694,6 +694,14 @@
             "issue": "http://anglebug.com/5881"
         },
         {
+            "name": "supports_primitives_generated_query",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_primitives_generated_query extension"
+            ],
+            "issue": "http://anglebug.com/5430"
+        },
+        {
             "name": "supports_surface_capabilities2_extension",
             "category": "Features",
             "description": [
@@ -871,6 +879,14 @@
             "issue": "http://anglebug.com/7172"
         },
         {
+            "name": "supports_fragment_shader_pixel_interlock",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_fragment_shader_interlock extension ",
+                "and has the fragmentShaderPixelInterlock feature"
+            ]
+        },
+        {
             "name": "explicitly_enable_per_sample_shading",
             "category": "Workarounds",
             "description": [
@@ -896,6 +912,14 @@
             "issue": "https://anglebug.com/7320"
         },
         {
+            "name": "supports_imageless_framebuffer",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_KHR_imageless_framebuffer extension"
+            ],
+            "issue": "http://anglebug.com/7553"
+        },
+        {
             "name": "prefer_linear_filter_for_YUV",
             "category": "Features",
             "description": [
@@ -908,6 +932,15 @@
             "description": [
                 "VkDevice supports VK_ANDROID_render_to_external_format and VK_EXT_ycbcr_attachment"
             ]
+        },
+        {
+            "name": "use_non_zero_stencil_write_mask_static_state",
+            "category": "Workarounds",
+            "description": [
+                "Work around a driver bug where 0 in stencil write mask static state would make the",
+                "corresponding dynamic state malfunction in the presence of discard or alpha to coverage"
+            ],
+            "issue": "http://anglebug.com/7556"
         }
     ]
 }

@@ -30,7 +30,7 @@ DispatchTableGL::DispatchTableGL() = default;
 void DispatchTableGL::initProcsDesktopGL(const gl::Version &version,
                                          const std::set<std::string> &extensions)
 {
-#if defined(ANGLE_ENABLE_OPENGL_DESKTOP)
+#if defined(ANGLE_ENABLE_GL_DESKTOP_BACKEND)
     if (extensions.count("GL_ARB_ES2_compatibility") != 0)
     {
         ASSIGN("glClearDepthf", clearDepthf);
@@ -1908,7 +1908,7 @@ void DispatchTableGL::initProcsDesktopGL(const gl::Version &version,
         ASSIGN("glVertexArrayVertexBuffer", vertexArrayVertexBuffer);
         ASSIGN("glVertexArrayVertexBuffers", vertexArrayVertexBuffers);
     }
-#endif  // defined(ANGLE_ENABLE_OPENGL_DESKTOP)
+#endif  // defined(ANGLE_ENABLE_GL_DESKTOP_BACKEND)
 }
 
 void DispatchTableGL::initProcsGLES(const gl::Version &version,
@@ -2819,7 +2819,7 @@ void DispatchTableGL::initProcsSharedExtensions(const std::set<std::string> &ext
 void DispatchTableGL::initProcsDesktopGLNULL(const gl::Version &version,
                                              const std::set<std::string> &extensions)
 {
-#    if defined(ANGLE_ENABLE_OPENGL_DESKTOP)
+#    if defined(ANGLE_ENABLE_GL_DESKTOP_BACKEND)
     if (extensions.count("GL_ARB_ES2_compatibility") != 0)
     {
         clearDepthf              = &glClearDepthfNULL;
@@ -4694,7 +4694,7 @@ void DispatchTableGL::initProcsDesktopGLNULL(const gl::Version &version,
         vertexArrayVertexBuffer                  = &glVertexArrayVertexBufferNULL;
         vertexArrayVertexBuffers                 = &glVertexArrayVertexBuffersNULL;
     }
-#    endif  // defined(ANGLE_ENABLE_OPENGL_DESKTOP)
+#    endif  // defined(ANGLE_ENABLE_GL_DESKTOP_BACKEND)
 }
 
 void DispatchTableGL::initProcsGLESNULL(const gl::Version &version,

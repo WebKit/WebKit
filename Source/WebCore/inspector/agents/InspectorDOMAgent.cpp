@@ -978,7 +978,7 @@ Protocol::ErrorStringOr<String> InspectorDOMAgent::getAssociatedDataForNode(Prot
 }
 #endif
 
-Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::DOM::EventListener>>> InspectorDOMAgent::getEventListenersForNode(Protocol::DOM::NodeId nodeId)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::DOM::EventListener>>> InspectorDOMAgent::getEventListenersForNode(Protocol::DOM::NodeId nodeId, std::optional<bool>&& includeAncestors)
 {
     Protocol::ErrorString errorString;
 
@@ -988,10 +988,12 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::DOM::EventListener>>> Inspec
 
     Vector<RefPtr<EventTarget>> ancestors;
     ancestors.append(node);
-    for (auto* ancestor = node->parentOrShadowHostNode(); ancestor; ancestor = ancestor->parentOrShadowHostNode())
-        ancestors.append(ancestor);
-    if (auto* window = node->document().domWindow())
-        ancestors.append(window);
+    if (includeAncestors.value_or(true)) {
+        for (auto* ancestor = node->parentOrShadowHostNode(); ancestor; ancestor = ancestor->parentOrShadowHostNode())
+            ancestors.append(ancestor);
+        if (auto* window = node->document().domWindow())
+            ancestors.append(window);
+    }
 
     struct EventListenerInfo {
         RefPtr<EventTarget> eventTarget;
@@ -1841,9 +1843,11 @@ Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int d
         if (children->length() > 0)
             value->setChildren(WTFMove(children));
     }
-    
-    if (auto layoutFlags = InspectorCSSAgent::layoutFlagsForNode(*node))
-        value->setLayoutFlags(layoutFlags.releaseNonNull());
+
+    if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent()) {
+        if (auto layoutFlags = cssAgent->protocolLayoutFlagsForNode(*node))
+            value->setLayoutFlags(layoutFlags.releaseNonNull());
+    }
 
     auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (pageAgent) {

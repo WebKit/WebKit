@@ -521,6 +521,14 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
                 WI.settings.enabledDOMTreeBadgeTypes.save();
             }, WI.settings.enabledDOMTreeBadgeTypes.value.includes(WI.DOMTreeElement.BadgeType.Flex));
         }
+
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): the `includeAncestors` parameter of `DOM.getEventListenersForNode` did not exist yet.
+        if (InspectorBackend.hasCommand("DOM.getEventListenersForNode", "includeAncestors")) {
+            contextMenu.appendCheckboxItem(WI.UIString("Event"), () => {
+                WI.settings.enabledDOMTreeBadgeTypes.value.toggleIncludes(WI.DOMTreeElement.BadgeType.Event);
+                WI.settings.enabledDOMTreeBadgeTypes.save();
+            }, WI.settings.enabledDOMTreeBadgeTypes.value.includes(WI.DOMTreeElement.BadgeType.Event));
+        }
     }
 
     _domTreeElementAdded(event)

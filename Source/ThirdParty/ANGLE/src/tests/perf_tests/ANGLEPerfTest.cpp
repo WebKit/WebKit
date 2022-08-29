@@ -9,6 +9,9 @@
 
 #include "ANGLEPerfTest.h"
 
+#if defined(ANGLE_PLATFORM_ANDROID)
+#    include <android/log.h>
+#endif
 #include "ANGLEPerfTestArgs.h"
 #include "common/debug.h"
 #include "common/mathutil.h"
@@ -16,6 +19,7 @@
 #include "common/string_utils.h"
 #include "common/system_utils.h"
 #include "common/utilities.h"
+#include "libANGLE/capture/gl_enum_utils.h"
 #include "test_utils/runner/TestSuite.h"
 #include "third_party/perf/perf_test.h"
 #include "third_party/trace_event/trace_event.h"
@@ -271,6 +275,10 @@ ANGLEPerfTest::~ANGLEPerfTest() {}
 
 void ANGLEPerfTest::run()
 {
+    printf("ANGLE: running test: %s\n", mName.c_str());
+#if defined(ANGLE_PLATFORM_ANDROID)
+    __android_log_print(ANDROID_LOG_INFO, "ANGLE", "running test: %s", mName.c_str());
+#endif
     if (mSkipTest)
     {
         GTEST_SKIP() << mSkipTestReason;
@@ -1225,7 +1233,7 @@ void ANGLERenderTest::skipTestIfFailsIntegerPrerequisite()
             std::stringstream ss;
             ss << "Test skipped due to value (" << std::to_string(static_cast<int>(driverValue))
                << ") being less than the prerequisite minimum (" << std::to_string(minRequired)
-               << ") for GL constant 0x" << std::hex << target;
+               << ") for GL constant " << gl::GLenumToString(gl::GLenumGroup::DefaultGroup, target);
             skipTest(ss.str());
         }
     }

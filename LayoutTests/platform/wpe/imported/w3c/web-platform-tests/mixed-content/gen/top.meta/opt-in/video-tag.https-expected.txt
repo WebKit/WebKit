@@ -1,0 +1,6 @@
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/video.py?redirection=no-redirect&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+
+PASS Mixed-Content: Expects allowed for video-tag to same-https origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects blocked for video-tag to cross-http origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects blocked for video-tag to same-http origin and no-redirect redirection from https context.
+

@@ -15,3 +15,6 @@ webkit.org/b/243074 imported/w3c/web-platform-tests/media-capabilities/encodingI
 
 webkit.org/b/243076 imported/w3c/web-platform-tests/resource-timing/redirects.html [ Pass Failure ]
 accessibility/aria-description.html [ Skip ]
+
+webkit.org/b/244358 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html [ Pass Failure ]
+webkit.org/b/244358 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html [ Pass Failure ]

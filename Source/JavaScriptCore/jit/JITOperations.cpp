@@ -182,7 +182,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, SlowPathR
             functionExecutable->prepareForExecution<FunctionExecutable>(vm, targetFunction, scope, CodeForCall, codeBlockSlot);
             RETURN_IF_EXCEPTION(throwScope, encodeResult(nullptr, nullptr));
         }
-        return encodeResult(executable->entrypointFor(CodeForCall, MustCheckArity).executableAddress(), codeBlockSlot);
+        return encodeResult(executable->entrypointFor(CodeForCall, MustCheckArity).taggedPtr(), codeBlockSlot);
     }
 }
 
@@ -231,40 +231,6 @@ JSC_DEFINE_JIT_OPERATION(operationThrowIteratorResultIsNotObject, void, (JSGloba
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     throwTypeError(globalObject, scope, "Iterator result interface is not an object."_s);
-}
-
-JSC_DEFINE_JIT_OPERATION(operationCallArityCheck, int32_t, (JSGlobalObject* globalObject))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    int32_t missingArgCount = CommonSlowPaths::arityCheckFor(vm, callFrame, CodeForCall);
-    if (UNLIKELY(missingArgCount < 0)) {
-        CodeBlock* codeBlock = CommonSlowPaths::codeBlockFromCallFrameCallee(callFrame, CodeForCall);
-        callFrame->convertToStackOverflowFrame(vm, codeBlock);
-        throwStackOverflowError(globalObject, scope);
-    }
-
-    return missingArgCount;
-}
-
-JSC_DEFINE_JIT_OPERATION(operationConstructArityCheck, int32_t, (JSGlobalObject* globalObject))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    int32_t missingArgCount = CommonSlowPaths::arityCheckFor(vm, callFrame, CodeForConstruct);
-    if (UNLIKELY(missingArgCount < 0)) {
-        CodeBlock* codeBlock = CommonSlowPaths::codeBlockFromCallFrameCallee(callFrame, CodeForConstruct);
-        callFrame->convertToStackOverflowFrame(vm, codeBlock);
-        throwStackOverflowError(globalObject, scope);
-    }
-
-    return missingArgCount;
 }
 
 JSC_DEFINE_JIT_OPERATION(operationTryGetById, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier))
@@ -2044,7 +2010,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
 
         codeBlock->optimizeSoon();
         codeBlock->unlinkedCodeBlock()->setDidOptimize(TriState::True);
-        void* targetPC = untagCodePtr<JITThunkPtrTag>(vm.getCTIStub(DFG::osrEntryThunkGenerator).code().executableAddress());
+        void* targetPC = untagCodePtr<JITThunkPtrTag>(vm.getCTIStub(DFG::osrEntryThunkGenerator).code().taggedPtr());
         targetPC = tagCodePtrWithStackPointerForJITCall(targetPC, callFrame);
         return encodeResult(targetPC, dataBuffer);
     }
@@ -2098,8 +2064,8 @@ JSC_DEFINE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, SlowPathRet
     switch (optimizedReplacement->jitType()) {
     case JITType::DFGJIT:
     case JITType::FTLJIT: {
-        MacroAssemblerCodePtr<ExceptionHandlerPtrTag> entry = DFG::prepareCatchOSREntry(vm, callFrame, codeBlock, optimizedReplacement, bytecodeIndex);
-        return encodeResult(entry.executableAddress<char*>(), optimizedReplacement);
+        CodePtr<ExceptionHandlerPtrTag> entry = DFG::prepareCatchOSREntry(vm, callFrame, codeBlock, optimizedReplacement, bytecodeIndex);
+        return encodeResult(entry.taggedPtr<char*>(), optimizedReplacement);
     }
     default:
         break;
@@ -2766,14 +2732,14 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchCharWithUnknownKeyType, char*, (JSGlobal
 
     const SimpleJumpTable& linkedTable = codeBlock->baselineSwitchJumpTable(tableIndex);
     ASSERT(codeBlock->unlinkedSwitchJumpTable(tableIndex).m_min == min);
-    void* result = linkedTable.m_ctiDefault.executableAddress();
+    void* result = linkedTable.m_ctiDefault.taggedPtr();
 
     if (key.isString()) {
         JSString* string = asString(key);
         if (string->length() == 1) {
             String value = string->value(globalObject);
             RETURN_IF_EXCEPTION(throwScope, nullptr);
-            result = linkedTable.ctiForValue(min, value[0]).executableAddress();
+            result = linkedTable.ctiForValue(min, value[0]).taggedPtr();
         }
     }
 
@@ -2793,11 +2759,11 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchImmWithUnknownKeyType, char*, (VM* vmPoi
     ASSERT(codeBlock->unlinkedSwitchJumpTable(tableIndex).m_min == min);
     void* result;
     if (key.isInt32())
-        result = linkedTable.ctiForValue(min, key.asInt32()).executableAddress();
+        result = linkedTable.ctiForValue(min, key.asInt32()).taggedPtr();
     else if (key.isDouble() && key.asDouble() == static_cast<int32_t>(key.asDouble()))
-        result = linkedTable.ctiForValue(min, static_cast<int32_t>(key.asDouble())).executableAddress();
+        result = linkedTable.ctiForValue(min, static_cast<int32_t>(key.asDouble())).taggedPtr();
     else
-        result = linkedTable.m_ctiDefault.executableAddress();
+        result = linkedTable.m_ctiDefault.taggedPtr();
     assertIsTaggedWith<JSSwitchPtrTag>(result);
     return reinterpret_cast<char*>(result);
 }
@@ -2820,9 +2786,9 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
         RETURN_IF_EXCEPTION(throwScope, nullptr);
 
         const UnlinkedStringJumpTable& unlinkedTable = codeBlock->unlinkedStringSwitchJumpTable(tableIndex);
-        result = linkedTable.ctiForValue(unlinkedTable, value).executableAddress();
+        result = linkedTable.ctiForValue(unlinkedTable, value).taggedPtr();
     } else
-        result = linkedTable.ctiDefault().executableAddress();
+        result = linkedTable.ctiDefault().taggedPtr();
 
     assertIsTaggedWith<JSSwitchPtrTag>(result);
     return reinterpret_cast<char*>(result);

@@ -17,7 +17,7 @@ using namespace sh;
 class NVDrawBuffersTest : public MatchOutputCodeTest
 {
   public:
-    NVDrawBuffersTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, 0, SH_ESSL_OUTPUT)
+    NVDrawBuffersTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_ESSL_OUTPUT)
     {
         ShBuiltInResources *resources = getResources();
         resources->MaxDrawBuffers     = 8;

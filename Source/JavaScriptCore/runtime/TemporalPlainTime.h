@@ -49,6 +49,8 @@ public:
 
     static ISO8601::PlainTime toPlainTime(JSGlobalObject*, const ISO8601::Duration&);
     static ISO8601::Duration roundTime(ISO8601::PlainTime, double increment, TemporalUnit, RoundingMode, std::optional<double> dayLengthNs);
+    static ISO8601::Duration toTemporalTimeRecord(JSGlobalObject*, JSObject*, bool skipRelevantPropertyCheck = false);
+    static ISO8601::PlainTime regulateTime(JSGlobalObject*, ISO8601::Duration&&, TemporalOverflow);
 
     static TemporalPlainTime* from(JSGlobalObject*, JSValue, std::optional<TemporalOverflow>);
     static int32_t compare(const ISO8601::PlainTime&, const ISO8601::PlainTime&);

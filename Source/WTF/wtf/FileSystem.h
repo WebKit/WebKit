@@ -289,6 +289,9 @@ inline MappedFileData& MappedFileData::operator=(MappedFileData&& other)
 // This function fails if there is already a file at the destination path.
 WTF_EXPORT_PRIVATE MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(Span<const uint8_t>)>&)>&& apply, PlatformFileHandle* = nullptr);
 
+WTF_EXPORT_PRIVATE MappedFileData createMappedFileData(const String&, size_t, PlatformFileHandle* = nullptr);
+WTF_EXPORT_PRIVATE void finalizeMappedFileData(MappedFileData&, size_t);
+
 } // namespace FileSystemImpl
 } // namespace WTF
 

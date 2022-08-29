@@ -68,6 +68,7 @@ public:
     std::optional<NetworkActivityTracker> networkActivityTracker;
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
     bool hadMainFrameMainResourcePrivateRelayed { false };
+    bool allowPrivacyProxy { true };
 };
 
 } // namespace WebKit

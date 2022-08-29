@@ -238,6 +238,24 @@ StringView URL::fragmentIdentifier() const
     return StringView(m_string).substring(m_queryEnd + 1);
 }
 
+// https://wicg.github.io/scroll-to-text-fragment/#the-fragment-directive
+String URL::consumefragmentDirective()
+{
+    ASCIILiteral fragmentDirectiveDelimiter = ":~:"_s;
+    auto fragment = fragmentIdentifier();
+    
+    auto fragmentDirectiveStart = fragment.find(fragmentDirectiveDelimiter);
+    
+    if (fragmentDirectiveStart == notFound)
+        return { };
+    
+    auto fragmentDirective = fragment.substring(fragmentDirectiveStart + fragmentDirectiveDelimiter.length()).toString();
+    
+    setFragmentIdentifier(fragment.left(fragmentDirectiveStart));
+    
+    return fragmentDirective;
+}
+
 URL URL::truncatedForUseAsBase() const
 {
     return URL(m_string.left(m_pathAfterLastSlash));
@@ -531,20 +549,21 @@ template<typename StringType>
 static String percentEncodeCharacters(const StringType& input, bool(*shouldEncode)(UChar))
 {
     auto encode = [shouldEncode] (const StringType& input) {
-        CString utf8 = input.utf8();
-        auto* data = utf8.data();
-        StringBuilder builder;
-        auto length = utf8.length();
-        for (unsigned j = 0; j < length; j++) {
-            auto c = data[j];
-            if (shouldEncode(c)) {
-                builder.append('%');
-                builder.append(upperNibbleToASCIIHexDigit(c));
-                builder.append(lowerNibbleToASCIIHexDigit(c));
-            } else
-                builder.append(c);
-        }
-        return builder.toString();
+        auto result = input.tryGetUTF8ForRange([&](Span<const char> span) -> String {
+            StringBuilder builder;
+            for (unsigned j = 0; j < span.size(); j++) {
+                auto c = span[j];
+                if (shouldEncode(c)) {
+                    builder.append('%');
+                    builder.append(upperNibbleToASCIIHexDigit(c));
+                    builder.append(lowerNibbleToASCIIHexDigit(c));
+                } else
+                    builder.append(c);
+            }
+            return builder.toString();
+        }, 0, input.length());
+        RELEASE_ASSERT(result);
+        return result.value();
     };
 
     for (size_t i = 0; i < input.length(); ++i) {

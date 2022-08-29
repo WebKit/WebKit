@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,30 +35,17 @@
 
 namespace JSC {
 
-void MacroAssemblerCodePtrBase::dumpWithName(void* executableAddress, void* dataLocation, const char* name, PrintStream& out)
-{
-    if (!executableAddress) {
-        out.print(name, "(null)");
-        return;
-    }
-    if (executableAddress == dataLocation) {
-        out.print(name, "(", RawPointer(executableAddress), ")");
-        return;
-    }
-    out.print(name, "(executable = ", RawPointer(executableAddress), ", dataLocation = ", RawPointer(dataLocation), ")");
-}
-
-bool MacroAssemblerCodeRefBase::tryToDisassemble(MacroAssemblerCodePtr<DisassemblyPtrTag> codePtr, size_t size, const char* prefix, PrintStream& out)
+bool MacroAssemblerCodeRefBase::tryToDisassemble(CodePtr<DisassemblyPtrTag> codePtr, size_t size, const char* prefix, PrintStream& out)
 {
     return JSC::tryToDisassemble(codePtr, size, prefix, out);
 }
 
-bool MacroAssemblerCodeRefBase::tryToDisassemble(MacroAssemblerCodePtr<DisassemblyPtrTag> codePtr, size_t size, const char* prefix)
+bool MacroAssemblerCodeRefBase::tryToDisassemble(CodePtr<DisassemblyPtrTag> codePtr, size_t size, const char* prefix)
 {
     return tryToDisassemble(codePtr, size, prefix, WTF::dataFile());
 }
 
-CString MacroAssemblerCodeRefBase::disassembly(MacroAssemblerCodePtr<DisassemblyPtrTag> codePtr, size_t size)
+CString MacroAssemblerCodeRefBase::disassembly(CodePtr<DisassemblyPtrTag> codePtr, size_t size)
 {
     StringPrintStream out;
     if (!tryToDisassemble(codePtr, size, "", out))

@@ -61,10 +61,10 @@ Seconds totalFTLCompileTime;
 Seconds totalFTLDFGCompileTime;
 Seconds totalFTLB3CompileTime;
 
-void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr<CFunctionPtrTag> newCalleeFunction)
+void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, CodePtr<CFunctionPtrTag> newCalleeFunction)
 {
     MacroAssembler::repatchCall(
-        CodeLocationCall<ReturnAddressPtrTag>(MacroAssemblerCodePtr<ReturnAddressPtrTag>(returnAddress)),
+        CodeLocationCall<ReturnAddressPtrTag>(CodePtr<ReturnAddressPtrTag>::fromTaggedPtr(const_cast<void*>(returnAddress.value()))),
         newCalleeFunction.retagged<OperationPtrTag>());
 }
 
@@ -826,13 +826,6 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     emitConsistencyCheck();
 #endif
 
-    stackOverflow.link(this);
-    m_bytecodeIndex = BytecodeIndex(0);
-    if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
-    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, regT0);
-    callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, regT0);
-
     // If the number of parameters is 1, we never require arity fixup.
     bool requiresArityFixup = m_unlinkedCodeBlock->numParameters() != 1;
     if (m_unlinkedCodeBlock->codeType() == FunctionCode && requiresArityFixup) {
@@ -845,19 +838,15 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
         emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, regT0);
         store8(TrustedImm32(0), Address(regT0, CodeBlock::offsetOfShouldAlwaysBeInlined()));
 
+        unsigned numberOfParameters = m_unlinkedCodeBlock->numParameters();
         load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), regT1);
-        branch32(AboveOrEqual, regT1, TrustedImm32(m_unlinkedCodeBlock->numParameters())).linkTo(beginLabel, this);
+        branch32(AboveOrEqual, regT1, TrustedImm32(numberOfParameters)).linkTo(beginLabel, this);
 
         m_bytecodeIndex = BytecodeIndex(0);
 
-        if (maxFrameExtentForSlowPathCall)
-            addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
-        loadPtr(Address(regT0, CodeBlock::offsetOfGlobalObject()), argumentGPR0);
-        callOperationWithCallFrameRollbackOnException(m_unlinkedCodeBlock->isConstructor() ? operationConstructArityCheck : operationCallArityCheck, argumentGPR0);
-        if (maxFrameExtentForSlowPathCall)
-            addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
-        branchTest32(Zero, returnValueGPR).linkTo(beginLabel, this);
-        move(returnValueGPR, GPRInfo::argumentGPR0);
+        getArityPadding(*m_vm, numberOfParameters, regT1, regT0, regT2, regT3, stackOverflow);
+
+        move(regT0, GPRInfo::argumentGPR0);
         emitNakedNearCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode<NoPtrTag>());
 
 #if ASSERT_ENABLED
@@ -867,6 +856,13 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
         jump(beginLabel);
     } else
         m_arityCheck = entryLabel; // Never require arity fixup.
+
+    stackOverflow.link(this);
+    m_bytecodeIndex = BytecodeIndex(0);
+    if (maxFrameExtentForSlowPathCall)
+        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
+    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, regT0);
+    callThrowOperationWithCallFrameRollback(operationThrowStackOverflowError, regT0);
 
     ASSERT(m_jmpTable.isEmpty());
 
@@ -995,7 +991,7 @@ void JIT::link()
         patchBuffer, JSEntryPtrTag,
         "Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_profiledCodeBlock, JITType::BaselineJIT)).data());
     
-    MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);
+    CodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);
     m_jitCode = adoptRef(*new BaselineJITCode(result, withArityCheck));
 
     m_jitCode->m_unlinkedCalls = FixedVector<UnlinkedCallLinkInfo>(m_unlinkedCalls.size());

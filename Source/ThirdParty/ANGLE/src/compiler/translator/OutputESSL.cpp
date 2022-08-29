@@ -11,7 +11,7 @@ namespace sh
 
 TOutputESSL::TOutputESSL(TCompiler *compiler,
                          TInfoSinkBase &objSink,
-                         ShCompileOptions compileOptions)
+                         const ShCompileOptions &compileOptions)
     : TOutputGLSLBase(compiler, objSink, compileOptions)
 {}
 
@@ -36,7 +36,7 @@ ImmutableString TOutputESSL::translateTextureFunction(const ImmutableString &nam
     // Check WEBGL_video_texture invocation first.
     if (name == "textureVideoWEBGL")
     {
-        if (option & SH_TAKE_VIDEO_TEXTURE_AS_EXTERNAL_OES)
+        if (option.takeVideoTextureAsExternalOES)
         {
             // TODO(http://anglebug.com/3889): Implement external image situation.
             UNIMPLEMENTED();

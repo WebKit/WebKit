@@ -84,12 +84,6 @@ public:
             m_drawingContext.replayDisplayList(WebCore::ImageBuffer::context());
     }
 
-    void clearBackend() final
-    {
-        m_drawingContext.displayList().clear();
-        WebCore::ImageBuffer::clearBackend();
-    }
-
 protected:
     DrawingContext m_drawingContext;
     std::unique_ptr<ItemBufferWritingClient> m_writingClient;

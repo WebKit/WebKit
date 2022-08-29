@@ -1,0 +1,8 @@
+
+PASS Input element programmatic selection support
+FAIL input type month should support the select() method assert_equals: the given input type is not supported expected "month" but got "text"
+FAIL input type week should support the select() method assert_equals: the given input type is not supported expected "week" but got "text"
+PASS Input element programmatic selection support 1
+FAIL input type month should not support variable-length selections assert_equals: the given input type is not supported expected "month" but got "text"
+FAIL input type week should not support variable-length selections assert_equals: the given input type is not supported expected "week" but got "text"
+

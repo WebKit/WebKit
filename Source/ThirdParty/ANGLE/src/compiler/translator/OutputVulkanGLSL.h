@@ -23,7 +23,7 @@ class TOutputVulkanGLSL : public TOutputGLSL
     TOutputVulkanGLSL(TCompiler *compiler,
                       TInfoSinkBase &objSink,
                       bool enablePrecision,
-                      ShCompileOptions compileOptions);
+                      const ShCompileOptions &compileOptions);
 
     uint32_t nextUnusedBinding() { return mNextUnusedBinding++; }
     uint32_t nextUnusedInputLocation(uint32_t consumedCount)

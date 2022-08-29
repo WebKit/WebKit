@@ -42,6 +42,8 @@
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSStringRefPrivate.h>
 #include <JavaScriptCore/OpaqueJSString.h>
+#include <WebCore/AXObjectCache.h>
+#include <WebCore/AccessibilityObject.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/DOMRect.h>
 #include <WebCore/DOMRectList.h>
@@ -301,6 +303,43 @@ WebCore::Element* WebAutomationSessionProxy::elementForNodeHandle(WebFrame& fram
         return nullptr;
 
     return &elementWrapper->wrapped();
+}
+
+WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectForNode(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, String& errorType)
+{
+    WebPage* page = WebProcess::singleton().webPage(pageID);
+    if (!page) {
+        errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound);
+        return nullptr;
+    }
+
+    auto* frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
+    if (!frame || !frame->coreFrame() || !frame->coreFrame()->view()) {
+        errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+        return nullptr;
+    }
+
+    if (!isValidNodeHandle(nodeHandle)) {
+        errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier);
+        return nullptr;
+    }
+
+    WebCore::Element* coreElement = elementForNodeHandle(*frame, nodeHandle);
+    if (!coreElement) {
+        errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
+        return nullptr;
+    }
+
+    if (!WebCore::AXObjectCache::accessibilityEnabled())
+        WebCore::AXObjectCache::enableAccessibility();
+
+    if (WebCore::AXObjectCache* axObjectCache = coreElement->document().axObjectCache()) {
+        if (WebCore::AccessibilityObject* axObject = axObjectCache->getOrCreate(coreElement))
+            return axObject;
+    }
+
+    errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
+    return nullptr;
 }
 
 void WebAutomationSessionProxy::ensureObserverForFrame(WebFrame& frame)
@@ -727,6 +766,32 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
     }
 
     completionHandler(std::nullopt, resultElementBounds, resultInViewCenterPoint, isObscured);
+}
+
+void WebAutomationSessionProxy::getComputedRole(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<String>)>&& completionHandler)
+{
+    String errorType;
+    auto* axObject = getAccessibilityObjectForNode(pageID, frameID, nodeHandle, errorType);
+
+    if (!errorType.isNull()) {
+        completionHandler(errorType, std::nullopt);
+        return;
+    }
+
+    completionHandler(std::nullopt, axObject->computedRoleString());
+}
+
+void WebAutomationSessionProxy::getComputedLabel(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<String>)>&& completionHandler)
+{
+    String errorType;
+    auto* axObject = getAccessibilityObjectForNode(pageID, frameID, nodeHandle, errorType);
+
+    if (!errorType.isNull()) {
+        completionHandler(errorType, std::nullopt);
+        return;
+    }
+
+    completionHandler(std::nullopt, axObject->computedLabel());
 }
 
 void WebAutomationSessionProxy::selectOptionElement(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>)>&& completionHandler)

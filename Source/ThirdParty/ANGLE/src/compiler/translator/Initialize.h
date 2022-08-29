@@ -23,7 +23,7 @@ void InitExtensionBehavior(const ShBuiltInResources &resources,
 // extensions will remain unsupported.
 void ResetExtensionBehavior(const ShBuiltInResources &resources,
                             TExtensionBehavior &extensionBehavior,
-                            const ShCompileOptions compileOptions);
+                            const ShCompileOptions &compileOptions);
 
 }  // namespace sh
 

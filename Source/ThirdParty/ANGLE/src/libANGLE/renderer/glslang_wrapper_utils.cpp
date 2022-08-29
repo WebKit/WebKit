@@ -4898,7 +4898,8 @@ void GlslangAssignTransformFeedbackLocations(gl::ShaderType shaderType,
     }
 }
 
-void GlslangGetShaderSpirvCode(const GlslangSourceOptions &options,
+void GlslangGetShaderSpirvCode(const gl::Context *context,
+                               const GlslangSourceOptions &options,
                                const gl::ProgramState &programState,
                                const gl::ProgramLinkedResources &resources,
                                GlslangProgramInterfaceInfo *programInterfaceInfo,
@@ -4908,7 +4909,7 @@ void GlslangGetShaderSpirvCode(const GlslangSourceOptions &options,
     for (const gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         gl::Shader *glShader         = programState.getAttachedShader(shaderType);
-        (*spirvBlobsOut)[shaderType] = glShader ? &glShader->getCompiledBinary() : nullptr;
+        (*spirvBlobsOut)[shaderType] = glShader ? &glShader->getCompiledBinary(context) : nullptr;
     }
 
     const gl::ProgramExecutable &programExecutable = programState.getExecutable();

@@ -400,32 +400,25 @@ static FloatRect boundariesForTextRun(const InlineIterator::TextBox& run)
     return run.visualRectIgnoringBlockDirection();
 }
 
-static IntRect ellipsisRectForTextRun(const InlineIterator::TextBox& run, unsigned start, unsigned end)
+static std::optional<IntRect> ellipsisRectForTextRun(const InlineIterator::TextBox& run, unsigned start, unsigned end)
 {
-    // FIXME: No ellipsis support in modern path yet.
-    if (!run.legacyInlineBox())
+    auto lineBox = run.lineBox();
+    if (!lineBox->hasEllipsis())
         return { };
 
-    auto& box = *run.legacyInlineBox();
-
-    auto truncation = box.truncation();
-    if (!truncation)
+    auto selectableRange = run.selectableRange();
+    if (!selectableRange.truncation)
         return { };
 
-    auto ellipsis = box.root().ellipsisBox();
-    if (!ellipsis)
-        return { };
-
-    int ellipsisStartPosition = std::max<int>(start - box.start(), 0);
-    int ellipsisEndPosition = std::min<int>(end - box.start(), box.len());
-
+    auto ellipsisStartPosition = std::max<unsigned>(start - selectableRange.start, 0);
+    auto ellipsisEndPosition = std::min<unsigned>(end - selectableRange.start, selectableRange.length);
     // The ellipsis should be considered to be selected if the end of
     // the selection is past the beginning of the truncation and the
     // beginning of the selection is before or at the beginning of the truncation.
-    if (ellipsisEndPosition < *truncation && ellipsisStartPosition > *truncation)
+    if (ellipsisEndPosition < *selectableRange.truncation && ellipsisStartPosition > *selectableRange.truncation)
         return { };
 
-    return ellipsis->selectionRect();
+    return IntRect { lineBox->ellipsisVisualRect(InlineIterator::LineBox::AdjustedForSelection::Yes) };
 }
 
 enum class ClippingOption { NoClipping, ClipToEllipsis };
@@ -439,12 +432,11 @@ static Vector<FloatQuad> collectAbsoluteQuads(const RenderText& textRenderer, bo
 
         // Shorten the width of this text box if it ends in an ellipsis.
         if (clipping == ClippingOption::ClipToEllipsis) {
-            auto ellipsisRect = ellipsisRectForTextRun(run, 0, textRenderer.text().length());
-            if (!ellipsisRect.isEmpty()) {
+            if (auto ellipsisRect = ellipsisRectForTextRun(run, 0, textRenderer.text().length())) {
                 if (textRenderer.style().isHorizontalWritingMode())
-                    boundaries.setWidth(ellipsisRect.maxX() - boundaries.x());
+                    boundaries.setWidth(ellipsisRect->maxX() - boundaries.x());
                 else
-                    boundaries.setHeight(ellipsisRect.maxY() - boundaries.y());
+                    boundaries.setHeight(ellipsisRect->maxY() - boundaries.y());
             }
         }
         
@@ -1653,7 +1645,7 @@ LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerM
     for (auto& run : InlineIterator::textBoxesFor(*this)) {
         LayoutRect rect;
         rect.unite(run.selectionRect(startOffset, endOffset));
-        rect.unite(ellipsisRectForTextRun(run, startOffset, endOffset));
+        rect.unite(ellipsisRectForTextRun(run, startOffset, endOffset).value_or(IntRect { }));
         if (rect.isEmpty())
             continue;
 

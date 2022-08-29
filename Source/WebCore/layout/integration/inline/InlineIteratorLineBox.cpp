@@ -29,6 +29,7 @@
 #include "InlineIteratorBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBlockFlow.h"
+#include "RenderView.h"
 
 namespace WebCore {
 namespace InlineIterator {
@@ -155,6 +156,25 @@ LeafBoxIterator closestBoxForHorizontalPosition(const LineBox& lineBox, float ho
     }
 
     return closestBox;
+}
+
+RenderObject::HighlightState LineBox::ellipsisSelectionState() const
+{
+    auto lastLeafBox = this->lastLeafBox();
+    ASSERT(lastLeafBox);
+    if (!lastLeafBox->isText())
+        return RenderObject::HighlightState::None;
+
+    auto& text = downcast<InlineIterator::TextBox>(*lastLeafBox);
+    if (text.selectionState() == RenderObject::HighlightState::None)
+        return RenderObject::HighlightState::None;
+
+    auto selectionRange = text.selectableRange();
+    if (!selectionRange.truncation)
+        return RenderObject::HighlightState::None;
+
+    auto [selectionStart, selectionEnd] = containingBlock().view().selection().rangeForTextBox(text.renderer(), selectionRange);
+    return selectionStart <= *selectionRange.truncation && selectionEnd >= *selectionRange.truncation ? RenderObject::HighlightState::Inside : RenderObject::HighlightState::None;
 }
 
 }

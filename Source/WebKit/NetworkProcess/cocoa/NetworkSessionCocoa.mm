@@ -1240,6 +1240,8 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
 
     NSURLSessionConfiguration *configuration = configurationForSessionID(m_sessionID, isParentProcessAFullWebBrowser(networkProcess));
 
+    m_blobRegistry.setFileDirectory(FileSystem::createTemporaryDirectory(@"BlobRegistryFiles"));
+
 #if HAVE(HSTS_STORAGE)
     if (!!parameters.hstsStorageDirectory && !m_sessionID.isEphemeral()) {
         SandboxExtension::consumePermanently(parameters.hstsStorageDirectoryExtensionHandle);
@@ -1633,7 +1635,7 @@ void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWra
 #if HAVE(NSURLSESSION_WEBSOCKET)
         if (auto* webSocketTask = sessionWrapper.webSocketDataTaskMap.get(taskIdentifier)) {
             auto challengeCompletionHandler = createChallengeCompletionHandler(networkProcess(), sessionID(), challenge, webSocketTask->partition(), 0, WTFMove(completionHandler));
-            networkProcess().authenticationManager().didReceiveAuthenticationChallenge(sessionID(), webSocketTask->pageID(), !webSocketTask->topOrigin().isEmpty() ? &webSocketTask->topOrigin() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(challengeCompletionHandler));
+            networkProcess().authenticationManager().didReceiveAuthenticationChallenge(sessionID(), webSocketTask->pageID(), !webSocketTask->topOrigin().isNull() ? &webSocketTask->topOrigin() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(challengeCompletionHandler));
             return;
         }
 #endif
@@ -1674,7 +1676,7 @@ DMFWebsitePolicyMonitor *NetworkSessionCocoa::deviceManagementPolicyMonitor()
 }
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
-std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed)
+std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy)
 {
     ASSERT(!request.hasHTTPHeaderField(WebCore::HTTPHeaderName::SecWebSocketProtocol));
     auto nsRequest = retainPtr(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
@@ -1696,7 +1698,15 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
     appPrivacyReportTestingData().didLoadAppInitiatedRequest(nsRequest.get().attribution == NSURLRequestAttributionDeveloper);
 #endif
 
-    // FIXME: This function can make up to 3 copies of a request.
+#if HAVE(PROHIBIT_PRIVACY_PROXY)
+    if (!allowPrivacyProxy) {
+        RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
+        [mutableRequest _setProhibitPrivacyProxy:YES];
+        nsRequest = WTFMove(mutableRequest);
+    }
+#endif
+
+    // FIXME: This function can make up to 4 copies of a request.
     // Reduce that to one if the protocol is null, the request isn't app initiated,
     // or the main frame main resource was private relayed, then set all properties
     // on the one copy.

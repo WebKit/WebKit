@@ -100,6 +100,15 @@ def jetStream2Breakdown(jsonObject):
         result[test] = breakdown._results["JetStream2.0"]["tests"][test]["metrics"]["Score"][None]["current"]
     return result
 
+def detailedJetStream2Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["JetStream2.0"]["tests"].keys():
+        for subtest in breakdown._results["JetStream2.0"]["tests"][test]["tests"]:
+            result[test + "-" + subtest] = breakdown._results["JetStream2.0"]["tests"][test]["tests"][subtest]["metrics"]["Time"][None]["current"]
+    return result
+
 def motionMarkBreakdown(jsonObject):
     breakdown = BenchmarkResults(jsonObject)
 
@@ -515,14 +524,16 @@ def getOptions():
     parser.add_argument("--breakdown", action="store_true",
         default=False, help="Print a per subtest breakdown.")
 
-    parser.add_argument("--sync-vs-async", action="store_true",
-        default=False, help="Print a per subtest breakdown in Speedometer2 by sync and async time.")
+    parser.add_argument("--detailed-breakdown", action="store_true",
+        default=False, help="Print a detailed breakdown per subtest.")
 
     return parser.parse_known_args()[0]
 
 
 def main():
     args = getOptions()
+    if args.detailed_breakdown:
+        args.breakdown = True
 
     # Flatten the list of lists of JSON files.
     a = itertools.chain.from_iterable(args.a)
@@ -544,7 +555,10 @@ def main():
     
     if typeA == JetStream2:
         if args.breakdown:
-            dumpBreakdowns(jetStream2Breakdown(a), jetStream2Breakdown(b))
+            if args.detailed_breakdown:
+                dumpBreakdowns(detailedJetStream2Breakdown(a), detailedJetStream2Breakdown(b))
+            else:
+                dumpBreakdowns(jetStream2Breakdown(a), jetStream2Breakdown(b))
 
         ttest(typeA, JetStream2Results(a), JetStream2Results(b))
 
@@ -552,7 +566,7 @@ def main():
             writeCSV(jetStream2Breakdown(a), jetStream2Breakdown(b), args.csv)
     elif typeA == Speedometer2:
         if args.breakdown:
-            if args.sync_vs_async:
+            if args.detailed_breakdown:
                 dumpBreakdowns(speedometer2BreakdownSyncAsync(a), speedometer2BreakdownSyncAsync(b))
             else:
                 dumpBreakdowns(speedometer2Breakdown(a), speedometer2Breakdown(b))

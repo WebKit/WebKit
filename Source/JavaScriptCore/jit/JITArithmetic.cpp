@@ -746,7 +746,7 @@ void JIT::emitMathICFast(JITUnaryMathIC<Generator>* mathIC, const JSInstruction*
 #if ENABLE(MATH_IC_STATS)
     auto inlineEnd = label();
     addLinkTask([=] (LinkBuffer& linkBuffer) {
-        size_t size = linkBuffer.locationOf(inlineEnd).executableAddress<char*>() - linkBuffer.locationOf(inlineStart).executableAddress<char*>();
+        size_t size = linkBuffer.locationOf(inlineEnd).taggedPtr<char*>() - linkBuffer.locationOf(inlineStart).taggedPtr<char*>();
         mathIC->m_generatedCodeSize += size;
     });
 #endif
@@ -813,7 +813,7 @@ void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const JSInstruction
 #if ENABLE(MATH_IC_STATS)
     auto inlineEnd = label();
     addLinkTask([=] (LinkBuffer& linkBuffer) {
-        size_t size = linkBuffer.locationOf(inlineEnd).executableAddress<char*>() - linkBuffer.locationOf(inlineStart).executableAddress<char*>();
+        size_t size = linkBuffer.locationOf(inlineEnd).taggedPtr<char*>() - linkBuffer.locationOf(inlineStart).taggedPtr<char*>();
         mathIC->m_generatedCodeSize += size;
     });
 #endif
@@ -851,7 +851,7 @@ void JIT::emitMathICSlow(JITUnaryMathIC<Generator>* mathIC, const JSInstruction*
 #if ENABLE(MATH_IC_STATS)
     auto slowPathEnd = label();
     addLinkTask([=] (LinkBuffer& linkBuffer) {
-        size_t size = linkBuffer.locationOf(slowPathEnd).executableAddress<char*>() - linkBuffer.locationOf(slowPathStart).executableAddress<char*>();
+        size_t size = linkBuffer.locationOf(slowPathEnd).taggedPtr<char*>() - linkBuffer.locationOf(slowPathStart).taggedPtr<char*>();
         mathIC->m_generatedCodeSize += size;
     });
 #endif
@@ -912,7 +912,7 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, const JSInstruction
 #if ENABLE(MATH_IC_STATS)
     auto slowPathEnd = label();
     addLinkTask([=] (LinkBuffer& linkBuffer) {
-        size_t size = linkBuffer.locationOf(slowPathEnd).executableAddress<char*>() - linkBuffer.locationOf(slowPathStart).executableAddress<char*>();
+        size_t size = linkBuffer.locationOf(slowPathEnd).taggedPtr<char*>() - linkBuffer.locationOf(slowPathStart).taggedPtr<char*>();
         mathIC->m_generatedCodeSize += size;
     });
 #endif

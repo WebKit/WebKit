@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2158,7 +2158,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                         CCallHelpers::TrustedImmPtr(globalObject),
                         CCallHelpers::CellValue(baseForCustom),
                         CCallHelpers::TrustedImmPtr(uid()),
-                        CCallHelpers::TrustedImmPtr(this->as<GetterSetterAccessCase>().m_customAccessor.executableAddress()));
+                        CCallHelpers::TrustedImmPtr(this->as<GetterSetterAccessCase>().m_customAccessor.taggedPtr()));
                 } else {
                     jit.setupArguments<GetValueFunc>(
                         CCallHelpers::TrustedImmPtr(globalObject),
@@ -2172,7 +2172,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                         CCallHelpers::CellValue(baseForCustom),
                         valueRegs,
                         CCallHelpers::TrustedImmPtr(uid()),
-                        CCallHelpers::TrustedImmPtr(this->as<GetterSetterAccessCase>().m_customAccessor.executableAddress()));
+                        CCallHelpers::TrustedImmPtr(this->as<GetterSetterAccessCase>().m_customAccessor.taggedPtr()));
                 } else {
                     jit.setupArguments<PutValueFunc>(
                         CCallHelpers::TrustedImmPtr(globalObject),
@@ -2190,9 +2190,9 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
                 if (Options::useJITCage()) {
                     if (m_type == CustomValueGetter || m_type == CustomAccessorGetter)
-                        linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(vmEntryCustomGetter));
+                        linkBuffer.link<OperationPtrTag>(operationCall, vmEntryCustomGetter);
                     else
-                        linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(vmEntryCustomSetter));
+                        linkBuffer.link<OperationPtrTag>(operationCall, vmEntryCustomSetter);
                 } else
                     linkBuffer.link(operationCall, this->as<GetterSetterAccessCase>().m_customAccessor);
             });
@@ -2252,7 +2252,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             jit.prepareCallOperation(vm);
             auto operationCall = jit.call(OperationPtrTag);
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(operationWriteBarrierSlowPath));
+                linkBuffer.link<OperationPtrTag>(operationCall, operationWriteBarrierSlowPath);
             });
             state.restoreLiveRegistersFromStackForCall(spillState);
 
@@ -2347,9 +2347,9 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                     
                     CCallHelpers::Call operationCall = jit.call(OperationPtrTag);
                     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                        linkBuffer.link(
+                        linkBuffer.link<OperationPtrTag>(
                             operationCall,
-                            FunctionPtr<OperationPtrTag>(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity));
+                            operationReallocateButterflyToHavePropertyStorageWithInitialCapacity);
                     });
                 } else {
                     // Handle the case where we are reallocating (i.e. the old structure/butterfly
@@ -2359,9 +2359,9 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                     
                     CCallHelpers::Call operationCall = jit.call(OperationPtrTag);
                     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                        linkBuffer.link(
+                        linkBuffer.link<OperationPtrTag>(
                             operationCall,
-                            FunctionPtr<OperationPtrTag>(operationReallocateButterflyToGrowPropertyStorage));
+                            operationReallocateButterflyToGrowPropertyStorage);
                     });
                 }
                 

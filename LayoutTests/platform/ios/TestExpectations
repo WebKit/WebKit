@@ -2142,6 +2142,7 @@ accessibility/insert-text-into-password-field.html [ Pass ]
 accessibility/list-with-dynamically-changing-content.html [ Pass ]
 accessibility/live-region-attributes-update-after-dynamic-change.html [ Pass ]
 accessibility/menu-list-crash2.html [ Pass ]
+accessibility/multiple-attribute-change-crash.html [ Pass ]
 accessibility/node-only-inert-object.html [ Pass ]
 accessibility/node-only-object-element-rect.html [ Pass ]
 accessibility/placeholder.html [ Pass ]
@@ -3638,7 +3639,7 @@ webkit.org/b/240927 [ Debug ]  storage/indexeddb/request-with-null-open-db-reque
 
 webkit.org/b/240929 [ Debug ]  resize-observer/resize-observer-with-zoom.html [ Pass Timeout ]
 
-fast/text/bulgarian-system-language-shaping.html [ Pass ]
+webkit.org/b/241253 fast/text/bulgarian-system-language-shaping.html [ Pass ]
 
 # These tests have different results on iOS
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/device-pixel-adjustment.html
@@ -3666,7 +3667,7 @@ webkit.org/b/242270 fast/encoding/char-after-fast-path-ascii-decoding.html [ Pas
 webkit.org/b/242273 fast/events/ios/dragstart-on-image-by-long-pressing.html [ Pass Failure ]
 
 # Requires platform support (see rdar://94324932).
-http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]
+http/tests/media/media-source/mediasource-rvfc.html [ Pass Failure ]
 
 webkit.org/b/242825 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
 
@@ -3720,7 +3721,15 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-right-color-001.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-top-color-001.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/244065 fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-readonly.html [ Pass ImageOnlyFailure ]
+# iOS user agent styles are preventing these from passing for <input type=search>
+webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/appearance-textfield-001.html [ ImageOnlyFailure ]
+webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-textfield-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/244134 animations/no-style-recalc-during-accelerated-animation.html [ Pass Failure ]
-webkit.org/b/244134 animations/steps-transform-rendering-updates.html [ Pass Failure ]
+webkit.org/b/244208 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass Failure Slow ]
+webkit.org/b/244208 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure Slow ]
+
+webkit.org/b/244346 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html [ Pass Failure ]
+
+webkit.org/b/244358 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html [ Pass Failure Timeout ]
+webkit.org/b/244358 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html [ Pass Failure ]
+webkit.org/b/244358 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html [ Pass Failure Timeout ]

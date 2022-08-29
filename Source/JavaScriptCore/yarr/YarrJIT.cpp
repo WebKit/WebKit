@@ -4106,7 +4106,7 @@ public:
         : m_jit(jit)
         , m_vm(vm)
         , m_codeBlock(codeBlock)
-        , m_boyerMooreData(static_cast<YarrBoyerMoyerData*>(codeBlock))
+        , m_boyerMooreData(static_cast<YarrBoyerMooreData*>(codeBlock))
         , m_regs(regs)
         , m_pattern(pattern)
         , m_patternString(patternString)
@@ -4121,7 +4121,7 @@ public:
     {
     }
 
-    YarrGenerator(CCallHelpers& jit, const VM* vm, YarrBoyerMoyerData* yarrBMData, const YarrJITRegs& regs, YarrPattern& pattern, StringView patternString, CharSize charSize, JITCompileMode compileMode)
+    YarrGenerator(CCallHelpers& jit, const VM* vm, YarrBoyerMooreData* yarrBMData, const YarrJITRegs& regs, YarrPattern& pattern, StringView patternString, CharSize charSize, JITCompileMode compileMode)
         : m_jit(jit)
         , m_vm(vm)
         , m_codeBlock(nullptr)
@@ -4353,7 +4353,7 @@ public:
     }
 
 #if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
-    void compileInline(YarrBoyerMoyerData& boyerMooreData)
+    void compileInline(YarrBoyerMooreData& boyerMooreData)
     {
         RELEASE_ASSERT(!m_pattern.m_containsBackreferences);
 
@@ -4656,7 +4656,7 @@ private:
     CCallHelpers& m_jit;
     const VM* const m_vm;
     YarrCodeBlock* const m_codeBlock;
-    YarrBoyerMoyerData* const m_boyerMooreData;
+    YarrBoyerMooreData* const m_boyerMooreData;
     const YarrJITRegs& m_regs;
 
     StackCheck* m_compilationThreadStackChecker { nullptr };
@@ -4759,7 +4759,7 @@ void jitCompile(YarrPattern& pattern, StringView patternString, CharSize charSiz
 #error "No support for inlined JIT'ing of RegExp.test for this CPU / OS combination."
 #endif
 
-void jitCompileInlinedTest(StackCheck* m_compilationThreadStackChecker, StringView patternString, OptionSet<Yarr::Flags> flags, CharSize charSize, const VM* vm, YarrBoyerMoyerData& boyerMooreData, CCallHelpers& jit, YarrJITRegisters& jitRegisters)
+void jitCompileInlinedTest(StackCheck* m_compilationThreadStackChecker, StringView patternString, OptionSet<Yarr::Flags> flags, CharSize charSize, const VM* vm, YarrBoyerMooreData& boyerMooreData, CCallHelpers& jit, YarrJITRegisters& jitRegisters)
 {
     Yarr::ErrorCode errorCode;
     Yarr::YarrPattern pattern(patternString, flags, errorCode);

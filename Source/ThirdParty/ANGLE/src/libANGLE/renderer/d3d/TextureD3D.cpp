@@ -722,7 +722,7 @@ angle::Result TextureD3D::onLabelUpdate(const gl::Context *context)
 {
     if (mTexStorage)
     {
-        mTexStorage->onLabelUpdate();
+        mTexStorage->setLabel(mState.getLabel());
     }
     return angle::Result::Continue;
 }

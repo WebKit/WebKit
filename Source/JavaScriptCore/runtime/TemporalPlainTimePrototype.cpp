@@ -29,6 +29,8 @@
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "TemporalDuration.h"
+#include "TemporalPlainDate.h"
+#include "TemporalPlainDateTime.h"
 #include "TemporalPlainTime.h"
 
 namespace JSC {
@@ -41,6 +43,7 @@ static JSC_DECLARE_HOST_FUNCTION(temporalPlainTimePrototypeFuncSince);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainTimePrototypeFuncRound);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainTimePrototypeFuncEquals);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainTimePrototypeFuncGetISOFields);
+static JSC_DECLARE_HOST_FUNCTION(temporalPlainTimePrototypeFuncToPlainDateTime);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainTimePrototypeFuncToString);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainTimePrototypeFuncToJSON);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainTimePrototypeFuncToLocaleString);
@@ -71,6 +74,7 @@ const ClassInfo TemporalPlainTimePrototype::s_info = { "Temporal.PlainTime"_s, &
   round            temporalPlainTimePrototypeFuncRound              DontEnum|Function 1
   equals           temporalPlainTimePrototypeFuncEquals             DontEnum|Function 1
   getISOFields     temporalPlainTimePrototypeFuncGetISOFields       DontEnum|Function 0
+  toPlainDateTime  temporalPlainTimePrototypeFuncToPlainDateTime    DontEnum|Function 1
   toString         temporalPlainTimePrototypeFuncToString           DontEnum|Function 0
   toJSON           temporalPlainTimePrototypeFuncToJSON             DontEnum|Function 0
   toLocaleString   temporalPlainTimePrototypeFuncToLocaleString     DontEnum|Function 0
@@ -254,6 +258,22 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncGetISOFields, (JSGlobalOb
     fields->putDirect(vm, vm.propertyNames->isoNanosecond, jsNumber(plainTime->nanosecond()));
     fields->putDirect(vm, vm.propertyNames->isoSecond, jsNumber(plainTime->second()));
     return JSValue::encode(fields);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.plaintime.prototype.toplaindatetime
+JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncToPlainDateTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
+    if (!plainTime)
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.toPlainDateTime called on value that's not a PlainTime"_s);
+
+    auto* plainDate = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), plainDate->plainDate(), plainTime->plainTime())));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaintime.prototype.tostring

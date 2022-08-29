@@ -2070,7 +2070,6 @@
 		3545E58827E2AD1200F1910E /* WritingModeTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WritingModeTests.cpp; sourceTree = "<group>"; };
 		370CE2291F57343400E7410B /* WKContentViewTargetForAction.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentViewTargetForAction.mm; sourceTree = "<group>"; };
 		371195AA1FE5797700A1FB92 /* WKWebViewAlwaysShowsScroller.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewAlwaysShowsScroller.mm; sourceTree = "<group>"; };
-		37119A7F20CCB695002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageFromDOMRange.mm; sourceTree = "<group>"; };
 		374B7A5E1DF36EEE00ACCB6C /* BundleEditingDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleEditingDelegate.mm; sourceTree = "<group>"; };
 		374B7A5F1DF36EEE00ACCB6C /* BundleEditingDelegatePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleEditingDelegatePlugIn.mm; sourceTree = "<group>"; };
@@ -2131,6 +2130,7 @@
 		4198524F27AD7B70005477B7 /* getUserMediaPermission.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMediaPermission.html; sourceTree = "<group>"; };
 		41BAF4E225AC9DB800D82F32 /* getUserMedia2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMedia2.html; sourceTree = "<group>"; };
 		41E67A8425D16E83007B0A4C /* STUNMessageParsingTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = STUNMessageParsingTest.cpp; sourceTree = "<group>"; };
+		41E9EE1A28B4DBF8006A2298 /* PermissionsAPI.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PermissionsAPI.mm; sourceTree = "<group>"; };
 		41EBA9F128ABA06500953013 /* ImageRotationSessionVT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageRotationSessionVT.cpp; sourceTree = "<group>"; };
 		44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsTestIOS.mm; sourceTree = "<group>"; };
 		442BBF681C91CAD90017087F /* RefLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefLogger.cpp; sourceTree = "<group>"; };
@@ -2836,7 +2836,6 @@
 		A180C0F91EE67DF000468F47 /* RunOpenPanel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RunOpenPanel.mm; sourceTree = "<group>"; };
 		A18AA8CC1C3FA218009B2B97 /* ContentFiltering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentFiltering.h; sourceTree = "<group>"; };
 		A1A4FE5D18DD3DB700B5EA8A /* Download.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Download.mm; sourceTree = "<group>"; };
-		A1B89B99221E029F00EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
 		A1C142C124AA7B2E00444207 /* ContextMenuMouseEvents.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuMouseEvents.mm; sourceTree = "<group>"; };
 		A1C4FB6C1BACCE50003742D0 /* QuickLook.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLook.mm; sourceTree = "<group>"; };
 		A1C4FB721BACD1B7003742D0 /* pages.pages */ = {isa = PBXFileReference; lastKnownFileType = file; name = pages.pages; path = ios/pages.pages; sourceTree = SOURCE_ROOT; };
@@ -3777,6 +3776,7 @@
 				9B2346411F943A2400DB1D23 /* PasteWebArchive.mm */,
 				51D8C18F2267B26700797E40 /* PDFLinkReferrer.mm */,
 				516281262325C19100BB7E42 /* PDFSnapshot.mm */,
+				41E9EE1A28B4DBF8006A2298 /* PermissionsAPI.mm */,
 				3FCC4FE41EC4E8520076E37C /* PictureInPictureDelegate.mm */,
 				DFB8FF312492F51A00F00B0D /* Preconnect.mm */,
 				C95501BE19AD2FAF0049BE3E /* Preferences.mm */,
@@ -4627,7 +4627,6 @@
 				BC90957E12554CF900083756 /* Base.xcconfig */,
 				BC90957F12554CF900083756 /* DebugRelease.xcconfig */,
 				BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */,
-				A1B89B99221E029F00EB4CEA /* SDKVariant.xcconfig */,
 				5735F0251F3A4EA6000EE801 /* TestWebKitAPI-iOS.entitlements */,
 				51EB125324C66BCB000CB030 /* TestWebKitAPI-macOS-internal.entitlements */,
 				7AB0173923FB2BF0002F8366 /* TestWebKitAPI-macOS.entitlements */,
@@ -4635,7 +4634,6 @@
 				7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */,
 				7C83E0261D0A5B8D00FEBCF3 /* TestWTF.xcconfig */,
 				7C83E0271D0A5B8D00FEBCF3 /* TestWTFLibrary.xcconfig */,
-				37119A7F20CCB695002C6DC9 /* WebKitTargetConditionals.xcconfig */,
 				A13EBB521B87346600097110 /* WebProcessPlugIn.xcconfig */,
 			);
 			path = Configurations;

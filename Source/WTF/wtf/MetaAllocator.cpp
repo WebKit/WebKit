@@ -68,7 +68,7 @@ void MetaAllocator::release(const LockHolder&, MetaAllocatorHandle& handle)
         MemoryPtr start = handle.start();
         size_t sizeInBytes = handle.sizeInBytes();
         decrementPageOccupancy(start.untaggedPtr(), sizeInBytes);
-        addFreeSpaceFromReleasedHandle(FreeSpacePtr(start), sizeInBytes);
+        addFreeSpaceFromReleasedHandle(start.retagged<FreeSpacePtrTag>(), sizeInBytes);
     }
 
     if (UNLIKELY(!!m_tracker))
@@ -114,7 +114,7 @@ void MetaAllocatorHandle::shrink(size_t newSizeInBytes)
     if (firstCompletelyFreePage < freeEnd)
         allocator.decrementPageOccupancy(reinterpret_cast<void*>(firstCompletelyFreePage), freeSize - (firstCompletelyFreePage - freeStartValue));
 
-    allocator.addFreeSpaceFromReleasedHandle(MetaAllocator::FreeSpacePtr(freeStart), freeSize);
+    allocator.addFreeSpaceFromReleasedHandle(freeStart.retagged<FreeSpacePtrTag>(), freeSize);
 
     m_end = freeStart;
 }
@@ -190,7 +190,7 @@ RefPtr<MetaAllocatorHandle> MetaAllocator::allocate(const LockHolder&, size_t si
     m_numAllocations++;
 #endif
 
-    auto handle = adoptRef(*new MetaAllocatorHandle(*this, MemoryPtr(start), sizeInBytes));
+    auto handle = adoptRef(*new MetaAllocatorHandle(*this, start.retagged<HandleMemoryPtrTag>(), sizeInBytes));
 
     if (UNLIKELY(!!m_tracker))
         m_tracker->notify(*handle.ptr());
@@ -289,7 +289,7 @@ void MetaAllocator::addFreshFreeSpace(void* start, size_t sizeInBytes)
     Config::AssertNotFrozenScope assertNotFrozenScope;
     Locker locker { m_lock };
     m_bytesReserved += sizeInBytes;
-    addFreeSpace(FreeSpacePtr::makeFromRawPointer(start), sizeInBytes);
+    addFreeSpace(FreeSpacePtr::fromUntaggedPtr(start), sizeInBytes);
 }
 
 size_t MetaAllocator::debugFreeSpaceSize()

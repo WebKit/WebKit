@@ -4,12 +4,18 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (150,50) size 322x162
-  RenderSVGTransformableContainer {g} at (150,50) size 322x162
+layer at (10,50) size 472x162 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (10,50) size 472x162
 layer at (150,50) size 162x162
-  RenderSVGRect {rect} at (0,0) size 162x162 [fill={[type=SOLID] [color=#AAFF44]}] [x=150.00] [y=50.00] [width=162.00] [height=162.00]
+  RenderSVGRect {rect} at (140,0) size 162x162 [fill={[type=SOLID] [color=#AAFF44]}] [x=150.00] [y=50.00] [width=162.00] [height=162.00]
 layer at (310,50) size 162x162
-  RenderSVGRect {rect} at (160,0) size 162x162 [fill={[type=SOLID] [color=#FFAA66]}] [x=310.00] [y=50.00] [width=162.00] [height=162.00]
+  RenderSVGRect {rect} at (300,0) size 162x162 [fill={[type=SOLID] [color=#FFAA66]}] [x=310.00] [y=50.00] [width=162.00] [height=162.00]
+layer at (10,60) size 162x150
+  RenderSVGImage {image} at (0,10) size 162x150
+layer at (160,60) size 162x150
+  RenderSVGImage {image} at (150,10) size 162x150
+layer at (320,60) size 162x150 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGImage {image} at (310,10) size 162x150
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

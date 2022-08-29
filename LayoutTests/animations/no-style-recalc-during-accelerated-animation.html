@@ -22,6 +22,7 @@
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
+            window.internals.setSpeculativeTilingDelayDisabledForTesting(true);
         }
 
         window.addEventListener("load", () => {
@@ -35,10 +36,10 @@
             box.addEventListener("animationiteration", () => result.innerText = "Got iteration event.\n");
             box.addEventListener("animationend", () => {
                 const numRecalcs = internals.styleRecalcCount();
-                if (numRecalcs > 5)
-                    result.innerText += "FAIL: saw " + numRecalcs + " style recalcs during the animation, should only see five."
+                if (numRecalcs > 9)
+                    result.innerText += "FAIL: saw " + numRecalcs + " style recalcs during the animation, should only nine or fewer."
                 else 
-                    result.innerText += "PASS: saw five or fewer style recalcs during the animation."
+                    result.innerText += "PASS: saw nine or fewer style recalcs during the animation."
 
                 if (window.testRunner)
                     testRunner.notifyDone();

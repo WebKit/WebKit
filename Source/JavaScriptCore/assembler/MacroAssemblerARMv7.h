@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2010 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2336,9 +2336,9 @@ public:
     ALWAYS_INLINE Call call(RegisterID target, RegisterID callTag) { return UNUSED_PARAM(callTag), call(target, NoPtrTag); }
     ALWAYS_INLINE Call call(Address address, RegisterID callTag) { return UNUSED_PARAM(callTag), call(address, NoPtrTag); }
 
-    ALWAYS_INLINE void callOperation(const FunctionPtr<OperationPtrTag> operation)
+    ALWAYS_INLINE void callOperation(const CodePtr<OperationPtrTag> operation)
     {
-        move(TrustedImmPtr(operation.executableAddress()), addressTempRegister);
+        move(TrustedImmPtr(operation.taggedPtr()), addressTempRegister);
         call(addressTempRegister, OperationPtrTag);
     }
 
@@ -2509,9 +2509,9 @@ public:
     ALWAYS_INLINE DataLabelPtr storePtrWithPatch(Address address) { return storePtrWithPatch(TrustedImmPtr(nullptr), address); }
 
     template<PtrTag resultTag, PtrTag locationTag>
-    static FunctionPtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
+    static CodePtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
     {
-        return FunctionPtr<resultTag>(reinterpret_cast<void(*)()>(ARMv7Assembler::readCallTarget(call.dataLocation())));
+        return CodePtr<resultTag>(reinterpret_cast<void(*)()>(ARMv7Assembler::readCallTarget(call.dataLocation())));
     }
     
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
@@ -2564,13 +2564,13 @@ public:
     template<PtrTag callTag, PtrTag destTag>
     static void repatchCall(CodeLocationCall<callTag> call, CodeLocationLabel<destTag> destination)
     {
-        ARMv7Assembler::relinkCall(call.dataLocation(), destination.executableAddress());
+        ARMv7Assembler::relinkCall(call.dataLocation(), destination.taggedPtr());
     }
 
     template<PtrTag callTag, PtrTag destTag>
-    static void repatchCall(CodeLocationCall<callTag> call, FunctionPtr<destTag> destination)
+    static void repatchCall(CodeLocationCall<callTag> call, CodePtr<destTag> destination)
     {
-        ARMv7Assembler::relinkCall(call.dataLocation(), destination.executableAddress());
+        ARMv7Assembler::relinkCall(call.dataLocation(), destination.taggedPtr());
     }
 
 protected:
@@ -2721,14 +2721,14 @@ private:
     friend class LinkBuffer;
 
     template<PtrTag tag>
-    static void linkCall(void* code, Call call, FunctionPtr<tag> function)
+    static void linkCall(void* code, Call call, CodePtr<tag> function)
     {
         if (!call.isFlagSet(Call::Near))
-            Assembler::linkPointer(code, call.m_label.labelAtOffset(-2), function.executableAddress());
+            Assembler::linkPointer(code, call.m_label.labelAtOffset(-2), function.taggedPtr());
         else if (call.isFlagSet(Call::Tail))
-            Assembler::linkTailCall(code, call.m_label, function.executableAddress());
+            Assembler::linkTailCall(code, call.m_label, function.taggedPtr());
         else
-            Assembler::linkCall(code, call.m_label, function.executableAddress());
+            Assembler::linkCall(code, call.m_label, function.taggedPtr());
     }
 
     bool m_makeJumpPatchable;

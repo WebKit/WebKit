@@ -49,7 +49,7 @@ namespace JSC {
 
 struct VMTraps::SignalContext {
 private:
-    SignalContext(PlatformRegisters& registers, MacroAssemblerCodePtr<PlatformRegistersPCPtrTag> trapPC)
+    SignalContext(PlatformRegisters& registers, CodePtr<PlatformRegistersPCPtrTag> trapPC)
         : registers(registers)
         , trapPC(trapPC)
         , stackPointer(MachineContext::stackPointer(registers))
@@ -66,7 +66,7 @@ public:
     }
 
     PlatformRegisters& registers;
-    MacroAssemblerCodePtr<PlatformRegistersPCPtrTag> trapPC;
+    CodePtr<PlatformRegistersPCPtrTag> trapPC;
     void* stackPointer;
     void* framePointer;
 };
@@ -90,7 +90,7 @@ void VMTraps::tryInstallTrapBreakpoints(VMTraps::SignalContext& context, StackBo
     // This must be the initial signal to get the mutator thread's attention.
     // Let's get the thread to break at invalidation points if needed.
     VM& vm = this->vm();
-    void* trapPC = context.trapPC.untaggedExecutableAddress();
+    void* trapPC = context.trapPC.untaggedPtr();
     // We must ensure we're in JIT/LLint code. If we are, we know a few things:
     // - The JS thread isn't holding the malloc lock. Therefore, it's safe to malloc below.
     // - The JS thread isn't holding the CodeBlockSet lock.
@@ -213,7 +213,7 @@ public:
                 if (!signalContext)
                     return SignalAction::NotHandled;
 
-                void* trapPC = signalContext->trapPC.untaggedExecutableAddress();
+                void* trapPC = signalContext->trapPC.untaggedPtr();
                 if (!isJITPC(trapPC))
                     return SignalAction::NotHandled;
 

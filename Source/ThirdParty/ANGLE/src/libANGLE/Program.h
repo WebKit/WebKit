@@ -370,8 +370,8 @@ class ProgramState final : angle::NonCopyable
     friend class Program;
 
     void updateActiveSamplers();
-    void updateProgramInterfaceInputs();
-    void updateProgramInterfaceOutputs();
+    void updateProgramInterfaceInputs(const Context *context);
+    void updateProgramInterfaceOutputs(const Context *context);
 
     // Scans the sampler bindings for type conflicts with sampler 'textureUnitIndex'.
     void setSamplerUniformTextureTypeAndFormat(size_t textureUnitIndex);
@@ -600,7 +600,8 @@ class Program final : public LabeledObject, public angle::Subject
     void getUniformiv(const Context *context, UniformLocation location, GLint *params) const;
     void getUniformuiv(const Context *context, UniformLocation location, GLuint *params) const;
 
-    void getActiveUniformBlockName(const UniformBlockIndex blockIndex,
+    void getActiveUniformBlockName(const Context *context,
+                                   const UniformBlockIndex blockIndex,
                                    GLsizei bufSize,
                                    GLsizei *length,
                                    GLchar *blockName) const;
@@ -794,9 +795,9 @@ class Program final : public LabeledObject, public angle::Subject
 
     angle::Result linkImpl(const Context *context);
 
-    bool linkValidateShaders(InfoLog &infoLog);
+    bool linkValidateShaders(const Context *context, InfoLog &infoLog);
     bool linkAttributes(const Context *context, InfoLog &infoLog);
-    bool linkVaryings(InfoLog &infoLog) const;
+    bool linkVaryings(const Context *context, InfoLog &infoLog) const;
 
     bool linkUniforms(const Context *context,
                       std::vector<UnusedUniform> *unusedUniformsOutOrNull,

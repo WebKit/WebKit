@@ -252,7 +252,8 @@ TIntermTyped *CreateSubpassLoadFuncCall(TSymbolTable *symbolTable,
                                         TBasicType inputType,
                                         TIntermSequence *arguments)
 {
-    return CreateBuiltInFunctionCallNode("subpassLoad", arguments, *symbolTable, kESSLVulkanOnly);
+    return CreateBuiltInFunctionCallNode("subpassLoad", arguments, *symbolTable,
+                                         kESSLInternalBackendBuiltIns);
 }
 
 class ReplaceSubpassInputUtils

@@ -59,7 +59,8 @@ def main(args):
     scm = SCMDetector(fs, host.executive).detect_scm_system(fs.getcwd())
 
     scm.discard_working_directory_changes()
-    scm.cleanup_and_optimize_local_repository()
+    if args.optimize_local_repository:
+        scm.cleanup_and_optimize_local_repository()
 
     if args.keep_jhbuild_directory:
         # Clean everything inside WebKitBuild, except the JHBuild directories.
@@ -77,6 +78,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Clean WebKit")
     parser.add_argument("--keep-jhbuild-directory", action="store_true",
                         help="Don't wipe the JHBuild build directories.")
-
+    parser.add_argument('--optimize-local-repository', action='store_true',
+                        default=False, help='run `git gc`')
     args = parser.parse_args()
     sys.exit(main(args))

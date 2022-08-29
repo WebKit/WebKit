@@ -1,4 +1,3 @@
-//@ skip if $architecture != "arm64" && $architecture != "x86-64"
 // memory.wast:3
 let $1 = instance("\x00\x61\x73\x6d\x01\x00\x00\x00\x05\x83\x80\x80\x80\x00\x01\x00\x00");
 

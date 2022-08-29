@@ -298,7 +298,7 @@ String TemporalPlainTime::toString(JSGlobalObject* globalObject, JSValue options
     return ISO8601::temporalTimeToString(plainTime, data.precision);
 }
 
-static ISO8601::Duration toTemporalTimeRecord(JSGlobalObject* globalObject, JSObject* temporalTimeLike)
+ISO8601::Duration TemporalPlainTime::toTemporalTimeRecord(JSGlobalObject* globalObject, JSObject* temporalTimeLike, bool skipRelevantPropertyCheck)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -325,7 +325,7 @@ static ISO8601::Duration toTemporalTimeRecord(JSGlobalObject* globalObject, JSOb
         duration[unit] = integer;
     }
 
-    if (!hasRelevantProperty) {
+    if (!hasRelevantProperty && !skipRelevantPropertyCheck) {
         throwTypeError(globalObject, scope, "Object must contain at least one Temporal time unit property"_s);
         return { };
     }
@@ -381,7 +381,7 @@ static ISO8601::PlainTime constrainTime(ISO8601::Duration&& duration)
         constrainToRange(duration.nanoseconds(), 0, 999));
 }
 
-static ISO8601::PlainTime regulateTime(JSGlobalObject* globalObject, ISO8601::Duration&& duration, TemporalOverflow overflow)
+ISO8601::PlainTime TemporalPlainTime::regulateTime(JSGlobalObject* globalObject, ISO8601::Duration&& duration, TemporalOverflow overflow)
 {
     switch (overflow) {
     case TemporalOverflow::Constrain:
@@ -390,26 +390,6 @@ static ISO8601::PlainTime regulateTime(JSGlobalObject* globalObject, ISO8601::Du
         return TemporalPlainTime::toPlainTime(globalObject, duration);
     }
     return { };
-}
-
-static JSObject* toTemporalCalendarWithISODefault(JSGlobalObject* globalObject, JSValue temporalCalendarLike)
-{
-    if (temporalCalendarLike.isUndefined())
-        return TemporalCalendar::create(globalObject->vm(), globalObject->calendarStructure(), iso8601CalendarID());
-    return TemporalCalendar::from(globalObject, temporalCalendarLike);
-}
-
-static JSObject* getTemporalCalendarWithISODefault(JSGlobalObject* globalObject, JSValue itemValue)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (itemValue.inherits<TemporalPlainTime>())
-        return jsCast<TemporalPlainTime*>(itemValue)->calendar();
-
-    JSValue calendar = itemValue.get(globalObject, vm.propertyNames->calendar);
-    RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, toTemporalCalendarWithISODefault(globalObject, calendar));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporaltime
@@ -424,12 +404,10 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
         if (itemValue.inherits<TemporalPlainTime>())
             return jsCast<TemporalPlainTime*>(itemValue);
 
-        if (itemValue.inherits<TemporalPlainDateTime>()) {
-            ISO8601::PlainTime plainTime { jsCast<TemporalPlainDateTime*>(itemValue)->plainTime() };
-            return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(plainTime));
-        }
+        if (itemValue.inherits<TemporalPlainDateTime>())
+            return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), jsCast<TemporalPlainDateTime*>(itemValue)->plainTime());
 
-        JSObject* calendar = getTemporalCalendarWithISODefault(globalObject, itemValue);
+        JSObject* calendar = TemporalCalendar::getTemporalCalendarWithISODefault(globalObject, itemValue);
         RETURN_IF_EXCEPTION(scope, { });
         JSString* calendarString = calendar->toString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });

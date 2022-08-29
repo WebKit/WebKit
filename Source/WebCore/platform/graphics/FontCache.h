@@ -72,6 +72,10 @@
 #include <mlang.h>
 #endif
 
+#if USE(FREETYPE)
+#include "FontSetCache.h"
+#endif
+
 namespace WebCore {
 
 class Font;
@@ -187,6 +191,10 @@ public:
 
     bool useBackslashAsYenSignForFamily(const AtomString& family);
 
+#if USE(FREETYPE)
+    static bool configurePatternForFontDescription(FcPattern*, const FontDescription&);
+#endif
+
 private:
     void invalidate();
     void releaseNoncriticalMemory();
@@ -244,6 +252,10 @@ private:
     SystemFontDatabaseCoreText m_systemFontDatabaseCoreText;
 
     friend class ComplexTextController;
+#endif
+
+#if USE(FREETYPE)
+    FontSetCache m_fontSetCache;
 #endif
 
     friend class Font;

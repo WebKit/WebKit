@@ -38,9 +38,11 @@
 #include "HTMLNames.h"
 #include "HTMLTemplateElement.h"
 #include "ProcessingInstruction.h"
+#include "TemplateContentDocumentFragment.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
+#include <memory>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -201,34 +203,65 @@ String MarkupAccumulator::serializeNodes(Node& targetNode, SerializedNodes root,
 
 void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, SerializedNodes root, const Namespaces* namespaces, Vector<QualifiedName>* tagNamesToSkip)
 {
-    if (tagNamesToSkip && is<Element>(targetNode)) {
-        for (auto& name : *tagNamesToSkip) {
-            if (downcast<Element>(targetNode).hasTagName(name))
-                return;
-        }
-    }
-
-    Namespaces namespaceHash;
+    WTF::Vector<Namespaces> namespaceStack;
     if (namespaces)
-        namespaceHash = *namespaces;
+        namespaceStack.append(*namespaces);
     else if (inXMLFragmentSerialization()) {
         // Make sure xml prefix and namespace are always known to uphold the constraints listed at http://www.w3.org/TR/xml-names11/#xmlReserved.
+        Namespaces namespaceHash;
         namespaceHash.set(xmlAtom().impl(), XMLNames::xmlNamespaceURI->impl());
         namespaceHash.set(XMLNames::xmlNamespaceURI->impl(), xmlAtom().impl());
-    }
+        namespaceStack.append(WTFMove(namespaceHash));
+    } else
+        namespaceStack.constructAndAppend();
 
-    if (root == SerializedNodes::SubtreeIncludingNode)
-        startAppendingNode(targetNode, &namespaceHash);
+    const Node* current = &targetNode;
+    do {
+        bool shouldSkipNode = false;
+        if (tagNamesToSkip && is<Element>(current)) {
+            for (auto& name : *tagNamesToSkip) {
+                if (downcast<Element>(current)->hasTagName(name))
+                    shouldSkipNode = true;
+            }
+        }
 
-    if (targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(targetNode))
-        return;
+        bool shouldAppendNode = !shouldSkipNode && !(current == &targetNode && root != SerializedNodes::SubtreeIncludingNode);
+        if (shouldAppendNode)
+            startAppendingNode(*current, &namespaceStack.last());
 
-    Node* current = targetNode.hasTagName(templateTag) ? downcast<HTMLTemplateElement>(targetNode).content().firstChild() : targetNode.firstChild();
-    for ( ; current; current = current->nextSibling())
-        serializeNodesWithNamespaces(*current, SerializedNodes::SubtreeIncludingNode, &namespaceHash, tagNamesToSkip);
+        bool shouldEmitCloseTag = !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
+        shouldSkipNode = shouldSkipNode || !shouldEmitCloseTag;
+        if (!shouldSkipNode) {
+            auto firstChild = current->hasTagName(templateTag) ? downcast<HTMLTemplateElement>(current)->content().firstChild() : current->firstChild();
+            if (firstChild) {
+                current = firstChild;
+                namespaceStack.append(namespaceStack.last());
+                continue;
+            }
+        }
 
-    if (root == SerializedNodes::SubtreeIncludingNode)
-        endAppendingNode(targetNode);
+        if (shouldAppendNode && shouldEmitCloseTag)
+            endAppendingNode(*current);
+
+        while (current != &targetNode) {
+            auto nextSibling = current->nextSibling();
+            if (nextSibling) {
+                current = nextSibling;
+                namespaceStack.removeLast();
+                namespaceStack.append(namespaceStack.last());
+                break;
+            }
+            current = current->parentNode();
+            namespaceStack.removeLast();
+            if (auto* fragment = dynamicDowncast<TemplateContentDocumentFragment>(current))
+                current = fragment->host();
+
+            shouldAppendNode = !(current == &targetNode && root != SerializedNodes::SubtreeIncludingNode);
+            shouldEmitCloseTag = !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
+            if (shouldAppendNode && shouldEmitCloseTag)
+                endAppendingNode(*current);
+        }
+    } while (current != &targetNode);
 }
 
 String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const String& urlString) const

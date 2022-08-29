@@ -166,14 +166,14 @@ inline JSValue getOperand(CallFrame* callFrame, VirtualRegister operand) { retur
 #define LLINT_CALL_THROW(globalObject, exceptionToThrow) do {                   \
         JSGlobalObject* __ct_globalObject = (globalObject);                                  \
         throwException(__ct_globalObject, throwScope, exceptionToThrow);        \
-        LLINT_CALL_END_IMPL(nullptr, callToThrow(vm).code().executableAddress(), ExceptionHandlerPtrTag);                 \
+        LLINT_CALL_END_IMPL(nullptr, callToThrow(vm).code().taggedPtr(), ExceptionHandlerPtrTag);                 \
     } while (false)
 
 #define LLINT_CALL_CHECK_EXCEPTION(globalObject) do {               \
         JSGlobalObject* __cce_globalObject = (globalObject);                                 \
         doExceptionFuzzingIfEnabled(__cce_globalObject, throwScope, "LLIntSlowPaths/call", nullptr); \
         if (UNLIKELY(throwScope.exception()))                           \
-            LLINT_CALL_END_IMPL(nullptr, callToThrow(vm).code().executableAddress(), ExceptionHandlerPtrTag); \
+            LLINT_CALL_END_IMPL(nullptr, callToThrow(vm).code().taggedPtr(), ExceptionHandlerPtrTag); \
     } while (false)
 
 #define LLINT_CALL_RETURN(globalObject, calleeFrame, callTarget, callTargetTag) do { \
@@ -425,7 +425,7 @@ static SlowPathReturnType entryOSR(CodeBlock* codeBlock, const char *name, Entry
     if (kind == Prologue)
         LLINT_RETURN_TWO(codeBlock->jitCode()->executableAddress(), nullptr);
     ASSERT(kind == ArityCheck);
-    LLINT_RETURN_TWO(codeBlock->jitCode()->addressForCall(MustCheckArity).executableAddress(), nullptr);
+    LLINT_RETURN_TWO(codeBlock->jitCode()->addressForCall(MustCheckArity).taggedPtr(), nullptr);
 }
 #else // ENABLE(JIT)
 static SlowPathReturnType entryOSR(CodeBlock* codeBlock, const char*, EntryKind)
@@ -480,7 +480,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
         uintptr_t* ptr = vm.getLoopHintExecutionCounter(pc);
         *ptr += codeBlock->llintExecuteCounter().m_activeThreshold;
         if (*ptr >= Options::earlyReturnFromInfiniteLoopsLimit())
-            LLINT_RETURN_TWO(LLInt::fuzzerReturnEarlyFromLoopHintEntrypoint().code().executableAddress(), callFrame->topOfFrame());
+            LLINT_RETURN_TWO(LLInt::fuzzerReturnEarlyFromLoopHintEntrypoint().code().taggedPtr(), callFrame->topOfFrame());
     }
     
     
@@ -502,7 +502,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     CodeLocationLabel<JSEntryPtrTag> codeLocation = codeMap.find(loopOSREntryBytecodeIndex);
     ASSERT(codeLocation);
 
-    void* jumpTarget = codeLocation.executableAddress();
+    void* jumpTarget = codeLocation.taggedPtr();
     ASSERT(jumpTarget);
     
     LLINT_RETURN_TWO(jumpTarget, callFrame->topOfFrame());
@@ -1850,7 +1850,7 @@ static SlowPathReturnType handleHostCall(CallFrame* calleeFrame, JSValue callee,
             vm.encodedHostCallReturnValue = callData.native.function(asObject(callee)->globalObject(), calleeFrame);
             DisallowGC disallowGC;
             auto* callerSP = calleeFrame + CallerFrameAndPC::sizeInRegisters;
-            LLINT_CALL_RETURN(globalObject, callerSP, LLInt::getHostCallReturnValueEntrypoint().code().executableAddress(), JSEntryPtrTag);
+            LLINT_CALL_RETURN(globalObject, callerSP, LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr(), JSEntryPtrTag);
         }
         
         slowPathLog("Call callee is not a function: ", callee, "\n");
@@ -1870,7 +1870,7 @@ static SlowPathReturnType handleHostCall(CallFrame* calleeFrame, JSValue callee,
         vm.encodedHostCallReturnValue = constructData.native.function(asObject(callee)->globalObject(), calleeFrame);
         DisallowGC disallowGC;
         auto* callerSP = calleeFrame + CallerFrameAndPC::sizeInRegisters;
-        LLINT_CALL_RETURN(globalObject, callerSP, LLInt::getHostCallReturnValueEntrypoint().code().executableAddress(), JSEntryPtrTag);
+        LLINT_CALL_RETURN(globalObject, callerSP, LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr(), JSEntryPtrTag);
     }
     
     slowPathLog("Constructor callee is not a function: ", callee, "\n");
@@ -1892,11 +1892,11 @@ inline SlowPathReturnType setUpCall(CallFrame* calleeFrame, CodeSpecializationKi
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell) {
         if (calleeAsValue.inherits<InternalFunction>()) {
-            MacroAssemblerCodePtr<JSEntryPtrTag> codePtr = vm.getCTIInternalFunctionTrampolineFor(kind);
+            CodePtr<JSEntryPtrTag> codePtr = vm.getCTIInternalFunctionTrampolineFor(kind);
             ASSERT(!!codePtr);
-            assertIsTaggedWith<JSEntryPtrTag>(codePtr.executableAddress());
+            assertIsTaggedWith<JSEntryPtrTag>(codePtr.taggedPtr());
             auto* callerSP = calleeFrame + CallerFrameAndPC::sizeInRegisters;
-            LLINT_CALL_RETURN(globalObject, callerSP, codePtr.executableAddress(), JSEntryPtrTag);
+            LLINT_CALL_RETURN(globalObject, callerSP, codePtr.taggedPtr(), JSEntryPtrTag);
         }
         RELEASE_AND_RETURN(throwScope, handleHostCall(calleeFrame, calleeAsValue, kind));
     }
@@ -1906,7 +1906,7 @@ inline SlowPathReturnType setUpCall(CallFrame* calleeFrame, CodeSpecializationKi
 
     DeferTraps deferTraps(vm); // We can't jettison this code if we're about to run it.
 
-    MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
+    CodePtr<JSEntryPtrTag> codePtr;
     // FIXME: Support wasm IC.
     // https://bugs.webkit.org/show_bug.cgi?id=220339
     if (executable->isHostFunction())
@@ -1932,9 +1932,9 @@ inline SlowPathReturnType setUpCall(CallFrame* calleeFrame, CodeSpecializationKi
     }
 
     ASSERT(!!codePtr);
-    assertIsTaggedWith<JSEntryPtrTag>(codePtr.executableAddress());
+    assertIsTaggedWith<JSEntryPtrTag>(codePtr.taggedPtr());
     auto* callerSP = calleeFrame + CallerFrameAndPC::sizeInRegisters;
-    LLINT_CALL_RETURN(globalObject, callerSP, codePtr.executableAddress(), JSEntryPtrTag);
+    LLINT_CALL_RETURN(globalObject, callerSP, codePtr.taggedPtr(), JSEntryPtrTag);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs)
@@ -2068,7 +2068,7 @@ inline SlowPathReturnType commonCallEval(CallFrame* callFrame, const JSInstructi
     calleeFrame->setArgumentCountIncludingThis(bytecode.m_argc);
     calleeFrame->setCallerFrame(callFrame);
     calleeFrame->uncheckedR(VirtualRegister(CallFrameSlot::callee)) = calleeAsValue;
-    calleeFrame->setReturnPC(returnPoint.code().executableAddress());
+    calleeFrame->setReturnPC(returnPoint.code().taggedPtr());
     calleeFrame->setCodeBlock(nullptr);
     callFrame->setCurrentVPC(pc);
     
@@ -2078,7 +2078,7 @@ inline SlowPathReturnType commonCallEval(CallFrame* callFrame, const JSInstructi
     vm.encodedHostCallReturnValue = JSValue::encode(eval(globalObject, calleeFrame, bytecode.m_ecmaMode));
     DisallowGC disallowGC;
     auto* callerSP = calleeFrame + CallerFrameAndPC::sizeInRegisters;
-    LLINT_CALL_RETURN(globalObject, callerSP, LLInt::getHostCallReturnValueEntrypoint().code().executableAddress(), JSEntryPtrTag);
+    LLINT_CALL_RETURN(globalObject, callerSP, LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr(), JSEntryPtrTag);
 }
     
 LLINT_SLOW_PATH_DECL(slow_path_call_eval)
@@ -2307,6 +2307,57 @@ LLINT_SLOW_PATH_DECL(slow_path_out_of_line_jump_target)
     LLINT_END_IMPL();
 }
 
+static void throwArityCheckStackOverflowError(JSGlobalObject* globalObject, ThrowScope& scope)
+{
+    JSObject* error = createStackOverflowError(globalObject);
+    throwException(globalObject, scope, error);
+#if LLINT_TRACING
+    if (UNLIKELY(Options::traceLLIntSlowPath()))
+        dataLog("Throwing exception ", JSValue(scope.exception()), ".\n");
+#endif
+}
+
+ALWAYS_INLINE int numberOfExtraSlots(int argumentCountIncludingThis)
+{
+    int frameSize = argumentCountIncludingThis + CallFrame::headerSizeInRegisters;
+    int alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
+    return alignedFrameSize - frameSize;
+}
+
+ALWAYS_INLINE int numberOfStackPaddingSlotsWithExtraSlots(CodeBlock* codeBlock, int argumentCountIncludingThis)
+{
+    if (static_cast<unsigned>(argumentCountIncludingThis) >= codeBlock->numParameters())
+        return 0;
+    return CommonSlowPaths::numberOfStackPaddingSlots(codeBlock, argumentCountIncludingThis) + numberOfExtraSlots(argumentCountIncludingThis);
+}
+
+static ALWAYS_INLINE int arityCheckFor(VM& vm, CallFrame* callFrame, CodeBlock* newCodeBlock)
+{
+    ASSERT(callFrame->argumentCountIncludingThis() < static_cast<unsigned>(newCodeBlock->numParameters()));
+    int padding = numberOfStackPaddingSlotsWithExtraSlots(newCodeBlock, callFrame->argumentCountIncludingThis());
+
+    Register* newStack = callFrame->registers() - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), padding);
+
+    if (UNLIKELY(!vm.ensureStackCapacityFor(newStack)))
+        return -1;
+    return padding;
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_arityCheck)
+{
+    LLINT_BEGIN();
+    int slotsToAdd = arityCheckFor(vm, callFrame, codeBlock);
+    if (UNLIKELY(slotsToAdd < 0)) {
+        callFrame->convertToStackOverflowFrame(vm, codeBlock);
+        SlowPathFrameTracer tracer(vm, callFrame);
+        ErrorHandlingScope errorScope(vm);
+        throwScope.release();
+        throwArityCheckStackOverflowError(globalObject, throwScope);
+        LLINT_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), callFrame);
+    }
+    LLINT_RETURN_TWO(nullptr, bitwise_cast<void*>(static_cast<uintptr_t>(slotsToAdd)));
+}
+
 template<typename Opcode>
 static void handleVarargsCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject* globalObject, const Opcode& bytecode, CheckpointOSRExitSideState& sideState)
 {
@@ -2385,9 +2436,9 @@ inline SlowPathReturnType dispatchToNextInstructionDuringExit(ThrowScope& scope,
     if (Options::forceOSRExitToLLInt() || codeBlock->jitType() == JITType::InterpreterThunk) {
         const JSInstruction* nextPC = pc.next().ptr();
 #if ENABLE(JIT)
-        return encodeResult(nextPC, LLInt::normalOSRExitTrampolineThunk().code().executableAddress());
+        return encodeResult(nextPC, LLInt::normalOSRExitTrampolineThunk().code().taggedPtr());
 #else
-        return encodeResult(nextPC, LLInt::getCodeRef<JSEntryPtrTag>(normal_osr_exit_trampoline).code().executableAddress());
+        return encodeResult(nextPC, LLInt::getCodeRef<JSEntryPtrTag>(normal_osr_exit_trampoline).code().taggedPtr());
 #endif
     }
 
@@ -2395,7 +2446,7 @@ inline SlowPathReturnType dispatchToNextInstructionDuringExit(ThrowScope& scope,
     ASSERT(codeBlock->jitType() == JITType::BaselineJIT);
     BytecodeIndex nextBytecodeIndex = pc.next().index();
     auto nextBytecode = codeBlock->jitCodeMap().find(nextBytecodeIndex);
-    return encodeResult(bitwise_cast<void*>(static_cast<uintptr_t>(1)), nextBytecode.executableAddress());
+    return encodeResult(bitwise_cast<void*>(static_cast<uintptr_t>(1)), nextBytecode.taggedPtr());
 #endif
     RELEASE_ASSERT_NOT_REACHED();
 }

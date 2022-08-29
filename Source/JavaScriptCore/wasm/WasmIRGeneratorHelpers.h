@@ -129,7 +129,7 @@ static inline void emitRethrowImpl(CCallHelpers& jit)
     CCallHelpers::Call call = jit.call(OperationPtrTag);
     jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
     jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
-        linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationWasmRethrow));
+        linkBuffer.link<OperationPtrTag>(call, operationWasmRethrow);
     });
 }
 
@@ -159,7 +159,7 @@ static inline void emitThrowImpl(CCallHelpers& jit, unsigned exceptionIndex)
     CCallHelpers::Call call = jit.call(OperationPtrTag);
     jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
     jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
-        linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationWasmThrow));
+        linkBuffer.link<OperationPtrTag>(call, operationWasmThrow);
     });
 }
 

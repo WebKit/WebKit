@@ -28,7 +28,9 @@ namespace sh
 class SpecConstMetal : public SpecConst
 {
   public:
-    SpecConstMetal(TSymbolTable *symbolTable, ShCompileOptions compileOptions, GLenum shaderType)
+    SpecConstMetal(TSymbolTable *symbolTable,
+                   const ShCompileOptions &compileOptions,
+                   GLenum shaderType)
         : SpecConst(symbolTable, compileOptions, shaderType)
     {}
     ~SpecConstMetal() override {}
@@ -43,7 +45,7 @@ class TranslatorMetal : public TranslatorVulkan
 
   protected:
     [[nodiscard]] bool translate(TIntermBlock *root,
-                                 ShCompileOptions compileOptions,
+                                 const ShCompileOptions &compileOptions,
                                  PerformanceDiagnostics *perfDiagnostics) override;
 
     [[nodiscard]] bool transformDepthBeforeCorrection(TIntermBlock *root,

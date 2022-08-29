@@ -1056,7 +1056,7 @@ public:
     void drawToPDF(WebCore::FrameIdentifier, const std::optional<WebCore::FloatRect>&, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 
 #if PLATFORM(GTK)
-    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const WebCore::ResourceError&)>&&);
+    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, WebCore::ResourceError&&)>&&);
 #endif
 
     void addResourceRequest(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceRequest&);
@@ -1502,7 +1502,7 @@ public:
     WebCore::HighlightVisibility appHighlightsVisiblility() const { return m_appHighlightsVisible; }
 
     bool createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
-    void restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::IPCHandle>&&, const std::optional<unsigned> index);
+    void restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::Handle>&&, const std::optional<unsigned> index);
     void setAppHighlightsVisibility(const WebCore::HighlightVisibility);
 #endif
 
@@ -1676,7 +1676,7 @@ private:
     void loadSimulatedRequestAndResponse(LoadParameters&&, WebCore::ResourceResponse&&);
     void navigateToPDFLinkWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
     void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
-    void reload(uint64_t navigationID, uint32_t reloadOptions, SandboxExtension::Handle&&);
+    void reload(uint64_t navigationID, OptionSet<WebCore::ReloadOption> reloadOptions, SandboxExtension::Handle&&);
     void goToBackForwardItem(uint64_t navigationID, const WebCore::BackForwardItemIdentifier&, WebCore::FrameLoadType, WebCore::ShouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&&, bool lastNavigationWasAppInitiated, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume);
     void tryRestoreScrollPosition();
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, CompletionHandler<void()>&&);
@@ -2242,7 +2242,7 @@ private:
     friend class PrintContextAccessScope;
 
 #if PLATFORM(GTK)
-    RefPtr<WebPrintOperationGtk> m_printOperation;
+    std::unique_ptr<WebPrintOperationGtk> m_printOperation;
 #endif
 
     SandboxExtensionTracker m_sandboxExtensionTracker;

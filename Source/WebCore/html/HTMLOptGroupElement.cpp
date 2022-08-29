@@ -77,7 +77,7 @@ const AtomString& HTMLOptGroupElement::formControlType() const
 
 void HTMLOptGroupElement::childrenChanged(const ChildChange& change)
 {
-    bool isRelevant = change.affectsElements();
+    bool isRelevant = change.affectsElements == ChildChange::AffectsElements::Yes;
     RefPtr select = isRelevant ? ownerSelectElement() : nullptr;
     if (!isRelevant || !select) {
         HTMLElement::childrenChanged(change);

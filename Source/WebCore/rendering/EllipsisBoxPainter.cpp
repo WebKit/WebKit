@@ -25,39 +25,39 @@
 #include "config.h"
 #include "EllipsisBoxPainter.h"
 
-#include "InlineDisplayBox.h"
+#include "InlineIteratorTextBox.h"
 #include "LegacyEllipsisBox.h"
+#include "LineSelection.h"
 #include "PaintInfo.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
-LegacyEllipsisBoxPainter::LegacyEllipsisBoxPainter(const LegacyEllipsisBox& ellipsisBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-    : EllipsisBoxPainter(InlineIterator::BoxLegacyPath { &ellipsisBox }, paintInfo, paintOffset)
-{
-}
-
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-ModernEllipsisBoxPainter::ModernEllipsisBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const InlineDisplay::Box& ellipsisBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-    : EllipsisBoxPainter(InlineIterator::BoxModernPath { inlineContent, inlineContent.indexForBox(ellipsisBox) }, paintInfo, paintOffset)
-{
-}
-#endif
-
-template<typename EllipsisBoxPath>
-EllipsisBoxPainter<EllipsisBoxPath>::EllipsisBoxPainter(EllipsisBoxPath&& ellipsisBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-    : m_ellipsisBox(WTFMove(ellipsisBox))
+EllipsisBoxPainter::EllipsisBoxPainter(const InlineIterator::LineBox& lineBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset, Color selectionForegroundColor, Color selectionBackgroundColor)
+    : m_lineBox(lineBox)
     , m_paintInfo(paintInfo)
     , m_paintOffset(paintOffset)
+    , m_selectionForegroundColor(selectionForegroundColor)
+    , m_selectionBackgroundColor(selectionBackgroundColor)
 {
 }
 
-template<typename EllipsisBoxPath>
-void EllipsisBoxPainter<EllipsisBoxPath>::paint()
+void EllipsisBoxPainter::paint()
 {
     // FIXME: Transition it to TextPainter.
     auto& context = m_paintInfo.context();
-    auto& style = m_ellipsisBox.style();
+    auto& style = m_lineBox.style();
     auto textColor = style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor);
+
+    if (m_lineBox.ellipsisSelectionState() != RenderObject::HighlightState::None) {
+        paintSelection();
+
+        // Select the correct color for painting the text.
+        auto foreground = m_paintInfo.forceTextColor() ? m_paintInfo.forcedTextColor() : m_selectionForegroundColor;
+        if (foreground.isValid() && foreground != textColor)
+            context.setFillColor(foreground);
+    }
+
     if (textColor != context.fillColor())
         context.setFillColor(textColor);
 
@@ -68,11 +68,10 @@ void EllipsisBoxPainter<EllipsisBoxPath>::paint()
         setShadow = true;
     }
     
-    auto visualRect = m_ellipsisBox.visualRectIgnoringBlockDirection();
-    m_ellipsisBox.containingBlock().flipForWritingMode(visualRect);
+    auto visualRect = m_lineBox.ellipsisVisualRect();
     auto textOrigin = visualRect.location();
     textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + style.metricsOfPrimaryFont().ascent());
-    context.drawBidiText(style.fontCascade(), m_ellipsisBox.textRun(), textOrigin);
+    context.drawBidiText(style.fontCascade(), m_lineBox.ellipsisText(), textOrigin);
 
     if (textColor != context.fillColor())
         context.setFillColor(textColor);
@@ -81,9 +80,28 @@ void EllipsisBoxPainter<EllipsisBoxPath>::paint()
         context.clearShadow();
 }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-template class EllipsisBoxPainter<InlineIterator::BoxModernPath>;
-#endif
-template class EllipsisBoxPainter<InlineIterator::BoxLegacyPath>;
+void EllipsisBoxPainter::paintSelection()
+{
+    auto& context = m_paintInfo.context();
+    auto& style = m_lineBox.style();
+
+    auto textColor = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
+    auto backgroundColor = m_selectionBackgroundColor;
+    if (!backgroundColor.isVisible())
+        return;
+
+    // If the text color ends up being the same as the selection background, invert the selection background.
+    if (textColor == backgroundColor)
+        backgroundColor = backgroundColor.invertedColorWithAlpha(1.0);
+
+    auto stateSaver = GraphicsContextStateSaver { context };
+
+    auto visualRect = LayoutRect { m_lineBox.ellipsisVisualRect(InlineIterator::LineBox::AdjustedForSelection::Yes) };
+    visualRect.move(m_paintOffset.x(), m_paintOffset.y());
+
+    auto ellipsisText = m_lineBox.ellipsisText();
+    style.fontCascade().adjustSelectionRectForText(ellipsisText, visualRect);
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(visualRect, m_lineBox.containingBlock().document().deviceScaleFactor(), ellipsisText.ltr()), backgroundColor);
+}
 
 }

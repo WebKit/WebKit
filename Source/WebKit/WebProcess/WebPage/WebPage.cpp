@@ -693,6 +693,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
+    WebStorageNamespaceProvider::incrementUseCount(*m_pageGroup, sessionStorageNamespaceIdentifier());
+
 #if PLATFORM(IOS)
     setAllowsDeprecatedSynchronousXMLHttpRequestDuringUnload(parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload);
 #endif
@@ -1093,6 +1095,8 @@ WebPage::~WebPage()
     if (m_footerBanner)
         m_footerBanner->detachFromPage();
 #endif
+
+    WebStorageNamespaceProvider::decrementUseCount(*m_pageGroup, sessionStorageNamespaceIdentifier());
 
 #ifndef NDEBUG
     webPageCounter.decrement();
@@ -1584,10 +1588,7 @@ void WebPage::close()
 #endif
 
 #if PLATFORM(GTK)
-    if (m_printOperation) {
-        m_printOperation->disconnectFromPage();
-        m_printOperation = nullptr;
-    }
+    m_printOperation = nullptr;
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
@@ -1905,7 +1906,7 @@ void WebPage::setDefersLoading(bool defersLoading)
     m_page->setDefersLoading(defersLoading);
 }
 
-void WebPage::reload(uint64_t navigationID, uint32_t reloadOptions, SandboxExtension::Handle&& sandboxExtensionHandle)
+void WebPage::reload(uint64_t navigationID, OptionSet<WebCore::ReloadOption> reloadOptions, SandboxExtension::Handle&& sandboxExtensionHandle)
 {
     SendStopResponsivenessTimer stopper;
 
@@ -1914,7 +1915,7 @@ void WebPage::reload(uint64_t navigationID, uint32_t reloadOptions, SandboxExten
 
     m_sandboxExtensionTracker.beginReload(m_mainFrame.ptr(), WTFMove(sandboxExtensionHandle));
     if (m_page && m_mainFrame->coreFrame())
-        m_page->userInputBridge().reloadFrame(*m_mainFrame->coreFrame(), OptionSet<ReloadOption>::fromRaw(reloadOptions));
+        m_page->userInputBridge().reloadFrame(*m_mainFrame->coreFrame(), reloadOptions);
     else
         ASSERT_NOT_REACHED();
 
@@ -5610,7 +5611,7 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
 
 #if PLATFORM(GTK)
     if (!m_printOperation)
-        m_printOperation = WebPrintOperationGtk::create(this, printInfo);
+        m_printOperation = makeUnique<WebPrintOperationGtk>(printInfo);
 #endif
 }
 
@@ -5804,17 +5805,25 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
 }
 
 #elif PLATFORM(GTK)
-void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler)
+void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, WebCore::ResourceError&&)>&& completionHandler)
 {
     beginPrinting(frameID, printInfo);
     if (m_printContext && m_printOperation) {
-        m_printOperation->startPrint(m_printContext.get(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (const WebCore::ResourceError& error) mutable {
+        m_printOperation->startPrint(m_printContext.get(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (RefPtr<WebCore::FragmentedSharedBuffer>&& data, WebCore::ResourceError&& error) mutable {
             m_printOperation = nullptr;
-            completionHandler(error);
+            std::optional<SharedMemory::Handle> ipcHandle;
+            if (error.isNull()) {
+                auto sharedMemory = SharedMemory::copyBuffer(*data);
+                SharedMemory::Handle handle;
+                sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
+                if (!handle.isNull())
+                    ipcHandle = WTFMove(handle);
+            }
+            completionHandler(WTFMove(ipcHandle), WTFMove(error));
         });
         return;
     }
-    completionHandler({ });
+    completionHandler(std::nullopt, { });
 }
 #endif
 
@@ -7575,7 +7584,12 @@ void WebPage::getTextFragmentMatch(CompletionHandler<void(const String&)>&& comp
         return;
     }
 
-    FragmentDirectiveParser fragmentDirectiveParser(mainWebFrame().url());
+    auto fragmentDirective = document->fragmentDirective();
+    if (fragmentDirective.isEmpty()) {
+        completionHandler({ });
+        return;
+    }
+    FragmentDirectiveParser fragmentDirectiveParser(fragmentDirective);
     if (!fragmentDirectiveParser.isValid()) {
         completionHandler({ });
         return;
@@ -8069,17 +8083,17 @@ bool WebPage::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighli
     return true;
 }
 
-void WebPage::restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::IPCHandle>&& memoryHandles, const std::optional<unsigned> index)
+void WebPage::restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::Handle>&& memoryHandles, const std::optional<unsigned> index)
 {
     RefPtr document = CheckedRef(m_page->focusController())->focusedOrMainFrame().document();
 
     unsigned i = 0;
-    for (const auto& ipcHandle : memoryHandles) {
-        auto sharedMemory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
+    for (const auto& handle : memoryHandles) {
+        auto sharedMemory = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
         if (!sharedMemory)
             continue;
 
-        document->appHighlightStorage().restoreAndScrollToAppHighlight(sharedMemory->createSharedBuffer(ipcHandle.dataSize), i == index ? ScrollToHighlight::Yes : ScrollToHighlight::No);
+        document->appHighlightStorage().restoreAndScrollToAppHighlight(sharedMemory->createSharedBuffer(handle.size()), i == index ? ScrollToHighlight::Yes : ScrollToHighlight::No);
         i++;
     }
 }

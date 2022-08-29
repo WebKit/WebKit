@@ -36,6 +36,7 @@
 #include "WasmOps.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/HexNumber.h>
+#include <wtf/SetForScope.h>
 
 namespace JSC { namespace Wasm {
 
@@ -63,12 +64,23 @@ auto SectionParser::parseType() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseStructType(i, signature));
             break;
         }
+        case TypeKind::Rec: {
+            if (!Options::useWebAssemblyGC())
+                return fail(i, "th type failed to parse because rec types are not enabled");
+
+            WASM_FAIL_IF_HELPER_FAILS(parseRecursionGroup(i, signature));
+            break;
+        }
         default:
-            return fail(i, "th Type is non-Func ", typeKind);
+            return fail(i, "th Type is non-Func and non-Struct ", typeKind);
         }
 
         WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for Type section's ", i, "th signature");
-        m_info->typeSignatures.uncheckedAppend(signature.releaseNonNull());
+        // Recursion group parsing will append the entries itself, as there may
+        // be multiple entries that need to be added to the type section for
+        // each recursion group.
+        if (!signature->is<RecursionGroup>())
+            m_info->typeSignatures.uncheckedAppend(signature.releaseNonNull());
     }
     return { };
 }
@@ -491,7 +503,7 @@ auto SectionParser::parseElement() -> PartialResult
         case 0x05: {
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section");
-            WASM_PARSER_FAIL_IF(!refType.isFuncref(), "reftype in element section should be funcref");
+            WASM_PARSER_FAIL_IF(!isFuncref(refType) && refType.isNullable(), "reftype in element section should be funcref");
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
@@ -513,7 +525,7 @@ auto SectionParser::parseElement() -> PartialResult
 
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section");
-            WASM_PARSER_FAIL_IF(!refType.isFuncref(), "reftype in element section should be funcref");
+            WASM_PARSER_FAIL_IF(!isFuncref(refType) && refType.isNullable(), "reftype in element section should be funcref");
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
@@ -529,7 +541,7 @@ auto SectionParser::parseElement() -> PartialResult
         case 0x07: {
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section");
-            WASM_PARSER_FAIL_IF(!refType.isFuncref(), "reftype in element section should be funcref");
+            WASM_PARSER_FAIL_IF(!isFuncref(refType) && refType.isNullable(), "reftype in element section should be funcref");
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
@@ -722,6 +734,70 @@ auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& s
     }
 
     structType = TypeInformation::typeDefinitionForStruct(fields);
+    return { };
+}
+
+auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition>& recursionGroup) -> PartialResult
+{
+    ASSERT(Options::useWebAssemblyGC());
+
+    uint32_t typeCount;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(typeCount), "can't get ", position, "th recursion group's type count");
+    WASM_PARSER_FAIL_IF(typeCount > maxRecursionGroupCount, "number of types for recursion group at position ", position, " is too big ", typeCount, " maximum ", maxRecursionGroupCount);
+    Vector<TypeIndex> types;
+    WASM_PARSER_FAIL_IF(!types.tryReserveCapacity(typeCount), "can't allocate enough memory for recursion group ", typeCount, " entries");
+    RefPtr<TypeDefinition> firstSignature;
+
+    SetForScope<RecursionGroupInformation> recursionGroupInfo(m_recursionGroupInformation, RecursionGroupInformation { true, m_info->typeCount(), m_info->typeCount() + typeCount });
+
+    for (uint32_t i = 0; i < typeCount; ++i) {
+        int8_t typeKind;
+        WASM_PARSER_FAIL_IF(!parseInt7(typeKind), "can't get recursion group's ", i, "th Type's type");
+        RefPtr<TypeDefinition> signature;
+        switch (static_cast<TypeKind>(typeKind)) {
+        case TypeKind::Func: {
+            WASM_FAIL_IF_HELPER_FAILS(parseFunctionType(i, signature));
+            break;
+        }
+        case TypeKind::Struct: {
+            WASM_FAIL_IF_HELPER_FAILS(parseStructType(i, signature));
+            break;
+        }
+        // FIXME: Add Array types when they are implemented.
+        default:
+            return fail(i, "th Type is non-Func and non-Struct ", typeKind);
+        }
+
+        WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for recursion group's ", i, "th signature");
+        types.uncheckedAppend(signature->index());
+
+        if (!i)
+            firstSignature = signature;
+    }
+
+    recursionGroup = TypeInformation::typeDefinitionForRecursionGroup(types);
+
+    // Type definitions are normalized such that non-recursive, singleton recursion groups
+    // are stored as the underlying concrete type without a projection. Otherwise we will
+    // store projections for each recursion group index in the type section.
+    if (typeCount > 1) {
+        WASM_PARSER_FAIL_IF(!m_info->typeSignatures.tryReserveCapacity(m_info->typeSignatures.capacity() + typeCount - 1), "can't allocate enough memory for recursion group's ", typeCount, " type indices");
+        for (uint32_t i = 0; i < typeCount; ++i) {
+            RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(recursionGroup->index(), i);
+            WASM_PARSER_FAIL_IF(!projection, "can't allocate enough memory for recursion group's ", i, "th projection");
+            m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
+        }
+    } else {
+        // If a type definition is idempotent for the below replacement, then it is non-recursive and doesn't need a projection.
+        if (*firstSignature == firstSignature->replacePlaceholders(recursionGroup->index()))
+            m_info->typeSignatures.uncheckedAppend(firstSignature.releaseNonNull());
+        else {
+            RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(recursionGroup->index(), 0);
+            WASM_PARSER_FAIL_IF(!projection, "can't allocate enough memory for recursion group's 0th projection");
+            m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
+        }
+    }
+
     return { };
 }
 

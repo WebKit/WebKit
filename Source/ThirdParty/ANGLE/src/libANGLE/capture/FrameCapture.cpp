@@ -32,6 +32,7 @@
 #include "libANGLE/Shader.h"
 #include "libANGLE/Surface.h"
 #include "libANGLE/VertexArray.h"
+#include "libANGLE/capture/capture_egl.h"
 #include "libANGLE/capture/capture_gles_1_0_autogen.h"
 #include "libANGLE/capture/capture_gles_2_0_autogen.h"
 #include "libANGLE/capture/capture_gles_3_0_autogen.h"
@@ -43,6 +44,7 @@
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/queryconversions.h"
 #include "libANGLE/queryutils.h"
+#include "libANGLE/validationEGL.h"
 #include "third_party/ceval/ceval.h"
 
 #define USE_SYSTEM_ZLIB
@@ -2887,6 +2889,18 @@ void CaptureTextureContents(std::vector<CallCapture> *setupCalls,
         return;
     }
 
+    if (index.getType() == gl::TextureType::External)
+    {
+        // The generated glTexImage2D call is for creating the staging texture
+        Capture(setupCalls,
+                CaptureTexImage2D(*replayState, true, gl::TextureTarget::_2D, index.getLevelIndex(),
+                                  format.internalFormat, desc.size.width, desc.size.height, 0,
+                                  format.format, format.type, data));
+
+        // For external textures, we're done
+        return;
+    }
+
     bool is3D =
         (index.getType() == gl::TextureType::_3D || index.getType() == gl::TextureType::_2DArray ||
          index.getType() == gl::TextureType::CubeMapArray);
@@ -3267,12 +3281,13 @@ void CaptureDefaultVertexAttribs(const gl::State &replayState,
 
 // Capture the setup of the state that's shared by all of the contexts in the share group
 // See IsSharedObjectResource for the list of objects covered here.
-void CaptureShareGroupMidExecutionSetup(const gl::Context *context,
-                                        std::vector<CallCapture> *setupCalls,
-                                        ResourceTracker *resourceTracker,
-                                        gl::State &replayState)
+void CaptureShareGroupMidExecutionSetup(
+    const gl::Context *context,
+    std::vector<CallCapture> *setupCalls,
+    ResourceTracker *resourceTracker,
+    gl::State &replayState,
+    const PackedEnumMap<ResourceIDType, uint32_t> &maxAccessedResourceIDs)
 {
-
     FrameCaptureShared *frameCaptureShared = context->getShareGroup()->getFrameCaptureShared();
     const gl::State &apiState              = context->getState();
 
@@ -3574,7 +3589,8 @@ void CaptureShareGroupMidExecutionSetup(const gl::Context *context,
                                   index.getType() == gl::TextureType::_2DArray ||
                                   index.getType() == gl::TextureType::Buffer ||
                                   index.getType() == gl::TextureType::CubeMap ||
-                                  index.getType() == gl::TextureType::CubeMapArray);
+                                  index.getType() == gl::TextureType::CubeMapArray ||
+                                  index.getType() == gl::TextureType::External);
 
             // Check for supported textures
             if (!supportedType)
@@ -3592,6 +3608,20 @@ void CaptureShareGroupMidExecutionSetup(const gl::Context *context,
                     CaptureTextureContents(calls, &replayState, texture, index, desc, 0, 0);
                 }
                 continue;
+            }
+
+            // create a staging GL_TEXTURE_2D texture to create the eglImage with
+            gl::TextureID stagingTexId = {maxAccessedResourceIDs[ResourceIDType::Texture] + 1};
+            if (index.getType() == gl::TextureType::External)
+            {
+                Capture(setupCalls, CaptureGenTextures(replayState, true, 1, &stagingTexId));
+                MaybeCaptureUpdateResourceIDs(context, resourceTracker, setupCalls);
+                Capture(setupCalls,
+                        CaptureBindTexture(replayState, true, gl::TextureType::_2D, stagingTexId));
+                Capture(setupCalls, CaptureTexParameteri(replayState, true, gl::TextureType::_2D,
+                                                         GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+                Capture(setupCalls, CaptureTexParameteri(replayState, true, gl::TextureType::_2D,
+                                                         GL_TEXTURE_MAG_FILTER, GL_NEAREST));
             }
 
             if (context->getExtensions().getImageANGLE)
@@ -3642,6 +3672,37 @@ void CaptureShareGroupMidExecutionSetup(const gl::Context *context,
                 {
                     CaptureTextureContents(calls, &replayState, texture, index, desc,
                                            static_cast<GLuint>(data.size()), data.data());
+                }
+
+                if (index.getType() == gl::TextureType::External)
+                {
+                    constexpr EGLint attribs[] = {
+                        EGL_IMAGE_PRESERVED,
+                        EGL_TRUE,
+                        EGL_NONE,
+                    };
+                    const egl::AttributeMap &attrib_listPacked =
+                        egl::PackParam<const egl::AttributeMap &>(attribs);
+                    attrib_listPacked.initializeWithoutValidation();
+
+                    // Create the image on demand
+                    egl::Image *image = nullptr;
+                    Capture(setupCalls,
+                            CaptureEGLCreateImage(context, EGL_GL_TEXTURE_2D_KHR,
+                                                  reinterpret_cast<EGLClientBuffer>(
+                                                      static_cast<GLuint64>(stagingTexId.value)),
+                                                  attrib_listPacked, image));
+
+                    // Pass the eglImage to the texture that is bound to GL_TEXTURE_EXTERNAL_OES
+                    // target
+                    for (std::vector<CallCapture> *calls : texSetupCalls)
+                    {
+                        Capture(calls, CaptureEGLImageTargetTexture2DOES(
+                                           replayState, true, gl::TextureType::External, image));
+                    }
+
+                    // Delete the staging texture
+                    Capture(setupCalls, CaptureDeleteTextures(replayState, true, 1, &stagingTexId));
                 }
             }
             else
@@ -3767,7 +3828,7 @@ void CaptureShareGroupMidExecutionSetup(const gl::Context *context,
         // This does not handle some more tricky situations like attaching shaders to a non-linked
         // program. Or attaching uncompiled shaders. Or attaching and then deleting a shader.
         // TODO(jmadill): Handle trickier program uses. http://anglebug.com/3662
-        if (shader->isCompiled())
+        if (shader->isCompiled(context))
         {
             const std::string &capturedSource =
                 context->getShareGroup()->getFrameCaptureShared()->getShaderSource(id);
@@ -3781,7 +3842,8 @@ void CaptureShareGroupMidExecutionSetup(const gl::Context *context,
             cap(CaptureCompileShader(replayState, true, id));
         }
 
-        if (sourcePointer && (!shader->isCompiled() || sourcePointer != shaderSource.c_str()))
+        if (sourcePointer &&
+            (!shader->isCompiled(context) || sourcePointer != shaderSource.c_str()))
         {
             cap(CaptureShaderSource(replayState, true, id, 1, &sourcePointer, nullptr));
         }
@@ -4153,9 +4215,9 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         gl::FramebufferState defaultFramebufferState(
             context->getCaps(), framebuffer->getState().id(),
             framebuffer->getState().getFramebufferSerial());
-        const std::vector<GLenum> &defaultDrawBufferStates =
+        const gl::DrawBuffersVector<GLenum> &defaultDrawBufferStates =
             defaultFramebufferState.getDrawBufferStates();
-        const std::vector<GLenum> &drawBufferStates = framebuffer->getDrawBufferStates();
+        const gl::DrawBuffersVector<GLenum> &drawBufferStates = framebuffer->getDrawBufferStates();
 
         if (drawBufferStates != defaultDrawBufferStates)
         {
@@ -6398,11 +6460,13 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
 
             break;
         }
+
         case EntryPoint::GLCopyBufferSubData:
         {
             maybeCaptureCoherentBuffers(context);
             break;
         }
+
         case EntryPoint::GLDeleteFramebuffers:
         case EntryPoint::GLDeleteFramebuffersOES:
         {
@@ -6422,6 +6486,7 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             }
             break;
         }
+
         case EntryPoint::GLUseProgram:
         {
             if (isCaptureActive())
@@ -6431,6 +6496,7 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             }
             break;
         }
+
         case EntryPoint::GLGenVertexArrays:
         case EntryPoint::GLGenVertexArraysOES:
         {
@@ -6444,6 +6510,7 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             }
             break;
         }
+
         case EntryPoint::GLDeleteVertexArrays:
         case EntryPoint::GLDeleteVertexArraysOES:
         {
@@ -6458,6 +6525,7 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             }
             break;
         }
+
         case EntryPoint::GLBindVertexArray:
         case EntryPoint::GLBindVertexArrayOES:
         {
@@ -6468,6 +6536,38 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             }
             break;
         }
+
+        case EntryPoint::EGLCreateImage:
+        case EntryPoint::EGLCreateImageKHR:
+        {
+            ParamData attribs =
+                call.params.getParam("attrib_list", ParamType::TGLint64Pointer, 4).data;
+
+            int bytesPerAttrib = 8;
+            int numAttribs     = static_cast<int>(attribs[0].size() / bytesPerAttrib);
+            std::vector<GLint64> reconstructedAttribs(numAttribs);
+            for (int i = 0; i < numAttribs; i++)
+            {
+                GLint64 compiledAttrib = 0;
+                for (int b = 0; b < bytesPerAttrib; b++)
+                {
+                    compiledAttrib |= attribs[0][i * bytesPerAttrib + b] << (b * sizeof(uint64_t));
+                }
+                reconstructedAttribs[i] = compiledAttrib;
+            }
+
+            // Check if the passed-in attribs are as expected, otherwise throw an UNREACHABLE
+            if (!isCaptureActive() &&
+                (reconstructedAttribs[0] != EGL_IMAGE_PRESERVED ||
+                 reconstructedAttribs[1] != EGL_TRUE || reconstructedAttribs[2] != EGL_NONE))
+            {
+                ERR() << "EGLImage created with " << numAttribs << " unsupported attribs types.";
+                UNREACHABLE();
+            }
+
+            break;
+        }
+
         default:
             break;
     }
@@ -6975,7 +7075,7 @@ void FrameCaptureShared::runMidExecutionCapture(const gl::Context *mainContext)
     mainContextReplayState.initializeForCapture(mainContext);
 
     CaptureShareGroupMidExecutionSetup(mainContext, &mShareGroupSetupCalls, &mResourceTracker,
-                                       mainContextReplayState);
+                                       mainContextReplayState, mMaxAccessedResourceIDs);
 
     scanSetupCalls(mainContext, mShareGroupSetupCalls);
 

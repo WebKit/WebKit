@@ -46,7 +46,7 @@ enum class FrameAndStackAdjustmentRequirement {
 };
 
 static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
-    VM& vm, FunctionPtr<CFunctionPtrTag> generationFunction, PtrTag resultTag, const char* name, unsigned extraPopsToRestore, FrameAndStackAdjustmentRequirement frameAndStackAdjustmentRequirement)
+    VM& vm, CodePtr<CFunctionPtrTag> generationFunction, PtrTag resultTag, const char* name, unsigned extraPopsToRestore, FrameAndStackAdjustmentRequirement frameAndStackAdjustmentRequirement)
 {
     AssemblyHelpers jit(nullptr);
 

@@ -204,6 +204,8 @@ UIProcess/Automation/libwpe/WebAutomationSessionLibWPE.cpp
 
 UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
+UIProcess/Gamepad/wpe/UIGamepadProviderWPE.cpp
+
 UIProcess/geoclue/GeoclueGeolocationProvider.cpp
 
 UIProcess/glib/WebPageProxyGLib.cpp

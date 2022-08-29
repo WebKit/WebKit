@@ -28,7 +28,7 @@ class TranslatorVulkan : public TCompiler
 
   protected:
     [[nodiscard]] bool translate(TIntermBlock *root,
-                                 ShCompileOptions compileOptions,
+                                 const ShCompileOptions &compileOptions,
                                  PerformanceDiagnostics *perfDiagnostics) override;
     bool shouldFlattenPragmaStdglInvariantAll() override;
 
@@ -36,12 +36,12 @@ class TranslatorVulkan : public TCompiler
     // See TranslatorMetal.cpp.
     [[nodiscard]] bool translateImpl(TInfoSinkBase &sink,
                                      TIntermBlock *root,
-                                     ShCompileOptions compileOptions,
+                                     const ShCompileOptions &compileOptions,
                                      PerformanceDiagnostics *perfDiagnostics,
                                      SpecConst *specConst,
                                      DriverUniform *driverUniforms);
 
-    void writeExtensionBehavior(ShCompileOptions compileOptions, TInfoSinkBase &sink);
+    void writeExtensionBehavior(const ShCompileOptions &compileOptions, TInfoSinkBase &sink);
 
     // Give subclass such as TranslatorMetal a chance to do depth transform before
     // TranslatorVulkan apply its own transform.

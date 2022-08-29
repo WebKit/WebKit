@@ -624,6 +624,14 @@ TIntermAggregate *TIntermAggregate::CreateConstructor(const TType &type, TInterm
     return new TIntermAggregate(nullptr, type, EOpConstruct, arguments);
 }
 
+TIntermAggregate *TIntermAggregate::CreateConstructor(
+    const TType &type,
+    const std::initializer_list<TIntermNode *> &arguments)
+{
+    TIntermSequence argSequence(arguments);
+    return CreateConstructor(type, &argSequence);
+}
+
 TIntermAggregate::TIntermAggregate(const TFunction *func,
                                    const TType &type,
                                    TOperator op,

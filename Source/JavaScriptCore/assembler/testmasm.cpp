@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -238,7 +238,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> compile(Generator&& generate)
 template<typename T, typename... Arguments>
 T invoke(const MacroAssemblerCodeRef<JSEntryPtrTag>& code, Arguments... arguments)
 {
-    void* executableAddress = untagCFunctionPtr<JSEntryPtrTag>(code.code().executableAddress());
+    void* executableAddress = untagCFunctionPtr<JSEntryPtrTag>(code.code().taggedPtr());
     T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);
 
 #if CPU(RISCV64)
@@ -4920,7 +4920,7 @@ void testProbeModifiesProgramCounter()
         // Write expected values into the registers.
         jit.probeDebug([&] (Probe::Context& context) {
             probeCallCount++;
-            context.cpu.pc() = retagCodePtr<JSEntryPtrTag, JITProbePCPtrTag>(continuation.code().executableAddress());
+            context.cpu.pc() = retagCodePtr<JSEntryPtrTag, JITProbePCPtrTag>(continuation.code().taggedPtr());
         });
 
         jit.breakpoint(); // We should never get here.

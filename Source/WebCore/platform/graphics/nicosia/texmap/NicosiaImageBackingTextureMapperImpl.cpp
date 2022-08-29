@@ -51,7 +51,7 @@ void ImageBackingTextureMapperImpl::flushUpdate()
     // If the update happens for the same image and there's no buffer, keep the current one
     // so it can be received by the CoordinatedGraphicsScene. In that case we only need to update
     // the isVisible flag.
-    if ((m_layerState.update.nativeImageID == m_update.update.nativeImageID) && !m_layerState.update.buffer) {
+    if ((m_layerState.update.nativeImageID == m_update.update.nativeImageID) && !m_layerState.update.imageBackingStore) {
         m_update.update.isVisible = m_layerState.update.isVisible;
         return;
     }

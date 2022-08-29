@@ -80,9 +80,15 @@ protected:
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, AtomString trackID);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, uint64_t trackID);
     WEBCORE_EXPORT virtual ~MediaSampleAVFObjC();
+    
+    void initializeTimes();
 
     RetainPtr<CMSampleBufferRef> m_sample;
     AtomString m_id;
+    
+    MediaTime m_presentationTime;
+    MediaTime m_decodeTime;
+    MediaTime m_duration;
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     Vector<Ref<SharedBuffer>> m_keyIDs;

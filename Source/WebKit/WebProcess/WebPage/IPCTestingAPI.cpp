@@ -1824,16 +1824,6 @@ static bool encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globa
     if (!jsSharedMemory)
         return false;
 
-    uint32_t dataSize = jsSharedMemory->size();
-
-    auto jsDataSizeValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "dataSize"_s));
-    if (scope.exception())
-        return false;
-    if (!jsDataSizeValue.isUndefined()) {
-        if (auto dataSizeValue = convertToUint64(jsDataSizeValue))
-            dataSize = *dataSizeValue;
-    }
-
     auto jsProtectionValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "protection"_s));
     if (scope.exception())
         return false;
@@ -1848,7 +1838,7 @@ static bool encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globa
     else if (!equalLettersIgnoringASCIICase(protectionValue, "readwrite"_s))
         return false;
 
-    encoder << SharedMemory::IPCHandle { jsSharedMemory->createHandle(protection), dataSize };
+    encoder << jsSharedMemory->createHandle(protection);
     return true;
 }
 
@@ -2633,7 +2623,7 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, I
     return object;
 }
 
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebKit::SharedMemory::IPCHandle&& value)
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebKit::SharedMemory::Handle&& value)
 {
     using SharedMemory = WebKit::SharedMemory;
     using Protection = WebKit::SharedMemory::Protection;
@@ -2646,10 +2636,10 @@ template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* glob
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
     auto protection = Protection::ReadWrite;
-    auto sharedMemory = SharedMemory::map(value.handle, protection);
+    auto sharedMemory = SharedMemory::map(value, protection);
     if (!sharedMemory) {
         protection = Protection::ReadOnly;
-        sharedMemory = SharedMemory::map(value.handle, protection);
+        sharedMemory = SharedMemory::map(value, protection);
         if (!sharedMemory)
             return JSC::JSValue();
     }
@@ -2658,7 +2648,7 @@ template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* glob
     object->putDirect(vm, JSC::Identifier::fromString(vm, "value"_s), jsValue);
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "dataSize"_s), JSC::JSValue(value.dataSize));
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "dataSize"_s), JSC::JSValue(value.size()));
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
     object->putDirect(vm, JSC::Identifier::fromString(vm, "protection"_s), JSC::jsNontrivialString(vm, protection == Protection::ReadWrite ? "ReadWrite"_s : "ReadOnly"_s));

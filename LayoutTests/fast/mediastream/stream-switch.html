@@ -3,21 +3,22 @@
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
 <script src="../../media/media-file.js"></script>
+<script src="../../media/utilities.js"></script>
+<script src="../../webrtc/routines.js"></script>
 <script>
 promise_test(async() => {
     let stream = await navigator.mediaDevices.getUserMedia({audio : true});
-
-    localVideo.srcObject = stream;
-    await localVideo.play();
-
     let cptr = 0;
+    let videoFile = "../../media/" + findMediaFile('video', 'content/test');
     while (++cptr < 20) {
         localVideo.srcObject = stream;
         await localVideo.play();
         await new Promise(resolve => setTimeout(resolve, 10));
-        localVideo.src = findMediaFile('video', 'content/test');
+        localVideo.srcObject = null;
+        localVideo.src = videoFile;
+        localVideo.load();
         await localVideo.play();
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await waitForVideoFrame(localVideo);
     }
 }, "Check switching between playing with and without stream");
 
@@ -34,9 +35,9 @@ promise_test(async() => {
     let cptr = 0;
     while (++cptr < 20) {
         stream.removeTrack(audioTrack);
-        await new Promise(resolve => setTimeout(resolve, 100));
+        once(stream, 'onremovetrack');
         stream.addTrack(audioTrack);
-        await new Promise(resolve => setTimeout(resolve, 100));
+        once(stream, 'onaddtrack');
     }
 }, "Check adding and removing a track to a stream");
 </script>

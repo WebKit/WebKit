@@ -213,9 +213,10 @@ RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(Protocol::ErrorStr
         return nullptr;
     }
 
+    auto& document = *targetFrame->document();
     if (!*isLocalStorage)
-        return m_inspectedPage.sessionStorage()->storageArea(targetFrame->document()->securityOrigin());
-    return m_inspectedPage.storageNamespaceProvider().localStorageArea(*targetFrame->document());
+        return m_inspectedPage.storageNamespaceProvider().sessionStorageArea(document);
+    return m_inspectedPage.storageNamespaceProvider().localStorageArea(document);
 }
 
 } // namespace WebCore

@@ -299,11 +299,6 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
 
     // Subpixel bits.
     mResources.SubPixelBits = static_cast<int>(caps.subPixelBits);
-
-    // Direct-to-metal constants:
-    mResources.DriverUniformsBindingIndex    = caps.driverUniformsBindingIndex;
-    mResources.DefaultUniformsBindingIndex   = caps.defaultUniformsBindingIndex;
-    mResources.UBOArgumentBufferBindingIndex = caps.UBOArgumentBufferBindingIndex;
 }
 
 Compiler::~Compiler() = default;

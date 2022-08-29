@@ -869,17 +869,11 @@ void RendererVk::ensureCapsInitialized() const
     mNativeCaps.maxCombinedShaderOutputResources =
         LimitToInt(maxPerStageResources - kReservedPerStageBindingCount);
 
-    // Reserve 1 extra varying for ANGLEPosition when GLLineRasterization is enabled
-    constexpr GLint kReservedVaryingComponentsForGLLineRasterization = 4;
     // Reserve 1 extra varying for transform feedback capture of gl_Position.
     constexpr GLint kReservedVaryingComponentsForTransformFeedbackExtension = 4;
 
     GLint reservedVaryingComponentCount = 0;
 
-    if (getFeatures().basicGLLineRasterization.enabled)
-    {
-        reservedVaryingComponentCount += kReservedVaryingComponentsForGLLineRasterization;
-    }
     if (getFeatures().supportsTransformFeedbackExtension.enabled &&
         (!getFeatures().supportsDepthClipControl.enabled ||
          getFeatures().enablePreRotateSurfaces.enabled ||
@@ -980,7 +974,7 @@ void RendererVk::ensureCapsInitialized() const
     // Atomic image operations in the vertex and fragment shaders require the
     // vertexPipelineStoresAndAtomics and fragmentStoresAndAtomics Vulkan features respectively.
     // If either of these features is not present, the number of image uniforms for that stage is
-    // advertized as zero, so image atomic operations support can be agnostic of shader stages.
+    // advertised as zero, so image atomic operations support can be agnostic of shader stages.
     //
     // GL_OES_shader_image_atomic requires that image atomic functions have support for r32i and
     // r32ui formats.  These formats have mandatory support for STORAGE_IMAGE_ATOMIC and
@@ -990,8 +984,7 @@ void RendererVk::ensureCapsInitialized() const
     mNativeExtensions.shaderImageAtomicOES = true;
 
     // Geometry shaders are required for ES 3.2.
-    // We don't support GS when we are emulating line raster due to the tricky position varying.
-    if (mPhysicalDeviceFeatures.geometryShader && !mFeatures.basicGLLineRasterization.enabled)
+    if (mPhysicalDeviceFeatures.geometryShader)
     {
         // TODO: geometry shader support is incomplete.  http://anglebug.com/3571
         bool geometryShader = mFeatures.supportsTransformFeedbackExtension.enabled &&
@@ -1021,8 +1014,8 @@ void RendererVk::ensureCapsInitialized() const
             LimitToInt(limitsVk.maxGeometryShaderInvocations);
     }
 
-    // We don't support TS when we are emulating line raster due to the tricky position varying.
-    if (mPhysicalDeviceFeatures.tessellationShader && !mFeatures.basicGLLineRasterization.enabled)
+    // Tessellation shaders are required for ES 3.2.
+    if (mPhysicalDeviceFeatures.tessellationShader)
     {
         constexpr uint32_t kReservedTessellationDefaultUniformBindingCount = 2;
 
@@ -1141,6 +1134,11 @@ void RendererVk::ensureCapsInitialized() const
 
     // GL_QCOM_shading_rate
     mNativeExtensions.shadingRateQCOM = mFeatures.supportsFragmentShadingRate.enabled;
+
+    // GL_ANGLE_shader_pixel_local_storage
+    mNativeExtensions.shaderPixelLocalStorageANGLE = true;
+    mNativeExtensions.shaderPixelLocalStorageCoherentANGLE =
+        getFeatures().supportsFragmentShaderPixelInterlock.enabled;
 }
 
 namespace vk
@@ -1216,12 +1214,14 @@ egl::Config GenerateDefaultConfig(DisplayVk *display,
 
     const VkPhysicalDeviceProperties &physicalDeviceProperties =
         renderer->getPhysicalDeviceProperties();
-    gl::Version maxSupportedESVersion = renderer->getMaxSupportedESVersion();
+    gl::Version maxSupportedESVersion      = renderer->getMaxSupportedESVersion();
+    gl::Version maxSupportedDesktopVersion = display->getMaxSupportedDesktopVersion();
 
     // ES3 features are required to emulate ES1
-    EGLint es1Support = (maxSupportedESVersion.major >= 3 ? EGL_OPENGL_ES_BIT : 0);
-    EGLint es2Support = (maxSupportedESVersion.major >= 2 ? EGL_OPENGL_ES2_BIT : 0);
-    EGLint es3Support = (maxSupportedESVersion.major >= 3 ? EGL_OPENGL_ES3_BIT : 0);
+    EGLint es1Support     = (maxSupportedESVersion.major >= 3 ? EGL_OPENGL_ES_BIT : 0);
+    EGLint es2Support     = (maxSupportedESVersion.major >= 2 ? EGL_OPENGL_ES2_BIT : 0);
+    EGLint es3Support     = (maxSupportedESVersion.major >= 3 ? EGL_OPENGL_ES3_BIT : 0);
+    EGLint desktopSupport = (maxSupportedDesktopVersion.major != 0 ? EGL_OPENGL_BIT : 0);
 
     egl::Config config;
 
@@ -1250,7 +1250,7 @@ egl::Config GenerateDefaultConfig(DisplayVk *display,
     config.nativeRenderable   = EGL_TRUE;
     config.nativeVisualID     = static_cast<EGLint>(GetNativeVisualID(colorFormat));
     config.nativeVisualType   = EGL_NONE;
-    config.renderableType     = es1Support | es2Support | es3Support;
+    config.renderableType     = es1Support | es2Support | es3Support | desktopSupport;
     config.sampleBuffers      = (sampleCount > 0) ? 1 : 0;
     config.samples            = sampleCount;
     config.surfaceType        = EGL_WINDOW_BIT | EGL_PBUFFER_BIT;

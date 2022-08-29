@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,18 +27,10 @@ namespace WebCore {
 class HTMLBDIElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLBDIElement);
 public:
-    static Ref<HTMLBDIElement> create(const QualifiedName& name, Document& document)
-    {
-        return adoptRef(*new HTMLBDIElement(name, document));
-    }
+    static Ref<HTMLBDIElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLBDIElement(const QualifiedName& name, Document& document)
-        : HTMLElement(name, document)
-    {
-        // FIXME: Rename setSelfOrAncestorHasDirAutoAttribute to reflect the fact bdi also uses this flag.
-        setSelfOrAncestorHasDirAutoAttribute(true);
-    }
+    HTMLBDIElement(const QualifiedName&, Document&);
 };
 
 } // namespace WebCore

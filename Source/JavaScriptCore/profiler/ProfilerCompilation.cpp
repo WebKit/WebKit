@@ -82,7 +82,7 @@ ExecutionCounter* Compilation::executionCounterFor(const OriginStack& origin)
     return counter.get();
 }
 
-void Compilation::addOSRExitSite(const Vector<MacroAssemblerCodePtr<JSInternalPtrTag>>& codeAddresses)
+void Compilation::addOSRExitSite(const Vector<CodePtr<JSInternalPtrTag>>& codeAddresses)
 {
     m_osrExitSites.append(OSRExitSite(codeAddresses));
 }

@@ -477,7 +477,9 @@ void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaint
 {
     m_graphicsLayer->setShowDebugBorder(showBorder);
     m_graphicsLayer->setShowRepaintCounter(showRepaintCounter);
-    
+
+    // m_viewportAnchorLayer can't show layer borders becuase it's a structural layer.
+
     if (m_ancestorClippingStack) {
         for (auto& entry : m_ancestorClippingStack->stack())
             entry.clippingLayer->setShowDebugBorder(showBorder);
@@ -605,6 +607,7 @@ void RenderLayerBacking::destroyGraphicsLayers()
     if (m_overflowControlsHostLayerAncestorClippingStack)
         removeClippingStackLayers(*m_overflowControlsHostLayerAncestorClippingStack);
 
+    GraphicsLayer::unparentAndClear(m_viewportAnchorLayer);
     GraphicsLayer::unparentAndClear(m_contentsContainmentLayer);
     GraphicsLayer::unparentAndClear(m_foregroundLayer);
     GraphicsLayer::unparentAndClear(m_backgroundLayer);
@@ -1007,6 +1010,9 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     bool layerConfigChanged = false;
     auto& compositor = this->compositor();
 
+    if (updateViewportConstrainedAnchorLayer(compositor.isViewportConstrainedFixedOrStickyLayer(m_owningLayer)))
+        layerConfigChanged = true;
+
     setBackgroundLayerPaintsFixedRootBackground(compositor.needsFixedRootBackgroundLayer(m_owningLayer));
 
     if (updateBackgroundLayer(m_backgroundLayerPaintsFixedRootBackground || m_requiresBackgroundLayer))
@@ -1345,6 +1351,13 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
     // FIXME: reflections should force transform-style to be flat in the style: https://bugs.webkit.org/show_bug.cgi?id=106959
     bool preserves3D = style.preserves3D() && !renderer().hasReflection();
+
+    if (m_viewportAnchorLayer) {
+        m_viewportAnchorLayer->setPosition(primaryLayerPosition);
+        // Setting boundsOrigin on this layer allows us to keep the position on m_graphicsLayer, which is necessary to preserve the propagation of the correct perspective transform to fixed layers.
+        m_viewportAnchorLayer->setBoundsOrigin(primaryLayerPosition);
+    }
+
     if (m_contentsContainmentLayer) {
         m_contentsContainmentLayer->setPreserves3D(preserves3D);
         m_contentsContainmentLayer->setPosition(primaryLayerPosition);
@@ -1671,6 +1684,9 @@ void RenderLayerBacking::updateInternalHierarchy()
 
     if (lastClippingLayer)
         orderedLayers.append(lastClippingLayer);
+
+    if (m_viewportAnchorLayer)
+        orderedLayers.append(m_viewportAnchorLayer.get());
 
     if (m_contentsContainmentLayer) {
         m_contentsContainmentLayer->removeAllChildren();
@@ -2224,6 +2240,24 @@ void RenderLayerBacking::positionOverflowControlsLayers()
         layer->setSize(cornerRect.size());
         layer->setDrawsContent(!cornerRect.isEmpty());
     }
+}
+
+bool RenderLayerBacking::updateViewportConstrainedAnchorLayer(bool needsAnchorLayer)
+{
+    bool layerChanged = false;
+    if (needsAnchorLayer) {
+        if (!m_viewportAnchorLayer) {
+            String layerName = m_owningLayer.name() + " (anchor)";
+            m_viewportAnchorLayer = createGraphicsLayer(layerName, GraphicsLayer::Type::Structural);
+            layerChanged = true;
+        }
+    } else if (m_viewportAnchorLayer) {
+        willDestroyLayer(m_viewportAnchorLayer.get());
+        GraphicsLayer::unparentAndClear(m_viewportAnchorLayer);
+        layerChanged = true;
+    }
+
+    return layerChanged;
 }
 
 bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
@@ -3099,6 +3133,9 @@ GraphicsLayer* RenderLayerBacking::childForSuperlayers() const
 {
     if (m_ancestorClippingStack)
         return m_ancestorClippingStack->firstClippingLayer();
+
+    if (m_viewportAnchorLayer)
+        return m_viewportAnchorLayer.get();
 
     if (m_contentsContainmentLayer)
         return m_contentsContainmentLayer.get();

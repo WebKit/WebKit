@@ -71,7 +71,7 @@ public:
         RELEASE_ASSERT(kind != GeneratedFinalCode);
     }
     
-    AccessGenerationResult(Kind kind, MacroAssemblerCodePtr<JITStubRoutinePtrTag> code)
+    AccessGenerationResult(Kind kind, CodePtr<JITStubRoutinePtrTag> code)
         : m_kind(kind)
         , m_code(code)
     {
@@ -96,7 +96,7 @@ public:
     
     Kind kind() const { return m_kind; }
     
-    const MacroAssemblerCodePtr<JITStubRoutinePtrTag>& code() const { return m_code; }
+    const CodePtr<JITStubRoutinePtrTag>& code() const { return m_code; }
     
     bool madeNoChanges() const { return m_kind == MadeNoChanges; }
     bool gaveUp() const { return m_kind == GaveUp; }
@@ -126,7 +126,7 @@ public:
     
 private:
     Kind m_kind;
-    MacroAssemblerCodePtr<JITStubRoutinePtrTag> m_code;
+    CodePtr<JITStubRoutinePtrTag> m_code;
     Vector<std::pair<InlineWatchpointSet&, StringFireDetail>> m_watchpointsToFire;
 };
 

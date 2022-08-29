@@ -18,20 +18,26 @@ using namespace sh;
 class EmulateGLDrawIDTest : public MatchOutputCodeTest
 {
   public:
-    EmulateGLDrawIDTest()
-        : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_VARIABLES, SH_GLSL_COMPATIBILITY_OUTPUT)
+    EmulateGLDrawIDTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_GLSL_COMPATIBILITY_OUTPUT)
     {
+        ShCompileOptions defaultCompileOptions = {};
+        defaultCompileOptions.variables        = true;
+        setDefaultCompileOptions(defaultCompileOptions);
+
         getResources()->ANGLE_multi_draw = 1;
     }
 
   protected:
     void CheckCompileFailure(const std::string &shaderString, const char *expectedError = nullptr)
     {
+        ShCompileOptions compileOptions = {};
+        compileOptions.variables        = true;
+
         std::string translatedCode;
         std::string infoLog;
         bool success = compileTestShader(GL_VERTEX_SHADER, SH_GLES2_SPEC,
                                          SH_GLSL_COMPATIBILITY_OUTPUT, shaderString, getResources(),
-                                         SH_VARIABLES, &translatedCode, &infoLog);
+                                         compileOptions, &translatedCode, &infoLog);
         EXPECT_FALSE(success);
         if (expectedError)
         {
@@ -61,10 +67,14 @@ TEST_F(EmulateGLDrawIDTest, CheckCompile)
         "   gl_Position = vec4(float(gl_DrawID), 0.0, 0.0, 1.0);\n"
         "}\n";
 
-    compile(shaderString, SH_OBJECT_CODE | SH_VARIABLES | SH_EMULATE_GL_DRAW_ID);
-    compile("#version 100\n" + shaderString, SH_OBJECT_CODE | SH_VARIABLES | SH_EMULATE_GL_DRAW_ID);
-    compile("#version 300 es\n" + shaderString,
-            SH_OBJECT_CODE | SH_VARIABLES | SH_EMULATE_GL_DRAW_ID);
+    ShCompileOptions compileOptions = {};
+    compileOptions.objectCode       = true;
+    compileOptions.variables        = true;
+    compileOptions.emulateGLDrawID  = true;
+
+    compile(shaderString, compileOptions);
+    compile("#version 100\n" + shaderString, compileOptions);
+    compile("#version 300 es\n" + shaderString, compileOptions);
 }
 
 // Check that gl_DrawID is properly emulated
@@ -86,7 +96,11 @@ TEST_F(EmulateGLDrawIDTest, EmulatesUniform)
         "   gl_Position = vec4(float(gl_DrawID), 0.0, 0.0, 1.0);\n"
         "}\n";
 
-    compile(shaderString, SH_OBJECT_CODE | SH_VARIABLES | SH_EMULATE_GL_DRAW_ID);
+    ShCompileOptions compileOptions = {};
+    compileOptions.objectCode       = true;
+    compileOptions.variables        = true;
+    compileOptions.emulateGLDrawID  = true;
+    compile(shaderString, compileOptions);
 
     EXPECT_TRUE(notFoundInCode("gl_DrawID"));
     EXPECT_TRUE(foundInCode("angle_DrawID"));
@@ -158,7 +172,11 @@ TEST_F(EmulateGLDrawIDTest, AllowsUserDefinedANGLEDrawID)
         "   gl_Position = vec4(float(angle_DrawID + gl_DrawID), 0.0, 0.0, 1.0);\n"
         "}\n";
 
-    compile(shaderString, SH_OBJECT_CODE | SH_VARIABLES | SH_EMULATE_GL_DRAW_ID);
+    ShCompileOptions compileOptions = {};
+    compileOptions.objectCode       = true;
+    compileOptions.variables        = true;
+    compileOptions.emulateGLDrawID  = true;
+    compile(shaderString, compileOptions);
 
     // " angle_DrawID" (note the space) should appear exactly twice:
     //    once in the declaration and once in the body.

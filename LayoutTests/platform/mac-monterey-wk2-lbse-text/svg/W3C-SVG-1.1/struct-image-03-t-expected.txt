@@ -8,6 +8,16 @@ layer at (23,13) size 434x282
   RenderSVGTransformableContainer {g} at (23,13) size 434x282
 layer at (23,13) size 434x224
   RenderSVGRect {rect} at (0,0) size 434x224 [fill={[type=SOLID] [color=#000000]}] [x=23.00] [y=13.00] [width=434.00] [height=224.00]
+layer at (25,15) size 430x48
+  RenderSVGImage {image} at (2,2) size 430x48
+layer at (25,43) size 430x48
+  RenderSVGImage {image} at (2,30) size 430x48
+layer at (25,91) size 430x48
+  RenderSVGImage {image} at (2,78) size 430x48
+layer at (25,139) size 430x48
+  RenderSVGImage {image} at (2,126) size 430x48
+layer at (25,187) size 430x48
+  RenderSVGImage {image} at (2,174) size 430x48
 layer at (25,249) size 299x46
   RenderSVGText {text} at (2,236) size 299x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 299x46

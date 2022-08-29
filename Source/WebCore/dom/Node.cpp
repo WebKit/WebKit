@@ -341,6 +341,15 @@ void Node::trackForDebugging()
 #endif
 }
 
+inline void NodeRareData::operator delete(NodeRareData* nodeRareData, std::destroying_delete_t)
+{
+    if (nodeRareData->m_isElementRareData)
+        static_cast<ElementRareData*>(nodeRareData)->~ElementRareData();
+    else
+        nodeRareData->~NodeRareData();
+    WTF::fastFree(nodeRareData);
+}
+
 Node::Node(Document& document, ConstructionType type)
     : m_nodeFlags(type)
     , m_treeScope(&document)
@@ -417,17 +426,9 @@ void Node::willBeDeletedFrom(Document& document)
 void Node::materializeRareData()
 {
     if (is<Element>(*this))
-        m_rareDataWithBitfields.setPointer(std::unique_ptr<NodeRareData, NodeRareDataDeleter>(new ElementRareData));
+        m_rareDataWithBitfields.setPointer(makeUnique<ElementRareData>());
     else
-        m_rareDataWithBitfields.setPointer(std::unique_ptr<NodeRareData, NodeRareDataDeleter>(new NodeRareData));
-}
-
-inline void Node::NodeRareDataDeleter::operator()(NodeRareData* rareData) const
-{
-    if (rareData->isElementRareData())
-        delete static_cast<ElementRareData*>(rareData);
-    else
-        delete static_cast<NodeRareData*>(rareData);
+        m_rareDataWithBitfields.setPointer(makeUnique<NodeRareData>());
 }
 
 void Node::clearRareData()

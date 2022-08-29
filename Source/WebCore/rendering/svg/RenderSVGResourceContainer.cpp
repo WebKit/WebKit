@@ -201,7 +201,7 @@ void RenderSVGResourceContainer::registerResource()
         return;
     }
 
-    auto elements = copyToVectorOf<Ref<Element>>(extensions.removePendingResource(m_id));
+    auto elements = copyToVectorOf<Ref<SVGElement>>(extensions.removePendingResource(m_id));
 
     // Cache us with the new id.
     extensions.addResource(m_id, *this);

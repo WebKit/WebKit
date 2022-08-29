@@ -824,7 +824,9 @@ public:
     // GL_ANGLE_request_extension
     static constexpr GCGLenum REQUESTABLE_EXTENSIONS_ANGLE = 0x93A8;
 
-    // ANGLE special internal format
+    // ANGLE special internal formats
+    static constexpr GCGLenum BGRA4_ANGLEX = 0x6ABC;
+    static constexpr GCGLenum BGR5_A1_ANGLEX = 0x6ABD;
     static constexpr GCGLenum BGRA8_SRGB_ANGLEX = 0x6AC0;
 
     // GL_OES_depth32

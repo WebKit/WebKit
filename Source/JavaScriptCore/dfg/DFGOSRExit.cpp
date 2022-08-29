@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -215,7 +215,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame, v
     if (exit.codeLocationForRepatch())
         MacroAssembler::repatchJump(exit.codeLocationForRepatch(), CodeLocationLabel<OSRExitPtrTag>(exitCode.code()));
 
-    vm.osrExitJumpDestination = exitCode.code().executableAddress();
+    vm.osrExitJumpDestination = exitCode.code().taggedPtr();
 }
 
 IGNORE_WARNINGS_BEGIN("frame-address")

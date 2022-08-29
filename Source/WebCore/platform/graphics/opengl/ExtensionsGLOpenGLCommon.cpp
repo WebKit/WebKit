@@ -186,13 +186,19 @@ String ExtensionsGLOpenGLCommon::getTranslatedShaderSourceANGLE(PlatformGLObject
     String translatedShaderSource;
     String shaderInfoLog;
 
-    GCGLuint64 extraCompileOptions = SH_CLAMP_INDIRECT_ARRAY_BOUNDS | SH_INIT_OUTPUT_VARIABLES | SH_ENFORCE_PACKING_RESTRICTIONS | SH_LIMIT_EXPRESSION_COMPLEXITY | SH_LIMIT_CALL_STACK_DEPTH | SH_INITIALIZE_UNINITIALIZED_LOCALS;
-
-    if (m_requiresBuiltInFunctionEmulation)
-        extraCompileOptions |= SH_EMULATE_ABS_INT_FUNCTION;
+    ShCompileOptions compileOptions = { };
+    compileOptions.objectCode = 1;
+    compileOptions.variables = 1;
+    compileOptions.emulateAbsIntFunction = m_requiresBuiltInFunctionEmulation ? 1 : 0;
+    compileOptions.enforcePackingRestrictions = 1;
+    compileOptions.clampIndirectArrayBounds = 1;
+    compileOptions.limitExpressionComplexity = 1;
+    compileOptions.limitCallStackDepth = 1;
+    compileOptions.initOutputVariables = 1;
+    compileOptions.initializeUninitializedLocals = 1;
 
     Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>> symbols;
-    bool isValid = compiler.compileShaderSource(entry.source.utf8().data(), shaderType, translatedShaderSource, shaderInfoLog, symbols, extraCompileOptions);
+    bool isValid = compiler.compileShaderSource(entry.source.utf8().data(), shaderType, translatedShaderSource, shaderInfoLog, symbols, compileOptions);
 
     entry.log = shaderInfoLog;
     entry.isValid = isValid;

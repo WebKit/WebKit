@@ -31,7 +31,13 @@
 #include "WebProcessProxy.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/PermissionDescriptor.h>
+#include <WebCore/PermissionQuerySource.h>
 #include <WebCore/PermissionState.h>
+#include <WebCore/SecurityOriginData.h>
+#include <optional>
+#include <wtf/GetPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebKit {
 
@@ -46,15 +52,54 @@ WebPermissionControllerProxy::~WebPermissionControllerProxy()
     m_process.removeMessageReceiver(Messages::WebPermissionControllerProxy::messageReceiverName());
 }
 
-void WebPermissionControllerProxy::query(const WebCore::ClientOrigin& clientOrigin, const WebCore::PermissionDescriptor& descriptor, WebPageProxyIdentifier identifier, CompletionHandler<void(std::optional<WebCore::PermissionState>, bool shouldCache)>&& completionHandler)
+void WebPermissionControllerProxy::query(const WebCore::ClientOrigin& clientOrigin, const WebCore::PermissionDescriptor& descriptor, std::optional<WebPageProxyIdentifier> identifier, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>, bool shouldCache)>&& completionHandler)
 {
-    auto webPageProxy = m_process.webPage(identifier);
+    RefPtr webPageProxy = identifier ? m_process.webPage(identifier.value()) : mostReasonableWebPageProxy(clientOrigin.topOrigin, source);
+
     if (!webPageProxy) {
         completionHandler(WebCore::PermissionState::Prompt, false);
         return;
     }
 
     webPageProxy->queryPermission(clientOrigin, descriptor, WTFMove(completionHandler));
+}
+
+WebPageProxy* WebPermissionControllerProxy::mostReasonableWebPageProxy(const WebCore::SecurityOriginData& topOrigin, WebCore::PermissionQuerySource source) const
+{
+    ASSERT(source == WebCore::PermissionQuerySource::SharedWorker || source == WebCore::PermissionQuerySource::ServiceWorker);
+    
+    WebPageProxy* webPageProxy = nullptr;
+    auto findWebPageProxy = [&topOrigin, &webPageProxy] (auto* processes) {
+        if (!processes)
+            return; 
+
+        for (auto& process : *processes) {
+            for (auto* potentialWebPageProxy : getPtr(process)->pages()) {
+                if (WebCore::SecurityOriginData::fromURL(URL { potentialWebPageProxy->currentURL() }) != topOrigin)
+                    continue;
+                // The most reasonable webPageProxy is the newest one (the one with the greatest identifier).
+                if (webPageProxy && webPageProxy->identifier() > potentialWebPageProxy->identifier())
+                    continue;
+                webPageProxy = potentialWebPageProxy;
+            }
+        }
+    };
+
+    Vector<Ref<WebProcessProxy>> currentProcess { Ref { m_process } };
+    findWebPageProxy(&currentProcess);
+
+    switch (source) {
+    case WebCore::PermissionQuerySource::ServiceWorker:
+        findWebPageProxy(m_process.serviceWorkerClientProcesses());
+        break;
+    case WebCore::PermissionQuerySource::SharedWorker:
+        findWebPageProxy(m_process.sharedWorkerClientProcesses());
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    return webPageProxy;
 }
 
 } // namespace WebKit

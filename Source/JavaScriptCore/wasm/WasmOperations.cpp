@@ -216,7 +216,7 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
 #endif
     // 4. Configure argument registers to jump to OSR entry from the caller of this runtime function.
     context.gpr(GPRInfo::argumentGPR0) = bitwise_cast<UCPURegister>(buffer);
-    context.gpr(GPRInfo::argumentGPR1) = bitwise_cast<UCPURegister>(osrEntryCallee.entrypoint().executableAddress<>());
+    context.gpr(GPRInfo::argumentGPR1) = bitwise_cast<UCPURegister>(osrEntryCallee.entrypoint().taggedPtr<>());
 }
 
 inline bool shouldJIT(unsigned functionIndex)

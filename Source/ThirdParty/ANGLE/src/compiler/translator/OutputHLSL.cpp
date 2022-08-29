@@ -306,7 +306,7 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
                        int numRenderTargets,
                        int maxDualSourceDrawBuffers,
                        const std::vector<ShaderVariable> &uniforms,
-                       ShCompileOptions compileOptions,
+                       const ShCompileOptions &compileOptions,
                        sh::WorkGroupSize workGroupSize,
                        TSymbolTable *symbolTable,
                        PerformanceDiagnostics *perfDiagnostics,
@@ -369,10 +369,9 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
     mTextureFunctionHLSL = new TextureFunctionHLSL;
     mImageFunctionHLSL   = new ImageFunctionHLSL;
     mAtomicCounterFunctionHLSL =
-        new AtomicCounterFunctionHLSL((compileOptions & SH_FORCE_ATOMIC_VALUE_RESOLUTION) != 0);
+        new AtomicCounterFunctionHLSL(compileOptions.forceAtomicValueResolution);
 
-    unsigned int firstUniformRegister =
-        (compileOptions & SH_SKIP_D3D_CONSTANT_REGISTER_ZERO) != 0 ? 1u : 0u;
+    unsigned int firstUniformRegister = compileOptions.skipD3DConstantRegisterZero ? 1u : 0u;
     mResourcesHLSL = new ResourcesHLSL(mStructureHLSL, outputType, uniforms, firstUniformRegister);
 
     if (mOutputType == SH_HLSL_3_0_OUTPUT)
@@ -412,7 +411,7 @@ void OutputHLSL::output(TIntermNode *treeRoot, TInfoSinkBase &objSink)
 {
     BuiltInFunctionEmulator builtInFunctionEmulator;
     InitBuiltInFunctionEmulatorForHLSL(&builtInFunctionEmulator);
-    if ((mCompileOptions & SH_EMULATE_ISNAN_FLOAT_FUNCTION) != 0)
+    if (mCompileOptions.emulateIsnanFloatFunction)
     {
         InitBuiltInIsnanFunctionEmulatorForHLSLWorkarounds(&builtInFunctionEmulator,
                                                            mShaderVersion);
@@ -1092,8 +1091,7 @@ void OutputHLSL::header(TInfoSinkBase &out,
         out << "\n";
     }
 
-    bool getDimensionsIgnoresBaseLevel =
-        (mCompileOptions & SH_HLSL_GET_DIMENSIONS_IGNORES_BASE_LEVEL) != 0;
+    bool getDimensionsIgnoresBaseLevel = mCompileOptions.HLSLGetDimensionsIgnoresBaseLevel;
     mTextureFunctionHLSL->textureFunctionHeader(out, mOutputType, getDimensionsIgnoresBaseLevel);
     mImageFunctionHLSL->imageFunctionHeader(out);
     mAtomicCounterFunctionHLSL->atomicCounterFunctionHeader(out);
@@ -3220,7 +3218,7 @@ void OutputHLSL::outputTriplet(TInfoSinkBase &out,
 
 void OutputHLSL::outputLineDirective(TInfoSinkBase &out, int line)
 {
-    if ((mCompileOptions & SH_LINE_DIRECTIVES) != 0 && line > 0)
+    if (mCompileOptions.lineDirectives && line > 0)
     {
         out << "\n";
         out << "#line " << line;

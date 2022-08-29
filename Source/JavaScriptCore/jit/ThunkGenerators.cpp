@@ -55,7 +55,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM& vm)
     jit.jumpToExceptionHandler(vm);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler));
+    patchBuffer.link<OperationPtrTag>(operation, operationLookupExceptionHandler);
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "handleException");
 }
 
@@ -71,7 +71,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenera
     jit.jumpToExceptionHandler(vm);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame));
+    patchBuffer.link<OperationPtrTag>(operation, operationLookupExceptionHandlerFromCallerFrame);
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "handleExceptionWithCallFrameRollback");
 }
 
@@ -317,7 +317,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
     // NullSetterFunctionType does not get the fast path support. But it is OK since using NullSetterFunctionType is extremely rare.
     notJSFunction.link(&jit);
     slowCase.append(jit.branchIfNotType(GPRInfo::regT0, InternalFunctionType));
-    void* executableAddress = vm.getCTIInternalFunctionTrampolineFor(kind).executableAddress();
+    void* executableAddress = vm.getCTIInternalFunctionTrampolineFor(kind).taggedPtr();
     jit.move(CCallHelpers::TrustedImmPtr(executableAddress), GPRInfo::regT4);
 
     isNative.link(&jit);
@@ -425,7 +425,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
             jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, executableOffsetToFunction), GPRInfo::argumentGPR2);
             auto operationCall = jit.call(OperationPtrTag);
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(vmEntryHostFunction));
+                linkBuffer.link<OperationPtrTag>(operationCall, vmEntryHostFunction);
             });
         } else
             jit.call(CCallHelpers::Address(GPRInfo::argumentGPR2, executableOffsetToFunction), HostFunctionPtrTag);
@@ -436,7 +436,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
             jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, InternalFunction::offsetOfNativeFunctionFor(kind)), GPRInfo::argumentGPR2);
             auto operationCall = jit.call(OperationPtrTag);
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(vmEntryHostFunction));
+                linkBuffer.link<OperationPtrTag>(operationCall, vmEntryHostFunction);
             });
         } else
             jit.call(CCallHelpers::Address(GPRInfo::argumentGPR2, InternalFunction::offsetOfNativeFunctionFor(kind)), HostFunctionPtrTag);

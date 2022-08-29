@@ -999,6 +999,8 @@ void WriteGroupSMaxNonUniformAMD(Blob *blob,
                                  IdScope execution,
                                  spv::GroupOperation operation,
                                  IdRef x);
+void WriteBeginInvocationInterlockEXT(Blob *blob);
+void WriteEndInvocationInterlockEXT(Blob *blob);
 
 }  // namespace spirv
 }  // namespace angle

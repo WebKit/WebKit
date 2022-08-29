@@ -222,7 +222,7 @@ class ExpressionLimitTest : public testing::Test
     // to the issue we are testing.
     bool CheckShaderCompilation(ShHandle compiler,
                                 const char *source,
-                                ShCompileOptions compileOptions,
+                                const ShCompileOptions &compileOptions,
                                 const char *expected_error)
     {
         bool success = sh::Compile(compiler, &source, 1, compileOptions) != 0;
@@ -259,7 +259,8 @@ TEST_F(ExpressionLimitTest, ExpressionComplexity)
     ShShaderSpec spec       = SH_WEBGL_SPEC;
     ShShaderOutput output   = SH_ESSL_OUTPUT;
     ShHandle vertexCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
-    ShCompileOptions compileOptions = SH_LIMIT_EXPRESSION_COMPLEXITY;
+    ShCompileOptions compileOptions          = {};
+    compileOptions.limitExpressionComplexity = true;
 
     // Test expression under the limit passes.
     EXPECT_TRUE(CheckShaderCompilation(
@@ -270,9 +271,10 @@ TEST_F(ExpressionLimitTest, ExpressionComplexity)
         vertexCompiler, GenerateShaderWithLongExpression(kMaxExpressionComplexity + 10).c_str(),
         compileOptions, kExpressionTooComplex));
     // Test expression over the limit without a limit does not fail.
+    compileOptions.limitExpressionComplexity = false;
     EXPECT_TRUE(CheckShaderCompilation(
         vertexCompiler, GenerateShaderWithLongExpression(kMaxExpressionComplexity + 10).c_str(),
-        compileOptions & ~SH_LIMIT_EXPRESSION_COMPLEXITY, nullptr));
+        compileOptions, nullptr));
     sh::Destruct(vertexCompiler);
 }
 
@@ -281,7 +283,8 @@ TEST_F(ExpressionLimitTest, UnusedExpressionComplexity)
     ShShaderSpec spec       = SH_WEBGL_SPEC;
     ShShaderOutput output   = SH_ESSL_OUTPUT;
     ShHandle vertexCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
-    ShCompileOptions compileOptions = SH_LIMIT_EXPRESSION_COMPLEXITY;
+    ShCompileOptions compileOptions          = {};
+    compileOptions.limitExpressionComplexity = true;
 
     // Test expression under the limit passes.
     EXPECT_TRUE(CheckShaderCompilation(
@@ -294,10 +297,11 @@ TEST_F(ExpressionLimitTest, UnusedExpressionComplexity)
         GenerateShaderWithUnusedLongExpression(kMaxExpressionComplexity + 10).c_str(),
         compileOptions, kExpressionTooComplex));
     // Test expression over the limit without a limit does not fail.
+    compileOptions.limitExpressionComplexity = false;
     EXPECT_TRUE(CheckShaderCompilation(
         vertexCompiler,
         GenerateShaderWithUnusedLongExpression(kMaxExpressionComplexity + 10).c_str(),
-        compileOptions & ~SH_LIMIT_EXPRESSION_COMPLEXITY, nullptr));
+        compileOptions, nullptr));
     sh::Destruct(vertexCompiler);
 }
 
@@ -306,7 +310,8 @@ TEST_F(ExpressionLimitTest, CallStackDepth)
     ShShaderSpec spec       = SH_WEBGL_SPEC;
     ShShaderOutput output   = SH_ESSL_OUTPUT;
     ShHandle vertexCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
-    ShCompileOptions compileOptions = SH_LIMIT_CALL_STACK_DEPTH;
+    ShCompileOptions compileOptions    = {};
+    compileOptions.limitCallStackDepth = true;
 
     // Test call stack under the limit passes.
     EXPECT_TRUE(CheckShaderCompilation(
@@ -317,9 +322,10 @@ TEST_F(ExpressionLimitTest, CallStackDepth)
         vertexCompiler, GenerateShaderWithDeepFunctionStack(kMaxCallStackDepth + 10).c_str(),
         compileOptions, kCallStackTooDeep));
     // Test call stack over the limit without limit does not fail.
+    compileOptions.limitCallStackDepth = false;
     EXPECT_TRUE(CheckShaderCompilation(
         vertexCompiler, GenerateShaderWithDeepFunctionStack(kMaxCallStackDepth + 10).c_str(),
-        compileOptions & ~SH_LIMIT_CALL_STACK_DEPTH, nullptr));
+        compileOptions, nullptr));
     sh::Destruct(vertexCompiler);
 }
 
@@ -328,7 +334,8 @@ TEST_F(ExpressionLimitTest, UnusedCallStackDepth)
     ShShaderSpec spec       = SH_WEBGL_SPEC;
     ShShaderOutput output   = SH_ESSL_OUTPUT;
     ShHandle vertexCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
-    ShCompileOptions compileOptions = SH_LIMIT_CALL_STACK_DEPTH;
+    ShCompileOptions compileOptions    = {};
+    compileOptions.limitCallStackDepth = true;
 
     // Test call stack under the limit passes.
     EXPECT_TRUE(CheckShaderCompilation(
@@ -339,9 +346,10 @@ TEST_F(ExpressionLimitTest, UnusedCallStackDepth)
         vertexCompiler, GenerateShaderWithUnusedDeepFunctionStack(kMaxCallStackDepth + 10).c_str(),
         compileOptions, kCallStackTooDeep));
     // Test call stack over the limit without limit does not fail.
+    compileOptions.limitCallStackDepth = false;
     EXPECT_TRUE(CheckShaderCompilation(
         vertexCompiler, GenerateShaderWithUnusedDeepFunctionStack(kMaxCallStackDepth + 10).c_str(),
-        compileOptions & ~SH_LIMIT_CALL_STACK_DEPTH, nullptr));
+        compileOptions, nullptr));
     sh::Destruct(vertexCompiler);
 }
 
@@ -350,7 +358,7 @@ TEST_F(ExpressionLimitTest, Recursion)
     ShShaderSpec spec       = SH_WEBGL_SPEC;
     ShShaderOutput output   = SH_ESSL_OUTPUT;
     ShHandle vertexCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
-    ShCompileOptions compileOptions = 0;
+    ShCompileOptions compileOptions = {};
 
     static const char *shaderWithRecursion0 =
         R"(precision mediump float;
@@ -536,15 +544,16 @@ TEST_F(ExpressionLimitTest, Recursion)
                                        kHasRecursion));
     // Check unused recursions fails if limiting call stack
     // since we check all paths.
-    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithRecursion6,
-                                       compileOptions | SH_LIMIT_CALL_STACK_DEPTH, kHasRecursion));
+    compileOptions.limitCallStackDepth = true;
+    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithRecursion6, compileOptions,
+                                       kHasRecursion));
 
     // Check unused recursions passes.
     EXPECT_TRUE(
         CheckShaderCompilation(vertexCompiler, shaderWithNoRecursion, compileOptions, nullptr));
     // Check unused recursions passes if limiting call stack.
-    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithNoRecursion,
-                                       compileOptions | SH_LIMIT_CALL_STACK_DEPTH, nullptr));
+    EXPECT_TRUE(
+        CheckShaderCompilation(vertexCompiler, shaderWithNoRecursion, compileOptions, nullptr));
     sh::Destruct(vertexCompiler);
 }
 
@@ -553,7 +562,8 @@ TEST_F(ExpressionLimitTest, FunctionParameterCount)
     ShShaderSpec spec     = SH_WEBGL_SPEC;
     ShShaderOutput output = SH_ESSL_OUTPUT;
     ShHandle compiler     = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
-    ShCompileOptions compileOptions = SH_LIMIT_EXPRESSION_COMPLEXITY;
+    ShCompileOptions compileOptions          = {};
+    compileOptions.limitExpressionComplexity = true;
 
     // Test parameters under the limit succeeds.
     EXPECT_TRUE(CheckShaderCompilation(
@@ -564,9 +574,10 @@ TEST_F(ExpressionLimitTest, FunctionParameterCount)
         compiler, GenerateShaderWithFunctionParameters(kMaxFunctionParameters + 1).c_str(),
         compileOptions, kTooManyParameters));
     // Test parameters over the limit without limit does not fail.
+    compileOptions.limitExpressionComplexity = false;
     EXPECT_TRUE(CheckShaderCompilation(
         compiler, GenerateShaderWithFunctionParameters(kMaxFunctionParameters + 1).c_str(),
-        compileOptions & ~SH_LIMIT_EXPRESSION_COMPLEXITY, nullptr));
+        compileOptions, nullptr));
     sh::Destruct(compiler);
 }
 
@@ -575,21 +586,23 @@ TEST_F(ExpressionLimitTest, NestingInsideSwitch)
     ShShaderSpec spec     = SH_WEBGL2_SPEC;
     ShShaderOutput output = SH_ESSL_OUTPUT;
     ShHandle compiler     = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
-    ShCompileOptions compileOptions = SH_LIMIT_EXPRESSION_COMPLEXITY;
+    ShCompileOptions compileOptions          = {};
+    compileOptions.limitExpressionComplexity = true;
 
     // Test nesting over the limit fails.
     EXPECT_TRUE(CheckShaderCompilation(
         compiler, GenerateShaderWithNestingInsideSwitch(kMaxExpressionComplexity + 1).c_str(),
         compileOptions, kExpressionTooComplex));
-    // Test nesting over the limit without limit does not fail.
-    EXPECT_TRUE(CheckShaderCompilation(
-        compiler, GenerateShaderWithNestingInsideSwitch(kMaxExpressionComplexity + 1).c_str(),
-        compileOptions & ~SH_LIMIT_EXPRESSION_COMPLEXITY, nullptr));
     // Test that nesting way over the limit doesn't cause stack overflow but is handled
     // gracefully.
     EXPECT_TRUE(CheckShaderCompilation(compiler,
                                        GenerateShaderWithNestingInsideSwitch(5000).c_str(),
                                        compileOptions, kTooComplexSwitch));
+    // Test nesting over the limit without limit does not fail.
+    compileOptions.limitExpressionComplexity = false;
+    EXPECT_TRUE(CheckShaderCompilation(
+        compiler, GenerateShaderWithNestingInsideSwitch(kMaxExpressionComplexity + 1).c_str(),
+        compileOptions, nullptr));
     sh::Destruct(compiler);
 }
 
@@ -598,22 +611,24 @@ TEST_F(ExpressionLimitTest, NestingInsideGlobalInitializer)
     ShShaderSpec spec     = SH_WEBGL_SPEC;
     ShShaderOutput output = SH_ESSL_OUTPUT;
     ShHandle compiler     = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
-    ShCompileOptions compileOptions = SH_LIMIT_EXPRESSION_COMPLEXITY;
+    ShCompileOptions compileOptions          = {};
+    compileOptions.limitExpressionComplexity = true;
 
     // Test nesting over the limit fails.
     EXPECT_TRUE(CheckShaderCompilation(
         compiler,
         GenerateShaderWithNestingInsideGlobalInitializer(kMaxExpressionComplexity + 1).c_str(),
         compileOptions, kExpressionTooComplex));
-    // Test nesting over the limit without limit does not fail.
-    EXPECT_TRUE(CheckShaderCompilation(
-        compiler,
-        GenerateShaderWithNestingInsideGlobalInitializer(kMaxExpressionComplexity + 1).c_str(),
-        compileOptions & ~SH_LIMIT_EXPRESSION_COMPLEXITY, nullptr));
     // Test that nesting way over the limit doesn't cause stack overflow but is handled
     // gracefully.
     EXPECT_TRUE(CheckShaderCompilation(
         compiler, GenerateShaderWithNestingInsideGlobalInitializer(5000).c_str(), compileOptions,
         kGlobalVariableInit));
+    // Test nesting over the limit without limit does not fail.
+    compileOptions.limitExpressionComplexity = false;
+    EXPECT_TRUE(CheckShaderCompilation(
+        compiler,
+        GenerateShaderWithNestingInsideGlobalInitializer(kMaxExpressionComplexity + 1).c_str(),
+        compileOptions, nullptr));
     sh::Destruct(compiler);
 }

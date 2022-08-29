@@ -348,7 +348,7 @@ Result SerializeFramebufferState(const gl::Context *context,
 
     {
         GroupScope attachmentsGroup(json, "Attachments");
-        const std::vector<gl::FramebufferAttachment> &colorAttachments =
+        const gl::DrawBuffersVector<gl::FramebufferAttachment> &colorAttachments =
             framebufferState.getColorAttachments();
         for (size_t attachmentIndex = 0; attachmentIndex < colorAttachments.size();
              ++attachmentIndex)
@@ -947,10 +947,13 @@ void SerializeShaderState(JsonSerializer *json, const gl::ShaderState &shaderSta
     json->addCString("CompileStatus", CompileStatusToString(shaderState.getCompileStatus()));
 }
 
-void SerializeShader(JsonSerializer *json, GLuint id, gl::Shader *shader)
+void SerializeShader(const gl::Context *context,
+                     JsonSerializer *json,
+                     GLuint id,
+                     gl::Shader *shader)
 {
     // Ensure deterministic compilation.
-    shader->resolveCompile();
+    shader->resolveCompile(context);
 
     GroupScope group(json, "Shader", id);
     SerializeShaderState(json, shader->getState());
@@ -1414,7 +1417,7 @@ Result SerializeContextToString(const gl::Context *context, std::string *stringO
         {
             GLuint id             = shader.first;
             gl::Shader *shaderPtr = shader.second;
-            SerializeShader(&json, id, shaderPtr);
+            SerializeShader(context, &json, id, shaderPtr);
         }
     }
     {

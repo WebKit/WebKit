@@ -569,7 +569,7 @@ angle::Result UploadTextureContents(const gl::Context *context,
 }
 
 // This might be unused on platform not supporting swizzle.
-ANGLE_MTL_UNUSED
+ANGLE_APPLE_UNUSED
 GLenum OverrideSwizzleValue(const gl::Context *context,
                             GLenum swizzle,
                             const mtl::Format &format,

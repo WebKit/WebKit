@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-class GraphicsContext;
 class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
@@ -87,6 +86,7 @@ public:
     void updateListItemDimensions(const RenderListItem&);
     void updateListMarkerDimensions(const RenderListMarker&);
     void updateStyle(const RenderBoxModelObject&, const RenderStyle& oldStyle);
+    void updateOverflow();
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 

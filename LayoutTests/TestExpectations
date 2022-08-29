@@ -895,7 +895,7 @@ imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-
 imported/w3c/web-platform-tests/cookies/name/name.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/prefix/__secure.header.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/about-blank-subresource.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/cookies/samesite/about-blank-toplevel.https.html [ Failure Pass ]
+imported/w3c/web-platform-tests/cookies/samesite/about-blank-toplevel.https.html [ Failure Crash Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/iframe.document.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/multiple-samesite-attributes.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-nested.https.html [ Failure Pass ]
@@ -3696,7 +3696,6 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-0
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-05.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-001.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-002.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-01.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-02.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-05.xht [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-06.xht [ ImageOnlyFailure ]
@@ -3716,9 +3715,6 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-a
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-16.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-17.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-18.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-03.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-05.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-descriptor-01.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-ligatures-11.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-position-02.html [ ImageOnlyFailure ]
@@ -4562,14 +4558,12 @@ webkit.org/b/234762 imported/w3c/web-platform-tests/css/css-writing-modes/wm-pro
 
 # New failures after updating WPT import of css/css-text on 2020-07
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-002.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/appearance-textfield-001.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-021.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-025.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-026.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-offset-table-001.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/text-overflow-ruby.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-textfield-001.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-child-will-change-transform.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-generated-content.html [ ImageOnlyFailure ]
 
@@ -4720,12 +4714,9 @@ webkit.org/b/214462 imported/w3c/web-platform-tests/css/css-scoping/slotted-plac
 # aspect-ratio (some of these rely on contain-intrinsic-size)
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-014.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-020.html [ ImageOnlyFailure ]
-webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-002.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-004.html [ ImageOnlyFailure ]
-webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-025.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-038.html [ ImageOnlyFailure ]
-webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-039.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/floats-aspect-ratio-001.html [ ImageOnlyFailure ]
 
 # contain-intrinsic-size

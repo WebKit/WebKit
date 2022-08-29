@@ -34,9 +34,9 @@
 
 namespace JSC {
 
-ModuleAnalyzer::ModuleAnalyzer(JSGlobalObject* globalObject, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
+ModuleAnalyzer::ModuleAnalyzer(JSGlobalObject* globalObject, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables, CodeFeatures features)
     : m_vm(globalObject->vm())
-    , m_moduleRecord(m_vm, JSModuleRecord::create(globalObject, m_vm, globalObject->moduleRecordStructure(), moduleKey, sourceCode, declaredVariables, lexicalVariables))
+    , m_moduleRecord(JSModuleRecord::create(globalObject, m_vm, globalObject->moduleRecordStructure(), moduleKey, sourceCode, declaredVariables, lexicalVariables, features))
 {
 }
 
@@ -149,7 +149,7 @@ JSModuleRecord* ModuleAnalyzer::analyze(ModuleProgramNode& moduleProgramNode)
     if (UNLIKELY(Options::dumpModuleRecord()))
         m_moduleRecord->dump();
 
-    return m_moduleRecord.get();
+    return m_moduleRecord;
 }
 
 } // namespace JSC

@@ -28,6 +28,7 @@
 #include "MutationObserverRegistration.h"
 #include "QualifiedName.h"
 #include "TagCollection.h"
+#include <new>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakPtr.h>
@@ -316,6 +317,8 @@ public:
         return result;
     }
 #endif
+
+    void operator delete(NodeRareData*, std::destroying_delete_t);
 
 protected:
     // Used by ElementRareData. Defined here for better packing in 64-bit.

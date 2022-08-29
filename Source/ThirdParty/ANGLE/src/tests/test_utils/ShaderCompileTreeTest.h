@@ -25,7 +25,7 @@ class TranslatorESSL;
 class ShaderCompileTreeTest : public testing::Test
 {
   public:
-    ShaderCompileTreeTest() : mExtraCompileOptions(0) {}
+    ShaderCompileTreeTest() : mCompileOptions{} {}
 
   protected:
     void SetUp() override;
@@ -46,7 +46,7 @@ class ShaderCompileTreeTest : public testing::Test
     virtual ShShaderSpec getShaderSpec() const = 0;
 
     std::string mInfoLog;
-    ShCompileOptions mExtraCompileOptions;
+    ShCompileOptions mCompileOptions;
 
     TIntermBlock *mASTRoot;
 

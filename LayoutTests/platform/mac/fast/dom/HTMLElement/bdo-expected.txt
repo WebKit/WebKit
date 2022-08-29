@@ -20,24 +20,21 @@ layer at (0,0) size 800x600
         RenderInline {BDO} at (0,0) size 224x18
           RenderText {#text} at (0,18) size 224x18
             text run at (0,18) width 224 RTL: "This sentence should be backward."
-        RenderText {#text} at (223,18) size 5x18
-          text run at (223,18) width 5: " "
-        RenderBR {BR} at (227,18) size 1x18
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (223,18) size 1x18
         RenderInline {BDO} at (0,0) size 212x18
           RenderText {#text} at (0,36) size 212x18
             text run at (0,36) width 212: "This sentence should be forward."
-        RenderText {#text} at (211,36) size 5x18
-          text run at (211,36) width 5: " "
-        RenderBR {BR} at (215,36) size 1x18
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (211,36) size 1x18
         RenderInline {BDO} at (0,0) size 0x18
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,54) size 0x18
         RenderInline {BDO} at (0,0) size 12x18
           RenderText {#text} at (0,72) size 12x18
             text run at (0,72) width 12 RTL: "A"
-        RenderText {#text} at (11,72) size 5x18
-          text run at (11,72) width 5: " "
-        RenderBR {BR} at (15,72) size 1x18
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (11,72) size 1x18
         RenderInline {BDO} at (0,0) size 297x18
           RenderText {#text} at (0,90) size 27x18
             text run at (0,90) width 27: "My "

@@ -57,8 +57,6 @@ WebCore::ResourceError downloadDestinationError(const WebCore::ResourceResponse&
 #endif
 
 #if PLATFORM(GTK)
-WebCore::ResourceError printError(const URL&, const WTF::String&);
-WebCore::ResourceError printerNotFoundError(const URL&);
 WebCore::ResourceError invalidPageRangeToPrint(const URL&);
 #endif
 

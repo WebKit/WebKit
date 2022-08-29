@@ -83,7 +83,7 @@ bool DecompressBlobCacheData(const uint8_t *compressedData,
 
     uLong destLen = uncompressedSize;
     int zResult   = zlib_internal::GzipUncompressHelper(
-        uncompressedData->data(), &destLen, compressedData, static_cast<uLong>(compressedSize));
+          uncompressedData->data(), &destLen, compressedData, static_cast<uLong>(compressedSize));
 
     if (zResult != Z_OK)
     {
@@ -185,24 +185,9 @@ bool BlobCache::get(angle::ScratchBuffer *scratchBuffer,
 
     if (result)
     {
-        if (entry->second == CacheSource::Memory)
-        {
-            ANGLE_HISTOGRAM_ENUMERATION("GPU.ANGLE.ProgramCache.CacheResult", kCacheHitMemory,
-                                        kCacheResultMax);
-        }
-        else
-        {
-            ANGLE_HISTOGRAM_ENUMERATION("GPU.ANGLE.ProgramCache.CacheResult", kCacheHitDisk,
-                                        kCacheResultMax);
-        }
 
         *valueOut      = BlobCache::Value(entry->first.data(), entry->first.size());
         *bufferSizeOut = entry->first.size();
-    }
-    else
-    {
-        ANGLE_HISTOGRAM_ENUMERATION("GPU.ANGLE.ProgramCache.CacheResult", kCacheMiss,
-                                    kCacheResultMax);
     }
 
     return result;

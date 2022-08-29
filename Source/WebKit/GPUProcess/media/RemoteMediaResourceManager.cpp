@@ -91,15 +91,12 @@ void RemoteMediaResourceManager::dataSent(RemoteMediaResourceIdentifier identifi
     resource->dataSent(bytesSent, totalBytesToBeSent);
 }
 
-void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier identifier, IPC::SharedBufferReference&& buffer, CompletionHandler<void(std::optional<SharedMemory::IPCHandle>&&)>&& completionHandler)
+void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier identifier, IPC::SharedBufferReference&& buffer, CompletionHandler<void(std::optional<SharedMemory::Handle>&&)>&& completionHandler)
 {
     SharedMemory::Handle handle;
 
     auto invokeCallbackAtScopeExit = makeScopeExit([&] {
-        std::optional<SharedMemory::IPCHandle> response;
-        if (!handle.isNull())
-            response = SharedMemory::IPCHandle { WTFMove(handle), buffer.size() };
-        completionHandler(WTFMove(response));
+        completionHandler(WTFMove(handle));
     });
 
     auto* resource = m_remoteMediaResources.get(identifier);

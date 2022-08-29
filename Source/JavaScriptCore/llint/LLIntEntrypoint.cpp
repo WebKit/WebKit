@@ -48,7 +48,7 @@ extern "C" void jsTrampolineFunctionForConstructArityCheckPrologue(void);
 template<typename PtrType>
 static MacroAssemblerCodeRef<JSEntryPtrTag> entrypointTrampoline(PtrType address)
 {
-    return MacroAssemblerCodeRef<JSEntryPtrTag>::createSelfManagedCodeRef(MacroAssemblerCodePtr<JSEntryPtrTag>::createFromExecutableAddress(retagCodePtr<void*, CFunctionPtrTag, JSEntryPtrTag>(address)));
+    return MacroAssemblerCodeRef<JSEntryPtrTag>::createSelfManagedCodeRef(CodePtr<JSEntryPtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, JSEntryPtrTag>(address)));
 }
 #endif
 

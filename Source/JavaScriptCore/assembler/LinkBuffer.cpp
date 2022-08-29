@@ -65,7 +65,7 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
         va_start(argList, format);
         out.vprintf(format, argList);
         va_end(argList);
-        PerfLog::log(out.toCString(), result.code().untaggedExecutableAddress<const uint8_t*>(), result.size());
+        PerfLog::log(out.toCString(), result.code().untaggedPtr<const uint8_t*>(), result.size());
     }
 #endif
 
@@ -90,14 +90,14 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
         vsnprintf(buffer + sizeof(prefix) - 1, stringLength + 1, format, argList);
         out.printf("%s", buffer);
 
-        registerLabel(result.code().untaggedExecutableAddress(), WTFMove(label));
+        registerLabel(result.code().untaggedPtr(), WTFMove(label));
     } else
         out.vprintf(format, argList);
 
     va_end(argList);
     out.printf(":\n");
 
-    uint8_t* executableAddress = result.code().untaggedExecutableAddress<uint8_t*>();
+    uint8_t* executableAddress = result.code().untaggedPtr<uint8_t*>();
     out.printf("    Code at [%p, %p)%s\n", executableAddress, executableAddress + result.size(), justDumpingHeader ? "." : ":");
     
     CString header = out.toCString();
@@ -108,7 +108,7 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
         return result;
     }
     
-    void* codeStart = entrypoint<DisassemblyPtrTag>().untaggedExecutableAddress();
+    void* codeStart = entrypoint<DisassemblyPtrTag>().untaggedPtr();
     void* codeEnd = bitwise_cast<uint8_t*>(codeStart) + size();
 
     if (Options::asyncDisassembly()) {
@@ -467,7 +467,7 @@ void LinkBuffer::allocate(MacroAssembler& macroAssembler, JITCompilationEffort e
     m_executableMemory = ExecutableAllocator::singleton().allocate(initialSize, effort);
     if (!m_executableMemory)
         return;
-    m_code = MacroAssemblerCodePtr<LinkBufferPtrTag>(m_executableMemory->start().retaggedPtr<LinkBufferPtrTag>());
+    m_code = CodePtr<LinkBufferPtrTag>(m_executableMemory->start().retaggedPtr<LinkBufferPtrTag>());
     m_size = initialSize;
     m_didAllocate = true;
 }

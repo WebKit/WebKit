@@ -68,7 +68,7 @@ void JSDOMMicrotask::run(JSGlobalObject* globalObject)
     ASSERT(callData.type != CallData::Type::None);
 
     if (UNLIKELY(globalObject->hasDebugger()))
-        globalObject->debugger()->willRunMicrotask(globalObject, *this);
+        globalObject->debugger()->willRunMicrotask(globalObject, identifier());
 
     NakedPtr<JSC::Exception> returnedException = nullptr;
     JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Microtask, job, callData, jsUndefined(), ArgList(), returnedException);
@@ -76,7 +76,7 @@ void JSDOMMicrotask::run(JSGlobalObject* globalObject)
         reportException(lexicalGlobalObject, returnedException);
 
     if (UNLIKELY(globalObject->hasDebugger()))
-        globalObject->debugger()->didRunMicrotask(globalObject, *this);
+        globalObject->debugger()->didRunMicrotask(globalObject, identifier());
 }
 
 } // namespace WebCore

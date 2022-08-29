@@ -100,9 +100,9 @@ test(function() {
 }, "Element colors are correct in dark color scheme with only light supported color scheme 2");
 
 test(function() {
-    document.body.style.setProperty("color-scheme", "auto");
-    test_prop(document.body, "color-scheme", "auto");
-}, "Color schemes changed to auto value");
+    document.body.style.setProperty("color-scheme", "normal");
+    test_prop(document.body, "color-scheme", "normal");
+}, "Color schemes changed to normal value");
 
 test(function() {
     // The semantic text color should be black still.

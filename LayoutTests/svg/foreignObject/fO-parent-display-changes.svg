@@ -7,12 +7,12 @@
     }
     </script>
 
+    <rect x='0' y='0' width='100' height='90' fill='green' ></rect>
     <g style="display:none;" >
-        <foreignObject>
+        <foreignObject width="100" height="100">
             <html xmlns="http://www.w3.org/1999/xhtml" >
                 <body style="width: 100px; height: 100px;margin:0; color: #FFFFFF; position: relative" id="databody" >PASS</body>
             </html>
         </foreignObject>
     </g>
-    <rect x='0' y='0' width='100' height='90' fill='green' ></rect>
 </svg>

@@ -31,6 +31,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKContentWorld.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKScriptMessage.h>

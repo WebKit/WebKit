@@ -775,6 +775,9 @@ void GenerateCaps(IDirect3D9 *d3d9,
     // D3D9 cannot support constant color and alpha blend funcs together
     limitations->noSimultaneousConstantColorAndAlphaBlendFunc = true;
 
+    // D3D9 cannot support unclamped constant blend color
+    limitations->noUnclampedBlendColor = true;
+
     // D3D9 cannot support packing more than one variable to a single varying.
     // TODO(jmadill): Implement more sophisticated component packing in D3D9.
     limitations->noFlexibleVaryingPacking = true;

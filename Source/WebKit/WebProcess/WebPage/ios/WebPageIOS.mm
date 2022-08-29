@@ -3245,7 +3245,7 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
 
     auto hitTestResult = eventHandler.hitTestResultAtPoint(request.point, hitTestRequestTypes);
     if (auto* hitFrame = hitTestResult.innerNodeFrame()) {
-        info.cursor = hitFrame->eventHandler().selectCursor(hitTestResult, false);
+        info.cursor = hitFrame->eventHandler().selectCursor(hitTestResult);
         if (request.includeCaretContext)
             populateCaretContext(hitTestResult, request, info);
     }
@@ -3370,7 +3370,7 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
                 return;
             sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
         }
-        send(Messages::WebPageProxy::SaveImageToLibrary(SharedMemory::IPCHandle { WTFMove(handle), buffer->size() }, authorizationToken));
+        send(Messages::WebPageProxy::SaveImageToLibrary(WTFMove(handle), authorizationToken));
     }
 }
 

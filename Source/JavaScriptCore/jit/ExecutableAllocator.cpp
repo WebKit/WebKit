@@ -260,7 +260,7 @@ static ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerato
     local2.link(&jit);
     jit.ret();
 
-    auto stubBaseCodePtr = MacroAssemblerCodePtr<LinkBufferPtrTag>(tagCodePtr<LinkBufferPtrTag>(stubBase));
+    auto stubBaseCodePtr = CodePtr<LinkBufferPtrTag>(tagCodePtr<LinkBufferPtrTag>(stubBase));
     LinkBuffer linkBuffer(jit, stubBaseCodePtr, stubSize, LinkBuffer::Profile::Thunk);
     // We don't use FINALIZE_CODE() for two reasons.
     // The first is that we don't want the writeable address, as disassembled instructions,
@@ -285,7 +285,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> ALWAYS_INLINE jitWriteThunkGenerato
     functionAsInt -= 1;
     function = reinterpret_cast<void*>(functionAsInt);
 #endif
-    auto codePtr = MacroAssemblerCodePtr<JITThunkPtrTag>(tagCFunctionPtr<JITThunkPtrTag>(function));
+    auto codePtr = CodePtr<JITThunkPtrTag>(tagCFunctionPtr<JITThunkPtrTag>(function));
     return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(codePtr);
 }
 #endif // USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
@@ -336,7 +336,7 @@ static ALWAYS_INLINE void initializeSeparatedWXHeaps(void* stubBase, size_t stub
     memset_s(&writableAddr, sizeof(writableAddr), 0, sizeof(writableAddr));
 
 #if ENABLE(SEPARATED_WX_HEAP)
-    g_jscConfig.jitWriteSeparateHeaps = reinterpret_cast<JITWriteSeparateHeapsFunction>(writeThunk.code().executableAddress());
+    g_jscConfig.jitWriteSeparateHeaps = reinterpret_cast<JITWriteSeparateHeapsFunction>(writeThunk.code().taggedPtr());
 #endif
 }
 
@@ -754,7 +754,7 @@ private:
 
                 MacroAssembler jit;
                 auto nearTailCall = jit.nearTailCall();
-                LinkBuffer linkBuffer(jit, MacroAssemblerCodePtr<NoPtrTag>(currentIsland), islandSizeInBytes, LinkBuffer::Profile::JumpIsland, JITCompilationMustSucceed, false);
+                LinkBuffer linkBuffer(jit, CodePtr<NoPtrTag>(currentIsland), islandSizeInBytes, LinkBuffer::Profile::JumpIsland, JITCompilationMustSucceed, false);
                 RELEASE_ASSERT(linkBuffer.isValid());
 
                 // We use this to appease the assertion that we're not finalizing on a compiler thread. In this situation, it's
@@ -1283,7 +1283,7 @@ RefPtr<ExecutableMemoryHandle> ExecutableMemoryHandle::createImpl(size_t sizeInB
     void* key = jit_heap_try_allocate(sizeInBytes);
     if (!key)
         return nullptr;
-    return adoptRef(new ExecutableMemoryHandle(MemoryPtr::makeFromRawPointer(key), jit_heap_get_size(key)));
+    return adoptRef(new ExecutableMemoryHandle(MemoryPtr::fromUntaggedPtr(key), jit_heap_get_size(key)));
 }
 
 ExecutableMemoryHandle::~ExecutableMemoryHandle()

@@ -274,7 +274,8 @@
             "enum": [
                 "rendered",
                 "flex",
-                "grid"
+                "grid",
+                "event"
             ],
             "description": "Relevant layout information about the node. Things not in this list are not important to Web Inspector."
         },

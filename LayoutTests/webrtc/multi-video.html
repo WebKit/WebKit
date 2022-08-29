@@ -5,6 +5,8 @@
         <title>Testing basic video exchange from offerer to receiver</title>
         <script src="../resources/testharness.js"></script>
         <script src="../resources/testharnessreport.js"></script>
+        <script src="routines.js"></script>
+        <script src="../media/utilities.js"></script>
     </head>
     <body>
         <video id="video1" autoplay=""></video>
@@ -14,10 +16,10 @@
         <video id="video5" autoplay=""></video>
         <video id="video6" autoplay=""></video>
         <canvas id="canvas" width="640" height="480"></canvas>
-        <script src ="routines.js"></script>
         <script>
-function testImage(video)
+async function testImage(video)
 {
+    await waitForVideoFrame(video);
     var id= video.id;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -80,14 +82,7 @@ promise_test((test) => {
         video6.srcObject = new MediaStream([tracks[5]]);
         return Promise.all([video1.play(), video2.play(), video3.play(), video4.play(), video5.play(), video6.play()]);
     }).then(() => {
-        return waitFor(100);
-    }).then(() => {
-        testImage(video1);
-        testImage(video2);
-        testImage(video3);
-        testImage(video4);
-        testImage(video5);
-        testImage(video6);
+        return Promise.all([testImage(video1), testImage(video2), testImage(video3), testImage(video4), testImage(video5), testImage(video6)]);
     });
 }, "Basic video exchange");
         </script>

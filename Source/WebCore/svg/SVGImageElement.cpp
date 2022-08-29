@@ -25,6 +25,7 @@
 #include "SVGImageElement.h"
 
 #include "CSSPropertyNames.h"
+#include "LegacyRenderSVGImage.h"
 #include "RenderImageResource.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGResource.h"
@@ -60,10 +61,20 @@ Ref<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Docum
 
 bool SVGImageElement::hasSingleSecurityOrigin() const
 {
-    auto* renderer = downcast<RenderSVGImage>(this->renderer());
-    if (!renderer || !renderer->imageResource().cachedImage())
+    const RenderImageResource* resource = nullptr;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (auto* renderer = dynamicDowncast<RenderSVGImage>(this->renderer()); renderer && renderer->imageResource().cachedImage())
+        resource = &renderer->imageResource();
+#endif
+    if (!resource) {
+        if (auto* renderer = dynamicDowncast<LegacyRenderSVGImage>(this->renderer()); renderer && renderer->imageResource().cachedImage())
+            resource = &renderer->imageResource();
+    }
+
+    if (!resource || !resource->cachedImage())
         return true;
-    auto* image = renderer->imageResource().cachedImage()->image();
+
+    auto* image = resource->cachedImage()->image();
     return !image || image->hasSingleSecurityOrigin();
 }
 
@@ -98,8 +109,12 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
         if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr) {
             updateRelativeLengthsInformation();
 
-            if (auto* renderer = this->renderer()) {
-                if (!downcast<RenderSVGImage>(*renderer).updateImageViewport())
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+            if (auto* image = dynamicDowncast<RenderSVGImage>(renderer()))
+                updateSVGRendererForElementChange();
+#endif
+            if (auto* image = dynamicDowncast<LegacyRenderSVGImage>(renderer())) {
+                if (!image->updateImageViewport())
                     return;
                 updateSVGRendererForElementChange();
             }
@@ -122,7 +137,11 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGImageElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGImage>(*this, WTFMove(style));
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGImage>(*this, WTFMove(style));
+#endif
+    return createRenderer<LegacyRenderSVGImage>(*this, WTFMove(style));
 }
 
 bool SVGImageElement::haveLoadedRequiredResources()
@@ -132,11 +151,18 @@ bool SVGImageElement::haveLoadedRequiredResources()
 
 void SVGImageElement::didAttachRenderers()
 {
-    if (auto* imageObj = downcast<RenderSVGImage>(renderer())) {
-        if (imageObj->imageResource().cachedImage())
-            return;
+    SVGGraphicsElement::didAttachRenderers();
 
-        imageObj->imageResource().setCachedImage(m_imageLoader.image());
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (auto* image = dynamicDowncast<RenderSVGImage>(renderer()); image && !image->imageResource().cachedImage()) {
+        image->imageResource().setCachedImage(m_imageLoader.image());
+        return;
+    }
+#endif
+
+    if (auto* image = dynamicDowncast<LegacyRenderSVGImage>(renderer()); image && !image->imageResource().cachedImage()) {
+        image->imageResource().setCachedImage(m_imageLoader.image());
+        return;
     }
 }
 

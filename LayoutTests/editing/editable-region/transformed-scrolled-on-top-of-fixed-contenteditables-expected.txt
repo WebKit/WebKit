@@ -13,13 +13,20 @@
       (children 2
         (GraphicsLayer
           (position 8.00 128.00)
-          (bounds 792.00 42.00)
-          (drawsContent 1)
-          (event region
-            (rect (0,0) width=792 height=42)
-          (editable region
-            (rect (0,0) width=792 height=42)
-          )
+          (bounds origin 8.00 128.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (position 8.00 128.00)
+              (bounds 792.00 42.00)
+              (drawsContent 1)
+              (event region
+                (rect (0,0) width=792 height=42)
+              (editable region
+                (rect (0,0) width=792 height=42)
+              )
+              )
+            )
           )
         )
         (GraphicsLayer

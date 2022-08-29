@@ -125,7 +125,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::DFGThunk);
     
-    patchBuffer.link(functionCall, FunctionPtr<OperationPtrTag>(operationCompileOSRExit));
+    patchBuffer.link<OperationPtrTag>(functionCall, operationCompileOSRExit);
 
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DFG OSR exit generation thunk");
 }

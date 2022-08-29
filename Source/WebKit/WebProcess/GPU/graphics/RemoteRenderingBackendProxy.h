@@ -171,7 +171,7 @@ private:
     void destroyGetPixelBufferSharedMemory();
 
     // Messages to be received.
-    void didCreateImageBufferBackend(ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
+    void didCreateImageBufferBackend(ImageBufferBackendHandle&&, WebCore::RenderingResourceIdentifier);
     void didFlush(WebCore::GraphicsContextFlushIdentifier, WebCore::RenderingResourceIdentifier);
     void didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID);
     void didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayerAsVolatile);

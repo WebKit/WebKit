@@ -33,12 +33,12 @@ class TranslatorHLSL : public TCompiler
 
   protected:
     [[nodiscard]] bool translate(TIntermBlock *root,
-                                 ShCompileOptions compileOptions,
+                                 const ShCompileOptions &compileOptions,
                                  PerformanceDiagnostics *perfDiagnostics) override;
     bool shouldFlattenPragmaStdglInvariantAll() override;
 
     // collectVariables needs to be run always so registers can be assigned.
-    bool shouldCollectVariables(ShCompileOptions compileOptions) override { return true; }
+    bool shouldCollectVariables(const ShCompileOptions &compileOptions) override { return true; }
 
     std::map<std::string, unsigned int> mShaderStorageBlockRegisterMap;
     std::map<std::string, unsigned int> mUniformBlockRegisterMap;

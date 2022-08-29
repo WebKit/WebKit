@@ -24,6 +24,20 @@ constexpr VkDeviceSize kMaxTotalEmptyBufferBytes = 16 * 1024 * 1024;
 class RendererVk;
 using ContextVkSet = std::set<ContextVk *>;
 
+class TextureUpload
+{
+  public:
+    TextureUpload() { mPrevUploadedMutableTexture = nullptr; }
+    ~TextureUpload() { resetPrevTexture(); }
+    angle::Result onMutableTextureUpload(ContextVk *contextVk, TextureVk *newTexture);
+    void onTextureRelease(TextureVk *textureVk);
+    void resetPrevTexture() { mPrevUploadedMutableTexture = nullptr; }
+
+  private:
+    // Keep track of the previously stored texture. Used to flush mutable textures.
+    TextureVk *mPrevUploadedMutableTexture;
+};
+
 class ShareGroupVk : public ShareGroupImpl
 {
   public:
@@ -70,7 +84,7 @@ class ShareGroupVk : public ShareGroupImpl
     // VkFramebuffer caches
     FramebufferCache mFramebufferCache;
 
-    void resetPrevTexture() { mPrevUploadedMutableTexture = nullptr; }
+    void resetPrevTexture() { mTextureUpload.resetPrevTexture(); }
 
     // ANGLE uses a PipelineLayout cache to store compatible pipeline layouts.
     PipelineLayoutCache mPipelineLayoutCache;
@@ -98,8 +112,8 @@ class ShareGroupVk : public ShareGroupImpl
     // The system time when last pruneEmptyBuffer gets called.
     double mLastPruneTime;
 
-    // Keep track of the previously stored texture. Used to flush mutable textures.
-    TextureVk *mPrevUploadedMutableTexture;
+    // Texture update manager used to flush uploaded mutable textures.
+    TextureUpload mTextureUpload;
 
     // If true, it is expected that a BufferBlock may still in used by textures that outlived
     // ShareGroup. The non-empty BufferBlock will be put into RendererVk's orphan list instead.

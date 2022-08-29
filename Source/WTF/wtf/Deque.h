@@ -152,7 +152,7 @@ protected:
 
     void assign(const DequeIteratorBase& other) { *this = other; }
 
-    void increment();
+    void increment(std::ptrdiff_t count = 1);
     void decrement();
 
     T* before() const;
@@ -207,6 +207,10 @@ public:
     // postfix ++ intentionally omitted
     Iterator& operator--() { Base::decrement(); return *this; }
     // postfix -- intentionally omitted
+
+    // Only forwarding + unsigned is supported.
+    Iterator& operator+=(size_t count) { Base::increment(count); return *this; }
+    Iterator operator+(size_t count) const { Iterator result(*this); result += count; return result; }
 };
 
 template<typename T, size_t inlineCapacity = 0>
@@ -242,6 +246,10 @@ public:
     // postfix ++ intentionally omitted
     Iterator& operator--() { Base::decrement(); return *this; }
     // postfix -- intentionally omitted
+
+    // Only forwarding + unsigned is supported.
+    Iterator& operator+=(size_t count) { Base::increment(count); return *this; }
+    Iterator operator+(size_t count) const { Iterator result(*this); result += count; return result; }
 };
 
 #ifdef NDEBUG
@@ -742,15 +750,20 @@ inline bool DequeIteratorBase<T, inlineCapacity>::isEqual(const DequeIteratorBas
 }
 
 template<typename T, size_t inlineCapacity>
-inline void DequeIteratorBase<T, inlineCapacity>::increment()
+inline void DequeIteratorBase<T, inlineCapacity>::increment(std::ptrdiff_t count)
 {
     checkValidity();
+    if (!count)
+        return;
     ASSERT(m_index != m_deque->m_end);
-    ASSERT(m_deque->m_buffer.capacity());
-    if (m_index == m_deque->m_buffer.capacity() - 1)
-        m_index = 0;
-    else
-        ++m_index;
+    size_t capacity = m_deque->m_buffer.capacity();
+    ASSERT(capacity);
+    m_index += count;
+    do {
+        if (m_index < capacity)
+            break;
+        m_index -= capacity;
+    } while (true);
     checkValidity();
 }
 

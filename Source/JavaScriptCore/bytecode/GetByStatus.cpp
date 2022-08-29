@@ -286,7 +286,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
             case ComplexGetStatus::Inlineable: {
                 std::unique_ptr<CallLinkStatus> callLinkStatus;
                 JSFunction* intrinsicFunction = nullptr;
-                FunctionPtr<CustomAccessorPtrTag> customAccessorGetter;
+                CodePtr<CustomAccessorPtrTag> customAccessorGetter;
                 std::unique_ptr<DOMAttributeAnnotation> domAttribute;
                 bool haveDOMAttribute = false;
 

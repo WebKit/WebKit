@@ -120,19 +120,29 @@ function asyncGeneratorResolve(generator, value, done)
 }
 
 @linkTimeConstant
+function asyncGeneratorYieldAwaited(result, generator)
+{
+    "use strict";
+
+    @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonYield);
+    @asyncGeneratorResolve(generator, result, false);
+}
+
+@linkTimeConstant
+function asyncGeneratorYieldOnRejected(result, generator)
+{
+    "use strict";
+
+    @doAsyncGeneratorBodyCall(generator, result, @GeneratorResumeModeThrow);
+}
+
+@linkTimeConstant
 function asyncGeneratorYield(generator, value, resumeMode)
 {
     "use strict";
 
-    function asyncGeneratorYieldAwaited(result)
-    {
-        @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonYield);
-        @asyncGeneratorResolve(generator, result, false);
-    }
-
     @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonAwait);
-
-    @awaitValue(generator, value, asyncGeneratorYieldAwaited);
+    @awaitValue(generator, value, @asyncGeneratorYieldAwaited);
 }
 
 @linkTimeConstant
@@ -140,8 +150,23 @@ function awaitValue(generator, value, onFulfilled)
 {
     "use strict";
 
-    var onRejected = function (result) { @doAsyncGeneratorBodyCall(generator, result, @GeneratorResumeModeThrow); };
-    @resolveWithoutPromiseForAsyncAwait(value, onFulfilled, onRejected);
+    @resolveWithoutPromiseForAsyncAwait(value, onFulfilled, @asyncGeneratorYieldOnRejected, generator);
+}
+
+@linkTimeConstant
+function doAsyncGeneratorBodyCallOnFulfilledNormal(result, generator)
+{
+    "use strict";
+
+    @doAsyncGeneratorBodyCall(generator, result, @GeneratorResumeModeNormal);
+}
+
+@linkTimeConstant
+function doAsyncGeneratorBodyCallOnFulfilledReturn(result, generator)
+{
+    "use strict";
+
+    @doAsyncGeneratorBodyCall(generator, result, @GeneratorResumeModeReturn);
 }
 
 @linkTimeConstant
@@ -150,10 +175,8 @@ function doAsyncGeneratorBodyCall(generator, resumeValue, resumeMode)
     "use strict";
 
     if (resumeMode === @GeneratorResumeModeReturn && @isSuspendYieldState(generator)) {
-        var onFulfilled = function(result) { @doAsyncGeneratorBodyCall(generator, result, @GeneratorResumeModeReturn); };
-
         @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonAwait);
-        @awaitValue(generator, resumeValue, onFulfilled);
+        @awaitValue(generator, resumeValue, @doAsyncGeneratorBodyCallOnFulfilledReturn);
         return;
     }
 
@@ -179,9 +202,7 @@ function doAsyncGeneratorBodyCall(generator, resumeValue, resumeMode)
 
     var reason = @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason);
     if (reason === @AsyncGeneratorSuspendReasonAwait) {
-        var onFulfilled = function(result) { @doAsyncGeneratorBodyCall(generator, result, @GeneratorResumeModeNormal); };
-
-        @awaitValue(generator, value, onFulfilled);
+        @awaitValue(generator, value, @doAsyncGeneratorBodyCallOnFulfilledNormal);
         return;
     }
 
@@ -193,6 +214,24 @@ function doAsyncGeneratorBodyCall(generator, resumeValue, resumeMode)
         @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonNone);
         return @asyncGeneratorResolve(generator, value, true);
     }
+}
+
+@linkTimeConstant
+function asyncGeneratorResumeNextOnFulfilled(result, generator)
+{
+    "use strict";
+
+    @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
+    @asyncGeneratorResolve(generator, result, true);
+}
+
+@linkTimeConstant
+function asyncGeneratorResumeNextOnRejected(error, generator)
+{
+    "use strict";
+
+    @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
+    @asyncGeneratorReject(generator, error);
 }
 
 @linkTimeConstant
@@ -223,15 +262,7 @@ function asyncGeneratorResumeNext(generator)
         if (state === @AsyncGeneratorStateCompleted) {
             if (next.resumeMode === @GeneratorResumeModeReturn) {
                 @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateAwaitingReturn);
-                @resolveWithoutPromiseForAsyncAwait(next.value,
-                    function (result) {
-                        @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
-                        @asyncGeneratorResolve(generator, result, true);
-                    },
-                    function (error) {
-                        @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
-                        @asyncGeneratorReject(generator, error);
-                    });
+                @resolveWithoutPromiseForAsyncAwait(next.value, @asyncGeneratorResumeNextOnFulfilled, @asyncGeneratorResumeNextOnRejected, generator);
                 return;
             }
 

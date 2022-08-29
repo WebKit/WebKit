@@ -88,12 +88,15 @@ body[dir=rtl] .details-section > .header > .options {
 }
 
 .details-section .details-section > .header {
-    top: 21px;
     background-color: var(--background-color-content);
     font-weight: 500;
 
     /* Ensure these headers are displayed below the parent header but above scrollbars. */
     z-index: calc(var(--z-index-header) - 1);
+}
+
+.details-section:has(> .header > .title:not(:empty)) .details-section > .header {
+    top: 21px;
 }
 
 .details-section .details-section:not(.collapsed) > .header {

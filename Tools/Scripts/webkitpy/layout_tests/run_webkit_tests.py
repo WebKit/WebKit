@@ -387,6 +387,14 @@ def parse_args(args):
             raise RuntimeError('--use-gpu-process implicitly sets the result flavor, this should not be overridden')
         options.result_report_flavor = 'gpuprocess'
 
+    if options.accessibility_isolated_tree:
+        host = Host()
+        host.initialize_scm()
+        options.additional_expectations.insert(0, host.filesystem.join(host.scm().checkout_root, 'LayoutTests/accessibility-isolated-tree/TestExpectations'))
+        if options.result_report_flavor:
+            raise RuntimeError('--accessibility-isolated-tree implicitly sets the result flavor, this should not be overridden')
+        options.result_report_flavor = 'accessibility-isolated-tree'
+
     return options, args
 
 

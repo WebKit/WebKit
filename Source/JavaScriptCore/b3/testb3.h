@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -197,9 +197,9 @@ inline std::unique_ptr<Compilation> compileProc(Procedure& procedure, unsigned o
 }
 
 template<typename T, typename... Arguments>
-T invoke(MacroAssemblerCodePtr<JITCompilationPtrTag> ptr, Arguments... arguments)
+T invoke(CodePtr<JITCompilationPtrTag> ptr, Arguments... arguments)
 {
-    void* executableAddress = untagCFunctionPtr<JITCompilationPtrTag>(ptr.executableAddress());
+    void* executableAddress = untagCFunctionPtr<JITCompilationPtrTag>(ptr.taggedPtr());
     T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);
     return function(arguments...);
 }
@@ -555,6 +555,7 @@ void testTrappingLoadAddStore();
 void testTrappingLoadDCE();
 void testTrappingStoreElimination();
 void testMoveConstants();
+void testMoveConstantsWithLargeOffsets();
 void testPCOriginMapDoesntInsertNops();
 void testBitOrBitOrArgImmImm32(int, int, int c);
 void testBitOrImmBitOrArgImm32(int, int, int c);

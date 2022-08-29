@@ -98,6 +98,7 @@ if (is_apple) {
   libangle_common_sources += [
     "src/common/apple/SoftLinking.h",
     "src/common/apple/apple_platform.h",
+    "src/common/apple_platform_utils.mm",
     "src/common/gl/cgl/FunctionsCGL.cpp",
     "src/common/gl/cgl/FunctionsCGL.h",
     "src/common/system_utils_apple.cpp",
@@ -569,34 +570,9 @@ libangle_capture_sources = [
   "src/libANGLE/capture/frame_capture_utils_autogen.cpp",
   "src/libANGLE/capture/gl_enum_utils.cpp",
   "src/libANGLE/capture/gl_enum_utils_autogen.cpp",
+  "src/libGLESv2/global_state.h",
   "src/third_party/ceval/ceval.h",
 ]
-
-libgl_sources = [
-  "src/libGL/entry_points_gl_1_autogen.cpp",
-  "src/libGL/entry_points_gl_1_autogen.h",
-  "src/libGL/entry_points_gl_2_autogen.cpp",
-  "src/libGL/entry_points_gl_2_autogen.h",
-  "src/libGL/entry_points_gl_3_autogen.cpp",
-  "src/libGL/entry_points_gl_3_autogen.h",
-  "src/libGL/entry_points_gl_4_autogen.cpp",
-  "src/libGL/entry_points_gl_4_autogen.h",
-  "src/libGL/entry_points_wgl.cpp",
-  "src/libGL/entry_points_wgl.h",
-  "src/libGL/libGL_autogen.cpp",
-  "src/libGL/proc_table_wgl.h",
-  "src/libGL/proc_table_wgl_autogen.cpp",
-  "src/libGLESv2/global_state.cpp",
-  "src/libGLESv2/global_state.h",
-  "src/libGLESv2/resource.h",
-]
-
-if (is_win) {
-  libgl_sources += [
-    "src/libGL/libGL.rc",
-    "src/libGL/libGL_autogen.def",
-  ]
-}
 
 libglesv2_sources = [
   "src/libGLESv2/egl_ext_stubs.cpp",
@@ -625,6 +601,17 @@ libglesv2_sources = [
   "src/libGLESv2/proc_table_egl.h",
   "src/libGLESv2/proc_table_egl_autogen.cpp",
   "src/libGLESv2/resource.h",
+]
+
+libglesv2_gl_sources = [
+  "src/libGLESv2/entry_points_gl_1_autogen.cpp",
+  "src/libGLESv2/entry_points_gl_1_autogen.h",
+  "src/libGLESv2/entry_points_gl_2_autogen.cpp",
+  "src/libGLESv2/entry_points_gl_2_autogen.h",
+  "src/libGLESv2/entry_points_gl_3_autogen.cpp",
+  "src/libGLESv2/entry_points_gl_3_autogen.h",
+  "src/libGLESv2/entry_points_gl_4_autogen.cpp",
+  "src/libGLESv2/entry_points_gl_4_autogen.h",
 ]
 
 libglesv2_cl_sources = [

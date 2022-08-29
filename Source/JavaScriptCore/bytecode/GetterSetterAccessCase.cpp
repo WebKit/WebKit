@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ GetterSetterAccessCase::GetterSetterAccessCase(VM& vm, JSCell* owner, AccessType
 
 Ref<AccessCase> GetterSetterAccessCase::create(
     VM& vm, JSCell* owner, AccessType type, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet,
-    bool viaProxy, WatchpointSet* additionalSet, FunctionPtr<CustomAccessorPtrTag> customGetter, JSObject* customSlotBase,
+    bool viaProxy, WatchpointSet* additionalSet, CodePtr<CustomAccessorPtrTag> customGetter, JSObject* customSlotBase,
     std::optional<DOMAttributeAnnotation> domAttribute, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)
 {
     switch (type) {
@@ -63,17 +63,19 @@ Ref<AccessCase> GetterSetterAccessCase::create(
 
     auto result = adoptRef(*new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, additionalSet, customSlotBase, WTFMove(prototypeAccessChain)));
     result->m_domAttribute = domAttribute;
-    result->m_customAccessor = customGetter ? FunctionPtr<CustomAccessorPtrTag>(customGetter) : nullptr;
+    if (customGetter)
+        result->m_customAccessor = customGetter;
     return result;
 }
 
 Ref<AccessCase> GetterSetterAccessCase::create(VM& vm, JSCell* owner, AccessType type, Structure* structure, CacheableIdentifier identifier, PropertyOffset offset,
     const ObjectPropertyConditionSet& conditionSet, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain, bool viaProxy, 
-    FunctionPtr<CustomAccessorPtrTag> customSetter, JSObject* customSlotBase)
+    CodePtr<CustomAccessorPtrTag> customSetter, JSObject* customSlotBase)
 {
     ASSERT(type == Setter || type == CustomValueSetter || type == CustomAccessorSetter);
     auto result = adoptRef(*new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, nullptr, customSlotBase, WTFMove(prototypeAccessChain)));
-    result->m_customAccessor = customSetter ? FunctionPtr<CustomAccessorPtrTag>(customSetter) : nullptr;
+    if (customSetter)
+        result->m_customAccessor = customSetter;
     return result;
 }
 
@@ -118,7 +120,7 @@ void GetterSetterAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Ind
     out.print(comma, "customSlotBase = ", RawPointer(customSlotBase()));
     if (callLinkInfo())
         out.print(comma, "callLinkInfo = ", RawPointer(callLinkInfo()));
-    out.print(comma, "customAccessor = ", RawPointer(m_customAccessor.executableAddress()));
+    out.print(comma, "customAccessor = ", RawPointer(m_customAccessor.taggedPtr()));
 }
 
 void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, const DOMJIT::GetterSetter* domJIT, GPRReg baseForGetGPR)

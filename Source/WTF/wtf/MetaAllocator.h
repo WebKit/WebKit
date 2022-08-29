@@ -62,7 +62,7 @@ class MetaAllocator {
     WTF_MAKE_NONCOPYABLE(MetaAllocator);
 
 public:
-    using FreeSpacePtr = MetaAllocatorPtr<FreeSpacePtrTag>;
+    using FreeSpacePtr = CodePtr<FreeSpacePtrTag>;
     using MemoryPtr = MetaAllocatorHandle::MemoryPtr;
 
     WTF_EXPORT_PRIVATE MetaAllocator(Lock&, size_t allocationGranule, size_t pageSize = WTF::pageSize());

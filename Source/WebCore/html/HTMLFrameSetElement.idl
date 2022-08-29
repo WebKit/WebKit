@@ -24,15 +24,18 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString cols;
     [CEReactions=NotNeeded, Reflect] attribute DOMString rows;
 
-    // Non-standard
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onblur;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onerror;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onfocus;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onfocusin;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onfocusout;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onload;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onresize;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onscroll;
+    [WindowEventHandler] attribute EventHandler onblur;
+    [WindowEventHandler] attribute EventHandler onerror;
+    [WindowEventHandler] attribute EventHandler onfocus;
+    [WindowEventHandler] attribute EventHandler onload;
+    [WindowEventHandler] attribute EventHandler onresize;
+    [WindowEventHandler] attribute EventHandler onscroll;
+
+    // See these 2 issues for onfocusin and onfocusout.
+    // https://github.com/w3c/uievents/issues/88
+    // https://github.com/whatwg/html/issues/3514
+    [WindowEventHandler] attribute EventHandler onfocusin;
+    [WindowEventHandler] attribute EventHandler onfocusout;
 
     // Non-standard named getter
     // FIXME: This is not in the standard, can we remove this?

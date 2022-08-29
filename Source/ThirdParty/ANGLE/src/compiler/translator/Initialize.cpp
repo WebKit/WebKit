@@ -197,7 +197,7 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
 
 void ResetExtensionBehavior(const ShBuiltInResources &resources,
                             TExtensionBehavior &extBehavior,
-                            const ShCompileOptions compileOptions)
+                            const ShCompileOptions &compileOptions)
 {
     for (auto &ext : extBehavior)
     {
@@ -205,7 +205,7 @@ void ResetExtensionBehavior(const ShBuiltInResources &resources,
     }
     if (resources.ARB_texture_rectangle)
     {
-        if ((compileOptions & SH_DISABLE_ARB_TEXTURE_RECTANGLE) != 0)
+        if (compileOptions.disableARBTextureRectangle)
         {
             // Remove ARB_texture_rectangle so it can't be enabled by extension directives.
             extBehavior.erase(TExtension::ARB_texture_rectangle);

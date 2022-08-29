@@ -37,6 +37,7 @@ PY_UTILS = str(pathlib.Path(__file__).resolve().parents[1] / 'src' / 'tests' / '
 if PY_UTILS not in sys.path:
     os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
 import angle_path_util
+import angle_test_util
 
 angle_path_util.AddDepsDirToPath('testing/scripts')
 import common
@@ -48,10 +49,6 @@ import test_env
 # get_sandbox_env breaks test runs on Linux (it seems to unset DISPLAY).
 CHROME_SANDBOX_ENV = 'CHROME_DEVEL_SANDBOX'
 CHROME_SANDBOX_PATH = '/opt/chromium/chrome_sandbox'
-
-
-def IsWindows():
-    return sys.platform == 'cygwin' or sys.platform.startswith('win')
 
 
 def main():
@@ -69,12 +66,10 @@ def main():
 
     env = os.environ.copy()
 
-    if 'GTEST_TOTAL_SHARDS' in env:
-        extra_flags += ['--shard-count=' + env['GTEST_TOTAL_SHARDS']]
-        env.pop('GTEST_TOTAL_SHARDS')
-    if 'GTEST_SHARD_INDEX' in env:
-        extra_flags += ['--shard-index=' + env['GTEST_SHARD_INDEX']]
-        env.pop('GTEST_SHARD_INDEX')
+    if angle_test_util.HasGtestShardsAndIndex(env):
+        extra_flags += ('--shard-count=%d --shard-index=%d' %
+                        angle_test_util.PopGtestShardsAndIndex(env)).split()
+
     if 'ISOLATED_OUTDIR' in env:
         extra_flags += ['--isolated-outdir=' + env['ISOLATED_OUTDIR']]
         env.pop('ISOLATED_OUTDIR')
@@ -95,13 +90,9 @@ def main():
             filter_list = common.extract_filter_list(args.isolated_script_test_filter)
             extra_flags.append('--gtest_filter=' + ':'.join(filter_list))
 
-        if IsWindows():
-            args.executable = '.\\%s.exe' % args.executable
-        else:
-            args.executable = './%s' % args.executable
         with common.temporary_file() as tempfile_path:
             env['CHROME_HEADLESS'] = '1'
-            cmd = [args.executable] + extra_flags
+            cmd = [angle_test_util.ExecutablePathInCurrentDir(args.executable)] + extra_flags
 
             if args.xvfb:
                 rc = xvfb.run_executable(cmd, env, stdoutfile=tempfile_path)
@@ -115,18 +106,5 @@ def main():
     return rc
 
 
-# This is not really a "script test" so does not need to manually add
-# any additional compile targets.
-def main_compile_targets(args):
-    json.dump([], args.output)
-
-
 if __name__ == '__main__':
-    # Conform minimally to the protocol defined by ScriptTest.
-    if 'compile_targets' in sys.argv:
-        funcs = {
-            'run': None,
-            'compile_targets': main_compile_targets,
-        }
-        sys.exit(common.run_script(sys.argv[1:], funcs))
     sys.exit(main())

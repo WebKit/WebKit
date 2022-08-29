@@ -69,7 +69,7 @@ TIntermTyped *CreateDitherValue(const TType &type, TIntermSequence *ditherValueE
 }
 
 void EmitFragmentOutputDither(TCompiler *compiler,
-                              ShCompileOptions compileOptions,
+                              const ShCompileOptions &compileOptions,
                               TSymbolTable *symbolTable,
                               TIntermBlock *ditherBlock,
                               TIntermTyped *ditherControl,
@@ -77,7 +77,7 @@ void EmitFragmentOutputDither(TCompiler *compiler,
                               TIntermTyped *fragmentOutput,
                               uint32_t location)
 {
-    bool roundOutputAfterDithering = (compileOptions & SH_ROUND_OUTPUT_AFTER_DITHERING) != 0;
+    bool roundOutputAfterDithering = compileOptions.roundOutputAfterDithering;
 
     // dither >> 2*location
     TIntermBinary *ditherControlShifted = new TIntermBinary(
@@ -234,7 +234,7 @@ void EmitFragmentOutputDither(TCompiler *compiler,
 }
 
 void EmitFragmentVariableDither(TCompiler *compiler,
-                                ShCompileOptions compileOptions,
+                                const ShCompileOptions &compileOptions,
                                 TSymbolTable *symbolTable,
                                 TIntermBlock *ditherBlock,
                                 TIntermTyped *ditherControl,
@@ -273,7 +273,7 @@ void EmitFragmentVariableDither(TCompiler *compiler,
 }
 
 TIntermNode *EmitDitheringBlock(TCompiler *compiler,
-                                ShCompileOptions compileOptions,
+                                const ShCompileOptions &compileOptions,
                                 TSymbolTable *symbolTable,
                                 SpecConst *specConst,
                                 DriverUniform *driverUniforms,
@@ -434,7 +434,7 @@ TIntermNode *EmitDitheringBlock(TCompiler *compiler,
 }  // anonymous namespace
 
 bool EmulateDithering(TCompiler *compiler,
-                      ShCompileOptions compileOptions,
+                      const ShCompileOptions &compileOptions,
                       TIntermBlock *root,
                       TSymbolTable *symbolTable,
                       SpecConst *specConst,

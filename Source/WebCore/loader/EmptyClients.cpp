@@ -493,6 +493,9 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
             : m_sessionID(sessionID)
         {
         }
+
+        const SecurityOrigin* topLevelOrigin() const final { return nullptr; };
+
     private:
         Ref<StorageArea> storageArea(const SecurityOrigin&) final { return adoptRef(*new EmptyStorageArea); }
         Ref<StorageNamespace> copy(Page&) final { return adoptRef(*new EmptyStorageNamespace { m_sessionID }); }
@@ -502,10 +505,11 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
         PAL::SessionID m_sessionID;
     };
 
-    Ref<StorageNamespace> createSessionStorageNamespace(Page&, unsigned) final;
     Ref<StorageNamespace> createLocalStorageNamespace(unsigned, PAL::SessionID) final;
     Ref<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned, PAL::SessionID) final;
 
+    void copySessionStorageNamespace(Page&, Page&) final { };
+    RefPtr<StorageNamespace> sessionStorageNamespace(const SecurityOrigin&, Page&, ShouldCreateNamespace) final;
 };
 
 class EmptyUserContentProvider final : public UserContentProvider {
@@ -1146,7 +1150,7 @@ void EmptyEditorClient::registerRedoStep(UndoStep&)
 {
 }
 
-Ref<StorageNamespace> EmptyStorageNamespaceProvider::createSessionStorageNamespace(Page& page, unsigned)
+RefPtr<StorageNamespace> EmptyStorageNamespaceProvider::sessionStorageNamespace(const SecurityOrigin&, Page& page, ShouldCreateNamespace)
 {
     return adoptRef(*new EmptyStorageNamespace { page.sessionID() });
 }

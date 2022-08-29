@@ -3961,11 +3961,18 @@ bool AccessibilityObject::isContainedByPasswordField() const
     return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(*element).isPasswordField();
 }
     
-AXCoreObject* AccessibilityObject::selectedListItem()
+AccessibilityObject* AccessibilityObject::selectedListItem()
 {
     for (const auto& child : children()) {
-        if (child->isListItem() && (child->isSelected() || child->isActiveDescendantOfFocusedContainer()))
-            return child.get();
+        if (!child->isListItem())
+            continue;
+
+        auto* axObject = dynamicDowncast<AccessibilityObject>(child.get());
+        if (!axObject)
+            continue;
+
+        if (axObject->isSelected() || axObject->isActiveDescendantOfFocusedContainer())
+            return axObject;
     }
     
     return nullptr;

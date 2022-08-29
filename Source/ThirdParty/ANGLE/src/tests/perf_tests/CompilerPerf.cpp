@@ -305,8 +305,11 @@ void CompilerPerfTest::step()
 {
     const char *shaderStrings[] = {mTestShader};
 
-    ShCompileOptions compileOptions = SH_OBJECT_CODE | SH_VARIABLES |
-                                      SH_INITIALIZE_UNINITIALIZED_LOCALS | SH_INIT_OUTPUT_VARIABLES;
+    ShCompileOptions compileOptions              = {};
+    compileOptions.objectCode                    = true;
+    compileOptions.variables                     = true;
+    compileOptions.initializeUninitializedLocals = true;
+    compileOptions.initOutputVariables           = true;
 
 #if !defined(NDEBUG)
     // Make sure that compilation succeeds and print the info log if it doesn't in debug mode.

@@ -980,6 +980,7 @@ void Document::childrenChanged(const ChildChange& change)
     if (newDocumentElement == m_documentElement)
         return;
     m_documentElement = newDocumentElement;
+    setDocumentElementLanguage(m_documentElement ? m_documentElement->langFromAttribute() : nullAtom());
     // The root style used for media query matching depends on the document element.
     styleScope().clearResolver();
 }
@@ -1507,6 +1508,26 @@ void Document::setContentLanguage(const AtomString& language)
     m_styleScope->didChangeStyleSheetEnvironment();
 }
 
+const AtomString& Document::effectiveDocumentElementLanguage() const
+{
+    if (!m_documentElementLanguage.isNull())
+        return m_documentElementLanguage;
+    return m_contentLanguage;
+}
+
+void Document::setDocumentElementLanguage(const AtomString& language)
+{
+    if (m_documentElementLanguage == language)
+        return;
+    m_documentElementLanguage = language;
+
+    if (m_contentLanguage == language)
+        return;
+
+    // Recalculate style so language is used when selecting the initial font.
+    m_styleScope->didChangeStyleSheetEnvironment();
+}
+
 ExceptionOr<void> Document::setXMLVersion(const String& version)
 {
     if (!XMLDocumentParser::supportsXMLVersion(version))
@@ -2004,7 +2025,7 @@ void Document::updateRenderTree(std::unique_ptr<const Style::Update> styleUpdate
 
 void Document::resolveStyle(ResolveStyleType type)
 {
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    ScriptDisallowedScope::InMainThreadOfWebProcess scriptDisallowedScope;
 
     ASSERT(!view() || !view()->isPainting());
 
@@ -2027,19 +2048,24 @@ void Document::resolveStyle(ResolveStyleType type)
     // FIXME: We should update style on our ancestor chain before proceeding, however doing so at
     // the time this comment was originally written caused several tests to crash.
 
-    // FIXME: Do this user agent shadow tree update per tree scope.
-    for (auto& element : copyToVectorOf<Ref<Element>>(m_elementsWithPendingUserAgentShadowTreeUpdates))
-        element->updateUserAgentShadowTree();
+    {
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    styleScope().flushPendingUpdate();
-    frameView.willRecalcStyle();
+        // FIXME: Do this user agent shadow tree update per tree scope.
+        for (auto& element : copyToVectorOf<Ref<Element>>(m_elementsWithPendingUserAgentShadowTreeUpdates))
+            element->updateUserAgentShadowTree();
 
-    InspectorInstrumentation::willRecalculateStyle(*this);
+        styleScope().flushPendingUpdate();
+        frameView.willRecalcStyle();
+
+        InspectorInstrumentation::willRecalculateStyle(*this);
+    }
 
     bool updatedCompositingLayers = false;
     {
         Style::PostResolutionCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
         m_inStyleRecalc = true;
 
@@ -3458,9 +3484,11 @@ void Document::logExceptionToConsole(const String& errorMessage, const String& s
 
 void Document::setURL(const URL& url)
 {
-    const URL& newURL = url.isEmpty() ? aboutBlankURL() : url;
+    URL newURL = url.isEmpty() ? aboutBlankURL() : url;
     if (newURL == m_url)
         return;
+    
+    m_fragmentDirective = newURL.consumefragmentDirective();
 
     m_url = newURL;
     if (SecurityOrigin::shouldIgnoreHost(m_url))

@@ -12,7 +12,7 @@ PACKAGES+=(
     libgnutls28-dev
     libharfbuzz-dev
     libicu-dev
-    libwpebackend-fdo-1.0-dev
+    $(aptIfExists libopenxr-dev)
     libwpewebkit-1.0-dev
     libxml2-dev
     pkg-config

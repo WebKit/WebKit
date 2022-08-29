@@ -75,8 +75,8 @@ void ScriptExecutable::clearCode(IsoCellSet& clearableCodeSet)
 {
     m_jitCodeForCall = nullptr;
     m_jitCodeForConstruct = nullptr;
-    m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr<JSEntryPtrTag>();
-    m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr<JSEntryPtrTag>();
+    m_jitCodeForCallWithArityCheck = CodePtr<JSEntryPtrTag>();
+    m_jitCodeForConstructWithArityCheck = CodePtr<JSEntryPtrTag>();
 
     switch (type()) {
     case FunctionExecutableType: {

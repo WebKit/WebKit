@@ -44,14 +44,12 @@ struct CompilerWorkaroundsD3D
 class ShaderD3D : public ShaderImpl
 {
   public:
-    ShaderD3D(const gl::ShaderState &state,
-              const angle::FeaturesD3D &features,
-              const gl::Extensions &extensions);
+    ShaderD3D(const gl::ShaderState &state, RendererD3D *renderer);
     ~ShaderD3D() override;
 
     std::shared_ptr<WaitableCompileEvent> compile(const gl::Context *context,
                                                   gl::ShCompilerInstance *compilerInstance,
-                                                  ShCompileOptions options) override;
+                                                  ShCompileOptions *options) override;
 
     std::string getDebugInfo() const override;
 
@@ -111,6 +109,7 @@ class ShaderD3D : public ShaderImpl
     bool mUsesNestedBreak;
     bool mRequiresIEEEStrictCompiling;
 
+    RendererD3D *mRenderer;
     ShShaderOutput mCompilerOutputType;
     mutable std::string mDebugInfo;
     std::map<std::string, unsigned int> mUniformRegisterMap;
@@ -121,7 +120,6 @@ class ShaderD3D : public ShaderImpl
     unsigned int mReadonlyImage2DRegisterIndex;
     unsigned int mImage2DRegisterIndex;
     std::set<std::string> mUsedImage2DFunctionNames;
-    ShCompileOptions mAdditionalOptions;
 };
 }  // namespace rx
 

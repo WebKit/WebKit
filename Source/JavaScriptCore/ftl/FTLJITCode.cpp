@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,7 +76,7 @@ void JITCode::initializeArityCheckEntrypoint(CodeRef<JSEntryPtrTag> entrypoint)
     m_arityCheckEntrypoint = entrypoint;
 }
 
-JITCode::CodePtr<JSEntryPtrTag> JITCode::addressForCall(ArityCheckMode arityCheck)
+CodePtr<JSEntryPtrTag> JITCode::addressForCall(ArityCheckMode arityCheck)
 {
     switch (arityCheck) {
     case ArityCheckNotRequired:
@@ -91,9 +91,9 @@ JITCode::CodePtr<JSEntryPtrTag> JITCode::addressForCall(ArityCheckMode arityChec
 void* JITCode::executableAddressAtOffset(size_t offset)
 {
     if (!offset)
-        return m_addressForCall.executableAddress();
+        return m_addressForCall.taggedPtr();
 
-    char* executableAddress = m_addressForCall.untaggedExecutableAddress<char*>();
+    char* executableAddress = m_addressForCall.untaggedPtr<char*>();
     return tagCodePtr<JSEntryPtrTag>(executableAddress + offset);
 }
 

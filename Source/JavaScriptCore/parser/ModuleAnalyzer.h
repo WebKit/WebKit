@@ -35,14 +35,15 @@ class ScriptFetchParameters;
 
 class ModuleAnalyzer {
     WTF_MAKE_NONCOPYABLE(ModuleAnalyzer);
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
-    ModuleAnalyzer(JSGlobalObject*, const Identifier& moduleKey, const SourceCode&, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables);
+    ModuleAnalyzer(JSGlobalObject*, const Identifier& moduleKey, const SourceCode&, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables, CodeFeatures);
 
     JSModuleRecord* analyze(ModuleProgramNode&);
 
     VM& vm() { return m_vm; }
 
-    JSModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
+    JSModuleRecord* moduleRecord() { return m_moduleRecord; }
 
     void appendRequestedModule(const Identifier&, RefPtr<ScriptFetchParameters>&&);
 
@@ -50,7 +51,7 @@ private:
     void exportVariable(ModuleProgramNode&, const RefPtr<UniquedStringImpl>&, const VariableEnvironmentEntry&);
 
     VM& m_vm;
-    Strong<JSModuleRecord> m_moduleRecord;
+    JSModuleRecord* m_moduleRecord;
     IdentifierSet m_requestedModules;
 };
 

@@ -46,14 +46,20 @@ public:
     WEBCORE_EXPORT StorageNamespaceProvider();
     WEBCORE_EXPORT virtual ~StorageNamespaceProvider();
 
-    virtual Ref<StorageNamespace> createSessionStorageNamespace(Page&, unsigned quota) = 0;
-
     Ref<StorageArea> localStorageArea(Document&);
+    Ref<StorageArea> sessionStorageArea(Document&);
+
+    enum class ShouldCreateNamespace : bool { No, Yes };
+    virtual RefPtr<StorageNamespace> sessionStorageNamespace(const SecurityOrigin&, Page&, ShouldCreateNamespace = ShouldCreateNamespace::Yes) = 0;
 
     WEBCORE_EXPORT void setSessionIDForTesting(PAL::SessionID);
 
+    void setSessionStorageQuota(unsigned quota) { m_sessionStorageQuota = quota; }
+    virtual void copySessionStorageNamespace(Page&, Page&) = 0;
+
 protected:
     StorageNamespace* optionalLocalStorageNamespace() { return m_localStorageNamespace.get(); }
+    unsigned sessionStorageQuota() const { return m_sessionStorageQuota; }
 
 private:
     friend class Internals;
@@ -65,6 +71,8 @@ private:
 
     RefPtr<StorageNamespace> m_localStorageNamespace;
     HashMap<SecurityOriginData, RefPtr<StorageNamespace>> m_transientLocalStorageNamespaces;
+
+    unsigned m_sessionStorageQuota { 0 };
 };
 
 } // namespace WebCore

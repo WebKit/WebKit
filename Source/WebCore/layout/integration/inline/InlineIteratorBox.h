@@ -59,6 +59,7 @@ public:
     bool isText() const;
     bool isInlineBox() const;
     bool isRootInlineBox() const;
+    bool isLineBreak() const;
 
     FloatRect visualRect() const;
     FloatRect visualRectIgnoringBlockDirection() const;
@@ -71,7 +72,6 @@ public:
     float logicalHeight() const { return isHorizontal() ? visualRectIgnoringBlockDirection().height() : visualRectIgnoringBlockDirection().width(); }
 
     bool isHorizontal() const;
-    bool isLineBreak() const;
 
     unsigned minimumCaretOffset() const;
     unsigned maximumCaretOffset() const;

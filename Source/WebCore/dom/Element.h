@@ -420,6 +420,7 @@ public:
     void setChildIndex(unsigned);
 
     AtomString effectiveLang() const;
+    AtomString langFromAttribute() const;
     Locale& locale() const;
 
     virtual bool accessKeyAction(bool /*sendToAnyEvent*/) { return false; }
@@ -522,11 +523,6 @@ public:
     virtual bool isDisabledFormControl() const { return false; }
 
     virtual bool childShouldCreateRenderer(const Node&) const;
-
-    bool hasPendingResources() const { return hasNodeFlag(NodeFlag::HasPendingResources); }
-    void setHasPendingResources() { setNodeFlag(NodeFlag::HasPendingResources); }
-    void clearHasPendingResources() { clearNodeFlag(NodeFlag::HasPendingResources); }
-    virtual void buildPendingResource() { };
 
     KeyframeEffectStack* keyframeEffectStack(PseudoId) const;
     KeyframeEffectStack& ensureKeyframeEffectStack(PseudoId);

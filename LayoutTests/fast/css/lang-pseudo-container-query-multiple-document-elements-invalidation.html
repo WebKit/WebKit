@@ -1,0 +1,25 @@
+<html lang="fr" class="reftest-wait">
+<div><span></span></div>
+<script>
+
+const test = document.querySelector('div').matches('*:has(:lang(fr))') ? 'PASS' : 'FAIL';
+
+const newDocumentElement = document.createElement('html');
+newDocumentElement.lang = 'en';
+document.replaceChild(newDocumentElement, document.documentElement);
+document.documentElement.innerHTML = `
+<head>
+<style>
+    div { width: 100px; height: 100px; }
+    div:has(*:lang(fr)) { background: red; }
+    div:has(*:lang(en)) { background: green; }
+    span.pass { color: green; }
+    span.fail { color: red; }
+</style>
+</head>
+<body>
+<div><span class="${test}">${test}</span></div>
+</body>`;
+
+</script>
+</html>

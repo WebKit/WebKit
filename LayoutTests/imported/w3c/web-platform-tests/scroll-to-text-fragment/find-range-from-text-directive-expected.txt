@@ -1,0 +1,46 @@
+
+PASS Basic smoke test - full word match.
+PASS Prefix must start on a word boundary.
+PASS Prefix need not end on a word boundary.
+PASS Prefix doesn't exist.
+PASS Multiple overlapping prefixes.
+PASS Multiple overlapping one letter prefixes.
+PASS Prefix overlaps match text.
+PASS Match text after prefix.
+PASS Search invisible content between prefix and match.
+PASS Prefix appears at end of document.
+PASS |end| forces |start| to end on word boundary.
+PASS no |end| or suffix forces |start| to end on word boundary.
+PASS suffix means |start| need not end on word boundary.
+PASS |start| doesn't need to start on word boundary.
+PASS prefix with non-existent exact match.
+PASS prefix with non-existent range match.
+PASS match doesn't immediately follow prefix.
+PASS match doesn't immediately follow first prefix instance.
+PASS no-prefix; |end| forces |start| to end on word boundary.
+PASS no-prefix; no |end| or suffix forces |start| to end on word boundary.
+PASS no-prefix; suffix means |start| need not end on word boundary.
+PASS |start| must start on a word boundary.
+PASS non-existent exact match.
+PASS non-existent range match.
+PASS overlapping exact matches with suffix.
+PASS overlapping one letter exact matches with suffix.
+PASS matching range search.
+PASS inverted range search.
+PASS no suffix forces |end| to be end bounded.
+PASS suffix means |end| need not be end bounded.
+PASS |end| must be start bounded.
+PASS |end| must be start bounded even if full range is word bounded.
+PASS non-existent |end|.
+PASS Range with preceeding suffix.
+PASS Match with no suffix.
+PASS Suffix comes before |end|.
+PASS Search invisible content between |end| and suffix.
+PASS Suffix must be end bounded.
+PASS Suffix need not be start bounded.
+PASS Non-existent suffix.
+PASS Content appears between match and suffix.
+PASS Non-matching suffix in first potential match.
+PASS Non-matching suffix search continues to prefix match.
+PASS Range end matches correct suffix.
+

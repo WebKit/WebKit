@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .explicit-width-height {
+        height: 400px;
+        width: 400px;
+    }
+
+    .max-width-height {
+        max-height: 400px;
+        max-width: 400px;
+    }
+
+
+    .min-width-height {
+        min-height: 400px;
+        min-width: 400px;
+    }
+</style>
+</head>
+<script src="full-screen-test.js"></script>
+<script>
+window.addEventListener('load', async event => {
+    target = document.getElementById('target');
+
+    consoleWrite('Testing with explicit width and height');
+    target.className = 'explicit-width-height';
+    runWithKeyDown(() => { target.webkitRequestFullscreen(); })
+    await waitFor(document, 'webkitfullscreenchange');
+
+    testExpected('target.clientWidth === document.documentElement.clientWidth', true);
+    testExpected('target.clientHeight === document.documentElement.clientHeight', true);
+
+    runWithKeyDown(() => { document.webkitExitFullscreen(); });
+    await waitFor(document, 'webkitfullscreenchange');
+
+    consoleWrite('Testing with max-width and max-height');
+    target.className = 'max-width-height';
+    runWithKeyDown(() => { target.webkitRequestFullscreen(); })
+    await waitFor(document, 'webkitfullscreenchange');
+
+    testExpected('target.clientWidth === document.documentElement.clientWidth', true);
+    testExpected('target.clientHeight === document.documentElement.clientHeight', true);
+
+    runWithKeyDown(() => { document.webkitExitFullscreen(); });
+    await waitFor(document, 'webkitfullscreenchange');
+
+    consoleWrite('Testing with min-width and min-height');
+    target.className = 'min-width-height';
+    runWithKeyDown(() => { target.webkitRequestFullscreen(); })
+    await waitFor(document, 'webkitfullscreenchange');
+
+    testExpected('target.clientWidth === document.documentElement.clientWidth', true);
+    testExpected('target.clientHeight === document.documentElement.clientHeight', true);
+
+    runWithKeyDown(() => { document.webkitExitFullscreen(); });
+    await waitFor(document, 'webkitfullscreenchange');
+
+    endTest();
+});
+</script>
+<body>
+    <div id="target"></div>
+</body>
+</html>

@@ -34,19 +34,17 @@ ASYNC CALL STACK:
 
 -- Running test case: Console.StackTrace.UnhandledPromiseRejection.PromiseReject
 CALL STACK:
-0: [N] (anonymous function)
-1: [N] reject
-2: [F] triggerUnhandledRejectionPromiseReject
+0: [N] reject
+1: [F] triggerUnhandledRejectionPromiseReject
 ASYNC CALL STACK:
 0: --- setTimeout ---
 1: [P] Global Code
 
 -- Running test case: Console.StackTrace.UnhandledPromiseRejection.ExplicitReject
 CALL STACK:
-0: [N] (anonymous function)
-1: [F] (anonymous function)
-2: [N] Promise
-3: [F] triggerUnhandledRejectionExplicit
+0: [F] (anonymous function)
+1: [N] Promise
+2: [F] triggerUnhandledRejectionExplicit
 ASYNC CALL STACK:
 0: --- setTimeout ---
 1: [P] Global Code

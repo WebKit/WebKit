@@ -162,6 +162,8 @@ public:
 
 static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
     // Base directories are not used by TestMain.
     g_assert_null(webkit_website_data_manager_get_base_data_directory(test->m_manager));
     g_assert_null(webkit_website_data_manager_get_base_cache_directory(test->m_manager));
@@ -272,6 +274,8 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(webkit_website_data_manager_get_service_worker_registrations_directory(baseDataManager.get()), ==, swRegistrationsDirectory.get());
     g_assert_cmpstr(webkit_website_data_manager_get_dom_cache_directory(baseDataManager.get()), ==, domCacheDirectory.get());
     g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(baseDataManager.get()), ==, Test::dataDirectory());
+
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
@@ -288,6 +292,8 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     g_assert_true(webkit_website_data_manager_is_ephemeral(manager.get()));
     g_assert_null(webkit_website_data_manager_get_base_data_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_base_cache_directory(manager.get()));
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     g_assert_null(webkit_website_data_manager_get_local_storage_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_disk_cache_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_offline_application_cache_directory(manager.get()));
@@ -295,6 +301,7 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     g_assert_null(webkit_website_data_manager_get_hsts_cache_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_itp_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_service_worker_registrations_directory(manager.get()));
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Configuration is ignored when is-ephemeral is used.
     manager = adoptGRef(WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, "base-data-directory", Test::dataDirectory(), "is-ephemeral", TRUE, nullptr)));
@@ -695,7 +702,9 @@ static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer
 
 static void testWebsiteDataITP(WebsiteDataTest* test, gconstpointer)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     const char* itpDirectory = webkit_website_data_manager_get_itp_directory(test->m_manager);
+    ALLOW_DEPRECATED_DECLARATIONS_END
     GUniquePtr<char> itpDatabaseFile(g_build_filename(itpDirectory, "observations.db", nullptr));
 
     // Delete any previous data.

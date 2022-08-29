@@ -41,7 +41,6 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InlineIteratorInlineBox.h"
-#include "InlineWalker.h"
 #include "LayoutRepainter.h"
 #include "LegacyInlineElementBox.h"
 #include "LegacyInlineTextBox.h"
@@ -912,31 +911,11 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
 
 void RenderBlock::simplifiedNormalFlowLayout()
 {
-    if (childrenInline()) {
-        ListHashSet<LegacyRootInlineBox*> lineBoxes;
-        for (InlineWalker walker(downcast<RenderBlockFlow>(*this)); !walker.atEnd(); walker.advance()) {
-            RenderObject& renderer = *walker.current();
-            if (!renderer.isOutOfFlowPositioned() && (renderer.isReplacedOrInlineBlock() || renderer.isFloating())) {
-                RenderBox& box = downcast<RenderBox>(renderer);
-                box.layoutIfNeeded();
-                if (box.inlineBoxWrapper())
-                    lineBoxes.add(&box.inlineBoxWrapper()->root());
-            } else if (is<RenderText>(renderer) || is<RenderInline>(renderer))
-                renderer.clearNeedsLayout();
-        }
+    ASSERT(!childrenInline());
 
-        // FIXME: Glyph overflow will get lost in this case, but not really a big deal.
-        // FIXME: Find a way to invalidate the knownToHaveNoOverflow flag on the InlineBoxes.
-        GlyphOverflowAndFallbackFontsMap textBoxDataMap;                  
-        for (auto it = lineBoxes.begin(), end = lineBoxes.end(); it != end; ++it) {
-            LegacyRootInlineBox* box = *it;
-            box->computeOverflow(box->lineTop(), box->lineBottom(), textBoxDataMap);
-        }
-    } else {
-        for (auto* box = firstChildBox(); box; box = box->nextSiblingBox()) {
-            if (!box->isOutOfFlowPositioned())
-                box->layoutIfNeeded();
-        }
+    for (auto* box = firstChildBox(); box; box = box->nextSiblingBox()) {
+        if (!box->isOutOfFlowPositioned())
+            box->layoutIfNeeded();
     }
 }
 

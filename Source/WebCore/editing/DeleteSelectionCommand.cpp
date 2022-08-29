@@ -77,7 +77,7 @@ static bool isTableRowEmpty(Node* row)
 
 static bool isSpecialHTMLElement(const Node& node)
 {
-    ScriptDisallowedScope scriptDisallowedScope;
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     if (!is<HTMLElement>(node))
         return false;
@@ -479,7 +479,7 @@ void DeleteSelectionCommand::insertBlockPlaceholderForTableCellIfNeeded(Element&
 {
     // Make sure empty cell has some height.
     {
-        ScriptDisallowedScope scriptDisallowedScope;
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         auto* renderer = element.renderer();
         if (!is<RenderTableCell>(renderer))
             return;
@@ -941,7 +941,7 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
     if (!rangeOfFirstCharacter)
         return String();
 
-    ScriptDisallowedScope scriptDisallowedScope;
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     for (auto* marker : document().markers().markersInRange(*rangeOfFirstCharacter, DocumentMarker::Autocorrected)) {
         int startOffset = marker->startOffset();
         if (startOffset == startOfSelection.deepEquivalent().offsetInContainerNode())
@@ -1050,7 +1050,7 @@ void DeleteSelectionCommand::doApply()
     if (!document().editor().behavior().shouldRebalanceWhiteSpacesInSecureField()) {
         if (RefPtr endNode = m_endingPosition.deprecatedNode(); is<Text>(endNode)) {
             auto& textNode = downcast<Text>(*endNode);
-            ScriptDisallowedScope scriptDisallowedScope;
+            ScriptDisallowedScope::InMainThread scriptDisallowedScope;
             if (textNode.length() && textNode.renderer())
                 shouldRebalaceWhiteSpace = textNode.renderer()->style().textSecurity() == TextSecurity::None;
         }        

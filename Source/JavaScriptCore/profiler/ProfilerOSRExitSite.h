@@ -33,17 +33,17 @@ namespace JSC { namespace Profiler {
 
 class OSRExitSite {
 public:
-    explicit OSRExitSite(const Vector<MacroAssemblerCodePtr<JSInternalPtrTag>>& codeAddresses)
+    explicit OSRExitSite(const Vector<CodePtr<JSInternalPtrTag>>& codeAddresses)
         : m_codeAddresses(codeAddresses)
     {
     }
     
-    const Vector<MacroAssemblerCodePtr<JSInternalPtrTag>>& codeAddress() const { return m_codeAddresses; }
+    const Vector<CodePtr<JSInternalPtrTag>>& codeAddress() const { return m_codeAddresses; }
     
     JSValue toJS(JSGlobalObject*) const;
 
 private:
-    Vector<MacroAssemblerCodePtr<JSInternalPtrTag>> m_codeAddresses;
+    Vector<CodePtr<JSInternalPtrTag>> m_codeAddresses;
 };
 
 } } // namespace JSC::Profiler

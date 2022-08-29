@@ -40,7 +40,8 @@ egl::Error SyncEGL::initialize(const egl::Display *display,
 {
     ASSERT(type == EGL_SYNC_FENCE_KHR || type == EGL_SYNC_NATIVE_FENCE_ANDROID);
 
-    std::vector<EGLint> attribs;
+    constexpr size_t kAttribVectorSize = 3;
+    angle::FixedVector<EGLint, kAttribVectorSize> attribs;
     if (type == EGL_SYNC_NATIVE_FENCE_ANDROID)
     {
         attribs.push_back(EGL_SYNC_NATIVE_FENCE_FD_ANDROID);

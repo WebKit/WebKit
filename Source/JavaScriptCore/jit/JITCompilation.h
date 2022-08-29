@@ -48,7 +48,7 @@ public:
     JS_EXPORT_PRIVATE Compilation(Compilation&&);
     JS_EXPORT_PRIVATE ~Compilation();
 
-    MacroAssemblerCodePtr<JITCompilationPtrTag> code() const { return m_codeRef.code(); }
+    CodePtr<JITCompilationPtrTag> code() const { return m_codeRef.code(); }
     MacroAssemblerCodeRef<JITCompilationPtrTag> codeRef() const { return m_codeRef; }
     
     CString disassembly() const { return m_codeRef.disassembly(); }

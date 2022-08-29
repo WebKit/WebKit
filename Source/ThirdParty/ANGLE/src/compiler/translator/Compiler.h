@@ -54,7 +54,7 @@ bool IsGLSL410OrOlder(ShShaderOutput output);
 bool RemoveInvariant(sh::GLenum shaderType,
                      int shaderVersion,
                      ShShaderOutput outputType,
-                     ShCompileOptions compileOptions);
+                     const ShCompileOptions &compileOptions);
 
 //
 // The base class used to back handles returned to the driver.
@@ -101,17 +101,18 @@ class TCompiler : public TShHandleBase
     // allocator. Returns nullptr whenever there are compilation errors.
     TIntermBlock *compileTreeForTesting(const char *const shaderStrings[],
                                         size_t numStrings,
-                                        ShCompileOptions compileOptions);
+                                        const ShCompileOptions &compileOptions);
 
     bool compile(const char *const shaderStrings[],
                  size_t numStrings,
-                 ShCompileOptions compileOptions);
+                 const ShCompileOptions &compileOptions);
 
     // Get results of the last compilation.
     int getShaderVersion() const { return mShaderVersion; }
     TInfoSink &getInfoSink() { return mInfoSink; }
 
     bool isEarlyFragmentTestsSpecified() const { return mEarlyFragmentTestsSpecified; }
+    bool hasDiscard() const { return mHasDiscard; }
     bool enablesPerSampleShading() const { return mEnablesPerSampleShading; }
     SpecConstUsageBits getSpecConstUsageBits() const { return mSpecConstUsageBits; }
 
@@ -143,7 +144,7 @@ class TCompiler : public TShHandleBase
 
     bool isHighPrecisionSupported() const;
 
-    bool shouldRunLoopAndIndexingValidation(ShCompileOptions compileOptions) const;
+    bool shouldRunLoopAndIndexingValidation(const ShCompileOptions &compileOptions) const;
     bool shouldLimitTypeSizes() const;
 
     // Get the resources set by InitBuiltInSymbolTable
@@ -205,11 +206,11 @@ class TCompiler : public TShHandleBase
   protected:
     // Add emulated functions to the built-in function emulator.
     virtual void initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
-                                             ShCompileOptions compileOptions)
+                                             const ShCompileOptions &compileOptions)
     {}
     // Translate to object code. May generate performance warnings through the diagnostics.
     [[nodiscard]] virtual bool translate(TIntermBlock *root,
-                                         ShCompileOptions compileOptions,
+                                         const ShCompileOptions &compileOptions,
                                          PerformanceDiagnostics *perfDiagnostics) = 0;
     // Get built-in extensions with default behavior.
     const TExtensionBehavior &getExtensionBehavior() const;
@@ -220,7 +221,7 @@ class TCompiler : public TShHandleBase
     const BuiltInFunctionEmulator &getBuiltInFunctionEmulator() const;
 
     virtual bool shouldFlattenPragmaStdglInvariantAll() = 0;
-    virtual bool shouldCollectVariables(ShCompileOptions compileOptions);
+    virtual bool shouldCollectVariables(const ShCompileOptions &compileOptions);
 
     bool wereVariablesCollected() const;
     std::vector<sh::ShaderVariable> mAttributes;
@@ -277,7 +278,7 @@ class TCompiler : public TShHandleBase
 
     TIntermBlock *compileTreeImpl(const char *const shaderStrings[],
                                   size_t numStrings,
-                                  const ShCompileOptions compileOptions);
+                                  const ShCompileOptions &compileOptions);
 
     // Fetches and stores shader metadata that is not stored within the AST itself, such as shader
     // version.
@@ -289,7 +290,7 @@ class TCompiler : public TShHandleBase
     // Does checks that need to be run after parsing is complete and returns true if they pass.
     bool checkAndSimplifyAST(TIntermBlock *root,
                              const TParseContext &parseContext,
-                             ShCompileOptions compileOptions);
+                             const ShCompileOptions &compileOptions);
 
     bool postParseChecks(const TParseContext &parseContext);
 
@@ -317,8 +318,11 @@ class TCompiler : public TShHandleBase
     TDiagnostics mDiagnostics;
     const char *mSourcePath;  // Path of source file or NULL
 
-    // fragment shader early fragment tests
+    // Fragment shader early fragment tests
     bool mEarlyFragmentTestsSpecified;
+
+    // Fragment shader has the discard instruction
+    bool mHasDiscard;
 
     // Whether per-sample shading is enabled by the shader.  In OpenGL, this keyword should
     // implicitly trigger per-sample shading without the API enabling it.

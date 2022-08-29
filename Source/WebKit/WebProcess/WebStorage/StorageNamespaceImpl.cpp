@@ -42,19 +42,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<StorageNamespaceImpl::Identifier, StorageNamespaceImpl*>& sessionStorageNamespaces()
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(Identifier identifier, PageIdentifier pageID, const WebCore::SecurityOrigin& topLevelOrigin, unsigned quotaInBytes)
 {
-    static NeverDestroyed<HashMap<StorageNamespaceImpl::Identifier, StorageNamespaceImpl*>> map;
-    return map;
-}
-
-Ref<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(Identifier identifier, PageIdentifier pageID, unsigned quotaInBytes)
-{
-    // The identifier of a session storage namespace is the WebPageProxyIdentifier. It is possible we have several WebPage objects in a single process for the same
-    // WebPageProxyIdentifier and these need to share the same namespace instance so we know where to route the IPC to.
-    if (auto* existingNamespace = sessionStorageNamespaces().get(identifier))
-        return *existingNamespace;
-    return adoptRef(*new StorageNamespaceImpl(StorageType::Session, identifier, pageID, nullptr, quotaInBytes));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::Session, identifier, pageID, &topLevelOrigin, quotaInBytes));
 }
 
 Ref<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(Identifier identifier, unsigned quotaInBytes)
@@ -67,7 +57,7 @@ Ref<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNames
     return adoptRef(*new StorageNamespaceImpl(StorageType::TransientLocal, identifier, std::nullopt, &topLevelOrigin, quotaInBytes));
 }
 
-StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, Identifier storageNamespaceID, const std::optional<PageIdentifier>& pageIdentifier, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes)
+StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, Identifier storageNamespaceID, const std::optional<PageIdentifier>& pageIdentifier, const WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes)
     : m_storageType(storageType)
     , m_storageNamespaceID(storageNamespaceID)
     , m_sessionPageID(pageIdentifier)
@@ -75,19 +65,6 @@ StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, Ide
     , m_quotaInBytes(quotaInBytes)
 {
     ASSERT(storageType == StorageType::Session || !m_sessionPageID);
-    
-    if (m_storageType == StorageType::Session) {
-        ASSERT(!sessionStorageNamespaces().contains(m_storageNamespaceID));
-        sessionStorageNamespaces().add(m_storageNamespaceID, this);
-    }
-}
-
-StorageNamespaceImpl::~StorageNamespaceImpl()
-{
-    if (m_storageType == StorageType::Session) {
-        bool wasRemoved = sessionStorageNamespaces().remove(m_storageNamespaceID);
-        ASSERT_UNUSED(wasRemoved, wasRemoved);
-    }
 }
 
 PAL::SessionID StorageNamespaceImpl::sessionID() const
@@ -112,9 +89,6 @@ Ref<StorageNamespace> StorageNamespaceImpl::copy(Page& newPage)
 {
     ASSERT(m_storageNamespaceID);
     ASSERT(m_storageType == StorageType::Session);
-
-    if (auto networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
-        networkProcessConnection->connection().send(Messages::NetworkStorageManager::CloneSessionStorageNamespace(m_storageNamespaceID, WebPage::fromCorePage(newPage).sessionStorageNamespaceIdentifier()), 0);
 
     return adoptRef(*new StorageNamespaceImpl(m_storageType, WebPage::fromCorePage(newPage).sessionStorageNamespaceIdentifier(), WebPage::fromCorePage(newPage).identifier(), m_topLevelOrigin.get(), m_quotaInBytes));
 }

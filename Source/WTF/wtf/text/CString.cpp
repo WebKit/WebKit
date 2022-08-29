@@ -30,6 +30,7 @@
 #include <string.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringCommon.h>
 #include <wtf/text/StringHasher.h>
 
 namespace WTF {
@@ -120,7 +121,7 @@ bool operator==(const CString& a, const CString& b)
         return false;
     if (a.length() != b.length())
         return false;
-    return !memcmp(a.data(), b.data(), a.length());
+    return equal(reinterpret_cast<const LChar*>(a.data()), reinterpret_cast<const LChar*>(b.data()), a.length());
 }
 
 bool operator==(const CString& a, const char* b)

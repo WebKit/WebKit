@@ -152,7 +152,7 @@ void LLIntPlan::didCompleteCompilation()
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->referencedFunctions().contains(functionIndex)) {
             TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
-            const TypeDefinition& signature = TypeInformation::get(typeIndex);
+            const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
             CCallHelpers jit;
             // The LLInt always bounds checks
             MemoryMode mode = MemoryMode::BoundsChecking;
@@ -181,7 +181,7 @@ void LLIntPlan::didCompleteCompilation()
 
     for (auto& unlinked : m_unlinkedWasmToWasmCalls) {
         for (auto& call : unlinked) {
-            MacroAssemblerCodePtr<WasmEntryPtrTag> executableAddress;
+            CodePtr<WasmEntryPtrTag> executableAddress;
             if (m_moduleInformation->isImportedFunctionFromFunctionIndexSpace(call.functionIndexSpace)) {
                 // FIXME: imports could have been linked in B3, instead of generating a patchpoint. This condition should be replaced by a RELEASE_ASSERT.
                 // https://bugs.webkit.org/show_bug.cgi?id=166462

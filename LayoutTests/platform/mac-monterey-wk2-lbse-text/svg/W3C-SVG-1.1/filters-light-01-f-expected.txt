@@ -4,14 +4,14 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (0,-14) size 544x48 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,-14) size 544x48
+layer at (0,-14) size 544x74 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,-14) size 544x74
 layer at (115,9) size 250x14
   RenderSVGText {text} at (114,23) size 252x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 251x14
       chunk 1 (middle anchor) text run 1 at (114.93,20.00) startOffset 0 endOffset 50 width 250.14: "Filters: feDistantLight, fePointLight, feSpotLight"
-layer at (70,-4) size 361x33 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (70,10) size 361x33
+layer at (70,-4) size 361x64 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (70,10) size 361x64
 layer at (70,-4) size 361x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 361x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 361x18
@@ -32,6 +32,14 @@ layer at (355,11) size 51x18
   RenderSVGText {text} at (285,15) size 51x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 51x18
       chunk 1 text run 1 at (355.00,25.00) startOffset 0 endOffset 8 width 50.66: "(45, 45)"
+layer at (70,30) size 50x30
+  RenderSVGImage {image} at (0,34) size 50x30
+layer at (165,30) size 50x30
+  RenderSVGImage {image} at (95,34) size 50x30
+layer at (260,30) size 50x30
+  RenderSVGImage {image} at (190,34) size 50x30
+layer at (355,30) size 50x30
+  RenderSVGImage {image} at (285,34) size 50x30
 layer at (70,-4) size 360x33 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (70,10) size 360x33
 layer at (70,-4) size 278x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -54,6 +62,16 @@ layer at (355,11) size 75x18
   RenderSVGText {text} at (285,15) size 75x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 75x18
       chunk 1 text run 1 at (355.00,25.00) startOffset 0 endOffset 12 width 74.66: "(50, 30, 10)"
+layer at (0,0) size 50x30
+  RenderSVGTransformableContainer {g} at (0,14) size 50x30
+layer at (0,0) size 50x30
+  RenderSVGImage {image} at (0,0) size 50x30
+layer at (0,0) size 50x30
+  RenderSVGImage {image} at (0,0) size 50x30
+layer at (0,0) size 50x30
+  RenderSVGImage {image} at (0,0) size 50x30
+layer at (0,0) size 50x30
+  RenderSVGImage {image} at (0,0) size 50x30
 layer at (70,-14) size 474x48 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (70,0) size 474x48
 layer at (70,-14) size 473x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

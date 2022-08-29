@@ -45,8 +45,14 @@ void TypeDefinition::dump(PrintStream& out) const
     if (is<FunctionSignature>())
         return as<FunctionSignature>()->dump(out);
 
-    ASSERT(is<StructType>());
-    return as<StructType>()->dump(out);
+    if (is<StructType>())
+        return as<StructType>()->dump(out);
+
+    if (is<RecursionGroup>())
+        return as<RecursionGroup>()->dump(out);
+
+    ASSERT(is<Projection>());
+    return as<Projection>()->dump(out);
 }
 
 String FunctionSignature::toString() const
@@ -89,6 +95,36 @@ void StructType::dump(PrintStream& out) const
     out.print(")");
 }
 
+String RecursionGroup::toString() const
+{
+    return WTF::toString(*this);
+}
+
+void RecursionGroup::dump(PrintStream& out) const
+{
+    out.print("(");
+    CommaPrinter comma;
+    for (RecursionGroupCount typeIndex = 0; typeIndex < typeCount(); ++typeIndex) {
+        out.print(comma);
+        TypeInformation::get(type(typeIndex)).dump(out);
+    }
+    out.print(")");
+}
+
+String Projection::toString() const
+{
+    return WTF::toString(*this);
+}
+
+void Projection::dump(PrintStream& out) const
+{
+    out.print("(");
+    CommaPrinter comma;
+    TypeInformation::get(recursionGroup()).dump(out);
+    out.print(".", index());
+    out.print(")");
+}
+
 static unsigned computeSignatureHash(size_t returnCount, const Type* returnTypes, size_t argumentCount, const Type* argumentTypes)
 {
     unsigned accumulator = 0xa1bcedd8u;
@@ -117,6 +153,22 @@ static unsigned computeStructTypeHash(size_t fieldCount, const StructField* fiel
     return accumulator;
 }
 
+static unsigned computeRecursionGroupHash(size_t typeCount, const TypeIndex* types)
+{
+    unsigned accumulator = 0x9cfb89bb;
+    for (uint32_t i = 0; i < typeCount; ++i)
+        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(static_cast<TypeIndex>(types[i])));
+    return accumulator;
+}
+
+static unsigned computeProjectionHash(TypeIndex recursionGroup, ProjectionIndex index)
+{
+    unsigned accumulator = 0xbeae6d4e;
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(static_cast<TypeIndex>(recursionGroup)));
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint32_t>::hash(static_cast<uint32_t>(index)));
+    return accumulator;
+}
+
 unsigned TypeDefinition::hash() const
 {
     if (is<FunctionSignature>()) {
@@ -124,9 +176,19 @@ unsigned TypeDefinition::hash() const
         return computeSignatureHash(signature->returnCount(), signature->storage(0), signature->argumentCount(), signature->storage(signature->returnCount()));
     }
 
-    ASSERT(is<StructType>());
-    const StructType* structType = as<StructType>();
-    return computeStructTypeHash(structType->fieldCount(), structType->storage(0));
+    if (is<StructType>()) {
+        const StructType* structType = as<StructType>();
+        return computeStructTypeHash(structType->fieldCount(), structType->storage(0));
+    }
+
+    if (is<RecursionGroup>()) {
+        const RecursionGroup* recursionGroup = as<RecursionGroup>();
+        return computeRecursionGroupHash(recursionGroup->typeCount(), recursionGroup->storage(0));
+    }
+
+    ASSERT(is<Projection>());
+    const Projection* projection = as<Projection>();
+    return computeProjectionHash(projection->recursionGroup(), projection->index());
 }
 
 RefPtr<TypeDefinition> TypeDefinition::tryCreateFunctionSignature(FunctionArgCount returnCount, FunctionArgCount argumentCount)
@@ -136,7 +198,7 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateFunctionSignature(FunctionArgCou
     void* memory = nullptr;
     if (!result.getValue(memory))
         return nullptr;
-    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(returnCount, argumentCount);
+    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::FunctionSignature, returnCount, argumentCount);
     return adoptRef(signature);
 }
 
@@ -147,8 +209,106 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateStructType(StructFieldCount fiel
     void* memory = nullptr;
     if (!result.getValue(memory))
         return nullptr;
-    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(fieldCount);
+    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::StructType, fieldCount);
     return adoptRef(signature);
+}
+
+RefPtr<TypeDefinition> TypeDefinition::tryCreateRecursionGroup(RecursionGroupCount typeCount)
+{
+    // We use WTF_MAKE_FAST_ALLOCATED for this class.
+    auto result = tryFastMalloc(allocatedRecursionGroupSize(typeCount));
+    void* memory = nullptr;
+    if (!result.getValue(memory))
+        return nullptr;
+    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::RecursionGroup, typeCount);
+    return adoptRef(signature);
+}
+
+RefPtr<TypeDefinition> TypeDefinition::tryCreateProjection()
+{
+    // We use WTF_MAKE_FAST_ALLOCATED for this class.
+    auto result = tryFastMalloc(allocatedProjectionSize());
+    void* memory = nullptr;
+    if (!result.getValue(memory))
+        return nullptr;
+    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::Projection);
+    return adoptRef(signature);
+}
+
+// Recursive types are stored "tied" in the sense that the spec refers to here:
+//
+//   https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md#equivalence
+//
+// That is, the recursive "back edges" are stored as a special type index. These
+// need to be substituted back out to a Projection eventually so that the type
+// can be further expanded if necessary. The substitute and replacePlaceholders
+// functions below are used to implement this substitution.
+Type TypeDefinition::substitute(Type type, TypeIndex projectee)
+{
+    if (type.kind == TypeKind::Rec) {
+        RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(projectee, static_cast<ProjectionIndex>(type.index));
+        TypeKind kind = type.isNullable() ? TypeKind::RefNull : TypeKind::Ref;
+        return Type { kind, type.nullable, projection->index() };
+    }
+
+    return type;
+}
+
+// This operation is a helper for expand() that calls substitute() in order
+// to replace placeholder recursive references in structural types.
+const TypeDefinition& TypeDefinition::replacePlaceholders(TypeIndex projectee) const
+{
+    if (is<FunctionSignature>()) {
+        const FunctionSignature* func = as<FunctionSignature>();
+        Vector<Type> newArguments;
+        Vector<Type, 1> newReturns;
+        newArguments.tryReserveCapacity(func->argumentCount());
+        newReturns.tryReserveCapacity(func->returnCount());
+        for (unsigned i = 0; i < func->argumentCount(); ++i)
+            newArguments.uncheckedAppend(substitute(func->argumentType(i), projectee));
+        for (unsigned i = 0; i < func->returnCount(); ++i)
+            newReturns.uncheckedAppend(substitute(func->returnType(i), projectee));
+
+        RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForFunction(newReturns, newArguments);
+        return *def;
+    }
+
+    if (is<StructType>()) {
+        const StructType* structType = as<StructType>();
+        Vector<StructField> newFields;
+        newFields.tryReserveCapacity(structType->fieldCount());
+        for (unsigned i = 0; i < structType->fieldCount(); i++) {
+            StructField field = structType->field(i);
+            newFields.uncheckedAppend(StructField { substitute(field.type, projectee), field.mutability });
+        }
+
+        RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForStruct(newFields);
+        return *def;
+    }
+
+    return *this;
+}
+
+// This function corresponds to the expand metafunction from the spec:
+//
+//  https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md#auxiliary-definitions
+//
+// It expands a potentially recursive context type and returns the concrete structural
+// type definition that it corresponds to. It should be called whenever the concrete
+// type is needed during validation or other phases.
+//
+// Caching the result of this lookup may be useful if this becomes a bottleneck.
+const TypeDefinition& TypeDefinition::expand() const
+{
+    if (is<Projection>()) {
+        const Projection& projection = *as<Projection>();
+        const TypeDefinition& projectee = TypeInformation::get(projection.recursionGroup());
+        const RecursionGroup& recursionGroup = *projectee.as<RecursionGroup>();
+        const TypeDefinition& underlyingType = TypeInformation::get(recursionGroup.type(projection.index()));
+        return underlyingType.replacePlaceholders(projectee.index());
+    }
+
+    return *this;
 }
 
 TypeInformation::TypeInformation()
@@ -186,7 +346,7 @@ struct FunctionParameterTypes {
 
     static bool equal(const TypeHash& sig, const FunctionParameterTypes& params)
     {
-        if (sig.key->is<StructType>())
+        if (!sig.key->is<FunctionSignature>())
             return false;
 
         const FunctionSignature* signature = sig.key->as<FunctionSignature>();
@@ -207,6 +367,9 @@ struct FunctionParameterTypes {
         return true;
     }
 
+    // The translate method (here and in structs below) is used as a part of the
+    // HashTranslator interface in order to construct a hash set entry when the entry
+    // is not already in the set. See HashSet.h for details.
     static void translate(TypeHash& entry, const FunctionParameterTypes& params, unsigned)
     {
         RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateFunctionSignature(params.returnTypes.size(), params.argumentTypes.size());
@@ -232,7 +395,7 @@ struct StructParameterTypes {
 
     static bool equal(const TypeHash& sig, const StructParameterTypes& params)
     {
-        if (sig.key->is<FunctionSignature>())
+        if (!sig.key->is<StructType>())
             return false;
 
         const StructType* structType = sig.key->as<StructType>();
@@ -260,6 +423,78 @@ struct StructParameterTypes {
     }
 };
 
+struct RecursionGroupParameterTypes {
+    const Vector<TypeIndex>& types;
+
+    static unsigned hash(const RecursionGroupParameterTypes& params)
+    {
+        return computeRecursionGroupHash(params.types.size(), params.types.data());
+    }
+
+    static bool equal(const TypeHash& sig, const RecursionGroupParameterTypes& params)
+    {
+        if (!sig.key->is<RecursionGroup>())
+            return false;
+
+        const RecursionGroup* recursionGroup = sig.key->as<RecursionGroup>();
+        if (recursionGroup->typeCount() != params.types.size())
+            return false;
+
+        for (unsigned i = 0; i < recursionGroup->typeCount(); ++i) {
+            if (recursionGroup->type(i) != params.types[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    static void translate(TypeHash& entry, const RecursionGroupParameterTypes& params, unsigned)
+    {
+        RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateRecursionGroup(params.types.size());
+        RELEASE_ASSERT(signature);
+
+        RecursionGroup* recursionGroup = signature->as<RecursionGroup>();
+        for (unsigned i = 0; i < params.types.size(); ++i)
+            recursionGroup->getType(i) = params.types[i];
+
+        entry.key = WTFMove(signature);
+    }
+};
+
+struct ProjectionParameterTypes {
+    const TypeIndex recursionGroup;
+    const ProjectionIndex index;
+
+    static unsigned hash(const ProjectionParameterTypes& params)
+    {
+        return computeProjectionHash(params.recursionGroup, params.index);
+    }
+
+    static bool equal(const TypeHash& sig, const ProjectionParameterTypes& params)
+    {
+        if (!sig.key->is<Projection>())
+            return false;
+
+        const Projection* projection = sig.key->as<Projection>();
+        if (projection->recursionGroup() != params.recursionGroup || projection->index() != params.index)
+            return false;
+
+        return true;
+    }
+
+    static void translate(TypeHash& entry, const ProjectionParameterTypes& params, unsigned)
+    {
+        RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateProjection();
+        RELEASE_ASSERT(signature);
+
+        Projection* projection = signature->as<Projection>();
+        projection->getRecursionGroup() = params.recursionGroup;
+        projection->getIndex() = params.index;
+
+        entry.key = WTFMove(signature);
+    }
+};
+
 RefPtr<TypeDefinition> TypeInformation::typeDefinitionForFunction(const Vector<Type, 1>& results, const Vector<Type>& args)
 {
     if constexpr (ASSERT_ENABLED) {
@@ -279,6 +514,24 @@ RefPtr<TypeDefinition> TypeInformation::typeDefinitionForStruct(const Vector<Str
     Locker locker { info.m_lock };
 
     auto addResult = info.m_typeSet.template add<StructParameterTypes>(StructParameterTypes { fields });
+    return addResult.iterator->key;
+}
+
+RefPtr<TypeDefinition> TypeInformation::typeDefinitionForRecursionGroup(const Vector<TypeIndex>& types)
+{
+    TypeInformation& info = singleton();
+    Locker locker { info.m_lock };
+
+    auto addResult = info.m_typeSet.template add<RecursionGroupParameterTypes>(RecursionGroupParameterTypes { types });
+    return addResult.iterator->key;
+}
+
+RefPtr<TypeDefinition> TypeInformation::typeDefinitionForProjection(TypeIndex recursionGroup, ProjectionIndex index)
+{
+    TypeInformation& info = singleton();
+    Locker locker { info.m_lock };
+
+    auto addResult = info.m_typeSet.template add<ProjectionParameterTypes>(ProjectionParameterTypes { recursionGroup, index });
     return addResult.iterator->key;
 }
 

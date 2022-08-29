@@ -68,7 +68,7 @@ public:
 
 private:
     // Messages
-    void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames, IPC::Semaphore&&, const MediaTime&, size_t frameSampleSize);
+    void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames, IPC::Semaphore&&, const MediaTime&, size_t frameSampleSize);
     void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames);
     void videoFrameAvailable(WebCore::RealtimeMediaSourceIdentifier, RemoteVideoFrameProxy::Properties&&, WebCore::VideoFrameTimeMetadata);
     // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.

@@ -1078,7 +1078,7 @@ public:
     const UnlinkedStringJumpTable& unlinkedStringSwitchJumpTable(unsigned index) const { return *m_unlinkedStringSwitchJumpTables[index]; }
     StringJumpTable& stringSwitchJumpTable(unsigned index) { return m_stringSwitchJumpTables[index]; }
 
-    void appendCatchEntrypoint(BytecodeIndex bytecodeIndex, MacroAssemblerCodePtr<ExceptionHandlerPtrTag> machineCode, Vector<FlushFormat>&& argumentFormats)
+    void appendCatchEntrypoint(BytecodeIndex bytecodeIndex, CodePtr<ExceptionHandlerPtrTag> machineCode, Vector<FlushFormat>&& argumentFormats)
     {
         m_catchEntrypoints.append(CatchEntrypointData { machineCode, FixedVector<FlushFormat>(WTFMove(argumentFormats)), bytecodeIndex });
     }

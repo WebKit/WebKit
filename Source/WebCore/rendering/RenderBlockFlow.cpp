@@ -72,9 +72,6 @@
 
 namespace WebCore {
 
-#define ENABLE_MODERN_PREFERRED_WIDTH_COMPUTATION 1
-#define ENABLE_MODERN_PREFERRED_WIDTH_COMPUTATION_FOR_INLINE_BOXES 1
-
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderBlockFlow);
 
 bool RenderBlock::s_canPropagateFloatIntoSibling = false;
@@ -688,6 +685,44 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
     // Now do the handling of the bottom of the block, adding in our bottom border/padding and
     // determining the correct collapsed bottom margin information.
     handleAfterSideOfBlock(beforeEdge, afterEdge, marginInfo);
+}
+
+void RenderBlockFlow::simplifiedNormalFlowLayout()
+{
+    if (!childrenInline()) {
+        RenderBlock::simplifiedNormalFlowLayout();
+        return;
+    }
+
+    bool shouldUpdateOverflow = false;
+    ListHashSet<LegacyRootInlineBox*> lineBoxes;
+    for (InlineWalker walker(*this); !walker.atEnd(); walker.advance()) {
+        RenderObject& renderer = *walker.current();
+        if (!renderer.isOutOfFlowPositioned() && (renderer.isReplacedOrInlineBlock() || renderer.isFloating())) {
+            RenderBox& box = downcast<RenderBox>(renderer);
+            box.layoutIfNeeded();
+            shouldUpdateOverflow = true;
+            if (box.inlineBoxWrapper())
+                lineBoxes.add(&box.inlineBoxWrapper()->root());
+        } else if (is<RenderText>(renderer) || is<RenderInline>(renderer))
+            renderer.clearNeedsLayout();
+    }
+
+    if (!shouldUpdateOverflow)
+        return;
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = modernLineLayout()) {
+        lineLayout->updateOverflow();
+        return;
+    }
+#endif
+
+    GlyphOverflowAndFallbackFontsMap textBoxDataMap;
+    for (auto it = lineBoxes.begin(), end = lineBoxes.end(); it != end; ++it) {
+        LegacyRootInlineBox* box = *it;
+        box->computeOverflow(box->lineTop(), box->lineBottom(), textBoxDataMap);
+    }
 }
 
 void RenderBlockFlow::computeAndSetLineLayoutPath()
@@ -2258,6 +2293,21 @@ FloatingObject* RenderBlockFlow::insertFloatingObject(RenderBox& floatBox)
     return m_floatingObjects->add(WTFMove(floatingObject));
 }
 
+FloatingObject& RenderBlockFlow::insertFloatingObjectForIFC(RenderBox& floatBox)
+{
+    ASSERT(floatBox.isFloating());
+
+    if (!m_floatingObjects)
+        createFloatingObjects();
+
+    auto& floatingObjectSet = m_floatingObjects->set();
+    auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(floatBox);
+    if (it != floatingObjectSet.end())
+        return *it->get();
+
+    return *m_floatingObjects->add(FloatingObject::create(floatBox));
+}
+
 void RenderBlockFlow::removeFloatingObject(RenderBox& floatBox)
 {
     if (m_floatingObjects) {
@@ -3534,10 +3584,8 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         if (modernLineLayout() && modernLineLayout()->shouldSwitchToLegacyOnInvalidation())
             path = ForcedLegacyPath;
 #endif
-#if ENABLE_MODERN_PREFERRED_WIDTH_COMPUTATION
         for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance())
             walker.current()->setPreferredLogicalWidthsDirty(true);
-#endif
         m_lineLayout = std::monostate();
         setLineLayoutPath(path);
         if (selfNeedsLayout() || normalChildNeedsLayout())
@@ -4442,7 +4490,6 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth)
 {
-#if ENABLE_MODERN_PREFERRED_WIDTH_COMPUTATION
     computeAndSetLineLayoutPath();
 
     // FIXME: Pass the replaced and inline block constrainst to IFC.
@@ -4455,10 +4502,8 @@ bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLo
                 continue;
             if (is<RenderLineBreak>(renderer))
                 continue;
-#if ENABLE_MODERN_PREFERRED_WIDTH_COMPUTATION_FOR_INLINE_BOXES
             if (is<RenderInline>(renderer))
                 continue;
-#endif
             return false;
         }
         return true;
@@ -4470,7 +4515,6 @@ bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLo
     if (!modernLineLayout())
         m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
 
-#if ENABLE_MODERN_PREFERRED_WIDTH_COMPUTATION_FOR_INLINE_BOXES
     auto& layoutFormattingContextLineLayout = *this->modernLineLayout();
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
@@ -4483,17 +4527,11 @@ bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLo
         // FIXME: Add other, inline level box cases.
         ASSERT_NOT_IMPLEMENTED_YET();
     }
-#endif
 
     std::tie(minLogicalWidth, maxLogicalWidth) = modernLineLayout()->computeIntrinsicWidthConstraints();
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance())
         walker.current()->setPreferredLogicalWidthsDirty(false);
     return true;
-#else
-    UNUSED_PARAM(minLogicalWidth);
-    UNUSED_PARAM(maxLogicalWidth);
-    return false;
-#endif
 }
 #endif
 

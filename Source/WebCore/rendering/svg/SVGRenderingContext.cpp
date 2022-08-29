@@ -30,8 +30,8 @@
 #include "BasicShapes.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "LegacyRenderSVGImage.h"
 #include "RenderLayer.h"
-#include "RenderSVGImage.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
@@ -268,7 +268,7 @@ void SVGRenderingContext::clipToImageBuffer(GraphicsContext& context, const Floa
 bool SVGRenderingContext::bufferForeground(RefPtr<ImageBuffer>& imageBuffer)
 {
     ASSERT(m_paintInfo);
-    ASSERT(is<RenderSVGImage>(*m_renderer));
+    ASSERT(is<LegacyRenderSVGImage>(*m_renderer));
     FloatRect boundingBox = m_renderer->objectBoundingBox();
 
     // Invalidate an existing buffer if the scale is not correct.
@@ -291,7 +291,7 @@ bool SVGRenderingContext::bufferForeground(RefPtr<ImageBuffer>& imageBuffer)
     bufferedRenderingContext.translate(-boundingBox.location());
     PaintInfo bufferedInfo(*m_paintInfo);
     bufferedInfo.setContext(bufferedRenderingContext);
-    downcast<RenderSVGImage>(*m_renderer).paintForeground(bufferedInfo);
+    downcast<LegacyRenderSVGImage>(*m_renderer).paintForeground(bufferedInfo);
 
     m_paintInfo->context().drawImageBuffer(*imageBuffer, boundingBox);
     return true;

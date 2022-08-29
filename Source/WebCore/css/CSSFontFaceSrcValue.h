@@ -49,6 +49,8 @@ public:
         return adoptRef(*new CSSFontFaceSrcValue(resource, true, LoadedFromOpaqueSource::No));
     }
 
+    ~CSSFontFaceSrcValue();
+
     const String& resource() const { return m_resource; }
     const String& format() const { return m_format; }
     bool isLocal() const { return m_isLocal; }
@@ -60,8 +62,8 @@ public:
     bool isSVGFontFaceSrc() const;
     bool isSVGFontTarget() const;
 
-    SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement; }
-    void setSVGFontFaceElement(SVGFontFaceElement* element) { m_svgFontFaceElement = element; }
+    SVGFontFaceElement* svgFontFaceElement() const;
+    void setSVGFontFaceElement(SVGFontFaceElement*);
 
     String customCSSText() const;
 
@@ -87,8 +89,7 @@ private:
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
 
     CachedResourceHandle<CachedFont> m_cachedFont;
-
-    SVGFontFaceElement* m_svgFontFaceElement;
+    WeakPtr<SVGFontFaceElement> m_svgFontFaceElement;
 };
 
 } // namespace WebCore

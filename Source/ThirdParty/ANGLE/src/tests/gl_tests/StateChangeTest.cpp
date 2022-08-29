@@ -8720,6 +8720,84 @@ TEST_P(StateChangeTestES3, StencilWriteMask)
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests that |discard| works with stencil write mask
+TEST_P(StateChangeTestES3, StencilWriteMaskVsDiscard)
+{
+    constexpr char kVS[] = R"(#version 300 es
+precision highp float;
+uniform float height;
+void main()
+{
+    // gl_VertexID    x    y
+    //      0        -1   -1
+    //      1         1   -1
+    //      2        -1    1
+    //      3         1    1
+    int bit0 = gl_VertexID & 1;
+    int bit1 = gl_VertexID >> 1;
+    gl_Position = vec4(bit0 * 2 - 1, bit1 * 2 - 1, gl_VertexID % 2 == 0 ? -1 : 1, 1);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 colorOut;
+uniform vec4 color;
+uniform int flag;
+void main()
+{
+    if (flag > 0)
+    {
+        discard;
+    }
+    colorOut = color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint colorLoc = glGetUniformLocation(program, "color");
+    ASSERT_NE(colorLoc, -1);
+
+    GLint flagLoc = glGetUniformLocation(program, "flag");
+    ASSERT_NE(flagLoc, -1);
+
+    glEnable(GL_DEPTH_TEST);
+
+    glClearColor(0, 0, 0, 1);
+    glClearDepthf(1);
+    glClearStencil(0x00);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    glDepthFunc(GL_LEQUAL);
+    glDepthMask(GL_FALSE);
+    glEnable(GL_STENCIL_TEST);
+
+    // Enable stencil write, but issue a draw call where all fragments are discarded.
+    glStencilFunc(GL_ALWAYS, 128, 128);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glStencilMask(128);
+
+    glUniform4f(colorLoc, 1, 0, 0, 1);
+    glUniform1i(flagLoc, 1);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    // At this point, the stencil buffer should be unmodified.  Verify it with another draw call.
+    glStencilFunc(GL_NOTEQUAL, 128, 128);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    glStencilMask(128);
+
+    glUniform4f(colorLoc, 0, 1, 0, 1);
+    glUniform1i(flagLoc, 0);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::green);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Tests state change for glCullFace and glEnable(GL_CULL_FACE) as well as glFrontFace
 TEST_P(StateChangeTestES3, CullFaceAndFrontFace)
 {

@@ -447,6 +447,7 @@ static void gotWebsiteDataCallback(WebKitWebsiteDataManager *manager, GAsyncResu
         "</script></head><body>\n");
 
     guint64 pageID = webkit_web_view_get_page_id(webkit_uri_scheme_request_get_web_view(dataRequest->request));
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS
     aboutDataFillTable(result, dataRequest, dataList, "Cookies", WEBKIT_WEBSITE_DATA_COOKIES, NULL, pageID);
     aboutDataFillTable(result, dataRequest, dataList, "Device Id Hash Salt", WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT, NULL, pageID);
     aboutDataFillTable(result, dataRequest, dataList, "Memory Cache", WEBKIT_WEBSITE_DATA_MEMORY_CACHE, NULL, pageID);
@@ -461,6 +462,7 @@ static void gotWebsiteDataCallback(WebKitWebsiteDataManager *manager, GAsyncResu
     aboutDataFillTable(result, dataRequest, dataList, "Service Worker Registratations", WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS,
         webkit_website_data_manager_get_service_worker_registrations_directory(manager), pageID);
     aboutDataFillTable(result, dataRequest, dataList, "DOM Cache", WEBKIT_WEBSITE_DATA_DOM_CACHE, webkit_website_data_manager_get_dom_cache_directory(manager), pageID);
+    G_GNUC_END_IGNORE_DEPRECATIONS
 
     result = g_string_append(result, "</body></html>");
     gsize streamLength = result->len;

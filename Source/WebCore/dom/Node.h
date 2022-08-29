@@ -286,8 +286,8 @@ public:
     // Returns the parent node, but null if the parent node is a ShadowRoot.
     ContainerNode* nonShadowBoundaryParentNode() const;
 
-    bool selfOrAncestorHasDirAutoAttribute() const { return hasNodeFlag(NodeFlag::SelfOrAncestorHasDirAuto); }
-    void setSelfOrAncestorHasDirAutoAttribute(bool flag) { setNodeFlag(NodeFlag::SelfOrAncestorHasDirAuto, flag); }
+    bool selfOrPrecedingNodesAffectDirAuto() const { return hasNodeFlag(NodeFlag::SelfOrPrecedingNodesAffectDirAuto); }
+    void setSelfOrPrecedingNodesAffectDirAuto(bool flag) { setNodeFlag(NodeFlag::SelfOrPrecedingNodesAffectDirAuto, flag); }
 
     // Returns the enclosing event parent Element (or self) that, when clicked, would trigger a navigation.
     WEBCORE_EXPORT Element* enclosingLinkEventParentOrSelf();
@@ -576,7 +576,7 @@ protected:
         IsUserActionElement = 1 << 17,
         IsParsingChildrenFinished = 1 << 18,
         HasSyntheticAttrChildNodes = 1 << 19,
-        SelfOrAncestorHasDirAuto = 1 << 20,
+        SelfOrPrecedingNodesAffectDirAuto = 1 << 20,
 
         HasCustomStyleResolveCallbacks = 1 << 21,
 
@@ -742,10 +742,6 @@ private:
 
     WEBCORE_EXPORT void notifyInspectorOfRendererChange();
     
-    struct NodeRareDataDeleter {
-        void operator()(NodeRareData*) const;
-    };
-
     mutable uint32_t m_refCountAndParentBit { s_refCountIncrement };
     mutable OptionSet<NodeFlag> m_nodeFlags;
 
@@ -754,7 +750,7 @@ private:
     Node* m_previous { nullptr };
     Node* m_next { nullptr };
     CompactPointerTuple<RenderObject*, uint16_t> m_rendererWithStyleFlags;
-    CompactUniquePtrTuple<NodeRareData, uint16_t, NodeRareDataDeleter> m_rareDataWithBitfields;
+    CompactUniquePtrTuple<NodeRareData, uint16_t> m_rareDataWithBitfields;
 };
 
 bool connectedInSameTreeScope(const Node*, const Node*);

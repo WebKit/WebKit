@@ -998,6 +998,12 @@ protected:
     // Generates GL error and returns false if parameters are invalid.
     bool validateTexFuncFormatAndType(const char* functionName, GCGLenum internalformat, GCGLenum format, GCGLenum type, GCGLint level);
 
+#if USE(ANGLE)
+    // Helper function to check internal formats accepted by ANGLE but not available in WebGL.
+    // Generates GL error and returns false if the internal format is invalid.
+    bool validateForbiddenInternalFormats(const char* functionName, GCGLenum internalformat);
+#endif
+
     // Helper function to check input level for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if level is invalid.
     bool validateTexFuncLevel(const char* functionName, GCGLenum target, GCGLint level);

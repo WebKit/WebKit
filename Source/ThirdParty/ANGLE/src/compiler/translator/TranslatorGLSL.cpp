@@ -23,19 +23,19 @@ TranslatorGLSL::TranslatorGLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutpu
 {}
 
 void TranslatorGLSL::initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
-                                                 ShCompileOptions compileOptions)
+                                                 const ShCompileOptions &compileOptions)
 {
-    if ((compileOptions & SH_EMULATE_ABS_INT_FUNCTION) != 0)
+    if (compileOptions.emulateAbsIntFunction)
     {
         InitBuiltInAbsFunctionEmulatorForGLSLWorkarounds(emu, getShaderType());
     }
 
-    if ((compileOptions & SH_EMULATE_ISNAN_FLOAT_FUNCTION) != 0)
+    if (compileOptions.emulateIsnanFloatFunction)
     {
         InitBuiltInIsnanFunctionEmulatorForGLSLWorkarounds(emu, getShaderVersion());
     }
 
-    if ((compileOptions & SH_EMULATE_ATAN2_FLOAT_FUNCTION) != 0)
+    if (compileOptions.emulateAtan2FloatFunction)
     {
         InitBuiltInAtanFunctionEmulatorForGLSLWorkarounds(emu);
     }
@@ -45,7 +45,7 @@ void TranslatorGLSL::initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
 }
 
 bool TranslatorGLSL::translate(TIntermBlock *root,
-                               ShCompileOptions compileOptions,
+                               const ShCompileOptions &compileOptions,
                                PerformanceDiagnostics * /*perfDiagnostics*/)
 {
     TInfoSinkBase &sink = getInfoSink().obj;
@@ -64,8 +64,7 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
     // variables. It should be harmless to do this twice in the case that the shader also explicitly
     // did this. However, it's important to emit invariant qualifiers only for those built-in
     // variables that are actually used, to avoid affecting the behavior of the shader.
-    if ((compileOptions & SH_FLATTEN_PRAGMA_STDGL_INVARIANT_ALL) != 0 &&
-        getPragma().stdgl.invariantAll &&
+    if (compileOptions.flattenPragmaSTDGLInvariantAll && getPragma().stdgl.invariantAll &&
         !sh::RemoveInvariant(getShaderType(), getShaderVersion(), getOutputType(), compileOptions))
     {
         ASSERT(wereVariablesCollected());
@@ -93,7 +92,7 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
         }
     }
 
-    if ((compileOptions & SH_REWRITE_TEXELFETCHOFFSET_TO_TEXELFETCH) != 0)
+    if (compileOptions.rewriteTexelFetchOffsetToTexelFetch)
     {
         if (!sh::RewriteTexelFetchOffset(this, root, getSymbolTable(), getShaderVersion()))
         {
@@ -101,7 +100,7 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
         }
     }
 
-    if ((compileOptions & SH_REWRITE_FLOAT_UNARY_MINUS_OPERATOR) != 0)
+    if (compileOptions.rewriteFloatUnaryMinusOperator)
     {
         if (!sh::RewriteUnaryMinusOperatorFloat(this, root))
         {
@@ -109,7 +108,7 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
         }
     }
 
-    if ((compileOptions & SH_REWRITE_ROW_MAJOR_MATRICES) != 0 && getShaderVersion() >= 300)
+    if (compileOptions.rewriteRowMajorMatrices && getShaderVersion() >= 300)
     {
         if (!RewriteRowMajorMatrices(this, root, &getSymbolTable()))
         {
@@ -223,9 +222,9 @@ bool TranslatorGLSL::shouldFlattenPragmaStdglInvariantAll()
     return IsGLSL130OrNewer(getOutputType());
 }
 
-bool TranslatorGLSL::shouldCollectVariables(ShCompileOptions compileOptions)
+bool TranslatorGLSL::shouldCollectVariables(const ShCompileOptions &compileOptions)
 {
-    return (compileOptions & SH_FLATTEN_PRAGMA_STDGL_INVARIANT_ALL) != 0 ||
+    return compileOptions.flattenPragmaSTDGLInvariantAll ||
            TCompiler::shouldCollectVariables(compileOptions);
 }
 
@@ -243,7 +242,8 @@ void TranslatorGLSL::writeVersion(TIntermNode *root)
     }
 }
 
-void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root, ShCompileOptions compileOptions)
+void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root,
+                                            const ShCompileOptions &compileOptions)
 {
     bool usesTextureCubeMapArray = false;
     bool usesTextureBuffer       = false;

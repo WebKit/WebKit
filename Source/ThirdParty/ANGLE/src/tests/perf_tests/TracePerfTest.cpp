@@ -64,7 +64,8 @@ struct TracePerfParams final : public RenderTestParams
         return strstr.str();
     }
 
-    TraceInfo traceInfo = {};
+    TraceInfo traceInfo       = {};
+    std::string tracePerfName = "";
 };
 
 std::ostream &operator<<(std::ostream &os, const TracePerfParams &params)
@@ -721,7 +722,7 @@ bool FindRootTraceTestDataPath(char *testDataDirOut, size_t maxDataDirLen)
 }
 
 TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
-    : ANGLERenderTest("TracePerf", *params.get(), "ms"),
+    : ANGLERenderTest("TracePerf_" + params->tracePerfName, *params.get(), "ms"),
       mParams(std::move(params)),
       mStartFrame(0),
       mEndFrame(0)
@@ -1163,6 +1164,14 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         }
     }
 
+    if (traceNameIs("star_wars_kotor"))
+    {
+        if (IsLinux() && mParams->isSwiftshader())
+        {
+            skipTest("TODO: http://anglebug.com/7565 Flaky on Swiftshader");
+        }
+    }
+
     if (traceNameIs("dead_by_daylight"))
     {
         addExtensionPrerequisite("GL_EXT_shader_framebuffer_fetch");
@@ -1257,9 +1266,22 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
     {
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
     }
+
     if (traceNameIs("mortal_kombat"))
     {
         addExtensionPrerequisite("GL_EXT_texture_buffer");
+    }
+
+    if (traceNameIs("ni_no_kuni"))
+    {
+        addExtensionPrerequisite("GL_EXT_shader_framebuffer_fetch");
+        addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
+    }
+
+    if (traceNameIs("octopath_traveler"))
+    {
+        addExtensionPrerequisite("GL_EXT_shader_framebuffer_fetch");
+        addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
     }
 
     // glDebugMessageControlKHR and glDebugMessageCallbackKHR crash on ARM GLES1.
@@ -1960,7 +1982,7 @@ void TracePerfTest::onReplayDiscardFramebufferEXT(GLenum target,
 void TracePerfTest::swap()
 {
     // Capture a screenshot if enabled.
-    if (gScreenShotDir != nullptr && !mScreenshotSaved &&
+    if (gScreenShotDir != nullptr && gSaveScreenshots && !mScreenshotSaved &&
         static_cast<uint32_t>(gScreenShotFrame) == mCurrentIteration)
     {
         std::stringstream screenshotNameStr;
@@ -2136,13 +2158,15 @@ void RegisterTraceTests()
             overrideParams.eglParameters.enable(Feature::ForceInitShaderVariables);
         }
 
-        auto factory = [overrideParams]() {
-            return new TracePerfTest(std::make_unique<TracePerfParams>(overrideParams));
-        };
         std::string paramName = testing::PrintToString(params);
         std::stringstream testNameStr;
         testNameStr << "Run/" << paramName;
-        std::string testName = testNameStr.str();
+        std::string testName         = testNameStr.str();
+        overrideParams.tracePerfName = testName;
+
+        auto factory = [overrideParams]() {
+            return new TracePerfTest(std::make_unique<TracePerfParams>(overrideParams));
+        };
         testing::RegisterTest("TracePerfTest", testName.c_str(), nullptr, paramName.c_str(),
                               __FILE__, __LINE__, factory);
     }

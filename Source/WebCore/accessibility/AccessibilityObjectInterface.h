@@ -1068,7 +1068,6 @@ public:
     virtual float stepValueForRange() const = 0;
     virtual AXCoreObject* selectedRadioButton() = 0;
     virtual AXCoreObject* selectedTabItem() = 0;
-    virtual AXCoreObject* selectedListItem() = 0;
     virtual int layoutCount() const = 0;
     virtual double loadingProgress() const = 0;
     virtual String brailleLabel() const = 0;
@@ -1078,7 +1077,6 @@ public:
     virtual String extendedDescription() const = 0;
 
     virtual bool supportsARIAOwns() const = 0;
-    virtual bool isActiveDescendantOfFocusedContainer() const = 0;
 
     // Retrieval of related objects.
     AccessibilityChildrenVector activeDescendantOfObjects() const { return relatedObjects(AXRelationType::ActiveDescendantOf); }

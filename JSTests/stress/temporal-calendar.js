@@ -25,11 +25,10 @@ shouldBe(Object.getOwnPropertyDescriptor(Temporal.Calendar, 'prototype').enumera
 shouldBe(Object.getOwnPropertyDescriptor(Temporal.Calendar, 'prototype').configurable, false);
 shouldBe(Temporal.Calendar.prototype.constructor, Temporal.Calendar);
 
-{
-    let calendar = new Temporal.Calendar("iso8601");
-    shouldBe(calendar.id, `iso8601`);
-    shouldBe(String(calendar), `iso8601`);
-}
+const isoCalendar = new Temporal.Calendar("iso8601");
+shouldBe(isoCalendar.id, `iso8601`);
+shouldBe(String(isoCalendar), `iso8601`);
+
 {
     let calendar = new Temporal.Calendar("gregory");
     shouldBe(calendar.id, `gregory`);
@@ -97,3 +96,20 @@ shouldThrow(() => {
     }
     shouldBe(JSON.parse(string, reviver).userCalendar instanceof Temporal.Calendar, true);
 }
+
+shouldBe(Temporal.Calendar.prototype.dateFromFields.length, 1);
+shouldBe(isoCalendar.dateFromFields({ year: 2007, month: 1, day: 9 }).toString(), '2007-01-09');
+shouldBe(isoCalendar.dateFromFields({ year: 2007, monthCode: 'M01', day: 9 }).toString(), '2007-01-09');
+shouldBe(isoCalendar.dateFromFields({ year: 2007, month: 20, day: 40 }).toString(), '2007-12-31');
+shouldBe(isoCalendar.dateFromFields({ year: 2007, month: 20, day: 40 }, { overflow: 'constrain' }).toString(), '2007-12-31');
+
+shouldThrow(() => { isoCalendar.dateFromFields(null); }, TypeError);
+shouldThrow(() => { isoCalendar.dateFromFields({ month: 1, day: 9 }); }, TypeError);
+shouldThrow(() => { isoCalendar.dateFromFields({ year: 2007, day: 9 }); }, TypeError);
+shouldThrow(() => { isoCalendar.dateFromFields({ year: 2007, month: 1 }); }, TypeError);
+shouldThrow(() => { isoCalendar.dateFromFields({ year: Infinity, month: 1, day: 9 }); }, RangeError);
+shouldThrow(() => { isoCalendar.dateFromFields({ year: 2007, month: 0, day: 9 }); }, RangeError);
+shouldThrow(() => { isoCalendar.dateFromFields({ year: 2007, monthCode: 'M00', day: 9 }); }, RangeError);
+shouldThrow(() => { isoCalendar.dateFromFields({ year: 2007, month: 1, day: 0 }); }, RangeError);
+shouldThrow(() => { isoCalendar.dateFromFields({ year: 2007, month: 1, monthCode: 'M02', day: 9 }); }, RangeError);
+shouldThrow(() => { isoCalendar.dateFromFields({ year: 2007, month: 20, day: 40 }, { overflow: 'reject' }); }, RangeError);

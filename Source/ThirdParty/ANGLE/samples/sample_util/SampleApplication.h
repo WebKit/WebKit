@@ -37,6 +37,8 @@ enum class ClientType
     ES3_1,
     GL3_3_CORE,
     GL3_3_COMPATIBILITY,
+    GL4_6_CORE,
+    GL4_6_COMPATIBILITY,
 };
 
 class SampleApplication

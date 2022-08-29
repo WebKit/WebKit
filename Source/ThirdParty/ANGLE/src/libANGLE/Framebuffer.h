@@ -81,10 +81,11 @@ class FramebufferState final : angle::NonCopyable
     const FramebufferAttachment *getDepthStencilAttachment() const;
     const FramebufferAttachment *getReadPixelsAttachment(GLenum readFormat) const;
 
-    const std::vector<GLenum> &getDrawBufferStates() const { return mDrawBufferStates; }
+    const DrawBuffersVector<GLenum> &getDrawBufferStates() const { return mDrawBufferStates; }
     DrawBufferMask getEnabledDrawBuffers() const { return mEnabledDrawBuffers; }
     GLenum getReadBufferState() const { return mReadBufferState; }
-    const std::vector<FramebufferAttachment> &getColorAttachments() const
+
+    const DrawBuffersVector<FramebufferAttachment> &getColorAttachments() const
     {
         return mColorAttachments;
     }
@@ -152,14 +153,14 @@ class FramebufferState final : angle::NonCopyable
     rx::Serial mFramebufferSerial;
     std::string mLabel;
 
-    std::vector<FramebufferAttachment> mColorAttachments;
+    DrawBuffersVector<FramebufferAttachment> mColorAttachments;
     FramebufferAttachment mDepthAttachment;
     FramebufferAttachment mStencilAttachment;
 
     // Tracks all the color buffers attached to this FramebufferDesc
     DrawBufferMask mColorAttachmentsMask;
 
-    std::vector<GLenum> mDrawBufferStates;
+    DrawBuffersVector<GLenum> mDrawBufferStates;
     GLenum mReadBufferState;
     DrawBufferMask mEnabledDrawBuffers;
     ComponentTypeMask mDrawBufferTypeMask;
@@ -250,7 +251,7 @@ class Framebuffer final : public angle::ObserverInterface,
     const FramebufferAttachment *getFirstColorAttachment() const;
     const FramebufferAttachment *getFirstNonNullAttachment() const;
 
-    const std::vector<FramebufferAttachment> &getColorAttachments() const
+    const DrawBuffersVector<FramebufferAttachment> &getColorAttachments() const
     {
         return mState.mColorAttachments;
     }
@@ -266,7 +267,7 @@ class Framebuffer final : public angle::ObserverInterface,
 
     size_t getDrawbufferStateCount() const;
     GLenum getDrawBufferState(size_t drawBuffer) const;
-    const std::vector<GLenum> &getDrawBufferStates() const;
+    const DrawBuffersVector<GLenum> &getDrawBufferStates() const;
     void setDrawBuffers(size_t count, const GLenum *buffers);
     const FramebufferAttachment *getDrawBuffer(size_t drawBuffer) const;
     ComponentType getDrawbufferWriteType(size_t drawBuffer) const;
@@ -507,7 +508,7 @@ class Framebuffer final : public angle::ObserverInterface,
     rx::FramebufferImpl *mImpl;
 
     mutable Optional<FramebufferStatus> mCachedStatus;
-    std::vector<angle::ObserverBinding> mDirtyColorAttachmentBindings;
+    DrawBuffersVector<angle::ObserverBinding> mDirtyColorAttachmentBindings;
     angle::ObserverBinding mDirtyDepthAttachmentBinding;
     angle::ObserverBinding mDirtyStencilAttachmentBinding;
 

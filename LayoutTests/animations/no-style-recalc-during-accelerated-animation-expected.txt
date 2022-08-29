@@ -1,2 +1,2 @@
 Got iteration event.
-PASS: saw five or fewer style recalcs during the animation.
+PASS: saw nine or fewer style recalcs during the animation.

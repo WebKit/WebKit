@@ -92,31 +92,31 @@ webkit_website_data_manager_get_base_data_directory                   (WebKitWeb
 WEBKIT_API const gchar *
 webkit_website_data_manager_get_base_cache_directory                  (WebKitWebsiteDataManager *manager);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_website_data_manager_get_local_storage_directory               (WebKitWebsiteDataManager *manager);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_website_data_manager_get_disk_cache_directory                  (WebKitWebsiteDataManager *manager);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_website_data_manager_get_offline_application_cache_directory   (WebKitWebsiteDataManager *manager);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_website_data_manager_get_indexeddb_directory                   (WebKitWebsiteDataManager *manager);
 
 WEBKIT_DEPRECATED const gchar *
 webkit_website_data_manager_get_websql_directory                      (WebKitWebsiteDataManager *manager);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_website_data_manager_get_hsts_cache_directory                  (WebKitWebsiteDataManager *manager);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_website_data_manager_get_itp_directory                         (WebKitWebsiteDataManager *manager);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_website_data_manager_get_service_worker_registrations_directory(WebKitWebsiteDataManager *manager);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_website_data_manager_get_dom_cache_directory                   (WebKitWebsiteDataManager *manager);
 
 WEBKIT_API WebKitCookieManager *

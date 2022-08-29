@@ -136,6 +136,20 @@ TIntermConstantUnion *CreateVecNode(const float values[],
     return new TIntermConstantUnion(u, type);
 }
 
+TIntermConstantUnion *CreateUVecNode(const unsigned int values[],
+                                     unsigned int vecSize,
+                                     TPrecision precision)
+{
+    TConstantUnion *u = new TConstantUnion[vecSize];
+    for (unsigned int channel = 0; channel < vecSize; ++channel)
+    {
+        u[channel].setUConst(values[channel]);
+    }
+
+    TType type(EbtUInt, precision, EvqConst, static_cast<uint8_t>(vecSize));
+    return new TIntermConstantUnion(u, type);
+}
+
 TIntermConstantUnion *CreateIndexNode(int index)
 {
     TConstantUnion *u = new TConstantUnion[1];
@@ -367,13 +381,21 @@ TIntermTyped *CreateBuiltInFunctionCallNode(const char *name,
     return TIntermAggregate::CreateBuiltInFunctionCall(*fn, arguments);
 }
 
+TIntermTyped *CreateBuiltInFunctionCallNode(const char *name,
+                                            const std::initializer_list<TIntermNode *> &arguments,
+                                            const TSymbolTable &symbolTable,
+                                            int shaderVersion)
+{
+    TIntermSequence argSequence(arguments);
+    return CreateBuiltInFunctionCallNode(name, &argSequence, symbolTable, shaderVersion);
+}
+
 TIntermTyped *CreateBuiltInUnaryFunctionCallNode(const char *name,
                                                  TIntermTyped *argument,
                                                  const TSymbolTable &symbolTable,
                                                  int shaderVersion)
 {
-    TIntermSequence seq = {argument};
-    return CreateBuiltInFunctionCallNode(name, &seq, symbolTable, shaderVersion);
+    return CreateBuiltInFunctionCallNode(name, {argument}, symbolTable, shaderVersion);
 }
 
 int GetESSLOrGLSLVersion(ShShaderSpec spec, int esslVersion, int glslVersion)

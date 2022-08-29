@@ -2033,7 +2033,7 @@ end)
 
 op(llint_function_for_call_arity_check, macro ()
     prologue(_llint_entry_osr_function_for_call_arityCheck, _llint_trace_arityCheck_for_call)
-    functionArityCheck(llint_function_for_call_arity_check, .functionForCallBegin, _slow_path_call_arityCheck)
+    functionArityCheck(llint_function_for_call_arity_check, .functionForCallBegin)
 .functionForCallBegin:
     functionInitialization(0)
     dispatch(0)
@@ -2041,7 +2041,7 @@ end)
 
 op(llint_function_for_construct_arity_check, macro ()
     prologue(_llint_entry_osr_function_for_construct_arityCheck, _llint_trace_arityCheck_for_construct)
-    functionArityCheck(llint_function_for_construct_arity_check, .functionForConstructBegin, _slow_path_construct_arityCheck)
+    functionArityCheck(llint_function_for_construct_arity_check, .functionForConstructBegin)
 .functionForConstructBegin:
     functionInitialization(1)
     dispatch(0)

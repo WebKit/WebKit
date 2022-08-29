@@ -120,7 +120,7 @@ public:
         return false;
     }
 
-    void generateOutOfLine(CodeBlock* codeBlock, FunctionPtr<CFunctionPtrTag> callReplacement)
+    void generateOutOfLine(CodeBlock* codeBlock, CodePtr<CFunctionPtrTag> callReplacement)
     {
         auto linkJumpToOutOfLineSnippet = [&] () {
             CCallHelpers jit(codeBlock);
@@ -216,7 +216,7 @@ public:
         m_inlineStart = start;
 
         m_inlineEnd = linkBuffer.locationOf<JSInternalPtrTag>(state.fastPathEnd);
-        ASSERT(m_inlineEnd.untaggedExecutableAddress() > m_inlineStart.untaggedExecutableAddress());
+        ASSERT(m_inlineEnd.untaggedPtr() > m_inlineStart.untaggedPtr());
 
         m_slowPathCallLocation = linkBuffer.locationOf<JSInternalPtrTag>(state.slowPathCall);
         m_slowPathStartLocation = linkBuffer.locationOf<JSInternalPtrTag>(state.slowPathStart);

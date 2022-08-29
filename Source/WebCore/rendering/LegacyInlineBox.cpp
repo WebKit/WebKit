@@ -23,6 +23,7 @@
 #include "FontMetrics.h"
 #include "Frame.h"
 #include "HitTestResult.h"
+#include "LegacyEllipsisBox.h"
 #include "LegacyInlineFlowBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderBlockFlow.h"
@@ -247,6 +248,7 @@ LegacyInlineBox* LegacyInlineBox::previousLeafOnLine() const
 
 RenderObject::HighlightState LegacyInlineBox::selectionState() const
 {
+    ASSERT(!is<LegacyEllipsisBox>(*this));
     return renderer().selectionState();
 }
 

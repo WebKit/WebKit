@@ -1,9 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
 <div tabindex=0 id="item1" role="img" aria-flowto="extra extra2">Item 1</div>
 <div>Item 2</div>
@@ -12,26 +13,33 @@
 <div id="extra" role="button">BUTTON</div>
 <div id="extra2" role="radio">RADIO BUTTON</div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-
-    description("This tests that aria-flowto correctly identifies the right elements.");
+    var testOutput = "This tests that aria-flowto correctly identifies the right elements.\n\n";
 
     if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
 
-          var item = document.getElementById("item1");
-          item.focus();
-          item = accessibilityController.focusedElement;
-          shouldBe("item.ariaFlowToElementAtIndex(0).role", "'AXRole: AXButton'");
-          shouldBe("item.ariaFlowToElementAtIndex(0).title", "'AXTitle: BUTTON'");
-          shouldBe("item.ariaFlowToElementAtIndex(1).role", "'AXRole: AXRadioButton'");
-          shouldBe("item.ariaFlowToElementAtIndex(1).title", "'AXTitle: RADIO BUTTON'");
+        var item = accessibilityController.accessibleElementById("item1");
+        testOutput += expect("item.ariaFlowToElementAtIndex(0).role", "'AXRole: AXButton'");
+        testOutput += expect("item.ariaFlowToElementAtIndex(0).title", "'AXTitle: BUTTON'");
+        testOutput += expect("item.ariaFlowToElementAtIndex(1).role", "'AXRole: AXRadioButton'");
+        testOutput += expect("item.ariaFlowToElementAtIndex(1).title", "'AXTitle: RADIO BUTTON'");
+
+        testOutput += "\nRemoving id 'extra' from #item1's aria-flowto.\n";
+
+        document.getElementById("item1").setAttribute("aria-flowto", "extra2");
+        setTimeout(async function() {
+            // We should only have one aria-flowto element now, so wait for the second to go away.
+            await waitFor(() => !item.ariaFlowToElementAtIndex(1));
+
+            testOutput += expect("item.ariaFlowToElementAtIndex(0).role", "'AXRole: AXRadioButton'");
+            testOutput += expect("item.ariaFlowToElementAtIndex(0).title", "'AXTitle: RADIO BUTTON'");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
     }
-
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "LegacyEllipsisBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderText.h"
@@ -46,7 +45,6 @@ public:
     bool isText() const { return m_inlineBox->isInlineTextBox(); }
     bool isInlineBox() const { return m_inlineBox->isInlineFlowBox(); }
     bool isRootInlineBox() const { return m_inlineBox->isRootInlineBox(); }
-    bool isEllipsisBox() const { return m_inlineBox->isEllipsisBox(); }
 
     FloatRect visualRectIgnoringBlockDirection() const { return m_inlineBox->frameRect(); }
 
@@ -72,8 +70,6 @@ public:
         bool ignoreHyphen = mode == TextRunMode::Editing;
         if (isText())
             return inlineTextBox()->createTextRun(ignoreCombinedText, ignoreHyphen);
-        if (isEllipsisBox())
-            return ellipsisBox()->createTextRun();
         ASSERT_NOT_REACHED();
         return TextRun { emptyString() };
     }
@@ -143,7 +139,6 @@ public:
 private:
     const LegacyInlineTextBox* inlineTextBox() const { return downcast<LegacyInlineTextBox>(m_inlineBox); }
     const LegacyInlineFlowBox* inlineFlowBox() const { return downcast<LegacyInlineFlowBox>(m_inlineBox); }
-    const LegacyEllipsisBox* ellipsisBox() const { return downcast<LegacyEllipsisBox>(m_inlineBox); }
 
     const LegacyInlineBox* m_inlineBox { nullptr };
 };

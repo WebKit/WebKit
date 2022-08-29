@@ -273,10 +273,8 @@ WI.DOMNode = class DOMNode extends WI.Object
         layoutFlags ||= [];
         console.assert(Array.isArray(layoutFlags), layoutFlags);
         console.assert(layoutFlags.every((layoutFlag) => Object.values(WI.DOMNode.LayoutFlag).includes(layoutFlag)), layoutFlags);
-        console.assert(layoutFlags.filter((layoutFlag) => WI.DOMNode._LayoutContextTypes.includes(layoutFlag)).length <= 1, this._layoutFlags);
-
-        if (Array.shallowEqual(layoutFlags, this._layoutFlags))
-            return;
+        console.assert(layoutFlags.filter((layoutFlag) => WI.DOMNode._LayoutContextTypes.includes(layoutFlag)).length <= 1, layoutFlags);
+        console.assert(layoutFlags.length && !Array.shallowEqual(layoutFlags, this._layoutFlags), layoutFlags);
 
         let oldLayoutContextType = this.layoutContextType;
 
@@ -863,18 +861,21 @@ WI.DOMNode = class DOMNode extends WI.Object
         target.DOMAgent.removeNode(this.id, this._makeUndoableCallback(callback));
     }
 
-    getEventListeners(callback)
+    getEventListeners({includeAncestors} = {})
     {
         console.assert(!this._destroyed, this);
-        if (this._destroyed) {
-            callback("ERROR: node is destroyed");
-            return;
-        }
+        if (this._destroyed)
+            return Promise.reject("ERROR: node is destroyed");
 
-        console.assert(WI.domManager.inspectedNode === this);
+        includeAncestors ??= true;
+
+        console.assert(WI.domManager.inspectedNode === this || !includeAncestors, this, includeAncestors);
 
         let target = WI.assumingMainTarget();
-        target.DOMAgent.getEventListenersForNode(this.id, callback);
+        return target.DOMAgent.getEventListenersForNode.invoke({
+            nodeId: this.id,
+            includeAncestors,
+        });
     }
 
     accessibilityProperties(callback)
@@ -1355,6 +1356,7 @@ WI.DOMNode.CustomElementState = {
 // Corresponds to `CSS.LayoutFlag`.
 WI.DOMNode.LayoutFlag = {
     Rendered: "rendered",
+    Event: "event",
 
     // These are mutually exclusive.
     Flex: "flex",

@@ -280,26 +280,30 @@ void GetInterfaceBlockName(const UniformBlockIndex index,
     }
 }
 
-void InitUniformBlockLinker(const ProgramState &state, UniformBlockLinker *blockLinker)
+void InitUniformBlockLinker(const Context *context,
+                            const ProgramState &state,
+                            UniformBlockLinker *blockLinker)
 {
     for (ShaderType shaderType : AllShaderTypes())
     {
         Shader *shader = state.getAttachedShader(shaderType);
         if (shader)
         {
-            blockLinker->addShaderBlocks(shaderType, &shader->getUniformBlocks());
+            blockLinker->addShaderBlocks(shaderType, &shader->getUniformBlocks(context));
         }
     }
 }
 
-void InitShaderStorageBlockLinker(const ProgramState &state, ShaderStorageBlockLinker *blockLinker)
+void InitShaderStorageBlockLinker(const Context *context,
+                                  const ProgramState &state,
+                                  ShaderStorageBlockLinker *blockLinker)
 {
     for (ShaderType shaderType : AllShaderTypes())
     {
         Shader *shader = state.getAttachedShader(shaderType);
         if (shader != nullptr)
         {
-            blockLinker->addShaderBlocks(shaderType, &shader->getShaderStorageBlocks());
+            blockLinker->addShaderBlocks(shaderType, &shader->getShaderStorageBlocks(context));
         }
     }
 }
@@ -1215,7 +1219,7 @@ angle::Result Program::linkImpl(const Context *context)
     mState.mExecutable->resetInfoLog();
 
     // Validate we have properly attached shaders before checking the cache.
-    if (!linkValidateShaders(mState.mExecutable->getInfoLog()))
+    if (!linkValidateShaders(context, mState.mExecutable->getInfoLog()))
     {
         return angle::Result::Continue;
     }
@@ -1247,12 +1251,12 @@ angle::Result Program::linkImpl(const Context *context)
     InfoLog &infoLog = mState.mExecutable->getInfoLog();
 
     // Re-link shaders after the unlink call.
-    bool result = linkValidateShaders(infoLog);
+    bool result = linkValidateShaders(context, infoLog);
     ASSERT(result);
 
     std::unique_ptr<LinkingState> linkingState(new LinkingState());
     ProgramMergedVaryings mergedVaryings;
-    LinkingVariables linkingVariables(mState);
+    LinkingVariables linkingVariables(context, mState);
     ProgramLinkedResources &resources = linkingState->resources;
 
     resources.init(&mState.mExecutable->mUniformBlocks, &mState.mExecutable->mUniforms,
@@ -1262,8 +1266,8 @@ angle::Result Program::linkImpl(const Context *context)
     // TODO: Fix incomplete linking. http://anglebug.com/6358
     updateLinkedShaderStages();
 
-    InitUniformBlockLinker(mState, &resources.uniformBlockLinker);
-    InitShaderStorageBlockLinker(mState, &resources.shaderStorageBlockLinker);
+    InitUniformBlockLinker(context, mState, &resources.uniformBlockLinker);
+    InitShaderStorageBlockLinker(context, mState, &resources.shaderStorageBlockLinker);
 
     if (mState.mAttachedShaders[ShaderType::Compute])
     {
@@ -1304,7 +1308,7 @@ angle::Result Program::linkImpl(const Context *context)
             return angle::Result::Continue;
         }
 
-        if (!linkVaryings(infoLog))
+        if (!linkVaryings(context, infoLog))
         {
             return angle::Result::Continue;
         }
@@ -1331,7 +1335,7 @@ angle::Result Program::linkImpl(const Context *context)
         gl::Shader *vertexShader = mState.mAttachedShaders[ShaderType::Vertex];
         if (vertexShader)
         {
-            mState.mNumViews = vertexShader->getNumViews();
+            mState.mNumViews = vertexShader->getNumViews(context);
             mState.mSpecConstUsageBits |= vertexShader->getSpecConstUsageBits();
         }
 
@@ -1341,12 +1345,14 @@ angle::Result Program::linkImpl(const Context *context)
             if (!mState.mExecutable->linkValidateOutputVariables(
                     context->getCaps(), context->getExtensions(), context->getClientVersion(),
                     combinedImageUniforms, combinedShaderStorageBlocks,
-                    fragmentShader->getActiveOutputVariables(), fragmentShader->getShaderVersion(),
-                    mFragmentOutputLocations, mFragmentOutputIndexes))
+                    fragmentShader->getActiveOutputVariables(context),
+                    fragmentShader->getShaderVersion(context), mFragmentOutputLocations,
+                    mFragmentOutputIndexes))
             {
                 return angle::Result::Continue;
             }
 
+            mState.mExecutable->mHasDiscard = fragmentShader->hasDiscard();
             mState.mExecutable->mEnablesPerSampleShading =
                 fragmentShader->enablesPerSampleShading();
             mState.mExecutable->mAdvancedBlendEquations =
@@ -1363,7 +1369,7 @@ angle::Result Program::linkImpl(const Context *context)
         }
     }
 
-    mState.mExecutable->saveLinkedStateInfo(mState);
+    mState.mExecutable->saveLinkedStateInfo(context, mState);
 
     mLinkingState                    = std::move(linkingState);
     mLinkingState->linkingFromBinary = false;
@@ -1371,8 +1377,8 @@ angle::Result Program::linkImpl(const Context *context)
     mLinkingState->linkEvent         = mProgram->link(context, resources, infoLog, mergedVaryings);
 
     // Must be after mProgram->link() to avoid misleading the linker about output variables.
-    mState.updateProgramInterfaceInputs();
-    mState.updateProgramInterfaceOutputs();
+    mState.updateProgramInterfaceInputs(context);
+    mState.updateProgramInterfaceOutputs(context);
 
     if (mState.mSeparable)
     {
@@ -1458,7 +1464,7 @@ void ProgramState::updateActiveSamplers()
     mExecutable->updateActiveSamplers(*this);
 }
 
-void ProgramState::updateProgramInterfaceInputs()
+void ProgramState::updateProgramInterfaceInputs(const Context *context)
 {
     const ShaderType firstAttachedShaderType = getFirstAttachedShaderStageType();
 
@@ -1474,7 +1480,7 @@ void ProgramState::updateProgramInterfaceInputs()
     // Copy over each input varying, since the Shader could go away
     if (shader->getType() == ShaderType::Compute)
     {
-        for (const sh::ShaderVariable &attribute : shader->getAllAttributes())
+        for (const sh::ShaderVariable &attribute : shader->getAllAttributes(context))
         {
             // Compute Shaders have the following built-in input variables.
             //
@@ -1489,14 +1495,14 @@ void ProgramState::updateProgramInterfaceInputs()
     }
     else
     {
-        for (const sh::ShaderVariable &varying : shader->getInputVaryings())
+        for (const sh::ShaderVariable &varying : shader->getInputVaryings(context))
         {
             UpdateInterfaceVariable(&mExecutable->mProgramInputs, varying);
         }
     }
 }
 
-void ProgramState::updateProgramInterfaceOutputs()
+void ProgramState::updateProgramInterfaceOutputs(const Context *context)
 {
     const ShaderType lastAttachedShaderType = getLastAttachedShaderStageType();
 
@@ -1515,7 +1521,7 @@ void ProgramState::updateProgramInterfaceOutputs()
     ASSERT(shader);
 
     // Copy over each output varying, since the Shader could go away
-    for (const sh::ShaderVariable &varying : shader->getOutputVaryings())
+    for (const sh::ShaderVariable &varying : shader->getOutputVaryings(context))
     {
         UpdateInterfaceVariable(&mExecutable->mOutputVariables, varying);
     }
@@ -2649,7 +2655,8 @@ bool Program::isValidated() const
     return mValidated;
 }
 
-void Program::getActiveUniformBlockName(const UniformBlockIndex blockIndex,
+void Program::getActiveUniformBlockName(const Context *context,
+                                        const UniformBlockIndex blockIndex,
                                         GLsizei bufSize,
                                         GLsizei *length,
                                         GLchar *blockName) const
@@ -2835,7 +2842,7 @@ GLenum Program::getTransformFeedbackBufferMode() const
     return mState.mExecutable->getTransformFeedbackBufferMode();
 }
 
-bool Program::linkValidateShaders(InfoLog &infoLog)
+bool Program::linkValidateShaders(const Context *context, InfoLog &infoLog)
 {
     const ShaderMap<Shader *> &shaders = mState.mAttachedShaders;
 
@@ -2863,7 +2870,7 @@ bool Program::linkValidateShaders(InfoLog &infoLog)
             continue;
         }
 
-        if (!shader->isCompiled())
+        if (!shader->isCompiled(context))
         {
             infoLog << ShaderTypeToString(shaderType) << " shader is not compiled.";
             return false;
@@ -2871,9 +2878,9 @@ bool Program::linkValidateShaders(InfoLog &infoLog)
 
         if (!version.valid())
         {
-            version = shader->getShaderVersion();
+            version = shader->getShaderVersion(context);
         }
-        else if (version != shader->getShaderVersion())
+        else if (version != shader->getShaderVersion(context))
         {
             infoLog << ShaderTypeToString(shaderType)
                     << " shader version does not match other shader versions.";
@@ -2885,7 +2892,7 @@ bool Program::linkValidateShaders(InfoLog &infoLog)
     {
         ASSERT(shaders[ShaderType::Compute]->getType() == ShaderType::Compute);
 
-        mState.mComputeShaderLocalSize = shaders[ShaderType::Compute]->getWorkGroupSize();
+        mState.mComputeShaderLocalSize = shaders[ShaderType::Compute]->getWorkGroupSize(context);
 
         // GLSL ES 3.10, 4.4.1.1 Compute Shader Inputs
         // If the work group size is not specified, a link time error should occur.
@@ -2936,7 +2943,7 @@ bool Program::linkValidateShaders(InfoLog &infoLog)
             ASSERT(geometryShader->getType() == ShaderType::Geometry);
 
             Optional<PrimitiveMode> inputPrimitive =
-                geometryShader->getGeometryShaderInputPrimitiveType();
+                geometryShader->getGeometryShaderInputPrimitiveType(context);
             if (!inputPrimitive.valid())
             {
                 infoLog << "Input primitive type is not specified in the geometry shader.";
@@ -2944,14 +2951,14 @@ bool Program::linkValidateShaders(InfoLog &infoLog)
             }
 
             Optional<PrimitiveMode> outputPrimitive =
-                geometryShader->getGeometryShaderOutputPrimitiveType();
+                geometryShader->getGeometryShaderOutputPrimitiveType(context);
             if (!outputPrimitive.valid())
             {
                 infoLog << "Output primitive type is not specified in the geometry shader.";
                 return false;
             }
 
-            Optional<GLint> maxVertices = geometryShader->getGeometryShaderMaxVertices();
+            Optional<GLint> maxVertices = geometryShader->getGeometryShaderMaxVertices(context);
             if (!maxVertices.valid())
             {
                 infoLog << "'max_vertices' is not specified in the geometry shader.";
@@ -2962,13 +2969,13 @@ bool Program::linkValidateShaders(InfoLog &infoLog)
             mState.mExecutable->mGeometryShaderOutputPrimitiveType = outputPrimitive.value();
             mState.mExecutable->mGeometryShaderMaxVertices         = maxVertices.value();
             mState.mExecutable->mGeometryShaderInvocations =
-                geometryShader->getGeometryShaderInvocations();
+                geometryShader->getGeometryShaderInvocations(context);
         }
 
         Shader *tessControlShader = shaders[ShaderType::TessControl];
         if (tessControlShader)
         {
-            int tcsShaderVertices = tessControlShader->getTessControlShaderVertices();
+            int tcsShaderVertices = tessControlShader->getTessControlShaderVertices(context);
             if (tcsShaderVertices == 0)
             {
                 // In tessellation control shader, output vertices should be specified at least
@@ -2990,7 +2997,7 @@ bool Program::linkValidateShaders(InfoLog &infoLog)
         Shader *tessEvaluationShader = shaders[ShaderType::TessEvaluation];
         if (tessEvaluationShader)
         {
-            GLenum tesPrimitiveMode = tessEvaluationShader->getTessGenMode();
+            GLenum tesPrimitiveMode = tessEvaluationShader->getTessGenMode(context);
             if (tesPrimitiveMode == 0)
             {
                 // In tessellation evaluation shader, a primitive mode should be specified at least
@@ -3007,10 +3014,12 @@ bool Program::linkValidateShaders(InfoLog &infoLog)
                 return false;
             }
 
-            mState.mExecutable->mTessGenMode        = tesPrimitiveMode;
-            mState.mExecutable->mTessGenSpacing     = tessEvaluationShader->getTessGenSpacing();
-            mState.mExecutable->mTessGenVertexOrder = tessEvaluationShader->getTessGenVertexOrder();
-            mState.mExecutable->mTessGenPointMode   = tessEvaluationShader->getTessGenPointMode();
+            mState.mExecutable->mTessGenMode    = tesPrimitiveMode;
+            mState.mExecutable->mTessGenSpacing = tessEvaluationShader->getTessGenSpacing(context);
+            mState.mExecutable->mTessGenVertexOrder =
+                tessEvaluationShader->getTessGenVertexOrder(context);
+            mState.mExecutable->mTessGenPointMode =
+                tessEvaluationShader->getTessGenPointMode(context);
         }
     }
 
@@ -3089,7 +3098,7 @@ void Program::setBaseInstanceUniform(GLuint baseInstance)
     mProgram->setUniform1iv(mState.mBaseInstanceLocation, 1, &baseInstanceInt);
 }
 
-bool Program::linkVaryings(InfoLog &infoLog) const
+bool Program::linkVaryings(const Context *context, InfoLog &infoLog) const
 {
     ShaderType previousShaderType = ShaderType::InvalidEnum;
     for (ShaderType shaderType : kAllGraphicsShaderTypes)
@@ -3104,12 +3113,12 @@ bool Program::linkVaryings(InfoLog &infoLog) const
         {
             Shader *previousShader = mState.mAttachedShaders[previousShaderType];
             const std::vector<sh::ShaderVariable> &outputVaryings =
-                previousShader->getOutputVaryings();
+                previousShader->getOutputVaryings(context);
 
             if (!LinkValidateShaderInterfaceMatching(
-                    outputVaryings, currentShader->getInputVaryings(), previousShaderType,
-                    currentShader->getType(), previousShader->getShaderVersion(),
-                    currentShader->getShaderVersion(), isSeparable(), infoLog))
+                    outputVaryings, currentShader->getInputVaryings(context), previousShaderType,
+                    currentShader->getType(), previousShader->getShaderVersion(context),
+                    currentShader->getShaderVersion(context), isSeparable(), infoLog))
             {
                 return false;
             }
@@ -3124,10 +3133,11 @@ bool Program::linkVaryings(InfoLog &infoLog) const
     Shader *vertexShader   = mState.mAttachedShaders[ShaderType::Vertex];
     Shader *fragmentShader = mState.mAttachedShaders[ShaderType::Fragment];
     if (vertexShader && fragmentShader &&
-        !LinkValidateBuiltInVaryings(vertexShader->getOutputVaryings(),
-                                     fragmentShader->getInputVaryings(), vertexShader->getType(),
-                                     fragmentShader->getType(), vertexShader->getShaderVersion(),
-                                     fragmentShader->getShaderVersion(), infoLog))
+        !LinkValidateBuiltInVaryings(vertexShader->getOutputVaryings(context),
+                                     fragmentShader->getInputVaryings(context),
+                                     vertexShader->getType(), fragmentShader->getType(),
+                                     vertexShader->getShaderVersion(context),
+                                     fragmentShader->getShaderVersion(context), infoLog))
     {
         return false;
     }
@@ -3146,7 +3156,7 @@ bool Program::linkUniforms(const Context *context,
     {
         if (shader)
         {
-            shaderUniforms[shader->getType()] = shader->getUniforms();
+            shaderUniforms[shader->getType()] = shader->getUniforms(context);
         }
     }
 
@@ -3188,18 +3198,18 @@ bool Program::linkAttributes(const Context *context, InfoLog &infoLog)
         return true;
     }
 
-    shaderVersion = vertexShader->getShaderVersion();
+    shaderVersion = vertexShader->getShaderVersion(context);
     if (shaderVersion >= 300)
     {
         // In GLSL ES 3.00.6, aliasing checks should be done with all declared attributes -
         // see GLSL ES 3.00.6 section 12.46. Inactive attributes will be pruned after
         // aliasing checks.
-        mState.mExecutable->mProgramInputs = vertexShader->getAllAttributes();
+        mState.mExecutable->mProgramInputs = vertexShader->getAllAttributes(context);
     }
     else
     {
         // In GLSL ES 1.00.17 we only do aliasing checks for active attributes.
-        mState.mExecutable->mProgramInputs = vertexShader->getActiveAttributes();
+        mState.mExecutable->mProgramInputs = vertexShader->getActiveAttributes(context);
     }
 
     GLuint maxAttribs = static_cast<GLuint>(caps.maxVertexAttributes);

@@ -127,7 +127,7 @@ bool DeclareAndInitBuiltinsForInstancedMultiview(TCompiler *compiler,
                                                  TIntermBlock *root,
                                                  unsigned numberOfViews,
                                                  GLenum shaderType,
-                                                 ShCompileOptions compileOptions,
+                                                 const ShCompileOptions &compileOptions,
                                                  ShShaderOutput shaderOutput,
                                                  TSymbolTable *symbolTable)
 {
@@ -163,7 +163,7 @@ bool DeclareAndInitBuiltinsForInstancedMultiview(TCompiler *compiler,
 
         // The AST transformation which adds the expression to select the viewport index should
         // be done only for the GLSL and ESSL output.
-        const bool selectView = (compileOptions & SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER) != 0;
+        const bool selectView = compileOptions.selectViewInNvGLSLVertexShader;
         // Assert that if the view is selected in the vertex shader, then the output is
         // either GLSL or ESSL.
         ASSERT(!selectView || IsOutputGLSL(shaderOutput) || IsOutputESSL(shaderOutput));

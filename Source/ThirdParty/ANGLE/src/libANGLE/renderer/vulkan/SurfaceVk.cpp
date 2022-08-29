@@ -419,10 +419,15 @@ angle::Result GetPresentModes(DisplayVk *displayVk,
 
 SurfaceVk::SurfaceVk(const egl::SurfaceState &surfaceState) : SurfaceImpl(surfaceState) {}
 
-SurfaceVk::~SurfaceVk()
+SurfaceVk::~SurfaceVk() {}
+
+void SurfaceVk::destroy(const egl::Display *display)
 {
-    mColorRenderTarget.destroy();
-    mDepthStencilRenderTarget.destroy();
+    DisplayVk *displayVk = vk::GetImpl(display);
+    RendererVk *renderer = displayVk->getRenderer();
+
+    mColorRenderTarget.destroy(renderer);
+    mDepthStencilRenderTarget.destroy(renderer);
 }
 
 angle::Result SurfaceVk::getAttachmentRenderTarget(const gl::Context *context,
@@ -561,6 +566,9 @@ void OffscreenSurfaceVk::destroy(const egl::Display *display)
     {
         mLockBufferHelper.destroy(vk::GetImpl(display)->getRenderer());
     }
+
+    // Call parent class to destroy any resources parent owns.
+    SurfaceVk::destroy(display);
 }
 
 FramebufferImpl *OffscreenSurfaceVk::createDefaultFramebuffer(const gl::Context *context,
@@ -845,6 +853,9 @@ void WindowSurfaceVk::destroy(const egl::Display *display)
     }
 
     mPresentSemaphoreRecycler.destroy(device);
+
+    // Call parent class to destroy any resources parent owns.
+    SurfaceVk::destroy(display);
 }
 
 egl::Error WindowSurfaceVk::initialize(const egl::Display *display)
@@ -1949,7 +1960,7 @@ void WindowSurfaceVk::deferAcquireNextImage()
     // WindowSurfaceVk::getAttachmentRenderTarget() to be called (which will acquire the next image)
     // before any RenderTargetVk accesses.  The processing of other dirty bits as well as other
     // setup for draws and reads will then access a properly-updated RenderTargetVk.
-    onStateChange(angle::SubjectMessage::SubjectChanged);
+    onStateChange(angle::SubjectMessage::SwapchainImageChanged);
 }
 
 angle::Result WindowSurfaceVk::doDeferredAcquireNextImage(const gl::Context *context,
@@ -2099,7 +2110,7 @@ VkResult WindowSurfaceVk::acquireNextSwapchainImage(vk::Context *context)
     // Notify the owning framebuffer there may be staged updates.
     if (image.image.hasStagedUpdatesInAllocatedLevels())
     {
-        onStateChange(angle::SubjectMessage::SubjectChanged);
+        onStateChange(angle::SubjectMessage::SwapchainImageChanged);
     }
 
     // Note that an acquire is no longer needed.

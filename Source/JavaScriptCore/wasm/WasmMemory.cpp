@@ -392,11 +392,6 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
     if (initialBytes > MAX_ARRAY_BUFFER_SIZE)
         return nullptr; // Client will throw OOMError.
 
-#if USE(JSVALUE32_64)
-    if (maximumBytes > MAX_ARRAY_BUFFER_SIZE)
-        return nullptr; // Client will throw OOMError.
-#endif
-
     if (maximum && !maximumBytes) {
         // User specified a zero maximum, initial size must also be zero.
         RELEASE_ASSERT(!initialBytes);

@@ -255,11 +255,6 @@ Element::~Element()
             map->clearElement();
     }
 #endif
-
-    if (hasPendingResources()) {
-        document().accessSVGExtensions().removeElementFromPendingResources(*this);
-        ASSERT(!hasPendingResources());
-    }
 }
 
 inline ElementRareData& Element::ensureElementRareData()
@@ -1947,15 +1942,6 @@ static inline bool isElementsArrayReflectionAttribute(const QualifiedName& name)
         || name == HTMLNames::aria_ownsAttr;
 }
 
-static inline AtomString effectiveLangFromAttribute(const Element& element)
-{
-    if (auto* elementData = element.elementData()) {
-        if (auto* attribute = elementData->findLanguageAttribute())
-            return attribute->value();
-    }
-    return nullAtom();
-}
-
 void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
 {
     bool valueIsSameAsBefore = oldValue == newValue;
@@ -2001,26 +1987,30 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
                 Style::Invalidator::invalidateShadowParts(*shadowRoot);
             }
         } else if (name == HTMLNames::langAttr || name.matches(XMLNames::langAttr)) {
-            Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
-            AtomString newValue = effectiveLangFromAttribute(*this);
-            auto setEffectiveLang = [&](Element& element) {
-                if (!newValue.isNull())
-                    element.ensureElementRareData().setEffectiveLang(newValue);
-                else if (hasRareData())
-                    element.elementRareData()->setEffectiveLang(nullAtom());
-            };
-            setEffectiveLang(*this);
-            for (auto it = descendantsOfType<Element>(*this).begin(); it;) {
-                auto& element = *it;
-                if (auto* elementData = element.elementData()) {
-                    if (auto* attribute = elementData->findLanguageAttribute()) {
-                        it.traverseNextSkippingChildren();
-                        continue;
+            if (document().documentElement() == this)
+                document().setDocumentElementLanguage(newValue);
+            else {
+                Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
+                AtomString newValue = langFromAttribute();
+                auto setEffectiveLang = [&](Element& element) {
+                    if (!newValue.isNull())
+                        element.ensureElementRareData().setEffectiveLang(newValue);
+                    else if (hasRareData())
+                        element.elementRareData()->setEffectiveLang(nullAtom());
+                };
+                setEffectiveLang(*this);
+                for (auto it = descendantsOfType<Element>(*this).begin(); it;) {
+                    auto& element = *it;
+                    if (auto* elementData = element.elementData()) {
+                        if (auto* attribute = elementData->findLanguageAttribute()) {
+                            it.traverseNextSkippingChildren();
+                            continue;
+                        }
                     }
+                    Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
+                    setEffectiveLang(element);
+                    it.traverseNext();
                 }
-                Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
-                setEffectiveLang(element);
-                it.traverseNext();
             }
         }
     }
@@ -2546,15 +2536,15 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
     }
 
     [&]() {
-        if (auto* parent = parentOrShadowHostElement(); parent && UNLIKELY(parent->hasRareData())) {
+        if (auto* parent = parentOrShadowHostElement(); parent && parent != document().documentElement() && UNLIKELY(parent->hasRareData())) {
             auto lang = parent->elementRareData()->effectiveLang();
-            if (!lang.isNull() && effectiveLangFromAttribute(*this).isNull()) {
+            if (!lang.isNull() && langFromAttribute().isNull()) {
                 ensureElementRareData().setEffectiveLang(lang);
                 return;
             }
         }
         if (UNLIKELY(hasRareData())) {
-            if (!elementRareData()->effectiveLang().isNull() && effectiveLangFromAttribute(*this).isNull())
+            if (!elementRareData()->effectiveLang().isNull() && langFromAttribute().isNull())
                 ensureElementRareData().setEffectiveLang(nullAtom());
         }
     }();
@@ -2624,12 +2614,9 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     ContainerNode::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (UNLIKELY(hasRareData()) && !elementRareData()->effectiveLang().isNull()) {
-        if (effectiveLangFromAttribute(*this).isNull())
+        if (langFromAttribute().isNull())
             elementRareData()->setEffectiveLang(nullAtom());
     }
-
-    if (hasPendingResources())
-        document().accessSVGExtensions().removeElementFromPendingResources(*this);
 
     Styleable::fromElement(*this).elementWasRemoved();
 
@@ -3630,7 +3617,7 @@ static void forEachRenderLayer(Element& element, const std::function<void(Render
 void Element::addToTopLayer()
 {
     RELEASE_ASSERT(!isInTopLayer());
-    ScriptDisallowedScope scriptDisallowedScope;
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     forEachRenderLayer(*this, [](RenderLayer& layer) {
         layer.establishesTopLayerWillChange();
@@ -3652,7 +3639,7 @@ void Element::addToTopLayer()
 void Element::removeFromTopLayer()
 {
     RELEASE_ASSERT(isInTopLayer());
-    ScriptDisallowedScope scriptDisallowedScope;
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     forEachRenderLayer(*this, [](RenderLayer& layer) {
         layer.establishesTopLayerWillChange();
@@ -3901,7 +3888,16 @@ AtomString Element::effectiveLang() const
         if (!lang.isNull())
             return lang;
     }
-    return document().contentLanguage();
+    return isConnected() ? document().effectiveDocumentElementLanguage() : nullAtom();
+}
+
+AtomString Element::langFromAttribute() const
+{
+    if (auto* data = elementData()) {
+        if (auto* attribute = data->findLanguageAttribute())
+            return attribute->value();
+    }
+    return nullAtom();
 }
 
 Locale& Element::locale() const

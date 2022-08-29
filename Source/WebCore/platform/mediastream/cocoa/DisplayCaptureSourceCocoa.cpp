@@ -109,6 +109,7 @@ DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(UniqueRef<Capturer>&& captu
     : RealtimeMediaSource(RealtimeMediaSource::Type::Video, WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt), pageIdentifier)
     , m_capturer(WTFMove(capturer))
     , m_timer(RunLoop::current(), this, &DisplayCaptureSourceCocoa::emitFrame)
+    , m_userActivity("App nap disabled for screen capture")
 {
     m_capturer->setObserver(this);
 }
@@ -173,6 +174,7 @@ void DisplayCaptureSourceCocoa::startProducingData()
 {
     m_startTime = MonotonicTime::now();
     m_timer.startRepeating(1_s / frameRate());
+    m_userActivity.start();
 
     commitConfiguration();
     if (!m_capturer->start())
@@ -182,6 +184,7 @@ void DisplayCaptureSourceCocoa::startProducingData()
 void DisplayCaptureSourceCocoa::stopProducingData()
 {
     m_timer.stop();
+    m_userActivity.stop();
     m_elapsedTime += MonotonicTime::now() - m_startTime;
     m_startTime = MonotonicTime::nan();
 

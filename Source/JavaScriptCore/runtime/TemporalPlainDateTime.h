@@ -42,6 +42,7 @@ public:
     }
 
     static TemporalPlainDateTime* create(VM&, Structure*, ISO8601::PlainDate&&, ISO8601::PlainTime&&);
+    static TemporalPlainDateTime* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::PlainDate&&, ISO8601::PlainTime&&);
     static TemporalPlainDateTime* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::Duration&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
@@ -55,7 +56,7 @@ public:
     ISO8601::PlainTime plainTime() const { return m_plainTime; }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD(name, capitalizedName) \
-    unsigned name() const { return m_plainDate.name(); }
+    decltype(auto) name() const { return m_plainDate.name(); }
     JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD);
 #undef JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD
 

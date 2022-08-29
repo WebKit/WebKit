@@ -67,8 +67,7 @@ DocumentFragment* HTMLTemplateElement::contentIfAvailable() const
 DocumentFragment& HTMLTemplateElement::content() const
 {
     if (!m_content)
-        m_content = TemplateContentDocumentFragment::create(document().ensureTemplateDocument(), this);
-
+        m_content = TemplateContentDocumentFragment::create(document().ensureTemplateDocument(), *this);
     return *m_content;
 }
 
