@@ -30,6 +30,7 @@
 
 #include "InlineDisplayContentBuilder.h"
 #include "LayoutBoxGeometry.h"
+#include "TextUtil.h"
 
 namespace WebCore {
 namespace Layout {
