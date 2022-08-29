@@ -615,6 +615,12 @@ public:
         storePtr(TrustedImmPtr(value), Address(GPRInfo::callFrameRegister, entry.offset() * sizeof(Register)));
     }
 
+    void emitPutCellToCallFrameHeader(GPRReg from, VirtualRegister entry)
+    {
+        ASSERT(entry.isHeader());
+        storeCell(from, Address(GPRInfo::callFrameRegister, entry.offset() * sizeof(Register)));
+    }
+
     void emitZeroToCallFrameHeader(VirtualRegister entry)
     {
         ASSERT(entry.isHeader());

@@ -61,7 +61,7 @@ static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBa
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, Instance::offsetOfOwner()), GPRInfo::argumentGPR0);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfModule()), GPRInfo::argumentGPR1);
     jit.prepareCallOperation(vm);
-    jit.emitPutToCallFrameHeader(GPRInfo::argumentGPR1, CallFrameSlot::callee);
+    jit.emitPutCellToCallFrameHeader(GPRInfo::argumentGPR1, CallFrameSlot::callee);
 
     emitThrowWasmToJSException(jit, GPRInfo::argumentGPR2, Wasm::ExceptionType::InvalidGCTypeUse);
 
@@ -298,11 +298,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfOwner()), GPRInfo::argumentGPR0);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfModule()), GPRInfo::argumentGPR0);
-    CCallHelpers::Address calleeSlot { GPRInfo::callFrameRegister, CallFrameSlot::callee  * sizeof(Register) };
-    jit.storePtr(GPRInfo::argumentGPR0, calleeSlot);
-#if USE(JSVALUE32_64)
-    jit.store32(CCallHelpers::TrustedImm32(JSValue::CellTag), calleeSlot.withOffset(TagOffset));
-#endif
+    jit.emitPutCellToCallFrameHeader(GPRInfo::argumentGPR0, CallFrameSlot::callee);
 
     // jsArg10 might overlap with regT0, so store 'this' argument first
     jit.storeValue(jsUndefined(), calleeFrame.withOffset(CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register))), jsArg10);
