@@ -27,6 +27,7 @@
 
 #include "PrintInfo.h"
 #include <WebCore/RefPtrCairo.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/glib/GRefPtr.h>
@@ -36,7 +37,6 @@ typedef struct _GtkPageSetup GtkPageSetup;
 typedef struct _GtkPageRange GtkPageRange;
 
 namespace WebCore {
-class FragmentedSharedBuffer;
 class PrintContext;
 class ResourceError;
 };
