@@ -177,13 +177,19 @@ void Line::truncate(InlineLayoutUnit logicalRight)
 {
     ASSERT(!m_contentIsTruncated);
     ASSERT(m_contentLogicalWidth > logicalRight);
+    auto isFirstRun = true;
     for (auto& run : m_runs) {
         if (run.isInlineBox())
             continue;
         if (run.logicalRight() > logicalRight) {
-            run.truncate(logicalRight - run.logicalLeft());
-            m_contentIsTruncated = true;
+            // The first atomic inline on a line must be clipped rather than ellipsed.
+            auto isFirstAtomicBox = isFirstRun && run.isBox();
+            if (!isFirstAtomicBox) {
+                run.truncate(logicalRight - run.logicalLeft());
+                m_contentIsTruncated = true;
+            }
         }
+        isFirstRun = false;
     }
 }
 

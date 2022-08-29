@@ -123,7 +123,7 @@ std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisRect(const Li
         if (lineRun.isInlineBox())
             continue;
         if (lineRun.isTruncated()) {
-            if (lineRun.isText())
+            if (lineRun.isText() && lineRun.textContent()->partiallyVisibleContent)
                 ellipsisStart = std::max(ellipsisStart, lineRun.logicalLeft() + lineRun.textContent()->partiallyVisibleContent->width);
             break;
         }
