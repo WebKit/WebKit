@@ -1219,6 +1219,8 @@ webkit.org/b/206684 [ Debug ] inspector/heap/tracking.html [ Pass Failure ]
 
 webkit.org/b/205956 inspector/runtime/executionContextCreated-onEnable.html [ Pass Failure ]
 
+webkit.org/b/244492 [ Debug ] inspector/runtime/getDisplayableProperties.html [ Pass Crash ]
+
 webkit.org/b/206668 fast/loader/redirect-to-invalid-url-using-meta-refresh-calls-policy-delegate.html [ Pass Failure ]
 
 webkit.org/b/180760 fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-async-delegates.html [ Pass Failure ]
