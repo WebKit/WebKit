@@ -524,6 +524,10 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.revert(revert_abort=True),
             ), mocks.Subprocess.Route(
+                self.executable, 'cherry-pick', '-e',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.cherry_pick(args[3], env=kwargs.get('env', dict())),
+            ), mocks.Subprocess.Route(
                 self.executable, 'restore', '--staged', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.restore(args[3], staged=True),
@@ -965,6 +969,32 @@ nothing to commit, working tree clean
             is_reverted_something = True
         if not is_reverted_something:
             return mocks.ProcessCompletion(returncode=1, stdout='On branch {}\nnothing to commit, working tree clean'.format(self.branch))
+
+        return mocks.ProcessCompletion(returncode=0)
+
+    def cherry_pick(self, hash, env=None):
+        commit = self.find(hash)
+        env = env or dict()
+
+        if self.staged:
+            return mocks.ProcessCompletion(returncode=1, stdout='error: your local changes would be overwritten by cherry-pick.\nfatal: cherry-pick failed\n')
+        if not commit:
+            return mocks.ProcessCompletion(returncode=128, stdout="fatal: bad revision '{}'\n".format(hash))
+
+        self.head = Commit(
+            branch=self.branch, repository_id=self.head.repository_id,
+            timestamp=int(time.time()),
+            identifier=self.head.identifier + 1 if self.head.branch_point else 1,
+            branch_point=self.head.branch_point or self.head.identifier,
+            message='Cherry-pick {}. {}\n    {}\n'.format(
+                env.get('GIT_WEBKIT_CHERRY_PICKED', '') or commit.hash,
+                env.get('GIT_WEBKIT_BUG', '') or '<bug>',
+                '\n    '.join(commit.message.splitlines()),
+            ),
+        )
+        self.head.author = Contributor(self.config()['user.name'], [self.config()['user.email']])
+        self.head.hash = hashlib.sha256(string_utils.encode(self.head.message)).hexdigest()[:40]
+        self.commits[self.branch].append(self.head)
 
         return mocks.ProcessCompletion(returncode=0)
 
