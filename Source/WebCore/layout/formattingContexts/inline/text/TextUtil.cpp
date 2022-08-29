@@ -50,8 +50,7 @@ static inline InlineLayoutUnit spaceWidth(const FontCascade& fontCascade, bool c
     return fontCascade.widthOfSpaceString();
 }
 
-enum class UseTrailingWhitespaceMeasuringOptimization : uint8_t { Yes, No };
-static inline InlineLayoutUnit contentWidth(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft, UseTrailingWhitespaceMeasuringOptimization useTrailingWhitespaceMeasuringOptimization = UseTrailingWhitespaceMeasuringOptimization::Yes)
+InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft, UseTrailingWhitespaceMeasuringOptimization useTrailingWhitespaceMeasuringOptimization)
 {
     if (from == to)
         return 0;
@@ -104,7 +103,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, const Fon
             return std::isnan(width) ? 0.0f : std::isinf(width) ? maxInlineLayoutUnit() : width;
         }
     }
-    return contentWidth(inlineTextItem.inlineTextBox(), fontCascade, from, to, contentLogicalLeft);
+    return width(inlineTextItem.inlineTextBox(), fontCascade, from, to, contentLogicalLeft);
 }
 
 InlineLayoutUnit TextUtil::trailingWhitespaceWidth(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, size_t startPosition, size_t endPosition)
@@ -112,8 +111,8 @@ InlineLayoutUnit TextUtil::trailingWhitespaceWidth(const InlineTextBox& inlineTe
     auto text = inlineTextBox.content();
     ASSERT(endPosition > startPosition + 1);
     ASSERT(text[endPosition - 1] == space);
-    return contentWidth(inlineTextBox, fontCascade, startPosition, endPosition, { }, UseTrailingWhitespaceMeasuringOptimization::Yes) - 
-        contentWidth(inlineTextBox, fontCascade, startPosition, endPosition - 1, { }, UseTrailingWhitespaceMeasuringOptimization::No);
+    return width(inlineTextBox, fontCascade, startPosition, endPosition, { }, UseTrailingWhitespaceMeasuringOptimization::Yes) - 
+        width(inlineTextBox, fontCascade, startPosition, endPosition - 1, { }, UseTrailingWhitespaceMeasuringOptimization::No);
 }
 
 template <typename TextIterator>
@@ -210,7 +209,7 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
                 auto middle = userPerceivedCharacterBoundaryAlignedIndex((left + right) / 2);
                 ASSERT(middle >= left && middle < right);
                 auto endOfMiddleCharacter = nextUserPerceivedCharacterIndex(middle);
-                auto width = contentWidth(inlineTextBox, fontCascade, startPosition, endOfMiddleCharacter, contentLogicalLeft);
+                auto width = TextUtil::width(inlineTextBox, fontCascade, startPosition, endOfMiddleCharacter, contentLogicalLeft);
                 if (width < availableWidth) {
                     left = endOfMiddleCharacter;
                     leftSideWidth = width;
@@ -231,7 +230,7 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
     auto graphemeClusterIterator = NonSharedCharacterBreakIterator { StringView { text }.substring(startPosition, length) };
     auto leftSide = TextUtil::WordBreakLeft { };
     for (auto clusterStartPosition = ubrk_next(graphemeClusterIterator); clusterStartPosition != UBRK_DONE; clusterStartPosition = ubrk_next(graphemeClusterIterator)) {
-        auto width = contentWidth(inlineTextBox, fontCascade, startPosition, startPosition + clusterStartPosition, contentLogicalLeft);
+        auto width = TextUtil::width(inlineTextBox, fontCascade, startPosition, startPosition + clusterStartPosition, contentLogicalLeft);
         if (width > availableWidth)
             return leftSide;
         leftSide = { static_cast<size_t>(clusterStartPosition), width };
@@ -326,9 +325,8 @@ bool TextUtil::containsStrongDirectionalityText(StringView text)
     return false;
 }
 
-size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextItem& inlineTextItem)
+size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextBox& inlineTextBox, size_t startPosition, size_t length)
 {
-    auto& inlineTextBox = inlineTextItem.inlineTextBox();
     auto textContent = inlineTextBox.content();
     RELEASE_ASSERT(!textContent.isEmpty());
 
@@ -336,16 +334,21 @@ size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextItem& inlineT
         return 1;
     if (inlineTextBox.canUseSimpleFontCodePath()) {
         UChar32 character;
-        size_t endOfCodePoint = inlineTextItem.start();
+        size_t endOfCodePoint = startPosition;
         U16_NEXT(textContent.characters16(), endOfCodePoint, textContent.length(), character);
-        ASSERT(endOfCodePoint > inlineTextItem.start());
-        return endOfCodePoint - inlineTextItem.start();
+        ASSERT(endOfCodePoint > startPosition);
+        return endOfCodePoint - startPosition;
     }
     auto graphemeClustersIterator = NonSharedCharacterBreakIterator { textContent };
-    auto nextPosition = ubrk_following(graphemeClustersIterator, inlineTextItem.start());
+    auto nextPosition = ubrk_following(graphemeClustersIterator, startPosition);
     if (nextPosition == UBRK_DONE)
-        return inlineTextItem.length();
-    return nextPosition - inlineTextItem.start();
+        return length;
+    return nextPosition - startPosition;
+}
+
+size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextItem& inlineTextItem)
+{
+    return firstUserPerceivedCharacterLength(inlineTextItem.inlineTextBox(), inlineTextItem.start(), inlineTextItem.length());
 }
 
 TextDirection TextUtil::directionForTextContent(StringView content)
