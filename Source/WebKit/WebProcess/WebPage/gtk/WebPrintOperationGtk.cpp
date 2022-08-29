@@ -568,7 +568,7 @@ void WebPrintOperationGtk::printPagesDone()
     m_cairoContext = nullptr;
 }
 
-void WebPrintOperationGtk::printDone(RefPtr<FragmentedSharedBuffer>&& buffer, WebCore::ResourceError&& error)
+void WebPrintOperationGtk::printDone(RefPtr<WebCore::FragmentedSharedBuffer>&& buffer, WebCore::ResourceError&& error)
 {
     if (m_printPagesIdleId)
         g_source_remove(m_printPagesIdleId);
