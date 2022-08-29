@@ -1734,10 +1734,8 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
 URL AccessibilityRenderObject::url() const
 {
     auto* node = this->node();
-    if (isLink() && is<HTMLAnchorElement>(node)) {
-        if (HTMLAnchorElement* anchor = downcast<HTMLAnchorElement>(anchorElement()))
-            return anchor->href();
-    }
+    if (isLink() && is<HTMLAnchorElement>(node))
+        return downcast<HTMLAnchorElement>(node)->href();
 
     if (m_renderer && isWebArea())
         return m_renderer->document().url();

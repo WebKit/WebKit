@@ -312,6 +312,8 @@ public:
         AXSelectedStateChanged,
         AXSelectedTextChanged,
         AXSetSizeChanged,
+        AXTableHeadersChanged,
+        AXURLChanged,
         AXValueChanged,
         AXScrolledToAnchor,
         AXLiveRegionCreated,

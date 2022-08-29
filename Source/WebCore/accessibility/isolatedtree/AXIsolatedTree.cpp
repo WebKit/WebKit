@@ -426,6 +426,9 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
     case AXPropertyName::AXColumnCount:
         propertyMap.set(AXPropertyName::AXColumnCount, axObject.axColumnCount());
         break;
+    case AXPropertyName::ColumnHeaders:
+        propertyMap.set(AXPropertyName::ColumnHeaders, axIDs(axObject.columnHeaders()));
+        break;
     case AXPropertyName::AXColumnIndex:
         propertyMap.set(AXPropertyName::AXColumnIndex, axObject.axColumnIndex());
         break;
@@ -490,6 +493,9 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
         break;
     case AXPropertyName::SupportsSetSize:
         propertyMap.set(AXPropertyName::SupportsSetSize, axObject.supportsSetSize());
+        break;
+    case AXPropertyName::URL:
+        propertyMap.set(AXPropertyName::URL, axObject.url().isolatedCopy());
         break;
     case AXPropertyName::ValueForRange:
         propertyMap.set(AXPropertyName::ValueForRange, axObject.valueForRange());

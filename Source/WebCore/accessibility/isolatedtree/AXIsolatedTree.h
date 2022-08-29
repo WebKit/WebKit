@@ -157,7 +157,6 @@ enum class AXPropertyName : uint16_t {
     IsKeyboardFocusable,
     IsLandmark,
     IsLink,
-    IsLinked,
     IsList,
     IsListBox,
     IsMathElement,

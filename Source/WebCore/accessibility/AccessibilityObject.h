@@ -238,7 +238,7 @@ public:
     bool isVisited() const override { return false; }
     bool isRequired() const override { return false; }
     bool supportsRequiredAttribute() const override { return false; }
-    bool isLinked() const override { return false; }
+    virtual bool isLinked() const { return false; }
     bool isExpanded() const override;
     bool isVisible() const override { return true; }
     bool isCollapsed() const override { return false; }
