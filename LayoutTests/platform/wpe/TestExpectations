@@ -255,9 +255,6 @@ webkit.org/b/236430 imported/w3c/web-platform-tests/svg/import/filters-image-03-
 webkit.org/b/236430 imported/w3c/web-platform-tests/svg/import/filters-image-04-f-manual.svg [ Failure ]
 webkit.org/b/236430 imported/w3c/web-platform-tests/svg/import/filters-image-05-f-manual.svg [ Failure ]
 
-# WebGL
-webkit.org/b/213203 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Failure Timeout ]
-
 # WebXR
 webkit.org/b/229455 webxr/high-performance.html [ Failure ]
 
@@ -579,18 +576,12 @@ webkit.org/b/206885 css3/font-variant-font-face-override.html [ ImageOnlyFailure
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-descriptor-01.html [ ImageOnlyFailure ]
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/font-variant-ligatures.html [ ImageOnlyFailure ]
 
-webkit.org/b/210236 fast/canvas/webgl/hide-some-renderer-info.html [ Failure ]
-webkit.org/b/210236 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
-webkit.org/b/210236 webgl/webgl-vertex-array-object-defined.html [ Failure ]
-
 webkit.org/b/210262 fast/selectors/text-field-selection-stroke-color.html [ ImageOnlyFailure ]
 webkit.org/b/210262 fast/selectors/text-field-selection-text-shadow.html [ ImageOnlyFailure ]
 
 # Only enabled on Mac/iOS so far.
 Bug(WPE) contentfiltering/ [ Skip ]
 Bug(WPE) http/tests/contentfiltering [ Skip ]
-
-webkit.org/b/212349 fast/canvas/webgl/readPixels-float.html [ Failure ]
 
 webkit.org/b/212351 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]
 
@@ -889,6 +880,9 @@ webkit.org/b/212144 http/tests/xmlhttprequest/on-network-timeout-error-during-pr
 # webkit.org/b/188506 fast/dom/timer-throttling-hidden-page.html [ Failure ]
 webkit.org/b/212350 fast/dom/timer-throttling-hidden-page.html [ Timeout ]
 
+webkit.org/b/244480 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
+webkit.org/b/244481 webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 8. TESTS FAILING
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -904,15 +898,10 @@ Bug(WPE) ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 # webgl/1.0.3:
 #  Failing:
 Bug(WPE) webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
-Bug(WPE) webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-aliasing.html [ Failure ]
-Bug(WPE) webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-matrix.html [ Failure ]
-Bug(WPE) webgl/1.0.3/conformance/renderbuffers/feedback-loop.html [ Failure ]
-webkit.org/b/204676 webgl/1.0.3/conformance/extensions/oes-texture-float.html [ Failure ]
 webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure ]
 webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
 webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
 #  Timing out:
-Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Timeout ]
 webkit.org/b/204676 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Timeout ]
 webkit.org/b/204676 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html [ Timeout ]
 webkit.org/b/204676 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-vec2.html [ Timeout ]
@@ -930,10 +919,7 @@ fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html [ Failure ]
 fast/canvas/canvas-toDataURL-webp.html [ Failure ]
 fast/canvas/toDataURL-supportedTypes.html [ Failure ]
-fast/canvas/webgl/antialiasing-enabled.html [ Failure ]
-fast/canvas/webgl/multisample-resolve-consistency.html [ Failure ]
 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
-fast/canvas/webgl/webglcontextchangedevent.html [ Timeout ]
 
 # security/
 # Require EventSender support
@@ -1355,6 +1341,14 @@ Bug(WPE) media/video-canvas-createPattern.html [ Failure ]
 
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-006.html [ ImageOnlyFailure ]
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/scrollable-scroll-3d-transform-z.html [ ImageOnlyFailure ]
+
+webkit.org/b/244473 fast/canvas/webgl/draw-elements-out-of-bounds-uint-index.html [ Failure ]
+webkit.org/b/244474 fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
+webkit.org/b/244476 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
+
+webkit.org/b/244479 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
+
+webkit.org/b/244482 webgl/webgl2-primitive-restart.html [ ImageOnlyFailure ]
 
 ######################################################
 # Test failures from turning GPU Process on by default
