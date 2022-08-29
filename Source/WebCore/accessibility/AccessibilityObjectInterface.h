@@ -1010,7 +1010,6 @@ public:
     virtual bool isVisited() const = 0;
     virtual bool isRequired() const = 0;
     virtual bool supportsRequiredAttribute() const = 0;
-    virtual bool isLinked() const = 0;
     virtual bool isExpanded() const = 0;
     virtual bool isVisible() const = 0;
     virtual bool isCollapsed() const = 0;

@@ -1973,10 +1973,14 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     else if (attrName == tabindexAttr)
         childrenChanged(element->parentNode(), element);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    else if (attrName == headersAttr)
+        updateIsolatedTree(get(element), AXTableHeadersChanged);
     else if (attrName == langAttr)
         updateIsolatedTree(get(element), AXObjectCache::AXLanguageChanged);
     else if (attrName == placeholderAttr)
         postNotification(element, AXPlaceholderChanged);
+    else if (attrName == hrefAttr)
+        updateIsolatedTree(get(element), AXURLChanged);
     else if (attrName == idAttr) {
         relationsNeedUpdate(true);
         updateIsolatedTree(get(element), AXObjectCache::AXIdAttributeChanged);
@@ -3670,6 +3674,12 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXSetSizeChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::SetSize);
             tree->updateNodeProperty(*notification.first, AXPropertyName::SupportsSetSize);
+            break;
+        case AXTableHeadersChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::ColumnHeaders);
+            break;
+        case AXURLChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::URL);
             break;
         case AXActiveDescendantChanged:
         case AXAriaRoleChanged:

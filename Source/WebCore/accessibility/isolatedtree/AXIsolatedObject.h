@@ -522,7 +522,6 @@ private:
     bool isOffScreen() const override;
     bool isPressed() const override;
     bool isUnvisited() const override { return boolAttributeValue(AXPropertyName::IsUnvisited); }
-    bool isLinked() const override;
     bool isVisible() const override { return boolAttributeValue(AXPropertyName::IsVisible); }
     bool isCollapsed() const override;
     bool isSelectedOptionActive() const override;

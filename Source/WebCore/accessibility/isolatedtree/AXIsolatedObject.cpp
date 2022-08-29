@@ -106,7 +106,6 @@ void AXIsolatedObject::initializeProperties(Ref<AXCoreObject> coreObject, IsRoot
     setProperty(AXPropertyName::IsInputImage, object.isInputImage());
     setProperty(AXPropertyName::IsLandmark, object.isLandmark());
     setProperty(AXPropertyName::IsLink, object.isLink());
-    setProperty(AXPropertyName::IsLinked, object.isLinked());
     setProperty(AXPropertyName::IsList, object.isList());
     setProperty(AXPropertyName::IsMediaTimeline, object.isMediaTimeline());
     setProperty(AXPropertyName::IsMenu, object.isMenu());
@@ -1747,12 +1746,6 @@ bool AXIsolatedObject::isOffScreen() const
 }
 
 bool AXIsolatedObject::isPressed() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isLinked() const
 {
     ASSERT_NOT_REACHED();
     return false;
