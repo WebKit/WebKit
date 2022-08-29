@@ -33,12 +33,28 @@
 #import "RealtimeMediaSourceCenter.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <pal/spi/ios/MediaExperienceAVSystemControllerSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/Vector.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
+
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
+
+SOFT_LINK_PRIVATE_FRAMEWORK(MediaExperience)
+SOFT_LINK_CLASS_OPTIONAL(MediaExperience, AVSystemController)
+SOFT_LINK_CONSTANT(MediaExperience, AVSystemController_RouteDescriptionKey_RouteCurrentlyPicked, NSString *)
+SOFT_LINK_CONSTANT(MediaExperience, AVSystemController_RouteDescriptionKey_RouteName, NSString *)
+SOFT_LINK_CONSTANT(MediaExperience, AVSystemController_RouteDescriptionKey_RouteUID, NSString *)
+SOFT_LINK_CONSTANT(MediaExperience, AVSystemController_RouteDescriptionKey_RouteType, NSString *)
+SOFT_LINK_CONSTANT(MediaExperience, AVSystemController_PickableRouteType_Default, NSString *)
+
+#endif // HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
+
+SOFT_LINK_PRIVATE_FRAMEWORK(AudioSession)
+SOFT_LINK_CONSTANT(AudioSession, AVAudioSessionPortBuiltInMic, NSString *)
 
 @interface WebAVAudioSessionAvailableInputsListener : NSObject {
     WebCore::AVAudioSessionCaptureDeviceManager* _callback;
@@ -234,21 +250,46 @@ void AVAudioSessionCaptureDeviceManager::activateAudioSession()
         RELEASE_LOG_ERROR(WebRTC, "Failed to activate audio session with error: %@.", error.localizedDescription);
 }
 
+struct DefaultMicrophoneInformation {
+    bool isBuiltInMicrophoneDefault { false };
+    NSString* routeUID { nil };
+};
+
+static std::optional<DefaultMicrophoneInformation> computeDefaultMicrophoneInformation()
+{
+ #if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
+    NSArray<NSDictionary *> *pickableRoutes = [[getAVSystemControllerClass() sharedAVSystemController] pickableRoutesForCategory:AVAudioSessionCategoryPlayAndRecord];
+    for (NSDictionary *route in pickableRoutes) {
+        BOOL pickedOnDevice = [[route objectForKey:getAVSystemController_RouteDescriptionKey_RouteCurrentlyPicked()] boolValue];
+        if (!pickedOnDevice)
+            continue;
+
+        NSString *type = route[getAVSystemController_RouteDescriptionKey_RouteType()];
+        if ([type isEqualToString:getAVSystemController_PickableRouteType_Default()])
+            return DefaultMicrophoneInformation { true, nil };
+
+        return DefaultMicrophoneInformation { false, route[getAVSystemController_RouteDescriptionKey_RouteUID()] };
+    }
+#endif // HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
+    return { };
+}
+
 Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieveAudioSessionCaptureDevices() const
 {
-    auto *defaultInput = [m_audioSession currentRoute].inputs.firstObject;
-    if (!defaultInput) {
-        RELEASE_LOG_INFO(WebRTC, "AVAudioSessionCaptureDeviceManager using previous default input");
-        defaultInput = m_lastDefaultMicrophone.get();
-    } else
-        m_lastDefaultMicrophone = defaultInput;
+    auto defaultMicrophoneInformation = computeDefaultMicrophoneInformation();
+    if (!defaultMicrophoneInformation && !m_lastDefaultMicrophone)
+        m_lastDefaultMicrophone = [m_audioSession currentRoute].inputs.firstObject;
 
     auto availableInputs = [m_audioSession availableInputs];
 
     Vector<AVAudioSessionCaptureDevice> newAudioDevices;
     newAudioDevices.reserveInitialCapacity(availableInputs.count);
-    for (AVAudioSessionPortDescription *portDescription in availableInputs)
-        newAudioDevices.uncheckedAppend(AVAudioSessionCaptureDevice::create(portDescription, defaultInput));
+    for (AVAudioSessionPortDescription *portDescription in availableInputs) {
+        auto device = AVAudioSessionCaptureDevice::create(portDescription, m_lastDefaultMicrophone.get());
+        if (defaultMicrophoneInformation)
+            device.setIsDefault((defaultMicrophoneInformation->isBuiltInMicrophoneDefault && portDescription.portType == getAVAudioSessionPortBuiltInMic()) || [portDescription.UID isEqualToString: defaultMicrophoneInformation->routeUID]);
+        newAudioDevices.uncheckedAppend(WTFMove(device));
+    }
 
     return newAudioDevices;
 }
