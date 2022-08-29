@@ -39,19 +39,6 @@
 namespace WebKit {
 
 #if ENABLE(REMOTE_INSPECTOR)
-static String backendCommandsPath()
-{
-    RetainPtr<CFURLRef> urlRef = adoptCF(CFBundleCopyResourceURL(WebCore::webKitBundle(), CFSTR("InspectorBackendCommands"), CFSTR("js"), CFSTR("WebInspectorUI\\Protocol")));
-    if (!urlRef)
-        return { };
-
-    char path[MAX_PATH];
-    if (!CFURLGetFileSystemRepresentation(urlRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH))
-        return { };
-
-    return String::fromUTF8(path);
-}
-
 static void initializeRemoteInspectorServer(StringView address)
 {
     if (Inspector::RemoteInspectorServer::singleton().isRunning())
@@ -66,7 +53,8 @@ static void initializeRemoteInspectorServer(StringView address)
     if (!port)
         return;
 
-    Inspector::RemoteInspector::singleton().setBackendCommandsPath(backendCommandsPath());
+    auto backendCommands = WebCore::webKitBundlePath({ "WebKit.Resources"_s, "WebInspectorUI"_s, "Protocol"_s, "InspectorBackendCommands.js"_s });
+    Inspector::RemoteInspector::singleton().setBackendCommandsPath(backendCommands);
     Inspector::RemoteInspectorServer::singleton().start(host.utf8().data(), port.value());
 }
 #endif

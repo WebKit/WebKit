@@ -35,20 +35,19 @@
 
 #if USE(CURL)
 #include <curl/curl.h>
+#else
+#error Unknown network backend
 #endif
 
 namespace WebKit {
 
 void InspectorResourceURLSchemeHandler::platformStartTask(WebPageProxy&, WebURLSchemeTask& task)
 {
-#if USE(CF) && USE(CURL)
     auto requestURL = task.request().url();
-    auto requestPath = requestURL.fileSystemPath();
+    auto requestPath = makeStringByReplacingAll(requestURL.path(), '/', '\\');
     if (requestPath.startsWith("\\"_s))
         requestPath = requestPath.substring(1);
-    auto path = URL(adoptCF(CFBundleCopyBundleURL(WebCore::webKitBundle())).get()).fileSystemPath();
-    path = FileSystem::pathByAppendingComponent(path, "WebInspectorUI"_s);
-    path = FileSystem::pathByAppendingComponent(path, requestPath);
+    auto path = WebCore::webKitBundlePath({ "WebInspectorUI"_s, requestPath });
     bool success;
     FileSystem::MappedFileData file(path, FileSystem::MappedFileMode::Private, success);
     if (!success) {
@@ -64,7 +63,6 @@ void InspectorResourceURLSchemeHandler::platformStartTask(WebPageProxy&, WebURLS
     task.didReceiveResponse(response);
     task.didReceiveData(WTFMove(data));
     task.didComplete({ });
-#endif
 }
 
 } // namespace WebKit

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,16 +27,21 @@
 #include "config.h"
 #include "WebCoreBundleWin.h"
 
-#if USE(CF)
-
 #include "WebCoreInstanceHandle.h"
-#include <CoreFoundation/CFBundle.h>
 #include <windows.h>
+#include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
+
+#if USE(CF)
+#include <CoreFoundation/CFBundle.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/URL.h>
+#include <wtf/text/StringBuilder.h>
+#endif
 
 namespace WebCore {
 
+#if USE(CF)
 static RetainPtr<CFBundleRef> createWebKitBundle()
 {
     if (CFBundleRef existingBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit")))
@@ -61,6 +67,76 @@ CFBundleRef webKitBundle()
     return bundle.get().get();
 }
 
-} // namespace WebCore
+String webKitBundlePath()
+{
+    URL bundleURL = adoptCF(CFBundleCopyBundleURL(webKitBundle())).get();
+    return bundleURL.fileSystemPath();
+}
 
-#endif
+String webKitBundlePath(StringView path)
+{
+    auto pathString = path.toStringWithoutCopying();
+    auto directory = FileSystem::parentPath(pathString);
+    auto fileName = FileSystem::pathFileName(pathString);
+    auto splitAt = fileName.reverseFind('.');
+
+    return webKitBundlePath(fileName.left(splitAt), fileName.substring(splitAt + 1), directory);
+}
+
+String webKitBundlePath(StringView name, StringView type, StringView directory)
+{
+    auto resourceURL = adoptCF(CFBundleCopyResourceURL(webKitBundle(), name.createCFString().get(), type.createCFString().get(), directory.createCFString().get()));
+    if (!resourceURL)
+        return nullString();
+
+    return adoptCF(CFURLCopyFileSystemPath(resourceURL.get(), kCFURLWindowsPathStyle)).get();
+}
+
+#else
+
+static String dllDirectory()
+{
+    WCHAR buffer[MAX_PATH];
+    DWORD length = ::GetModuleFileNameW(WebCore::instanceHandle(), buffer, MAX_PATH);
+    if (!length || (length == MAX_PATH && GetLastError() == ERROR_INSUFFICIENT_BUFFER))
+        return emptyString();
+
+    String path(buffer, length);
+    return FileSystem::parentPath(path);
+}
+
+String webKitBundlePath()
+{
+    static NeverDestroyed<String> bundle = FileSystem::pathByAppendingComponent(dllDirectory(), "WebKit.resources"_s);
+    return bundle;
+}
+
+String webKitBundlePath(StringView path)
+{
+    auto resource = FileSystem::pathByAppendingComponent(webKitBundlePath(), path);
+    if (!FileSystem::fileExists(resource))
+        return nullString();
+
+    return resource;
+}
+
+String webKitBundlePath(StringView name, StringView type, StringView directory)
+{
+    auto fileName = makeString(name, '.', type);
+
+    // CF seems to search in .lproj directories for files as well but since
+    // there's only one file there just flag it here
+    if (name == "mediaControlsLocalizedStrings"_s)
+        return webKitBundlePath(FileSystem::pathByAppendingComponent("en.lproj"_s, fileName));
+
+    return webKitBundlePath(FileSystem::pathByAppendingComponent(directory, fileName));
+}
+
+#endif // USE(CF)
+
+String webKitBundlePath(const Vector<StringView>& components)
+{
+    return webKitBundlePath(FileSystem::pathByAppendingComponents(emptyString(), components));
+}
+
+} // namespace WebCore
