@@ -46,7 +46,7 @@ public:
     ~RemoteLayerTreeHost();
 
     RemoteLayerTreeNode* nodeForID(WebCore::GraphicsLayer::PlatformLayerID) const;
-    RemoteLayerTreeNode* rootNode() const { return m_rootNode; }
+    RemoteLayerTreeNode* rootNode() const { return m_rootNode.get(); }
 
     CALayer *layerForID(WebCore::GraphicsLayer::PlatformLayerID) const;
     CALayer *rootLayer() const;
@@ -90,7 +90,7 @@ private:
     RemoteLayerBackingStore::LayerContentsType layerContentsType() const;
 
     RemoteLayerTreeDrawingAreaProxy* m_drawingArea { nullptr };
-    RemoteLayerTreeNode* m_rootNode { nullptr };
+    WeakPtr<RemoteLayerTreeNode> m_rootNode;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<RemoteLayerTreeNode>> m_nodes;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)

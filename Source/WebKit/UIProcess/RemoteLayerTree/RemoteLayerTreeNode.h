@@ -39,7 +39,7 @@ namespace WebKit {
 
 class RemoteLayerTreeScrollbars;
 
-class RemoteLayerTreeNode {
+class RemoteLayerTreeNode : public CanMakeWeakPtr<RemoteLayerTreeNode> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<CALayer>);
