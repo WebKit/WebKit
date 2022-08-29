@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -40,11 +41,12 @@ struct PermissionDescriptor;
 
 class PermissionController : public ThreadSafeRefCounted<PermissionController> {
 public:
-    static PermissionController& shared();
+    WEBCORE_EXPORT static PermissionController& shared();
     WEBCORE_EXPORT static void setSharedController(Ref<PermissionController>&&);
     
     virtual ~PermissionController() = default;
     virtual void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, Page*, PermissionQuerySource, CompletionHandler<void(std::optional<PermissionState>)>&&) = 0;
+    virtual std::optional<PermissionState> querySync(WebCore::ClientOrigin&&, PermissionDescriptor&&, Page*, PermissionQuerySource) = 0;
     virtual void addObserver(PermissionObserver&) = 0;
     virtual void removeObserver(PermissionObserver&) = 0;
 protected:
@@ -57,6 +59,7 @@ public:
 private:
     DummyPermissionController() = default;
     void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, Page*, PermissionQuerySource, CompletionHandler<void(std::optional<PermissionState>)>&& callback) final { callback({ }); }
+    std::optional<PermissionState> querySync(WebCore::ClientOrigin&&, PermissionDescriptor&&, Page*, PermissionQuerySource) final { return std::nullopt; }
     void addObserver(PermissionObserver&) final { }
     void removeObserver(PermissionObserver&) final { }
 };

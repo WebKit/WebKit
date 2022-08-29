@@ -46,13 +46,18 @@ class WebPermissionControllerProxy final : public IPC::MessageReceiver {
 public:
     explicit WebPermissionControllerProxy(WebProcessProxy&);
     ~WebPermissionControllerProxy();
+
+    // IPC::MessageReceiver
+    // Implemented in generated WebPermissionControllerProxyMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
 private:
     WebPageProxy* mostReasonableWebPageProxy(const WebCore::SecurityOriginData&, WebCore::PermissionQuerySource) const;
 
     // IPC Message handlers.
     void query(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, std::optional<WebPageProxyIdentifier>, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>, bool shouldCache)>&&);
+    void querySync(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, std::optional<WebPageProxyIdentifier>, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>, bool shouldCache)>&&);
 
     WebProcessProxy& m_process;
 };

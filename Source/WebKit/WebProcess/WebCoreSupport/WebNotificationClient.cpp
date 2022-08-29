@@ -31,8 +31,17 @@
 #include "NotificationPermissionRequestManager.h"
 #include "WebNotificationManager.h"
 #include "WebPage.h"
+#include "WebPermissionController.h"
 #include "WebProcess.h"
+#include <WebCore/ClientOrigin.h>
+#include <WebCore/Page.h>
+#include <WebCore/PermissionController.h>
+#include <WebCore/PermissionName.h>
+#include <WebCore/PermissionQuerySource.h>
+#include <WebCore/PermissionState.h>
+#include <WebCore/Permissions.h>
 #include <WebCore/ScriptExecutionContext.h>
+#include <WebCore/SecurityOriginData.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -102,9 +111,6 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext& context, P
     if (!securityOrigin)
         return permissionHandler(NotificationClient::Permission::Denied);
 
-    // Add origin to list of origins that have requested permission to use the Notifications API.
-    m_notificationPermissionRequesters.add(securityOrigin->data());
-
     m_page->notificationPermissionRequestManager()->startRequest(securityOrigin->data(), WTFMove(permissionHandler));
 }
 
@@ -112,29 +118,34 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 {
     if (!context
         || (!context->isDocument() && !context->isServiceWorkerGlobalScope())
+        || !context->securityOrigin()
         || WebProcess::singleton().sessionID().isEphemeral())
         return NotificationClient::Permission::Denied;
 
-    auto* origin = context->securityOrigin();
-    if (!origin)
+    auto source = Permissions::sourceFromContext(*context);
+    if (!source)
         return NotificationClient::Permission::Denied;
 
-    NotificationClient::Permission resultPermission;
-    callOnMainRunLoopAndWait([&resultPermission, origin = origin->data().toString().isolatedCopy()] {
-        resultPermission = WebProcess::singleton().supplement<WebNotificationManager>()->policyForOrigin(origin);
+    auto* page = m_page ? m_page->corePage() : nullptr;
+    auto resultPermission = NotificationClient::Permission::Default;
+    callOnMainRunLoopAndWait([&resultPermission, topOrigin = crossThreadCopy(context->topOrigin().data()), securityOrigin = crossThreadCopy(context->securityOrigin()->data()), page, source = *source] {
+        auto permissionState = PermissionController::shared().querySync(ClientOrigin { topOrigin, securityOrigin }, PermissionDescriptor { WebCore::PermissionName::Notifications }, page, source);
+        if (!permissionState)
+            return;
+
+        switch (*permissionState) {
+        case WebCore::PermissionState::Granted:
+            resultPermission = NotificationClient::Permission::Granted;
+            break;
+        case WebCore::PermissionState::Denied:
+            resultPermission = NotificationClient::Permission::Denied;
+            break;
+        case WebCore::PermissionState::Prompt:
+            resultPermission = NotificationClient::Permission::Default;
+        }
     });
 
-    // To reduce fingerprinting, if the origin has not requested permission to use the
-    // Notifications API, and the permission state is "denied", return "default" instead.
-    if (resultPermission == NotificationClient::Permission::Denied && !m_notificationPermissionRequesters.contains(context->securityOrigin()->data()))
-        return NotificationClient::Permission::Default;
-
     return resultPermission;
-}
-
-void WebNotificationClient::clearNotificationPermissionState()
-{
-    m_notificationPermissionRequesters.clear();
 }
 
 } // namespace WebKit

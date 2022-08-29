@@ -379,6 +379,7 @@ public:
     bool grantNotificationPermission(WKStringRef origin);
     bool denyNotificationPermission(WKStringRef origin);
     bool denyNotificationPermissionOnPrompt(WKStringRef origin);
+    void removeAllWebNotificationPermissions();
 
     PlatformWebView* createOtherPlatformWebView(PlatformWebView* parentView, WKPageConfigurationRef, WKNavigationActionRef, WKWindowFeaturesRef);
 

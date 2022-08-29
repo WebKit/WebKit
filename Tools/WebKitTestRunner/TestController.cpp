@@ -794,6 +794,11 @@ bool TestController::denyNotificationPermissionOnPrompt(WKStringRef originString
     return true;
 }
 
+void TestController::removeAllWebNotificationPermissions()
+{
+    m_webNotificationProvider.reset();
+}
+
 void TestController::createWebViewWithOptions(const TestOptions& options)
 {
     auto applicationBundleIdentifier = options.applicationBundleIdentifier();

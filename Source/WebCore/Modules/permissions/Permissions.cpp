@@ -84,7 +84,7 @@ static bool isAllowedByFeaturePolicy(const Document& document, PermissionName na
     }
 }
 
-static std::optional<PermissionQuerySource> sourceFromContext(const ScriptExecutionContext& context)
+std::optional<PermissionQuerySource> Permissions::sourceFromContext(const ScriptExecutionContext& context)
 {
     if (is<Document>(context))
         return PermissionQuerySource::Window;

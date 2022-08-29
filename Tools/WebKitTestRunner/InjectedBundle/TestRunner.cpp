@@ -888,6 +888,7 @@ void TestRunner::denyWebNotificationPermissionOnPrompt(JSStringRef origin)
 void TestRunner::removeAllWebNotificationPermissions()
 {
     WKBundleRemoveAllWebNotificationPermissions(InjectedBundle::singleton().bundle(), page());
+    postSynchronousPageMessage("RemoveAllWebNotificationPermissions");
 }
 
 void TestRunner::simulateWebNotificationClick(JSValueRef notification)

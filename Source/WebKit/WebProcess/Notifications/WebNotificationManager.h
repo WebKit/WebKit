@@ -64,9 +64,6 @@ public:
 
     void didUpdateNotificationDecision(const String& originString, bool allowed);
 
-    // Looks in local cache for permission. If not found, returns DefaultDenied.
-    WebCore::NotificationClient::Permission policyForOrigin(const String& originString) const;
-
     void removeAllPermissionsForTesting();
 
 private:
@@ -88,8 +85,7 @@ private:
     WebProcess& m_process;
 
 #if ENABLE(NOTIFICATIONS)
-    HashMap<UUID, Ref<WebCore::Notification>> m_nonPersistentNotifications;    
-    HashMap<String, bool> m_permissionsMap;
+    HashMap<UUID, Ref<WebCore::Notification>> m_nonPersistentNotifications;
 #endif
 };
 

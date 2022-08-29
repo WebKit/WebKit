@@ -38,14 +38,21 @@
 #include "WebNotification.h"
 #include "WebNotificationManagerMessages.h"
 #include "WebPageProxyMessages.h"
+#include "WebPermissionController.h"
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
 #include <WebCore/Notification.h>
 #include <WebCore/NotificationData.h>
 #include <WebCore/Page.h>
+#include <WebCore/PermissionController.h>
+#include <WebCore/PermissionDescriptor.h>
+#include <WebCore/PermissionName.h>
+#include <WebCore/PermissionState.h>
 #include <WebCore/SWContextManager.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
 #endif
@@ -73,7 +80,12 @@ WebNotificationManager::~WebNotificationManager()
 void WebNotificationManager::initialize(const WebProcessCreationParameters& parameters)
 {
 #if ENABLE(NOTIFICATIONS)
-    m_permissionsMap = parameters.notificationPermissions;
+    auto& webPermissionController = downcast<WebPermissionController>(PermissionController::shared());
+    for (auto const& [originString, allowed] : parameters.notificationPermissions) {
+        auto topOrigin = SecurityOrigin::createFromString(originString)->data();
+        auto permissionState = allowed ? PermissionState::Granted : PermissionState::Denied;
+        webPermissionController.updateCache(ClientOrigin { topOrigin, SecurityOriginData { } }, PermissionDescriptor { PermissionName::Notifications }, permissionState);
+    }
 #else
     UNUSED_PARAM(parameters);
 #endif
@@ -82,7 +94,10 @@ void WebNotificationManager::initialize(const WebProcessCreationParameters& para
 void WebNotificationManager::didUpdateNotificationDecision(const String& originString, bool allowed)
 {
 #if ENABLE(NOTIFICATIONS)
-    m_permissionsMap.set(originString, allowed);
+    auto& webPermissionController = downcast<WebPermissionController>(PermissionController::shared());
+    auto topOrigin = SecurityOrigin::createFromString(originString)->data();
+    auto permissionState = allowed ? PermissionState::Granted : PermissionState::Denied;
+    webPermissionController.updateCache(ClientOrigin { topOrigin, SecurityOriginData { } }, PermissionDescriptor { PermissionName::Notifications }, permissionState);
 #else
     UNUSED_PARAM(originString);
     UNUSED_PARAM(allowed);
@@ -92,33 +107,19 @@ void WebNotificationManager::didUpdateNotificationDecision(const String& originS
 void WebNotificationManager::didRemoveNotificationDecisions(const Vector<String>& originStrings)
 {
 #if ENABLE(NOTIFICATIONS)
+    auto& webPermissionController = downcast<WebPermissionController>(PermissionController::shared());
     for (auto& originString : originStrings)
-        m_permissionsMap.remove(originString);
+        webPermissionController.removeEntryFromCache(ClientOrigin { SecurityOrigin::createFromString(originString)->data(), SecurityOriginData { } });
 #else
     UNUSED_PARAM(originStrings);
 #endif
 }
 
-NotificationClient::Permission WebNotificationManager::policyForOrigin(const String& originString) const
-{
-#if ENABLE(NOTIFICATIONS)
-    if (!originString)
-        return NotificationClient::Permission::Default;
-
-    auto it = m_permissionsMap.find(originString);
-    if (it != m_permissionsMap.end())
-        return it->value ? NotificationClient::Permission::Granted : NotificationClient::Permission::Denied;
-#else
-    UNUSED_PARAM(originString);
-#endif
-    
-    return NotificationClient::Permission::Default;
-}
-
 void WebNotificationManager::removeAllPermissionsForTesting()
 {
 #if ENABLE(NOTIFICATIONS)
-    m_permissionsMap.clear();
+    auto& webPermissionController = downcast<WebPermissionController>(PermissionController::shared());
+    webPermissionController.clearCache();
 #endif
 }
 
