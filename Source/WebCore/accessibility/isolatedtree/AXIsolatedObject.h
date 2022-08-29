@@ -238,7 +238,7 @@ private:
     AccessibilitySortDirection sortDirection() const override { return static_cast<AccessibilitySortDirection>(intAttributeValue(AXPropertyName::SortDirection)); }
     bool canvasHasFallbackContent() const override { return boolAttributeValue(AXPropertyName::CanvasHasFallbackContent); }
     bool supportsRangeValue() const override { return boolAttributeValue(AXPropertyName::SupportsRangeValue); }
-    String identifierAttribute() const override { return stringAttributeValue(AXPropertyName::IdentifierAttribute); }
+    String identifierAttribute() const override;
     String linkRelValue() const override { return stringAttributeValue(AXPropertyName::LinkRelValue); }
     void classList(Vector<String>&) const override;
     AccessibilityCurrentState currentState() const override { return static_cast<AccessibilityCurrentState>(intAttributeValue(AXPropertyName::CurrentState)); }

@@ -174,7 +174,11 @@ void AXIsolatedObject::initializeProperties(Ref<AXCoreObject> coreObject, IsRoot
     setProperty(AXPropertyName::SortDirection, static_cast<int>(object.sortDirection()));
     setProperty(AXPropertyName::CanvasHasFallbackContent, object.canvasHasFallbackContent());
     setProperty(AXPropertyName::SupportsRangeValue, object.supportsRangeValue());
+#if !LOG_DISABLED
+    // Eagerly cache ID when logging is enabled so that we can log isolated objects without constant deadlocks.
+    // Don't cache ID when logging is disabled because we don't expect non-test AX clients to actually request it.
     setProperty(AXPropertyName::IdentifierAttribute, object.identifierAttribute().isolatedCopy());
+#endif
     setProperty(AXPropertyName::LinkRelValue, object.linkRelValue().isolatedCopy());
     setProperty(AXPropertyName::CurrentState, static_cast<int>(object.currentState()));
     setProperty(AXPropertyName::CurrentValue, object.currentValue().isolatedCopy());
@@ -1403,6 +1407,19 @@ int AXIsolatedObject::insertionPointLineNumber() const
             return axObject->insertionPointLineNumber();
         return -1;
     });
+}
+
+String AXIsolatedObject::identifierAttribute() const
+{
+#if !LOG_DISABLED
+    return stringAttributeValue(AXPropertyName::IdentifierAttribute);
+#else
+    return Accessibility::retrieveValueFromMainThread<String>([this] () -> String {
+        if (auto* object = associatedAXObject())
+            return object->identifierAttribute().isolatedCopy();
+        return { };
+    });
+#endif
 }
 
 PlainTextRange AXIsolatedObject::doAXRangeForLine(unsigned lineIndex) const

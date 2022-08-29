@@ -1983,7 +1983,9 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         updateIsolatedTree(get(element), AXURLChanged);
     else if (attrName == idAttr) {
         relationsNeedUpdate(true);
-        updateIsolatedTree(get(element), AXObjectCache::AXIdAttributeChanged);
+#if !LOG_DISABLED
+        updateIsolatedTree(get(element), AXIdAttributeChanged);
+#endif
     }
 #endif
     else if (attrName == openAttr && is<HTMLDialogElement>(*element)) {
