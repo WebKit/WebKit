@@ -26,6 +26,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "AbortableTaskQueue.h"
 #include "GStreamerCommon.h"
 #include "GStreamerEMEUtilities.h"
 #include "ImageOrientation.h"
@@ -599,6 +600,8 @@ private:
 #endif
 
     GRefPtr<GstStreamCollection> m_streamCollection;
+
+    AbortableTaskQueue m_abortableTaskQueue;
 };
 
 }
