@@ -27,6 +27,7 @@
 
 #include "ArgumentCoders.h" // NOLINT
 #include "Decoder.h" // NOLINT
+#include "GeneratedSerializers.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
 #include "TestWithStreamBatchedMessages.h" // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT

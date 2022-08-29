@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GeneratedSerializers.h"
 #include "RemoteBindGroupLayoutProxy.h"
 #include "RemoteBindGroupProxy.h"
 #include "RemoteBufferProxy.h"

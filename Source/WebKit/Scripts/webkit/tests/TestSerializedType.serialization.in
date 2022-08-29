@@ -1,0 +1,10 @@
+# test comment
+
+header: "StructHeader.h"
+
+#if ENABLE(TEST_FEATURE)
+struct Namespace::Subnamespace::StructName {
+    FirstMemberType firstMemberName
+    SecondMemberType secondMemberName
+}
+#endif

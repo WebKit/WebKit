@@ -35,6 +35,7 @@
 #if ENABLE(DEPRECATED_FEATURE) || ENABLE(FEATURE_FOR_TESTING)
 #include "DummyType.h" // NOLINT
 #endif
+#include "GeneratedSerializers.h" // NOLINT
 #if PLATFORM(MAC)
 #include "GestureTypes.h" // NOLINT
 #endif

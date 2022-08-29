@@ -1244,6 +1244,8 @@
 		5CA26D81217ABD5B00F97A35 /* WKSafeBrowsingWarning.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CA26D80217ABBB600F97A35 /* WKSafeBrowsingWarning.h */; };
 		5CA26D83217AD1B800F97A35 /* WKSafeBrowsingWarning.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CA26D7F217ABBB600F97A35 /* WKSafeBrowsingWarning.mm */; };
 		5CA9854A210BEB640057EB6B /* SafeBrowsingWarning.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CA98549210BEB5A0057EB6B /* SafeBrowsingWarning.h */; };
+		5CAB7DE028B80FE1002282A6 /* GeneratedSerializers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CAB7DDE28B80FE1002282A6 /* GeneratedSerializers.cpp */; };
+		5CAB7DE128B80FE1002282A6 /* GeneratedSerializers.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CAB7DDF28B80FE1002282A6 /* GeneratedSerializers.h */; };
 		5CABDC8622C40FDE001EDE8E /* WKMessageListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CABDC8522C40FCC001EDE8E /* WKMessageListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CABDC8722C40FED001EDE8E /* APIMessageListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CABDC8322C40FA7001EDE8E /* APIMessageListener.h */; };
 		5CADDE05215046BD0067D309 /* WKWebProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C74300E21500492004BFA17 /* WKWebProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5318,6 +5320,9 @@
 		5CA2F7472350E15400BE5194 /* NetworkSchemeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSchemeRegistry.h; sourceTree = "<group>"; };
 		5CA98549210BEB5A0057EB6B /* SafeBrowsingWarning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SafeBrowsingWarning.h; sourceTree = "<group>"; };
 		5CA9854B210BEB730057EB6B /* SafeBrowsingWarningCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SafeBrowsingWarningCocoa.mm; sourceTree = "<group>"; };
+		5CAB7DDE28B80FE1002282A6 /* GeneratedSerializers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratedSerializers.cpp; sourceTree = "<group>"; };
+		5CAB7DDF28B80FE1002282A6 /* GeneratedSerializers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratedSerializers.h; sourceTree = "<group>"; };
+		5CAB7DE228B86FB8002282A6 /* WebGPUOrigin3D.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUOrigin3D.serialization.in; sourceTree = "<group>"; };
 		5CABDC8322C40FA7001EDE8E /* APIMessageListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIMessageListener.h; sourceTree = "<group>"; };
 		5CABDC8422C40FCC001EDE8E /* WKMessageListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMessageListener.cpp; sourceTree = "<group>"; };
 		5CABDC8522C40FCC001EDE8E /* WKMessageListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMessageListener.h; sourceTree = "<group>"; };
@@ -5369,6 +5374,8 @@
 		5CD2864E1E722F440094FDC8 /* WKContentRuleListStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentRuleListStore.mm; sourceTree = "<group>"; };
 		5CD2864F1E722F440094FDC8 /* WKContentRuleListStoreInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentRuleListStoreInternal.h; sourceTree = "<group>"; };
 		5CD286501E722F440094FDC8 /* WKContentRuleListStorePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentRuleListStorePrivate.h; sourceTree = "<group>"; };
+		5CD4F01B28B6A20700F9ECEA /* WebGPUValidationError.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUValidationError.serialization.in; sourceTree = "<group>"; };
+		5CD4F01C28B6ADDB00F9ECEA /* generate-serializers.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-serializers.py"; sourceTree = "<group>"; };
 		5CD748B523C8EB190092A999 /* WebURLSchemeHandlerIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURLSchemeHandlerIdentifier.h; sourceTree = "<group>"; };
 		5CD748B523C8EB190092A9B5 /* NetworkResourceLoadIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourceLoadIdentifier.h; sourceTree = "<group>"; };
 		5CE0C366229F2D3D003695F0 /* APIContextMenuElementInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIContextMenuElementInfo.cpp; sourceTree = "<group>"; };
@@ -8623,6 +8630,7 @@
 				1CB7467027439CB000F19874 /* WebGPUOrigin2D.h */,
 				1C98C0A027462679002CCB78 /* WebGPUOrigin3D.cpp */,
 				1CB746A027439CBD00F19874 /* WebGPUOrigin3D.h */,
+				5CAB7DE228B86FB8002282A6 /* WebGPUOrigin3D.serialization.in */,
 				1C98C0C12746267F002CCB78 /* WebGPUOutOfMemoryError.cpp */,
 				1C98C07C2744B991002CCB78 /* WebGPUOutOfMemoryError.h */,
 				1C98C09F27462679002CCB78 /* WebGPUPipelineDescriptorBase.cpp */,
@@ -8677,6 +8685,7 @@
 				1CB7468027439CB400F19874 /* WebGPUTextureViewDescriptor.h */,
 				1C98C09827462678002CCB78 /* WebGPUValidationError.cpp */,
 				1C98C07D2744B9B7002CCB78 /* WebGPUValidationError.h */,
+				5CD4F01B28B6A20700F9ECEA /* WebGPUValidationError.serialization.in */,
 				1C98C0D027462681002CCB78 /* WebGPUVertexAttribute.cpp */,
 				1CB7467227439CB000F19874 /* WebGPUVertexAttribute.h */,
 				1C98C0AC2746267B002CCB78 /* WebGPUVertexBufferLayout.cpp */,
@@ -12795,6 +12804,8 @@
 				1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */,
 				1AA575FF1496B7C000A4EE06 /* EventDispatcherMessageReceiver.cpp */,
 				1AA576001496B7C000A4EE06 /* EventDispatcherMessages.h */,
+				5CAB7DDE28B80FE1002282A6 /* GeneratedSerializers.cpp */,
+				5CAB7DDF28B80FE1002282A6 /* GeneratedSerializers.h */,
 				0F5562E627EE28D200953585 /* GPUConnectionToWebProcessMessageReceiver.cpp */,
 				0F5562E527EE28D200953585 /* GPUConnectionToWebProcessMessages.h */,
 				0F5562E727EE28D200953585 /* GPUConnectionToWebProcessMessagesReplies.h */,
@@ -13151,6 +13162,7 @@
 				0FC0856E187CE0A900780D86 /* __init__.py */,
 				4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */,
 				C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */,
+				5CD4F01C28B6ADDB00F9ECEA /* generate-serializers.py */,
 				0FC0856F187CE0A900780D86 /* messages.py */,
 				0FC08570187CE0A900780D86 /* model.py */,
 				0FC08571187CE0A900780D86 /* parser.py */,
@@ -14274,6 +14286,7 @@
 				CD19D2EA2046406F0017074A /* FullscreenTouchSecheuristic.h in Headers */,
 				CDA93DB022F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.h in Headers */,
 				515BE1B31D5902DD00DD7C68 /* GamepadData.h in Headers */,
+				5CAB7DE128B80FE1002282A6 /* GeneratedSerializers.h in Headers */,
 				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
 				9EC532A32447FBAD00215216 /* GeolocationIdentifier.h in Headers */,
 				BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */,
@@ -16933,6 +16946,7 @@
 				CDCDC99E248FE8DA00A69522 /* EndowmentStateTracker.mm in Sources */,
 				1AA576021496B97900A4EE06 /* EventDispatcherMessageReceiver.cpp in Sources */,
 				CDA93DB122F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp in Sources */,
+				5CAB7DE028B80FE1002282A6 /* GeneratedSerializers.cpp in Sources */,
 				C1A152D724E5A29A00978C8B /* HandleXPCEndpointMessages.mm in Sources */,
 				51E9049727BCB3D900929E7E /* ICAppBundle.mm in Sources */,
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,
