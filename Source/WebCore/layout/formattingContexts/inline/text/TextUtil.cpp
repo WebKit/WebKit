@@ -36,6 +36,7 @@
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "SurrogatePairAwareTextIterator.h"
+#include "TextRun.h"
 #include <unicode/ubidi.h>
 #include <wtf/text/TextBreakIterator.h>
 
@@ -353,6 +354,17 @@ TextDirection TextUtil::directionForTextContent(StringView content)
         return TextDirection::LTR;
     return ubidi_getBaseDirection(content.characters16(), content.length()) == UBIDI_RTL ? TextDirection::RTL : TextDirection::LTR;
 }
+
+TextRun TextUtil::ellipsisTextRun(bool isHorizontal)
+{
+    if (isHorizontal) {
+        static MainThreadNeverDestroyed<const AtomString> horizontalEllipsisStr(&horizontalEllipsis, 1);
+        return TextRun { horizontalEllipsisStr->string() };
+    }
+    static MainThreadNeverDestroyed<const AtomString> verticalEllipsisStr(&verticalEllipsis, 1);
+    return TextRun { verticalEllipsisStr->string() };
+}
+
 
 }
 }

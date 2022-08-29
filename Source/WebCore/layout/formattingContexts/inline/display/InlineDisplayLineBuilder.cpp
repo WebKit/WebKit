@@ -129,8 +129,7 @@ std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisRect(const Li
         }
         ellipsisStart = std::max(ellipsisStart, lineRun.logicalRight());
     }
-    static MainThreadNeverDestroyed<const AtomString> ellipsisStr(&horizontalEllipsis, 1);
-    auto ellipsisWidth = !lineBox.lineIndex() ? root().firstLineStyle().fontCascade().width(TextRun { ellipsisStr->string() }) : root().style().fontCascade().width(TextRun { ellipsisStr->string() });
+    auto ellipsisWidth = !lineBox.lineIndex() ? root().firstLineStyle().fontCascade().width(TextUtil::ellipsisTextRun()) : root().style().fontCascade().width(TextUtil::ellipsisTextRun());
     auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
     auto lineBoxRect = lineBox.logicalRect();
     auto ellipsisRect = FloatRect { lineBoxRect.left() + ellipsisStart, lineBoxRect.top() + rootInlineBoxRect.top(), ellipsisWidth, rootInlineBoxRect.height() };

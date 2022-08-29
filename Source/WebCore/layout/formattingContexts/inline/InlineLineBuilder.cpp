@@ -589,9 +589,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
 
     auto needsTextOverflowAdjustment = !isInIntrinsicWidthMode && rootStyle.textOverflow() == TextOverflow::Ellipsis && horizontalAvailableSpace < m_line.contentLogicalWidth();
     if (needsTextOverflowAdjustment) {
-        static MainThreadNeverDestroyed<const AtomString> ellipsisStr(&horizontalEllipsis, 1);
-        auto ellipsisRun = WebCore::TextRun { ellipsisStr->string() };
-        auto ellipsisWidth = isFirstLine() ? root().firstLineStyle().fontCascade().width(ellipsisRun) : rootStyle.fontCascade().width(ellipsisRun);
+        auto ellipsisWidth = isFirstLine() ? root().firstLineStyle().fontCascade().width(TextUtil::ellipsisTextRun()) : rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
         auto logicalRightForContentWithoutEllipsis = std::max(0.f, horizontalAvailableSpace - ellipsisWidth);
         m_line.truncate(logicalRightForContentWithoutEllipsis);
     }

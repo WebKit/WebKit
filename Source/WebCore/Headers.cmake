@@ -1005,8 +1005,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/flex/FlexFormattingState.h
     layout/formattingContexts/flex/FlexLayout.h
 
-    layout/formattingContexts/inline/display/InlineDisplayBox.h
+    layout/formattingContexts/inline/InlineItem.h
+    layout/formattingContexts/inline/InlineLine.h
     layout/formattingContexts/inline/InlineRect.h
+    layout/formattingContexts/inline/InlineTextItem.h
+
+    layout/formattingContexts/inline/display/InlineDisplayBox.h
+
+    layout/formattingContexts/inline/text/TextUtil.h
 
     layout/integration/LayoutIntegrationBoxTree.h
 
@@ -1026,6 +1032,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/layouttree/LayoutContainerBox.h
     layout/layouttree/LayoutBox.h
     layout/layouttree/LayoutInitialContainingBlock.h
+    layout/layouttree/LayoutInlineTextBox.h
 
     loader/CanvasActivityRecord.h
     loader/ContentFilterClient.h

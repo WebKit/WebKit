@@ -30,6 +30,7 @@
 #include "FloatRect.h"
 #include "LayoutBox.h"
 #include "TextRun.h"
+#include "TextUtil.h"
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -77,11 +78,7 @@ public:
 
     bool hasEllipsis() const { return m_ellipsisVisualRect.has_value(); }
     FloatRect ellipsisVisualRect() const { return *m_ellipsisVisualRect; }
-    TextRun ellipsisText() const
-    {
-        static MainThreadNeverDestroyed<const AtomString> ellipsisStr(&horizontalEllipsis, 1);
-        return TextRun { ellipsisStr->string() };
-    }
+    TextRun ellipsisText() const { return TextRun { Layout::TextUtil::ellipsisTextRun(isHorizontal()) }; }
 
     bool isHorizontal() const { return m_isHorizontal; }
 
