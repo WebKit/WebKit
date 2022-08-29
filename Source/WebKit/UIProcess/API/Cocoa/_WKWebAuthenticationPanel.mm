@@ -1013,12 +1013,12 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
         result.rpId = options.relyingPartyIdentifier;
     if (options.allowCredentials)
         result.allowCredentials = publicKeyCredentialDescriptors(options.allowCredentials);
-	result.userVerification = userVerification(options.userVerification);
-	result.authenticatorAttachment = authenticatorAttachment(options.authenticatorAttachment);
-	if (options.extensionsCBOR)
-		result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(asUInt8Span(options.extensionsCBOR));
-	else
-    	result.extensions = authenticationExtensionsClientInputs(options.extensions);
+    if (options.extensionsCBOR)
+        result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(asUInt8Span(options.extensionsCBOR));
+    else
+        result.extensions = authenticationExtensionsClientInputs(options.extensions);
+    result.userVerification = userVerification(options.userVerification);
+    result.authenticatorAttachment = authenticatorAttachment(options.authenticatorAttachment);
 #endif
 
     return result;
