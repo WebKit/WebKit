@@ -113,6 +113,8 @@ public:
         StringLength,
         DirectArgumentsLength,
         ScopedArgumentsLength,
+        RegExpLastIndex,
+        SetRegExpLastIndex,
         ModuleNamespaceLoad,
         InstanceOfHit,
         InstanceOfMiss,

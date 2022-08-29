@@ -43,6 +43,7 @@
 #include "LinkBuffer.h"
 #include "ModuleNamespaceAccessCase.h"
 #include "PolymorphicAccess.h"
+#include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
 #include "StructureStubInfo.h"
@@ -80,6 +81,8 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case RegExpLastIndex:
+    case SetRegExpLastIndex:
     case ModuleNamespaceLoad:
     case Replace:
     case InstanceOfGeneric:
@@ -303,6 +306,8 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case RegExpLastIndex:
+    case SetRegExpLastIndex:
     case ModuleNamespaceLoad:
     case InstanceOfHit:
     case InstanceOfMiss:
@@ -368,6 +373,8 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case RegExpLastIndex:
+    case SetRegExpLastIndex:
     case ModuleNamespaceLoad:
     case CheckPrivateBrand:
     case SetPrivateBrand:
@@ -434,6 +441,8 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case RegExpLastIndex:
+    case SetRegExpLastIndex:
     case ModuleNamespaceLoad:
     case InstanceOfHit:
     case InstanceOfMiss:
@@ -501,6 +510,8 @@ bool AccessCase::needsScratchFPR() const
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case RegExpLastIndex:
+    case SetRegExpLastIndex:
     case ModuleNamespaceLoad:
     case InstanceOfHit:
     case InstanceOfMiss:
@@ -606,6 +617,8 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case RegExpLastIndex:
+    case SetRegExpLastIndex:
     case InstanceOfGeneric:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
@@ -671,6 +684,8 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case RegExpLastIndex:
+    case SetRegExpLastIndex:
     case ModuleNamespaceLoad:
     case InstanceOfHit:
     case InstanceOfMiss:
@@ -774,6 +789,8 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case RegExpLastIndex:
+    case SetRegExpLastIndex:
     case IndexedScopedArgumentsLoad:
     case IndexedDirectArgumentsLoad:
     case IndexedTypedArrayInt8Load:
@@ -1094,6 +1111,23 @@ void AccessCase::generateWithGuard(
             CCallHelpers::Address(baseGPR, ScopedArguments::offsetOfTotalLength()),
             valueRegs.payloadGPR());
         jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
+        state.succeed();
+        return;
+    }
+
+    case RegExpLastIndex: {
+        ASSERT(!viaProxy());
+        fallThrough.append(jit.branchIfNotType(baseGPR, RegExpObjectType));
+        jit.loadValue(CCallHelpers::Address(baseGPR, RegExpObject::offsetOfLastIndex()), valueRegs);
+        state.succeed();
+        return;
+    }
+
+    case SetRegExpLastIndex: {
+        ASSERT(!viaProxy());
+        fallThrough.append(jit.branchIfNotType(baseGPR, RegExpObjectType));
+        state.failAndIgnore.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(baseGPR, RegExpObject::offsetOfRegExpAndFlags()), CCallHelpers::TrustedImm32(RegExpObject::lastIndexIsNotWritableFlag)));
+        jit.storeValue(valueRegs, CCallHelpers::Address(baseGPR, RegExpObject::offsetOfLastIndex()));
         state.succeed();
         return;
     }
@@ -2537,6 +2571,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case RegExpLastIndex:
+    case SetRegExpLastIndex:
     case ModuleNamespaceLoad:
     case InstanceOfGeneric:
     case IndexedInt32Load:
@@ -2628,6 +2664,8 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case RegExpLastIndex:
+    case SetRegExpLastIndex:
     case CheckPrivateBrand:
     case SetPrivateBrand:
     case IndexedInt32Load:
@@ -2743,6 +2781,8 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case RegExpLastIndex:
+    case SetRegExpLastIndex:
     case CheckPrivateBrand:
     case SetPrivateBrand:
     case IndexedInt32Load:
