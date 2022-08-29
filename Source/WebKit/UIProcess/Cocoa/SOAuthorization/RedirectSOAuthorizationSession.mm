@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,13 +38,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<SOAuthorizationSession> RedirectSOAuthorizationSession::create(SOAuthorization *soAuthorization, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
+Ref<SOAuthorizationSession> RedirectSOAuthorizationSession::create(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
 {
-    return adoptRef(*new RedirectSOAuthorizationSession(soAuthorization, WTFMove(navigationAction), page, WTFMove(completionHandler)));
+    return adoptRef(*new RedirectSOAuthorizationSession(WTFMove(navigationAction), page, WTFMove(completionHandler)));
 }
 
-RedirectSOAuthorizationSession::RedirectSOAuthorizationSession(SOAuthorization *soAuthorization, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
-    : NavigationSOAuthorizationSession(soAuthorization, WTFMove(navigationAction), page, InitiatingAction::Redirect, WTFMove(completionHandler))
+RedirectSOAuthorizationSession::RedirectSOAuthorizationSession(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
+    : NavigationSOAuthorizationSession(WTFMove(navigationAction), page, InitiatingAction::Redirect, WTFMove(completionHandler))
 {
 }
 

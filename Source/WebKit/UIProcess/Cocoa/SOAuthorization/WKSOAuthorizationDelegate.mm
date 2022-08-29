@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -144,9 +144,18 @@
 {
     RELEASE_ASSERT(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("setSession: (existing session = %p, new session = %p)", _session.get(), session.get());
-    _session = WTFMove(session);
+    if (_session.get() == session.get())
+        return;
+
     if (_session)
+        _session->setSOAuthorizationDelegate(nil);
+
+    _session = WTFMove(session);
+
+    if (_session) {
+        _session->setSOAuthorizationDelegate(self);
         _session->shouldStart();
+    }
 }
 @end
 
