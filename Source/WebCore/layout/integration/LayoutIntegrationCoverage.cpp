@@ -607,10 +607,15 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineClamp, reasons, includeReasons);
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
+    auto contentHasFloat = flow.containsFloats();
     auto hasSeenInlineBox = false;
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
-        if (auto childReasons = canUseForChild(*walker.current(), includeReasons))
+        auto& child = *walker.current();
+        if (auto childReasons = canUseForChild(child, includeReasons))
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
+        auto nonLineBreakBoxWithFloatClear = contentHasFloat && !is<RenderLineBreak>(child) && RenderStyle::usedClear(child) != UsedClear::None;
+        if (nonLineBreakBoxWithFloatClear)
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
         hasSeenInlineBox = hasSeenInlineBox || is<RenderInline>(*walker.current());
     }
     auto styleReasons = canUseForStyle(flow, includeReasons);
