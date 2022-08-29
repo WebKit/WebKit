@@ -120,6 +120,14 @@ bool URL::hasSpecialScheme() const
         || protocolIs("wss"_s);
 }
 
+bool URL::hasLocalScheme() const
+{
+    // https://fetch.spec.whatwg.org/#local-scheme
+    return protocolIs("about"_s)
+        || protocolIs("blob"_s)
+        || protocolIs("data"_s);
+}
+
 unsigned URL::pathStart() const
 {
     unsigned start = m_hostEnd + m_portLength;
