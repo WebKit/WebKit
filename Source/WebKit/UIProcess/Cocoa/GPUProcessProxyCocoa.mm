@@ -47,8 +47,6 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
 bool GPUProcessProxy::isPowerLoggingInTaskMode()
 {
-    if (!PLQueryRegistered)
-        return false;
     auto dictionary = PLQueryRegistered(PLClientIDWebKit, CFSTR("TaskModeQuery"), nullptr);
     if (!dictionary)
         return false;
