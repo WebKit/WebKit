@@ -20,6 +20,9 @@
 #include "config.h"
 #include "WebKitPrintOperation.h"
 
+#include "Attachment.h"
+#include "SharedMemory.h"
+#include "WebKitError.h"
 #include "WebKitPrintCustomWidgetPrivate.h"
 #include "WebKitPrintOperationPrivate.h"
 #include "WebKitPrivate.h"
@@ -81,6 +84,11 @@ struct _WebKitPrintOperationPrivate {
 
     GRefPtr<GtkPrintSettings> printSettings;
     GRefPtr<GtkPageSetup> pageSetup;
+    GRefPtr<GtkPrinter> printer;
+#if HAVE(GTK_UNIX_PRINTING)
+    GRefPtr<GtkPrintJob> printJob;
+    IPC::Attachment attachment;
+#endif
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -291,6 +299,7 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOpe
     if (gtk_dialog_run(GTK_DIALOG(printDialog)) == GTK_RESPONSE_OK) {
         priv->printSettings = adoptGRef(gtk_print_unix_dialog_get_settings(printDialog));
         priv->pageSetup = gtk_print_unix_dialog_get_page_setup(printDialog);
+        priv->printer = gtk_print_unix_dialog_get_selected_printer(printDialog);
         returnValue = WEBKIT_PRINT_OPERATION_RESPONSE_PRINT;
         if (customWidget)
             webkitPrintCustomWidgetEmitCustomWidgetApplySignal(customWidget.get());
@@ -309,29 +318,77 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOpe
 }
 #endif
 
-static void drawPagesForPrintingCompleted(API::Error* wkPrintError, WebKitPrintOperation* printOperation)
+static void webkitPrintOperationFailed(WebKitPrintOperation* printOperation, GUniquePtr<GError>&& error)
 {
-    // When running synchronously WebPageProxy::printFrame() calls endPrinting().
-    if (printOperation->priv->printMode == PrintInfo::PrintModeAsync && printOperation->priv->webView)
-        webkitWebViewGetPage(printOperation->priv->webView).endPrinting();
-
-    const WebCore::ResourceError& resourceError = wkPrintError ? wkPrintError->platformError() : WebCore::ResourceError();
-    if (!resourceError.isNull()) {
-        GUniquePtr<GError> printError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
-            toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().data()));
-        g_signal_emit(printOperation, signals[FAILED], 0, printError.get());
-    }
-    g_signal_emit(printOperation, signals[FINISHED], 0, NULL);
+    g_signal_emit(printOperation, signals[FAILED], 0, error.get());
 }
 
-static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOperation, WebFrameProxy* webFrame, GtkPrintSettings* printSettings, GtkPageSetup* pageSetup)
+static void webkitPrintOperationFailed(WebKitPrintOperation* printOperation, WebCore::ResourceError&& error)
 {
-    PrintInfo printInfo(printSettings, pageSetup, printOperation->priv->printMode);
+    webkitPrintOperationFailed(printOperation, GUniquePtr<GError> { g_error_new_literal(g_quark_from_string(error.domain().utf8().data()),
+        toWebKitError(error.errorCode()), error.localizedDescription().utf8().data()) });
+}
+
+static void webkitPrintOperationFinished(WebKitPrintOperation* printOperation)
+{
+    auto* priv = printOperation->priv;
+    priv->printJob = nullptr;
+    priv->attachment = { };
+
+    g_signal_emit(printOperation, signals[FINISHED], 0);
+}
+
+static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOperation, WebFrameProxy* webFrame, GtkPrinter* printer, GtkPrintSettings* printSettings, GtkPageSetup* pageSetup)
+{
+    if (!printer) {
+        webkitPrintOperationFailed(printOperation, GUniquePtr<GError> { g_error_new_literal(WEBKIT_PRINT_ERROR, WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND, _("Printer not found")) });
+        webkitPrintOperationFinished(printOperation);
+        return;
+    }
+
+#if HAVE(GTK_UNIX_PRINTING)
+    static unsigned jobNumber = 0;
+    const char* applicationName = g_get_application_name();
+    GUniquePtr<char> jobName(g_strdup_printf("%s job #%u", applicationName ? applicationName : "WebKit", ++jobNumber));
+    auto* priv = printOperation->priv;
+    priv->printJob = adoptGRef(gtk_print_job_new(jobName.get(), printer, printSettings, pageSetup));
+
+    // GTK print backends update the settings on create_cairo_surface, so here we call get_surface just to get the settings updated.
+    auto* surface = gtk_print_job_get_surface(priv->printJob.get(), nullptr);
+    cairo_surface_finish(surface);
+
+    PrintInfo printInfo(priv->printJob.get(), printOperation->priv->printMode);
     auto& page = webkitWebViewGetPage(printOperation->priv->webView);
-    g_object_ref(printOperation);
-    page.drawPagesForPrinting(webFrame, printInfo, [printOperation](API::Error* printError) {
-        drawPagesForPrintingCompleted(printError, adoptGRef(printOperation).get());
+    page.drawPagesForPrinting(webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation)](std::optional<SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
+        auto* priv = printOperation->priv;
+        // When running synchronously, WebPageProxy::printFrame() calls endPrinting().
+        if (priv->printMode == PrintInfo::PrintModeAsync && priv->webView)
+            webkitWebViewGetPage(priv->webView).endPrinting();
+
+        if (!data || !error.isNull()) {
+            if (!error.isNull())
+                webkitPrintOperationFailed(printOperation.get(), WTFMove(error));
+            webkitPrintOperationFinished(printOperation.get());
+            return;
+        }
+
+        priv->attachment = data->releaseAttachment();
+        GUniqueOutPtr<GError> jobError;
+        gtk_print_job_set_source_fd(priv->printJob.get(), priv->attachment.fd().value(), &jobError.outPtr());
+        if (jobError) {
+            webkitPrintOperationFailed(printOperation.get(), GUniquePtr<GError> { g_error_new_literal(WEBKIT_PRINT_ERROR, WEBKIT_PRINT_ERROR_GENERAL, jobError->message) });
+            webkitPrintOperationFinished(printOperation.get());
+            return;
+        }
+
+        gtk_print_job_send(priv->printJob.get(), [](GtkPrintJob* printJob, gpointer userData, const GError* error) {
+            auto printOperation = adoptGRef(static_cast<WebKitPrintOperation*>(userData));
+            if (error)
+                webkitPrintOperationFailed(printOperation.get(), GUniquePtr<GError> { g_error_new_literal(WEBKIT_PRINT_ERROR, WEBKIT_PRINT_ERROR_GENERAL, error->message) });
+            webkitPrintOperationFinished(printOperation.get());
+        }, printOperation.leakRef(), nullptr);
     });
+#endif
 }
 
 WebKitPrintOperationResponse webkitPrintOperationRunDialogForFrame(WebKitPrintOperation* printOperation, GtkWindow* parent, WebFrameProxy* webFrame)
@@ -347,7 +404,7 @@ WebKitPrintOperationResponse webkitPrintOperationRunDialogForFrame(WebKitPrintOp
     if (response == WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL)
         return response;
 
-    webkitPrintOperationPrintPagesForFrame(printOperation, webFrame, priv->printSettings.get(), priv->pageSetup.get());
+    webkitPrintOperationPrintPagesForFrame(printOperation, webFrame, priv->printer.get(), priv->printSettings.get(), priv->pageSetup.get());
     return response;
 }
 
@@ -483,6 +540,30 @@ WebKitPrintOperationResponse webkit_print_operation_run_dialog(WebKitPrintOperat
     return webkitPrintOperationRunDialogForFrame(printOperation, parent, page.mainFrame());
 }
 
+static GRefPtr<GtkPrinter> printerFromSettingsOrDefault(GtkPrintSettings* settings)
+{
+    struct FindPrinterData {
+        const char* printerName;
+        GRefPtr<GtkPrinter> printer;
+    } data = { gtk_print_settings_get_printer(settings), nullptr };
+
+    gtk_enumerate_printers([](GtkPrinter* printer, gpointer userData) -> gboolean {
+        auto& data = *static_cast<FindPrinterData*>(userData);
+        if (data.printerName && !g_strcmp0(gtk_printer_get_name(printer), data.printerName)) {
+            data.printer = printer;
+            return TRUE;
+        }
+        if (!data.printerName && gtk_printer_is_default(printer)) {
+            data.printer = printer;
+            return TRUE;
+        }
+
+        return FALSE;
+    }, &data, nullptr, TRUE);
+
+    return data.printer;
+}
+
 /**
  * webkit_print_operation_print:
  * @print_operation: a #WebKitPrintOperation
@@ -505,7 +586,8 @@ void webkit_print_operation_print(WebKitPrintOperation* printOperation)
     WebKitPrintOperationPrivate* priv = printOperation->priv;
     GRefPtr<GtkPrintSettings> printSettings = priv->printSettings ? priv->printSettings : adoptGRef(gtk_print_settings_new());
     GRefPtr<GtkPageSetup> pageSetup = priv->pageSetup ? priv->pageSetup : adoptGRef(gtk_page_setup_new());
+    GRefPtr<GtkPrinter> printer = printerFromSettingsOrDefault(printSettings.get());
 
     auto& page = webkitWebViewGetPage(printOperation->priv->webView);
-    webkitPrintOperationPrintPagesForFrame(printOperation, page.mainFrame(), printSettings.get(), pageSetup.get());
+    webkitPrintOperationPrintPagesForFrame(printOperation, page.mainFrame(), printer.get(), printSettings.get(), pageSetup.get());
 }
