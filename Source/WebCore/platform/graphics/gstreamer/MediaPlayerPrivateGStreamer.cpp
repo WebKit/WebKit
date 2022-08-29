@@ -211,6 +211,8 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     GST_DEBUG_OBJECT(pipeline(), "Disposing player");
     m_isPlayerShuttingDown.store(true);
 
+    m_abortableTaskQueue.startAborting();
+
     for (auto& track : m_audioTracks.values())
         track->disconnect();
 
@@ -272,6 +274,7 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 
     m_player = nullptr;
     m_notifier->invalidate();
+    m_abortableTaskQueue.finishAborting();
 }
 
 bool MediaPlayerPrivateGStreamer::isAvailable()
@@ -3363,8 +3366,12 @@ void MediaPlayerPrivateGStreamer::updateVideoOrientation(const GstTagList* tagLi
     if (m_videoSourceOrientation.usesWidthAsHeight())
         m_videoSize = m_videoSize.transposedSize();
 
-    callOnMainThreadAndWait([this] {
+    m_abortableTaskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([weakThis = WeakPtr { *this }, this] {
+        if (!weakThis)
+            return AbortableTaskQueue::Void();
+
         m_player->sizeChanged();
+        return AbortableTaskQueue::Void();
     });
 }
 
