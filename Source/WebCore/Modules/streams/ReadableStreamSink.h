@@ -27,6 +27,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include <JavaScriptCore/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Span.h>
@@ -40,7 +41,7 @@ class ReadableStreamSink : public RefCounted<ReadableStreamSink> {
 public:
     virtual ~ReadableStreamSink() = default;
 
-    virtual void enqueue(const BufferSource&) = 0;
+    virtual void enqueue(const Ref<JSC::Uint8Array>&) = 0;
     virtual void close() = 0;
     virtual void error(String&&) = 0;
 };
@@ -55,7 +56,7 @@ public:
 private:
     explicit ReadableStreamToSharedBufferSink(Callback&&);
 
-    void enqueue(const BufferSource&) final;
+    void enqueue(const Ref<JSC::Uint8Array>&) final;
     void close() final;
     void error(String&&) final;
 

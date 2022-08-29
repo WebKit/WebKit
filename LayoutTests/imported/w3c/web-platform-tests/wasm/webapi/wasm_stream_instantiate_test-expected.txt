@@ -9,7 +9,7 @@ PASS instantiateStreaming check CORS
 PASS instantiateStreaming raise error if no-cors
 PASS instantiateStreaming receive promise with response created from ArrayBuffer
 PASS instantiateStreaming using ReadableStream with Uint8Array chunks
-FAIL instantiateStreaming using ReadableStream with ArrayBuffer chunk assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS instantiateStreaming using ReadableStream with ArrayBuffer chunk
 PASS instantiateStreaming using blob
 PASS instantiateStreaming using FormData
 

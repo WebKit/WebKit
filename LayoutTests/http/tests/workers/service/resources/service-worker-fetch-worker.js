@@ -5,7 +5,7 @@ function stringToBuffer(value) {
     var view = new Uint16Array(result);
     for (var i = 0; i < value.length; ++i)
         view[i] = value.charCodeAt(i);
-    return result;
+    return new Uint8Array(result);
 }
 
 self.addEventListener("fetch", (event) => {

@@ -27,10 +27,10 @@
 #include "config.h"
 #include "ReadableStreamSink.h"
 
-#include "BufferSource.h"
 #include "DOMException.h"
 #include "ReadableStream.h"
 #include "SharedBuffer.h"
+#include <JavaScriptCore/Uint8Array.h>
 
 namespace WebCore {
 
@@ -44,13 +44,13 @@ void ReadableStreamToSharedBufferSink::pipeFrom(ReadableStream& stream)
     stream.pipeTo(*this);
 }
 
-void ReadableStreamToSharedBufferSink::enqueue(const BufferSource& buffer)
+void ReadableStreamToSharedBufferSink::enqueue(const Ref<JSC::Uint8Array>& buffer)
 {
-    if (!buffer.length())
+    if (!buffer->byteLength())
         return;
 
     if (m_callback) {
-        Span chunk { buffer.data(), buffer.length() };
+        Span<const uint8_t> chunk { buffer->data(), buffer->byteLength() };
         m_callback(&chunk);
     }
 }
