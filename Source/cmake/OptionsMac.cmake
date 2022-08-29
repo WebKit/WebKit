@@ -1,6 +1,7 @@
-# FIXME: These should line up with versions in Version.xcconfig
-set(WEBKIT_MAC_VERSION 609.1.6)
-set(MACOSX_FRAMEWORK_BUNDLE_VERSION 609.1.6+)
+# FIXME: These should line up with versions in Configurations/Version.xcconfig.
+# See Source/WebKitLegacy/PlatformWin.cmake for how WebKitVersion.h is generated.
+set(WEBKIT_MAC_VERSION 615.1.1)
+set(MACOSX_FRAMEWORK_BUNDLE_VERSION 615.1.1+)
 
 WEBKIT_OPTION_BEGIN()
 # Private options shared with other WebKit ports. Add options here only if

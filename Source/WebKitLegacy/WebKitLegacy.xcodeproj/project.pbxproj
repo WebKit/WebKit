@@ -775,7 +775,6 @@
 		1C7B0C650EB2464D00A28502 /* WebInspectorClientCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebInspectorClientCF.cpp; path = cf/WebCoreSupport/WebInspectorClientCF.cpp; sourceTree = SOURCE_ROOT; };
 		1C8CB0790AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEditingDelegatePrivate.h; sourceTree = "<group>"; };
 		1C904FD20BA9DD0F0081E9D0 /* WebKitLegacy.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKitLegacy.xcconfig; sourceTree = "<group>"; };
-		1C904FD30BA9DD0F0081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1C904FD40BA9DD0F0081E9D0 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1C904FD50BA9DD0F0081E9D0 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1CF18F4026BB71B7004B1722 /* WebKitLogInitialization.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitLogInitialization.mm; sourceTree = "<group>"; };
@@ -1668,7 +1667,6 @@
 			children = (
 				1C904FD50BA9DD0F0081E9D0 /* Base.xcconfig */,
 				1C904FD40BA9DD0F0081E9D0 /* DebugRelease.xcconfig */,
-				1C904FD30BA9DD0F0081E9D0 /* Version.xcconfig */,
 				1C904FD20BA9DD0F0081E9D0 /* WebKitLegacy.xcconfig */,
 			);
 			name = Configurations;
@@ -3367,15 +3365,15 @@
 			files = (
 			);
 			inputPaths = (
-				"$(PROJECT_DIR)/mac/Configurations/Version.xcconfig",
+				"$(SRCROOT)/../../Configurations/Version.xcconfig",
 			);
 			name = "Update Info.plist with version information";
 			outputPaths = (
-				"$(PROJECT_DIR)/mac/Info.plist",
+				"$(SRCROOT)/mac/Info.plist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"${PROJECT_DIR}/mac/Info.plist\";\nfi;\n";
+			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"${SRCROOT}/mac/Info.plist\";\nfi;\n";
 		};
 		650473452789431C00AF78A2 /* Create Symlink to Alt Root Path */ = {
 			isa = PBXShellScriptBuildPhase;

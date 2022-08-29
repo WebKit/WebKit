@@ -706,7 +706,6 @@
 		1C5C57E127571CB1003B540D /* DecodeEscapeSequences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecodeEscapeSequences.h; sourceTree = "<group>"; };
 		1C5C57E627573142003B540D /* TextEncodingRegistryIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextEncodingRegistryIOS.mm; sourceTree = "<group>"; };
 		1C5C57E82757318D003B540D /* TextEncodingRegistryMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextEncodingRegistryMac.mm; sourceTree = "<group>"; };
-		1C67CEA21E32EE2600F80F2E /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1C77C8C725D7972000635E0C /* CoreTextSoftLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CoreTextSoftLink.cpp; sourceTree = "<group>"; };
 		1C77C8C825D7972000635E0C /* CoreTextSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTextSoftLink.h; sourceTree = "<group>"; };
 		1C77C8CB25D79B6C00635E0C /* OTSVGTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTSVGTable.h; sourceTree = "<group>"; };
@@ -1266,7 +1265,6 @@
 				1C09D0631E31EC3100725F18 /* Base.xcconfig */,
 				1C09D0621E31EC2800725F18 /* DebugRelease.xcconfig */,
 				1C09D05D1E31C77A00725F18 /* PAL.xcconfig */,
-				1C67CEA21E32EE2600F80F2E /* Version.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";

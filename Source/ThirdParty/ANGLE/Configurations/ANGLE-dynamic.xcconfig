@@ -1,4 +1,4 @@
-#include "Version.xcconfig"
+#include "../../../../Configurations/Version.xcconfig"
 #include "../../../../Configurations/WebKitTargetConditionals.xcconfig"
 
 PRODUCT_NAME = ANGLE-shared;

@@ -4920,7 +4920,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		37119A8020CCB6DD002C6DC9 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		410091CD242CFD5E00C5EDA2 /* aes_nohw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aes_nohw.c; sourceTree = "<group>"; };
 		410091D0242CFD8200C5EDA2 /* gcm_nohw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gcm_nohw.c; sourceTree = "<group>"; };
 		410091D6242E0BBA00C5EDA2 /* video_codec_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video_codec_constants.h; sourceTree = "<group>"; };
@@ -16849,7 +16848,6 @@
 				5C08848A1E4A978C00403995 /* libyuv.xcconfig */,
 				5C4B4A8F1E42C431002651C8 /* opus.xcconfig */,
 				5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */,
-				37119A8020CCB6DD002C6DC9 /* Version.xcconfig */,
 				41F77D1E215BE4AD00E72967 /* yasm.xcconfig */,
 			);
 			path = Configurations;
