@@ -3131,7 +3131,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 {
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
 
-    if (context.detectingContentfulPaint() && context.contenfulPaintDetected())
+    if (context.detectingContentfulPaint() && context.contentfulPaintDetected())
         return;
 
     auto localPaintFlags = paintFlags - PaintLayerFlag::AppliedTransform;
