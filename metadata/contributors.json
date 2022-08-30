@@ -3710,6 +3710,8 @@
       "emails" : [
          "wilander@apple.com"
       ],
+      "expertise" : "Cookies, Tracking prevention, Privacy, Ad attribution",
+      "github" : "johnwilander",
       "name" : "John Wilander",
       "nicks" : [
          "johnwilander"
