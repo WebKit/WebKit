@@ -20,6 +20,7 @@
 #pragma once
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+#include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
 #include "TransformState.h"
 #include <wtf/MathExtras.h>
