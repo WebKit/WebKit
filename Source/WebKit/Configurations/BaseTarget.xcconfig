@@ -23,7 +23,7 @@
 
 #include? "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/PlatformSupport.xcconfig"
 #include "FeatureDefines.xcconfig"
-#include "Version.xcconfig"
+#include "../../../Configurations/Version.xcconfig"
 #include "../../../Configurations/WebKitTargetConditionals.xcconfig"
 
 WK_PRIVATE_FRAMEWORKS_DIR = $(WK_PRIVATE_FRAMEWORKS_DIR_$(USE_INTERNAL_SDK));

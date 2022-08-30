@@ -42,16 +42,16 @@ struct ArrayBufferViewWatchpointAdaptor;
 
 class VM;
 
-class FireDetail {
+class JS_EXPORT_PRIVATE FireDetail {
     void* operator new(size_t) = delete;
     
 public:
     FireDetail() = default;
-    virtual ~FireDetail() = default;
+    virtual ~FireDetail();
     virtual void dump(PrintStream&) const = 0;
 };
 
-class StringFireDetail final : public FireDetail {
+class JS_EXPORT_PRIVATE StringFireDetail final : public FireDetail {
 public:
     StringFireDetail(const char* string)
         : m_string(string)
@@ -153,7 +153,7 @@ public:
     { }
 
 protected:
-    ~Watchpoint();
+    JS_EXPORT_PRIVATE ~Watchpoint();
 
 private:
     friend class WatchpointSet;

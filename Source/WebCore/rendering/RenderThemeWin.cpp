@@ -966,21 +966,12 @@ Color RenderThemeWin::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOpt
 #if ENABLE(VIDEO)
 String RenderThemeWin::stringWithContentsOfFile(const String& name, const String& type)
 {
-#if USE(CF)
-    RetainPtr<CFURLRef> requestedURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundle(), name.createCFString().get(), type.createCFString().get(), 0));
-    if (!requestedURLRef)
-        return String();
+    auto path = webKitBundlePath(name, type, emptyString());
+    if (!path)
+        return { };
 
-    UInt8 requestedFilePath[MAX_PATH];
-    if (!CFURLGetFileSystemRepresentation(requestedURLRef.get(), false, requestedFilePath, MAX_PATH))
-        return String();
-
-    auto contents = FileSystem::readEntireFile(requestedFilePath);
-
+    auto contents = FileSystem::readEntireFile(path);
     return contents ? String::adopt(WTFMove(*contents)) : String();
-#else
-    return emptyString();
-#endif
 }
 
 String RenderThemeWin::mediaControlsStyleSheet()

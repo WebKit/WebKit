@@ -587,11 +587,14 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     }
     m_successiveHyphenatedLineCount = lineEndsWithHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
 
-    auto needsTextOverflowAdjustment = !isInIntrinsicWidthMode && rootStyle.textOverflow() == TextOverflow::Ellipsis && horizontalAvailableSpace < m_line.contentLogicalWidth();
-    if (needsTextOverflowAdjustment) {
-        static MainThreadNeverDestroyed<const AtomString> ellipsisStr(&horizontalEllipsis, 1);
-        auto ellipsisRun = WebCore::TextRun { ellipsisStr->string() };
-        auto ellipsisWidth = isFirstLine() ? root().firstLineStyle().fontCascade().width(ellipsisRun) : rootStyle.fontCascade().width(ellipsisRun);
+    auto needsTextOverflowAdjustment = [&] {
+        if (horizontalAvailableSpace >= m_line.contentLogicalWidth() || isInIntrinsicWidthMode)
+            return false;
+        // text-overflow is in effect when the block container has overflow other than visible.
+        return !rootStyle.isOverflowVisible() && rootStyle.textOverflow() == TextOverflow::Ellipsis;
+    };
+    if (needsTextOverflowAdjustment()) {
+        auto ellipsisWidth = isFirstLine() ? root().firstLineStyle().fontCascade().width(TextUtil::ellipsisTextRun()) : rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
         auto logicalRightForContentWithoutEllipsis = std::max(0.f, horizontalAvailableSpace - ellipsisWidth);
         m_line.truncate(logicalRightForContentWithoutEllipsis);
     }

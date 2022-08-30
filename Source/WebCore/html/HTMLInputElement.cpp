@@ -625,7 +625,7 @@ void HTMLInputElement::subtreeHasChanged()
 {
     m_inputType->subtreeHasChanged();
     // When typing in an input field, childrenChanged is not called, so we need to force the directionality check.
-    calculateAndAdjustDirectionality();
+    updateEffectiveDirectionalityOfDirAuto();
 }
 
 const AtomString& HTMLInputElement::formControlType() const

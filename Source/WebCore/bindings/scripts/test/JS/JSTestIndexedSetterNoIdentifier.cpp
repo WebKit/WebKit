@@ -120,8 +120,8 @@ void JSTestIndexedSetterNoIdentifierPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestIndexedSetterNoIdentifier::s_info = { "TestIndexedSetterNoIdentifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterNoIdentifier) };
 
-JSTestIndexedSetterNoIdentifier::JSTestIndexedSetterNoIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestIndexedSetterNoIdentifier>&& impl)
-    : JSDOMWrapper<TestIndexedSetterNoIdentifier>(structure, globalObject, WTFMove(impl))
+JSTestIndexedSetterNoIdentifier::JSTestIndexedSetterNoIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestIndexedSetterNoIdentifier>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestIndexedSetterNoIdentifier>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

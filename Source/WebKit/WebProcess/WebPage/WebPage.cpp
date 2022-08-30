@@ -1588,10 +1588,7 @@ void WebPage::close()
 #endif
 
 #if PLATFORM(GTK)
-    if (m_printOperation) {
-        m_printOperation->disconnectFromPage();
-        m_printOperation = nullptr;
-    }
+    m_printOperation = nullptr;
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
@@ -5614,7 +5611,7 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
 
 #if PLATFORM(GTK)
     if (!m_printOperation)
-        m_printOperation = WebPrintOperationGtk::create(this, printInfo);
+        m_printOperation = makeUnique<WebPrintOperationGtk>(printInfo);
 #endif
 }
 
@@ -5808,17 +5805,25 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
 }
 
 #elif PLATFORM(GTK)
-void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler)
+void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, WebCore::ResourceError&&)>&& completionHandler)
 {
     beginPrinting(frameID, printInfo);
     if (m_printContext && m_printOperation) {
-        m_printOperation->startPrint(m_printContext.get(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (const WebCore::ResourceError& error) mutable {
+        m_printOperation->startPrint(m_printContext.get(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (RefPtr<WebCore::FragmentedSharedBuffer>&& data, WebCore::ResourceError&& error) mutable {
             m_printOperation = nullptr;
-            completionHandler(error);
+            std::optional<SharedMemory::Handle> ipcHandle;
+            if (error.isNull()) {
+                auto sharedMemory = SharedMemory::copyBuffer(*data);
+                SharedMemory::Handle handle;
+                sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
+                if (!handle.isNull())
+                    ipcHandle = WTFMove(handle);
+            }
+            completionHandler(WTFMove(ipcHandle), WTFMove(error));
         });
         return;
     }
-    completionHandler({ });
+    completionHandler(std::nullopt, { });
 }
 #endif
 

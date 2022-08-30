@@ -27,6 +27,7 @@
 
 #include "ArgumentCoders.h" // NOLINT
 #include "Decoder.h" // NOLINT
+#include "GeneratedSerializers.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
 #include "TestWithImageDataMessages.h" // NOLINT
 #include "WebCoreArgumentCoders.h" // NOLINT

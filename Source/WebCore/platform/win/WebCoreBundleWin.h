@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +24,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreBundleWin_h
-#define WebCoreBundleWin_h
+#pragma once
+
+#include <wtf/Forward.h>
 
 #if USE(CF)
-
 typedef struct __CFBundle* CFBundleRef;
+#endif
 
 namespace WebCore {
 
+#if USE(CF)
 CFBundleRef webKitBundle();
-
-}
-
 #endif
 
-#endif // WebCoreBundleWin_h
+String webKitBundlePath();
+String webKitBundlePath(StringView path);
+String webKitBundlePath(StringView name, StringView type, StringView directory);
+String webKitBundlePath(const Vector<StringView>& components);
+
+}

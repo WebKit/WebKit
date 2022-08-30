@@ -45,7 +45,7 @@ bool ContentfulPaintChecker::qualifiesForContentfulPaint(FrameView& frameView)
     frameView.setPaintsEntireContents(oldEntireContents);
     frameView.setPaintBehavior(oldPaintBehavior);
 
-    return checkerContext.contenfulPaintDetected();
+    return checkerContext.contentfulPaintDetected();
 }
 
 }

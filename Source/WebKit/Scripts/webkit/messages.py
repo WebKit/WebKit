@@ -1069,6 +1069,7 @@ def generate_message_handler(receiver):
         '"%s"' % messages_header_filename(receiver): [None],
         '"HandleMessage.h"': [None],
         '"Decoder.h"': [None],
+        '"GeneratedSerializers.h"': [None],
     }
 
     collect_header_conditions_for_receiver(receiver, header_conditions)

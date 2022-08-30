@@ -128,8 +128,8 @@ void JSTestNamedSetterWithIdentifierPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestNamedSetterWithIdentifier::s_info = { "TestNamedSetterWithIdentifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithIdentifier) };
 
-JSTestNamedSetterWithIdentifier::JSTestNamedSetterWithIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterWithIdentifier>&& impl)
-    : JSDOMWrapper<TestNamedSetterWithIdentifier>(structure, globalObject, WTFMove(impl))
+JSTestNamedSetterWithIdentifier::JSTestNamedSetterWithIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterWithIdentifier>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestNamedSetterWithIdentifier>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

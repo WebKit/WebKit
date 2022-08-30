@@ -146,8 +146,8 @@ void JSTestOperationConditionalPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestOperationConditional::s_info = { "TestOperationConditional"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOperationConditional) };
 
-JSTestOperationConditional::JSTestOperationConditional(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestOperationConditional>&& impl)
-    : JSDOMWrapper<TestOperationConditional>(structure, globalObject, WTFMove(impl))
+JSTestOperationConditional::JSTestOperationConditional(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestOperationConditional>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestOperationConditional>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

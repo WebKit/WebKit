@@ -120,6 +120,7 @@ $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesKeys.h.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb
 $(PROJECT_DIR)/Scripts/generate-https-upgrade-database.sh
 $(PROJECT_DIR)/Scripts/generate-message-receiver.py
+$(PROJECT_DIR)/Scripts/generate-serializers.py
 $(PROJECT_DIR)/Scripts/webkit/__init__.py
 $(PROJECT_DIR)/Scripts/webkit/messages.py
 $(PROJECT_DIR)/Scripts/webkit/model.py
@@ -137,6 +138,8 @@ $(PROJECT_DIR)/Shared/Notifications/NotificationManagerMessageHandler.messages.i
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerProxy.messages.in
 $(PROJECT_DIR)/Shared/Plugins/NPObjectMessageReceiver.messages.in
 $(PROJECT_DIR)/Shared/WebConnection.messages.in
+$(PROJECT_DIR)/Shared/WebGPU/WebGPUOrigin3D.serialization.in
+$(PROJECT_DIR)/Shared/WebGPU/WebGPUValidationError.serialization.in
 $(PROJECT_DIR)/UIProcess/Automation/Automation.json
 $(PROJECT_DIR)/UIProcess/Automation/WebAutomationSession.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in

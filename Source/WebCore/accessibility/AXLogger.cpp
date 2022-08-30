@@ -481,6 +481,12 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXSetSizeChanged:
         stream << "AXSetSizeChanged";
         break;
+    case AXObjectCache::AXNotification::AXTableHeadersChanged:
+        stream << "AXTableHeadersChanged";
+        break;
+    case AXObjectCache::AXNotification::AXURLChanged:
+        stream << "AXURLChanged";
+        break;
     case AXObjectCache::AXNotification::AXValueChanged:
         stream << "AXValueChanged";
         break;

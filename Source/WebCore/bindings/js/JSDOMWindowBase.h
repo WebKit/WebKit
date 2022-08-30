@@ -30,8 +30,10 @@
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/Lookup.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <JavaScriptCore/ObjectPropertyChangeAdaptiveWatchpoint.h>
 #include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/StructureInlines.h>
+#include <JavaScriptCore/Watchpoint.h>
 #include <JavaScriptCore/WriteBarrier.h>
 #include <cstddef>
 #include <wtf/Forward.h>
@@ -104,6 +106,10 @@ private:
 
     RefPtr<DOMWindow> m_wrapped;
     RefPtr<Event> m_currentEvent;
+
+    void installAlwaysSlowPutContiguousPrototypesAreSaneWatchpoint(JSC::VM&);
+
+    std::unique_ptr<JSC::ObjectPropertyChangeAdaptiveWatchpoint<JSC::InlineWatchpointSet>> m_staticNodeListPrototypeLengthWatchpoint;
 };
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::JSGlobalObject*, DOMWindow&);

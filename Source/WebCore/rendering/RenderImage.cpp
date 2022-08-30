@@ -480,7 +480,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     LayoutUnit missingImageBorderWidth(1 / deviceScaleFactor);
 
     if (context.detectingContentfulPaint()) {
-        if (!context.contenfulPaintDetected() && !isDeferredImage(element()) && cachedImage() && cachedImage()->canRender(this, deviceScaleFactor) && !contentSize.isEmpty())
+        if (!context.contentfulPaintDetected() && !isDeferredImage(element()) && cachedImage() && cachedImage()->canRender(this, deviceScaleFactor) && !contentSize.isEmpty())
             context.setContentfulPaintDetected();
 
         return;

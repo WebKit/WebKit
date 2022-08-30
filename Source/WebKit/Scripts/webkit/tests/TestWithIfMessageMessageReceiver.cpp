@@ -29,6 +29,7 @@
 #include "ArgumentCoders.h" // NOLINT
 #endif
 #include "Decoder.h" // NOLINT
+#include "GeneratedSerializers.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
 #include "TestWithIfMessageMessages.h" // NOLINT
 #if PLATFORM(COCOA) || PLATFORM(GTK)

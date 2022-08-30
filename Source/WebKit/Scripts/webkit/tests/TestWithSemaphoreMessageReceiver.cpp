@@ -26,6 +26,7 @@
 #include "TestWithSemaphore.h"
 
 #include "Decoder.h" // NOLINT
+#include "GeneratedSerializers.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
 #include "IPCSemaphore.h" // NOLINT
 #include "TestWithSemaphoreMessages.h" // NOLINT

@@ -66,7 +66,7 @@ public:
     // Custom functions
     JSC::JSValue customOperation(JSC::JSGlobalObject&, JSC::CallFrame&);
 protected:
-    JSTestLegacyNoInterfaceObject(JSC::Structure*, JSDOMGlobalObject&, Ref<TestLegacyNoInterfaceObject>&&);
+    JSTestLegacyNoInterfaceObject(JSC::Structure*, JSDOMGlobalObject&, Ref<TestLegacyNoInterfaceObject>&&, JSC::Butterfly* = nullptr);
 
     void finishCreation(JSC::VM&);
 };

@@ -132,8 +132,8 @@ void JSTestNamedSetterWithIndexedGetterAndSetterPrototype::finishCreation(VM& vm
 
 const ClassInfo JSTestNamedSetterWithIndexedGetterAndSetter::s_info = { "TestNamedSetterWithIndexedGetterAndSetter"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithIndexedGetterAndSetter) };
 
-JSTestNamedSetterWithIndexedGetterAndSetter::JSTestNamedSetterWithIndexedGetterAndSetter(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterWithIndexedGetterAndSetter>&& impl)
-    : JSDOMWrapper<TestNamedSetterWithIndexedGetterAndSetter>(structure, globalObject, WTFMove(impl))
+JSTestNamedSetterWithIndexedGetterAndSetter::JSTestNamedSetterWithIndexedGetterAndSetter(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterWithIndexedGetterAndSetter>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestNamedSetterWithIndexedGetterAndSetter>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

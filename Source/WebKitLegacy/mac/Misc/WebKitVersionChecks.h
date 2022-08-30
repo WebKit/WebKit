@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
     For example the version 1.2.3 is returned as 0x00010203 and version 200.3.5 is returned as 0x00C80305
     A version of -1 is returned if the main executable did not link against WebKit.
 
-    Please use the current WebKit version number, available in WebKit/mac/Configurations/Version.xcconfig,
+    Please use the current WebKit version number, available in Configurations/Version.xcconfig,
     when adding a new version constant.
 */
 

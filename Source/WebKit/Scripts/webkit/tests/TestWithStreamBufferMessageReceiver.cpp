@@ -26,6 +26,7 @@
 #include "TestWithStreamBuffer.h"
 
 #include "Decoder.h" // NOLINT
+#include "GeneratedSerializers.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
 #include "StreamConnectionBuffer.h" // NOLINT
 #include "TestWithStreamBufferMessages.h" // NOLINT

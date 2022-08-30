@@ -54,7 +54,7 @@ layer at (8,158) size 182x22 clip at (9,159) size 180x20 scrollX 148 scrollWidth
       text run at (-147,1) width 328 RTL: "Lorem ipsum dolor sit amet, consectetur adipiscing"
 layer at (8,218) size 182x22 clip at (9,219) size 180x20 scrollX 148 scrollWidth 328
   RenderBlock {DIV} at (0,210) size 182x22 [border: (1px solid #000000)]
-    RenderInline {A} at (0,0) size 329x18 [color=#0000EE]
+    RenderInline {A} at (0,0) size 330x18 [color=#0000EE]
       RenderText {#text} at (-147,1) size 329x18
         text run at (-147,1) width 328 RTL: "Lorem ipsum dolor sit amet, consectetur adipiscing"
     RenderText {#text} at (0,0) size 0x0
@@ -64,7 +64,7 @@ layer at (8,278) size 182x22 clip at (9,279) size 180x20 scrollX 148 scrollWidth
       text run at (-147,1) width 328: "Lorem ipsum dolor sit amet, consectetur adipiscing"
 layer at (8,338) size 182x22 clip at (9,339) size 180x20 scrollX 148 scrollWidth 328
   RenderBlock {DIV} at (0,330) size 182x22 [border: (1px solid #000000)]
-    RenderInline {A} at (0,0) size 329x18 [color=#0000EE]
+    RenderInline {A} at (0,0) size 330x18 [color=#0000EE]
       RenderText {#text} at (-147,1) size 329x18
         text run at (-147,1) width 328: "Lorem ipsum dolor sit amet, consectetur adipiscing"
     RenderText {#text} at (0,0) size 0x0

@@ -2002,7 +2002,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
                 for (auto it = descendantsOfType<Element>(*this).begin(); it;) {
                     auto& element = *it;
                     if (auto* elementData = element.elementData()) {
-                        if (auto* attribute = elementData->findLanguageAttribute()) {
+                        if (elementData->findLanguageAttribute()) {
                             it.traverseNextSkippingChildren();
                             continue;
                         }
@@ -2494,63 +2494,52 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 #endif
 
-    auto hostChildElementDidChange = makeScopeExit([&] () {
-        if (parentNode() == &parentOfInsertedTree) {
-            if (auto* shadowRoot = parentNode()->shadowRoot())
-                shadowRoot->hostChildElementDidChange(*this);
+    if (parentOfInsertedTree.isInTreeScope()) {
+        bool becomeConnected = insertionType.connectedToDocument;
+        TreeScope* newScope = &parentOfInsertedTree.treeScope();
+        auto* newDocument = becomeConnected ? dynamicDowncast<HTMLDocument>(newScope->documentScope()) : nullptr;
+        if (!insertionType.treeScopeChanged)
+            newScope = nullptr;
+
+        const AtomString& idValue = getIdAttribute();
+        if (!idValue.isNull()) {
+            if (newScope)
+                updateIdForTreeScope(*newScope, nullAtom(), idValue);
+            if (newDocument)
+                updateIdForDocument(*newDocument, nullAtom(), idValue, AlwaysUpdateHTMLDocumentNamedItemMaps);
         }
-    });
 
-    if (!parentOfInsertedTree.isInTreeScope())
-        return InsertedIntoAncestorResult::Done;
-
-    bool becomeConnected = insertionType.connectedToDocument;
-    TreeScope* newScope = &parentOfInsertedTree.treeScope();
-    auto* newDocument = becomeConnected ? dynamicDowncast<HTMLDocument>(newScope->documentScope()) : nullptr;
-    if (!insertionType.treeScopeChanged)
-        newScope = nullptr;
-
-    const AtomString& idValue = getIdAttribute();
-    if (!idValue.isNull()) {
-        if (newScope)
-            updateIdForTreeScope(*newScope, nullAtom(), idValue);
-        if (newDocument)
-            updateIdForDocument(*newDocument, nullAtom(), idValue, AlwaysUpdateHTMLDocumentNamedItemMaps);
-    }
-
-    const AtomString& nameValue = getNameAttribute();
-    if (!nameValue.isNull()) {
-        if (newScope)
-            updateNameForTreeScope(*newScope, nullAtom(), nameValue);
-        if (newDocument)
-            updateNameForDocument(*newDocument, nullAtom(), nameValue);
-    }
-
-    if (becomeConnected) {
-        if (UNLIKELY(isCustomElementUpgradeCandidate())) {
-            ASSERT(isConnected());
-            CustomElementReactionQueue::tryToUpgradeElement(*this);
+        const AtomString& nameValue = getNameAttribute();
+        if (!nameValue.isNull()) {
+            if (newScope)
+                updateNameForTreeScope(*newScope, nullAtom(), nameValue);
+            if (newDocument)
+                updateNameForDocument(*newDocument, nullAtom(), nameValue);
         }
-        if (UNLIKELY(isDefinedCustomElement()))
-            CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
-    }
 
-    [&]() {
-        if (auto* parent = parentOrShadowHostElement(); parent && parent != document().documentElement() && UNLIKELY(parent->hasRareData())) {
-            auto lang = parent->elementRareData()->effectiveLang();
-            if (!lang.isNull() && langFromAttribute().isNull()) {
-                ensureElementRareData().setEffectiveLang(lang);
-                return;
+        if (becomeConnected) {
+            if (UNLIKELY(isCustomElementUpgradeCandidate())) {
+                ASSERT(isConnected());
+                CustomElementReactionQueue::tryToUpgradeElement(*this);
             }
+            if (UNLIKELY(isDefinedCustomElement()))
+                CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
         }
-        if (UNLIKELY(hasRareData())) {
-            if (!elementRareData()->effectiveLang().isNull() && langFromAttribute().isNull())
-                ensureElementRareData().setEffectiveLang(nullAtom());
-        }
-    }();
 
-    if (shouldAutofocus(*this))
-        document().topDocument().appendAutofocusCandidate(*this);
+        if (shouldAutofocus(*this))
+            document().topDocument().appendAutofocusCandidate(*this);
+    }
+
+    if (parentNode() == &parentOfInsertedTree) {
+        if (auto* shadowRoot = parentNode()->shadowRoot())
+            shadowRoot->hostChildElementDidChange(*this);
+    }
+
+    if (auto* parent = parentOrShadowHostElement(); parent && parent != document().documentElement() && UNLIKELY(parent->hasRareData())) {
+        auto lang = parent->elementRareData()->effectiveLang();
+        if (!lang.isNull() && langFromAttribute().isNull())
+            ensureElementRareData().setEffectiveLang(lang);
+    }
 
     return InsertedIntoAncestorResult::Done;
 }
@@ -2578,26 +2567,22 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
         if (!removalType.treeScopeChanged)
             oldScope = nullptr;
 
-        const AtomString& idValue = getIdAttribute();
-        if (!idValue.isNull()) {
+        if (auto& idValue = getIdAttribute(); !idValue.isEmpty()) {
             if (oldScope)
-                updateIdForTreeScope(*oldScope, idValue, nullAtom());
+                oldScope->removeElementById(*idValue.impl(), *this);
             if (oldHTMLDocument)
                 updateIdForDocument(*oldHTMLDocument, idValue, nullAtom(), AlwaysUpdateHTMLDocumentNamedItemMaps);
         }
 
-        const AtomString& nameValue = getNameAttribute();
-        if (!nameValue.isNull()) {
+        if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
             if (oldScope)
-                updateNameForTreeScope(*oldScope, nameValue, nullAtom());
+                oldScope->removeElementByName(*nameValue.impl(), *this);
             if (oldHTMLDocument)
                 updateNameForDocument(*oldHTMLDocument, nameValue, nullAtom());
         }
 
-        if (oldDocument) {
-            if (oldDocument->cssTarget() == this)
-                oldDocument->setCSSTarget(nullptr);
-        }
+        if (oldDocument && oldDocument->cssTarget() == this)
+            oldDocument->setCSSTarget(nullptr);
 
         if (removalType.disconnectedFromDocument && UNLIKELY(isDefinedCustomElement()))
             CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(*this);
@@ -2614,7 +2599,8 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     ContainerNode::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (UNLIKELY(hasRareData()) && !elementRareData()->effectiveLang().isNull()) {
-        if (langFromAttribute().isNull())
+        if (auto* parent = parentOrShadowHostElement(); langFromAttribute().isNull()
+            && !(parent && UNLIKELY(parent->hasRareData()) && !parent->elementRareData()->effectiveLang().isNull()))
             elementRareData()->setEffectiveLang(nullAtom());
     }
 

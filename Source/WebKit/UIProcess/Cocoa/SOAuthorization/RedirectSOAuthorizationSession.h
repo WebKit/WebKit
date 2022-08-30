@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,10 @@ class RedirectSOAuthorizationSession final : public NavigationSOAuthorizationSes
 public:
     using Callback = CompletionHandler<void(bool)>;
 
-    static Ref<SOAuthorizationSession> create(SOAuthorization *soAuthorization, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler);
+    static Ref<SOAuthorizationSession> create(Ref<API::NavigationAction>&&, WebPageProxy&, Callback&& completionHandler);
 
 private:
-    RedirectSOAuthorizationSession(SOAuthorization *, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&);
+    RedirectSOAuthorizationSession(Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&);
 
     // SOAuthorizationSession
     void fallBackToWebPathInternal() final;

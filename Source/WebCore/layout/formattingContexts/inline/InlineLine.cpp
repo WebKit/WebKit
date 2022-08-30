@@ -177,13 +177,20 @@ void Line::truncate(InlineLayoutUnit logicalRight)
 {
     ASSERT(!m_contentIsTruncated);
     ASSERT(m_contentLogicalWidth > logicalRight);
+    auto isFirstRun = true;
     for (auto& run : m_runs) {
         if (run.isInlineBox())
             continue;
         if (run.logicalRight() > logicalRight) {
-            run.truncate(logicalRight - run.logicalLeft());
-            m_contentIsTruncated = true;
+            // The first character or atomic inline-level element on a line must be clipped rather than ellipsed.
+            if (isFirstRun)
+                m_contentIsTruncated = run.truncate(logicalRight - run.logicalLeft(), Run::CanFullyTruncate::No);
+            else {
+                run.truncate(logicalRight - run.logicalLeft());
+                m_contentIsTruncated = true;
+            }
         }
+        isFirstRun = false;
     }
 }
 
@@ -770,22 +777,28 @@ InlineLayoutUnit Line::Run::removeTrailingWhitespace()
     return trimmedWidth;
 }
 
-void Line::Run::truncate(InlineLayoutUnit visibledWidth)
+bool Line::Run::truncate(InlineLayoutUnit visibleWidth, CanFullyTruncate canFullyTruncate)
 {
-    ASSERT(!visibledWidth || visibledWidth < m_logicalWidth);
-    m_isTruncated = true;
-    if (!isText() || visibledWidth <= 0.f)
-        return;
-    auto leftSide = TextUtil::breakWord(downcast<InlineTextBox>(*m_layoutBox)
-        , m_textContent->start
-        , m_textContent->length
-        , m_logicalWidth
-        , visibledWidth
-        , m_logicalLeft
-        , m_style.fontCascade());
+    ASSERT(!visibleWidth || visibleWidth < m_logicalWidth);
 
-    if (leftSide.length)
-        m_textContent->partiallyVisibleContent = { leftSide.length, leftSide.logicalWidth };
+    if (isText()) {
+        m_isTruncated = true;
+        auto& inlineTextBox = downcast<InlineTextBox>(*m_layoutBox);
+        auto leftSide = TextUtil::WordBreakLeft { };
+        if (visibleWidth > 0.f)
+            leftSide = TextUtil::breakWord(inlineTextBox, m_textContent->start, m_textContent->length, m_logicalWidth, visibleWidth, m_logicalLeft, m_style.fontCascade());
+
+        if (leftSide.length)
+            m_textContent->partiallyVisibleContent = { leftSide.length, leftSide.logicalWidth };
+        else if (canFullyTruncate == CanFullyTruncate::No) {
+            auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextBox, m_textContent->start, m_textContent->length);
+            auto firstCharacterWidth = TextUtil::width(inlineTextBox, inlineTextBox.style().fontCascade(), m_textContent->start, m_textContent->start + firstCharacterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
+            m_textContent->partiallyVisibleContent = { firstCharacterLength, firstCharacterWidth };
+        }
+    } else
+        m_isTruncated = canFullyTruncate == CanFullyTruncate::Yes;
+
+    return m_isTruncated;
 }
 
 }

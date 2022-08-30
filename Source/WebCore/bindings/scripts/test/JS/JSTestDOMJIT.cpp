@@ -575,8 +575,8 @@ void JSTestDOMJITPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestDOMJIT::s_info = { "TestDOMJIT"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDOMJIT) };
 
-JSTestDOMJIT::JSTestDOMJIT(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDOMJIT>&& impl)
-    : JSNode(structure, globalObject, WTFMove(impl))
+JSTestDOMJIT::JSTestDOMJIT(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDOMJIT>&& impl, JSC::Butterfly* butterfly)
+    : JSNode(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

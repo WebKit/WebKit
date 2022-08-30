@@ -9,7 +9,7 @@ PASS compileStreaming check CORS
 PASS compileStreaming raise error if no-cors
 PASS compileStreaming receive promise with response created from ArrayBuffer
 PASS compileStreaming using ReadableStream with Uint8Array chunks
-FAIL compileStreaming using ReadableStream with ArrayBuffer chunk assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS compileStreaming using ReadableStream with ArrayBuffer chunk
 PASS compileStreaming using blob
 PASS compileStreaming using FormData
 

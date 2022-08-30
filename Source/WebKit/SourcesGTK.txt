@@ -446,7 +446,6 @@ WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp
 
 WebProcess/WebPage/gtk/AcceleratedSurfaceWayland.cpp
 WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp @no-unify
-WebProcess/WebPage/gtk/PrinterListGtk.cpp
 WebProcess/WebPage/gtk/WebPageGtk.cpp
 WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
 

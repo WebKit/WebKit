@@ -30,10 +30,10 @@ layer at (99,137) size 5x5
   RenderSVGRect {rect} at (90,82) size 5x5 [fill={[type=SOLID] [color=#00C000]}] [x=98.97] [y=136.50] [width=4.00] [height=4.00]
 layer at (21,137) size 5x5
   RenderSVGRect {rect} at (12,82) size 5x5 [fill={[type=SOLID] [color=#00C000]}] [x=21.03] [y=136.50] [width=4.00] [height=4.00]
-layer at (42,151) size 39x14
-  RenderSVGText {text} at (33,97) size 41x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 40x14
-      chunk 1 text run 1 at (42.00,162.00) startOffset 0 endOffset 7 width 39.35: "stroked"
+layer at (42,151) size 40x14
+  RenderSVGText {text} at (33,96) size 42x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 41x14
+      chunk 1 text run 1 at (42.00,162.00) startOffset 0 endOffset 7 width 40.08: "stroked"
 layer at (125,56) size 104x90
   RenderSVGPath {path} at (117,2) size 104x90 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M 177 56 L 228.962 146 L 125.038 146 L 177 56 Z M 177 71 L 215.971 138.5 L 138.029 138.5 L 177 71 Z"]
 layer at (175,54) size 5x4
@@ -49,9 +49,9 @@ layer at (214,137) size 5x5
 layer at (136,137) size 5x5
   RenderSVGRect {rect} at (127,82) size 5x5 [fill={[type=SOLID] [color=#00C000]}] [x=136.03] [y=136.50] [width=4.00] [height=4.00]
 layer at (162,151) size 25x14
-  RenderSVGText {text} at (153,97) size 26x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 25x14
-      chunk 1 text run 1 at (162.00,162.00) startOffset 0 endOffset 6 width 24.68: "filled"
+  RenderSVGText {text} at (153,96) size 27x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 26x14
+      chunk 1 text run 1 at (162.00,162.00) startOffset 0 endOffset 6 width 25.14: "filled"
 layer at (10,304) size 283x46
   RenderSVGText {text} at (10,304) size 284x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 284x46

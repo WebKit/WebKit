@@ -120,8 +120,8 @@ void JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype::finishCreation(VM& vm
 
 const ClassInfo JSTestNamedSetterWithLegacyOverrideBuiltIns::s_info = { "TestNamedSetterWithLegacyOverrideBuiltIns"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyOverrideBuiltIns) };
 
-JSTestNamedSetterWithLegacyOverrideBuiltIns::JSTestNamedSetterWithLegacyOverrideBuiltIns(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterWithLegacyOverrideBuiltIns>&& impl)
-    : JSDOMWrapper<TestNamedSetterWithLegacyOverrideBuiltIns>(structure, globalObject, WTFMove(impl))
+JSTestNamedSetterWithLegacyOverrideBuiltIns::JSTestNamedSetterWithLegacyOverrideBuiltIns(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterWithLegacyOverrideBuiltIns>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestNamedSetterWithLegacyOverrideBuiltIns>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

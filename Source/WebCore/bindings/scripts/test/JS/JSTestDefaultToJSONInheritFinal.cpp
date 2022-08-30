@@ -148,8 +148,8 @@ void JSTestDefaultToJSONInheritFinalPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestDefaultToJSONInheritFinal::s_info = { "TestDefaultToJSONInheritFinal"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritFinal) };
 
-JSTestDefaultToJSONInheritFinal::JSTestDefaultToJSONInheritFinal(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSONInheritFinal>&& impl)
-    : JSTestDefaultToJSONInherit(structure, globalObject, WTFMove(impl))
+JSTestDefaultToJSONInheritFinal::JSTestDefaultToJSONInheritFinal(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSONInheritFinal>&& impl, JSC::Butterfly* butterfly)
+    : JSTestDefaultToJSONInherit(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

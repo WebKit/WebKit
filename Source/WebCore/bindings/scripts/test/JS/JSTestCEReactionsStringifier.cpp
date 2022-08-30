@@ -133,8 +133,8 @@ void JSTestCEReactionsStringifierPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestCEReactionsStringifier::s_info = { "TestCEReactionsStringifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsStringifier) };
 
-JSTestCEReactionsStringifier::JSTestCEReactionsStringifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCEReactionsStringifier>&& impl)
-    : JSDOMWrapper<TestCEReactionsStringifier>(structure, globalObject, WTFMove(impl))
+JSTestCEReactionsStringifier::JSTestCEReactionsStringifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCEReactionsStringifier>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestCEReactionsStringifier>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

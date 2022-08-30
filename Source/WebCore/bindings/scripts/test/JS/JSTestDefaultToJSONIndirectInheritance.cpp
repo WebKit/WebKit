@@ -116,8 +116,8 @@ void JSTestDefaultToJSONIndirectInheritancePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestDefaultToJSONIndirectInheritance::s_info = { "TestDefaultToJSONIndirectInheritance"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONIndirectInheritance) };
 
-JSTestDefaultToJSONIndirectInheritance::JSTestDefaultToJSONIndirectInheritance(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSONIndirectInheritance>&& impl)
-    : JSTestDefaultToJSONInherit(structure, globalObject, WTFMove(impl))
+JSTestDefaultToJSONIndirectInheritance::JSTestDefaultToJSONIndirectInheritance(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSONIndirectInheritance>&& impl, JSC::Butterfly* butterfly)
+    : JSTestDefaultToJSONInherit(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

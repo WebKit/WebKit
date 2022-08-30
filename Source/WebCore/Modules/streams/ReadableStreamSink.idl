@@ -28,7 +28,7 @@
     LegacyNoInterfaceObject,
     SkipVTableValidation
 ] interface ReadableStreamSink {
-    undefined enqueue(BufferSource chunk);
+    undefined enqueue(Uint8Array chunk);
     undefined close();
     undefined error(DOMString message);
 };

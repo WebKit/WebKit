@@ -23,7 +23,7 @@
 
 #include? "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/PlatformSupport.xcconfig"
 #include "FeatureDefines.xcconfig"
-#include "Version.xcconfig"
+#include "../../../Configurations/Version.xcconfig"
 #include "../../../Configurations/WebKitTargetConditionals.xcconfig"
 
 GCC_PREFIX_HEADER = WebCorePrefix.h;

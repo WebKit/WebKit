@@ -154,8 +154,8 @@ void JSTestCEReactionsPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestCEReactions::s_info = { "TestCEReactions"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactions) };
 
-JSTestCEReactions::JSTestCEReactions(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCEReactions>&& impl)
-    : JSDOMWrapper<TestCEReactions>(structure, globalObject, WTFMove(impl))
+JSTestCEReactions::JSTestCEReactions(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCEReactions>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestCEReactions>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

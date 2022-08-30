@@ -80,6 +80,7 @@ private:
             case Array::Int32:
             case Array::Double:
             case Array::Contiguous:
+            case Array::AlwaysSlowPutContiguous:
                 m_badPropertyJump.fill(jit, jit->m_jit.branch32(
                     MacroAssembler::AboveOrEqual, m_propertyGPR,
                     MacroAssembler::TrustedImm32(MIN_SPARSE_ARRAY_INDEX)));
@@ -100,6 +101,7 @@ private:
             jit->callOperation(operationEnsureDouble, m_tempGPR, SpeculativeJIT::TrustedImmPtr(&vm), m_baseGPR);
             break;
         case Array::Contiguous:
+        case Array::AlwaysSlowPutContiguous:
             jit->callOperation(operationEnsureContiguous, m_tempGPR, SpeculativeJIT::TrustedImmPtr(&vm), m_baseGPR);
             break;
         case Array::ArrayStorage:

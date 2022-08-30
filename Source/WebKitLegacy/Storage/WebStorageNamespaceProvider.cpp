@@ -140,14 +140,13 @@ void WebStorageNamespaceProvider::copySessionStorageNamespace(WebCore::Page& src
         return;
 
     auto& srcPageSessionStorageNamespaces = srcPageIt->value;
-
-    auto& dstSessionStorageNamespaces = static_cast<WebStorageNamespaceProvider&>(dstPage.storageNamespaceProvider()).m_sessionStorageNamespaces;
-    ASSERT(dstSessionStorageNamespaces.find(dstPage) == dstSessionStorageNamespaces.end());
-
-    HashMap<SecurityOriginData, RefPtr<StorageNamespace>> map;
-    auto& dstPageSessionStorageNamespaces = dstSessionStorageNamespaces.add(dstPage, map).iterator->value;
+    HashMap<SecurityOriginData, RefPtr<StorageNamespace>> dstPageSessionStorageNamespaces;
     for (auto& [origin, srcNamespace] : srcPageSessionStorageNamespaces)
         dstPageSessionStorageNamespaces.set(origin, srcNamespace->copy(dstPage));
+
+    auto& dstSessionStorageNamespaces = static_cast<WebStorageNamespaceProvider&>(dstPage.storageNamespaceProvider()).m_sessionStorageNamespaces;
+    ASSERT(!dstSessionStorageNamespaces.contains(dstPage));
+    dstSessionStorageNamespaces.set(dstPage, WTFMove(dstPageSessionStorageNamespaces));
 }
 
 }

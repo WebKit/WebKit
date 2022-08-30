@@ -209,6 +209,7 @@ public:
     template<typename Decoder> static std::optional<URL> decode(Decoder&);
 
     WTF_EXPORT_PRIVATE bool hasSpecialScheme() const;
+    WTF_EXPORT_PRIVATE bool hasLocalScheme() const;
 
 private:
     friend class URLParser;

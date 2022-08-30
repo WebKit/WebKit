@@ -127,8 +127,8 @@ void JSTestStringifierNamedOperationPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestStringifierNamedOperation::s_info = { "TestStringifierNamedOperation"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierNamedOperation) };
 
-JSTestStringifierNamedOperation::JSTestStringifierNamedOperation(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestStringifierNamedOperation>&& impl)
-    : JSDOMWrapper<TestStringifierNamedOperation>(structure, globalObject, WTFMove(impl))
+JSTestStringifierNamedOperation::JSTestStringifierNamedOperation(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestStringifierNamedOperation>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestStringifierNamedOperation>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

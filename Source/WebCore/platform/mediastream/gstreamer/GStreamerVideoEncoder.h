@@ -20,9 +20,7 @@
 
 #pragma once
 
-#include <gst/gst.h>
-
-G_BEGIN_DECLS
+#include "GStreamerCommon.h"
 
 #define WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER (webkit_webrtc_video_encoder_get_type())
 #define WEBKIT_WEBRTC_VIDEO_ENCODER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER, WebKitWebrtcVideoEncoder))
@@ -46,4 +44,4 @@ struct _WebKitWebrtcVideoEncoderClass {
 
 GType webkit_webrtc_video_encoder_get_type(void);
 
-G_END_DECLS
+bool webrtcVideoEncoderSetFormat(WebKitWebrtcVideoEncoder*, GRefPtr<GstCaps>&&);

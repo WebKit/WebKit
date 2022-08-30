@@ -28,7 +28,9 @@
 
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
+#include "TemporalPlainDate.h"
 #include "TemporalPlainDateTime.h"
+#include "TemporalPlainTime.h"
 
 namespace JSC {
 

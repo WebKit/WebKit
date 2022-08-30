@@ -59,7 +59,7 @@ public:
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestException(JSC::Structure*, JSDOMGlobalObject&, Ref<TestException>&&);
+    JSTestException(JSC::Structure*, JSDOMGlobalObject&, Ref<TestException>&&, JSC::Butterfly* = nullptr);
 
     void finishCreation(JSC::VM&);
 };

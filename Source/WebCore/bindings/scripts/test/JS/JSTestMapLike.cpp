@@ -148,8 +148,8 @@ void JSTestMapLikePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestMapLike::s_info = { "TestMapLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLike) };
 
-JSTestMapLike::JSTestMapLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestMapLike>&& impl)
-    : JSDOMWrapper<TestMapLike>(structure, globalObject, WTFMove(impl))
+JSTestMapLike::JSTestMapLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestMapLike>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestMapLike>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

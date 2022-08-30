@@ -119,8 +119,8 @@ void JSTestPluginInterfacePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestPluginInterface::s_info = { "TestPluginInterface"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPluginInterface) };
 
-JSTestPluginInterface::JSTestPluginInterface(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestPluginInterface>&& impl)
-    : JSDOMWrapper<TestPluginInterface>(structure, globalObject, WTFMove(impl))
+JSTestPluginInterface::JSTestPluginInterface(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestPluginInterface>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestPluginInterface>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

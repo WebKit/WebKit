@@ -169,7 +169,8 @@ public:
         bool hasTrailingLetterSpacing() const;
         InlineLayoutUnit trailingLetterSpacing() const;
         InlineLayoutUnit removeTrailingLetterSpacing();
-        void truncate(InlineLayoutUnit truncatedWidth);
+        enum class CanFullyTruncate : uint8_t { Yes, No };
+        bool truncate(InlineLayoutUnit truncatedWidth, CanFullyTruncate = CanFullyTruncate::Yes);
 
         Type m_type { Type::Text };
         const Box* m_layoutBox { nullptr };

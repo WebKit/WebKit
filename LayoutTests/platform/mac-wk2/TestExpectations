@@ -1306,12 +1306,6 @@ webkit.org/b/222183 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/med
 
 webkit.org/b/222365 inspector/dom/attributeModified.html [ Pass Timeout ]
 
-# webkit.org/b/222277
-imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Skip ]
-imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Skip ]
-imported/w3c/web-platform-tests/mediacapture-record/idlharness.window.html [ Skip ]
-imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-error.html [ Pass Failure ]
-
 webkit.org/b/222500 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Pass Timeout ]
 
 webkit.org/b/222677 inspector/model/auditTestCase.html [ Pass Timeout ]

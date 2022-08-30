@@ -112,6 +112,9 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJSLocker& locker, ArrayProfile
     case asArrayModesIgnoringTypedArrays(NonArrayWithContiguous) | asArrayModesIgnoringTypedArrays(ArrayWithContiguous) | asArrayModesIgnoringTypedArrays(CopyOnWriteArrayWithContiguous):
         return handleContiguousModes(Array::Contiguous, observed);
 
+    case asArrayModesIgnoringTypedArrays(NonArrayWithAlwaysSlowPutContiguous):
+        return handleContiguousModes(Array::AlwaysSlowPutContiguous, observed);
+
     case asArrayModesIgnoringTypedArrays(NonArrayWithArrayStorage):
         return ArrayMode(Array::ArrayStorage, nonArray, Array::AsIs, action).withProfile(locker, profile, makeSafe);
     case asArrayModesIgnoringTypedArrays(NonArrayWithSlowPutArrayStorage):
@@ -171,6 +174,8 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJSLocker& locker, ArrayProfile
             type = Array::Double;
         else if (shouldUseInt32(observed))
             type = Array::Int32;
+        else if (shouldUseAlwaysSlowPutContiguous(observed))
+            type = Array::AlwaysSlowPutContiguous;
         else
             type = Array::SelectUsingArguments;
         
@@ -379,7 +384,7 @@ ArrayMode ArrayMode::refine(
     }
 }
 
-Structure* ArrayMode::originalArrayStructure(Graph& graph, const CodeOrigin& codeOrigin) const
+StructureSet ArrayMode::originalArrayStructureSet(Graph& graph, const CodeOrigin& codeOrigin) const
 {
     JSGlobalObject* globalObject = graph.globalObjectFor(codeOrigin);
     
@@ -395,7 +400,7 @@ Structure* ArrayMode::originalArrayStructure(Graph& graph, const CodeOrigin& cod
                 return globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous);
             default:
                 CRASH();
-                return nullptr;
+                return { };
             }
         }
         FALLTHROUGH;
@@ -415,26 +420,30 @@ Structure* ArrayMode::originalArrayStructure(Graph& graph, const CodeOrigin& cod
             return globalObject->originalArrayStructureForIndexingType(ArrayWithArrayStorage);
         default:
             CRASH();
-            return nullptr;
+            return { };
         }
     }
         
     case Array::OriginalNonArray: {
         TypedArrayType type = typedArrayType();
-        if (type == NotTypedArray)
-            return nullptr;
+        if (type == NotTypedArray) {
+            if (this->type() == Array::AlwaysSlowPutContiguous)
+                return globalObject->originalAlwaysSlowPutContiguousStructureSet();
+
+            return { };
+        }
         
         return globalObject->typedArrayStructureConcurrently(type);
     }
         
     default:
-        return nullptr;
+        return { };
     }
 }
 
-Structure* ArrayMode::originalArrayStructure(Graph& graph, Node* node) const
+StructureSet ArrayMode::originalArrayStructureSet(Graph& graph, Node* node) const
 {
-    return originalArrayStructure(graph, node->origin.semantic);
+    return originalArrayStructureSet(graph, node->origin.semantic);
 }
 
 bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& value, IndexingType shape) const
@@ -461,7 +470,17 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
 
     // Array::OriginalNonArray can be shown when the value is a TypedArray with original structure.
     // But here, we already filtered TypedArrays. So, just handle it like a NonArray.
-    case Array::OriginalNonArray:
+    case Array::OriginalNonArray: {
+        if (type() == Array::AlwaysSlowPutContiguous) {
+            if (!value.m_structure.isFinite())
+                return false;
+            JSGlobalObject* globalObject = graph.globalObjectFor(node->origin.semantic);
+            return value.m_structure.toStructureSet().isSubsetOf(globalObject->originalAlwaysSlowPutContiguousStructureSet());
+        }
+
+        FALLTHROUGH;
+    }
+
     case Array::NonArray: {
         if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModesIgnoringTypedArrays(shape)))
             return true;
@@ -494,10 +513,7 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
     case Array::OriginalCopyOnWriteArray: {
         if (!value.m_structure.isFinite())
             return false;
-        Structure* originalStructure = originalArrayStructure(graph, node);
-        if (value.m_structure.size() != 1)
-            return false;
-        return value.m_structure.onlyStructure().get() == originalStructure;
+        return value.m_structure.toStructureSet().isSubsetOf(originalArrayStructureSet(graph, node));
     }
     }
     return false;
@@ -523,6 +539,9 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
         
     case Array::Contiguous:
         return alreadyChecked(graph, node, value, ContiguousShape);
+
+    case Array::AlwaysSlowPutContiguous:
+        return alreadyChecked(graph, node, value, AlwaysSlowPutContiguousShape);
         
     case Array::ArrayStorage:
         return alreadyChecked(graph, node, value, ArrayStorageShape);
@@ -674,6 +693,8 @@ const char* arrayTypeToString(Array::Type type)
         return "Double";
     case Array::Contiguous:
         return "Contiguous";
+    case Array::AlwaysSlowPutContiguous:
+        return "AlwaysSlowPutContiguous";
     case Array::ArrayStorage:
         return "ArrayStorage";
     case Array::SlowPutArrayStorage:
@@ -774,6 +795,8 @@ IndexingType toIndexingShape(Array::Type type)
         return DoubleShape;
     case Array::Contiguous:
         return ContiguousShape;
+    case Array::AlwaysSlowPutContiguous:
+        return AlwaysSlowPutContiguousShape;
     case Array::Undecided:
         return UndecidedShape;
     case Array::ArrayStorage:
@@ -867,6 +890,7 @@ bool permitsBoundsCheckLowering(Array::Type type)
     case Array::Int32:
     case Array::Double:
     case Array::Contiguous:
+    case Array::AlwaysSlowPutContiguous:
     case Array::ArrayStorage:
     case Array::SlowPutArrayStorage:
     case Array::Int8Array:

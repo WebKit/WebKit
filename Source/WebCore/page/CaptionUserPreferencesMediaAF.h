@@ -54,6 +54,7 @@ public:
 
     bool userPrefersCaptions() const override;
     bool userPrefersSubtitles() const override;
+    bool userPrefersTextDescriptions() const final;
 
     float captionFontSizeScaleAndImportance(bool&) const override;
     bool captionStrokeWidthForFont(float fontSize, const String& language, float& strokeWidth, bool& important) const override;

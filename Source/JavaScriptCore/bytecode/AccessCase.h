@@ -116,6 +116,7 @@ public:
         IndexedInt32Load,
         IndexedDoubleLoad,
         IndexedContiguousLoad,
+        IndexedAlwaysSlowPutContiguousLoad,
         IndexedArrayStorageLoad,
         IndexedScopedArgumentsLoad,
         IndexedDirectArgumentsLoad,

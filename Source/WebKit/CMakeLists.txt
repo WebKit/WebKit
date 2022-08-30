@@ -510,6 +510,28 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
 endmacro()
 GENERATE_MESSAGE_SOURCES(WebKit_DERIVED_SOURCES "${WebKit_MESSAGES_IN_FILES}")
 
+set(WebKit_SERIALIZATION_IN_FILES
+    ${WEBKIT_DIR}/Shared/WebGPU/WebGPUOrigin3D.serialization.in
+    ${WEBKIT_DIR}/Shared/WebGPU/WebGPUValidationError.serialization.in
+)
+
+list(APPEND WebKit_DERIVED_SOURCES
+    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
+    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.cpp
+)
+
+add_custom_command(
+    OUTPUT
+        ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
+        ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.cpp
+    MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-serializers.py
+    DEPENDS
+        ${WebKit_SERIALIZATION_IN_FILES}
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-serializers.py ${WebKit_SERIALIZATION_IN_FILES}
+    WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
+    VERBATIM
+)
+
 set(WebKit_AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS
     ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py
     ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/cpp_generator.py

@@ -34,21 +34,6 @@ namespace WebKit::WebGPU {
 
 struct ValidationError {
     String message;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << message;
-    }
-
-    template<class Decoder> static std::optional<ValidationError> decode(Decoder& decoder)
-    {
-        std::optional<String> message;
-        decoder >> message;
-        if (!message)
-            return std::nullopt;
-
-        return { { WTFMove(*message) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

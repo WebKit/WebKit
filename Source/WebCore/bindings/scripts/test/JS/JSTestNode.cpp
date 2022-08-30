@@ -237,8 +237,8 @@ void JSTestNodePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestNode::s_info = { "TestNode"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNode) };
 
-JSTestNode::JSTestNode(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNode>&& impl)
-    : JSNode(structure, globalObject, WTFMove(impl))
+JSTestNode::JSTestNode(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNode>&& impl, JSC::Butterfly* butterfly)
+    : JSNode(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

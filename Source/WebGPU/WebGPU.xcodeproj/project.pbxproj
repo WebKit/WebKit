@@ -285,7 +285,6 @@
 		1CAB8D3D2866DA2D00347F21 /* CAMetalLayer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CAMetalLayer.hpp; sourceTree = "<group>"; };
 		1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CC0C8C9273A7D8900D0B481 /* WebGPU.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = WebGPU.modulemap; sourceTree = "<group>"; };
-		1CC0C8CA273A819100D0B481 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1CEBD7E32716AFBA00A5254D /* WebGPU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebGPU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CEBD7E62716AFBA00A5254D /* WebGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPU.h; sourceTree = "<group>"; };
 		1CEBD7F22716B2CC00A5254D /* libwgsl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwgsl.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -667,7 +666,6 @@
 				1CEBD7FA2716B3D500A5254D /* Base.xcconfig */,
 				1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */,
 				1CEBD7FB2716B5B400A5254D /* DebugRelease.xcconfig */,
-				1CC0C8CA273A819100D0B481 /* Version.xcconfig */,
 				1CEBD7FC2716B64400A5254D /* WebGPU.xcconfig */,
 				1CEBD7FD2716B64F00A5254D /* WGSL.xcconfig */,
 				1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */,

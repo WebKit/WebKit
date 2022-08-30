@@ -8840,7 +8840,7 @@ void WebPageProxy::revokeGeolocationAuthorizationToken(const String& authorizati
     m_geolocationPermissionRequestManager.revokeAuthorizationToken(authorizationToken);
 }
 
-void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const PermissionDescriptor& descriptor, CompletionHandler<void(std::optional<PermissionState>, bool shouldCache)>&& completionHandler)
+void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const PermissionDescriptor& descriptor, CompletionHandler<void(std::optional<PermissionState>)>&& completionHandler)
 {
     bool canAPISucceed = true;
     bool shouldChangeDeniedToPrompt = true;
@@ -8876,25 +8876,25 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
     }
 
     if (name.isNull()) {
-        completionHandler({ }, false);
+        completionHandler({ });
         return;
     }
 
     if (!canAPISucceed) {
-        completionHandler(shouldChangeDeniedToPrompt ? PermissionState::Prompt : PermissionState::Denied, false);
+        completionHandler(shouldChangeDeniedToPrompt ? PermissionState::Prompt : PermissionState::Denied);
         return;
     }
 
     CompletionHandler<void(std::optional<WebCore::PermissionState>)> callback = [clientOrigin, shouldChangeDeniedToPrompt, shouldChangePromptToGrant, completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result) {
-            completionHandler({ }, false);
+            completionHandler({ });
             return;
         }
         if (*result == PermissionState::Denied && shouldChangeDeniedToPrompt)
             result = PermissionState::Prompt;
         else if (*result == PermissionState::Prompt && shouldChangePromptToGrant)
             result = PermissionState::Granted;
-        completionHandler(*result, false);
+        completionHandler(*result);
     };
 
     if (clientOrigin.topOrigin.isUnique()) {
@@ -9340,15 +9340,10 @@ uint64_t WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& pri
     return sendWithAsyncReply(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count), toAPIDataSharedBufferCallback(WTFMove(callback)), printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 #elif PLATFORM(GTK)
-void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, CompletionHandler<void(API::Error*)>&& callback)
+void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, ResourceError&&)>&& callback)
 {
-    auto callbackWrapper = [callback = WTFMove(callback)] (const WebCore::ResourceError& error) mutable {
-        if (error.isNull())
-            return callback(nullptr);
-        callback(API::Error::create(error).ptr());
-    };
     m_isInPrintingMode = true;
-    sendWithAsyncReply(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo), WTFMove(callbackWrapper), printingSendOptions(m_isPerformingDOMPrintOperation));
+    sendWithAsyncReply(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo), WTFMove(callback), printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 #endif
 
@@ -10981,7 +10976,7 @@ void WebPageProxy::speechSynthesisSetFinishedCallback(CompletionHandler<void()>&
     speechSynthesisData().speakingFinishedCompletionHandler = WTFMove(completionHandler);
 }
 
-void WebPageProxy::speechSynthesisSpeak(const String& text, const String& lang, float volume, float rate, float pitch, MonotonicTime startTime, const String& voiceURI, const String& voiceName, const String& voiceLang, bool localService, bool defaultVoice, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::speechSynthesisSpeak(const String& text, const String& lang, float volume, float rate, float pitch, MonotonicTime, const String& voiceURI, const String& voiceName, const String& voiceLang, bool localService, bool defaultVoice, CompletionHandler<void()>&& completionHandler)
 {
     auto voice = WebCore::PlatformSpeechSynthesisVoice::create(voiceURI, voiceName, voiceLang, localService, defaultVoice);
     auto utterance = WebCore::PlatformSpeechSynthesisUtterance::create(*this);

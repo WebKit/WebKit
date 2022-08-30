@@ -1219,6 +1219,8 @@ webkit.org/b/206684 [ Debug ] inspector/heap/tracking.html [ Pass Failure ]
 
 webkit.org/b/205956 inspector/runtime/executionContextCreated-onEnable.html [ Pass Failure ]
 
+webkit.org/b/244492 [ Debug ] inspector/runtime/getDisplayableProperties.html [ Pass Crash ]
+
 webkit.org/b/206668 fast/loader/redirect-to-invalid-url-using-meta-refresh-calls-policy-delegate.html [ Pass Failure ]
 
 webkit.org/b/180760 fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-async-delegates.html [ Pass Failure ]
@@ -1451,6 +1453,8 @@ fast/layoutformattingcontext/wbr-simple.html [ ImageOnlyFailure ]
 
 webkit.org/b/219498 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-003.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/244538 [ Debug ] imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-003.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure ]
 
 webkit.org/b/221095 [ BigSur+ ] media/mediacapabilities/vp9.html [ Skip ]
@@ -1601,6 +1605,8 @@ webkit.org/b/225420 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-s
 webkit.org/b/228238 [ BigSur Debug arm64 ] imported/w3c/web-platform-tests/IndexedDB/idbcursor-iterating-update.htm [ Pass Timeout ]
 
 webkit.org/b/228245 [ BigSur Release arm64 ] imported/w3c/web-platform-tests/workers/modules/shared-worker-import-csp.html [ Pass Failure ]
+
+webkit.org/b/244499 [ Debug ]  imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-referrer.html [ Pass Crash ]
 
 webkit.org/b/228260 [ BigSur Debug ] imported/w3c/web-platform-tests/IndexedDB/idb_binary_key_conversion.htm [ Pass Timeout ]
 

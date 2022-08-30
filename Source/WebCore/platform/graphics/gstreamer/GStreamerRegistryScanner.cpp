@@ -780,10 +780,12 @@ void GStreamerRegistryScanner::fillAudioRtpCapabilities(Configuration configurat
 
     auto factories = ElementFactories({ codecElement, rtpElement });
     if (factories.hasElementForMediaType(codecElement, "audio/x-opus") && factories.hasElementForMediaType(rtpElement, "audio/x-opus"))
-        capabilities.codecs.append({ .mimeType = "audio/OPUS"_s, .clockRate = 48000, .channels = 2, .sdpFmtpLine = emptyString() });
+        capabilities.codecs.append({ .mimeType = "audio/OPUS"_s, .clockRate = 48000, .channels = 2, .sdpFmtpLine = "minptime=10;useinbandfec=1"_s });
 
-    if (factories.hasElementForMediaType(codecElement, "audio/isac") && factories.hasElementForMediaType(rtpElement, "audio/isac"))
+    if (factories.hasElementForMediaType(codecElement, "audio/isac") && factories.hasElementForMediaType(rtpElement, "audio/isac")) {
         capabilities.codecs.append({ .mimeType = "audio/ISAC"_s, .clockRate = 16000, .channels = 1, .sdpFmtpLine = emptyString() });
+        capabilities.codecs.append({ .mimeType = "audio/ISAC"_s, .clockRate = 32000, .channels = 1, .sdpFmtpLine = emptyString() });
+    }
 
     if (factories.hasElementForMediaType(codecElement, "audio/G722") && factories.hasElementForMediaType(rtpElement, "audio/G722"))
         capabilities.codecs.append({ .mimeType = "audio/G722"_s, .clockRate = 8000, .channels = 1, .sdpFmtpLine = emptyString() });
@@ -822,6 +824,14 @@ void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configurat
             .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=640c1f"_s });
         capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
             .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42e01f"_s });
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f"_s });
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42001f"_s });
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=4d001f"_s });
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=4d001f"_s });
     }
 
     // FIXME: Probe for video/H265 capabilies.

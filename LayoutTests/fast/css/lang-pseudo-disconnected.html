@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container" lang="zh"><span></span></div>
+<script src="../../resources/js-test.js"></script>
+<script>
+description(':lang pseudo class should work in a disconnected subtree');
+let target = container.querySelector('span');
+shouldBeTrue('target.matches(":lang(zh)")');
+shouldBeTrue('target.parentNode.remove(); target.matches(":lang(zh)")');
+
+const anotherContainer = document.createElement('div');
+anotherContainer.innerHTML = '<div lang="fr"><span></span></div>';
+target = anotherContainer.querySelector('span');
+shouldBeTrue('target.matches(":lang(fr)")');
+shouldBeTrue('document.body.append(target.parentNode); target.matches(":lang(fr)")');
+
+</script>
+</body>
+</html>

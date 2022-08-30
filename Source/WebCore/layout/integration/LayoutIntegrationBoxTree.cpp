@@ -64,6 +64,14 @@ static RenderStyle rootBoxStyle(const RenderBlock& rootRenderer)
     auto clonedStyle = RenderStyle::clone(rootRenderer.style());
     if (is<RenderBlockFlow>(rootRenderer))
         clonedStyle.setEffectiveDisplay(DisplayType::Block);
+    if (rootRenderer.isAnonymousBlock()) {
+        auto& anonBlockParentStyle = rootRenderer.parent()->style();
+        // overflow and text-overflow property values don't get forwarded to anonymous block boxes.
+        // e.g. <div style="overflow: hidden; text-overflow: ellipsis; width: 100px; white-space: pre;">this text should have ellipsis<div></div></div>
+        clonedStyle.setTextOverflow(anonBlockParentStyle.textOverflow());
+        clonedStyle.setOverflowX(anonBlockParentStyle.overflowX());
+        clonedStyle.setOverflowY(anonBlockParentStyle.overflowY());
+    }
     return clonedStyle;
 }
 

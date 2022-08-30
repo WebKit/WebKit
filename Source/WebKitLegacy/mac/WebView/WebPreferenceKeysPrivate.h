@@ -44,8 +44,8 @@
 #define WebKitUsesEncodingDetectorPreferenceKey @"WebKitUsesEncodingDetector"
 #define WebKitUserStyleSheetEnabledPreferenceKey @"WebKitUserStyleSheetEnabledPreferenceKey"
 #define WebKitUserStyleSheetLocationPreferenceKey @"WebKitUserStyleSheetLocationPreferenceKey"
-#if !TARGET_OS_IPHONE
 #define WebKitShouldPrintBackgroundsPreferenceKey @"WebKitShouldPrintBackgroundsPreferenceKey"
+#if !TARGET_OS_IPHONE
 #define WebKitTextAreasAreResizablePreferenceKey @"WebKitTextAreasAreResizable"
 #endif
 #define WebKitShrinksStandaloneImagesToFitPreferenceKey @"WebKitShrinksStandaloneImagesToFit"

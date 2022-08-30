@@ -73,7 +73,7 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     LayoutRect contentBoxRect = this->contentBoxRect();
 
     if (context.detectingContentfulPaint()) {
-        if (!context.contenfulPaintDetected() && canvasElement().renderingContext())
+        if (!context.contentfulPaintDetected() && canvasElement().renderingContext())
             context.setContentfulPaintDetected();
         return;
     }

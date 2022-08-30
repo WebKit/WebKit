@@ -169,7 +169,7 @@ protected:
     unsigned parseBorderWidthAttribute(const AtomString&) const;
 
     void childrenChanged(const ChildChange&) override;
-    void calculateAndAdjustDirectionality();
+    void updateEffectiveDirectionalityOfDirAuto();
 
     using EventHandlerNameMap = HashMap<AtomStringImpl*, AtomString>;
     static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
@@ -187,7 +187,7 @@ private:
         TextDirection direction;
         RefPtr<Node> strongDirectionalityNode;
     };
-    TextDirectionWithStrongDirectionalityNode directionality() const;
+    TextDirectionWithStrongDirectionalityNode computeDirectionalityFromText() const;
 
     enum class AllowPercentage : bool { No, Yes };
     enum class UseCSSPXAsUnitType : bool { No, Yes };

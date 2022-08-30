@@ -349,7 +349,7 @@ public:
     // Contentful Paint Detection
 
     void setContentfulPaintDetected() { m_contentfulPaintDetected = true; }
-    bool contenfulPaintDetected() const { return m_contentfulPaintDetected; }
+    bool contentfulPaintDetected() const { return m_contentfulPaintDetected; }
 
     // FIXME: Nothing in this section belongs here, and should be moved elsewhere.
 #if OS(WINDOWS)

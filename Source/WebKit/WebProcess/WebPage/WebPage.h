@@ -1056,7 +1056,7 @@ public:
     void drawToPDF(WebCore::FrameIdentifier, const std::optional<WebCore::FloatRect>&, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 
 #if PLATFORM(GTK)
-    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const WebCore::ResourceError&)>&&);
+    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, WebCore::ResourceError&&)>&&);
 #endif
 
     void addResourceRequest(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceRequest&);
@@ -2242,7 +2242,7 @@ private:
     friend class PrintContextAccessScope;
 
 #if PLATFORM(GTK)
-    RefPtr<WebPrintOperationGtk> m_printOperation;
+    std::unique_ptr<WebPrintOperationGtk> m_printOperation;
 #endif
 
     SandboxExtensionTracker m_sandboxExtensionTracker;
