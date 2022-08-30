@@ -317,6 +317,9 @@ add_custom_target(playstation_tools_copy
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${WEBKIT_LIBRARIES_DIR}/tools/sce_sys/
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/sce_sys/
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${WEBKIT_LIBRARIES_DIR}/tools/scripts/
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/scripts/
     COMMAND ${CMAKE_COMMAND} -E touch
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ebootparam.ini
 )
