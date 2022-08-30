@@ -82,9 +82,6 @@ private:
     const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
     Span<const ASCIILiteral> sortedTables() final;
 
-    Vector<String> columnsForTable(ASCIILiteral tableName);
-    void addMissingColumnToTable(ASCIILiteral tableName, ASCIILiteral columnName);
-
     using Statement = std::unique_ptr<WebCore::SQLiteStatement>;
     mutable Statement m_setUnattributedPrivateClickMeasurementAsExpiredStatement;
     mutable Statement m_findUnattributedStatement;

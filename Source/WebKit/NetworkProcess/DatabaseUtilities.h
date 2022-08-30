@@ -64,6 +64,8 @@ protected:
     TableAndIndexPair currentTableAndIndexQueries(const String&);
     String stripIndexQueryToMatchStoredValue(const char* originalQuery);
     void migrateDataToNewTablesIfNecessary();
+    Vector<String> columnsForTable(ASCIILiteral tableName);
+    bool addMissingColumnToTable(ASCIILiteral tableName, ASCIILiteral columnName);
 
     WebCore::PrivateClickMeasurement buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement&, PrivateClickMeasurementAttributionType) const;
 

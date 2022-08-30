@@ -77,8 +77,8 @@ private:
     int m_monthDay { 0 }; // [1, 31].
 };
 
-constexpr unsigned operatingDatesWindowLong { 30 };
-constexpr unsigned operatingDatesWindowShort { 7 };
+constexpr unsigned operatingDatesWindowLong { 30 }; // days
+constexpr unsigned operatingDatesWindowShort { 7 }; // days
 constexpr Seconds operatingTimeWindowForLiveOnTesting { 1_h };
 
 enum class OperatingDatesWindow : uint8_t { Long, Short, ForLiveOnTesting, ForReproTesting };
@@ -132,6 +132,7 @@ public:
     virtual bool isVeryPrevalentResource(const RegistrableDomain&) const = 0;
     virtual void setPrevalentResource(const RegistrableDomain&) = 0;
     virtual void setVeryPrevalentResource(const RegistrableDomain&) = 0;
+    virtual void setMostRecentWebPushInteractionTime(const RegistrableDomain&) = 0;
 
     virtual void setGrandfathered(const RegistrableDomain&, bool value) = 0;
     virtual bool isGrandfathered(const RegistrableDomain&) const = 0;

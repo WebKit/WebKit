@@ -85,6 +85,8 @@ public:
     void setGrandfathered(const RegistrableDomain&, bool value) override;
     bool isGrandfathered(const RegistrableDomain&) const override;
 
+    void setMostRecentWebPushInteractionTime(const RegistrableDomain&) override;
+    WallTime mostRecentWebPushInteractionTime(const RegistrableDomain&) const;
     void setIsScheduledForAllScriptWrittenStorageRemoval(const RegistrableDomain&, bool value);
     void setSubframeUnderTopFrameDomain(const SubFrameDomain&, const TopFrameDomain&) override;
     void setSubresourceUnderTopFrameDomain(const SubResourceDomain&, const TopFrameDomain&) override;
@@ -166,6 +168,7 @@ private:
         unsigned domainID;
         RegistrableDomain registrableDomain;
         WallTime mostRecentUserInteractionTime;
+        WallTime mostRecentWebPushInteractionTime;
         bool hadUserInteraction;
         bool grandfathered;
         bool isScheduledForAllButCookieDataRemoval;
@@ -234,6 +237,8 @@ private:
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_hadUserInteractionStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_updateGrandfatheredStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_updateIsScheduledForAllButCookieDataRemovalStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_updateMostRecentWebPushInteractionTimeStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_mostRecentWebPushInteractionTimeStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_isGrandfatheredStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_countPrevalentResourcesStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_countPrevalentResourcesWithUserInteractionStatement;
@@ -263,6 +268,7 @@ private:
 
 } // namespace WebKit
 
+// FIXME: Remove this. All ResourceLoadStatisticsStores are ResourceLoadStatisticsDatabaseStores. See FIXME above.
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ResourceLoadStatisticsDatabaseStore)
     static bool isType(const WebKit::ResourceLoadStatisticsStore& store) { return store.isDatabaseStore(); }
 SPECIALIZE_TYPE_TRAITS_END()

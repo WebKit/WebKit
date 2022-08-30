@@ -29,6 +29,8 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import <WebCore/SQLiteDatabase.h>
+#import <WebCore/SQLiteStatement.h>
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -1294,4 +1296,56 @@ TEST(ResourceLoadStatistics, MigrateDistinctDataFromTableWithMissingIndexes)
     
     // Clear pre-filled database.
     [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
+}
+
+static Vector<String> columnsForTable(WebCore::SQLiteDatabase& database, ASCIILiteral tableName)
+{
+    auto statement = database.prepareStatementSlow(makeString("PRAGMA table_info(", tableName, ")"));
+    EXPECT_NOT_NULL(statement);
+
+    Vector<String> columns;
+    while (statement->step() == SQLITE_ROW)
+        columns.append(statement->columnText(1));
+
+    return columns;
+}
+
+TEST(ResourceLoadStatistics, DatabaseSchemeUpdate)
+{
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+
+    NSError *error = nil;
+    [[NSFileManager defaultManager] removeItemAtURL:dataStoreConfiguration.get()._resourceLoadStatisticsDirectory error:&error];
+    EXPECT_NULL(error);
+    bool createdDirectory = [[NSFileManager defaultManager] createDirectoryAtURL:dataStoreConfiguration.get()._resourceLoadStatisticsDirectory withIntermediateDirectories:YES attributes:nil error:&error];
+    EXPECT_TRUE(createdDirectory);
+    EXPECT_NULL(error);
+    
+    NSURL *targetURL = [dataStoreConfiguration.get()._resourceLoadStatisticsDirectory URLByAppendingPathComponent:@"observations.db"];
+    WebCore::SQLiteDatabase database;
+    EXPECT_TRUE(database.open(targetURL.path));
+
+    constexpr auto createObservedDomain = "CREATE TABLE ObservedDomains ("
+        "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, "
+        "hadUserInteraction INTEGER NOT NULL, mostRecentUserInteractionTime REAL NOT NULL, grandfathered INTEGER NOT NULL, "
+        "isPrevalent INTEGER NOT NULL, isVeryPrevalent INTEGER NOT NULL, dataRecordsRemoved INTEGER NOT NULL,"
+        "timesAccessedAsFirstPartyDueToUserInteraction INTEGER NOT NULL, timesAccessedAsFirstPartyDueToStorageAccessAPI INTEGER NOT NULL,"
+        "isScheduledForAllButCookieDataRemoval INTEGER NOT NULL)"_s;
+
+    EXPECT_TRUE(database.executeCommand(createObservedDomain));
+    database.close();
+
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    __block bool done { false };
+    [dataStore _setPrevalentDomain:[NSURL URLWithString:@"https://example.com/"] completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    
+    WebCore::SQLiteDatabase databaseAfterMigration;
+    EXPECT_TRUE(databaseAfterMigration.open(targetURL.path));
+    auto columns = columnsForTable(databaseAfterMigration, "ObservedDomains"_s);
+    databaseAfterMigration.close();
+    EXPECT_WK_STREQ(columns.last(), "mostRecentWebPushInteractionTime");
 }
