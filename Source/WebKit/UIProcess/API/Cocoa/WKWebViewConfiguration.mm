@@ -129,7 +129,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     std::optional<RetainPtr<NSString>> _applicationNameForUserAgent;
     NSTimeInterval _incrementalRenderingSuppressionTimeout;
     BOOL _respectsImageOrientation;
-    BOOL _printsBackgrounds;
     BOOL _allowsJavaScriptMarkup;
     BOOL _convertsPositionStyleOnCopy;
     BOOL _allowsMetaRefresh;
@@ -221,11 +220,9 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 
 #if PLATFORM(IOS_FAMILY)
     _respectsImageOrientation = YES;
-    _printsBackgrounds = YES;
 #endif
 
 #if PLATFORM(MAC)
-    _printsBackgrounds = NO;
     _respectsImageOrientation = NO;
     _showsURLsInToolTips = NO;
     _serviceControlsEnabled = NO;
@@ -395,7 +392,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration->_applicationNameForUserAgent = self->_applicationNameForUserAgent;
 
     configuration->_respectsImageOrientation = self->_respectsImageOrientation;
-    configuration->_printsBackgrounds = self->_printsBackgrounds;
     configuration->_incrementalRenderingSuppressionTimeout = self->_incrementalRenderingSuppressionTimeout;
     configuration->_allowsJavaScriptMarkup = self->_allowsJavaScriptMarkup;
     configuration->_convertsPositionStyleOnCopy = self->_convertsPositionStyleOnCopy;
@@ -659,12 +655,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (BOOL)_printsBackgrounds
 {
-    return _printsBackgrounds;
+    return self.preferences.shouldPrintBackgrounds;
 }
 
 - (void)_setPrintsBackgrounds:(BOOL)printsBackgrounds
 {
-    _printsBackgrounds = printsBackgrounds;
+    self.preferences.shouldPrintBackgrounds = printsBackgrounds;
 }
 
 - (NSTimeInterval)_incrementalRenderingSuppressionTimeout

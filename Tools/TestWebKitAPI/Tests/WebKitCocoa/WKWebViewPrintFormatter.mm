@@ -30,7 +30,9 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestPDFDocument.h"
 #import "TestWKWebView.h"
+#import "WebCore/Color.h"
 #import <WebKit/WebKit.h>
 #import <WebKit/WebKitPrivate.h>
 #import <WebKit/_WKWebViewPrintFormatter.h>
@@ -129,6 +131,55 @@ TEST(WKWebView, PrintToPDFUsingPrintPageRenderer)
 
     EXPECT_NE([pdfData length], 0UL);
 }
+
+#if HAVE(PDFKIT)
+TEST(WKWebView, PrintToPDFShouldPrintBackgrounds)
+{
+    auto config = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [config preferences].shouldPrintBackgrounds = NO;
+    
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:config.get()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"red"];
+    [webView waitForNextPresentationUpdate];
+    
+    auto runTest = [&] (BOOL shouldPrintBackgrounds) {
+        CGRect pageRect = CGRectMake(0, 0, 100, 100);
+        auto printPageRenderer = adoptNS([[UIPrintPageRenderer alloc] init]);
+        [printPageRenderer addPrintFormatter:[webView viewPrintFormatter] startingAtPageAtIndex:0];
+        [printPageRenderer setPaperRect:pageRect];
+        [printPageRenderer setPrintableRect:pageRect];
+
+        NSMutableData *pdfData = [NSMutableData data];
+        UIGraphicsBeginPDFContextToData(pdfData, pageRect, nil);
+
+        NSInteger numberOfPages = [printPageRenderer numberOfPages];
+        for (NSInteger i = 0; i < numberOfPages; i++) {
+            UIGraphicsBeginPDFPage();
+            CGRect bounds = UIGraphicsGetPDFContextBounds();
+            [printPageRenderer drawPageAtIndex:i inRect:bounds];
+        }
+
+        UIGraphicsEndPDFContext();
+
+        auto pdf = TestWebKitAPI::TestPDFDocument::createFromData(pdfData);
+        auto page = pdf->page(0);
+        
+        WebCore::Color expected = WebCore::Color({ 0xFF, 0x00, 0x00 });
+        
+        if (shouldPrintBackgrounds)
+            EXPECT_EQ(page->colorAtPoint(99, 99), expected);
+        else
+            EXPECT_NE(page->colorAtPoint(99, 99), expected);
+    };
+    
+    runTest(NO);
+    
+    [webView configuration].preferences.shouldPrintBackgrounds = YES;
+    
+    runTest(YES);
+}
+#endif // HAVE(PDFKIT)
 
 TEST(WKWebView, PrintToPDFUsingPrintInteractionController)
 {

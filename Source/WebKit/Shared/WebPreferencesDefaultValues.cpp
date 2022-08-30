@@ -54,6 +54,12 @@ bool defaultCSSOMViewScrollingAPIEnabled()
     return !result;
 }
 
+bool defaultShouldPrintBackgrounds()
+{
+    static bool result = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DefaultsToExcludingBackgroundsWhenPrinting);
+    return result;
+}
+
 #if !USE(APPLE_INTERNAL_SDK)
 bool defaultAlternateFormControlDesignEnabled()
 {

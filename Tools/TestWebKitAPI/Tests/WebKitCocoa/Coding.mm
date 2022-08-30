@@ -49,6 +49,7 @@ TEST(Coding, WKPreferences)
     // Change all defaults to something else.
     [a setMinimumFontSize:10];
     [a setJavaScriptEnabled:NO];
+    [a setShouldPrintBackgrounds:YES];
 #if PLATFORM(IOS_FAMILY)
     [a setJavaScriptCanOpenWindowsAutomatically:YES];
 #else
@@ -62,6 +63,7 @@ TEST(Coding, WKPreferences)
     EXPECT_EQ([a minimumFontSize], [b minimumFontSize]);
     EXPECT_EQ([a javaScriptEnabled], [b javaScriptEnabled]);
     EXPECT_EQ([a javaScriptCanOpenWindowsAutomatically], [b javaScriptCanOpenWindowsAutomatically]);
+    EXPECT_EQ([a shouldPrintBackgrounds], [b shouldPrintBackgrounds]);
 
 #if PLATFORM(MAC)
     EXPECT_EQ([a plugInsEnabled], [b plugInsEnabled]);
