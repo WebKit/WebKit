@@ -24,6 +24,7 @@
 
 #include "GStreamerCommon.h"
 #include "GStreamerVideoCaptureSource.h"
+#include "GStreamerVideoEncoder.h"
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
@@ -99,7 +100,10 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     // FIXME: Re-enable this. Currently triggers caps negotiation error.
     g_object_set(m_payloader.get(), "auto-header-extension", FALSE, nullptr);
 
-    g_object_set(m_encoder.get(), "format", encoderCaps.get(), nullptr);
+    if (!webrtcVideoEncoderSetFormat(WEBKIT_WEBRTC_VIDEO_ENCODER(m_encoder.get()), WTFMove(encoderCaps))) {
+        GST_ERROR_OBJECT(m_bin.get(), "Unable to set encoder format");
+        return false;
+    }
 
     int payloadType;
     if (gst_structure_get_int(structure, "payload", &payloadType))
