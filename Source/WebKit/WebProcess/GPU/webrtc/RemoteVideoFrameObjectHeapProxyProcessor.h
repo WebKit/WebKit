@@ -66,6 +66,7 @@ public:
 
 private:
     explicit RemoteVideoFrameObjectHeapProxyProcessor(GPUProcessConnection&);
+    void initialize();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -83,7 +84,7 @@ private:
 
 private:
     Lock m_connectionLock;
-    IPC::Connection::UniqueID m_connectionID WTF_GUARDED_BY_LOCK(m_connectionLock);
+    RefPtr<IPC::Connection> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
     Lock m_callbacksLock;
     HashMap<RemoteVideoFrameIdentifier, Callback> m_callbacks WTF_GUARDED_BY_LOCK(m_callbacksLock);
     Ref<WorkQueue> m_queue;
