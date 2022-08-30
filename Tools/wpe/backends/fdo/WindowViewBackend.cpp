@@ -37,6 +37,7 @@
 #include <wayland-egl.h>
 #include <epoxy/egl.h>
 #include <wpe/fdo-egl.h>
+#include <xkbcommon/xkbcommon.h>
 
 #ifndef EGL_WL_bind_wayland_display
 #define EGL_WL_bind_wayland_display 1
