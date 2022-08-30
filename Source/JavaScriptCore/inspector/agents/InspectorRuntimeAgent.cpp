@@ -53,7 +53,7 @@ using namespace JSC;
 InspectorRuntimeAgent::InspectorRuntimeAgent(AgentContext& context)
     : InspectorAgentBase("Runtime"_s)
     , m_injectedScriptManager(context.injectedScriptManager)
-    , m_debugger(context.environment.debugger())
+    , m_debugger(*context.environment.debugger())
     , m_vm(context.environment.vm())
 {
 }

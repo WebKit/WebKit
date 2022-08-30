@@ -221,7 +221,7 @@ InspectorDebuggerAgent::InspectorDebuggerAgent(AgentContext& context)
     : InspectorAgentBase("Debugger"_s)
     , m_frontendDispatcher(makeUnique<DebuggerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(DebuggerBackendDispatcher::create(context.backendDispatcher, this))
-    , m_debugger(context.environment.debugger())
+    , m_debugger(*context.environment.debugger())
     , m_injectedScriptManager(context.injectedScriptManager)
 {
     // FIXME: make pauseReason optional so that there was no need to init it with "other".

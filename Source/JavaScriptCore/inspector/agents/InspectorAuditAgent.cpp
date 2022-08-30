@@ -42,7 +42,7 @@ InspectorAuditAgent::InspectorAuditAgent(AgentContext& context)
     : InspectorAgentBase("Audit"_s)
     , m_backendDispatcher(AuditBackendDispatcher::create(context.backendDispatcher, this))
     , m_injectedScriptManager(context.injectedScriptManager)
-    , m_debugger(context.environment.debugger())
+    , m_debugger(*context.environment.debugger())
 {
 }
 
