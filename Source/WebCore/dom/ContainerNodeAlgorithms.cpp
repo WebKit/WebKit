@@ -181,14 +181,14 @@ RemovedSubtreeObservability notifyChildNodeRemoved(ContainerNode& oldParentOfRem
 void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode& container)
 {
     // We have to tell all children that their parent has died.
-    RefPtr<Node> next = nullptr;
-    for (RefPtr<Node> node = container.firstChild(); node; node = next) {
+    Node* next = nullptr;
+    for (auto* node = container.firstChild(); node; node = next) {
         ASSERT(!node->m_deletionHasBegun);
 
         next = node->nextSibling();
         node->setNextSibling(nullptr);
         node->setParentNode(nullptr);
-        container.setFirstChild(next.get());
+        container.setFirstChild(next);
         if (next)
             next->setPreviousSibling(nullptr);
 
@@ -199,12 +199,13 @@ void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode& conta
             // Add the node to the list of nodes to be deleted.
             // Reuse the nextSibling pointer for this purpose.
             if (tail)
-                tail->setNextSibling(node.get());
+                tail->setNextSibling(node);
             else
-                head = node.get();
+                head = node;
 
-            tail = node.get();
+            tail = node;
         } else {
+            Ref protectedNode { *node }; // removedFromDocument may remove remove all references to this node.
             node->setTreeScopeRecursively(container.document());
             if (node->isInTreeScope())
                 notifyChildNodeRemoved(container, *node);
