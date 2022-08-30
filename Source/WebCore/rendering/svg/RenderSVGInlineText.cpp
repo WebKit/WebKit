@@ -29,10 +29,12 @@
 #include "FloatQuad.h"
 #include "InlineRunAndOffset.h"
 #include "LegacyRenderSVGRoot.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBlock.h"
 #include "RenderSVGText.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGInlineTextBoxInlines.h"
+#include "SVGLayerTransformComputation.h"
 #include "SVGRenderingContext.h"
 #include "SVGRootInlineBox.h"
 #include "StyleFontSizeFunctions.h"
@@ -207,8 +209,18 @@ void RenderSVGInlineText::updateScaledFont()
 
 void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const RenderStyle& style, float& scalingFactor, FontCascade& scaledFont)
 {
+    auto computeScalingFactor = [&renderer]() {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
+            if (const auto* layerRenderer = lineageOfType<RenderLayerModelObject>(renderer).first())
+                return SVGLayerTransformComputation(*layerRenderer).calculateScreenFontSizeScalingFactor();
+        }
+#endif
+        return SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
+    };
+
     // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
-    scalingFactor = SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
+    scalingFactor = computeScalingFactor();
     if (!scalingFactor || style.fontDescription().textRenderingMode() == TextRenderingMode::GeometricPrecision) {
         scalingFactor = 1;
         scaledFont = style.fontCascade();

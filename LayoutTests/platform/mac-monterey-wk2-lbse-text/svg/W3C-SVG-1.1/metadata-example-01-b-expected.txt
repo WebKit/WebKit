@@ -4,8 +4,8 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (0,0) size 875x336 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 875x336
+layer at (0,0) size 971x336 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 971x336
 layer at (0,0) size 227x231
   RenderSVGTransformableContainer {g} at (0,0) size 227x231
 layer at (0,0) size 227x231
@@ -82,8 +82,8 @@ layer at (91,134) size 9x6
   RenderSVGPath {path} at (29,97) size 9x6 [fill={[type=SOLID] [color=#000000]}] [data="M 99.333 135.915 C 98.751 135.16 98.236 134.439 97.802 133.761 C 95.469 135.261 91.135 136.761 91.135 136.761 C 91.308 137.28 91.618 137.982 92.037 138.827 C 94.796 138.819 97.022 138.053 99.333 135.914 Z"]
 layer at (62,36) size 10x9
   RenderSVGPath {path} at (0,0) size 10x9 [fill={[type=SOLID] [color=#000000]}] [data="M 66.386 44.677 C 68.511 42.927 71.761 40.427 71.511 37.427 L 70.261 36.802 L 70.136 36.052 C 65.011 39.302 62.386 40.427 61.636 41.052 C 62.511 42.927 64.136 42.427 64.136 42.427 C 66.261 41.302 68.136 40.052 68.136 40.052 C 66.261 42.177 65.636 43.177 65.636 43.177 C 65.636 43.177 65.511 44.052 66.386 44.677 Z"]
-layer at (168,84) size 707x252 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (168,84) size 707x252
+layer at (168,84) size 803x252 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (168,84) size 803x252
 layer at (168,84) size 707x144 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 707x144
 layer at (168,192) size 54x36
@@ -112,42 +112,42 @@ layer at (425,103) size 8x8
   RenderSVGPath {polygon} at (5,0) size 8x8 [fill={[type=SOLID] [color=#5A59CE]}] [points="433 107 425 111 425 103"]
 layer at (420,157) size 8x8
   RenderSVGPath {polygon} at (0,54) size 8x8 [fill={[type=SOLID] [color=#5A59CE]}] [points="428 160 421 165 420 157"]
-layer at (177,95) size 587x229 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (9,11) size 587x229
-layer at (458,95) size 305x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGText {text} at (281,0) size 305x12 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 305x12
-      chunk 1 text run 1 at (458.00,105.00) startOffset 0 endOffset 67 width 304.59: "http://prismstandard.org/vocabularies/1.0/resourcetype.xml#birdsEye"
-layer at (453,149) size 311x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGText {text} at (276,54) size 311x12 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 311x12
-      chunk 1 text run 1 at (453.00,159.00) startOffset 0 endOffset 71 width 310.70: "http://prismstandard.org/vocabularies/1.0/resourcetype.xml#illustration"
-layer at (177,203) size 29x12
-  RenderSVGText {text} at (0,108) size 30x12 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 30x12
-      chunk 1 text run 1 at (177.00,213.00) startOffset 0 endOffset 7 width 29.47: "online:"
-layer at (240,95) size 184x184
-  RenderSVGTransformableContainer {g} at (72,11) size 184x184
-layer at (256,148) size 154x12
-  RenderSVGText {text} at (16,53) size 154x12 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 154x12
-      chunk 1 text run 1 at (256.00,158.00) startOffset 0 endOffset 36 width 153.97: "http://purl.org/dc/elements/1.1/type"
-layer at (250,196) size 163x12
-  RenderSVGText {text} at (10,101) size 164x12 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 164x12
-      chunk 1 text run 1 at (250.00,206.00) startOffset 0 endOffset 38 width 163.41: "http://purl.org/dc/elements/1.1/format"
-layer at (250,266) size 167x12
-  RenderSVGText {text} at (10,171) size 167x12 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 167x12
-      chunk 1 text run 1 at (250.00,276.00) startOffset 0 endOffset 39 width 166.76: "http://purl.org/dc/elements/1.1/subject"
-layer at (256,95) size 154x12
-  RenderSVGText {text} at (16,0) size 154x12 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 154x12
-      chunk 1 text run 1 at (256.00,105.00) startOffset 0 endOffset 36 width 153.97: "http://purl.org/dc/elements/1.1/type"
-layer at (240,215) size 183x12
-  RenderSVGText {text} at (0,120) size 184x12 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 184x12
-      chunk 1 text run 1 at (240.00,225.00) startOffset 0 endOffset 43 width 183.43: "http://purl.org/dc/elements/1.1/description"
+layer at (177,92) size 794x233 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (9,8) size 794x233
+layer at (458,92) size 508x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (281,0) size 508x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 508x17
+      chunk 1 text run 1 at (458.00,105.00) startOffset 0 endOffset 67 width 507.65: "http://prismstandard.org/vocabularies/1.0/resourcetype.xml#birdsEye"
+layer at (453,146) size 518x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (276,54) size 518x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 518x17
+      chunk 1 text run 1 at (453.00,159.00) startOffset 0 endOffset 71 width 517.84: "http://prismstandard.org/vocabularies/1.0/resourcetype.xml#illustration"
+layer at (177,200) size 49x17
+  RenderSVGText {text} at (0,108) size 50x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 50x17
+      chunk 1 text run 1 at (177.00,213.00) startOffset 0 endOffset 7 width 49.11: "online:"
+layer at (240,92) size 306x188 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (72,8) size 306x188
+layer at (256,145) size 257x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (16,53) size 257x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 257x17
+      chunk 1 text run 1 at (256.00,158.00) startOffset 0 endOffset 36 width 256.62: "http://purl.org/dc/elements/1.1/type"
+layer at (250,193) size 272x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (10,101) size 273x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 273x17
+      chunk 1 text run 1 at (250.00,206.00) startOffset 0 endOffset 38 width 272.36: "http://purl.org/dc/elements/1.1/format"
+layer at (250,263) size 278x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (10,171) size 278x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 278x17
+      chunk 1 text run 1 at (250.00,276.00) startOffset 0 endOffset 39 width 277.93: "http://purl.org/dc/elements/1.1/subject"
+layer at (256,92) size 257x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (16,0) size 257x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 257x17
+      chunk 1 text run 1 at (256.00,105.00) startOffset 0 endOffset 36 width 256.62: "http://purl.org/dc/elements/1.1/type"
+layer at (240,212) size 306x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,120) size 306x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 306x17
+      chunk 1 text run 1 at (240.00,225.00) startOffset 0 endOffset 43 width 305.72: "http://purl.org/dc/elements/1.1/description"
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46
