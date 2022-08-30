@@ -8840,7 +8840,7 @@ void WebPageProxy::revokeGeolocationAuthorizationToken(const String& authorizati
     m_geolocationPermissionRequestManager.revokeAuthorizationToken(authorizationToken);
 }
 
-void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const PermissionDescriptor& descriptor, CompletionHandler<void(std::optional<PermissionState>, bool shouldCache)>&& completionHandler)
+void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const PermissionDescriptor& descriptor, CompletionHandler<void(std::optional<PermissionState>)>&& completionHandler)
 {
     bool canAPISucceed = true;
     bool shouldChangeDeniedToPrompt = true;
@@ -8876,25 +8876,25 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
     }
 
     if (name.isNull()) {
-        completionHandler({ }, false);
+        completionHandler({ });
         return;
     }
 
     if (!canAPISucceed) {
-        completionHandler(shouldChangeDeniedToPrompt ? PermissionState::Prompt : PermissionState::Denied, false);
+        completionHandler(shouldChangeDeniedToPrompt ? PermissionState::Prompt : PermissionState::Denied);
         return;
     }
 
     CompletionHandler<void(std::optional<WebCore::PermissionState>)> callback = [clientOrigin, shouldChangeDeniedToPrompt, shouldChangePromptToGrant, completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result) {
-            completionHandler({ }, false);
+            completionHandler({ });
             return;
         }
         if (*result == PermissionState::Denied && shouldChangeDeniedToPrompt)
             result = PermissionState::Prompt;
         else if (*result == PermissionState::Prompt && shouldChangePromptToGrant)
             result = PermissionState::Granted;
-        completionHandler(*result, false);
+        completionHandler(*result);
     };
 
     if (clientOrigin.topOrigin.isUnique()) {

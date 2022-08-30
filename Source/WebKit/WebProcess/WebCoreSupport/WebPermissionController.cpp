@@ -47,10 +47,6 @@ WebPermissionController::WebPermissionController() = default;
 
 void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor&& descriptor, WebCore::Page* page, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
-    auto cachedResult = queryCache(origin, descriptor);
-    if (cachedResult != WebCore::PermissionState::Prompt)
-        return completionHandler(cachedResult);
-
     std::optional<WebPageProxyIdentifier> proxyIdentifier;
     if (source == WebCore::PermissionQuerySource::Window || source == WebCore::PermissionQuerySource::DedicatedWorker) {
         ASSERT(page);
@@ -61,36 +57,6 @@ void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::Per
     tryProcessingRequests();
 }
 
-WebCore::PermissionState WebPermissionController::queryCache(const WebCore::ClientOrigin& origin, const WebCore::PermissionDescriptor& descriptor)
-{
-    auto iterator = m_cachedPermissionEntries.find(origin);
-    if (iterator != m_cachedPermissionEntries.end()) {
-        for (auto& entry : iterator->value) {
-            if (entry.first == descriptor)
-                return entry.second;
-        }
-    }
-
-    return WebCore::PermissionState::Prompt;
-}
-
-void WebPermissionController::updateCache(const WebCore::ClientOrigin& origin, const WebCore::PermissionDescriptor& descriptor, WebCore::PermissionState state)
-{
-    auto& entries = m_cachedPermissionEntries.ensure(origin, [&]() {
-        return Vector<PermissionEntry> { };
-    }).iterator->value;
-    for (auto& entry : entries) {
-        if (entry.first == descriptor) {
-            if (entry.second == state)
-                return;
-
-            entry.second = state;
-            permissionChanged(origin, descriptor, state);
-            return;
-        }
-    }
-}
-
 void WebPermissionController::tryProcessingRequests()
 {
     while (!m_requests.isEmpty()) {
@@ -98,24 +64,13 @@ void WebPermissionController::tryProcessingRequests()
         if (currentRequest.isWaitingForReply)
             return;
 
-        // Cache may have updated.
-        auto cachedResult = queryCache(currentRequest.origin, currentRequest.descriptor);
-        if (cachedResult != WebCore::PermissionState::Prompt) {
-            m_requests.takeFirst().completionHandler(cachedResult);
-            continue;
-        }
-
         currentRequest.isWaitingForReply = true;
-        WebProcess::singleton().sendWithAsyncReply(Messages::WebPermissionControllerProxy::Query(currentRequest.origin, currentRequest.descriptor, currentRequest.identifier, currentRequest.source), [this, weakThis = WeakPtr { *this }](auto state, bool shouldCache) {
+        WebProcess::singleton().sendWithAsyncReply(Messages::WebPermissionControllerProxy::Query(currentRequest.origin, currentRequest.descriptor, currentRequest.identifier, currentRequest.source), [this, weakThis = WeakPtr { *this }](auto state) {
             RefPtr protectedThis { weakThis.get() };
             if (!protectedThis)
                 return;
 
-            auto takenRequest = m_requests.takeFirst();
-            takenRequest.completionHandler(state);
-            if (shouldCache && state)
-                updateCache(takenRequest.origin, takenRequest.descriptor, *state);
-
+            m_requests.takeFirst().completionHandler(state);
             tryProcessingRequests();
         });
     }

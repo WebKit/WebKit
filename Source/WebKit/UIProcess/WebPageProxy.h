@@ -2144,7 +2144,7 @@ public:
     void setInteractionRegionsEnabled(bool);
 #endif
 
-    void queryPermission(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, CompletionHandler<void(std::optional<WebCore::PermissionState>, bool shouldCache)>&&);
+    void queryPermission(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
