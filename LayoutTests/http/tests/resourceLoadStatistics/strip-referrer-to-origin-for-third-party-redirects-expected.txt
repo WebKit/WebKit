@@ -12,4 +12,14 @@ TEST COMPLETE
 --------
 Frame: '<!--frame1-->'
 --------
+
+
+--------
+Frame: '<!--frame3-->'
+--------
+http://localhost:8000/resourceLoadStatistics/resources/redirect-within-iframe.html
+
+--------
+Frame: '<!--frame2-->'
+--------
 http://127.0.0.1:8000/

@@ -180,7 +180,7 @@ bool NetworkDataTask::isThirdPartyRequest(const WebCore::ResourceRequest& reques
 void NetworkDataTask::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest& request)
 {
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    if ((m_session->sessionID().isEphemeral() || m_session->isResourceLoadStatisticsEnabled()) && m_session->shouldDowngradeReferrer() && isThirdPartyRequest(request))
+    if ((m_session->sessionID().isEphemeral() || m_session->isResourceLoadStatisticsEnabled()) && m_session->shouldDowngradeReferrer() && !WebCore::areRegistrableDomainsEqual(request.url(), URL { request.httpReferrer() }))
         request.setExistingHTTPReferrerToOriginString();
 #endif
 }

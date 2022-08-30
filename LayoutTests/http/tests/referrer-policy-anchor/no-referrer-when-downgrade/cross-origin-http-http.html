@@ -2,8 +2,10 @@
 <html>
 <body onload="clickLink()">
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.waitUntilDone();
+    testRunner.setStatisticsShouldDowngradeReferrer(false, function () { downgradeReferrerCallback('no-referrer-when-downgrade', 'localhost')});
+}
 
 function clickLink() {
     // Should be the full URL

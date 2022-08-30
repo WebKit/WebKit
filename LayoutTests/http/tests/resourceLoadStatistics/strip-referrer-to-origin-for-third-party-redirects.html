@@ -26,6 +26,10 @@
         }).then(function(data) {
             referrer = data;
             shouldBeEqualToString("referrer", "http://127.0.0.1:8000/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-redirects.html");
+            
+            openIframe("http://localhost:8000/resourceLoadStatistics/resources/redirect.py?redirectTo=http://localhost:8000/resourceLoadStatistics/resources/redirect-within-iframe.html", function () {
+                setEnableFeature(false, finishJSTest);
+            });
 
             openIframe("resources/redirect.py?redirectTo=http://localhost:8000/resourceLoadStatistics/resources/echo-referrer.py", function () {
                 setEnableFeature(false, finishJSTest);

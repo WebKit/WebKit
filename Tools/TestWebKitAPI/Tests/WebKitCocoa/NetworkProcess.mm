@@ -58,6 +58,14 @@ TEST(NetworkProcess, Entitlements)
 
 TEST(WebKit, HTTPReferer)
 {
+    RetainPtr<WKWebsiteDataStore> websiteDataStore;
+
+    @autoreleasepool {
+        auto webView = adoptNS([WKWebView new]);
+        websiteDataStore = [webView configuration].websiteDataStore;
+        [websiteDataStore _setResourceLoadStatisticsEnabled:NO];
+    }
+
     auto checkReferer = [] (NSURL *baseURL, const char* expectedReferer) {
         using namespace TestWebKitAPI;
         bool done = false;
