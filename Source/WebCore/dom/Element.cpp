@@ -2496,23 +2496,21 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
 
     if (parentOfInsertedTree.isInTreeScope()) {
         bool becomeConnected = insertionType.connectedToDocument;
-        TreeScope* newScope = &parentOfInsertedTree.treeScope();
+        auto* newScope = &parentOfInsertedTree.treeScope();
         auto* newDocument = becomeConnected ? dynamicDowncast<HTMLDocument>(newScope->documentScope()) : nullptr;
         if (!insertionType.treeScopeChanged)
             newScope = nullptr;
 
-        const AtomString& idValue = getIdAttribute();
-        if (!idValue.isNull()) {
+        if (auto& idValue = getIdAttribute(); !idValue.isEmpty()) {
             if (newScope)
-                updateIdForTreeScope(*newScope, nullAtom(), idValue);
+                newScope->addElementById(*idValue.impl(), *this);
             if (newDocument)
                 updateIdForDocument(*newDocument, nullAtom(), idValue, AlwaysUpdateHTMLDocumentNamedItemMaps);
         }
 
-        const AtomString& nameValue = getNameAttribute();
-        if (!nameValue.isNull()) {
+        if (auto& nameValue = getNameAttribute(); !nameValue.isNull()) {
             if (newScope)
-                updateNameForTreeScope(*newScope, nullAtom(), nameValue);
+                newScope->addElementByName(*nameValue.impl(), *this);
             if (newDocument)
                 updateNameForDocument(*newDocument, nullAtom(), nameValue);
         }
@@ -2536,7 +2534,7 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
     }
 
     if (auto* parent = parentOrShadowHostElement(); parent && parent != document().documentElement() && UNLIKELY(parent->hasRareData())) {
-        auto lang = parent->elementRareData()->effectiveLang();
+        auto& lang = parent->elementRareData()->effectiveLang();
         if (!lang.isNull() && langFromAttribute().isNull())
             ensureElementRareData().setEffectiveLang(lang);
     }
