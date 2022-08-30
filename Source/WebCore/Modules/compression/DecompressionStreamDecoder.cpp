@@ -118,7 +118,17 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib
     }
 
     while (shouldDecompress) {
-        auto output = Vector<uint8_t>(allocateSize);
+        auto output = Vector<uint8_t>();
+        if (!output.tryReserveInitialCapacity(allocateSize)) {
+            allocateSize /= 4;
+
+            if (allocateSize < startingAllocationSize)
+                return Exception { OutOfMemoryError };
+
+            continue;
+        }
+
+        output.resize(allocateSize);
 
         m_zstream.next_out = output.data();
         m_zstream.avail_out = output.size();
@@ -143,7 +153,11 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib
         storage.append(output);
     }
 
-    return storage.takeAsArrayBuffer();
+    auto decompressedData = storage.takeAsArrayBuffer();
+    if (!decompressedData)
+        return Exception { OutOfMemoryError };
+
+    return decompressedData;
 }
 
 #if PLATFORM(COCOA)
@@ -176,7 +190,17 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppl
     m_stream.src_size = inputLength;
     
     while (shouldDecompress) {
-        auto output = Vector<uint8_t>(allocateSize);
+        auto output = Vector<uint8_t>();
+        if (!output.tryReserveInitialCapacity(allocateSize)) {
+            allocateSize /= 4;
+
+            if (allocateSize < startingAllocationSize)
+                return Exception { OutOfMemoryError };
+
+            continue;
+        }
+
+        output.resize(allocateSize);
 
         m_stream.dst_ptr = output.data();
         m_stream.dst_size = output.size();
@@ -201,7 +225,11 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppl
         storage.append(output);
     }
 
-    return storage.takeAsArrayBuffer();
+    auto decompressedData = storage.takeAsArrayBuffer();
+    if (!decompressedData)
+        return Exception { OutOfMemoryError };
+
+    return decompressedData;
 }
 #endif
 

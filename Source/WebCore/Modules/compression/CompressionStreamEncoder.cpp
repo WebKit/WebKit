@@ -98,7 +98,7 @@ ExceptionOr<bool> CompressionStreamEncoder::initialize()
 ExceptionOr<RefPtr<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(const uint8_t* input, const size_t inputLength)
 {
 
-    size_t allocateSize = startingAllocationSize;
+    size_t allocateSize = (inputLength < startingAllocationSize) ? startingAllocationSize : inputLength;
     auto storage = SharedBufferBuilder();
 
     int result;    
@@ -114,7 +114,17 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(const u
     }
 
     while (shouldCompress) {
-        auto output = Vector<uint8_t>(allocateSize);
+        auto output = Vector<uint8_t>();
+        if (!output.tryReserveInitialCapacity(allocateSize)) {
+            allocateSize /= 4;
+
+            if (allocateSize < startingAllocationSize)
+                return Exception { OutOfMemoryError };
+
+            continue;
+        }
+
+        output.resize(allocateSize);
 
         m_zstream.next_out = output.data();
         m_zstream.avail_out = output.size();
@@ -135,6 +145,10 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(const u
         storage.append(output);
     }
 
-    return storage.takeAsArrayBuffer();
+    auto compressedData = storage.takeAsArrayBuffer();
+    if (!compressedData)
+        return Exception { OutOfMemoryError };
+
+    return compressedData;
 }
 } // namespace WebCore
