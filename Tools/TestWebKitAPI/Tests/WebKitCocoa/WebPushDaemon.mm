@@ -348,7 +348,9 @@ static void clearWebsiteDataStore(WKWebsiteDataStore *store)
 {
     __block bool clearedStore = false;
     [store removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        clearedStore = true;
+        [store _clearResourceLoadStatistics:^{
+            clearedStore = true;
+        }];
     }];
     TestWebKitAPI::Util::run(&clearedStore);
 }
@@ -624,6 +626,10 @@ TEST(WebPush, ITPCleanup)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
     auto tempDir = setUpTestWebPushD();
     using namespace TestWebKitAPI;
+    
+    NSError *error;
+    [[NSFileManager defaultManager] removeItemAtURL:adoptNS([_WKWebsiteDataStoreConfiguration new]).get()._resourceLoadStatisticsDirectory error:&error];
+    EXPECT_NULL(error);
 
     auto runTestWithInterval = ^(NSTimeInterval interval, bool expectPushAfterITPCleanupToSucceed) {
         HTTPServer server({
