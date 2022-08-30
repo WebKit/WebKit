@@ -1769,27 +1769,6 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
     }
 }
 
-bool RenderLayerCompositor::needsCompositingUpdateForStyleChangeOnNonCompositedLayer(RenderLayer& layer, const RenderStyle* oldStyle) const
-{
-    // Needed for scroll bars.
-    if (layer.isRenderViewLayer())
-        return true;
-
-    if (!oldStyle)
-        return false;
-
-    const RenderStyle& newStyle = layer.renderer().style();
-    // Visibility change may affect geometry of the enclosing composited layer.
-    if (oldStyle->visibility() != newStyle.visibility())
-        return true;
-
-    // We don't have any direct reasons for this style change to affect layer composition. Test if it might affect things indirectly.
-    if (styleChangeMayAffectIndirectCompositingReasons(*oldStyle, newStyle))
-        return true;
-
-    return false;
-}
-
 // FIXME: remove and never ask questions about reflection layers.
 static RenderLayerModelObject& rendererForCompositingTests(const RenderLayer& layer)
 {
@@ -1976,11 +1955,6 @@ void RenderLayerCompositor::repaintInCompositedAncestor(RenderLayer& layer, cons
     // so we need to make sure the window system synchronizes those changes on the screen.
     if (compositedAncestor->isRenderViewLayer())
         m_renderView.frameView().setNeedsOneShotDrawingSynchronization();
-}
-
-// FIXME: remove.
-void RenderLayerCompositor::layerWasAdded(RenderLayer&, RenderLayer&)
-{
 }
 
 void RenderLayerCompositor::layerWillBeRemoved(RenderLayer& parent, RenderLayer& child)
