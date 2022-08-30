@@ -68,9 +68,11 @@ RealtimeOutgoingMediaSourceGStreamer::~RealtimeOutgoingMediaSourceGStreamer()
         gst_element_release_request_pad(parent.get(), m_webrtcSinkPad.get());
     }
 
+    gst_element_set_locked_state(m_bin.get(), TRUE);
     gst_element_set_state(m_bin.get(), GST_STATE_NULL);
     if (auto pipeline = adoptGRef(gst_element_get_parent(m_bin.get())))
         gst_bin_remove(GST_BIN_CAST(pipeline.get()), m_bin.get());
+    gst_element_set_locked_state(m_bin.get(), FALSE);
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
@@ -99,11 +101,12 @@ void RealtimeOutgoingMediaSourceGStreamer::stop()
         return;
 
     m_source.value()->removeObserver(*this);
-    gst_element_send_event(m_outgoingSource.get(), gst_event_new_eos());
-    gst_element_set_locked_state(m_bin.get(), TRUE);
+    webkitMediaStreamSrcSignalEndOfStream(WEBKIT_MEDIA_STREAM_SRC(m_outgoingSource.get()));
+
+    gst_element_set_locked_state(m_outgoingSource.get(), TRUE);
     gst_element_set_state(m_outgoingSource.get(), GST_STATE_NULL);
     gst_bin_remove(GST_BIN_CAST(m_bin.get()), m_outgoingSource.get());
-    gst_element_set_locked_state(m_bin.get(), FALSE);
+    gst_element_set_locked_state(m_outgoingSource.get(), FALSE);
     m_source.reset();
 }
 
