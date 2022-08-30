@@ -7683,9 +7683,6 @@ void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController:
     completionHandler();
 }
 
-void completeTextManipulation(const Vector<WebCore::TextManipulationController::ManipulationItem>,
-    CompletionHandler<void(const HashSet<WebCore::TextManipulationController::ItemIdentifier, WebCore::TextManipulationController::ManipulationFailure>&)>&&);
-
 void WebPage::completeTextManipulation(const Vector<WebCore::TextManipulationController::ManipulationItem>& items,
     CompletionHandler<void(bool allFailed, const Vector<WebCore::TextManipulationController::ManipulationFailure>&)>&& completionHandler)
 {
