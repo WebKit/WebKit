@@ -1117,7 +1117,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
     }
     
     if (auto* view = document().view())
-        view->cancelScheduledScrollToFocusedElement();
+        view->cancelScheduledScrolls();
 
     document().updateLayoutIgnorePendingStylesheets();
 
