@@ -780,23 +780,24 @@ InlineLayoutUnit Line::Run::removeTrailingWhitespace()
 bool Line::Run::truncate(InlineLayoutUnit visibleWidth, CanFullyTruncate canFullyTruncate)
 {
     ASSERT(!visibleWidth || visibleWidth < m_logicalWidth);
-    if (visibleWidth == 0.f)
-        return false;
 
     if (isText()) {
+        m_isTruncated = true;
         auto& inlineTextBox = downcast<InlineTextBox>(*m_layoutBox);
-        auto leftSide = TextUtil::breakWord(inlineTextBox, m_textContent->start, m_textContent->length, m_logicalWidth, visibleWidth, m_logicalLeft, m_style.fontCascade());
-        if (leftSide.length) {
-            m_isTruncated = true;
+        auto leftSide = TextUtil::WordBreakLeft { };
+        if (visibleWidth > 0.f)
+            leftSide = TextUtil::breakWord(inlineTextBox, m_textContent->start, m_textContent->length, m_logicalWidth, visibleWidth, m_logicalLeft, m_style.fontCascade());
+
+        if (leftSide.length)
             m_textContent->partiallyVisibleContent = { leftSide.length, leftSide.logicalWidth };
-        } else if (canFullyTruncate == CanFullyTruncate::No) {
+        else if (canFullyTruncate == CanFullyTruncate::No) {
             auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextBox, m_textContent->start, m_textContent->length);
             auto firstCharacterWidth = TextUtil::width(inlineTextBox, inlineTextBox.style().fontCascade(), m_textContent->start, m_textContent->start + firstCharacterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
             m_textContent->partiallyVisibleContent = { firstCharacterLength, firstCharacterWidth };
-            m_isTruncated = true;
         }
     } else
         m_isTruncated = canFullyTruncate == CanFullyTruncate::Yes;
+
     return m_isTruncated;
 }
 
