@@ -28,6 +28,8 @@
 #include "StreamConnectionEncoder.h"
 
 #if ENABLE(TEST_FEATURE)
+#include "FirstMemberType.h"
+#include "SecondMemberType.h"
 #include "StructHeader.h"
 #endif // ENABLE(TEST_FEATURE)
 
@@ -38,13 +40,23 @@ namespace IPC {
 void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(Encoder& encoder, const Namespace::Subnamespace::StructName& instance)
 {
     encoder << instance.firstMemberName;
+#if ENABLE(SECOND_MEMBER)
     encoder << instance.secondMemberName;
+#endif // ENABLE(SECOND_MEMBER)
+    encoder << !!instance.nullableTestMember;
+    if (!!instance.nullableTestMember)
+        encoder << instance.nullableTestMember;
 }
 
-void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(StreamConnectionEncoder& encoder, const Namespace::Subnamespace::StructName& instance)
+void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& encoder, const Namespace::Subnamespace::StructName& instance)
 {
     encoder << instance.firstMemberName;
+#if ENABLE(SECOND_MEMBER)
     encoder << instance.secondMemberName;
+#endif // ENABLE(SECOND_MEMBER)
+    encoder << !!instance.nullableTestMember;
+    if (!!instance.nullableTestMember)
+        encoder << instance.nullableTestMember;
 }
 
 std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subnamespace::StructName>::decode(Decoder& decoder)
@@ -54,14 +66,31 @@ std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subn
     if (!firstMemberName)
         return std::nullopt;
 
+#if ENABLE(SECOND_MEMBER)
     std::optional<SecondMemberType> secondMemberName;
     decoder >> secondMemberName;
     if (!secondMemberName)
         return std::nullopt;
+#endif // ENABLE(SECOND_MEMBER)
+
+    std::optional<RetainPtr<CFTypeRef>> nullableTestMember;
+    std::optional<bool> hasnullableTestMember;
+    decoder >> hasnullableTestMember;
+    if (!hasnullableTestMember)
+        return std::nullopt;
+    if (*hasnullableTestMember) {
+        decoder >> nullableTestMember;
+        if (!nullableTestMember)
+            return std::nullopt;
+    } else
+        nullableTestMember = std::optional<RetainPtr<CFTypeRef>> { RetainPtr<CFTypeRef> { } };
 
     return { {
         WTFMove(*firstMemberName),
-        WTFMove(*secondMemberName)
+#if ENABLE(SECOND_MEMBER)
+        WTFMove(*secondMemberName),
+#endif // ENABLE(SECOND_MEMBER)
+        WTFMove(*nullableTestMember)
     } };
 }
 

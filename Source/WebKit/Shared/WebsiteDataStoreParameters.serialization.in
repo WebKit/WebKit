@@ -20,11 +20,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-encoders: Encoder StreamConnectionEncoder
-headers: "WebGPUValidationError.h"
+struct WebKit::WebsiteDataStoreParameters {
+    Vector<uint8_t> uiProcessCookieStorageIdentifier;
+    WebKit::SandboxExtension::Handle cookieStoragePathExtensionHandle;
+    WebKit::NetworkSessionCreationParameters networkSessionParameters;
 
-#if ENABLE(GPU_PROCESS)
-struct WebKit::WebGPU::ValidationError {
-    String message
-}
+#if PLATFORM(IOS_FAMILY)
+    std::optional<WebKit::SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
+    std::optional<WebKit::SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
+    std::optional<WebKit::SandboxExtension::Handle> parentBundleDirectoryExtensionHandle;
+    std::optional<WebKit::SandboxExtension::Handle> tempDirectoryExtensionHandle;
 #endif
+};

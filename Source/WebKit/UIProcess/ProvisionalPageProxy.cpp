@@ -30,6 +30,7 @@
 #include "APIWebsitePolicies.h"
 #include "DrawingAreaProxy.h"
 #include "FormDataReference.h"
+#include "GeneratedSerializers.h"
 #include "HandleMessage.h"
 #include "Logging.h"
 #include "PageClient.h"

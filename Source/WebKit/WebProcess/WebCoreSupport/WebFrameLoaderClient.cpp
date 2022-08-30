@@ -32,6 +32,7 @@
 #include "FindController.h"
 #include "FormDataReference.h"
 #include "FrameInfoData.h"
+#include "GeneratedSerializers.h"
 #include "IPCTestingAPI.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleDOMWindowExtension.h"

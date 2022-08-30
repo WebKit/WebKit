@@ -37,6 +37,7 @@
 #include "DownloadProxyMap.h"
 #include "DownloadProxyMessages.h"
 #include "FrameInfoData.h"
+#include "GeneratedSerializers.h"
 #include "LegacyGlobalSettings.h"
 #include "Logging.h"
 #include "NetworkContentRuleListManagerMessages.h"

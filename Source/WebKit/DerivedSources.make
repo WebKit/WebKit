@@ -447,11 +447,16 @@ $(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(
 	$(RUBY) $< --frontend WebKit --base $(WEB_PREFERENCES_COMBINED_INPUT_FILE) --debug ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml	--internal ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml $(addprefix --template , $(WEB_PREFERENCES_TEMPLATES))
 
 SERIALIZATION_DESCRIPTION_FILES = \
-	$(WebKit2)/Shared/WebGPU/WebGPUValidationError.serialization.in \
-	$(WebKit2)/Shared/WebGPU/WebGPUOrigin3D.serialization.in \
+	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
+	Shared/FrameInfoData.serialization.in \
+	Shared/FrameTreeNodeData.serialization.in \
+	Shared/mac/SecItemResponseData.serialization.in \
+	Shared/WebsiteDataStoreParameters.serialization.in \
+	Shared/WebGPU/WebGPUValidationError.serialization.in \
+	Shared/WebGPU/WebGPUOrigin3D.serialization.in \
 #
 
 all : GeneratedSerializers.h GeneratedSerializers.cpp
 
 GeneratedSerializers.h GeneratedSerializers.cpp : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make
-	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES)
+	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py $(WebKit2)/ $(SERIALIZATION_DESCRIPTION_FILES)

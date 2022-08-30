@@ -29,6 +29,7 @@
 #if ENABLE(GEOLOCATION)
 
 #include "FrameInfoData.h"
+#include "GeneratedSerializers.h"
 #include "GeolocationIdentifier.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"

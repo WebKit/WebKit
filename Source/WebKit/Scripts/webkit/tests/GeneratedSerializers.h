@@ -37,7 +37,7 @@ class StreamConnectionEncoder;
 #if ENABLE(TEST_FEATURE)
 template<> struct ArgumentCoder<Namespace::Subnamespace::StructName> {
     static void encode(Encoder&, const Namespace::Subnamespace::StructName&);
-    static void encode(StreamConnectionEncoder&, const Namespace::Subnamespace::StructName&);
+    static void encode(OtherEncoder&, const Namespace::Subnamespace::StructName&);
     static std::optional<Namespace::Subnamespace::StructName> decode(Decoder&);
 };
 #endif // ENABLE(TEST_FEATURE)

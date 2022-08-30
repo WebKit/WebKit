@@ -1,10 +1,14 @@
 # test comment
 
-header: "StructHeader.h"
+encoders: Encoder OtherEncoder
+headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
 
 #if ENABLE(TEST_FEATURE)
 struct Namespace::Subnamespace::StructName {
     FirstMemberType firstMemberName
-    SecondMemberType secondMemberName
+    #if ENABLE(SECOND_MEMBER)
+    SecondMemberType secondMemberName;
+    #endif
+    [NULLABLE] RetainPtr<CFTypeRef> nullableTestMember;
 }
 #endif

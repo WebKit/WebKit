@@ -20,11 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-encoders: Encoder StreamConnectionEncoder
-headers: "WebGPUValidationError.h"
+headers: "WebCoreArgumentCoders.h"
 
-#if ENABLE(GPU_PROCESS)
-struct WebKit::WebGPU::ValidationError {
-    String message
+struct WebKit::FrameInfoData {
+    bool isMainFrame
+    WebCore::ResourceRequest request
+    WebCore::SecurityOriginData securityOrigin
+    String frameName
+    std::optional<WebCore::FrameIdentifier> frameID
+    std::optional<WebCore::FrameIdentifier> parentFrameID
 }
-#endif
