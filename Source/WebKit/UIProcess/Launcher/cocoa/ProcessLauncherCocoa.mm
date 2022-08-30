@@ -267,8 +267,14 @@ void ProcessLauncher::launchProcess()
                 eventHandler->handleXPCEvent(event.get());
             });
         }
+
+#if ENABLE(XPC_IPC)
+        IPC::Connection::handleXPCMessage(event);
+#endif
     };
 
+    static NeverDestroyed<dispatch_queue_t> queue = dispatch_queue_create("WebKit XPC Event Handler", DISPATCH_QUEUE_SERIAL);
+    xpc_connection_set_target_queue(m_xpcConnection.get(), queue.get());
     xpc_connection_set_event_handler(m_xpcConnection.get(), eventHandler);
 
     xpc_connection_resume(m_xpcConnection.get());

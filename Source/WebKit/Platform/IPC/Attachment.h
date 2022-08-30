@@ -44,6 +44,11 @@
 #include <wtf/unix/UnixFileDescriptor.h>
 #endif
 
+#if ENABLE(XPC_IPC)
+#import "XPCObject.h"
+#import <wtf/OSObjectPtr.h>
+#endif
+
 namespace IPC {
 
 class Decoder;
@@ -64,7 +69,10 @@ public:
         MappedMemoryType,
         CustomWriterType,
 #elif OS(DARWIN)
-        MachPortType
+        MachPortType,
+#if ENABLE(XPC_IPC)
+        XPCObjectType
+#endif
 #endif
     };
 
@@ -83,6 +91,9 @@ public:
 #elif OS(DARWIN)
     Attachment(MachSendRight&&);
     Attachment(const MachSendRight&);
+#if ENABLE(XPC_IPC)
+    Attachment(WebKit::XPCObject);
+#endif
 #elif OS(WINDOWS)
     Attachment(HANDLE handle)
         : m_handle(handle)
@@ -99,6 +110,10 @@ public:
     UnixFileDescriptor release() { return std::exchange(m_fd, UnixFileDescriptor { }); }
 
     const CustomWriter& customWriter() const { return m_customWriter; }
+#elif OS(DARWIN)
+#if ENABLE(XPC_IPC)
+    xpc_object_t xpcObject() const { return m_xpcObject.get(); }
+#endif
 #elif OS(WINDOWS)
     HANDLE handle() const { return m_handle; }
 #endif
@@ -113,6 +128,10 @@ private:
     UnixFileDescriptor m_fd;
     size_t m_size;
     CustomWriter m_customWriter;
+#elif OS(DARWIN)
+#if ENABLE(XPC_IPC)
+    OSObjectPtr<xpc_object_t> m_xpcObject;
+#endif
 #elif OS(WINDOWS)
     HANDLE m_handle { INVALID_HANDLE_VALUE };
 #endif

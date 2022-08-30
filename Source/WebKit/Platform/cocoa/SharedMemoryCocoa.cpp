@@ -44,7 +44,7 @@
 
 namespace WebKit {
 
-#if HAVE(MACH_MEMORY_ENTRY)
+#if HAVE(MACH_MEMORY_ENTRY) && !ENABLE(XPC_IPC)
 static int toVMMemoryLedger(MemoryLedger memoryLedger)
 {
     switch (memoryLedger) {
@@ -74,20 +74,27 @@ static inline std::optional<size_t> safeRoundPage(size_t size)
 }
 
 SharedMemory::Handle::Handle()
-    : m_port(MACH_PORT_NULL)
-    , m_size(0)
+    : m_size(0)
 {
 }
 
 SharedMemory::Handle::Handle(Handle&& other)
 {
+#if ENABLE(XPC_IPC)
+    m_xpcObject = WTFMove(other.m_xpcObject);
+#else
     m_port = std::exchange(other.m_port, MACH_PORT_NULL);
+#endif
     m_size = std::exchange(other.m_size, 0);
 }
 
 auto SharedMemory::Handle::operator=(Handle&& other) -> Handle&
 {
+#if ENABLE(XPC_IPC)
+    m_xpcObject = WTFMove(other.m_xpcObject);
+#else
     m_port = std::exchange(other.m_port, MACH_PORT_NULL);
+#endif
     m_size = std::exchange(other.m_size, 0);
     return *this;
 }
@@ -99,7 +106,7 @@ SharedMemory::Handle::~Handle()
 
 void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
 {
-#if HAVE(MACH_MEMORY_ENTRY)
+#if HAVE(MACH_MEMORY_ENTRY) && !ENABLE(XPC_IPC)
     if (!m_port)
         return;
 
@@ -114,7 +121,7 @@ void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger memoryLedger) cons
 
 void SharedMemory::Handle::setOwnershipOfMemory(const WebCore::ProcessIdentity& processIdentity, MemoryLedger memoryLedger) const
 {
-#if HAVE(TASK_IDENTITY_TOKEN) && HAVE(MACH_MEMORY_ENTRY_OWNERSHIP_IDENTITY_TOKEN_SUPPORT)
+#if HAVE(TASK_IDENTITY_TOKEN) && HAVE(MACH_MEMORY_ENTRY_OWNERSHIP_IDENTITY_TOKEN_SUPPORT) && !ENABLE(XPC_IPC)
     if (!m_port)
         return;
 
@@ -130,28 +137,45 @@ void SharedMemory::Handle::setOwnershipOfMemory(const WebCore::ProcessIdentity& 
 
 bool SharedMemory::Handle::isNull() const
 {
+#if ENABLE(XPC_IPC)
+    return !m_xpcObject;
+#else
     return !m_port;
+#endif
 }
 
 void SharedMemory::Handle::clear()
 {
+#if ENABLE(XPC_IPC)
+    // FIXME: Release memory?
+    m_xpcObject = nullptr;
+#else
     if (m_port)
         deallocateSendRightSafely(m_port);
 
     m_port = MACH_PORT_NULL;
+#endif
     m_size = 0;
 }
 
 void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
 {
     encoder << static_cast<uint64_t>(m_size);
+#if ENABLE(XPC_IPC)
+    encoder << IPC::Attachment(XPCObject { m_xpcObject.get() });
+#else
     encoder << MachSendRight::adopt(m_port);
     m_port = MACH_PORT_NULL;
+#endif
 }
 
 bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
 {
+#if ENABLE(XPC_IPC)
+    ASSERT(!handle.m_xpcObject);
+#else
     ASSERT(!handle.m_port);
+#endif
     ASSERT(!handle.m_size);
     uint64_t bufferSize;
     if (!decoder.decode(bufferSize))
@@ -161,12 +185,19 @@ bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
     if (UNLIKELY(!roundedSize))
         return false;
 
+#if ENABLE(XPC_IPC)
+    IPC::Attachment attachment;
+    if (!decoder.decode(attachment))
+        return false;
+    handle.m_xpcObject = attachment.xpcObject();
+#else
     auto sendRight = decoder.decode<MachSendRight>();
+    handle.m_port = sendRight->leakSendRight();
+#endif
     if (UNLIKELY(!decoder.isValid()))
         return false;
     
     handle.m_size = bufferSize;
-    handle.m_port = sendRight->leakSendRight();
     return true;
 }
 
@@ -190,6 +221,17 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
         return nullptr;
     }
 
+#if ENABLE(XPC_IPC)
+    void* result = mmap(0, *roundedSize, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, 0, 0);
+    if (result == MAP_FAILED) {
+#if RELEASE_LOG_DISABLED
+        LOG_ERROR("Failed to allocate shared memory (%zu bytes), errno = %x", size, errno);
+#else
+        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::allocate: Failed to allocate shared memory (%zu bytes), errno = %x", size, errno);
+#endif
+        return nullptr;
+    }
+#else
     mach_vm_address_t address = 0;
     // Using VM_FLAGS_PURGABLE so that we can later transfer ownership of the memory via mach_memory_entry_ownership().
     kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, *roundedSize, VM_FLAGS_ANYWHERE | VM_FLAGS_PURGABLE);
@@ -201,11 +243,16 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 #endif
         return nullptr;
     }
+#endif
 
     auto sharedMemory = adoptRef(*new SharedMemory);
     sharedMemory->m_size = size;
+#if ENABLE(XPC_IPC)
+    sharedMemory->m_data = result;
+#else
     sharedMemory->m_data = toPointer(address);
     sharedMemory->m_port = MACH_PORT_NULL;
+#endif
     sharedMemory->m_protection = Protection::ReadWrite;
 
     return WTFMove(sharedMemory);
@@ -224,6 +271,7 @@ static inline vm_prot_t machProtection(SharedMemory::Protection protection)
     return VM_PROT_NONE;
 }
 
+#if !ENABLE(XPC_IPC)
 static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, SharedMemory::Protection protection, mach_port_t parentEntry)
 {
     auto roundedSize = safeRoundPage(size);
@@ -266,19 +314,31 @@ static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, Share
 
     return WTF::MachSendRight::adopt(port);
 }
+#endif
 
 RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, Protection protection)
 {
     ASSERT(size);
 
+#if ENABLE(XPC_IPC)
+    auto xpcObject = xpc_shmem_create(data, size);
+    RELEASE_ASSERT(xpcObject);
+    if (!xpcObject)
+        return nullptr;
+#else
     auto sendRight = makeMemoryEntry(size, toVMAddress(data), protection, MACH_PORT_NULL);
     if (!sendRight)
         return nullptr;
+#endif
 
     auto sharedMemory(adoptRef(*new SharedMemory));
     sharedMemory->m_size = size;
     sharedMemory->m_data = nullptr;
+#if ENABLE(XPC_IPC)
+    sharedMemory->m_xpcObject = xpcObject;
+#else
     sharedMemory->m_port = sendRight.leakSendRight();
+#endif
     sharedMemory->m_protection = protection;
 
     return WTFMove(sharedMemory);
@@ -294,6 +354,20 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
         return nullptr;
     }
 
+#if ENABLE(XPC_IPC)
+    void* address = nullptr;
+    auto size = xpc_shmem_map(handle.m_xpcObject.get(), &address);
+    RELEASE_ASSERT(address);
+    RELEASE_ASSERT(size >= handle.m_size);
+    if (!size) {
+#if RELEASE_LOG_DISABLED
+        LOG_ERROR("SharedMemory::map: Failed to map shared memory.");
+#else
+        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::map: Failed to map shared memory.");
+#endif
+        return nullptr;
+    }
+#else
     vm_prot_t vmProtection = machProtection(protection);
     mach_vm_address_t mappedAddress = 0;
     kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, *roundedSize, 0, VM_FLAGS_ANYWHERE, handle.m_port, 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
@@ -306,11 +380,16 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
         return nullptr;
     }
 #endif
+#endif
 
     auto sharedMemory(adoptRef(*new SharedMemory));
     sharedMemory->m_size = handle.m_size;
+#if ENABLE(XPC_IPC)
+    sharedMemory->m_data = address;
+#else
     sharedMemory->m_data = toPointer(mappedAddress);
     sharedMemory->m_port = MACH_PORT_NULL;
+#endif
     sharedMemory->m_protection = protection;
 
     return WTFMove(sharedMemory);
@@ -324,7 +403,7 @@ SharedMemory::~SharedMemory()
             RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::~SharedMemory: Failed to deallocate memory (%zu bytes) due to overflow", this, m_size);
             RELEASE_ASSERT_NOT_REACHED();
         }
-
+        
         kern_return_t kr = mach_vm_deallocate(mach_task_self(), toVMAddress(m_data), *roundedSize);
 #if RELEASE_LOG_DISABLED
         ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
@@ -335,7 +414,10 @@ SharedMemory::~SharedMemory()
         }
 #endif
     }
-
+    
+#if ENABLE(XPC_IPC)
+    // FIXME:
+#else
     if (m_port) {
         kern_return_t kr = mach_port_deallocate(mach_task_self(), m_port);
 #if RELEASE_LOG_DISABLED
@@ -346,12 +428,17 @@ SharedMemory::~SharedMemory()
             ASSERT_NOT_REACHED();
         }
 #endif
-    }        
+    }
+#endif
 }
     
 bool SharedMemory::createHandle(Handle& handle, Protection protection)
 {
+#if ENABLE(XPC_IPC)
+    ASSERT(!handle.m_xpcObject);
+#else
     ASSERT(!handle.m_port);
+#endif
     ASSERT(!handle.m_size);
 
     auto roundedSize = safeRoundPage(m_size);
@@ -360,16 +447,32 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
         return false;
     }
 
+#if ENABLE(XPC_IPC)
+    RELEASE_ASSERT(!!m_data ^ !!m_xpcObject);
+    if (m_data) {
+        auto xpcObject = xpc_shmem_create(m_data, *roundedSize);
+        RELEASE_ASSERT(xpcObject);
+        if (!xpcObject)
+            return false;
+        handle.m_xpcObject = xpcObject;
+    } else {
+        if (!m_xpcObject)
+            return false;
+        handle.m_xpcObject = m_xpcObject;
+    }
+#else
     auto sendRight = createSendRight(protection);
     if (!sendRight)
         return false;
 
     handle.m_port = sendRight.leakSendRight();
+#endif
     handle.m_size = m_size;
 
     return true;
 }
 
+#if !ENABLE(XPC_IPC)
 WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
 {
     ASSERT(m_protection == protection || m_protection == Protection::ReadWrite && protection == Protection::ReadOnly);
@@ -381,5 +484,6 @@ WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
     ASSERT(m_data);
     return makeMemoryEntry(m_size, toVMAddress(m_data), protection, MACH_PORT_NULL);
 }
+#endif
 
 } // namespace WebKit

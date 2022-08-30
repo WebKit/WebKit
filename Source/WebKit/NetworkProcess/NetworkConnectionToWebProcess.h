@@ -299,6 +299,10 @@ private:
     void getProcessDisplayName(audit_token_t, CompletionHandler<void(const String&)>&&);
 #endif
 
+#if ENABLE(XPC_IPC)
+    void getNetworkProcessConnectionInfo(PAL::SessionID, CompletionHandler<void(WebCore::HTTPCookieAcceptPolicy)>&&);
+#endif
+
 #if USE(LIBWEBRTC)
     NetworkRTCProvider& rtcProvider();
 #endif

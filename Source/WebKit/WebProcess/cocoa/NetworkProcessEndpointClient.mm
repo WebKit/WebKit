@@ -23,28 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
+#import "config.h"
 #import "NetworkProcessEndpointClient.h"
-#import <wtf/NeverDestroyed.h>
-#import <wtf/threads/BinarySemaphore.h>
+
+#import "Connection.h"
+#import "XPCEndpoint.h"
+#import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class LaunchServicesDatabaseManager : public WebKit::NetworkProcessEndpointObserver {
-public:
-    static LaunchServicesDatabaseManager& singleton();
+NetworkProcessEndpointClient& NetworkProcessEndpointClient::singleton()
+{
+    static NeverDestroyed<NetworkProcessEndpointClient> manager;
+    return manager.get();
+}
 
-    void waitForDatabaseUpdate();
+void NetworkProcessEndpointClient::handleEvent(xpc_object_t message)
+{
+#if ENABLE(XPC_IPC)
+    if (IPC::Connection::handleXPCMessage(message))
+        return;
+#endif
 
-private:
-    void handleEvent(xpc_object_t) override;
-    void didConnect(xpc_connection_t) override;
+    for (auto& observer : m_observers)
+        observer->handleEvent(message);
+}
 
-    bool waitForDatabaseUpdate(Seconds);
+void NetworkProcessEndpointClient::didConnect()
+{
+    for (auto& observer : m_observers)
+        observer->didConnect(connection().get());
+}
 
-    std::atomic<bool> m_hasReceivedLaunchServicesDatabase { false };
-    BinarySemaphore m_semaphore;
-};
+void NetworkProcessEndpointClient::didCloseConnection(xpc_connection_t connection)
+{
+    WTFLogAlways("WebKitXPC: NetworkProcessEndpointClient::didCloseConnection");
+#if ENABLE(XPC_IPC)
+    IPC::Connection::handleXPCDisconnect(XPCObject { connection });
+#endif
+}
+
+void NetworkProcessEndpointClient::addObserver(WeakPtr<NetworkProcessEndpointObserver> observer)
+{
+    m_observers.append(observer);
+}
 
 }

@@ -54,9 +54,9 @@ class WebSharedWorkerObjectConnection;
 
 class NetworkProcessConnection : public RefCounted<NetworkProcessConnection>, IPC::Connection::Client {
 public:
-    static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier connectionIdentifier, WebCore::HTTPCookieAcceptPolicy httpCookieAcceptPolicy)
+    static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
     {
-        return adoptRef(*new NetworkProcessConnection(connectionIdentifier, httpCookieAcceptPolicy));
+        return adoptRef(*new NetworkProcessConnection(connectionIdentifier));
     }
     ~NetworkProcessConnection();
     
@@ -79,6 +79,7 @@ public:
     std::optional<audit_token_t> networkProcessAuditToken() const { return m_networkProcessAuditToken; }
 #endif
 
+    void setCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy) { m_cookieAcceptPolicy = cookieAcceptPolicy; }
     WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy() const { return m_cookieAcceptPolicy; }
     bool cookiesEnabled() const;
 
@@ -89,7 +90,7 @@ public:
 #endif
 
 private:
-    NetworkProcessConnection(IPC::Connection::Identifier, WebCore::HTTPCookieAcceptPolicy);
+    NetworkProcessConnection(IPC::Connection::Identifier);
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

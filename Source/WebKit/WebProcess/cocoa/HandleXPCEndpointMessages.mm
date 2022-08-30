@@ -26,28 +26,37 @@
 #import "config.h"
 #import "HandleXPCEndpointMessages.h"
 
+#import "Connection.h"
 #import "LaunchServicesDatabaseManager.h"
 #import "LaunchServicesDatabaseXPCConstants.h"
+#import "NetworkProcessEndpointClient.h"
+#import "NetworkProcessEndpointXPCConstants.h"
 #import "XPCEndpoint.h"
 
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-void handleXPCEndpointMessages(xpc_object_t event, const char* messageName)
+void handleXPCMessages(xpc_object_t event, const char* messageName)
 {
     ASSERT_UNUSED(event, xpc_get_type(event) == XPC_TYPE_DICTIONARY);
     ASSERT_UNUSED(messageName, messageName);
 
-#if HAVE(LSDATABASECONTEXT)
-    if (!strcmp(messageName, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName)) {
-        auto xpcEndPoint = xpc_dictionary_get_value(event, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointNameKey);
+#if ENABLE(XPC_IPC)
+    if (IPC::Connection::handleXPCMessage(event))
+        return;
+#endif
+
+    if (!strcmp(messageName, NetworkProcessEndpointXPCConstants::xpcNetworkProcessXPCEndpointMessageName)) {
+        auto xpcEndPoint = xpc_dictionary_get_value(event, NetworkProcessEndpointXPCConstants::xpcNetworkProcessXPCEndpointNameKey);
         if (!xpcEndPoint || xpc_get_type(xpcEndPoint) != XPC_TYPE_ENDPOINT)
             return;
-        LaunchServicesDatabaseManager::singleton().setEndpoint(xpcEndPoint);
+#if HAVE(LSDATABASECONTEXT)
+        NetworkProcessEndpointClient::singleton().addObserver(WeakPtr { LaunchServicesDatabaseManager::singleton() });
+#endif
+        NetworkProcessEndpointClient::singleton().setEndpoint(xpcEndPoint);
         return;
     }
-#endif
 }
 
 }

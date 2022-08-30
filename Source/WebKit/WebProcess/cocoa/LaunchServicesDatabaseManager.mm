@@ -59,16 +59,12 @@ void LaunchServicesDatabaseManager::handleEvent(xpc_object_t message)
     }
 }
 
-void LaunchServicesDatabaseManager::didConnect()
+void LaunchServicesDatabaseManager::didConnect(xpc_connection_t connection)
 {
     auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcRequestLaunchServicesDatabaseUpdateMessageName);
 
-    auto connection = this->connection();
-    if (!connection)
-        return;
-
-    xpc_connection_send_message(connection.get(), message.get());
+    xpc_connection_send_message(connection, message.get());
 }
 
 bool LaunchServicesDatabaseManager::waitForDatabaseUpdate(Seconds timeout)

@@ -42,6 +42,9 @@ XPCEndpoint::XPCEndpoint()
     m_connection = adoptOSObject(xpc_connection_create(nullptr, nullptr));
     m_endpoint = adoptOSObject(xpc_endpoint_create(m_connection.get()));
 
+    static dispatch_queue_t queue = dispatch_queue_create("XPC endpoint queue", DISPATCH_QUEUE_SERIAL);
+    //xpc_connection_set_target_queue(m_connection.get(), queue);
+
     xpc_connection_set_target_queue(m_connection.get(), dispatch_get_main_queue());
     xpc_connection_set_event_handler(m_connection.get(), ^(xpc_object_t message) {
         xpc_type_t type = xpc_get_type(message);
@@ -51,6 +54,9 @@ XPCEndpoint::XPCEndpoint()
 #if USE(APPLE_INTERNAL_SDK)
             auto pid = xpc_connection_get_pid(connection.get());
 
+            audit_token_t auditToken;
+            xpc_connection_get_audit_token(connection.get(), &auditToken);
+            
             if (pid != getpid() && !WTF::hasEntitlement(connection.get(), "com.apple.private.webkit.use-xpc-endpoint"_s)) {
                 WTFLogAlways("Audit token does not have required entitlement com.apple.private.webkit.use-xpc-endpoint");
 #if PLATFORM(MAC)
@@ -65,8 +71,37 @@ XPCEndpoint::XPCEndpoint()
 #endif
             }
 #endif // USE(APPLE_INTERNAL_SDK)
-            xpc_connection_set_target_queue(connection.get(), dispatch_get_main_queue());
-            xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t event) {
+
+            {
+                LockHolder holder(m_connectionsLock);
+                m_connections.append(connection);
+            }
+
+            didConnect(connection.get());
+
+            //static dispatch_queue_t queue = dispatch_queue_create("XPC endpoint queue", DISPATCH_QUEUE_SERIAL);
+            xpc_connection_set_target_queue(connection.get(), queue);
+
+            //xpc_connection_set_target_queue(connection.get(), dispatch_get_main_queue());
+             xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t event) {
+                if (xpc_get_type(event) == XPC_TYPE_ERROR) {
+                    WTFLogAlways("WebKitXPC: received XPC error");
+                    if (event != XPC_ERROR_CONNECTION_INVALID && event != XPC_ERROR_TERMINATION_IMMINENT)
+                        return;
+
+                    WTFLogAlways("WebKitXPC: didCloseConnection");
+                    didCloseConnection(connection.get());
+
+                    LockHolder holder(m_connectionsLock);
+                    for (size_t i = 0; i < m_connections.size(); i++) {
+                        if (m_connections[i].get() == connection.get()) {
+                            m_connections.remove(i);
+                            break;
+                        }
+                    }
+                    return;
+                }
+
                 handleEvent(connection.get(), event);
             });
             xpc_connection_resume(connection.get());
@@ -90,6 +125,28 @@ void XPCEndpoint::sendEndpointToConnection(xpc_connection_t connection)
 OSObjectPtr<xpc_endpoint_t> XPCEndpoint::endpoint() const
 {
     return m_endpoint;
+}
+
+void XPCEndpoint::sendMessageOnAllConnections(OSObjectPtr<xpc_object_t> message)
+{
+    LockHolder holder(m_connectionsLock);
+    for (auto& connection : m_connections) {
+        RELEASE_ASSERT(xpc_get_type(connection.get()) == XPC_TYPE_CONNECTION);
+        xpc_connection_send_message(connection.get(), message.get());
+    }
+}
+
+OSObjectPtr<xpc_connection_t> XPCEndpoint::connectionFromAuditToken(audit_token_t auditToken)
+{
+    LockHolder holder(m_connectionsLock);
+    for (auto& connection : m_connections) {
+        RELEASE_ASSERT(xpc_get_type(connection.get()) == XPC_TYPE_CONNECTION);
+        audit_token_t token;
+        xpc_connection_get_audit_token(connection.get(), &token);
+        if (!memcmp(token.val, auditToken.val, sizeof(token.val)))
+            return connection;
+    }
+    return nullptr;
 }
 
 }

@@ -25,26 +25,16 @@
 
 #pragma once
 
-#import "NetworkProcessEndpointClient.h"
-#import <wtf/NeverDestroyed.h>
-#import <wtf/threads/BinarySemaphore.h>
-
 namespace WebKit {
 
-class LaunchServicesDatabaseManager : public WebKit::NetworkProcessEndpointObserver {
-public:
-    static LaunchServicesDatabaseManager& singleton();
+namespace NetworkProcessEndpointXPCConstants {
 
-    void waitForDatabaseUpdate();
+constexpr auto xpcNetworkProcessXPCEndpointNameKey = "network-process-xpc-endpoint";
+constexpr auto xpcNetworkProcessXPCEndpointMessageName = "network-process-xpc-endpoint-message";
+constexpr auto xpcBootstrapNetworkProcessConnectionMessageName = "bootstrap-network-process-connection";
+constexpr auto xpcBootstrapNetworkProcessConnectionSessionIDKey = "session-id";
+constexpr auto xpcBootstrapNetworkProcessConnectionProcessIdentifierKey = "process-identifier";
 
-private:
-    void handleEvent(xpc_object_t) override;
-    void didConnect(xpc_connection_t) override;
+} // namespace NetworkProcessEndpointXPCConstants
 
-    bool waitForDatabaseUpdate(Seconds);
-
-    std::atomic<bool> m_hasReceivedLaunchServicesDatabase { false };
-    BinarySemaphore m_semaphore;
-};
-
-}
+} // namespace WebKit

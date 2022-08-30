@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetworkProcessProxy.h"
 
-#import "LaunchServicesDatabaseXPCConstants.h"
+#import "NetworkProcessEndpointXPCConstants.h"
 #import "NetworkProcessMessages.h"
 #import "WebProcessPool.h"
 #import "XPCEndpoint.h"
@@ -58,7 +58,7 @@ bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) co
     if (!messageName || !*messageName)
         return false;
 
-    if (LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName == messageName) {
+    if (!strcmp(messageName, NetworkProcessEndpointXPCConstants::xpcNetworkProcessXPCEndpointMessageName)) {
         m_networkProcess->m_endpointMessage = event;
         for (auto& processPool : WebProcessPool::allProcessPools()) {
             for (auto& process : processPool->processes())

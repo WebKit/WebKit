@@ -38,6 +38,10 @@
 #include "InspectorExtensionTypes.h"
 #endif
 
+#if ENABLE(XPC_IPC)
+#include "XPCEndpoint.h"
+#endif
+
 namespace WebCore {
 class InspectorController;
 class InspectorFrontendHost;
@@ -54,6 +58,9 @@ class WebInspectorUIExtensionController;
 
 class WebInspectorUI final
     : public RefCounted<WebInspectorUI>
+#if ENABLE(XPC_IPC)
+    , public XPCEndpoint
+#endif
     , private IPC::Connection::Client
     , public WebCore::InspectorFrontendClient {
 public:
@@ -68,6 +75,16 @@ public:
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override { /* Do nothing, the inspected page process may have crashed and may be getting replaced. */ }
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override { closeWindow(); }
+
+#if ENABLE(XPC_IPC)
+    // XPCEndpoint
+    const char* xpcEndpointMessageNameKey() const override;
+    const char* xpcEndpointMessageName() const override;
+    const char* xpcEndpointNameKey() const override;
+    void didConnect(xpc_connection_t) override;
+    void didCloseConnection(xpc_connection_t) override;
+    void handleEvent(xpc_connection_t, xpc_object_t) override;
+#endif
 
     // Called by WebInspectorUI messages
     void establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, const DebuggableInfoData&, bool underTest, unsigned inspectionLevel);
@@ -176,6 +193,10 @@ public:
 
 private:
     explicit WebInspectorUI(WebPage&);
+
+#if ENABLE(XPC_IPC)
+    IPC::Attachment attachmentFromXPCEndpoint() const;
+#endif
 
     WebPage& m_page;
     Ref<WebCore::InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;

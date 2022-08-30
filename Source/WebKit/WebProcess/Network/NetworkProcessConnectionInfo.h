@@ -41,6 +41,9 @@ struct NetworkProcessConnectionInfo {
     {
 #if USE(UNIX_DOMAIN_SOCKETS)
         return IPC::Connection::Identifier(connection.fd().value());
+#elif ENABLE(XPC_IPC)
+        auto xpcConnection = static_cast<xpc_connection_t>(connection.xpcObject());
+        return IPC::Connection::Identifier(0, xpcConnection);
 #elif OS(DARWIN)
         return IPC::Connection::Identifier(connection.sendRight());
 #elif OS(WINDOWS)

@@ -107,6 +107,9 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     DidDeliverMessagePortMessages(uint64_t messageBatchIdentifier)
     RegisterURLSchemesAsCORSEnabled(Vector<String> schemes);
     SetCORSDisablingPatterns(WebCore::PageIdentifier pageIdentifier, Vector<String> patterns)
+#if ENABLE(XPC_IPC)
+    GetNetworkProcessConnectionInfo(PAL::SessionID sessionID) -> (enum:uint8_t WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy) Async
+#endif
 #if PLATFORM(MAC)
     GetProcessDisplayName(audit_token_t auditToken) -> (String displayName)
     UpdateActivePages(String name, Vector<String> activePagesOrigins, audit_token_t auditToken)

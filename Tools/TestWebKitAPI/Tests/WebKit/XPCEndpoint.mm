@@ -62,6 +62,9 @@ private:
             xpc_connection_send_message(connection, message.get());
         }
     }
+    void didCloseConnection(xpc_connection_t) override
+    {
+    }
 };
 
 class XPCEndpointClient final : public WebKit::XPCEndpointClient {
@@ -79,6 +82,9 @@ private:
         xpc_connection_send_message(connection().get(), message.get());
 
         clientConnectedToEndpoint = true;
+    }
+    void didCloseConnection(xpc_connection_t) override
+    {
     }
 };
 

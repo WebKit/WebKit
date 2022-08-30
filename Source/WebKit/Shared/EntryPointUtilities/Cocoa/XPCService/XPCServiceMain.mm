@@ -148,7 +148,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
             return;
         }
 
-        handleXPCEndpointMessages(event, messageName);
+        handleXPCMessages(event, messageName);
     });
 
     xpc_connection_resume(peer);

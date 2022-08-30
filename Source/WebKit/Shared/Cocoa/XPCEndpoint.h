@@ -26,6 +26,9 @@
 #pragma once
 
 #include "WKDeclarationSpecifiers.h"
+#include <wtf/Lock.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
@@ -35,21 +38,30 @@ class XPCEndpoint {
 public:
     WK_EXPORT XPCEndpoint();
     WK_EXPORT virtual ~XPCEndpoint() = default;
-
+    
     WK_EXPORT void sendEndpointToConnection(xpc_connection_t);
-
+    
     WK_EXPORT OSObjectPtr<xpc_endpoint_t> endpoint() const;
-
+    
+    WK_EXPORT void sendMessageOnAllConnections(OSObjectPtr<xpc_object_t> message);
+    
+    WK_EXPORT OSObjectPtr<xpc_connection_t> connectionFromAuditToken(audit_token_t auditToken);
+    
     static constexpr auto xpcMessageNameKey = "message-name";
-
+    
 private:
-    virtual const char* xpcEndpointMessageNameKey() const = 0;
-    virtual const char* xpcEndpointMessageName() const = 0;
-    virtual const char* xpcEndpointNameKey() const = 0;
+    virtual const char* xpcEndpointMessageNameKey() const { return nullptr; }
+    virtual const char* xpcEndpointMessageName() const { return nullptr; }
+    virtual const char* xpcEndpointNameKey() const { return nullptr; }
+    virtual void didConnect(xpc_connection_t) { }
+    virtual void didCloseConnection(xpc_connection_t) = 0;
     virtual void handleEvent(xpc_connection_t, xpc_object_t) = 0;
-
+    
     OSObjectPtr<xpc_connection_t> m_connection;
     OSObjectPtr<xpc_endpoint_t> m_endpoint;
+    
+    Vector<OSObjectPtr<xpc_connection_t>> m_connections;
+    Lock m_connectionsLock;
 };
 
 }

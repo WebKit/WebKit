@@ -2264,6 +2264,7 @@
 		E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */; };
 		E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */; };
 		E326E357284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E326E356284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm */; };
+		E3539AD728BE8DAA004BEA7B /* NetworkProcessEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A4A15C28B948C40068116E /* NetworkProcessEndpoint.h */; };
 		E36FF00327F36FBD004BE21A /* SandboxStateVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = E36FF00127F36FBD004BE21A /* SandboxStateVariables.h */; };
 		E36FF00427F36FBD004BE21A /* preferences.sb in Resources */ = {isa = PBXBuildFile; fileRef = E36FF00227F36FBD004BE21A /* preferences.sb */; };
 		E3816B3D27E2463A005EAFC0 /* WebMockContentFilterManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3816B3B27E24639005EAFC0 /* WebMockContentFilterManager.cpp */; };
@@ -2277,6 +2278,12 @@
 		E38A1FC023A551BF00D2374F /* UserInterfaceIdiom.mm in Sources */ = {isa = PBXBuildFile; fileRef = E38A1FBF23A551BF00D2374F /* UserInterfaceIdiom.mm */; };
 		E39628DD23960CC600658ECD /* WebDeviceOrientationUpdateProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E39628DB23960CC500658ECD /* WebDeviceOrientationUpdateProvider.h */; };
 		E39628DE23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39628DC23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp */; };
+		E3A4A15528B7D1140068116E /* XPCObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A4A15428B7D1100068116E /* XPCObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3A4A15728B7D7280068116E /* NetworkProcessEndpointXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A4A15628B7D7280068116E /* NetworkProcessEndpointXPCConstants.h */; };
+		E3A4A15928B7ECD40068116E /* NetworkProcessEndpointClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A4A15828B7ECD40068116E /* NetworkProcessEndpointClient.h */; };
+		E3A4A15E28B961680068116E /* Attachment.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3A4A15D28B961680068116E /* Attachment.mm */; };
+		E3A4A16028B968270068116E /* NetworkProcessEndpointClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3A4A15F28B968270068116E /* NetworkProcessEndpointClient.mm */; };
+		E3A4A16228B968360068116E /* NetworkProcessEndpoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3A4A16128B968360068116E /* NetworkProcessEndpoint.mm */; };
 		E3CAAA442413279900CED2E2 /* AccessibilitySupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */; };
 		E413F59D1AC1ADC400345360 /* NetworkCacheEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */; };
 		E42E06101AA7523B00B11699 /* NetworkCacheIOChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */; };
@@ -7136,6 +7143,13 @@
 		E39628DB23960CC500658ECD /* WebDeviceOrientationUpdateProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationUpdateProvider.h; sourceTree = "<group>"; };
 		E39628DC23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDeviceOrientationUpdateProvider.cpp; sourceTree = "<group>"; };
 		E39628E423971F3400658ECD /* WebDeviceOrientationUpdateProvider.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebDeviceOrientationUpdateProvider.messages.in; sourceTree = "<group>"; };
+		E3A4A15428B7D1100068116E /* XPCObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCObject.h; sourceTree = "<group>"; };
+		E3A4A15628B7D7280068116E /* NetworkProcessEndpointXPCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessEndpointXPCConstants.h; sourceTree = "<group>"; };
+		E3A4A15828B7ECD40068116E /* NetworkProcessEndpointClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessEndpointClient.h; sourceTree = "<group>"; };
+		E3A4A15C28B948C40068116E /* NetworkProcessEndpoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkProcessEndpoint.h; sourceTree = "<group>"; };
+		E3A4A15D28B961680068116E /* Attachment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Attachment.mm; sourceTree = "<group>"; };
+		E3A4A15F28B968270068116E /* NetworkProcessEndpointClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessEndpointClient.mm; sourceTree = "<group>"; };
+		E3A4A16128B968360068116E /* NetworkProcessEndpoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessEndpoint.mm; sourceTree = "<group>"; };
 		E3A86FBB26958D830059264D /* WebCaptionPreferencesDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCaptionPreferencesDelegate.h; sourceTree = "<group>"; };
 		E3A86FBC26958E330059264D /* WebCaptionPreferencesDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCaptionPreferencesDelegate.cpp; sourceTree = "<group>"; };
 		E3BCE877267252120011D8DB /* AccessibilityPreferences.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityPreferences.cpp; sourceTree = "<group>"; };
@@ -9847,6 +9861,7 @@
 				CE550E12228373C800D28791 /* InsertTextOptions.h */,
 				C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */,
 				2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */,
+				E3A4A15628B7D7280068116E /* NetworkProcessEndpointXPCConstants.h */,
 				2D440B8325EF235E00A98D87 /* PDFKitSoftLink.h */,
 				2D440B8225EF235E00A98D87 /* PDFKitSoftLink.mm */,
 				F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */,
@@ -9889,6 +9904,7 @@
 				C14D306524B794E700480387 /* XPCEndpoint.mm */,
 				C14D306824B794E700480387 /* XPCEndpointClient.h */,
 				C14D306624B794E700480387 /* XPCEndpointClient.mm */,
+				E3A4A15428B7D1100068116E /* XPCObject.h */,
 			);
 			name = cocoa;
 			path = Cocoa;
@@ -11051,6 +11067,8 @@
 				C1A152D624E5A29A00978C8B /* HandleXPCEndpointMessages.mm */,
 				C14D37FC24ACDF45007FF014 /* LaunchServicesDatabaseManager.h */,
 				C14D37FD24ACE086007FF014 /* LaunchServicesDatabaseManager.mm */,
+				E3A4A15828B7ECD40068116E /* NetworkProcessEndpointClient.h */,
+				E3A4A15F28B968270068116E /* NetworkProcessEndpointClient.mm */,
 				CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */,
 				CDA29A1C1CBDBF5B00901CCF /* PlaybackSessionManager.messages.in */,
 				CDA29A181CBDBF4100901CCF /* PlaybackSessionManager.mm */,
@@ -11088,6 +11106,8 @@
 				5321594F1DBAE6D70054AA3C /* NetworkDataTaskCocoa.h */,
 				5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */,
 				7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */,
+				E3A4A15C28B948C40068116E /* NetworkProcessEndpoint.h */,
+				E3A4A16128B968360068116E /* NetworkProcessEndpoint.mm */,
 				532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */,
 				5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */,
 				41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */,
@@ -12571,6 +12591,7 @@
 		BCC56F751159955E001CCAF9 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				E3A4A15D28B961680068116E /* Attachment.mm */,
 				1A30EAC5115D7DA30053E937 /* ConnectionCocoa.mm */,
 				5C1579E627172A5100ED5280 /* DaemonConnectionCocoa.mm */,
 				1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */,
@@ -14442,6 +14463,9 @@
 				5179556A162876F300FA43B6 /* NetworkProcess.h in Headers */,
 				517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */,
 				5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */,
+				E3539AD728BE8DAA004BEA7B /* NetworkProcessEndpoint.h in Headers */,
+				E3A4A15928B7ECD40068116E /* NetworkProcessEndpointClient.h in Headers */,
+				E3A4A15728B7D7280068116E /* NetworkProcessEndpointXPCConstants.h in Headers */,
 				5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */,
 				E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */,
 				5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */,
@@ -15542,6 +15566,7 @@
 				1A7C0DF71B7D1F1000A9B848 /* WKWindowFeaturesRef.h in Headers */,
 				C15E6CB324B7BE6F00E501A2 /* XPCEndpoint.h in Headers */,
 				C15E6CB424B7BE7600E501A2 /* XPCEndpointClient.h in Headers */,
+				E3A4A15528B7D1140068116E /* XPCObject.h in Headers */,
 				BCBECDE816B6416800047A1A /* XPCServiceEntryPoint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -16931,6 +16956,7 @@
 				517B5F7E275E97B6002DC22D /* AppBundleRequest.mm in Sources */,
 				EBA8D3B227A5E33F00CB7900 /* ApplePushServiceConnection.mm in Sources */,
 				2DEB1D2E2127473600933906 /* ArgumentCodersCF.cpp in Sources */,
+				E3A4A15E28B961680068116E /* Attachment.mm in Sources */,
 				CD4570D424411D0F00A3DCEB /* AudioSessionRoutingArbitrator.cpp in Sources */,
 				CD4570D3244113B500A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp in Sources */,
 				512F58A212A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp in Sources */,
@@ -16974,6 +17000,8 @@
 				52F060E11654318500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp in Sources */,
 				517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */,
+				E3A4A16228B968360068116E /* NetworkProcessEndpoint.mm in Sources */,
+				E3A4A16028B968270068116E /* NetworkProcessEndpointClient.mm in Sources */,
 				5163199416289A6000E22F00 /* NetworkProcessMessageReceiver.cpp in Sources */,
 				513A163C163088F6005D7D22 /* NetworkProcessProxyMessageReceiver.cpp in Sources */,
 				E152551A17011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp in Sources */,
