@@ -516,7 +516,7 @@ void HTMLConstructionSite::insertHTMLElement(AtomHTMLToken&& token)
 std::unique_ptr<CustomElementConstructionData> HTMLConstructionSite::insertHTMLElementOrFindCustomElementInterface(AtomHTMLToken&& token)
 {
     JSCustomElementInterface* elementInterface = nullptr;
-    RefPtr<Element> element = createHTMLElementOrFindCustomElementInterface(token, &elementInterface);
+    auto element = createHTMLElementOrFindCustomElementInterface(token, &elementInterface);
     if (UNLIKELY(elementInterface))
         return makeUnique<CustomElementConstructionData>(*elementInterface, token.name(), WTFMove(token.attributes()));
     attachLater(currentNode(), *element);
@@ -710,7 +710,7 @@ static inline JSCustomElementInterface* findCustomElementInterface(Document& own
     return registry->findInterface(localName);
 }
 
-RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface(AtomHTMLToken& token, JSCustomElementInterface** customElementInterface)
+RefPtr<HTMLElement> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface(AtomHTMLToken& token, JSCustomElementInterface** customElementInterface)
 {
     auto& localName = token.name();
     // FIXME: This can't use HTMLConstructionSite::createElement because we
@@ -749,13 +749,12 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
         downcast<HTMLImageElement>(*element).setPictureElement(&downcast<HTMLPictureElement>(currentNode()));
 
     setAttributes(*element, token, m_parserContentPolicy);
-    ASSERT(element->isHTMLElement());
     return element;
 }
 
-Ref<Element> HTMLConstructionSite::createHTMLElement(AtomHTMLToken& token)
+Ref<HTMLElement> HTMLConstructionSite::createHTMLElement(AtomHTMLToken& token)
 {
-    RefPtr<Element> element = createHTMLElementOrFindCustomElementInterface(token, nullptr);
+    auto element = createHTMLElementOrFindCustomElementInterface(token, nullptr);
     ASSERT(element);
     return element.releaseNonNull();
 }
