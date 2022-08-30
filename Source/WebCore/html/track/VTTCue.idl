@@ -28,6 +28,7 @@ typedef (double or AutoKeyword) LineAndPositionSetting;
 
 [
     Conditional=VIDEO,
+    ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
     Exposed=Window

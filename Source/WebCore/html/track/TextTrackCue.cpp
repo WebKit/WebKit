@@ -426,10 +426,7 @@ String TextTrackCue::toJSONString() const
 
 TextStream& operator<<(TextStream& stream, const TextTrackCue& cue)
 {
-    String text;
-    if (is<VTTCue>(cue))
-        text = downcast<VTTCue>(cue).text();
-    return stream << &cue << " id=" << cue.id() << " interval=" << cue.startTime() << "-->" << cue.endTime() << " cue=" << text << ')';
+    return stream << &cue << " id=" << cue.id() << " interval=" << cue.startTime() << "-->" << cue.endTime() << " cue=" << cue.text() << ')';
 }
 
 #endif

@@ -58,5 +58,6 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionApp
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(WebCore, MediaAccessibility, kMAXCaptionAppearanceSettingsChangedNotification, CFStringRef, WEBCORE_EXPORT)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, MediaAccessibility, kMAAudibleMediaSettingsChangedNotification, CFStringRef)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebCore, MediaAccessibility, MAImageCaptioningCopyCaptionWithSource, CFStringRef, (CGImageSourceRef imageSource, CFErrorRef *error), (imageSource, error))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaAccessibility, MAAudibleMediaPrefCopyPreferDescriptiveVideo, CFBooleanRef, (), ())
 
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
