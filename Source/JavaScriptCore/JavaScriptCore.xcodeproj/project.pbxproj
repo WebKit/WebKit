@@ -1090,7 +1090,7 @@
 		536B319C1F735E7D0037FC33 /* UnifiedSource134.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B31971F735E5B0037FC33 /* UnifiedSource134.cpp */; };
 		536B319D1F735E7D0037FC33 /* UnifiedSource135.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B31991F735E5D0037FC33 /* UnifiedSource135.cpp */; };
 		5370806B1FE232DF00299E44 /* JSArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66BB17B6B5AB00A7AE3F /* JSArrayBufferView.h */; };
-		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
+		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		537FEEC92742BDA300C9EFEE /* StructureID.h in Headers */ = {isa = PBXBuildFile; fileRef = 537FEEC82742BDA300C9EFEE /* StructureID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		537FEED02742BDE100C9EFEE /* StructureAlignedMemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 537FEECC2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.h */; };
 		5381B9391E60E97D0090F794 /* WasmFaultSignalHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2011,7 +2011,7 @@
 		E3BF3C532390D205008BC752 /* WebAssemblyGlobalConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BF3C512390D1FC008BC752 /* WebAssemblyGlobalConstructor.h */; };
 		E3BFA5D021E853A1009C0EBA /* DFGDesiredGlobalProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFA5CD21E853A1009C0EBA /* DFGDesiredGlobalProperty.h */; };
 		E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */; };
-		E3C295DD1ED2CBDA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */; };
+		E3C295DD1ED2CBDA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C4131D289E08EA001150F8 /* SyntheticModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C4131C289E08E5001150F8 /* SyntheticModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C694B323026877006FBE42 /* WasmOSREntryData.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C694B123026873006FBE42 /* WasmOSREntryData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C73A9125BFA73B00EFE303 /* WasmStreamingPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C73A9025BFA73400EFE303 /* WasmStreamingPlan.h */; };

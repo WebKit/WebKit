@@ -175,8 +175,8 @@ void JSTestCallTracerPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestCallTracer::s_info = { "TestCallTracer"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracer) };
 
-JSTestCallTracer::JSTestCallTracer(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCallTracer>&& impl)
-    : JSDOMWrapper<TestCallTracer>(structure, globalObject, WTFMove(impl))
+JSTestCallTracer::JSTestCallTracer(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCallTracer>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestCallTracer>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

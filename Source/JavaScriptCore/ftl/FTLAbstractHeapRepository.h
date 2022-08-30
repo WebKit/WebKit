@@ -254,6 +254,7 @@ public:
         case DFG::Array::Double:
             return indexedDoubleProperties;
         case DFG::Array::Contiguous:
+        case DFG::Array::AlwaysSlowPutContiguous:
             return indexedContiguousProperties;
         case DFG::Array::ArrayStorage:
         case DFG::Array::SlowPutArrayStorage:

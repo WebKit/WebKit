@@ -452,8 +452,8 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestConditionalIncludes::s_info = { "TestConditionalIncludes"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionalIncludes) };
 
-JSTestConditionalIncludes::JSTestConditionalIncludes(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestConditionalIncludes>&& impl)
-    : JSDOMWrapper<TestConditionalIncludes>(structure, globalObject, WTFMove(impl))
+JSTestConditionalIncludes::JSTestConditionalIncludes(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestConditionalIncludes>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestConditionalIncludes>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

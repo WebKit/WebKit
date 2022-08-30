@@ -146,8 +146,8 @@ void JSTestSetLikePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestSetLike::s_info = { "TestSetLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLike) };
 
-JSTestSetLike::JSTestSetLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestSetLike>&& impl)
-    : JSDOMWrapper<TestSetLike>(structure, globalObject, WTFMove(impl))
+JSTestSetLike::JSTestSetLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestSetLike>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestSetLike>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

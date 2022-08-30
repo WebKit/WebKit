@@ -122,8 +122,8 @@ void JSTestExceptionPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestException::s_info = { "TestException"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestException) };
 
-JSTestException::JSTestException(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestException>&& impl)
-    : JSDOMWrapper<TestException>(structure, globalObject, WTFMove(impl))
+JSTestException::JSTestException(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestException>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestException>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

@@ -69,7 +69,7 @@ public:
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetCallData | JSC::OverridesGetOwnPropertySlot | JSC::OverridesPut | JSC::ProhibitsPropertyCaching;
 protected:
-    JSTestPluginInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestPluginInterface>&&);
+    JSTestPluginInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestPluginInterface>&&, JSC::Butterfly* = nullptr);
 
     void finishCreation(JSC::VM&);
 };

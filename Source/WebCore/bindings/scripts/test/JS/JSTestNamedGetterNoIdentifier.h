@@ -63,7 +63,7 @@ public:
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpureForPropertyAbsence | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertyNames | JSC::OverridesGetOwnPropertySlot;
 protected:
-    JSTestNamedGetterNoIdentifier(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedGetterNoIdentifier>&&);
+    JSTestNamedGetterNoIdentifier(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedGetterNoIdentifier>&&, JSC::Butterfly* = nullptr);
 
     void finishCreation(JSC::VM&);
 };

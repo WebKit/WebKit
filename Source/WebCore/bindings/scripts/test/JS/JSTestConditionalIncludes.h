@@ -71,7 +71,7 @@ public:
     JSC::JSValue mixinCustomOperation(JSC::JSGlobalObject&, JSC::CallFrame&);
 #endif
 protected:
-    JSTestConditionalIncludes(JSC::Structure*, JSDOMGlobalObject&, Ref<TestConditionalIncludes>&&);
+    JSTestConditionalIncludes(JSC::Structure*, JSDOMGlobalObject&, Ref<TestConditionalIncludes>&&, JSC::Butterfly* = nullptr);
 
     void finishCreation(JSC::VM&);
 };

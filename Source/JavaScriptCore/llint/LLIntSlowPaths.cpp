@@ -863,6 +863,13 @@ static JSValue performLLIntGetByID(BytecodeIndex bytecodeIndex, CodeBlock* codeB
 
             if (!(--metadata.hitCountForLLIntCaching))
                 setupGetByIdPrototypeCache(globalObject, vm, codeBlock, bytecodeIndex, metadata, baseCell, slot, ident);
+        } else if (hasAlwaysSlowPutContiguous(baseCell->indexingMode()) && ident == vm.propertyNames->length) {
+            {
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+                metadata.setArrayLengthMode();
+                metadata.arrayLengthMode.arrayProfile.observeStructure(structure);
+            }
+            vm.writeBarrier(codeBlock);
         }
     } else if (Options::useLLIntICs() && isJSArray(baseValue) && ident == vm.propertyNames->length) {
         {

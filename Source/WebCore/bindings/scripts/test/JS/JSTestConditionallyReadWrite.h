@@ -60,7 +60,7 @@ public:
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 protected:
-    JSTestConditionallyReadWrite(JSC::Structure*, JSDOMGlobalObject&, Ref<TestConditionallyReadWrite>&&);
+    JSTestConditionallyReadWrite(JSC::Structure*, JSDOMGlobalObject&, Ref<TestConditionallyReadWrite>&&, JSC::Butterfly* = nullptr);
 
     void finishCreation(JSC::VM&);
 };

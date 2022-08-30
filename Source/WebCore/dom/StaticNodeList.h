@@ -45,6 +45,8 @@ public:
     unsigned length() const override;
     Node* item(unsigned index) const override;
 
+    bool isStaticNodeList() const final;
+
 private:
     StaticNodeList(Vector<Ref<Node>>&& nodes)
         : m_nodes(WTFMove(nodes))
@@ -63,6 +65,8 @@ public:
 
     unsigned length() const override;
     Element* item(unsigned index) const override;
+
+    bool isStaticNodeList() const final;
 
 private:
     StaticElementList(Vector<Ref<Element>>&& elements)

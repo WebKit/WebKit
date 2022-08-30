@@ -29,6 +29,7 @@
 
 #include "ArrayProfile.h"
 #include "SpeculatedType.h"
+#include "StructureSet.h"
 
 namespace JSC {
 
@@ -61,6 +62,7 @@ enum Type : uint8_t {
     Int32,
     Double,
     Contiguous,
+    AlwaysSlowPutContiguous,
     ArrayStorage,
     SlowPutArrayStorage,
     
@@ -264,6 +266,7 @@ public:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
+        case Array::AlwaysSlowPutContiguous:
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
             return true;
@@ -332,7 +335,12 @@ public:
     
     bool isSlowPut() const
     {
-        return type() == Array::SlowPutArrayStorage;
+        return type() == Array::SlowPutArrayStorage || type() == Array::AlwaysSlowPutContiguous;
+    }
+
+    bool isAnyKindOfContiguous() const
+    {
+        return type() == Array::Contiguous || type() == Array::AlwaysSlowPutContiguous;
     }
 
     bool canCSEStorage() const
@@ -359,6 +367,7 @@ public:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
+        case Array::AlwaysSlowPutContiguous:
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
             return true;
@@ -373,6 +382,7 @@ public:
         case Array::String:
         case Array::DirectArguments:
         case Array::ScopedArguments:
+        case Array::AlwaysSlowPutContiguous:
             return ArrayMode(Array::Generic);
         default:
             return *this;
@@ -400,6 +410,7 @@ public:
         case Array::Unprofiled:
         case Array::ForceExit:
         case Array::Generic:
+        case Array::AlwaysSlowPutContiguous:
         // TypedArrays do not have a self length property as of ES6.
         case Array::Int8Array:
         case Array::Int16Array:
@@ -440,9 +451,9 @@ public:
         }
     }
     
-    // Returns 0 if this is not OriginalArray.
-    Structure* originalArrayStructure(Graph&, const CodeOrigin&) const;
-    Structure* originalArrayStructure(Graph&, Node*) const;
+    // Returns empty set if this is not original array.
+    StructureSet originalArrayStructureSet(Graph&, const CodeOrigin&) const;
+    StructureSet originalArrayStructureSet(Graph&, Node*) const;
     
     bool doesConversion() const
     {
@@ -470,6 +481,9 @@ public:
             break;
         case Array::Contiguous:
             result = arrayModesWithIndexingShapes(ContiguousShape);
+            break;
+        case Array::AlwaysSlowPutContiguous:
+            result = arrayModesWithIndexingShapes(AlwaysSlowPutContiguousShape);
             break;
         case Array::ArrayStorage:
             return arrayModesWithIndexingShapes(ArrayStorageShape);

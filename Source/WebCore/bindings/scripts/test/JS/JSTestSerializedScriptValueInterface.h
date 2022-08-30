@@ -64,7 +64,7 @@ public:
 
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestSerializedScriptValueInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestSerializedScriptValueInterface>&&);
+    JSTestSerializedScriptValueInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestSerializedScriptValueInterface>&&, JSC::Butterfly* = nullptr);
 
     void finishCreation(JSC::VM&);
 };

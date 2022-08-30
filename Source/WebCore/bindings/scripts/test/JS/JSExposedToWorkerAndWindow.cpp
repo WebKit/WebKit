@@ -187,8 +187,8 @@ void JSExposedToWorkerAndWindowPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSExposedToWorkerAndWindow::s_info = { "ExposedToWorkerAndWindow"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedToWorkerAndWindow) };
 
-JSExposedToWorkerAndWindow::JSExposedToWorkerAndWindow(Structure* structure, JSDOMGlobalObject& globalObject, Ref<ExposedToWorkerAndWindow>&& impl)
-    : JSDOMWrapper<ExposedToWorkerAndWindow>(structure, globalObject, WTFMove(impl))
+JSExposedToWorkerAndWindow::JSExposedToWorkerAndWindow(Structure* structure, JSDOMGlobalObject& globalObject, Ref<ExposedToWorkerAndWindow>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<ExposedToWorkerAndWindow>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

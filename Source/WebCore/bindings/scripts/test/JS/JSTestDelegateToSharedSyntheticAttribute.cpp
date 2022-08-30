@@ -130,8 +130,8 @@ void JSTestDelegateToSharedSyntheticAttributePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestDelegateToSharedSyntheticAttribute::s_info = { "TestDelegateToSharedSyntheticAttribute"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDelegateToSharedSyntheticAttribute) };
 
-JSTestDelegateToSharedSyntheticAttribute::JSTestDelegateToSharedSyntheticAttribute(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDelegateToSharedSyntheticAttribute>&& impl)
-    : JSDOMWrapper<TestDelegateToSharedSyntheticAttribute>(structure, globalObject, WTFMove(impl))
+JSTestDelegateToSharedSyntheticAttribute::JSTestDelegateToSharedSyntheticAttribute(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDelegateToSharedSyntheticAttribute>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestDelegateToSharedSyntheticAttribute>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

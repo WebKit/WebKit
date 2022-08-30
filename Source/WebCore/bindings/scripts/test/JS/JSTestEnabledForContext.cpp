@@ -121,8 +121,8 @@ void JSTestEnabledForContextPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestEnabledForContext::s_info = { "TestEnabledForContext"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledForContext) };
 
-JSTestEnabledForContext::JSTestEnabledForContext(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEnabledForContext>&& impl)
-    : JSDOMWrapper<TestEnabledForContext>(structure, globalObject, WTFMove(impl))
+JSTestEnabledForContext::JSTestEnabledForContext(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEnabledForContext>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestEnabledForContext>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

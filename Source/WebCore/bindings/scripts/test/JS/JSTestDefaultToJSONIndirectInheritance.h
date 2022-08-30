@@ -61,7 +61,7 @@ public:
         return static_cast<TestDefaultToJSONIndirectInheritance&>(Base::wrapped());
     }
 protected:
-    JSTestDefaultToJSONIndirectInheritance(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSONIndirectInheritance>&&);
+    JSTestDefaultToJSONIndirectInheritance(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSONIndirectInheritance>&&, JSC::Butterfly* = nullptr);
 
     void finishCreation(JSC::VM&);
 };

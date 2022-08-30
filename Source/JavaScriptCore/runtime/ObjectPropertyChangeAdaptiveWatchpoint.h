@@ -30,7 +30,7 @@
 namespace JSC {
 
 template<typename WatchpointSet>
-class ObjectPropertyChangeAdaptiveWatchpoint final : public AdaptiveInferredPropertyValueWatchpointBase {
+class JS_EXPORT_PRIVATE ObjectPropertyChangeAdaptiveWatchpoint final : public AdaptiveInferredPropertyValueWatchpointBase {
 public:
     using Base = AdaptiveInferredPropertyValueWatchpointBase;
     ObjectPropertyChangeAdaptiveWatchpoint(JSCell* owner, const ObjectPropertyCondition& condition, WatchpointSet& watchpointSet)

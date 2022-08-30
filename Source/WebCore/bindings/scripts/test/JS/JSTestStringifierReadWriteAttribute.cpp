@@ -129,8 +129,8 @@ void JSTestStringifierReadWriteAttributePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestStringifierReadWriteAttribute::s_info = { "TestStringifierReadWriteAttribute"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadWriteAttribute) };
 
-JSTestStringifierReadWriteAttribute::JSTestStringifierReadWriteAttribute(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestStringifierReadWriteAttribute>&& impl)
-    : JSDOMWrapper<TestStringifierReadWriteAttribute>(structure, globalObject, WTFMove(impl))
+JSTestStringifierReadWriteAttribute::JSTestStringifierReadWriteAttribute(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestStringifierReadWriteAttribute>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestStringifierReadWriteAttribute>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 
