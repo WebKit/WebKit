@@ -1453,6 +1453,8 @@ fast/layoutformattingcontext/wbr-simple.html [ ImageOnlyFailure ]
 
 webkit.org/b/219498 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-003.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/244538 [ Debug ] imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-003.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure ]
 
 webkit.org/b/221095 [ BigSur+ ] media/mediacapabilities/vp9.html [ Skip ]
