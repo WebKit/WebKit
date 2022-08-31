@@ -347,7 +347,7 @@ inline void NodeRareData::operator delete(NodeRareData* nodeRareData, std::destr
         static_cast<ElementRareData*>(nodeRareData)->~ElementRareData();
     else
         nodeRareData->~NodeRareData();
-    WTF::fastFree(nodeRareData);
+    NodeRareData::freeAfterDestruction(nodeRareData);
 }
 
 Node::Node(Document& document, ConstructionType type)

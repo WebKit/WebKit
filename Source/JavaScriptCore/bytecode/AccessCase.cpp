@@ -194,8 +194,11 @@ Ref<AccessCase> AccessCase::createSetPrivateBrand(
     return adoptRef(*new AccessCase(vm, owner, SetPrivateBrand, identifier, invalidOffset, newStructure, { }, { }));
 }
 
-AccessCase::~AccessCase()
+Ref<AccessCase> AccessCase::createReplace(VM& vm, JSCell* owner, CacheableIdentifier identifier, PropertyOffset offset, Structure* oldStructure, bool viaProxy)
 {
+    auto result = adoptRef(*new AccessCase(vm, owner, Replace, identifier, offset, oldStructure, { }, { }));
+    result->m_viaProxy = viaProxy;
+    return result;
 }
 
 RefPtr<AccessCase> AccessCase::fromStructureStubInfo(
@@ -208,7 +211,7 @@ RefPtr<AccessCase> AccessCase::fromStructureStubInfo(
 
     case CacheType::PutByIdReplace:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return AccessCase::create(vm, owner, Replace, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure());
+        return AccessCase::createReplace(vm, owner, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure(), false);
 
     case CacheType::InByIdSelf:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
@@ -227,17 +230,17 @@ RefPtr<AccessCase> AccessCase::fromStructureStubInfo(
     }
 }
 
-bool AccessCase::hasAlternateBase() const
+bool AccessCase::hasAlternateBaseImpl() const
 {
     return !conditionSet().isEmpty();
 }
 
-JSObject* AccessCase::alternateBase() const
+JSObject* AccessCase::alternateBaseImpl() const
 {
     return conditionSet().slotBaseCondition().object();
 }
 
-Ref<AccessCase> AccessCase::clone() const
+Ref<AccessCase> AccessCase::cloneImpl() const
 {
     auto result = adoptRef(*new AccessCase(*this));
     result->resetState();
@@ -897,7 +900,9 @@ void AccessCase::dump(PrintStream& out) const
     if (!m_conditionSet.isEmpty())
         out.print("\n", indent, "conditions = ", m_conditionSet);
 
-    dumpImpl(out, comma, indent);
+    const_cast<AccessCase*>(this)->runWithDowncast([&](auto* accessCase) {
+        accessCase->dumpImpl(out, comma, indent);
+    });
 
     out.print("}");
 }
@@ -2621,6 +2626,88 @@ TypedArrayType AccessCase::toTypedArrayType(AccessType accessType)
     }
 }
 
+template<typename Func>
+inline void AccessCase::runWithDowncast(const Func& func)
+{
+    switch (m_type) {
+    case Transition:
+    case Delete:
+    case DeleteNonConfigurable:
+    case DeleteMiss:
+    case Replace:
+    case InHit:
+    case InMiss:
+    case ArrayLength:
+    case StringLength:
+    case DirectArgumentsLength:
+    case ScopedArgumentsLength:
+    case CheckPrivateBrand:
+    case SetPrivateBrand:
+    case IndexedInt32Load:
+    case IndexedDoubleLoad:
+    case IndexedContiguousLoad:
+    case IndexedArrayStorageLoad:
+    case IndexedScopedArgumentsLoad:
+    case IndexedDirectArgumentsLoad:
+    case IndexedTypedArrayInt8Load:
+    case IndexedTypedArrayUint8Load:
+    case IndexedTypedArrayUint8ClampedLoad:
+    case IndexedTypedArrayInt16Load:
+    case IndexedTypedArrayUint16Load:
+    case IndexedTypedArrayInt32Load:
+    case IndexedTypedArrayUint32Load:
+    case IndexedTypedArrayFloat32Load:
+    case IndexedTypedArrayFloat64Load:
+    case IndexedInt32Store:
+    case IndexedDoubleStore:
+    case IndexedContiguousStore:
+    case IndexedAlwaysSlowPutContiguousLoad:
+    case IndexedArrayStorageStore:
+    case IndexedTypedArrayInt8Store:
+    case IndexedTypedArrayUint8Store:
+    case IndexedTypedArrayUint8ClampedStore:
+    case IndexedTypedArrayInt16Store:
+    case IndexedTypedArrayUint16Store:
+    case IndexedTypedArrayInt32Store:
+    case IndexedTypedArrayUint32Store:
+    case IndexedTypedArrayFloat32Store:
+    case IndexedTypedArrayFloat64Store:
+    case IndexedStringLoad:
+    case IndexedNoIndexingMiss:
+    case InstanceOfGeneric:
+        func(static_cast<AccessCase*>(this));
+        break;
+
+    case Load:
+    case Miss:
+    case GetGetter:
+        func(static_cast<ProxyableAccessCase*>(this));
+        break;
+
+    case Getter:
+    case Setter:
+    case CustomValueGetter:
+    case CustomAccessorGetter:
+    case CustomValueSetter:
+    case CustomAccessorSetter:
+        func(static_cast<GetterSetterAccessCase*>(this));
+        break;
+
+    case IntrinsicGetter:
+        func(static_cast<IntrinsicGetterAccessCase*>(this));
+        break;
+
+    case ModuleNamespaceLoad:
+        func(static_cast<ModuleNamespaceAccessCase*>(this));
+        break;
+
+    case InstanceOfHit:
+    case InstanceOfMiss:
+        func(static_cast<InstanceOfAccessCase*>(this));
+        break;
+    }
+}
+
 #if ASSERT_ENABLED
 void AccessCase::checkConsistency(StructureStubInfo& stubInfo)
 {
@@ -2743,6 +2830,51 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     }
 
     return true;
+}
+
+void AccessCase::operator delete(AccessCase* accessCase, std::destroying_delete_t)
+{
+    accessCase->runWithDowncast([](auto* accessCase) {
+        using T = std::decay_t<decltype(*accessCase)>;
+        accessCase->~T();
+    });
+    AccessCase::freeAfterDestruction(accessCase);
+}
+
+Ref<AccessCase> AccessCase::clone() const
+{
+    RefPtr<AccessCase> result;
+    const_cast<AccessCase*>(this)->runWithDowncast([&](auto* accessCase) {
+        result = accessCase->cloneImpl();
+    });
+    return result.releaseNonNull();
+}
+
+WatchpointSet* AccessCase::additionalSet() const
+{
+    WatchpointSet* result = nullptr;
+    const_cast<AccessCase*>(this)->runWithDowncast([&](auto* accessCase) {
+        result = accessCase->additionalSetImpl();
+    });
+    return result;
+}
+
+bool AccessCase::hasAlternateBase() const
+{
+    bool result = false;
+    const_cast<AccessCase*>(this)->runWithDowncast([&](auto* accessCase) {
+        result = accessCase->hasAlternateBaseImpl();
+    });
+    return result;
+}
+
+JSObject* AccessCase::alternateBase() const
+{
+    JSObject* result = nullptr;
+    const_cast<AccessCase*>(this)->runWithDowncast([&](auto* accessCase) {
+        result = accessCase->alternateBaseImpl();
+    });
+    return result;
 }
 
 } // namespace JSC

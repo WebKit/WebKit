@@ -888,7 +888,7 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                     }
                 }
 
-                newCase = ProxyableAccessCase::create(vm, codeBlock, AccessCase::Replace, propertyName, slot.cachedOffset(), oldStructure, ObjectPropertyConditionSet(), isProxy);
+                newCase = AccessCase::createReplace(vm, codeBlock, propertyName, slot.cachedOffset(), oldStructure, isProxy);
             } else {
                 ASSERT(!isProxy);
                 ASSERT(slot.type() == PutPropertySlot::NewProperty);

@@ -42,15 +42,13 @@ public:
     
     JSObject* prototype() const { return m_prototype.get(); }
     
-    void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const final;
-    Ref<AccessCase> clone() const final;
-    
-    ~InstanceOfAccessCase() final;
-
 private:
     InstanceOfAccessCase(
         VM&, JSCell*, AccessType, Structure*, const ObjectPropertyConditionSet&,
         JSObject* prototype);
+
+    void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const;
+    Ref<AccessCase> cloneImpl() const;
 
     WriteBarrier<JSObject> m_prototype;
 };
