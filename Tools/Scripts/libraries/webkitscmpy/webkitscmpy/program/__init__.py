@@ -28,6 +28,7 @@ import sys
 from .blame import Blame
 from .branch import Branch
 from .canonicalize import Canonicalize
+from .cherry_pick import CherryPick
 from .clean import Clean, DeletePRBranches
 from .command import Command
 from .commit import Commit
@@ -82,7 +83,7 @@ def main(
         Clean, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
-        Pickable,
+        Pickable, CherryPick,
     ]
     if subversion:
         programs.append(SetupGitSvn)
