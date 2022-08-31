@@ -451,7 +451,7 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
     // If we have been inserted from a renderer-less document,
     // our loader may have not fetched the image, so do it now.
     if (insertionType.connectedToDocument && !m_imageLoader->image())
-        m_imageLoader->updateFromElement();
+        selectImageSource(RelevantMutation::Yes);
 
     return insertNotificationRequest;
 }
