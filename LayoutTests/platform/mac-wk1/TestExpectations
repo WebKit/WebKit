@@ -2026,4 +2026,7 @@ imported/w3c/web-platform-tests/reporting/cross-origin-reports-isolated.https.su
 
 webkit.org/b/244611 [ Debug ] http/tests/loading/form-submission-no-load-event.html [ Pass Crash ]
 
+webkit.org/b/244636 [ Monterey Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Crash ]
+
+
 webkit.org/b/244637 imported/w3c/web-platform-tests/content-security-policy/generic/304-response-should-update-csp.sub.html [ Pass Failure ]
