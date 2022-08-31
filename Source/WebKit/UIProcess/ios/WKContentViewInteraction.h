@@ -794,9 +794,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (BOOL)_formControlRefreshEnabled;
 #endif
 
-#if HAVE(PASTEBOARD_DATA_OWNER)
 - (WebCore::DataOwnerType)_dataOwnerForPasteboard:(WebKit::PasteboardAccessIntent)intent;
-#endif
 
 #if ENABLE(IMAGE_ANALYSIS)
 - (void)_endImageAnalysisGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures;

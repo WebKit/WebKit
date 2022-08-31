@@ -10481,14 +10481,10 @@ void WebPageProxy::touchBarMenuItemDataRemoved(const TouchBarMenuItemData& touch
 }
 #endif
 
-#if HAVE(PASTEBOARD_DATA_OWNER)
-
 DataOwnerType WebPageProxy::dataOwnerForPasteboard(PasteboardAccessIntent intent) const
 {
     return pageClient().dataOwnerForPasteboard(intent);
 }
-
-#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 

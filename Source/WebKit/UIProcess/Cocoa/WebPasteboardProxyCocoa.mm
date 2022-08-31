@@ -633,7 +633,6 @@ std::optional<DataOwnerType> WebPasteboardProxy::determineDataOwner(IPC::Connect
     if (!pageID)
         return DataOwnerType::Undefined;
 
-#if HAVE(PASTEBOARD_DATA_OWNER)
     std::optional<DataOwnerType> result;
     for (auto* page : process->pages()) {
         if (page->webPageID() == *pageID) {
@@ -645,10 +644,6 @@ std::optional<DataOwnerType> WebPasteboardProxy::determineDataOwner(IPC::Connect
     // currently known to the UI process.
     MESSAGE_CHECK_WITH_RETURN_VALUE(result.has_value(), std::nullopt);
     return result;
-#else
-    UNUSED_PARAM(intent);
-    return DataOwnerType::Undefined;
-#endif
 }
 
 void WebPasteboardProxy::PasteboardAccessInformation::grantAccess(WebProcessProxy& process, PasteboardAccessType type)
