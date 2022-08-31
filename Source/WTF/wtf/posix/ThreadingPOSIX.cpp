@@ -609,7 +609,7 @@ bool ThreadCondition::timedWait(Mutex& mutex, WallTime absoluteTime)
     if (absoluteTime < WallTime::now())
         return false;
 
-    if (absoluteTime > WallTime::fromRawSeconds(std::numeric_limits<time_t>::max())) {
+    if (absoluteTime > WallTime::fromRawSeconds(static_cast<double>(std::numeric_limits<time_t>::max()))) {
         wait(mutex);
         return true;
     }
