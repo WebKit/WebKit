@@ -6960,7 +6960,6 @@
             }
         },
         "text-decoration-thickness": {
-            "inherited": true,
             "codegen-properties": {
                 "converter": "TextDecorationThickness"
             },
