@@ -1,0 +1,66 @@
+Tests RTCPeerConnection in have-local-offer state.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc.signalingState is "stable"
+PASS pc.setLocalDescription(sessionDescription).then(requestSucceeded1, finishIfFailed); did not throw exception.
+PASS setLocalDescription succeeded.
+PASS pc.localDescription.type is "offer"
+PASS pc.localDescription.sdp is "local"
+FAIL pc.remoteDescription should throw an exception. Was null.
+PASS pc.signalingState is "have-local-offer"
+PASS pc.setLocalDescription(sessionDescription).then(finishIfSucceeded, requestFailed1); did not throw exception.
+PASS setLocalDescription failed.
+FAIL errorReason.name should be InvalidSessionDescriptionError. Was InvalidStateError.
+PASS pc.localDescription.type is "offer"
+PASS pc.localDescription.sdp is "local"
+FAIL pc.remoteDescription should throw an exception. Was null.
+PASS pc.signalingState is "have-local-offer"
+PASS pc.setLocalDescription(sessionDescription).then(finishIfSucceeded, requestFailed2); did not throw exception.
+PASS setLocalDescription failed.
+FAIL errorReason.name should be InvalidSessionDescriptionError. Was InvalidStateError.
+PASS pc.localDescription.type is "offer"
+PASS pc.localDescription.sdp is "local"
+FAIL pc.remoteDescription should throw an exception. Was null.
+PASS pc.signalingState is "have-local-offer"
+PASS pc.setRemoteDescription(sessionDescription).then(finishIfSucceeded, requestFailed3); did not throw exception.
+PASS setRemoteDescription failed.
+FAIL errorReason.name should be InvalidSessionDescriptionError. Was InvalidStateError.
+PASS pc.localDescription.type is "offer"
+PASS pc.localDescription.sdp is "local"
+FAIL pc.remoteDescription should throw an exception. Was null.
+PASS pc.signalingState is "have-local-offer"
+PASS pc.setLocalDescription(sessionDescription).then(requestSucceeded2, finishIfFailed); did not throw exception.
+PASS setLocalDescription succeeded.
+PASS pc.localDescription.type is "offer"
+PASS pc.localDescription.sdp is "local"
+FAIL pc.remoteDescription should throw an exception. Was null.
+PASS pc.signalingState is "have-local-offer"
+PASS pc.setRemoteDescription(sessionDescription).then(requestSucceeded3, finishIfFailed); did not throw exception.
+PASS setRemoteDescription succeeded.
+PASS pc.localDescription.type is "offer"
+PASS pc.localDescription.sdp is "local"
+PASS pc.remoteDescription.type is "pranswer"
+PASS pc.remoteDescription.sdp is "remote"
+PASS pc.signalingState is "have-remote-pranswer"
+FAIL pc.localDescription should throw an exception. Was null.
+FAIL pc.remoteDescription should throw an exception. Was null.
+PASS pc.signalingState is "stable"
+PASS pc.setLocalDescription(sessionDescription).then(requestSucceeded4, finishIfFailed); did not throw exception.
+PASS setLocalDescription succeeded.
+PASS pc.localDescription.type is "offer"
+PASS pc.localDescription.sdp is "local"
+FAIL pc.remoteDescription should throw an exception. Was null.
+PASS pc.signalingState is "have-local-offer"
+PASS pc.setRemoteDescription(sessionDescription).then(requestSucceeded5, finishIfFailed); did not throw exception.
+PASS setRemoteDescription succeeded.
+PASS pc.localDescription.type is "offer"
+PASS pc.localDescription.sdp is "local"
+PASS pc.remoteDescription.type is "answer"
+PASS pc.remoteDescription.sdp is "remote"
+PASS pc.signalingState is "stable"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
