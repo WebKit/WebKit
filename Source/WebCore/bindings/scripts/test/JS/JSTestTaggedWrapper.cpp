@@ -118,8 +118,8 @@ void JSTestTaggedWrapperPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestTaggedWrapper::s_info = { "TestTaggedWrapper"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapper) };
 
-JSTestTaggedWrapper::JSTestTaggedWrapper(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestTaggedWrapper>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestTaggedWrapper, SignedPtrTraits<TestTaggedWrapper, TestTaggedWrapperPtrTag>>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestTaggedWrapper::JSTestTaggedWrapper(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestTaggedWrapper>&& impl)
+    : JSDOMWrapper<TestTaggedWrapper, SignedPtrTraits<TestTaggedWrapper, TestTaggedWrapperPtrTag>>(structure, globalObject, WTFMove(impl))
 {
 }
 

@@ -750,7 +750,7 @@ public:
         return m_transitionWatchpointSet;
     }
     
-    JS_EXPORT_PRIVATE WatchpointSet* ensurePropertyReplacementWatchpointSet(VM&, PropertyOffset);
+    WatchpointSet* ensurePropertyReplacementWatchpointSet(VM&, PropertyOffset);
     void startWatchingPropertyForReplacements(VM& vm, PropertyOffset offset)
     {
         ensurePropertyReplacementWatchpointSet(vm, offset);

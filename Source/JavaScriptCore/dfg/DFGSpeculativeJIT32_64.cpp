@@ -1873,8 +1873,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
         break;
     }
     case Array::Int32:
-    case Array::Contiguous:
-    case Array::AlwaysSlowPutContiguous: {
+    case Array::Contiguous: {
         if (node->arrayMode().isInBounds()) {
             SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
             StorageOperand storage(this, m_graph.varArgChild(node, 2));

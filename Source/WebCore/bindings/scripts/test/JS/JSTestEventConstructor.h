@@ -62,7 +62,7 @@ public:
         return static_cast<TestEventConstructor&>(Base::wrapped());
     }
 protected:
-    JSTestEventConstructor(JSC::Structure*, JSDOMGlobalObject&, Ref<TestEventConstructor>&&, JSC::Butterfly* = nullptr);
+    JSTestEventConstructor(JSC::Structure*, JSDOMGlobalObject&, Ref<TestEventConstructor>&&);
 
     void finishCreation(JSC::VM&);
 };

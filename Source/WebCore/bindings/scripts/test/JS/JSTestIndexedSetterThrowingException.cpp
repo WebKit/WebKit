@@ -120,8 +120,8 @@ void JSTestIndexedSetterThrowingExceptionPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestIndexedSetterThrowingException::s_info = { "TestIndexedSetterThrowingException"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterThrowingException) };
 
-JSTestIndexedSetterThrowingException::JSTestIndexedSetterThrowingException(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestIndexedSetterThrowingException>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestIndexedSetterThrowingException>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestIndexedSetterThrowingException::JSTestIndexedSetterThrowingException(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestIndexedSetterThrowingException>&& impl)
+    : JSDOMWrapper<TestIndexedSetterThrowingException>(structure, globalObject, WTFMove(impl))
 {
 }
 

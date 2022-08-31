@@ -218,8 +218,8 @@ void JSTestDefaultToJSONPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestDefaultToJSON::s_info = { "TestDefaultToJSON"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSON) };
 
-JSTestDefaultToJSON::JSTestDefaultToJSON(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSON>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestDefaultToJSON>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestDefaultToJSON::JSTestDefaultToJSON(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSON>&& impl)
+    : JSDOMWrapper<TestDefaultToJSON>(structure, globalObject, WTFMove(impl))
 {
 }
 

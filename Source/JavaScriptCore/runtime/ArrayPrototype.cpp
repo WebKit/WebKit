@@ -1012,7 +1012,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncReverse, (JSGlobalObject* globalObject, C
     thisObject->ensureWritable(vm);
 
     switch (thisObject->indexingType()) {
-    case ALL_FAST_PUT_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_CONTIGUOUS_INDEXING_TYPES:
     case ALL_INT32_INDEXING_TYPES: {
         auto& butterfly = *thisObject->butterfly();
         if (length > butterfly.publicLength())
@@ -1322,7 +1322,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncUnShift, (JSGlobalObject* globalObject, C
 
 enum class IndexOfDirection { Forward, Backward };
 template<IndexOfDirection direction>
-ALWAYS_INLINE JSValue tryFastIndexOf(JSGlobalObject* globalObject, VM& vm, JSObject* array, uint64_t length64, JSValue searchElement, uint64_t index64)
+ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray* array, uint64_t length64, JSValue searchElement, uint64_t index64)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -1444,10 +1444,12 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncIndexOf, (JSGlobalObject* globalObject, C
     RETURN_IF_EXCEPTION(scope, { });
     JSValue searchElement = callFrame->argument(0);
 
-    JSValue result = tryFastIndexOf<IndexOfDirection::Forward>(globalObject, vm, thisObject, length, searchElement, index);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (result)
-        return JSValue::encode(result);
+    if (isJSArray(thisObject)) {
+        JSValue result = fastIndexOf<IndexOfDirection::Forward>(globalObject, vm, asArray(thisObject), length, searchElement, index);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (result)
+            return JSValue::encode(result);
+    }
 
     for (; index < length; ++index) {
         JSValue e = getProperty(globalObject, thisObject, index);
@@ -1494,10 +1496,12 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncLastIndexOf, (JSGlobalObject* globalObjec
 
     JSValue searchElement = callFrame->argument(0);
 
-    JSValue result = tryFastIndexOf<IndexOfDirection::Backward>(globalObject, vm, thisObject, length, searchElement, index);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (result)
-        return JSValue::encode(result);
+    if (isJSArray(thisObject)) {
+        JSValue result = fastIndexOf<IndexOfDirection::Backward>(globalObject, vm, asArray(thisObject), length, searchElement, index);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (result)
+            return JSValue::encode(result);
+    }
 
     do {
         ASSERT(index < length);

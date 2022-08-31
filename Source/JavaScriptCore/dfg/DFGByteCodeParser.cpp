@@ -2516,6 +2516,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
                 return false;
 
             ArrayMode arrayMode = getArrayMode(Array::Read);
+            if (!arrayMode.isJSArray())
+                return false;
+
             if (!arrayMode.isJSArrayWithOriginalStructure())
                 return false;
 
@@ -2602,32 +2605,21 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
                 return false;
 
             ArrayMode arrayMode = getArrayMode(Array::Read);
+            if (!arrayMode.isJSArray())
+                return false;
+
+            if (!arrayMode.isJSArrayWithOriginalStructure())
+                return false;
+
             // We do not want to convert arrays into one type just to perform indexOf.
             if (arrayMode.doesConversion())
                 return false;
-
-            auto addToGraphAndSetResult = [&] {
-                insertChecks();
-
-                Node* array = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
-                addVarArgChild(array);
-                addVarArgChild(get(virtualRegisterForArgumentIncludingThis(1, registerOffset))); // Search element.
-                if (argumentCountIncludingThis >= 3)
-                    addVarArgChild(get(virtualRegisterForArgumentIncludingThis(2, registerOffset))); // Start index.
-                addVarArgChild(nullptr);
-
-                Node* node = addToGraph(Node::VarArg, ArrayIndexOf, OpInfo(arrayMode.asWord()), OpInfo());
-                setResult(node);
-            };
-
-            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
 
             switch (arrayMode.type()) {
             case Array::Double:
             case Array::Int32:
             case Array::Contiguous: {
-                if (!arrayMode.isJSArrayWithOriginalStructure())
-                    return false;
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
 
                 Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
                 Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
@@ -2641,27 +2633,17 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
                     m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
                     m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
 
-                    addToGraphAndSetResult();
-                    return true;
-                }
+                    insertChecks();
 
-                return false;
-            }
+                    Node* array = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+                    addVarArgChild(array);
+                    addVarArgChild(get(virtualRegisterForArgumentIncludingThis(1, registerOffset))); // Search element.
+                    if (argumentCountIncludingThis >= 3)
+                        addVarArgChild(get(virtualRegisterForArgumentIncludingThis(2, registerOffset))); // Start index.
+                    addVarArgChild(nullptr);
 
-            case Array::AlwaysSlowPutContiguous: {
-                if (arrayMode.arrayClass() != Array::OriginalNonArray)
-                    return false;
-
-                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
-
-                if (globalObject->alwaysSlowPutContiguousPrototypesAreSaneWatchpointSet().isStillValid()
-                    && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
-                    && globalObject->objectPrototypeIsSaneConcurrently(objectPrototypeStructure)) {
-
-                    m_graph.watchpoints().addLazily(globalObject->alwaysSlowPutContiguousPrototypesAreSaneWatchpointSet());
-                    m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
-
-                    addToGraphAndSetResult();
+                    Node* node = addToGraph(Node::VarArg, ArrayIndexOf, OpInfo(arrayMode.asWord()), OpInfo());
+                    setResult(node);
                     return true;
                 }
 

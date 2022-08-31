@@ -56,7 +56,6 @@ public:
     virtual bool isLiveNodeList() const { return false; }
     virtual bool isChildNodeList() const { return false; }
     virtual bool isEmptyNodeList() const { return false; }
-    virtual bool isStaticNodeList() const { return false; }
     virtual size_t memoryCost() const { return 0; }
 };
 

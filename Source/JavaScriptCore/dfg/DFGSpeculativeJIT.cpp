@@ -780,7 +780,6 @@ JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGP
     case Array::Int32:
     case Array::Double:
     case Array::Contiguous:
-    case Array::AlwaysSlowPutContiguous:
     case Array::Undecided:
     case Array::ArrayStorage: {
         IndexingType shape = arrayMode.shapeMask();
@@ -879,7 +878,6 @@ void SpeculativeJIT::checkArray(Node* node)
     case Array::Int32:
     case Array::Double:
     case Array::Contiguous:
-    case Array::AlwaysSlowPutContiguous:
     case Array::Undecided:
     case Array::ArrayStorage:
     case Array::SlowPutArrayStorage: {
@@ -907,11 +905,9 @@ void SpeculativeJIT::checkArray(Node* node)
     case Array::Int32:
     case Array::Double:
     case Array::Contiguous:
-    case Array::AlwaysSlowPutContiguous:
     case Array::Undecided:
     case Array::ArrayStorage:
     case Array::SlowPutArrayStorage: {
-        ASSERT(tempGPR.has_value());
         m_jit.load8(MacroAssembler::Address(baseReg, JSCell::indexingTypeAndMiscOffset()), tempGPR.value());
         speculationCheck(
             BadIndexingType, JSValueSource::unboxedCell(baseReg), nullptr,
@@ -2681,7 +2677,6 @@ void SpeculativeJIT::compilePutByVal(Node* node)
     case Array::String:
     case Array::DirectArguments:
     case Array::ScopedArguments:
-    case Array::AlwaysSlowPutContiguous:
     case Array::Undecided:
 #if USE(JSVALUE32_64)
     case Array::BigInt64Array:
@@ -8649,8 +8644,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
     case Array::Undecided:
     case Array::Int32:
     case Array::Double:
-    case Array::Contiguous:
-    case Array::AlwaysSlowPutContiguous: {
+    case Array::Contiguous: {
         StorageOperand storage(this, node->child2());
         GPRTemporary result(this, Reuse, storage);
         GPRReg storageReg = storage.gpr();
@@ -10155,7 +10149,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         }
 
         if (searchElementEdge.useKind() == OtherUse) {
-            ASSERT(node->arrayMode().isAnyKindOfContiguous());
+            ASSERT(node->arrayMode().type() == Array::Contiguous);
             JSValueOperand searchElement(this, searchElementEdge, ManualOperandSpeculation);
             GPRTemporary temp(this);
 
@@ -10175,7 +10169,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
             return;
         }
 
-        ASSERT(node->arrayMode().isAnyKindOfContiguous());
+        ASSERT(node->arrayMode().type() == Array::Contiguous);
         SpeculateCellOperand searchElement(this, searchElementEdge);
         GPRReg searchElementGPR = searchElement.gpr();
 
@@ -10235,7 +10229,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
     }
 
     case StringUse: {
-        ASSERT(node->arrayMode().isAnyKindOfContiguous());
+        ASSERT(node->arrayMode().type() == Array::Contiguous);
         SpeculateCellOperand searchElement(this, searchElementEdge);
 
         GPRReg searchElementGPR = searchElement.gpr();

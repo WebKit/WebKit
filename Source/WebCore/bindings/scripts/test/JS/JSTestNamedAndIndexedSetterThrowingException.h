@@ -66,7 +66,7 @@ public:
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpureForPropertyAbsence | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertyNames | JSC::OverridesGetOwnPropertySlot | JSC::OverridesPut | JSC::ProhibitsPropertyCaching;
 protected:
-    JSTestNamedAndIndexedSetterThrowingException(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedAndIndexedSetterThrowingException>&&, JSC::Butterfly* = nullptr);
+    JSTestNamedAndIndexedSetterThrowingException(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedAndIndexedSetterThrowingException>&&);
 
     void finishCreation(JSC::VM&);
 };

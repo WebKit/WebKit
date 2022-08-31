@@ -146,8 +146,8 @@ void JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype::finishCreation(V
 
 const ClassInfo JSTestNamedSetterWithLegacyUnforgeableProperties::s_info = { "TestNamedSetterWithLegacyUnforgeableProperties"_s, &Base::s_info, &JSTestNamedSetterWithLegacyUnforgeablePropertiesTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyUnforgeableProperties) };
 
-JSTestNamedSetterWithLegacyUnforgeableProperties::JSTestNamedSetterWithLegacyUnforgeableProperties(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterWithLegacyUnforgeableProperties>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestNamedSetterWithLegacyUnforgeableProperties>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestNamedSetterWithLegacyUnforgeableProperties::JSTestNamedSetterWithLegacyUnforgeableProperties(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterWithLegacyUnforgeableProperties>&& impl)
+    : JSDOMWrapper<TestNamedSetterWithLegacyUnforgeableProperties>(structure, globalObject, WTFMove(impl))
 {
 }
 

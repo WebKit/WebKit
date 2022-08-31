@@ -62,7 +62,7 @@ public:
         return static_cast<TestPromiseRejectionEvent&>(Base::wrapped());
     }
 protected:
-    JSTestPromiseRejectionEvent(JSC::Structure*, JSDOMGlobalObject&, Ref<TestPromiseRejectionEvent>&&, JSC::Butterfly* = nullptr);
+    JSTestPromiseRejectionEvent(JSC::Structure*, JSDOMGlobalObject&, Ref<TestPromiseRejectionEvent>&&);
 
     void finishCreation(JSC::VM&);
 };
