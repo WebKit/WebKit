@@ -27,14 +27,17 @@ namespace WebCore {
 
 class RealtimeOutgoingAudioSourceGStreamer final : public RealtimeOutgoingMediaSourceGStreamer {
 public:
-    static Ref<RealtimeOutgoingAudioSourceGStreamer> create(Ref<MediaStreamTrackPrivate>&& audioSource) { return adoptRef(*new RealtimeOutgoingAudioSourceGStreamer(WTFMove(audioSource))); }
+    static Ref<RealtimeOutgoingAudioSourceGStreamer> create(const String& mediaStreamId, MediaStreamTrack& track) { return adoptRef(*new RealtimeOutgoingAudioSourceGStreamer(mediaStreamId, track)); }
 
     bool setPayloadType(const GRefPtr<GstCaps>&) final;
 
 protected:
-    explicit RealtimeOutgoingAudioSourceGStreamer(Ref<MediaStreamTrackPrivate>&&);
+    explicit RealtimeOutgoingAudioSourceGStreamer(const String& mediaStreamId, MediaStreamTrack&);
 
 private:
+    void codecPreferencesChanged(const GRefPtr<GstCaps>&) final;
+    RTCRtpCapabilities rtpCapabilities() const final;
+
     GRefPtr<GstElement> m_audioconvert;
     GRefPtr<GstElement> m_audioresample;
 };

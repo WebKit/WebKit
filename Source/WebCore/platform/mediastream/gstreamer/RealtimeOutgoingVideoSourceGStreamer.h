@@ -27,19 +27,20 @@ namespace WebCore {
 
 class RealtimeOutgoingVideoSourceGStreamer final : public RealtimeOutgoingMediaSourceGStreamer {
 public:
-    static Ref<RealtimeOutgoingVideoSourceGStreamer> create(Ref<MediaStreamTrackPrivate>&& source) { return adoptRef(*new RealtimeOutgoingVideoSourceGStreamer(WTFMove(source))); }
+    static Ref<RealtimeOutgoingVideoSourceGStreamer> create(const String& mediaStreamId, MediaStreamTrack& track) { return adoptRef(*new RealtimeOutgoingVideoSourceGStreamer(mediaStreamId, track)); }
 
     void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }
 
     bool setPayloadType(const GRefPtr<GstCaps>&) final;
 
 protected:
-    explicit RealtimeOutgoingVideoSourceGStreamer(Ref<MediaStreamTrackPrivate>&&);
+    explicit RealtimeOutgoingVideoSourceGStreamer(const String& mediaStreamId, MediaStreamTrack&);
 
     bool m_shouldApplyRotation { false };
 
 private:
     void codecPreferencesChanged(const GRefPtr<GstCaps>&) final;
+    RTCRtpCapabilities rtpCapabilities() const final;
 
     GRefPtr<GstElement> m_videoConvert;
     GRefPtr<GstElement> m_videoFlip;

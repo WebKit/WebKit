@@ -31,8 +31,7 @@ PASS pc.signalingState is "stable"
 PASS pc.setLocalDescription(sessionDescription).then(requestSucceeded1, finishIfFailed); did not throw exception.
 PASS setLocalDescription succeeded.
 PASS pc.localDescription.type is "offer"
-FAIL pc.localDescription.sdp should be local. Was t=0 0
-.
+PASS pc.localDescription.sdp is "local"
 FAIL pc.remoteDescription should throw an exception. Was null.
 PASS pc.signalingState is "have-local-offer"
 FAIL pc.localDescription should throw an exception. Was null.
@@ -42,8 +41,7 @@ PASS pc.setRemoteDescription(sessionDescription).then(requestSucceeded2, finishI
 PASS setRemoteDescription succeeded.
 FAIL pc.localDescription should throw an exception. Was null.
 PASS pc.remoteDescription.type is "offer"
-FAIL pc.remoteDescription.sdp should be remote. Was t=0 0
-.
+PASS pc.remoteDescription.sdp is "remote"
 PASS pc.signalingState is "have-remote-offer"
 PASS successfullyParsed is true
 

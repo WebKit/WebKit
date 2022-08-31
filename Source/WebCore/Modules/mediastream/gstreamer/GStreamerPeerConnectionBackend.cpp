@@ -215,15 +215,15 @@ ExceptionOr<Ref<RTCRtpSender>> GStreamerPeerConnectionBackend::addTrack(MediaStr
 
     if (auto sender = findExistingSender(m_peerConnection.currentTransceivers(), *senderBackend)) {
         backendFromRTPSender(*sender).takeSource(*senderBackend);
-        sender->setTrack(Ref(track));
-        sender->setMediaStreamIds(WTFMove(mediaStreamIds));
+        sender->setTrack(track);
+        sender->setMediaStreamIds(mediaStreamIds);
         return sender.releaseNonNull();
     }
 
     auto transceiverBackend = m_endpoint->transceiverBackendFromSender(*senderBackend);
 
-    auto sender = RTCRtpSender::create(m_peerConnection, Ref(track), WTFMove(senderBackend));
-    sender->setMediaStreamIds(WTFMove(mediaStreamIds));
+    auto sender = RTCRtpSender::create(m_peerConnection, track, WTFMove(senderBackend));
+    sender->setMediaStreamIds(mediaStreamIds);
     auto receiver = createReceiver(transceiverBackend->createReceiverBackend(), track.kind(), track.id());
     auto transceiver = RTCRtpTransceiver::create(sender.copyRef(), WTFMove(receiver), WTFMove(transceiverBackend));
     m_peerConnection.addInternalTransceiver(WTFMove(transceiver));
@@ -293,11 +293,17 @@ void GStreamerPeerConnectionBackend::addPendingTrackEvent(PendingTrackEvent&& ev
     m_pendingTrackEvents.append(WTFMove(event));
 }
 
-void GStreamerPeerConnectionBackend::dispatchPendingTrackEvents()
+void GStreamerPeerConnectionBackend::dispatchPendingTrackEvents(MediaStream& mediaStream)
 {
     auto events = WTFMove(m_pendingTrackEvents);
-    for (auto& event : events)
+    for (auto& event : events) {
+        Vector<RefPtr<MediaStream>> pendingStreams;
+        pendingStreams.reserveInitialCapacity(1);
+        pendingStreams.uncheckedAppend(&mediaStream);
+        event.streams = WTFMove(pendingStreams);
+
         dispatchTrackEvent(event);
+    }
 }
 
 void GStreamerPeerConnectionBackend::removeTrack(RTCRtpSender& sender)

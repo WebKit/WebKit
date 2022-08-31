@@ -57,6 +57,7 @@ WTF_DEFINE_GPTR_DELETER(GstAudioConverter, gst_audio_converter_free)
 
 #if defined(BUILDING_WebCore) && USE(GSTREAMER_WEBRTC)
 WTF_DEFINE_GPTR_DELETER(GstWebRTCSessionDescription, gst_webrtc_session_description_free)
+WTF_DEFINE_GPTR_DELETER(GstSDPMessage, gst_sdp_message_free)
 #endif
 
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)

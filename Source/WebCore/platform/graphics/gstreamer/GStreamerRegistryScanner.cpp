@@ -847,6 +847,21 @@ void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configurat
         capabilities.codecs.append({ .mimeType = "video/VP9"_s, .clockRate = 90000, .sdpFmtpLine = "profile-id=2"_s });
     }
 }
+
+Vector<RTCRtpCapabilities::HeaderExtensionCapability> GStreamerRegistryScanner::audioRtpExtensions()
+{
+    if (!m_audioRtpExtensions)
+        m_audioRtpExtensions = probeRtpExtensions(m_allAudioRtpExtensions);
+    return *m_audioRtpExtensions;
+}
+
+Vector<RTCRtpCapabilities::HeaderExtensionCapability> GStreamerRegistryScanner::videoRtpExtensions()
+{
+    if (!m_videoRtpExtensions)
+        m_videoRtpExtensions = probeRtpExtensions(m_allVideoRtpExtensions);
+    return *m_videoRtpExtensions;
+}
+
 #endif // USE(GSTREAMER_WEBRTC)
 
 }

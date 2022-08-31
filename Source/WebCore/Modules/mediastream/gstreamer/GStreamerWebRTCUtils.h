@@ -263,5 +263,10 @@ std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&&, co
 
 bool sdpMediaHasAttributeKey(const GstSDPMedia*, const char* key);
 
+WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromRtpCapabilities(const RTCRtpCapabilities&, Function<void(GstStructure*)> supplementCapsCallback);
+
+GstWebRTCRTPTransceiverDirection getDirectionFromSDPMedia(const GstSDPMedia*);
+WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia*);
+
 }
 #endif
