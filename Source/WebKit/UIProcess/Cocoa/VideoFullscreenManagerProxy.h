@@ -113,6 +113,7 @@ private:
     void requestVideoContentLayer() final;
     void returnVideoContentLayer() final;
     void didSetupFullscreen() final;
+    void failedToEnterFullscreen() final;
     void didEnterFullscreen(const WebCore::FloatSize&) final;
     void willExitFullscreen() final;
     void didExitFullscreen() final;
@@ -199,6 +200,7 @@ private:
     void didSetupFullscreen(PlaybackSessionContextIdentifier);
     void willExitFullscreen(PlaybackSessionContextIdentifier);
     void didExitFullscreen(PlaybackSessionContextIdentifier);
+    void failedToEnterFullscreen(PlaybackSessionContextIdentifier);
     void didEnterFullscreen(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
     void didCleanupFullscreen(PlaybackSessionContextIdentifier);
     void setVideoLayerFrame(PlaybackSessionContextIdentifier, WebCore::FloatRect);

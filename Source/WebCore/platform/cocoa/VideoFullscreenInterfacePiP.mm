@@ -219,10 +219,11 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (void)dealloc
 {
-    if (_startPictureInPictureTimer)
+    if (_startPictureInPictureTimer) {
         [self removeObserver];
-    [_startPictureInPictureTimer invalidate];
-    _startPictureInPictureTimer = nil;
+        [_startPictureInPictureTimer invalidate];
+        _startPictureInPictureTimer = nil;
+    }
     _controller = nil;
     _pip = nil;
     [super dealloc];
@@ -266,6 +267,11 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    ASSERT([keyPath isEqualToString:@"pictureInPicturePossible"]);
+
+    if (![keyPath isEqualToString:@"pictureInPicturePossible"] || ![self isPictureInPicturePossible])
+        return;
+
     if (!_startPictureInPictureTimer)
         return;
     [_startPictureInPictureTimer invalidate];
