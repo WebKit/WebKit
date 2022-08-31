@@ -2264,7 +2264,7 @@ private:
     void runJavaScriptConfirm(WebCore::FrameIdentifier, WebKit::FrameInfoData&&, const String&, Messages::WebPageProxy::RunJavaScriptConfirmDelayedReply&&);
     void runJavaScriptPrompt(WebCore::FrameIdentifier, WebKit::FrameInfoData&&, const String&, const String&, Messages::WebPageProxy::RunJavaScriptPromptDelayedReply&&);
     void setStatusText(const String&);
-    void mouseDidMoveOverElement(WebHitTestResultData&&, uint32_t modifiers, UserData&&);
+    void mouseDidMoveOverElement(WebHitTestResultData&&, OptionSet<WebEvent::Modifier> modifiers, UserData&&);
 
 #if ENABLE(WEBGL)
     void webGLPolicyForURL(URL&&, Messages::WebPageProxy::WebGLPolicyForURLDelayedReply&&);

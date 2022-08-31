@@ -6348,10 +6348,10 @@ void WebPageProxy::setStatusText(const String& text)
     m_uiClient->setStatusText(this, text);
 }
 
-void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultData, uint32_t opaqueModifiers, UserData&& userData)
+void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultData, OptionSet<WebEvent::Modifier> modifiers, UserData&& userData)
 {
     m_lastMouseMoveHitTestResult = API::HitTestResult::create(hitTestResultData);
-    auto modifiers = OptionSet<WebEvent::Modifier>::fromRaw(opaqueModifiers);
+
     m_uiClient->mouseDidMoveOverElement(*this, hitTestResultData, modifiers, m_process->transformHandlesToObjects(userData.object()).get());
     setToolTip(hitTestResultData.toolTipText);
 }
