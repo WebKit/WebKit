@@ -59,9 +59,6 @@ static const NSTimeInterval playbackControlsVisibleDurationAfterResettingVideoSo
 #endif
 
 SOFTLINK_AVKIT_FRAMEWORK()
-#if HAVE(AVOBSERVATIONCONTROLLER)
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVObservationController)
-#endif
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPictureInPictureController)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerViewController)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
@@ -370,10 +367,7 @@ NS_ASSUME_NONNULL_END
     RetainPtr<UIViewController> _presentingViewController;
 #endif
     RetainPtr<AVPlayerViewController> _avPlayerViewController;
-#if HAVE(AVOBSERVATIONCONTROLLER)
     RetainPtr<NSTimer> _startPictureInPictureTimer;
-    RetainPtr<AVObservationController> _avPlayerViewControllerObservationController;
-#endif
     id<AVPlayerViewControllerDelegate_WebKitOnly> _delegate;
 }
 
@@ -385,9 +379,6 @@ NS_ASSUME_NONNULL_END
     _fullscreenInterface = interface;
     _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() initWithPlayerLayerView:interface->playerLayerView()]);
     _avPlayerViewController.get().modalPresentationStyle = UIModalPresentationOverFullScreen;
-#if HAVE(AVOBSERVATIONCONTROLLER)
-    _avPlayerViewControllerObservationController = adoptNS([allocAVObservationControllerInstance() initWithOwner:_avPlayerViewController.get()]);
-#endif
 #if PLATFORM(WATCHOS)
     _avPlayerViewController.get().delegate = self;
 #endif
@@ -395,17 +386,15 @@ NS_ASSUME_NONNULL_END
     return self;
 }
 
-#if HAVE(AVOBSERVATIONCONTROLLER)
 - (void)dealloc
 {
-    [_startPictureInPictureTimer invalidate];
-    _startPictureInPictureTimer = nil;
-    [_avPlayerViewControllerObservationController stopAllObservation];
-    _avPlayerViewControllerObservationController = nil;
-
+    if (_startPictureInPictureTimer) {
+        [self removeObserver];
+        [_startPictureInPictureTimer invalidate];
+        _startPictureInPictureTimer = nil;
+    }
     [super dealloc];
 }
-#endif
 
 - (BOOL)playerViewControllerShouldHandleDoneButtonTap:(AVPlayerViewController *)playerViewController
 {
@@ -461,31 +450,58 @@ NS_ASSUME_NONNULL_END
 #define MY_NO_RETURN
 #endif
 
-#if HAVE(AVOBSERVATIONCONTROLLER)
-static const NSTimeInterval startPictureInPictureTimeInterval = 0.5;
+static const NSTimeInterval startPictureInPictureTimeInterval = 1.0;
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    ASSERT([keyPath isEqualToString:@"pictureInPicturePossible"]);
+
+    if (![keyPath isEqualToString:@"pictureInPicturePossible"] || ![self isPictureInPicturePossible])
+        return;
+
+    if (!_startPictureInPictureTimer)
+        return;
+    [_startPictureInPictureTimer invalidate];
+    _startPictureInPictureTimer = nil;
+
+    [self removeObserver];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self startPictureInPicture];
+    });
+}
+
+- (void)initObserver
+{
+    [_avPlayerViewController addObserver:self forKeyPath:@"pictureInPicturePossible" options:NSKeyValueObservingOptionNew context:nil];
+}
+
+- (void)removeObserver
+{
+    [_avPlayerViewController removeObserver:self forKeyPath:@"pictureInPicturePossible" context:nil];
+}
 
 - (void)tryToStartPictureInPicture MY_NO_RETURN
 {
     if (_startPictureInPictureTimer)
         return;
 
+    if ([self isPictureInPicturePossible]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self startPictureInPicture];
+        });
+        return;
+    }
+
     _startPictureInPictureTimer = [NSTimer scheduledTimerWithTimeInterval:startPictureInPictureTimeInterval repeats:NO block:^(NSTimer *_Nonnull) {
-        [_avPlayerViewControllerObservationController stopAllObservation];
+        [self removeObserver];
         _startPictureInPictureTimer = nil;
         if (_fullscreenInterface)
             _fullscreenInterface->failedToStartPictureInPicture();
     }];
 
-    [_avPlayerViewControllerObservationController startObserving:_avPlayerViewController.get() keyPath:@"pictureInPicturePossible" includeInitialValue:YES observationHandler:^(id _Nonnull, id _Nonnull, id _Nonnull) {
-        if ([self isPictureInPicturePossible] && _startPictureInPictureTimer) {
-            [_avPlayerViewControllerObservationController stopAllObservation];
-            [_startPictureInPictureTimer invalidate];
-            _startPictureInPictureTimer = nil;
-            [self startPictureInPicture];
-        }
-    }];
+    [self initObserver];
 }
-#endif
 
 - (void)startPictureInPicture MY_NO_RETURN
 {
@@ -969,7 +985,15 @@ void VideoFullscreenInterfaceAVKit::failedToStartPictureInPicture()
     if (m_videoFullscreenModel) {
         m_videoFullscreenModel->failedToEnterPictureInPicture();
         m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
+        m_videoFullscreenModel->fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenModeNone);
     }
+    if (m_fullscreenChangeObserver) {
+        m_fullscreenChangeObserver->failedToEnterFullscreen();
+        m_changingStandbyOnly = false;
+    }
+
+    m_enterFullscreenNeedsExitPictureInPicture = false;
+    m_exitFullscreenNeedsExitPictureInPicture = false;
 }
 
 void VideoFullscreenInterfaceAVKit::willStopPictureInPicture()
@@ -1270,15 +1294,7 @@ void VideoFullscreenInterfaceAVKit::doEnterFullscreen()
 
     if (m_targetMode.hasPictureInPicture() && !m_currentMode.hasPictureInPicture()) {
         m_enterFullscreenNeedsEnterPictureInPicture = true;
-        if ([m_playerViewController isPictureInPicturePossible])
-            [m_playerViewController startPictureInPicture];
-        else
-#if HAVE(AVOBSERVATIONCONTROLLER)
-            [m_playerViewController tryToStartPictureInPicture];
-#else
-            failedToStartPictureInPicture();
-#endif
-
+        [m_playerViewController tryToStartPictureInPicture];
         return;
     }
     m_enterFullscreenNeedsEnterPictureInPicture = false;

@@ -1984,6 +1984,7 @@ public:
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
+    void failedToEnterFullscreen(PlaybackSessionContextIdentifier);
     void didEnterFullscreen(PlaybackSessionContextIdentifier);
     void didExitFullscreen(PlaybackSessionContextIdentifier);
     void didChangePlaybackRate(PlaybackSessionContextIdentifier);

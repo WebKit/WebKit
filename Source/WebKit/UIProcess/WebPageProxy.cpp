@@ -6242,6 +6242,10 @@ void WebPageProxy::didExitFullscreen(PlaybackSessionContextIdentifier identifier
     }
 }
 
+void WebPageProxy::failedToEnterFullscreen(PlaybackSessionContextIdentifier identifier)
+{
+}
+
 #else
 
 void WebPageProxy::didEnterFullscreen()

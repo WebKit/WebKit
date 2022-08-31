@@ -38,6 +38,7 @@ public:
     virtual void returnVideoContentLayer() = 0;
     virtual void didSetupFullscreen() = 0;
     virtual void didEnterFullscreen(const FloatSize&) = 0;
+    virtual void failedToEnterFullscreen() = 0;
     virtual void willExitFullscreen() = 0;
     virtual void didExitFullscreen() = 0;
     virtual void didCleanupFullscreen() = 0;
