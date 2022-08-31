@@ -2025,3 +2025,5 @@ imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.htt
 imported/w3c/web-platform-tests/reporting/cross-origin-reports-isolated.https.sub.html [ Failure ]
 
 webkit.org/b/244611 [ Debug ] http/tests/loading/form-submission-no-load-event.html [ Pass Crash ]
+
+webkit.org/b/244637 imported/w3c/web-platform-tests/content-security-policy/generic/304-response-should-update-csp.sub.html [ Pass Failure ]
