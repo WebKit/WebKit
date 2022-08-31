@@ -187,7 +187,11 @@ pas_large_allocation_result_create_empty(void)
 /* This is somewhat expensive, so it's a good idea to do a simple eligibility
    filter before calling it, like checking if the requested size is smaller
    than the free's size. */
-static PAS_ALWAYS_INLINE pas_large_allocation_result
+static
+#ifndef WK_WORKAROUND_RDAR_87613908_ASAN_STACK_USE_AFTER_SCOPE
+PAS_ALWAYS_INLINE
+#endif
+pas_large_allocation_result
 pas_large_free_allocate(pas_large_free free,
                         size_t size,
                         pas_alignment alignment,
