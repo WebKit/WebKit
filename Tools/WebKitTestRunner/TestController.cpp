@@ -990,8 +990,10 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     batchUpdatePreferences(platformPreferences(), [options, enableAllExperimentalFeatures = m_enableAllExperimentalFeatures] (auto preferences) {
         WKPreferencesResetTestRunnerOverrides(preferences);
 
-        if (enableAllExperimentalFeatures)
+        if (enableAllExperimentalFeatures) {
             WKPreferencesEnableAllExperimentalFeatures(preferences);
+            WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("AlternateWebMPlayerEnabled").get());
+        }
 
         WKPreferencesResetAllInternalDebugFeatures(preferences);
 
