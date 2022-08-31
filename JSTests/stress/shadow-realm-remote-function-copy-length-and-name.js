@@ -207,7 +207,7 @@ f = realm.evaluate(`(() => {
   let p = new Proxy(target, {
     getOwnPropertyDescriptor(t, p) {
       log(\`getOwnPropertyDescriptor \${p}\`);
-      return Reflect.getOwnProperty(...arguments);
+      return Reflect.getOwnPropertyDescriptor(...arguments);
     },
     get(t, p) {
       log(\`get \${p}\`);
@@ -299,6 +299,7 @@ shouldHaveDescriptor(f, "name", {
   configurable: true,
 });
 shouldBe(log(), [
+  "getOwnPropertyDescriptor length",
   "get length",
   "length getter",
   "get name",
@@ -316,7 +317,7 @@ f = realm.evaluate(`(() => {
   let p = new Proxy(target, {
     getOwnPropertyDescriptor(t, p) {
       log(\`getOwnPropertyDescriptor \${p}\`);
-      return Reflect.getOwnProperty(...arguments);
+      return Reflect.getOwnPropertyDescriptor(...arguments);
     },
     get(t, p) {
       log(\`get \${p}\`);
@@ -394,6 +395,7 @@ shouldHaveDescriptor(f, "name", {
   configurable: true,
 });
 shouldBe(log(), [
+  "getOwnPropertyDescriptor length",
   "get length",
   "get name",
   "apply",

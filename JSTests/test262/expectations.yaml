@@ -822,12 +822,6 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/ShadowRealm/prototype/evaluate/throws-typeerror-wrap-throwing.js:
-  default: 'Test262Error: TypeError on wrapping a callable proxy with throwing getOwnPropertyDescriptor trap Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: TypeError on wrapping a callable proxy with throwing getOwnPropertyDescriptor trap Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/ShadowRealm/prototype/importValue/throws-if-exportname-not-string.js:
-  default: 'Test262Error: Expected a TypeError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error'
 test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
   default: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
   strict mode: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'

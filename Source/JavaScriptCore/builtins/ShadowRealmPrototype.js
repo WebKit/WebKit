@@ -27,15 +27,16 @@
 // if `fromShadowRealm` is false, we are wrapping an object from the incubating
 // realm; if true, we are wrapping an object from the shadow realm
 @linkTimeConstant
-function wrap(fromShadowRealm, shadowRealm, target)
+function wrapRemoteValue(fromShadowRealm, shadowRealm, target)
 {
     "use strict";
 
-    if (@isCallable(target)) {
+    if (@isCallable(target))
         return @createRemoteFunction(target, fromShadowRealm ? null : shadowRealm);
-    } else if (@isObject(target)) {
+
+    if (@isObject(target))
         @throwTypeError("value passing between realms must be callable or primitive");
-    }
+
     return target;
 }
 
@@ -49,8 +50,16 @@ function evaluate(sourceText)
     if (typeof sourceText !== 'string')
         @throwTypeError("`%ShadowRealm%.evaluate requires that the |sourceText| argument be a string");
 
-    var result = @evalInRealm(this, sourceText)
-    return @wrap(true, this, result);
+    return @wrapRemoteValue(true, this, @evalInRealm(this, sourceText));
+}
+
+@linkTimeConstant
+function crossRealmThrow(error)
+{
+    "use strict";
+
+    // re-throw because import issues raise errors using the realm's global object
+    @throwTypeError(@toString(error));
 }
 
 function importValue(specifier, exportName)
@@ -60,21 +69,18 @@ function importValue(specifier, exportName)
     if (!@isShadowRealm(this))
         @throwTypeError("`%ShadowRealm%.importValue requires that |this| be a ShadowRealm instance");
 
-    var exportNameString = @toString(exportName);
     var specifierString = @toString(specifier);
 
+    if (typeof exportName !== 'string')
+        @throwTypeError("`%ShadowRealm%.importValue requires that the |exportName| argument be a string");
+
     var lookupBinding = (module) => {
-        var lookup = module[exportNameString]
+        var lookup = module[exportName]
         if (lookup === @undefined)
             @throwTypeError("%ShadowRealm%.importValue requires |exportName| to exist in the |specifier|");
 
-        return @wrap(true, this, lookup);
+        return @wrapRemoteValue(true, this, lookup);
     };
 
-    var crossRealmThrow = (error) => {
-        // re-throw because import issues raise errors using the realm's global object
-        @throwTypeError(@toString(error));
-    };
-
-    return @importInRealm(this, specifierString).@then(lookupBinding, crossRealmThrow);
+    return @importInRealm(this, specifierString).@then(lookupBinding, @crossRealmThrow);
 }
