@@ -1,4 +1,4 @@
 
 
-FAIL Quirks mode elements with class names should remain queriable regardless of sibling adoption into standards mode documents assert_true: expected true got false
+PASS Quirks mode elements with class names should remain queriable regardless of sibling adoption into standards mode documents
 
