@@ -63,6 +63,13 @@ void VP9TestingOverrides::setHardwareDecoderDisabled(std::optional<bool>&& disab
         m_configurationChangedCallback();
 }
 
+void VP9TestingOverrides::setVP9DecoderDisabled(std::optional<bool>&& disabled)
+{
+    m_vp9DecoderDisabled = WTFMove(disabled);
+    if (m_configurationChangedCallback)
+        m_configurationChangedCallback();
+}
+
 void VP9TestingOverrides::setVP9ScreenSizeAndScale(std::optional<ScreenDataOverrides>&& overrides)
 {
     m_screenSizeAndScale = WTFMove(overrides);
@@ -124,6 +131,9 @@ void registerSupplementalVP9Decoder()
 
 bool isVP9DecoderAvailable()
 {
+    if (auto disabledForTesting = VP9TestingOverrides::singleton().vp9DecoderDisabled())
+        return !*disabledForTesting;
+
 #if PLATFORM(IOS)
     return canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9);
 #else

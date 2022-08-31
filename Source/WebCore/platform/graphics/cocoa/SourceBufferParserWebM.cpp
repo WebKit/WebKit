@@ -1310,6 +1310,7 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
     bool isAnyCodecAvailable = isAnyAudioCodecAvailable;
 #if ENABLE(VP9)
     isAnyCodecAvailable |= isVP9DecoderAvailable();
+    isAnyCodecAvailable |= isVP8DecoderAvailable();
 #endif
 
     if (!isAnyCodecAvailable)
@@ -1321,14 +1322,13 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 
     for (auto& codec : codecs) {
 #if ENABLE(VP9)
-        if (codec.startsWith("vp09"_s)
-            || codec.startsWith("vp08"_s)
-            || equal(codec, "vp8"_s)
-            || equal(codec, "vp9"_s)
-            || equal(codec, "vp8.0"_s)
-            || equal(codec, "vp9.0"_s)) {
+        bool isVP9 = codec.startsWith("vp09"_s) || equal(codec, "vp9"_s) || equal(codec, "vp9.0"_s);
+        bool isVP8 = codec.startsWith("vp08"_s) || equal(codec, "vp8"_s) || equal(codec, "vp8.0"_s);
+        if (isVP9 || isVP8) {
 
-            if (!isVP9DecoderAvailable())
+            if (isVP9 && !isVP9DecoderAvailable())
+                return MediaPlayerEnums::SupportsType::IsNotSupported;
+            if (isVP8 && !isVP8DecoderAvailable())
                 return MediaPlayerEnums::SupportsType::IsNotSupported;
 
             auto codecParameters = parseVPCodecParameters(codec);

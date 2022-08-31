@@ -1107,6 +1107,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setSystemHasACForTesting(boolean hasAC);
 
     undefined setHardwareVP9DecoderDisabledForTesting(boolean disabled);
+    undefined setVP9DecoderDisabledForTesting(boolean disabled);
     undefined setVP9ScreenSizeAndScaleForTesting(double width, double height, double scale);
 
     long readPreferenceInteger(DOMString domain, DOMString key);

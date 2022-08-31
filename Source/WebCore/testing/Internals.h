@@ -1237,6 +1237,7 @@ public:
     void setSystemHasACForTesting(bool);
 
     void setHardwareVP9DecoderDisabledForTesting(bool);
+    void setVP9DecoderDisabledForTesting(bool);
     void setVP9ScreenSizeAndScaleForTesting(double, double, double);
 
     int readPreferenceInteger(const String& domain, const String& key);

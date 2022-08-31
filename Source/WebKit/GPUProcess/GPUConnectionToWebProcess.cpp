@@ -710,6 +710,7 @@ void GPUConnectionToWebProcess::setMediaOverridesForTesting(MediaOverridesForTes
 {
 #if ENABLE(VP9) && PLATFORM(COCOA)
     VP9TestingOverrides::singleton().setHardwareDecoderDisabled(WTFMove(overrides.vp9HardwareDecoderDisabled));
+    VP9TestingOverrides::singleton().setVP9DecoderDisabled(WTFMove(overrides.vp9DecoderDisabled));
     VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(WTFMove(overrides.vp9ScreenSizeAndScale));
 #endif
 
