@@ -5,6 +5,7 @@
 <script src="resources/breakpoint-options-utilities.js"></script>
 <script>
 function triggerSymbolicBreakpoint() {
+    [1, 2, 3].reverse();
     TestPage.dispatchEventToFrontend("TestPage-SymbolicBreakpoint");
 }
 
@@ -21,41 +22,10 @@ function test()
 
     let suite = InspectorTest.createAsyncSuite("SymbolicBreakpoint");
 
-    suite.addTestCase({
-        name: "SymbolicBreakpoint.RegexCaseInsensitive.Hit",
-        async test() {
-            let pauseCount = 0;
-            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
-                ++pauseCount;
-                WI.debuggerManager.resume();
-            });
-
-            InspectorTest.log("Adding breakpoint...");
-            let breakpoint = new WI.SymbolicBreakpoint("tRiGgEr\\w+", {caseSensitive: false, isRegex: true});
-            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
-            InspectorTest.assert(WI.debuggerManager.symbolicBreakpointsForSymbol("triggerSymbolicBreakpoint")[0] === breakpoint, "Should match breakpoint.");
-
-            InspectorTest.log("Triggering breakpoint...");
-            await triggerBreakpoint();
-            InspectorTest.expectEqual(pauseCount, 1, "Should pause.");
-
-            InspectorTest.newline();
-
-            InspectorTest.log("Removing breakpoint...");
-            breakpoint.remove();
-
-            InspectorTest.log("Triggering breakpoint...");
-            await triggerBreakpoint();
-            InspectorTest.expectEqual(pauseCount, 1, "Should not pause.");
-
-            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
-        },
-    });
-
     InspectorTest.BreakpointOptions.addTestCases(suite, {
-        testCaseNamePrefix: "RegexCaseInsensitive.Hit.",
+        testCaseNamePrefix: "ExactCaseSensitive.Native.JS.Hit.",
         createBreakpoint() {
-            let breakpoint = new WI.SymbolicBreakpoint("tRiGgEr\\w+", {caseSensitive: false, isRegex: true});
+            let breakpoint = new WI.SymbolicBreakpoint("reverse");
             WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
             return breakpoint;
         },
@@ -63,7 +33,7 @@ function test()
     });
 
     suite.addTestCase({
-        name: "SymbolicBreakpoint.RegexCaseInsensitive.Miss",
+        name: "SymbolicBreakpoint.ExactCaseSensitive.Native.JS.Miss",
         async test() {
             let pauseCount = 0;
             let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
@@ -72,9 +42,9 @@ function test()
             });
 
             InspectorTest.log("Adding breakpoint...");
-            let breakpoint = new WI.SymbolicBreakpoint("tRiGgEr\\w+_DOES_NOT_EXIST", {caseSensitive: false, isRegex: true});
+            let breakpoint = new WI.SymbolicBreakpoint("rEvErSe");
             WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
-            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("triggerSymbolicBreakpoint").length, "Should not match breakpoint.");
+            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("reverse").length, "Should not match breakpoint.");
 
             InspectorTest.log("Triggering breakpoint...");
             await triggerBreakpoint();
@@ -94,7 +64,7 @@ function test()
     });
 
     suite.addTestCase({
-        name: "SymbolicBreakpoint.RegexCaseInsensitive.Disabled",
+        name: "SymbolicBreakpoint.ExactCaseSensitive.Native.JS.Disabled",
         async test() {
             let pauseCount = 0;
             let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
@@ -103,9 +73,9 @@ function test()
             });
 
             InspectorTest.log("Adding breakpoint...");
-            let breakpoint = new WI.SymbolicBreakpoint("tRiGgEr\\w+", {caseSensitive: false, isRegex: true, disabled: true});
+            let breakpoint = new WI.SymbolicBreakpoint("reverse", {disabled: true});
             WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
-            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("triggerSymbolicBreakpoint").length, "Should not match breakpoint.");
+            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("reverse").length, "Should not match breakpoint.");
 
             InspectorTest.log("Triggering breakpoint...");
             await triggerBreakpoint();
