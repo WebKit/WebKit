@@ -338,11 +338,11 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
         break;
     }
     case GST_WEBRTC_STATS_REMOTE_OUTBOUND_RTP: {
-        GST_FIXME("Remote outbound RTP stats not exposed yet");
+        // FIXME: Remote outbound RTP stats not exposed yet.
         break;
     }
     case GST_WEBRTC_STATS_CSRC:
-        GST_FIXME("Deprecated stats: csrc");
+        // Deprecated stats: csrc.
         break;
     case GST_WEBRTC_STATS_PEER_CONNECTION: {
         RTCStatsReport::PeerConnectionStats stats;
@@ -357,10 +357,10 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
         break;
     }
     case GST_WEBRTC_STATS_STREAM:
-        GST_FIXME("Deprecated stats: stream");
+        // Deprecated stats: stream.
         break;
     case GST_WEBRTC_STATS_DATA_CHANNEL:
-        GST_FIXME("Missing data-channel stats support");
+        // FIXME: Missing data-channel stats support.
         break;
     case GST_WEBRTC_STATS_LOCAL_CANDIDATE:
     case GST_WEBRTC_STATS_REMOTE_CANDIDATE:
@@ -378,7 +378,7 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
         }
         break;
     case GST_WEBRTC_STATS_CERTIFICATE:
-        GST_FIXME("Missing certificate stats support");
+        // FIXME: Missing certificate stats support
         break;
     }
 
