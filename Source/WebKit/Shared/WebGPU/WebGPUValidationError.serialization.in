@@ -20,11 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-encoders: Encoder StreamConnectionEncoder
-headers: "WebGPUValidationError.h"
+headers requiring ENABLE(GPU_PROCESS): "WebGPUValidationError.h"
 
 #if ENABLE(GPU_PROCESS)
-struct WebKit::WebGPU::ValidationError {
+[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ValidationError {
     String message
 }
 #endif

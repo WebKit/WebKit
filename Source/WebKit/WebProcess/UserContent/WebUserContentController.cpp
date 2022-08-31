@@ -29,7 +29,6 @@
 #include "ContentWorldShared.h"
 #include "DataReference.h"
 #include "FrameInfoData.h"
-#include "GeneratedSerializers.h"
 #include "InjectUserScriptImmediately.h"
 #include "InjectedBundleScriptWorld.h"
 #include "WebCompiledContentRuleList.h"

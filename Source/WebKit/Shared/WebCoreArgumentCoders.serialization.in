@@ -20,13 +20,65 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-headers requiring ENABLE(GPU_PROCESS): "WebGPUOrigin3D.h"
-headers: "StreamConnectionEncoder.h"
-
-#if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::Origin3DDict {
-    PAL::WebGPU::IntegerCoordinate x
-    PAL::WebGPU::IntegerCoordinate y
-    PAL::WebGPU::IntegerCoordinate z
+header: <WebCore/DOMCacheEngine.h>
+struct WebCore::DOMCacheEngine::CacheInfo {
+    uint64_t identifier
+    String name
 }
-#endif
+
+header: <WebCore/TransformationMatrix.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::TransformationMatrix {
+    double m11()
+    double m12()
+    double m13()
+    double m14()
+    double m21()
+    double m22()
+    double m23()
+    double m24()
+    double m31()
+    double m32()
+    double m33()
+    double m34()
+    double m41()
+    double m42()
+    double m43()
+    double m44()
+}
+
+header: <WebCore/CacheQueryOptions.h>
+struct WebCore::CacheQueryOptions {
+    bool ignoreSearch;
+    bool ignoreMethod;
+    bool ignoreVary;
+    String cacheName;
+}
+
+header: <WebCore/CharacterRange.h>
+struct WebCore::CharacterRange {
+    uint64_t location
+    uint64_t length
+}
+
+header: <WebCore/AffineTransform.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::AffineTransform {
+    double a()
+    double b()
+    double c()
+    double d()
+    double e()
+    double f()
+}
+
+header: <WebCore/FloatPoint.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatPoint {
+    float x()
+    float y()
+}
+
+header: <WebCore/FloatPoint3D.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatPoint3D {
+    float x()
+    float y()
+    float z()
+}

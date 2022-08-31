@@ -448,8 +448,10 @@ $(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(
 
 SERIALIZATION_DESCRIPTION_FILES = \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
+	Shared/API/APIGeometry.serialization.in \
 	Shared/FrameInfoData.serialization.in \
 	Shared/FrameTreeNodeData.serialization.in \
+	Shared/WebCoreArgumentCoders.serialization.in \
 	Shared/mac/SecItemResponseData.serialization.in \
 	Shared/WebsiteDataStoreParameters.serialization.in \
 	Shared/WebGPU/WebGPUValidationError.serialization.in \

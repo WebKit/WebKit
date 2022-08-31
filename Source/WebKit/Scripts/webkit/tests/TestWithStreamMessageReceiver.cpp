@@ -30,7 +30,6 @@
 #include "ArgumentCodersDarwin.h" // NOLINT
 #endif
 #include "Decoder.h" // NOLINT
-#include "GeneratedSerializers.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
 #include "TestWithStreamMessages.h" // NOLINT
 #if PLATFORM(COCOA)

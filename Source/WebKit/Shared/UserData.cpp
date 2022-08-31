@@ -230,11 +230,11 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         break;
 
     case API::Object::Type::Point:
-        static_cast<const API::Point&>(object).encode(encoder);
+        encoder << static_cast<const API::Point&>(object);
         break;
 
     case API::Object::Type::Rect:
-        static_cast<const API::Rect&>(object).encode(encoder);
+        encoder << static_cast<const API::Rect&>(object);
         break;
 
     case API::Object::Type::SerializedScriptValue: {
@@ -244,7 +244,7 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
     }
 
     case API::Object::Type::Size:
-        static_cast<const API::Size&>(object).encode(encoder);
+        encoder << static_cast<const API::Size&>(object);
         break;
 
     case API::Object::Type::String: {
@@ -412,15 +412,23 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
             return false;
         break;
 
-    case API::Object::Type::Point:
-        if (!API::Point::decode(decoder, result))
+    case API::Object::Type::Point: {
+        std::optional<Ref<API::Point>> point;
+        decoder >> point;
+        if (!point)
             return false;
+        result = WTFMove(*point);
         break;
+    }
 
-    case API::Object::Type::Rect:
-        if (!API::Rect::decode(decoder, result))
+    case API::Object::Type::Rect: {
+        std::optional<Ref<API::Rect>> rect;
+        decoder >> rect;
+        if (!rect)
             return false;
+        result = WTFMove(*rect);
         break;
+    }
 
     case API::Object::Type::SerializedScriptValue: {
         IPC::DataReference dataReference;
@@ -431,10 +439,14 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         break;
     }
 
-    case API::Object::Type::Size:
-        if (!API::Size::decode(decoder, result))
+    case API::Object::Type::Size: {
+        std::optional<Ref<API::Size>> size;
+        decoder >> size;
+        if (!size)
             return false;
+        result = WTFMove(*size);
         break;
+    }
 
     case API::Object::Type::String: {
         String string;

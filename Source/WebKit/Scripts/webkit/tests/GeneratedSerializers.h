@@ -27,6 +27,8 @@
 #include "ArgumentCoders.h"
 
 namespace Namespace::Subnamespace { struct StructName; }
+namespace Namespace { class OtherClass; }
+namespace Namespace { class ReturnRefClass; }
 
 namespace IPC {
 
@@ -40,6 +42,16 @@ template<> struct ArgumentCoder<Namespace::Subnamespace::StructName> {
     static void encode(OtherEncoder&, const Namespace::Subnamespace::StructName&);
     static std::optional<Namespace::Subnamespace::StructName> decode(Decoder&);
 };
-#endif // ENABLE(TEST_FEATURE)
+#endif
+
+template<> struct ArgumentCoder<Namespace::OtherClass> {
+    static void encode(Encoder&, const Namespace::OtherClass&);
+    static std::optional<Namespace::OtherClass> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Namespace::ReturnRefClass> {
+    static void encode(Encoder&, const Namespace::ReturnRefClass&);
+    static std::optional<Ref<Namespace::ReturnRefClass>> decode(Decoder&);
+};
 
 } // namespace IPC

@@ -27,7 +27,6 @@
 #include "EventDispatcher.h"
 
 #include "EventDispatcherMessages.h"
-#include "GeneratedSerializers.h"
 #include "MomentumEventDispatcher.h"
 #include "WebEventConversion.h"
 #include "WebPage.h"

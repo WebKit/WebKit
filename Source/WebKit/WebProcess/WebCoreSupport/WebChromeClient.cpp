@@ -32,7 +32,6 @@
 #include "DrawingArea.h"
 #include "FindController.h"
 #include "FrameInfoData.h"
-#include "GeneratedSerializers.h"
 #include "HangDetectionDisabler.h"
 #include "ImageBufferShareableBitmapBackend.h"
 #include "InjectedBundleNavigationAction.h"

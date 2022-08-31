@@ -1,14 +1,24 @@
 # test comment
 
-encoders: Encoder OtherEncoder
-headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
+headers requiring ENABLE(TEST_FEATURE): "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
+headers: "HeaderWithoutCondition"
 
 #if ENABLE(TEST_FEATURE)
-struct Namespace::Subnamespace::StructName {
+[AdditionalEncoder=OtherEncoder] struct Namespace::Subnamespace::StructName {
     FirstMemberType firstMemberName
     #if ENABLE(SECOND_MEMBER)
     SecondMemberType secondMemberName;
     #endif
-    [NULLABLE] RetainPtr<CFTypeRef> nullableTestMember;
+    [Nullable] RetainPtr<CFTypeRef> nullableTestMember;
 }
 #endif
+
+class Namespace::OtherClass {
+    int a
+    bool b
+}
+
+[Return=Ref] class Namespace::ReturnRefClass {
+    double functionCall().member1
+    double functionCall().member2
+}

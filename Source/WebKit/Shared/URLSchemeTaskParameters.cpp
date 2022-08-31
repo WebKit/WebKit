@@ -28,7 +28,6 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
-#include "GeneratedSerializers.h"
 #include "WebCoreArgumentCoders.h"
 
 namespace WebKit {

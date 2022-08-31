@@ -148,10 +148,7 @@ using namespace WebKit;
     template void ArgumentCoder<Type>::encode<Encoder>(Encoder&, const Type&); \
     template void ArgumentCoder<Type>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Type&);
 
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(AffineTransform)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatBoxExtent)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatPoint)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatPoint3D)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatRect)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatRoundedRect)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatSize)
@@ -172,78 +169,6 @@ DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(DisplayList::SetInlineFillColor)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(DisplayList::SetInlineStrokeColor)
 
 #undef DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE
-
-void ArgumentCoder<CacheQueryOptions>::encode(Encoder& encoder, const CacheQueryOptions& options)
-{
-    encoder << options.ignoreSearch;
-    encoder << options.ignoreMethod;
-    encoder << options.ignoreVary;
-    encoder << options.cacheName;
-}
-
-bool ArgumentCoder<CacheQueryOptions>::decode(Decoder& decoder, CacheQueryOptions& options)
-{
-    bool ignoreSearch;
-    if (!decoder.decode(ignoreSearch))
-        return false;
-    bool ignoreMethod;
-    if (!decoder.decode(ignoreMethod))
-        return false;
-    bool ignoreVary;
-    if (!decoder.decode(ignoreVary))
-        return false;
-    String cacheName;
-    if (!decoder.decode(cacheName))
-        return false;
-
-    options.ignoreSearch = ignoreSearch;
-    options.ignoreMethod = ignoreMethod;
-    options.ignoreVary = ignoreVary;
-    options.cacheName = WTFMove(cacheName);
-    return true;
-}
-
-void ArgumentCoder<CharacterRange>::encode(Encoder& encoder, const CharacterRange& range)
-{
-    encoder << static_cast<uint64_t>(range.location);
-    encoder << static_cast<uint64_t>(range.length);
-}
-
-std::optional<CharacterRange> ArgumentCoder<CharacterRange>::decode(Decoder& decoder)
-{
-    std::optional<uint64_t> location;
-    decoder >> location;
-    if (!location)
-        return std::nullopt;
-
-    std::optional<uint64_t> length;
-    decoder >> length;
-    if (!length)
-        return std::nullopt;
-
-    return { { *location, *length } };
-}
-
-void ArgumentCoder<DOMCacheEngine::CacheInfo>::encode(Encoder& encoder, const DOMCacheEngine::CacheInfo& info)
-{
-    encoder << info.identifier;
-    encoder << info.name;
-}
-
-auto ArgumentCoder<DOMCacheEngine::CacheInfo>::decode(Decoder& decoder) -> std::optional<DOMCacheEngine::CacheInfo>
-{
-    std::optional<uint64_t> identifier;
-    decoder >> identifier;
-    if (!identifier)
-        return std::nullopt;
-    
-    std::optional<String> name;
-    decoder >> name;
-    if (!name)
-        return std::nullopt;
-    
-    return {{ WTFMove(*identifier), WTFMove(*name) }};
-}
 
 void ArgumentCoder<DOMCacheEngine::Record>::encode(Encoder& encoder, const DOMCacheEngine::Record& record)
 {
@@ -355,91 +280,6 @@ bool ArgumentCoder<EventTrackingRegions>::decode(Decoder& decoder, EventTracking
     eventTrackingRegions.eventSpecificSynchronousDispatchRegions = WTFMove(eventSpecificSynchronousDispatchRegions);
     return true;
 }
-
-template<typename Encoder>
-void ArgumentCoder<TransformationMatrix>::encode(Encoder& encoder, const TransformationMatrix& transformationMatrix)
-{
-    encoder << transformationMatrix.m11();
-    encoder << transformationMatrix.m12();
-    encoder << transformationMatrix.m13();
-    encoder << transformationMatrix.m14();
-
-    encoder << transformationMatrix.m21();
-    encoder << transformationMatrix.m22();
-    encoder << transformationMatrix.m23();
-    encoder << transformationMatrix.m24();
-
-    encoder << transformationMatrix.m31();
-    encoder << transformationMatrix.m32();
-    encoder << transformationMatrix.m33();
-    encoder << transformationMatrix.m34();
-
-    encoder << transformationMatrix.m41();
-    encoder << transformationMatrix.m42();
-    encoder << transformationMatrix.m43();
-    encoder << transformationMatrix.m44();
-}
-
-bool ArgumentCoder<TransformationMatrix>::decode(Decoder& decoder, TransformationMatrix& transformationMatrix)
-{
-    double m11;
-    if (!decoder.decode(m11))
-        return false;
-    double m12;
-    if (!decoder.decode(m12))
-        return false;
-    double m13;
-    if (!decoder.decode(m13))
-        return false;
-    double m14;
-    if (!decoder.decode(m14))
-        return false;
-
-    double m21;
-    if (!decoder.decode(m21))
-        return false;
-    double m22;
-    if (!decoder.decode(m22))
-        return false;
-    double m23;
-    if (!decoder.decode(m23))
-        return false;
-    double m24;
-    if (!decoder.decode(m24))
-        return false;
-
-    double m31;
-    if (!decoder.decode(m31))
-        return false;
-    double m32;
-    if (!decoder.decode(m32))
-        return false;
-    double m33;
-    if (!decoder.decode(m33))
-        return false;
-    double m34;
-    if (!decoder.decode(m34))
-        return false;
-
-    double m41;
-    if (!decoder.decode(m41))
-        return false;
-    double m42;
-    if (!decoder.decode(m42))
-        return false;
-    double m43;
-    if (!decoder.decode(m43))
-        return false;
-    double m44;
-    if (!decoder.decode(m44))
-        return false;
-
-    transformationMatrix.setMatrix(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
-    return true;
-}
-
-template void ArgumentCoder<TransformationMatrix>::encode<Encoder>(Encoder&, const TransformationMatrix&);
-template void ArgumentCoder<TransformationMatrix>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const TransformationMatrix&);
 
 void ArgumentCoder<LinearTimingFunction>::encode(Encoder& encoder, const LinearTimingFunction& timingFunction)
 {

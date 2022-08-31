@@ -22,5 +22,5 @@
 
 class WebKit::SecItemResponseData {
     OSStatus m_resultCode;
-    [NULLABLE] RetainPtr<CFTypeRef> m_resultObject;
+    [Nullable] RetainPtr<CFTypeRef> m_resultObject;
 }

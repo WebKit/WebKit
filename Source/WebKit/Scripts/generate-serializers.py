@@ -27,22 +27,26 @@ import sys
 
 
 class SerializedType(object):
-    def __init__(self, headers, struct_or_class, namespace, name, members, condition, encoders):
-        self.headers = headers
+    def __init__(self, struct_or_class, namespace, name, members, condition, attributes):
         self.struct_or_class = struct_or_class
         self.namespace = namespace
         self.name = name
         self.members = members
         self.condition = condition
-        self.encoders = encoders
+        self.encoders = ['Encoder']
+        self.serialize_with_function_calls = False
+        self.return_ref = False
+        if attributes is not None:
+            for attribute in attributes.split(', '):
+                key, value = attribute.split('=')
+                if key == 'AdditionalEncoder':
+                    self.encoders.append(value)
+                if key == 'Return' and value == 'Ref':
+                    self.return_ref = True
 
     def namespace_and_name(self):
         return self.namespace + '::' + self.name
 
-    def encoder_types(self):
-        if self.encoders is not None:
-            return self.encoders
-        return ['Encoder']
 
 class MemberVariable(object):
     def __init__(self, type, name, condition, attributes):
@@ -51,6 +55,18 @@ class MemberVariable(object):
         self.condition = condition
         self.attributes = attributes
 
+
+class ConditionalHeader(object):
+    def __init__(self, header, condition):
+        self.header = header
+        self.condition = condition
+
+    def __lt__(self, other):
+        return self.header < other.header
+
+
+def sanitize_string_for_variable_name(string):
+    return string.replace('()', '').replace('.', '')
 
 _license_header = """/*
  * Copyright (C) 2022 Apple Inc. All rights reserved.
@@ -98,62 +114,65 @@ def generate_header(serialized_types):
         if type.condition is not None:
             result.append('#if ' + type.condition)
         result.append('template<> struct ArgumentCoder<' + type.namespace_and_name() + '> {')
-        for encoder in type.encoder_types():
+        for encoder in type.encoders:
             result.append('    static void encode(' + encoder + '&, const ' + type.namespace_and_name() + '&);')
-        result.append('    static std::optional<' + type.namespace_and_name() + '> decode(Decoder&);')
+        if type.return_ref:
+            result.append('    static std::optional<Ref<' + type.namespace_and_name() + '>> decode(Decoder&);')
+        else:
+            result.append('    static std::optional<' + type.namespace_and_name() + '> decode(Decoder&);')
         result.append('};')
         if type.condition is not None:
-            result.append('#endif // ' + type.condition)
+            result.append('#endif')
     result.append('')
     result.append('} // namespace IPC\n')
     return '\n'.join(result)
 
 
-def generate_cpp(serialized_types):
+def generate_cpp(serialized_types, headers):
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
     result.append('#include "GeneratedSerializers.h"')
     result.append('')
-    result.append('#include "StreamConnectionEncoder.h"')
-    for type in serialized_types:
-        if type.condition is not None:
-            result.append('')
-            result.append('#if ' + type.condition)
-        for header in type.headers:
-            result.append('#include ' + header)
-        if type.condition is not None:
-            result.append('#endif // ' + type.condition)
+    for header in headers:
+        if header.condition is not None:
+            result.append('#if ' + header.condition)
+        result.append('#include ' + header.header)
+        if header.condition is not None:
+            result.append('#endif')
     result.append('')
     result.append('namespace IPC {')
     for type in serialized_types:
         result.append('')
         if type.condition is not None:
             result.append('#if ' + type.condition)
-        for encoder in type.encoder_types():
+        for encoder in type.encoders:
             result.append('')
             result.append('void ArgumentCoder<' + type.namespace_and_name() + '>::encode(' + encoder + '& encoder, const ' + type.namespace_and_name() + '& instance)')
             result.append('{')
             for member in type.members:
                 if member.condition is not None:
                     result.append('#if ' + member.condition)
-                if 'NULLABLE' in member.attributes:
+                if 'Nullable' in member.attributes:
                     result.append('    encoder << !!instance.' + member.name + ';')
                     result.append('    if (!!instance.' + member.name + ')')
                     result.append('        encoder << instance.' + member.name + ';')
                 else:
-                    result.append('    encoder << instance.' + member.name + ';')
+                    result.append('    encoder << instance.' + member.name + ('()' if type.serialize_with_function_calls else '') + ';')
                 if member.condition is not None:
-                    result.append('#endif // ' + member.condition)
+                    result.append('#endif')
             result.append('}')
         result.append('')
-        result.append('std::optional<' + type.namespace_and_name() + '> ArgumentCoder<' + type.namespace_and_name() + '>::decode(Decoder& decoder)')
+        if type.return_ref:
+            result.append('std::optional<Ref<' + type.namespace_and_name() + '>> ArgumentCoder<' + type.namespace_and_name() + '>::decode(Decoder& decoder)')
+        else:
+            result.append('std::optional<' + type.namespace_and_name() + '> ArgumentCoder<' + type.namespace_and_name() + '>::decode(Decoder& decoder)')
         result.append('{')
         for member in type.members:
             if member.condition is not None:
                 result.append('#if ' + member.condition)
-            result.append('    std::optional<' + member.type + '> ' + member.name + ';')
-            if 'NULLABLE' in member.attributes:
+            result.append('    std::optional<' + member.type + '> ' + sanitize_string_for_variable_name(member.name) + ';')
+            if 'Nullable' in member.attributes:
                 result.append('    std::optional<bool> has' + member.name + ';')
                 result.append('    decoder >> has' + member.name + ';')
                 result.append('    if (!has' + member.name + ')')
@@ -165,39 +184,48 @@ def generate_cpp(serialized_types):
                 result.append('    } else')
                 result.append('        ' + member.name + ' = std::optional<' + member.type + '> { ' + member.type + ' { } };')
             else:
-                result.append('    decoder >> ' + member.name + ';')
-                result.append('    if (!' + member.name + ')')
+                result.append('    decoder >> ' + sanitize_string_for_variable_name(member.name) + ';')
+                result.append('    if (!' + sanitize_string_for_variable_name(member.name) + ')')
                 result.append('        return std::nullopt;')
             if member.condition is not None:
-                result.append('#endif // ' + member.condition)
+                result.append('#endif')
             result.append('')
-        result.append('    return { {')
+        if type.return_ref:
+            result.append('    return { ' + type.namespace_and_name() + '::create(')
+        else:
+            result.append('    return { {')
         first_member = True
         for i in range(len(type.members)):
             if type.members[i].condition is not None:
                 result.append('#if ' + type.members[i].condition)
-            result.append('        WTFMove(*' + type.members[i].name + ')' + ('' if i == len(type.members) - 1 else ','))
+            result.append('        WTFMove(*' + sanitize_string_for_variable_name(type.members[i].name) + ')' + ('' if i == len(type.members) - 1 else ','))
             if type.members[i].condition is not None:
-                result.append('#endif // ' + type.members[i].condition)
-        result.append('    } };')
+                result.append('#endif')
+        if type.return_ref:
+            result.append('    ) };')
+        else:
+            result.append('    } };')
         result.append('}')
         if type.condition is not None:
             result.append('')
-            result.append('#endif // ' + type.condition)
+            result.append('#endif')
     result.append('')
     result.append('} // namespace IPC\n')
     return '\n'.join(result)
 
 
-def parse_serialized_type(file):
+def parse_serialized_types(file):
+    serialized_types = []
+    headers = []
+
+    attributes = None
     namespace = None
     name = None
-    headers = None
     members = []
     type_condition = None
     member_condition = None
     struct_or_class = None
-    encoders = None
+
     for line in file:
         line = line.strip()
         if line.startswith('#'):
@@ -210,22 +238,36 @@ def parse_serialized_type(file):
                 member_condition = None
             continue
         if line.startswith('}'):
-            if headers is None:
-                headers = ['"' + name + '.h"']
-            headers.sort()
-            return SerializedType(headers, struct_or_class, namespace, name, members, type_condition, encoders)
-        match = re.search(r'headers: (.*)', line)
-        if match:
-            headers = match.group(1).split()
+            serialized_types.append(SerializedType(struct_or_class, namespace, name, members, type_condition, attributes))
+            attributes = None
+            namespace = None
+            members = []
+            type_condition = None
+            member_condition = None
+            struct_or_class = None
             continue
-        match = re.search(r'encoders: (.*)', line)
+
+        match = re.search(r'headers? requiring (.*): (.*)', line)
         if match:
-            encoders = match.group(1).split()
+            condition, header_names = match.groups()
+            for header in header_names.split():
+                headers.append(ConditionalHeader(header, condition))
+            continue
+        match = re.search(r'headers?: (.*)', line)
+        if match:
+            for header in match.group(1).split():
+                headers.append(ConditionalHeader(header, None))
+            continue
+
+        match = re.search(r'\[(.*)\] (struct|class) (.*)::(.*) {', line)
+        if match:
+            attributes, struct_or_class, namespace, name = match.groups()
             continue
         match = re.search(r'(struct|class) (.*)::(.*) {', line)
         if match:
             struct_or_class, namespace, name = match.groups()
             continue
+
         match = re.search(r'\[(.*)\] (.*) ([^;]*)', line)
         if match:
             attribute, member_type, member_name = match.groups()
@@ -235,19 +277,27 @@ def parse_serialized_type(file):
             if match:
                 member_type, member_name = match.groups()
                 members.append(MemberVariable(member_type, member_name, member_condition, []))
-    return None
+    if len(headers) == 0 and len(serialized_types) == 1:
+        headers = [ConditionalHeader('"' + name + '.h"', None)]
+    return [serialized_types, headers]
 
 
 def main(argv):
     descriptions = []
+    headers = []
     for i in range(2, len(argv)):
         with open(argv[1] + argv[i]) as file:
-            descriptions.append(parse_serialized_type(file))
+            new_types, new_headers = parse_serialized_types(file)
+            for type in new_types:
+                descriptions.append(type)
+            for header in new_headers:
+                headers.append(header)
+    headers.sort()
 
     with open('GeneratedSerializers.h', "w+") as header_output:
         header_output.write(generate_header(descriptions))
     with open('GeneratedSerializers.cpp', "w+") as cpp_output:
-        cpp_output.write(generate_cpp(descriptions))
+        cpp_output.write(generate_cpp(descriptions, headers))
     return 0
 
 

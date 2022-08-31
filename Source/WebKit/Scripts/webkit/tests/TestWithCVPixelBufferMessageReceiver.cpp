@@ -29,7 +29,6 @@
 #include "ArgumentCodersCF.h" // NOLINT
 #endif
 #include "Decoder.h" // NOLINT
-#include "GeneratedSerializers.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
 #include "TestWithCVPixelBufferMessages.h" // NOLINT
 #if USE(AVFOUNDATION)

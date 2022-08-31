@@ -28,6 +28,7 @@
 #include "ArgumentCoder.h"
 #include "ArrayReference.h"
 #include "ArrayReferenceTuple.h"
+#include "GeneratedSerializers.h"
 #include <utility>
 #include <variant>
 #include <wtf/Box.h>

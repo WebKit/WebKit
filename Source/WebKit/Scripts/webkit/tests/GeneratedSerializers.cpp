@@ -25,13 +25,16 @@
 #include "config.h"
 #include "GeneratedSerializers.h"
 
-#include "StreamConnectionEncoder.h"
-
 #if ENABLE(TEST_FEATURE)
 #include "FirstMemberType.h"
+#endif
+#include "HeaderWithoutCondition"
+#if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
+#endif
+#if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
-#endif // ENABLE(TEST_FEATURE)
+#endif
 
 namespace IPC {
 
@@ -42,7 +45,7 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(Encoder& encoder
     encoder << instance.firstMemberName;
 #if ENABLE(SECOND_MEMBER)
     encoder << instance.secondMemberName;
-#endif // ENABLE(SECOND_MEMBER)
+#endif
     encoder << !!instance.nullableTestMember;
     if (!!instance.nullableTestMember)
         encoder << instance.nullableTestMember;
@@ -53,7 +56,7 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& en
     encoder << instance.firstMemberName;
 #if ENABLE(SECOND_MEMBER)
     encoder << instance.secondMemberName;
-#endif // ENABLE(SECOND_MEMBER)
+#endif
     encoder << !!instance.nullableTestMember;
     if (!!instance.nullableTestMember)
         encoder << instance.nullableTestMember;
@@ -71,7 +74,7 @@ std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subn
     decoder >> secondMemberName;
     if (!secondMemberName)
         return std::nullopt;
-#endif // ENABLE(SECOND_MEMBER)
+#endif
 
     std::optional<RetainPtr<CFTypeRef>> nullableTestMember;
     std::optional<bool> hasnullableTestMember;
@@ -89,11 +92,61 @@ std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subn
         WTFMove(*firstMemberName),
 #if ENABLE(SECOND_MEMBER)
         WTFMove(*secondMemberName),
-#endif // ENABLE(SECOND_MEMBER)
+#endif
         WTFMove(*nullableTestMember)
     } };
 }
 
-#endif // ENABLE(TEST_FEATURE)
+#endif
+
+
+void ArgumentCoder<Namespace::OtherClass>::encode(Encoder& encoder, const Namespace::OtherClass& instance)
+{
+    encoder << instance.a;
+    encoder << instance.b;
+}
+
+std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decode(Decoder& decoder)
+{
+    std::optional<int> a;
+    decoder >> a;
+    if (!a)
+        return std::nullopt;
+
+    std::optional<bool> b;
+    decoder >> b;
+    if (!b)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*a),
+        WTFMove(*b)
+    } };
+}
+
+
+void ArgumentCoder<Namespace::ReturnRefClass>::encode(Encoder& encoder, const Namespace::ReturnRefClass& instance)
+{
+    encoder << instance.functionCall().member1;
+    encoder << instance.functionCall().member2;
+}
+
+std::optional<Ref<Namespace::ReturnRefClass>> ArgumentCoder<Namespace::ReturnRefClass>::decode(Decoder& decoder)
+{
+    std::optional<double> functionCallmember1;
+    decoder >> functionCallmember1;
+    if (!functionCallmember1)
+        return std::nullopt;
+
+    std::optional<double> functionCallmember2;
+    decoder >> functionCallmember2;
+    if (!functionCallmember2)
+        return std::nullopt;
+
+    return { Namespace::ReturnRefClass::create(
+        WTFMove(*functionCallmember1),
+        WTFMove(*functionCallmember2)
+    ) };
+}
 
 } // namespace IPC
