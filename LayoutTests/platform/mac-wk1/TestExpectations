@@ -1624,9 +1624,6 @@ imported/w3c/web-platform-tests/css/css-position/position-relative-004.html [ Pa
 
 webkit.org/b/229252 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-continue-async.htm [ Pass Timeout ]
 
-# webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80345048>:
-[ Monterey ] webrtc/h264-high.html [ Failure ]
-
 webkit.org/b/229425 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Pass Timeout ]
 
 webkit.org/b/238689 storage/websql/change-version.html [ Pass Timeout ]
@@ -1644,10 +1641,6 @@ webkit.org/b/229519 media/media-session/actionHandlerInternalMappings.html [ Pas
 
 webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]
 
-webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pass Failure Slow ]
-
-webkit.org/b/230055 [ BigSur ] webrtc/datachannel/datachannel-page-cache-send.html [ Pass Timeout ]
-
 webkit.org/b/228211 css2.1/20110323/replaced-intrinsic-003.htm [ Pass Failure ]
 
 webkit.org/b/230425 printing/allowed-breaks.html [ Pass Failure ]
@@ -1656,8 +1649,6 @@ webkit.org/b/230425 printing/allowed-breaks.html [ Pass Failure ]
 http/tests/webshare/ [ Skip ]
 
 webkit.org/b/230842 [ BigSur Debug ] media/track/audio-track.html [ Pass Crash ]
-
-webkit.org/b/230848 [ BigSur Debug ] webrtc/datachannel/datachannel-gc.html [ Pass Crash ]
 
 webkit.org/b/230905 [ BigSur ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Pass Failure ]
 
@@ -1972,3 +1963,45 @@ webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-mod
 webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html [ Crash ]
 webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html [ Crash ]
 
+# rdar://92764272 ([ Ventura wk1 ] 18 X fast/html/details (layout-tests) are flaky text failures)
+fast/html/details-add-summary-1-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-10-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-2-and-click.html [ Pass Failure ] 
+fast/html/details-add-summary-3-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-4-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-5-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-6-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-7-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-8-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-9-and-click.html [ Pass Failure ]
+fast/html/details-click-controls.html [ Pass Failure ]
+fast/html/details-mouse-click.html [ Pass Failure ]
+fast/html/details-remove-summary-1-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-2-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-3-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-4-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-5-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-6-and-click.html [ Pass Failure ]
+
+# rdar://92765314 ([ Ventura wk1 Release x86_64 ] 8X fast/forms/number/number- (Layout-Tests) are flaky text failures)
+[ Release ] fast/forms/number/number-change-type-on-focus.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-large-padding.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-capturing.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-change-and-input-events.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-click-in-iframe.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-in-multi-column.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-state.html [ Pass Failure ]
+
+#rdar://96906411 (REGRESSION(251850@main): imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html is a constant text failure)
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.https.sub.html [ Failure ]
+imported/w3c/web-platform-tests/reporting/cross-origin-reports-isolated.https.sub.html [ Failure ]
+
+webkit.org/b/244611 [ Debug ] http/tests/loading/form-submission-no-load-event.html [ Pass Crash ]
+
+webkit.org/b/244636 [ Monterey Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Crash ]
+
+webkit.org/b/244637 imported/w3c/web-platform-tests/content-security-policy/generic/304-response-should-update-csp.sub.html [ Pass Failure ]
+
+webkit.org/b/244649 [ Debug ] imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-flexbox-001.html [ Pass Crash ]
