@@ -196,7 +196,7 @@ private:
     typedef Vector<HTMLConstructionSiteTask, 1> TaskQueue;
 
     void setCompatibilityMode(DocumentCompatibilityMode);
-    void setCompatibilityModeFromDoctype(const String& name, const String& publicId, const String& systemId);
+    void setCompatibilityModeFromDoctype(const AtomString& name, const String& publicId, const String& systemId);
 
     void attachLater(ContainerNode& parent, Ref<Node>&& child, bool selfClosing = false);
 
