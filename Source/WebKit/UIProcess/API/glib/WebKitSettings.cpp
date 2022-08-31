@@ -229,7 +229,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ENABLE_XSS_AUDITOR:
         break;
     case PROP_ENABLE_FRAME_FLATTENING:
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         webkit_settings_set_enable_frame_flattening(settings, g_value_get_boolean(value));
+ALLOW_DEPRECATED_DECLARATIONS_END
         break;
     case PROP_ENABLE_PLUGINS:
         break;
@@ -433,7 +435,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         g_value_set_boolean(value, FALSE);
         break;
     case PROP_ENABLE_FRAME_FLATTENING:
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         g_value_set_boolean(value, webkit_settings_get_enable_frame_flattening(settings));
+ALLOW_DEPRECATED_DECLARATIONS_END
         break;
     case PROP_ENABLE_PLUGINS:
         g_value_set_boolean(value, FALSE);
@@ -729,6 +733,8 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * Whether to enable the frame flattening. With this setting each subframe is expanded
      * to its contents, which will flatten all the frames to become one scrollable page.
      * On touch devices scrollable subframes on a page can result in a confusing user experience.
+     *
+     * Deprecated: 2.38
      */
     sObjProperties[PROP_ENABLE_FRAME_FLATTENING] =
         g_param_spec_boolean(
@@ -736,7 +742,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Enable frame flattening"),
             _("Whether to enable frame flattening."),
             FALSE,
-            readWriteConstructParamFlags);
+            static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
 
     /**
      * WebKitSettings:enable-plugins:
@@ -1875,6 +1881,7 @@ void webkit_settings_set_enable_xss_auditor(WebKitSettings* settings, gboolean e
  *
  * Returns: %TRUE If frame flattening is enabled or %FALSE otherwise.
  *
+ * Deprecated: 2.38.
  **/
 gboolean webkit_settings_get_enable_frame_flattening(WebKitSettings* settings)
 {
@@ -1889,6 +1896,8 @@ gboolean webkit_settings_get_enable_frame_flattening(WebKitSettings* settings)
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-frame-flattening property.
+ *
+ * Deprecated: 2.38.
  */
 void webkit_settings_set_enable_frame_flattening(WebKitSettings* settings, gboolean enabled)
 {

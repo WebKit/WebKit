@@ -72,10 +72,12 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_html5_database(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_html5_database(settings));
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // Frame flattening is disabled by default.
     g_assert_false(webkit_settings_get_enable_frame_flattening(settings));
     webkit_settings_set_enable_frame_flattening(settings, TRUE);
     g_assert_true(webkit_settings_get_enable_frame_flattening(settings));
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     // By default, JavaScript can open windows automatically is disabled.
     g_assert_false(webkit_settings_get_javascript_can_open_windows_automatically(settings));
