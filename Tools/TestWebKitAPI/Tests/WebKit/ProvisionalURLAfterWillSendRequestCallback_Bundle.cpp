@@ -51,7 +51,9 @@ public:
         }
 
         // Change the main frame URL.
-        WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple2", "html"));
+        auto previousURL = TestWebKitAPI::Util::toSTD(adoptWK(WKURLCopyString(adoptWK(WKURLRequestCopyURL(request)).get())));
+        previousURL += "?query";
+        auto url = adoptWK(WKURLCreateWithUTF8CString(previousURL.c_str()));
         return WKURLRequestCreateWithWKURL(url.get());
     }
 
