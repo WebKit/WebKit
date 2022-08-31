@@ -269,7 +269,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 {
     ASSERT([keyPath isEqualToString:@"pictureInPicturePossible"]);
 
-    if (![keyPath isEqualToString:@"pictureInPicturePossible"] || ![self isPictureInPicturePossible])
+    if (![keyPath isEqualToString:@"pictureInPicturePossible"] || !_pip.get().pictureInPicturePossible)
         return;
 
     if (!_startPictureInPictureTimer)
