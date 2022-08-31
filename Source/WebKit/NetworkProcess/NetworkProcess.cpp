@@ -106,6 +106,7 @@
 #if PLATFORM(COCOA)
 #include "CookieStorageUtilsCF.h"
 #include "LaunchServicesDatabaseObserver.h"
+#include "NetworkProcessEndpoint.h"
 #include "NetworkSessionCocoa.h"
 #include <wtf/cocoa/Entitlements.h>
 #endif
@@ -172,8 +173,10 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     addSupplement<LegacyCustomProtocolManager>();
 #endif
+    addSupplement<NetworkProcessEndpoint>();
 #if HAVE(LSDATABASECONTEXT)
     addSupplement<LaunchServicesDatabaseObserver>();
+    supplement<NetworkProcessEndpoint>()->addObserver(WeakPtr { supplement<LaunchServicesDatabaseObserver>() });
 #endif
 #if PLATFORM(COCOA) && ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     LegacyCustomProtocolManager::networkProcessCreated(*this);
@@ -369,9 +372,17 @@ void NetworkProcess::initializeConnection(IPC::Connection* connection)
         supplement->initializeConnection(connection);
 }
 
-void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, CompletionHandler<void(std::optional<IPC::Attachment>&&, HTTPCookieAcceptPolicy)>&& completionHandler)
+void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, std::optional<audit_token_t> auditToken, CompletionHandler<void(std::optional<IPC::Attachment>&&, HTTPCookieAcceptPolicy)>&& completionHandler)
 {
+#if ENABLE(XPC_IPC)
+    RELEASE_ASSERT(auditToken);
+    auto webProcessConnection = supplement<NetworkProcessEndpoint>()->connectionFromAuditToken(*auditToken);
+    RELEASE_ASSERT(webProcessConnection);
+    auto endpoint = supplement<NetworkProcessEndpoint>()->endpoint();
+    auto connectionIdentifiers = std::optional(IPC::Connection::ConnectionIdentifierPair { IPC::Connection::Identifier(0, webProcessConnection), IPC::Attachment(XPCObject { endpoint.get() }) });
+#else
     auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
+#endif
     if (!connectionIdentifiers) {
         completionHandler({ }, HTTPCookieAcceptPolicy::Never);
         return;
@@ -391,6 +402,22 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     if (auto* session = networkSession(sessionID))
         session->storageManager().startReceivingMessageFromConnection(connection.connection());
 }
+
+#if ENABLE(XPC_IPC)
+void NetworkProcess::createXPCNetworkConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Connection::Identifier connectionIdentifier)
+{
+    auto newConnection = NetworkConnectionToWebProcess::create(*this, identifier, sessionID, connectionIdentifier);
+    auto& connection = newConnection.get();
+
+    ASSERT(!m_webProcessConnections.contains(identifier));
+    m_webProcessConnections.add(identifier, WTFMove(newConnection));
+
+    connection.setOnLineState(NetworkStateNotifier::singleton().onLine());
+#if ENABLE(INDEXED_DATABASE)
+    webIDBServer(sessionID).addConnection(connection.connection(), identifier);
+#endif
+}
+#endif
 
 void NetworkProcess::clearCachedCredentials(PAL::SessionID sessionID)
 {

@@ -33,11 +33,19 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(XPC_IPC)
+#include "XPCEndpointClient.h"
+#endif
+
 namespace WebKit {
 
 class WebPage;
 
-class WebInspector : public API::ObjectImpl<API::Object::Type::BundleInspector>, private IPC::Connection::Client {
+class WebInspector : public API::ObjectImpl<API::Object::Type::BundleInspector>
+#if ENABLE(XPC_IPC)
+, public XPCEndpointClient
+#endif
+, private IPC::Connection::Client {
 public:
     static Ref<WebInspector> create(WebPage*);
 
@@ -51,6 +59,13 @@ public:
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override { close(); }
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override { close(); }
+
+#if ENABLE(XPC_IPC)
+    // XPCEndpointClient
+    void handleEvent(xpc_object_t) override;
+    void didConnect() override;
+    void didCloseConnection(xpc_connection_t) override;
+#endif
 
     void show();
     void close();

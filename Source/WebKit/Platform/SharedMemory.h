@@ -38,6 +38,10 @@
 #include <windows.h>
 #endif
 
+#if ENABLE(XPC_IPC)
+#include <wtf/OSObjectPtr.h>
+#endif
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -98,12 +102,14 @@ public:
         friend class SharedMemory;
 #if USE(UNIX_DOMAIN_SOCKETS)
         mutable IPC::Attachment m_attachment;
+#elif ENABLE(XPC_IPC)
+        OSObjectPtr<xpc_object_t> m_xpcObject;
 #elif OS(DARWIN)
         mutable mach_port_t m_port { MACH_PORT_NULL };
 #elif OS(WINDOWS)
         mutable HANDLE m_handle;
 #endif
-        size_t m_size;
+        size_t m_size { 0 };
     };
 
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
@@ -154,6 +160,8 @@ private:
 #if USE(UNIX_DOMAIN_SOCKETS)
     std::optional<int> m_fileDescriptor;
     bool m_isWrappingMap { false };
+#elif ENABLE(XPC_IPC)
+    OSObjectPtr<xpc_object_t> m_xpcObject;
 #elif OS(DARWIN)
     mach_port_t m_port { MACH_PORT_NULL };
 #elif OS(WINDOWS)

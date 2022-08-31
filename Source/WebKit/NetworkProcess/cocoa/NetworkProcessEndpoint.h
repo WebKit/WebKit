@@ -25,26 +25,46 @@
 
 #pragma once
 
-#import "NetworkProcessEndpointClient.h"
-#import <wtf/NeverDestroyed.h>
-#import <wtf/threads/BinarySemaphore.h>
+#include "NetworkProcess.h"
+#include "NetworkProcessSupplement.h"
+#include "XPCEndpoint.h"
+#include <wtf/OSObjectPtr.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-class LaunchServicesDatabaseManager : public WebKit::NetworkProcessEndpointObserver {
+class NetworkProcessEndpointObserver : public CanMakeWeakPtr<NetworkProcessEndpointObserver> {
 public:
-    static LaunchServicesDatabaseManager& singleton();
+    virtual ~NetworkProcessEndpointObserver() { }
 
-    void waitForDatabaseUpdate();
+    virtual void handleEvent(xpc_connection_t, xpc_object_t) = 0;
+};
+
+class NetworkProcessEndpoint : public WebKit::XPCEndpoint, public NetworkProcessSupplement {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    NetworkProcessEndpoint(NetworkProcess&);
+    virtual ~NetworkProcessEndpoint();
+
+    static const char* supplementName();
+
+    void addObserver(WeakPtr<NetworkProcessEndpointObserver>);
 
 private:
-    void handleEvent(xpc_object_t) override;
+    // XPCEndpoint
+    const char* xpcEndpointMessageNameKey() const override;
+    const char* xpcEndpointMessageName() const override;
+    const char* xpcEndpointNameKey() const override;
     void didConnect(xpc_connection_t) override;
+    void didCloseConnection(xpc_connection_t) override;
+    void handleEvent(xpc_connection_t, xpc_object_t) override;
 
-    bool waitForDatabaseUpdate(Seconds);
+    // NetworkProcessSupplement
+    void initializeConnection(IPC::Connection*) final;
 
-    std::atomic<bool> m_hasReceivedLaunchServicesDatabase { false };
-    BinarySemaphore m_semaphore;
+    Vector<WeakPtr<NetworkProcessEndpointObserver>> m_observers;
+    WeakPtr<NetworkProcess> m_networkProcess;
 };
 
 }

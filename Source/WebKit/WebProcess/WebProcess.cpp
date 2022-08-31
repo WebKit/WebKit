@@ -165,6 +165,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "NetworkProcessEndpointXPCConstants.h"
 #include "ObjCObjectGraph.h"
 #include "UserMediaCaptureManager.h"
 #endif
@@ -238,6 +239,10 @@
 
 #if HAVE(LSDATABASECONTEXT)
 #include "LaunchServicesDatabaseManager.h"
+#endif
+
+#if ENABLE(XPC_IPC)
+#include "NetworkProcessEndpointClient.h"
 #endif
 
 #undef WEBPROCESS_RELEASE_LOG
@@ -1175,9 +1180,17 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 
     // If we've lost our connection to the network process (e.g. it crashed) try to re-establish it.
     if (!m_networkProcessConnection) {
+#if ENABLE(XPC_IPC)
+        RELEASE_ASSERT(NetworkProcessEndpointClient::singleton().waitForConnection(Seconds::infinity()));
+#endif
         auto connectionInfo = getNetworkProcessConnection(*parentProcessConnection());
-
-        m_networkProcessConnection = NetworkProcessConnection::create(connectionInfo.releaseIdentifier(), connectionInfo.cookieAcceptPolicy);
+#if ENABLE(XPC_IPC)
+        auto identifier = IPC::Connection::Identifier(XPCObject { NetworkProcessEndpointClient::singleton().connection().get() });
+#else
+        auto identifier = connectionInfo.releaseIdentifier();
+#endif
+        m_networkProcessConnection = NetworkProcessConnection::create(identifier);
+        m_networkProcessConnection->setCookieAcceptPolicy(connectionInfo.cookieAcceptPolicy);
 #if HAVE(AUDIT_TOKEN)
         m_networkProcessConnection->setNetworkProcessAuditToken(WTFMove(connectionInfo.auditToken));
 #endif

@@ -88,6 +88,7 @@ ShouldDispatchWhenWaitingForSyncReply Encoder::shouldDispatchMessageWhenWaitingF
 
 void Encoder::setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply shouldDispatchWhenWaitingForSyncReply)
 {
+    WTFLogAlways("WebKitXPC: setShouldDispatchMessageWhenWaitingForSyncReply %hhu", shouldDispatchWhenWaitingForSyncReply);
     switch (shouldDispatchWhenWaitingForSyncReply) {
     case ShouldDispatchWhenWaitingForSyncReply::No:
         messageFlags().remove(MessageFlags::DispatchMessageWhenWaitingForSyncReply);

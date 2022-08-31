@@ -26,15 +26,15 @@
 #pragma once
 
 #include "NetworkProcess.h"
+#include "NetworkProcessEndpoint.h"
 #include "NetworkProcessSupplement.h"
-#include "XPCEndpoint.h"
 #include <wtf/Lock.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebKit {
 
-class LaunchServicesDatabaseObserver : public WebKit::XPCEndpoint, public NetworkProcessSupplement {
+class LaunchServicesDatabaseObserver : public NetworkProcessSupplement, public NetworkProcessEndpointObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LaunchServicesDatabaseObserver(NetworkProcess&);
@@ -45,18 +45,9 @@ public:
 private:
     void startObserving(OSObjectPtr<xpc_connection_t>);
 
-    // XPCEndpoint
-    const char* xpcEndpointMessageNameKey() const override;
-    const char* xpcEndpointMessageName() const override;
-    const char* xpcEndpointNameKey() const override;
     void handleEvent(xpc_connection_t, xpc_object_t) override;
 
-    // NetworkProcessSupplement
-    void initializeConnection(IPC::Connection*) final;
-
-    RetainPtr<id> m_observer;
-    Lock m_connectionsLock;
-    Vector<OSObjectPtr<xpc_connection_t>> m_connections WTF_GUARDED_BY_LOCK(m_connectionsLock);
+    WeakPtr<NetworkProcess> m_networkProcess;
 };
 
 }

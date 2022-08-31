@@ -33,18 +33,24 @@ namespace WebKit {
 
 void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
 {
+    RELEASE_ASSERT(xpc_get_type(endpoint) == XPC_TYPE_ENDPOINT);
+
     {
         Locker locker { m_connectionLock };
 
         if (m_connection)
             return;
 
-        m_connection = adoptOSObject(xpc_connection_create_from_endpoint(endpoint));
+        // m_connection = adoptOSObject(xpc_connection_create_from_endpoint(endpoint));
+        m_connection = xpc_connection_create_from_endpoint(endpoint);
 
-        xpc_connection_set_target_queue(m_connection.get(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
+        static dispatch_queue_t queue = dispatch_queue_create("XPC endpoint client queue", DISPATCH_QUEUE_SERIAL);
+        // xpc_connection_set_target_queue(m_connection.get(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
+        xpc_connection_set_target_queue(m_connection.get(), queue);
         xpc_connection_set_event_handler(m_connection.get(), ^(xpc_object_t message) {
             xpc_type_t type = xpc_get_type(message);
             if (type == XPC_TYPE_ERROR) {
+                WTFLogAlways("WebKitXPC: endpoint client received XPC error");
                 if (message == XPC_ERROR_CONNECTION_INVALID || message == XPC_ERROR_TERMINATION_IMMINENT) {
                     Locker locker { m_connectionLock };
                     m_connection = nullptr;
@@ -70,13 +76,28 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
         xpc_connection_resume(m_connection.get());
     }
 
+    m_semaphore.signal();
+    m_hasConnected = true;
+
     didConnect();
+}
+
+void XPCEndpointClient::setEndpoint(XPCObject endpoint)
+{
+    setEndpoint(endpoint.xpcEndpoint);
 }
 
 OSObjectPtr<xpc_connection_t> XPCEndpointClient::connection()
 {
     Locker locker { m_connectionLock };
     return m_connection;
+}
+
+bool XPCEndpointClient::waitForConnection(Seconds timeout)
+{
+    if (m_hasConnected)
+        return true;
+    return m_semaphore.waitFor(timeout);
 }
 
 }

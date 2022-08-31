@@ -47,6 +47,10 @@
 #include <WebCore/ScriptController.h>
 #include <WebCore/WindowFeatures.h>
 
+#if ENABLE(XPC_SPI)
+#include <wtf/spi/darwin/XPCSPI.h>
+#endif
+
 static const float minimumAttachedHeight = 250;
 static const float maximumAttachedHeightRatio = 0.75;
 static const float minimumAttachedWidth = 500;
@@ -86,6 +90,10 @@ void WebInspector::setFrontendConnection(IPC::Attachment encodedConnectionIdenti
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.release().release());
+#elif ENABLE(XPC_IPC)
+    xpc_object_t xpcEndpoint = encodedConnectionIdentifier.xpcObject();
+    setEndpoint(XPCObject { xpcEndpoint });
+    IPC::Connection::Identifier connectionIdentifier(0, XPCEndpointClient::connection());
 #elif OS(DARWIN)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.leakSendRight());
 #elif OS(WINDOWS)
@@ -295,6 +303,24 @@ bool WebInspector::canAttachWindow()
     unsigned maximumAttachedHeight = inspectedPageHeight * maximumAttachedHeightRatio;
     return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= inspectedPageWidth;
 }
+
+#if ENABLE(XPC_IPC)
+void WebInspector::handleEvent(xpc_object_t message)
+{
+    IPC::Connection::handleXPCMessage(XPCObject { message });
+}
+
+void WebInspector::didConnect()
+{
+
+}
+
+void WebInspector::didCloseConnection(xpc_connection_t connection)
+{
+    WTFLogAlways("WebKitXPC: WebInspector::didCloseConnection");
+    IPC::Connection::handleXPCDisconnect(XPCObject { connection });
+}
+#endif
 
 void WebInspector::updateDockingAvailability()
 {

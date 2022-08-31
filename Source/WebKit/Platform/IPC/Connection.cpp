@@ -315,12 +315,10 @@ Connection::~Connection()
     clearAsyncReplyHandlers(*this);
 }
 
-// WTF_IGNORES_THREAD_SAFETY_ANALYSIS because this function accesses connectionMap() without locking.
-// It is safe because this function is only called on the main thread and Connection objects are only
-// constructed / destroyed on the main thread.
-Connection* Connection::connection(UniqueID uniqueID) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+Connection* Connection::connection(UniqueID uniqueID)
 {
     ASSERT(RunLoop::isMain());
+    Locker locker { s_connectionMapLock };
     return connectionMap().get(uniqueID);
 }
 

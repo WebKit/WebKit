@@ -58,6 +58,10 @@
 #endif
 
 
+#if ENABLE(XPC_IPC)
+#include "XPCObject.h"
+#endif
+
 namespace IPC {
 
 enum class SendOption {
@@ -185,12 +189,31 @@ public:
             , xpcConnection(WTFMove(xpcConnection))
         {
         }
+#if ENABLE(XPC_IPC)
+        Identifier(WebKit::XPCObject xpcObject)
+            : xpcConnection(xpcObject.xpcConnection)
+        {
+        }
+#endif
 
         mach_port_t port { MACH_PORT_NULL };
         OSObjectPtr<xpc_connection_t> xpcConnection;
     };
-    static bool identifierIsValid(Identifier identifier) { return MACH_PORT_VALID(identifier.port); }
-    xpc_connection_t xpcConnection() const { return m_xpcConnection.get(); }
+    static bool identifierIsValid(Identifier identifier)
+    {
+#if ENABLE(XPC_IPC)
+        return !!identifier.xpcConnection;
+#else
+        return MACH_PORT_VALID(identifier.port);
+#endif
+    }
+    xpc_connection_t xpcConnection() const
+    {
+#if ENABLE(XPC_IPC)
+        LockHolder locker(s_connectionMapLock);
+#endif
+        return m_xpcConnection.get();
+    }
     std::optional<audit_token_t> getAuditToken();
     pid_t remoteProcessID() const;
 #elif OS(WINDOWS)
@@ -307,6 +330,12 @@ public:
 
 #if PLATFORM(COCOA)
     bool kill();
+#endif
+
+#if ENABLE(XPC_IPC)
+    static bool handleXPCMessage(xpc_object_t event);
+    static bool handleXPCMessage(WebKit::XPCObject event);
+    static bool handleXPCDisconnect(WebKit::XPCObject connection);
 #endif
 
     bool isValid() const { return m_isValid; }
@@ -490,6 +519,9 @@ private:
     bool m_isInitializingSendSource { false };
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
+#if ENABLE(XPC_IPC)
+    Lock m_xpcConnectionLock;
+#endif
     bool m_wasKilled { false };
 #elif OS(WINDOWS)
     // Called on the connection queue.

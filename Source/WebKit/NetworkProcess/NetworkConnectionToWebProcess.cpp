@@ -38,6 +38,7 @@
 #include "NetworkLoadScheduler.h"
 #include "NetworkMDNSRegisterMessages.h"
 #include "NetworkProcess.h"
+#include "NetworkProcessConnectionInfo.h"
 #include "NetworkProcessConnectionMessages.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxyMessages.h"
@@ -1438,6 +1439,15 @@ RefPtr<NetworkResourceLoader> NetworkConnectionToWebProcess::takeNetworkResource
 void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockContentFilterSettings&& settings)
 {
     MockContentFilterSettings::singleton() = WTFMove(settings);
+}
+#endif
+
+#if ENABLE(XPC_IPC)
+void NetworkConnectionToWebProcess::getNetworkProcessConnectionInfo(PAL::SessionID, CompletionHandler<void(WebCore::HTTPCookieAcceptPolicy)>&& completionHandler)
+{
+    auto* storage = networkProcess().storageSession(m_sessionID);
+    RELEASE_ASSERT(storage);
+    completionHandler(storage->cookieAcceptPolicy());
 }
 #endif
 

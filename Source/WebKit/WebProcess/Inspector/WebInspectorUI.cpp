@@ -492,4 +492,38 @@ String WebInspectorUI::localizedStringsURL() const
 }
 #endif // !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
 
+#if ENABLE(XPC_IPC)
+const char* WebInspectorUI::xpcEndpointMessageNameKey() const
+{
+    return nullptr;
+}
+
+const char* WebInspectorUI::xpcEndpointMessageName() const
+{
+    return nullptr;
+}
+
+const char* WebInspectorUI::xpcEndpointNameKey() const
+{
+    return nullptr;
+}
+
+void WebInspectorUI::didConnect(xpc_connection_t)
+{
+}
+
+void WebInspectorUI::didCloseConnection(xpc_connection_t connection)
+{
+    WTFLogAlways("WebKitXPC: WebInspectorUI::didCloseConnection");
+#if ENABLE(XPC_IPC)
+    IPC::Connection::handleXPCDisconnect(XPCObject { connection });
+#endif
+}
+
+void WebInspectorUI::handleEvent(xpc_connection_t, xpc_object_t message)
+{
+    IPC::Connection::handleXPCMessage(XPCObject { message });
+}
+#endif
+
 } // namespace WebKit

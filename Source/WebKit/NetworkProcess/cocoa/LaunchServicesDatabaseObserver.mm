@@ -34,7 +34,8 @@
 
 namespace WebKit {
 
-LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver(NetworkProcess&)
+LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver(NetworkProcess& networkProcess)
+: m_networkProcess(WeakPtr { networkProcess })
 {
 #if HAVE(LSDATABASECONTEXT) && !HAVE(SYSTEM_CONTENT_LS_DATABASE)
     m_observer = [LSDatabaseContext.sharedDatabaseContext addDatabaseChangeObserver4WebKit:^(xpc_object_t change) {
@@ -42,11 +43,11 @@ LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver(NetworkProcess&)
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
         xpc_dictionary_set_value(message.get(), LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey, change);
 
-        Locker locker { m_connectionsLock };
-        for (auto& connection : m_connections) {
-            RELEASE_ASSERT(xpc_get_type(connection.get()) == XPC_TYPE_CONNECTION);
-            xpc_connection_send_message(connection.get(), message.get());
-        }
+        auto weakNetworkProcess = m_networkProcess;
+        callOnMainThread([weakNetworkProcess, message] {
+            if (weakNetworkProcess)
+                weakNetworkProcess->supplement<NetworkProcessEndpoint>()->sendMessageOnAllConnections(message);
+        });
     }];
 #endif
 }
@@ -58,11 +59,6 @@ const char* LaunchServicesDatabaseObserver::supplementName()
 
 void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t> connection)
 {
-    {
-        Locker locker { m_connectionsLock };
-        m_connections.append(connection);
-    }
-
 #if HAVE(SYSTEM_CONTENT_LS_DATABASE)
     [LSDatabaseContext.sharedDatabaseContext getSystemContentDatabaseObject4WebKit:makeBlockPtr([connection = connection] (xpc_object_t _Nullable object, NSError * _Nullable error) {
         if (!object)
@@ -98,47 +94,14 @@ LaunchServicesDatabaseObserver::~LaunchServicesDatabaseObserver()
 #endif
 }
 
-const char* LaunchServicesDatabaseObserver::xpcEndpointMessageNameKey() const
-{
-    return xpcMessageNameKey;
-}
-
-const char* LaunchServicesDatabaseObserver::xpcEndpointMessageName() const
-{
-    return LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName;
-}
-
-const char* LaunchServicesDatabaseObserver::xpcEndpointNameKey() const
-{
-    return LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointNameKey;
-}
-
 void LaunchServicesDatabaseObserver::handleEvent(xpc_connection_t connection, xpc_object_t event)
 {
-    if (xpc_get_type(event) == XPC_TYPE_ERROR) {
-        if (event != XPC_ERROR_CONNECTION_INVALID && event != XPC_ERROR_TERMINATION_IMMINENT)
-            return;
-
-        Locker locker { m_connectionsLock };
-        for (size_t i = 0; i < m_connections.size(); i++) {
-            if (m_connections[i].get() == connection) {
-                m_connections.remove(i);
-                break;
-            }
-        }
-        return;
-    }
     if (xpc_get_type(event) == XPC_TYPE_DICTIONARY) {
-        auto* messageName = xpc_dictionary_get_string(event, xpcMessageNameKey);
+        auto* messageName = xpc_dictionary_get_string(event, XPCEndpoint::xpcMessageNameKey);
         if (LaunchServicesDatabaseXPCConstants::xpcRequestLaunchServicesDatabaseUpdateMessageName != messageName)
             return;
         startObserving(connection);
     }
-}
-
-void LaunchServicesDatabaseObserver::initializeConnection(IPC::Connection* connection)
-{
-    sendEndpointToConnection(connection->xpcConnection());
 }
 
 }

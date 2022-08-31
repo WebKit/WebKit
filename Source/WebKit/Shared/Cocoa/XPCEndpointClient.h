@@ -26,27 +26,35 @@
 #pragma once
 
 #include "WKDeclarationSpecifiers.h"
+#include "XPCObject.h"
 #include <wtf/Lock.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebKit {
 
 class XPCEndpointClient {
 public:
     virtual ~XPCEndpointClient() { }
-
+    
     WK_EXPORT void setEndpoint(xpc_endpoint_t);
-
-protected:
+    WK_EXPORT void setEndpoint(XPCObject);
+    
     WK_EXPORT OSObjectPtr<xpc_connection_t> connection();
-
+    
+    WK_EXPORT bool waitForConnection(Seconds);
+    
 private:
     virtual void handleEvent(xpc_object_t) = 0;
     virtual void didConnect() = 0;
-
+    virtual void didCloseConnection(xpc_connection_t) = 0;
+    
     Lock m_connectionLock;
     OSObjectPtr<xpc_connection_t> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
+    
+    std::atomic<bool> m_hasConnected { false };
+    BinarySemaphore m_semaphore;
 };
 
 }

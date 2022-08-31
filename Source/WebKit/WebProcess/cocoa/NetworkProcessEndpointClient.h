@@ -25,26 +25,33 @@
 
 #pragma once
 
-#import "NetworkProcessEndpointClient.h"
+#import "XPCEndpointClient.h"
 #import <wtf/NeverDestroyed.h>
-#import <wtf/threads/BinarySemaphore.h>
+#import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-class LaunchServicesDatabaseManager : public WebKit::NetworkProcessEndpointObserver {
+class NetworkProcessEndpointObserver : public CanMakeWeakPtr<NetworkProcessEndpointObserver> {
 public:
-    static LaunchServicesDatabaseManager& singleton();
+    virtual ~NetworkProcessEndpointObserver() { }
 
-    void waitForDatabaseUpdate();
+    virtual void handleEvent(xpc_object_t) = 0;
+    virtual void didConnect(xpc_connection_t) = 0;
+};
+
+class NetworkProcessEndpointClient : public WebKit::XPCEndpointClient {
+public:
+    static NetworkProcessEndpointClient& singleton();
+
+    void addObserver(WeakPtr<NetworkProcessEndpointObserver>);
 
 private:
     void handleEvent(xpc_object_t) override;
-    void didConnect(xpc_connection_t) override;
+    void didConnect() override;
+    void didCloseConnection(xpc_connection_t) override;
 
-    bool waitForDatabaseUpdate(Seconds);
-
-    std::atomic<bool> m_hasReceivedLaunchServicesDatabase { false };
-    BinarySemaphore m_semaphore;
+    Vector<WeakPtr<NetworkProcessEndpointObserver>> m_observers;
 };
 
 }

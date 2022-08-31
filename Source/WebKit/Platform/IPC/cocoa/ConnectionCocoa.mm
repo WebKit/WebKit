@@ -75,6 +75,15 @@ constexpr mach_msg_id_t outOfLineBodyMessageID = 0xdba1dba;
 
 void Connection::platformInvalidate()
 {
+#if ENABLE(XPC_IPC)
+    WTFLogAlways("WebKitXPC: Connection::platformInvalidate");
+    LockHolder locker(m_xpcConnectionLock);
+    if (m_xpcConnection) {
+        xpc_connection_cancel(m_xpcConnection.get());
+        m_xpcConnection = nullptr;
+    }
+    m_isConnected = false;
+#else
     if (!m_isConnected) {
         if (m_sendPort) {
             ASSERT(!m_isServer);
@@ -104,7 +113,6 @@ void Connection::platformInvalidate()
 
     m_pendingOutgoingMachMessage = nullptr;
     m_isInitializingSendSource = false;
-    m_isConnected = false;
 
     ASSERT(m_sendPort);
     ASSERT(m_receivePort);
@@ -115,6 +123,8 @@ void Connection::platformInvalidate()
     m_sendPort = MACH_PORT_NULL;
 
     cancelReceiveSource();
+    m_isConnected = false;
+#endif
 }
 
 void Connection::cancelReceiveSource()
@@ -126,13 +136,17 @@ void Connection::cancelReceiveSource()
 
 void Connection::platformInitialize(Identifier identifier)
 {
+#if ENABLE(XPC_IPC)
+    LockHolder locker(s_connectionMapLock);
+    m_xpcConnection = identifier.xpcConnection;
+#else
     if (!MACH_PORT_VALID(identifier.port))
         return;
-
+    
     if (m_isServer) {
         m_receivePort = identifier.port;
         m_sendPort = MACH_PORT_NULL;
-
+        
 #if !PLATFORM(WATCHOS)
         mach_port_guard(mach_task_self(), m_receivePort, reinterpret_cast<mach_port_context_t>(this), true);
 #endif
@@ -140,11 +154,12 @@ void Connection::platformInitialize(Identifier identifier)
         m_receivePort = MACH_PORT_NULL;
         m_sendPort = identifier.port;
     }
-
+    
     m_sendSource = nullptr;
     m_receiveSource = nullptr;
-
+    
     m_xpcConnection = identifier.xpcConnection;
+#endif
 }
 
 static void requestNoSenderNotifications(mach_port_t port, mach_port_t notify)
@@ -159,10 +174,12 @@ static void requestNoSenderNotifications(mach_port_t port, mach_port_t notify)
         deallocateSendRightSafely(previousNotificationPort);
 }
 
+#if !ENABLE(XPC_IPC)
 static void requestNoSenderNotifications(mach_port_t port)
 {
     requestNoSenderNotifications(port, port);
 }
+#endif
 
 static void clearNoSenderNotifications(mach_port_t port)
 {
@@ -171,6 +188,11 @@ static void clearNoSenderNotifications(mach_port_t port)
 
 bool Connection::open()
 {
+#if ENABLE(XPC_IPC)
+    m_isConnected = true;
+    auto encoder = makeUniqueRef<Encoder>(MessageName::InitializeConnection, 0);
+    sendMessage(WTFMove(encoder), { });
+#else
     if (m_isServer) {
         ASSERT(m_receivePort);
         ASSERT(!m_sendPort);
@@ -232,7 +254,7 @@ bool Connection::open()
         if (m_sendSource)
             dispatch_resume(m_sendSource.get());
     });
-
+#endif
     return true;
 }
 
@@ -269,11 +291,51 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
 
 bool Connection::platformCanSendOutgoingMessages() const
 {
+#if ENABLE(XPC_IPC)
+    return true;
+#else
     return !m_pendingOutgoingMachMessage && !m_isInitializingSendSource;
+#endif
 }
 
 bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 {
+#if ENABLE(XPC_IPC)
+    auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+
+    auto data = adoptOSObject(xpc_data_create(encoder->buffer(), encoder->bufferSize()));
+    xpc_dictionary_set_string(message.get(), "message-name", description(encoder->messageName()));
+    xpc_dictionary_set_value(message.get(), "webkit-message", data.get());
+
+    auto attachments = encoder->releaseAttachments();
+    if (attachments.size()) {
+        auto messageAttachments = adoptOSObject(xpc_array_create(nullptr, 0));
+        for (auto& attachment : attachments) {
+            auto xpcAttachment = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+            xpc_dictionary_set_uint64(xpcAttachment.get(), "attachment-type", attachment.type());
+
+            if (attachment.type() == Attachment::MachPortType) {
+                NSLog(@"Sending attachment port %d", attachment.sendRight());
+                auto machSend = adoptOSObject(xpc_mach_send_create(attachment.sendRight()));
+                xpc_dictionary_set_value(xpcAttachment.get(), "mach-send", machSend.get());
+            } else if (attachment.type() == Attachment::XPCObjectType)
+                xpc_dictionary_set_value(xpcAttachment.get(), "xpc-object", attachment.xpcObject());
+            else
+                RELEASE_ASSERT_NOT_REACHED();
+            xpc_array_append_value(messageAttachments.get(), xpcAttachment.get());
+        }
+        xpc_dictionary_set_value(message.get(), "webkit-message-attachments", messageAttachments.get());
+    }
+
+    LockHolder locker(m_xpcConnectionLock);
+
+    if (!m_xpcConnection)
+        return false;
+
+    xpc_connection_send_message(m_xpcConnection.get(), message.get());
+
+    return true;
+#else
     ASSERT(!m_pendingOutgoingMachMessage);
     ASSERT(!m_isInitializingSendSource);
 
@@ -350,6 +412,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     ASSERT(MACH_PORT_VALID(m_sendPort));
 
     return sendMessage(WTFMove(message));
+#endif
 }
 
 void Connection::initializeSendSource()
@@ -588,23 +651,23 @@ void Connection::receiveSourceEventHandler()
 
 IPC::Connection::Identifier Connection::identifier() const
 {
-    return Identifier(m_isServer ? m_receivePort : m_sendPort, m_xpcConnection);
+    return Identifier(m_isServer ? m_receivePort : m_sendPort, xpcConnection());
 }
 
 std::optional<audit_token_t> Connection::getAuditToken()
 {
-    if (!m_xpcConnection)
+    if (!xpcConnection())
         return std::nullopt;
     
     audit_token_t auditToken;
-    xpc_connection_get_audit_token(m_xpcConnection.get(), &auditToken);
+    xpc_connection_get_audit_token(xpcConnection(), &auditToken);
     return WTFMove(auditToken);
 }
 
 bool Connection::kill()
 {
-    if (m_xpcConnection) {
-        terminateWithReason(m_xpcConnection.get(), WebKit::ReasonCode::ConnectionKilled, "Connection::kill");
+    if (xpcConnection()) {
+        terminateWithReason(xpcConnection(), WebKit::ReasonCode::ConnectionKilled, "Connection::kill");
         m_wasKilled = true;
         return true;
     }
@@ -637,11 +700,89 @@ void Connection::didReceiveSyncReply(OptionSet<SendSyncOption> sendSyncOptions)
 
 pid_t Connection::remoteProcessID() const
 {
-    if (!m_xpcConnection)
+    if (!xpcConnection())
         return 0;
 
-    return xpc_connection_get_pid(m_xpcConnection.get());
+    return xpc_connection_get_pid(xpcConnection());
 }
+
+#if ENABLE(XPC_IPC)
+bool Connection::handleXPCDisconnect(WebKit::XPCObject connection)
+{
+    WTFLogAlways("WebKitXPC: received XPC error, connection = %p", connection.xpcConnection);
+    LockHolder locker(s_connectionMapLock);
+    for (const auto& keyValuePair : connectionMap()) {
+        if (connection.xpcConnection != keyValuePair.value->m_xpcConnection.get())
+            continue;
+        WTFLogAlways("WebKitXPC: connectionDidClose");
+        keyValuePair.value->connectionDidClose();
+        return true;
+    }
+    WTFLogAlways("WebKitXPC: Could not find connection!");
+    return false;
+}
+
+bool Connection::handleXPCMessage(xpc_object_t event)
+{
+    if (xpc_get_type(event) != XPC_TYPE_DICTIONARY)
+        return false;
+
+    auto webkitMessage = xpc_dictionary_get_value(event, "webkit-message");
+    if (!webkitMessage)
+        return false;
+
+    size_t length = xpc_data_get_length(webkitMessage);
+    auto data = xpc_data_get_bytes_ptr(webkitMessage);
+
+    Vector<Attachment> attachments;
+    auto messageAttachments = xpc_dictionary_get_value(event, "webkit-message-attachments");
+    for (size_t i = 0; i < xpc_array_get_count(messageAttachments); i++) {
+        auto attachment = xpc_array_get_dictionary(messageAttachments, xpc_array_get_count(messageAttachments) - i - 1);
+
+        auto attachmentType = xpc_dictionary_get_uint64(attachment, "attachment-type");
+
+        if (attachmentType == Attachment::MachPortType) {
+            auto machSend = xpc_dictionary_get_value(attachment, "mach-send");
+            auto port = xpc_mach_send_copy_right(machSend);
+            NSLog(@"Received attachment port %d", port);
+            attachments.append(Attachment(MachSendRight::create(port)));
+        } else if (attachmentType == Attachment::XPCObjectType) {
+            auto xpcObject = xpc_dictionary_get_value(attachment, "xpc-object");
+            attachments.append(Attachment(WebKit::XPCObject { xpcObject }));
+        } else
+            RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    auto decoder = Decoder::create(static_cast<const uint8_t*>(data), length, WTFMove(attachments));
+
+    if (decoder->messageName() == MessageName::InitializeConnection)
+        return true;
+
+    auto xpcConnection = xpc_dictionary_get_remote_connection(event);
+
+    LockHolder locker(s_connectionMapLock);
+    for (const auto& keyValuePair : connectionMap()) {
+        if (xpcConnection != keyValuePair.value->m_xpcConnection.get())
+            continue;
+
+        auto connection = RefPtr { keyValuePair.value };
+        if (!strstr(description(decoder->messageName()), "DisplayWasRefreshed"))
+            WTFLogAlways("WebKitXPC: Got message %s", description(decoder->messageName()));
+        connection->m_connectionQueue->dispatch([connection, decoder = WTFMove(decoder)]() mutable {
+            connection->processIncomingMessage(WTFMove(decoder));
+        });
+        return true;
+    }
+    //RELEASE_ASSERT(false);
+    WTFLogAlways("WebKitXPC: No connection found for message %s", description(decoder->messageName()));
+    return false;
+}
+
+bool Connection::handleXPCMessage(WebKit::XPCObject event)
+{
+    return handleXPCMessage(event.xpcObject);
+}
+#endif
 
 std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
 {
