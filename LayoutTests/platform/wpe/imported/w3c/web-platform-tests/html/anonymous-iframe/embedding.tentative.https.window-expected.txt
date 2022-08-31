@@ -1,7 +1,7 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Parent embeds same-origin anonymous iframe
+TIMEOUT Parent embeds same-origin anonymous iframe Test timed out
 PASS Parent embeds cross-origin anonymous iframe
 TIMEOUT COEP:require-corp parent embeds same-origin anonymous iframe Test timed out
 TIMEOUT COEP:require-corp parent embeds cross-origin anonymous iframe Test timed out

@@ -1,3 +1,3 @@
 
-FAIL XMLHttpRequest: send() - "Basic" authenticated request using setRequestHeader() when there is an existing session assert_equals: expected "f8947137-d721-4624-8bb5-1e3c2d8ac873\npass" but got "7972fecd-cba5-44a4-9968-acb5b8db190f\nopen-pass"
+FAIL XMLHttpRequest: send() - "Basic" authenticated request using setRequestHeader() when there is an existing session assert_equals: expected "95925d71-bf0c-44a7-ac2c-87c5a9f2896a\npass" but got "defb115b-5535-421f-bfcb-7f14990887b9\nopen-pass"
 Note: this test will only work as expected once per browsing session. Restart browser to re-test.
