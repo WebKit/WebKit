@@ -111,7 +111,7 @@ private:
     UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const;
     std::optional<HorizontalConstraints> floatConstraints(const InlineRect& lineLogicalRect) const;
 
-    void handleFloatContent(const InlineItem&);
+    Result handleFloatContent(const InlineItem&);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     InlineRect lineRectForCandidateInlineContent(const LineCandidate&) const;
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
@@ -119,7 +119,7 @@ private:
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
     void initialize(const UsedConstraints&, size_t leadingInlineTextItemIndex, const std::optional<PreviousLine>&);
     struct CommittedContent {
-        size_t inlineItemCount { 0 };
+        size_t itemCount { 0 };
         size_t partialTrailingContentLength { 0 };
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
