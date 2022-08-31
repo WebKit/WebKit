@@ -987,6 +987,47 @@ Protocol::ErrorStringOr<Ref<Protocol::Debugger::FunctionDetails>> InspectorDebug
     return details.releaseNonNull();
 }
 
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Debugger::Location>>> InspectorDebuggerAgent::getBreakpointLocations(Ref<JSON::Object>&& start, Ref<JSON::Object>&& end)
+{
+    Protocol::ErrorString errorString;
+
+    JSC::SourceID startSourceID;
+    unsigned startLineNumber;
+    unsigned startColumnNumber;
+    if (!parseLocation(errorString, WTFMove(start), startSourceID, startLineNumber, startColumnNumber))
+        return makeUnexpected(errorString);
+
+    JSC::SourceID endSourceID;
+    unsigned endLineNumber;
+    unsigned endColumnNumber;
+    if (!parseLocation(errorString, WTFMove(end), endSourceID, endLineNumber, endColumnNumber))
+        return makeUnexpected(errorString);
+
+    if (startSourceID != endSourceID)
+        return makeUnexpected("Must have same scriptId for given start and given end"_s);
+
+    if (endLineNumber < startLineNumber)
+        return makeUnexpected("Cannot have lineNumber of given end be before lineNumber of given start"_s);
+
+    if (startLineNumber == endLineNumber && endColumnNumber < startColumnNumber)
+        return makeUnexpected("Cannot have columnNumber of given end be before columnNumber of given start"_s);
+
+    auto scriptIterator = m_scripts.find(startSourceID);
+    if (scriptIterator == m_scripts.end())
+        return makeUnexpected("Missing script for scriptId in given start"_s);
+
+    auto protocolLocations = JSON::ArrayOf<Protocol::Debugger::Location>::create();
+    m_debugger.forEachBreakpointLocation(startSourceID, scriptIterator->value.sourceProvider.get(), startLineNumber, startColumnNumber, endLineNumber, endColumnNumber, [&] (int lineNumber, int columnNumber) {
+        auto protocolLocation = Protocol::Debugger::Location::create()
+            .setScriptId(String::number(startSourceID))
+            .setLineNumber(lineNumber)
+            .release();
+        protocolLocation->setColumnNumber(columnNumber);
+        protocolLocations->addItem(WTFMove(protocolLocation));
+    });
+    return protocolLocations;
+}
+
 void InspectorDebuggerAgent::schedulePauseAtNextOpportunity(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data)
 {
     if (m_javaScriptPauseScheduled)

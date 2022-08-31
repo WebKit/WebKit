@@ -46,7 +46,9 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
 
         this._scriptIdentifier = sourceCode instanceof WI.Script ? sourceCode.id : null;
         this._target = sourceCode instanceof WI.Script ? sourceCode.target : null;
+
         this._resolved = !!resolved;
+        this._resolvedLocations = [];
 
         this._sourceCodeLocation.addEventListener(WI.SourceCodeLocation.Event.LocationChanged, this._sourceCodeLocationLocationChanged, this);
         this._sourceCodeLocation.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, this._sourceCodeLocationDisplayLocationChanged, this);
@@ -104,6 +106,7 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
     get contentIdentifier() { return this._contentIdentifier; }
     get scriptIdentifier() { return this._scriptIdentifier; }
     get target() { return this._target; }
+    get resolvedLocations() { return this._resolvedLocations; }
 
     get displayName()
     {
@@ -205,6 +208,32 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
         this._resolved = resolved || false;
 
         this.dispatchEventToListeners(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange);
+    }
+
+    addResolvedLocation(location)
+    {
+        console.assert(!this._isSpecial(), this);
+        console.assert(location instanceof WI.SourceCodeLocation, location);
+        console.assert(!this.hasResolvedLocation(location), location, this._resolvedLocations);
+
+        this._resolvedLocations.push(location);
+        this.resolved = true;
+    }
+
+    hasResolvedLocation(location)
+    {
+        console.assert(!this._isSpecial(), this);
+        console.assert(location instanceof WI.SourceCodeLocation, location);
+
+        return this._resolvedLocations.some((resolvedLocation) => resolvedLocation.isEqual(location));
+    }
+
+    clearResolvedLocations()
+    {
+        console.assert(!this._isSpecial(), this);
+
+        this._resolvedLocations = [];
+        this.resolved = false;
     }
 
     remove()

@@ -428,6 +428,14 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         return [];
     }
 
+    breakpointsForSourceCodeLocation(sourceCodeLocation)
+    {
+        console.assert(sourceCodeLocation instanceof WI.SourceCodeLocation, sourceCodeLocation);
+
+        return this.breakpointsForSourceCode(sourceCodeLocation.sourceCode)
+            .filter((breakpoint) => breakpoint.hasResolvedLocation(sourceCodeLocation));
+    }
+
     breakpointForSourceCodeLocation(sourceCodeLocation)
     {
         console.assert(sourceCodeLocation instanceof WI.SourceCodeLocation);
@@ -932,12 +940,12 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         console.assert(breakpoint.identifier === breakpointIdentifier);
 
-        if (!breakpoint.sourceCodeLocation.sourceCode) {
-            let sourceCodeLocation = this._sourceCodeLocationFromPayload(target, location);
-            breakpoint.sourceCodeLocation.sourceCode = sourceCodeLocation.sourceCode;
-        }
+        let sourceCodeLocation = this._sourceCodeLocationFromPayload(target, location);
 
-        breakpoint.resolved = true;
+        if (!breakpoint.sourceCodeLocation.sourceCode)
+            breakpoint.sourceCodeLocation.sourceCode = sourceCodeLocation.sourceCode;
+
+        breakpoint.addResolvedLocation(sourceCodeLocation);
     }
 
     globalObjectCleared(target)
@@ -954,7 +962,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         // Mark all the breakpoints as unresolved. They will be reported as resolved when
         // breakpointResolved is called as the page loads.
         for (let breakpoint of this._breakpoints) {
-            breakpoint.resolved = false;
+            breakpoint.clearResolvedLocations();
+
             if (breakpoint.sourceCodeLocation.sourceCode)
                 breakpoint.sourceCodeLocation.sourceCode = null;
         }
@@ -1224,7 +1233,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         // If something goes wrong it will stay unresolved and show up as such in the user interface.
         // When setting for a new target, don't change the resolved target.
         if (!specificTarget)
-            breakpoint.resolved = false;
+            breakpoint.clearResolvedLocations();
 
         if (breakpoint.contentIdentifier) {
             let targets = specificTarget ? [specificTarget] : WI.targets;

@@ -1447,13 +1447,15 @@ WI.TextEditor = class TextEditor extends WI.View
 
     _removeBreakpointFromLineAndColumn(lineNumber, columnNumber)
     {
-        console.assert(columnNumber in this._breakpoints[lineNumber]);
-        delete this._breakpoints[lineNumber][columnNumber];
+        if (!nullish(columnNumber)) {
+            console.assert(columnNumber in this._breakpoints[lineNumber]);
+            delete this._breakpoints[lineNumber][columnNumber];
 
-        // There are still breakpoints on the line. Update the breakpoint style.
-        if (!isEmptyObject(this._breakpoints[lineNumber])) {
-            this._setBreakpointStylesOnLine(lineNumber);
-            return;
+            // There are still breakpoints on the line. Update the breakpoint style.
+            if (!isEmptyObject(this._breakpoints[lineNumber])) {
+                this._setBreakpointStylesOnLine(lineNumber);
+                return;
+            }
         }
 
         delete this._breakpoints[lineNumber];
@@ -1509,19 +1511,17 @@ WI.TextEditor = class TextEditor extends WI.View
 
         console.assert(lineNumber in this._breakpoints);
 
-        if (this._codeMirror.hasLineClass(lineNumber, "wrap", WI.TextEditor.MultipleBreakpointsStyleClassName)) {
-            console.assert(!isEmptyObject(this._breakpoints[lineNumber]));
-            return;
-        }
-
-        // Single existing breakpoint, start tracking it for dragging.
-        console.assert(Object.keys(this._breakpoints[lineNumber]).length === 1);
-        var columnNumber = Object.keys(this._breakpoints[lineNumber])[0];
-        this._draggingBreakpointInfo = this._breakpoints[lineNumber][columnNumber];
         this._lineNumberWithMousedDownBreakpoint = lineNumber;
         this._lineNumberWithDraggedBreakpoint = lineNumber;
-        this._columnNumberWithMousedDownBreakpoint = columnNumber;
-        this._columnNumberWithDraggedBreakpoint = columnNumber;
+        this._draggingBreakpointInfo = this._breakpoints[lineNumber];
+
+        let columnNumbers = Object.keys(this._breakpoints[lineNumber]);
+        if (columnNumbers.length === 1) {
+            let columnNumber = columnNumbers[0];
+            this._draggingBreakpointInfo = this._draggingBreakpointInfo[columnNumber];
+            this._columnNumberWithMousedDownBreakpoint = columnNumber;
+            this._columnNumberWithDraggedBreakpoint = columnNumber;
+        }
 
         this._documentMouseMovedEventListener = this._documentMouseMoved.bind(this);
         this._documentMouseUpEventListener = this._documentMouseUp.bind(this);
@@ -1572,6 +1572,17 @@ WI.TextEditor = class TextEditor extends WI.View
         // Record that the mouse dragged some so when mouse up fires we know to do the
         // work of removing and moving the breakpoint.
         this._mouseDragged = true;
+
+        if (!("_columnNumberWithMousedDownBreakpoint" in this)) {
+            if (lineNumber === this._lineNumberWithMousedDownBreakpoint) {
+                this._setColumnBreakpointInfoForLine(lineNumber, this._draggingBreakpointInfo);
+                this._lineNumberWithDraggedBreakpoint = lineNumber;
+            } else {
+                this._removeBreakpointFromLineAndColumn(this._lineNumberWithMousedDownBreakpoint);
+                delete this._lineNumberWithDraggedBreakpoint;
+            }
+            return;
+        }
 
         if ("_lineNumberWithDraggedBreakpoint" in this) {
             // We have a line that is currently showing the dragged breakpoint. Remove that breakpoint
@@ -1629,13 +1640,12 @@ WI.TextEditor = class TextEditor extends WI.View
                 // and tells us to clear the breakpoint info, we can ignore those calls.
                 if (this._previousColumnBreakpointInfo && delegateImplementsBreakpointRemoved) {
                     this._ignoreSetBreakpointInfoCalls = true;
-                    for (var columnNumber in this._previousColumnBreakpointInfo)
-                        this._delegate.textEditorBreakpointRemoved(this, this._lineNumberWithDraggedBreakpoint, columnNumber);
+                    this._delegate.textEditorBreakpointRemoved(this, this._lineNumberWithDraggedBreakpoint);
                     delete this._ignoreSetBreakpointInfoCalls;
                 }
 
                 // Tell the delegate to move the breakpoint from one line to another.
-                if (delegateImplementsBreakpointMoved) {
+                if ("_columnNumberWithDraggedBreakpoint" in this && delegateImplementsBreakpointMoved) {
                     this._ignoreSetBreakpointInfoCalls = true;
                     this._delegate.textEditorBreakpointMoved(this, this._lineNumberWithMousedDownBreakpoint, this._columnNumberWithMousedDownBreakpoint, this._lineNumberWithDraggedBreakpoint, this._columnNumberWithDraggedBreakpoint);
                     delete this._ignoreSetBreakpointInfoCalls;
@@ -1644,8 +1654,8 @@ WI.TextEditor = class TextEditor extends WI.View
         } else {
             // Toggle the disabled state of the breakpoint.
             console.assert(this._lineNumberWithMousedDownBreakpoint in this._breakpoints);
-            console.assert(this._columnNumberWithMousedDownBreakpoint in this._breakpoints[this._lineNumberWithMousedDownBreakpoint]);
-            if (this._lineNumberWithMousedDownBreakpoint in this._breakpoints && this._columnNumberWithMousedDownBreakpoint in this._breakpoints[this._lineNumberWithMousedDownBreakpoint] && delegateImplementsBreakpointClicked)
+            console.assert(!("_columnNumberWithMousedDownBreakpoint" in this) || this._columnNumberWithMousedDownBreakpoint in this._breakpoints[this._lineNumberWithMousedDownBreakpoint]);
+            if (this._lineNumberWithMousedDownBreakpoint in this._breakpoints && (!("_columnNumberWithMousedDownBreakpoint" in this) || this._columnNumberWithMousedDownBreakpoint in this._breakpoints[this._lineNumberWithMousedDownBreakpoint]) && delegateImplementsBreakpointClicked)
                 this._delegate.textEditorBreakpointClicked(this, this._lineNumberWithMousedDownBreakpoint, this._columnNumberWithMousedDownBreakpoint);
         }
 

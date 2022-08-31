@@ -10,7 +10,8 @@ PAUSES AT: 0:0
       1    let b=function(){return 0}
       2    let c=function(){return 0}
       3    let arr=[];
-
+LOCATIONS FROM 0:0 to 0:26
+      0    |let a=function(){|return 0|}
 
 INSERTING AT: 1:0
 PAUSES AT: 1:0
@@ -19,7 +20,8 @@ PAUSES AT: 1:0
       2    let c=function(){return 0}
       3    let arr=[];
       4    let obj={};
-
+LOCATIONS FROM 1:0 to 1:26
+      1    |let b=function(){|return 0|}
 
 INSERTING AT: 2:0
 PAUSES AT: 2:0
@@ -29,7 +31,8 @@ PAUSES AT: 2:0
       3    let arr=[];
       4    let obj={};
       5
-
+LOCATIONS FROM 2:0 to 2:26
+      2    |let c=function(){|return 0|}
 
 INSERTING AT: 3:0
 PAUSES AT: 3:0
@@ -40,7 +43,8 @@ PAUSES AT: 3:0
       4    let obj={};
       5
       6    // Control flow
-
+LOCATIONS FROM 3:0 to 3:11
+      3    |let arr=[];
 
 INSERTING AT: 4:0
 PAUSES AT: 4:0
@@ -51,7 +55,8 @@ PAUSES AT: 4:0
       5
       6    // Control flow
       7
-
+LOCATIONS FROM 4:0 to 4:11
+      4    |let obj={};
 
 INSERTING AT: 5:0
 PAUSES AT: 8:4
@@ -65,7 +70,8 @@ PAUSES AT: 8:4
       9        a();
      10
      11    if (0) {
-
+LOCATIONS FROM 5:0 to 5:0
+      5    #
 
 INSERTING AT: 6:0
 PAUSES AT: 8:4
@@ -78,7 +84,8 @@ PAUSES AT: 8:4
       9        a();
      10
      11    if (0) {
-
+LOCATIONS FROM 6:0 to 6:15
+      6    #// Control flow
 
 INSERTING AT: 7:0
 PAUSES AT: 8:4
@@ -90,7 +97,8 @@ PAUSES AT: 8:4
       9        a();
      10
      11    if (0) {
-
+LOCATIONS FROM 7:0 to 7:0
+      7    #
 
 INSERTING AT: 8:0
 PAUSES AT: 8:4
@@ -101,7 +109,8 @@ PAUSES AT: 8:4
       9        a();
      10
      11    if (0) {
-
+LOCATIONS FROM 8:0 to 8:6
+      8    #if (|0)
 
 INSERTING AT: 9:0
 PAUSES AT: 9:4
@@ -112,7 +121,8 @@ PAUSES AT: 9:4
      10
      11    if (0) {
      12        a();
-
+LOCATIONS FROM 9:0 to 9:8
+      9    #    |a();
 
 INSERTING AT: 10:0
 PAUSES AT: 11:4
@@ -124,7 +134,8 @@ PAUSES AT: 11:4
      12        a();
      13    }
      14
-
+LOCATIONS FROM 10:0 to 10:0
+     10    #
 
 INSERTING AT: 11:0
 PAUSES AT: 11:4
@@ -135,7 +146,8 @@ PAUSES AT: 11:4
      12        a();
      13    }
      14
-
+LOCATIONS FROM 11:0 to 11:8
+     11    #if (|0) {
 
 INSERTING AT: 12:0
 PAUSES AT: 12:4
@@ -146,7 +158,8 @@ PAUSES AT: 12:4
      13    }
      14
      15    if (0)
-
+LOCATIONS FROM 12:0 to 12:8
+     12    #    |a();
 
 INSERTING AT: 13:0
 PAUSES AT: 15:4
@@ -159,7 +172,8 @@ PAUSES AT: 15:4
      16        a();
      17    else if (0)
      18        a();
-
+LOCATIONS FROM 13:0 to 13:1
+     13    #}
 
 INSERTING AT: 14:0
 PAUSES AT: 15:4
@@ -171,7 +185,8 @@ PAUSES AT: 15:4
      16        a();
      17    else if (0)
      18        a();
-
+LOCATIONS FROM 14:0 to 14:0
+     14    #
 
 INSERTING AT: 15:0
 PAUSES AT: 15:4
@@ -182,7 +197,8 @@ PAUSES AT: 15:4
      16        a();
      17    else if (0)
      18        a();
-
+LOCATIONS FROM 15:0 to 15:6
+     15    #if (|0)
 
 INSERTING AT: 16:0
 PAUSES AT: 16:4
@@ -193,7 +209,8 @@ PAUSES AT: 16:4
      17    else if (0)
      18        a();
      19    else
-
+LOCATIONS FROM 16:0 to 16:8
+     16    #    |a();
 
 INSERTING AT: 17:0
 PAUSES AT: 17:9
@@ -204,7 +221,8 @@ PAUSES AT: 17:9
      18        a();
      19    else
      20        a();
-
+LOCATIONS FROM 17:0 to 17:11
+     17    #else if (|0)
 
 INSERTING AT: 18:0
 PAUSES AT: 18:4
@@ -215,7 +233,8 @@ PAUSES AT: 18:4
      19    else
      20        a();
      21
-
+LOCATIONS FROM 18:0 to 18:8
+     18    #    |a();
 
 INSERTING AT: 19:0
 PAUSES AT: 20:4
@@ -227,7 +246,8 @@ PAUSES AT: 20:4
      21
      22    a() ? b() : c()
      23
-
+LOCATIONS FROM 19:0 to 19:4
+     19    #else
 
 INSERTING AT: 20:0
 PAUSES AT: 20:4
@@ -238,7 +258,8 @@ PAUSES AT: 20:4
      21
      22    a() ? b() : c()
      23
-
+LOCATIONS FROM 20:0 to 20:8
+     20    #    |a();
 
 INSERTING AT: 21:0
 PAUSES AT: 22:0
@@ -250,7 +271,8 @@ PAUSES AT: 22:0
      23
      24    // Loops
      25
-
+LOCATIONS FROM 21:0 to 21:0
+     21    #
 
 INSERTING AT: 22:0
 PAUSES AT: 22:0
@@ -261,7 +283,8 @@ PAUSES AT: 22:0
      23
      24    // Loops
      25
-
+LOCATIONS FROM 22:0 to 22:15
+     22    |a() ? b() : c()
 
 INSERTING AT: 23:0
 PAUSES AT: 26:7
@@ -275,7 +298,8 @@ PAUSES AT: 26:7
      27        a();
      28
      29    while (0) {
-
+LOCATIONS FROM 23:0 to 23:0
+     23    #
 
 INSERTING AT: 24:0
 PAUSES AT: 26:7
@@ -288,7 +312,8 @@ PAUSES AT: 26:7
      27        a();
      28
      29    while (0) {
-
+LOCATIONS FROM 24:0 to 24:8
+     24    #// Loops
 
 INSERTING AT: 25:0
 PAUSES AT: 26:7
@@ -300,7 +325,8 @@ PAUSES AT: 26:7
      27        a();
      28
      29    while (0) {
-
+LOCATIONS FROM 25:0 to 25:0
+     25    #
 
 INSERTING AT: 26:0
 PAUSES AT: 26:7
@@ -311,7 +337,8 @@ PAUSES AT: 26:7
      27        a();
      28
      29    while (0) {
-
+LOCATIONS FROM 26:0 to 26:9
+     26    #while (|0)
 
 INSERTING AT: 27:0
 PAUSES AT: 27:4
@@ -322,7 +349,8 @@ PAUSES AT: 27:4
      28
      29    while (0) {
      30        a();
-
+LOCATIONS FROM 27:0 to 27:8
+     27    #    |a();
 
 INSERTING AT: 28:0
 PAUSES AT: 29:7
@@ -334,7 +362,8 @@ PAUSES AT: 29:7
      30        a();
      31    }
      32
-
+LOCATIONS FROM 28:0 to 28:0
+     28    #
 
 INSERTING AT: 29:0
 PAUSES AT: 29:7
@@ -345,7 +374,8 @@ PAUSES AT: 29:7
      30        a();
      31    }
      32
-
+LOCATIONS FROM 29:0 to 29:11
+     29    #while (|0) {
 
 INSERTING AT: 30:0
 PAUSES AT: 30:4
@@ -356,7 +386,8 @@ PAUSES AT: 30:4
      31    }
      32
      33    do {
-
+LOCATIONS FROM 30:0 to 30:8
+     30    #    |a();
 
 INSERTING AT: 31:0
 PAUSES AT: 34:4
@@ -370,7 +401,8 @@ PAUSES AT: 34:4
      35    } while (0);
      36
      37    for (a(); b(); c())
-
+LOCATIONS FROM 31:0 to 31:1
+     31    #}
 
 INSERTING AT: 32:0
 PAUSES AT: 34:4
@@ -383,7 +415,8 @@ PAUSES AT: 34:4
      35    } while (0);
      36
      37    for (a(); b(); c())
-
+LOCATIONS FROM 32:0 to 32:0
+     32    #
 
 INSERTING AT: 33:0
 PAUSES AT: 34:4
@@ -395,7 +428,8 @@ PAUSES AT: 34:4
      35    } while (0);
      36
      37    for (a(); b(); c())
-
+LOCATIONS FROM 33:0 to 33:4
+     33    #do {
 
 INSERTING AT: 34:0
 PAUSES AT: 34:4
@@ -406,7 +440,8 @@ PAUSES AT: 34:4
      35    } while (0);
      36
      37    for (a(); b(); c())
-
+LOCATIONS FROM 34:0 to 34:8
+     34    #    |a();
 
 INSERTING AT: 35:0
 PAUSES AT: 35:9
@@ -417,7 +452,8 @@ PAUSES AT: 35:9
      36
      37    for (a(); b(); c())
      38        break;
-
+LOCATIONS FROM 35:0 to 35:12
+     35    #} while (|0);
 
 INSERTING AT: 36:0
 PAUSES AT: 37:5
@@ -429,7 +465,8 @@ PAUSES AT: 37:5
      38        break;
      39
      40    for (; b(); c())
-
+LOCATIONS FROM 36:0 to 36:0
+     36    #
 
 INSERTING AT: 37:0
 PAUSES AT: 37:5
@@ -440,7 +477,8 @@ PAUSES AT: 37:5
      38        break;
      39
      40    for (; b(); c())
-
+LOCATIONS FROM 37:0 to 37:19
+     37    #for (|a(); |b(); |c())
 
 INSERTING AT: 38:0
 PAUSES AT: 38:4
@@ -451,7 +489,8 @@ PAUSES AT: 38:4
      39
      40    for (; b(); c())
      41        break;
-
+LOCATIONS FROM 38:0 to 38:10
+     38    #    |break;
 
 INSERTING AT: 39:0
 PAUSES AT: 40:7
@@ -463,7 +502,8 @@ PAUSES AT: 40:7
      41        break;
      42
      43    for (a(); b();)
-
+LOCATIONS FROM 39:0 to 39:0
+     39    #
 
 INSERTING AT: 40:0
 PAUSES AT: 40:7
@@ -474,7 +514,8 @@ PAUSES AT: 40:7
      41        break;
      42
      43    for (a(); b();)
-
+LOCATIONS FROM 40:0 to 40:16
+     40    #for (; |b(); |c())
 
 INSERTING AT: 41:0
 PAUSES AT: 41:4
@@ -485,7 +526,8 @@ PAUSES AT: 41:4
      42
      43    for (a(); b();)
      44        break;
-
+LOCATIONS FROM 41:0 to 41:10
+     41    #    |break;
 
 INSERTING AT: 42:0
 PAUSES AT: 43:5
@@ -497,7 +539,8 @@ PAUSES AT: 43:5
      44        break;
      45
      46    for (a();; c())
-
+LOCATIONS FROM 42:0 to 42:0
+     42    #
 
 INSERTING AT: 43:0
 PAUSES AT: 43:5
@@ -508,7 +551,8 @@ PAUSES AT: 43:5
      44        break;
      45
      46    for (a();; c())
-
+LOCATIONS FROM 43:0 to 43:15
+     43    #for (|a(); |b();)
 
 INSERTING AT: 44:0
 PAUSES AT: 44:4
@@ -519,7 +563,8 @@ PAUSES AT: 44:4
      45
      46    for (a();; c())
      47        break;
-
+LOCATIONS FROM 44:0 to 44:10
+     44    #    |break;
 
 INSERTING AT: 45:0
 PAUSES AT: 46:5
@@ -531,7 +576,8 @@ PAUSES AT: 46:5
      47        break;
      48
      49    for (a();;)
-
+LOCATIONS FROM 45:0 to 45:0
+     45    #
 
 INSERTING AT: 46:0
 PAUSES AT: 46:5
@@ -542,7 +588,8 @@ PAUSES AT: 46:5
      47        break;
      48
      49    for (a();;)
-
+LOCATIONS FROM 46:0 to 46:15
+     46    #for (|a();; |c())
 
 INSERTING AT: 47:0
 PAUSES AT: 47:4
@@ -553,7 +600,8 @@ PAUSES AT: 47:4
      48
      49    for (a();;)
      50        break;
-
+LOCATIONS FROM 47:0 to 47:10
+     47    #    |break;
 
 INSERTING AT: 48:0
 PAUSES AT: 49:5
@@ -565,7 +613,8 @@ PAUSES AT: 49:5
      50        break;
      51
      52    for (; b();)
-
+LOCATIONS FROM 48:0 to 48:0
+     48    #
 
 INSERTING AT: 49:0
 PAUSES AT: 49:5
@@ -576,7 +625,8 @@ PAUSES AT: 49:5
      50        break;
      51
      52    for (; b();)
-
+LOCATIONS FROM 49:0 to 49:11
+     49    #for (|a();;)
 
 INSERTING AT: 50:0
 PAUSES AT: 50:4
@@ -587,7 +637,8 @@ PAUSES AT: 50:4
      51
      52    for (; b();)
      53        break;
-
+LOCATIONS FROM 50:0 to 50:10
+     50    #    |break;
 
 INSERTING AT: 51:0
 PAUSES AT: 52:7
@@ -599,7 +650,8 @@ PAUSES AT: 52:7
      53        break;
      54
      55    for (;; c())
-
+LOCATIONS FROM 51:0 to 51:0
+     51    #
 
 INSERTING AT: 52:0
 PAUSES AT: 52:7
@@ -610,7 +662,8 @@ PAUSES AT: 52:7
      53        break;
      54
      55    for (;; c())
-
+LOCATIONS FROM 52:0 to 52:12
+     52    #for (; |b();)
 
 INSERTING AT: 53:0
 PAUSES AT: 53:4
@@ -621,7 +674,8 @@ PAUSES AT: 53:4
      54
      55    for (;; c())
      56        break;
-
+LOCATIONS FROM 53:0 to 53:10
+     53    #    |break;
 
 INSERTING AT: 54:0
 PAUSES AT: 55:8
@@ -633,7 +687,8 @@ PAUSES AT: 55:8
      56        break;
      57
      58    for (;;)
-
+LOCATIONS FROM 54:0 to 54:0
+     54    #
 
 INSERTING AT: 55:0
 PAUSES AT: 55:8
@@ -644,7 +699,8 @@ PAUSES AT: 55:8
      56        break;
      57
      58    for (;;)
-
+LOCATIONS FROM 55:0 to 55:12
+     55    #for (;; |c())
 
 INSERTING AT: 56:0
 PAUSES AT: 56:4
@@ -655,7 +711,8 @@ PAUSES AT: 56:4
      57
      58    for (;;)
      59        break;
-
+LOCATIONS FROM 56:0 to 56:10
+     56    #    |break;
 
 INSERTING AT: 57:0
 PAUSES AT: 59:4
@@ -668,7 +725,8 @@ PAUSES AT: 59:4
      60
      61    for (a(); b(); c()) {
      62        break;
-
+LOCATIONS FROM 57:0 to 57:0
+     57    #
 
 INSERTING AT: 58:0
 PAUSES AT: 59:4
@@ -680,7 +738,8 @@ PAUSES AT: 59:4
      60
      61    for (a(); b(); c()) {
      62        break;
-
+LOCATIONS FROM 58:0 to 58:8
+     58    #for (;;)
 
 INSERTING AT: 59:0
 PAUSES AT: 59:4
@@ -691,7 +750,8 @@ PAUSES AT: 59:4
      60
      61    for (a(); b(); c()) {
      62        break;
-
+LOCATIONS FROM 59:0 to 59:10
+     59    #    |break;
 
 INSERTING AT: 60:0
 PAUSES AT: 61:5
@@ -703,7 +763,8 @@ PAUSES AT: 61:5
      62        break;
      63    }
      64
-
+LOCATIONS FROM 60:0 to 60:0
+     60    #
 
 INSERTING AT: 61:0
 PAUSES AT: 61:5
@@ -714,7 +775,8 @@ PAUSES AT: 61:5
      62        break;
      63    }
      64
-
+LOCATIONS FROM 61:0 to 61:21
+     61    #for (|a(); |b(); |c()) {
 
 INSERTING AT: 62:0
 PAUSES AT: 62:4
@@ -725,7 +787,8 @@ PAUSES AT: 62:4
      63    }
      64
      65    for (let x of arr)
-
+LOCATIONS FROM 62:0 to 62:10
+     62    #    |break;
 
 INSERTING AT: 63:0
 PAUSES AT: 65:14
@@ -738,7 +801,8 @@ PAUSES AT: 65:14
      66        break;
      67
      68    for (let x in obj)
-
+LOCATIONS FROM 63:0 to 63:1
+     63    #}
 
 INSERTING AT: 64:0
 PAUSES AT: 65:14
@@ -750,7 +814,8 @@ PAUSES AT: 65:14
      66        break;
      67
      68    for (let x in obj)
-
+LOCATIONS FROM 64:0 to 64:0
+     64    #
 
 INSERTING AT: 65:0
 PAUSES AT: 65:14
@@ -761,7 +826,8 @@ PAUSES AT: 65:14
      66        break;
      67
      68    for (let x in obj)
-
+LOCATIONS FROM 65:0 to 65:18
+     65    #for (let x of |arr)
 
 INSERTING AT: 66:0
 PAUSES AT: 66:4
@@ -772,7 +838,8 @@ PAUSES AT: 66:4
      67
      68    for (let x in obj)
      69        break;
-
+LOCATIONS FROM 66:0 to 66:10
+     66    #    |break;
 
 INSERTING AT: 67:0
 PAUSES AT: 68:14
@@ -784,7 +851,8 @@ PAUSES AT: 68:14
      69        break;
      70
      71    // Switch
-
+LOCATIONS FROM 67:0 to 67:0
+     67    #
 
 INSERTING AT: 68:0
 PAUSES AT: 68:14
@@ -795,7 +863,8 @@ PAUSES AT: 68:14
      69        break;
      70
      71    // Switch
-
+LOCATIONS FROM 68:0 to 68:18
+     68    #for (let x in |obj)
 
 INSERTING AT: 69:0
 PAUSES AT: 69:4
@@ -806,7 +875,8 @@ PAUSES AT: 69:4
      70
      71    // Switch
      72
-
+LOCATIONS FROM 69:0 to 69:10
+     69    #    |break;
 
 INSERTING AT: 70:0
 PAUSES AT: 73:8
@@ -820,7 +890,8 @@ PAUSES AT: 73:8
      74    case 1:
      75        a();
      76        break;
-
+LOCATIONS FROM 70:0 to 70:0
+     70    #
 
 INSERTING AT: 71:0
 PAUSES AT: 73:8
@@ -833,7 +904,8 @@ PAUSES AT: 73:8
      74    case 1:
      75        a();
      76        break;
-
+LOCATIONS FROM 71:0 to 71:9
+     71    #// Switch
 
 INSERTING AT: 72:0
 PAUSES AT: 73:8
@@ -845,7 +917,8 @@ PAUSES AT: 73:8
      74    case 1:
      75        a();
      76        break;
-
+LOCATIONS FROM 72:0 to 72:0
+     72    #
 
 INSERTING AT: 73:0
 PAUSES AT: 73:8
@@ -856,7 +929,8 @@ PAUSES AT: 73:8
      74    case 1:
      75        a();
      76        break;
-
+LOCATIONS FROM 73:0 to 73:12
+     73    #switch (|0) {
 
 INSERTING AT: 74:0
 PAUSES AT: 75:4
@@ -868,7 +942,8 @@ PAUSES AT: 75:4
      76        break;
      77    case 2:
      78        a();
-
+LOCATIONS FROM 74:0 to 74:7
+     74    #case 1:
 
 INSERTING AT: 75:0
 PAUSES AT: 75:4
@@ -879,7 +954,8 @@ PAUSES AT: 75:4
      76        break;
      77    case 2:
      78        a();
-
+LOCATIONS FROM 75:0 to 75:8
+     75    #    |a();
 
 INSERTING AT: 76:0
 PAUSES AT: 76:4
@@ -890,7 +966,8 @@ PAUSES AT: 76:4
      77    case 2:
      78        a();
      79        // fallthrough
-
+LOCATIONS FROM 76:0 to 76:10
+     76    #    |break;
 
 INSERTING AT: 77:0
 PAUSES AT: 78:4
@@ -902,7 +979,8 @@ PAUSES AT: 78:4
      79        // fallthrough
      80    case 3:
      81        a();
-
+LOCATIONS FROM 77:0 to 77:7
+     77    #case 2:
 
 INSERTING AT: 78:0
 PAUSES AT: 78:4
@@ -913,7 +991,8 @@ PAUSES AT: 78:4
      79        // fallthrough
      80    case 3:
      81        a();
-
+LOCATIONS FROM 78:0 to 78:8
+     78    #    |a();
 
 INSERTING AT: 79:0
 PAUSES AT: 81:4
@@ -926,7 +1005,8 @@ PAUSES AT: 81:4
      82        break;
      83    default:
      84        a();
-
+LOCATIONS FROM 79:0 to 79:18
+     79    #    // fallthrough
 
 INSERTING AT: 80:0
 PAUSES AT: 81:4
@@ -938,7 +1018,8 @@ PAUSES AT: 81:4
      82        break;
      83    default:
      84        a();
-
+LOCATIONS FROM 80:0 to 80:7
+     80    #case 3:
 
 INSERTING AT: 81:0
 PAUSES AT: 81:4
@@ -949,7 +1030,8 @@ PAUSES AT: 81:4
      82        break;
      83    default:
      84        a();
-
+LOCATIONS FROM 81:0 to 81:8
+     81    #    |a();
 
 INSERTING AT: 82:0
 PAUSES AT: 82:4
@@ -960,7 +1042,8 @@ PAUSES AT: 82:4
      83    default:
      84        a();
      85        break;
-
+LOCATIONS FROM 82:0 to 82:10
+     82    #    |break;
 
 INSERTING AT: 83:0
 PAUSES AT: 84:4
@@ -972,7 +1055,8 @@ PAUSES AT: 84:4
      85        break;
      86    }
      87
-
+LOCATIONS FROM 83:0 to 83:8
+     83    #default:
 
 INSERTING AT: 84:0
 PAUSES AT: 84:4
@@ -983,7 +1067,8 @@ PAUSES AT: 84:4
      85        break;
      86    }
      87
-
+LOCATIONS FROM 84:0 to 84:8
+     84    #    |a();
 
 INSERTING AT: 85:0
 PAUSES AT: 85:4
@@ -994,7 +1079,8 @@ PAUSES AT: 85:4
      86    }
      87
      88    // Try/Catch
-
+LOCATIONS FROM 85:0 to 85:10
+     85    #    |break;
 
 INSERTING AT: 86:0
 PAUSES AT: 91:4
@@ -1010,7 +1096,8 @@ PAUSES AT: 91:4
      92    } catch (e) {
      93        shouldNotBeReached();
      94    } finally {
-
+LOCATIONS FROM 86:0 to 86:1
+     86    #}
 
 INSERTING AT: 87:0
 PAUSES AT: 91:4
@@ -1025,7 +1112,8 @@ PAUSES AT: 91:4
      92    } catch (e) {
      93        shouldNotBeReached();
      94    } finally {
-
+LOCATIONS FROM 87:0 to 87:0
+     87    #
 
 INSERTING AT: 88:0
 PAUSES AT: 91:4
@@ -1039,7 +1127,8 @@ PAUSES AT: 91:4
      92    } catch (e) {
      93        shouldNotBeReached();
      94    } finally {
-
+LOCATIONS FROM 88:0 to 88:12
+     88    #// Try/Catch
 
 INSERTING AT: 89:0
 PAUSES AT: 91:4
@@ -1052,7 +1141,8 @@ PAUSES AT: 91:4
      92    } catch (e) {
      93        shouldNotBeReached();
      94    } finally {
-
+LOCATIONS FROM 89:0 to 89:0
+     89    #
 
 INSERTING AT: 90:0
 PAUSES AT: 91:4
@@ -1064,7 +1154,8 @@ PAUSES AT: 91:4
      92    } catch (e) {
      93        shouldNotBeReached();
      94    } finally {
-
+LOCATIONS FROM 90:0 to 90:5
+     90    #try {
 
 INSERTING AT: 91:0
 PAUSES AT: 91:4
@@ -1075,7 +1166,8 @@ PAUSES AT: 91:4
      92    } catch (e) {
      93        shouldNotBeReached();
      94    } finally {
-
+LOCATIONS FROM 91:0 to 91:8
+     91    #    |a();
 
 INSERTING AT: 92:0
 PAUSES AT: 93:4
@@ -1087,7 +1179,8 @@ PAUSES AT: 93:4
      94    } finally {
      95        b();
      96    }
-
+LOCATIONS FROM 92:0 to 92:13
+     92    #} catch (e) {
 
 INSERTING AT: 93:0
 PAUSES AT: 93:4
@@ -1098,7 +1191,8 @@ PAUSES AT: 93:4
      94    } finally {
      95        b();
      96    }
-
+LOCATIONS FROM 93:0 to 93:25
+     93    #    |shouldNotBeReached();
 
 INSERTING AT: 94:0
 PAUSES AT: 95:4
@@ -1110,7 +1204,8 @@ PAUSES AT: 95:4
      96    }
      97
      98    // Class
-
+LOCATIONS FROM 94:0 to 94:11
+     94    #} finally {
 
 INSERTING AT: 95:0
 PAUSES AT: 95:4
@@ -1121,7 +1216,8 @@ PAUSES AT: 95:4
      96    }
      97
      98    // Class
-
+LOCATIONS FROM 95:0 to 95:8
+     95    #    |b();
 
 INSERTING AT: 96:0
 PAUSES AT: 151:8
@@ -1187,7 +1283,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 96:0 to 96:1
+     96    #}
 
 INSERTING AT: 97:0
 PAUSES AT: 151:8
@@ -1252,7 +1349,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 97:0 to 97:0
+     97    #
 
 INSERTING AT: 98:0
 PAUSES AT: 151:8
@@ -1316,7 +1414,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 98:0 to 98:8
+     98    #// Class
 
 INSERTING AT: 99:0
 PAUSES AT: 151:8
@@ -1379,7 +1478,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 99:0 to 99:0
+     99    #
 
 INSERTING AT: 100:0
 PAUSES AT: 151:8
@@ -1441,7 +1541,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 100:0 to 100:12
+    100    #class Base {
 
 INSERTING AT: 101:0
 PAUSES AT: 103:8
@@ -1454,7 +1555,8 @@ PAUSES AT: 103:8
     104        }
     105
     106        baseMethod()
-
+LOCATIONS FROM 101:0 to 101:17
+    101    #    constructor()
 
 INSERTING AT: 102:0
 PAUSES AT: 103:8
@@ -1466,7 +1568,8 @@ PAUSES AT: 103:8
     104        }
     105
     106        baseMethod()
-
+LOCATIONS FROM 102:0 to 102:5
+    102    #    {
 
 INSERTING AT: 103:0
 PAUSES AT: 103:8
@@ -1477,7 +1580,8 @@ PAUSES AT: 103:8
     104        }
     105
     106        baseMethod()
-
+LOCATIONS FROM 103:0 to 103:26
+    103    #        |this._base = true;
 
 INSERTING AT: 104:0
 PAUSES AT: 104:4
@@ -1488,7 +1592,8 @@ PAUSES AT: 104:4
     105
     106        baseMethod()
     107        {
-
+LOCATIONS FROM 104:0 to 104:5
+    104    #    |}
 
 INSERTING AT: 105:0
 PAUSES AT: 151:8
@@ -1545,7 +1650,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 105:0 to 105:0
+    105    #
 
 INSERTING AT: 106:0
 PAUSES AT: 108:8
@@ -1558,7 +1664,8 @@ PAUSES AT: 108:8
     109        }
     110
     111        method()
-
+LOCATIONS FROM 106:0 to 106:16
+    106    #    baseMethod()
 
 INSERTING AT: 107:0
 PAUSES AT: 108:8
@@ -1570,7 +1677,8 @@ PAUSES AT: 108:8
     109        }
     110
     111        method()
-
+LOCATIONS FROM 107:0 to 107:5
+    107    #    {
 
 INSERTING AT: 108:0
 PAUSES AT: 108:8
@@ -1581,7 +1689,8 @@ PAUSES AT: 108:8
     109        }
     110
     111        method()
-
+LOCATIONS FROM 108:0 to 108:12
+    108    #        |a();
 
 INSERTING AT: 109:0
 PAUSES AT: 109:4
@@ -1592,7 +1701,8 @@ PAUSES AT: 109:4
     110
     111        method()
     112        {
-
+LOCATIONS FROM 109:0 to 109:5
+    109    #    |}
 
 INSERTING AT: 110:0
 PAUSES AT: 151:8
@@ -1644,7 +1754,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 110:0 to 110:0
+    110    #
 
 INSERTING AT: 111:0
 PAUSES AT: 113:8
@@ -1657,7 +1768,8 @@ PAUSES AT: 113:8
     114        }
     115    }
     116
-
+LOCATIONS FROM 111:0 to 111:12
+    111    #    method()
 
 INSERTING AT: 112:0
 PAUSES AT: 113:8
@@ -1669,7 +1781,8 @@ PAUSES AT: 113:8
     114        }
     115    }
     116
-
+LOCATIONS FROM 112:0 to 112:5
+    112    #    {
 
 INSERTING AT: 113:0
 PAUSES AT: 113:8
@@ -1680,7 +1793,8 @@ PAUSES AT: 113:8
     114        }
     115    }
     116
-
+LOCATIONS FROM 113:0 to 113:12
+    113    #        |a();
 
 INSERTING AT: 114:0
 PAUSES AT: 114:4
@@ -1691,7 +1805,8 @@ PAUSES AT: 114:4
     115    }
     116
     117    class Child extends Base {
-
+LOCATIONS FROM 114:0 to 114:5
+    114    #    |}
 
 INSERTING AT: 115:0
 PAUSES AT: 151:8
@@ -1738,7 +1853,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 115:0 to 115:1
+    115    #}
 
 INSERTING AT: 116:0
 PAUSES AT: 151:8
@@ -1784,7 +1900,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 116:0 to 116:0
+    116    #
 
 INSERTING AT: 117:0
 PAUSES AT: 151:8
@@ -1829,7 +1946,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 117:0 to 117:26
+    117    #class Child extends Base {
 
 INSERTING AT: 118:0
 PAUSES AT: 120:8
@@ -1842,7 +1960,8 @@ PAUSES AT: 120:8
     121            this._child = true;
     122        }
     123
-
+LOCATIONS FROM 118:0 to 118:17
+    118    #    constructor()
 
 INSERTING AT: 119:0
 PAUSES AT: 120:8
@@ -1854,7 +1973,8 @@ PAUSES AT: 120:8
     121            this._child = true;
     122        }
     123
-
+LOCATIONS FROM 119:0 to 119:5
+    119    #    {
 
 INSERTING AT: 120:0
 PAUSES AT: 120:8
@@ -1865,7 +1985,8 @@ PAUSES AT: 120:8
     121            this._child = true;
     122        }
     123
-
+LOCATIONS FROM 120:0 to 120:16
+    120    #        |super();
 
 INSERTING AT: 121:0
 PAUSES AT: 121:8
@@ -1876,7 +1997,8 @@ PAUSES AT: 121:8
     122        }
     123
     124        childMethod()
-
+LOCATIONS FROM 121:0 to 121:27
+    121    #        |this._child = true;
 
 INSERTING AT: 122:0
 PAUSES AT: 122:4
@@ -1887,7 +2009,8 @@ PAUSES AT: 122:4
     123
     124        childMethod()
     125        {
-
+LOCATIONS FROM 122:0 to 122:5
+    122    #    |}
 
 INSERTING AT: 123:0
 PAUSES AT: 151:8
@@ -1926,7 +2049,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 123:0 to 123:0
+    123    #
 
 INSERTING AT: 124:0
 PAUSES AT: 126:8
@@ -1939,7 +2063,8 @@ PAUSES AT: 126:8
     127        }
     128
     129        method()
-
+LOCATIONS FROM 124:0 to 124:17
+    124    #    childMethod()
 
 INSERTING AT: 125:0
 PAUSES AT: 126:8
@@ -1951,7 +2076,8 @@ PAUSES AT: 126:8
     127        }
     128
     129        method()
-
+LOCATIONS FROM 125:0 to 125:5
+    125    #    {
 
 INSERTING AT: 126:0
 PAUSES AT: 126:8
@@ -1962,7 +2088,8 @@ PAUSES AT: 126:8
     127        }
     128
     129        method()
-
+LOCATIONS FROM 126:0 to 126:12
+    126    #        |b();
 
 INSERTING AT: 127:0
 PAUSES AT: 127:4
@@ -1973,7 +2100,8 @@ PAUSES AT: 127:4
     128
     129        method()
     130        {
-
+LOCATIONS FROM 127:0 to 127:5
+    127    #    |}
 
 INSERTING AT: 128:0
 PAUSES AT: 151:8
@@ -2007,7 +2135,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 128:0 to 128:0
+    128    #
 
 INSERTING AT: 129:0
 PAUSES AT: 131:8
@@ -2020,7 +2149,8 @@ PAUSES AT: 131:8
     132            b();
     133        }
     134
-
+LOCATIONS FROM 129:0 to 129:12
+    129    #    method()
 
 INSERTING AT: 130:0
 PAUSES AT: 131:8
@@ -2032,7 +2162,8 @@ PAUSES AT: 131:8
     132            b();
     133        }
     134
-
+LOCATIONS FROM 130:0 to 130:5
+    130    #    {
 
 INSERTING AT: 131:0
 PAUSES AT: 131:8
@@ -2043,7 +2174,8 @@ PAUSES AT: 131:8
     132            b();
     133        }
     134
-
+LOCATIONS FROM 131:0 to 131:23
+    131    #        |super.method();
 
 INSERTING AT: 132:0
 PAUSES AT: 132:8
@@ -2054,7 +2186,8 @@ PAUSES AT: 132:8
     133        }
     134
     135        get name()
-
+LOCATIONS FROM 132:0 to 132:12
+    132    #        |b();
 
 INSERTING AT: 133:0
 PAUSES AT: 133:4
@@ -2065,7 +2198,8 @@ PAUSES AT: 133:4
     134
     135        get name()
     136        {
-
+LOCATIONS FROM 133:0 to 133:5
+    133    #    |}
 
 INSERTING AT: 134:0
 PAUSES AT: 151:8
@@ -2093,7 +2227,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 134:0 to 134:0
+    134    #
 
 INSERTING AT: 135:0
 PAUSES AT: 137:8
@@ -2106,7 +2241,8 @@ PAUSES AT: 137:8
     138        }
     139
     140        set name(x)
-
+LOCATIONS FROM 135:0 to 135:14
+    135    #    get name()
 
 INSERTING AT: 136:0
 PAUSES AT: 137:8
@@ -2118,7 +2254,8 @@ PAUSES AT: 137:8
     138        }
     139
     140        set name(x)
-
+LOCATIONS FROM 136:0 to 136:5
+    136    #    {
 
 INSERTING AT: 137:0
 PAUSES AT: 137:8
@@ -2129,7 +2266,8 @@ PAUSES AT: 137:8
     138        }
     139
     140        set name(x)
-
+LOCATIONS FROM 137:0 to 137:26
+    137    #        |return this._name;
 
 INSERTING AT: 138:0
 PAUSES AT: 138:4
@@ -2140,7 +2278,8 @@ PAUSES AT: 138:4
     139
     140        set name(x)
     141        {
-
+LOCATIONS FROM 138:0 to 138:5
+    138    #    |}
 
 INSERTING AT: 139:0
 PAUSES AT: 151:8
@@ -2163,7 +2302,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 139:0 to 139:4
+    139    #
 
 INSERTING AT: 140:0
 PAUSES AT: 142:8
@@ -2176,7 +2316,8 @@ PAUSES AT: 142:8
     143        }
     144    }
     145
-
+LOCATIONS FROM 140:0 to 140:15
+    140    #    set name(x)
 
 INSERTING AT: 141:0
 PAUSES AT: 142:8
@@ -2188,7 +2329,8 @@ PAUSES AT: 142:8
     143        }
     144    }
     145
-
+LOCATIONS FROM 141:0 to 141:5
+    141    #    {
 
 INSERTING AT: 142:0
 PAUSES AT: 142:8
@@ -2199,7 +2341,8 @@ PAUSES AT: 142:8
     143        }
     144    }
     145
-
+LOCATIONS FROM 142:0 to 142:23
+    142    #        |this._name = x;
 
 INSERTING AT: 143:0
 PAUSES AT: 143:4
@@ -2210,7 +2353,8 @@ PAUSES AT: 143:4
     144    }
     145
     146    // ---------
-
+LOCATIONS FROM 143:0 to 143:5
+    143    #    |}
 
 INSERTING AT: 144:0
 PAUSES AT: 151:8
@@ -2228,7 +2372,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 144:0 to 144:1
+    144    #}
 
 INSERTING AT: 145:0
 PAUSES AT: 151:8
@@ -2245,7 +2390,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 145:0 to 145:0
+    145    #
 
 INSERTING AT: 146:0
 PAUSES AT: 151:8
@@ -2261,7 +2407,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 146:0 to 146:12
+    146    #// ---------
 
 INSERTING AT: 147:0
 PAUSES AT: 151:8
@@ -2276,7 +2423,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 147:0 to 147:10
+    147    #/* Misc */
 
 INSERTING AT: 148:0
 PAUSES AT: 151:8
@@ -2290,7 +2438,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 148:0 to 148:12
+    148    #// ---------
 
 INSERTING AT: 149:0
 PAUSES AT: 151:8
@@ -2303,7 +2452,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 149:0 to 149:0
+    149    #
 
 INSERTING AT: 150:0
 PAUSES AT: 151:8
@@ -2315,7 +2465,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 150:0 to 150:5
+    150    #    {
 
 INSERTING AT: 151:0
 PAUSES AT: 151:8
@@ -2326,7 +2477,8 @@ PAUSES AT: 151:8
     152        }
     153
     154    label:
-
+LOCATIONS FROM 151:0 to 151:12
+    151    #        |a();
 
 INSERTING AT: 152:0
 PAUSES AT: 156:8
@@ -2341,7 +2493,8 @@ PAUSES AT: 156:8
     157        }
     158
     159    var w1 = {x:1, y:2};
-
+LOCATIONS FROM 152:0 to 152:5
+    152    #    }
 
 INSERTING AT: 153:0
 PAUSES AT: 156:8
@@ -2355,7 +2508,8 @@ PAUSES AT: 156:8
     157        }
     158
     159    var w1 = {x:1, y:2};
-
+LOCATIONS FROM 153:0 to 153:0
+    153    #
 
 INSERTING AT: 154:0
 PAUSES AT: 156:8
@@ -2368,7 +2522,8 @@ PAUSES AT: 156:8
     157        }
     158
     159    var w1 = {x:1, y:2};
-
+LOCATIONS FROM 154:0 to 154:6
+    154    #label:
 
 INSERTING AT: 155:0
 PAUSES AT: 156:8
@@ -2380,7 +2535,8 @@ PAUSES AT: 156:8
     157        }
     158
     159    var w1 = {x:1, y:2};
-
+LOCATIONS FROM 155:0 to 155:5
+    155    #    {
 
 INSERTING AT: 156:0
 PAUSES AT: 156:8
@@ -2391,7 +2547,8 @@ PAUSES AT: 156:8
     157        }
     158
     159    var w1 = {x:1, y:2};
-
+LOCATIONS FROM 156:0 to 156:12
+    156    #        |a();
 
 INSERTING AT: 157:0
 PAUSES AT: 159:0
@@ -2404,7 +2561,8 @@ PAUSES AT: 159:0
     160    with (w1) {
     161        a();
     162    }
-
+LOCATIONS FROM 157:0 to 157:5
+    157    #    }
 
 INSERTING AT: 158:0
 PAUSES AT: 159:0
@@ -2416,7 +2574,8 @@ PAUSES AT: 159:0
     160    with (w1) {
     161        a();
     162    }
-
+LOCATIONS FROM 158:0 to 158:0
+    158    #
 
 INSERTING AT: 159:0
 PAUSES AT: 159:0
@@ -2427,7 +2586,8 @@ PAUSES AT: 159:0
     160    with (w1) {
     161        a();
     162    }
-
+LOCATIONS FROM 159:0 to 159:20
+    159    |var w1 = {x:1, y:2};
 
 INSERTING AT: 160:0
 PAUSES AT: 160:6
@@ -2438,7 +2598,8 @@ PAUSES AT: 160:6
     161        a();
     162    }
     163
-
+LOCATIONS FROM 160:0 to 160:11
+    160    #with (|w1) {
 
 INSERTING AT: 161:0
 PAUSES AT: 161:4
@@ -2449,7 +2610,8 @@ PAUSES AT: 161:4
     162    }
     163
     164    var v1 = 1,
-
+LOCATIONS FROM 161:0 to 161:8
+    161    #    |a();
 
 INSERTING AT: 162:0
 PAUSES AT: 164:0
@@ -2462,7 +2624,8 @@ PAUSES AT: 164:0
     165        v2 = 1;
     166    let l1 = 2,
     167        l2 = 2;
-
+LOCATIONS FROM 162:0 to 162:1
+    162    #}
 
 INSERTING AT: 163:0
 PAUSES AT: 164:0
@@ -2474,7 +2637,8 @@ PAUSES AT: 164:0
     165        v2 = 1;
     166    let l1 = 2,
     167        l2 = 2;
-
+LOCATIONS FROM 163:0 to 163:0
+    163    #
 
 INSERTING AT: 164:0
 PAUSES AT: 164:0
@@ -2485,7 +2649,8 @@ PAUSES AT: 164:0
     165        v2 = 1;
     166    let l1 = 2,
     167        l2 = 2;
-
+LOCATIONS FROM 164:0 to 164:11
+    164    |var v1 = 1,
 
 INSERTING AT: 165:0
 PAUSES AT: 165:4
@@ -2496,7 +2661,8 @@ PAUSES AT: 165:4
     166    let l1 = 2,
     167        l2 = 2;
     168    const c1 = 3,
-
+LOCATIONS FROM 165:0 to 165:11
+    165    #    |v2 = 1;
 
 INSERTING AT: 166:0
 PAUSES AT: 166:0
@@ -2507,7 +2673,8 @@ PAUSES AT: 166:0
     167        l2 = 2;
     168    const c1 = 3,
     169        c2 = 3;
-
+LOCATIONS FROM 166:0 to 166:11
+    166    |let l1 = 2,
 
 INSERTING AT: 167:0
 PAUSES AT: 167:4
@@ -2518,7 +2685,8 @@ PAUSES AT: 167:4
     168    const c1 = 3,
     169        c2 = 3;
     170
-
+LOCATIONS FROM 167:0 to 167:11
+    167    #    |l2 = 2;
 
 INSERTING AT: 168:0
 PAUSES AT: 168:0
@@ -2529,7 +2697,8 @@ PAUSES AT: 168:0
     169        c2 = 3;
     170
     171    v1 = v2 = v1;
-
+LOCATIONS FROM 168:0 to 168:13
+    168    |const c1 = 3,
 
 INSERTING AT: 169:0
 PAUSES AT: 169:4
@@ -2540,7 +2709,8 @@ PAUSES AT: 169:4
     170
     171    v1 = v2 = v1;
     172
-
+LOCATIONS FROM 169:0 to 169:11
+    169    #    |c2 = 3;
 
 INSERTING AT: 170:0
 PAUSES AT: 171:0
@@ -2552,7 +2722,8 @@ PAUSES AT: 171:0
     172
     173    var {x, y} = obj;
     174    var [w, z] = arr;
-
+LOCATIONS FROM 170:0 to 170:0
+    170    #
 
 INSERTING AT: 171:0
 PAUSES AT: 171:0
@@ -2563,7 +2734,8 @@ PAUSES AT: 171:0
     172
     173    var {x, y} = obj;
     174    var [w, z] = arr;
-
+LOCATIONS FROM 171:0 to 171:13
+    171    |v1 = v2 = v1;
 
 INSERTING AT: 172:0
 PAUSES AT: 173:0
@@ -2575,7 +2747,8 @@ PAUSES AT: 173:0
     174    var [w, z] = arr;
     175
     176    var o1 = {
-
+LOCATIONS FROM 172:0 to 172:0
+    172    #
 
 INSERTING AT: 173:0
 PAUSES AT: 173:0
@@ -2586,7 +2759,8 @@ PAUSES AT: 173:0
     174    var [w, z] = arr;
     175
     176    var o1 = {
-
+LOCATIONS FROM 173:0 to 173:17
+    173    |var {x, y} = obj;
 
 INSERTING AT: 174:0
 PAUSES AT: 174:0
@@ -2597,7 +2771,8 @@ PAUSES AT: 174:0
     175
     176    var o1 = {
     177        p1: 1,
-
+LOCATIONS FROM 174:0 to 174:17
+    174    |var [w, z] = arr;
 
 INSERTING AT: 175:0
 PAUSES AT: 176:0
@@ -2609,7 +2784,8 @@ PAUSES AT: 176:0
     177        p1: 1,
     178        p2: a(),
     179        p3: 1,
-
+LOCATIONS FROM 175:0 to 175:0
+    175    #
 
 INSERTING AT: 176:0
 PAUSES AT: 176:0
@@ -2620,7 +2796,8 @@ PAUSES AT: 176:0
     177        p1: 1,
     178        p2: a(),
     179        p3: 1,
-
+LOCATIONS FROM 176:0 to 176:10
+    176    |var o1 = {
 
 INSERTING AT: 177:0
 PAUSES AT: 184:0
@@ -2638,7 +2815,8 @@ PAUSES AT: 184:0
     185        1,
     186        a(),
     187        1,
-
+LOCATIONS FROM 177:0 to 177:10
+    177    #    p1: 1,
 
 INSERTING AT: 178:0
 PAUSES AT: 184:0
@@ -2655,7 +2833,8 @@ PAUSES AT: 184:0
     185        1,
     186        a(),
     187        1,
-
+LOCATIONS FROM 178:0 to 178:12
+    178    #    p2: a(),
 
 INSERTING AT: 179:0
 PAUSES AT: 184:0
@@ -2671,7 +2850,8 @@ PAUSES AT: 184:0
     185        1,
     186        a(),
     187        1,
-
+LOCATIONS FROM 179:0 to 179:10
+    179    #    p3: 1,
 
 INSERTING AT: 180:0
 PAUSES AT: 184:0
@@ -2686,7 +2866,8 @@ PAUSES AT: 184:0
     185        1,
     186        a(),
     187        1,
-
+LOCATIONS FROM 180:0 to 180:14
+    180    #    ["p4"]: 1,
 
 INSERTING AT: 181:0
 PAUSES AT: 184:0
@@ -2700,7 +2881,8 @@ PAUSES AT: 184:0
     185        1,
     186        a(),
     187        1,
-
+LOCATIONS FROM 181:0 to 181:13
+    181    #    [b()]: 1,
 
 INSERTING AT: 182:0
 PAUSES AT: 184:0
@@ -2713,7 +2895,8 @@ PAUSES AT: 184:0
     185        1,
     186        a(),
     187        1,
-
+LOCATIONS FROM 182:0 to 182:2
+    182    #};
 
 INSERTING AT: 183:0
 PAUSES AT: 184:0
@@ -2725,7 +2908,8 @@ PAUSES AT: 184:0
     185        1,
     186        a(),
     187        1,
-
+LOCATIONS FROM 183:0 to 183:0
+    183    #
 
 INSERTING AT: 184:0
 PAUSES AT: 184:0
@@ -2736,7 +2920,8 @@ PAUSES AT: 184:0
     185        1,
     186        a(),
     187        1,
-
+LOCATIONS FROM 184:0 to 184:10
+    184    |var a1 = [
 
 INSERTING AT: 185:0
 PAUSES AT: 191:0
@@ -2753,7 +2938,8 @@ PAUSES AT: 191:0
     192    var i2 = new Child;
     193    i2.name;
     194    i2.name = 1;
-
+LOCATIONS FROM 185:0 to 185:6
+    185    #    1,
 
 INSERTING AT: 186:0
 PAUSES AT: 191:0
@@ -2769,7 +2955,8 @@ PAUSES AT: 191:0
     192    var i2 = new Child;
     193    i2.name;
     194    i2.name = 1;
-
+LOCATIONS FROM 186:0 to 186:8
+    186    #    a(),
 
 INSERTING AT: 187:0
 PAUSES AT: 191:0
@@ -2784,7 +2971,8 @@ PAUSES AT: 191:0
     192    var i2 = new Child;
     193    i2.name;
     194    i2.name = 1;
-
+LOCATIONS FROM 187:0 to 187:6
+    187    #    1,
 
 INSERTING AT: 188:0
 PAUSES AT: 191:0
@@ -2798,7 +2986,8 @@ PAUSES AT: 191:0
     192    var i2 = new Child;
     193    i2.name;
     194    i2.name = 1;
-
+LOCATIONS FROM 188:0 to 188:8
+    188    #    b(),
 
 INSERTING AT: 189:0
 PAUSES AT: 191:0
@@ -2811,7 +3000,8 @@ PAUSES AT: 191:0
     192    var i2 = new Child;
     193    i2.name;
     194    i2.name = 1;
-
+LOCATIONS FROM 189:0 to 189:2
+    189    #];
 
 INSERTING AT: 190:0
 PAUSES AT: 191:0
@@ -2823,7 +3013,8 @@ PAUSES AT: 191:0
     192    var i2 = new Child;
     193    i2.name;
     194    i2.name = 1;
-
+LOCATIONS FROM 190:0 to 190:0
+    190    #
 
 INSERTING AT: 191:0
 PAUSES AT: 191:0
@@ -2834,7 +3025,8 @@ PAUSES AT: 191:0
     192    var i2 = new Child;
     193    i2.name;
     194    i2.name = 1;
-
+LOCATIONS FROM 191:0 to 191:18
+    191    |var i1 = new Base;
 
 INSERTING AT: 192:0
 PAUSES AT: 192:0
@@ -2845,7 +3037,8 @@ PAUSES AT: 192:0
     193    i2.name;
     194    i2.name = 1;
     195    i2.method();
-
+LOCATIONS FROM 192:0 to 192:19
+    192    |var i2 = new Child;
 
 INSERTING AT: 193:0
 PAUSES AT: 193:0
@@ -2856,7 +3049,8 @@ PAUSES AT: 193:0
     194    i2.name = 1;
     195    i2.method();
     196
-
+LOCATIONS FROM 193:0 to 193:8
+    193    |i2.name;
 
 INSERTING AT: 194:0
 PAUSES AT: 194:0
@@ -2867,7 +3061,8 @@ PAUSES AT: 194:0
     195    i2.method();
     196
     197    var t1 = `${1} ${x=1} ${a()}`;
-
+LOCATIONS FROM 194:0 to 194:12
+    194    |i2.name = 1;
 
 INSERTING AT: 195:0
 PAUSES AT: 195:0
@@ -2878,7 +3073,8 @@ PAUSES AT: 195:0
     196
     197    var t1 = `${1} ${x=1} ${a()}`;
     198    var t2 = a`${1} ${x=1} ${a()}`;
-
+LOCATIONS FROM 195:0 to 195:12
+    195    |i2.method();
 
 INSERTING AT: 196:0
 PAUSES AT: 197:0
@@ -2890,7 +3086,8 @@ PAUSES AT: 197:0
     198    var t2 = a`${1} ${x=1} ${a()}`;
     199
     200    a(a(), b());
-
+LOCATIONS FROM 196:0 to 196:0
+    196    #
 
 INSERTING AT: 197:0
 PAUSES AT: 197:0
@@ -2901,7 +3098,8 @@ PAUSES AT: 197:0
     198    var t2 = a`${1} ${x=1} ${a()}`;
     199
     200    a(a(), b());
-
+LOCATIONS FROM 197:0 to 197:30
+    197    |var t1 = `${1} ${x=1} ${a()}`;
 
 INSERTING AT: 198:0
 PAUSES AT: 198:0
@@ -2912,7 +3110,8 @@ PAUSES AT: 198:0
     199
     200    a(a(), b());
     201
-
+LOCATIONS FROM 198:0 to 198:31
+    198    |var t2 = a`${1} ${x=1} ${a()}`;
 
 INSERTING AT: 199:0
 PAUSES AT: 200:0
@@ -2924,7 +3123,8 @@ PAUSES AT: 200:0
     201
     202    if (o1.p1)
     203        a();
-
+LOCATIONS FROM 199:0 to 199:0
+    199    #
 
 INSERTING AT: 200:0
 PAUSES AT: 200:0
@@ -2935,7 +3135,8 @@ PAUSES AT: 200:0
     201
     202    if (o1.p1)
     203        a();
-
+LOCATIONS FROM 200:0 to 200:12
+    200    |a(a(), b());
 
 INSERTING AT: 201:0
 PAUSES AT: 202:4
@@ -2947,7 +3148,8 @@ PAUSES AT: 202:4
     203        a();
     204
     205    if (o1["p1"])
-
+LOCATIONS FROM 201:0 to 201:0
+    201    #
 
 INSERTING AT: 202:0
 PAUSES AT: 202:4
@@ -2958,7 +3160,8 @@ PAUSES AT: 202:4
     203        a();
     204
     205    if (o1["p1"])
-
+LOCATIONS FROM 202:0 to 202:10
+    202    #if (|o1.p1)
 
 INSERTING AT: 203:0
 PAUSES AT: 203:4
@@ -2969,7 +3172,8 @@ PAUSES AT: 203:4
     204
     205    if (o1["p1"])
     206        a();
-
+LOCATIONS FROM 203:0 to 203:8
+    203    #    |a();
 
 INSERTING AT: 204:0
 PAUSES AT: 205:4
@@ -2981,7 +3185,8 @@ PAUSES AT: 205:4
     206        a();
     207
     208    if (String.raw`test`)
-
+LOCATIONS FROM 204:0 to 204:0
+    204    #
 
 INSERTING AT: 205:0
 PAUSES AT: 205:4
@@ -2992,7 +3197,8 @@ PAUSES AT: 205:4
     206        a();
     207
     208    if (String.raw`test`)
-
+LOCATIONS FROM 205:0 to 205:13
+    205    #if (|o1["p1"])
 
 INSERTING AT: 206:0
 PAUSES AT: 206:4
@@ -3003,7 +3209,8 @@ PAUSES AT: 206:4
     207
     208    if (String.raw`test`)
     209        a();
-
+LOCATIONS FROM 206:0 to 206:8
+    206    #    |a();
 
 INSERTING AT: 207:0
 PAUSES AT: 208:4
@@ -3015,7 +3222,8 @@ PAUSES AT: 208:4
     209        a();
     210
     211    a(), b(), c();
-
+LOCATIONS FROM 207:0 to 207:0
+    207    #
 
 INSERTING AT: 208:0
 PAUSES AT: 208:4
@@ -3026,7 +3234,8 @@ PAUSES AT: 208:4
     209        a();
     210
     211    a(), b(), c();
-
+LOCATIONS FROM 208:0 to 208:21
+    208    #if (|String.raw`test`)
 
 INSERTING AT: 209:0
 PAUSES AT: 209:4
@@ -3037,7 +3246,8 @@ PAUSES AT: 209:4
     210
     211    a(), b(), c();
     212
-
+LOCATIONS FROM 209:0 to 209:8
+    209    #    |a();
 
 INSERTING AT: 210:0
 PAUSES AT: 211:0
@@ -3049,7 +3259,8 @@ PAUSES AT: 211:0
     212
     213    a(),
     214    b(),
-
+LOCATIONS FROM 210:0 to 210:0
+    210    #
 
 INSERTING AT: 211:0
 PAUSES AT: 211:0
@@ -3060,7 +3271,8 @@ PAUSES AT: 211:0
     212
     213    a(),
     214    b(),
-
+LOCATIONS FROM 211:0 to 211:14
+    211    |a(), |b(), |c();
 
 INSERTING AT: 212:0
 PAUSES AT: 213:0
@@ -3072,7 +3284,8 @@ PAUSES AT: 213:0
     214    b(),
     215    c();
     216
-
+LOCATIONS FROM 212:0 to 212:0
+    212    #
 
 INSERTING AT: 213:0
 PAUSES AT: 213:0
@@ -3083,7 +3296,8 @@ PAUSES AT: 213:0
     214    b(),
     215    c();
     216
-
+LOCATIONS FROM 213:0 to 213:4
+    213    |a(),
 
 INSERTING AT: 214:0
 PAUSES AT: 214:0
@@ -3094,7 +3308,8 @@ PAUSES AT: 214:0
     215    c();
     216
     217    true && (a(), b(), c()) && true;
-
+LOCATIONS FROM 214:0 to 214:4
+    214    |b(),
 
 INSERTING AT: 215:0
 PAUSES AT: 215:0
@@ -3105,7 +3320,8 @@ PAUSES AT: 215:0
     216
     217    true && (a(), b(), c()) && true;
     218
-
+LOCATIONS FROM 215:0 to 215:4
+    215    |c();
 
 INSERTING AT: 216:0
 PAUSES AT: 217:0
@@ -3117,7 +3333,8 @@ PAUSES AT: 217:0
     218
     219    true && (
     220        a(),
-
+LOCATIONS FROM 216:0 to 216:0
+    216    #
 
 INSERTING AT: 217:0
 PAUSES AT: 217:0
@@ -3128,7 +3345,8 @@ PAUSES AT: 217:0
     218
     219    true && (
     220        a(),
-
+LOCATIONS FROM 217:0 to 217:32
+    217    |true && (a(), b(), c()) && true;
 
 INSERTING AT: 218:0
 PAUSES AT: 219:0
@@ -3140,7 +3358,8 @@ PAUSES AT: 219:0
     220        a(),
     221        b(),
     222        c()
-
+LOCATIONS FROM 218:0 to 218:0
+    218    #
 
 INSERTING AT: 219:0
 PAUSES AT: 219:0
@@ -3151,7 +3370,8 @@ PAUSES AT: 219:0
     220        a(),
     221        b(),
     222        c()
-
+LOCATIONS FROM 219:0 to 219:9
+    219    |true && (
 
 INSERTING AT: 220:0
 PAUSES AT: 226:4
@@ -3168,7 +3388,8 @@ PAUSES AT: 226:4
     227    } catch { }
     228
     229    try {
-
+LOCATIONS FROM 220:0 to 220:8
+    220    #    a(),
 
 INSERTING AT: 221:0
 PAUSES AT: 226:4
@@ -3184,7 +3405,8 @@ PAUSES AT: 226:4
     227    } catch { }
     228
     229    try {
-
+LOCATIONS FROM 221:0 to 221:8
+    221    #    b(),
 
 INSERTING AT: 222:0
 PAUSES AT: 226:4
@@ -3199,7 +3421,8 @@ PAUSES AT: 226:4
     227    } catch { }
     228
     229    try {
-
+LOCATIONS FROM 222:0 to 222:7
+    222    #    c()
 
 INSERTING AT: 223:0
 PAUSES AT: 226:4
@@ -3213,7 +3436,8 @@ PAUSES AT: 226:4
     227    } catch { }
     228
     229    try {
-
+LOCATIONS FROM 223:0 to 223:10
+    223    #) && true;
 
 INSERTING AT: 224:0
 PAUSES AT: 226:4
@@ -3226,7 +3450,8 @@ PAUSES AT: 226:4
     227    } catch { }
     228
     229    try {
-
+LOCATIONS FROM 224:0 to 224:0
+    224    #
 
 INSERTING AT: 225:0
 PAUSES AT: 226:4
@@ -3238,7 +3463,8 @@ PAUSES AT: 226:4
     227    } catch { }
     228
     229    try {
-
+LOCATIONS FROM 225:0 to 225:5
+    225    #try {
 
 INSERTING AT: 226:0
 PAUSES AT: 226:4
@@ -3249,7 +3475,8 @@ PAUSES AT: 226:4
     227    } catch { }
     228
     229    try {
-
+LOCATIONS FROM 226:0 to 226:24
+    226    #    |throw |a(), |b(), |c();
 
 INSERTING AT: 227:0
 PAUSES AT: 230:4
@@ -3263,7 +3490,8 @@ PAUSES AT: 230:4
     231            b(),
     232            c();
     233    } catch { }
-
+LOCATIONS FROM 227:0 to 227:11
+    227    #} catch { }
 
 INSERTING AT: 228:0
 PAUSES AT: 230:4
@@ -3276,7 +3504,8 @@ PAUSES AT: 230:4
     231            b(),
     232            c();
     233    } catch { }
-
+LOCATIONS FROM 228:0 to 228:0
+    228    #
 
 INSERTING AT: 229:0
 PAUSES AT: 230:4
@@ -3288,7 +3517,8 @@ PAUSES AT: 230:4
     231            b(),
     232            c();
     233    } catch { }
-
+LOCATIONS FROM 229:0 to 229:5
+    229    #try {
 
 INSERTING AT: 230:0
 PAUSES AT: 230:4
@@ -3299,7 +3529,8 @@ PAUSES AT: 230:4
     231            b(),
     232            c();
     233    } catch { }
-
+LOCATIONS FROM 230:0 to 230:14
+    230    #    |throw |a(),
 
 INSERTING AT: 231:0
 PAUSES AT: 231:8
@@ -3310,7 +3541,8 @@ PAUSES AT: 231:8
     232            c();
     233    } catch { }
     234
-
+LOCATIONS FROM 231:0 to 231:12
+    231    #        |b(),
 
 INSERTING AT: 232:0
 PAUSES AT: 232:8
@@ -3320,13 +3552,18 @@ PAUSES AT: 232:8
 -=> 232    #        |c();
     233    } catch { }
     234
-
+LOCATIONS FROM 232:0 to 232:12
+    232    #        |c();
 
 INSERTING AT: 233:0
 PRODUCES: Could not resolve breakpoint
+LOCATIONS FROM 233:0 to 233:11
+    233    #} catch { }
 
 INSERTING AT: 234:0
 PRODUCES: Could not resolve breakpoint
+LOCATIONS FROM 234:0 to 234:0
+    234    #
 
 -- Running test case: Debugger.resolvedBreakpoint.dumpEachLine.Functions
 
@@ -3336,7 +3573,8 @@ PAUSES AT: 0:19
       1    function named() {
       2        var x;
       3    }
-
+LOCATIONS FROM 0:0 to 0:20
+      0    #function inline() {|}
 
 INSERTING AT: 1:0
 PAUSES AT: 2:4
@@ -3346,7 +3584,8 @@ PAUSES AT: 2:4
       3    }
       4    function outer1() {
       5        function inner() {
-
+LOCATIONS FROM 1:0 to 1:18
+      1    #function named() {
 
 INSERTING AT: 2:0
 PAUSES AT: 2:4
@@ -3356,7 +3595,8 @@ PAUSES AT: 2:4
       3    }
       4    function outer1() {
       5        function inner() {
-
+LOCATIONS FROM 2:0 to 2:10
+      2    #    |var x;
 
 INSERTING AT: 3:0
 PAUSES AT: 3:0
@@ -3367,7 +3607,8 @@ PAUSES AT: 3:0
       4    function outer1() {
       5        function inner() {
       6            var y;
-
+LOCATIONS FROM 3:0 to 3:1
+      3    |}
 
 INSERTING AT: 4:0
 PAUSES AT: 8:0
@@ -3382,7 +3623,8 @@ PAUSES AT: 8:0
       9    function outer2()
      10    {
      11        function inner()
-
+LOCATIONS FROM 4:0 to 4:19
+      4    #function outer1() {
 
 INSERTING AT: 5:0
 PAUSES AT: 6:8
@@ -3394,7 +3636,8 @@ PAUSES AT: 6:8
       7        }
       8    }
       9    function outer2()
-
+LOCATIONS FROM 5:0 to 5:22
+      5    #    function inner() {
 
 INSERTING AT: 6:0
 PAUSES AT: 6:8
@@ -3405,7 +3648,8 @@ PAUSES AT: 6:8
       7        }
       8    }
       9    function outer2()
-
+LOCATIONS FROM 6:0 to 6:14
+      6    #        |var y;
 
 INSERTING AT: 7:0
 PAUSES AT: 7:4
@@ -3416,7 +3660,8 @@ PAUSES AT: 7:4
       8    }
       9    function outer2()
      10    {
-
+LOCATIONS FROM 7:0 to 7:5
+      7    #    |}
 
 INSERTING AT: 8:0
 PAUSES AT: 8:0
@@ -3427,7 +3672,8 @@ PAUSES AT: 8:0
       9    function outer2()
      10    {
      11        function inner()
-
+LOCATIONS FROM 8:0 to 8:1
+      8    |}
 
 INSERTING AT: 9:0
 PAUSES AT: 15:0
@@ -3444,7 +3690,8 @@ PAUSES AT: 15:0
      16    function outer3() {
      17        var x;
      18        function inner() { var y; }
-
+LOCATIONS FROM 9:0 to 9:17
+      9    #function outer2()
 
 INSERTING AT: 10:0
 PAUSES AT: 15:0
@@ -3460,7 +3707,8 @@ PAUSES AT: 15:0
      16    function outer3() {
      17        var x;
      18        function inner() { var y; }
-
+LOCATIONS FROM 10:0 to 10:1
+     10    #{
 
 INSERTING AT: 11:0
 PAUSES AT: 13:8
@@ -3473,7 +3721,8 @@ PAUSES AT: 13:8
      14        }
      15    }
      16    function outer3() {
-
+LOCATIONS FROM 11:0 to 11:20
+     11    #    function inner()
 
 INSERTING AT: 12:0
 PAUSES AT: 13:8
@@ -3485,7 +3734,8 @@ PAUSES AT: 13:8
      14        }
      15    }
      16    function outer3() {
-
+LOCATIONS FROM 12:0 to 12:5
+     12    #    {
 
 INSERTING AT: 13:0
 PAUSES AT: 13:8
@@ -3496,7 +3746,8 @@ PAUSES AT: 13:8
      14        }
      15    }
      16    function outer3() {
-
+LOCATIONS FROM 13:0 to 13:14
+     13    #        |var y;
 
 INSERTING AT: 14:0
 PAUSES AT: 14:4
@@ -3507,7 +3758,8 @@ PAUSES AT: 14:4
      15    }
      16    function outer3() {
      17        var x;
-
+LOCATIONS FROM 14:0 to 14:5
+     14    #    |}
 
 INSERTING AT: 15:0
 PAUSES AT: 15:0
@@ -3518,7 +3770,8 @@ PAUSES AT: 15:0
      16    function outer3() {
      17        var x;
      18        function inner() { var y; }
-
+LOCATIONS FROM 15:0 to 15:1
+     15    |}
 
 INSERTING AT: 16:0
 PAUSES AT: 17:4
@@ -3530,7 +3783,8 @@ PAUSES AT: 17:4
      18        function inner() { var y; }
      19    }
      20    function outer4() {
-
+LOCATIONS FROM 16:0 to 16:19
+     16    #function outer3() {
 
 INSERTING AT: 17:0
 PAUSES AT: 17:4
@@ -3541,7 +3795,8 @@ PAUSES AT: 17:4
      18        function inner() { var y; }
      19    }
      20    function outer4() {
-
+LOCATIONS FROM 17:0 to 17:10
+     17    #    |var x;
 
 INSERTING AT: 18:0
 PAUSES AT: 18:23
@@ -3552,7 +3807,8 @@ PAUSES AT: 18:23
      19    }
      20    function outer4() {
      21        function inner() { var y; }
-
+LOCATIONS FROM 18:0 to 18:31
+     18    #    function inner() { |var y; |}
 
 INSERTING AT: 19:0
 PAUSES AT: 19:0
@@ -3563,7 +3819,8 @@ PAUSES AT: 19:0
      20    function outer4() {
      21        function inner() { var y; }
      22        var x;
-
+LOCATIONS FROM 19:0 to 19:1
+     19    |}
 
 INSERTING AT: 20:0
 PAUSES AT: 22:4
@@ -3576,7 +3833,8 @@ PAUSES AT: 22:4
      23    }
      24    function outer5() {
      25        var x;
-
+LOCATIONS FROM 20:0 to 20:19
+     20    #function outer4() {
 
 INSERTING AT: 21:0
 PAUSES AT: 21:23
@@ -3587,7 +3845,8 @@ PAUSES AT: 21:23
      22        var x;
      23    }
      24    function outer5() {
-
+LOCATIONS FROM 21:0 to 21:31
+     21    #    function inner() { |var y; |}
 
 INSERTING AT: 22:0
 PAUSES AT: 22:4
@@ -3598,7 +3857,8 @@ PAUSES AT: 22:4
      23    }
      24    function outer5() {
      25        var x;
-
+LOCATIONS FROM 22:0 to 22:10
+     22    #    |var x;
 
 INSERTING AT: 23:0
 PAUSES AT: 23:0
@@ -3609,7 +3869,8 @@ PAUSES AT: 23:0
      24    function outer5() {
      25        var x;
      26        function inner() { var y; }
-
+LOCATIONS FROM 23:0 to 23:1
+     23    |}
 
 INSERTING AT: 24:0
 PAUSES AT: 25:4
@@ -3621,7 +3882,8 @@ PAUSES AT: 25:4
      26        function inner() { var y; }
      27        var x;
      28    }
-
+LOCATIONS FROM 24:0 to 24:19
+     24    #function outer5() {
 
 INSERTING AT: 25:0
 PAUSES AT: 25:4
@@ -3632,7 +3894,8 @@ PAUSES AT: 25:4
      26        function inner() { var y; }
      27        var x;
      28    }
-
+LOCATIONS FROM 25:0 to 25:10
+     25    #    |var x;
 
 INSERTING AT: 26:0
 PAUSES AT: 26:23
@@ -3643,7 +3906,8 @@ PAUSES AT: 26:23
      27        var x;
      28    }
      29    function outer6() {
-
+LOCATIONS FROM 26:0 to 26:31
+     26    #    function inner() { |var y; |}
 
 INSERTING AT: 27:0
 PAUSES AT: 27:4
@@ -3654,7 +3918,8 @@ PAUSES AT: 27:4
      28    }
      29    function outer6() {
      30        function inner1() { var y; }
-
+LOCATIONS FROM 27:0 to 27:10
+     27    #    |var x;
 
 INSERTING AT: 28:0
 PAUSES AT: 28:0
@@ -3665,7 +3930,8 @@ PAUSES AT: 28:0
      29    function outer6() {
      30        function inner1() { var y; }
      31        var x;
-
+LOCATIONS FROM 28:0 to 28:1
+     28    |}
 
 INSERTING AT: 29:0
 PAUSES AT: 31:4
@@ -3678,7 +3944,8 @@ PAUSES AT: 31:4
      32        function inner2() { var z; }
      33    }
      34    function outer7() {
-
+LOCATIONS FROM 29:0 to 29:19
+     29    #function outer6() {
 
 INSERTING AT: 30:0
 PAUSES AT: 30:24
@@ -3689,7 +3956,8 @@ PAUSES AT: 30:24
      31        var x;
      32        function inner2() { var z; }
      33    }
-
+LOCATIONS FROM 30:0 to 30:32
+     30    #    function inner1() { |var y; |}
 
 INSERTING AT: 31:0
 PAUSES AT: 31:4
@@ -3700,7 +3968,8 @@ PAUSES AT: 31:4
      32        function inner2() { var z; }
      33    }
      34    function outer7() {
-
+LOCATIONS FROM 31:0 to 31:10
+     31    #    |var x;
 
 INSERTING AT: 32:0
 PAUSES AT: 32:24
@@ -3711,7 +3980,8 @@ PAUSES AT: 32:24
      33    }
      34    function outer7() {
      35        function inner1() { var y; }
-
+LOCATIONS FROM 32:0 to 32:32
+     32    #    function inner2() { |var z; |}
 
 INSERTING AT: 33:0
 PAUSES AT: 33:0
@@ -3722,7 +3992,8 @@ PAUSES AT: 33:0
      34    function outer7() {
      35        function inner1() { var y; }
      36        function inner2() { var z; }
-
+LOCATIONS FROM 33:0 to 33:1
+     33    |}
 
 INSERTING AT: 34:0
 PAUSES AT: 37:4
@@ -3736,7 +4007,8 @@ PAUSES AT: 37:4
      38    }
      39    function outer7() {
      40        function inner1() { var y; }
-
+LOCATIONS FROM 34:0 to 34:19
+     34    #function outer7() {
 
 INSERTING AT: 35:0
 PAUSES AT: 35:24
@@ -3747,7 +4019,8 @@ PAUSES AT: 35:24
      36        function inner2() { var z; }
      37        var x;
      38    }
-
+LOCATIONS FROM 35:0 to 35:32
+     35    #    function inner1() { |var y; |}
 
 INSERTING AT: 36:0
 PAUSES AT: 36:24
@@ -3758,7 +4031,8 @@ PAUSES AT: 36:24
      37        var x;
      38    }
      39    function outer7() {
-
+LOCATIONS FROM 36:0 to 36:32
+     36    #    function inner2() { |var z; |}
 
 INSERTING AT: 37:0
 PAUSES AT: 37:4
@@ -3769,7 +4043,8 @@ PAUSES AT: 37:4
      38    }
      39    function outer7() {
      40        function inner1() { var y; }
-
+LOCATIONS FROM 37:0 to 37:10
+     37    #    |var x;
 
 INSERTING AT: 38:0
 PAUSES AT: 38:0
@@ -3780,7 +4055,8 @@ PAUSES AT: 38:0
      39    function outer7() {
      40        function inner1() { var y; }
      41        function inner2() { var z; }
-
+LOCATIONS FROM 38:0 to 38:1
+     38    |}
 
 INSERTING AT: 39:0
 PAUSES AT: 42:0
@@ -3794,7 +4070,8 @@ PAUSES AT: 42:0
      43
      44    (function() {
      45        var x;
-
+LOCATIONS FROM 39:0 to 39:19
+     39    #function outer7() {
 
 INSERTING AT: 40:0
 PAUSES AT: 40:24
@@ -3805,7 +4082,8 @@ PAUSES AT: 40:24
      41        function inner2() { var z; }
      42    }
      43
-
+LOCATIONS FROM 40:0 to 40:32
+     40    #    function inner1() { |var y; |}
 
 INSERTING AT: 41:0
 PAUSES AT: 41:24
@@ -3816,7 +4094,8 @@ PAUSES AT: 41:24
      42    }
      43
      44    (function() {
-
+LOCATIONS FROM 41:0 to 41:32
+     41    #    function inner2() { |var z; |}
 
 INSERTING AT: 42:0
 PAUSES AT: 42:0
@@ -3827,7 +4106,8 @@ PAUSES AT: 42:0
      43
      44    (function() {
      45        var x;
-
+LOCATIONS FROM 42:0 to 42:1
+     42    |}
 
 INSERTING AT: 43:0
 PAUSES AT: 44:0
@@ -3839,7 +4119,8 @@ PAUSES AT: 44:0
      45        var x;
      46    })();
      47
-
+LOCATIONS FROM 43:0 to 43:0
+     43    #
 
 INSERTING AT: 44:0
 PAUSES AT: 44:0
@@ -3850,7 +4131,8 @@ PAUSES AT: 44:0
      45        var x;
      46    })();
      47
-
+LOCATIONS FROM 44:0 to 44:13
+     44    |(function() {
 
 INSERTING AT: 45:0
 PAUSES AT: 45:4
@@ -3861,7 +4143,8 @@ PAUSES AT: 45:4
      46    })();
      47
      48    (() => {
-
+LOCATIONS FROM 45:0 to 45:10
+     45    #    |var x;
 
 INSERTING AT: 46:0
 PAUSES AT: 46:0
@@ -3872,7 +4155,8 @@ PAUSES AT: 46:0
      47
      48    (() => {
      49        var x;
-
+LOCATIONS FROM 46:0 to 46:5
+     46    |})();
 
 INSERTING AT: 47:0
 PAUSES AT: 48:0
@@ -3884,7 +4168,8 @@ PAUSES AT: 48:0
      49        var x;
      50    });
      51
-
+LOCATIONS FROM 47:0 to 47:0
+     47    #
 
 INSERTING AT: 48:0
 PAUSES AT: 48:0
@@ -3895,7 +4180,8 @@ PAUSES AT: 48:0
      49        var x;
      50    });
      51
-
+LOCATIONS FROM 48:0 to 48:8
+     48    |(() => {
 
 INSERTING AT: 49:0
 PAUSES AT: 49:4
@@ -3906,7 +4192,8 @@ PAUSES AT: 49:4
      50    });
      51
      52    function* generator() {
-
+LOCATIONS FROM 49:0 to 49:10
+     49    #    |var x;
 
 INSERTING AT: 50:0
 PAUSES AT: 50:0
@@ -3917,7 +4204,8 @@ PAUSES AT: 50:0
      51
      52    function* generator() {
      53        var x;
-
+LOCATIONS FROM 50:0 to 50:3
+     50    |});
 
 INSERTING AT: 51:0
 PAUSES AT: 87:0
@@ -3964,7 +4252,8 @@ PAUSES AT: 87:0
      88    () => 1;
      89    (x) => x;
      90    (x) => { x };
-
+LOCATIONS FROM 51:0 to 51:0
+     51    #
 
 INSERTING AT: 52:0
 PAUSES AT: 53:4
@@ -3976,7 +4265,8 @@ PAUSES AT: 53:4
      54    }
      55
      56    class Class {
-
+LOCATIONS FROM 52:0 to 52:23
+     52    #function* generator() {
 
 INSERTING AT: 53:0
 PAUSES AT: 53:4
@@ -3987,7 +4277,8 @@ PAUSES AT: 53:4
      54    }
      55
      56    class Class {
-
+LOCATIONS FROM 53:0 to 53:10
+     53    #    |var x;
 
 INSERTING AT: 54:0
 PAUSES AT: 54:0
@@ -3998,7 +4289,8 @@ PAUSES AT: 54:0
      55
      56    class Class {
      57        static staticMethod1() {
-
+LOCATIONS FROM 54:0 to 54:1
+     54    |}
 
 INSERTING AT: 55:0
 PAUSES AT: 87:0
@@ -4041,7 +4333,8 @@ PAUSES AT: 87:0
      88    () => 1;
      89    (x) => x;
      90    (x) => { x };
-
+LOCATIONS FROM 55:0 to 55:0
+     55    #
 
 INSERTING AT: 56:0
 PAUSES AT: 87:0
@@ -4083,7 +4376,8 @@ PAUSES AT: 87:0
      88    () => 1;
      89    (x) => x;
      90    (x) => { x };
-
+LOCATIONS FROM 56:0 to 56:13
+     56    #class Class {
 
 INSERTING AT: 57:0
 PAUSES AT: 58:8
@@ -4095,7 +4389,8 @@ PAUSES AT: 58:8
      59        }
      60        static staticMethod2()
      61        {
-
+LOCATIONS FROM 57:0 to 57:28
+     57    #    static staticMethod1() {
 
 INSERTING AT: 58:0
 PAUSES AT: 58:8
@@ -4106,7 +4401,8 @@ PAUSES AT: 58:8
      59        }
      60        static staticMethod2()
      61        {
-
+LOCATIONS FROM 58:0 to 58:14
+     58    #        |var x;
 
 INSERTING AT: 59:0
 PAUSES AT: 59:4
@@ -4117,7 +4413,8 @@ PAUSES AT: 59:4
      60        static staticMethod2()
      61        {
      62            var x;
-
+LOCATIONS FROM 59:0 to 59:5
+     59    #    |}
 
 INSERTING AT: 60:0
 PAUSES AT: 62:8
@@ -4130,7 +4427,8 @@ PAUSES AT: 62:8
      63        }
      64        method1() {
      65            var x;
-
+LOCATIONS FROM 60:0 to 60:26
+     60    #    static staticMethod2()
 
 INSERTING AT: 61:0
 PAUSES AT: 62:8
@@ -4142,7 +4440,8 @@ PAUSES AT: 62:8
      63        }
      64        method1() {
      65            var x;
-
+LOCATIONS FROM 61:0 to 61:5
+     61    #    {
 
 INSERTING AT: 62:0
 PAUSES AT: 62:8
@@ -4153,7 +4452,8 @@ PAUSES AT: 62:8
      63        }
      64        method1() {
      65            var x;
-
+LOCATIONS FROM 62:0 to 62:14
+     62    #        |var x;
 
 INSERTING AT: 63:0
 PAUSES AT: 63:4
@@ -4164,7 +4464,8 @@ PAUSES AT: 63:4
      64        method1() {
      65            var x;
      66        }
-
+LOCATIONS FROM 63:0 to 63:5
+     63    #    |}
 
 INSERTING AT: 64:0
 PAUSES AT: 65:8
@@ -4176,7 +4477,8 @@ PAUSES AT: 65:8
      66        }
      67        method2()
      68        {
-
+LOCATIONS FROM 64:0 to 64:15
+     64    #    method1() {
 
 INSERTING AT: 65:0
 PAUSES AT: 65:8
@@ -4187,7 +4489,8 @@ PAUSES AT: 65:8
      66        }
      67        method2()
      68        {
-
+LOCATIONS FROM 65:0 to 65:14
+     65    #        |var x;
 
 INSERTING AT: 66:0
 PAUSES AT: 66:4
@@ -4198,7 +4501,8 @@ PAUSES AT: 66:4
      67        method2()
      68        {
      69            var x;
-
+LOCATIONS FROM 66:0 to 66:5
+     66    #    |}
 
 INSERTING AT: 67:0
 PAUSES AT: 69:8
@@ -4211,7 +4515,8 @@ PAUSES AT: 69:8
      70        }
      71        get getter1() {
      72            var x;
-
+LOCATIONS FROM 67:0 to 67:13
+     67    #    method2()
 
 INSERTING AT: 68:0
 PAUSES AT: 69:8
@@ -4223,7 +4528,8 @@ PAUSES AT: 69:8
      70        }
      71        get getter1() {
      72            var x;
-
+LOCATIONS FROM 68:0 to 68:5
+     68    #    {
 
 INSERTING AT: 69:0
 PAUSES AT: 69:8
@@ -4234,7 +4540,8 @@ PAUSES AT: 69:8
      70        }
      71        get getter1() {
      72            var x;
-
+LOCATIONS FROM 69:0 to 69:14
+     69    #        |var x;
 
 INSERTING AT: 70:0
 PAUSES AT: 70:4
@@ -4245,7 +4552,8 @@ PAUSES AT: 70:4
      71        get getter1() {
      72            var x;
      73        }
-
+LOCATIONS FROM 70:0 to 70:5
+     70    #    |}
 
 INSERTING AT: 71:0
 PAUSES AT: 72:8
@@ -4257,7 +4565,8 @@ PAUSES AT: 72:8
      73        }
      74        get getter2()
      75        {
-
+LOCATIONS FROM 71:0 to 71:19
+     71    #    get getter1() {
 
 INSERTING AT: 72:0
 PAUSES AT: 72:8
@@ -4268,7 +4577,8 @@ PAUSES AT: 72:8
      73        }
      74        get getter2()
      75        {
-
+LOCATIONS FROM 72:0 to 72:14
+     72    #        |var x;
 
 INSERTING AT: 73:0
 PAUSES AT: 73:4
@@ -4279,7 +4589,8 @@ PAUSES AT: 73:4
      74        get getter2()
      75        {
      76            var x;
-
+LOCATIONS FROM 73:0 to 73:5
+     73    #    |}
 
 INSERTING AT: 74:0
 PAUSES AT: 76:8
@@ -4292,7 +4603,8 @@ PAUSES AT: 76:8
      77        }
      78        set setter1(x) {
      79            var s;
-
+LOCATIONS FROM 74:0 to 74:17
+     74    #    get getter2()
 
 INSERTING AT: 75:0
 PAUSES AT: 76:8
@@ -4304,7 +4616,8 @@ PAUSES AT: 76:8
      77        }
      78        set setter1(x) {
      79            var s;
-
+LOCATIONS FROM 75:0 to 75:5
+     75    #    {
 
 INSERTING AT: 76:0
 PAUSES AT: 76:8
@@ -4315,7 +4628,8 @@ PAUSES AT: 76:8
      77        }
      78        set setter1(x) {
      79            var s;
-
+LOCATIONS FROM 76:0 to 76:14
+     76    #        |var x;
 
 INSERTING AT: 77:0
 PAUSES AT: 77:4
@@ -4326,7 +4640,8 @@ PAUSES AT: 77:4
      78        set setter1(x) {
      79            var s;
      80        }
-
+LOCATIONS FROM 77:0 to 77:5
+     77    #    |}
 
 INSERTING AT: 78:0
 PAUSES AT: 79:8
@@ -4338,7 +4653,8 @@ PAUSES AT: 79:8
      80        }
      81        set setter2(x)
      82        {
-
+LOCATIONS FROM 78:0 to 78:20
+     78    #    set setter1(x) {
 
 INSERTING AT: 79:0
 PAUSES AT: 79:8
@@ -4349,7 +4665,8 @@ PAUSES AT: 79:8
      80        }
      81        set setter2(x)
      82        {
-
+LOCATIONS FROM 79:0 to 79:14
+     79    #        |var s;
 
 INSERTING AT: 80:0
 PAUSES AT: 80:4
@@ -4360,7 +4677,8 @@ PAUSES AT: 80:4
      81        set setter2(x)
      82        {
      83            var s;
-
+LOCATIONS FROM 80:0 to 80:5
+     80    #    |}
 
 INSERTING AT: 81:0
 PAUSES AT: 83:8
@@ -4373,7 +4691,8 @@ PAUSES AT: 83:8
      84        }
      85    }
      86
-
+LOCATIONS FROM 81:0 to 81:18
+     81    #    set setter2(x)
 
 INSERTING AT: 82:0
 PAUSES AT: 83:8
@@ -4385,7 +4704,8 @@ PAUSES AT: 83:8
      84        }
      85    }
      86
-
+LOCATIONS FROM 82:0 to 82:5
+     82    #    {
 
 INSERTING AT: 83:0
 PAUSES AT: 83:8
@@ -4396,7 +4716,8 @@ PAUSES AT: 83:8
      84        }
      85    }
      86
-
+LOCATIONS FROM 83:0 to 83:14
+     83    #        |var s;
 
 INSERTING AT: 84:0
 PAUSES AT: 84:4
@@ -4407,7 +4728,8 @@ PAUSES AT: 84:4
      85    }
      86
      87    x => x;
-
+LOCATIONS FROM 84:0 to 84:5
+     84    #    |}
 
 INSERTING AT: 85:0
 PAUSES AT: 87:0
@@ -4420,7 +4742,8 @@ PAUSES AT: 87:0
      88    () => 1;
      89    (x) => x;
      90    (x) => { x };
-
+LOCATIONS FROM 85:0 to 85:1
+     85    #}
 
 INSERTING AT: 86:0
 PAUSES AT: 87:0
@@ -4432,7 +4755,8 @@ PAUSES AT: 87:0
      88    () => 1;
      89    (x) => x;
      90    (x) => { x };
-
+LOCATIONS FROM 86:0 to 86:0
+     86    #
 
 INSERTING AT: 87:0
 PAUSES AT: 87:0
@@ -4443,7 +4767,8 @@ PAUSES AT: 87:0
      88    () => 1;
      89    (x) => x;
      90    (x) => { x };
-
+LOCATIONS FROM 87:0 to 87:7
+     87    |x => |x;
 
 INSERTING AT: 88:0
 PAUSES AT: 88:0
@@ -4454,7 +4779,8 @@ PAUSES AT: 88:0
      89    (x) => x;
      90    (x) => { x };
      91    (x) => {
-
+LOCATIONS FROM 88:0 to 88:8
+     88    |() => |1;
 
 INSERTING AT: 89:0
 PAUSES AT: 89:0
@@ -4465,7 +4791,8 @@ PAUSES AT: 89:0
      90    (x) => { x };
      91    (x) => {
      92        x
-
+LOCATIONS FROM 89:0 to 89:9
+     89    |(x) => |x;
 
 INSERTING AT: 90:0
 PAUSES AT: 90:0
@@ -4476,7 +4803,8 @@ PAUSES AT: 90:0
      91    (x) => {
      92        x
      93    };
-
+LOCATIONS FROM 90:0 to 90:13
+     90    |(x) => { |x |};
 
 INSERTING AT: 91:0
 PAUSES AT: 91:0
@@ -4487,7 +4815,8 @@ PAUSES AT: 91:0
      92        x
      93    };
      94    () => {
-
+LOCATIONS FROM 91:0 to 91:8
+     91    |(x) => {
 
 INSERTING AT: 92:0
 PAUSES AT: 92:4
@@ -4498,7 +4827,8 @@ PAUSES AT: 92:4
      93    };
      94    () => {
      95        var x;
-
+LOCATIONS FROM 92:0 to 92:5
+     92    #    |x
 
 INSERTING AT: 93:0
 PAUSES AT: 93:0
@@ -4509,7 +4839,8 @@ PAUSES AT: 93:0
      94    () => {
      95        var x;
      96    };
-
+LOCATIONS FROM 93:0 to 93:2
+     93    |};
 
 INSERTING AT: 94:0
 PAUSES AT: 94:0
@@ -4520,7 +4851,8 @@ PAUSES AT: 94:0
      95        var x;
      96    };
      97
-
+LOCATIONS FROM 94:0 to 94:7
+     94    |() => {
 
 INSERTING AT: 95:0
 PAUSES AT: 95:4
@@ -4531,7 +4863,8 @@ PAUSES AT: 95:4
      96    };
      97
      98    var fObj = {
-
+LOCATIONS FROM 95:0 to 95:10
+     95    #    |var x;
 
 INSERTING AT: 96:0
 PAUSES AT: 96:0
@@ -4542,7 +4875,8 @@ PAUSES AT: 96:0
      97
      98    var fObj = {
      99        f1: function() {
-
+LOCATIONS FROM 96:0 to 96:2
+     96    |};
 
 INSERTING AT: 97:0
 PAUSES AT: 98:0
@@ -4554,7 +4888,8 @@ PAUSES AT: 98:0
      99        f1: function() {
     100            var x;
     101        },
-
+LOCATIONS FROM 97:0 to 97:0
+     97    #
 
 INSERTING AT: 98:0
 PAUSES AT: 98:0
@@ -4565,7 +4900,8 @@ PAUSES AT: 98:0
      99        f1: function() {
     100            var x;
     101        },
-
+LOCATIONS FROM 98:0 to 98:12
+     98    |var fObj = {
 
 INSERTING AT: 99:0
 PAUSES AT: 100:8
@@ -4577,7 +4913,8 @@ PAUSES AT: 100:8
     101        },
     102        f2: function()
     103        {
-
+LOCATIONS FROM 99:0 to 99:20
+     99    #    f1: function() {
 
 INSERTING AT: 100:0
 PAUSES AT: 100:8
@@ -4588,7 +4925,8 @@ PAUSES AT: 100:8
     101        },
     102        f2: function()
     103        {
-
+LOCATIONS FROM 100:0 to 100:14
+    100    #        |var x;
 
 INSERTING AT: 101:0
 PAUSES AT: 101:4
@@ -4599,7 +4937,8 @@ PAUSES AT: 101:4
     102        f2: function()
     103        {
     104            var x;
-
+LOCATIONS FROM 101:0 to 101:6
+    101    #    |},
 
 INSERTING AT: 102:0
 PAUSES AT: 104:8
@@ -4612,7 +4951,8 @@ PAUSES AT: 104:8
     105        },
     106        f3: () => {
     107            var x;
-
+LOCATIONS FROM 102:0 to 102:18
+    102    #    f2: function()
 
 INSERTING AT: 103:0
 PAUSES AT: 104:8
@@ -4624,7 +4964,8 @@ PAUSES AT: 104:8
     105        },
     106        f3: () => {
     107            var x;
-
+LOCATIONS FROM 103:0 to 103:5
+    103    #    {
 
 INSERTING AT: 104:0
 PAUSES AT: 104:8
@@ -4635,7 +4976,8 @@ PAUSES AT: 104:8
     105        },
     106        f3: () => {
     107            var x;
-
+LOCATIONS FROM 104:0 to 104:14
+    104    #        |var x;
 
 INSERTING AT: 105:0
 PAUSES AT: 105:4
@@ -4646,7 +4988,8 @@ PAUSES AT: 105:4
     106        f3: () => {
     107            var x;
     108        },
-
+LOCATIONS FROM 105:0 to 105:6
+    105    #    |},
 
 INSERTING AT: 106:0
 PAUSES AT: 107:8
@@ -4658,7 +5001,8 @@ PAUSES AT: 107:8
     108        },
     109        f4: () =>
     110        {
-
+LOCATIONS FROM 106:0 to 106:15
+    106    #    f3: () => {
 
 INSERTING AT: 107:0
 PAUSES AT: 107:8
@@ -4669,7 +5013,8 @@ PAUSES AT: 107:8
     108        },
     109        f4: () =>
     110        {
-
+LOCATIONS FROM 107:0 to 107:14
+    107    #        |var x;
 
 INSERTING AT: 108:0
 PAUSES AT: 108:4
@@ -4680,7 +5025,8 @@ PAUSES AT: 108:4
     109        f4: () =>
     110        {
     111            var x;
-
+LOCATIONS FROM 108:0 to 108:6
+    108    #    |},
 
 INSERTING AT: 109:0
 PAUSES AT: 111:8
@@ -4693,7 +5039,8 @@ PAUSES AT: 111:8
     112        }
     113    };
     114
-
+LOCATIONS FROM 109:0 to 109:13
+    109    #    f4: () =>
 
 INSERTING AT: 110:0
 PAUSES AT: 111:8
@@ -4705,7 +5052,8 @@ PAUSES AT: 111:8
     112        }
     113    };
     114
-
+LOCATIONS FROM 110:0 to 110:5
+    110    #    {
 
 INSERTING AT: 111:0
 PAUSES AT: 111:8
@@ -4716,7 +5064,8 @@ PAUSES AT: 111:8
     112        }
     113    };
     114
-
+LOCATIONS FROM 111:0 to 111:14
+    111    #        |var x;
 
 INSERTING AT: 112:0
 PAUSES AT: 112:4
@@ -4727,13 +5076,18 @@ PAUSES AT: 112:4
     113    };
     114
     115    function commaOneLine() {
-
+LOCATIONS FROM 112:0 to 112:8
+    112    #    |}
 
 INSERTING AT: 113:0
 PRODUCES: Could not resolve breakpoint
+LOCATIONS FROM 113:0 to 113:2
+    113    #};
 
 INSERTING AT: 114:0
 PRODUCES: Could not resolve breakpoint
+LOCATIONS FROM 114:0 to 114:0
+    114    #
 
 INSERTING AT: 115:0
 PAUSES AT: 116:4
@@ -4745,7 +5099,8 @@ PAUSES AT: 116:4
     117    }
     118
     119    function commaMultiLine() {
-
+LOCATIONS FROM 115:0 to 115:25
+    115    #function commaOneLine() {
 
 INSERTING AT: 116:0
 PAUSES AT: 116:4
@@ -4756,7 +5111,8 @@ PAUSES AT: 116:4
     117    }
     118
     119    function commaMultiLine() {
-
+LOCATIONS FROM 116:0 to 116:33
+    116    #    |inline(), |inline(), |inline();
 
 INSERTING AT: 117:0
 PAUSES AT: 117:0
@@ -4767,10 +5123,13 @@ PAUSES AT: 117:0
     118
     119    function commaMultiLine() {
     120        inline(),
-
+LOCATIONS FROM 117:0 to 117:1
+    117    |}
 
 INSERTING AT: 118:0
 PRODUCES: Could not resolve breakpoint
+LOCATIONS FROM 118:0 to 118:0
+    118    #
 
 INSERTING AT: 119:0
 PAUSES AT: 120:4
@@ -4782,7 +5141,8 @@ PAUSES AT: 120:4
     121        inline(),
     122        inline();
     123    }
-
+LOCATIONS FROM 119:0 to 119:27
+    119    #function commaMultiLine() {
 
 INSERTING AT: 120:0
 PAUSES AT: 120:4
@@ -4793,7 +5153,8 @@ PAUSES AT: 120:4
     121        inline(),
     122        inline();
     123    }
-
+LOCATIONS FROM 120:0 to 120:13
+    120    #    |inline(),
 
 INSERTING AT: 121:0
 PAUSES AT: 121:4
@@ -4804,7 +5165,8 @@ PAUSES AT: 121:4
     122        inline();
     123    }
     124
-
+LOCATIONS FROM 121:0 to 121:13
+    121    #    |inline(),
 
 INSERTING AT: 122:0
 PAUSES AT: 122:4
@@ -4815,7 +5177,8 @@ PAUSES AT: 122:4
     123    }
     124
     125    function returnOneLine() {
-
+LOCATIONS FROM 122:0 to 122:13
+    122    #    |inline();
 
 INSERTING AT: 123:0
 PAUSES AT: 123:0
@@ -4826,10 +5189,13 @@ PAUSES AT: 123:0
     124
     125    function returnOneLine() {
     126        return inline(), inline(), inline();
-
+LOCATIONS FROM 123:0 to 123:1
+    123    |}
 
 INSERTING AT: 124:0
 PRODUCES: Could not resolve breakpoint
+LOCATIONS FROM 124:0 to 124:0
+    124    #
 
 INSERTING AT: 125:0
 PAUSES AT: 126:4
@@ -4841,7 +5207,8 @@ PAUSES AT: 126:4
     127    }
     128
     129    function returnMultiLine() {
-
+LOCATIONS FROM 125:0 to 125:26
+    125    #function returnOneLine() {
 
 INSERTING AT: 126:0
 PAUSES AT: 126:4
@@ -4852,7 +5219,8 @@ PAUSES AT: 126:4
     127    }
     128
     129    function returnMultiLine() {
-
+LOCATIONS FROM 126:0 to 126:40
+    126    #    |return |inline(), |inline(), |inline();
 
 INSERTING AT: 127:0
 PAUSES AT: 127:0
@@ -4863,10 +5231,13 @@ PAUSES AT: 127:0
     128
     129    function returnMultiLine() {
     130        return inline(),
-
+LOCATIONS FROM 127:0 to 127:1
+    127    |}
 
 INSERTING AT: 128:0
 PRODUCES: Could not resolve breakpoint
+LOCATIONS FROM 128:0 to 128:0
+    128    #
 
 INSERTING AT: 129:0
 PAUSES AT: 130:4
@@ -4878,7 +5249,8 @@ PAUSES AT: 130:4
     131            inline(),
     132            inline();
     133    }
-
+LOCATIONS FROM 129:0 to 129:28
+    129    #function returnMultiLine() {
 
 INSERTING AT: 130:0
 PAUSES AT: 130:4
@@ -4889,7 +5261,8 @@ PAUSES AT: 130:4
     131            inline(),
     132            inline();
     133    }
-
+LOCATIONS FROM 130:0 to 130:20
+    130    #    |return |inline(),
 
 INSERTING AT: 131:0
 PAUSES AT: 131:8
@@ -4900,7 +5273,8 @@ PAUSES AT: 131:8
     132            inline();
     133    }
     134
-
+LOCATIONS FROM 131:0 to 131:17
+    131    #        |inline(),
 
 INSERTING AT: 132:0
 PAUSES AT: 132:8
@@ -4910,7 +5284,8 @@ PAUSES AT: 132:8
 -=> 132    #        |inline();
     133    }
     134
-
+LOCATIONS FROM 132:0 to 132:17
+    132    #        |inline();
 
 INSERTING AT: 133:0
 PAUSES AT: 133:0
@@ -4919,10 +5294,13 @@ PAUSES AT: 133:0
     132            inline();
 -=> 133    |}
     134
-
+LOCATIONS FROM 133:0 to 133:1
+    133    |}
 
 INSERTING AT: 134:0
 PRODUCES: Could not resolve breakpoint
+LOCATIONS FROM 134:0 to 134:0
+    134    #
 
 -- Running test case: Debugger.resolvedBreakpoint.dumpEachLine.Unicode
 
@@ -4932,7 +5310,8 @@ PAUSES AT: 0:0
       1    var unicodeVariableStr = "Non-8-bit '∙' character.";
       2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
       3    var unicodeVariable2 = 2;
-
+LOCATIONS FROM 0:0 to 0:36
+      0    |var unicodeVariable1 = function(){|};
 
 INSERTING AT: 1:0
 PAUSES AT: 1:0
@@ -4941,7 +5320,8 @@ PAUSES AT: 1:0
       2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
       3    var unicodeVariable2 = 2;
       4
-
+LOCATIONS FROM 1:0 to 1:52
+      1    |var unicodeVariableStr = "Non-8-bit '∙' character.";
 
 INSERTING AT: 2:0
 PAUSES AT: 2:0
@@ -4950,7 +5330,8 @@ PAUSES AT: 2:0
 -=>   2    |var unicodeSurrogatePairStr = "Emoji '😍' character.";
       3    var unicodeVariable2 = 2;
       4
-
+LOCATIONS FROM 2:0 to 2:54
+      2    |var unicodeSurrogatePairStr = "Emoji '😍' character.";
 
 INSERTING AT: 3:0
 PAUSES AT: 3:0
@@ -4959,8 +5340,11 @@ PAUSES AT: 3:0
       2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
 -=>   3    |var unicodeVariable2 = 2;
       4
-
+LOCATIONS FROM 3:0 to 3:25
+      3    |var unicodeVariable2 = 2;
 
 INSERTING AT: 4:0
 PRODUCES: Could not resolve breakpoint
+LOCATIONS FROM 4:0 to 4:0
+      4    #
 

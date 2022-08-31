@@ -30,14 +30,54 @@
 
 namespace JSC {
 
-std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn(int line, int column)
+void DebuggerPausePositions::forEachBreakpointLocation(int startLine, int startColumn, int endLine, int endColumn, Function<void(const JSTextPosition&)>&& callback)
+{
+    auto isAfterEnd = [&] (int line, int column) {
+        return (line == endLine && column >= endColumn) || line > endLine;
+    };
+
+    Vector<JSTextPosition> uniquePositions;
+    for (auto it = firstPositionAfter(startLine, startColumn); it != m_positions.end(); ++it) {
+        auto line = it->position.line;
+        auto column = it->position.column();
+
+        if (isAfterEnd(line, column))
+            break;
+
+        if (auto resolvedPosition = breakpointLocationForLineColumn(line, column, it)) {
+            if (!isAfterEnd(resolvedPosition->line, resolvedPosition->column()))
+                uniquePositions.appendIfNotContains(*resolvedPosition);
+        }
+    }
+    std::sort(uniquePositions.begin(), uniquePositions.end(), [] (const auto& a, const auto& b) {
+        if (a.line == b.line)
+            return a.column() < b.column();
+        return a.line < b.line;
+    });
+    for (const auto& position : uniquePositions)
+        callback(position);
+}
+
+DebuggerPausePositions::Positions::iterator DebuggerPausePositions::firstPositionAfter(int line, int column)
 {
     DebuggerPausePosition position = { DebuggerPausePositionType::Invalid, JSTextPosition(line, column, 0) };
-    auto it = std::lower_bound(m_positions.begin(), m_positions.end(), position, [] (const DebuggerPausePosition& a, const DebuggerPausePosition& b) {
+    return std::lower_bound(m_positions.begin(), m_positions.end(), position, [] (const DebuggerPausePosition& a, const DebuggerPausePosition& b) {
         if (a.position.line == b.position.line)
             return a.position.column() < b.position.column();
         return a.position.line < b.position.line;
     });
+}
+
+std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn(int line, int column)
+{
+    return breakpointLocationForLineColumn(line, column, firstPositionAfter(line, column));
+}
+
+std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn(int line, int column, DebuggerPausePositions::Positions::iterator it)
+{
+    ASSERT(line <= it->position.line);
+    ASSERT(line != it->position.line || column <= it->position.column());
+
     if (it == m_positions.end())
         return std::nullopt;
 

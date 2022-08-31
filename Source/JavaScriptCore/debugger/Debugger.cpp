@@ -465,6 +465,46 @@ DebuggerParseData& Debugger::debuggerParseData(SourceID sourceID, SourceProvider
     return result.iterator->value;
 }
 
+void Debugger::forEachBreakpointLocation(SourceID sourceID, SourceProvider* sourceProvider, int startLine, int startColumn, int endLine, int endColumn, Function<void(int, int)>&& callback)
+{
+    auto providerStartLine = sourceProvider->startPosition().m_line.oneBasedInt(); // One based to match the already adjusted line.
+    auto providerStartColumn = sourceProvider->startPosition().m_column.zeroBasedInt(); // Zero based so column zero is zero.
+
+    // FIXME: <https://webkit.org/b/162771> Web Inspector: Adopt TextPosition in Inspector to avoid oneBasedInt/zeroBasedInt ambiguity
+    // Inspector breakpoint line and column values are zero-based but the executable
+    // and CodeBlock line values are one-based while column is zero-based.
+    auto adjustedStartLine = startLine + 1;
+    auto adjustedStartColumn = startColumn;
+    auto adjustedEndLine = endLine + 1;
+    auto adjustedEndColumn = endColumn;
+
+    // Account for a <script>'s start position on the first line only.
+    if (startLine == providerStartLine && startColumn) {
+        ASSERT(providerStartColumn <= startColumn);
+        if (providerStartColumn)
+            adjustedStartColumn -= providerStartColumn;
+    }
+    if (endLine == providerStartLine && endColumn) {
+        ASSERT(providerStartColumn <= endColumn);
+        if (providerStartColumn)
+            adjustedEndColumn -= providerStartColumn;
+    }
+
+    auto& parseData = debuggerParseData(sourceID, sourceProvider);
+    parseData.pausePositions.forEachBreakpointLocation(adjustedStartLine, adjustedStartColumn, adjustedEndLine, adjustedEndColumn, [&, callback = WTFMove(callback)] (const JSTextPosition& resolvedPosition) {
+        auto resolvedLine = resolvedPosition.line;
+        auto resolvedColumn = resolvedPosition.column();
+
+        // Re-account for a <script>'s start position on the first line only.
+        if (resolvedLine == providerStartLine && (startColumn || (endLine == providerStartLine && endColumn))) {
+            if (providerStartColumn)
+                resolvedColumn += providerStartColumn;
+        }
+
+        callback(resolvedLine - 1, resolvedColumn);
+    });
+}
+
 bool Debugger::resolveBreakpoint(Breakpoint& breakpoint, SourceProvider* sourceProvider)
 {
     RELEASE_ASSERT(!breakpoint.isResolved());
