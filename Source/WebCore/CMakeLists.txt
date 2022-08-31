@@ -989,6 +989,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Range.idl
     dom/RequestAnimationFrameCallback.idl
     dom/SecurityPolicyViolationEvent.idl
+    dom/SecurityPolicyViolationEventDisposition.idl
     dom/ShadowRoot.idl
     dom/ShadowRootInit.idl
     dom/ShadowRootMode.idl
@@ -1265,6 +1266,8 @@ set(WebCore_NON_SVG_IDL_FILES
     page/WindowOrWorkerGlobalScope.idl
     page/WindowSessionStorage.idl
     page/WorkerNavigator.idl
+
+    page/csp/CSPViolationReportBody.idl
 
     plugins/DOMMimeType.idl
     plugins/DOMMimeTypeArray.idl

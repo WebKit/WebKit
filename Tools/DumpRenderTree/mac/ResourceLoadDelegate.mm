@@ -170,6 +170,7 @@ BOOL isAllowedHost(NSString *host)
         if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host) && !isAllowedHost(host) && (!testHost || isLocalhost(testHost))) {
             String blockedURL = [url absoluteString];
             replace(blockedURL, JSC::Yarr::RegularExpression("&key=[^&]+&"_s), "&key=GENERATED_KEY&"_s);
+            replace(blockedURL, JSC::Yarr::RegularExpression("reportID=[-0123456789abcdefABCDEF]+"_s), "reportID=GENERATED_REPORT_ID"_s);
             printf("Blocked access to external URL %s\n", blockedURL.utf8().data());
             return nil;
         }

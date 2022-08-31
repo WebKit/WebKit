@@ -56,6 +56,7 @@
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/ReportingScope.h>
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
@@ -646,8 +647,12 @@ bool NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptio
         return false;
 #endif
 
+    String reportingEndpoints = response.httpHeaderField(HTTPHeaderName::ReportingEndpoints);
+    if (!reportingEndpoints.isEmpty())
+        m_reportingEndpoints = ReportingScope::parseReportingEndpointsFromHeader(reportingEndpoints, response.url());
+
     auto url = response.url();
-    ContentSecurityPolicy contentSecurityPolicy { URL { url }, this };
+    ContentSecurityPolicy contentSecurityPolicy { URL { url }, this, this };
     contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, originalRequest().httpReferrer());
     if (!contentSecurityPolicy.allowFrameAncestors(m_parameters.frameAncestorOrigins, url))
         return true;
@@ -713,7 +718,7 @@ std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingO
 
     std::unique_ptr<ContentSecurityPolicy> contentSecurityPolicy;
     if (!response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy).isNull()) {
-        contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { response.url() }, nullptr);
+        contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { response.url() }, nullptr, this);
         contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, originalRequest().httpReferrer(), ContentSecurityPolicy::ReportParsingErrors::No);
     }
 
@@ -1830,6 +1835,16 @@ void NetworkResourceLoader::serviceWorkerDidNotHandle(ServiceWorkerFetchTask* fe
 bool NetworkResourceLoader::isAppInitiated()
 {
     return m_parameters.request.isAppInitiated();
+}
+
+void NetworkResourceLoader::notifyReportObservers(Ref<Report>&& report)
+{
+    send(Messages::WebPage::NotifyReportObservers { m_parameters.webFrameID, WTFMove(report) }, m_parameters.webPageID);
+}
+
+String NetworkResourceLoader::endpointURIForToken(const String& reportTo) const
+{
+    return m_reportingEndpoints.get(reportTo);
 }
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)

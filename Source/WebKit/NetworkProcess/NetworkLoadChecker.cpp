@@ -445,7 +445,7 @@ ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy()
 {
     if (!m_contentSecurityPolicy && m_cspResponseHeaders) {
         // FIXME: Pass the URL of the protected resource instead of its origin.
-        m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { m_origin->toRawString() });
+        m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { m_origin->toRawString() }, nullptr, m_networkResourceLoader.get());
         m_contentSecurityPolicy->didReceiveHeaders(*m_cspResponseHeaders, String { m_referrer }, ContentSecurityPolicy::ReportParsingErrors::No);
         if (!m_documentURL.isEmpty())
             m_contentSecurityPolicy->setDocumentURL(m_documentURL);

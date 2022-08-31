@@ -78,6 +78,8 @@ public:
 
     WTF_EXPORT_PRIVATE String strippedForUseAsReferrer() const;
 
+    WTF_EXPORT_PRIVATE String strippedForUseAsReferrerWithExplicitPort() const;
+
     // Makes a deep copy. Helpful only if you need to use a URL on another
     // thread. Since the underlying StringImpl objects are immutable, there's
     // no other reason to ever prefer isolatedCopy() over plain old assignment.

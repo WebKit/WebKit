@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google, Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,7 @@ static bool isCSPDirectiveName(StringView name)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::mediaSrc)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::objectSrc)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::pluginTypes)
+        || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::reportTo)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::reportURI)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::sandbox)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::scriptSrc)

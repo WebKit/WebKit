@@ -1,7 +1,0 @@
-Blocked access to external URL http://www1.%7B%7Bhost%7D%7D/content-security-policy/support/frame.html#0
-
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Same-document navigations in an iframe blocked by CSP frame-src dynamically using the <meta> tag Test timed out
-

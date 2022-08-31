@@ -119,6 +119,7 @@ class BlobPart;
 class CertificateInfo;
 class Color;
 class SharedBuffer;
+class CSPViolationReportBody;
 class Credential;
 class CubicBezierTimingFunction;
 class Cursor;
@@ -141,6 +142,8 @@ class PaymentInstallmentConfiguration;
 class PixelBuffer;
 class ProtectionSpace;
 class Region;
+class Report;
+class ReportBody;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -844,6 +847,16 @@ template<> struct ArgumentCoder<UnixFileDescriptor> {
 template<> struct ArgumentCoder<WebCore::PixelBuffer> {
     template<class Encoder> static void encode(Encoder&, const WebCore::PixelBuffer&);
     static std::optional<Ref<WebCore::PixelBuffer>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Ref<WebCore::Report>> {
+    static void encode(Encoder&, const Ref<WebCore::Report>&);
+    static std::optional<Ref<WebCore::Report>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<RefPtr<WebCore::ReportBody>> {
+    static void encode(Encoder&, const RefPtr<WebCore::ReportBody>&);
+    static std::optional<RefPtr<WebCore::ReportBody>> decode(Decoder&);
 };
 
 } // namespace IPC

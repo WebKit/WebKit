@@ -324,8 +324,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/reporting/Report.h
     Modules/reporting/ReportBody.h
+    Modules/reporting/ReportingClient.h
     Modules/reporting/ReportingObserver.h
     Modules/reporting/ReportingObserverCallback.h
+    Modules/reporting/ReportingScope.h
 
     Modules/speech/SpeechRecognitionCaptureSource.h
     Modules/speech/SpeechRecognitionCaptureSourceImpl.h
@@ -745,6 +747,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ScriptExecutionContext.h
     dom/SecurityContext.h
     dom/SecurityPolicyViolationEvent.h
+    dom/SecurityPolicyViolationEventDisposition.h
     dom/SelectionRestorationMode.h
     dom/ShadowRoot.h
     dom/ShadowRootInit.h
@@ -1248,6 +1251,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/WindowFeatures.h
     page/WindowOrWorkerGlobalScope.h
 
+    page/csp/CSPViolationReportBody.h
     page/csp/ContentSecurityPolicy.h
     page/csp/ContentSecurityPolicyClient.h
     page/csp/ContentSecurityPolicyHash.h

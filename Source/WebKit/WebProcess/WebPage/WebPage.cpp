@@ -240,6 +240,8 @@
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderVideo.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/Report.h>
+#include <WebCore/ReportingScope.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -4600,6 +4602,18 @@ void WebPage::enqueueSecurityPolicyViolationEvent(FrameIdentifier frameID, Secur
         return;
     if (auto* document = coreFrame->document())
         document->enqueueSecurityPolicyViolationEvent(WTFMove(eventInit));
+}
+
+void WebPage::notifyReportObservers(FrameIdentifier frameID, Ref<WebCore::Report>&& report)
+{
+    auto* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+    auto* coreFrame = frame->coreFrame();
+    if (!coreFrame)
+        return;
+    if (RefPtr document = coreFrame->document())
+        document->reportingScope().notifyReportObservers(WTFMove(report));
 }
 
 NotificationPermissionRequestManager* WebPage::notificationPermissionRequestManager()

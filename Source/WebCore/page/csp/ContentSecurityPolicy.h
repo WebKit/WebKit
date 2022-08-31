@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google, Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
 #include <functional>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
@@ -62,6 +63,7 @@ class ResourceRequest;
 class ScriptExecutionContext;
 class SecurityOrigin;
 struct ContentSecurityPolicyClient;
+struct ReportingClient;
 
 enum class ParserInserted : bool { No, Yes };
 enum class LogToConsole : bool { No, Yes };
@@ -79,7 +81,7 @@ class ContentSecurityPolicy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ContentSecurityPolicy(URL&&, ScriptExecutionContext&);
-    WEBCORE_EXPORT explicit ContentSecurityPolicy(URL&&, ContentSecurityPolicyClient* = nullptr);
+    WEBCORE_EXPORT explicit ContentSecurityPolicy(URL&&, ContentSecurityPolicyClient*, ReportingClient*);
     WEBCORE_EXPORT ~ContentSecurityPolicy();
 
     enum class ShouldMakeIsolatedCopy : bool { No, Yes };
@@ -164,6 +166,7 @@ public:
     void reportInvalidSandboxFlags(const String&) const;
     void reportInvalidDirectiveInReportOnlyMode(const String&) const;
     void reportInvalidDirectiveInHTTPEquivMeta(const String&) const;
+    void reportMissingReportToTokens(const String&) const;
     void reportMissingReportURI(const String&) const;
     void reportUnsupportedDirective(const String&) const;
     void enforceSandboxFlags(SandboxFlags sandboxFlags) { m_sandboxFlags |= sandboxFlags; }
@@ -207,7 +210,7 @@ private:
     void logToConsole(const String& message, const String& contextURL = String(), const OrdinalNumber& contextLine = OrdinalNumber::beforeFirst(), const OrdinalNumber& contextColumn = OrdinalNumber::beforeFirst(), JSC::JSGlobalObject* = nullptr) const;
     void applyPolicyToScriptExecutionContext();
 
-    String createURLForReporting(const URL&, const String&) const;
+    String createURLForReporting(const URL&, const String&, bool usesReportingAPI) const;
 
     const PAL::TextEncoding documentEncoding() const;
 
@@ -240,6 +243,8 @@ private:
     // We can never have both a script execution context and a ContentSecurityPolicyClient.
     ScriptExecutionContext* m_scriptExecutionContext { nullptr };
     ContentSecurityPolicyClient* m_client { nullptr };
+    mutable ReportingClient* m_reportingClient { nullptr };
+
     URL m_protectedURL;
     std::optional<URL> m_documentURL;
     std::unique_ptr<ContentSecurityPolicySource> m_selfSource;

@@ -38,6 +38,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
 #include <WebCore/ByteArrayPixelBuffer.h>
+#include <WebCore/CSPViolationReportBody.h>
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/CacheStorageConnection.h>
 #include <WebCore/CompositionUnderline.h>
@@ -75,6 +76,8 @@
 #include <WebCore/RectEdges.h>
 #include <WebCore/Region.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/Report.h>
+#include <WebCore/ReportBody.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/ResourceRequest.h>
@@ -3219,5 +3222,57 @@ void ArgumentCoder<PixelBuffer>::encode<Encoder>(Encoder&, const PixelBuffer&);
 
 template
 void ArgumentCoder<PixelBuffer>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const PixelBuffer&);
+
+void ArgumentCoder<Ref<WebCore::Report>>::encode(Encoder& encoder, const Ref<WebCore::Report>& report)
+{
+    report->encode(encoder);
+}
+
+std::optional<Ref<WebCore::Report>> ArgumentCoder<Ref<WebCore::Report>>::decode(Decoder& decoder)
+{
+    return WebCore::Report::decode(decoder);
+}
+
+void ArgumentCoder<RefPtr<WebCore::ReportBody>>::encode(Encoder& encoder, const RefPtr<WebCore::ReportBody>& reportBody)
+{
+    bool hasReportBody = !!reportBody;
+    encoder << hasReportBody;
+    if (!hasReportBody)
+        return;
+
+    encoder << reportBody->reportBodyType();
+
+    switch (reportBody->reportBodyType()) {
+    case ReportBodyType::CSPViolation:
+        downcast<CSPViolationReportBody>(reportBody.get())->encode(encoder);
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportBody>>::decode(Decoder& decoder)
+{
+    bool hasReportBody = false;
+    if (!decoder.decode(hasReportBody))
+        return std::nullopt;
+
+    RefPtr<WebCore::ReportBody> result;
+    if (!hasReportBody)
+        return { result };
+
+    std::optional<ReportBodyType> reportBodyType;
+    decoder >> reportBodyType;
+    if (!reportBodyType)
+        return std::nullopt;
+
+    switch (*reportBodyType) {
+    case ReportBodyType::CSPViolation:
+        return CSPViolationReportBody::decode(decoder);
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
 
 } // namespace IPC

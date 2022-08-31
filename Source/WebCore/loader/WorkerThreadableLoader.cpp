@@ -123,7 +123,12 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     ASSERT(contentSecurityPolicy);
 
     auto securityOriginCopy = securityOrigin->isolatedCopy();
-    auto contentSecurityPolicyIsolatedCopy = makeUnique<ContentSecurityPolicy>(globalScope.url().isolatedCopy());
+    ReportingClient* reportingClient = nullptr;
+    if (auto* client = m_loaderProxy.reportingClient())
+        reportingClient = client;
+    else if (auto* workerScope = dynamicDowncast<WorkerGlobalScope>(globalScope))
+        reportingClient = workerScope;
+    auto contentSecurityPolicyIsolatedCopy = makeUnique<ContentSecurityPolicy>(globalScope.url().isolatedCopy(), nullptr, reportingClient);
     contentSecurityPolicyIsolatedCopy->copyStateFrom(contentSecurityPolicy, ContentSecurityPolicy::ShouldMakeIsolatedCopy::Yes);
     contentSecurityPolicyIsolatedCopy->copyUpgradeInsecureRequestStateFrom(*contentSecurityPolicy, ContentSecurityPolicy::ShouldMakeIsolatedCopy::Yes);
     auto crossOriginEmbedderPolicyCopy = globalScope.crossOriginEmbedderPolicy().isolatedCopy();
