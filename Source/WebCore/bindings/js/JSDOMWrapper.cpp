@@ -32,13 +32,14 @@
 #include "JSRemoteDOMWindow.h"
 #include "SerializedScriptValue.h"
 #include "WebCoreJSClientData.h"
+#include <JavaScriptCore/Butterfly.h>
 #include <JavaScriptCore/Error.h>
 
 namespace WebCore {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMObject);
 
-JSDOMObject::JSDOMObject(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Butterfly* butterfly)
+JSDOMObject::JSDOMObject(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, JSC::Butterfly* butterfly)
     : Base(globalObject.vm(), structure, butterfly)
 {
     ASSERT(scriptExecutionContext() || globalObject.classInfo() == JSRemoteDOMWindow::info());
