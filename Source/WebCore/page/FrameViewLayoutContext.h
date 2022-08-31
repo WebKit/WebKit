@@ -144,6 +144,9 @@ private:
 #endif
     void updateStyleForLayout();
 
+    bool handleLayoutWithFrameFlatteningIfNeeded();
+    void startLayoutAtMainFrameViewIfNeeded();
+
     // These functions may only be accessed by LayoutStateMaintainer.
     // Subtree push/pop
     void pushLayoutState(RenderElement&);

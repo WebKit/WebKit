@@ -42,7 +42,11 @@ protected:
 public:
     FrameView* childView() const { return downcast<FrameView>(RenderWidget::widget()); }
 
+    void layoutWithFlattening(bool fixedWidth, bool fixedHeight);
+
 private:
+    void performLayoutWithFlattening(bool hasFixedWidth, bool hasFixedHeight);
+    RenderView* childRenderView() const;
     void widget() const = delete;
 };
 

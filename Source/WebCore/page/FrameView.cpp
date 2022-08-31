@@ -50,6 +50,7 @@
 #include "FragmentDirectiveParser.h"
 #include "FragmentDirectiveRangeFinder.h"
 #include "Frame.h"
+#include "FrameFlattening.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameSelection.h"
@@ -482,6 +483,44 @@ void FrameView::setFrameRect(const IntRect& newRect)
     setCurrentScrollType(oldScrollType);
 }
 
+FrameFlattening FrameView::effectiveFrameFlattening() const
+{
+#if PLATFORM(IOS_FAMILY)
+    // On iOS when async frame scrolling is enabled, it does not make sense to use full frame flattening.
+    // In that case, we just consider that frame flattening is disabled. This allows people to test
+    // frame scrolling on iOS by enabling "Async Frame Scrolling" via the Safari menu.
+    if (frame().settings().asyncFrameScrollingEnabled() && frame().settings().frameFlattening() == FrameFlattening::FullyEnabled)
+        return FrameFlattening::Disabled;
+#endif
+    return frame().settings().frameFlattening();
+}
+
+bool FrameView::frameFlatteningEnabled() const
+{
+    return effectiveFrameFlattening() != FrameFlattening::Disabled;
+}
+
+bool FrameView::isFrameFlatteningValidForThisFrame() const
+{
+    if (!frameFlatteningEnabled())
+        return false;
+
+    HTMLFrameOwnerElement* owner = frame().ownerElement();
+    if (!owner)
+        return false;
+
+    // Frame flattening is valid only for <frame> and <iframe>.
+    return owner->hasTagName(frameTag) || owner->hasTagName(iframeTag);
+}
+
+bool FrameView::avoidScrollbarCreation() const
+{
+    // with frame flattening no subframe can have scrollbars
+    // but we also cannot turn scrollbars off as we determine
+    // our flattening policy using that.
+    return isFrameFlatteningValidForThisFrame();
+}
+
 void FrameView::setCanHaveScrollbars(bool canHaveScrollbars)
 {
     m_canHaveScrollbars = canHaveScrollbars;
@@ -749,7 +788,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
         return;
     }
     
-    if (is<HTMLFrameSetElement>(*bodyOrFrameset)) {
+    if (is<HTMLFrameSetElement>(*bodyOrFrameset) && !frameFlatteningEnabled()) {
         vMode = ScrollbarMode::AlwaysOff;
         hMode = ScrollbarMode::AlwaysOff;
         return;
@@ -1261,7 +1300,7 @@ void FrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
         return;
     
     if (auto* body = frame().document()->bodyOrFrameset()) {
-        if (is<HTMLFrameSetElement>(*body) && body->renderer())
+        if (is<HTMLFrameSetElement>(*body) && !frameFlatteningEnabled() && body->renderer())
             body->renderer()->setChildNeedsLayout();
     }
     auto firstLayout = !layoutContext().didFirstLayout();
@@ -1286,6 +1325,7 @@ void FrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
 
 void FrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
 {
+    renderView()->releaseProtectedRenderWidgets();
     auto* layoutRootEnclosingLayer = layoutRoot->enclosingLayer();
     layoutRootEnclosingLayer->updateLayerPositionsAfterLayout(!is<RenderView>(*layoutRoot), layoutContext().needsFullRepaint());
 
@@ -4367,6 +4407,32 @@ FrameView* FrameView::parentFrameView() const
     if (!parentFrame)
         return nullptr;
     return parentFrame->view();
+}
+
+bool FrameView::isInChildFrameWithFrameFlattening() const
+{
+    if (!frameFlatteningEnabled())
+        return false;
+
+    if (!parent())
+        return false;
+
+    HTMLFrameOwnerElement* ownerElement = frame().ownerElement();
+    if (!ownerElement)
+        return false;
+
+    if (!ownerElement->renderWidget())
+        return false;
+
+    // Frame flattening applies when the owner element is either in a frameset or
+    // an iframe with flattening parameters.
+    if (is<HTMLIFrameElement>(*ownerElement))
+        return downcast<RenderIFrame>(*ownerElement->renderWidget()).flattenFrame();
+
+    if (is<HTMLFrameElement>(*ownerElement))
+        return true;
+
+    return false;
 }
 
 void FrameView::updateControlTints()

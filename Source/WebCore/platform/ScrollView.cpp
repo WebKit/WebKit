@@ -78,6 +78,8 @@ bool ScrollView::setHasVerticalScrollbar(bool hasBar, bool* contentSizeAffected)
 
 bool ScrollView::setHasScrollbarInternal(RefPtr<Scrollbar>& scrollbar, ScrollbarOrientation orientation, bool hasBar, bool* contentSizeAffected)
 {
+    ASSERT(!hasBar || !avoidScrollbarCreation());
+
     if (hasBar && !scrollbar) {
         scrollbar = createScrollbar(orientation);
         addChild(*scrollbar);
@@ -640,12 +642,12 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
     bool scrollbarAddedOrRemoved = false;
 
     if (m_scrollbarsSuppressed || (hScroll != ScrollbarMode::Auto && vScroll != ScrollbarMode::Auto)) {
-        if (hasHorizontalScrollbar != newHasHorizontalScrollbar) {
+        if (hasHorizontalScrollbar != newHasHorizontalScrollbar && (hasHorizontalScrollbar || !avoidScrollbarCreation())) {
             if (setHasHorizontalScrollbar(newHasHorizontalScrollbar))
                 scrollbarAddedOrRemoved = true;
         }
 
-        if (hasVerticalScrollbar != newHasVerticalScrollbar) {
+        if (hasVerticalScrollbar != newHasVerticalScrollbar && (hasVerticalScrollbar || !avoidScrollbarCreation())) {
             if (setHasVerticalScrollbar(newHasVerticalScrollbar))
                 scrollbarAddedOrRemoved = true;
         }
@@ -682,7 +684,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
             }
         }
 
-        if (hasHorizontalScrollbar != newHasHorizontalScrollbar) {
+        if (hasHorizontalScrollbar != newHasHorizontalScrollbar && (hasHorizontalScrollbar || !avoidScrollbarCreation())) {
             if (scrollOrigin().y() && !newHasHorizontalScrollbar)
                 ScrollableArea::setScrollOrigin(IntPoint(scrollOrigin().x(), scrollOrigin().y() - m_horizontalScrollbar->occupiedHeight()));
             if (m_horizontalScrollbar)
@@ -695,7 +697,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
             }
         }
 
-        if (hasVerticalScrollbar != newHasVerticalScrollbar) {
+        if (hasVerticalScrollbar != newHasVerticalScrollbar && (hasVerticalScrollbar || !avoidScrollbarCreation())) {
             if (scrollOrigin().x() && !newHasVerticalScrollbar)
                 ScrollableArea::setScrollOrigin(IntPoint(scrollOrigin().x() - m_verticalScrollbar->occupiedWidth(), scrollOrigin().y()));
             if (m_verticalScrollbar)
