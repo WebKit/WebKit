@@ -34,23 +34,24 @@ namespace WebCore {
 struct PolicyContainer {
     CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     CrossOriginOpenerPolicy crossOriginOpenerPolicy;
-    // FIXME: CSP list and referrer policy should be part of the PolicyContainer.
+    ReferrerPolicy referrerPolicy = ReferrerPolicy::Default;
+    // FIXME: CSP list should be part of the PolicyContainer.
 
-    PolicyContainer isolatedCopy() const & { return { crossOriginEmbedderPolicy.isolatedCopy(), crossOriginOpenerPolicy.isolatedCopy() }; }
-    PolicyContainer isolatedCopy() && { return { WTFMove(crossOriginEmbedderPolicy).isolatedCopy(), WTFMove(crossOriginOpenerPolicy).isolatedCopy() }; }
+    PolicyContainer isolatedCopy() const & { return { crossOriginEmbedderPolicy.isolatedCopy(), crossOriginOpenerPolicy.isolatedCopy(), referrerPolicy }; }
+    PolicyContainer isolatedCopy() && { return { WTFMove(crossOriginEmbedderPolicy).isolatedCopy(), WTFMove(crossOriginOpenerPolicy).isolatedCopy(), referrerPolicy }; }
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PolicyContainer> decode(Decoder&);
 };
 
 inline bool operator==(const PolicyContainer& a, const PolicyContainer& b)
 {
-    return a.crossOriginEmbedderPolicy == b.crossOriginEmbedderPolicy && a.crossOriginOpenerPolicy == b.crossOriginOpenerPolicy;
+    return a.crossOriginEmbedderPolicy == b.crossOriginEmbedderPolicy && a.crossOriginOpenerPolicy == b.crossOriginOpenerPolicy && a.referrerPolicy == b.referrerPolicy;
 }
 
 template<class Encoder>
 void PolicyContainer::encode(Encoder& encoder) const
 {
-    encoder << crossOriginEmbedderPolicy << crossOriginOpenerPolicy;
+    encoder << crossOriginEmbedderPolicy << crossOriginOpenerPolicy << referrerPolicy;
 }
 
 template<class Decoder>
@@ -66,9 +67,15 @@ std::optional<PolicyContainer> PolicyContainer::decode(Decoder& decoder)
     if (!crossOriginOpenerPolicy)
         return std::nullopt;
 
+    std::optional<ReferrerPolicy> referrerPolicy;
+    decoder >> referrerPolicy;
+    if (!referrerPolicy)
+        return std::nullopt;
+
     return {{
         WTFMove(*crossOriginEmbedderPolicy),
-        WTFMove(*crossOriginOpenerPolicy)
+        WTFMove(*crossOriginOpenerPolicy),
+        *referrerPolicy
     }};
 }
 

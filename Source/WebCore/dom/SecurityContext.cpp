@@ -174,7 +174,8 @@ PolicyContainer SecurityContext::policyContainer() const
 {
     return {
         crossOriginEmbedderPolicy(),
-        crossOriginOpenerPolicy()
+        crossOriginOpenerPolicy(),
+        referrerPolicy()
     };
 }
 
