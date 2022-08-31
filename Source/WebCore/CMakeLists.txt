@@ -2147,6 +2147,12 @@ set(MODERN_MEDIA_CONTROLS_STYLE_SHEETS
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-media-controls.css"
 )
 
+if (PORT STREQUAL "GTK" OR PORT STREQUAL "WPE")
+    list(APPEND MODERN_MEDIA_CONTROLS_STYLE_SHEETS
+        "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-overrides.css"
+    )
+endif ()
+
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
     DEPENDS ${MODERN_MEDIA_CONTROLS_STYLE_SHEETS}
