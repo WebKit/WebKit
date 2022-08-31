@@ -36,6 +36,7 @@
 #include "MediaFeatureNames.h"
 #include "QualifiedName.h"
 #include "SVGNames.h"
+#include "TagName.h"
 #include "TelephoneNumberDetector.h"
 #include "UserAgentStyle.h"
 #include "WebKitFontFamilyNames.h"
@@ -61,6 +62,7 @@ void ProcessWarming::initializeNames()
     XMLNSNames::init();
     XMLNames::init();
     WebKitFontFamilyNames::init();
+    initializeTagNameStrings();
 }
 
 void ProcessWarming::prewarmGlobally()

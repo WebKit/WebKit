@@ -22,6 +22,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/DOMWindowConstructors.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/DecompressionStreamBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/DecompressionStreamBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/DedicatedWorkerGlobalScopeConstructors.idl
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ElementName.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ElementName.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/EventFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/EventHeaders.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/EventInterfaces.h
@@ -3022,6 +3024,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/MathMLNames.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/MathMLNames.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ModernMediaControls.css
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ModernMediaControls.js
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Namespace.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Namespace.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PaintWorkletGlobalScopeConstructors.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PlugInsResources.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PlugInsResourcesData.cpp
@@ -3059,6 +3063,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StylePropertyShorthandFunctions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StylePropertyShorthandFunctions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SupplementalDependencies.dep
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SupplementalDependencies.txt
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TagName.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TagName.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TextDecoderStreamBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TextDecoderStreamBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TextEncoderStreamBuiltins.cpp

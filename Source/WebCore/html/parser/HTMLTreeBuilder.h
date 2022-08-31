@@ -37,6 +37,8 @@ class JSCustomElementInterface;
 class HTMLDocumentParser;
 class ScriptElement;
 
+enum class TagName : uint16_t;
+
 struct CustomElementConstructionData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
@@ -142,9 +144,9 @@ private:
     void processCharacterBuffer(ExternalCharacterTokenBuffer&);
     inline void processCharacterBufferForInBody(ExternalCharacterTokenBuffer&);
 
-    void processFakeStartTag(const QualifiedName&, Vector<Attribute>&& attributes = Vector<Attribute>());
-    void processFakeEndTag(const QualifiedName&);
-    void processFakeEndTag(const AtomString&);
+    void processFakeStartTag(TagName, Vector<Attribute>&& attributes = Vector<Attribute>());
+    void processFakeEndTag(TagName);
+    void processFakeEndTag(const HTMLStackItem&);
     void processFakeCharacters(const String&);
     void processFakePEndTagIfPInButtonScope();
 

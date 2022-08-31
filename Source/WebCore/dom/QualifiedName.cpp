@@ -21,6 +21,8 @@
 #include "QualifiedName.h"
 
 #include "CommonAtomStrings.h"
+#include "ElementName.h"
+#include "Namespace.h"
 #include "QualifiedNameCache.h"
 #include "ThreadGlobalData.h"
 #include <wtf/Assertions.h>
@@ -30,8 +32,28 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QualifiedName);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QualifiedNameQualifiedNameImpl);
 
-QualifiedName::QualifiedName(const AtomString& p, const AtomString& l, const AtomString& n)
-    : m_impl(threadGlobalData().qualifiedNameCache().getOrCreate(QualifiedNameComponents { p.impl(), l.impl(), n.isEmpty() ? nullptr : n.impl() }))
+QualifiedName::QualifiedNameImpl::QualifiedNameImpl(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI)
+    : m_namespace(Namespace::Unknown)
+    , m_elementName(ElementName::Unknown)
+    , m_prefix(prefix)
+    , m_localName(localName)
+    , m_namespaceURI(namespaceURI)
+{
+    ASSERT(!namespaceURI.isEmpty() || namespaceURI.isNull());
+}
+
+static QualifiedNameComponents makeComponents(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI)
+{
+    return { prefix.impl(), localName.impl(), namespaceURI.isEmpty() ? nullptr : namespaceURI.impl() };
+}
+
+QualifiedName::QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI)
+    : m_impl(threadGlobalData().qualifiedNameCache().getOrCreate(makeComponents(prefix, localName, namespaceURI)))
+{
+}
+
+QualifiedName::QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI, Namespace nodeNamespace, ElementName elementName)
+    : m_impl(threadGlobalData().qualifiedNameCache().getOrCreate(makeComponents(prefix, localName, namespaceURI), nodeNamespace, elementName))
 {
 }
 
@@ -49,13 +71,13 @@ void QualifiedName::init()
     if (initialized)
         return;
 
-    anyName.construct(nullAtom(), starAtom(), starAtom());
+    anyName.construct(nullAtom(), starAtom(), starAtom(), Namespace::Unknown, ElementName::Unknown);
     initialized = true;
 }
 
 const QualifiedName& nullQName()
 {
-    static NeverDestroyed<QualifiedName> nullName(nullAtom(), nullAtom(), nullAtom());
+    static NeverDestroyed<QualifiedName> nullName(nullAtom(), nullAtom(), nullAtom(), Namespace::None, ElementName::Unknown);
     return nullName;
 }
 
@@ -68,7 +90,7 @@ const AtomString& QualifiedName::localNameUpper() const
 
 unsigned QualifiedName::QualifiedNameImpl::computeHash() const
 {
-    QualifiedNameComponents components = { m_prefix.impl(), m_localName.impl(), m_namespace.impl() };
+    QualifiedNameComponents components = { m_prefix.impl(), m_localName.impl(), m_namespaceURI.impl() };
     return WTF::computeHash(components);
 }
 

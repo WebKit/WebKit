@@ -270,6 +270,9 @@ public:
     const AtomString& prefix() const final { return m_tagName.prefix(); }
     const AtomString& namespaceURI() const final { return m_tagName.namespaceURI(); }
 
+    ElementName elementName() const { return m_tagName.elementName(); }
+    Namespace nodeNamespace() const { return m_tagName.nodeNamespace(); }
+
     ExceptionOr<void> setPrefix(const AtomString&) final;
 
     String nodeName() const override;

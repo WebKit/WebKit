@@ -1611,6 +1611,8 @@ all : \
     CSSValueKeywords.h \
     ColorData.cpp \
     DOMJITAbstractHeapRepository.h \
+    ElementName.cpp \
+    ElementName.h \
     EventInterfaces.h \
     EventTargetInterfaces.h \
     HTMLElementFactory.cpp \
@@ -1626,6 +1628,8 @@ all : \
     JSSVGElementWrapperFactory.cpp \
     JSSVGElementWrapperFactory.h \
     LocalizableAdditions.strings.out \
+    Namespace.cpp \
+    Namespace.h \
     SVGElementFactory.cpp \
     SVGElementFactory.h \
     SVGElementTypeHelpers.h \
@@ -1636,6 +1640,8 @@ all : \
     StyleBuilderGenerated.cpp \
     StylePropertyShorthandFunctions.cpp \
     StylePropertyShorthandFunctions.h \
+    TagName.cpp \
+    TagName.h \
     CSSStyleDeclaration+PropertyNames.idl \
     WebKitFontFamilyNames.cpp \
     WebKitFontFamilyNames.h \
@@ -1993,7 +1999,7 @@ HTML_TAG_FILES_PATTERNS = $(subst .,%,$(HTML_TAG_FILES))
 all : $(HTML_TAG_FILES)
 
 $(HTML_TAG_FILES_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory
+	$(PERL) $< --elements $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory
 
 XML_NS_NAMES_FILES = XMLNSNames.cpp XMLNSNames.h
 XML_NS_NAMES_FILES_PATTERNS = $(subst .,%,$(XML_NS_NAMES_FILES))
@@ -2029,7 +2035,7 @@ SVG_TAG_FILES_PATTERNS = $(subst .,%,$(SVG_TAG_FILES))
 all : $(SVG_TAG_FILES)
 
 $(SVG_TAG_FILES_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory
+	$(PERL) $< --elements $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory
 
 XLINK_NAMES_FILES = XLinkNames.cpp XLinkNames.h
 XLINK_NAMES_FILES_PATTERNS = $(subst .,%,$(XLINK_NAMES_FILES))
@@ -2086,7 +2092,68 @@ MATH_ML_GENERATED_PATTERNS = $(subst .,%,$(MATH_ML_GENERATED_FILES))
 
 all : $(MATH_ML_GENERATED_FILES)
 $(MATH_ML_GENERATED_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/mathml/mathtags.in $(WebCore)/mathml/mathattrs.in
-	$(PERL) $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory
+	$(PERL) $< --elements $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory
+
+# --------
+
+# TagName, ElementName, and Namespace enums
+
+DOM_NAME_ENUM_DEPS = \
+    $(WebCore)/dom/make_names.pl \
+    $(WebCore)/bindings/scripts/Hasher.pm \
+    $(WebCore)/bindings/scripts/StaticString.pm \
+    $(WebCore)/html/HTMLTagNames.in \
+    $(WebCore)/svg/svgtags.in \
+    $(WebCore)/mathml/mathtags.in \
+    $(WebCore)/html/HTMLAttributeNames.in \
+    $(WebCore)/mathml/mathattrs.in \
+    $(WebCore)/svg/svgattrs.in \
+    $(WebCore)/svg/xlinkattrs.in \
+    $(WebCore)/xml/xmlattrs.in \
+    $(WebCore)/xml/xmlnsattrs.in \
+#
+
+DOM_NAME_ENUM_ARGUMENTS = \
+    --elements $(WebCore)/html/HTMLTagNames.in \
+    --elements $(WebCore)/svg/svgtags.in \
+    --elements $(WebCore)/mathml/mathtags.in \
+    --attrs $(WebCore)/html/HTMLAttributeNames.in \
+    --attrs $(WebCore)/mathml/mathattrs.in \
+    --attrs $(WebCore)/svg/svgattrs.in \
+    --attrs $(WebCore)/svg/xlinkattrs.in \
+    --attrs $(WebCore)/xml/xmlattrs.in \
+    --attrs $(WebCore)/xml/xmlnsattrs.in \
+#
+
+TAG_NAME_GENERATED_FILES = \
+    TagName.cpp \
+    TagName.h \
+#
+TAG_NAME_GENERATED_PATTERNS = $(subst .,%,$(TAG_NAME_GENERATED_FILES))
+
+all : $(TAG_NAME_GENERATED_FILES)
+$(TAG_NAME_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
+	$(PERL) $< --enum TagName $(DOM_NAME_ENUM_ARGUMENTS)
+
+ELEMENT_NAME_GENERATED_FILES = \
+    ElementName.cpp \
+    ElementName.h \
+#
+ELEMENT_NAME_GENERATED_PATTERNS = $(subst .,%,$(ELEMENT_NAME_GENERATED_FILES))
+
+all : $(ELEMENT_NAME_GENERATED_FILES)
+$(ELEMENT_NAME_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
+	$(PERL) $< --enum ElementName $(DOM_NAME_ENUM_ARGUMENTS)
+
+NAMESPACE_GENERATED_FILES = \
+    Namespace.cpp \
+    Namespace.h \
+#
+NAMESPACE_GENERATED_PATTERNS = $(subst .,%,$(NAMESPACE_GENERATED_FILES))
+
+all : $(NAMESPACE_GENERATED_FILES)
+$(NAMESPACE_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
+	$(PERL) $< --enum Namespace $(DOM_NAME_ENUM_ARGUMENTS)
 
 # --------
 

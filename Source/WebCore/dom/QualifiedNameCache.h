@@ -39,6 +39,8 @@
 #include "MathMLNames.h"
 #endif
 
+enum class ElementName : uint16_t;
+enum class Namespace : uint8_t;
 
 namespace WebCore {
 
@@ -48,6 +50,7 @@ public:
     QualifiedNameCache() = default;
 
     Ref<QualifiedName::QualifiedNameImpl> getOrCreate(const QualifiedNameComponents&);
+    Ref<QualifiedName::QualifiedNameImpl> getOrCreate(const QualifiedNameComponents&, Namespace, ElementName);
     void remove(QualifiedName::QualifiedNameImpl&);
 
 private:

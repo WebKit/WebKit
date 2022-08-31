@@ -34,20 +34,43 @@ struct QNameComponentsTranslator {
     {
         return computeHash(components);
     }
+
     static bool equal(QualifiedName::QualifiedNameImpl* name, const QualifiedNameComponents& c)
     {
-        return c.m_prefix == name->m_prefix.impl() && c.m_localName == name->m_localName.impl() && c.m_namespace == name->m_namespace.impl();
+        return c.m_prefix == name->m_prefix.impl() && c.m_localName == name->m_localName.impl() && c.m_namespaceURI == name->m_namespaceURI.impl();
     }
+
     static void translate(QualifiedName::QualifiedNameImpl*& location, const QualifiedNameComponents& components, unsigned)
     {
-        location = &QualifiedName::QualifiedNameImpl::create(components.m_prefix, components.m_localName, components.m_namespace).leakRef();
+        location = &QualifiedName::QualifiedNameImpl::create(components.m_prefix, components.m_localName, components.m_namespaceURI).leakRef();
     }
 };
 
 Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const QualifiedNameComponents& components)
 {
-    QNameSet::AddResult addResult = m_cache.add<QNameComponentsTranslator>(components);
-    return addResult.isNewEntry ? adoptRef(**addResult.iterator) : Ref<QualifiedName::QualifiedNameImpl> { **addResult.iterator };
+    auto addResult = m_cache.add<QNameComponentsTranslator>(components);
+
+    if (addResult.isNewEntry) {
+        auto nodeNamespace = findNamespace(components.m_namespaceURI);
+        (*addResult.iterator)->m_namespace = nodeNamespace;
+        (*addResult.iterator)->m_elementName = findElementName(nodeNamespace, components.m_localName);
+        return adoptRef(**addResult.iterator);
+    }
+
+    return Ref { **addResult.iterator };
+}
+
+Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const QualifiedNameComponents& components, Namespace nodeNamespace, ElementName elementName)
+{
+    auto addResult = m_cache.add<QNameComponentsTranslator>(components);
+
+    if (addResult.isNewEntry) {
+        (*addResult.iterator)->m_namespace = nodeNamespace;
+        (*addResult.iterator)->m_elementName = elementName;
+        return adoptRef(**addResult.iterator);
+    }
+
+    return Ref { **addResult.iterator };
 }
 
 void QualifiedNameCache::remove(QualifiedName::QualifiedNameImpl& impl)
