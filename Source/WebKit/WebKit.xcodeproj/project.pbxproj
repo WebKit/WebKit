@@ -16642,12 +16642,12 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DSTROOT)/System/Library/Preferences/Logging/Subsystems/com.apple.WebKit.plist",
-				"$(DSTROOT)/AppleInternal/Library/Ariadne/Plists/WebKit.plist",
+				"$(WK_LOGGING_PREFERENCES_OUTPUT_PATH)",
+				"$(WK_TRACE_POINTS_OUTPUT_PATH)",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/copy-signpost-plists.sh\n";
+			shellScript = "Scripts/copy-binary-plists.sh\n";
 		};
 		F4CDF3CC27E918D900191928 /* Copy Profiling Data */ = {
 			isa = PBXShellScriptBuildPhase;
