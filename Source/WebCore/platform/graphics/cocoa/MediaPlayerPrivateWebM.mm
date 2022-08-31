@@ -338,9 +338,9 @@ void MediaPlayerPrivateWebM::updateBufferedFromTrackBuffers(bool ended)
 {
     MediaTime highestEndTime = MediaTime::negativeInfiniteTime();
     for (auto& trackBuffer : m_trackBufferMap.values()) {
-        if (!trackBuffer.get().buffered().length())
+        if (!trackBuffer->buffered().length())
             continue;
-        highestEndTime = std::max(highestEndTime, trackBuffer.get().maximumBufferedTime());
+        highestEndTime = std::max(highestEndTime, trackBuffer->maximumBufferedTime());
     }
 
     // NOTE: Short circuit the following if none of the TrackBuffers have buffered ranges to avoid generating
@@ -353,10 +353,10 @@ void MediaPlayerPrivateWebM::updateBufferedFromTrackBuffers(bool ended)
     PlatformTimeRanges intersectionRanges { MediaTime::zeroTime(), highestEndTime };
 
     for (auto& trackBuffer : m_trackBufferMap.values()) {
-        if (!trackBuffer.get().buffered().length())
+        if (!trackBuffer->buffered().length())
             continue;
 
-        PlatformTimeRanges trackRanges = trackBuffer.get().buffered();
+        PlatformTimeRanges trackRanges = trackBuffer->buffered();
 
         if (ended)
             trackRanges.add(trackRanges.maximumBufferedTime(), highestEndTime);
