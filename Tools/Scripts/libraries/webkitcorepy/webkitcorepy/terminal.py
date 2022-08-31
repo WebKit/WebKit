@@ -23,7 +23,9 @@
 import contextlib
 import io
 import sys
-import readline
+
+if not sys.platform.startswith('win'):
+    import readline
 
 from webkitcorepy import StringIO, run
 
