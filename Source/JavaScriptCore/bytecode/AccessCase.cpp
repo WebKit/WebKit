@@ -2648,7 +2648,6 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case IndexedInt32Store:
     case IndexedDoubleStore:
     case IndexedContiguousStore:
-    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageStore:
     case IndexedTypedArrayInt8Store:
     case IndexedTypedArrayUint8Store:
