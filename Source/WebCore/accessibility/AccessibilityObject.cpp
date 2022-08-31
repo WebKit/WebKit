@@ -2554,6 +2554,7 @@ static void initializeRoleMap()
         { "main"_s, AccessibilityRole::LandmarkMain },
         { "marquee"_s, AccessibilityRole::ApplicationMarquee },
         { "math"_s, AccessibilityRole::DocumentMath },
+        { "mark"_s, AccessibilityRole::Mark },
         { "menu"_s, AccessibilityRole::Menu },
         { "menubar"_s, AccessibilityRole::MenuBar },
         { "menuitem"_s, AccessibilityRole::MenuItem },
