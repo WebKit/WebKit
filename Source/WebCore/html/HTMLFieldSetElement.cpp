@@ -150,7 +150,7 @@ bool HTMLFieldSetElement::matchesInvalidPseudoClass() const
 
 bool HTMLFieldSetElement::supportsFocus() const
 {
-    return HTMLElement::supportsFocus();
+    return HTMLElement::supportsFocus() && !isDisabledFormControl();
 }
 
 const AtomString& HTMLFieldSetElement::formControlType() const

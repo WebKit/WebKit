@@ -31,6 +31,8 @@ input:disabled {
 <input type="text" id="parserGeneratedInput9">
 </fieldset>
 </form>
+<fieldset tabindex=0 disabled id="fieldset-tabindex"></fieldset>
+</form>
 
 <script>
 description('Tests for HTMLFieldSetElement.disabled behavior.');
@@ -290,6 +292,10 @@ document.execCommand('insertText', false, 'K');
 shouldBe('insertedLegendTextInput.value', '"JJJK"');
 shouldBe('firstLegendTextInput.value', '"IIK"');
 shouldBe('secondLegendTextInput.value', '"K"');
+
+var disabledFieldsetWithTabindex = document.getElementById('fieldset-tabindex');
+document.activeElement.blur();
+shouldBe('disabledFieldsetWithTabindex.focus(); document.activeElement', 'document.body');
 
 document.body.removeChild(document.getElementsByTagName('form')[0]);
 document.body.removeChild(fieldSet);
