@@ -27,6 +27,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/MachSendRight.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -99,11 +100,11 @@ public:
 #if USE(UNIX_DOMAIN_SOCKETS)
         mutable IPC::Attachment m_attachment;
 #elif OS(DARWIN)
-        mutable mach_port_t m_port { MACH_PORT_NULL };
+        mutable MachSendRight m_handle;
 #elif OS(WINDOWS)
         mutable HANDLE m_handle;
 #endif
-        size_t m_size;
+        size_t m_size { 0 };
     };
 
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
@@ -155,7 +156,7 @@ private:
     std::optional<int> m_fileDescriptor;
     bool m_isWrappingMap { false };
 #elif OS(DARWIN)
-    mach_port_t m_port { MACH_PORT_NULL };
+    MachSendRight m_sendRight;
 #elif OS(WINDOWS)
     HANDLE m_handle;
 #endif
