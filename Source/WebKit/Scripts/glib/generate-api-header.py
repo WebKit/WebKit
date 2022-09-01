@@ -27,28 +27,28 @@ import subprocess
 import sys
 
 API_SINGLE_HEADER_CHECK = {
-    "gtk": '''#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+    "gtk": '''#if !defined(__WEBKIT2_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <webkit2/webkit2.h> can be included directly.\"
 #endif''',
-    "wpe": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+    "wpe": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <wpe/webkit.h> can be included directly.\"
 #endif'''
 }
 
 INJECTED_BUNDLE_API_SINGLE_HEADER_CHECK = {
-    "gtk": '''#if !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+    "gtk": '''#if !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <webkit2/webkit-web-extension.h> can be included directly.\"
 #endif''',
-    "wpe": '''#if !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+    "wpe": '''#if !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <wpe/webkit-web-extension.h> can be included directly.\"
 #endif'''
 }
 
 SHARED_API_SINGLE_HEADER_CHECK = {
-    "gtk": '''#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__)
+    "gtk": '''#if !defined(__WEBKIT2_H_INSIDE__) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <webkit2/webkit2.h> can be included directly.\"
 #endif''',
-    "wpe": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(WEBKIT2_COMPILATION) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__)
+    "wpe": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <wpe/webkit.h> can be included directly.\"
 #endif'''
 }

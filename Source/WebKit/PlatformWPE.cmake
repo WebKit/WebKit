@@ -38,8 +38,6 @@ if (EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
     )
 endif ()
 
-add_definitions(-DWEBKIT2_COMPILATION)
-
 add_definitions(-DLIBDIR="${LIB_INSTALL_DIR}")
 add_definitions(-DPKGLIBDIR="${LIB_INSTALL_DIR}/wpe-webkit-${WPE_API_VERSION}")
 add_definitions(-DPKGLIBEXECDIR="${LIBEXEC_INSTALL_DIR}")
@@ -535,7 +533,6 @@ GI_INTROSPECT(WPEJavaScriptCore ${WPE_API_VERSION} jsc/jsc.h
     SYMBOL_PREFIX jsc
     DEPENDENCIES GObject-2.0
     OPTIONS
-        -DJSC_COMPILATION
         -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
         -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
     SOURCES

@@ -17,7 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__JSC_H_INSIDE__) && !defined(JSC_COMPILATION) && !defined(WEBKIT2_COMPILATION)
+#if !defined(__JSC_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error "Only <jsc/jsc.h> can be included directly."
 #endif
 

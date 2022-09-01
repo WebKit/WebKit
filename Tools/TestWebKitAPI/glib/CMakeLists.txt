@@ -58,11 +58,6 @@ set(WebKitGLibAPIWebProcessTests
 macro(ADD_WK2_TEST_WEB_EXTENSION extension_name)
     add_library(${extension_name} MODULE ${ARGN})
     add_dependencies(${extension_name} WebKit)
-    set_property(
-        TARGET ${extension_name}
-        APPEND
-        PROPERTY COMPILE_DEFINITIONS WEBKIT2_COMPILATION
-    )
     set_target_properties(${extension_name} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${TEST_LIBRARY_DIR}
     )

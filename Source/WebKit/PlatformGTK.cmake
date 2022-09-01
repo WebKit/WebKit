@@ -34,8 +34,6 @@ if (EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
     )
 endif ()
 
-add_definitions(-DBUILDING_WEBKIT)
-add_definitions(-DWEBKIT2_COMPILATION)
 add_definitions(-DWEBKIT_DOM_USE_UNSTABLE_API)
 
 add_definitions(-DPKGLIBEXECDIR="${LIBEXEC_INSTALL_DIR}")

@@ -24,7 +24,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+#if !defined(__WEBKIT2_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error "Only <webkit2/webkit2.h> can be included directly."
 #endif
 

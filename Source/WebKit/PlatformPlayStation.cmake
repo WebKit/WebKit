@@ -1,7 +1,5 @@
 include(Headers.cmake)
 
-add_definitions(-DBUILDING_WEBKIT)
-
 set(WebKit_USE_PREFIX_HEADER ON)
 
 list(APPEND WebProcess_SOURCES

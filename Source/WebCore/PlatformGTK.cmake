@@ -155,8 +155,6 @@ include_directories(SYSTEM
 
 list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE GTK::GTK)
 
-add_definitions(-DBUILDING_WEBKIT)
-
 if (ENABLE_SMOOTH_SCROLLING)
     list(APPEND WebCore_SOURCES
         platform/ScrollAnimationSmooth.cpp

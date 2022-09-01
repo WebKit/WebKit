@@ -6,8 +6,6 @@ set(PluginProcess_OUTPUT_NAME WebKitPluginProcess)
 
 include(Headers.cmake)
 
-add_definitions(-DBUILDING_WEBKIT)
-
 list(APPEND WebKit_SOURCES
     GPUProcess/graphics/RemoteGraphicsContextGLWin.cpp
 
