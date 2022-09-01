@@ -125,16 +125,12 @@ class Git(Scm):
             intersected = False
             log = None
             try:
-                kwargs = dict()
-                if sys.version_info >= (3, 6):
-                    kwargs = dict(encoding='utf-8')
                 self._last_populated[branch] = time.time()
                 log = subprocess.Popen(
                     [self.repo.executable(), 'log', '{}/{}'.format(remote, branch) if remote else branch, '--no-decorate', '--date=unix', '--'],
                     cwd=self.repo.root_path,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
-                    **kwargs
                 )
                 if log.poll():
                     raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))
@@ -142,14 +138,17 @@ class Git(Scm):
                 hash = None
                 revision = None
 
-                line = log.stdout.readline()
+                import codecs
+                log_stdout = codecs.getreader('ascii')(log.stdout, 'backslashreplace')
+
+                line = log_stdout.readline()
                 while line:
                     if line.startswith('    git-svn-id: '):
                         match = self.repo.GIT_SVN_REVISION.match(line.lstrip())
                         if match:
                             revision = int(match.group('revision'))
                     if not line.startswith('commit '):
-                        line = log.stdout.readline()
+                        line = log_stdout.readline()
                         continue
 
                     if hash and _append(branch, hash, revision=revision):
@@ -159,7 +158,7 @@ class Git(Scm):
 
                     hash = line.split(' ')[1].rstrip()
                     revision = None
-                    line = log.stdout.readline()
+                    line = log_stdout.readline()
 
                 if hash:
                     intersected = _append(branch, hash, revision=revision)
