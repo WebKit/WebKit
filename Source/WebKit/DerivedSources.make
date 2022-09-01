@@ -458,7 +458,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUOrigin3D.serialization.in \
 #
 
-all : GeneratedSerializers.h GeneratedSerializers.cpp
+all : GeneratedSerializers.h GeneratedSerializers.cpp SerializedTypeInfo.cpp
 
-GeneratedSerializers.h GeneratedSerializers.cpp : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make
+GeneratedSerializers.h GeneratedSerializers.cpp SerializedTypeInfo.cpp : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make
 	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py $(WebKit2)/ $(SERIALIZATION_DESCRIPTION_FILES)

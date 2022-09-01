@@ -533,6 +533,7 @@ add_custom_command(
     OUTPUT
         ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
         ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.cpp
+        ${WebKit_DERIVED_SOURCES_DIR}/SerializedTypeInfo.cpp
     MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-serializers.py
     DEPENDS
         ${WebKit_SERIALIZATION_IN_FILES}

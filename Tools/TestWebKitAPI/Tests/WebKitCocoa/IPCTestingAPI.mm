@@ -481,6 +481,14 @@ TEST(IPCTestingAPI, CanInterceptFindString)
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
+TEST(IPCTestingAPI, SerializedTypeInfo)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+    NSDictionary *typeInfo = [webView objectByEvaluatingJavaScript:@"IPC.serializedTypeInfo"];
+    NSArray *expectedArray = @[@"bool", @"bool", @"bool", @"String"];
+    EXPECT_TRUE([typeInfo[@"WebCore::CacheQueryOptions"] isEqualToArray:expectedArray]);
+}
+
 #endif
 
 TEST(IPCTestingAPI, CGColorInNSSecureCoding)

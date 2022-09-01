@@ -214,6 +214,34 @@ def generate_cpp(serialized_types, headers):
     return '\n'.join(result)
 
 
+def generate_serialized_type_info(serialized_types):
+    result = []
+    result.append(_license_header)
+    result.append('#include "config.h"')
+    result.append('#include "SerializedTypeInfo.h"')
+    result.append('')
+    result.append('#if ENABLE(IPC_TESTING_API)')
+    result.append('')
+    result.append('namespace WebKit {')
+    result.append('')
+    result.append('Vector<SerializedTypeInfo> allSerializedTypes()')
+    result.append('{')
+    result.append('    return {')
+    for type in serialized_types:
+        result.append('        { "' + type.namespace_and_name() + '"_s, {')
+        for member in type.members:
+            result.append('            "' + member.type + '"_s,')
+        result.append('        } },')
+    result.append('    };')
+    result.append('}')
+    result.append('')
+    result.append('} // namespace WebKit')
+    result.append('')
+    result.append('#endif // ENABLE(IPC_TESTING_API)')
+    result.append('')
+    return '\n'.join(result)
+
+
 def parse_serialized_types(file):
     serialized_types = []
     headers = []
@@ -283,21 +311,23 @@ def parse_serialized_types(file):
 
 
 def main(argv):
-    descriptions = []
+    serialized_types = []
     headers = []
     for i in range(2, len(argv)):
         with open(argv[1] + argv[i]) as file:
             new_types, new_headers = parse_serialized_types(file)
             for type in new_types:
-                descriptions.append(type)
+                serialized_types.append(type)
             for header in new_headers:
                 headers.append(header)
     headers.sort()
 
     with open('GeneratedSerializers.h', "w+") as header_output:
-        header_output.write(generate_header(descriptions))
+        header_output.write(generate_header(serialized_types))
     with open('GeneratedSerializers.cpp', "w+") as cpp_output:
-        cpp_output.write(generate_cpp(descriptions, headers))
+        cpp_output.write(generate_cpp(serialized_types, headers))
+    with open('SerializedTypeInfo.cpp', "w+") as cpp_output:
+        cpp_output.write(generate_serialized_type_info(serialized_types))
     return 0
 
 

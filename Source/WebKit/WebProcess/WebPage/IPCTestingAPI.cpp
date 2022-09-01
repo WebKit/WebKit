@@ -37,6 +37,7 @@
 #include "MessageArgumentDescriptions.h"
 #include "NetworkProcessConnection.h"
 #include "RemoteRenderingBackendCreationParameters.h"
+#include "SerializedTypeInfo.h"
 #include "StreamClientConnection.h"
 #include "StreamConnectionBuffer.h"
 #include "WebCoreArgumentCoders.h"
@@ -353,6 +354,7 @@ private:
     static JSValueRef retrieveID(JSContextRef, JSObjectRef thisObject, JSValueRef* exception, const WTF::Function<uint64_t(JSIPC&)>&);
 
     static JSValueRef messages(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef serializedTypeInfo(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef processTargets(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
 
     WeakPtr<WebPage> m_webPage;
@@ -1632,6 +1634,7 @@ const JSStaticValue* JSIPC::staticValues()
         { "sessionID", sessionID, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "webPageProxyID", webPageProxyID, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "messages", messages, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "serializedTypeInfo", serializedTypeInfo, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "processTargets", processTargets, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { 0, 0, 0, 0 }
     };
@@ -2311,6 +2314,36 @@ JSValueRef JSIPC::createSharedMemory(JSContextRef context, JSObjectRef, JSObject
     }
 
     return JSSharedMemory::create(*size)->createJSWrapper(context);
+}
+
+JSValueRef JSIPC::serializedTypeInfo(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
+{
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSC::JSObject* object = constructEmptyObject(globalObject, globalObject->objectPrototype());
+    RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+
+    auto types = allSerializedTypes();
+
+    for (size_t i = 0; i < types.size(); i++) {
+        auto& type = types[i];
+
+        JSC::JSObject* membersArray = JSC::constructEmptyArray(globalObject, nullptr);
+        RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+
+        for (size_t j = 0; j < type.members.size(); j++) {
+            membersArray->putDirectIndex(globalObject, j, JSC::jsNontrivialString(vm, type.members[j]));
+            RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+        }
+
+        object->putDirect(vm, JSC::Identifier::fromString(vm, String(type.name)), membersArray);
+        RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+    }
+
+    return toRef(vm, object);
 }
 
 JSValueRef JSIPC::vmPageSize(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
