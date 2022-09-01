@@ -28,6 +28,7 @@
 
 #include <memory>
 #include <openssl/X509.h>
+#include <openssl/hmac.h>
 
 namespace WebCore {
 
@@ -109,6 +110,15 @@ struct OpenSSLCryptoPtrDeleter<EC_POINT> {
 
 using ECPointPtr = OpenSSLCryptoPtr<EC_POINT>;
 
+template <>
+struct OpenSSLCryptoPtrDeleter<HMAC_CTX> {
+    void operator()(HMAC_CTX* ptr) const
+    {
+        HMAC_CTX_free(ptr);
+    }
+};
+
+using HMACCtxPtr = OpenSSLCryptoPtr<HMAC_CTX>;
 
 template <>
 struct OpenSSLCryptoPtrDeleter<PKCS8_PRIV_KEY_INFO> {
