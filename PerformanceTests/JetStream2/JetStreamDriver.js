@@ -1,7 +1,7 @@
 "use strict";
 
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-const preloadResources = !isInBrowser;
 const measureTotalTimeAsSubtest = false; // Once we move to preloading all resources, it would be good to turn this on.
 
 if (typeof RAMification === "undefined")
@@ -176,7 +175,19 @@ const fileLoader = (function() {
             if (!isInBrowser)
                 return Promise.resolve(readFile(url));
 
-            let fetchResponse = await fetch(new Request(url));
+            let fetchResponse;
+            let tries = 3;
+            while (tries--) {
+                try {
+                    fetchResponse = await fetch(new Request(url));
+                    break;
+                } catch (e) {
+                    if (!tries) {
+                        window.allIsGood = false;
+                        throw new Error("Fetch failed");
+                    }
+                }
+            }
             if (url.indexOf(".js") !== -1)
                 return await fetchResponse.text();
             else if (url.indexOf(".wasm") !== -1)
@@ -200,6 +211,8 @@ const fileLoader = (function() {
 class Driver {
     constructor() {
         this.benchmarks = [];
+        this.blobDataCache = { };
+        this.loadCache = { };
     }
 
     addPlan(plan, BenchmarkClass = DefaultBenchmark) {
@@ -233,6 +246,16 @@ class Driver {
             }
 
             benchmark.updateUIAfterRun();
+
+            if (isInBrowser) {
+                let cache = JetStream.blobDataCache;
+                for (let file of benchmark.plan.files) {
+                    let blobData = cache[file];
+                    blobData[3]--;
+                    if (!blobData[3])
+                        cache[file] = undefined;
+                }
+            }
         }
 
         let totalTime = Date.now() - start;
@@ -371,6 +394,7 @@ class Driver {
     }
 
     async initialize() {
+        await this.preloadFilesForBrowser();
         await this.fetchResources();
         this.prepareToRun();
         if (isInBrowser && window.location.search == '?report=true') {
@@ -378,9 +402,27 @@ class Driver {
         }
     }
 
-    async fetchResources() {
+    async preloadFilesForBrowser() {
+        if (!isInBrowser)
+            return;
+
+        var counter = { };
+        counter.loadedFiles = 0;
+        counter.totalFiles = 0;
+
+        var promises = [];
         for (let benchmark of this.benchmarks)
-            await benchmark.fetchResources();
+            promises.push(benchmark.preloadFilesForBrowser(counter));
+        await Promise.all(promises);
+
+        JetStream.loadCache = { }; // Done preloading all the files.
+    }
+
+    async fetchResources() {
+        var promises = [];
+        for (let benchmark of this.benchmarks)
+            promises.push(benchmark.fetchResources());
+        await Promise.all(promises);
 
         if (!isInBrowser)
             return;
@@ -545,14 +587,15 @@ class Benchmark {
         if (prerunCode)
             addScript(prerunCode);
 
-        if (preloadResources) {
+        if (!isInBrowser) {
             assert(this.scripts && this.scripts.length === this.plan.files.length);
 
             for (let text of this.scripts)
                 addScript(text);
         } else {
+            let cache = JetStream.blobDataCache;
             for (let file of this.plan.files)
-                addScriptWithURL(file);
+                addScriptWithURL(cache[file][2]);
         }
 
         let promise = new Promise((resolve, reject) => {
@@ -597,11 +640,62 @@ class Benchmark {
             Realm.dispose(magicFrame);
     }
 
+    async doLoadBlob(file) {
+        let response;
+        let tries = 3;
+        while (tries--) {
+            try {
+                response = await fetch(file, { cache: "no-store" });
+                break;
+            } catch (e) {
+                if (!tries) {
+                    window.allIsGood = false;
+                    throw new Error("Fetch failed");
+                }
+            }
+        }
+        let blob = await response.blob();
+        var blobData = [ file, blob, URL.createObjectURL(blob), 0 ];
+        JetStream.blobDataCache[file] = blobData;
+        return blobData;
+    }
+
+    async loadBlob(file) {
+        let promise = JetStream.loadCache[file];
+        if (promise)
+            return await promise;
+
+        promise = this.doLoadBlob(file);
+        JetStream.loadCache[file] = promise;
+        return await promise;
+    }
+
+    preloadFilesForBrowser(counter) {
+        if (!isInBrowser)
+            return;
+        let filePromises = this.plan.files.map((file) => this.loadBlob(file));
+
+        counter.totalFiles += filePromises.length;
+
+        return Promise.all(filePromises.map((promise) => {
+            return promise.then((blobData) => {
+                if (!window.allIsGood)
+                    return;
+
+                blobData[3]++; // Increment the refCount.
+
+                ++counter.loadedFiles;
+                var statusElement = document.getElementById("status");
+                statusElement.innerHTML = `Loading ${counter.loadedFiles} of ${counter.totalFiles} ...`;
+            });
+        }));
+    }
+
     fetchResources() {
         if (this._resourcesPromise)
             return this._resourcesPromise;
 
-        let filePromises = preloadResources ? this.plan.files.map((file) => fileLoader.load(file)) : [];
+        let filePromises = !isInBrowser ? this.plan.files.map((file) => fileLoader.load(file)) : [];
         let preloads = [];
         let preloadVariableNames = [];
 
@@ -615,7 +709,7 @@ class Benchmark {
         preloads = preloads.map((file) => fileLoader.load(file));
 
         let p1 = Promise.all(filePromises).then((texts) => {
-            if (!preloadResources)
+            if (isInBrowser)
                 return;
             this.scripts = [];
             assert(texts.length === this.plan.files.length);
