@@ -41,3 +41,14 @@
 .inline-widget.breakpoint.disabled {
     background-color: var(--breakpoint-color-disabled);
 }
+
+.inline-widget.breakpoint.auto-continue::after {
+    position: absolute;
+    right: 5px;
+    width: 3px;
+    height: 10px;
+    content: "";
+    clip-path: polygon(0 20%, 100% 50%, 0 80%);
+    background-color: var(--selected-foreground-color);
+    transform: scaleX(-1);
+}

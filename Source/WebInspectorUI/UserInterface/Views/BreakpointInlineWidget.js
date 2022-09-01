@@ -62,6 +62,7 @@ WI.BreakpointInlineWidget = class BreakpointInlineWidget
     _update()
     {
         this._element.classList.toggle("disabled", !this._breakpoint || this._breakpoint.disabled);
+        this._element.classList.toggle("auto-continue", !!this._breakpoint?.autoContinue);
     }
 
     _createBreakpoint() {
@@ -77,6 +78,7 @@ WI.BreakpointInlineWidget = class BreakpointInlineWidget
     _addBreakpointEventListeners()
     {
         this._breakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._handleBreakpointDisabledStateChanged, this);
+        this._breakpoint.addEventListener(WI.Breakpoint.Event.AutoContinueDidChange, this._handleBreakpointAutoContinueChanged, this);
 
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointRemoved, this._handleBreakpointRemoved, this);
     }
@@ -124,6 +126,11 @@ WI.BreakpointInlineWidget = class BreakpointInlineWidget
         this._update();
     }
 
+    _handleBreakpointAutoContinueChanged(event)
+    {
+        this._update();
+    }
+
     _handleBreakpointRemoved(event)
     {
         let {breakpoint} = event.data;
@@ -131,6 +138,7 @@ WI.BreakpointInlineWidget = class BreakpointInlineWidget
             return;
 
         this._breakpoint.removeEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._handleBreakpointDisabledStateChanged, this);
+        this._breakpoint.removeEventListener(WI.Breakpoint.Event.AutoContinueDidChange, this._handleBreakpointAutoContinueChanged, this);
 
         WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BreakpointRemoved, this._handleBreakpointRemoved, this);
 
