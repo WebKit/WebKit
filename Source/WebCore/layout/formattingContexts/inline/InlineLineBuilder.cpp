@@ -267,7 +267,7 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     auto& boxGeometry = m_inlineFormattingContext.geometryForBox(layoutBox);
 
     if (layoutBox.isFloatingPositioned())
-        return boxGeometry.marginBoxWidth();
+        return std::max(0_lu, boxGeometry.marginBoxWidth());
 
     if (layoutBox.isReplacedBox())
         return boxGeometry.marginBoxWidth();
@@ -648,8 +648,8 @@ UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initial
     auto lineIsConstrainedByFloat = false;
 
     if (auto lineConstraints = floatConstraints(initialLineLogicalRect)) {
-        lineLogicalLeft = lineConstraints->logicalLeft;
-        lineLogicalRight = lineConstraints->logicalRight();
+        lineLogicalLeft = std::max<InlineLayoutUnit>(lineLogicalLeft, lineConstraints->logicalLeft);
+        lineLogicalRight = std::min<InlineLayoutUnit>(lineLogicalRight, lineConstraints->logicalRight());
         lineIsConstrainedByFloat = true;
     }
 
@@ -909,8 +909,8 @@ InlineRect LineBuilder::lineRectForCandidateInlineContent(const LineCandidate& l
         return m_lineLogicalRect;
     auto adjustedLineLogicalRect = InlineRect { m_lineLogicalRect.top(), m_lineLogicalRect.left(), m_lineLogicalRect.width(), maximumLineLogicalHeight };
     if (auto horizontalConstraints = floatConstraints(adjustedLineLogicalRect)) {
-        adjustedLineLogicalRect.setLeft(horizontalConstraints->logicalLeft);
-        adjustedLineLogicalRect.setWidth(horizontalConstraints->logicalWidth);
+        adjustedLineLogicalRect.setLeft(std::max<InlineLayoutUnit>(adjustedLineLogicalRect.left(), horizontalConstraints->logicalLeft));
+        adjustedLineLogicalRect.setWidth(std::min<InlineLayoutUnit>(adjustedLineLogicalRect.width(), horizontalConstraints->logicalWidth));
     }
     return adjustedLineLogicalRect;
 }
