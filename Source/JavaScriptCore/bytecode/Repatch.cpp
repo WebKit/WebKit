@@ -380,6 +380,9 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 if (!arguments->overrodeThings())
                     newCase = AccessCase::create(vm, codeBlock, AccessCase::ScopedArgumentsLength, propertyName);
             }
+        } else if (propertyName == vm.propertyNames->lastIndex) {
+            if (baseCell->inherits<RegExpObject>())
+                newCase = AccessCase::create(vm, codeBlock, AccessCase::RegExpLastIndex, propertyName);
         }
 
         if (!propertyName.isSymbol() && baseCell->inherits<JSModuleNamespaceObject>() && !slot.isUnset()) {
@@ -826,193 +829,201 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
         
         if (!baseValue.isCell())
             return GiveUpOnCache;
-        
-        if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
-            return GiveUpOnCache;
-
-        // FIXME: We should try to do something smarter here...
-        if (isCopyOnWrite(oldStructure->indexingMode()))
-            return GiveUpOnCache;
-        // We can't end up storing to a CoW on the prototype since it shouldn't own properties.
-        ASSERT(!isCopyOnWrite(slot.base()->indexingMode()));
-
-        if (!oldStructure->propertyAccessesAreCacheable())
-            return GiveUpOnCache;
 
         JSCell* baseCell = baseValue.asCell();
-
-        bool isProxy = false;
-        if (baseCell->type() == PureForwardingProxyType) {
-            baseCell = jsCast<JSProxy*>(baseCell)->target();
-            baseValue = baseCell;
-            isProxy = true;
-
-            // We currently only cache Replace and JS/Custom Setters on JSProxy. We don't
-            // cache transitions because global objects will never share the same structure
-            // in our current implementation.
-            bool isCacheableProxy = (slot.isCacheablePut() && slot.type() == PutPropertySlot::ExistingProperty)
-                || slot.isCacheableSetter()
-                || slot.isCacheableCustom();
-            if (!isCacheableProxy)
-                return GiveUpOnCache;
-        }
-
-        if (isProxy && (putKind == PutKind::DirectPrivateFieldSet || putKind == PutKind::DirectPrivateFieldDefine))
-            return GiveUpOnCache;
-
         RefPtr<AccessCase> newCase;
 
-        if (slot.base() == baseValue && slot.isCacheablePut()) {
-            if (slot.type() == PutPropertySlot::ExistingProperty) {
-                // This assert helps catch bugs if we accidentally forget to disable caching
-                // when we transition then store to an existing property. This is common among
-                // paths that reify lazy properties. If we reify a lazy property and forget
-                // to disable caching, we may come down this path. The Replace IC does not
-                // know how to model these types of structure transitions (or any structure
-                // transition for that matter).
-                RELEASE_ASSERT(baseValue.asCell()->structure() == oldStructure);
-
-                oldStructure->didCachePropertyReplacement(vm, slot.cachedOffset());
-            
-                if (stubInfo.cacheType() == CacheType::Unset
-                    && InlineAccess::canGenerateSelfPropertyReplace(codeBlock, stubInfo, slot.cachedOffset())
-                    && !oldStructure->needImpurePropertyWatchpoint()
-                    && !isProxy) {
-                    
-                    bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(codeBlock, stubInfo, oldStructure, slot.cachedOffset());
-                    if (generatedCodeInline) {
-                        LOG_IC((ICEvent::PutBySelfPatch, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
-                        repatchSlowPathCall(codeBlock, stubInfo, appropriateOptimizingPutByFunction(slot, putByKind, putKind));
-                        stubInfo.initPutByIdReplace(locker, codeBlock, oldStructure, slot.cachedOffset(), propertyName);
-                        return RetryCacheLater;
-                    }
-                }
-
-                newCase = AccessCase::createReplace(vm, codeBlock, propertyName, slot.cachedOffset(), oldStructure, isProxy);
-            } else {
-                ASSERT(!isProxy);
-                ASSERT(slot.type() == PutPropertySlot::NewProperty);
-
-                if (!oldStructure->isObject())
-                    return GiveUpOnCache;
-
-                // If the old structure is dictionary, it means that this is one-on-one between an object and a structure.
-                // If this is NewProperty operation, generating IC for this does not offer any benefit because this transition never happens again.
-                if (oldStructure->isDictionary())
-                    return RetryCacheLater;
-
-                PropertyOffset offset;
-                Structure* newStructure = Structure::addPropertyTransitionToExistingStructureConcurrently(oldStructure, ident.impl(), static_cast<unsigned>(PropertyAttribute::None), offset);
-                if (!newStructure || !newStructure->propertyAccessesAreCacheable())
-                    return GiveUpOnCache;
-
-                // If JSObject::put is overridden by UserObject, UserObject::put performs side-effect on JSObject::put, and it neglects to mark the PutPropertySlot as non-cachaeble,
-                // then arbitrary structure transitions can happen during the put operation, and this generates wrong transition information here as if oldStructure -> newStructure.
-                // In reality, the transition is oldStructure -> something unknown structures -> baseValue's structure.
-                // To guard against the embedder's potentially incorrect UserObject::put implementation, we should check for this condition and if found, and give up on caching the put.
-                ASSERT(baseValue.asCell()->structure() == newStructure);
-                if (baseValue.asCell()->structure() != newStructure)
-                    return GiveUpOnCache;
-
-                ASSERT(newStructure->previousID() == oldStructure);
-                ASSERT(!newStructure->isDictionary());
-                ASSERT(newStructure->isObject());
-                
-                RefPtr<PolyProtoAccessChain> prototypeAccessChain;
-                ObjectPropertyConditionSet conditionSet;
-                if (putKind == PutKind::NotDirect) {
-                    auto cacheStatus = prepareChainForCaching(globalObject, baseCell, nullptr);
-                    if (!cacheStatus)
-                        return GiveUpOnCache;
-
-                    if (cacheStatus->usesPolyProto) {
-                        prototypeAccessChain = PolyProtoAccessChain::tryCreate(globalObject, baseCell, nullptr);
-                        if (!prototypeAccessChain)
-                            return GiveUpOnCache;
-                    } else {
-                        prototypeAccessChain = nullptr;
-                        conditionSet = generateConditionsForPropertySetterMiss(
-                            vm, codeBlock, globalObject, newStructure, ident.impl());
-                        if (!conditionSet.isValid())
-                            return GiveUpOnCache;
-                    }
-                }
-
-                if (putKind == PutKind::DirectPrivateFieldDefine) {
-                    ASSERT(ident.isPrivateName());
-                    conditionSet = generateConditionsForPropertyMiss(vm, codeBlock, globalObject, newStructure, ident.impl());
-                    if (!conditionSet.isValid())
-                        return GiveUpOnCache;
-                }
-
-                newCase = AccessCase::createTransition(vm, codeBlock, propertyName, offset, oldStructure, newStructure, conditionSet, WTFMove(prototypeAccessChain), stubInfo);
+        if (!(putKind == PutKind::DirectPrivateFieldSet || putKind == PutKind::DirectPrivateFieldDefine)) {
+            if (propertyName == vm.propertyNames->lastIndex) {
+                if (baseCell->inherits<RegExpObject>())
+                    newCase = AccessCase::create(vm, codeBlock, AccessCase::SetRegExpLastIndex, propertyName);
             }
-        } else if (slot.isCacheableCustom() || slot.isCacheableSetter()) {
-            if (slot.isCacheableCustom()) {
-                ObjectPropertyConditionSet conditionSet;
-                RefPtr<PolyProtoAccessChain> prototypeAccessChain;
+        }
 
-                // We need to do this even if we're a self custom, since we must disallow dictionaries
-                // because we need to be informed if the custom goes away since we cache the constant
-                // function pointer.
-                auto cacheStatus = prepareChainForCaching(globalObject, baseCell, slot.base());
-                if (!cacheStatus)
+        if (!newCase) {
+            if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
+                return GiveUpOnCache;
+
+            // FIXME: We should try to do something smarter here...
+            if (isCopyOnWrite(oldStructure->indexingMode()))
+                return GiveUpOnCache;
+            // We can't end up storing to a CoW on the prototype since it shouldn't own properties.
+            ASSERT(!isCopyOnWrite(slot.base()->indexingMode()));
+
+            if (!oldStructure->propertyAccessesAreCacheable())
+                return GiveUpOnCache;
+
+            bool isProxy = false;
+            if (baseCell->type() == PureForwardingProxyType) {
+                baseCell = jsCast<JSProxy*>(baseCell)->target();
+                baseValue = baseCell;
+                isProxy = true;
+
+                // We currently only cache Replace and JS/Custom Setters on JSProxy. We don't
+                // cache transitions because global objects will never share the same structure
+                // in our current implementation.
+                bool isCacheableProxy = (slot.isCacheablePut() && slot.type() == PutPropertySlot::ExistingProperty)
+                    || slot.isCacheableSetter()
+                    || slot.isCacheableCustom();
+                if (!isCacheableProxy)
                     return GiveUpOnCache;
+            }
 
-                if (slot.base() != baseValue) {
-                    if (cacheStatus->usesPolyProto) {
-                        prototypeAccessChain = PolyProtoAccessChain::tryCreate(globalObject, baseCell, slot.base());
-                        if (!prototypeAccessChain)
+            if (isProxy && (putKind == PutKind::DirectPrivateFieldSet || putKind == PutKind::DirectPrivateFieldDefine))
+                return GiveUpOnCache;
+
+            if (slot.base() == baseValue && slot.isCacheablePut()) {
+                if (slot.type() == PutPropertySlot::ExistingProperty) {
+                    // This assert helps catch bugs if we accidentally forget to disable caching
+                    // when we transition then store to an existing property. This is common among
+                    // paths that reify lazy properties. If we reify a lazy property and forget
+                    // to disable caching, we may come down this path. The Replace IC does not
+                    // know how to model these types of structure transitions (or any structure
+                    // transition for that matter).
+                    RELEASE_ASSERT(baseValue.asCell()->structure() == oldStructure);
+
+                    oldStructure->didCachePropertyReplacement(vm, slot.cachedOffset());
+                
+                    if (stubInfo.cacheType() == CacheType::Unset
+                        && InlineAccess::canGenerateSelfPropertyReplace(codeBlock, stubInfo, slot.cachedOffset())
+                        && !oldStructure->needImpurePropertyWatchpoint()
+                        && !isProxy) {
+                        
+                        bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(codeBlock, stubInfo, oldStructure, slot.cachedOffset());
+                        if (generatedCodeInline) {
+                            LOG_IC((ICEvent::PutBySelfPatch, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
+                            repatchSlowPathCall(codeBlock, stubInfo, appropriateOptimizingPutByFunction(slot, putByKind, putKind));
+                            stubInfo.initPutByIdReplace(locker, codeBlock, oldStructure, slot.cachedOffset(), propertyName);
+                            return RetryCacheLater;
+                        }
+                    }
+
+                    newCase = AccessCase::createReplace(vm, codeBlock, propertyName, slot.cachedOffset(), oldStructure, isProxy);
+                } else {
+                    ASSERT(!isProxy);
+                    ASSERT(slot.type() == PutPropertySlot::NewProperty);
+
+                    if (!oldStructure->isObject())
+                        return GiveUpOnCache;
+
+                    // If the old structure is dictionary, it means that this is one-on-one between an object and a structure.
+                    // If this is NewProperty operation, generating IC for this does not offer any benefit because this transition never happens again.
+                    if (oldStructure->isDictionary())
+                        return RetryCacheLater;
+
+                    PropertyOffset offset;
+                    Structure* newStructure = Structure::addPropertyTransitionToExistingStructureConcurrently(oldStructure, ident.impl(), static_cast<unsigned>(PropertyAttribute::None), offset);
+                    if (!newStructure || !newStructure->propertyAccessesAreCacheable())
+                        return GiveUpOnCache;
+
+                    // If JSObject::put is overridden by UserObject, UserObject::put performs side-effect on JSObject::put, and it neglects to mark the PutPropertySlot as non-cachaeble,
+                    // then arbitrary structure transitions can happen during the put operation, and this generates wrong transition information here as if oldStructure -> newStructure.
+                    // In reality, the transition is oldStructure -> something unknown structures -> baseValue's structure.
+                    // To guard against the embedder's potentially incorrect UserObject::put implementation, we should check for this condition and if found, and give up on caching the put.
+                    ASSERT(baseValue.asCell()->structure() == newStructure);
+                    if (baseValue.asCell()->structure() != newStructure)
+                        return GiveUpOnCache;
+
+                    ASSERT(newStructure->previousID() == oldStructure);
+                    ASSERT(!newStructure->isDictionary());
+                    ASSERT(newStructure->isObject());
+                    
+                    RefPtr<PolyProtoAccessChain> prototypeAccessChain;
+                    ObjectPropertyConditionSet conditionSet;
+                    if (putKind == PutKind::NotDirect) {
+                        auto cacheStatus = prepareChainForCaching(globalObject, baseCell, nullptr);
+                        if (!cacheStatus)
                             return GiveUpOnCache;
-                    } else {
-                        prototypeAccessChain = nullptr;
-                        conditionSet = generateConditionsForPrototypePropertyHitCustom(
-                            vm, codeBlock, globalObject, oldStructure, slot.base(), ident.impl(), static_cast<unsigned>(PropertyAttribute::None));
+
+                        if (cacheStatus->usesPolyProto) {
+                            prototypeAccessChain = PolyProtoAccessChain::tryCreate(globalObject, baseCell, nullptr);
+                            if (!prototypeAccessChain)
+                                return GiveUpOnCache;
+                        } else {
+                            prototypeAccessChain = nullptr;
+                            conditionSet = generateConditionsForPropertySetterMiss(
+                                vm, codeBlock, globalObject, newStructure, ident.impl());
+                            if (!conditionSet.isValid())
+                                return GiveUpOnCache;
+                        }
+                    }
+
+                    if (putKind == PutKind::DirectPrivateFieldDefine) {
+                        ASSERT(ident.isPrivateName());
+                        conditionSet = generateConditionsForPropertyMiss(vm, codeBlock, globalObject, newStructure, ident.impl());
                         if (!conditionSet.isValid())
                             return GiveUpOnCache;
                     }
+
+                    newCase = AccessCase::createTransition(vm, codeBlock, propertyName, offset, oldStructure, newStructure, conditionSet, WTFMove(prototypeAccessChain), stubInfo);
                 }
+            } else if (slot.isCacheableCustom() || slot.isCacheableSetter()) {
+                if (slot.isCacheableCustom()) {
+                    ObjectPropertyConditionSet conditionSet;
+                    RefPtr<PolyProtoAccessChain> prototypeAccessChain;
 
-                newCase = GetterSetterAccessCase::create(
-                    vm, codeBlock, slot.isCustomAccessor() ? AccessCase::CustomAccessorSetter : AccessCase::CustomValueSetter, oldStructure, propertyName,
-                    invalidOffset, conditionSet, WTFMove(prototypeAccessChain), isProxy, slot.customSetter(), slot.base() != baseValue ? slot.base() : nullptr);
-            } else {
-                ASSERT(slot.isCacheableSetter());
-                ObjectPropertyConditionSet conditionSet;
-                RefPtr<PolyProtoAccessChain> prototypeAccessChain;
-                PropertyOffset offset = slot.cachedOffset();
-
-                if (slot.base() != baseValue) {
+                    // We need to do this even if we're a self custom, since we must disallow dictionaries
+                    // because we need to be informed if the custom goes away since we cache the constant
+                    // function pointer.
                     auto cacheStatus = prepareChainForCaching(globalObject, baseCell, slot.base());
                     if (!cacheStatus)
                         return GiveUpOnCache;
-                    if (cacheStatus->flattenedDictionary)
-                        return RetryCacheLater;
 
-                    if (cacheStatus->usesPolyProto) {
-                        prototypeAccessChain = PolyProtoAccessChain::tryCreate(globalObject, baseCell, slot.base());
-                        if (!prototypeAccessChain)
-                            return GiveUpOnCache;
-                        unsigned attributes;
-                        offset = prototypeAccessChain->slotBaseStructure(vm, baseCell->structure())->get(vm, ident.impl(), attributes);
-                        if (!isValidOffset(offset) || !(attributes & PropertyAttribute::Accessor))
-                            return RetryCacheLater;
-                    } else {
-                        prototypeAccessChain = nullptr;
-                        conditionSet = generateConditionsForPrototypePropertyHit(
-                            vm, codeBlock, globalObject, oldStructure, slot.base(), ident.impl());
-                        if (!conditionSet.isValid())
-                            return GiveUpOnCache;
-
-                        if (!(conditionSet.slotBaseCondition().attributes() & PropertyAttribute::Accessor))
-                            return GiveUpOnCache;
-
-                        offset = conditionSet.slotBaseCondition().offset();
+                    if (slot.base() != baseValue) {
+                        if (cacheStatus->usesPolyProto) {
+                            prototypeAccessChain = PolyProtoAccessChain::tryCreate(globalObject, baseCell, slot.base());
+                            if (!prototypeAccessChain)
+                                return GiveUpOnCache;
+                        } else {
+                            prototypeAccessChain = nullptr;
+                            conditionSet = generateConditionsForPrototypePropertyHitCustom(
+                                vm, codeBlock, globalObject, oldStructure, slot.base(), ident.impl(), static_cast<unsigned>(PropertyAttribute::None));
+                            if (!conditionSet.isValid())
+                                return GiveUpOnCache;
+                        }
                     }
-                }
 
-                newCase = GetterSetterAccessCase::create(
-                    vm, codeBlock, AccessCase::Setter, oldStructure, propertyName, offset, conditionSet, WTFMove(prototypeAccessChain), isProxy);
+                    newCase = GetterSetterAccessCase::create(
+                        vm, codeBlock, slot.isCustomAccessor() ? AccessCase::CustomAccessorSetter : AccessCase::CustomValueSetter, oldStructure, propertyName,
+                        invalidOffset, conditionSet, WTFMove(prototypeAccessChain), isProxy, slot.customSetter(), slot.base() != baseValue ? slot.base() : nullptr);
+                } else {
+                    ASSERT(slot.isCacheableSetter());
+                    ObjectPropertyConditionSet conditionSet;
+                    RefPtr<PolyProtoAccessChain> prototypeAccessChain;
+                    PropertyOffset offset = slot.cachedOffset();
+
+                    if (slot.base() != baseValue) {
+                        auto cacheStatus = prepareChainForCaching(globalObject, baseCell, slot.base());
+                        if (!cacheStatus)
+                            return GiveUpOnCache;
+                        if (cacheStatus->flattenedDictionary)
+                            return RetryCacheLater;
+
+                        if (cacheStatus->usesPolyProto) {
+                            prototypeAccessChain = PolyProtoAccessChain::tryCreate(globalObject, baseCell, slot.base());
+                            if (!prototypeAccessChain)
+                                return GiveUpOnCache;
+                            unsigned attributes;
+                            offset = prototypeAccessChain->slotBaseStructure(vm, baseCell->structure())->get(vm, ident.impl(), attributes);
+                            if (!isValidOffset(offset) || !(attributes & PropertyAttribute::Accessor))
+                                return RetryCacheLater;
+                        } else {
+                            prototypeAccessChain = nullptr;
+                            conditionSet = generateConditionsForPrototypePropertyHit(
+                                vm, codeBlock, globalObject, oldStructure, slot.base(), ident.impl());
+                            if (!conditionSet.isValid())
+                                return GiveUpOnCache;
+
+                            if (!(conditionSet.slotBaseCondition().attributes() & PropertyAttribute::Accessor))
+                                return GiveUpOnCache;
+
+                            offset = conditionSet.slotBaseCondition().offset();
+                        }
+                    }
+
+                    newCase = GetterSetterAccessCase::create(
+                        vm, codeBlock, AccessCase::Setter, oldStructure, propertyName, offset, conditionSet, WTFMove(prototypeAccessChain), isProxy);
+                }
             }
         }
 

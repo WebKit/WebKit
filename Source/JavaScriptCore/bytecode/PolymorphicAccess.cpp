@@ -963,6 +963,12 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
     case AccessCase::ScopedArgumentsLength:
         out.print("ScopedArgumentsLength");
         return;
+    case AccessCase::RegExpLastIndex:
+        out.print("RegExpLastIndex");
+        return;
+    case AccessCase::SetRegExpLastIndex:
+        out.print("SetRegExpLastIndex");
+        return;
     case AccessCase::ModuleNamespaceLoad:
         out.print("ModuleNamespaceLoad");
         return;
