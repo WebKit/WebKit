@@ -122,6 +122,7 @@ constexpr float gradientsPerDegreeFloat= 400.0f / 360.0f;
 constexpr float degreesPerGradientFloat = 360.0f / 400.0f;
 constexpr float turnsPerDegreeFloat = 1.0f / 360.0f;
 constexpr float degreesPerTurnFloat = 360.0f;
+constexpr float radiansPerTurnFloat = 2.0f * piFloat;
 
 constexpr inline float deg2rad(float d)  { return d * radiansPerDegreeFloat; }
 constexpr inline float rad2deg(float r)  { return r * degreesPerRadianFloat; }

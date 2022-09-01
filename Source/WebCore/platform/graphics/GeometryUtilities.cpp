@@ -346,4 +346,10 @@ float angleOfPointToSideOfIntersection(const FloatRect& boundingRect, const std:
     return side == BoxSide::Top || side == BoxSide::Bottom ? angle : 90 - angle;
 }
 
+float normalizeAngleInRadians(float radians)
+{
+    float circles = radians / radiansPerTurnFloat;
+    return radiansPerTurnFloat * (circles - floor(circles));
+}
+
 }
