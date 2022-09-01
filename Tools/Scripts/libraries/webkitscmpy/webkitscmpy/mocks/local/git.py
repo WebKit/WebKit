@@ -255,7 +255,7 @@ nothing to commit, working tree clean
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
                     stdout='\n'.join(sorted(['* ' + self.branch] + list(({default_branch} | set(self.commits.keys())) - {self.branch}))) +
-                           '\nremotes/origin/HEAD -> origin/{}\n'.format(default_branch),
+                           '\nremotes/origin/HEAD -> origin/{}\n'.format(default_branch) + '\n'.join(['  remotes/{}'.format(name) for name in self.remotes.keys()]) + '\n',
                 ),
             ), mocks.Subprocess.Route(
                 self.executable, 'tag',
@@ -562,7 +562,7 @@ nothing to commit, working tree clean
             ), mocks.Subprocess.Route(
                 self.executable, 'push', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
-                generator=lambda *args, **kwargs: self.push(args[2], args[3].split(':')[0]),
+                generator=lambda *args, **kwargs: self.push(args[2], args[4 if args[3] == '--delete' else 3].split(':')[0]),
             ), mocks.Subprocess.Route(
                 self.executable, 'diff', re.compile(r'.+'),
                 cwd=self.path,
@@ -591,6 +591,18 @@ nothing to commit, working tree clean
                     stdout='Source/main.cpp\nSource/main.h\n',
                 ),
             ),  mocks.Subprocess.Route(
+                self.executable, 'branch', '--set-upstream-to', re.compile(r'.+'), re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                ) if args[4] in self.remotes else mocks.ProcessCompletion(returncode=128, stderr="fatal: branch '{}' does not exist".format(args[4])),
+            ), mocks.Subprocess.Route(
+                self.executable, 'branch', '--track', re.compile(r'.+'), re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                ) if args[4] in self.remotes else mocks.ProcessCompletion(returncode=128, stderr="fatal: branch '{}' does not exist".format(args[4])),
+            ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
@@ -694,10 +706,14 @@ nothing to commit, working tree clean
     def branches_on(self, hash):
         result = set()
         found_identifier = 0
+        if '/' in hash:
+            _, hash = hash.split('/', 1)
+        for remote in self.remotes.keys():
+            if remote.endswith('/{}'.format(hash)):
+                result.add('remotes/{}'.format(remote))
         for branch, commits in self.commits.items():
-
             for commit in commits:
-                if commit.hash.startswith(hash):
+                if commit.hash.startswith(hash) or commit.branch == hash:
                     if commit.identifier is not None:
                         found_identifier = max(commit.identifier, found_identifier)
                     result.add(commit.branch)
@@ -1064,7 +1080,11 @@ nothing to commit, working tree clean
         )
 
     def push(self, remote, branch):
-        self.remotes['{}/{}'.format(remote, branch)] = self.commits[branch][:]
+        remote_branch = '{}/{}'.format(remote, branch)
+        if branch in self.commits:
+            self.remotes[remote_branch] = self.commits[branch][:]
+        elif remote_branch in self.remotes:
+            del self.remotes[remote_branch]
         return mocks.ProcessCompletion(returncode=0)
 
     def dcommit(self, remote='origin', branch=None):
