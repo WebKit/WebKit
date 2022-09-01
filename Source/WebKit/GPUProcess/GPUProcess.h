@@ -158,6 +158,7 @@ private:
     void removeMockMediaDevice(const String& persistentId);
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
+    void triggerMockMicrophoneConfigurationChange();
     bool setCaptureAttributionString(const String&);
 #endif
 #if HAVE(SC_CONTENT_SHARING_SESSION)

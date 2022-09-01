@@ -55,6 +55,8 @@ public:
     void captureStopped(bool didFail);
     void sourceMutedChanged(bool value, bool interrupted);
 
+    void configurationChanged(String&& persistentID, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&);
+
 protected:
     void createRemoteMediaSource();
     void removeAsClient();
