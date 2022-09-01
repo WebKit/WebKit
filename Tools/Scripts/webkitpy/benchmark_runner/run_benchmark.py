@@ -81,7 +81,7 @@ def parse_args(parser=None):
         _log.error("No diagnose directory to dump profiles to: {}".format(args.diagnose_dir))
         exit()
 
-    if args.generate_profiles and args.platform is not 'osx':
+    if args.generate_profiles and args.platform != 'osx':
         _log.error("Profile generation is currently only supported on macOS.")
         exit()
 
