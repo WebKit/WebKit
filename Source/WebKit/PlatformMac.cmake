@@ -101,7 +101,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/NetworkProcess/cocoa"
     "${WEBKIT_DIR}/NetworkProcess/mac"
     "${WEBKIT_DIR}/NetworkProcess/PrivateClickMeasurement/cocoa"
-    "${WEBKIT_DIR}/PluginProcess/mac"
     "${WEBKIT_DIR}/UIProcess/mac"
     "${WEBKIT_DIR}/UIProcess/API/C/mac"
     "${WEBKIT_DIR}/UIProcess/API/Cocoa"
@@ -148,7 +147,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Cocoa/GroupActivities"
     "${WEBKIT_DIR}/UIProcess/Media"
     "${WEBKIT_DIR}/UIProcess/WebAuthentication/fido"
-    "${WEBKIT_DIR}/WebAuthnProcess/mac"
     "${WEBKIT_DIR}/WebProcess/WebAuthentication"
     "${WEBKIT_DIR}/WebProcess/cocoa"
     "${WEBKIT_DIR}/WebProcess/mac"
@@ -159,7 +157,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/MediaSession"
     "${WEBKIT_DIR}/WebProcess/Model/mac"
     "${WEBKIT_DIR}/WebProcess/Plugins/PDF"
-    "${WEBKIT_DIR}/WebProcess/Plugins/Netscape/mac"
     "${WEBKIT_DIR}/WebProcess/WebPage/Cocoa"
     "${WEBKIT_DIR}/WebProcess/WebPage/RemoteLayerTree"
     "${WEBKIT_DIR}/WebProcess/WebPage/mac"
@@ -191,16 +188,10 @@ set(GPUProcess_SOURCES
     ${XPCService_SOURCES}
 )
 
-set(WebAuthnProcess_SOURCES
-    WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnServiceEntryPoint.mm
-    ${XPCService_SOURCES}
-)
-
 # FIXME: These should not have Development in production builds.
 set(WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
 set(NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
 set(GPUProcess_OUTPUT_NAME com.apple.WebKit.GPU.Development)
-set(WebAuthnProcess_OUTPUT_NAME com.apple.WebKit.WebAuthn.Development)
 
 set(WebProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 set(NetworkProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
@@ -246,9 +237,6 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
     UIProcess/mac/SecItemShimProxy
 
-    WebAuthnProcess/WebAuthnConnectionToWebProcess
-    WebAuthnProcess/WebAuthnProcess
-
     WebProcess/ApplePay/WebPaymentCoordinator
 
     WebProcess/GPU/media/RemoteImageDecoderAVFManager
@@ -256,8 +244,6 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     WebProcess/GPU/media/ios/RemoteMediaSessionHelper
 
     WebProcess/Inspector/WebInspectorUIExtensionController
-
-    WebProcess/WebAuthentication/WebAuthnProcessConnection
 
     WebProcess/WebPage/ViewGestureGeometryCollector
     WebProcess/WebPage/ViewUpdateDispatcher
@@ -797,25 +783,11 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         ${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-OSX.plist
         ${NetworkProcess_OUTPUT_NAME})
 
-    if (ENABLE_PLUGIN_PROCESS)
-        WEBKIT_XPC_SERVICE(PluginProcess
-            "com.apple.WebKit.Plugin.64"
-            ${WEBKIT_DIR}/PluginProcess/EntryPoint/Cocoa/XPCService/PluginService.Info.plist
-            ${PluginProcess_OUTPUT_NAME})
-    endif ()
-
     if (ENABLE_GPU_PROCESS)
         WEBKIT_XPC_SERVICE(GPUProcess
             "com.apple.WebKit.GPU"
             ${WEBKIT_DIR}/GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-OSX.plist
             ${GPUProcess_OUTPUT_NAME})
-    endif ()
-
-    if (ENABLE_WEB_AUTHN)
-        WEBKIT_XPC_SERVICE(WebAuthnProcess
-            "com.apple.WebKit.WebAuthn"
-            ${WEBKIT_DIR}/WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnService/Info-OSX.plist
-            ${WebAuthnProcess_OUTPUT_NAME})
     endif ()
 
     set(WebKit_RESOURCES_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Resources)
@@ -829,23 +801,11 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         VERBATIM)
     list(APPEND WebKit_SB_FILES ${WebKit_RESOURCES_DIR}/com.apple.WebKit.NetworkProcess.sb)
 
-    if (ENABLE_PLUGIN_PROCESS)
-        add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebKit.plugin-common.sb COMMAND
-            grep -o "^[^;]*" ${WEBKIT_DIR}/PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.plugin-common.sb
-            VERBATIM)
-        list(APPEND WebKit_SB_FILES ${WebKit_RESOURCES_DIR}/com.apple.WebKit.plugin-common.sb)
-    endif ()
     if (ENABLE_GPU_PROCESS)
         add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebKit.GPUProcess.sb COMMAND
             grep -o "^[^;]*" ${WEBKIT_DIR}/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.GPUProcess.sb
             VERBATIM)
         list(APPEND WebKit_SB_FILES ${WebKit_RESOURCES_DIR}/com.apple.WebKit.GPUProcess.sb)
-    endif ()
-    if (ENABLE_WEB_AUTHN)
-        add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebKit.WebAuthnProcess.sb COMMAND
-            grep -o "^[^;]*" ${WEBKIT_DIR}/WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.WebAuthnProcess.sb
-            VERBATIM)
-        list(APPEND WebKit_SB_FILES ${WebKit_RESOURCES_DIR}/com.apple.WebKit.WebAuthnProcess.sb)
     endif ()
     if (ENABLE_BUILT_IN_NOTIFICATIONS)
         add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebKit.webpushd.sb COMMAND
