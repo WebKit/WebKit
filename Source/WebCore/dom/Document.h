@@ -478,6 +478,8 @@ public:
 
     const AtomString& effectiveDocumentElementLanguage() const;
     void setDocumentElementLanguage(const AtomString&);
+    TextDirection documentElementTextDirection() const { return m_documentElementTextDirection; }
+    void setDocumentElementTextDirection(TextDirection textDirection) { m_documentElementTextDirection = textDirection; }
 
     String xmlEncoding() const { return m_xmlEncoding; }
     String xmlVersion() const { return m_xmlVersion; }
@@ -1940,6 +1942,7 @@ private:
 
     AtomString m_contentLanguage;
     AtomString m_documentElementLanguage;
+    TextDirection m_documentElementTextDirection;
 
     RefPtr<TextResourceDecoder> m_decoder;
 

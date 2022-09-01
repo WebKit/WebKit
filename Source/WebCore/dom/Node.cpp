@@ -2630,7 +2630,7 @@ void Node::removedLastRef()
 
 void Node::incrementConnectedSubframeCount(unsigned amount)
 {
-    static_assert(RareDataBitFields { Page::maxNumberOfFrames, 0, 0 }.connectedSubframeCount == Page::maxNumberOfFrames, "connectedSubframeCount must fit Page::maxNumberOfFrames");
+    static_assert(RareDataBitFields { Page::maxNumberOfFrames, 0, 0, 0, 0 }.connectedSubframeCount == Page::maxNumberOfFrames, "connectedSubframeCount must fit Page::maxNumberOfFrames");
 
     ASSERT(isContainerNode());
     auto bitfields = rareDataBitfields();
@@ -2668,6 +2668,27 @@ void Node::updateAncestorConnectedSubframeCountForInsertion() const
 
     for (Node* node = parentOrShadowHostNode(); node; node = node->parentOrShadowHostNode())
         node->incrementConnectedSubframeCount(count);
+}
+
+TextDirection Node::effectiveTextDirection() const
+{
+    if (rareDataBitfields().usesEffectiveTextDirection)
+        return static_cast<TextDirection>(rareDataBitfields().effectiveTextDirection);
+    return document().documentElementTextDirection();
+}
+
+void Node::setEffectiveTextDirection(TextDirection direction)
+{
+    auto bitfields = rareDataBitfields();
+    bitfields.effectiveTextDirection = static_cast<uint16_t>(direction);
+    setRareDataBitfields(bitfields);
+}
+
+void Node::setUsesEffectiveTextDirection(bool value)
+{
+    auto bitfields = rareDataBitfields();
+    bitfields.usesEffectiveTextDirection = value;
+    setRareDataBitfields(bitfields);
 }
 
 bool Node::inRenderedDocument() const

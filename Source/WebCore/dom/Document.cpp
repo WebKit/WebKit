@@ -983,6 +983,8 @@ void Document::childrenChanged(const ChildChange& change)
         return;
     m_documentElement = newDocumentElement;
     setDocumentElementLanguage(m_documentElement ? m_documentElement->langFromAttribute() : nullAtom());
+    setDocumentElementTextDirection(m_documentElement && is<HTMLElement>(m_documentElement) && m_documentElement->usesEffectiveTextDirection()
+        ? downcast<HTMLElement>(*m_documentElement).effectiveTextDirection() : TextDirection::LTR);
     // The root style used for media query matching depends on the document element.
     styleScope().clearResolver();
 }
