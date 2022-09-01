@@ -34,6 +34,8 @@ WI.BreakpointInlineWidget = class BreakpointInlineWidget
 
             this._breakpoint = breakpointOrSourceCodeLocation;
             this._sourceCodeLocation = this._breakpoint.sourceCodeLocation;
+
+            this._addBreakpointEventListeners();
         } else {
             console.assert(breakpointOrSourceCodeLocation instanceof WI.SourceCodeLocation, breakpointOrSourceCodeLocation);
 
@@ -44,6 +46,7 @@ WI.BreakpointInlineWidget = class BreakpointInlineWidget
         this._element = document.createElement("span");
         this._element.classList.add("inline-widget", "breakpoint");
         this._element.addEventListener("click", this._handleClick.bind(this));
+        this._element.addEventListener("contextmenu", this._handleContextmenu.bind(this));
 
         this._update();
     }
@@ -58,18 +61,80 @@ WI.BreakpointInlineWidget = class BreakpointInlineWidget
 
     _update()
     {
-        this._element.classList.toggle("disabled", !this._breakpoint);
+        this._element.classList.toggle("disabled", !this._breakpoint || this._breakpoint.disabled);
+    }
+
+    _createBreakpoint() {
+        console.assert(!this._breakpoint);
+        this._breakpoint = new WI.JavaScriptBreakpoint(this._sourceCodeLocation, {resolved: true});
+        WI.debuggerManager.addBreakpoint(this._breakpoint);
+
+        this._addBreakpointEventListeners();
+
+        this._update();
+    }
+
+    _addBreakpointEventListeners()
+    {
+        this._breakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._handleBreakpointDisabledStateChanged, this);
+
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointRemoved, this._handleBreakpointRemoved, this);
     }
 
     _handleClick(event)
     {
         if (this._breakpoint) {
-            this._breakpoint.remove();
-            this._breakpoint = null;
-        } else {
-            this._breakpoint = new WI.JavaScriptBreakpoint(this._sourceCodeLocation, {resolved: true});
-            WI.debuggerManager.addBreakpoint(this._breakpoint);
+            if (this._breakpoint.disabled)
+                this._breakpoint.disabled = false;
+            else
+                this._breakpoint.remove();
+            return;
         }
+
+        this._createBreakpoint();
+    }
+
+    _handleContextmenu(event)
+    {
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
+
+        if (!this._breakpoint) {
+            contextMenu.appendItem(WI.UIString("Add Breakpoint"), () => {
+                this._createBreakpoint();
+            });
+            return;
+        }
+
+        WI.BreakpointPopover.appendContextMenuItems(contextMenu, this._breakpoint, this._element);
+
+        if (!WI.isShowingSourcesTab()) {
+            contextMenu.appendSeparator();
+
+            contextMenu.appendItem(WI.UIString("Reveal in Sources Tab"), () => {
+                WI.showSourcesTab({
+                    representedObjectToSelect: this._breakpoint,
+                    initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
+                });
+            });
+        }
+    }
+
+    _handleBreakpointDisabledStateChanged(event)
+    {
+        this._update();
+    }
+
+    _handleBreakpointRemoved(event)
+    {
+        let {breakpoint} = event.data;
+        if (breakpoint !== this._breakpoint)
+            return;
+
+        this._breakpoint.removeEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._handleBreakpointDisabledStateChanged, this);
+
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BreakpointRemoved, this._handleBreakpointRemoved, this);
+
+        this._breakpoint = null;
 
         this._update();
     }
