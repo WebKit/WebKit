@@ -236,10 +236,22 @@ static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
 
 @end
 
+static void *const NSAttributedStringQueueIdentityKey = (void *)&NSAttributedStringQueueIdentityKey;
+
 @implementation NSAttributedString (WKPrivate)
 
 + (void)_loadFromHTMLWithOptions:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options contentLoader:(WKNavigation *(^)(WKWebView *))loadWebContent completionHandler:(NSAttributedStringCompletionHandler)completionHandler
 {
+    return [self _loadFromHTMLWithOptions:options queue:nil contentLoader:loadWebContent completionHandler:completionHandler];
+}
+
++ (void)_loadFromHTMLWithOptions:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options queue:(dispatch_queue_t)queue contentLoader:(WKNavigation *(^)(WKWebView *))loadWebContent completionHandler:(NSAttributedStringCompletionHandler)completionHandler
+{
+    dispatch_queue_t callbackQueue = queue ?: dispatch_get_main_queue();
+    
+    void *nonNullValue = NSAttributedStringQueueIdentityKey;
+    dispatch_queue_set_specific(callbackQueue, NSAttributedStringQueueIdentityKey, nonNullValue, NULL);
+    
     if (options[NSWebPreferencesDocumentOption])
         [NSException raise:NSInvalidArgumentException format:@"NSWebPreferencesDocumentOption option is not supported"];
     if (options[NSWebResourceLoadDelegateDocumentOption])
@@ -333,7 +345,7 @@ static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
                 timeoutInterval = timeoutOption.doubleValue;
         }
 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, timeoutInterval * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, timeoutInterval * NSEC_PER_SEC), callbackQueue, ^{
             if (finished)
                 return;
             cancel(WKErrorAttributedStringContentLoadTimedOut, nil);
@@ -345,10 +357,10 @@ static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
         ASSERT(webView.get().loading);
     };
 
-    if ([NSThread isMainThread])
+    if (dispatch_get_specific(NSAttributedStringQueueIdentityKey))
         runConversion();
     else
-        dispatch_async(dispatch_get_main_queue(), runConversion);
+        dispatch_async(callbackQueue, runConversion);
 }
 
 @end
@@ -357,14 +369,26 @@ static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
 
 + (void)loadFromHTMLWithRequest:(NSURLRequest *)request options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
 {
-    [self _loadFromHTMLWithOptions:options contentLoader:^WKNavigation *(WKWebView *webView) {
+    [self loadFromHTMLWithRequest:request options:options queue:nil completionHandler:completionHandler];
+}
+
++ (void)loadFromHTMLWithRequest:(NSURLRequest *)request options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options queue:(dispatch_queue_t)queue completionHandler:(NSAttributedStringCompletionHandler)completionHandler
+{
+    [self _loadFromHTMLWithOptions:options queue:queue contentLoader:^WKNavigation *(WKWebView *webView)
+    {
         return [webView loadRequest:request];
     } completionHandler:completionHandler];
 }
 
 + (void)loadFromHTMLWithFileURL:(NSURL *)fileURL options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
 {
-    [self _loadFromHTMLWithOptions:options contentLoader:^WKNavigation *(WKWebView *webView) {
+    [self loadFromHTMLWithFileURL:fileURL options:options queue:nil completionHandler:completionHandler];
+}
+
++ (void)loadFromHTMLWithFileURL:(NSURL *)fileURL options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options queue:(dispatch_queue_t)queue completionHandler:(NSAttributedStringCompletionHandler)completionHandler
+{
+    [self _loadFromHTMLWithOptions:options queue:queue contentLoader:^WKNavigation *(WKWebView *webView)
+    {
         auto* readAccessURL = dynamic_objc_cast<NSURL>(options[NSReadAccessURLDocumentOption]);
         return [webView loadFileURL:fileURL allowingReadAccessToURL:readAccessURL];
     } completionHandler:completionHandler];
@@ -372,7 +396,13 @@ static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
 
 + (void)loadFromHTMLWithString:(NSString *)string options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
 {
-    [self _loadFromHTMLWithOptions:options contentLoader:^WKNavigation *(WKWebView *webView) {
+    [self loadFromHTMLWithString:string options:options queue:nil completionHandler:completionHandler];
+}
+
++ (void)loadFromHTMLWithString:(NSString *)string options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options queue:(dispatch_queue_t)queue completionHandler:(NSAttributedStringCompletionHandler)completionHandler
+{
+    [self _loadFromHTMLWithOptions:options queue:queue contentLoader:^WKNavigation *(WKWebView *webView)
+    {
         auto* baseURL = dynamic_objc_cast<NSURL>(options[NSBaseURLDocumentOption]);
         return [webView loadHTMLString:string baseURL:baseURL];
     } completionHandler:completionHandler];
@@ -380,7 +410,13 @@ static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
 
 + (void)loadFromHTMLWithData:(NSData *)data options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
 {
-    [self _loadFromHTMLWithOptions:options contentLoader:^WKNavigation *(WKWebView *webView) {
+    [self loadFromHTMLWithData:data options:options queue:nil completionHandler:completionHandler];
+}
+
++ (void)loadFromHTMLWithData:(NSData *)data options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options queue:(dispatch_queue_t)queue completionHandler:(NSAttributedStringCompletionHandler)completionHandler
+{
+    [self _loadFromHTMLWithOptions:options queue:queue contentLoader:^WKNavigation *(WKWebView *webView)
+    {
         auto* textEncodingName = dynamic_objc_cast<NSString>(options[NSTextEncodingNameDocumentOption]);
         auto characterEncoding = static_cast<NSStringEncoding>(dynamic_objc_cast<NSNumber>(options[NSCharacterEncodingDocumentOption]).unsignedIntegerValue);
         auto* baseURL = dynamic_objc_cast<NSURL>(options[NSBaseURLDocumentOption]);

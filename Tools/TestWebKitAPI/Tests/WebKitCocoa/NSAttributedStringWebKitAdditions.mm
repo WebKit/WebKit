@@ -75,4 +75,27 @@ TEST(NSAttributedStringWebKitAdditions, DirectoriesNotCreated)
     [webView synchronouslyLoadHTMLString:@"hi"];
     EXPECT_TRUE(cookieDirectoryExists());
 }
+
+TEST(NSAttributedStringWebKitAdditions, DirectoriesNotCreatedBackgroundQueue)
+{
+    NSString *directory = [NSHomeDirectory() stringByAppendingString:@"/Library/Cookies"];
+    dispatch_queue_t queue = dispatch_queue_create("com.apple.WebKit.loadFromHTMLWithData", DISPATCH_QUEUE_SERIAL);
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtPath:directory error:nil];
+
+    __block bool done = false;
+    [NSAttributedString loadFromHTMLWithData:[NSData data] options:@{ } queue:queue completionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto cookieDirectoryExists = [&] {
+        return [[NSFileManager defaultManager] fileExistsAtPath:directory];
+    };
+    EXPECT_FALSE(cookieDirectoryExists());
+
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:@"hi"];
+    EXPECT_TRUE(cookieDirectoryExists());
+}
 #endif

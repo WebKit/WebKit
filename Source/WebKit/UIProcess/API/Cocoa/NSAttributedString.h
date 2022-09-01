@@ -73,6 +73,21 @@ typedef void (^NSAttributedStringCompletionHandler)(NSAttributedString * _Nullab
     NS_SWIFT_NAME(loadFromHTML(request:options:completionHandler:)) WK_SWIFT_ASYNC_NAME(fromHTML(request:options:)) WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
+ @abstract Loads an HTML URL request and converts the contents into an attributed string.
+ @param request The request specifying the URL to load.
+ @param options Document attributes for interpreting the document contents.
+ NSTextSizeMultiplierDocumentOption and NSTimeoutDocumentOption are supported option keys.
+ @param queue The queue to call back on.
+ @param completionHandler A block to invoke when the operation completes or fails.
+ @discussion The completionHandler is passed the attributed string result along with any
+ document-level attributes, or an error.
+*/
++ (void)loadFromHTMLWithRequest:(NSURLRequest *)request options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options
+    queue:(dispatch_queue_t _Nullable)queue
+    completionHandler:(NSAttributedStringCompletionHandler)completionHandler
+    NS_SWIFT_NAME(loadFromHTML(request:options:queue:completionHandler:)) WK_SWIFT_ASYNC_NAME(fromHTML(request:options:queue:)) WK_API_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+/*!
  @abstract Converts a local HTML file into an attributed string.
  @param fileURL The file URL to load.
  @param options Document attributes for interpreting the document contents.
@@ -86,6 +101,22 @@ typedef void (^NSAttributedStringCompletionHandler)(NSAttributedString * _Nullab
 */
 + (void)loadFromHTMLWithFileURL:(NSURL *)fileURL options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
     NS_SWIFT_NAME(loadFromHTML(fileURL:options:completionHandler:)) WK_SWIFT_ASYNC_NAME(fromHTML(fileURL:options:)) WK_API_AVAILABLE(macos(10.15), ios(13.0));
+
+/*!
+ @abstract Converts a local HTML file into an attributed string.
+ @param fileURL The file URL to load.
+ @param options Document attributes for interpreting the document contents.
+ NSTextSizeMultiplierDocumentOption, NSTimeoutDocumentOption and NSReadAccessURLDocumentOption
+ are supported option keys.
+ @param queue The queue to call back on.
+ @param completionHandler A block to invoke when the operation completes or fails.
+ @discussion The completionHandler is passed the attributed string result along with any
+ document-level attributes, or an error. If NSReadAccessURLDocumentOption references a single file,
+ only that file may be loaded by WebKit. If NSReadAccessURLDocumentOption references a directory,
+ files inside that directory may be loaded by WebKit.
+*/
++ (void)loadFromHTMLWithFileURL:(NSURL *)fileURL options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options queue:(dispatch_queue_t _Nullable)queue completionHandler:(NSAttributedStringCompletionHandler)completionHandler
+    NS_SWIFT_NAME(loadFromHTML(fileURL:options:queue:completionHandler:)) WK_SWIFT_ASYNC_NAME(fromHTML(fileURL:options:queue:)) WK_API_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 /*!
  @abstract Converts an HTML string into an attributed string.
@@ -102,6 +133,22 @@ typedef void (^NSAttributedStringCompletionHandler)(NSAttributedString * _Nullab
     NS_SWIFT_NAME(loadFromHTML(string:options:completionHandler:)) WK_SWIFT_ASYNC_NAME(fromHTML(_:options:)) WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
+ @abstract Converts an HTML string into an attributed string.
+ @param string The HTML string to use as the contents.
+ @param options Document attributes for interpreting the document contents.
+ NSTextSizeMultiplierDocumentOption, NSTimeoutDocumentOption and NSBaseURLDocumentOption
+ are supported option keys.
+ @param queue The queue to call back on.
+ @param completionHandler A block to invoke when the operation completes or fails.
+ @discussion The completionHandler is passed the attributed string result along with any
+ document-level attributes, or an error. NSBaseURLDocumentOption is used to resolve relative URLs
+ within the document.
+*/
++ (void)loadFromHTMLWithString:(NSString *)string options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options queue:(dispatch_queue_t _Nullable)queue completionHandler:(NSAttributedStringCompletionHandler)completionHandler
+    NS_SWIFT_NAME(loadFromHTML(string:options:queue:completionHandler:)) WK_SWIFT_ASYNC_NAME(fromHTML(_:options:queue:)) WK_API_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+
+/*!
  @abstract Converts HTML data into an attributed string.
  @param data The HTML data to use as the contents.
  @param options Document attributes for interpreting the document contents.
@@ -114,6 +161,21 @@ typedef void (^NSAttributedStringCompletionHandler)(NSAttributedString * _Nullab
 */
 + (void)loadFromHTMLWithData:(NSData *)data options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
     NS_SWIFT_NAME(loadFromHTML(data:options:completionHandler:)) WK_SWIFT_ASYNC_NAME(fromHTML(_:options:)) WK_API_AVAILABLE(macos(10.15), ios(13.0));
+
+/*!
+ @abstract Converts HTML data into an attributed string.
+ @param data The HTML data to use as the contents.
+ @param options Document attributes for interpreting the document contents.
+ NSTextSizeMultiplierDocumentOption, NSTimeoutDocumentOption, NSTextEncodingNameDocumentOption,
+ and NSCharacterEncodingDocumentOption are supported option keys.
+ @param queue The queue to call back on.
+ @param completionHandler A block to invoke when the operation completes or fails.
+ @discussion The completionHandler is passed the attributed string result along with any
+ document-level attributes, or an error. If neither NSTextEncodingNameDocumentOption nor
+ NSCharacterEncodingDocumentOption is supplied, a best-guess encoding is used.
+*/
++ (void)loadFromHTMLWithData:(NSData *)data options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options queue:(dispatch_queue_t _Nullable)queue completionHandler:(NSAttributedStringCompletionHandler)completionHandler
+    NS_SWIFT_NAME(loadFromHTML(data:options:queue:completionHandler:)) WK_SWIFT_ASYNC_NAME(fromHTML(_:options:queue:)) WK_API_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @end
 
