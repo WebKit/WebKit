@@ -587,11 +587,11 @@ DirPseudoEnabled:
   humanReadableDescription: "Enable the directionality pseudo-class :dir"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: Starting the preference name with "Disable" is inconsistent with most other preferences and should be changed.
 DisableMediaExperiencePIDInheritance:
