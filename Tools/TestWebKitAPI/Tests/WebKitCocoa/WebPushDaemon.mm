@@ -627,7 +627,7 @@ TEST(WebPush, ITPCleanup)
     auto tempDir = setUpTestWebPushD();
     using namespace TestWebKitAPI;
     
-    NSError *error;
+    NSError *error = nil;
     [[NSFileManager defaultManager] removeItemAtURL:adoptNS([_WKWebsiteDataStoreConfiguration new]).get()._resourceLoadStatisticsDirectory error:&error];
     EXPECT_NULL(error);
 
@@ -736,9 +736,9 @@ TEST(WebPush, ITPCleanup)
         testPush(expectPushAfterITPCleanupToSucceed);
     };
 
-    // FIXME: This time interval should change when rdar://92694600 is fixed.
     runTestWithInterval(3600 * 24 * 0, true);
-    runTestWithInterval(3600 * 24 * 5, true);
+    runTestWithInterval(3600 * 24 * 29, true);
+    runTestWithInterval(3600 * 24 * 31, false);
     runTestWithInterval(3600 * 24 * 50, false);
     runTestWithInterval(3600 * 24 * 100, false);
 

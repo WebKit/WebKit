@@ -2302,6 +2302,11 @@ void ResourceLoadStatisticsDatabaseStore::clearGrandfathering(Vector<unsigned>&&
     }
 }
 
+bool ResourceLoadStatisticsDatabaseStore::hasHadRecentWebPushInteraction(const DomainData& resourceStatistic) const
+{
+    return resourceStatistic.mostRecentWebPushInteractionTime && !hasStatisticsExpired(resourceStatistic.mostRecentWebPushInteractionTime, OperatingDatesWindow::Long);
+}
+
 bool ResourceLoadStatisticsDatabaseStore::hasHadUnexpiredRecentUserInteraction(const DomainData& resourceStatistic, OperatingDatesWindow operatingDatesWindow)
 {
     if (resourceStatistic.hadUserInteraction && hasStatisticsExpired(resourceStatistic.mostRecentUserInteractionTime, operatingDatesWindow)) {
@@ -2384,10 +2389,17 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
     Vector<DomainData> domains = this->domains();
     Vector<unsigned> domainIDsToClearGrandfathering;
     for (auto& statistic : domains) {
+        // Domains permanently configured to be exempt. This can be home screen web applications, app-bound domains, or similar.
         if (shouldExemptFromWebsiteDataDeletion(statistic.registrableDomain))
             continue;
+
+        // Domains with WebPush that the user interacts with continuously should keep their data.
+        if (hasHadRecentWebPushInteraction(statistic))
+            continue;
+
         if (auto mostRecentUserInteractionTime = this->mostRecentUserInteractionTime(statistic))
             oldestUserInteraction = std::min(oldestUserInteraction, *mostRecentUserInteractionTime);
+
         if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
             toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic.registrableDomain);
             toDeleteOrRestrictFor.domainsToDeleteAllScriptWrittenStorageFor.append(statistic.registrableDomain);
