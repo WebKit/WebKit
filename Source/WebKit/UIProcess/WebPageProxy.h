@@ -265,6 +265,7 @@ class ValidationBubble;
 enum class AutoplayEvent : uint8_t;
 enum class CookieConsentDecisionResult : uint8_t;
 enum class CreateNewGroupForHighlight : bool;
+enum class DataOwnerType : uint8_t;
 enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class EditAction : uint8_t;
@@ -316,9 +317,6 @@ struct TextRecognitionResult;
 struct ViewportAttributes;
 struct WindowFeatures;
 
-#if HAVE(PASTEBOARD_DATA_OWNER)
-enum class DataOwnerType : uint8_t;
-#endif
 
 template<typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
@@ -1208,9 +1206,7 @@ public:
     bool useDarkAppearance() const;
     bool useElevatedUserInterfaceLevel() const;
 
-#if HAVE(PASTEBOARD_DATA_OWNER)
     WebCore::DataOwnerType dataOwnerForPasteboard(PasteboardAccessIntent) const;
-#endif
 
 #if PLATFORM(COCOA)
     // Called by the web process through a message.
@@ -1846,6 +1842,7 @@ public:
     void startURLSchemeTaskShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, URLSchemeTaskParameters&&);
     void loadDataWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&&, WebCore::ShouldOpenExternalURLsPolicy, WebCore::SubstituteData::SessionHistoryVisibility);
     void loadRequestWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&& = std::nullopt, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt);
+    void backForwardAddItemShared(Ref<WebProcessProxy>&&, BackForwardListItemState&&);
     void backForwardGoToItemShared(Ref<WebProcessProxy>&&, const WebCore::BackForwardItemIdentifier&, CompletionHandler<void(const WebBackForwardListCounts&)>&&);
     void decidePolicyForNavigationActionSyncShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, WebCore::FrameIdentifier, bool isMainFrame, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData&, Messages::WebPageProxy::DecidePolicyForNavigationActionSyncDelayedReply&&);
 #if USE(QUICK_LOOK)
@@ -1983,6 +1980,7 @@ public:
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
+    void failedToEnterFullscreen(PlaybackSessionContextIdentifier);
     void didEnterFullscreen(PlaybackSessionContextIdentifier);
     void didExitFullscreen(PlaybackSessionContextIdentifier);
     void didChangePlaybackRate(PlaybackSessionContextIdentifier);
@@ -2263,7 +2261,7 @@ private:
     void runJavaScriptConfirm(WebCore::FrameIdentifier, WebKit::FrameInfoData&&, const String&, Messages::WebPageProxy::RunJavaScriptConfirmDelayedReply&&);
     void runJavaScriptPrompt(WebCore::FrameIdentifier, WebKit::FrameInfoData&&, const String&, const String&, Messages::WebPageProxy::RunJavaScriptPromptDelayedReply&&);
     void setStatusText(const String&);
-    void mouseDidMoveOverElement(WebHitTestResultData&&, uint32_t modifiers, UserData&&);
+    void mouseDidMoveOverElement(WebHitTestResultData&&, OptionSet<WebEvent::Modifier> modifiers, UserData&&);
 
 #if ENABLE(WEBGL)
     void webGLPolicyForURL(URL&&, Messages::WebPageProxy::WebGLPolicyForURLDelayedReply&&);

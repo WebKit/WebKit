@@ -388,7 +388,7 @@ public:
     TextDecorationSkipInk textDecorationSkipInk() const { return static_cast<TextDecorationSkipInk>(m_rareInheritedData->textDecorationSkipInk); }
     TextUnderlinePosition textUnderlinePosition() const { return static_cast<TextUnderlinePosition>(m_rareInheritedData->textUnderlinePosition); }
     TextUnderlineOffset textUnderlineOffset() const { return m_rareInheritedData->textUnderlineOffset; }
-    TextDecorationThickness textDecorationThickness() const { return m_rareInheritedData->textDecorationThickness; }
+    TextDecorationThickness textDecorationThickness() const { return m_rareNonInheritedData->textDecorationThickness; }
 
     TextIndentLine textIndentLine() const { return static_cast<TextIndentLine>(m_rareInheritedData->textIndentLine); }
     TextIndentType textIndentType() const { return static_cast<TextIndentType>(m_rareInheritedData->textIndentType); }
@@ -1036,7 +1036,7 @@ public:
     void setTextDecorationSkipInk(TextDecorationSkipInk skipInk) { SET_VAR(m_rareInheritedData, textDecorationSkipInk, static_cast<unsigned>(skipInk)); }
     void setTextUnderlinePosition(TextUnderlinePosition position) { SET_VAR(m_rareInheritedData, textUnderlinePosition, static_cast<unsigned>(position)); }
     void setTextUnderlineOffset(TextUnderlineOffset textUnderlineOffset) { SET_VAR(m_rareInheritedData, textUnderlineOffset, textUnderlineOffset); }
-    void setTextDecorationThickness(TextDecorationThickness textDecorationThickness) { SET_VAR(m_rareInheritedData, textDecorationThickness, textDecorationThickness); }
+    void setTextDecorationThickness(TextDecorationThickness textDecorationThickness) { SET_VAR(m_rareNonInheritedData, textDecorationThickness, textDecorationThickness); }
     void setDirection(TextDirection v) { m_inheritedFlags.direction = static_cast<unsigned>(v); }
     void setHasExplicitlySetDirection(bool v) { m_nonInheritedFlags.hasExplicitlySetDirection = v; }
     void setLineHeight(Length&&);

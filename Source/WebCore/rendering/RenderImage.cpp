@@ -479,14 +479,17 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     float deviceScaleFactor = document().deviceScaleFactor();
     LayoutUnit missingImageBorderWidth(1 / deviceScaleFactor);
 
+    if (isDeferredImage(element()))
+        return;
+
     if (context.detectingContentfulPaint()) {
-        if (!context.contentfulPaintDetected() && !isDeferredImage(element()) && cachedImage() && cachedImage()->canRender(this, deviceScaleFactor) && !contentSize.isEmpty())
+        if (!context.contentfulPaintDetected() && cachedImage() && cachedImage()->canRender(this, deviceScaleFactor) && !contentSize.isEmpty())
             context.setContentfulPaintDetected();
 
         return;
     }
 
-    if (!imageResource().cachedImage() || isDeferredImage(element()) || shouldDisplayBrokenImageIcon()) {
+    if (!imageResource().cachedImage() || shouldDisplayBrokenImageIcon()) {
         if (paintInfo.phase == PaintPhase::Selection)
             return;
 

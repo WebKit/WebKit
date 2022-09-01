@@ -26,21 +26,88 @@
 #include "config.h"
 #include "JITStubRoutine.h"
 
+#include "GCAwareJITStubRoutine.h"
+#include "PolymorphicCallStubRoutine.h"
+
 #if ENABLE(JIT)
 
 namespace JSC {
 
-JITStubRoutine::~JITStubRoutine() { }
-
-bool JITStubRoutine::visitWeak(VM&)
+void JITStubRoutine::observeZeroRefCountImpl()
 {
-    return true;
+    RELEASE_ASSERT(!m_refCount);
+    delete this;
+}
+
+template<typename Func>
+void JITStubRoutine::runWithDowncast(const Func& function)
+{
+    switch (m_type) {
+    case Type::JITStubRoutineType:
+        function(static_cast<JITStubRoutine*>(this));
+        break;
+    case Type::GCAwareJITStubRoutineType:
+        function(static_cast<GCAwareJITStubRoutine*>(this));
+        break;
+    case Type::PolymorphicAccessJITStubRoutineType:
+        function(static_cast<PolymorphicAccessJITStubRoutine*>(this));
+        break;
+    case Type::PolymorphicCallStubRoutineType:
+        function(static_cast<PolymorphicCallStubRoutine*>(this));
+        break;
+    case Type::MarkingGCAwareJITStubRoutineType:
+        function(static_cast<MarkingGCAwareJITStubRoutine*>(this));
+        break;
+    case Type::GCAwareJITStubRoutineWithExceptionHandlerType:
+        function(static_cast<GCAwareJITStubRoutineWithExceptionHandler*>(this));
+        break;
+    }
+}
+
+void JITStubRoutine::aboutToDie()
+{
+    runWithDowncast([&](auto* derived) {
+        derived->aboutToDieImpl();
+    });
 }
 
 void JITStubRoutine::observeZeroRefCount()
 {
-    RELEASE_ASSERT(!m_refCount);
-    delete this;
+    runWithDowncast([&](auto* derived) {
+        derived->observeZeroRefCountImpl();
+    });
+}
+
+bool JITStubRoutine::visitWeak(VM& vm)
+{
+    bool result = true;
+    runWithDowncast([&](auto* derived) {
+        result = derived->visitWeakImpl(vm);
+    });
+    return result;
+}
+
+void JITStubRoutine::markRequiredObjects(AbstractSlotVisitor& visitor)
+{
+    runWithDowncast([&](auto* derived) {
+        derived->markRequiredObjectsImpl(visitor);
+    });
+}
+
+void JITStubRoutine::markRequiredObjects(SlotVisitor& visitor)
+{
+    runWithDowncast([&](auto* derived) {
+        derived->markRequiredObjectsImpl(visitor);
+    });
+}
+
+void JITStubRoutine::operator delete(JITStubRoutine* stubRoutine, std::destroying_delete_t)
+{
+    stubRoutine->runWithDowncast([&](auto* derived) {
+        using T = std::decay_t<decltype(*derived)>;
+        derived->~T();
+        T::freeAfterDestruction(derived);
+    });
 }
 
 } // namespace JSC

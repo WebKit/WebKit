@@ -2122,7 +2122,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             popover.present(calculateTargetFrame(), preferredEdges, {updateContent: true, shouldAnimate: false});
         };
 
-        let sections = WI.EventListenerSectionGroup.groupIntoSectionsByEvent(listeners);
+        let sections = WI.EventListenerSectionGroup.groupIntoSectionsByEvent(listeners, {hideTarget: true});
         for (let section of sections) {
             section.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, function(event) {
                 const shouldAnimate = false;

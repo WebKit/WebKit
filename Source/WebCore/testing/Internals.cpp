@@ -706,6 +706,7 @@ Internals::Internals(Document& document)
 
 #if ENABLE(VP9) && PLATFORM(COCOA)
     VP9TestingOverrides::singleton().setHardwareDecoderDisabled(std::nullopt);
+    VP9TestingOverrides::singleton().setVP9DecoderDisabled(std::nullopt);
     VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(std::nullopt);
 #endif
 }
@@ -6413,6 +6414,15 @@ void Internals::setHardwareVP9DecoderDisabledForTesting(bool disabled)
 {
 #if ENABLE(VP9) && PLATFORM(COCOA)
     VP9TestingOverrides::singleton().setHardwareDecoderDisabled(disabled);
+#else
+    UNUSED_PARAM(disabled);
+#endif
+}
+
+void Internals::setVP9DecoderDisabledForTesting(bool disabled)
+{
+#if ENABLE(VP9) && PLATFORM(COCOA)
+    VP9TestingOverrides::singleton().setVP9DecoderDisabled(disabled);
 #else
     UNUSED_PARAM(disabled);
 #endif

@@ -112,6 +112,10 @@ Repeating items:
 ["a","b","b","b","c"], ["c","b","b","a"] => [["a",-1],["c",1],["b",0],["b",0],["b",-1],["c",-1],["a",1]]
 ["a","a","b","b","c","c"], ["b","b","c","c","a","a"] => [["a",-1],["a",-1],["b",0],["b",0],["c",0],["c",0],["a",1],["a",1]]
 
+-- Running test case: Array.prototype.firstValue
+PASS: firstValue of a nonempty array should be the first value.
+PASS: firstValue of an empty array should be undefined.
+
 -- Running test case: Array.prototype.lastValue
 PASS: lastValue of a nonempty array should be the last value.
 PASS: lastValue of an empty array should be undefined.

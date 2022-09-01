@@ -190,8 +190,8 @@ void JSTestOverloadedConstructorsWithSequencePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestOverloadedConstructorsWithSequence::s_info = { "TestOverloadedConstructorsWithSequence"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsWithSequence) };
 
-JSTestOverloadedConstructorsWithSequence::JSTestOverloadedConstructorsWithSequence(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestOverloadedConstructorsWithSequence>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestOverloadedConstructorsWithSequence>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestOverloadedConstructorsWithSequence::JSTestOverloadedConstructorsWithSequence(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestOverloadedConstructorsWithSequence>&& impl)
+    : JSDOMWrapper<TestOverloadedConstructorsWithSequence>(structure, globalObject, WTFMove(impl))
 {
 }
 

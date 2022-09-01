@@ -106,6 +106,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (BOOL)accessibilityIsDeletion;
 - (BOOL)accessibilityIsFirstItemInSuggestion;
 - (BOOL)accessibilityIsLastItemInSuggestion;
+- (BOOL)accessibilityIsMarkAnnotation;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -1303,4 +1304,9 @@ bool AccessibilityUIElement::isFirstItemInSuggestion()
 bool AccessibilityUIElement::isLastItemInSuggestion()
 {
     return [m_element accessibilityIsLastItemInSuggestion];
+}
+
+bool AccessibilityUIElement::isMarkAnnotation() const
+{
+    return [m_element accessibilityIsMarkAnnotation];
 }

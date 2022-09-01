@@ -1079,6 +1079,7 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
         if (!mainFrameIsExternal && !isAllowedHost(host.get())) {
             auto blockedURL = makeString(urlString.get());
             replace(blockedURL, JSC::Yarr::RegularExpression("&key=[^&]+&"_s), "&key=GENERATED_KEY&"_s);
+            replace(blockedURL, JSC::Yarr::RegularExpression("reportID=[-0123456789abcdefABCDEF]+"_s), "reportID=GENERATED_REPORT_ID"_s);
             injectedBundle.outputText(makeString("Blocked access to external URL ", blockedURL, '\n'));
             return nullptr;
         }

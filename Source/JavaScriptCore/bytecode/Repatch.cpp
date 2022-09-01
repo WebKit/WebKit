@@ -664,9 +664,6 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
             case ContiguousShape:
                 accessType = AccessCase::IndexedContiguousLoad;
                 break;
-            case AlwaysSlowPutContiguousShape:
-                accessType = AccessCase::IndexedAlwaysSlowPutContiguousLoad;
-                break;
             case ArrayStorageShape:
                 accessType = AccessCase::IndexedArrayStorageLoad;
                 break;
@@ -888,7 +885,7 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                     }
                 }
 
-                newCase = ProxyableAccessCase::create(vm, codeBlock, AccessCase::Replace, propertyName, slot.cachedOffset(), oldStructure, ObjectPropertyConditionSet(), isProxy);
+                newCase = AccessCase::createReplace(vm, codeBlock, propertyName, slot.cachedOffset(), oldStructure, isProxy);
             } else {
                 ASSERT(!isProxy);
                 ASSERT(slot.type() == PutPropertySlot::NewProperty);

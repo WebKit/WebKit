@@ -251,10 +251,19 @@ IGNORE_WARNINGS_END
 @property (nonatomic, readonly) CGRect _referenceBounds;
 @end
 
+typedef NS_ENUM(NSInteger, _UIDataOwner) {
+    _UIDataOwnerUndefined,
+    _UIDataOwnerUser,
+    _UIDataOwnerEnterprise,
+    _UIDataOwnerShared,
+};
+
 @interface UIResponder (UIKitSPI)
 - (UIResponder *)firstResponder;
 - (void)makeTextWritingDirectionNatural:(id)sender;
 @property (nonatomic, setter=_setSuppressSoftwareKeyboard:) BOOL _suppressSoftwareKeyboard;
+@property (nonatomic, setter=_setDataOwnerForCopy:) _UIDataOwner _dataOwnerForCopy;
+@property (nonatomic, setter=_setDataOwnerForPaste:) _UIDataOwner _dataOwnerForPaste;
 @end
 
 @interface UIKeyboardImpl : UIView

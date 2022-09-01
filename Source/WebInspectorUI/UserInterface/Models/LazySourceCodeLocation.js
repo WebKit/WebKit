@@ -44,13 +44,6 @@ WI.LazySourceCodeLocation = class LazySourceCodeLocation extends WI.SourceCodeLo
 
     // Public
 
-    isEqual(other)
-    {
-        if (!other)
-            return false;
-        return this._lazySourceCode === other._sourceCode && this._lineNumber === other._lineNumber && this._columnNumber === other._columnNumber;
-    }
-
     get sourceCode()
     {
         return this._lazySourceCode;

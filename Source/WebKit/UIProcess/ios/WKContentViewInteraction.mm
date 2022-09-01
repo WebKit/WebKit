@@ -8261,8 +8261,6 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-#if HAVE(PASTEBOARD_DATA_OWNER)
-
 static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 {
     switch (platformType) {
@@ -8302,8 +8300,6 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
     return WebCore::DataOwnerType::Undefined;
 }
-
-#endif // HAVE(PASTEBOARD_DATA_OWNER)
 
 - (RetainPtr<WKTargetedPreviewContainer>)_createPreviewContainerWithLayerName:(NSString *)layerName
 {

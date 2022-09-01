@@ -60,7 +60,7 @@ public:
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 protected:
-    JSTestDomainSecurity(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDomainSecurity>&&, JSC::Butterfly* = nullptr);
+    JSTestDomainSecurity(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDomainSecurity>&&);
 
     void finishCreation(JSC::VM&);
 };

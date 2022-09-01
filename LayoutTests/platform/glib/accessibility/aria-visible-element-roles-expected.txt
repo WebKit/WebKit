@@ -161,6 +161,7 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <mark hidden="" aria-hidden="false" id="mark"></mark>
 
+    computedRoleString: mark
 
 <pre hidden="" aria-hidden="false" id="pre"></pre>
     AXRole: AXSection

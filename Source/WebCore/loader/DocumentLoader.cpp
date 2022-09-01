@@ -866,7 +866,11 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
     ASSERT_UNUSED(resource, m_mainResource == &resource);
 
     if (!response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy).isNull()) {
-        m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { response.url() }, nullptr);
+        ReportingClient* reportingClient = nullptr;
+        if (m_frame && m_frame->document())
+            reportingClient = m_frame->document();
+
+        m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { response.url() }, nullptr, reportingClient);
         m_contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer(), ContentSecurityPolicy::ReportParsingErrors::No);
     } else
         m_contentSecurityPolicy = nullptr;
@@ -932,7 +936,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
 
     if (m_substituteData.isValid() || !platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(response)) {
         auto url = response.url();
-        ContentSecurityPolicy contentSecurityPolicy(URL { url }, this);
+        ContentSecurityPolicy contentSecurityPolicy(URL { url }, this, m_frame->document());
         contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer());
         if (!contentSecurityPolicy.allowFrameAncestors(*m_frame, url)) {
             stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(identifier, response);

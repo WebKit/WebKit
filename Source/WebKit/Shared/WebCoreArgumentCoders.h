@@ -26,13 +26,10 @@
 #pragma once
 
 #include "ArgumentCoders.h"
-#include <WebCore/AffineTransform.h>
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DisplayListItems.h>
-#include <WebCore/FloatPoint.h>
-#include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatRoundedRect.h>
 #include <WebCore/FloatSize.h>
@@ -119,6 +116,7 @@ class BlobPart;
 class CertificateInfo;
 class Color;
 class SharedBuffer;
+class CSPViolationReportBody;
 class Credential;
 class CubicBezierTimingFunction;
 class Cursor;
@@ -141,6 +139,8 @@ class PaymentInstallmentConfiguration;
 class PixelBuffer;
 class ProtectionSpace;
 class Region;
+class Report;
+class ReportBody;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -152,12 +152,9 @@ class StepsTimingFunction;
 class StickyPositionViewportConstraints;
 class SystemImage;
 class TextCheckingRequestData;
-class TransformationMatrix;
 class UserStyleSheet;
 
 struct AttributedString;
-struct CacheQueryOptions;
-struct CharacterRange;
 struct CompositionUnderline;
 struct DataDetectorElementInfo;
 struct DictationAlternative;
@@ -225,7 +222,6 @@ struct SerializedAttachmentData;
 #endif
 
 namespace DOMCacheEngine {
-struct CacheInfo;
 struct Record;
 }
 
@@ -240,10 +236,7 @@ namespace IPC {
         static std::optional<Type> decode(Decoder&); \
     };
 
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::AffineTransform)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatBoxExtent)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatPoint)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatPoint3D)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatRect)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatRoundedRect)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatSize)
@@ -270,21 +263,6 @@ template<> struct ArgumentCoder<WebCore::AttributedString> {
     static std::optional<WebCore::AttributedString> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::CacheQueryOptions> {
-    static void encode(Encoder&, const WebCore::CacheQueryOptions&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::CacheQueryOptions&);
-};
-
-template<> struct ArgumentCoder<WebCore::CharacterRange> {
-    static void encode(Encoder&, const WebCore::CharacterRange&);
-    static std::optional<WebCore::CharacterRange> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::DOMCacheEngine::CacheInfo> {
-    static void encode(Encoder&, const WebCore::DOMCacheEngine::CacheInfo&);
-    static std::optional<WebCore::DOMCacheEngine::CacheInfo> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::DOMCacheEngine::Record> {
     static void encode(Encoder&, const WebCore::DOMCacheEngine::Record&);
     static std::optional<WebCore::DOMCacheEngine::Record> decode(Decoder&);
@@ -298,12 +276,6 @@ template<> struct ArgumentCoder<WebCore::TouchActionData> {
 template<> struct ArgumentCoder<WebCore::EventTrackingRegions> {
     static void encode(Encoder&, const WebCore::EventTrackingRegions&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::EventTrackingRegions&);
-};
-
-template<> struct ArgumentCoder<WebCore::TransformationMatrix> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::TransformationMatrix&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::TransformationMatrix&);
 };
 
 template<> struct ArgumentCoder<WebCore::LinearTimingFunction> {
@@ -844,6 +816,16 @@ template<> struct ArgumentCoder<UnixFileDescriptor> {
 template<> struct ArgumentCoder<WebCore::PixelBuffer> {
     template<class Encoder> static void encode(Encoder&, const WebCore::PixelBuffer&);
     static std::optional<Ref<WebCore::PixelBuffer>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Ref<WebCore::Report>> {
+    static void encode(Encoder&, const Ref<WebCore::Report>&);
+    static std::optional<Ref<WebCore::Report>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<RefPtr<WebCore::ReportBody>> {
+    static void encode(Encoder&, const RefPtr<WebCore::ReportBody>&);
+    static std::optional<RefPtr<WebCore::ReportBody>> decode(Decoder&);
 };
 
 } // namespace IPC

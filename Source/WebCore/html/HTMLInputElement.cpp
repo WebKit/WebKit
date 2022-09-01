@@ -625,7 +625,8 @@ void HTMLInputElement::subtreeHasChanged()
 {
     m_inputType->subtreeHasChanged();
     // When typing in an input field, childrenChanged is not called, so we need to force the directionality check.
-    updateEffectiveDirectionalityOfDirAuto();
+    if (selfOrPrecedingNodesAffectDirAuto())
+        updateEffectiveDirectionalityOfDirAuto();
 }
 
 const AtomString& HTMLInputElement::formControlType() const
@@ -1051,6 +1052,8 @@ ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEvent
     setLastChangeWasNotUserEdit();
     setFormControlValueMatchesRenderer(false);
     m_inputType->setValue(WTFMove(sanitizedValue), valueChanged, eventBehavior, selection);
+    if (selfOrPrecedingNodesAffectDirAuto())
+        updateEffectiveDirectionalityOfDirAuto();
 
     bool wasModifiedProgrammatically = eventBehavior == DispatchNoEvent;
     if (wasModifiedProgrammatically) {

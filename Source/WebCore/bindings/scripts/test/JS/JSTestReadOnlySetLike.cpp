@@ -140,8 +140,8 @@ void JSTestReadOnlySetLikePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestReadOnlySetLike::s_info = { "TestReadOnlySetLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlySetLike) };
 
-JSTestReadOnlySetLike::JSTestReadOnlySetLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestReadOnlySetLike>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestReadOnlySetLike>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestReadOnlySetLike::JSTestReadOnlySetLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestReadOnlySetLike>&& impl)
+    : JSDOMWrapper<TestReadOnlySetLike>(structure, globalObject, WTFMove(impl))
 {
 }
 

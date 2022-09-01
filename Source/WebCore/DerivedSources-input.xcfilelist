@@ -1132,6 +1132,7 @@ $(PROJECT_DIR)/dom/Range+DOMParsing.idl
 $(PROJECT_DIR)/dom/Range.idl
 $(PROJECT_DIR)/dom/RequestAnimationFrameCallback.idl
 $(PROJECT_DIR)/dom/SecurityPolicyViolationEvent.idl
+$(PROJECT_DIR)/dom/SecurityPolicyViolationEventDisposition.idl
 $(PROJECT_DIR)/dom/ShadowRoot.idl
 $(PROJECT_DIR)/dom/ShadowRootInit.idl
 $(PROJECT_DIR)/dom/ShadowRootMode.idl
@@ -1484,6 +1485,7 @@ $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope+Performance.idl
 $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope.idl
 $(PROJECT_DIR)/page/WindowSessionStorage.idl
 $(PROJECT_DIR)/page/WorkerNavigator.idl
+$(PROJECT_DIR)/page/csp/CSPViolationReportBody.idl
 $(PROJECT_DIR)/platform/ColorData.gperf
 $(PROJECT_DIR)/platform/network/HTTPHeaderNames.in
 $(PROJECT_DIR)/platform/network/create-http-header-name-table

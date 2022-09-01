@@ -40,15 +40,11 @@ ProxyableAccessCase::ProxyableAccessCase(VM& vm, JSCell* owner, AccessType acces
 
 Ref<AccessCase> ProxyableAccessCase::create(VM& vm, JSCell* owner, AccessType type, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, bool viaProxy, WatchpointSet* additionalSet, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)
 {
-    ASSERT(type == Load || type == Miss || type == GetGetter || type == Replace);
+    ASSERT(type == Load || type == Miss || type == GetGetter);
     return adoptRef(*new ProxyableAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, additionalSet, WTFMove(prototypeAccessChain)));
 }
 
-ProxyableAccessCase::~ProxyableAccessCase()
-{
-}
-
-Ref<AccessCase> ProxyableAccessCase::clone() const
+Ref<AccessCase> ProxyableAccessCase::cloneImpl() const
 {
     auto result = adoptRef(*new ProxyableAccessCase(*this));
     result->resetState();

@@ -32,13 +32,11 @@ layer at (0,0) size 800x600
           text run at (36,64) width 0: " "
 layer at (8,109) size 108x83 clip at (12,113) size 100x75
   RenderBlock {PRE} at (0,101) size 108x83 [border: (4px solid #A52A2A)]
-    RenderText {#text} at (4,4) size 100x75
-      text run at (4,4) width 88: "This   text"
-      text run at (92,4) width 12: "     "
+    RenderText {#text} at (4,4) size 128x75
+      text run at (4,4) width 128: "This   text     "
       text run at (4,19) width 72: "will wrap"
       text run at (76,19) width 0: " "
-      text run at (4,34) width 72: "and   fit"
-      text run at (76,34) width 24: "   "
+      text run at (4,34) width 96: "and   fit   "
       text run at (4,49) width 80: "within the"
       text run at (84,49) width 0: " "
       text run at (4,64) width 32: "box."

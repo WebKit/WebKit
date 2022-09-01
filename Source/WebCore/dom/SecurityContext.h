@@ -40,6 +40,7 @@ class SecurityOriginPolicy;
 class ContentSecurityPolicy;
 struct CrossOriginOpenerPolicy;
 struct PolicyContainer;
+enum class ReferrerPolicy : uint8_t;
 
 enum SandboxFlag {
     // See http://www.whatwg.org/specs/web-apps/current-work/#attr-iframe-sandbox for a list of the sandbox flags.
@@ -95,6 +96,8 @@ public:
     void setCrossOriginEmbedderPolicy(const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy) { m_crossOriginEmbedderPolicy = crossOriginEmbedderPolicy; }
 
     virtual const CrossOriginOpenerPolicy& crossOriginOpenerPolicy() const;
+
+    virtual ReferrerPolicy referrerPolicy() const = 0;
 
     PolicyContainer policyContainer() const;
 

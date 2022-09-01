@@ -82,12 +82,12 @@ private:
 
 class PolymorphicCallStubRoutine final : public GCAwareJITStubRoutine {
 public:
+    friend class JITStubRoutine;
+
     PolymorphicCallStubRoutine(
         const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, const JSCell* owner,
         CallFrame* callerFrame, CallLinkInfo&, const Vector<PolymorphicCallCase>&,
         UniqueArray<uint32_t>&& fastCounts);
-    
-    ~PolymorphicCallStubRoutine() final;
     
     CallVariantList variants() const;
     bool hasEdges() const;
@@ -102,12 +102,12 @@ public:
             functor(variant.get());
     }
 
-    bool visitWeak(VM&) final;
-
 private:
     template<typename Visitor> void markRequiredObjectsInternalImpl(Visitor&);
-    void markRequiredObjectsInternal(AbstractSlotVisitor&) final;
-    void markRequiredObjectsInternal(SlotVisitor&) final;
+    void markRequiredObjectsImpl(AbstractSlotVisitor&);
+    void markRequiredObjectsImpl(SlotVisitor&);
+
+    bool visitWeakImpl(VM&);
 
     FixedVector<WriteBarrier<JSCell>> m_variants;
     UniqueArray<uint32_t> m_fastCounts;

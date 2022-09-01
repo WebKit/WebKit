@@ -44,6 +44,8 @@ class Frame;
 
 namespace WebCoreTestSupport {
 
+void initializeNames() TEST_SUPPORT_EXPORT;
+
 void injectInternalsObject(JSContextRef) TEST_SUPPORT_EXPORT;
 void resetInternalsObject(JSContextRef) TEST_SUPPORT_EXPORT;
 void monitorWheelEvents(WebCore::Frame&, bool clearLatchingState) TEST_SUPPORT_EXPORT;

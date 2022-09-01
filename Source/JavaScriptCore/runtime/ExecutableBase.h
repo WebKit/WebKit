@@ -58,7 +58,7 @@ inline bool isCall(CodeSpecializationKind kind)
 class ExecutableBase : public JSCell {
     friend class JIT;
     friend class LLIntOffsetsExtractor;
-    friend MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM*);
+    friend MacroAssemblerCodeRef<JSEntryPtrTag> boundFunctionCallGenerator(VM*);
 
 protected:
     ExecutableBase(VM& vm, Structure* structure)
@@ -130,6 +130,24 @@ public:
         return generatedJITCodeForConstruct();
     }
 
+    CodePtr<JSEntryPtrTag> generatedJITCodeWithArityCheckForCall() const
+    {
+        return m_jitCodeForCallWithArityCheck;
+    }
+
+    CodePtr<JSEntryPtrTag> generatedJITCodeWithArityCheckForConstruct() const
+    {
+        return m_jitCodeForConstructWithArityCheck;
+    }
+
+    CodePtr<JSEntryPtrTag> generatedJITCodeWithArityCheckFor(CodeSpecializationKind kind) const
+    {
+        if (kind == CodeForCall)
+            return generatedJITCodeWithArityCheckForCall();
+        ASSERT(kind == CodeForConstruct);
+        return generatedJITCodeWithArityCheckForConstruct();
+    }
+
     CodePtr<JSEntryPtrTag> entrypointFor(CodeSpecializationKind kind, ArityCheckMode arity)
     {
         // Check if we have a cached result. We only have it for arity check because we use the
@@ -197,6 +215,28 @@ public:
     }
 
     ImplementationVisibility implementationVisibility() const;
+
+    CodePtr<JSEntryPtrTag> swapGeneratedJITCodeWithArityCheckForDebugger(CodeSpecializationKind kind, CodePtr<JSEntryPtrTag> jitCodeWithArityCheck)
+    {
+        if (kind == CodeForCall)
+            return swapGeneratedJITCodeForCallWithArityCheckForDebugger(jitCodeWithArityCheck);
+        ASSERT(kind == CodeForConstruct);
+        return swapGeneratedJITCodeForConstructWithArityCheckForDebugger(jitCodeWithArityCheck);
+    }
+
+    CodePtr<JSEntryPtrTag> swapGeneratedJITCodeForCallWithArityCheckForDebugger(CodePtr<JSEntryPtrTag> jitCodeForCallWithArityCheck)
+    {
+        auto old = m_jitCodeForCallWithArityCheck;
+        m_jitCodeForCallWithArityCheck = jitCodeForCallWithArityCheck;
+        return old;
+    }
+
+    CodePtr<JSEntryPtrTag> swapGeneratedJITCodeForConstructWithArityCheckForDebugger(CodePtr<JSEntryPtrTag> jitCodeForConstructWithArityCheck)
+    {
+        auto old = m_jitCodeForConstructWithArityCheck;
+        m_jitCodeForConstructWithArityCheck = jitCodeForConstructWithArityCheck;
+        return old;
+    }
     
     void dump(PrintStream&) const;
         

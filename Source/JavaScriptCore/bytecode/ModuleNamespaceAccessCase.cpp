@@ -38,7 +38,7 @@
 namespace JSC {
 
 ModuleNamespaceAccessCase::ModuleNamespaceAccessCase(VM& vm, JSCell* owner, CacheableIdentifier identifier, JSModuleNamespaceObject* moduleNamespaceObject, JSModuleEnvironment* moduleEnvironment, ScopeOffset scopeOffset)
-    : Base(vm, owner, ModuleNamespaceLoad, identifier, invalidOffset, nullptr, ObjectPropertyConditionSet(), nullptr)
+    : Base(vm, owner, AccessType::ModuleNamespaceLoad, identifier, invalidOffset, nullptr, ObjectPropertyConditionSet(), nullptr)
     , m_scopeOffset(scopeOffset)
 {
     m_moduleNamespaceObject.set(vm, owner, moduleNamespaceObject);
@@ -50,11 +50,7 @@ Ref<AccessCase> ModuleNamespaceAccessCase::create(VM& vm, JSCell* owner, Cacheab
     return adoptRef(*new ModuleNamespaceAccessCase(vm, owner, identifier, moduleNamespaceObject, moduleEnvironment, scopeOffset));
 }
 
-ModuleNamespaceAccessCase::~ModuleNamespaceAccessCase()
-{
-}
-
-Ref<AccessCase> ModuleNamespaceAccessCase::clone() const
+Ref<AccessCase> ModuleNamespaceAccessCase::cloneImpl() const
 {
     auto result = adoptRef(*new ModuleNamespaceAccessCase(*this));
     result->resetState();

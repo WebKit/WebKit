@@ -63,7 +63,7 @@ public:
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpure | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertyNames | JSC::OverridesGetOwnPropertySlot;
 protected:
-    JSTestLegacyOverrideBuiltIns(JSC::Structure*, JSDOMGlobalObject&, Ref<TestLegacyOverrideBuiltIns>&&, JSC::Butterfly* = nullptr);
+    JSTestLegacyOverrideBuiltIns(JSC::Structure*, JSDOMGlobalObject&, Ref<TestLegacyOverrideBuiltIns>&&);
 
     void finishCreation(JSC::VM&);
 };

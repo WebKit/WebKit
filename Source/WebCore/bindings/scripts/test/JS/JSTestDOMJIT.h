@@ -62,7 +62,7 @@ public:
         return static_cast<TestDOMJIT&>(Base::wrapped());
     }
 protected:
-    JSTestDOMJIT(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDOMJIT>&&, JSC::Butterfly* = nullptr);
+    JSTestDOMJIT(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDOMJIT>&&);
 
     void finishCreation(JSC::VM&);
 };

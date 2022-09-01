@@ -33,7 +33,7 @@ namespace JSC {
 
 class IntrinsicGetterAccessCase final : public AccessCase {
 public:
-    typedef AccessCase Base;
+    using Base = AccessCase;
     friend class AccessCase;
 
     JSFunction* intrinsicFunction() const { return m_intrinsicFunction.get(); }
@@ -44,12 +44,10 @@ public:
 
     static Ref<AccessCase> create(VM&, JSCell*, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, JSFunction* intrinsicFunction, RefPtr<PolyProtoAccessChain>&&);
 
-    Ref<AccessCase> clone() const final;
-
-    ~IntrinsicGetterAccessCase() final;
-
 private:
     IntrinsicGetterAccessCase(VM&, JSCell*, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, JSFunction* intrinsicFunction, RefPtr<PolyProtoAccessChain>&&);
+
+    Ref<AccessCase> cloneImpl() const;
 
     WriteBarrier<JSFunction> m_intrinsicFunction;
 };

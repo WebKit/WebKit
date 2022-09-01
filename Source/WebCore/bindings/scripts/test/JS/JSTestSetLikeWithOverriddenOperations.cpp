@@ -150,8 +150,8 @@ void JSTestSetLikeWithOverriddenOperationsPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestSetLikeWithOverriddenOperations::s_info = { "TestSetLikeWithOverriddenOperations"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikeWithOverriddenOperations) };
 
-JSTestSetLikeWithOverriddenOperations::JSTestSetLikeWithOverriddenOperations(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestSetLikeWithOverriddenOperations>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestSetLikeWithOverriddenOperations>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestSetLikeWithOverriddenOperations::JSTestSetLikeWithOverriddenOperations(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestSetLikeWithOverriddenOperations>&& impl)
+    : JSDOMWrapper<TestSetLikeWithOverriddenOperations>(structure, globalObject, WTFMove(impl))
 {
 }
 

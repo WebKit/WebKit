@@ -31,6 +31,8 @@ messages -> WebPage LegacyReceiver {
     SendCSPViolationReport(WebCore::FrameIdentifier frameID, URL reportURL, IPC::FormDataReference reportData)
     EnqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier frameID, struct WebCore::SecurityPolicyViolationEventInit eventInit)
 
+    NotifyReportObservers(WebCore::FrameIdentifier frameID, Ref<WebCore::Report> report)
+
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply() -> (bool handled) Synchronous
 
 #if PLATFORM(COCOA)

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "WorkerDebugger.h"
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
 #include <wtf/Forward.h>
@@ -41,6 +40,7 @@ namespace WebCore {
 
 class InstrumentingAgents;
 class WebInjectedScriptManager;
+class WorkerDebugger;
 class WorkerOrWorkletGlobalScope;
 struct WorkerAgentContext;
 
@@ -64,8 +64,8 @@ public:
     Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
     Inspector::InspectorEvaluateHandler evaluateHandler() const override;
     void frontendInitialized() override { }
-    Stopwatch& executionStopwatch() const final { return m_executionStopwatch; }
-    WorkerDebugger& debugger() override { return m_debugger; }
+    WTF::Stopwatch& executionStopwatch() const override;
+    JSC::Debugger* debugger() override;
     JSC::VM& vm() override;
 
 private:
@@ -82,8 +82,8 @@ private:
     std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
     Ref<Inspector::FrontendRouter> m_frontendRouter;
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
-    Ref<Stopwatch> m_executionStopwatch;
-    WorkerDebugger m_debugger;
+    Ref<WTF::Stopwatch> m_executionStopwatch;
+    std::unique_ptr<WorkerDebugger> m_debugger;
     Inspector::AgentRegistry m_agents;
     WorkerOrWorkletGlobalScope& m_globalScope;
     std::unique_ptr<Inspector::FrontendChannel> m_forwardingChannel;

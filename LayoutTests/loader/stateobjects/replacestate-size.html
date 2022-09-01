@@ -21,7 +21,7 @@ function loaded()
     try {
         // Push 63+mb of state objects (while the string is exactly 1mb, it counts for a little more than 1mb)
         for (var i = 1; i < 64; ++i)
-            history.pushState(0, 0, object);
+            history.pushState(0, 0, "#" + object);
     } catch (e) {
         log("Unexpected exception pushing > 63mb but < 64mb of state objects: " + e);  
     }
@@ -32,7 +32,7 @@ function loaded()
         // replaceState with a 1mb state object.
         // If replaceState counts against the global limit, this will cause an exception.
         // But it should work.
-        history.replaceState(0, 0, object);
+        history.replaceState(0, 0, "#" + object);
         
         log("It fit");
     } catch (e) {
@@ -46,7 +46,7 @@ function loaded()
 
     try {
         // Replacing the 63rd 1mb string with a 2mb string *should* still trigger the limit.
-        history.replaceState(0, 0, object);
+        history.replaceState(0, 0, "#" + object);
         log("It fit, but should not have");
     } catch (e) {
         log("Expected exception replacing the last state object: " + e);  

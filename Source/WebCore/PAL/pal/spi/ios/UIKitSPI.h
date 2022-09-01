@@ -154,6 +154,17 @@ typedef enum {
 
 @end
 
+typedef NS_ENUM(NSInteger, _UIDataOwner) {
+    _UIDataOwnerUndefined,
+    _UIDataOwnerUser,
+    _UIDataOwnerEnterprise,
+    _UIDataOwnerShared,
+};
+
+@interface UIPasteboard ()
++ (void)_performAsDataOwner:(_UIDataOwner)dataOwner block:(void(^ NS_NOESCAPE)(void))block;
+@end
+
 @interface UIScreen ()
 
 @property (nonatomic, readonly) CGRect _referenceBounds;

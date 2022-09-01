@@ -58,7 +58,7 @@ public:
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestDelegateToSharedSyntheticAttribute(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDelegateToSharedSyntheticAttribute>&&, JSC::Butterfly* = nullptr);
+    JSTestDelegateToSharedSyntheticAttribute(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDelegateToSharedSyntheticAttribute>&&);
 
     void finishCreation(JSC::VM&);
 };

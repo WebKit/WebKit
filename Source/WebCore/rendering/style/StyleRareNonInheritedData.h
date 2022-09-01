@@ -39,6 +39,7 @@
 #include "StyleContentAlignmentData.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
+#include "TextDecorationThickness.h"
 #include "TouchAction.h"
 #include "TranslateTransformOperation.h"
 #include "WillChangeData.h"
@@ -212,6 +213,7 @@ public:
     unsigned effectiveAppearance : appearanceBitWidth; // EAppearance
 
     unsigned textDecorationStyle : 3; // TextDecorationStyle
+    TextDecorationThickness textDecorationThickness;
 
     unsigned aspectRatioType : 2; // AspectRatioType
     unsigned contentVisibility : 2; // ContentVisibility

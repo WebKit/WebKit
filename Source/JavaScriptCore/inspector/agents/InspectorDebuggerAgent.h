@@ -90,6 +90,7 @@ public:
     Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>> searchInContent(const Protocol::Debugger::ScriptId&, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
     Protocol::ErrorStringOr<String> getScriptSource(const Protocol::Debugger::ScriptId&) final;
     Protocol::ErrorStringOr<Ref<Protocol::Debugger::FunctionDetails>> getFunctionDetails(const String& functionId) final;
+    Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Debugger::Location>>> getBreakpointLocations(Ref<JSON::Object>&& start, Ref<JSON::Object>&& end) final;
     Protocol::ErrorStringOr<void> setPauseOnDebuggerStatements(bool enabled, RefPtr<JSON::Object>&& options) final;
     Protocol::ErrorStringOr<void> setPauseOnExceptions(const String& state, RefPtr<JSON::Object>&& options) final;
     Protocol::ErrorStringOr<void> setPauseOnAssertions(bool enabled, RefPtr<JSON::Object>&& options) final;
@@ -106,6 +107,8 @@ public:
     // JSC::Debugger::Observer
     void didParseSource(JSC::SourceID, const JSC::Debugger::Script&) final;
     void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) final;
+    void didCreateNativeExecutable(JSC::NativeExecutable&) final;
+    void willCallNativeExecutable(JSC::CallFrame*) final;
     void willEnter(JSC::CallFrame*) final;
     void didQueueMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier) final;
     void willRunMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier) final;

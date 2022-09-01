@@ -52,15 +52,7 @@ Ref<AccessCase> GetterSetterAccessCase::create(
     bool viaProxy, WatchpointSet* additionalSet, CodePtr<CustomAccessorPtrTag> customGetter, JSObject* customSlotBase,
     std::optional<DOMAttributeAnnotation> domAttribute, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)
 {
-    switch (type) {
-    case Getter:
-    case CustomAccessorGetter:
-    case CustomValueGetter:
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    };
-
+    ASSERT(type == Getter || type == CustomValueGetter || type == CustomAccessorGetter);
     auto result = adoptRef(*new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, additionalSet, customSlotBase, WTFMove(prototypeAccessChain)));
     result->m_domAttribute = domAttribute;
     if (customGetter)
@@ -79,12 +71,6 @@ Ref<AccessCase> GetterSetterAccessCase::create(VM& vm, JSCell* owner, AccessType
     return result;
 }
 
-
-GetterSetterAccessCase::~GetterSetterAccessCase()
-{
-}
-
-
 GetterSetterAccessCase::GetterSetterAccessCase(const GetterSetterAccessCase& other)
     : Base(other)
     , m_customSlotBase(other.m_customSlotBase)
@@ -93,25 +79,25 @@ GetterSetterAccessCase::GetterSetterAccessCase(const GetterSetterAccessCase& oth
     m_domAttribute = other.m_domAttribute;
 }
 
-Ref<AccessCase> GetterSetterAccessCase::clone() const
+Ref<AccessCase> GetterSetterAccessCase::cloneImpl() const
 {
     auto result = adoptRef(*new GetterSetterAccessCase(*this));
     result->resetState();
     return result;
 }
 
-bool GetterSetterAccessCase::hasAlternateBase() const
+bool GetterSetterAccessCase::hasAlternateBaseImpl() const
 {
     if (customSlotBase())
         return true;
-    return Base::hasAlternateBase();
+    return Base::hasAlternateBaseImpl();
 }
 
-JSObject* GetterSetterAccessCase::alternateBase() const
+JSObject* GetterSetterAccessCase::alternateBaseImpl() const
 {
     if (customSlotBase())
         return customSlotBase();
-    return Base::alternateBase();
+    return Base::alternateBaseImpl();
 }
 
 void GetterSetterAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Indenter& indent) const

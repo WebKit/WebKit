@@ -25,36 +25,43 @@
 
 #pragma once
 
-#include <optional>
-#include <wtf/Forward.h>
+#include "ContextDestructionObserver.h"
+#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Report;
 class ReportingObserverCallback;
+class ReportingScope;
 class ScriptExecutionContext;
 
-class ReportingObserver final : public RefCounted<ReportingObserver> {
-    WTF_MAKE_FAST_ALLOCATED;
+class ReportingObserver final : public RefCounted<ReportingObserver>, public ContextDestructionObserver  {
+    WTF_MAKE_ISO_ALLOCATED(ReportingObserver);
 public:
     struct Options {
-        std::optional<Vector<String>> types;
+        std::optional<Vector<AtomString>> types;
         bool buffered { false };
     };
 
-    static Ref<ReportingObserver> create(ScriptExecutionContext&, ReportingObserverCallback&, const ReportingObserver::Options&);
+    static Ref<ReportingObserver> create(ScriptExecutionContext&, Ref<ReportingObserverCallback>&&, ReportingObserver::Options&&);
 
     virtual ~ReportingObserver();
 
     void observe();
     void disconnect();
-    Vector<Report> takeRecords();
+    Vector<Ref<Report>> takeRecords();
+
+    void appendQueuedReportIfCorrectType(const Ref<Report>&);
 
 private:
-    explicit ReportingObserver(ScriptExecutionContext&, ReportingObserverCallback&, const ReportingObserver::Options&);
+    explicit ReportingObserver(ScriptExecutionContext&, Ref<ReportingObserverCallback>&&, ReportingObserver::Options&&);
+
+    WeakPtr<ReportingScope> m_reportingScope;
+    Ref<ReportingObserverCallback> m_callback;
+    Options m_options;
+    Vector<Ref<Report>> m_queuedReports;
 };
 
 }

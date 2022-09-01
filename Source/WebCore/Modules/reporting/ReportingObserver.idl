@@ -29,7 +29,8 @@ typedef sequence<Report> ReportList;
 
 [
     EnabledBySetting=ReportingEnabled,
-    Exposed=(Window,Worker)
+    Exposed=(Window,Worker),
+    GenerateIsReachable=ImplScriptExecutionContext
 ] interface ReportingObserver {
     [CallWith=CurrentScriptExecutionContext] constructor(ReportingObserverCallback callback, optional ReportingObserverOptions options);
     undefined observe();
@@ -38,6 +39,6 @@ typedef sequence<Report> ReportList;
 };
 
 dictionary ReportingObserverOptions {
-    sequence<DOMString>? types;
+    sequence<[AtomString] DOMString>? types;
     boolean buffered = false;
 };

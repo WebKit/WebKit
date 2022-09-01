@@ -38,8 +38,8 @@ namespace WebCore {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMObject);
 
-JSDOMObject::JSDOMObject(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Butterfly* butterfly)
-    : Base(globalObject.vm(), structure, butterfly)
+JSDOMObject::JSDOMObject(JSC::Structure* structure, JSC::JSGlobalObject& globalObject)
+    : Base(globalObject.vm(), structure)
 {
     ASSERT(scriptExecutionContext() || globalObject.classInfo() == JSRemoteDOMWindow::info());
 }

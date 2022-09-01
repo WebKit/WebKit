@@ -2827,6 +2827,14 @@ static RenderObject* rendererForView(WAKView* view)
     return NO;
 }
 
+- (BOOL)accessibilityIsMarkAnnotation
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Mark }) != nullptr;
+}
+
 - (NSArray<NSString *> *)accessibilitySpeechHint
 {
     if (![self _prepareAccessibilityCall])

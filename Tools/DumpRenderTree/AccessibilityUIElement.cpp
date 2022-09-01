@@ -1660,6 +1660,11 @@ static JSValueRef getIsLastItemInSuggestionCallback(JSContextRef context, JSObje
     return JSValueMakeBoolean(context, toAXElement(thisObject)->isLastItemInSuggestion());
 }
 
+static JSValueRef getIsMarkAnnotationCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isMarkAnnotation());
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
@@ -2023,6 +2028,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "isDeletion", getIsDeletionCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isFirstItemInSuggesiton", getIsFirstItemInSuggestionCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isLastItemInSuggesiton", getIsLastItemInSuggestionCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isMarkAnnotation", getIsMarkAnnotationCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif // PLATFORM(IOS_FAMILY)
 #if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
         { "supportedActions", supportedActionsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

@@ -1575,8 +1575,6 @@ fast/events/tabindex-focus-blur-all.html [ Failure ]
 
 # Ref-test imported from W3C that is failing because type=image input elements have rounded corners on iOS.
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01.html [ ImageOnlyFailure ]
-# Ref-test imported form W3C that is failing because the test is off by a couple of pixels on iOS.
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-slow.html [ ImageOnlyFailure ]
 
 webkit.org/b/204505 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-fraction-003.xht [ ImageOnlyFailure ]
 webkit.org/b/204505 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-shorthand-2.xht [ ImageOnlyFailure ]
@@ -3740,3 +3738,4 @@ webkit.org/b/244501 [ Debug ] webgl/2.0.y/conformance2/state/gl-object-get-calls
 
 webkit.org/b/244549 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/blob-url-workers.window.html [ Pass Failure ]
 
+webkit.org/b/244619 editing/selection/ios/tap-to-set-selection-in-editable-web-view.html [ Pass Timeout ]

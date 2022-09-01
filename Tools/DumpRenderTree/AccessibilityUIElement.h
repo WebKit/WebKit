@@ -327,6 +327,8 @@ public:
     bool isTextArea() const;
     bool isSearchField() const;
     
+    bool isMarkAnnotation() const;
+
     AccessibilityTextMarkerRange textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*);
 #endif // PLATFORM(IOS_FAMILY)
 

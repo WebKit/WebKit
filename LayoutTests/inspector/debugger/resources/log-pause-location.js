@@ -106,6 +106,41 @@ TestPage.registerInitializer(() => {
         }
     }
 
+    window.logResolvedBreakpointLocationsInRange = function(start, end, resolvedLocations) {
+        InspectorTest.assert(!resolvedLocations.length || start.lineNumber < resolvedLocations.firstValue.lineNumber || start.columnNumber <= resolvedLocations.firstValue.columnNumber, "Start position should always come before first resolved location position.");
+        InspectorTest.assert(!resolvedLocations.length || end.lineNumber > resolvedLocations.lastValue.lineNumber || end.columnNumber > resolvedLocations.lastValue.columnNumber, "End position should always come after last resolved position.");
+
+        const inputCaret = "#";
+        const resolvedCaret = "|";
+
+        for (let lineNumber = start.lineNumber; lineNumber <= end.lineNumber; ++lineNumber) {
+            let lineContent = lines[lineNumber];
+            if (typeof lineContent !== "string")
+                continue;
+
+            if (lineNumber === start.lineNumber)
+                lineContent = " ".repeat(start.columnNumber) + lineContent.slice(start.columnNumber);
+
+            if (lineNumber === end.lineNumber)
+                lineContent = lineContent.slice(0, end.columnNumber)
+
+            for (let i = resolvedLocations.length - 1; i >= 0; --i) {
+                let resolvedLocation = resolvedLocations[i];
+
+                if (resolvedLocation.lineNumber !== lineNumber)
+                    continue;
+
+                lineContent = insertCaretIntoStringAtIndex(lineContent, resolvedLocation.columnNumber, resolvedCaret);
+            }
+
+            if (lineContent[0] !== resolvedCaret)
+                lineContent = insertCaretIntoStringAtIndex(lineContent, 0, inputCaret);
+
+            let number = lineNumber.toString().padStart(3);
+            InspectorTest.log(`    ${number}    ${lineContent}`);
+        }
+    }
+
     window.logLinesWithContext = function(location, context) {
         if (location.sourceCode !== linesSourceCode && !WI.networkManager.mainFrame.mainResource.scripts.includes(location.sourceCode)) {
             InspectorTest.log("--- Source Unavailable ---");

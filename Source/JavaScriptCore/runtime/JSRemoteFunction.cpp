@@ -207,12 +207,16 @@ void JSRemoteFunction::copyNameAndLength(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    PropertySlot slot(m_targetFunction.get(), PropertySlot::InternalMethodType::Get);
+    PropertySlot slot(m_targetFunction.get(), PropertySlot::InternalMethodType::GetOwnProperty);
     bool targetHasLength = m_targetFunction->getOwnPropertySlotInline(globalObject, vm.propertyNames->length, slot);
     RETURN_IF_EXCEPTION(scope, void());
 
     if (targetHasLength) {
-        JSValue targetLength = slot.getValue(globalObject, vm.propertyNames->length);
+        JSValue targetLength;
+        if (LIKELY(!slot.isTaintedByOpaqueObject()))
+            targetLength = slot.getValue(globalObject, vm.propertyNames->length);
+        else
+            targetLength = m_targetFunction->get(globalObject, vm.propertyNames->length);
         RETURN_IF_EXCEPTION(scope, void());
         double targetLengthAsInt = targetLength.toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, void());

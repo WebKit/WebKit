@@ -1,3 +1,4 @@
 
-FAIL Non-redirected cross-origin URLs are not stripped. assert_equals: expected "http://127.0.0.1:8800/content-security-policy/support/fail.png" but got "http://127.0.0.1:8800"
+
+FAIL Non-redirected cross-origin URLs are not stripped. assert_equals: expected 0 but got 2
 

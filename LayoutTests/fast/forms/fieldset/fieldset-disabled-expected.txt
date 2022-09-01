@@ -88,6 +88,7 @@ PASS legendFieldSet.disabled is false
 PASS insertedLegendTextInput.value is "JJJK"
 PASS firstLegendTextInput.value is "IIK"
 PASS secondLegendTextInput.value is "K"
+PASS disabledFieldsetWithTabindex.focus(); document.activeElement is document.body
 PASS successfullyParsed is true
 
 TEST COMPLETE

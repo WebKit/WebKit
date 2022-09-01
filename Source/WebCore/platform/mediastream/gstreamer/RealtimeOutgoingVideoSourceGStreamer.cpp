@@ -22,7 +22,7 @@
 
 #if USE(GSTREAMER_WEBRTC)
 
-#include "GStreamerCommon.h"
+#include "GStreamerRegistryScanner.h"
 #include "GStreamerVideoCaptureSource.h"
 #include "GStreamerVideoEncoder.h"
 
@@ -31,10 +31,13 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
 
 namespace WebCore {
 
-RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(Ref<MediaStreamTrackPrivate>&& source)
-    : RealtimeOutgoingMediaSourceGStreamer()
+RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(const String& mediaStreamId, MediaStreamTrack& track)
+    : RealtimeOutgoingMediaSourceGStreamer(mediaStreamId, track)
 {
     registerWebKitGStreamerElements();
+
+    static Atomic<uint64_t> sourceCounter = 0;
+    gst_element_set_name(m_bin.get(), makeString("outgoing-video-source-", sourceCounter.exchangeAdd(1)).ascii().data());
 
     m_videoConvert = makeGStreamerElement("videoconvert", nullptr);
 
@@ -43,59 +46,52 @@ RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(Ref<M
 
     m_encoder = gst_element_factory_make("webrtcvideoencoder", nullptr);
     gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_videoFlip.get(), m_videoConvert.get(), m_encoder.get(), nullptr);
+}
 
-    auto* padTemplate = gst_element_get_pad_template(m_encoder.get(), "src");
-    auto caps = adoptGRef(gst_pad_template_get_caps(padTemplate));
-    m_allowedCaps = adoptGRef(gst_caps_new_empty());
-    gst_caps_foreach(caps.get(), reinterpret_cast<GstCapsForeachFunc>(+[](GstCapsFeatures*, GstStructure* structure, gpointer userData) -> gboolean {
-        auto* source = reinterpret_cast<RealtimeOutgoingVideoSourceGStreamer*>(userData);
-        const char* name = gst_structure_get_name(structure);
-        const char* encodingName = nullptr;
-        if (!strcmp(name, "video/x-vp8"))
-            encodingName = "VP8";
-        else if (!strcmp(name, "video/x-vp9"))
-            encodingName = "VP9";
-        else if (!strcmp(name, "video/x-h264"))
-            encodingName = "H264";
-        if (encodingName)
-            gst_caps_append_structure(source->m_allowedCaps.get(), gst_structure_new("application/x-rtp", "media", G_TYPE_STRING, "video", "encoding-name", G_TYPE_STRING, encodingName, "clock-rate", G_TYPE_INT, 90000, nullptr));
-        return TRUE;
-    }), this);
-
-    setSource(WTFMove(source));
+RTCRtpCapabilities RealtimeOutgoingVideoSourceGStreamer::rtpCapabilities() const
+{
+    auto& registryScanner = GStreamerRegistryScanner::singleton();
+    return registryScanner.videoRtpCapabilities(GStreamerRegistryScanner::Configuration::Encoding);
 }
 
 bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>& caps)
 {
-    GST_DEBUG_OBJECT(m_bin.get(), "Outgoing video source payload caps: %" GST_PTR_FORMAT, caps.get());
+    GST_DEBUG_OBJECT(m_bin.get(), "Setting payload caps: %" GST_PTR_FORMAT, caps.get());
     auto* structure = gst_caps_get_structure(caps.get(), 0);
-    GRefPtr<GstCaps> encoderCaps;
-    if (const char* encodingName = gst_structure_get_string(structure, "encoding-name")) {
-        if (!strcmp(encodingName, "VP8")) {
-            encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp8"));
-            m_payloader = makeGStreamerElement("rtpvp8pay", nullptr);
-        } else if (!strcmp(encodingName, "VP9")) {
-            encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
-            if (const char* vp9Profile = gst_structure_get_string(structure, "vp9-profile-id"))
-                gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, vp9Profile, nullptr);
-            m_payloader = makeGStreamerElement("rtpvp9pay", nullptr);
-        } else if (!strcmp(encodingName, "H264")) {
-            encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
-            m_payloader = makeGStreamerElement("rtph264pay", nullptr);
-            // FIXME: https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/issues/893
-            // gst_util_set_object_arg(G_OBJECT(m_payloader.get()), "aggregate-mode", "zero-latency");
-            // g_object_set(m_payloader.get(), "config-interval", -1, nullptr);
-        } else {
-            GST_ERROR_OBJECT(m_bin.get(), "Unsupported outgoing video encoding: %s", encodingName);
-            return false;
-        }
-    } else {
+    const char* encodingName = gst_structure_get_string(structure, "encoding-name");
+    if (!encodingName) {
         GST_ERROR_OBJECT(m_bin.get(), "encoding-name not found");
         return false;
     }
 
-    if (!m_payloader)
+    auto encoding = makeString(encodingName).convertToASCIILowercase();
+    m_payloader = makeGStreamerElement(makeString("rtp"_s, encoding, "pay"_s).ascii().data(), nullptr);
+    if (UNLIKELY(!m_payloader)) {
+        GST_ERROR_OBJECT(m_bin.get(), "RTP payloader not found for encoding %s", encodingName);
         return false;
+    }
+
+    GRefPtr<GstCaps> encoderCaps;
+    if (encoding == "vp8"_s) {
+        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp8"));
+    } else if (encoding == "vp9"_s) {
+        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
+        if (const char* vp9Profile = gst_structure_get_string(structure, "vp9-profile-id"))
+            gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, vp9Profile, nullptr);
+    } else if (encoding == "h264"_s) {
+        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
+        // FIXME: https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/issues/893
+        // gst_util_set_object_arg(G_OBJECT(m_payloader.get()), "aggregate-mode", "zero-latency");
+        // g_object_set(m_payloader.get(), "config-interval", -1, nullptr);
+
+        const char* profile = gst_structure_get_string(structure, "profile");
+        if (!profile)
+            profile = "baseline";
+        gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, profile, nullptr);
+    } else {
+        GST_ERROR_OBJECT(m_bin.get(), "Unsupported outgoing video encoding: %s", encodingName);
+        return false;
+    }
 
     // FIXME: Re-enable this. Currently triggers caps negotiation error.
     g_object_set(m_payloader.get(), "auto-header-extension", FALSE, nullptr);
@@ -109,8 +105,7 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     if (gst_structure_get_int(structure, "payload", &payloadType))
         g_object_set(m_payloader.get(), "pt", payloadType, nullptr);
 
-    auto filteredCaps = adoptGRef(gst_caps_new_full(gst_structure_copy(structure), nullptr));
-    g_object_set(m_capsFilter.get(), "caps", filteredCaps.get(), nullptr);
+    g_object_set(m_capsFilter.get(), "caps", caps.get(), nullptr);
 
     gst_bin_add(GST_BIN_CAST(m_bin.get()), m_payloader.get());
 
@@ -119,22 +114,24 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         gst_element_link_many(m_outgoingSource.get(), m_valve.get(), m_videoFlip.get(), m_videoConvert.get(), m_preEncoderQueue.get(), m_encoder.get(), nullptr);
 
     gst_element_link_many(m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
-    gst_element_sync_state_with_parent(m_encoder.get());
-    gst_element_sync_state_with_parent(m_payloader.get());
+    gst_bin_sync_children_states(GST_BIN_CAST(m_bin.get()));
     return true;
 }
 
 void RealtimeOutgoingVideoSourceGStreamer::codecPreferencesChanged(const GRefPtr<GstCaps>& codecPreferences)
 {
-    gst_element_set_locked_state(m_outgoingSource.get(), TRUE);
+    gst_element_set_locked_state(m_bin.get(), TRUE);
     if (m_payloader) {
-        gst_element_unlink_many(m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
+        gst_element_set_locked_state(m_payloader.get(), TRUE);
         gst_element_set_state(m_payloader.get(), GST_STATE_NULL);
+        gst_element_unlink_many(m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
         gst_bin_remove(GST_BIN_CAST(m_bin.get()), m_payloader.get());
         m_payloader.clear();
     }
     setPayloadType(codecPreferences);
-    gst_element_set_locked_state(m_outgoingSource.get(), FALSE);
+    gst_element_set_locked_state(m_bin.get(), FALSE);
+    gst_element_sync_state_with_parent(m_bin.get());
+    GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_bin.get()), GST_DEBUG_GRAPH_SHOW_ALL, "outgoing-video-new-codec-prefs");
 }
 
 } // namespace WebCore

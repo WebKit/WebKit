@@ -553,9 +553,7 @@ public:
 
     virtual void makeViewBlank(bool) { }
 
-#if HAVE(PASTEBOARD_DATA_OWNER)
     virtual WebCore::DataOwnerType dataOwnerForPasteboard(PasteboardAccessIntent) const { return WebCore::DataOwnerType::Undefined; }
-#endif
 
     virtual bool hasResizableWindows() const { return false; }
 

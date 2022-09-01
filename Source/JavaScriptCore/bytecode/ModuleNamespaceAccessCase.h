@@ -46,14 +46,12 @@ public:
 
     static Ref<AccessCase> create(VM&, JSCell* owner, CacheableIdentifier, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);
 
-    Ref<AccessCase> clone() const final;
-
     void emit(AccessGenerationState&, MacroAssembler::JumpList& fallThrough);
-
-    ~ModuleNamespaceAccessCase() final;
 
 private:
     ModuleNamespaceAccessCase(VM&, JSCell* owner, CacheableIdentifier, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);
+
+    Ref<AccessCase> cloneImpl() const;
 
     WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
     WriteBarrier<JSModuleEnvironment> m_moduleEnvironment;

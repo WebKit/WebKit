@@ -68,13 +68,12 @@ static const IndexingType UndecidedShape                  = 0x02; // Only useful
 static const IndexingType Int32Shape                      = 0x04;
 static const IndexingType DoubleShape                     = 0x06;
 static const IndexingType ContiguousShape                 = 0x08;
-static const IndexingType AlwaysSlowPutContiguousShape    = 0x0A;
-static const IndexingType ArrayStorageShape               = 0x0C;
-static const IndexingType SlowPutArrayStorageShape        = 0x0E;
+static const IndexingType ArrayStorageShape               = 0x0A;
+static const IndexingType SlowPutArrayStorageShape        = 0x0C;
 
 static const IndexingType IndexingShapeMask               = 0x0E;
 static const IndexingType IndexingShapeShift              = 1;
-static const IndexingType NumberOfIndexingShapes          = 8;
+static const IndexingType NumberOfIndexingShapes          = 7;
 static const IndexingType IndexingTypeMask                = IndexingShapeMask | IsArray;
 
 // Whether or not the butterfly is copy on write. If it is copy on write then the butterfly is actually a JSImmutableButterfly. This should only ever be set if there are no named properties.
@@ -96,23 +95,22 @@ static const IndexingType IndexingTypeLockIsHeld          = 0x40;
 static const IndexingType IndexingTypeLockHasParked       = 0x80;
 
 // List of acceptable array types.
-static const IndexingType NonArray                            = 0x0;
-static const IndexingType NonArrayWithInt32                   = Int32Shape;
-static const IndexingType NonArrayWithDouble                  = DoubleShape;
-static const IndexingType NonArrayWithContiguous              = ContiguousShape;
-static const IndexingType NonArrayWithAlwaysSlowPutContiguous = AlwaysSlowPutContiguousShape;
-static const IndexingType NonArrayWithArrayStorage            = ArrayStorageShape;
-static const IndexingType NonArrayWithSlowPutArrayStorage     = SlowPutArrayStorageShape;
-static const IndexingType ArrayClass                          = IsArray; // I'd want to call this "Array" but this would lead to disastrous namespace pollution.
-static const IndexingType ArrayWithUndecided                  = IsArray | UndecidedShape;
-static const IndexingType ArrayWithInt32                      = IsArray | Int32Shape;
-static const IndexingType ArrayWithDouble                     = IsArray | DoubleShape;
-static const IndexingType ArrayWithContiguous                 = IsArray | ContiguousShape;
-static const IndexingType ArrayWithArrayStorage               = IsArray | ArrayStorageShape;
-static const IndexingType ArrayWithSlowPutArrayStorage        = IsArray | SlowPutArrayStorageShape;
-static const IndexingType CopyOnWriteArrayWithInt32           = IsArray | Int32Shape | CopyOnWrite;
-static const IndexingType CopyOnWriteArrayWithDouble          = IsArray | DoubleShape | CopyOnWrite;
-static const IndexingType CopyOnWriteArrayWithContiguous      = IsArray | ContiguousShape | CopyOnWrite;
+static const IndexingType NonArray                        = 0x0;
+static const IndexingType NonArrayWithInt32               = Int32Shape;
+static const IndexingType NonArrayWithDouble              = DoubleShape;
+static const IndexingType NonArrayWithContiguous          = ContiguousShape;
+static const IndexingType NonArrayWithArrayStorage        = ArrayStorageShape;
+static const IndexingType NonArrayWithSlowPutArrayStorage = SlowPutArrayStorageShape;
+static const IndexingType ArrayClass                      = IsArray; // I'd want to call this "Array" but this would lead to disastrous namespace pollution.
+static const IndexingType ArrayWithUndecided              = IsArray | UndecidedShape;
+static const IndexingType ArrayWithInt32                  = IsArray | Int32Shape;
+static const IndexingType ArrayWithDouble                 = IsArray | DoubleShape;
+static const IndexingType ArrayWithContiguous             = IsArray | ContiguousShape;
+static const IndexingType ArrayWithArrayStorage           = IsArray | ArrayStorageShape;
+static const IndexingType ArrayWithSlowPutArrayStorage    = IsArray | SlowPutArrayStorageShape;
+static const IndexingType CopyOnWriteArrayWithInt32       = IsArray | Int32Shape | CopyOnWrite;
+static const IndexingType CopyOnWriteArrayWithDouble      = IsArray | DoubleShape | CopyOnWrite;
+static const IndexingType CopyOnWriteArrayWithContiguous  = IsArray | ContiguousShape | CopyOnWrite;
 
 #define ALL_BLANK_INDEXING_TYPES \
     NonArray:                    \
@@ -137,21 +135,13 @@ static const IndexingType CopyOnWriteArrayWithContiguous      = IsArray | Contig
     ALL_WRITABLE_DOUBLE_INDEXING_TYPES: \
     case CopyOnWriteArrayWithDouble
 
-#define ALL_WRITABLE_FAST_PUT_CONTIGUOUS_INDEXING_TYPES \
+#define ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES    \
     NonArrayWithContiguous:                       \
     case ArrayWithContiguous                      \
 
-#define ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES       \
-    ALL_WRITABLE_FAST_PUT_CONTIGUOUS_INDEXING_TYPES: \
-    case NonArrayWithAlwaysSlowPutContiguous
-
-#define ALL_FAST_PUT_CONTIGUOUS_INDEXING_TYPES        \
-    ALL_WRITABLE_FAST_PUT_CONTIGUOUS_INDEXING_TYPES:  \
+#define ALL_CONTIGUOUS_INDEXING_TYPES        \
+    ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES:  \
     case CopyOnWriteArrayWithContiguous
-
-#define ALL_CONTIGUOUS_INDEXING_TYPES         \
-    ALL_FAST_PUT_CONTIGUOUS_INDEXING_TYPES:   \
-    case NonArrayWithAlwaysSlowPutContiguous
 
 #define ARRAY_WITH_ARRAY_STORAGE_INDEXING_TYPES \
     ArrayWithArrayStorage:                      \
@@ -187,16 +177,6 @@ inline bool hasContiguous(IndexingType indexingType)
     return (indexingType & IndexingShapeMask) == ContiguousShape;
 }
 
-inline bool hasAlwaysSlowPutContiguous(IndexingType indexingType)
-{
-    return (indexingType & IndexingShapeMask) == AlwaysSlowPutContiguousShape;
-}
-
-inline bool hasAnyContiguous(IndexingType indexingType)
-{
-    return hasContiguous(indexingType) || hasAlwaysSlowPutContiguous(indexingType);
-}
-
 inline bool hasArrayStorage(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) == ArrayStorageShape;
@@ -210,11 +190,6 @@ inline bool hasAnyArrayStorage(IndexingType indexingType)
 inline bool hasSlowPutArrayStorage(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) == SlowPutArrayStorageShape;
-}
-
-inline bool hasAnySlowPutIndexingType(IndexingType indexingType)
-{
-    return hasAlwaysSlowPutContiguous(indexingType) || hasSlowPutArrayStorage(indexingType);
 }
 
 inline bool shouldUseSlowPut(IndexingType indexingType)

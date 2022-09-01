@@ -534,9 +534,6 @@ public:
     InlineWatchpointSet m_sharedArrayBufferSpeciesWatchpointSet { ClearWatchpoint };
     InlineWatchpointSet m_typedArrayConstructorSpeciesWatchpointSet { IsWatched };
     InlineWatchpointSet m_typedArrayPrototypeIteratorProtocolWatchpointSet { IsWatched };
-
-    // Current this is being set up in JSDOMWindowBase and watches only NodeList.prototype.length getter to be original.
-    InlineWatchpointSet m_alwaysSlowPutContiguousPrototypesAreSaneWatchpointSet { ClearWatchpoint };
 #define DECLARE_TYPED_ARRAY_TYPE_SPECIES_WATCHPOINT_SET(name) \
     InlineWatchpointSet m_typedArray ## name ## SpeciesWatchpointSet { ClearWatchpoint }; \
     InlineWatchpointSet m_typedArray ## name ## IteratorProtocolWatchpointSet { ClearWatchpoint };
@@ -667,7 +664,6 @@ public:
     }
     InlineWatchpointSet& typedArrayConstructorSpeciesWatchpointSet() { return m_typedArrayConstructorSpeciesWatchpointSet; }
     InlineWatchpointSet& typedArrayPrototypeIteratorProtocolWatchpointSet() { return m_typedArrayPrototypeIteratorProtocolWatchpointSet; }
-    InlineWatchpointSet& alwaysSlowPutContiguousPrototypesAreSaneWatchpointSet() { return m_alwaysSlowPutContiguousPrototypesAreSaneWatchpointSet; }
 
     bool isArrayPrototypeIteratorProtocolFastAndNonObservable();
     bool isTypedArrayPrototypeIteratorProtocolFastAndNonObservable(TypedArrayType);
@@ -888,14 +884,6 @@ public:
     {
         return originalArrayStructureForIndexingType(structure->indexingMode() | IsArray) == structure;
     }
-
-    bool isOriginalSlowPutContigiousStructure(Structure* structure)
-    {
-        ASSERT(hasAlwaysSlowPutContiguous(structure->indexingMode()));
-        return m_originalAlwaysSlowPutContiguousStructureSet.contains(structure);
-    }
-
-    const StructureSet& originalAlwaysSlowPutContiguousStructureSet() const { return m_originalAlwaysSlowPutContiguousStructureSet; }
         
     Structure* booleanObjectStructure() const { return m_booleanObjectStructure.get(this); }
     Structure* callbackConstructorStructure() const { return m_callbackConstructorStructure.get(this); }
@@ -1332,8 +1320,6 @@ protected:
 
     void setNeedsSiteSpecificQuirks(bool needQuirks) { m_needsSiteSpecificQuirks = needQuirks; }
 
-    JS_EXPORT_PRIVATE void recordOriginalAlwaysSlowPutContiguousStructure(Structure*);
-
 private:
     friend class LLIntOffsetsExtractor;
 
@@ -1357,8 +1343,6 @@ private:
 #ifdef JSC_GLIB_API_ENABLED
     std::unique_ptr<WrapperMap> m_wrapperMap;
 #endif
-
-    StructureSet m_originalAlwaysSlowPutContiguousStructureSet;
 };
 
 inline JSArray* constructEmptyArray(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, unsigned initialLength = 0, JSValue newTarget = JSValue())

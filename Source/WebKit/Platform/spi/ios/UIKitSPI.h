@@ -164,6 +164,13 @@
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #endif
 
+typedef NS_ENUM(NSInteger, _UIDataOwner) {
+    _UIDataOwnerUndefined,
+    _UIDataOwnerUser,
+    _UIDataOwnerEnterprise,
+    _UIDataOwnerShared,
+};
+
 #if HAVE(LINK_PREVIEW)
 typedef NS_ENUM(NSInteger, UIPreviewItemType) {
     UIPreviewItemTypeNone,
@@ -172,13 +179,6 @@ typedef NS_ENUM(NSInteger, UIPreviewItemType) {
     UIPreviewItemTypeImage,
     UIPreviewItemTypeText,
     UIPreviewItemTypeAttachment,
-};
-
-typedef NS_ENUM(NSInteger, _UIDataOwner) {
-    _UIDataOwnerUndefined,
-    _UIDataOwnerUser,
-    _UIDataOwnerEnterprise,
-    _UIDataOwnerShared,
 };
 
 @class UIPreviewItemController;
@@ -507,10 +507,8 @@ typedef enum {
 - (void)_wheelChangedWithEvent:(UIEvent *)event;
 - (void)_beginPinningInputViews;
 - (void)_endPinningInputViews;
-#if HAVE(PASTEBOARD_DATA_OWNER)
 @property (nonatomic, setter=_setDataOwnerForCopy:) _UIDataOwner _dataOwnerForCopy;
 @property (nonatomic, setter=_setDataOwnerForPaste:) _UIDataOwner _dataOwnerForPaste;
-#endif
 @end
 
 @class FBSDisplayConfiguration;

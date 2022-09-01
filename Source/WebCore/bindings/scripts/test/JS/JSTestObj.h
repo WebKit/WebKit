@@ -84,7 +84,7 @@ public:
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertyNames | JSC::OverridesGetOwnPropertySlot;
 protected:
-    JSTestObj(JSC::Structure*, JSDOMGlobalObject&, Ref<TestObj>&&, JSC::Butterfly* = nullptr);
+    JSTestObj(JSC::Structure*, JSDOMGlobalObject&, Ref<TestObj>&&);
 
     void finishCreation(JSC::VM&);
 };

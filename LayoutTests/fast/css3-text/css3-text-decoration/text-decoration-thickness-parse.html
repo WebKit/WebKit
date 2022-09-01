@@ -42,7 +42,7 @@ shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4'))
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).getPropertyValue('text-decoration-thickness')", "auto");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test6')).getPropertyValue('text-decoration-thickness')", "37px");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test7')).getPropertyValue('text-decoration-thickness')", "200px");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test8')).getPropertyValue('text-decoration-thickness')", "40px");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test8')).getPropertyValue('text-decoration-thickness')", "auto");
 shouldBeEqualToString("document.getElementById('target').sheet.cssRules[0].style.textDecorationThickness", "");
 shouldBeEqualToString("document.getElementById('target').sheet.cssRules[1].style.textDecorationThickness", "auto");
 shouldBeEqualToString("document.getElementById('target').sheet.cssRules[2].style.textDecorationThickness", "from-font");

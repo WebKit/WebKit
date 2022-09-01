@@ -82,6 +82,8 @@ private:
     static void networkStateChanged(bool isOnLine);
     void notifyNetworkStateChange(bool isOnline);
 
+    ReportingClient* reportingClient() const final;
+
     UniqueRef<Page> m_page;
     Ref<Document> m_document;
     ScriptExecutionContextIdentifier m_contextIdentifier;

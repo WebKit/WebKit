@@ -53,7 +53,7 @@ public:
 
         Element& element() const { return m_item.element(); }
         ContainerNode& node() const { return m_item.node(); }
-        const AtomString& namespaceURI() const { return m_item.namespaceURI(); }
+        ElementName elementName() const { return m_item.elementName(); }
         HTMLStackItem& stackItem() { return m_item; }
         const HTMLStackItem& stackItem() const { return m_item; }
 
@@ -77,26 +77,16 @@ public:
 
     // Inlining this function is a (small) performance win on the parsing
     // benchmark.
-    Element& top() const
-    {
-        return m_top->element();
-    }
-
-    ContainerNode& topNode() const
-    {
-        return m_top->node();
-    }
-
-    HTMLStackItem& topStackItem() const
-    {
-        return m_top->stackItem();
-    }
+    Element& top() const { return m_top->element(); }
+    ContainerNode& topNode() const { return m_top->node(); }
+    ElementName topElementName() const { return m_top->elementName(); }
+    HTMLStackItem& topStackItem() const { return m_top->stackItem(); }
 
     HTMLStackItem* oneBelowTop() const;
     ElementRecord& topRecord() const;
     ElementRecord* find(Element&) const;
     ElementRecord* furthestBlockForFormattingElement(Element&) const;
-    ElementRecord* topmost(const AtomString& tagName) const;
+    ElementRecord* topmost(ElementName) const;
 
     void insertAbove(HTMLStackItem&&, ElementRecord&);
 
@@ -107,11 +97,9 @@ public:
     void pushHTMLBodyElement(HTMLStackItem&&);
 
     void pop();
-    void popUntil(const AtomString& tagName);
+    void popUntil(ElementName);
     void popUntil(Element&);
-    void popUntilPopped(const AtomString& tagName);
-    void popUntilPopped(const QualifiedName& tagName) { popUntilPopped(tagName.localName()); }
-
+    void popUntilPopped(ElementName);
     void popUntilPopped(Element&);
     void popUntilNumberedHeaderElementPopped();
     void popUntilTableScopeMarker(); // "clear the stack back to a table context" in the spec.
@@ -129,19 +117,13 @@ public:
     void removeHTMLHeadElement(Element&);
 
     bool contains(Element&) const;
-    bool contains(const AtomString& tagName) const;
 
     bool inScope(Element&) const;
-    bool inScope(const AtomString& tagName) const;
-    bool inScope(const QualifiedName&) const;
-    bool inListItemScope(const AtomString& tagName) const;
-    bool inListItemScope(const QualifiedName&) const;
-    bool inTableScope(const AtomString& tagName) const;
-    bool inTableScope(const QualifiedName&) const;
-    bool inButtonScope(const AtomString& tagName) const;
-    bool inButtonScope(const QualifiedName&) const;
-    bool inSelectScope(const AtomString& tagName) const;
-    bool inSelectScope(const QualifiedName&) const;
+    bool inScope(ElementName) const;
+    bool inListItemScope(ElementName) const;
+    bool inTableScope(ElementName) const;
+    bool inButtonScope(ElementName) const;
+    bool inSelectScope(ElementName) const;
 
     bool hasNumberedHeaderElementInScope() const;
 

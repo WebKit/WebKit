@@ -18,6 +18,24 @@ function test()
     });
 
     suite.addTestCase({
+        name: "Set.prototype.filter",
+        test() {
+            function test(set, callback, thisArg, expected, message) {
+                InspectorTest.expectShallowEqual(Array.from(set.filter(callback, thisArg)), expected, message);
+            }
+
+            const set1 = new Set([1, 2, 3, 4]);
+            const set2 = new Set([2, 4]);
+
+            test(set1, function(value) { return value % 2; }, null, [1, 3], "Set can filter based on the value.");
+            test(set1, function(value, key) { return key % 2; }, null, [1, 3], "Set can filter based on the key.");
+            test(set1, function(value, key, set) { return set === set1; }, null, [1, 2, 3, 4], "Set can filter based on the set object.");
+            test(set1, function(value, key, set) { return this.has(key); }, set2, [2, 4], "Set can filter with a different this.");
+            test(set1, function(value, key, set) { return this !== set; }, set2, [1, 2, 3, 4], "Set can filter based on the set object with a different this.");
+        },
+    });
+
+    suite.addTestCase({
         name: "Set.prototype.pushAll",
         test() {
             function test(iterable) {

@@ -251,14 +251,14 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const Vector<A
 
 ALWAYS_INLINE bool matchesDirPseudoClass(const Element& element, const AtomString& argument)
 {
+    // FIXME: Add support for non-HTML elements.
     if (!is<HTMLElement>(element))
         return false;
 
     if (!element.document().settings().dirPseudoEnabled())
         return false;
 
-    // FIXME: Add support for non-HTML elements.
-    switch (downcast<HTMLElement>(element).computeDirectionality()) {
+    switch (element.effectiveTextDirection()) {
     case TextDirection::LTR:
         return equalIgnoringASCIICase(argument, "ltr"_s);
     case TextDirection::RTL:

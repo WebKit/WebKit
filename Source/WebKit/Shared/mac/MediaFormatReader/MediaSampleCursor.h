@@ -28,6 +28,7 @@
 #if ENABLE(WEBM_FORMAT_READER)
 
 #include "CoreMediaWrapped.h"
+#include "MediaSampleByteRange.h"
 #include <WebCore/MediaSample.h>
 #include <WebCore/SampleMap.h>
 #include <variant>
@@ -71,7 +72,7 @@ private:
     MediaSampleCursor(Allocator&&, const MediaSampleCursor&);
 
     template<typename OrderedMap> std::optional<typename OrderedMap::iterator> locateIterator(OrderedMap&, bool hasAllSamples) const WTF_REQUIRES_LOCK(m_locatorLock);
-    using SampleType = std::optional<std::pair<const MediaSample*, const WebCore::MediaSamplesBlock::MediaSampleItem*>>;
+    using SampleType = std::optional<std::pair<const WebCore::MediaSample*, const WebCore::MediaSamplesBlock::MediaSampleItem*>>;
     SampleType locateMediaSample(WebCore::SampleMap&, bool hasAllSamples) const WTF_REQUIRES_LOCK(m_locatorLock);
     Timing locateTiming(WebCore::SampleMap&, bool hasAllSamples) const WTF_REQUIRES_LOCK(m_locatorLock);
 

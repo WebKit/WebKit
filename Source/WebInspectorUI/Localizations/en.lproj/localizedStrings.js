@@ -451,6 +451,7 @@ localizedStrings["DOM Content Loaded \u2014 %s"] = "DOM Content Loaded \u2014 %s
 localizedStrings["DOM Event \u201C%s\u201D"] = "DOM Event \u201C%s\u201D";
 localizedStrings["DOM Events"] = "DOM Events";
 localizedStrings["DOM Nodes:"] = "DOM Nodes:";
+localizedStrings["DOM Tree:"] = "DOM Tree:";
 /* Label indicating that network activity is being simulated with DSL connectivity. */
 localizedStrings["DSL"] = "DSL";
 localizedStrings["Damping"] = "Damping";
@@ -463,6 +464,7 @@ localizedStrings["Database"] = "Database";
 localizedStrings["Database no longer has expected version."] = "Database no longer has expected version.";
 localizedStrings["Databases"] = "Databases";
 localizedStrings["Date"] = "Date";
+localizedStrings["De-emphasize nodes that are not rendered"] = "De-emphasize nodes that are not rendered";
 localizedStrings["Debug: "] = "Debug: ";
 localizedStrings["Debugger Statement"] = "Debugger Statement";
 /* Break (pause) on debugger statements */
@@ -839,8 +841,8 @@ localizedStrings["Import audit or result"] = "Import audit or result";
 localizedStrings["Imported"] = "Imported";
 localizedStrings["Imported - %s"] = "Imported - %s";
 localizedStrings["Imported \u2014 %s"] = "Imported \u2014 %s";
-localizedStrings["Include original response data"] = "Include original response data";
 localizedStrings["Include original request data"] = "Include original request data";
+localizedStrings["Include original response data"] = "Include original response data";
 localizedStrings["Incomplete"] = "Incomplete";
 localizedStrings["Indent width:"] = "Indent width:";
 localizedStrings["Index"] = "Index";

@@ -274,6 +274,17 @@
             ]
         },
         {
+            "name": "getBreakpointLocations",
+            "description": "Returns a list of valid breakpoint locations within the given location range.",
+            "parameters": [
+                { "name": "start", "$ref": "Location", "description": "Starting location to look for breakpoint locations after (inclusive). Must have same scriptId as end." },
+                { "name": "end", "$ref": "Location", "description": "Ending location to look for breakpoint locations before (exclusive). Must have same scriptId as start." }
+            ],
+            "returns": [
+                { "name": "locations", "type": "array", "items": { "$ref": "Location" }, "description": "List of resolved breakpoint locations." }
+            ]
+        },
+        {
             "name": "setPauseOnDebuggerStatements",
             "description": "Control whether the debugger pauses execution before `debugger` statements.",
             "parameters": [

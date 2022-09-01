@@ -97,7 +97,7 @@ private:
     void collectTransceivers() final;
 
     void addPendingTrackEvent(PendingTrackEvent&&);
-    void dispatchPendingTrackEvents();
+    void dispatchPendingTrackEvents(MediaStream&);
 
 private:
     bool isLocalDescriptionSet() const final { return m_isLocalDescriptionSet; }

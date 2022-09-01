@@ -25,10 +25,10 @@
 
 WI.SourceCodePosition = class SourceCodePosition
 {
-    constructor(lineNumber, columNumber)
+    constructor(lineNumber, columnNumber)
     {
         this._lineNumber = lineNumber || 0;
-        this._columnNumber = columNumber || 0;
+        this._columnNumber = columnNumber || 0;
     }
 
     // Public

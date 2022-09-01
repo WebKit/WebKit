@@ -59,7 +59,7 @@ public:
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestLegacyFactoryFunction(JSC::Structure*, JSDOMGlobalObject&, Ref<TestLegacyFactoryFunction>&&, JSC::Butterfly* = nullptr);
+    JSTestLegacyFactoryFunction(JSC::Structure*, JSDOMGlobalObject&, Ref<TestLegacyFactoryFunction>&&);
 
     void finishCreation(JSC::VM&);
 };

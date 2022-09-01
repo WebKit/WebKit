@@ -50,7 +50,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> linkPolymorphicCallThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM&, CallMode);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallWithDebuggerHookGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructWithDebuggerHookGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallWithoutSavedTagsGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionCallGenerator(VM&);

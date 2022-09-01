@@ -100,7 +100,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_overlay(makeUnique<InspectorOverlay>(page, inspectorClient))
     , m_executionStopwatch(Stopwatch::create())
-    , m_debugger(page)
     , m_page(page)
     , m_inspectorClient(inspectorClient)
 {
@@ -147,6 +146,8 @@ void InspectorController::createLazyAgents()
         return;
 
     m_didCreateLazyAgents = true;
+
+    m_debugger = makeUnique<PageDebugger>(m_page);
 
     m_injectedScriptManager->connect();
 
@@ -200,6 +201,8 @@ void InspectorController::inspectedPageDestroyed()
     m_inspectorClient = nullptr;
 
     m_agents.discardValues();
+
+    m_debugger = nullptr;
 }
 
 void InspectorController::setInspectorFrontendClient(InspectorFrontendClient* inspectorFrontendClient)
@@ -514,9 +517,10 @@ Stopwatch& InspectorController::executionStopwatch() const
     return m_executionStopwatch;
 }
 
-PageDebugger& InspectorController::debugger()
+JSC::Debugger* InspectorController::debugger()
 {
-    return m_debugger;
+    ASSERT_IMPLIES(m_didCreateLazyAgents, m_debugger);
+    return m_debugger.get();
 }
 
 JSC::VM& InspectorController::vm()

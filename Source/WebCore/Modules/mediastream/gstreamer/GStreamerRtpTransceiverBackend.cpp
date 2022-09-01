@@ -37,7 +37,9 @@ namespace WebCore {
 GStreamerRtpTransceiverBackend::GStreamerRtpTransceiverBackend(GRefPtr<GstWebRTCRTPTransceiver>&& rtcTransceiver)
     : m_rtcTransceiver(WTFMove(rtcTransceiver))
 {
-    g_object_set(m_rtcTransceiver.get(), "do-nack", TRUE, "fec-type", GST_WEBRTC_FEC_TYPE_ULP_RED, nullptr);
+    // FIXME: Enable FEC once flexfec is available. ULPFEC is a disaster, see also
+    // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1407 ...
+    g_object_set(m_rtcTransceiver.get(), "do-nack", TRUE, nullptr);
 }
 
 std::unique_ptr<GStreamerRtpReceiverBackend> GStreamerRtpTransceiverBackend::createReceiverBackend()

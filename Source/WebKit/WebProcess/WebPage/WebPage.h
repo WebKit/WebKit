@@ -213,6 +213,7 @@ class Page;
 class PrintContext;
 class Range;
 class RenderImage;
+class Report;
 class ResourceRequest;
 class ResourceResponse;
 class SelectionData;
@@ -450,6 +451,8 @@ public:
     void addConsoleMessage(WebCore::FrameIdentifier, MessageSource, MessageLevel, const String&, std::optional<WebCore::ResourceLoaderIdentifier> = std::nullopt);
     void sendCSPViolationReport(WebCore::FrameIdentifier, const URL& reportURL, IPC::FormDataReference&&);
     void enqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier, WebCore::SecurityPolicyViolationEventInit&&);
+
+    void notifyReportObservers(WebCore::FrameIdentifier, Ref<WebCore::Report>&&);
 
     // -- Called by the DrawingArea.
     // FIXME: We could genericize these into a DrawingArea client interface. Would that be beneficial?

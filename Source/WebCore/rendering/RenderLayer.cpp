@@ -434,8 +434,6 @@ void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
     if (child.hasBlendMode() || (child.hasNotIsolatedBlendingDescendants() && !child.isolatesBlending()))
         updateAncestorChainHasBlendingDescendants(); // Why not just dirty?
 #endif
-
-    compositor().layerWasAdded(*this, child);
 }
 
 void RenderLayer::removeChild(RenderLayer& oldChild)
@@ -647,9 +645,6 @@ void RenderLayer::setParent(RenderLayer* parent)
         compositor().layerWillBeRemoved(*m_parent, *this);
 
     m_parent = parent;
-
-    if (m_parent && !renderer().renderTreeBeingDestroyed())
-        compositor().layerWasAdded(*m_parent, *this);
 }
 
 RenderLayer* RenderLayer::stackingContext() const

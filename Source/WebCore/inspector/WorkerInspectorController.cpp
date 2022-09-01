@@ -35,6 +35,7 @@
 #include "WorkerAuditAgent.h"
 #include "WorkerConsoleAgent.h"
 #include "WorkerDOMDebuggerAgent.h"
+#include "WorkerDebugger.h"
 #include "WorkerDebuggerAgent.h"
 #include "WorkerNetworkAgent.h"
 #include "WorkerOrWorkletGlobalScope.h"
@@ -66,7 +67,6 @@ WorkerInspectorController::WorkerInspectorController(WorkerOrWorkletGlobalScope&
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_executionStopwatch(Stopwatch::create())
-    , m_debugger(globalScope)
     , m_globalScope(globalScope)
 {
     ASSERT(globalScope.isContextThread());
@@ -93,6 +93,8 @@ void WorkerInspectorController::workerTerminating()
     disconnectFrontend(Inspector::DisconnectReason::InspectedTargetDestroyed);
 
     m_agents.discardValues();
+
+    m_debugger = nullptr;
 }
 
 void WorkerInspectorController::connectFrontend()
@@ -194,6 +196,8 @@ void WorkerInspectorController::createLazyAgents()
 
     m_didCreateLazyAgents = true;
 
+    m_debugger = makeUnique<WorkerDebugger>(m_globalScope);
+
     m_injectedScriptManager->connect();
 
     auto workerContext = workerAgentContext();
@@ -228,6 +232,17 @@ InspectorFunctionCallHandler WorkerInspectorController::functionCallHandler() co
 InspectorEvaluateHandler WorkerInspectorController::evaluateHandler() const
 {
     return WebCore::evaluateHandlerFromAnyThread;
+}
+
+Stopwatch& WorkerInspectorController::executionStopwatch() const
+{
+    return m_executionStopwatch;
+}
+
+JSC::Debugger* WorkerInspectorController::debugger()
+{
+    ASSERT_IMPLIES(m_didCreateLazyAgents, m_debugger);
+    return m_debugger.get();
 }
 
 VM& WorkerInspectorController::vm()

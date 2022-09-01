@@ -24,6 +24,8 @@
 
 #include "GStreamerCommon.h"
 #include "GStreamerMediaStreamSource.h"
+#include "GStreamerWebRTCUtils.h"
+#include "MediaStreamTrack.h"
 
 #define GST_USE_UNSTABLE_API
 #include <gst/webrtc/webrtc.h>
@@ -34,7 +36,9 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
 
 namespace WebCore {
 
-RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer()
+RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer(const String& mediaStreamId, MediaStreamTrack& track)
+    : m_mediaStreamId(mediaStreamId)
+    , m_trackId(track.id())
 {
     m_bin = gst_bin_new(nullptr);
 
@@ -50,6 +54,8 @@ RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer()
 
     auto srcPad = adoptGRef(gst_element_get_static_pad(m_capsFilter.get(), "src"));
     gst_element_add_pad(m_bin.get(), gst_ghost_pad_new("src", srcPad.get()));
+
+    setSource(track.privateTrack());
 }
 
 RealtimeOutgoingMediaSourceGStreamer::~RealtimeOutgoingMediaSourceGStreamer()
@@ -61,11 +67,11 @@ RealtimeOutgoingMediaSourceGStreamer::~RealtimeOutgoingMediaSourceGStreamer()
 
     if (m_webrtcSinkPad) {
         auto srcPad = adoptGRef(gst_element_get_static_pad(m_bin.get(), "src"));
-        gst_pad_unlink(srcPad.get(), m_webrtcSinkPad.get());
-
-        auto parent = adoptGRef(gst_pad_get_parent_element(m_webrtcSinkPad.get()));
-        GST_DEBUG_OBJECT(parent.get(), "Removing pad %" GST_PTR_FORMAT, m_webrtcSinkPad.get());
-        gst_element_release_request_pad(parent.get(), m_webrtcSinkPad.get());
+        if (gst_pad_unlink(srcPad.get(), m_webrtcSinkPad.get())) {
+            GST_DEBUG_OBJECT(m_bin.get(), "Removing webrtcbin pad %" GST_PTR_FORMAT, m_webrtcSinkPad.get());
+            if (auto parent = adoptGRef(gst_pad_get_parent_element(m_webrtcSinkPad.get())))
+                gst_element_release_request_pad(parent.get(), m_webrtcSinkPad.get());
+        }
     }
 
     gst_element_set_locked_state(m_bin.get(), TRUE);
@@ -73,6 +79,20 @@ RealtimeOutgoingMediaSourceGStreamer::~RealtimeOutgoingMediaSourceGStreamer()
     if (auto pipeline = adoptGRef(gst_element_get_parent(m_bin.get())))
         gst_bin_remove(GST_BIN_CAST(pipeline.get()), m_bin.get());
     gst_element_set_locked_state(m_bin.get(), FALSE);
+}
+
+const GRefPtr<GstCaps>& RealtimeOutgoingMediaSourceGStreamer::allowedCaps() const
+{
+    if (m_allowedCaps)
+        return m_allowedCaps;
+
+    auto sdpMsIdLine = makeString(m_mediaStreamId, ' ', m_trackId);
+    m_allowedCaps = capsFromRtpCapabilities(rtpCapabilities(), [&sdpMsIdLine](GstStructure* structure) {
+        gst_structure_set(structure, "a-msid", G_TYPE_STRING, sdpMsIdLine.ascii().data(), nullptr);
+    });
+
+    GST_DEBUG_OBJECT(m_bin.get(), "Allowed caps: %" GST_PTR_FORMAT, m_allowedCaps.get());
+    return m_allowedCaps;
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
@@ -139,11 +159,11 @@ void RealtimeOutgoingMediaSourceGStreamer::initializeFromTrack()
 
 void RealtimeOutgoingMediaSourceGStreamer::link()
 {
+    GST_DEBUG_OBJECT(m_bin.get(), "Linking webrtcbin pad %" GST_PTR_FORMAT, m_webrtcSinkPad.get());
     gst_element_link(m_postEncoderQueue.get(), m_capsFilter.get());
 
     auto srcPad = adoptGRef(gst_element_get_static_pad(m_bin.get(), "src"));
     gst_pad_link(srcPad.get(), m_webrtcSinkPad.get());
-    gst_element_sync_state_with_parent(m_bin.get());
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::setSinkPad(GRefPtr<GstPad>&& pad)
@@ -157,7 +177,9 @@ void RealtimeOutgoingMediaSourceGStreamer::setSinkPad(GRefPtr<GstPad>&& pad)
     g_signal_connect_swapped(m_transceiver.get(), "notify::codec-preferences", G_CALLBACK(+[](RealtimeOutgoingMediaSourceGStreamer* source, GParamSpec*, GstWebRTCRTPTransceiver* transceiver) {
         GRefPtr<GstCaps> codecPreferences;
         g_object_get(transceiver, "codec-preferences", &codecPreferences.outPtr(), nullptr);
-        source->codecPreferencesChanged(codecPreferences);
+        callOnMainThreadAndWait([&] {
+            source->codecPreferencesChanged(codecPreferences);
+        });
     }), this);
     g_object_get(m_transceiver.get(), "sender", &m_sender.outPtr(), nullptr);
 }

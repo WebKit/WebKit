@@ -48,6 +48,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #define ALLOW_FLOATS 0
+#define ALLOW_RTL_FLOATS 0
 
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
@@ -368,6 +369,9 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     auto isSupportedFloatingOrPositioned = [&] (auto& renderer) {
 #if !ALLOW_FLOATS
         if (renderer.isFloating())
+            return false;
+#elif !ALLOW_RTL_FLOATS
+        if (!renderer.parent()->style().isLeftToRightDirection())
             return false;
 #endif
         if (renderer.isOutOfFlowPositioned()) {

@@ -227,6 +227,18 @@ function test()
     });
 
     suite.addTestCase({
+        name: "Array.prototype.firstValue",
+        test() {
+            let object1 = {};
+            let object2 = {};
+            InspectorTest.expectEqual([object1, object2].firstValue, object1, "firstValue of a nonempty array should be the first value.")
+            InspectorTest.expectEqual([].firstValue, undefined, "firstValue of an empty array should be undefined.")
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "Array.prototype.lastValue",
         test() {
             let object1 = {};

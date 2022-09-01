@@ -175,8 +175,8 @@ void JSTestLegacyFactoryFunctionPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestLegacyFactoryFunction::s_info = { "TestLegacyFactoryFunction"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyFactoryFunction) };
 
-JSTestLegacyFactoryFunction::JSTestLegacyFactoryFunction(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestLegacyFactoryFunction>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestLegacyFactoryFunction>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestLegacyFactoryFunction::JSTestLegacyFactoryFunction(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestLegacyFactoryFunction>&& impl)
+    : JSDOMWrapper<TestLegacyFactoryFunction>(structure, globalObject, WTFMove(impl))
 {
 }
 
