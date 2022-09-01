@@ -1,0 +1,7 @@
+{
+    "timeout": 1200,
+    "count": 5,
+    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/JetStream2/@r286562",
+    "entry_point": "index.html?report=true",
+    "output_file": "jetstream2.result"
+}
