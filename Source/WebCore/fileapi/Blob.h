@@ -84,10 +84,10 @@ public:
         return blob;
     }
 
-    static Ref<Blob> deserialize(ScriptExecutionContext* context, const URL& srcURL, const String& type, long long size, const String& fileBackedPath)
+    static Ref<Blob> deserialize(ScriptExecutionContext* context, const URL& srcURL, const String& type, long long size, long long memoryCost, const String& fileBackedPath)
     {
         ASSERT(Blob::isNormalizedContentType(type));
-        auto blob = adoptRef(*new Blob(deserializationContructor, context, srcURL, type, size, fileBackedPath));
+        auto blob = adoptRef(*new Blob(deserializationContructor, context, srcURL, type, size, memoryCost, fileBackedPath));
         blob->suspendIfNeeded();
         return blob;
     }
@@ -118,6 +118,8 @@ public:
     void arrayBuffer(Ref<DeferredPromise>&&);
     ExceptionOr<Ref<ReadableStream>> stream();
 
+    size_t memoryCost() const { return m_memoryCost; }
+
     // Keeping the handle alive will keep the Blob data alive (but not the Blob object).
     BlobURLHandle handle() const;
 
@@ -133,10 +135,10 @@ protected:
     Blob(UninitializedContructor, ScriptExecutionContext*, URL&&, String&& type);
 
     enum DeserializationContructor { deserializationContructor };
-    Blob(DeserializationContructor, ScriptExecutionContext*, const URL& srcURL, const String& type, std::optional<unsigned long long> size, const String& fileBackedPath);
+    Blob(DeserializationContructor, ScriptExecutionContext*, const URL& srcURL, const String& type, std::optional<unsigned long long> size, unsigned long long memoryCost, const String& fileBackedPath);
 
     // For slicing.
-    Blob(ScriptExecutionContext*, const URL& srcURL, long long start, long long end, const String& contentType);
+    Blob(ScriptExecutionContext*, const URL& srcURL, long long start, long long end, unsigned long long memoryCost, const String& contentType);
 
 private:
     void loadBlob(FileReaderLoader::ReadType, CompletionHandler<void(BlobLoader&)>&&);
@@ -146,6 +148,7 @@ private:
 
     String m_type;
     mutable std::optional<unsigned long long> m_size;
+    size_t m_memoryCost { 0 };
 
     // This is an internal URL referring to the blob data associated with this object. It serves
     // as an identifier for this blob. The internal URL is never used to source the blob's content

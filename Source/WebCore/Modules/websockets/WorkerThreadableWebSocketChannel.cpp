@@ -477,12 +477,12 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
         return ThreadableWebSocketChannel::SendFail;
     setMethodNotCompleted();
 
-    m_loaderProxy.postTaskToLoader([peer = m_peer, url = binaryData.url().isolatedCopy(), type = binaryData.type().isolatedCopy(), size = binaryData.size()](ScriptExecutionContext& context) {
+    m_loaderProxy.postTaskToLoader([peer = m_peer, url = binaryData.url().isolatedCopy(), type = binaryData.type().isolatedCopy(), size = binaryData.size(), memoryCost = binaryData.memoryCost()](ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
         ASSERT(peer);
 
-        peer->send(Blob::deserialize(&context, url, type, size, { }));
+        peer->send(Blob::deserialize(&context, url, type, size, memoryCost, { }));
     });
 
     Ref<Bridge> protectedThis(*this);

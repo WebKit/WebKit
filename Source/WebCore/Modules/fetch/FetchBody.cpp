@@ -90,7 +90,7 @@ std::optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context
     auto url = formData.asBlobURL();
     if (!url.isNull()) {
         // FIXME: Properly set mime type and size of the blob.
-        Ref<const Blob> blob = Blob::deserialize(&context, url, { }, { }, { });
+        Ref<const Blob> blob = Blob::deserialize(&context, url, { }, { }, 0, { });
         return FetchBody { WTFMove(blob) };
     }
 

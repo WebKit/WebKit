@@ -129,6 +129,23 @@ Blob::Blob(ScriptExecutionContext* context)
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { }, { });
 }
 
+static size_t computeMemoryCost(const Vector<BlobPartVariant>& blobPartVariants)
+{
+    size_t memoryCost = 0;
+    for (auto& blobPartVariant : blobPartVariants) {
+        WTF::switchOn(blobPartVariant, [&](const RefPtr<Blob>& blob) {
+            memoryCost += blob->memoryCost();
+        }, [&](const RefPtr<JSC::ArrayBufferView>& view) {
+            memoryCost += view->byteLength();
+        }, [&](const RefPtr<JSC::ArrayBuffer>& array) {
+            memoryCost += array->byteLength();
+        }, [&](const String& string) {
+            memoryCost += string.sizeInBytes();
+        });
+    }
+    return memoryCost;
+}
+
 static Vector<BlobPart> buildBlobData(Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
 {
     BlobBuilder builder(propertyBag.endings);
@@ -145,6 +162,7 @@ static Vector<BlobPart> buildBlobData(Vector<BlobPartVariant>&& blobPartVariants
 Blob::Blob(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
     : ActiveDOMObject(&context)
     , m_type(normalizedContentType(propertyBag.type))
+    , m_memoryCost(computeMemoryCost(blobPartVariants))
     , m_internalURL(BlobURL::createInternalURL())
 {
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, buildBlobData(WTFMove(blobPartVariants), propertyBag), m_type);
@@ -154,6 +172,7 @@ Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String
     : ActiveDOMObject(context)
     , m_type(contentType)
     , m_size(data.size())
+    , m_memoryCost(data.size())
     , m_internalURL(BlobURL::createInternalURL())
 {
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(WTFMove(data)) }, contentType);
@@ -163,15 +182,17 @@ Blob::Blob(ReferencingExistingBlobConstructor, ScriptExecutionContext* context, 
     : ActiveDOMObject(context)
     , m_type(blob.type())
     , m_size(blob.size())
+    , m_memoryCost(blob.memoryCost())
     , m_internalURL(BlobURL::createInternalURL())
 {
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(blob.url()) } , m_type);
 }
 
-Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL& srcURL, const String& type, std::optional<unsigned long long> size, const String& fileBackedPath)
+Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL& srcURL, const String& type, std::optional<unsigned long long> size, unsigned long long memoryCost, const String& fileBackedPath)
     : ActiveDOMObject(context)
     , m_type(normalizedContentType(type))
     , m_size(size)
+    , m_memoryCost(memoryCost)
     , m_internalURL(BlobURL::createInternalURL())
 {
     if (fileBackedPath.isEmpty())
@@ -180,9 +201,10 @@ Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL
         ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(m_internalURL, srcURL, fileBackedPath, m_type);
 }
 
-Blob::Blob(ScriptExecutionContext* context, const URL& srcURL, long long start, long long end, const String& type)
+Blob::Blob(ScriptExecutionContext* context, const URL& srcURL, long long start, long long end, unsigned long long memoryCost, const String& type)
     : ActiveDOMObject(context)
     , m_type(normalizedContentType(type))
+    , m_memoryCost(memoryCost)
     , m_internalURL(BlobURL::createInternalURL())
     // m_size is not necessarily equal to end - start so we do not initialize it here.
 {
@@ -198,7 +220,15 @@ Blob::~Blob()
 
 Ref<Blob> Blob::slice(long long start, long long end, const String& contentType) const
 {
-    auto blob = adoptRef(*new Blob(scriptExecutionContext(), m_internalURL, start, end, contentType));
+    unsigned long long sliceMemoryCost = 0;
+    if (auto totalMemoryCost = memoryCost()) {
+        unsigned long long positiveStart = start > 0 ? std::min<unsigned long long>(start, totalMemoryCost) : totalMemoryCost - std::min<unsigned long long>(-start, totalMemoryCost);
+        unsigned long long positiveEnd = end > 0 ? std::min<unsigned long long>(end, totalMemoryCost) : totalMemoryCost - std::min<unsigned long long>(-end, totalMemoryCost);
+        if (positiveStart < positiveEnd)
+            sliceMemoryCost = positiveEnd - positiveStart;
+        ASSERT(sliceMemoryCost <= totalMemoryCost);
+    }
+    auto blob = adoptRef(*new Blob(scriptExecutionContext(), m_internalURL, start, end, sliceMemoryCost, contentType));
     blob->suspendIfNeeded();
     return blob;
 }
