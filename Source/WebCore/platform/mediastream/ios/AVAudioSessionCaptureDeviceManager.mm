@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
 #import "AVAudioSessionCaptureDevice.h"
+#import "CoreAudioSharedUnit.h"
 #import "Logging.h"
 #import "RealtimeMediaSourceCenter.h"
 #import <AVFoundation/AVAudioSession.h>
@@ -277,15 +278,23 @@ static std::optional<DefaultMicrophoneInformation> computeDefaultMicrophoneInfor
 Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieveAudioSessionCaptureDevices() const
 {
     auto defaultMicrophoneInformation = computeDefaultMicrophoneInformation();
-    if (!defaultMicrophoneInformation && !m_lastDefaultMicrophone)
-        m_lastDefaultMicrophone = [m_audioSession currentRoute].inputs.firstObject;
+    auto currentInput = [m_audioSession currentRoute].inputs.firstObject;
+    if (currentInput) {
+        if (currentInput != m_lastDefaultMicrophone.get()) {
+            auto device = AVAudioSessionCaptureDevice::create(currentInput, currentInput);
+            callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([device = crossThreadCopy(WTFMove(device))] () mutable {
+                CoreAudioSharedUnit::singleton().handleNewCurrentMicrophoneDevice(WTFMove(device));
+            }).get());
+        }
+        m_lastDefaultMicrophone = currentInput;
+    }
 
     auto availableInputs = [m_audioSession availableInputs];
 
     Vector<AVAudioSessionCaptureDevice> newAudioDevices;
     newAudioDevices.reserveInitialCapacity(availableInputs.count);
     for (AVAudioSessionPortDescription *portDescription in availableInputs) {
-        auto device = AVAudioSessionCaptureDevice::create(portDescription, m_lastDefaultMicrophone.get());
+        auto device = AVAudioSessionCaptureDevice::create(portDescription, currentInput);
         if (defaultMicrophoneInformation)
             device.setIsDefault((defaultMicrophoneInformation->isBuiltInMicrophoneDefault && portDescription.portType == getAVAudioSessionPortBuiltInMic()) || [portDescription.UID isEqualToString: defaultMicrophoneInformation->routeUID]);
         newAudioDevices.uncheckedAppend(WTFMove(device));

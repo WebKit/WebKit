@@ -155,6 +155,19 @@ void UserMediaCaptureManager::sourceSettingsChanged(RealtimeMediaSourceIdentifie
     }, [](std::nullptr_t) { });
 }
 
+void UserMediaCaptureManager::sourceConfigurationChanged(RealtimeMediaSourceIdentifier identifier, String&& persistentID, RealtimeMediaSourceSettings&& settings, RealtimeMediaSourceCapabilities&& capabilities)
+{
+    auto iterator = m_sources.find(identifier);
+    if (iterator == m_sources.end())
+        return;
+
+    switchOn(iterator->value, [&](Ref<RemoteRealtimeAudioSource>& source) {
+        source->configurationChanged(WTFMove(persistentID), WTFMove(settings), WTFMove(capabilities));
+    }, [&](Ref<RemoteRealtimeVideoSource>& source) {
+        source->configurationChanged(WTFMove(persistentID), WTFMove(settings), WTFMove(capabilities));
+    }, [](std::nullptr_t) { });
+}
+
 void UserMediaCaptureManager::applyConstraintsSucceeded(RealtimeMediaSourceIdentifier identifier, RealtimeMediaSourceSettings&& settings)
 {
     auto iterator = m_sources.find(identifier);
