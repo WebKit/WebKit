@@ -3482,7 +3482,11 @@ void FrameLoader::executeJavaScriptURL(const URL& url, const NavigationAction& a
 {
     ASSERT(url.protocolIsJavaScript());
 
-    bool isFirstNavigationInFrame = m_stateMachine.isDisplayingInitialEmptyDocument();
+    bool isFirstNavigationInFrame = false;
+    if (!m_stateMachine.committedFirstRealDocumentLoad()) {
+        m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
+        isFirstNavigationInFrame = true;
+    }
 
     RefPtr ownerDocument = m_frame.ownerElement() ? &m_frame.ownerElement()->document() : nullptr;
     if (ownerDocument)
