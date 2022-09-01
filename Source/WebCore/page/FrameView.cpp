@@ -2221,7 +2221,7 @@ bool FrameView::scrollToFragment(const URL& url)
     auto fragmentIdentifier = url.fragmentIdentifier();
     auto fragmentDirective = document->fragmentDirective();
     
-    if (document->settings().scrollToTextFragmentEnabled() && !fragmentDirective.isEmpty()) {
+    if (frame().isMainFrame() && document->settings().scrollToTextFragmentEnabled() && !fragmentDirective.isEmpty()) {
         FragmentDirectiveParser fragmentDirectiveParser(fragmentDirective);
         
         if (fragmentDirectiveParser.isValid()) {

@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ScrollToTextFragmentIndicatorEnabled=false ] -->
+<meta charset="utf-8" />
+<title>Scroll to text fragment - highlight simple start text</title>
+<link rel="help" href="https://wicg.github.io/scroll-to-text-fragment/">
+<meta name="assert" content="This test checks that a fragment directive with start text is correctly highlighted.">
+<link rel="match" href="scroll-to-text-fragment-start-expected.html">
+
+<p>The test passes if there is no highlight in the following iframe.</p>
+<iframe width="400px" height="100px" src="../resources/iframe-scroll-to-text-fragment.html#:~:text=Example"></iframe>
+
+<script>
+  location.href = "#:~:text=Example";
+</script>
+</html>
