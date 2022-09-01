@@ -2313,6 +2313,11 @@ void Element::invalidateForQueryContainerSizeChange()
     setNodeFlag(NodeFlag::NeedsUpdateQueryContainerDependentStyle);
 }
 
+void Element::invalidateForResumingQueryContainerResolution()
+{
+    markAncestorsForInvalidatedStyle();
+}
+
 bool Element::needsUpdateQueryContainerDependentStyle() const
 {
     return hasNodeFlag(NodeFlag::NeedsUpdateQueryContainerDependentStyle);

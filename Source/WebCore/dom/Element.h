@@ -650,6 +650,7 @@ public:
     void invalidateStyleInternal();
     void invalidateStyleForSubtreeInternal();
     void invalidateForQueryContainerSizeChange();
+    void invalidateForResumingQueryContainerResolution();
 
     bool needsUpdateQueryContainerDependentStyle() const;
     void clearNeedsUpdateQueryContainerDependentStyle();
