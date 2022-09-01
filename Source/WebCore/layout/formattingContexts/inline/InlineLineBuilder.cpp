@@ -109,8 +109,8 @@ static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inline
     // e.g. [inline box start][prior_continuous_content][inline box end] (<span>prior_continuous_content</span>)
     // An incoming <img> box would enable us to commit the "<span>prior_continuous_content</span>" content
     // but an incoming text content would not necessarily.
-    ASSERT(current.isText() || current.isBox() || current.isFloat());
-    ASSERT(next.isText() || next.isBox() || next.isFloat());
+    ASSERT(current.isText() || current.isBox());
+    ASSERT(next.isText() || next.isBox());
     if (current.isText() && next.isText()) {
         auto& currentInlineTextItem = downcast<InlineTextItem>(current);
         auto& nextInlineTextItem = downcast<InlineTextItem>(next);
@@ -136,13 +136,6 @@ static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inline
         // [text][text] : is a continuous content.
         // [text-][text] : after [hyphen] position is a soft wrap opportunity.
         return endsWithSoftWrapOpportunity(currentInlineTextItem, nextInlineTextItem);
-    }
-    if (current.isFloat() || next.isFloat()) {
-        // While floats are not part of the inline content and they are not supposed to introduce soft wrap opportunities,
-        // e.g. [text][float box][float box][text][float box][text] is essentially just [text][text][text]
-        // figuring out whether a float (or set of floats) should stay on the line or not (and handle potentially out of order inline items)
-        // brings in unnecessary complexity.
-        return true;
     }
     if (current.layoutBox().isListMarkerBox() || next.layoutBox().isListMarkerBox())
         return false;
@@ -759,6 +752,10 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             }
             return true;
         }
+        if (trailingInlineItem.isInlineBoxStart()) {
+            // This is a special case when the inline box's fist child is a float box.
+            return false;
+        }
         ASSERT_NOT_REACHED();
         return true;
     };
@@ -790,6 +787,15 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
             continue;
         }
         ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isFloat());
+        if (inlineItem.isFloat()) {
+            // While floats are not part of the inline content and they are not supposed to introduce soft wrap opportunities,
+            // e.g. [text][float box][float box][text][float box][text] is essentially just [text][text][text]
+            // figuring out whether a float (or set of floats) should stay on the line or not (and handle potentially out of order inline items)
+            // brings in unnecessary complexity.
+            // For now let's always treat a float as a soft wrap opportunity.
+            auto wrappingPosition = index == startIndex ? std::min(index + 1, layoutRange.end) : index;
+            return wrappingPosition;
+        }
         if (!previousInlineItemIndex) {
             previousInlineItemIndex = index;
             continue;
