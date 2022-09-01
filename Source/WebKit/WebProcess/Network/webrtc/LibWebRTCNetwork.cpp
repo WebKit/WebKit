@@ -63,14 +63,14 @@ void LibWebRTCNetwork::setConnection(RefPtr<IPC::Connection>&& connection)
 {
 #if USE(LIBWEBRTC)
     if (m_connection)
-        m_connection->removeThreadMessageReceiver(Messages::LibWebRTCNetwork::messageReceiverName());
+        m_connection->removeMessageReceiver(Messages::LibWebRTCNetwork::messageReceiverName());
 #endif
     m_connection = WTFMove(connection);
 #if USE(LIBWEBRTC)
     if (m_isActive)
         setSocketFactoryConnection();
     if (m_connection)
-        m_connection->addThreadMessageReceiver(Messages::LibWebRTCNetwork::messageReceiverName(), this);
+        m_connection->addMessageReceiver(*this, *this, Messages::LibWebRTCNetwork::messageReceiverName());
 #endif
 }
 
@@ -94,7 +94,7 @@ void LibWebRTCNetwork::setSocketFactoryConnection()
 }
 #endif
 
-void LibWebRTCNetwork::dispatchToThread(Function<void()>&& callback)
+void LibWebRTCNetwork::dispatch(Function<void()>&& callback)
 {
     if (!m_isActive) {
         RELEASE_LOG_ERROR(WebRTC, "Received WebRTCSocket message while libWebRTCNetwork is not active");

@@ -34,6 +34,7 @@
 #include "NetworkDataTask.h"
 #include <WebCore/FetchIdentifier.h>
 #include <wtf/FileSystem.h>
+#include <wtf/FunctionDispatcher.h>
 
 namespace IPC {
 class FormDataReference;
@@ -47,7 +48,7 @@ class NetworkProcess;
 class SandboxExtension;
 class WebSWServerToContextConnection;
 
-class ServiceWorkerDownloadTask : public NetworkDataTask, public IPC::Connection::ThreadMessageReceiver {
+class ServiceWorkerDownloadTask : public NetworkDataTask, private FunctionDispatcher, private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<ServiceWorkerDownloadTask> create(NetworkSession& session, NetworkDataTaskClient& client, WebSWServerToContextConnection& connection, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, const WebCore::ResourceRequest& request, DownloadID downloadID)
@@ -63,8 +64,6 @@ public:
     void start();
     void stop() { cancel(); }
 
-    using NetworkDataTask::ref;
-    using NetworkDataTask::deref;
     using NetworkDataTask::weakPtrFactory;
     using NetworkDataTask::WeakValueType;
 
@@ -85,11 +84,11 @@ private:
     State state() const final { return m_state; }
     void setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) final;
 
-    // IPC::Connection::ThreadMessageReceiver
-    void dispatchToThread(Function<void()>&&) final;
+    // FunctionDispatcher
+    void dispatch(Function<void()>&&) final;
+
+    // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void refMessageReceiver() final { ref(); }
-    void derefMessageReceiver() final { deref(); }
 
     template<typename Message> bool sendToServiceWorker(Message&&);
     void didFailDownload(std::optional<WebCore::ResourceError>&& = { });

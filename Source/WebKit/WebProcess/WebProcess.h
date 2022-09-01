@@ -646,7 +646,7 @@ private:
     Ref<WebCookieJar> m_cookieJar;
     WebSocketChannelManager m_webSocketChannelManager;
 
-    RefPtr<LibWebRTCNetwork> m_libWebRTCNetwork;
+    std::unique_ptr<LibWebRTCNetwork> m_libWebRTCNetwork;
 
     HashSet<String> m_dnsPrefetchedHosts;
     PAL::HysteresisActivity m_dnsPrefetchHystereris;

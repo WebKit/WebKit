@@ -103,7 +103,7 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
 
 void NetworkRTCProvider::startListeningForIPC()
 {
-    m_connection->connection().addThreadMessageReceiver(Messages::NetworkRTCProvider::messageReceiverName(), this);
+    m_connection->connection().addMessageReceiver(*this, *this, Messages::NetworkRTCProvider::messageReceiverName());
 }
 
 NetworkRTCProvider::~NetworkRTCProvider()
@@ -121,11 +121,11 @@ void NetworkRTCProvider::close()
     while (!m_resolvers.isEmpty())
         stopResolver(*m_resolvers.keys().begin());
 
-    m_connection->connection().removeThreadMessageReceiver(Messages::NetworkRTCProvider::messageReceiverName());
+    m_connection->connection().removeMessageReceiver(Messages::NetworkRTCProvider::messageReceiverName());
     m_connection = nullptr;
     m_rtcMonitor.stopUpdating();
 
-    callOnRTCNetworkThread([this]() {
+    callOnRTCNetworkThread([this, protectedThis = Ref { *this }] {
         auto sockets = std::exchange(m_sockets, { });
         for (auto& socket : sockets)
             socket.second->close();
@@ -319,7 +319,7 @@ void NetworkRTCProvider::newConnection(Socket& serverSocket, std::unique_ptr<rtc
     m_pendingIncomingSockets.add(incomingSocketIdentifier, WTFMove(newSocket));
 }
 
-void NetworkRTCProvider::dispatchToThread(Function<void()>&& callback)
+void NetworkRTCProvider::dispatch(Function<void()>&& callback)
 {
     callOnRTCNetworkThread((WTFMove(callback)));
 }

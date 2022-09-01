@@ -37,6 +37,7 @@
 #include <WebCore/LibWebRTCSocketIdentifier.h>
 #include <webrtc/p2p/base/basic_packet_socket_factory.h>
 #include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
+#include <wtf/FunctionDispatcher.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -71,7 +72,7 @@ struct SocketComparator {
     }
 };
 
-class NetworkRTCProvider : public rtc::MessageHandler, public IPC::Connection::ThreadMessageReceiverRefCounted {
+class NetworkRTCProvider : public rtc::MessageHandler, private FunctionDispatcher, private IPC::MessageReceiver, public ThreadSafeRefCounted<NetworkRTCProvider> {
 public:
     static Ref<NetworkRTCProvider> create(NetworkConnectionToWebProcess& connection)
     {
@@ -81,7 +82,6 @@ public:
     }
     ~NetworkRTCProvider();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveNetworkRTCMonitorMessage(IPC::Connection& connection, IPC::Decoder& decoder) { m_rtcMonitor.didReceiveMessage(connection, decoder); }
 
     class Socket {
@@ -141,8 +141,11 @@ private:
 
     void OnMessage(rtc::Message*);
 
-    // IPC::Connection::ThreadMessageReceiver
-    void dispatchToThread(Function<void()>&&) final;
+    // FunctionDispatcher
+    void dispatch(Function<void()>&&) final;
+
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     static rtc::ProxyInfo proxyInfoFromSession(const RTCNetwork::SocketAddress&, NetworkSession&);
 

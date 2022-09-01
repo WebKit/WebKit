@@ -67,7 +67,7 @@ ServiceWorkerDownloadTask::~ServiceWorkerDownloadTask()
 
 void ServiceWorkerDownloadTask::startListeningForIPC()
 {
-    m_serviceWorkerConnection->ipcConnection().addThreadMessageReceiver(Messages::ServiceWorkerDownloadTask::messageReceiverName(), this, fetchIdentifier().toUInt64());
+    m_serviceWorkerConnection->ipcConnection().addMessageReceiver(*this, *this, Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
 }
 
 void ServiceWorkerDownloadTask::close()
@@ -75,7 +75,7 @@ void ServiceWorkerDownloadTask::close()
     ASSERT(isMainRunLoop());
 
     if (m_serviceWorkerConnection) {
-        m_serviceWorkerConnection->ipcConnection().removeThreadMessageReceiver(Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
+        m_serviceWorkerConnection->ipcConnection().removeMessageReceiver(Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
         m_serviceWorkerConnection->unregisterDownload(*this);
         m_serviceWorkerConnection = nullptr;
     }
@@ -86,7 +86,7 @@ template<typename Message> bool ServiceWorkerDownloadTask::sendToServiceWorker(M
     return m_serviceWorkerConnection ? m_serviceWorkerConnection->ipcConnection().send(std::forward<Message>(message), 0) : false;
 }
 
-void ServiceWorkerDownloadTask::dispatchToThread(Function<void()>&& function)
+void ServiceWorkerDownloadTask::dispatch(Function<void()>&& function)
 {
     sharedServiceWorkerDownloadTaskQueue().dispatch([protectedThis = Ref { *this }, function = WTFMove(function)] {
         function();

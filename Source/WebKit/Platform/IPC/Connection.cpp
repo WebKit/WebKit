@@ -384,16 +384,16 @@ void Connection::removeWorkQueueMessageReceiver(ReceiverName receiverName, uint6
     removeMessageReceiveQueue(ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID));
 }
 
-void Connection::addThreadMessageReceiver(ReceiverName receiverName, ThreadMessageReceiver* receiver, uint64_t destinationID)
+void Connection::addMessageReceiver(FunctionDispatcher& dispatcher, MessageReceiver& receiver, ReceiverName receiverName, uint64_t destinationID)
 {
     auto receiverMatcher = ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID);
-    auto receiveQueue = makeUnique<ThreadMessageReceiverQueue>(*receiver);
+    auto receiveQueue = makeUnique<FunctionDispatcherQueue>(dispatcher, receiver);
     Locker incomingMessagesLocker { m_incomingMessagesLock };
     enqueueMatchingMessagesToMessageReceiveQueue(*receiveQueue, receiverMatcher);
     m_receiveQueues.add(WTFMove(receiveQueue), receiverMatcher);
 }
 
-void Connection::removeThreadMessageReceiver(ReceiverName receiverName, uint64_t destinationID)
+void Connection::removeMessageReceiver(ReceiverName receiverName, uint64_t destinationID)
 {
     removeMessageReceiveQueue(ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID));
 }

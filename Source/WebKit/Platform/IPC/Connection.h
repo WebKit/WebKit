@@ -123,28 +123,6 @@ public:
     class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCounted<WorkQueueMessageReceiver> {
     };
 
-    class ThreadMessageReceiver : public MessageReceiver {
-    public:
-        virtual void dispatchToThread(WTF::Function<void()>&&) = 0;
-
-        void ref() { refMessageReceiver(); }
-        void deref() { derefMessageReceiver(); }
-
-    protected:
-        virtual void refMessageReceiver() = 0;
-        virtual void derefMessageReceiver() = 0;
-    };
-
-    class ThreadMessageReceiverRefCounted : public ThreadMessageReceiver, public ThreadSafeRefCounted<ThreadMessageReceiverRefCounted> {
-    public:
-        using ThreadSafeRefCounted::ref;
-        using ThreadSafeRefCounted::deref;
-
-    private:
-        void refMessageReceiver() final { ThreadSafeRefCounted::ref(); }
-        void derefMessageReceiver() final { ThreadSafeRefCounted::deref(); }
-    };
-
 #if ENABLE(IPC_TESTING_API)
     class MessageObserver : public CanMakeWeakPtr<MessageObserver> {
     public:
@@ -235,17 +213,20 @@ public:
     void addMessageReceiveQueue(MessageReceiveQueue&, const ReceiverMatcher&);
     void removeMessageReceiveQueue(const ReceiverMatcher&);
 
-    // Adds a message receieve queue that dispatches through WorkQueue to WorkQueueMessageReceiver.
+    // Adds a message receive queue that dispatches through WorkQueue to WorkQueueMessageReceiver.
     // Keeps the WorkQueue and the WorkQueueMessageReceiver alive. Dispatched tasks keep WorkQueueMessageReceiver alive.
     // destinationID == 0 matches all ids.
     void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiver&, uint64_t destinationID = 0);
     void removeWorkQueueMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
-    // Adds a message receieve queue that dispatches through ThreadMessageReceiver.
-    // Keeps the ThreadMessageReceiver alive. Dispatched tasks keep the ThreadMessageReceiver alive.
-    // destinationID == 0 matches all ids.
-    void addThreadMessageReceiver(ReceiverName, ThreadMessageReceiver*, uint64_t destinationID = 0);
-    void removeThreadMessageReceiver(ReceiverName, uint64_t destinationID = 0);
+    // Adds a message receive queue that dispatches through FunctionDispatcher.
+    // `FunctionDispatcher` will be used in any thread.
+    // `FunctionDispatcher` will be used to dispatch `MessageReceiver` functions
+    // until `removeMessageReceiver()` for same receiver name, destination id returns.
+    // The caller is responsible for making sure the `MessageReceiver` is alive when the dispatched functions
+    // are run.
+    void addMessageReceiver(FunctionDispatcher&, MessageReceiver&, ReceiverName, uint64_t destinationID = 0);
+    void removeMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
     bool open();
     void invalidate();

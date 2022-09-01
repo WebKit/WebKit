@@ -1858,7 +1858,7 @@ void WebProcess::clearCachedPage(BackForwardItemIdentifier backForwardItemID, Co
 LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 {
     if (!m_libWebRTCNetwork)
-        m_libWebRTCNetwork = LibWebRTCNetwork::create();
+        m_libWebRTCNetwork = LibWebRTCNetwork::create().moveToUniquePtr();
     return *m_libWebRTCNetwork;
 }
 
