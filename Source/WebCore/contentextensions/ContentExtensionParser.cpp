@@ -35,6 +35,7 @@
 #include "ContentExtensionRule.h"
 #include "ContentExtensionsBackend.h"
 #include "ContentExtensionsDebugging.h"
+#include "ProcessWarming.h"
 #include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
@@ -206,6 +207,7 @@ bool isValidCSSSelector(const String& selector)
     ASSERT(isMainThread());
     initializeCommonAtomStrings();
     QualifiedName::init();
+    ProcessWarming::initializeNames();
     CSSParserContext context(HTMLQuirksMode);
     CSSParser parser(context);
     return !!parser.parseSelector(selector);
