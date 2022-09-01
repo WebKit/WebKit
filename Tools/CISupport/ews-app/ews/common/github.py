@@ -215,8 +215,8 @@ class GitHubEWS(GitHub):
         hash_url = 'https://github.com/WebKit/WebKit/commit/{}'.format(change.change_id)
 
         if change.comment_id == -1:
-            ews_status_bubble_url = 'https://ews.webkit.org/status-bubble/{}'.format(change.change_id)
-            return u'Loading EWS status-bubbles for {}. You can also access them at {}'.format(hash_url, ews_status_bubble_url)
+            pr_url = GitHub.pr_url(change.pr_id)
+            return u'Starting EWS tests for {}. Live statuses available at the PR page, {}'.format(hash_url, pr_url)
         comment = '\n\n| Misc | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
 
