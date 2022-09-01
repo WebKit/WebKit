@@ -50,7 +50,7 @@ struct SnapOffset {
 template <typename UnitType, typename RectType>
 struct ScrollSnapOffsetsInfo {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    ScrollSnapStrictness strictness;
+    ScrollSnapStrictness strictness { ScrollSnapStrictness::None };
     Vector<SnapOffset<UnitType>> horizontalSnapOffsets;
     Vector<SnapOffset<UnitType>> verticalSnapOffsets;
     Vector<RectType> snapAreas;
