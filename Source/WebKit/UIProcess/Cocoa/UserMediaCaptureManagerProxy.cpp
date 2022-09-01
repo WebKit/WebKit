@@ -136,6 +136,11 @@ private:
         m_connection->send(Messages::UserMediaCaptureManager::SourceSettingsChanged(m_id, m_source->settings()), 0);
     }
 
+    void sourceConfigurationChanged() final
+    {
+        m_connection->send(Messages::UserMediaCaptureManager::SourceConfigurationChanged(m_id, m_source->persistentID(), m_source->settings(), m_source->capabilities()), 0);
+    }
+
     // May get called on a background thread.
     void audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames) final {
         if (m_description != description || m_shouldReset) {
