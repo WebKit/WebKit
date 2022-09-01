@@ -1179,7 +1179,13 @@ sub XcodeOptions
     push @options, "-UseSanitizedBuildSystemEnvironment=YES";
     push @options, "-ShowBuildOperationDuration=YES";
     if (!checkForArgumentAndRemoveFromARGV("--no-use-workspace")) {
-        my $workspace = $configuredXcodeWorkspace // sourceDir() . "/WebKit.xcworkspace";
+        my $defaultWorkspace = sourceDir() . "/WebKit.xcworkspace";
+        my $workspace = $configuredXcodeWorkspace // $defaultWorkspace;
+        if ($workspace eq $defaultWorkspace && $xcodeSDK =~ /\.internal$/) {
+            die "Refusing to build with an internal SDK ($xcodeSDK) using the workspace at $workspace.\n" .
+                "Either switch SDKs or select a different workspace to build from with\n" .
+                "    set-webkit-configuration --workspace=<workspace>\n";
+        }
         push @options, ("-workspace", $workspace) if $workspace;
     }
     push @options, ("-configuration", $configuration);
