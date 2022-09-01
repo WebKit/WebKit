@@ -124,6 +124,11 @@ inline bool operator==(const RoundedRect::Radii& a, const RoundedRect::Radii& b)
     return a.topLeft() == b.topLeft() && a.topRight() == b.topRight() && a.bottomLeft() == b.bottomLeft() && a.bottomRight() == b.bottomRight();
 }
 
+inline bool operator!=(const RoundedRect::Radii& a, const RoundedRect::Radii& b)
+{
+    return !(a == b);
+}
+
 inline bool operator==(const RoundedRect& a, const RoundedRect& b)
 {
     return a.rect() == b.rect() && a.radii() == b.radii();

@@ -1201,6 +1201,14 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
     LayoutRect newOutlineBox;
 
     bool fullRepaint = selfNeedsLayout();
+
+    if (!fullRepaint && oldBounds != newBounds && style().hasBorderRadius()) {
+        auto oldRadius = style().getRoundedBorderFor(oldBounds).radii();
+        auto newRadius = style().getRoundedBorderFor(newBounds).radii();
+
+        fullRepaint = oldRadius != newRadius;
+    }
+
     if (!fullRepaint) {
         // This ASSERT fails due to animations. See https://bugs.webkit.org/show_bug.cgi?id=37048
         // ASSERT(!newOutlineBoxRectPtr || *newOutlineBoxRectPtr == outlineBoundsForRepaint(repaintContainer));
