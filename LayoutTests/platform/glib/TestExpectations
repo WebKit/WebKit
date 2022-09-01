@@ -1382,6 +1382,9 @@ webgl/webgl-via-metal-flag-off.html [ Skip ]
 
 # Remove after ANGLE is the default backend.
 inspector/canvas/updateShader-webgl.html [ Failure ]
+webgl/webgl-draft-extensions-flag-default.html [ Failure ]
+webgl/webgl-draft-extensions-flag-off.html [ Failure ]
+webgl/webgl-draft-extensions-flag-on.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs

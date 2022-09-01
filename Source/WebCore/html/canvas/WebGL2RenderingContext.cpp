@@ -2610,6 +2610,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     if (isContextLostOrPending())
         return nullptr;
 
+    // When adding extensions that use enableDraftExtensions, add them to the webgl-draft-extensions-flag.js test.
     const bool enableDraftExtensions = scriptExecutionContext()->settingsValues().webGLDraftExtensionsEnabled;
 
 #define ENABLE_IF_REQUESTED(type, variable, nameLiteral, canEnable) \
