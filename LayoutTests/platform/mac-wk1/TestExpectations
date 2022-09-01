@@ -1148,6 +1148,8 @@ fast/images/sprite-sheet-image-draw.html [ Skip ]
 media/video-restricted-invisible-autoplay-not-allowed-source.html [ Skip ]
 media/video-restricted-invisible-autoplay-not-allowed.html [ Skip ]
 
+webkit.org/b/244693 [ Debug ] media/video-element-other-namespace-crash.html [ Pass Crash ]
+
 # <rdar://problem/42736213>
 displaylists/layer-dispay-list.html [ Failure ]
 
