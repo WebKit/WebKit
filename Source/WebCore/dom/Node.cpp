@@ -859,7 +859,20 @@ void Node::adjustStyleValidity(Style::Validity validity, Style::InvalidationMode
         setStyleFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer);
 }
 
-inline void Node::updateAncestorsForStyleRecalc()
+void Node::updateAncestorsForStyleRecalc()
+{
+    markAncestorsForInvalidatedStyle();
+
+    auto* documentElement = document().documentElement();
+    if (!documentElement)
+        return;
+    if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
+        return;
+    document().setChildNeedsStyleRecalc();
+    document().scheduleStyleRecalc();
+}
+
+void Node::markAncestorsForInvalidatedStyle()
 {
     auto composedAncestors = composedTreeAncestors(*this);
     auto it = composedAncestors.begin();
@@ -876,14 +889,6 @@ inline void Node::updateAncestorsForStyleRecalc()
             it->setChildNeedsStyleRecalc();
         }
     }
-
-    auto* documentElement = document().documentElement();
-    if (!documentElement)
-        return;
-    if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
-        return;
-    document().setChildNeedsStyleRecalc();
-    document().scheduleStyleRecalc();
 }
 
 void Node::invalidateStyle(Style::Validity validity, Style::InvalidationMode mode)

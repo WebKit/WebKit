@@ -658,9 +658,7 @@ void TreeResolver::popParent()
     auto& parentElement = *parent().element;
 
     parentElement.setHasValidStyle();
-    // Don't clear the child flags if there are unresolved containers because we are going to resume the style resolution.
-    if (!hasUnresolvedQueryContainers())
-        parentElement.clearChildNeedsStyleRecalc();
+    parentElement.clearChildNeedsStyleRecalc();
 
     if (parent().didPushScope)
         popScope();
@@ -849,7 +847,7 @@ void TreeResolver::resolveComposedTree()
         if (!style)
             resetStyleForNonRenderedDescendants(element);
 
-        auto queryContainerAction = determineQueryContainerAction(element, style, previousContainerType);
+        auto queryContainerAction = updateStateForQueryContainer(element, style, previousContainerType, change, descendantsToResolve);
 
         bool shouldIterateChildren = [&] {
             // display::none, no need to resolve descendants.
@@ -861,9 +859,6 @@ void TreeResolver::resolveComposedTree()
             return element.childNeedsStyleRecalc() || descendantsToResolve != DescendantsToResolve::None;
         }();
 
-        // Ensure we respect DescendantsToResolve::All after resuming the style resolution.
-        if (queryContainerAction == QueryContainerAction::Resolve && descendantsToResolve == DescendantsToResolve::All)
-            element.invalidateStyleForSubtreeInternal();
 
         if (!m_didSeePendingStylesheet)
             m_didSeePendingStylesheet = hasLoadingStylesheet(m_document.styleScope(), element, !shouldIterateChildren);
@@ -886,27 +881,37 @@ void TreeResolver::resolveComposedTree()
     popParentsToDepth(1);
 }
 
-auto TreeResolver::determineQueryContainerAction(const Element& element, const RenderStyle* style, ContainerType previousContainerType) -> QueryContainerAction
+
+auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderStyle* style, ContainerType previousContainerType, Change& change, DescendantsToResolve& descendantsToResolve) -> QueryContainerAction
 {
     if (!style)
         return QueryContainerAction::None;
 
-    // FIXME: Render tree needs to be updated before proceeding to children also if we have a former query container
-    // because container unit resolution for descendants relies on it being up-to-date.
-    if (style->containerType() == ContainerType::Normal && previousContainerType == ContainerType::Normal)
-        return QueryContainerAction::None;
+    auto tryRestoreState = [&](auto& state) {
+        if (!state)
+            return;
+        change = std::max(change, state->change);
+        descendantsToResolve = std::max(descendantsToResolve, state->descendantsToResolve);
+        state = { };
+    };
 
-    if (m_resolvedQueryContainers.contains(element))
-        return QueryContainerAction::None;
+    if (auto it = m_queryContainerStates.find(element); it != m_queryContainerStates.end()) {
+        tryRestoreState(it->value);
+        return QueryContainerAction::Continue;
+    }
 
-    m_unresolvedQueryContainers.append(element);
-    return QueryContainerAction::Resolve;
+    if (style->containerType() != ContainerType::Normal || previousContainerType != ContainerType::Normal) {
+        m_queryContainerStates.add(element, QueryContainerState { change, descendantsToResolve });
+        m_hasUnresolvedQueryContainers = true;
+        return QueryContainerAction::Resolve;
+    }
+
+    return QueryContainerAction::None;
 }
 
 std::unique_ptr<Update> TreeResolver::resolve()
 {
-    m_resolvedQueryContainers.add(m_unresolvedQueryContainers.begin(), m_unresolvedQueryContainers.end());
-    m_unresolvedQueryContainers.clear();
+    m_hasUnresolvedQueryContainers = false;
 
     Element* documentElement = m_document.documentElement();
     if (!documentElement) {
@@ -930,6 +935,14 @@ std::unique_ptr<Update> TreeResolver::resolve()
     ASSERT(m_parentStack.size() == 1);
     m_parentStack.clear();
     popScope();
+
+    if (m_hasUnresolvedQueryContainers) {
+        for (auto& containerAndState : m_queryContainerStates) {
+            // Ensure that resumed resolution reaches the container.
+            if (containerAndState.value)
+                containerAndState.key->invalidateForResumingQueryContainerResolution();
+        }
+    }
 
     if (m_update->roots().isEmpty())
         return { };
