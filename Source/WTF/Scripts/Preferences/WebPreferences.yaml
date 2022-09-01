@@ -1009,7 +1009,8 @@ InterruptAudioOnPageVisibilityChangeEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: WebCore::RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange()
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
     WebCore:
       default: false
 

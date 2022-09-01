@@ -495,6 +495,10 @@ void MediaStreamTrack::updateToPageMutedState()
 
     switch (source().deviceType()) {
     case CaptureDevice::DeviceType::Microphone:
+#if PLATFORM(IOS_FAMILY)
+        if (document.settings().manageCaptureStatusBarInGPUProcessEnabled() && !document.settings().interruptAudioOnPageVisibilityChangeEnabled())
+            m_private->setIsInBackground(document.hidden());
+#endif
         m_private->setMuted(page->mutedState().contains(MediaProducerMutedState::AudioCaptureIsMuted)
             || (document.hidden() && document.settings().interruptAudioOnPageVisibilityChangeEnabled()));
         break;

@@ -87,6 +87,8 @@ public:
     bool muted() const;
     void setMuted(bool muted) { m_source->setMuted(muted); }
 
+    void setIsInBackground(bool value) { m_source->setIsInBackground(value); }
+
     bool isCaptureTrack() const;
 
     bool enabled() const { return m_isEnabled; }

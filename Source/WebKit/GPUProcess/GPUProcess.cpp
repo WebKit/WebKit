@@ -69,6 +69,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include <WebCore/CoreAudioSharedUnit.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
 
@@ -253,6 +254,12 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     setMockCaptureDevicesEnabled(parameters.useMockCaptureDevices);
 #if PLATFORM(MAC)
     SandboxExtension::consumePermanently(parameters.microphoneSandboxExtensionHandle);
+#endif
+#if PLATFORM(IOS_FAMILY)
+    CoreAudioSharedUnit::unit().setStatusBarWasTappedCallback([this](auto completionHandler) {
+        parentProcessConnection()->sendWithAsyncReply(Messages::GPUProcessProxy::StatusBarWasTapped(), [] { }, 0);
+        completionHandler();
+    });
 #endif
 #endif // ENABLE(MEDIA_STREAM)
 

@@ -1632,6 +1632,21 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
     return WebCore::Color::white;
 }
 
+void WebPageProxy::statusBarWasTapped()
+{
+#if PLATFORM(IOS)
+    RELEASE_LOG_INFO(WebRTC, "WebPageProxy::statusBarWasTapped");
+
+#if USE(APPLE_INTERNAL_SDK)
+    UIApplication *app = UIApplication.sharedApplication;
+    if (!app.supportsMultipleScenes && app.applicationState != UIApplicationStateActive)
+        [[LSApplicationWorkspace defaultWorkspace] openApplicationWithBundleID:[[NSBundle mainBundle] bundleIdentifier]];
+#endif
+
+    m_uiClient->statusBarWasTapped();
+#endif
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

@@ -40,6 +40,8 @@ public:
 
 private:
     RemoteRealtimeAudioSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, AtomString&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
+
+    void setIsInBackground(bool) final;
 };
 
 } // namespace WebKit

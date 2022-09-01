@@ -385,6 +385,11 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
     plistbuddy Add :com.apple.tcc.delegated-services:1 string kTCCServiceMicrophone
 
+    plistbuddy Add :com.apple.springboard.statusbarstyleoverrides bool YES
+    plistbuddy Add :com.apple.springboard.statusbarstyleoverrides.coordinator array
+    plistbuddy Add :com.apple.springboard.statusbarstyleoverrides.coordinator:0 string UIStatusBarStyleOverrideWebRTCAudioCapture
+    plistbuddy Add :com.apple.springboard.statusbarstyleoverrides.coordinator:1 string UIStatusBarStyleOverrideWebRTCCapture
+
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.GPU
 
     plistbuddy Add :com.apple.systemstatus.activityattribution bool YES

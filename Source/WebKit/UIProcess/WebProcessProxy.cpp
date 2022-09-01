@@ -538,6 +538,15 @@ WebPageProxy* WebProcessProxy::webPage(WebPageProxyIdentifier pageID)
     return globalPageMap().get(pageID);
 }
 
+WebPageProxy* WebProcessProxy::audioCapturingWebPage()
+{
+    for (auto* page : globalPageMap().values()) {
+        if (page->hasActiveAudioStream())
+            return page;
+    }
+    return nullptr;
+}
+
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 void WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed()
 {

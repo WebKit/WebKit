@@ -328,6 +328,14 @@ void CoreAudioCaptureSource::delaySamples(Seconds seconds)
     unit().delaySamples(seconds);
 }
 
+#if PLATFORM(IOS_FAMILY)
+void CoreAudioCaptureSource::setIsInBackground(bool value)
+{
+    if (isProducingData())
+        CoreAudioSharedUnit::unit().setIsInBackground(value);
+}
+#endif
+
 void CoreAudioCaptureSource::audioUnitWillStart()
 {
     forEachObserver([](auto& observer) {

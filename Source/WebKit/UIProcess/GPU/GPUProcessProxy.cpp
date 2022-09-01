@@ -684,6 +684,16 @@ void GPUProcessProxy::requestBitmapImageForCurrentTime(ProcessIdentifier process
     sendWithAsyncReply(Messages::GPUProcess::RequestBitmapImageForCurrentTime(processIdentifier, playerIdentifier), WTFMove(completion));
 }
 
+#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
+void GPUProcessProxy::statusBarWasTapped(CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* page = WebProcessProxy::audioCapturingWebPage())
+        page->statusBarWasTapped();
+    // Find the web page capturing audio and put focus on it.
+    completionHandler();
+}
+#endif
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

@@ -61,6 +61,11 @@ void RemoteRealtimeAudioSource::remoteAudioSamplesAvailable(const MediaTime& tim
     audioSamplesAvailable(time, data, description, size);
 }
 
+void RemoteRealtimeAudioSource::setIsInBackground(bool value)
+{
+    connection().send(Messages::UserMediaCaptureManagerProxy::SetIsInBackground { identifier(), value }, 0);
+}
+
 }
 
 #endif

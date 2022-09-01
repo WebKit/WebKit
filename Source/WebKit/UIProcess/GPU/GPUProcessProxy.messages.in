@@ -31,6 +31,9 @@ messages -> GPUProcessProxy {
 #if ENABLE(VP9)
     SetHasVP9HardwareDecoder(bool hasVP9HardwareDecoder)
 #endif
+#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
+    StatusBarWasTapped() -> () Async
+#endif
 
     ProcessIsReadyToExit()
     TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)

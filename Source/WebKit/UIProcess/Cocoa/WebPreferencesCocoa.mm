@@ -28,6 +28,7 @@
 
 #import "StringUtilities.h"
 #import "WebPreferencesKeys.h"
+#import <WebCore/RealtimeMediaSourceCenter.h>
 #import <wtf/text/StringConcatenate.h>
 
 #if ENABLE(MEDIA_STREAM)
@@ -150,6 +151,7 @@ void WebPreferences::platformInitializeStore()
         // If other preferences need to dynamically set the initial value based on host app state, we should extended
         // the declarative format rather than adding more special cases here.
         m_store.setBoolValueForKey(WebPreferencesKey::mediaDevicesEnabledKey(), UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio() || UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo());
+        m_store.setBoolValueForKey(WebPreferencesKey::interruptAudioOnPageVisibilityChangeEnabledKey(),  WebCore::RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange());
 #endif
 
 #define INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \

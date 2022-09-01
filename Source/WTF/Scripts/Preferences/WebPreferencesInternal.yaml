@@ -582,6 +582,19 @@ LiveRangeSelectionEnabled:
     WebCore:
       default: false
 
+ManageCaptureStatusBarInGPUProcessEnabled:
+  type: bool
+  humanReadableName: "GPU Process: Capture Status Bar management"
+  humanReadableDescription: "Enable Capture Status Bar management in GPU Process"
+  condition: ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKit:
+      default: WebKit::defaultManageCaptureStatusBarInGPUProcessEnabled()
+    WebKitLegacy:
+      default: false
+    WebCore:
+      default: false
+
 MediaCaptureRequiresSecureConnection:
   type: bool
   inspectorOverride: true

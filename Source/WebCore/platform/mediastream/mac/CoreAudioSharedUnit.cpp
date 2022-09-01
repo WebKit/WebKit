@@ -47,6 +47,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "AVAudioSessionCaptureDeviceManager.h"
+#include "MediaCaptureStatusBarManager.h"
 #endif
 
 #include <pal/cf/AudioToolboxSoftLink.h>
@@ -203,6 +204,10 @@ CoreAudioSharedUnit& CoreAudioSharedUnit::unit()
 CoreAudioSharedUnit::CoreAudioSharedUnit()
     : m_sampleRateCapabilities(8000, 96000)
     , m_verifyCapturingTimer(*this, &CoreAudioSharedUnit::verifyIsCapturing)
+{
+}
+
+CoreAudioSharedUnit::~CoreAudioSharedUnit()
 {
 }
 
@@ -622,6 +627,9 @@ void CoreAudioSharedUnit::stopInternal()
     }
 
     m_ioUnitStarted = false;
+#if PLATFORM(IOS_FAMILY)
+    setIsInBackground(false);
+#endif
 }
 
 void CoreAudioSharedUnit::registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
@@ -656,6 +664,35 @@ void CoreAudioSharedUnit::unregisterSpeakerSamplesProducer(CoreAudioSpeakerSampl
 
     setIsRenderingAudio(false);
 }
+
+#if PLATFORM(IOS_FAMILY)
+void CoreAudioSharedUnit::setIsInBackground(bool isInBackground)
+{
+    if (!MediaCaptureStatusBarManager::hasSupport())
+        return;
+
+    if (!isInBackground) {
+        if (m_statusBarManager) {
+            m_statusBarManager->stop();
+            m_statusBarManager = nullptr;
+        }
+        return;
+    }
+
+    if (m_statusBarManager)
+        return;
+
+    m_statusBarManager = makeUnique<MediaCaptureStatusBarManager>([this](auto&& completionHandler) {
+        if (m_statusBarWasTappedCallback)
+            m_statusBarWasTappedCallback(WTFMove(completionHandler));
+    }, [this] {
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit status bar failed");
+        captureFailed();
+        ASSERT(!m_statusBarManager);
+    });
+    m_statusBarManager->start();
+}
+#endif
 
 } // namespace WebCore
 

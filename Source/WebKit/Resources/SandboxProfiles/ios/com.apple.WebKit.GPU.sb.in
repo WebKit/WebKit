@@ -165,6 +165,8 @@
                 (subpath "/tmp/AudioCapture")
             )
         )
+        (allow mach-lookup
+            (global-name "com.apple.springboard.statusbarservices"))
     )
 
     ;; Media capture, camera access

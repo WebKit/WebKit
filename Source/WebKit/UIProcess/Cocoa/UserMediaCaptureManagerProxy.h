@@ -93,6 +93,7 @@ private:
     void clone(WebCore::RealtimeMediaSourceIdentifier clonedID, WebCore::RealtimeMediaSourceIdentifier cloneID, WebCore::PageIdentifier);
     void endProducingData(WebCore::RealtimeMediaSourceIdentifier);
     void setShouldApplyRotation(WebCore::RealtimeMediaSourceIdentifier, bool shouldApplyRotation);
+    void setIsInBackground(WebCore::RealtimeMediaSourceIdentifier, bool);
 
     WebCore::CaptureSourceOrError createMicrophoneSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*, WebCore::PageIdentifier);
     WebCore::CaptureSourceOrError createCameraSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*, WebCore::PageIdentifier);

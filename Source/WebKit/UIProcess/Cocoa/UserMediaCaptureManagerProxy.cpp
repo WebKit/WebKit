@@ -122,6 +122,7 @@ public:
     }
 
     void setShouldApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = true; }
+    void setIsInBackground(bool value) { m_source->setIsInBackground(value); }
 
 private:
     void sourceStopped() final {
@@ -467,6 +468,12 @@ void UserMediaCaptureManagerProxy::setShouldApplyRotation(RealtimeMediaSourceIde
 {
     if (auto* proxy = m_proxies.get(sourceID))
         proxy->setShouldApplyRotation(shouldApplyRotation);
+}
+
+void UserMediaCaptureManagerProxy::setIsInBackground(RealtimeMediaSourceIdentifier sourceID, bool isInBackground)
+{
+    if (auto* proxy = m_proxies.get(sourceID))
+        proxy->setIsInBackground(isInBackground);
 }
 
 void UserMediaCaptureManagerProxy::clear()

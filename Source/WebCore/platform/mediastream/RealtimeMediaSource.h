@@ -222,6 +222,7 @@ public:
     virtual void setInterruptedForTesting(bool);
 
     virtual bool setShouldApplyRotation(bool) { return false; }
+    virtual void setIsInBackground(bool);
 
     PageIdentifier pageIdentifier() const { return m_pageIdentifier; }
 
@@ -349,6 +350,10 @@ inline bool RealtimeMediaSource::isVideoSource() const
 inline bool RealtimeMediaSource::isProducingData() const
 {
     return m_isProducingData;
+}
+
+inline void RealtimeMediaSource::setIsInBackground(bool)
+{
 }
 
 } // namespace WebCore

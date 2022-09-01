@@ -157,6 +157,7 @@ private:
 #endif
         RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) final;
         void didNotHandleTapAsClick(const WebCore::IntPoint&) final;
+        void statusBarWasTapped() final;
 #endif // PLATFORM(IOS_FAMILY)
         PlatformViewController *presentingViewController() final;
 
@@ -256,6 +257,7 @@ private:
 #endif
         bool webViewActionsForElementDefaultActions : 1;
         bool webViewDidNotHandleTapAsClickAtPoint : 1;
+        bool webViewStatusBarWasTapped : 1;
 #endif
         bool presentingViewControllerForWebView : 1;
         bool dataDetectionContextForWebView : 1;
