@@ -973,8 +973,9 @@ LayoutRect RenderTableSection::logicalRectForWritingModeAndDirection(const Layou
         tableAlignedRect = tableAlignedRect.transposedRect();
 
     const Vector<LayoutUnit>& columnPos = table()->columnPositions();
-    // FIXME: The table's direction should determine our row's direction, not the section's (see bug 96691).
-    if (!style().isLeftToRightDirection())
+
+    // The table's 'direction' determines in which direction the rows flow.
+    if (!table()->style().isLeftToRightDirection())
         tableAlignedRect.setX(columnPos[columnPos.size() - 1] - tableAlignedRect.maxX());
 
     return tableAlignedRect;
@@ -1399,18 +1400,6 @@ const BorderValue& RenderTableSection::borderAdjoiningEndCell(const RenderTableC
     return isDirectionSame(this, &cell) ? style().borderEnd() : style().borderStart();
 }
 
-const RenderTableCell* RenderTableSection::firstRowCellAdjoiningTableStart() const
-{
-    unsigned adjoiningStartCellColumnIndex = isDirectionSame(this, table()) ? 0 : table()->lastColumnIndex();
-    return cellAt(0, adjoiningStartCellColumnIndex).primaryCell();
-}
-
-const RenderTableCell* RenderTableSection::firstRowCellAdjoiningTableEnd() const
-{
-    unsigned adjoiningEndCellColumnIndex = isDirectionSame(this, table()) ? table()->lastColumnIndex() : 0;
-    return cellAt(0, adjoiningEndCellColumnIndex).primaryCell();
-}
-
 void RenderTableSection::appendColumn(unsigned pos)
 {
     ASSERT(!m_needsCellRecalc);
@@ -1564,8 +1553,8 @@ void RenderTableSection::setLogicalPositionForCell(RenderTableCell* cell, unsign
     LayoutPoint cellLocation(0_lu, m_rowPos[cell->rowIndex()]);
     LayoutUnit horizontalBorderSpacing = table()->hBorderSpacing();
 
-    // FIXME: The table's direction should determine our row's direction, not the section's (see bug 96691).
-    if (!style().isLeftToRightDirection())
+    // The table's 'direction' determines in which direction the rows flow.
+    if (!table()->style().isLeftToRightDirection())
         cellLocation.setX(table()->columnPositions()[table()->numEffCols()] - table()->columnPositions()[table()->colToEffCol(cell->col() + cell->colSpan())] + horizontalBorderSpacing);
     else
         cellLocation.setX(table()->columnPositions()[effectiveColumn] + horizontalBorderSpacing);

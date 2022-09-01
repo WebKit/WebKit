@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x170
+  RenderBlock {HTML} at (0,0) size 800x170
+    RenderBody {BODY} at (8,16) size 784x146
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 550x18
+          text run at (0,0) width 550: "This test checks that the row direction is determined by the table's 'direction' property."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 488x18
+          text run at (0,0) width 488: "In all the tables below, the lime cell should be on the right of the purple cell."
+      RenderTable {TABLE} at (0,68) size 50x26
+        RenderTableSection {TBODY} at (0,0) size 50x26
+          RenderTableRow {TR} at (0,2) size 50x22
+            RenderTableCell {TD} at (26,12) size 22x2 [bgcolor=#800080] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,12) size 22x2 [bgcolor=#00FF00] [r=0 c=1 rs=1 cs=1]
+      RenderTable {TABLE} at (0,94) size 50x26
+        RenderTableSection {TBODY} at (0,0) size 50x26
+          RenderTableRow {TR} at (0,2) size 50x22
+            RenderTableCell {TD} at (2,12) size 22x2 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (26,12) size 22x2 [bgcolor=#800080] [r=0 c=1 rs=1 cs=1]
+      RenderTable {TABLE} at (0,120) size 50x26
+        RenderTableSection {TBODY} at (0,0) size 50x26
+          RenderTableRow {TR} at (0,2) size 50x22
+            RenderTableCell {TD} at (2,12) size 22x2 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (26,12) size 22x2 [bgcolor=#800080] [r=0 c=1 rs=1 cs=1]

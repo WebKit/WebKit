@@ -1179,7 +1179,7 @@ LayoutUnit RenderTable::calcBorderStart() const
         if (sectionAdjoiningBorder.style() > BorderStyle::Hidden)
             borderWidth = std::max(borderWidth, sectionAdjoiningBorder.width());
 
-        if (const RenderTableCell* adjoiningStartCell = topNonEmptySection->firstRowCellAdjoiningTableStart()) {
+        if (const RenderTableCell* adjoiningStartCell = topNonEmptySection->cellAt(0, 0).primaryCell()) {
             // FIXME: Make this work with perpendicular and flipped cells.
             const BorderValue& startCellAdjoiningBorder = adjoiningStartCell->borderAdjoiningTableStart();
             if (startCellAdjoiningBorder.style() == BorderStyle::Hidden)
@@ -1234,7 +1234,7 @@ LayoutUnit RenderTable::calcBorderEnd() const
         if (sectionAdjoiningBorder.style() > BorderStyle::Hidden)
             borderWidth = std::max(borderWidth, sectionAdjoiningBorder.width());
 
-        if (const RenderTableCell* adjoiningEndCell = topNonEmptySection->firstRowCellAdjoiningTableEnd()) {
+        if (const RenderTableCell* adjoiningEndCell = topNonEmptySection->cellAt(0, lastColumnIndex()).primaryCell()) {
             // FIXME: Make this work with perpendicular and flipped cells.
             const BorderValue& endCellAdjoiningBorder = adjoiningEndCell->borderAdjoiningTableEnd();
             if (endCellAdjoiningBorder.style() == BorderStyle::Hidden)

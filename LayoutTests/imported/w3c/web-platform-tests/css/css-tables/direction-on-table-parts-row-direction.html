@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <style>
+        .rtl {
+            direction: rtl;
+        }
+
+        .limeBackground {
+            background-color: lime;
+        }
+        .purpleBackground {
+            background-color: purple;
+        }
+
+        td {
+            height: 20px;
+            width: 20px;
+        }
+    </style>
+    <p>This test checks that the row direction is determined by the table's 'direction' property.</p>
+    <p>In all the tables below, the lime cell should be on the right of the purple cell.</p>
+    <table class="rtl">
+        <tbody>
+        <tr>
+            <td class="purpleBackground"></td>
+            <td class="limeBackground"></td>
+        </tr>
+        </tbody>
+    </table>
+    <table>
+        <tbody class="rtl">
+        <tr>
+            <td class="limeBackground"></td>
+            <td class="purpleBackground"></td>
+        </tr>
+        </tbody>
+    </table>
+    <table>
+        <tbody>
+        <tr class="rtl">
+            <td class="limeBackground"></td>
+            <td class="purpleBackground"></td>
+        </tr>
+        </tbody>
+    </table>
+</body></html>
