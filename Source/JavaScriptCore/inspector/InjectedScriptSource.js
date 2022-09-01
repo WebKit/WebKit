@@ -57,6 +57,9 @@ function createArrayWithoutPrototype(/* value1, value2, ... */)
 function createInspectorInjectedScript(InjectedScriptHost, inspectedGlobalObject, injectedScriptId)
 {
 
+function PrototypelessObjectBase() {}
+PrototypelessObjectBase.prototype = null;
+
 function toString(obj)
 {
     return @String(obj);
@@ -127,10 +130,12 @@ function max(a, b) {
 
 // -------
 
-let InjectedScript = class InjectedScript
+let InjectedScript = class InjectedScript extends PrototypelessObjectBase
 {
     constructor()
     {
+        super();
+
         this._lastBoundObjectId = 1;
         this._idToWrappedObject = @createObjectWithoutPrototype();
         this._idToObjectGroupName = @createObjectWithoutPrototype();
@@ -969,10 +974,12 @@ var injectedScript = new InjectedScript;
 
 // -------
 
-let RemoteObject = class RemoteObject
+let RemoteObject = class RemoteObject extends PrototypelessObjectBase
 {
     constructor(object, objectGroupName, forceValueType, generatePreview, columnNames)
     {
+        super();
+
         this.type = typeof object;
 
         if (this.type === "undefined" && InjectedScriptHost.isHTMLAllCollection(object))
@@ -1496,9 +1503,12 @@ let RemoteObject = class RemoteObject
 
 // -------
 
-InjectedScript.CallFrameProxy = class CallFrameProxy {
+InjectedScript.CallFrameProxy = class CallFrameProxy extends PrototypelessObjectBase
+{
     constructor(ordinal, callFrame)
     {
+        super();
+
         this.callFrameId = `{"ordinal":${ordinal},"injectedScriptId":${injectedScriptId}}`;
         this.functionName = callFrame.functionName;
 
