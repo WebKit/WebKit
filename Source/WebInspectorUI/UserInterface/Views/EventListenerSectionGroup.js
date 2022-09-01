@@ -108,7 +108,7 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
 
     // Static
 
-    static groupIntoSectionsByEvent(eventListeners)
+    static groupIntoSectionsByEvent(eventListeners, options = {})
     {
         let eventListenerTypes = new Map;
         for (let eventListener of eventListeners) {
@@ -127,12 +127,12 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         let types = Array.from(eventListenerTypes.keys());
         types.sort();
         for (let type of types)
-            rows.push(WI.EventListenerSectionGroup._createEventListenerSection(type, eventListenerTypes.get(type), {hideType: true}));
+            rows.push(WI.EventListenerSectionGroup._createEventListenerSection(type, eventListenerTypes.get(type), {...options, hideType: true}));
 
         return rows;
     }
 
-    static groupIntoSectionsByTarget(eventListeners, domNode)
+    static groupIntoSectionsByTarget(eventListeners, domNode, options = {})
     {
         const windowTargetIdentifier = Symbol("window");
 
@@ -161,7 +161,7 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
             let title = target === windowTargetIdentifier ? WI.unlocalizedString("window") : target.displayName;
             let identifier = target === windowTargetIdentifier ? WI.unlocalizedString("window") : target.unescapedSelector;
 
-            let section = WI.EventListenerSectionGroup._createEventListenerSection(title, eventListenersForTarget, {hideTarget: true, identifier});
+            let section = WI.EventListenerSectionGroup._createEventListenerSection(title, eventListenersForTarget, {...options, hideTarget: true, identifier});
             if (target instanceof WI.DOMNode)
                 WI.bindInteractionsForNodeToElement(target, section.titleElement, {ignoreClick: true});
             rows.push(section);
