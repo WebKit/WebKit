@@ -262,9 +262,9 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
 
     // TimelineRecordBar delegate
 
-    timelineRecordBarClicked(timelineRecordBar)
+    timelineRecordBarClicked(timelineRecord)
     {
-        this.selectedRecord = timelineRecordBar.records[0];
+        this.selectedRecord = timelineRecord;
     }
 
     // Protected
