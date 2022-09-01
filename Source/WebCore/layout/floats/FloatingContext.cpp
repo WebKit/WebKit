@@ -259,7 +259,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
             return { };
         };
         if (auto bottomWithClear = floatBottom())
-            verticalPositionCandidate = *bottomWithClear + boxGeometry.marginBefore();
+            verticalPositionCandidate = std::max(BoxGeometry::borderBoxTop(boxGeometry), *bottomWithClear) + boxGeometry.marginBefore();
     } else {
         // Incoming float cannot be placed higher than existing floats (margin box of the last float).
         // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
