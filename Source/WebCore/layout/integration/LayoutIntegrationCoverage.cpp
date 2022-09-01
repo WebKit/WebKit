@@ -367,6 +367,12 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         return reasons;
 
     auto isSupportedFloatingOrPositioned = [&] (auto& renderer) {
+        if (renderer.style().styleType() == PseudoId::FirstLetter) {
+            // Initial letter implementation uses a specialized float behavior internally.
+            auto& style = renderer.style();
+            if (renderer.isFloating() && (!style.initialLetter().isEmpty() || style.initialLetterDrop() || style.initialLetterHeight()))
+                return false;
+        }
 #if !ALLOW_FLOATS
         if (renderer.isFloating())
             return false;
