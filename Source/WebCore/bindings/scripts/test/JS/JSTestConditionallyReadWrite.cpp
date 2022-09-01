@@ -235,8 +235,8 @@ void JSTestConditionallyReadWritePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestConditionallyReadWrite::s_info = { "TestConditionallyReadWrite"_s, &Base::s_info, &JSTestConditionallyReadWriteTable, nullptr, CREATE_METHOD_TABLE(JSTestConditionallyReadWrite) };
 
-JSTestConditionallyReadWrite::JSTestConditionallyReadWrite(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestConditionallyReadWrite>&& impl)
-    : JSDOMWrapper<TestConditionallyReadWrite>(structure, globalObject, WTFMove(impl))
+JSTestConditionallyReadWrite::JSTestConditionallyReadWrite(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestConditionallyReadWrite>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestConditionallyReadWrite>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

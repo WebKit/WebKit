@@ -129,8 +129,8 @@ void JSTestLegacyOverrideBuiltInsPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestLegacyOverrideBuiltIns::s_info = { "TestLegacyOverrideBuiltIns"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyOverrideBuiltIns) };
 
-JSTestLegacyOverrideBuiltIns::JSTestLegacyOverrideBuiltIns(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestLegacyOverrideBuiltIns>&& impl)
-    : JSDOMWrapper<TestLegacyOverrideBuiltIns>(structure, globalObject, WTFMove(impl))
+JSTestLegacyOverrideBuiltIns::JSTestLegacyOverrideBuiltIns(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestLegacyOverrideBuiltIns>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestLegacyOverrideBuiltIns>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

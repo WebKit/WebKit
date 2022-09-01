@@ -86,6 +86,7 @@ constexpr ArrayModes asArrayModesIgnoringTypedArrays(IndexingType indexingMode)
     | asArrayModesIgnoringTypedArrays(NonArrayWithInt32)                   \
     | asArrayModesIgnoringTypedArrays(NonArrayWithDouble)                  \
     | asArrayModesIgnoringTypedArrays(NonArrayWithContiguous)              \
+    | asArrayModesIgnoringTypedArrays(NonArrayWithAlwaysSlowPutContiguous) \
     | asArrayModesIgnoringTypedArrays(NonArrayWithArrayStorage)            \
     | asArrayModesIgnoringTypedArrays(NonArrayWithSlowPutArrayStorage)     \
     | ALL_TYPED_ARRAY_MODES)
@@ -162,6 +163,11 @@ inline bool shouldUseFastArrayStorage(ArrayModes arrayModes)
 inline bool shouldUseContiguous(ArrayModes arrayModes)
 {
     return arrayModesIncludeIgnoringTypedArrays(arrayModes, ContiguousShape);
+}
+
+inline bool shouldUseAlwaysSlowPutContiguous(ArrayModes arrayModes)
+{
+    return arrayModesIncludeIgnoringTypedArrays(arrayModes, AlwaysSlowPutContiguousShape);
 }
 
 inline bool shouldUseDouble(ArrayModes arrayModes)

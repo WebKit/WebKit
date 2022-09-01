@@ -59,7 +59,7 @@ public:
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSExposedToWorkerAndWindow(JSC::Structure*, JSDOMGlobalObject&, Ref<ExposedToWorkerAndWindow>&&);
+    JSExposedToWorkerAndWindow(JSC::Structure*, JSDOMGlobalObject&, Ref<ExposedToWorkerAndWindow>&&, JSC::Butterfly* = nullptr);
 
     void finishCreation(JSC::VM&);
 };

@@ -664,6 +664,9 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
             case ContiguousShape:
                 accessType = AccessCase::IndexedContiguousLoad;
                 break;
+            case AlwaysSlowPutContiguousShape:
+                accessType = AccessCase::IndexedAlwaysSlowPutContiguousLoad;
+                break;
             case ArrayStorageShape:
                 accessType = AccessCase::IndexedArrayStorageLoad;
                 break;

@@ -128,8 +128,8 @@ void JSTestNamedDeleterWithIdentifierPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestNamedDeleterWithIdentifier::s_info = { "TestNamedDeleterWithIdentifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterWithIdentifier) };
 
-JSTestNamedDeleterWithIdentifier::JSTestNamedDeleterWithIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedDeleterWithIdentifier>&& impl)
-    : JSDOMWrapper<TestNamedDeleterWithIdentifier>(structure, globalObject, WTFMove(impl))
+JSTestNamedDeleterWithIdentifier::JSTestNamedDeleterWithIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedDeleterWithIdentifier>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestNamedDeleterWithIdentifier>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

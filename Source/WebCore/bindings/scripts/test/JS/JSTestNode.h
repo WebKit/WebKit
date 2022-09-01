@@ -61,7 +61,7 @@ public:
         return static_cast<TestNode&>(Base::wrapped());
     }
 protected:
-    JSTestNode(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNode>&&);
+    JSTestNode(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNode>&&, JSC::Butterfly* = nullptr);
 
     void finishCreation(JSC::VM&);
 };

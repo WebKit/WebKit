@@ -120,8 +120,8 @@ void JSTestNamedDeleterThrowingExceptionPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestNamedDeleterThrowingException::s_info = { "TestNamedDeleterThrowingException"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterThrowingException) };
 
-JSTestNamedDeleterThrowingException::JSTestNamedDeleterThrowingException(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedDeleterThrowingException>&& impl)
-    : JSDOMWrapper<TestNamedDeleterThrowingException>(structure, globalObject, WTFMove(impl))
+JSTestNamedDeleterThrowingException::JSTestNamedDeleterThrowingException(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedDeleterThrowingException>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestNamedDeleterThrowingException>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

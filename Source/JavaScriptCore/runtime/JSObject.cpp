@@ -572,6 +572,8 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, JSGlobalObject* g
     
     if (i > MAX_ARRAY_INDEX)
         return thisObject->methodTable()->getOwnPropertySlot(thisObject, globalObject, Identifier::from(vm, i), slot);
+
+    unsigned attributes = hasAnySlowPutIndexingType(thisObject->indexingType()) && thisObject->structure()->typeInfo().slowPutArrayStorageVectorPropertiesAreReadOnly() ? static_cast<unsigned>(PropertyAttribute::ReadOnly) : static_cast<unsigned>(PropertyAttribute::None);
     
     switch (thisObject->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -586,7 +588,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, JSGlobalObject* g
         
         JSValue value = butterfly->contiguous().at(thisObject, i).get();
         if (value) {
-            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), value);
+            slot.setValue(thisObject, attributes, value);
             return true;
         }
         
@@ -600,7 +602,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, JSGlobalObject* g
         
         double value = butterfly->contiguousDouble().at(thisObject, i);
         if (value == value) {
-            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), JSValue(JSValue::EncodeAsDouble, value));
+            slot.setValue(thisObject, attributes, JSValue(JSValue::EncodeAsDouble, value));
             return true;
         }
         
@@ -615,7 +617,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, JSGlobalObject* g
         if (i < storage->vectorLength()) {
             JSValue value = storage->m_vector[i].get();
             if (value) {
-                slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), value);
+                slot.setValue(thisObject, attributes, value);
                 return true;
             }
         } else if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
@@ -1458,7 +1460,7 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm)
 ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, TransitionKind transition)
 {
     DeferGC deferGC(vm);
-    ASSERT(hasContiguous(indexingType()));
+    ASSERT(hasAnyContiguous(indexingType()));
 
     unsigned vectorLength = m_butterfly->vectorLength();
     ArrayStorage* newStorage = constructConvertedArrayStorageWithoutCopyingElements(vm, vectorLength);
@@ -1748,6 +1750,7 @@ ContiguousJSValues JSObject::tryMakeWritableContiguousSlow(VM& vm)
         return convertDoubleToContiguous(vm);
         
     case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+    case NonArrayWithAlwaysSlowPutContiguous:
         return ContiguousJSValues();
         
     default:
@@ -1786,9 +1789,12 @@ ArrayStorage* JSObject::ensureArrayStorageSlow(VM& vm)
         ASSERT(!needsSlowPutIndexing());
         return convertDoubleToArrayStorage(vm);
         
-    case ALL_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_FAST_PUT_CONTIGUOUS_INDEXING_TYPES:
         ASSERT(!indexingShouldBeSparse());
         ASSERT(!needsSlowPutIndexing());
+        FALLTHROUGH;
+
+    case NonArrayWithAlwaysSlowPutContiguous:
         return convertContiguousToArrayStorage(vm);
         
     default:
@@ -1818,11 +1824,14 @@ ArrayStorage* JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode(V
     case ALL_DOUBLE_INDEXING_TYPES:
         return enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(vm, convertDoubleToArrayStorage(vm));
         
-    case ALL_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_FAST_PUT_CONTIGUOUS_INDEXING_TYPES:
         return enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(vm, convertContiguousToArrayStorage(vm));
         
     case ALL_ARRAY_STORAGE_INDEXING_TYPES:
         return enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(vm, m_butterfly->arrayStorage());
+
+    case NonArrayWithAlwaysSlowPutContiguous:
+        return enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(vm, convertContiguousToArrayStorage(vm, TransitionKind::AllocateSlowPutArrayStorage));
         
     default:
         CRASH();
@@ -1855,8 +1864,12 @@ void JSObject::switchToSlowPutArrayStorage(VM& vm)
         convertDoubleToArrayStorage(vm, TransitionKind::AllocateSlowPutArrayStorage);
         break;
         
-    case ALL_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_FAST_PUT_CONTIGUOUS_INDEXING_TYPES:
         convertContiguousToArrayStorage(vm, TransitionKind::AllocateSlowPutArrayStorage);
+        break;
+
+    case NonArrayWithAlwaysSlowPutContiguous:
+        enterDictionaryIndexingMode(vm);
         break;
         
     case NonArrayWithArrayStorage:
@@ -2955,7 +2968,7 @@ bool JSObject::putByIndexBeyondVectorLengthWithoutAttributes(JSGlobalObject* glo
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isCopyOnWrite(indexingMode()));
-    ASSERT((indexingType() & IndexingShapeMask) == indexingShape);
+    ASSERT((indexingType() & IndexingShapeMask) == indexingShape || hasAlwaysSlowPutContiguous(indexingType()));
     ASSERT(!indexingShouldBeSparse());
 
     Butterfly* butterfly = m_butterfly.get();
@@ -2968,8 +2981,9 @@ bool JSObject::putByIndexBeyondVectorLengthWithoutAttributes(JSGlobalObject* glo
         || (i >= MIN_SPARSE_ARRAY_INDEX && !isDenseEnoughForVector(i, countElements<indexingShape>(butterfly)))
         || indexIsSufficientlyBeyondLengthForSparseMap(i, butterfly->vectorLength())) {
         ASSERT(i <= MAX_ARRAY_INDEX);
-        ensureArrayStorageSlow(vm);
-        SparseArrayValueMap* map = allocateSparseIndexMap(vm);
+        bool needsDictionaryIndexingMode = hasAlwaysSlowPutContiguous(indexingType());
+        ArrayStorage* storage = ensureArrayStorageSlow(vm);
+        SparseArrayValueMap* map = needsDictionaryIndexingMode ? enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(vm, storage)->m_sparseMap.get() : allocateSparseIndexMap(vm);
         bool result = map->putEntry(globalObject, this, i, value, false);
         RETURN_IF_EXCEPTION(scope, false);
         ASSERT(i >= arrayStorage()->length());
@@ -3995,7 +4009,7 @@ bool JSObject::needsSlowPutIndexing() const
 
 TransitionKind JSObject::suggestedArrayStorageTransition() const
 {
-    if (needsSlowPutIndexing())
+    if (needsSlowPutIndexing() || hasAlwaysSlowPutContiguous(indexingType()))
         return TransitionKind::AllocateSlowPutArrayStorage;
     
     return TransitionKind::AllocateArrayStorage;

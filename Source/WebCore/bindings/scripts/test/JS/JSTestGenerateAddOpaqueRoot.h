@@ -60,7 +60,7 @@ public:
 
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestGenerateAddOpaqueRoot(JSC::Structure*, JSDOMGlobalObject&, Ref<TestGenerateAddOpaqueRoot>&&);
+    JSTestGenerateAddOpaqueRoot(JSC::Structure*, JSDOMGlobalObject&, Ref<TestGenerateAddOpaqueRoot>&&, JSC::Butterfly* = nullptr);
 
     void finishCreation(JSC::VM&);
 };

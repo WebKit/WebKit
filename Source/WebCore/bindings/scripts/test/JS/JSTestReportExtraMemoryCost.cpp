@@ -118,8 +118,8 @@ void JSTestReportExtraMemoryCostPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestReportExtraMemoryCost::s_info = { "TestReportExtraMemoryCost"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReportExtraMemoryCost) };
 
-JSTestReportExtraMemoryCost::JSTestReportExtraMemoryCost(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestReportExtraMemoryCost>&& impl)
-    : JSDOMWrapper<TestReportExtraMemoryCost>(structure, globalObject, WTFMove(impl))
+JSTestReportExtraMemoryCost::JSTestReportExtraMemoryCost(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestReportExtraMemoryCost>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestReportExtraMemoryCost>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

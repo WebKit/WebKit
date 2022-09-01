@@ -60,7 +60,7 @@ public:
     }
     bool isZapped() const { return !*bitwise_cast<const uint32_t*>(this); }
 
-    bool isLive();
+    JS_EXPORT_PRIVATE bool isLive();
 
     bool isPreciseAllocation() const;
     CellContainer cellContainer() const;

@@ -120,8 +120,8 @@ void JSTestNamedGetterCallWithPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestNamedGetterCallWith::s_info = { "TestNamedGetterCallWith"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterCallWith) };
 
-JSTestNamedGetterCallWith::JSTestNamedGetterCallWith(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedGetterCallWith>&& impl)
-    : JSDOMWrapper<TestNamedGetterCallWith>(structure, globalObject, WTFMove(impl))
+JSTestNamedGetterCallWith::JSTestNamedGetterCallWith(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedGetterCallWith>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestNamedGetterCallWith>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

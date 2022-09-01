@@ -730,16 +730,16 @@ JSArray* JSArray::fastSlice(JSGlobalObject* globalObject, JSObject* source, uint
 {
     VM& vm = globalObject->vm();
 
-    Structure* sourceStructure = source->structure();
-    if (sourceStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
+    if (!source->canDoFastIndexedAccess())
         return nullptr;
 
-    auto arrayType = source->indexingType() | IsArray;
+    auto sourceIndexingType = source->indexingType();
+    auto arrayType = sourceIndexingType == NonArrayWithAlwaysSlowPutContiguous ? ArrayWithContiguous : sourceIndexingType | IsArray;
     switch (arrayType) {
     case ArrayWithDouble:
     case ArrayWithInt32:
     case ArrayWithContiguous: {
-        if (count >= MIN_SPARSE_ARRAY_INDEX || sourceStructure->holesMustForwardToPrototype(source))
+        if (count >= MIN_SPARSE_ARRAY_INDEX)
             return nullptr;
 
         if (startIndex + count > source->butterfly()->vectorLength())

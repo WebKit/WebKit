@@ -125,8 +125,8 @@ void JSTestStringifierAnonymousOperationPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestStringifierAnonymousOperation::s_info = { "TestStringifierAnonymousOperation"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierAnonymousOperation) };
 
-JSTestStringifierAnonymousOperation::JSTestStringifierAnonymousOperation(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestStringifierAnonymousOperation>&& impl)
-    : JSDOMWrapper<TestStringifierAnonymousOperation>(structure, globalObject, WTFMove(impl))
+JSTestStringifierAnonymousOperation::JSTestStringifierAnonymousOperation(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestStringifierAnonymousOperation>&& impl, JSC::Butterfly* butterfly)
+    : JSDOMWrapper<TestStringifierAnonymousOperation>(structure, globalObject, WTFMove(impl), butterfly)
 {
 }
 

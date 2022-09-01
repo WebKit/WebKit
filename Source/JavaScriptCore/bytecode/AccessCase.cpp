@@ -86,6 +86,7 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
+    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageLoad:
     case IndexedScopedArgumentsLoad:
     case IndexedDirectArgumentsLoad:
@@ -310,6 +311,7 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
+    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageLoad:
     case IndexedScopedArgumentsLoad:
     case IndexedDirectArgumentsLoad:
@@ -378,6 +380,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
+    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageLoad:
     case IndexedScopedArgumentsLoad:
     case IndexedDirectArgumentsLoad:
@@ -444,6 +447,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
+    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageLoad:
     case IndexedScopedArgumentsLoad:
     case IndexedDirectArgumentsLoad:
@@ -507,6 +511,7 @@ bool AccessCase::needsScratchFPR() const
     case InstanceOfGeneric:
     case IndexedInt32Load:
     case IndexedContiguousLoad:
+    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageLoad:
     case IndexedScopedArgumentsLoad:
     case IndexedDirectArgumentsLoad:
@@ -610,6 +615,7 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
+    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageLoad:
     case IndexedScopedArgumentsLoad:
     case IndexedDirectArgumentsLoad:
@@ -678,6 +684,7 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
+    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageLoad:
     case IndexedScopedArgumentsLoad:
     case IndexedDirectArgumentsLoad:
@@ -769,6 +776,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
+    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageLoad:
     case ArrayLength:
     case StringLength:
@@ -1345,6 +1353,7 @@ void AccessCase::generateWithGuard(
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
+    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
@@ -1398,6 +1407,9 @@ void AccessCase::generateWithGuard(
                 break;
             case IndexedContiguousLoad:
                 expectedShape = ContiguousShape;
+                break;
+            case IndexedAlwaysSlowPutContiguousLoad:
+                expectedShape = AlwaysSlowPutContiguousShape;
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -2542,6 +2554,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
+    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageLoad:
     case IndexedScopedArgumentsLoad:
     case IndexedDirectArgumentsLoad:
@@ -2648,6 +2661,7 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case IndexedInt32Store:
     case IndexedDoubleStore:
     case IndexedContiguousStore:
+    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageStore:
     case IndexedTypedArrayInt8Store:
     case IndexedTypedArrayUint8Store:
@@ -2748,6 +2762,7 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
+    case IndexedAlwaysSlowPutContiguousLoad:
     case IndexedArrayStorageLoad:
     case IndexedScopedArgumentsLoad:
     case IndexedDirectArgumentsLoad:
