@@ -152,6 +152,10 @@ if (COMPILER_IS_GCC_OR_CLANG)
         # -Wodr trips over our bindings integrity feature when LTO is enabled.
         # https://bugs.webkit.org/show_bug.cgi?id=229867
         WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-odr)
+
+        # Match Clang's behavor and exit after emitting 20 errors.
+        # https://bugs.webkit.org/show_bug.cgi?id=244621
+        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-fmax-errors=20)
     endif ()
 
     # Force SSE2 fp on x86 builds.
