@@ -279,6 +279,14 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let elementsSettingsView = new WI.SettingsView("elements", WI.UIString("Elements"));
 
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): CSS.LayoutFlag.Rendered did not exist yet.
+        console.log(InspectorBackend.Enum.CSS);
+        if (InspectorBackend.Enum.CSS?.LayoutFlag?.Rendered) {
+            elementsSettingsView.addSetting(WI.UIString("DOM Tree:"), WI.settings.domTreeDeemphasizesNodesThatAreNotRendered, WI.UIString("De-emphasize nodes that are not rendered"));
+
+            elementsSettingsView.addSeparator();
+        }
+
         if (InspectorBackend.hasCommand("DOM.setInspectModeEnabled", "showRulers")) {
             elementsSettingsView.addSetting(WI.UIString("Element Selection:"), WI.settings.showRulersDuringElementSelection, WI.UIString("Show page rulers and node border lines"));
 

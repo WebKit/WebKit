@@ -109,6 +109,9 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
             this._breakpointsEnabledDidChange();
         }
+
+        WI.settings.domTreeDeemphasizesNodesThatAreNotRendered.addEventListener(WI.Setting.Event.Changed, this._handleDOMTreeDeemphasizesNodesThatAreNotRenderedChanged, this);
+        this._updateDOMTreeDeemphasizesNodesThatAreNotRendered();
     }
 
     // Public
@@ -171,6 +174,8 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             WI.DOMBreakpoint.removeEventListener(WI.DOMBreakpoint.Event.DOMNodeWillChange, this._handleDOMBreakpointDOMNodeWillChange, this);
             WI.DOMBreakpoint.removeEventListener(WI.DOMBreakpoint.Event.DOMNodeDidChange, this._handleDOMBreakpointDOMNodeDidChange, this);
         }
+
+        WI.settings.domTreeDeemphasizesNodesThatAreNotRendered.removeEventListener(WI.Setting.Event.Changed, this._handleDOMTreeDeemphasizesNodesThatAreNotRenderedChanged, this);
 
         this._domTreeOutline.close();
         this._pendingBreakpointNodes.clear();
@@ -862,5 +867,15 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     _breakpointsEnabledDidChange(event)
     {
         this._domTreeOutline.element.classList.toggle("breakpoints-disabled", !WI.debuggerManager.breakpointsEnabled);
+    }
+
+    _updateDOMTreeDeemphasizesNodesThatAreNotRendered()
+    {
+        this.element.classList.toggle("deemphasize-unrendered", WI.settings.domTreeDeemphasizesNodesThatAreNotRendered.value);
+    }
+
+    _handleDOMTreeDeemphasizesNodesThatAreNotRenderedChanged(event)
+    {
+        this._updateDOMTreeDeemphasizesNodesThatAreNotRendered()
     }
 };
