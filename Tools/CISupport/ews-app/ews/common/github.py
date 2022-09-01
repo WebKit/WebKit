@@ -213,6 +213,10 @@ class GitHubEWS(GitHub):
 
     def generate_comment_text_for_change(self, change):
         hash_url = 'https://github.com/WebKit/WebKit/commit/{}'.format(change.change_id)
+
+        if change.comment_id == -1:
+            ews_status_bubble_url = 'https://ews.webkit.org/status-bubble/{}'.format(change.change_id)
+            return u'Loading EWS status-bubbles for {}. You can also access them at {}'.format(hash_url, ews_status_bubble_url)
         comment = '\n\n| Misc | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
 
