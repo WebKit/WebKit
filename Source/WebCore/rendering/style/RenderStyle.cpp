@@ -676,7 +676,7 @@ inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) c
 
     if (m_inheritedFlags.textDecorationLines != other.m_inheritedFlags.textDecorationLines
         || m_rareNonInheritedData->textDecorationStyle != other.m_rareNonInheritedData->textDecorationStyle
-        || m_rareInheritedData->textDecorationThickness != other.m_rareInheritedData->textDecorationThickness
+        || m_rareNonInheritedData->textDecorationThickness != other.m_rareNonInheritedData->textDecorationThickness
         || m_rareInheritedData->textUnderlineOffset != other.m_rareInheritedData->textUnderlineOffset
         || m_rareInheritedData->textUnderlinePosition != other.m_rareInheritedData->textUnderlinePosition) {
         // Underlines are always drawn outside of their textbox bounds when text-underline-position: under;

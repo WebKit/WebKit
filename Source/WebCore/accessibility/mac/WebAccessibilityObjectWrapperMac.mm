@@ -865,6 +865,8 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
                 AXAttributeStringSetNumber(attrString, @"AXIsSuggestedDeletion", @YES, range);
             else if (equalLettersIgnoringASCIICase(roleValue, "suggestion"_s))
                 AXAttributeStringSetNumber(attrString, @"AXIsSuggestion", @YES, range);
+            else if (equalLettersIgnoringASCIICase(roleValue, "mark"_s))
+                AXAttributeStringSetNumber(attrString, @"AXHighlight", @YES, range);
         }
     }
 }

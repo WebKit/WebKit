@@ -137,6 +137,7 @@ private:
     void requestVideoContentLayer() final;
     void returnVideoContentLayer() final;
     void didSetupFullscreen() final;
+    void failedToEnterFullscreen() final { }
     void didEnterFullscreen(const FloatSize&) final { }
     void willExitFullscreen() final;
     void didExitFullscreen() final;

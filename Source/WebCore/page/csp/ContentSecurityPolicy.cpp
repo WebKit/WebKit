@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google, Inc. All rights reserved.
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "ContentSecurityPolicy.h"
 
 #include "BlobURL.h"
+#include "CSPViolationReportBody.h"
 #include "ContentSecurityPolicyClient.h"
 #include "ContentSecurityPolicyDirective.h"
 #include "ContentSecurityPolicyDirectiveList.h"
@@ -48,11 +49,14 @@
 #include "LegacySchemeRegistry.h"
 #include "ParsingUtilities.h"
 #include "PingLoader.h"
+#include "Report.h"
+#include "ReportingClient.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicyViolationEvent.h"
 #include "Settings.h"
 #include "SubresourceIntegrity.h"
+#include "WorkerGlobalScope.h"
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <pal/crypto/CryptoDigest.h>
@@ -82,15 +86,28 @@ static String consoleMessageForViolation(const ContentSecurityPolicyDirective& v
         isDefaultSrc ? " directive nor the default-src directive of the Content Security Policy." : " directive of the Content Security Policy.");
 }
 
-ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ContentSecurityPolicyClient* client)
+ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ContentSecurityPolicyClient* client, ReportingClient* reportingClient)
     : m_client { client }
+    , m_reportingClient { reportingClient }
     , m_protectedURL { WTFMove(protectedURL) }
 {
     updateSourceSelf(SecurityOrigin::create(m_protectedURL).get());
 }
 
+static ReportingClient* reportingClientForContext(ScriptExecutionContext& scriptExecutionContext)
+{
+    if (auto* document = dynamicDowncast<Document>(scriptExecutionContext))
+        return document;
+
+    if (auto* workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
+        return workerGlobalScope;
+
+    return nullptr;
+}
+
 ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ScriptExecutionContext& scriptExecutionContext)
     : m_scriptExecutionContext(&scriptExecutionContext)
+    , m_reportingClient { reportingClientForContext(scriptExecutionContext) }
     , m_protectedURL { WTFMove(protectedURL) }
 {
     ASSERT(scriptExecutionContext.securityOrigin());
@@ -713,7 +730,7 @@ static bool shouldReportProtocolOnly(const URL& url)
     return !url.isHierarchical() || url.protocolIs("file"_s);
 }
 
-String ContentSecurityPolicy::createURLForReporting(const URL& url, const String& violatedDirective) const
+String ContentSecurityPolicy::createURLForReporting(const URL& url, const String& violatedDirective, bool usesReportingAPI) const
 {
     // This implements the deprecated CSP2 "strip uri for reporting" algorithm from https://www.w3.org/TR/CSP2/#violation-reports
     // with the change that cross-origin is considered safe except on some directives.
@@ -728,8 +745,13 @@ String ContentSecurityPolicy::createURLForReporting(const URL& url, const String
         return { };
     if (shouldReportProtocolOnly(url))
         return url.protocol().toString();
+
+    // WPT indicates that modern Reporting API expects explicit port in reported URLs
+    //     content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html
+    //     content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html
     if (securityOrigin->canRequest(url) || directiveIsSafe)
-        return url.strippedForUseAsReferrer();
+        return usesReportingAPI ? url.strippedForUseAsReferrerWithExplicitPort() : url.strippedForUseAsReferrer();
+
     return SecurityOrigin::create(url)->toString();
 }
 
@@ -760,12 +782,14 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     // FIXME: Support sending reports from worker.
     CSPInfo info;
 
+    bool usesReportTo = !violatedDirectiveList.reportToTokens().isEmpty();
+
     String blockedURI;
     if (blockedURLString == "eval"_s || blockedURLString == "inline"_s)
         blockedURI = blockedURLString;
     else {
         // If there is a redirect then we use the pre-redirect URL: https://www.w3.org/TR/CSP3/#security-violation-reports.
-        blockedURI = createURLForReporting(preRedirectURL.isNull() ? URL { blockedURLString } : preRedirectURL, effectiveViolatedDirective);
+        blockedURI = createURLForReporting(preRedirectURL.isNull() ? URL { blockedURLString } : preRedirectURL, effectiveViolatedDirective, usesReportTo);
     }
 
     info.documentURI = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer() : blockedURI;
@@ -776,7 +800,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     if (m_client)
         m_client->willSendCSPViolationReport(info);
     else {
-        if (!is<Document>(m_scriptExecutionContext))
+        if (!usesReportTo && !is<Document>(m_scriptExecutionContext))
             return;
 
         auto& document = downcast<Document>(*m_scriptExecutionContext);
@@ -789,7 +813,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
         auto stack = createScriptCallStack(JSExecState::currentState(), 2);
         auto* callFrame = stack->firstNonNativeCallFrame();
         if (callFrame && callFrame->lineNumber()) {
-            info.sourceFile = createURLForReporting(URL { callFrame->sourceURL() }, effectiveViolatedDirective);
+            info.sourceFile = createURLForReporting(URL { callFrame->sourceURL() }, effectiveViolatedDirective, usesReportTo);
             info.lineNumber = callFrame->lineNumber();
             info.columnNumber = callFrame->columnNumber();
         }
@@ -798,6 +822,12 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
     unsigned short httpStatusCode = m_selfSourceProtocol == "http"_s ? m_httpStatusCode : 0;
+    
+    // WPT indicate modern Reporting API expect valid status code, regardless of protocol:
+    //     content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html
+    //     content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html
+    if (usesReportTo)
+        httpStatusCode = m_httpStatusCode;
 
     // 1. Dispatch violation event.
     SecurityPolicyViolationEventInit violationEventInit;
@@ -808,6 +838,13 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     violationEventInit.effectiveDirective = effectiveViolatedDirective;
     violationEventInit.originalPolicy = violatedDirectiveList.header();
     violationEventInit.sourceFile = info.sourceFile;
+
+    // WPT expects modern Reporting API expects source file to be populated with document URI instead of blank:
+    //     content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html
+    //     content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html
+    if (usesReportTo && violationEventInit.sourceFile.isNull())
+        violationEventInit.sourceFile = info.documentURI;
+
     violationEventInit.disposition = violatedDirectiveList.isReportOnly() ? SecurityPolicyViolationEventDisposition::Report : SecurityPolicyViolationEventDisposition::Enforce;
     violationEventInit.statusCode = httpStatusCode;
     violationEventInit.lineNumber =  info.lineNumber;
@@ -815,6 +852,21 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     violationEventInit.sample = info.sample;
     violationEventInit.bubbles = true;
     violationEventInit.composed = true;
+
+    Vector<String> reportURIs;
+    if (usesReportTo && m_reportingClient) {
+        m_reportingClient->notifyReportObservers(Report::create(CSPViolationReportBody::cspReportType(), info.documentURI, CSPViolationReportBody::create(SecurityPolicyViolationEventInit { violationEventInit })));
+
+        for (auto& token : violatedDirectiveList.reportToTokens()) {
+            auto reportToURI = m_reportingClient->endpointURIForToken(token);
+            if (reportToURI.isNull() || reportToURI.isEmpty())
+                continue;
+
+            reportURIs.append(WTFMove(reportToURI));
+        }
+    } else
+        reportURIs = violatedDirectiveList.reportURIs();
+
     if (m_client)
         m_client->enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));
     else {
@@ -826,38 +878,12 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     }
 
     // 2. Send violation report (if applicable).
-    auto& reportURIs = violatedDirectiveList.reportURIs();
     if (reportURIs.isEmpty())
         return;
 
-    // We need to be careful here when deciding what information to send to the
-    // report-uri. Currently, we send only the current document's URL and the
-    // directive that was violated. The document's URL is safe to send because
-    // it's the document itself that's requesting that it be sent. You could
-    // make an argument that we shouldn't send HTTPS document URLs to HTTP
-    // report-uris (for the same reasons that we suppress the Referer in that
-    // case), but the Referer is sent implicitly whereas this request is only
-    // sent explicitly. As for which directive was violated, that's pretty
-    // harmless information.
+    auto reportURL = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer() : blockedURI;
 
-    auto cspReport = JSON::Object::create();
-    cspReport->setString("document-uri"_s, info.documentURI);
-    cspReport->setString("referrer"_s, m_referrer);
-    cspReport->setString("violated-directive"_s, effectiveViolatedDirective);
-    cspReport->setString("effective-directive"_s, effectiveViolatedDirective);
-    cspReport->setString("original-policy"_s, violatedDirectiveList.header());
-    cspReport->setString("blocked-uri"_s, blockedURI);
-    cspReport->setInteger("status-code"_s, httpStatusCode);
-    if (!info.sourceFile.isNull()) {
-        cspReport->setString("source-file"_s, info.sourceFile);
-        cspReport->setInteger("line-number"_s, info.lineNumber);
-        cspReport->setInteger("column-number"_s, info.columnNumber);
-    }
-
-    auto reportObject = JSON::Object::create();
-    reportObject->setObject("csp-report"_s, WTFMove(cspReport));
-
-    auto report = FormData::create(reportObject->toJSONString().utf8());
+    auto report = CSPViolationReportBody::createReportFormDataForViolation(info, usesReportTo, violatedDirectiveList.isReportOnly(), effectiveViolatedDirective, m_referrer, violatedDirectiveList.header(), blockedURI, httpStatusCode);
 
     if (m_client) {
         for (const auto& url : reportURIs)
@@ -945,6 +971,11 @@ void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiv
 void ContentSecurityPolicy::reportMissingReportURI(const String& policy) const
 {
     logToConsole("The Content Security Policy '" + policy + "' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.");
+}
+
+void ContentSecurityPolicy::reportMissingReportToTokens(const String& policy) const
+{
+    logToConsole("The Content Security Policy '" + policy + "' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.");
 }
 
 void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const OrdinalNumber& contextLine, const OrdinalNumber& contextColumn, JSC::JSGlobalObject* state) const

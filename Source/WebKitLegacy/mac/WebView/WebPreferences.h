@@ -209,12 +209,10 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_3, 10_14)
 */
 @property (nonatomic) BOOL autosaves;
 
-#if !TARGET_OS_IPHONE
 /*!
     @property shouldPrintBackgrounds
 */
 @property (nonatomic) BOOL shouldPrintBackgrounds;
-#endif
 
 /*!
     @property privateBrowsingEnabled:

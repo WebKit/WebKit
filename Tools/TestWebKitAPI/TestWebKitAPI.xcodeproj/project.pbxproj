@@ -235,6 +235,8 @@
 		46397B951DC2C850009A78AE /* DOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46397B941DC2C850009A78AE /* DOMNode.mm */; };
 		4647B1261EBA3B850041D7EF /* ProcessDidTerminate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4647B1251EBA3B730041D7EF /* ProcessDidTerminate.cpp */; };
 		464C764D230DF85C00AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 464C764C230DF83200AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 */; };
+		4657323A28BDB18F00972575 /* ProvisionalURLAfterWillSendRequestCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4657323828BDB18F00972575 /* ProvisionalURLAfterWillSendRequestCallback.cpp */; };
+		4657323C28BDB2E500972575 /* ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4657323928BDB18F00972575 /* ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp */; };
 		465C23AF2640C3FE00F2FC7F /* postMessage-regularly.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 465C23AE2640C3C500F2FC7F /* postMessage-regularly.html */; };
 		466AF38A26FE393600CE2EB8 /* ServiceWorkerPagePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 466AF38826FE393200CE2EB8 /* ServiceWorkerPagePlugIn.mm */; };
 		466C3843210637DE006A88DE /* notify-resourceLoadObserver.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 466C3842210637CE006A88DE /* notify-resourceLoadObserver.html */; };
@@ -2154,6 +2156,8 @@
 		463F4722255B49B600D9E0CC /* VisibilityState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VisibilityState.mm; sourceTree = "<group>"; };
 		4647B1251EBA3B730041D7EF /* ProcessDidTerminate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessDidTerminate.cpp; sourceTree = "<group>"; };
 		464C764C230DF83200AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BadServiceWorkerRegistrations-4.sqlite3"; sourceTree = "<group>"; };
+		4657323828BDB18F00972575 /* ProvisionalURLAfterWillSendRequestCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProvisionalURLAfterWillSendRequestCallback.cpp; sourceTree = "<group>"; };
+		4657323928BDB18F00972575 /* ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp; sourceTree = "<group>"; };
 		465A08FD280096F80028FD0E /* YoutubeReplacementPlugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = YoutubeReplacementPlugin.mm; sourceTree = "<group>"; };
 		465C23AE2640C3C500F2FC7F /* postMessage-regularly.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "postMessage-regularly.html"; sourceTree = "<group>"; };
 		465E2806255B2A690063A787 /* GPUProcess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUProcess.mm; sourceTree = "<group>"; };
@@ -4728,6 +4732,8 @@
 				333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */,
 				F6FDDDD214241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp */,
 				4647B1251EBA3B730041D7EF /* ProcessDidTerminate.cpp */,
+				4657323828BDB18F00972575 /* ProvisionalURLAfterWillSendRequestCallback.cpp */,
+				4657323928BDB18F00972575 /* ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp */,
 				8A3AF93A16C9ED2700D248C1 /* ReloadPageAfterCrash.cpp */,
 				2DD7D3A9178205D00026E1E3 /* ResizeReversePaginatedWebView.cpp */,
 				8A2C750D16CED9550024F352 /* ResizeWindowAfterCrash.cpp */,
@@ -6040,6 +6046,7 @@
 				57F1C91125DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm in Sources */,
 				4647B1261EBA3B850041D7EF /* ProcessDidTerminate.cpp in Sources */,
 				FEC2A85624CEB65F00ADBC35 /* PropertySlot.cpp in Sources */,
+				4657323A28BDB18F00972575 /* ProvisionalURLAfterWillSendRequestCallback.cpp in Sources */,
 				041A1E34216FFDBC00789E0A /* PublicSuffix.cpp in Sources */,
 				EB9AD8C727646E7400D893A4 /* PushDatabase.cpp in Sources */,
 				EBA75C49275ED7C700D6D31C /* PushMessageCrypto.cpp in Sources */,
@@ -6344,6 +6351,7 @@
 				0F139E791A42457000F590F5 /* PlatformUtilitiesCocoa.mm in Sources */,
 				BC575BE0126F590D006F0F12 /* PlatformUtilitiesMac.mm in Sources */,
 				B55AD1D5179F3B3000AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp in Sources */,
+				4657323C28BDB2E500972575 /* ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp in Sources */,
 				C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */,
 				7673499D1930C5BB00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad_bundle.cpp in Sources */,
 				CE3524F81B1431F60028A7C5 /* TextFieldDidBeginAndEndEditing_Bundle.cpp in Sources */,

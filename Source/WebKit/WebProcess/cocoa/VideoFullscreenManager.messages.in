@@ -32,6 +32,7 @@ messages -> VideoFullscreenManager {
     WillExitFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
     DidExitFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
     DidEnterFullscreen(WebKit::PlaybackSessionContextIdentifier contextId, std::optional<WebCore::FloatSize> size)
+    FailedToEnterFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
     DidCleanupFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
     SetVideoLayerFrameFenced(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatRect bounds, MachSendRight machSendRight)
     SetVideoLayerGravityEnum(WebKit::PlaybackSessionContextIdentifier contextId, unsigned gravity)

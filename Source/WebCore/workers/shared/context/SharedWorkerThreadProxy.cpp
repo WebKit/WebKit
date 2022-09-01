@@ -200,4 +200,9 @@ void SharedWorkerThreadProxy::workerGlobalScopeClosed()
     });
 }
 
+ReportingClient* SharedWorkerThreadProxy::reportingClient() const
+{
+    return &m_document.get();
+}
+
 } // namespace WebCore

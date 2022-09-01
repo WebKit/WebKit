@@ -1776,11 +1776,29 @@ if not (C_LOOP or C_LOOP_WIN)
         bpbeq sp, address, .zeroFillDone
         move address, sp
 
-        move 0, scratch
-    .zeroFillLoop:
-        storep scratch, [address]
-        addp PtrSize, address
-        bpa a0, address, .zeroFillLoop
+        # Filling stack space from |address| to sp (stored in |a0| now).
+        if (ARM64 or ARM64E) and ADDRESS64
+            # Because of ARM64 calling convention, stack-pointer is already 16-byte aligned.
+            # Let's check address is aligned or not to use 16-byte zero-fill.
+            assert(macro (ok)  btpz a0, (PtrSize * 2 - 1), ok end)
+            btpz address, (PtrSize * 2 - 1), .zeroFillLoop
+            # If it is not aligned, then store pointer-size and increment.
+            emit "str xzr, [x1], #8" # address is a1, thus x1
+            bpbeq a0, address, .zeroFillDone
+            assert(macro (ok)  btpz address, (PtrSize * 2 - 1), ok end)
+        .zeroFillLoop:
+            # Use non-temporal store-pair (stnp) since these stack values are meaningless to the execution.
+            # Avoid polluting CPU cache by using stnp.
+            emit "stnp xzr, xzr, [x1]" # address is a1, thus x1
+            addp PtrSize * 2, address
+            bpa a0, address, .zeroFillLoop
+        else
+            move 0, scratch
+        .zeroFillLoop:
+            storep scratch, [address]
+            addp PtrSize, address
+            bpa a0, address, .zeroFillLoop
+        end
 
     .zeroFillDone:
         move a0, sp

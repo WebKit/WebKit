@@ -73,26 +73,46 @@ imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worke
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-blocked.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-classic.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import.http.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-module.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-classic.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-import.http.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-import.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-module.http.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import.http.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-classic.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import.http.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-module.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-classic.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-import.http.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-import.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-classic.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-import.http.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-import.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-module.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-classic.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-import.http.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-import.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-import.http.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-import.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-classic.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import.http.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-module.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-module.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-classic.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.http.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-module.http.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-module.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/inside-worker/sharedworker-connect-src.sub.html [ Skip ]
@@ -355,6 +375,9 @@ imported/w3c/web-platform-tests/beacon/ [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-beacon-allowed.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-beacon-blocked.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-beacon-redirect-to-blocked.sub.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/beacon.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/beacon.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/beacon.https.html [ Skip ]
 http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html [ Skip ]
 http/tests/security/contentSecurityPolicy/connect-src-beacon-blocked.html [ Skip ]
 http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.py [ Skip ]
@@ -1084,6 +1107,7 @@ webkit.org/b/184569 [ Debug ] animations/missing-from-to.html [ Skip ]
 webkit.org/b/184458 media/remote-control-command-is-user-gesture.html [ Pass Timeout ]
 
 webkit.org/b/185404 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html [ Pass Failure ]
+http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies.html [ Pass Failure ]
 
 webkit.org/b/186581 [ Debug ] fast/parser/xml-error-adopted.xml [ Timeout Pass ]
 
@@ -1182,7 +1206,6 @@ webkit.org/b/199242 [ Debug ] http/tests/performance/performance-resource-timing
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-compositing-change.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-slow.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/tall-cross-domain-iframe-in-scrolled.sub.html [ Skip ]
 
 # <rdar://problem/42625657> REGRESSION (Mojave): 12 fast/images tests timing out on WK1
@@ -1224,6 +1247,8 @@ webkit.org/b/244492 [ Debug ] inspector/runtime/getDisplayableProperties.html [ 
 webkit.org/b/206668 fast/loader/redirect-to-invalid-url-using-meta-refresh-calls-policy-delegate.html [ Pass Failure ]
 
 webkit.org/b/180760 fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-async-delegates.html [ Pass Failure ]
+
+webkit.org/b/244607 [ Debug ] fast/loader/opaque-base-url.html [ Crash ]
 
 webkit.org/b/190830 [ Debug ] media/track/video-track-addition-and-frame-removal.html [ Pass Crash ]
 
@@ -1452,6 +1477,8 @@ fast/layoutformattingcontext/run-expansion-extends-line-content-width.html [ Ima
 fast/layoutformattingcontext/wbr-simple.html [ ImageOnlyFailure ]
 
 webkit.org/b/219498 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-003.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/244538 [ Debug ] imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-003.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure ]
 
@@ -1936,7 +1963,29 @@ webkit.org/b/243494 [ Debug ] compositing/layer-creation/scale-rotation-animatio
 imported/w3c/web-platform-tests/compression [ Skip ]
 
 # webkit.org/b/243733 [ Mac wk1 ] Many recently imported mixed-content WPT tests are failing on Mac wk1
-imported/w3c/web-platform-tests/mixed-content [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/audio-tag.https.html [ Failure ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/video-tag.https.html [ Failure ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/audio-tag.https.html [ Failure ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/video-tag.https.html [ Failure ]
+
+# WebKitLegacy does not support Shared Workers, so skip related tests.
+imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.http-rp [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.meta [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic.http-rp [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.http-rp [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.meta [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module.http-rp [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-import-data.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-module.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import-data.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-module.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-import-data.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-import.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-module.https.html [ Skip ]
 
 # webkit.org/b/243738 [ macOS wk1 ] Multiple imported/w3c/web-platform-tests/wasm tests are a constant failure on Mac wk1
 imported/w3c/web-platform-tests/wasm [ Skip ]
@@ -1956,6 +2005,8 @@ webkit.org/b/244312 http/tests/media/fairplay/fps-mse-unmuxed-same-key.html [ Pa
 webkit.org/b/244312 http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Pass Failure ]
 webkit.org/b/244312 http/tests/media/fairplay/fps-hls.html [ Pass Failure ]
 
+webkit.org/b/244601 http/tests/media/fairplay/fps-mse-unmuxed-key-renewal.html [ Failure ]
+
 webkit.org/b/244336 fast/canvas/canvas-createPattern-video-loading.html [ Pass Timeout ]
 
 webkit.org/b/244347 storage/domstorage/sessionstorage/window-open-remove-item.html [ Pass Failure ]
@@ -1970,3 +2021,12 @@ webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-mod
 webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html [ Crash ]
 webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html [ Crash ]
 
+imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.https.sub.html [ Failure ]
+imported/w3c/web-platform-tests/reporting/cross-origin-reports-isolated.https.sub.html [ Failure ]
+
+webkit.org/b/244611 [ Debug ] http/tests/loading/form-submission-no-load-event.html [ Pass Crash ]
+
+webkit.org/b/244636 [ Monterey Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Crash ]
+
+
+webkit.org/b/244637 imported/w3c/web-platform-tests/content-security-policy/generic/304-response-should-update-csp.sub.html [ Pass Failure ]

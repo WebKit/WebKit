@@ -85,6 +85,7 @@ $(PROJECT_DIR)/NetworkProcess/NetworkBroadcastChannelRegistry.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkConnectionToWebProcess.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkContentRuleListManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkProcess.messages.in
+$(PROJECT_DIR)/NetworkProcess/NetworkProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/NetworkProcess/NetworkResourceLoader.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkSocketChannel.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkSocketStream.messages.in
@@ -125,10 +126,13 @@ $(PROJECT_DIR)/Scripts/webkit/__init__.py
 $(PROJECT_DIR)/Scripts/webkit/messages.py
 $(PROJECT_DIR)/Scripts/webkit/model.py
 $(PROJECT_DIR)/Scripts/webkit/parser.py
+$(PROJECT_DIR)/Shared/API/APIGeometry.serialization.in
 $(PROJECT_DIR)/Shared/API/Cocoa/RemoteObjectRegistry.messages.in
 $(PROJECT_DIR)/Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in
 $(PROJECT_DIR)/Shared/Authentication/AuthenticationManager.messages.in
 $(PROJECT_DIR)/Shared/AuxiliaryProcess.messages.in
+$(PROJECT_DIR)/Shared/FrameInfoData.serialization.in
+$(PROJECT_DIR)/Shared/FrameTreeNodeData.serialization.in
 $(PROJECT_DIR)/Shared/HTTPSUpgrade/HTTPSUpgradeList.txt
 $(PROJECT_DIR)/Shared/IPCConnectionTester.messages.in
 $(PROJECT_DIR)/Shared/IPCStreamTester.messages.in
@@ -138,8 +142,11 @@ $(PROJECT_DIR)/Shared/Notifications/NotificationManagerMessageHandler.messages.i
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerProxy.messages.in
 $(PROJECT_DIR)/Shared/Plugins/NPObjectMessageReceiver.messages.in
 $(PROJECT_DIR)/Shared/WebConnection.messages.in
+$(PROJECT_DIR)/Shared/WebCoreArgumentCoders.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUOrigin3D.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUValidationError.serialization.in
+$(PROJECT_DIR)/Shared/WebsiteDataStoreParameters.serialization.in
+$(PROJECT_DIR)/Shared/mac/SecItemResponseData.serialization.in
 $(PROJECT_DIR)/UIProcess/Automation/Automation.json
 $(PROJECT_DIR)/UIProcess/Automation/WebAutomationSession.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in

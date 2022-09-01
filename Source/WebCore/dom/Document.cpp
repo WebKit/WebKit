@@ -194,6 +194,7 @@
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "ReportingScope.h"
 #include "RequestAnimationFrameCallback.h"
 #include "ResizeObserver.h"
 #include "ResourceLoadObserver.h"
@@ -587,6 +588,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_editor(makeUniqueRef<Editor>(*this))
     , m_selection(makeUniqueRef<FrameSelection>(this))
     , m_whitespaceCache(makeUniqueRef<WhitespaceCache>())
+    , m_reportingScope(ReportingScope::create(*this))
 {
     addToDocumentsMap();
 
@@ -981,6 +983,8 @@ void Document::childrenChanged(const ChildChange& change)
         return;
     m_documentElement = newDocumentElement;
     setDocumentElementLanguage(m_documentElement ? m_documentElement->langFromAttribute() : nullAtom());
+    setDocumentElementTextDirection(m_documentElement && is<HTMLElement>(m_documentElement) && m_documentElement->usesEffectiveTextDirection()
+        ? downcast<HTMLElement>(*m_documentElement).effectiveTextDirection() : TextDirection::LTR);
     // The root style used for media query matching depends on the document element.
     styleScope().clearResolver();
 }
@@ -2751,6 +2755,8 @@ void Document::removeAllEventListeners()
     if (m_domWindow)
         m_domWindow->removeAllEventListeners();
 
+    m_reportingScope->removeAllObservers();
+    
 #if ENABLE(IOS_TOUCH_EVENTS)
     clearTouchEventHandlersAndListeners();
 #endif
@@ -3867,6 +3873,7 @@ void Document::processMetaHttpEquiv(const String& equiv, const AtomString& conte
     RefPtr frame = this->frame();
     RefPtr documentLoader = frame ? frame->loader().documentLoader() : nullptr;
     auto httpStatusCode = documentLoader ? documentLoader->response().httpStatusCode() : 0;
+    auto responseURL = documentLoader ? documentLoader->response().url() : URL();
 
     HTTPHeaderName headerName;
     if (!findHTTPHeaderName(equiv, headerName))
@@ -3916,6 +3923,10 @@ void Document::processMetaHttpEquiv(const String& equiv, const AtomString& conte
     case HTTPHeaderName::ContentSecurityPolicy:
         if (isInDocumentHead)
             contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta, referrer(), httpStatusCode);
+        break;
+
+    case HTTPHeaderName::ReportingEndpoints:
+        reportingScope().parseReportingEndpoints(content, responseURL);
         break;
 
     default:
@@ -9246,6 +9257,16 @@ bool Document::isSameSiteForCookies(const URL& url) const
 {
     auto domain = isTopDocument() ? RegistrableDomain(securityOrigin().data()) : RegistrableDomain(siteForCookies());
     return domain.matches(url);
+}
+
+void Document::notifyReportObservers(Ref<Report>&& reports)
+{
+    reportingScope().notifyReportObservers(WTFMove(reports));
+}
+
+String Document::endpointURIForToken(const String& token) const
+{
+    return reportingScope().endpointURIForToken(token);
 }
 
 } // namespace WebCore

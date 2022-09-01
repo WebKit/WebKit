@@ -54,11 +54,11 @@ void TextDocumentParser::insertFakeFormattingElements()
 
     Attribute nameAttribute(nameAttr, "color-scheme"_s);
     Attribute contentAttribute(contentAttr, "light dark"_s);
-    AtomHTMLToken fakeMeta(HTMLToken::Type::StartTag, metaTag->localName(), { WTFMove(nameAttribute), WTFMove(contentAttribute) });
+    AtomHTMLToken fakeMeta(HTMLToken::Type::StartTag, TagName::meta, { WTFMove(nameAttribute), WTFMove(contentAttribute) });
     treeBuilder().constructTree(WTFMove(fakeMeta));
 
     Attribute attribute(styleAttr, "word-wrap: break-word; white-space: pre-wrap;"_s);
-    AtomHTMLToken fakePre(HTMLToken::Type::StartTag, preTag->localName(), { WTFMove(attribute) });
+    AtomHTMLToken fakePre(HTMLToken::Type::StartTag, TagName::pre, { WTFMove(attribute) });
     treeBuilder().constructTree(WTFMove(fakePre));
 
     // Normally we would skip the first \n after a <pre> element, but we don't

@@ -99,10 +99,22 @@ CodePtr<JITThunkPtrTag> JITThunks::ctiNativeCall(VM& vm)
     return ctiStub(vm, nativeCallGenerator).code();
 }
 
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeCallWithDebuggerHook(VM& vm)
+{
+    ASSERT(Options::useJIT());
+    return ctiStub(vm, nativeCallWithDebuggerHookGenerator).code();
+}
+
 CodePtr<JITThunkPtrTag> JITThunks::ctiNativeConstruct(VM& vm)
 {
     ASSERT(Options::useJIT());
     return ctiStub(vm, nativeConstructGenerator).code();
+}
+
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeConstructWithDebuggerHook(VM& vm)
+{
+    ASSERT(Options::useJIT());
+    return ctiStub(vm, nativeConstructWithDebuggerHookGenerator).code();
 }
 
 CodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCall(VM& vm)

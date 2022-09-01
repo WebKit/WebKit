@@ -145,8 +145,11 @@ public: \
     \
     void* operator new[](size_t size) = delete; \
     void operator delete[](void* p) = delete; \
-using webkitFastMalloced = int; \
+    \
+    exportMacro static void freeAfterDestruction(void*); \
+    \
+    using webkitFastMalloced = int; \
 private: \
-using __makeBisoMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
+    using __makeBisoMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
 } } // namespace bmalloc::api

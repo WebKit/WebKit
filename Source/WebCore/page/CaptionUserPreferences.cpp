@@ -152,10 +152,7 @@ void CaptionUserPreferences::setUserPrefersSubtitles(bool preference)
 bool CaptionUserPreferences::userPrefersTextDescriptions() const
 {
     auto* page = currentPage();
-    if (!page)
-        return false;
-    
-    return page->settings().shouldDisplayTextDescriptions();
+    return page && page->settings().audioDescriptionsEnabled() && page->settings().shouldDisplayTextDescriptions();
 }
 
 void CaptionUserPreferences::setUserPrefersTextDescriptions(bool preference)
@@ -317,16 +314,22 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioT
 
 int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaElement* mediaElement) const
 {
+    if (!mediaElement || !mediaElement->player())
+        return 0;
+
     CaptionDisplayMode displayMode = captionDisplayMode();
-    if (displayMode == Manual)
+    auto kind = track->kind();
+    auto prefersTextDescriptions = kind == TextTrack::Kind::Descriptions && userPrefersTextDescriptions();
+    if (displayMode == Manual && !prefersTextDescriptions)
         return 0;
 
     bool legacyOverride = mediaElement->webkitClosedCaptionsVisible();
     if (displayMode == AlwaysOn && (!userPrefersSubtitles() && !userPrefersCaptions() && !legacyOverride))
         return 0;
-    if (track->kind() != TextTrack::Kind::Captions && track->kind() != TextTrack::Kind::Subtitles && track->kind() != TextTrack::Kind::Forced)
+
+    if (kind != TextTrack::Kind::Captions && kind != TextTrack::Kind::Subtitles && kind != TextTrack::Kind::Forced && !prefersTextDescriptions)
         return 0;
-    if (!track->isMainProgramContent())
+    if (!track->isMainProgramContent() && !prefersTextDescriptions)
         return 0;
 
     bool trackHasOnlyForcedSubtitles = track->containsOnlyForcedSubtitles();
@@ -335,10 +338,7 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
 
     Vector<String> userPreferredCaptionLanguages = preferredLanguages();
 
-    if ((displayMode == Automatic && !legacyOverride) || trackHasOnlyForcedSubtitles) {
-
-        if (!mediaElement || !mediaElement->player())
-            return 0;
+    if ((displayMode == Automatic && !legacyOverride) || trackHasOnlyForcedSubtitles || prefersTextDescriptions) {
 
         String textTrackLanguage = track->validBCP47Language();
         if (textTrackLanguage.isEmpty())
@@ -383,9 +383,11 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
 
     int trackScore = 0;
 
-    if (userPrefersCaptions()) {
+    if (kind == TextTrack::Kind::Descriptions && userPrefersTextDescriptions())
+        trackScore = 3;
+    else if (userPrefersCaptions()) {
         // When the user prefers accessibility tracks, rank is SDH, then CC, then subtitles.
-        if (track->kind() == TextTrack::Kind::Subtitles)
+        if (kind == TextTrack::Kind::Subtitles)
             trackScore = 1;
         else if (track->isClosedCaptions())
             trackScore = 2;
@@ -393,7 +395,7 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
             trackScore = 3;
     } else {
         // When the user prefers translation tracks, rank is subtitles, then SDH, then CC tracks.
-        if (track->kind() == TextTrack::Kind::Subtitles)
+        if (kind == TextTrack::Kind::Subtitles)
             trackScore = 3;
         else if (!track->isClosedCaptions())
             trackScore = 2;

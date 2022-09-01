@@ -100,10 +100,12 @@
         "isWebInspectorInternalScript": true,
         "isWebKitInternalScript": true,
         "multiplicationSign": true,
+        "nullish": true,
         "parseMIMEType": true,
         "resolveDotsInPath": true,
         "simpleGlobStringToRegExp": true,
         "timestamp": true,
+        "xor": true,
         "zeroWidthSpace": true,
 
         // DOM Utilities

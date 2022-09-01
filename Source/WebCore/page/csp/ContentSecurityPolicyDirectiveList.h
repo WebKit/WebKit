@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google, Inc. All rights reserved.
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,6 +84,7 @@ public:
     const String& webAssemblyDisabledErrorMessage() const { return m_webAssemblyDisabledErrorMessage; }
     bool isReportOnly() const { return m_reportOnly; }
     bool shouldReportSample(const String&) const;
+    const Vector<String>& reportToTokens() const { return m_reportToTokens; }
     const Vector<String>& reportURIs() const { return m_reportURIs; }
 
     // FIXME: Remove this once we teach ContentSecurityPolicyDirectiveList how to log an arbitrary console message.
@@ -99,6 +100,7 @@ private:
         String value;
     };
     template<typename CharacterType> std::optional<ParsedDirective> parseDirective(StringParsingBuffer<CharacterType>);
+    void parseReportTo(ParsedDirective&&);
     void parseReportURI(ParsedDirective&&);
     void addDirective(ParsedDirective&&);
     void applySandboxPolicy(ParsedDirective&&);
@@ -150,6 +152,7 @@ private:
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_styleSrcAttr;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_workerSrc;
 
+    Vector<String> m_reportToTokens;
     Vector<String> m_reportURIs;
     
     String m_evalDisabledErrorMessage;

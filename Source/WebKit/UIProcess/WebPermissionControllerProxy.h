@@ -52,7 +52,7 @@ private:
     WebPageProxy* mostReasonableWebPageProxy(const WebCore::SecurityOriginData&, WebCore::PermissionQuerySource) const;
 
     // IPC Message handlers.
-    void query(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, std::optional<WebPageProxyIdentifier>, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>, bool shouldCache)>&&);
+    void query(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, std::optional<WebPageProxyIdentifier>, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
 
     WebProcessProxy& m_process;
 };

@@ -37,6 +37,11 @@ function xor(a, b)
     return b || false;
 }
 
+function nullish(value)
+{
+    return value === null || value === undefined;
+}
+
 Object.defineProperty(Object, "shallowCopy",
 {
     value(object)
@@ -187,6 +192,19 @@ Object.defineProperty(Set.prototype, "find",
                 return item;
         }
         return undefined;
+    },
+});
+
+Object.defineProperty(Set.prototype, "filter",
+{
+    value(callback, thisArg)
+    {
+        let filtered = new Set;
+        for (let item of this) {
+            if (callback.call(thisArg, item, item, this))
+                filtered.add(item);
+        }
+        return filtered;
     },
 });
 
@@ -708,6 +726,14 @@ Object.defineProperty(Array, "diffArrays",
             initialArray = initialArray.slice(deletionCount);
             currentArray = currentArray.slice(additionCount);
         }
+    }
+});
+
+Object.defineProperty(Array.prototype, "firstValue",
+{
+    get()
+    {
+        return this[0];
     }
 });
 

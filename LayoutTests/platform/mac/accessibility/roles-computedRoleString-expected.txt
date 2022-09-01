@@ -43,7 +43,7 @@ PASS input[type='time'] -> .
 PASS input[type='url'] -> .
 PASS input[type='week'] -> .
 PASS ins -> insertion.
-PASS mark -> .
+PASS mark -> mark.
 PASS math -> math.
 PASS meter -> meter.
 PASS nav -> navigation.

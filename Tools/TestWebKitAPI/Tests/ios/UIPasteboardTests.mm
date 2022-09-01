@@ -50,8 +50,6 @@ static void checkJSONWithLogging(NSString *jsonString, NSDictionary *expected)
         NSLog(@"Expected JSON: %@ to match values: %@", jsonString, expected);
 }
 
-#if HAVE(PASTEBOARD_DATA_OWNER)
-
 static _UIDataOwner gLastKnownDataOwner = _UIDataOwnerUndefined;
 
 @interface TestUIPasteboard : NSObject
@@ -79,8 +77,6 @@ static _UIDataOwner gLastKnownDataOwner = _UIDataOwnerUndefined;
 }
 
 @end
-
-#endif // HAVE(PASTEBOARD_DATA_OWNER)
 
 #endif // PLATFORM(IOS)
 
@@ -383,8 +379,6 @@ TEST(UIPasteboardTests, MissingPreferredPresentationSizeForImage)
     EXPECT_WK_STREQ("174", [webView stringByEvaluatingJavaScript:@"document.querySelector('img').height"]);
 }
 
-#if HAVE(PASTEBOARD_DATA_OWNER)
-
 TEST(UIPasteboardTests, PerformAsDataOwnerWhenCopying)
 {
     auto swizzler = ClassMethodSwizzler {
@@ -453,8 +447,6 @@ TEST(UIPasteboardTests, PerformAsDataOwnerWithManagedURL)
         EXPECT_EQ(gLastKnownDataOwner, _UIDataOwnerUser);
     }
 }
-
-#endif // HAVE(PASTEBOARD_DATA_OWNER)
 
 #endif // PLATFORM(IOS)
 

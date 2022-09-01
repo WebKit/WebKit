@@ -2840,6 +2840,8 @@ webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ Skip ]
 
 # :dir pseudo class isn't enabled yet.
 imported/w3c/web-platform-tests/css/css-pseudo/dir-pseudo-on-bdi-element.html [ Failure ]
+fast/css/dir-pseudo-container-query-invalidation.html [ Failure ]
+fast/css/dir-pseudo-container-query.html [ Failure ]
 fast/css/dir-pseudo-on-input-element.html [ Failure ]
 
 ################################################################################

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009, 2011 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@
 #include "JSDOMExceptionHandling.h"
 #include "Performance.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
+#include "ReportingScope.h"
 #include "ScheduledAction.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
@@ -104,6 +105,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     , m_connectionProxy(connectionProxy)
     , m_socketProvider(socketProvider)
     , m_performance(Performance::create(this, params.timeOrigin))
+    , m_reportingScope(ReportingScope::create(*this))
     , m_referrerPolicy(params.referrerPolicy)
     , m_settingsValues(params.settingsValues)
     , m_workerType(params.workerType)
@@ -682,5 +684,15 @@ void WorkerGlobalScope::updateServiceWorkerClientData()
     swClientConnection().registerServiceWorkerClient(clientOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, String { m_userAgent });
 }
 #endif
+
+void WorkerGlobalScope::notifyReportObservers(Ref<Report>&& reports)
+{
+    reportingScope().notifyReportObservers(WTFMove(reports));
+}
+
+String WorkerGlobalScope::endpointURIForToken(const String& token) const
+{
+    return reportingScope().endpointURIForToken(token);
+}
 
 } // namespace WebCore

@@ -5,7 +5,7 @@ PASS window.getComputedStyle(document.getElementById('test4')).getPropertyValue(
 PASS window.getComputedStyle(document.getElementById('test5')).getPropertyValue('text-decoration-thickness') is "auto"
 PASS window.getComputedStyle(document.getElementById('test6')).getPropertyValue('text-decoration-thickness') is "37px"
 PASS window.getComputedStyle(document.getElementById('test7')).getPropertyValue('text-decoration-thickness') is "200px"
-PASS window.getComputedStyle(document.getElementById('test8')).getPropertyValue('text-decoration-thickness') is "40px"
+PASS window.getComputedStyle(document.getElementById('test8')).getPropertyValue('text-decoration-thickness') is "auto"
 PASS document.getElementById('target').sheet.cssRules[0].style.textDecorationThickness is ""
 PASS document.getElementById('target').sheet.cssRules[1].style.textDecorationThickness is "auto"
 PASS document.getElementById('target').sheet.cssRules[2].style.textDecorationThickness is "from-font"

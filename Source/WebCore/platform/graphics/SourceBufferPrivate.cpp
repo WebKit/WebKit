@@ -65,7 +65,7 @@ SourceBufferPrivate::~SourceBufferPrivate() = default;
 void SourceBufferPrivate::resetTimestampOffsetInTrackBuffers()
 {
     for (auto& trackBuffer : m_trackBufferMap.values())
-        trackBuffer.get().resetTimestampOffset();
+        trackBuffer->resetTimestampOffset();
 }
 
 void SourceBufferPrivate::setBufferedDirty(bool flag)
@@ -77,15 +77,15 @@ void SourceBufferPrivate::setBufferedDirty(bool flag)
 void SourceBufferPrivate::resetTrackBuffers()
 {
     for (auto& trackBuffer : m_trackBufferMap.values())
-        trackBuffer.get().reset();
+        trackBuffer->reset();
 }
 
 void SourceBufferPrivate::updateHighestPresentationTimestamp()
 {
     MediaTime highestTime;
     for (auto& trackBuffer : m_trackBufferMap.values()) {
-        auto lastSampleIter = trackBuffer.get().samples().presentationOrder().rbegin();
-        if (lastSampleIter == trackBuffer.get().samples().presentationOrder().rend())
+        auto lastSampleIter = trackBuffer->samples().presentationOrder().rbegin();
+        if (lastSampleIter == trackBuffer->samples().presentationOrder().rend())
             continue;
         highestTime = std::max(highestTime, lastSampleIter->first);
     }
@@ -112,9 +112,9 @@ void SourceBufferPrivate::updateBufferedFromTrackBuffers(bool sourceIsEnded)
     // 2. Let highest end time be the largest track buffer ranges end time across all the track buffers managed by this SourceBuffer object.
     MediaTime highestEndTime = MediaTime::negativeInfiniteTime();
     for (auto& trackBuffer : m_trackBufferMap.values()) {
-        if (!trackBuffer.get().buffered().length())
+        if (!trackBuffer->buffered().length())
             continue;
-        highestEndTime = std::max(highestEndTime, trackBuffer.get().maximumBufferedTime());
+        highestEndTime = std::max(highestEndTime, trackBuffer->maximumBufferedTime());
     }
 
     // NOTE: Short circuit the following if none of the TrackBuffers have buffered ranges to avoid generating
@@ -129,11 +129,11 @@ void SourceBufferPrivate::updateBufferedFromTrackBuffers(bool sourceIsEnded)
 
     // 4. For each audio and video track buffer managed by this SourceBuffer, run the following steps:
     for (auto& trackBuffer : m_trackBufferMap.values()) {
-        if (!trackBuffer.get().buffered().length())
+        if (!trackBuffer->buffered().length())
             continue;
         
         // 4.1 Let track ranges equal the track buffer ranges for the current track buffer.
-        PlatformTimeRanges trackRanges = trackBuffer.get().buffered();
+        PlatformTimeRanges trackRanges = trackBuffer->buffered();
 
         // 4.2 If readyState is "ended", then set the end time on the last range in track ranges to highest end time.
         if (sourceIsEnded)
@@ -189,8 +189,8 @@ void SourceBufferPrivate::seekToTime(const MediaTime& time)
 
 void SourceBufferPrivate::clearTrackBuffers()
 {
-    for (auto& trackBufferPair : m_trackBufferMap.values())
-        trackBufferPair.get().clearSamples();
+    for (auto& trackBuffer : m_trackBufferMap.values())
+        trackBuffer->clearSamples();
 }
 
 void SourceBufferPrivate::bufferedSamplesForTrackId(const AtomString& trackId, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
@@ -221,7 +221,7 @@ MediaTime SourceBufferPrivate::fastSeekTimeForMediaTime(const MediaTime& targetT
 
     for (auto& trackBuffer : m_trackBufferMap.values()) {
         // Find the sample which contains the target time.
-        auto trackSeekTime = trackBuffer.get().findSeekTimeForTargetTime(targetTime, negativeThreshold, positiveThreshold);
+        auto trackSeekTime = trackBuffer->findSeekTimeForTargetTime(targetTime, negativeThreshold, positiveThreshold);
         
         if (trackSeekTime.isValid() && abs(targetTime - trackSeekTime) > abs(targetTime - seekTime))
             seekTime = trackSeekTime;
@@ -431,8 +431,8 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximu
     MediaTime rangeStart = MediaTime::invalidTime();
 
     for (auto& trackBuffer : m_trackBufferMap.values()) {
-        auto iter = trackBuffer.get().samples().presentationOrder().findSampleContainingOrAfterPresentationTime(MediaTime::zeroTime());
-        if (iter != trackBuffer.get().samples().presentationOrder().end()) {
+        auto iter = trackBuffer->samples().presentationOrder().findSampleContainingOrAfterPresentationTime(MediaTime::zeroTime());
+        if (iter != trackBuffer->samples().presentationOrder().end()) {
             MediaTime startTime = iter->first;
             if (rangeStart.isInvalid() || startTime < rangeStart)
                 rangeStart = startTime;
@@ -520,7 +520,7 @@ uint64_t SourceBufferPrivate::totalTrackBufferSizeInBytes() const
 {
     uint64_t totalSizeInBytes = 0;
     for (auto& trackBuffer : m_trackBufferMap.values())
-        totalSizeInBytes += trackBuffer.get().samples().sizeInBytes();
+        totalSizeInBytes += trackBuffer->samples().sizeInBytes();
 
     return totalSizeInBytes;
 }
@@ -563,7 +563,7 @@ void SourceBufferPrivate::setClient(SourceBufferPrivateClient* client)
 void SourceBufferPrivate::setAllTrackBuffersNeedRandomAccess()
 {
     for (auto& trackBuffer : m_trackBufferMap.values())
-        trackBuffer.get().setNeedRandomAccessFlag(true);
+        trackBuffer->setNeedRandomAccessFlag(true);
 }
 
 void SourceBufferPrivate::didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&& segment, CompletionHandler<void(SourceBufferPrivateClient::ReceiveResult)>&& completionHandler)
@@ -679,14 +679,14 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
             m_timestampOffset = m_groupStartTimestamp - presentationTimestamp;
 
             for (auto& trackBuffer : m_trackBufferMap.values())
-                trackBuffer.get().resetTimestampOffset();
+                trackBuffer->resetTimestampOffset();
 
             // 1.3.2 Set group end timestamp equal to group start timestamp.
             m_groupEndTimestamp = m_groupStartTimestamp;
 
             // 1.3.3 Set the need random access point flag on all track buffers to true.
             for (auto& trackBuffer : m_trackBufferMap.values())
-                trackBuffer.get().setNeedRandomAccessFlag(true);
+                trackBuffer->setNeedRandomAccessFlag(true);
 
             // 1.3.4 Unset group start timestamp.
             m_groupStartTimestamp = MediaTime::invalidTime();

@@ -120,7 +120,7 @@ public:
     void insertCommentOnHTMLHtmlElement(AtomHTMLToken&&);
     void insertHTMLElement(AtomHTMLToken&&);
     std::unique_ptr<CustomElementConstructionData> insertHTMLElementOrFindCustomElementInterface(AtomHTMLToken&&);
-    void insertCustomElement(Ref<Element>&&, const AtomString& localName, Vector<Attribute>&&);
+    void insertCustomElement(Ref<Element>&&, Vector<Attribute>&&);
     void insertSelfClosingHTMLElement(AtomHTMLToken&&);
     void insertFormattingElement(AtomHTMLToken&&);
     void insertHTMLHeadElement(AtomHTMLToken&&);
@@ -150,6 +150,7 @@ public:
     void reconstructTheActiveFormattingElements();
 
     void generateImpliedEndTags();
+    void generateImpliedEndTagsWithExclusion(ElementName);
     void generateImpliedEndTagsWithExclusion(const AtomString& tagName);
 
     bool inQuirksMode() { return m_inQuirksMode; }
@@ -157,6 +158,7 @@ public:
     bool isEmpty() const { return !m_openElements.stackDepth(); }
     Element& currentElement() const { return m_openElements.top(); }
     ContainerNode& currentNode() const { return m_openElements.topNode(); }
+    ElementName currentElementName() const { return m_openElements.topElementName(); }
     HTMLStackItem& currentStackItem() const { return m_openElements.topStackItem(); }
     HTMLStackItem* oneBelowTop() const { return m_openElements.oneBelowTop(); }
     Document& ownerDocumentForCurrentNode();
@@ -188,7 +190,7 @@ public:
         SetForScope<bool> m_redirectAttachToFosterParentChange;
     };
 
-    static bool isFormattingTag(const AtomString&);
+    static bool isFormattingTag(TagName);
 
 private:
     // In the common case, this queue will have only one task because most
@@ -196,14 +198,14 @@ private:
     typedef Vector<HTMLConstructionSiteTask, 1> TaskQueue;
 
     void setCompatibilityMode(DocumentCompatibilityMode);
-    void setCompatibilityModeFromDoctype(const String& name, const String& publicId, const String& systemId);
+    void setCompatibilityModeFromDoctype(const AtomString& name, const String& publicId, const String& systemId);
 
     void attachLater(ContainerNode& parent, Ref<Node>&& child, bool selfClosing = false);
 
     void findFosterSite(HTMLConstructionSiteTask&);
 
-    RefPtr<Element> createHTMLElementOrFindCustomElementInterface(AtomHTMLToken&, JSCustomElementInterface**);
-    Ref<Element> createHTMLElement(AtomHTMLToken&);
+    RefPtr<HTMLElement> createHTMLElementOrFindCustomElementInterface(AtomHTMLToken&, JSCustomElementInterface**);
+    Ref<HTMLElement> createHTMLElement(AtomHTMLToken&);
     Ref<Element> createElement(AtomHTMLToken&, const AtomString& namespaceURI);
 
     void mergeAttributesFromTokenIntoElement(AtomHTMLToken&&, Element&);

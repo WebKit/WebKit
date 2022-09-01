@@ -114,7 +114,7 @@ TestPage.registerInitializer(() => {
         suite.addTestCase({
             name, test(resolve, reject) {
                 let script = window.findScript(scriptRegex);
-                window.loadLinesFromSourceCode(script).then(() => {
+                window.loadLinesFromSourceCode(script).then((lines) => {
                     // Set one breakpoint per line.
                     for (let line = script.range.startLine; line <= script.range.endLine; ++line) {
                         DebuggerAgent.setBreakpoint(createLocation(script, line, 0), (error, breakpointId, payload) => {
@@ -128,8 +128,17 @@ TestPage.registerInitializer(() => {
                                 InspectorTest.log(`INSERTING AT: ${inputLocation.lineNumber}:${inputLocation.columnNumber}`);
                                 InspectorTest.log(`PAUSES AT: ${payload.lineNumber}:${payload.columnNumber}`);                                
                                 window.logResolvedBreakpointLinesWithContext(inputLocation, resolvedLocation, 3);
-                                InspectorTest.log("");
                             }
+                        });
+
+                        let start = createLocation(script, line, 0);
+                        let end = createLocation(script, line, lines[line].length);
+                        DebuggerAgent.getBreakpointLocations(start, end, (error, locations) => {
+                            InspectorTest.log(`LOCATIONS FROM ${start.lineNumber}:${start.columnNumber} to ${end.lineNumber}:${end.columnNumber}`);
+                            if (error)
+                                InspectorTest.log(`PRODUCES: ${error}`);
+                            else
+                                window.logResolvedBreakpointLocationsInRange(start, end, locations.map((location) => script.createSourceCodeLocation(location.lineNumber, location.columnNumber)));
                         });
 
                         // Clear the breakpoint we just set without knowing its breakpoint identifier.

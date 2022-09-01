@@ -23,17 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIGeometry_h
-#define APIGeometry_h
+#pragma once
 
 #include "APIObject.h"
 #include "WKGeometry.h"
-#include <WebCore/FloatRect.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
 
 namespace API {
 
@@ -43,11 +36,12 @@ public:
     {
         return adoptRef(*new Size(size));
     }
+    static Ref<Size> create(double width, double height)
+    {
+        return create(WKSizeMake(width, height));
+    }
 
     const WKSize& size() const { return m_size; }
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<API::Object>&);
 
 private:
     explicit Size(const WKSize& size)
@@ -64,11 +58,12 @@ public:
     {
         return adoptRef(*new Point(point));
     }
+    static Ref<Point> create(double x, double y)
+    {
+        return adoptRef(*new Point(WKPointMake(x, y)));
+    }
 
     const WKPoint& point() const { return m_point; }
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<API::Object>&);
 
 private:
     explicit Point(const WKPoint& point)
@@ -84,11 +79,12 @@ public:
     {
         return adoptRef(*new Rect(rect));
     }
+    static Ref<Rect> create(double x, double y, double width, double height)
+    {
+        return create(WKRectMake(x, y, width, height));
+    }
 
     const WKRect& rect() const { return m_rect; }
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<API::Object>&);
 
 private:
     explicit Rect(const WKRect& rect)
@@ -100,5 +96,3 @@ private:
 };
 
 } // namespace API
-
-#endif // APIGeometry_h

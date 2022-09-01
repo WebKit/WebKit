@@ -42,6 +42,7 @@ class TransformState {
 public:
     enum TransformDirection { ApplyTransformDirection, UnapplyInverseTransformDirection };
     enum TransformAccumulation { FlattenTransform, AccumulateTransform };
+    enum TransformMatrixTracking { DoNotTrackTransformMatrix, TrackSVGCTMMatrix, TrackSVGScreenCTMMatrix };
 
     TransformState(TransformDirection mappingDirection, const FloatPoint& p, const FloatQuad& quad)
         : m_lastPlanarPoint(p)
@@ -91,6 +92,9 @@ public:
 
     void setLastPlanarSecondaryQuad(const std::optional<FloatQuad>&);
 
+    void setTransformMatrixTracking(TransformMatrixTracking tracking) { m_tracking = tracking; }
+    TransformMatrixTracking transformMatrixTracking() const { return m_tracking; }
+
     void move(LayoutUnit x, LayoutUnit y, TransformAccumulation accumulate = FlattenTransform)
     {
         move(LayoutSize(x, y), accumulate);
@@ -113,6 +117,7 @@ public:
     std::optional<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
 
     TransformationMatrix* accumulatedTransform() const { return m_accumulatedTransform.get(); }
+    std::unique_ptr<TransformationMatrix> releaseTrackedTransform() { return WTFMove(m_trackedTransform); }
     TransformDirection direction() const { return m_direction; }
 
 private:
@@ -131,10 +136,12 @@ private:
 
     // We only allocate the transform if we need to
     std::unique_ptr<TransformationMatrix> m_accumulatedTransform;
+    std::unique_ptr<TransformationMatrix> m_trackedTransform;
     LayoutSize m_accumulatedOffset;
     bool m_accumulatingTransform;
     bool m_mapPoint;
     bool m_mapQuad;
+    TransformMatrixTracking m_tracking { DoNotTrackTransformMatrix };
     TransformDirection m_direction;
 };
 

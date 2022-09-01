@@ -74,6 +74,8 @@
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [coder encodeBool:self.javaScriptEnabled forKey:@"javaScriptEnabled"];
 ALLOW_DEPRECATED_DECLARATIONS_END
+    
+    [coder encodeBool:self.shouldPrintBackgrounds forKey:@"shouldPrintBackgrounds"];
 
 #if PLATFORM(MAC)
     [coder encodeBool:self.tabFocusesLinks forKey:@"tabFocusesLinks"];
@@ -92,6 +94,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     self.javaScriptEnabled = [coder decodeBoolForKey:@"javaScriptEnabled"];
 ALLOW_DEPRECATED_DECLARATIONS_END
+    
+    self.shouldPrintBackgrounds = [coder decodeBoolForKey:@"shouldPrintBackgrounds"];
 
 #if PLATFORM(MAC)
     self.tabFocusesLinks = [coder decodeBoolForKey:@"tabFocusesLinks"];
@@ -135,6 +139,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)javaScriptCanOpenWindowsAutomatically
 {
     _preferences->setJavaScriptCanOpenWindowsAutomatically(javaScriptCanOpenWindowsAutomatically);
+}
+
+- (void)setShouldPrintBackgrounds:(BOOL)enabled
+{
+    _preferences->setShouldPrintBackgrounds(enabled);
+}
+
+- (BOOL)shouldPrintBackgrounds
+{
+    return _preferences->shouldPrintBackgrounds();
 }
 
 - (BOOL)isTextInteractionEnabled
@@ -1019,12 +1033,12 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (void)_setShouldPrintBackgrounds:(BOOL)enabled
 {
-    _preferences->setShouldPrintBackgrounds(enabled);
+    self.shouldPrintBackgrounds = enabled;
 }
 
 - (BOOL)_shouldPrintBackgrounds
 {
-    return _preferences->shouldPrintBackgrounds();
+    return self.shouldPrintBackgrounds;
 }
 
 - (void)_setWebSecurityEnabled:(BOOL)enabled

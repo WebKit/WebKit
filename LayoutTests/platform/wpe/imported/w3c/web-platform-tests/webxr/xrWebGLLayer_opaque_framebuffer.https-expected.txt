@@ -1,23 +1,6 @@
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: deleteFramebuffer: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: getFramebufferAttachmentParameter: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: getFramebufferAttachmentParameter: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: getFramebufferAttachmentParameter: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: getFramebufferAttachmentParameter: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: getFramebufferAttachmentParameter: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: getFramebufferAttachmentParameter: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: getFramebufferAttachmentParameter: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: getFramebufferAttachmentParameter: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: getFramebufferAttachmentParameter: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: getFramebufferAttachmentParameter: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: getFramebufferAttachmentParameter: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: getFramebufferAttachmentParameter: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: framebufferTexture2D: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: framebufferRenderbuffer: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: framebufferRenderbuffer: An opaque framebuffer's attachments cannot be inspected or changed
-CONSOLE MESSAGE: WebGL: checkFramebufferStatus: An opaque framebuffer is considered incomplete outside of a requestAnimationFrame
 
-PASS Ensure that the framebuffer given by the WebGL layer is opaque for immersive - webgl
-FAIL Ensure that the framebuffer given by the WebGL layer is opaque for immersive - webgl2 assert_implements: webgl2 not supported. undefined
+FAIL Ensure that the framebuffer given by the WebGL layer is opaque for immersive - webgl assert_equals: expected 0 but got 1280
+FAIL Ensure that the framebuffer given by the WebGL layer is opaque for immersive - webgl2 assert_equals: expected 1282 but got 0
 PASS Ensure that the framebuffer given by the WebGL layer is opaque for non-immersive - webgl
-FAIL Ensure that the framebuffer given by the WebGL layer is opaque for non-immersive - webgl2 assert_implements: webgl2 not supported. undefined
+PASS Ensure that the framebuffer given by the WebGL layer is opaque for non-immersive - webgl2
 

@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class ScriptExecutionContext;
+class SpeechSynthesis;
 class TextTrack;
 class TextTrackList;
 class TextTrackClient;
@@ -107,6 +108,7 @@ public:
     void invalidateTrackIndex();
 
     bool isRendered();
+    bool isSpoken();
     int trackIndexRelativeToRenderedTracks();
 
     bool hasBeenConfigured() const { return m_hasBeenConfigured; }
@@ -133,10 +135,14 @@ public:
     virtual bool shouldPurgeCuesFromUnbufferedRanges() const { return false; }
     virtual void removeCuesNotInTimeRanges(PlatformTimeRanges&);
 
+    Document& document() const;
+
+#if ENABLE(SPEECH_SYNTHESIS)
+    SpeechSynthesis& speechSynthesis();
+#endif
+    
 protected:
     TextTrack(ScriptExecutionContext*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language, TextTrackType);
-
-    Document& document() const;
 
     RefPtr<TextTrackCue> matchCue(TextTrackCue&, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
     bool hasCue(TextTrackCue& cue, TextTrackCue::CueMatchRules rules = TextTrackCue::MatchAllFields) { return matchCue(cue, rules); }
@@ -164,8 +170,6 @@ private:
     const char* logClassName() const override { return "TextTrack"; }
 #endif
 
-    WeakPtr<TextTrackList> m_textTrackList;
-
     VTTRegionList& ensureVTTRegionList();
     RefPtr<VTTRegionList> m_regions;
 
@@ -177,6 +181,9 @@ private:
     ReadinessState m_readinessState { NotLoaded };
     std::optional<int> m_trackIndex;
     std::optional<int> m_renderedTrackIndex;
+#if ENABLE(SPEECH_SYNTHESIS)
+    RefPtr<SpeechSynthesis> m_speechSynthesis;
+#endif
     bool m_hasBeenConfigured { false };
 };
 

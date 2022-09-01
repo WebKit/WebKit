@@ -107,8 +107,6 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
 
 - (void)speakUtterance:(RefPtr<WebCore::PlatformSpeechSynthesisUtterance>&&)utterance
 {
-    // When speak is called we should not have an existing speech utterance outstanding.
-    ASSERT(!m_utterance);
     ASSERT(utterance);
     if (!utterance || !PAL::isAVFoundationFrameworkAvailable())
         return;
@@ -123,7 +121,7 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
     // then choose the default language.
     WebCore::PlatformSpeechSynthesisVoice* utteranceVoice = utterance->voice();
     NSString *voiceLanguage = nil;
-    if (!utteranceVoice) {
+    if (!utteranceVoice || utteranceVoice->voiceURI().isEmpty()) {
         if (utterance->lang().isEmpty())
             voiceLanguage = [PAL::getAVSpeechSynthesisVoiceClass() currentLanguageCode];
         else

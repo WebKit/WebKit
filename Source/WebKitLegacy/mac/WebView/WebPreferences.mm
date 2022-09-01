@@ -847,7 +847,6 @@ public:
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-#if !PLATFORM(IOS_FAMILY)
 - (BOOL)shouldPrintBackgrounds
 {
     return [self _boolValueForKey: WebKitShouldPrintBackgroundsPreferenceKey];
@@ -857,7 +856,6 @@ public:
 {
     [self _setBoolValue: flag forKey: WebKitShouldPrintBackgroundsPreferenceKey];
 }
-#endif
 
 - (BOOL)isJavaScriptEnabled
 {

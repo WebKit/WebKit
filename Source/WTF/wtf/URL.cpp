@@ -869,6 +869,28 @@ String URL::strippedForUseAsReferrer() const
     );
 }
 
+String URL::strippedForUseAsReferrerWithExplicitPort() const
+{
+    if (!m_isValid)
+        return m_string;
+
+    // Custom ports will appear in the URL string:
+    if (m_portLength)
+        return strippedForUseAsReferrer();
+
+    auto port = defaultPortForProtocol(protocol());
+    if (!port)
+        return strippedForUseAsReferrer();
+
+    unsigned end = credentialsEnd();
+
+    if (m_userStart == end && m_queryEnd == m_string.length())
+        return makeString(StringView(m_string).left(m_hostEnd), ':', static_cast<unsigned>(*port), StringView(m_string).substring(pathStart()));
+
+    return makeString(StringView(m_string).left(m_hostEnd), ':', static_cast<unsigned>(*port), StringView(m_string).substring(end, m_queryEnd - end));
+}
+
+
 bool URL::isLocalFile() const
 {
     // Including feed here might be a bad idea since drag and drop uses this check

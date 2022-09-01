@@ -40,6 +40,7 @@
 #include "Logging.h"
 #include "MockGamepadProvider.h"
 #include "Page.h"
+#include "ProcessWarming.h"
 #include "SWContextManager.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "WheelEventTestMonitor.h"
@@ -58,6 +59,11 @@
 namespace WebCoreTestSupport {
 using namespace JSC;
 using namespace WebCore;
+
+void initializeNames()
+{
+    ProcessWarming::initializeNames();
+}
 
 void injectInternalsObject(JSContextRef context)
 {

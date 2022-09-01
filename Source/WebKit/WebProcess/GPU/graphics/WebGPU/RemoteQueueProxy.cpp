@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "GeneratedSerializers.h"
 #include "RemoteQueueMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 

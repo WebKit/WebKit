@@ -26,6 +26,10 @@
 #include "config.h"
 #include "SpeechSynthesisUtterance.h"
 
+#include "EventNames.h"
+#include "SpeechSynthesisErrorEvent.h"
+#include "SpeechSynthesisEvent.h"
+
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include <wtf/IsoMallocInlines.h>
@@ -36,12 +40,18 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesisUtterance);
     
 Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text)
 {
-    return adoptRef(*new SpeechSynthesisUtterance(context, text));
+    return adoptRef(*new SpeechSynthesisUtterance(context, text, { }));
 }
 
-SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext& context, const String& text)
+Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text, SpeechSynthesisUtterance::UtteranceCompletionHandler&& completion)
+{
+    return adoptRef(*new SpeechSynthesisUtterance(context, text, WTFMove(completion)));
+}
+
+SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext& context, const String& text, UtteranceCompletionHandler&& completion)
     : m_platformUtterance(PlatformSpeechSynthesisUtterance::create(*this))
     , m_scriptExecutionContext(context)
+    , m_completionHandler(WTFMove(completion))
 {
     m_platformUtterance->setText(text);
 }
@@ -68,6 +78,29 @@ void SpeechSynthesisUtterance::setVoice(SpeechSynthesisVoice* voice)
     if (voice)
         m_platformUtterance->setVoice(voice->platformVoice());
 }
+
+void SpeechSynthesisUtterance::eventOccurred(const AtomString& type, unsigned long charIndex, unsigned long charLength, const String& name)
+{
+    if (m_completionHandler) {
+        if (type == eventNames().endEvent)
+            m_completionHandler(*this);
+
+        return;
+    }
+
+    dispatchEvent(SpeechSynthesisEvent::create(type, { this, charIndex, charLength, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), name }));
+}
+
+void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, SpeechSynthesisErrorCode errorCode)
+{
+    if (m_completionHandler) {
+        m_completionHandler(*this);
+        return;
+    }
+
+    dispatchEvent(SpeechSynthesisErrorEvent::create(type, { { this, 0, 0, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), { } }, errorCode }));
+}
+
 
 } // namespace WebCore
 

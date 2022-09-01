@@ -88,7 +88,6 @@ RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& type) const
 
 void PlatformPasteboard::performAsDataOwner(DataOwnerType type, Function<void()>&& actions)
 {
-#if HAVE(PASTEBOARD_DATA_OWNER)
     auto dataOwner = _UIDataOwnerUndefined;
     switch (type) {
     case DataOwnerType::Undefined:
@@ -108,10 +107,6 @@ void PlatformPasteboard::performAsDataOwner(DataOwnerType type, Function<void()>
     [PAL::getUIPasteboardClass() _performAsDataOwner:dataOwner block:^{
         actions();
     }];
-#else
-    UNUSED_PARAM(type);
-    actions();
-#endif
 }
 
 void PlatformPasteboard::getPathnamesForType(Vector<String>&, const String&) const

@@ -40,6 +40,7 @@ enum class SDKAlignedBehavior {
     ConvertsInvalidURLsToBlank,
     DataURLFragmentRemoval,
     DecidesPolicyBeforeLoadingQuickLookPreview,
+    DefaultsToExcludingBackgroundsWhenPrinting,
     DefaultsToPassiveTouchListenersOnDocument,
     DefaultsToPassiveWheelListenersOnDocument,
     DisallowsSettingAnyXHRHeaderFromFileURLs,

@@ -101,14 +101,16 @@ class Change(models.Model):
         changes = Change.objects.filter(pr_id=pr_id).order_by('-created')
         if not changes or len(changes) == 1:
             return []
+        obsolete_changes = []
         for change in changes[1:]:
             if not change.obsolete:
                 if change.change_id == change_id:
                     _log.info('Marking change {} on pr {} as obsolete, even though we just received builds for it. Latest commit:'.format(change_id, pr_id, change[0].pr_id))
                 change.obsolete = True
                 change.save()
+                obsolete_changes.append(change)
                 _log.info('Marked change {} on pr {} as obsolete'.format(change.change_id, pr_id))
-        return changes[1:]
+        return obsolete_changes
 
     @classmethod
     def set_sent_to_buildbot(cls, change_id, value, commit_queue=False):

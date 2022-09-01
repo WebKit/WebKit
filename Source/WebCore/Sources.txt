@@ -279,7 +279,9 @@ Modules/push-api/PushManager.cpp
 Modules/push-api/ServiceWorkerRegistrationPushAPI.cpp
 Modules/remoteplayback/RemotePlayback.cpp
 Modules/reporting/Report.cpp
+Modules/reporting/ReportBody.cpp
 Modules/reporting/ReportingObserver.cpp
+Modules/reporting/ReportingScope.cpp
 Modules/speech/SpeechRecognition.cpp
 Modules/speech/SpeechRecognitionAlternative.cpp
 Modules/speech/SpeechRecognitionErrorEvent.cpp
@@ -1852,6 +1854,7 @@ page/WindowFeatures.cpp
 page/WindowFocusAllowedIndicator.cpp
 page/WindowOrWorkerGlobalScope.cpp
 page/WorkerNavigator.cpp
+page/csp/CSPViolationReportBody.cpp
 page/csp/ContentSecurityPolicy.cpp
 page/csp/ContentSecurityPolicyClient.cpp
 page/csp/ContentSecurityPolicyDirective.cpp
@@ -2998,6 +3001,7 @@ JSBlobPropertyBag.cpp
 JSBroadcastChannel.cpp
 JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp
+JSCSPViolationReportBody.cpp
 JSCSSAnimation.cpp
 JSCSSConditionRule.cpp
 JSCSSContainerRule.cpp
@@ -3948,6 +3952,7 @@ JSScrollLogicalPosition.cpp
 JSScrollOptions.cpp
 JSScrollToOptions.cpp
 JSSecurityPolicyViolationEvent.cpp
+JSSecurityPolicyViolationEventDisposition.cpp
 JSServiceWorker.cpp
 JSServiceWorkerClient.cpp
 JSServiceWorkerClientType.cpp

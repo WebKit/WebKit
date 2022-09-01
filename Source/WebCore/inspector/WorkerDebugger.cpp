@@ -86,7 +86,7 @@ void WorkerDebugger::runEventLoopWhilePaused()
     MessageQueueWaitResult result;
     do {
         result = downcast<WorkerDedicatedRunLoop>(m_globalScope.workerOrWorkletThread()->runLoop()).runInDebuggerMode(m_globalScope);
-    } while (result != MessageQueueTerminated && !doneProcessingDebuggerEvents());
+    } while (result != MessageQueueTerminated && !m_doneProcessingDebuggerEvents);
 }
 
 void WorkerDebugger::reportException(JSC::JSGlobalObject* exec, JSC::Exception* exception) const

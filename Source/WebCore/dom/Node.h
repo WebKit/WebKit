@@ -289,6 +289,12 @@ public:
     bool selfOrPrecedingNodesAffectDirAuto() const { return hasNodeFlag(NodeFlag::SelfOrPrecedingNodesAffectDirAuto); }
     void setSelfOrPrecedingNodesAffectDirAuto(bool flag) { setNodeFlag(NodeFlag::SelfOrPrecedingNodesAffectDirAuto, flag); }
 
+    TextDirection effectiveTextDirection() const;
+    void setEffectiveTextDirection(TextDirection);
+
+    bool usesEffectiveTextDirection() const { return rareDataBitfields().usesEffectiveTextDirection; }
+    void setUsesEffectiveTextDirection(bool);
+
     // Returns the enclosing event parent Element (or self) that, when clicked, would trigger a navigation.
     WEBCORE_EXPORT Element* enclosingLinkEventParentOrSelf();
 
@@ -613,6 +619,8 @@ protected:
         uint16_t connectedSubframeCount : 10;
         uint16_t tabIndexState : 2;
         uint16_t customElementState : 2;
+        uint16_t usesEffectiveTextDirection : 1;
+        uint16_t effectiveTextDirection : 1;
     };
 
     bool hasNodeFlag(NodeFlag flag) const { return m_nodeFlags.contains(flag); }

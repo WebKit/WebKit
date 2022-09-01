@@ -49,6 +49,7 @@
 #include "ReferrerPolicy.h"
 #include "RegistrableDomain.h"
 #include "RenderPtr.h"
+#include "ReportingClient.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "StringWithDirection.h"
@@ -202,6 +203,7 @@ class Range;
 class Region;
 class RenderTreeBuilder;
 class RenderView;
+class ReportingScope;
 class RequestAnimationFrameCallback;
 class ResizeObserver;
 class SVGDocumentExtensions;
@@ -348,7 +350,8 @@ class Document
     , public FrameDestructionObserver
     , public Supplementable<Document>
     , public Logger::Observer
-    , public CanvasObserver {
+    , public CanvasObserver
+    , public ReportingClient {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(Document, WEBCORE_EXPORT);
 public:
     using WeakValueType = EventTarget::WeakValueType;
@@ -475,6 +478,8 @@ public:
 
     const AtomString& effectiveDocumentElementLanguage() const;
     void setDocumentElementLanguage(const AtomString&);
+    TextDirection documentElementTextDirection() const { return m_documentElementTextDirection; }
+    void setDocumentElementTextDirection(TextDirection textDirection) { m_documentElementTextDirection = textDirection; }
 
     String xmlEncoding() const { return m_xmlEncoding; }
     String xmlVersion() const { return m_xmlVersion; }
@@ -1694,6 +1699,8 @@ public:
 
     std::optional<PAL::SessionID> sessionID() const final;
 
+    ReportingScope& reportingScope() const { return m_reportingScope.get(); }
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
@@ -1821,6 +1828,9 @@ private:
 
     NotificationClient* notificationClient() final;
 
+    void notifyReportObservers(Ref<Report>&&) final;
+    String endpointURIForToken(const String&) const final;
+
     const Ref<const Settings> m_settings;
 
     UniqueRef<Quirks> m_quirks;
@@ -1932,6 +1942,7 @@ private:
 
     AtomString m_contentLanguage;
     AtomString m_documentElementLanguage;
+    TextDirection m_documentElementTextDirection;
 
     RefPtr<TextResourceDecoder> m_decoder;
 
@@ -2291,6 +2302,8 @@ private:
     Vector<Function<void()>> m_whenIsVisibleHandlers;
 
     WeakHashSet<Element> m_elementsWithPendingUserAgentShadowTreeUpdates;
+
+    Ref<ReportingScope> m_reportingScope;
 };
 
 Element* eventTargetElementForDocument(Document*);

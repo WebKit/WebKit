@@ -18,7 +18,7 @@ var count = 1;
 function iframeClicked()
 {
     try {
-        history.pushState(object, object, object);
+        history.pushState(object, object, "#" + object);
     } catch (e) {
         log("Expected exception: " + e);
         if (window.testRunner)

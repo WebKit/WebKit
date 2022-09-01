@@ -97,7 +97,6 @@ NetworkProcess/NetworkLoad.cpp
 NetworkProcess/NetworkLoadChecker.cpp
 NetworkProcess/NetworkLoadScheduler.cpp
 NetworkProcess/NetworkProcess.cpp
-NetworkProcess/NetworkProcessCreationParameters.cpp
 NetworkProcess/NetworkProcessPlatformStrategies.cpp
 NetworkProcess/NetworkResourceLoadParameters.cpp
 NetworkProcess/NetworkResourceLoadMap.cpp
@@ -196,7 +195,6 @@ Shared/DebuggableInfoData.cpp
 Shared/EditingRange.cpp
 Shared/EditorState.cpp
 Shared/FontInfo.cpp
-Shared/FrameInfoData.cpp
 Shared/InspectorExtensionTypes.cpp
 Shared/IPCConnectionTester.cpp
 Shared/IPCStreamTester.cpp
@@ -258,7 +256,6 @@ Shared/WebTouchEvent.cpp
 Shared/WebUserContentControllerDataTypes.cpp
 Shared/WebWheelEventCoalescer.cpp
 Shared/WebWheelEvent.cpp
-Shared/WebsiteDataStoreParameters.cpp
 Shared/WebsitePoliciesData.cpp
 
 Shared/API/APIArray.cpp
@@ -266,7 +263,6 @@ Shared/API/APIData.cpp
 Shared/API/APIDictionary.cpp
 Shared/API/APIError.cpp
 Shared/API/APIFrameHandle.cpp
-Shared/API/APIGeometry.cpp
 Shared/API/APIObject.cpp
 Shared/API/APIPageHandle.cpp
 Shared/API/APIURLRequest.cpp

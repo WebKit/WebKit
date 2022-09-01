@@ -2037,7 +2037,7 @@ ShouldPrintBackgrounds:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      "PLATFORM(IOS_FAMILY)": true
+      "PLATFORM(IOS_FAMILY)": WebKit::defaultShouldPrintBackgrounds()
       default: false
     WebCore:
       default: false

@@ -170,6 +170,7 @@ public:
     void setPrevalentResource(RegistrableDomain&&, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(RegistrableDomain&&, CompletionHandler<void()>&&);
     void dumpResourceLoadStatistics(CompletionHandler<void(String&&)>&&);
+    void setMostRecentWebPushInteractionTime(RegistrableDomain&&, CompletionHandler<void()>&&);
     void isPrevalentResource(RegistrableDomain&&, CompletionHandler<void(bool)>&&);
     void isVeryPrevalentResource(RegistrableDomain&&, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubresourceUnder(SubResourceDomain&&, TopFrameDomain&&, CompletionHandler<void(bool)>&&);

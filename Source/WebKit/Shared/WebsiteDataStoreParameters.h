@@ -33,22 +33,9 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
 struct WebsiteDataStoreParameters {
-    WebsiteDataStoreParameters() = default;
-    WebsiteDataStoreParameters(WebsiteDataStoreParameters&&) = default;
-    WebsiteDataStoreParameters& operator=(WebsiteDataStoreParameters&&) = default;
-    ~WebsiteDataStoreParameters();
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebsiteDataStoreParameters> decode(IPC::Decoder&);
-
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
     SandboxExtension::Handle cookieStoragePathExtensionHandle;
     NetworkSessionCreationParameters networkSessionParameters;

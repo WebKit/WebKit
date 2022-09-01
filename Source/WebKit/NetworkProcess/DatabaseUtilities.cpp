@@ -328,4 +328,39 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
     transaction.commit();
 }
 
+Vector<String> DatabaseUtilities::columnsForTable(ASCIILiteral tableName)
+{
+    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA table_info(", tableName, ")"));
+
+    if (!statement) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::columnsForTable Unable to prepare statement to fetch schema for table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    Vector<String> columns;
+    while (statement->step() == SQLITE_ROW) {
+        auto name = statement->columnText(1);
+        columns.append(name);
+    }
+
+    return columns;
+}
+
+bool DatabaseUtilities::addMissingColumnToTable(ASCIILiteral tableName, ASCIILiteral columnName)
+{
+    auto statement = m_database.prepareStatementSlow(makeString("ALTER TABLE ", tableName, " ADD COLUMN ", columnName));
+    if (!statement) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::addMissingColumnToTable Unable to prepare statement to add missing columns to table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    if (statement->step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::addMissingColumnToTable error executing statement to add missing columns to table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    return true;
+}
+
 } // namespace WebKit

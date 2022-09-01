@@ -27,21 +27,39 @@
 #include "Report.h"
 
 #include "ReportBody.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-Ref<Report> Report::create(const String& type, const String& url, const RefPtr<ReportBody>& body)
+WTF_MAKE_ISO_ALLOCATED_IMPL(Report);
+
+Ref<Report> Report::create(const AtomString& type, const String& url, RefPtr<ReportBody>&& body)
 {
-    return adoptRef(*new Report(type, url, body));
+    return adoptRef(*new Report(type, url, WTFMove(body)));
 }
 
-Report::Report(const String& type, const String& url, const RefPtr<ReportBody>& body)
+Report::Report(const AtomString& type, const String& url, RefPtr<ReportBody>&& body)
     : m_type(type)
     , m_url(url)
-    , m_body(body)
+    , m_body(WTFMove(body))
 {
 }
 
 Report::~Report() = default;
+
+const AtomString& Report::type() const
+{
+    return m_type;
+}
+
+const String& Report::url() const
+{
+    return m_url;
+}
+
+const RefPtr<ReportBody>& Report::body()
+{
+    return m_body;
+}
 
 } // namespace WebCore

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div>This is some <div id="highlight1" role="mark">highlighted</div> text.</div>
+<div>This is some <mark id="highlight2">highlighted</mark> text.</div>
+
+<script>
+
+    if (window.accessibilityController) {
+        let output = "This test makes sure that the mark role exposes the right attributes in the attriubuted string.\n";
+
+        var highlight1 = accessibilityController.accessibleElementById("highlight1").childAtIndex(0);
+        var markerRange = highlight1.textMarkerRangeForElement(highlight1);
+        output += expect("highlight1.attributedStringForTextMarkerRangeContainsAttribute('AXHighlight', markerRange)", "true");
+
+        var highlight2 = accessibilityController.accessibleElementById("highlight2").childAtIndex(0);
+        var markerRange = highlight2.textMarkerRangeForElement(highlight2);
+        output += expect("highlight2.attributedStringForTextMarkerRangeContainsAttribute('AXHighlight', markerRange)", "true");
+
+        debug(output);
+    }
+
+</script>
+
+</body>
+</html>

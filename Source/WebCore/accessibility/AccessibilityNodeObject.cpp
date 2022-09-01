@@ -375,7 +375,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Caption;
     if (node()->hasTagName(dialogTag))
         return AccessibilityRole::ApplicationDialog;
-    if (node()->hasTagName(markTag))
+    if (node()->hasTagName(markTag) || equalLettersIgnoringASCIICase(getAttribute(roleAttr), "mark"_s))
         return AccessibilityRole::Mark;
     if (node()->hasTagName(preTag))
         return AccessibilityRole::Pre;

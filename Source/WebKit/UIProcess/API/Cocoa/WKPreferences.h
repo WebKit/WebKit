@@ -51,6 +51,11 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  */
 @property (nonatomic, getter=isFraudulentWebsiteWarningEnabled) BOOL fraudulentWebsiteWarningEnabled WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
+/*! @abstract A Boolean value indicating whether the web view should include backgrounds when printing.
+ @discussion The default value is `NO`.
+ */
+@property (nonatomic) BOOL shouldPrintBackgrounds WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #if !TARGET_OS_IPHONE
 /*!
  @property tabFocusesLinks

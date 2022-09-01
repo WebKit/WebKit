@@ -34,19 +34,17 @@ namespace JSC {
 class ProxyableAccessCase : public AccessCase {
 public:
     using Base = AccessCase;
-
-    WatchpointSet* additionalSet() const override { return m_additionalSet.get(); }
+    friend class AccessCase;
 
     static Ref<AccessCase> create(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
         bool viaProxy = false, WatchpointSet* additionalSet = nullptr, RefPtr<PolyProtoAccessChain>&& = nullptr);
 
-    void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const override;
-    Ref<AccessCase> clone() const override;
-
-    ~ProxyableAccessCase() override;
-
 protected:
     ProxyableAccessCase(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, RefPtr<PolyProtoAccessChain>&&);
+
+    WatchpointSet* additionalSetImpl() const { return m_additionalSet.get(); }
+    void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const;
+    Ref<AccessCase> cloneImpl() const;
 
 private:
     RefPtr<WatchpointSet> m_additionalSet;

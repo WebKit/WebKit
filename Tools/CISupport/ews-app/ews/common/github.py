@@ -192,6 +192,7 @@ class GitHubEWS(GitHub):
     ICON_BUILD_FAIL = u'\U0000274C'
     ICON_BUILD_WAITING = u'\U000023F3'
     ICON_BUILD_ONGOING = u'![loading](https://user-images.githubusercontent.com/3098702/171232313-daa606f1-8fd6-4b0f-a20b-2cb93c43d19b.png)'
+    ICON_BUILD_ONGOING_WITH_FAILURES = ICON_BUILD_ONGOING  # FIXME: Update icon for this case
     ICON_BUILD_ERROR = u'\U0001F4A5'
     ICON_EMPTY_SPACE = u'\U00002003'
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
@@ -261,8 +262,11 @@ class GitHubEWS(GitHub):
         url = 'https://{}/#/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, build.builder_id, build.number)
 
         if build.result is None:
-            hover_over_text = 'Build is in progress'
-            icon = GitHubEWS.ICON_BUILD_ONGOING
+            if self._does_build_contains_any_failed_step(build):
+                icon = GitHubEWS.ICON_BUILD_ONGOING_WITH_FAILURES
+            else:
+                icon = GitHubEWS.ICON_BUILD_ONGOING
+            hover_over_text = 'Build is in progress. Recent messages:' + self._steps_messages(build)
         elif build.result == Buildbot.SUCCESS:
             if is_parent_build:
                 icon = GitHubEWS.ICON_BUILD_WAITING
@@ -287,11 +291,11 @@ class GitHubEWS(GitHub):
             icon = GitHubEWS.ICON_BUILD_PASS
         elif build.result == Buildbot.FAILURE:
             icon = GitHubEWS.ICON_BUILD_FAIL
-            hover_over_text = build.state_string
+            hover_over_text = self._most_recent_failure_message(build)
         elif build.result == Buildbot.CANCELLED:
             icon = GitHubEWS.ICON_EMPTY_SPACE
             name = u'~~{}~~'.format(name)
-            hover_over_text = 'Build was cancelled'
+            hover_over_text = 'Build was cancelled. Recent messages:' + self._steps_messages(build)
         elif build.result == Buildbot.SKIPPED:
             icon = GitHubEWS.ICON_EMPTY_SPACE
             if re.search(r'Pull request .* doesn\'t have relevant changes', build.state_string):
@@ -303,14 +307,14 @@ class GitHubEWS(GitHub):
             elif re.search(r'Hash .* on PR .* is outdated', build.state_string):
                 hover_over_text += ' Commit was outdated when EWS attempted to process it.'
         elif build.result == Buildbot.RETRY:
-            hover_over_text = 'Build is being retried'
+            hover_over_text = 'Build is being retried. Recent messages:' + self._steps_messages(build)
             icon = GitHubEWS.ICON_BUILD_ONGOING
         elif build.result == Buildbot.EXCEPTION:
-            hover_over_text = 'An unexpected error occured'
+            hover_over_text = 'An unexpected error occured. Recent messages:' + self._steps_messages(build)
             icon = GitHubEWS.ICON_BUILD_ERROR
         else:
             icon = GitHubEWS.ICON_BUILD_ERROR
-            hover_over_text = 'An unexpected error occured'
+            hover_over_text = 'An unexpected error occured. Recent messages:' + self._steps_messages(build)
 
         return u'| [{icon} {name}]({url} "{hover_over_text}") '.format(icon=icon, name=name, url=url, hover_over_text=hover_over_text)
 
@@ -351,3 +355,24 @@ class GitHubEWS(GitHub):
         if not change.obsolete:
             gh.update_pr_description_with_status_bubble(pr_id, comment_text)
         return comment_id
+
+    def _steps_messages(self, build):
+        # FIXME: figure out if it is possible to have multi-line hover-over messages in GitHub UI.
+        return '; '.join([step.state_string for step in build.step_set.all().order_by('uid') if self._should_display_step(step)])
+
+    def _should_display_step(self, step):
+        return not filter(lambda step_to_hide: re.search(step_to_hide, step.state_string), StatusBubble.STEPS_TO_HIDE)
+
+    def _does_build_contains_any_failed_step(self, build):
+        for step in build.step_set.all():
+            if step.result and step.result != Buildbot.SUCCESS and step.result != Buildbot.WARNINGS and step.result != Buildbot.SKIPPED:
+                return True
+        return False
+
+    def _most_recent_failure_message(self, build):
+        for step in build.step_set.all().order_by('-uid'):
+            if step.result == Buildbot.SUCCESS and 'retrying build' in step.state_string:
+                return step.state_string
+            if step.result == Buildbot.FAILURE:
+                return step.state_string
+        return ''

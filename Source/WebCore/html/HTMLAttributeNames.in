@@ -5,7 +5,7 @@ attrsNullNamespace
 
 abbr
 accept
-accept_charset
+accept-charset
 accesskey
 action
 align
@@ -153,7 +153,7 @@ high
 href
 hreflang
 hspace
-http_equiv
+http-equiv
 id
 imagesizes
 imagesrcset

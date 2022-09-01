@@ -407,6 +407,8 @@ public:
     bool isDeletion() const;
     bool isFirstItemInSuggestion() const;
     bool isLastItemInSuggestion() const;
+    
+    bool isMarkAnnotation() const;
 private:
     AccessibilityUIElement(PlatformUIElement);
     AccessibilityUIElement(const AccessibilityUIElement&);

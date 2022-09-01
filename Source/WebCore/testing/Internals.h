@@ -115,6 +115,7 @@ class ScrollableArea;
 class SerializedScriptValue;
 class SharedBuffer;
 class SourceBuffer;
+class SpeechSynthesisUtterance;
 class StringCallback;
 class StyleSheet;
 class TextIterator;
@@ -135,6 +136,7 @@ class MediaKeySession;
 
 #if ENABLE(VIDEO)
 class TextTrackCueGeneric;
+class VTTCue;
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -1090,7 +1092,13 @@ public:
     size_t mediaElementCount() const;
 
     void setMediaElementVolumeLocked(HTMLMediaElement&, bool);
+
+#if ENABLE(SPEECH_SYNTHESIS)
+    ExceptionOr<RefPtr<SpeechSynthesisUtterance>> speechSynthesisUtteranceForCue(const VTTCue&);
+    ExceptionOr<RefPtr<VTTCue>> mediaElementCurrentlySpokenCue(HTMLMediaElement&);
 #endif
+
+#endif // ENABLE(VIDEO)
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
     String ongoingLoadsDescriptions() const;
@@ -1229,6 +1237,7 @@ public:
     void setSystemHasACForTesting(bool);
 
     void setHardwareVP9DecoderDisabledForTesting(bool);
+    void setVP9DecoderDisabledForTesting(bool);
     void setVP9ScreenSizeAndScaleForTesting(double, double, double);
 
     int readPreferenceInteger(const String& domain, const String& key);

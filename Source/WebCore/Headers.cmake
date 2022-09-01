@@ -324,8 +324,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/reporting/Report.h
     Modules/reporting/ReportBody.h
+    Modules/reporting/ReportingClient.h
     Modules/reporting/ReportingObserver.h
     Modules/reporting/ReportingObserverCallback.h
+    Modules/reporting/ReportingScope.h
 
     Modules/speech/SpeechRecognitionCaptureSource.h
     Modules/speech/SpeechRecognitionCaptureSourceImpl.h
@@ -745,6 +747,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ScriptExecutionContext.h
     dom/SecurityContext.h
     dom/SecurityPolicyViolationEvent.h
+    dom/SecurityPolicyViolationEventDisposition.h
     dom/SelectionRestorationMode.h
     dom/ShadowRoot.h
     dom/ShadowRootInit.h
@@ -1248,6 +1251,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/WindowFeatures.h
     page/WindowOrWorkerGlobalScope.h
 
+    page/csp/CSPViolationReportBody.h
     page/csp/ContentSecurityPolicy.h
     page/csp/ContentSecurityPolicyClient.h
     page/csp/ContentSecurityPolicyHash.h
@@ -2122,6 +2126,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.h
     ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.h
     ${WebCore_DERIVED_SOURCES_DIR}/CommandLineAPIModuleSourceBuiltins.h
+    ${WebCore_DERIVED_SOURCES_DIR}/ElementName.h
     ${WebCore_DERIVED_SOURCES_DIR}/EventInterfaces.h
     ${WebCore_DERIVED_SOURCES_DIR}/EventTargetInterfaces.h
     ${WebCore_DERIVED_SOURCES_DIR}/HTMLElementTypeHelpers.h
@@ -2160,10 +2165,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/JSTreeWalker.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSXPathExpression.h
     ${WebCore_DERIVED_SOURCES_DIR}/JSXPathResult.h
+    ${WebCore_DERIVED_SOURCES_DIR}/Namespace.h
     ${WebCore_DERIVED_SOURCES_DIR}/ReadableByteStreamInternalsBuiltins.h
     ${WebCore_DERIVED_SOURCES_DIR}/ReadableStreamInternalsBuiltins.h
     ${WebCore_DERIVED_SOURCES_DIR}/Settings.h
     ${WebCore_DERIVED_SOURCES_DIR}/StreamInternalsBuiltins.h
+    ${WebCore_DERIVED_SOURCES_DIR}/TagName.h
     ${WebCore_DERIVED_SOURCES_DIR}/TransformStreamInternalsBuiltins.h
     ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltinInternals.h
     ${WebCore_DERIVED_SOURCES_DIR}/WebKitFontFamilyNames.h

@@ -36,6 +36,7 @@
 #include "WebGLRenderingContextBase.h"
 #include "WebGLSampler.h"
 #include "WebGLShader.h"
+#include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>

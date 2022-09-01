@@ -764,7 +764,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     bool shouldPaintBackgroundImage = bgImage && bgImage->canRender(this, style().effectiveZoom());
     
     if (context.detectingContentfulPaint()) {
-        if (!context.contenfulPaintDetected() && shouldPaintBackgroundImage && bgImage->cachedImage()) {
+        if (!context.contentfulPaintDetected() && shouldPaintBackgroundImage && bgImage->cachedImage()) {
             if (style().backgroundSizeType() != FillSizeType::Size || !style().backgroundSizeLength().isEmpty())
                 context.setContentfulPaintDetected();
             return;

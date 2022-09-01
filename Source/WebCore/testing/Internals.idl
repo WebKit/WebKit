@@ -1045,6 +1045,9 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=VIDEO] readonly attribute unsigned long mediaElementCount;
     [Conditional=VIDEO] undefined setMediaElementVolumeLocked(HTMLMediaElement element, boolean volumeLocked);
 
+    [Conditional=SPEECH_SYNTHESIS] SpeechSynthesisUtterance speechSynthesisUtteranceForCue(VTTCue cue);
+    [Conditional=SPEECH_SYNTHESIS] VTTCue mediaElementCurrentlySpokenCue(HTMLMediaElement media);
+
     DOMString ongoingLoadsDescriptions();
     undefined setCaptureExtraNetworkLoadMetricsEnabled(boolean value);
 
@@ -1104,6 +1107,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setSystemHasACForTesting(boolean hasAC);
 
     undefined setHardwareVP9DecoderDisabledForTesting(boolean disabled);
+    undefined setVP9DecoderDisabledForTesting(boolean disabled);
     undefined setVP9ScreenSizeAndScaleForTesting(double width, double height, double scale);
 
     long readPreferenceInteger(DOMString domain, DOMString key);

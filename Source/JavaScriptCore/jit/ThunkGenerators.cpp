@@ -373,8 +373,9 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallMode cal
 
 enum ThunkEntryType { EnterViaCall, EnterViaJumpWithSavedTags, EnterViaJumpWithoutSavedTags };
 enum class ThunkFunctionType { JSFunction, InternalFunction };
+enum class IncludeDebuggerHook { No, Yes };
 
-static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFunctionType thunkFunctionType, CodeSpecializationKind kind, ThunkEntryType entryType = EnterViaCall)
+static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFunctionType thunkFunctionType, CodeSpecializationKind kind, ThunkEntryType entryType = EnterViaCall, IncludeDebuggerHook includeDebuggerHook = IncludeDebuggerHook::No)
 {
     // FIXME: This should be able to log ShadowChicken prologue packets.
     // https://bugs.webkit.org/show_bug.cgi?id=155689
@@ -401,6 +402,14 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
 
     jit.emitPutToCallFrameHeader(nullptr, CallFrameSlot::codeBlock);
     jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
+
+    if (includeDebuggerHook == IncludeDebuggerHook::Yes) {
+        jit.move(JSInterfaceJIT::framePointerRegister, GPRInfo::argumentGPR0);
+        auto debuggerWillCallNativeExecutable = jit.call(OperationPtrTag);
+        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link<OperationPtrTag>(debuggerWillCallNativeExecutable, operationDebuggerWillCallNativeExecutable);
+        });
+    }
 
     // Host function signature: f(JSGlobalObject*, CallFrame*);
 #if CPU(X86_64) && OS(WINDOWS)
@@ -487,12 +496,17 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
     jit.jumpToExceptionHandler(vm);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "%s %s%s trampoline", thunkFunctionType == ThunkFunctionType::JSFunction ? "native" : "internal", entryType == EnterViaJumpWithSavedTags ? "Tail With Saved Tags " : entryType == EnterViaJumpWithoutSavedTags ? "Tail Without Saved Tags " : "", toCString(kind).data());
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "%s %s%s%s trampoline", thunkFunctionType == ThunkFunctionType::JSFunction ? "native" : "internal", entryType == EnterViaJumpWithSavedTags ? "Tail With Saved Tags " : entryType == EnterViaJumpWithoutSavedTags ? "Tail Without Saved Tags " : "", toCString(kind).data(), includeDebuggerHook == IncludeDebuggerHook::Yes ? " Debugger" : "");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallGenerator(VM& vm)
 {
     return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForCall);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallWithDebuggerHookGenerator(VM& vm)
+{
+    return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForCall, EnterViaCall, IncludeDebuggerHook::Yes);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallGenerator(VM& vm)
@@ -508,6 +522,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallWithoutSavedTagsGenerator(VM
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructGenerator(VM& vm)
 {
     return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForConstruct);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructWithDebuggerHookGenerator(VM& vm)
+{
+    return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForConstruct, EnterViaCall, IncludeDebuggerHook::Yes);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionCallGenerator(VM& vm)

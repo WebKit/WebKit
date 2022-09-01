@@ -476,14 +476,10 @@ void PageClientImpl::requestTextRecognition(const URL& imageURL, const Shareable
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-#if HAVE(PASTEBOARD_DATA_OWNER)
-
 WebCore::DataOwnerType PageClientImpl::dataOwnerForPasteboard(PasteboardAccessIntent intent) const
 {
     return [m_contentView _dataOwnerForPasteboard:intent];
 }
-
-#endif
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy&)
 {

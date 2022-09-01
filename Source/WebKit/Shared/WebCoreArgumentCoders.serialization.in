@@ -1,0 +1,84 @@
+# Copyright (C) 2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+header: <WebCore/DOMCacheEngine.h>
+struct WebCore::DOMCacheEngine::CacheInfo {
+    uint64_t identifier
+    String name
+}
+
+header: <WebCore/TransformationMatrix.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::TransformationMatrix {
+    double m11()
+    double m12()
+    double m13()
+    double m14()
+    double m21()
+    double m22()
+    double m23()
+    double m24()
+    double m31()
+    double m32()
+    double m33()
+    double m34()
+    double m41()
+    double m42()
+    double m43()
+    double m44()
+}
+
+header: <WebCore/CacheQueryOptions.h>
+struct WebCore::CacheQueryOptions {
+    bool ignoreSearch;
+    bool ignoreMethod;
+    bool ignoreVary;
+    String cacheName;
+}
+
+header: <WebCore/CharacterRange.h>
+struct WebCore::CharacterRange {
+    uint64_t location
+    uint64_t length
+}
+
+header: <WebCore/AffineTransform.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::AffineTransform {
+    double a()
+    double b()
+    double c()
+    double d()
+    double e()
+    double f()
+}
+
+header: <WebCore/FloatPoint.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatPoint {
+    float x()
+    float y()
+}
+
+header: <WebCore/FloatPoint3D.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatPoint3D {
+    float x()
+    float y()
+    float z()
+}

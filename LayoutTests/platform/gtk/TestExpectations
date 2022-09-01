@@ -917,6 +917,24 @@ webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-containers
 webkit.org/b/241601 svg/wicd/rightsizing-grid.xhtml [ Failure ]
 webkit.org/b/241601 svg/wicd/test-rightsizing-b.xhtml [ Failure ]
 
+# Shared Workers don't seem to generate some CSP report events in GTK
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import.http.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import.https.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-import.http.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-import.https.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import.http.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import.https.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-import.http.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-import.https.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-import.http.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-import.https.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-import.http.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-import.https.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import.http.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import.https.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.http.html [ Failure ]
+webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.https.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////

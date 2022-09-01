@@ -1,6 +1,6 @@
-frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
-CONSOLE MESSAGE: The Content Security Policy 'block-all-mixed-content' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+CONSOLE MESSAGE: The Content Security Policy 'block-all-mixed-content' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
 frame "<!--frame1-->" - didCommitLoadForFrame
 CONSOLE MESSAGE: Blocked mixed content http://127.0.0.1:8000/security/resources/compass.jpg because 'block-all-mixed-content' appears in the Content Security Policy.
 CONSOLE MESSAGE: [Report Only] Blocked mixed content http://127.0.0.1:8000/security/resources/compass.jpg because 'block-all-mixed-content' appears in the Content Security Policy.

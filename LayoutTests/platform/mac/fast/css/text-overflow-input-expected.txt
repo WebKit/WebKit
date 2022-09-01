@@ -203,7 +203,7 @@ layer at (472,143) size 114x13 scrollWidth 289
 layer at (615,143) size 141x13 backgroundClip at (615,143) size 140x13 clip at (615,143) size 140x13 scrollWidth 386
   RenderBlock {DIV} at (0,0) size 141x13
     RenderText {#text} at (0,0) size 385x13
-      text run at (0,0) width 385: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
+      text run at (0,0) width 385: "\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}"
 layer at (11,162) size 140x13 scrollX 148 scrollWidth 288
   RenderBlock {DIV} at (3,3) size 140x13 [color=#A9A9A9]
     RenderText {#text} at (-147,0) size 288x13
@@ -216,18 +216,18 @@ layer at (180,162) size 113x13 scrollX 175 scrollWidth 288
       text run at (-174,0) width 287: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (180,162) size 113x13
   RenderBlock {DIV} at (0,0) size 113x13
-layer at (311,162) size 140x13 scrollX 148 scrollWidth 288
+layer at (311,162) size 140x13 scrollX 149 scrollWidth 289
   RenderBlock {DIV} at (3,3) size 140x13
     RenderText {#text} at (-147,0) size 288x13
       text run at (-147,0) width 287: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (480,162) size 113x13 scrollX 175 scrollWidth 288
+layer at (480,162) size 113x13 scrollX 176 scrollWidth 289
   RenderBlock {DIV} at (0,0) size 113x13
     RenderText {#text} at (-174,0) size 288x13
       text run at (-174,0) width 287: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (611,162) size 140x13 backgroundClip at (611,162) size 139x13 clip at (611,162) size 139x13 scrollX 245 scrollWidth 385
+layer at (611,162) size 140x13 backgroundClip at (611,162) size 139x13 clip at (611,162) size 139x13 scrollX 246 scrollWidth 386
   RenderBlock {DIV} at (0,0) size 140x13
     RenderText {#text} at (-244,0) size 385x13
-      text run at (-244,0) width 384 RTL: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
+      text run at (-244,0) width 384: "\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}"
 layer at (257,215) size 141x13 scrollWidth 288
   RenderBlock {DIV} at (3,3) size 141x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 288x13

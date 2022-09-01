@@ -52,15 +52,12 @@ private:
     void addObserver(WebCore::PermissionObserver&) final;
     void removeObserver(WebCore::PermissionObserver&) final;
 
-    WebCore::PermissionState queryCache(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&);
-    void updateCache(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, WebCore::PermissionState);
     void tryProcessingRequests();
     void permissionChanged(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, WebCore::PermissionState);
 
     WeakHashSet<WebCore::PermissionObserver> m_observers;
 
     using PermissionEntry = std::pair<WebCore::PermissionDescriptor, WebCore::PermissionState>;
-    HashMap<WebCore::ClientOrigin, Vector<PermissionEntry>> m_cachedPermissionEntries;
 
     struct PermissionRequest {
         WebCore::ClientOrigin origin;

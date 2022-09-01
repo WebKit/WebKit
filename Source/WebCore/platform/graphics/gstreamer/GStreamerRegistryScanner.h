@@ -68,6 +68,8 @@ public:
 #if USE(GSTREAMER_WEBRTC)
     RTCRtpCapabilities audioRtpCapabilities(Configuration);
     RTCRtpCapabilities videoRtpCapabilities(Configuration);
+    Vector<RTCRtpCapabilities::HeaderExtensionCapability> audioRtpExtensions();
+    Vector<RTCRtpCapabilities::HeaderExtensionCapability> videoRtpExtensions();
 #endif
 
 protected:

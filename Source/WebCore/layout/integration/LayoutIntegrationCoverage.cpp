@@ -48,6 +48,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #define ALLOW_FLOATS 0
+#define ALLOW_RTL_FLOATS 0
 
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
@@ -95,9 +96,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlowIsPaginated:
         stream << "paginated";
-        break;
-    case AvoidanceReason::FlowHasTextOverflow:
-        stream << "text-overflow";
         break;
     case AvoidanceReason::FlowHasLineClamp:
         stream << "-webkit-line-clamp";
@@ -309,8 +307,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
 {
     auto& style = renderer.style();
     OptionSet<AvoidanceReason> reasons;
-    if (style.textOverflow() == TextOverflow::Ellipsis)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
     if (style.writingMode() == WritingMode::BottomToTop)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedWritingMode, reasons, includeReasons);
     if (style.hasTextCombine())
@@ -321,9 +317,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
         SET_REASON_AND_RETURN_IF_NEEDED(BoxDecorationBreakClone, reasons, includeReasons);
 #endif
-    if (renderer.isAnonymousBlock() && renderer.parent()->style().textOverflow() == TextOverflow::Ellipsis)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-
     // These are non-standard properties.
     if (style.lineBreak() == LineBreak::AfterWhiteSpace)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasAfterWhiteSpaceLineBreak, reasons, includeReasons);
@@ -376,6 +369,9 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     auto isSupportedFloatingOrPositioned = [&] (auto& renderer) {
 #if !ALLOW_FLOATS
         if (renderer.isFloating())
+            return false;
+#elif !ALLOW_RTL_FLOATS
+        if (!renderer.parent()->style().isLeftToRightDirection())
             return false;
 #endif
         if (renderer.isOutOfFlowPositioned()) {

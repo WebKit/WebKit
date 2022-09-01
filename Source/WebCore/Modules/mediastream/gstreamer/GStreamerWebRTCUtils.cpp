@@ -442,6 +442,93 @@ bool sdpMediaHasAttributeKey(const GstSDPMedia* media, const char* key)
     return false;
 }
 
+GRefPtr<GstCaps> capsFromRtpCapabilities(const RTCRtpCapabilities& capabilities, Function<void(GstStructure*)> supplementCapsCallback)
+{
+    auto caps = adoptGRef(gst_caps_new_empty());
+    for (unsigned index = 0; auto& codec : capabilities.codecs) {
+        auto components = codec.mimeType.split('/');
+        auto* codecStructure = gst_structure_new("application/x-rtp", "media", G_TYPE_STRING, components[0].ascii().data(),
+            "encoding-name", G_TYPE_STRING, components[1].ascii().data(), "clock-rate", G_TYPE_INT, codec.clockRate, nullptr);
+
+        if (!codec.sdpFmtpLine.isEmpty()) {
+            for (auto& fmtp : codec.sdpFmtpLine.split(';')) {
+                auto fieldAndValue = fmtp.split('=');
+                gst_structure_set(codecStructure, fieldAndValue[0].ascii().data(), G_TYPE_STRING, fieldAndValue[1].ascii().data(), nullptr);
+            }
+        }
+
+        if (codec.channels && *codec.channels > 1)
+            gst_structure_set(codecStructure, "encoding-params", G_TYPE_STRING, makeString(*codec.channels).ascii().data(), nullptr);
+
+        supplementCapsCallback(codecStructure);
+
+        if (!index) {
+            for (unsigned i = 0; auto& extension : capabilities.headerExtensions)
+                gst_structure_set(codecStructure, makeString("extmap-", i++).ascii().data(), G_TYPE_STRING, extension.uri.ascii().data(), nullptr);
+        }
+        gst_caps_append_structure(caps.get(), codecStructure);
+        index++;
+    }
+
+    return caps;
+}
+
+GstWebRTCRTPTransceiverDirection getDirectionFromSDPMedia(const GstSDPMedia* media)
+{
+    for (unsigned i = 0; i < gst_sdp_media_attributes_len(media); i++) {
+        const auto* attribute = gst_sdp_media_get_attribute(media, i);
+
+        if (!g_strcmp0(attribute->key, "sendonly"))
+            return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDONLY;
+        if (!g_strcmp0(attribute->key, "sendrecv"))
+            return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDRECV;
+        if (!g_strcmp0(attribute->key, "recvonly"))
+            return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY;
+        if (!g_strcmp0(attribute->key, "inactive"))
+            return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_INACTIVE;
+    }
+
+    return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_NONE;
+}
+
+GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia* media)
+{
+    ensureDebugCategoryInitialized();
+    unsigned numberOfFormats = gst_sdp_media_formats_len(media);
+    auto caps = adoptGRef(gst_caps_new_empty());
+    for (unsigned i = 0; i < numberOfFormats; i++) {
+        const char* rtpMapValue = gst_sdp_media_get_attribute_val_n(media, "rtpmap", i);
+        if (!rtpMapValue) {
+            GST_DEBUG("Skipping media format without rtpmap");
+            continue;
+        }
+        auto rtpMap = StringView::fromLatin1(rtpMapValue);
+        auto components = rtpMap.split(' ');
+        auto payloadType = parseInteger<int>(*components.begin());
+        if (!payloadType || !*payloadType) {
+            GST_WARNING("Invalid payload type in rtpmap %s", rtpMap.utf8().data());
+            continue;
+        }
+
+        auto* formatCaps = gst_sdp_media_get_caps_from_media(media, *payloadType);
+        if (!formatCaps) {
+            GST_WARNING("No caps found for payload type %d", *payloadType);
+            continue;
+        }
+
+        // Relay SDP attributes to the caps, this is specially useful so that elements in
+        // webrtcbin will be able to enable RTP header extensions.
+        gst_sdp_media_attributes_to_caps(media, formatCaps);
+        for (unsigned j = 0; j < gst_caps_get_size(formatCaps); j++) {
+            auto* structure = gst_caps_get_structure(formatCaps, j);
+            gst_structure_set_name(structure, "application/x-rtp");
+        }
+
+        gst_caps_append(caps.get(), formatCaps);
+    }
+    return caps;
+}
+
 } // namespace WebCore
 
 #endif

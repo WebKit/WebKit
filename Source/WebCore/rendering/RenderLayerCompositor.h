@@ -239,8 +239,7 @@ public:
     
     void repaintInCompositedAncestor(RenderLayer&, const LayoutRect&);
     
-    // Notify us that a layer has been added or removed
-    void layerWasAdded(RenderLayer& parent, RenderLayer& child);
+    // Notify us that a layer has been removed
     void layerWillBeRemoved(RenderLayer& parent, RenderLayer& child);
 
     void layerStyleChanged(StyleDifference, RenderLayer&, const RenderStyle* oldStyle);
@@ -416,7 +415,6 @@ private:
     bool requiresCompositingLayer(const RenderLayer&, RequiresCompositingData&) const;
     // Whether the layer could ever be composited.
     bool canBeComposited(const RenderLayer&) const;
-    bool needsCompositingUpdateForStyleChangeOnNonCompositedLayer(RenderLayer&, const RenderStyle* oldStyle) const;
 
     // Make or destroy the backing for this layer; returns true if backing changed.
     enum class BackingRequired { No, Yes, Unknown };

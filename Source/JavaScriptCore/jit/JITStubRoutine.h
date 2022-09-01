@@ -36,6 +36,11 @@ namespace JSC {
 class JITStubRoutineSet;
 class Structure;
 class VM;
+class GCAwareJITStubRoutine;
+class GCAwareJITStubRoutineWithExceptionHandler;
+class PolymorphicAccessJITStubRoutine;
+class PolymorphicCallStubRoutine;
+class MarkingGCAwareJITStubRoutine;
 
 class AccessCase;
 
@@ -53,9 +58,25 @@ class JITStubRoutine {
     WTF_MAKE_NONCOPYABLE(JITStubRoutine);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    JITStubRoutine(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code)
+    enum class Type : uint8_t {
+        JITStubRoutineType,
+        GCAwareJITStubRoutineType,
+        PolymorphicAccessJITStubRoutineType,
+        PolymorphicCallStubRoutineType,
+        MarkingGCAwareJITStubRoutineType,
+        GCAwareJITStubRoutineWithExceptionHandlerType,
+    };
+
+    friend class GCAwareJITStubRoutine;
+    friend class PolymorphicAccessJITStubRoutine;
+    friend class PolymorphicCallStubRoutine;
+    friend class MarkingGCAwareJITStubRoutine;
+    friend class GCAwareJITStubRoutineWithExceptionHandler;
+
+    JITStubRoutine(Type type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code)
         : m_code(code)
         , m_refCount(1)
+        , m_type(type)
     {
     }
     
@@ -63,11 +84,11 @@ public:
     // a RefPtr<JITStubRoutine>.
     static Ref<JITStubRoutine> createSelfManagedRoutine(CodePtr<JITStubRoutinePtrTag> rawCodePointer)
     {
-        return adoptRef(*new JITStubRoutine(MacroAssemblerCodeRef<JITStubRoutinePtrTag>::createSelfManagedCodeRef(rawCodePointer)));
+        return adoptRef(*new JITStubRoutine(Type::JITStubRoutineType, MacroAssemblerCodeRef<JITStubRoutinePtrTag>::createSelfManagedCodeRef(rawCodePointer)));
     }
     
-    virtual ~JITStubRoutine();
-    virtual void aboutToDie() { }
+    void aboutToDie();
+    void observeZeroRefCount();
     
     // MacroAssemblerCodeRef is copyable, but at the cost of reference
     // counting churn. Returning a reference is a good way of reducing
@@ -104,17 +125,30 @@ public:
         return isJITPC(bitwise_cast<void*>(address));
     }
     
+    bool visitWeak(VM&);
+    void markRequiredObjects(AbstractSlotVisitor&);
+    void markRequiredObjects(SlotVisitor&);
+
+    void operator delete(JITStubRoutine*, std::destroying_delete_t);
+
+protected:
+    ALWAYS_INLINE void observeZeroRefCountImpl();
+    ALWAYS_INLINE void aboutToDieImpl() { }
+    ALWAYS_INLINE void markRequiredObjectsImpl(AbstractSlotVisitor&) { }
+    ALWAYS_INLINE void markRequiredObjectsImpl(SlotVisitor&) { }
+
     // Return true if you are still valid after. Return false if you are now invalid. If you return
     // false, you will usually not do any clearing because the idea is that you will simply be
     // destroyed.
-    virtual bool visitWeak(VM&);
+    ALWAYS_INLINE bool visitWeakImpl(VM&) { return true; }
 
-protected:
-    virtual void observeZeroRefCount();
+    template<typename Func>
+    ALWAYS_INLINE void runWithDowncast(const Func& function);
 
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> m_code;
     unsigned m_refCount;
     mutable unsigned m_hash { 0 };
+    Type m_type;
 };
 
 // Helper for the creation of simple stub routines that need no help from the GC.
