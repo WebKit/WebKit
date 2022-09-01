@@ -34,7 +34,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGViewElement);
 
 inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document)
+    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGFitToViewBox(this)
 {
     ASSERT(hasTagName(SVGNames::viewTag));

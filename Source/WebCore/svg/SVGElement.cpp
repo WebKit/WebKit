@@ -158,9 +158,10 @@ static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, CSSPrope
     return map;
 }
 
-SVGElement::SVGElement(const QualifiedName& tagName, Document& document, ConstructionType constructionType)
+SVGElement::SVGElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry, ConstructionType constructionType)
     : StyledElement(tagName, document, constructionType)
     , m_propertyAnimatorFactory(makeUnique<SVGPropertyAnimatorFactory>())
+    , m_propertyRegistry(WTFMove(propertyRegistry))
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {

@@ -73,7 +73,6 @@ private:
     SVGMarkerElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMarkerElement, SVGElement, SVGFitToViewBox>;
-    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -86,7 +85,6 @@ private:
 
     bool selfHasRelativeLengths() const override;
 
-    PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedLength> m_refX { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
     Ref<SVGAnimatedLength> m_refY { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
     Ref<SVGAnimatedLength> m_markerWidth { SVGAnimatedLength::create(this, SVGLengthMode::Width, "3"_s) };

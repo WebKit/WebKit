@@ -39,7 +39,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFilterElement);
 
 inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document)
+    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGURIReference(this)
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.

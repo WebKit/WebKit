@@ -42,7 +42,6 @@ private:
     SVGFEOffsetElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEOffsetElement, SVGFilterPrimitiveStandardAttributes>;
-    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -53,7 +52,6 @@ private:
     IntOutsets outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const override;
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
-    PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     Ref<SVGAnimatedNumber> m_dx { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_dy { SVGAnimatedNumber::create(this) };

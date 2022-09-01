@@ -64,7 +64,7 @@ public:
     static void invalidateFilterPrimitiveParent(SVGElement*);
 
 protected:
-    SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&);
+    SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;

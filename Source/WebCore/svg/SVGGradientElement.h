@@ -92,7 +92,7 @@ public:
     SVGAnimatedTransformList& gradientTransformAnimated() { return m_gradientTransform; }
 
 protected:
-    SVGGradientElement(const QualifiedName&, Document&);
+    SVGGradientElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;

@@ -37,12 +37,9 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGElement, SVGGraphicsElement>;
-    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     bool isValid() const final { return SVGTests::isValid(); }
     bool rendererIsNeeded(const RenderStyle&) final;
-
-    PropertyRegistry m_propertyRegistry { *this };
 };
 
 } // namespace WebCore

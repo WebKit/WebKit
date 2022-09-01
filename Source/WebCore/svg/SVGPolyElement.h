@@ -41,7 +41,6 @@ protected:
 
 private:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPolyElement, SVGGeometryElement>;
-    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) override; 
     void svgAttributeChanged(const QualifiedName&) override;
@@ -49,7 +48,6 @@ private:
     bool isValid() const override { return SVGTests::isValid(); }
     bool supportsMarkers() const override { return true; }
 
-    PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedPointList> m_points { SVGAnimatedPointList::create(this) };
 };
 

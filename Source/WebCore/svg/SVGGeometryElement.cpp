@@ -36,8 +36,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGGeometryElement);
 
-SVGGeometryElement::SVGGeometryElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document)
+SVGGeometryElement::SVGGeometryElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
+    : SVGGraphicsElement(tagName, document, WTFMove(propertyRegistry))
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {

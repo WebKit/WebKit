@@ -52,7 +52,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGAnimationElement);
 
 SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document& document)
-    : SVGSMILElement(tagName, document)
+    : SVGSMILElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGTests(this)
 {
 }

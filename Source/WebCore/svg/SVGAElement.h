@@ -46,7 +46,6 @@ private:
     SVGAElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAElement, SVGGraphicsElement, SVGURIReference>;
-    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
@@ -67,7 +66,6 @@ private:
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
-    PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_target { SVGAnimatedString::create(this) };
 
     // This is computed only once and must not be affected by subsequent URL changes.

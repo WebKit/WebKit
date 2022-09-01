@@ -37,14 +37,12 @@ private:
     SVGFEMergeNodeElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeNodeElement, SVGElement>;
-    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
-    PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
 };
 

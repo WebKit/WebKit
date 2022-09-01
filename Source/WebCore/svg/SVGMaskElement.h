@@ -50,7 +50,6 @@ private:
     SVGMaskElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMaskElement, SVGElement, SVGTests>;
-    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
@@ -62,7 +61,6 @@ private:
     bool needsPendingResourceHandling() const final { return false; }
     bool selfHasRelativeLengths() const final { return true; }
 
-    PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width, "-10%"_s) };
     Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height, "-10%"_s) };
     Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width, "120%"_s) };

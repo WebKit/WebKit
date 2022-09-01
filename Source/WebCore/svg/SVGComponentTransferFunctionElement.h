@@ -91,7 +91,6 @@ protected:
     SVGComponentTransferFunctionElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGComponentTransferFunctionElement, SVGElement>;
-    const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -99,7 +98,6 @@ protected:
     bool rendererIsNeeded(const RenderStyle&) override { return false; }
     
 private:
-    PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, FECOMPONENTTRANSFER_TYPE_IDENTITY) };
     Ref<SVGAnimatedNumberList> m_tableValues { SVGAnimatedNumberList::create(this) };
     Ref<SVGAnimatedNumber> m_slope { SVGAnimatedNumber::create(this, 1) };

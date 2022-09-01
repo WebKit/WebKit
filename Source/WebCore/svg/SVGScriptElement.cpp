@@ -31,7 +31,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGScriptElement);
 
 inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
-    : SVGElement(tagName, document)
+    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGURIReference(this)
     , ScriptElement(*this, wasInsertedByParser, alreadyStarted)
     , m_loadEventTimer(*this, &SVGElement::loadEventTimerFired)

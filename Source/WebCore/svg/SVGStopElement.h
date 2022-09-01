@@ -39,7 +39,6 @@ private:
     SVGStopElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGStopElement, SVGElement>;
-    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
@@ -49,7 +48,6 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool rendererIsNeeded(const RenderStyle&) final;
 
-    PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(this, 0) };
 };
 

@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGPolyElement);
 
 SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
-    : SVGGeometryElement(tagName, document)
+    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {

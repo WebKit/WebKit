@@ -43,7 +43,7 @@ using SMILEventSender = EventSender<SVGSMILElement>;
 class SVGSMILElement : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGSMILElement);
 public:
-    SVGSMILElement(const QualifiedName&, Document&);
+    SVGSMILElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
     virtual ~SVGSMILElement();
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;

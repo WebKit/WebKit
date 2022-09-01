@@ -50,9 +50,6 @@ private:
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFontElement, SVGElement>;
-    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    PropertyRegistry m_propertyRegistry { *this };
 };
 
 } // namespace WebCore

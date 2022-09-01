@@ -33,7 +33,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGCircleElement);
 
 inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document& document)
-    : SVGGeometryElement(tagName, document)
+    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
 {
     ASSERT(hasTagName(SVGNames::circleTag));
 

@@ -46,7 +46,7 @@ public:
     SVGAnimatedNumber& pathLengthAnimated() { return m_pathLength; }
 
 protected:
-    SVGGeometryElement(const QualifiedName&, Document&);
+    SVGGeometryElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;

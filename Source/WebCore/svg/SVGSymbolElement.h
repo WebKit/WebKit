@@ -35,14 +35,11 @@ private:
     SVGSymbolElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSymbolElement, SVGGraphicsElement, SVGFitToViewBox>;
-    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 
     bool selfHasRelativeLengths() const override;
-
-    PropertyRegistry m_propertyRegistry { *this };
 };
 
 } // namespace WebCore

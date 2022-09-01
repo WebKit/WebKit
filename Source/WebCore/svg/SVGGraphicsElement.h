@@ -70,7 +70,7 @@ public:
     SVGAnimatedTransformList& transformAnimated() { return m_transform; }
 
 protected:
-    SVGGraphicsElement(const QualifiedName&, Document&);
+    SVGGraphicsElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;

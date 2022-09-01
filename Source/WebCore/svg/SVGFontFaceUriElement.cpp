@@ -40,7 +40,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFontFaceUriElement);
 using namespace SVGNames;
     
 inline SVGFontFaceUriElement::SVGFontFaceUriElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document)
+    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
 {
     ASSERT(hasTagName(font_face_uriTag));
 }

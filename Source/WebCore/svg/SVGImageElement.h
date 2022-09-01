@@ -51,7 +51,6 @@ private:
     SVGImageElement(const QualifiedName&, Document&);
     
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGImageElement, SVGGraphicsElement, SVGURIReference>;
-    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
@@ -67,7 +66,6 @@ private:
     bool selfHasRelativeLengths() const final { return true; }
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
     Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
     Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width) };

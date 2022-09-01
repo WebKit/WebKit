@@ -33,7 +33,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGLineElement);
 
 inline SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document& document)
-    : SVGGeometryElement(tagName, document)
+    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
 {
     ASSERT(hasTagName(SVGNames::lineTag));
 
