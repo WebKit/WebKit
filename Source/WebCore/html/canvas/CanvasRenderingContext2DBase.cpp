@@ -49,6 +49,7 @@
 #include "DisplayListRecorder.h"
 #include "DisplayListReplayer.h"
 #include "FloatQuad.h"
+#include "GeometryUtilities.h"
 #include "Gradient.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -1934,7 +1935,9 @@ ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createConicGradie
     if (!std::isfinite(angleInRadians) || !std::isfinite(x) || !std::isfinite(y))
         return Exception { NotSupportedError };
 
-    return CanvasGradient::create(FloatPoint(x, y), angleInRadians, *this);
+    // Angle starts from x-axis for consistency within canvas methods. See https://html.spec.whatwg.org/multipage/canvas.html#dom-context-2d-createconicgradient
+    angleInRadians = normalizeAngleInRadians(angleInRadians) + piOverTwoFloat;
+    return CanvasGradient::create(FloatPoint(x, y), angleInRadians , *this);
 }
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CanvasImageSource&& image, const String& repetition)

@@ -223,7 +223,7 @@ rebuildPath2D(3, "");
 rebuildPath2D(4, "");
 rebuildCanvasGradient(5, {"type":"linear-gradient","points":[1,2,3,4],"stops":[{"offset":1,"color":"rgb(255, 0, 0)"},{"offset":1,"color":"rgb(0, 0, 255)"}]});
 rebuildCanvasGradient(6, {"type":"radial-gradient","points":[1,2,3,4,5,6],"stops":[]});
-rebuildCanvasGradient(7, {"type":"conic-gradient","points":[2,3,1],"stops":[{"offset":1,"color":"rgb(0, 128, 0)"}]});
+rebuildCanvasGradient(7, {"type":"conic-gradient","points":[2,3,2.570796489715576],"stops":[{"offset":1,"color":"rgb(0, 128, 0)"}]});
 rebuildCanvasPattern(8, {"image":<filtered>,"repeat":"no-repeat"});
 rebuildImage(9, <filtered>);
 rebuildImageData(10, {"data":[0,0,0,0,0,0,0,0],"width":1,"height":2});
