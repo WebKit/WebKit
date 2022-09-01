@@ -111,6 +111,8 @@ def parse_args(args):
                              help='Only build, check and run TestWTF'),
         optparse.make_option('--webkit-only', action='store_const', const='TestWebKitAPI', dest='api_binary',
                              help='Only check and run TestWebKitAPI'),
+        optparse.make_option('--ipc-only', action='store_const', const='TestIPC', dest='api_binary',
+                             help='Only check and run TestIPC (Darwin ports only)'),
         optparse.make_option('--web-core-only', action='store_const', const='TestWebCore', dest='api_binary',
                              help='Only check and run TestWebCore.exe (Windows only)'),
         optparse.make_option('--webkit-legacy-only', action='store_const', const='TestWebKitLegacy', dest='api_binary',

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "TestsController.h"
-#import "UIKitMacHelperSPI.h"
-#import <wtf/RetainPtr.h>
+#include "config.h"
 
-#if !defined(BUILDING_TEST_WTF) && !defined(BUILDING_TEST_IPC)
-#import <WebKit/WKProcessPoolPrivate.h>
-#endif
+#include "Test.h"  // NOLINT
+#include "StreamConnectionBuffer.h"
 
-int main(int argc, char** argv)
+namespace TestWebKitAPI {
+
+TEST(StreamConnectionBufferTests, CreateWorks)
 {
-    bool passed = false;
-    @autoreleasepool {
-#if PLATFORM(MACCATALYST)
-        UINSApplicationInstantiate();
-#endif
+    IPC::StreamConnectionBuffer b(5000);
+    EXPECT_NE(b.data(), nullptr);
+    EXPECT_LT(b.dataSize(), 5000u);
+}
 
-        [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"TestWebKitAPI"];
-
-        // Set up user defaults.
-        auto argumentDomain = adoptNS([[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy]);
-        if (!argumentDomain)
-            argumentDomain = adoptNS([[NSMutableDictionary alloc] init]);
-
-        [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain.get() forName:NSArgumentDomain];
-
-#if !defined(BUILDING_TEST_WTF) && !defined(BUILDING_TEST_IPC)
-        [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
-#endif
-
-        passed = TestWebKitAPI::TestsController::singleton().run(argc, argv);
-    }
-
-    // FIXME: Work-around for <rdar://problem/77922262>
-    exit(passed ? EXIT_SUCCESS : EXIT_FAILURE);
 }
