@@ -243,6 +243,15 @@ void MediaStreamTrackPrivate::sourceSettingsChanged()
     });
 }
 
+void MediaStreamTrackPrivate::sourceConfigurationChanged()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    forEachObserver([this](auto& observer) {
+        observer.trackConfigurationChanged(*this);
+    });
+}
+
 bool MediaStreamTrackPrivate::preventSourceFromStopping()
 {
     ALWAYS_LOG(LOGIDENTIFIER, m_isEnded);

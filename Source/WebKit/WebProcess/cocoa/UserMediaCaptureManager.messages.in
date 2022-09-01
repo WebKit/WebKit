@@ -27,6 +27,7 @@ messages -> UserMediaCaptureManager NotRefCounted {
     SourceStopped(WebCore::RealtimeMediaSourceIdentifier id, bool didFail)
     SourceMutedChanged(WebCore::RealtimeMediaSourceIdentifier id, bool muted, bool interrupted)
     SourceSettingsChanged(WebCore::RealtimeMediaSourceIdentifier id, WebCore::RealtimeMediaSourceSettings settings)
+    SourceConfigurationChanged(WebCore::RealtimeMediaSourceIdentifier id, String persistentID, WebCore::RealtimeMediaSourceSettings settings, WebCore::RealtimeMediaSourceCapabilities capabilities)
     ApplyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier id, WebCore::RealtimeMediaSourceSettings settings)
     ApplyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier id, String failedConstraint, String message)
 }

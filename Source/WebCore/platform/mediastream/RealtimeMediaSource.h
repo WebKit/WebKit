@@ -85,6 +85,7 @@ public:
         virtual void sourceMutedChanged() { }
         virtual void sourceSettingsChanged() { }
         virtual void audioUnitWillStart() { }
+        virtual void sourceConfigurationChanged() { }
 
         // Observer state queries.
         virtual bool preventSourceFromStopping() { return false; }
@@ -137,7 +138,6 @@ public:
     virtual bool interrupted() const { return false; }
 
     const AtomString& name() const { return m_name; }
-    void setName(const AtomString& name) { m_name = name; }
 
     unsigned fitnessScore() const { return m_fitnessScore; }
 
@@ -259,6 +259,9 @@ protected:
 
     void setType(Type);
 
+    void setName(const AtomString&);
+    void setPersistentId(const String&);
+
 private:
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
@@ -270,6 +273,7 @@ private:
     virtual void didEnd() { }
 
     void updateHasStartedProducingData();
+    void initializePersistentId();
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
@@ -326,6 +330,11 @@ struct CaptureSourceOrError {
 };
 
 String convertEnumerationToString(RealtimeMediaSource::Type);
+
+inline void RealtimeMediaSource::setName(const AtomString& name)
+{
+    m_name = name;
+}
 
 inline void RealtimeMediaSource::whenReady(CompletionHandler<void(String)>&& callback)
 {

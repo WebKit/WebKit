@@ -44,6 +44,7 @@
 #if PLATFORM(COCOA)
 #include "CoreAudioCaptureSource.h"
 #include "DisplayCaptureSourceCocoa.h"
+#include "MockAudioSharedUnit.h"
 #include "MockRealtimeVideoSourceMac.h"
 #endif
 
@@ -317,6 +318,16 @@ void MockRealtimeMediaSourceCenter::setMockCaptureDevicesInterrupted(bool isCame
 {
     MockRealtimeVideoSource::setIsInterrupted(isCameraInterrupted);
     MockRealtimeAudioSource::setIsInterrupted(isMicrophoneInterrupted);
+}
+
+void MockRealtimeMediaSourceCenter::triggerMockMicrophoneConfigurationChange()
+{
+#if PLATFORM(COCOA)
+    auto devices = audioCaptureDeviceManager().captureDevices();
+    if (devices.size() <= 1)
+        return;
+    MockAudioSharedUnit::singleton().handleNewCurrentMicrophoneDevice(WTFMove(devices[1]));
+#endif
 }
 
 void MockRealtimeMediaSourceCenter::setDevices(Vector<MockMediaDevice>&& newMockDevices)
