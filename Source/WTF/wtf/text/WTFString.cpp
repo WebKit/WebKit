@@ -90,12 +90,6 @@ String makeStringByRemoving(const String& string, unsigned position, unsigned le
     return makeString(view.left(position), view.substring(position + lengthToRemove));
 }
 
-String String::substring(unsigned position, unsigned length) const
-{
-    // FIXME: Should this function, and the many others like it, be inlined?
-    return m_impl ? m_impl->substring(position, length) : String { };
-}
-
 String String::substringSharingImpl(unsigned offset, unsigned length) const
 {
     // FIXME: We used to check against a limit of Heap::minExtraCost / sizeof(UChar).

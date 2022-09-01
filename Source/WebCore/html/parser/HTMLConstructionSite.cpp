@@ -659,7 +659,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
             breakIndex = characters.length();
 
         unsigned substringLength = breakIndex - currentPosition;
-        auto substring = LIKELY(!currentPosition && substringLength >= characters.length()) ? characters : characters.substring(currentPosition, substringLength);
+        auto substring = characters.substring(currentPosition, substringLength);
         AtomString substringAtom = m_whitespaceCache.lookup(substring, whitespaceMode);
         auto textNode = Text::create(task.parent->document(), substringAtom.isNull() ? WTFMove(substring) : substringAtom.releaseString());
 

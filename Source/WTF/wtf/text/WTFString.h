@@ -197,7 +197,7 @@ public:
     bool endsWith(char character) const { return endsWith(static_cast<UChar>(character)); }
     bool hasInfixEndingAt(StringView suffix, unsigned end) const;
 
-    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN substring(unsigned position, unsigned length = MaxLength) const;
+    String WARN_UNUSED_RETURN substring(unsigned position, unsigned length = MaxLength) const;
     WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN substringSharingImpl(unsigned position, unsigned length = MaxLength) const;
     String WARN_UNUSED_RETURN left(unsigned length) const { return substring(0, length); }
     String WARN_UNUSED_RETURN right(unsigned length) const { return substring(this->length() - length, length); }
@@ -510,6 +510,17 @@ inline void String::clearImplIfNotShared()
 {
     if (m_impl && m_impl->hasOneRef())
         m_impl = nullptr;
+}
+
+inline String String::substring(unsigned position, unsigned length) const
+{
+    if (!m_impl)
+        return { };
+
+    if (!position && length >= m_impl->length())
+        return *this;
+
+    return m_impl->substring(position, length);
 }
 
 template<typename Func>
