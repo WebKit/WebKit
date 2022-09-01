@@ -1,5 +1,5 @@
 <!--
- Copyright (C) 2019 Apple Inc. All rights reserved.
+ Copyright (C) 2019-2022 Apple Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 <head>
     <meta charset="utf-8" />
 
-    <title>JetStream 2 In-Depth Analysis</title>
+    <title>JetStream 2.1 In-Depth Analysis</title>
 
     <link rel="stylesheet" href="JetStream.css">
 
@@ -35,7 +35,7 @@
 <body>
 <h1 class="logo">
     <div id="jetstreams">
-        <a href="index.html" class="logo-image">JetStream 2</a>
+        <a href="index.html" class="logo-image">JetStream 2.1</a>
     </div>
 </h1>
 <main>
@@ -87,7 +87,7 @@
         </p>
 
         <p>
-        All but one of JetStream'2 JavaScript benchmarks run for N iterations, where
+        All but one of JetStream 2's JavaScript benchmarks run for N iterations, where
         N is usually 120. JetStream 2 reports the startup score as the time it takes to run the first iteration.
         The worst case score is the average of the worst M iterations, excluding the first iteration.
         M is always less than N, and is usually 4. The average case score is the average
@@ -113,12 +113,19 @@
         </p>
 
         <p>
-        Note that scores from JetStream 2 are not comparable to scores to other versions
+        JetStream 2.1 runs the same benchmarks as JetStream 2, but updates the benchmark driver to
+        improve score stability. This is achieved by pre-fetching network resources prior to running
+        the benchmarks. This can reduce perturbations on the measurement of JavaScript execution
+        time due to network latency and any consequent second order effects.
+        </p>
+
+        <p>
+        Note that scores from JetStream 2.1 are not comparable to scores to other versions
         of any JetStream benchmark.
         </p>
 
         <h3>
-        JetStream 2 has 64 subtests:
+        JetStream 2.1 has 64 subtests:
         </h3>
 
         <dl>
