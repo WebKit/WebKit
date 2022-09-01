@@ -1841,6 +1841,11 @@ void TestRunner::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool
     }));
 }
 
+void TestRunner::triggerMockMicrophoneConfigurationChange()
+{
+    postSynchronousMessage("TriggerMockMicrophoneConfigurationChange");
+}
+
 #if ENABLE(GAMEPAD)
 
 void TestRunner::connectMockGamepad(unsigned index)

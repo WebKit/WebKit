@@ -72,6 +72,7 @@ private:
     Vector<AVAudioSessionCaptureDevice> retrieveAudioSessionCaptureDevices() const;
     void setAudioCaptureDevices(Vector<AVAudioSessionCaptureDevice>&&);
     bool setPreferredAudioSessionDeviceUIDInternal(const String&);
+    void notifyNewCurrentMicrophoneDevice(CaptureDevice&&);
 
     enum class AudioSessionState { NotNeeded, Inactive, Active };
 

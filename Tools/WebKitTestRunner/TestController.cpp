@@ -3706,6 +3706,11 @@ void TestController::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, 
     WKPageSetMockCaptureDevicesInterrupted(m_mainWebView->page(), isCameraInterrupted, isMicrophoneInterrupted);
 }
 
+void TestController::triggerMockMicrophoneConfigurationChange()
+{
+    WKPageTriggerMockMicrophoneConfigurationChange(m_mainWebView->page());
+}
+
 struct InAppBrowserPrivacyCallbackContext {
     explicit InAppBrowserPrivacyCallbackContext(TestController& controller)
         : testController(controller)

@@ -86,6 +86,8 @@ public:
 
     const String& persistentIDForTesting() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
 
+    void handleNewCurrentMicrophoneDevice(CaptureDevice&&);
+
 protected:
     void forEachClient(const Function<void(CoreAudioCaptureSource&)>&) const;
     void captureFailed();

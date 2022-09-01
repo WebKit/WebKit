@@ -55,6 +55,17 @@ RealtimeMediaSource::RealtimeMediaSource(Type type, AtomString&& name, String&& 
     , m_type(type)
     , m_name(WTFMove(name))
 {
+    initializePersistentId();
+}
+
+void RealtimeMediaSource::setPersistentId(const String& persistentID)
+{
+    m_persistentID = persistentID;
+    initializePersistentId();
+}
+
+void RealtimeMediaSource::initializePersistentId()
+{
     if (m_persistentID.isEmpty())
         m_persistentID = createVersion4UUIDString();
 

@@ -428,6 +428,11 @@ void GPUProcess::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool
 {
     MockRealtimeMediaSourceCenter::setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
 }
+
+void GPUProcess::triggerMockMicrophoneConfigurationChange()
+{
+    MockRealtimeMediaSourceCenter::singleton().triggerMockMicrophoneConfigurationChange();
+}
 #endif // ENABLE(MEDIA_STREAM)
 
 #if HAVE(SC_CONTENT_SHARING_SESSION)

@@ -192,6 +192,7 @@ private:
     void trackMutedChanged(MediaStreamTrackPrivate&) final;
     void trackSettingsChanged(MediaStreamTrackPrivate&) final;
     void trackEnabledChanged(MediaStreamTrackPrivate&) final;
+    void trackConfigurationChanged(MediaStreamTrackPrivate&) final;
 
     // PlatformMediaSession::AudioCaptureSource
     bool isCapturingAudio() const final;

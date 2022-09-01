@@ -618,6 +618,16 @@ void MediaStreamTrack::trackSettingsChanged(MediaStreamTrackPrivate&)
     configureTrackRendering();
 }
 
+void MediaStreamTrack::trackConfigurationChanged(MediaStreamTrackPrivate&)
+{
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
+        if (!scriptExecutionContext() || scriptExecutionContext()->activeDOMObjectsAreStopped() || m_private->muted() || ended())
+            return;
+
+        dispatchEvent(Event::create(eventNames().configurationchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    });
+}
+
 void MediaStreamTrack::trackEnabledChanged(MediaStreamTrackPrivate&)
 {
     configureTrackRendering();

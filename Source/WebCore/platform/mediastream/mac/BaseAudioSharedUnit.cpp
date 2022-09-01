@@ -301,6 +301,13 @@ void BaseAudioSharedUnit::whenAudioCaptureUnitIsNotRunning(Function<void()>&& ca
     m_whenNotRunningCallbacks.append(WTFMove(callback));
 }
 
+void BaseAudioSharedUnit::handleNewCurrentMicrophoneDevice(CaptureDevice&& device)
+{
+    forEachClient([&device](auto& client) {
+        client.handleNewCurrentMicrophoneDevice(device);
+    });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

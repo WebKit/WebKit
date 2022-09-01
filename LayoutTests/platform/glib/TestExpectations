@@ -817,6 +817,8 @@ webkit.org/b/230415 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 
+fast/mediastream/mediastreamtrack-configurationchange.html [ Failure ]
+
 webkit.org/b/223508 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Failure Pass ]
 
 webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failure ]

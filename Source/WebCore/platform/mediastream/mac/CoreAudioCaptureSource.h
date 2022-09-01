@@ -59,6 +59,8 @@ public:
 
     CMClockRef timebaseClock();
 
+    void handleNewCurrentMicrophoneDevice(const CaptureDevice&);
+
 protected:
     CoreAudioCaptureSource(String&& deviceID, AtomString&& label, String&& hashSalt, uint32_t persistentID, BaseAudioSharedUnit*, PageIdentifier);
     virtual ~CoreAudioCaptureSource();
