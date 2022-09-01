@@ -943,7 +943,7 @@ LineBuilder::Result LineBuilder::handleFloatContent(const InlineItem& floatItem)
     floatingState->append(floatingContext.toFloatItem(floatBox));
     m_floats.append(&floatBox);
     // Check if this float shrinks the line (they don't get positioned higher than the line).
-    if (floatingPosition.y() > m_lineLogicalRect.bottom())
+    if (BoxGeometry::marginBoxRect(boxGeometry).top() > m_lineLogicalRect.bottom())
         return { InlineContentBreaker::IsEndOfLine::No, { 1, false } };
 
     m_contentIsConstrainedByFloat = true;
