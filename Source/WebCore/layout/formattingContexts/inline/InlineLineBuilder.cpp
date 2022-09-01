@@ -922,10 +922,10 @@ LineBuilder::Result LineBuilder::handleFloatContent(const InlineItem& floatItem)
         ASSERT_NOT_REACHED();
         return { InlineContentBreaker::IsEndOfLine::No };
     }
-    auto& floatBox = floatItem.layoutBox();    
+    auto& floatBox = floatItem.layoutBox();
     ASSERT(formattingState());
     auto& boxGeometry = formattingState()->boxGeometry(floatBox);
-    auto availableWidthForFloat = m_lineLogicalRect.width() - m_line.contentLogicalRight();
+    auto availableWidthForFloat = m_lineLogicalRect.width() - m_line.contentLogicalRight() + trimmableTrailingContentWidth(m_line);
     if (m_line.hasContent() && boxGeometry.marginBoxWidth() > availableWidthForFloat) {
         // This float needs to go somwhere else on the next line.
         return { InlineContentBreaker::IsEndOfLine::Yes };
