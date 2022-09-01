@@ -315,16 +315,11 @@ void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomHTMLToken&& toke
 
 void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomHTMLToken&& token, Element& element)
 {
-    if (token.attributes().isEmpty())
-        return;
-
     if (!scriptingContentIsAllowed(m_parserContentPolicy))
         element.stripScriptingAttributes(token.attributes());
 
-    for (auto& tokenAttribute : token.attributes()) {
-        if (!element.elementData() || !element.findAttributeByName(tokenAttribute.name()))
-            element.setAttribute(tokenAttribute.name(), tokenAttribute.value());
-    }
+    for (auto& tokenAttribute : token.attributes())
+        element.setAttributeWithoutOverwriting(tokenAttribute.name(), tokenAttribute.value());
 }
 
 void HTMLConstructionSite::insertHTMLHtmlStartTagInBody(AtomHTMLToken&& token)

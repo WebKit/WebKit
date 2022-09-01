@@ -1874,6 +1874,13 @@ void Element::setAttribute(const QualifiedName& name, const AtomString& value)
     setAttributeInternal(index, name, value, NotInSynchronizationOfLazyAttribute);
 }
 
+void Element::setAttributeWithoutOverwriting(const QualifiedName& name, const AtomString& value)
+{
+    synchronizeAttribute(name);
+    if (!elementData() || elementData()->findAttributeIndexByName(name) == ElementData::attributeNotFound)
+        addAttributeInternal(name, value, NotInSynchronizationOfLazyAttribute);
+}
+
 void Element::setAttributeWithoutSynchronization(const QualifiedName& name, const AtomString& value)
 {
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
