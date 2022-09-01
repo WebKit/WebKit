@@ -196,6 +196,10 @@ if (LTO_MODE AND COMPILER_IS_CLANG)
     set(CMAKE_MODULE_LINKER_FLAGS "-flto=${LTO_MODE} ${CMAKE_MODULE_LINKER_FLAGS}")
 endif ()
 
+if (COMPILER_IS_CLANG AND USE_LIBCXX)
+    set(CMAKE_CXX_FLAGS "-std=c++20 -stdlib=libc++ ${CMAKE_CXX_FLAGS}")
+endif ()
+
 if (COMPILER_IS_GCC_OR_CLANG)
     # Careful: this needs to be above where ENABLED_COMPILER_SANITIZERS is set.
     # Also, it's not possible to use the normal prepend/append macros for

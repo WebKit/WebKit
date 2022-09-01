@@ -67,6 +67,8 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         set(COMPILER_IS_CLANG ON)
     endif ()
 
+    option(USE_LIBCXX "Use llvm libc++" OFF)
+
     if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
         if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "9.3.0")
             message(FATAL_ERROR "GCC 9.3 or newer is required to build WebKit. Use a newer GCC version or Clang.")
