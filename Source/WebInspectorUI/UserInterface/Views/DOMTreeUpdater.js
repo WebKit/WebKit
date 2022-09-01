@@ -121,11 +121,21 @@ WI.DOMTreeUpdater.prototype = {
 
     _updateModifiedNodes: function()
     {
+        let documentNeedsUpdated = false;
+
         // Update for insertions and deletions before attribute modifications. This ensures
         // tree elements get created for newly attached children before we try to update them.
         let parentElementsToUpdate = new Set;
         let markNodeParentForUpdate = (value, key, map) => {
+            if (documentNeedsUpdated)
+                return;
+
             let parentNode = value.parent;
+            if (parentNode.nodeType() === Node.DOCUMENT_NODE) {
+                documentNeedsUpdated = true;
+                return;
+            }
+
             let parentTreeElement = this._treeOutline.findTreeElement(parentNode);
             if (parentTreeElement)
                 parentElementsToUpdate.add(parentTreeElement);
@@ -133,28 +143,32 @@ WI.DOMTreeUpdater.prototype = {
         this._recentlyInsertedNodes.forEach(markNodeParentForUpdate);
         this._recentlyDeletedNodes.forEach(markNodeParentForUpdate);
 
-        for (let parentTreeElement of parentElementsToUpdate) {
-            if (parentTreeElement.treeOutline && parentTreeElement.listItemElement) {
-                parentTreeElement.updateTitle();
-                parentTreeElement.updateChildren();
+        if (documentNeedsUpdated)
+            this._treeOutline.update();
+        else {
+            for (let parentTreeElement of parentElementsToUpdate) {
+                if (parentTreeElement.treeOutline && parentTreeElement.listItemElement) {
+                    parentTreeElement.updateTitle();
+                    parentTreeElement.updateChildren();
+                }
             }
-        }
 
-        for (let node of this._recentlyModifiedNodes.values()) {
-            let nodeTreeElement = this._treeOutline.findTreeElement(node);
-            if (!nodeTreeElement)
-                continue;
-
-            for (let [attribute, nodes] of this._recentlyModifiedAttributes.entries()) {
-                // Don't report textContent changes as attribute modifications.
-                if (attribute === this._textContentAttributeSymbol)
+            for (let node of this._recentlyModifiedNodes.values()) {
+                let nodeTreeElement = this._treeOutline.findTreeElement(node);
+                if (!nodeTreeElement)
                     continue;
 
-                if (nodes.has(node))
-                    nodeTreeElement.attributeDidChange(attribute);
-            }
+                for (let [attribute, nodes] of this._recentlyModifiedAttributes.entries()) {
+                    // Don't report textContent changes as attribute modifications.
+                    if (attribute === this._textContentAttributeSymbol)
+                        continue;
 
-            nodeTreeElement.updateTitle();
+                    if (nodes.has(node))
+                        nodeTreeElement.attributeDidChange(attribute);
+                }
+
+                nodeTreeElement.updateTitle();
+            }
         }
 
         this._recentlyInsertedNodes.clear();
