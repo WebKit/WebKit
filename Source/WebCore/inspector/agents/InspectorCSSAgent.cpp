@@ -51,6 +51,7 @@
 #include "FontPlatformData.h"
 #include "Frame.h"
 #include "HTMLHeadElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLStyleElement.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
@@ -980,8 +981,21 @@ OptionSet<InspectorCSSAgent::LayoutFlag> InspectorCSSAgent::layoutFlagsForNode(N
 
     OptionSet<LayoutFlag> layoutFlags;
 
-    if (renderer)
+    if (renderer) {
         layoutFlags.add(InspectorCSSAgent::LayoutFlag::Rendered);
+
+        if (is<Document>(node)) {
+            // We display document scrollability on the document element's node in the frontend. Other browsers show
+            // scrollability on document.scrollingElement(), but that makes it impossible to see when both the document
+            // and the <body> are scrollable in quirks mode.
+        } else if (is<HTMLHtmlElement>(node)) {
+            if (auto* frameView = node.document().view()) {
+                if (frameView->isScrollable())
+                    layoutFlags.add(InspectorCSSAgent::LayoutFlag::Scrollable);
+            }
+        } else if (is<RenderBox>(*renderer) && downcast<RenderBox>(*renderer).canBeScrolledAndHasScrollableArea())
+            layoutFlags.add(InspectorCSSAgent::LayoutFlag::Scrollable);
+    }
 
     if (auto contextType = layoutFlagContextType(renderer))
         layoutFlags.add(*contextType);
@@ -1000,6 +1014,8 @@ static RefPtr<JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>> toProtocol(
     auto protocolLayoutFlags = JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>::create();
     if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Rendered))
         protocolLayoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Rendered));
+    if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Scrollable))
+        protocolLayoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Scrollable));
     if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Flex))
         protocolLayoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Flex));
     if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Grid))

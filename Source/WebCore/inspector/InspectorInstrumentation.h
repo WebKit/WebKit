@@ -42,6 +42,7 @@
 #include "EventTarget.h"
 #include "FormData.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentationPublic.h"
 #include "Page.h"
@@ -124,6 +125,8 @@ public:
     static void didRemoveDOMNode(Document&, Node&);
     static void willDestroyDOMNode(Node&);
     static void didChangeRendererForDOMNode(Node&);
+    static void didAddOrRemoveScrollbars(FrameView&);
+    static void didAddOrRemoveScrollbars(RenderObject&);
     static void willModifyDOMAttr(Document&, Element&, const AtomString& oldValue, const AtomString& newValue);
     static void didModifyDOMAttr(Document&, Element&, const AtomString& name, const AtomString& value);
     static void didRemoveDOMAttr(Document&, Element&, const AtomString& name);
@@ -346,6 +349,8 @@ private:
     static void didRemoveDOMNodeImpl(InstrumentingAgents&, Node&);
     static void willDestroyDOMNodeImpl(InstrumentingAgents&, Node&);
     static void didChangeRendererForDOMNodeImpl(InstrumentingAgents&, Node&);
+    static void didAddOrRemoveScrollbarsImpl(InstrumentingAgents&, FrameView&);
+    static void didAddOrRemoveScrollbarsImpl(InstrumentingAgents&, RenderObject&);
     static void willModifyDOMAttrImpl(InstrumentingAgents&, Element&, const AtomString& oldValue, const AtomString& newValue);
     static void didModifyDOMAttrImpl(InstrumentingAgents&, Element&, const AtomString& name, const AtomString& value);
     static void didRemoveDOMAttrImpl(InstrumentingAgents&, Element&, const AtomString& name);
@@ -603,6 +608,20 @@ inline void InspectorInstrumentation::didChangeRendererForDOMNode(Node& node)
     ASSERT(InspectorInstrumentationPublic::hasFrontends());
     if (auto* agents = instrumentingAgents(node.document()))
         didChangeRendererForDOMNodeImpl(*agents, node);
+}
+
+inline void InspectorInstrumentation::didAddOrRemoveScrollbars(FrameView& frameView)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* agents = instrumentingAgents(frameView.frame().document()))
+        didAddOrRemoveScrollbarsImpl(*agents, frameView);
+}
+
+inline void InspectorInstrumentation::didAddOrRemoveScrollbars(RenderObject& renderer)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* agents = instrumentingAgents(renderer))
+        didAddOrRemoveScrollbarsImpl(*agents, renderer);
 }
 
 inline void InspectorInstrumentation::willModifyDOMAttr(Document& document, Element& element, const AtomString& oldValue, const AtomString& newValue)

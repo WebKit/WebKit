@@ -185,6 +185,23 @@ void InspectorInstrumentation::didChangeRendererForDOMNodeImpl(InstrumentingAgen
         cssAgent->didChangeRendererForDOMNode(node);
 }
 
+void InspectorInstrumentation::didAddOrRemoveScrollbarsImpl(InstrumentingAgents& instrumentingAgents, FrameView& frameView)
+{
+    if (auto* cssAgent = instrumentingAgents.enabledCSSAgent()) {
+        auto* document = frameView.frame().document();
+        if (auto* documentElement = document ? document->documentElement() : nullptr)
+            cssAgent->didChangeRendererForDOMNode(*documentElement);
+    }
+}
+
+void InspectorInstrumentation::didAddOrRemoveScrollbarsImpl(InstrumentingAgents& instrumentingAgents, RenderObject& renderer)
+{
+    if (auto* cssAgent = instrumentingAgents.enabledCSSAgent()) {
+        if (auto* node = renderer.node())
+            cssAgent->didChangeRendererForDOMNode(*node);
+    }
+}
+
 void InspectorInstrumentation::willModifyDOMAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element, const AtomString& oldValue, const AtomString& newValue)
 {
     if (auto* pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())

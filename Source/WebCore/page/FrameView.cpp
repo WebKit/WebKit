@@ -573,7 +573,7 @@ void FrameView::setContentsSize(const IntSize& size)
 
     ScrollView::setContentsSize(size);
     contentsResized();
-    
+
     Page* page = frame().page();
     if (!page)
         return;
@@ -3032,6 +3032,8 @@ void FrameView::addedOrRemovedScrollbar()
     }
 
     updateTiledBackingAdaptiveSizing();
+
+    InspectorInstrumentation::didAddOrRemoveScrollbars(*this);
 }
 
 TiledBacking::Scrollability FrameView::computeScrollability() const

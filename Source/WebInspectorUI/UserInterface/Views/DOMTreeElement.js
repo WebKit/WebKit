@@ -2022,6 +2022,11 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         let handleClick = null;
 
         switch (badgeType) {
+        case WI.DOMTreeElement.BadgeType.Scrollable:
+            text = WI.UIString("Scroll", "Title for a badge applied to DOM nodes that are a scrollable container.");
+            handleClick = this._handleScrollableBadgeClicked.bind(this);
+            break;
+
         case WI.DOMTreeElement.BadgeType.Flex:
             console.assert(!this._elementForBadgeType.has(WI.DOMTreeElement.BadgeType.Grid));
             text = WI.unlocalizedString("flex");
@@ -2063,6 +2068,10 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         for (let layoutFlag of this.representedObject.layoutFlags) {
             switch (layoutFlag) {
+            case WI.DOMNode.LayoutFlag.Scrollable:
+                this._createBadge(WI.DOMTreeElement.BadgeType.Scrollable);
+                break;
+
             case WI.DOMNode.LayoutFlag.Grid:
                 this._createBadge(WI.DOMTreeElement.BadgeType.Grid);
                 break;
@@ -2137,7 +2146,12 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         contentElement.className = "event-badge-popover-content";
         contentElement.appendChild(detailsSection.element);
 
-        popover.presentNewContentWithFrame(contentElement, calculateTargetFrame(), preferredEdges)
+        popover.presentNewContentWithFrame(contentElement, calculateTargetFrame(), preferredEdges);
+    }
+
+    _handleScrollableBadgeClicked(event)
+    {
+        this.representedObject.scrollIntoView();
     }
 
     _handleBadgeDoubleClicked(event)
@@ -2203,11 +2217,12 @@ WI.DOMTreeElement.BreakpointStatus = {
 };
 
 WI.DOMTreeElement.BadgeType = {
+    Scrollable: "scrollable",
     Flex: "flex",
     Grid: "grid",
     Event: "event",
 };
-WI.settings.enabledDOMTreeBadgeTypes = new WI.Setting("enabled-dom-tree-badge-types", [WI.DOMTreeElement.BadgeType.Flex, WI.DOMTreeElement.BadgeType.Grid, WI.DOMTreeElement.BadgeType.Event]);
+WI.settings.enabledDOMTreeBadgeTypes = new WI.Setting("enabled-dom-tree-badge-types", [WI.DOMTreeElement.BadgeType.Flex, WI.DOMTreeElement.BadgeType.Grid, WI.DOMTreeElement.BadgeType.Event, WI.DOMTreeElement.BadgeType.Scrollable]);
 
 WI.DOMTreeElement.HighlightStyleClassName = "highlight";
 WI.DOMTreeElement.SearchHighlightStyleClassName = "search-highlight";

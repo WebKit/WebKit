@@ -274,7 +274,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         console.assert(Array.isArray(layoutFlags), layoutFlags);
         console.assert(layoutFlags.every((layoutFlag) => Object.values(WI.DOMNode.LayoutFlag).includes(layoutFlag)), layoutFlags);
         console.assert(layoutFlags.filter((layoutFlag) => WI.DOMNode._LayoutContextTypes.includes(layoutFlag)).length <= 1, layoutFlags);
-        console.assert(layoutFlags.length && !Array.shallowEqual(layoutFlags, this._layoutFlags), layoutFlags);
+        console.assert(!layoutFlags.length || !Array.shallowEqual(layoutFlags, this._layoutFlags), layoutFlags);
 
         let oldLayoutContextType = this.layoutContextType;
 
@@ -1357,6 +1357,7 @@ WI.DOMNode.CustomElementState = {
 WI.DOMNode.LayoutFlag = {
     Rendered: "rendered",
     Event: "event",
+    Scrollable: "scrollable",
 
     // These are mutually exclusive.
     Flex: "flex",

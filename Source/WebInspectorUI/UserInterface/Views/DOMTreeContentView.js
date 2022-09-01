@@ -534,6 +534,14 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
                 WI.settings.enabledDOMTreeBadgeTypes.save();
             }, WI.settings.enabledDOMTreeBadgeTypes.value.includes(WI.DOMTreeElement.BadgeType.Event));
         }
+
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): `Scrollable` value for `CSS.LayoutFlag` did not exist yet.
+        if (InspectorBackend.Enum.CSS?.LayoutFlag?.Scrollable) {
+            contextMenu.appendCheckboxItem(WI.UIString("Scroll", "Title for a badge applied to DOM nodes that are a scrollable container."), () => {
+                WI.settings.enabledDOMTreeBadgeTypes.value.toggleIncludes(WI.DOMTreeElement.BadgeType.Scrollable);
+                WI.settings.enabledDOMTreeBadgeTypes.save();
+            }, WI.settings.enabledDOMTreeBadgeTypes.value.includes(WI.DOMTreeElement.BadgeType.Scrollable));
+        }
     }
 
     _domTreeElementAdded(event)

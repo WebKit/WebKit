@@ -136,6 +136,7 @@ public:
         Flex = 1 << 1,
         Grid = 1 << 2,
         Event = 1 << 3,
+        Scrollable = 1 << 4,
     };
     OptionSet<LayoutFlag> layoutFlagsForNode(Node&);
     RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> protocolLayoutFlagsForNode(Node&);

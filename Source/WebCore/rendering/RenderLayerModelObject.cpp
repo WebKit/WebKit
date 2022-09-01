@@ -124,8 +124,10 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
     RenderElement::styleDidChange(diff, oldStyle);
     updateFromStyle();
 
+    bool gainedOrLostLayer = false;
     if (requiresLayer()) {
         if (!layer() && layerCreationAllowedForSubtree()) {
+            gainedOrLostLayer = true;
             if (s_wasFloating && isFloating())
                 setChildNeedsLayout();
             createLayer();
@@ -133,6 +135,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
                 layer()->setRepaintStatus(NeedsFullRepaint);
         }
     } else if (layer() && layer()->parent()) {
+        gainedOrLostLayer = true;
 #if ENABLE(CSS_COMPOSITING)
         if (oldStyle && oldStyle->hasBlendMode())
             layer()->willRemoveChildWithBlendMode();
@@ -153,6 +156,9 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         if (s_hadTransform)
             setNeedsLayoutAndPrefWidthsRecalc();
     }
+
+    if (gainedOrLostLayer)
+        InspectorInstrumentation::didAddOrRemoveScrollbars(*this);
 
     if (layer()) {
         layer()->styleChanged(diff, oldStyle);

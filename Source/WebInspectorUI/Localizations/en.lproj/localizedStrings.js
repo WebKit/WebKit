@@ -1357,6 +1357,8 @@ localizedStrings["Script ignored due to blackbox"] = "Script ignored due to blac
 localizedStrings["Script ignored when debugging due to URL pattern blackbox"] = "Script ignored when debugging due to URL pattern blackbox";
 localizedStrings["Scripts"] = "Scripts";
 localizedStrings["Scripts can also be individually blackboxed by clicking on the %s icon that is shown on hover."] = "Scripts can also be individually blackboxed by clicking on the %s icon that is shown on hover.";
+/* Title for a badge applied to DOM nodes that are a scrollable container. */
+localizedStrings["Scroll"] = "Scroll";
 /* Scroll selected DOM node into view on the inspected web page */
 localizedStrings["Scroll into View"] = "Scroll into View";
 localizedStrings["Search"] = "Search";

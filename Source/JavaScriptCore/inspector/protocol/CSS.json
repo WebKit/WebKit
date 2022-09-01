@@ -273,6 +273,7 @@
             "type": "string",
             "enum": [
                 "rendered",
+                "scrollable",
                 "flex",
                 "grid",
                 "event"

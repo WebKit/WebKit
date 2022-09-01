@@ -81,6 +81,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "HitTestingTransformState.h"
+#include "InspectorInstrumentation.h"
 #include "LegacyRenderSVGForeignObject.h"
 #include "LegacyRenderSVGRoot.h"
 #include "Logging.h"
@@ -5456,16 +5457,21 @@ void RenderLayer::updateFiltersAfterStyleChange()
 
 void RenderLayer::updateLayerScrollableArea()
 {
-    if (!is<RenderBox>(renderer()) || !downcast<RenderBox>(renderer()).requiresLayerWithScrollableArea()) {
-        bool hadScrollableArea = scrollableArea();
-        clearLayerScrollableArea();
+    bool hasScrollableArea = scrollableArea();
+    bool needsScrollableArea = is<RenderBox>(renderer()) && downcast<RenderBox>(renderer()).requiresLayerWithScrollableArea();
 
-        if (hadScrollableArea && renderer().settings().asyncOverflowScrollingEnabled())
-            setNeedsCompositingConfigurationUpdate();
+    if (needsScrollableArea == hasScrollableArea)
         return;
+
+    if (needsScrollableArea)
+        ensureLayerScrollableArea();
+    else {
+        clearLayerScrollableArea();
+        if (renderer().settings().asyncOverflowScrollingEnabled())
+            setNeedsCompositingConfigurationUpdate();
     }
 
-    ensureLayerScrollableArea();
+    InspectorInstrumentation::didAddOrRemoveScrollbars(m_renderer);
 }
 
 void RenderLayer::updateFilterPaintingStrategy()
