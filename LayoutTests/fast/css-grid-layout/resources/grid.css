@@ -320,10 +320,6 @@
     writing-mode: horizontal-tb;
     -webkit-writing-mode: horizontal-tb;
 }
-.horizontalBT {
-    writing-mode: horizontal-bt;
-    -webkit-writing-mode: horizontal-bt;
-}
 .directionRTL {
     direction: rtl;
 }

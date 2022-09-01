@@ -2381,8 +2381,6 @@ const BorderValue& RenderStyle::borderBefore() const
     switch (writingMode()) {
     case WritingMode::TopToBottom:
         return borderTop();
-    case WritingMode::BottomToTop:
-        return borderBottom();
     case WritingMode::LeftToRight:
         return borderLeft();
     case WritingMode::RightToLeft:
@@ -2397,8 +2395,6 @@ const BorderValue& RenderStyle::borderAfter() const
     switch (writingMode()) {
     case WritingMode::TopToBottom:
         return borderBottom();
-    case WritingMode::BottomToTop:
-        return borderTop();
     case WritingMode::LeftToRight:
         return borderRight();
     case WritingMode::RightToLeft:
@@ -2427,8 +2423,6 @@ float RenderStyle::borderBeforeWidth() const
     switch (writingMode()) {
     case WritingMode::TopToBottom:
         return borderTopWidth();
-    case WritingMode::BottomToTop:
-        return borderBottomWidth();
     case WritingMode::LeftToRight:
         return borderLeftWidth();
     case WritingMode::RightToLeft:
@@ -2443,8 +2437,6 @@ float RenderStyle::borderAfterWidth() const
     switch (writingMode()) {
     case WritingMode::TopToBottom:
         return borderBottomWidth();
-    case WritingMode::BottomToTop:
-        return borderTopWidth();
     case WritingMode::LeftToRight:
         return borderRightWidth();
     case WritingMode::RightToLeft:

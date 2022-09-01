@@ -2993,22 +2993,7 @@ static bool shouldFlipBeforeAfterMargins(const RenderStyle& containingBlockStyle
 {
     ASSERT(containingBlockStyle.isHorizontalWritingMode() != childStyle->isHorizontalWritingMode());
     WritingMode childWritingMode = childStyle->writingMode();
-    bool shouldFlip = false;
-    switch (containingBlockStyle.writingMode()) {
-    case WritingMode::TopToBottom:
-        shouldFlip = (childWritingMode == WritingMode::RightToLeft);
-        break;
-    case WritingMode::BottomToTop:
-        shouldFlip = (childWritingMode == WritingMode::RightToLeft);
-        break;
-    case WritingMode::RightToLeft:
-        shouldFlip = (childWritingMode == WritingMode::BottomToTop);
-        break;
-    case WritingMode::LeftToRight:
-        shouldFlip = (childWritingMode == WritingMode::BottomToTop);
-        break;
-    }
-
+    bool shouldFlip = containingBlockStyle.writingMode() == WritingMode::TopToBottom && childWritingMode == WritingMode::RightToLeft;
     if (!containingBlockStyle.isLeftToRightDirection())
         shouldFlip = !shouldFlip;
 
@@ -5157,8 +5142,6 @@ LayoutRect RenderBox::visualOverflowRectForPropagation(const RenderStyle* parent
     // in a particular axis, then we have to flip the rect along that axis.
     if (style().writingMode() == WritingMode::RightToLeft || parentStyle->writingMode() == WritingMode::RightToLeft)
         rect.setX(width() - rect.maxX());
-    else if (style().writingMode() == WritingMode::BottomToTop || parentStyle->writingMode() == WritingMode::BottomToTop)
-        rect.setY(height() - rect.maxY());
 
     return rect;
 }
@@ -5225,8 +5208,6 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parent
     // in a particular axis, then we have to flip the rect along that axis.
     if (style().writingMode() == WritingMode::RightToLeft || parentStyle->writingMode() == WritingMode::RightToLeft)
         rect.setX(width() - rect.maxX());
-    else if (style().writingMode() == WritingMode::BottomToTop || parentStyle->writingMode() == WritingMode::BottomToTop)
-        rect.setY(height() - rect.maxY());
 
     return rect;
 }
@@ -5234,8 +5215,8 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parent
 LayoutRect RenderBox::flippedClientBoxRect() const
 {
     // Because of the special coordinate system used for overflow rectangles (not quite logical, not
-    // quite physical), we need to flip the block progression coordinate in vertical-rl and
-    // horizontal-bt writing modes. Apart from that, this method does the same as clientBoxRect().
+    // quite physical), we need to flip the block progression coordinate in vertical-rl
+    // writing mode. Apart from that, this method does the same as clientBoxRect().
 
     LayoutUnit left = borderLeft();
     LayoutUnit top = borderTop();
@@ -5243,7 +5224,7 @@ LayoutRect RenderBox::flippedClientBoxRect() const
     LayoutUnit bottom = borderBottom();
     // Calculate physical padding box.
     LayoutRect rect(left, top, width() - left - right, height() - top - bottom);
-    // Flip block progression axis if writing mode is vertical-rl or horizontal-bt.
+    // Flip block progression axis if writing mode is vertical-rl.
     flipForWritingMode(rect);
     // Subtract space occupied by scrollbars. They are at their physical edge in this coordinate
     // system, so order is important here: first flip, then subtract scrollbars.

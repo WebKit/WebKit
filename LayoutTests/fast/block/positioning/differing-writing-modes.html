@@ -3,7 +3,6 @@
 <title>Differing writing modes test for positioned elements and their containing blocks</title>
 <style>
 .htb { -webkit-writing-mode: horizontal-tb }
-.hbt { -webkit-writing-mode: horizontal-bt }
 .vlr { -webkit-writing-mode: vertical-lr }
 .vrl { -webkit-writing-mode: vertical-rl }
 
@@ -34,84 +33,54 @@ The test boxes:<br>
     <div class="child htb tl"></div>
     <div class="child vlr tr"></div>
     <div class="child vrl bl"></div>
-    <div class="child hbt br"></div>
 </div>
 
 <div class="container vlr">
     <div class="child htb tl"></div>
     <div class="child vlr tr"></div>
     <div class="child vrl bl"></div>
-    <div class="child hbt br"></div>
-</div>
-
-<div class="container hbt">
-    <div class="child htb tl"></div>
-    <div class="child vlr tr"></div>
-    <div class="child vrl bl"></div>
-    <div class="child hbt br"></div>
 </div>
 
 <div class="container vrl">
     <div class="child htb tl"></div>
     <div class="child vlr tr"></div>
     <div class="child vrl bl"></div>
-    <div class="child hbt br"></div>
 </div><br>
 
 <div class="container htb">
     <div class="child htb tr"></div>
     <div class="child vlr bl"></div>
     <div class="child vrl br"></div>
-    <div class="child hbt tl"></div>
 </div>
 
 <div class="container vlr">
     <div class="child htb tr"></div>
     <div class="child vlr bl"></div>
     <div class="child vrl br"></div>
-    <div class="child hbt tl"></div>
-</div>
-
-<div class="container hbt">
-    <div class="child htb tr"></div>
-    <div class="child vlr bl"></div>
-    <div class="child vrl br"></div>
-    <div class="child hbt tl"></div>
 </div>
 
 <div class="container vrl">
     <div class="child htb tr"></div>
     <div class="child vlr bl"></div>
     <div class="child vrl br"></div>
-    <div class="child hbt tl"></div>
 </div><br>
 
 <div class="container htb">
     <div class="child htb bl"></div>
     <div class="child vlr br"></div>
     <div class="child vrl tl"></div>
-    <div class="child hbt tr"></div>
 </div>
 
 <div class="container vlr">
     <div class="child htb bl"></div>
     <div class="child vlr br"></div>
     <div class="child vrl tl"></div>
-    <div class="child hbt tr"></div>
-</div>
-
-<div class="container hbt">
-    <div class="child htb bl"></div>
-    <div class="child vlr br"></div>
-    <div class="child vrl tl"></div>
-    <div class="child hbt tr"></div>
 </div>
 
 <div class="container vrl">
     <div class="child htb bl"></div>
     <div class="child vlr br"></div>
     <div class="child vrl tl"></div>
-    <div class="child hbt tr"></div>
 </div><br>
 
 <div class="container htb">
@@ -125,21 +94,12 @@ The test boxes:<br>
     <div class="child htb br"></div>
     <div class="child vlr tl"></div>
     <div class="child vrl tr"></div>
-    <div class="child hbt bl"></div>
-</div>
-
-<div class="container hbt">
-    <div class="child htb br"></div>
-    <div class="child vlr tl"></div>
-    <div class="child vrl tr"></div>
-    <div class="child hbt bl"></div>
 </div>
 
 <div class="container vrl">
     <div class="child htb br"></div>
     <div class="child vlr tl"></div>
     <div class="child vrl tr"></div>
-    <div class="child hbt bl"></div>
 </div>
 
 </body>

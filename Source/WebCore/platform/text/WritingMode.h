@@ -38,7 +38,6 @@ namespace WebCore {
 
 enum class WritingMode : uint8_t {
     TopToBottom = 0, // horizontal-tb
-    BottomToTop = 1, // horizontal-bt
     LeftToRight = 2, // vertical-lr
     RightToLeft = 3, // vertical-rl
 };
@@ -53,8 +52,6 @@ constexpr unsigned makeTextFlowInitalizer(WritingMode writingMode, TextDirection
 enum TextFlow {
     InlineEastBlockSouth = makeTextFlowInitalizer(WritingMode::TopToBottom, TextDirection::LTR),
     InlineWestBlockSouth = makeTextFlowInitalizer(WritingMode::TopToBottom, TextDirection::RTL),
-    InlineEastBlockNorth = makeTextFlowInitalizer(WritingMode::BottomToTop, TextDirection::LTR),
-    InlineWestBlockNorth = makeTextFlowInitalizer(WritingMode::BottomToTop, TextDirection::RTL),
     InlineSouthBlockEast = makeTextFlowInitalizer(WritingMode::LeftToRight, TextDirection::LTR),
     InlineSouthBlockWest = makeTextFlowInitalizer(WritingMode::LeftToRight, TextDirection::RTL),
     InlineNorthBlockEast = makeTextFlowInitalizer(WritingMode::RightToLeft, TextDirection::LTR),
@@ -67,8 +64,8 @@ constexpr inline TextFlow makeTextFlow(WritingMode writingMode, TextDirection di
 }
 
 constexpr unsigned TextFlowReversedMask = 1;
-constexpr unsigned TextFlowFlippedMask = 2;
-constexpr unsigned TextFlowVerticalMask = 4;
+constexpr unsigned TextFlowFlippedMask = 1 << 1;
+constexpr unsigned TextFlowVerticalMask = 1 << 2;
 
 constexpr inline bool isReversedTextFlow(TextFlow textflow)
 {
@@ -96,19 +93,19 @@ constexpr inline bool isVerticalWritingMode(WritingMode writingMode)
     return isVerticalTextFlow(makeTextFlow(writingMode, TextDirection::LTR));
 }
 
-// Block progression increases in the opposite direction to normal; modes vertical-rl or horizontal-bt.
+// Block progression increases in the opposite direction to normal; mode vertical-rl
 constexpr inline bool isFlippedWritingMode(WritingMode writingMode)
 {
     return isFlippedTextFlow(makeTextFlow(writingMode, TextDirection::LTR));
 }
 
-// Lines have horizontal orientation; modes horizontal-tb or horizontal-bt.
+// Lines have horizontal orientation; modes horizontal-tb.
 constexpr inline bool isHorizontalWritingMode(WritingMode writingMode)
 {
     return !isVerticalWritingMode(writingMode);
 }
 
-// Bottom of the line occurs earlier in the block; modes vertical-lr or horizontal-bt.
+// Bottom of the line occurs earlier in the block; modes vertical-lr.
 constexpr inline bool isFlippedLinesWritingMode(WritingMode writingMode)
 {
     return isFlippedLinesTextFlow(makeTextFlow(writingMode, TextDirection::LTR));

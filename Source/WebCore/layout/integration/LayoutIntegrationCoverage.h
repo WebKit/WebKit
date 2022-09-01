@@ -54,7 +54,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 14,
     // Unused                                    = 1LLU  << 15,
     // Unused                                    = 1LLU  << 16,
-    FlowHasUnsupportedWritingMode                = 1LLU  << 17,
+    // Unused                                    = 1LLU  << 17,
     // Unused                                    = 1LLU  << 18,
     // Unused                                    = 1LLU  << 19,
     FlowHasLineAlignEdges                        = 1LLU  << 20,

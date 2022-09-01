@@ -854,7 +854,7 @@ inline void LegacyInlineFlowBox::addBorderOutsetVisualOverflow(LayoutRect& logic
     LayoutUnit borderOutsetLogicalRight = borderOutsets.end(lineStyle.writingMode());
 
     // Similar to how glyph overflow works, if our lines are flipped, then it's actually the opposite border that applies, since
-    // the line is "upside down" in terms of block coordinates. vertical-rl and horizontal-bt are the flipped line modes.
+    // the line is "upside down" in terms of block coordinates. vertical-rl is the flipped line mode.
     LayoutUnit outsetLogicalTop = lineStyle.isFlippedLinesWritingMode() ? borderOutsetLogicalBottom : borderOutsetLogicalTop;
     LayoutUnit outsetLogicalBottom = lineStyle.isFlippedLinesWritingMode() ? borderOutsetLogicalTop : borderOutsetLogicalBottom;
 

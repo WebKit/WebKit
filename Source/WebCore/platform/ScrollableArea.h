@@ -438,8 +438,6 @@ private:
     // writing-mode / direction     scrollOrigin.x() set    scrollOrigin.y() set
     // horizontal-tb / ltr          NO                      NO
     // horizontal-tb / rtl          YES                     NO
-    // horizontal-bt / ltr          NO                      YES
-    // horizontal-bt / rtl          YES                     YES
     // vertical-lr / ltr            NO                      NO
     // vertical-lr / rtl            NO                      YES
     // vertical-rl / ltr            YES                     NO

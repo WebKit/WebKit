@@ -106,9 +106,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FloatIsShapeOutside:
         stream << "float has shape";
         break;
-    case AvoidanceReason::FlowHasUnsupportedWritingMode:
-        stream << "unsupported writing mode (vertical-rl/horizontal-bt";
-        break;
     case AvoidanceReason::FlowHasLineAlignEdges:
         stream << "-webkit-line-align edges";
         break;
@@ -292,8 +289,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
 {
     auto& style = renderer.style();
     OptionSet<AvoidanceReason> reasons;
-    if (style.writingMode() == WritingMode::BottomToTop)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedWritingMode, reasons, includeReasons);
     if (style.styleType() == PseudoId::FirstLetter && (!style.initialLetter().isEmpty() || style.initialLetterDrop() || style.initialLetterHeight()))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasInitialLetter, reasons, includeReasons);
     // These are non-standard properties.

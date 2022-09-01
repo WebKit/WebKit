@@ -60,19 +60,6 @@
     checkElementAtPoint(51, 101, "2-1-2");
     checkElementAtPoint(101, 101, "2-1-3");
 
-    log("\nTesting horizontal-bt:");
-    style.webkitWritingMode = "horizontal-bt";
-    checkElementAtPoint(1, 101, "c");
-    checkElementAtPoint(1, 51, "1-1-1");
-    checkElementAtPoint(51, 51, "1-1-2");
-    checkElementAtPoint(101, 51, "1-1-3");
-    checkElementAtPoint(1, 26, "1-2-1");
-    checkElementAtPoint(51, 26, "1-2-2");
-    checkElementAtPoint(101, 26, "1-2-3");
-    checkElementAtPoint(1, 1, "2-1-1");
-    checkElementAtPoint(51, 1, "2-1-2");
-    checkElementAtPoint(101, 1, "2-1-3");
-
     log("\nTesting vertical-lr:");
     style.webkitWritingMode = "vertical-lr";
     checkElementAtPoint(1, 1, "c");

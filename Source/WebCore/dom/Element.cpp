@@ -948,9 +948,7 @@ inline ScrollAlignment toScrollAlignmentForInlineDirection(std::optional<ScrollL
     case ScrollLogicalPosition::Start: {
         switch (writingMode) {
         case WritingMode::TopToBottom:
-        case WritingMode::BottomToTop: {
             return isLTR ? ScrollAlignment::alignLeftAlways : ScrollAlignment::alignRightAlways;
-        }
         case WritingMode::LeftToRight:
         case WritingMode::RightToLeft: {
             return isLTR ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignBottomAlways;
@@ -965,9 +963,7 @@ inline ScrollAlignment toScrollAlignmentForInlineDirection(std::optional<ScrollL
     case ScrollLogicalPosition::End: {
         switch (writingMode) {
         case WritingMode::TopToBottom:
-        case WritingMode::BottomToTop: {
             return isLTR ? ScrollAlignment::alignRightAlways : ScrollAlignment::alignLeftAlways;
-        }
         case WritingMode::LeftToRight:
         case WritingMode::RightToLeft: {
             return isLTR ? ScrollAlignment::alignBottomAlways : ScrollAlignment::alignTopAlways;
@@ -992,8 +988,6 @@ inline ScrollAlignment toScrollAlignmentForBlockDirection(std::optional<ScrollLo
         switch (writingMode) {
         case WritingMode::TopToBottom:
             return ScrollAlignment::alignTopAlways;
-        case WritingMode::BottomToTop:
-            return ScrollAlignment::alignBottomAlways;
         case WritingMode::LeftToRight:
             return ScrollAlignment::alignLeftAlways;
         case WritingMode::RightToLeft:
@@ -1009,8 +1003,6 @@ inline ScrollAlignment toScrollAlignmentForBlockDirection(std::optional<ScrollLo
         switch (writingMode) {
         case WritingMode::TopToBottom:
             return ScrollAlignment::alignBottomAlways;
-        case WritingMode::BottomToTop:
-            return ScrollAlignment::alignTopAlways;
         case WritingMode::LeftToRight:
             return ScrollAlignment::alignRightAlways;
         case WritingMode::RightToLeft:

@@ -1128,10 +1128,6 @@
                 {
                     "value": "tb",
                     "status": "deprecated"
-                },
-                {
-                    "value": "horizontal-bt",
-                    "status": "non-standard"
                 }
             ],
             "codegen-properties": {

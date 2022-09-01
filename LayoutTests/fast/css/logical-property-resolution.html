@@ -13,10 +13,6 @@
   -webkit-writing-mode: horizontal-tb;
 }
 
-.bt-block {
-  -webkit-writing-mode: horizontal-bt
-}
-
 .lr-block {
   -webkit-writing-mode: vertical-lr
 }
@@ -86,11 +82,9 @@ function dumpBlockProperties()
 </head>
 <body onload="dumpBlockProperties()">
 <div class="ltr-text tb-block test"></div>
-<div class="ltr-text bt-block test"></div>
 <div class="ltr-text lr-block test"></div>
 <div class="ltr-text rl-block test"></div>
 <div class="rtl-text tb-block test"></div>
-<div class="rtl-text bt-block test"></div>
 <div class="rtl-text lr-block test"></div>
 <div class="rtl-text rl-block test"></div>
 <p style="clear:both" id="result"></p>

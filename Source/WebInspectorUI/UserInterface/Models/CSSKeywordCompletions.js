@@ -1154,7 +1154,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "all", "auto", "text",
     ],
     "-webkit-writing-mode": [
-        "lr", "rl", "tb", "lr-tb", "rl-tb", "tb-rl", "horizontal-tb", "vertical-rl", "vertical-lr", "horizontal-bt",
+        "lr", "rl", "tb", "lr-tb", "rl-tb", "tb-rl", "horizontal-tb", "vertical-rl", "vertical-lr",
     ],
     "alignment-baseline": [
         "baseline", "middle", "auto", "alphabetic", "before-edge", "after-edge", "central", "text-before-edge", "text-after-edge", "ideographic", "hanging", "mathematical",
@@ -1409,6 +1409,6 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "normal", "break-word",
     ],
     "writing-mode": [
-        "lr", "rl", "tb", "lr-tb", "rl-tb", "tb-rl", "horizontal-tb", "vertical-rl", "vertical-lr", "horizontal-bt",
+        "lr", "rl", "tb", "lr-tb", "rl-tb", "tb-rl", "horizontal-tb", "vertical-rl", "vertical-lr",
     ],
 };
