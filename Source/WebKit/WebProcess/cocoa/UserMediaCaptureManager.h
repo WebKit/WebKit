@@ -126,6 +126,8 @@ private:
     void sourceMutedChanged(WebCore::RealtimeMediaSourceIdentifier, bool muted, bool interrupted);
 
     void sourceSettingsChanged(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);
+    void sourceConfigurationChanged(WebCore::RealtimeMediaSourceIdentifier, String&&, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&);
+
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);
     void applyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier, String&&, String&&);
 

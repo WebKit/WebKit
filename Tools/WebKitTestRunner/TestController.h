@@ -320,6 +320,7 @@ public:
     void setMockCameraOrientation(uint64_t);
     bool isMockRealtimeMediaSourceCenterEnabled() const;
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
+    void triggerMockMicrophoneConfigurationChange();
     bool hasAppBoundSession();
 
     void injectUserScript(WKStringRef);
