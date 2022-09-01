@@ -35,6 +35,7 @@
 #include "ReportingScope.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 

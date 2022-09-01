@@ -30,6 +30,7 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/WeakPtr.h>
 
 namespace WTF {
 class String;

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JITStubRoutine.h"
 
+#include "AccessCase.h"
+#include "CallLinkInfo.h"
 #include "GCAwareJITStubRoutine.h"
 #include "PolymorphicCallStubRoutine.h"
 

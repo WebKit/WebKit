@@ -28,8 +28,11 @@
 
 #include "ContextDestructionObserver.h"
 #include "HeaderFieldTokenizer.h"
+#include "Report.h"
 #include "ReportingObserver.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {

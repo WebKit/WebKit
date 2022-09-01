@@ -27,6 +27,9 @@
 #include "config.h"
 #include "QualifiedNameCache.h"
 
+#include "ElementName.h"
+#include "Namespace.h"
+
 namespace WebCore {
 
 struct QNameComponentsTranslator {

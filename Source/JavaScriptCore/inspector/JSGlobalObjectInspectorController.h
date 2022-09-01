@@ -28,6 +28,7 @@
 #include "InspectorAgentRegistry.h"
 #include "InspectorEnvironment.h"
 #include "InspectorFrontendRouter.h"
+#include "Strong.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>

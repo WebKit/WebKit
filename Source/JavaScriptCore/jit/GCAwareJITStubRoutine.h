@@ -27,6 +27,7 @@
 
 #if ENABLE(JIT)
 
+#include "DFGCodeOriginPool.h"
 #include "JITStubRoutine.h"
 #include "JSObject.h"
 #include "WriteBarrier.h"
@@ -35,9 +36,6 @@
 #include <wtf/Vector.h>
 
 namespace JSC {
-namespace DFG {
-class CodeOriginPool;
-}
 
 class AccessCase;
 class CallLinkInfo;
