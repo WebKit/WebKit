@@ -540,7 +540,7 @@ CommitDate: {time_c}
             'origin': 'git@github.example.com:WebKit/WebKit.git',
             'fork': 'git@github.example.com:Contributor/WebKit.git',
             'security': 'git@github.example.com:WebKit/WebKit-security.git',
-            'fork-security': 'git@github.example.com:Contributor/WebKit-security.git',
+            'security-fork': 'git@github.example.com:Contributor/WebKit-security.git',
         }), OutputCapture():
             project_config = os.path.join(self.path, 'metadata', local.Git.GIT_CONFIG_EXTENSION)
             os.mkdir(os.path.dirname(project_config))
@@ -550,6 +550,10 @@ CommitDate: {time_c}
                 f.write('    security = git@github.example.com:WebKit/WebKit-security.git\n')
 
             self.assertEqual(local.Git(self.path).source_remotes(), ['origin', 'security'])
+            self.assertEqual(
+                local.Git(self.path).source_remotes(personal=True),
+                ['origin', 'security', 'fork', 'security-fork'],
+            )
 
     def test_files_changed(self):
         with mocks.local.Git(self.path), OutputCapture():

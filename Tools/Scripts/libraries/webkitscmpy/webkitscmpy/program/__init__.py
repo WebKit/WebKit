@@ -45,6 +45,7 @@ from .pull_request import PullRequest
 from .revert import Revert
 from .setup_git_svn import SetupGitSvn
 from .setup import Setup
+from .track import Track
 
 from webkitcorepy import arguments, log as webkitcorepy_log
 from webkitscmpy import local, log, remote
@@ -83,7 +84,7 @@ def main(
         Clean, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
-        Pickable, CherryPick,
+        Pickable, CherryPick, Track,
     ]
     if subversion:
         programs.append(SetupGitSvn)

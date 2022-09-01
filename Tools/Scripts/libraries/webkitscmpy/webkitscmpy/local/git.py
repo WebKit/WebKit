@@ -32,7 +32,7 @@ import time
 
 from collections import defaultdict
 
-from webkitcorepy import run, decorators, NestedFuzzyDict
+from webkitcorepy import run, decorators, NestedFuzzyDict, string_utils
 from webkitscmpy.local import Scm
 from webkitscmpy import remote, Commit, Contributor, log
 
@@ -506,7 +506,8 @@ class Git(Scm):
 
         return None
 
-    def source_remotes(self, cached=None):
+    @decorators.Memoize()
+    def source_remotes(self, cached=True, personal=False):
         candidates = [self.default_remote]
         config = self.config(cached=cached)
         for candidate in config.keys():
@@ -517,7 +518,28 @@ class Git(Scm):
                 continue
             if config.get('remote.{}.url'.format(candidate)):
                 candidates.append(candidate)
-        return candidates
+
+        personal_remotes = []
+        if personal:
+            all_remotes = list(self.branches_for(remote=None))
+            for candidate in ['fork'] + ['{}-fork'.format(og) for og in candidates]:
+                if candidate in all_remotes:
+                    personal_remotes.append(candidate)
+            usernames = []
+            rmt = self.remote()
+            for candidate in all_remotes:
+                if not candidate or '-' in candidate:
+                    continue
+                if candidate in candidates or candidate in personal_remotes:
+                    continue
+                if isinstance(rmt, remote.GitHub) and candidate == rmt.credentials(required=False)[0]:
+                    continue
+                usernames.append(candidate)
+            for username in sorted(usernames):
+                for candidate in [username] + ['{}-{}'.format(username, og) for og in candidates]:
+                    if candidate in all_remotes:
+                        personal_remotes.append(candidate)
+        return candidates + personal_remotes
 
     def _commit_count(self, native_parameter):
         revision_count = run(
@@ -550,7 +572,7 @@ class Git(Scm):
             return sorted(result[None])
         if remote is True:
             return sorted(set.union(*result.values()))
-        if isinstance(remote, str):
+        if isinstance(remote, string_utils.basestring):
             return sorted(result[remote])
         return result
 
@@ -938,6 +960,16 @@ class Git(Scm):
                 cwd=self.root_path,
             ).returncode else self.commit()
 
+        branch_remote = self.remote_for(argument)
+        if branch_remote:
+            result = run([
+                self.executable(), 'branch',
+                '--set-upstream-to' if argument in self.branches_for(remote=False) else '--track',
+                argument, '{}/{}'.format(branch_remote, argument),
+            ], capture_output=True, encoding='utf-8', cwd=self.root_path)
+            if result.returncode:
+                sys.stderr.write(result.stderr)
+
         return None if run(
             [self.executable(), 'checkout', self._to_git_ref(argument)] + log_arg + ['--'],
             cwd=self.root_path,
@@ -1075,3 +1107,20 @@ class Git(Scm):
         if output.returncode:
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
         return output.stdout.rstrip().splitlines()
+
+    def remote_for(self, argument):
+        candidates = self.source_remotes()
+        while candidates:
+            if argument not in self.branches_for(remote=candidates[-1]):
+                candidates.remove(candidates[-1])
+                continue
+            up_to_date = list(self.branches_for(hash='{}/{}'.format(candidates[-1], argument), remote=None).keys())
+            for candidate in candidates:
+                if candidate in up_to_date:
+                    return candidate
+            candidates.remove(candidates[-1])
+
+        for remote in self.source_remotes(personal=True)[len(self.source_remotes()):]:
+            if argument in self.branches_for(remote=remote):
+                return remote
+        return None
