@@ -142,7 +142,7 @@ public:
 protected:
     explicit ContainerNode(Document&, ConstructionType = CreateContainer);
 
-    friend void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode&);
+    friend void removeDetachedChildrenInContainer(ContainerNode&);
 
     void removeDetachedChildren();
     void setFirstChild(Node* child) { m_firstChild = child; }

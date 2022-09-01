@@ -178,9 +178,8 @@ RemovedSubtreeObservability notifyChildNodeRemoved(ContainerNode& oldParentOfRem
     return notifyNodeRemovedFromTree(oldParentOfRemovedTree, treeScopeChange, child);
 }
 
-void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode& container)
+void removeDetachedChildrenInContainer(ContainerNode& container)
 {
-    // We have to tell all children that their parent has died.
     RefPtr<Node> next = nullptr;
     for (RefPtr<Node> node = container.firstChild(); node; node = next) {
         ASSERT(!node->m_deletionHasBegun);
@@ -192,54 +191,13 @@ void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode& conta
         if (next)
             next->setPreviousSibling(nullptr);
 
-        if (!node->refCount()) {
-#ifndef NDEBUG
-            node->m_deletionHasBegun = true;
-#endif
-            // Add the node to the list of nodes to be deleted.
-            // Reuse the nextSibling pointer for this purpose.
-            if (tail)
-                tail->setNextSibling(node.get());
-            else
-                head = node.get();
-
-            tail = node.get();
-        } else {
-            node->setTreeScopeRecursively(container.document());
-            if (node->isInTreeScope())
-                notifyChildNodeRemoved(container, *node);
-            ASSERT_WITH_SECURITY_IMPLICATION(!node->isInTreeScope());
-        }
+        node->setTreeScopeRecursively(container.document());
+        if (node->isInTreeScope())
+            notifyChildNodeRemoved(container, *node);
+        ASSERT_WITH_SECURITY_IMPLICATION(!node->isInTreeScope());
     }
 
     container.setLastChild(nullptr);
-}
-
-void removeDetachedChildrenInContainer(ContainerNode& container)
-{
-    // List of nodes to be deleted.
-    Node* head = nullptr;
-    Node* tail = nullptr;
-
-    addChildNodesToDeletionQueue(head, tail, container);
-
-    Node* node;
-    Node* next;
-    while ((node = head)) {
-        ASSERT(node->m_deletionHasBegun);
-
-        next = node->nextSibling();
-        node->setNextSibling(nullptr);
-
-        head = next;
-        if (!next)
-            tail = nullptr;
-
-        if (is<ContainerNode>(*node))
-            addChildNodesToDeletionQueue(head, tail, downcast<ContainerNode>(*node));
-        
-        delete node;
-    }
 }
 
 #ifndef NDEBUG
