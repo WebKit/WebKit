@@ -948,6 +948,8 @@ webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/xhr/event-readysta
 imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_server.html [ Pass Failure ]
 imported/w3c/web-platform-tests/navigation-timing/nav2_test_attributes_values.html [ Pass Failure ]
 
+webkit.org/b/244676 [ Debug ] imported/w3c/web-platform-tests/navigation-timing/dom_interactive_media_document.html [ Pass Crash ]
+
 webkit.org/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
 
 # rdar://problem/27723718
