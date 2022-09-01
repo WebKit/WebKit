@@ -243,6 +243,10 @@ class Events(service.BuildbotService):
             print('Not reporting step started to GitHub')
             return
 
+        if 'WebKit/WebKit' in repository:
+            # Do not report status directly to GitHub for WebKit/WebKit, since we have status-bubbles for that.
+            return
+
         builder = yield self.master.db.builders.getBuilder(build.get('builderid'))
 
         data_to_send = dict(
