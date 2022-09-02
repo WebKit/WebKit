@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "AudioSessionRoutingArbitratorProxy.h"
+#import "WKNSData.h"
 #import "WKWebViewMac.h"
 #import "_WKFrameHandleInternal.h"
 #import "WebPageProxy.h"

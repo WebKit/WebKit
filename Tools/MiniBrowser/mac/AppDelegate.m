@@ -38,7 +38,6 @@
 #import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKInternalDebugFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
-#import <WebKit/_WKUserContentExtensionStore.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
 enum {

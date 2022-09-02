@@ -28,6 +28,9 @@
 #import "config.h"
 #import "UIProcessLogInitialization.h"
 
+#import <wtf/NeverDestroyed.h>
+#import <wtf/text/WTFString.h>
+
 #if PLATFORM(COCOA)
 
 namespace WebKit {

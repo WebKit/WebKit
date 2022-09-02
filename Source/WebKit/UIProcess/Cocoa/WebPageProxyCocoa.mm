@@ -87,6 +87,7 @@ SOFT_LINK_CLASS_OPTIONAL(Synapse, SYNotesActivationObserver)
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/RenderThemeIOS.h>
+#import "UIKitSPI.h"
 #else
 #import <WebCore/RenderThemeMac.h>
 #endif

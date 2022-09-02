@@ -39,8 +39,6 @@
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKContentRuleListAction.h>
-#import <WebKit/_WKUserContentExtensionStore.h>
-#import <WebKit/_WKUserContentFilter.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -531,44 +529,6 @@ TEST_F(WKContentRuleListStoreTest, UnsafeMMap)
     TestWebKitAPI::Util::run(&doneRemoving);
 }
 #endif // PLATFORM(IOS_FAMILY)
-
-TEST_F(WKContentRuleListStoreTest, _WKUserContentExtensionStoreSelectors)
-{
-    [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
-    NSString *identifier = @"TestOldSPIMixup";
-
-    __block bool doneCompiling = false;
-    [(_WKUserContentExtensionStore *)[WKContentRuleListStore defaultStore] compileContentExtensionForIdentifier:identifier encodedContentExtension:basicFilter completionHandler:^(_WKUserContentFilter *filter, NSError *error) {
-        EXPECT_NULL(error);
-        EXPECT_NOT_NULL(filter);
-        doneCompiling = true;
-    }];
-    TestWebKitAPI::Util::run(&doneCompiling);
-
-    __block bool doneLookingUp = false;
-    [(_WKUserContentExtensionStore *)[WKContentRuleListStore defaultStore] lookupContentExtensionForIdentifier:identifier completionHandler:^(_WKUserContentFilter *filter, NSError *error) {
-        EXPECT_NULL(error);
-        EXPECT_NOT_NULL(filter);
-        doneLookingUp = true;
-    }];
-    TestWebKitAPI::Util::run(&doneLookingUp);
-
-    __block bool domeRemoving = false;
-    [(_WKUserContentExtensionStore *)[WKContentRuleListStore defaultStore] removeContentExtensionForIdentifier:identifier completionHandler:^(NSError *error) {
-        EXPECT_NULL(error);
-        domeRemoving = true;
-    }];
-    TestWebKitAPI::Util::run(&domeRemoving);
-
-    doneLookingUp = false;
-    [(_WKUserContentExtensionStore *)[WKContentRuleListStore defaultStore] lookupContentExtensionForIdentifier:identifier completionHandler:^(_WKUserContentFilter *filter, NSError *error) {
-        EXPECT_WK_STREQ(error.domain, WKErrorDomain);
-        EXPECT_EQ(error.code, WKErrorContentRuleListStoreLookUpFailed);
-        EXPECT_NULL(filter);
-        doneLookingUp = true;
-    }];
-    TestWebKitAPI::Util::run(&doneLookingUp);
-}
 
 static RetainPtr<WKContentRuleList> compileContentRuleList(const char* json, NSString *identifier = @"testidentifier")
 {

@@ -37,7 +37,9 @@ namespace WebKit {
 using namespace fido;
 
 namespace {
-inline bool compareVersion(NSData *data, const uint8_t version[], size_t versionSize)
+
+// FIXME: This is duplicate code with compareVersion in NfcConnection.mm.
+inline bool compareCcidVersion(NSData *data, const uint8_t version[], size_t versionSize)
 {
     if (!data)
         return false;
@@ -85,8 +87,8 @@ void CcidConnection::detectContactless()
 void CcidConnection::trySelectFidoApplet()
 {
     [m_smartCard transmitRequest:adoptNS([[NSData alloc] initWithBytes:kCtapNfcAppletSelectionCommand length:sizeof(kCtapNfcAppletSelectionCommand)]).get() reply:makeBlockPtr([this](NSData * _Nullable versionData, NSError * _Nullable error) {
-        if (compareVersion(versionData, kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f))
-            || compareVersion(versionData, kCtapNfcAppletSelectionCtap, sizeof(kCtapNfcAppletSelectionCtap))) {
+        if (compareCcidVersion(versionData, kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f))
+            || compareCcidVersion(versionData, kCtapNfcAppletSelectionCtap, sizeof(kCtapNfcAppletSelectionCtap))) {
             callOnMainRunLoop([this] () mutable {
                 if (m_service)
                     m_service->didConnectTag();
@@ -94,7 +96,7 @@ void CcidConnection::trySelectFidoApplet()
             return;
         }
             [m_smartCard transmitRequest:adoptNS([[NSData alloc] initWithBytes:kCtapNfcU2fVersionCommand length:sizeof(kCtapNfcU2fVersionCommand)]).get() reply:makeBlockPtr([this](NSData * _Nullable versionData, NSError * _Nullable error) {
-                if (compareVersion(versionData, kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f))) {
+                if (compareCcidVersion(versionData, kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f))) {
                     callOnMainRunLoop([this] () mutable {
                         if (m_service)
                             m_service->didConnectTag();

@@ -315,7 +315,6 @@ Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm
 Tests/WebKitCocoa/WebsitePolicies.mm
 Tests/WebKitCocoa/YoutubeReplacementPlugin.mm
 Tests/WebKitCocoa/_WKInputDelegate.mm
-Tests/WebKitCocoa/_WKUserContentExtensionStore.mm
 Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm
 Tests/WebKitCocoa/iOSMouseSupport.mm
 Tests/WebKitCocoa/iOSStylusSupport.mm
