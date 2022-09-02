@@ -26,7 +26,7 @@ input {
 const input = document.getElementById("input");
 jsTestIsAsync = true;
 clicked = false;
-selectionChanged = false;
+selectionEverChangedToWord = false;
 
 description("This test verifies that tapping in a misspelled word selects the misspelled word, and does not cause " +
     "the selection to collapse after a click event is dispatched. To manually test, tap the input field to bring up " +
@@ -37,10 +37,13 @@ description("This test verifies that tapping in a misspelled word selects the mi
     await UIHelper.activateAndWaitForInputSessionAt(40, 100);
 
     input.addEventListener("click", () => clicked = true);
-    document.addEventListener("selectionchange", () => selectionChanged = true);
+    document.addEventListener("selectionchange", () => {
+        if (input.selectionStart == 0 && input.selectionEnd == 7)
+            selectionEverChangedToWord = true;
+    });
 
     await UIHelper.tapAt(300, 100);
-    shouldBecomeEqual("clicked && selectionChanged", "true", () => {
+    shouldBecomeEqual("clicked && selectionEverChangedToWord", "true", () => {
         shouldBe("input.selectionStart", "0");
         shouldBe("input.selectionEnd", "7");
         input.remove();
