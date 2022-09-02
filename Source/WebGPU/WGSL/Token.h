@@ -81,6 +81,8 @@ enum class TokenType: uint32_t {
     Equal,
     GT,
     LT,
+    Minus,
+    MinusMinus,
     Period,
     ParenLeft,
     ParenRight,

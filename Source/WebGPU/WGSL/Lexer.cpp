@@ -102,6 +102,11 @@ Token Lexer<T>::lex()
             shift();
             return makeToken(TokenType::Arrow);
         }
+        if (m_current == '-') {
+            shift();
+            return makeToken(TokenType::MinusMinus);
+        }
+        return makeToken(TokenType::Minus);
         break;
     case '0': {
         shift();

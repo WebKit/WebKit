@@ -107,6 +107,10 @@ String toString(TokenType type)
         return ">"_s;
     case TokenType::LT:
         return "<"_s;
+    case TokenType::Minus:
+        return "-"_s;
+    case TokenType::MinusMinus:
+        return "--"_s;
     case TokenType::Period:
         return "."_s;
     case TokenType::ParenLeft:

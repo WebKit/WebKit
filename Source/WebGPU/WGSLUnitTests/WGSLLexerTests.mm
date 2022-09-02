@@ -65,6 +65,33 @@
     checkSingleLiteral("42e-a"_s, WGSL::TokenType::IntegerLiteral, 42);
 }
 
+- (void) testLexerOfSpecialTokens {
+    auto checkSingleToken = [] (const String& string, WGSL::TokenType type) {
+        WGSL::Lexer<LChar> lexer(string);
+        WGSL::Token result = lexer.lex();
+        XCTAssertEqual(result.m_type, type);
+        return result;
+    };
+
+    checkSingleToken("->"_s, WGSL::TokenType::Arrow);
+    checkSingleToken("@"_s,  WGSL::TokenType::Attribute);
+    checkSingleToken("{"_s,  WGSL::TokenType::BraceLeft);
+    checkSingleToken("}"_s,  WGSL::TokenType::BraceRight);
+    checkSingleToken("["_s,  WGSL::TokenType::BracketLeft);
+    checkSingleToken("]"_s,  WGSL::TokenType::BracketRight);
+    checkSingleToken(":"_s,  WGSL::TokenType::Colon);
+    checkSingleToken(","_s,  WGSL::TokenType::Comma);
+    checkSingleToken("="_s,  WGSL::TokenType::Equal);
+    checkSingleToken(">"_s,  WGSL::TokenType::GT);
+    checkSingleToken("<"_s,  WGSL::TokenType::LT);
+    checkSingleToken("-"_s,  WGSL::TokenType::Minus);
+    checkSingleToken("--"_s, WGSL::TokenType::MinusMinus);
+    checkSingleToken("."_s,  WGSL::TokenType::Period);
+    checkSingleToken("("_s,  WGSL::TokenType::ParenLeft);
+    checkSingleToken(")"_s,  WGSL::TokenType::ParenRight);
+    checkSingleToken(";"_s,  WGSL::TokenType::Semicolon);
+}
+
 - (void) testLexerOnComputeShader {
     WGSL::Lexer<LChar> lexer(
         "@block struct B {\n"
@@ -283,6 +310,157 @@
     ++lineNumber;
     checkNextToken(WGSL::TokenType::BraceRight);
     checkNextToken(WGSL::TokenType::EndOfFile);
+}
+
+- (void) testLexerOnTriangleVert {
+    WGSL::Lexer<LChar> lexer(
+        "@vertex\n"
+        "fn main(\n"
+        "    @builtin(vertex_index) VertexIndex : u32\n"
+        ") -> @builtin(position) vec4<f32> {\n"
+        "    var pos = array<vec2<f32>, 3>(\n"
+        "        vec2<f32>(0.0, 0.5),\n"
+        "        vec2<f32>(-0.5, -0.5),\n"
+        "        vec2<f32>(0.5, -0.5)\n"
+        "    );\n\n"
+        "    return vec4<f32>(pos[VertexIndex], 0.0, 1.0);\n"
+        "}\n"_s);
+
+    unsigned lineNumber = 0;
+    auto checkNextTokenIs = [&](WGSL::TokenType type) {
+        WGSL::Token result = lexer.lex();
+        XCTAssertEqual(result.m_type, type);
+        XCTAssertEqual(result.m_span.m_line, lineNumber);
+        return result;
+    };
+    auto checkNextTokenIsIdentifier = [&](const String& ident) {
+        WGSL::Token result = checkNextTokenIs(WGSL::TokenType::Identifier);
+        XCTAssertEqual(result.m_ident, ident);
+    };
+    auto checkNextTokenIsLiteral = [&](WGSL::TokenType type, double literalValue) {
+        WGSL::Token result = checkNextTokenIs(type);
+        XCTAssertEqual(result.m_literalValue, literalValue);
+    };
+    auto checkNextTokensAreBuiltinAttr = [&](const String& attr) {
+        checkNextTokenIs(WGSL::TokenType::Attribute);
+        checkNextTokenIsIdentifier("builtin"_s);
+        checkNextTokenIs(WGSL::TokenType::ParenLeft);
+        checkNextTokenIsIdentifier(attr);
+        checkNextTokenIs(WGSL::TokenType::ParenRight);
+    };
+
+    // @vertex
+    checkNextTokenIs(WGSL::TokenType::Attribute);
+    checkNextTokenIsIdentifier("vertex"_s);
+
+    ++lineNumber;
+    // fn main(
+    checkNextTokenIs(WGSL::TokenType::KeywordFn);
+    checkNextTokenIsIdentifier("main"_s);
+    checkNextTokenIs(WGSL::TokenType::ParenLeft);
+
+    ++lineNumber;
+    //    @builtin(vertex_index) VertexIndex : u32
+    checkNextTokensAreBuiltinAttr("vertex_index"_s);
+    checkNextTokenIsIdentifier("VertexIndex"_s);
+    checkNextTokenIs(WGSL::TokenType::Colon);
+    checkNextTokenIs(WGSL::TokenType::KeywordU32);
+
+    ++lineNumber;
+    // ) -> @builtin(position) vec4<f32> {
+    checkNextTokenIs(WGSL::TokenType::ParenRight);
+    checkNextTokenIs(WGSL::TokenType::Arrow);
+    checkNextTokensAreBuiltinAttr("position"_s);
+    checkNextTokenIsIdentifier("vec4"_s);
+    checkNextTokenIs(WGSL::TokenType::LT);
+    checkNextTokenIs(WGSL::TokenType::KeywordF32);
+    checkNextTokenIs(WGSL::TokenType::GT);
+    checkNextTokenIs(WGSL::TokenType::BraceLeft);
+
+    ++lineNumber;
+    //    var pos = array<vec2<f32>, 3>(
+    checkNextTokenIs(WGSL::TokenType::KeywordVar);
+    checkNextTokenIsIdentifier("pos"_s);
+    checkNextTokenIs(WGSL::TokenType::Equal);
+    checkNextTokenIsIdentifier("array"_s);
+    checkNextTokenIs(WGSL::TokenType::LT);
+    checkNextTokenIsIdentifier("vec2"_s);
+    checkNextTokenIs(WGSL::TokenType::LT);
+    checkNextTokenIs(WGSL::TokenType::KeywordF32);
+    checkNextTokenIs(WGSL::TokenType::GT);
+    checkNextTokenIs(WGSL::TokenType::Comma);
+    checkNextTokenIsLiteral(WGSL::TokenType::IntegerLiteral, 3);
+    checkNextTokenIs(WGSL::TokenType::GT);
+    checkNextTokenIs(WGSL::TokenType::ParenLeft);
+
+    ++lineNumber;
+    //        vec2<f32>(0.0, 0.5),
+    checkNextTokenIsIdentifier("vec2"_s);
+    checkNextTokenIs(WGSL::TokenType::LT);
+    checkNextTokenIs(WGSL::TokenType::KeywordF32);
+    checkNextTokenIs(WGSL::TokenType::GT);
+    checkNextTokenIs(WGSL::TokenType::ParenLeft);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.0);
+    checkNextTokenIs(WGSL::TokenType::Comma);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.5);
+    checkNextTokenIs(WGSL::TokenType::ParenRight);
+    checkNextTokenIs(WGSL::TokenType::Comma);
+
+    ++lineNumber;
+    //        vec2<f32>(-0.5, -0.5),
+    checkNextTokenIsIdentifier("vec2"_s);
+    checkNextTokenIs(WGSL::TokenType::LT);
+    checkNextTokenIs(WGSL::TokenType::KeywordF32);
+    checkNextTokenIs(WGSL::TokenType::GT);
+    checkNextTokenIs(WGSL::TokenType::ParenLeft);
+    checkNextTokenIs(WGSL::TokenType::Minus);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.5);
+    checkNextTokenIs(WGSL::TokenType::Comma);
+    checkNextTokenIs(WGSL::TokenType::Minus);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.5);
+    checkNextTokenIs(WGSL::TokenType::ParenRight);
+    checkNextTokenIs(WGSL::TokenType::Comma);
+
+    ++lineNumber;
+    //        vec2<f32>(0.5, -0.5)
+    checkNextTokenIsIdentifier("vec2"_s);
+    checkNextTokenIs(WGSL::TokenType::LT);
+    checkNextTokenIs(WGSL::TokenType::KeywordF32);
+    checkNextTokenIs(WGSL::TokenType::GT);
+    checkNextTokenIs(WGSL::TokenType::ParenLeft);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.5);
+    checkNextTokenIs(WGSL::TokenType::Comma);
+    checkNextTokenIs(WGSL::TokenType::Minus);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.5);
+    checkNextTokenIs(WGSL::TokenType::ParenRight);
+
+    ++lineNumber;
+    //    );
+    checkNextTokenIs(WGSL::TokenType::ParenRight);
+    checkNextTokenIs(WGSL::TokenType::Semicolon);
+
+    lineNumber += 2;
+    //    return vec4<f32>(pos[VertexIndex], 0.0, 1.0);
+    checkNextTokenIs(WGSL::TokenType::KeywordReturn);
+    checkNextTokenIsIdentifier("vec4"_s);
+    checkNextTokenIs(WGSL::TokenType::LT);
+    checkNextTokenIs(WGSL::TokenType::KeywordF32);
+    checkNextTokenIs(WGSL::TokenType::GT);
+    checkNextTokenIs(WGSL::TokenType::ParenLeft);
+    checkNextTokenIsIdentifier("pos"_s);
+    checkNextTokenIs(WGSL::TokenType::BracketLeft);
+    checkNextTokenIsIdentifier("VertexIndex"_s);
+    checkNextTokenIs(WGSL::TokenType::BracketRight);
+    checkNextTokenIs(WGSL::TokenType::Comma);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 0.0);
+    checkNextTokenIs(WGSL::TokenType::Comma);
+    checkNextTokenIsLiteral(WGSL::TokenType::DecimalFloatLiteral, 1.0);
+    checkNextTokenIs(WGSL::TokenType::ParenRight);
+    checkNextTokenIs(WGSL::TokenType::Semicolon);
+
+    ++lineNumber;
+    // }
+    checkNextTokenIs(WGSL::TokenType::BraceRight);
 }
 
 @end
