@@ -1,0 +1,14 @@
+WEBVTT
+X-TIMESTAMP-MAP=MPEGTS:900000,LOCAL:00:00:00.000
+
+STYLE
+::cue { background-color: rgba(255,0,0,0.5) !important }
+::cue() { background-color: rgba(0,0,255,0.5) !important }
+::cue(.green-background) { background-color: rgba(0, 255, 0, 1) }
+::cue(.bigger) { font-size: 48px; }
+
+1
+00:00.000 --> 00:10.000
+<c>No style</c>
+<c.green-background>Green Background</c>
+<c.bigger>Bigger</c>
