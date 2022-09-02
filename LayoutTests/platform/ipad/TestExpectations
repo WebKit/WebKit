@@ -116,3 +116,6 @@ webkit.org/b/178588 fast/css/button-height.html [ Failure ]
 webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/229656 fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
+
+webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfactory-databases-opaque-origin.html [ Pass Failure ]
+webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfactory-deleteDatabase-opaque-origin.html [ Pass Failure ]
