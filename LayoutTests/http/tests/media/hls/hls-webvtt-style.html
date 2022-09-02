@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../../media-resources/video-test.js></script>
+    <script>
+        window.addEventListener('load', async event => {
+            video = document.getElementById('video');
+            video.src = "../resources/hls/test-webvtt-style.m3u8";
+            video.play();
+            await waitFor(video.textTracks, 'addtrack');
+
+            testExpected("video.textTracks.length", "1");
+            run("video.textTracks[0].mode = 'showing'");
+
+            await waitFor(video.textTracks[0], 'cuechange');
+
+            run('textTrackContainer = window.internals.shadowRoot(video).querySelector("div[pseudo=-webkit-media-text-track-container]")');
+            run('cue = textTrackContainer.querySelector("span[pseudo=cue]")')
+
+            testExpected('getComputedStyle(cue).backgroundColor', "rgba(255, 0, 0, 0.5)");
+
+            testExpected('getComputedStyle(cue.children[0]).backgroundColor', "rgba(0, 0, 0, 0)");
+            testExpected('getComputedStyle(cue.children[1]).backgroundColor', "rgb(0, 255, 0)");
+            testExpected('getComputedStyle(cue.children[2]).fontSize', "48px");
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <video id="video" muted loop></video>
+</body>
+</html>

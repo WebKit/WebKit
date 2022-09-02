@@ -216,6 +216,7 @@ void InbandGenericTextTrack::newRegionsParsed()
 
 void InbandGenericTextTrack::newStyleSheetsParsed()
 {
+    m_styleSheets = parser().takeStyleSheets();
 }
 
 void InbandGenericTextTrack::fileFailedToParse()
