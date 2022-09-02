@@ -108,6 +108,7 @@
 #import <UIKit/UIContextMenuInteraction_ForSpringBoardOnly.h>
 #import <UIKit/UIContextMenuInteraction_ForWebKitOnly.h>
 #import <UIKit/UIContextMenuInteraction_Private.h>
+#import <UIKit/UIMenu_Private.h>
 #endif
 
 #if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
@@ -1342,6 +1343,10 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 
 #if USE(UICONTEXTMENU)
+
+typedef NS_ENUM(NSUInteger, UIMenuOptionsPrivate) {
+    UIMenuOptionsPrivateRemoveLineLimitForChildren = 1 << 6,
+};
 
 @interface UIContextMenuInteraction ()
 @property (nonatomic, readonly) UIGestureRecognizer *gestureRecognizerForFailureRelationships;
