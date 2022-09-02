@@ -19,7 +19,9 @@
   window.onload = () => {
     document.querySelector("#log").textContent = `PASS: The load event was fired`;
     clearTimeout(timeoutHandle);
-    if (window.testRunner)
-      testRunner.notifyDone();
+    setTimeout(() => {
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }, 0);
   }
 </script>
