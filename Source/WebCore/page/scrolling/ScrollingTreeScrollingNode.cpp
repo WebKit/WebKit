@@ -172,10 +172,8 @@ FloatPoint ScrollingTreeScrollingNode::maximumScrollPosition() const
 
 bool ScrollingTreeScrollingNode::eventCanScrollContents(const PlatformWheelEvent& wheelEvent) const
 {
-#if PLATFORM(GTK)
-    // In case of GTK platform the end of momentum scroll events
-    // always have a delta of 0. More information in the documentation
-    // of the API gdk_event_is_scroll_stop_event.
+#if PLATFORM(WPE) || PLATFORM(GTK)
+    // In case of GTK and WPE the end of momentum scroll events always have a delta of 0.
     if (wheelEvent.isEndOfNonMomentumScroll())
         return true;
 #endif
