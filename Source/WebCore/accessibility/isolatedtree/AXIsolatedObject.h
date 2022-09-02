@@ -47,7 +47,7 @@ class AXIsolatedTree;
 class AXIsolatedObject final : public AXCoreObject {
     friend class AXIsolatedTree;
 public:
-    static Ref<AXIsolatedObject> create(Ref<AXCoreObject>, AXIsolatedTree*);
+    static Ref<AXIsolatedObject> create(const Ref<AXCoreObject>&, AXIsolatedTree*);
     ~AXIsolatedObject();
 
     void setObjectID(AXID id) override { m_id = id; }
@@ -66,13 +66,13 @@ private:
     AXIsolatedTree* tree() const { return m_cachedTree.get(); }
 
     AXIsolatedObject() = default;
-    AXIsolatedObject(Ref<AXCoreObject>, AXIsolatedTree*);
+    AXIsolatedObject(const Ref<AXCoreObject>&, AXIsolatedTree*);
     bool isAXIsolatedObjectInstance() const override { return true; }
     AXCoreObject* associatedAXObject() const;
 
     enum class IsRoot : bool { Yes, No };
-    void initializeProperties(Ref<AXCoreObject>, IsRoot);
-    void initializePlatformProperties(Ref<const AXCoreObject>, IsRoot);
+    void initializeProperties(const Ref<AXCoreObject>&, IsRoot);
+    void initializePlatformProperties(const Ref<const AXCoreObject>&, IsRoot);
 
     void setProperty(AXPropertyName, AXPropertyValueVariant&&, bool shouldRemove = false);
     void setObjectProperty(AXPropertyName, AXCoreObject*);
