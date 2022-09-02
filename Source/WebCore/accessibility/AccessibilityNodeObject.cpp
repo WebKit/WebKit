@@ -418,11 +418,12 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Footer;
     }
 
-    // menu tags with toolbar type should have Toolbar role.
-    if (node()->hasTagName(menuTag) && equalLettersIgnoringASCIICase(getAttribute(typeAttr), "toolbar"_s))
-        return AccessibilityRole::Toolbar;
-    if (node()->hasTagName(menuTag) && !equalLettersIgnoringASCIICase(getAttribute(typeAttr), "toolbar"_s))
+    // menu tags with toolbar type should have Toolbar role and menu tags without toolbar should have role list
+    if (node()->hasTagName(menuTag)) {
+        if (equalLettersIgnoringASCIICase(getAttribute(typeAttr), "toolbar"_s))
+            return AccessibilityRole::Toolbar;
         return AccessibilityRole::List;
+    }
     if (node()->hasTagName(timeTag))
         return AccessibilityRole::Time;
     if (node()->hasTagName(hrTag))
