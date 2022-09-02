@@ -418,7 +418,8 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Footer;
     }
 
-    // menu tags with toolbar type should have Toolbar role and menu tags without toolbar should have role list
+    // Per the HTML AAM, <menu> is mapped to list role but we keep backward compatibility for the obsolete type="toolbar".
+    // See https://html.spec.whatwg.org/multipage/obsolete.html#attr-menu-type
     if (node()->hasTagName(menuTag)) {
         if (equalLettersIgnoringASCIICase(getAttribute(typeAttr), "toolbar"_s))
             return AccessibilityRole::Toolbar;

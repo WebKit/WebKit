@@ -147,6 +147,9 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 <menu hidden="" aria-hidden="false" type="toolbar" id="menu-toolbar"></menu>
     AXRole: tool bar
 
+<menu hidden="" aria-hidden="false" id="menu-list"></menu>
+    AXRole: AXList
+
 <hr hidden="" aria-hidden="false" id="hr">
     AXRole: separator
 
