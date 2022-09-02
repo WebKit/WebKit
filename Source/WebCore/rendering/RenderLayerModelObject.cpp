@@ -25,6 +25,7 @@
 #include "config.h"
 #include "RenderLayerModelObject.h"
 
+#include "InspectorInstrumentation.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"

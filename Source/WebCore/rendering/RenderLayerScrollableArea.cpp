@@ -55,6 +55,7 @@
 #include "FocusController.h"
 #include "FrameSelection.h"
 #include "HitTestResult.h"
+#include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGeometryMap.h"
