@@ -712,15 +712,13 @@ void WebChromeClient::unavailablePluginButtonClicked(Element& element, RenderEmb
 void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult, unsigned modifierFlags, const String& toolTip, TextDirection)
 {
     RefPtr<API::Object> userData;
-    
-    auto modifiers = OptionSet<WebEvent::Modifier>::fromRaw(modifierFlags);
 
     // Notify the bundle client.
-    m_page.injectedBundleUIClient().mouseDidMoveOverElement(&m_page, hitTestResult, modifiers, userData);
+    m_page.injectedBundleUIClient().mouseDidMoveOverElement(&m_page, hitTestResult, OptionSet<WebEvent::Modifier>::fromRaw(modifierFlags), userData);
 
     // Notify the UIProcess.
     WebHitTestResultData webHitTestResultData(hitTestResult, toolTip);
-    m_page.send(Messages::WebPageProxy::MouseDidMoveOverElement(webHitTestResultData, modifiers, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    m_page.send(Messages::WebPageProxy::MouseDidMoveOverElement(webHitTestResultData, modifierFlags, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.
