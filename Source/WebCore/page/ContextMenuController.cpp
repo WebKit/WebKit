@@ -1287,10 +1287,12 @@ void ContextMenuController::addDebuggingItems()
     ContextMenuItem InspectElementItem(ActionType, ContextMenuItemTagInspectElement, contextMenuItemTagInspectElement());
     appendItem(InspectElementItem, m_contextMenu.get());
 
+#if ENABLE(VIDEO)
     if (page->settings().showMediaStatsContextMenuItemEnabled() && !m_context.hitTestResult().absoluteMediaURL().isEmpty()) {
         ContextMenuItem ShowMediaStats(CheckableActionType, ContextMenuItemTagShowMediaStats, contextMenuItemTagShowMediaStats());
         appendItem(ShowMediaStats, m_contextMenu.get());
     }
+#endif // ENABLE(VIDEO)
 }
 
 void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const

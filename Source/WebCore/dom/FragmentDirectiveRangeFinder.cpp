@@ -66,8 +66,11 @@ static bool isSearchInvisible(const Node& node)
         || is<HTMLProgressElement>(node)
         || is<HTMLStyleElement>(node)
         || is<HTMLScriptElement>(node)
+#if ENABLE(VIDEO)
         || is<HTMLVideoElement>(node)
-        || is<HTMLAudioElement>(node))
+        || is<HTMLAudioElement>(node)
+#endif // ENABLE(VIDEO)
+        )
         return true;
     
     // FIXME: Is a select element whose multiple content attribute is absent.
