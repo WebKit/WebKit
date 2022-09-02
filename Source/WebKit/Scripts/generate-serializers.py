@@ -99,7 +99,8 @@ def generate_header(serialized_types):
     result.append(_license_header)
     result.append('#pragma once')
     result.append('')
-    result.append('#include "ArgumentCoders.h"')
+    result.append('#include <wtf/ArgumentCoder.h>')
+    result.append('#include <wtf/Ref.h>')
     result.append('')
     for type in serialized_types:
         result.append('namespace ' + type.namespace + ' { ' + type.struct_or_class + ' ' + type.name + '; }')

@@ -26,6 +26,8 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include "Decoder.h"
+#include "Encoder.h"
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -53,6 +55,7 @@
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/WorkerType.h>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/EnumTraits.h>
 
 #if ENABLE(APPLE_PAY)

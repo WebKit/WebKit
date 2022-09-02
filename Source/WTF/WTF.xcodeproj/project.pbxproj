@@ -78,6 +78,7 @@
 		53FC70D023FB950C005B1990 /* OSLogPrintStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53FC70CF23FB950C005B1990 /* OSLogPrintStream.cpp */; };
 		5C1F05932164356B0039302C /* CFURLExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1F05912164356B0039302C /* CFURLExtras.cpp */; };
 		5C1F0595216437B30039302C /* URLCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1F0594216437B30039302C /* URLCF.cpp */; };
+		5CB8CB6D28C16CB700539906 /* ArgumentCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB8CB6C28C16CB700539906 /* ArgumentCoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CC0EE7521629F1900A1A842 /* URLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE7321629F1900A1A842 /* URLParser.cpp */; };
 		5CC0EE7621629F1900A1A842 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE7421629F1900A1A842 /* URL.cpp */; };
 		5CC0EE892162BC2200A1A842 /* URLCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE862162BC2200A1A842 /* URLCocoa.mm */; };
@@ -1138,6 +1139,7 @@
 		5C1F0594216437B30039302C /* URLCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLCF.cpp; sourceTree = "<group>"; };
 		5C1F0597216439940039302C /* URLHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLHash.h; sourceTree = "<group>"; };
 		5C7C88D31D0A3A0A009D2F6D /* UniqueRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueRef.h; sourceTree = "<group>"; };
+		5CB8CB6C28C16CB700539906 /* ArgumentCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCoder.h; sourceTree = "<group>"; };
 		5CC0EE7121629F1800A1A842 /* URL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URL.h; sourceTree = "<group>"; };
 		5CC0EE7221629F1900A1A842 /* URLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLParser.h; sourceTree = "<group>"; };
 		5CC0EE7321629F1900A1A842 /* URLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParser.cpp; sourceTree = "<group>"; };
@@ -1914,6 +1916,7 @@
 				CE1132832370634900A8C83B /* AnsiColors.h */,
 				E37E96522702AD0700E1C36A /* ApproximateTime.cpp */,
 				E37E96532702AD0700E1C36A /* ApproximateTime.h */,
+				5CB8CB6C28C16CB700539906 /* ArgumentCoder.h */,
 				4427C5A921F6D6C300A612A4 /* ASCIICType.cpp */,
 				A8A4725A151A825A004123FF /* ASCIICType.h */,
 				A8A4725B151A825A004123FF /* Assertions.cpp */,
@@ -2841,6 +2844,7 @@
 				DD3DC96027A4BF8E007E5B61 /* Algorithms.h in Headers */,
 				DD3DC99627A4BF8E007E5B61 /* AnsiColors.h in Headers */,
 				DD3DC92527A4BF8E007E5B61 /* ApproximateTime.h in Headers */,
+				5CB8CB6D28C16CB700539906 /* ArgumentCoder.h in Headers */,
 				DD3DC8CA27A4BF8E007E5B61 /* ASCIICType.h in Headers */,
 				DDF307E927C086DF006A526F /* ASCIIFastPath.h in Headers */,
 				DDF307EB27C086DF006A526F /* ASCIILiteral.h in Headers */,

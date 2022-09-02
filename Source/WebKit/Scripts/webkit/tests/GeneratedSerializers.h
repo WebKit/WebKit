@@ -24,7 +24,8 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
+#include <wtf/ArgumentCoder.h>
+#include <wtf/Ref.h>
 
 namespace Namespace::Subnamespace { struct StructName; }
 namespace Namespace { class OtherClass; }

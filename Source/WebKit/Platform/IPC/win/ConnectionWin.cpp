@@ -26,8 +26,10 @@
 #include "config.h"
 #include "Connection.h"
 
-#include "ArgumentCoder.h"
 #include "DataReference.h"
+#include "Decoder.h"
+#include "Encoder.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/HexNumber.h>
 #include <wtf/RandomNumber.h>
 

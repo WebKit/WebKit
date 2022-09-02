@@ -25,13 +25,15 @@
 
 #pragma once
 
-#include "Decoder.h"
-#include "Encoder.h"
-#include <WebCore/NotificationData.h>
+#include <optional>
 #include <wtf/EnumTraits.h>
 #include <wtf/Span.h>
 
 namespace IPC {
+
+class Decoder;
+class Encoder;
+
 namespace Detail {
 template<typename T, typename I> auto TestLegacyDecoder(int) -> decltype(I::decode(std::declval<Decoder&>(), std::declval<T&>()), std::true_type { });
 template<typename T, typename I> auto TestLegacyDecoder(long) -> std::false_type;
@@ -69,6 +71,7 @@ template<typename T, typename = void> struct ArgumentCoder {
         }
     }
 
+    template<typename Decoder>
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, T& t)
     {
         if constexpr(HasLegacyDecoderV<T>)

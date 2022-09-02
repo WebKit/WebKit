@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ArgumentCoder.h"
+#include <wtf/ArgumentCoder.h>
 
 #if HAVE(AUDIT_TOKEN)
 #include <mach/mach.h>

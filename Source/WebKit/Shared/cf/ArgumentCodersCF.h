@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "ArgumentCoder.h"
 #include <Security/SecCertificate.h>
 #include <Security/SecTrust.h>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/RetainPtr.h>
 
 #if HAVE(SEC_KEYCHAIN)

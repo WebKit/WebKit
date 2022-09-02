@@ -4,6 +4,7 @@ set(WTF_PUBLIC_HEADERS
     Algorithms.h
     AnsiColors.h
     ApproximateTime.h
+    ArgumentCoder.h
     Assertions.h
     Atomics.h
     AutodrainedPool.h

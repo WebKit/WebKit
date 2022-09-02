@@ -25,12 +25,14 @@
 
 #pragma once
 
-#include "ArgumentCoder.h"
 #include "ArrayReference.h"
 #include "ArrayReferenceTuple.h"
+#include "Decoder.h"
+#include "Encoder.h"
 #include "GeneratedSerializers.h"
 #include <utility>
 #include <variant>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Box.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Expected.h>
