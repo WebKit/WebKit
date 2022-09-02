@@ -1,0 +1,15 @@
+# These are the layout test expectations for Apple's iOS-15 port of WebKit.
+#
+
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Platform-specific directories. Skipped here, then re-enabled on the appropriate platform.
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+# rdar://97297483 ([ iOS16 ] fast/events/ios/rotation/zz-no-rotation.html is a constant timeout =)
+fast/events/ios/rotation/zz-no-rotation.html [ Pass ]
+
+webkit.org/b/243494 [ Debug ] compositing/layer-creation/scale-rotation-animation-overlap.html [ Pass Timeout ]
+
+# Find interactions are unavailable on iOS 15.
+editing/find/ios [ Skip ]

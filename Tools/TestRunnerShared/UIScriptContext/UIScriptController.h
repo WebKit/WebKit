@@ -148,6 +148,8 @@ public:
     virtual double contentOffsetX() const { notImplemented(); return 0; }
     virtual double contentOffsetY() const { notImplemented(); return 0; }
 
+    virtual JSObjectRef adjustedContentInset() const { notImplemented(); return nullptr; }
+
     virtual JSRetainPtr<JSStringRef> scrollingTreeAsText() const { notImplemented(); return nullptr; }
     virtual JSRetainPtr<JSStringRef> uiViewTreeAsText() const { notImplemented(); return nullptr; }
 
@@ -261,6 +263,9 @@ public:
     // Find in Page
 
     virtual void findString(JSStringRef, unsigned long, unsigned long) { notImplemented(); }
+
+    virtual void presentFindNavigator() { notImplemented(); }
+    virtual void dismissFindNavigator() { notImplemented(); }
 
     // Accessibility
 

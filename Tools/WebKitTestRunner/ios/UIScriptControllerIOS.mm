@@ -80,6 +80,16 @@ static NSDictionary *toNSDictionary(CGRect rect)
     };
 }
 
+static NSDictionary *toNSDictionary(UIEdgeInsets insets)
+{
+    return @{
+        @"top" : @(insets.top),
+        @"left" : @(insets.left),
+        @"bottom" : @(insets.bottom),
+        @"right" : @(insets.right)
+    };
+}
+
 static Vector<String> parseModifierArray(JSContextRef context, JSValueRef arrayValue)
 {
     if (!arrayValue)
@@ -685,6 +695,11 @@ double UIScriptControllerIOS::contentOffsetX() const
 double UIScriptControllerIOS::contentOffsetY() const
 {
     return webView().scrollView.contentOffset.y;
+}
+
+JSObjectRef UIScriptControllerIOS::adjustedContentInset() const
+{
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(webView().scrollView.adjustedContentInset) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
 bool UIScriptControllerIOS::scrollUpdatesDisabled() const
@@ -1384,6 +1399,20 @@ bool UIScriptControllerIOS::suppressSoftwareKeyboard() const
 void UIScriptControllerIOS::setSuppressSoftwareKeyboard(bool suppressSoftwareKeyboard)
 {
     webView()._suppressSoftwareKeyboard = suppressSoftwareKeyboard;
+}
+
+void UIScriptControllerIOS::presentFindNavigator()
+{
+#if HAVE(UIFINDINTERACTION)
+    [webView().findInteraction presentFindNavigatorShowingReplace:NO];
+#endif
+}
+
+void UIScriptControllerIOS::dismissFindNavigator()
+{
+#if HAVE(UIFINDINTERACTION)
+    [webView().findInteraction dismissFindNavigator];
+#endif
 }
 
 bool UIScriptControllerIOS::isWebContentFirstResponder() const
