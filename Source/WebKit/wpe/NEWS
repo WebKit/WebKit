@@ -1,4 +1,17 @@
 ==================
+WPE WebKit 2.37.91
+==================
+
+What's new in WPE WebKit 2.37.91?
+
+  - Cache and reuse image-based backing stores to improve memory consumption.
+  - Deprecate enable-frame-flattening setting because the functionality will
+    be removed in 2.40.
+  - Fix deadlock when disposing player while handling rotation tag.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Polish.
+
+==================
 WPE WebKit 2.37.90
 ==================
 
