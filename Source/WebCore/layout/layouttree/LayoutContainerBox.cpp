@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayoutContainerBox.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -125,4 +123,3 @@ void ContainerBox::destroyChildren()
 
 }
 }
-#endif

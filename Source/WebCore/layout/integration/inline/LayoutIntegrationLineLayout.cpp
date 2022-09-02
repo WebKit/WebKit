@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayoutIntegrationLineLayout.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "DeprecatedGlobalSettings.h"
 #include "EventRegion.h"
 #include "FloatingState.h"
@@ -876,4 +874,3 @@ void LineLayout::outputLineTree(WTF::TextStream& stream, size_t depth) const
 }
 }
 
-#endif

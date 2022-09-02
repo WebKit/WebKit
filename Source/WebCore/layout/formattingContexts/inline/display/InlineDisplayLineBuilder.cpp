@@ -26,8 +26,6 @@
 #include "config.h"
 #include "InlineDisplayLineBuilder.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "InlineDisplayContentBuilder.h"
 #include "LayoutBoxGeometry.h"
 #include "TextUtil.h"
@@ -160,4 +158,3 @@ InlineRect InlineDisplayLineBuilder::flipLogicalLineRectToVisualForWritingMode(c
 }
 }
 
-#endif

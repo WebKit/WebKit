@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FloatRect.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
@@ -151,4 +149,3 @@ private:
 }
 }
 
-#endif

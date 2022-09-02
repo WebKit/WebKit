@@ -26,8 +26,6 @@
 #include "config.h"
 #include "InlineFormattingGeometry.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FloatingContext.h"
 #include "FontCascade.h"
 #include "FormattingContext.h"
@@ -212,4 +210,3 @@ std::tuple<const InlineDisplay::Box*, const InlineDisplay::Box*> InlineFormattin
 }
 }
 
-#endif

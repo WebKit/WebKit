@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "LayoutBox.h"
 #include "LayoutUnits.h"
 #include <unicode/ubidi.h>
@@ -111,4 +109,3 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 }
 }
-#endif

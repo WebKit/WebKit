@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BlockFormattingQuirks.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "BlockFormattingContext.h"
 #include "BlockFormattingGeometry.h"
 #include "BlockMarginCollapse.h"
@@ -132,4 +130,3 @@ bool BlockFormattingQuirks::shouldCollapseMarginAfterWithParentMarginAfter(const
 }
 }
 
-#endif

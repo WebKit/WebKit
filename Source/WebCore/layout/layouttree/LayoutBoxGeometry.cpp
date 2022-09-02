@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayoutBoxGeometry.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -108,4 +106,3 @@ Rect BoxGeometry::contentBox() const
 }
 }
 
-#endif

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "InlineRect.h"
 #include "LayoutBox.h"
 #include "TextFlags.h"
@@ -221,4 +219,3 @@ inline Box::Text::Text(size_t start, size_t length, const String& originalConten
 
 }
 }
-#endif

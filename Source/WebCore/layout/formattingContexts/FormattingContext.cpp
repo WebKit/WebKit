@@ -26,8 +26,6 @@
 #include "config.h"
 #include "FormattingContext.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FormattingGeometry.h"
 #include "FormattingQuirks.h"
 #include "FormattingState.h"
@@ -309,4 +307,3 @@ void FormattingContext::validateGeometryConstraintsAfterLayout() const
 
 }
 }
-#endif

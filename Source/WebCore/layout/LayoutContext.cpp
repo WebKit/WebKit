@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayoutContext.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "BlockFormattingContext.h"
 #include "BlockFormattingState.h"
 #include "FlexFormattingContext.h"
@@ -132,4 +130,3 @@ std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const 
 }
 }
 
-#endif

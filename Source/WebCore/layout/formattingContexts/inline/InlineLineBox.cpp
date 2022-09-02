@@ -26,8 +26,6 @@
 #include "config.h"
 #include "InlineLineBox.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
 
@@ -125,4 +123,3 @@ InlineRect LineBox::logicalBorderBoxForInlineBox(const Box& layoutBox, const Box
 } // namespace Layout
 } // namespace WebCore
 
-#endif

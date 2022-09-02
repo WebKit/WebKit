@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 namespace WebCore {
 
 class GraphicsContext;
@@ -42,4 +40,3 @@ struct PaintingContext {
 } // namespace WebCore
 
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

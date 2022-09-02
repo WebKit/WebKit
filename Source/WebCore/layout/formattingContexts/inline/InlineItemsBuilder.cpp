@@ -26,8 +26,6 @@
 #include "config.h"
 #include "InlineItemsBuilder.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "InlineSoftLineBreakItem.h"
 #include "LayoutLineBreakBox.h"
 #include "StyleResolver.h"
@@ -613,4 +611,3 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems&
 }
 }
 
-#endif

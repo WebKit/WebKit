@@ -26,8 +26,6 @@
 #include "config.h"
 #include "FloatingState.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
@@ -92,4 +90,3 @@ void FloatingState::append(FloatItem floatItem)
 
 }
 }
-#endif

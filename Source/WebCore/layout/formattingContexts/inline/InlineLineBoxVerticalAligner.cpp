@@ -26,8 +26,6 @@
 #include "config.h"
 #include "InlineLineBoxVerticalAligner.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "InlineFormattingContext.h"
 #include "LayoutBoxGeometry.h"
 
@@ -495,4 +493,3 @@ InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& li
 }
 }
 
-#endif

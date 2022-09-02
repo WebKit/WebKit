@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FormattingConstraints.h"
 
 namespace WebCore {
@@ -55,4 +53,3 @@ inline ConstraintsForFlexContent::ConstraintsForFlexContent(const ConstraintsFor
 
 SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONSTRAINTS(ConstraintsForFlexContent, isConstraintsForFlexContent())
 
-#endif

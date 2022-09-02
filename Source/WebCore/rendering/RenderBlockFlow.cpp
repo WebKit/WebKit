@@ -711,12 +711,10 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
     if (!shouldUpdateOverflow)
         return;
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = modernLineLayout()) {
         lineLayout->updateOverflow();
         return;
     }
-#endif
 
     GlyphOverflowAndFallbackFontsMap textBoxDataMap;
     for (auto it = lineBoxes.begin(), end = lineBoxes.end(); it != end; ++it) {
@@ -731,10 +729,8 @@ void RenderBlockFlow::computeAndSetLineLayoutPath()
         return;
 
     auto compute = [&] {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         if (LayoutIntegration::LineLayout::canUseFor(*this))
             return ModernPath;
-#endif
         return LegacyPath;
     };
 
@@ -745,12 +741,10 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
 {
     computeAndSetLineLayoutPath();
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (lineLayoutPath() == ModernPath) {
         layoutModernLines(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         return;
     }
-#endif
 
     if (!legacyLineLayout())
         m_lineLayout = makeUnique<LegacyLineLayout>(*this);
@@ -2050,20 +2044,16 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         auto shouldInvalidateLineLayoutPath = [&] {
             if (selfNeedsLayout() || legacyLineLayout())
                 return true;
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
             if (modernLineLayout() && !LayoutIntegration::LineLayout::canUseForAfterStyleChange(*this, diff))
                 return true;
-#endif
             return false;
         };
         if (shouldInvalidateLineLayoutPath())
             invalidateLineLayoutPath();
     }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = modernLineLayout())
         lineLayout->updateStyle(*this, *oldStyle);
-#endif
 
     if (multiColumnFlow())
         updateStylesForColumnChildren();
@@ -2944,22 +2934,18 @@ bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTe
 {
     ASSERT(childrenInline());
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (modernLineLayout())
         return modernLineLayout()->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction);
-#endif
 
     return legacyLineLayout() && legacyLineLayout()->lineBoxes().hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
 void RenderBlockFlow::addOverflowFromInlineChildren()
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (modernLineLayout()) {
         modernLineLayout()->collectOverflow();
         return;
     }
-#endif
     
     if (legacyLineLayout())
         legacyLineLayout()->addOverflowFromInlineChildren();
@@ -2971,12 +2957,10 @@ void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUn
         return;
 
     // Floats currently affect the choice of layout path.
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (modernLineLayout()) {
         invalidateLineLayoutPath();
         return;
     }
-#endif
 
     LegacyRootInlineBox* lowestDirtyLine = lastRootBox();
     LegacyRootInlineBox* afterLowest = lowestDirtyLine;
@@ -3005,10 +2989,8 @@ std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
     if (!hasLines())
         return std::nullopt;
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (modernLineLayout())
         return LayoutUnit { floorToInt(modernLineLayout()->firstLinePhysicalBaseline()) };
-#endif
 
     ASSERT(firstRootBox());
     if (style().isFlippedLinesWritingMode())
@@ -3056,10 +3038,8 @@ std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode
             lastBaseline = style.metricsOfPrimaryFont().ascent(lastRootBox()->baselineType())
                 + (style.isFlippedLinesWritingMode() ? logicalHeight() - lastRootBox()->logicalBottom() : lastRootBox()->logicalTop());
         }
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         else if (modernLineLayout())
             lastBaseline = floorToInt(modernLineLayout()->lastLineLogicalBaseline());
-#endif
     }
     // According to the CSS spec http://www.w3.org/TR/CSS21/visudet.html, we shouldn't be performing this min, but should
     // instead be returning boxHeight directly. However, we feel that a min here is better behavior (and is consistent
@@ -3280,10 +3260,8 @@ int RenderBlockFlow::lineCount() const
         ASSERT_NOT_REACHED();
         return 0;
     }
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (modernLineLayout())
         return modernLineLayout()->lineCount();
-#endif
     if (legacyLineLayout())
         return legacyLineLayout()->lineCount();
 
@@ -3508,12 +3486,10 @@ void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoin
 {
     ASSERT(childrenInline());
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (modernLineLayout()) {
         modernLineLayout()->paint(paintInfo, paintOffset);
         return;
     }
-#endif
 
     if (legacyLineLayout())
         legacyLineLayout()->lineBoxes().paint(this, paintInfo, paintOffset);
@@ -3580,10 +3556,8 @@ void RenderBlockFlow::invalidateLineLayoutPath()
     case ModernPath: {
         // FIXME: Implement partial invalidation.
         auto path = UndeterminedPath;
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         if (modernLineLayout() && modernLineLayout()->shouldSwitchToLegacyOnInvalidation())
             path = ForcedLegacyPath;
-#endif
         for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance())
             walker.current()->setPreferredLogicalWidthsDirty(true);
         m_lineLayout = std::monostate();
@@ -3598,7 +3572,6 @@ void RenderBlockFlow::invalidateLineLayoutPath()
     ASSERT_NOT_REACHED();
 }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     bool needsUpdateReplacedDimensions = false;
@@ -3715,7 +3688,6 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
     setLogicalHeight(newBorderBoxBottom);
 }
-#endif
 
 #if ENABLE(TREE_DEBUGGING)
 void RenderBlockFlow::outputFloatingObjects(WTF::TextStream& stream, int depth) const
@@ -3736,12 +3708,10 @@ void RenderBlockFlow::outputFloatingObjects(WTF::TextStream& stream, int depth) 
 
 void RenderBlockFlow::outputLineTreeAndMark(WTF::TextStream& stream, const LegacyInlineBox* markedBox, int depth) const
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* modernLineLayout = this->modernLineLayout()) {
         modernLineLayout->outputLineTree(stream, depth);
         return;
     }
-#endif
     for (const LegacyRootInlineBox* root = firstRootBox(); root; root = root->nextRootBox())
         root->outputLineTreeAndMark(stream, markedBox, depth);
 }
@@ -4144,10 +4114,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
 {
     ASSERT(!shouldApplyInlineSizeContainment());
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (const_cast<RenderBlockFlow&>(*this).tryComputePreferredWidthsUsingModernPath(minLogicalWidth, maxLogicalWidth))
         return;
-#endif
 
     float inlineMax = 0;
     float inlineMin = 0;
@@ -4487,7 +4455,6 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     maxLogicalWidth = preferredWidth(maxLogicalWidth, inlineMax);
 }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth)
 {
     computeAndSetLineLayoutPath();
@@ -4533,7 +4500,6 @@ bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLo
         walker.current()->setPreferredLogicalWidthsDirty(false);
     return true;
 }
-#endif
 
 }
 // namespace WebCore

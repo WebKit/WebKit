@@ -140,10 +140,8 @@ TextBoxIterator& TextBoxIterator::traverseNextTextBox()
 
 TextBoxIterator firstTextBoxFor(const RenderText& text)
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(text))
         return lineLayout->textBoxesFor(text);
-#endif
 
     return { BoxLegacyPath { text.firstTextBox() } };
 }
@@ -153,7 +151,6 @@ TextBoxIterator textBoxFor(const LegacyInlineTextBox* legacyInlineTextBox)
     return { BoxLegacyPath { legacyInlineTextBox } };
 }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent& content, const InlineDisplay::Box& box)
 {
     return textBoxFor(content, content.indexForBox(box));
@@ -164,7 +161,6 @@ TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent& content, size
     ASSERT(content.boxes[boxIndex].text());
     return { BoxModernPath { content, boxIndex } };
 }
-#endif
 
 TextBoxRange textBoxesFor(const RenderText& text)
 {

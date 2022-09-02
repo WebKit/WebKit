@@ -26,8 +26,6 @@
 #include "config.h"
 #include "InlineFormattingContext.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FloatingContext.h"
 #include "FontCascade.h"
 #include "InlineDamage.h"
@@ -525,4 +523,3 @@ void InlineFormattingContext::invalidateFormattingState()
 }
 }
 
-#endif

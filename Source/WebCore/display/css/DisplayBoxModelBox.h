@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "DisplayBox.h"
 #include <wtf/RefPtr.h>
 
@@ -90,4 +88,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_DISPLAY_BOX(BoxModelBox, isBoxModelBox())
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

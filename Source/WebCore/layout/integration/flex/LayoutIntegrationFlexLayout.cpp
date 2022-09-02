@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayoutIntegrationFlexLayout.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FlexFormattingConstraints.h"
 #include "FlexFormattingContext.h"
 #include "HitTestLocation.h"
@@ -217,4 +215,3 @@ LayoutUnit FlexLayout::contentLogicalHeight() const
 }
 }
 
-#endif

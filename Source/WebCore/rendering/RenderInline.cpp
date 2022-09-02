@@ -188,7 +188,6 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
             updateStyleOfAnonymousBlockContinuations(*containingBlock(), &newStyle, oldStyle);
     }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (diff >= StyleDifference::Repaint) {
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
             auto shouldInvalidateLineLayoutPath = selfNeedsLayout() || !LayoutIntegration::LineLayout::canUseForAfterInlineBoxStyleChange(*this, diff);
@@ -198,7 +197,6 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
                 lineLayout->updateStyle(*this, *oldStyle);
         }
     }
-#endif
 }
 
 bool RenderInline::mayAffectLayout() const
@@ -228,19 +226,16 @@ bool RenderInline::mayAffectLayout() const
 
 void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
         lineLayout->paint(paintInfo, paintOffset, this);
         return;
     }
-#endif
     m_lineBoxes.paint(this, paintInfo, paintOffset);
 }
 
 template<typename GeneratorContext>
 void RenderInline::generateLineBoxRects(GeneratorContext& context) const
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
         auto inlineBoxRects = lineLayout->collectInlineBoxRects(*this);
         if (inlineBoxRects.isEmpty()) {
@@ -251,7 +246,6 @@ void RenderInline::generateLineBoxRects(GeneratorContext& context) const
             context.addRect(inlineBoxRect);
         return;
     }
-#endif
     if (LegacyInlineFlowBox* curr = firstLineBox()) {
         for (; curr; curr = curr->nextLineBox())
             context.addRect(FloatRect(curr->topLeft(), curr->size()));
@@ -348,10 +342,8 @@ LayoutUnit RenderInline::offsetTop() const
 
 LayoutPoint RenderInline::firstInlineBoxTopLeft() const
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
         return lineLayout->firstInlineBoxRect(*this).location();
-#endif
     if (LegacyInlineBox* firstBox = firstLineBox())
         return flooredLayoutPoint(firstBox->locationIncludingFlipping());
     return { };
@@ -426,10 +418,8 @@ bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
                                 const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     ASSERT(layer());
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
         return lineLayout->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction, this);
-#endif
     return m_lineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
@@ -466,10 +456,8 @@ private:
 
 IntRect RenderInline::linesBoundingBox() const
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* layout = LayoutIntegration::LineLayout::containing(*this))
         return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
-#endif
 
     IntRect result;
     
@@ -502,10 +490,8 @@ IntRect RenderInline::linesBoundingBox() const
 
 LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* layout = LayoutIntegration::LineLayout::containing(*this))
         return layout->visualOverflowBoundingBoxRectFor(*this);
-#endif
 
     if (!firstLineBox() || !lastLineBox())
         return LayoutRect();
@@ -596,10 +582,8 @@ LayoutRect RenderInline::clippedOverflowRect(const RenderLayerModelObject* repai
             return false;
         if (continuation())
             return false;
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         if (LayoutIntegration::LineLayout::containing(*this))
             return false;
-#endif
         return true;
     };
 

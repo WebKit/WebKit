@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "MarginTypes.h"
 
 namespace WebCore {
@@ -88,4 +86,3 @@ private:
 }
 }
 
-#endif

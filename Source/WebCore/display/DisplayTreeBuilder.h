@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "DisplayBoxFactory.h"
 #include <wtf/IsoMalloc.h>
 
@@ -105,4 +103,3 @@ void showDisplayTree(const StackingItem&);
 } // namespace Display
 } // namespace WebCore
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

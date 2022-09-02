@@ -26,8 +26,6 @@
 #include "config.h"
 #include "FormattingGeometry.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "BlockFormattingState.h"
 #include "FlexFormattingState.h"
 #include "FloatingContext.h"
@@ -1171,4 +1169,3 @@ ConstraintsForInFlowContent FormattingGeometry::constraintsForInFlowContent(cons
 
 }
 }
-#endif

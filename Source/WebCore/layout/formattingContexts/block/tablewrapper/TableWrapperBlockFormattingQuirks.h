@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "BlockFormattingQuirks.h"
 
 namespace WebCore {
@@ -46,4 +44,3 @@ public:
 }
 }
 
-#endif

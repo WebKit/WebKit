@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "LayoutContainerBox.h"
 #include <wtf/IsoMalloc.h>
 
@@ -83,4 +81,3 @@ void printLayoutTreeForLiveDocuments();
 }
 }
 
-#endif

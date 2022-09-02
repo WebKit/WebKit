@@ -39,13 +39,11 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "StyleScope.h"
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 #include "LayoutBoxGeometry.h"
 #include "LayoutContext.h"
 #include "LayoutState.h"
 #include "LayoutTreeBuilder.h"
 #include "RenderDescendantIterator.h"
-#endif
 
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
@@ -53,7 +51,6 @@
 
 namespace WebCore {
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 void FrameViewLayoutContext::layoutUsingFormattingContext()
 {
     if (!DeprecatedGlobalSettings::layoutFormattingContextEnabled())
@@ -85,7 +82,6 @@ void FrameViewLayoutContext::layoutUsingFormattingContext()
     Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree(*m_layoutState, renderView);
 #endif
 }
-#endif
 
 static bool isObjectAncestorContainerOf(RenderElement& ancestor, RenderElement& descendant)
 {
@@ -252,9 +248,7 @@ void FrameViewLayoutContext::performLayout()
         RenderTreeNeedsLayoutChecker checker(*layoutRoot);
 #endif
         layoutRoot->layout();
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         layoutUsingFormattingContext();
-#endif
         ++m_layoutCount;
 #if ENABLE(TEXT_AUTOSIZING)
         applyTextSizingIfNeeded(*layoutRoot.get());

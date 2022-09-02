@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FloatRect.h"
 #include "LayoutBox.h"
 #include "TextRun.h"
@@ -113,4 +111,3 @@ private:
 }
 }
 
-#endif

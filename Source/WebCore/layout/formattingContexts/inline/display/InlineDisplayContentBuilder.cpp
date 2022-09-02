@@ -26,8 +26,6 @@
 #include "config.h"
 #include "InlineDisplayContentBuilder.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FontCascade.h"
 #include "InlineFormattingGeometry.h"
 #include "InlineTextBoxStyle.h"
@@ -1021,4 +1019,3 @@ InlineLayoutUnit InlineDisplayContentBuilder::outsideListMarkerVisualPosition(co
 }
 }
 
-#endif

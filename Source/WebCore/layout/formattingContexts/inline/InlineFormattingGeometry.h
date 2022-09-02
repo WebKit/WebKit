@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FormattingGeometry.h"
 #include "InlineLineBuilder.h"
 
@@ -63,4 +61,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_GEOMETRY(InlineFormattingGeometry, isInlineFormattingGeometry())
 
-#endif

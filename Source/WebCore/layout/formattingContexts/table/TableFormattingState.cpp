@@ -26,8 +26,6 @@
 #include "config.h"
 #include "TableFormattingState.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "TableFormattingContext.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -100,4 +98,3 @@ TableFormattingState::~TableFormattingState()
 
 }
 }
-#endif

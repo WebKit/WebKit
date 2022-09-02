@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FontCascade.h"
 #include "LayoutContainerBox.h"
 #include "LayoutIntegrationInlineContent.h"
@@ -302,4 +300,3 @@ private:
 }
 }
 
-#endif

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FormattingConstraints.h"
 
 namespace WebCore {
@@ -52,4 +50,3 @@ inline ConstraintsForTableContent::ConstraintsForTableContent(const ConstraintsF
 
 SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONSTRAINTS(ConstraintsForTableContent, isConstraintsForTableContent())
 
-#endif

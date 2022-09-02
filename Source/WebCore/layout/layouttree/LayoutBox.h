@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "LayoutUnits.h"
 #include "RenderStyle.h"
 #include <wtf/CheckedPtr.h>
@@ -257,4 +255,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \
     static bool isType(const WebCore::Layout::Box& box) { return box.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif

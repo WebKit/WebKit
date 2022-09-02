@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayoutBox.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
 #include "LayoutContainingBlockChainIterator.h"
@@ -577,4 +575,3 @@ void Box::removeRareData()
 }
 }
 
-#endif

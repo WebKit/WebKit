@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayoutInitialContainingBlock.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -44,4 +42,3 @@ InitialContainingBlock::InitialContainingBlock(RenderStyle&& style, std::unique_
 }
 }
 
-#endif

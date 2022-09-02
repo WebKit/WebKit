@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FormattingConstraints.h"
 #include "LayoutContainerBox.h"
 #include "LayoutUnit.h"
@@ -112,4 +110,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \
     static bool isType(const WebCore::Layout::FormattingContext& formattingContext) { return formattingContext.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayoutIntegrationInlineContentPainter.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "EllipsisBoxPainter.h"
 #include "InlineBoxPainter.h"
 #include "PaintInfo.h"
@@ -193,4 +191,3 @@ bool LayerPaintScope::includes(const InlineDisplay::Box& box)
 }
 }
 
-#endif

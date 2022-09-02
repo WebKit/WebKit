@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "DisplayBox.h"
 #include "InlineDisplayBox.h"
 
@@ -56,4 +54,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_DISPLAY_BOX(TextBox, isTextBox())
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

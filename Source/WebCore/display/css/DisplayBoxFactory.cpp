@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DisplayBoxFactory.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "DisplayBoxClip.h"
 #include "DisplayBoxDecorationData.h"
 #include "DisplayBoxDecorationPainter.h"
@@ -305,4 +303,3 @@ const Layout::Box* BoxFactory::bodyBoxFromRootBox(const Layout::ContainerBox& ro
 } // namespace Display
 } // namespace WebCore
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DisplayBox.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "DisplayTree.h"
 #include "FillLayer.h"
 #include "ShadowData.h"
@@ -79,4 +77,3 @@ String Box::debugDescription() const
 } // namespace Display
 } // namespace WebCore
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

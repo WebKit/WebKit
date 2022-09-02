@@ -246,10 +246,8 @@ String TextPainter::cachedGlyphDisplayListsForTextNodeAsText(Text& textNode, Opt
         DisplayList::DisplayList* displayList = nullptr;
         if (auto* legacyInlineBox = textBox.legacyInlineBox())
             displayList = TextPainter::glyphDisplayListIfExists(*legacyInlineBox);
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         else
             displayList = TextPainter::glyphDisplayListIfExists(*textBox.inlineBox());
-#endif
         if (displayList) {
             builder.append(displayList->asText(flags));
             builder.append('\n');

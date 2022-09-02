@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BlockMarginCollapse.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "BlockFormattingQuirks.h"
 #include "BlockFormattingState.h"
 #include "FloatingState.h"
@@ -572,4 +570,3 @@ UsedVerticalMargin BlockMarginCollapse::collapsedVerticalValues(const Box& layou
 
 }
 }
-#endif

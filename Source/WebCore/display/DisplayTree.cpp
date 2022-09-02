@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DisplayTree.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "DisplayContainerBox.h"
 #include "DisplayStackingItem.h"
 #include "DisplayView.h"
@@ -59,4 +57,3 @@ void Tree::setBoxNeedsDisplay(Box&, std::optional<UnadjustedAbsoluteFloatRect>) 
 } // namespace Display
 } // namespace WebCore
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

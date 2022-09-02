@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "LayoutInitialContainingBlock.h"
 
 namespace WebCore {
@@ -202,4 +200,3 @@ inline bool LayoutIterator<T>::operator!=(const LayoutIterator& other) const
 }
 #include "LayoutChildIterator.h"
 
-#endif

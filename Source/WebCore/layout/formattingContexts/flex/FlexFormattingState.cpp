@@ -26,8 +26,6 @@
 #include "config.h"
 #include "FlexFormattingState.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -46,4 +44,3 @@ FlexFormattingState::~FlexFormattingState()
 
 }
 }
-#endif

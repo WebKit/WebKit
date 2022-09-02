@@ -732,10 +732,8 @@ void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const
                 textBoxPainter.paint();
                 continue;
             }
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
             ModernTextBoxPainter textBoxPainter(box->modernPath().inlineContent(), box->modernPath().box(), maskInfo, paintOffset);
             textBoxPainter.paint();
-#endif
         }
         return;
     }

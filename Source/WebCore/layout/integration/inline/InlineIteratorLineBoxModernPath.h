@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "InlineIteratorBoxModernPath.h"
 #include "LayoutIntegrationInlineContent.h"
 #include "RenderBlockFlow.h"
@@ -130,6 +128,4 @@ private:
 
 }
 }
-
-#endif
 

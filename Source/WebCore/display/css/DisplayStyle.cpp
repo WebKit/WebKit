@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DisplayStyle.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "BorderData.h"
 #include "FillLayer.h"
 #include "RenderStyle.h"
@@ -164,4 +162,3 @@ bool Style::collapseWhiteSpace() const
 } // namespace Display
 } // namespace WebCore
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

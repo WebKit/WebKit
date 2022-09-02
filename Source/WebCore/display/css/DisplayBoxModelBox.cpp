@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DisplayBoxModelBox.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "DisplayBoxClip.h"
 #include "DisplayBoxDecorationData.h"
 #include "DisplayBoxRareGeometry.h"
@@ -147,4 +145,3 @@ String BoxModelBox::debugDescription() const
 } // namespace Display
 } // namespace WebCore
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

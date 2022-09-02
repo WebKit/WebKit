@@ -26,8 +26,6 @@
 #include "config.h"
 #include "InlineContentBreaker.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FontCascade.h"
 #include "Hyphenation.h"
 #include "InlineItem.h"
@@ -770,4 +768,3 @@ void InlineContentBreaker::ContinuousContent::reset()
 }
 }
 }
-#endif

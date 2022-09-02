@@ -54,12 +54,10 @@ LegacyTextBoxPainter::LegacyTextBoxPainter(const LegacyInlineTextBox& textBox, P
 {
 }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 ModernTextBoxPainter::ModernTextBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const InlineDisplay::Box& box, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     : TextBoxPainter(InlineIterator::BoxModernPath { inlineContent, inlineContent.indexForBox(box) }, paintInfo, paintOffset)
 {
 }
-#endif
 
 template<typename TextBoxPath>
 TextBoxPainter<TextBoxPath>::TextBoxPainter(TextBoxPath&& textBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -406,10 +404,8 @@ void TextBoxPainter<TextBoxPath>::paintForeground(const StyledMarkedText& marked
 
     if constexpr (std::is_same_v<TextBoxPath, InlineIterator::BoxLegacyPath>)
         textPainter.setGlyphDisplayListIfNeeded(downcast<LegacyInlineTextBox>(*textBox().legacyInlineBox()), m_paintInfo, m_paintTextRun);
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     else
         textPainter.setGlyphDisplayListIfNeeded(textBox().box(), m_paintInfo, m_paintTextRun);
-#endif
 
     // TextPainter wants the box rectangle and text origin of the entire line box.
     textPainter.paintRange(m_paintTextRun, m_paintRect, textOriginFromPaintRect(m_paintRect), markedText.startOffset, markedText.endOffset);
@@ -825,18 +821,14 @@ const ShadowData* TextBoxPainter<TextBoxPath>::debugTextShadow() const
 {
     if (!m_renderer.settings().legacyLineLayoutVisualCoverageEnabled())
         return nullptr;
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if constexpr (std::is_same_v<TextBoxPath, InlineIterator::BoxModernPath>)
         return nullptr;
-#endif
 
     static NeverDestroyed<ShadowData> debugTextShadow(LengthPoint(Length(LengthType::Fixed), Length(LengthType::Fixed)), Length(10, LengthType::Fixed), Length(20, LengthType::Fixed), ShadowStyle::Normal, true, SRGBA<uint8_t> { 150, 0, 0, 190 });
     return &debugTextShadow.get();
 }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 template class TextBoxPainter<InlineIterator::BoxModernPath>;
-#endif
 template class TextBoxPainter<InlineIterator::BoxLegacyPath>;
 
 }

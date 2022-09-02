@@ -118,11 +118,9 @@ public:
     static FloatRect calculateUnionOfAllDocumentMarkerBounds(const LegacyInlineTextBox&);
 };
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 class ModernTextBoxPainter : public TextBoxPainter<InlineIterator::BoxModernPath> {
 public:
     ModernTextBoxPainter(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&, PaintInfo&, const LayoutPoint& paintOffset);
 };
-#endif
 
 }

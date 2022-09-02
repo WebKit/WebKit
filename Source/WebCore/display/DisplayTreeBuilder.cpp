@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DisplayTreeBuilder.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "DisplayBoxFactory.h"
 #include "DisplayContainerBox.h"
 #include "DisplayStackingItem.h"
@@ -452,4 +450,3 @@ void showDisplayTree(const StackingItem& stackingItem)
 } // namespace Display
 } // namespace WebCore
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

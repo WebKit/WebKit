@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayoutState.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #ifndef NDEBUG
 #include "BlockFormattingState.h"
 #include "InlineFormattingState.h"
@@ -352,4 +350,3 @@ void LayoutContext::verifyAndOutputMismatchingLayoutTree(const LayoutState& layo
 
 #endif
 
-#endif

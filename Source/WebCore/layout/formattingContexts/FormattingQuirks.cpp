@@ -26,8 +26,6 @@
 #include "config.h"
 #include "FormattingQuirks.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FormattingGeometry.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
@@ -79,4 +77,3 @@ LayoutUnit FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight(
 }
 }
 
-#endif

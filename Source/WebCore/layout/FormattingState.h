@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FormattingContext.h"
 #include "LayoutState.h"
 #include <wtf/IsoMalloc.h>
@@ -114,4 +112,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \
     static bool isType(const WebCore::Layout::FormattingState& formattingState) { return formattingState.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif

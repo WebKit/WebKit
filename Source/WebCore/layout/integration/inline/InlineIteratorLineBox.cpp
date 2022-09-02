@@ -79,20 +79,16 @@ bool LineBoxIterator::operator==(const LineBoxIterator& other) const
 
 LineBoxIterator firstLineBoxFor(const RenderBlockFlow& flow)
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = flow.modernLineLayout())
         return lineLayout->firstLineBox();
-#endif
 
     return { LineBoxIteratorLegacyPath { flow.firstRootBox() } };
 }
 
 LineBoxIterator lastLineBoxFor(const RenderBlockFlow& flow)
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = flow.modernLineLayout())
         return lineLayout->lastLineBox();
-#endif
 
     return { LineBoxIteratorLegacyPath { flow.lastRootBox() } };
 }

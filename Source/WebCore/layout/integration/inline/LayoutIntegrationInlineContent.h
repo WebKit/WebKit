@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "InlineDisplayBox.h"
 #include "LayoutIntegrationLine.h"
 #include <wtf/HashMap.h>
@@ -111,4 +109,3 @@ template<typename Function> void InlineContent::traverseNonRootInlineBoxes(const
 }
 }
 
-#endif

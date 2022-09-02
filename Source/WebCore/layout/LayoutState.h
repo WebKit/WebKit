@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "LayoutContainerBox.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -174,4 +172,3 @@ inline BoxGeometry* Box::cachedGeometryForLayoutState(const LayoutState& layoutS
 
 }
 }
-#endif

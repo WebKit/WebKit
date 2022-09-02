@@ -76,10 +76,8 @@
 #include "RenderView.h"
 #include <wtf/SetForScope.h>
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 #include "FrameView.h"
 #include "FrameViewLayoutContext.h"
-#endif
 
 namespace WebCore {
 

@@ -77,11 +77,9 @@ class RenderWidget;
 class ScrollingCoordinator;
 class ScrollAnchoringController;
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 namespace Display {
 class View;
 }
-#endif
 
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 
@@ -106,10 +104,8 @@ public:
 
     WEBCORE_EXPORT RenderView* renderView() const;
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     Display::View* existingDisplayView() const;
     Display::View& displayView();
-#endif
 
     int mapFromLayoutToCSSUnits(LayoutUnit) const;
     LayoutUnit mapFromCSSToLayoutUnits(int) const;
@@ -903,9 +899,7 @@ private:
     const Ref<Frame> m_frame;
     FrameViewLayoutContext m_layoutContext;
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     std::unique_ptr<Display::View> m_displayView;
-#endif
 
     HashSet<Widget*> m_widgetsInRenderTree;
     std::unique_ptr<ListHashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;

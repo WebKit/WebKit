@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FormattingQuirks.h"
 
 namespace WebCore {
@@ -51,4 +49,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_QUIRKS(TableFormattingQuirks, isTableFormattingQuirks())
 
-#endif

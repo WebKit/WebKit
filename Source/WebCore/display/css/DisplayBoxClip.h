@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "DisplayBox.h"
 #include "FloatRoundedRect.h"
 #include "RectEdges.h"
@@ -75,4 +73,3 @@ private:
 } // namespace WebCore
 
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

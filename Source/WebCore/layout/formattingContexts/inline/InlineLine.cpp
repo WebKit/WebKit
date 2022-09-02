@@ -26,8 +26,6 @@
 #include "config.h"
 #include "InlineLine.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FontCascade.h"
 #include "InlineFormattingContext.h"
 #include "InlineSoftLineBreakItem.h"
@@ -804,4 +802,3 @@ bool Line::Run::truncate(InlineLayoutUnit visibleWidth, CanFullyTruncate canFull
 }
 }
 
-#endif

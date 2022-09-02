@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -66,4 +64,3 @@ private:
 
 }
 }
-#endif

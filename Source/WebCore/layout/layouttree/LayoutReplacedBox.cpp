@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayoutReplacedBox.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -91,4 +89,3 @@ bool ReplacedBox::hasAspectRatio() const
 
 }
 }
-#endif

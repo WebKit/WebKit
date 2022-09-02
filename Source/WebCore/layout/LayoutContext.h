@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
 
@@ -71,4 +69,3 @@ private:
 
 }
 }
-#endif

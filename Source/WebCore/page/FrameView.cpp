@@ -140,10 +140,8 @@
 #include "LocalDefaultSystemAppearance.h"
 #endif
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 #include "DisplayView.h"
 #include "LayoutContext.h"
-#endif
 
 #define PAGE_ID valueOrDefault(frame().pageID()).toUInt64()
 #define FRAME_ID valueOrDefault(frame().frameID()).toUInt64()
@@ -965,13 +963,11 @@ void FrameView::updateScrollingCoordinatorScrollSnapProperties() const
 
 bool FrameView::flushCompositingStateForThisFrame(const Frame& rootFrameForFlush)
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (DeprecatedGlobalSettings::layoutFormattingContextEnabled()) {
         if (auto* view = existingDisplayView())
             view->flushLayers();
         return true;
     }
-#endif
 
     RenderView* renderView = this->renderView();
     if (!renderView)
@@ -1177,10 +1173,8 @@ void FrameView::setIsInWindow(bool isInWindow)
     if (RenderView* renderView = this->renderView())
         renderView->setIsInWindow(isInWindow);
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* view = existingDisplayView())
         view->setIsInWindow(isInWindow);
-#endif
 }
 
 void FrameView::forceLayoutParentViewIfNeeded()
@@ -5647,7 +5641,6 @@ RenderView* FrameView::renderView() const
     return frame().contentRenderer();
 }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 Display::View* FrameView::existingDisplayView() const
 {
     return m_displayView.get();
@@ -5659,7 +5652,6 @@ Display::View& FrameView::displayView()
         m_displayView = makeUnique<Display::View>(*this);
     return *m_displayView;
 }
-#endif
 
 int FrameView::mapFromLayoutToCSSUnits(LayoutUnit value) const
 {

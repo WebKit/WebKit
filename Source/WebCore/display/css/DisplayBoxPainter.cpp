@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DisplayBoxPainter.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "CachedImage.h"
 #include "Color.h"
 #include "DisplayBoxDecorationData.h"
@@ -103,4 +101,3 @@ void BoxPainter::paintBox(const Box& box, PaintingContext& paintingContext, cons
 } // namespace Display
 } // namespace WebCore
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

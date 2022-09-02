@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
 #include <wtf/IsoMalloc.h>
@@ -92,4 +90,3 @@ private:
 
 }
 }
-#endif

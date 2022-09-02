@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FormattingState.h"
 #include "InlineRect.h"
 #include <wtf/IsoMalloc.h>
@@ -52,4 +50,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_STATE(FlexFormattingState, isFlexFormattingState())
 
-#endif

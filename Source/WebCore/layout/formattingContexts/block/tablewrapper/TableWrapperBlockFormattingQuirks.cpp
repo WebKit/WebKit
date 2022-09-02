@@ -26,8 +26,6 @@
 #include "config.h"
 #include "TableWrapperBlockFormattingQuirks.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "BlockFormattingGeometry.h"
 #include "LayoutState.h"
 #include "TableWrapperBlockFormattingContext.h"
@@ -51,4 +49,3 @@ LayoutUnit TableWrapperQuirks::overriddenTableHeight(const ContainerBox& tableBo
 }
 }
 
-#endif

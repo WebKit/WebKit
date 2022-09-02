@@ -41,12 +41,10 @@ InlineBoxPainter::InlineBoxPainter(const LegacyInlineFlowBox& inlineBox, PaintIn
 {
 }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 InlineBoxPainter::InlineBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const InlineDisplay::Box& box, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     : InlineBoxPainter(*InlineIterator::inlineBoxFor(inlineContent, box), paintInfo, paintOffset)
 {
 }
-#endif
 
 InlineBoxPainter::InlineBoxPainter(const InlineIterator::InlineBox& inlineBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     : m_inlineBox(inlineBox)

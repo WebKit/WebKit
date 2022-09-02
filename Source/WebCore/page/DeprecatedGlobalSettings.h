@@ -143,13 +143,11 @@ public:
     static void setWebAPIStatisticsEnabled(bool isEnabled) { shared().m_webAPIStatisticsEnabled = isEnabled; }
     static bool webAPIStatisticsEnabled() { return shared().m_webAPIStatisticsEnabled; }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     static void setLayoutFormattingContextEnabled(bool isEnabled) { shared().m_layoutFormattingContextEnabled = isEnabled; }
     static bool layoutFormattingContextEnabled() { return shared().m_layoutFormattingContextEnabled; }
 
     static void setInlineFormattingContextIntegrationEnabled(bool isEnabled) { shared().m_inlineFormattingContextIntegrationEnabled = isEnabled; }
     static bool inlineFormattingContextIntegrationEnabled() { return shared().m_inlineFormattingContextIntegrationEnabled; }
-#endif
 
 #if ENABLE(CSS_PAINTING_API)
     static void setCSSPaintingAPIEnabled(bool isEnabled) { shared().m_CSSPaintingAPIEnabled = isEnabled; }
@@ -354,10 +352,8 @@ private:
     bool m_pageAtRuleSupportEnabled { false };
     bool m_highlightAPIEnabled { false };
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     bool m_layoutFormattingContextEnabled { false };
     bool m_inlineFormattingContextIntegrationEnabled { true };
-#endif
 
 #if ENABLE(CSS_PAINTING_API)
     bool m_CSSPaintingAPIEnabled { false };

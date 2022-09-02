@@ -32,8 +32,6 @@
 #include "LayoutListMarkerBox.h"
 #include "LayoutReplacedBox.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 namespace WebCore {
 namespace Layout {
 
@@ -478,4 +476,3 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
 }
 }
 
-#endif

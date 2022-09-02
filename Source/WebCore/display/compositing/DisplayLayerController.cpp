@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DisplayLayerController.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DisplayCSSPainter.h"
@@ -218,4 +216,3 @@ GraphicsLayerFactory* LayerController::graphicsLayerFactory() const
 } // namespace Display
 } // namespace WebCore
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

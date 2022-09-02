@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FormattingConstraints.h"
 #include "InlineContentBreaker.h"
 #include "InlineFormattingState.h"
@@ -170,4 +168,3 @@ inline LineBuilder::PartialContent::PartialContent(size_t length, std::optional<
 
 }
 }
-#endif

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "FloatingContext.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "BlockFormattingState.h"
 #include "FloatAvoider.h"
 #include "LayoutBox.h"
@@ -737,4 +735,3 @@ bool Iterator::operator!=(const Iterator& other) const
 
 }
 }
-#endif

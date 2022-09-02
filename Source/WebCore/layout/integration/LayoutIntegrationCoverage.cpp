@@ -45,8 +45,6 @@
 #include <pal/Logging.h>
 #include <wtf/OptionSet.h>
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #define ALLOW_FLOATS 0
 #define ALLOW_RTL_FLOATS 0
 
@@ -623,4 +621,3 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
 }
 }
 
-#endif

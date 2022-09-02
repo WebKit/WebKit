@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include "DisplayReplacedBox.h"
@@ -63,4 +61,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_DISPLAY_BOX(ImageBox, isImageBox())
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

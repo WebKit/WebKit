@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FloatingState.h"
 #include "FormattingContext.h"
 #include "LayoutContainerBox.h"
@@ -92,4 +90,3 @@ private:
 
 }
 }
-#endif

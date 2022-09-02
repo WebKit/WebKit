@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "InlineDisplayLine.h"
 #include "InlineFormattingContext.h"
 #include "InlineLineBuilder.h"
@@ -61,4 +59,3 @@ private:
 }
 }
 
-#endif

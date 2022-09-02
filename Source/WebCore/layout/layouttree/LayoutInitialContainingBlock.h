@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "LayoutContainerBox.h"
 #include <wtf/IsoMalloc.h>
 
@@ -55,4 +53,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(InitialContainingBlock, isInitialContainingBlock())
 
-#endif

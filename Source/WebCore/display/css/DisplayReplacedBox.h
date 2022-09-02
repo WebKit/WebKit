@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "DisplayBoxModelBox.h"
 
 namespace WebCore {
@@ -55,4 +53,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_DISPLAY_BOX(ReplacedBox, isReplacedBox())
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

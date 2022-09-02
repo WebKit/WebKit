@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "LayoutGeometryRect.h"
 #include "LayoutUnits.h"
 #include <wtf/IsoMalloc.h>
@@ -420,4 +418,3 @@ inline LayoutUnit BoxGeometry::borderEnd() const
 
 }
 }
-#endif

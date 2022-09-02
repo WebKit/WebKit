@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "InlineDisplayBox.h"
 #include "InlineItem.h"
 #include "InlineTextItem.h"
@@ -312,4 +310,3 @@ inline bool Line::Run::hasTextCombine() const
 
 }
 }
-#endif

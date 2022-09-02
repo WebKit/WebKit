@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "Color.h"
 #include "DisplayFillLayerImageGeometry.h"
 #include "FloatRoundedRect.h"
@@ -120,4 +118,3 @@ private:
 } // namespace WebCore
 
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

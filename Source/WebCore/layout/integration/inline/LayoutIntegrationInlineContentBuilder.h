@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "InlineFormattingState.h"
 #include <wtf/Vector.h>
 
@@ -55,4 +53,3 @@ private:
 
 }
 }
-#endif

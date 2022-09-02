@@ -26,8 +26,6 @@
 #include "config.h"
 #include "InlineLineBuilder.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FloatingContext.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingGeometry.h"
@@ -1172,4 +1170,3 @@ const LayoutState& LineBuilder::layoutState() const
 }
 }
 
-#endif

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FlexFormattingConstraints.h"
 #include "FlexFormattingState.h"
 #include "FlexRect.h"
@@ -138,4 +136,3 @@ inline FlexLayout::LogicalFlexItem::LogicalFlexItem(LayoutSize marginBoxSize, Lo
 }
 }
 
-#endif

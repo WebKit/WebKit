@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "LayoutInitialContainingBlock.h"
 #include <wtf/HashMap.h>
 #include <wtf/UniqueRef.h>
@@ -92,4 +90,3 @@ void showInlineContent(TextStream&, const InlineContent&, size_t depth);
 }
 }
 
-#endif

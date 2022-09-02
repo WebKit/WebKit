@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "FloatRect.h"
 #include "LayoutRect.h"
 #include "RenderStyleConstants.h"
@@ -86,4 +84,3 @@ Vector<FillLayerImageGeometry, 1> calculateFillLayerImageGeometry(const RenderSt
 } // namespace Display
 } // namespace WebCore
 
-#endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

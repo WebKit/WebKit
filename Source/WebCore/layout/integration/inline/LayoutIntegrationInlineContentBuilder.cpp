@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayoutIntegrationInlineContentBuilder.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "InlineDisplayBox.h"
 #include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
@@ -152,4 +150,3 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
 }
 }
 
-#endif

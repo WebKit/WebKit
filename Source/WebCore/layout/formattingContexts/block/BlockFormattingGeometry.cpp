@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BlockFormattingGeometry.h"
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "BlockFormattingContext.h"
 #include "BlockFormattingQuirks.h"
 #include "BlockMarginCollapse.h"
@@ -400,4 +398,3 @@ IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(con
 }
 }
 
-#endif
