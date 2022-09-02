@@ -963,7 +963,7 @@ UseCGDisplayListImageCache:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 UseCGDisplayListsForDOMRendering:
   type: bool
