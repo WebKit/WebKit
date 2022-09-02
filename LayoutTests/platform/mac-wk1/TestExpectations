@@ -525,6 +525,9 @@ http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-inse
 # WK1 networking is blocked by JS
 imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html
 
+webkit.org/b/244715 [ Debug ] imported/w3c/web-platform-tests/xhr/request-content-length.any.worker.html [ Pass Failure ]
+webkit.org/b/244715 [ Debug ] imported/w3c/web-platform-tests/xhr/request-content-length.any.html [ Pass Failure ]
+
 webkit.org/b/187230 editing/mac/pasteboard/can-copy-url-without-title.html [ Skip ]
 
 ### END OF (1) Failures with bug reports
