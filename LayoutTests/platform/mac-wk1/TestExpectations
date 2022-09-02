@@ -1343,6 +1343,8 @@ media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 media/presentationmodechanged-fired-once.html [ Skip ]
 media/video-presentation-mode.html [ Skip ]
 
+webkit.org/b/244696 [ Debug ] media/modern-media-controls/media-documents/insert-style-should-not-crash.html [ Pass Crash ]
+
 webkit.org/b/213896 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-008.html [ Pass Failure ]
 
 # ENABLE_INPUT_TYPE_* are not enabled on wk1.
