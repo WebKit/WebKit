@@ -52,7 +52,7 @@ void TextDocumentParser::insertFakePreElement()
     // sending fake bytes through the front-end of the parser to avoid
     // distrubing the line/column number calculations.
     Attribute attribute(styleAttr, "word-wrap: break-word; white-space: pre-wrap;"_s);
-    AtomHTMLToken fakePre(HTMLToken::Type::StartTag, preTag->localName(), { WTFMove(attribute) });
+    AtomHTMLToken fakePre(HTMLToken::Type::StartTag, TagName::pre, { WTFMove(attribute) });
     treeBuilder().constructTree(WTFMove(fakePre));
 
     // Normally we would skip the first \n after a <pre> element, but we don't

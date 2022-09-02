@@ -45,11 +45,11 @@ feTile
 feTurbulence
 filter
 font
-font_face
-font_face_format
-font_face_name
-font_face_src
-font_face_uri
+font-face
+font-face-format
+font-face-name
+font-face-src
+font-face-uri
 foreignObject
 g
 glyph
@@ -61,7 +61,7 @@ linearGradient
 marker
 mask
 metadata
-missing_glyph
+missing-glyph
 mpath interfaceName=SVGMPathElement
 path
 pattern

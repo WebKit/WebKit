@@ -41,13 +41,13 @@ HTMLFormattingElementList::HTMLFormattingElementList() = default;
 
 HTMLFormattingElementList::~HTMLFormattingElementList() = default;
 
-Element* HTMLFormattingElementList::closestElementInScopeWithName(const AtomString& targetName)
+Element* HTMLFormattingElementList::closestElementInScopeWithName(ElementName targetElement)
 {
     for (unsigned i = 1; i <= m_entries.size(); ++i) {
         const Entry& entry = m_entries[m_entries.size() - i];
         if (entry.isMarker())
             return nullptr;
-        if (entry.stackItem().matchesHTMLTag(targetName))
+        if (entry.stackItem().elementName() == targetElement)
             return &entry.element();
     }
     return nullptr;
@@ -119,6 +119,17 @@ void HTMLFormattingElementList::clearToLastMarker()
     }
 }
 
+static bool itemsHaveMatchingNames(const HTMLStackItem& a, const HTMLStackItem& b)
+{
+    if (a.elementName() != b.elementName())
+        return false;
+
+    if (a.elementName() != ElementName::Unknown)
+        return true;
+
+    return a.localName() == b.localName() && a.namespaceURI() == b.namespaceURI();
+}
+
 Vector<const HTMLStackItem*> HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(HTMLStackItem& newItem)
 {
     if (m_entries.size() < kNoahsArkCapacity)
@@ -137,7 +148,7 @@ Vector<const HTMLStackItem*> HTMLFormattingElementList::tryToEnsureNoahsArkCondi
 
         // Quickly reject obviously non-matching candidates.
         auto& candidate = entry.stackItem();
-        if (newItem.localName() != candidate.localName() || newItem.namespaceURI() != candidate.namespaceURI())
+        if (!itemsHaveMatchingNames(newItem, candidate))
             continue;
         if (candidate.attributes().size() != newItemAttributeCount)
             continue;
@@ -165,7 +176,7 @@ void HTMLFormattingElementList::ensureNoahsArkCondition(HTMLStackItem& newItem)
         for (auto* candidate : candidates) {
             // These properties should already have been checked by tryToEnsureNoahsArkConditionQuickly.
             ASSERT(newItem.attributes().size() == candidate->attributes().size());
-            ASSERT(newItem.localName() == candidate->localName() && newItem.namespaceURI() == candidate->namespaceURI());
+            ASSERT(itemsHaveMatchingNames(newItem, *candidate));
 
             auto* candidateAttribute = candidate->findAttribute(attribute.name());
             if (candidateAttribute && candidateAttribute->value() == attribute.value())
