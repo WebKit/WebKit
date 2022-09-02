@@ -332,11 +332,6 @@ math
       AXSubrole: AXDocumentMath
       AXRoleDescription: math
 
-menu
-      AXRole: AXList
-      AXSubrole: AXContentList
-      AXRoleDescription: content list
-
 merror
       AXRole: AXGroup
       AXSubrole: AXMathRow
@@ -504,6 +499,16 @@ meter
       AXRole: AXLevelIndicator
       AXSubrole: AXMeter
       AXRoleDescription: level indicator
+
+menu
+      AXRole: AXList
+      AXSubrole: AXContentList
+      AXRoleDescription: content list
+
+li
+      AXRole: AXGroup
+      AXSubrole:
+      AXRoleDescription: group
 
 nav
       AXRole: AXGroup
