@@ -74,6 +74,9 @@ public:
     void revoke(VM&);
     bool isRevoked() const;
 
+    static ptrdiff_t offsetOfTarget() { return OBJECT_OFFSETOF(ProxyObject, m_target); }
+    static ptrdiff_t offsetOfHandler() { return OBJECT_OFFSETOF(ProxyObject, m_handler); }
+
 private:
     JS_EXPORT_PRIVATE ProxyObject(VM&, Structure*);
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSGlobalObject*, JSValue target, JSValue handler);

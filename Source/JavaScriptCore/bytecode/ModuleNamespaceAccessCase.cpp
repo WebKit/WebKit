@@ -60,8 +60,9 @@ Ref<AccessCase> ModuleNamespaceAccessCase::cloneImpl() const
 void ModuleNamespaceAccessCase::emit(AccessGenerationState& state, MacroAssembler::JumpList& fallThrough)
 {
     CCallHelpers& jit = *state.jit;
-    JSValueRegs valueRegs = state.valueRegs;
-    GPRReg baseGPR = state.baseGPR;
+    StructureStubInfo& stubInfo = *state.stubInfo;
+    JSValueRegs valueRegs = stubInfo.valueRegs();
+    GPRReg baseGPR = stubInfo.m_baseGPR;
 
     fallThrough.append(
         jit.branchPtr(

@@ -278,6 +278,7 @@ FOR_EACH_LAZY_BUILTIN_TYPE(CHECK_FEATURE_FLAG_TYPE)
 
 static JSC_DECLARE_HOST_FUNCTION(makeBoundFunction);
 static JSC_DECLARE_HOST_FUNCTION(hasOwnLengthProperty);
+static JSC_DECLARE_HOST_FUNCTION(globalFuncHandleProxyGetTrapResult);
 static JSC_DECLARE_HOST_FUNCTION(createPrivateSymbol);
 static JSC_DECLARE_HOST_FUNCTION(jsonParse);
 static JSC_DECLARE_HOST_FUNCTION(jsonStringify);
@@ -363,6 +364,36 @@ JSC_DEFINE_HOST_FUNCTION(hasOwnLengthProperty, (JSGlobalObject* globalObject, Ca
         return JSValue::encode(jsBoolean(true));
     }
     RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(target->hasOwnProperty(globalObject, vm.propertyNames->length))));
+}
+
+JSC_DEFINE_HOST_FUNCTION(globalFuncHandleProxyGetTrapResult, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue trapResult = callFrame->uncheckedArgument(0);
+
+    JSObject* target = asObject(callFrame->uncheckedArgument(1));
+
+    Identifier propertyName = callFrame->uncheckedArgument(2).toPropertyKey(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    PropertyDescriptor descriptor;
+    bool result = target->getOwnPropertyDescriptor(globalObject, propertyName.impl(), descriptor);
+    EXCEPTION_ASSERT(!scope.exception() || !result);
+    if (result) {
+        if (descriptor.isDataDescriptor() && !descriptor.configurable() && !descriptor.writable()) {
+            bool isSame = sameValue(globalObject, descriptor.value(), trapResult);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (!isSame)
+                return throwVMTypeError(globalObject, scope, "Proxy handler's 'get' result of a non-configurable and non-writable property should be the same value as the target's property"_s);
+        } else if (descriptor.isAccessorDescriptor() && !descriptor.configurable() && descriptor.getter().isUndefined()) {
+            if (!trapResult.isUndefined())
+                return throwVMTypeError(globalObject, scope, "Proxy handler's 'get' result of a non-configurable accessor property without a getter should be undefined"_s);
+        }
+    }
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsUndefined()));
 }
 
 // FIXME: use a bytecode or intrinsic for creating a private symbol.
@@ -1569,6 +1600,11 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::hasOwnLengthProperty)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, String(), hasOwnLengthProperty, ImplementationVisibility::Private));
+        });
+
+    // Proxy prototype helpers.
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::handleProxyGetTrapResult)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 3, String(), globalFuncHandleProxyGetTrapResult, ImplementationVisibility::Private));
         });
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::dateTimeFormat)].initLater([] (const Initializer<JSCell>& init) {

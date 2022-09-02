@@ -78,17 +78,18 @@ bool IntrinsicGetterAccessCase::canEmitIntrinsicGetter(StructureStubInfo& stubIn
 void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state)
 {
     CCallHelpers& jit = *state.jit;
-    JSValueRegs valueRegs = state.valueRegs;
-    GPRReg baseGPR = state.baseGPR;
+    StructureStubInfo& stubInfo = *state.stubInfo;
+    JSValueRegs valueRegs = stubInfo.valueRegs();
+    GPRReg baseGPR = stubInfo.m_baseGPR;
     GPRReg valueGPR = valueRegs.payloadGPR();
 
     switch (intrinsic()) {
     case TypedArrayLengthIntrinsic: {
 #if USE(LARGE_TYPED_ARRAYS)
-        jit.load64(MacroAssembler::Address(state.baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
+        jit.load64(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
         jit.boxInt52(valueGPR, valueGPR, state.scratchGPR, state.scratchFPR);
 #else
-        jit.load32(MacroAssembler::Address(state.baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
+        jit.load32(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
         jit.boxInt32(valueGPR, valueRegs);
 #endif
         state.succeed();
@@ -98,12 +99,12 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
     case TypedArrayByteLengthIntrinsic: {
         TypedArrayType type = typedArrayType(structure()->typeInfo().type());
 #if USE(LARGE_TYPED_ARRAYS)
-        jit.load64(MacroAssembler::Address(state.baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
+        jit.load64(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
         if (elementSize(type) > 1)
             jit.lshift64(TrustedImm32(logElementSize(type)), valueGPR);
         jit.boxInt52(valueGPR, valueGPR, state.scratchGPR, state.scratchFPR);
 #else
-        jit.load32(MacroAssembler::Address(state.baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
+        jit.load32(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
         if (elementSize(type) > 1) {
             // We can use a bitshift here since on ADDRESS32 platforms TypedArrays cannot have byteLength that overflows an int32.
             jit.lshift32(TrustedImm32(logElementSize(type)), valueGPR);

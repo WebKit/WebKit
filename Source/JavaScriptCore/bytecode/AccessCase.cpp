@@ -43,6 +43,7 @@
 #include "LinkBuffer.h"
 #include "ModuleNamespaceAccessCase.h"
 #include "PolymorphicAccess.h"
+#include "ProxyObjectAccessCase.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
 #include "StructureStubInfo.h"
@@ -81,6 +82,7 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case ProxyObjectLoad:
     case Replace:
     case InstanceOfGeneric:
     case IndexedInt32Load:
@@ -305,6 +307,7 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case ProxyObjectLoad:
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfGeneric:
@@ -371,6 +374,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case ProxyObjectLoad:
     case CheckPrivateBrand:
     case SetPrivateBrand:
         return true;
@@ -438,6 +442,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case ProxyObjectLoad:
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfGeneric:
@@ -506,6 +511,7 @@ bool AccessCase::needsScratchFPR() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case ProxyObjectLoad:
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfGeneric:
@@ -588,6 +594,12 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
             functor(accessCase.moduleEnvironment());
         break;
     }
+    case ProxyObjectLoad: {
+        auto& accessor = this->as<ProxyObjectAccessCase>();
+        if (accessor.callLinkInfo())
+            accessor.callLinkInfo()->forEachDependentCell(functor);
+        break;
+    }
     case InstanceOfHit:
     case InstanceOfMiss:
         if (as<InstanceOfAccessCase>().prototype())
@@ -660,6 +672,7 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case CustomAccessorGetter:
     case CustomValueSetter:
     case CustomAccessorSetter:
+    case ProxyObjectLoad:
         doesCalls = true;
         break;
     case Delete:
@@ -807,6 +820,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case IndexedTypedArrayUint32Store:
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
+    case ProxyObjectLoad:
         return other.type() == type();
 
     case ModuleNamespaceLoad: {
@@ -970,13 +984,13 @@ void AccessCase::generateWithGuard(
     CCallHelpers& jit = *state.jit;
     StructureStubInfo& stubInfo = *state.stubInfo;
     VM& vm = state.m_vm;
-    JSValueRegs valueRegs = state.valueRegs;
-    GPRReg baseGPR = state.baseGPR;
+    JSValueRegs valueRegs = stubInfo.valueRegs();
+    GPRReg baseGPR = stubInfo.m_baseGPR;
     GPRReg scratchGPR = state.scratchGPR;
 
     if (requiresIdentifierNameMatch() && !stubInfo.hasConstantIdentifier) {
         RELEASE_ASSERT(m_identifier);
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = stubInfo.propertyGPR();
         // non-rope string check done inside polymorphic access.
 
         if (uid()->isSymbol())
@@ -990,7 +1004,7 @@ void AccessCase::generateWithGuard(
         if (m_polyProtoAccessChain) {
             ASSERT(!viaProxy());
             GPRReg baseForAccessGPR = state.scratchGPR;
-            jit.move(state.baseGPR, baseForAccessGPR);
+            jit.move(baseGPR, baseForAccessGPR);
             m_polyProtoAccessChain->forEach(vm, structure(), [&] (Structure* structure, bool atEnd) {
                 fallThrough.append(
                     jit.branchStructure(
@@ -1112,10 +1126,16 @@ void AccessCase::generateWithGuard(
         return;
     }
 
+    case ProxyObjectLoad: {
+        ASSERT(!viaProxy());
+        this->as<ProxyObjectAccessCase>().emit(state, fallThrough);
+        return;
+    }
+
     case IndexedScopedArgumentsLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = stubInfo.propertyGPR();
 
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(ScopedArgumentsType)));
@@ -1177,7 +1197,7 @@ void AccessCase::generateWithGuard(
     case IndexedDirectArgumentsLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = stubInfo.propertyGPR();
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(DirectArgumentsType)));
         
@@ -1204,7 +1224,7 @@ void AccessCase::generateWithGuard(
 
         TypedArrayType type = toTypedArrayType(m_type);
 
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = stubInfo.propertyGPR();
 
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
@@ -1297,7 +1317,7 @@ void AccessCase::generateWithGuard(
     case IndexedStringLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = stubInfo.propertyGPR();
 
         fallThrough.append(jit.branchIfNotString(baseGPR));
 
@@ -1345,7 +1365,7 @@ void AccessCase::generateWithGuard(
 
     case IndexedNoIndexingMiss: {
         emitDefaultGuard();
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = stubInfo.propertyGPR();
         state.failAndIgnore.append(jit.branch32(CCallHelpers::LessThan, propertyGPR, CCallHelpers::TrustedImm32(0)));
         break;
     }
@@ -1357,7 +1377,7 @@ void AccessCase::generateWithGuard(
     case IndexedArrayStorageLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = stubInfo.propertyGPR();
 
         // int32 check done in polymorphic access.
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::indexingTypeAndMiscOffset()), scratchGPR);
@@ -1459,7 +1479,7 @@ void AccessCase::generateWithGuard(
     case IndexedContiguousStore:
     case IndexedArrayStorageStore: {
         ASSERT(!viaProxy());
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = stubInfo.propertyGPR();
 
         // int32 check done in polymorphic access.
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::indexingTypeAndMiscOffset()), scratchGPR);
@@ -1613,7 +1633,7 @@ void AccessCase::generateWithGuard(
 
         TypedArrayType type = toTypedArrayType(m_type);
 
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = stubInfo.propertyGPR();
 
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
@@ -1718,13 +1738,13 @@ void AccessCase::generateWithGuard(
         
         fallThrough.append(
             jit.branchPtr(
-                CCallHelpers::NotEqual, state.prototypeGPR(),
+                CCallHelpers::NotEqual, stubInfo.prototypeGPR(),
                 CCallHelpers::TrustedImmPtr(as<InstanceOfAccessCase>().prototype())));
         break;
         
     case InstanceOfGeneric: {
         ASSERT(!viaProxy());
-        GPRReg prototypeGPR = state.prototypeGPR();
+        GPRReg prototypeGPR = stubInfo.prototypeGPR();
         // Legend: value = `base instanceof prototypeGPR`.
         
         GPRReg valueGPR = valueRegs.payloadGPR();
@@ -1819,9 +1839,9 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     CodeBlock* codeBlock = jit.codeBlock();
     ECMAMode ecmaMode = state.m_ecmaMode;
     StructureStubInfo& stubInfo = *state.stubInfo;
-    JSValueRegs valueRegs = state.valueRegs;
-    GPRReg baseGPR = state.baseGPR;
-    GPRReg thisGPR = stubInfo.thisValueIsInExtraGPR() ? state.thisGPR() : baseGPR;
+    JSValueRegs valueRegs = stubInfo.valueRegs();
+    GPRReg baseGPR = stubInfo.m_baseGPR;
+    GPRReg thisGPR = stubInfo.thisValueIsInExtraGPR() ? stubInfo.thisGPR() : baseGPR;
     GPRReg scratchGPR = state.scratchGPR;
 
     for (const ObjectPropertyCondition& condition : m_conditionSet) {
@@ -2028,7 +2048,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // Therefore, we temporarily grow the stack for the purpose of the call and then
             // shrink it after.
 
-            state.setSpillStateForJSGetterSetter(spillState);
+            state.setSpillStateForJSCall(spillState);
 
             RELEASE_ASSERT(!access.callLinkInfo());
             auto* callLinkInfo = state.m_callLinkInfos.add(stubInfo.codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No);
@@ -2550,6 +2570,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case ProxyObjectLoad:
     case InstanceOfGeneric:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
@@ -2705,6 +2726,10 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case InstanceOfMiss:
         func(static_cast<InstanceOfAccessCase*>(this));
         break;
+
+    case ProxyObjectLoad:
+        func(static_cast<ProxyObjectAccessCase*>(this));
+        break;
     }
 }
 
@@ -2794,8 +2819,9 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
         return true;
 
     case Getter:
-    case Setter: {
-        // Getter and Setter relies on CodeBlock, which makes sharing impossible.
+    case Setter:
+    case ProxyObjectLoad: {
+        // Getter, Setter, and ProxyObjectLoad relies on CodeBlock, which makes sharing impossible.
         return false;
     }
 

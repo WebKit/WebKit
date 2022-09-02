@@ -180,6 +180,7 @@ namespace JSC {
     macro(stringSubstringInternal) \
     macro(makeBoundFunction) \
     macro(hasOwnLengthProperty) \
+    macro(handleProxyGetTrapResult) \
     macro(importModule) \
     macro(copyDataProperties) \
     macro(meta) \

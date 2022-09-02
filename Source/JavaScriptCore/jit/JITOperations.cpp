@@ -2291,7 +2291,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValOptimize, EncodedJSValue, (JSGlobalObj
                 ConcurrentJSLocker locker(codeBlock->m_lock);
                 profile->computeUpdatedPrediction(locker, codeBlock, structure);
             }
-            repatchArrayGetByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo);
+            repatchArrayGetByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo, GetByKind::ByVal);
         }
     }
 
@@ -2348,6 +2348,165 @@ JSC_DEFINE_JIT_OPERATION(operationGetByVal, EncodedJSValue, (JSGlobalObject* glo
     auto propertyName = property.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     RELEASE_AND_RETURN(scope, JSValue::encode(baseValue.get(globalObject, propertyName)));
+}
+
+ALWAYS_INLINE static JSValue getByValWithThis(JSGlobalObject* globalObject, CallFrame* callFrame, ArrayProfile* arrayProfile, JSValue baseValue, JSValue subscript, JSValue thisValue)
+{
+    UNUSED_PARAM(callFrame);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (LIKELY(baseValue.isCell() && subscript.isString())) {
+        Structure& structure = *baseValue.asCell()->structure();
+        if (JSCell::canUseFastGetOwnProperty(structure)) {
+            auto existingAtomString = asString(subscript)->toExistingAtomString(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (!existingAtomString.isNull()) {
+                if (JSValue result = baseValue.asCell()->fastGetOwnProperty(vm, structure, existingAtomString.impl())) {
+                    ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
+                    return result;
+                }
+            }
+        }
+    }
+
+    PropertySlot slot(thisValue, PropertySlot::PropertySlot::InternalMethodType::Get);
+    if (std::optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
+        uint32_t i = *index;
+        if (isJSString(baseValue)) {
+            if (asString(baseValue)->canGetIndex(i))
+                RELEASE_AND_RETURN(scope, asString(baseValue)->getIndex(globalObject, i));
+            if (arrayProfile)
+                arrayProfile->setOutOfBounds();
+        } else if (baseValue.isObject()) {
+            JSObject* object = asObject(baseValue);
+            if (JSValue result = object->tryGetIndexQuickly(i, arrayProfile))
+                return result;
+
+            bool skipMarkingOutOfBounds = false;
+
+            if (object->indexingType() == ArrayWithContiguous
+                && static_cast<uint32_t>(i) < object->butterfly()->publicLength()) {
+                // FIXME: expand this to ArrayStorage, Int32, and maybe Double:
+                // https://bugs.webkit.org/show_bug.cgi?id=182940
+                auto* globalObject = object->globalObject();
+                skipMarkingOutOfBounds = globalObject->isOriginalArrayStructure(object->structure()) && globalObject->arrayPrototypeChainIsSane();
+            }
+
+            if (!skipMarkingOutOfBounds && !CommonSlowPaths::canAccessArgumentIndexQuickly(*object, i)) {
+                // FIXME: This will make us think that in-bounds typed array accesses are actually
+                // out-of-bounds.
+                // https://bugs.webkit.org/show_bug.cgi?id=149886
+                if (arrayProfile)
+                    arrayProfile->setOutOfBounds();
+            }
+        }
+
+        RELEASE_AND_RETURN(scope, baseValue.get(globalObject, i, slot));
+    } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile)
+        arrayProfile->setOutOfBounds();
+
+    baseValue.requireObjectCoercible(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto property = subscript.toPropertyKey(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    RELEASE_AND_RETURN(scope, baseValue.get(globalObject, property, slot));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationGetByValWithThisGeneric, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* profile, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    JSValue thisValue = JSValue::decode(encodedThis);
+
+    stubInfo->tookSlowPath = true;
+
+    return JSValue::encode(getByValWithThis(globalObject, callFrame, profile, baseValue, subscript, thisValue));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationGetByValWithThisOptimize, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* profile, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    JSValue thisValue = JSValue::decode(encodedThis);
+
+    CodeBlock* codeBlock = callFrame->codeBlock();
+
+    if (baseValue.isCell() && subscript.isInt32()) {
+        Structure* structure = baseValue.asCell()->structure();
+        if (stubInfo->considerCachingGeneric(vm, codeBlock, structure)) {
+            if (profile) {
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+                profile->computeUpdatedPrediction(locker, codeBlock, structure);
+            }
+            repatchArrayGetByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo, GetByKind::ByValWithThis);
+        }
+    }
+
+    PropertySlot slot(thisValue, PropertySlot::PropertySlot::InternalMethodType::Get);
+    if (baseValue.isCell() && CacheableIdentifier::isCacheableIdentifierCell(subscript)) {
+        const Identifier propertyName = subscript.toPropertyKey(globalObject);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        if (subscript.isSymbol() || !parseIndex(propertyName)) {
+            scope.release();
+            return JSValue::encode(baseValue.getPropertySlot(globalObject, propertyName, slot, [&] (bool found, PropertySlot& slot) -> JSValue {
+                LOG_IC((ICEvent::OperationGetByValWithThisOptimize, baseValue.classInfoOrNull(), propertyName, baseValue == slot.slotBase()));
+
+                CacheableIdentifier identifier = CacheableIdentifier::createFromCell(subscript.asCell());
+                if (stubInfo->considerCachingBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
+                    repatchGetBy(globalObject, codeBlock, baseValue, identifier, slot, *stubInfo, GetByKind::ByValWithThis);
+                return found ? slot.getValue(globalObject, propertyName) : jsUndefined();
+            }));
+        }
+    }
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(getByValWithThis(globalObject, callFrame, profile, baseValue, subscript, thisValue)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationGetByValWithThis, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedThis))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue property = JSValue::decode(encodedProperty);
+    JSValue thisValue = JSValue::decode(encodedThis);
+
+    if (LIKELY(baseValue.isCell())) {
+        JSCell* base = baseValue.asCell();
+
+        if (std::optional<uint32_t> index = property.tryGetAsUint32Index())
+            RELEASE_AND_RETURN(scope, getByValWithIndexAndThis(globalObject, base, *index, thisValue));
+
+        if (property.isString()) {
+            Structure& structure = *base->structure();
+            if (JSCell::canUseFastGetOwnProperty(structure)) {
+                auto existingAtomString = asString(property)->toExistingAtomString(globalObject);
+                RETURN_IF_EXCEPTION(scope, { });
+                if (!existingAtomString.isNull()) {
+                    if (JSValue result = base->fastGetOwnProperty(vm, structure, existingAtomString.impl()))
+                        return JSValue::encode(result);
+                }
+            }
+        }
+    }
+
+    baseValue.requireObjectCoercible(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto propertyName = property.toPropertyKey(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    PropertySlot slot(thisValue, PropertySlot::PropertySlot::InternalMethodType::Get);
+    RELEASE_AND_RETURN(scope, JSValue::encode(baseValue.get(globalObject, propertyName, slot)));
 }
 
 ALWAYS_INLINE static JSValue getPrivateName(JSGlobalObject* globalObject, CallFrame* callFrame, JSValue baseValue, JSValue fieldNameValue)

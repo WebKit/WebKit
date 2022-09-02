@@ -258,6 +258,9 @@ void StructureStubInfo::reset(const ConcurrentJSLockerBase& locker, CodeBlock* c
     case AccessType::GetByVal:
         resetGetBy(codeBlock, *this, GetByKind::ByVal);
         break;
+    case AccessType::GetByValWithThis:
+        resetGetBy(codeBlock, *this, GetByKind::ByValWithThis);
+        break;
     case AccessType::GetPrivateName:
         resetGetBy(codeBlock, *this, GetByKind::PrivateName);
         break;
@@ -434,6 +437,8 @@ static CodePtr<OperationPtrTag> slowOperationFromUnlinkedStructureStubInfo(const
         return operationGetByIdDirectOptimize;
     case AccessType::GetByIdWithThis:
         return operationGetByIdWithThisOptimize;
+    case AccessType::GetByValWithThis:
+        return operationGetByValWithThisOptimize;
     case AccessType::HasPrivateName:
         return operationHasPrivateNameOptimize;
     case AccessType::HasPrivateBrand: 
@@ -607,6 +612,19 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(const BaselineUn
         m_extraTagGPR = BaselineJITRegisters::GetByIdWithThis::thisJSR.tagGPR();
 #endif
         break;
+    case AccessType::GetByValWithThis:
+        hasConstantIdentifier = false;
+#if USE(JSVALUE64)
+        m_baseGPR = BaselineJITRegisters::GetByValWithThis::baseJSR.payloadGPR();
+        m_valueGPR = BaselineJITRegisters::GetByValWithThis::resultJSR.payloadGPR();
+        m_extraGPR = BaselineJITRegisters::GetByValWithThis::thisJSR.payloadGPR();
+        m_extra2GPR = BaselineJITRegisters::GetByValWithThis::propertyJSR.payloadGPR();
+        m_stubInfoGPR = BaselineJITRegisters::GetByValWithThis::FastPath::stubInfoGPR;
+#else
+        // Registers are exhausted, we cannot have this IC on 32bit.
+        RELEASE_ASSERT_NOT_REACHED();
+#endif
+        break;
     case AccessType::PutById:
         hasConstantIdentifier = true;
         m_extraGPR = InvalidGPRReg;
@@ -672,6 +690,7 @@ void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(const DFG::Un
 
     m_baseGPR = unlinkedStubInfo.m_baseGPR;
     m_extraGPR = unlinkedStubInfo.m_extraGPR;
+    m_extra2GPR = unlinkedStubInfo.m_extra2GPR;
     m_valueGPR = unlinkedStubInfo.m_valueGPR;
     m_stubInfoGPR = unlinkedStubInfo.m_stubInfoGPR;
 
@@ -683,10 +702,15 @@ void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(const DFG::Un
 #if ASSERT_ENABLED
 void StructureStubInfo::checkConsistency()
 {
-    if (thisValueIsInExtraGPR()) {
+    switch (accessType) {
+    case AccessType::GetByIdWithThis:
         // We currently use a union for both "thisGPR" and "propertyGPR". If this were
         // not the case, we'd need to take one of them out of the union.
         RELEASE_ASSERT(hasConstantIdentifier);
+        break;
+    case AccessType::GetByValWithThis:
+    default:
+        break;
     }
 }
 #endif // ASSERT_ENABLED

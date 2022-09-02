@@ -1186,6 +1186,10 @@ private:
             break;
         }
 
+        case GetByValWithThis: {
+            break;
+        }
+
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias: {
@@ -2917,7 +2921,6 @@ private:
         case TypeOf:
         case PutByIdWithThis:
         case PutByValWithThis:
-        case GetByValWithThis:
         case CompareEqPtr:
         case NumberToStringWithValidRadixConstant:
         case GetGlobalThis:

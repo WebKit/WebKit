@@ -41,6 +41,7 @@ enum class GetByKind {
     TryById,
     ByIdWithThis,
     ByIdDirect,
+    ByValWithThis,
     PrivateName,
     PrivateNameById,
 };
@@ -61,7 +62,7 @@ enum class InByKind {
     PrivateName
 };
 
-void repatchArrayGetByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&);
+void repatchArrayGetByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&, GetByKind);
 void repatchGetBy(JSGlobalObject*, CodeBlock*, JSValue, CacheableIdentifier, const PropertySlot&, StructureStubInfo&, GetByKind);
 void repatchArrayPutByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&, PutKind, ECMAMode);
 void repatchPutBy(JSGlobalObject*, CodeBlock*, JSValue, Structure*, CacheableIdentifier, const PutPropertySlot&, StructureStubInfo&, PutByKind, PutKind);

@@ -114,6 +114,7 @@ public:
         DirectArgumentsLength,
         ScopedArgumentsLength,
         ModuleNamespaceLoad,
+        ProxyObjectLoad,
         InstanceOfHit,
         InstanceOfMiss,
         InstanceOfGeneric,
@@ -384,11 +385,12 @@ public:
         struct Key {
             Key() = default;
 
-            Key(GPRReg baseGPR, GPRReg valueGPR, GPRReg extraGPR, GPRReg stubInfoGPR, GPRReg arrayProfileGPR, RegisterSet usedRegisters, PolymorphicAccessJITStubRoutine* wrapped)
+            Key(GPRReg baseGPR, GPRReg valueGPR, GPRReg extraGPR, GPRReg extra2GPR, GPRReg stubInfoGPR, GPRReg arrayProfileGPR, RegisterSet usedRegisters, PolymorphicAccessJITStubRoutine* wrapped)
                 : m_wrapped(wrapped)
                 , m_baseGPR(baseGPR)
                 , m_valueGPR(valueGPR)
                 , m_extraGPR(extraGPR)
+                , m_extra2GPR(extra2GPR)
                 , m_stubInfoGPR(stubInfoGPR)
                 , m_arrayProfileGPR(arrayProfileGPR)
                 , m_usedRegisters(usedRegisters)
@@ -406,6 +408,7 @@ public:
                     && a.m_baseGPR == b.m_baseGPR
                     && a.m_valueGPR == b.m_valueGPR
                     && a.m_extraGPR == b.m_extraGPR
+                    && a.m_extra2GPR == b.m_extra2GPR
                     && a.m_stubInfoGPR == b.m_stubInfoGPR
                     && a.m_arrayProfileGPR == b.m_arrayProfileGPR
                     && a.m_usedRegisters == b.m_usedRegisters;
@@ -415,6 +418,7 @@ public:
             GPRReg m_baseGPR;
             GPRReg m_valueGPR;
             GPRReg m_extraGPR;
+            GPRReg m_extra2GPR;
             GPRReg m_stubInfoGPR;
             GPRReg m_arrayProfileGPR;
             RegisterSet m_usedRegisters;
@@ -449,6 +453,7 @@ public:
                 if (a.m_baseGPR == b.m_baseGPR
                     && a.m_valueGPR == b.m_valueGPR
                     && a.m_extraGPR == b.m_extraGPR
+                    && a.m_extra2GPR == b.m_extra2GPR
                     && a.m_stubInfoGPR == b.m_stubInfoGPR
                     && a.m_arrayProfileGPR == b.m_arrayProfileGPR
                     && a.m_usedRegisters == b.m_usedRegisters) {
@@ -479,6 +484,7 @@ public:
         GPRReg m_baseGPR;
         GPRReg m_valueGPR;
         GPRReg m_extraGPR;
+        GPRReg m_extra2GPR;
         GPRReg m_stubInfoGPR;
         GPRReg m_arrayProfileGPR;
         RegisterSet m_usedRegisters;

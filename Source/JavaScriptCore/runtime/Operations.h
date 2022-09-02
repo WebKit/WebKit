@@ -892,18 +892,23 @@ ALWAYS_INLINE JSValue jsBitwiseXor(JSGlobalObject* globalObject, JSValue v1, JSV
     return bitwiseBinaryOp(globalObject, v1, v2, int32Op, bigIntOp, "Invalid mix of BigInt and other type in bitwise 'xor' operation."_s);
 }
 
-ALWAYS_INLINE EncodedJSValue getByValWithIndex(JSGlobalObject* globalObject, JSCell* base, uint32_t index)
+ALWAYS_INLINE EncodedJSValue getByValWithIndexAndThis(JSGlobalObject* globalObject, JSCell* base, uint32_t index, JSValue thisValue)
 {
     if (base->isObject()) {
-        JSObject* object = asObject(base);
-        if (JSValue result = object->tryGetIndexQuickly(index))
+        if (JSValue result = asObject(base)->tryGetIndexQuickly(index))
             return JSValue::encode(result);
+    } if (isJSString(base)) {
+        if (asString(base)->canGetIndex(index))
+            return JSValue::encode(asString(base)->getIndex(globalObject, index));
     }
 
-    if (isJSString(base) && asString(base)->canGetIndex(index))
-        return JSValue::encode(asString(base)->getIndex(globalObject, index));
+    PropertySlot slot(thisValue, PropertySlot::PropertySlot::InternalMethodType::Get);
+    return JSValue::encode(JSValue(base).get(globalObject, index, slot));
+}
 
-    return JSValue::encode(JSValue(base).get(globalObject, index));
+ALWAYS_INLINE EncodedJSValue getByValWithIndex(JSGlobalObject* globalObject, JSCell* base, uint32_t index)
+{
+    return getByValWithIndexAndThis(globalObject, base, index, base);
 }
 
 } // namespace JSC

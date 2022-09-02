@@ -6386,6 +6386,77 @@ void SpeculativeJIT::compileDateGet(Node* node)
     }
 }
 
+void SpeculativeJIT::compileGetByValWithThis(Node* node)
+{
+    JSValueOperand base(this, node->child1(), ManualOperandSpeculation);
+    JSValueOperand thisValue(this, node->child2(), ManualOperandSpeculation);
+    JSValueOperand property(this, node->child3(), ManualOperandSpeculation);
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg thisValueGPR = thisValue.gpr();
+    GPRReg propertyGPR = property.gpr();
+
+    GPRTemporary stubInfoTemp;
+    GPRReg stubInfoGPR = InvalidGPRReg;
+    if (m_graph.m_plan.isUnlinked()) {
+        stubInfoTemp = GPRTemporary(this);
+        stubInfoGPR = stubInfoTemp.gpr();
+    }
+
+    speculate(node, node->child1());
+    speculate(node, node->child2());
+    speculate(node, node->child3());
+
+    JSValueRegsTemporary results(this);
+    JSValueRegs resultRegs = results.regs();
+    GPRReg resultGPR = resultRegs.gpr();
+
+    CodeOrigin codeOrigin = node->origin.semantic;
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
+    RegisterSet usedRegisters = this->usedRegisters();
+
+    JITCompiler::JumpList slowCases;
+    if (!m_state.forNode(node->child1()).isType(SpecCell))
+        slowCases.append(m_jit.branchIfNotCell(baseGPR));
+
+    JSValueRegs baseRegs { baseGPR };
+    JSValueRegs propertyRegs { propertyGPR };
+    JSValueRegs thisValueRegs { thisValueGPR };
+    auto [ stubInfo, stubInfoConstant ] = m_jit.addStructureStubInfo();
+    JITGetByValWithThisGenerator gen(
+        m_jit.codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::GetByValWithThis, usedRegisters,
+        baseRegs, propertyRegs, thisValueRegs, resultRegs, stubInfoGPR);
+
+    std::visit([&](auto* stubInfo) {
+        if (m_state.forNode(node->child3()).isType(SpecString))
+            stubInfo->propertyIsString = true;
+        else if (m_state.forNode(node->child3()).isType(SpecInt32Only))
+            stubInfo->propertyIsInt32 = true;
+        else if (m_state.forNode(node->child3()).isType(SpecSymbol))
+            stubInfo->propertyIsSymbol = true;
+    }, stubInfo);
+
+    std::unique_ptr<SlowPathGenerator> slowPath;
+    if (m_graph.m_plan.isUnlinked()) {
+        gen.generateDFGDataICFastPath(m_jit, stubInfoConstant.index(), stubInfoGPR);
+        gen.m_unlinkedStubInfoConstantIndex = stubInfoConstant.index();
+        slowPath = slowPathICCall(
+            slowCases, this, stubInfoConstant, stubInfoGPR, CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationGetByValWithThisOptimize,
+            resultGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(codeOrigin)), stubInfoGPR, nullptr, baseGPR, propertyGPR, thisValueGPR);
+    } else {
+        gen.generateFastPath(m_jit);
+        slowCases.append(gen.slowPathJump());
+        slowPath = slowPathCall(
+            slowCases, this, operationGetByValWithThisOptimize,
+            resultGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(codeOrigin)), TrustedImmPtr(gen.stubInfo()), nullptr, baseGPR, propertyGPR, thisValueGPR);
+    }
+
+    m_jit.addGetByValWithThis(gen, slowPath.get());
+    addSlowPathGenerator(WTFMove(slowPath));
+
+    jsValueResult(resultGPR, node);
+}
+
 #endif
 
 } } // namespace JSC::DFG

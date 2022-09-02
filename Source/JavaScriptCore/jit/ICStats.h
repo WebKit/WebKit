@@ -52,6 +52,7 @@ namespace JSC {
     macro(OperationGetByIdOptimize) \
     macro(OperationGetByValOptimize) \
     macro(OperationGetByIdWithThisOptimize) \
+    macro(OperationGetByValWithThisOptimize) \
     macro(OperationGenericIn) \
     macro(OperationInByIdGeneric) \
     macro(OperationInByIdOptimize) \

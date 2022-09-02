@@ -58,11 +58,13 @@ struct UnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
     GPRReg m_baseGPR { InvalidGPRReg };
     GPRReg m_valueGPR { InvalidGPRReg };
     GPRReg m_extraGPR { InvalidGPRReg };
+    GPRReg m_extra2GPR { InvalidGPRReg };
     GPRReg m_stubInfoGPR { InvalidGPRReg };
 #if USE(JSVALUE32_64)
     GPRReg m_valueTagGPR { InvalidGPRReg };
     GPRReg m_baseTagGPR { InvalidGPRReg };
     GPRReg m_extraTagGPR { InvalidGPRReg };
+    GPRReg m_extra2TagGPR { InvalidGPRReg };
 #endif
     bool hasConstantIdentifier { false };
 };

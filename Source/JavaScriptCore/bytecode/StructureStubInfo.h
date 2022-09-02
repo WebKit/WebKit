@@ -60,6 +60,7 @@ enum class AccessType : int8_t {
     GetByIdDirect,
     TryGetById,
     GetByVal,
+    GetByValWithThis,
     PutById,
     PutByVal,
     PutPrivateName,
@@ -175,9 +176,9 @@ public:
     {
         return JSValueRegs(
 #if USE(JSVALUE32_64)
-            m_extraTagGPR,
+            propertyTagGPR(),
 #endif
-            m_extraGPR);
+            propertyGPR());
     }
 
     JSValueRegs baseRegs() const
@@ -189,7 +190,7 @@ public:
             m_baseGPR);
     }
 
-    bool thisValueIsInExtraGPR() const { return accessType == AccessType::GetByIdWithThis; }
+    bool thisValueIsInExtraGPR() const { return accessType == AccessType::GetByIdWithThis || accessType == AccessType::GetByValWithThis; }
 
 #if ASSERT_ENABLED
     void checkConsistency();
@@ -363,19 +364,35 @@ public:
 
     GPRReg thisGPR() const { return m_extraGPR; }
     GPRReg prototypeGPR() const { return m_extraGPR; }
-    GPRReg propertyGPR() const { return m_extraGPR; }
     GPRReg brandGPR() const { return m_extraGPR; }
+    GPRReg propertyGPR() const
+    {
+        switch (accessType) {
+        case AccessType::GetByValWithThis:
+            return m_extra2GPR;
+        default:
+            return m_extraGPR;
+        }
+    }
 
 #if USE(JSVALUE32_64)
     GPRReg thisTagGPR() const { return m_extraTagGPR; }
     GPRReg prototypeTagGPR() const { return m_extraTagGPR; }
-    GPRReg propertyTagGPR() const { return m_extraTagGPR; }
+    GPRReg propertyTagGPR() const
+    {
+        switch (accessType) {
+        case AccessType::GetByValWithThis:
+            return m_extra2TagGPR;
+        default:
+            return m_extraTagGPR;
+        }
+    }
 #endif
 
     CodeOrigin codeOrigin;
     PropertyOffset byIdSelfOffset;
-    std::unique_ptr<PolymorphicAccess> m_stub;
     WriteBarrierStructureID m_inlineAccessBaseStructureID;
+    std::unique_ptr<PolymorphicAccess> m_stub;
 private:
     CacheableIdentifier m_identifier;
     // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.
@@ -399,9 +416,12 @@ public:
 
     RegisterSet usedRegisters;
 
+    CallSiteIndex callSiteIndex;
+
     GPRReg m_baseGPR { InvalidGPRReg };
     GPRReg m_valueGPR { InvalidGPRReg };
     GPRReg m_extraGPR { InvalidGPRReg };
+    GPRReg m_extra2GPR { InvalidGPRReg };
     GPRReg m_stubInfoGPR { InvalidGPRReg };
     GPRReg m_arrayProfileGPR { InvalidGPRReg };
 #if USE(JSVALUE32_64)
@@ -410,6 +430,7 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=204726
     GPRReg m_baseTagGPR { InvalidGPRReg };
     GPRReg m_extraTagGPR { InvalidGPRReg };
+    GPRReg m_extra2TagGPR { InvalidGPRReg };
 #endif
 
     AccessType accessType;
@@ -425,7 +446,6 @@ public:
 private:
     Lock m_bufferedStructuresLock;
 public:
-    CallSiteIndex callSiteIndex;
     bool resetByGC : 1 { false };
     bool tookSlowPath : 1 { false };
     bool everConsidered : 1 { false };

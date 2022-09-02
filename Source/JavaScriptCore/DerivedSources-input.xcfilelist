@@ -59,6 +59,7 @@ $(PROJECT_DIR)/builtins/ObjectConstructor.js
 $(PROJECT_DIR)/builtins/PromiseConstructor.js
 $(PROJECT_DIR)/builtins/PromiseOperations.js
 $(PROJECT_DIR)/builtins/PromisePrototype.js
+$(PROJECT_DIR)/builtins/ProxyHelpers.js
 $(PROJECT_DIR)/builtins/ReflectObject.js
 $(PROJECT_DIR)/builtins/RegExpPrototype.js
 $(PROJECT_DIR)/builtins/RegExpStringIteratorPrototype.js

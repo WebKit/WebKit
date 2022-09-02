@@ -57,7 +57,7 @@ using CompileTimeStructureStubInfo = std::variant<StructureStubInfo*, BaselineUn
 
 class JITInlineCacheGenerator {
 protected:
-    JITInlineCacheGenerator() { }
+    JITInlineCacheGenerator() = default;
     JITInlineCacheGenerator(CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, AccessType);
     
 public:
@@ -111,7 +111,7 @@ public:
 
 class JITByIdGenerator : public JITInlineCacheGenerator {
 protected:
-    JITByIdGenerator() { }
+    JITByIdGenerator() = default;
 
     JITByIdGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, AccessType,
@@ -164,7 +164,7 @@ public:
 
 class JITGetByIdGenerator final : public JITByIdGenerator {
 public:
-    JITGetByIdGenerator() { }
+    JITGetByIdGenerator() = default;
 
     JITGetByIdGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
@@ -190,7 +190,7 @@ private:
 
 class JITGetByIdWithThisGenerator final : public JITByIdGenerator {
 public:
-    JITGetByIdWithThisGenerator() { }
+    JITGetByIdWithThisGenerator() = default;
 
     JITGetByIdWithThisGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
@@ -325,7 +325,7 @@ public:
 class JITDelByValGenerator final : public JITInlineCacheGenerator {
     using Base = JITInlineCacheGenerator;
 public:
-    JITDelByValGenerator() { }
+    JITDelByValGenerator() = default;
 
     JITDelByValGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters,
@@ -373,7 +373,7 @@ public:
 class JITDelByIdGenerator final : public JITInlineCacheGenerator {
     using Base = JITInlineCacheGenerator;
 public:
-    JITDelByIdGenerator() { }
+    JITDelByIdGenerator() = default;
 
     JITDelByIdGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
@@ -420,7 +420,7 @@ public:
 class JITInByValGenerator : public JITInlineCacheGenerator {
     using Base = JITInlineCacheGenerator;
 public:
-    JITInByValGenerator() { }
+    JITInByValGenerator() = default;
 
     JITInByValGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
@@ -467,7 +467,7 @@ public:
 
 class JITInByIdGenerator final : public JITByIdGenerator {
 public:
-    JITInByIdGenerator() { }
+    JITInByIdGenerator() = default;
 
     JITInByIdGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
@@ -491,7 +491,7 @@ public:
 class JITInstanceOfGenerator final : public JITInlineCacheGenerator {
 public:
     using Base = JITInlineCacheGenerator;
-    JITInstanceOfGenerator() { }
+    JITInstanceOfGenerator() = default;
     
     JITInstanceOfGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, GPRReg result,
@@ -541,7 +541,7 @@ public:
 class JITGetByValGenerator final : public JITInlineCacheGenerator {
     using Base = JITInlineCacheGenerator;
 public:
-    JITGetByValGenerator() { }
+    JITGetByValGenerator() = default;
 
     JITGetByValGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
@@ -591,10 +591,65 @@ public:
     CCallHelpers::PatchableJump m_slowPathJump;
 };
 
+class JITGetByValWithThisGenerator final : public JITInlineCacheGenerator {
+    using Base = JITInlineCacheGenerator;
+public:
+    JITGetByValWithThisGenerator() = default;
+
+    JITGetByValWithThisGenerator(
+        CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
+        JSValueRegs base, JSValueRegs property, JSValueRegs thisRegs, JSValueRegs result, GPRReg stubInfoGPR);
+
+    CCallHelpers::Jump slowPathJump() const
+    {
+        ASSERT(m_slowPathJump.m_jump.isSet());
+        return m_slowPathJump.m_jump;
+    }
+
+    void finalize(LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
+
+    void generateFastPath(CCallHelpers&);
+
+    void generateEmptyPath(CCallHelpers&);
+
+    template<typename StubInfo>
+    static void setUpStubInfo(StubInfo& stubInfo,
+        AccessType accessType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters,
+        JSValueRegs baseRegs, JSValueRegs propertyRegs, JSValueRegs thisRegs, JSValueRegs resultRegs, GPRReg stubInfoGPR)
+    {
+        JITInlineCacheGenerator::setUpStubInfoImpl(stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters);
+        if constexpr (!std::is_same_v<std::decay_t<StubInfo>, BaselineUnlinkedStructureStubInfo>) {
+            stubInfo.m_baseGPR = baseRegs.payloadGPR();
+            stubInfo.m_extraGPR = thisRegs.payloadGPR();
+            stubInfo.m_valueGPR = resultRegs.payloadGPR();
+            stubInfo.m_extra2GPR = propertyRegs.payloadGPR();
+            stubInfo.m_stubInfoGPR = stubInfoGPR;
+#if USE(JSVALUE32_64)
+            stubInfo.m_baseTagGPR = baseRegs.tagGPR();
+            stubInfo.m_valueTagGPR = resultRegs.tagGPR();
+            stubInfo.m_extraTagGPR = thisRegs.tagGPR();
+            stubInfo.m_extra2TagGPR = propertyRegs.tagGPR();
+#endif
+            stubInfo.hasConstantIdentifier = false;
+        } else {
+            UNUSED_PARAM(baseRegs);
+            UNUSED_PARAM(propertyRegs);
+            UNUSED_PARAM(thisRegs);
+            UNUSED_PARAM(resultRegs);
+            UNUSED_PARAM(stubInfoGPR);
+        }
+    }
+
+    JSValueRegs m_base;
+    JSValueRegs m_result;
+
+    CCallHelpers::PatchableJump m_slowPathJump;
+};
+
 class JITPrivateBrandAccessGenerator final : public JITInlineCacheGenerator {
     using Base = JITInlineCacheGenerator;
 public:
-    JITPrivateBrandAccessGenerator() { }
+    JITPrivateBrandAccessGenerator() = default;
 
     JITPrivateBrandAccessGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,

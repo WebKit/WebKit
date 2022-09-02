@@ -492,6 +492,8 @@ op :get_by_val_with_this,
     },
     metadata: {
         profile: ValueProfile,
+        arrayProfile: ArrayProfile,
+        seenIdentifiers: GetByValHistory,
     }
 
 op :get_by_id_direct,
