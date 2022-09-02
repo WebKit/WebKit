@@ -50,12 +50,13 @@ public:
     bool accessibilityIsolatedTreeMode() const { return boolWebPreferenceFeatureValue("IsAccessibilityIsolatedTreeEnabled", false); }
 
     bool allowsLinkPreview() const { return boolTestRunnerFeatureValue("allowsLinkPreview"); }
+    bool appHighlightsEnabled() const { return boolTestRunnerFeatureValue("appHighlightsEnabled"); }
     bool dumpJSConsoleLogInStdErr() const { return boolTestRunnerFeatureValue("dumpJSConsoleLogInStdErr"); }
     bool editable() const { return boolTestRunnerFeatureValue("editable"); }
     bool enableInAppBrowserPrivacy() const { return boolTestRunnerFeatureValue("enableInAppBrowserPrivacy"); }
     bool enableProcessSwapOnNavigation() const { return boolTestRunnerFeatureValue("enableProcessSwapOnNavigation"); }
     bool enableProcessSwapOnWindowOpen() const { return boolTestRunnerFeatureValue("enableProcessSwapOnWindowOpen"); }
-    bool appHighlightsEnabled() const { return boolTestRunnerFeatureValue("appHighlightsEnabled"); }
+    bool findInteractionEnabled() const { return boolTestRunnerFeatureValue("findInteractionEnabled") ; }
     bool ignoreSynchronousMessagingTimeouts() const { return boolTestRunnerFeatureValue("ignoreSynchronousMessagingTimeouts"); }
     bool ignoresViewportScaleLimits() const { return boolTestRunnerFeatureValue("ignoresViewportScaleLimits"); }
     bool isAppBoundWebView() const { return boolTestRunnerFeatureValue("isAppBoundWebView"); }

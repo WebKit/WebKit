@@ -151,12 +151,13 @@ const TestFeatures& TestOptions::defaults()
         };
         features.boolTestRunnerFeatures = {
             { "allowsLinkPreview", true },
+            { "appHighlightsEnabled", false },
             { "dumpJSConsoleLogInStdErr", false },
             { "editable", false },
             { "enableInAppBrowserPrivacy", false },
             { "enableProcessSwapOnNavigation", true },
             { "enableProcessSwapOnWindowOpen", false },
-            { "appHighlightsEnabled", false },
+            { "findInteractionEnabled", false },
             { "ignoreSynchronousMessagingTimeouts", false },
             { "ignoresViewportScaleLimits", false },
             { "isAppBoundWebView", false },
@@ -207,12 +208,13 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         GENERATED_WEB_PREFERENCE_KEY_TYPE_MAPPINGS
 
         { "allowsLinkPreview", TestHeaderKeyType::BoolTestRunner },
+        { "appHighlightsEnabled", TestHeaderKeyType::BoolTestRunner },
         { "dumpJSConsoleLogInStdErr", TestHeaderKeyType::BoolTestRunner },
         { "editable", TestHeaderKeyType::BoolTestRunner },
         { "enableInAppBrowserPrivacy", TestHeaderKeyType::BoolTestRunner },
         { "enableProcessSwapOnNavigation", TestHeaderKeyType::BoolTestRunner },
         { "enableProcessSwapOnWindowOpen", TestHeaderKeyType::BoolTestRunner },
-        { "appHighlightsEnabled", TestHeaderKeyType::BoolTestRunner },
+        { "findInteractionEnabled", TestHeaderKeyType::BoolTestRunner },
         { "ignoreSynchronousMessagingTimeouts", TestHeaderKeyType::BoolTestRunner },
         { "ignoresViewportScaleLimits", TestHeaderKeyType::BoolTestRunner },
         { "isAppBoundWebView", TestHeaderKeyType::BoolTestRunner },

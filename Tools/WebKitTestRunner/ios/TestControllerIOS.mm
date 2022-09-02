@@ -272,6 +272,10 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         webView._dragInteractionPolicy = dragInteractionPolicy(options);
         webView.focusStartsInputSessionPolicy = focusStartsInputSessionPolicy(options);
 
+#if HAVE(UIFINDINTERACTION)
+        webView.findInteractionEnabled = options.findInteractionEnabled();
+#endif
+
         UIScrollView *scrollView = webView.scrollView;
         [scrollView _removeAllAnimations:YES];
         [scrollView setZoomScale:1 animated:NO];

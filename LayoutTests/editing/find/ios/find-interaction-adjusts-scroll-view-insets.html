@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true findInteractionEnabled=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+
+    body {
+        height: 1000px;
+    }
+
+    </style>
+</head>
+<body>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies the scroll view's content inset is adjusted when the find navigator is presented.");
+
+    initialViewportHeight = window.visualViewport.height;
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+
+    adjustedContentInset = await UIHelper.adjustedContentInset();
+    shouldBeZero("adjustedContentInset.bottom");
+    debug("");
+
+    debug("Presenting find navigator.");
+    await UIHelper.presentFindNavigator();
+    await UIHelper.waitForKeyboardToShow();
+    await UIHelper.ensureVisibleContentRectUpdate();
+
+    adjustedContentInset = await UIHelper.adjustedContentInset();
+    shouldNotBe("adjustedContentInset.bottom", "0");
+    debug("");
+
+    debug("Dismissing find navigator.");
+    await UIHelper.dismissFindNavigator();
+    await UIHelper.waitForKeyboardToHide();
+    await UIHelper.ensureVisibleContentRectUpdate();
+
+    adjustedContentInset = await UIHelper.adjustedContentInset();
+    shouldBeZero("adjustedContentInset.bottom");
+    debug("");
+
+    finishJSTest();
+});
+</script>
+</html>

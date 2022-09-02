@@ -10,3 +10,6 @@
 fast/events/ios/rotation/zz-no-rotation.html [ Pass ]
 
 webkit.org/b/243494 [ Debug ] compositing/layer-creation/scale-rotation-animation-overlap.html [ Pass Timeout ]
+
+# Find interactions are unavailable on iOS 15.
+editing/find/ios [ Skip ]

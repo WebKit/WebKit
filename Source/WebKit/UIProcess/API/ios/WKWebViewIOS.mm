@@ -2733,6 +2733,11 @@ static int32_t activeOrientation(WKWebView *webView)
     if ([_contentView isFocusingElement])
         return YES;
 
+#if HAVE(UIFINDINTERACTION)
+    if ([_findInteraction isFindNavigatorVisible])
+        return YES;
+#endif
+
     NSNumber *isLocalKeyboard = [keyboardInfo valueForKey:UIKeyboardIsLocalUserInfoKey];
     return isLocalKeyboard && !isLocalKeyboard.boolValue;
 }

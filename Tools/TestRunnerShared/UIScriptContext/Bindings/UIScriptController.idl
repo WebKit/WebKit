@@ -297,6 +297,7 @@ interface UIScriptController {
 
     readonly attribute double contentOffsetX;
     readonly attribute double contentOffsetY;
+    readonly attribute object adjustedContentInset; // An object with 'top', 'left', 'bottom', 'right' properties.
 
     attribute boolean scrollUpdatesDisabled; // Turns off notifications back to the web process after scrolls (used for testing scrolling tree).
 
@@ -348,6 +349,9 @@ interface UIScriptController {
     undefined simulateRotationLikeSafari(DeviceOrientation orientation, object callback);
 
     undefined findString(DOMString string, unsigned long options, unsigned long maxCount);
+
+    undefined presentFindNavigator();
+    undefined dismissFindNavigator();
 
     // Unparent and parent the web view, simulating, for example, tab switching.
     undefined removeViewFromWindow(object callback);

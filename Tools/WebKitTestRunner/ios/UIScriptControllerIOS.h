@@ -95,6 +95,7 @@ private:
     bool isPresentingModally() const override;
     double contentOffsetX() const override;
     double contentOffsetY() const override;
+    JSObjectRef adjustedContentInset() const override;
     bool scrollUpdatesDisabled() const override;
     void setScrollUpdatesDisabled(bool) override;
     void scrollToOffset(long x, long y, ScrollToOptions*) override;
@@ -167,6 +168,9 @@ private:
 
     bool suppressSoftwareKeyboard() const final;
     void setSuppressSoftwareKeyboard(bool) final;
+
+    void presentFindNavigator() override;
+    void dismissFindNavigator() override;
 
     void waitForModalTransitionToFinish() const;
     void waitForSingleTapToReset() const;
