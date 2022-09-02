@@ -691,6 +691,36 @@ String gstStructureToJSONString(const GstStructure* structure)
     return value->toJSONString();
 }
 
+#if !GST_CHECK_VERSION(1, 18, 0)
+GstClockTime webkitGstElementGetCurrentRunningTime(GstElement* element)
+{
+    g_return_val_if_fail(GST_IS_ELEMENT(element), GST_CLOCK_TIME_NONE);
+
+    auto baseTime = gst_element_get_base_time(element);
+    if (!GST_CLOCK_TIME_IS_VALID(baseTime)) {
+        GST_DEBUG_OBJECT(element, "Could not determine base time");
+        return GST_CLOCK_TIME_NONE;
+    }
+
+    auto clock = adoptGRef(gst_element_get_clock(element));
+    if (!clock) {
+        GST_DEBUG_OBJECT(element, "Element has no clock");
+        return GST_CLOCK_TIME_NONE;
+    }
+
+    auto clockTime = gst_clock_get_time(clock.get());
+    if (!GST_CLOCK_TIME_IS_VALID(clockTime))
+        return GST_CLOCK_TIME_NONE;
+
+    if (clockTime < baseTime) {
+        GST_DEBUG_OBJECT(element, "Got negative current running time");
+        return GST_CLOCK_TIME_NONE;
+    }
+
+    return clockTime - baseTime;
+}
+#endif
+
 }
 
 #endif // USE(GSTREAMER)
