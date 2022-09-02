@@ -35,21 +35,6 @@ namespace WebKit::WebGPU {
 
 struct SupportedFeatures {
     Vector<String> features;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << features;
-    }
-
-    template<class Decoder> static std::optional<SupportedFeatures> decode(Decoder& decoder)
-    {
-        std::optional<Vector<String>> features;
-        decoder >> features;
-        if (!features)
-            return std::nullopt;
-
-        return { { WTFMove(*features) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

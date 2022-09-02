@@ -521,6 +521,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/API/APIGeometry.serialization.in
 
     Shared/WebGPU/WebGPUOrigin3D.serialization.in
+    Shared/WebGPU/WebGPUSupportedFeatures.serialization.in
     Shared/WebGPU/WebGPUValidationError.serialization.in
 )
 
