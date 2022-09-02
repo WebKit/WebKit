@@ -1,4 +1,17 @@
 =================
+WebKitGTK 2.37.91
+=================
+
+What's new in WebKitGTK 2.37.91?
+
+  - Cache and reuse image-based backing stores to improve memory consumption.
+  - Fix printing with bubblewrap sandbox enabled
+  - Deprecate enable-frame-flattening setting because the functionality will be removed for 2.40.
+  - Fix deadlock when disposing player while handling rotation tag.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Polish.
+
+=================
 WebKitGTK 2.37.90
 =================
 
