@@ -110,7 +110,7 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
             updateRelativeLengthsInformation();
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-            if (auto* image = dynamicDowncast<RenderSVGImage>(renderer()))
+            if (is<RenderSVGImage>(renderer()))
                 updateSVGRendererForElementChange();
 #endif
             if (auto* image = dynamicDowncast<LegacyRenderSVGImage>(renderer())) {
