@@ -84,6 +84,11 @@ MathMLFractionElement::FractionAlignment MathMLFractionElement::cachedFractionAl
     if (alignment)
         return alignment.value();
 
+    if (document().settings().coreMathMLEnabled()) {
+        alignment = FractionAlignmentCenter;
+        return alignment.value();
+    }
+
     auto& value = attributeWithoutSynchronization(name);
     if (equalLettersIgnoringASCIICase(value, "left"_s))
         alignment = FractionAlignmentLeft;
