@@ -71,8 +71,8 @@ PASS parent is picture, previous source has media removed
 PASS parent is picture, previous source has type set
 PASS parent is picture, previous source has type changed
 PASS parent is picture, previous source has type removed
-FAIL srcset is set to same value assert_unreached: update the image data was run Reached unreachable code
-FAIL sizes is set to same value assert_unreached: update the image data was run Reached unreachable code
+PASS srcset is set to same value
+PASS sizes is set to same value
 PASS crossorigin state not changed: absent, removeAttribute
 PASS crossorigin state not changed: empty to anonymous
 PASS crossorigin state not changed: anonymous to foobar
