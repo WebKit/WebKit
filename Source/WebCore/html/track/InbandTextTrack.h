@@ -44,6 +44,7 @@ public:
     bool isMainProgramContent() const override;
     bool isEasyToRead() const override;
     void setMode(Mode) override;
+    bool isDefault() const override;
     size_t inbandTrackIndex();
 
     AtomString inBandMetadataTrackDispatchType() const override;

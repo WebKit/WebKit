@@ -3046,7 +3046,7 @@ void MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions()
         }
 #endif
 
-        m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, option, InbandTextTrackPrivate::CueFormat::Generic));
+        m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, legibleGroup, option, InbandTextTrackPrivate::CueFormat::Generic));
     }
 
     processNewAndRemovedTextTracks(removedTextTracks);
