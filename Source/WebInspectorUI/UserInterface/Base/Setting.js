@@ -234,7 +234,6 @@ WI.settings = {
     experimentalAllowInspectingInspector: new WI.Setting("experimental-allow-inspecting-inspector", false),
     experimentalCSSSortPropertyNameAutocompletionByUsage: new WI.Setting("experimental-css-sort-property-name-autocompletion-by-usage", true),
     experimentalEnableNetworkEmulatedCondition: new WI.Setting("experimental-enable-network-emulated-condition", false),
-    experimentalEnableSymbolicBreakpoints: new WI.Setting("experimental-enable-symbolic-breakpoints", false),
 
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),

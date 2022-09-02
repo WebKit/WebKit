@@ -40,9 +40,6 @@ WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
 
     static supported(target)
     {
-        if (!WI.settings.experimentalEnableSymbolicBreakpoints.value)
-            return false;
-
         // COMPATIBILITY (iOS 16.0): Debugger.addSymbolicBreakpoint did exist yet.
         return (target || InspectorBackend).hasCommand("Debugger.addSymbolicBreakpoint");
     }

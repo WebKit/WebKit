@@ -14,8 +14,6 @@ function triggerSymbolicBreakpoint() {
 
 function test()
 {
-    WI.settings.experimentalEnableSymbolicBreakpoints.value = true;
-
     function triggerBreakpoint() {
         return Promise.all([
             InspectorTest.awaitEvent("TestPage-SymbolicBreakpoint"),

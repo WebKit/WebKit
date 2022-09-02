@@ -167,8 +167,6 @@ localizedStrings["All items in \u0022%s\u0022 must be valid DOM nodes"] = "All i
 /* Label for setting that allows the user to inspect the Web Inspector user interface. */
 localizedStrings["Allow Inspecting Web Inspector @ Experimental Settings"] = "Allow Inspecting Web Inspector";
 localizedStrings["Allow Media Capture on Insecure Sites"] = "Allow Media Capture on Insecure Sites";
-/* Label for checkbox that controls whether symbolic breakpoint functionality is enabled. */
-localizedStrings["Allow Symbolic Breakpoints"] = "Allow Symbolic Breakpoints";
 /* Label for checkbox that controls whether network throttling functionality is enabled. */
 localizedStrings["Allow throttling"] = "Allow throttling";
 localizedStrings["Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint's location."] = "Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint's location.";
@@ -471,7 +469,6 @@ localizedStrings["Debugger Statement"] = "Debugger Statement";
 localizedStrings["Debugger Statements @ JavaScript Breakpoint"] = "Debugger Statements";
 localizedStrings["Debugger disabled during Audit"] = "Debugger disabled during Audit";
 localizedStrings["Debugger disabled during Timeline recording"] = "Debugger disabled during Timeline recording";
-localizedStrings["Debugger:"] = "Debugger:";
 localizedStrings["Debugging:"] = "Debugging:";
 localizedStrings["Debugs"] = "Debugs";
 localizedStrings["Decoded"] = "Decoded";
