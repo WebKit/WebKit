@@ -26,12 +26,11 @@
 #pragma once
 
 #include "FloatRect.h"
+#include "ImageBuffer.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
 #include "RenderingMode.h"
-#include <JavaScriptCore/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 #if USE(CORE_IMAGE)
 OBJC_CLASS CIImage;
@@ -40,8 +39,6 @@ OBJC_CLASS CIImage;
 namespace WebCore {
 
 class Filter;
-class FloatRect;
-class ImageBuffer;
 class ImageBufferAllocator;
 
 class FilterImage : public RefCounted<FilterImage> {

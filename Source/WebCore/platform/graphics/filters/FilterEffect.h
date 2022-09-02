@@ -24,6 +24,7 @@
 
 #include "DestinationColorSpace.h"
 #include "FilterEffectApplier.h"
+#include "FilterEffectGeometry.h"
 #include "FilterFunction.h"
 #include "FilterImageVector.h"
 

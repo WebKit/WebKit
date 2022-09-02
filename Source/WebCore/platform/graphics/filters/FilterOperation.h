@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Color.h"
+#include "FilterFunction.h"
 #include "LayoutSize.h"
 #include "LengthBox.h"
 #include <wtf/EnumTraits.h>
@@ -45,7 +46,6 @@ namespace WebCore {
 struct BlendingContext;
 class CachedResourceLoader;
 class CachedSVGDocumentReference;
-class FilterEffect;
 struct ResourceLoaderOptions;
 
 class FilterOperation : public ThreadSafeRefCounted<FilterOperation> {
@@ -98,6 +98,8 @@ public:
     bool isSameType(const FilterOperation& o) const { return o.type() == m_type; }
 
     virtual bool isIdentity() const { return false; }
+    
+    virtual RefPtr<FilterFunction> createFilterFunction(const Filter&) const { return nullptr; }
 
     virtual IntOutsets outsets() const { return { }; }
 
@@ -202,6 +204,8 @@ private:
     bool isIdentity() const override;
     IntOutsets outsets() const override;
 
+    RefPtr<FilterFunction> createFilterFunction(const Filter&) const override;
+
     String m_url;
     AtomString m_fragment;
     std::unique_ptr<CachedSVGDocumentReference> m_cachedSVGDocumentReference;
@@ -237,6 +241,8 @@ private:
     }
 
     bool isIdentity() const override;
+    RefPtr<FilterFunction> createFilterFunction(const Filter&) const override;
+
     bool transformColor(SRGBA<float>&) const override;
 
     double m_amount;
@@ -273,6 +279,8 @@ private:
     }
 
     bool isIdentity() const override;
+    RefPtr<FilterFunction> createFilterFunction(const Filter&) const override;
+
     bool transformColor(SRGBA<float>&) const override;
 
     double m_amount;
@@ -335,6 +343,8 @@ private:
     bool isIdentity() const override;
     IntOutsets outsets() const override;
 
+    RefPtr<FilterFunction> createFilterFunction(const Filter&) const override;
+
     Length m_stdDeviation;
 };
 
@@ -374,6 +384,8 @@ private:
 
     bool isIdentity() const override;
     IntOutsets outsets() const override;
+
+    RefPtr<FilterFunction> createFilterFunction(const Filter&) const override;
 
     IntPoint m_location; // FIXME: should location be in Lengths?
     int m_stdDeviation;
