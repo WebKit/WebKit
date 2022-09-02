@@ -419,8 +419,12 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     }
 
     // menu tags with toolbar type should have Toolbar role.
-    if (node()->hasTagName(menuTag) && equalLettersIgnoringASCIICase(getAttribute(typeAttr), "toolbar"_s))
+    if (node()->hasTagName(menuTag) && equalLettersIgnoringASCIICase(getAttribute(typeAttr), "toolbar"_s)) {
         return AccessibilityRole::Toolbar;
+    } else 
+        return AccessibilityRole::List;
+    
+        
     if (node()->hasTagName(timeTag))
         return AccessibilityRole::Time;
     if (node()->hasTagName(hrTag))

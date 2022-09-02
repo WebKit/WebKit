@@ -120,6 +120,10 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
     AXRole: AXList
     computedRoleString: list
 
+<menu hidden="" aria-hidden="false" id="menu-list"></menu>
+    AXRole: AXList
+    computedRoleString: list
+
 <figure hidden="" aria-hidden="false" id="figure"></figure>
     AXRole: AXGroup
     computedRoleString: figure
