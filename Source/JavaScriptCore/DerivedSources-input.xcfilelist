@@ -108,6 +108,7 @@ $(PROJECT_DIR)/inspector/protocol/Heap.json
 $(PROJECT_DIR)/inspector/protocol/IndexedDB.json
 $(PROJECT_DIR)/inspector/protocol/Inspector.json
 $(PROJECT_DIR)/inspector/protocol/LayerTree.json
+$(PROJECT_DIR)/inspector/protocol/Media.json
 $(PROJECT_DIR)/inspector/protocol/Memory.json
 $(PROJECT_DIR)/inspector/protocol/Network.json
 $(PROJECT_DIR)/inspector/protocol/Page.json

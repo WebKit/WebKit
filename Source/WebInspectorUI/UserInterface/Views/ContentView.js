@@ -197,6 +197,9 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.Animation)
             return new WI.AnimationContentView(representedObject, extraArguments);
 
+        if (representedObject instanceof WI.MediaPlayer)
+            return new WI.MediaPlayerContentView(representedObject, extraArguments);
+
         if (representedObject instanceof WI.Collection)
             return new WI.CollectionContentView(representedObject, extraArguments);
 
@@ -338,6 +341,8 @@ WI.ContentView = class ContentView extends WI.View
             || representedObject instanceof WI.AuditTestCaseResult || representedObject instanceof WI.AuditTestGroupResult)
             return true;
         if (representedObject instanceof WI.Animation)
+            return true;
+        if (representedObject instanceof WI.MediaPlayer)
             return true;
         if (representedObject instanceof WI.Collection)
             return true;

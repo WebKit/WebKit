@@ -187,6 +187,25 @@ WI.RemoteObject = class RemoteObject
         target.AnimationAgent.resolveAnimation(animation.animationId, objectGroup, wrapCallback);
     }
 
+    static resolveMediaElement(player, objectGroup, callback)
+    {
+        console.assert(typeof callback === "function");
+
+        function wrapCallback(error, object) {
+            if (error || !object)
+                callback(null);
+            else
+                callback(WI.RemoteObject.fromPayload(object, WI.mainTarget));
+        }
+
+        let target = WI.assumingMainTarget();
+
+        // COMPATIBILITY (iOS 13.1): Media.resolveMediaElement did not exist yet.
+        console.assert(target.hasCommand("Media.resolveMediaElement"));
+
+        target.MediaAgent.resolveElement(player.identifier, objectGroup, wrapCallback);
+    }
+
     // Public
 
     get target()

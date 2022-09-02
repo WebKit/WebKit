@@ -145,6 +145,7 @@ WI.Target = class Target extends WI.Object
     get IndexedDBAgent() { return this._agents.IndexedDB; }
     get InspectorAgent() { return this._agents.Inspector; }
     get LayerTreeAgent() { return this._agents.LayerTree; }
+    get MediaAgent() { return this._agents.Media; }
     get MemoryAgent() { return this._agents.Memory; }
     get NetworkAgent() { return this._agents.Network; }
     get PageAgent() { return this._agents.Page; }
