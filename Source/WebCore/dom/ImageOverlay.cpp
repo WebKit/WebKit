@@ -510,10 +510,9 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
 
         auto offsetsAlongHorizontalAxis = line.children.map([&](auto& child) -> WTF::Range<float> {
             auto textQuad = convertToContainerCoordinates(child.normalizedQuad);
-            return {
-                offsetAlongHorizontalAxis(textQuad.p1(), textQuad.p4()),
-                offsetAlongHorizontalAxis(textQuad.p2(), textQuad.p3())
-            };
+            auto startOffset = offsetAlongHorizontalAxis(textQuad.p1(), textQuad.p4());
+            auto endOffset = offsetAlongHorizontalAxis(textQuad.p2(), textQuad.p3());
+            return { std::min(startOffset, endOffset), std::max(startOffset, endOffset) };
         });
 
         for (size_t childIndex = 0; childIndex < line.children.size(); ++childIndex) {
