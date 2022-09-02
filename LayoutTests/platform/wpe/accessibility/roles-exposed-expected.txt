@@ -322,6 +322,12 @@ mtr
 mtd
       AXRole: AXCell
 
+menu
+      AXRole: AXList
+
+li
+      AXRole: AXListItem
+
 nav
       AXRole: AXLandmarkNavigation
 
