@@ -179,7 +179,7 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const Vector<AXID>& a
             if (!cache || !cache->relationTargetIDs().contains(axID))
                 return nullptr;
 
-            auto* axObject = cache->objectForID(axID);
+            RefPtr axObject = cache->objectForID(axID);
             if (!axObject || !axObject->accessibilityIsIgnored())
                 return nullptr;
 
@@ -264,16 +264,16 @@ void AXIsolatedTree::queueChange(const NodeChange& nodeChange)
     m_pendingChildrenUpdates.append({ objectID, WTFMove(childrenIDs) });
 }
 
-void AXIsolatedTree::addUnconnectedNode(AccessibilityObject& axObject)
+void AXIsolatedTree::addUnconnectedNode(Ref<AccessibilityObject> axObject)
 {
     ASSERT(isMainThread());
 
-    if (!axObject.objectID().isValid() || !axObject.wrapper()) {
-        AXLOG(makeString("AXIsolatedTree::addUnconnectedNode bailing because associated live object ID ", axObject.objectID().loggingString(), " had no wrapper or had an invalid ID. Object is:"));
-        AXLOG(&axObject);
+    if (!axObject->objectID().isValid() || !axObject->wrapper()) {
+        AXLOG(makeString("AXIsolatedTree::addUnconnectedNode bailing because associated live object ID ", axObject->objectID().loggingString(), " had no wrapper or had an invalid ID. Object is:"));
+        AXLOG(axObject.ptr());
         return;
     }
-    AXLOG(makeString("AXIsolatedTree::addUnconnectedNode creating isolated object from live object ID ", axObject.objectID().loggingString()));
+    AXLOG(makeString("AXIsolatedTree::addUnconnectedNode creating isolated object from live object ID ", axObject->objectID().loggingString()));
 
     // Because we are queuing a change for an object not intended to be connected to the rest of the tree,
     // we don't need to update m_nodeMap or m_pendingChildrenUpdates for this object or its parent as is
@@ -282,10 +282,10 @@ void AXIsolatedTree::addUnconnectedNode(AccessibilityObject& axObject)
     // Instead, just directly create and queue the node change so m_readerThreadNodeMap can hold a reference
     // to it. It will be removed from m_readerThreadNodeMap when the corresponding DOM element, renderer, or
     // other entity is removed from the page.
-    auto isolatedObject = AXIsolatedObject::create(axObject, this);
-    isolatedObject->attachPlatformWrapper(axObject.wrapper());
+    auto object = AXIsolatedObject::create(axObject, this);
+    object->attachPlatformWrapper(axObject->wrapper());
 
-    NodeChange nodeChange { isolatedObject, nullptr };
+    NodeChange nodeChange { object, nullptr };
     Locker locker { m_changeLogLock };
     m_pendingAppends.append(WTFMove(nodeChange));
 }

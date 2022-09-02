@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-void AXIsolatedObject::initializePlatformProperties(Ref<const AXCoreObject> object, IsRoot isRoot)
+void AXIsolatedObject::initializePlatformProperties(const Ref<const AXCoreObject>& object, IsRoot isRoot)
 {
     setProperty(AXPropertyName::HasApplePDFAnnotationAttribute, object->hasApplePDFAnnotationAttribute());
     setProperty(AXPropertyName::SpeechHint, object->speechHintAttributeValue().isolatedCopy());

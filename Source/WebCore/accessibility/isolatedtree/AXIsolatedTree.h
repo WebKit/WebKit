@@ -354,7 +354,7 @@ public:
     double loadingProgress() { return m_loadingProgress; }
     void updateLoadingProgress(double);
 
-    void addUnconnectedNode(AccessibilityObject&);
+    void addUnconnectedNode(Ref<AccessibilityObject>);
     // Removes the corresponding isolated object and all descendants from the m_nodeMap and queues their removal from the tree.
     void removeNode(const AXCoreObject&);
     // Removes the given node and all its descendants from m_nodeMap.

@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-AXIsolatedObject::AXIsolatedObject(Ref<AXCoreObject> axObject, AXIsolatedTree* tree)
+AXIsolatedObject::AXIsolatedObject(const Ref<AXCoreObject>& axObject, AXIsolatedTree* tree)
     : m_cachedTree(tree)
     , m_id(axObject->objectID())
 {
@@ -57,7 +57,7 @@ AXIsolatedObject::AXIsolatedObject(Ref<AXCoreObject> axObject, AXIsolatedTree* t
     }
 }
 
-Ref<AXIsolatedObject> AXIsolatedObject::create(Ref<AXCoreObject> object, AXIsolatedTree* tree)
+Ref<AXIsolatedObject> AXIsolatedObject::create(const Ref<AXCoreObject>& object, AXIsolatedTree* tree)
 {
     return adoptRef(*new AXIsolatedObject(object, tree));
 }
@@ -72,7 +72,7 @@ void AXIsolatedObject::init()
     ASSERT_NOT_REACHED();
 }
 
-void AXIsolatedObject::initializeProperties(Ref<AXCoreObject> coreObject, IsRoot isRoot)
+void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject, IsRoot isRoot)
 {
     ASSERT(is<AccessibilityObject>(coreObject));
     auto& object = downcast<AccessibilityObject>(coreObject.get());
