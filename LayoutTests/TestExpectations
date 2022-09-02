@@ -540,8 +540,6 @@ imported/w3c/web-platform-tests/reporting/document-reporting-default-endpoint.ht
 imported/w3c/web-platform-tests/reporting/document-reporting-named-endpoints.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/reporting/document-reporting-override-endpoint.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/reporting/document-reporting-path-absolute.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/reporting/nestedReport.html [ Skip ]
-imported/w3c/web-platform-tests/reporting/order.html [ Skip ]
 
 fast/files/file-reader-back-forward-cache.html [ DumpJSConsoleLogInStdErr ]
 fast/history/page-cache-createImageBitmap.html [ DumpJSConsoleLogInStdErr ]

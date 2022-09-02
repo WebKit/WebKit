@@ -95,6 +95,7 @@
 #include <WebCore/ShareData.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SystemImage.h>
+#include <WebCore/TestReportBody.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TimingFunction.h>
@@ -3086,6 +3087,9 @@ void ArgumentCoder<RefPtr<WebCore::ReportBody>>::encode(Encoder& encoder, const 
     case ReportBodyType::CSPViolation:
         downcast<CSPViolationReportBody>(reportBody.get())->encode(encoder);
         return;
+    case ReportBodyType::Test:
+        downcast<TestReportBody>(reportBody.get())->encode(encoder);
+        return;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -3109,6 +3113,8 @@ std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportB
     switch (*reportBodyType) {
     case ReportBodyType::CSPViolation:
         return CSPViolationReportBody::decode(decoder);
+    case ReportBodyType::Test:
+        return TestReportBody::decode(decoder);
     }
 
     ASSERT_NOT_REACHED();

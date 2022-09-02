@@ -354,6 +354,13 @@ imported/w3c/web-platform-tests/xhr/idlharness.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/xhr/open-url-redirected-sharedworker-origin.htm [ Skip ]
 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.sharedworker.html [ Skip ]
 
+# Reporting API "generate_test_report" is not supported on WebKitLegacy
+imported/w3c/web-platform-tests/reporting/bufferSize.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/disconnect.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/generateTestReport.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/nestedReport.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/order.html [ Skip ]
+
 # Dark mode not supported on Windows
 css-dark-mode [ Skip ]
 

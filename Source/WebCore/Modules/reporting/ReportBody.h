@@ -32,6 +32,7 @@ namespace WebCore {
 
 enum class ReportBodyType : uint8_t {
     CSPViolation,
+    Test
     // More to come
 };
 
@@ -57,7 +58,8 @@ namespace WTF {
 template<> struct EnumTraits<WebCore::ReportBodyType> {
     using values = EnumValues<
     WebCore::ReportBodyType,
-    WebCore::ReportBodyType::CSPViolation
+    WebCore::ReportBodyType::CSPViolation,
+    WebCore::ReportBodyType::Test
     >;
 };
 

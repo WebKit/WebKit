@@ -316,3 +316,11 @@ window.test_driver_internal.delete_all_cookies = function(context=null)
     return Promise.resolve();
 }
 
+window.test_driver_internal.generate_test_report = function(message, context=null)
+{
+    if (!window.testRunner)
+        return Promise.reject(new Error("unimplemented"));
+    testRunner.generateTestReport(message);
+    return Promise.resolve();
+}
+

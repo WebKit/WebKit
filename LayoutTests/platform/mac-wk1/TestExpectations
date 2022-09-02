@@ -287,6 +287,13 @@ imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-store-cursors.an
 imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-store.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.sharedworker.html [ Skip ]
 
+# Reporting API "generate_test_report" is not supported on WebKitLegacy
+imported/w3c/web-platform-tests/reporting/bufferSize.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/disconnect.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/generateTestReport.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/nestedReport.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/order.html [ Skip ]
+
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 fast/history/page-cache-media-recorder.html [ Skip ]

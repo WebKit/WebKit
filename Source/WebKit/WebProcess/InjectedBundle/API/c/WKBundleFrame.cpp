@@ -44,6 +44,7 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/Page.h>
+#include <WebCore/ReportingScope.h>
 
 WKTypeID WKBundleFrameGetTypeID()
 {
@@ -287,4 +288,14 @@ void WKBundleFrameFocus(WKBundleFrameRef frameRef)
         return;
 
     CheckedRef(coreFrame->page()->focusController())->setFocusedFrame(coreFrame.get());
+}
+
+void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef message)
+{
+    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreFrame();
+    if (!coreFrame)
+        return;
+
+    if (RefPtr document = coreFrame->document())
+        document->reportingScope().generateTestReport(WebKit::toWTFString(message));
 }

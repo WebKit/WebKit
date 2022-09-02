@@ -611,6 +611,7 @@ $(PROJECT_DIR)/Modules/reporting/Report.idl
 $(PROJECT_DIR)/Modules/reporting/ReportBody.idl
 $(PROJECT_DIR)/Modules/reporting/ReportingObserver.idl
 $(PROJECT_DIR)/Modules/reporting/ReportingObserverCallback.idl
+$(PROJECT_DIR)/Modules/reporting/TestReportBody.idl
 $(PROJECT_DIR)/Modules/speech/DOMWindow+SpeechSynthesis.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognition.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognitionAlternative.idl

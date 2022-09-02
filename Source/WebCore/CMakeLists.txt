@@ -554,6 +554,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/reporting/ReportBody.idl
     Modules/reporting/ReportingObserver.idl
     Modules/reporting/ReportingObserverCallback.idl
+    Modules/reporting/TestReportBody.idl
 
     Modules/speech/DOMWindow+SpeechSynthesis.idl
     Modules/speech/SpeechRecognitionErrorEvent.idl

@@ -2642,6 +2642,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubmitEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubmitEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubtleCrypto.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubtleCrypto.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTestReportBody.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTestReportBody.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSText.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSText.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextDecoder.cpp

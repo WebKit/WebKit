@@ -282,6 +282,7 @@ Modules/reporting/Report.cpp
 Modules/reporting/ReportBody.cpp
 Modules/reporting/ReportingObserver.cpp
 Modules/reporting/ReportingScope.cpp
+Modules/reporting/TestReportBody.cpp
 Modules/speech/SpeechRecognition.cpp
 Modules/speech/SpeechRecognitionAlternative.cpp
 Modules/speech/SpeechRecognitionErrorEvent.cpp
@@ -3999,6 +4000,7 @@ JSStyleSheet.cpp
 JSStyleSheetList.cpp
 JSSubmitEvent.cpp
 JSSubtleCrypto.cpp
+JSTestReportBody.cpp
 JSText.cpp
 JSTextDecoder.cpp
 JSTextDecoderStream.cpp

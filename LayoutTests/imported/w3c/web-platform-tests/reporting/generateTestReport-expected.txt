@@ -1,3 +1,3 @@
 
-FAIL Generate Test Report assert_unreached: generate test report failed Reached unreachable code
+PASS Generate Test Report
 

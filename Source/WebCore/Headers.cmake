@@ -328,6 +328,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/reporting/ReportingObserver.h
     Modules/reporting/ReportingObserverCallback.h
     Modules/reporting/ReportingScope.h
+    Modules/reporting/TestReportBody.h
 
     Modules/speech/SpeechRecognitionCaptureSource.h
     Modules/speech/SpeechRecognitionCaptureSourceImpl.h

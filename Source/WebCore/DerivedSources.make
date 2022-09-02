@@ -533,6 +533,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/reporting/ReportBody.idl \
     $(WebCore)/Modules/reporting/ReportingObserver.idl \
     $(WebCore)/Modules/reporting/ReportingObserverCallback.idl \
+    $(WebCore)/Modules/reporting/TestReportBody.idl \
     $(WebCore)/Modules/speech/DOMWindow+SpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisErrorCode.idl \

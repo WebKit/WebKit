@@ -61,6 +61,8 @@ public:
 
     String endpointURIForToken(const String&) const;
 
+    void generateTestReport(String&& message);
+
 private:
     explicit ReportingScope(ScriptExecutionContext&);
 

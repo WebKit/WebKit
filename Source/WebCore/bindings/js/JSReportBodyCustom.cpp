@@ -29,7 +29,9 @@
 #include "CSPViolationReportBody.h"
 #include "JSCSPViolationReportBody.h"
 #include "JSDOMBinding.h"
+#include "JSTestReportBody.h"
 #include "ReportBody.h"
+#include "TestReportBody.h"
 
 namespace WebCore {
 using namespace JSC;
@@ -38,6 +40,8 @@ JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, 
 {
     if (is<CSPViolationReportBody>(reportBody))
         return createWrapper<CSPViolationReportBody>(globalObject, WTFMove(reportBody));
+    if (is<TestReportBody>(reportBody))
+        return createWrapper<TestReportBody>(globalObject, WTFMove(reportBody));
     return createWrapper<ReportBody>(globalObject, WTFMove(reportBody));
 }
 
