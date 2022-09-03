@@ -404,6 +404,12 @@ bool DeleteSelectionCommand::initializePositionData()
     return true;
 }
 
+    // We don't want to inherit style from an element which don't have contents.
+    static bool shouldNotInheritStyleFrom(const Node& node)
+    {
+        return !node.canContainRangeEndPoint();
+    }
+
 void DeleteSelectionCommand::saveTypingStyleState()
 {
     // A common case is deleting characters that are all from the same text node. In 
@@ -419,6 +425,9 @@ void DeleteSelectionCommand::saveTypingStyleState()
         document().selection().clearTypingStyle();
         return;
     }
+
+    if (shouldNotInheritStyleFrom(*m_selectionToDelete.start().anchorNode()))
+        return;
 
     // Figure out the typing style in effect before the delete is done.
     m_typingStyle = EditingStyle::create(m_selectionToDelete.start(), EditingStyle::EditingPropertiesInEffect);
