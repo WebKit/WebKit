@@ -272,9 +272,6 @@ public:
     void setLayoutMode(WKLayoutMode);
     void updateSupportsArbitraryLayoutModes();
 
-    void setOverrideDeviceScaleFactor(CGFloat);
-    CGFloat overrideDeviceScaleFactor() const { return m_overrideDeviceScaleFactor; }
-
     void windowDidOrderOffScreen();
     void windowDidOrderOnScreen();
     void windowDidBecomeKey(NSWindow *);
@@ -793,7 +790,6 @@ private:
     CGSize m_scrollOffsetAdjustment { 0, 0 };
 
     CGSize m_intrinsicContentSize { 0, 0 };
-    CGFloat m_overrideDeviceScaleFactor { 0 };
 
     RetainPtr<WKViewLayoutStrategy> m_layoutStrategy;
     WKLayoutMode m_lastRequestedLayoutMode { kWKLayoutModeViewSize };

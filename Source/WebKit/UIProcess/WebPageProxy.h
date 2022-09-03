@@ -1124,6 +1124,7 @@ public:
     
     float deviceScaleFactor() const;
     void setIntrinsicDeviceScaleFactor(float);
+    std::optional<float> customDeviceScaleFactor() const { return m_customDeviceScaleFactor; }
     void setCustomDeviceScaleFactor(float);
 
     void accessibilitySettingsDidChange();

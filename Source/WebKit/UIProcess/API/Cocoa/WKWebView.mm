@@ -3928,6 +3928,16 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     });
 }
 
+- (void)_setOverrideDeviceScaleFactor:(CGFloat)deviceScaleFactor
+{
+    _page->setCustomDeviceScaleFactor(deviceScaleFactor);
+}
+
+- (CGFloat)_overrideDeviceScaleFactor
+{
+    return _page->customDeviceScaleFactor().value_or(0);
+}
+
 @end
 
 @implementation WKWebView (WKDeprecated)

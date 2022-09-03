@@ -1379,16 +1379,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _impl->automaticallyAdjustsContentInsets();
 }
 
-- (void)_setOverrideDeviceScaleFactor:(CGFloat)deviceScaleFactor
-{
-    _impl->setOverrideDeviceScaleFactor(deviceScaleFactor);
-}
-
-- (CGFloat)_overrideDeviceScaleFactor
-{
-    return _impl->overrideDeviceScaleFactor();
-}
-
 - (BOOL)_windowOcclusionDetectionEnabled
 {
     return _impl->windowOcclusionDetectionEnabled();

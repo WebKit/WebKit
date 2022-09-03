@@ -1928,16 +1928,8 @@ void WebViewImpl::updateSupportsArbitraryLayoutModes()
     }
 }
 
-void WebViewImpl::setOverrideDeviceScaleFactor(CGFloat deviceScaleFactor)
-{
-    m_overrideDeviceScaleFactor = deviceScaleFactor;
-    m_page->setIntrinsicDeviceScaleFactor(intrinsicDeviceScaleFactor());
-}
-
 float WebViewImpl::intrinsicDeviceScaleFactor() const
 {
-    if (m_overrideDeviceScaleFactor)
-        return m_overrideDeviceScaleFactor;
     if (m_targetWindowForMovePreparation)
         return [m_targetWindowForMovePreparation backingScaleFactor];
     if (NSWindow *window = [m_view window])

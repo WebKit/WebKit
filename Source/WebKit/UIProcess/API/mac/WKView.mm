@@ -1423,12 +1423,12 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 
 - (void)_setOverrideDeviceScaleFactor:(CGFloat)deviceScaleFactor
 {
-    _data->_impl->setOverrideDeviceScaleFactor(deviceScaleFactor);
+    _data->_impl->page().setCustomDeviceScaleFactor(deviceScaleFactor);
 }
 
 - (CGFloat)_overrideDeviceScaleFactor
 {
-    return _data->_impl->overrideDeviceScaleFactor();
+    return _data->_impl->page().customDeviceScaleFactor().value_or(0);
 }
 
 - (WKLayoutMode)_layoutMode
