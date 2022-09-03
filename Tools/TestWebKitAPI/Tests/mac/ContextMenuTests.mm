@@ -39,6 +39,43 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/BlockPtr.h>
 
+@interface PopoverNotificationListener : NSObject
+- (instancetype)initWithCallback:(Function<void(NSNotification *)>&&)callback;
+@end
+
+@implementation PopoverNotificationListener {
+    Function<void(NSNotification *)> _callback;
+}
+
+- (instancetype)initWithCallback:(Function<void(NSNotification *)>&&)callback
+{
+    if (!(self = [super init]))
+        return nil;
+
+    auto *notificationCenter = NSNotificationCenter.defaultCenter;
+    [notificationCenter addObserver:self selector:@selector(handleNotification:) name:NSPopoverWillShowNotification object:nil];
+    [notificationCenter addObserver:self selector:@selector(handleNotification:) name:NSPopoverDidShowNotification object:nil];
+    [notificationCenter addObserver:self selector:@selector(handleNotification:) name:NSPopoverWillCloseNotification object:nil];
+    [notificationCenter addObserver:self selector:@selector(handleNotification:) name:NSPopoverDidCloseNotification object:nil];
+    _callback = WTFMove(callback);
+    return self;
+}
+
+- (void)dealloc
+{
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+
+    [super dealloc];
+}
+
+- (void)handleNotification:(NSNotification *)notification
+{
+    if (_callback)
+        _callback(notification);
+}
+
+@end
+
 @interface NSMenu (ContextMenuTests)
 - (NSMenuItem *)itemWithIdentifier:(NSString *)identifier;
 @end
@@ -182,6 +219,32 @@ TEST(ContextMenuTests, ShowColorPanel)
     }];
     Util::run(&calledOrderFrontColorPanel);
 }
+
+#if HAVE(SHARING_SERVICE_PICKER_POPOVER_SPI)
+
+TEST(ContextMenuTests, SharePopoverDoesNotClearSelection)
+{
+    bool didShowPopover = false;
+    auto listener = adoptNS([[PopoverNotificationListener alloc] initWithCallback:[&](NSNotification *notification) {
+        if ([notification.name isEqualToString:NSPopoverDidShowNotification])
+            didShowPopover = true;
+    }]);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView setForceWindowToBecomeKey:YES];
+    [webView synchronouslyLoadHTMLString:@"<body style='font-size: 100px;'>Hello world this is a test</body>"];
+    [[webView window] makeFirstResponder:webView.get()];
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+    [webView rightClick:NSMakePoint(100, 100) andSelectItemMatching:^BOOL(NSMenuItem *item) {
+        return [item.title containsString:@"Share"];
+    }];
+
+    TestWebKitAPI::Util::run(&didShowPopover);
+    EXPECT_WK_STREQ("Hello world this is a test", [webView selectedText]);
+}
+
+#endif // HAVE(SHARING_SERVICE_PICKER_POPOVER_SPI)
 
 } // namespace TestWebKitAPI
 

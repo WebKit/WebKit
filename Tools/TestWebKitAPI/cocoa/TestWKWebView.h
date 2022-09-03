@@ -149,6 +149,7 @@
 - (void)typeCharacter:(char)character;
 - (void)setEventTimestampOffset:(NSTimeInterval)offset;
 @property (nonatomic, readonly) NSTimeInterval eventTimestamp;
+@property (nonatomic) BOOL forceWindowToBecomeKey;
 @end
 #endif
 
