@@ -943,7 +943,7 @@ because an opaque root it cares about has been encountered whenever `ownerNode` 
 In the most simplistic model, the opaque root for this case will be the `ownerNode` itself.
 However, each `Node` object also has to keep its parent, siblings, and children alive.
 To this end, each `Node` designates the [root](https://dom.spec.whatwg.org/#concept-tree-root) node as its opaque root.
-Both `Node` and `StyleSheet` objects use this unique opaque root as a way of communicating with the gargage collector.
+Both `Node` and `StyleSheet` objects use this unique opaque root as a way of communicating with the garbage collector.
 
 For example, `StyleSheet` object informs the garbage collector of this opaque root when it's asked to visit its children in
 [JSStyleSheetCustom.cpp](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/bindings/js/JSStyleSheetCustom.cpp):
@@ -1006,7 +1006,7 @@ makes use of this IDL attribute as follows:
 };
 ```
 
-Here, `signal` is a public member function funtion of
+Here, `signal` is a public member function of
 the [underlying C++ object](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/AbortController.h):
 
 ```cpp
@@ -1033,7 +1033,7 @@ Any operation done in visitAdditionalChildren needs to be multi-thread safe.
 For example, it cannot increment or decrement the reference count of a `RefCounted` object
 or create a new `WeakPtr` from `CanMakeWeakPtr` since these WTF classes are not thread safe.
 
-The second step can be achived by adding `CustomIsReachable` to the IDL file and
+The second step can be achieved by adding `CustomIsReachable` to the IDL file and
 implementing `JS*Owner::isReachableFromOpaqueRoots` in JS*Custom.cpp file.
 Alternatively and more preferably, `GenerateIsReachable` can be added to IDL file to automatically generate this code
 with the following values:
