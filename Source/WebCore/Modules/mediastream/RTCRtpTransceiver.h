@@ -72,10 +72,14 @@ public:
     RTCRtpTransceiverBackend* backend() { return m_backend.get(); }
     void setConnection(RTCPeerConnection&);
 
+    std::optional<RTCRtpTransceiverDirection> firedDirection() const { return m_firedDirection; }
+    void setFiredDirection(std::optional<RTCRtpTransceiverDirection> firedDirection) { m_firedDirection = firedDirection; }
+
 private:
     RTCRtpTransceiver(Ref<RTCRtpSender>&&, Ref<RTCRtpReceiver>&&, std::unique_ptr<RTCRtpTransceiverBackend>&&);
 
     RTCRtpTransceiverDirection m_direction;
+    std::optional<RTCRtpTransceiverDirection> m_firedDirection;
 
     Ref<RTCRtpSender> m_sender;
     Ref<RTCRtpReceiver> m_receiver;

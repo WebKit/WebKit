@@ -38,6 +38,7 @@
 #include "RTCIceGatheringState.h"
 #include "RTCRtpCapabilities.h"
 #include "RTCRtpSendParameters.h"
+#include "RTCRtpTransceiverDirection.h"
 #include "RTCSessionDescription.h"
 #include "RTCSignalingState.h"
 #include <wtf/FixedVector.h>
@@ -137,7 +138,15 @@ public:
         String currentRemoteDescriptionSdp;
         std::optional<RTCSdpType> pendingRemoteDescriptionSdpType;
         String pendingRemoteDescriptionSdp;
+
+        DescriptionStates isolatedCopy() &&;
     };
+    struct TransceiverState {
+        String mid;
+        Vector<RefPtr<MediaStream>> receiverStreams;
+        std::optional<RTCRtpTransceiverDirection> firedDirection;
+    };
+    using TransceiverStates = Vector<TransceiverState>;
 
     void newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL, std::optional<DescriptionStates>&&);
     void newDataChannel(UniqueRef<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
@@ -212,10 +221,10 @@ protected:
     void createAnswerSucceeded(String&&);
     void createAnswerFailed(Exception&&);
 
-    void setLocalDescriptionSucceeded(std::optional<DescriptionStates>&&, std::unique_ptr<RTCSctpTransportBackend>&&);
+    void setLocalDescriptionSucceeded(std::optional<DescriptionStates>&&, std::optional<TransceiverStates>&&, std::unique_ptr<RTCSctpTransportBackend>&&);
     void setLocalDescriptionFailed(Exception&&);
 
-    void setRemoteDescriptionSucceeded(std::optional<DescriptionStates>&&, std::unique_ptr<RTCSctpTransportBackend>&&);
+    void setRemoteDescriptionSucceeded(std::optional<DescriptionStates>&&, std::optional<TransceiverStates>&&, std::unique_ptr<RTCSctpTransportBackend>&&);
     void setRemoteDescriptionFailed(Exception&&);
 
     void validateSDP(const String&) const;
@@ -254,7 +263,23 @@ private:
     const void* m_logIdentifier;
 #endif
     bool m_finishedGatheringCandidates { false };
+    bool m_isProcessingLocalDescriptionAnswer { false };
 };
+
+inline PeerConnectionBackend::DescriptionStates PeerConnectionBackend::DescriptionStates::isolatedCopy() &&
+{
+    return DescriptionStates {
+        signalingState,
+        currentLocalDescriptionSdpType,
+        WTFMove(currentLocalDescriptionSdp).isolatedCopy(),
+        pendingLocalDescriptionSdpType,
+        WTFMove(pendingLocalDescriptionSdp).isolatedCopy(),
+        currentRemoteDescriptionSdpType,
+        WTFMove(currentRemoteDescriptionSdp).isolatedCopy(),
+        pendingRemoteDescriptionSdpType,
+        WTFMove(pendingRemoteDescriptionSdp).isolatedCopy()
+    };
+}
 
 } // namespace WebCore
 

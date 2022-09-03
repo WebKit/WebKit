@@ -126,8 +126,6 @@ private:
     // webrtc::PeerConnectionObserver API
     void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState) final;
     void OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface>) final;
-    void OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>) final;
-    void OnRemoveTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>) final;
 
     void OnNegotiationNeededEvent(uint32_t) final;
     void OnStandardizedIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState) final;
@@ -141,10 +139,6 @@ private:
     void setLocalSessionDescriptionFailed(ExceptionCode, const char*);
     void setRemoteSessionDescriptionSucceeded();
     void setRemoteSessionDescriptionFailed(ExceptionCode, const char*);
-    void newTransceiver(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>&&);
-    void removeRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&&);
-
-    void addPendingTrackEvent(Ref<RTCRtpReceiver>&&, MediaStreamTrack&, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&, RefPtr<RTCRtpTransceiver>&&);
 
     template<typename T>
     ExceptionOr<Backends> createTransceiverBackends(T&&, webrtc::RtpTransceiverInit&&, LibWebRTCRtpSenderBackend::Source&&);
@@ -156,7 +150,7 @@ private:
 
     rtc::scoped_refptr<LibWebRTCStatsCollector> createStatsCollector(Ref<DeferredPromise>&&);
 
-    MediaStream& mediaStreamFromRTCStream(webrtc::MediaStreamInterface&);
+    MediaStream& mediaStreamFromRTCStreamId(const String&);
 
     void AddRef() const { ref(); }
     rtc::RefCountReleaseStatus Release() const

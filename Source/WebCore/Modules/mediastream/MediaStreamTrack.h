@@ -162,6 +162,8 @@ public:
     const void* logIdentifier() const final { return m_private->logIdentifier(); }
 #endif
 
+    void setShouldFireMuteEventImmediately(bool value) { m_shouldFireMuteEventImmediately = value; }
+
 protected:
     MediaStreamTrack(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
 
@@ -211,6 +213,7 @@ private:
     bool m_ended { false };
     const bool m_isCaptureTrack { false };
     bool m_isInterrupted { false };
+    bool m_shouldFireMuteEventImmediately { false };
 };
 
 typedef Vector<Ref<MediaStreamTrack>> MediaStreamTrackVector;

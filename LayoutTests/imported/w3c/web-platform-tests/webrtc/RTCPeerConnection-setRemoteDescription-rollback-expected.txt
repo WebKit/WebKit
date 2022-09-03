@@ -17,7 +17,7 @@ PASS rollback of a local offer to negotiated stable state should enable applying
 PASS rollback a local offer with audio direction change to negotiated stable state and then add video receiver
 PASS two transceivers with same mids
 PASS onremovetrack fires during remote rollback
-FAIL rollback of a remote offer with stream changes assert_equals: expected 2 but got 1
+PASS rollback of a remote offer with stream changes
 PASS removeTrack() with a sender being rolled back does not crash or throw
 PASS Implicit rollback with only a datachannel works
 

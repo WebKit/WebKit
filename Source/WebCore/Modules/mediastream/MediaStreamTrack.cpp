@@ -603,12 +603,21 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
     if (document->activeDOMObjectsAreStopped() || m_ended)
         return;
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, muted = m_private->muted()] {
+    Function<void()> updateMuted = [this, muted = m_private->muted()] {
         if (!scriptExecutionContext() || scriptExecutionContext()->activeDOMObjectsAreStopped())
             return;
+
+        if (m_muted == muted)
+            return;
+
         m_muted = muted;
         dispatchEvent(Event::create(muted ? eventNames().muteEvent : eventNames().unmuteEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    });
+    };
+    if (m_shouldFireMuteEventImmediately)
+        updateMuted();
+    else
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, WTFMove(updateMuted));
+
     configureTrackRendering();
 
     bool wasInterrupted = m_isInterrupted;
