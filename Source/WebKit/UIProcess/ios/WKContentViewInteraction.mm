@@ -1671,7 +1671,26 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     }
 
     [self _cancelInteraction];
-    [_textInteractionAssistant deactivateSelection];
+
+    BOOL shouldDeactivateSelection = [&] {
+#if PLATFORM(MACCATALYST)
+        if (reason == EndEditingReasonResigningFirstResponder) {
+            // This logic is based on a similar check on macOS (in WebViewImpl::resignFirstResponder()) to
+            // maintain the active selection when resigning first responder, if the new responder is in a
+            // modal popover or panel.
+            // FIXME: Ideally, this would additionally check that the new first responder corresponds to
+            // a view underneath this view controller; however, there doesn't seem to be any way of doing
+            // so at the moment. In lieu of this, we can at least check that the web view itself isn't
+            // inside the popover.
+            auto *controller = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+            return [self isDescendantOfView:controller.viewIfLoaded] || controller.modalPresentationStyle != UIModalPresentationPopover;
+        }
+#endif // PLATFORM(MACCATALYST)
+        return YES;
+    }();
+
+    if (shouldDeactivateSelection)
+        [_textInteractionAssistant deactivateSelection];
 
     [self _resetInputViewDeferral];
 }

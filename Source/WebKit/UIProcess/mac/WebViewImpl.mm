@@ -1403,7 +1403,15 @@ bool WebViewImpl::resignFirstResponder()
 
     resetSecureInputState();
 
-    if (!m_page->maintainsInactiveSelection())
+    auto shouldClearSelection = [&] {
+        if (m_page->maintainsInactiveSelection())
+            return false;
+
+        NSWindow *nextResponderWindow = dynamic_objc_cast<NSView>(nextResponder).window;
+        return !dynamic_objc_cast<NSPanel>(nextResponderWindow);
+    }();
+
+    if (shouldClearSelection)
         m_page->clearSelection();
 
     m_page->activityStateDidChange(WebCore::ActivityState::IsFocused);
