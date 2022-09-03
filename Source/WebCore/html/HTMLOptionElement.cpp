@@ -187,12 +187,9 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomStri
         // FIXME: Use PseudoClassChangeInvalidation in other elements that implement matchesDefaultPseudoClass().
         Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassDefault, !value.isNull());
         m_isDefault = !value.isNull();
-
-        // FIXME: This doesn't match what the HTML specification says.
-        // The specification implies that removing the selected attribute or
-        // changing the value of a selected attribute that is already present
-        // has no effect on whether the element is selected.
-        setSelectedState(!value.isNull());
+        
+        if (bool setSelectedState = !value.isNull())
+            setSelected(setSelectedState);
     } else
         HTMLElement::parseAttribute(name, value);
 }
