@@ -26,11 +26,11 @@
 #pragma once
 
 #include "ASTNode.h"
+#include "Decl.h"
 #include "FunctionDecl.h"
-#include "GlobalDecl.h"
 #include "GlobalDirective.h"
-#include "GlobalVariableDecl.h"
 #include "StructureDecl.h"
+#include "VariableDecl.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -40,7 +40,7 @@ namespace WGSL::AST {
 class ShaderModule final : ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ShaderModule(SourceSpan span, Vector<UniqueRef<GlobalDirective>>&& directives, Vector<UniqueRef<GlobalDecl>>&& decls)
+    ShaderModule(SourceSpan span, Vector<UniqueRef<GlobalDirective>>&& directives, Vector<UniqueRef<Decl>>&& decls)
         : ASTNode(span)
         , m_directives(WTFMove(directives))
     {
@@ -48,15 +48,15 @@ public:
             if (is<StructDecl>(decl.get())) {
                 // We want to go from UniqueRef<BaseClass> to UniqueRef<DerivedClass>, but that is not supported by downcast.
                 // So instead we do UniqueRef -> unique_ptr -> raw_pointer -(downcast)-> raw_pointer -> unique_ptr -> UniqueRef...
-                GlobalDecl* rawPtr = decl.moveToUniquePtr().release();
+                Decl* rawPtr = decl.moveToUniquePtr().release();
                 StructDecl* downcastedRawPtr = downcast<StructDecl>(rawPtr);
                 m_structs.append(makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<StructDecl>(downcastedRawPtr)));
-            } else if (is<GlobalVariableDecl>(decl.get())) {
-                GlobalDecl* rawPtr = decl.moveToUniquePtr().release();
-                GlobalVariableDecl* downcastedRawPtr = downcast<GlobalVariableDecl>(rawPtr);
-                m_globalVars.append(makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<GlobalVariableDecl>(downcastedRawPtr)));
+            } else if (is<VariableDecl>(decl.get())) {
+                Decl* rawPtr = decl.moveToUniquePtr().release();
+                VariableDecl* downcastedRawPtr = downcast<VariableDecl>(rawPtr);
+                m_globalVars.append(makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<VariableDecl>(downcastedRawPtr)));
             } else {
-                GlobalDecl* rawPtr = decl.moveToUniquePtr().release();
+                Decl* rawPtr = decl.moveToUniquePtr().release();
                 FunctionDecl* func = downcast<FunctionDecl>(rawPtr);
                 m_functions.append(makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<FunctionDecl>(func)));
             }
@@ -65,14 +65,14 @@ public:
 
     Vector<UniqueRef<GlobalDirective>>& directives() { return m_directives; }
     Vector<UniqueRef<StructDecl>>& structs() { return m_structs; }
-    Vector<UniqueRef<GlobalVariableDecl>>& globalVars() { return m_globalVars; }
+    Vector<UniqueRef<VariableDecl>>& globalVars() { return m_globalVars; }
     Vector<UniqueRef<FunctionDecl>>& functions() { return m_functions; }
 
 private:
     Vector<UniqueRef<GlobalDirective>> m_directives;
 
     Vector<UniqueRef<StructDecl>> m_structs;
-    Vector<UniqueRef<GlobalVariableDecl>> m_globalVars;
+    Vector<UniqueRef<VariableDecl>> m_globalVars;
     Vector<UniqueRef<FunctionDecl>> m_functions;
 };
 

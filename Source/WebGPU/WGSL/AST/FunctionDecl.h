@@ -28,7 +28,7 @@
 #include "ASTNode.h"
 #include "Attribute.h"
 #include "CompilationMessage.h"
-#include "GlobalDecl.h"
+#include "Decl.h"
 #include "Statements/CompoundStatement.h"
 #include "TypeDecl.h"
 
@@ -55,11 +55,11 @@ private:
     Attributes m_attributes;
 };
 
-class FunctionDecl final : public GlobalDecl {
+class FunctionDecl final : public Decl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FunctionDecl(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<Parameter>>&& parameters, std::unique_ptr<TypeDecl>&& returnType, CompoundStatement&& body, Attributes&& attributes, Attributes&& returnAttributes)
-        : GlobalDecl(sourceSpan)
+        : Decl(sourceSpan)
         , m_name(name)
         , m_parameters(WTFMove(parameters))
         , m_attributes(WTFMove(attributes))

@@ -29,12 +29,12 @@
 #include "config.h"
 
 #include "AST/Attribute.h"
+#include "AST/Decl.h"
 #include "AST/Expression.h"
 #include "AST/Expressions/CallableExpression.h"
 #include "AST/Expressions/IdentifierExpression.h"
 #include "AST/Expressions/LiteralExpressions.h"
 #include "AST/Expressions/StructureAccess.h"
-#include "AST/GlobalDecl.h"
 #include "AST/Statement.h"
 #include "AST/Statements/AssignmentStatement.h"
 #include "AST/Statements/CompoundStatement.h"
@@ -153,7 +153,7 @@ Expected<AST::ShaderModule, Error> Parser<Lexer>::parseShader()
     Vector<UniqueRef<AST::GlobalDirective>> directives;
     // FIXME: parse directives here.
 
-    Vector<UniqueRef<AST::GlobalDecl>> decls;
+    Vector<UniqueRef<AST::Decl>> decls;
     while (!m_lexer.isAtEndOfFile()) {
         PARSE(globalDecl, GlobalDecl)
         decls.append(WTFMove(globalDecl));
@@ -163,7 +163,7 @@ Expected<AST::ShaderModule, Error> Parser<Lexer>::parseShader()
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::GlobalDecl>, Error> Parser<Lexer>::parseGlobalDecl()
+Expected<UniqueRef<AST::Decl>, Error> Parser<Lexer>::parseGlobalDecl()
 {
     START_PARSE();
 
@@ -175,9 +175,9 @@ Expected<UniqueRef<AST::GlobalDecl>, Error> Parser<Lexer>::parseGlobalDecl()
         return { makeUniqueRef<AST::StructDecl>(WTFMove(structDecl)) };
     }
     case TokenType::KeywordVar: {
-        PARSE(varDecl, GlobalVariableDecl, WTFMove(attributes));
+        PARSE(varDecl, VariableDecl, WTFMove(attributes));
         CONSUME_TYPE(Semicolon);
-        return { makeUniqueRef<AST::GlobalVariableDecl>(WTFMove(varDecl)) };
+        return { makeUniqueRef<AST::VariableDecl>(WTFMove(varDecl)) };
     }
     case TokenType::KeywordFn: {
         PARSE(fn, FunctionDecl, WTFMove(attributes));
@@ -327,7 +327,7 @@ Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseTypeDeclAfterIdent
 }
 
 template<typename Lexer>
-Expected<AST::GlobalVariableDecl, Error> Parser<Lexer>::parseGlobalVariableDecl(AST::Attributes&& attributes)
+Expected<AST::VariableDecl, Error> Parser<Lexer>::parseVariableDecl(AST::Attributes&& attributes)
 {
     START_PARSE();
 
@@ -351,7 +351,7 @@ Expected<AST::GlobalVariableDecl, Error> Parser<Lexer>::parseGlobalVariableDecl(
     std::unique_ptr<AST::Expression> maybeInitializer = nullptr;
     // FIXME: initializer
 
-    RETURN_NODE(GlobalVariableDecl, name.m_ident, WTFMove(maybeQualifier), WTFMove(maybeType), WTFMove(maybeInitializer), WTFMove(attributes));
+    RETURN_NODE(VariableDecl, name.m_ident, WTFMove(maybeQualifier), WTFMove(maybeType), WTFMove(maybeInitializer), WTFMove(attributes));
 }
 
 template<typename Lexer>

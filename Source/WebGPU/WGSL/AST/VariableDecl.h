@@ -27,19 +27,19 @@
 
 #include "Attribute.h"
 #include "CompilationMessage.h"
+#include "Decl.h"
 #include "Expression.h"
-#include "GlobalDecl.h"
 #include "TypeDecl.h"
 #include "VariableQualifier.h"
 #include <wtf/text/WTFString.h>
 
 namespace WGSL::AST {
 
-class GlobalVariableDecl final : public GlobalDecl {
+class VariableDecl final : public Decl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GlobalVariableDecl(SourceSpan span, StringView name, std::unique_ptr<VariableQualifier>&& qualifier, std::unique_ptr<TypeDecl>&& type, std::unique_ptr<Expression>&& initializer, Attributes&& attributes)
-        : GlobalDecl(span)
+    VariableDecl(SourceSpan span, StringView name, std::unique_ptr<VariableQualifier>&& qualifier, std::unique_ptr<TypeDecl>&& type, std::unique_ptr<Expression>&& initializer, Attributes&& attributes)
+        : Decl(span)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
         , m_qualifier(WTFMove(qualifier))
@@ -49,7 +49,7 @@ public:
         ASSERT(m_type || m_initializer);
     }
 
-    Kind kind() const override { return Kind::GlobalVariable; }
+    Kind kind() const override { return Kind::Variable; }
     const StringView& name() const { return m_name; }
     Attributes& attributes() { return m_attributes; }
     VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
@@ -68,4 +68,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(GlobalVariableDecl, isGlobalVariable())
+SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(VariableDecl, isVariable())

@@ -30,24 +30,24 @@
 
 namespace WGSL::AST {
 
-class GlobalDecl : public ASTNode {
+class Decl : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Kind {
-        GlobalVariable,
+        Variable,
         Struct,
         Function,
     };
 
-    GlobalDecl(SourceSpan span)
+    Decl(SourceSpan span)
         : ASTNode(span)
     {
     }
 
-    virtual ~GlobalDecl() {}
+    virtual ~Decl() { }
 
     virtual Kind kind() const = 0;
-    bool isGlobalVariable() const { return kind() == Kind::GlobalVariable; }
+    bool isVariable() const { return kind() == Kind::Variable; }
     bool isStruct() const { return kind() == Kind::Struct; }
     bool isFunction() const { return kind() == Kind::Function; }
 };
@@ -56,5 +56,5 @@ public:
 
 #define SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
-    static bool isType(const WGSL::AST::GlobalDecl& decl) { return decl.predicate; } \
+    static bool isType(const WGSL::AST::Decl& decl) { return decl.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()

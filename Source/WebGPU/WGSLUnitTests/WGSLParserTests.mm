@@ -79,7 +79,7 @@
     XCTAssert(shader->structs().isEmpty());
     XCTAssert(shader->globalVars().size() == 1);
     XCTAssert(shader->functions().isEmpty());
-    WGSL::AST::GlobalVariableDecl& var = shader->globalVars()[0];
+    WGSL::AST::VariableDecl& var = shader->globalVars()[0];
     XCTAssert(var.attributes().size() == 2);
     XCTAssert(var.attributes()[0]->isGroup());
     XCTAssert(!downcast<WGSL::AST::GroupAttribute>(var.attributes()[0].get()).group());
