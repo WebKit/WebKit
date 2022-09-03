@@ -190,6 +190,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
     ASSERT(m_globalScope->hasOneRef());
 
     RefPtr<WorkerOrWorkletGlobalScope> workerGlobalScopeToDelete;
+    Function<void()> stoppedCallback;
     {
         // Mutex protection is necessary to ensure that we don't change m_globalScope
         // while WorkerThread::stop is accessing it.
@@ -200,14 +201,16 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
         // context will trigger the main thread to race against us to delete the WorkerThread
         // object, and the WorkerThread object owns the mutex we need to unlock after this.
         workerGlobalScopeToDelete = std::exchange(m_globalScope, nullptr);
-
-        if (m_stoppedCallback)
-            callOnMainThread(WTFMove(m_stoppedCallback));
+        stoppedCallback = std::exchange(m_stoppedCallback, nullptr);
     }
 
     // The below assignment will destroy the context, which will in turn notify messaging proxy.
     // We cannot let any objects survive past thread exit, because no other thread will run GC or otherwise destroy them.
     workerGlobalScopeToDelete = nullptr;
+
+    // Make sure we don't call the stoppedCallback before the WorkerGlobalScope has been destroyed.
+    if (stoppedCallback)
+        callOnMainThread(WTFMove(stoppedCallback));
 
     // Clean up WebCore::ThreadGlobalData before WTF::Thread goes away!
     threadGlobalData().destroy();
