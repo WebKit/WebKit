@@ -153,11 +153,12 @@ void HTMLLabelElement::defaultEventHandler(Event& event)
 
         processingClick = true;
 
-        control->dispatchSimulatedClick(&event);
-
         document().updateLayoutIgnorePendingStylesheets();
         if (control->isMouseFocusable())
             control->focus({ { }, { }, { }, FocusTrigger::Click, { } });
+
+        // Click the corresponding control.
+        control->dispatchSimulatedClick(&event);
 
         processingClick = false;
 
