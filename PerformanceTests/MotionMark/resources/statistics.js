@@ -179,7 +179,8 @@ Experiment.defaults =
 Regression = Utilities.createClass(
     function(samples, getComplexity, getFrameLength, startIndex, endIndex, options)
     {
-        var desiredFrameLength = options.desiredFrameLength || 1000/60;
+        var targetFrameRate = options["frame-rate"] || 60;
+        var desiredFrameLength = options.desiredFrameLength || 1000/targetFrameRate;
         var bestProfile;
 
         if (!options.preferredProfile || options.preferredProfile == Strings.json.profiles.slope) {

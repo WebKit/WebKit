@@ -29,6 +29,8 @@
         this._options = options;
         this._results = null;
         this._version = version;
+        this._targetFrameRate = options["frame-rate"] || 60;
+        this._systemFrameRate = options["system-frame-rate"] || 60;
         if (testData) {
             this._iterationsSamplers = testData;
             this._processData();
@@ -83,6 +85,7 @@
         }, this);
 
         this._results[Strings.json.version] = this._version;
+        this._results[Strings.json.fps] = this._targetFrameRate;
         this._results[Strings.json.score] = Statistics.sampleMean(iterationsScores.length, iterationsScores.reduce(function(a, b) { return a + b; }));
         this._results[Strings.json.scoreLowerBound] = this._results[Strings.json.results.iterations][0][Strings.json.scoreLowerBound];
         this._results[Strings.json.scoreUpperBound] = this._results[Strings.json.results.iterations][0][Strings.json.scoreUpperBound];
@@ -109,7 +112,7 @@
 
             var complexityIndex = series.fieldMap[Strings.json.complexity];
             var frameLengthIndex = series.fieldMap[Strings.json.frameLength];
-            var regressionOptions = { desiredFrameLength: 1000/60 };
+            var regressionOptions = { desiredFrameLength: 1000/this._targetFrameRate };
             if (profile)
                 regressionOptions.preferredProfile = profile;
             return {
@@ -164,6 +167,8 @@
         ];
         result[Strings.json.complexity][Strings.json.complexity] = calculation.complexity;
         result[Strings.json.complexity][Strings.json.measurements.stdev] = Math.sqrt(calculation.error / samples[Strings.json.complexity].length);
+
+        result[Strings.json.fps] = data.targetFPS || 60;
 
         if (isRampController) {
             var timeComplexity = new Experiment;
@@ -442,9 +447,10 @@ window.sectionsManager =
         document.querySelector("#" + sectionIdentifier + " .version").textContent = version;
     },
 
-    setSectionScore: function(sectionIdentifier, score, confidence)
+    setSectionScore: function(sectionIdentifier, score, confidence, fps)
     {
-        document.querySelector("#" + sectionIdentifier + " .score").textContent = score;
+        if (fps && score)
+            document.querySelector("#" + sectionIdentifier + " .score").textContent = `${score} @ ${fps}fps`;
         if (confidence)
             document.querySelector("#" + sectionIdentifier + " .confidence").textContent = confidence;
     },
@@ -557,8 +563,9 @@ window.benchmarkController = {
         var dashboard = benchmarkRunnerClient.results;
         var score = dashboard.score;
         var confidence = "±" + (Statistics.largestDeviationPercentage(dashboard.scoreLowerBound, score, dashboard.scoreUpperBound) * 100).toFixed(2) + "%";
+        var fps = dashboard._systemFrameRate;
         sectionsManager.setSectionVersion("results", dashboard.version);
-        sectionsManager.setSectionScore("results", score.toFixed(2), confidence);
+        sectionsManager.setSectionScore("results", score.toFixed(2), confidence, fps);
         sectionsManager.populateTable("results-header", Headers.testName, dashboard);
         sectionsManager.populateTable("results-score", Headers.score, dashboard);
         sectionsManager.populateTable("results-data", Headers.details, dashboard);
@@ -658,3 +665,4 @@ window.benchmarkController = {
 };
 
 window.addEventListener("load", function() { benchmarkController.initialize(); });
+

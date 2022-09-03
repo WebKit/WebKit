@@ -42,6 +42,8 @@ Utilities.extendObject(window.benchmarkController, {
             samplesWithProperties[seriesName] = series.toArray();
         })
 
+        this._targetFrameRate = options["frame-rate"] || 60;
+
         this.createTimeGraph(testResult, samplesWithProperties[Strings.json.controller], testData[Strings.json.marks], testData[Strings.json.controller], options, margins, size);
         this.onTimeGraphOptionsChanged();
 
@@ -127,14 +129,14 @@ Utilities.extendObject(window.benchmarkController, {
             .domain([xMin, xMax]);
         var yScale = d3.scale.linear()
             .range([size.height, 0])
-            .domain([1000/20, 1000/60]);
+            .domain([1000/(this._targetFrameRate/3), 1000/this._targetFrameRate]);
 
         var xAxis = d3.svg.axis()
             .scale(xScale)
             .orient("bottom");
         var yAxis = d3.svg.axis()
             .scale(yScale)
-            .tickValues([1000/20, 1000/25, 1000/30, 1000/35, 1000/40, 1000/45, 1000/50, 1000/55, 1000/60])
+            .tickValues([1000/20, 1000/25, 1000/30, 1000/35, 1000/40, 1000/45, 1000/50, 1000/55, 1000/60, 1000/90, 1000/120])
             .tickFormat(function(d) { return (1000 / d).toFixed(0); })
             .orient("left");
 
@@ -284,7 +286,7 @@ Utilities.extendObject(window.benchmarkController, {
                 .domain([0, complexityMax]);
         var yRight = d3.scale.linear()
                 .range([size.height, 0])
-                .domain([1000/20, 1000/60]);
+                .domain([1000/(this._targetFrameRate/3), 1000/this._targetFrameRate]);
 
         // Axes
         var xAxis = d3.svg.axis()
@@ -296,7 +298,7 @@ Utilities.extendObject(window.benchmarkController, {
                 .orient("left");
         var yAxisRight = d3.svg.axis()
                 .scale(yRight)
-                .tickValues([1000/20, 1000/25, 1000/30, 1000/35, 1000/40, 1000/45, 1000/50, 1000/55, 1000/60])
+                .tickValues([1000/20, 1000/25, 1000/30, 1000/35, 1000/40, 1000/45, 1000/50, 1000/55, 1000/60, 1000/90, 1000/120])
                 .tickFormat(function(d) { return (1000/d).toFixed(0); })
                 .orient("right");
 
@@ -623,6 +625,6 @@ Utilities.extendObject(window.benchmarkController, {
             }
         }
 
-        sectionsManager.setSectionScore("test-graph", score, mean);
+        sectionsManager.setSectionScore("test-graph", score, mean, this._targetFrameRate);
     }
 });
