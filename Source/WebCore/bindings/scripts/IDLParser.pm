@@ -1455,6 +1455,12 @@ sub parseDefaultValue
         $self->assertTokenValue($self->getToken(), "]", __LINE__);
         return "[]";
     }
+    if ($next->value() eq "{") {
+        # Accept {} but just ignore it.
+        $self->assertTokenValue($self->getToken(), "{", __LINE__);
+        $self->assertTokenValue($self->getToken(), "}", __LINE__);
+        return undef;
+    }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
 

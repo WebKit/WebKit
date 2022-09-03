@@ -609,6 +609,17 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
         result.dictionaryMember = convert<IDLDictionary<TestObj::DictionaryThatShouldTolerateNull>>(lexicalGlobalObject, dictionaryMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
+    JSValue dictionaryMemberWithDefaultValue;
+    if (isNullOrUndefined)
+        dictionaryMemberWithDefaultValue = jsUndefined();
+    else {
+        dictionaryMemberWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "dictionaryMemberWithDefault"_s));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    if (!dictionaryMemberWithDefaultValue.isUndefined()) {
+        result.dictionaryMemberWithDefault = convert<IDLDictionary<TestObj::ParentDictionary>>(lexicalGlobalObject, dictionaryMemberWithDefaultValue);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     JSValue enumerationValueWithDefaultValue;
     if (isNullOrUndefined)
         enumerationValueWithDefaultValue = jsUndefined();
@@ -1073,6 +1084,11 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
         auto dictionaryMemberValue = toJS<IDLDictionary<TestObj::DictionaryThatShouldTolerateNull>>(lexicalGlobalObject, globalObject, throwScope, IDLDictionary<TestObj::DictionaryThatShouldTolerateNull>::extractValueFromNullable(dictionary.dictionaryMember));
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, JSC::Identifier::fromString(vm, "dictionaryMember"_s), dictionaryMemberValue);
+    }
+    if (!IDLDictionary<TestObj::ParentDictionary>::isNullValue(dictionary.dictionaryMemberWithDefault)) {
+        auto dictionaryMemberWithDefaultValue = toJS<IDLDictionary<TestObj::ParentDictionary>>(lexicalGlobalObject, globalObject, throwScope, IDLDictionary<TestObj::ParentDictionary>::extractValueFromNullable(dictionary.dictionaryMemberWithDefault));
+        RETURN_IF_EXCEPTION(throwScope, { });
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "dictionaryMemberWithDefault"_s), dictionaryMemberWithDefaultValue);
     }
     auto enumerationValueWithDefaultValue = toJS<IDLEnumeration<TestObj::EnumType>>(lexicalGlobalObject, throwScope, dictionary.enumerationValueWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
@@ -1630,6 +1646,7 @@ static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_methodWithOptionalNu
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_methodWithOptionalXPathNSResolver);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_methodWithOptionalRecord);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_methodWithOptionalPromise);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_methodWithOptionalDictIsDefault);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_methodWithCallbackInterfaceArg);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_methodWithNullableCallbackInterfaceArg);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_methodWithNonCallbackInterfaceArgAndCallbackInterfaceArg);
@@ -2365,6 +2382,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithOptionalXPathNSResolver"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_methodWithOptionalXPathNSResolver, 0 } },
     { "methodWithOptionalRecord"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_methodWithOptionalRecord, 0 } },
     { "methodWithOptionalPromise"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_methodWithOptionalPromise, 0 } },
+    { "methodWithOptionalDictIsDefault"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_methodWithOptionalDictIsDefault, 0 } },
     { "methodWithCallbackInterfaceArg"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_methodWithCallbackInterfaceArg, 1 } },
     { "methodWithNullableCallbackInterfaceArg"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_methodWithNullableCallbackInterfaceArg, 1 } },
     { "methodWithNonCallbackInterfaceArgAndCallbackInterfaceArg"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_methodWithNonCallbackInterfaceArgAndCallbackInterfaceArg, 2 } },
@@ -7145,6 +7163,24 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_methodWithOptionalP
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_methodWithOptionalPromise, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_methodWithOptionalPromiseBody>(*lexicalGlobalObject, *callFrame, "methodWithOptionalPromise");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_methodWithOptionalDictIsDefaultBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    auto& impl = castedThis->wrapped();
+    EnsureStillAliveScope argument0 = callFrame->argument(0);
+    auto dict = convert<IDLDictionary<TestObj::Dictionary>>(*lexicalGlobalObject, argument0.value());
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithOptionalDictIsDefault(WTFMove(dict)); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_methodWithOptionalDictIsDefault, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_methodWithOptionalDictIsDefaultBody>(*lexicalGlobalObject, *callFrame, "methodWithOptionalDictIsDefault");
 }
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_methodWithCallbackInterfaceArgBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
