@@ -5877,9 +5877,9 @@ bool CSSPropertyParser::consumeOverflowShorthand(bool important)
         // paged-x or paged-y, then overflow-x and overflow-y should have the same value.
         if (xValueID == CSSValueWebkitPagedX || xValueID == CSSValueWebkitPagedY)
             xValueID = CSSValueAuto;
-    } else 
+    } else {
         yValueID = m_range.consumeIncludingWhitespace().id();
-
+    }
     if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyOverflowY, yValueID, m_context))
         return false;
     if (!m_range.atEnd())
