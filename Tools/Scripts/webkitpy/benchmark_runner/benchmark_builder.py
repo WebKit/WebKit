@@ -1,12 +1,14 @@
 import logging
 import tempfile
 import os
+import re
 import shutil
 import subprocess
 import sys
 import tarfile
 
 from webkitpy.benchmark_runner.utils import get_path_from_project_root, force_remove
+from webkitpy.benchmark_runner.github_downloader import GithubDownloadTask
 from zipfile import ZipFile
 
 if sys.version_info > (3, 0):
@@ -19,6 +21,8 @@ _log = logging.getLogger(__name__)
 
 
 class BenchmarkBuilder(object):
+    LOCAL_GIT_ARCHIVE_SCHEMA = re.compile(r'\A(?P<path>.+)@(?P<reference>[0-9a-zA-z.\-]+)\Z')
+
     def __init__(self, name, plan, driver):
         self._name = name
         self._plan = plan
@@ -33,6 +37,10 @@ class BenchmarkBuilder(object):
             self._fetch_remote_archive(self._plan['remote_archive'])
         elif 'svn_source' in self._plan:
             self._checkout_with_subversion(self._plan['svn_source'])
+        elif self._local_git_archive_eligible():
+            self._prepare_content_from_local_git_archive(self._plan['local_git_archive'])
+        elif 'github_source' in self._plan:
+            self._download_from_github(self._plan['github_source'], self._plan.get('github_subtree'))
         else:
             raise Exception('The benchmark location was not specified')
 
@@ -94,6 +102,32 @@ class BenchmarkBuilder(object):
         error_code = subprocess.call(['svn', 'checkout', '--trust-server-cert', '--non-interactive', subversion_url, self._dest])
         if error_code:
             raise Exception('Cannot checkout the benchmark - Error: %s' % error_code)
+
+    def _download_from_github(self, github_source, github_subtree):
+        _log.info(f'Downloading content from {github_source}')
+        GithubDownloadTask(github_source, github_subtree).execute(self._dest)
+
+    def _local_git_archive_eligible(self):
+        if 'local_git_archive' not in self._plan:
+            return False
+        if not self.LOCAL_GIT_ARCHIVE_SCHEMA.match(self._plan['local_git_archive']):
+            return False
+        is_git_checkout = subprocess.check_output(['git', '-C', os.path.dirname(__file__), 'rev-parse',
+                                                   '--is-inside-work-tree'], encoding='utf-8').strip() == 'true'
+        return is_git_checkout
+
+    def _prepare_content_from_local_git_archive(self, local_git_archive):
+        match = self.LOCAL_GIT_ARCHIVE_SCHEMA.match(local_git_archive)
+        relpath_in_repo = match.group('path').lstrip('/')
+        reference = match.group('reference')
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output = os.path.join(temp_dir, 'temp.tar')
+            subprocess.check_call(['git', 'archive', '--format=tar', reference, relpath_in_repo, '-o', output],
+                                  cwd=get_path_from_project_root('../../../../'))
+            temp_extract_path = os.path.join(temp_dir, 'extract')
+            os.makedirs(temp_extract_path)
+            subprocess.check_call(['tar', 'zxvf', output, '-C', temp_extract_path])
+            shutil.copytree(os.path.join(temp_extract_path, relpath_in_repo), self._dest)
 
     def _apply_patch(self, patch):
         old_working_directory = os.getcwd()

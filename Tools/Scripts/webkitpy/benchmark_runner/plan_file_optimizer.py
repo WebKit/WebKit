@@ -1,0 +1,47 @@
+import json
+import logging
+from argparse import ArgumentParser
+from collections import OrderedDict
+
+from github_downloader import GithubDownloadTask
+
+_log = logging.getLogger(__name__)
+
+
+def optimize_plan_file(file_path):
+    with open(file_path) as fp:
+        plan = json.load(fp, object_pairs_hook=OrderedDict)
+
+    if 'github_source' not in plan:
+        _log.info('Current plan doesn\'t contain \'github_source\' key, nothing to optimize.')
+        return
+    if 'github_subtree' in plan:
+        _log.info('Current plan already has \'github_subtree\' optimization.')
+        return
+
+    task = GithubDownloadTask(plan['github_source'])
+    subtree = task.subtree
+
+    def drop_keys(dictionary, keys_to_drop):
+        for key in keys_to_drop:
+            dictionary.pop(key, None)
+
+    drop_keys(subtree, ['sha', 'size'])
+    for entry in subtree['tree']:
+        drop_keys(entry, ['sha', 'size', 'url'])
+
+    plan['github_subtree'] = subtree
+    with open(file_path, 'w') as fp:
+        json.dump(plan, fp, indent=4, separators=(',', ': '))
+
+
+def main():
+    parser = ArgumentParser('A script that optimize plan file to avoid issuing GitHubAPI request')
+    parser.add_argument('--plan', '-p', required=True, help='Path to plan file that needs to be optimized')
+    args = parser.parse_args()
+    optimize_plan_file(args.plan)
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    main()
