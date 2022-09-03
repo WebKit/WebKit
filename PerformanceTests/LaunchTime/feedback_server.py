@@ -14,7 +14,7 @@ from tornado.httpserver import HTTPServer
 
 try:
     from queue import Queue
-except NameError:  Python 2
+except NameError:  # Python 2
     from Queue import Queue
 
 
