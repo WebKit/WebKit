@@ -29,6 +29,8 @@
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE) && PLATFORM(MAC)
 
 #import "WebAccessibilityObjectWrapperMac.h"
+#import <pal/spi/cocoa/AccessibilitySupportSPI.h>
+#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 
 namespace WebCore {
 
@@ -101,6 +103,64 @@ void AXIsolatedObject::setPreventKeyboardDOMEventDispatch(bool value)
         object->setPreventKeyboardDOMEventDispatch(value);
     });
 }
+
+// The methods in this comment block are intentionally retrieved from the main-thread
+// and not cached because we don't expect AX clients to ever request them.
+IntPoint AXIsolatedObject::clickPoint()
+{
+    ASSERT(_AXGetClientForCurrentRequestUntrusted() != kAXClientTypeVoiceOver);
+
+    return Accessibility::retrieveValueFromMainThread<IntPoint>([this] () -> IntPoint {
+        if (auto* object = associatedAXObject())
+            return object->clickPoint();
+        return { };
+    });
+}
+
+bool AXIsolatedObject::pressedIsPresent() const
+{
+    ASSERT(_AXGetClientForCurrentRequestUntrusted() != kAXClientTypeVoiceOver);
+
+    return Accessibility::retrieveValueFromMainThread<bool>([this] () -> bool {
+        if (auto* object = associatedAXObject())
+            return object->pressedIsPresent();
+        return false;
+    });
+}
+
+Vector<String> AXIsolatedObject::determineDropEffects() const
+{
+    ASSERT(_AXGetClientForCurrentRequestUntrusted() != kAXClientTypeVoiceOver);
+
+    return Accessibility::retrieveValueFromMainThread<Vector<String>>([this] () -> Vector<String> {
+        if (auto* object = associatedAXObject())
+            return object->determineDropEffects();
+        return { };
+    });
+}
+
+int AXIsolatedObject::layoutCount() const
+{
+    ASSERT(_AXGetClientForCurrentRequestUntrusted() != kAXClientTypeVoiceOver);
+
+    return Accessibility::retrieveValueFromMainThread<int>([this] () -> int {
+        if (auto* object = associatedAXObject())
+            return object->layoutCount();
+        return { };
+    });
+}
+
+Vector<String> AXIsolatedObject::classList() const
+{
+    ASSERT(_AXGetClientForCurrentRequestUntrusted() != kAXClientTypeVoiceOver);
+
+    return Accessibility::retrieveValueFromMainThread<Vector<String>>([this] () -> Vector<String> {
+        if (auto* object = associatedAXObject())
+            return object->classList();
+        return { };
+    });
+}
+// End purposely un-cached properties block.
 
 String AXIsolatedObject::descriptionAttributeValue() const
 {

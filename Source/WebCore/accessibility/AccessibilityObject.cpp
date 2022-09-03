@@ -3139,17 +3139,19 @@ String AccessibilityObject::identifierAttribute() const
     return getAttribute(idAttr);
 }
 
-void AccessibilityObject::classList(Vector<String>& classList) const
+Vector<String> AccessibilityObject::classList() const
 {
-    Node* node = this->node();
-    if (!is<Element>(node))
-        return;
-    
-    Element* element = downcast<Element>(node);
-    DOMTokenList& list = element->classList();
-    unsigned length = list.length();
+    auto* element = this->element();
+    if (!element)
+        return { };
+
+    auto& domClassList = element->classList();
+    Vector<String> classList;
+    unsigned length = domClassList.length();
+    classList.reserveInitialCapacity(length);
     for (unsigned k = 0; k < length; k++)
-        classList.append(list.item(k).string());
+        classList.append(domClassList.item(k).string());
+    return classList;
 }
 
 bool AccessibilityObject::supportsPressed() const
