@@ -8250,6 +8250,12 @@ void WebPage::clearNotificationPermissionState()
 }
 #endif
 
+void WebPage::generateTestReport(String&& message, String&& group)
+{
+    if (RefPtr document = m_page->mainFrame().document())
+        document->reportingScope().generateTestReport(WTFMove(message), WTFMove(group));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

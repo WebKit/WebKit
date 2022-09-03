@@ -160,8 +160,10 @@ String ReportingScope::endpointURIForToken(const String& reportTo) const
     return m_reportingEndpoints.get(reportTo);
 }
 
-void ReportingScope::generateTestReport(String&& message)
+void ReportingScope::generateTestReport(String&& message, String&& group)
 {
+    UNUSED_PARAM(group);
+
     String reportURL { ""_s };
     if (auto* document = dynamicDowncast<Document>(scriptExecutionContext()))
         reportURL = document->url().strippedForUseAsReferrer();

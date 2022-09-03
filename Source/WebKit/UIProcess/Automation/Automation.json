@@ -854,6 +854,15 @@
                 { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to fetch all credentials for." },
                 { "name": "isUserVerified", "type": "boolean", "description": "The isUserVerified value to set on the given virtual authenticator"}
             ]
+        },
+        {
+            "name": "generateTestReport",
+            "description": "generate a test report for the specified browsing context",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "message", "type": "string", "description": "The body message for the generated test report." },
+                { "name": "group", "type": "string", "description": "The group value to use when sending a test report."}
+            ]
         }
     ],
     "events": [

@@ -1680,6 +1680,17 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::setVirtualAuthent
     SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
 }
 
+Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::generateTestReport(const String& browsingContextHandle, const String& message, const String& group)
+{
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+
+    page->generateTestReport(message, group);
+
+    return { };
+}
+
 bool WebAutomationSession::shouldAllowGetUserMediaForPage(const WebPageProxy&) const
 {
     return m_permissionForGetUserMedia;

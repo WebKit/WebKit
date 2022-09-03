@@ -290,12 +290,12 @@ void WKBundleFrameFocus(WKBundleFrameRef frameRef)
     CheckedRef(coreFrame->page()->focusController())->setFocusedFrame(coreFrame.get());
 }
 
-void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef message)
+void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef message, WKStringRef group)
 {
     RefPtr coreFrame = WebKit::toImpl(frameRef)->coreFrame();
     if (!coreFrame)
         return;
 
     if (RefPtr document = coreFrame->document())
-        document->reportingScope().generateTestReport(WebKit::toWTFString(message));
+        document->reportingScope().generateTestReport(WebKit::toWTFString(message), WebKit::toWTFString(group));
 }

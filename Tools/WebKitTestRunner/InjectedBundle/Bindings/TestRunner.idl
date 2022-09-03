@@ -434,5 +434,5 @@ interface TestRunner {
     undefined takeViewPortSnapshot(object callback);
 
     // Reporting API
-    undefined generateTestReport(DOMString message);
+    undefined generateTestReport(DOMString message, DOMString group);
 };

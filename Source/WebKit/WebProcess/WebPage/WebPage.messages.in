@@ -704,4 +704,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     SetInteractionRegionsEnabled(bool enable)
 #endif
+
+    GenerateTestReport(String message, String group);
 }

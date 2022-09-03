@@ -1563,6 +1563,8 @@ public:
     void setInteractionRegionsEnabled(bool);
 #endif
 
+    void generateTestReport(String&& message, String&& group);
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 

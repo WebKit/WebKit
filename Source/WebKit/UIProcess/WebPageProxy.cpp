@@ -11654,6 +11654,11 @@ bool WebPageProxy::shouldAvoidSynchronouslyWaitingToPreventDeadlock() const
     return false;
 }
 
+void WebPageProxy::generateTestReport(const String& message, const String& group)
+{
+    send(Messages::WebPage::GenerateTestReport(message, group));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

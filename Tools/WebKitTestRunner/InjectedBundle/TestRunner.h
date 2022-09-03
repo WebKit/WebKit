@@ -549,7 +549,7 @@ public:
     void viewPortSnapshotTaken(WKStringRef);
 
     // Reporting API
-    void generateTestReport(JSStringRef message);
+    void generateTestReport(JSStringRef message, JSStringRef group);
 
 private:
     TestRunner();
