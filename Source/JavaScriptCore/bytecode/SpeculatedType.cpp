@@ -514,11 +514,12 @@ SpeculatedType speculationFromClassInfoInheritance(const ClassInfo* classInfo)
     if (classInfo->isSubClassOf(JSArray::info()))
         return SpecArray | SpecDerivedArray;
 
-    if (classInfo->isSubClassOf(JSFunction::info())) {
-        if (classInfo == JSBoundFunction::info())
-            return SpecFunctionWithNonDefaultHasInstance;
+    static_assert(std::is_final_v<JSBoundFunction>);
+    if (classInfo == JSBoundFunction::info())
+        return SpecFunctionWithNonDefaultHasInstance;
+
+    if (classInfo->isSubClassOf(JSFunction::info()))
         return SpecFunctionWithDefaultHasInstance;
-    }
 
     if (classInfo->isSubClassOf(JSPromise::info()))
         return SpecPromiseObject;
@@ -540,7 +541,8 @@ SpeculatedType speculationFromClassInfoInheritance(const ClassInfo* classInfo)
 SpeculatedType speculationFromStructure(Structure* structure)
 {
     SpeculatedType filteredResult = SpecNone;
-    switch (structure->typeInfo().type()) {
+    JSType type = structure->typeInfo().type();
+    switch (type) {
     case StringType:
         filteredResult = SpecString;
         break;
@@ -549,6 +551,39 @@ SpeculatedType speculationFromStructure(Structure* structure)
         break;
     case HeapBigIntType:
         filteredResult = SpecHeapBigInt;
+        break;
+    case FinalObjectType:
+        filteredResult = SpecFinalObject;
+        break;
+    case DirectArgumentsType:
+        filteredResult = SpecDirectArguments;
+        break;
+    case ScopedArgumentsType:
+        filteredResult = SpecScopedArguments;
+        break;
+    case RegExpObjectType:
+        filteredResult = SpecRegExpObject;
+        break;
+    case JSDateType:
+        filteredResult = SpecDateObject;
+        break;
+    case JSMapType:
+        filteredResult = SpecMapObject;
+        break;
+    case JSSetType:
+        filteredResult = SpecSetObject;
+        break;
+    case JSWeakMapType:
+        filteredResult = SpecWeakMapObject;
+        break;
+    case JSWeakSetType:
+        filteredResult = SpecWeakSetObject;
+        break;
+    case ProxyObjectType:
+        filteredResult = SpecProxyObject;
+        break;
+    case DataViewType:
+        filteredResult = SpecDataViewObject;
         break;
     case DerivedArrayType:
         filteredResult = SpecDerivedArray;
@@ -563,7 +598,27 @@ SpeculatedType speculationFromStructure(Structure* structure)
     case DerivedStringObjectType:
         filteredResult = SpecObjectOther;
         break;
+    case JSPromiseType:
+        filteredResult = SpecPromiseObject;
+        break;
+    case JSFunctionType:
+        static_assert(std::is_final_v<JSBoundFunction>);
+        if (structure->classInfoForCells() == JSBoundFunction::info())
+            filteredResult = SpecFunctionWithNonDefaultHasInstance;
+        else
+            filteredResult = SpecFunctionWithDefaultHasInstance;
+        break;
+
+#define JSC_TYPED_ARRAY_CHECK(type) \
+    case type##ArrayType: \
+        filteredResult = Spec ## type ## Array; \
+        break;
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_TYPED_ARRAY_CHECK)
+#undef JSC_TYPED_ARRAY_CHECK
+
     default:
+        if (!isObjectType(type))
+            return SpecCellOther;
         return speculationFromClassInfoInheritance(structure->classInfoForCells());
     }
     ASSERT(filteredResult);
