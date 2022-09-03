@@ -2569,11 +2569,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attributeName isEqualToString:NSAccessibilityDOMIdentifierAttribute])
         return backingObject->identifierAttribute();
-    if ([attributeName isEqualToString:NSAccessibilityDOMClassListAttribute]) {
-        Vector<String> classList;
-        backingObject->classList(classList);
-        return createNSArray(classList).autorelease();
-    }
+    if ([attributeName isEqualToString:NSAccessibilityDOMClassListAttribute])
+        return createNSArray(backingObject->classList()).autorelease();
 
     if ([attributeName isEqualToString:@"AXResolvedEditingStyles"])
         return [self baseAccessibilityResolvedEditingStyles];

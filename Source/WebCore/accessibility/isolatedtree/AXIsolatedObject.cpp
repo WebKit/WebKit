@@ -163,11 +163,9 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
     setProperty(AXPropertyName::MinValueForRange, object.minValueForRange());
     setObjectProperty(AXPropertyName::SelectedRadioButton, object.selectedRadioButton());
     setObjectProperty(AXPropertyName::SelectedTabItem, object.selectedTabItem());
-    setProperty(AXPropertyName::LayoutCount, object.layoutCount());
     setProperty(AXPropertyName::SupportsARIAOwns, object.supportsARIAOwns());
     setProperty(AXPropertyName::HasPopup, object.hasPopup());
     setProperty(AXPropertyName::PopupValue, object.popupValue().isolatedCopy());
-    setProperty(AXPropertyName::PressedIsPresent, object.pressedIsPresent());
     setProperty(AXPropertyName::ARIAIsMultiline, object.ariaIsMultiline());
     setProperty(AXPropertyName::InvalidStatus, object.invalidStatus().isolatedCopy());
     setProperty(AXPropertyName::SupportsExpanded, object.supportsExpanded());
@@ -192,7 +190,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
     setProperty(AXPropertyName::SupportsDropping, object.supportsDropping());
     setProperty(AXPropertyName::SupportsDragging, object.supportsDragging());
     setProperty(AXPropertyName::IsGrabbed, object.isGrabbed());
-    setProperty(AXPropertyName::DropEffects, object.determineDropEffects());
     setObjectProperty(AXPropertyName::TitleUIElement, object.titleUIElement());
     setObjectProperty(AXPropertyName::VerticalScrollBar, object.scrollBar(AccessibilityOrientation::Vertical));
     setObjectProperty(AXPropertyName::HorizontalScrollBar, object.scrollBar(AccessibilityOrientation::Horizontal));
@@ -200,7 +197,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
     setProperty(AXPropertyName::PlaceholderValue, object.placeholderValue().isolatedCopy());
     setProperty(AXPropertyName::ExpandedTextValue, object.expandedTextValue().isolatedCopy());
     setProperty(AXPropertyName::SupportsExpandedTextValue, object.supportsExpandedTextValue());
-    setProperty(AXPropertyName::ClickPoint, object.clickPoint());
     setProperty(AXPropertyName::ComputedRoleString, object.computedRoleString().isolatedCopy());
     setProperty(AXPropertyName::ValueAutofillButtonType, static_cast<int>(object.valueAutofillButtonType()));
     setProperty(AXPropertyName::URL, object.url().isolatedCopy());
@@ -329,15 +325,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
     setObjectProperty(AXPropertyName::DecrementButton, object.decrementButton());
     setObjectProperty(AXPropertyName::IncrementButton, object.incrementButton());
     setProperty(AXPropertyName::IsIncrementor, object.isIncrementor());
-
-    Vector<String> classList;
-    object.classList(classList);
-    StringBuilder combinedClassList;
-    for (auto it = classList.begin(), end = classList.end(); it != end; ++it) {
-        combinedClassList.append(*it);
-        combinedClassList.append(' ');
-    }
-    setProperty(AXPropertyName::ClassList, combinedClassList.toString());
 
     setProperty(AXPropertyName::ColorValue, object.colorValue());
 
@@ -561,12 +548,6 @@ AXCoreObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, unsign
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
 {
     texts = const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<Vector<AccessibilityText>>(AXPropertyName::AccessibilityText);
-}
-
-void AXIsolatedObject::classList(Vector<String>& list) const
-{
-    String classList = stringAttributeValue(AXPropertyName::ClassList);
-    list.appendVector(classList.split(' '));
 }
 
 PAL::SessionID AXIsolatedObject::sessionID() const
@@ -2178,6 +2159,38 @@ bool AXIsolatedObject::supportsPressAction() const
 {
     return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<bool>(AXPropertyName::SupportsPressAction);
 }
+
+#if !PLATFORM(MAC)
+IntPoint AXIsolatedObject::clickPoint()
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+Vector<String> AXIsolatedObject::determineDropEffects() const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+bool AXIsolatedObject::pressedIsPresent() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+int AXIsolatedObject::layoutCount() const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+Vector<String> AXIsolatedObject::classList() const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+#endif
 
 } // namespace WebCore
 

@@ -226,12 +226,12 @@ private:
     float minValueForRange() const override { return floatAttributeValue(AXPropertyName::MinValueForRange); }
     AXCoreObject* selectedRadioButton() override { return objectAttributeValue(AXPropertyName::SelectedRadioButton); }
     AXCoreObject* selectedTabItem() override { return objectAttributeValue(AXPropertyName::SelectedTabItem); }
-    int layoutCount() const override { return intAttributeValue(AXPropertyName::LayoutCount); }
+    int layoutCount() const override;
     double loadingProgress() const override { return tree()->loadingProgress(); }
     bool supportsARIAOwns() const override { return boolAttributeValue(AXPropertyName::SupportsARIAOwns); }
     bool hasPopup() const override { return boolAttributeValue(AXPropertyName::HasPopup); }
     String popupValue() const override { return stringAttributeValue(AXPropertyName::PopupValue); }
-    bool pressedIsPresent() const override { return boolAttributeValue(AXPropertyName::PressedIsPresent); }
+    bool pressedIsPresent() const override;
     bool ariaIsMultiline() const override { return boolAttributeValue(AXPropertyName::ARIAIsMultiline); }
     String invalidStatus() const override { return stringAttributeValue(AXPropertyName::InvalidStatus); }
     bool supportsExpanded() const override { return boolAttributeValue(AXPropertyName::SupportsExpanded); }
@@ -240,7 +240,7 @@ private:
     bool supportsRangeValue() const override { return boolAttributeValue(AXPropertyName::SupportsRangeValue); }
     String identifierAttribute() const override;
     String linkRelValue() const override { return stringAttributeValue(AXPropertyName::LinkRelValue); }
-    void classList(Vector<String>&) const override;
+    Vector<String> classList() const override;
     AccessibilityCurrentState currentState() const override { return static_cast<AccessibilityCurrentState>(intAttributeValue(AXPropertyName::CurrentState)); }
     String currentValue() const override { return stringAttributeValue(AXPropertyName::CurrentValue); }
     bool supportsCurrent() const override { return boolAttributeValue(AXPropertyName::SupportsCurrent); }
@@ -252,7 +252,7 @@ private:
     bool supportsDropping() const override { return boolAttributeValue(AXPropertyName::SupportsDropping); }
     bool supportsDragging() const override { return boolAttributeValue(AXPropertyName::SupportsDragging); }
     bool isGrabbed() override { return boolAttributeValue(AXPropertyName::IsGrabbed); }
-    Vector<String> determineDropEffects() const override { return vectorAttributeValue<String>(AXPropertyName::DropEffects); }
+    Vector<String> determineDropEffects() const override;
     AXCoreObject* accessibilityHitTest(const IntPoint&) const override;
     AXCoreObject* focusedUIElement() const override;
     AXCoreObject* parentObject() const override { return parentObjectUnignored(); }
@@ -275,7 +275,7 @@ private:
     bool supportsPressAction() const override;
     LayoutRect boundingBoxRect() const override;
     LayoutRect elementRect() const override;
-    IntPoint clickPoint() override { return intPointAttributeValue(AXPropertyName::ClickPoint); }
+    IntPoint clickPoint() override;
     void accessibilityText(Vector<AccessibilityText>& texts) const override;
     String brailleLabel() const override { return stringAttributeValue(AXPropertyName::BrailleLabel); }
     String brailleRoleDescription() const override { return stringAttributeValue(AXPropertyName::BrailleRoleDescription); }

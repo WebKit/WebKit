@@ -1111,7 +1111,7 @@ public:
     virtual bool supportsRangeValue() const = 0;
     virtual String identifierAttribute() const = 0;
     virtual String linkRelValue() const = 0;
-    virtual void classList(Vector<String>&) const = 0;
+    virtual Vector<String> classList() const = 0;
     virtual AccessibilityCurrentState currentState() const = 0;
     virtual String currentValue() const = 0;
     virtual bool supportsCurrent() const = 0;

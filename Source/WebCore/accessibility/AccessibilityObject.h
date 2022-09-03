@@ -325,7 +325,7 @@ public:
     bool supportsRangeValue() const override;
     String identifierAttribute() const override;
     String linkRelValue() const override;
-    void classList(Vector<String>&) const override;
+    Vector<String> classList() const override;
     AccessibilityCurrentState currentState() const override;
     String currentValue() const override;
     bool supportsCurrent() const override;
