@@ -5880,6 +5880,7 @@ bool CSSPropertyParser::consumeOverflowShorthand(bool important)
     } else {
         yValueID = m_range.consumeIncludingWhitespace().id();
     }
+    
     if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyOverflowY, yValueID, m_context))
         return false;
     if (!m_range.atEnd())
