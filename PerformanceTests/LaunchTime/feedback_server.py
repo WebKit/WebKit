@@ -1,4 +1,3 @@
-from Queue import Queue
 import logging
 import os
 import socket
@@ -12,6 +11,11 @@ import tornado.web
 import tornado.websocket
 import tornado.template
 from tornado.httpserver import HTTPServer
+
+try:
+    from queue import Queue
+except NameError:  Python 2
+    from Queue import Queue
 
 
 class FeedbackServer:
@@ -38,12 +42,12 @@ class FeedbackServer:
         while True:
             try:
                 self._application.listen(self._port)
-                print 'Running feedback server at http://localhost:{}'.format(self._port)
+                print('Running feedback server at http://localhost:{}'.format(self._port))
                 break
             except socket.error as err:
                 self._port += 1
             except:
-                print 'Feedback server failed to start'
+                print('Feedback server failed to start')
                 break
         self._server_is_ready.release()
         self._io_loop.start()
