@@ -1083,6 +1083,8 @@
 		52CDC5C92731DA0D00A3E3EB /* VirtualLocalConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52CDC5C22731DA0C00A3E3EB /* VirtualLocalConnection.mm */; };
 		52CDC5CA2731DA0D00A3E3EB /* VirtualAuthenticatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CDC5C32731DA0C00A3E3EB /* VirtualAuthenticatorManager.h */; };
 		52D5A1B01C57495A00DE34A3 /* VideoFullscreenManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */; };
+		52EDB40328C2B8DD002DCF33 /* AuthenticatorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED852147363A0016B847 /* AuthenticatorManager.cpp */; settings = {COMPILER_FLAGS = "-DRELEASE_WITHOUT_OPTIMIZATIONS -O0"; }; };
+		52EDB40428C2B8FD002DCF33 /* WebAuthenticatorCoordinatorProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0DCBF4D926E2ED3200EA0E07 /* WebAuthenticatorCoordinatorProxy.mm */; settings = {COMPILER_FLAGS = "-DRELEASE_WITHOUT_OPTIMIZATIONS -O0"; }; };
 		52F060E11654318500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F060DD1654317500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp */; };
 		52F4B46927E1197700FFD129 /* VirtualAuthenticatorUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F4B46727E1197700FFD129 /* VirtualAuthenticatorUtils.h */; };
 		52F4B46A27E1197700FFD129 /* VirtualAuthenticatorUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52F4B46827E1197700FFD129 /* VirtualAuthenticatorUtils.mm */; };
@@ -16909,6 +16911,7 @@
 				CD4570D3244113B500A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp in Sources */,
 				512F58A212A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp in Sources */,
 				57FABB132581827C0059DC95 /* AuthenticationServicesCoreSoftLink.mm in Sources */,
+				52EDB40328C2B8DD002DCF33 /* AuthenticatorManager.cpp in Sources */,
 				9955A6F41C7986DC00EB6A93 /* AutomationBackendDispatchers.cpp in Sources */,
 				99249AD51F1F1E5600B62FBB /* AutomationFrontendDispatchers.cpp in Sources */,
 				9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */,
@@ -17232,6 +17235,7 @@
 				52CDC5C52731DA0D00A3E3EB /* VirtualService.mm in Sources */,
 				1A60224C18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp in Sources */,
 				1A8E7D3C18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp in Sources */,
+				52EDB40428C2B8FD002DCF33 /* WebAuthenticatorCoordinatorProxy.mm in Sources */,
 				57DCED702142EE680016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp in Sources */,
 				575B1BBA23CE9C130020639A /* WebAutomationSession.cpp in Sources */,
 				1C0A19571C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp in Sources */,
