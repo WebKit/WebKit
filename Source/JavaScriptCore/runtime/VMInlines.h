@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Debugger.h"
 #include "EntryFrame.h"
 #include "FuzzerAgent.h"
 #include "ProfilerDatabase.h"
@@ -95,6 +96,16 @@ inline void VM::setFuzzerAgent(std::unique_ptr<FuzzerAgent>&& fuzzerAgent)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!m_fuzzerAgent, "Only one FuzzerAgent can be specified at a time.");
     m_fuzzerAgent = WTFMove(fuzzerAgent);
+}
+
+template<typename Func>
+inline void VM::forEachDebugger(const Func& callback)
+{
+    if (LIKELY(m_debuggers.isEmpty()))
+        return;
+
+    for (auto* debugger = m_debuggers.head(); debugger; debugger = debugger->next())
+        callback(*debugger);
 }
 
 } // namespace JSC

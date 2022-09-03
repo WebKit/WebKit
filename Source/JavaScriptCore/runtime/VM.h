@@ -904,7 +904,8 @@ public:
 
     void addDebugger(Debugger&);
     void removeDebugger(Debugger&);
-    void forEachDebugger(Function<void(Debugger&)>&&);
+    template<typename Func>
+    void forEachDebugger(const Func&);
 
 private:
     VM(VMType, HeapType, WTF::RunLoop* = nullptr, bool* success = nullptr);

@@ -29,6 +29,7 @@
 #include "Debugger.h"
 #include "ExecutableBaseInlines.h"
 #include "JSCInlines.h"
+#include "VMInlines.h"
 
 namespace JSC {
 

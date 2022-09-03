@@ -1485,15 +1485,6 @@ void VM::removeDebugger(Debugger& debugger)
     m_debuggers.remove(&debugger);
 }
 
-void VM::forEachDebugger(Function<void(Debugger&)>&& callback)
-{
-    if (LIKELY(m_debuggers.isEmpty()))
-        return;
-
-    for (auto* debugger = m_debuggers.head(); debugger; debugger = debugger->next())
-        callback(*debugger);
-}
-
 void QueuedTask::run()
 {
     if (!m_job.isObject())
