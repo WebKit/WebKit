@@ -246,7 +246,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
 #if !LOG_DISABLED
             auto oldState = m_lazyImageLoadState;
 #endif
-            if (m_lazyImageLoadState == LazyImageLoadState::None && isImageElement) {
+            if (!isDeferred() && isImageElement) {
                 auto& imageElement = downcast<HTMLImageElement>(element());
                 if (imageElement.isLazyLoadable() && document.settings().lazyImageLoadingEnabled()) {
                     m_lazyImageLoadState = LazyImageLoadState::Deferred;
