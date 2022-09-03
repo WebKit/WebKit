@@ -23,7 +23,7 @@
 
     function logInputEvent(event)
     {
-        write(`(${event.target.id}): type=${event.type}, inputType=${event.inputType}, data=${event.data}, dataTransfer=${event.dataTransfer}`);
+        write(`(${event.target.id}): type=${event.type}, inputType=${event.inputType}, data=${event.data}, dataTransfer=${event.dataTransfer}, isComposing=${event.isComposing}`);
     }
 
     async function runTest() {

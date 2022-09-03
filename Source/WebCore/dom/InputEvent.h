@@ -33,15 +33,19 @@ namespace WebCore {
 class DataTransfer;
 class WindowProxy;
 
+enum class IsInputMethodComposing : bool { No, Yes };
+
 class InputEvent final : public UIEvent {
     WTF_MAKE_ISO_ALLOCATED(InputEvent);
 public:
     struct Init : UIEventInit {
         String data;
+        bool isComposing { false }; // input method
+        String inputType;
     };
 
     static Ref<InputEvent> create(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&& view,
-        const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail);
+        const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
 
     static Ref<InputEvent> create(const AtomString& type, const Init& initializer)
     {
@@ -54,15 +58,18 @@ public:
     const String& data() const { return m_data; }
     RefPtr<DataTransfer> dataTransfer() const;
     const Vector<RefPtr<StaticRange>>& getTargetRanges() { return m_targetRanges; }
+    bool isInputMethodComposing() const { return m_isInputMethodComposing; }
 
 private:
-    InputEvent(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&&, const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail);
+    InputEvent(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&&,
+        const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
     InputEvent(const AtomString& eventType, const Init&);
 
     String m_inputType;
     String m_data;
     RefPtr<DataTransfer> m_dataTransfer;
     Vector<RefPtr<StaticRange>> m_targetRanges;
+    bool m_isInputMethodComposing;
 };
 
 } // namespace WebCore

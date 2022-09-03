@@ -121,6 +121,20 @@ ASCIILiteral inputTypeNameForEditingAction(EditAction action)
     }
 }
 
+bool isInputMethodComposingForEditingAction(EditAction action)
+{
+    switch (action) {
+    case EditAction::TypingDeletePendingComposition:
+    case EditAction::TypingDeleteFinalComposition:
+    case EditAction::TypingInsertPendingComposition:
+    case EditAction::TypingInsertFinalComposition:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
 EditCommand::EditCommand(Document& document, EditAction editingAction)
     : m_document { document }
     , m_startingSelection { m_document->selection().selection() }

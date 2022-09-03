@@ -118,6 +118,7 @@ private:
     void setShouldPreventSpellChecking(bool prevent) { m_shouldPreventSpellChecking = prevent; }
 
     AtomString inputEventTypeName() const final;
+    bool isInputMethodComposing() const final;
     String inputEventData() const final;
     RefPtr<DataTransfer> inputEventDataTransfer() const final;
     bool isBeforeInputEventCancelable() const final;

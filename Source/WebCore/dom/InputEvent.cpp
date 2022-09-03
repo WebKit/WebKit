@@ -36,24 +36,28 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InputEvent);
 
-Ref<InputEvent> InputEvent::create(const AtomString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
+Ref<InputEvent> InputEvent::create(const AtomString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view,
+    const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail, IsInputMethodComposing isInputMethodComposing)
 {
-    return adoptRef(*new InputEvent(eventType, inputType, cancelable, WTFMove(view), data, WTFMove(dataTransfer), targetRanges, detail));
+    return adoptRef(*new InputEvent(eventType, inputType, cancelable, WTFMove(view), data, WTFMove(dataTransfer), targetRanges, detail, isInputMethodComposing));
 }
 
-InputEvent::InputEvent(const AtomString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
+InputEvent::InputEvent(const AtomString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view,
+    const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail, IsInputMethodComposing isInputMethodComposing)
     : UIEvent(eventType, CanBubble::Yes, cancelable, IsComposed::Yes, WTFMove(view), detail)
     , m_inputType(inputType)
     , m_data(data)
     , m_dataTransfer(dataTransfer)
     , m_targetRanges(targetRanges)
+    , m_isInputMethodComposing(isInputMethodComposing == IsInputMethodComposing::Yes)
 {
 }
 
 InputEvent::InputEvent(const AtomString& eventType, const Init& initializer)
     : UIEvent(eventType, initializer)
-    , m_inputType(emptyString())
+    , m_inputType(initializer.inputType)
     , m_data(initializer.data)
+    , m_isInputMethodComposing(initializer.isComposing)
 {
 }
 

@@ -2,16 +2,16 @@ To manually test this, drag the text in the first input into the second, then un
 
 
 Performing drag and drop
-(source): type=beforeinput, inputType=deleteByDrag, data=`null`
-(destination): type=beforeinput, inputType=insertFromDrop, data=`Input events!`
-(source): type=input, inputType=deleteByDrag, data=`null`
-(destination): type=input, inputType=insertFromDrop, data=`Input events!`
+(source): type=beforeinput, inputType=deleteByDrag, data=`null`, isComposing=false
+(destination): type=beforeinput, inputType=insertFromDrop, data=`Input events!`, isComposing=false
+(source): type=input, inputType=deleteByDrag, data=`null`, isComposing=false
+(destination): type=input, inputType=insertFromDrop, data=`Input events!`, isComposing=false
 
 Undoing drag and drop
-(destination): type=beforeinput, inputType=historyUndo, data=`null`
-(destination): type=input, inputType=historyUndo, data=`null`
+(destination): type=beforeinput, inputType=historyUndo, data=`null`, isComposing=false
+(destination): type=input, inputType=historyUndo, data=`null`, isComposing=false
 
 Redoing drag and drop
-(destination): type=beforeinput, inputType=historyRedo, data=`null`
-(destination): type=input, inputType=historyRedo, data=`null`
+(destination): type=beforeinput, inputType=historyRedo, data=`null`, isComposing=false
+(destination): type=input, inputType=historyRedo, data=`null`, isComposing=false
 

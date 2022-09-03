@@ -52,7 +52,7 @@
 
         function logInputEvent(event)
         {
-            write(`(${event.target.id}): type=${event.type}, inputType=${event.inputType}, data=\`${event.data}\``);
+            write(`(${event.target.id}): type=${event.type}, inputType=${event.inputType}, data=\`${event.data}\`, isComposing=${event.isComposing}`);
         }
 
         function moveToCenter(element)

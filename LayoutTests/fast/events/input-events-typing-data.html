@@ -32,13 +32,13 @@
         function handleRichInput(event)
         {
             if (event.inputType === "insertText" || event.inputType === "insertReplacementText")
-                debug(`Rich contenteditable received '${event.type}' with inputType: '${event.inputType}' and data: '${event.data}'`);
+                debug(`Rich contenteditable received '${event.type}' with inputType: '${event.inputType}' and data: '${event.data}' and isComposing: ${event.isComposing}`);
         }
 
         function handlePlainInput(event)
         {
             if (event.inputType === "insertText" || event.inputType === "insertReplacementText")
-                debug(`Plain textarea received '${event.type}' with inputType: '${event.inputType}' and data: '${event.data}'`);
+                debug(`Plain textarea received '${event.type}' with inputType: '${event.inputType}' and data: '${event.data}' and isComposing: ${event.isComposing}`);
         }
     </script>
     <script src="../../resources/js-test-post.js"></script>

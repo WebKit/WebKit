@@ -480,6 +480,11 @@ AtomString CompositeEditCommand::inputEventTypeName() const
     return inputTypeNameForEditingAction(editingAction());
 }
 
+bool CompositeEditCommand::isInputMethodComposing() const
+{
+    return isInputMethodComposingForEditingAction(editingAction());
+}
+
 //
 // sugary-sweet convenience functions to help create and apply edit commands in composite commands
 //

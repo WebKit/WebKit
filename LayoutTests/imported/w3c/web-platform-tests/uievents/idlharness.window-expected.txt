@@ -142,12 +142,12 @@ PASS InputEvent interface: existence and properties of interface prototype objec
 PASS InputEvent interface: existence and properties of interface prototype object's "constructor" property
 PASS InputEvent interface: existence and properties of interface prototype object's @@unscopables property
 PASS InputEvent interface: attribute data
-FAIL InputEvent interface: attribute isComposing assert_true: The prototype object must have a property "isComposing" expected true got false
+PASS InputEvent interface: attribute isComposing
 PASS InputEvent interface: attribute inputType
 PASS InputEvent must be primary interface of new InputEvent("event")
 PASS Stringification of new InputEvent("event")
 PASS InputEvent interface: new InputEvent("event") must inherit property "data" with the proper type
-FAIL InputEvent interface: new InputEvent("event") must inherit property "isComposing" with the proper type assert_inherits: property "isComposing" not found in prototype chain
+PASS InputEvent interface: new InputEvent("event") must inherit property "isComposing" with the proper type
 PASS InputEvent interface: new InputEvent("event") must inherit property "inputType" with the proper type
 PASS UIEvent interface: new InputEvent("event") must inherit property "view" with the proper type
 PASS UIEvent interface: new InputEvent("event") must inherit property "detail" with the proper type

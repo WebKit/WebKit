@@ -41,6 +41,7 @@
             shouldBe("event.bubbles", "true");
             shouldBe("event.cancelable", "false");
             shouldBe("event.composed", "true");
+            shouldBe("event.isComposing", "false");
         }
 
         function checkBeforeInputEvent(event)
@@ -54,6 +55,7 @@
             shouldBe("event.bubbles", "true");
             shouldBe("event.cancelable", "true");
             shouldBe("event.composed", "true");
+            shouldBe("event.isComposing", "false");
         }
     </script>
 </head>

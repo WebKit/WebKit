@@ -52,7 +52,7 @@
 
         function logInputEvent(event)
         {
-            output.innerHTML += `(${event.target.id}): type=${event.type}, inputType=${event.inputType}, data="${event.data}" dataTransfer=${dataTransferToString(event.dataTransfer)}<br>`;
+            output.innerHTML += `(${event.target.id}): type=${event.type}, inputType=${event.inputType}, data="${event.data}" dataTransfer=${dataTransferToString(event.dataTransfer)} isComposing=${dataTransferToString(event.isComposing)}<br>`;
         }
 
         function doubleClick() {

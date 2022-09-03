@@ -30,6 +30,7 @@
 
     readonly attribute DOMString inputType;
     readonly attribute DOMString? data;
+    [ImplementedAs=isInputMethodComposing] readonly attribute boolean isComposing;
     readonly attribute DataTransfer? dataTransfer;
 
     sequence<StaticRange> getTargetRanges();
@@ -37,4 +38,6 @@
 
 dictionary InputEventInit : UIEventInit {
     DOMString? data = null;
+    boolean isComposing = false;
+    DOMString inputType = "";
 };
