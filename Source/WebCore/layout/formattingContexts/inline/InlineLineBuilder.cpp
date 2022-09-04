@@ -581,12 +581,11 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
 
 std::optional<HorizontalConstraints> LineBuilder::floatConstraints(const InlineRect& lineLogicalRect) const
 {
-    auto* floatingState = this->floatingState();
-    if (!floatingState || floatingState->floats().isEmpty())
+    if (isInIntrinsicWidthMode() || floatingState()->isEmpty())
         return { };
 
     // Check for intruding floats and adjust logical left/available width for this line accordingly.
-    auto floatingContext = FloatingContext { formattingContext(), *floatingState };
+    auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
     auto toLogicalFloatPosition = [&] (const auto& constraints) -> FloatingContext::Constraints {
         if (root().style().isLeftToRightDirection())
             return constraints;
@@ -880,7 +879,7 @@ InlineRect LineBuilder::lineRectForCandidateInlineContent(const LineCandidate& l
 {
     auto& inlineContent = lineCandidate.inlineContent;
     // Check if the candidate content would stretch the line and whether additional floats are getting in the way.
-    if (!floatingState() || !inlineContent.hasInlineLevelBox())
+    if (isInIntrinsicWidthMode() || !inlineContent.hasInlineLevelBox())
         return m_lineLogicalRect;
     auto maximumLineLogicalHeight = m_lineLogicalRect.height();
     for (auto& run : inlineContent.continuousContent().runs()) {
@@ -901,8 +900,7 @@ InlineRect LineBuilder::lineRectForCandidateInlineContent(const LineCandidate& l
 
 LineBuilder::Result LineBuilder::handleFloatContent(const InlineItem& floatItem)
 {
-    auto* floatingState = this->floatingState();
-    if (!floatingState) {
+    if (isInIntrinsicWidthMode()) {
         ASSERT_NOT_REACHED();
         return { InlineContentBreaker::IsEndOfLine::No };
     }
@@ -921,10 +919,10 @@ LineBuilder::Result LineBuilder::handleFloatContent(const InlineItem& floatItem)
     boxGeometry.setLogicalTopLeft(staticPosition);
     // Float it.
     ASSERT(m_rootHorizontalConstraints);
-    auto floatingContext = FloatingContext { formattingContext(), *floatingState };
+    auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
     auto floatingPosition = floatingContext.positionForFloat(floatBox, *m_rootHorizontalConstraints);
     boxGeometry.setLogicalTopLeft(floatingPosition);
-    floatingState->append(floatingContext.toFloatItem(floatBox));
+    floatingState()->append(floatingContext.toFloatItem(floatBox));
     m_floats.append(&floatBox);
     // Check if this float shrinks the line (they don't get positioned higher than the line).
     if (BoxGeometry::marginBoxRect(boxGeometry).top() > m_lineLogicalRect.bottom())

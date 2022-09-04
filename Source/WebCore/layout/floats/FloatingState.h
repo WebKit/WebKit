@@ -78,6 +78,8 @@ public:
     void append(FloatItem);
     void clear() { m_floats.clear(); }
 
+    bool isEmpty() const { return floats().isEmpty(); }
+
 private:
     friend class FloatingContext;
     FloatingState(LayoutState&, const ContainerBox& formattingContextRoot);
