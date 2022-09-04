@@ -27,6 +27,7 @@
 #include "ReportingScope.h"
 
 #include "ContextDestructionObserver.h"
+#include "Document.h"
 #include "HeaderFieldTokenizer.h"
 #include "Report.h"
 #include "ReportingObserver.h"

@@ -27,6 +27,7 @@
 
 #include "ReportBody.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
