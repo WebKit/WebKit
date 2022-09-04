@@ -358,8 +358,8 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
         layoutRange.start = !intrinsicContent.partialOverflowingContent ? intrinsicContent.inlineItemRange.end : intrinsicContent.inlineItemRange.end - 1;
         previousLine = LineBuilder::PreviousLine { { }, { }, intrinsicContent.partialOverflowingContent };
         // FIXME: Add support for clear.
-        for (auto* floatBox : intrinsicContent.floats)
-            maximumFloatWidth += geometryForBox(*floatBox).marginBoxWidth();
+        for (auto* inlineFloatItem : intrinsicContent.placedFloats)
+            maximumFloatWidth += geometryForBox(inlineFloatItem->layoutBox()).marginBoxWidth();
     }
     return maximumLineWidth + maximumFloatWidth;
 }

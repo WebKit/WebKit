@@ -60,12 +60,12 @@ public:
         // Content width measured during line breaking (avoid double-measuring).
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
     };
-    using FloatList = Vector<const Box*>;
+    using FloatList = Vector<const InlineItem*>;
     struct LineContent {
         InlineItemRange inlineItemRange;
         std::optional<PartialContent> partialOverflowingContent { };
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth;
-        const FloatList& floats;
+        FloatList placedFloats;
         bool hasIntrusiveFloat { false };
         InlineLayoutUnit lineMarginStart { 0 };
         InlineLayoutPoint lineLogicalTopLeft;
@@ -86,7 +86,7 @@ public:
         InlineItemRange inlineItemRange;
         InlineLayoutUnit logicalWidth { 0 };
         std::optional<PartialContent> partialOverflowingContent { };
-        const FloatList& floats;
+        FloatList placedFloats;
     };
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, const std::optional<PreviousLine>&);
 
@@ -156,7 +156,7 @@ private:
     InlineRect m_lineLogicalRect;
     InlineLayoutUnit m_lineMarginStart { 0 };
     const InlineItems& m_inlineItems;
-    FloatList m_floats;
+    FloatList m_placedFloats;
     std::optional<InlineTextItem> m_partialLeadingTextItem;
     std::optional<InlineLayoutUnit> m_overflowingLogicalWidth;
     Vector<const InlineItem*> m_wrapOpportunityList;

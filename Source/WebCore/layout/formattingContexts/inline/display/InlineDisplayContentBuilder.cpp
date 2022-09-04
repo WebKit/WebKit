@@ -765,8 +765,8 @@ void InlineDisplayContentBuilder::processFloatBoxes(const LineBuilder::LineConte
         return;
     }
 
-    for (auto* floatBox : lineContent.floats) {
-        auto& boxGeometry = formattingState().boxGeometry(*floatBox);
+    for (auto* inlineFloatItem : lineContent.placedFloats) {
+        auto& boxGeometry = formattingState().boxGeometry(inlineFloatItem->layoutBox());
         auto borderBoxLogicalRect = LayoutRect { BoxGeometry::borderBoxRect(boxGeometry) };
         auto visualRect = flipLogicalRectToVisualForWritingMode(InlineRect { borderBoxLogicalRect }, writingMode);
 
