@@ -52,6 +52,46 @@ static inline StringBuilder toString(const Line::RunList& runs)
     return lineContentBuilder;
 }
 
+static inline Vector<int32_t> computedVisualOrder(const Line& line)
+{
+    if (!line.contentNeedsBidiReordering())
+        return { };
+
+    auto& lineRuns = line.runs();
+    Vector<UBiDiLevel> runLevels;
+    runLevels.reserveInitialCapacity(lineRuns.size());
+
+    Vector<size_t> runIndexOffsetMap;
+    runIndexOffsetMap.reserveInitialCapacity(lineRuns.size());
+    auto hasOpaqueRun = false;
+    for (size_t i = 0, accumulatedOffset = 0; i < lineRuns.size(); ++i) {
+        if (lineRuns[i].bidiLevel() == InlineItem::opaqueBidiLevel) {
+            ++accumulatedOffset;
+            hasOpaqueRun = true;
+            continue;
+        }
+
+        // bidiLevels are required to be less than the MAX + 1, otherwise
+        // ubidi_reorderVisual will silently fail.
+        if (lineRuns[i].bidiLevel() > UBIDI_MAX_EXPLICIT_LEVEL + 1) {
+            ASSERT(lineRuns[i].bidiLevel() == UBIDI_DEFAULT_LTR);
+            continue;
+        }
+
+        runLevels.uncheckedAppend(lineRuns[i].bidiLevel());
+        runIndexOffsetMap.uncheckedAppend(accumulatedOffset);
+    }
+
+    Vector<int32_t> visualOrderList(runLevels.size());
+    ubidi_reorderVisual(runLevels.data(), runLevels.size(), visualOrderList.data());
+    if (hasOpaqueRun) {
+        ASSERT(visualOrderList.size() == runIndexOffsetMap.size());
+        for (size_t i = 0; i < runIndexOffsetMap.size(); ++i)
+            visualOrderList[i] += runIndexOffsetMap[visualOrderList[i]];
+    }
+    return visualOrderList;
+}
+
 static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentTextItem, const InlineTextItem& nextInlineTextItem)
 {
     ASSERT(!nextInlineTextItem.isWhitespace());
@@ -306,11 +346,6 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
-struct UsedConstraints {
-    InlineRect logicalRect;
-    InlineLayoutUnit marginStart { 0 };
-    bool isConstrainedByFloat { false };
-};
 LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, const InlineRect& lineLogicalRect, const std::optional<PreviousLine>& previousLine)
 {
     auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
@@ -318,59 +353,10 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
 
     auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, committedContent);
-    auto& lineRuns = m_line.runs();
-
-    auto computedVisualOrder = [&]() -> Vector<int32_t> {
-        if (!m_line.contentNeedsBidiReordering())
-            return { };
-
-        Vector<UBiDiLevel> runLevels;
-        runLevels.reserveInitialCapacity(lineRuns.size());
-
-        Vector<size_t> runIndexOffsetMap;
-        runIndexOffsetMap.reserveInitialCapacity(lineRuns.size());
-        auto hasOpaqueRun = false;
-        for (size_t i = 0, accumulatedOffset = 0; i < lineRuns.size(); ++i) {
-            if (lineRuns[i].bidiLevel() == InlineItem::opaqueBidiLevel) {
-                ++accumulatedOffset;
-                hasOpaqueRun = true;
-                continue;
-            }
-
-            // bidiLevels are required to be less than the MAX + 1, otherwise
-            // ubidi_reorderVisual will silently fail.
-            if (lineRuns[i].bidiLevel() > UBIDI_MAX_EXPLICIT_LEVEL + 1) {
-                ASSERT(lineRuns[i].bidiLevel() == UBIDI_DEFAULT_LTR);
-                continue;
-            }
-
-            runLevels.uncheckedAppend(lineRuns[i].bidiLevel());
-            runIndexOffsetMap.uncheckedAppend(accumulatedOffset);
-        }
-
-        Vector<int32_t> visualOrderList(runLevels.size());
-        ubidi_reorderVisual(runLevels.data(), runLevels.size(), visualOrderList.data());
-        if (hasOpaqueRun) {
-            ASSERT(visualOrderList.size() == runIndexOffsetMap.size());
-            for (size_t i = 0; i < runIndexOffsetMap.size(); ++i)
-                visualOrderList[i] += runIndexOffsetMap[visualOrderList[i]];
-        }
-        return visualOrderList;
-    };
-
-    auto inlineBaseDirectionForLineContent = [&] {
-        auto& rootStyle = !previousLine ? root().firstLineStyle() : root().style();
-        auto shouldUseBlockDirection = rootStyle.unicodeBidi() != UnicodeBidi::Plaintext;
-        if (shouldUseBlockDirection)
-            return rootStyle.direction();
-        // A previous line ending with a line break (<br> or preserved \n) introduces a new unicode paragraph with its own direction.
-        if (previousLine && !previousLine->endsWithLineBreak)
-            return previousLine->inlineBaseDirection;
-        return TextUtil::directionForTextContent(toString(lineRuns));
-    };
 
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     auto partialOverflowingContent = committedContent.partialTrailingContentLength ? std::make_optional<PartialContent>(committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth) : std::nullopt;
+
     return LineContent { committedRange
         , partialOverflowingContent
         , partialOverflowingContent ? std::nullopt : committedContent.overflowLogicalWidth
@@ -384,10 +370,10 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , m_line.hangingTrailingContentWidth()
         , isLastLine
         , m_line.nonSpanningInlineLevelBoxCount()
-        , computedVisualOrder()
+        , computedVisualOrder(m_line)
         , inlineBaseDirectionForLineContent()
         , m_line.isContentTruncated()
-        , lineRuns };
+        , m_line.runs() };
 }
 
 LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine)
@@ -639,7 +625,7 @@ std::optional<HorizontalConstraints> LineBuilder::floatConstraints(const InlineR
     return HorizontalConstraints { toLayoutUnit(lineLogicalLeft), toLayoutUnit(lineLogicalRight - lineLogicalLeft) };
 }
 
-UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const
+LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const
 {
     auto lineLogicalLeft = initialLineLogicalRect.left();
     auto lineLogicalRight = initialLineLogicalRect.right();
@@ -1155,6 +1141,19 @@ bool LineBuilder::isLastLineWithInlineContent(const InlineItemRange& lineRange, 
     // There has to be at least one non-float item.
     ASSERT_NOT_REACHED();
     return false;
+}
+
+TextDirection LineBuilder::inlineBaseDirectionForLineContent()
+{
+    ASSERT(!m_line.runs().isEmpty());
+    auto& rootStyle = isFirstLine() ? root().firstLineStyle() : root().style();
+    auto shouldUseBlockDirection = rootStyle.unicodeBidi() != UnicodeBidi::Plaintext;
+    if (shouldUseBlockDirection)
+        return rootStyle.direction();
+    // A previous line ending with a line break (<br> or preserved \n) introduces a new unicode paragraph with its own direction.
+    if (m_previousLine && !m_previousLine->endsWithLineBreak)
+        return m_previousLine->inlineBaseDirection;
+    return TextUtil::directionForTextContent(toString(m_line.runs()));
 }
 
 const ContainerBox& LineBuilder::root() const

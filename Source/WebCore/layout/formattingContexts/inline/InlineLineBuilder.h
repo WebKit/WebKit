@@ -35,7 +35,6 @@ namespace Layout {
 
 class FloatingContext;
 struct LineCandidate;
-struct UsedConstraints;
 
 class LineBuilder {
 public:
@@ -96,6 +95,14 @@ private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
     size_t nextWrapOpportunity(size_t startIndex, const LineBuilder::InlineItemRange& layoutRange) const;
 
+    struct UsedConstraints {
+        InlineRect logicalRect;
+        InlineLayoutUnit marginStart { 0 };
+        bool isConstrainedByFloat { false };
+    };
+    UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const;
+    std::optional<HorizontalConstraints> floatConstraints(const InlineRect& lineLogicalRect) const;
+
     struct Result {
         InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::No };
         struct CommittedContentCount {
@@ -106,9 +113,6 @@ private:
         size_t partialTrailingContentLength { 0 };
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
-    UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const;
-    std::optional<HorizontalConstraints> floatConstraints(const InlineRect& lineLogicalRect) const;
-
     Result handleFloatContent(const InlineItem&);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     InlineRect lineRectForCandidateInlineContent(const LineCandidate&) const;
@@ -129,6 +133,8 @@ private:
 
     std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
     bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
+
+    TextDirection inlineBaseDirectionForLineContent();
 
     bool isFirstLine() const { return !m_previousLine.has_value(); }
 
