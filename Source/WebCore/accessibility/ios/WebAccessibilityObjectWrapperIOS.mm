@@ -1538,7 +1538,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (value)
         return value;
 
-    Ref<AXCoreObject> backingObject = *self.axBackingObject;
+    Ref<AccessibilityObject> backingObject = *self.axBackingObject;
     if (backingObject->supportsCheckedState()) {
         switch (backingObject->checkboxOrRadioValue()) {
         case AccessibilityButtonState::Off:
