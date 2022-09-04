@@ -131,16 +131,16 @@ public:
     bool isContainedByPasswordField() const override;
     AccessibilityObject* passwordFieldOrContainingPasswordField() override { return nullptr; }
     bool isNativeTextControl() const override { return false; }
-    bool isSearchField() const override { return false; }
+    virtual bool isSearchField() const { return false; }
     bool isListBoxOption() const override { return false; }
     bool isAttachment() const override { return false; }
-    bool isMediaTimeline() const override { return false; }
+    bool isMediaTimeline() const { return false; }
     bool isMenuRelated() const override { return false; }
     bool isMenu() const override { return false; }
     bool isMenuBar() const override { return false; }
     bool isMenuButton() const override { return false; }
     bool isMenuItem() const override { return false; }
-    bool isFileUploadButton() const override;
+    bool isFileUploadButton() const;
     bool isInputImage() const override { return false; }
     bool isProgressIndicator() const override { return false; }
     bool isSlider() const override { return false; }
@@ -150,14 +150,13 @@ public:
     bool isLabel() const override { return false; }
 
     bool isList() const override { return false; }
-    bool isUnorderedList() const override { return false; }
-    bool isOrderedList() const override { return false; }
-    bool isDescriptionList() const override { return false; }
+    virtual bool isUnorderedList() const { return false; }
+    virtual bool isOrderedList() const { return false; }
+    virtual bool isDescriptionList() const { return false; }
 
     // Table support.
     bool isTable() const override { return false; }
     bool isExposable() const override { return true; }
-    bool isDataTable() const override { return false; }
     int tableLevel() const override { return 0; }
     bool supportsSelectedRows() const override { return false; }
     AccessibilityChildrenVector columns() override { return AccessibilityChildrenVector(); }
@@ -179,8 +178,8 @@ public:
     std::pair<unsigned, unsigned> rowIndexRange() const override { return { 0, 1 }; }
     // Returns the start location and column span of the cell.
     std::pair<unsigned, unsigned> columnIndexRange() const override { return { 0, 1 }; }
-    bool isColumnHeaderCell() const override { return false; }
-    bool isRowHeaderCell() const override { return false; }
+    virtual bool isColumnHeaderCell() const { return false; }
+    virtual bool isRowHeaderCell() const { return false; }
     int axColumnIndex() const override { return -1; }
     int axRowIndex() const override { return -1; }
 
@@ -208,7 +207,7 @@ public:
     AXCoreObject* incrementButton() override { return nullptr; }
     AXCoreObject* decrementButton() override { return nullptr; }
     bool isSpinButtonPart() const override { return false; }
-    bool isIncrementor() const override { return false; }
+    virtual bool isIncrementor() const { return false; }
     bool isMockObject() const override { return false; }
     virtual bool isMediaControlLabel() const { return false; }
     bool isMediaObject() const override { return false; }
@@ -217,18 +216,18 @@ public:
     bool isNonNativeTextControl() const override;
     bool isButton() const override;
     bool isLandmark() const override;
-    bool isRangeControl() const override;
-    bool isMeter() const override;
+    bool isRangeControl() const;
+    bool isMeter() const;
     bool isStyleFormatGroup() const override;
     bool isFigureElement() const override;
     bool isKeyboardFocusable() const override;
-    bool isOutput() const override;
+    bool isOutput() const;
 
     bool isChecked() const override { return false; }
     bool isEnabled() const override { return false; }
     bool isSelected() const override { return false; }
     bool isFocused() const override { return false; }
-    bool isHovered() const override { return false; }
+    virtual bool isHovered() const { return false; }
     bool isIndeterminate() const override { return false; }
     bool isLoaded() const override { return false; }
     bool isMultiSelectable() const override { return false; }
@@ -241,7 +240,7 @@ public:
     virtual bool isLinked() const { return false; }
     bool isExpanded() const override;
     bool isVisible() const override { return true; }
-    bool isCollapsed() const override { return false; }
+    virtual bool isCollapsed() const { return false; }
     void setIsExpanded(bool) override { }
     FloatRect unobscuredContentRect() const override;
     FloatRect relativeFrame() const override;
@@ -286,8 +285,8 @@ public:
     AccessibilityObjectInclusion defaultObjectInclusion() const override;
     bool accessibilityIsIgnoredByDefault() const override;
 
-    bool isShowingValidationMessage() const override;
-    String validationMessage() const override;
+    bool isShowingValidationMessage() const;
+    String validationMessage() const;
 
     unsigned blockquoteLevel() const override;
     unsigned headingLevel() const override { return 0; }
@@ -319,9 +318,9 @@ public:
     bool supportsPressed() const override;
     bool supportsExpanded() const override;
     bool supportsChecked() const override;
-    bool supportsRowCountChange() const override;
+    bool supportsRowCountChange() const;
     AccessibilitySortDirection sortDirection() const override;
-    bool canvasHasFallbackContent() const override { return false; }
+    virtual bool canvasHasFallbackContent() const { return false; }
     bool supportsRangeValue() const override;
     String identifierAttribute() const override;
     String linkRelValue() const override;
@@ -645,7 +644,7 @@ public:
     bool supportsARIAAttributes() const;
 
     // CSS3 Speech properties.
-    OptionSet<SpeakAs> speakAsProperty() const override { return OptionSet<SpeakAs> { }; }
+    virtual OptionSet<SpeakAs> speakAsProperty() const { return OptionSet<SpeakAs> { }; }
 
     // Make this object visible by scrolling as many nested scrollable views as needed.
     void scrollToMakeVisible() const override;
@@ -671,12 +670,12 @@ public:
     bool isMathUnderOver() const override { return false; }
     bool isMathRoot() const override { return false; }
     bool isMathSquareRoot() const override { return false; }
-    bool isMathText() const override { return false; }
-    bool isMathNumber() const override { return false; }
-    bool isMathOperator() const override { return false; }
-    bool isMathFenceOperator() const override { return false; }
-    bool isMathSeparatorOperator() const override { return false; }
-    bool isMathIdentifier() const override { return false; }
+    virtual bool isMathText() const { return false; }
+    virtual bool isMathNumber() const { return false; }
+    virtual bool isMathOperator() const { return false; }
+    virtual bool isMathFenceOperator() const { return false; }
+    virtual bool isMathSeparatorOperator() const { return false; }
+    virtual bool isMathIdentifier() const { return false; }
     bool isMathTable() const override { return false; }
     bool isMathTableRow() const override { return false; }
     bool isMathTableCell() const override { return false; }
@@ -706,7 +705,7 @@ public:
     String mathFencedOpenString() const override { return String(); }
     String mathFencedCloseString() const override { return String(); }
     int mathLineThickness() const override { return 0; }
-    bool isAnonymousMathOperator() const override { return false; }
+    virtual bool isAnonymousMathOperator() const { return false; }
 
     // Multiscripts components.
     void mathPrescripts(AccessibilityMathMultiscriptPairs&) override { }
@@ -746,7 +745,7 @@ public:
 #if PLATFORM(COCOA)
     bool preventKeyboardDOMEventDispatch() const override;
     void setPreventKeyboardDOMEventDispatch(bool) override;
-    bool fileUploadButtonReturnsValueInTitle() const override;
+    bool fileUploadButtonReturnsValueInTitle() const;
     String speechHintAttributeValue() const override;
     String descriptionAttributeValue() const override;
     String helpTextAttributeValue() const override;
@@ -764,7 +763,7 @@ public:
     AccessibilityObject* highestEditableAncestor() override;
 
     const AccessibilityScrollView* ancestorAccessibilityScrollView(bool includeSelf) const;
-    AccessibilityObject* webAreaObject() const override { return nullptr; }
+    virtual AccessibilityObject* webAreaObject() const { return nullptr; }
 
     void clearIsIgnoredFromParentData() { m_isIgnoredFromParentData = { }; }
     void setIsIgnoredFromParentDataForChild(AccessibilityObject*);

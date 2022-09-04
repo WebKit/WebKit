@@ -93,9 +93,6 @@ protected:
     // Used in type checking function is<AccessibilityTable>.
     bool isAccessibilityTableInstance() const final { return true; }
 
-    // isDataTable is whether it is exposed as an AccessibilityTable because the heuristic
-    // think this "looks" like a data-based table (instead of a table used for layout).
-    bool isDataTable() const final;
     bool computeAccessibilityIsIgnored() const final;
 
 private:
@@ -104,6 +101,10 @@ private:
     HTMLTableElement* tableElement() const;
     void addChildrenFromSection(RenderTableSection*, unsigned& maxColumnCount);
     void addTableCellChild(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
+
+    // isDataTable is whether it is exposed as an AccessibilityTable because the heuristic
+    // think this "looks" like a data-based table (instead of a table used for layout).
+    bool isDataTable() const;
 };
 
 } // namespace WebCore 

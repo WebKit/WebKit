@@ -119,30 +119,23 @@ private:
     bool isLandmark() const override { return boolAttributeValue(AXPropertyName::IsLandmark); }
     bool isLink() const override { return boolAttributeValue(AXPropertyName::IsLink); }
     bool isPasswordField() const override { return boolAttributeValue(AXPropertyName::IsPasswordField); }
-    bool isSearchField() const override { return boolAttributeValue(AXPropertyName::IsSearchField); }
     bool isAttachment() const override { return boolAttributeValue(AXPropertyName::IsAttachment); }
-    bool isMediaTimeline() const override { return boolAttributeValue(AXPropertyName::IsMediaTimeline); }
     bool isMenuRelated() const override { return boolAttributeValue(AXPropertyName::IsMenuRelated); }
     bool isMenu() const override { return boolAttributeValue(AXPropertyName::IsMenu); }
     bool isMenuBar() const override { return boolAttributeValue(AXPropertyName::IsMenuBar); }
     bool isMenuButton() const override { return boolAttributeValue(AXPropertyName::IsMenuButton); }
     bool isMenuItem() const override { return boolAttributeValue(AXPropertyName::IsMenuItem); }
-    bool isFileUploadButton() const override { return boolAttributeValue(AXPropertyName::IsFileUploadButton); }
     bool isInputImage() const override { return boolAttributeValue(AXPropertyName::IsInputImage); }
     bool isProgressIndicator() const override { return boolAttributeValue(AXPropertyName::IsProgressIndicator); }
     bool isSlider() const override { return boolAttributeValue(AXPropertyName::IsSlider); }
     bool isControl() const override { return boolAttributeValue(AXPropertyName::IsControl); }
 
     bool isList() const override { return boolAttributeValue(AXPropertyName::IsList); }
-    bool isUnorderedList() const override { return boolAttributeValue(AXPropertyName::IsUnorderedList); }
-    bool isOrderedList() const override { return boolAttributeValue(AXPropertyName::IsOrderedList); }
-    bool isDescriptionList() const override { return boolAttributeValue(AXPropertyName::IsDescriptionList); }
     bool isKeyboardFocusable() const override { return boolAttributeValue(AXPropertyName::IsKeyboardFocusable); }
     
     // Table support.
     bool isTable() const override { return boolAttributeValue(AXPropertyName::IsTable); }
     bool isExposable() const override { return boolAttributeValue(AXPropertyName::IsExposable); }
-    bool isDataTable() const override { return boolAttributeValue(AXPropertyName::IsDataTable); }
     int tableLevel() const override { return intAttributeValue(AXPropertyName::TableLevel); }
     bool supportsSelectedRows() const override { return boolAttributeValue(AXPropertyName::SupportsSelectedRows); }
     AccessibilityChildrenVector columns() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Columns)); }
@@ -164,8 +157,6 @@ private:
     std::pair<unsigned, unsigned> rowIndexRange() const override { return pairAttributeValue<unsigned>(AXPropertyName::RowIndexRange); }
     // Returns the start location and column span of the cell.
     std::pair<unsigned, unsigned> columnIndexRange() const override { return pairAttributeValue<unsigned>(AXPropertyName::ColumnIndexRange); }
-    bool isColumnHeaderCell() const override { return boolAttributeValue(AXPropertyName::IsColumnHeaderCell); }
-    bool isRowHeaderCell() const override { return boolAttributeValue(AXPropertyName::IsRowHeaderCell); }
     int axColumnIndex() const override { return intAttributeValue(AXPropertyName::AXColumnIndex); }
     int axRowIndex() const override { return intAttributeValue(AXPropertyName::AXRowIndex); }
 
@@ -190,10 +181,7 @@ private:
     bool isMenuListOption() const override { return boolAttributeValue(AXPropertyName::IsMenuListOption); }
     bool isTextControl() const override { return boolAttributeValue(AXPropertyName::IsTextControl); }
     bool isButton() const override { return boolAttributeValue(AXPropertyName::IsButton); }
-    bool isRangeControl() const override { return boolAttributeValue(AXPropertyName::IsRangeControl); }
-    bool isMeter() const override { return boolAttributeValue(AXPropertyName::IsMeter); }
     bool isStyleFormatGroup() const override { return boolAttributeValue(AXPropertyName::IsStyleFormatGroup); }
-    bool isOutput() const override { return boolAttributeValue(AXPropertyName::IsOutput); }
     bool isChecked() const override { return boolAttributeValue(AXPropertyName::IsChecked); }
     bool isEnabled() const override { return boolAttributeValue(AXPropertyName::IsEnabled); }
     bool isSelected() const override { return boolAttributeValue(AXPropertyName::IsSelected); }
@@ -215,8 +203,6 @@ private:
     bool canSetExpandedAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetExpandedAttribute); }
     // We should never create an isolated object from an ignored live object, so we can hardcode this to false.
     bool accessibilityIsIgnored() const override { return false; }
-    bool isShowingValidationMessage() const override { return boolAttributeValue(AXPropertyName::IsShowingValidationMessage); }
-    String validationMessage() const override { return stringAttributeValue(AXPropertyName::ValidationMessage); }
     unsigned blockquoteLevel() const override { return unsignedAttributeValue(AXPropertyName::BlockquoteLevel); }
     unsigned headingLevel() const override { return unsignedAttributeValue(AXPropertyName::HeadingLevel); }
     AccessibilityButtonState checkboxOrRadioValue() const override { return propertyValue<AccessibilityButtonState>(AXPropertyName::ButtonState); }
@@ -236,7 +222,6 @@ private:
     String invalidStatus() const override { return stringAttributeValue(AXPropertyName::InvalidStatus); }
     bool supportsExpanded() const override { return boolAttributeValue(AXPropertyName::SupportsExpanded); }
     AccessibilitySortDirection sortDirection() const override { return static_cast<AccessibilitySortDirection>(intAttributeValue(AXPropertyName::SortDirection)); }
-    bool canvasHasFallbackContent() const override { return boolAttributeValue(AXPropertyName::CanvasHasFallbackContent); }
     bool supportsRangeValue() const override { return boolAttributeValue(AXPropertyName::SupportsRangeValue); }
     String identifierAttribute() const override;
     String linkRelValue() const override { return stringAttributeValue(AXPropertyName::LinkRelValue); }
@@ -294,7 +279,6 @@ private:
     String actionVerb() const override { return stringAttributeValue(AXPropertyName::ActionVerb); }
     String readOnlyValue() const override { return stringAttributeValue(AXPropertyName::ReadOnlyValue); }
     String autoCompleteValue() const override { return stringAttributeValue(AXPropertyName::AutoCompleteValue); }
-    OptionSet<SpeakAs> speakAsProperty() const override { return optionSetAttributeValue<SpeakAs>(AXPropertyName::SpeakAs); }
     bool isMathElement() const override { return boolAttributeValue(AXPropertyName::IsMathElement); }
     bool isMathFraction() const override { return boolAttributeValue(AXPropertyName::IsMathFraction); }
     bool isMathFenced() const override { return boolAttributeValue(AXPropertyName::IsMathFenced); }
@@ -303,12 +287,6 @@ private:
     bool isMathUnderOver() const override { return boolAttributeValue(AXPropertyName::IsMathUnderOver); }
     bool isMathRoot() const override { return boolAttributeValue(AXPropertyName::IsMathRoot); }
     bool isMathSquareRoot() const override { return boolAttributeValue(AXPropertyName::IsMathSquareRoot); }
-    bool isMathText() const override { return boolAttributeValue(AXPropertyName::IsMathText); }
-    bool isMathNumber() const override { return boolAttributeValue(AXPropertyName::IsMathNumber); }
-    bool isMathOperator() const override { return boolAttributeValue(AXPropertyName::IsMathOperator); }
-    bool isMathFenceOperator() const override { return boolAttributeValue(AXPropertyName::IsMathFenceOperator); }
-    bool isMathSeparatorOperator() const override { return boolAttributeValue(AXPropertyName::IsMathSeparatorOperator); }
-    bool isMathIdentifier() const override { return boolAttributeValue(AXPropertyName::IsMathIdentifier); }
     bool isMathTable() const override { return boolAttributeValue(AXPropertyName::IsMathTable); }
     bool isMathTableRow() const override { return boolAttributeValue(AXPropertyName::IsMathTableRow); }
     bool isMathTableCell() const override { return boolAttributeValue(AXPropertyName::IsMathTableCell); }
@@ -326,11 +304,9 @@ private:
     String mathFencedOpenString() const override { return stringAttributeValue(AXPropertyName::MathFencedOpenString); }
     String mathFencedCloseString() const override { return stringAttributeValue(AXPropertyName::MathFencedCloseString); }
     int mathLineThickness() const override { return intAttributeValue(AXPropertyName::MathLineThickness); }
-    bool isAnonymousMathOperator() const override { return boolAttributeValue(AXPropertyName::IsAnonymousMathOperator); }
     void mathPrescripts(AccessibilityMathMultiscriptPairs&) override;
     void mathPostscripts(AccessibilityMathMultiscriptPairs&) override;
 #if PLATFORM(COCOA)
-    bool fileUploadButtonReturnsValueInTitle() const override { return boolAttributeValue(AXPropertyName::FileUploadButtonReturnsValueInTitle); }
     String speechHintAttributeValue() const override { return stringAttributeValue(AXPropertyName::SpeechHint); }
     String descriptionAttributeValue() const override;
     String helpTextAttributeValue() const override;
@@ -366,7 +342,6 @@ private:
     // Spin button support.
     AXCoreObject* incrementButton() override { return objectAttributeValue(AXPropertyName::IncrementButton); }
     AXCoreObject* decrementButton() override { return objectAttributeValue(AXPropertyName::DecrementButton); }
-    bool isIncrementor() const override { return boolAttributeValue(AXPropertyName::IsIncrementor); }
     AccessibilityChildrenVector documentLinks() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::DocumentLinks)); }
     bool supportsCheckedState() const override { return boolAttributeValue(AXPropertyName::SupportsCheckedState); }
 
@@ -515,7 +490,6 @@ private:
     bool isARIATextControl() const override;
     bool isNonNativeTextControl() const override;
     bool isFigureElement() const override;
-    bool isHovered() const override;
     bool isIndeterminate() const override;
     bool isLoaded() const override { return loadingProgress() >= 1; }
     bool isOnScreen() const override;
@@ -523,7 +497,6 @@ private:
     bool isPressed() const override;
     bool isUnvisited() const override { return boolAttributeValue(AXPropertyName::IsUnvisited); }
     bool isVisible() const override { return boolAttributeValue(AXPropertyName::IsVisible); }
-    bool isCollapsed() const override;
     bool isSelectedOptionActive() const override;
     bool hasBoldFont() const override { return boolAttributeValue(AXPropertyName::HasBoldFont); }
     bool hasItalicFont() const override { return boolAttributeValue(AXPropertyName::HasItalicFont); }
@@ -547,7 +520,6 @@ private:
     bool supportsHasPopup() const override;
     bool supportsPressed() const override;
     bool supportsChecked() const override;
-    bool supportsRowCountChange() const override { return boolAttributeValue(AXPropertyName::SupportsRowCountChange); }
     bool isModalDescendant(Node*) const override;
     bool isModalNode() const override;
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
@@ -611,7 +583,6 @@ private:
 #if PLATFORM(COCOA)
     bool hasApplePDFAnnotationAttribute() const override { return boolAttributeValue(AXPropertyName::HasApplePDFAnnotationAttribute); }
 #endif
-    AXCoreObject* webAreaObject() const override { return objectAttributeValue(AXPropertyName::WebArea); }
 
 #if PLATFORM(COCOA) && ENABLE(MODEL_ELEMENT)
     Vector<RetainPtr<id>> modelElementChildren() override;
