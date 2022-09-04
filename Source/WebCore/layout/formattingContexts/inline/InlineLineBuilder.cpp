@@ -356,6 +356,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
 
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     auto partialOverflowingContent = committedContent.partialTrailingContentLength ? std::make_optional<PartialContent>(committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth) : std::nullopt;
+    auto inlineBaseDirection = m_line.runs().isEmpty() ? TextDirection::LTR : inlineBaseDirectionForLineContent();
 
     return LineContent { committedRange
         , partialOverflowingContent
@@ -371,7 +372,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , isLastLine
         , m_line.nonSpanningInlineLevelBoxCount()
         , computedVisualOrder(m_line)
-        , inlineBaseDirectionForLineContent()
+        , inlineBaseDirection
         , m_line.isContentTruncated()
         , m_line.runs() };
 }
