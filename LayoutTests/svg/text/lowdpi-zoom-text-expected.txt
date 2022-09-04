@@ -1,0 +1,8 @@
+Test: zoom should not affect getComputedTextLength().
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+
