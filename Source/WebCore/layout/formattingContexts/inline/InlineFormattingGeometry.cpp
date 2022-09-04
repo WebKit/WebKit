@@ -45,19 +45,37 @@ InlineFormattingGeometry::InlineFormattingGeometry(const InlineFormattingContext
 {
 }
 
-InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuilder::LineContent& lineContent, InlineLayoutUnit previousLineLogicalBottom, const FloatingContext& floatingContext) const
+InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuilder::LineContent& lineContent, const InlineRect& lineInitialRect, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext) const
 {
-    // Normally the next line's logical top is the previous line's logical bottom, but when the line ends
-    // with the clear property set, the next line needs to clear the existing floats.
-    if (lineContent.runs.isEmpty())
-        return previousLineLogicalBottom;
-    auto& lastRunLayoutBox = lineContent.runs.last().layoutBox(); 
-    if (!lastRunLayoutBox.hasFloatClear())
-        return previousLineLogicalBottom;
-    auto positionWithClearance = floatingContext.verticalPositionWithClearance(lastRunLayoutBox);
-    if (!positionWithClearance)
-        return previousLineLogicalBottom;
-    return std::max(previousLineLogicalBottom, InlineLayoutUnit(positionWithClearance->position));
+    if (!lineContent.inlineItemRange.isEmpty()) {
+        // Normally the next line's logical top is the previous line's logical bottom, but when the line ends
+        // with the clear property set, the next line needs to clear the existing floats.
+        if (lineContent.runs.isEmpty())
+            return lineLogicalRect.bottom();
+        auto& lastRunLayoutBox = lineContent.runs.last().layoutBox();
+        if (!lastRunLayoutBox.hasFloatClear())
+            return lineLogicalRect.bottom();
+        auto positionWithClearance = floatingContext.verticalPositionWithClearance(lastRunLayoutBox);
+        if (!positionWithClearance)
+            return lineLogicalRect.bottom();
+        return std::max(lineLogicalRect.bottom(), InlineLayoutUnit(positionWithClearance->position));
+    }
+    // Move the next line below the intrusive float(s).
+    ASSERT(lineContent.runs.isEmpty());
+    ASSERT(lineContent.hasIntrusiveFloat);
+    auto lineBottomWithNoInlineContent = std::max(lineLogicalRect.bottom(), lineInitialRect.bottom());
+    auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineInitialRect.top()), toLayoutUnit(lineBottomWithNoInlineContent));
+    ASSERT(floatConstraints.left || floatConstraints.right);
+    if (floatConstraints.left && floatConstraints.right) {
+        // In case of left and right constraints, we need to pick the one that's closer to the current line.
+        return std::min(floatConstraints.left->y, floatConstraints.right->y);
+    }
+    if (floatConstraints.left)
+        return floatConstraints.left->y;
+    if (floatConstraints.right)
+        return floatConstraints.right->y;
+    ASSERT_NOT_REACHED();
+    return lineBottomWithNoInlineContent;
 }
 
 ContentWidthAndMargin InlineFormattingGeometry::inlineBlockContentWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
@@ -205,6 +223,13 @@ std::tuple<const InlineDisplay::Box*, const InlineDisplay::Box*> InlineFormattin
     if (foundFirstDisplayBox)
         return { &displayBoxes[displayBoxes.size() - 1], nullptr };
     return { nullptr, nullptr };
+}
+
+InlineLayoutUnit InlineFormattingGeometry::initialLineHeight() const
+{
+    if (layoutState().inStandardsMode())
+        return formattingContext().root().style().computedLineHeight();
+    return formattingContext().formattingQuirks().initialLineHeight();
 }
 
 }

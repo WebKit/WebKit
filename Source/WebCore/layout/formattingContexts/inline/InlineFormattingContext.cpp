@@ -195,71 +195,48 @@ LayoutUnit InlineFormattingContext::usedContentHeight() const
     return bottom - top;
 }
 
-void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::InlineItemRange needsLayoutRange, const ConstraintsForInFlowContent& constraints)
+static size_t indexOfFirstInlineItemForNextLine(const LineBuilder::LineContent& lineContent, const std::optional<LineBuilder::PreviousLine>& previousLine, std::optional<size_t> previousLineLastInlineItemIndex)
+{
+    auto lineContentRange = lineContent.inlineItemRange;
+    if (!lineContent.partialOverflowingContent.has_value())
+        return lineContentRange.end;
+
+    // When the trailing content is partial, we need to reuse the last InlineTextItem.
+    auto lineLayoutHasAdvancedWithPartialContent = !previousLine || (lineContentRange.end > previousLineLastInlineItemIndex
+        || (previousLine->partialOverflowingContent && previousLine->partialOverflowingContent->length > lineContent.partialOverflowingContent->length));
+    if (lineLayoutHasAdvancedWithPartialContent)
+        return lineContentRange.end - 1;
+    // Move over to the next run if we are stuck on this partial content (when the overflow content length remains the same).
+    // We certainly lose some content, but we would be busy looping otherwise.
+    ASSERT_NOT_REACHED();
+    return lineContentRange.end;
+}
+
+void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBuilder::InlineItemRange& needsLayoutRange, const ConstraintsForInFlowContent& constraints)
 {
     auto& formattingState = this->formattingState();
     formattingState.boxes().reserveInitialCapacity(formattingState.inlineItems().size());
-    InlineLayoutUnit lineLogicalTop = constraints.logicalTop();
+
+    auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };
     auto previousLine = std::optional<LineBuilder::PreviousLine> { };
+    auto previousLineLastInlineItemIndex = std::optional<size_t> { };
     auto& floatingState = formattingState.floatingState();
     auto floatingContext = FloatingContext { *this, floatingState };
+    auto firstInlineItemNeedsLayout = needsLayoutRange.start;
 
     auto lineBuilder = LineBuilder { *this, floatingState, constraints.horizontal(), inlineItems };
-    while (!needsLayoutRange.isEmpty()) {
-        auto initialLineHeight = [&]() -> InlineLayoutUnit {
-            if (layoutState().inStandardsMode())
-                return root().style().computedLineHeight();
-            return formattingQuirks().initialLineHeight();
-        }();
-        auto initialLineConstraints = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, initialLineHeight };
-        auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, initialLineConstraints, previousLine);
+    while (firstInlineItemNeedsLayout < needsLayoutRange.end) {
+
+        auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight() };
+        auto lineContent = lineBuilder.layoutInlineContent({ firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, previousLine);
         auto lineLogicalRect = computeGeometryForLineContent(lineContent);
 
-        auto lineContentRange = lineContent.inlineItemRange;
-        if (!lineContentRange.isEmpty()) {
-            ASSERT(needsLayoutRange.start < lineContentRange.end);
-            lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect.bottom(), floatingContext);
-            if (lineContent.isLastLineWithInlineContent) {
-                // The final content height of this inline formatting context should include the cleared floats as well.
-                formattingState.setClearGapAfterLastLine(lineLogicalTop - lineLogicalRect.bottom());
-            }
-            // When the trailing content is partial, we need to reuse the last InlineTextItem.
-            auto lastInlineItemNeedsPartialLayout = lineContent.partialOverflowingContent.has_value();
-            if (lastInlineItemNeedsPartialLayout) {
-                auto lineLayoutHasAdvanced = !previousLine
-                    || lineContentRange.end > previousLine->range.end
-                    || (previousLine->partialOverflowingContent && previousLine->partialOverflowingContent->length > lineContent.partialOverflowingContent->length);
-                if (!lineLayoutHasAdvanced) {
-                    ASSERT_NOT_REACHED();
-                    // Move over to the next run if we are stuck on this partial content (when the overflow content length remains the same).
-                    // We certainly lose some content, but we would be busy looping otherwise.
-                    lastInlineItemNeedsPartialLayout = false;
-                }
-            }
-            needsLayoutRange.start = lastInlineItemNeedsPartialLayout ? lineContentRange.end - 1 : lineContentRange.end;
-            previousLine = LineBuilder::PreviousLine { lineContentRange, !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, lineContent.partialOverflowingContent, lineContent.trailingOverflowingContentWidth };
-            continue;
-        }
-        // Floats prevented us placing any content on the line.
-        ASSERT(lineContent.runs.isEmpty());
-        ASSERT(lineContent.hasIntrusiveFloat);
-        // Move the next line below the intrusive float(s).
-        auto logicalTopCandidateForNextLine = [&] {
-            auto lineBottomWithNoInlineContent = LayoutUnit { std::max(lineLogicalRect.bottom(), initialLineConstraints.bottom()) };
-            auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalTop), lineBottomWithNoInlineContent);
-            ASSERT(floatConstraints.left || floatConstraints.right);
-            if (floatConstraints.left && floatConstraints.right) {
-                // In case of left and right constraints, we need to pick the one that's closer to the current line.
-                return std::min(floatConstraints.left->y, floatConstraints.right->y);
-            }
-            if (floatConstraints.left)
-                return floatConstraints.left->y;
-            if (floatConstraints.right)
-                return floatConstraints.right->y;
-            ASSERT_NOT_REACHED();
-            return lineBottomWithNoInlineContent;
-        };
-        lineLogicalTop = logicalTopCandidateForNextLine();
+        lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineContent, lineInitialRect, lineLogicalRect, floatingContext);
+        if (lineContent.isLastLineWithInlineContent)
+            formattingState.setClearGapAfterLastLine(lineLogicalTop - lineLogicalRect.bottom());
+        firstInlineItemNeedsLayout = indexOfFirstInlineItemForNextLine(lineContent, previousLine, previousLineLastInlineItemIndex);
+        previousLine = LineBuilder::PreviousLine { !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, lineContent.partialOverflowingContent, lineContent.trailingOverflowingContentWidth };
+        previousLineLastInlineItemIndex = lineContent.inlineItemRange.end;
     }
 }
 
@@ -379,7 +356,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
         maximumLineWidth = std::max(maximumLineWidth, intrinsicContent.logicalWidth);
 
         layoutRange.start = !intrinsicContent.partialOverflowingContent ? intrinsicContent.inlineItemRange.end : intrinsicContent.inlineItemRange.end - 1;
-        previousLine = LineBuilder::PreviousLine { intrinsicContent.inlineItemRange, { }, { }, intrinsicContent.partialOverflowingContent };
+        previousLine = LineBuilder::PreviousLine { { }, { }, intrinsicContent.partialOverflowingContent };
         // FIXME: Add support for clear.
         for (auto* floatBox : intrinsicContent.floats)
             maximumFloatWidth += geometryForBox(*floatBox).marginBoxWidth();

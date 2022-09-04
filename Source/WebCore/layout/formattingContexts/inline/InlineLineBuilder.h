@@ -54,7 +54,6 @@ public:
         std::optional<InlineLayoutUnit> width { };
     };
     struct PreviousLine {
-        InlineItemRange range;
         bool endsWithLineBreak { false };
         TextDirection inlineBaseDirection { TextDirection::LTR };
         std::optional<PartialContent> partialOverflowingContent { };
