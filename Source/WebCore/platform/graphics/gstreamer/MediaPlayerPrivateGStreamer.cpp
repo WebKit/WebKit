@@ -102,6 +102,7 @@
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(GSTREAMER_MPEGTS)
@@ -1720,7 +1721,13 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
         else
             GST_WARNING("Unknown track type found for stream %" PRIu64 "", streamId);
     }
+
 #undef CREATE_OR_SELECT_TRACK
+
+    // Issue an error when we are backing a <video> element where we want to expose a text track
+    // while no video track was found. This is covered by test media/video-source-error.html.
+    if (player && player->isVideoPlayer() && textTrackIndex && !videoTrackIndex)
+        loadingFailed(MediaPlayer::NetworkState::FormatError, m_readyState, false);
 }
 
 void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* message)
@@ -2655,6 +2662,19 @@ void MediaPlayerPrivateGStreamer::updateStates()
                     m_readyState = MediaPlayer::ReadyState::HaveCurrentData;
                     m_networkState = MediaPlayer::NetworkState::Loading;
                 }
+            } else if (!m_isLegacyPlaybin) {
+                // playbin3 download buffering support is not as flexible as in playbin2, so we
+                // need to manually dispatch ready/network state changes sequentially here.
+                m_readyState = MediaPlayer::ReadyState::HaveFutureData;
+                m_networkState = MediaPlayer::NetworkState::Loading;
+                maybeNotifyClientOfReadyAndNetworkChanges(oldNetworkState, oldReadyState);
+                oldReadyState = MediaPlayer::ReadyState::HaveFutureData;
+                oldNetworkState = MediaPlayer::NetworkState::Loading;
+
+                if (m_didDownloadFinish) {
+                    m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
+                    m_networkState = MediaPlayer::NetworkState::Loaded;
+                }
             } else if (m_didDownloadFinish || isLooping) {
                 m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
                 m_networkState = MediaPlayer::NetworkState::Loaded;
@@ -2768,16 +2788,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
     if (player && shouldUpdatePlaybackState)
         player->playbackStateChanged();
 
-    if (m_networkState != oldNetworkState) {
-        GST_DEBUG_OBJECT(pipeline(), "Network State Changed from %s to %s", convertEnumerationToString(oldNetworkState).utf8().data(), convertEnumerationToString(m_networkState).utf8().data());
-        if (player)
-            player->networkStateChanged();
-    }
-    if (m_readyState != oldReadyState) {
-        GST_DEBUG_OBJECT(pipeline(), "Ready State Changed from %s to %s", convertEnumerationToString(oldReadyState).utf8().data(), convertEnumerationToString(m_readyState).utf8().data());
-        if (player)
-            player->readyStateChanged();
-    }
+    maybeNotifyClientOfReadyAndNetworkChanges(oldNetworkState, oldReadyState);
 
     if (getStateResult == GST_STATE_CHANGE_SUCCESS && m_currentState >= GST_STATE_PAUSED) {
         updatePlaybackRate();
@@ -2949,6 +2960,23 @@ void MediaPlayerPrivateGStreamer::didEnd()
     timeChanged(MediaTime::invalidTime());
 }
 
+void MediaPlayerPrivateGStreamer::maybeNotifyClientOfReadyAndNetworkChanges(MediaPlayerEnums::NetworkState oldNetworkState, MediaPlayerEnums::ReadyState oldReadyState)
+{
+    RefPtr player = m_player.get();
+    if (!player)
+        return;
+
+    if (m_networkState != oldNetworkState) {
+        GST_DEBUG_OBJECT(pipeline(), "Network State Changed from %s to %s", convertEnumerationToString(oldNetworkState).utf8().data(), convertEnumerationToString(m_networkState).utf8().data());
+        player->networkStateChanged();
+    }
+
+    if (m_readyState != oldReadyState) {
+        GST_DEBUG_OBJECT(pipeline(), "Ready State Changed from %s to %s", convertEnumerationToString(oldReadyState).utf8().data(), convertEnumerationToString(m_readyState).utf8().data());
+        player->readyStateChanged();
+    }
+}
+
 void MediaPlayerPrivateGStreamer::getSupportedTypes(HashSet<String>& types)
 {
     GStreamerRegistryScanner::getSupportedDecodingTypes(types);
@@ -3110,14 +3138,15 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         return;
 
     GST_INFO("Creating pipeline for %s player", player->isVideoPlayer() ? "video" : "audio");
-    const char* playbinName = "playbin";
 
-    // MSE and Mediastream require playbin3. Regular playback can use playbin3 on-demand with the
-    // WEBKIT_GST_USE_PLAYBIN3 environment variable.
-    const char* usePlaybin3 = g_getenv("WEBKIT_GST_USE_PLAYBIN3");
+    // MSE and Mediastream require playbin3. Regular playback uses playbin3 if GStreamer >= 1.24.9 is
+    // detected, unless the WEBKIT_GST_USE_PLAYBIN2 environment variable is set to 1.
+    const char* playbinName = "playbin3";
+    auto usePlaybin2Override = StringView::fromLatin1(g_getenv("WEBKIT_GST_USE_PLAYBIN2"));
+    auto usePlaybin2 = usePlaybin2Override ? parseInteger<unsigned>(usePlaybin2Override) : std::nullopt;
     bool isMediaStream = url.protocolIs("mediastream"_s);
-    if (isMediaSource() || isMediaStream || (usePlaybin3 && !strcmp(usePlaybin3, "1")))
-        playbinName = "playbin3";
+    if ((usePlaybin2.value_or(0) || !webkitGstCheckVersion(1, 24, 9)) && !isMediaSource() && !isMediaStream)
+        playbinName = "playbin";
 
     ASSERT(!m_pipeline);
 
