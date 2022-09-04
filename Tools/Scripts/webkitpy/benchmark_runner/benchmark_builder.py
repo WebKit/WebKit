@@ -104,7 +104,7 @@ class BenchmarkBuilder(object):
             raise Exception('Cannot checkout the benchmark - Error: %s' % error_code)
 
     def _download_from_github(self, github_source, github_subtree):
-        _log.info(f'Downloading content from {github_source}')
+        _log.info('Downloading content from {}'.format(github_source))
         GithubDownloadTask(github_source, github_subtree).execute(self._dest)
 
     def _local_git_archive_eligible(self):
