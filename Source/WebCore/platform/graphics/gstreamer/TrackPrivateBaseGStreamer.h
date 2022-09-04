@@ -97,10 +97,6 @@ private:
     bool getTag(GstTagList* tags, const gchar* tagName, StringType& value);
 
     void streamChanged();
-
-    static void activeChangedCallback(TrackPrivateBaseGStreamer*);
-    static void tagsChangedCallback(TrackPrivateBaseGStreamer*);
-
     void tagsChanged();
 
     TrackType m_type;

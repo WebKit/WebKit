@@ -270,7 +270,6 @@ http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html 
 http/tests/security/canvas-remote-read-remote-video-redirect.html [ Pass ]
 http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/video-redirect-allowed.html [ Pass ]
-http/tests/security/video-cross-origin-caching.html [ Pass ]
 media/media-can-play-webm.html [ Pass ]
 media/media-controller-time-constant.html [ Pass ]
 media/media-controller-time.html [ Pass ]
@@ -906,9 +905,6 @@ webkit.org/b/233731 fast/mediastream/getDisplayMedia-size.html [ Failure ]
 
 webkit.org/b/233836 http/tests/media/media-blocked-by-willsendrequest.html [ Timeout ]
 
-# Expected to pass when we enable playbin3 by default and update the SDK to GStreamer 1.20.
-webkit.org/b/234084 media/track/audio-track-configuration.html [ Failure ]
-
 # Even with playbin3 enabled there is still a failure here, h264parse is unable
 # to calculate the framerate of test.mp4 and the calculated bitrate tag is too
 # low, probably because we would need a playing pipeline to have better average
@@ -931,6 +927,17 @@ webkit.org/b/239750 media/media-source/media-mp4-xhe-aac.html [ Skip ]
 # bad colorimetry handling, our baseline looks a bit greyish compared to the
 # Apple baseline.
 media/media-hevc-video-as-img.html [ ImageOnlyFailure ]
+
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1418
+imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-video-frame.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-enter-seeking.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange-dynamically-created-track-element.html [ Failure ]
+
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1419
+http/tests/media/video-play-stall-seek.html [ Timeout ]
+
+# playbin3 doesn't handle URI redirects yet, see https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1562
+http/tests/security/video-cross-origin-caching.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
@@ -2042,22 +2049,14 @@ media/unsupported-rtsp.html [ WontFix Skip ]
 # This test is specific to QuickTime media engine.
 media/video-does-not-loop.html [ WontFix Timeout Crash ]
 
-# Requires media engine closed caption support.
-media/media-captions.html [ WontFix Failure ]
-
 # No support for MPEG-4 caption support
 webkit.org/b/131546 media/track/track-forced-subtitles-in-band.html [ Timeout Failure Crash ]
-webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Timeout Crash ]
-webkit.org/b/131546 webkit.org/b/198830 media/track/track-in-band-legacy-api.html [ Failure Crash ]
-webkit.org/b/131546 media/track/track-in-band-mode.html [ Skip ]
 media/track/track-in-band-chapters.html [ Skip ]
 
 # DataCue.value not enabled
 http/tests/media/track-in-band-hls-metadata.html [ Skip ]
 
-# ENABLE(WEBVTT_REGIONS) is disabled
-webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
-webkit.org/b/109570 media/track/w3c [ Skip ]
+media/track/w3c/interfaces/TextTrackCue/align.html [ Failure ]
 
 # Modern-media-controls support expected to pass, excepted for Apple-specific tests.
 media/modern-media-controls [ Pass ]
@@ -2709,7 +2708,6 @@ webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 
 webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
 webkit.org/b/141959 http/tests/media/clearkey/clear-key-hls-aes128.html [ Crash Timeout ]
-webkit.org/b/130971 media/track/track-remove-track.html [ Timeout ]
 webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
 
 webkit.org/b/168373 http/tests/media/track-in-band-hls-metadata-crash.html [ Timeout ]
