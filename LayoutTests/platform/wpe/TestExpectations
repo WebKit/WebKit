@@ -178,6 +178,7 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.https.sub.htm
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]
+
 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html [ Skip ]
 
 # Ping attribute
