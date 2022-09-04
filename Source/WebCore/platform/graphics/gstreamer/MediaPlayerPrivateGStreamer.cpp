@@ -103,6 +103,7 @@
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(GSTREAMER_MPEGTS)
@@ -763,7 +764,7 @@ MediaTime MediaPlayerPrivateGStreamer::currentTime() const
         return MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value()) - m_startTime;
     }
 
-    if (!m_pipeline || m_didErrorOccur)
+    if (!m_pipeline)
         return MediaTime::zeroTime();
 
     GST_TRACE_OBJECT(pipeline(), "seeking: %s, seekTarget: %s", boolForPrinting(m_isSeeking), m_seekTarget.toString().utf8().data());
@@ -887,6 +888,8 @@ const PlatformTimeRanges& MediaPlayerPrivateGStreamer::buffered() const
         if (gst_query_parse_nth_buffering_range(query.get(), index, &rangeStart, &rangeStop)) {
             uint64_t startTime = gst_util_uint64_scale_int_round(toGstUnsigned64Time(mediaDuration), rangeStart, GST_FORMAT_PERCENT_MAX);
             uint64_t stopTime = gst_util_uint64_scale_int_round(toGstUnsigned64Time(mediaDuration), rangeStop, GST_FORMAT_PERCENT_MAX);
+            if (!GST_CLOCK_TIME_IS_VALID(startTime) || !GST_CLOCK_TIME_IS_VALID(stopTime))
+                continue;
             m_buffered.add(MediaTime(startTime, GST_SECOND), MediaTime(stopTime, GST_SECOND));
         }
     }
@@ -894,7 +897,7 @@ const PlatformTimeRanges& MediaPlayerPrivateGStreamer::buffered() const
     // Fallback to the more general maxTimeLoaded() if no range has been found.
     if (!m_buffered.length()) {
         MediaTime loaded = maxTimeLoaded();
-        if (loaded.isValid() && loaded)
+        if (loaded > MediaTime::zeroTime())
             m_buffered.add(MediaTime::zeroTime(), loaded);
     }
 
@@ -1366,11 +1369,24 @@ MediaTime MediaPlayerPrivateGStreamer::platformDuration() const
     if (m_didErrorOccur)
         return MediaTime::invalidTime();
 
-    // The duration query would fail on a not-prerolled pipeline.
-    if (GST_STATE(m_pipeline.get()) < GST_STATE_PAUSED)
-        return MediaTime::invalidTime();
-
     int64_t duration = 0;
+
+    // The duration query would fail on a not-prerolled pipeline, so check if the source element has
+    // a BYTES duration and attempt conversion to TIME format.
+    if (m_source && m_parseBin && GST_STATE(m_pipeline.get()) < GST_STATE_PAUSED) {
+        int64_t bytesDuration;
+        if (!gst_element_query_duration(m_source.get(), GST_FORMAT_BYTES, &bytesDuration))
+            return MediaTime::invalidTime();
+
+        GST_DEBUG_OBJECT(m_pipeline.get(), "BYTES duration: %" G_GINT64_FORMAT, bytesDuration);
+        auto pad = adoptGRef(gst_element_get_static_pad(m_parseBin.get(), "sink"));
+        if (!gst_pad_query_convert(pad.get(), GST_FORMAT_BYTES, bytesDuration, GST_FORMAT_TIME, &duration))
+            return MediaTime::invalidTime();
+
+        GST_LOG_OBJECT(pipeline(), "Duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(duration));
+        return MediaTime(duration, GST_SECOND);
+    }
+
     if (!gst_element_query_duration(m_pipeline.get(), GST_FORMAT_TIME, &duration) || !GST_CLOCK_TIME_IS_VALID(duration)) {
         GST_DEBUG_OBJECT(pipeline(), "Time duration query failed for %s", m_url.string().utf8().data());
         // https://www.w3.org/TR/2011/WD-html5-20110113/video.html#getting-media-metadata
@@ -1714,6 +1730,8 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
 
     bool oldHasAudio = m_hasAudio;
     bool oldHasVideo = m_hasVideo;
+    auto oldReadyState = m_readyState;
+    bool isVideoSizeKnown = false;
 
     RefPtr player = m_player.get();
 
@@ -1729,7 +1747,7 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
     for (auto& track : m_textTracks.values())
         track->setActive(false);
 
-    auto scopeExit = makeScopeExit([oldHasAudio, oldHasVideo, protectedThis = ThreadSafeWeakPtr { *this }, this] {
+    auto scopeExit = makeScopeExit([&, protectedThis = ThreadSafeWeakPtr { *this }, this] {
         RefPtr self = protectedThis.get();
         if (!self)
             return;
@@ -1750,8 +1768,14 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
             if (oldHasVideo != m_hasVideo || oldHasAudio != m_hasAudio)
                 player->characteristicChanged();
 
-            if (!oldHasVideo && m_hasVideo)
-                player->sizeChanged();
+            auto duration = this->duration();
+            bool isDurationRelevant = duration != MediaTime::positiveInfiniteTime() && duration != MediaTime::zeroTime();
+            if (isMediaStreamPlayer())
+                isDurationRelevant = true;
+            if (oldReadyState < MediaPlayer::ReadyState::HaveMetadata && isDurationRelevant && ((m_hasVideo && isVideoSizeKnown) || (m_hasAudio && !player->isVideoPlayer()))) {
+                m_readyState = MediaPlayer::ReadyState::HaveMetadata;
+                player->readyStateChanged();
+            }
 
             player->mediaEngineUpdated();
         }
@@ -1803,14 +1827,21 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
         if (type & GST_STREAM_TYPE_AUDIO) {
             CREATE_OR_SELECT_TRACK(audio, Audio);
             configureMediaStreamAudioTracks();
-        } else if (type & GST_STREAM_TYPE_VIDEO && player && player->isVideoPlayer())
+        } else if (type & GST_STREAM_TYPE_VIDEO && player && player->isVideoPlayer()) {
             CREATE_OR_SELECT_TRACK(video, Video);
-        else if (type & GST_STREAM_TYPE_TEXT)
+            isVideoSizeKnown = updateVideoSizeAndOrientationFromStream(stream);
+        } else if (type & GST_STREAM_TYPE_TEXT)
             CREATE_OR_SELECT_TRACK(text, Text);
         else
             GST_WARNING("Unknown track type found for stream %" PRIu64 "", streamId);
     }
+
 #undef CREATE_OR_SELECT_TRACK
+
+    // Issue an error when we are backing a <video> element where we want to expose a text track
+    // while no video track was found. This is covered by test media/video-source-error.html.
+    if (player && player->isVideoPlayer() && textTrackIndex && !videoTrackIndex)
+        loadingFailed(MediaPlayer::NetworkState::FormatError, m_readyState, false);
 }
 
 void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* message)
@@ -1825,8 +1856,8 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     // WebKitMediaSrc) parsebin and decodebin3 emit their own stream-collection messages, but late,
     // and sometimes with duplicated streams. Let's only listen for stream-collection messages from
     // the source to avoid these issues.
-    auto sourceName = StringView::fromLatin1(GST_OBJECT_NAME(m_source.get()));
-    if (!(sourceName.startsWith("filesrc"_s) || WEBKIT_IS_WEB_SRC(m_source.get())) && GST_MESSAGE_SRC(message) != GST_OBJECT(m_source.get())) {
+    bool sourceIsStreamAware = isMediaSource() || isMediaStreamPlayer();
+    if (sourceIsStreamAware && GST_MESSAGE_SRC(message) != GST_OBJECT(m_source.get())) {
         GST_DEBUG_OBJECT(pipeline(), "Ignoring redundant STREAM_COLLECTION from %" GST_PTR_FORMAT, message->src);
         return;
     }
@@ -1903,7 +1934,7 @@ FloatSize MediaPlayerPrivateGStreamer::naturalSize() const
     if (isHolePunchRenderingEnabled())
         return s_holePunchDefaultFrameSize;
 
-    return m_videoSize;
+    return FloatSize();
 }
 
 void MediaPlayerPrivateGStreamer::configureMediaStreamAudioTracks()
@@ -2327,7 +2358,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         m_currentVideoStreamId = m_requestedVideoStreamId;
         m_currentTextStreamId = m_requestedTextStreamId;
 
-        // It's possible the user made a track switch before the initial STREAMS_SELECED. Now it's a good moment to
+        // It's possible the user made a track switch before the initial STREAMS_SELECTED. Now it's a good moment to
         // request it being attended. Note that it's not possible to send a SELECT_STREAMS before the first
         // STREAMS_SELECTED message because at that point the pipeline is not compeletely constructed.
         playbin3SendSelectStreamsIfAppropriate();
@@ -2553,6 +2584,8 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
 
 void MediaPlayerPrivateGStreamer::configureParsebin(GstElement* parsebin)
 {
+    m_parseBin = parsebin;
+
     // We can save some overhead by not parsing again streams that are already parsed and that
     // the caps match the decoder's. In that case, we can skip creating a parser element in parsebin.
     g_signal_connect(parsebin, "autoplug-select",
@@ -2627,7 +2660,8 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
     // is not an issue in 1.22. Streams parsing is not needed for MediaStream cases because we do it
     // upfront for incoming WebRTC MediaStreams. It is however needed for MSE, otherwise decodebin3
     // might not auto-plug hardware decoders.
-    bool isBlob = m_url.protocolIs("blob"_s);
+    bool isBlob = m_url.protocolIsBlob();
+    bool isDataUri = m_url.protocolIsData();
     auto nameView = StringView::fromLatin1(elementName.get());
     if (webkitGstCheckVersion(1, 22, 0) && nameView.startsWith("urisourcebin"_s) && (isBlob || isMediaSource() || isMediaStreamPlayer()))
         g_object_set(element, "use-buffering", FALSE, "parse-streams", !isMediaStreamPlayer(), nullptr);
@@ -2645,7 +2679,7 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
     // configure urisourcebin to setup a ring buffer so that downstream demuxers operate in pull
     // mode. Some demuxers (matroskademux) don't work as well in push mode.
     if (nameView.startsWith("urisourcebin"_s) && !m_isLegacyPlaybin && m_preload == MediaPlayer::Preload::Auto) {
-        if (isBlob)
+        if (isBlob || isDataUri)
             g_object_set(element, "ring-buffer-max-size", 2 * MB, nullptr);
         else if (!isMediaSource() && !isMediaStreamPlayer())
             g_object_set(element, "download", TRUE, nullptr);
@@ -2833,7 +2867,8 @@ void MediaPlayerPrivateGStreamer::updateStates()
             m_networkState = MediaPlayer::NetworkState::Empty;
             break;
         case GST_STATE_READY:
-            m_readyState = MediaPlayer::ReadyState::HaveMetadata;
+            if (!m_isLegacyPlaybin && !m_videoSize.isZero())
+                m_readyState = MediaPlayer::ReadyState::HaveMetadata;
             m_networkState = MediaPlayer::NetworkState::Empty;
             break;
         case GST_STATE_PAUSED:
@@ -2854,6 +2889,19 @@ void MediaPlayerPrivateGStreamer::updateStates()
             } else if (m_didDownloadFinish || isLooping) {
                 m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
                 m_networkState = MediaPlayer::NetworkState::Loaded;
+            } else if (!isMediaStreamPlayer() && !m_isLegacyPlaybin && m_readyState < MediaPlayer::ReadyState::HaveFutureData) {
+                // playbin3 download buffering support is not as flexible as in playbin2, so we
+                // need to manually dispatch ready/network state changes sequentially here.
+                m_readyState = MediaPlayer::ReadyState::HaveFutureData;
+                m_networkState = MediaPlayer::NetworkState::Loading;
+                maybeNotifyClientOfReadyAndNetworkChanges(oldNetworkState, oldReadyState);
+                oldReadyState = MediaPlayer::ReadyState::HaveFutureData;
+                oldNetworkState = MediaPlayer::NetworkState::Loading;
+
+                if (m_didDownloadFinish) {
+                    m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
+                    m_networkState = MediaPlayer::NetworkState::Loaded;
+                }
             } else {
                 m_readyState = MediaPlayer::ReadyState::HaveFutureData;
                 m_networkState = MediaPlayer::NetworkState::Loading;
@@ -2969,16 +3017,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
     if (player && shouldUpdatePlaybackState)
         player->playbackStateChanged();
 
-    if (m_networkState != oldNetworkState) {
-        GST_DEBUG_OBJECT(pipeline(), "Network State Changed from %s to %s", convertEnumerationToString(oldNetworkState).utf8().data(), convertEnumerationToString(m_networkState).utf8().data());
-        if (player)
-            player->networkStateChanged();
-    }
-    if (m_readyState != oldReadyState) {
-        GST_DEBUG_OBJECT(pipeline(), "Ready State Changed from %s to %s", convertEnumerationToString(oldReadyState).utf8().data(), convertEnumerationToString(m_readyState).utf8().data());
-        if (player)
-            player->readyStateChanged();
-    }
+    maybeNotifyClientOfReadyAndNetworkChanges(oldNetworkState, oldReadyState);
 
     if (getStateResult == GST_STATE_CHANGE_SUCCESS && m_currentState >= GST_STATE_PAUSED) {
         updatePlaybackRate();
@@ -3117,7 +3156,9 @@ void MediaPlayerPrivateGStreamer::recalculateDurationIfNeeded() const
     MediaTime now = currentTime();
     MediaTime currentDuration = duration();
 
-    auto cacheNewDuration = [this](const MediaTime& now) {
+    auto cacheNewDuration = [&](const MediaTime& now) {
+        if (now == currentDuration)
+            return;
         GST_DEBUG_OBJECT(pipeline(), "HTMLMediaElement duration previously infinite or unknown (e.g. live stream or unknown duration), setting it to current position.");
         m_cachedDuration = now;
         if (RefPtr player = m_player.get())
@@ -3175,6 +3216,23 @@ void MediaPlayerPrivateGStreamer::didEnd()
 #if ENABLE(MEDIA_TELEMETRY)
     MediaTelemetryReport::singleton().reportPlaybackState(MediaTelemetryReport::AVPipelineState::EndOfStream);
 #endif
+}
+
+void MediaPlayerPrivateGStreamer::maybeNotifyClientOfReadyAndNetworkChanges(MediaPlayerEnums::NetworkState oldNetworkState, MediaPlayerEnums::ReadyState oldReadyState)
+{
+    RefPtr player = m_player.get();
+    if (!player)
+        return;
+
+    if (m_networkState != oldNetworkState) {
+        GST_DEBUG_OBJECT(pipeline(), "Network state changed from %s to %s", convertEnumerationToString(oldNetworkState).utf8().data(), convertEnumerationToString(m_networkState).utf8().data());
+        player->networkStateChanged();
+    }
+
+    if (m_readyState != oldReadyState) {
+        GST_DEBUG_OBJECT(pipeline(), "Ready state changed from %s to %s", convertEnumerationToString(oldReadyState).utf8().data(), convertEnumerationToString(m_readyState).utf8().data());
+        player->readyStateChanged();
+    }
 }
 
 void MediaPlayerPrivateGStreamer::getSupportedTypes(HashSet<String>& types)
@@ -3274,6 +3332,12 @@ void MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag()
         return;
     }
 
+    if (m_url.protocolIsData()) {
+        GST_DEBUG_OBJECT(pipeline(), "Data URI detected. Disabling on-disk buffering");
+        disableDownloading();
+        return;
+    }
+
     // We don't want to stop downloading if we already started it.
     if (flags & flagDownload && m_readyState > MediaPlayer::ReadyState::HaveNothing && !m_shouldResetPipeline) {
         GST_DEBUG_OBJECT(pipeline(), "Download already started, not starting again");
@@ -3338,15 +3402,16 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         return;
 
     GST_INFO("Creating pipeline for %s player", player->isVideoPlayer() ? "video" : "audio");
-    ASCIILiteral playbinName = "playbin"_s;
 
-    // MSE, Blob and Mediastream require playbin3. Regular playback can use playbin3 on-demand with the
-    // WEBKIT_GST_USE_PLAYBIN3 environment variable.
-    auto usePlaybin3 = StringView::fromLatin1(g_getenv("WEBKIT_GST_USE_PLAYBIN3"));
+    // MSE, Blob and Mediastream require playbin3. Regular playback uses playbin3 if GStreamer >=
+    // 1.26.2 is detected, unless the WEBKIT_GST_USE_PLAYBIN2 environment variable is set to 1.
+    ASCIILiteral playbinName = "playbin3"_s;
+    auto usePlaybin2Override = StringView::fromLatin1(g_getenv("WEBKIT_GST_USE_PLAYBIN2"));
+    auto usePlaybin2 = usePlaybin2Override ? parseInteger<unsigned>(usePlaybin2Override) : std::nullopt;
     bool isMediaStream = url.protocolIs("mediastream"_s);
-    bool isBlob = url.protocolIs("blob"_s);
-    if (isMediaSource() || isMediaStream || isBlob || usePlaybin3 == "1"_s)
-        playbinName = "playbin3"_s;
+    bool isBlob = url.protocolIsBlob();
+    if ((usePlaybin2.value_or(0) || !webkitGstCheckVersion(1, 26, 2)) && !isMediaSource() && !isMediaStream && !isBlob)
+        playbinName = "playbin"_s;
 
     ASSERT(!m_pipeline);
 
@@ -3730,37 +3795,37 @@ void MediaPlayerPrivateGStreamer::updateVideoOrientation(const GstTagList* tagLi
     GST_DEBUG_OBJECT(pipeline(), "Finished waiting for main-thread task to call sizeChanged()... %s", sizeChangedProcessed ? "sizeChanged() was called." : "task queue aborted by flush");
 }
 
-void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const GstCaps* caps)
+bool MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromStream(GstStream* stream)
 {
-    ASSERT(isMainThread());
+    ASSERT(!m_isLegacyPlaybin);
+    auto caps = adoptGRef(gst_stream_get_caps(stream));
+    auto tags = adoptGRef(gst_stream_get_tags(stream));
 
+    return updateVideoSizeAndOrientationFromCapsAndTags(caps, tags);
+}
+
+bool MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCapsAndTags(const GRefPtr<GstCaps>& caps, const GRefPtr<GstTagList>& tags)
+{
     // TODO: handle possible clean aperture data. See https://bugzilla.gnome.org/show_bug.cgi?id=596571
     // TODO: handle possible transformation matrix. See https://bugzilla.gnome.org/show_bug.cgi?id=596326
-
-    // Get the video PAR and original size, if this fails the
-    // video-sink has likely not yet negotiated its caps.
     int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
     double frameRate;
     GstVideoFormat format;
     PlatformVideoColorSpace colorSpace;
-    if (!getVideoSizeAndFormatFromCaps(caps, m_videoSizeFromCaps, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride, frameRate, colorSpace)) {
-        GST_WARNING("Failed to get size and format from caps: %" GST_PTR_FORMAT, caps);
-        return;
+    IntSize originalSize;
+    if (!getVideoSizeAndFormatFromCaps(caps.get(), originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride, frameRate, colorSpace)) {
+        GST_WARNING("Failed to get size and format from caps: %" GST_PTR_FORMAT, caps.get());
+        return false;
     }
 
-    auto pad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
-    ASSERT(pad);
-    auto tagsEvent = adoptGRef(gst_pad_get_sticky_event(pad.get(), GST_EVENT_TAG, 0));
+    m_videoSizeFromCaps = originalSize;
+
     auto orientation = ImageOrientation::Orientation::None;
-    if (tagsEvent) {
-        GstTagList* tagList;
-        gst_event_parse_tag(tagsEvent.get(), &tagList);
-        orientation = getVideoOrientation(tagList).orientation();
+    if (tags) {
+        orientation = getVideoOrientation(tags.get()).orientation();
+        setVideoSourceOrientation(orientation);
     }
 
-    auto originalSize = m_videoSizeFromCaps;
-
-    setVideoSourceOrientation(orientation);
     // If the video is tagged as rotated 90 or 270 degrees, swap width and height.
     if (m_videoSourceOrientation.usesWidthAsHeight())
         originalSize = originalSize.transposedSize();
@@ -3802,6 +3867,21 @@ void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const Gs
 
     GST_DEBUG_OBJECT(pipeline(), "Saving natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
     m_videoSize = FloatSize(static_cast<int>(width), static_cast<int>(height));
+    return true;
+}
+
+bool MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(GstCaps* caps)
+{
+    ASSERT(isMainThread());
+
+    auto pad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
+    ASSERT(pad);
+    auto tagsEvent = adoptGRef(gst_pad_get_sticky_event(pad.get(), GST_EVENT_TAG, 0));
+    GstTagList* tagList = nullptr;
+    if (tagsEvent)
+        gst_event_parse_tag(tagsEvent.get(), &tagList);
+
+    return updateVideoSizeAndOrientationFromCapsAndTags(GRefPtr(caps), GRefPtr(tagList));
 }
 
 void MediaPlayerPrivateGStreamer::setCachedPosition(const MediaTime& cachedPosition) const
@@ -3892,7 +3972,13 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
                 return;
             RefPtr player = m_player.get();
 
-            updateVideoSizeAndOrientationFromCaps(caps.get());
+            auto oldSize = m_videoSize;
+            auto isSizeKnown = updateVideoSizeAndOrientationFromCaps(caps.get());
+            if (!m_isLegacyPlaybin && oldSize.isZero() && isSizeKnown && m_readyState < MediaPlayer::ReadyState::HaveMetadata) {
+                m_readyState = MediaPlayer::ReadyState::HaveMetadata;
+                if (player)
+                    player->readyStateChanged();
+            }
 
             // Live streams start without pre-rolling, that means they can reach PAUSED while sinks
             // still haven't received a sample to render. So we need to notify the media element in
