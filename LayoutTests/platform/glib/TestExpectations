@@ -877,7 +877,8 @@ webkit.org/b/229761 http/tests/media/media-stream/audio-capture-and-category.htt
 webkit.org/b/229973 media/track/in-band/track-in-band-kate-ogg-cues-added-once.html [ Failure Pass ]
 webkit.org/b/229973 media/track/in-band/track-in-band-srt-mkv-cues-added-once.html [ Failure Pass ]
 
-webkit.org/b/230028 media/media-source/media-source-seek-twice.html [ Pass Timeout ]
+# Crashing since https://commits.webkit.org/254142@main
+webkit.org/b/244776 webkit.org/b/230028 media/media-source/media-source-seek-twice.html [ Pass Timeout Crash ]
 
 # rvfc related failures
 imported/w3c/web-platform-tests/video-rvfc [ Pass ]
@@ -899,6 +900,9 @@ webkit.org/b/234084 media/track/audio-track-configuration.html [ Failure ]
 webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
 
 webkit.org/b/237901 media/media-source/media-source-interruption-with-resume-allowing-play.html [ Slow ]
+
+webkit.org/b/244776 media/media-source/media-source-seek-detach-crash.html [ Crash ]
+webkit.org/b/244776 media/media-source/media-source-unnecessary-seek-seeked.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
