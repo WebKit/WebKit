@@ -1461,9 +1461,10 @@ bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
         return false;
 
     // create an AX object, but skip it if it is not supposed to be seen
-    AccessibilityObject* object = replacedNode->renderer()->document().axObjectCache()->getOrCreate(replacedNode);
-    if (object->accessibilityIsIgnored())
-        return false;
+    if (auto* cache = replacedNode->renderer()->document().axObjectCache()) {
+        if (auto* axObject = cache->getOrCreate(replacedNode))
+            return !axObject->accessibilityIsIgnored();
+    }
 
     return true;
 }
