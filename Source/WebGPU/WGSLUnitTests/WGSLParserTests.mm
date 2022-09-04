@@ -33,6 +33,7 @@
 #import "LiteralExpressions.h"
 #import "ReturnStatement.h"
 #import "StructureAccess.h"
+#import "VariableStatement.h"
 #import "WGSL.h"
 #import <XCTest/XCTest.h>
 #import <wtf/DataLog.h>
@@ -204,6 +205,64 @@
         XCTAssert(expr.arguments()[1].get().isAbstractFloatLiteral());
         XCTAssert(expr.arguments()[2].get().isAbstractFloatLiteral());
         XCTAssert(expr.arguments()[3].get().isAbstractFloatLiteral());
+    }
+}
+
+- (void) testParsingLocalVariable {
+    auto shader = WGSL::parseLChar(
+        "@vertex\n"
+        "fn main() -> vec4<f32> {\n"
+        "    var x = vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
+        "    return x;\n"
+        "}"_s);
+
+    if (!shader.has_value())
+        dataLogLn(shader.error());
+    XCTAssert(shader.has_value());
+    XCTAssertEqual(shader->directives().size(), 0ull);
+    XCTAssertEqual(shader->structs().size(), 0ull);
+    XCTAssertEqual(shader->globalVars().size(), 0ull);
+    XCTAssertEqual(shader->functions().size(), 1ull);
+
+    {
+        WGSL::AST::FunctionDecl& func = shader->functions()[0];
+        // @vertex
+        XCTAssertEqual(func.attributes().size(), 1u);
+        XCTAssert(func.attributes()[0]->isStage());
+        XCTAssertEqual(downcast<WGSL::AST::StageAttribute>(func.attributes()[0].get()).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
+
+        // fn main() -> vec4<f32> {
+        XCTAssert(func.name() == "main"_s);
+        XCTAssertEqual(func.parameters().size(), 0u);
+        XCTAssertEqual(func.returnAttributes().size(), 0u);
+        XCTAssert(func.maybeReturnType());
+        XCTAssert(func.maybeReturnType()->isParameterized());
+        XCTAssertEqual(func.body().statements().size(), 2u);
+
+        // var x = vec4<f32>(0.4, 0.4, 0.8, 1.0);
+        XCTAssert(func.body().statements()[0]->isVariable());
+        WGSL::AST::VariableStatement& varStmt = downcast<WGSL::AST::VariableStatement>(func.body().statements()[0].get());
+        WGSL::AST::VariableDecl& varDecl = downcast<WGSL::AST::VariableDecl>(varStmt.declaration());
+        XCTAssertEqual(varDecl.name(), "x"_s);
+        XCTAssertEqual(varDecl.attributes().size(), 0u);
+        XCTAssertEqual(varDecl.maybeQualifier(), nullptr);
+        XCTAssertEqual(varDecl.maybeTypeDecl(), nullptr);
+        XCTAssert(varDecl.maybeInitializer());
+        WGSL::AST::CallableExpression& varInitExpr = downcast<WGSL::AST::CallableExpression>(*varDecl.maybeInitializer());
+        XCTAssert(varInitExpr.target().isParameterized());
+        XCTAssert(varInitExpr.arguments().size() == 4);
+        XCTAssert(varInitExpr.arguments()[0].get().isAbstractFloatLiteral());
+        XCTAssert(varInitExpr.arguments()[1].get().isAbstractFloatLiteral());
+        XCTAssert(varInitExpr.arguments()[2].get().isAbstractFloatLiteral());
+        XCTAssert(varInitExpr.arguments()[3].get().isAbstractFloatLiteral());
+
+        // return x;
+        XCTAssert(func.body().statements()[1]->isReturn());
+        WGSL::AST::ReturnStatement& retStmt = downcast<WGSL::AST::ReturnStatement>(func.body().statements()[1].get());
+        XCTAssert(retStmt.maybeExpression());
+        XCTAssert(retStmt.maybeExpression()->isIdentifier());
+        WGSL::AST::IdentifierExpression retExpr = downcast<WGSL::AST::IdentifierExpression>(*retStmt.maybeExpression());
+        XCTAssert(retExpr.identifier() == "x"_s);
     }
 }
 

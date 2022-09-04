@@ -50,7 +50,8 @@ public:
     Expected<AST::StructMember, Error> parseStructMember();
     Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDecl();
     Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDeclAfterIdentifier(StringView&&, SourcePosition start);
-    Expected<AST::VariableDecl, Error> parseVariableDecl(AST::Attributes&&);
+    Expected<AST::VariableDecl, Error> parseVariableDecl();
+    Expected<AST::VariableDecl, Error> parseVariableDeclWithAttributes(AST::Attributes&&);
     Expected<AST::VariableQualifier, Error> parseVariableQualifier();
     Expected<AST::StorageClass, Error> parseStorageClass();
     Expected<AST::AccessMode, Error> parseAccessMode();

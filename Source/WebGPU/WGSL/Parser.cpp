@@ -39,6 +39,7 @@
 #include "AST/Statements/AssignmentStatement.h"
 #include "AST/Statements/CompoundStatement.h"
 #include "AST/Statements/ReturnStatement.h"
+#include "AST/Statements/VariableStatement.h"
 #include "AST/StructureDecl.h"
 #include "Lexer.h"
 #include <wtf/text/StringBuilder.h>
@@ -175,7 +176,7 @@ Expected<UniqueRef<AST::Decl>, Error> Parser<Lexer>::parseGlobalDecl()
         return { makeUniqueRef<AST::StructDecl>(WTFMove(structDecl)) };
     }
     case TokenType::KeywordVar: {
-        PARSE(varDecl, VariableDecl, WTFMove(attributes));
+        PARSE(varDecl, VariableDeclWithAttributes, WTFMove(attributes));
         CONSUME_TYPE(Semicolon);
         return { makeUniqueRef<AST::VariableDecl>(WTFMove(varDecl)) };
     }
@@ -326,8 +327,16 @@ Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseTypeDeclAfterIdent
     RETURN_NODE_REF(NamedType, WTFMove(name));
 }
 
+// VariableDecl:
+//      'var' VariableQualifier? Ident (':' TypeDecl)? ('=' Expression)?
 template<typename Lexer>
-Expected<AST::VariableDecl, Error> Parser<Lexer>::parseVariableDecl(AST::Attributes&& attributes)
+Expected<AST::VariableDecl, Error> Parser<Lexer>::parseVariableDecl()
+{
+    return parseVariableDeclWithAttributes(AST::Attributes { });
+}
+
+template<typename Lexer>
+Expected<AST::VariableDecl, Error> Parser<Lexer>::parseVariableDeclWithAttributes(AST::Attributes&& attributes)
 {
     START_PARSE();
 
@@ -349,7 +358,11 @@ Expected<AST::VariableDecl, Error> Parser<Lexer>::parseVariableDecl(AST::Attribu
     }
 
     std::unique_ptr<AST::Expression> maybeInitializer = nullptr;
-    // FIXME: initializer
+    if (current().m_type == TokenType::Equal) {
+        consume();
+        PARSE(initializerExpr, Expression);
+        maybeInitializer = initializerExpr.moveToUniquePtr();
+    }
 
     RETURN_NODE(VariableDecl, name.m_ident, WTFMove(maybeQualifier), WTFMove(maybeType), WTFMove(maybeInitializer), WTFMove(attributes));
 }
@@ -488,6 +501,11 @@ Expected<UniqueRef<AST::Statement>, Error> Parser<Lexer>::parseStatement()
         PARSE(returnStmt, ReturnStatement);
         CONSUME_TYPE(Semicolon);
         return { makeUniqueRef<AST::ReturnStatement>(WTFMove(returnStmt)) };
+    }
+    case TokenType::KeywordVar: {
+        PARSE(varDecl, VariableDecl);
+        CONSUME_TYPE(Semicolon);
+        return { makeUniqueRef<AST::VariableStatement>(CURRENT_SOURCE_SPAN(), WTFMove(varDecl)) };
     }
     case TokenType::Identifier: {
         // FIXME: there will be other cases here eventually for function calls

@@ -25,39 +25,28 @@
 
 #pragma once
 
-#include "ASTNode.h"
-#include <wtf/TypeCasts.h>
+#include "Decl.h"
+#include "Statement.h"
+#include <wtf/UniqueRef.h>
 
 namespace WGSL::AST {
 
-class Statement : public ASTNode {
+class VariableStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    enum class Kind : uint8_t {
-        Compound,
-        Return,
-        Assignment,
-        Variable,
-    };
-
-    Statement(SourceSpan span)
-        : ASTNode(span)
+    VariableStatement(SourceSpan span, VariableDecl&& decl)
+        : Statement(span)
+        , m_decl(makeUniqueRef<VariableDecl>(WTFMove(decl)))
     {
     }
 
-    virtual ~Statement() {}
+    Kind kind() const override { return Kind::Variable; }
+    Decl& declaration() { return m_decl.get(); }
 
-    virtual Kind kind() const = 0;
-    bool isCompound() const { return kind() == Kind::Compound; }
-    bool isReturn() const { return kind() == Kind::Return; }
-    bool isAssignment() const { return kind() == Kind::Assignment; }
-    bool isVariable() const { return kind() == Kind::Variable; }
+private:
+    UniqueRef<Decl> m_decl;
 };
 
 } // namespace WGSL::AST
 
-#define SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
-    static bool isType(const WGSL::AST::Statement& statement) { return statement.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(VariableStatement, isVariable())
