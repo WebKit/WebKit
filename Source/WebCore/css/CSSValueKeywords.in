@@ -161,15 +161,18 @@ extra-expanded
 ultra-expanded
 //
 // CSS_PROP_GENERIC_FONT_FAMILY:
+// IMPORTANT: serif must remain the first one and -webkit-body the last one.
+// See how they are consumed in consumeGenericFamily/consumeGenericFamilyRaw.
 //
 serif
 sans-serif
 cursive
 fantasy
 monospace
--webkit-body
 -webkit-pictograph
 system-ui
+-webkit-body
+
 //
 //
 // CSS_PROP_*_COLOR
