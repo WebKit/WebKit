@@ -1079,6 +1079,40 @@ TEST(WebKit2, CapturePermission)
     done = false;
 }
 
+TEST(WebKit2, EnumerateDevicesAfterMuting)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration preferences]._inactiveMediaCaptureSteamRepromptIntervalInMinutes = .5 / 60;
+
+    initializeMediaCaptureConfiguration(configuration.get());
+
+#if PLATFORM(IOS_FAMILY)
+    [configuration setAllowsInlineMediaPlayback:YES];
+#endif
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    webView.get().UIDelegate = delegate.get();
+
+    [webView loadTestPageNamed:@"getUserMedia"];
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
+
+    [webView setCameraCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
+    [webView setMicrophoneCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
+
+    // Sleep long enough for the reprompt timer to fire and clear cached state.
+    Util::sleep(1);
+
+    // Verify enumerateDevices still works fine.
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkEnumerateDevicesDoesNotFilter()"];
+    TestWebKitAPI::Util::run(&done);
+}
+
 #if PLATFORM(IOS_FAMILY)
 TEST(WebKit2, CapturePermissionWithSystemBlocking)
 {
