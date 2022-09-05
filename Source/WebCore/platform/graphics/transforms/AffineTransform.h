@@ -27,6 +27,7 @@
 #pragma once
 
 #include "CompositeOperation.h"
+#include "FloatConversion.h"
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include <array>
@@ -152,14 +153,14 @@ public:
         return (m_transform[1] == 0 && m_transform[2] == 0) || (m_transform[0] == 0 && m_transform[3] == 0);
     }
 
-    bool isEssentiallyEqualTo(const AffineTransform& m2) const
+    bool isEssentiallyEqualToAsFloats(const AffineTransform& m2) const
     {
-        return (WTF::areEssentiallyEqual(m_transform[0], m2.m_transform[0])
-            && WTF::areEssentiallyEqual(m_transform[1], m2.m_transform[1])
-            && WTF::areEssentiallyEqual(m_transform[2], m2.m_transform[2])
-            && WTF::areEssentiallyEqual(m_transform[3], m2.m_transform[3])
-            && WTF::areEssentiallyEqual(m_transform[4], m2.m_transform[4])
-            && WTF::areEssentiallyEqual(m_transform[5], m2.m_transform[5]));
+        return WTF::areEssentiallyEqual(narrowPrecisionToFloat(m_transform[0]), narrowPrecisionToFloat(m2.m_transform[0]))
+            && WTF::areEssentiallyEqual(narrowPrecisionToFloat(m_transform[1]), narrowPrecisionToFloat(m2.m_transform[1]))
+            && WTF::areEssentiallyEqual(narrowPrecisionToFloat(m_transform[2]), narrowPrecisionToFloat(m2.m_transform[2]))
+            && WTF::areEssentiallyEqual(narrowPrecisionToFloat(m_transform[3]), narrowPrecisionToFloat(m2.m_transform[3]))
+            && WTF::areEssentiallyEqual(narrowPrecisionToFloat(m_transform[4]), narrowPrecisionToFloat(m2.m_transform[4]))
+            && WTF::areEssentiallyEqual(narrowPrecisionToFloat(m_transform[5]), narrowPrecisionToFloat(m2.m_transform[5]));
     }
 
     bool operator==(const AffineTransform& m2) const
