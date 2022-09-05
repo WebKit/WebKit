@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 700x400
+  RenderSVGRoot {svg} at (0,0) size 700x400
+layer at (0,0) size 700x400
+  RenderSVGViewportContainer at (0,0) size 700x400
+layer at (0,0) size 320x210
+  RenderSVGImage {image} at (0,0) size 320x210
+layer at (350,0) size 32x21
+  RenderSVGImage {image} at (350,0) size 32x21

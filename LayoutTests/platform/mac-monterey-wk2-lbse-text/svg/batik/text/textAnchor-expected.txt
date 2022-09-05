@@ -1,0 +1,206 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 450x500
+  RenderSVGRoot {svg} at (0,0) size 450x500
+layer at (0,0) size 450x500
+  RenderSVGViewportContainer at (0,0) size 450x500
+layer at (143,26) size 164x17
+  RenderSVGText {text} at (142,25) size 166x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 165x18
+      chunk 1 (middle anchor) text run 1 at (142.72,40.00) startOffset 0 endOffset 22 width 164.55: "text-anchor on <tspan>"
+layer at (-14,0) size 465x500 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (-15,0) size 465x500
+layer at (0,0) size 451x500 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (14,0) size 451x500
+layer at (0,0) size 450x167
+  RenderSVGRect {rect} at (0,0) size 450x167 [opacity=0.10] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=450.00] [height=167.00]
+layer at (0,167) size 450x167
+  RenderSVGRect {rect} at (0,167) size 450x167 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=167.00] [width=450.00] [height=167.00]
+layer at (0,334) size 450x166
+  RenderSVGRect {rect} at (0,334) size 450x166 [opacity=0.10] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=334.00] [width=450.00] [height=166.00]
+layer at (150,0) size 0x500
+  RenderSVGPath {line} at (150,0) size 0x500 [stroke={[type=SOLID] [color=#FF0000]}] [x1=150.00] [y1=0.00] [x2=150.00] [y2=500.00]
+layer at (320,0) size 0x500
+  RenderSVGPath {line} at (320,0) size 0x500 [stroke={[type=SOLID] [color=#FF0000]}] [x1=320.00] [y1=0.00] [x2=320.00] [y2=500.00]
+layer at (0,0) size 450x500
+  RenderSVGRect {rect} at (0,0) size 450x500 [stroke={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=450.00] [height=500.00]
+layer at (-14,15) size 454x39 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,15) size 454x39
+layer at (150,15) size 290x39
+  RenderSVGTransformableContainer {g} at (164,0) size 290x39
+layer at (150,15) size 289x39
+  RenderSVGText {text} at (0,0) size 290x39 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 53x19
+      RenderSVGInlineText {#text} at (0,20) size 53x19
+        chunk 1 text run 1 at (150.00,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
+    RenderSVGInlineText {#text} at (52,20) size 4x19
+      chunk 1 text run 1 at (202.42,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 105x19
+      RenderSVGInlineText {#text} at (56,20) size 104x19
+        chunk 1 text run 1 at (206.42,50.00) startOffset 0 endOffset 15 width 103.97: "same text chunk"
+    RenderSVGInlineText {#text} at (160,20) size 4x19
+      chunk 1 text run 1 at (310.39,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 120x19
+      RenderSVGInlineText {#text} at (170,0) size 120x19
+        chunk 1 text run 1 at (320.00,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (68,15) size 372x39
+  RenderSVGTransformableContainer {g} at (82,0) size 372x39
+layer at (68,15) size 371x39
+  RenderSVGText {text} at (0,0) size 372x39 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 53x19
+      RenderSVGInlineText {#text} at (0,20) size 53x19
+        chunk 1 (middle anchor) text run 1 at (67.80,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
+    RenderSVGInlineText {#text} at (52,20) size 4x19
+      chunk 1 text run 1 at (120.23,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 105x19
+      RenderSVGInlineText {#text} at (56,20) size 104x19
+        chunk 1 text run 1 at (124.23,50.00) startOffset 0 endOffset 15 width 103.97: "same text chunk"
+    RenderSVGInlineText {#text} at (160,20) size 4x19
+      chunk 1 text run 1 at (228.20,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 120x19
+      RenderSVGInlineText {#text} at (252,0) size 120x19
+        chunk 1 text run 1 at (320.00,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (-14,15) size 454x39 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 454x39
+layer at (-14,15) size 453x39 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGText {text} at (0,0) size 454x39 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 53x19
+      RenderSVGInlineText {#text} at (0,20) size 53x19
+        chunk 1 (end anchor) text run 1 at (-14.39,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
+    RenderSVGInlineText {#text} at (52,20) size 4x19
+      chunk 1 text run 1 at (38.03,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 105x19
+      RenderSVGInlineText {#text} at (56,20) size 104x19
+        chunk 1 text run 1 at (42.03,50.00) startOffset 0 endOffset 15 width 103.97: "same text chunk"
+    RenderSVGInlineText {#text} at (160,20) size 4x19
+      chunk 1 text run 1 at (146.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 120x19
+      RenderSVGInlineText {#text} at (334,0) size 120x19
+        chunk 1 text run 1 at (320.00,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (-14,15) size 394x39 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,15) size 394x39
+layer at (150,15) size 230x39
+  RenderSVGTransformableContainer {g} at (164,0) size 230x39
+layer at (150,15) size 230x39
+  RenderSVGText {text} at (0,0) size 230x39 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 53x19
+      RenderSVGInlineText {#text} at (0,20) size 53x19
+        chunk 1 text run 1 at (150.00,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
+    RenderSVGInlineText {#text} at (52,20) size 4x19
+      chunk 1 text run 1 at (202.42,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 105x19
+      RenderSVGInlineText {#text} at (56,20) size 104x19
+        chunk 1 text run 1 at (206.42,50.00) startOffset 0 endOffset 15 width 103.97: "same text chunk"
+    RenderSVGInlineText {#text} at (160,20) size 4x19
+      chunk 1 text run 1 at (310.39,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 120x19
+      RenderSVGInlineText {#text} at (110,0) size 120x19
+        chunk 1 (middle anchor) text run 1 at (260.46,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (68,15) size 312x39
+  RenderSVGTransformableContainer {g} at (82,0) size 312x39
+layer at (68,15) size 312x39
+  RenderSVGText {text} at (0,0) size 312x39 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 53x19
+      RenderSVGInlineText {#text} at (0,20) size 53x19
+        chunk 1 (middle anchor) text run 1 at (67.80,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
+    RenderSVGInlineText {#text} at (52,20) size 4x19
+      chunk 1 text run 1 at (120.23,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 105x19
+      RenderSVGInlineText {#text} at (56,20) size 104x19
+        chunk 1 text run 1 at (124.23,50.00) startOffset 0 endOffset 15 width 103.97: "same text chunk"
+    RenderSVGInlineText {#text} at (160,20) size 4x19
+      chunk 1 text run 1 at (228.20,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 120x19
+      RenderSVGInlineText {#text} at (192,0) size 120x19
+        chunk 1 (middle anchor) text run 1 at (260.46,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (-14,15) size 394x39 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 394x39
+layer at (-14,15) size 394x39 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGText {text} at (0,0) size 394x39 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 53x19
+      RenderSVGInlineText {#text} at (0,20) size 53x19
+        chunk 1 (end anchor) text run 1 at (-14.39,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
+    RenderSVGInlineText {#text} at (52,20) size 4x19
+      chunk 1 text run 1 at (38.03,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 105x19
+      RenderSVGInlineText {#text} at (56,20) size 104x19
+        chunk 1 text run 1 at (42.03,50.00) startOffset 0 endOffset 15 width 103.97: "same text chunk"
+    RenderSVGInlineText {#text} at (160,20) size 4x19
+      chunk 1 text run 1 at (146.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 120x19
+      RenderSVGInlineText {#text} at (274,0) size 120x19
+        chunk 1 (middle anchor) text run 1 at (260.46,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (-14,15) size 335x39 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,15) size 335x39
+layer at (150,15) size 171x39
+  RenderSVGTransformableContainer {g} at (164,0) size 171x39
+layer at (150,15) size 170x39
+  RenderSVGText {text} at (0,0) size 170x39 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 53x19
+      RenderSVGInlineText {#text} at (0,20) size 53x19
+        chunk 1 text run 1 at (150.00,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
+    RenderSVGInlineText {#text} at (52,20) size 4x19
+      chunk 1 text run 1 at (202.42,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 105x19
+      RenderSVGInlineText {#text} at (56,20) size 104x19
+        chunk 1 text run 1 at (206.42,50.00) startOffset 0 endOffset 15 width 103.97: "same text chunk"
+    RenderSVGInlineText {#text} at (160,20) size 4x19
+      chunk 1 text run 1 at (310.39,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 120x19
+      RenderSVGInlineText {#text} at (50,0) size 120x19
+        chunk 1 (end anchor) text run 1 at (200.93,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (68,15) size 253x39
+  RenderSVGTransformableContainer {g} at (82,0) size 253x39
+layer at (68,15) size 252x39
+  RenderSVGText {text} at (0,0) size 253x39 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 53x19
+      RenderSVGInlineText {#text} at (0,20) size 53x19
+        chunk 1 (middle anchor) text run 1 at (67.80,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
+    RenderSVGInlineText {#text} at (52,20) size 4x19
+      chunk 1 text run 1 at (120.23,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 105x19
+      RenderSVGInlineText {#text} at (56,20) size 104x19
+        chunk 1 text run 1 at (124.23,50.00) startOffset 0 endOffset 15 width 103.97: "same text chunk"
+    RenderSVGInlineText {#text} at (160,20) size 4x19
+      chunk 1 text run 1 at (228.20,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 120x19
+      RenderSVGInlineText {#text} at (133,0) size 120x19
+        chunk 1 (end anchor) text run 1 at (200.93,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (-14,15) size 335x39 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 335x39
+layer at (-14,15) size 334x39 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGText {text} at (0,0) size 335x39 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 53x19
+      RenderSVGInlineText {#text} at (0,20) size 53x19
+        chunk 1 (end anchor) text run 1 at (-14.39,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
+    RenderSVGInlineText {#text} at (52,20) size 4x19
+      chunk 1 text run 1 at (38.03,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 105x19
+      RenderSVGInlineText {#text} at (56,20) size 104x19
+        chunk 1 text run 1 at (42.03,50.00) startOffset 0 endOffset 15 width 103.97: "same text chunk"
+    RenderSVGInlineText {#text} at (160,20) size 4x19
+      chunk 1 text run 1 at (146.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
+    RenderSVGTSpan {tspan} at (0,0) size 120x19
+      RenderSVGInlineText {#text} at (215,0) size 120x19
+        chunk 1 (end anchor) text run 1 at (200.93,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (0,0) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {use} at (-1,-1) size 540x565
+layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x564
+layer at (1,1) size 447x497
+  RenderSVGRect {rect} at (1,1) size 447x497 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x564
+layer at (0,0) size 28x29
+  RenderSVGViewportContainer {svg} at (0,0) size 28x29
+layer at (158,352) size 287x212 backgroundClip at (413,467) size 37x33 clip at (413,467) size 37x33
+  RenderSVGPath {path} at (158,352) size 287x212 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]

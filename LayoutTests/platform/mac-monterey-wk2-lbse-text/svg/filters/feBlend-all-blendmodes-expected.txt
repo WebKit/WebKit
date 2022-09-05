@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (50,0) size 50x50
+  RenderSVGRect {rect} at (50,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (100,0) size 50x50
+  RenderSVGRect {rect} at (100,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (150,0) size 50x50
+  RenderSVGRect {rect} at (150,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=150.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (200,0) size 50x50
+  RenderSVGRect {rect} at (200,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=200.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (250,0) size 50x50
+  RenderSVGRect {rect} at (250,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=250.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (300,0) size 50x50
+  RenderSVGRect {rect} at (300,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=300.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (350,0) size 50x50
+  RenderSVGRect {rect} at (350,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=350.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (50,50) size 50x50
+  RenderSVGRect {rect} at (50,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=50.00] [width=50.00] [height=50.00]
+layer at (100,50) size 50x50
+  RenderSVGRect {rect} at (100,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=50.00] [width=50.00] [height=50.00]
+layer at (150,50) size 50x50
+  RenderSVGRect {rect} at (150,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=150.00] [y=50.00] [width=50.00] [height=50.00]
+layer at (200,50) size 50x50
+  RenderSVGRect {rect} at (200,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=200.00] [y=50.00] [width=50.00] [height=50.00]
+layer at (250,50) size 50x50
+  RenderSVGRect {rect} at (250,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=250.00] [y=50.00] [width=50.00] [height=50.00]
+layer at (300,50) size 50x50
+  RenderSVGRect {rect} at (300,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=300.00] [y=50.00] [width=50.00] [height=50.00]
+layer at (350,50) size 50x50
+  RenderSVGRect {rect} at (350,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=350.00] [y=50.00] [width=50.00] [height=50.00]
+layer at (0,50) size 50x50
+  RenderSVGRect {rect} at (0,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=50.00] [width=50.00] [height=50.00]

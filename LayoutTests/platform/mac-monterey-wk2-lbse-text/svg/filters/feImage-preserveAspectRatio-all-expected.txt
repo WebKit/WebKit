@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x400
+  RenderSVGRoot {svg} at (0,0) size 800x400
+layer at (0,0) size 800x400
+  RenderSVGViewportContainer at (0,0) size 800x400
+layer at (1,1) size 1198x498 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (1,1) size 1198x498 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=1198.00] [height=498.00]
+layer at (50,25) size 1100x425 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGTransformableContainer {g} at (50,25) size 1100x425
+layer at (50,25) size 100x200
+  RenderSVGRect {rect} at (0,0) size 100x200 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=25.00] [width=100.00] [height=200.00]
+layer at (50,25) size 100x200
+  RenderSVGRect {rect} at (0,0) size 100x200 [stroke={[type=SOLID] [color=#008000]}] [x=50.00] [y=25.00] [width=100.00] [height=200.00]
+layer at (50,325) size 200x100 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (0,300) size 200x100 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=325.00] [width=200.00] [height=100.00]
+layer at (50,325) size 200x100 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (0,300) size 200x100 [stroke={[type=SOLID] [color=#008000]}] [x=50.00] [y=325.00] [width=200.00] [height=100.00]
+layer at (300,25) size 100x200
+  RenderSVGRect {rect} at (250,0) size 100x200 [fill={[type=SOLID] [color=#000000]}] [x=300.00] [y=25.00] [width=100.00] [height=200.00]
+layer at (300,25) size 100x200
+  RenderSVGRect {rect} at (250,0) size 100x200 [stroke={[type=SOLID] [color=#008000]}] [x=300.00] [y=25.00] [width=100.00] [height=200.00]
+layer at (420,25) size 100x200
+  RenderSVGRect {rect} at (370,0) size 100x200 [fill={[type=SOLID] [color=#000000]}] [x=420.00] [y=25.00] [width=100.00] [height=200.00]
+layer at (420,25) size 100x200
+  RenderSVGRect {rect} at (370,0) size 100x200 [stroke={[type=SOLID] [color=#008000]}] [x=420.00] [y=25.00] [width=100.00] [height=200.00]
+layer at (540,25) size 100x200
+  RenderSVGRect {rect} at (490,0) size 100x200 [fill={[type=SOLID] [color=#000000]}] [x=540.00] [y=25.00] [width=100.00] [height=200.00]
+layer at (540,25) size 100x200
+  RenderSVGRect {rect} at (490,0) size 100x200 [stroke={[type=SOLID] [color=#008000]}] [x=540.00] [y=25.00] [width=100.00] [height=200.00]
+layer at (700,25) size 200x100 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (650,0) size 200x100 [fill={[type=SOLID] [color=#000000]}] [x=700.00] [y=25.00] [width=200.00] [height=100.00]
+layer at (700,25) size 200x100 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (650,0) size 200x100 [stroke={[type=SOLID] [color=#008000]}] [x=700.00] [y=25.00] [width=200.00] [height=100.00]
+layer at (700,145) size 200x100 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (650,120) size 200x100 [fill={[type=SOLID] [color=#000000]}] [x=700.00] [y=145.00] [width=200.00] [height=100.00]
+layer at (700,145) size 200x100 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (650,120) size 200x100 [stroke={[type=SOLID] [color=#008000]}] [x=700.00] [y=145.00] [width=200.00] [height=100.00]
+layer at (700,265) size 200x100 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (650,240) size 200x100 [fill={[type=SOLID] [color=#000000]}] [x=700.00] [y=265.00] [width=200.00] [height=100.00]
+layer at (700,265) size 200x100 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (650,240) size 200x100 [stroke={[type=SOLID] [color=#008000]}] [x=700.00] [y=265.00] [width=200.00] [height=100.00]
+layer at (300,250) size 100x200 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (250,225) size 100x200 [fill={[type=SOLID] [color=#000000]}] [x=300.00] [y=250.00] [width=100.00] [height=200.00]
+layer at (300,250) size 100x200 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (250,225) size 100x200 [stroke={[type=SOLID] [color=#008000]}] [x=300.00] [y=250.00] [width=100.00] [height=200.00]
+layer at (420,250) size 100x200 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (370,225) size 100x200 [fill={[type=SOLID] [color=#000000]}] [x=420.00] [y=250.00] [width=100.00] [height=200.00]
+layer at (420,250) size 100x200 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (370,225) size 100x200 [stroke={[type=SOLID] [color=#008000]}] [x=420.00] [y=250.00] [width=100.00] [height=200.00]
+layer at (540,250) size 100x200 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (490,225) size 100x200 [fill={[type=SOLID] [color=#000000]}] [x=540.00] [y=250.00] [width=100.00] [height=200.00]
+layer at (540,250) size 100x200 backgroundClip at (0,0) size 800x400 clip at (0,0) size 800x400
+  RenderSVGRect {rect} at (490,225) size 100x200 [stroke={[type=SOLID] [color=#008000]}] [x=540.00] [y=250.00] [width=100.00] [height=200.00]

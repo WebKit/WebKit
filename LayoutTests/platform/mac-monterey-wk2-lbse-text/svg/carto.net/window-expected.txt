@@ -1,0 +1,418 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {symbol} at (-70,-10) size 140x20
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 140x20 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {symbol} at (-6,-6) size 12x12
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 11x11 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (0,0) size 11x11 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=-5.50] [y1=-5.50] [x2=5.50] [y2=5.50]
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (0,0) size 11x11 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=-5.50] [x2=-5.50] [y2=5.50]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {symbol} at (-6,-6) size 12x12
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 11x11 [stroke={[type=SOLID] [color=#696969]}] [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {symbol} at (-6,-6) size 12x12
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 11x11 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,6) size 11x0
+  RenderSVGPath {line} at (0,11) size 11x0 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=5.50] [x2=-5.50] [y2=5.50]
+layer at (-5000,-5000) size 15000x15000 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-5000,-5000) size 15000x15000 [fill={[type=SOLID] [color=#D3D3D3]}] [x=-5000.00] [y=-5000.00] [width=15000.00] [height=15000.00]
+layer at (-5000,0) size 15000x80 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-5000,0) size 15000x80 [fill={[type=SOLID] [color=#FFFFFF]}] [x=-5000.00] [y=0.00] [width=15000.00] [height=80.00]
+layer at (10,11) size 329x23
+  RenderSVGText {text} at (10,11) size 329x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 329x23
+      chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 34 width 328.98: "Demonstration of the Window object"
+layer at (10,37) size 63x16
+  RenderSVGText {text} at (10,37) size 63x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 63x16
+      chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 10 width 62.61: "Statustext"
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (-70,-10) size 140x20
+layer at (0,0) size 1024x700 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (70,10) size 1024x700
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-70,-10) size 140x20 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
+layer at (414,15) size 132x12
+  RenderSVGText {text} at (414,14) size 132x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 132x13
+      chunk 1 (middle anchor) text run 1 at (414.37,25.00) startOffset 0 endOffset 23 width 131.26: "Close Navigation Window"
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (-70,-10) size 140x20
+layer at (0,0) size 1024x700 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (70,10) size 1024x700
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-70,-10) size 140x20 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
+layer at (583,15) size 94x12
+  RenderSVGText {text} at (583,14) size 94x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 94x13
+      chunk 1 (middle anchor) text run 1 at (583.26,25.00) startOffset 0 endOffset 16 width 93.48: "Close Big Window"
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (-70,-10) size 140x20
+layer at (0,0) size 1024x700 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (70,10) size 1024x700
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-70,-10) size 140x20 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
+layer at (714,15) size 132x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (714,14) size 132x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 132x13
+      chunk 1 (middle anchor) text run 1 at (714.38,25.00) startOffset 0 endOffset 23 width 131.25: "Close Middlesize Window"
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (-70,-10) size 140x20
+layer at (0,0) size 1024x700 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (70,10) size 1024x700
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-70,-10) size 140x20 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (-70,-10) size 140x20
+layer at (0,0) size 1024x700 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (70,10) size 1024x700
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-70,-10) size 140x20 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (-70,-10) size 140x20
+layer at (0,0) size 1024x700 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (70,10) size 1024x700
+layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-70,-10) size 140x20 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
+layer at (411,45) size 138x12
+  RenderSVGText {text} at (411,44) size 138x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 138x13
+      chunk 1 (middle anchor) text run 1 at (411.49,55.00) startOffset 0 endOffset 24 width 137.02: "Resize Navigation Window"
+layer at (-15,-15) size 715x515 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-15,-15) size 715x515
+layer at (-15,-15) size 236x215 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 236x215
+layer at (0,0) size 220x200
+  RenderSVGTransformableContainer {g} at (15,15) size 220x200
+layer at (0,0) size 220x200
+  RenderSVGRect {rect} at (0,0) size 220x200 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=0.00] [width=220.00] [height=200.00]
+layer at (10,12) size 205x124
+  RenderSVGTransformableContainer {g} at (10,12) size 205x124
+layer at (10,12) size 205x124
+  RenderSVGText {text} at (0,0) size 205x124 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 123x16
+      chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 18 width 122.87: "This window should"
+    RenderSVGTSpan {tspan} at (0,0) size 148x16
+      RenderSVGInlineText {#text} at (0,16) size 148x16
+        chunk 1 text run 1 at (10.00,41.00) startOffset 0 endOffset 24 width 147.16: "contain navigation tools"
+    RenderSVGTSpan {tspan} at (0,0) size 94x16
+      RenderSVGInlineText {#text} at (0,38) size 94x16
+        chunk 1 text run 1 at (10.00,63.00) startOffset 0 endOffset 15 width 93.14: "Click on button"
+    RenderSVGTSpan {tspan} at (0,0) size 205x16
+      RenderSVGInlineText {#text} at (0,54) size 205x16
+        chunk 1 text run 1 at (10.00,79.00) startOffset 0 endOffset 32 width 204.93: "'Resize Navigation Window' for a"
+    RenderSVGTSpan {tspan} at (0,0) size 185x16
+      RenderSVGInlineText {#text} at (0,70) size 185x16
+        chunk 1 text run 1 at (10.00,95.00) startOffset 0 endOffset 28 width 184.68: "random resize of this Window"
+    RenderSVGTSpan {tspan} at (0,0) size 164x16
+      RenderSVGInlineText {#text} at (0,92) size 164x16
+        chunk 1 text run 1 at (10.00,117.00) startOffset 0 endOffset 26 width 163.57: "Note that this window also"
+    RenderSVGTSpan {tspan} at (0,0) size 184x16
+      RenderSVGInlineText {#text} at (0,108) size 184x16
+        chunk 1 text run 1 at (10.00,133.00) startOffset 0 endOffset 28 width 183.15: "features a window decoration"
+layer at (0,187) size 220x13
+  RenderSVGRect {rect} at (0,187) size 220x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=187.00] [width=220.00] [height=13.00]
+layer at (3,188) size 44x11
+  RenderSVGText {text} at (3,187) size 44x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 44x12
+      chunk 1 text run 1 at (3.00,197.00) startOffset 0 endOffset 9 width 43.83: "Statusbar"
+layer at (-15,-15) size 236x202 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 236x202
+layer at (-15,-15) size 236x202 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 236x202
+layer at (-15,-15) size 20x202 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 20x202 [fill={[type=SOLID] [color=#B0C4DE]}] [x=-15.00] [y=-15.00] [width=20.00] [height=202.00]
+layer at (-15,-15) size 236x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 236x20 [fill={[type=SOLID] [color=#B0C4DE]}] [x=-15.00] [y=-15.00] [width=236.00] [height=20.00]
+layer at (0,170) size 99x12
+  RenderSVGText {text} at (15,184) size 99x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 99x13
+      chunk 1 text run 1 at (0.00,180.00) startOffset 0 endOffset 17 width 98.61: "Navigation Window"
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (9,9) size 12x12
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=-5.50] [y1=-5.50] [x2=5.50] [y2=5.50]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=-5.50] [x2=-5.50] [y2=5.50]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (9,9) size 12x12
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (9,9) size 12x12
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,6) size 12x0
+  RenderSVGPath {line} at (-6,5) size 12x0 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=5.50] [x2=-5.50] [y2=5.50]
+layer at (-5,-5) size 706x506 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (9,9) size 706x506
+layer at (-5,-5) size 706x506 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 706x506
+layer at (0,0) size 701x501
+  RenderSVGRect {rect} at (5,5) size 701x501 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=0.00] [width=700.00] [height=500.00]
+layer at (0,487) size 701x14
+  RenderSVGRect {rect} at (5,492) size 701x14 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=487.00] [width=700.00] [height=13.00]
+layer at (3,488) size 133x12
+  RenderSVGText {text} at (8,493) size 134x12 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 134x12
+      chunk 1 text run 1 at (3.00,497.00) startOffset 0 endOffset 28 width 133.18: "This is a big movable window"
+layer at (-5,-5) size 406x306 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 406x306
+layer at (-5,-5) size 406x306 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 406x306
+layer at (0,0) size 401x301
+  RenderSVGRect {rect} at (5,5) size 401x301 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=0.00] [width=400.00] [height=300.00]
+layer at (0,287) size 401x14
+  RenderSVGRect {rect} at (5,292) size 401x14 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=287.00] [width=400.00] [height=13.00]
+layer at (3,288) size 165x12
+  RenderSVGText {text} at (8,293) size 167x12 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 166x12
+      chunk 1 text run 1 at (3.00,297.00) startOffset 0 endOffset 34 width 165.63: "This window contains other windows"
+layer at (-5,-5) size 226x186 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 226x186
+layer at (0,0) size 221x181
+  RenderSVGTransformableContainer {g} at (5,5) size 221x181
+layer at (0,0) size 220x180
+  RenderSVGRect {rect} at (0,0) size 220x180 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=0.00] [width=220.00] [height=180.00]
+layer at (0,167) size 220x13
+  RenderSVGRect {rect} at (0,167) size 220x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=167.00] [width=220.00] [height=13.00]
+layer at (3,168) size 181x11
+  RenderSVGText {text} at (3,167) size 182x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 182x12
+      chunk 1 text run 1 at (3.00,177.00) startOffset 0 endOffset 36 width 181.04: "Changing a colour changes background"
+layer at (-5,-5) size 226x23 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 226x23
+layer at (0,0) size 221x18
+  RenderSVGRect {rect} at (5,5) size 221x18 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=0.00] [y=0.00] [width=220.00] [height=17.00]
+layer at (3,1) size 84x15
+  RenderSVGText {text} at (8,6) size 86x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 85x16
+      chunk 1 text run 1 at (3.00,14.00) startOffset 0 endOffset 13 width 84.51: "Colour Picker"
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=-5.50] [y1=-5.50] [x2=5.50] [y2=5.50]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=-5.50] [x2=-5.50] [y2=5.50]
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,6) size 12x0
+  RenderSVGPath {line} at (-6,5) size 12x0 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=5.50] [x2=-5.50] [y2=5.50]
+layer at (-5,-5) size 186x86 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 186x86
+layer at (0,0) size 181x81
+  RenderSVGTransformableContainer {g} at (5,5) size 181x81
+layer at (0,0) size 180x80
+  RenderSVGRect {rect} at (0,0) size 180x80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=0.00] [width=180.00] [height=80.00]
+layer at (10,27) size 154x48
+  RenderSVGTransformableContainer {g} at (10,27) size 154x48
+layer at (10,27) size 153x48
+  RenderSVGText {text} at (0,0) size 154x48 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 154x16
+      chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 23 width 153.40: "This is a none-moveable"
+    RenderSVGTSpan {tspan} at (0,0) size 137x16
+      RenderSVGInlineText {#text} at (0,16) size 137x16
+        chunk 1 text run 1 at (10.00,56.00) startOffset 0 endOffset 21 width 136.98: "none-closeable status"
+    RenderSVGTSpan {tspan} at (0,0) size 47x16
+      RenderSVGInlineText {#text} at (0,32) size 47x16
+        chunk 1 text run 1 at (10.00,72.00) startOffset 0 endOffset 6 width 46.96: "window"
+layer at (-5,-5) size 186x23 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 186x23
+layer at (0,0) size 181x18
+  RenderSVGRect {rect} at (5,5) size 181x18 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=0.00] [y=0.00] [width=180.00] [height=17.00]
+layer at (3,1) size 93x15
+  RenderSVGText {text} at (8,6) size 95x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 94x16
+      chunk 1 text run 1 at (3.00,14.00) startOffset 0 endOffset 13 width 93.91: "Status Window"
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,6) size 12x0
+  RenderSVGPath {line} at (-6,5) size 12x0 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=5.50] [x2=-5.50] [y2=5.50]
+layer at (-5,-5) size 406x23 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 406x23
+layer at (0,0) size 401x18
+  RenderSVGRect {rect} at (5,5) size 401x18 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=0.00] [y=0.00] [width=400.00] [height=17.00]
+layer at (3,1) size 169x15
+  RenderSVGText {text} at (8,6) size 170x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 170x16
+      chunk 1 text run 1 at (3.00,14.00) startOffset 0 endOffset 24 width 169.03: "Nested middlesize Window"
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=-5.50] [y1=-5.50] [x2=5.50] [y2=5.50]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=-5.50] [x2=-5.50] [y2=5.50]
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,6) size 12x0
+  RenderSVGPath {line} at (-6,5) size 12x0 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=5.50] [x2=-5.50] [y2=5.50]
+layer at (-5,-5) size 206x186 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 206x186
+layer at (0,0) size 201x181
+  RenderSVGTransformableContainer {g} at (5,5) size 201x181
+layer at (0,0) size 200x180
+  RenderSVGRect {rect} at (0,0) size 200x180 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=0.00] [width=200.00] [height=180.00]
+layer at (10,27) size 173x80
+  RenderSVGTransformableContainer {g} at (10,27) size 173x80
+layer at (10,27) size 173x80
+  RenderSVGText {text} at (0,0) size 173x80 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 171x16
+      chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 26 width 170.60: "This window has a callback"
+    RenderSVGTSpan {tspan} at (0,0) size 159x16
+      RenderSVGInlineText {#text} at (0,16) size 159x16
+        chunk 1 text run 1 at (10.00,56.00) startOffset 0 endOffset 25 width 158.89: "function indicating mouse"
+    RenderSVGTSpan {tspan} at (0,0) size 173x16
+      RenderSVGInlineText {#text} at (0,32) size 173x16
+        chunk 1 text run 1 at (10.00,72.00) startOffset 0 endOffset 26 width 172.95: "movements in the statusbar"
+    RenderSVGTSpan {tspan} at (0,0) size 125x16
+      RenderSVGInlineText {#text} at (0,48) size 125x16
+        chunk 1 text run 1 at (10.00,88.00) startOffset 0 endOffset 19 width 124.45: "and alerting window"
+    RenderSVGTSpan {tspan} at (0,0) size 42x16
+      RenderSVGInlineText {#text} at (0,64) size 42x16
+        chunk 1 text run 1 at (10.00,104.00) startOffset 0 endOffset 6 width 41.48: "events"
+layer at (0,167) size 200x13
+  RenderSVGRect {rect} at (0,167) size 200x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=167.00] [width=200.00] [height=13.00]
+layer at (3,168) size 118x11
+  RenderSVGText {text} at (3,167) size 118x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 118x12
+      chunk 1 text run 1 at (3.00,177.00) startOffset 0 endOffset 27 width 117.82: "Callback function is active"
+layer at (-5,-5) size 206x23 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 206x23
+layer at (0,0) size 201x18
+  RenderSVGRect {rect} at (5,5) size 201x18 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=0.00] [y=0.00] [width=200.00] [height=17.00]
+layer at (3,1) size 89x15
+  RenderSVGText {text} at (8,6) size 90x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 90x16
+      chunk 1 text run 1 at (3.00,14.00) startOffset 0 endOffset 12 width 89.20: "Small Window"
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=-5.50] [y1=-5.50] [x2=5.50] [y2=5.50]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=-5.50] [x2=-5.50] [y2=5.50]
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,6) size 12x0
+  RenderSVGPath {line} at (-6,5) size 12x0 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=5.50] [x2=-5.50] [y2=5.50]
+layer at (0,0) size 151x61
+  RenderSVGTransformableContainer {g} at (5,5) size 151x61
+layer at (0,0) size 150x60
+  RenderSVGTransformableContainer {g} at (0,0) size 150x60
+layer at (0,0) size 150x60
+  RenderSVGRect {rect} at (0,0) size 150x60 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=0.00] [width=150.00] [height=60.00]
+layer at (5,6) size 138x46
+  RenderSVGTransformableContainer {g} at (5,5) size 138x46
+layer at (5,6) size 137x45
+  RenderSVGText {text} at (0,0) size 138x45 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 128x13
+      chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 24 width 127.39: "This is a minimal window"
+    RenderSVGTSpan {tspan} at (0,0) size 138x13
+      RenderSVGInlineText {#text} at (0,16) size 138x13
+        chunk 1 text run 1 at (5.00,32.00) startOffset 0 endOffset 29 width 137.04: "without title and status bar."
+    RenderSVGTSpan {tspan} at (0,0) size 114x13
+      RenderSVGInlineText {#text} at (0,32) size 114x13
+        chunk 1 text run 1 at (5.00,48.00) startOffset 0 endOffset 23 width 113.98: "it is also not moveable"
+layer at (-5,-5) size 706x23 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 706x23
+layer at (0,0) size 701x18
+  RenderSVGRect {rect} at (5,5) size 701x18 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=0.00] [y=0.00] [width=700.00] [height=17.00]
+layer at (3,1) size 74x15
+  RenderSVGText {text} at (8,6) size 75x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 75x16
+      chunk 1 text run 1 at (3.00,14.00) startOffset 0 endOffset 10 width 74.34: "Big Window"
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=-5.50] [y1=-5.50] [x2=5.50] [y2=5.50]
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=-5.50] [x2=-5.50] [y2=5.50]
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [stroke={[type=SOLID] [color=#696969]}] [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,-5) size 11x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 11x11
+layer at (0,0) size 1025x701 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (5,5) size 1025x701
+layer at (-5,-5) size 12x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-6,-6) size 12x12 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+layer at (-5,6) size 12x0
+  RenderSVGPath {line} at (-6,5) size 12x0 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=5.50] [x2=-5.50] [y2=5.50]

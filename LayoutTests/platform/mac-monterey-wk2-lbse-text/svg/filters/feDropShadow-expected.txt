@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (5,5) size 140x140
+  RenderSVGEllipse {circle} at (5,5) size 140x140 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=75.00] [cy=75.00] [r=70.00]
+layer at (180,5) size 140x140
+  RenderSVGEllipse {circle} at (180,5) size 140x140 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=250.00] [cy=75.00] [r=70.00]
+layer at (355,5) size 140x140
+  RenderSVGEllipse {circle} at (355,5) size 140x140 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=425.00] [cy=75.00] [r=70.00]
+layer at (530,5) size 140x140
+  RenderSVGEllipse {circle} at (530,5) size 140x140 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=600.00] [cy=75.00] [r=70.00]
+layer at (5,180) size 140x140
+  RenderSVGEllipse {circle} at (5,180) size 140x140 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=75.00] [cy=250.00] [r=70.00]
+layer at (180,180) size 140x140
+  RenderSVGEllipse {circle} at (180,180) size 140x140 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=250.00] [cy=250.00] [r=70.00]
+layer at (355,180) size 140x140
+  RenderSVGEllipse {circle} at (355,180) size 140x140 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=425.00] [cy=250.00] [r=70.00]
+layer at (530,180) size 140x140
+  RenderSVGEllipse {circle} at (530,180) size 140x140 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=600.00] [cy=250.00] [r=70.00]
