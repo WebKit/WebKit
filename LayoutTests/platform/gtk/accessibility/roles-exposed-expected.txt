@@ -223,6 +223,12 @@ mark
 math
       AXRole: AXMath
 
+menu
+      AXRole: AXList
+
+li
+      AXRole: AXListItem
+
 merror
       AXRole: AXGroup
 
