@@ -132,10 +132,39 @@ public:
     };
 #endif
 
+    struct Identifier {
+        Identifier() = default;
 #if USE(UNIX_DOMAIN_SOCKETS)
-    typedef int Identifier;
-    static bool identifierIsValid(Identifier identifier) { return identifier != -1; }
+        explicit Identifier(int handle)
+            : handle(handle)
+        {
+        }
+        operator bool() const { return handle != -1; }
+        int handle { -1 };
+#elif OS(WINDOWS)
+        explicit Identifier(HANDLE handle)
+            : handle(handle)
+        {
+        }
+        operator bool() const { return !!handle; }
+        HANDLE handle { 0 };
+#elif OS(DARWIN)
+        explicit Identifier(mach_port_t port)
+            : port(port)
+        {
+        }
+        Identifier(mach_port_t port, OSObjectPtr<xpc_connection_t> xpcConnection)
+            : port(port)
+            , xpcConnection(WTFMove(xpcConnection))
+        {
+        }
+        operator bool() const { return MACH_PORT_VALID(port); }
+        mach_port_t port { MACH_PORT_NULL };
+        OSObjectPtr<xpc_connection_t> xpcConnection;
+#endif
+    };
 
+#if USE(UNIX_DOMAIN_SOCKETS)
     struct SocketPair {
         int client;
         int server;
@@ -148,33 +177,11 @@ public:
 
     static Connection::SocketPair createPlatformConnection(unsigned options = SetCloexecOnClient | SetCloexecOnServer);
 #elif OS(DARWIN)
-    struct Identifier {
-        Identifier()
-        {
-        }
-
-        Identifier(mach_port_t port)
-            : port(port)
-        {
-        }
-
-        Identifier(mach_port_t port, OSObjectPtr<xpc_connection_t> xpcConnection)
-            : port(port)
-            , xpcConnection(WTFMove(xpcConnection))
-        {
-        }
-
-        mach_port_t port { MACH_PORT_NULL };
-        OSObjectPtr<xpc_connection_t> xpcConnection;
-    };
-    static bool identifierIsValid(Identifier identifier) { return MACH_PORT_VALID(identifier.port); }
     xpc_connection_t xpcConnection() const { return m_xpcConnection.get(); }
     std::optional<audit_token_t> getAuditToken();
     pid_t remoteProcessID() const;
 #elif OS(WINDOWS)
-    typedef HANDLE Identifier;
-    static bool createServerAndClientIdentifiers(Identifier& serverIdentifier, Identifier& clientIdentifier);
-    static bool identifierIsValid(Identifier identifier) { return !!identifier; }
+    static bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientIdentifier);
 #endif
 
     static Ref<Connection> createServerConnection(Identifier, Client&);

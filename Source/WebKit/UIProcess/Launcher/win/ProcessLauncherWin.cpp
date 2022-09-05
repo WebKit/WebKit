@@ -118,7 +118,7 @@ void ProcessLauncher::launchProcess()
     WTF::ProcessID pid = processInformation.dwProcessId;
 
     RunLoop::main().dispatch([protectedThis, pid, serverIdentifier] {
-        protectedThis->didFinishLaunchingProcess(pid, serverIdentifier);
+        protectedThis->didFinishLaunchingProcess(pid, IPC::Connection::Identifier { serverIdentifier });
     });
 }
 

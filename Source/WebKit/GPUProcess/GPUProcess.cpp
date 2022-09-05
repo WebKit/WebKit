@@ -139,7 +139,7 @@ void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier iden
     auto connectionIdentifier = asConnectionIdentifier(WTFMove(connectionHandle));
     // If sender exited before we received the identifier, the identifier
     // may not be valid.
-    if (!IPC::Connection::identifierIsValid(connectionIdentifier))
+    if (!connectionIdentifier)
         return;
 
     auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, sessionID, WTFMove(connectionIdentifier), WTFMove(parameters));
