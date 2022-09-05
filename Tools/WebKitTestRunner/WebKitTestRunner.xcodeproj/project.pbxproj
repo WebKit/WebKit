@@ -1376,6 +1376,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
 			};
 			name = Debug;
 		};
@@ -1383,6 +1384,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
 			};
 			name = Release;
 		};
@@ -1529,6 +1531,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
 			};
 			name = Production;
 		};
