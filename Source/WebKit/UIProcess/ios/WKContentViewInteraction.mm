@@ -1669,7 +1669,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 
     [self _cancelInteraction];
 
-    BOOL shouldDeactivateSelection = [&] -> BOOL {
+    BOOL shouldDeactivateSelection = [&]() -> BOOL {
 #if PLATFORM(MACCATALYST)
         if (reason == EndEditingReasonResigningFirstResponder) {
             // This logic is based on a similar check on macOS (in WebViewImpl::resignFirstResponder()) to
