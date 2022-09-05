@@ -53,7 +53,6 @@ static const char* defaultProcessPath(ProcessLauncher::ProcessType processType)
 
 void ProcessLauncher::launchProcess()
 {
-    IPC::Connection::Identifier serverIdentifier;
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection(IPC::Connection::ConnectionOptions::SetCloexecOnServer);
 
     int sendBufSize = 32 * 1024;
@@ -83,7 +82,7 @@ void ProcessLauncher::launchProcess()
         return;
     }
     close(socketPair.client);
-    serverIdentifier = socketPair.server;
+    IPC::Connection::Identifier serverIdentifier { socketPair.server };
 
     // We've finished launching the process, message back to the main run loop.
     RefPtr<ProcessLauncher> protectedThis(this);
