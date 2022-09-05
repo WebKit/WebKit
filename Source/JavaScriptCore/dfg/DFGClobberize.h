@@ -1819,6 +1819,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             write(RegExpState);
             write(RegExpObject_lastIndex);
             return;
+        } else if (node->child1().useKind() == StringUse
+            && node->child2().useKind() == StringUse
+            && node->child3().useKind() == StringUse) {
+            return;
         }
         clobberTop();
         return;
