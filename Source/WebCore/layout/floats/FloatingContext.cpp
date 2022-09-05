@@ -391,7 +391,8 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
     // 1. Convert vertical position if this floating context is inherited.
     // 2. Find the inner left/right floats at candidateTop/candidateBottom.
     // 3. Convert left/right positions back to formattingContextRoot's cooridnate system.
-    auto coordinateMappingIsRequired = &floatingState().root() != &root();
+    auto& floatingState = this->floatingState();
+    auto coordinateMappingIsRequired = &floatingState.root() != &root();
     auto adjustedCandidateTop = candidateTop;
     LayoutSize adjustingDelta;
     if (coordinateMappingIsRequired) {
@@ -402,11 +403,8 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
     auto adjustedCandidateBottom = adjustedCandidateTop + (candidateBottom - candidateTop);
     auto isCandidateEmpty = adjustedCandidateTop == adjustedCandidateBottom;
 
-    Constraints constraints;
-    auto& floats = floatingState().floats();
-    for (auto index = floats.size(); index--;) {
-        auto& floatItem = floats[index];
-
+    auto constraints = Constraints { };
+    for (auto& floatItem : makeReversedRange(floatingState.floats())) {
         if (constraints.left && floatItem.isLeftPositioned())
             continue;
 
@@ -427,7 +425,9 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         else
             constraints.right = PointInContextRoot { floatBoxRect.left(), floatBoxRect.bottom() };
 
-        if (constraints.left && constraints.right)
+        if ((constraints.left && constraints.right)
+            || (constraints.left && !floatingState.hasRightPositioned())
+            || (constraints.right && !floatingState.hasLeftPositioned()))
             break;
     }
 
