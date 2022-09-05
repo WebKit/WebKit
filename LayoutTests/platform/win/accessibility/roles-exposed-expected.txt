@@ -364,6 +364,16 @@ math
       AXSubrole: AXDocumentMath
       AXRoleDescription: math
 
+menu
+      AXRole: AXList
+      AXSubrole: AXContentList
+      AXRoleDescription: content list
+
+li
+      AXRole: AXGroup
+      AXSubrole:
+      AXRoleDescription: group
+
 merror
       AXRole: AXGroup
       AXSubrole: AXMathRow
@@ -533,16 +543,6 @@ meter
       AXRole: AXProgressIndicator
       AXSubrole:
       AXRoleDescription: progress indicator
-
-menu
-      AXRole: AXList
-      AXSubrole: AXContentList
-      AXRoleDescription: content list
-
-li
-      AXRole: AXGroup
-      AXSubrole:
-      AXRoleDescription: group
 
 nav
       AXRole: AXGroup

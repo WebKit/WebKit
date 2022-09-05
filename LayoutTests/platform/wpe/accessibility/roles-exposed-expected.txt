@@ -223,6 +223,12 @@ mark
 math
       AXRole: AXMath
 
+menu
+      AXRole: AXList
+
+li
+      AXRole: AXListItem
+
 merror
       AXRole: AXGroup
 
@@ -321,12 +327,6 @@ mtr
 
 mtd
       AXRole: AXCell
-
-menu
-      AXRole: AXList
-
-li
-      AXRole: AXListItem
 
 nav
       AXRole: AXLandmarkNavigation
