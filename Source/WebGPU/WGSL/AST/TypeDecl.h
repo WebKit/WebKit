@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTNode.h"
+#include "Expression.h"
 #include <wtf/TypeCasts.h>
 
 namespace WGSL::AST {
@@ -35,6 +36,7 @@ class TypeDecl : public ASTNode {
 
 public:
     enum class Kind : uint8_t {
+        Array,
         Named,
         Parameterized,
     };
@@ -47,8 +49,28 @@ public:
     virtual ~TypeDecl() {}
 
     virtual Kind kind() const = 0;
+    bool isArray() const { return kind() == Kind::Array; }
     bool isNamed() const { return kind() == Kind::Named; }
     bool isParameterized() const { return kind() == Kind::Parameterized; }
+};
+
+class ArrayType final : public TypeDecl {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ArrayType(SourceSpan span, std::unique_ptr<TypeDecl>&& elementType, std::unique_ptr<Expression>&& elementCount)
+        : TypeDecl(span)
+        , m_elementType(WTFMove(elementType))
+        , m_elementCount(WTFMove(elementCount))
+    {
+    }
+
+    Kind kind() const override { return Kind::Array; }
+    TypeDecl* maybeElementType() const { return m_elementType.get(); }
+    Expression* maybeElementCount() const { return m_elementCount.get(); }
+
+private:
+    std::unique_ptr<TypeDecl> m_elementType;
+    std::unique_ptr<Expression> m_elementCount;
 };
 
 class NamedType final : public TypeDecl {
@@ -137,5 +159,6 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
     static bool isType(const WGSL::AST::TypeDecl& type) { return type.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
+SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ArrayType, isArray())
 SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(NamedType, isNamed())
 SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ParameterizedType, isParameterized())
