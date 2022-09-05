@@ -76,14 +76,12 @@ svg/filters/feDiffuseLighting-feSpotLight-primitiveUnits-objectBoundingBox.svg  
 svg/filters/feDisplacementMap-color-interpolation-filters.svg                          [ ImageOnlyFailure ]
 svg/filters/feDisplacementMap.svg                                                      [ ImageOnlyFailure ]
 svg/filters/feDropShadow-blur-radius.html                                              [ ImageOnlyFailure ]
-svg/filters/feDropShadow-negative-deviation.svg                                        [ ImageOnlyFailure ]
 svg/filters/feDropShadow-subregion.svg                                                 [ ImageOnlyFailure ]
 svg/filters/feDropShadow-zero-deviation.svg                                            [ ImageOnlyFailure ]
 svg/filters/feDropShadow.svg                                                           [ ImageOnlyFailure ]
 svg/filters/feFlood-color-interpolation.svg                                            [ ImageOnlyFailure ]
 svg/filters/feFlood-with-alpha-color.html                                              [ ImageOnlyFailure ]
 svg/filters/feGaussianBlur-clipped.svg                                                 [ ImageOnlyFailure ]
-svg/filters/feGaussianBlur-negative-deviation.svg                                      [ ImageOnlyFailure ]
 svg/filters/feGaussianBlur-subregion.svg                                               [ ImageOnlyFailure ]
 svg/filters/feGaussianBlur-zero-deviation.svg                                          [ ImageOnlyFailure ]
 svg/filters/feGaussianBlur.svg                                                         [ ImageOnlyFailure ]
@@ -521,7 +519,6 @@ svg/carto.net/window.svg                               [ ImageOnlyFailure ]
 svg/custom/SVGPoint-matrixTransform.svg                [ ImageOnlyFailure ]
 svg/custom/pointer-events-text-css-transform.svg       [ Failure ]
 svg/custom/text-repaint-including-stroke.svg           [ Failure ]
-svg/custom/text-rotated-gradient.svg                   [ Failure ]
 svg/custom/use-event-handler-on-referenced-element.svg [ Failure ]
 svg/custom/use-event-handler-on-use-element.svg        [ Failure ]
 svg/hixie/perf/003.xml                                 [ ImageOnlyFailure ]
@@ -592,7 +589,6 @@ svg/hixie/text/003.html                    [ ImageOnlyFailure ]
 svg/text/font-size-below-point-five-2.svg  [ ImageOnlyFailure ]
 svg/text/monospace-text-size-in-img.html   [ ImageOnlyFailure ]
 svg/text/text-repaint-rects.xhtml          [ ImageOnlyFailure ]
-svg/text/text-repaint-rects.xhtml          [ ImageOnlyFailure ]
 svg/text/text-rescale.html                 [ ImageOnlyFailure ]
 
 # Text rendering has issues with CSS 'visibility'
@@ -611,7 +607,6 @@ svg/as-image/svg-object-intrinsic-size.html         [ ImageOnlyFailure ]
 
 # SVG sizing/repainting broken for SVGs embedded via HTML <object>
 svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1.html [ ImageOnlyFailure ]
-svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2.html [ ImageOnlyFailure ]
 svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2.html [ ImageOnlyFailure ]
 svg/as-object/embedded-svg-immediate-offsetWidth-query.html                   [ ImageOnlyFailure ]
 svg/as-object/embedded-svg-size-changes-no-layout-triggers.html               [ ImageOnlyFailure ]
@@ -709,6 +704,22 @@ svg/W3C-SVG-1.1/fonts-elem-02-t.svg [ Pass ImageOnlyFailure ]
 
 # 2) Filter / feImage invalidation/repainting issue?
 svg/filters/feImage-target-reappend-to-document.svg [ Pass ImageOnlyFailure ]
+
+###############
+#   Crashes   #
+###############
+
+# 1) RenderLayer asserts that a RenderSVGText renderer has a scrollableArea.
+# The test moves the <text> element from the <html>...<svg><text>... document
+# fragment to be the document element (instead of RenderSVGRoot). It then
+# gets a scrollableArea (bugs.webkit.org/b/222952) assigned, where it shouldn't.
+# The assertion is correct, the behavior not.
+# (Passes in release builds, asserts in debug)
+webkit.org/b/222952 svg/dom/replaceChild-document-crash.html [ Pass Crash ]
+
+# 2) RenderLayerFilters doesn't yet protect us from negative 'deviations' values in the effect stack
+svg/filters/feDropShadow-negative-deviation.svg   [ ImageOnlyFailure Crash ]
+svg/filters/feGaussianBlur-negative-deviation.svg [ ImageOnlyFailure Crash ]
 
 ###############
 #  OVERRIDES  #
