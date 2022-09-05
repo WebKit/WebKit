@@ -35,6 +35,7 @@
 #include "PerformanceUserTiming.h"
 #include "SerializedScriptValue.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/SystemTracing.h>
 
 namespace WebCore {
 
@@ -60,6 +61,7 @@ ExceptionOr<Ref<PerformanceMark>> PerformanceMark::create(JSC::JSGlobalObject& g
     if (is<Document>(scriptExecutionContext) && PerformanceUserTiming::isRestrictedMarkName(name))
         return Exception { SyntaxError };
 
+    bool mayEmitSignpost = false;
     double startTime;
     JSC::JSValue detail;
     if (markOptions) {
@@ -72,8 +74,14 @@ ExceptionOr<Ref<PerformanceMark>> PerformanceMark::create(JSC::JSGlobalObject& g
         
         if (markOptions->detail.isUndefined())
             detail = JSC::jsNull();
-        else
+        else {
             detail = markOptions->detail;
+            // We emit signpost based on detail.webkitSignpost property but in non user-observable way: using VM Inquiry and own property to get the value.
+            // And we do not emit signpost if startTime is specified since signpost only works with the current wall time. We only accept string for this property.
+            // "webkitSignpost" property can have "begin", "end", or "emit", and we use appropriate signpost based on that operation.
+            if (detail.isObject() && !markOptions->startTime)
+                mayEmitSignpost = true;
+        }
     } else {
         startTime = performanceNow(scriptExecutionContext);
         detail = JSC::jsNull();
@@ -83,6 +91,36 @@ ExceptionOr<Ref<PerformanceMark>> PerformanceMark::create(JSC::JSGlobalObject& g
     auto serializedDetail = SerializedScriptValue::create(globalObject, detail, { }, ignoredMessagePorts);
     if (serializedDetail.hasException())
         return serializedDetail.releaseException();
+
+    if (mayEmitSignpost) {
+        auto& vm = globalObject.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        auto& detailObject = *JSC::asObject(detail);
+        auto propertyName = JSC::Identifier::fromString(vm, "webkitSignpost"_s);
+        JSC::PropertySlot slot(&detailObject, JSC::PropertySlot::InternalMethodType::VMInquiry, &vm);
+        bool result = detailObject.getOwnPropertySlot(&detailObject, &globalObject, propertyName, slot);
+        if (UNLIKELY(scope.exception()))
+            return Exception { ExistingExceptionError };
+
+        // We only accept if the value is simple one. Not getter etc.
+        if (result && slot.isValue()) {
+            JSC::JSValue value = slot.getValue(&globalObject, propertyName);
+            if (UNLIKELY(scope.exception()))
+                return Exception { ExistingExceptionError };
+            if (value.isString()) {
+                String operation = value.toWTFString(&globalObject);
+                if (UNLIKELY(scope.exception()))
+                    return Exception { ExistingExceptionError };
+
+                if (operation == "begin"_s)
+                    WTFBeginSignpost(&globalObject, "UserTiming signpost", "%" PUBLIC_LOG_STRING, name.ascii().data());
+                else if (operation == "end"_s)
+                    WTFEndSignpost(&globalObject, "UserTiming signpost", "%" PUBLIC_LOG_STRING, name.ascii().data());
+                else if (operation == "emit"_s)
+                    WTFEmitSignpost(&globalObject, "UserTiming signpost", "%" PUBLIC_LOG_STRING, name.ascii().data());
+            }
+        }
+    }
 
     return adoptRef(*new PerformanceMark(name, startTime, serializedDetail.releaseReturnValue()));
 }
