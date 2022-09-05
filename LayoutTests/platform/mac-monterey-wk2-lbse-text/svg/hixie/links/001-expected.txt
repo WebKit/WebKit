@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (25,15) size 50x30
+  RenderSVGTransformableContainer {a} at (25,15) size 50x30
+layer at (25,15) size 30x30
+  RenderSVGEllipse {circle} at (0,0) size 30x30 [fill={[type=SOLID] [color=#0000FF]}] [cx=40.00] [cy=30.00] [r=15.00]
+layer at (45,15) size 30x30
+  RenderSVGEllipse {circle} at (20,0) size 30x30 [fill={[type=SOLID] [color=#0000FF]}] [cx=60.00] [cy=30.00] [r=15.00]
+layer at (25,55) size 50x30
+  RenderSVGTransformableContainer {a} at (25,55) size 50x30
+layer at (25,55) size 50x30
+  RenderSVGTransformableContainer {g} at (0,0) size 50x30
+layer at (25,55) size 30x30
+  RenderSVGEllipse {circle} at (0,0) size 30x30 [fill={[type=SOLID] [color=#0000FF]}] [cx=40.00] [cy=70.00] [r=15.00]
+layer at (45,55) size 30x30
+  RenderSVGEllipse {circle} at (20,0) size 30x30 [fill={[type=SOLID] [color=#0000FF]}] [cx=60.00] [cy=70.00] [r=15.00]

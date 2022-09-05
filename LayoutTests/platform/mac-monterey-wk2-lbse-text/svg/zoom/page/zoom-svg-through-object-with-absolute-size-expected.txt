@@ -1,0 +1,44 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x205
+  RenderBlock {html} at (0,0) size 800x205
+    RenderBody {body} at (5,5) size 790x194
+      RenderTable {table} at (143,0) size 503x194
+        RenderTableSection (anonymous) at (0,0) size 503x194
+          RenderTableRow {tr} at (0,0) size 503x194
+            RenderTableCell {td} at (0,0) size 503x194 [r=0 c=0 rs=1 cs=3]
+              RenderTable {table} at (6,6) size 490x181
+                RenderTableSection (anonymous) at (0,0) size 489x180
+                  RenderTableRow {tr} at (0,1) size 489x68
+                    RenderTableCell {td} at (1,1) size 486x68 [r=0 c=0 rs=1 cs=2]
+                      RenderBlock {h1} at (5,20) size 475x27
+                        RenderText {#text} at (0,0) size 475x26
+                          text run at (0,0) width 475: "Both sides should have identical size after zooming"
+                  RenderTableRow {tr} at (0,69) size 489x25
+                    RenderTableCell {td} at (1,69) size 243x25 [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (94,5) size 54x14
+                        text run at (94,5) width 54: "SVG Image"
+                    RenderTableCell {td} at (244,69) size 243x25 [r=1 c=1 rs=1 cs=1]
+                      RenderText {#text} at (94,5) size 54x14
+                        text run at (94,5) width 54: "PNG Image"
+                  RenderTableRow {tr} at (0,95) size 489x84
+                    RenderTableCell {td} at (1,95) size 243x84 [r=2 c=0 rs=1 cs=1]
+                      RenderEmbeddedObject {object} at (97,5) size 140x70
+                        layer at (0,0) size 139x69
+                          RenderView at (0,0) size 139x69
+                        layer at (0,0) size 139x69 scrollWidth 200 scrollHeight 100
+                          RenderSVGRoot {svg} at (0,0) size 139x69
+                        layer at (0,0) size 139x69
+                          RenderSVGViewportContainer at (0,0) size 139x69
+                        layer at (30,46) size 370x230 backgroundClip at (0,0) size 139x69 clip at (0,0) size 139x69
+                          RenderSVGTransformableContainer {g} at (30,46) size 370x230
+                        layer at (30,46) size 50x80 backgroundClip at (0,0) size 139x69 clip at (0,0) size 139x69
+                          RenderSVGRect {rect} at (0,0) size 50x80 [stroke={[type=SOLID] [color=#000000]}] [x=30.00] [y=46.00] [width=50.00] [height=80.00]
+                        layer at (130,46) size 50x80 backgroundClip at (0,0) size 139x69 clip at (0,0) size 139x69
+                          RenderSVGRect {rect} at (100,0) size 50x80 [fill={[type=SOLID] [color=#FF0000]}] [x=130.00] [y=46.00] [width=50.00] [height=80.00]
+                        layer at (1,1) size 478x358 backgroundClip at (0,0) size 139x69 clip at (0,0) size 139x69
+                          RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+                      RenderText {#text} at (0,0) size 0x0
+                    RenderTableCell {td} at (244,95) size 243x84 [r=2 c=1 rs=1 cs=1]
+                      RenderImage {img} at (5,5) size 140x70
+                      RenderText {#text} at (0,0) size 0x0

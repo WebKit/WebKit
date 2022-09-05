@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 87x40
+  RenderSVGTransformableContainer {g} at (0,0) size 87x40 [opacity=0.50]
+layer at (0,0) size 87x40
+  RenderSVGRect {rect} at (0,0) size 87x40 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=87.00] [height=40.00]
+layer at (0,46) size 141x18
+  RenderSVGText {text} at (0,46) size 142x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 142x18
+      chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 22 width 141.32: "This should not crash."

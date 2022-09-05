@@ -840,6 +840,26 @@ public:
         return isWatchingGlobalObjectWatchpoint(globalObject, set);
     }
 
+    bool isWatchingStringSymbolReplaceWatchpoint(Node* node)
+    {
+        if (m_plan.isUnlinked())
+            return false;
+
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        InlineWatchpointSet& set = globalObject->stringSymbolReplaceWatchpointSet();
+        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+    }
+
+    bool isWatchingRegExpPrimordialPropertiesWatchpoint(Node* node)
+    {
+        if (m_plan.isUnlinked())
+            return false;
+
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        InlineWatchpointSet& set = globalObject->regExpPrimordialPropertiesWatchpointSet();
+        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+    }
+
     Profiler::Compilation* compilation() { return m_plan.compilation(); }
 
     DesiredIdentifiers& identifiers() { return m_plan.identifiers(); }

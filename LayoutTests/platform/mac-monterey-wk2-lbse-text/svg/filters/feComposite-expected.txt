@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 400x400
+  RenderSVGRoot {svg} at (0,0) size 400x400
+layer at (0,0) size 400x400
+  RenderSVGViewportContainer at (0,0) size 400x400
+layer at (10,10) size 50x50
+  RenderSVGRect {rect} at (10,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=50.00] [height=50.00]
+layer at (10,76) size 28x18
+  RenderSVGText {text} at (10,76) size 29x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 29x18
+      chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 4 width 28.43: "over"
+layer at (70,10) size 50x50
+  RenderSVGRect {rect} at (70,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=70.00] [y=10.00] [width=50.00] [height=50.00]
+layer at (70,76) size 12x18
+  RenderSVGText {text} at (70,76) size 13x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 13x18
+      chunk 1 text run 1 at (70.00,90.00) startOffset 0 endOffset 2 width 12.45: "in"
+layer at (130,10) size 50x50
+  RenderSVGRect {rect} at (130,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=130.00] [y=10.00] [width=50.00] [height=50.00]
+layer at (130,76) size 20x18
+  RenderSVGText {text} at (130,76) size 21x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x18
+      chunk 1 text run 1 at (130.00,90.00) startOffset 0 endOffset 3 width 20.45: "out"
+layer at (10,110) size 50x50
+  RenderSVGRect {rect} at (10,110) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=110.00] [width=50.00] [height=50.00]
+layer at (10,176) size 28x18
+  RenderSVGText {text} at (10,176) size 28x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 28x18
+      chunk 1 text run 1 at (10.00,190.00) startOffset 0 endOffset 4 width 27.55: "atop"
+layer at (70,110) size 50x50
+  RenderSVGRect {rect} at (70,110) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=70.00] [y=110.00] [width=50.00] [height=50.00]
+layer at (70,176) size 21x18
+  RenderSVGText {text} at (70,176) size 22x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x18
+      chunk 1 text run 1 at (70.00,190.00) startOffset 0 endOffset 3 width 21.33: "xor"
+layer at (130,110) size 50x50
+  RenderSVGRect {rect} at (130,110) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=130.00] [y=110.00] [width=50.00] [height=50.00]
+layer at (130,176) size 65x18
+  RenderSVGText {text} at (130,176) size 65x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 65x18
+      chunk 1 text run 1 at (130.00,190.00) startOffset 0 endOffset 10 width 64.86: "arithmetic"

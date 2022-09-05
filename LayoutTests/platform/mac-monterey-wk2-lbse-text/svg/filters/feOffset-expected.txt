@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (25,25) size 50x50
+  RenderSVGTransformableContainer {g} at (25,25) size 50x50
+layer at (25,25) size 50x50
+  RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+layer at (25,25) size 50x50
+  RenderSVGTransformableContainer {g} at (25,25) size 50x50
+layer at (25,25) size 50x50
+  RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+layer at (25,25) size 50x50
+  RenderSVGTransformableContainer {g} at (25,25) size 50x50
+layer at (25,25) size 50x50
+  RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+layer at (25,25) size 50x50
+  RenderSVGTransformableContainer {g} at (25,25) size 50x50
+layer at (25,25) size 50x50
+  RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+layer at (25,25) size 50x50
+  RenderSVGTransformableContainer {g} at (25,25) size 50x50
+layer at (25,25) size 50x50
+  RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+layer at (25,25) size 50x50
+  RenderSVGTransformableContainer {g} at (25,25) size 50x50
+layer at (25,25) size 50x50
+  RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+layer at (25,25) size 50x50
+  RenderSVGTransformableContainer {g} at (25,25) size 50x50
+layer at (25,25) size 50x50
+  RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]

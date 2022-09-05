@@ -1141,7 +1141,7 @@ NO_RETURN inline void failedToSendSyncMessage()
 static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection& connection)
 {
     NetworkProcessConnectionInfo connectionInfo;
-    auto requestConnection = [&] {
+    auto requestConnection = [&]() -> bool {
         if (!connection.isValid()) {
             // Connection to UIProcess has been severed, exit cleanly.
             exit(0);
@@ -1150,7 +1150,7 @@ static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection&
             RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to send or receive message");
             return false;
         }
-        return IPC::Connection::identifierIsValid(connectionInfo.identifier());
+        return connectionInfo.identifier();
     };
 
     static constexpr unsigned maxFailedAttempts = 30;

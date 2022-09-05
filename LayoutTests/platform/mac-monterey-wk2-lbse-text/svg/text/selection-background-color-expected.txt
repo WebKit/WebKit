@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x236
+  RenderBlock {html} at (0,0) size 800x236
+    RenderBody {body} at (8,16) size 784x204
+      RenderBlock {p} at (0,0) size 784x204
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,16) size 600x200
+  RenderSVGRoot {svg} at (0,0) size 600x200
+layer at (8,16) size 600x200
+  RenderSVGViewportContainer at (0,0) size 600x200
+layer at (8,28) size 244x53
+  RenderSVGTransformableContainer {g} at (0,12) size 244x53
+layer at (8,28) size 243x23
+  RenderSVGText {text} at (0,0) size 244x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 244x23
+      chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 28 width 243.28: "Should have blue background."
+layer at (8,58) size 243x23
+  RenderSVGText {text} at (0,30) size 244x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 244x23
+      chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 28 width 243.28: "Should have blue background."
+selection start: position 0 of child 0 {#text} of child 1 {text} of child 3 {g} of child 1 {svg} of child 1 {p} of body
+selection end:   position 28 of child 0 {#text} of child 3 {text} of child 3 {g} of child 1 {svg} of child 1 {p} of body

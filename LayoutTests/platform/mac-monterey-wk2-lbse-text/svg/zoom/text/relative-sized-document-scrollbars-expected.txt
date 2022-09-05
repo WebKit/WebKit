@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (8,6) size 784x588
+  RenderSVGRect {rect} at (8,6) size 784x588 [stroke={[type=SOLID] [color=#000000]}] [x=8.00] [y=6.00] [width=784.00] [height=588.00]

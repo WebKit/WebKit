@@ -117,7 +117,7 @@ TEST_F(ConnectionTest, CreateClientConnection)
 {
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> connection = IPC::Connection::createClientConnection(identifiers->client.leakSendRight(), m_mockClientClient);
+    Ref<IPC::Connection> connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() }, m_mockClientClient);
     connection->invalidate();
 }
 
@@ -126,7 +126,7 @@ TEST_F(ConnectionTest, ConnectLocalConnection)
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
     Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server), m_mockServerClient);
-    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(identifiers->client.leakSendRight(), m_mockClientClient);
+    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() }, m_mockClientClient);
     serverConnection->open();
     clientConnection->open();
     serverConnection->invalidate();
@@ -138,7 +138,7 @@ TEST_F(ConnectionTest, SendLocalMessage)
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
     Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server), m_mockServerClient);
-    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(identifiers->client.leakSendRight(), m_mockClientClient);
+    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() }, m_mockClientClient);
     serverConnection->open();
     clientConnection->open();
 

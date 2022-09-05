@@ -52,7 +52,7 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
         return false;
 
     m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(atoll(argv[1]));
-    m_parameters.connectionIdentifier = atoi(argv[2]);
+    m_parameters.connectionIdentifier = IPC::Connection::Identifier { atoi(argv[2]) };
 #if ENABLE(DEVELOPER_MODE)
     if (argc > 3 && !strcmp(argv[3], "--configure-jsc-for-testing"))
         JSC::Config::configureForTesting();

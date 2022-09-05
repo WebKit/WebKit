@@ -95,7 +95,7 @@ void WebInspector::setFrontendConnection(IPC::Attachment encodedConnectionIdenti
     return;
 #endif
 
-    if (!IPC::Connection::identifierIsValid(connectionIdentifier))
+    if (!connectionIdentifier)
         return;
 
     m_frontendConnection = IPC::Connection::createClientConnection(connectionIdentifier, *this);

@@ -136,11 +136,13 @@ static bool sendMessage(Notification& notification, WebPage* page, const Functio
     std::optional<WebCore::PageIdentifier> pageIdentifier;
     if (page)
         pageIdentifier = page->identifier();
+#if ENABLE(SERVICE_WORKER)
     else if (auto* connection = SWContextManager::singleton().connection()) {
         // Pageless notification messages are, by default, on behalf of a service worker.
         // So use the service worker connection's page identifier.
         pageIdentifier = connection->pageIdentifier();
     }
+#endif
 
     ASSERT(pageIdentifier);
     return sendMessage(*WebProcess::singleton().parentProcessConnection(), pageIdentifier->toUInt64());

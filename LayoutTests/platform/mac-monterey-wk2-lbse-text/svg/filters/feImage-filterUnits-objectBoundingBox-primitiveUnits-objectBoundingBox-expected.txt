@@ -1,0 +1,34 @@
+layer at (0,0) size 800x800
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 800x800
+  RenderSVGRoot {svg} at (0,0) size 800x800
+layer at (0,0) size 800x800
+  RenderSVGViewportContainer at (0,0) size 800x800
+layer at (200,200) size 400x400
+  RenderSVGHiddenContainer {defs} at (200,200) size 400x400
+layer at (200,200) size 400x400
+  RenderSVGEllipse {circle} at (0,0) size 400x400 [fill={[type=SOLID] [color=#008000]}] [cx=400.00] [cy=400.00] [r=200.00]
+layer at (0,0) size 200x200
+  RenderSVGTransformableContainer {g} at (0,0) size 200x200
+layer at (50,50) size 100x100
+  RenderSVGRect {rect} at (50,50) size 100x100 [stroke={[type=SOLID] [color=#FF0000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+layer at (0,0) size 200x200
+  RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+layer at (0,0) size 200x200
+  RenderSVGTransformableContainer {g} at (0,0) size 200x200
+layer at (50,50) size 100x100
+  RenderSVGRect {rect} at (50,50) size 100x100 [stroke={[type=SOLID] [color=#FF0000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+layer at (0,0) size 200x200
+  RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+layer at (0,0) size 200x200
+  RenderSVGTransformableContainer {g} at (0,0) size 200x200
+layer at (40,40) size 120x120
+  RenderSVGRect {rect} at (40,40) size 120x120 [stroke={[type=SOLID] [color=#FF0000]}] [x=40.00] [y=40.00] [width=120.00] [height=120.00]
+layer at (0,0) size 200x200
+  RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+layer at (0,0) size 200x200
+  RenderSVGTransformableContainer {g} at (0,0) size 200x200
+layer at (40,40) size 120x120
+  RenderSVGRect {rect} at (40,40) size 120x120 [stroke={[type=SOLID] [color=#FF0000]}] [x=40.00] [y=40.00] [width=120.00] [height=120.00]
+layer at (0,0) size 200x200
+  RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]

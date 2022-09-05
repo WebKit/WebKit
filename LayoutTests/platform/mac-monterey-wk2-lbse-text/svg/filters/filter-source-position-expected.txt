@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (20,20) size 110x110
+  RenderSVGHiddenContainer {defs} at (20,20) size 110x110
+layer at (20,20) size 110x110
+  RenderSVGImage {image} at (0,0) size 110x110
+layer at (20,20) size 110x110
+  RenderSVGTransformableContainer {use} at (20,20) size 110x110
+layer at (20,20) size 110x110
+  RenderSVGImage {image} at (0,0) size 110x110
+layer at (20,20) size 110x110
+  RenderSVGTransformableContainer {use} at (20,20) size 110x110
+layer at (20,20) size 110x110
+  RenderSVGImage {image} at (0,0) size 110x110
+layer at (20,20) size 110x110
+  RenderSVGTransformableContainer {use} at (20,20) size 110x110
+layer at (20,20) size 110x110
+  RenderSVGImage {image} at (0,0) size 110x110
+layer at (20,20) size 110x110
+  RenderSVGTransformableContainer {use} at (20,20) size 110x110
+layer at (20,20) size 110x110
+  RenderSVGImage {image} at (0,0) size 110x110
