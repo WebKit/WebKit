@@ -891,7 +891,11 @@ private:
             String string = stringNode->tryGetString(m_graph);
             if (!string)
                 break;
-            
+
+            String replace = m_node->child3()->tryGetString(m_graph);
+            if (!replace)
+                break;
+
             Node* regExpObjectNode = m_node->child2().node();
             RegExp* regExp;
             if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>()) {
@@ -912,15 +916,32 @@ private:
                 }
                 m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpoint());
                 regExp = regExpObjectNode->castOperand<RegExp*>();
+            } else if (String searchString = m_node->child2()->tryGetString(m_graph); !!searchString) {
+                // String/String/String case.
+
+                size_t matchStart = string.find(searchString);
+                if (matchStart == notFound) {
+                    m_changed = true;
+                    m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
+                    m_node->convertToIdentityOn(stringNode);
+                    break;
+                }
+
+                size_t searchStringLength = searchString.length();
+                size_t matchEnd = matchStart + searchStringLength;
+                auto result = tryMakeString(StringView(string).substring(0, matchStart), replace, StringView(string).substring(matchEnd, string.length() - matchEnd));
+                if (!result)
+                    break;
+
+                m_changed = true;
+                m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
+                m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, WTFMove(result)));
+                break;
             } else {
                 if (verbose)
                     dataLog("Giving up because the regexp is unknown.\n");
                 break;
             }
-
-            String replace = m_node->child3()->tryGetString(m_graph);
-            if (!replace)
-                break;
 
             StringBuilder builder;
 
@@ -978,7 +999,6 @@ private:
 
             NodeOrigin origin = m_node->origin;
 
-            // Preserve any checks we have.
             m_insertionSet.insertNode(
                 m_nodeIndex, SpecNone, Check, origin, m_node->children.justChecks());
 

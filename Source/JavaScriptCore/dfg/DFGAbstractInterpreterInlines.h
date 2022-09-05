@@ -2655,7 +2655,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case StringReplace:
     case StringReplaceRegExp:
         if (node->child1().useKind() == StringUse
-            && node->child2().useKind() == RegExpObjectUse
+            && (node->child2().useKind() == RegExpObjectUse || node->child2().useKind() == StringUse)
             && node->child3().useKind() == StringUse) {
             // This doesn't clobber the world. It just reads and writes regexp state.
         } else
