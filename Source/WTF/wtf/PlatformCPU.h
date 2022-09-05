@@ -55,6 +55,12 @@
 #define WTF_MIPS_FP64 (defined __mips_fpr && __mips_fpr == 64)
 #endif
 
+/* CPU(LOONGARCH64) - LOONGARCH64 */
+#if defined(__loongarch64)
+#define WTF_CPU_LOONGARCH64 1
+#define WTF_CPU_KNOWN 1
+#endif
+
 /* CPU(PPC64) - PowerPC 64-bit Big Endian */
 #if (  defined(__ppc64__)      \
     || defined(__PPC64__))     \
