@@ -243,6 +243,7 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
             callback(true);
         });
         m_grantedRequests.append(request);
+        m_grantedFrames.add(request.frameID());
         return;
     }
 
@@ -311,13 +312,17 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
 
 void UserMediaPermissionRequestManagerProxy::resetAccess(std::optional<FrameIdentifier> frameID)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, frameID ? frameID->toUInt64() : 0);
+
     if (frameID) {
-        ALWAYS_LOG(LOGIDENTIFIER, frameID ? frameID->loggingString() : String { });
         m_grantedRequests.removeAllMatching([frameID](const auto& grantedRequest) {
             return grantedRequest->mainFrameID() == frameID;
         });
-    } else
+        m_grantedFrames.remove(*frameID);
+    } else {
         m_grantedRequests.clear();
+        m_grantedFrames.clear();
+    }
     m_pregrantedRequests.clear();
     m_deniedRequests.clear();
     m_hasFilteredDeviceList = false;
@@ -390,8 +395,10 @@ bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(const UserMediaPer
 
 void UserMediaPermissionRequestManagerProxy::updateStoredRequests(UserMediaPermissionRequestProxy& request)
 {
-    if (request.requestType() == MediaStreamRequest::Type::UserMedia)
+    if (request.requestType() == MediaStreamRequest::Type::UserMedia) {
         m_grantedRequests.append(request);
+        m_grantedFrames.add(request.frameID());
+    }
 
     m_deniedRequests.removeAllMatching([&request](auto& deniedRequest) {
         if (!isMatchingDeniedRequest(request, deniedRequest))
@@ -559,7 +566,7 @@ void UserMediaPermissionRequestManagerProxy::platformValidateUserMediaRequestCon
 void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionInvalidRequest(const String& invalidConstraint)
 {
     ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID().toUInt64());
-    bool filterConstraint = !m_currentUserMediaRequest->hasPersistentAccess() && !wasGrantedVideoOrAudioAccess(m_currentUserMediaRequest->frameID(), m_currentUserMediaRequest->userMediaDocumentSecurityOrigin(), m_currentUserMediaRequest->topLevelDocumentSecurityOrigin());
+    bool filterConstraint = !m_currentUserMediaRequest->hasPersistentAccess() && !wasGrantedVideoOrAudioAccess(m_currentUserMediaRequest->frameID());
 
     denyRequest(*m_currentUserMediaRequest, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::InvalidConstraint, filterConstraint ? String { } : invalidConstraint);
 }
@@ -733,23 +740,9 @@ void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(FrameIde
     m_page.uiClient().checkUserMediaPermissionForOrigin(m_page, *webFrame, userMediaOrigin.get(), topLevelOrigin.get(), request.get());
 }
 
-bool UserMediaPermissionRequestManagerProxy::wasGrantedVideoOrAudioAccess(FrameIdentifier frameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin)
+bool UserMediaPermissionRequestManagerProxy::wasGrantedVideoOrAudioAccess(FrameIdentifier frameID)
 {
-    for (const auto& grantedRequest : m_grantedRequests) {
-        if (grantedRequest->requiresDisplayCapture())
-            continue;
-        if (!grantedRequest->userMediaDocumentSecurityOrigin().isSameSchemeHostPort(userMediaDocumentOrigin))
-            continue;
-        if (!grantedRequest->topLevelDocumentSecurityOrigin().isSameSchemeHostPort(topLevelDocumentOrigin))
-            continue;
-        if (grantedRequest->frameID() != frameID)
-            continue;
-
-        if (grantedRequest->requiresVideoCapture() || grantedRequest->requiresAudioCapture())
-            return true;
-    }
-
-    return false;
+    return m_grantedFrames.contains(frameID);
 }
 
 static inline bool haveMicrophoneDevice(const Vector<WebCore::CaptureDevice>& devices, const String& deviceID)
@@ -859,7 +852,7 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(Frame
 
             syncWithWebCorePrefs();
 
-            bool revealIdsAndLabels = originHasPersistentAccess || wasGrantedVideoOrAudioAccess(frameID, userMediaDocumentOrigin.get(), topLevelDocumentOrigin.get());
+            bool revealIdsAndLabels = originHasPersistentAccess || wasGrantedVideoOrAudioAccess(frameID);
 
             callCompletionHandler.release();
             computeFilteredDeviceList(revealIdsAndLabels, [completionHandler = WTFMove(completionHandler), deviceIDHashSalt = WTFMove(deviceIDHashSalt)] (auto&& devices) mutable {
