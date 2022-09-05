@@ -113,7 +113,7 @@ static_assert(sizeof(MessageInfo) + sizeof(AttachmentInfo) * attachmentMaxAmount
 
 void Connection::platformInitialize(Identifier identifier)
 {
-    m_socketDescriptor = identifier;
+    m_socketDescriptor = identifier.handle;
 #if USE(GLIB)
     m_socket = adoptGRef(g_socket_new_from_fd(m_socketDescriptor, nullptr));
 #endif
