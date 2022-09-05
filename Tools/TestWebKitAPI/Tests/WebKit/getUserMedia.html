@@ -246,6 +246,17 @@
                     window.webkit.messageHandlers.gum.postMessage("FAIL checkConstraintsStatus, " + e);
                 });
             }
+
+            function checkEnumerateDevicesDoesNotFilter() {
+                navigator.mediaDevices.enumerateDevices().then(devices => {
+                    if (!devices.length) {
+                        window.webkit.messageHandlers.gum.postMessage("FAIL checkEnumerateDevicesDoesNotFilter as no devices");
+                    }
+                    window.webkit.messageHandlers.gum.postMessage(devices[0].label ? "PASS" : "FAIL checkEnumerateDevicesDoesNotFilter as there is no label");
+                }, e => {
+                    window.webkit.messageHandlers.gum.postMessage("FAIL checkEnumerateDevicesDoesNotFilter, " + e);
+                });
+            }
         </script>
     <head>
 

@@ -144,7 +144,7 @@ private:
 
     RequestAction getRequestAction(const UserMediaPermissionRequestProxy&);
 
-    bool wasGrantedVideoOrAudioAccess(WebCore::FrameIdentifier, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin);
+    bool wasGrantedVideoOrAudioAccess(WebCore::FrameIdentifier);
 
     void computeFilteredDeviceList(bool revealIdsAndLabels, CompletionHandler<void(Vector<WebCore::CaptureDevice>&&)>&&);
     void platformGetMediaStreamDevices(CompletionHandler<void(Vector<WebCore::CaptureDevice>&&)>&&);
@@ -194,6 +194,7 @@ private:
 #endif
     uint64_t m_hasPendingCapture { 0 };
     std::optional<bool> m_mockDevicesEnabledOverride;
+    HashSet<WebCore::FrameIdentifier> m_grantedFrames;
 };
 
 String convertEnumerationToString(UserMediaPermissionRequestManagerProxy::RequestAction);
