@@ -57,9 +57,11 @@ private:
     PermissionStatus(ScriptExecutionContext&, PermissionState, const PermissionDescriptor&);
 
     // PermissionObserver
+    PermissionState currentState() const final { return m_state; }
     void stateChanged(PermissionState) final;
     const ClientOrigin& origin() const final { return m_origin; }
     const PermissionDescriptor& descriptor() const final { return m_descriptor; }
+    const ScriptExecutionContext* context() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;

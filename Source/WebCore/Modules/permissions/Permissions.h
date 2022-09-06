@@ -34,10 +34,17 @@ namespace JSC {
 class JSObject;
 } // namespace JSC
 
+namespace WTF {
+class String;
+}
+
 namespace WebCore {
 
 class NavigatorBase;
 class PermissionStatus;
+class ScriptExecutionContext;
+enum class PermissionName : uint8_t;
+enum class PermissionQuerySource : uint8_t;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
@@ -49,6 +56,8 @@ public:
 
     NavigatorBase* navigator();
     void query(JSC::Strong<JSC::JSObject>, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&&);
+    WEBCORE_EXPORT static std::optional<PermissionQuerySource> sourceFromContext(const ScriptExecutionContext&);
+    WEBCORE_EXPORT static std::optional<PermissionName> toPermissionName(const String&);
 
 private:
     explicit Permissions(NavigatorBase&);

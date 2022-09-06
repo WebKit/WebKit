@@ -56,6 +56,7 @@
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPasteboardProxy.h"
+#include "WebPermissionControllerMessages.h"
 #include "WebPermissionControllerProxy.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcessCache.h"
@@ -69,9 +70,11 @@
 #include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <WebCore/PermissionName.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/PrewarmInformation.h>
 #include <WebCore/PublicSuffix.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SuddenTermination.h>
 #include <pal/system/Sound.h>
 #include <stdio.h>
@@ -2117,6 +2120,21 @@ const WeakHashSet<WebProcessProxy>* WebProcessProxy::sharedWorkerClientProcesses
     if (m_sharedWorkerInformation)
         return &m_sharedWorkerInformation.value().clientProcesses;
     return nullptr;
+}
+
+void WebProcessProxy::permissionChanged(WebCore::PermissionName permissionName, const WebCore::SecurityOriginData& topOrigin)
+{
+    auto webProcessPools = WebKit::WebProcessPool::allProcessPools();
+
+    for (auto& webProcessPool : webProcessPools) {
+        for (auto& webProcessProxy : webProcessPool->processes())
+            webProcessProxy->sendPermissionChanged(permissionName, topOrigin);
+    }
+}
+
+void WebProcessProxy::sendPermissionChanged(WebCore::PermissionName permissionName, const WebCore::SecurityOriginData& topOrigin)
+{
+    send(Messages::WebPermissionController::permissionChanged(permissionName, topOrigin), 0);
 }
 
 } // namespace WebKit

@@ -771,19 +771,29 @@ static String originUserVisibleName(WKSecurityOriginRef origin)
 
 bool TestController::grantNotificationPermission(WKStringRef originString)
 {
-    m_webNotificationProvider.setPermission(toWTFString(originString), true);
-
     auto origin = adoptWK(WKSecurityOriginCreateFromString(originString));
+    auto previousPermissionState = m_webNotificationProvider.permissionState(origin.get());
+
+    m_webNotificationProvider.setPermission(toWTFString(originString), true);
     WKNotificationManagerProviderDidUpdateNotificationPolicy(WKNotificationManagerGetSharedServiceWorkerNotificationManager(), origin.get(), true);
+
+    if (!previousPermissionState || !*previousPermissionState)
+        WKPagePermissionChanged(toWK("notifications").get(), originString);
+
     return true;
 }
 
 bool TestController::denyNotificationPermission(WKStringRef originString)
 {
-    m_webNotificationProvider.setPermission(toWTFString(originString), false);
-
     auto origin = adoptWK(WKSecurityOriginCreateFromString(originString));
+    auto previousPermissionState = m_webNotificationProvider.permissionState(origin.get());
+
+    m_webNotificationProvider.setPermission(toWTFString(originString), false);
     WKNotificationManagerProviderDidUpdateNotificationPolicy(WKNotificationManagerGetSharedServiceWorkerNotificationManager(), origin.get(), false);
+
+    if (!previousPermissionState || *previousPermissionState)
+        WKPagePermissionChanged(toWK("notifications").get(), originString);
+
     return true;
 }
 

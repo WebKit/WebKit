@@ -26,11 +26,11 @@ PASS PermissionStatus interface: existence and properties of interface prototype
 PASS PermissionStatus interface: existence and properties of interface prototype object's "constructor" property
 PASS PermissionStatus interface: existence and properties of interface prototype object's @@unscopables property
 PASS PermissionStatus interface: attribute state
-FAIL PermissionStatus interface: attribute onchange assert_true: The prototype object must have a property "onchange" expected true got false
+PASS PermissionStatus interface: attribute onchange
 PASS PermissionStatus must be primary interface of permissionStatus
 PASS Stringification of permissionStatus
 PASS PermissionStatus interface: permissionStatus must inherit property "state" with the proper type
-FAIL PermissionStatus interface: permissionStatus must inherit property "onchange" with the proper type assert_inherits: property "onchange" not found in prototype chain
+PASS PermissionStatus interface: permissionStatus must inherit property "onchange" with the proper type
 PASS Permissions interface: existence and properties of interface object
 PASS Permissions interface object length
 PASS Permissions interface object name

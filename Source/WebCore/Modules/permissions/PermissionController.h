@@ -25,18 +25,20 @@
 
 #pragma once
 
+#include "PermissionDescriptor.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
+enum class PermissionName : uint8_t;
 enum class PermissionQuerySource : uint8_t;
 enum class PermissionState : uint8_t;
 class Page;
 class PermissionObserver;
 struct ClientOrigin;
-struct PermissionDescriptor;
+struct SecurityOriginData;
 
 class PermissionController : public ThreadSafeRefCounted<PermissionController> {
 public:
@@ -44,9 +46,10 @@ public:
     WEBCORE_EXPORT static void setSharedController(Ref<PermissionController>&&);
     
     virtual ~PermissionController() = default;
-    virtual void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, Page*, PermissionQuerySource, CompletionHandler<void(std::optional<PermissionState>)>&&) = 0;
+    virtual void query(ClientOrigin&&, PermissionDescriptor, Page*, PermissionQuerySource, CompletionHandler<void(std::optional<PermissionState>)>&&) = 0;
     virtual void addObserver(PermissionObserver&) = 0;
     virtual void removeObserver(PermissionObserver&) = 0;
+    virtual void permissionChanged(PermissionName, const SecurityOriginData&) = 0;
 protected:
     PermissionController() = default;
 };
@@ -56,9 +59,10 @@ public:
     static Ref<DummyPermissionController> create() { return adoptRef(*new DummyPermissionController); }
 private:
     DummyPermissionController() = default;
-    void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, Page*, PermissionQuerySource, CompletionHandler<void(std::optional<PermissionState>)>&& callback) final { callback({ }); }
+    void query(ClientOrigin&&, PermissionDescriptor, Page*, PermissionQuerySource, CompletionHandler<void(std::optional<PermissionState>)>&& callback) final { callback({ }); }
     void addObserver(PermissionObserver&) final { }
     void removeObserver(PermissionObserver&) final { }
+    void permissionChanged(PermissionName, const SecurityOriginData&) final { }
 };
 
 } // namespace WebCore

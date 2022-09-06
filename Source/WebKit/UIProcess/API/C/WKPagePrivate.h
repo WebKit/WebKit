@@ -212,6 +212,8 @@ WK_EXPORT void WKPageSetMediaCaptureReportingDelayForTesting(WKPageRef page, dou
 
 WK_EXPORT void WKPageDispatchActivityStateUpdateForTesting(WKPageRef page);
 
+WK_EXPORT void WKPagePermissionChanged(WKStringRef permissionName, WKStringRef originString);
+
 #ifdef __cplusplus
 }
 #endif

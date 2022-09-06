@@ -32,6 +32,5 @@
 ] interface PermissionStatus : EventTarget {
     readonly attribute PermissionState state;
     readonly attribute PermissionName name;
-    // FIXME: Add support for onchange.
-    // attribute EventHandler onchange;
+    attribute EventHandler onchange;
 };

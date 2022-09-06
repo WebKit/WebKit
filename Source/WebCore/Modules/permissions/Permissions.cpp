@@ -38,6 +38,7 @@
 #include "Page.h"
 #include "PermissionController.h"
 #include "PermissionDescriptor.h"
+#include "PermissionName.h"
 #include "PermissionQuerySource.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -46,8 +47,10 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
+#include <optional>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -84,7 +87,7 @@ static bool isAllowedByFeaturePolicy(const Document& document, PermissionName na
     }
 }
 
-static std::optional<PermissionQuerySource> sourceFromContext(const ScriptExecutionContext& context)
+std::optional<PermissionQuerySource> Permissions::sourceFromContext(const ScriptExecutionContext& context)
 {
     if (is<Document>(context))
         return PermissionQuerySource::Window;
@@ -96,6 +99,20 @@ static std::optional<PermissionQuerySource> sourceFromContext(const ScriptExecut
     if (is<ServiceWorkerGlobalScope>(context))
         return PermissionQuerySource::ServiceWorker;
 #endif
+    return std::nullopt;
+}
+
+
+std::optional<PermissionName> Permissions::toPermissionName(const String& name)
+{
+    if (name == "camera"_s)
+        return PermissionName::Camera;
+    if (name == "geolocation"_s)
+        return PermissionName::Geolocation;
+    if (name == "microphone"_s)
+        return PermissionName::Microphone;
+    if (name == "notifications"_s)
+        return PermissionName::Notifications;
     return std::nullopt;
 }
 
@@ -141,7 +158,7 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
             return;
         }
 
-        PermissionController::shared().query(ClientOrigin { document->topOrigin().data(), WTFMove(originData) }, PermissionDescriptor { permissionDescriptor }, document->page(), *source, [document = Ref { *document }, permissionDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
+        PermissionController::shared().query(ClientOrigin { document->topOrigin().data(), WTFMove(originData) }, permissionDescriptor, document->page(), *source, [document = Ref { *document }, permissionDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
             if (!permissionState)
                 promise.reject(Exception { NotSupportedError, "Permissions::query does not support this API"_s });
             else
@@ -162,7 +179,7 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
             return;
         }
 
-        PermissionController::shared().query(ClientOrigin { document.topOrigin().data(), WTFMove(originData) }, PermissionDescriptor { permissionDescriptor }, document.page(), source, [contextIdentifier, permissionDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
+        PermissionController::shared().query(ClientOrigin { document.topOrigin().data(), WTFMove(originData) }, permissionDescriptor, document.page(), source, [contextIdentifier, permissionDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
             ScriptExecutionContext::postTaskTo(contextIdentifier, [promise = WTFMove(promise), permissionState, permissionDescriptor](auto& context) mutable {
                 if (!permissionState)
                     promise.reject(Exception { NotSupportedError, "Permissions::query does not support this API"_s });

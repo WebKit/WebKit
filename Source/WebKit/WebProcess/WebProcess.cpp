@@ -354,7 +354,7 @@ WebProcess::WebProcess()
 #endif
 
     WebCore::WebLockRegistry::setSharedRegistry(RemoteWebLockRegistry::create(*this));
-    WebCore::PermissionController::setSharedController(WebPermissionController::create());
+    WebCore::PermissionController::setSharedController(WebPermissionController::create(*this));
 }
 
 WebProcess::~WebProcess()
