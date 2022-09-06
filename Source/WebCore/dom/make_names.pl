@@ -1263,7 +1263,7 @@ sub generateFindNameForLength
                     print F "'$letter', ";
                 }
                 print F "};\n";
-                print F "${indent}if (!memcmp($bufferStart, rest, $lengthToCompare * sizeof(characterType))) {\n";
+                print F "${indent}if (WTF::equal($bufferStart, rest, $lengthToCompare)) {\n";
             }
             print F "$indent    return ${enumClass}::$enumValue;\n";
             print F "$indent}\n";
