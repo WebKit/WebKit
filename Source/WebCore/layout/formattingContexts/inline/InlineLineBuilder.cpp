@@ -614,7 +614,7 @@ std::optional<HorizontalConstraints> LineBuilder::floatConstraints(const InlineR
             logicalConstraints.left = PointInContextRoot { borderBoxWidth - constraints.right->x, constraints.right->y };
         return logicalConstraints;
     };
-    auto constraints = toLogicalFloatPosition(floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), toLayoutUnit(lineLogicalRect.bottom())));
+    auto constraints = toLogicalFloatPosition(floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), toLayoutUnit(lineLogicalRect.bottom()), FloatingContext::MayBeAboveLastFloat::Yes));
 
     // Check if these values actually constrain the line.
     if (constraints.left && constraints.left->x <= lineLogicalRect.left())

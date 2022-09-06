@@ -64,7 +64,7 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuild
     ASSERT(lineContent.runs.isEmpty() || lineContent.runs[0].isLineSpanningInlineBoxStart());
     ASSERT(lineContent.hasIntrusiveFloat);
     auto lineBottomWithNoInlineContent = std::max(lineLogicalRect.bottom(), lineInitialRect.bottom());
-    auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineInitialRect.top()), toLayoutUnit(lineBottomWithNoInlineContent));
+    auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineInitialRect.top()), toLayoutUnit(lineBottomWithNoInlineContent), FloatingContext::MayBeAboveLastFloat::Yes);
     ASSERT(floatConstraints.left || floatConstraints.right);
     if (floatConstraints.left && floatConstraints.right) {
         // In case of left and right constraints, we need to pick the one that's closer to the current line.

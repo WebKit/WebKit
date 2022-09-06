@@ -384,12 +384,12 @@ std::optional<LayoutUnit> FloatingContext::top() const
     return top;
 }
 
-FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom) const
+FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom, MayBeAboveLastFloat mayBeAboveLastFloat) const
 {
     if (isEmpty())
         return { };
     // 1. Convert vertical position if this floating context is inherited.
-    // 2. Find the inner left/right floats at candidateTop/candidateBottom.
+    // 2. Find the inner left/right floats at candidateTop/candidateBottom. Note when MayBeAboveLastFloat is 'no', we can just stop at the inner most (last) float (block vs. inline case).
     // 3. Convert left/right positions back to formattingContextRoot's cooridnate system.
     auto& floatingState = this->floatingState();
     auto coordinateMappingIsRequired = &floatingState.root() != &root();
@@ -402,33 +402,41 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
     }
     auto adjustedCandidateBottom = adjustedCandidateTop + (candidateBottom - candidateTop);
     auto isCandidateEmpty = adjustedCandidateTop == adjustedCandidateBottom;
+    auto contains = [&] (auto& floatBoxRect) {
+        if (isCandidateEmpty)
+            return floatBoxRect.top() <= adjustedCandidateTop && floatBoxRect.bottom() > adjustedCandidateTop;
+        return floatBoxRect.top() < adjustedCandidateBottom && floatBoxRect.bottom() > adjustedCandidateTop;
+    };
 
     auto constraints = Constraints { };
-    for (auto& floatItem : makeReversedRange(floatingState.floats())) {
-        if (constraints.left && floatItem.isLeftPositioned())
-            continue;
+    if (mayBeAboveLastFloat == MayBeAboveLastFloat::No) {
+        for (auto& floatItem : makeReversedRange(floatingState.floats())) {
+            if ((constraints.left && floatItem.isLeftPositioned()) || (constraints.right && !floatItem.isLeftPositioned()))
+                continue;
+            auto floatBoxRect = floatItem.rectWithMargin();
+            if (!contains(floatBoxRect))
+                continue;
+            if (floatItem.isLeftPositioned())
+                constraints.left = PointInContextRoot { floatBoxRect.right(), floatBoxRect.bottom() };
+            else
+                constraints.right = PointInContextRoot { floatBoxRect.left(), floatBoxRect.bottom() };
 
-        if (constraints.right && !floatItem.isLeftPositioned())
-            continue;
-
-        auto floatBoxRect = floatItem.rectWithMargin();
-        auto contains = [&] {
-            if (isCandidateEmpty)
-                return floatBoxRect.top() <= adjustedCandidateTop && floatBoxRect.bottom() > adjustedCandidateTop;
-            return floatBoxRect.top() < adjustedCandidateBottom && floatBoxRect.bottom() > adjustedCandidateTop;
-        };
-        if (!contains())
-            continue;
-
-        if (floatItem.isLeftPositioned())
-            constraints.left = PointInContextRoot { floatBoxRect.right(), floatBoxRect.bottom() };
-        else
-            constraints.right = PointInContextRoot { floatBoxRect.left(), floatBoxRect.bottom() };
-
-        if ((constraints.left && constraints.right)
-            || (constraints.left && !floatingState.hasRightPositioned())
-            || (constraints.right && !floatingState.hasLeftPositioned()))
-            break;
+            if ((constraints.left && constraints.right)
+                || (constraints.left && !floatingState.hasRightPositioned())
+                || (constraints.right && !floatingState.hasLeftPositioned()))
+                break;
+        }
+    } else {
+        for (auto& floatItem : makeReversedRange(floatingState.floats())) {
+            auto floatBoxRect = floatItem.rectWithMargin();
+            if (!contains(floatBoxRect))
+                continue;
+            if (floatItem.isLeftPositioned() && (!constraints.left || constraints.left->x < floatBoxRect.right()))
+                constraints.left = PointInContextRoot { floatBoxRect.right(), floatBoxRect.bottom() };
+            else if (floatItem.isRightPositioned() && (!constraints.right || constraints.right->x > floatBoxRect.left()))
+                constraints.right = PointInContextRoot { floatBoxRect.left(), floatBoxRect.bottom() };
+            // FIXME: Bail out when floats are way above.
+        }
     }
 
     if (coordinateMappingIsRequired) {

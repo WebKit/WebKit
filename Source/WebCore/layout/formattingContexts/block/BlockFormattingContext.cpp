@@ -236,7 +236,7 @@ std::optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoi
 
     // FIXME: Check if the non-yet-computed height affects this computation - and whether we have to resolve it at a later point.
     auto logicalTop = logicalTopInFormattingContextRootCoordinate(layoutBox);
-    auto constraints = floatConstraintsInContainingBlockCoordinate(floatingContext.constraints(logicalTop, logicalTop));
+    auto constraints = floatConstraintsInContainingBlockCoordinate(floatingContext.constraints(logicalTop, logicalTop, FloatingContext::MayBeAboveLastFloat::No));
     if (!constraints.left && !constraints.right)
         return { };
     // Shrink the available space if the floats are actually intruding at this vertical position.
