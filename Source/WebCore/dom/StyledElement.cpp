@@ -174,18 +174,22 @@ MutableStyleProperties& StyledElement::ensureMutableInlineStyle()
     return downcast<MutableStyleProperties>(*inlineStyle);
 }
 
+void StyledElement::attributeWithPresentationalHintChanged()
+{
+    elementData()->setPresentationalHintStyleIsDirty(true);
+    invalidateStyle();
+}
+
 void StyledElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
 {
-    if (oldValue != newValue) {
-        if (name == styleAttr)
-            styleAttributeChanged(newValue, reason);
-        else if (hasPresentationalHintsForAttribute(name)) {
-            elementData()->setPresentationalHintStyleIsDirty(true);
-            invalidateStyle();
-        }
-    }
+    if (name == styleAttr)
+        styleAttributeChanged(newValue, reason);
+    else {
+        if (hasPresentationalHintsForAttribute(name))
+            attributeWithPresentationalHintChanged();
 
-    Element::attributeChanged(name, oldValue, newValue, reason);
+        Element::attributeChanged(name, oldValue, newValue, reason);
+    }
 }
 
 PropertySetCSSStyleDeclaration* StyledElement::inlineStyleCSSOMWrapper()

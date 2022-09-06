@@ -51,11 +51,13 @@ std::optional<SVGZoomAndPanType> SVGZoomAndPan::parseZoomAndPan(StringParsingBuf
     return parseZoomAndPanGeneric(buffer);
 }
 
-void SVGZoomAndPan::parseAttribute(const QualifiedName& attributeName, const AtomString& value)
+bool SVGZoomAndPan::parseAttribute(const QualifiedName& attributeName, const AtomString& value)
 {
-    if (attributeName != SVGNames::zoomAndPanAttr)
-        return;
-    m_zoomAndPan = SVGPropertyTraits<SVGZoomAndPanType>::fromString(value);
+    if (attributeName == SVGNames::zoomAndPanAttr) {
+        m_zoomAndPan = SVGPropertyTraits<SVGZoomAndPanType>::fromString(value);
+        return true;
+    }
+    return false;
 }
 
 }

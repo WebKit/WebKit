@@ -291,22 +291,7 @@ static CrossOriginState parseCrossoriginState(const AtomString& crossoriginValue
     return equalLettersIgnoringASCIICase(crossoriginValue, "use-credentials"_s) ? UseCredentials : Anonymous;
 }
 
-void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
-{
-    HTMLElement::attributeChanged(name, oldValue, newValue, reason);
-
-    if (name == referrerpolicyAttr && document().settings().referrerPolicyAttributeEnabled()) {
-        auto oldReferrerPolicy = parseReferrerPolicy(oldValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
-        auto newReferrerPolicy = parseReferrerPolicy(newValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
-        if (oldReferrerPolicy != newReferrerPolicy)
-            m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
-    } else if (name == crossoriginAttr) {
-        if (parseCrossoriginState(oldValue) != parseCrossoriginState(newValue))
-            m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
-    }
-}
-
-void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == altAttr) {
         if (is<RenderImage>(renderer()))
@@ -334,23 +319,32 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
         // No action needed for eager to lazy transition.
         if (!hasLazyLoadableAttributeValue(value))
             loadDeferredImage();
-    } else {
-        if (name == nameAttr) {
-            bool willHaveName = !value.isEmpty();
-            if (m_hadNameBeforeAttributeChanged != willHaveName && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
-                HTMLDocument& document = downcast<HTMLDocument>(this->document());
-                const AtomString& id = getIdAttribute();
-                if (!id.isEmpty() && id != getNameAttribute()) {
-                    if (willHaveName)
-                        document.addDocumentNamedItem(*id.impl(), *this);
-                    else
-                        document.removeDocumentNamedItem(*id.impl(), *this);
-                }
-            }
-            m_hadNameBeforeAttributeChanged = willHaveName;
+    } else if (name == referrerpolicyAttr) {
+        if (document().settings().referrerPolicyAttributeEnabled()) {
+            auto oldReferrerPolicy = parseReferrerPolicy(oldValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
+            auto newReferrerPolicy = parseReferrerPolicy(value, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
+            if (oldReferrerPolicy != newReferrerPolicy)
+                m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
         }
-        HTMLElement::parseAttribute(name, value);
-    }
+    } else if (name == crossoriginAttr) {
+        if (parseCrossoriginState(oldValue) != parseCrossoriginState(value))
+            m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
+    } else if (name == nameAttr) {
+        bool willHaveName = !value.isEmpty();
+        if (m_hadNameBeforeAttributeChanged != willHaveName && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
+            HTMLDocument& document = downcast<HTMLDocument>(this->document());
+            const AtomString& id = getIdAttribute();
+            if (!id.isEmpty() && id != getNameAttribute()) {
+                if (willHaveName)
+                    document.addDocumentNamedItem(*id.impl(), *this);
+                else
+                    document.removeDocumentNamedItem(*id.impl(), *this);
+            }
+        }
+        m_hadNameBeforeAttributeChanged = willHaveName;
+        nameAttributeChanged(value);
+    } else
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void HTMLImageElement::loadDeferredImage()

@@ -362,16 +362,31 @@ bool HTMLTableElement::hasPresentationalHintsForAttribute(const QualifiedName& n
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
 
+    auto invalidateForBordersOrPaddingChange = [&] {
+        if (bordersBefore != cellBorders() || oldPadding != m_padding) {
+            m_sharedCellStyle = nullptr;
+            bool cellChanged = false;
+            for (auto& child : childrenOfType<Element>(*this))
+                cellChanged |= setTableCellsChanged(child);
+            if (cellChanged)
+                invalidateStyleForSubtree();
+        }
+    };
+
     if (name == borderAttr)  {
         // FIXME: This attribute is a mess.
         m_borderAttr = parseBorderWidthAttribute(value);
+        invalidateForBordersOrPaddingChange();
+        attributeWithPresentationalHintChanged();
     } else if (name == bordercolorAttr) {
         m_borderColorAttr = !value.isEmpty();
+        invalidateForBordersOrPaddingChange();
+        attributeWithPresentationalHintChanged();
     } else if (name == frameAttr) {
         // FIXME: This attribute is a mess.
         bool borderTop;
@@ -391,24 +406,18 @@ void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomStrin
             m_rulesAttr = ColsRules;
         else if (equalLettersIgnoringASCIICase(value, "all"_s))
             m_rulesAttr = AllRules;
+        invalidateForBordersOrPaddingChange();
+        attributeWithPresentationalHintChanged();
     } else if (name == cellpaddingAttr) {
         if (!value.isEmpty())
             m_padding = std::max(0, parseHTMLInteger(value).value_or(0));
         else
             m_padding = 1;
+        invalidateForBordersOrPaddingChange();
     } else if (name == colsAttr) {
         // ###
     } else
-        HTMLElement::parseAttribute(name, value);
-
-    if (bordersBefore != cellBorders() || oldPadding != m_padding) {
-        m_sharedCellStyle = nullptr;
-        bool cellChanged = false;
-        for (auto& child : childrenOfType<Element>(*this))
-            cellChanged |= setTableCellsChanged(child);
-        if (cellChanged)
-            invalidateStyleForSubtree();
-    }
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 static StyleProperties* leakBorderStyle(CSSValueID value)

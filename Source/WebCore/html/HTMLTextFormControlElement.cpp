@@ -554,13 +554,13 @@ void HTMLTextFormControlElement::scheduleSelectEvent()
     queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().selectEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 } 
 
-void HTMLTextFormControlElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLTextFormControlElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == placeholderAttr) {
         updatePlaceholderText();
         updatePlaceholderVisibility();
     } else
-        HTMLFormControlElementWithState::parseAttribute(name, value);
+        HTMLFormControlElementWithState::attributeChanged(name, oldValue, value, reason);
 }
 
 void HTMLTextFormControlElement::disabledStateChanged()

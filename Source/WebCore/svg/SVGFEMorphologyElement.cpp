@@ -55,29 +55,21 @@ void SVGFEMorphologyElement::setRadius(float x, float y)
     updateSVGRendererForElementChange();
 }
 
-void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFEMorphologyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == SVGNames::operatorAttr) {
         MorphologyOperatorType propertyValue = SVGPropertyTraits<MorphologyOperatorType>::fromString(value);
         if (propertyValue != MorphologyOperatorType::Unknown)
             m_svgOperator->setBaseValInternal<MorphologyOperatorType>(propertyValue);
-        return;
-    }
-
-    if (name == SVGNames::inAttr) {
+    } else if (name == SVGNames::inAttr)
         m_in1->setBaseValInternal(value);
-        return;
-    }
-
-    if (name == SVGNames::radiusAttr) {
+    else if (name == SVGNames::radiusAttr) {
         if (auto result = parseNumberOptionalNumber(value)) {
             m_radiusX->setBaseValInternal(result->first);
             m_radiusY->setBaseValInternal(result->second);
         }
-        return;
-    }
-
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
+    } else
+        SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, value, reason);
 }
 
 bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)

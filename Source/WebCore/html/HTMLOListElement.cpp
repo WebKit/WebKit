@@ -83,7 +83,7 @@ void HTMLOListElement::collectPresentationalHintsForAttribute(const QualifiedNam
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLOListElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLOListElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == startAttr) {
         int oldStart = start();
@@ -98,7 +98,7 @@ void HTMLOListElement::parseAttribute(const QualifiedName& name, const AtomStrin
         m_isReversed = reversed;
         RenderListItem::updateItemValuesForOrderedList(*this);
     } else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void HTMLOListElement::setStartForBindings(int start)

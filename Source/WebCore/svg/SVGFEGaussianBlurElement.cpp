@@ -56,31 +56,23 @@ void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)
     updateSVGRendererForElementChange();
 }
 
-void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFEGaussianBlurElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == SVGNames::stdDeviationAttr) {
         if (auto result = parseNumberOptionalNumber(value)) {
             m_stdDeviationX->setBaseValInternal(result->first);
             m_stdDeviationY->setBaseValInternal(result->second);
         }
-        return;
-    }
-
-    if (name == SVGNames::inAttr) {
+    } else if (name == SVGNames::inAttr)
         m_in1->setBaseValInternal(value);
-        return;
-    }
-
-    if (name == SVGNames::edgeModeAttr) {
+    else if (name == SVGNames::edgeModeAttr) {
         auto propertyValue = SVGPropertyTraits<EdgeModeType>::fromString(value);
         if (propertyValue != EdgeModeType::Unknown)
             m_edgeMode->setBaseValInternal<EdgeModeType>(propertyValue);
         else
             document().accessSVGExtensions().reportWarning("feGaussianBlur: problem parsing edgeMode=\"" + value + "\". Filtered element will not be displayed.");
-        return;
-    }
-
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
+    } else
+        SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGFEGaussianBlurElement::svgAttributeChanged(const QualifiedName& attrName)

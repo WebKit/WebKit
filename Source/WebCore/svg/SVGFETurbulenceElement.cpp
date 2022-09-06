@@ -51,41 +51,27 @@ Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& 
     return adoptRef(*new SVGFETurbulenceElement(tagName, document));
 }
 
-void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == SVGNames::typeAttr) {
         TurbulenceType propertyValue = SVGPropertyTraits<TurbulenceType>::fromString(value);
         if (propertyValue != TurbulenceType::Unknown)
             m_type->setBaseValInternal<TurbulenceType>(propertyValue);
-        return;
-    }
-
-    if (name == SVGNames::stitchTilesAttr) {
+    } else if (name == SVGNames::stitchTilesAttr) {
         SVGStitchOptions propertyValue = SVGPropertyTraits<SVGStitchOptions>::fromString(value);
         if (propertyValue > 0)
             m_stitchTiles->setBaseValInternal<SVGStitchOptions>(propertyValue);
-        return;
-    }
-
-    if (name == SVGNames::baseFrequencyAttr) {
+    } else if (name == SVGNames::baseFrequencyAttr) {
         if (auto result = parseNumberOptionalNumber(value)) {
             m_baseFrequencyX->setBaseValInternal(result->first);
             m_baseFrequencyY->setBaseValInternal(result->second);
         }
-        return;
-    }
-
-    if (name == SVGNames::seedAttr) {
+    } else if (name == SVGNames::seedAttr)
         m_seed->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::numOctavesAttr) {
+    else if (name == SVGNames::numOctavesAttr)
         m_numOctaves->setBaseValInternal(parseInteger<unsigned>(value).value_or(0));
-        return;
-    }
-
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
+    else
+        SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, value, reason);
 }
 
 bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)

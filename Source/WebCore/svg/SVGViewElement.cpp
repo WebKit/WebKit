@@ -45,11 +45,12 @@ Ref<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGViewElement(tagName, document));
 }
 
-void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGViewElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    SVGElement::parseAttribute(name, value);
-    SVGFitToViewBox::parseAttribute(name, value);
-    SVGZoomAndPan::parseAttribute(name, value);
+    if (SVGFitToViewBox::parseAttribute(name, value) || SVGZoomAndPan::parseAttribute(name, value))
+        return;
+
+    SVGElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGViewElement::svgAttributeChanged(const QualifiedName& attrName)

@@ -77,14 +77,14 @@ const MathMLElement::Length& MathMLScriptsElement::superscriptShift()
     return cachedMathMLLength(superscriptshiftAttr, m_superscriptShift);
 }
 
-void MathMLScriptsElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void MathMLScriptsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == subscriptshiftAttr)
         m_subscriptShift = std::nullopt;
     else if (name == superscriptshiftAttr)
         m_superscriptShift = std::nullopt;
-
-    MathMLElement::parseAttribute(name, value);
+    else
+        MathMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 RenderPtr<RenderElement> MathMLScriptsElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

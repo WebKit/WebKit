@@ -91,43 +91,21 @@ const Color& HTMLMetaElement::contentColor()
 
 void HTMLMetaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
 {
-    HTMLElement::attributeChanged(name, oldValue, newValue, reason);
-
-    if (!isInDocumentTree())
-        return;
-
     if (name == nameAttr) {
-        if (equalLettersIgnoringASCIICase(oldValue, "theme-color"_s) && !equalLettersIgnoringASCIICase(newValue, "theme-color"_s))
+        nameAttributeChanged(newValue);
+        if (isInDocumentTree() && equalLettersIgnoringASCIICase(oldValue, "theme-color"_s) && !equalLettersIgnoringASCIICase(newValue, "theme-color"_s))
             document().metaElementThemeColorChanged(*this);
-        return;
-    }
-}
-
-void HTMLMetaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
-{
-    if (name == nameAttr) {
         process();
-        return;
-    }
-
-    if (name == contentAttr) {
+    } else if (name == contentAttr) {
         m_contentColor = std::nullopt;
         process();
-        return;
-    }
-
-    if (name == http_equivAttr) {
+    } else if (name == http_equivAttr)
         process();
-        return;
-    }
-
-    if (name == mediaAttr) {
+    else if (name == mediaAttr) {
         m_media = nullptr;
         process();
-        return;
-    }
-
-    HTMLElement::parseAttribute(name, value);
+    } else
+        HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 }
 
 Node::InsertedIntoAncestorResult HTMLMetaElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

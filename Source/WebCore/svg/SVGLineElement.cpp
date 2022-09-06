@@ -51,7 +51,7 @@ Ref<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGLineElement(tagName, document));
 }
 
-void SVGLineElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGLineElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     SVGParsingError parseError = NoError;
 
@@ -63,10 +63,10 @@ void SVGLineElement::parseAttribute(const QualifiedName& name, const AtomString&
         m_x2->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
     else if (name == SVGNames::y2Attr)
         m_y2->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
+    else
+        SVGGeometryElement::attributeChanged(name, oldValue, value, reason);
 
     reportAttributeParsingError(parseError, name, value);
-
-    SVGGeometryElement::parseAttribute(name, value);
 }
 
 void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)

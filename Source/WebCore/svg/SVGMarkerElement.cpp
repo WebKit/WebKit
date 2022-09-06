@@ -59,25 +59,22 @@ AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float 
     return SVGFitToViewBox::viewBoxToViewTransform(viewBox(), preserveAspectRatio(), viewWidth, viewHeight);
 }
 
-void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGMarkerElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
+    SVGParsingError parseError = NoError;
+
+    if (SVGFitToViewBox::parseAttribute(name, value))
+        return;
+
     if (name == SVGNames::markerUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGMarkerUnitsType>::fromString(value);
         if (propertyValue > 0)
             m_markerUnits->setBaseValInternal<SVGMarkerUnitsType>(propertyValue);
-        return;
-    }
-
-    if (name == SVGNames::orientAttr) {
+    } else if (name == SVGNames::orientAttr) {
         auto pair = SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>>::fromString(value);
         m_orientAngle->setBaseValInternal(pair.first);
         m_orientType->setBaseValInternal(pair.second);
-        return;
-    }
-
-    SVGParsingError parseError = NoError;
-
-    if (name == SVGNames::refXAttr)
+    } else if (name == SVGNames::refXAttr)
         m_refX->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
     else if (name == SVGNames::refYAttr)
         m_refY->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
@@ -85,11 +82,10 @@ void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomStrin
         m_markerWidth->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
     else if (name == SVGNames::markerHeightAttr)
         m_markerHeight->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
+    else
+        SVGElement::attributeChanged(name, oldValue, value, reason);
 
     reportAttributeParsingError(parseError, name, value);
-
-    SVGElement::parseAttribute(name, value);
-    SVGFitToViewBox::parseAttribute(name, value);
 }
 
 void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)

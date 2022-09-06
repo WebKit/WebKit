@@ -130,7 +130,7 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
     return slot == m_summarySlot.get();
 }
 
-void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == openAttr) {
         bool oldValue = m_isOpen;
@@ -154,7 +154,7 @@ void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomStr
             m_isToggleEventTaskQueued = true;
         }
     } else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 

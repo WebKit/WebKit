@@ -237,7 +237,7 @@ void HTMLAnchorElement::setActive(bool down, Style::InvalidationScope invalidati
     HTMLElement::setActive(down, invalidationScope);
 }
 
-void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == hrefAttr) {
         bool wasLink = isLink();
@@ -251,8 +251,6 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomStri
                     document().frame()->loader().client().prefetchDNS(document().completeURL(parsedURL).host().toString());
             }
         }
-    } else if (name == nameAttr || name == titleAttr) {
-        // Do nothing.
     } else if (name == relAttr) {
         // Update HTMLAnchorElement::relList() if more rel attributes values are supported.
         static MainThreadNeverDestroyed<const AtomString> noReferrer("noreferrer"_s);
@@ -269,7 +267,7 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomStri
             m_relList->associatedAttributeValueChanged(value);
     }
     else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 bool HTMLAnchorElement::isURLAttribute(const Attribute& attribute) const

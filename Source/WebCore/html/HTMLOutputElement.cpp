@@ -69,11 +69,13 @@ bool HTMLOutputElement::supportsFocus() const
     return HTMLElement::supportsFocus();
 }
 
-void HTMLOutputElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLOutputElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    if (name == HTMLNames::forAttr && m_forTokens)
-        m_forTokens->associatedAttributeValueChanged(value);
-    HTMLFormControlElement::parseAttribute(name, value);
+    if (name == HTMLNames::forAttr) {
+        if (m_forTokens)
+            m_forTokens->associatedAttributeValueChanged(value);
+    } else
+        HTMLFormControlElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void HTMLOutputElement::reset()

@@ -73,7 +73,7 @@ const MathMLElement::Length& MathMLPaddedElement::voffset()
     return cachedMathMLLength(MathMLNames::voffsetAttr, m_voffset);
 }
 
-void MathMLPaddedElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void MathMLPaddedElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == widthAttr)
         m_width = std::nullopt;
@@ -85,8 +85,8 @@ void MathMLPaddedElement::parseAttribute(const QualifiedName& name, const AtomSt
         m_lspace = std::nullopt;
     else if (name == voffsetAttr)
         m_voffset = std::nullopt;
-
-    MathMLElement::parseAttribute(name, value);
+    else
+        MathMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 RenderPtr<RenderElement> MathMLPaddedElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

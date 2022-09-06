@@ -51,34 +51,20 @@ SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagNam
     });
 }
 
-void SVGTextPositioningElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGTextPositioningElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    if (name == SVGNames::xAttr) {
+    if (name == SVGNames::xAttr)
         m_x->baseVal()->parse(value);
-        return;
-    }
-
-    if (name == SVGNames::yAttr) {
+    else if (name == SVGNames::yAttr)
         m_y->baseVal()->parse(value);
-        return;
-    }
-
-    if (name == SVGNames::dxAttr) {
+    else if (name == SVGNames::dxAttr)
         m_dx->baseVal()->parse(value);
-        return;
-    }
-
-    if (name == SVGNames::dyAttr) {
+    else if (name == SVGNames::dyAttr)
         m_dy->baseVal()->parse(value);
-        return;
-    }
-
-    if (name == SVGNames::rotateAttr) {
+    else if (name == SVGNames::rotateAttr)
         m_rotate->baseVal()->parse(value);
-        return;
-    }
-
-    SVGTextContentElement::parseAttribute(name, value);
+    else
+        SVGTextContentElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGTextPositioningElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)

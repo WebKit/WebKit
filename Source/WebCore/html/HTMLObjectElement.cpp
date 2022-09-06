@@ -99,7 +99,7 @@ void HTMLObjectElement::collectPresentationalHintsForAttribute(const QualifiedNa
         HTMLPlugInImageElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLObjectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     bool invalidateRenderer = false;
     bool needsWidgetUpdate = false;
@@ -119,7 +119,7 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomStri
         invalidateRenderer = true;
         needsWidgetUpdate = true;
     } else
-        HTMLPlugInImageElement::parseAttribute(name, value);
+        HTMLPlugInImageElement::attributeChanged(name, oldValue, value, reason);
 
     if (needsWidgetUpdate) {
         setNeedsWidgetUpdate(true);

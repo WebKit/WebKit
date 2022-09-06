@@ -49,26 +49,18 @@ Ref<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGFEBlendElement(tagName, document));
 }
     
-void SVGFEBlendElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFEBlendElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == SVGNames::modeAttr) {
         BlendMode mode = BlendMode::Normal;
         if (parseBlendMode(value, mode))
             m_mode->setBaseValInternal<BlendMode>(mode);
-        return;
-    }
-
-    if (name == SVGNames::inAttr) {
+    } else if (name == SVGNames::inAttr)
         m_in1->setBaseValInternal(value);
-        return;
-    }
-
-    if (name == SVGNames::in2Attr) {
+    else if (name == SVGNames::in2Attr)
         m_in2->setBaseValInternal(value);
-        return;
-    }
-
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
+    else
+        SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, value, reason);
 }
 
 bool SVGFEBlendElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)

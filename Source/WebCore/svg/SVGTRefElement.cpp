@@ -172,10 +172,12 @@ void SVGTRefElement::detachTarget()
         document().accessSVGExtensions().addPendingResource(target.identifier, *this);
 }
 
-void SVGTRefElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGTRefElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    SVGTextPositioningElement::parseAttribute(name, value);
-    SVGURIReference::parseAttribute(name, value);
+    if (SVGURIReference::parseAttribute(name, value))
+        return;
+
+    SVGTextPositioningElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)

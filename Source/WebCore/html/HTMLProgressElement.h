@@ -54,7 +54,7 @@ private:
     bool childShouldCreateRenderer(const Node&) const final;
     RenderProgress* renderProgress() const;
 
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& value, AttributeModificationReason) final;
 
     void didAttachRenderers() final;
 

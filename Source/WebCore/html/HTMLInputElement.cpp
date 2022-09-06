@@ -568,11 +568,11 @@ void HTMLInputElement::updateType()
         ASSERT(elementData());
         // FIXME: We don't have the old attribute values so we pretend that we didn't have the old values.
         if (const Attribute* height = findAttributeByName(heightAttr))
-            attributeChanged(heightAttr, nullAtom(), height->value());
+            attributeChanged(heightAttr, nullAtom(), height->value(), ModifiedDirectly);
         if (const Attribute* width = findAttributeByName(widthAttr))
-            attributeChanged(widthAttr, nullAtom(), width->value());
+            attributeChanged(widthAttr, nullAtom(), width->value(), ModifiedDirectly);
         if (const Attribute* align = findAttributeByName(alignAttr))
-            attributeChanged(alignAttr, nullAtom(), align->value());
+            attributeChanged(alignAttr, nullAtom(), align->value(), ModifiedDirectly);
     }
 
     if (auto* form = this->form(); form && wasSuccessfulSubmitButtonCandidate != m_inputType->canBeSuccessfulSubmitButton())
@@ -723,7 +723,7 @@ inline void HTMLInputElement::initializeInputType()
     updateValidity();
 }
 
-void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     ASSERT(m_inputType);
     Ref protectedInputType { *m_inputType };
@@ -732,7 +732,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomStrin
         removeFromRadioButtonGroup();
         m_name = value;
         addToRadioButtonGroup();
-        HTMLTextFormControlElement::parseAttribute(name, value);
+        nameAttributeChanged(value);
     } else if (name == autocompleteAttr) {
         if (equalLettersIgnoringASCIICase(value, "off"_s)) {
             m_autocomplete = Off;
@@ -802,7 +802,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomStrin
     }
 #endif
     else
-        HTMLTextFormControlElement::parseAttribute(name, value);
+        HTMLTextFormControlElement::attributeChanged(name, oldValue, value, reason);
 
     m_inputType->attributeChanged(name);
 }

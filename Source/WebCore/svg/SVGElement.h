@@ -168,10 +168,9 @@ protected:
     virtual ~SVGElement();
 
     bool rendererIsNeeded(const RenderStyle&) override;
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
 
     void finishParsingChildren() override;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly) override;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     bool childShouldCreateRenderer(const Node&) const override;
 
     SVGElementRareData& ensureSVGRareData();

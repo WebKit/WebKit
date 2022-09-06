@@ -41,7 +41,7 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTests>;
 
-    void parseAttribute(const QualifiedName&, const AtomString&);
+    bool parseAttribute(const QualifiedName&, const AtomString&);
     void svgAttributeChanged(const QualifiedName&);
 
     static void addSupportedAttributes(MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName>&);

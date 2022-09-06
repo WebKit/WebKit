@@ -78,7 +78,7 @@ unsigned MathMLElement::rowSpan() const
     return std::max(1u, std::min(limitToOnlyHTMLNonNegative(rowSpanValue, 1u), maxRowspan));
 }
 
-void MathMLElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void MathMLElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == hrefAttr) {
         bool wasLink = isLink();
@@ -103,7 +103,7 @@ void MathMLElement::parseAttribute(const QualifiedName& name, const AtomString& 
             return;
         }
 
-        StyledElement::parseAttribute(name, value);
+        StyledElement::attributeChanged(name, oldValue, value, reason);
     }
 }
 

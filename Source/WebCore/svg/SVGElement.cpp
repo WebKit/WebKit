@@ -408,25 +408,32 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
         correspondingElement->ensureSVGRareData().addInstance(*this);
 }
 
-void SVGElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    if (name == HTMLNames::classAttr) {
+    if (name == HTMLNames::idAttr) {
+        idAttributeChanged(oldValue, value);
+        document().accessSVGExtensions().rebuildAllElementReferencesForTarget(*this);
+    } else if (name == HTMLNames::styleAttr) {
+        styleAttributeChanged(value, reason);
+        invalidateInstances();
+    } else if (name == HTMLNames::classAttr) {
         m_className->setBaseValInternal(value);
-        return;
-    }
-
-    if (name == HTMLNames::tabindexAttr) {
+        classAttributeChanged(className());
+        invalidateInstances();
+    } else if (name == HTMLNames::tabindexAttr) {
         if (value.isEmpty())
             setTabIndexExplicitly(std::nullopt);
         else if (auto optionalTabIndex = parseHTMLInteger(value))
             setTabIndexExplicitly(optionalTabIndex.value());
-        return;
-    }
+    } else {
+        auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name);
+        if (!eventName.isNull()) {
+            setAttributeEventListener(eventName, name, value);
+            return;
+        }
 
-    auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name);
-    if (!eventName.isNull()) {
-        setAttributeEventListener(eventName, name, value);
-        return;
+        StyledElement::attributeChanged(name, oldValue, value, reason);
+        svgAttributeChanged(name);
     }
 }
 
@@ -617,21 +624,6 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
     }
 
     return svgChild.isValid();
-}
-
-void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
-{
-    StyledElement::attributeChanged(name, oldValue, newValue);
-
-    if (name == HTMLNames::idAttr)
-        document().accessSVGExtensions().rebuildAllElementReferencesForTarget(*this);
-
-    // Changes to the style attribute are processed lazily (see Element::getAttribute() and related methods),
-    // so we don't want changes to the style attribute to result in extra work here except invalidateInstances().
-    if (name == HTMLNames::styleAttr)
-        invalidateInstances();
-    else
-        svgAttributeChanged(name);
 }
 
 void SVGElement::synchronizeAttribute(const QualifiedName& name)

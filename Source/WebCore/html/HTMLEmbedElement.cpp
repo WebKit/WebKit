@@ -95,7 +95,7 @@ static bool hasTypeOrSrc(const HTMLEmbedElement& embed)
     return embed.hasAttributeWithoutSynchronization(typeAttr) || embed.hasAttributeWithoutSynchronization(srcAttr);
 }
 
-void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLEmbedElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == typeAttr) {
         m_serviceType = value.string().left(value.find(';')).convertToASCIILowercase();
@@ -115,7 +115,7 @@ void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomStrin
             invalidateStyle();
         // FIXME: If both code and src attributes are specified, last one parsed/changed wins. That can't be right!
     } else
-        HTMLPlugInImageElement::parseAttribute(name, value);
+        HTMLPlugInImageElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void HTMLEmbedElement::parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues)

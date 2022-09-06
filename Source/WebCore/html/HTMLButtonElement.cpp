@@ -106,7 +106,7 @@ bool HTMLButtonElement::hasPresentationalHintsForAttribute(const QualifiedName& 
     return HTMLFormControlElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLButtonElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLButtonElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == typeAttr) {
         Type oldType = m_type;
@@ -122,7 +122,7 @@ void HTMLButtonElement::parseAttribute(const QualifiedName& name, const AtomStri
                 form()->resetDefaultButton();
         }
     } else
-        HTMLFormControlElement::parseAttribute(name, value);
+        HTMLFormControlElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void HTMLButtonElement::defaultEventHandler(Event& event)

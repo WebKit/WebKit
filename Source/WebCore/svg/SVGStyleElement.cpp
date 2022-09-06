@@ -92,23 +92,17 @@ String SVGStyleElement::title() const
     return attributeWithoutSynchronization(SVGNames::titleAttr);
 }
 
-void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGStyleElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == SVGNames::titleAttr) {
         if (sheet() && !isInShadowTree())
             sheet()->setTitle(value);
-        return;
-    }
-    if (name == SVGNames::typeAttr) {
+    } else if (name == SVGNames::typeAttr)
         m_styleSheetOwner.setContentType(value);
-        return;
-    }
-    if (name == SVGNames::mediaAttr) {
+    else if (name == SVGNames::mediaAttr)
         m_styleSheetOwner.setMedia(value);
-        return;
-    }
-
-    SVGElement::parseAttribute(name, value);
+    else
+        SVGElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGStyleElement::finishParsingChildren()

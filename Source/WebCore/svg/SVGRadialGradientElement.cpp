@@ -62,7 +62,7 @@ Ref<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedNa
     return adoptRef(*new SVGRadialGradientElement(tagName, document));
 }
 
-void SVGRadialGradientElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGRadialGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     SVGParsingError parseError = NoError;
 
@@ -78,10 +78,10 @@ void SVGRadialGradientElement::parseAttribute(const QualifiedName& name, const A
         m_fy->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
     else if (name == SVGNames::frAttr)
         m_fr->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, value, parseError, SVGLengthNegativeValuesMode::Forbid));
+    else
+        SVGGradientElement::attributeChanged(name, oldValue, value, reason);
 
     reportAttributeParsingError(parseError, name, value);
-
-    SVGGradientElement::parseAttribute(name, value);
 }
 
 void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName)

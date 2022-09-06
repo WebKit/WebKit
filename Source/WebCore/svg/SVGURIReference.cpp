@@ -52,12 +52,16 @@ SVGElement& SVGURIReference::contextElement() const
     return *m_href->contextElement();
 }
 
-void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomString& value)
+bool SVGURIReference::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name.matches(SVGNames::hrefAttr))
         m_href->setBaseValInternal(value.isNull() ? contextElement().getAttribute(XLinkNames::hrefAttr) : value);
-    else if (name.matches(XLinkNames::hrefAttr) && !contextElement().hasAttribute(SVGNames::hrefAttr))
-        m_href->setBaseValInternal(value);
+    else if (name.matches(XLinkNames::hrefAttr)) {
+        if (!contextElement().hasAttribute(SVGNames::hrefAttr))
+            m_href->setBaseValInternal(value);
+    } else
+        return false;
+    return true;
 }
 
 AtomString SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const Document& document)

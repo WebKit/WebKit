@@ -131,14 +131,17 @@ bool SVGTests::isValid() const
     return true;
 }
 
-void SVGTests::parseAttribute(const QualifiedName& attributeName, const AtomString& value)
+bool SVGTests::parseAttribute(const QualifiedName& attributeName, const AtomString& value)
 {
     if (attributeName == SVGNames::requiredFeaturesAttr)
         m_requiredFeatures->reset(value);
-    if (attributeName == SVGNames::requiredExtensionsAttr)
+    else if (attributeName == SVGNames::requiredExtensionsAttr)
         m_requiredExtensions->reset(value);
-    if (attributeName == SVGNames::systemLanguageAttr)
+    else if (attributeName == SVGNames::systemLanguageAttr)
         m_systemLanguage->reset(value);
+    else
+        return false;
+    return true;
 }
 
 void SVGTests::svgAttributeChanged(const QualifiedName& attrName)

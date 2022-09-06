@@ -97,7 +97,7 @@ void HTMLIFrameElement::collectPresentationalHintsForAttribute(const QualifiedNa
         HTMLFrameElementBase::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == sandboxAttr) {
         if (m_sandbox)
@@ -117,7 +117,7 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomStri
             loadDeferredFrame();
         }
     } else
-        HTMLFrameElementBase::parseAttribute(name, value);
+        HTMLFrameElementBase::attributeChanged(name, oldValue, value, reason);
 }
 
 bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)

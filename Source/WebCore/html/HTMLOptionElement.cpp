@@ -167,7 +167,7 @@ int HTMLOptionElement::index() const
     return 0;
 }
 
-void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
 #if ENABLE(DATALIST_ELEMENT)
     if (name == valueAttr) {
@@ -194,7 +194,7 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomStri
         // has no effect on whether the element is selected.
         setSelectedState(!value.isNull());
     } else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 String HTMLOptionElement::value() const

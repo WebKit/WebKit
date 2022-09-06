@@ -133,16 +133,14 @@ bool SVGGeometryElement::isPointInStroke(DOMPointInit&& pointInit)
     return false;
 }
 
-void SVGGeometryElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGGeometryElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == SVGNames::pathLengthAttr) {
         m_pathLength->setBaseValInternal(value.toFloat());
         if (m_pathLength->baseVal() < 0)
             document().accessSVGExtensions().reportError("A negative value for path attribute <pathLength> is not allowed"_s);
-        return;
-    }
-
-    SVGGraphicsElement::parseAttribute(name, value);
+    } else
+        SVGGraphicsElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGGeometryElement::svgAttributeChanged(const QualifiedName& attrName)

@@ -68,59 +68,30 @@ SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElem
     return nullptr;
 }
 
-void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFELightElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    if (name == SVGNames::azimuthAttr) {
+    if (name == SVGNames::azimuthAttr)
         m_azimuth->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::elevationAttr) {
+    else if (name == SVGNames::elevationAttr)
         m_elevation->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::xAttr) {
+    else if (name == SVGNames::xAttr)
         m_x->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::yAttr) {
+    else if (name == SVGNames::yAttr)
         m_y->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::zAttr) {
+    else if (name == SVGNames::zAttr)
         m_z->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::pointsAtXAttr) {
+    else if (name == SVGNames::pointsAtXAttr)
         m_pointsAtX->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::pointsAtYAttr) {
+    else if (name == SVGNames::pointsAtYAttr)
         m_pointsAtY->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::pointsAtZAttr) {
+    else if (name == SVGNames::pointsAtZAttr)
         m_pointsAtZ->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::specularExponentAttr) {
+    else if (name == SVGNames::specularExponentAttr)
         m_specularExponent->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::limitingConeAngleAttr) {
+    else if (name == SVGNames::limitingConeAngleAttr)
         m_limitingConeAngle->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    SVGElement::parseAttribute(name, value);
+    else
+        SVGElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)

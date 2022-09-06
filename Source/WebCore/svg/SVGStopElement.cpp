@@ -49,17 +49,15 @@ Ref<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGStopElement(tagName, document));
 }
 
-void SVGStopElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGStopElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == SVGNames::offsetAttr) {
         if (value.endsWith('%'))
             m_offset->setBaseValInternal(value.string().left(value.length() - 1).toFloat() / 100.0f);
         else
             m_offset->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    SVGElement::parseAttribute(name, value);
+    } else
+        SVGElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGStopElement::svgAttributeChanged(const QualifiedName& attrName)

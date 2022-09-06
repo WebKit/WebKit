@@ -112,7 +112,7 @@ void HTMLTableCellElement::collectPresentationalHintsForAttribute(const Qualifie
         HTMLTablePartElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLTableCellElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLTableCellElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == rowspanAttr) {
         if (is<RenderTableCell>(renderer()))
@@ -121,7 +121,7 @@ void HTMLTableCellElement::parseAttribute(const QualifiedName& name, const AtomS
         if (is<RenderTableCell>(renderer()))
             downcast<RenderTableCell>(*renderer()).colSpanOrRowSpanChanged();
     } else
-        HTMLTablePartElement::parseAttribute(name, value);
+        HTMLTablePartElement::attributeChanged(name, oldValue, value, reason);
 }
 
 const StyleProperties* HTMLTableCellElement::additionalPresentationalHintStyle() const

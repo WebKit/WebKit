@@ -72,7 +72,7 @@ void HTMLTableColElement::collectPresentationalHintsForAttribute(const Qualified
         HTMLTablePartElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLTableColElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLTableColElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == spanAttr) {
         m_span = clampHTMLNonNegativeIntegerToRange(value, minSpan, maxSpan, defaultSpan);
@@ -88,7 +88,7 @@ void HTMLTableColElement::parseAttribute(const QualifiedName& name, const AtomSt
             }
         }
     } else
-        HTMLTablePartElement::parseAttribute(name, value);
+        HTMLTablePartElement::attributeChanged(name, oldValue, value, reason);
 }
 
 const StyleProperties* HTMLTableColElement::additionalPresentationalHintStyle() const

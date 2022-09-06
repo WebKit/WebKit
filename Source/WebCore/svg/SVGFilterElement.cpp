@@ -62,8 +62,11 @@ Ref<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGFilterElement(tagName, document));
 }
 
-void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFilterElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
+    if (SVGURIReference::parseAttribute(name, value))
+        return;
+
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::filterUnitsAttr) {
@@ -82,11 +85,10 @@ void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomStrin
         m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
     else if (name == SVGNames::heightAttr)
         m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
+    else
+        SVGElement::attributeChanged(name, oldValue, value, reason);
 
     reportAttributeParsingError(parseError, name, value);
-
-    SVGElement::parseAttribute(name, value);
-    SVGURIReference::parseAttribute(name, value);
 }
 
 void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)

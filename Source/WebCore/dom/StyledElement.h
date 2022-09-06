@@ -74,6 +74,8 @@ protected:
     }
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly) override;
+    void styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason);
+    void attributeWithPresentationalHintChanged();
 
     virtual bool hasPresentationalHintsForAttribute(const QualifiedName&) const { return false; }
 
@@ -84,7 +86,6 @@ protected:
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
 private:
-    void styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason);
     void synchronizeStyleAttributeInternalImpl();
 
     void inlineStyleChanged();

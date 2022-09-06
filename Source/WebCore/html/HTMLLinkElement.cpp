@@ -163,7 +163,7 @@ void HTMLLinkElement::setDisabledState(bool disabled)
     }
 }
 
-void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == relAttr) {
         auto parsedRel = LinkRelAttribute(document(), value);
@@ -173,40 +173,27 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomString
             m_relList->associatedAttributeValueChanged(value);
         if (didMutateRel)
             process();
-        return;
-    }
-    if (name == hrefAttr) {
+    } else if (name == hrefAttr) {
         process();
-        return;
-    }
-    if (name == typeAttr) {
+    } else if (name == typeAttr) {
         m_type = value;
         process();
-        return;
-    }
-    if (name == sizesAttr) {
+    } else if (name == sizesAttr) {
         if (m_sizes)
             m_sizes->associatedAttributeValueChanged(value);
         process();
-        return;
-    }
-    if (name == mediaAttr) {
+    } else if (name == mediaAttr) {
         m_media = value.string().convertToASCIILowercase();
         process();
         if (m_sheet && !isDisabled())
             m_styleScope->didChangeActiveStyleSheetCandidates();
-        return;
-    }
-    if (name == disabledAttr) {
+    } else if (name == disabledAttr) {
         setDisabledState(!value.isNull());
-        return;
-    }
-    if (name == titleAttr) {
+    } else if (name == titleAttr) {
         if (m_sheet && !isInShadowTree())
             m_sheet->setTitle(value);
-        return;
-    }
-    HTMLElement::parseAttribute(name, value);
+    } else
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 bool HTMLLinkElement::shouldLoadLink()

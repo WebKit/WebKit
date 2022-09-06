@@ -44,10 +44,12 @@ Ref<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGSymbolElement(tagName, document));
 }
 
-void SVGSymbolElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGSymbolElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    SVGGraphicsElement::parseAttribute(name, value);
-    SVGFitToViewBox::parseAttribute(name, value);
+    if (SVGFitToViewBox::parseAttribute(name, value))
+        return;
+
+    SVGGraphicsElement::attributeChanged(name, oldValue, value, reason);
 }
 
 bool SVGSymbolElement::selfHasRelativeLengths() const

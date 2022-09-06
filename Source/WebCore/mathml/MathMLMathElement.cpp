@@ -56,15 +56,14 @@ RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(RenderStyle&& 
     return createRenderer<RenderMathMLMath>(*this, WTFMove(style));
 }
 
-void MathMLMathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void MathMLMathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    bool mathVariantAttribute = name == mathvariantAttr;
-    if (mathVariantAttribute)
+    if (name == mathvariantAttr) {
         m_mathVariant = std::nullopt;
-    if ((mathVariantAttribute) && renderer())
-        MathMLStyle::resolveMathMLStyleTree(renderer());
-
-    MathMLElement::parseAttribute(name, value);
+        if (renderer())
+            MathMLStyle::resolveMathMLStyleTree(renderer());
+    } else
+        MathMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void MathMLMathElement::didAttachRenderers()

@@ -366,9 +366,11 @@ bool HTMLModelElement::isInteractive() const
 
 void HTMLModelElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
 {
-    HTMLElement::attributeChanged(name, oldValue, newValue, reason);
-    if (m_modelPlayer && name == HTMLNames::interactiveAttr)
-        m_modelPlayer->setInteractionEnabled(isInteractive());
+    if (name == HTMLNames::interactiveAttr) {
+        if (m_modelPlayer)
+            m_modelPlayer->setInteractionEnabled(isInteractive());
+    } else
+        HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 }
 
 void HTMLModelElement::defaultEventHandler(Event& event)

@@ -294,10 +294,6 @@ public:
         ModifiedByCloning
     };
 
-    // These functions are called whenever an attribute is added, changed or removed.
-    virtual void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly);
-    virtual void parseAttribute(const QualifiedName&, const AtomString&) { }
-
     // Only called by the parser immediately after element construction.
     void parserSetAttributes(const Vector<Attribute>&);
 
@@ -700,9 +696,14 @@ protected:
     void removeAllEventListeners() final;
     virtual void parserDidSetAttributes();
 
+    // This function is called whenever an attribute is added, changed or removed.
+    virtual void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason);
+
     void setTabIndexExplicitly(std::optional<int>);
 
+    void idAttributeChanged(const AtomString& oldValue, const AtomString& newValue);
     void classAttributeChanged(const AtomString& newClassString);
+    void nameAttributeChanged(const AtomString& newValue);
     void partAttributeChanged(const AtomString& newValue);
 
     void addShadowRoot(Ref<ShadowRoot>&&);
@@ -737,6 +738,7 @@ private:
     void willModifyAttribute(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
     void didModifyAttribute(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
     void didRemoveAttribute(const QualifiedName&, const AtomString& oldValue);
+    void notifyAttributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly);
 
     void synchronizeAttribute(const QualifiedName&) const;
     void synchronizeAttribute(const AtomString& localName) const;

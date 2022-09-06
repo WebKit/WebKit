@@ -54,7 +54,7 @@ Ref<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGRectElement(tagName, document));
 }
 
-void SVGRectElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGRectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     SVGParsingError parseError = NoError;
 
@@ -70,10 +70,10 @@ void SVGRectElement::parseAttribute(const QualifiedName& name, const AtomString&
         m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError, SVGLengthNegativeValuesMode::Forbid));
     else if (name == SVGNames::heightAttr)
         m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError, SVGLengthNegativeValuesMode::Forbid));
+    else
+        SVGGeometryElement::attributeChanged(name, oldValue, value, reason);
 
     reportAttributeParsingError(parseError, name, value);
-
-    SVGGeometryElement::parseAttribute(name, value);
 }
 
 void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)

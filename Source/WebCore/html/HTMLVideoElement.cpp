@@ -132,7 +132,7 @@ bool HTMLVideoElement::hasPresentationalHintsForAttribute(const QualifiedName& n
     return HTMLMediaElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLVideoElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == posterAttr) {
         if (shouldDisplayPosterImage()) {
@@ -146,18 +146,16 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomStrin
             }
         }
     }
-    else {
-        HTMLMediaElement::parseAttribute(name, value);    
-
 #if PLATFORM(IOS_FAMILY) && ENABLE(WIRELESS_PLAYBACK_TARGET)
-        if (name == webkitairplayAttr) {
-            bool disabled = false;
-            if (equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::webkitairplayAttr), "deny"_s))
-                disabled = true;
-            mediaSession().setWirelessVideoPlaybackDisabled(disabled);
-        }
-#endif
+    else if (name == webkitairplayAttr) {
+        bool disabled = false;
+        if (equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::webkitairplayAttr), "deny"_s))
+            disabled = true;
+        mediaSession().setWirelessVideoPlaybackDisabled(disabled);
     }
+#endif
+    else
+        HTMLMediaElement::attributeChanged(name, oldValue, value, reason);
 }
 
 bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode) const

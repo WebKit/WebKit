@@ -49,29 +49,23 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& d
     });
 }
 
-void SVGGradientElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
+    if (SVGURIReference::parseAttribute(name, value))
+        return;
+
     if (name == SVGNames::gradientUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
             m_gradientUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
-        return;
-    }
-
-    if (name == SVGNames::gradientTransformAttr) {
+    } else if (name == SVGNames::gradientTransformAttr)
         m_gradientTransform->baseVal()->parse(value);
-        return;
-    }
-
-    if (name == SVGNames::spreadMethodAttr) {
+    else if (name == SVGNames::spreadMethodAttr) {
         auto propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(value);
         if (propertyValue > 0)
             m_spreadMethod->setBaseValInternal<SVGSpreadMethodType>(propertyValue);
-        return;
-    }
-
-    SVGElement::parseAttribute(name, value);
-    SVGURIReference::parseAttribute(name, value);
+    } else
+        SVGElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGGradientElement::svgAttributeChanged(const QualifiedName& attrName)

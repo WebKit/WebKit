@@ -361,35 +361,33 @@ bool HTMLElement::matchesReadWritePseudoClass() const
     return editabilityFromContentEditableAttr(*this, PageIsEditable::No) != Editability::ReadOnly;
 }
 
-void HTMLElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == dirAttr) {
         dirAttributeChanged(value);
-        return;
-    }
-
-    if (name == tabindexAttr) {
+    } else if (name == tabindexAttr) {
         if (auto optionalTabIndex = parseHTMLInteger(value))
             setTabIndexExplicitly(optionalTabIndex.value());
         else
             setTabIndexExplicitly(std::nullopt);
-        return;
-    }
-
-    if (document().settings().inertAttributeEnabled() && name == inertAttr)
-        invalidateStyleInternal();
-
-    if (name == inputmodeAttr) {
+    } else if (name == inertAttr) {
+        if (document().settings().inertAttributeEnabled())
+            invalidateStyleInternal();
+    } else if (name == inputmodeAttr) {
         auto& document = this->document();
         if (this == document.focusedElement()) {
             if (auto* page = document.page())
                 page->chrome().client().focusedElementDidChangeInputMode(*this, canonicalInputMode());
         }
-    }
+    } else {
+        auto& eventName = eventNameForEventHandlerAttribute(name);
+        if (!eventName.isNull()) {
+            setAttributeEventListener(eventName, name, value);
+            return;
+        }
 
-    auto& eventName = eventNameForEventHandlerAttribute(name);
-    if (!eventName.isNull())
-        setAttributeEventListener(eventName, name, value);
+        StyledElement::attributeChanged(name, oldValue, value, reason);
+    }
 }
 
 Node::InsertedIntoAncestorResult HTMLElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

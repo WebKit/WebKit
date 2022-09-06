@@ -752,22 +752,12 @@ bool HTMLMediaElement::isInteractiveContent() const
     return controls();
 }
 
-void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (name == webkitwirelessvideoplaybackdisabledAttr)
-        mediaSession().setWirelessVideoPlaybackDisabled(newValue != nullAtom());
-    else
-#endif
-        HTMLElement::attributeChanged(name, oldValue, newValue, reason);
-}
-
-void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
-{
-    if (name == idAttr)
+    if (name == idAttr) {
         m_id = value;
-
-    if (name == srcAttr) {
+        idAttributeChanged(oldValue, value);
+    } else if (name == srcAttr) {
         // https://html.spec.whatwg.org/multipage/embedded-content.html#location-of-the-media-resource
         // Location of the Media Resource
         // 12 February 2017
@@ -803,13 +793,15 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomStrin
     } else if (name == titleAttr) {
         if (m_mediaSession)
             m_mediaSession->clientCharacteristicsChanged(false);
-    }
-    else
-        HTMLElement::parseAttribute(name, value);
-
-    // Changing the "muted" attribue could affect ":muted"
-    if (name == mutedAttr)
+    } if (name == mutedAttr) {
+        // Changing the "muted" attribute could affect ":muted"
         invalidateStyle();
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    } else if (name == webkitwirelessvideoplaybackdisabledAttr) {
+        mediaSession().setWirelessVideoPlaybackDisabled(!value.isNull());
+#endif
+    } else
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void HTMLMediaElement::finishParsingChildren()

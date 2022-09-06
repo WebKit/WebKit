@@ -144,36 +144,34 @@ void SVGSVGElement::updateCurrentTranslate()
         document().renderView()->repaint();
 }
 
-void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+static const AtomString& eventNameForOutermostSVGSVGElementAttribute(const QualifiedName& name)
+{
+    if (name == HTMLNames::onunloadAttr)
+        return eventNames().unloadEvent;
+    if (name == HTMLNames::onresizeAttr)
+        return eventNames().resizeEvent;
+    if (name == HTMLNames::onscrollAttr)
+        return eventNames().scrollEvent;
+    if (name == SVGNames::onzoomAttr)
+        return eventNames().zoomEvent;
+    if (name == HTMLNames::onabortAttr)
+        return eventNames().abortEvent;
+    return nullAtom();
+}
+
+void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (!nearestViewportElement() && isConnected()) {
         // For these events, the outermost <svg> element works like a <body> element does,
         // setting certain event handlers directly on the window object.
-        if (name == HTMLNames::onunloadAttr) {
-            document().setWindowAttributeEventListener(eventNames().unloadEvent, name, value, mainThreadNormalWorld());
-            return;
-        }
-        if (name == HTMLNames::onresizeAttr) {
-            document().setWindowAttributeEventListener(eventNames().resizeEvent, name, value, mainThreadNormalWorld());
-            return;
-        }
-        if (name == HTMLNames::onscrollAttr) {
-            document().setWindowAttributeEventListener(eventNames().scrollEvent, name, value, mainThreadNormalWorld());
-            return;
-        }
-        if (name == SVGNames::onzoomAttr) {
-            document().setWindowAttributeEventListener(eventNames().zoomEvent, name, value, mainThreadNormalWorld());
-            return;
-        }
-        if (name == HTMLNames::onabortAttr) {
-            document().setWindowAttributeEventListener(eventNames().abortEvent, name, value, mainThreadNormalWorld());
-            return;
-        }
-        if (name == HTMLNames::onerrorAttr) {
-            document().setWindowAttributeEventListener(eventNames().errorEvent, name, value, mainThreadNormalWorld());
+        if (auto eventName = eventNameForOutermostSVGSVGElementAttribute(name); !eventName.isNull()) {
+            document().setWindowAttributeEventListener(eventName, name, value, mainThreadNormalWorld());
             return;
         }
     }
+
+    if (SVGFitToViewBox::parseAttribute(name, value) || SVGZoomAndPan::parseAttribute(name, value))
+        return;
 
     SVGParsingError parseError = NoError;
 
@@ -197,13 +195,10 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomString& 
             length = SVGLengthValue(SVGLengthMode::Height, "100%"_s);
         }
         m_height->setBaseValInternal(length);
-    }
+    } else
+        SVGGraphicsElement::attributeChanged(name, oldValue, value, reason);
 
     reportAttributeParsingError(parseError, name, value);
-
-    SVGGraphicsElement::parseAttribute(name, value);
-    SVGFitToViewBox::parseAttribute(name, value);
-    SVGZoomAndPan::parseAttribute(name, value);
 }
 
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)

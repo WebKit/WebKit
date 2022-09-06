@@ -103,8 +103,8 @@ void MathMLAnnotationElement::attributeChanged(const QualifiedName& name, const 
         auto* parent = parentElement();
         if (is<MathMLElement>(parent) && parent->hasTagName(semanticsTag))
             downcast<MathMLElement>(*parent).updateSelectedChild();
-    }
-    MathMLPresentationElement::attributeChanged(name, oldValue, newValue, reason);
+    } else
+        MathMLPresentationElement::attributeChanged(name, oldValue, newValue, reason);
 }
 
 }

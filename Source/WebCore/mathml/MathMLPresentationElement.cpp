@@ -357,15 +357,16 @@ std::optional<MathMLElement::MathVariant> MathMLPresentationElement::specifiedMa
     return m_mathVariant.value() == MathVariant::None ? std::nullopt : m_mathVariant;
 }
 
-void MathMLPresentationElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void MathMLPresentationElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    bool mathVariantAttribute = name == mathvariantAttr && acceptsMathVariantAttribute();
-    if (mathVariantAttribute)
+    if (name == mathvariantAttr) {
+        if (!acceptsMathVariantAttribute())
+            return;
         m_mathVariant = std::nullopt;
-    if ((mathVariantAttribute) && renderer())
-        MathMLStyle::resolveMathMLStyleTree(renderer());
-
-    MathMLElement::parseAttribute(name, value);
+        if (renderer())
+            MathMLStyle::resolveMathMLStyleTree(renderer());
+    } else
+        MathMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 }

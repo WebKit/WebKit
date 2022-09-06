@@ -103,7 +103,7 @@ void HTMLTrackElement::removedFromAncestor(RemovalType removalType, ContainerNod
         downcast<HTMLMediaElement>(oldParentOfRemovedTree).didRemoveTextTrack(*this);
 }
 
-void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLTrackElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == srcAttr) {
         scheduleLoad();
@@ -116,8 +116,8 @@ void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomStrin
         track().setLabel(value);
     else if (name == srclangAttr)
         track().setLanguage(value);
-
-    HTMLElement::parseAttribute(name, value);
+    else
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 const AtomString& HTMLTrackElement::kind()

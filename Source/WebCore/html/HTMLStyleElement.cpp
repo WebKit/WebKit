@@ -75,11 +75,12 @@ Ref<HTMLStyleElement> HTMLStyleElement::create(Document& document)
     return adoptRef(*new HTMLStyleElement(styleTag, document, false));
 }
 
-void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLStyleElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    if (name == titleAttr && sheet() && !isInShadowTree())
-        sheet()->setTitle(value);
-    else if (name == mediaAttr) {
+    if (name == titleAttr) {
+        if (sheet() && !isInShadowTree())
+            sheet()->setTitle(value);
+    } else if (name == mediaAttr) {
         m_styleSheetOwner.setMedia(value);
         if (sheet()) {
             sheet()->setMediaQueries(MediaQuerySet::create(value, MediaQueryParserContext(document())));
@@ -93,7 +94,7 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomStrin
         if (auto* scope = m_styleSheetOwner.styleScope())
             scope->didChangeStyleSheetContents();
     } else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void HTMLStyleElement::finishParsingChildren()

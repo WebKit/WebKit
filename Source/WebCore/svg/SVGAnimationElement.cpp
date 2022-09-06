@@ -163,8 +163,11 @@ bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attrib
     return Element::attributeContainsJavaScriptURL(attribute);
 }
 
-void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGAnimationElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
+    if (SVGTests::parseAttribute(name, value))
+        return;
+
     if (name == SVGNames::valuesAttr) {
         // Per the SMIL specification, leading and trailing white space,
         // and white space before and after semicolon separators, is allowed and will be ignored.
@@ -175,48 +178,27 @@ void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomSt
         });
 
         updateAnimationMode();
-        return;
-    }
-
-    if (name == SVGNames::keyTimesAttr) {
+    } else if (name == SVGNames::keyTimesAttr)
         parseKeyTimes(value, m_keyTimesFromAttribute, true);
-        return;
-    }
-
-    if (name == SVGNames::keyPointsAttr) {
+    else if (name == SVGNames::keyPointsAttr) {
         if (hasTagName(SVGNames::animateMotionTag)) {
             // This is specified to be an animateMotion attribute only but it is simpler to put it here 
             // where the other timing calculatations are.
             parseKeyTimes(value, m_keyPoints, false);
         }
-        return;
-    }
-
-    if (name == SVGNames::keySplinesAttr) {
+    } else if (name == SVGNames::keySplinesAttr) {
         if (auto keySplines = parseKeySplines(value))
             m_keySplines = WTFMove(*keySplines);
         else
             m_keySplines.clear();
-        return;
-    }
-
-    if (name == SVGNames::attributeTypeAttr) {
+    } else if (name == SVGNames::attributeTypeAttr)
         setAttributeType(value);
-        return;
-    }
-
-    if (name == SVGNames::calcModeAttr) {
+    else if (name == SVGNames::calcModeAttr)
         setCalcMode(value);
-        return;
-    }
-
-    if (name == SVGNames::fromAttr || name == SVGNames::toAttr || name == SVGNames::byAttr) {
+    else if (name == SVGNames::fromAttr || name == SVGNames::toAttr || name == SVGNames::byAttr)
         updateAnimationMode();
-        return;
-    }
-
-    SVGSMILElement::parseAttribute(name, value);
-    SVGTests::parseAttribute(name, value);
+    else
+        SVGSMILElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGAnimationElement::svgAttributeChanged(const QualifiedName& attrName)

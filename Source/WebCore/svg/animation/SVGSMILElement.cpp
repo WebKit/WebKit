@@ -480,7 +480,7 @@ bool SVGSMILElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGSMILElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGSMILElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == SVGNames::beginAttr) {
         if (!m_conditions.isEmpty()) {
@@ -505,7 +505,7 @@ void SVGSMILElement::parseAttribute(const QualifiedName& name, const AtomString&
     else if (name == SVGNames::onbeginAttr)
         setAttributeEventListener(eventNames().beginEventEvent, name, value);
     else
-        SVGElement::parseAttribute(name, value);
+        SVGElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)

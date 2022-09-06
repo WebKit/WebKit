@@ -53,7 +53,7 @@ Ref<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLAreaElement(tagName, document));
 }
 
-void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLAreaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == shapeAttr) {
         if (equalLettersIgnoringASCIICase(value, "default"_s))
@@ -73,7 +73,7 @@ void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomString
     } else if (name == altAttr) {
         // Do nothing.
     } else
-        HTMLAnchorElement::parseAttribute(name, value);
+        HTMLAnchorElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void HTMLAreaElement::invalidateCachedRegion()

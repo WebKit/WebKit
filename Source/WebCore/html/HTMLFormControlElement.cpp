@@ -153,7 +153,7 @@ void HTMLFormControlElement::setAncestorDisabled(bool isDisabled)
     disabledStateChanged();
 }
 
-void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFormControlElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == formAttr)
         formAttributeChanged();
@@ -182,7 +182,7 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
             requiredStateChanged();
         }
     } else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void HTMLFormControlElement::disabledAttributeChanged()

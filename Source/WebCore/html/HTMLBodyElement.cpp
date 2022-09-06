@@ -112,7 +112,7 @@ const AtomString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const
     return eventNameForEventHandlerAttribute(attributeName, map);
 }
 
-void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLBodyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == vlinkAttr || name == alinkAttr || name == linkAttr) {
         auto parsedColor = parseLegacyColorValue(value);
@@ -134,23 +134,19 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomString
                 document().resetActiveLinkColor();
         }
         invalidateStyleForSubtree();
-        return;
-    }
-
-    // FIXME: Emit "selectionchange" event at <input> / <textarea> elements and remove this special-case.
-    // https://bugs.webkit.org/show_bug.cgi?id=234348
-    if (name == onselectionchangeAttr) {
+    } else if (name == onselectionchangeAttr) {
+        // FIXME: Emit "selectionchange" event at <input> / <textarea> elements and remove this special-case.
+        // https://bugs.webkit.org/show_bug.cgi?id=234348
         document().setAttributeEventListener(eventNames().selectionchangeEvent, name, value, mainThreadNormalWorld());
-        return;
-    }
+    } else {
+        auto& eventName = eventNameForWindowEventHandlerAttribute(name);
+        if (!eventName.isNull()) {
+            document().setWindowAttributeEventListener(eventName, name, value, mainThreadNormalWorld());
+            return;
+        }
 
-    auto& eventName = eventNameForWindowEventHandlerAttribute(name);
-    if (!eventName.isNull()) {
-        document().setWindowAttributeEventListener(eventName, name, value, mainThreadNormalWorld());
-        return;
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
     }
-
-    HTMLElement::parseAttribute(name, value);
 }
 
 Node::InsertedIntoAncestorResult HTMLBodyElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

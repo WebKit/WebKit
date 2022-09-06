@@ -63,8 +63,11 @@ void SVGTextPathElement::clearResourceReferences()
     removeElementReference();
 }
 
-void SVGTextPathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGTextPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
+    if (SVGURIReference::parseAttribute(name, value))
+        return;
+
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::startOffsetAttr)
@@ -77,12 +80,10 @@ void SVGTextPathElement::parseAttribute(const QualifiedName& name, const AtomStr
         SVGTextPathSpacingType propertyValue = SVGPropertyTraits<SVGTextPathSpacingType>::fromString(value);
         if (propertyValue > 0)
             m_spacing->setBaseValInternal<SVGTextPathSpacingType>(propertyValue);
-    }
+    } else
+        SVGTextContentElement::attributeChanged(name, oldValue, value, reason);
 
     reportAttributeParsingError(parseError, name, value);
-
-    SVGTextContentElement::parseAttribute(name, value);
-    SVGURIReference::parseAttribute(name, value);
 }
 
 void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)

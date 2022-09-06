@@ -78,16 +78,16 @@ bool SVGImageElement::hasSingleSecurityOrigin() const
     return !image || image->hasSingleSecurityOrigin();
 }
 
-void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    if (name == SVGNames::preserveAspectRatioAttr) {
-        m_preserveAspectRatio->setBaseValInternal(SVGPreserveAspectRatioValue { value });
+    if (SVGURIReference::parseAttribute(name, value))
         return;
-    }
 
     SVGParsingError parseError = NoError;
 
-    if (name == SVGNames::xAttr)
+    if (name == SVGNames::preserveAspectRatioAttr)
+        m_preserveAspectRatio->setBaseValInternal(SVGPreserveAspectRatioValue { value });
+    else if (name == SVGNames::xAttr)
         m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
     else if (name == SVGNames::yAttr)
         m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
@@ -95,11 +95,10 @@ void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomString
         m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError, SVGLengthNegativeValuesMode::Forbid));
     else if (name == SVGNames::heightAttr)
         m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError, SVGLengthNegativeValuesMode::Forbid));
+    else
+        SVGGraphicsElement::attributeChanged(name, oldValue, value, reason);
 
     reportAttributeParsingError(parseError, name, value);
-
-    SVGGraphicsElement::parseAttribute(name, value);
-    SVGURIReference::parseAttribute(name, value);
 }
 
 void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)

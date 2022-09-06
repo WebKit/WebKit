@@ -84,7 +84,7 @@ void HTMLFrameSetElement::collectPresentationalHintsForAttribute(const Qualified
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == rowsAttr) {
         // FIXME: What is the right thing to do when removing this attribute?
@@ -94,10 +94,7 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomSt
             // FIXME: Would be nice to optimize the case where m_rowLengths did not change.
             invalidateStyleForSubtree();
         }
-        return;
-    }
-
-    if (name == colsAttr) {
+    } else if (name == colsAttr) {
         // FIXME: What is the right thing to do when removing this attribute?
         // Why not treat it the same way we treat setting it to the empty string?
         if (!value.isNull()) {
@@ -105,10 +102,7 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomSt
             // FIXME: Would be nice to optimize the case where m_colLengths did not change.
             invalidateStyleForSubtree();
         }
-        return;
-    }
-
-    if (name == frameborderAttr) {
+    } else if (name == frameborderAttr) {
         if (!value.isNull()) {
             if (equalLettersIgnoringASCIICase(value, "no"_s) || value == "0"_s) {
                 m_frameborder = false;
@@ -121,39 +115,29 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomSt
             m_frameborderSet = false;
         }
         // FIXME: Do we need to trigger repainting?
-        return;
-    }
-
-    if (name == noresizeAttr) {
+    } else if (name == noresizeAttr) {
         // FIXME: This should set m_noresize to false if the value is null.
         m_noresize = true;
-        return;
-    }
-
-    if (name == borderAttr) {
+    } else if (name == borderAttr) {
         if (!value.isNull()) {
             m_border = parseHTMLInteger(value).value_or(0);
             m_borderSet = true;
         } else
             m_borderSet = false;
         // FIXME: Do we need to trigger repainting?
-        return;
-    }
-
-    if (name == bordercolorAttr) {
+    } else if (name == bordercolorAttr) {
         m_borderColorSet = !value.isEmpty();
         // FIXME: Clearly wrong: This can overwrite the value inherited from the parent frameset.
         // FIXME: Do we need to trigger repainting?
-        return;
-    }
+    } else {
+        auto& eventName = HTMLBodyElement::eventNameForWindowEventHandlerAttribute(name);
+        if (!eventName.isNull()) {
+            document().setWindowAttributeEventListener(eventName, name, value, mainThreadNormalWorld());
+            return;
+        }
 
-    auto& eventName = HTMLBodyElement::eventNameForWindowEventHandlerAttribute(name);
-    if (!eventName.isNull()) {
-        document().setWindowAttributeEventListener(eventName, name, value, mainThreadNormalWorld());
-        return;
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
     }
-
-    HTMLElement::parseAttribute(name, value);
 }
 
 bool HTMLFrameSetElement::rendererIsNeeded(const RenderStyle& style)

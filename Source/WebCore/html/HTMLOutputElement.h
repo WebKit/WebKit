@@ -54,7 +54,7 @@ private:
 
     bool canContainRangeEndPoint() const final { return false; }
     bool computeWillValidate() const final { return false; }
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& value, AttributeModificationReason) final;
     const AtomString& formControlType() const final;
     bool isEnumeratable() const final { return true; }
     bool supportLabels() const final { return true; }

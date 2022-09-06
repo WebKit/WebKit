@@ -90,9 +90,9 @@ void HTMLOptGroupElement::childrenChanged(const ChildChange& change)
     HTMLElement::childrenChanged(change);
 }
 
-void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLOptGroupElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    HTMLElement::parseAttribute(name, value);
+    // FIXME: This should only be called if an attribute relevant to the parent select element is changed.
     recalcSelectOptions();
 
     if (name == disabledAttr) {
@@ -106,7 +106,8 @@ void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const AtomSt
 
             m_isDisabled = newDisabled;
         }
-    }
+    } else
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void HTMLOptGroupElement::recalcSelectOptions()

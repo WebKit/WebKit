@@ -64,24 +64,25 @@ void HTMLMenuElement::removedFromAncestor(RemovalType type, ContainerNode& ances
     }
 }
 
-void HTMLMenuElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLMenuElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    if (name != typeAttr || !DeprecatedGlobalSettings::menuItemElementEnabled()) {
-        HTMLElement::parseAttribute(name, value);
-        return;
-    }
-    bool wasTouchBarMenu = m_isTouchBarMenu;
-    m_isTouchBarMenu = equalLettersIgnoringASCIICase(value, "touchbar"_s);
-    if (!wasTouchBarMenu && m_isTouchBarMenu) {
-        if (auto* page = document().page()) {
-            page->chrome().client().didInsertMenuElement(*this);
-            for (auto& child : childrenOfType<Element>(*this))
-                page->chrome().client().didInsertMenuItemElement(downcast<HTMLMenuItemElement>(child));
+    if (name == typeAttr) {
+        if (!DeprecatedGlobalSettings::menuItemElementEnabled())
+            return;
+        bool wasTouchBarMenu = m_isTouchBarMenu;
+        m_isTouchBarMenu = equalLettersIgnoringASCIICase(value, "touchbar"_s);
+        if (!wasTouchBarMenu && m_isTouchBarMenu) {
+            if (auto* page = document().page()) {
+                page->chrome().client().didInsertMenuElement(*this);
+                for (auto& child : childrenOfType<Element>(*this))
+                    page->chrome().client().didInsertMenuItemElement(downcast<HTMLMenuItemElement>(child));
+            }
+        } else if (wasTouchBarMenu && !m_isTouchBarMenu) {
+            if (auto* page = document().page())
+                page->chrome().client().didRemoveMenuElement(*this);
         }
-    } else if (wasTouchBarMenu && !m_isTouchBarMenu) {
-        if (auto* page = document().page())
-            page->chrome().client().didRemoveMenuElement(*this);
-    }
+    } else
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 Ref<HTMLMenuElement> HTMLMenuElement::create(const QualifiedName& tagName, Document& document)

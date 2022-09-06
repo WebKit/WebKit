@@ -44,10 +44,12 @@ Ref<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGScriptElement(tagName, document, insertedByParser, false));
 }
 
-void SVGScriptElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGScriptElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    SVGElement::parseAttribute(name, value);
-    SVGURIReference::parseAttribute(name, value);
+    if (SVGURIReference::parseAttribute(name, value))
+        return;
+
+    SVGElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)

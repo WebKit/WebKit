@@ -54,16 +54,14 @@ bool SVGAnimateTransformElement::hasValidAttributeType() const
     return SVGAnimateElementBase::hasValidAttributeType();
 }
 
-void SVGAnimateTransformElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGAnimateTransformElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == SVGNames::typeAttr) {
         m_type = SVGTransformable::parseTransformType(value).value_or(SVGTransformValue::SVG_TRANSFORM_UNKNOWN);
         if (m_type == SVGTransformValue::SVG_TRANSFORM_MATRIX)
             m_type = SVGTransformValue::SVG_TRANSFORM_UNKNOWN;
-        return;
-    }
-
-    SVGAnimateElementBase::parseAttribute(name, value);
+    } else
+        SVGAnimateElementBase::attributeChanged(name, oldValue, value, reason);
 }
 
 String SVGAnimateTransformElement::animateRangeString(const String& string) const

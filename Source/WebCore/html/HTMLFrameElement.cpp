@@ -81,7 +81,7 @@ int HTMLFrameElement::defaultTabIndex() const
     return 0;
 }
 
-void HTMLFrameElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFrameElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == frameborderAttr) {
         m_frameBorder = parseHTMLInteger(value).value_or(0);
@@ -91,7 +91,7 @@ void HTMLFrameElement::parseAttribute(const QualifiedName& name, const AtomStrin
         if (auto* renderer = this->renderer())
             renderer->updateFromElement();
     } else
-        HTMLFrameElementBase::parseAttribute(name, value);
+        HTMLFrameElementBase::attributeChanged(name, oldValue, value, reason);
 }
 
 } // namespace WebCore

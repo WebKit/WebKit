@@ -103,10 +103,11 @@ void MathMLSelectElement::childrenChanged(const ChildChange& change)
 
 void MathMLSelectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
 {
-    if (hasTagName(mactionTag) && (name == MathMLNames::actiontypeAttr || name == MathMLNames::selectionAttr))
-        updateSelectedChild();
-
-    MathMLRowElement::attributeChanged(name, oldValue, newValue, reason);
+    if (name == MathMLNames::actiontypeAttr || name == MathMLNames::selectionAttr) {
+        if (hasTagName(mactionTag))
+            updateSelectedChild();
+    } else
+        MathMLRowElement::attributeChanged(name, oldValue, newValue, reason);
 }
 
 int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)

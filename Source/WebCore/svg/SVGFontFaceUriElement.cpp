@@ -64,12 +64,12 @@ Ref<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
     return src;
 }
 
-void SVGFontFaceUriElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFontFaceUriElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == SVGNames::hrefAttr || name == XLinkNames::hrefAttr)
         loadFont();
     else
-        SVGElement::parseAttribute(name, value);
+        SVGElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGFontFaceUriElement::childrenChanged(const ChildChange& change)

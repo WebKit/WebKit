@@ -524,7 +524,7 @@ bool HTMLFormElement::shouldAutocorrect() const
 
 #endif
 
-void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == actionAttr) {
         m_attributes.parseAction(value);
@@ -552,7 +552,7 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString
         if (m_relList)
             m_relList->associatedAttributeValueChanged(value);
     } else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, unsigned rangeStart, unsigned rangeEnd)

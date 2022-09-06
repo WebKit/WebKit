@@ -166,21 +166,20 @@ RefPtr<HTMLImageElement> HTMLAttachmentElement::enclosingImageElement() const
     return { };
 }
 
-void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
-    if (name == progressAttr || name == subtitleAttr || name == titleAttr || name == typeAttr) {
-        if (auto* renderer = this->renderer())
-            renderer->invalidate();
-    }
-
-    HTMLElement::parseAttribute(name, value);
-
 #if ENABLE(SERVICE_CONTROLS)
     if (name == typeAttr && attachmentType() == "application/pdf"_s) {
         setImageMenuEnabled(true);
         ImageControlsMac::updateImageControls(*this);
     }
 #endif
+
+    if (name == progressAttr || name == subtitleAttr || name == titleAttr || name == typeAttr) {
+        if (auto* renderer = this->renderer())
+            renderer->invalidate();
+    } else
+        HTMLElement::attributeChanged(name, oldValue, value, reason);
 }
 
 String HTMLAttachmentElement::attachmentTitle() const

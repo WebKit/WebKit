@@ -70,10 +70,9 @@ Ref<SVGFontFaceElement> SVGFontFaceElement::create(const QualifiedName& tagName,
     return adoptRef(*new SVGFontFaceElement(tagName, document));
 }
 
-void SVGFontFaceElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFontFaceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {    
-    CSSPropertyID propertyId = cssPropertyIdForSVGAttributeName(name);
-    if (propertyId > 0) {
+    if (auto propertyId = cssPropertyIdForSVGAttributeName(name)) {
         // FIXME: Parse using the @font-face descriptor grammars, not the property grammars.
         auto& properties = m_fontFaceRule->mutableProperties();
         bool valueChanged = properties.setProperty(propertyId, value);
@@ -89,10 +88,8 @@ void SVGFontFaceElement::parseAttribute(const QualifiedName& name, const AtomStr
         }
 
         rebuildFontFace();
-        return;
-    }
-    
-    SVGElement::parseAttribute(name, value);
+    } else
+        SVGElement::attributeChanged(name, oldValue, value, reason);
 }
 
 unsigned SVGFontFaceElement::unitsPerEm() const

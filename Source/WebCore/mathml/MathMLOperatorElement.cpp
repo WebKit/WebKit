@@ -229,28 +229,32 @@ static std::optional<MathMLOperatorDictionary::Flag> attributeNameToPropertyFlag
     return std::nullopt;
 }
 
-void MathMLOperatorElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void MathMLOperatorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
+    auto updateRendererFromElement = [&] {
+        if (renderer())
+            downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
+    };
+
     if (name == formAttr) {
         m_dictionaryProperty = std::nullopt;
         m_properties.dirtyFlags = MathMLOperatorDictionary::allFlags;
     } else if (auto flag = attributeNameToPropertyFlag(name))
         m_properties.dirtyFlags |= flag.value();
-    else if (name == lspaceAttr)
+    else if (name == lspaceAttr) {
         m_leadingSpace = std::nullopt;
-    else if (name == rspaceAttr)
+        updateRendererFromElement();
+    } else if (name == rspaceAttr) {
         m_trailingSpace = std::nullopt;
-    else if (name == minsizeAttr)
+        updateRendererFromElement();
+    } else if (name == minsizeAttr)
         m_minSize = std::nullopt;
     else if (name == maxsizeAttr)
         m_maxSize = std::nullopt;
-
-    if ((name == stretchyAttr || name == lspaceAttr || name == rspaceAttr || name == movablelimitsAttr) && renderer()) {
-        downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
-        return;
-    }
-
-    MathMLTokenElement::parseAttribute(name, value);
+    else if (name == stretchyAttr || name == movablelimitsAttr)
+        updateRendererFromElement();
+    else
+        MathMLTokenElement::attributeChanged(name, oldValue, value, reason);
 }
 
 RenderPtr<RenderElement> MathMLOperatorElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

@@ -107,17 +107,18 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
     parentFrame->loader().subframeLoader().requestFrame(*this, m_frameURL, frameName, lockHistory, lockBackForwardList);
 }
 
-void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFrameElementBase::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == srcdocAttr) {
         if (value.isNull())
             setLocation(stripLeadingAndTrailingHTMLSpaces(attributeWithoutSynchronization(srcAttr)));
         else
             setLocation("about:srcdoc"_s);
-    } else if (name == srcAttr && !hasAttributeWithoutSynchronization(srcdocAttr))
-        setLocation(stripLeadingAndTrailingHTMLSpaces(value));
-    else
-        HTMLFrameOwnerElement::parseAttribute(name, value);
+    } else if (name == srcAttr) {
+        if (!hasAttributeWithoutSynchronization(srcdocAttr))
+            setLocation(stripLeadingAndTrailingHTMLSpaces(value));
+    } else
+        HTMLFrameOwnerElement::attributeChanged(name, oldValue, value, reason);
 }
 
 Node::InsertedIntoAncestorResult HTMLFrameElementBase::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

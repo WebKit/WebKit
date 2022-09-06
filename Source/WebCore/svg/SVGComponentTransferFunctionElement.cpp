@@ -46,46 +46,26 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
     });
 }
 
-void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == SVGNames::typeAttr) {
         ComponentTransferType propertyValue = SVGPropertyTraits<ComponentTransferType>::fromString(value);
         if (propertyValue > 0)
             m_type->setBaseValInternal<ComponentTransferType>(propertyValue);
-        return;
-    }
-
-    if (name == SVGNames::tableValuesAttr) {
+    } else if (name == SVGNames::tableValuesAttr)
         m_tableValues->baseVal()->parse(value);
-        return;
-    }
-
-    if (name == SVGNames::slopeAttr) {
+    else if (name == SVGNames::slopeAttr)
         m_slope->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::interceptAttr) {
+    else if (name == SVGNames::interceptAttr)
         m_intercept->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::amplitudeAttr) {
+    else if (name == SVGNames::amplitudeAttr)
         m_amplitude->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::exponentAttr) {
+    else if (name == SVGNames::exponentAttr)
         m_exponent->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::offsetAttr) {
+    else if (name == SVGNames::offsetAttr)
         m_offset->setBaseValInternal(value.toFloat());
-        return;
-    }
-
-    SVGElement::parseAttribute(name, value);
+    else
+        SVGElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void SVGComponentTransferFunctionElement::svgAttributeChanged(const QualifiedName& attrName)

@@ -40,7 +40,7 @@ public:
 
 private:
     MathMLMathElement(const QualifiedName& tagName, Document&);
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& value, AttributeModificationReason) final;
     void didAttachRenderers() final;
 
     bool acceptsMathVariantAttribute() final { return true; }

@@ -166,7 +166,7 @@ void HTMLTextAreaElement::collectPresentationalHintsForAttribute(const Qualified
         HTMLTextFormControlElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& value, AttributeModificationReason reason)
 {
     if (name == rowsAttr) {
         unsigned rows = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultRows);
@@ -202,7 +202,7 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomSt
     else if (name == minlengthAttr)
         minLengthAttributeChanged(value);
     else
-        HTMLTextFormControlElement::parseAttribute(name, value);
+        HTMLTextFormControlElement::attributeChanged(name, oldValue, value, reason);
 }
 
 void HTMLTextAreaElement::maxLengthAttributeChanged(const AtomString& newValue)
