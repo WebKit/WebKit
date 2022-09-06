@@ -29,6 +29,20 @@
 #include <optional>
 #include <wtf/SystemFree.h>
 
+#if HAVE(BACKTRACE_SYMBOLS) || HAVE(BACKTRACE)
+#include <execinfo.h>
+#endif
+
+#if HAVE(DLADDR)
+#include <cxxabi.h>
+#include <dlfcn.h>
+#endif
+
+#if OS(WINDOWS)
+#include <windows.h>
+#include <wtf/win/DbgHelperWin.h>
+#endif
+
 namespace WTF {
 
 class PrintStream;
@@ -74,6 +88,46 @@ public:
     WTF_EXPORT_PRIVATE static std::optional<DemangleEntry> demangle(void*);
 
     WTF_EXPORT_PRIVATE void dump(PrintStream&, const char* indentString = nullptr) const;
+
+    template<typename Functor>
+    void forEach(Functor functor) const
+    {
+        const auto* stack = this->stack();
+#if HAVE(BACKTRACE_SYMBOLS)
+        char** symbols = backtrace_symbols(stack, m_size);
+        if (!symbols)
+            return;
+#elif OS(WINDOWS)
+        HANDLE hProc = GetCurrentProcess();
+        uint8_t symbolData[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)] = { 0 };
+        auto symbolInfo = reinterpret_cast<SYMBOL_INFO*>(symbolData);
+
+        symbolInfo->SizeOfStruct = sizeof(SYMBOL_INFO);
+        symbolInfo->MaxNameLen = MAX_SYM_NAME;
+#endif
+
+        for (int i = 0; i < m_size; ++i) {
+            const char* mangledName = nullptr;
+            const char* cxaDemangled = nullptr;
+#if HAVE(BACKTRACE_SYMBOLS)
+            mangledName = symbols[i];
+#elif OS(WINDOWS)
+            if (DbgHelper::SymFromAddress(hProc, reinterpret_cast<DWORD64>(stack[i]), nullptr, symbolInfo))
+                mangledName = symbolInfo->Name;
+#endif
+            auto demangled = demangle(stack[i]);
+            if (demangled) {
+                mangledName = demangled->mangledName();
+                cxaDemangled = demangled->demangledName();
+            }
+            const int frameNumber = i + 1;
+            functor(frameNumber, stack[i], cxaDemangled ? cxaDemangled : mangledName);
+        }
+
+#if HAVE(BACKTRACE_SYMBOLS)
+        free(symbols);
+#endif
+    }
 
 private:
     inline static size_t instanceSize(int capacity);

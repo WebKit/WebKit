@@ -3722,6 +3722,7 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
             patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 exceptionHandle.generate(jit, params, this);
+                JIT_COMMENT(jit, "Unlinked wasm to wasm imported function call patchpoint");
                 CCallHelpers::Call call = jit.threadSafePatchableNearCall();
                 jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
                     unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
@@ -3751,6 +3752,7 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
             patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 exceptionHandle.generate(jit, params, this);
+                JIT_COMMENT(jit, "Wasm to embedder imported function call patchpoint");
                 jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
             });
 
@@ -3771,6 +3773,7 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
         patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             exceptionHandle.generate(jit, params, this);
+            JIT_COMMENT(jit, "Unlinked wasm to wasm non-imported function call patchpoint");
             CCallHelpers::Call call = jit.threadSafePatchableNearCall();
             jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
                 unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
@@ -4033,6 +4036,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
         if (origin.data())
             out.print("Wasm: ", OpcodeOrigin(origin));
     });
+    procedure.code().setDisassembler(makeUnique<B3::Air::Disassembler>());
     
     // This means we cannot use either StackmapGenerationParams::usedRegisters() or
     // StackmapGenerationParams::unavailableRegisters(). In exchange for this concession, we

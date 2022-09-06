@@ -101,6 +101,8 @@ ScratchRegisterAllocator::PreservedState ScratchRegisterAllocator::preserveReuse
     if (!didReuseRegisters())
         return PreservedState(0, extraStackSpace);
 
+    JIT_COMMENT(jit, "preserveReusedRegistersByPushing");
+
     RegisterSet registersToSpill;
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         FPRReg reg = FPRInfo::toRegister(i);
@@ -126,6 +128,8 @@ void ScratchRegisterAllocator::restoreReusedRegistersByPopping(AssemblyHelpers& 
     RELEASE_ASSERT(preservedState);
     if (!didReuseRegisters())
         return;
+    
+    JIT_COMMENT(jit, "restoreReusedRegistersByPopping");
 
     RegisterSet registersToFill;
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
@@ -165,6 +169,7 @@ unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpe
     RELEASE_ASSERT(extraBytesAtTopOfStack % sizeof(void*) == 0);
     if (!usedRegisters.numberOfSetRegisters())
         return 0;
+    JIT_COMMENT(jit, "Preserve registers to stack for call: ", usedRegisters, "; Extra bytes at top of stack: ", extraBytesAtTopOfStack);
     
     unsigned stackOffset = (usedRegisters.numberOfSetRegisters()) * sizeof(EncodedJSValue);
     stackOffset += extraBytesAtTopOfStack;
@@ -204,6 +209,8 @@ void ScratchRegisterAllocator::restoreRegistersFromStackForCall(AssemblyHelpers&
         RELEASE_ASSERT(numberOfStackBytesUsedForRegisterPreservation == 0);
         return;
     }
+
+    JIT_COMMENT(jit, "Restore registers from stack for call: ", usedRegisters, "; Extra bytes at top of stack: ", extraBytesAtTopOfStack);
 
     AssemblyHelpers::LoadRegSpooler spooler(jit, MacroAssembler::stackPointerRegister);
 

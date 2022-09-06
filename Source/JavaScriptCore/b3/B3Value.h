@@ -730,7 +730,21 @@ private:
 
     NO_RETURN_DUE_TO_CRASH static void badKind(Kind, unsigned);
 
+#if ASSERT_ENABLED
+    String m_compilerConstructionSite { generateCompilerConstructionSite() };
+
+    static String generateCompilerConstructionSite();
+#endif
+
 public:
+    String compilerConstructionSite() const
+    {
+#if ASSERT_ENABLED
+        return m_compilerConstructionSite;
+#endif
+        return "[(assertions are disabled)]"_s;
+    }
+
     BasicBlock* owner { nullptr }; // computed by Procedure::resetValueOwners().
 };
 

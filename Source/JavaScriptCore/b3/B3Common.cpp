@@ -42,7 +42,7 @@ bool shouldDumpIR(Procedure& procedure, B3CompilationMode mode)
         return true;
 
 #if ENABLE(FTL_JIT)
-    return FTL::verboseCompilationEnabled() || FTL::shouldDumpDisassembly() || shouldDumpIRAtEachPhase(mode);
+    return FTL::verboseCompilationEnabled() || shouldDumpIRAtEachPhase(mode);
 #else
     return shouldDumpIRAtEachPhase(mode);
 #endif

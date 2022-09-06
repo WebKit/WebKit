@@ -253,6 +253,15 @@ struct Type {
         return static_cast<bool>(nullable);
     }
 
+    void dump(PrintStream& out) const
+    {
+        switch (kind) {
+        #define CREATE_CASE(name, ...) case TypeKind::name: out.print(#name); break;
+        FOR_EACH_WASM_TYPE(CREATE_CASE)
+        #undef CREATE_CASE
+        }
+    }
+
     // Use Wasm::isFuncref and Wasm::isExternref instead because they check againts all kind of representations of function referenes and external references.
 
     #define CREATE_PREDICATE(name, ...) bool is ## name() const { return kind == TypeKind::name; }

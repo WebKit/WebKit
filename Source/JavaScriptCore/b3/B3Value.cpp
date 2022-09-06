@@ -43,10 +43,42 @@
 #include "B3WasmBoundsCheckValue.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
+#include <wtf/StackTrace.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace B3 {
+
+#if ASSERT_ENABLED
+String Value::generateCompilerConstructionSite()
+{
+    if (!Options::dumpDisassembly())
+        return emptyString();
+
+    StringPrintStream s;
+    static constexpr int framesToShow = 3;
+    static constexpr int framesToSkip = 7;
+    void* samples[framesToShow + framesToSkip];
+    int frames = framesToShow + framesToSkip;
+
+    WTFGetBacktrace(samples, &frames);
+    StackTrace stackTrace(samples + framesToSkip, frames - framesToSkip, "");
+
+    s.print("[");
+    bool firstPrinted = false;
+    stackTrace.forEach([&] (unsigned, void*, const char* cName) {
+        auto name = String::fromUTF8(cName);
+        if (firstPrinted)
+            s.print("|");
+        if (name.contains("enerator"_s)) {
+            s.print(name.left(name.find('(')));
+            firstPrinted = true;
+        }
+    });
+    s.print("]");
+    return s.toString();
+}
+#endif
 
 const char* const Value::dumpPrefix = "b@";
 void DeepValueDump::dump(PrintStream& out) const
