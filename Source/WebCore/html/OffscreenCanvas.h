@@ -89,16 +89,16 @@ public:
             return buffer->memoryCost();
         return 0;
     }
-    WeakPtr<HTMLCanvasElement> takePlaceholderCanvas();
+    WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> takePlaceholderCanvas();
 
 private:
     RefPtr<ImageBuffer> m_buffer;
     IntSize m_size;
     bool m_originClean;
-    WeakPtr<HTMLCanvasElement> m_placeholderCanvas;
+    WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_placeholderCanvas;
 };
 
-class OffscreenCanvas final : public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTargetWithInlineData, private ContextDestructionObserver {
+class OffscreenCanvas final : public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTarget, private ContextDestructionObserver {
     WTF_MAKE_ISO_ALLOCATED(OffscreenCanvas);
 public:
 
@@ -199,7 +199,7 @@ private:
             return adoptRef(*new PlaceholderData);
         }
 
-        WeakPtr<HTMLCanvasElement> canvas;
+        WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> canvas;
         RefPtr<ImageBufferPipe::Source> bufferPipeSource;
         RefPtr<ImageBuffer> pendingCommitBuffer;
         mutable Lock bufferLock;

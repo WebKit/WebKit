@@ -53,7 +53,8 @@ class RemoteCDMInstanceSessionProxy;
 class RemoteCDMInstanceProxy : public WebCore::CDMInstanceClient, private IPC::MessageReceiver  {
 public:
     using WebCore::CDMInstanceClient::weakPtrFactory;
-    using WeakValueType = WebCore::CDMInstanceClient::WeakValueType;
+    using WebCore::CDMInstanceClient::WeakValueType;
+    using WebCore::CDMInstanceClient::WeakPtrImplType;
 
     static std::unique_ptr<RemoteCDMInstanceProxy> create(RemoteCDMProxy&, Ref<WebCore::CDMInstance>&&, RemoteCDMInstanceIdentifier);
     ~RemoteCDMInstanceProxy();

@@ -59,7 +59,7 @@ private:
     String m_code;
     URL m_sourceURL;
     TextPosition m_sourcePosition;
-    WeakPtr<ContainerNode> m_originalNode;
+    WeakPtr<ContainerNode, WeakPtrImplWithEventTargetData> m_originalNode;
 };
 
 } // namespace WebCore

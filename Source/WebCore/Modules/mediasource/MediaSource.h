@@ -54,7 +54,7 @@ class MediaSource final
     : public RefCounted<MediaSource>
     , public MediaSourcePrivateClient
     , public ActiveDOMObject
-    , public EventTargetWithInlineData
+    , public EventTarget
     , public URLRegistrable
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
@@ -171,7 +171,7 @@ private:
     RefPtr<SourceBufferList> m_activeSourceBuffers;
     std::unique_ptr<PlatformTimeRanges> m_buffered;
     std::unique_ptr<PlatformTimeRanges> m_liveSeekable;
-    WeakPtr<HTMLMediaElement> m_mediaElement;
+    WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
     MediaTime m_duration;
     MediaTime m_pendingSeekTime;
     ReadyState m_readyState { ReadyState::Closed };

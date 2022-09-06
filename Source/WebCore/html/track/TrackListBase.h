@@ -39,7 +39,7 @@ namespace WebCore {
 
 class TrackBase;
 
-class TrackListBase : public RefCounted<TrackListBase>, public EventTargetWithInlineData, public ActiveDOMObject {
+class TrackListBase : public RefCounted<TrackListBase>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(TrackListBase);
 public:
     virtual ~TrackListBase();

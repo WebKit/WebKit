@@ -144,7 +144,7 @@ void SVGDocumentExtensions::addPendingResource(const AtomString& id, SVGElement&
     if (id.isEmpty())
         return;
 
-    auto result = m_pendingResources.add(id, WeakHashSet<SVGElement> { });
+    auto result = m_pendingResources.add(id, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> { });
     result.iterator->value.add(element);
 
     element.setHasPendingResources();

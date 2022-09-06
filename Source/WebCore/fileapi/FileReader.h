@@ -49,7 +49,7 @@ namespace WebCore {
 
 class Blob;
 
-class FileReader final : public RefCounted<FileReader>, public ActiveDOMObject, public EventTargetWithInlineData, private FileReaderLoaderClient {
+class FileReader final : public RefCounted<FileReader>, public ActiveDOMObject, public EventTarget, private FileReaderLoaderClient {
     WTF_MAKE_ISO_ALLOCATED(FileReader);
 public:
     static Ref<FileReader> create(ScriptExecutionContext&);

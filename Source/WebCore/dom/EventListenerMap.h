@@ -47,7 +47,7 @@ using EventListenerVector = Vector<RefPtr<RegisteredEventListener>, 1, CrashOnOv
 
 class EventListenerMap {
 public:
-    EventListenerMap();
+    WEBCORE_EXPORT EventListenerMap();
 
     bool isEmpty() const { return m_entries.isEmpty(); }
     bool contains(const AtomString& eventType) const { return find(eventType); }
@@ -55,6 +55,10 @@ public:
     bool containsActive(const AtomString& eventType) const;
 
     void clear();
+    void clearEntriesForTearDown()
+    {
+        m_entries.clear();
+    }
 
     void replace(const AtomString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, const RegisteredEventListener::Options&);
     bool add(const AtomString& eventType, Ref<EventListener>&&, const RegisteredEventListener::Options&);

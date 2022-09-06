@@ -65,7 +65,8 @@ public:
     void setShouldRegisterAsSpeakerSamplesProducer(bool);
 
     using WebCore::AudioSession::InterruptionObserver::weakPtrFactory;
-    using WeakValueType = WebCore::AudioSession::InterruptionObserver::WeakValueType;
+    using WebCore::AudioSession::InterruptionObserver::WeakValueType;
+    using WebCore::AudioSession::InterruptionObserver::WeakPtrImplType;
 
 private:
     void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription&, size_t);

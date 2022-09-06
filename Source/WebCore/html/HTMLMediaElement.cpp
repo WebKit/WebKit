@@ -1773,7 +1773,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     INFO_LOG(identifier, "nextInterestingTime:", nextInterestingTime);
 
     if (nextInterestingTime.isValid() && m_player) {
-        m_player->performTaskAtMediaTime([this, weakThis = WeakPtr { *this }, identifier] {
+        m_player->performTaskAtMediaTime([this, weakThis = WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> { *this }, identifier] {
             if (!weakThis)
                 return;
 
@@ -1959,7 +1959,7 @@ void HTMLMediaElement::speakCueText(TextTrackCue& cue)
         cancelSpeakingCueText();
 
     m_cueBeingSpoken = &cue;
-    cue.speak(m_reportedPlaybackRate ? m_reportedPlaybackRate : m_requestedPlaybackRate, volume(), [weakThis = WeakPtr { *this }](const TextTrackCue&) {
+    cue.speak(m_reportedPlaybackRate ? m_reportedPlaybackRate : m_requestedPlaybackRate, volume(), [weakThis = WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> { *this }](const TextTrackCue&) {
         ASSERT(isMainThread());
         if (!weakThis)
             return;
@@ -3160,7 +3160,7 @@ void HTMLMediaElement::progressEventTimerFired()
     if (!m_player->supportsProgressMonitoring())
         return;
 
-    m_player->didLoadingProgress([this, weakThis = WeakPtr { *this }](bool progress) {
+    m_player->didLoadingProgress([this, weakThis = WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> { *this }](bool progress) {
         if (!weakThis)
             return;
         MonotonicTime time = MonotonicTime::now();

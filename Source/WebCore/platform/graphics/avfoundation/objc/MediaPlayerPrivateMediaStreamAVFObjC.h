@@ -85,7 +85,8 @@ public:
     WTFLogChannel& logChannel() const final;
 
     using MediaStreamTrackPrivate::Observer::weakPtrFactory;
-    using WeakValueType = MediaStreamTrackPrivate::Observer::WeakValueType;
+    using MediaStreamTrackPrivate::Observer::WeakValueType;
+    using MediaStreamTrackPrivate::Observer::WeakPtrImplType;
 
 private:
     PlatformLayer* rootLayer() const;

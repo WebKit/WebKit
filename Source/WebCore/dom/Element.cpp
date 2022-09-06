@@ -2089,7 +2089,7 @@ void Element::setElementAttribute(const QualifiedName& attributeName, Element* e
     else
         setAttribute(attributeName, emptyAtom());
 
-    explicitlySetAttrElementsMap().set(attributeName, Vector<WeakPtr<Element>> { element });
+    explicitlySetAttrElementsMap().set(attributeName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> { element });
 }
 
 std::optional<Vector<RefPtr<Element>>> Element::getElementsArrayAttribute(const QualifiedName& attributeName) const
@@ -2135,7 +2135,7 @@ void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std:
         return;
     }
 
-    Vector<WeakPtr<Element>> newElements;
+    Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> newElements;
     newElements.reserveInitialCapacity(elements->size());
     StringBuilder value;
     for (auto element : elements.value()) {
@@ -4971,9 +4971,9 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
     return animations;
 }
 
-static WeakHashMap<Element, ElementIdentifier>& elementIdentifiersMap()
+static WeakHashMap<Element, ElementIdentifier, WeakPtrImplWithEventTargetData>& elementIdentifiersMap()
 {
-    static MainThreadNeverDestroyed<WeakHashMap<Element, ElementIdentifier>> map;
+    static MainThreadNeverDestroyed<WeakHashMap<Element, ElementIdentifier, WeakPtrImplWithEventTargetData>> map;
     return map;
 }
 

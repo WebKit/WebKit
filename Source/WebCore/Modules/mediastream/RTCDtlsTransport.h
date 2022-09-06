@@ -39,7 +39,7 @@ class RTCIceTransport;
 class RTCPeerConnection;
 class ScriptExecutionContext;
 
-class RTCDtlsTransport final : public RefCounted<RTCDtlsTransport>, public ActiveDOMObject, public EventTargetWithInlineData, public RTCDtlsTransportBackend::Client {
+class RTCDtlsTransport final : public RefCounted<RTCDtlsTransport>, public ActiveDOMObject, public EventTarget, public RTCDtlsTransportBackend::Client {
     WTF_MAKE_ISO_ALLOCATED(RTCDtlsTransport);
 public:
     static Ref<RTCDtlsTransport> create(ScriptExecutionContext&, UniqueRef<RTCDtlsTransportBackend>&&, Ref<RTCIceTransport>&&);
@@ -59,7 +59,7 @@ public:
 private:
     RTCDtlsTransport(ScriptExecutionContext&, UniqueRef<RTCDtlsTransportBackend>&&, Ref<RTCIceTransport>&&);
 
-    // EventTargetWithInlineData
+    // EventTarget
     EventTargetInterface eventTargetInterface() const final { return RTCDtlsTransportEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }

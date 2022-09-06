@@ -84,7 +84,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 class BaseAudioContext
     : public ActiveDOMObject
     , public ThreadSafeRefCounted<BaseAudioContext>
-    , public EventTargetWithInlineData
+    , public EventTarget
 #if !RELEASE_LOG_DISABLED
     , public LoggerHelper
 #endif

@@ -168,7 +168,7 @@ public:
     void willDeleteForm(HTMLFormElement&);
 
 private:
-    WeakHashMap<HTMLFormElement, String> m_formToKeyMap;
+    WeakHashMap<HTMLFormElement, String, WeakPtrImplWithEventTargetData> m_formToKeyMap;
     HashMap<String, unsigned> m_formSignatureToNextIndexMap;
 };
 

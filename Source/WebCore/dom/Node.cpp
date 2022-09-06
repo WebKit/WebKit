@@ -103,9 +103,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Node);
 using namespace HTMLNames;
 
 #if DUMP_NODE_STATISTICS
-static WeakHashSet<Node>& liveNodeSet()
+static WeakHashSet<Node, WeakPtrImplWithEventTargetData>& liveNodeSet()
 {
-    static NeverDestroyed<WeakHashSet<Node>> liveNodes;
+    static NeverDestroyed<WeakHashSet<Node, WeakPtrImplWithEventTargetData>> liveNodes;
     return liveNodes;
 }
 
@@ -305,9 +305,9 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, nodeCounter, ("WebCoreNode"
 #ifndef NDEBUG
 static bool shouldIgnoreLeaks = false;
 
-static WeakHashSet<Node>& ignoreSet()
+static WeakHashSet<Node, WeakPtrImplWithEventTargetData>& ignoreSet()
 {
-    static NeverDestroyed<WeakHashSet<Node>> ignore;
+    static NeverDestroyed<WeakHashSet<Node, WeakPtrImplWithEventTargetData>> ignore;
     return ignore;
 }
 
@@ -388,9 +388,6 @@ Node::~Node()
 
     if (auto* textManipulationController = document().textManipulationControllerIfExists(); UNLIKELY(textManipulationController))
         textManipulationController->removeNode(*this);
-
-    if (hasEventTargetData())
-        clearEventTargetData();
 
     document().decrementReferencingNodeCount();
 
@@ -2257,59 +2254,6 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& ev
 bool Node::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
 {
     return tryRemoveEventListener(this, eventType, listener, options);
-}
-
-typedef HashMap<Node*, std::unique_ptr<EventTargetData>> EventTargetDataMap;
-
-static EventTargetDataMap& eventTargetDataMap()
-{
-    static NeverDestroyed<EventTargetDataMap> map;
-
-    return map;
-}
-
-static Lock s_eventTargetDataMapLock;
-
-EventTargetData* Node::eventTargetData()
-{
-    return hasEventTargetData() ? eventTargetDataMap().get(this) : nullptr;
-}
-
-EventTargetData* Node::eventTargetDataConcurrently()
-{
-    // Not holding the lock when the world is stopped accelerates parallel constraint solving, which
-    // calls this function from many threads. Parallel constraint solving can happen with the world
-    // running or stopped, but if we do it with a running world, then we're usually mixing constraint
-    // solving with other work. Therefore, the most likely time for contention on this lock is when the
-    // world is stopped. We don't have to hold the lock when the world is stopped, because a stopped world
-    // means that we will never mutate the event target data map.
-    JSC::VM* vm = commonVMOrNull();
-    if (vm && vm->heap.worldIsRunning()) {
-        Locker locker { s_eventTargetDataMapLock };
-        return hasEventTargetData() ? eventTargetDataMap().get(this) : nullptr;
-    }
-    return hasEventTargetData() ? eventTargetDataMap().get(this) : nullptr;
-}
-
-EventTargetData& Node::ensureEventTargetData()
-{
-    if (hasEventTargetData())
-        return *eventTargetDataMap().get(this);
-
-    JSC::VM* vm = commonVMOrNull();
-    RELEASE_ASSERT(!vm || vm->heap.worldIsRunning());
-
-    Locker locker { s_eventTargetDataMapLock };
-    setHasEventTargetData(true);
-    return *eventTargetDataMap().add(this, makeUnique<EventTargetData>()).iterator->value;
-}
-
-void Node::clearEventTargetData()
-{
-    JSC::VM* vm = commonVMOrNull();
-    RELEASE_ASSERT(!vm || vm->heap.worldIsRunning());
-    Locker locker { s_eventTargetDataMapLock };
-    eventTargetDataMap().remove(this);
 }
 
 Vector<std::unique_ptr<MutationObserverRegistration>>* Node::mutationObserverRegistry()

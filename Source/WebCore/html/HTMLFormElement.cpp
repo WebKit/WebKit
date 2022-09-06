@@ -984,7 +984,7 @@ void HTMLFormElement::finishParsingChildren()
     document().formController().restoreControlStateIn(*this);
 }
 
-const Vector<WeakPtr<HTMLElement>>& HTMLFormElement::unsafeAssociatedElements() const
+const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& HTMLFormElement::unsafeAssociatedElements() const
 {
     ASSERT(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
     return m_associatedElements;

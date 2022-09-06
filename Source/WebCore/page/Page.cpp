@@ -1643,7 +1643,7 @@ void Page::updateRendering()
 #endif
 
     // Timestamps should not change while serving the rendering update steps.
-    Vector<WeakPtr<Document>> initialDocuments;
+    Vector<WeakPtr<Document, WeakPtrImplWithEventTargetData>> initialDocuments;
     forEachDocument([&initialDocuments] (Document& document) {
         document.domWindow()->freezeNowTimestamp();
         initialDocuments.append(document);
@@ -1771,7 +1771,7 @@ void Page::doAfterUpdateRendering()
         
         if (appHighlightStorage->hasUnrestoredHighlights() && MonotonicTime::now() - appHighlightStorage->lastRangeSearchTime() > 1_s) {
             appHighlightStorage->resetLastRangeSearchTime();
-            document.eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakDocument = WeakPtr { document }] {
+            document.eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakDocument = WeakPtr<Document, WeakPtrImplWithEventTargetData> { document }] {
                 RefPtr document { weakDocument.get() };
                 if (!document)
                     return;

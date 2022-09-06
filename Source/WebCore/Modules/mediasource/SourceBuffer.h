@@ -60,7 +60,7 @@ class WebCoreOpaqueRoot;
 class SourceBuffer final
     : public RefCounted<SourceBuffer>
     , public ActiveDOMObject
-    , public EventTargetWithInlineData
+    , public EventTarget
     , private SourceBufferPrivateClient
     , private AudioTrackClient
     , private VideoTrackClient
@@ -71,8 +71,9 @@ class SourceBuffer final
 {
     WTF_MAKE_ISO_ALLOCATED(SourceBuffer);
 public:
-    using WeakValueType = EventTarget::WeakValueType;
     using EventTarget::weakPtrFactory;
+    using EventTarget::WeakValueType;
+    using EventTarget::WeakPtrImplType;
 
     static Ref<SourceBuffer> create(Ref<SourceBufferPrivate>&&, MediaSource*);
     virtual ~SourceBuffer();

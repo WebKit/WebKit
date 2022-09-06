@@ -36,7 +36,7 @@ public:
 
     static Ref<HTMLSlotElement> create(const QualifiedName&, Document&);
 
-    const Vector<WeakPtr<Node>>* assignedNodes() const;
+    const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodes() const;
     struct AssignedNodesOptions {
         bool flatten;
     };
@@ -44,7 +44,7 @@ public:
     Vector<Ref<Element>> assignedElements(const AssignedNodesOptions&) const;
 
     void assign(FixedVector<ElementOrText>&&);
-    const Vector<WeakPtr<Node>>& manuallyAssignedNodes() const { return m_manuallyAssignedNodes; }
+    const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& manuallyAssignedNodes() const { return m_manuallyAssignedNodes; }
     void removeManuallyAssignedNode(Node&);
 
     void enqueueSlotChangeEvent();
@@ -64,7 +64,7 @@ private:
 
     bool m_inSignalSlotList { false };
     bool m_isInInsertedIntoAncestor { false };
-    Vector<WeakPtr<Node>> m_manuallyAssignedNodes;
+    Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>> m_manuallyAssignedNodes;
 };
 
 }

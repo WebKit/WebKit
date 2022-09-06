@@ -34,8 +34,9 @@ class CSSStyleSheet;
 class ProcessingInstruction final : public CharacterData, private CachedStyleSheetClient {
     WTF_MAKE_ISO_ALLOCATED(ProcessingInstruction);
 public:
-    using WeakValueType = CharacterData::WeakValueType;
     using CharacterData::weakPtrFactory;
+    using CharacterData::WeakValueType;
+    using CharacterData::WeakPtrImplType;
 
     static Ref<ProcessingInstruction> create(Document&, String&& target, String&& data);
     virtual ~ProcessingInstruction();

@@ -71,13 +71,13 @@ private:
     Element* container() const;
     HTMLFrameOwnerElement* frameOwnerForControls() const;
 
-    std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> collectClickableElements();
+    std::pair<Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>, Vector<String>> collectClickableElements();
     void hideUserInteractionBlockingElementIfNeeded();
 
-    WeakHashSet<Element> m_elementsToIgnoreWhenSearching;
-    std::pair<WeakPtr<Element>, WeakPtr<HTMLFrameOwnerElement>> m_containerAndFrameOwnerForControls;
-    WeakHashMap<HTMLFrameOwnerElement, WeakPtr<Element>> m_frameOwnersAndContainersToSearchAgain;
-    WeakPtr<Element> m_userInteractionBlockingElement;
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsToIgnoreWhenSearching;
+    std::pair<WeakPtr<Element, WeakPtrImplWithEventTargetData>, WeakPtr<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData>> m_containerAndFrameOwnerForControls;
+    WeakHashMap<HTMLFrameOwnerElement, WeakPtr<Element, WeakPtrImplWithEventTargetData>, WeakPtrImplWithEventTargetData> m_frameOwnersAndContainersToSearchAgain;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_userInteractionBlockingElement;
     AtomString m_overrideSearchTermForTesting;
     Timer m_collectClickableElementsTimer;
     bool m_collectingClickableElements { false };

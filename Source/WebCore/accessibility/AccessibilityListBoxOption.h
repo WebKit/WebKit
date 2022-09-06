@@ -65,7 +65,7 @@ private:
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
     bool computeAccessibilityIsIgnored() const final;
 
-    WeakPtr<HTMLElement> m_optionElement;
+    WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_optionElement;
 };
     
 } // namespace WebCore 

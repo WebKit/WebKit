@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class Document;
+class WeakPtrImplWithEventTargetData;
 
 class IdleCallbackController {
     WTF_MAKE_FAST_ALLOCATED;
@@ -60,7 +61,7 @@ private:
 
     Deque<IdleRequest> m_idleRequestCallbacks;
     Deque<IdleRequest> m_runnableIdleCallbacks;
-    WeakPtr<Document> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 } // namespace WebCore

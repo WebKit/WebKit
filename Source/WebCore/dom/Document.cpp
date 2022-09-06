@@ -846,8 +846,8 @@ Element* Document::elementForAccessKey(const String& key)
 
 void Document::buildAccessKeyCache()
 {
-    m_accessKeyCache = makeUnique<HashMap<String, WeakPtr<Element>, ASCIICaseInsensitiveHash>>([this] {
-        HashMap<String, WeakPtr<Element>, ASCIICaseInsensitiveHash> map;
+    m_accessKeyCache = makeUnique<HashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash>>([this] {
+        HashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash> map;
         for (auto& node : composedTreeDescendants(*this)) {
             auto element = dynamicDowncast<Element>(node);
             if (!element)
@@ -4010,10 +4010,10 @@ void Document::metaElementThemeColorChanged(HTMLMetaElement& metaElement)
     themeColorChanged();
 }
 
-WeakPtr<HTMLMetaElement> Document::determineActiveThemeColorMetaElement()
+WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData> Document::determineActiveThemeColorMetaElement()
 {
     if (!m_metaThemeColorElements) {
-        Vector<WeakPtr<HTMLMetaElement>> metaThemeColorElements;
+        Vector<WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData>> metaThemeColorElements;
         for (auto& metaElement : descendantsOfType<HTMLMetaElement>(*this)) {
             if (equalLettersIgnoringASCIICase(metaElement.name(), "theme-color"_s) && metaElement.contentColor().isValid())
                 metaThemeColorElements.append(metaElement);
@@ -8841,7 +8841,7 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
     if (messageSource == MessageSource::Other)
         return;
 
-    eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr { *this }, level, messageSource, logMessages = WTFMove(logMessages)]() mutable {
+    eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, level, messageSource, logMessages = WTFMove(logMessages)]() mutable {
         if (!weakThis || !weakThis->page())
             return;
 
@@ -8880,7 +8880,7 @@ void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(
         callback(false);
         return;
     }
-    eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, url, callback = WTFMove(callback)]() mutable {
+    eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, url, callback = WTFMove(callback)]() mutable {
         auto* frame = weakThis ? weakThis->frame() : nullptr;
         if (!frame) {
             callback(false);
@@ -9054,7 +9054,7 @@ void Document::didRejectSyncXHRDuringPageDismissal()
     if (m_numberOfRejectedSyncXHRs > 1)
         return;
 
-    postTask([this, weakThis = WeakPtr { *this }](auto&) mutable {
+    postTask([this, weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }](auto&) mutable {
         if (weakThis)
             m_numberOfRejectedSyncXHRs = 0;
     });

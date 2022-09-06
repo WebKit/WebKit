@@ -171,7 +171,7 @@ private:
     bool isGoogleMaps() const;
 #endif
 
-    WeakPtr<Document> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 
     mutable std::optional<bool> m_hasBrokenEncryptedMediaAPISupportQuirk;
     mutable std::optional<bool> m_needsFullWidthHeightFullscreenStyleQuirk;

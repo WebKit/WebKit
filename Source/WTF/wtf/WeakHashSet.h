@@ -31,12 +31,12 @@
 
 namespace WTF {
 
-template<typename T, typename Counter = EmptyCounter, EnableWeakPtrThreadingAssertions assertionsPolicy = EnableWeakPtrThreadingAssertions::Yes>
+template<typename T, typename WeakPtrImpl = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions assertionsPolicy = EnableWeakPtrThreadingAssertions::Yes>
 class WeakHashSet final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef HashSet<Ref<WeakPtrImpl<Counter>>> WeakPtrImplSet;
-    typedef typename WeakPtrImplSet::AddResult AddResult;
+    using WeakPtrImplSet = HashSet<Ref<WeakPtrImpl>>;
+    using AddResult = typename WeakPtrImplSet::AddResult;
 
     class WeakHashSetConstIterator {
     public:
@@ -105,9 +105,9 @@ public:
     bool remove(const U& value)
     {
         auto& weakPtrImpl = value.weakPtrFactory().m_impl;
-        if (!weakPtrImpl || !*weakPtrImpl)
-            return false;
-        return m_set.remove(*weakPtrImpl);
+        if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
+            return m_set.remove(*pointer);
+        return false;
     }
 
     void clear() { m_set.clear(); }
@@ -116,9 +116,9 @@ public:
     bool contains(const U& value) const
     {
         auto& weakPtrImpl = value.weakPtrFactory().m_impl;
-        if (!weakPtrImpl || !*weakPtrImpl)
-            return false;
-        return m_set.contains(*weakPtrImpl);
+        if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
+            return m_set.contains(*pointer);
+        return false;
     }
 
     unsigned capacity() const { return m_set.capacity(); }
@@ -138,9 +138,9 @@ public:
 
     void forEach(const Function<void(T&)>& callback)
     {
-        auto items = map(m_set, [](const Ref<WeakPtrImpl<Counter>>& item) {
+        auto items = map(m_set, [](const Ref<WeakPtrImpl>& item) {
             auto* pointer = static_cast<T*>(item->template get<T>());
-            return WeakPtr { pointer };
+            return WeakPtr<T, WeakPtrImpl> { pointer };
         });
         for (auto& item : items) {
             if (item && m_set.contains(*item.m_impl))
@@ -158,12 +158,12 @@ private:
     WeakPtrImplSet m_set;
 };
 
-template<typename MapFunction, typename T>
-struct Mapper<MapFunction, const WeakHashSet<T> &, void> {
+template<typename MapFunction, typename T, typename WeakMapImpl>
+struct Mapper<MapFunction, const WeakHashSet<T, WeakMapImpl> &, void> {
     using SourceItemType = T&;
     using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
 
-    static Vector<DestinationItemType> map(const WeakHashSet<T>& source, const MapFunction& mapFunction)
+    static Vector<DestinationItemType> map(const WeakHashSet<T, WeakMapImpl>& source, const MapFunction& mapFunction)
     {
         Vector<DestinationItemType> result;
         result.reserveInitialCapacity(source.computeSize());
@@ -173,10 +173,10 @@ struct Mapper<MapFunction, const WeakHashSet<T> &, void> {
     }
 };
 
-template<typename T>
-inline auto copyToVector(const WeakHashSet<T>& collection) -> Vector<WeakPtr<T>>
+template<typename T, typename WeakMapImpl>
+inline auto copyToVector(const WeakHashSet<T, WeakMapImpl>& collection) -> Vector<WeakPtr<T, WeakMapImpl>>
 {
-    return WTF::map(collection, [] (auto& v) -> WeakPtr<T> { return WeakPtr<T> { v }; });
+    return WTF::map(collection, [](auto& v) -> WeakPtr<T, WeakMapImpl> { return WeakPtr<T, WeakMapImpl> { v }; });
 }
 
 

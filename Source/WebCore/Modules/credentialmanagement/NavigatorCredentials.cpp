@@ -44,7 +44,7 @@ const char* NavigatorCredentials::supplementName()
     return "NavigatorCredentials";
 }
 
-CredentialsContainer* NavigatorCredentials::credentials(WeakPtr<Document>&& document)
+CredentialsContainer* NavigatorCredentials::credentials(WeakPtr<Document, WeakPtrImplWithEventTargetData>&& document)
 {
     if (!m_credentialsContainer)
         m_credentialsContainer = CredentialsContainer::create(WTFMove(document));

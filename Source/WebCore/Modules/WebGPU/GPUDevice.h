@@ -75,7 +75,7 @@ class GPUSupportedLimits;
 class GPUTexture;
 struct GPUTextureDescriptor;
 
-class GPUDevice : public RefCounted<GPUDevice>, public ActiveDOMObject, public EventTargetWithInlineData {
+class GPUDevice : public RefCounted<GPUDevice>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(GPUDevice);
 public:
     static Ref<GPUDevice> create(ScriptExecutionContext* scriptExecutionContext, Ref<PAL::WebGPU::Device>&& backing)
@@ -142,7 +142,7 @@ private:
     // FIXME: We probably need to override more methods to make this work properly.
     const char* activeDOMObjectName() const final { return "GPUDevice"; }
 
-    // EventTargetWithInlineData.
+    // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return GPUDeviceEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }

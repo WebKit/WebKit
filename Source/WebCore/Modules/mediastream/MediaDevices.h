@@ -56,7 +56,7 @@ struct MediaTrackSupportedConstraints;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
-class MediaDevices final : public RefCounted<MediaDevices>, public ActiveDOMObject, public EventTargetWithInlineData {
+class MediaDevices final : public RefCounted<MediaDevices>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(MediaDevices);
 public:
     static Ref<MediaDevices> create(Document&);
@@ -111,7 +111,7 @@ private:
     void stop() final;
     bool virtualHasPendingActivity() const final;
 
-    // EventTargetWithInlineData.
+    // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return MediaDevicesEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }

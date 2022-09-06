@@ -47,7 +47,7 @@ namespace WebCore {
 class Document;
 
 class MediaStream final
-    : public EventTargetWithInlineData
+    : public EventTarget
     , public ActiveDOMObject
     , public MediaStreamPrivate::Observer
     , private MediaCanStartListener
@@ -78,8 +78,9 @@ public:
 
     RefPtr<MediaStream> clone();
 
-    using WeakValueType = MediaStreamPrivate::Observer::WeakValueType;
     using MediaStreamPrivate::Observer::weakPtrFactory;
+    using MediaStreamPrivate::Observer::WeakValueType;
+    using MediaStreamPrivate::Observer::WeakPtrImplType;
 
     bool active() const { return m_isActive; }
     bool muted() const { return m_private->muted(); }

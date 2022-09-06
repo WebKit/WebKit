@@ -123,7 +123,7 @@ void AbortSignal::signalFollow(AbortSignal& signal)
 
     ASSERT(!m_followingSignal);
     m_followingSignal = signal;
-    signal.addAlgorithm([weakThis = WeakPtr { this }](JSC::JSValue reason) {
+    signal.addAlgorithm([weakThis = WeakPtr<AbortSignal, WeakPtrImplWithEventTargetData> { this }](JSC::JSValue reason) {
         if (weakThis)
             weakThis->signalAbort(reason);
     });

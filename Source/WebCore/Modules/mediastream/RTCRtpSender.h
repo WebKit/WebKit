@@ -111,7 +111,7 @@ private:
     String m_trackId;
     String m_trackKind;
     std::unique_ptr<RTCRtpSenderBackend> m_backend;
-    WeakPtr<RTCPeerConnection> m_connection;
+    WeakPtr<RTCPeerConnection, WeakPtrImplWithEventTargetData> m_connection;
     RefPtr<RTCDTMFSender> m_dtmfSender;
     std::unique_ptr<RTCRtpTransform> m_transform;
 #if !RELEASE_LOG_DISABLED

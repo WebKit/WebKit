@@ -49,7 +49,7 @@ private:
     {
     }
 
-    WeakPtr<HTMLElement> m_element;
+    WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_element;
 };
 
 } // namespace WebCore

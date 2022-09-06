@@ -683,7 +683,7 @@ bool ServiceWorkerContainer::addEventListener(const AtomString& eventType, Ref<E
     if (eventListener->isAttribute() && eventType == eventNames().messageEvent)
         startMessages();
 
-    return EventTargetWithInlineData::addEventListener(eventType, WTFMove(eventListener), options);
+    return EventTarget::addEventListener(eventType, WTFMove(eventListener), options);
 }
 
 void ServiceWorkerContainer::enableNavigationPreload(ServiceWorkerRegistrationIdentifier identifier, VoidPromise&& promise)

@@ -132,7 +132,7 @@ private:
             m_frameObserver.willDetachGlobalObjectFromFrame();
         }
 
-        WeakPtr<WebCore::DOMWindow> m_window;
+        WeakPtr<WebCore::DOMWindow, WebCore::WeakPtrImplWithEventTargetData> m_window;
         DOMObjectCacheFrameObserver& m_frameObserver;
     };
 

@@ -66,7 +66,7 @@ private:
 
     enum class Priority : bool { Low, High };
     struct Task {
-        WeakPtr<HTMLImageElement> element;
+        WeakPtr<HTMLImageElement, WeakPtrImplWithEventTargetData> element;
         Priority priority { Priority::Low };
         unsigned taskNumber { 0 };
     };
@@ -79,7 +79,7 @@ private:
     String m_targetLanguageIdentifier;
     WeakPtr<Page> m_page;
     Timer m_resumeProcessingTimer;
-    WeakHashMap<HTMLImageElement, URL> m_queuedElements;
+    WeakHashMap<HTMLImageElement, URL, WeakPtrImplWithEventTargetData> m_queuedElements;
     PriorityQueue<Task, firstIsHigherPriority> m_queue;
     unsigned m_pendingRequestCount { 0 };
     unsigned m_currentTaskNumber { 0 };

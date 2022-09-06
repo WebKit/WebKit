@@ -271,7 +271,7 @@ void NamedSlotAssignment::resolveSlotsAfterSlotMutation(ShadowRoot& shadowRoot, 
     }
 }
 
-void NamedSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node>>&, Vector<WeakPtr<Node>>&, ShadowRoot&)
+void NamedSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>&, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>&, ShadowRoot&)
 {
 }
 
@@ -332,7 +332,7 @@ void NamedSlotAssignment::hostChildElementDidChangeSlotAttribute(Element& elemen
     RenderTreeUpdater::tearDownRenderers(element);
 }
 
-const Vector<WeakPtr<Node>>* NamedSlotAssignment::assignedNodesForSlot(const HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
+const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* NamedSlotAssignment::assignedNodesForSlot(const HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
 {
     ASSERT(slotElement.containingShadowRoot() == &shadowRoot);
     const AtomString& slotName = slotNameFromAttributeValue(slotElement.attributeWithoutSynchronization(nameAttr));
@@ -431,16 +431,16 @@ HTMLSlotElement* ManualSlotAssignment::findAssignedSlot(const Node& node)
     return containingShadowRoot && containingShadowRoot->host() == node.parentNode() ? slot : nullptr;
 }
 
-static Vector<WeakPtr<Node>> effectiveAssignedNodes(ShadowRoot& shadowRoot, const Vector<WeakPtr<Node>>& manuallyAssingedNodes)
+static Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>> effectiveAssignedNodes(ShadowRoot& shadowRoot, const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& manuallyAssingedNodes)
 {
-    return WTF::compactMap(manuallyAssingedNodes, [&](auto& node) -> std::optional<WeakPtr<Node>> {
+    return WTF::compactMap(manuallyAssingedNodes, [&](auto& node) -> std::optional<WeakPtr<Node, WeakPtrImplWithEventTargetData>> {
         if (node->parentNode() != shadowRoot.host())
             return std::nullopt;
         return WeakPtr { node.get() };
     });
 }
 
-const Vector<WeakPtr<Node>>* ManualSlotAssignment::assignedNodesForSlot(const HTMLSlotElement& slot, ShadowRoot& shadowRoot)
+const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* ManualSlotAssignment::assignedNodesForSlot(const HTMLSlotElement& slot, ShadowRoot& shadowRoot)
 {
     auto addResult = m_slots.ensure(slot, []() {
         return Slot { };
@@ -488,7 +488,7 @@ void ManualSlotAssignment::removeSlotElementByName(const AtomString&, HTMLSlotEl
     }
 }
 
-void ManualSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement& slot, Vector<WeakPtr<Node>>& previous, Vector<WeakPtr<Node>>& current, ShadowRoot& shadowRoot)
+void ManualSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement& slot, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& previous, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& current, ShadowRoot& shadowRoot)
 {
     auto effectivePrevious = effectiveAssignedNodes(shadowRoot, previous);
     HashSet<Ref<HTMLSlotElement>> affectedSlots;

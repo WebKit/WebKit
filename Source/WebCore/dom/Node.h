@@ -341,9 +341,6 @@ public:
     bool isLink() const { return hasNodeFlag(NodeFlag::IsLink); }
     void setIsLink(bool flag) { setNodeFlag(NodeFlag::IsLink, flag); }
 
-    bool hasEventTargetData() const { return hasNodeFlag(NodeFlag::HasEventTargetData); }
-    void setHasEventTargetData(bool flag) { setNodeFlag(NodeFlag::HasEventTargetData, flag); }
-
     bool isInGCReacheableRefMap() const { return hasNodeFlag(NodeFlag::IsInGCReachableRefMap); }
     void setIsInGCReacheableRefMap(bool flag) { setNodeFlag(NodeFlag::IsInGCReachableRefMap, flag); }
 
@@ -523,10 +520,6 @@ public:
     bool m_adoptionIsRequired { true };
 #endif
 
-    EventTargetData* eventTargetData() final;
-    EventTargetData* eventTargetDataConcurrently() final;
-    EventTargetData& ensureEventTargetData() final;
-
     HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> registeredMutationObservers(MutationObserverOptionType, const QualifiedName* attributeName);
     void registerMutationObserver(MutationObserver&, MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter);
     void unregisterMutationObserver(MutationObserverRegistration&);
@@ -572,7 +565,6 @@ protected:
         IsConnected = 1 << 10,
         IsInShadowTree = 1 << 11,
         IsUnknownElement = 1 << 12,
-        HasEventTargetData = 1 << 13,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
@@ -711,8 +703,6 @@ protected:
     NodeRareData* rareData() const { return m_rareDataWithBitfields.pointer(); }
     NodeRareData& ensureRareData();
     void clearRareData();
-
-    void clearEventTargetData();
 
     void setHasCustomStyleResolveCallbacks() { setNodeFlag(NodeFlag::HasCustomStyleResolveCallbacks); }
 

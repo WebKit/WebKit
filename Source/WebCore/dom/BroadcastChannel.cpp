@@ -84,7 +84,7 @@ private:
 
     void ensureOnMainThread(Function<void(Document&)>&&);
 
-    WeakPtr<BroadcastChannel> m_broadcastChannel;
+    WeakPtr<BroadcastChannel, WeakPtrImplWithEventTargetData> m_broadcastChannel;
     const BroadcastChannelIdentifier m_identifier;
     const String m_name; // Main thread only.
     std::optional<PartitionedSecurityOrigin> m_origin; // Main thread only.

@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class Document;
+class WeakPtrImplWithEventTargetData;
 class MediaQuerySet;
 class RenderStyle;
 
@@ -90,7 +91,7 @@ public:
 
 private:
     String m_mediaType;
-    WeakPtr<const Document> m_document;
+    WeakPtr<const Document, WeakPtrImplWithEventTargetData> m_document;
     const RenderStyle* m_style { nullptr };
     bool m_fallbackResult { false };
 };

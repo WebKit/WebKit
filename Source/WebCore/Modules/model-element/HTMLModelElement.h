@@ -54,8 +54,9 @@ template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient, public ModelPlayerClient, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLModelElement);
 public:
-    using WeakValueType = HTMLElement::WeakValueType;
     using HTMLElement::weakPtrFactory;
+    using HTMLElement::WeakValueType;
+    using HTMLElement::WeakPtrImplType;
 
     static Ref<HTMLModelElement> create(const QualifiedName&, Document&);
     virtual ~HTMLModelElement();

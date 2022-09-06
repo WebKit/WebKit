@@ -121,7 +121,9 @@ struct SameSizeAsRenderObject {
     unsigned m_bitfields;
 };
 
+#if CPU(ADDRESS64)
 static_assert(sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), "RenderObject should stay small");
+#endif
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, renderObjectCounter, ("RenderObject"));
 

@@ -45,7 +45,7 @@ class TextTrackCueList;
 class VTTRegion;
 class VTTRegionList;
 
-class TextTrack : public TrackBase, public EventTargetWithInlineData, public ActiveDOMObject {
+class TextTrack : public TrackBase, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(TextTrack);
 public:
     static Ref<TextTrack> create(Document*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language);

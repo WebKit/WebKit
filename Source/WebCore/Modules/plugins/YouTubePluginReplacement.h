@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class WeakPtrImplWithEventTargetData;
 class YouTubeEmbedShadowElement;
 
 class YouTubePluginReplacement final : public PluginReplacement {
@@ -55,7 +56,7 @@ private:
     bool willCreateRenderer() final { return m_embedShadowElement; }
     RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, RenderStyle&&, const RenderTreePosition&) final;
 
-    WeakPtr<HTMLPlugInElement> m_parentElement;
+    WeakPtr<HTMLPlugInElement, WeakPtrImplWithEventTargetData> m_parentElement;
     RefPtr<YouTubeEmbedShadowElement> m_embedShadowElement;
     HashMap<AtomString, AtomString> m_attributes;
 };

@@ -157,9 +157,9 @@ using namespace Inspector;
 
 static constexpr Seconds defaultTransientActivationDuration { 5_s };
 
-static WeakHashSet<DOMWindow>& windowsInterestedInStorageEvents()
+static WeakHashSet<DOMWindow, WeakPtrImplWithEventTargetData>& windowsInterestedInStorageEvents()
 {
-    static MainThreadNeverDestroyed<WeakHashSet<DOMWindow>> set;
+    static MainThreadNeverDestroyed<WeakHashSet<DOMWindow, WeakPtrImplWithEventTargetData>> set;
     return set;
 }
 

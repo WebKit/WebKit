@@ -57,7 +57,7 @@ private:
 
     String m_returnValue;
     bool m_isModal { false };
-    WeakPtr<Element> m_previouslyFocusedElement;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
 };
 
 } // namespace WebCore

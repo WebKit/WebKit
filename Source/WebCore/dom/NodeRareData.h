@@ -330,7 +330,7 @@ private:
 
     std::unique_ptr<NodeListsNodeData> m_nodeLists;
     std::unique_ptr<NodeMutationObserverData> m_mutationObserverData;
-    WeakPtr<HTMLSlotElement> m_manuallyAssignedSlot;
+    WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_manuallyAssignedSlot;
 };
 
 template<> struct NodeListTypeIdentifier<NameNodeList> {

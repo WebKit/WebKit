@@ -481,7 +481,8 @@
         }
 
         using WebCore::MediaSessionCoordinatorClient::weakPtrFactory;
-        using WeakValueType = WebCore::MediaSessionCoordinatorClient::WeakValueType;
+        using WebCore::MediaSessionCoordinatorClient::WeakValueType;
+        using WebCore::MediaSessionCoordinatorClient::WeakPtrImplType;
 
     private:
         explicit WKMediaSessionCoordinatorForTesting(id <_WKMediaSessionCoordinator> clientCoordinator)

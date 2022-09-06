@@ -211,11 +211,11 @@ private:
     Document& m_document;
     Timer m_contentObservationTimer;
     WeakHashSet<const DOMTimer> m_DOMTimerList;
-    WeakHashSet<const Element> m_elementsWithTransition;
-    WeakHashSet<const Element> m_elementsWithDestroyedVisibleRenderer;
+    WeakHashSet<const Element, WeakPtrImplWithEventTargetData> m_elementsWithTransition;
+    WeakHashSet<const Element, WeakPtrImplWithEventTargetData> m_elementsWithDestroyedVisibleRenderer;
     WKContentChange m_observedContentState { WKContentNoChange };
-    WeakPtr<Element> m_hiddenTouchTargetElement;
-    WeakHashSet<Element> m_visibilityCandidateList;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_hiddenTouchTargetElement;
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_visibilityCandidateList;
     bool m_touchEventIsBeingDispatched { false };
     bool m_isWaitingForStyleRecalc { false };
     bool m_isInObservedStyleRecalc { false };

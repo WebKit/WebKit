@@ -191,6 +191,7 @@ class CachedPage;
 class CaptureDevice;
 class DocumentLoader;
 class DragData;
+class WeakPtrImplWithEventTargetData;
 class FontAttributeChanges;
 class FontChanges;
 class Frame;
@@ -2504,7 +2505,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    Vector<std::pair<WeakPtr<WebCore::HTMLElement>, Vector<CompletionHandler<void(RefPtr<WebCore::Element>&&)>>>> m_elementsPendingTextRecognition;
+    Vector<std::pair<WeakPtr<WebCore::HTMLElement, WebCore::WeakPtrImplWithEventTargetData>, Vector<CompletionHandler<void(RefPtr<WebCore::Element>&&)>>>> m_elementsPendingTextRecognition;
 #endif
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
@@ -2516,7 +2517,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    WeakHashSet<WebCore::HTMLImageElement> m_elementsToExcludeFromRemoveBackground;
+    WeakHashSet<WebCore::HTMLImageElement, WebCore::WeakPtrImplWithEventTargetData> m_elementsToExcludeFromRemoveBackground;
 #endif
 };
 

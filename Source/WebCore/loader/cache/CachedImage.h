@@ -35,6 +35,7 @@ namespace WebCore {
 
 class CachedImageClient;
 class CachedResourceLoader;
+class WeakPtrImplWithEventTargetData;
 class FloatSize;
 class MemoryCache;
 class RenderElement;
@@ -190,7 +191,7 @@ private:
 
     MonotonicTime m_lastUpdateImageDataTime;
 
-    WeakPtr<Document> m_skippingRevalidationDocument;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_skippingRevalidationDocument;
 
     static constexpr unsigned maxUpdateImageDataCount = 4;
     unsigned m_updateImageDataCount : 3;

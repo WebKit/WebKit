@@ -1198,7 +1198,7 @@ private:
     WeakHashSet<ActivityStateChangeObserver> m_activityStateChangeObservers;
 
 #if ENABLE(SERVICE_WORKER)
-    WeakPtr<ServiceWorkerGlobalScope> m_serviceWorkerGlobalScope;
+    WeakPtr<ServiceWorkerGlobalScope, WeakPtrImplWithEventTargetData> m_serviceWorkerGlobalScope;
 #endif
 
 #if ENABLE(RESOURCE_USAGE)
@@ -1328,7 +1328,7 @@ private:
 
 #if ENABLE(IMAGE_ANALYSIS)
     using CachedTextRecognitionResult = std::pair<TextRecognitionResult, IntRect>;
-    WeakHashMap<HTMLElement, CachedTextRecognitionResult> m_textRecognitionResults;
+    WeakHashMap<HTMLElement, CachedTextRecognitionResult, WeakPtrImplWithEventTargetData> m_textRecognitionResults;
 #endif
 
 #if USE(ATSPI)

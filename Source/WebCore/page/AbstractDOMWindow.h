@@ -36,7 +36,7 @@ namespace WebCore {
 class AbstractFrame;
 
 // FIXME: Rename DOMWindow to LocalWindow and AbstractDOMWindow to DOMWindow.
-class AbstractDOMWindow : public RefCounted<AbstractDOMWindow>, public EventTargetWithInlineData {
+class AbstractDOMWindow : public RefCounted<AbstractDOMWindow>, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(AbstractDOMWindow);
 public:
     virtual ~AbstractDOMWindow();

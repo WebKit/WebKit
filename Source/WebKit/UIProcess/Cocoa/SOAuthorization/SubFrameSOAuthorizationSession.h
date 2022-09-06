@@ -39,7 +39,8 @@ class SubFrameSOAuthorizationSession final : public NavigationSOAuthorizationSes
 public:
     using Callback = CompletionHandler<void(bool)>;
     using SOAuthorizationSession::weakPtrFactory;
-    using WeakValueType = SOAuthorizationSession::WeakValueType;
+    using SOAuthorizationSession::WeakValueType;
+    using SOAuthorizationSession::WeakPtrImplType;
 
     static Ref<SOAuthorizationSession> create(Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, WebCore::FrameIdentifier);
 

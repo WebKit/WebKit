@@ -52,7 +52,8 @@ public:
     ~RemoteSampleBufferDisplayLayer();
 
     using WebCore::SampleBufferDisplayLayer::Client::weakPtrFactory;
-    using WeakValueType = WebCore::SampleBufferDisplayLayer::Client::WeakValueType;
+    using WebCore::SampleBufferDisplayLayer::Client::WeakValueType;
+    using WebCore::SampleBufferDisplayLayer::Client::WeakPtrImplType;
 
     using LayerInitializationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>;
     void initialize(bool hideRootLayer, WebCore::IntSize, LayerInitializationCallback&&);

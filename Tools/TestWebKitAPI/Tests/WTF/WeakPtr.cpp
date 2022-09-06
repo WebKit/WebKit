@@ -33,16 +33,29 @@ namespace TestWebKitAPI {
 
 static unsigned s_baseWeakReferences = 0;
 
-struct WeakPtrCounter {
+class WeakPtrImplWithCounter final : public WTF::WeakPtrImplBase<WeakPtrImplWithCounter> {
+public:
+    template<typename T>
+    WeakPtrImplWithCounter(T* ptr)
+        : WTF::WeakPtrImplBase<WeakPtrImplWithCounter>(ptr)
+    {
+        increment();
+    }
+
+    ~WeakPtrImplWithCounter()
+    {
+        decrement();
+    }
+
     static void increment() { ++s_baseWeakReferences; }
     static void decrement() { --s_baseWeakReferences; }
 };
 
-template<typename T> using CanMakeWeakPtr = WTF::CanMakeWeakPtr<T, WeakPtrFactoryInitialization::Lazy, WeakPtrCounter>;
-template<typename T, typename U> using WeakHashMap = WTF::WeakHashMap<T, U, WeakPtrCounter>;
-template<typename T> using WeakHashSet = WTF::WeakHashSet<T, WeakPtrCounter>;
-template<typename T> using WeakPtr = WTF::WeakPtr<T, WeakPtrCounter>;
-template<typename T> using WeakPtrFactory = WTF::WeakPtrFactory<T, WeakPtrCounter>;
+template<typename T> using CanMakeWeakPtr = WTF::CanMakeWeakPtr<T, WeakPtrFactoryInitialization::Lazy, WeakPtrImplWithCounter>;
+template<typename T, typename U> using WeakHashMap = WTF::WeakHashMap<T, U, WeakPtrImplWithCounter>;
+template<typename T> using WeakHashSet = WTF::WeakHashSet<T, WeakPtrImplWithCounter>;
+template<typename T> using WeakPtr = WTF::WeakPtr<T, WeakPtrImplWithCounter>;
+template<typename T> using WeakPtrFactory = WTF::WeakPtrFactory<T, WeakPtrImplWithCounter>;
 
 // FIXME: Drop when we support C++20. C++17 does not support template parameter deduction for aliases and WeakPtr is an alias in this file.
 template<typename T, typename = std::enable_if_t<!WTF::IsSmartPtr<T>::value>> inline auto makeWeakPtr(T& object, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes)

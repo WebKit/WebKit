@@ -151,8 +151,9 @@ class HTMLMediaElement
 {
     WTF_MAKE_ISO_ALLOCATED(HTMLMediaElement);
 public:
-    using WeakValueType = HTMLElement::WeakValueType;
     using HTMLElement::weakPtrFactory;
+    using HTMLElement::WeakValueType;
+    using HTMLElement::WeakPtrImplType;
 
     RefPtr<MediaPlayer> player() const { return m_player; }
     WEBCORE_EXPORT std::optional<MediaPlayerIdentifier> playerIdentifier() const;

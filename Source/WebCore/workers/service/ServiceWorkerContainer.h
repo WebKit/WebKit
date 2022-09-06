@@ -54,7 +54,7 @@ enum class WorkerType : bool;
 
 template<typename IDLType> class DOMPromiseProxy;
 
-class ServiceWorkerContainer final : public EventTargetWithInlineData, public ActiveDOMObject, public ServiceWorkerJobClient {
+class ServiceWorkerContainer final : public EventTarget, public ActiveDOMObject, public ServiceWorkerJobClient {
     WTF_MAKE_NONCOPYABLE(ServiceWorkerContainer);
     WTF_MAKE_ISO_ALLOCATED(ServiceWorkerContainer);
 public:

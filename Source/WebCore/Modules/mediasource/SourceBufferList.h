@@ -42,7 +42,7 @@ namespace WebCore {
 class SourceBuffer;
 class WebCoreOpaqueRoot;
 
-class SourceBufferList final : public RefCounted<SourceBufferList>, public EventTargetWithInlineData, public ActiveDOMObject {
+class SourceBufferList final : public RefCounted<SourceBufferList>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(SourceBufferList);
 public:
     static Ref<SourceBufferList> create(ScriptExecutionContext*);

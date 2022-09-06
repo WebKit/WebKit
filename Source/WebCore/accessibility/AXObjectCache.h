@@ -556,7 +556,7 @@ private:
     Timer m_liveRegionChangedPostTimer;
     ListHashSet<RefPtr<AccessibilityObject>> m_liveRegionObjectsSet;
 
-    WeakPtr<Element> m_currentModalElement;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_currentModalElement;
     // Multiple aria-modals behavior is undefined by spec. We keep them sorted based on DOM order here.
     // If that changes to require only one aria-modal we could change this to a WeakHashSet, or discard the set completely.
     ListHashSet<Element*> m_modalElementsSet;
@@ -566,14 +566,14 @@ private:
     Timer m_performCacheUpdateTimer;
 
     AXTextStateChangeIntent m_textSelectionIntent;
-    WeakHashSet<Element> m_deferredRecomputeIsIgnoredList;
-    WeakHashSet<HTMLTableElement> m_deferredRecomputeTableIsExposedList;
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredRecomputeIsIgnoredList;
+    WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData> m_deferredRecomputeTableIsExposedList;
     ListHashSet<Node*> m_deferredTextChangedList;
-    WeakHashSet<Element> m_deferredSelectedChildredChangedList;
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredSelectedChildredChangedList;
     ListHashSet<RefPtr<AccessibilityObject>> m_deferredChildrenChangedList;
     ListHashSet<Node*> m_deferredNodeAddedOrRemovedList;
-    WeakHashSet<Element> m_deferredModalChangedList;
-    WeakHashSet<Element> m_deferredMenuListChange;
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredModalChangedList;
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredMenuListChange;
     HashMap<Element*, String> m_deferredTextFormControlValue;
     Vector<std::pair<Element*, QualifiedName>> m_deferredAttributeChange;
     Vector<std::pair<Node*, Node*>> m_deferredFocusedNodeChange;

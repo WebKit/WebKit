@@ -70,7 +70,7 @@ private:
     void appendBytes(DocumentWriter&, const uint8_t*, size_t) final;
     void finish() final;
 
-    WeakPtr<HTMLModelElement> m_modelElement;
+    WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> m_modelElement;
     String m_outgoingReferrer;
 };
 

@@ -87,7 +87,7 @@ private:
     bool m_stopped { false };
 
     std::unique_ptr<RTCRtpTransceiverBackend> m_backend;
-    WeakPtr<RTCPeerConnection> m_connection;
+    WeakPtr<RTCPeerConnection, WeakPtrImplWithEventTargetData> m_connection;
 };
 
 class RtpTransceiverSet {

@@ -57,14 +57,21 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(EventTarget);
-WTF_MAKE_ISO_ALLOCATED_IMPL(EventTargetWithInlineData);
 
 Ref<EventTarget> EventTarget::create(ScriptExecutionContext& context)
 {
     return EventTargetConcrete::create(context);
 }
 
-EventTarget::~EventTarget() = default;
+EventTarget::~EventTarget()
+{
+    // Explicitly tearing down since WeakPtrImpl can be alive longer than EventTarget.
+    if (hasEventTargetData()) {
+        auto* eventTargetData = this->eventTargetData();
+        ASSERT(eventTargetData);
+        eventTargetData->clear();
+    }
+}
 
 bool EventTarget::isNode() const
 {

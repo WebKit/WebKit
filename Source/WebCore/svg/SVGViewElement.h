@@ -51,7 +51,7 @@ private:
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
-    WeakPtr<SVGSVGElement> m_targetElement;
+    WeakPtr<SVGSVGElement, WeakPtrImplWithEventTargetData> m_targetElement;
 };
 
 } // namespace WebCore

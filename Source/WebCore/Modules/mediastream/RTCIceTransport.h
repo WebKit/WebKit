@@ -47,7 +47,7 @@ namespace WebCore {
 
 class RTCPeerConnection;
 
-class RTCIceTransport : public RefCounted<RTCIceTransport>, public ActiveDOMObject, public EventTargetWithInlineData, public RTCIceTransportBackend::Client {
+class RTCIceTransport : public RefCounted<RTCIceTransport>, public ActiveDOMObject, public EventTarget, public RTCIceTransportBackend::Client {
     WTF_MAKE_ISO_ALLOCATED(RTCIceTransport);
 public:
     static Ref<RTCIceTransport> create(ScriptExecutionContext&, UniqueRef<RTCIceTransportBackend>&&, RTCPeerConnection&);
@@ -71,7 +71,7 @@ public:
 private:
     RTCIceTransport(ScriptExecutionContext&, UniqueRef<RTCIceTransportBackend>&&, RTCPeerConnection&);
 
-    // EventTargetWithInlineData
+    // EventTarget
     EventTargetInterface eventTargetInterface() const final { return RTCIceTransportEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
@@ -89,7 +89,7 @@ private:
 
     bool m_isStopped { false };
     UniqueRef<RTCIceTransportBackend> m_backend;
-    WeakPtr<RTCPeerConnection> m_connection;
+    WeakPtr<RTCPeerConnection, WeakPtrImplWithEventTargetData> m_connection;
     RTCIceTransportState m_transportState { RTCIceTransportState::New };
     RTCIceGatheringState m_gatheringState { RTCIceGatheringState::New };
     std::optional<CandidatePair> m_selectedCandidatePair;
