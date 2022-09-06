@@ -89,7 +89,6 @@ public:
     virtual EventTargetInterface eventTargetInterface() const = 0;
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
-    WEBCORE_EXPORT virtual bool isNode() const;
     WEBCORE_EXPORT virtual bool isPaymentRequest() const;
 
     using AddEventListenerOptionsOrBoolean = std::variant<AddEventListenerOptions, bool>;
@@ -153,11 +152,24 @@ public:
         return weakPtrFactory().bitfield() & static_cast<uint16_t>(EventTargetFlag::HasEventTargetData);
     }
 
+    bool isNode() const
+    {
+        return weakPtrFactory().bitfield() & static_cast<uint16_t>(EventTargetFlag::IsNode);
+    }
+
 protected:
+    enum ConstructNodeTag { ConstructNode };
+    EventTarget() = default;
+    EventTarget(ConstructNodeTag)
+    {
+        weakPtrFactory().setBitfield(weakPtrFactory().bitfield() | static_cast<uint16_t>(EventTargetFlag::IsNode));
+    }
+
     WEBCORE_EXPORT virtual ~EventTarget();
 
     enum class EventTargetFlag : uint16_t {
         HasEventTargetData = 1 << 0,
+        IsNode = 1 << 1,
     };
 
     void setHasEventTargetData(bool flag) const

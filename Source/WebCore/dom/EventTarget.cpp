@@ -73,11 +73,6 @@ EventTarget::~EventTarget()
     }
 }
 
-bool EventTarget::isNode() const
-{
-    return false;
-}
-
 bool EventTarget::isPaymentRequest() const
 {
     return false;

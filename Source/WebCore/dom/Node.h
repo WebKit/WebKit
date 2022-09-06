@@ -725,7 +725,6 @@ private:
 
     void refEventTarget() final;
     void derefEventTarget() final;
-    bool isNode() const final;
 
     void trackForDebugging();
     void materializeRareData();

@@ -351,7 +351,8 @@ inline void NodeRareData::operator delete(NodeRareData* nodeRareData, std::destr
 }
 
 Node::Node(Document& document, ConstructionType type)
-    : m_nodeFlags(type)
+    : EventTarget(ConstructNode)
+    , m_nodeFlags(type)
     , m_treeScope(&document)
 {
     ASSERT(isMainThread());
@@ -434,11 +435,6 @@ void Node::clearRareData()
     ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->isEmpty());
 
     m_rareDataWithBitfields.setPointer(nullptr);
-}
-
-bool Node::isNode() const
-{
-    return true;
 }
 
 String Node::nodeValue() const
