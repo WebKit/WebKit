@@ -3741,3 +3741,5 @@ webkit.org/b/244549 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/244619 editing/selection/ios/tap-to-set-selection-in-editable-web-view.html [ Pass Timeout ]
 
 webkit.org/b/244740 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Pass Failure ]
+
+webkit.org/b/244851 platform/ios/mediastream/video-muted-in-background-tab.html [ Pass Crash ]
