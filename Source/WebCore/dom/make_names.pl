@@ -1254,7 +1254,7 @@ sub generateFindNameForLength
             my $lengthToCompare = $length - $currentIndex;
             if ($lengthToCompare == 1) {
                 my $letter = substr($string, $currentIndex, 1);
-                print F "${indent}if (buffer[$currentIndex] == '$letter') {\n";
+                print F "${indent}if (buffer[$currentIndex] == '$letter')\n";
             } else {
                 my $bufferStart = $currentIndex > 0 ? "buffer.data() + $currentIndex" : "buffer.data()";
                 print F "${indent}static constexpr characterType rest[] = { ";
@@ -1263,36 +1263,43 @@ sub generateFindNameForLength
                     print F "'$letter', ";
                 }
                 print F "};\n";
-                print F "${indent}if (!memcmp($bufferStart, rest, $lengthToCompare * sizeof(characterType))) {\n";
+                print F "${indent}if (!memcmp($bufferStart, rest, $lengthToCompare * sizeof(characterType)))\n";
             }
             print F "$indent    return ${enumClass}::$enumValue;\n";
-            print F "$indent}\n";
         } else {
             print F "${indent}return ${enumClass}::$enumValue;\n";
         }
         return;
     }
+
     for (my $i = 0; $i < $candidateCount;) {
         my $candidate = $candidates->[$i];
         my $string = $candidate->{string};
         my $enumValue = $candidate->{enumValue};
         my $letterAtIndex = substr($string, $currentIndex, 1);
-        print F "${indent}if (buffer[$currentIndex] == '$letterAtIndex') {\n";
-        my @candidatesWithPrefix = ($candidate);
-        for ($i = $i + 1; $i < $candidateCount; $i = $i + 1) {
-            my $nextCandidate = $candidates->[$i];
-            my $nextString = $nextCandidate->{string};
-            if (substr($nextString, $currentIndex, 1) eq $letterAtIndex) {
-                push(@candidatesWithPrefix, $nextCandidate);
-            } else {
-                last;
+        my $lengthToCompare = $length - $currentIndex;
+        if ($lengthToCompare == 1) {
+            print F "${indent}if (buffer[$currentIndex] == '$letterAtIndex')\n";
+            print F "${indent}    return ${enumClass}::$enumValue;\n";
+            $i = $i + 1;
+        } else {
+            print F "${indent}if (buffer[$currentIndex] == '$letterAtIndex') {\n";
+            my @candidatesWithPrefix = ($candidate);
+            for ($i = $i + 1; $i < $candidateCount; $i = $i + 1) {
+                my $nextCandidate = $candidates->[$i];
+                my $nextString = $nextCandidate->{string};
+                if (substr($nextString, $currentIndex, 1) eq $letterAtIndex) {
+                    push(@candidatesWithPrefix, $nextCandidate);
+                } else {
+                    last;
+                }
             }
+            generateFindNameForLength($indent . "    ", \@candidatesWithPrefix, $length, $currentIndex + 1, $enumClass);
+            if (@candidatesWithPrefix > 1) {
+                print F "${indent}    return ${enumClass}::Unknown;\n";
+            }
+            print F "$indent}\n";
         }
-        generateFindNameForLength($indent . "    ", \@candidatesWithPrefix, $length, $currentIndex + 1, $enumClass);
-        if (@candidatesWithPrefix > 1) {
-            print F "${indent}    return ${enumClass}::Unknown;\n";
-        }
-        print F "$indent}\n";
     }
 }
 
