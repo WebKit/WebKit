@@ -31,6 +31,7 @@
 #include "TouchEvent.h"
 
 #include "EventDispatcher.h"
+#include "Node.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
