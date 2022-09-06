@@ -31,6 +31,7 @@
 #include "AST/Attribute.h"
 #include "AST/Decl.h"
 #include "AST/Expression.h"
+#include "AST/Expressions/ArrayAccess.h"
 #include "AST/Expressions/CallableExpression.h"
 #include "AST/Expressions/IdentifierExpression.h"
 #include "AST/Expressions/LiteralExpressions.h"
@@ -618,14 +619,32 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePostfixExpressio
 
     UniqueRef<AST::Expression> expr = WTFMove(base);
     // FIXME: add the case for array/vector/matrix access
-    while (current().m_type == TokenType::Period) {
-        consume();
-        CONSUME_TYPE_NAMED(fieldName, Identifier);
-        SourceSpan span(startPosition, m_lexer.currentPosition());
-        expr = makeUniqueRef<AST::StructureAccess>(span, WTFMove(expr), fieldName.m_ident);
-    }
 
-    return { WTFMove(expr) };
+    for (;;) {
+        switch (current().m_type) {
+        case TokenType::BracketLeft: {
+            consume();
+            PARSE(arrayIndex, Expression);
+            CONSUME_TYPE(BracketRight);
+            // FIXME: Replace with NODE_REF(...)
+            SourceSpan span(startPosition, m_lexer.currentPosition());
+            expr = makeUniqueRef<AST::ArrayAccess>(span, WTFMove(expr), WTFMove(arrayIndex));
+            break;
+        }
+
+        case TokenType::Period: {
+            consume();
+            CONSUME_TYPE_NAMED(fieldName, Identifier);
+            // FIXME: Replace with NODE_REF(...)
+            SourceSpan span(startPosition, m_lexer.currentPosition());
+            expr = makeUniqueRef<AST::StructureAccess>(span, WTFMove(expr), fieldName.m_ident);
+            break;
+        }
+
+        default:
+            return { WTFMove(expr) };
+        }
+    }
 }
 
 // https://gpuweb.github.io/gpuweb/wgsl/#syntax-primary_expression

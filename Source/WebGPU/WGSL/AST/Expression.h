@@ -41,6 +41,7 @@ public:
         AbstractIntLiteral,
         AbstractFloatLiteral,
         Identifier,
+        ArrayAccess,
         StructureAccess,
         CallableExpression,
         UnaryExpression,
@@ -61,6 +62,7 @@ public:
     bool isAbstractIntLiteral() const { return kind() == Kind::AbstractIntLiteral; }
     bool isAbstractFloatLiteral() const { return kind() == Kind::AbstractFloatLiteral; }
     bool isIdentifier() const { return kind() == Kind::Identifier; }
+    bool isArrayAccess() const { return kind() == Kind::ArrayAccess; }
     bool isStructureAccess() const { return kind() == Kind::StructureAccess; }
     bool isCallableExpression() const { return kind() == Kind::CallableExpression; }
     bool isUnaryExpression() const { return kind() == Kind::UnaryExpression; }

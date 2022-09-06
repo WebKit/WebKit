@@ -78,6 +78,7 @@
 		33EA188427BC268600A1DD52 /* StructureAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188327BC268600A1DD52 /* StructureAccess.h */; };
 		33EA188627BC26DF00A1DD52 /* CallableExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188527BC26DF00A1DD52 /* CallableExpression.h */; };
 		33EA188827BC361E00A1DD52 /* LiteralExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188727BC361E00A1DD52 /* LiteralExpressions.h */; };
+		3A7E164C28C57BB8003F49C9 /* ArrayAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7E164B28C57BB7003F49C9 /* ArrayAccess.h */; };
 		3AAE4EB428C56E9A00DA484B /* UnaryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AAE4EB328C56E9A00DA484B /* UnaryExpression.h */; };
 		3AE27DB528C1BA480043A8E0 /* VariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* VariableStatement.h */; };
 		6634666B285F0140002ABE8E /* ConstLiteralTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6634666A285F0140002ABE8E /* ConstLiteralTests.mm */; };
@@ -334,6 +335,7 @@
 		33EA188327BC268600A1DD52 /* StructureAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StructureAccess.h; sourceTree = "<group>"; };
 		33EA188527BC26DF00A1DD52 /* CallableExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallableExpression.h; sourceTree = "<group>"; };
 		33EA188727BC361E00A1DD52 /* LiteralExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiteralExpressions.h; sourceTree = "<group>"; };
+		3A7E164B28C57BB7003F49C9 /* ArrayAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayAccess.h; sourceTree = "<group>"; };
 		3AAE4EB328C56E9A00DA484B /* UnaryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnaryExpression.h; sourceTree = "<group>"; };
 		3AE27DB428C1BA480043A8E0 /* VariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableStatement.h; sourceTree = "<group>"; };
 		6634666A285F0140002ABE8E /* ConstLiteralTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ConstLiteralTests.mm; sourceTree = "<group>"; };
@@ -727,6 +729,7 @@
 		33EA187C27BC246000A1DD52 /* Expressions */ = {
 			isa = PBXGroup;
 			children = (
+				3A7E164B28C57BB7003F49C9 /* ArrayAccess.h */,
 				33EA188527BC26DF00A1DD52 /* CallableExpression.h */,
 				33EA188127BC25D000A1DD52 /* IdentifierExpression.h */,
 				33EA188727BC361E00A1DD52 /* LiteralExpressions.h */,
@@ -765,6 +768,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A7E164C28C57BB8003F49C9 /* ArrayAccess.h in Headers */,
 				33EA188027BC24E200A1DD52 /* AssignmentStatement.h in Headers */,
 				33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */,
 				33EA186A27BC1BE600A1DD52 /* Attribute.h in Headers */,
