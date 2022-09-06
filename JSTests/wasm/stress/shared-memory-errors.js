@@ -1,5 +1,3 @@
-//Growing a shared memory requires signal handlers, which are not yet ported to ARMv7
-//@ skip if $architecture == "arm"
 import * as assert from '../assert.js';
 
 assert.throws(() => {

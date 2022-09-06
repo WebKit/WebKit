@@ -476,8 +476,11 @@ size_t Memory::fastMappedRedzoneBytes()
 
 size_t Memory::fastMappedBytes()
 {
-    static_assert(sizeof(uint64_t) == sizeof(size_t), "We rely on allowing the maximum size of Memory we map to be 2^32 + redzone which is larger than fits in a 32-bit integer that we'd pass to mprotect if this didn't hold.");
-    return (static_cast<size_t>(1) << 32) + fastMappedRedzoneBytes();
+    // MAX_ARRAY_BUFFER_SIZE is 2GB on 32bit architectures, which
+    // makes the whole thing (memory + redzone) fit inside a 32bit
+    // pointer. For 64bit we are using 4GB, which again is
+    // MAX_ARRAY_BUFFER_SIZE.
+    return MAX_ARRAY_BUFFER_SIZE + fastMappedRedzoneBytes();
 }
 #endif
 
@@ -489,11 +492,12 @@ bool Memory::addressIsInGrowableOrFastMemory(void* address)
 Expected<PageCount, Memory::GrowFailReason> Memory::growShared(VM& vm, PageCount delta)
 {
 #if !ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
-    // Shared memory requires signaling memory which is not available on ARMv7 or others
-    // yet. In order to get more of the test suite to run, we can still use
-    // a shared mmeory by using bounds checking, but we cannot grow it safely
-    // in case it's used by multiple threads. Once the signal handler are
-    // available, this can be relaxed.
+    // Shared memory requires signaling memory. In order to get more
+    // of the test suite to run when the feature is not available, we
+    // can still use a shared mmeory by using bounds checking, but we
+    // cannot grow it safely in case it's used by multiple
+    // threads. Once the signal handler are available, this can be
+    // relaxed.
     return makeUnexpected(GrowFailReason::GrowSharedUnavailable);
 #endif
 
