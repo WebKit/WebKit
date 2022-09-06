@@ -35,6 +35,7 @@
 #include "AST/Expressions/IdentifierExpression.h"
 #include "AST/Expressions/LiteralExpressions.h"
 #include "AST/Expressions/StructureAccess.h"
+#include "AST/Expressions/UnaryExpression.h"
 #include "AST/Statement.h"
 #include "AST/Statements/AssignmentStatement.h"
 #include "AST/Statements/CompoundStatement.h"
@@ -591,7 +592,14 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseMultiplicativeEx
 template<typename Lexer>
 Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseUnaryExpression()
 {
-    // FIXME: fill in
+    START_PARSE();
+
+    if (current().m_type == TokenType::Minus) {
+        consume();
+        PARSE(expression, SingularExpression);
+        RETURN_NODE_REF(UnaryExpression, WTFMove(expression), AST::UnaryOperation::Negate);
+    }
+
     return parseSingularExpression();
 }
 

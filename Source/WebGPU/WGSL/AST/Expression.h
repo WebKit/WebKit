@@ -43,6 +43,7 @@ public:
         Identifier,
         StructureAccess,
         CallableExpression,
+        UnaryExpression,
     };
 
     Expression(SourceSpan span)
@@ -62,6 +63,7 @@ public:
     bool isIdentifier() const { return kind() == Kind::Identifier; }
     bool isStructureAccess() const { return kind() == Kind::StructureAccess; }
     bool isCallableExpression() const { return kind() == Kind::CallableExpression; }
+    bool isUnaryExpression() const { return kind() == Kind::UnaryExpression; }
 };
 
 } // namespace WGSL::AST
