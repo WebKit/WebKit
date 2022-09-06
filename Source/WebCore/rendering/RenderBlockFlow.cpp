@@ -3592,62 +3592,49 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         if (!renderer.needsLayout() && !needsUpdateReplacedDimensions)
             continue;
 
+        auto shouldRunInFlowLayout = renderer.isInFlow() && is<RenderElement>(renderer) && !is<RenderLineBreak>(renderer) && !is<RenderInline>(renderer) && !is<RenderCounter>(renderer);
         if (renderer.isOutOfFlowPositioned())
             renderer.containingBlock()->insertPositionedObject(downcast<RenderBox>(renderer));
+        else if (shouldRunInFlowLayout)
+            downcast<RenderElement>(renderer).layoutIfNeeded();
+        else
+            renderer.clearNeedsLayout();
 
         if (is<RenderReplaced>(renderer)) {
-            auto& replaced = downcast<RenderReplaced>(renderer);
-            replaced.layoutIfNeeded();
-            layoutFormattingContextLineLayout.updateReplacedDimensions(replaced);
+            layoutFormattingContextLineLayout.updateReplacedDimensions(downcast<RenderReplaced>(renderer));
             continue;
         }
         if (is<RenderTable>(renderer)) {
-            auto& inlineTable = downcast<RenderTable>(renderer);
-            inlineTable.layoutIfNeeded();
-            layoutFormattingContextLineLayout.updateInlineTableDimensions(inlineTable);
+            layoutFormattingContextLineLayout.updateInlineTableDimensions(downcast<RenderTable>(renderer));
             continue;
         }
         if (is<RenderListMarker>(renderer)) {
-            auto& marker = downcast<RenderListMarker>(renderer);
-            marker.layoutIfNeeded();
-            layoutFormattingContextLineLayout.updateListMarkerDimensions(marker);
+            layoutFormattingContextLineLayout.updateListMarkerDimensions(downcast<RenderListMarker>(renderer));
             continue;
         }
         if (is<RenderListItem>(renderer)) {
-            auto& listItem = downcast<RenderListItem>(renderer);
-            listItem.layoutIfNeeded();
-            layoutFormattingContextLineLayout.updateListItemDimensions(listItem);
+            layoutFormattingContextLineLayout.updateListItemDimensions(downcast<RenderListItem>(renderer));
             continue;
         }
         if (is<RenderBlock>(renderer)) {
-            auto& block = downcast<RenderBlock>(renderer);
-            block.layoutIfNeeded();
-            layoutFormattingContextLineLayout.updateInlineBlockDimensions(block);
+            layoutFormattingContextLineLayout.updateInlineBlockDimensions(downcast<RenderBlock>(renderer));
             continue;
         }
-
         if (is<RenderLineBreak>(renderer)) {
             layoutFormattingContextLineLayout.updateLineBreakBoxDimensions(downcast<RenderLineBreak>(renderer));
-            renderer.clearNeedsLayout();
             continue;
         }
-
         if (is<RenderInline>(renderer)) {
             layoutFormattingContextLineLayout.updateInlineBoxDimensions(downcast<RenderInline>(renderer));
-            renderer.clearNeedsLayout();
             continue;
         }
-
         if (is<RenderCounter>(renderer)) {
             // The counter content gets updated unconventionally by involving computePreferredLogicalWidths() (see RenderCounter::updateCounter())
             // Here we assume that every time the content of a counter changes, we already handled the update by re-constructing the associated InlineTextBox (see BoxTree::buildTreeForInlineContent).
             if (renderer.preferredLogicalWidthsDirty())
                 downcast<RenderCounter>(renderer).updateCounter();
-            renderer.clearNeedsLayout();
             continue;
         }
-
-        renderer.clearNeedsLayout();
     }
 
     auto contentBoxTop = borderAndPaddingBefore();
