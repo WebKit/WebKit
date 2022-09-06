@@ -28,7 +28,7 @@
 
 #pragma once
 
-#if USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)
+#if USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(ANGLE)
 
 #include "NicosiaContentLayerTextureMapperImpl.h"
 
@@ -41,7 +41,9 @@ namespace WebCore {
 class IntSize;
 class GraphicsContextGLANGLE;
 class GraphicsContextGLFallback;
+#if USE(LIBGBM)
 class GraphicsContextGLGBM;
+#endif
 class PlatformDisplay;
 }
 
@@ -51,7 +53,9 @@ class GCGLANGLELayer final : public ContentLayerTextureMapperImpl::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     GCGLANGLELayer(WebCore::GraphicsContextGLFallback&);
+#if USE(LIBGBM)
     GCGLANGLELayer(WebCore::GraphicsContextGLGBM&);
+#endif
     virtual ~GCGLANGLELayer();
 
     ContentLayer& contentLayer() const { return m_contentLayer; }
