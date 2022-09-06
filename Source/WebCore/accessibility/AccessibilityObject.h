@@ -539,6 +539,7 @@ public:
     AtomString tagName() const override;
     bool hasDisplayContents() const;
 
+    std::optional<SimpleRange> visibleCharacterRange() const override;
     VisiblePositionRange visiblePositionRange() const override { return VisiblePositionRange(); }
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override { return VisiblePositionRange(); }
 
@@ -715,6 +716,7 @@ public:
     bool isAXHidden() const;
     bool isDOMHidden() const;
     bool isHidden() const { return isAXHidden() || isDOMHidden(); }
+    bool isOnScreen() const override;
 
 #if PLATFORM(COCOA)
     void overrideAttachmentParent(AXCoreObject* parent);
@@ -775,6 +777,9 @@ public:
 
     AccessibilityChildrenVector relatedObjects(AXRelationType) const override;
 
+    String innerHTML() const override;
+    String outerHTML() const override;
+
 #if PLATFORM(COCOA) && ENABLE(MODEL_ELEMENT)
     Vector<RetainPtr<id>> modelElementChildren() override;
 #endif
@@ -799,7 +804,6 @@ protected:
     virtual bool shouldIgnoreAttributeRole() const { return false; }
     virtual AccessibilityRole buttonRoleType() const;
     String rolePlatformDescription() const;
-    bool isOnScreen() const override;
     bool dispatchTouchEvent();
 
     static bool isARIAInput(AccessibilityRole);
@@ -809,15 +813,12 @@ protected:
 
     bool allowsTextRanges() const;
     unsigned getLengthForTextRange() const;
-    String innerHTML() const override;
-    String outerHTML() const override;
 
 private:
     bool hasAncestorFlag(AXAncestorFlag flag) const { return ancestorFlagsAreInitialized() && m_ancestorFlags.contains(flag); }
     std::optional<SimpleRange> rangeOfStringClosestToRangeInDirection(const SimpleRange&, AccessibilitySearchDirection, const Vector<String>&) const;
     std::optional<SimpleRange> selectionRange() const;
     std::optional<SimpleRange> findTextRange(const Vector<String>& searchStrings, const SimpleRange& start, AccessibilitySearchTextDirection) const;
-    std::optional<SimpleRange> visibleCharacterRange() const override;
     std::optional<SimpleRange> visibleCharacterRangeInternal(const std::optional<SimpleRange>&, const FloatRect&, const IntRect&) const;
     Vector<BoundaryPoint> previousLineStartBoundaryPoints(const VisiblePosition&, const SimpleRange&, unsigned) const;
     std::optional<VisiblePosition> previousLineStartPositionInternal(const VisiblePosition&) const;

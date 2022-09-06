@@ -369,7 +369,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
     initializePlatformProperties(coreObject, isRoot);
 }
 
-AXCoreObject* AXIsolatedObject::associatedAXObject() const
+AccessibilityObject* AXIsolatedObject::associatedAXObject() const
 {
     ASSERT(isMainThread());
 
