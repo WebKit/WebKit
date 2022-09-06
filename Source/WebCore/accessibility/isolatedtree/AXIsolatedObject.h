@@ -68,7 +68,7 @@ private:
     AXIsolatedObject() = default;
     AXIsolatedObject(const Ref<AXCoreObject>&, AXIsolatedTree*);
     bool isAXIsolatedObjectInstance() const override { return true; }
-    AXCoreObject* associatedAXObject() const;
+    AccessibilityObject* associatedAXObject() const;
 
     enum class IsRoot : bool { Yes, No };
     void initializeProperties(const Ref<AXCoreObject>&, IsRoot);
