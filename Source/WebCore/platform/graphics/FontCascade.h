@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
@@ -200,8 +200,6 @@ public:
 
     WEBCORE_EXPORT static void setShouldUseSmoothing(bool);
     WEBCORE_EXPORT static bool shouldUseSmoothing();
-
-    static bool isSubpixelAntialiasingAvailable();
 
     enum class CodePath : uint8_t { Auto, Simple, Complex, SimpleWithGlyphOverflow };
     CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;

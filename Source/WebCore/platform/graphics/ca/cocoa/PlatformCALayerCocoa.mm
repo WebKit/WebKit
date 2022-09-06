@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1239,11 +1239,6 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
         }
 
         {
-            if (!layerContents->platformCALayerContentsOpaque() && !platformCALayer->supportsSubpixelAntialiasedText() && FontCascade::isSubpixelAntialiasingAvailable()) {
-                // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
-                graphicsContext.setShouldSmoothFonts(false);
-            }
-
 #if PLATFORM(MAC)
             // It's important to get the clip from the context, because it may be significantly
             // smaller than the layer bounds (e.g. tiled layers)

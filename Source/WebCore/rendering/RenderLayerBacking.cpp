@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1594,7 +1594,7 @@ void RenderLayerBacking::updateAfterDescendants()
 {
     // FIXME: this potentially duplicates work we did in updateConfiguration().
     PaintedContentsInfo contentsInfo(*this);
-    contentsInfo.setWantsSubpixelAntialiasedTextState(GraphicsLayer::supportsSubpixelAntialiasedLayerText() && FontCascade::isSubpixelAntialiasingAvailable());
+    contentsInfo.setWantsSubpixelAntialiasedTextState(false);
 
     if (!m_owningLayer.isRenderViewLayer()) {
         bool didUpdateContentsRect = false;

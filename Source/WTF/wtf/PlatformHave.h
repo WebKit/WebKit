@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -426,10 +426,6 @@
 #define HAVE_OS_DARK_MODE_SUPPORT 1
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
-#define HAVE_CG_FONT_RENDERING_GET_FONT_SMOOTHING_DISABLED 1
-#endif
-
 #if PLATFORM(MAC)
 #define HAVE_READ_ONLY_SYSTEM_VOLUME 1
 #endif
@@ -817,7 +813,7 @@
 #define HAVE_AVCAPTUREDEVICE 1
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 110000 && defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
+#if PLATFORM(MAC) && defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
 #define HAVE_SANDBOX_MESSAGE_FILTERING 1
 #endif
 
@@ -936,7 +932,7 @@
 #define HAVE_PDFKIT 1
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 110300) \
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 110300) \
     || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140500) \
     || (PLATFORM(APPLETV) && __TV_OS_VERSION_MAX_ALLOWED >= 140500) \
     || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED >= 70400)
@@ -1310,7 +1306,7 @@
 #define HAVE_LOCKDOWN_MODE_PDF_ADDITIONS 1
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101600) \
+#if PLATFORM(MAC) \
     || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000) \
     || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 70000) \
     || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 140000)

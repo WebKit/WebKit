@@ -113,24 +113,6 @@ AffineTransform computeVerticalTextMatrix(const Font& font, const AffineTransfor
 
 #if !PLATFORM(WIN)
 
-// Confusingly, even when CGFontRenderingGetFontSmoothingDisabled() returns true, CGContextSetShouldSmoothFonts() still impacts text
-// rendering, which is why this function uses the "subpixel antialiasing" rather than "smoothing" terminology.
-bool FontCascade::isSubpixelAntialiasingAvailable()
-{
-#if HAVE(CG_FONT_RENDERING_GET_FONT_SMOOTHING_DISABLED)
-    static bool subpixelAntialiasingEnabled;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&]() {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        subpixelAntialiasingEnabled = !CGFontRenderingGetFontSmoothingDisabled();
-        ALLOW_DEPRECATED_DECLARATIONS_END
-    });
-    return subpixelAntialiasingEnabled;
-#else
-    return false;
-#endif
-}
-
 static void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef context, const CGSize* advances, unsigned count, const FloatPoint& point)
 {
     // Keep this in sync as the inverse of `DrawGlyphsRecorder::recordDrawGlyphs`.

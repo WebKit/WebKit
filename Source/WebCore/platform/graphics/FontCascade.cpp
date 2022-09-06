@@ -451,13 +451,6 @@ bool FontCascade::shouldUseSmoothing()
     return shouldUseFontSmoothing;
 }
 
-#if !USE(CORE_TEXT) || PLATFORM(WIN)
-bool FontCascade::isSubpixelAntialiasingAvailable()
-{
-    return false;
-}
-#endif
-
 void FontCascade::setCodePath(CodePath p)
 {
     s_codePath = p;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 - 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
@@ -241,16 +241,12 @@ bool WidthIterator::hasExtraSpacing() const
 static void addToGlyphBuffer(GlyphBuffer& glyphBuffer, Glyph glyph, const Font& font, float width, GlyphBufferStringOffset currentCharacterIndex, UChar32 character)
 {
     glyphBuffer.add(glyph, font, width, currentCharacterIndex);
-#if USE(CTFONTSHAPEGLYPHS)
     // These 0 glyphs are needed by shapers if the source text has surrogate pairs.
     // However, CTFontTransformGlyphs() can't delete these 0 glyphs from the shaped text,
     // so we shouldn't add them in the first place if we're using that shaping routine.
     // Any other shaping routine should delete these glyphs from the shaped text.
     if (!U_IS_BMP(character))
         glyphBuffer.add(0, font, 0, currentCharacterIndex + 1);
-#else
-    UNUSED_PARAM(character);
-#endif
 }
 
 template <typename TextIterator>
