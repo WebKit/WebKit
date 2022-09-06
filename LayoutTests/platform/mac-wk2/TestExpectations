@@ -1347,6 +1347,8 @@ webkit.org/b/223462 [ Debug arm64 ] imported/w3c/web-platform-tests/mediacapture
 
 webkit.org/b/223486 [ arm64 ] inspector/css/modify-inline-style.html [ Pass Failure ]
 
+webkit.org/b/244846 inspector/css/setLayoutContextTypeChangedMode.html [ Pass Failure ]
+
 # webkit.org/b/223488 The following three tests are flakey failing only on Apple Silicon.
 [ arm64 ] http/wpt/beacon/cors/cors-preflight-blob-failure.html [ Pass Failure ]
 [ arm64 ] http/wpt/beacon/cors/cors-preflight-blob-success.html [ Pass Failure ]
