@@ -123,17 +123,64 @@ static uint64_t nameHashForShader(const char* name, size_t length)
 GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes)
     : GraphicsContextGL(attributes)
 {
+}
+
+GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
+{
+    if (!makeContextCurrent())
+        return;
+
+    if (m_texture)
+        ::glDeleteTextures(1, &m_texture);
+#if USE(COORDINATED_GRAPHICS)
+    if (m_compositorTexture)
+        ::glDeleteTextures(1, &m_compositorTexture);
+#endif
+
+    auto attributes = contextAttributes();
+
+    if (attributes.antialias) {
+        ::glDeleteRenderbuffers(1, &m_multisampleColorBuffer);
+        if (attributes.stencil || attributes.depth)
+            ::glDeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+        ::glDeleteFramebuffers(1, &m_multisampleFBO);
+    } else if (attributes.stencil || attributes.depth) {
+#if USE(OPENGL_ES)
+        if (m_depthBuffer)
+            glDeleteRenderbuffers(1, &m_depthBuffer);
+
+        if (m_stencilBuffer)
+            glDeleteRenderbuffers(1, &m_stencilBuffer);
+#endif
+        if (m_depthStencilBuffer)
+            ::glDeleteRenderbuffers(1, &m_depthStencilBuffer);
+    }
+    ::glDeleteFramebuffers(1, &m_fbo);
+#if USE(COORDINATED_GRAPHICS)
+    ::glDeleteTextures(1, &m_intermediateTexture);
+#endif
+
+#if USE(CAIRO)
+    if (m_vao)
+        deleteVertexArray(m_vao);
+#endif
+}
+
+bool GraphicsContextGLOpenGL::initialize()
+{
 #if USE(NICOSIA)
-    m_nicosiaLayer = makeUnique<Nicosia::GCGLLayer>(*this);
+    m_nicosiaLayer = Nicosia::GCGLLayer::create(*this);
+    if (!m_nicosiaLayer)
+        return false;
 #else
     m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
 #endif
 
-    bool success = makeContextCurrent();
-    ASSERT_UNUSED(success, success);
+    if (!makeContextCurrent())
+        return false;
 
     validateAttributes();
-    attributes = contextAttributes(); // They may have changed during validation.
+    auto attributes = contextAttributes(); // They may have changed during validation.
 
     // Create a texture to render into.
     ::glGenTextures(1, &m_texture);
@@ -246,57 +293,14 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     m_compiler.setResources(ANGLEResources);
 
     ::glClearColor(0, 0, 0, 0);
-}
 
-GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
-{
-    bool success = makeContextCurrent();
-    ASSERT_UNUSED(success, success);
-    if (m_texture)
-        ::glDeleteTextures(1, &m_texture);
-#if USE(COORDINATED_GRAPHICS)
-    if (m_compositorTexture)
-        ::glDeleteTextures(1, &m_compositorTexture);
-#endif
-
-    auto attributes = contextAttributes();
-
-    if (attributes.antialias) {
-        ::glDeleteRenderbuffers(1, &m_multisampleColorBuffer);
-        if (attributes.stencil || attributes.depth)
-            ::glDeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
-        ::glDeleteFramebuffers(1, &m_multisampleFBO);
-    } else if (attributes.stencil || attributes.depth) {
-#if USE(OPENGL_ES)
-        if (m_depthBuffer)
-            glDeleteRenderbuffers(1, &m_depthBuffer);
-
-        if (m_stencilBuffer)
-            glDeleteRenderbuffers(1, &m_stencilBuffer);
-#endif
-        if (m_depthStencilBuffer)
-            ::glDeleteRenderbuffers(1, &m_depthStencilBuffer);
-    }
-    ::glDeleteFramebuffers(1, &m_fbo);
-#if USE(COORDINATED_GRAPHICS)
-    ::glDeleteTextures(1, &m_intermediateTexture);
-#endif
-
-#if USE(CAIRO)
-    if (m_vao)
-        deleteVertexArray(m_vao);
-#endif
-}
-
-bool GraphicsContextGLOpenGL::initialize()
-{
     return platformInitialize();
 }
 
 bool GraphicsContextGLOpenGL::makeContextCurrent()
 {
 #if USE(NICOSIA)
-    return m_nicosiaLayer->makeContextCurrent();
+    return m_nicosiaLayer && m_nicosiaLayer->makeContextCurrent();
 #else
     return m_texmapLayer->makeContextCurrent();
 #endif

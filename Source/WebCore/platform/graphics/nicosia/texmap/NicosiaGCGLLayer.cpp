@@ -43,11 +43,18 @@ namespace Nicosia {
 
 using namespace WebCore;
 
-GCGLLayer::GCGLLayer(GraphicsContextGLOpenGL& context)
+std::unique_ptr<GCGLLayer> GCGLLayer::create(WebCore::GraphicsContextGLOpenGL& context)
+{
+    if (auto glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing()))
+        return makeUnique<GCGLLayer>(context, WTFMove(glContext));
+    return nullptr;
+}
+
+GCGLLayer::GCGLLayer(GraphicsContextGLOpenGL& context, std::unique_ptr<WebCore::GLContext>&& glContext)
     : m_context(context)
+    , m_glContext(WTFMove(glContext))
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {
-    m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
 }
 
 GCGLLayer::~GCGLLayer()
