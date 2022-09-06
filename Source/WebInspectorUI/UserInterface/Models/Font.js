@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,14 @@
 
 WI.Font = class Font
 {
-    constructor(name, variationAxes)
+    constructor(name, variationAxes, {synthesizedBold, synthesizedOblique} = {})
     {
         this._name = name;
         this._variationAxes = variationAxes;
+
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): CSS.Font.synthesizedBold and CSS.Font.synthesizedOblique did not exist yet.
+        this._synthesizedBold = !!synthesizedBold;
+        this._synthesizedOblique = !!synthesizedOblique;
     }
 
     // Static
@@ -36,13 +40,19 @@ WI.Font = class Font
     static fromPayload(payload)
     {
         let variationAxes = payload.variationAxes.map((axisPayload) => WI.FontVariationAxis.fromPayload(axisPayload));
-        return new WI.Font(payload.displayName, variationAxes);
+
+        let synthesizedBold = payload.synthesizedBold;
+        let synthesizedOblique = payload.synthesizedOblique;
+
+        return new WI.Font(payload.displayName, variationAxes, {synthesizedBold, synthesizedOblique});
     }
 
     // Public
 
     get name() { return this._name; }
     get variationAxes() { return this._variationAxes; }
+    get synthesizedBold() { return this._synthesizedBold; }
+    get synthesizedOblique() { return this._synthesizedOblique; }
 
     variationAxis(tag)
     {

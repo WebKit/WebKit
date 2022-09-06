@@ -163,6 +163,66 @@ function test()
         }
     });
 
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.SyntheticWeightFromNormal",
+        description: "Ensure that text does not get a synthesized font weight for the node '#synthetic-weight-from-normal-test'.",
+        async setup() {
+            return loadFontFace("normal normal 12px AhemNormal", " ", "TestPage-SyntheticWeightFromNormalLoaded");
+        },
+        selector: "#synthetic-weight-from-normal-test",
+        computedFontHandler(font) {
+            InspectorTest.expectFalse(font.synthesizedBold, "Font should not have a synthesized weight.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.SyntheticWeightFromBold",
+        description: "Ensure that text does get a synthesized font weight for the node '#synthetic-weight-from-bold-test'.",
+        async setup() {
+            return loadFontFace("bold normal 12px AhemNormal", " ", "TestPage-SyntheticWeightFromBoldLoaded");
+        },
+        selector: "#synthetic-weight-from-bold-test",
+        computedFontHandler(font) {
+            InspectorTest.expectTrue(font.synthesizedBold, "Font should have a synthesized weight.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.SyntheticObliqueFromNormal",
+        description: "Ensure that text does not get a synthesized font style for the node '#synthetic-oblique-from-normal-test'.",
+        async setup() {
+            return loadFontFace("normal normal 12px AhemNormal", " ", "TestPage-SyntheticObliqueFromNormalLoaded");
+        },
+        selector: "#synthetic-oblique-from-normal-test",
+        computedFontHandler(font) {
+            InspectorTest.expectFalse(font.synthesizedOblique, "Font should not have a synthesized obliqueness.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.SyntheticObliqueFromItalic",
+        description: "Ensure that text does get a synthesized font style for the node '#synthetic-oblique-from-italic-test'.",
+        async setup() {
+            return loadFontFace("italic normal 12px AhemNormal", " ", "TestPage-SyntheticObliqueFromItalicLoaded");
+        },
+        selector: "#synthetic-oblique-from-italic-test",
+        computedFontHandler(font) {
+            InspectorTest.expectTrue(font.synthesizedOblique, "Font should have a synthesized obliqueness.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.SyntheticObliqueFromOblique",
+        description: "Ensure that text does get a synthesized font style for the node '#synthetic-oblique-from-oblique-test'.",
+        async setup() {
+            return loadFontFace("oblique normal 12px AhemNormal", " ", "TestPage-SyntheticObliqueFromObliqueLoaded");
+        },
+        selector: "#synthetic-oblique-from-oblique-test",
+        computedFontHandler(font) {
+            InspectorTest.expectTrue(font.synthesizedOblique, "Font should have a synthesized obliqueness.");
+        }
+    });
+
     WI.domManager.requestDocument((node) => {
         documentNode = node;
         suite.runTestCasesAndFinish();
@@ -204,6 +264,13 @@ function test()
     src: url("../../animations/font-variations/resources/Boxis-VF.ttf");
 }
 
+@font-face {
+    font-family: "AhemNormal";
+    font-weight: normal;
+    font-style: normal;
+    src: url("../../resources/Ahem.otf") format("opentype");
+}
+
 </style>
 </head>
 <body onload="runTest();">
@@ -220,6 +287,13 @@ function test()
     <div id="webfont-cjk-test-2" style="font-family: SomethingElse, WebFontWithCJKAndLatin, sans-serif;">&#x00A5Yen</div>
 
     <div id="variable-font-test-1" style="font-family: VariableFont;">Variable Font Test 1</div>
+
+    <div id="synthetic-weight-from-normal-test" style="font-family: AhemNormal; font-weight: normal;">Synthetic Weight Test 1</div>
+    <div id="synthetic-weight-from-bold-test" style="font-family: AhemNormal; font-weight: bold;">Synthetic Weight Test 2</div>
+
+    <div id="synthetic-oblique-from-normal-test" style="font-family: AhemNormal; font-style: normal;">Synthetic Oblique Test 1</div>
+    <div id="synthetic-oblique-from-italic-test" style="font-family: AhemNormal; font-style: italic;">Synthetic Oblique Test 2</div>
+    <div id="synthetic-oblique-from-oblique-test" style="font-family: AhemNormal; font-style: oblique;">Synthetic Oblique Test 3</div>
 </div>
 </body>
 </html>

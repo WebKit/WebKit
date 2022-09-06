@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,8 +51,13 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         this._fontNameRow.value = this.nodeStyles.computedPrimaryFont.name;
 
         this._fontSizeRow.value = this._formatSizeValue(this._fontPropertiesMap.get("font-size"));
+
         this._fontStyleRow.value = this._formatStyleValue(this._fontPropertiesMap.get("font-style"));
+        this._fontStyleRow.warningMessage = this.nodeStyles.computedPrimaryFont?.synthesizedOblique ? WI.UIString("Font was synthesized to be oblique because no oblique font is available.", "A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided style.") : null;
+
         this._fontWeightRow.value = this._formatSimpleSingleValue(this._fontPropertiesMap.get("font-weight"), "wght", "%s");
+        this._fontWeightRow.warningMessage = this.nodeStyles.computedPrimaryFont?.synthesizedBold ? WI.UIString("Font was synthesized to be bold because no bold font is available.", "A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided weight.") : null;
+
         this._fontStretchRow.value = this._formatSimpleSingleValue(this._fontPropertiesMap.get("font-stretch"), "wdth", WI.UIString("%s%%", "%s%% @ Font Details Sidebar", "A single value expressed as a percentage where the value has already been converted from a number to a string."));
 
         this._fontVariantLigaturesRow.value = this._formatLigatureValue(this._fontPropertiesMap.get("font-variant-ligatures"));

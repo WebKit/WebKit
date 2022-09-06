@@ -542,8 +542,10 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSComputedStylePropert
 
 static Ref<Protocol::CSS::Font> buildObjectForFont(const Font& font)
 {
+    auto& fontPlatformData = font.platformData();
+    
     auto resultVariationAxes = JSON::ArrayOf<Protocol::CSS::FontVariationAxis>::create();
-    for (auto& variationAxis : font.platformData().variationAxes(ShouldLocalizeAxisNames::Yes)) {
+    for (auto& variationAxis : fontPlatformData.variationAxes(ShouldLocalizeAxisNames::Yes)) {
         auto axis = Protocol::CSS::FontVariationAxis::create()
             .setTag(variationAxis.tag())
             .setMinimumValue(variationAxis.minimumValue())
@@ -556,11 +558,16 @@ static Ref<Protocol::CSS::Font> buildObjectForFont(const Font& font)
         
         resultVariationAxes->addItem(WTFMove(axis));
     }
-    
-    return Protocol::CSS::Font::create()
+
+    auto protocolFont = Protocol::CSS::Font::create()
         .setDisplayName(font.platformData().familyName())
         .setVariationAxes(WTFMove(resultVariationAxes))
         .release();
+
+    protocolFont->setSynthesizedBold(fontPlatformData.syntheticBold());
+    protocolFont->setSynthesizedOblique(fontPlatformData.syntheticOblique());
+
+    return protocolFont;
 }
 
 Protocol::ErrorStringOr<Ref<Protocol::CSS::Font>> InspectorCSSAgent::getFontDataForNode(Protocol::DOM::NodeId nodeId)
