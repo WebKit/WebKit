@@ -5034,6 +5034,8 @@ webkit.org/b/234690 imported/w3c/web-platform-tests/css/css-color/inline-opacity
 
 # color-mix() doesn't work with currentcolor
 webkit.org/b/234691 imported/w3c/web-platform-tests/css/css-color/color-mix-basic-001.html [ ImageOnlyFailure ]
+webkit.org/b/234691 imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-001.html [ ImageOnlyFailure ]
+webkit.org/b/234691 imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-002.html [ ImageOnlyFailure ]
 
 # display-p3 canvas and ImageData are Cocoa only for now.
 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
