@@ -554,12 +554,23 @@ WI.Spring = class Spring
             wd = w0 * Math.sqrt(1 - zeta * zeta);
             A = 1;
             B = (zeta * w0 + -this.initialVelocity) / wd;
+        } else if (zeta > 1) {
+            // Over-damped.
+            A = -zeta * w0 + w0 * Math.sqrt(zeta * zeta - 1);
+            B = -zeta * w0 - w0 * Math.sqrt(zeta * zeta - 1);
         }
 
-        if (zeta < 1) // Under-damped
+        if (zeta < 1) {
+            // Under-damped
             t = Math.exp(-t * zeta * w0) * (A * Math.cos(wd * t) + B * Math.sin(wd * t));
-        else // Critically damped (ignoring over-damped case).
+        } else if (zeta == 1) {
+            // Critically damped.
             t = (A + B * t) * Math.exp(-t * w0);
+        } else {
+            // Over-damped.
+            t = ((B + this.initialVelocity) * Math.exp(t * A) - 
+                    (A + this.initialVelocity) * Math.exp(t * B)) / (B - A);
+        }
 
         return 1 - t; // Map range from [1..0] to [0..1].
     }
