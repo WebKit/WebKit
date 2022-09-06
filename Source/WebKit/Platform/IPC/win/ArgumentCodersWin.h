@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2017 Konstantin Tokarev <annulen@yandex.ru>
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,39 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Attachment.h"
+#pragma once
 
-#include "ArgumentCoders.h"
+#include <wtf/ArgumentCoder.h>
+
+namespace WTF {
+class Win32Handle;
+}
 
 namespace IPC {
 
-Attachment::Attachment(Win32Handle&& handle)
-    : m_handle(WTFMove(handle))
-{
-}
+template<> struct ArgumentCoder<WTF::Win32Handle> {
+    static void encode(Encoder&, const WTF::Win32Handle&);
+    static void encode(Encoder&, WTF::Win32Handle&&);
+    static std::optional<WTF::Win32Handle> decode(Decoder&);
+};
 
-void Attachment::encode(Encoder& encoder) const
-{
-    encoder << m_handle;
 }
-
-std::optional<Attachment> Attachment::decode(Decoder& decoder)
-{
-    auto handle = decoder.decode<Win32Handle>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-    return Attachment { WTFMove(*handle) };
-}
-
-const Win32Handle& Attachment::handle() const
-{
-    return m_handle;
-}
-
-Win32Handle Attachment::release()
-{
-    return WTFMove(m_handle);
-}
-
-} // namespace IPC

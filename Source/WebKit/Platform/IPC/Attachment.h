@@ -35,7 +35,7 @@
 #endif
 
 #if OS(WINDOWS)
-#include <windows.h>
+#include <wtf/win/Win32Handle.h>
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
@@ -84,9 +84,7 @@ public:
     Attachment(MachSendRight&&);
     Attachment(const MachSendRight&);
 #elif OS(WINDOWS)
-    Attachment(HANDLE handle)
-        : m_handle(handle)
-    { }
+    Attachment(Win32Handle&&);
 #endif
 
     Type type() const { return m_type; }
@@ -100,7 +98,8 @@ public:
 
     const CustomWriter& customWriter() const { return m_customWriter; }
 #elif OS(WINDOWS)
-    HANDLE handle() const { return m_handle; }
+    const Win32Handle& handle() const;
+    Win32Handle release();
 #endif
 
     void encode(Encoder&) const;
@@ -114,7 +113,7 @@ private:
     size_t m_size;
     CustomWriter m_customWriter;
 #elif OS(WINDOWS)
-    HANDLE m_handle { INVALID_HANDLE_VALUE };
+    Win32Handle m_handle;
 #endif
 };
 

@@ -372,7 +372,7 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
         LOG_ERROR("Failed to create server and client identifiers");
         return std::nullopt;
     }
-    return ConnectionIdentifierPair { Identifier { serverIdentifier }, Attachment { clientIdentifier } };
+    return ConnectionIdentifierPair { Identifier { serverIdentifier }, Attachment { Win32Handle { clientIdentifier } } };
 }
 
 } // namespace IPC

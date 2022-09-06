@@ -36,7 +36,7 @@
 #endif
 
 #if OS(WINDOWS)
-#include <windows.h>
+#include <wtf/win/Win32Handle.h>
 #endif
 
 namespace IPC {
@@ -89,10 +89,6 @@ public:
         IPC::Attachment releaseAttachment() const;
         void adoptAttachment(IPC::Attachment&&);
 #endif
-#if OS(WINDOWS)
-        static void encodeHandle(IPC::Encoder&, HANDLE);
-        static std::optional<HANDLE> decodeHandle(IPC::Decoder&);
-#endif
         void encode(IPC::Encoder&) const;
         static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Handle&);
     private:
@@ -102,7 +98,7 @@ public:
 #elif OS(DARWIN)
         mutable MachSendRight m_handle;
 #elif OS(WINDOWS)
-        mutable HANDLE m_handle;
+        mutable Win32Handle m_handle;
 #endif
         size_t m_size { 0 };
     };
@@ -132,7 +128,7 @@ public:
     }
 
 #if OS(WINDOWS)
-    HANDLE handle() const { return m_handle; }
+    HANDLE handle() const { return m_handle.get(); }
 #endif
 
 #if PLATFORM(COCOA)
@@ -158,7 +154,7 @@ private:
 #elif OS(DARWIN)
     MachSendRight m_sendRight;
 #elif OS(WINDOWS)
-    HANDLE m_handle;
+    Win32Handle m_handle;
 #endif
 };
 

@@ -21,6 +21,7 @@ list(APPEND WebKit_SOURCES
 
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
+    Platform/IPC/win/ArgumentCodersWin.cpp
     Platform/IPC/win/AttachmentWin.cpp
     Platform/IPC/win/ConnectionWin.cpp
     Platform/IPC/win/IPCSemaphoreWin.cpp
@@ -102,6 +103,7 @@ list(APPEND WebKit_SOURCES
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/GPUProcess/graphics/wc"
+    "${WEBKIT_DIR}/Platform/IPC/win"
     "${WEBKIT_DIR}/Platform/classifier"
     "${WEBKIT_DIR}/Platform/generic"
     "${WEBKIT_DIR}/PluginProcess/win"

@@ -33,7 +33,7 @@
 #include <mach/semaphore.h>
 #include <wtf/MachSendRight.h>
 #elif OS(WINDOWS)
-#include <windows.h>
+#include <wtf/win/Win32Handle.h>
 #elif USE(UNIX_DOMAIN_SOCKETS)
 #include <wtf/unix/UnixFileDescriptor.h>
 #endif
@@ -65,7 +65,7 @@ public:
     MachSendRight createSendRight() const;
     explicit operator bool() const { return m_sendRight || m_semaphore != SEMAPHORE_NULL; }
 #elif OS(WINDOWS)
-    explicit Semaphore(HANDLE);
+    explicit Semaphore(Win32Handle&&);
 #elif USE(UNIX_DOMAIN_SOCKETS)
     explicit Semaphore(UnixFileDescriptor&&);
     explicit operator bool() const { return !!m_fd; }
@@ -79,7 +79,7 @@ private:
     MachSendRight m_sendRight;
     semaphore_t m_semaphore { SEMAPHORE_NULL };
 #elif OS(WINDOWS)
-    HANDLE m_semaphoreHandle { nullptr };
+    Win32Handle m_semaphoreHandle;
 #elif USE(UNIX_DOMAIN_SOCKETS)
     UnixFileDescriptor m_fd;
 #endif

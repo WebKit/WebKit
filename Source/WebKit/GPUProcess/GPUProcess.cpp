@@ -119,12 +119,10 @@ void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
 
 static IPC::Connection::Identifier asConnectionIdentifier(IPC::Attachment&& connectionHandle)
 {
-#if USE(UNIX_DOMAIN_SOCKETS)
+#if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
     return IPC::Connection::Identifier { connectionHandle.release().release() };
 #elif OS(DARWIN)
     return IPC::Connection::Identifier { connectionHandle.leakSendRight() };
-#elif OS(WINDOWS)
-    return IPC::Connection::Identifier { connectionHandle.handle() };
 #else
     notImplemented();
     return IPC::Connection::Identifier { };

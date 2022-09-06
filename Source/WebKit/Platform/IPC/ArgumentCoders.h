@@ -46,6 +46,9 @@
 #if OS(DARWIN)
 #include "ArgumentCodersDarwin.h"
 #endif
+#if OS(WINDOWS)
+#include "ArgumentCodersWin.h"
+#endif
 
 namespace IPC {
 

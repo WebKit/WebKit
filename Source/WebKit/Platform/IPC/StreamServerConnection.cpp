@@ -55,12 +55,10 @@ Ref<StreamServerConnection> StreamServerConnection::create(Connection& connectio
 
 Ref<StreamServerConnection> StreamServerConnection::createWithDedicatedConnection(Attachment&& connectionIdentifier, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
 {
-#if USE(UNIX_DOMAIN_SOCKETS)
+#if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
     IPC::Connection::Identifier connectionHandle { connectionIdentifier.release().release() };
 #elif OS(DARWIN)
     IPC::Connection::Identifier connectionHandle { connectionIdentifier.leakSendRight() };
-#elif OS(WINDOWS)
-    IPC::Connection::Identifier connectionHandle { connectionIdentifier.handle() };
 #else
     notImplemented();
     IPC::Connection::Identifier connectionHandle { };
