@@ -3742,4 +3742,4 @@ webkit.org/b/244619 editing/selection/ios/tap-to-set-selection-in-editable-web-v
 
 webkit.org/b/244740 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Pass Failure ]
 
-webkit.org/b/244851 platform/ios/mediastream/video-muted-in-background-tab.html [ Pass Crash ]
+webkit.org/b/244851 [ Debug ] platform/ios/mediastream/video-muted-in-background-tab.html [ Skip ]
