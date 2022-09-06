@@ -1416,6 +1416,16 @@ typedef NS_ENUM(NSUInteger, UIMenuOptionsPrivate) {
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
+    _UIScrollDeviceCategoryOverlayScroll = 6
+};
+
+@interface UIScrollEvent ()
+- (_UIScrollDeviceCategory)_scrollDeviceCategory;
+@end
+#endif
+
 @interface UITextInteractionAssistant (IPI)
 @property (nonatomic, readonly) BOOL inGesture;
 @property (nonatomic, readonly) UITextInteraction *interactions;

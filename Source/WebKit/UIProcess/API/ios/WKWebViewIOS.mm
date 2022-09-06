@@ -38,6 +38,7 @@
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 #import "TapHandlingResult.h"
+#import "UIKitSPI.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
 #import "WKBackForwardListItemInternal.h"
@@ -1878,6 +1879,13 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 - (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion
 {
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    if ([scrollEvent _scrollDeviceCategory] == _UIScrollDeviceCategoryOverlayScroll) {
+        completion(YES);
+        return;
+    }
+#endif
+
     BOOL isHandledByDefault = !scrollView.scrollEnabled;
 
     if (scrollEvent.phase == UIScrollPhaseMayBegin) {
