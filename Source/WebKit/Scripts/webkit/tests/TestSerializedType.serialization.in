@@ -14,6 +14,7 @@ headers: "HeaderWithoutCondition"
 #endif
 
 class Namespace::OtherClass {
+    [ReturnEarlyIfTrue] bool isNull
     int a
     bool b
 }
@@ -21,4 +22,16 @@ class Namespace::OtherClass {
 [Return=Ref] class Namespace::ReturnRefClass {
     double functionCall().member1
     double functionCall().member2
+    std::unique_ptr<int> uniqueMember
+}
+
+[LegacyPopulateFrom=EmptyConstructor] struct Namespace::EmptyConstructorStruct {
+    int m_int;
+    double m_double;
+}
+
+[LegacyPopulateFrom=EmptyConstructor] class Namespace::EmptyConstructorNullable {
+    [ReturnEarlyIfTrue] bool m_isNull;
+    MemberType m_type;
+    OtherMemberType m_value;
 }

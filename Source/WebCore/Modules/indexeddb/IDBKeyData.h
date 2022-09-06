@@ -27,6 +27,7 @@
 
 #include "IDBKey.h"
 #include <variant>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Hasher.h>
 #include <wtf/StdSet.h>
 #include <wtf/text/StringHash.h>
@@ -84,9 +85,6 @@ public:
     void setStringValue(const String&);
     void setDateValue(double);
     WEBCORE_EXPORT void setNumberValue(double);
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<IDBKeyData> decode(Decoder&);
     
 #if !LOG_DISABLED
     WEBCORE_EXPORT String loggingString() const;
@@ -152,6 +150,7 @@ public:
 
 private:
     friend struct IDBKeyDataHashTraits;
+    friend struct IPC::ArgumentCoder<IDBKeyData, void>;
 
     static void isolatedCopy(const IDBKeyData& source, IDBKeyData& destination);
 
@@ -212,80 +211,6 @@ struct IDBKeyDataHashTraits : public WTF::CustomHashTraits<IDBKeyData> {
         return key.isNull();
     }
 };
-
-template<class Encoder>
-void IDBKeyData::encode(Encoder& encoder) const
-{
-    encoder << m_isNull;
-    if (m_isNull)
-        return;
-
-    encoder << m_type;
-
-    switch (m_type) {
-    case IndexedDB::KeyType::Invalid:
-    case IndexedDB::KeyType::Max:
-    case IndexedDB::KeyType::Min:
-        break;
-    case IndexedDB::KeyType::Array:
-        encoder << std::get<Vector<IDBKeyData>>(m_value);
-        break;
-    case IndexedDB::KeyType::Binary:
-        encoder << std::get<ThreadSafeDataBuffer>(m_value);
-        break;
-    case IndexedDB::KeyType::String:
-        encoder << std::get<String>(m_value);
-        break;
-    case IndexedDB::KeyType::Date:
-    case IndexedDB::KeyType::Number:
-        encoder << std::get<double>(m_value);
-        break;
-    }
-}
-
-template<class Decoder>
-std::optional<IDBKeyData> IDBKeyData::decode(Decoder& decoder)
-{
-    IDBKeyData keyData;
-    if (!decoder.decode(keyData.m_isNull))
-        return std::nullopt;
-
-    if (keyData.m_isNull)
-        return keyData;
-
-    if (!decoder.decode(keyData.m_type))
-        return std::nullopt;
-
-    switch (keyData.m_type) {
-    case IndexedDB::KeyType::Invalid:
-    case IndexedDB::KeyType::Max:
-    case IndexedDB::KeyType::Min:
-        break;
-    case IndexedDB::KeyType::Array:
-        keyData.m_value = Vector<IDBKeyData>();
-        if (!decoder.decode(std::get<Vector<IDBKeyData>>(keyData.m_value)))
-            return std::nullopt;
-        break;
-    case IndexedDB::KeyType::Binary:
-        keyData.m_value = ThreadSafeDataBuffer();
-        if (!decoder.decode(std::get<ThreadSafeDataBuffer>(keyData.m_value)))
-            return std::nullopt;
-        break;
-    case IndexedDB::KeyType::String:
-        keyData.m_value = String();
-        if (!decoder.decode(std::get<String>(keyData.m_value)))
-            return std::nullopt;
-        break;
-    case IndexedDB::KeyType::Date:
-    case IndexedDB::KeyType::Number:
-        keyData.m_value = 0.0;
-        if (!decoder.decode(std::get<double>(keyData.m_value)))
-            return std::nullopt;
-        break;
-    }
-
-    return keyData;
-}
 
 using IDBKeyDataSet = StdSet<IDBKeyData>;
 

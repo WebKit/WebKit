@@ -82,3 +82,182 @@ header: <WebCore/FloatPoint3D.h>
     float y()
     float z()
 }
+
+header: <WebCore/IDBCursorRecord.h>
+struct WebCore::IDBCursorRecord {
+    WebCore::IDBKeyData key;
+    WebCore::IDBKeyData primaryKey;
+    WebCore::IDBValue value;
+}
+
+header: <WebCore/IDBCursorInfo.h>
+class WebCore::IDBCursorInfo {
+    WebCore::IDBResourceIdentifier identifier();
+    WebCore::IDBResourceIdentifier transactionIdentifier();
+    uint64_t objectStoreIdentifier();
+    uint64_t sourceIdentifier();
+
+    WebCore::IDBKeyRangeData range();
+
+    WebCore::IndexedDB::CursorSource cursorSource();
+    WebCore::IndexedDB::CursorDirection cursorDirection();
+    WebCore::IndexedDB::CursorType cursorType();
+};
+
+header: <WebCore/IDBError.h>
+class WebCore::IDBError {
+    std::optional<WebCore::ExceptionCode> code()
+    String messageForSerialization()
+}
+
+header: <WebCore/IDBGetAllRecordsData.h>
+struct WebCore::IDBGetAllRecordsData {
+    WebCore::IDBKeyRangeData keyRangeData;
+    WebCore::IndexedDB::GetAllType getAllType;
+    std::optional<uint32_t> count;
+    uint64_t objectStoreIdentifier;
+    uint64_t indexIdentifier;
+}
+
+header: <WebCore/IDBGetResult.h>
+class WebCore::IDBGetResult {
+    WebCore::IDBKeyData keyData()
+    WebCore::IDBKeyData primaryKeyData()
+    WebCore::IDBValue value()
+    std::optional<WebCore::IDBKeyPath> keyPath()
+    Vector<WebCore::IDBCursorRecord> prefetchedRecords()
+    bool isDefined()
+}
+
+header: <WebCore/IDBGetAllResult.h>
+class WebCore::IDBGetAllResult {
+    WebCore::IndexedDB::GetAllType type()
+    Vector<WebCore::IDBKeyData> keys()
+    Vector<WebCore::IDBValue> values()
+    std::optional<WebCore::IDBKeyPath> keyPath()
+}
+
+header: <WebCore/IDBDatabaseInfo.h>
+class WebCore::IDBDatabaseInfo {
+    String m_name
+    uint64_t m_version
+    uint64_t m_maxIndexID
+    uint64_t m_maxObjectStoreID
+    HashMap<uint64_t, WebCore::IDBObjectStoreInfo> m_objectStoreMap
+}
+
+header: <WebCore/IDBKeyRangeData.h>
+struct WebCore::IDBKeyRangeData {
+    [ReturnEarlyIfTrue] bool isNull;
+
+    WebCore::IDBKeyData lowerKey;
+    WebCore::IDBKeyData upperKey;
+
+    bool lowerOpen;
+    bool upperOpen;
+};
+
+header: <WebCore/IDBTransactionInfo.h>
+class WebCore::IDBTransactionInfo {
+    WebCore::IDBResourceIdentifier identifier();
+    WebCore::IDBTransactionMode mode();
+    WebCore::IDBTransactionDurability durability();
+    uint64_t newVersion();
+    Vector<String> objectStores();
+    std::unique_ptr<WebCore::IDBDatabaseInfo> originalDatabaseInfo();
+};
+
+header: <WebCore/IDBGetRecordData.h>
+struct WebCore::IDBGetRecordData {
+    WebCore::IDBKeyRangeData keyRangeData;
+    WebCore::IDBGetRecordDataType type;
+}
+
+header: <WebCore/IDBIndexInfo.h>
+class WebCore::IDBIndexInfo {
+    uint64_t identifier()
+    uint64_t objectStoreIdentifier()
+    String name()
+    WebCore::IDBKeyPath keyPath()
+    bool unique()
+    bool multiEntry()
+}
+
+header: <WebCore/IDBObjectStoreInfo.h>
+class WebCore::IDBObjectStoreInfo {
+    uint64_t identifier()
+    String name()
+    std::optional<WebCore::IDBKeyPath> keyPath()
+    bool autoIncrement()
+    HashMap<uint64_t, WebCore::IDBIndexInfo> indexMap()
+}
+
+header: <WebCore/IDBIterateCursorData.h>
+struct WebCore::IDBIterateCursorData {
+    WebCore::IDBKeyData keyData;
+    WebCore::IDBKeyData primaryKeyData;
+    unsigned count;
+    WebCore::IndexedDB::CursorIterateOption option;
+}
+
+header: <WebCore/IDBResourceIdentifier.h>
+class WebCore::IDBResourceIdentifier {
+    WebCore::IDBConnectionIdentifier m_idbConnectionIdentifier
+    uint64_t m_resourceNumber
+}
+
+header: <WebCore/IDBValue.h>
+class WebCore::IDBValue {
+    WebCore::ThreadSafeDataBuffer data()
+    Vector<String> blobURLs()
+    Vector<String> blobFilePaths()
+};
+
+header: <WebCore/IDBRequestData.h>
+class WebCore::IDBRequestData {
+    WebCore::IDBConnectionIdentifier m_serverConnectionIdentifier;
+    std::unique_ptr<WebCore::IDBResourceIdentifier> m_requestIdentifier;
+    std::unique_ptr<WebCore::IDBResourceIdentifier> m_transactionIdentifier;
+    std::unique_ptr<WebCore::IDBResourceIdentifier> m_cursorIdentifier;
+    uint64_t m_objectStoreIdentifier;
+    uint64_t m_indexIdentifier;
+    WebCore::IndexedDB::IndexRecordType m_indexRecordType;
+    std::optional<WebCore::IDBDatabaseIdentifier> m_databaseIdentifier;
+    uint64_t m_requestedVersion;
+    WebCore::IndexedDB::RequestType m_requestType;
+}
+
+header: <WebCore/IDBDatabaseIdentifier.h>
+# FIXME: When decoding from IPC, databaseName can be null, and the non-empty constructor asserts that this is not the case.
+[LegacyPopulateFrom=EmptyConstructor] class WebCore::IDBDatabaseIdentifier {
+    String m_databaseName
+    WebCore::ClientOrigin m_origin
+    bool m_isTransient
+}
+
+header: <WebCore/IDBDatabaseNameAndVersion.h>
+struct WebCore::IDBDatabaseNameAndVersion {
+    String name;
+    uint64_t version;
+}
+
+header: <WebCore/IDBResultData.h>
+[LegacyPopulateFrom=EmptyConstructor] class WebCore::IDBResultData {
+    WebCore::IDBResultType m_type;
+    WebCore::IDBResourceIdentifier m_requestIdentifier;
+    WebCore::IDBError m_error;
+    uint64_t m_databaseConnectionIdentifier;
+    std::unique_ptr<WebCore::IDBDatabaseInfo> m_databaseInfo;
+    std::unique_ptr<WebCore::IDBTransactionInfo> m_transactionInfo;
+    std::unique_ptr<WebCore::IDBKeyData> m_resultKey;
+    std::unique_ptr<WebCore::IDBGetResult> m_getResult;
+    std::unique_ptr<WebCore::IDBGetAllResult> m_getAllResult;
+    uint64_t m_resultInteger;
+}
+
+header: <WebCore/IDBKeyData.h>
+[LegacyPopulateFrom=EmptyConstructor] class WebCore::IDBKeyData {
+    [ReturnEarlyIfTrue] bool m_isNull;
+    WebCore::IndexedDB::KeyType m_type;
+    std::variant<Vector<WebCore::IDBKeyData>, String, double, WebCore::ThreadSafeDataBuffer> m_value;
+}

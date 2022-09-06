@@ -62,6 +62,15 @@ struct IDBKeyRangeData {
         upperOpen = keyRange->upperOpen();
     }
 
+    IDBKeyRangeData(bool isNull, IDBKeyData&& lowerKey, IDBKeyData&& upperKey, bool lowerOpen, bool upperOpen)
+        : lowerKey(WTFMove(lowerKey))
+        , upperKey(WTFMove(upperKey))
+        , lowerOpen(WTFMove(lowerOpen))
+        , upperOpen(WTFMove(upperOpen))
+        , isNull(isNull)
+    {
+    }
+
     WEBCORE_EXPORT IDBKeyRangeData isolatedCopy() const;
 
     WEBCORE_EXPORT RefPtr<IDBKeyRange> maybeCreateIDBKeyRange() const;
@@ -69,9 +78,6 @@ struct IDBKeyRangeData {
     WEBCORE_EXPORT bool isExactlyOneKey() const;
     bool containsKey(const IDBKeyData&) const;
     bool isValid() const;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBKeyRangeData&);
 
     IDBKeyData lowerKey;
     IDBKeyData upperKey;
@@ -85,45 +91,5 @@ struct IDBKeyRangeData {
     String loggingString() const;
 #endif
 };
-
-template<class Encoder>
-void IDBKeyRangeData::encode(Encoder& encoder) const
-{
-    encoder << isNull;
-    if (isNull)
-        return;
-
-    encoder << upperKey << lowerKey << upperOpen << lowerOpen;
-}
-
-template<class Decoder>
-bool IDBKeyRangeData::decode(Decoder& decoder, IDBKeyRangeData& keyRange)
-{
-    if (!decoder.decode(keyRange.isNull))
-        return false;
-
-    if (keyRange.isNull)
-        return true;
-
-    std::optional<IDBKeyData> upperKey;
-    decoder >> upperKey;
-    if (!upperKey)
-        return false;
-    keyRange.upperKey = WTFMove(*upperKey);
-    
-    std::optional<IDBKeyData> lowerKey;
-    decoder >> lowerKey;
-    if (!lowerKey)
-        return false;
-    keyRange.lowerKey = WTFMove(*lowerKey);
-
-    if (!decoder.decode(keyRange.upperOpen))
-        return false;
-
-    if (!decoder.decode(keyRange.lowerOpen))
-        return false;
-
-    return true;
-}
 
 } // namespace WebCore

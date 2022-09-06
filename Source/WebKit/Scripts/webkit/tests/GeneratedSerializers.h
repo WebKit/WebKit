@@ -30,6 +30,8 @@
 namespace Namespace::Subnamespace { struct StructName; }
 namespace Namespace { class OtherClass; }
 namespace Namespace { class ReturnRefClass; }
+namespace Namespace { struct EmptyConstructorStruct; }
+namespace Namespace { class EmptyConstructorNullable; }
 
 namespace IPC {
 
@@ -53,6 +55,16 @@ template<> struct ArgumentCoder<Namespace::OtherClass> {
 template<> struct ArgumentCoder<Namespace::ReturnRefClass> {
     static void encode(Encoder&, const Namespace::ReturnRefClass&);
     static std::optional<Ref<Namespace::ReturnRefClass>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Namespace::EmptyConstructorStruct> {
+    static void encode(Encoder&, const Namespace::EmptyConstructorStruct&);
+    static std::optional<Namespace::EmptyConstructorStruct> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Namespace::EmptyConstructorNullable> {
+    static void encode(Encoder&, const Namespace::EmptyConstructorNullable&);
+    static std::optional<Namespace::EmptyConstructorNullable> decode(Decoder&);
 };
 
 } // namespace IPC

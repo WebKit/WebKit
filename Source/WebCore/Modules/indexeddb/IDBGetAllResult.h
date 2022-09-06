@@ -29,8 +29,8 @@
 #include "IDBKeyPath.h"
 #include "IDBValue.h"
 #include "IndexedDB.h"
-
 #include <variant>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -38,9 +38,7 @@ namespace WebCore {
 class IDBGetAllResult {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(IDBGetAllResult, WEBCORE_EXPORT);
 public:
-    IDBGetAllResult()
-    {
-    }
+    IDBGetAllResult() = default;
 
     IDBGetAllResult(IndexedDB::GetAllType type, const std::optional<IDBKeyPath>& keyPath)
         : m_type(type)
@@ -54,18 +52,24 @@ public:
 
     IndexedDB::GetAllType type() const { return m_type; }
     const std::optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
-    const Vector<IDBKeyData>& keys() const;
-    const Vector<IDBValue>& values() const;
+    WEBCORE_EXPORT const Vector<IDBKeyData>& keys() const;
+    WEBCORE_EXPORT const Vector<IDBValue>& values() const;
 
     void addKey(IDBKeyData&&);
     void addValue(IDBValue&&);
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBGetAllResult&);
-
     WEBCORE_EXPORT Vector<String> allBlobFilePaths() const;
 
 private:
+    friend struct IPC::ArgumentCoder<IDBGetAllResult, void>;
+    IDBGetAllResult(IndexedDB::GetAllType type, Vector<IDBKeyData>&& keys, Vector<IDBValue>&& values, std::optional<IDBKeyPath>&& keyPath)
+        : m_type(type)
+        , m_keys(WTFMove(keys))
+        , m_values(WTFMove(values))
+        , m_keyPath(WTFMove(keyPath))
+    {
+    }
+
     static void isolatedCopy(const IDBGetAllResult& source, IDBGetAllResult& destination);
 
     IndexedDB::GetAllType m_type { IndexedDB::GetAllType::Keys };
@@ -73,29 +77,5 @@ private:
     Vector<IDBValue> m_values;
     std::optional<IDBKeyPath> m_keyPath;
 };
-
-template<class Encoder>
-void IDBGetAllResult::encode(Encoder& encoder) const
-{
-    encoder << m_type << m_keys << m_values << m_keyPath;
-}
-
-template<class Decoder>
-bool IDBGetAllResult::decode(Decoder& decoder, IDBGetAllResult& result)
-{
-    if (!decoder.decode(result.m_type))
-        return false;
-
-    if (!decoder.decode(result.m_keys))
-        return false;
-
-    if (!decoder.decode(result.m_values))
-        return false;
-    
-    if (!decoder.decode(result.m_keyPath))
-        return false;
-
-    return true;
-}
 
 } // namespace WebCore

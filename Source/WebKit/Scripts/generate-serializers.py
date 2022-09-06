@@ -36,6 +36,7 @@ class SerializedType(object):
         self.encoders = ['Encoder']
         self.serialize_with_function_calls = False
         self.return_ref = False
+        self.populate_from_empty_constructor = False
         if attributes is not None:
             for attribute in attributes.split(', '):
                 key, value = attribute.split('=')
@@ -43,6 +44,8 @@ class SerializedType(object):
                     self.encoders.append(value)
                 if key == 'Return' and value == 'Ref':
                     self.return_ref = True
+                if key == 'LegacyPopulateFrom' and value == 'EmptyConstructor':
+                    self.populate_from_empty_constructor = True
 
     def namespace_and_name(self):
         return self.namespace + '::' + self.name
@@ -55,6 +58,11 @@ class MemberVariable(object):
         self.condition = condition
         self.attributes = attributes
 
+    def unique_ptr_type(self):
+        match = re.search(r'std::unique_ptr<(.*)>', self.type)
+        if match:
+            return match.group(1)
+        return None
 
 class ConditionalHeader(object):
     def __init__(self, header, condition):
@@ -158,8 +166,15 @@ def generate_cpp(serialized_types, headers):
                     result.append('    encoder << !!instance.' + member.name + ';')
                     result.append('    if (!!instance.' + member.name + ')')
                     result.append('        encoder << instance.' + member.name + ';')
+                elif member.unique_ptr_type() is not None:
+                    result.append('    encoder << !!instance.' + member.name + ';')
+                    result.append('    if (!!instance.' + member.name + ')')
+                    result.append('        encoder << *instance.' + member.name + ';')
                 else:
                     result.append('    encoder << instance.' + member.name + ('()' if type.serialize_with_function_calls else '') + ';')
+                    if 'ReturnEarlyIfTrue' in member.attributes:
+                        result.append('    if (instance.' + member.name + ')')
+                        result.append('        return;')
                 if member.condition is not None:
                     result.append('#endif')
             result.append('}')
@@ -184,28 +199,49 @@ def generate_cpp(serialized_types, headers):
                 result.append('            return std::nullopt;')
                 result.append('    } else')
                 result.append('        ' + member.name + ' = std::optional<' + member.type + '> { ' + member.type + ' { } };')
+            elif member.unique_ptr_type() is not None:
+                result.append('    std::optional<bool> has' + sanitize_string_for_variable_name(member.name) + ';')
+                result.append('    decoder >> has' + sanitize_string_for_variable_name(member.name) + ';')
+                result.append('    if (!has' + sanitize_string_for_variable_name(member.name) + ')')
+                result.append('        return std::nullopt;')
+                result.append('    if (*has' + sanitize_string_for_variable_name(member.name) + ') {')
+                result.append('        std::optional<' + member.unique_ptr_type() + '> contents;')
+                result.append('        decoder >> contents;')
+                result.append('        if (!contents)')
+                result.append('            return std::nullopt;')
+                result.append('        ' + sanitize_string_for_variable_name(member.name) + '= makeUnique<' + member.unique_ptr_type() + '>(WTFMove(*contents));')
+                result.append('    } else')
+                result.append('        ' + sanitize_string_for_variable_name(member.name) + ' = std::optional<' + member.type + '> { ' + member.type + ' { } };')
             else:
                 result.append('    decoder >> ' + sanitize_string_for_variable_name(member.name) + ';')
                 result.append('    if (!' + sanitize_string_for_variable_name(member.name) + ')')
                 result.append('        return std::nullopt;')
+                if 'ReturnEarlyIfTrue' in member.attributes:
+                    result.append('    if (*' + sanitize_string_for_variable_name(member.name) + ')')
+                    result.append('        return { ' + type.namespace_and_name() + ' { } };')
             if member.condition is not None:
                 result.append('#endif')
             result.append('')
-        if type.return_ref:
-            result.append('    return { ' + type.namespace_and_name() + '::create(')
+        if type.populate_from_empty_constructor:
+            result.append('    ' + type.namespace_and_name() + ' result;')
+            for member in type.members:
+                result.append('    result.' + member.name + ' = WTFMove(*' + member.name + ');')
+            result.append('    return { WTFMove(result) };')
         else:
-            result.append('    return { {')
-        first_member = True
-        for i in range(len(type.members)):
-            if type.members[i].condition is not None:
-                result.append('#if ' + type.members[i].condition)
-            result.append('        WTFMove(*' + sanitize_string_for_variable_name(type.members[i].name) + ')' + ('' if i == len(type.members) - 1 else ','))
-            if type.members[i].condition is not None:
-                result.append('#endif')
-        if type.return_ref:
-            result.append('    ) };')
-        else:
-            result.append('    } };')
+            if type.return_ref:
+                result.append('    return { ' + type.namespace_and_name() + '::create(')
+            else:
+                result.append('    return { ' + type.namespace_and_name() + ' {')
+            for i in range(len(type.members)):
+                if type.members[i].condition is not None:
+                    result.append('#if ' + type.members[i].condition)
+                result.append('        WTFMove(*' + sanitize_string_for_variable_name(type.members[i].name) + ')' + ('' if i == len(type.members) - 1 else ','))
+                if type.members[i].condition is not None:
+                    result.append('#endif')
+            if type.return_ref:
+                result.append('    ) };')
+            else:
+                result.append('    } };')
         result.append('}')
         if type.condition is not None:
             result.append('')
@@ -296,6 +332,9 @@ def parse_serialized_types(file):
         if match:
             struct_or_class, namespace, name = match.groups()
             continue
+        match = re.search(r'(struct|class) (.*) {', line)
+        if match:
+            raise Exception('missing namespace in .serialization.in file for ' + match.group(2))
 
         match = re.search(r'\[(.*)\] (.*) ([^;]*)', line)
         if match:

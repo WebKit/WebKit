@@ -35,7 +35,7 @@ namespace WebCore {
 class IDBObjectStoreInfo {
 public:
     WEBCORE_EXPORT IDBObjectStoreInfo();
-    IDBObjectStoreInfo(uint64_t identifier, const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement);
+    WEBCORE_EXPORT IDBObjectStoreInfo(uint64_t identifier, const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement, HashMap<uint64_t, IDBIndexInfo>&& = { });
 
     uint64_t identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
@@ -60,9 +60,6 @@ public:
     void deleteIndex(const String& indexName);
     void deleteIndex(uint64_t indexIdentifier);
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBObjectStoreInfo&);
-
 #if !LOG_DISABLED
     String loggingString(int indent = 0) const;
     String condensedLoggingString() const;
@@ -76,32 +73,5 @@ private:
 
     HashMap<uint64_t, IDBIndexInfo> m_indexMap;
 };
-
-template<class Encoder>
-void IDBObjectStoreInfo::encode(Encoder& encoder) const
-{
-    encoder << m_identifier << m_name << m_keyPath << m_autoIncrement << m_indexMap;
-}
-
-template<class Decoder>
-bool IDBObjectStoreInfo::decode(Decoder& decoder, IDBObjectStoreInfo& info)
-{
-    if (!decoder.decode(info.m_identifier))
-        return false;
-
-    if (!decoder.decode(info.m_name))
-        return false;
-
-    if (!decoder.decode(info.m_keyPath))
-        return false;
-
-    if (!decoder.decode(info.m_autoIncrement))
-        return false;
-
-    if (!decoder.decode(info.m_indexMap))
-        return false;
-
-    return true;
-}
 
 } // namespace WebCore

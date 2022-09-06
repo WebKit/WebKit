@@ -32,10 +32,6 @@
 
 namespace WebCore {
 
-IDBRequestData::IDBRequestData()
-{
-}
-
 IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionProxy& connectionProxy, const IDBOpenDBRequest& request)
     : m_serverConnectionIdentifier(connectionProxy.serverConnectionIdentifier())
     , m_requestIdentifier(makeUnique<IDBResourceIdentifier>(connectionProxy, request))

@@ -68,20 +68,13 @@ public:
     {
     }
 
-    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, IDBValue&& value, const std::optional<IDBKeyPath>& keyPath)
-        : m_value(WTFMove(value))
-        , m_keyData(keyData)
-        , m_primaryKeyData(primaryKeyData)
-        , m_keyPath(keyPath)
-    {
-    }
-
-    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, IDBValue&& value, const std::optional<IDBKeyPath>& keyPath, Vector<IDBCursorRecord>&& prefetechedRecords)
+    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, IDBValue&& value, const std::optional<IDBKeyPath>& keyPath, Vector<IDBCursorRecord>&& prefetechedRecords = { }, bool isDefined = true)
         : m_value(WTFMove(value))
         , m_keyData(keyData)
         , m_primaryKeyData(primaryKeyData)
         , m_keyPath(keyPath)
         , m_prefetchedRecords(WTFMove(prefetechedRecords))
+        , m_isDefined(isDefined)
     {
     }
 
@@ -99,9 +92,6 @@ public:
     const Vector<IDBCursorRecord>& prefetchedRecords() const { return m_prefetchedRecords; }
     bool isDefined() const { return m_isDefined; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBGetResult&);
-
 private:
     static void isolatedCopy(const IDBGetResult& source, IDBGetResult& destination);
 
@@ -112,47 +102,5 @@ private:
     Vector<IDBCursorRecord> m_prefetchedRecords;
     bool m_isDefined { true };
 };
-
-template<class Encoder>
-void IDBGetResult::encode(Encoder& encoder) const
-{
-    encoder << m_keyData << m_primaryKeyData << m_keyPath << m_isDefined << m_value << m_prefetchedRecords;
-}
-
-template<class Decoder>
-bool IDBGetResult::decode(Decoder& decoder, IDBGetResult& result)
-{
-    std::optional<IDBKeyData> keyData;
-    decoder >> keyData;
-    if (!keyData)
-        return false;
-    result.m_keyData = WTFMove(*keyData);
-
-    std::optional<IDBKeyData> primaryKeyData;
-    decoder >> primaryKeyData;
-    if (!primaryKeyData)
-        return false;
-    result.m_primaryKeyData = WTFMove(*primaryKeyData);
-
-    if (!decoder.decode(result.m_keyPath))
-        return false;
-
-    if (!decoder.decode(result.m_isDefined))
-        return false;
-
-    std::optional<IDBValue> value;
-    decoder >> value;
-    if (!value)
-        return false;
-    result.m_value = WTFMove(*value);
-
-    std::optional<Vector<IDBCursorRecord>> prefetchedRecords;
-    decoder >> prefetchedRecords;
-    if (!prefetchedRecords)
-        return false;
-    result.m_prefetchedRecords = WTFMove(*prefetchedRecords);
-
-    return true;
-}
 
 } // namespace WebCore

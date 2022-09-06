@@ -88,7 +88,7 @@ std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subn
     } else
         nullableTestMember = std::optional<RetainPtr<CFTypeRef>> { RetainPtr<CFTypeRef> { } };
 
-    return { {
+    return { Namespace::Subnamespace::StructName {
         WTFMove(*firstMemberName),
 #if ENABLE(SECOND_MEMBER)
         WTFMove(*secondMemberName),
@@ -102,12 +102,22 @@ std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subn
 
 void ArgumentCoder<Namespace::OtherClass>::encode(Encoder& encoder, const Namespace::OtherClass& instance)
 {
+    encoder << instance.isNull;
+    if (instance.isNull)
+        return;
     encoder << instance.a;
     encoder << instance.b;
 }
 
 std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decode(Decoder& decoder)
 {
+    std::optional<bool> isNull;
+    decoder >> isNull;
+    if (!isNull)
+        return std::nullopt;
+    if (*isNull)
+        return { Namespace::OtherClass { } };
+
     std::optional<int> a;
     decoder >> a;
     if (!a)
@@ -118,7 +128,8 @@ std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decod
     if (!b)
         return std::nullopt;
 
-    return { {
+    return { Namespace::OtherClass {
+        WTFMove(*isNull),
         WTFMove(*a),
         WTFMove(*b)
     } };
@@ -129,6 +140,9 @@ void ArgumentCoder<Namespace::ReturnRefClass>::encode(Encoder& encoder, const Na
 {
     encoder << instance.functionCall().member1;
     encoder << instance.functionCall().member2;
+    encoder << !!instance.uniqueMember;
+    if (!!instance.uniqueMember)
+        encoder << *instance.uniqueMember;
 }
 
 std::optional<Ref<Namespace::ReturnRefClass>> ArgumentCoder<Namespace::ReturnRefClass>::decode(Decoder& decoder)
@@ -143,10 +157,86 @@ std::optional<Ref<Namespace::ReturnRefClass>> ArgumentCoder<Namespace::ReturnRef
     if (!functionCallmember2)
         return std::nullopt;
 
+    std::optional<std::unique_ptr<int>> uniqueMember;
+    std::optional<bool> hasuniqueMember;
+    decoder >> hasuniqueMember;
+    if (!hasuniqueMember)
+        return std::nullopt;
+    if (*hasuniqueMember) {
+        std::optional<int> contents;
+        decoder >> contents;
+        if (!contents)
+            return std::nullopt;
+        uniqueMember= makeUnique<int>(WTFMove(*contents));
+    } else
+        uniqueMember = std::optional<std::unique_ptr<int>> { std::unique_ptr<int> { } };
+
     return { Namespace::ReturnRefClass::create(
         WTFMove(*functionCallmember1),
-        WTFMove(*functionCallmember2)
+        WTFMove(*functionCallmember2),
+        WTFMove(*uniqueMember)
     ) };
+}
+
+
+void ArgumentCoder<Namespace::EmptyConstructorStruct>::encode(Encoder& encoder, const Namespace::EmptyConstructorStruct& instance)
+{
+    encoder << instance.m_int;
+    encoder << instance.m_double;
+}
+
+std::optional<Namespace::EmptyConstructorStruct> ArgumentCoder<Namespace::EmptyConstructorStruct>::decode(Decoder& decoder)
+{
+    std::optional<int> m_int;
+    decoder >> m_int;
+    if (!m_int)
+        return std::nullopt;
+
+    std::optional<double> m_double;
+    decoder >> m_double;
+    if (!m_double)
+        return std::nullopt;
+
+    Namespace::EmptyConstructorStruct result;
+    result.m_int = WTFMove(*m_int);
+    result.m_double = WTFMove(*m_double);
+    return { WTFMove(result) };
+}
+
+
+void ArgumentCoder<Namespace::EmptyConstructorNullable>::encode(Encoder& encoder, const Namespace::EmptyConstructorNullable& instance)
+{
+    encoder << instance.m_isNull;
+    if (instance.m_isNull)
+        return;
+    encoder << instance.m_type;
+    encoder << instance.m_value;
+}
+
+std::optional<Namespace::EmptyConstructorNullable> ArgumentCoder<Namespace::EmptyConstructorNullable>::decode(Decoder& decoder)
+{
+    std::optional<bool> m_isNull;
+    decoder >> m_isNull;
+    if (!m_isNull)
+        return std::nullopt;
+    if (*m_isNull)
+        return { Namespace::EmptyConstructorNullable { } };
+
+    std::optional<MemberType> m_type;
+    decoder >> m_type;
+    if (!m_type)
+        return std::nullopt;
+
+    std::optional<OtherMemberType> m_value;
+    decoder >> m_value;
+    if (!m_value)
+        return std::nullopt;
+
+    Namespace::EmptyConstructorNullable result;
+    result.m_isNull = WTFMove(*m_isNull);
+    result.m_type = WTFMove(*m_type);
+    result.m_value = WTFMove(*m_value);
+    return { WTFMove(result) };
 }
 
 } // namespace IPC
