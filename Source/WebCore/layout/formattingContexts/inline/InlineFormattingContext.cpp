@@ -225,7 +225,12 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
     auto firstInlineItemNeedsLayout = needsLayoutRange.start;
 
     auto lineBuilder = LineBuilder { *this, floatingState, constraints.horizontal(), inlineItems };
-    while (firstInlineItemNeedsLayout < needsLayoutRange.end) {
+    auto isAtEnd = [&] {
+        auto endOfInlineContent = firstInlineItemNeedsLayout == needsLayoutRange.end;
+        auto endOfOverflowingFloatingContent = previousLine && previousLine->overflowingFloats.isEmpty();
+        return endOfInlineContent && endOfOverflowingFloatingContent;
+    };
+    while (!isAtEnd()) {
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight() };
         auto lineContent = lineBuilder.layoutInlineContent({ firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, previousLine);
@@ -235,7 +240,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
         if (lineContent.isLastLineWithInlineContent)
             formattingState.setClearGapAfterLastLine(lineLogicalTop - lineLogicalRect.bottom());
         firstInlineItemNeedsLayout = indexOfFirstInlineItemForNextLine(lineContent, previousLine, previousLineLastInlineItemIndex);
-        previousLine = LineBuilder::PreviousLine { !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, lineContent.partialOverflowingContent, lineContent.trailingOverflowingContentWidth };
+        previousLine = LineBuilder::PreviousLine { !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, lineContent.partialOverflowingContent, WTFMove(lineContent.overflowingFloats), lineContent.trailingOverflowingContentWidth };
         previousLineLastInlineItemIndex = lineContent.inlineItemRange.end;
     }
 }
@@ -356,7 +361,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
         maximumLineWidth = std::max(maximumLineWidth, intrinsicContent.logicalWidth);
 
         layoutRange.start = !intrinsicContent.partialOverflowingContent ? intrinsicContent.inlineItemRange.end : intrinsicContent.inlineItemRange.end - 1;
-        previousLine = LineBuilder::PreviousLine { { }, { }, intrinsicContent.partialOverflowingContent };
+        previousLine = LineBuilder::PreviousLine { { }, { }, intrinsicContent.partialOverflowingContent, { } };
         // FIXME: Add support for clear.
         for (auto* inlineFloatItem : intrinsicContent.placedFloats)
             maximumFloatWidth += geometryForBox(inlineFloatItem->layoutBox()).marginBoxWidth();

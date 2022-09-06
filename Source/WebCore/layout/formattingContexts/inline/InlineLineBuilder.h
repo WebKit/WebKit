@@ -53,19 +53,21 @@ public:
         size_t length { 0 };
         std::optional<InlineLayoutUnit> width { };
     };
+    using FloatList = Vector<const InlineItem*>;
     struct PreviousLine {
         bool endsWithLineBreak { false };
         TextDirection inlineBaseDirection { TextDirection::LTR };
         std::optional<PartialContent> partialOverflowingContent { };
+        FloatList overflowingFloats;
         // Content width measured during line breaking (avoid double-measuring).
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
     };
-    using FloatList = Vector<const InlineItem*>;
     struct LineContent {
         InlineItemRange inlineItemRange;
         std::optional<PartialContent> partialOverflowingContent { };
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth;
         FloatList placedFloats;
+        FloatList overflowingFloats;
         bool hasIntrusiveFloat { false };
         InlineLayoutUnit lineMarginStart { 0 };
         InlineLayoutPoint lineLogicalTopLeft;
@@ -112,13 +114,14 @@ private:
         size_t partialTrailingContentLength { 0 };
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
-    Result handleFloatContent(const InlineItem&);
+    enum LineBoxConstraintApplies : uint8_t { Yes, No };
+    bool tryPlacingFloatBox(const InlineItem&, LineBoxConstraintApplies);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     InlineRect lineRectForCandidateInlineContent(const LineCandidate&) const;
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
-    void initialize(const UsedConstraints&, size_t leadingInlineTextItemIndex, const std::optional<PreviousLine>&);
+    void initialize(const UsedConstraints&, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>&);
     struct CommittedContent {
         size_t itemCount { 0 };
         size_t partialTrailingContentLength { 0 };
@@ -157,6 +160,7 @@ private:
     InlineLayoutUnit m_lineMarginStart { 0 };
     const InlineItems& m_inlineItems;
     FloatList m_placedFloats;
+    FloatList m_overflowingFloats;
     std::optional<InlineTextItem> m_partialLeadingTextItem;
     std::optional<InlineLayoutUnit> m_overflowingLogicalWidth;
     Vector<const InlineItem*> m_wrapOpportunityList;

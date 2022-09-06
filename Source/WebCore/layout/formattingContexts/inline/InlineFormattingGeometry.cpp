@@ -61,7 +61,7 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuild
         return std::max(lineLogicalRect.bottom(), InlineLayoutUnit(positionWithClearance->position));
     }
     // Move the next line below the intrusive float(s).
-    ASSERT(lineContent.runs.isEmpty());
+    ASSERT(lineContent.runs.isEmpty() || lineContent.runs[0].isLineSpanningInlineBoxStart());
     ASSERT(lineContent.hasIntrusiveFloat);
     auto lineBottomWithNoInlineContent = std::max(lineLogicalRect.bottom(), lineInitialRect.bottom());
     auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineInitialRect.top()), toLayoutUnit(lineBottomWithNoInlineContent));
