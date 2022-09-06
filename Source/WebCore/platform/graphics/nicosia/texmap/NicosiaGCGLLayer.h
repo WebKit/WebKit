@@ -43,8 +43,9 @@ namespace Nicosia {
 class GCGLLayer : public ContentLayerTextureMapperImpl::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit GCGLLayer(WebCore::GraphicsContextGLOpenGL&);
+    static std::unique_ptr<GCGLLayer> create(WebCore::GraphicsContextGLOpenGL&);
 
+    GCGLLayer(WebCore::GraphicsContextGLOpenGL&, std::unique_ptr<WebCore::GLContext>&&);
     virtual ~GCGLLayer();
 
     ContentLayer& contentLayer() const { return m_contentLayer; }
