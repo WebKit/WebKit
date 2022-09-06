@@ -1449,7 +1449,7 @@ void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContent
 
 void NetworkProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType workerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier)
 {
-    RELEASE_LOG(Worker, "NetworkProcessProxy::registerRemoteWorkerClientProcess: workerType=%{public}s, clientProcessIdentifier=%" PRIu64 ", remoteWorkerProcessIdentifier=%" PRIu64, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", clientProcessIdentifier.toUInt64(), remoteWorkerProcessIdentifier.toUInt64());
+    RELEASE_LOG(Worker, "NetworkProcessProxy::registerRemoteWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcessIdentifier=%" PRIu64 ", remoteWorkerProcessIdentifier=%" PRIu64, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", clientProcessIdentifier.toUInt64(), remoteWorkerProcessIdentifier.toUInt64());
     auto* clientWebProcess = WebProcessProxy::processForIdentifier(clientProcessIdentifier);
     auto* remoteWorkerProcess = WebProcessProxy::processForIdentifier(remoteWorkerProcessIdentifier);
     if (!clientWebProcess || !remoteWorkerProcess) {
@@ -1462,7 +1462,7 @@ void NetworkProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType wor
 
 void NetworkProcessProxy::unregisterRemoteWorkerClientProcess(RemoteWorkerType workerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier)
 {
-    RELEASE_LOG(Worker, "NetworkProcessProxy::unregisterRemoteWorkerClientProcess: workerType=%{public}s, clientProcessIdentifier=%" PRIu64 ", remoteWorkerProcessIdentifier=%" PRIu64, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", clientProcessIdentifier.toUInt64(), remoteWorkerProcessIdentifier.toUInt64());
+    RELEASE_LOG(Worker, "NetworkProcessProxy::unregisterRemoteWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcessIdentifier=%" PRIu64 ", remoteWorkerProcessIdentifier=%" PRIu64, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", clientProcessIdentifier.toUInt64(), remoteWorkerProcessIdentifier.toUInt64());
     auto* clientWebProcess = WebProcessProxy::processForIdentifier(clientProcessIdentifier);
     auto* remoteWorkerProcess = WebProcessProxy::processForIdentifier(remoteWorkerProcessIdentifier);
     if (!clientWebProcess || !remoteWorkerProcess) {

@@ -45,8 +45,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SharedWorker);
 
-#define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%{public}s] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
-#define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%{public}s] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
+#define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
+#define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
 
 static HashMap<SharedWorkerObjectIdentifier, SharedWorker*>& allSharedWorkers()
 {

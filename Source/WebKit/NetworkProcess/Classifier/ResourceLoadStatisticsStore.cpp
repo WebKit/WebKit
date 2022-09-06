@@ -511,14 +511,14 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, c
 
     for (auto& domain : domains) {
         if (batch.size() == maxNumberOfDomainsInOneLogStatement) {
-            RELEASE_LOG_INFO(ITPDebug, "%" PUBLIC_LOG_STRING " to (%{public}d of %u): %" PUBLIC_LOG_STRING ".", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
+            RELEASE_LOG_INFO(ITPDebug, "%" PUBLIC_LOG_STRING " to (%d of %u): %" PUBLIC_LOG_STRING ".", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
             batch.shrink(0);
             ++batchNumber;
         }
         batch.append(domain);
     }
     if (!batch.isEmpty())
-        RELEASE_LOG_INFO(ITPDebug, "%" PUBLIC_LOG_STRING " to (%{public}d of %u): %" PUBLIC_LOG_STRING ".", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
+        RELEASE_LOG_INFO(ITPDebug, "%" PUBLIC_LOG_STRING " to (%d of %u): %" PUBLIC_LOG_STRING ".", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
 }
 
 bool ResourceLoadStatisticsStore::shouldExemptFromWebsiteDataDeletion(const RegistrableDomain& domain) const

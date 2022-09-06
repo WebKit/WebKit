@@ -55,25 +55,25 @@ IPC::Connection* WebSharedWorkerObjectConnection::messageSenderConnection() cons
 
 void WebSharedWorkerObjectConnection::requestSharedWorker(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, const WebCore::WorkerOptions& workerOptions)
 {
-    CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
+    CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
     send(Messages::WebSharedWorkerServerConnection::RequestSharedWorker { sharedWorkerKey, sharedWorkerObjectIdentifier, WTFMove(port), workerOptions });
 }
 
 void WebSharedWorkerObjectConnection::sharedWorkerObjectIsGoingAway(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
-    CONNECTION_RELEASE_LOG("sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
+    CONNECTION_RELEASE_LOG("sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
     send(Messages::WebSharedWorkerServerConnection::SharedWorkerObjectIsGoingAway { sharedWorkerKey, sharedWorkerObjectIdentifier });
 }
 
 void WebSharedWorkerObjectConnection::suspendForBackForwardCache(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
-    CONNECTION_RELEASE_LOG("suspendForBackForwardCache: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
+    CONNECTION_RELEASE_LOG("suspendForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
     send(Messages::WebSharedWorkerServerConnection::SuspendForBackForwardCache { sharedWorkerKey, sharedWorkerObjectIdentifier });
 }
 
 void WebSharedWorkerObjectConnection::resumeForBackForwardCache(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
-    CONNECTION_RELEASE_LOG("resumeForBackForwardCache: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
+    CONNECTION_RELEASE_LOG("resumeForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
     send(Messages::WebSharedWorkerServerConnection::ResumeForBackForwardCache { sharedWorkerKey, sharedWorkerObjectIdentifier });
 }
 
