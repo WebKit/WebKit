@@ -247,46 +247,46 @@ void GraphicsContextGLOpenGL::getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> valu
     switch (pname) {
 #if USE(OPENGL)
     case MAX_FRAGMENT_UNIFORM_VECTORS:
-        ::glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, value.data);
+        ::glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, value.data());
         *value /= 4;
         break;
     case MAX_VERTEX_UNIFORM_VECTORS:
-        ::glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, value.data);
+        ::glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, value.data());
         *value /= 4;
         break;
     case MAX_VARYING_VECTORS:
         if (isGLES2Compliant()) {
             ASSERT(::glGetError() == GL_NO_ERROR);
-            ::glGetIntegerv(GL_MAX_VARYING_VECTORS, value.data);
+            ::glGetIntegerv(GL_MAX_VARYING_VECTORS, value.data());
             if (::glGetError() == GL_INVALID_ENUM) {
-                ::glGetIntegerv(GL_MAX_VARYING_COMPONENTS, value.data);
+                ::glGetIntegerv(GL_MAX_VARYING_COMPONENTS, value.data());
                 *value /= 4;
             }
         } else {
-            ::glGetIntegerv(GL_MAX_VARYING_FLOATS, value.data);
+            ::glGetIntegerv(GL_MAX_VARYING_FLOATS, value.data());
             *value /= 4;
         }
         break;
 #endif
     case MAX_TEXTURE_SIZE:
-        ::glGetIntegerv(MAX_TEXTURE_SIZE, value.data);
+        ::glGetIntegerv(MAX_TEXTURE_SIZE, value.data());
         if (getExtensions().requiresRestrictedMaximumTextureSize())
             *value = std::min(4096, *value);
         break;
     case MAX_CUBE_MAP_TEXTURE_SIZE:
-        ::glGetIntegerv(MAX_CUBE_MAP_TEXTURE_SIZE, value.data);
+        ::glGetIntegerv(MAX_CUBE_MAP_TEXTURE_SIZE, value.data());
         if (getExtensions().requiresRestrictedMaximumTextureSize())
             *value = std::min(1024, *value);
         break;
     default:
-        ::glGetIntegerv(pname, value.data);
+        ::glGetIntegerv(pname, value.data());
     }
 }
 
 void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLSpan<GCGLint, 2> range, GCGLint* precision)
 {
     UNUSED_PARAM(shaderType);
-    ASSERT(range.data);
+    ASSERT(range.data());
     ASSERT(precision);
 
     if (!makeContextCurrent())
@@ -318,7 +318,7 @@ void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGL
 
 void GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels)
 {
-    if (width && height && !pixels.data) {
+    if (width && height && !pixels.data()) {
         synthesizeGLError(INVALID_VALUE);
         return;
     }
@@ -378,7 +378,7 @@ void GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenu
         }
     }
 
-    texImage2DDirect(target, level, openGLInternalFormat, width, height, border, openGLFormat, type, pixels.data);
+    texImage2DDirect(target, level, openGLInternalFormat, width, height, border, openGLFormat, type, pixels.data());
 }
 
 void GraphicsContextGLOpenGL::depthRange(GCGLclampf zNear, GCGLclampf zFar)
@@ -422,7 +422,7 @@ void GraphicsContextGLOpenGL::readnPixels(GCGLint x, GCGLint y, GCGLsizei width,
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_fbo);
         ::glFlush();
     }
-    ::glReadPixels(x, y, width, height, format, type, data.data);
+    ::glReadPixels(x, y, width, height, format, type, data.data());
     if (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
 }
