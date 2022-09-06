@@ -156,7 +156,7 @@ void BBQPlan::work(CompilationEffort effort)
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
-    dataLogLn("Generated BBQ code for WebAssembly BBQ function[", m_functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
+    dataLogLnIf(Options::dumpDisassembly(), "Generated BBQ code for WebAssembly BBQ function[", m_functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
     dumpDisassembly(context, linkBuffer);
     bool dumpDisassemblyAgain = false;
     function->entrypoint.compilation = makeUnique<Compilation>(
@@ -286,7 +286,7 @@ void BBQPlan::didCompleteCompilation()
 
             computePCToCodeOriginMap(context, linkBuffer);
 
-            dataLogLn("Generated BBQ code for WebAssembly BBQ function[", functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
+            dataLogLnIf(Options::dumpDisassembly(), "Generated BBQ code for WebAssembly BBQ function[", functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
             dumpDisassembly(context, linkBuffer);
             bool dumpDisassemblyAgain = false;
             function->entrypoint.compilation = makeUnique<Compilation>(
