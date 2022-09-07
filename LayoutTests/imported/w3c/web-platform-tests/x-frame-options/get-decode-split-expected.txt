@@ -1,0 +1,6 @@
+
+PASS `,SAMEORIGIN,,DENY,` blocks same-origin framing
+PASS `,SAMEORIGIN,,DENY,` blocks cross-origin framing
+PASS `  SAMEORIGIN,    DENY` blocks same-origin framing
+PASS `  SAMEORIGIN,    DENY` blocks cross-origin framing
+

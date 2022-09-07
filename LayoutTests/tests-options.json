@@ -5990,6 +5990,9 @@
     "imported/w3c/web-platform-tests/worklets/paint-worklet-referrer.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/x-frame-options/multiple.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/xhr/overridemimetype-blob.html": [
         "slow"
     ],

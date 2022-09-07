@@ -477,6 +477,11 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/a
 imported/w3c/web-platform-tests/workers/same-origin-check.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/mixed-content [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/upgrade-insecure-requests [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/x-frame-options/deny.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/x-frame-options/get-decode-split.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/x-frame-options/invalid.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/x-frame-options/multiple.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/x-frame-options/sameorigin.sub.html [ DumpJSConsoleLogInStdErr ]
 
 # Skip some WPT that require cross-origin testrunner features we don't yet support, causing timeouts.
 imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic.http-rp/opt-in/xhr.https.html [ Skip ]
