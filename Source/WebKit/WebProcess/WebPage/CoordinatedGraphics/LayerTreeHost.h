@@ -37,9 +37,6 @@
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
-#if PLATFORM(GTK)
-#include <WebCore/CoordinatedGraphicsLayer.h>
-#endif
 
 #if USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
 
@@ -48,6 +45,7 @@
 #else // USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
 
 namespace WebCore {
+class CoordinatedGraphicsLayer;
 class IntRect;
 class IntSize;
 class GraphicsLayer;
@@ -234,6 +232,7 @@ inline void LayerTreeHost::scrollNonCompositedContents(const WebCore::IntRect&) 
 inline void LayerTreeHost::forceRepaint() { }
 inline void LayerTreeHost::forceRepaintAsync(CompletionHandler<void()>&&) { }
 inline void LayerTreeHost::sizeDidChange(const WebCore::IntSize&) { }
+inline void LayerTreeHost::targetRefreshRateDidChange(unsigned) { }
 inline void LayerTreeHost::pauseRendering() { }
 inline void LayerTreeHost::resumeRendering() { }
 inline WebCore::GraphicsLayerFactory* LayerTreeHost::graphicsLayerFactory() { return nullptr; }
@@ -242,6 +241,10 @@ inline void LayerTreeHost::didChangeViewportAttributes(WebCore::ViewportAttribut
 inline void LayerTreeHost::setIsDiscardable(bool) { }
 inline void LayerTreeHost::deviceOrPageScaleFactorChanged() { }
 inline RefPtr<WebCore::DisplayRefreshMonitor> LayerTreeHost::createDisplayRefreshMonitor(WebCore::PlatformDisplayID) { return nullptr; }
+#if PLATFORM(GTK)
+inline void LayerTreeHost::adjustTransientZoom(double, WebCore::FloatPoint) { }
+inline void LayerTreeHost::commitTransientZoom(double, WebCore::FloatPoint) { }
+#endif
 #endif
 
 } // namespace WebKit
