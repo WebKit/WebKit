@@ -86,7 +86,6 @@ imported/w3c/web-platform-tests/pointerevents [ Pass ]
 imported/w3c/web-platform-tests/speech-api [ Pass ]
 
 http/tests/media/fairplay [ Pass ]
-media/track/track-description-cue.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.

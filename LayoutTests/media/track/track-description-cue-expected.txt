@@ -1,4 +1,0 @@
-
-
-PASS WebVTT audio descriptions
-

@@ -1045,9 +1045,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=VIDEO] readonly attribute unsigned long mediaElementCount;
     [Conditional=VIDEO] undefined setMediaElementVolumeLocked(HTMLMediaElement element, boolean volumeLocked);
 
-    [Conditional=SPEECH_SYNTHESIS] SpeechSynthesisUtterance speechSynthesisUtteranceForCue(VTTCue cue);
-    [Conditional=SPEECH_SYNTHESIS] VTTCue mediaElementCurrentlySpokenCue(HTMLMediaElement media);
-
     DOMString ongoingLoadsDescriptions();
     undefined setCaptureExtraNetworkLoadMetricsEnabled(boolean value);
 

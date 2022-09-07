@@ -203,7 +203,6 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SourceBuffer.h"
-#include "SpeechSynthesisUtterance.h"
 #include "SpellChecker.h"
 #include "StaticNodeList.h"
 #include "StorageNamespace.h"
@@ -279,7 +278,6 @@
 #include "TextTrack.h"
 #include "TextTrackCueGeneric.h"
 #include "TimeRanges.h"
-#include "VTTCue.h"
 #endif
 
 #if ENABLE(WEBGL)
@@ -4704,27 +4702,10 @@ void Internals::setMediaElementVolumeLocked(HTMLMediaElement& element, bool volu
 {
     element.setVolumeLocked(volumeLocked);
 }
-
-#if ENABLE(SPEECH_SYNTHESIS)
-ExceptionOr<RefPtr<SpeechSynthesisUtterance>> Internals::speechSynthesisUtteranceForCue(const VTTCue& cue)
-{
-    return cue.speechUtterance();
-}
-
-ExceptionOr<RefPtr<VTTCue>> Internals::mediaElementCurrentlySpokenCue(HTMLMediaElement& element)
-{
-    auto cue = element.cueBeingSpoken();
-    ASSERT(is<VTTCue>(cue));
-    if (!is<VTTCue>(cue))
-        return Exception { InvalidAccessError };
-
-    return downcast<VTTCue>(cue.get());
-}
 #endif
 
-#endif // ENABLE(VIDEO)
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
+
 void Internals::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
 {
     Page* page = contextDocument()->frame()->page();

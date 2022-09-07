@@ -34,7 +34,6 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLElement.h"
-#include "SpeechSynthesisUtterance.h"
 #include "TextTrackCue.h"
 #include "VTTRegion.h"
 #include <wtf/TypeCasts.h>
@@ -44,6 +43,7 @@ namespace WebCore {
 class DocumentFragment;
 class HTMLDivElement;
 class HTMLSpanElement;
+class ScriptExecutionContext;
 class VTTCue;
 class VTTScanner;
 class WebVTTCueData;
@@ -110,7 +110,7 @@ public:
     const String& align() const;
     ExceptionOr<void> setAlign(const String&);
 
-    const String& text() const final { return m_content; }
+    const String& text() const { return m_content; }
     void setText(const String&);
 
     const String& cueSettings() const { return m_settings; }
@@ -190,10 +190,6 @@ public:
 
     double calculateComputedTextPosition() const;
 
-#if ENABLE(SPEECH_SYNTHESIS)
-    RefPtr<SpeechSynthesisUtterance> speechUtterance() const { return m_speechUtterance; }
-#endif
-    
 protected:
     VTTCue(Document&, const MediaTime& start, const MediaTime& end, String&& content);
 
@@ -226,8 +222,6 @@ private:
     };
     CueSetting settingName(VTTScanner&);
 
-    void speak(double, double, SpeakCueCompletionHandler&&) final;
-
     String m_content;
     String m_settings;
     std::optional<double> m_linePosition;
@@ -245,9 +239,6 @@ private:
     RefPtr<HTMLSpanElement> m_cueHighlightBox;
     RefPtr<HTMLDivElement> m_cueBackdropBox;
     RefPtr<VTTCueBox> m_displayTree;
-#if ENABLE(SPEECH_SYNTHESIS)
-    RefPtr<SpeechSynthesisUtterance> m_speechUtterance;
-#endif
 
     CSSValueID m_displayDirection { CSSValueLtr };
     int m_displaySize { 0 };

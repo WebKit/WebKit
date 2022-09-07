@@ -10995,7 +10995,7 @@ void WebPageProxy::speechSynthesisSetFinishedCallback(CompletionHandler<void()>&
     speechSynthesisData().speakingFinishedCompletionHandler = WTFMove(completionHandler);
 }
 
-void WebPageProxy::speechSynthesisSpeak(const String& text, const String& lang, float volume, float rate, float pitch, MonotonicTime, const String& voiceURI, const String& voiceName, const String& voiceLang, bool localService, bool defaultVoice, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::speechSynthesisSpeak(const String& text, const String& lang, float volume, float rate, float pitch, MonotonicTime startTime, const String& voiceURI, const String& voiceName, const String& voiceLang, bool localService, bool defaultVoice, CompletionHandler<void()>&& completionHandler)
 {
     auto voice = WebCore::PlatformSpeechSynthesisVoice::create(voiceURI, voiceName, voiceLang, localService, defaultVoice);
     auto utterance = WebCore::PlatformSpeechSynthesisUtterance::create(*this);
