@@ -189,6 +189,14 @@ void RemoteWebInspectorUIProxy::showCertificate(const CertificateInfo& certifica
     platformShowCertificate(certificateInfo);
 }
 
+void RemoteWebInspectorUIProxy::setInspectorPageDeveloperExtrasEnabled(bool enabled)
+{
+    if (!m_inspectorPage)
+        return;
+
+    m_inspectorPage->preferences().setDeveloperExtrasEnabled(enabled);
+}
+
 void RemoteWebInspectorUIProxy::sendMessageToBackend(const String& message)
 {
     if (m_client)

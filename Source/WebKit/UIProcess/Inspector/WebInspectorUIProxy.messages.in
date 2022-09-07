@@ -63,4 +63,6 @@ messages -> WebInspectorUIProxy {
     SetSheetRect(WebCore::FloatRect rect)
 
     StartWindowDrag()
+
+    SetInspectorPageDeveloperExtrasEnabled(bool enabled)
 }

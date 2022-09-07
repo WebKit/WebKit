@@ -90,6 +90,8 @@ public:
     bool canPickColorFromScreen() override { return false; }
     void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler) override { completionHandler({ }); }
 
+    void setInspectorPageDeveloperExtrasEnabled(bool) override { };
+
     virtual void attachWindow(DockSide) = 0;
     virtual void detachWindow() = 0;
 

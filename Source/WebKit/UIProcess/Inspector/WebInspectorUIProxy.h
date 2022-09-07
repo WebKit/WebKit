@@ -260,6 +260,7 @@ private:
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void inspectedURLChanged(const String&);
     void showCertificate(const WebCore::CertificateInfo&);
+    void setInspectorPageDeveloperExtrasEnabled(bool);
     void elementSelectionChanged(bool);
     void timelineRecordingChanged(bool);
 
