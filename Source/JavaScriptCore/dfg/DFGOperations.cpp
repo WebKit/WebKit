@@ -2506,6 +2506,43 @@ JSC_DEFINE_JIT_OPERATION(operationStringValueOf, JSString*, (JSGlobalObject* glo
     return nullptr;
 }
 
+
+enum class StringReplaceSubstitutions : bool { Yes, No };
+template<StringReplaceSubstitutions substitutions>
+static ALWAYS_INLINE JSString* stringReplaceStringString(JSGlobalObject* globalObject, JSString* stringCell, String string, String search, String replacement)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    size_t matchStart = string.find(search);
+    if (matchStart == notFound)
+        return stringCell;
+
+    size_t searchLength = search.length();
+    size_t matchEnd = matchStart + searchLength;
+    if constexpr (substitutions == StringReplaceSubstitutions::Yes) {
+        size_t dollarSignPosition = replacement.find('$');
+        if (dollarSignPosition != WTF::notFound) {
+            StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
+            int ovector[2] = { static_cast<int>(matchStart),  static_cast<int>(matchEnd) };
+            substituteBackreferencesSlow(builder, replacement, string, ovector, nullptr, dollarSignPosition);
+            if (UNLIKELY(builder.hasOverflowed())) {
+                throwOutOfMemoryError(globalObject, scope);
+                return nullptr;
+            }
+            replacement = builder.toString();
+        }
+    }
+
+    auto result = tryMakeString(StringView(string).substring(0, matchStart), replacement, StringView(string).substring(matchEnd, string.length() - matchEnd));
+    if (UNLIKELY(!result)) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+
+    return jsString(vm, WTFMove(result));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringString, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell, JSString* replacementCell))
 {
     VM& vm = globalObject->vm();
@@ -2522,19 +2559,26 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringString, JSString*, (JSGloba
     String replacement = replacementCell->value(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    size_t matchStart = string.find(search);
-    if (matchStart == notFound)
-        return stringCell;
+    RELEASE_AND_RETURN(scope, stringReplaceStringString<StringReplaceSubstitutions::Yes>(globalObject, stringCell, WTFMove(string), WTFMove(search), WTFMove(replacement)));
+}
 
-    size_t searchLength = search.length();
-    size_t matchEnd = matchStart + searchLength;
-    auto result = tryMakeString(StringView(string).substring(0, matchStart), replacement, StringView(string).substring(matchEnd, string.length() - matchEnd));
-    if (!result) {
-        throwOutOfMemoryError(globalObject, scope);
-        return nullptr;
-    }
+JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithoutSubstitution, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell, JSString* replacementCell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    return jsString(vm, WTFMove(result));
+    String string = stringCell->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    String search = searchCell->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    String replacement = replacementCell->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    RELEASE_AND_RETURN(scope, stringReplaceStringString<StringReplaceSubstitutions::No>(globalObject, stringCell, WTFMove(string), WTFMove(search), WTFMove(replacement)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyString, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell))
@@ -2554,10 +2598,11 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyString, JSString*, (JS
     if (matchStart == notFound)
         return stringCell;
 
+    // Because replacement string is empty, it cannot include backreferences.
     size_t searchLength = search.length();
     size_t matchEnd = matchStart + searchLength;
     auto result = tryMakeString(StringView(string).substring(0, matchStart), StringView(string).substring(matchEnd, string.length() - matchEnd));
-    if (!result) {
+    if (UNLIKELY(!result)) {
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }

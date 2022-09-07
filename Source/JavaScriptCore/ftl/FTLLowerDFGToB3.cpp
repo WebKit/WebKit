@@ -14742,12 +14742,22 @@ IGNORE_CLANG_WARNINGS_END
             && m_node->child1().useKind() == StringUse
             && m_node->child2().useKind() == StringUse
             && m_node->child3().useKind() == StringUse) {
+            String replacement = m_node->child3()->tryGetString(m_graph);
+            if (!!replacement) {
+                if (!replacement.length()) {
+                    LValue string = lowString(m_node->child1());
+                    LValue search = lowString(m_node->child2());
+                    setJSValue(vmCall(pointerType(), operationStringReplaceStringEmptyString, weakPointer(globalObject), string, search));
+                    return;
+                }
 
-            if (JSString* replace = m_node->child3()->dynamicCastConstant<JSString*>(); replace && !replace->length()) {
-                LValue string = lowString(m_node->child1());
-                LValue search = lowString(m_node->child2());
-                setJSValue(vmCall(pointerType(), operationStringReplaceStringEmptyString, weakPointer(globalObject), string, search));
-                return;
+                if (replacement.find('$') == notFound) {
+                    LValue string = lowString(m_node->child1());
+                    LValue search = lowString(m_node->child2());
+                    LValue replace = lowString(m_node->child3());
+                    setJSValue(vmCall(pointerType(), operationStringReplaceStringStringWithoutSubstitution, weakPointer(globalObject), string, search, replace));
+                    return;
+                }
             }
 
             LValue string = lowString(m_node->child1());

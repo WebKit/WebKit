@@ -916,8 +916,9 @@ private:
                 }
                 m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpoint());
                 regExp = regExpObjectNode->castOperand<RegExp*>();
-            } else if (String searchString = m_node->child2()->tryGetString(m_graph); !!searchString) {
+            } else if (String searchString = m_node->child2()->tryGetString(m_graph); !!searchString && m_graph.isWatchingStringSymbolReplaceWatchpoint(m_node)) {
                 // String/String/String case.
+                // FIXME: Extract these operations and share it with runtime code.
 
                 size_t matchStart = string.find(searchString);
                 if (matchStart == notFound) {
@@ -929,8 +930,19 @@ private:
 
                 size_t searchStringLength = searchString.length();
                 size_t matchEnd = matchStart + searchStringLength;
+
+                size_t dollarSignPosition = replace.find('$');
+                if (dollarSignPosition != WTF::notFound) {
+                    StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
+                    int ovector[2] = { static_cast<int>(matchStart),  static_cast<int>(matchEnd) };
+                    substituteBackreferencesSlow(builder, replace, string, ovector, nullptr, dollarSignPosition);
+                    if (UNLIKELY(builder.hasOverflowed()))
+                        break;
+                    replace = builder.toString();
+                }
+
                 auto result = tryMakeString(StringView(string).substring(0, matchStart), replace, StringView(string).substring(matchEnd, string.length() - matchEnd));
-                if (!result)
+                if (UNLIKELY(!result))
                     break;
 
                 m_changed = true;
