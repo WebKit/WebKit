@@ -2535,6 +2535,10 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
         page->pointerLockController().elementWasRemoved(*this);
 #endif
         page->pointerCaptureController().elementWasRemoved(*this);
+#if ENABLE(WHEEL_EVENT_LATCHING)
+        if (auto* scrollLatchingController = page->scrollLatchingControllerIfExists())
+            scrollLatchingController->removeLatchingStateForTarget(*this);
+#endif
     }
 
     setSavedLayerScrollPosition(ScrollPosition());
@@ -2584,13 +2588,6 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     }
 
     Styleable::fromElement(*this).elementWasRemoved();
-
-#if ENABLE(WHEEL_EVENT_LATCHING)
-    if (RefPtr frame = document().frame(); frame && frame->page()) {
-        if (auto* scrollLatchingController = frame->page()->scrollLatchingControllerIfExists())
-            scrollLatchingController->removeLatchingStateForTarget(*this);
-    }
-#endif
 
     if (UNLIKELY(isInTopLayer()))
         removeFromTopLayer();
