@@ -1535,13 +1535,15 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 [ BigSur ] webanimations/accelerated-animation-easing-and-direction-update.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-animation-slot-invalidation.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-animation-with-easing.html [ Pass ImageOnlyFailure ]
-[ BigSur ] webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-overlapping-transform-animations.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-transform-related-animation-property-order.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-transition-by-removing-property.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-translate-animation-underlying-transform-changed-in-flight.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-translate-animation.html [ Pass ImageOnlyFailure ]
+
+# rdar://80340735 ([ Monterey wk1 arm64 ] webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html is a flaky image only failure)
+webkit.org/b/244891 webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html [ Pass ImageOnlyFailure Timeout ]
 
 # webkit.org/b/223904 Updating test expectations for 9 tests
 [ BigSur ] transforms/2d/scale-change-composited.html [ Pass ImageOnlyFailure ]
@@ -1560,9 +1562,6 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 
 # rdar://80346720 ([Monterey Wk1] media/media-source/media-webm-opus-partial.html is a consistent failure)
 [ Monterey ] media/media-source/media-webm-opus-partial.html [ Failure ]
-
-# rdar://80340735 ([ Monterey wk1 arm64 ] webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html is a flaky image only failure)
-[ Monterey arm64 ] webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html [ Pass Timeout ]
 
 #nrdar://80343068 ([ Monterey wk1 arm64] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html is a flaky image only failure)
 [ Monterey arm64 ] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ Pass ImageOnlyFailure ]
