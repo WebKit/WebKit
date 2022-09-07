@@ -165,8 +165,6 @@ JSC_DECLARE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, SlowPath
 JSC_DECLARE_JIT_OPERATION(operationThrowRemoteFunctionException, EncodedJSValue, (JSRemoteFunction*));
 
 JSC_DECLARE_JIT_OPERATION(operationThrowStackOverflowError, void, (CodeBlock*));
-JSC_DECLARE_JIT_OPERATION(operationCallArityCheck, int32_t, (JSGlobalObject*));
-JSC_DECLARE_JIT_OPERATION(operationConstructArityCheck, int32_t, (JSGlobalObject*));
 
 JSC_DECLARE_JIT_OPERATION(operationTryGetById, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationTryGetByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));

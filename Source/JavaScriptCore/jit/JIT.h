@@ -270,11 +270,6 @@ namespace JSC {
             m_exceptionChecks.append(emitExceptionCheck(vm()));
         }
 
-        void exceptionCheckWithCallFrameRollback()
-        {
-            m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck(vm()));
-        }
-
         void advanceToNextCheckpoint();
         void emitJumpSlowToHotForCheckpoint(Jump);
         void setFastPathResumePoint();
@@ -703,7 +698,6 @@ namespace JSC {
 
         MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr<CFunctionPtrTag>);
         void appendCallWithExceptionCheck(Address);
-        MacroAssembler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr<CFunctionPtrTag>);
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr<CFunctionPtrTag>, VirtualRegister result);
         void appendCallWithExceptionCheckSetJSValueResult(Address, VirtualRegister result);
         template<typename Bytecode>
@@ -817,10 +811,13 @@ namespace JSC {
 #endif // OS(WINDOWS) && CPU(X86_64)
 
         template<typename OperationType, typename... Args>
-        MacroAssembler::Call callOperationWithCallFrameRollbackOnException(OperationType operation, Args... args)
+        MacroAssembler::Call callThrowOperationWithCallFrameRollback(OperationType operation, Args... args)
         {
             setupArguments<OperationType>(args...);
-            return appendCallWithCallFrameRollbackOnException(operation);
+            updateTopCallFrame(); // The callee is responsible for setting topCallFrame to their caller
+            MacroAssembler::Call call = appendCall(operation);
+            m_exceptionChecksWithCallFrameRollback.append(jump());
+            return call;
         }
 
         enum class ProfilingPolicy {

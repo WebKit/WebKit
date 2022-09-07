@@ -595,6 +595,8 @@ public:
     }
 #endif
 
+    void getArityPadding(VM&, unsigned numberOfParameters, GPRReg argumentCountIncludingThisGPR, GPRReg paddingOutputGPR, GPRReg scratchGPR0, GPRReg scratchGPR1, JumpList& stackOverflow);
+
     void emitGetFromCallFrameHeaderPtr(VirtualRegister entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
     {
         ASSERT(entry.isHeader());

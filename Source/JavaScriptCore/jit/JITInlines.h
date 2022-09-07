@@ -133,14 +133,6 @@ ALWAYS_INLINE void JIT::appendCallWithExceptionCheck(Address function)
     exceptionCheck();
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithCallFrameRollbackOnException(const FunctionPtr<CFunctionPtrTag> function)
-{
-    updateTopCallFrame(); // The callee is responsible for setting topCallFrame to their caller
-    MacroAssembler::Call call = appendCall(function);
-    exceptionCheckWithCallFrameRollback();
-    return call;
-}
-
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr<CFunctionPtrTag> function, VirtualRegister dst)
 {
     MacroAssembler::Call call = appendCallWithExceptionCheck(function);
