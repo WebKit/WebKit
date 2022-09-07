@@ -261,3 +261,49 @@ header: <WebCore/IDBKeyData.h>
     WebCore::IndexedDB::KeyType m_type;
     std::variant<Vector<WebCore::IDBKeyData>, String, double, WebCore::ThreadSafeDataBuffer> m_value;
 }
+
+headers requiring USE(CG): <CoreGraphics/CGGeometry.h> <CoreGraphics/CGAffineTransform.h>
+
+#if USE(CG)
+[AdditionalEncoder=StreamConnectionEncoder] struct CGSize {
+    CGFloat width
+    CGFloat height
+};
+
+struct CGPoint {
+    CGFloat x
+    CGFloat y
+};
+
+struct CGRect {
+    CGPoint origin
+    CGSize size
+};
+
+struct CGAffineTransform {
+  CGFloat a
+  CGFloat b
+  CGFloat c
+  CGFloat d
+  CGFloat tx
+  CGFloat ty
+};
+#endif
+
+header: <WebCore/FloatRect.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatRect {
+    WebCore::FloatPoint location()
+    WebCore::FloatSize size()
+}
+
+header: <WebCore/Pasteboard.h>
+struct WebCore::PasteboardURL {
+    URL url
+    String title
+#if PLATFORM(MAC)
+    String userVisibleForm
+#endif
+#if PLATFORM(GTK)
+    String markup
+#endif
+};

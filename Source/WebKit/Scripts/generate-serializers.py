@@ -48,6 +48,8 @@ class SerializedType(object):
                     self.populate_from_empty_constructor = True
 
     def namespace_and_name(self):
+        if self.namespace is None:
+            return self.name
         return self.namespace + '::' + self.name
 
 
@@ -111,7 +113,14 @@ def generate_header(serialized_types):
     result.append('#include <wtf/Ref.h>')
     result.append('')
     for type in serialized_types:
-        result.append('namespace ' + type.namespace + ' { ' + type.struct_or_class + ' ' + type.name + '; }')
+        if type.condition is not None:
+            result.append('#if ' + type.condition)
+        if type.namespace is None:
+            result.append(type.struct_or_class + ' ' + type.name + ';')
+        else:
+            result.append('namespace ' + type.namespace + ' { ' + type.struct_or_class + ' ' + type.name + '; }')
+        if type.condition is not None:
+            result.append('#endif')
     result.append('')
     result.append('namespace IPC {')
     result.append('')
@@ -279,7 +288,7 @@ def generate_serialized_type_info(serialized_types):
     return '\n'.join(result)
 
 
-def parse_serialized_types(file):
+def parse_serialized_types(file, file_name):
     serialized_types = []
     headers = []
 
@@ -300,14 +309,17 @@ def parse_serialized_types(file):
                 else:
                     member_condition = line[4:]
             elif line.startswith('#endif'):
-                member_condition = None
+                if name is None:
+                    type_condition = None
+                else:
+                    member_condition = None
             continue
         if line.startswith('}'):
             serialized_types.append(SerializedType(struct_or_class, namespace, name, members, type_condition, attributes))
             attributes = None
             namespace = None
+            name = None
             members = []
-            type_condition = None
             member_condition = None
             struct_or_class = None
             continue
@@ -332,9 +344,14 @@ def parse_serialized_types(file):
         if match:
             struct_or_class, namespace, name = match.groups()
             continue
+        match = re.search(r'\[(.*)\] (struct|class) (.*) {', line)
+        if match:
+            attributes, struct_or_class, name = match.groups()
+            continue
         match = re.search(r'(struct|class) (.*) {', line)
         if match:
-            raise Exception('missing namespace in .serialization.in file for ' + match.group(2))
+            struct_or_class, name = match.groups()
+            continue
 
         match = re.search(r'\[(.*)\] (.*) ([^;]*)', line)
         if match:
@@ -346,7 +363,7 @@ def parse_serialized_types(file):
                 member_type, member_name = match.groups()
                 members.append(MemberVariable(member_type, member_name, member_condition, []))
     if len(headers) == 0 and len(serialized_types) == 1:
-        headers = [ConditionalHeader('"' + name + '.h"', None)]
+        headers = [ConditionalHeader('"' + file_name[0:len(file_name) - len('.serialization.in')] + '.h"', None)]
     return [serialized_types, headers]
 
 
@@ -355,7 +372,7 @@ def main(argv):
     headers = []
     for i in range(2, len(argv)):
         with open(argv[1] + argv[i]) as file:
-            new_types, new_headers = parse_serialized_types(file)
+            new_types, new_headers = parse_serialized_types(file, argv[i])
             for type in new_types:
                 serialized_types.append(type)
             for header in new_headers:

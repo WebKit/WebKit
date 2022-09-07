@@ -35,3 +35,11 @@ class Namespace::OtherClass {
     MemberType m_type;
     OtherMemberType m_value;
 }
+
+class WithoutNamespace {
+    int a;
+}
+
+[AdditionalEncoder=OtherEncoder] class WithoutNamespaceWithAttributes {
+    int a;
+}

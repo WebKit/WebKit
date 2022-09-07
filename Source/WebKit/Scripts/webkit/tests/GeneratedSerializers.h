@@ -27,11 +27,15 @@
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Ref.h>
 
+#if ENABLE(TEST_FEATURE)
 namespace Namespace::Subnamespace { struct StructName; }
+#endif
 namespace Namespace { class OtherClass; }
 namespace Namespace { class ReturnRefClass; }
 namespace Namespace { struct EmptyConstructorStruct; }
 namespace Namespace { class EmptyConstructorNullable; }
+class WithoutNamespace;
+class WithoutNamespaceWithAttributes;
 
 namespace IPC {
 
@@ -65,6 +69,17 @@ template<> struct ArgumentCoder<Namespace::EmptyConstructorStruct> {
 template<> struct ArgumentCoder<Namespace::EmptyConstructorNullable> {
     static void encode(Encoder&, const Namespace::EmptyConstructorNullable&);
     static std::optional<Namespace::EmptyConstructorNullable> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WithoutNamespace> {
+    static void encode(Encoder&, const WithoutNamespace&);
+    static std::optional<WithoutNamespace> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WithoutNamespaceWithAttributes> {
+    static void encode(Encoder&, const WithoutNamespaceWithAttributes&);
+    static void encode(OtherEncoder&, const WithoutNamespaceWithAttributes&);
+    static std::optional<WithoutNamespaceWithAttributes> decode(Decoder&);
 };
 
 } // namespace IPC

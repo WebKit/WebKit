@@ -239,4 +239,45 @@ std::optional<Namespace::EmptyConstructorNullable> ArgumentCoder<Namespace::Empt
     return { WTFMove(result) };
 }
 
+
+void ArgumentCoder<WithoutNamespace>::encode(Encoder& encoder, const WithoutNamespace& instance)
+{
+    encoder << instance.a;
+}
+
+std::optional<WithoutNamespace> ArgumentCoder<WithoutNamespace>::decode(Decoder& decoder)
+{
+    std::optional<int> a;
+    decoder >> a;
+    if (!a)
+        return std::nullopt;
+
+    return { WithoutNamespace {
+        WTFMove(*a)
+    } };
+}
+
+
+void ArgumentCoder<WithoutNamespaceWithAttributes>::encode(Encoder& encoder, const WithoutNamespaceWithAttributes& instance)
+{
+    encoder << instance.a;
+}
+
+void ArgumentCoder<WithoutNamespaceWithAttributes>::encode(OtherEncoder& encoder, const WithoutNamespaceWithAttributes& instance)
+{
+    encoder << instance.a;
+}
+
+std::optional<WithoutNamespaceWithAttributes> ArgumentCoder<WithoutNamespaceWithAttributes>::decode(Decoder& decoder)
+{
+    std::optional<int> a;
+    decoder >> a;
+    if (!a)
+        return std::nullopt;
+
+    return { WithoutNamespaceWithAttributes {
+        WTFMove(*a)
+    } };
+}
+
 } // namespace IPC

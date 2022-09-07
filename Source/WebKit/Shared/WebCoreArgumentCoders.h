@@ -32,7 +32,6 @@
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DisplayListItems.h>
-#include <WebCore/FloatRect.h>
 #include <WebCore/FloatRoundedRect.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -174,7 +173,6 @@ struct Length;
 struct GrammarDetail;
 struct MimeClassInfo;
 struct PasteboardImage;
-struct PasteboardURL;
 struct PluginInfo;
 struct PromisedAttachmentInfo;
 struct RecentSearch;
@@ -240,7 +238,6 @@ namespace IPC {
     };
 
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatBoxExtent)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatRect)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatRoundedRect)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatSize)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::IntPoint)
@@ -248,13 +245,6 @@ DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::IntRect)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::IntSize)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::LayoutPoint)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::LayoutSize)
-
-#if USE(CG)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(CGRect)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(CGSize)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(CGPoint)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(CGAffineTransform)
-#endif
 
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::DisplayList::SetInlineFillColor)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::DisplayList::SetInlineStrokeColor)
@@ -444,11 +434,6 @@ template<> struct ArgumentCoder<WebCore::PasteboardImage> {
 template<> struct ArgumentCoder<WebCore::PasteboardCustomData> {
     static void encode(Encoder&, const WebCore::PasteboardCustomData&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::PasteboardCustomData&);
-};
-
-template<> struct ArgumentCoder<WebCore::PasteboardURL> {
-    static void encode(Encoder&, const WebCore::PasteboardURL&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::PasteboardURL&);
 };
 
 #if USE(SOUP)

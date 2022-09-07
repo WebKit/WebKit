@@ -56,6 +56,12 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             "MemberType"_s,
             "OtherMemberType"_s,
         } },
+        { "WithoutNamespace"_s, {
+            "int"_s,
+        } },
+        { "WithoutNamespaceWithAttributes"_s, {
+            "int"_s,
+        } },
     };
 }
 
