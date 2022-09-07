@@ -1333,7 +1333,7 @@ webkit.org/b/207891 imported/w3c/web-platform-tests/css/css-position/fixed-z-ind
 
 http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]
 
-webkit.org/b/208022 [ Debug ] http/tests/history/back-to-post.py [ Pass Failure ]
+webkit.org/b/208022 http/tests/history/back-to-post.py [ Pass Failure ]
 
 # prefetch not supported in WK1
 http/wpt/prefetch [ Skip ]
