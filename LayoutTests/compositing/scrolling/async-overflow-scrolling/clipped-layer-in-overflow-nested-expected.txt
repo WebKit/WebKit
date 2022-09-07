@@ -76,31 +76,39 @@
         )
         (GraphicsLayer
           (position 41.00 33.00)
-          (bounds origin 0.00 50.00)
           (bounds 301.00 316.00)
           (clips 1)
           (children 1
             (GraphicsLayer
-              (position 20.00 220.00)
-              (bounds 200.00 200.00)
-              (clips 1)
+              (bounds origin 0.00 50.00)
               (children 1
                 (GraphicsLayer
-                  (position 23.00 23.00)
-                  (bounds origin 0.00 150.00)
-                  (bounds 195.00 210.00)
+                  (position 20.00 220.00)
+                  (bounds 200.00 200.00)
                   (clips 1)
                   (children 1
                     (GraphicsLayer
-                      (position 2.00 202.00)
-                      (bounds 191.00 150.00)
+                      (position 23.00 23.00)
+                      (bounds 195.00 210.00)
                       (clips 1)
                       (children 1
                         (GraphicsLayer
-                          (offsetFromRenderer width=-6 height=-6)
-                          (position 24.00 44.00)
-                          (bounds 112.00 112.00)
-                          (drawsContent 1)
+                          (bounds origin 0.00 150.00)
+                          (children 1
+                            (GraphicsLayer
+                              (position 2.00 202.00)
+                              (bounds 191.00 150.00)
+                              (clips 1)
+                              (children 1
+                                (GraphicsLayer
+                                  (offsetFromRenderer width=-6 height=-6)
+                                  (position 24.00 44.00)
+                                  (bounds 112.00 112.00)
+                                  (drawsContent 1)
+                                )
+                              )
+                            )
+                          )
                         )
                       )
                     )

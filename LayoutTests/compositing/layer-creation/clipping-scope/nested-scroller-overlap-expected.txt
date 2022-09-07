@@ -68,9 +68,13 @@
           (clips 1)
           (children 1
             (GraphicsLayer
-              (position 10.00 10.00)
-              (bounds 100.00 80.00)
-              (contentsOpaque 1)
+              (children 1
+                (GraphicsLayer
+                  (position 10.00 10.00)
+                  (bounds 100.00 80.00)
+                  (contentsOpaque 1)
+                )
+              )
             )
           )
         )
@@ -84,14 +88,22 @@
           (clips 1)
           (children 1
             (GraphicsLayer
-              (position 21.00 111.00)
-              (bounds 285.00 200.00)
-              (clips 1)
               (children 1
                 (GraphicsLayer
-                  (position 10.00 10.00)
-                  (bounds 100.00 80.00)
-                  (contentsOpaque 1)
+                  (position 21.00 111.00)
+                  (bounds 285.00 200.00)
+                  (clips 1)
+                  (children 1
+                    (GraphicsLayer
+                      (children 1
+                        (GraphicsLayer
+                          (position 10.00 10.00)
+                          (bounds 100.00 80.00)
+                          (contentsOpaque 1)
+                        )
+                      )
+                    )
+                  )
                 )
               )
             )
@@ -103,14 +115,22 @@
           (clips 1)
           (children 1
             (GraphicsLayer
-              (position 21.00 111.00)
-              (bounds 285.00 200.00)
-              (clips 1)
               (children 1
                 (GraphicsLayer
-                  (position 10.00 100.00)
-                  (bounds 100.00 80.00)
-                  (contentsOpaque 1)
+                  (position 21.00 111.00)
+                  (bounds 285.00 200.00)
+                  (clips 1)
+                  (children 1
+                    (GraphicsLayer
+                      (children 1
+                        (GraphicsLayer
+                          (position 10.00 100.00)
+                          (bounds 100.00 80.00)
+                          (contentsOpaque 1)
+                        )
+                      )
+                    )
+                  )
                 )
               )
             )
@@ -122,14 +142,22 @@
           (clips 1)
           (children 1
             (GraphicsLayer
-              (position 21.00 111.00)
-              (bounds 285.00 200.00)
-              (clips 1)
               (children 1
                 (GraphicsLayer
-                  (position 10.00 190.00)
-                  (bounds 100.00 80.00)
-                  (contentsOpaque 1)
+                  (position 21.00 111.00)
+                  (bounds 285.00 200.00)
+                  (clips 1)
+                  (children 1
+                    (GraphicsLayer
+                      (children 1
+                        (GraphicsLayer
+                          (position 10.00 190.00)
+                          (bounds 100.00 80.00)
+                          (contentsOpaque 1)
+                        )
+                      )
+                    )
+                  )
                 )
               )
             )
