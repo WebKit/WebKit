@@ -341,34 +341,6 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     return true;
 }
 
-static inline RenderBlock* firstContainingBlockWithLogicalWidth(const RenderReplaced* replaced)
-{
-    // We have to lookup the containing block, which has an explicit width, which must not be equal to our direct containing block.
-    // If the embedded document appears _after_ we performed the initial layout, our intrinsic size is 300x150. If our containing
-    // block doesn't provide an explicit width, it's set to the 300 default, coming from the initial layout run.
-    RenderBlock* containingBlock = replaced->containingBlock();
-    if (!containingBlock)
-        return 0;
-
-    for (; containingBlock && !is<RenderView>(*containingBlock) && !containingBlock->isBody(); containingBlock = containingBlock->containingBlock()) {
-        if (containingBlock->style().logicalWidth().isSpecified())
-            return containingBlock;
-    }
-
-    return 0;
-}
-
-bool RenderReplaced::hasReplacedLogicalWidth() const
-{
-    if (style().logicalWidth().isSpecified())
-        return true;
-
-    if (style().logicalWidth().isAuto())
-        return false;
-
-    return firstContainingBlockWithLogicalWidth(this);
-}
-
 bool RenderReplaced::hasReplacedLogicalHeight() const
 {
     if (style().logicalHeight().isAuto())
