@@ -25,6 +25,7 @@
 #include "config.h"
 #include "RenderBox.h"
 
+#include "BoxModelPainter.h"
 #include "CSSFontSelector.h"
 #include "ControlStates.h"
 #include "Document.h"
@@ -1683,9 +1684,11 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
             view().scheduleLazyRepaint(*this);
     }
 
+    BoxModelPainter boxModelPainter { *this, paintInfo };
+
     if (borderOrBackgroundPaintingIsNeeded) {
         if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
-            paintBorder(paintInfo, paintRect, style(), bleedAvoidance);
+            boxModelPainter.paintBorder(paintRect, style(), bleedAvoidance);
 
         paintBackground(paintInfo, paintRect, bleedAvoidance);
 
@@ -1696,7 +1699,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
 
     // The theme will tell us whether or not we should also paint the CSS border.
     if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style().hasEffectiveAppearance() || (borderOrBackgroundPaintingIsNeeded && theme().paintBorderOnly(*this, paintInfo, paintRect))) && style().hasVisibleBorderDecoration())
-        paintBorder(paintInfo, paintRect, style(), bleedAvoidance);
+        boxModelPainter.paintBorder(paintRect, style(), bleedAvoidance);
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
         paintInfo.context().endTransparencyLayer();
@@ -1944,7 +1947,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
 
     if (allMaskImagesLoaded) {
         paintFillLayers(paintInfo, Color(), style().maskLayers(), paintRect, BackgroundBleedNone, compositeOp);
-        paintNinePieceImage(paintInfo.context(), paintRect, style(), style().maskBoxImage(), compositeOp);
+        BoxModelPainter { *this, paintInfo }.paintNinePieceImage(paintRect, style(), style().maskBoxImage(), compositeOp);
     }
     
     if (pushTransparencyLayer)

@@ -108,9 +108,9 @@ bool StyleGeneratedImage::hasClient(RenderElement& renderer) const
     return m_imageGeneratorValue->clients().contains(&renderer);
 }
 
-RefPtr<Image> StyleGeneratedImage::image(RenderElement* renderer, const FloatSize& size) const
+RefPtr<Image> StyleGeneratedImage::image(const RenderElement* renderer, const FloatSize& size) const
 {
-    return renderer ? m_imageGeneratorValue->image(*renderer, size) : &Image::nullImage();
+    return renderer ? m_imageGeneratorValue->image(const_cast<RenderElement&>(*renderer), size) : &Image::nullImage();
 }
 
 bool StyleGeneratedImage::knownToBeOpaque(const RenderElement& renderer) const

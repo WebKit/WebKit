@@ -23,6 +23,7 @@
 #include "config.h"
 #include "RenderInline.h"
 
+#include "BoxModelPainter.h"
 #include "Chrome.h"
 #include "FloatQuad.h"
 #include "FrameSelection.h"
@@ -994,7 +995,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
 
     float outlineWidth = styleToUse.outlineWidth();
     BorderStyle outlineStyle = styleToUse.outlineStyle();
-    bool antialias = shouldAntialiasLines(graphicsContext);
+    bool antialias = BoxModelPainter::shouldAntialiasLines(graphicsContext);
 
     auto adjustedPreviousLine = previousLine;
     adjustedPreviousLine.moveBy(paintOffset);

@@ -27,6 +27,7 @@
 #include "RenderTable.h"
 
 #include "AutoTableLayout.h"
+#include "BoxModelPainter.h"
 #include "CollapsedBorderValue.h"
 #include "Document.h"
 #include "FixedTableLayout.h"
@@ -811,7 +812,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& p
     paintBoxShadow(paintInfo, rect, style(), ShadowStyle::Inset);
 
     if (style().hasVisibleBorderDecoration() && !collapseBorders())
-        paintBorder(paintInfo, rect, style());
+        BoxModelPainter { *this, paintInfo }.paintBorder(rect, style());
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
         paintInfo.context().endTransparencyLayer();

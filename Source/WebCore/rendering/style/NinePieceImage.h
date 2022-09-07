@@ -187,7 +187,7 @@ public:
     static FloatSize computeMiddleTileScale(const Vector<FloatSize>& scales, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule);
     static Vector<FloatSize> computeTileScales(const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule);
 
-    void paint(GraphicsContext&, RenderElement*, const RenderStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, CompositeOperator) const;
+    void paint(GraphicsContext&, const RenderElement*, const RenderStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, CompositeOperator) const;
 
 private:
     struct Data : RefCounted<Data> {

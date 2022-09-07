@@ -26,6 +26,7 @@
 #include "RenderElement.h"
 
 #include "AXObjectCache.h"
+#include "BoxModelPainter.h"
 #include "CachedResourceLoader.h"
 #include "ContentData.h"
 #include "CursorList.h"
@@ -1933,7 +1934,7 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
     }
     case BorderStyle::Inset:
     case BorderStyle::Outset:
-        calculateBorderStyleColor(borderStyle, side, color);
+        color = BoxModelPainter::calculateBorderStyleColor(borderStyle, side, color);
         FALLTHROUGH;
     case BorderStyle::Solid: {
         StrokeStyle oldStrokeStyle = graphicsContext.strokeStyle();

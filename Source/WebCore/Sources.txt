@@ -2340,6 +2340,7 @@ plugins/PluginInfoProvider.cpp
 rendering/AutoTableLayout.cpp
 rendering/BidiRun.cpp
 rendering/BorderEdge.cpp
+rendering/BoxModelPainter.cpp
 rendering/BreakLines.cpp
 rendering/CSSFilter.cpp
 rendering/CaretRectComputation.cpp

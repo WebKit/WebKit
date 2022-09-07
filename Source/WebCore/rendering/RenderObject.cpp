@@ -1968,28 +1968,6 @@ RenderFragmentedFlow* RenderObject::locateEnclosingFragmentedFlow() const
     return containingBlock ? containingBlock->enclosingFragmentedFlow() : nullptr;
 }
 
-void RenderObject::calculateBorderStyleColor(const BorderStyle& style, const BoxSide& side, Color& color)
-{
-    ASSERT(style == BorderStyle::Inset || style == BorderStyle::Outset);
-
-    // This values were derived empirically.
-    constexpr float baseDarkColorLuminance { 0.014443844f }; // Luminance of SRGBA<uint8_t> { 32, 32, 32 }
-    constexpr float baseLightColorLuminance { 0.83077f }; // Luminance of SRGBA<uint8_t> { 235, 235, 235 }
-
-    enum Operation { Darken, Lighten };
-
-    Operation operation = (side == BoxSide::Top || side == BoxSide::Left) == (style == BorderStyle::Inset) ? Darken : Lighten;
-
-    // Here we will darken the border decoration color when needed. This will yield a similar behavior as in FF.
-    if (operation == Darken) {
-        if (color.luminance() > baseDarkColorLuminance)
-            color = color.darkened();
-    } else {
-        if (color.luminance() < baseLightColorLuminance)
-            color = color.lightened();
-    }
-}
-
 void RenderObject::setHasReflection(bool hasReflection)
 {
     if (hasReflection || hasRareData())

@@ -57,7 +57,7 @@ private:
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
     bool hasClient(RenderElement&) const final;
-    RefPtr<Image> image(RenderElement*, const FloatSize&) const final;
+    RefPtr<Image> image(const RenderElement*, const FloatSize&) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
 
     explicit StyleGeneratedImage(Ref<CSSImageGeneratorValue>&&);

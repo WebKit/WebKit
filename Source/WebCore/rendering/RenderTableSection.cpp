@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "RenderTableSection.h"
+
+#include "BoxModelPainter.h"
 #include "Document.h"
 #include "HitTestResult.h"
 #include "HTMLNames.h"
@@ -1128,7 +1130,7 @@ void RenderTableSection::paintRowGroupBorderIfRequired(const PaintInfo& paintInf
         return;
 
     const RenderStyle& style = this->style();
-    bool antialias = shouldAntialiasLines(paintInfo.context());
+    bool antialias = BoxModelPainter::shouldAntialiasLines(paintInfo.context());
     LayoutRect rowGroupRect = LayoutRect(paintOffset, size());
     rowGroupRect.moveBy(-LayoutPoint(outerBorderLeft(&style), (borderSide == BoxSide::Right) ? 0_lu : outerBorderTop(&style)));
 

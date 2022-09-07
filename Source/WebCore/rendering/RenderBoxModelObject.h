@@ -216,8 +216,6 @@ public:
 
     virtual LayoutUnit containingBlockLogicalWidthForContent() const;
 
-    void paintBorder(const PaintInfo&, const LayoutRect&, const RenderStyle&, BackgroundBleedAvoidance = BackgroundBleedNone, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
-    bool paintNinePieceImage(GraphicsContext&, const LayoutRect&, const RenderStyle&, const NinePieceImage&, CompositeOperator = CompositeOperator::SourceOver);
     void paintBoxShadow(const PaintInfo&, const LayoutRect&, const RenderStyle&, ShadowStyle, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
     void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer&, const LayoutRect&, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&, const LayoutRect& backgroundImageStrip = { }, CompositeOperator = CompositeOperator::SourceOver, RenderElement* backgroundObject = nullptr, BaseBackgroundColorUsage = BaseBackgroundColorUse);
 
@@ -270,11 +268,8 @@ protected:
     bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
     bool borderObscuresBackground() const;
     RoundedRect backgroundRoundedRectAdjustedForBleedAvoidance(const GraphicsContext&, const LayoutRect&, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const;
-    LayoutRect borderInnerRectAdjustedForBleedAvoidance(const GraphicsContext&, const LayoutRect&, BackgroundBleedAvoidance) const;
 
     InterpolationQuality chooseInterpolationQuality(GraphicsContext&, Image&, const void*, const LayoutSize&);
-
-    static bool shouldAntialiasLines(GraphicsContext&);
 
     static void clipRoundedInnerRect(GraphicsContext&, const FloatRect&, const FloatRoundedRect& clipRect);
 
@@ -324,20 +319,6 @@ private:
     
     bool fixedBackgroundPaintsInLocalCoordinates() const;
 
-    void clipBorderSidePolygon(GraphicsContext&, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
-                               BoxSide, bool firstEdgeMatches, bool secondEdgeMatches);
-
-    void paintOneBorderSide(GraphicsContext&, const RenderStyle&, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
-        const LayoutRect& sideRect, BoxSide, BoxSide adjacentSide1, BoxSide adjacentSide2, const BorderEdges&,
-        const Path*, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor = nullptr);
-    void paintTranslucentBorderSides(GraphicsContext&, const RenderStyle&, const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment,
-        const BorderEdges&, BoxSideSet, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias = false);
-    void paintBorderSides(GraphicsContext&, const RenderStyle&, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
-        const IntPoint& innerBorderAdjustment, const BorderEdges&, BoxSideSet, BackgroundBleedAvoidance,
-        bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias = false, const Color* overrideColor = nullptr);
-    void drawBoxSideFromPath(GraphicsContext&, const LayoutRect&, const Path&, const BorderEdges&,
-        float thickness, float drawThickness, BoxSide, const RenderStyle&,
-        Color, BorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
     void paintMaskForTextFillBox(ImageBuffer*, const FloatRect&, const InlineIterator::InlineBoxIterator&, const LayoutRect&);
 };
 

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "InlineBoxPainter.h"
 
+#include "BoxModelPainter.h"
 #include "GraphicsContext.h"
 #include "InlineIteratorLineBox.h"
 #include "LegacyInlineFlowBox.h"
@@ -174,8 +175,11 @@ void InlineBoxPainter::paintMask()
     }
 
     bool hasSingleLine = !m_inlineBox.previousInlineBox() && !m_inlineBox.nextInlineBox();
+
+    BoxModelPainter boxModelPainter { renderer(), m_paintInfo };
+
     if (hasSingleLine)
-        renderer().paintNinePieceImage(m_paintInfo.context(), LayoutRect(adjustedPaintOffset, localRect.size()), renderer().style(), maskNinePieceImage, compositeOp);
+        boxModelPainter.paintNinePieceImage(LayoutRect(adjustedPaintOffset, localRect.size()), renderer().style(), maskNinePieceImage, compositeOp);
     else {
         // We have a mask image that spans multiple lines.
         // We need to adjust _tx and _ty by the width of all previous lines.
@@ -193,7 +197,7 @@ void InlineBoxPainter::paintMask()
         LayoutRect clipRect = clipRectForNinePieceImageStrip(m_inlineBox, maskNinePieceImage, paintRect);
         GraphicsContextStateSaver stateSaver(m_paintInfo.context());
         m_paintInfo.context().clip(clipRect);
-        renderer().paintNinePieceImage(m_paintInfo.context(), LayoutRect(stripX, stripY, stripWidth, stripHeight), renderer().style(), maskNinePieceImage, compositeOp);
+        boxModelPainter.paintNinePieceImage(LayoutRect(stripX, stripY, stripWidth, stripHeight), renderer().style(), maskNinePieceImage, compositeOp);
     }
 
     if (pushTransparencyLayer)
@@ -245,7 +249,7 @@ void InlineBoxPainter::paintDecorations()
     bool hasSingleLine = !m_inlineBox.previousInlineBox() && !m_inlineBox.nextInlineBox();
     if (!hasBorderImage || hasSingleLine) {
         auto [hasClosedLeftEdge, hasClosedRightEdge] = m_inlineBox.hasClosedLeftAndRightEdge();
-        renderer().paintBorder(m_paintInfo, paintRect, style, BackgroundBleedNone, hasClosedLeftEdge, hasClosedRightEdge);
+        BoxModelPainter { renderer(), m_paintInfo }.paintBorder(paintRect, style, BackgroundBleedNone, hasClosedLeftEdge, hasClosedRightEdge);
         return;
     }
 
@@ -272,7 +276,7 @@ void InlineBoxPainter::paintDecorations()
     LayoutRect clipRect = clipRectForNinePieceImageStrip(m_inlineBox, borderImage, paintRect);
     GraphicsContextStateSaver stateSaver(context);
     context.clip(clipRect);
-    renderer().paintBorder(m_paintInfo, LayoutRect(stripX, stripY, stripWidth, stripHeight), style);
+    BoxModelPainter { renderer(), m_paintInfo }.paintBorder(LayoutRect(stripX, stripY, stripWidth, stripHeight), style);
 }
 
 void InlineBoxPainter::paintFillLayers(const Color& color, const FillLayer& fillLayer, const LayoutRect& rect, CompositeOperator op)
