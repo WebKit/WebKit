@@ -462,11 +462,14 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, const Inlin
 
 LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange)
 {
+    size_t overflowingFloatCount = 0;
     auto placeOverflowingFloatsFromPreviousLine = [&] {
         if (!m_previousLine)
             return;
         while (!m_previousLine->overflowingFloats.isEmpty()) {
-            tryPlacingFloatBox(*m_previousLine->overflowingFloats[0], LineBoxConstraintApplies::No);
+            auto isPlaced = tryPlacingFloatBox(*m_previousLine->overflowingFloats[0], LineBoxConstraintApplies::No);
+            ASSERT_UNUSED(isPlaced, isPlaced);
+            ++overflowingFloatCount;
             m_previousLine->overflowingFloats.remove(0);
         }
     };
@@ -524,6 +527,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
         currentItemIndex = needsLayoutRange.start + committedItemCount;
     }
     // Looks like we've run out of runs.
+    ASSERT_UNUSED(overflowingFloatCount, committedItemCount || overflowingFloatCount);
     return { committedItemCount, { } };
 }
 
@@ -1170,8 +1174,10 @@ bool LineBuilder::isLastLineWithInlineContent(const InlineItemRange& lineRange, 
 {
     if (hasPartialTrailingContent)
         return false;
-    if (lineRange.end == lastInlineItemIndex)
-        return true;
+    if (lineRange.end == lastInlineItemIndex) {
+        // We must have only committed trailing overflowing floats on the line when the range is empty.
+        return !lineRange.isEmpty();
+    }
     // Omit floats to see if this is the last line with inline content.
     for (auto i = lastInlineItemIndex; i--;) {
         if (!m_inlineItems[i].isFloat())
