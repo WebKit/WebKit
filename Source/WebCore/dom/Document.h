@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "BlobURL.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CanvasBase.h"
 #include "ClientOrigin.h"
@@ -1815,6 +1816,7 @@ private:
 
     // Document URLs.
     URL m_url; // Document.URL: The URL from which this document was retrieved.
+    BlobURLHandle m_blobURLLifetimeExtension; // Keep the Document's blob alive so it can be reloaded.
     URL m_baseURL; // Node.baseURI: The URL to use when resolving relative URLs.
     URL m_baseURLOverride; // An alternative base URL that takes precedence over m_baseURL (but not m_baseElementURL).
     URL m_baseElementURL; // The URL set by the <base> element.

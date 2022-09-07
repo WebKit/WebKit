@@ -3419,6 +3419,11 @@ void Document::setURL(const URL& url)
     if (SecurityOrigin::shouldIgnoreHost(m_url))
         m_url.setHostAndPort({ });
 
+    if (m_url.protocolIsBlob())
+        m_blobURLLifetimeExtension = m_url;
+    else
+        m_blobURLLifetimeExtension.clear();
+
     m_documentURI = m_url.string();
     updateBaseURL();
 }
