@@ -42,9 +42,9 @@ PASS `"DENY";SAMEORIGIN` blocks cross-origin framing
 PASS `SAMEORIGIN,"DENY"` blocks cross-origin framing
 PASS `"DENY",SAMEORIGIN` blocks cross-origin framing
 PASS `SAMEORIGIN;` blocks same-origin framing
-FAIL `(the empty string);SAMEORIGIN` blocks same-origin framing assert_equals: expected null but got Document node with 2 children
-FAIL `SAMEORIGIN,(the empty string)` blocks same-origin framing assert_equals: expected null but got Document node with 2 children
-FAIL `(the empty string),SAMEORIGIN` blocks same-origin framing assert_equals: expected null but got Document node with 2 children
+PASS `(the empty string);SAMEORIGIN` blocks same-origin framing
+PASS `SAMEORIGIN,(the empty string)` blocks same-origin framing
+PASS `(the empty string),SAMEORIGIN` blocks same-origin framing
 PASS `SAMEORIGIN;` blocks cross-origin framing
 PASS `(the empty string);SAMEORIGIN` blocks cross-origin framing
 PASS `SAMEORIGIN,(the empty string)` blocks cross-origin framing
@@ -84,9 +84,9 @@ PASS `INVALID;ALLOWALL` blocks cross-origin framing
 PASS `ALLOWALL,INVALID` blocks cross-origin framing
 PASS `INVALID,ALLOWALL` blocks cross-origin framing
 PASS `ALLOWALL;` blocks same-origin framing
-FAIL `(the empty string);ALLOWALL` blocks same-origin framing assert_equals: expected null but got Document node with 2 children
-FAIL `ALLOWALL,(the empty string)` blocks same-origin framing assert_equals: expected null but got Document node with 2 children
-FAIL `(the empty string),ALLOWALL` blocks same-origin framing assert_equals: expected null but got Document node with 2 children
+PASS `(the empty string);ALLOWALL` blocks same-origin framing
+PASS `ALLOWALL,(the empty string)` blocks same-origin framing
+PASS `(the empty string),ALLOWALL` blocks same-origin framing
 PASS `ALLOWALL;` blocks cross-origin framing
 PASS `(the empty string);ALLOWALL` blocks cross-origin framing
 PASS `ALLOWALL,(the empty string)` blocks cross-origin framing
