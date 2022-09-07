@@ -364,7 +364,6 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , WTFMove(m_placedFloats)
         , WTFMove(m_overflowingFloats)
         , m_contentIsConstrainedByFloat
-        , m_lineMarginStart
         , m_lineLogicalRect.topLeft()
         , m_lineLogicalRect.width()
         , m_line.contentLogicalWidth()
@@ -952,7 +951,8 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
     }
 
     // Set static position first.
-    auto staticPosition = LayoutPoint { m_lineLogicalRect.topLeft() };
+    auto lineMarginBoxLeft = std::max(0.f, m_lineLogicalRect.left() - m_lineMarginStart);
+    auto staticPosition = LayoutPoint { lineMarginBoxLeft, m_lineLogicalRect.top() };
     staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
     boxGeometry.setLogicalTopLeft(staticPosition);
     // Float it.
@@ -964,7 +964,7 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
     m_placedFloats.append(&floatItem);
     // Check if this float shrinks the line (they don't get positioned higher than the line).
     auto floatBoxMarginBox = BoxGeometry::marginBoxRect(boxGeometry);
-    if (floatBoxMarginBox.top() >= m_lineLogicalRect.bottom() || floatBoxMarginBox.right() <= m_lineLogicalRect.left()) {
+    if (floatBoxMarginBox.top() >= m_lineLogicalRect.bottom() || floatBoxMarginBox.right() <= lineMarginBoxLeft) {
         // This float is placed outside the line. No need to shrink the current line.
         return true;
     }

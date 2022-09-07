@@ -69,7 +69,6 @@ public:
         FloatList placedFloats;
         FloatList overflowingFloats;
         bool hasIntrusiveFloat { false };
-        InlineLayoutUnit lineMarginStart { 0 };
         InlineLayoutPoint lineLogicalTopLeft;
         InlineLayoutUnit lineLogicalWidth { 0 };
         InlineLayoutUnit contentLogicalWidth { 0 };
