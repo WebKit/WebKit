@@ -1834,10 +1834,28 @@ std::optional<bool> MediaPlayerPrivateAVFoundationObjC::allTracksArePlayable() c
         return std::nullopt;
 
     for (AVAssetTrack *assetTrack : [m_avAsset tracks]) {
-        if (!trackIsPlayable(assetTrack))
+        if ([assetTrack isEnabled] && !trackIsPlayable(assetTrack))
             return false;
     }
     return true;
+}
+
+bool MediaPlayerPrivateAVFoundationObjC::containsDisabledTracks() const
+{
+    if (m_avPlayerItem) {
+        for (AVPlayerItemTrack *track in [m_avPlayerItem tracks]) {
+            if (![track isEnabled])
+                return true;
+        }
+        return false;
+    }
+
+    ASSERT(m_avAsset);
+    for (AVAssetTrack *assetTrack : [m_avAsset tracks]) {
+        if (![assetTrack isEnabled])
+            return true;
+    }
+    return false;
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::trackIsPlayable(AVAssetTrack* track) const
@@ -1926,7 +1944,7 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
     }
 
     if (!m_cachedAssetIsPlayable)
-        m_cachedAssetIsPlayable = [[m_avAsset valueForKey:@"playable"] boolValue];
+        m_cachedAssetIsPlayable = [[m_avAsset valueForKey:@"playable"] boolValue] || containsDisabledTracks();
 
     if (*m_cachedAssetIsPlayable && *m_cachedTracksArePlayable)
         return MediaPlayerAVAssetStatusPlayable;
